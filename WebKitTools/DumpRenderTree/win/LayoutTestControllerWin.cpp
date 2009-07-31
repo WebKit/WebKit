@@ -121,6 +121,19 @@ JSStringRef LayoutTestController::copyEncodedHostName(JSStringRef name)
     return 0;
 }
 
+void LayoutTestController::disableImageLoading()
+{
+    COMPtr<IWebView> webView;
+    if (FAILED(frame->webView(&webView)))
+        return;
+    
+    COMPtr<IWebPreferences> preferences;
+    if (FAILED(webView->preferences(&preferences)))
+        return;
+    
+    preferences->setLoadsImagesAutomatically(FALSE);
+}
+
 void LayoutTestController::dispatchPendingLoadRequests()
 {
     // FIXME: Implement for testing fix for 6727495

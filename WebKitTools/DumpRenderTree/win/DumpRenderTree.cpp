@@ -677,6 +677,7 @@ static void resetWebViewToConsistentStateBeforeTesting()
     if (SUCCEEDED(webView->preferences(&preferences))) {
         preferences->setPrivateBrowsingEnabled(FALSE);
         preferences->setJavaScriptCanOpenWindowsAutomatically(TRUE);
+        preferences->setLoadsImagesAutomatically(TRUE);
 
         if (persistentUserStyleSheetLocation) {
             Vector<wchar_t> urlCharacters(CFStringGetLength(persistentUserStyleSheetLocation.get()));

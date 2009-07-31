@@ -259,6 +259,12 @@ void LayoutTestController::setAuthorAndUserStylesEnabled(bool flag)
     // FIXME: implement
 }
 
+void LayoutTestController::disableImageLoading()
+{
+    // FIXME: Implement for testing fix for https://bugs.webkit.org/show_bug.cgi?id=27896
+    // Also need to make sure image loading is re-enabled for each new test.
+}
+
 void LayoutTestController::setIconDatabaseEnabled(bool flag)
 {
     // FIXME: implement

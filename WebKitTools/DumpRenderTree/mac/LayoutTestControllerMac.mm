@@ -283,6 +283,11 @@ void LayoutTestController::setUserStyleSheetLocation(JSStringRef path)
     [[WebPreferences standardPreferences] setUserStyleSheetLocation:url];
 }
 
+void LayoutTestController::disableImageLoading()
+{
+    [[WebPreferences standardPreferences] setLoadsImagesAutomatically:NO];
+}
+
 void LayoutTestController::dispatchPendingLoadRequests()
 {
     [[mainFrame webView] _dispatchPendingLoadRequests];

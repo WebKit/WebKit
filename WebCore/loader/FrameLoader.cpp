@@ -1114,6 +1114,12 @@ void FrameLoader::startIconLoader()
         }
     }
 
+    // People who want to avoid loading images generally want to avoid loading all images.
+    // Now that we've accounted for URL mapping, avoid starting the network load if images aren't set to display automatically.
+    Settings* settings = m_frame->settings();
+    if (settings && !settings->loadsImagesAutomatically())
+        return;
+
     // This is either a reload or the icon database said "yes, load the icon", so kick off the load!
     if (!m_iconLoader)
         m_iconLoader.set(IconLoader::create(m_frame).release());
