@@ -363,7 +363,7 @@ class Bugzilla:
 
         self.browser.open(self.attachment_url_for_id(attachment_id, 'edit'))
         self.browser.select_form(nr=1)
-        self.browser['comment'] = comment_text
+        self.browser.set_value(comment_text, name='comment', nr=0)
         self.browser.find_control(type='select', nr=0).value = ("X",)
         self.browser.submit()
 

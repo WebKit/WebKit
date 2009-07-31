@@ -1,3 +1,13 @@
+2009-07-31  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/27894> bugzilla-tool: Bugzilla.clear_attachment_review_flag() fails with ClientForm-0.2.10 and python-2.5
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/modules/bugzilla.py:
+        (Bugzilla.clear_attachment_review_flag): Specify which 'comment'
+        form field to use when setting its value.
+
 2009-07-31  Eric Seidel  <eric@webkit.org>
 
         Reviewed by David Kilzer.
