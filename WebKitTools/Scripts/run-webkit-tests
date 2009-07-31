@@ -153,23 +153,24 @@ my $errorTag = "stderr";
 
 my @macPlatforms = ("mac-tiger", "mac-leopard", "mac-snowleopard", "mac");
 
-if (isTiger()) {
-    $platform = "mac-tiger";
-    $tolerance = 1.0;
-} elsif (isLeopard()) {
-    $platform = "mac-leopard";
-    $tolerance = 0.1;
-} elsif (isSnowLeopard()) {
-    $platform = "mac-snowleopard";
-    $tolerance = 0.1;
-} elsif (isAppleMacWebKit()) {
-    $platform = "mac";
+if (isAppleMacWebKit()) {
+    if (isTiger()) {
+        $platform = "mac-tiger";
+        $tolerance = 1.0;
+    } elsif (isLeopard()) {
+        $platform = "mac-leopard";
+        $tolerance = 0.1;
+    } elsif (isSnowLeopard()) {
+        $platform = "mac-snowleopard";
+        $tolerance = 0.1;
+    } else {
+        $platform = "mac";
+    }
 } elsif (isQt()) {
     $platform = "qt";
 } elsif (isGtk()) {
     $platform = "gtk";
-}
-elsif (isWx()) {
+} elsif (isWx()) {
     $platform = "wx";
 } elsif (isCygwin()) {
     $platform = "win";
