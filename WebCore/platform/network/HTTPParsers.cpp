@@ -100,6 +100,13 @@ bool parseHTTPRefresh(const String& refresh, bool fromHttpEquivMeta, double& del
                 if (refresh[urlEndPos] == quotationMark)
                     break;
             }
+            
+            // https://bugs.webkit.org/show_bug.cgi?id=27868
+            // Sometimes there is no closing quote for the end of the URL even though there was an opening quote.
+            // If we looped over the entire alleged URL string back to the opening quote, just go ahead and use everything
+            // after the opening quote instead.
+            if (urlEndPos == urlStartPos)
+                urlEndPos = len;
         }
 
         url = refresh.substring(urlStartPos, urlEndPos - urlStartPos).stripWhiteSpace();
