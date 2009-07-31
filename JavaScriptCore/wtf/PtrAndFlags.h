@@ -37,7 +37,6 @@ namespace WTF {
     template<class T, typename FlagEnum> class PtrAndFlags {
     public:
         PtrAndFlags() : m_ptrAndFlags(0) {}
-        PtrAndFlags(T* ptr) : m_ptrAndFlags(0) { set(ptr); }
 
         bool isFlagSet(FlagEnum flagNumber) const { ASSERT(flagNumber < 2); return m_ptrAndFlags & (1 << flagNumber); }
         void setFlag(FlagEnum flagNumber) { ASSERT(flagNumber < 2); m_ptrAndFlags |= (1 << flagNumber);}
@@ -51,9 +50,6 @@ namespace WTF {
             m_leaksPtr = ptr;
 #endif
         }
-
-        bool operator!() const { return !get(); }
-        T* operator->() const { return reinterpret_cast<T*>(m_ptrAndFlags & ~3); }
 
     private:
         intptr_t m_ptrAndFlags;

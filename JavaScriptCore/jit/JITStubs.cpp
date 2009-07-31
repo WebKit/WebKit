@@ -583,7 +583,7 @@ extern "C" {
 
 JITThunks::JITThunks(JSGlobalData* globalData)
 {
-    JIT::compileCTIMachineTrampolines(globalData, &m_executablePool, &m_ctiStringLengthTrampoline, &m_ctiVirtualCallLink, &m_ctiVirtualCall, &m_ctiNativeCallThunk);
+    JIT::compileCTIMachineTrampolines(globalData, &m_executablePool, &m_ctiStringLengthTrampoline, &m_ctiVirtualCallPreLink, &m_ctiVirtualCallLink, &m_ctiVirtualCall, &m_ctiNativeCallThunk);
 
 #if PLATFORM_ARM_ARCH(7)
     // Unfortunate the arm compiler does not like the use of offsetof on JITStackFrame (since it contains non POD types),
@@ -606,7 +606,7 @@ JITThunks::JITThunks(JSGlobalData* globalData)
 
 #if ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
 
-NEVER_INLINE void JITThunks::tryCachePutByID(CallFrame* callFrame, CodeBlock* codeBlock, ReturnAddressPtr returnAddress, JSValue baseValue, const PutPropertySlot& slot, StructureStubInfo* stubInfo)
+NEVER_INLINE void JITThunks::tryCachePutByID(CallFrame* callFrame, CodeBlock* codeBlock, ReturnAddressPtr returnAddress, JSValue baseValue, const PutPropertySlot& slot)
 {
     // The interpreter checks for recursion here; I do not believe this can occur in CTI.
 
@@ -633,6 +633,8 @@ NEVER_INLINE void JITThunks::tryCachePutByID(CallFrame* callFrame, CodeBlock* co
         return;
     }
 
+    StructureStubInfo* stubInfo = &codeBlock->getStubInfo(returnAddress);
+
     // Cache hit: Specialize instruction and ref Structures.
 
     // Structure transition, cache transition info
@@ -652,7 +654,7 @@ NEVER_INLINE void JITThunks::tryCachePutByID(CallFrame* callFrame, CodeBlock* co
     JIT::patchPutByIdReplace(codeBlock, stubInfo, structure, slot.cachedOffset(), returnAddress);
 }
 
-NEVER_INLINE void JITThunks::tryCacheGetByID(CallFrame* callFrame, CodeBlock* codeBlock, ReturnAddressPtr returnAddress, JSValue baseValue, const Identifier& propertyName, const PropertySlot& slot, StructureStubInfo* stubInfo)
+NEVER_INLINE void JITThunks::tryCacheGetByID(CallFrame* callFrame, CodeBlock* codeBlock, ReturnAddressPtr returnAddress, JSValue baseValue, const Identifier& propertyName, const PropertySlot& slot)
 {
     // FIXME: Write a test that proves we need to check for recursion here just
     // like the interpreter does, then add a check for recursion.
@@ -691,6 +693,11 @@ NEVER_INLINE void JITThunks::tryCacheGetByID(CallFrame* callFrame, CodeBlock* co
         return;
     }
 
+    // In the interpreter the last structure is trapped here; in CTI we use the
+    // *_second method to achieve a similar (but not quite the same) effect.
+
+    StructureStubInfo* stubInfo = &codeBlock->getStubInfo(returnAddress);
+
     // Cache hit: Specialize instruction and ref Structures.
 
     if (slot.slotBase() == baseValue) {
@@ -719,7 +726,7 @@ NEVER_INLINE void JITThunks::tryCacheGetByID(CallFrame* callFrame, CodeBlock* co
 
     size_t count = countPrototypeChainEntriesAndCheckForProxies(callFrame, baseValue, slot);
     if (!count) {
-        stubInfo->accessType = access_get_by_id_generic;
+        stubInfo->opcodeID = op_get_by_id_generic;
         return;
     }
 
@@ -1021,16 +1028,22 @@ DEFINE_STUB_FUNCTION(void, op_put_by_id)
 
     CallFrame* callFrame = stackFrame.callFrame;
     Identifier& ident = stackFrame.args[1].identifier();
+
     PutPropertySlot slot;
     stackFrame.args[0].jsValue().put(callFrame, ident, stackFrame.args[2].jsValue(), slot);
-    CodeBlock* codeBlock = stackFrame.callFrame->codeBlock();
-    StructureStubInfo* stubInfo = &codeBlock->getStubInfo(STUB_RETURN_ADDRESS);
 
-    if (!stubInfo->seenOnce())
-        stubInfo->setSeen();
-    else
-        JITThunks::tryCachePutByID(callFrame, codeBlock, STUB_RETURN_ADDRESS, stackFrame.args[0].jsValue(), slot, stubInfo);
+    ctiPatchCallByReturnAddress(callFrame->codeBlock(), STUB_RETURN_ADDRESS, FunctionPtr(cti_op_put_by_id_second));
 
+    CHECK_FOR_EXCEPTION_AT_END();
+}
+
+DEFINE_STUB_FUNCTION(void, op_put_by_id_second)
+{
+    STUB_INIT_STACK_FRAME(stackFrame);
+
+    PutPropertySlot slot;
+    stackFrame.args[0].jsValue().put(stackFrame.callFrame, stackFrame.args[1].identifier(), stackFrame.args[2].jsValue(), slot);
+    JITThunks::tryCachePutByID(stackFrame.callFrame, stackFrame.callFrame->codeBlock(), STUB_RETURN_ADDRESS, stackFrame.args[0].jsValue(), slot);
     CHECK_FOR_EXCEPTION_AT_END();
 }
 
@@ -1062,89 +1075,117 @@ DEFINE_STUB_FUNCTION(JSObject*, op_put_by_id_transition_realloc)
     return base;
 }
 
-DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_method_check)
-{
-    STUB_INIT_STACK_FRAME(stackFrame);
-
-    CallFrame* callFrame = stackFrame.callFrame;
-    Identifier& ident = stackFrame.args[1].identifier();
-    JSValue baseValue = stackFrame.args[0].jsValue();
-    PropertySlot slot(baseValue);
-    JSValue result = baseValue.get(callFrame, ident, slot);
-    CHECK_FOR_EXCEPTION();
-    MethodCallLinkInfo& methodCallLinkInfo = callFrame->codeBlock()->getMethodCallLinkInfo(STUB_RETURN_ADDRESS);
-
-    if (!methodCallLinkInfo.seenOnce())
-        methodCallLinkInfo.setSeen();
-    else {
-        // If we successfully got something, then the base from which it is being accessed must
-        // be an object.  (Assertion to ensure asObject() call below is safe, which comes after
-        // an isCacheable() chceck.
-        ASSERT(!slot.isCacheable() || slot.slotBase().isObject());
-
-        // Check that:
-        //   * We're dealing with a JSCell,
-        //   * the property is cachable,
-        //   * it's not a dictionary
-        //   * there is a function cached.
-        Structure* structure;
-        JSCell* specific;
-        JSObject* slotBaseObject;
-        if (baseValue.isCell()
-            && slot.isCacheable()
-            && !(structure = asCell(baseValue)->structure())->isDictionary()
-            && (slotBaseObject = asObject(slot.slotBase()))->getPropertySpecificValue(callFrame, ident, specific)
-            && specific
-            ) {
-
-            JSFunction* callee = (JSFunction*)specific;
-
-            // Since we're accessing a prototype in a loop, it's a good bet that it
-            // should not be treated as a dictionary.
-            if (slotBaseObject->structure()->isDictionary())
-                slotBaseObject->setStructure(Structure::fromDictionaryTransition(slotBaseObject->structure()));
-
-            // The result fetched should always be the callee!
-            ASSERT(result == JSValue(callee));
-
-            // Check to see if the function is on the object's prototype.  Patch up the code to optimize.
-            if (slot.slotBase() == structure->prototypeForLookup(callFrame))
-                JIT::patchMethodCallProto(callFrame->codeBlock(), methodCallLinkInfo, callee, structure, slotBaseObject);
-            // Check to see if the function is on the object itself.
-            // Since we generate the method-check to check both the structure and a prototype-structure (since this
-            // is the common case) we have a problem - we need to patch the prototype structure check to do something
-            // useful.  We could try to nop it out altogether, but that's a little messy, so lets do something simpler
-            // for now.  For now it performs a check on a special object on the global object only used for this
-            // purpose.  The object is in no way exposed, and as such the check will always pass.
-            else if (slot.slotBase() == baseValue)
-                JIT::patchMethodCallProto(callFrame->codeBlock(), methodCallLinkInfo, callee, structure, callFrame->scopeChain()->globalObject()->methodCallDummy());
-
-            // For now let any other case be cached as a normal get_by_id.
-        }
-
-        // Revert the get_by_id op back to being a regular get_by_id - allow it to cache like normal, if it needs to.
-        ctiPatchCallByReturnAddress(callFrame->codeBlock(), STUB_RETURN_ADDRESS, FunctionPtr(cti_op_get_by_id));
-    }
-
-    return JSValue::encode(result);
-}
-
 DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
 
     CallFrame* callFrame = stackFrame.callFrame;
     Identifier& ident = stackFrame.args[1].identifier();
+
     JSValue baseValue = stackFrame.args[0].jsValue();
     PropertySlot slot(baseValue);
     JSValue result = baseValue.get(callFrame, ident, slot);
-    CodeBlock* codeBlock = callFrame->codeBlock();
-    StructureStubInfo* stubInfo = &codeBlock->getStubInfo(STUB_RETURN_ADDRESS);
 
-    if (!stubInfo->seenOnce())
-        stubInfo->setSeen();
-    else
-        JITThunks::tryCacheGetByID(callFrame, codeBlock, STUB_RETURN_ADDRESS, baseValue, ident, slot, stubInfo);
+    ctiPatchCallByReturnAddress(callFrame->codeBlock(), STUB_RETURN_ADDRESS, FunctionPtr(cti_op_get_by_id_second));
+
+    CHECK_FOR_EXCEPTION_AT_END();
+    return JSValue::encode(result);
+}
+
+DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_method_check)
+{
+    STUB_INIT_STACK_FRAME(stackFrame);
+
+    CallFrame* callFrame = stackFrame.callFrame;
+    Identifier& ident = stackFrame.args[1].identifier();
+
+    JSValue baseValue = stackFrame.args[0].jsValue();
+    PropertySlot slot(baseValue);
+    JSValue result = baseValue.get(callFrame, ident, slot);
+
+    ctiPatchCallByReturnAddress(callFrame->codeBlock(), STUB_RETURN_ADDRESS, FunctionPtr(cti_op_get_by_id_method_check_second));
+
+    CHECK_FOR_EXCEPTION_AT_END();
+    return JSValue::encode(result);
+}
+
+DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_method_check_second)
+{
+    STUB_INIT_STACK_FRAME(stackFrame);
+
+    CallFrame* callFrame = stackFrame.callFrame;
+    Identifier& ident = stackFrame.args[1].identifier();
+
+    JSValue baseValue = stackFrame.args[0].jsValue();
+    PropertySlot slot(baseValue);
+    JSValue result = baseValue.get(callFrame, ident, slot);
+
+    CHECK_FOR_EXCEPTION();
+
+    // If we successfully got something, then the base from which it is being accessed must
+    // be an object.  (Assertion to ensure asObject() call below is safe, which comes after
+    // an isCacheable() chceck.
+    ASSERT(!slot.isCacheable() || slot.slotBase().isObject());
+
+    // Check that:
+    //   * We're dealing with a JSCell,
+    //   * the property is cachable,
+    //   * it's not a dictionary
+    //   * there is a function cached.
+    Structure* structure;
+    JSCell* specific;
+    JSObject* slotBaseObject;
+    if (baseValue.isCell()
+        && slot.isCacheable()
+        && !(structure = asCell(baseValue)->structure())->isDictionary()
+        && (slotBaseObject = asObject(slot.slotBase()))->getPropertySpecificValue(callFrame, ident, specific)
+        && specific
+        ) {
+
+        JSFunction* callee = (JSFunction*)specific;
+
+        // Since we're accessing a prototype in a loop, it's a good bet that it
+        // should not be treated as a dictionary.
+        if (slotBaseObject->structure()->isDictionary())
+            slotBaseObject->setStructure(Structure::fromDictionaryTransition(slotBaseObject->structure()));
+
+        // The result fetched should always be the callee!
+        ASSERT(result == JSValue(callee));
+        MethodCallLinkInfo& methodCallLinkInfo = callFrame->codeBlock()->getMethodCallLinkInfo(STUB_RETURN_ADDRESS);
+
+        // Check to see if the function is on the object's prototype.  Patch up the code to optimize.
+        if (slot.slotBase() == structure->prototypeForLookup(callFrame))
+            JIT::patchMethodCallProto(callFrame->codeBlock(), methodCallLinkInfo, callee, structure, slotBaseObject);
+        // Check to see if the function is on the object itself.
+        // Since we generate the method-check to check both the structure and a prototype-structure (since this
+        // is the common case) we have a problem - we need to patch the prototype structure check to do something
+        // useful.  We could try to nop it out altogether, but that's a little messy, so lets do something simpler
+        // for now.  For now it performs a check on a special object on the global object only used for this
+        // purpose.  The object is in no way exposed, and as such the check will always pass.
+        else if (slot.slotBase() == baseValue)
+            JIT::patchMethodCallProto(callFrame->codeBlock(), methodCallLinkInfo, callee, structure, callFrame->scopeChain()->globalObject()->methodCallDummy());
+
+        // For now let any other case be cached as a normal get_by_id.
+    }
+
+    // Revert the get_by_id op back to being a regular get_by_id - allow it to cache like normal, if it needs to.
+    ctiPatchCallByReturnAddress(callFrame->codeBlock(), STUB_RETURN_ADDRESS, FunctionPtr(cti_op_get_by_id));
+
+    return JSValue::encode(result);
+}
+
+DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_second)
+{
+    STUB_INIT_STACK_FRAME(stackFrame);
+
+    CallFrame* callFrame = stackFrame.callFrame;
+    Identifier& ident = stackFrame.args[1].identifier();
+
+    JSValue baseValue = stackFrame.args[0].jsValue();
+    PropertySlot slot(baseValue);
+    JSValue result = baseValue.get(callFrame, ident, slot);
+
+    JITThunks::tryCacheGetByID(callFrame, callFrame->codeBlock(), STUB_RETURN_ADDRESS, baseValue, ident, slot);
 
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValue::encode(result);
@@ -1176,7 +1217,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_self_fail)
         PolymorphicAccessStructureList* polymorphicStructureList;
         int listIndex = 1;
 
-        if (stubInfo->accessType == access_get_by_id_self) {
+        if (stubInfo->opcodeID == op_get_by_id_self) {
             ASSERT(!stubInfo->stubRoutine);
             polymorphicStructureList = new PolymorphicAccessStructureList(CodeLocationLabel(), stubInfo->u.getByIdSelf.baseObjectStructure);
             stubInfo->initGetByIdSelfList(polymorphicStructureList, 2);
@@ -1200,18 +1241,18 @@ static PolymorphicAccessStructureList* getPolymorphicAccessStructureListSlot(Str
     PolymorphicAccessStructureList* prototypeStructureList = 0;
     listIndex = 1;
 
-    switch (stubInfo->accessType) {
-    case access_get_by_id_proto:
+    switch (stubInfo->opcodeID) {
+    case op_get_by_id_proto:
         prototypeStructureList = new PolymorphicAccessStructureList(stubInfo->stubRoutine, stubInfo->u.getByIdProto.baseObjectStructure, stubInfo->u.getByIdProto.prototypeStructure);
         stubInfo->stubRoutine = CodeLocationLabel();
         stubInfo->initGetByIdProtoList(prototypeStructureList, 2);
         break;
-    case access_get_by_id_chain:
+    case op_get_by_id_chain:
         prototypeStructureList = new PolymorphicAccessStructureList(stubInfo->stubRoutine, stubInfo->u.getByIdChain.baseObjectStructure, stubInfo->u.getByIdChain.chain);
         stubInfo->stubRoutine = CodeLocationLabel();
         stubInfo->initGetByIdProtoList(prototypeStructureList, 2);
         break;
-    case access_get_by_id_proto_list:
+    case op_get_by_id_proto_list:
         prototypeStructureList = stubInfo->u.getByIdProtoList.structureList;
         listIndex = stubInfo->u.getByIdProtoList.listSize;
         stubInfo->u.getByIdProtoList.listSize++;
@@ -1478,27 +1519,33 @@ DEFINE_STUB_FUNCTION(VoidPtrPair, op_call_arityCheck)
 }
 
 #if ENABLE(JIT_OPTIMIZE_CALL)
-DEFINE_STUB_FUNCTION(void*, vm_lazyLinkCall)
+DEFINE_STUB_FUNCTION(void*, vm_dontLazyLinkCall)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
 
     JSGlobalData* globalData = stackFrame.globalData;
     JSFunction* callee = asFunction(stackFrame.args[0].jsValue());
+
+    ctiPatchNearCallByReturnAddress(stackFrame.callFrame->callerFrame()->codeBlock(), stackFrame.args[1].returnAddress(), globalData->jitStubs.ctiVirtualCallLink());
+
+    return callee->body()->generatedJITCode().addressForCall().executableAddress();
+}
+
+DEFINE_STUB_FUNCTION(void*, vm_lazyLinkCall)
+{
+    STUB_INIT_STACK_FRAME(stackFrame);
+
+    JSFunction* callee = asFunction(stackFrame.args[0].jsValue());
     JITCode& jitCode = callee->body()->generatedJITCode();
+    
+    CodeBlock* codeBlock = 0;
+    if (!callee->isHostFunction())
+        codeBlock = &callee->body()->bytecode(callee->scope().node());
+    else
+        codeBlock = &callee->body()->generatedBytecode();
+
     CallLinkInfo* callLinkInfo = &stackFrame.callFrame->callerFrame()->codeBlock()->getCallLinkInfo(stackFrame.args[1].returnAddress());
-
-    if (!callLinkInfo->seenOnce())
-        callLinkInfo->setSeen();
-    else {
-
-        CodeBlock* codeBlock = 0;
-        if (!callee->isHostFunction())
-            codeBlock = &callee->body()->bytecode(callee->scope().node());
-        else
-            codeBlock = &callee->body()->generatedBytecode();
-        JIT::linkCall(callee, stackFrame.callFrame->callerFrame()->codeBlock(), codeBlock, jitCode, callLinkInfo, stackFrame.args[2].int32(), globalData);
-
-    }
+    JIT::linkCall(callee, stackFrame.callFrame->callerFrame()->codeBlock(), codeBlock, jitCode, callLinkInfo, stackFrame.args[2].int32(), stackFrame.globalData);
 
     return jitCode.addressForCall().executableAddress();
 }
