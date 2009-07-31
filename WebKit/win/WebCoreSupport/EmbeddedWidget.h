@@ -39,7 +39,7 @@ interface IWebEmbeddedView;
 
 class EmbeddedWidget : public WebCore::Widget, public WebCore::PluginManualLoader {
 public:
-    static EmbeddedWidget* create(IWebEmbeddedView*, WebCore::Element* element, HWND parentWindow, const WebCore::IntSize&);
+    static PassRefPtr<EmbeddedWidget> create(IWebEmbeddedView*, WebCore::Element* element, HWND parentWindow, const WebCore::IntSize&);
     ~EmbeddedWidget();
 
 private:
