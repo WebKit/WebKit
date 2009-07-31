@@ -15,7 +15,7 @@ fast/loader/subframe-navigate-during-main-frame-load.html
 fast/events/popup-blocking-click-in-iframe.html
 
 # Plain text controller currently in Mac DumpRenderTree only.
-editing/text-iterator
+editing/text-iterator/basic-iteration.html
 
 # ------- works on 64 bit but not on 32 bit
 svg/custom/path-getTotalLength.svg
@@ -23,7 +23,6 @@ svg/custom/glyph-setting-d-attribute.svg
 fast/canvas/canvas-getImageData.html
 
 # ------- crashes
-fast/events/tabindex-focus-chain.html
 fast/loader/empty-embed-src-attribute.html
 fast/text/find-hidden-text.html
 
@@ -970,7 +969,6 @@ fast/css/namespaces/007.xml
 fast/doctypes/003.html
 fast/dom/assign-to-window-status.html
 fast/dom/frame-loading-via-document-write.html
-fast/dom/javascript-url-crash-function.html
 fast/dom/set-frame-src-while-running-script-in-frame.html
 fast/dom/wrapper-classes.html
 fast/dom/HTMLDocument/hasFocus.html
@@ -2915,7 +2913,6 @@ fast/dom/setPrimitiveValue.html
 fast/dom/stripNullFromTextNodes.html
 fast/dom/Window/btoa-pnglet.html
 fast/dom/Window/open-existing-pop-up-blocking.html
-fast/dom/Window/window-resize.html
 fast/dynamic/002.html
 fast/dynamic/004.html
 fast/dynamic/006.html
@@ -5029,9 +5026,6 @@ fast/block/float/033.html
 fast/block/positioning/absolute-in-inline-rtl-4.html
 fast/canvas/canvas-composite-alpha.html
 fast/canvas/canvas-gradient-addStop-error.html
-fast/css/readonly-pseudoclass-opera-002.html
-fast/css/readonly-pseudoclass-opera-004.html
-fast/css/readonly-pseudoclass-opera-005.html
 fast/css/zoom-body-scroll.html
 fast/dom/cssTarget-crash.html
 fast/dom/getBoundingClientRect.html
