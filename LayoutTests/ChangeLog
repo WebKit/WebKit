@@ -1,3 +1,9 @@
+2009-07-31  Mark Rowe  <mrowe@apple.com>
+
+        Fix the test case that was landed in r46624.
+
+        * http/tests/misc/meta-refresh-stray-single-quote.html:
+
 2009-07-30  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Mark Rowe, but Dan Bernstein also reviewed and asked thoughtful questions.
