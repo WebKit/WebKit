@@ -29,8 +29,15 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "GraphicsLayer.h"
+#include "StringHash.h"
+#include <wtf/HashSet.h>
 #include <wtf/RetainPtr.h>
 
+@class CABasicAnimation;
+@class CAKeyframeAnimation;
+@class CALayer;
+@class CAMediaTimingFunction;
+@class CAPropertyAnimation;
 @class WebAnimationDelegate;
 @class WebLayer;
 
@@ -67,40 +74,44 @@ public:
     virtual void setMasksToBounds(bool);
     virtual void setDrawsContent(bool);
 
-    virtual void setBackgroundColor(const Color&, const Animation* anim = 0, double beginTime = 0);
+    virtual void setBackgroundColor(const Color&);
     virtual void clearBackgroundColor();
 
     virtual void setContentsOpaque(bool);
     virtual void setBackfaceVisibility(bool);
 
     // return true if we started an animation
-    virtual bool setOpacity(float, const Animation* anim = 0, double beginTime = 0);
+    virtual void setOpacity(float);
 
     virtual void setNeedsDisplay();
     virtual void setNeedsDisplayInRect(const FloatRect&);
 
+    virtual void setContentsRect(const IntRect&);
+    
     virtual void suspendAnimations();
     virtual void resumeAnimations();
 
-    virtual bool animateTransform(const TransformValueList&, const IntSize&, const Animation*, double beginTime, bool isTransition);
-    virtual bool animateFloat(AnimatedPropertyID, const FloatValueList&, const Animation*, double beginTime);
-
+    virtual bool addAnimation(const KeyframeValueList&, const IntSize& boxSize, const Animation*, const String& keyframesName, double beginTime);
+    virtual void removeAnimationsForProperty(AnimatedPropertyID);
+    virtual void removeAnimationsForKeyframes(const String& keyframesName);
+    virtual void pauseAnimation(const String& keyframesName);
+    
     virtual void setContentsToImage(Image*);
     virtual void setContentsToVideo(PlatformLayer*);
-    virtual void clearContents();
     
-    virtual void updateContentsRect();
-
     virtual PlatformLayer* platformLayer() const;
 
 #ifndef NDEBUG
     virtual void setDebugBackgroundColor(const Color&);
     virtual void setDebugBorder(const Color&, float borderWidth);
-    virtual void setZPosition(float);
 #endif
 
     virtual void setGeometryOrientation(CompositingCoordinatesOrientation);
-    virtual CompositingCoordinatesOrientation geometryOrientation() const;
+
+    void recursiveCommitChanges();
+    void commitLayerChanges();
+
+    virtual void syncCompositingState();
 
 protected:
     virtual void setOpacityInternal(float);
@@ -108,19 +119,31 @@ protected:
 private:
     void updateOpacityOnLayer();
 
-    WebLayer* primaryLayer() const  { return m_transformLayer.get() ? m_transformLayer.get() : m_layer.get(); }
+    WebLayer* primaryLayer() const { return m_transformLayer.get() ? m_transformLayer.get() : m_layer.get(); }
     WebLayer* hostLayerForSublayers() const;
     WebLayer* layerForSuperlayer() const;
+    CALayer* animatedLayer(AnimatedPropertyID property) const;
 
-    WebLayer* animatedLayer(AnimatedPropertyID property) const
+    bool createAnimationFromKeyframes(const KeyframeValueList&, const Animation*, const String& keyframesName, double beginTime);
+    bool createTransformAnimationsFromKeyframes(const KeyframeValueList&, const Animation*, const String& keyframesName, double beginTime, const IntSize& boxSize);
+
+    // Return autoreleased animation (use RetainPtr?)
+    CABasicAnimation* createBasicAnimation(const Animation*, AnimatedPropertyID, bool additive);
+    CAKeyframeAnimation* createKeyframeAnimation(const Animation*, AnimatedPropertyID, bool additive);
+    void setupAnimation(CAPropertyAnimation*, const Animation*, bool additive);
+    
+    CAMediaTimingFunction* timingFunctionForAnimationValue(const AnimationValue*, const Animation*);
+    
+    bool setAnimationEndpoints(const KeyframeValueList&, const Animation*, CABasicAnimation*);
+    bool setAnimationKeyframes(const KeyframeValueList&, const Animation*, CAKeyframeAnimation*);
+
+    bool setTransformAnimationEndpoints(const KeyframeValueList&, const Animation*, CABasicAnimation*, int functionIndex, TransformOperation::OperationType, bool isMatrixAnimation, const IntSize& boxSize);
+    bool setTransformAnimationKeyframes(const KeyframeValueList&, const Animation*, CAKeyframeAnimation*, int functionIndex, TransformOperation::OperationType, bool isMatrixAnimation, const IntSize& boxSize);
+    
+    bool animationIsRunning(const String& keyframesName) const
     {
-        return (property == AnimatedPropertyBackgroundColor) ? m_contentsLayer.get() : primaryLayer();
+        return m_runningKeyframeAnimations.find(keyframesName) != m_runningKeyframeAnimations.end();
     }
-
-    void setBasicAnimation(AnimatedPropertyID, TransformOperation::OperationType, short index, void* fromVal, void* toVal, bool isTransition, const Animation*, double time);
-    void setKeyframeAnimation(AnimatedPropertyID, TransformOperation::OperationType, short index, void* keys, void* values, void* timingFunctions, bool isTransition, const Animation*, double time);
-
-    virtual void removeAnimation(int index, bool reset);
 
     bool requiresTiledLayer(const FloatSize&) const;
     void swapFromOrToTiledLayer(bool useTiledLayer);
@@ -128,16 +151,115 @@ private:
     CompositingCoordinatesOrientation defaultContentsOrientation() const;
     void updateContentsTransform();
     
-    void setContentsLayer(WebLayer*);
-    WebLayer* contentsLayer() const { return m_contentsLayer.get(); }
+    void setupContentsLayer(CALayer*);
+    CALayer* contentsLayer() const { return m_contentsLayer.get(); }
     
+    // All these "update" methods will be called inside a BEGIN_BLOCK_OBJC_EXCEPTIONS/END_BLOCK_OBJC_EXCEPTIONS block.
+    void updateSublayerList();
+    void updateLayerPosition();
+    void updateLayerSize();
+    void updateAnchorPoint();
+    void updateTransform();
+    void updateChildrenTransform();
+    void updateMasksToBounds();
+    void updateContentsOpaque();
+    void updateBackfaceVisibility();
+    void updateLayerPreserves3D();
+    void updateLayerDrawsContent();
+    void updateLayerBackgroundColor();
+
+    void updateContentsImage();
+    void updateContentsVideo();
+    void updateContentsRect();
+    void updateGeometryOrientation();
+
+    void updateLayerAnimations();
+
+    void setAnimationOnLayer(CAPropertyAnimation*, AnimatedPropertyID, int index, double beginTime);
+    bool removeAnimationFromLayer(AnimatedPropertyID, int index);
+    void pauseAnimationOnLayer(AnimatedPropertyID, int index);
+
+    enum LayerChange {
+        NoChange = 0,
+        NameChanged = 1 << 1,
+        ChildrenChanged = 1 << 2,   // also used for content layer, and preserves-3d, and size if tiling changes?
+        PositionChanged = 1 << 3,
+        AnchorPointChanged = 1 << 4,
+        SizeChanged = 1 << 5,
+        TransformChanged = 1 << 6,
+        ChildrenTransformChanged = 1 << 7,
+        Preserves3DChanged = 1 << 8,
+        MasksToBoundsChanged = 1 << 9,
+        DrawsContentChanged = 1 << 10,  // need this?
+        BackgroundColorChanged = 1 << 11,
+        ContentsOpaqueChanged = 1 << 12,
+        BackfaceVisibilityChanged = 1 << 13,
+        OpacityChanged = 1 << 14,
+        AnimationChanged = 1 << 15,
+        DirtyRectsChanged = 1 << 16,
+        ContentsImageChanged = 1 << 17,
+        ContentsVideoChanged = 1 << 18,
+        ContentsRectChanged = 1 << 19,
+        GeometryOrientationChanged = 1 << 20
+    };
+    typedef unsigned LayerChangeFlags;
+    void noteLayerPropertyChanged(LayerChangeFlags flags);
+
+    void repaintLayerDirtyRects();
+
     RetainPtr<WebLayer> m_layer;
     RetainPtr<WebLayer> m_transformLayer;
-    RetainPtr<WebLayer> m_contentsLayer;
+    RetainPtr<CALayer> m_contentsLayer;
+    
+    enum ContentsLayerPurpose {
+        NoContentsLayer = 0,
+        ContentsLayerForImage,
+        ContentsLayerForVideo
+    };
+    
+    ContentsLayerPurpose m_contentsLayerPurpose;
+    bool m_contentsLayerHasBackgroundColor : 1;
 
     RetainPtr<WebAnimationDelegate> m_animationDelegate;
 
-    bool m_contentLayerForImageOrVideo;
+    RetainPtr<CGImageRef> m_pendingContentsImage;
+    
+    struct LayerAnimation {
+        LayerAnimation(CAPropertyAnimation* caAnim, const String& keyframesName, AnimatedPropertyID property, int index, double beginTime)
+        : m_animation(caAnim)
+        , m_keyframesName(keyframesName)
+        , m_property(property)
+        , m_index(index)
+        , m_beginTime(beginTime)
+        { }
+
+        RetainPtr<CAPropertyAnimation*> m_animation;
+        String m_keyframesName;
+        AnimatedPropertyID m_property;
+        int m_index;
+        double m_beginTime;
+    };
+    
+    Vector<LayerAnimation> m_uncomittedAnimations;
+    
+    // Animations on the layer are identified by property + index.
+    typedef int AnimatedProperty;   // std containers choke on the AnimatedPropertyID enum
+    typedef pair<AnimatedProperty, int> AnimationPair;
+
+    HashSet<AnimatedProperty> m_transitionPropertiesToRemove;
+    
+    enum { Remove, Pause };
+    typedef int AnimationProcessingAction;
+    typedef HashMap<String, AnimationProcessingAction> AnimationsToProcessMap;
+    AnimationsToProcessMap m_keyframeAnimationsToProcess;
+
+    // Map of keyframe names to their associated lists of animations for running animations, so we can remove/pause them.
+    typedef HashMap<String, Vector<AnimationPair> > KeyframeAnimationsMap;
+    KeyframeAnimationsMap m_runningKeyframeAnimations;
+    
+    Vector<FloatRect> m_dirtyRects;
+    
+    LayerChangeFlags m_uncommittedChanges;
 };
 
 } // namespace WebCore

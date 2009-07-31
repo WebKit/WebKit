@@ -439,6 +439,37 @@ void FrameView::setNeedsOneShotDrawingSynchronization()
 }
 #endif // USE(ACCELERATED_COMPOSITING)
 
+bool FrameView::syncCompositingStateRecursive()
+{
+#if USE(ACCELERATED_COMPOSITING)
+    ASSERT(m_frame->view() == this);
+    RenderView* contentRenderer = m_frame->contentRenderer();
+    if (!contentRenderer)
+        return true;    // We don't want to keep trying to update layers if we have no renderer.
+
+    if (m_layoutTimer.isActive()) {
+        // Don't sync layers if there's a layout pending.
+        return false;
+    }
+    
+    if (GraphicsLayer* rootLayer = contentRenderer->compositor()->rootPlatformLayer())
+        rootLayer->syncCompositingState();
+
+    bool allSubframesSynced = true;
+    const HashSet<RefPtr<Widget> >* viewChildren = children();
+    HashSet<RefPtr<Widget> >::const_iterator end = viewChildren->end();
+    for (HashSet<RefPtr<Widget> >::const_iterator current = viewChildren->begin(); current != end; ++current) {
+        Widget* widget = (*current).get();
+        if (widget->isFrameView()) {
+            bool synced = static_cast<FrameView*>(widget)->syncCompositingStateRecursive();
+            allSubframesSynced &= synced;
+        }
+    }
+    return allSubframesSynced;
+#endif // USE(ACCELERATED_COMPOSITING)
+    return true;
+}
+
 void FrameView::didMoveOnscreen()
 {
     RenderView* view = m_frame->contentRenderer();
@@ -1442,6 +1473,13 @@ void FrameView::paintContents(GraphicsContext* p, const IntRect& rect)
     ASSERT(!needsLayout());
     if (needsLayout())
         return;
+
+#if USE(ACCELERATED_COMPOSITING)
+    if (!p->paintingDisabled()) {
+        if (GraphicsLayer* rootLayer = contentRenderer->compositor()->rootPlatformLayer())
+            rootLayer->syncCompositingState();
+    }
+#endif
 
     ASSERT(!m_isPainting);
         

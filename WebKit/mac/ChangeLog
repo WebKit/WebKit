@@ -1,3 +1,51 @@
+2009-07-31  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Anders Carlsson.
+        
+        Accelerated animations stutter on pages with lots of animations and 3d transforms
+        https://bugs.webkit.org/show_bug.cgi?id=27884
+        
+        This patch changes the strategy for synchronizing painting view the view,
+        and compositing layer updates. Previously the strategy was to disable screen
+        updates between the time we updated the layer tree, and painted the view. That
+        left screen updates disabled for too long (hundreds of milliseconds) in some
+        cases, causing animation stutter.
+        
+        The new strategy is to batch up changes to the CA layer tree, and commit them
+        all at once just before painting happens (referred to as a "sync" in the code).
+        GraphicsLayerCA now keeps a bitmask of changed properties, and then migrates
+        the values stored in GraphicsLayer into the CA layer tree at commit time.
+        
+        Compositing layers are then synced in FrameView::paintContents(). However, not
+        all style/layout changes will result in painting; to deal with style changes that
+        touch only compositing properties, we set up a runloop observer that takes care
+        of comitting layer changes when no painting happens.
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::scheduleCompositingLayerSync):
+        scheduleViewUpdate() renamed to syncCompositingStateRecursive()
+        
+        * WebView/WebView.mm:
+        (-[WebView _close]):
+        (-[WebView _clearLayerSyncLoopObserver]):
+        "viewUpdateRunLoopObserver" is now "layerSyncLoopObserver".
+
+        (-[WebView _syncCompositingChanges]):
+        Helper method that calls syncCompositingStateRecursive() on the FrameView.
+        
+        (layerSyncRunLoopObserverCallBack):
+        (-[WebView _scheduleCompositingLayerSync]):
+        This is all about layer sycning now. Also, the run loop observer is repeating,
+        because it has to keep firing until syncCompositingStateRecursive() says that it
+        has completed.
+        
+        * WebView/WebViewData.h:
+        "viewUpdateRunLoopObserver" is now "layerSyncLoopObserver".
+
+        * WebView/WebViewInternal.h:
+        _scheduleViewUpdate is now _scheduleCompositingLayerSync
+
 2009-07-30  Michael Nordman  <michaeln@google.com>
 
         Reviewed by Darin Fisher.

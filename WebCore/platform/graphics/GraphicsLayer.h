@@ -34,6 +34,7 @@
 #include "FloatPoint3D.h"
 #include "FloatSize.h"
 #include "GraphicsLayerClient.h"
+#include "IntRect.h"
 #include "TransformationMatrix.h"
 #include "TransformOperations.h"
 #include <wtf/OwnPtr.h>
@@ -42,7 +43,7 @@
 #ifdef __OBJC__
 @class WebLayer;
 @class CALayer;
-typedef WebLayer PlatformLayer;
+typedef CALayer PlatformLayer;
 typedef CALayer* NativeLayer;
 #else
 typedef void* PlatformLayer;
@@ -61,117 +62,95 @@ class Image;
 class TextStream;
 class TimingFunction;
 
+// Base class for animation values (also used for transitions). Here to
+// represent values for properties being animated via the GraphicsLayer,
+// without pulling in style-related data from outside of the platform directory.
+class AnimationValue : public Noncopyable {
+public:
+    AnimationValue(float keyTime, const TimingFunction* timingFunction = 0)
+        : m_keyTime(keyTime)
+        , m_timingFunction(0)
+    {
+        if (timingFunction)
+            m_timingFunction.set(new TimingFunction(*timingFunction));
+    }
+    
+    virtual ~AnimationValue() { }
+
+    float keyTime() const { return m_keyTime; }
+    const TimingFunction* timingFunction() const { return m_timingFunction.get(); }
+
+private:
+    float m_keyTime;
+    OwnPtr<TimingFunction> m_timingFunction;
+};
+
+// Used to store one float value of an animation.
+class FloatAnimationValue : public AnimationValue {
+public:
+    FloatAnimationValue(float keyTime, float value, const TimingFunction* timingFunction = 0)
+        : AnimationValue(keyTime, timingFunction)
+        , m_value(value)
+    {
+    }
+
+    float value() const { return m_value; }
+
+private:
+    float m_value;
+};
+
+// Used to store one transform value in a keyframe list.
+class TransformAnimationValue : public AnimationValue {
+public:
+    TransformAnimationValue(float keyTime, const TransformOperations* value = 0, const TimingFunction* timingFunction = 0)
+        : AnimationValue(keyTime, timingFunction)
+    {
+        if (value)
+            m_value.set(new TransformOperations(*value));
+    }
+
+    const TransformOperations* value() const { return m_value.get(); }
+
+private:
+    OwnPtr<TransformOperations> m_value;
+};
+
+// Used to store a series of values in a keyframe list. Values will all be of the same type,
+// which can be inferred from the property.
+class KeyframeValueList : public Noncopyable {
+public:
+
+    KeyframeValueList(AnimatedPropertyID property)
+        : m_property(property)
+    {
+    }
+    
+    ~KeyframeValueList()
+    {
+        deleteAllValues(m_values);
+    }
+    
+    AnimatedPropertyID property() const { return m_property; }
+
+    size_t size() const { return m_values.size(); }
+    const AnimationValue* at(size_t i) const { return m_values.at(i); }
+    
+    // Insert, sorted by keyTime. Takes ownership of the pointer.
+    void insert(const AnimationValue*);
+    
+protected:
+    Vector<const AnimationValue*> m_values;
+    AnimatedPropertyID m_property;
+};
+
+
+
 // GraphicsLayer is an abstraction for a rendering surface with backing store,
 // which may have associated transformation and animations.
 
 class GraphicsLayer {
 public:
-    // Used to store one float value of a keyframe animation.
-    class FloatValue {
-    public:
-        FloatValue(float key, float value, const TimingFunction* timingFunction = 0)
-            : m_key(key), m_value(value), m_timingFunction(0)
-        {
-            if (timingFunction)
-                m_timingFunction.set(new TimingFunction(*timingFunction));
-        }
-
-        FloatValue(const FloatValue& other)
-            : m_key(other.key()), m_value(other.value()), m_timingFunction(0)
-        {
-            if (other.timingFunction())
-                m_timingFunction.set(new TimingFunction(*other.timingFunction()));
-        }
-
-        const FloatValue& operator=(const FloatValue& other)
-        {
-            if (&other != this)
-                set(other.key(), other.value(), other.timingFunction());
-            return *this;
-        }
-
-        void set(float key, float value, const TimingFunction*);
-        
-        float key() const { return m_key; }
-        float value() const { return m_value; }
-        const TimingFunction* timingFunction() const { return m_timingFunction.get(); }
-
-    private:
-        float m_key;
-        float m_value;
-        OwnPtr<TimingFunction> m_timingFunction;
-    };
-    
-    
-    class FloatValueList {
-    public:
-        void insert(float key, float value, const TimingFunction* timingFunction);
-
-        size_t size() const { return m_values.size(); }
-        const FloatValue& at(size_t i) const { return m_values.at(i); }
-        const Vector<FloatValue>& values() const { return m_values; }
-
-    private:
-        Vector<FloatValue> m_values;
-    };
-
-    // Used to store one transform in a keyframe list.
-    class TransformValue {
-    public:
-        TransformValue(float key = NAN, const TransformOperations* value = 0, const TimingFunction* timingFunction = 0)
-            : m_key(key)
-        {
-            if (value)
-                m_value.set(new TransformOperations(*value));
-            if (timingFunction)
-                m_timingFunction.set(new TimingFunction(*timingFunction));
-        }
-
-        TransformValue(const TransformValue& other)
-            : m_key(other.key())
-        {
-            if (other.value())
-                m_value.set(new TransformOperations(*other.value()));
-            if (other.timingFunction())
-                m_timingFunction.set(new TimingFunction(*other.timingFunction()));
-        }
-
-        const TransformValue& operator=(const TransformValue& other)
-        {
-            if (&other != this)
-                set(other.key(), other.value(), other.timingFunction());
-            return *this;
-        }
-
-        void set(float key, const TransformOperations* value, const TimingFunction* timingFunction);
-
-        float key() const { return m_key; }
-        const TransformOperations* value() const { return m_value.get(); }
-        const TimingFunction* timingFunction() const { return m_timingFunction.get(); }
-        
-    private:
-        float m_key;
-        OwnPtr<TransformOperations> m_value;
-        OwnPtr<TimingFunction> m_timingFunction;
-    };
-    
-    // Used to store a series of transforms in a keyframe list.
-    class TransformValueList {
-    public:
-        typedef Vector<TransformOperation::OperationType> FunctionList;
-
-        size_t size() const { return m_values.size(); }
-        const TransformValue& at(size_t i) const { return m_values.at(i); }
-        const Vector<TransformValue>& values() const { return m_values; }
-        
-        void insert(float key, const TransformOperations* value, const TimingFunction* timingFunction);
-        
-        // return a list of the required functions. List is empty if keyframes are not valid
-        // If return value is true, functions contain rotations of >= 180 degrees
-        void makeFunctionList(FunctionList& list, bool& isValid, bool& hasBigRotation) const;
-    private:
-        Vector<TransformValue> m_values;
-    };
 
     static GraphicsLayer* createGraphicsLayer(GraphicsLayerClient*);
     
@@ -235,7 +214,7 @@ public:
 
     // The color used to paint the layer backgrounds
     const Color& backgroundColor() const { return m_backgroundColor; }
-    virtual void setBackgroundColor(const Color&, const Animation* = 0, double beginTime = 0);
+    virtual void setBackgroundColor(const Color&);
     virtual void clearBackgroundColor();
     bool backgroundColorSet() const { return m_backgroundColorSet; }
 
@@ -247,8 +226,7 @@ public:
     virtual void setBackfaceVisibility(bool b) { m_backfaceVisibility = b; }
 
     float opacity() const { return m_opacity; }
-    // return true if we started an animation
-    virtual bool setOpacity(float o, const Animation* = 0, double beginTime = 0);
+    virtual void setOpacity(float opacity) { m_opacity = opacity; }
 
     // Some GraphicsLayers paint only the foreground or the background content
     GraphicsLayerPaintingPhase drawingPhase() const { return m_paintingPhase; }
@@ -258,13 +236,17 @@ public:
     // mark the given rect (in layer coords) as needing dispay. Never goes deep.
     virtual void setNeedsDisplayInRect(const FloatRect&) = 0;
 
-    virtual bool animateTransform(const TransformValueList&, const IntSize&, const Animation*, double beginTime, bool isTransition) = 0;
-    virtual bool animateFloat(AnimatedPropertyID, const FloatValueList&, const Animation*, double beginTime) = 0;
+    // Set that the position/size of the contents (image or video).
+    IntRect contentsRect() const { return m_contentsRect; }
+    virtual void setContentsRect(const IntRect& r) { m_contentsRect = r; }
     
-    void removeFinishedAnimations(const String& name, int index, bool reset);
-    void removeFinishedTransitions(AnimatedPropertyID);
-    void removeAllAnimations();
-
+    // Return true if the animation is handled by the compositing system. If this returns
+    // false, the animation will be run by AnimationController.
+    virtual bool addAnimation(const KeyframeValueList&, const IntSize& /*boxSize*/, const Animation*, const String& /*keyframesName*/, double /*beginTime*/) { return false; }
+    virtual void removeAnimationsForProperty(AnimatedPropertyID) { }
+    virtual void removeAnimationsForKeyframes(const String& /* keyframesName */) { }
+    virtual void pauseAnimation(const String& /* keyframesName */) { }
+    
     virtual void suspendAnimations();
     virtual void resumeAnimations();
     
@@ -272,10 +254,7 @@ public:
     virtual void setContentsToImage(Image*) { }
     virtual void setContentsToVideo(PlatformLayer*) { }
     virtual void setContentsBackgroundColor(const Color&) { }
-    virtual void clearContents() { }
     
-    virtual void updateContentsRect() { }
-
     // Callback from the underlying graphics system to draw layer contents.
     void paintGraphicsLayerContents(GraphicsContext&, const IntRect& clip);
     
@@ -294,12 +273,12 @@ public:
     static CompositingCoordinatesOrientation compositingCoordinatesOrientation();
 
     // Set the geometry orientation (top-down, or bottom-up) for this layer, which also controls sublayer geometry.
-    virtual void setGeometryOrientation(CompositingCoordinatesOrientation) { }
-    virtual CompositingCoordinatesOrientation geometryOrientation() const { return CompositingCoordinatesTopDown; }
+    virtual void setGeometryOrientation(CompositingCoordinatesOrientation orientation) { m_geometryOrientation = orientation; }
+    CompositingCoordinatesOrientation geometryOrientation() const { return m_geometryOrientation; }
 
     // Flippedness of the contents of this layer. Does not affect sublayer geometry.
     virtual void setContentsOrientation(CompositingCoordinatesOrientation orientation) { m_contentsOrientation = orientation; }
-    virtual CompositingCoordinatesOrientation contentsOrientation() const { return m_contentsOrientation; }
+    CompositingCoordinatesOrientation contentsOrientation() const { return m_contentsOrientation; }
 
 #ifndef NDEBUG
     static bool showDebugBorders();
@@ -314,24 +293,25 @@ public:
     virtual void setZPosition(float);
 #endif
 
-    static String propertyIdToString(AnimatedPropertyID);
-    
     virtual void distributeOpacity(float);
     virtual float accumulatedOpacity() const;
 
+    // Some compositing systems may do internal batching to synchronize compositing updates
+    // with updates drawn into the window. This is a signal to flush any internal batched state.
+    virtual void syncCompositingState() { }
+
 protected:
+
+    typedef Vector<TransformOperation::OperationType> TransformOperationList;
+    // Given a list of TransformAnimationValues, return an array of transform operations.
+    // On return, if hasBigRotation is true, functions contain rotations of >= 180 degrees
+    static void fetchTransformOperationList(const KeyframeValueList&, TransformOperationList&, bool& isValid, bool& hasBigRotation);
+
     virtual void setOpacityInternal(float) { }
     
     GraphicsLayer(GraphicsLayerClient*);
 
     void dumpProperties(TextStream&, int indent) const;
-
-    // returns -1 if not found
-    int findAnimationEntry(AnimatedPropertyID, short index) const;
-    void addAnimationEntry(AnimatedPropertyID, short index, bool isTransition, const Animation*);
-
-    virtual void removeAnimation(int /*index*/, bool /*reset*/) {}
-    void removeAllAnimationsForProperty(AnimatedPropertyID);
 
     GraphicsLayerClient* m_client;
     String m_name;
@@ -361,54 +341,14 @@ protected:
     bool m_drawsContent : 1;
 
     GraphicsLayerPaintingPhase m_paintingPhase;
-    CompositingCoordinatesOrientation m_contentsOrientation;
+    CompositingCoordinatesOrientation m_geometryOrientation;    // affects geometry of layer positions
+    CompositingCoordinatesOrientation m_contentsOrientation;    // affects orientation of layer contents
 
     Vector<GraphicsLayer*> m_children;
     GraphicsLayer* m_parent;
-    
-    // AnimationEntry represents an animation of a property on this layer.
-    // For transform only, there may be more than one, in which case 'index'
-    // is an index into the list of transforms. 
-    class AnimationEntry {
-    public:
-        AnimationEntry(const Animation* animation, AnimatedPropertyID property, short index, bool isTransition)
-            : m_animation(const_cast<Animation*>(animation))
-            , m_property(property)
-            , m_index(index)
-            , m_isCurrent(true)
-            , m_isTransition(isTransition)
-        {
-        }
-        
-        const Animation* animation() const { return m_animation.get(); }
-        AnimatedPropertyID property() const { return m_property; }
-        int index() const { return m_index; }
-        bool isCurrent() const { return m_isCurrent; }
-        void setIsCurrent(bool b = true) { m_isCurrent = b; }
-        bool isTransition() const { return m_isTransition; }
 
-        bool matches(AnimatedPropertyID property, short index) const
-        {
-            return m_property == property && m_index == index;
-        }
-        
-        void reset(const Animation* animation, bool isTransition)
-        {
-            m_animation = const_cast<Animation*>(animation);
-            m_isTransition = isTransition;
-            m_isCurrent = true;
-        }
-    
-    private:
-        RefPtr<Animation> m_animation;
-        AnimatedPropertyID m_property : 14;
-        short m_index : 16;
-        bool m_isCurrent : 1;
-        bool m_isTransition : 1;
-    };
-    
-    Vector<AnimationEntry> m_animations;      // running animations/transitions
-    
+    IntRect m_contentsRect;
+
 #ifndef NDEBUG
     int m_repaintCount;
 #endif

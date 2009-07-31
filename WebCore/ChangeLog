@@ -1,3 +1,109 @@
+2009-07-31  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Anders Carlsson.
+        
+        Accelerated animations stutter on pages with lots of animations and 3d transforms
+        https://bugs.webkit.org/show_bug.cgi?id=27884
+        
+        This patch changes the strategy for synchronizing painting view the view,
+        and compositing layer updates. Previously the strategy was to disable screen
+        updates between the time we updated the layer tree, and painted the view. That
+        left screen updates disabled for too long (hundreds of milliseconds) in some
+        cases, causing animation stutter.
+        
+        The new strategy is to batch up changes to the CA layer tree, and commit them
+        all at once just before painting happens (referred to as a "sync" in the code).
+        GraphicsLayerCA now keeps a bitmask of changed properties, and then migrates
+        the values stored in GraphicsLayer into the CA layer tree at commit time.
+        
+        Compositing layers are then synced in FrameView::paintContents(). However, not
+        all style/layout changes will result in painting; to deal with style changes that
+        touch only compositing properties, we set up a runloop observer that takes care
+        of comitting layer changes when no painting happens.
+
+        * WebCore.base.exp: Export FrameView::syncCompositingStateRecursive()
+
+        * loader/EmptyClients.h: scheduleViewUpdate() renamed to syncCompositingStateRecursive()
+        * page/ChromeClient.h: scheduleViewUpdate() renamed to syncCompositingStateRecursive()
+
+        * page/FrameView.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::syncCompositingStateRecursive): syncCompositingState() on the
+        view and all subviews. Like layoutIfNeededRecursive(). If layout is pending, does not
+        sync and returns false, since we only want to sync when layout is done.
+        
+        (WebCore::FrameView::paintContents): syncCompositingState() before painting.
+
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::endAnimation):
+        Call animationPaused() to notify the graphics layers about animation pausing.
+        
+        * platform/graphics/FloatPoint3D.h:
+        (WebCore::operator==):
+        (WebCore::operator!=): 
+        Add missing comparison operators.
+        
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::setOpacity):
+        (WebCore::GraphicsLayer::setBackgroundColor): Simple setters no longer care about animation info.
+        
+        (WebCore::GraphicsLayer::paintGraphicsLayerContents): Null-check client.
+        
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::AnimationValue:):
+        (WebCore::TransformAnimationValue:):
+        (WebCore::KeyframeValueList:):
+        (WebCore::KeyframeValueList::insert):
+        Cleaned up versions of FloatValue and TransformValue, used to store information
+        about keyframes values.
+
+        (WebCore::GraphicsLayer::contentsRect):
+        (WebCore::GraphicsLayer::setContentsRect):
+        ContentsRect is now a simple setter.
+        
+        (WebCore::GraphicsLayer::addAnimation):
+        (WebCore::GraphicsLayer::removeAnimationsForProperty):
+        (WebCore::GraphicsLayer::removeAnimationsForKeyframes):
+        (WebCore::GraphicsLayer::pauseAnimation):
+        Simplified animation api.
+        
+        (WebCore::GraphicsLayer::setGeometryOrientation):
+        (WebCore::GraphicsLayer::geometryOrientation):
+        setGeometryOrientation is now just a normal member variable.
+        
+        (WebCore::GraphicsLayer::contentsOrientation): add a getter.
+        (WebCore::GraphicsLayer::syncCompositingState): Entry into the layer sync code.
+        
+        * platform/graphics/GraphicsLayerClient.h: scheduleViewUpdate() renamed to syncCompositingStateRecursive)
+
+        * platform/graphics/mac/GraphicsLayerCA.h:
+        * platform/graphics/mac/GraphicsLayerCA.mm:
+        Lots of cleanup and refactoring. Main points:
+        - Layer changes are all batched, and only committed to the CA layer on syncCompositingState().
+        - Bitmask is used to store which properties have changed. More efficient than before.
+        - Simpler animation interface; simple setters are no longer confounded with animations.
+        - Refactored code that creates CA animations, and stores which animations are running.
+
+        * platform/graphics/transforms/TransformOperations.h:
+        (WebCore::TransformOperations::size):
+        (WebCore::TransformOperations::at): Useful accessors for size and indexed access.
+        
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerBacking.cpp:
+        Renamed 'contentsLayer' to 'foregroundLayer' to avoid confusion with GraphicsLayer's
+        contentsLayer.
+        Adapt to GraphicsLayer's simpler animation API.
+        Pass animation pausing through to the graphics layers.
+        contentsBox() is no longer a callback via GraphicsLayerClient.
+        
+        * rendering/RenderLayerCompositor.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::setCompositingLayersNeedRebuild):
+        (WebCore::RenderLayerCompositor::scheduleSync):
+        (WebCore::RenderLayerCompositor::rebuildCompositingLayerTree):
+        scheduleViewUpdate() is no longer required. Instead, we plumb through "compositingLayerSync"
+        notifications, which travel up to WebKit and set up a runloop observer.
+        
 2009-07-30  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by David Levin.

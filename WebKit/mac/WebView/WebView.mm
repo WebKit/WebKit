@@ -363,7 +363,7 @@ static const char webViewIsOpen[] = "At least one WebView is still open.";
 - (BOOL)_continuousCheckingAllowed;
 - (NSResponder *)_responderForResponderOperations;
 #if USE(ACCELERATED_COMPOSITING)
-- (void)_clearViewUpdateRunLoopObserver;
+- (void)_clearLayerSyncLoopObserver;
 #endif
 @end
 
@@ -1031,7 +1031,7 @@ static bool fastDocumentTeardownEnabled()
     }
 
 #if USE(ACCELERATED_COMPOSITING)
-    [self _clearViewUpdateRunLoopObserver];
+    [self _clearLayerSyncLoopObserver];
 #endif
     
     [[NSDistributedNotificationCenter defaultCenter] removeObserver:self];
@@ -5101,14 +5101,14 @@ static WebFrameView *containingFrameView(NSView *view)
 }
 
 #if USE(ACCELERATED_COMPOSITING)
-- (void)_clearViewUpdateRunLoopObserver
+- (void)_clearLayerSyncLoopObserver
 {
-    if (!_private->viewUpdateRunLoopObserver)
+    if (!_private->layerSyncRunLoopObserver)
         return;
 
-    CFRunLoopObserverInvalidate(_private->viewUpdateRunLoopObserver);
-    CFRelease(_private->viewUpdateRunLoopObserver);
-    _private->viewUpdateRunLoopObserver = 0;
+    CFRunLoopObserverInvalidate(_private->layerSyncRunLoopObserver);
+    CFRelease(_private->layerSyncRunLoopObserver);
+    _private->layerSyncRunLoopObserver = 0;
 }
 #endif
 @end
@@ -5396,59 +5396,75 @@ static WebFrameView *containingFrameView(NSView *view)
         [self didChangeValueForKey:UsingAcceleratedCompositingProperty];
 }
 
+- (BOOL)_syncCompositingChanges
+{
+    Frame* frame = [self _mainCoreFrame];
+    if (frame && frame->view())
+        return frame->view()->syncCompositingStateRecursive();
+
+    return YES;
+}
+
 /*
     The order of events with compositing updates is this:
     
    Start of runloop                                        End of runloop
         |                                                       |
       --|-------------------------------------------------------|--
-           ^                                           ^     ^
-           |                                           |     |
-    NSWindow update,                                   |  CA commit
-     NSView drawing                                    |
-        flush                                          |
-                                      viewUpdateRunLoopObserverCallBack
+           ^         ^                                        ^
+           |         |                                        |
+    NSWindow update, |                                     CA commit
+     NSView drawing  |                                  
+        flush        |                                  
+                layerSyncRunLoopObserverCallBack
 
-    The viewUpdateRunLoopObserverCallBack is required to ensure that
-    layout has happened before CA commits layer changes (it's analagous to
-    -viewWillDraw for NSViews).
+    To avoid flashing, we have to ensure that compositing changes (rendered via
+    the CoreAnimation rendering display link) appear on screen at the same time
+    as content painted into the window via the normal WebCore rendering path.
+
+    CoreAnimation will commit any layer changes at the end of the runloop via
+    its "CA commit" observer. Those changes can then appear onscreen at any time
+    when the display link fires, which can result in unsynchronized rendering.
     
-    CA commits on a run loop observer at the end of the cycle.
-    It is also rendering via a CV display link continuously. So we have to
-    ensure that layer updates committed at the end of the runloop cycle don't get
-    to the screen via the display link until the window flush at the start
-    of the next cycle. Thus, viewUpdateRunLoopObserverCallBack has to
-    call -disableScreenUpdatesUntilFlush to stop screen updates until the flush
-    at the start of the next runloop cycle.
+    To fix this, the GraphicsLayerCA code in WebCore does not change the CA
+    layer tree during style changes and layout; it stores up all changes and
+    commits them via syncCompositingState(). There are then two situations in
+    which we can call syncCompositingState():
     
-    See also -[WebView drawRect:], where we also do a -disableScreenUpdatesUntilFlush.
+    1. When painting. FrameView::paintContents() makes a call to syncCompositingState().
+    
+    2. When style changes/layout have made changes to the layer tree which do not
+       result in painting. In this case we need a run loop observer to do a
+       syncCompositingState() at an appropriate time. The observer will keep firing
+       until the time is right (essentially when there are no more pending layouts).
+    
 */
 
-static void viewUpdateRunLoopObserverCallBack(CFRunLoopObserverRef, CFRunLoopActivity, void* info)
+static void layerSyncRunLoopObserverCallBack(CFRunLoopObserverRef, CFRunLoopActivity, void* info)
 {
     WebView* webView = reinterpret_cast<WebView*>(info);
-    [webView _viewWillDrawInternal];
-    [webView _clearViewUpdateRunLoopObserver];
-    if ([webView _needsOneShotDrawingSynchronization])
-        [[webView window] disableScreenUpdatesUntilFlush];
+    if ([webView _syncCompositingChanges])
+        [webView _clearLayerSyncLoopObserver];
 }
 
-- (void)_scheduleViewUpdate
+- (void)_scheduleCompositingLayerSync
 {
-    if (_private->viewUpdateRunLoopObserver)
+    if (_private->layerSyncRunLoopObserver)
         return;
 
-    // Run before AppKit does its window update.
-    const CFIndex runLoopOrder = NSDisplayWindowRunLoopOrdering - 1;
+    // Run after AppKit does its window update. If we do any painting, we'll commit
+    // layer changes from FrameView::paintContents(), otherwise we'll commit via
+    // _syncCompositingChanges when this observer fires.
+    const CFIndex runLoopOrder = NSDisplayWindowRunLoopOrdering + 1;
 
     // The WebView always outlives the observer, so no need to retain/release.
     CFRunLoopObserverContext context = { 0, self, 0, 0, 0 };
 
-    _private->viewUpdateRunLoopObserver = CFRunLoopObserverCreate(NULL,
-        kCFRunLoopBeforeWaiting | kCFRunLoopExit, FALSE /* one shot */,
-        runLoopOrder, viewUpdateRunLoopObserverCallBack, &context);
+    _private->layerSyncRunLoopObserver = CFRunLoopObserverCreate(NULL,
+        kCFRunLoopBeforeWaiting | kCFRunLoopExit, true /* repeats */,
+        runLoopOrder, layerSyncRunLoopObserverCallBack, &context);
 
-    CFRunLoopAddObserver(CFRunLoopGetCurrent(), _private->viewUpdateRunLoopObserver, kCFRunLoopCommonModes);
+    CFRunLoopAddObserver(CFRunLoopGetCurrent(), _private->layerSyncRunLoopObserver, kCFRunLoopCommonModes);
 }
 
 #endif

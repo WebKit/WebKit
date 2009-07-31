@@ -87,7 +87,7 @@ namespace WebCore {
 - (void)_setNeedsOneShotDrawingSynchronization:(BOOL)needsSynchronization;
 - (void)_startedAcceleratedCompositingForFrame:(WebFrame*)webFrame;
 - (void)_stoppedAcceleratedCompositingForFrame:(WebFrame*)webFrame;
-- (void)_scheduleViewUpdate;
+- (void)_scheduleCompositingLayerSync;
 #endif
 
 @end

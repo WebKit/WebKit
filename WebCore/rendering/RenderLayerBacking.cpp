@@ -55,7 +55,7 @@ RenderLayerBacking::RenderLayerBacking(RenderLayer* layer)
     : m_owningLayer(layer)
     , m_ancestorClippingLayer(0)
     , m_graphicsLayer(0)
-    , m_contentsLayer(0)
+    , m_foregroundLayer(0)
     , m_clippingLayer(0)
     , m_hasDirectlyCompositedContent(false)
 {
@@ -65,7 +65,7 @@ RenderLayerBacking::RenderLayerBacking(RenderLayer* layer)
 RenderLayerBacking::~RenderLayerBacking()
 {
     updateClippingLayers(false, false);
-    updateContentsLayer(false);
+    updateForegroundLayer(false);
     destroyGraphicsLayer();
 }
 
@@ -99,8 +99,8 @@ void RenderLayerBacking::destroyGraphicsLayer()
     delete m_graphicsLayer;
     m_graphicsLayer = 0;
 
-    delete m_contentsLayer;
-    m_contentsLayer = 0;
+    delete m_foregroundLayer;
+    m_foregroundLayer = 0;
 
     delete m_clippingLayer;
     m_clippingLayer = 0;
@@ -108,7 +108,7 @@ void RenderLayerBacking::destroyGraphicsLayer()
 
 void RenderLayerBacking::updateLayerOpacity()
 {
-    m_graphicsLayer->setOpacity(compositingOpacity(renderer()->opacity()), 0, 0);
+    m_graphicsLayer->setOpacity(compositingOpacity(renderer()->opacity()));
 }
 
 void RenderLayerBacking::updateLayerTransform()
@@ -152,7 +152,7 @@ bool RenderLayerBacking::updateGraphicsLayerConfiguration()
     RenderLayerCompositor* compositor = this->compositor();
 
     bool layerConfigChanged = false;
-    if (updateContentsLayer(compositor->needsContentsCompositingLayer(m_owningLayer)))
+    if (updateForegroundLayer(compositor->needsContentsCompositingLayer(m_owningLayer)))
         layerConfigChanged = true;
     
     if (updateClippingLayers(compositor->clippedByAncestor(m_owningLayer), compositor->clipsCompositingDescendants(m_owningLayer)))
@@ -292,21 +292,21 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
         m_graphicsLayer->setAnchorPoint(FloatPoint3D(0.5f, 0.5f, 0));
     }
 
-    if (m_contentsLayer) {
+    if (m_foregroundLayer) {
         // The contents layer is always coincidental with the graphicsLayer for now.
-        m_contentsLayer->setPosition(IntPoint(0, 0));
-        m_contentsLayer->setSize(newSize);
-        m_contentsLayer->setOffsetFromRenderer(m_graphicsLayer->offsetFromRenderer());
+        m_foregroundLayer->setPosition(IntPoint(0, 0));
+        m_foregroundLayer->setSize(newSize);
+        m_foregroundLayer->setOffsetFromRenderer(m_graphicsLayer->offsetFromRenderer());
     }
 
-    m_graphicsLayer->updateContentsRect();
+    m_graphicsLayer->setContentsRect(contentsBox());
     if (!m_hasDirectlyCompositedContent)
         m_graphicsLayer->setDrawsContent(!isSimpleContainerCompositingLayer() && !paintingGoesToWindow());
 }
 
 void RenderLayerBacking::updateInternalHierarchy()
 {
-    // m_contentsLayer has to be inserted in the correct order with child layers,
+    // m_foregroundLayer has to be inserted in the correct order with child layers,
     // so it's not inserted here.
     if (m_ancestorClippingLayer) {
         m_ancestorClippingLayer->removeAllChildren();
@@ -363,24 +363,24 @@ bool RenderLayerBacking::updateClippingLayers(bool needsAncestorClip, bool needs
     return layersChanged;
 }
 
-bool RenderLayerBacking::updateContentsLayer(bool needsContentsLayer)
+bool RenderLayerBacking::updateForegroundLayer(bool needsForegroundLayer)
 {
     bool layerChanged = false;
-    if (needsContentsLayer) {
-        if (!m_contentsLayer) {
-            m_contentsLayer = GraphicsLayer::createGraphicsLayer(this);
+    if (needsForegroundLayer) {
+        if (!m_foregroundLayer) {
+            m_foregroundLayer = GraphicsLayer::createGraphicsLayer(this);
 #ifndef NDEBUG
-            m_contentsLayer->setName("Contents");
+            m_foregroundLayer->setName("Contents");
 #endif
-            m_contentsLayer->setDrawsContent(true);
-            m_contentsLayer->setDrawingPhase(GraphicsLayerPaintForegroundMask);
+            m_foregroundLayer->setDrawsContent(true);
+            m_foregroundLayer->setDrawingPhase(GraphicsLayerPaintForegroundMask);
             m_graphicsLayer->setDrawingPhase(GraphicsLayerPaintBackgroundMask);
             layerChanged = true;
         }
-    } else if (m_contentsLayer) {
-        m_contentsLayer->removeFromParent();
-        delete m_contentsLayer;
-        m_contentsLayer = 0;
+    } else if (m_foregroundLayer) {
+        m_foregroundLayer->removeFromParent();
+        delete m_foregroundLayer;
+        m_foregroundLayer = 0;
         m_graphicsLayer->setDrawingPhase(GraphicsLayerPaintAllMask);
         layerChanged = true;
     }
@@ -657,12 +657,12 @@ FloatPoint RenderLayerBacking::computePerspectiveOrigin(const IntRect& borderBox
 }
 
 // Return the offset from the top-left of this compositing layer at which the renderer's contents are painted.
-IntSize RenderLayerBacking::contentOffsetInCompostingLayer()
+IntSize RenderLayerBacking::contentOffsetInCompostingLayer() const
 {
     return IntSize(-m_compositedBounds.x(), -m_compositedBounds.y());
 }
 
-IntRect RenderLayerBacking::contentsBox(const GraphicsLayer*)
+IntRect RenderLayerBacking::contentsBox() const
 {
     if (!renderer()->isBox())
         return IntRect();
@@ -700,47 +700,28 @@ bool RenderLayerBacking::paintingGoesToWindow() const
 
 void RenderLayerBacking::setContentsNeedDisplay()
 {
-    bool needViewUpdate = false;
-
-    if (m_graphicsLayer && m_graphicsLayer->drawsContent()) {
+    if (m_graphicsLayer && m_graphicsLayer->drawsContent())
         m_graphicsLayer->setNeedsDisplay();
-        needViewUpdate = true;
-    }
     
-    if (m_contentsLayer && m_contentsLayer->drawsContent()) {
-        m_contentsLayer->setNeedsDisplay();
-        needViewUpdate = true;
-    }
-    
-    // Make sure layout happens before we get rendered again.
-    if (needViewUpdate)
-        compositor()->scheduleViewUpdate();
+    if (m_foregroundLayer && m_foregroundLayer->drawsContent())
+        m_foregroundLayer->setNeedsDisplay();
 }
 
 // r is in the coordinate space of the layer's render object
 void RenderLayerBacking::setContentsNeedDisplayInRect(const IntRect& r)
 {
-    bool needViewUpdate = false;
-
     if (m_graphicsLayer && m_graphicsLayer->drawsContent()) {
         FloatPoint dirtyOrigin = contentsToGraphicsLayerCoordinates(m_graphicsLayer, FloatPoint(r.x(), r.y()));
         FloatRect dirtyRect(dirtyOrigin, r.size());
         FloatRect bounds(FloatPoint(), m_graphicsLayer->size());
-        if (bounds.intersects(dirtyRect)) {
+        if (bounds.intersects(dirtyRect))
             m_graphicsLayer->setNeedsDisplayInRect(dirtyRect);
-            needViewUpdate = true;
-        }
     }
 
-    if (m_contentsLayer && m_contentsLayer->drawsContent()) {
+    if (m_foregroundLayer && m_foregroundLayer->drawsContent()) {
         // FIXME: do incremental repaint
-        m_contentsLayer->setNeedsDisplay();
-        needViewUpdate = true;
+        m_foregroundLayer->setNeedsDisplay();
     }
-
-    // Make sure layout happens before we get rendered again.
-    if (needViewUpdate)
-        compositor()->scheduleViewUpdate();
 }
 
 static void setClip(GraphicsContext* p, const IntRect& paintDirtyRect, const IntRect& clipRect)
@@ -942,8 +923,8 @@ bool RenderLayerBacking::startAnimation(double beginTime, const Animation* anim,
     if (!hasOpacity && !hasTransform)
         return false;
     
-    GraphicsLayer::TransformValueList transformVector;
-    GraphicsLayer::FloatValueList opacityVector;
+    KeyframeValueList transformVector(AnimatedPropertyWebkitTransform);
+    KeyframeValueList opacityVector(AnimatedPropertyOpacity);
 
     for (Vector<KeyframeValue>::const_iterator it = keyframes.beginKeyframes(); it != keyframes.endKeyframes(); ++it) {
         const RenderStyle* keyframeStyle = it->style();
@@ -956,19 +937,19 @@ bool RenderLayerBacking::startAnimation(double beginTime, const Animation* anim,
         const TimingFunction* tf = keyframeStyle->hasAnimations() ? &((*keyframeStyle->animations()).animation(0)->timingFunction()) : 0;
         
         if (hasTransform)
-            transformVector.insert(key, &(keyframeStyle->transform()), tf);
-
+            transformVector.insert(new TransformAnimationValue(key, &(keyframeStyle->transform()), tf));
+        
         if (hasOpacity)
-            opacityVector.insert(key, keyframeStyle->opacity(), tf);
+            opacityVector.insert(new FloatAnimationValue(key, keyframeStyle->opacity(), tf));
     }
 
     bool didAnimateTransform = !hasTransform;
     bool didAnimateOpacity = !hasOpacity;
     
-    if (hasTransform && m_graphicsLayer->animateTransform(transformVector, toRenderBox(renderer())->borderBoxRect().size(), anim, beginTime, false))
+    if (hasTransform && m_graphicsLayer->addAnimation(transformVector, toRenderBox(renderer())->borderBoxRect().size(), anim, keyframes.animationName(), beginTime))
         didAnimateTransform = true;
 
-    if (hasOpacity && m_graphicsLayer->animateFloat(AnimatedPropertyOpacity, opacityVector, anim, beginTime))
+    if (hasOpacity && m_graphicsLayer->addAnimation(opacityVector, IntSize(), anim, keyframes.animationName(), beginTime))
         didAnimateOpacity = true;
     
     bool runningAcceleratedAnimation = didAnimateTransform && didAnimateOpacity;
@@ -986,26 +967,21 @@ bool RenderLayerBacking::startTransition(double beginTime, int property, const R
     if (property == (int)CSSPropertyOpacity) {
         const Animation* opacityAnim = toStyle->transitionForProperty(CSSPropertyOpacity);
         if (opacityAnim && !opacityAnim->isEmptyOrZeroDuration()) {
-            // If beginTime is not 0, we are restarting this transition, so first set the from value
-            // in case it was smashed by a previous animation.
-            if (beginTime > 0)
-                m_graphicsLayer->setOpacity(compositingOpacity(fromStyle->opacity()), 0, 0);
-
-            if (m_graphicsLayer->setOpacity(compositingOpacity(toStyle->opacity()), opacityAnim, beginTime))
+            KeyframeValueList opacityVector(AnimatedPropertyOpacity);
+            opacityVector.insert(new FloatAnimationValue(0, compositingOpacity(fromStyle->opacity())));
+            opacityVector.insert(new FloatAnimationValue(1, compositingOpacity(toStyle->opacity())));
+            if (m_graphicsLayer->addAnimation(opacityVector, toRenderBox(renderer())->borderBoxRect().size(), opacityAnim, String(), beginTime))
                 didAnimate = true;
         }
     }
 
     if (property == (int)CSSPropertyWebkitTransform && m_owningLayer->hasTransform()) {
-        // We get a TransformOperation, which is a linked list of primitive operations and their arguments.
-        // Arguments can be floats or Length values, which need to be converted to numbers using
-        // val.calcFloatValue(renderer()->width()) (or height()).
         const Animation* transformAnim = toStyle->transitionForProperty(CSSPropertyWebkitTransform);
         if (transformAnim && !transformAnim->isEmptyOrZeroDuration()) {
-            GraphicsLayer::TransformValueList transformVector;
-            transformVector.insert(0, &fromStyle->transform(), 0);        
-            transformVector.insert(1, &toStyle->transform(), 0);        
-            if (m_graphicsLayer->animateTransform(transformVector, toRenderBox(renderer())->borderBoxRect().size(), transformAnim, beginTime, true))
+            KeyframeValueList transformVector(AnimatedPropertyWebkitTransform);
+            transformVector.insert(new TransformAnimationValue(0, &fromStyle->transform()));
+            transformVector.insert(new TransformAnimationValue(1, &toStyle->transform()));
+            if (m_graphicsLayer->addAnimation(transformVector, toRenderBox(renderer())->borderBoxRect().size(), transformAnim, String(), beginTime))
                 didAnimate = true;
         }
     }
@@ -1021,16 +997,27 @@ void RenderLayerBacking::notifyAnimationStarted(const GraphicsLayer*, double tim
     renderer()->animation()->notifyAnimationStarted(renderer(), time);
 }
 
-void RenderLayerBacking::animationFinished(const String& name, int index, bool reset)
+void RenderLayerBacking::notifySyncRequired(const GraphicsLayer*)
 {
-    m_graphicsLayer->removeFinishedAnimations(name, index, reset);
+    if (!renderer()->documentBeingDestroyed())
+        compositor()->scheduleSync();
+}
+
+void RenderLayerBacking::animationFinished(const String& animationName)
+{
+    m_graphicsLayer->removeAnimationsForKeyframes(animationName);
+}
+
+void RenderLayerBacking::animationPaused(const String& animationName)
+{
+    m_graphicsLayer->pauseAnimation(animationName);
 }
 
 void RenderLayerBacking::transitionFinished(int property)
 {
     AnimatedPropertyID animatedProperty = cssToGraphicsLayerProperty(property);
     if (animatedProperty != AnimatedPropertyInvalid)
-        m_graphicsLayer->removeFinishedTransitions(animatedProperty);
+        m_graphicsLayer->removeAnimationsForProperty(animatedProperty);
 }
 
 void RenderLayerBacking::suspendAnimations()

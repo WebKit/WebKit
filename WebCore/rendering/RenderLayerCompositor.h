@@ -64,7 +64,7 @@ public:
     // Copy the acceleratedCompositingEnabledFlag from Settings
     void cacheAcceleratedCompositingEnabledFlag();
 
-    // Called when the layer hierarchy needs to be udpated (compositing layers have been
+    // Called when the layer hierarchy needs to be updated (compositing layers have been
     // created, destroyed or re-parented).
     void setCompositingLayersNeedRebuild(bool needRebuild = true);
     bool compositingLayersNeedRebuild() const { return m_compositingLayersNeedRebuild; }
@@ -74,7 +74,7 @@ public:
     void setCompositingConsultsOverlap(bool b) { m_compositingConsultsOverlap = b; }
     bool compositingConsultsOverlap() const { return m_compositingConsultsOverlap; }
     
-    void scheduleViewUpdate();
+    void scheduleSync();
     
     // Rebuild the tree of compositing layers
     void updateCompositingLayers(RenderLayer* updateRoot = 0);

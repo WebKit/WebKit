@@ -191,7 +191,7 @@ namespace WebCore {
         virtual void setNeedsOneShotDrawingSynchronization() = 0;
         // Sets a flag to specify that the view needs to be updated, so we need
         // to do an eager layout before the drawing.
-        virtual void scheduleViewUpdate() = 0;
+        virtual void scheduleCompositingLayerSync() = 0;
 #endif
 
 #if PLATFORM(MAC)

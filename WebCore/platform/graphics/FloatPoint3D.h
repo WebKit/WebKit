@@ -49,6 +49,16 @@ private:
     float m_z;
 };
 
+inline bool operator==(const FloatPoint3D& a, const FloatPoint3D& b)
+{
+    return a.x() == b.x() && a.y() == b.y() && a.z() == b.z();
+}
+
+inline bool operator!=(const FloatPoint3D& a, const FloatPoint3D& b)
+{
+    return a.x() != b.x() || a.y() != b.y() || a.z() != b.z();
+}
+
 } // namespace WebCore
 
 #endif // FloatPoint3D_h

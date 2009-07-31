@@ -211,8 +211,12 @@ void KeyframeAnimation::endAnimation(bool reset)
 #if USE(ACCELERATED_COMPOSITING)
         if (m_object->hasLayer()) {
             RenderLayer* layer = toRenderBoxModelObject(m_object)->layer();
-            if (layer->isComposited())
-                layer->backing()->animationFinished(m_keyframes.animationName(), 0, reset);
+            if (layer->isComposited()) {
+                if (reset)
+                    layer->backing()->animationFinished(m_keyframes.animationName());
+                else
+                    layer->backing()->animationPaused(m_keyframes.animationName());
+            }
         }
 #else
         UNUSED_PARAM(reset);

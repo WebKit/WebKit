@@ -73,8 +73,8 @@ public:
     bool hasAncestorClippingLayer() const { return m_ancestorClippingLayer != 0; }
     GraphicsLayer* ancestorClippingLayer() const { return m_ancestorClippingLayer; }
 
-    bool hasContentsLayer() const { return m_contentsLayer != 0; }
-    GraphicsLayer* contentsLayer() const { return m_contentsLayer; }
+    bool hasContentsLayer() const { return m_foregroundLayer != 0; }
+    GraphicsLayer* foregroundLayer() const { return m_foregroundLayer; }
     
     GraphicsLayer* parentForSublayers() const { return m_clippingLayer ? m_clippingLayer : m_graphicsLayer; }
     GraphicsLayer* childForSuperlayers() const { return m_ancestorClippingLayer ? m_ancestorClippingLayer : m_graphicsLayer; }
@@ -97,7 +97,8 @@ public:
     // Interface to start, finish, suspend and resume animations and transitions
     bool startAnimation(double beginTime, const Animation* anim, const KeyframeList& keyframes);
     bool startTransition(double beginTime, int property, const RenderStyle* fromStyle, const RenderStyle* toStyle);
-    void animationFinished(const String& name, int index, bool reset);
+    void animationFinished(const String& name);
+    void animationPaused(const String& name);
     void transitionFinished(int property);
 
     void suspendAnimations();
@@ -111,10 +112,11 @@ public:
 
     // GraphicsLayerClient interface
     virtual void notifyAnimationStarted(const GraphicsLayer*, double startTime);
+    virtual void notifySyncRequired(const GraphicsLayer*);
 
     virtual void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const IntRect& clip);
 
-    virtual IntRect contentsBox(const GraphicsLayer*);
+    IntRect contentsBox() const;
     
 private:
     void createGraphicsLayer();
@@ -124,9 +126,9 @@ private:
     RenderLayerCompositor* compositor() const { return m_owningLayer->compositor(); }
 
     bool updateClippingLayers(bool needsAncestorClip, bool needsDescendantClip);
-    bool updateContentsLayer(bool needsContentsLayer);
+    bool updateForegroundLayer(bool needsForegroundLayer);
 
-    IntSize contentOffsetInCompostingLayer();
+    IntSize contentOffsetInCompostingLayer() const;
     // Result is transform origin in pixels.
     FloatPoint3D computeTransformOrigin(const IntRect& borderBox) const;
     // Result is perspective origin in pixels.
@@ -162,7 +164,7 @@ private:
 
     GraphicsLayer* m_ancestorClippingLayer; // only used if we are clipped by an ancestor which is not a stacking context
     GraphicsLayer* m_graphicsLayer;
-    GraphicsLayer* m_contentsLayer;         // only used in cases where we need to draw the foreground separately
+    GraphicsLayer* m_foregroundLayer;       // only used in cases where we need to draw the foreground separately
     GraphicsLayer* m_clippingLayer;         // only used if we have clipping on a stacking context, with compositing children
 
     IntRect m_compositedBounds;

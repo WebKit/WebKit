@@ -146,7 +146,7 @@ public:
 #if USE(ACCELERATED_COMPOSITING)
     virtual void attachRootGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*);
     virtual void setNeedsOneShotDrawingSynchronization();
-    virtual void scheduleViewUpdate();
+    virtual void scheduleCompositingLayerSync();
 #endif
 
     virtual void requestGeolocationPermissionForFrame(WebCore::Frame*, WebCore::Geolocation*);
