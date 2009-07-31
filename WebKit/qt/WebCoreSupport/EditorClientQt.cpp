@@ -84,11 +84,12 @@ static QString dumpRange(WebCore::Range *range)
 {
     if (!range)
         return QLatin1String("(null)");
-    QString str;
     WebCore::ExceptionCode code;
-    str.sprintf("range from %ld of %ls to %ld of %ls",
-                range->startOffset(code), dumpPath(range->startContainer(code)).unicode(),
-                range->endOffset(code), dumpPath(range->endContainer(code)).unicode());
+
+    QString str = QString("range from %1 of %2 to %3 of %4")
+        .arg(range->startOffset(code)).arg(dumpPath(range->startContainer(code)))
+        .arg(range->endOffset(code)).arg(dumpPath(range->endContainer(code)));
+
     return str;
 }
 

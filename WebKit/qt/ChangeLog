@@ -1,5 +1,15 @@
 2009-07-31  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
+        Reviewed by Adam Treat.
+
+        Fix warning by migrating use of QString.sprintf(...) to
+        QString.arg().arg()...
+
+        * WebCoreSupport/EditorClientQt.cpp:
+        (dumpRange):
+
+2009-07-31  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
         Reviewed by Tor Arne Vestbø.
 
         Expose the Offline Web Application Cache in the Qt API.
