@@ -358,7 +358,6 @@ QWebSettings::QWebSettings()
     d->attributes.insert(QWebSettings::LocalStorageDatabaseEnabled, true);
     d->attributes.insert(QWebSettings::LocalContentCanAccessRemoteUrls, true);
     d->offlineStorageDefaultQuota = 5 * 1024 * 1024;
-
 }
 
 /*!
@@ -785,10 +784,18 @@ qint64 QWebSettings::offlineStorageDefaultQuota()
 }
 
 /*
-    \internal
+    \since 4.6
     \relates QWebSettings
 
     Sets the path for HTML5 offline web application cache storage to \a path.
+
+    An application cache acts like an HTTP cache in some sense. For documents
+    that use the application cache via JavaScript, the loader mechinery will
+    first ask the application cache for the contents, before hitting the
+    network.
+
+    The feature is described in details at:
+    http://dev.w3.org/html5/spec/Overview.html#appcache
 
     \a path must point to an existing directory where the cache is stored.
 
@@ -796,7 +803,7 @@ qint64 QWebSettings::offlineStorageDefaultQuota()
 
     \sa offlineWebApplicationCachePath()
 */
-void QWEBKIT_EXPORT qt_websettings_setOfflineWebApplicationCachePath(const QString& path)
+void QWebSettings::setOfflineWebApplicationCachePath(const QString& path)
 {
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     WebCore::cacheStorage().setCacheDirectory(path);
@@ -804,20 +811,47 @@ void QWEBKIT_EXPORT qt_websettings_setOfflineWebApplicationCachePath(const QStri
 }
 
 /*
-    \internal
+    \since 4.6
     \relates QWebSettings
 
     Returns the path of the HTML5 offline web application cache storage
     or an empty string if the feature is disabled.
 
-    \sa setOfflineWebApplicationCachePath()
+    \sa setWebApplicationCachePath()
 */
-QString QWEBKIT_EXPORT qt_websettings_offlineWebApplicationCachePath()
+QString QWebSettings::offlineWebApplicationCachePath()
 {
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     return WebCore::cacheStorage().cacheDirectory();
 #else
     return QString();
+#endif
+}
+
+/*!
+    \since 4.6
+
+    Sets the value of the quota for the offline web application cache
+    to \a maximumSize.
+*/
+void QWebSettings::setOfflineWebApplicationCacheQuota(qint64 maximumSize)
+{
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    WebCore::cacheStorage().setMaximumSize(maximumSize);
+#endif
+}
+
+/*!
+    \since 4.6
+
+    Returns the value of the quota for the offline web application cache.
+*/
+qint64 QWebSettings::offlineWebApplicationCacheQuota()
+{
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    return WebCore::cacheStorage().maximumSize();
+#else
+    return 0;
 #endif
 }
 

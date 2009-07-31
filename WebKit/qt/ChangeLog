@@ -1,3 +1,17 @@
+2009-07-31  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Expose the Offline Web Application Cache in the Qt API.
+
+        * Api/qwebsettings.cpp:
+        (QWebSettings::QWebSettings):
+        (QWebSettings::setOfflineWebApplicationCachePath):
+        (QWebSettings::offlineWebApplicationCachePath):
+        (QWebSettings::setOfflineWebApplicationCacheQuota):
+        (QWebSettings::offlineWebApplicationCacheQuota):
+        * Api/qwebsettings.h:
+
 2009-07-30  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Adam Treat.
