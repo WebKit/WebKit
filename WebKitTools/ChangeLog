@@ -1,5 +1,11 @@
 2009-07-30  Mark Rowe  <mrowe@apple.com>
 
+        Include some information about the error when we die.
+
+        * Scripts/run-webkit-tests:
+
+2009-07-30  Mark Rowe  <mrowe@apple.com>
+
         Ensure that the path exists before writing results to it.
         Hopefully this will make the Windows build bot happy.
 

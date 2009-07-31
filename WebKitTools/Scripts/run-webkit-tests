@@ -1161,7 +1161,7 @@ sub countAndPrintLeaks($$$)
 sub writeToFile($$)
 {
     my ($filePath, $contents) = @_;
-    open NEWFILE, ">", "$filePath" or die "could not create $filePath\n";
+    open NEWFILE, ">", "$filePath" or die "Could not create $filePath. $!\n";
     print NEWFILE $contents;
     close NEWFILE;
 }
