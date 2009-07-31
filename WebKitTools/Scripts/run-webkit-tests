@@ -1785,7 +1785,7 @@ sub recordActualResultsAndDiff($$)
     my $actualResultsPath = "$testResultsDirectory/$base-$actualTag$expectedResultExtension";
     my $copiedExpectedResultsPath = "$testResultsDirectory/$base-$expectedTag$expectedResultExtension";
 
-    mkpath($expectedResultDirectoryPath);
+    mkpath(dirname($actualResultsPath));
     writeToFile("$actualResultsPath", $actualResults);
 
     if (-f $expectedResultPath) {

@@ -1,5 +1,11 @@
 2009-07-30  Mark Rowe  <mrowe@apple.com>
 
+        Things work better when you create the correct directories.
+
+        * Scripts/run-webkit-tests:
+
+2009-07-30  Mark Rowe  <mrowe@apple.com>
+
         Include some information about the error when we die.
 
         * Scripts/run-webkit-tests:
