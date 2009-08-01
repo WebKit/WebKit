@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2008 Google Inc. All rights reserved.
+ * Copyright (C) 2007-2009 Torch Mobile, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -33,6 +34,7 @@
 #include "CurrentTime.h"
 
 #if PLATFORM(WIN_OS)
+
 // Windows is first since we want to use hires timers, despite PLATFORM(CF)
 // being defined.
 // If defined, WIN32_LEAN_AND_MEAN disables timeBeginPeriod/timeEndPeriod.
@@ -40,9 +42,17 @@
 #include <windows.h>
 #include <math.h>
 #include <stdint.h>
+#include <time.h>
+
+#if USE(QUERY_PERFORMANCE_COUNTER)
+#if PLATFORM(WINCE)
+extern "C" time_t mktime(struct tm *t);
+#else
 #include <sys/timeb.h>
 #include <sys/types.h>
-#include <time.h>
+#endif
+#endif
+
 #elif PLATFORM(CF)
 #include <CoreFoundation/CFDate.h>
 #elif PLATFORM(GTK)
@@ -58,6 +68,8 @@ namespace WTF {
 const double msPerSecond = 1000.0;
 
 #if PLATFORM(WIN_OS)
+
+#if USE(QUERY_PERFORMANCE_COUNTER)
 
 static LARGE_INTEGER qpcFrequency;
 static bool syncedTime;
@@ -183,6 +195,55 @@ double currentTime()
     lastUTCTime = utc;
     return utc / 1000.0;
 }
+
+#else
+
+static double currentSystemTime()
+{
+    FILETIME ft;
+    GetCurrentFT(&ft);
+
+    // As per Windows documentation for FILETIME, copy the resulting FILETIME structure to a
+    // ULARGE_INTEGER structure using memcpy (using memcpy instead of direct assignment can
+    // prevent alignment faults on 64-bit Windows).
+
+    ULARGE_INTEGER t;
+    memcpy(&t, &ft, sizeof(t));
+
+    // Windows file times are in 100s of nanoseconds.
+    // To convert to seconds, we have to divide by 10,000,000, which is more quickly
+    // done by multiplying by 0.0000001.
+
+    // Between January 1, 1601 and January 1, 1970, there were 369 complete years,
+    // of which 89 were leap years (1700, 1800, and 1900 were not leap years).
+    // That is a total of 134774 days, which is 11644473600 seconds.
+
+    return t.QuadPart * 0.0000001 - 11644473600.0;
+}
+
+double currentTime()
+{
+    static bool init = false;
+    static double lastTime;
+    static DWORD lastTickCount;
+    if (!init) {
+        lastTime = currentSystemTime();
+        lastTickCount = GetTickCount();
+        init = true;
+        return lastTime;
+    }
+
+    DWORD tickCountNow = GetTickCount();
+    DWORD elapsed = tickCountNow - lastTickCount;
+    double timeNow = lastTime + (double)elapsed / 1000.;
+    if (elapsed >= 0x7FFFFFFF) {
+        lastTime = timeNow;
+        lastTickCount = tickCountNow;
+    }
+    return timeNow;
+}
+
+#endif // USE(QUERY_PERFORMANCE_COUNTER)
 
 #elif PLATFORM(CF)
 

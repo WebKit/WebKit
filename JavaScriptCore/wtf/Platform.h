@@ -338,6 +338,11 @@
 #define ENABLE_JSC_MULTIPLE_THREADS 1
 #endif
 
+/* On Windows, use QueryPerformanceCounter by default */
+#if PLATFORM(WIN_OS)
+#define WTF_USE_QUERY_PERFORMANCE_COUNTER  1
+#endif
+
 #if PLATFORM(WINCE) && !PLATFORM(QT)
 #undef ENABLE_JSC_MULTIPLE_THREADS
 #define ENABLE_JSC_MULTIPLE_THREADS        0
