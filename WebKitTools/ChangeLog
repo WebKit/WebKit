@@ -1,5 +1,24 @@
 2009-08-01  David Kilzer  <ddkilzer@apple.com>
 
+        <http://webkit.org/b/18599> resolve-ChangeLogs doesn't work with relative paths
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/resolve-ChangeLogs: Used chdirReturningRelativePath()
+        and determineVCSRoot() to change directories to the root of the
+        project before running the command and to provide a path for
+        removeChangeLogArguments() to make sure any ChangeLog arguments
+        on the command line are still found.
+        (canonicalRelativePath): Added.  Returns a canonical path (e.g.,
+        stripping 'dir/../' from the path) relative to the current
+        directory.
+        (removeChangeLogArguments): Added argument which contains a
+        relative path that must be prepended to any ChangeLog arguments.
+        Used canonicalRelativePath() and File::Spec->catfile() to
+        construct a normalized, relative path to each file.
+
+2009-08-01  David Kilzer  <ddkilzer@apple.com>
+
         Implement VCSUtils::chdirReturningRelativePath()
 
         Reviewed by Eric Seidel.

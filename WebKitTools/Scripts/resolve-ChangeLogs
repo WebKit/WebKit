@@ -40,6 +40,7 @@ use Getopt::Long;
 use POSIX;
 use VCSUtils;
 
+sub canonicalRelativePath($);
 sub conflictFiles($);
 sub findChangeLog($);
 sub findUnmergedChangeLogs();
@@ -49,7 +50,7 @@ sub fixOneMergedChangeLog($);
 sub hasGitUnmergedFiles();
 sub mergeChanges($$$);
 sub parseFixMerged($$;$);
-sub removeChangeLogArguments();
+sub removeChangeLogArguments($);
 sub resolveChangeLog($);
 sub resolveConflict($);
 sub showStatus($;$);
@@ -76,7 +77,9 @@ my $getOptionsResult = GetOptions(
     'w|warnings!'    => \$printWarnings,
 );
 
-my @changeLogFiles = removeChangeLogArguments();
+my $relativePath = chdirReturningRelativePath(determineVCSRoot());
+
+my @changeLogFiles = removeChangeLogArguments($relativePath);
 
 if (!defined $fixMerged && scalar(@changeLogFiles) == 0) {
     @changeLogFiles = findUnmergedChangeLogs();
@@ -141,6 +144,13 @@ if ($gitRebaseContinue) {
 }
 
 exit 0;
+
+sub canonicalRelativePath($)
+{
+    my ($originalPath) = @_;
+    my $absolutePath = Cwd::abs_path($originalPath);
+    return File::Spec->abs2rel($absolutePath);
+}
 
 sub conflictFiles($)
 {
@@ -482,12 +492,13 @@ sub parseFixMerged($$;$)
     }
 }
 
-sub removeChangeLogArguments()
+sub removeChangeLogArguments($)
 {
+    my ($baseDir) = @_;
     my @results = ();
 
     for (my $i = 0; $i < scalar(@ARGV); ) {
-        my $file = findChangeLog($ARGV[$i]);
+        my $file = findChangeLog(canonicalRelativePath(File::Spec->catfile($baseDir, $ARGV[$i])));
         if (defined $file) {
             splice(@ARGV, $i, 1);
             push @results, $file;
