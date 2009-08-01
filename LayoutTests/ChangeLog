@@ -1,3 +1,13 @@
+2009-08-01  John Abd-El-Malek  <jam@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Update test to work with multi-process message ports.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27819
+
+        * fast/events/message-channel-gc.html:
+
 2009-08-01  Evan Martin  <evan@chromium.org>
 
         Reviewed by Adam Barth.
