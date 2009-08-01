@@ -98,6 +98,7 @@ public slots:
     bool pauseTransitionAtTimeOnElementWithId(const QString &propertyName, double time, const QString &elementId);
     unsigned numberOfActiveAnimations() const;
     void dispatchPendingLoadRequests();
+    void disableImageLoading();
 
     void setDatabaseQuota(int size);
     void clearAllDatabases();
