@@ -1,5 +1,21 @@
 2009-08-01  David Kilzer  <ddkilzer@apple.com>
 
+        Implement VCSUtils::chdirReturningRelativePath()
+
+        Reviewed by Eric Seidel.
+
+        Step 2 to fix:
+        <http://webkit.org/b/18599> resolve-ChangeLogs doesn't work with relative paths
+
+        * Scripts/VCSUtils.pm:
+        (VCSUtils::chdirReturningRelativePath): Moved here from
+        chdirAndGetDifference() in svn-create-patch.
+        * Scripts/svn-create-patch: Switched to use
+        chdirReturningRelativePath() instead of chdirAndGetDifference().
+        (chdirAndGetDifference): Removed.
+
+2009-08-01  David Kilzer  <ddkilzer@apple.com>
+
         Implement VCSUtils::determineVCSRoot()
 
         Reviewed by Eric Seidel.

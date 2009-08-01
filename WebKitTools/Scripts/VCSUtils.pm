@@ -29,6 +29,7 @@
 use strict;
 use warnings;
 
+use Cwd qw();  # "qw()" prevents warnings about redefining getcwd() with "use POSIX;"
 use File::Basename;
 use File::Spec;
 
@@ -37,7 +38,7 @@ BEGIN {
    our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
    $VERSION     = 1.00;
    @ISA         = qw(Exporter);
-   @EXPORT      = qw(&determineSVNRoot &determineVCSRoot &isGit &isGitDirectory &isSVN &isSVNDirectory &makeFilePathRelative);
+   @EXPORT      = qw(&chdirReturningRelativePath &determineSVNRoot &determineVCSRoot &isGit &isGitDirectory &isSVN &isSVNDirectory &makeFilePathRelative);
    %EXPORT_TAGS = ( );
    @EXPORT_OK   = ();
 }
@@ -103,6 +104,16 @@ sub isSVN()
 
     $isSVN = isSVNDirectory(".");
     return $isSVN;
+}
+
+sub chdirReturningRelativePath($)
+{
+    my ($directory) = @_;
+    my $previousDirectory = Cwd::getcwd();
+    chdir $directory;
+    my $newDirectory = Cwd::getcwd();
+    return "." if $newDirectory eq $previousDirectory;
+    return File::Spec->abs2rel($previousDirectory, $newDirectory);
 }
 
 sub determineGitRoot()
