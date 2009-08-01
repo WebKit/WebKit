@@ -1,6 +1,17 @@
 # WebCore - qmake build info
 CONFIG += building-libs
 CONFIG += depend_includepath
+
+symbian: {
+    TARGET.EPOCALLOWDLLDATA=1
+    TARGET.EPOCHEAPSIZE = 0x20000 0x2000000 // Min 128kB, Max 32MB
+    TARGET.CAPABILITY = All -Tcb
+
+    webkitlibs.sources = QtWebKit.dll
+    webkitlibs.path = /sys/bin
+    DEPLOYMENT += webkitlibs
+}
+
 include($$PWD/../WebKit.pri)
 
 TEMPLATE = lib
