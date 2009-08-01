@@ -1,5 +1,18 @@
 2009-08-01  David Kilzer  <ddkilzer@apple.com>
 
+        resolve-ChangeLogs: add error checking to git ls-files command on close()
+
+        Reviewed by Eric Seidel.
+
+        Item 2 of <https://bugs.webkit.org/show_bug.cgi?id=18599#c0>.
+
+        * Scripts/resolve-ChangeLogs: Added error checking to close()
+        after running git ls-files.  Added error checking to all
+        system() calls by checking for a non-zero WEXITSTATUS($?).
+        Changed "|| die;" expressions to "or die $!;".
+
+2009-08-01  David Kilzer  <ddkilzer@apple.com>
+
         <http://webkit.org/b/18599> resolve-ChangeLogs doesn't work with relative paths
 
         Reviewed by Eric Seidel.
