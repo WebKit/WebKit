@@ -402,8 +402,19 @@ ACTIVE_DOM_OBJECT_TYPES(MAKE_CASE)
         default:
             ASSERT_NOT_REACHED();
 #undef MAKE_CASE
+        }
+
+        if (type == V8ClassIndex::MESSAGEPORT) {
+            MessagePort* port1 = static_cast<MessagePort*>(object);
+            MessagePort* port2 = port1->locallyEntangledPort();
+            if (port1->isEntangled() && !port2) {
+                // We marked this port as reachable in GCPrologueVisitor.  Undo this now since the
+                // port could be not reachable in the future if it gets disentangled (and also
+                // GCPrologueVisitor expects to see all handles marked as weak).
+                wrapper.MakeWeak(port1, &DOMDataStore::weakActiveDOMObjectCallback);
+            }
+        }
     }
-}
 };
 
 void V8GCController::gcEpilogue()

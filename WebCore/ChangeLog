@@ -1,3 +1,17 @@
+2009-08-01  John Abd-El-Malek  <jam@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Fix a message port handle always getting marked as reachable once it gets entangled.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27824
+
+        No tests since this only arises with the Chromium multi-process message port implementation
+        which isn't in this repostiory.
+
+        * bindings/v8/V8GCController.cpp:
+        (WebCore::GCEpilogueVisitor::visitDOMWrapper):
+
 2009-07-31  Yong Li  <yong.li@torchmobile.com>
 
         Reviewed by Adam Barth.
