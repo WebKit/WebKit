@@ -1,3 +1,11 @@
+2009-07-31  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Skip http/tests/misc/favicon-loads-with-images-disabled.html as
+        this requires resource load callbacks in Gtk DRT. I've raised bug
+        #27905 to track this.
+
+        * platform/gtk/Skipped:
+
 2009-07-31  Brady Eidson  <beidson@apple.com>
 
         Reviewed by John Sullivan.

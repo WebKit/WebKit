@@ -5946,6 +5946,11 @@ fast/dom/Window/window-screen-properties.html
 fast/forms/textarea-metrics.html
 transitions/change-values-during-transition.html
 
+# See Bug #27905 - http://bugs.webkit.org/show_bug.cgi?id=27905
+# Missing resource load callback ability in DRT
+http/tests/loading/redirect-methods.html
+http/tests/misc/favicon-loads-with-images-disabled.html
+
 # This port doesn't support isolated worlds yet.
 http/tests/security/isolatedWorld/all-window-properties.html
 http/tests/security/isolatedWorld/all-window-prototypes.html
@@ -5967,6 +5972,3 @@ http/tests/security/isolatedWorld/window-properties.html
 
 # Missing DRT ability return a null request for willSendRequest redirect calls
 http/tests/misc/will-send-request-returns-null-on-redirect.html
-
-# Missing resource load callback ability in DRT
-http/tests/loading/redirect-methods.html
