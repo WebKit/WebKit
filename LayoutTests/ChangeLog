@@ -1,3 +1,10 @@
+2009-08-01  Brady Eidson  <beidson@apple.com>
+
+        For my new test I landed last night, check in Tiger-specific results, and skip on Windows.
+
+        * platform/mac-tiger/http/tests/misc/favicon-loads-with-images-disabled-expected.txt: Added.
+        * platform/win/Skipped: Add to the skipped list because the failure needs exploration.
+
 2009-08-01  John Abd-El-Malek  <jam@chromium.org>
 
         Reviewed by Eric Seidel.

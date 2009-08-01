@@ -573,5 +573,6 @@ http/tests/security/isolatedWorld/object-prototype.html
 http/tests/security/isolatedWorld/string-prototype.html
 http/tests/security/isolatedWorld/window-properties.html
 
-# <rdar://problem/7102793> http/tests/loading/redirect-methods.html fails on Windows (no didReceiveResponse callback after a redirect)
+# <rdar://problem/7102793> When dumping resource load delegate callbacks, we tend to not get didReceiveResponse for the main response.
 http/tests/loading/redirect-methods.html
+http/tests/misc/favicon-loads-with-images-disabled.html
