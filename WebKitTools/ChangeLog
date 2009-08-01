@@ -1,3 +1,23 @@
+2009-07-31  David Levin  <levin@chromium.org>
+
+        Reviewed by Adam Treat.
+
+        check-webkit-style --git-commit has bugs if you select a commit in the past
+        https://bugs.webkit.org/show_bug.cgi?id=27908
+
+        * Scripts/check-webkit-style:
+        (main): Made the git-commit command only select the first commit
+        if a range is given (and print a warning).
+        * Scripts/modules/scm.py:
+        (SCM::create_patch_from_local_commit):
+        (SCM::create_patch_since_local_commit):
+        (SCM::commit_locally_with_message):
+        (SCM::discard_local_commits):
+        Added an error messages in case these aren't overriden.
+
+        (Git::create_patch_since_local_commit):
+        Added this command to allow doing a diff of everything after a given commit.
+
 2009-07-31  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Speculative Qt build fix. Not reviewed.

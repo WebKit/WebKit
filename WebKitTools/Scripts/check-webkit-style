@@ -42,7 +42,7 @@ from modules.scm import detect_scm_system
 
 # Override the usage of the lint tool.
 cpp_style._USAGE = """
-Syntax: %(program_name)s [--verbose=#] [--git-commit=<COMMITISH>] [--output=vs7]
+Syntax: %(program_name)s [--verbose=#] [--git-commit=<SingleCommit>] [--output=vs7]
         [--filter=-x,+y,...] [file] ...
 
   The style guidelines this tries to follow are those in
@@ -66,12 +66,8 @@ Syntax: %(program_name)s [--verbose=#] [--git-commit=<COMMITISH>] [--output=vs7]
     verbose=#
       Specify a number 0-5 to restrict errors to certain verbosity levels.
 
-    git-commit=<COMMITISH>
-      Check style for a specified git commit.
-      Note that the program checks style based on current local file
-      instead of actual diff of the git commit.  So, if the files are
-      updated after the specified git commit, the information of line
-      number may be wrong.
+    git-commit=<SingleCommit>
+      Checks the style of everything from the given commit to the local tree.
 
     output=vs7
       By default, the output is formatted to ease emacs parsing.  Visual Studio
@@ -152,7 +148,13 @@ def main():
         scm = detect_scm_system(cwd)
 
         if "--git-commit" in flags:
-            process_patch(scm.create_patch_from_local_commit(flags["--git-commit"]))
+            commit = flags["--git-commit"]
+            if '..' in commit:
+                # FIXME: If the range is a "...", the code should find the common ancestor and
+                # start there (see git diff --help for information about how ... usually works).
+                commit = commit[:commit.find('..')]
+                print >> sys.stderr, "Warning: Ranges are not supported for --git-commit. Checking all changes since %s.\n" % commit
+            process_patch(scm.create_patch_since_local_commit(commit))
         else:
             process_patch(scm.create_patch())
 

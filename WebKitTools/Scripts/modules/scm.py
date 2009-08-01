@@ -195,10 +195,13 @@ class SCM:
         raise NotImplementedError, "subclasses must implement"
 
     def create_patch_from_local_commit(self, commit_id):
-        pass
+        error("Your source control manager does not support creating a patch from a local commit.")
+
+    def create_patch_since_local_commit(self, commit_id):
+        error("Your source control manager does not support creating a patch from a local commit.")
 
     def commit_locally_with_message(self, message):
-        pass
+        error("Your source control manager does not support local commits.")
 
     def discard_local_commits(self):
         pass
@@ -353,6 +356,9 @@ class Git(SCM):
 
     def create_patch_from_local_commit(self, commit_id):
         return self.run_command(['git', 'diff', commit_id + "^.." + commit_id])
+
+    def create_patch_since_local_commit(self, commit_id):
+        return self.run_command(['git', 'diff', commit_id])
 
     def commit_locally_with_message(self, message):
         self.run_command(['git', 'commit', '--all', '-F', '-'], input=message)
