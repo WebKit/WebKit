@@ -33,7 +33,7 @@ use warnings;
 
 use HTTP::Date qw(str2time);
 use File::Find;
-use File::Temp;
+use File::Temp ();
 use File::Spec;
 use FindBin;
 use lib $FindBin::Bin;
