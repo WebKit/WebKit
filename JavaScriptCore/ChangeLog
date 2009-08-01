@@ -1,3 +1,13 @@
+2009-07-31  Ada Chan  <adachan@apple.com>
+
+        Fixes the Windows release-PGO build.
+
+        Reviewed by Jon Honeycutt.
+
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj: Suppresses the warning about unreachable code that we get by adding "return 0" to WTF::TCMalloc_PageHeap::runScavengerThread().
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMalloc_PageHeap::runScavengerThread): Fixes the error about the method not returning a value in the release-PGO build.
+
 2009-07-31  Zoltan Horvath  <hzoltan@inf.u-szeged.hu>
 
         Change malloc to fastMalloc and free to fastFree in Yarr's RegexInterpreter.cpp

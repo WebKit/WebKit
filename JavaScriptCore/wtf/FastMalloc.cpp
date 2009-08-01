@@ -1416,7 +1416,11 @@ void TCMalloc_PageHeap::init()
 #if USE_BACKGROUND_THREAD_TO_SCAVENGE_MEMORY
 void* TCMalloc_PageHeap::runScavengerThread(void* context)
 {
-  reinterpret_cast<TCMalloc_PageHeap*>(context)->scavengerThread();
+  static_cast<TCMalloc_PageHeap*>(context)->scavengerThread();
+#if COMPILER(MSVC)
+  // Without this, Visual Studio will complain that this method does not return a value.
+  return 0;
+#endif
 }
 
 void TCMalloc_PageHeap::scavenge() 
