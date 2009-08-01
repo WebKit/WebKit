@@ -5117,3 +5117,9 @@ http/tests/security/isolatedWorld/window-properties.html
 
 # Missing DRT ability return a null request for willSendRequest redirect calls
 http/tests/misc/will-send-request-returns-null-on-redirect.html
+
+# Audio related tests are failing on buildbot
+# See: https://bugs.webkit.org/show_bug.cgi?id=27910
+fast/dom/constructed-objects-prototypes.html
+fast/dom/constructors-cached-navigate.html
+fast/dom/constructors-cached.html
