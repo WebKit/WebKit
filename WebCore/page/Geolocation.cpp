@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008, 2009 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2009 Torch Mobile, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -261,10 +262,10 @@ void Geolocation::requestPermission()
     if (!page)
         return;
     
+    m_allowGeolocation = InProgress;
+
     // Ask the chrome: it maintains the geolocation challenge policy itself.
     page->chrome()->requestGeolocationPermissionForFrame(m_frame, this);
-    
-    m_allowGeolocation = InProgress;
 }
 
 void Geolocation::geolocationServicePositionChanged(GeolocationService* service)
