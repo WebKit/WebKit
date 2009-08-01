@@ -45,7 +45,7 @@ my $clean = 0;
 my $minimal = 0;
 my $makeArgs;
 
-my ($threeDRenderingSupport, $channelMessagingSupport, $databaseSupport, $domStorageSupport,
+my ($threeDRenderingSupport, $channelMessagingSupport, $databaseSupport, $datagridSupport, $domStorageSupport,
     $filtersSupport, $geolocationSupport, $gnomeKeyringSupport, $iconDatabaseSupport,
     $javaScriptDebuggerSupport, $offlineWebApplicationSupport, $rubySupport, $sharedWorkersSupport, 
     $svgSupport, $svgAnimationSupport, $svgAsImageSupport, $svgDOMObjCBindingsSupport, $svgFontsSupport,
@@ -65,6 +65,9 @@ my @features = (
     { option => "database", desc => "Toggle Database Support",
       define => "ENABLE_DATABASE", default => 1, value => \$databaseSupport },
 
+    { option => "datagrid", desc => "Toggle Datagrid Support",
+      define => "ENABLE_DATAGRID", default => 1, value => \$datagridSupport },
+          
     { option => "dom-storage", desc => "Toggle DOM Storage Support",
       define => "ENABLE_DOM_STORAGE", default => 1, value => \$domStorageSupport },
 

@@ -1,3 +1,12 @@
+2009-07-31  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        Add a top level build option to control datagrid support
+        https://bugs.webkit.org/show_bug.cgi?id=27915
+
+        * Scripts/build-webkit:
+
 2009-07-31  David Levin  <levin@chromium.org>
 
         Reviewed by Adam Treat.
