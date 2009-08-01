@@ -637,6 +637,7 @@ PluginView::PluginView(Frame* parentFrame, const IntSize& size, PluginPackage* p
     , m_popPopupsStateTimer(this, &PluginView::popPopupsStateTimerFired)
     , m_paramNames(0)
     , m_paramValues(0)
+    , m_mimeType(mimeType)
 #if defined(XP_MACOSX)
     , m_isWindowed(false)
 #else
@@ -664,7 +665,6 @@ PluginView::PluginView(Frame* parentFrame, const IntSize& size, PluginPackage* p
     , m_loadManually(loadManually)
     , m_manualStream(0)
     , m_isJavaScriptPaused(false)
-    , m_mimeType(mimeType)
 {
     if (!m_plugin) {
         m_status = PluginStatusCanNotFindPlugin;
