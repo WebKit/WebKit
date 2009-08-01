@@ -5128,3 +5128,7 @@ fast/dom/constructors-cached.html
 # https://bugs.webkit.org/show_bug.cgi?id=27912
 animations/change-keyframes.html
 transitions/zero-duration-with-non-zero-delay-end.html
+
+# Printing related layout test failure has no results, but obvious error message
+# https://bugs.webkit.org/show_bug.cgi?id=27913
+printing/media-queries-print.html
