@@ -313,27 +313,6 @@ void Page::removeUnstartedPlugin(PluginView* view)
     m_unstartedPlugins.remove(view);
 }
 
-void Page::setCanStartPlugins(bool canStartPlugins)
-{
-    if (m_canStartPlugins == canStartPlugins)
-        return;
-
-    m_canStartPlugins = canStartPlugins;
-
-    if (!m_canStartPlugins || m_unstartedPlugins.isEmpty())
-        return;
-
-    Vector<PluginView*> unstartedPlugins;
-    copyToVector(m_unstartedPlugins, unstartedPlugins);
-    m_unstartedPlugins.clear();
-
-    for (size_t i = 0; i < unstartedPlugins.size(); ++i) {
-        if (unstartedPlugins[i]->start())
-            continue;
-        unstartedPlugins[i]->parentFrame()->loader()->client()->dispatchDidFailToStartPlugin(unstartedPlugins[i]);
-    }
-}
-
 static Frame* incrementFrame(Frame* curr, bool forward, bool wrapFlag)
 {
     return forward
