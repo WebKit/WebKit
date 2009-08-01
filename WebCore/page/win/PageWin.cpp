@@ -27,8 +27,10 @@
 #include "Page.h"
 
 #include "Frame.h"
+#include "FrameLoaderClient.h"
 #include "FrameView.h"
 #include "FloatRect.h"
+#include "PluginView.h"
 #include <windows.h>
 
 namespace WebCore {

@@ -1,5 +1,13 @@
 2009-07-31  Jon Honeycutt  <jhoneycutt@apple.com>
 
+        Windows build fix!
+
+        Unreviewed.
+
+        * page/win/PageWin.cpp:
+
+2009-07-31  Jon Honeycutt  <jhoneycutt@apple.com>
+
         Mac build fix.
 
         Unreviewed.
