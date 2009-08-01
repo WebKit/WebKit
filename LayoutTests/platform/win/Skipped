@@ -313,7 +313,6 @@ fast/events/popup-blocking-click-in-iframe.html
 # These tests only fail in Release builds
 editing/execCommand/find-after-replace.html
 editing/pasteboard/4989774.html
-fast/forms/input-truncate-newline.html
 fast/forms/plaintext-mode-2.html
 fast/forms/textarea-paste-newline.html
 

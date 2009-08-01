@@ -1,3 +1,11 @@
+2009-08-01  Brian Weinstein  <bweinstein@apple.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        Remove a non-existent test from the Windows Skipped List.
+
+        * platform/win/Skipped:
+
 2009-08-01  Brady Eidson  <beidson@apple.com>
 
         For my new test I landed last night, check in Tiger-specific results, and skip on Windows.
