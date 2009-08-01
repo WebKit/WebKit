@@ -1499,7 +1499,7 @@ int RenderBox::calcPercentageHeight(const Length& height)
             // no size and allow the flexing of the table or the cell to its specified height to cause us
             // to grow to fill the space.  This could end up being wrong in some cases, but it is
             // preferable to the alternative (sizing intrinsically and making the row end up too big).
-            RenderTableCell* cell = static_cast<RenderTableCell*>(cb);
+            RenderTableCell* cell = toRenderTableCell(cb);
             if (scrollsOverflowY() && (!cell->style()->height().isAuto() || !cell->table()->style()->height().isAuto()))
                 return 0;
             return -1;

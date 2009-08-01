@@ -69,16 +69,16 @@ private:
     int m_refCount;
 };
 
-inline RenderWidget* toRenderWidget(RenderObject* o)
+inline RenderWidget* toRenderWidget(RenderObject* object)
 {
-    ASSERT(!o || o->isWidget());
-    return static_cast<RenderWidget*>(o);
+    ASSERT(!object || object->isWidget());
+    return static_cast<RenderWidget*>(object);
 }
 
-inline const RenderWidget* toRenderWidget(const RenderObject* o)
+inline const RenderWidget* toRenderWidget(const RenderObject* object)
 {
-    ASSERT(!o || o->isWidget());
-    return static_cast<const RenderWidget*>(o);
+    ASSERT(!object || object->isWidget());
+    return static_cast<const RenderWidget*>(object);
 }
 
 // This will catch anyone doing an unnecessary cast.

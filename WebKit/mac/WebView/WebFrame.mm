@@ -543,7 +543,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     }
 
     if (!_private->coreFrame || !_private->coreFrame->document() || !_private->coreFrame->view()) return pages;
-    RenderView* root = static_cast<RenderView *>(_private->coreFrame->document()->renderer());
+    RenderView* root = toRenderView(_private->coreFrame->document()->renderer());
     if (!root) return pages;
     
     FrameView* view = _private->coreFrame->view();
@@ -649,7 +649,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
     if (!_private->coreFrame || !_private->coreFrame->document())
         return nil;
-    RenderView* root = static_cast<RenderView *>(_private->coreFrame->document()->renderer());
+    RenderView* root = toRenderView(_private->coreFrame->document()->renderer());
     if (!root)
         return nil;
     return _private->coreFrame->document()->axObjectCache()->getOrCreate(root)->wrapper();

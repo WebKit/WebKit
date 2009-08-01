@@ -1,12 +1,10 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1997 Martin Jones (mjones@kde.org)
  *           (C) 1997 Torben Weis (weis@kde.org)
  *           (C) 1998 Waldo Bastian (bastian@kde.org)
  *           (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -38,23 +36,12 @@ class RenderTableRow;
 class RenderTableSection : public RenderBox {
 public:
     RenderTableSection(Node*);
-    ~RenderTableSection();
+    virtual ~RenderTableSection();
 
-    virtual RenderObjectChildList* virtualChildren() { return children(); }
-    virtual const RenderObjectChildList* virtualChildren() const { return children(); }
     const RenderObjectChildList* children() const { return &m_children; }
     RenderObjectChildList* children() { return &m_children; }
 
-    virtual const char* renderName() const { return isAnonymous() ? "RenderTableSection (anonymous)" : "RenderTableSection"; }
-
-    virtual bool isTableSection() const { return true; }
-
-    virtual void destroy();
-
-    virtual void layout();
-
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0);
-    virtual void removeChild(RenderObject* oldChild);
 
     virtual int firstLineBoxBaseline() const;
 
@@ -64,7 +51,7 @@ public:
     int calcRowHeight();
     int layoutRows(int height);
 
-    RenderTable* table() const { return static_cast<RenderTable*>(parent()); }
+    RenderTable* table() const { return toRenderTable(parent()); }
 
     struct CellStruct {
         RenderTableCell* cell;
@@ -91,10 +78,6 @@ public:
     virtual int overflowHeight(bool includeInterior = true) const { return (!includeInterior && hasOverflowClip()) ? height() : m_overflowHeight; }
     virtual int overflowTop(bool includeInterior = true) const { return (!includeInterior && hasOverflowClip()) ? 0 : m_overflowTop; }
 
-    virtual int lowestPosition(bool includeOverflowInterior, bool includeSelf) const;
-    virtual int rightmostPosition(bool includeOverflowInterior, bool includeSelf) const;
-    virtual int leftmostPosition(bool includeOverflowInterior, bool includeSelf) const;
-
     int calcOuterBorderTop() const;
     int calcOuterBorderBottom() const;
     int calcOuterBorderLeft(bool rtl) const;
@@ -105,11 +88,6 @@ public:
     int outerBorderBottom() const { return m_outerBorderBottom; }
     int outerBorderLeft() const { return m_outerBorderLeft; }
     int outerBorderRight() const { return m_outerBorderRight; }
-
-    virtual void paint(PaintInfo&, int tx, int ty);
-    virtual void paintObject(PaintInfo&, int tx, int ty);
-
-    virtual void imageChanged(WrappedImagePtr, const IntRect* = 0);
 
     int numRows() const { return m_gridRows; }
     int numColumns() const;
@@ -129,9 +107,31 @@ public:
 
     int getBaseline(int row) { return m_grid[row].baseline; }
 
+private:
+    virtual RenderObjectChildList* virtualChildren() { return children(); }
+    virtual const RenderObjectChildList* virtualChildren() const { return children(); }
+
+    virtual const char* renderName() const { return isAnonymous() ? "RenderTableSection (anonymous)" : "RenderTableSection"; }
+
+    virtual bool isTableSection() const { return true; }
+
+    virtual void destroy();
+
+    virtual void layout();
+
+    virtual void removeChild(RenderObject* oldChild);
+
+    virtual int lowestPosition(bool includeOverflowInterior, bool includeSelf) const;
+    virtual int rightmostPosition(bool includeOverflowInterior, bool includeSelf) const;
+    virtual int leftmostPosition(bool includeOverflowInterior, bool includeSelf) const;
+
+    virtual void paint(PaintInfo&, int tx, int ty);
+    virtual void paintObject(PaintInfo&, int tx, int ty);
+
+    virtual void imageChanged(WrappedImagePtr, const IntRect* = 0);
+
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
 
-private:
     virtual int lineHeight(bool, bool) const { return 0; }
 
     bool ensureRows(int);
@@ -160,6 +160,21 @@ private:
     bool m_needsCellRecalc;
     bool m_hasOverflowingCell;
 };
+
+inline RenderTableSection* toRenderTableSection(RenderObject* object)
+{
+    ASSERT(!object || object->isTableSection());
+    return static_cast<RenderTableSection*>(object);
+}
+
+inline const RenderTableSection* toRenderTableSection(const RenderObject* object)
+{
+    ASSERT(!object || object->isTableSection());
+    return static_cast<const RenderTableSection*>(object);
+}
+
+// This will catch anyone doing an unnecessary cast.
+void toRenderTableSection(const RenderTableSection*);
 
 } // namespace WebCore
 

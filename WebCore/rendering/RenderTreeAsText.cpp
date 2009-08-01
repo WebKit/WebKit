@@ -204,14 +204,14 @@ static TextStream &operator<<(TextStream& ts, const RenderObject& o)
         // FIXME: Deliberately dump the "inner" box of table cells, since that is what current results reflect.  We'd like
         // to clean up the results to dump both the outer box and the intrinsic padding so that both bits of information are
         // captured by the results.
-        const RenderTableCell& cell = static_cast<const RenderTableCell&>(o);
+        const RenderTableCell& cell = *toRenderTableCell(&o);
         r = IntRect(cell.x(), cell.y() + cell.intrinsicPaddingTop(), cell.width(), cell.height() - cell.intrinsicPaddingTop() - cell.intrinsicPaddingBottom());
     } else if (o.isBox())
         r = toRenderBox(&o)->frameRect();
 
     // FIXME: Temporary in order to ensure compatibility with existing layout test results.
     if (adjustForTableCells)
-        r.move(0, -static_cast<RenderTableCell*>(o.containingBlock())->intrinsicPaddingTop());
+        r.move(0, -toRenderTableCell(o.containingBlock())->intrinsicPaddingTop());
 
     ts << " " << r;
 
@@ -307,7 +307,7 @@ static TextStream &operator<<(TextStream& ts, const RenderObject& o)
     }
 
     if (o.isTableCell()) {
-        const RenderTableCell& c = static_cast<const RenderTableCell&>(o);
+        const RenderTableCell& c = *toRenderTableCell(&o);
         ts << " [r=" << c.row() << " c=" << c.col() << " rs=" << c.rowSpan() << " cs=" << c.colSpan() << "]";
     }
 
@@ -343,7 +343,7 @@ static void writeTextRun(TextStream& ts, const RenderText& o, const InlineTextBo
     // FIXME: Table cell adjustment is temporary until results can be updated.
     int y = run.m_y;
     if (o.containingBlock()->isTableCell())
-        y -= static_cast<RenderTableCell*>(o.containingBlock())->intrinsicPaddingTop();
+        y -= toRenderTableCell(o.containingBlock())->intrinsicPaddingTop();
     ts << "text run at (" << run.m_x << "," << y << ") width " << run.m_width;
     if (run.direction() == RTL || run.m_dirOverride) {
         ts << (run.direction() == RTL ? " RTL" : " LTR");

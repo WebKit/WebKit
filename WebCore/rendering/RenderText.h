@@ -173,16 +173,16 @@ private:
     mutable bool m_knownNotToUseFallbackFonts : 1;
 };
 
-inline RenderText* toRenderText(RenderObject* o)
+inline RenderText* toRenderText(RenderObject* object)
 { 
-    ASSERT(!o || o->isText());
-    return static_cast<RenderText*>(o);
+    ASSERT(!object || object->isText());
+    return static_cast<RenderText*>(object);
 }
 
-inline const RenderText* toRenderText(const RenderObject* o)
+inline const RenderText* toRenderText(const RenderObject* object)
 { 
-    ASSERT(!o || o->isText());
-    return static_cast<const RenderText*>(o);
+    ASSERT(!object || object->isText());
+    return static_cast<const RenderText*>(object);
 }
 
 // This will catch anyone doing an unnecessary cast.

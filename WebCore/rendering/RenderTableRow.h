@@ -1,12 +1,10 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1997 Martin Jones (mjones@kde.org)
  *           (C) 1997 Torben Weis (weis@kde.org)
  *           (C) 1998 Waldo Bastian (bastian@kde.org)
  *           (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -35,15 +33,16 @@ class RenderTableRow : public RenderBox {
 public:
     RenderTableRow(Node*);
 
-    virtual RenderObjectChildList* virtualChildren() { return children(); }
-    virtual const RenderObjectChildList* virtualChildren() const { return children(); }
     const RenderObjectChildList* children() const { return &m_children; }
     RenderObjectChildList* children() { return &m_children; }
 
-    RenderTableSection* section() const { return static_cast<RenderTableSection*>(parent()); }
-    RenderTable* table() const { return static_cast<RenderTable*>(parent()->parent()); }
+    RenderTableSection* section() const { return toRenderTableSection(parent()); }
+    RenderTable* table() const { return toRenderTable(parent()->parent()); }
 
 private:
+    virtual RenderObjectChildList* virtualChildren() { return children(); }
+    virtual const RenderObjectChildList* virtualChildren() const { return children(); }
+
     virtual const char* renderName() const { return isAnonymous() ? "RenderTableRow (anonymous)" : "RenderTableRow"; }
 
     virtual bool isTableRow() const { return true; }
@@ -65,9 +64,23 @@ private:
 
     virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle);
 
-private:
     RenderObjectChildList m_children;
 };
+
+inline RenderTableRow* toRenderTableRow(RenderObject* object)
+{
+    ASSERT(!object || object->isTableRow());
+    return static_cast<RenderTableRow*>(object);
+}
+
+inline const RenderTableRow* toRenderTableRow(const RenderObject* object)
+{
+    ASSERT(!object || object->isTableRow());
+    return static_cast<const RenderTableRow*>(object);
+}
+
+// This will catch anyone doing an unnecessary cast.
+void toRenderTableRow(const RenderTableRow*);
 
 } // namespace WebCore
 

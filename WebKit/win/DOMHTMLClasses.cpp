@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1284,7 +1284,7 @@ HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::isUserEdited(
     if (FAILED(isTextField(&textField)) || !textField)
         return S_OK;
     RenderObject* renderer = m_element->renderer();
-    if (renderer && static_cast<WebCore::RenderTextControl*>(renderer)->isUserEdited())
+    if (renderer && toRenderTextControl(renderer)->isUserEdited())
         *result = TRUE;
     return S_OK;
 }
@@ -1481,7 +1481,7 @@ HRESULT STDMETHODCALLTYPE DOMHTMLTextAreaElement::isUserEdited(
     *result = FALSE;
     ASSERT(m_element);
     RenderObject* renderer = m_element->renderer();
-    if (renderer && static_cast<WebCore::RenderTextControl*>(renderer)->isUserEdited())
+    if (renderer && toRenderTextControl(renderer)->isUserEdited())
         *result = TRUE;
     return S_OK;
 }

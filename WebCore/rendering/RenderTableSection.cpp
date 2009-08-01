@@ -124,7 +124,7 @@ void RenderTableSection::addChild(RenderObject* child, RenderObject* beforeChild
     if (!ensureRows(m_cRow + 1))
         return;
 
-    m_grid[m_cRow].rowRenderer = static_cast<RenderTableRow*>(child);
+    m_grid[m_cRow].rowRenderer = toRenderTableRow(child);
 
     if (!beforeChild) {
         m_grid[m_cRow].height = child->style()->height();
@@ -530,7 +530,7 @@ int RenderTableSection::layoutRows(int toAdd)
             for (RenderObject* o = cell->firstChild(); o; o = o->nextSibling()) {
                 if (!o->isText() && o->style()->height().isPercent() && (flexAllChildren || o->isReplaced() || (o->isBox() && toRenderBox(o)->scrollsOverflow()))) {
                     // Tables with no sections do not flex.
-                    if (!o->isTable() || static_cast<RenderTable*>(o)->hasSections()) {
+                    if (!o->isTable() || toRenderTable(o)->hasSections()) {
                         o->setNeedsLayout(true, false);
                         cellChildrenFlex = true;
                     }
@@ -659,7 +659,7 @@ int RenderTableSection::lowestPosition(bool includeOverflowInterior, bool includ
     for (RenderObject* row = firstChild(); row; row = row->nextSibling()) {
         for (RenderObject* curr = row->firstChild(); curr; curr = curr->nextSibling()) {
             if (curr->isTableCell()) {
-                RenderTableCell* cell = static_cast<RenderTableCell*>(curr);
+                RenderTableCell* cell = toRenderTableCell(curr);
                 bottom = max(bottom, cell->y() + cell->lowestPosition(false));
             }
         }
@@ -677,7 +677,7 @@ int RenderTableSection::rightmostPosition(bool includeOverflowInterior, bool inc
     for (RenderObject* row = firstChild(); row; row = row->nextSibling()) {
         for (RenderObject* curr = row->firstChild(); curr; curr = curr->nextSibling()) {
             if (curr->isTableCell()) {
-                RenderTableCell* cell = static_cast<RenderTableCell*>(curr);
+                RenderTableCell* cell = toRenderTableCell(curr);
                 right = max(right, cell->x() + cell->rightmostPosition(false));
             }
         }
@@ -695,7 +695,7 @@ int RenderTableSection::leftmostPosition(bool includeOverflowInterior, bool incl
     for (RenderObject* row = firstChild(); row; row = row->nextSibling()) {
         for (RenderObject* curr = row->firstChild(); curr; curr = curr->nextSibling()) {
             if (curr->isTableCell()) {
-                RenderTableCell* cell = static_cast<RenderTableCell*>(curr);
+                RenderTableCell* cell = toRenderTableCell(curr);
                 left = min(left, cell->x() + cell->leftmostPosition(false));
             }
         }
@@ -1027,7 +1027,7 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, int tx, int ty)
                 if (!cell || (r > startrow && (cellAt(r - 1, c).cell == cell)))
                     continue;
 
-                RenderTableRow* row = static_cast<RenderTableRow*>(cell->parent());
+                RenderTableRow* row = toRenderTableRow(cell->parent());
 
                 if (paintPhase == PaintPhaseBlockBackground || paintPhase == PaintPhaseChildBlockBackground) {
                     // We need to handle painting a stack of backgrounds.  This stack (from bottom to top) consists of
@@ -1081,12 +1081,12 @@ void RenderTableSection::recalcCells()
             if (!ensureRows(m_cRow + 1))
                 break;
             
-            RenderTableRow* tableRow = static_cast<RenderTableRow*>(row);
+            RenderTableRow* tableRow = toRenderTableRow(row);
             m_grid[m_cRow].rowRenderer = tableRow;
 
             for (RenderObject* cell = row->firstChild(); cell; cell = cell->nextSibling()) {
                 if (cell->isTableCell())
-                    addCell(static_cast<RenderTableCell*>(cell), tableRow);
+                    addCell(toRenderTableCell(cell), tableRow);
             }
         }
     }

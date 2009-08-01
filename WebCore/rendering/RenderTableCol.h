@@ -1,12 +1,10 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1997 Martin Jones (mjones@kde.org)
  *           (C) 1997 Torben Weis (weis@kde.org)
  *           (C) 1998 Waldo Bastian (bastian@kde.org)
  *           (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  *
  * This library is free software; you can redistribute it and/or
@@ -29,18 +27,26 @@
 #define RenderTableCol_h
 
 #include "RenderBox.h"
-#include "RenderTable.h"
 
 namespace WebCore {
+
+class RenderTable;
 
 class RenderTableCol : public RenderBox {
 public:
     RenderTableCol(Node*);
 
-    virtual RenderObjectChildList* virtualChildren() { return children(); }
-    virtual const RenderObjectChildList* virtualChildren() const { return children(); }
     const RenderObjectChildList* children() const { return &m_children; }
     RenderObjectChildList* children() { return &m_children; }
+
+    virtual void calcPrefWidths();
+
+    int span() const { return m_span; }
+    void setSpan(int span) { m_span = span; }
+
+private:
+    virtual RenderObjectChildList* virtualChildren() { return children(); }
+    virtual const RenderObjectChildList* virtualChildren() const { return children(); }
 
     virtual const char* renderName() const { return "RenderTableCol"; }
     virtual bool isTableCol() const { return true; }
@@ -54,17 +60,26 @@ public:
     virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer);
     virtual void imageChanged(WrappedImagePtr, const IntRect* = 0);
 
-    virtual void calcPrefWidths();
-
-    int span() const { return m_span; }
-    void setSpan(int s) { m_span = s; }
-
-private:
     RenderTable* table() const;
 
     RenderObjectChildList m_children;
     int m_span;
 };
+
+inline RenderTableCol* toRenderTableCol(RenderObject* object)
+{
+    ASSERT(!object || object->isTableCol());
+    return static_cast<RenderTableCol*>(object);
+}
+
+inline const RenderTableCol* toRenderTableCol(const RenderObject* object)
+{
+    ASSERT(!object || object->isTableCol());
+    return static_cast<const RenderTableCol*>(object);
+}
+
+// This will catch anyone doing an unnecessary cast.
+void toRenderTableCol(const RenderTableCol*);
 
 }
 

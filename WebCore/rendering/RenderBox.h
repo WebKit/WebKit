@@ -360,16 +360,16 @@ private:
     static bool s_hadOverflowClip;
 };
 
-inline RenderBox* toRenderBox(RenderObject* o)
+inline RenderBox* toRenderBox(RenderObject* object)
 { 
-    ASSERT(!o || o->isBox());
-    return static_cast<RenderBox*>(o);
+    ASSERT(!object || object->isBox());
+    return static_cast<RenderBox*>(object);
 }
 
-inline const RenderBox* toRenderBox(const RenderObject* o)
+inline const RenderBox* toRenderBox(const RenderObject* object)
 { 
-    ASSERT(!o || o->isBox());
-    return static_cast<const RenderBox*>(o);
+    ASSERT(!object || object->isBox());
+    return static_cast<const RenderBox*>(object);
 }
 
 // This will catch anyone doing an unnecessary cast.

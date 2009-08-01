@@ -103,16 +103,16 @@ private:
     RefPtr<TextControlInnerTextElement> m_innerText;
 };
 
-inline RenderTextControl* toRenderTextControl(RenderObject* o)
+inline RenderTextControl* toRenderTextControl(RenderObject* object)
 { 
-    ASSERT(!o || o->isTextControl());
-    return static_cast<RenderTextControl*>(o);
+    ASSERT(!object || object->isTextControl());
+    return static_cast<RenderTextControl*>(object);
 }
 
-inline const RenderTextControl* toRenderTextControl(const RenderObject* o)
+inline const RenderTextControl* toRenderTextControl(const RenderObject* object)
 { 
-    ASSERT(!o || o->isTextControl());
-    return static_cast<const RenderTextControl*>(o);
+    ASSERT(!object || object->isTextControl());
+    return static_cast<const RenderTextControl*>(object);
 }
 
 // This will catch anyone doing an unnecessary cast.

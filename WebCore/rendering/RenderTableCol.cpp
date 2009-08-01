@@ -1,12 +1,10 @@
-/**
- * This file is part of the DOM implementation for KDE.
- *
+/*
  * Copyright (C) 1997 Martin Jones (mjones@kde.org)
  *           (C) 1997 Torben Weis (weis@kde.org)
  *           (C) 1998 Waldo Bastian (bastian@kde.org)
  *           (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  *
  * This library is free software; you can redistribute it and/or
@@ -31,13 +29,15 @@
 #include "CachedImage.h"
 #include "HTMLNames.h"
 #include "HTMLTableColElement.h"
+#include "RenderTable.h"
 
 namespace WebCore {
 
 using namespace HTMLNames;
 
 RenderTableCol::RenderTableCol(Node* node)
-    : RenderBox(node), m_span(1)
+    : RenderBox(node)
+    , m_span(1)
 {
     // init RenderObject attributes
     setInline(true); // our object is not Inline
@@ -75,10 +75,11 @@ IntRect RenderTableCol::clippedOverflowRectForRepaint(RenderBoxModelObject* repa
     // FIXME: Find a better way to do this, e.g., need to repaint all the cells that we
     // might have propagated a background color or borders into.
     // FIXME: check for repaintContainer each time here?
-    if (RenderObject* parentTable = table())
-        return parentTable->clippedOverflowRectForRepaint(repaintContainer);
 
-    return IntRect();
+    RenderTable* parentTable = table();
+    if (!parentTable)
+        return IntRect();
+    return parentTable->clippedOverflowRectForRepaint(repaintContainer);
 }
 
 void RenderTableCol::imageChanged(WrappedImagePtr, const IntRect*)
@@ -100,7 +101,7 @@ RenderTable* RenderTableCol::table() const
     RenderObject* table = parent();
     if (table && !table->isTable())
         table = table->parent();
-    return table && table->isTable() ? static_cast<RenderTable*>(table) : 0;
+    return table && table->isTable() ? toRenderTable(table) : 0;
 }
 
 }

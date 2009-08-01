@@ -83,7 +83,7 @@ static WebRenderNode *copyRenderNode(RenderObject* node)
 
     NSString *name = [[NSString alloc] initWithUTF8String:node->renderName()];
     
-    RenderWidget* renderWidget = node->isWidget() ? static_cast<RenderWidget*>(node) : 0;
+    RenderWidget* renderWidget = node->isWidget() ? toRenderWidget(node) : 0;
     Widget* widget = renderWidget ? renderWidget->widget() : 0;
     NSView *view = widget ? widget->platformWidget() : nil;
 

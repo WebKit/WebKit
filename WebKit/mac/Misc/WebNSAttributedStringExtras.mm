@@ -72,7 +72,7 @@ static NSFileWrapper *fileWrapperForElement(Element* e)
         wrapper = [[kit(e->document()->frame()) _dataSource] _fileWrapperForURL:URL];
     }
     if (!wrapper) {
-        RenderImage* renderer = static_cast<RenderImage*>(e->renderer());
+        RenderImage* renderer = toRenderImage(e->renderer());
         if (renderer->cachedImage() && !renderer->cachedImage()->errorOccurred()) {
             wrapper = [[NSFileWrapper alloc] initRegularFileWithContents:(NSData *)(renderer->cachedImage()->image()->getTIFFRepresentation())];
             [wrapper setPreferredFilename:@"image.tiff"];

@@ -84,7 +84,7 @@ bool AccessibilityTable::isTableExposableThroughAccessibility()
     if (ariaRole != UnknownRole)
         return false;
     
-    RenderTable* table = static_cast<RenderTable*>(m_renderer);
+    RenderTable* table = toRenderTable(m_renderer);
     
     // this employs a heuristic to determine if this table should appear. 
     // Only "data" tables should be exposed as tables. 
@@ -212,7 +212,7 @@ void AccessibilityTable::addChildren()
     if (!m_renderer || !m_renderer->isTable())
         return;
     
-    RenderTable* table = static_cast<RenderTable*>(m_renderer);
+    RenderTable* table = toRenderTable(m_renderer);
     AXObjectCache* axCache = m_renderer->document()->axObjectCache();
 
     // go through all the available sections to pull out the rows
@@ -374,7 +374,7 @@ AccessibilityTableCell* AccessibilityTable::cellForColumnAndRow(unsigned column,
     if (!hasChildren())
         addChildren();
     
-    RenderTable* table = static_cast<RenderTable*>(m_renderer);
+    RenderTable* table = toRenderTable(m_renderer);
     RenderTableSection* tableSection = table->header();
     if (!tableSection)
         tableSection = table->firstBody();

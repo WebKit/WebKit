@@ -87,7 +87,7 @@ AccessibilityObject* AccessibilityTableRow::parentTable() const
     if (!m_renderer || !m_renderer->isTableRow())
         return 0;
     
-    return axObjectCache()->getOrCreate(static_cast<RenderTableRow*>(m_renderer)->table());
+    return axObjectCache()->getOrCreate(toRenderTableRow(m_renderer)->table());
 }
     
 AccessibilityObject* AccessibilityTableRow::headerObject()

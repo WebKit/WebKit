@@ -3921,7 +3921,7 @@ void RenderBlock::calcPrefWidths()
         }
 
         if (isTableCell()) {
-            Length w = static_cast<const RenderTableCell*>(this)->styleOrColWidth();
+            Length w = toRenderTableCell(this)->styleOrColWidth();
             if (w.isFixed() && w.value() > 0)
                 m_maxPrefWidth = max(m_minPrefWidth, calcContentBoxWidth(w.value()));
         }

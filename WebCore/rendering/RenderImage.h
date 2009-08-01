@@ -103,16 +103,16 @@ protected:
     friend class RenderImageScaleObserver;
 };
 
-inline RenderImage* toRenderImage(RenderObject* o)
+inline RenderImage* toRenderImage(RenderObject* object)
 { 
-    ASSERT(!o || o->isRenderImage());
-    return static_cast<RenderImage*>(o);
+    ASSERT(!object || object->isRenderImage());
+    return static_cast<RenderImage*>(object);
 }
 
-inline const RenderImage* toRenderImage(const RenderObject* o)
+inline const RenderImage* toRenderImage(const RenderObject* object)
 { 
-    ASSERT(!o || o->isRenderImage());
-    return static_cast<const RenderImage*>(o);
+    ASSERT(!object || object->isRenderImage());
+    return static_cast<const RenderImage*>(object);
 }
 
 // This will catch anyone doing an unnecessary cast.

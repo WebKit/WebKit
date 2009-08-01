@@ -67,7 +67,7 @@ AccessibilityObject* AccessibilityTableCell::parentTable() const
     if (!m_renderer || !m_renderer->isTableCell())
         return false;
     
-    return axObjectCache()->getOrCreate(static_cast<RenderTableCell*>(m_renderer)->table());
+    return axObjectCache()->getOrCreate(toRenderTableCell(m_renderer)->table());
 }
     
 bool AccessibilityTableCell::isTableCell() const
@@ -92,7 +92,7 @@ void AccessibilityTableCell::rowIndexRange(pair<int, int>& rowRange)
     if (!m_renderer || !m_renderer->isTableCell())
         return;
     
-    RenderTableCell* renderCell = static_cast<RenderTableCell*>(m_renderer);
+    RenderTableCell* renderCell = toRenderTableCell(m_renderer);
     rowRange.first = renderCell->row();
     rowRange.second = renderCell->rowSpan();
     
@@ -122,7 +122,7 @@ void AccessibilityTableCell::columnIndexRange(pair<int, int>& columnRange)
     if (!m_renderer || !m_renderer->isTableCell())
         return;
     
-    RenderTableCell* renderCell = static_cast<RenderTableCell*>(m_renderer);
+    RenderTableCell* renderCell = toRenderTableCell(m_renderer);
     columnRange.first = renderCell->col();
     columnRange.second = renderCell->colSpan();    
 }
@@ -141,7 +141,7 @@ AccessibilityObject* AccessibilityTableCell::titleUIElement() const
     if (node && node->hasTagName(thTag))
         return 0;
     
-    RenderTableCell* renderCell = static_cast<RenderTableCell*>(m_renderer);
+    RenderTableCell* renderCell = toRenderTableCell(m_renderer);
 
     // If this cell is in the first column, there is no need to continue.
     int col = renderCell->col();

@@ -147,10 +147,11 @@ static RegularExpression* regExpForLabels(NSArray* labels)
 
 NSString* Frame::searchForNSLabelsAboveCell(RegularExpression* regExp, HTMLTableCellElement* cell)
 {
-    RenderTableCell* cellRenderer = static_cast<RenderTableCell*>(cell->renderer());
+    RenderObject* cellRenderer = cell->renderer();
 
     if (cellRenderer && cellRenderer->isTableCell()) {
-        RenderTableCell* cellAboveRenderer = cellRenderer->table()->cellAbove(cellRenderer);
+        RenderTableCell* tableCellRenderer = toRenderTableCell(cellRenderer);
+        RenderTableCell* cellAboveRenderer = tableCellRenderer->table()->cellAbove(tableCellRenderer);
 
         if (cellAboveRenderer) {
             HTMLTableCellElement* aboveCell =

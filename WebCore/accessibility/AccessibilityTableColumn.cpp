@@ -105,7 +105,7 @@ AccessibilityObject* AccessibilityTableColumn::headerObject()
     if (!renderer->isTable())
         return 0;
     
-    RenderTable* table = static_cast<RenderTable*>(renderer);
+    RenderTable* table = toRenderTable(renderer);
     
     AccessibilityObject* headerObject = 0;
     

@@ -60,9 +60,9 @@ void AutoTableLayout::recalcColumn(int effCol)
 
     while (child) {
         if (child->isTableCol())
-            static_cast<RenderTableCol*>(child)->calcPrefWidths();
+            toRenderTableCol(child)->calcPrefWidths();
         else if (child->isTableSection()) {
-            RenderTableSection* section = static_cast<RenderTableSection*>(child);
+            RenderTableSection* section = toRenderTableSection(child);
             int numRows = section->numRows();
             RenderTableCell* last = 0;
             for (int i = 0; i < numRows; i++) {
@@ -169,7 +169,7 @@ void AutoTableLayout::fullRecalc()
     int cCol = 0;
     while (child) {
         if (child->isTableCol()) {
-            RenderTableCol *col = static_cast<RenderTableCol*>(child);
+            RenderTableCol *col = toRenderTableCol(child);
             int span = col->span();
             if (col->firstChild()) {
                 grpWidth = col->style()->width();
@@ -227,7 +227,7 @@ static bool shouldScaleColumns(RenderTable* table)
                 if (tw.isPercent())
                     scale = false;
                 else {
-                    RenderTableCell* cell = static_cast<RenderTableCell*>(cb);
+                    RenderTableCell* cell = toRenderTableCell(cb);
                     if (cell->colSpan() > 1 || cell->table()->style()->width().isAuto())
                         scale = false;
                     else

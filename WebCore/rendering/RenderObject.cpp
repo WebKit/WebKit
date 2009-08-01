@@ -285,7 +285,7 @@ void RenderObject::addChild(RenderObject* newChild, RenderObject* beforeChild)
         RenderTable* table;
         RenderObject* afterChild = beforeChild ? beforeChild->previousSibling() : children->lastChild();
         if (afterChild && afterChild->isAnonymous() && afterChild->isTable())
-            table = static_cast<RenderTable*>(afterChild);
+            table = toRenderTable(afterChild);
         else {
             table = new (renderArena()) RenderTable(document() /* is anonymous */);
             RefPtr<RenderStyle> newStyle = RenderStyle::create();
@@ -595,7 +595,7 @@ void RenderObject::setLayerNeedsFullRepaint()
 RenderBlock* RenderObject::containingBlock() const
 {
     if (isTableCell()) {
-        const RenderTableCell* cell = static_cast<const RenderTableCell*>(this);
+        const RenderTableCell* cell = toRenderTableCell(this);
         if (parent() && cell->section())
             return cell->table();
         return 0;

@@ -219,7 +219,7 @@ static CachedImage* imageFromElement(DOMElement *domElement)
         return 0;
     
     RenderObject* renderer = element->renderer();
-    RenderImage* imageRenderer = static_cast<RenderImage*>(renderer);
+    RenderImage* imageRenderer = toRenderImage(renderer);
     if (!imageRenderer->cachedImage() || imageRenderer->cachedImage()->errorOccurred()) 
         return 0;        
     return imageRenderer->cachedImage();
@@ -268,7 +268,7 @@ static CachedImage* imageFromElement(DOMElement *domElement)
     NSString *extension = @"";
     if (RenderObject* renderer = core(element)->renderer()) {
         if (renderer->isImage()) {
-            if (CachedImage* image = static_cast<RenderImage*>(renderer)->cachedImage()) {
+            if (CachedImage* image = toRenderImage(renderer)->cachedImage()) {
                 extension = image->image()->filenameExtension();
                 if (![extension length])
                     return 0;
