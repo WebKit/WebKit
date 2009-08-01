@@ -1,21 +1,3 @@
-2009-08-01  Mark Rowe  <mrowe@apple.com>
-
-        Reviewed by Sam Weinig.
-
-        Fix <https://bugs.webkit.org/show_bug.cgi?id=27923>.
-        Bug 27923: run-webkit-tests should not invoke "ps" repeatedly on Mac OS X
-
-        run-webkit-tests invokes "ps" after each test on Mac OS X to determine whether DumpRenderTree is
-        in the process of crashing.  We can do the same test more efficiently with a simple call to sysctl.
-        I couldn't find any built-in way of doing this directly from perl, so we do it from a simple C module
-        instead.  This speeds up run-webkit-tests by around 8%.
-
-        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
-        * DumpRenderTree/mac/PerlSupport/DumpRenderTreeSupport.c: Added.
-        (processIsCrashing):
-        * DumpRenderTree/mac/PerlSupport/Makefile: Added.
-        * Scripts/run-webkit-tests:
-
 2009-08-01  David Kilzer  <ddkilzer@apple.com>
 
         resolve-ChangeLogs: add error checking to git ls-files command on close()
