@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+# Copyright (C) 2006, 2007, 2008, 2009 Apple Inc.  All rights reserved.
 # Copyright (C) 2009 Torch Mobile Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -34,9 +34,9 @@ use File::Basename;
 use File::Spec;
 use FindBin;
 use lib $FindBin::Bin;
+use Term::ReadKey;
 use VCSUtils;
 use webkitdirs;
-use Term::ReadKey;
 
 sub normalizeLineEndings($$);
 
@@ -125,7 +125,7 @@ if ($regenerateLog && $existingLog && scalar(@changeLogs) > 0) {
 # (as can happen with git-commit --amend)
 exec $editor, @ARGV if $existingLog && $keepExistingLog;
 
-my $topLevel = topLevelSourceDirectory();
+my $topLevel = determineVCSRoot();
 
 my %changeLogSort;
 my %changeLogContents;
@@ -219,16 +219,6 @@ if ($foundComment) {
 }
 
 unlink "$log.edit";
-
-sub topLevelSourceDirectory
-{
-    if (isGit()) {
-        chomp(my $gitDir = `git rev-parse --git-dir`);
-        return dirname($gitDir);
-    } elsif (isSVN()) {
-        return determineSVNRoot();
-    }
-}
 
 sub normalizeLineEndings($$)
 {

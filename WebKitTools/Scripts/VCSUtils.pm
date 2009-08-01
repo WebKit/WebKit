@@ -1,4 +1,4 @@
-# Copyright (C) 2007 Apple Inc.  All rights reserved.
+# Copyright (C) 2007, 2008, 2009 Apple Inc.  All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -28,15 +28,16 @@
 
 use strict;
 use warnings;
+
+use File::Basename;
 use File::Spec;
-use webkitdirs;
 
 BEGIN {
    use Exporter   ();
    our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
    $VERSION     = 1.00;
    @ISA         = qw(Exporter);
-   @EXPORT      = qw(&isGitDirectory &isGit &isSVNDirectory &isSVN &determineSVNRoot &makeFilePathRelative);
+   @EXPORT      = qw(&determineSVNRoot &determineVCSRoot &isGit &isGitDirectory &isSVN &isSVNDirectory &makeFilePathRelative);
    %EXPORT_TAGS = ( );
    @EXPORT_OK   = ();
 }
@@ -104,6 +105,12 @@ sub isSVN()
     return $isSVN;
 }
 
+sub determineGitRoot()
+{
+    chomp(my $gitDir = `git rev-parse --git-dir`);
+    return dirname($gitDir);
+}
+
 sub determineSVNRoot()
 {
     my $devNull = File::Spec->devnull();
@@ -137,6 +144,17 @@ sub determineSVNRoot()
     }
 
     return File::Spec->rel2abs($last);
+}
+
+sub determineVCSRoot()
+{
+    if (isGit()) {
+        return determineGitRoot();
+    }
+    if (isSVN()) {
+        return determineSVNRoot();
+    }
+    die "Unable to determine VCS root";
 }
 
 sub svnRevisionForDirectory($)

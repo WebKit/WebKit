@@ -1,3 +1,23 @@
+2009-08-01  David Kilzer  <ddkilzer@apple.com>
+
+        Implement VCSUtils::determineVCSRoot()
+
+        Reviewed by Eric Seidel.
+
+        Step 1 to fix:
+        <http://webkit.org/b/18599> resolve-ChangeLogs doesn't work with relative paths
+
+        * Scripts/VCSUtils.pm: Removed reference to webkitdirs module.
+        (VCSUtils::EXPORT): Added &determineVCSRoot.  Realphabetized.
+        (VCSUtils::determineGitRoot): Added.  Based on code in
+        commit-log-editor.
+        (VCSUtils::determineVCSRoot): Implemented using
+        determineGitRoot() and determineSVNRoot().
+        * Scripts/commit-log-editor: Replaced use of
+        topLevelSourceDirectory() with determineVCSRoot().  Resorted
+        use statements.
+        (topLevelSourceDirectory): Removed.
+
 2009-07-31  Daniel Bates  <dbates@intudata.com>
 
         Reviewed by Eric Seidel.
