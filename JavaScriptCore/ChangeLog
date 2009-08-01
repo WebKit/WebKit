@@ -1,5 +1,15 @@
 2009-08-01  Zoltan Horvath  <hzoltan@inf.u-szeged.hu>
 
+        Allow custom memory allocation control for JavaScriptCore's ScopeChain class
+        https://bugs.webkit.org/show_bug.cgi?id=27834
+
+        Inherits ScopeChain class from FastAllocBase because it has been
+        instantiated by 'new' in JavaScriptCore/runtime/JSFunction.h:109.
+
+        * runtime/ScopeChain.h:
+
+2009-08-01  Zoltan Horvath  <hzoltan@inf.u-szeged.hu>
+
         Reviewed by Darin Adler.
 
         Allow custom memory allocation control for JavaScriptCore's RegExpConstructorPrivate struct 

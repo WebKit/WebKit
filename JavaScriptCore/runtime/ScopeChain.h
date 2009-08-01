@@ -154,7 +154,7 @@ namespace JSC {
 
     class NoScopeChain {};
 
-    class ScopeChain {
+    class ScopeChain : public FastAllocBase {
         friend class JIT;
     public:
         ScopeChain(NoScopeChain)
