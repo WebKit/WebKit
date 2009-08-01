@@ -177,6 +177,10 @@ namespace WebCore {
 
         void focusPluginElement();
 
+        const String& pluginsPage() const { return m_pluginsPage; }
+        const String& mimeType() const { return m_mimeType; }
+        const KURL& url() const { return m_url; }
+
 #if PLATFORM(WIN_OS) && !PLATFORM(WX) && ENABLE(NETSCAPE_PLUGIN_API)
         static LRESULT CALLBACK PluginViewWndProc(HWND, UINT, WPARAM, LPARAM);
         LRESULT wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
@@ -191,12 +195,16 @@ namespace WebCore {
 
         static bool isCallingPlugin();
 
+        bool start();
+
     private:
         PluginView(Frame* parentFrame, const IntSize&, PluginPackage*, Element*, const KURL&, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually);
 
         void setParameters(const Vector<String>& paramNames, const Vector<String>& paramValues);
+        bool startOrAddToUnstartedList();
+        void removeFromUnstartedListIfNecessary();
         void init();
-        bool start();
+        void platformStart();
         void stop();
         static void setCurrentPluginView(PluginView*);
         NPError load(const FrameLoadRequest&, bool sendNotification, void* notifyData);
@@ -245,8 +253,9 @@ namespace WebCore {
         int m_paramCount;
         char** m_paramNames;
         char** m_paramValues;
+        String m_pluginsPage;
 
-        CString m_mimeType;
+        String m_mimeType;
         CString m_userAgent;
 
         NPP m_instance;
@@ -272,6 +281,7 @@ namespace WebCore {
         unsigned m_lastMessage;
         bool m_isCallingPluginWndProc;
         HDC m_wmPrintHDC;
+        bool m_haveUpdatedPluginWidget;
 #endif
 
 #if (PLATFORM(QT) && PLATFORM(WIN_OS)) || defined(XP_MACOSX)

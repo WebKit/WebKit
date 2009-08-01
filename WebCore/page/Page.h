@@ -59,6 +59,7 @@ namespace WebCore {
     class Node;
     class PageGroup;
     class PluginData;
+    class PluginView;
     class ProgressTracker;
     class RenderTheme;
     class VisibleSelection;
@@ -84,6 +85,11 @@ namespace WebCore {
 
         static void refreshPlugins(bool reload);
         PluginData* pluginData() const;
+
+        void setCanStartPlugins(bool);
+        bool canStartPlugins() const { return m_canStartPlugins; }
+        void addUnstartedPlugin(PluginView*);
+        void removeUnstartedPlugin(PluginView*);
 
         EditorClient* editorClient() const { return m_editorClient; }
 
@@ -251,6 +257,9 @@ namespace WebCore {
 
         double m_customHTMLTokenizerTimeDelay;
         int m_customHTMLTokenizerChunkSize;
+
+        bool m_canStartPlugins;
+        HashSet<PluginView*> m_unstartedPlugins;
 
 #if ENABLE(DOM_STORAGE)
         RefPtr<StorageNamespace> m_sessionStorage;

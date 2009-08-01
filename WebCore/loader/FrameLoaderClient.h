@@ -59,6 +59,7 @@ namespace WebCore {
     class IntSize;
     class KURL;
     class NavigationAction;
+    class PluginView;
     class ResourceError;
     class ResourceHandle;
     class ResourceLoader;
@@ -202,8 +203,10 @@ namespace WebCore {
                                    const String& referrer, bool allowsScrolling, int marginWidth, int marginHeight) = 0;
         virtual PassRefPtr<Widget> createPlugin(const IntSize&, HTMLPlugInElement*, const KURL&, const Vector<String>&, const Vector<String>&, const String&, bool loadManually) = 0;
         virtual void redirectDataToPlugin(Widget* pluginWidget) = 0;
-        
+
         virtual PassRefPtr<Widget> createJavaAppletWidget(const IntSize&, HTMLAppletElement*, const KURL& baseURL, const Vector<String>& paramNames, const Vector<String>& paramValues) = 0;
+
+        virtual void dispatchDidFailToStartPlugin(const PluginView*) const { }
 
         virtual ObjectContentType objectContentType(const KURL& url, const String& mimeType) = 0;
         virtual String overrideMediaType() const = 0;

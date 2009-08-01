@@ -631,6 +631,65 @@ PassRefPtr<Frame> WebFrameLoaderClient::createFrame(const KURL& URL, const Strin
     return childFrame.release();
 }
 
+void WebFrameLoaderClient::dispatchDidFailToStartPlugin(const PluginView* pluginView) const
+{
+    WebView* webView = m_webFrame->webView();
+
+    COMPtr<IWebResourceLoadDelegate> resourceLoadDelegate;
+    if (FAILED(webView->resourceLoadDelegate(&resourceLoadDelegate)))
+        return;
+
+    RetainPtr<CFMutableDictionaryRef> userInfo(AdoptCF, CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+
+    Frame* frame = core(m_webFrame);
+    ASSERT(frame == pluginView->parentFrame());
+
+    if (!pluginView->pluginsPage().isNull()) {
+        KURL pluginPageURL = frame->document()->completeURL(deprecatedParseURL(pluginView->pluginsPage()));
+        if (pluginPageURL.protocolInHTTPFamily()) {
+            static CFStringRef key = MarshallingHelpers::LPCOLESTRToCFStringRef(WebKitErrorPlugInPageURLStringKey);
+            RetainPtr<CFStringRef> str(AdoptCF, pluginPageURL.string().createCFString());
+            CFDictionarySetValue(userInfo.get(), key, str.get());
+        }
+    }
+
+    if (!pluginView->mimeType().isNull()) {
+        static CFStringRef key = MarshallingHelpers::LPCOLESTRToCFStringRef(WebKitErrorMIMETypeKey);
+
+        RetainPtr<CFStringRef> str(AdoptCF, pluginView->mimeType().createCFString());
+        CFDictionarySetValue(userInfo.get(), key, str.get());
+    }
+
+    if (pluginView->plugin()) {
+        String pluginName = pluginView->plugin()->name();
+        if (!pluginName.isNull()) {
+            static CFStringRef key = MarshallingHelpers::LPCOLESTRToCFStringRef(WebKitErrorPlugInNameKey);
+            RetainPtr<CFStringRef> str(AdoptCF, pluginName.createCFString());
+            CFDictionarySetValue(userInfo.get(), key, str.get());
+        }
+    }
+
+    COMPtr<CFDictionaryPropertyBag> userInfoBag(AdoptCOM, CFDictionaryPropertyBag::createInstance());
+    userInfoBag->setDictionary(userInfo.get());
+ 
+    int errorCode = 0;
+    switch (pluginView->status()) {
+        case PluginStatusCanNotFindPlugin:
+            errorCode = WebKitErrorCannotFindPlugIn;
+            break;
+        case PluginStatusCanNotLoadPlugin:
+            errorCode = WebKitErrorCannotLoadPlugIn;
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+    }
+
+    ResourceError resourceError(String(WebKitErrorDomain), errorCode, pluginView->url().string(), String());
+    COMPtr<IWebError> error(AdoptCOM, WebError::createInstance(resourceError, userInfoBag.get()));
+     
+    resourceLoadDelegate->plugInFailedWithError(webView, error.get(), getWebDataSource(frame->loader()->documentLoader()));
+}
+
 PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize& pluginSize, HTMLPlugInElement* element, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
 {
     WebView* webView = m_webFrame->webView();
@@ -674,61 +733,7 @@ PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize& pluginSize,
     if (pluginView->status() == PluginStatusLoadedSuccessfully)
         return pluginView;
 
-    COMPtr<IWebResourceLoadDelegate> resourceLoadDelegate;
-
-    if (FAILED(webView->resourceLoadDelegate(&resourceLoadDelegate)))
-        return pluginView;
-
-    RetainPtr<CFMutableDictionaryRef> userInfo(AdoptCF, CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-
-    size_t size = paramNames.size();
-    for (size_t i = 0; i < size; i++) {
-        if (paramNames[i] == "pluginspage") {
-            KURL pluginPageURL = frame->document()->completeURL(deprecatedParseURL(paramValues[i]));
-            if (pluginPageURL.protocolInHTTPFamily()) {
-                static CFStringRef key = MarshallingHelpers::LPCOLESTRToCFStringRef(WebKitErrorPlugInPageURLStringKey);
-                RetainPtr<CFStringRef> str(AdoptCF, pluginPageURL.string().createCFString());
-                CFDictionarySetValue(userInfo.get(), key, str.get());
-            }
-            break;
-        }
-    }
-
-    if (!mimeType.isNull()) {
-        static CFStringRef key = MarshallingHelpers::LPCOLESTRToCFStringRef(WebKitErrorMIMETypeKey);
-
-        RetainPtr<CFStringRef> str(AdoptCF, mimeType.createCFString());
-        CFDictionarySetValue(userInfo.get(), key, str.get());
-    }
-
-    if (pluginView->plugin()) {
-        String pluginName = pluginView->plugin()->name();
-        if (!pluginName.isNull()) {
-            static CFStringRef key = MarshallingHelpers::LPCOLESTRToCFStringRef(WebKitErrorPlugInNameKey);
-            RetainPtr<CFStringRef> str(AdoptCF, pluginName.createCFString());
-            CFDictionarySetValue(userInfo.get(), key, str.get());
-        }
-    }
-
-    COMPtr<CFDictionaryPropertyBag> userInfoBag(AdoptCOM, CFDictionaryPropertyBag::createInstance());
-    userInfoBag->setDictionary(userInfo.get());
- 
-    int errorCode = 0;
-    switch (pluginView->status()) {
-        case PluginStatusCanNotFindPlugin:
-            errorCode = WebKitErrorCannotFindPlugIn;
-            break;
-        case PluginStatusCanNotLoadPlugin:
-            errorCode = WebKitErrorCannotLoadPlugIn;
-            break;
-        default:
-            ASSERT_NOT_REACHED();
-    }
-
-    ResourceError resourceError(String(WebKitErrorDomain), errorCode, url.string(), String());
-    COMPtr<IWebError> error(AdoptCOM, WebError::createInstance(resourceError, userInfoBag.get()));
-     
-    resourceLoadDelegate->plugInFailedWithError(webView, error.get(), getWebDataSource(frame->loader()->documentLoader()));
+    dispatchDidFailToStartPlugin(pluginView.get());
 
     return pluginView;
 }

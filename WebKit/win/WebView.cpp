@@ -1896,7 +1896,7 @@ static LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, L
         case WM_SHOWWINDOW:
             lResult = DefWindowProc(hWnd, message, wParam, lParam);
             if (wParam == 0)
-                // The window is being hidden (e.g., because we switched tabs.
+                // The window is being hidden (e.g., because we switched tabs).
                 // Null out our backing store.
                 webView->deleteBackingStore();
             break;
@@ -5313,6 +5313,12 @@ HRESULT WebView::setMemoryCacheDelegateCallsEnabled(BOOL enabled)
 HRESULT WebView::setJavaScriptURLsAreAllowed(BOOL areAllowed)
 {
     m_page->setJavaScriptURLsAreAllowed(areAllowed);
+    return S_OK;
+}
+
+HRESULT WebView::setCanStartPlugins(BOOL canStartPlugins)
+{
+    m_page->setCanStartPlugins(canStartPlugins);
     return S_OK;
 }
 

@@ -159,4 +159,6 @@ interface IWebViewPrivate : IUnknown
     HRESULT setMemoryCacheDelegateCallsEnabled([in] BOOL enabled);
 
     HRESULT setJavaScriptURLsAreAllowed([in] BOOL areAllowed);
+
+    HRESULT setCanStartPlugins([in] BOOL canStartPlugins);
 }

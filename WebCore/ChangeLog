@@ -1,3 +1,104 @@
+2009-07-29  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        <rdar://problem/5698113> Safari shouldn't auto-activate plug-ins in
+        background tabs (make Win consistent with Mac)
+
+        https://bugs.webkit.org/show_bug.cgi?id=27855
+
+        Reviewed by Anders Carlsson.
+
+        * loader/FrameLoaderClient.h:
+        (WebCore::FrameLoaderClient::dispatchDidFailToStartPlugin):
+        Declare a new function to dispatch failures to start plug-ins.
+
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        Initialize new member variable.
+        (WebCore::Page::addUnstartedPlugin):
+        Add the PluginView to the set of unstarted plug-ins.
+        (WebCore::Page::removeUnstartedPlugin):
+        Remove the PluginView from the set of unstarted plug-ins.
+        (WebCore::Page::setCanStartPlugins):
+        If we can now start plug-ins, iterate the set of unstarted plug-ins,
+        starting them. If a plug-in fails to start, dispatch a failed-to-start-
+        plug-in error. Clear the list of unstarted plug-ins.
+
+        * page/Page.h:
+        Added m_canStartPlugins to track whether we can currently start
+        plug-ins. Added m_unstartedPlugins to keep track of plug-ins in the
+        page that are waiting to be started.
+        (WebCore::Page::canStartPlugins):
+
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::start):
+        m_mimeType is now a WebCore::String, so we call .utf8(). If NPP_New()
+        fails, set m_status to reflect this; this used to be set by init(), but
+        start() will not be called by init() if we are delaying start().
+        If NPP_New() succeeds, set m_status to reflect this, and call
+        platformStart().
+        (WebCore::PluginView::startOrAddToUnstartedList):
+        If we cannot start plug-ins, add this view to the Page's list of
+        unstarted plug-ins and return true. Otherwise, call start() and return
+        the result.
+        (WebCore::PluginView::removeFromUnstartedListIfNecessary):
+        If we've been started or we don't have a Page, return early. Remove
+        ourselves from the Page's list of unstarted plug-ins.
+        (WebCore::PluginView::bindingInstance):
+        If we haven't been started yet, return 0. This matches the Mac
+        behavior.
+        (WebCore::PluginView::setParameters):
+        If we find the "plug-ins page" parameter, record it; it may be used if
+        we fail to start the plug-in.
+        (WebCore::PluginView::PluginView):
+        Initialize new members m_haveUpdatedPluginWidget. Initialize m_mimeType
+        with mimeType directly; m_mimeType is now a WebCore::String.
+
+        * plugins/PluginView.h:
+        Made start() public, so Page can call it when we start unstarted
+        plug-ins. Changed m_mimeType from CString to String and added
+        m_pluginsPage; these are needed by dispatchDidFailToStartPlugin().
+        (WebCore::PluginView::pluginsPage):
+        Added for dispatchDidFailToStartPlugin().
+        (WebCore::PluginView::mimeType):
+        Ditto.
+        (WebCore::PluginView::url):
+        Ditto.
+
+        * plugins/gtk/PluginViewGtk.cpp:
+        (WebCore::PluginView::platformStart):
+        Stubbed.
+
+        * plugins/mac/PluginViewMac.cpp:
+        (WebCore::PluginView::platformStart):
+        Stubbed.
+
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::platformStart):
+        Stubbed.
+
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::updatePluginWidget):
+        Use m_haveUpdatedPluginWidget to ensure that we will call MoveWindow()
+        and SetWindowRgn() to position the plug-in and set its clip rect if an
+        earlier call to updatePluginWidget() was made before
+        setPlatformPluginWidget() was called to set the plug-in's HWND.
+        (WebCore::PluginView::~PluginView):
+        Call removeFromUnstartedListIfNecessary() to remove the plug-in from
+        the unstarted list if the plug-in is destroyed before it is started.
+        (WebCore::PluginView::init):
+        Call startOrAddtoUnstartedList to start the plug-in or, if plug-ins
+        cannot be started, to add it to the list of plug-ins waiting to be
+        started. Set m_status to indicate success; this is also set by start(),
+        but that may be delayed, and we don't want the loader to dispatch a
+        failed-to-start-plug-in error when we return from init().
+        (WebCore::PluginView::platformStart):
+        Added; code moved from init(). This is now called by start() to perform
+        any platform-specific tasks that need to take place after the plug-in
+        has started. Added a call to updatePluginWidget() to ensure we position
+        the plug-in and set its clip rect after the plug-in has started.
+        Removed the setting of m_status; start() does this before calling this
+        function (and we assert this at the head of the function).
+
 2009-07-30  Darin Adler  <darin@apple.com>
 
         Reviewed by David Levin.
