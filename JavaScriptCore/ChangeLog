@@ -1,5 +1,16 @@
 2009-08-01  Zoltan Horvath  <hzoltan@inf.u-szeged.hu>
 
+        Allow custom memory allocation control for JavaScriptCore's HashMap class
+        http://bugs.webkit.org/show_bug.cgi?id=27871
+
+        Inherits HashMap class from FastAllocBase because it has been
+        instantiated by 'new' in JavaScriptCore/API/JSClassRef.cpp:148.
+
+        * wtf/RefPtrHashMap.h:
+        (WTF::):
+
+2009-08-01  Zoltan Horvath  <hzoltan@inf.u-szeged.hu>
+
         Allow custom memory allocation control for JavaScriptCore's ScopeChain class
         https://bugs.webkit.org/show_bug.cgi?id=27834
 
