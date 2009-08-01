@@ -1,3 +1,11 @@
+2009-08-01  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Oliver Hunt.
+
+        Roll out r46668 as it was misinformed.  ScopeChain is only used with placement new.
+
+        * runtime/ScopeChain.h:
+
 2009-08-01  Zoltan Horvath  <hzoltan@inf.u-szeged.hu>
 
         Allow custom memory allocation control for JavaScriptCore's HashMap class
