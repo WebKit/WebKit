@@ -1,5 +1,12 @@
 2009-08-01  Mark Rowe  <mrowe@apple.com>
 
+        Try and make the Qt build bot happy.
+
+        * BuildSlaveSupport/test-result-archive: Handle the case where run-webkit-tests generates
+        no output files at all and thus does not create the layout-test-results directory.
+
+2009-08-01  Mark Rowe  <mrowe@apple.com>
+
         Move the include of DumpRenderTreeSupport to after DumpRenderTree has been built.
 
         * Scripts/run-webkit-tests:

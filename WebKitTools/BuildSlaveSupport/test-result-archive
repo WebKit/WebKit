@@ -54,6 +54,13 @@ def archiveTestResults(configuration, platform):
         if e.errno != 2:
             raise
 
+    try:
+        # Ensure that layoutTestResultsDir exists since we cannot archive a directory that does not exist
+        os.makedirs(layoutTestResultsDir)
+    except OSError, e:
+        if e.errno != 17:
+            raise
+
     if platform == 'mac':
         if subprocess.call(["ditto", "-c", "-k", "--sequesterRsrc", layoutTestResultsDir, archiveFile]):
             return 1
