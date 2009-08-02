@@ -56,6 +56,7 @@
 #include "RegExpPrototype.h"
 #include "Register.h"
 #include "SamplingTool.h"
+#include <stdarg.h>
 #include <stdio.h>
 
 using namespace std;

@@ -1,5 +1,11 @@
 2009-08-02  Geoffrey Garen  <ggaren@apple.com>
 
+        GTK build fix.
+
+        * jit/JITStubs.cpp: #include <stdarg.h>, for a definition of va_start.
+
+2009-08-02  Geoffrey Garen  <ggaren@apple.com>
+
         Qt build fix.
         
         * runtime/Collector.cpp: #include <limits.h>, for a definition of ULONG_MAX.
