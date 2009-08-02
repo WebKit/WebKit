@@ -7,17 +7,17 @@ PASS [undefined].filter(passUndefined) is [undefined]
 PASS (new Array(20)).filter(passUndefined) is []
 PASS [0,1,2,3,4,5,6,7,8,9].filter(passEven) is [0,2,4,6,8]
 PASS [0,1,2,3,4,5,6,7,8,9].filter(passAfter5) is [5,6,7,8,9]
-PASS mixPartialAndFast.filter(passAfter5) is [5,6,7,8,9,99999]
+PASS mixPartialAndFast.filter(passAfter5) is [5,6,7,8,9,sparseArrayLength-1]
 PASS toObject([undefined]).filter(passUndefined) is [undefined]
 PASS toObject(new Array(20)).filter(passUndefined) is []
 PASS toObject([0,1,2,3,4,5,6,7,8,9]).filter(passEven) is [0,2,4,6,8]
 PASS toObject([0,1,2,3,4,5,6,7,8,9]).filter(passAfter5) is [5,6,7,8,9]
-PASS toObject(mixPartialAndFast).filter(passAfter5) is [5,6,7,8,9,99999]
+PASS toObject(mixPartialAndFast).filter(passAfter5) is [5,6,7,8,9,sparseArrayLength-1]
 PASS reverseInsertionOrder([undefined]).filter(passUndefined) is [undefined]
 PASS reverseInsertionOrder(new Array(20)).filter(passUndefined) is []
 PASS reverseInsertionOrder([0,1,2,3,4,5,6,7,8,9]).filter(passEven) is [0,2,4,6,8]
 PASS reverseInsertionOrder([0,1,2,3,4,5,6,7,8,9]).filter(passAfter5) is [5,6,7,8,9]
-PASS reverseInsertionOrder(mixPartialAndFast).filter(passAfter5) is [5,6,7,8,9,99999]
+PASS reverseInsertionOrder(mixPartialAndFast).filter(passAfter5) is [5,6,7,8,9,sparseArrayLength-1]
 ,0,[object Object]
 PASS reverseInsertionOrder([undefined]).filter(filterLog(passUndefined)) is [undefined]
 PASS reverseInsertionOrder(new Array(20)).filter(filterLog(passUndefined)) is []
@@ -37,8 +37,8 @@ PASS reverseInsertionOrder([0,1,2,3,4]).filter(filterLog(passEven)) is [0,2,4]
 7,7,[object Object]
 8,8,[object Object]
 9,9,[object Object]
-99999,99999,[object Object]
-PASS reverseInsertionOrder(mixPartialAndFast).filter(filterLog(passAfter5)) is [5,6,7,8,9,99999]
+10099,10099,[object Object]
+PASS reverseInsertionOrder(mixPartialAndFast).filter(filterLog(passAfter5)) is [5,6,7,8,9,sparseArrayLength-1]
 ,0,
 PASS ([undefined]).filter(filterLog(passUndefined)) is [undefined]
 PASS (new Array(20)).filter(filterLog(passUndefined)) is []
@@ -58,8 +58,8 @@ PASS ([0,1,2,3,4]).filter(filterLog(passEven)) is [0,2,4]
 7,7,0,1,2,3,4,5,6,7,8,9,
 8,8,0,1,2,3,4,5,6,7,8,9,
 9,9,0,1,2,3,4,5,6,7,8,9,
-99999,99999,0,1,2,3,4,5,6,7,8,9,
-PASS (mixPartialAndFast).filter(filterLog(passAfter5)) is [5,6,7,8,9,99999]
+10099,10099,0,1,2,3,4,5,6,7,8,9,
+PASS (mixPartialAndFast).filter(filterLog(passAfter5)) is [5,6,7,8,9,sparseArrayLength-1]
 PASS [1,2,3].filter(function(i,j,k,l,m){ return m=!m; }) is [1,2,3]
 PASS successfullyParsed is true
 

@@ -1,5 +1,11 @@
 2009-08-02  Sam Weinig  <sam@webkit.org>
 
+        Land updated expected result.
+
+        * fast/js/array-filter-expected.txt:
+
+2009-08-02  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Oliver Hunt.
 
         Speed up fast/js/array-filter.html by 10x in debug builds by not using an
