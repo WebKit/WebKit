@@ -53,11 +53,13 @@ namespace WebCore {
 
 class CachedResource;
 class Database;
+class Document;
 class DocumentLoader;
 class GraphicsContext;
 class HitTestResult;
 class InspectorBackend;
 class InspectorClient;
+class InspectorDOMAgent;
 class InspectorFrontend;
 class JavaScriptCallFrame;
 class StorageArea;
@@ -269,12 +271,14 @@ private:
     friend class InspectorBackend;
  
     // Following are used from InspectorBackend and internally.
-    void scriptObjectReady();
+    void scriptObjectReady(bool enableDOMAgent);
     void moveWindowBy(float x, float y) const;
     void setAttachedWindow(bool);
     void setAttachedWindowHeight(unsigned height);
     void storeLastActivePanel(const String& panelName);
     void closeWindow();
+    InspectorDOMAgent* domAgent() { return m_domAgent.get(); }
+
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     void startUserInitiatedProfilingSoon();
     void toggleRecordButton(bool);
@@ -301,6 +305,7 @@ private:
     Page* m_inspectedPage;
     InspectorClient* m_client;
     OwnPtr<InspectorFrontend> m_frontend;
+    RefPtr<InspectorDOMAgent> m_domAgent;
     Page* m_page;
     RefPtr<Node> m_nodeToFocus;
     RefPtr<InspectorResource> m_mainResource;

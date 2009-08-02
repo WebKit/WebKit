@@ -36,6 +36,7 @@
 #include "HTMLFrameOwnerElement.h"
 #include "InspectorClient.h"
 #include "InspectorController.h"
+#include "InspectorDOMAgent.h"
 #include "InspectorResource.h"
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
@@ -181,10 +182,10 @@ bool InspectorBackend::searchingForNode()
     return false;
 }
 
-void InspectorBackend::loaded()
+void InspectorBackend::loaded(bool enableDOMAgent)
 {
     if (m_inspectorController)
-        m_inspectorController->scriptObjectReady();
+        m_inspectorController->scriptObjectReady(enableDOMAgent);
 }
 
 void InspectorBackend::enableResourceTracking(bool always)
@@ -353,6 +354,30 @@ void InspectorBackend::stepOutOfFunctionInDebugger()
 }
 
 #endif
+
+void InspectorBackend::getChildNodes(long callId, long elementId)
+{
+    if (m_inspectorController)
+        m_inspectorController->domAgent()->getChildNodes(callId, elementId);
+}
+
+void InspectorBackend::setAttribute(long callId, long elementId, const String& name, const String& value)
+{
+    if (m_inspectorController)
+        m_inspectorController->domAgent()->setAttribute(callId, elementId, name, value);
+}
+
+void InspectorBackend::removeAttribute(long callId, long elementId, const String& name)
+{
+    if (m_inspectorController)
+        m_inspectorController->domAgent()->removeAttribute(callId, elementId, name);
+}
+
+void InspectorBackend::setTextNodeValue(long callId, long elementId, const String& value)
+{
+    if (m_inspectorController)
+        m_inspectorController->domAgent()->setTextNodeValue(callId, elementId, value);
+}
 
 void InspectorBackend::highlight(Node* node)
 {

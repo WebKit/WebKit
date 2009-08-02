@@ -30684,6 +30684,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\inspector\InspectorDOMAgent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\InspectorDOMAgent.h"
+				>
+			</File>
+			<File
 				RelativePath="..\inspector\InspectorDOMStorageResource.cpp"
 				>
 			</File>
@@ -30759,6 +30767,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\Callback.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\CallStackSidebarPane.js"
 					>
 				</File>
@@ -30784,6 +30796,10 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\DataGrid.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\DOMAgent.js"
 					>
 				</File>
 				<File

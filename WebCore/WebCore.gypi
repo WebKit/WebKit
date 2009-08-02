@@ -1406,6 +1406,8 @@
             'inspector/InspectorController.h',
             'inspector/InspectorDatabaseResource.cpp',
             'inspector/InspectorDatabaseResource.h',
+            'inspector/InspectorDOMAgent.cpp',
+            'inspector/InspectorDOMAgent.h',
             'inspector/InspectorDOMStorageResource.cpp',
             'inspector/InspectorDOMStorageResource.h',
             'inspector/InspectorFrontend.cpp',

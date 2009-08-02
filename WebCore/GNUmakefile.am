@@ -1125,6 +1125,8 @@ webcore_sources += \
 	WebCore/inspector/InspectorBackend.h \
 	WebCore/inspector/InspectorDatabaseResource.cpp \
 	WebCore/inspector/InspectorDatabaseResource.h \
+	WebCore/inspector/InspectorDOMAgent.cpp \
+	WebCore/inspector/InspectorDOMAgent.h \
 	WebCore/inspector/InspectorDOMStorageResource.cpp \
 	WebCore/inspector/InspectorDOMStorageResource.h \
 	WebCore/inspector/InspectorClient.h \

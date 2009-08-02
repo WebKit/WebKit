@@ -39,6 +39,7 @@ namespace WebCore {
 
 class CachedResource;
 class InspectorClient;
+class InspectorDOMAgent;
 class JavaScriptCallFrame;
 class Node;
 
@@ -81,7 +82,7 @@ public:
 
     bool searchingForNode();
 
-    void loaded();
+    void loaded(bool enableDOMAgent);
 
     void enableResourceTracking(bool always);
     void disableResourceTracking(bool always);
@@ -121,6 +122,11 @@ public:
     void stepIntoStatementInDebugger();
     void stepOutOfFunctionInDebugger();
 #endif
+
+    void getChildNodes(long callId, long elementId);
+    void setAttribute(long callId, long elementId, const String& name, const String& value);
+    void removeAttribute(long callId, long elementId, const String& name);
+    void setTextNodeValue(long callId, long elementId, const String& value);
 
     // Generic code called from custom implementations.
     void highlight(Node* node);

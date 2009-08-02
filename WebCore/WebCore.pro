@@ -859,6 +859,7 @@ SOURCES += \
     inspector/ConsoleMessage.cpp \
     inspector/InspectorBackend.cpp \
     inspector/InspectorDatabaseResource.cpp \
+    inspector/InspectorDOMAgent.cpp \
     inspector/InspectorDOMStorageResource.cpp \
     inspector/InspectorController.cpp \
     inspector/InspectorFrontend.cpp \

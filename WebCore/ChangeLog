@@ -1,3 +1,51 @@
+2009-08-01  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Reimplement Elements Panel so that its
+        interaction with DOM is serialized.
+
+        This is a first cut wuth read support for DOM elements
+        tree as well as some limited editing. No properties, no
+        styles, no search capabilities are implemented yet.
+        Set Preferences.useDOMAgent to true in order to try it
+        out, otherwise disabled by default.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27771
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * inspector/InspectorBackend.cpp:
+        (WebCore::InspectorBackend::getChildNodes):
+        (WebCore::InspectorBackend::setAttribute):
+        (WebCore::InspectorBackend::removeAttribute):
+        (WebCore::InspectorBackend::setTextNodeValue):
+        * inspector/InspectorBackend.h:
+        * inspector/InspectorBackend.idl:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::windowScriptObjectAvailable):
+        (WebCore::InspectorController::setFrontendProxyObject):
+        (WebCore::InspectorController::close):
+        (WebCore::InspectorController::populateScriptObjects):
+        (WebCore::InspectorController::didCommitLoad):
+        * inspector/InspectorController.h:
+        (WebCore::InspectorController::domAgent):
+        * inspector/InspectorDOMAgent.cpp: Added.
+        * inspector/InspectorDOMAgent.h: Added.
+        * inspector/InspectorFrontend.cpp:
+        * inspector/InspectorFrontend.h:
+        * inspector/front-end/Callback.js: Added.
+        * inspector/front-end/DOMAgent.js: Added.
+        * inspector/front-end/ElementsPanel.js:
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+        (WebInspector.loaded):
+
 2009-08-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Adele Peterson.

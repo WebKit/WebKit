@@ -4,6 +4,7 @@
     <file>BottomUpProfileDataGridTree.js</file>
     <file>Breakpoint.js</file>
     <file>BreakpointsSidebarPane.js</file>
+    <file>Callback.js</file>
     <file>CallStackSidebarPane.js</file>
     <file>Console.js</file>
     <file>Database.js</file>
@@ -11,6 +12,7 @@
     <file>DatabasesPanel.js</file>
     <file>DatabaseTableView.js</file>
     <file>DataGrid.js</file>
+    <file>DOMAgent.js</file>
     <file>DOMStorage.js</file>
     <file>DOMStorageDataGrid.js</file>
     <file>DOMStorageItemsView.js</file>

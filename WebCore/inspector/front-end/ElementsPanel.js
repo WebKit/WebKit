@@ -60,7 +60,6 @@ WebInspector.ElementsPanel = function()
             InspectorController.toggleNodeSearch();
             this.panel.nodeSearchButton.removeStyleClass("toggled-on");
         }
-
         WebInspector.console.addInspectedNode(this._focusedDOMNode);
     };
 
@@ -181,7 +180,7 @@ WebInspector.ElementsPanel.prototype = {
         delete this.currentQuery;
         this.searchCanceled();
 
-        var inspectedWindow = InspectorController.inspectedWindow();
+        var inspectedWindow = Preferences.useDOMAgent ? WebInspector.domAgent.inspectedWindow : InspectorController.inspectedWindow();
         if (!inspectedWindow || !inspectedWindow.document)
             return;
 

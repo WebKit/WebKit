@@ -286,6 +286,69 @@ bool InspectorFrontend::addDOMStorage(const ScriptObject& domStorageObj)
 }
 #endif
 
+void InspectorFrontend::setDocumentElement(const ScriptObject& root)
+{
+    OwnPtr<ScriptFunctionCall> function(newFunctionCall("setDocumentElement"));
+    function->appendArgument(root);
+    function->call();
+}
+
+void InspectorFrontend::setChildNodes(int parentId, const ScriptArray& nodes)
+{
+    OwnPtr<ScriptFunctionCall> function(newFunctionCall("setChildNodes"));
+    function->appendArgument(parentId);
+    function->appendArgument(nodes);
+    function->call();
+}
+
+void InspectorFrontend::hasChildrenUpdated(int id, bool newValue)
+{
+    OwnPtr<ScriptFunctionCall> function(newFunctionCall("hasChildrenUpdated"));
+    function->appendArgument(id);
+    function->appendArgument(newValue);
+    function->call();
+}
+
+void InspectorFrontend::childNodeInserted(int parentId, int prevId, const ScriptObject& node)
+{
+    OwnPtr<ScriptFunctionCall> function(newFunctionCall("childNodeInserted"));
+    function->appendArgument(parentId);
+    function->appendArgument(prevId);
+    function->appendArgument(node);
+    function->call();
+}
+
+void InspectorFrontend::childNodeRemoved(int parentId, int id)
+{
+    OwnPtr<ScriptFunctionCall> function(newFunctionCall("childNodeRemoved"));
+    function->appendArgument(parentId);
+    function->appendArgument(id);
+    function->call();
+}
+
+void InspectorFrontend::attributesUpdated(int id, const ScriptArray& attributes)
+{
+    OwnPtr<ScriptFunctionCall> function(newFunctionCall("attributesUpdated"));
+    function->appendArgument(id);
+    function->appendArgument(attributes);
+    function->call();
+}
+
+void InspectorFrontend::didGetChildNodes(int callId)
+{
+    OwnPtr<ScriptFunctionCall> function(newFunctionCall("didGetChildNodes"));
+    function->appendArgument(callId);
+    function->call();
+}
+
+void InspectorFrontend::didApplyDomChange(int callId, bool success)
+{
+    OwnPtr<ScriptFunctionCall> function(newFunctionCall("didApplyDomChange"));
+    function->appendArgument(callId);
+    function->appendArgument(success);
+    function->call();
+}
+
 PassOwnPtr<ScriptFunctionCall> InspectorFrontend::newFunctionCall(const String& functionName)
 {
     ScriptFunctionCall* function = new ScriptFunctionCall(m_scriptState, m_webInspector, "dispatch");

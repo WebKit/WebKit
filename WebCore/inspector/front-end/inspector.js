@@ -37,7 +37,8 @@ var Preferences = {
     minScriptsSidebarWidth: 200,
     showInheritedComputedStyleProperties: false,
     styleRulesExpandedState: {},
-    showMissingLocalizedStrings: false
+    showMissingLocalizedStrings: false,
+    useDOMAgent: false
 }
 
 var WebInspector = {
@@ -299,6 +300,8 @@ WebInspector.loaded = function()
     document.body.addStyleClass("platform-" + platform);
 
     this.console = new WebInspector.Console();
+    if (Preferences.useDOMAgent)
+        this.domAgent = new WebInspector.DOMAgent();
 
     this.panels = {};
     this._createPanels();
@@ -378,7 +381,7 @@ WebInspector.loaded = function()
     document.getElementById("toolbar").addEventListener("mousedown", this.toolbarDragStart, true);
     document.getElementById("close-button").addEventListener("click", this.close, true);
 
-    InspectorController.loaded();
+    InspectorController.loaded(Preferences.useDOMAgent);
 }
 
 var windowLoaded = function()

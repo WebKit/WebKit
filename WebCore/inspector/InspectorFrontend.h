@@ -96,6 +96,15 @@ namespace WebCore {
         bool addDOMStorage(const ScriptObject& domStorageObj);
 #endif
 
+        void setDocumentElement(const ScriptObject& root);
+        void setChildNodes(int parentId, const ScriptArray& nodes);
+        void hasChildrenUpdated(int id, bool newValue);
+        void childNodeInserted(int parentId, int prevId, const ScriptObject& node);
+        void childNodeRemoved(int parentId, int id);
+        void attributesUpdated(int id, const ScriptArray& attributes);
+        void didGetChildNodes(int callId);
+        void didApplyDomChange(int callId, bool success);
+
     private:
         PassOwnPtr<ScriptFunctionCall> newFunctionCall(const String& functionName);
         void callSimpleFunction(const String& functionName);

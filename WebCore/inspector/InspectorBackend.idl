@@ -36,7 +36,7 @@ module core {
     ] InspectorBackend {
         void hideDOMNodeHighlight();
         [Custom] void highlightDOMNode(in Node node);
-        void loaded();
+        void loaded(in boolean enableDOMAgent);
         void windowUnloading();
         void attach();
         void detach();
@@ -97,5 +97,9 @@ module core {
 
         [Custom] Array profiles();
 #endif
-     };
+        void getChildNodes(in long callId, in long elementId);
+        void setAttribute(in long callId, in long elementId, in DOMString name, in DOMString value);
+        void removeAttribute(in long callId, in long elementId, in DOMString name);
+        void setTextNodeValue(in long callId, in long elementId, in DOMString value);
+    };
  }
