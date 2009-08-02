@@ -294,11 +294,6 @@ my $productDir = productDir();
 $productDir .= "/bin" if isQt();
 $productDir .= "/Programs" if isGtk();
 
-if (isAppleMacWebKit()) {
-    push @INC, $productDir;
-    eval 'use DumpRenderTreeSupport;';
-}
-
 chdirWebKit();
 
 if (!defined($root)) {
@@ -322,6 +317,11 @@ $imageDiffTool .= "_debug" if isCygwin() && $configuration ne "Release";
 die "can't find executable $imageDiffTool (looked in $productDir)\n" if $pixelTests && !-x $imageDiffTool;
 
 checkFrameworks() unless isCygwin();
+
+if (isAppleMacWebKit()) {
+    push @INC, $productDir;
+    eval 'use DumpRenderTreeSupport;';
+}
 
 my $layoutTestsName = "LayoutTests";
 my $testDirectory = File::Spec->rel2abs($layoutTestsName);

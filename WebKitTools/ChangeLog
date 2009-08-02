@@ -1,5 +1,11 @@
 2009-08-01  Mark Rowe  <mrowe@apple.com>
 
+        Move the include of DumpRenderTreeSupport to after DumpRenderTree has been built.
+
+        * Scripts/run-webkit-tests:
+
+2009-08-01  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Sam Weinig and David D. Kilzer.
 
         Fix <https://bugs.webkit.org/show_bug.cgi?id=27923>.
