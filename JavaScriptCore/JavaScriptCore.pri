@@ -160,6 +160,7 @@ SOURCES += \
     runtime/InternalFunction.cpp \
     runtime/Completion.cpp \
     runtime/JSArray.cpp \
+    runtime/JSAPIValueWrapper.cpp \
     runtime/JSByteArray.cpp \
     runtime/JSCell.cpp \
     runtime/JSFunction.cpp \

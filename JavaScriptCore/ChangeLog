@@ -1,5 +1,13 @@
 2009-08-02  Geoffrey Garen  <ggaren@apple.com>
 
+        Qt build fix.
+
+        Added JSAPIValueWrapper.cpp to the build.
+
+        * JavaScriptCore.pri:
+
+2009-08-02  Geoffrey Garen  <ggaren@apple.com>
+
         Windows build fix.
 
         Exported symbols for JSAPIValueWrapper.
