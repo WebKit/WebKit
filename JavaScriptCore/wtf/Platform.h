@@ -566,7 +566,7 @@
 #if PLATFORM(X86_64) && PLATFORM(MAC)
 #define WTF_USE_JSVALUE64 1
 #else
-#define WTF_USE_JSVALUE32 1
+#define WTF_USE_JSVALUE32_64 1
 #endif
 #endif /* !defined(WTF_USE_JSVALUE64) && !defined(WTF_USE_JSVALUE32) && !defined(WTF_USE_JSVALUE32_64) */
 
