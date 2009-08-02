@@ -1,3 +1,12 @@
+2009-08-02  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Reviewed by Jan Alonzo.
+
+        Script for building the WebKit library for wx.
+        https://bugs.webkit.org/show_bug.cgi?id=27619
+
+        * wscript: Added.
+
 2009-07-24  Andrei Popescu  <andreip@google.com>
 
         Reviewed by Anders Carlsson.
