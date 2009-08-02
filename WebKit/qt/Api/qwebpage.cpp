@@ -36,6 +36,7 @@
 #include "FrameLoaderClientQt.h"
 #include "FrameView.h"
 #include "FormState.h"
+#include "ApplicationCacheStorage.h"
 #include "ChromeClientQt.h"
 #include "ContextMenu.h"
 #include "ContextMenuClientQt.h"
@@ -75,6 +76,7 @@
 #include <QBasicTimer>
 #include <QBitArray>
 #include <QDebug>
+#include <QDesktopServices>
 #include <QDragEnterEvent>
 #include <QDragLeaveEvent>
 #include <QDragMoveEvent>
@@ -263,6 +265,30 @@ static inline Qt::DropAction dragOpToDropAction(unsigned actions)
     return result;
 }
 
+static void initializeApplicationCachePathIfNecessary()
+{
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    static bool initialized = false;
+        
+    if (initialized)
+        return;
+
+    // Determine the path for HTML5 Application Cache DB
+    QString appCachePath;
+#if QT_VERSION >= 0x040500
+    appCachePath = QDesktopServices::storageLocation(QDesktopServices::CacheLocation);
+#else
+    appCachePath = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
+#endif
+
+    if (appCachePath.isEmpty())
+        appCachePath = QDir::homePath() + QLatin1String("/.") + QCoreApplication::applicationName();
+
+    WebCore::cacheStorage().setCacheDirectory(appCachePath);
+    initialized = true;
+#endif
+}                                                
+
 QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     : q(qq)
     , view(0)
@@ -271,6 +297,7 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     WebCore::InitializeLoggingChannelsIfNecessary();
     JSC::initializeThreading();
     WebCore::FrameLoader::setLocalLoadPolicy(WebCore::FrameLoader::AllowLocalLoadsForLocalAndSubstituteData);
+    initializeApplicationCachePathIfNecessary();
 
     chromeClient = new ChromeClientQt(q);
     contextMenuClient = new ContextMenuClientQt();
