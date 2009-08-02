@@ -269,8 +269,6 @@ namespace JSC {
 
         static double toDouble(JSValue);
         static bool toBoolean(JSValue);
-        static JSObject* toObject(JSValue, ExecState*);
-        static JSObject* toThisObject(JSValue, ExecState*);
 
         static bool getUInt32(JSValue, uint32_t&);
         static bool getTruncatedInt32(JSValue, int32_t&);
@@ -285,8 +283,6 @@ namespace JSC {
         static JSValue nullImmediate();
         static JSValue zeroImmediate();
         static JSValue oneImmediate();
-
-        static JSObject* prototype(JSValue, ExecState*);
 
     private:
 #if USE(JSVALUE64)

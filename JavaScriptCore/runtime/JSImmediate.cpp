@@ -21,56 +21,6 @@
 #include "config.h"
 #include "JSImmediate.h"
 
-#if !USE(JSVALUE32_64)
-
-#include "BooleanConstructor.h"
-#include "BooleanPrototype.h"
-#include "Error.h"
-#include "ExceptionHelpers.h"
-#include "JSGlobalObject.h"
-#include "JSNotAnObject.h"
-#include "NumberConstructor.h"
-#include "NumberPrototype.h"
-
 namespace JSC {
 
-JSObject* JSImmediate::toThisObject(JSValue v, ExecState* exec)
-{
-    ASSERT(isImmediate(v));
-    if (isNumber(v))
-        return constructNumber(exec, v);
-    if (isBoolean(v))
-        return constructBooleanFromImmediateBoolean(exec, v);
-    ASSERT(v.isUndefinedOrNull());
-    return exec->globalThisValue();
-}
-
-JSObject* JSImmediate::toObject(JSValue v, ExecState* exec)
-{
-    ASSERT(isImmediate(v));
-    if (isNumber(v))
-        return constructNumber(exec, v);
-    if (isBoolean(v))
-        return constructBooleanFromImmediateBoolean(exec, v);
-    
-    JSNotAnObjectErrorStub* exception = createNotAnObjectErrorStub(exec, v.isNull());
-    exec->setException(exception);
-    return new (exec) JSNotAnObject(exec, exception);
-}
-
-JSObject* JSImmediate::prototype(JSValue v, ExecState* exec)
-{
-    ASSERT(isImmediate(v));
-    if (isNumber(v))
-        return exec->lexicalGlobalObject()->numberPrototype();
-    if (isBoolean(v))
-        return exec->lexicalGlobalObject()->booleanPrototype();
-
-    JSNotAnObjectErrorStub* exception = createNotAnObjectErrorStub(exec, v.isNull());
-    exec->setException(exception);
-    return new (exec) JSNotAnObject(exec, exception);
-}
-
 } // namespace JSC
-
-#endif // !USE(JSVALUE32_64)

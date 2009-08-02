@@ -1,5 +1,15 @@
 2009-08-02  Geoffrey Garen  <ggaren@apple.com>
 
+        Windows build fix: Nixed JSImmediate::prototype, JSImmediate::toObject,
+        and JSImmediate::toThisObject, and removed their exported symbols.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore_debug.def:
+        * runtime/JSImmediate.cpp:
+        * runtime/JSImmediate.h:
+
+2009-08-02  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Mark Rowe.
 
         Enabled JSVALUE32_64 by default on all platforms other than x86_64 (which uses JSVALUE64).

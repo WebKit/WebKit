@@ -191,7 +191,6 @@ EXPORTS
     ?protectedGlobalObjectCount@Heap@JSC@@QAEIXZ
     ?protectedObjectCount@Heap@JSC@@QAEIXZ
     ?protectedObjectTypeCounts@Heap@JSC@@QAEPAV?$HashCountedSet@PBDU?$PtrHash@PBD@WTF@@U?$HashTraits@PBD@2@@WTF@@XZ
-    ?prototype@JSImmediate@JSC@@CAPAVJSObject@2@VJSValue@2@PAVExecState@2@@Z
     ?put@JSCell@JSC@@UAEXPAVExecState@2@ABVIdentifier@2@VJSValue@2@AAVPutPropertySlot@2@@Z
     ?put@JSCell@JSC@@UAEXPAVExecState@2@IVJSValue@2@@Z
     ?put@JSGlobalObject@JSC@@UAEXPAVExecState@2@ABVIdentifier@2@VJSValue@2@AAVPutPropertySlot@2@@Z
@@ -237,7 +236,6 @@ EXPORTS
     ?toInt32SlowCase@JSC@@YAHNAA_N@Z
     ?toNumber@JSObject@JSC@@UBENPAVExecState@2@@Z
     ?toNumber@JSString@JSC@@EBENPAVExecState@2@@Z
-    ?toObject@JSImmediate@JSC@@CAPAVJSObject@2@VJSValue@2@PAVExecState@2@@Z
     ?toObject@JSObject@JSC@@UBEPAV12@PAVExecState@2@@Z
     ?toObject@JSString@JSC@@EBEPAVJSObject@2@PAVExecState@2@@Z
     ?toPrimitive@JSString@JSC@@EBE?AVJSValue@2@PAVExecState@2@W4PreferredPrimitiveType@2@@Z
@@ -249,7 +247,6 @@ EXPORTS
     ?toThisJSString@JSString@JSC@@EAEPAV12@PAVExecState@2@@Z
     ?toThisJSString@StringObject@JSC@@EAEPAVJSString@2@PAVExecState@2@@Z
     ?toThisObject@JSCell@JSC@@UBEPAVJSObject@2@PAVExecState@2@@Z
-    ?toThisObject@JSImmediate@JSC@@CAPAVJSObject@2@VJSValue@2@PAVExecState@2@@Z
     ?toThisObject@JSObject@JSC@@UBEPAV12@PAVExecState@2@@Z
     ?toThisObject@JSString@JSC@@EBEPAVJSObject@2@PAVExecState@2@@Z
     ?toThisString@JSCell@JSC@@UBE?AVUString@2@PAVExecState@2@@Z
