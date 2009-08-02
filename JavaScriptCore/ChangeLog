@@ -1,5 +1,14 @@
 2009-08-02  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Disabled JSVALUE32_64 on Qt builds, since all layout tests mysteriously
+        crash with it enabled.
+
+        * wtf/Platform.h:
+
+2009-08-02  Geoffrey Garen  <ggaren@apple.com>
+
         Qt build fix.
 
         Added JSAPIValueWrapper.cpp to the build.
