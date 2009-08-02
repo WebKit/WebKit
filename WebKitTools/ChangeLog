@@ -1,5 +1,12 @@
 2009-08-01  Mark Rowe  <mrowe@apple.com>
 
+        Try again to make the Qt build bot happy.
+
+        * BuildSlaveSupport/test-result-archive: Create a placeholder file inside the newly-created
+        directory to prevent 'zip' from failing due to the directory containing no files.
+
+2009-08-01  Mark Rowe  <mrowe@apple.com>
+
         Try and make the Qt build bot happy.
 
         * BuildSlaveSupport/test-result-archive: Handle the case where run-webkit-tests generates

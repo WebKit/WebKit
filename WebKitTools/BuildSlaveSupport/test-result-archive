@@ -61,6 +61,8 @@ def archiveTestResults(configuration, platform):
         if e.errno != 17:
             raise
 
+    open(os.path.join(layoutTestResultsDir, '.placeholder'), 'w').close()
+
     if platform == 'mac':
         if subprocess.call(["ditto", "-c", "-k", "--sequesterRsrc", layoutTestResultsDir, archiveFile]):
             return 1
