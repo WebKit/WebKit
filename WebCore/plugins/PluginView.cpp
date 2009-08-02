@@ -172,6 +172,7 @@ bool PluginView::start()
 
     if (npErr != NPERR_NO_ERROR) {
         m_status = PluginStatusCanNotLoadPlugin;
+        PluginMainThreadScheduler::scheduler().unregisterPlugin(m_instance);
         return false;
     }
 

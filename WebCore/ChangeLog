@@ -2,6 +2,21 @@
 
         Reviewed by Anders Carlsson.
 
+        Unregister plugin from PluginMainThreadScheduler if NPP_New fails
+        
+        https://bugs.webkit.org/show_bug.cgi?id=27706
+        
+        Since the plugin has not been started yet (m_isStarted is not set),
+        calling stop() will not have any affect, so we manually unregister
+        in start() before returning.
+
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::start):
+
+2009-07-27  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Anders Carlsson.
+
         Join the various versions of PluginView::stop() into one shared implementation
 
         https://bugs.webkit.org/show_bug.cgi?id=27706
