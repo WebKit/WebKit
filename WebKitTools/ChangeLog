@@ -1,3 +1,16 @@
+2009-08-02  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Reviewed by Jan Alonzo.
+
+        Scripts needed for the waf build.
+        https://bugs.webkit.org/show_bug.cgi?id=27619
+
+        * wx/build: Added.
+        * wx/build/build_utils.py: Added.
+        * wx/build/settings.py: Added.
+        * wx/build/waf_extensions.py: Added.
+        * wx/build/wxpresets.py: Added.
+
 2009-08-01  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
