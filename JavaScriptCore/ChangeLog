@@ -1,5 +1,14 @@
 2009-08-02  Geoffrey Garen  <ggaren@apple.com>
 
+        Windows build fix.
+
+        Exported symbols for JSAPIValueWrapper.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore_debug.def:
+
+2009-08-02  Geoffrey Garen  <ggaren@apple.com>
+
         GTK build fix.
 
         * jit/JITStubs.cpp: #include <stdarg.h>, for a definition of va_start.

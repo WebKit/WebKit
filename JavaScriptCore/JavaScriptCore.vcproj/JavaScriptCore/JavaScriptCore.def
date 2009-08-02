@@ -135,6 +135,7 @@ EXPORTS
     ?getOwnPropertySlot@JSString@JSC@@EAE_NPAVExecState@2@IAAVPropertySlot@2@@Z
     ?getOwnPropertySlot@StringObject@JSC@@UAE_NPAVExecState@2@ABVIdentifier@2@AAVPropertySlot@2@@Z
     ?getOwnPropertySlot@StringObject@JSC@@UAE_NPAVExecState@2@IAAVPropertySlot@2@@Z
+    ?getPrimitiveNumber@JSAPIValueWrapper@JSC@@UAE_NPAVExecState@2@AANAAVJSValue@2@@Z
     ?getPrimitiveNumber@JSObject@JSC@@UAE_NPAVExecState@2@AANAAVJSValue@2@@Z
     ?getPrimitiveNumber@JSString@JSC@@EAE_NPAVExecState@2@AANAAVJSValue@2@@Z
     ?getPropertyAttributes@JSObject@JSC@@UBE_NPAVExecState@2@ABVIdentifier@2@AAI@Z
@@ -231,15 +232,20 @@ EXPORTS
     ?timedWait@ThreadCondition@WTF@@QAE_NAAVMutex@2@N@Z
     ?tlsKeyCount@WTF@@YAAAJXZ
     ?tlsKeys@WTF@@YAPAKXZ
+    ?toBoolean@JSAPIValueWrapper@JSC@@UBE_NPAVExecState@2@@Z
     ?toBoolean@JSObject@JSC@@UBE_NPAVExecState@2@@Z
     ?toBoolean@JSString@JSC@@EBE_NPAVExecState@2@@Z
     ?toInt32SlowCase@JSC@@YAHNAA_N@Z
+    ?toNumber@JSAPIValueWrapper@JSC@@UBENPAVExecState@2@@Z
     ?toNumber@JSObject@JSC@@UBENPAVExecState@2@@Z
     ?toNumber@JSString@JSC@@EBENPAVExecState@2@@Z
+    ?toObject@JSAPIValueWrapper@JSC@@UBEPAVJSObject@2@PAVExecState@2@@Z
     ?toObject@JSObject@JSC@@UBEPAV12@PAVExecState@2@@Z
     ?toObject@JSString@JSC@@EBEPAVJSObject@2@PAVExecState@2@@Z
+    ?toPrimitive@JSAPIValueWrapper@JSC@@UBE?AVJSValue@2@PAVExecState@2@W4PreferredPrimitiveType@2@@Z
     ?toPrimitive@JSString@JSC@@EBE?AVJSValue@2@PAVExecState@2@W4PreferredPrimitiveType@2@@Z
     ?toStrictUInt32@UString@JSC@@QBEIPA_N@Z
+    ?toString@JSAPIValueWrapper@JSC@@UBE?AVUString@2@PAVExecState@2@@Z
     ?toString@JSObject@JSC@@UBE?AVUString@2@PAVExecState@2@@Z
     ?toString@JSString@JSC@@EBE?AVUString@2@PAVExecState@2@@Z
     ?toString@StringObject@JSC@@EBE?AVUString@2@PAVExecState@2@@Z
