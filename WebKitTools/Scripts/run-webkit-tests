@@ -294,6 +294,11 @@ my $productDir = productDir();
 $productDir .= "/bin" if isQt();
 $productDir .= "/Programs" if isGtk();
 
+if (isAppleMacWebKit()) {
+    push @INC, $productDir;
+    eval 'use DumpRenderTreeSupport;';
+}
+
 chdirWebKit();
 
 if (!defined($root)) {
@@ -1357,12 +1362,7 @@ sub dumpToolDidCrash()
     # On Mac OS X, crashing may be significantly delayed by crash reporter.
     return 0 unless isAppleMacWebKit();
 
-    my $tryingToExit = 0;
-    open PS, "ps -o state -p $dumpToolPID |";
-    <PS>; # skip header
-    $tryingToExit = 1 if <PS> =~ /E/;
-    close PS;
-    return $tryingToExit;
+    return DumpRenderTreeSupport::processIsCrashing($dumpToolPID);
 }
 
 sub openHTTPDIfNeeded()
