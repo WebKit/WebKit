@@ -1,3 +1,11 @@
+2009-08-01  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by David D. Kilzer.
+
+        Display the reminder once rather than once per ChangeLog.
+
+        * Scripts/prepare-ChangeLog:
+
 2009-08-01  David Kilzer  <ddkilzer@apple.com>
 
         resolve-ChangeLogs: add error checking to git ls-files command on close()
