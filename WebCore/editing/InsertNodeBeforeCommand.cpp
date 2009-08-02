@@ -40,7 +40,7 @@ InsertNodeBeforeCommand::InsertNodeBeforeCommand(PassRefPtr<Node> insertChild, P
     ASSERT(m_refChild);
     ASSERT(m_refChild->parentNode());
 
-    ASSERT(enclosingNodeOfType(Position(m_refChild->parentNode(), 0), isContentEditable) || !m_refChild->parentNode()->attached());
+    ASSERT(m_refChild->parentNode()->isContentEditable() || !m_refChild->parentNode()->attached());
 }
 
 void InsertNodeBeforeCommand::doApply()

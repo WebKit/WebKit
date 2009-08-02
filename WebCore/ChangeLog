@@ -1,3 +1,25 @@
+2009-08-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Adele Peterson.
+
+        isContentEditable function in htmlediting.* must be removed
+        https://bugs.webkit.org/show_bug.cgi?id=27870
+
+        This patch removes isContentEditable function in htmlediting.cpp and
+        replaces all usage by calling Node::isContentEditable or its derivatives.
+
+        * editing/AppendNodeCommand.cpp: ditto
+        (WebCore::AppendNodeCommand::AppendNodeCommand): ditto
+        * editing/IndentOutdentCommand.cpp: ditto
+        (WebCore::IndentOutdentCommand::outdentParagraph): ditto
+        * editing/InsertNodeBeforeCommand.cpp: ditto
+        (WebCore::InsertNodeBeforeCommand::InsertNodeBeforeCommand): ditto
+        * editing/htmlediting.cpp: ditto
+        (WebCore::enclosingNodeWithTag): ditto
+        (WebCore::enclosingNodeOfType): ditto
+        (WebCore::canMergeLists): ditto
+        * editing/htmlediting.h: Updated prototype
+
 2009-08-01  John Abd-El-Malek  <jam@chromium.org>
 
         Reviewed by Adam Barth.
