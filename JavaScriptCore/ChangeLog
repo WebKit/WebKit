@@ -1,3 +1,12 @@
+2009-08-02  Yong Li  <yong.li@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        DateMath depends on strftime and localtime, which need to be imported manually on WinCE
+        https://bugs.webkit.org/show_bug.cgi?id=26558
+
+        * wtf/DateMath.cpp:
+
 2009-08-01  David Kilzer  <ddkilzer@apple.com>
 
         wtf/Threading.h: added include of Platform.h
