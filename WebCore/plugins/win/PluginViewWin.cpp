@@ -104,8 +104,6 @@ using namespace HTMLNames;
 const LPCWSTR kWebPluginViewdowClassName = L"WebPluginView";
 const LPCWSTR kWebPluginViewProperty = L"WebPluginViewProperty";
 
-static const char* MozillaUserAgent = "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1) Gecko/20061010 Firefox/2.0";
-
 #if !PLATFORM(WINCE)
 // The code used to hook BeginPaint/EndPaint originally came from
 // <http://www.fengyuan.com/article/wmprint.html>.
@@ -753,21 +751,6 @@ void PluginView::setNPWindowRect(const IntRect& rect)
             m_pluginWndProc = (WNDPROC)SetWindowLongPtr(platformPluginWidget(), GWLP_WNDPROC, (LONG)PluginViewWndProc);
 #endif
     }
-}
-
-const char* PluginView::userAgentStatic()
-{
-    return 0;
-}
-
-const char* PluginView::userAgent()
-{
-    if (m_plugin->quirks().contains(PluginQuirkWantsMozillaUserAgent))
-        return MozillaUserAgent;
-
-    if (m_userAgent.isNull())
-        m_userAgent = m_parentFrame->loader()->userAgent(m_url).utf8();
-    return m_userAgent.data();
 }
 
 NPError PluginView::handlePostReadFile(Vector<char>& buffer, uint32 len, const char* buf)

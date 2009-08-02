@@ -258,25 +258,6 @@ void PluginView::setParentVisible(bool visible)
     }
 }
 
-static const char* MozillaUserAgent = "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.1) Gecko/20061010 Firefox/2.0";
-
-const char* PluginView::userAgent()
-{
-    if (m_plugin->quirks().contains(PluginQuirkWantsMozillaUserAgent))
-        return MozillaUserAgent;
-
-    if (m_userAgent.isNull())
-        m_userAgent = m_parentFrame->loader()->userAgent(m_url).utf8();
-
-    return m_userAgent.data();
-}
-
-const char* PluginView::userAgentStatic()
-{
-    //FIXME - Lie and say we are Mozilla
-    return MozillaUserAgent;
-}
-
 NPError PluginView::handlePostReadFile(Vector<char>& buffer, uint32 len, const char* buf)
 {
     String filename(buf, len);

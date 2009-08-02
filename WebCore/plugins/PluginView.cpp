@@ -1115,4 +1115,32 @@ void PluginView::paintMissingPluginIcon(GraphicsContext* context, const IntRect&
     context->restore();
 }
 
+static const char* MozillaUserAgent = "Mozilla/5.0 ("
+#if defined(XP_MACOSX)
+        "Macintosh; U; Intel Mac OS X;"
+#elif defined(XP_WIN)
+        "Windows; U; Windows NT 5.1;"
+#elif defined(XP_UNIX)
+        "X11; U; Linux i686;"
+#endif
+        " en-US; rv:1.8.1) Gecko/20061010 Firefox/2.0";
+
+const char* PluginView::userAgent()
+{
+    if (m_plugin->quirks().contains(PluginQuirkWantsMozillaUserAgent))
+        return MozillaUserAgent;
+
+    if (m_userAgent.isNull())
+        m_userAgent = m_parentFrame->loader()->userAgent(m_url).utf8();
+
+    return m_userAgent.data();
+}
+
+#if ENABLE(NETSCAPE_PLUGIN_API)
+const char* PluginView::userAgentStatic()
+{
+    return MozillaUserAgent;
+}
+#endif
+
 } // namespace WebCore
