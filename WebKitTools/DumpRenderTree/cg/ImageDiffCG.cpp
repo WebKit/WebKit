@@ -87,25 +87,20 @@ static void releaseMallocBuffer(void* info, const void* data, size_t size)
 
 static RetainPtr<CGImageRef> createDifferenceImage(CGImageRef baseImage, CGImageRef testImage, float& difference)
 {
-    static RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
-    RetainPtr<CGImageRef> diffImage;
-    
     size_t width = CGImageGetWidth(baseImage);
     size_t height = CGImageGetHeight(baseImage);
     size_t rowBytes = width * 4;
-    
+
     // Draw base image in bitmap context
     void* baseBuffer = calloc(height, rowBytes);
-    CGContextRef baseContext = CGBitmapContextCreate(baseBuffer, width, height, 8, rowBytes, colorSpace.get(), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host);
-    CGContextDrawImage(baseContext, CGRectMake(0, 0, width, height), baseImage);
-    CGContextRelease(baseContext);
-    
+    RetainPtr<CGContextRef> baseContext(AdoptCF, CGBitmapContextCreate(baseBuffer, width, height, 8, rowBytes, CGImageGetColorSpace(baseImage), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host));
+    CGContextDrawImage(baseContext.get(), CGRectMake(0, 0, width, height), baseImage);
+
     // Draw test image in bitmap context
     void* buffer = calloc(height, rowBytes);
-    CGContextRef context = CGBitmapContextCreate(buffer, width, height, 8, rowBytes, colorSpace.get(), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host);
-    CGContextDrawImage(context, CGRectMake(0, 0, width, height), testImage);
-    CGContextRelease(context);
-    
+    RetainPtr<CGContextRef> context(AdoptCF, CGBitmapContextCreate(buffer, width, height, 8, rowBytes, CGImageGetColorSpace(testImage), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host));
+    CGContextDrawImage(context.get(), CGRectMake(0, 0, width, height), testImage);
+
     // Compare the content of the 2 bitmaps
     void* diffBuffer = malloc(width * height);
     float count = 0.0f;
@@ -141,7 +136,8 @@ static RetainPtr<CGImageRef> createDifferenceImage(CGImageRef baseImage, CGImage
         difference = 100.0f * sum / (height * width);
     else
         difference = 0.0f;
-    
+
+    RetainPtr<CGImageRef> diffImage;
     // Generate a normalized diff image if there is any difference
     if (difference > 0.0f) {
         if (maxDistance < 1.0f) {
@@ -150,11 +146,9 @@ static RetainPtr<CGImageRef> createDifferenceImage(CGImageRef baseImage, CGImage
                 diff[p] = diff[p] / maxDistance;
         }
         
-        CGDataProviderRef provider = CGDataProviderCreateWithData(0, diffBuffer, width * height, releaseMallocBuffer);
-        CGColorSpaceRef diffColorspace = CGColorSpaceCreateDeviceGray();
-        diffImage.adoptCF(CGImageCreate(width, height, 8, 8, width, diffColorspace, 0, provider, 0, false, kCGRenderingIntentDefault));
-        CGColorSpaceRelease(diffColorspace);
-        CGDataProviderRelease(provider);
+        static CGColorSpaceRef diffColorspace = CGColorSpaceCreateDeviceGray();
+        RetainPtr<CGDataProviderRef> provider(AdoptCF, CGDataProviderCreateWithData(0, diffBuffer, width * height, releaseMallocBuffer));
+        diffImage.adoptCF(CGImageCreate(width, height, 8, 8, width, diffColorspace, 0, provider.get(), 0, false, kCGRenderingIntentDefault));
     }
     else
         free(diffBuffer);
