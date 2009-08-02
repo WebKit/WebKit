@@ -1,3 +1,12 @@
+2009-08-01  David Kilzer  <ddkilzer@apple.com>
+
+        wtf/Threading.h: added include of Platform.h
+
+        Reviewed by Mark Rowe.
+
+        * wtf/Threading.h: Added #include "Platform.h" since this header
+        uses PLATFORM() and other macros.
+
 2009-08-01  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Oliver Hunt.

@@ -59,6 +59,8 @@
 #ifndef Threading_h
 #define Threading_h
 
+#include "Platform.h"
+
 #if PLATFORM(WINCE)
 #include <windows.h>
 #endif
