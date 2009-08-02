@@ -1,3 +1,12 @@
+2009-08-02  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Reviewed by Jan Alonzo.
+
+        Script for building the JavaScriptCore library for wx.
+        https://bugs.webkit.org/show_bug.cgi?id=27619
+
+        * wscript: Added.
+
 2009-08-02  Yong Li  <yong.li@torchmobile.com>
 
         Reviewed by George Staikos.
