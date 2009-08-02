@@ -1,3 +1,37 @@
+2009-07-30  Joseph Pecoraro  <joepeck02@gmail.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Inspector: let me *edit* css styles in the web inspector.
+        https://bugs.webkit.org/show_bug.cgi?id=27124
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel): added property stylesheet pointing to 1 stylesheet added to the page if needed
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.prototype.update): handle blank sections
+        (WebInspector.StylesSidebarPane.prototype.addBlankSection): blank section in the correct position
+        (WebInspector.StylesSidebarPane.prototype.appropriateSelectorForNode): helper to get a nice selector for the selectd node
+        (WebInspector.StylePropertiesSection):
+        (WebInspector.StylePropertiesSection.prototype.expand):
+        (WebInspector.StylePropertiesSection.prototype.isPropertyInherited):
+        (WebInspector.StylePropertiesSection.prototype.isPropertyOverloaded):
+        (WebInspector.StylePropertiesSection.prototype.addNewBlankProperty):
+        (WebInspector.StylePropertiesSection.prototype._dblclickEmptySpace): easily create new properties
+        (WebInspector.StylePropertiesSection.prototype._dblclickSelector):
+        (WebInspector.StylePropertiesSection.prototype.startEditingSelector): allow for editing selectors
+        (WebInspector.StylePropertiesSection.prototype.editingSelectorCommitted):
+        (WebInspector.StylePropertiesSection.prototype.editingSelectorCancelled):
+        (WebInspector.StylePropertiesSection.prototype._doesSelectorAffectSelectedNode): helper to check if a selector applies to the selected node
+        (WebInspector.BlankStylePropertiesSection.prototype._dblclick):
+        (WebInspector.BlankStylePropertiesSection.prototype.startEditing):
+        (WebInspector.BlankStylePropertiesSection.prototype.editingCancelled):
+        (WebInspector.BlankStylePropertiesSection.prototype.editingCommitted):
+        (WebInspector.BlankStylePropertiesSection.prototype.makeNormal): morph into a StylePropertiesSection
+        (WebInspector.StylePropertyTreeElement.prototype):
+        (WebInspector.StylePropertyTreeElement.prototype.):
+        * inspector/front-end/inspector.css:
+
 2009-07-31  Anton Muhin  <antonm@chromium.org>
 
         Reviewed by Adam Barth.

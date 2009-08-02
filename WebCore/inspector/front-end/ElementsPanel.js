@@ -113,6 +113,8 @@ WebInspector.ElementsPanel = function()
     this._nodeRemovedEventListener = InspectorController.wrapCallback(this._nodeRemoved.bind(this));
     this._contentLoadedEventListener = InspectorController.wrapCallback(this._contentLoaded.bind(this));
 
+    this.stylesheet = null;
+
     this.reset();
 }
 

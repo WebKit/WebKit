@@ -1182,6 +1182,10 @@ body.inactive .placard.selected {
     -webkit-background-clip: padding;
 }
 
+.section.no-affect .header {
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(167, 167, 167)), to(rgb(123, 123, 123)))
+}
+
 .section .header::before {
     position: absolute;
     top: 4px;
@@ -1189,6 +1193,10 @@ body.inactive .placard.selected {
     width: 8px;
     height: 8px;
     content: url(Images/treeRightTriangleWhite.png);
+}
+
+.section.blank-section .header::before {
+    display: none;
 }
 
 .section.expanded .header::before {
@@ -1200,6 +1208,10 @@ body.inactive .placard.selected {
     font-weight: bold;
     word-wrap: break-word;
     white-space: normal;
+}
+
+.section .header .title.blank-title {
+    font-style: italic;
 }
 
 .section .header label {
@@ -1239,6 +1251,15 @@ body.inactive .placard.selected {
     padding: 2px 6px 3px;
     list-style: none;
     background-color: white;
+    min-height: 18px;
+}
+
+.section.no-affect .properties li {
+    opacity: 0.5;
+}
+
+.section.no-affect .properties li.editing {
+    opacity: 1.0;
 }
 
 .section.expanded .properties {
