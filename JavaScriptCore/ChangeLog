@@ -1,5 +1,11 @@
 2009-08-02  Geoffrey Garen  <ggaren@apple.com>
 
+        Qt build fix.
+        
+        * runtime/Collector.cpp: #include <limits.h>, for a definition of ULONG_MAX.
+
+2009-08-02  Geoffrey Garen  <ggaren@apple.com>
+
         Windows build fix: Nixed JSImmediate::prototype, JSImmediate::toObject,
         and JSImmediate::toThisObject, and removed their exported symbols.
 
