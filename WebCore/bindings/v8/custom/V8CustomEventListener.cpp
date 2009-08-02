@@ -83,6 +83,8 @@ v8::Local<v8::Value> V8EventListener::callListenerFunction(v8::Handle<v8::Value>
     v8::Handle<v8::Value> parameters[1] = { jsEvent };
 
     V8Proxy* proxy = V8Proxy::retrieve(m_frame);
+    if (!proxy)
+        return v8::Local<v8::Value>();
     return proxy->callFunction(handlerFunction, receiver, 1, parameters);
 }
 
