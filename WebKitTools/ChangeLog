@@ -1,3 +1,13 @@
+2009-08-02  David D. Kilzer  <ddkilzer@webkit.org>
+
+        <http://webkit.org/b/27930> bugzilla-tool hates Tor Arne Vestbø
+
+        Reviewed by Tor Arne Vestbø.
+
+        * Scripts/bugzilla-tool:
+        (set_reviewer_in_changelog): Made sure reviewer is properly
+        encoded when calling replace().
+
 2009-08-02  Kevin Ollivier  <kevino@theolliviers.com>
 
         Reviewed by David Levin.
