@@ -223,38 +223,6 @@ PluginView::~PluginView()
     m_window = 0;
 }
 
-void PluginView::stop()
-{
-    if (!m_isStarted)
-        return;
-
-    LOG(Plugins, "PluginView::stop(): Stopping plug-in '%s'", m_plugin->name().utf8().data());
-
-    HashSet<RefPtr<PluginStream> > streams = m_streams;
-    HashSet<RefPtr<PluginStream> >::iterator end = streams.end();
-    for (HashSet<RefPtr<PluginStream> >::iterator it = streams.begin(); it != end; ++it) {
-        (*it)->stop();
-        disconnectStream((*it).get());
-    }
-
-    ASSERT(m_streams.isEmpty());
-
-    m_isStarted = false;
-
-    JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
-
-    PluginMainThreadScheduler::scheduler().unregisterPlugin(m_instance);
-
-    // Destroy the plugin
-    PluginView::setCurrentPluginView(this);
-    setCallingPlugin(true);
-    m_plugin->pluginFuncs()->destroy(m_instance, 0);
-    setCallingPlugin(false);
-    PluginView::setCurrentPluginView(0);
-
-    m_instance->pdata = 0;
-}
-
 // Used before the plugin view has been initialized properly, and as a
 // fallback for variables that do not require a view to resolve.
 NPError PluginView::getValueStatic(NPNVariable variable, void* value)

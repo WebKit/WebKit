@@ -1,3 +1,38 @@
+2009-08-02  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Anders Carlsson.
+
+        Join the various versions of PluginView::stop() into one shared implementation
+
+        https://bugs.webkit.org/show_bug.cgi?id=27706
+
+        The platform-dependent bits are now ifdef'ed in the shared implementation,
+        using the XP_ defines (XP_WIN, XP_MACOSX, XP_UNIX) from npapi.h
+        
+        Differences to the original implementation are as follows:
+
+            - The Qt port unregistered the plugin before calling NP_SetWindow
+              with a 0 window handle. Now it's done after (similar to Win)
+
+            - The GTK and Qt ports unregistered the plugin before clearing
+              the m_npWindow.ws_info struct. Now it's done after.
+              
+            - The Win port constructed the DropAllLocks after unsubclassing
+              the window. Now it's done before.
+              
+            - The Mac, Qt, and GTK ports did not pass a NPSavedData struct
+              to NP_Destroy (like the Win port). Now all ports do.
+
+            - The Win port did not call PluginView::setCurrentPluginView()
+              before calling to NP-functions. Now it does.     
+
+        * plugins/PluginView.cpp:
+        * plugins/PluginViewNone.cpp:
+        * plugins/gtk/PluginViewGtk.cpp:
+        * plugins/mac/PluginViewMac.cpp:
+        * plugins/qt/PluginViewQt.cpp:
+        * plugins/win/PluginViewWin.cpp:
+
 2009-07-30  Joseph Pecoraro  <joepeck02@gmail.com>
 
         Reviewed by Timothy Hatcher.

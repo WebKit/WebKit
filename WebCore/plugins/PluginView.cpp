@@ -191,6 +191,83 @@ bool PluginView::start()
     return true;
 }
 
+void PluginView::stop()
+{
+    if (!m_isStarted)
+        return;
+
+    LOG(Plugins, "PluginView::stop(): Stopping plug-in '%s'", m_plugin->name().utf8().data());
+
+    HashSet<RefPtr<PluginStream> > streams = m_streams;
+    HashSet<RefPtr<PluginStream> >::iterator end = streams.end();
+    for (HashSet<RefPtr<PluginStream> >::iterator it = streams.begin(); it != end; ++it) {
+        (*it)->stop();
+        disconnectStream((*it).get());
+    }
+
+    ASSERT(m_streams.isEmpty());
+
+    m_isStarted = false;
+
+    JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
+
+#ifdef XP_WIN
+    // Unsubclass the window
+    if (m_isWindowed) {
+#if PLATFORM(WINCE)
+        WNDPROC currentWndProc = (WNDPROC)GetWindowLong(platformPluginWidget(), GWL_WNDPROC);
+
+        if (currentWndProc == PluginViewWndProc)
+            SetWindowLong(platformPluginWidget(), GWL_WNDPROC, (LONG)m_pluginWndProc);
+#else
+        WNDPROC currentWndProc = (WNDPROC)GetWindowLongPtr(platformPluginWidget(), GWLP_WNDPROC);
+
+        if (currentWndProc == PluginViewWndProc)
+            SetWindowLongPtr(platformPluginWidget(), GWLP_WNDPROC, (LONG)m_pluginWndProc);
+#endif
+    }
+#endif // XP_WIN
+
+#if !defined(XP_MACOSX)
+    // Clear the window
+    m_npWindow.window = 0;
+
+    if (m_plugin->pluginFuncs()->setwindow && !m_plugin->quirks().contains(PluginQuirkDontSetNullWindowHandleOnDestroy)) {
+        PluginView::setCurrentPluginView(this);
+        setCallingPlugin(true);
+        m_plugin->pluginFuncs()->setwindow(m_instance, &m_npWindow);
+        setCallingPlugin(false);
+        PluginView::setCurrentPluginView(0);
+    }
+
+#ifdef XP_UNIX
+    if (m_isWindowed && m_npWindow.ws_info)
+           delete (NPSetWindowCallbackStruct *)m_npWindow.ws_info;
+    m_npWindow.ws_info = 0;
+#endif
+
+#endif // !defined(XP_MACOSX)
+
+    PluginMainThreadScheduler::scheduler().unregisterPlugin(m_instance);
+
+    NPSavedData* savedData = 0;
+    PluginView::setCurrentPluginView(this);
+    setCallingPlugin(true);
+    NPError npErr = m_plugin->pluginFuncs()->destroy(m_instance, &savedData);
+    setCallingPlugin(false);
+    LOG_NPERROR(npErr);
+    PluginView::setCurrentPluginView(0);
+
+    if (savedData) {
+        // TODO: Actually save this data instead of just discarding it
+        if (savedData->buf)
+            NPN_MemFree(savedData->buf);
+        NPN_MemFree(savedData);
+    }
+
+    m_instance->pdata = 0;
+}
+
 void PluginView::setCurrentPluginView(PluginView* pluginView)
 {
     s_currentPluginView = pluginView;
