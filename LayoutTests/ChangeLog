@@ -1,3 +1,11 @@
+2009-08-03  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        [Gtk] Skip accessibility/input-slider.html as it needs
+        Accessibility support in DRT which the Gtk do not have an
+        implementation at the moment.
+
+        * platform/gtk/Skipped:
+
 2009-08-03  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Sam Weinig.
