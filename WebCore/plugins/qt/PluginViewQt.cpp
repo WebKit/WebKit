@@ -45,6 +45,7 @@
 #include "NotImplemented.h"
 #include "Page.h"
 #include "PlatformMouseEvent.h"
+#include "PlatformKeyboardEvent.h"
 #include "PluginContainerQt.h"
 #include "PluginDebug.h"
 #include "PluginPackage.h"
@@ -55,10 +56,12 @@
 #include "npruntime_impl.h"
 #include "runtime.h"
 #include "runtime_root.h"
+#include <QKeyEvent>
 #include <QWidget>
 #include <QX11Info>
 #include <runtime/JSLock.h>
 #include <runtime/JSValue.h>
+#include <X11/X.h>
 
 using JSC::ExecState;
 using JSC::Interpreter;
@@ -150,14 +153,76 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
         setNPWindowIfNeeded();
 }
 
+// TODO: Unify across ports.
+bool PluginView::dispatchNPEvent(NPEvent& event)
+{
+    if (!m_plugin->pluginFuncs()->event)
+        return false;
+
+    PluginView::setCurrentPluginView(this);
+    JSC::JSLock::DropAllLocks dropAllLocks(false);
+
+    setCallingPlugin(true);
+    bool accepted = m_plugin->pluginFuncs();
+    setCallingPlugin(false);
+
+    return accepted;
+}
+
+void setSharedXEventFields(XEvent& xEvent, QWidget* hostWindow)
+{
+    xEvent.xany.serial = 0; // we are unaware of the last request processed by X Server
+    xEvent.xany.send_event = false;
+    xEvent.xany.display = hostWindow->x11Info().display();
+    // NOTE: event.xany.window doesn't always respond to the .window property of other XEvent's
+    // but does in the case of KeyPress, KeyRelease, ButtonPress, ButtonRelease, and MotionNotify
+    // events; thus, this is right:
+    xEvent.xany.window = hostWindow->window()->handle();
+}
+
+void setXKeyEventSpecificFields(XEvent& xEvent, KeyboardEvent* event)
+{
+    QKeyEvent* qKeyEvent = event->keyEvent()->qtEvent();
+
+    xEvent.xkey.root = QX11Info::appRootWindow();
+    xEvent.xkey.subwindow = 0; // we have no child window
+    xEvent.xkey.time = event->timeStamp();
+    xEvent.xkey.state = qKeyEvent->nativeModifiers();
+    xEvent.xkey.keycode = qKeyEvent->nativeScanCode();
+    xEvent.xkey.same_screen = true;
+
+    // NOTE: As the XEvents sent to the plug-in are synthesized and there is not a native window
+    // corresponding to the plug-in rectangle, some of the members of the XEvent structures are not
+    // set to their normal Xserver values. e.g. Key events don't have a position.
+    // source: https://developer.mozilla.org/en/NPEvent
+    xEvent.xkey.x = 0;
+    xEvent.xkey.y = 0;
+    xEvent.xkey.x_root = 0;
+    xEvent.xkey.y_root = 0;
+}
+
 void PluginView::handleKeyboardEvent(KeyboardEvent* event)
 {
-    notImplemented();
+    if (m_isWindowed)
+        return;
+
+    if (event->type() != "keydown" && event->type() != "keyup")
+        return;
+
+    XEvent npEvent; // On UNIX NPEvent is a typedef for XEvent.
+
+    npEvent.type = (event->type() == "keydown") ? 2 : 3; // ints as Qt unsets KeyPress and KeyRelease
+    setSharedXEventFields(npEvent, m_parentFrame->view()->hostWindow()->platformWindow());
+    setXKeyEventSpecificFields(npEvent, event);
+
+    if (!dispatchNPEvent(npEvent))
+        event->setDefaultHandled();
 }
 
 void PluginView::handleMouseEvent(MouseEvent* event)
 {
-    notImplemented();
+    if (m_isWindowed)
+        return;
 }
 
 void PluginView::setParent(ScrollView* parent)

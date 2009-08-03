@@ -1,3 +1,19 @@
+2009-08-03  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        Based on work by Yael Aharon.
+
+        Implement keyboard event forwarding for windowless plugins
+        for the Qt port.
+
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::dispatchNPEvent):
+        (WebCore::setSharedXEventFields):
+        (WebCore::setXKeyEventSpecificFields):
+        (WebCore::PluginView::handleKeyboardEvent):
+        (WebCore::PluginView::handleMouseEvent):
+
 2009-08-03  Joseph Pecoraro  <joepeck02@gmail.com>
 
         Reviewed by Timothy Hatcher.
