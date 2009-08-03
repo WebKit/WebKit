@@ -116,10 +116,15 @@ Event* JSDOMGlobalObject::currentEvent() const
     return d()->evt;
 }
 
+JSDOMGlobalObject* toJSDOMGlobalObject(Document* document)
+{
+    return toJSDOMWindow(document->frame());
+}
+
 JSDOMGlobalObject* toJSDOMGlobalObject(ScriptExecutionContext* scriptExecutionContext)
 {
     if (scriptExecutionContext->isDocument())
-        return toJSDOMWindow(static_cast<Document*>(scriptExecutionContext)->frame());
+        return toJSDOMGlobalObject(static_cast<Document*>(scriptExecutionContext));
 
 #if ENABLE(WORKERS)
     if (scriptExecutionContext->isWorkerContext())

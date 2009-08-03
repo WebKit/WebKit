@@ -1,3 +1,25 @@
+2009-08-02  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        JSNodeCustom should call document() instead of scriptExecutionContext()
+        https://bugs.webkit.org/show_bug.cgi?id=27931
+
+        We want to call document() because it's in inline function, instead of
+        scriptExecutionContext() because it's a virtual function.  If we have a
+        Node*, then we know that the virtual function will always return the
+        document anyway.
+
+        There are more instance of this bug, but I'd like to start with a small
+        patch and work up.
+
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::toJSDOMGlobalObject):
+        * bindings/js/JSDOMGlobalObject.h:
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::JSNode::addEventListener):
+        (WebCore::JSNode::removeEventListener):
+
 2009-08-02  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Anders Carlsson.
