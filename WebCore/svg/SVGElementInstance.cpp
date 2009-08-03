@@ -136,7 +136,7 @@ void SVGElementInstance::setNeedsUpdate(bool value)
 ScriptExecutionContext* SVGElementInstance::scriptExecutionContext() const
 {
     if (SVGElement* element = correspondingElement())
-        return element->scriptExecutionContext();
+        return element->document();
     return 0;
 }
 
