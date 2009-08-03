@@ -259,12 +259,14 @@ void PluginView::stop()
     LOG_NPERROR(npErr);
     PluginView::setCurrentPluginView(0);
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
     if (savedData) {
         // TODO: Actually save this data instead of just discarding it
         if (savedData->buf)
             NPN_MemFree(savedData->buf);
         NPN_MemFree(savedData);
     }
+#endif
 
     m_instance->pdata = 0;
 }
