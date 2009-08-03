@@ -1,6 +1,6 @@
 2009-08-03  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
-        Reviewed by Eric Seidel.
+        Rubber-stamped by Eric Seidel.
 
         [Gtk] macros in webkit.m4 should be defined once only
         https://bugs.webkit.org/show_bug.cgi?id=27929
