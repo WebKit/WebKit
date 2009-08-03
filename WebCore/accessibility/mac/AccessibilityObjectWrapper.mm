@@ -951,7 +951,10 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
 #endif
         { TableHeaderContainerRole, NSAccessibilityGroupRole },
         { DefinitionListDefinitionRole, NSAccessibilityGroupRole },
-        { DefinitionListTermRole, NSAccessibilityGroupRole }
+        { DefinitionListTermRole, NSAccessibilityGroupRole },
+        
+        { SliderThumbRole, NSAccessibilityValueIndicatorRole },
+        
 
     };
     AccessibilityRoleMap& roleMap = *new AccessibilityRoleMap;
@@ -1056,6 +1059,12 @@ static NSString* roleValueToNSString(AccessibilityRole value)
 
     if ([axRole isEqualToString:NSAccessibilityCellRole])
         return NSAccessibilityRoleDescription(NSAccessibilityCellRole, [self subrole]);
+
+    if ([axRole isEqualToString:NSAccessibilitySliderRole])
+        return NSAccessibilityRoleDescription(NSAccessibilitySliderRole, [self subrole]);
+
+    if ([axRole isEqualToString:NSAccessibilityValueIndicatorRole])
+        return NSAccessibilityRoleDescription(NSAccessibilityValueIndicatorRole, [self subrole]);
 
     if ([axRole isEqualToString:@"AXWebArea"])
         return AXWebAreaText();
@@ -1345,7 +1354,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         }  
     }
     
-    if ((m_object->isListBox() ||m_object->isList()) && [attributeName isEqualToString:NSAccessibilityOrientationAttribute])
+    if ((m_object->isListBox() || m_object->isList()) && [attributeName isEqualToString:NSAccessibilityOrientationAttribute])
         return NSAccessibilityVerticalOrientationValue;
 
     if ([attributeName isEqualToString: @"AXSelectedTextMarkerRange"])
@@ -1579,8 +1588,34 @@ static NSString* roleValueToNSString(AccessibilityRole value)
 
     if (m_object->isAttachment())
         [[self attachmentView] accessibilityPerformAction:NSAccessibilityPressAction];
-    
-    m_object->press();    
+    else
+        m_object->press();    
+}
+
+- (void)accessibilityPerformIncrementAction
+{
+    if (!m_object)
+        return;
+
+    m_object->updateBackingStore();
+
+    if (m_object->isAttachment())
+        [[self attachmentView] accessibilityPerformAction:NSAccessibilityIncrementAction];
+    else
+        m_object->increment();    
+}
+
+- (void)accessibilityPerformDecrementAction
+{
+    if (!m_object)
+        return;
+
+    m_object->updateBackingStore();
+
+    if (m_object->isAttachment())
+        [[self attachmentView] accessibilityPerformAction:NSAccessibilityDecrementAction];
+    else
+        m_object->decrement();    
 }
 
 - (void)accessibilityPerformShowMenuAction
@@ -1631,6 +1666,12 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     
     else if ([action isEqualToString:NSAccessibilityShowMenuAction])
         [self accessibilityPerformShowMenuAction];
+
+    else if ([action isEqualToString:NSAccessibilityIncrementAction])
+        [self accessibilityPerformIncrementAction];
+
+    else if ([action isEqualToString:NSAccessibilityDecrementAction])
+        [self accessibilityPerformDecrementAction];
 }
 
 - (void)accessibilitySetValue:(id)value forAttribute:(NSString*)attributeName

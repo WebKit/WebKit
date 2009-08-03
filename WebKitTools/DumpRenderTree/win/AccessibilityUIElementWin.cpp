@@ -339,3 +339,10 @@ bool AccessibilityUIElement::isAttributeSettable(JSStringRef attribute)
     return false;
 }
 
+void AccessibilityUIElement::increment()
+{
+}
+
+void AccessibilityUIElement::decrement()
+{
+}

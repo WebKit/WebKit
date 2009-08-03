@@ -1,3 +1,27 @@
+2009-08-03  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        HTMLInputElement is not controllable by assistive technologies
+        https://bugs.webkit.org/show_bug.cgi?id=27941
+
+        Accessibility control of a slider required adding increment() and decrement()
+        methods to AccessibilityObject, so expose thos methods on AccessibilityUIElement.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (incrementCallback): New, call UI element increment method.
+        (decrementCallback): New, call UI element decrement method.
+        (AccessibilityUIElement::getJSClass): Expose increment and decrement methods.
+
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::increment): New, send NSAccessibilityIncrementAction to Mac wrapper.
+        (AccessibilityUIElement::decrement): New, send NSAccessibilityDecrementAction to Mac wrapper.
+
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::increment): New, do nothing.
+        (AccessibilityUIElement::decrement): New, do nothing.
+
 2009-08-02  David D. Kilzer  <ddkilzer@webkit.org>
 
         <http://webkit.org/b/27930> bugzilla-tool hates Tor Arne Vestbø

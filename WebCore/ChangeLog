@@ -1,3 +1,81 @@
+2009-08-03  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        HTMLInputElement is not controllable by assistive technologies
+        https://bugs.webkit.org/show_bug.cgi?id=27941
+
+        Test: accessibility/input-slider.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+            Add AccessibilitySlider.cpp/.h
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::getOrCreate):
+            Create AccessibilitySlider and AccessibilitySliderThumb.
+
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::increment):
+        (WebCore::AccessibilityObject::decrement):
+            Add default, do nothing, base class methods.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::canSetFocusAttribute):
+            Correct typo.
+
+        * accessibility/AccessibilitySlider.cpp: Added.
+        (WebCore::AccessibilitySlider::AccessibilitySlider):
+        (WebCore::AccessibilitySlider::create):
+        (WebCore::AccessibilitySlider::children):
+        (WebCore::AccessibilitySlider::addChildren):
+        (WebCore::AccessibilitySlider::getAttribute):
+        (WebCore::AccessibilitySlider::valueForRange):
+        (WebCore::AccessibilitySlider::maxValueForRange):
+        (WebCore::AccessibilitySlider::minValueForRange):
+        (WebCore::AccessibilitySlider::changeValue):
+        (WebCore::AccessibilitySlider::setValue):
+        (WebCore::AccessibilitySlider::increment):
+        (WebCore::AccessibilitySlider::decrement):
+        (WebCore::AccessibilitySlider::element):
+        (WebCore::AccessibilitySliderThumb::AccessibilitySliderThumb):
+        (WebCore::AccessibilitySliderThumb::create):
+        (WebCore::AccessibilitySliderThumb::elementRect):
+        (WebCore::AccessibilitySliderThumb::size):
+        * accessibility/AccessibilitySlider.h: Added.
+        (WebCore::AccessibilitySlider::~AccessibilitySlider):
+        (WebCore::AccessibilitySlider::roleValue):
+        (WebCore::AccessibilitySlider::accessibilityIsIgnored):
+        (WebCore::AccessibilitySlider::isSlider):
+        (WebCore::AccessibilitySlider::canSetValueAttribute):
+        (WebCore::AccessibilitySliderThumb::~AccessibilitySliderThumb):
+        (WebCore::AccessibilitySliderThumb::roleValue):
+        (WebCore::AccessibilitySliderThumb::accessibilityIsIgnored):
+        (WebCore::AccessibilitySliderThumb::setParentObject):
+        (WebCore::AccessibilitySliderThumb::parentObject):
+
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (RoleEntry::):
+            SliderThumbRole -> NSAccessibilityValueIndicatorRole
+        (-[AccessibilityObjectWrapper roleDescription]):
+            Return role description for NSAccessibilitySliderRole and NSAccessibilityValueIndicatorRole.
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:]):
+            Minor coding style correction.
+        (-[AccessibilityObjectWrapper accessibilityPerformPressAction]):
+            If attachement view handles press action, don't also call object wrapper.
+        (-[AccessibilityObjectWrapper accessibilityPerformIncrementAction]):
+            New, call object's increment() method.
+        (-[AccessibilityObjectWrapper accessibilityPerformDecrementAction]):
+            New, call object's decrement() method.
+        (-[AccessibilityObjectWrapper accessibilityPerformAction:]):
+            Respond to NSAccessibilityIncrementAction and NSAccessibilityDecrementAction.
+
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::thumbRect):
+            Factor logic out of layout so AccessibilitySliderThumb can get thumb location/size.
+        (WebCore::RenderSlider::layout):
+            Move code to thumbRect().
+        * rendering/RenderSlider.h:
+
 2009-08-03  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Eric Seidel.

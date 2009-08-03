@@ -1,3 +1,15 @@
+2009-08-03  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        HTMLInputElement is not controllable by assistive technologies
+        https://bugs.webkit.org/show_bug.cgi?id=27941
+        
+        Add test for <input type=range> accessibility .
+
+        * accessibility/input-slider.html: Added.
+        * platform/mac/accessibility/input-slider-expected.txt: Added.
+
 2009-08-02  Sam Weinig  <sam@webkit.org>
 
         Land updated expected result.

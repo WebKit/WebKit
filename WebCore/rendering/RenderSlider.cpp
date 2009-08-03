@@ -285,6 +285,30 @@ PassRefPtr<RenderStyle> RenderSlider::createThumbStyle(const RenderStyle* parent
     return style.release();
 }
 
+IntRect RenderSlider::thumbRect()
+{
+    if (!m_thumb)
+        return IntRect();
+
+    IntRect thumbRect;
+    RenderBox* thumb = toRenderBox(m_thumb->renderer());
+
+    thumbRect.setWidth(thumb->style()->width().calcMinValue(contentWidth()));
+    thumbRect.setHeight(thumb->style()->height().calcMinValue(contentHeight()));
+
+    double fraction = sliderPosition(static_cast<HTMLInputElement*>(node()));
+    IntRect contentRect = contentBoxRect();
+    if (style()->appearance() == SliderVerticalPart) {
+        thumbRect.setX(contentRect.x() + (contentRect.width() - thumbRect.width()) / 2);
+        thumbRect.setY(contentRect.y() + static_cast<int>(nextafter((contentRect.height() - thumbRect.height()) + 1, 0) * (1 - fraction)));
+    } else {
+        thumbRect.setX(contentRect.x() + static_cast<int>(nextafter((contentRect.width() - thumbRect.width()) + 1, 0) * fraction));
+        thumbRect.setY(contentRect.y() + (contentRect.height() - thumbRect.height()) / 2);
+    }
+
+    return thumbRect;
+}
+
 void RenderSlider::layout()
 {
     ASSERT(needsLayout());
@@ -324,23 +348,8 @@ void RenderSlider::layout()
 
         thumb->layoutIfNeeded();
 
-        IntRect thumbRect;
-
-        thumbRect.setWidth(thumb->style()->width().calcMinValue(contentWidth()));
-        thumbRect.setHeight(thumb->style()->height().calcMinValue(contentHeight()));
-
-        double fraction = sliderPosition(static_cast<HTMLInputElement*>(node()));
-        IntRect contentRect = contentBoxRect();
-        if (style()->appearance() == SliderVerticalPart) {
-            thumbRect.setX(contentRect.x() + (contentRect.width() - thumbRect.width()) / 2);
-            thumbRect.setY(contentRect.y() + static_cast<int>(nextafter((contentRect.height() - thumbRect.height()) + 1, 0) * (1 - fraction)));
-        } else {
-            thumbRect.setX(contentRect.x() + static_cast<int>(nextafter((contentRect.width() - thumbRect.width()) + 1, 0) * fraction));
-            thumbRect.setY(contentRect.y() + (contentRect.height() - thumbRect.height()) / 2);
-        }
-
-        thumb->setFrameRect(thumbRect);
-
+        IntRect rect = thumbRect();
+        thumb->setFrameRect(rect);
         if (thumb->checkForRepaintDuringLayout())
             thumb->repaintDuringLayoutIfMoved(oldThumbRect);
 

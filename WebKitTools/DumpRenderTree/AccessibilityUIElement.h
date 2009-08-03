@@ -74,7 +74,9 @@ public:
     JSStringRef attributesOfDocumentLinks();
     JSStringRef attributesOfChildren();
     JSStringRef parameterizedAttributeNames();
-    
+    void increment();
+    void decrement();
+
     // Attributes - platform-independent implementations
     JSStringRef attributeValue(JSStringRef attribute);
     bool isAttributeSettable(JSStringRef attribute);
@@ -114,7 +116,7 @@ public:
     
     // Table-specific
     AccessibilityUIElement cellForColumnAndRow(unsigned column, unsigned row);
-    
+
 private:
     static JSClassRef getJSClass();
 

@@ -525,3 +525,13 @@ void AccessibilityUIElement::setSelectedTextRange(unsigned location, unsigned le
     NSValue *textRangeValue = [NSValue valueWithRange:textRange];
     [m_element accessibilitySetValue:textRangeValue forAttribute:NSAccessibilitySelectedTextRangeAttribute];
 }
+
+void AccessibilityUIElement::increment()
+{
+    [m_element accessibilityPerformAction:NSAccessibilityIncrementAction];
+}
+
+void AccessibilityUIElement::decrement()
+{
+    [m_element accessibilityPerformAction:NSAccessibilityDecrementAction];
+}
