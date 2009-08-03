@@ -1,5 +1,13 @@
 2009-08-03  Eric Carlson  <eric.carlson@apple.com>
 
+        One more build fix after https://bugs.webkit.org/show_bug.cgi?id=46720.
+
+        Unreviewed.
+
+        * WebCoreSources.bkl:
+
+2009-08-03  Eric Carlson  <eric.carlson@apple.com>
+
         Build fix after https://bugs.webkit.org/show_bug.cgi?id=46720.
 
         Unreviewed.
