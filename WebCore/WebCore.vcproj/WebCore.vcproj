@@ -16409,6 +16409,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\accessibility\AccessibilitySlider.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\accessibility\AccessibilitySlider.h"
+				>
+			</File>
+			<File
 				RelativePath="..\accessibility\AccessibilityTable.cpp"
 				>
 			</File>

@@ -286,6 +286,8 @@ webcore_sources += \
 	WebCore/accessibility/AccessibilityObject.h \
 	WebCore/accessibility/AccessibilityRenderObject.cpp \
 	WebCore/accessibility/AccessibilityRenderObject.h \
+	WebCore/accessibility/AccessibilitySlider.cpp \
+	WebCore/accessibility/AccessibilitySlider.h \
 	WebCore/accessibility/AccessibilityTable.cpp \
 	WebCore/accessibility/AccessibilityTable.h \
 	WebCore/accessibility/AccessibilityTableCell.cpp \

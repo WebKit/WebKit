@@ -373,6 +373,8 @@
             'accessibility/AccessibilityObject.h',
             'accessibility/AccessibilityRenderObject.cpp',
             'accessibility/AccessibilityRenderObject.h',
+            'accessibility/AccessibilitySlider.cpp',
+            'accessibility/AccessibilitySlider.h',
             'accessibility/AccessibilityTable.cpp',
             'accessibility/AccessibilityTable.h',
             'accessibility/AccessibilityTableCell.cpp',

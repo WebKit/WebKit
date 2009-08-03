@@ -457,6 +457,7 @@ SOURCES += \
     accessibility/AccessibilityListBox.cpp \    
     accessibility/AccessibilityListBoxOption.cpp \    
     accessibility/AccessibilityRenderObject.cpp \    
+    accessibility/AccessibilitySlider.cpp \    
     accessibility/AccessibilityARIAGrid.cpp \    
     accessibility/AccessibilityARIAGridCell.cpp \    
     accessibility/AccessibilityARIAGridRow.cpp \    
@@ -1138,6 +1139,7 @@ HEADERS += \
     accessibility/AccessibilityList.h \
     accessibility/AccessibilityObject.h \
     accessibility/AccessibilityRenderObject.h \
+    accessibility/AccessibilitySlider.h \
     accessibility/AccessibilityTableCell.h \
     accessibility/AccessibilityTableColumn.h \
     accessibility/AccessibilityTable.h \
