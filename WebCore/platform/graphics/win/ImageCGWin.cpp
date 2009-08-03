@@ -65,8 +65,8 @@ bool BitmapImage::getHBITMAPOfSize(HBITMAP bmp, LPSIZE size)
 
 void BitmapImage::drawFrameMatchingSourceSize(GraphicsContext* ctxt, const FloatRect& dstRect, const IntSize& srcSize, CompositeOperator compositeOp)
 {
-    int frames = frameCount();
-    for (int i = 0; i < frames; ++i) {
+    size_t frames = frameCount();
+    for (size_t i = 0; i < frames; ++i) {
         CGImageRef image = frameAtIndex(i);
         if (CGImageGetHeight(image) == static_cast<size_t>(srcSize.height()) && CGImageGetWidth(image) == static_cast<size_t>(srcSize.width())) {
             size_t currentFrame = m_currentFrame;

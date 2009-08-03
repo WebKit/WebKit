@@ -267,7 +267,7 @@ bool ImageDecoderQt::isSizeAvailable()
     return ImageDecoder::isSizeAvailable();
 }
 
-int ImageDecoderQt::frameCount() const
+size_t ImageDecoderQt::frameCount() const
 {
     if (debugImageDecoderQt)
         qDebug() << " ImageDecoderQt::frameCount() returns" << m_imageList.size();

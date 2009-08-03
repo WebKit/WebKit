@@ -205,12 +205,23 @@ namespace WebCore {
             return !m_failed && m_sizeAvailable; 
         }
 
-        // Requests the size.
+        // Returns the size of the image.
         virtual IntSize size() const
         {
             // Requesting the size of an invalid bitmap is meaningless.
             ASSERT(!m_failed);
             return m_size;
+        }
+
+        // Returns the size of frame |index|.  This will only differ from size()
+        // for formats where different frames are different sizes (namely ICO,
+        // where each frame represents a different icon within the master file).
+        // Notably, this does not return different sizes for different GIF
+        // frames, since while these may be stored as smaller rectangles, during
+        // decoding they are composited to create a full-size frame.
+        virtual IntSize frameSizeAtIndex(size_t) const
+        {
+            return size();
         }
 
         // Called by the image decoders to set their decoded size, this also check
@@ -231,7 +242,7 @@ namespace WebCore {
         // The total number of frames for the image.  Classes that support multiple frames
         // will scan the image data for the answer if they need to (without necessarily
         // decoding all of the individual frames).
-        virtual int frameCount() { return 1; }
+        virtual size_t frameCount() { return 1; }
 
         // The number of repetitions to perform for an animation loop.
         virtual int repetitionCount() const { return cAnimationNone; }
@@ -239,7 +250,7 @@ namespace WebCore {
         // Called to obtain the RGBA32Buffer full of decoded data for rendering.  The
         // decoder plugin will decode as much of the frame as it can before handing
         // back the buffer.
-        virtual RGBA32Buffer* frameBufferAtIndex(size_t index) = 0;
+        virtual RGBA32Buffer* frameBufferAtIndex(size_t) = 0;
 
         // Whether or not the underlying image format even supports alpha transparency.
         virtual bool supportsAlpha() const { return true; }

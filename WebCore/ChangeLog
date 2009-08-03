@@ -1,3 +1,42 @@
+2009-07-27  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26460
+        Plumbing and cleanup in advance of returning multiple frames from the
+        ICOImageDecoder:
+        * Make ImageDecoder::frameCount() return a size_t like
+          ImageSource::frameCount() and BitmapImage::frameCount() already do.
+        * Add ImageDecoder::frameSizeAtIndex() alongside size(), to report the
+          size of a particular frame.  Hook all the
+          ImageSource::frameSizeAtIndex() implementations to this.  No
+          ImageDecoder implements this yet; that will come in my next change.
+
+        * platform/graphics/cairo/ImageSourceCairo.cpp:
+        (WebCore::ImageSource::frameSizeAtIndex): Hook to ImageDecoder function.
+        * platform/graphics/qt/ImageDecoderQt.cpp:
+        (WebCore::ImageDecoderQt::frameCount): returns size_t.
+        * platform/graphics/qt/ImageDecoderQt.h: frameCount() returns size_t.
+        * platform/graphics/qt/ImageSourceQt.cpp:
+        (WebCore::ImageSource::frameSizeAtIndex): Hook to ImageDecoder function.
+        * platform/graphics/skia/ImageSourceSkia.cpp:
+        (WebCore::ImageSource::frameSizeAtIndex): Hook to ImageDecoder function.
+        * platform/graphics/win/ImageCGWin.cpp:
+        (WebCore::BitmapImage::drawFrameMatchingSourceSize): frameCount() returns size_t.
+        * platform/graphics/win/ImageCairoWin.cpp:
+        (WebCore::BitmapImage::drawFrameMatchingSourceSize): frameCount() returns size_t.
+        * platform/graphics/wx/ImageSourceWx.cpp:
+        (WebCore::ImageSource::frameSizeAtIndex): Hook to ImageDecoder function.
+        * platform/image-decoders/ImageDecoder.h:
+        (WebCore::ImageDecoder::size): Clarify comment.
+        (WebCore::ImageDecoder::frameSizeAtIndex): Add.
+        (WebCore::ImageDecoder::frameCount): returns size_t.
+        (WebCore::ImageDecoder::frameBufferAtIndex): Remove unneeded param name.
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoder::frameCount): returns size_t.
+        (WebCore::GIFImageDecoder::frameBufferAtIndex): frameCount() returns size_t.
+        * platform/image-decoders/gif/GIFImageDecoder.h: frameCount() returns size_t.
+
 2009-08-03  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Darin Adler.

@@ -48,7 +48,7 @@ namespace WebCore {
 
         // The total number of frames for the image.  Will scan the image data for the answer
         // (without necessarily decoding all of the individual frames).
-        virtual int frameCount();
+        virtual size_t frameCount();
 
         // The number of repetitions to perform for an animation loop.
         virtual int repetitionCount() const;

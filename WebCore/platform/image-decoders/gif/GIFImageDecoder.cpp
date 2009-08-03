@@ -123,7 +123,7 @@ bool GIFImageDecoder::isSizeAvailable()
 
 // The total number of frames for the image.  Will scan the image data for the answer
 // (without necessarily decoding all of the individual frames).
-int GIFImageDecoder::frameCount()
+size_t GIFImageDecoder::frameCount()
 {
     // If the decoder had an earlier error, we will just return what we had decoded
     // so far.
@@ -170,7 +170,7 @@ int GIFImageDecoder::repetitionCount() const
 
 RGBA32Buffer* GIFImageDecoder::frameBufferAtIndex(size_t index)
 {
-    if (index >= static_cast<size_t>(frameCount()))
+    if (index >= frameCount())
         return 0;
 
     RGBA32Buffer& frame = m_frameBufferCache[index];

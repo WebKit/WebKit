@@ -73,8 +73,8 @@ bool BitmapImage::getHBITMAPOfSize(HBITMAP bmp, LPSIZE size)
 
 void BitmapImage::drawFrameMatchingSourceSize(GraphicsContext* ctxt, const FloatRect& dstRect, const IntSize& srcSize, CompositeOperator compositeOp)
 {
-    int frames = frameCount();
-    for (int i = 0; i < frames; ++i) {
+    size_t frames = frameCount();
+    for (size_t i = 0; i < frames; ++i) {
         cairo_surface_t* image = frameAtIndex(i);
         if (cairo_image_surface_get_height(image) == static_cast<size_t>(srcSize.height()) && cairo_image_surface_get_width(image) == static_cast<size_t>(srcSize.width())) {
             size_t currentFrame = m_currentFrame;
