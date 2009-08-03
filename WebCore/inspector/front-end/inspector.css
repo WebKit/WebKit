@@ -259,7 +259,7 @@ body.attached #main {
     right: 0;
 }
 
-body.console-visible #main-status-bar {
+body.drawer-visible #main-status-bar {
     height: 24px;
     background-image: url(Images/statusbarResizerVertical.png), url(Images/statusbarBackground.png);
     background-repeat: no-repeat, repeat-x;
@@ -267,11 +267,11 @@ body.console-visible #main-status-bar {
     cursor: row-resize;
 }
 
-body.console-visible #main-status-bar * {
+body.drawer-visible #main-status-bar * {
     cursor: default;
 }
 
-body.console-visible #main-panels {
+body.drawer-visible #main-panels {
     bottom: 24px;
 }
 
@@ -378,7 +378,31 @@ body.detached #dock-status-bar-item.toggled-on:active {
     background-position: 32px 0;
 }
 
-#error-warning-count {
+#changes-status-bar-item {
+    background-image: url(Images/consoleButtons.png); /* TODO: Needs Image for Changes Toggle Button */
+}
+
+#changes-status-bar-item:active {
+    background-position: 32px 0;
+}
+
+#changes-status-bar-item.toggled-on {
+    background-position: 0 24px;
+}
+
+#changes-status-bar-item.toggled-on:active {
+    background-position: 32px 24px;
+}
+
+#clear-changes-status-bar-item {
+    background-image: url(Images/clearConsoleButtons.png);
+}
+
+#clear-changes-status-bar-item:active {
+    background-position: 32px 0;
+}
+
+#count-items {
     position: absolute;
     right: 16px;
     top: 0;
@@ -388,8 +412,20 @@ body.detached #dock-status-bar-item.toggled-on:active {
     height: 19px;
 }
 
-#error-warning-count:hover {
+#changes-count, #error-warning-count {
+    display: inline;
+}
+
+#error-warning-count:hover, #changes-count:hover {
     border-bottom: 1px solid rgb(96, 96, 96);
+}
+
+#style-changes-count::before {
+    content: url(Images/styleIcon.png); /* TODO: Needs Image for Style Changes Icon */
+    width: 10px;
+    height: 10px;
+    vertical-align: -1px;
+    margin-right: 2px;
 }
 
 #error-count::before {
@@ -399,8 +435,8 @@ body.detached #dock-status-bar-item.toggled-on:active {
     vertical-align: -1px;
     margin-right: 2px;
 }
-
-#error-count + #warning-count {
+    
+#changes-count + #error-warning-count, #error-count + #warning-count {
     margin-left: 6px;
 }
 
@@ -412,7 +448,7 @@ body.detached #dock-status-bar-item.toggled-on:active {
     margin-right: 2px;
 }
 
-#console {
+#drawer {
     display: none;
     position: absolute;
     bottom: 0;
@@ -425,11 +461,11 @@ body.detached #dock-status-bar-item.toggled-on:active {
     background-position: bottom;
 }
 
-body.console-visible #console {
+body.drawer-visible #drawer {
     display: block;
 }
 
-#console-status-bar {
+#drawer-status-bar {
     position: absolute;
     bottom: 0;
     left: 0;

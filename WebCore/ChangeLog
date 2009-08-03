@@ -1,3 +1,81 @@
+2009-08-03  Joseph Pecoraro  <joepeck02@gmail.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Inspector: Make Bottom "Drawer" More Extensible To Support Other Views
+        https://bugs.webkit.org/show_bug.cgi?id=27928
+
+        * English.lproj/localizedStrings.js:
+
+          "Show changes view", "Hide changes view", "Clear changes log", "%d style change", "%d style changes"
+
+        * inspector/front-end/ChangesView.js: Added.
+        (WebInspector.ChangesView):
+        (WebInspector.ChangesView.prototype._clearButtonClicked):
+        (WebInspector.ChangesView.prototype._toggleChangesButtonClicked):
+        (WebInspector.ChangesView.prototype.attach):
+        (WebInspector.ChangesView.prototype.show):
+        (WebInspector.ChangesView.prototype.hide):
+
+          To be a new view to show Changes made via the inspector.  DOM, CSS, or otherwise.
+
+        * inspector/front-end/Console.js: Removed.
+
+          Sliding View aspect moved to Drawer.js.  The "console" itself has moved to ConsoleView.js
+
+        * inspector/front-end/ConsoleView.js: Added.
+
+          Little has changed from its move from Console.js other then support for working with the Drawer.
+
+        * inspector/front-end/Drawer.js: Added.
+        (WebInspector.Drawer):
+        (WebInspector.Drawer.prototype.get visibleView):
+        (WebInspector.Drawer.prototype.set visibleView):
+        (WebInspector.Drawer.prototype.show.animationFinished):
+        (WebInspector.Drawer.prototype.show):
+        (WebInspector.Drawer.prototype.hide.animationFinished):
+        (WebInspector.Drawer.prototype.hide):
+        (WebInspector.Drawer.prototype._safelyRemoveChildren):
+        (WebInspector.Drawer.prototype._startStatusBarDragging):
+        (WebInspector.Drawer.prototype._statusBarDragging):
+        (WebInspector.Drawer.prototype._endStatusBarDragging):
+
+          Allow for multiple views inside the Sliding Drawer.
+
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel):
+        (WebInspector.ElementsPanel.prototype.renameSelector):
+        (WebInspector.ElementsPanel.prototype.addStyleChange):
+        (WebInspector.ElementsPanel.prototype.removeStyleChange):
+        (WebInspector.ElementsPanel.prototype.generateStylesheet):
+
+          Starting work on the "Changes" Panel. The ability to generate a Stylesheet from Styles added via the Inspector.
+
+        * inspector/front-end/Images/styleIcon.png: Added.
+
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylePropertiesSection.prototype.isInspectorStylesheet):
+        (WebInspector.StylePropertiesSection.prototype.editingSelectorCommitted):
+        (WebInspector.BlankStylePropertiesSection.prototype.makeNormal):
+        (WebInspector.StylePropertyTreeElement.prototype):
+
+          Interface with ElementsPanel for generating a Stylesheet of Changes.
+
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.css: Refactored to allow for multiple views in the drawer.
+        * inspector/front-end/inspector.html: Refactored to allow for multiple views in the drawer.
+
+        * inspector/front-end/inspector.js:
+        (WebInspector.get styleChanges):
+        (WebInspector.set styleChanges):
+        (WebInspector._updateChangesCount):
+        (WebInspector.loaded):
+        (WebInspector.documentKeyDown):
+        (WebInspector.showConsole):
+        (WebInspector.showChanges):
+
+          Support for the drawer and "styles changed icon" similar to the "errors and warnings" icons.
+
 2009-08-03  Dean McNamee  <deanm@chromium.org>
 
         Reviewed by Adam Barth.

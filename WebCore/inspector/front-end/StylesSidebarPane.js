@@ -429,6 +429,11 @@ WebInspector.StylePropertiesSection.prototype = {
         return true;
     },
 
+    isInspectorStylesheet: function()
+    {
+        return (this.styleRule.parentStyleSheet === WebInspector.panels.elements.stylesheet);
+    },
+
     update: function(full)
     {
         if (full || this.computedStyle) {
@@ -588,7 +593,10 @@ WebInspector.StylePropertiesSection.prototype = {
 
         this.rule = newRule;
         this.styleRule = { section: this, style: newRule.style, selectorText: newRule.selectorText, parentStyleSheet: newRule.parentStyleSheet, rule: newRule };
+        var oldIdentifier = this.identifier;
+        this.identifier = newRule.selectorText + ":" + this.subtitleElement.textContent;        
         this.pane.update(null, true);
+        WebInspector.panels.elements.renameSelector(oldIdentifier, this.identifier, oldContent, newContent);
         moveToNextIfNeeded.call(this);
     },
 
@@ -702,6 +710,7 @@ WebInspector.BlankStylePropertiesSection.prototype = {
         this.rule = styleRule.rule;
         this.computedStyle = false;
         this.editable = true;
+        this.identifier = styleRule.selectorText + ":inspector";
         // leftovers are: this.noAffect if applicable
     }
 }
@@ -1185,6 +1194,8 @@ WebInspector.StylePropertyTreeElement.prototype = {
 
     applyStyleText: function(styleText, updateInterface)
     {
+        var section = this.treeOutline.section;
+        var elementsPanel = WebInspector.panels.elements;
         var styleTextLength = styleText.trimWhitespace().length;
 
         // Create a new element to parse the user input CSS.
@@ -1202,16 +1213,18 @@ WebInspector.StylePropertyTreeElement.prototype = {
                     this.style.removeProperty(longhandProperties[i]);
             } else
                 this.style.removeProperty(this.name);
+            elementsPanel.removeStyleChange(section.identifier, this.style, this.name);
         }
 
         if (!styleTextLength) {
             if (updateInterface) {
                 // The user deleted everything, so remove the tree element and update.
                 if (!this._newProperty)
-                    delete this.treeOutline.section._afterUpdate;
-                if (this.treeOutline.section && this.treeOutline.section.pane)
-                    this.treeOutline.section.pane.update();
+                    delete section._afterUpdate;
+                if (section && section.pane)
+                    section.pane.update();
                 this.parent.removeChild(this);
+                elementsPanel.removeStyleChange(section.identifier, this.style, this.name);
             }
             return;
         }
@@ -1251,10 +1264,11 @@ WebInspector.StylePropertyTreeElement.prototype = {
 
             // Set the property on the real style declaration.
             this.style.setProperty((shorthand || name), value, priority);
+            elementsPanel.addStyleChange(section.identifier, this.style, (shorthand || name));
         }
 
-        if (this.treeOutline.section && this.treeOutline.section.pane)
-            this.treeOutline.section.pane.dispatchEventToListeners("style edited");
+        if (section && section.pane)
+            section.pane.dispatchEventToListeners("style edited");
 
         if (updateInterface)
             this.updateAll(true);

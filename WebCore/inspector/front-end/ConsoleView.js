@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007, 2008 Apple Inc.  All rights reserved.
+ * Copyright (C) 2009 Joseph Pecoraro
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,11 +27,16 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.Console = function()
+WebInspector.ConsoleView = function(drawer)
 {
-    this.messages = [];
+    WebInspector.View.call(this, document.getElementById("console-view"));
 
-    WebInspector.View.call(this, document.getElementById("console"));
+    this.messages = [];
+    this.drawer = drawer;
+
+    this.clearButton = document.getElementById("clear-console-status-bar-item");
+    this.clearButton.title = WebInspector.UIString("Clear console log.");
+    this.clearButton.addEventListener("click", this._clearButtonClicked.bind(this), false);
 
     this.messagesElement = document.getElementById("console-messages");
     this.messagesElement.addEventListener("selectstart", this._messagesSelectStart.bind(this), false);
@@ -40,103 +46,49 @@ WebInspector.Console = function()
     this.promptElement.handleKeyEvent = this._promptKeyDown.bind(this);
     this.prompt = new WebInspector.TextPrompt(this.promptElement, this.completions.bind(this), " .=:[({;");
 
-    this.toggleButton = document.getElementById("console-status-bar-item");
-    this.toggleButton.title = WebInspector.UIString("Show console.");
-    this.toggleButton.addEventListener("click", this._toggleButtonClicked.bind(this), false);
-
-    this.clearButton = document.getElementById("clear-console-status-bar-item");
-    this.clearButton.title = WebInspector.UIString("Clear console log.");
-    this.clearButton.addEventListener("click", this._clearButtonClicked.bind(this), false);
-
     this.topGroup = new WebInspector.ConsoleGroup(null, 0);
     this.messagesElement.insertBefore(this.topGroup.element, this.promptElement);
     this.groupLevel = 0;
     this.currentGroup = this.topGroup;
 
-    document.getElementById("main-status-bar").addEventListener("mousedown", this._startStatusBarDragging.bind(this), true);
+    this.toggleConsoleButton = document.getElementById("console-status-bar-item");
+    this.toggleConsoleButton.title = WebInspector.UIString("Show console.");
+    this.toggleConsoleButton.addEventListener("click", this._toggleConsoleButtonClicked.bind(this), false);
+
+    var anchoredStatusBar = document.getElementById("anchored-status-bar-items");
+    anchoredStatusBar.appendChild(this.toggleConsoleButton);
+
 }
 
-WebInspector.Console.prototype = {
+WebInspector.ConsoleView.prototype = {
+    _toggleConsoleButtonClicked: function()
+    {
+        this.drawer.visibleView = this;
+    },
+
+    attach: function(mainElement, statusBarElement)
+    {
+        mainElement.appendChild(this.element);
+        statusBarElement.appendChild(this.clearButton);
+    },
+
     show: function()
     {
-        if (this._animating || this.visible)
-            return;
-
-        WebInspector.View.prototype.show.call(this);
-
-        this._animating = true;
-
-        this.toggleButton.addStyleClass("toggled-on");
-        this.toggleButton.title = WebInspector.UIString("Hide console.");
-
-        document.body.addStyleClass("console-visible");
-
-        var anchoredItems = document.getElementById("anchored-status-bar-items");
-
-        var animations = [
-            {element: document.getElementById("main"), end: {bottom: this.element.offsetHeight}},
-            {element: document.getElementById("main-status-bar"), start: {"padding-left": anchoredItems.offsetWidth - 1}, end: {"padding-left": 0}},
-            {element: document.getElementById("other-console-status-bar-items"), start: {opacity: 0}, end: {opacity: 1}}
-        ];
-
-        var consoleStatusBar = document.getElementById("console-status-bar");
-        consoleStatusBar.insertBefore(anchoredItems, consoleStatusBar.firstChild);
-
-        function animationFinished()
-        {
-            if ("updateStatusBarItems" in WebInspector.currentPanel)
-                WebInspector.currentPanel.updateStatusBarItems();
-            WebInspector.currentFocusElement = this.promptElement;
-            delete this._animating;
-        }
-
-        WebInspector.animateStyle(animations, window.event && window.event.shiftKey ? 2000 : 250, animationFinished.bind(this));
-
+        this.toggleConsoleButton.addStyleClass("toggled-on");
+        this.toggleConsoleButton.title = WebInspector.UIString("Hide console.");
         if (!this.prompt.isCaretInsidePrompt())
             this.prompt.moveCaretToEndOfPrompt();
     },
 
+    afterShow: function()
+    {
+        WebInspector.currentFocusElement = this.promptElement;  
+    },
+
     hide: function()
     {
-        if (this._animating || !this.visible)
-            return;
-
-        WebInspector.View.prototype.hide.call(this);
-
-        this._animating = true;
-
-        this.toggleButton.removeStyleClass("toggled-on");
-        this.toggleButton.title = WebInspector.UIString("Show console.");
-
-        if (this.element === WebInspector.currentFocusElement || this.element.isAncestor(WebInspector.currentFocusElement))
-            WebInspector.currentFocusElement = WebInspector.previousFocusElement;
-
-        var anchoredItems = document.getElementById("anchored-status-bar-items");
-
-        // Temporally set properties and classes to mimic the post-animation values so panels
-        // like Elements in their updateStatusBarItems call will size things to fit the final location.
-        document.getElementById("main-status-bar").style.setProperty("padding-left", (anchoredItems.offsetWidth - 1) + "px");
-        document.body.removeStyleClass("console-visible");
-        if ("updateStatusBarItems" in WebInspector.currentPanel)
-            WebInspector.currentPanel.updateStatusBarItems();
-        document.body.addStyleClass("console-visible");
-
-        var animations = [
-            {element: document.getElementById("main"), end: {bottom: 0}},
-            {element: document.getElementById("main-status-bar"), start: {"padding-left": 0}, end: {"padding-left": anchoredItems.offsetWidth - 1}},
-            {element: document.getElementById("other-console-status-bar-items"), start: {opacity: 1}, end: {opacity: 0}}
-        ];
-
-        function animationFinished()
-        {
-            var mainStatusBar = document.getElementById("main-status-bar");
-            mainStatusBar.insertBefore(anchoredItems, mainStatusBar.firstChild);
-            mainStatusBar.style.removeProperty("padding-left");
-            document.body.removeStyleClass("console-visible");
-            delete this._animating;
-        }
-
-        WebInspector.animateStyle(animations, window.event && window.event.shiftKey ? 2000 : 250, animationFinished.bind(this));
+        this.toggleConsoleButton.removeStyleClass("toggled-on");
+        this.toggleConsoleButton.title = WebInspector.UIString("Show console.");
     },
 
     addMessage: function(msg)
@@ -262,7 +214,7 @@ WebInspector.Console.prototype = {
         var reportCompletions = this._reportCompletions.bind(this, bestMatchOnly, completionsReadyCallback, dotNotation, bracketNotation, prefix);
         this._evalInInspectedWindow(expressionString, reportCompletions);
     },
-    
+
     _reportCompletions: function(bestMatchOnly, completionsReadyCallback, dotNotation, bracketNotation, prefix, result) {
         if (bracketNotation) {
             if (prefix.length && prefix[0] === "'")
@@ -305,11 +257,6 @@ WebInspector.Console.prototype = {
                 break;
         }
         setTimeout(completionsReadyCallback, 0, results);
-    },
-
-    _toggleButtonClicked: function()
-    {
-        this.visible = !this.visible;
     },
 
     _clearButtonClicked: function()
@@ -357,41 +304,6 @@ WebInspector.Console.prototype = {
         this.prompt.handleKeyEvent(event);
     },
 
-    _startStatusBarDragging: function(event)
-    {
-        if (!this.visible || event.target !== document.getElementById("main-status-bar"))
-            return;
-
-        WebInspector.elementDragStart(document.getElementById("main-status-bar"), this._statusBarDragging.bind(this), this._endStatusBarDragging.bind(this), event, "row-resize");
-
-        this._statusBarDragOffset = event.pageY - this.element.totalOffsetTop;
-
-        event.stopPropagation();
-    },
-
-    _statusBarDragging: function(event)
-    {
-        var mainElement = document.getElementById("main");
-
-        var height = window.innerHeight - event.pageY + this._statusBarDragOffset;
-        height = Number.constrain(height, Preferences.minConsoleHeight, window.innerHeight - mainElement.totalOffsetTop - Preferences.minConsoleHeight);
-
-        mainElement.style.bottom = height + "px";
-        this.element.style.height = height + "px";
-
-        event.preventDefault();
-        event.stopPropagation();
-    },
-
-    _endStatusBarDragging: function(event)
-    {
-        WebInspector.elementDragEnd(event);
-
-        delete this._statusBarDragOffset;
-
-        event.stopPropagation();
-    },
-
     _evalInInspectedWindow: function(expression, callback)
     {
         if (WebInspector.panels.scripts && WebInspector.panels.scripts.paused) {
@@ -400,7 +312,7 @@ WebInspector.Console.prototype = {
         }
         this.doEvalInWindow(expression, callback);
     },
-    
+
     _ensureCommandLineAPIInstalled: function(inspectedWindow)
     {
         if (!inspectedWindow._inspectorCommandLineAPI) {
@@ -621,10 +533,10 @@ WebInspector.Console.prototype = {
             elem.appendChild(urlElement);
             elem.appendChild(document.createTextNode(")"));
         }
-    },
+    }
 }
 
-WebInspector.Console.prototype.__proto__ = WebInspector.View.prototype;
+WebInspector.ConsoleView.prototype.__proto__ = WebInspector.View.prototype;
 
 WebInspector.ConsoleMessage = function(source, type, level, line, url, groupLevel, repeatCount)
 {

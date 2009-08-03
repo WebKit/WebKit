@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2007, 2008 Apple Inc.  All rights reserved.
  * Copyright (C) 2008 Matt Lilek <webkit@mattlilek.com>
+ * Copyright (C) 2009 Joseph Pecoraro
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -114,6 +115,7 @@ WebInspector.ElementsPanel = function()
     this._contentLoadedEventListener = InspectorController.wrapCallback(this._contentLoaded.bind(this));
 
     this.stylesheet = null;
+    this.styles = {};
 
     this.reset();
 }
@@ -519,6 +521,121 @@ WebInspector.ElementsPanel.prototype = {
             this.updateMutationEventListeners(window);
     },
 
+    renameSelector: function(oldIdentifier, newIdentifier, oldSelector, newSelector)
+    {
+        // TODO: Implement Shifting the oldSelector, and its contents to a newSelector
+    },
+
+    addStyleChange: function(identifier, style, property)
+    {
+        if (!style.parentRule)
+            return;
+
+        var selector = style.parentRule.selectorText;
+        if (!this.styles[identifier])
+            this.styles[identifier] = {};
+
+        if (!this.styles[identifier][selector])
+            this.styles[identifier][selector] = {};
+
+        if (!this.styles[identifier][selector][property])
+            WebInspector.styleChanges += 1;
+
+        this.styles[identifier][selector][property] = style.getPropertyValue(property);
+    },
+
+    removeStyleChange: function(identifier, style, property)
+    {
+        if (!style.parentRule)
+            return;
+
+        var selector = style.parentRule.selectorText;
+        if (!this.styles[identifier] || !this.styles[identifier][selector])
+            return;
+
+        if (this.styles[identifier][selector][property]) {
+            delete this.styles[identifier][selector][property];
+            WebInspector.styleChanges -= 1;
+        }
+    },
+
+    generateStylesheet: function()
+    {
+        if (!WebInspector.styleChanges)
+            return;
+
+        // Merge Down to Just Selectors
+        var mergedSelectors = {};
+        for (var identifier in this.styles) {
+            for (var selector in this.styles[identifier]) {
+                if (!mergedSelectors[selector])
+                    mergedSelectors[selector] = this.styles[identifier][selector];
+                else { // merge on selector
+                    var merge = {};
+                    for (var property in mergedSelectors[selector])
+                        merge[property] = mergedSelectors[selector][property];
+                    for (var property in this.styles[identifier][selector]) {
+                        if (!merge[property])
+                            merge[property] = this.styles[identifier][selector][property];
+                        else { // merge on property within a selector, include comment to notify user
+                            var value1 = merge[property];
+                            var value2 = this.styles[identifier][selector][property];
+
+                            if (value1 === value2)
+                                merge[property] = [value1];
+                            else if (Object.type(value1) === "array")
+                                merge[property].push(value2);
+                            else
+                                merge[property] = [value1, value2];
+                        }
+                    }
+                    mergedSelectors[selector] = merge;
+                }
+            }
+        }
+
+        var builder = [];
+        builder.push("/**");
+        builder.push(" * Inspector Generated Stylesheet"); // UIString?
+        builder.push(" */\n");
+
+        var indent = "  ";
+        function displayProperty(property, value, comment) {
+            if (comment)
+                return indent + "/* " + property + ": " + value + "; */";
+            else
+                return indent + property + ": " + value + ";";
+        }
+
+        for (var selector in mergedSelectors) {
+            var psuedoStyle = mergedSelectors[selector];
+            var properties = Object.properties(psuedoStyle);
+            if (properties.length) {
+                builder.push(selector + " {");
+                for (var i = 0; i < properties.length; ++i) {
+                    var property = properties[i];
+                    var value = psuedoStyle[property];
+                    if (Object.type(value) !== "array")
+                        builder.push(displayProperty(property, value));
+                    else {
+                        if (value.length === 1)
+                            builder.push(displayProperty(property, value) + " /* merged from equivalent edits */"); // UIString?
+                        else {                        
+                            builder.push(indent + "/* There was a Conflict... There were Multiple Edits for '" + property + "' */"); // UIString?
+                            for (var j = 0; j < value.length; ++j)
+                                builder.push(displayProperty(property, value, true));
+                        }
+                    }
+                }
+                builder.push("}\n");
+            }
+        }
+
+        WebInspector.showConsole();
+        var result = builder.join("\n");
+        InspectorController.inspectedWindow().console.log(result);
+    },
+
     _addMutationEventListeners: function(monitoredWindow)
     {
         monitoredWindow.document.addEventListener("DOMNodeInserted", this._nodeInsertedEventListener, true);
@@ -916,7 +1033,7 @@ WebInspector.ElementsPanel.prototype = {
         {
             var rightPadding = 20;
             var errorWarningElement = document.getElementById("error-warning-count");
-            if (!WebInspector.console.visible && errorWarningElement)
+            if (!WebInspector.drawer.visible && errorWarningElement)
                 rightPadding += errorWarningElement.offsetWidth;
             return ((crumbs.totalOffsetLeft + crumbs.offsetWidth + rightPadding) < window.innerWidth);
         }

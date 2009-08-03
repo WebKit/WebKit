@@ -6,7 +6,8 @@
     <file>BreakpointsSidebarPane.js</file>
     <file>Callback.js</file>
     <file>CallStackSidebarPane.js</file>
-    <file>Console.js</file>
+    <file>ChangesView.js</file>
+    <file>ConsoleView.js</file>
     <file>Database.js</file>
     <file>DatabaseQueryView.js</file>
     <file>DatabasesPanel.js</file>
@@ -16,6 +17,7 @@
     <file>DOMStorage.js</file>
     <file>DOMStorageDataGrid.js</file>
     <file>DOMStorageItemsView.js</file>
+    <file>Drawer.js</file>
     <file>ElementsPanel.js</file>
     <file>ElementsTreeOutline.js</file>
     <file>FontView.js</file>

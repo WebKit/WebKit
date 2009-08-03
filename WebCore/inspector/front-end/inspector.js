@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006, 2007, 2008 Apple Inc.  All rights reserved.
  * Copyright (C) 2007 Matt Lilek (pewtermoose@gmail.com).
+ * Copyright (C) 2009 Joseph Pecoraro
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -252,6 +253,53 @@ var WebInspector = {
             errorWarningElement.title = null;
     },
 
+    get styleChanges()
+    {
+        return this._styleChanges;
+    },
+
+    set styleChanges(x)
+    {
+        x = Math.max(x, 0);
+
+        if (this._styleChanges === x)
+            return;
+        this._styleChanges = x;
+        this._updateChangesCount();
+    },
+
+    _updateChangesCount: function()
+    {
+        // TODO: Remove immediate return when enabling the Changes Panel
+        return;
+
+        var changesElement = document.getElementById("changes-count");
+        if (!changesElement)
+            return;
+
+        if (!this.styleChanges) {
+            changesElement.addStyleClass("hidden");
+            return;
+        }
+
+        changesElement.removeStyleClass("hidden");
+        changesElement.removeChildren();
+
+        if (this.styleChanges) {
+            var styleChangesElement = document.createElement("span");
+            styleChangesElement.id = "style-changes-count";
+            styleChangesElement.textContent = this.styleChanges;
+            changesElement.appendChild(styleChangesElement);
+        }
+
+        if (this.styleChanges) {
+            if (this.styleChanges === 1)
+                changesElement.title = WebInspector.UIString("%d style change", this.styleChanges);
+            else
+                changesElement.title = WebInspector.UIString("%d style changes", this.styleChanges);
+        }
+    },
+
     get hoveredDOMNode()
     {
         return this._hoveredDOMNode;
@@ -299,7 +347,13 @@ WebInspector.loaded = function()
     var platform = InspectorController.platform();
     document.body.addStyleClass("platform-" + platform);
 
-    this.console = new WebInspector.Console();
+    this.drawer = new WebInspector.Drawer();
+    this.console = new WebInspector.ConsoleView(this.drawer);
+    // TODO: Uncomment when enabling the Changes Panel
+    // this.changes = new WebInspector.ChangesView(this.drawer);
+    // TODO: Remove class="hidden" from inspector.html on button#changes-status-bar-item
+    this.drawer.visibleView = this.console;
+
     if (Preferences.useDOMAgent)
         this.domAgent = new WebInspector.DOMAgent();
 
@@ -370,8 +424,14 @@ WebInspector.loaded = function()
         dockToggleButton.title = WebInspector.UIString("Dock to main window.");
 
     var errorWarningCount = document.getElementById("error-warning-count");
-    errorWarningCount.addEventListener("click", this.console.show.bind(this.console), false);
+    errorWarningCount.addEventListener("click", this.showConsole.bind(this), false);
     this._updateErrorAndWarningCounts();
+
+    this.styleChanges = 0;
+    // TODO: Uncomment when enabling the Changes Panel
+    // var changesElement = document.getElementById("changes-count");
+    // changesElement.addEventListener("click", this.showChanges.bind(this), false);
+    // this._updateErrorAndWarningCounts();
 
     var searchField = document.getElementById("search");
     searchField.addEventListener("keydown", this.searchKeyDown.bind(this), false);
@@ -501,7 +561,7 @@ WebInspector.documentKeyDown = function(event)
 
         switch (event.keyIdentifier) {
             case "U+001B": // Escape key
-                this.console.visible = !this.console.visible;
+                this.drawer.visible = !this.drawer.visible;
                 event.preventDefault();
                 break;
 
@@ -793,7 +853,12 @@ WebInspector.elementDragEnd = function(event)
 
 WebInspector.showConsole = function()
 {
-    this.console.show();
+    this.drawer.visibleView = this.console;
+}
+
+WebInspector.showChanges = function()
+{
+    this.drawer.visibleView = this.changes;
 }
 
 WebInspector.showElementsPanel = function()

@@ -38,8 +38,10 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <script type="text/javascript" src="TextPrompt.js"></script>
     <script type="text/javascript" src="Placard.js"></script>
     <script type="text/javascript" src="View.js"></script>
-    <script type="text/javascript" src="Console.js"></script>
     <script type="text/javascript" src="Callback.js"></script>
+    <script type="text/javascript" src="Drawer.js"></script>
+    <script type="text/javascript" src="ChangesView.js"></script>
+    <script type="text/javascript" src="ConsoleView.js"></script>
     <script type="text/javascript" src="Resource.js"></script>
     <script type="text/javascript" src="ResourceCategory.js"></script>
     <script type="text/javascript" src="Database.js"></script>
@@ -90,11 +92,11 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </div>
     <div id="main">
         <div id="main-panels" tabindex="0" spellcheck="false"></div>
-        <div id="main-status-bar" class="status-bar"><div id="anchored-status-bar-items"><button id="dock-status-bar-item" class="status-bar-item toggled"></button><button id="console-status-bar-item" class="status-bar-item"></button><div id="error-warning-count" class="hidden"></div></div></div>
+        <div id="main-status-bar" class="status-bar"><div id="anchored-status-bar-items"><button id="dock-status-bar-item" class="status-bar-item toggled"></button><button id="console-status-bar-item" class="status-bar-item"></button><button id="changes-status-bar-item" class="status-bar-item hidden"></button><div id="count-items"><div id="changes-count" class="hidden"></div><div id="error-warning-count" class="hidden"></div></div></div></div>
     </div>
-    <div id="console">
-        <div id="console-messages"><div id="console-prompt" spellcheck="false"><br></div></div>
-        <div id="console-status-bar" class="status-bar"><div id="other-console-status-bar-items"><button id="clear-console-status-bar-item" class="status-bar-item"></button></div></div>
+    <div id="drawer">
+        <div id="console-view"><div id="console-messages"><div id="console-prompt" spellcheck="false"><br></div></div></div>
+        <div id="drawer-status-bar" class="status-bar"><div id="other-drawer-status-bar-items"><button id="clear-console-status-bar-item" class="status-bar-item"></button></div></div>
     </div>
 </body>
 </html>
