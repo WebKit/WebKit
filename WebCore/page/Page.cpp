@@ -45,7 +45,6 @@
 #include "NetworkStateNotifier.h"
 #include "PageGroup.h"
 #include "PluginData.h"
-#include "PluginView.h"
 #include "ProgressTracker.h"
 #include "RenderWidget.h"
 #include "RenderTheme.h"
