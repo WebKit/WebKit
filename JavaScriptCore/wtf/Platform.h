@@ -565,7 +565,7 @@
 #if !defined(WTF_USE_JSVALUE64) && !defined(WTF_USE_JSVALUE32) && !defined(WTF_USE_JSVALUE32_64)
 #if PLATFORM(X86_64) && PLATFORM(MAC)
 #define WTF_USE_JSVALUE64 1
-#elif PLATFORM(QT) // All Qt layout tests crash in JSVALUE32_64 mode.
+#elif PLATFORM(QT) /* All Qt layout tests crash in JSVALUE32_64 mode. */
 #define WTF_USE_JSVALUE32 1
 #else
 #define WTF_USE_JSVALUE32_64 1
