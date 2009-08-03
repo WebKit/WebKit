@@ -1,5 +1,11 @@
 2009-08-03  Ada Chan  <adachan@apple.com>
 
+        Fixed the Tiger build.
+
+        * wtf/FastMalloc.cpp:
+
+2009-08-03  Ada Chan  <adachan@apple.com>
+
         Reviewed by Darin Adler.
 
         Don't use background thread to scavenge memory on Tiger until we figure out why it causes a crash.
