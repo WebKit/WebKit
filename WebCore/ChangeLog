@@ -1,3 +1,20 @@
+2009-08-03  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Sam Weinig.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=27748
+        crash w/ stack overflow when same CSS file loaded repeatedly
+
+        Fix crash caused by a stack overflow when repeatedly loading very large
+        CSS files. CSSRuleData in CSSStyleSelector.h destroyed itself 
+        recursively rather than iteratively.
+
+        Test: fast/css/large-list-of-rules-crash.html
+
+        * css/CSSStyleSelector.h:
+        (WebCore::CSSRuleData::~CSSRuleData):
+        (WebCore::CSSRuleDataList::~CSSRuleDataList):
+
 2009-08-03  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
