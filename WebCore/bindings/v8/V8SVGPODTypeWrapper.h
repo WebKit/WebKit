@@ -230,7 +230,7 @@ private:
         , m_setter(setter)
         , m_cacheRemovalCallback(cacheRemovalCallback)
     {
-        ASSERT(creator);
+        ASSERT(m_creator);  // |creator|'s pointer was taken by m_creator.
         ASSERT(getter);
         ASSERT(setter);
         ASSERT(cacheRemovalCallback);
