@@ -1,3 +1,12 @@
+2009-08-03  Ada Chan  <adachan@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Don't use background thread to scavenge memory on Tiger until we figure out why it causes a crash.
+        https://bugs.webkit.org/show_bug.cgi?id=27900
+
+        * wtf/FastMalloc.cpp:
+
 2009-08-03  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Jan Alonzo.

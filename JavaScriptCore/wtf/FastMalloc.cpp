@@ -97,7 +97,10 @@
 
 
 // Use a background thread to periodically scavenge memory to release back to the system
+// https://bugs.webkit.org/show_bug.cgi?id=27900: don't turn this on for Tiger until we have figured out why it caused a crash.
+#if !defined(BUILDING_ON_TIGER)
 #define USE_BACKGROUND_THREAD_TO_SCAVENGE_MEMORY 1
+#endif
 
 #ifndef NDEBUG
 namespace WTF {
