@@ -1,3 +1,16 @@
+2009-08-03  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [Gtk] macros in webkit.m4 should be defined once only
+        https://bugs.webkit.org/show_bug.cgi?id=27929
+
+        The macros in webkit.m4 are not meant to be called multiple times
+        so we'll make them AC_DEFUN_ONCE. Also make AC_HEADER_STDC and AC_PROG_CXX
+        AC_REQUIRE to remove the automake warnings when doing autogen.sh.
+
+        * autotools/webkit.m4:
+
 2009-07-29  Ariya Hidayat  <ariya.hidayat@nokia.com>
 
         Reviewed by Simon Hausmann.

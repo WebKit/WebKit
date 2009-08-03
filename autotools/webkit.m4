@@ -7,7 +7,7 @@ dnl WebKit and JavaScriptCore builds.
 m4_define([initialized], [no])
 
 # check for pkg-config
-AC_DEFUN([WEBKIT_INIT],
+AC_DEFUN_ONCE([WEBKIT_INIT],
 [dnl
 dnl check if we have the required packages to have successful checks
 dnl
@@ -55,7 +55,7 @@ fi
 
 AM_PROG_CC_STDC
 AM_PROG_CC_C_O
-AC_PROG_CXX
+AC_REQUIRE([AC_PROG_CXX])
 AC_PROG_INSTALL
 AC_SYS_LARGEFILE
 
@@ -71,13 +71,13 @@ AC_C_INLINE
 AC_C_VOLATILE
 
 # C/C++ Headers
-AC_HEADER_STDC
+AC_REQUIRE([AC_HEADER_STDC])
 AC_HEADER_STDBOOL
 
 m4_define([initialized], [yes])
 ])
 
-AC_DEFUN([WEBKIT_CHECK_DEPENDENCIES],
+AC_DEFUN_ONCE([WEBKIT_CHECK_DEPENDENCIES],
 [dnl
 dnl check for module dependencies
 for module in $1
@@ -91,7 +91,7 @@ do
 done
 ])
 
-AC_DEFUN([_WEBKIT_CHECK_GLIB],
+AC_DEFUN_ONCE([_WEBKIT_CHECK_GLIB],
 [dnl
 dnl check for glib
 # Version requirements
@@ -115,7 +115,7 @@ if test -z "$GLIB_GENMARSHAL" || test -z "$GLIB_MKENUMS"; then
 fi
 ])
 
-AC_DEFUN([_WEBKIT_CHECK_UNICODE],
+AC_DEFUN_ONCE([_WEBKIT_CHECK_UNICODE],
 [dnl
 dnl determine the Unicode backend
 AC_MSG_CHECKING([which Unicode backend to use])
