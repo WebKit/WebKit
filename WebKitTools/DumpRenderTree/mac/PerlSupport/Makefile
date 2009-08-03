@@ -56,3 +56,5 @@ endif
 
 clean:
 	rm -f $(WRAPPER) $(PERL_MODULE) $(DYLIB)
+
+installhdrs installsrc install:
