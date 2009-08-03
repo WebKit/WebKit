@@ -1,3 +1,18 @@
+2009-08-03  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Fix a bug that could cause an ASSERT to fail incorrectly, leading
+        to a renderer crash in Chromium.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27947
+
+        All tests in storage/ pass.
+
+        * platform/sql/SQLiteTransaction.cpp:
+        (WebCore::SQLiteTransaction::~SQLiteTransaction):
+        (WebCore::SQLiteTransaction::begin):
+
 2009-08-03  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Simon Hausmann.

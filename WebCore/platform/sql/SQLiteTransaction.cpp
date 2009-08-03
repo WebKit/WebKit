@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -38,16 +38,16 @@ SQLiteTransaction::SQLiteTransaction(SQLiteDatabase& db)
 
 SQLiteTransaction::~SQLiteTransaction()
 {
-    if (m_inProgress) 
+    if (m_inProgress)
         rollback();
 }
-    
+
 void SQLiteTransaction::begin()
 {
     if (!m_inProgress) {
         ASSERT(!m_db.m_transactionInProgress);
         m_inProgress = m_db.executeCommand("BEGIN;");
-        m_db.m_transactionInProgress = true;
+        m_db.m_transactionInProgress = m_inProgress;
     }
 }
 
@@ -76,5 +76,5 @@ void SQLiteTransaction::stop()
     m_inProgress = false;
     m_db.m_transactionInProgress = false;
 }
-    
+
 } // namespace WebCore
