@@ -1020,9 +1020,9 @@ void RenderLayerBacking::transitionFinished(int property)
         m_graphicsLayer->removeAnimationsForProperty(animatedProperty);
 }
 
-void RenderLayerBacking::suspendAnimations()
+void RenderLayerBacking::suspendAnimations(double time)
 {
-    m_graphicsLayer->suspendAnimations();
+    m_graphicsLayer->suspendAnimations(time);
 }
 
 void RenderLayerBacking::resumeAnimations()

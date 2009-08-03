@@ -1,3 +1,35 @@
+2009-08-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Make the DRT APIs to pause transitions and animations work for accelerated animations
+        <https://bugs.webkit.org/show_bug.cgi?id=27627>
+        <rdar://problem/6442932>
+
+        Fix the 'pauseAnimationAtTimeOnElementWithId' and 'pauseTransitionAtTimeOnElementWithId' APIs
+        available to LayoutTests to work with accelerated animations and transitions. Done by sending
+        the pause time down to the GraphicsLayer, and using it to stop time on the layer.
+        
+        I also added an assertion to check that the animation has actually started when we
+        try to pause it, to check that the pause time we compute is valid. This revealed a number
+        of tests that tried to pause before animations started, required some amount of test fixing.
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::freezeAtTime):
+        * page/animation/AnimationBase.h:
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::pauseAnimationAtTime):
+        (WebCore::CompositeAnimation::pauseTransitionAtTime):
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::suspendAnimations):
+        * platform/graphics/GraphicsLayer.h:
+        * platform/graphics/mac/GraphicsLayerCA.h:
+        * platform/graphics/mac/GraphicsLayerCA.mm:
+        (WebCore::GraphicsLayerCA::suspendAnimations):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::suspendAnimations):
+        * rendering/RenderLayerBacking.h:
+
 2009-08-03  Tony Chang  <tony@chromium.org>
 
         Reviewed by Darin Adler.

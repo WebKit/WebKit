@@ -1,3 +1,44 @@
+2009-08-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Make the DRT APIs to pause transitions and animations work for accelerated animations
+        <https://bugs.webkit.org/show_bug.cgi?id=27627>
+        <rdar://problem/6442932>
+
+        Fix the 'pauseAnimationAtTimeOnElementWithId' and 'pauseTransitionAtTimeOnElementWithId' APIs
+        available to LayoutTests to work with accelerated animations and transitions. Done by sending
+        the pause time down to the GraphicsLayer, and using it to stop time on the layer.
+        
+        I also added an assertion to check that the animation has actually started when we
+        try to pause it, to check that the pause time we compute is valid. This revealed a number
+        of tests that tried to pause before animations started, required some amount of test fixing.
+
+        * animations/animation-drt-api-multiple-keyframes.html:
+        * animations/animation-drt-api.html:
+        * animations/animation-hit-test-transform.html:
+        * animations/animation-hit-test.html:
+        * animations/animation-test-helpers.js:
+        (isCloseEnough):
+        (matrixStringToArray):
+        (checkExpectedValue):
+        (endTest):
+        (startTest):
+        (runAnimationTest.else):
+        (runAnimationTest):
+        (waitForAnimationToStart):
+        * transitions/transition-drt-api-delay.html:
+        * transitions/transition-hit-test-transform.html:
+        * transitions/transition-shorthand-delay.html:
+        * transitions/transition-test-helpers.js:
+        (isCloseEnough):
+        (checkExpectedValue):
+        (endTest):
+        (runTest):
+        (waitForAnimationStart):
+        (startTest):
+        (runTransitionTest):
+
 2009-08-03  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

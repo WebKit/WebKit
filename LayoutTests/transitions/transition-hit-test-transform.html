@@ -26,6 +26,7 @@
         position:absolute;
     }
      </style>
+   <script src="transition-test-helpers.js" type="text/javascript" charset="utf-8"></script>
    <script type="text/javascript" charset="utf-8">
         function checkResult(pos, isIn)
         {
@@ -69,7 +70,7 @@
             }
       
             document.getElementById("target").style.webkitTransform = "translateX(300px)";
-            window.setTimeout(doTest, 0);
+            waitForAnimationStart(doTest);
         }
    </script>
 </head>

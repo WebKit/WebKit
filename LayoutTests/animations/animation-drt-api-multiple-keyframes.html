@@ -26,14 +26,26 @@
       60% { left: 15px; }
       to { left: 20px; }
     }
-         
-     </style>
+   </style>
+
+   <script src="animation-test-helpers.js" type="text/javascript" charset="utf-8"></script>
    <script type="text/javascript" charset="utf-8">
-    function startTest() {
+    if (window.layoutTestController)
+      layoutTestController.waitUntilDone();
+   
+    function animationStarted()
+    {
       if (window.layoutTestController) {
         if (!layoutTestController.pauseAnimationAtTimeOnElementWithId("anim", 3, "box"))
           throw("Animation is not running");
+
+        layoutTestController.notifyDone();
       }
+    }
+
+    function startTest()
+    {
+      waitForAnimationToStart(document.getElementById('box'), animationStarted);
     }
    </script>
 </head>

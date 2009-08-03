@@ -45,6 +45,8 @@
 #include "MatrixTransformOperation.h"
 #include "Matrix3DTransformOperation.h"
 #include "RenderBox.h"
+#include "RenderLayer.h"
+#include "RenderLayerBacking.h"
 #include "RenderStyle.h"
 #include "UnitBezier.h"
 
@@ -1077,10 +1079,18 @@ void AnimationBase::goIntoEndingOrLoopingState()
     m_animState = isLooping ? AnimationStateLooping : AnimationStateEnding;
 }
   
-void AnimationBase::pauseAtTime(double t)
+void AnimationBase::freezeAtTime(double t)
 {
-    updatePlayState(false);
+    ASSERT(m_startTime);        // if m_startTime is zero, we haven't started yet, so we'll get a bad pause time.
     m_pauseTime = m_startTime + t - m_animation->delay();
+
+#if USE(ACCELERATED_COMPOSITING)
+    if (m_object && m_object->hasLayer()) {
+        RenderLayer* layer = toRenderBoxModelObject(m_object)->layer();
+        if (layer->isComposited())
+            layer->backing()->suspendAnimations(m_pauseTime);
+    }
+#endif
 }
 
 double AnimationBase::beginAnimationUpdateTime() const

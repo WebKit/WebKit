@@ -29,13 +29,25 @@
       }
     }
          
-     </style>
-   <script type="text/javascript" charset="utf-8">
-    function startTest() {
+  </style>
+
+  <script src="animation-test-helpers.js" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript" charset="utf-8">
+    if (window.layoutTestController)
+      layoutTestController.waitUntilDone();
+
+    function animationStarted()
+    {
       if (window.layoutTestController) {
         if (!layoutTestController.pauseAnimationAtTimeOnElementWithId("bounce", 1.0, "target"))
           throw("Animation is not running");
+        layoutTestController.notifyDone();
       }
+    }
+
+    function startTest()
+    {
+      waitForAnimationToStart(document.getElementById('target'), animationStarted);
     }
    </script>
 </head>

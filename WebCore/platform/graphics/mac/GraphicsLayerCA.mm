@@ -1546,9 +1546,9 @@ bool GraphicsLayerCA::setTransformAnimationKeyframes(const KeyframeValueList& va
     return true;
 }
 
-void GraphicsLayerCA::suspendAnimations()
+void GraphicsLayerCA::suspendAnimations(double time)
 {
-    double t = currentTimeToMediaTime(currentTime());
+    double t = currentTimeToMediaTime(time ? time : currentTime());
     [primaryLayer() setSpeed:0];
     [primaryLayer() setTimeOffset:t];
 }

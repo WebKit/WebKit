@@ -210,7 +210,7 @@ void GraphicsLayer::paintGraphicsLayerContents(GraphicsContext& context, const I
         m_client->paintContents(this, context, m_paintingPhase, clip);
 }
 
-void GraphicsLayer::suspendAnimations()
+void GraphicsLayer::suspendAnimations(double)
 {
 }
 

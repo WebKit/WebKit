@@ -88,7 +88,7 @@ public:
 
     virtual void setContentsRect(const IntRect&);
     
-    virtual void suspendAnimations();
+    virtual void suspendAnimations(double time);
     virtual void resumeAnimations();
 
     virtual bool addAnimation(const KeyframeValueList&, const IntSize& boxSize, const Animation*, const String& keyframesName, double beginTime);

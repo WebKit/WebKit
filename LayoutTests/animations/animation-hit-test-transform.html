@@ -27,7 +27,9 @@
         background-color: yellow;
         position:absolute;
     }
-     </style>
+   </style>
+
+   <script src="animation-test-helpers.js" type="text/javascript" charset="utf-8"></script>
    <script type="text/javascript" charset="utf-8">
         function checkResult(pos, isIn)
         {
@@ -71,7 +73,7 @@
             }
       
             document.getElementById("target").style.webkitAnimationName = "anim";
-            window.setTimeout(doTest, 0);
+            waitForAnimationToStart(document.getElementById('target'), doTest);
         }
    </script>
 </head>
