@@ -245,7 +245,9 @@ bool PluginPackage::load()
         m_loadCount++;
         return true;
     } else {
-#if !PLATFORM(WINCE)
+#if PLATFORM(WINCE)
+        m_module = ::LoadLibraryW(m_path.charactersWithNullTermination());
+#else
         WCHAR currentPath[MAX_PATH];
 
         if (!::GetCurrentDirectoryW(MAX_PATH, currentPath))
@@ -255,12 +257,10 @@ bool PluginPackage::load()
 
         if (!::SetCurrentDirectoryW(path.charactersWithNullTermination()))
             return false;
-#endif
 
         // Load the library
         m_module = ::LoadLibraryExW(m_path.charactersWithNullTermination(), 0, LOAD_WITH_ALTERED_SEARCH_PATH);
 
-#if !PLATFORM(WINCE)
         if (!::SetCurrentDirectoryW(currentPath)) {
             if (m_module)
                 ::FreeLibrary(m_module);
