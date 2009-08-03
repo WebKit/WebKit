@@ -1,3 +1,13 @@
+2009-08-03  Balazs Kelemen  <kelemen.balazs.3@stud.u-szeged.hu>
+
+        Reviewed by Simon Hausmann.
+
+        Do memory cleanup when running robotized QtLauncher in debug as well.
+
+        * QtLauncher/main.cpp:
+        (launcherMain):
+        (main):
+
 2009-07-30  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Tor Arne Vestbø.
