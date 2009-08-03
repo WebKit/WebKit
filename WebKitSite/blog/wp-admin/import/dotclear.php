@@ -1,7 +1,11 @@
 <?php
-/*
- * DotClear import plugin
- * by Thomas Quinot - http://thomas.quinot.org/
+/**
+ * DotClear Importer
+ *
+ * @package WordPress
+ * @subpackage Importer
+ * @author Thomas Quinot
+ * @link http://thomas.quinot.org/
  */
 
 /**
@@ -10,6 +14,15 @@
 
 if(!function_exists('get_comment_count'))
 {
+	/**
+	 * Get the comment count for posts.
+	 *
+	 * @package WordPress
+	 * @subpackage Dotclear_Import
+	 *
+	 * @param int $post_ID Post ID
+	 * @return int
+	 */
 	function get_comment_count($post_ID)
 	{
 		global $wpdb;
@@ -19,6 +32,15 @@ if(!function_exists('get_comment_count'))
 
 if(!function_exists('link_exists'))
 {
+	/**
+	 * Check whether link already exists.
+	 *
+	 * @package WordPress
+	 * @subpackage Dotclear_Import
+	 *
+	 * @param string $linkname
+	 * @return int
+	 */
 	function link_exists($linkname)
 	{
 		global $wpdb;
@@ -26,92 +48,51 @@ if(!function_exists('link_exists'))
 	}
 }
 
-/*
- Identify UTF-8 text
- Taken from http://www.php.net/manual/fr/function.mb-detect-encoding.php#50087
-*/
-//
-//    utf8 encoding validation developed based on Wikipedia entry at:
-//    http://en.wikipedia.org/wiki/UTF-8
-//
-//    Implemented as a recursive descent parser based on a simple state machine
-//    copyright 2005 Maarten Meijer
-//
-//    This cries out for a C-implementation to be included in PHP core
-//
-
-function valid_1byte($char) {
-	if(!is_int($char)) return false;
-		return ($char & 0x80) == 0x00;
-}
-
-function valid_2byte($char) {
-	if(!is_int($char)) return false;
-		return ($char & 0xE0) == 0xC0;
-}
-
-function valid_3byte($char) {
-	if(!is_int($char)) return false;
-		return ($char & 0xF0) == 0xE0;
-}
-
-function valid_4byte($char) {
-	if(!is_int($char)) return false;
-		return ($char & 0xF8) == 0xF0;
-}
-
-function valid_nextbyte($char) {
-	if(!is_int($char)) return false;
-		return ($char & 0xC0) == 0x80;
-}
-
-function valid_utf8($string) {
-	$len = strlen($string);
-	$i = 0;
-	while( $i < $len ) {
-		$char = ord(substr($string, $i++, 1));
-		if(valid_1byte($char)) {    // continue
-			continue;
-		} else if(valid_2byte($char)) { // check 1 byte
-			if(!valid_nextbyte(ord(substr($string, $i++, 1))))
-				return false;
-		} else if(valid_3byte($char)) { // check 2 bytes
-			if(!valid_nextbyte(ord(substr($string, $i++, 1))))
-				return false;
-			if(!valid_nextbyte(ord(substr($string, $i++, 1))))
-				return false;
-		} else if(valid_4byte($char)) { // check 3 bytes
-			if(!valid_nextbyte(ord(substr($string, $i++, 1))))
-				return false;
-			if(!valid_nextbyte(ord(substr($string, $i++, 1))))
-				return false;
-			if(!valid_nextbyte(ord(substr($string, $i++, 1))))
-				return false;
-		} // goto next char
-	}
-	return true; // done
-}
-
+/**
+ * Convert from dotclear charset to utf8 if required
+ *
+ * @package WordPress
+ * @subpackage Dotclear_Import
+ *
+ * @param string $s
+ * @return string
+ */
 function csc ($s) {
-	if (valid_utf8 ($s)) {
+	if (seems_utf8 ($s)) {
 		return $s;
 	} else {
 		return iconv(get_option ("dccharset"),"UTF-8",$s);
 	}
 }
 
+/**
+ * @package WordPress
+ * @subpackage Dotclear_Import
+ *
+ * @param string $s
+ * @return string
+ */
 function textconv ($s) {
 	return csc (preg_replace ('|(?<!<br />)\s*\n|', ' ', $s));
 }
 
 /**
-	The Main Importer Class
-**/
+ * Dotclear Importer class
+ *
+ * Will process the WordPress eXtended RSS files that you upload from the export
+ * file.
+ *
+ * @package WordPress
+ * @subpackage Importer
+ *
+ * @since unknown
+ */
 class Dotclear_Import {
 
 	function header()
 	{
 		echo '<div class="wrap">';
+		screen_icon();
 		echo '<h2>'.__('Import DotClear').'</h2>';
 		echo '<p>'.__('Steps may take a few minutes depending on the size of your database. Please be patient.').'</p>';
 	}
@@ -128,7 +109,7 @@ class Dotclear_Import {
 		echo '<form action="admin.php?import=dotclear&amp;step=1" method="post">';
 		wp_nonce_field('import-dotclear');
 		$this->db_form();
-		echo '<p class="submit"><input type="submit" name="submit" value="'.attribute_escape(__('Import Categories')).'" /></p>';
+		echo '<p class="submit"><input type="submit" name="submit" class="button" value="'.esc_attr__('Import Categories').'" /></p>';
 		echo '</form></div>';
 	}
 
@@ -225,7 +206,7 @@ class Dotclear_Import {
 
 			// Store category translation for future use
 			add_option('dccat2wpcat',$dccat2wpcat);
-			echo '<p>'.sprintf(__ngettext('Done! <strong>%1$s</strong> category imported.', 'Done! <strong>%1$s</strong> categories imported.', $count), $count).'<br /><br /></p>';
+			echo '<p>'.sprintf(_n('Done! <strong>%1$s</strong> category imported.', 'Done! <strong>%1$s</strong> categories imported.', $count), $count).'<br /><br /></p>';
 			return true;
 		}
 		echo __('No Categories to Import!');
@@ -526,7 +507,7 @@ class Dotclear_Import {
 			}
 			add_option('dclinks2wplinks',$dclinks2wplinks);
 			echo '<p>';
-			printf(__ngettext('Done! <strong>%s</strong> link or link category imported.', 'Done! <strong>%s</strong> links or link categories imported.', $count), $count);
+			printf(_n('Done! <strong>%s</strong> link or link category imported.', 'Done! <strong>%s</strong> links or link categories imported.', $count), $count);
 			echo '<br /><br /></p>';
 			return true;
 		}
@@ -545,7 +526,7 @@ class Dotclear_Import {
 
 		echo '<form action="admin.php?import=dotclear&amp;step=2" method="post">';
 		wp_nonce_field('import-dotclear');
-		printf('<input type="submit" name="submit" value="%s" />', attribute_escape(__('Import Users')));
+		printf('<p class="submit"><input type="submit" name="submit" class="button" value="%s" /></p>', esc_attr__('Import Users'));
 		echo '</form>';
 
 	}
@@ -558,7 +539,7 @@ class Dotclear_Import {
 
 		echo '<form action="admin.php?import=dotclear&amp;step=3" method="post">';
 		wp_nonce_field('import-dotclear');
-		printf('<input type="submit" name="submit" value="%s" />', attribute_escape(__('Import Posts')));
+		printf('<p class="submit"><input type="submit" name="submit" class="button" value="%s" /></p>', esc_attr__('Import Posts'));
 		echo '</form>';
 	}
 
@@ -572,7 +553,7 @@ class Dotclear_Import {
 
 		echo '<form action="admin.php?import=dotclear&amp;step=4" method="post">';
 		wp_nonce_field('import-dotclear');
-		printf('<input type="submit" name="submit" value="%s" />', attribute_escape(__('Import Comments')));
+		printf('<p class="submit"><input type="submit" name="submit" class="button" value="%s" /></p>', esc_attr__('Import Comments'));
 		echo '</form>';
 	}
 
@@ -584,7 +565,7 @@ class Dotclear_Import {
 
 		echo '<form action="admin.php?import=dotclear&amp;step=5" method="post">';
 		wp_nonce_field('import-dotclear');
-		printf('<input type="submit" name="submit" value="%s" />', attribute_escape(__('Import Links')));
+		printf('<p class="submit"><input type="submit" name="submit" class="button" value="%s" /></p>', esc_attr__('Import Links'));
 		echo '</form>';
 	}
 
@@ -597,7 +578,7 @@ class Dotclear_Import {
 
 		echo '<form action="admin.php?import=dotclear&amp;step=6" method="post">';
 		wp_nonce_field('import-dotclear');
-		printf('<input type="submit" name="submit" value="%s" />', attribute_escape(__('Finish')));
+		printf('<p class="submit"><input type="submit" name="submit" class="button" value="%s" /></p>', esc_attr__('Finish'));
 		echo '</form>';
 	}
 
@@ -623,11 +604,11 @@ class Dotclear_Import {
 	{
 		echo '<p>'.__('Welcome to WordPress.  We hope (and expect!) that you will find this platform incredibly rewarding!  As a new WordPress user coming from DotClear, there are some things that we would like to point out.  Hopefully, they will help your transition go as smoothly as possible.').'</p>';
 		echo '<h3>'.__('Users').'</h3>';
-		echo '<p>'.sprintf(__('You have already setup WordPress and have been assigned an administrative login and password.  Forget it.  You didn\'t have that login in DotClear, why should you have it here?  Instead we have taken care to import all of your users into our system.  Unfortunately there is one downside.  Because both WordPress and DotClear uses a strong encryption hash with passwords, it is impossible to decrypt it and we are forced to assign temporary passwords to all your users.  <strong>Every user has the same username, but their passwords are reset to password123.</strong>  So <a href="%1$s">Login</a> and change it.'), '/wp-login.php').'</p>';
+		echo '<p>'.sprintf(__('You have already setup WordPress and have been assigned an administrative login and password.  Forget it.  You didn&#8217;t have that login in DotClear, why should you have it here?  Instead we have taken care to import all of your users into our system.  Unfortunately there is one downside.  Because both WordPress and DotClear uses a strong encryption hash with passwords, it is impossible to decrypt it and we are forced to assign temporary passwords to all your users.  <strong>Every user has the same username, but their passwords are reset to password123.</strong>  So <a href="%1$s">Login</a> and change it.'), '/wp-login.php').'</p>';
 		echo '<h3>'.__('Preserving Authors').'</h3>';
 		echo '<p>'.__('Secondly, we have attempted to preserve post authors.  If you are the only author or contributor to your blog, then you are safe.  In most cases, we are successful in this preservation endeavor.  However, if we cannot ascertain the name of the writer due to discrepancies between database tables, we assign it to you, the administrative user.').'</p>';
 		echo '<h3>'.__('Textile').'</h3>';
-		echo '<p>'.__('Also, since you\'re coming from DotClear, you probably have been using Textile to format your comments and posts.  If this is the case, we recommend downloading and installing <a href="http://www.huddledmasses.org/category/development/wordpress/textile/">Textile for WordPress</a>.  Trust me... You\'ll want it.').'</p>';
+		echo '<p>'.__('Also, since you&#8217;re coming from DotClear, you probably have been using Textile to format your comments and posts.  If this is the case, we recommend downloading and installing <a href="http://www.huddledmasses.org/category/development/wordpress/textile/">Textile for WordPress</a>.  Trust me&#8230; You&#8217;ll want it.').'</p>';
 		echo '<h3>'.__('WordPress Resources').'</h3>';
 		echo '<p>'.__('Finally, there are numerous WordPress resources around the internet.  Some of them are:').'</p>';
 		echo '<ul>';
@@ -635,7 +616,7 @@ class Dotclear_Import {
 		echo '<li>'.__('<a href="http://wordpress.org/support/">The WordPress support forums</a>').'</li>';
 		echo '<li>'.__('<a href="http://codex.wordpress.org">The Codex (In other words, the WordPress Bible)</a>').'</li>';
 		echo '</ul>';
-		echo '<p>'.sprintf(__('That\'s it! What are you waiting for? Go <a href="%1$s">login</a>!'), '../wp-login.php').'</p>';
+		echo '<p>'.sprintf(__('That&#8217;s it! What are you waiting for? Go <a href="%1$s">login</a>!'), '../wp-login.php').'</p>';
 	}
 
 	function db_form()
@@ -644,7 +625,7 @@ class Dotclear_Import {
 		printf('<tr><th><label for="dbuser">%s</label></th><td><input type="text" name="dbuser" id="dbuser" /></td></tr>', __('DotClear Database User:'));
 		printf('<tr><th><label for="dbpass">%s</label></th><td><input type="password" name="dbpass" id="dbpass" /></td></tr>', __('DotClear Database Password:'));
 		printf('<tr><th><label for="dbname">%s</label></th><td><input type="text" name="dbname" id="dbname" /></td></tr>', __('DotClear Database Name:'));
-		printf('<tr><th><label for="dbhost">%s</label></th><td><input type="text" name="dbhost" nameid="dbhost" value="localhost" /></td></tr>', __('DotClear Database Host:'));
+		printf('<tr><th><label for="dbhost">%s</label></th><td><input type="text" name="dbhost" id="dbhost" value="localhost" /></td></tr>', __('DotClear Database Host:'));
 		printf('<tr><th><label for="dbprefix">%s</label></th><td><input type="text" name="dbprefix" id="dbprefix" value="dc_"/></td></tr>', __('DotClear Table prefix:'));
 		printf('<tr><th><label for="dccharset">%s</label></th><td><input type="text" name="dccharset" id="dccharset" value="ISO-8859-15"/></td></tr>', __('Originating character set:'));
 		echo '</table>';
@@ -742,5 +723,7 @@ class Dotclear_Import {
 }
 
 $dc_import = new Dotclear_Import();
+
 register_importer('dotclear', __('DotClear'), __('Import categories, users, posts, comments, and links from a DotClear blog.'), array ($dc_import, 'dispatch'));
+
 ?>

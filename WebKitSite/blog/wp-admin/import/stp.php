@@ -1,7 +1,22 @@
 <?php
+/**
+ * Simple Tags Plugin Importer
+ *
+ * @package WordPress
+ * @subpackage Importer
+ */
+
+/**
+ * Simple Tags Plugin Tags converter class.
+ *
+ * Will convert Simple Tags Plugin tags over to the WordPress 2.3 taxonomy.
+ *
+ * @since unknown
+ */
 class STP_Import {
 	function header()  {
 		echo '<div class="wrap">';
+		screen_icon();
 		echo '<h2>'.__('Import Simple Tagging').'</h2>';
 		echo '<p>'.__('Steps may take a few minutes depending on the size of your database. Please be patient.').'<br /><br /></p>';
 	}
@@ -18,7 +33,7 @@ class STP_Import {
 		echo '<p><strong>'.__('Don&#8217;t be stupid - backup your database before proceeding!').'</strong></p>';
 		echo '<form action="admin.php?import=stp&amp;step=1" method="post">';
 		wp_nonce_field('import-stp');
-		echo '<p class="submit"><input type="submit" name="submit" value="'.__('Step 1').'" /></p>';
+		echo '<p class="submit"><input type="submit" name="submit" class="button" value="'.esc_attr__('Step 1').'" /></p>';
 		echo '</form>';
 		echo '</div>';
 	}
@@ -73,12 +88,12 @@ class STP_Import {
 
 			add_option('stpimp_posts', $posts);
 			$count = count($posts);
-			echo '<p>' . sprintf( __ngettext('Done! <strong>%s</strong> tag to post relationships were read.', 'Done! <strong>%s</strong> tags to post relationships were read.', $count), $count ) . '<br /></p>';
+			echo '<p>' . sprintf( _n('Done! <strong>%s</strong> tag to post relationships were read.', 'Done! <strong>%s</strong> tags to post relationships were read.', $count), $count ) . '<br /></p>';
 		}
 
 		echo '<form action="admin.php?import=stp&amp;step=2" method="post">';
 		wp_nonce_field('import-stp');
-		echo '<p class="submit"><input type="submit" name="submit" value="'.__('Step 2').'" /></p>';
+		echo '<p class="submit"><input type="submit" name="submit" class="button" value="'.esc_attr__('Step 2').'" /></p>';
 		echo '</form>';
 		echo '</div>';
 	}
@@ -91,10 +106,10 @@ class STP_Import {
 		// run that funky magic!
 		$tags_added = $this->tag2post();
 
-		echo '<p>' . sprintf( __ngettext('Done! <strong>%s</strong> tag was added!', 'Done! <strong>%s</strong> tags were added!', $tags_added), $tags_added ) . '<br /></p>';
+		echo '<p>' . sprintf( _n('Done! <strong>%s</strong> tag was added!', 'Done! <strong>%s</strong> tags were added!', $tags_added), $tags_added ) . '<br /></p>';
 		echo '<form action="admin.php?import=stp&amp;step=3" method="post">';
 		wp_nonce_field('import-stp');
-		echo '<p class="submit"><input type="submit" name="submit" value="'.__('Step 3').'" /></p>';
+		echo '<p class="submit"><input type="submit" name="submit" class="button" value="'.esc_attr__('Step 3').'" /></p>';
 		echo '</form>';
 		echo '</div>';
 	}

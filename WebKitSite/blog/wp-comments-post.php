@@ -30,16 +30,20 @@ if ( empty($status->comment_status) ) {
 } elseif ( in_array($status->post_status, array('draft', 'pending') ) ) {
 	do_action('comment_on_draft', $comment_post_ID);
 	exit;
+} else {
+	do_action('pre_comment_on_post', $comment_post_ID);
 }
 
-$comment_author       = trim(strip_tags($_POST['author']));
-$comment_author_email = trim($_POST['email']);
-$comment_author_url   = trim($_POST['url']);
-$comment_content      = trim($_POST['comment']);
+$comment_author       = ( isset($_POST['author']) )  ? trim(strip_tags($_POST['author'])) : null;
+$comment_author_email = ( isset($_POST['email']) )   ? trim($_POST['email']) : null;
+$comment_author_url   = ( isset($_POST['url']) )     ? trim($_POST['url']) : null;
+$comment_content      = ( isset($_POST['comment']) ) ? trim($_POST['comment']) : null;
 
 // If the user is logged in
 $user = wp_get_current_user();
 if ( $user->ID ) {
+	if ( empty( $user->display_name ) )
+		$user->display_name=$user->user_login;
 	$comment_author       = $wpdb->escape($user->display_name);
 	$comment_author_email = $wpdb->escape($user->user_email);
 	$comment_author_url   = $wpdb->escape($user->user_url);
@@ -50,7 +54,7 @@ if ( $user->ID ) {
 		}
 	}
 } else {
-	if ( get_option('comment_registration') )
+	if ( get_option('comment_registration') || 'private' == $status->post_status )
 		wp_die( __('Sorry, you must be logged in to post a comment.') );
 }
 
@@ -66,18 +70,21 @@ if ( get_option('require_name_email') && !$user->ID ) {
 if ( '' == $comment_content )
 	wp_die( __('Error: please type a comment.') );
 
-$commentdata = compact('comment_post_ID', 'comment_author', 'comment_author_email', 'comment_author_url', 'comment_content', 'comment_type', 'user_ID');
+$comment_parent = isset($_POST['comment_parent']) ? absint($_POST['comment_parent']) : 0;
+
+$commentdata = compact('comment_post_ID', 'comment_author', 'comment_author_email', 'comment_author_url', 'comment_content', 'comment_type', 'comment_parent', 'user_ID');
 
 $comment_id = wp_new_comment( $commentdata );
 
 $comment = get_comment($comment_id);
 if ( !$user->ID ) {
-	setcookie('comment_author_' . COOKIEHASH, $comment->comment_author, time() + 30000000, COOKIEPATH, COOKIE_DOMAIN);
-	setcookie('comment_author_email_' . COOKIEHASH, $comment->comment_author_email, time() + 30000000, COOKIEPATH, COOKIE_DOMAIN);
-	setcookie('comment_author_url_' . COOKIEHASH, clean_url($comment->comment_author_url), time() + 30000000, COOKIEPATH, COOKIE_DOMAIN);
+	$comment_cookie_lifetime = apply_filters('comment_cookie_lifetime', 30000000);
+	setcookie('comment_author_' . COOKIEHASH, $comment->comment_author, time() + $comment_cookie_lifetime, COOKIEPATH, COOKIE_DOMAIN);
+	setcookie('comment_author_email_' . COOKIEHASH, $comment->comment_author_email, time() + $comment_cookie_lifetime, COOKIEPATH, COOKIE_DOMAIN);
+	setcookie('comment_author_url_' . COOKIEHASH, esc_url($comment->comment_author_url), time() + $comment_cookie_lifetime, COOKIEPATH, COOKIE_DOMAIN);
 }
 
-$location = ( empty($_POST['redirect_to']) ? get_permalink($comment_post_ID) : $_POST['redirect_to'] ) . '#comment-' . $comment_id;
+$location = empty($_POST['redirect_to']) ? get_comment_link($comment_id) : $_POST['redirect_to'] . '#comment-' . $comment_id;
 $location = apply_filters('comment_post_redirect', $location, $comment);
 
 wp_redirect($location);

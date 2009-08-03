@@ -1,1 +1,0 @@
-jQuery( function($) { $('#users').wpList(); } );

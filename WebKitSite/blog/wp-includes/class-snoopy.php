@@ -1,22 +1,12 @@
 <?php
-/**
- * Snoopy - the PHP net client
- * @author Monte Ohrt <monte@ispi.net>
- * @copyright 1999-2000 ispi, all rights reserved
- * @version 1.01
- * @license GNU Lesser GPL
- * @link http://snoopy.sourceforge.net/
- * @package Snoopy
- */
-
 if ( !in_array('Snoopy', get_declared_classes() ) ) :
-/**
- * Snoopy - the PHP net client
- *
- * @author Monte Ohrt <monte@ispi.net>
- * @copyright (c): 1999-2000 ispi, all rights reserved
- * @version 1.01
- *
+/*************************************************
+
+Snoopy - the PHP net client
+Author: Monte Ohrt <monte@ispi.net>
+Copyright (c): 1999-2008 New Digital Group, all rights reserved
+Version: 1.2.4
+
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -29,20 +19,16 @@ if ( !in_array('Snoopy', get_declared_classes() ) ) :
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- *
- * You may contact the author of Snoopy by e-mail at:
- * monte@ispi.net
- *
- * Or, write to:
- * Monte Ohrt
- * CTO, ispi
- * 237 S. 70th suite 220
- * Lincoln, NE 68510
- *
- * @link http://snoopy.sourceforge.net/ The latest version of Snoopy can be
- *		obtained
- */
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+You may contact the author of Snoopy by e-mail at:
+monte@ohrt.com
+
+The latest version of Snoopy can be obtained from:
+http://snoopy.sourceforge.net/
+
+*************************************************/
+
 class Snoopy
 {
 	/**** Public variables ****/
@@ -56,7 +42,7 @@ class Snoopy
 	var $proxy_user		=	"";					// proxy user to use
 	var $proxy_pass		=	"";					// proxy password to use
 
-	var $agent			=	"Snoopy v1.2.3";	// agent we masquerade as
+	var $agent			=	"Snoopy v1.2.4";	// agent we masquerade as
 	var	$referer		=	"";					// referer info to pass
 	var $cookies		=	array();			// array of cookies to pass
 												// $cookies["username"]="joe";
@@ -85,7 +71,7 @@ class Snoopy
 	var $error			=	"";					// error messages sent here
 	var	$response_code	=	"";					// response code returned from server
 	var	$headers		=	array();			// headers returned from server sent here
-	var	$maxlength		=	8192;				// max return data length (body)
+	var	$maxlength		=	500000;				// max return data length (body)
 	var $read_timeout	=	0;					// timeout on read operations, in seconds
 												// supported only since PHP 4 Beta 4
 												// set to 0 to disallow timeouts
@@ -727,13 +713,13 @@ class Snoopy
 							chr(176),
 							chr(39),
 							chr(128),
-							"Ã¤",
-							"Ã¶",
-							"Ã¼",
-							"Ã„",
-							"Ã–",
-							"Ãœ",
-							"ÃŸ",
+							"ä",
+							"ö",
+							"ü",
+							"Ä",
+							"Ö",
+							"Ü",
+							"ß",
 						);
 
 		$text = preg_replace($search,$replace,$document);
@@ -1020,8 +1006,7 @@ class Snoopy
 
 		$headerfile = tempnam($temp_dir, "sno");
 
-		$safer_URI = strtr( $URI, "\"", " " ); // strip quotes from the URI to avoid shell access
-		exec(escapeshellcmd($this->curl_path." -D \"$headerfile\"".$cmdline_params." \"".$safer_URI."\""),$results,$return);
+		exec($this->curl_path." -k -D \"$headerfile\"".$cmdline_params." \"".escapeshellcmd($URI)."\"",$results,$return);
 
 		if($return)
 		{
@@ -1245,9 +1230,7 @@ class Snoopy
 						if (!is_readable($file_name)) continue;
 
 						$fp = fopen($file_name, "r");
-						while (!feof($fp)) {
-							$file_content .= fread($fp, filesize($file_name));
-						}
+						$file_content = fread($fp, filesize($file_name));
 						fclose($fp);
 						$base_name = basename($file_name);
 
@@ -1264,5 +1247,4 @@ class Snoopy
 	}
 }
 endif;
-
 ?>

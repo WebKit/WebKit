@@ -1,9 +1,23 @@
 <?php
+/**
+ * Jeromes Keyword Plugin Importer
+ *
+ * @package WordPress
+ * @subpackage Importer
+ */
 
+/**
+ * Jeromes Keyword Plugin Importer class
+ *
+ * Will convert Jeromes Keyword Plugin tags to WordPress taxonomy tags.
+ *
+ * @since 2.3
+ */
 class JeromesKeyword_Import {
 
 	function header() {
 		echo '<div class="wrap">';
+		screen_icon();
 		echo '<h2>'.__('Import Jerome&#8217;s Keywords').'</h2>';
 		echo '<p>'.__('Steps may take a few minutes depending on the size of your database. Please be patient.').'<br /><br /></p>';
 	}
@@ -20,11 +34,11 @@ class JeromesKeyword_Import {
 		echo '<p><strong>'.__('Don&#8217;t be stupid - backup your database before proceeding!').'</strong></p>';
 		echo '<form action="admin.php?import=jkw&amp;step=1" method="post">';
 		wp_nonce_field('import-jkw');
-		echo '<p class="submit"><input type="submit" name="submit" class="button" value="'.__('Import Version 1.x').'" /></p>';
+		echo '<p class="submit"><input type="submit" name="submit" class="button" value="'.esc_attr__('Import Version 1.x').'" /></p>';
 		echo '</form>';
 		echo '<form action="admin.php?import=jkw&amp;step=3" method="post">';
 		wp_nonce_field('import-jkw');
-		echo '<p class="submit"><input type="submit" name="submit" class="button" value="'.__('Import Version 2.0a').'" /></p>';
+		echo '<p class="submit"><input type="submit" name="submit" class="button" value="'.esc_attr__('Import Version 2.0a').'" /></p>';
 		echo '</form>';
 		echo '</div>';
 	}
@@ -84,7 +98,7 @@ class JeromesKeyword_Import {
 			return false;
 		} else {
 			$count = count($metakeys);
-			echo '<p>' . sprintf( __ngettext('Done! <strong>%s</strong> post with tags were read.', 'Done! <strong>%s</strong> posts with tags were read.', $count), $count ) . '<br /></p>';
+			echo '<p>' . sprintf( _n('Done! <strong>%s</strong> post with tags were read.', 'Done! <strong>%s</strong> posts with tags were read.', $count), $count ) . '<br /></p>';
 			echo '<ul>';
 			foreach ( $metakeys as $post_meta ) {
 				if ( $post_meta->meta_value != '' ) {
@@ -106,7 +120,7 @@ class JeromesKeyword_Import {
 
 		echo '<form action="admin.php?import=jkw&amp;step='.($precheck? 2:6).'" method="post">';
 		wp_nonce_field('import-jkw');
-		echo '<p class="submit"><input type="submit" name="submit" value="'.__('Next').'" /></p>';
+		echo '<p class="submit"><input type="submit" name="submit" class="button" value="'.esc_attr__('Next').'" /></p>';
 		echo '</form>';
 		echo '</div>';
 	}
@@ -125,7 +139,7 @@ class JeromesKeyword_Import {
 			return false;
 		} else {
 			$count = count($metakeys);
-			echo '<p>' . sprintf( __ngettext('Done! <strong>%s</strong> tag were read.', 'Done! <strong>%s</strong> tags were read.', $count), $count ) . '<br /></p>';
+			echo '<p>' . sprintf( _n('Done! <strong>%s</strong> tag were read.', 'Done! <strong>%s</strong> tags were read.', $count), $count ) . '<br /></p>';
 			echo '<ul>';
 			foreach ( $metakeys as $post_meta ) {
 				$keyword = addslashes(trim($post_meta->tag_name));
@@ -139,7 +153,7 @@ class JeromesKeyword_Import {
 		}
 		echo '<form action="admin.php?import=jkw&amp;step='.($precheck? 4:5).'" method="post">';
 		wp_nonce_field('import-jkw');
-		echo '<p class="submit"><input type="submit" name="submit" value="'.__('Next').'" /></p>';
+		echo '<p class="submit"><input type="submit" name="submit" class="button" value="'.esc_attr__('Next').'" /></p>';
 		echo '</form>';
 		echo '</div>';
 	}

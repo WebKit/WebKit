@@ -1,4 +1,12 @@
 <?php
+/**
+ * Comment Management Panel
+ *
+ * @package WordPress
+ * @subpackage Administration
+ */
+
+/** Load WordPress Bootstrap */
 require_once('admin.php');
 
 $parent_file = 'edit-comments.php';
@@ -9,7 +17,12 @@ wp_reset_vars( array('action') );
 if ( isset( $_POST['deletecomment'] ) )
 	$action = 'deletecomment';
 
-function comment_footer_die( $msg ) {  // $msg is assumed to contain HTML and be sanitized
+/**
+ * Display error message at bottom of comments.
+ *
+ * @param string $msg Error Message. Assumed to contain HTML and be sanitized.
+ */
+function comment_footer_die( $msg ) {
 	echo "<div class='wrap'><p>$msg</p></div>";
 	include('admin-footer.php');
 	die;
@@ -21,7 +34,6 @@ case 'editcomment' :
 	$title = __('Edit Comment');
 
 	wp_enqueue_script('comment');
-
 	require_once('admin-header.php');
 
 	$comment_id = absint( $_GET['c'] );
@@ -78,18 +90,18 @@ if ( 'spam' == $_GET['dt'] ) {
 
 <table width="100%">
 <tr>
-<td><input type='button' class="button" value='<?php _e('No'); ?>' onclick="self.location='<?php echo admin_url('edit-comments.php'); ?>" /></td>
-<td class="textright"><input type='submit' class="button" value='<?php echo $button; ?>' /></td>
+<td><input type='button' class="button" value='<?php esc_attr_e('No'); ?>' onclick="self.location='<?php echo admin_url('edit-comments.php'); ?>" /></td>
+<td class="textright"><input type='submit' class="button" value='<?php echo esc_attr($button); ?>' /></td>
 </tr>
 </table>
 
 <?php wp_nonce_field( $nonce_action ); ?>
-<input type='hidden' name='action' value='<?php echo $formaction; ?>' />
+<input type='hidden' name='action' value='<?php echo esc_attr($formaction); ?>' />
 <?php if ( 'spam' == $_GET['dt'] ) { ?>
 <input type='hidden' name='dt' value='spam' />
 <?php } ?>
-<input type='hidden' name='p' value='<?php echo $comment->comment_post_ID; ?>' />
-<input type='hidden' name='c' value='<?php echo $comment->comment_ID; ?>' />
+<input type='hidden' name='p' value='<?php echo esc_attr($comment->comment_post_ID); ?>' />
+<input type='hidden' name='c' value='<?php echo esc_attr($comment->comment_ID); ?>' />
 <input type='hidden' name='noredir' value='1' />
 </form>
 
@@ -107,11 +119,11 @@ if ( 'spam' == $_GET['dt'] ) {
 <?php if ( $comment->comment_author_url ) { ?>
 <tr>
 <th scope="row"><?php _e('URL'); ?></th>
-<td><a href='<?php echo $comment->comment_author_url; ?>'><?php echo $comment->comment_author_url; ?></a></td>
+<td><a href="<?php echo $comment->comment_author_url; ?>"><?php echo $comment->comment_author_url; ?></a></td>
 </tr>
 <?php } ?>
 <tr>
-<th scope="row" valign="top"><?php _e('Comment'); ?></th>
+<th scope="row" valign="top"><?php /* translators: field name in comment form */ echo _x('Comment', 'noun'); ?></th>
 <td><?php echo $comment->comment_content; ?></td>
 </tr>
 </table>
@@ -171,7 +183,7 @@ case 'unapprovecomment' :
 	if ( '' != wp_get_referer() && false == $noredir )
 		wp_redirect( wp_get_referer() );
 	else
-		wp_redirect( admin_url('edit.php?p=' . absint( $comment->comment_post_ID ) . '#comments') );
+		wp_redirect( admin_url('edit-comments.php?p=' . absint( $comment->comment_post_ID ) . '#comments') );
 
 	exit();
 	break;
@@ -196,7 +208,7 @@ case 'approvecomment' :
 	if ( '' != wp_get_referer() && false == $noredir )
 		wp_redirect( wp_get_referer() );
 	else
-		wp_redirect( admin_url('edit.php?p=' . absint( $comment->comment_post_ID ) . '#comments') );
+		wp_redirect( admin_url('edit-comments.php?p=' . absint( $comment->comment_post_ID ) . '#comments') );
 
 	exit();
 	break;
@@ -204,13 +216,13 @@ case 'approvecomment' :
 case 'editedcomment' :
 
 	$comment_id = absint( $_POST['comment_ID'] );
-	$comment_post_id = absint( $_POST['comment_post_id'] );
+	$comment_post_id = absint( $_POST['comment_post_ID'] );
 
 	check_admin_referer( 'update-comment_' . $comment_id );
 
 	edit_comment();
 
-	$location = ( empty( $_POST['referredby'] ) ? "edit.php?p=$comment_post_id" : $_POST['referredby'] ) . '#comment-' . $comment_id;
+	$location = ( empty( $_POST['referredby'] ) ? "edit-comments.php?p=$comment_post_id" : $_POST['referredby'] ) . '#comment-' . $comment_id;
 	$location = apply_filters( 'comment_edit_redirect', $location, $comment_id );
 	wp_redirect( $location );
 

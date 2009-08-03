@@ -1,5 +1,18 @@
 <?php
+/**
+ * Movable Type and Typepad Importer
+ *
+ * @package WordPress
+ * @subpackage Importer
+ */
 
+/**
+ * Moveable Type and Typepad Importer class
+ *
+ * Upload your exported Movable Type or Typepad entries into WordPress.
+ *
+ * @since unknown
+ */
 class MT_Import {
 
 	var $posts = array ();
@@ -11,6 +24,7 @@ class MT_Import {
 
 	function header() {
 		echo '<div class="wrap">';
+		screen_icon();
 		echo '<h2>'.__('Import Movable Type or TypePad').'</h2>';
 	}
 
@@ -22,27 +36,27 @@ class MT_Import {
 		$this->header();
 ?>
 <div class="narrow">
-<p><?php _e('Howdy! We&#8217;re about to begin importing all of your Movable Type or Typepad entries into WordPress. To begin, either choose a file to upload and click "Upload file and import," or use FTP to upload your MT export file as <code>mt-export.txt</code> in your <code>/wp-content/</code> directory and then click "Import mt-export.txt"'); ?></p>
+<p><?php _e('Howdy! We&#8217;re about to begin importing all of your Movable Type or Typepad entries into WordPress. To begin, either choose a file to upload and click &#8220;Upload file and import&#8221;, or use FTP to upload your MT export file as <code>mt-export.txt</code> in your <code>/wp-content/</code> directory and then click "Import mt-export.txt"'); ?></p>
 
 <?php wp_import_upload_form( add_query_arg('step', 1) ); ?>
-<form method="post" action="<?php echo add_query_arg('step', 1); ?>" class="import-upload-form">
+<form method="post" action="<?php echo esc_attr(add_query_arg('step', 1)); ?>" class="import-upload-form">
 
 <?php wp_nonce_field('import-upload'); ?>
 <p>
 	<input type="hidden" name="upload_type" value="ftp" />
 <?php _e('Or use <code>mt-export.txt</code> in your <code>/wp-content/</code> directory'); ?></p>
 <p class="submit">
-<input type="submit" value="<?php echo attribute_escape(__('Import mt-export.txt')); ?>" />
+<input type="submit" class="button" value="<?php esc_attr_e('Import mt-export.txt'); ?>" />
 </p>
 </form>
-<p><?php _e('The importer is smart enough not to import duplicates, so you can run this multiple times without worry if&#8212;for whatever reason&#8212;it doesn\'t finish. If you get an <strong>out of memory</strong> error try splitting up the import file into pieces.'); ?> </p>
+<p><?php _e('The importer is smart enough not to import duplicates, so you can run this multiple times without worry if&#8212;for whatever reason&#8212;it doesn&#8217;t finish. If you get an <strong>out of memory</strong> error try splitting up the import file into pieces.'); ?> </p>
 </div>
 <?php
 		$this->footer();
 	}
 
 	function users_form($n) {
-		global $wpdb, $testing;
+		global $wpdb;
 		$users = $wpdb->get_results("SELECT * FROM $wpdb->users ORDER BY ID");
 ?><select name="userselect[<?php echo $n; ?>]">
 	<option value="#NONE#"><?php _e('- Select -') ?></option>
@@ -56,12 +70,38 @@ class MT_Import {
 	</select>
 	<?php
 
-
 	}
+
+	function has_gzip() {
+		return is_callable('gzopen');
+	}
+
+	function fopen($filename, $mode='r') {
+		if ( $this->has_gzip() )
+			return gzopen($filename, $mode);
+		return fopen($filename, $mode);
+	}
+
+	function feof($fp) {
+		if ( $this->has_gzip() )
+			return gzeof($fp);
+		return feof($fp);
+	}
+
+	function fgets($fp, $len=8192) {
+		if ( $this->has_gzip() )
+			return gzgets($fp, $len);
+		return fgets($fp, $len);
+	}
+
+	function fclose($fp) {
+		if ( $this->has_gzip() )
+			return gzclose($fp);
+		return fclose($fp);
+ 	}
 
 	//function to check the authorname and do the mapping
 	function checkauthor($author) {
-		global $wpdb;
 		//mtnames is an array with the names in the mt import file
 		$pass = wp_generate_password();
 		if (!(in_array($author, $this->mtnames))) { //a new mt author name is found
@@ -69,7 +109,7 @@ class MT_Import {
 			$this->mtnames[$this->j] = $author; //add that new mt author name to an array
 			$user_id = username_exists($this->newauthornames[$this->j]); //check if the new author name defined by the user is a pre-existing wp user
 			if (!$user_id) { //banging my head against the desk now.
-				if ($newauthornames[$this->j] == 'left_blank') { //check if the user does not want to change the authorname
+				if ($this->newauthornames[$this->j] == 'left_blank') { //check if the user does not want to change the authorname
 					$user_id = wp_create_user($author, $pass);
 					$this->newauthornames[$this->j] = $author; //now we have a name, in the place of left_blank.
 				} else {
@@ -90,12 +130,12 @@ class MT_Import {
 		$temp = array();
 		$authors = array();
 
-		$handle = fopen($this->file, 'r');
+		$handle = $this->fopen($this->file, 'r');
 		if ( $handle == null )
 			return false;
 
 		$in_comment = false;
-		while ( $line = fgets($handle) ) {
+		while ( $line = $this->fgets($handle) ) {
 			$line = trim($line);
 
 			if ( 'COMMENT:' == $line )
@@ -118,7 +158,7 @@ class MT_Import {
 				array_push($authors, "$next");
 		}
 
-		fclose($handle);
+		$this->fclose($handle);
 
 		return $authors;
 	}
@@ -152,10 +192,11 @@ class MT_Import {
 	function mt_authors_form() {
 ?>
 <div class="wrap">
+<?php screen_icon(); ?>
 <h2><?php _e('Assign Authors'); ?></h2>
-<p><?php _e('To make it easier for you to edit and save the imported posts and drafts, you may want to change the name of the author of the posts. For example, you may want to import all the entries as admin\'s entries.'); ?></p>
+<p><?php _e('To make it easier for you to edit and save the imported posts and drafts, you may want to change the name of the author of the posts. For example, you may want to import all the entries as admin&#8217;s entries.'); ?></p>
 <p><?php _e('Below, you can see the names of the authors of the MovableType posts in <em>italics</em>. For each of these names, you can either pick an author in your WordPress installation from the menu, or enter a name for the author in the textbox.'); ?></p>
-<p><?php _e('If a new user is created by WordPress, a password will be randomly generated. Manually change the user\'s details if necessary.'); ?></p>
+<p><?php _e('If a new user is created by WordPress, a password will be randomly generated. Manually change the user&#8217;s details if necessary.'); ?></p>
 	<?php
 
 
@@ -166,12 +207,12 @@ class MT_Import {
 		$j = -1;
 		foreach ($authors as $author) {
 			++ $j;
-			echo '<li><label>'.__('Current author:').' <strong>'.$author.'</strong><br />'.sprintf(__('Create user %1$s or map to existing'), ' <input type="text" value="'.$author.'" name="'.'user[]'.'" maxlength="30"> <br />');
+			echo '<li><label>'.__('Current author:').' <strong>'.$author.'</strong><br />'.sprintf(__('Create user %1$s or map to existing'), ' <input type="text" value="'. esc_attr($author) .'" name="'.'user[]'.'" maxlength="30"> <br />');
 			$this->users_form($j);
 			echo '</label></li>';
 		}
 
-		echo '<input type="submit" value="'.__('Submit').'">'.'<br />';
+		echo '<p class="submit"><input type="submit" class="button" value="'.esc_attr__('Submit').'"></p>'.'<br />';
 		echo '</form>';
 		echo '</ol></div>';
 
@@ -224,10 +265,10 @@ class MT_Import {
 			if ( 0 != count($post->categories) ) {
 				wp_create_categories($post->categories, $post_id);
 			}
-			
+
 			 // Add tags or keywords
 			if ( 1 < strlen($post->post_keywords) ) {
-			 	// Keywords exist. 
+			 	// Keywords exist.
 				printf(__('<br />Adding tags <i>%s</i>...'), stripslashes($post->post_keywords));
 				wp_add_post_tags($post_id, $post->post_keywords);
 			}
@@ -247,7 +288,7 @@ class MT_Import {
 		}
 
 		if ( $num_comments )
-			printf(' '.__ngettext('(%s comment)', '(%s comments)', $num_comments), $num_comments);
+			printf(' '._n('(%s comment)', '(%s comments)', $num_comments), $num_comments);
 
 		$num_pings = 0;
 		foreach ( $pings as $ping ) {
@@ -264,7 +305,7 @@ class MT_Import {
 		}
 
 		if ( $num_pings )
-			printf(' '.__ngettext('(%s ping)', '(%s pings)', $num_pings), $num_pings);
+			printf(' '._n('(%s ping)', '(%s pings)', $num_pings), $num_pings);
 
 		echo "</li>";
 		//ob_flush();flush();
@@ -273,7 +314,7 @@ class MT_Import {
 	function process_posts() {
 		global $wpdb;
 
-		$handle = fopen($this->file, 'r');
+		$handle = $this->fopen($this->file, 'r');
 		if ( $handle == null )
 			return false;
 
@@ -286,7 +327,7 @@ class MT_Import {
 
 		echo "<div class='wrap'><ol>";
 
-		while ( $line = fgets($handle) ) {
+		while ( $line = $this->fgets($handle) ) {
 			$line = trim($line);
 
 			if ( '-----' == $line ) {
@@ -398,7 +439,9 @@ class MT_Import {
 			} else {
 				// Processing multi-line field, check context.
 
-				$line .= "\n";
+				if( !empty($line) )
+					$line .= "\n";
+
 				if ( 'body' == $context ) {
 					$post->post_content .= $line;
 				} else if ( 'extended' ==  $context ) {
@@ -414,6 +457,8 @@ class MT_Import {
 				}
 			}
 		}
+
+		$this->fclose($handle);
 
 		echo '</ol>';
 

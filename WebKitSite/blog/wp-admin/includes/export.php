@@ -1,8 +1,28 @@
 <?php
+/**
+ * WordPress Export Administration API
+ *
+ * @package WordPress
+ * @subpackage Administration
+ */
 
-// version number for the export format.  bump this when something changes that might affect compatibility.
+/**
+ * Version number for the export format.
+ *
+ * Bump this when something changes that might affect compatibility.
+ *
+ * @since unknown
+ * @var string
+ */
 define('WXR_VERSION', '1.0');
 
+/**
+ * {@internal Missing Short Description}}
+ *
+ * @since unknown
+ *
+ * @param unknown_type $author
+ */
 function export_wp($author='') {
 global $wpdb, $post_ids, $post;
 
@@ -26,6 +46,13 @@ $post_ids = $wpdb->get_col("SELECT ID FROM $wpdb->posts $where ORDER BY post_dat
 $categories = (array) get_categories('get=all');
 $tags = (array) get_tags('get=all');
 
+/**
+ * {@internal Missing Short Description}}
+ *
+ * @since unknown
+ *
+ * @param unknown_type $categories
+ */
 function wxr_missing_parents($categories) {
 	if ( !is_array($categories) || empty($categories) )
 		return array();
@@ -61,17 +88,31 @@ while ( ( $cat = array_shift($categories) ) && ++$pass < $passes ) {
 }
 unset($categories);
 
+/**
+ * Place string in CDATA tag.
+ *
+ * @since unknown
+ *
+ * @param string $str String to place in XML CDATA tag.
+ */
 function wxr_cdata($str) {
 	if ( seems_utf8($str) == false )
 		$str = utf8_encode($str);
 
-	// $str = ent2ncr(wp_specialchars($str));
+	// $str = ent2ncr(esc_html($str));
 
 	$str = "<![CDATA[$str" . ( ( substr($str, -1) == ']' ) ? ' ' : '') . "]]>";
 
 	return $str;
 }
 
+/**
+ * {@internal Missing Short Description}}
+ *
+ * @since unknown
+ *
+ * @return string Site URL.
+ */
 function wxr_site_url() {
 	global $current_site;
 
@@ -85,6 +126,13 @@ function wxr_site_url() {
 	}
 }
 
+/**
+ * {@internal Missing Short Description}}
+ *
+ * @since unknown
+ *
+ * @param object $c Category Object
+ */
 function wxr_cat_name($c) {
 	if ( empty($c->name) )
 		return;
@@ -92,6 +140,13 @@ function wxr_cat_name($c) {
 	echo '<wp:cat_name>' . wxr_cdata($c->name) . '</wp:cat_name>';
 }
 
+/**
+ * {@internal Missing Short Description}}
+ *
+ * @since unknown
+ *
+ * @param object $c Category Object
+ */
 function wxr_category_description($c) {
 	if ( empty($c->description) )
 		return;
@@ -99,6 +154,13 @@ function wxr_category_description($c) {
 	echo '<wp:category_description>' . wxr_cdata($c->description) . '</wp:category_description>';
 }
 
+/**
+ * {@internal Missing Short Description}}
+ *
+ * @since unknown
+ *
+ * @param object $t Tag Object
+ */
 function wxr_tag_name($t) {
 	if ( empty($t->name) )
 		return;
@@ -106,6 +168,13 @@ function wxr_tag_name($t) {
 	echo '<wp:tag_name>' . wxr_cdata($t->name) . '</wp:tag_name>';
 }
 
+/**
+ * {@internal Missing Short Description}}
+ *
+ * @since unknown
+ *
+ * @param object $t Tag Object
+ */
 function wxr_tag_description($t) {
 	if ( empty($t->description) )
 		return;
@@ -113,6 +182,11 @@ function wxr_tag_description($t) {
 	echo '<wp:tag_description>' . wxr_cdata($t->description) . '</wp:tag_description>';
 }
 
+/**
+ * {@internal Missing Short Description}}
+ *
+ * @since unknown
+ */
 function wxr_post_taxonomy() {
 	$categories = get_the_category();
 	$tags = get_the_tags();
@@ -148,7 +222,7 @@ echo '<?xml version="1.0" encoding="' . get_bloginfo('charset') . '"?' . ">\n";
 
 <!-- To import this information into a WordPress blog follow these steps. -->
 <!-- 1. Log into that blog as an administrator. -->
-<!-- 2. Go to Manage: Import in the blog's admin panels. -->
+<!-- 2. Go to Tools: Import in the blog's admin panels (or Manage: Import in older versions of WordPress). -->
 <!-- 3. Choose "WordPress" from the list. -->
 <!-- 4. Upload this file using the form provided on that page. -->
 <!-- 5. You will first be asked to map the authors in this export file to users -->
@@ -159,6 +233,7 @@ echo '<?xml version="1.0" encoding="' . get_bloginfo('charset') . '"?' . ">\n";
 
 <?php the_generator('export');?>
 <rss version="2.0"
+	xmlns:excerpt="http://wordpress.org/export/<?php echo WXR_VERSION; ?>/excerpt/"
 	xmlns:content="http://purl.org/rss/1.0/modules/content/"
 	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
 	xmlns:dc="http://purl.org/dc/elements/1.1/"
@@ -190,6 +265,9 @@ echo '<?xml version="1.0" encoding="' . get_bloginfo('charset') . '"?' . ">\n";
 			$where = "WHERE ID IN (".join(',', $next_posts).")";
 			$posts = $wpdb->get_results("SELECT * FROM $wpdb->posts $where ORDER BY post_date_gmt ASC");
 				foreach ($posts as $post) {
+			// Don't export revisions.  They bloat the export.
+			if ( 'revision' == $post->post_type )
+				continue;
 			setup_postdata($post); ?>
 <item>
 <title><?php echo apply_filters('the_title_rss', $post->post_title); ?></title>

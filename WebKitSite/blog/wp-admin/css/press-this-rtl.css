@@ -1,98 +1,128 @@
 body {
-	font-family: Tahoma;
+	font-family: Tahoma, Arial;
 }
-.ui-tabs-nav {
-	padding-left:0;
-	padding-right:8px;
-}
-.ui-tabs-nav li {
+
+#poststuff #edButtonPreview,
+#poststuff #edButtonHTML {
+	margin: 0 0 0 5px;
 	float: right;
 }
-.button {
-	font-family: Tahoma;
-	margin-left:0;
+
+/* Editor/Main Column */
+div#poststuff {
+	padding-left: 0;
+	padding-right: 10px;
+}
+
+.posting {
+	margin-right: 0;
+	margin-left: 228px;
+	left: auto;
+	right: 0;
+}
+
+#side-info-column {
+	float: left;
+	right: auto;
+	left: 0;
+	margin-right: 0;
+	margin-left: 10px;
+}
+
+#side-info-column .sleeve {
+	padding-left: 0;
+	padding-right: 10px;
+}
+
+h3.tb {
+	margin-left: 0;
 	margin-right: 5px;
 }
-#wphead #viewsite {
-	margin-left:0;
-	margin-right: 10px;
+
+#actions {
+	float: left;
 }
-#viewsite {
-	right:auto;
-	left: 8px;
+
+#extra_fields #actions {
+	right: auto;
+	left: 4px;
 }
-#wphead #viewsite a {
-	font-family: Tahoma;
+
+#actions li {
+	float: right;
+	margin-right: 0;
+	margin-left: 10px;
 }
-h1 {
-	right:auto;
-	left:0;
+
+#extra_fields .button {
+	margin-right: 0;
+	margin-left: 5px;
 }
-div#posting {
-	padding-left:0;
-	padding-right: 16px;
-}
-#photo_directions span {
-	right:auto;
-	left:3px;
-}
+
+/* Photo Styles */
 #img_container a {
-	float:right;
+	float: right;
 }
-#img_container a, #img_container a:link, #img_container a:visited {
-	margin:0 0 4px 4px;
+
+#category-add input, #category-add select {
+	font-family: Tahoma, Arial;
 }
-div#categories {
-	right:auto;
-	left:16px;
+
+#categorydiv ul.categorychecklist ul {
+	margin-left: 0;
+	margin-right: 18px;
 }
-div#categories h2 {
-	margin: .5em 1em .5em 0;
-}
+
+/* Tags */
 #tagsdiv #newtag {
-	margin-right:0;	
-	margin-left: 5px;	
+	margin-right: 0;
+	margin-left: 5px;
 }
-#jaxtag {
-	padding-left:0;
-	padding-right: 1em;
+
+#tagadd {
+	margin-left: 0;
+	margin-right: 3px;
 }
-#tagchecklist {
-	padding-left:0;
-	padding-right: 1em;
-}
+
 #tagchecklist span {
-	margin-right: 10px;
 	margin-left: .5em;
+	margin-right: 10px;
 	float: right;
 }
 #tagchecklist span a {
-	margin: 6px -9px 0pt 0;
+	margin: 6px -9px 0 0;
 	float: right;
 }
-.submitbox {
-	float: left;
+
+#content {
+	margin-left: 0;
+	margin-right: 1%;
 }
-.submitbox .submit input {
-	text-align:right;
+
+.submit input,
+.button,
+.button-primary,
+.button-secondary,
+.button-highlighted,
+#postcustomstuff .submit input {
+	font-family: Tahoma, Arial, sans-serif;
 }
-.video_split #extra_fields {
-	float:right;
-}
-.video_split .editor_area {
-	float: left;
-}
+
 .ac_results li {
-	text-align:right;
+	text-align: right;
 }
+
 #TB_ajaxContent #options {
-	right:auto;
-	left:25px;
+	right: auto;
+	left: 25px;
 }
+
 #post_status {
-	margin-left:0;
+	margin-left: 0;
 	margin-right: 10px;
 }
+
+/* Footer */
 #footer {
 	padding: 10px 60px 0 0;
 }

@@ -1,69 +1,129 @@
-<?php if ( ! defined('ABSPATH') ) die(); ?>
-<table class="widefat">
+<?php
+/**
+ * Edit attachments table for inclusion in administration panels.
+ *
+ * @package WordPress
+ * @subpackage Administration
+ */
+
+// don't load directly
+if ( !defined('ABSPATH') )
+	die('-1');
+
+if ( have_posts() ) { ?>
+<table class="widefat fixed" cellspacing="0">
 	<thead>
 	<tr>
-
-<?php $posts_columns = wp_manage_media_columns(); ?>
-<?php foreach($posts_columns as $post_column_key => $column_display_name) {
-	if ( 'cb' === $post_column_key )
-		$class = ' class="check-column"';
-	elseif ( 'comments' === $post_column_key )
-		$class = ' class="num"';
-	else
-		$class = '';
-?>
-	<th scope="col"<?php echo $class; ?>><?php echo $column_display_name; ?></th>
-<?php } ?>
-
+<?php print_column_headers('upload'); ?>
 	</tr>
 	</thead>
+
+	<tfoot>
+	<tr>
+<?php print_column_headers('upload', false); ?>
+	</tr>
+	</tfoot>
+
 	<tbody id="the-list" class="list:post">
 <?php
-if ( have_posts() ) {
-$bgcolor = '';
-add_filter('the_title','wp_specialchars');
+add_filter('the_title','esc_html');
+$alt = '';
+$posts_columns = get_column_headers('upload');
+$hidden = get_hidden_columns('upload');
 while (have_posts()) : the_post();
-$class = 'alternate' == $class ? '' : 'alternate';
+$alt = ( 'alternate' == $alt ) ? '' : 'alternate';
 global $current_user;
 $post_owner = ( $current_user->ID == $post->post_author ? 'self' : 'other' );
-$att_title = get_the_title();
-if ( empty($att_title) )
-	$att_title = __('(no title)');
+$att_title = _draft_or_post_title();
 
 ?>
-	<tr id='post-<?php echo $id; ?>' class='<?php echo trim( $class . ' author-' . $post_owner . ' status-' . $post->post_status ); ?>' valign="top">
+	<tr id='post-<?php echo $id; ?>' class='<?php echo trim( $alt . ' author-' . $post_owner . ' status-' . $post->post_status ); ?>' valign="top">
 
 <?php
+foreach ($posts_columns as $column_name => $column_display_name ) {
+	$class = "class=\"$column_name column-$column_name\"";
 
-foreach($posts_columns as $column_name=>$column_display_name) {
+	$style = '';
+	if ( in_array($column_name, $hidden) )
+		$style = ' style="display:none;"';
+
+	$attributes = "$class$style";
 
 	switch($column_name) {
 
 	case 'cb':
 		?>
-		<th scope="row" class="check-column"><input type="checkbox" name="delete[]" value="<?php the_ID(); ?>" /></th>
+		<th scope="row" class="check-column"><input type="checkbox" name="media[]" value="<?php the_ID(); ?>" /></th>
 		<?php
 		break;
 
 	case 'icon':
+		$attributes = 'class="column-icon media-icon"' . $style;
 		?>
-		<td class="media-icon"><?php echo wp_get_attachment_link($post->ID, array(80, 60), false, true); ?></td>
+		<td <?php echo $attributes ?>><?php
+			if ( $thumb = wp_get_attachment_image( $post->ID, array(80, 60), true ) ) {
+?>
+
+				<a href="media.php?action=edit&amp;attachment_id=<?php the_ID(); ?>" title="<?php echo esc_attr(sprintf(__('Edit &#8220;%s&#8221;'), $att_title)); ?>">
+					<?php echo $thumb; ?>
+				</a>
+
+<?php			}
+		?></td>
 		<?php
 		// TODO
 		break;
 
 	case 'media':
 		?>
-		<td><strong><a href="media.php?action=edit&amp;attachment_id=<?php the_ID(); ?>" title="<?php echo attribute_escape(sprintf(__('Edit "%s"'), $att_title)); ?>"><?php echo $att_title; ?></a></strong><br />
+		<td <?php echo $attributes ?>><strong><a href="<?php echo get_edit_post_link( $post->ID ); ?>" title="<?php echo esc_attr(sprintf(__('Edit &#8220;%s&#8221;'), $att_title)); ?>"><?php echo $att_title; ?></a></strong><br />
 		<?php echo strtoupper(preg_replace('/^.*?\.(\w+)$/', '$1', get_attached_file($post->ID))); ?>
-		<?php do_action('manage_media_media_column', $post->ID); ?>
-		</td>
+		<p>
+		<?php
+		$actions = array();
+		if ( current_user_can('edit_post', $post->ID) )
+			$actions['edit'] = '<a href="' . get_edit_post_link($post->ID, true) . '">' . __('Edit') . '</a>';
+		if ( current_user_can('delete_post', $post->ID) )
+			$actions['delete'] = "<a class='submitdelete' href='" . wp_nonce_url("post.php?action=delete&amp;post=$post->ID", 'delete-post_' . $post->ID) . "' onclick=\"if ( confirm('" . esc_js(sprintf( ('draft' == $post->post_status) ? __("You are about to delete this attachment '%s'\n  'Cancel' to stop, 'OK' to delete.") : __("You are about to delete this attachment '%s'\n  'Cancel' to stop, 'OK' to delete."), $post->post_title )) . "') ) { return true;}return false;\">" . __('Delete') . "</a>";
+		$actions['view'] = '<a href="' . get_permalink($post->ID) . '" title="' . esc_attr(sprintf(__('View &#8220;%s&#8221;'), $title)) . '" rel="permalink">' . __('View') . '</a>';
+		$action_count = count($actions);
+		$i = 0;
+		echo '<div class="row-actions">';
+		foreach ( $actions as $action => $link ) {
+			++$i;
+			( $i == $action_count ) ? $sep = '' : $sep = ' | ';
+			echo "<span class='$action'>$link$sep</span>";
+		}
+		echo '</div>';
+		?></p></td>
+		<?php
+		break;
+
+	case 'author':
+		?>
+		<td <?php echo $attributes ?>><?php the_author() ?></td>
+		<?php
+		break;
+
+	case 'tags':
+		?>
+		<td <?php echo $attributes ?>><?php
+		$tags = get_the_tags();
+		if ( !empty( $tags ) ) {
+			$out = array();
+			foreach ( $tags as $c )
+				$out[] = "<a href='edit.php?tag=$c->slug'> " . esc_html(sanitize_term_field('name', $c->name, $c->term_id, 'post_tag', 'display')) . "</a>";
+			echo join( ', ', $out );
+		} else {
+			_e('No Tags');
+		}
+		?></td>
 		<?php
 		break;
 
 	case 'desc':
 		?>
-		<td><?php echo has_excerpt() ? $post->post_excerpt : ''; ?></td>
+		<td <?php echo $attributes ?>><?php echo has_excerpt() ? $post->post_excerpt : ''; ?></td>
 		<?php
 		break;
 
@@ -73,7 +133,7 @@ foreach($posts_columns as $column_name=>$column_display_name) {
 		} else {
 			$t_time = get_the_time(__('Y/m/d g:i:s A'));
 			$m_time = $post->post_date;
-			$time = get_post_time( 'G', true );
+			$time = get_post_time( 'G', true, $post, false );
 			if ( ( abs($t_diff = time() - $time) ) < 86400 ) {
 				if ( $t_diff < 0 )
 					$h_time = sprintf( __('%s from now'), human_time_diff( $time ) );
@@ -84,38 +144,36 @@ foreach($posts_columns as $column_name=>$column_display_name) {
 			}
 		}
 		?>
-		<td><?php echo $h_time ?></td>
+		<td <?php echo $attributes ?>><?php echo $h_time ?></td>
 		<?php
 		break;
 
 	case 'parent':
-		$title = __('(no title)'); // override below
 		if ( $post->post_parent > 0 ) {
 			if ( get_post($post->post_parent) ) {
-				$parent_title = get_the_title($post->post_parent);
-				if ( !empty($parent_title) )
-					$title = $parent_title;
+				$title =_draft_or_post_title($post->post_parent);
 			}
 			?>
-			<td><strong><a href="post.php?action=edit&amp;post=<?php echo $post->post_parent; ?>"><?php echo $title ?></a></strong></td>
+			<td <?php echo $attributes ?>><strong><a href="<?php echo get_edit_post_link( $post->post_parent ); ?>"><?php echo $title ?></a></strong>, <?php echo get_the_time(__('Y/m/d')); ?></td>
 			<?php
 		} else {
 			?>
-			<td>&nbsp;</td>
+			<td <?php echo $attributes ?>>&nbsp;</td>
 			<?php
 		}
 
 		break;
 
 	case 'comments':
+		$attributes = 'class="comments column-comments num"' . $style;
 		?>
-		<td class="num"><div class="post-com-count-wrapper">
+		<td <?php echo $attributes ?>><div class="post-com-count-wrapper">
 		<?php
 		$left = get_pending_comments_num( $post->ID );
 		$pending_phrase = sprintf( __('%s pending'), number_format( $left ) );
 		if ( $left )
 			echo '<strong>';
-		comments_number("<a href='upload.php?attachment_id=$id' title='$pending_phrase' class='post-com-count'><span class='comment-count'>" . __('0') . '</span></a>', "<a href='upload.php?attachment_id=$id' title='$pending_phrase' class='post-com-count'><span class='comment-count'>" . __('1') . '</span></a>', "<a href='upload.php?attachment_id=$id' title='$pending_phrase' class='post-com-count'><span class='comment-count'>" . __('%') . '</span></a>');
+		comments_number("<a href='edit-comments.php?p=$id' title='$pending_phrase' class='post-com-count'><span class='comment-count'>" . /* translators: comment count link */ _x('0', 'comment count') . '</span></a>', "<a href='edit-comments.php?p=$id' title='$pending_phrase' class='post-com-count'><span class='comment-count'>" . /* translators: comment count link */ _x('1', 'comment count') . '</span></a>', "<a href='edit-comments.php?p=$id' title='$pending_phrase' class='post-com-count'><span class='comment-count'>" . /* translators: comment count link: % will be substituted by comment count */ _x('%', 'comment count') . '</span></a>');
 		if ( $left )
 			echo '</strong>';
 		?>
@@ -123,30 +181,32 @@ foreach($posts_columns as $column_name=>$column_display_name) {
 		<?php
 		break;
 
-	case 'location':
+	case 'actions':
 		?>
-		<td><a href="<?php the_permalink(); ?>"><?php _e('Permalink'); ?></a></td>
+		<td <?php echo $attributes ?>>
+		<a href="media.php?action=edit&amp;attachment_id=<?php the_ID(); ?>" title="<?php echo esc_attr(sprintf(__('Edit &#8220;%s&#8221;'), $att_title)); ?>"><?php _e('Edit'); ?></a> |
+		<a href="<?php the_permalink(); ?>"><?php _e('Get permalink'); ?></a>
+		</td>
 		<?php
 		break;
 
 	default:
 		?>
-		<td><?php do_action('manage_media_custom_column', $column_name, $id); ?></td>
+		<td <?php echo $attributes ?>><?php do_action('manage_media_custom_column', $column_name, $id); ?></td>
 		<?php
 		break;
 	}
 }
 ?>
 	</tr>
-<?php
-endwhile;
-} else {
-?>
-  <tr style='background-color: <?php echo $bgcolor; ?>'>
-    <td colspan="8"><?php _e('No posts found.') ?></td>
-  </tr>
+<?php endwhile; ?>
+	</tbody>
+</table>
+<?php } else { ?>
+
+<p><?php _e('No media attachments found.') ?></p>
+
 <?php
 } // end if ( have_posts() )
 ?>
-	</tbody>
-</table>
+

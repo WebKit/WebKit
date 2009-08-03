@@ -1,28 +1,28 @@
 <?php
+/**
+ * WordPress FTP Sockets Filesystem.
+ *
+ * @package WordPress
+ * @subpackage Filesystem
+ */
+
+/**
+ * WordPress Filesystem Class for implementing FTP Sockets.
+ *
+ * @since 2.5
+ * @package WordPress
+ * @subpackage Filesystem
+ * @uses WP_Filesystem_Base Extends class
+ */
 class WP_Filesystem_ftpsockets extends WP_Filesystem_Base {
 	var $ftp = false;
 	var $timeout = 5;
-	var $errors;
+	var $errors = null;
 	var $options = array();
 
 	var $permission = null;
 
-	var $filetypes = array(
-							'php' => FTP_ASCII,
-							'css' => FTP_ASCII,
-							'txt' => FTP_ASCII,
-							'js'  => FTP_ASCII,
-							'html'=> FTP_ASCII,
-							'htm' => FTP_ASCII,
-							'xml' => FTP_ASCII,
-
-							'jpg' => FTP_BINARY,
-							'png' => FTP_BINARY,
-							'gif' => FTP_BINARY,
-							'bmp' => FTP_BINARY
-							);
-
-	function WP_Filesystem_ftpsockets($opt='') {
+	function WP_Filesystem_ftpsockets($opt = '') {
 		$this->method = 'ftpsockets';
 		$this->errors = new WP_Error();
 
@@ -86,51 +86,57 @@ class WP_Filesystem_ftpsockets extends WP_Filesystem_Base {
 		$this->permission = $perm;
 	}
 
-	function get_contents($file, $type = '', $resumepos = 0){
+	function get_contents($file, $type = '', $resumepos = 0) {
 		if( ! $this->exists($file) )
 			return false;
 
-		if( empty($type) ){
-			$extension = substr(strrchr($file, '.'), 1);
-			$type = isset($this->filetypes[ $extension ]) ? $this->filetypes[ $extension ] : FTP_AUTOASCII;
-		}
+		if( empty($type) )
+			$type = FTP_AUTOASCII;
 		$this->ftp->SetType($type);
+
 		$temp = wp_tempnam( $file );
+
 		if ( ! $temphandle = fopen($temp, 'w+') )
 			return false;
+
 		if ( ! $this->ftp->fget($temphandle, $file) ) {
 			fclose($temphandle);
 			unlink($temp);
 			return ''; //Blank document, File does exist, Its just blank.
 		}
+
 		fseek($temphandle, 0); //Skip back to the start of the file being written to
 		$contents = '';
+
 		while ( ! feof($temphandle) )
 			$contents .= fread($temphandle, 8192);
+
 		fclose($temphandle);
 		unlink($temp);
 		return $contents;
 	}
 
-	function get_contents_array($file){
+	function get_contents_array($file) {
 		return explode("\n", $this->get_contents($file) );
 	}
 
 	function put_contents($file, $contents, $type = '' ) {
-		if( empty($type) ){
-			$extension = substr(strrchr($file, '.'), 1);
-			$type = isset($this->filetypes[ $extension ]) ? $this->filetypes[ $extension ] : FTP_AUTOASCII;
-		}
+		if( empty($type) )
+			$type = $this->is_binary($contents) ? FTP_BINARY : FTP_ASCII;
+
 		$this->ftp->SetType($type);
 
 		$temp = wp_tempnam( $file );
 		if ( ! $temphandle = fopen($temp, 'w+') ){
-			unlink($temp);		
+			unlink($temp);
 			return false;
 		}
+
 		fwrite($temphandle, $contents);
 		fseek($temphandle, 0); //Skip back to the start of the file being written to
+
 		$ret = $this->ftp->fput($file, $temphandle);
+
 		fclose($temphandle);
 		unlink($temp);
 		return $ret;
@@ -146,12 +152,12 @@ class WP_Filesystem_ftpsockets extends WP_Filesystem_Base {
 	function chdir($file) {
 		return $this->ftp->chdir($file);
 	}
-	
+
 	function chgrp($file, $group, $recursive = false ) {
 		return false;
 	}
 
-	function chmod($file, $mode = false, $recursive = false ){
+	function chmod($file, $mode = false, $recursive = false ) {
 		if( ! $mode )
 			$mode = $this->permission;
 		if( ! $mode )
@@ -204,6 +210,8 @@ class WP_Filesystem_ftpsockets extends WP_Filesystem_Base {
 	}
 
 	function delete($file, $recursive = false ) {
+		if ( empty($file) )
+			return false;
 		if ( $this->is_file($file) )
 			return $this->ftp->delete($file);
 		if ( !$recursive )
@@ -251,7 +259,7 @@ class WP_Filesystem_ftpsockets extends WP_Filesystem_Base {
 		return $this->ftp->filesize($file);
 	}
 
-	function touch($file, $time = 0, $atime = 0 ){
+	function touch($file, $time = 0, $atime = 0 ) {
 		return false;
 	}
 
@@ -311,8 +319,9 @@ class WP_Filesystem_ftpsockets extends WP_Filesystem_Base {
 		return $ret;
 	}
 
-	function __destruct(){
+	function __destruct() {
 		$this->ftp->quit();
 	}
 }
+
 ?>

@@ -1,27 +1,133 @@
 <?php
+/**
+ * Holds Most of the WordPress classes.
+ *
+ * Some of the other classes are contained in other files. For example, the
+ * WordPress cache is in cache.php and the WordPress roles API is in
+ * capabilities.php. The third party libraries are contained in their own
+ * separate files.
+ *
+ * @package WordPress
+ */
 
+/**
+ * WordPress environment setup class.
+ *
+ * @package WordPress
+ * @since 2.0.0
+ */
 class WP {
-	var $public_query_vars = array('m', 'p', 'posts', 'w', 'cat', 'withcomments', 'withoutcomments', 's', 'search', 'exact', 'sentence', 'debug', 'calendar', 'page', 'paged', 'more', 'tb', 'pb', 'author', 'order', 'orderby', 'year', 'monthnum', 'day', 'hour', 'minute', 'second', 'name', 'category_name', 'tag', 'feed', 'author_name', 'static', 'pagename', 'page_id', 'error', 'comments_popup', 'attachment', 'attachment_id', 'subpost', 'subpost_id', 'preview', 'robots', 'taxonomy', 'term');
+	/**
+	 * Public query variables.
+	 *
+	 * Long list of public query variables.
+	 *
+	 * @since 2.0.0
+	 * @access public
+	 * @var array
+	 */
+	var $public_query_vars = array('m', 'p', 'posts', 'w', 'cat', 'withcomments', 'withoutcomments', 's', 'search', 'exact', 'sentence', 'debug', 'calendar', 'page', 'paged', 'more', 'tb', 'pb', 'author', 'order', 'orderby', 'year', 'monthnum', 'day', 'hour', 'minute', 'second', 'name', 'category_name', 'tag', 'feed', 'author_name', 'static', 'pagename', 'page_id', 'error', 'comments_popup', 'attachment', 'attachment_id', 'subpost', 'subpost_id', 'preview', 'robots', 'taxonomy', 'term', 'cpage');
 
-	var $private_query_vars = array('offset', 'posts_per_page', 'posts_per_archive_page', 'what_to_show', 'showposts', 'nopaging', 'post_type', 'post_status', 'category__in', 'category__not_in', 'category__and', 'tag__in', 'tag__not_in', 'tag__and', 'tag_slug__in', 'tag_slug__and', 'tag_id', 'post_mime_type', 'perm');
+	/**
+	 * Private query variables.
+	 *
+	 * Long list of private query variables.
+	 *
+	 * @since 2.0.0
+	 * @var array
+	 */
+	var $private_query_vars = array('offset', 'posts_per_page', 'posts_per_archive_page', 'showposts', 'nopaging', 'post_type', 'post_status', 'category__in', 'category__not_in', 'category__and', 'tag__in', 'tag__not_in', 'tag__and', 'tag_slug__in', 'tag_slug__and', 'tag_id', 'post_mime_type', 'perm', 'comments_per_page');
+
+	/**
+	 * Extra query variables set by the user.
+	 *
+	 * @since 2.1.0
+	 * @var array
+	 */
 	var $extra_query_vars = array();
 
+	/**
+	 * Query variables for setting up the WordPress Query Loop.
+	 *
+	 * @since 2.0.0
+	 * @var array
+	 */
 	var $query_vars;
+
+	/**
+	 * String parsed to set the query variables.
+	 *
+	 * @since 2.0.0
+	 * @var string
+	 */
 	var $query_string;
+
+	/**
+	 * Permalink or requested URI.
+	 *
+	 * @since 2.0.0
+	 * @var string
+	 */
 	var $request;
+
+	/**
+	 * Rewrite rule the request matched.
+	 *
+	 * @since 2.0.0
+	 * @var string
+	 */
 	var $matched_rule;
+
+	/**
+	 * Rewrite query the request matched.
+	 *
+	 * @since 2.0.0
+	 * @var string
+	 */
 	var $matched_query;
+
+	/**
+	 * Whether already did the permalink.
+	 *
+	 * @since 2.0.0
+	 * @var bool
+	 */
 	var $did_permalink = false;
 
+	/**
+	 * Add name to list of public query variables.
+	 *
+	 * @since 2.1.0
+	 *
+	 * @param string $qv Query variable name.
+	 */
 	function add_query_var($qv) {
 		if ( !in_array($qv, $this->public_query_vars) )
 			$this->public_query_vars[] = $qv;
 	}
 
+	/**
+	 * Set the value of a query variable.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param string $key Query variable name.
+	 * @param mixed $value Query variable value.
+	 */
 	function set_query_var($key, $value) {
 		$this->query_vars[$key] = $value;
 	}
 
+	/**
+	 * Parse request to find correct WordPress query.
+	 *
+	 * Sets up the query variables based on the request. There are also many
+	 * filters and actions that can be used to further manipulate the result.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param array|string $extra_query_vars Set the extra query variables.
+	 */
 	function parse_request($extra_query_vars = '') {
 		global $wp_rewrite;
 
@@ -90,7 +196,7 @@ class WP {
 
 			// Look for matches.
 			$request_match = $request;
-			foreach ($rewrite as $match => $query) {
+			foreach ( (array) $rewrite as $match => $query) {
 				// Don't try to match against AtomPub calls
 				if ( $req_uri == 'wp-app.php' )
 					break;
@@ -101,8 +207,8 @@ class WP {
 					$request_match = $req_uri . '/' . $request;
 				}
 
-				if (preg_match("!^$match!", $request_match, $matches) ||
-					preg_match("!^$match!", urldecode($request_match), $matches)) {
+				if (preg_match("#^$match#", $request_match, $matches) ||
+					preg_match("#^$match#", urldecode($request_match), $matches)) {
 					// Got a match.
 					$this->matched_rule = $match;
 
@@ -110,7 +216,8 @@ class WP {
 					$query = preg_replace("!^.+\?!", '', $query);
 
 					// Substitute the substring matches into the query.
-					eval("\$query = \"" . addslashes($query) . "\";");
+					eval("@\$query = \"" . addslashes($query) . "\";");
+
 					$this->matched_query = $query;
 
 					// Parse the query.
@@ -146,7 +253,7 @@ class WP {
 		$this->public_query_vars = apply_filters('query_vars', $this->public_query_vars);
 
 		foreach ( $GLOBALS['wp_taxonomies'] as $taxonomy => $t )
-			if ( isset($t->query_var) )
+			if ( $t->query_var )
 				$taxonomy_query_vars[$t->query_var] = $taxonomy;
 
 		for ($i=0; $i<count($this->public_query_vars); $i += 1) {
@@ -171,7 +278,7 @@ class WP {
 			}
 		}
 
-		foreach ($this->private_query_vars as $var) {
+		foreach ( (array) $this->private_query_vars as $var) {
 			if (isset($this->extra_query_vars[$var]))
 				$this->query_vars[$var] = $this->extra_query_vars[$var];
 			elseif (isset($GLOBALS[$var]) && '' != $GLOBALS[$var])
@@ -186,17 +293,28 @@ class WP {
 		do_action_ref_array('parse_request', array(&$this));
 	}
 
+	/**
+	 * Send additional HTTP headers for caching, content type, etc.
+	 *
+	 * Sets the X-Pingback header, 404 status (if 404), Content-type. If showing
+	 * a feed, it will also send last-modified, etag, and 304 status if needed.
+	 *
+	 * @since 2.0.0
+	 */
 	function send_headers() {
-		@header('X-Pingback: '. get_bloginfo('pingback_url'));
+		$headers = array('X-Pingback' => get_bloginfo('pingback_url'));
+		$status = null;
+		$exit_required = false;
+
 		if ( is_user_logged_in() )
-			nocache_headers();
+			$headers = array_merge($headers, wp_get_nocache_headers());
 		if ( !empty($this->query_vars['error']) && '404' == $this->query_vars['error'] ) {
-			status_header( 404 );
+			$status = 404;
 			if ( !is_user_logged_in() )
-				nocache_headers();
-			@header('Content-Type: ' . get_option('html_type') . '; charset=' . get_option('blog_charset'));
+				$headers = array_merge($headers, wp_get_nocache_headers());
+			$headers['Content-Type'] = get_option('html_type') . '; charset=' . get_option('blog_charset');
 		} else if ( empty($this->query_vars['feed']) ) {
-			@header('Content-Type: ' . get_option('html_type') . '; charset=' . get_option('blog_charset'));
+			$headers['Content-Type'] = get_option('html_type') . '; charset=' . get_option('blog_charset');
 		} else {
 			// We're showing a feed, so WP is indeed the only thing that last changed
 			if ( !empty($this->query_vars['withcomments'])
@@ -214,8 +332,8 @@ class WP {
 			else
 				$wp_last_modified = mysql2date('D, d M Y H:i:s', get_lastpostmodified('GMT'), 0).' GMT';
 			$wp_etag = '"' . md5($wp_last_modified) . '"';
-			@header("Last-Modified: $wp_last_modified");
-			@header("ETag: $wp_etag");
+			$headers['Last-Modified'] = $wp_last_modified;
+			$headers['ETag'] = $wp_etag;
 
 			// Support for Conditional GET
 			if (isset($_SERVER['HTTP_IF_NONE_MATCH']))
@@ -232,17 +350,35 @@ class WP {
 			if ( ($client_last_modified && $client_etag) ?
 					 (($client_modified_timestamp >= $wp_modified_timestamp) && ($client_etag == $wp_etag)) :
 					 (($client_modified_timestamp >= $wp_modified_timestamp) || ($client_etag == $wp_etag)) ) {
-				status_header( 304 );
-				exit;
+				$status = 304;
+				$exit_required = true;
 			}
 		}
+
+		$headers = apply_filters('wp_headers', $headers, $this);
+
+		if ( ! empty( $status ) )
+			status_header( $status );
+		foreach( (array) $headers as $name => $field_value )
+			@header("{$name}: {$field_value}");
+
+		if ($exit_required)
+			exit();
 
 		do_action_ref_array('send_headers', array(&$this));
 	}
 
+	/**
+	 * Sets the query string property based off of the query variable property.
+	 *
+	 * The 'query_string' filter is deprecated, but still works. Plugins should
+	 * use the 'request' filter instead.
+	 *
+	 * @since 2.0.0
+	 */
 	function build_query_string() {
 		$this->query_string = '';
-		foreach (array_keys($this->query_vars) as $wpvar) {
+		foreach ( (array) array_keys($this->query_vars) as $wpvar) {
 			if ( '' != $this->query_vars[$wpvar] ) {
 				$this->query_string .= (strlen($this->query_string) < 1) ? '' : '&';
 				if ( !is_scalar($this->query_vars[$wpvar]) ) // Discard non-scalars.
@@ -258,17 +394,30 @@ class WP {
 		}
 	}
 
+	/**
+	 * Setup the WordPress Globals.
+	 *
+	 * The query_vars property will be extracted to the GLOBALS. So care should
+	 * be taken when naming global variables that might interfere with the
+	 * WordPress environment.
+	 *
+	 * @global string $query_string Query string for the loop.
+	 * @global int $more Only set, if single page or post.
+	 * @global int $single If single page or post. Only set, if single page or post.
+	 *
+	 * @since 2.0.0
+	 */
 	function register_globals() {
 		global $wp_query;
 		// Extract updated query vars back into global namespace.
-		foreach ($wp_query->query_vars as $key => $value) {
+		foreach ( (array) $wp_query->query_vars as $key => $value) {
 			$GLOBALS[$key] = $value;
 		}
 
-		$GLOBALS['query_string'] = & $this->query_string;
+		$GLOBALS['query_string'] = $this->query_string;
 		$GLOBALS['posts'] = & $wp_query->posts;
-		$GLOBALS['post'] = & $wp_query->post;
-		$GLOBALS['request'] = & $wp_query->request;
+		$GLOBALS['post'] = $wp_query->post;
+		$GLOBALS['request'] = $wp_query->request;
 
 		if ( is_single() || is_page() ) {
 			$GLOBALS['more'] = 1;
@@ -276,31 +425,66 @@ class WP {
 		}
 	}
 
+	/**
+	 * Setup the current user.
+	 *
+	 * @since 2.0.0
+	 */
 	function init() {
 		wp_get_current_user();
 	}
 
+	/**
+	 * Setup the Loop based on the query variables.
+	 *
+	 * @uses WP::$query_vars
+	 * @since 2.0.0
+	 */
 	function query_posts() {
 		global $wp_the_query;
 		$this->build_query_string();
 		$wp_the_query->query($this->query_vars);
  	}
 
+ 	/**
+ 	 * Set the Headers for 404, if permalink is not found.
+	 *
+	 * Issue a 404 if a permalink request doesn't match any posts.  Don't issue
+	 * a 404 if one was already issued, if the request was a search, or if the
+	 * request was a regular query string request rather than a permalink
+	 * request. Issues a 200, if not 404.
+	 *
+	 * @since 2.0.0
+ 	 */
 	function handle_404() {
 		global $wp_query;
-		// Issue a 404 if a permalink request doesn't match any posts.  Don't
-		// issue a 404 if one was already issued, if the request was a search,
-		// or if the request was a regular query string request rather than a
-		// permalink request.
+
 		if ( (0 == count($wp_query->posts)) && !is_404() && !is_search() && ( $this->did_permalink || (!empty($_SERVER['QUERY_STRING']) && (false === strpos($_SERVER['REQUEST_URI'], '?'))) ) ) {
+			// Don't 404 for these queries if they matched an object.
+			if ( ( is_tag() || is_category() || is_author() ) && $wp_query->get_queried_object() ) {
+				if ( !is_404() )
+					status_header( 200 );
+				return;
+			}
 			$wp_query->set_404();
 			status_header( 404 );
 			nocache_headers();
-		}	elseif( is_404() != true ) {
+		} elseif ( !is_404() ) {
 			status_header( 200 );
 		}
 	}
 
+	/**
+	 * Sets up all of the variables required by the WordPress environment.
+	 *
+	 * The action 'wp' has one parameter that references the WP object. It
+	 * allows for accessing the properties and methods to further manipulate the
+	 * object.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param string|array $query_args Passed to {@link parse_request()}
+	 */
 	function main($query_args = '') {
 		$this->init();
 		$this->parse_request($query_args);
@@ -311,15 +495,67 @@ class WP {
 		do_action_ref_array('wp', array(&$this));
 	}
 
+	/**
+	 * PHP4 Constructor - Does nothing.
+	 *
+	 * Call main() method when ready to run setup.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @return WP
+	 */
 	function WP() {
 		// Empty.
 	}
 }
 
+/**
+ * WordPress Error class.
+ *
+ * Container for checking for WordPress errors and error messages. Return
+ * WP_Error and use {@link is_wp_error()} to check if this class is returned.
+ * Many core WordPress functions pass this class in the event of an error and
+ * if not handled properly will result in code errors.
+ *
+ * @package WordPress
+ * @since 2.1.0
+ */
 class WP_Error {
+	/**
+	 * Stores the list of errors.
+	 *
+	 * @since 2.1.0
+	 * @var array
+	 * @access private
+	 */
 	var $errors = array();
+
+	/**
+	 * Stores the list of data for error codes.
+	 *
+	 * @since 2.1.0
+	 * @var array
+	 * @access private
+	 */
 	var $error_data = array();
 
+	/**
+	 * PHP4 Constructor - Sets up error message.
+	 *
+	 * If code parameter is empty then nothing will be done. It is possible to
+	 * add multiple messages to the same code, but with other methods in the
+	 * class.
+	 *
+	 * All parameters are optional, but if the code parameter is set, then the
+	 * data parameter is optional.
+	 *
+	 * @since 2.1.0
+	 *
+	 * @param string|int $code Error code
+	 * @param string $message Error message
+	 * @param mixed $data Optional. Error data.
+	 * @return WP_Error
+	 */
 	function WP_Error($code = '', $message = '', $data = '') {
 		if ( empty($code) )
 			return;
@@ -330,6 +566,14 @@ class WP_Error {
 			$this->error_data[$code] = $data;
 	}
 
+	/**
+	 * Retrieve all error codes.
+	 *
+	 * @since 2.1.0
+	 * @access public
+	 *
+	 * @return array List of error codes, if avaiable.
+	 */
 	function get_error_codes() {
 		if ( empty($this->errors) )
 			return array();
@@ -337,6 +581,14 @@ class WP_Error {
 		return array_keys($this->errors);
 	}
 
+	/**
+	 * Retrieve first error code available.
+	 *
+	 * @since 2.1.0
+	 * @access public
+	 *
+	 * @return string|int Empty string, if no error codes.
+	 */
 	function get_error_code() {
 		$codes = $this->get_error_codes();
 
@@ -346,11 +598,19 @@ class WP_Error {
 		return $codes[0];
 	}
 
+	/**
+	 * Retrieve all error messages or error messages matching code.
+	 *
+	 * @since 2.1.0
+	 *
+	 * @param string|int $code Optional. Retrieve messages matching code, if exists.
+	 * @return array Error strings on success, or empty array on failure (if using codee parameter).
+	 */
 	function get_error_messages($code = '') {
 		// Return all messages if no code specified.
 		if ( empty($code) ) {
 			$all_messages = array();
-			foreach ( $this->errors as $code => $messages )
+			foreach ( (array) $this->errors as $code => $messages )
 				$all_messages = array_merge($all_messages, $messages);
 
 			return $all_messages;
@@ -362,6 +622,17 @@ class WP_Error {
 			return array();
 	}
 
+	/**
+	 * Get single error message.
+	 *
+	 * This will get the first message available for the code. If no code is
+	 * given then the first code available will be used.
+	 *
+	 * @since 2.1.0
+	 *
+	 * @param string|int $code Optional. Error code to retrieve message.
+	 * @return string
+	 */
 	function get_error_message($code = '') {
 		if ( empty($code) )
 			$code = $this->get_error_code();
@@ -371,6 +642,14 @@ class WP_Error {
 		return $messages[0];
 	}
 
+	/**
+	 * Retrieve error data for error code.
+	 *
+	 * @since 2.1.0
+	 *
+	 * @param string|int $code Optional. Error code.
+	 * @return mixed Null, if no errors.
+	 */
 	function get_error_data($code = '') {
 		if ( empty($code) )
 			$code = $this->get_error_code();
@@ -380,12 +659,32 @@ class WP_Error {
 		return null;
 	}
 
+	/**
+	 * Append more error messages to list of error messages.
+	 *
+	 * @since 2.1.0
+	 * @access public
+	 *
+	 * @param string|int $code Error code.
+	 * @param string $message Error message.
+	 * @param mixed $data Optional. Error data.
+	 */
 	function add($code, $message, $data = '') {
 		$this->errors[$code][] = $message;
 		if ( ! empty($data) )
 			$this->error_data[$code] = $data;
 	}
 
+	/**
+	 * Add data for error code.
+	 *
+	 * The error code can only contain one error data.
+	 *
+	 * @since 2.1.0
+	 *
+	 * @param mixed $data Error data.
+	 * @param string|int $code Error code.
+	 */
 	function add_data($data, $code = '') {
 		if ( empty($code) )
 			$code = $this->get_error_code();
@@ -394,64 +693,169 @@ class WP_Error {
 	}
 }
 
+/**
+ * Check whether variable is a WordPress Error.
+ *
+ * Looks at the object and if a WP_Error class. Does not check to see if the
+ * parent is also WP_Error, so can't inherit WP_Error and still use this
+ * function.
+ *
+ * @since 2.1.0
+ *
+ * @param mixed $thing Check if unknown variable is WordPress Error object.
+ * @return bool True, if WP_Error. False, if not WP_Error.
+ */
 function is_wp_error($thing) {
 	if ( is_object($thing) && is_a($thing, 'WP_Error') )
 		return true;
 	return false;
 }
 
-/*
+/**
  * A class for displaying various tree-like structures.
- * Extend the Walker class to use it, see examples at the bottom
+ *
+ * Extend the Walker class to use it, see examples at the below. Child classes
+ * do not need to implement all of the abstract methods in the class. The child
+ * only needs to implement the methods that are needed. Also, the methods are
+ * not strictly abstract in that the parameter definition needs to be followed.
+ * The child classes can have additional parameters.
+ *
+ * @package WordPress
+ * @since 2.1.0
+ * @abstract
  */
 class Walker {
+	/**
+	 * What the class handles.
+	 *
+	 * @since 2.1.0
+	 * @var string
+	 * @access public
+	 */
 	var $tree_type;
+
+	/**
+	 * DB fields to use.
+	 *
+	 * @since 2.1.0
+	 * @var array
+	 * @access protected
+	 */
 	var $db_fields;
 
-	//abstract callbacks
+	/**
+	 * Max number of pages walked by the paged walker
+	 *
+	 * @since 2.7.0
+	 * @var int
+	 * @access protected
+	 */
+	var $max_pages = 1;
+
+	/**
+	 * Starts the list before the elements are added.
+	 *
+	 * Additional parameters are used in child classes. The args parameter holds
+	 * additional values that may be used with the child class methods. This
+	 * method is called at the start of the output list.
+	 *
+	 * @since 2.1.0
+	 * @abstract
+	 *
+	 * @param string $output Passed by reference. Used to append additional content.
+	 */
 	function start_lvl(&$output) {}
+
+	/**
+	 * Ends the list of after the elements are added.
+	 *
+	 * Additional parameters are used in child classes. The args parameter holds
+	 * additional values that may be used with the child class methods. This
+	 * method finishes the list at the end of output of the elements.
+	 *
+	 * @since 2.1.0
+	 * @abstract
+	 *
+	 * @param string $output Passed by reference. Used to append additional content.
+	 */
 	function end_lvl(&$output)   {}
+
+	/**
+	 * Start the element output.
+	 *
+	 * Additional parameters are used in child classes. The args parameter holds
+	 * additional values that may be used with the child class methods. Includes
+	 * the element output also.
+	 *
+	 * @since 2.1.0
+	 * @abstract
+	 *
+	 * @param string $output Passed by reference. Used to append additional content.
+	 */
 	function start_el(&$output)  {}
+
+	/**
+	 * Ends the element output, if needed.
+	 *
+	 * Additional parameters are used in child classes. The args parameter holds
+	 * additional values that may be used with the child class methods.
+	 *
+	 * @since 2.1.0
+	 * @abstract
+	 *
+	 * @param string $output Passed by reference. Used to append additional content.
+	 */
 	function end_el(&$output)    {}
 
-	/*
- 	 * display one element if the element doesn't have any children
- 	 * otherwise, display the element and its children
- 	 */
+	/**
+	 * Traverse elements to create list from elements.
+	 *
+	 * Display one element if the element doesn't have any children otherwise,
+	 * display the element and its children. Will only traverse up to the max
+	 * depth and no ignore elements under that depth. It is possible to set the
+	 * max depth to include all depths, see walk() method.
+	 *
+	 * This method shouldn't be called directly, use the walk() method instead.
+	 *
+	 * @since 2.5.0
+	 *
+	 * @param object $element Data object
+	 * @param array $children_elements List of elements to continue traversing.
+	 * @param int $max_depth Max depth to traverse.
+	 * @param int $depth Depth of current element.
+	 * @param array $args
+	 * @param string $output Passed by reference. Used to append additional content.
+	 * @return null Null on failure with no changes to parameters.
+	 */
 	function display_element( $element, &$children_elements, $max_depth, $depth=0, $args, &$output ) {
 
 		if ( !$element )
 			return;
 
 		$id_field = $this->db_fields['id'];
-		$parent_field = $this->db_fields['parent'];
 
 		//display this element
+		if ( is_array( $args[0] ) )
+			$args[0]['has_children'] = ! empty( $children_elements[$element->$id_field] );
 		$cb_args = array_merge( array(&$output, $element, $depth), $args);
 		call_user_func_array(array(&$this, 'start_el'), $cb_args);
 
-		if ( $max_depth == 0 ||
-		     ($max_depth != 0 &&  $max_depth > $depth+1 )) { //whether to descend
+		$id = $element->$id_field;
 
-			$num_elements = sizeof( $children_elements );
-			for ( $i = 0; $i < $num_elements; $i++ ) {
+		// descend only when the depth is right and there are childrens for this element
+		if ( ($max_depth == 0 || $max_depth > $depth+1 ) && isset( $children_elements[$id]) ) {
 
-				$child = $children_elements[$i];
-				if ( $child->$parent_field == $element->$id_field ) {
+			foreach( $children_elements[ $id ] as $child ){
 
-					if ( !isset($newlevel) ) {
-						$newlevel = true;
-						//start the child delimiter
-						$cb_args = array_merge( array(&$output, $depth), $args);
-						call_user_func_array(array(&$this, 'start_lvl'), $cb_args);
-					}
-
-					array_splice( $children_elements, $i, 1 );
-					$num_elements--;
-					$this->display_element( $child, $children_elements, $max_depth, $depth + 1, $args, $output );
-					$i = -1;
+				if ( !isset($newlevel) ) {
+					$newlevel = true;
+					//start the child delimiter
+					$cb_args = array_merge( array(&$output, $depth), $args);
+					call_user_func_array(array(&$this, 'start_lvl'), $cb_args);
 				}
+				$this->display_element( $child, $children_elements, $max_depth, $depth + 1, $args, $output );
 			}
+			unset( $children_elements[ $id ] );
 		}
 
 		if ( isset($newlevel) && $newlevel ){
@@ -465,13 +869,20 @@ class Walker {
 		call_user_func_array(array(&$this, 'end_el'), $cb_args);
 	}
 
-	/*
- 	* displays array of elements hierarchically
- 	* it is a generic function which does not assume any existing order of elements
- 	* max_depth = -1 means flatly display every element
- 	* max_depth = 0  means display all levels
- 	* max_depth > 0  specifies the number of display levels.
- 	*/
+	/**
+	 * Display array of elements hierarchically.
+	 *
+	 * It is a generic function which does not assume any existing order of
+	 * elements. max_depth = -1 means flatly display every element. max_depth =
+	 * 0 means display all levels. max_depth > 0  specifies the number of
+	 * display levels.
+	 *
+	 * @since 2.1.0
+	 *
+	 * @param array $elements
+	 * @param int $max_depth
+	 * @return string
+	 */
 	function walk( $elements, $max_depth) {
 
 		$args = array_slice(func_get_args(), 2);
@@ -496,7 +907,9 @@ class Walker {
 
 		/*
 		 * need to display in hierarchical order
-		 * splice elements into two buckets: those without parent and those with parent
+		 * seperate elements into two buckets: top level and children elements
+		 * children_elements is two dimensional array, eg.
+		 * children_elements[10][] contains all sub-elements whose parent is 10.
 		 */
 		$top_level_elements = array();
 		$children_elements  = array();
@@ -504,26 +917,25 @@ class Walker {
 			if ( 0 == $e->$parent_field )
 				$top_level_elements[] = $e;
 			else
-				$children_elements[] = $e;
+				$children_elements[ $e->$parent_field ][] = $e;
 		}
 
 		/*
-		 * none of the elements is top level
-		 * the first one must be root of the sub elements
+		 * when none of the elements is top level
+		 * assume the first one must be root of the sub elements
 		 */
-		if ( !$top_level_elements ) {
+		if ( empty($top_level_elements) ) {
 
-			$root = $children_elements[0];
-			$num_elements = sizeof($children_elements);
-			for ( $i = 0; $i < $num_elements; $i++ ) {
+			$first = array_slice( $elements, 0, 1 );
+			$root = $first[0];
 
-				$child = $children_elements[$i];
-				if ($root->$parent_field == $child->$parent_field ) {
-					$top_level_elements[] = $child;
-					array_splice( $children_elements, $i, 1 );
-					$num_elements--;
-					$i--;
-				}
+			$top_level_elements = array();
+			$children_elements  = array();
+			foreach ( $elements as $e) {
+				if ( $root->$parent_field == $e->$parent_field )
+					$top_level_elements[] = $e;
+				else
+					$children_elements[ $e->$parent_field ][] = $e;
 			}
 		}
 
@@ -531,51 +943,251 @@ class Walker {
 			$this->display_element( $e, $children_elements, $max_depth, 0, $args, $output );
 
 		/*
-		* if we are displaying all levels, and remaining children_elements is not empty,
-		* then we got orphans, which should be displayed regardless
-	 	*/
-		if ( ( $max_depth == 0 ) && sizeof( $children_elements ) > 0 ) {
+		 * if we are displaying all levels, and remaining children_elements is not empty,
+		 * then we got orphans, which should be displayed regardless
+		 */
+		if ( ( $max_depth == 0 ) && count( $children_elements ) > 0 ) {
 			$empty_array = array();
-			foreach ( $children_elements as $orphan_e )
-				$this->display_element( $orphan_e, $empty_array, 1, 0, $args, $output );
+			foreach ( $children_elements as $orphans )
+				foreach( $orphans as $op )
+					$this->display_element( $op, $empty_array, 1, 0, $args, $output );
 		 }
+
 		 return $output;
+	}
+
+	/**
+ 	 * paged_walk() - produce a page of nested elements
+ 	 *
+ 	 * Given an array of hierarchical elements, the maximum depth, a specific page number,
+ 	 * and number of elements per page, this function first determines all top level root elements
+ 	 * belonging to that page, then lists them and all of their children in hierarchical order.
+ 	 *
+ 	 * @package WordPress
+ 	 * @since 2.7
+ 	 * @param $max_depth = 0  means display all levels; $max_depth > 0  specifies the number of display levels.
+ 	 * @param $page_num the specific page number, beginning with 1.
+ 	 * @return XHTML of the specified page of elements
+ 	 */
+	function paged_walk( $elements, $max_depth, $page_num, $per_page ) {
+
+		/* sanity check */
+		if ( empty($elements) || $max_depth < -1 )
+			return '';
+
+		$args = array_slice( func_get_args(), 4 );
+		$output = '';
+
+		$id_field = $this->db_fields['id'];
+		$parent_field = $this->db_fields['parent'];
+
+		$count = -1;
+		if ( -1 == $max_depth )
+			$total_top = count( $elements );
+		if ( $page_num < 1 || $per_page < 0  ) {
+			// No paging
+			$paging = false;
+			$start = 0;
+			if ( -1 == $max_depth )
+				$end = $total_top;
+			$this->max_pages = 1;
+		} else {
+			$paging = true;
+			$start = ( (int)$page_num - 1 ) * (int)$per_page;
+			$end   = $start + $per_page;
+			if ( -1 == $max_depth )
+				$this->max_pages = ceil($total_top / $per_page);
+		}
+
+		// flat display
+		if ( -1 == $max_depth ) {
+			if ( !empty($args[0]['reverse_top_level']) ) {
+				$elements = array_reverse( $elements );
+				$oldstart = $start;
+				$start = $total_top - $end;
+				$end = $total_top - $oldstart;
+			}
+
+			$empty_array = array();
+			foreach ( $elements as $e ) {
+				$count++;
+				if ( $count < $start )
+					continue;
+				if ( $count >= $end )
+					break;
+				$this->display_element( $e, $empty_array, 1, 0, $args, $output );
+			}
+			return $output;
+		}
+
+		/*
+		 * seperate elements into two buckets: top level and children elements
+		 * children_elements is two dimensional array, eg.
+		 * children_elements[10][] contains all sub-elements whose parent is 10.
+		 */
+		$top_level_elements = array();
+		$children_elements  = array();
+		foreach ( $elements as $e) {
+			if ( 0 == $e->$parent_field )
+				$top_level_elements[] = $e;
+			else
+				$children_elements[ $e->$parent_field ][] = $e;
+		}
+
+		$total_top = count( $top_level_elements );
+		if ( $paging )
+			$this->max_pages = ceil($total_top / $per_page);
+		else
+			$end = $total_top;
+
+		if ( !empty($args[0]['reverse_top_level']) ) {
+			$top_level_elements = array_reverse( $top_level_elements );
+			$oldstart = $start;
+			$start = $total_top - $end;
+			$end = $total_top - $oldstart;
+		}
+		if ( !empty($args[0]['reverse_children']) ) {
+			foreach ( $children_elements as $parent => $children )
+				$children_elements[$parent] = array_reverse( $children );
+		}
+
+		foreach ( $top_level_elements as $e ) {
+			$count++;
+
+			//for the last page, need to unset earlier children in order to keep track of orphans
+			if ( $end >= $total_top && $count < $start )
+					$this->unset_children( $e, $children_elements );
+
+			if ( $count < $start )
+				continue;
+
+			if ( $count >= $end )
+				break;
+
+			$this->display_element( $e, $children_elements, $max_depth, 0, $args, $output );
+		}
+
+		if ( $end >= $total_top && count( $children_elements ) > 0 ) {
+			$empty_array = array();
+			foreach ( $children_elements as $orphans )
+				foreach( $orphans as $op )
+					$this->display_element( $op, $empty_array, 1, 0, $args, $output );
+		}
+
+		return $output;
+	}
+
+	function get_number_of_root_elements( $elements ){
+
+		$num = 0;
+		$parent_field = $this->db_fields['parent'];
+
+		foreach ( $elements as $e) {
+			if ( 0 == $e->$parent_field )
+				$num++;
+		}
+		return $num;
+	}
+
+	// unset all the children for a given top level element
+	function unset_children( $e, &$children_elements ){
+
+		if ( !$e || !$children_elements )
+			return;
+
+		$id_field = $this->db_fields['id'];
+		$id = $e->$id_field;
+
+		if ( !empty($children_elements[$id]) && is_array($children_elements[$id]) )
+			foreach ( (array) $children_elements[$id] as $child )
+				$this->unset_children( $child, $children_elements );
+
+		if ( isset($children_elements[$id]) )
+			unset( $children_elements[$id] );
+
 	}
 }
 
+/**
+ * Create HTML list of pages.
+ *
+ * @package WordPress
+ * @since 2.1.0
+ * @uses Walker
+ */
 class Walker_Page extends Walker {
+	/**
+	 * @see Walker::$tree_type
+	 * @since 2.1.0
+	 * @var string
+	 */
 	var $tree_type = 'page';
-	var $db_fields = array ('parent' => 'post_parent', 'id' => 'ID'); //TODO: decouple this
 
+	/**
+	 * @see Walker::$db_fields
+	 * @since 2.1.0
+	 * @todo Decouple this.
+	 * @var array
+	 */
+	var $db_fields = array ('parent' => 'post_parent', 'id' => 'ID');
+
+	/**
+	 * @see Walker::start_lvl()
+	 * @since 2.1.0
+	 *
+	 * @param string $output Passed by reference. Used to append additional content.
+	 * @param int $depth Depth of page. Used for padding.
+	 */
 	function start_lvl(&$output, $depth) {
 		$indent = str_repeat("\t", $depth);
 		$output .= "\n$indent<ul>\n";
 	}
 
+	/**
+	 * @see Walker::end_lvl()
+	 * @since 2.1.0
+	 *
+	 * @param string $output Passed by reference. Used to append additional content.
+	 * @param int $depth Depth of page. Used for padding.
+	 */
 	function end_lvl(&$output, $depth) {
 		$indent = str_repeat("\t", $depth);
 		$output .= "$indent</ul>\n";
 	}
 
-	function start_el(&$output, $page, $depth, $current_page, $args) {
+	/**
+	 * @see Walker::start_el()
+	 * @since 2.1.0
+	 *
+	 * @param string $output Passed by reference. Used to append additional content.
+	 * @param object $page Page data object.
+	 * @param int $depth Depth of page. Used for padding.
+	 * @param int $current_page Page ID.
+	 * @param array $args
+	 */
+	function start_el(&$output, $page, $depth, $args, $current_page) {
 		if ( $depth )
 			$indent = str_repeat("\t", $depth);
 		else
 			$indent = '';
 
 		extract($args, EXTR_SKIP);
-		$css_class = 'page_item page-item-'.$page->ID;
+		$css_class = array('page_item', 'page-item-'.$page->ID);
 		if ( !empty($current_page) ) {
 			$_current_page = get_page( $current_page );
-			if ( in_array($page->ID, (array) $_current_page->ancestors) )
-				$css_class .= ' current_page_ancestor';
+			if ( isset($_current_page->ancestors) && in_array($page->ID, (array) $_current_page->ancestors) )
+				$css_class[] = 'current_page_ancestor';
 			if ( $page->ID == $current_page )
-				$css_class .= ' current_page_item';
+				$css_class[] = 'current_page_item';
 			elseif ( $_current_page && $page->ID == $_current_page->post_parent )
-				$css_class .= ' current_page_parent';
+				$css_class[] = 'current_page_parent';
+		} elseif ( $page->ID == get_option('page_for_posts') ) {
+			$css_class[] = 'current_page_parent';
 		}
 
-		$output .= $indent . '<li class="' . $css_class . '"><a href="' . get_page_link($page->ID) . '" title="' . attribute_escape(apply_filters('the_title', $page->post_title)) . '">' . apply_filters('the_title', $page->post_title) . '</a>';
+		$css_class = implode(' ', apply_filters('page_css_class', $css_class, $page));
+
+		$output .= $indent . '<li class="' . $css_class . '"><a href="' . get_page_link($page->ID) . '" title="' . esc_attr(apply_filters('the_title', $page->post_title)) . '">' . $link_before . apply_filters('the_title', $page->post_title) . $link_after . '</a>';
 
 		if ( !empty($show_date) ) {
 			if ( 'modified' == $show_date )
@@ -587,33 +1199,96 @@ class Walker_Page extends Walker {
 		}
 	}
 
+	/**
+	 * @see Walker::end_el()
+	 * @since 2.1.0
+	 *
+	 * @param string $output Passed by reference. Used to append additional content.
+	 * @param object $page Page data object. Not used.
+	 * @param int $depth Depth of page. Not Used.
+	 */
 	function end_el(&$output, $page, $depth) {
 		$output .= "</li>\n";
 	}
 
 }
 
+/**
+ * Create HTML dropdown list of pages.
+ *
+ * @package WordPress
+ * @since 2.1.0
+ * @uses Walker
+ */
 class Walker_PageDropdown extends Walker {
+	/**
+	 * @see Walker::$tree_type
+	 * @since 2.1.0
+	 * @var string
+	 */
 	var $tree_type = 'page';
-	var $db_fields = array ('parent' => 'post_parent', 'id' => 'ID'); //TODO: decouple this
 
+	/**
+	 * @see Walker::$db_fields
+	 * @since 2.1.0
+	 * @todo Decouple this
+	 * @var array
+	 */
+	var $db_fields = array ('parent' => 'post_parent', 'id' => 'ID');
+
+	/**
+	 * @see Walker::start_el()
+	 * @since 2.1.0
+	 *
+	 * @param string $output Passed by reference. Used to append additional content.
+	 * @param object $page Page data object.
+	 * @param int $depth Depth of page in reference to parent pages. Used for padding.
+	 * @param array $args Uses 'selected' argument for selected page to set selected HTML attribute for option element.
+	 */
 	function start_el(&$output, $page, $depth, $args) {
 		$pad = str_repeat('&nbsp;', $depth * 3);
 
-		$output .= "\t<option value=\"$page->ID\"";
+		$output .= "\t<option class=\"level-$depth\" value=\"$page->ID\"";
 		if ( $page->ID == $args['selected'] )
 			$output .= ' selected="selected"';
 		$output .= '>';
-		$title = wp_specialchars($page->post_title);
+		$title = esc_html($page->post_title);
 		$output .= "$pad$title";
 		$output .= "</option>\n";
 	}
 }
 
+/**
+ * Create HTML list of categories.
+ *
+ * @package WordPress
+ * @since 2.1.0
+ * @uses Walker
+ */
 class Walker_Category extends Walker {
+	/**
+	 * @see Walker::$tree_type
+	 * @since 2.1.0
+	 * @var string
+	 */
 	var $tree_type = 'category';
-	var $db_fields = array ('parent' => 'parent', 'id' => 'term_id'); //TODO: decouple this
 
+	/**
+	 * @see Walker::$db_fields
+	 * @since 2.1.0
+	 * @todo Decouple this
+	 * @var array
+	 */
+	var $db_fields = array ('parent' => 'parent', 'id' => 'term_id');
+
+	/**
+	 * @see Walker::start_lvl()
+	 * @since 2.1.0
+	 *
+	 * @param string $output Passed by reference. Used to append additional content.
+	 * @param int $depth Depth of category. Used for tab indentation.
+	 * @param array $args Will only append content if style argument value is 'list'.
+	 */
 	function start_lvl(&$output, $depth, $args) {
 		if ( 'list' != $args['style'] )
 			return;
@@ -622,6 +1297,14 @@ class Walker_Category extends Walker {
 		$output .= "$indent<ul class='children'>\n";
 	}
 
+	/**
+	 * @see Walker::end_lvl()
+	 * @since 2.1.0
+	 *
+	 * @param string $output Passed by reference. Used to append additional content.
+	 * @param int $depth Depth of category. Used for tab indentation.
+	 * @param array $args Will only append content if style argument value is 'list'.
+	 */
 	function end_lvl(&$output, $depth, $args) {
 		if ( 'list' != $args['style'] )
 			return;
@@ -630,16 +1313,25 @@ class Walker_Category extends Walker {
 		$output .= "$indent</ul>\n";
 	}
 
+	/**
+	 * @see Walker::start_el()
+	 * @since 2.1.0
+	 *
+	 * @param string $output Passed by reference. Used to append additional content.
+	 * @param object $category Category data object.
+	 * @param int $depth Depth of category in reference to parents.
+	 * @param array $args
+	 */
 	function start_el(&$output, $category, $depth, $args) {
 		extract($args);
 
-		$cat_name = attribute_escape( $category->name);
+		$cat_name = esc_attr( $category->name);
 		$cat_name = apply_filters( 'list_cats', $cat_name, $category );
 		$link = '<a href="' . get_category_link( $category->term_id ) . '" ';
 		if ( $use_desc_for_title == 0 || empty($category->description) )
 			$link .= 'title="' . sprintf(__( 'View all posts filed under %s' ), $cat_name) . '"';
 		else
-			$link .= 'title="' . attribute_escape( apply_filters( 'category_description', $category->description, $category )) . '"';
+			$link .= 'title="' . esc_attr( strip_tags( apply_filters( 'category_description', $category->description, $category ) ) ) . '"';
 		$link .= '>';
 		$link .= $cat_name . '</a>';
 
@@ -695,6 +1387,15 @@ class Walker_Category extends Walker {
 		}
 	}
 
+	/**
+	 * @see Walker::end_el()
+	 * @since 2.1.0
+	 *
+	 * @param string $output Passed by reference. Used to append additional content.
+	 * @param object $page Not used.
+	 * @param int $depth Depth of category. Not used.
+	 * @param array $args Only uses 'list' for whether should append to output.
+	 */
 	function end_el(&$output, $page, $depth, $args) {
 		if ( 'list' != $args['style'] )
 			return;
@@ -704,15 +1405,43 @@ class Walker_Category extends Walker {
 
 }
 
+/**
+ * Create HTML dropdown list of Categories.
+ *
+ * @package WordPress
+ * @since 2.1.0
+ * @uses Walker
+ */
 class Walker_CategoryDropdown extends Walker {
+	/**
+	 * @see Walker::$tree_type
+	 * @since 2.1.0
+	 * @var string
+	 */
 	var $tree_type = 'category';
-	var $db_fields = array ('parent' => 'parent', 'id' => 'term_id'); //TODO: decouple this
 
+	/**
+	 * @see Walker::$db_fields
+	 * @since 2.1.0
+	 * @todo Decouple this
+	 * @var array
+	 */
+	var $db_fields = array ('parent' => 'parent', 'id' => 'term_id');
+
+	/**
+	 * @see Walker::start_el()
+	 * @since 2.1.0
+	 *
+	 * @param string $output Passed by reference. Used to append additional content.
+	 * @param object $category Category data object.
+	 * @param int $depth Depth of category. Used for padding.
+	 * @param array $args Uses 'selected', 'show_count', and 'show_last_update' keys, if they exist.
+	 */
 	function start_el(&$output, $category, $depth, $args) {
 		$pad = str_repeat('&nbsp;', $depth * 3);
 
 		$cat_name = apply_filters('list_cats', $category->name, $category);
-		$output .= "\t<option value=\"".$category->term_id."\"";
+		$output .= "\t<option class=\"level-$depth\" value=\"".$category->term_id."\"";
 		if ( $category->term_id == $args['selected'] )
 			$output .= ' selected="selected"';
 		$output .= '>';
@@ -727,20 +1456,64 @@ class Walker_CategoryDropdown extends Walker {
 	}
 }
 
+/**
+ * Send XML response back to AJAX request.
+ *
+ * @package WordPress
+ * @since 2.1.0
+ */
 class WP_Ajax_Response {
+	/**
+	 * Store XML responses to send.
+	 *
+	 * @since 2.1.0
+	 * @var array
+	 * @access private
+	 */
 	var $responses = array();
 
+	/**
+	 * PHP4 Constructor - Passes args to {@link WP_Ajax_Response::add()}.
+	 *
+	 * @since 2.1.0
+	 * @see WP_Ajax_Response::add()
+	 *
+	 * @param string|array $args Optional. Will be passed to add() method.
+	 * @return WP_Ajax_Response
+	 */
 	function WP_Ajax_Response( $args = '' ) {
 		if ( !empty($args) )
 			$this->add($args);
 	}
 
-	// a WP_Error object can be passed in 'id' or 'data'
+	/**
+	 * Append to XML response based on given arguments.
+	 *
+	 * The arguments that can be passed in the $args parameter are below. It is
+	 * also possible to pass a WP_Error object in either the 'id' or 'data'
+	 * argument. The parameter isn't actually optional, content should be given
+	 * in order to send the correct response.
+	 *
+	 * 'what' argument is a string that is the XMLRPC response type.
+	 * 'action' argument is a boolean or string that acts like a nonce.
+	 * 'id' argument can be WP_Error or an integer.
+	 * 'old_id' argument is false by default or an integer of the previous ID.
+	 * 'position' argument is an integer or a string with -1 = top, 1 = bottom,
+	 * html ID = after, -html ID = before.
+	 * 'data' argument is a string with the content or message.
+	 * 'supplemental' argument is an array of strings that will be children of
+	 * the supplemental element.
+	 *
+	 * @since 2.1.0
+	 *
+	 * @param string|array $args Override defaults.
+	 * @return string XML response.
+	 */
 	function add( $args = '' ) {
 		$defaults = array(
 			'what' => 'object', 'action' => false,
 			'id' => '0', 'old_id' => false,
-			'position' => 1, // -1 = top, 1 = bottom, html ID = after, -html ID = before
+			'position' => 1,
 			'data' => '', 'supplemental' => array()
 		);
 
@@ -755,7 +1528,7 @@ class WP_Ajax_Response {
 
 		$response = '';
 		if ( is_wp_error($data) ) {
-			foreach ( $data->get_error_codes() as $code ) {
+			foreach ( (array) $data->get_error_codes() as $code ) {
 				$response .= "<wp_error code='$code'><![CDATA[" . $data->get_error_message($code) . "]]></wp_error>";
 				if ( !$error_data = $data->get_error_data($code) )
 					continue;
@@ -781,7 +1554,7 @@ class WP_Ajax_Response {
 		}
 
 		$s = '';
-		if ( (array) $supplemental ) {
+		if ( is_array($supplemental) ) {
 			foreach ( $supplemental as $k => $v )
 				$s .= "<$k><![CDATA[$v]]></$k>";
 			$s = "<supplemental>$s</supplemental>";
@@ -802,10 +1575,17 @@ class WP_Ajax_Response {
 		return $x;
 	}
 
+	/**
+	 * Display XML formatted responses.
+	 *
+	 * Sets the content type header to text/xml.
+	 *
+	 * @since 2.1.0
+	 */
 	function send() {
 		header('Content-Type: text/xml');
 		echo "<?xml version='1.0' standalone='yes'?><wp_ajax>";
-		foreach ( $this->responses as $response )
+		foreach ( (array) $this->responses as $response )
 			echo $response;
 		echo '</wp_ajax>';
 		die();

@@ -1,26 +1,26 @@
 <?php
-class WP_Filesystem_FTPext extends WP_Filesystem_Base{
+/**
+ * WordPress FTP Filesystem.
+ *
+ * @package WordPress
+ * @subpackage Filesystem
+ */
+
+/**
+ * WordPress Filesystem Class for implementing FTP.
+ *
+ * @since 2.5
+ * @package WordPress
+ * @subpackage Filesystem
+ * @uses WP_Filesystem_Base Extends class
+ */
+class WP_Filesystem_FTPext extends WP_Filesystem_Base {
 	var $link;
 	var $timeout = 5;
-	var $errors = array();
+	var $errors = null;
 	var $options = array();
 
 	var $permission = null;
-
-	var $filetypes = array(
-							'php'=>FTP_ASCII,
-							'css'=>FTP_ASCII,
-							'txt'=>FTP_ASCII,
-							'js'=>FTP_ASCII,
-							'html'=>FTP_ASCII,
-							'htm'=>FTP_ASCII,
-							'xml'=>FTP_ASCII,
-
-							'jpg'=>FTP_BINARY,
-							'png'=>FTP_BINARY,
-							'gif'=>FTP_BINARY,
-							'bmp'=>FTP_BINARY
-							);
 
 	function WP_Filesystem_FTPext($opt='') {
 		$this->method = 'ftpext';
@@ -47,24 +47,26 @@ class WP_Filesystem_FTPext extends WP_Filesystem_Base{
 			$this->wp_base = $opt['base'];
 
 		// Check if the options provided are OK.
-		if ( empty ($opt['username']) )
+		if ( empty($opt['username']) )
 			$this->errors->add('empty_username', __('FTP username is required'));
 		else
 			$this->options['username'] = $opt['username'];
 
-		if ( empty ($opt['password']) )
+		if ( empty($opt['password']) )
 			$this->errors->add('empty_password', __('FTP password is required'));
 		else
 			$this->options['password'] = $opt['password'];
 
-		$this->options['ssl'] = ( !empty($opt['ssl']) );
+		$this->options['ssl'] = false;
+		if ( isset($opt['connection_type']) && 'ftps' == $opt['connection_type'] )
+			$this->options['ssl'] = true;
 	}
 
 	function connect() {
-		if ( $this->options['ssl'] && function_exists('ftp_ssl_connect') )
-			$this->link = @ftp_ssl_connect($this->options['hostname'], $this->options['port'],$this->timeout);
+		if ( isset($this->options['ssl']) && $this->options['ssl'] && function_exists('ftp_ssl_connect') )
+			$this->link = @ftp_ssl_connect($this->options['hostname'], $this->options['port'], $this->timeout);
 		else
-			$this->link = @ftp_connect($this->options['hostname'], $this->options['port'],$this->timeout);
+			$this->link = @ftp_connect($this->options['hostname'], $this->options['port'], $this->timeout);
 
 		if ( ! $this->link ) {
 			$this->errors->add('connect', sprintf(__('Failed to connect to FTP Server %1$s:%2$s'), $this->options['hostname'], $this->options['port']));
@@ -76,28 +78,33 @@ class WP_Filesystem_FTPext extends WP_Filesystem_Base{
 			return false;
 		}
 
+		//Set the Connection to use Passive FTP
+		@ftp_pasv( $this->link, true );
+
 		return true;
 	}
 
 	function setDefaultPermissions($perm) {
 		$this->permission = $perm;
 	}
-	
+
 	function get_contents($file, $type = '', $resumepos = 0 ){
-		if( empty($type) ){
-			$extension = substr(strrchr($file, "."), 1);
-			$type = isset($this->filetypes[ $extension ]) ? $this->filetypes[ $extension ] : FTP_ASCII;
-		}
+		if( empty($type) )
+			$type = FTP_BINARY;
+
 		$temp = tmpfile();
 		if ( ! $temp )
 			return false;
+
 		if( ! @ftp_fget($this->link, $temp, $file, $type, $resumepos) )
 			return false;
+
 		fseek($temp, 0); //Skip back to the start of the file being written to
 		$contents = '';
-		while (!feof($temp)) {
+
+		while ( ! feof($temp) )
 			$contents .= fread($temp, 8192);
-		}
+
 		fclose($temp);
 		return $contents;
 	}
@@ -105,21 +112,23 @@ class WP_Filesystem_FTPext extends WP_Filesystem_Base{
 		return explode("\n", $this->get_contents($file));
 	}
 	function put_contents($file, $contents, $type = '' ) {
-		if( empty($type) ) {
-			$extension = substr(strrchr($file, "."), 1);
-			$type = isset($this->filetypes[ $extension ]) ? $this->filetypes[ $extension ] : FTP_ASCII;
-		}
+		if( empty($type) )
+			$type = $this->is_binary($contents) ? FTP_BINARY : FTP_ASCII;
+
 		$temp = tmpfile();
 		if ( ! $temp )
 			return false;
+
 		fwrite($temp, $contents);
 		fseek($temp, 0); //Skip back to the start of the file being written to
+
 		$ret = @ftp_fput($this->link, $file, $temp, $type);
+
 		fclose($temp);
 		return $ret;
 	}
 	function cwd() {
-		$cwd = ftp_pwd($this->link);
+		$cwd = @ftp_pwd($this->link);
 		if( $cwd )
 			$cwd = trailingslashit($cwd);
 		return $cwd;
@@ -135,7 +144,7 @@ class WP_Filesystem_FTPext extends WP_Filesystem_Base{
 			$mode = $this->permission;
 		if( ! $mode )
 			return false;
-		if ( ! $this->exists($file) )
+		if ( ! $this->exists($file) && ! $this->is_dir($file) )
 			return false;
 		if ( ! $recursive || ! $this->is_dir($file) ) {
 			if ( ! function_exists('ftp_chmod') )
@@ -176,30 +185,31 @@ class WP_Filesystem_FTPext extends WP_Filesystem_Base{
 		return ftp_rename($this->link, $source, $destination);
 	}
 
-	function delete($file,$recursive=false) {
+	function delete($file, $recursive = false ) {
+		if ( empty($file) )
+			return false;
 		if ( $this->is_file($file) )
 			return @ftp_delete($this->link, $file);
 		if ( !$recursive )
 			return @ftp_rmdir($this->link, $file);
-		$filelist = $this->dirlist($file);
-		foreach ((array) $filelist as $filename => $fileinfo) {
-			$this->delete($file . '/' . $filename, $recursive);
-		}
+
+		$filelist = $this->dirlist( trailingslashit($file) );
+		if ( !empty($filelist) )
+			foreach ( $filelist as $delete_file )
+				$this->delete( trailingslashit($file) . $delete_file['name'], $recursive);
 		return @ftp_rmdir($this->link, $file);
 	}
 
 	function exists($file) {
-		$list = ftp_rawlist($this->link, $file, false);
-		if( ! $list )
-			return false;
-		return count($list) == 1 ? true : false;
+		$list = @ftp_rawlist($this->link, $file, false);
+		return !empty($list); //empty list = no file, so invert.
 	}
 	function is_file($file) {
-		return $this->is_dir($file) ? false : true;
+		return $this->exists($file) && !$this->is_dir($file);
 	}
 	function is_dir($path) {
 		$cwd = $this->cwd();
-		$result = @ftp_chdir($this->link, $path);
+		$result = @ftp_chdir($this->link, trailingslashit($path) );
 		if( $result && $path == $this->cwd() || $this->cwd() != $cwd ) {
 			@ftp_chdir($this->link, $cwd);
 			return true;
@@ -207,7 +217,7 @@ class WP_Filesystem_FTPext extends WP_Filesystem_Base{
 		return false;
 	}
 	function is_readable($file) {
-		//Get dir list, Check if the file is writable by the current user??
+		//Get dir list, Check if the file is readable by the current user??
 		return true;
 	}
 	function is_writable($file) {
@@ -227,7 +237,7 @@ class WP_Filesystem_FTPext extends WP_Filesystem_Base{
 		return false;
 	}
 	function mkdir($path, $chmod = false, $chown = false, $chgrp = false) {
-		if( !@ftp_mkdir($this->link, $path) )
+		if( !ftp_mkdir($this->link, $path) )
 			return false;
 		if( $chmod )
 			$this->chmod($path, $chmod);
@@ -238,17 +248,14 @@ class WP_Filesystem_FTPext extends WP_Filesystem_Base{
 		return true;
 	}
 	function rmdir($path, $recursive = false) {
-		if( ! $recursive )
-			return @ftp_rmdir($this->link, $path);
-
-		//TODO: Recursive Directory delete, Have to delete files from the folder first.
-		//$dir = $this->dirlist($path);
-		//foreach($dir as $file)
-
+		return $this->delete($path, $recursive);
 	}
 
 	function parselisting($line) {
-		$is_windows = ($this->OS_remote == FTP_OS_Windows);
+		static $is_windows;
+		if ( is_null($is_windows) )
+			$is_windows = strpos( strtolower(ftp_systype($this->link)), 'win') !== false;
+
 		if ($is_windows && preg_match("/([0-9]{2})-([0-9]{2})-([0-9]{2}) +([0-9]{2}):([0-9]{2})(AM|PM) +([0-9]+|<DIR>) +(.+)/", $line, $lucifer)) {
 			$b = array();
 			if ($lucifer[3]<70) { $lucifer[3] +=2000; } else { $lucifer[3]+=1900; } // 4digit year fix

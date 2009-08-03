@@ -1,13 +1,27 @@
 <?php
+/**
+ * Blogware XML Importer
+ *
+ * @package WordPress
+ * @subpackage Importer
+ * @author Shayne Sweeney
+ * @link http://www.theshayne.com/
+ */
 
-/* By Shayne Sweeney - http://www.theshayne.com/ */
-
+/**
+ * Blogware XML Importer class
+ *
+ * Extract posts from Blogware XML export file into your blog.
+ *
+ * @since unknown
+ */
 class BW_Import {
 
 	var $file;
 
 	function header() {
 		echo '<div class="wrap">';
+		screen_icon();
 		echo '<h2>'.__('Import Blogware').'</h2>';
 	}
 
@@ -75,7 +89,7 @@ class BW_Import {
 			}
 
 			// Clean up content
-			$post_content = preg_replace('|<(/?[A-Z]+)|e', "'<' . strtolower('$1')", $post_content);
+			$post_content = preg_replace_callback('|<(/?[A-Z]+)|', create_function('$match', 'return "<" . strtolower($match[1]);'), $post_content);
 			$post_content = str_replace('<br>', '<br />', $post_content);
 			$post_content = str_replace('<hr>', '<hr />', $post_content);
 			$post_content = $wpdb->escape($post_content);
@@ -95,7 +109,7 @@ class BW_Import {
 					return $post_id;
 				}
 				if (!$post_id) {
-					_e("Couldn't get post ID");
+					_e('Couldn&#8217;t get post ID');
 					echo '</li>';
 					break;
 				}
@@ -115,7 +129,7 @@ class BW_Import {
 					$comment_content = $this->unhtmlentities($comment_content);
 
 					// Clean up content
-					$comment_content = preg_replace('|<(/?[A-Z]+)|e', "'<' . strtolower('$1')", $comment_content);
+					$comment_content = preg_replace_callback('|<(/?[A-Z]+)|', create_function('$match', 'return "<" . strtolower($match[1]);'), $comment_content);
 					$comment_content = str_replace('<br>', '<br />', $comment_content);
 					$comment_content = str_replace('<hr>', '<hr />', $comment_content);
 					$comment_content = $wpdb->escape($comment_content);
@@ -141,7 +155,7 @@ class BW_Import {
 			}
 			if ( $num_comments ) {
 				echo ' ';
-				printf( __ngettext('%s comment', '%s comments', $num_comments), $num_comments );
+				printf( _n('%s comment', '%s comments', $num_comments), $num_comments );
 			}
 			echo '</li>';
 			flush();

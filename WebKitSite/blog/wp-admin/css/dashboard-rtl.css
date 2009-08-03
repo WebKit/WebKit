@@ -1,62 +1,93 @@
-/* Right Now */
-#rightnow {
-	margin-right:0;
-	margin-left: 7px;
+#dashboard-widgets-wrap .has-sidebar {
+	margin-right: 0;
+	margin-left: -51%;
 }
-#rightnow .reallynow span {
-	text-align: right;
-	float: right;
+#dashboard-widgets-wrap .has-sidebar .has-sidebar-content {
+	margin-right: 0;
+	margin-left: 51%;
 }
-#rightnow .reallynow a {
+.view-all {
+	right: auto;
+	left: 0;
+}
+#dashboard_right_now p.sub, #dashboard-widgets h4, #dashboard_quick_press h4, a.rsswidget, #dashboard_plugins h4, #dashboard_plugins h5, #dashboard_recent_comments .comment-meta .approve {
+	font-family: Tahoma, Arial;
+}
+#dashboard_right_now td.b {
+	padding-right: 0;
+	padding-left: 6px;
 	text-align: left;
+	font-family: Tahoma, Arial;
+}
+#dashboard_right_now .t {
+	padding-right: 0;
+	padding-left: 12px;
+}
+#dashboard_right_now .versions a {
+	font-family: Tahoma, Arial;
+}
+#dashboard_right_now a.button {
 	float: left;
-	margin: 1px 0 0 6px;
+	clear: left;
 }
-/* Widgets */
-div#dashboard-widgets-wrap {
-	margin-right:0;
-	margin-left:-13px;
+#dashboard-widgets h3 .postbox-title-action {
+	right: auto;
+	left: 30px;
 }
-div.dashboard-widget-holder {
-	float:right;
+#the-comment-list .pingback {
+	padding-left: 0 !important;
+	padding-right: 9px !important;
 }
-div.dashboard-widget {
-	margin-right:0;
-	margin-left: 20px;
+/* Recent Comments */
+#the-comment-list .comment-item {
+	padding: 1em 70px 1em 10px;
 }
-h3.dashboard-widget-title span {
-	text-align: right;
+#the-comment-list .comment-item .avatar {
 	float: right;
+	margin-left: 0;
+	margin-right: -60px;
 }
-h3.dashboard-widget-title small {
+/* Feeds */
+.rss-widget cite {
 	text-align: left;
-	float:left;
 }
-div.dashboard-widget-submit input  {
-	font-family: Tahoma;
+.rss-widget span.rss-date {
+	font-family: Tahoma, Arial;
+	margin-left: 0;
+	margin-right: 3px;
 }
-div.dashboard-widget-content ul, div.dashboard-widget-content ol, div.dashboard-widget-content dl {
-	padding-left:0;
-	padding-right:15px;
-}
-#dashboard_secondary div.dashboard-widget-content ul li {
-	float:right;
-}
-#dashboard_secondary div.dashboard-widget-content ul li .post {
-	font-family:arial;
-}
-#dashboard_secondary div.dashboard-widget-content ul li a {
-	border-right:0 none;
-	border-left: 1px solid #dadada;
-	height:110px;
-}
-#dashboard_secondary div.dashboard-widget-content ul li a cite {
-	font-family: Tahoma;
-}
-#dashboard-widgets .widget_rss ul li span.rss-date {
-	float:right;
-}
-#dashboard-widgets .widget_rss ul li a {
+/* QuickPress */
+#dashboard_quick_press h4 {
 	float: right;
-	margin: 0 0 .2em .5em;
+	text-align: left;
+}
+#dashboard_quick_press h4 label {
+	margin-right: 0;
+	margin-left: 10px;
+}
+#dashboard_quick_press .input-text-wrap, #dashboard_quick_press .textarea-wrap {
+	margin: 0 5em 1em 0;
+}
+#dashboard_quick_press #media-buttons {
+	margin: 0 5em .5em 0;
+	padding: 0 10px 0 0;
+}
+#dashboard-widgets #dashboard_quick_press form p.submit {
+	margin-left: 0;
+	margin-right: 4.6em;
+}
+#dashboard-widgets #dashboard_quick_press form p.submit input {
+	float: right;
+}
+#dashboard-widgets #dashboard_quick_press form p.submit #save-post {
+	margin: 0 10px 0 1em;
+}
+#dashboard-widgets #dashboard_quick_press form p.submit #publish {
+	float: left;
+}
+/* Recent Drafts */
+#dashboard_recent_drafts h4 abbr {
+	font-family: Tahoma, Arial;
+	margin-left:0;
+	margin-right: 3px;
 }

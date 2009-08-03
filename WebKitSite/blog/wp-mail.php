@@ -1,19 +1,17 @@
 <?php
 /**
  * Gets the email message from the user's mailbox to add as
- * a WordPress post. Will only run if this is setup and enabled.
+ * a WordPress post. Mailbox connection information must be
+ * configured under Settings > Writing
  *
  * @package WordPress
  */
 
-/** Make sure that the WordPress bootstrap has ran before continuing. */
+/** Make sure that the WordPress bootstrap has run before continuing. */
 require(dirname(__FILE__) . '/wp-load.php');
 
-/** Get the POP3 class for which to access the mailbox. */
-require_once(ABSPATH.WPINC.'/class-pop3.php');
-
-// WTF is this? Use constants instead.
-error_reporting(2037);
+/** Get the POP3 class with which to access the mailbox. */
+require_once( ABSPATH . WPINC . '/class-pop3.php' );
 
 $time_difference = get_option('gmt_offset') * 3600;
 
@@ -21,58 +19,63 @@ $phone_delim = '::';
 
 $pop3 = new POP3();
 
-if (!$pop3->connect(get_option('mailserver_url'), get_option('mailserver_port')))
-	wp_die(wp_specialchars($pop3->ERROR));
+if ( ! $pop3->connect(get_option('mailserver_url'), get_option('mailserver_port') ) ||
+	! $pop3->user(get_option('mailserver_login')) ||
+	( ! $count = $pop3->pass(get_option('mailserver_pass')) ) ) {
+		$pop3->quit();
+		wp_die( ( 0 === $count ) ? __('There doesn&#8217;t seem to be any new mail.') : esc_html($pop3->ERROR) );
+}
 
-if (!$pop3->user(get_option('mailserver_login')))
-	wp_die(wp_specialchars($pop3->ERROR));
-
-$count = $pop3->pass(get_option('mailserver_pass'));
-if (false === $count)
-	wp_die(wp_specialchars($pop3->ERROR));
-if (0 == $count)
-	echo "<p>There doesn't seem to be any new mail.</p>\n"; // will fall-through to end of for loop
-
-for ($i=1; $i <= $count; $i++) :
+for ( $i = 1; $i <= $count; $i++ ) {
 
 	$message = $pop3->get($i);
 
+	$bodysignal = false;
+	$boundary = '';
+	$charset = '';
 	$content = '';
 	$content_type = '';
 	$content_transfer_encoding = '';
-	$boundary = '';
-	$bodysignal = 0;
 	$post_author = 1;
 	$author_found = false;
 	$dmonths = array('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec');
-	foreach ($message as $line) :
-		if (strlen($line) < 3) $bodysignal = 1;
-
-		if ($bodysignal) {
+	foreach ($message as $line) {
+		// body signal
+		if ( strlen($line) < 3 )
+			$bodysignal = true;
+		if ( $bodysignal ) {
 			$content .= $line;
 		} else {
-			if (preg_match('/Content-Type: /i', $line)) {
+			if ( preg_match('/Content-Type: /i', $line) ) {
 				$content_type = trim($line);
-				$content_type = substr($content_type, 14, strlen($content_type)-14);
+				$content_type = substr($content_type, 14, strlen($content_type) - 14);
 				$content_type = explode(';', $content_type);
+				if ( ! empty( $content_type[1] ) ) {
+					$charset = explode('=', $content_type[1]);
+					$charset = ( ! empty( $charset[1] ) ) ? trim($charset[1]) : '';
+				}
 				$content_type = $content_type[0];
 			}
-			if (preg_match('/Content-Transfer-Encoding: /i', $line)) {
+			if ( preg_match('/Content-Transfer-Encoding: /i', $line) ) {
 				$content_transfer_encoding = trim($line);
-				$content_transfer_encoding = substr($content_transfer_encoding, 27, strlen($content_transfer_encoding)-14);
+				$content_transfer_encoding = substr($content_transfer_encoding, 27, strlen($content_transfer_encoding) - 27);
 				$content_transfer_encoding = explode(';', $content_transfer_encoding);
 				$content_transfer_encoding = $content_transfer_encoding[0];
 			}
-			if (($content_type == 'multipart/alternative') && (preg_match('/boundary="/', $line)) && ($boundary == '')) {
+			if ( ( $content_type == 'multipart/alternative' ) && ( false !== strpos($line, 'boundary="') ) && ( '' == $boundary ) ) {
 				$boundary = trim($line);
 				$boundary = explode('"', $boundary);
 				$boundary = $boundary[1];
 			}
 			if (preg_match('/Subject: /i', $line)) {
 				$subject = trim($line);
-				$subject = substr($subject, 9, strlen($subject)-9);
-				$subject = wp_iso_descrambler($subject);
+				$subject = substr($subject, 9, strlen($subject) - 9);
 				// Captures any text in the subject before $phone_delim as the subject
+				if ( function_exists('iconv_mime_decode') ) {
+					$subject = iconv_mime_decode($subject, 2, get_option('blog_charset'));
+				} else {
+					$subject = wp_iso_descrambler($subject);
+				}
 				$subject = explode($phone_delim, $subject);
 				$subject = $subject[0];
 			}
@@ -86,17 +89,15 @@ for ($i=1; $i <= $count; $i++) :
 					$author = trim($line);
 				$author = sanitize_email($author);
 				if ( is_email($author) ) {
-					echo "Author = {$author} <p>";
+					echo '<p>' . sprintf(__('Author is %s'), $author) . '</p>';
 					$userdata = get_user_by_email($author);
-					if (!$userdata) {
-						$post_author = 1;
+					if ( empty($userdata) ) {
 						$author_found = false;
 					} else {
 						$post_author = $userdata->ID;
 						$author_found = true;
 					}
 				} else {
-					$post_author = 1;
 					$author_found = false;
 				}
 			}
@@ -105,7 +106,7 @@ for ($i=1; $i <= $count; $i++) :
 				$ddate = trim($line);
 				$ddate = str_replace('Date: ', '', $ddate);
 				if (strpos($ddate, ',')) {
-					$ddate = trim(substr($ddate, strpos($ddate, ',')+1, strlen($ddate)));
+					$ddate = trim(substr($ddate, strpos($ddate, ',') + 1, strlen($ddate)));
 				}
 				$date_arr = explode(' ', $ddate);
 				$date_time = explode(':', $date_arr[3]);
@@ -117,8 +118,8 @@ for ($i=1; $i <= $count; $i++) :
 				$ddate_m = $date_arr[1];
 				$ddate_d = $date_arr[0];
 				$ddate_Y = $date_arr[2];
-				for ($j=0; $j<12; $j++) {
-					if ($ddate_m == $dmonths[$j]) {
+				for ( $j = 0; $j < 12; $j++ ) {
+					if ( $ddate_m == $dmonths[$j] ) {
 						$ddate_m = $j+1;
 					}
 				}
@@ -130,15 +131,12 @@ for ($i=1; $i <= $count; $i++) :
 				$post_date_gmt = gmdate('Y-m-d H:i:s', $ddate_U);
 			}
 		}
-	endforeach;
+	}
 
 	// Set $post_status based on $author_found and on author's publish_posts capability
-	if ($author_found) {
+	if ( $author_found ) {
 		$user = new WP_User($post_author);
-		if ($user->has_cap('publish_posts'))
-			$post_status = 'publish';
-		else
-			$post_status = 'pending';
+		$post_status = ( $user->has_cap('publish_posts') ) ? 'publish' : 'pending';
 	} else {
 		// Author not found in DB, set status to pending.  Author already set to admin.
 		$post_status = 'pending';
@@ -146,21 +144,33 @@ for ($i=1; $i <= $count; $i++) :
 
 	$subject = trim($subject);
 
-	if ($content_type == 'multipart/alternative') {
+	if ( $content_type == 'multipart/alternative' ) {
 		$content = explode('--'.$boundary, $content);
 		$content = $content[2];
-		$content = explode('Content-Transfer-Encoding: quoted-printable', $content);
-		$content = strip_tags($content[1], '<img><p><br><i><b><u><em><strong><strike><font><span><div>');
+		// match case-insensitive content-transfer-encoding
+		if ( preg_match( '/Content-Transfer-Encoding: quoted-printable/i', $content, $delim) ) {
+			$content = explode($delim[0], $content);
+			$content = $content[1];
+		}
+		$content = strip_tags($content, '<img><p><br><i><b><u><em><strong><strike><font><span><div>');
 	}
 	$content = trim($content);
 
-	if (stripos($content_transfer_encoding, "quoted-printable") !== false) {
+	//Give Post-By-Email extending plugins full access to the content
+	//Either the raw content or the content of the last quoted-printable section
+	$content = apply_filters('wp_mail_original_content', $content);
+
+	if ( false !== stripos($content_transfer_encoding, "quoted-printable") ) {
 		$content = quoted_printable_decode($content);
+	}
+
+	if ( function_exists('iconv') && ! empty( $charset ) ) {
+		$content = iconv($charset, get_option('blog_charset'), $content);
 	}
 
 	// Captures any text in the body after $phone_delim as the body
 	$content = explode($phone_delim, $content);
-	$content[1] ? $content = $content[1] : $content = $content[0];
+	$content = empty( $content[1] ) ? $content[0] : $content[1];
 
 	$content = trim($content);
 
@@ -170,9 +180,7 @@ for ($i=1; $i <= $count; $i++) :
 
 	if ($post_title == '') $post_title = $subject;
 
-	if (empty($post_categories)) $post_categories[] = get_option('default_email_category');
-
-	$post_category = $post_categories;
+	$post_category = array(get_option('default_email_category'));
 
 	$post_data = compact('post_content','post_title','post_date','post_date_gmt','post_author','post_category', 'post_status');
 	$post_data = add_magic_quotes($post_data);
@@ -181,25 +189,24 @@ for ($i=1; $i <= $count; $i++) :
 	if ( is_wp_error( $post_ID ) )
 		echo "\n" . $post_ID->get_error_message();
 
-	if (!$post_ID) {
-		// we couldn't post, for whatever reason. better move forward to the next email
+	// We couldn't post, for whatever reason. Better move forward to the next email.
+	if ( empty( $post_ID ) )
 		continue;
-	}
 
 	do_action('publish_phone', $post_ID);
 
-	echo "\n<p><b>Author:</b> " . wp_specialchars($post_author) . "</p>";
-	echo "\n<p><b>Posted title:</b> " . wp_specialchars($post_title) . "<br />";
+	echo "\n<p>" . sprintf(__('<strong>Author:</strong> %s'), esc_html($post_author)) . '</p>';
+	echo "\n<p>" . sprintf(__('<strong>Posted title:</strong> %s'), esc_html($post_title)) . '</p>';
 
 	if(!$pop3->delete($i)) {
-		echo '<p>Oops '.wp_specialchars($pop3->ERROR).'</p></div>';
+		echo '<p>' . sprintf(__('Oops: %s'), esc_html($pop3->ERROR)) . '</p>';
 		$pop3->reset();
 		exit;
 	} else {
-		echo "<p>Mission complete, message <strong>$i</strong> deleted.</p>";
+		echo '<p>' . sprintf(__('Mission complete.  Message <strong>%s</strong> deleted.'), $i) . '</p>';
 	}
 
-endfor;
+}
 
 $pop3->quit();
 

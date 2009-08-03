@@ -1,73 +1,91 @@
-#poststuff .postbox h3 {
-	padding-left:0;
-	padding-right: 23px;
+* html #wpcontent #adminmenu .wp-has-submenu .wp-menu-toggle {
+	background: url(../images/menu-bits-rtl.gif) no-repeat scroll right -109px;
 }
-* html #poststuff .postarea, * html #poststuff #titlediv {
+
+* html #wpcontent #adminmenu li.wp-has-current-submenu .wp-menu-toggle {
+	background: url(../images/menu-bits-rtl.gif) no-repeat scroll right -206px;
+}
+* html #adminmenu {
 	margin-left:0;
-	margin-right: 3%;
+	margin-right: -80px;
+}
+* html div.folded #adminmenu {
+	margin-left: 0;
+	margin-right: -22px;
+}
+#wpcontent #adminmenu .wp-submenu li.wp-submenu-head {
+	padding: 3px 10px 4px 4px;
+}
+.inline-edit-row fieldset label span.title {
+	float: right;
+}
+.inline-edit-row fieldset label span.input-text-wrap {
+	margin-right: 0;
+}
+p.search-box {
+	float: left;
 }
 * html #poststuff h2 {
 	margin-right: 0;
 }
 #bh {
-	padding-right:0;
-	padding-left: 15px;
+	margin: 7px 10px 0 0;
+	float: left;
 }
+#user_info + div#favorite-actions {
+	right: auto;
+	left: 15px;
+}
+#wphead-info {
+	float: left;
+}
+/* without this dashboard widgets appear in one column for some screen widths */
 div#dashboard-widgets {
-	padding-right:0;
+	padding-right: 0;
 	padding-left: 1px;
 }
-#tagchecklist span a {
+.tagchecklist span a {
 	margin: 4px -9px 0 0;
-}
-#poststuff .togbox {
-	margin-left:0;
-	margin-right: -19px;
 }
 .widefat th input {
 	margin: 0 5px 0 0;
 }
 /* ---------- add by navid */
-#dashmenu { /* fix top right bottom in admin */
-	direction:ltr;
+#TB_window {
+	width: 670px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin-right: 335px !important;
 }
-#sidemenu a { /* fix left admin buttom ex. plugins, options */
-	float:left;
+#dashboard_plugins {
+	direction: ltr;
 }
-.wrap h2 {
-	margin:5px 4px 0 0;
+#dashboard_plugins h3.hndle {
+	direction: rtl;
 }
-#editor-toolbar {/* fix hover in media uploader icon */
-	direction:ltr;
+#dashboard_incoming_links ul li,
+#dashboard_secondary ul li,
+#dashboard_primary ul li,
+p.row-actions {
+	width: 100%;
 }
-#TB_window { /* fix theme preview */
-	left:2%;
+#favorite-inside {
+	position: absolute;
+	right:0;
 }
-/* fix widget page */
-form#widgets-filter {
-	position:static;
+#post-status-info {
+	height: 25px;
 }
-#widget-search {
-	display:none;
+#screen-meta {
+	position: static;
 }
-/* fix manage comment page */
-ul.view-switch li {
-	float:left;
+p.submit { /* quick edit and reply in edit-comments.php */
+	height:22px;
 }
-form#posts-filter {
-	position:static;
+.inner-sidebar { /* fix edit single comment */
+	position: static;
 }
-#post-search {
-	display:none;
+form#widgets-filter { /* fix widget page */
+	position: static;
 }
-#submenu {
-	margin-right: 20px;
-}
-/* Fixes for media-upload window */
-/* Center media-upload panel on screen */
-#TB_window { 
-	width: 670px; 
-	position: absolute; 
-	top: 50%; 
-	left: 50%; 
-	margin-right: 335px !important; }

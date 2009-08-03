@@ -17,11 +17,6 @@
  * $Id: class-pop3.php 6440 2007-12-20 22:28:54Z westi $
  */
 
-/**
- * POP3
- *
- * @package SquirrelMail
- */
 class POP3 {
     var $ERROR      = '';       //  Error string.
 

@@ -77,13 +77,13 @@ function hash_hmac($algo, $data, $key, $raw_output = false) {
 }
 endif;
 
-if ( ! function_exists('mb_strcut') ):
-	function mb_strcut( $str, $start, $length=null, $encoding=null ) {
-		return _mb_strcut($str, $start, $length, $encoding);
+if ( ! function_exists('mb_substr') ):
+	function mb_substr( $str, $start, $length=null, $encoding=null ) {
+		return _mb_substr($str, $start, $length, $encoding);
 	}
 endif;
 
-function _mb_strcut( $str, $start, $length=null, $encoding=null ) {
+function _mb_substr( $str, $start, $length=null, $encoding=null ) {
 	// the solution below, works only for utf-8, so in case of a different
 	// charset, just use built-in substr
 	$charset = get_option( 'blog_charset' );
@@ -94,6 +94,25 @@ function _mb_strcut( $str, $start, $length=null, $encoding=null ) {
 	preg_match_all( '/./us', $str, $match );
 	$chars = is_null( $length )? array_slice( $match[0], $start ) : array_slice( $match[0], $start, $length );
 	return implode( '', $chars );
+}
+
+if ( !function_exists( 'htmlspecialchars_decode' ) ) {
+	// Added in PHP 5.1.0
+	// Error checks from PEAR::PHP_Compat
+	function htmlspecialchars_decode( $string, $quote_style = ENT_COMPAT )
+	{
+		if ( !is_scalar( $string ) ) {
+			trigger_error( 'htmlspecialchars_decode() expects parameter 1 to be string, ' . gettype( $string ) . ' given', E_USER_WARNING );
+			return;
+		}
+
+		if ( !is_int( $quote_style ) && $quote_style !== null ) {
+			trigger_error( 'htmlspecialchars_decode() expects parameter 2 to be integer, ' . gettype( $quote_style ) . ' given', E_USER_WARNING );
+			return;
+		}
+
+		return wp_specialchars_decode( $string, $quote_style );
+	}
 }
 
 ?>

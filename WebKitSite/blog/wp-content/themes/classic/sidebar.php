@@ -1,4 +1,9 @@
-
+<?php
+/**
+ * @package WordPress
+ * @subpackage Classic_Theme
+ */
+?>
 <!-- begin sidebar -->
 <div id="menu">
 
@@ -13,7 +18,7 @@
    <form id="searchform" method="get" action="<?php bloginfo('home'); ?>">
 	<div>
 		<input type="text" name="s" id="s" size="15" /><br />
-		<input type="submit" value="<?php _e('Search'); ?>" />
+		<input type="submit" value="<?php esc_attr_e('Search'); ?>" />
 	</div>
 	</form>
  </li>

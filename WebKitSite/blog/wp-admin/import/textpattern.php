@@ -1,10 +1,22 @@
 <?php
 /**
-	Add These Functions to make our lives easier
-**/
+ * TextPattern Importer
+ *
+ * @package WordPress
+ * @subpackage Importer
+ */
 
 if(!function_exists('get_comment_count'))
 {
+	/**
+	 * Get the comment count for posts.
+	 *
+	 * @package WordPress
+	 * @subpackage Textpattern_Import
+	 *
+	 * @param int $post_ID Post ID
+	 * @return int
+	 */
 	function get_comment_count($post_ID)
 	{
 		global $wpdb;
@@ -14,6 +26,15 @@ if(!function_exists('get_comment_count'))
 
 if(!function_exists('link_exists'))
 {
+	/**
+	 * Check whether link already exists.
+	 *
+	 * @package WordPress
+	 * @subpackage Textpattern_Import
+	 *
+	 * @param string $linkname
+	 * @return int
+	 */
 	function link_exists($linkname)
 	{
 		global $wpdb;
@@ -22,13 +43,16 @@ if(!function_exists('link_exists'))
 }
 
 /**
-	The Main Importer Class
-**/
+ * TextPattern Importer Class
+ *
+ * @since unknown
+ */
 class Textpattern_Import {
 
 	function header()
 	{
 		echo '<div class="wrap">';
+		screen_icon();
 		echo '<h2>'.__('Import Textpattern').'</h2>';
 		echo '<p>'.__('Steps may take a few minutes depending on the size of your database. Please be patient.').'</p>';
 	}
@@ -46,7 +70,7 @@ class Textpattern_Import {
 		echo '<form action="admin.php?import=textpattern&amp;step=1" method="post">';
 		wp_nonce_field('import-textpattern');
 		$this->db_form();
-		echo '<p class="submit"><input type="submit" class="button" name="submit" value="'.attribute_escape(__('Import')).'" /></p>';
+		echo '<p class="submit"><input type="submit" name="submit" class="button" value="'.esc_attr__('Import').'" /></p>';
 		echo '</form>';
 		echo '</div>';
 	}
@@ -177,7 +201,7 @@ class Textpattern_Import {
 
 			// Store category translation for future use
 			add_option('txpcat2wpcat',$txpcat2wpcat);
-			echo '<p>'.sprintf(__ngettext('Done! <strong>%1$s</strong> category imported.', 'Done! <strong>%1$s</strong> categories imported.', $count), $count).'<br /><br /></p>';
+			echo '<p>'.sprintf(_n('Done! <strong>%1$s</strong> category imported.', 'Done! <strong>%1$s</strong> categories imported.', $count), $count).'<br /><br /></p>';
 			return true;
 		}
 		echo __('No Categories to Import!');
@@ -462,7 +486,7 @@ class Textpattern_Import {
 			}
 			add_option('txplinks2wplinks',$txplinks2wplinks);
 			echo '<p>';
-			printf(__ngettext('Done! <strong>%s</strong> link imported', 'Done! <strong>%s</strong> links imported', $count), $count);
+			printf(_n('Done! <strong>%s</strong> link imported', 'Done! <strong>%s</strong> links imported', $count), $count);
 			echo '<br /><br /></p>';
 			return true;
 		}
@@ -481,7 +505,7 @@ class Textpattern_Import {
 
 		echo '<form action="admin.php?import=textpattern&amp;step=2" method="post">';
 		wp_nonce_field('import-textpattern');
-		printf('<input type="submit" class="button" name="submit" value="%s" />', attribute_escape(__('Import Users')));
+		printf('<p class="submit"><input type="submit" name="submit" class="button" value="%s" /></p>', esc_attr__('Import Users'));
 		echo '</form>';
 
 	}
@@ -494,7 +518,7 @@ class Textpattern_Import {
 
 		echo '<form action="admin.php?import=textpattern&amp;step=3" method="post">';
 		wp_nonce_field('import-textpattern');
-		printf('<input type="submit" class="button" name="submit" value="%s" />', attribute_escape(__('Import Posts')));
+		printf('<p class="submit"><input type="submit" name="submit" class="button" value="%s" /></p>', esc_attr__('Import Posts'));
 		echo '</form>';
 	}
 
@@ -508,7 +532,7 @@ class Textpattern_Import {
 
 		echo '<form action="admin.php?import=textpattern&amp;step=4" method="post">';
 		wp_nonce_field('import-textpattern');
-		printf('<input type="submit" class="button" name="submit" value="%s" />', attribute_escape(__('Import Comments')));
+		printf('<p class="submit"><input type="submit" name="submit" class="button" value="%s" /></p>', esc_attr__('Import Comments'));
 		echo '</form>';
 	}
 
@@ -520,7 +544,7 @@ class Textpattern_Import {
 
 		echo '<form action="admin.php?import=textpattern&amp;step=5" method="post">';
 		wp_nonce_field('import-textpattern');
-		printf('<input type="submit" class="button" name="submit" value="%s" />', attribute_escape(__('Import Links')));
+		printf('<p class="submit"><input type="submit" name="submit" class="button" value="%s" /></p>', esc_attr__('Import Links'));
 		echo '</form>';
 	}
 
@@ -533,7 +557,7 @@ class Textpattern_Import {
 
 		echo '<form action="admin.php?import=textpattern&amp;step=6" method="post">';
 		wp_nonce_field('import-textpattern');
-		printf('<input type="submit" class="button" name="submit" value="%s" />', attribute_escape(__('Finish')));
+		printf('<p class="submit"><input type="submit" name="submit" class="button" value="%s" /></p>', esc_attr__('Finish'));
 		echo '</form>';
 	}
 
@@ -670,5 +694,7 @@ class Textpattern_Import {
 }
 
 $txp_import = new Textpattern_Import();
+
 register_importer('textpattern', __('Textpattern'), __('Import categories, users, posts, comments, and links from a Textpattern blog.'), array ($txp_import, 'dispatch'));
+
 ?>

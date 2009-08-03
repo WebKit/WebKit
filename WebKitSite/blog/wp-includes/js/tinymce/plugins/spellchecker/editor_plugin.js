@@ -312,7 +312,7 @@
 		},
 
 		_sendRPC : function(m, p, cb) {
-			var t = this, url = t.editor.getParam("spellchecker_rpc_url", this.url+"/rpc.php");
+			var t = this, url = t.editor.getParam("spellchecker_rpc_url", this.url+'/rpc.php');
 
 			if (url == '{backend}') {
 				t.editor.setProgressState(0);

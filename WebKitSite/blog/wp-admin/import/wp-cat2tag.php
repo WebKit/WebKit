@@ -1,5 +1,19 @@
 <?php
+/**
+ * WordPress Categories to Tags Converter.
+ *
+ * @package WordPress
+ * @subpackage Importer
+ */
 
+/**
+ * WordPress categories to tags converter class.
+ *
+ * Will convert WordPress categories to tags, removing the category after the
+ * process is complete and updating all posts to switch to the tag.
+ *
+ * @since unknown
+ */
 class WP_Categories_to_Tags {
 	var $categories_to_convert = array();
 	var $all_categories = array();
@@ -50,7 +64,8 @@ class WP_Categories_to_Tags {
 		echo '<br class="clear" />';
 
 		if ( $cat_num > 0 ) {
-			echo '<h2>' . sprintf( __ngettext( 'Convert Category to Tag.', 'Convert Categories (%d) to Tags.', $cat_num ), $cat_num ) . '</h2>';
+			screen_icon();
+			echo '<h2>' . sprintf( _n( 'Convert Category to Tag.', 'Convert Categories (%d) to Tags.', $cat_num ), $cat_num ) . '</h2>';
 			echo '<div class="narrow">';
 			echo '<p>' . __('Hey there. Here you can selectively convert existing categories to tags. To get started, check the categories you wish to be converted, then click the Convert button.') . '</p>';
 			echo '<p>' . __('Keep in mind that if you convert a category with child categories, the children become top-level orphans.') . '</p></div>';
@@ -88,7 +103,7 @@ function check_all_rows() {
 </script>
 
 <form name="catlist" id="catlist" action="admin.php?import=wp-cat2tag&amp;step=2" method="post">
-<p><input type="button" class="button-secondary" value="<?php _e('Check All'); ?>" onclick="this.value=check_all_rows()" />
+<p><input type="button" class="button-secondary" value="<?php esc_attr_e('Check All'); ?>" onclick="this.value=check_all_rows()" />
 <?php wp_nonce_field('import-cat2tag'); ?></p>
 <ul style="list-style:none">
 
@@ -103,7 +118,7 @@ function check_all_rows() {
 
 				 if ( in_array( intval($category->term_id),  $this->hybrids_ids ) )
 				 	echo ' <a href="#note"> * </a>';
-				
+
 				if ( isset($hier[$category->term_id]) )
 					$this->_category_children($category, $hier); ?></li>
 <?php		}
@@ -113,7 +128,7 @@ function check_all_rows() {
 <?php	if ( ! empty($this->hybrids_ids) )
 			echo '<p><a name="note"></a>' . __('* This category is also a tag. Converting it will add that tag to all posts that are currently in the category.') . '</p>'; ?>
 
-<p class="submit"><input type="submit" name="submit" class="button" value="<?php _e('Convert Categories to Tags'); ?>" /></p>
+<p class="submit"><input type="submit" name="submit" class="button" value="<?php esc_attr_e('Convert Categories to Tags'); ?>" /></p>
 </form>
 
 <?php }
@@ -125,9 +140,10 @@ function check_all_rows() {
 		echo '<br class="clear" />';
 
 		if ( $tags_num > 0 ) {
-			echo '<h2>' . sprintf( __ngettext( 'Convert Tag to Category.', 'Convert Tags (%d) to Categories.', $tags_num ), $tags_num ) . '</h2>';
+			screen_icon();
+			echo '<h2>' . sprintf( _n( 'Convert Tag to Category.', 'Convert Tags (%d) to Categories.', $tags_num ), $tags_num ) . '</h2>';
 			echo '<div class="narrow">';
-			echo '<p>' . __('Here you can selectively converts existing tags to categories. To get started, check the tags you wish to be converted, then click the Convert button.') . '</p>';
+			echo '<p>' . __('Here you can selectively convert existing tags to categories. To get started, check the tags you wish to be converted, then click the Convert button.') . '</p>';
 			echo '<p>' . __('The newly created categories will still be associated with the same posts.') . '</p></div>';
 
 			$this->tags_form();
@@ -163,12 +179,12 @@ function check_all_tagrows() {
 </script>
 
 <form name="taglist" id="taglist" action="admin.php?import=wp-cat2tag&amp;step=4" method="post">
-<p><input type="button" class="button-secondary" value="<?php _e('Check All'); ?>" onclick="this.value=check_all_tagrows()" />
+<p><input type="button" class="button-secondary" value="<?php esc_attr_e('Check All'); ?>" onclick="this.value=check_all_tagrows()" />
 <?php wp_nonce_field('import-cat2tag'); ?></p>
 <ul style="list-style:none">
 
 <?php	foreach ( $this->all_tags as $tag ) { ?>
-	<li><label><input type="checkbox" name="tags_to_convert[]" value="<?php echo intval($tag->term_id); ?>" /> <?php echo attribute_escape($tag->name) . ' (' . $tag->count . ')'; ?></label><?php if ( in_array( intval($tag->term_id),  $this->hybrids_ids ) ) echo ' <a href="#note"> * </a>'; ?></li>
+	<li><label><input type="checkbox" name="tags_to_convert[]" value="<?php echo intval($tag->term_id); ?>" /> <?php echo esc_attr($tag->name) . ' (' . $tag->count . ')'; ?></label><?php if ( in_array( intval($tag->term_id),  $this->hybrids_ids ) ) echo ' <a href="#note"> * </a>'; ?></li>
 
 <?php	} ?>
 </ul>
@@ -176,7 +192,7 @@ function check_all_tagrows() {
 <?php	if ( ! empty($this->hybrids_ids) )
 			echo '<p><a name="note"></a>' . __('* This tag is also a category. When converted, all posts associated with the tag will also be in the category.') . '</p>'; ?>
 
-<p class="submit"><input type="submit" name="submit_tags" class="button" value="<?php _e('Convert Tags to Categories'); ?>" /></p>
+<p class="submit"><input type="submit" name="submit_tags" class="button" value="<?php esc_attr_e('Convert Tags to Categories'); ?>" /></p>
 </form>
 
 <?php }
@@ -233,7 +249,7 @@ function check_all_tagrows() {
 			$cat_id = (int) $cat_id;
 
 			if ( ! $this->_category_exists($cat_id) ) {
-				echo '<li>' . sprintf( __('Category %s doesn\'t exist!'),  $cat_id ) . "</li>\n";
+				echo '<li>' . sprintf( __('Category %s doesn&#8217;t exist!'),  $cat_id ) . "</li>\n";
 			} else {
 				$category =& get_category($cat_id);
 				echo '<li>' . sprintf(__('Converting category <strong>%s</strong> ... '),  $category->name);
@@ -243,7 +259,7 @@ function check_all_tagrows() {
 
 					if ( ! ($id = is_term( $category->slug, 'post_tag' ) ) )
 						$id = wp_insert_term($category->name, 'post_tag', array('slug' => $category->slug));
-					
+
 					$id = $id['term_taxonomy_id'];
 					$posts = get_objects_in_term($category->term_id, 'category');
 					$term_order = 0;
@@ -252,7 +268,7 @@ function check_all_tagrows() {
 						$values[] = $wpdb->prepare( "(%d, %d, %d)", $post, $id, $term_order);
 						clean_post_cache($post);
 					}
-					
+
 					if ( $values ) {
 						$wpdb->query("INSERT INTO $wpdb->term_relationships (object_id, term_taxonomy_id, term_order) VALUES " . join(',', $values) . " ON DUPLICATE KEY UPDATE term_order = VALUES(term_order)");
 
@@ -262,7 +278,7 @@ function check_all_tagrows() {
 					echo __('Converted successfully.') . "</li>\n";
 					continue;
 				}
-				
+
 				// if tag already exists, add it to all posts in the category
 				if ( $tag_ttid = $wpdb->get_var( $wpdb->prepare("SELECT term_taxonomy_id FROM $wpdb->term_taxonomy WHERE term_id = %d AND taxonomy = 'post_tag'", $category->term_id) ) ) {
 					$objects_ids = get_objects_in_term($category->term_id, 'category');
@@ -309,14 +325,12 @@ function check_all_tagrows() {
 
 		if ( ! empty($clean_term_cache) ) {
 			$clean_term_cache = array_unique(array_values($clean_term_cache));
-			foreach ( $clean_term_cache as $id )
-				wp_cache_delete($id, 'post_tag');
+			clean_term_cache($clean_term_cache, 'post_tag');
 		}
 
 		if ( ! empty($clean_cat_cache) ) {
 			$clean_cat_cache = array_unique(array_values($clean_cat_cache));
-			foreach ( $clean_cat_cache as $id )
-				wp_cache_delete($id, 'category');
+			clean_term_cache($clean_cat_cache, 'category');
 		}
 
 		if ( $clear_parents ) delete_option('category_children');
@@ -392,20 +406,18 @@ function check_all_tagrows() {
 				echo __('Converted successfully.') . "</li>\n";
 
 			} else {
-				printf( '<li>' . __('Tag #%s doesn\'t exist!') . "</li>\n",  $tag_id );
+				printf( '<li>' . __('Tag #%s doesn&#8217;t exist!') . "</li>\n",  $tag_id );
 			}
 		}
 
 		if ( ! empty($clean_term_cache) ) {
 			$clean_term_cache = array_unique(array_values($clean_term_cache));
-			foreach ( $clean_term_cache as $id )
-				wp_cache_delete($id, 'post_tag');
+			clean_term_cache($clean_term_cache, 'post_tag');
 		}
 
 		if ( ! empty($clean_cat_cache) ) {
 			$clean_cat_cache = array_unique(array_values($clean_cat_cache));
-			foreach ( $clean_cat_cache as $id )
-				wp_cache_delete($id, 'category');
+			clean_term_cache($clean_term_cache, 'category');
 		}
 
 		if ( $clear_parents ) delete_option('category_children');

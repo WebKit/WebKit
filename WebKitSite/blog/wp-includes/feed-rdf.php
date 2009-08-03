@@ -5,11 +5,10 @@
  * @package WordPress
  */
 
-header('Content-Type: application/rdf+xml; charset=' . get_option('blog_charset'), true);
+header('Content-Type: ' . feed_content_type('rdf') . '; charset=' . get_option('blog_charset'), true);
 $more = 1;
 
-?>
-<?php echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>'; ?>
+echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>'; ?>
 <rdf:RDF
 	xmlns="http://purl.org/rss/1.0/"
 	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
@@ -25,7 +24,7 @@ $more = 1;
 	<description><?php bloginfo_rss('description') ?></description>
 	<dc:date><?php echo mysql2date('Y-m-d\TH:i:s\Z', get_lastpostmodified('GMT'), false); ?></dc:date>
 	<?php the_generator( 'rdf' ); ?>
-	<sy:updatePeriod>hourly</sy:updatePeriod>
+	<sy:updatePeriod><?php echo apply_filters( 'rss_update_period', 'hourly' ); ?></sy:updatePeriod>
 	<sy:updateFrequency>1</sy:updateFrequency>
 	<sy:updateBase>2000-01-01T12:00+00:00</sy:updateBase>
 	<?php do_action('rdf_header'); ?>
