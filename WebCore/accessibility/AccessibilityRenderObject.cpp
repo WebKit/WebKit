@@ -487,6 +487,21 @@ bool AccessibilityRenderObject::isGroup() const
     return roleValue() == GroupRole;
 }
     
+AccessibilityObject* AccessibilityRenderObject::selectedRadioButton()
+{
+    if (!isRadioGroup())
+        return 0;
+    
+    // Find the child radio button that is selected (ie. the intValue == 1).
+    int count = m_children.size();
+    for (int i = 0; i < count; ++i) {
+        AccessibilityObject* object = m_children[i].get();
+        if (object->roleValue() == RadioButtonRole && object->intValue() == 1)
+            return object;
+    }
+    return 0;
+}
+    
 const AtomicString& AccessibilityRenderObject::getAttribute(const QualifiedName& attribute) const
 {
     Node* node = m_renderer->node();
@@ -2203,6 +2218,7 @@ static const ARIARoleMap& createARIARoleMap()
         { "menuitemradio", MenuItemRole },
         { "progressbar", ProgressIndicatorRole },
         { "radio", RadioButtonRole },
+        { "radiogroup", RadioGroupRole },
         { "row", RowRole },
         { "range", SliderRole },
         { "slider", SliderRole },

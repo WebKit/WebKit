@@ -1,3 +1,13 @@
+2009-08-03  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Bug 27943: Need to implement ARIA role="radiogroup"
+        https://bugs.webkit.org/show_bug.cgi?id=27943
+
+        * platform/mac/accessibility/aria-radiogroup-expected.txt: Added.
+        * platform/mac/accessibility/aria-radiogroup.html: Added.
+
 2009-08-03  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Eric Seidel.

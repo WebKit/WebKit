@@ -1,3 +1,23 @@
+2009-08-03  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Bug 27943: Need to implement ARIA role="radiogroup"
+        https://bugs.webkit.org/show_bug.cgi?id=27943
+
+        Test: platform/mac/accessibility/aria-radiogroup.html
+
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::isRadioGroup):
+        (WebCore::AccessibilityObject::selectedRadioButton):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::selectedRadioButton):
+        (WebCore::RoleEntry::):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper roleDescription]):
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:]):
+
 2009-08-03  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Eric Seidel.

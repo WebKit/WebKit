@@ -1039,6 +1039,9 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     if ([axRole isEqualToString:NSAccessibilityRadioButtonRole])
         return NSAccessibilityRoleDescription(NSAccessibilityRadioButtonRole, [self subrole]);
 
+    if ([axRole isEqualToString:NSAccessibilityRadioGroupRole])
+        return NSAccessibilityRoleDescription(NSAccessibilityRadioGroupRole, [self subrole]);
+
     if ([axRole isEqualToString:NSAccessibilityTextFieldRole])
         return NSAccessibilityRoleDescription(NSAccessibilityTextFieldRole, [self subrole]);
 
@@ -1234,6 +1237,15 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             return [NSNumber numberWithFloat:m_object->valueForRange()];
         if (m_object->hasIntValue())
             return [NSNumber numberWithInt:m_object->intValue()];
+
+        // radio groups return the selected radio button as the AXValue
+        if (m_object->isRadioGroup()) {
+            AccessibilityObject* radioButton = m_object->selectedRadioButton();
+            if (!radioButton)
+                return nil;
+            return radioButton->wrapper();
+        }
+        
         return m_object->stringValue();
     }
 
