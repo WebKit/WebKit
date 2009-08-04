@@ -1,3 +1,13 @@
+2009-08-04  Jakub Wieczorek  <faw217@gmail.com>
+
+        Reviewed by Simon Hausmann.
+
+        Add QWebPluginDatabase API to the Qt API.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=27651
+
+        * WebCore.pro:
+
 2009-08-04  Ariya Hidayat  <ariya.hidayat@nokia.com>
 
         Reviewed by Adam Treat.

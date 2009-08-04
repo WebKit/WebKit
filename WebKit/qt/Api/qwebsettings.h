@@ -32,6 +32,7 @@ namespace WebCore {
 }
 
 class QWebPage;
+class QWebPluginDatabase;
 class QWebSettingsPrivate;
 QT_BEGIN_NAMESPACE
 class QUrl;
@@ -101,6 +102,8 @@ public:
     static QString iconDatabasePath();
     static void clearIconDatabase();
     static QIcon iconForUrl(const QUrl &url);
+
+    static QWebPluginDatabase *pluginDatabase();
 
     static void setWebGraphic(WebGraphic type, const QPixmap &graphic);
     static QPixmap webGraphic(WebGraphic type);

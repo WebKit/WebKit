@@ -2164,6 +2164,7 @@ SOURCES += \
     ../WebKit/qt/Api/qwebhistory.cpp \
     ../WebKit/qt/Api/qwebsettings.cpp \
     ../WebKit/qt/Api/qwebhistoryinterface.cpp \
+    ../WebKit/qt/Api/qwebplugindatabase.cpp \
     ../WebKit/qt/Api/qwebpluginfactory.cpp \
     ../WebKit/qt/Api/qwebsecurityorigin.cpp \
     ../WebKit/qt/Api/qwebdatabase.cpp \

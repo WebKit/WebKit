@@ -1,3 +1,57 @@
+2009-08-04  Jakub Wieczorek  <faw217@gmail.com>
+
+        Reviewed by Simon Hausmann.
+
+        Add QWebPluginDatabase API to the Qt API.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=27651
+
+        * Api/headers.pri:
+        * Api/qwebplugindatabase.cpp: Added.
+        (QWebPluginPrivate::QWebPluginPrivate):
+        (QWebPluginDatabasePrivate::QWebPluginDatabasePrivate):
+        (QWebPlugin::MimeType::operator==):
+        (QWebPlugin::QWebPlugin):
+        (QWebPlugin::~QWebPlugin):
+        (QWebPlugin::name):
+        (QWebPlugin::description):
+        (QWebPlugin::mimeTypes):
+        (QWebPlugin::supportsMimeType):
+        (QWebPlugin::path):
+        (QWebPlugin::isNull):
+        (QWebPlugin::setEnabled):
+        (QWebPlugin::isEnabled):
+        (QWebPlugin::operator==):
+        (QWebPlugin::operator!=):
+        (QWebPlugin::operator=):
+        (QWebPluginDatabase::QWebPluginDatabase):
+        (QWebPluginDatabase::~QWebPluginDatabase):
+        (QWebPluginDatabase::plugins):
+        (QWebPluginDatabase::defaultSearchPaths):
+        (QWebPluginDatabase::searchPaths):
+        (QWebPluginDatabase::setSearchPaths):
+        (QWebPluginDatabase::addSearchPath):
+        (QWebPluginDatabase::refresh):
+        (QWebPluginDatabase::pluginForMimeType):
+        (QWebPluginDatabase::setPreferredPluginForMimeType):
+        * Api/qwebplugindatabase.h: Added.
+        * Api/qwebplugindatabase_p.h: Added.
+        * Api/qwebsettings.cpp:
+        (QWebSettings::pluginDatabase):
+        * Api/qwebsettings.h:
+        * tests/qwebplugindatabase/qwebplugindatabase.pro: Added.
+        * tests/qwebplugindatabase/tst_qwebplugindatabase.cpp: Added.
+        (tst_QWebPluginDatabase::installedPlugins):
+        (tst_QWebPluginDatabase::searchPaths):
+        (tst_QWebPluginDatabase::null_data):
+        (tst_QWebPluginDatabase::null):
+        (tst_QWebPluginDatabase::pluginForMimeType):
+        (tst_QWebPluginDatabase::enabled):
+        (tst_QWebPluginDatabase::operatorequal_data):
+        (tst_QWebPluginDatabase::operatorequal):
+        (tst_QWebPluginDatabase::preferredPlugin):
+        * tests/tests.pro:
+
 2009-08-03  Balazs Kelemen  <kelemen.balazs.3@stud.u-szeged.hu>
 
         Reviewed by Simon Hausmann.

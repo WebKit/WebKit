@@ -22,6 +22,7 @@
 
 #include "qwebpage.h"
 #include "qwebpage_p.h"
+#include "qwebplugindatabase.h"
 
 #include "Cache.h"
 #include "CrossOriginPreflightResultCache.h"
@@ -539,6 +540,17 @@ QIcon QWebSettings::iconForUrl(const QUrl& url)
 }
 
 /*!
+    Returns the plugin database object.
+*/
+QWebPluginDatabase *QWebSettings::pluginDatabase()
+{
+    static QWebPluginDatabase* database = 0;
+    if (!database)
+        database = new QWebPluginDatabase();
+    return database;
+}
+
+/*!
     Sets \a graphic to be drawn when QtWebKit needs to draw an image of the
     given \a type.
 
@@ -626,7 +638,7 @@ int QWebSettings::maximumPagesInCache()
 
    The \a cacheMinDeadCapacity specifies the \e minimum number of bytes that
    dead objects should consume when the cache is under pressure.
-   
+
    \a cacheMaxDead is the \e maximum number of bytes that dead objects should
    consume when the cache is \bold not under pressure.
 
@@ -686,7 +698,7 @@ void QWebSettings::resetFontFamily(FontFamily which)
 
 /*!
     \fn void QWebSettings::setAttribute(WebAttribute attribute, bool on)
-    
+
     Enables or disables the specified \a attribute feature depending on the
     value of \a on.
 */
