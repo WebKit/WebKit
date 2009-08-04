@@ -131,11 +131,14 @@ class SCM:
             error("Working directory has local commits, pass --force-clean to continue.")
         self.discard_local_commits()
 
-    def apply_patch(self, patch):
+    def apply_patch(self, patch, force=False):
         # It's possible that the patch was not made from the root directory.
         # We should detect and handle that case.
         curl_process = subprocess.Popen(['curl', patch['url']], stdout=subprocess.PIPE)
-        patch_apply_process = subprocess.Popen([self.script_path('svn-apply'), '--reviewer', patch['reviewer']], stdin=curl_process.stdout)
+        args = [self.script_path('svn-apply'), '--reviewer', patch['reviewer']]
+        if force:
+            args.append('--force')
+        patch_apply_process = subprocess.Popen(args, stdin=curl_process.stdout)
 
         return_code = patch_apply_process.wait()
         if return_code:

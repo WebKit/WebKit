@@ -1,3 +1,15 @@
+2009-08-03  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        bugzilla-tool land-patches needs --queue mode
+        https://bugs.webkit.org/show_bug.cgi?id=27961
+
+        Add a --commit-queue command line option to suppress user interaction.
+
+        * Scripts/bugzilla-tool:
+        * Scripts/modules/scm.py:
+
 2009-08-03  Mark Rowe  <mrowe@apple.com>
 
         Build fix.  Add installsrc, installhdrs and install targets.
