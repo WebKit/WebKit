@@ -1,3 +1,16 @@
+2009-08-04  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        bugzilla-tool has too many fatal errors
+        https://bugs.webkit.org/show_bug.cgi?id=27969
+
+        Replace several fatal errors with ScriptError exceptions.
+
+        * Scripts/bugzilla-tool:
+        * Scripts/modules/bugzilla.py:
+        * Scripts/modules/scm.py:
+
 2009-08-04  Eric Seidel  <eric@webkit.org>
 
         No review, ChangeLog fix only.

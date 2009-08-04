@@ -99,9 +99,9 @@ def modified_changelogs(scm):
 def commit_message_for_this_commit(scm):
     changelog_paths = modified_changelogs(scm)
     if not len(changelog_paths):
-        error("Found no modified ChangeLogs, cannot create a commit message.\n"
-              "All changes require a ChangeLog.  See:\n"
-              "http://webkit.org/coding/contributing.html")
+        raise ScriptError("Found no modified ChangeLogs, cannot create a commit message.\n"
+                          "All changes require a ChangeLog.  See:\n"
+                          "http://webkit.org/coding/contributing.html")
 
     changelog_messages = []
     for path in changelog_paths:

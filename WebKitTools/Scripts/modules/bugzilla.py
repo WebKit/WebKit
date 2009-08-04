@@ -242,7 +242,7 @@ class Bugzilla:
         # If the resulting page has a title, and it contains the word "invalid" assume it's the login failure page.
         if match and re.search("Invalid", match.group(1), re.IGNORECASE):
             # FIXME: We could add the ability to try again on failure.
-            error("Bugzilla login failed: %s" % match.group(1))
+            raise ScriptError("Bugzilla login failed: %s" % match.group(1))
 
         self.authenticated = True
 
@@ -284,7 +284,7 @@ class Bugzilla:
         if match:
             text_lines = BeautifulSoup(match.group('error_message')).findAll(text=True)
             error_message = "\n" + '\n'.join(["  " + line.strip() for line in text_lines if line.strip()])
-        error("Bug not created: %s" % error_message)
+        raise ScriptError("Bug not created: %s" % error_message)
 
     def create_bug_with_patch(self, bug_title, bug_description, component, patch_file_object, patch_description, cc, mark_for_review=False):
         self.authenticate()

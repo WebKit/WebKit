@@ -116,7 +116,7 @@ class SCM:
     def ensure_clean_working_directory(self, force):
         if not force and not self.working_directory_is_clean():
             print self.run_command(self.status_command(), raise_on_failure=False)
-            error("Working directory has modifications, pass --force-clean or --no-clean to continue.")
+            raise ScriptError("Working directory has modifications, pass --force-clean or --no-clean to continue.")
         
         log("Cleaning working directory")
         self.clean_working_directory()
@@ -383,7 +383,7 @@ class Git(SCM):
         commit_ids = []
         for commitish in args:
             if '...' in commitish:
-                error("'...' is not supported (found in '%s'). Did you mean '..'?" % commitish)
+                raise ScriptError("'...' is not supported (found in '%s'). Did you mean '..'?" % commitish)
             elif '..' in commitish:
                 commit_ids += self.run_command(['git', 'rev-list', commitish]).splitlines()
             else:
