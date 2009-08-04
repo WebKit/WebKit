@@ -1,3 +1,15 @@
+2009-08-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Add support for transitions of min- and max-width, and min- and max-height.
+        https://bugs.webkit.org/show_bug.cgi?id=27990
+
+        Test: transitions/min-max-width-height-transitions.html
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::ensurePropertyMap):
+
 2009-08-04  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

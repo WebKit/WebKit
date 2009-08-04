@@ -1,0 +1,73 @@
+<!DOCTYPE>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Testing transitions of min-, max-width, height</title>
+  <style type="text/css" media="screen">
+    #container {
+      border: 1px solid black;
+      width: 300px;
+      height: 300px;
+    }
+    
+    .box {
+      width: 100px;
+      height: 100px;
+      margin: 10px;
+      background-color: blue;
+      -webkit-transition-property: min-width, min-height, max-width, max-height;
+      -webkit-transition-duration: 1s;
+      -webkit-transition-timing-function: linear;
+    }
+    
+    .minner {
+      min-width: 100px;
+      min-height: 100px;
+    }
+
+    #container.final .minner {
+      min-width: 200px;
+      min-height: 200px;
+    }
+
+    .maxer {
+      max-width: 100px;
+      max-height: 100px;
+    }
+
+    #container.final .maxer {
+      max-width: 50px;
+      max-height: 50px;
+    }
+
+  </style>
+  <script src="transition-test-helpers.js" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript" charset="utf-8">
+
+    const expectedValues = [
+      // [time, element-id, property, expected-value, tolerance]
+      [0.5, 'box1', 'min-height', 150, 2],
+      [0.5, 'box1', 'min-width', 150, 2],
+      [0.5, 'box2', 'max-height', 75, 2],
+      [0.5, 'box2', 'max-width', 75, 2],
+    ];
+  
+    function setupTest()
+    {
+      document.getElementById('container').className = 'final';
+    }
+  
+    runTransitionTest(expectedValues, setupTest, true);
+    
+  </script>
+</head>
+<body>
+  
+  <div id="container">
+    <div id="box1" class='minner box'></div>
+    <div id="box2" class='maxer box'></div>
+  </div>
+
+  <div id="result"></div>
+</body>
+</html>
