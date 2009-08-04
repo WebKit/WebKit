@@ -302,7 +302,39 @@ PassRefPtr<HTMLElement> createStyleSpanElement(Document* document)
     styleElement->setAttribute(classAttr, styleSpanClassString());
     return styleElement.release();
 }
+    
+RefPtr<CSSMutableStyleDeclaration> getPropertiesNotInComputedStyle(CSSStyleDeclaration* style, CSSComputedStyleDeclaration* computedStyle)
+{
+    ASSERT(style);
+    ASSERT(computedStyle);
+    RefPtr<CSSMutableStyleDeclaration> result = style->makeMutable();
+    computedStyle->diff(result.get());
 
+    // If text decorations in effect is not present in the computed style, then there is nothing to remove from result
+    RefPtr<CSSValue> computedValue = computedStyle->getPropertyCSSValue(CSSPropertyWebkitTextDecorationsInEffect);
+    if (!computedValue || !computedValue->isValueList())
+        return result;
+
+    // Take care of both text-decoration and -webkit-text-decorations-in-effect
+    static const int textDecorationProperties[]={CSSPropertyTextDecoration, CSSPropertyWebkitTextDecorationsInEffect};
+    for (size_t n = 0; n < sizeof(textDecorationProperties)/sizeof(textDecorationProperties[1]); n++) {
+        RefPtr<CSSValue> styleValue = style->getPropertyCSSValue(textDecorationProperties[n]);
+        if (!styleValue || !styleValue->isValueList())
+            continue;
+
+        CSSValueList* desiredValueList = static_cast<CSSValueList*>(styleValue.get());
+        CSSValueList* computedValueList = static_cast<CSSValueList*>(computedValue.get());
+        for (size_t i = 0; i < desiredValueList->length(); i++) {
+            if (!computedValueList->hasValue(desiredValueList->item(i))) {
+                result->removeProperty(textDecorationProperties[n]);
+                break;
+            }
+        }
+    }
+
+    return result;
+}
+    
 ApplyStyleCommand::ApplyStyleCommand(Document* document, CSSStyleDeclaration* style, EditAction editingAction, EPropertyLevel propertyLevel)
     : CompositeEditCommand(document)
     , m_style(style->makeMutable())

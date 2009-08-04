@@ -771,66 +771,41 @@ bool Editor::clientIsEditable() const
     return client() && client()->isEditable();
 }
 
+static TriState triStateOfStyleInComputedStyle(CSSStyleDeclaration* desiredStyle, CSSComputedStyleDeclaration* computedStyle)
+{
+    RefPtr<CSSMutableStyleDeclaration> diff = getPropertiesNotInComputedStyle(desiredStyle, computedStyle);
+    if (!diff->length())
+        return TrueTriState;
+    else if (diff->length() == desiredStyle->length())
+        return FalseTriState;
+    return MixedTriState;
+}
+
 bool Editor::selectionStartHasStyle(CSSStyleDeclaration* style) const
 {
     Node* nodeToRemove;
     RefPtr<CSSComputedStyleDeclaration> selectionStyle = m_frame->selectionComputedStyle(nodeToRemove);
     if (!selectionStyle)
         return false;
-    
-    RefPtr<CSSMutableStyleDeclaration> mutableStyle = style->makeMutable();
-    
-    bool match = true;
-    CSSMutableStyleDeclaration::const_iterator end = mutableStyle->end();
-    for (CSSMutableStyleDeclaration::const_iterator it = mutableStyle->begin(); it != end; ++it) {
-        int propertyID = (*it).id();
-        if (!equalIgnoringCase(mutableStyle->getPropertyValue(propertyID), selectionStyle->getPropertyValue(propertyID))) {
-            match = false;
-            break;
-        }
-    }
-    
+    TriState state = triStateOfStyleInComputedStyle(style, selectionStyle.get());
     if (nodeToRemove) {
         ExceptionCode ec = 0;
         nodeToRemove->remove(ec);
         ASSERT(ec == 0);
     }
-    
-    return match;
-}
-
-static void updateState(CSSMutableStyleDeclaration* desiredStyle, CSSComputedStyleDeclaration* computedStyle, bool& atStart, TriState& state)
-{
-    CSSMutableStyleDeclaration::const_iterator end = desiredStyle->end();
-    for (CSSMutableStyleDeclaration::const_iterator it = desiredStyle->begin(); it != end; ++it) {
-        int propertyID = (*it).id();
-        String desiredProperty = desiredStyle->getPropertyValue(propertyID);
-        String computedProperty = computedStyle->getPropertyValue(propertyID);
-        TriState propertyState = equalIgnoringCase(desiredProperty, computedProperty)
-            ? TrueTriState : FalseTriState;
-        if (atStart) {
-            state = propertyState;
-            atStart = false;
-        } else if (state != propertyState) {
-            state = MixedTriState;
-            break;
-        }
-    }
+    return state == TrueTriState;
 }
 
 TriState Editor::selectionHasStyle(CSSStyleDeclaration* style) const
 {
-    bool atStart = true;
     TriState state = FalseTriState;
-
-    RefPtr<CSSMutableStyleDeclaration> mutableStyle = style->makeMutable();
 
     if (!m_frame->selection()->isRange()) {
         Node* nodeToRemove;
         RefPtr<CSSComputedStyleDeclaration> selectionStyle = m_frame->selectionComputedStyle(nodeToRemove);
         if (!selectionStyle)
             return FalseTriState;
-        updateState(mutableStyle.get(), selectionStyle.get(), atStart, state);
+        state = triStateOfStyleInComputedStyle(style, selectionStyle.get());
         if (nodeToRemove) {
             ExceptionCode ec = 0;
             nodeToRemove->remove(ec);
@@ -839,10 +814,15 @@ TriState Editor::selectionHasStyle(CSSStyleDeclaration* style) const
     } else {
         for (Node* node = m_frame->selection()->start().node(); node; node = node->traverseNextNode()) {
             RefPtr<CSSComputedStyleDeclaration> nodeStyle = computedStyle(node);
-            if (nodeStyle)
-                updateState(mutableStyle.get(), nodeStyle.get(), atStart, state);
-            if (state == MixedTriState)
-                break;
+            if (nodeStyle) {
+                TriState nodeState = triStateOfStyleInComputedStyle(style, nodeStyle.get());
+                if (node == m_frame->selection()->start().node())
+                    state = nodeState;
+                else if (state != nodeState) {
+                    state = MixedTriState;
+                    break;
+                }
+            }
             if (node == m_frame->selection()->end().node())
                 break;
         }
