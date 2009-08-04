@@ -1523,6 +1523,14 @@ bool AccessibilityRenderObject::isVisited() const
 {
     return m_renderer->style()->pseudoState() == PseudoVisited;
 }
+    
+bool AccessibilityRenderObject::isRequired() const
+{
+    if (equalIgnoringCase(getAttribute(aria_requiredAttr).string(), "true"))
+        return true;
+    
+    return false;
+}
 
 bool AccessibilityRenderObject::isSelected() const
 {

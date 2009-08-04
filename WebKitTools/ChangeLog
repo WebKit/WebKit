@@ -1,3 +1,21 @@
+2009-08-03  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Jon Honeycutt.
+
+        Bug 27958 - WAI-ARIA: Implement 'aria-required' attribute.
+        https://bugs.webkit.org/show_bug.cgi?id=27958
+
+        Exposed isRequired to DumpRenderTree for accessibility.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (getIsRequiredCallback):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::isRequired):
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::isRequired):
+
 2009-08-04  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

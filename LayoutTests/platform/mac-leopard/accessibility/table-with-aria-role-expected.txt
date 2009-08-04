@@ -37,6 +37,7 @@ test	test	test
 '>
 AXTitleUIElement: (null)
 AXAccessKey: (null)
+AXRequired: 0
 
 ------------
 AXRole: AXMenu

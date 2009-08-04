@@ -1,0 +1,52 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<input type="text" aria-required="true" id="textfield1">
+<input type="text" aria-required="false" id="textfield2">
+<input type="text" id="textfield3">
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that aria-required is a usable attribute.");
+
+    if (window.accessibilityController) {
+
+          // this text field should be required.
+          document.getElementById("textfield1").focus();
+          var obj = accessibilityController.focusedElement;
+
+          var succeeded = obj.isRequired;
+          shouldBe("succeeded", "true");
+
+          // this text field should not be required
+          document.getElementById("textfield2").focus();
+          var obj = accessibilityController.focusedElement;
+
+          var succeeded = !obj.isRequired;
+          shouldBe("succeeded", "true");
+
+          // this text field should not be required
+          document.getElementById("textfield3").focus();
+          var obj = accessibilityController.focusedElement;
+
+          var succeeded = !obj.isRequired;
+          shouldBe("succeeded", "true");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

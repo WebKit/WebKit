@@ -1,3 +1,19 @@
+2009-08-03  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Jon Honeycutt.
+
+        Bug 27958 - WAI-ARIA: Implement 'aria-required' attribute.
+        https://bugs.webkit.org/show_bug.cgi?id=27958
+
+        Tests for aria-required. Modified tests to accomodate new attribute.
+
+        * platform/mac-leopard/accessibility/table-with-aria-role-expected.txt:
+        * platform/mac/accessibility/aria-required-expected.txt: Added.
+        * platform/mac/accessibility/aria-required.html: Added.
+        * platform/mac/accessibility/legend-expected.txt:
+        * platform/mac/accessibility/radio-button-group-members-expected.txt:
+        * platform/mac/accessibility/table-with-aria-role-expected.txt:
+
 2009-08-04  Ariya Hidayat  <ariya.hidayat@nokia.com>
 
         Rubber-stamped by Simon Hausmann.

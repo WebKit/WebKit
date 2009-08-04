@@ -1,3 +1,22 @@
+2009-08-03  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Jon Honeycutt.
+
+        Bug 27958 - WAI-ARIA: Implement 'aria-required' attribute.
+        https://bugs.webkit.org/show_bug.cgi?id=27958
+
+        Test: platform/mac/accessibility/aria-required.html
+
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::isRequired):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::isRequired):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper accessibilityAttributeNames]):
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:]):
+        * html/HTMLAttributeNames.in:
+
 2009-08-04  Jakub Wieczorek  <faw217@gmail.com>
 
         Reviewed by Simon Hausmann.

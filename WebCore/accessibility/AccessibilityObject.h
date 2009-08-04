@@ -246,6 +246,7 @@ public:
     virtual bool isPressed() const { return false; };
     virtual bool isReadOnly() const { return false; };
     virtual bool isVisited() const { return false; };
+    virtual bool isRequired() const { return false; };
 
     virtual bool canSetFocusAttribute() const { return false; };
     virtual bool canSetTextRangeAttributes() const { return false; };

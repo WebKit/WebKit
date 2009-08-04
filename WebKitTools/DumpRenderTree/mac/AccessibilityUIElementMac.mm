@@ -407,6 +407,14 @@ bool AccessibilityUIElement::isEnabled()
     return false;
 }
 
+bool AccessibilityUIElement::isRequired() const
+{
+    id value = [m_element accessibilityAttributeValue:@"AXRequired"];
+    if ([value isKindOfClass:[NSNumber class]])
+        return [value boolValue];
+    return false;
+}
+
 // parameterized attributes
 int AccessibilityUIElement::lineForIndex(int index)
 {

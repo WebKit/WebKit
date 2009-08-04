@@ -23,6 +23,7 @@ AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
 AXTitleUIElement: <AXGroup>
 AXAccessKey: (null)
+AXRequired: 0
 
 
 -----------------------------

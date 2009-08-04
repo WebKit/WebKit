@@ -23,6 +23,7 @@ aria-labelledby
 aria-level
 aria-pressed
 aria-readonly
+aria-required
 aria-valuemax
 aria-valuemin
 aria-valuenow

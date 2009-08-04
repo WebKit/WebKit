@@ -23,6 +23,7 @@ AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXRadioButton>
 AXTitleUIElement: (null)
 AXAccessKey: (null)
+AXRequired: 0
 
 ------------
 AXRole: AXRadioButton
@@ -48,6 +49,7 @@ AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXRadioButton>
 AXTitleUIElement: (null)
 AXAccessKey: (null)
+AXRequired: 0
 
 ------------
 AXRole: AXRadioButton
@@ -73,6 +75,7 @@ AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXRadioButton>
 AXTitleUIElement: (null)
 AXAccessKey: (null)
+AXRequired: 0
 
 ------------
 
@@ -102,6 +105,7 @@ AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXRadioButton>
 AXTitleUIElement: (null)
 AXAccessKey: (null)
+AXRequired: 0
 
 ------------
 AXRole: AXRadioButton
@@ -127,6 +131,7 @@ AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXRadioButton>
 AXTitleUIElement: (null)
 AXAccessKey: (null)
+AXRequired: 0
 
 ------------
 
@@ -156,6 +161,7 @@ AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXRadioButton: 'Yes'>
 AXTitleUIElement: (null)
 AXAccessKey: (null)
+AXRequired: 0
 
 ------------
 AXRole: AXRadioButton
@@ -181,6 +187,7 @@ AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXRadioButton: 'No'>
 AXTitleUIElement: (null)
 AXAccessKey: (null)
+AXRequired: 0
 
 ------------
 
@@ -210,6 +217,7 @@ AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXRadioButton>
 AXTitleUIElement: (null)
 AXAccessKey: (null)
+AXRequired: 0
 
 ------------
 

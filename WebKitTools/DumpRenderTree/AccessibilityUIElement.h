@@ -95,6 +95,7 @@ public:
     JSStringRef selectedTextRange();
     bool supportsPressAction();
     bool isEnabled();
+    bool isRequired() const;
     double clickPointX();
     double clickPointY();
 

@@ -255,6 +255,11 @@ bool AccessibilityUIElement::isEnabled()
     return false;
 }
 
+bool AccessibilityUIElement::isRequired() const
+{
+    return false;
+}
+
 int AccessibilityUIElement::insertionPointLineNumber()
 {
     return 0;
