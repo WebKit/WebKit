@@ -1,3 +1,18 @@
+2009-08-03  John Abd-El-Malek  <jam@chromium.org>
+
+        Reviewed by David Levin.
+
+        Fix MessagePort construction in worker process.  Also make the other object constructions match this.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27906
+
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::convertToV8Object):
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::setDOMException):
+        * bindings/v8/WorkerContextExecutionProxy.cpp:
+        (WebCore::WorkerContextExecutionProxy::ToV8Object):
+
 2009-08-03  Christian Plesner Hansen  <christian.plesner.hansen@gmail.com>
 
         Reviewed by David Levin.

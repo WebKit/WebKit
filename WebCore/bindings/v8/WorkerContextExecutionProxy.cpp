@@ -39,9 +39,11 @@
 #include "DOMCoreException.h"
 #include "Event.h"
 #include "EventException.h"
+#include "MessagePort.h"
 #include "RangeException.h"
 #include "V8Binding.h"
 #include "V8DOMMap.h"
+#include "V8Index.h"
 #include "V8Proxy.h"
 #include "V8WorkerContextEventListener.h"
 #include "V8WorkerContextObjectEventListener.h"
@@ -50,6 +52,7 @@
 #include "WorkerLocation.h"
 #include "WorkerNavigator.h"
 #include "WorkerScriptController.h"
+#include "XMLHttpRequest.h"
 #include "XMLHttpRequestException.h"
 
 namespace WebCore {
@@ -211,16 +214,34 @@ v8::Handle<v8::Value> WorkerContextExecutionProxy::ToV8Object(V8ClassIndex::V8Wr
     if (type == V8ClassIndex::DEDICATEDWORKERCONTEXT)
         return WorkerContextToV8Object(static_cast<WorkerContext*>(impl));
 
-    if (type == V8ClassIndex::WORKER || type == V8ClassIndex::XMLHTTPREQUEST) {
+    bool isActiveDomObject = false;
+    switch (type) {
+#define MAKE_CASE(TYPE, NAME) case V8ClassIndex::TYPE:
+        ACTIVE_DOM_OBJECT_TYPES(MAKE_CASE)
+        isActiveDomObject = true;
+        break;
+#undef MAKE_CASE
+    default:
+        break;
+    }
+
+    if (isActiveDomObject) {
         v8::Persistent<v8::Object> result = getActiveDOMObjectMap().get(impl);
         if (!result.IsEmpty())
             return result;
 
         v8::Local<v8::Object> object = toV8(type, type, impl);
-        if (!object.IsEmpty())
-            static_cast<Worker*>(impl)->ref();
+        switch (type) {
+#define MAKE_CASE(TYPE, NAME) \
+        case V8ClassIndex::TYPE: static_cast<NAME*>(impl)->ref(); break;
+            ACTIVE_DOM_OBJECT_TYPES(MAKE_CASE)
+#undef MAKE_CASE
+        default:
+            ASSERT_NOT_REACHED();
+        }
+
         result = v8::Persistent<v8::Object>::New(object);
-        V8DOMWrapper::setJSWrapperForDOMObject(impl, result);
+        V8DOMWrapper::setJSWrapperForActiveDOMObject(impl, result);
         return result;
     }
 

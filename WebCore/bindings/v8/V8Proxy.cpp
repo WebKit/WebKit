@@ -46,7 +46,6 @@
 #include "V8HiddenPropertyName.h"
 #include "V8Index.h"
 #include "V8IsolatedWorld.h"
-#include "WorkerContextExecutionProxy.h"
 
 #include <algorithm>
 #include <utility>
@@ -1028,18 +1027,6 @@ void V8Proxy::initContextIfNeeded()
     m_frame->loader()->dispatchWindowObjectAvailable();
 }
 
-template <class T>
-void setDOMExceptionHelper(V8ClassIndex::V8WrapperType type, PassRefPtr<T> exception)
-{
-    v8::Handle<v8::Value> v8Exception;
-    if (WorkerContextExecutionProxy::retrieve())
-        v8Exception = WorkerContextExecutionProxy::ToV8Object(type, exception.get());
-    else
-        v8Exception = V8DOMWrapper::convertToV8Object(type, exception.get());
-
-    v8::ThrowException(v8Exception);
-}
-
 void V8Proxy::setDOMException(int exceptionCode)
 {
     if (exceptionCode <= 0)
@@ -1051,31 +1038,31 @@ void V8Proxy::setDOMException(int exceptionCode)
     v8::Handle<v8::Value> exception;
     switch (description.type) {
     case DOMExceptionType:
-        setDOMExceptionHelper(V8ClassIndex::DOMCOREEXCEPTION, DOMCoreException::create(description));
+        exception = V8DOMWrapper::convertToV8Object(V8ClassIndex::DOMCOREEXCEPTION, DOMCoreException::create(description));
         break;
     case RangeExceptionType:
-        setDOMExceptionHelper(V8ClassIndex::RANGEEXCEPTION, RangeException::create(description));
+        exception = V8DOMWrapper::convertToV8Object(V8ClassIndex::RANGEEXCEPTION, RangeException::create(description));
         break;
     case EventExceptionType:
-        setDOMExceptionHelper(V8ClassIndex::EVENTEXCEPTION, EventException::create(description));
+        exception = V8DOMWrapper::convertToV8Object(V8ClassIndex::EVENTEXCEPTION, EventException::create(description));
         break;
     case XMLHttpRequestExceptionType:
-        setDOMExceptionHelper(V8ClassIndex::XMLHTTPREQUESTEXCEPTION, XMLHttpRequestException::create(description));
+        exception = V8DOMWrapper::convertToV8Object(V8ClassIndex::XMLHTTPREQUESTEXCEPTION, XMLHttpRequestException::create(description));
         break;
 #if ENABLE(SVG)
     case SVGExceptionType:
-        setDOMExceptionHelper(V8ClassIndex::SVGEXCEPTION, SVGException::create(description));
+        exception = V8DOMWrapper::convertToV8Object(V8ClassIndex::SVGEXCEPTION, SVGException::create(description));
         break;
 #endif
 #if ENABLE(XPATH)
     case XPathExceptionType:
-        setDOMExceptionHelper(V8ClassIndex::XPATHEXCEPTION, XPathException::create(description));
+        exception = V8DOMWrapper::convertToV8Object(V8ClassIndex::XPATHEXCEPTION, XPathException::create(description));
         break;
 #endif
-    default:
-        ASSERT_NOT_REACHED();
-        break;
     }
+
+    ASSERT(!exception.IsEmpty());
+    v8::ThrowException(exception);
 }
 
 v8::Handle<v8::Value> V8Proxy::throwError(ErrorType type, const char* message)

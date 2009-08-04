@@ -517,6 +517,17 @@ v8::Handle<v8::Value> V8DOMWrapper::convertToV8Object(V8ClassIndex::V8WrapperTyp
     ASSERT(type != V8ClassIndex::EVENTTARGET);
     ASSERT(type != V8ClassIndex::EVENT);
 
+    // These objects can be constructed under WorkerContextExecutionProxy.  They need special
+    // handling, since if we proceed below V8Proxy::retrieve() will get called and will crash.
+    if ((type == V8ClassIndex::DOMCOREEXCEPTION
+         || type == V8ClassIndex::RANGEEXCEPTION
+         || type == V8ClassIndex::EVENTEXCEPTION
+         || type == V8ClassIndex::XMLHTTPREQUESTEXCEPTION
+         || type == V8ClassIndex::MESSAGEPORT)
+        && WorkerContextExecutionProxy::retrieve()) {
+        return WorkerContextExecutionProxy::ToV8Object(type, impl);
+    }
+
     bool isActiveDomObject = false;
     switch (type) {
 #define MAKE_CASE(TYPE, NAME) case V8ClassIndex::TYPE:
