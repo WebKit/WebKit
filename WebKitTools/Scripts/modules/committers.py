@@ -47,6 +47,7 @@ class Reviewer(Committer):
 committers_unable_to_review = [
     Committer("Albert J. Wong", "ajwong@chromium.org"),
     Committer("Ben Murdoch", "benm@google.com"),
+    Committer("Peter Kasting", "pkasting@google.com"),
     Committer("Shinichiro Hamaji", "hamaji@google.com"),
     Committer("Zoltan Horvath", "hzoltan@inf.u-szeged.hu"),
 ]
