@@ -159,6 +159,13 @@ class Bugzilla:
             reviewer_email = review_flag['setter']
             reviewer = self.committers.reviewer_by_bugzilla_email(reviewer_email)
             attachment['reviewer'] = reviewer.full_name
+
+        commit_queue_flag = element.find('flag', attrs={"name" : "commit-queue"})
+        if commit_queue_flag and commit_queue_flag['status'] == '+':
+            committer_email = commit_queue_flag['setter']
+            committer = self.committers.committer_by_bugzilla_email(committer_email)
+            attachment['commit-queue'] = committer.full_name
+
         return attachment
 
     def fetch_attachments_from_bug(self, bug_id):
@@ -171,10 +178,6 @@ class Bugzilla:
         attachments = []
         for element in soup.findAll('attachment'):
             attachment = self._parse_attachment_element(element, bug_id)
-            commit_queue_flag = element.find('flag', attrs={"name" : "commit-queue"})
-            if commit_queue_flag and commit_queue_flag['status'] == '+':
-                attachment['commit-queue'] = True # FIXME: Validate that the flag was set by a committer.
-
             attachments.append(attachment)
         return attachments
 

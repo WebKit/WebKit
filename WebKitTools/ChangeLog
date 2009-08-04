@@ -1,3 +1,15 @@
+2009-08-04  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        bugzilla-tool --commit-queue should validate commit-queue setter is a committer
+        https://bugs.webkit.org/show_bug.cgi?id=27974
+
+        With a test!
+
+        * Scripts/modules/bugzilla.py:
+        * Scripts/modules/bugzilla_unittest.py:
+
 2009-08-04  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
