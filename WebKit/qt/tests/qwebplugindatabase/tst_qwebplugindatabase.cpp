@@ -42,7 +42,7 @@ private slots:
     void preferredPlugin();
 };
 
-typedef QWebPlugin::MimeType MimeType;
+typedef QWebPluginInfo::MimeType MimeType;
 
 void tst_QWebPluginDatabase::installedPlugins()
 {
@@ -51,14 +51,14 @@ void tst_QWebPluginDatabase::installedPlugins()
     QWebFrame* frame = page.mainFrame();
 
     QVariantMap jsPluginsMap = frame->evaluateJavaScript("window.navigator.plugins").toMap();
-    QList<QWebPlugin> plugins = QWebSettings::pluginDatabase()->plugins();
+    QList<QWebPluginInfo> plugins = QWebSettings::pluginDatabase()->plugins();
     QCOMPARE(plugins, QWebSettings::pluginDatabase()->plugins());
 
     int length = jsPluginsMap["length"].toInt();
     QCOMPARE(length, plugins.count());
 
     for (int i = 0; i < length; ++i) {
-        QWebPlugin plugin = plugins.at(i);
+        QWebPluginInfo plugin = plugins.at(i);
 
         QVariantMap jsPlugin = frame->evaluateJavaScript(QString("window.navigator.plugins[%1]").arg(i)).toMap();
         QString name = jsPlugin["name"].toString();
@@ -94,7 +94,7 @@ void tst_QWebPluginDatabase::installedPlugins()
 void tst_QWebPluginDatabase::searchPaths()
 {
     QWebPluginDatabase* database = QWebSettings::pluginDatabase();
-    QList<QWebPlugin> plugins = database->plugins();
+    QList<QWebPluginInfo> plugins = database->plugins();
     QStringList directories = database->searchPaths();
     QCOMPARE(QWebPluginDatabase::defaultSearchPaths(), directories);
 
@@ -145,23 +145,23 @@ void tst_QWebPluginDatabase::searchPaths()
     QCOMPARE(database->plugins(), plugins);
 }
 
-Q_DECLARE_METATYPE(QWebPlugin)
+Q_DECLARE_METATYPE(QWebPluginInfo)
 void tst_QWebPluginDatabase::null_data()
 {
-    QTest::addColumn<QWebPlugin>("plugin");
+    QTest::addColumn<QWebPluginInfo>("plugin");
     QTest::addColumn<bool>("null");
 
-    QTest::newRow("null") << QWebPlugin() << true;
+    QTest::newRow("null") << QWebPluginInfo() << true;
     QTest::newRow("foo") << QWebSettings::pluginDatabase()->pluginForMimeType("foobarbaz") << true;
 
-    QList<QWebPlugin> plugins = QWebSettings::pluginDatabase()->plugins();
+    QList<QWebPluginInfo> plugins = QWebSettings::pluginDatabase()->plugins();
     for (int i = 0; i < plugins.count(); ++i)
         QTest::newRow(QString::number(i).toUtf8().constData()) << plugins.at(i) << false;
 }
 
 void tst_QWebPluginDatabase::null()
 {
-    QFETCH(QWebPlugin, plugin);
+    QFETCH(QWebPluginInfo, plugin);
     QFETCH(bool, null);
 
     QCOMPARE(plugin.isNull(), null);
@@ -169,12 +169,12 @@ void tst_QWebPluginDatabase::null()
 
 void tst_QWebPluginDatabase::pluginForMimeType()
 {
-    QMultiMap<QString, QWebPlugin> pluginsMap;
+    QMultiMap<QString, QWebPluginInfo> pluginsMap;
     QWebPluginDatabase* database = QWebSettings::pluginDatabase();
-    QList<QWebPlugin> plugins = database->plugins();
+    QList<QWebPluginInfo> plugins = database->plugins();
 
     for (int i = 0; i < plugins.count(); ++i) {
-        QWebPlugin plugin = plugins.at(i);
+        QWebPluginInfo plugin = plugins.at(i);
 
         QList<MimeType> mimeTypes = plugin.mimeTypes();
         for (int j = 0; j < mimeTypes.count(); ++j) {
@@ -185,7 +185,7 @@ void tst_QWebPluginDatabase::pluginForMimeType()
     }
 
     for (int i = 0; i < plugins.count(); ++i) {
-        QWebPlugin plugin = plugins.at(i);
+        QWebPluginInfo plugin = plugins.at(i);
 
         QList<MimeType> mimeTypes = plugin.mimeTypes();
         for (int j = 0; j < mimeTypes.count(); ++j) {
@@ -195,7 +195,7 @@ void tst_QWebPluginDatabase::pluginForMimeType()
             if (pluginsMap.count(mimeType) > 1)
                 continue;
 
-            QWebPlugin pluginForMimeType = database->pluginForMimeType(mimeType);
+            QWebPluginInfo pluginForMimeType = database->pluginForMimeType(mimeType);
             QCOMPARE(pluginForMimeType, plugin);
             database->setSearchPaths(database->searchPaths());
             QCOMPARE(pluginForMimeType, plugin);
@@ -210,12 +210,12 @@ void tst_QWebPluginDatabase::pluginForMimeType()
 
 void tst_QWebPluginDatabase::enabled()
 {
-    QMultiMap<QString, QWebPlugin> pluginsMap;
+    QMultiMap<QString, QWebPluginInfo> pluginsMap;
     QWebPluginDatabase* database = QWebSettings::pluginDatabase();
-    QList<QWebPlugin> plugins = database->plugins();
+    QList<QWebPluginInfo> plugins = database->plugins();
 
     for (int i = 0; i < plugins.count(); ++i) {
-        QWebPlugin plugin = plugins.at(i);
+        QWebPluginInfo plugin = plugins.at(i);
 
         QList<MimeType> mimeTypes = plugin.mimeTypes();
         for (int j = 0; j < mimeTypes.count(); ++j) {
@@ -225,11 +225,11 @@ void tst_QWebPluginDatabase::enabled()
         }
     }
 
-    QMultiMap<QString, QWebPlugin>::iterator it = pluginsMap.begin();
+    QMultiMap<QString, QWebPluginInfo>::iterator it = pluginsMap.begin();
     while (it != pluginsMap.end()) {
         QString mimeType = it.key();
-        QWebPlugin plugin = it.value();
-        QWebPlugin pluginForMimeType = database->pluginForMimeType(mimeType);
+        QWebPluginInfo plugin = it.value();
+        QWebPluginInfo pluginForMimeType = database->pluginForMimeType(mimeType);
 
         QVERIFY(pluginsMap.count(mimeType) > 0);
 
@@ -251,7 +251,7 @@ void tst_QWebPluginDatabase::enabled()
         QVERIFY(!plugin.isNull());
         QVERIFY(!pluginForMimeType.isNull());
 
-        QWebPlugin pluginForMimeType2 = database->pluginForMimeType(mimeType);
+        QWebPluginInfo pluginForMimeType2 = database->pluginForMimeType(mimeType);
         if (pluginsMap.count(mimeType) == 1) {
             QVERIFY(pluginForMimeType2 != plugin);
             QVERIFY(pluginForMimeType2.isNull());
@@ -268,21 +268,21 @@ void tst_QWebPluginDatabase::enabled()
 
 void tst_QWebPluginDatabase::operatorequal_data()
 {
-    QTest::addColumn<QWebPlugin>("first");
-    QTest::addColumn<QWebPlugin>("second");
+    QTest::addColumn<QWebPluginInfo>("first");
+    QTest::addColumn<QWebPluginInfo>("second");
     QTest::addColumn<bool>("equal");
 
     QWebPluginDatabase* database = QWebSettings::pluginDatabase();
-    QTest::newRow("null") << QWebPlugin() << QWebPlugin() << true;
+    QTest::newRow("null") << QWebPluginInfo() << QWebPluginInfo() << true;
     QTest::newRow("application/x-shockwave-flash") << database->pluginForMimeType("application/x-shockwave-flash")
                                                    << database->pluginForMimeType("application/x-shockwave-flash") << true;
     QTest::newRow("foo/bar-baz") << database->pluginForMimeType("foo/bar-baz")
                                  << database->pluginForMimeType("foo/bar-baz") << true;
 
-    QList<QWebPlugin> plugins = database->plugins();
+    QList<QWebPluginInfo> plugins = database->plugins();
     for (int i = 0; i < (plugins.count() - 1); ++i) {
-        QWebPlugin first = plugins.at(i);
-        QWebPlugin second = plugins.at(i + 1);
+        QWebPluginInfo first = plugins.at(i);
+        QWebPluginInfo second = plugins.at(i + 1);
 
         QTest::newRow(QString("%1==%2").arg(first.name(), second.name()).toUtf8().constData())
                                     << first << second << false;
@@ -291,8 +291,8 @@ void tst_QWebPluginDatabase::operatorequal_data()
 
 void tst_QWebPluginDatabase::operatorequal()
 {
-    QFETCH(QWebPlugin, first);
-    QFETCH(QWebPlugin, second);
+    QFETCH(QWebPluginInfo, first);
+    QFETCH(QWebPluginInfo, second);
     QFETCH(bool, equal);
 
     QCOMPARE(first == second, equal);
@@ -300,12 +300,12 @@ void tst_QWebPluginDatabase::operatorequal()
 
 void tst_QWebPluginDatabase::preferredPlugin()
 {
-    QMultiMap<QString, QWebPlugin> pluginsMap;
+    QMultiMap<QString, QWebPluginInfo> pluginsMap;
     QWebPluginDatabase* database = QWebSettings::pluginDatabase();
-    QList<QWebPlugin> plugins = database->plugins();
+    QList<QWebPluginInfo> plugins = database->plugins();
 
     for (int i = 0; i < plugins.count(); ++i) {
-        QWebPlugin plugin = plugins.at(i);
+        QWebPluginInfo plugin = plugins.at(i);
 
         QList<MimeType> mimeTypes = plugin.mimeTypes();
         for (int j = 0; j < mimeTypes.count(); ++j) {
@@ -314,18 +314,18 @@ void tst_QWebPluginDatabase::preferredPlugin()
         }
     }
 
-    QMultiMap<QString, QWebPlugin>::iterator it = pluginsMap.begin();
+    QMultiMap<QString, QWebPluginInfo>::iterator it = pluginsMap.begin();
     while (it != pluginsMap.end()) {
         QString mimeType = it.key();
 
         if (pluginsMap.count(mimeType) > 1) {
-            QList<QWebPlugin> pluginsForMimeType = pluginsMap.values(mimeType);
-            QWebPlugin plugin = database->pluginForMimeType(mimeType);
+            QList<QWebPluginInfo> pluginsForMimeType = pluginsMap.values(mimeType);
+            QWebPluginInfo plugin = database->pluginForMimeType(mimeType);
             QVERIFY(plugin.supportsMimeType(mimeType));
 
             pluginsForMimeType.removeAll(plugin);
             for (int i = 0; i < pluginsForMimeType.count(); ++i) {
-                QWebPlugin anotherPlugin = pluginsForMimeType.at(i);
+                QWebPluginInfo anotherPlugin = pluginsForMimeType.at(i);
                 QVERIFY(plugin.supportsMimeType(mimeType));
                 QVERIFY(plugin != anotherPlugin);
 
@@ -341,21 +341,21 @@ void tst_QWebPluginDatabase::preferredPlugin()
                 database->setSearchPaths(database->searchPaths());
                 QCOMPARE(database->pluginForMimeType(mimeType), anotherPlugin);
 
-                database->setPreferredPluginForMimeType(mimeType, QWebPlugin());
+                database->setPreferredPluginForMimeType(mimeType, QWebPluginInfo());
                 QCOMPARE(database->pluginForMimeType(mimeType), plugin);
             }
         } else {
-            QWebPlugin plugin = database->pluginForMimeType(mimeType);
+            QWebPluginInfo plugin = database->pluginForMimeType(mimeType);
             QCOMPARE(pluginsMap.value(mimeType), plugin);
 
             database->setPreferredPluginForMimeType(mimeType, plugin);
             QCOMPARE(database->pluginForMimeType(mimeType), plugin);
 
             plugin.setEnabled(false);
-            QCOMPARE(database->pluginForMimeType(mimeType), QWebPlugin());
+            QCOMPARE(database->pluginForMimeType(mimeType), QWebPluginInfo());
             plugin.setEnabled(true);
 
-            database->setPreferredPluginForMimeType(mimeType, QWebPlugin());
+            database->setPreferredPluginForMimeType(mimeType, QWebPluginInfo());
             QCOMPARE(database->pluginForMimeType(mimeType), plugin);
         }
 
@@ -367,8 +367,8 @@ void tst_QWebPluginDatabase::preferredPlugin()
 
         QString mimeType1 = mimeTypes.at(0);
         QString mimeType2 = mimeTypes.at(1);
-        QWebPlugin plugin1 = database->pluginForMimeType(mimeType1);
-        QWebPlugin plugin2 = database->pluginForMimeType(mimeType2);
+        QWebPluginInfo plugin1 = database->pluginForMimeType(mimeType1);
+        QWebPluginInfo plugin2 = database->pluginForMimeType(mimeType2);
 
         int i = 2;
         while (plugin2.supportsMimeType(mimeType1)

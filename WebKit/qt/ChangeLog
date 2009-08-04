@@ -1,5 +1,42 @@
 2009-08-04  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        Reviewed by Tor Arne Vestbø.
+
+        Rename QWebPlugin to QWebPluginInfo, as discussed on IRC.
+
+        * Api/qwebplugindatabase.cpp:
+        (QWebPluginInfoPrivate::QWebPluginInfoPrivate):
+        (QWebPluginInfo::QWebPluginInfo):
+        (QWebPluginInfo::~QWebPluginInfo):
+        (QWebPluginInfo::name):
+        (QWebPluginInfo::description):
+        (QWebPluginInfo::mimeTypes):
+        (QWebPluginInfo::supportsMimeType):
+        (QWebPluginInfo::path):
+        (QWebPluginInfo::isNull):
+        (QWebPluginInfo::setEnabled):
+        (QWebPluginInfo::isEnabled):
+        (QWebPluginInfo::operator==):
+        (QWebPluginInfo::operator!=):
+        (QWebPluginInfo::operator=):
+        (QWebPluginDatabase::plugins):
+        (QWebPluginDatabase::pluginForMimeType):
+        (QWebPluginDatabase::setPreferredPluginForMimeType):
+        * Api/qwebplugindatabase.h:
+        * Api/qwebplugindatabase_p.h:
+        * tests/qwebplugindatabase/tst_qwebplugindatabase.cpp:
+        (tst_QWebPluginDatabase::installedPlugins):
+        (tst_QWebPluginDatabase::searchPaths):
+        (tst_QWebPluginDatabase::null_data):
+        (tst_QWebPluginDatabase::null):
+        (tst_QWebPluginDatabase::pluginForMimeType):
+        (tst_QWebPluginDatabase::enabled):
+        (tst_QWebPluginDatabase::operatorequal_data):
+        (tst_QWebPluginDatabase::operatorequal):
+        (tst_QWebPluginDatabase::preferredPlugin):
+
+2009-08-04  Simon Hausmann  <simon.hausmann@nokia.com>
+
         Reviewed by Adam Treat.
 
         Replace QWebPlugin::MimeType with a typedef to
