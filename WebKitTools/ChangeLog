@@ -1,3 +1,15 @@
+2009-08-04  Mike Fenton  <mike.fenton@torchmobile.com>
+
+        Reviewed by Adam Treat.
+
+        Fix --skipped=only mode to honor flags such as --no-http and platform ignored directories by checking
+        to make sure the Skipped entries are not in the $ignoredDirectories array.  Directories commonly included
+        are (http, media, compositing, wml, wcss).
+
+        https://bugs.webkit.org/show_bug.cgi?id=27893
+
+        * Scripts/run-webkit-tests:
+
 2009-08-03  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Jon Honeycutt.

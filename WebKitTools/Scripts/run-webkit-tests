@@ -408,10 +408,20 @@ if ($ignoreTests) {
     processIgnoreTests($ignoreTests, "ignore-tests");
 }
 
+sub fileShouldBeIgnored {
+    my($filePath) = @_;
+    foreach my $ignoredDir (keys %ignoredDirectories) {
+        if ($filePath =~ m/^$ignoredDir/) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
 if (!$ignoreSkipped) {
     foreach my $level (@platformTestHierarchy) {
         if (open SKIPPED, "<", "$level/Skipped") {
-            if ($verbose && !$skippedOnly) {
+            if ($verbose) {
                 my ($dir, $name) = splitpath($level);
                 print "Skipped tests in $name:\n";
             }
@@ -423,7 +433,11 @@ if (!$ignoreSkipped) {
                 $skipped =~ s/[ \n\r]+$//;
                 if ($skipped && $skipped !~ /^#/) {
                     if ($skippedOnly) {
-                        push(@ARGV, $skipped);
+                        if (!&fileShouldBeIgnored($skipped)) {
+                            push(@ARGV, $skipped);
+                        } elsif ($verbose) {
+                            print "    $skipped\n";
+                        }
                     } else {
                         if ($verbose) {
                             print "    $skipped\n";
