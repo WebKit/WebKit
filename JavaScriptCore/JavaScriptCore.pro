@@ -33,10 +33,6 @@ INCLUDEPATH += $$GENERATED_SOURCES_DIR
     }
 }
 
-CONFIG -= warn_on
-*-g++*:QMAKE_CXXFLAGS += -Wreturn-type -fno-strict-aliasing
-#QMAKE_CXXFLAGS += -Wall -Wno-undef -Wno-unused-parameter
-
 CONFIG(release):!CONFIG(QTDIR_build) {
     contains(QT_CONFIG, reduce_exports):CONFIG += hide_symbols
     unix:contains(QT_CONFIG, reduce_relocations):CONFIG += bsymbolic_functions

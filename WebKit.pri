@@ -39,6 +39,10 @@ CONFIG(release, debug|release) {
 BASE_DIR = $$PWD
 INCLUDEPATH += $$PWD/WebKit/qt/Api
 
+CONFIG -= warn_on
+*-g++*:QMAKE_CXXFLAGS += -Wreturn-type -fno-strict-aliasing
+#QMAKE_CXXFLAGS += -Wall -Wno-undef -Wno-unused-parameter
+
 # Enable GNU compiler extensions to the ARM compiler for all Qt ports using RVCT
 *-armcc {
     QMAKE_CFLAGS += --gnu

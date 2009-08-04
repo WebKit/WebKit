@@ -45,13 +45,8 @@ unix {
     lessThan(QT_MINOR_VERSION, 4): QMAKE_PKGCONFIG_REQUIRES += QtXml
 }
 
-CONFIG -= warn_on
-*-g++*:QMAKE_CXXFLAGS += -Wreturn-type -fno-strict-aliasing
-
 unix:!mac:*-g++*:QMAKE_CXXFLAGS += -ffunction-sections -fdata-sections 
 unix:!mac:*-g++*:QMAKE_LFLAGS += -Wl,--gc-sections
-
-#QMAKE_CXXFLAGS += -Wall -Wno-undef -Wno-unused-parameter
 
 CONFIG(release):!CONFIG(QTDIR_build) {
     contains(QT_CONFIG, reduce_exports):CONFIG += hide_symbols
