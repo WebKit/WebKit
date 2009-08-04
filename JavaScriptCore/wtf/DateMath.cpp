@@ -846,7 +846,7 @@ double parseDateFromNullTerminatedCharacters(const char* dateString)
                 return NaN;
 
             int sgn = (o < 0) ? -1 : 1;
-            o = abs(o);
+            o = labs(o);
             if (*dateString != ':') {
                 offset = ((o / 100) * 60 + (o % 100)) * sgn;
             } else { // GMT+05:00
