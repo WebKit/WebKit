@@ -2625,7 +2625,6 @@ fast/box-shadow/border-radius-big.html
 fast/box-sizing/box-sizing.html
 fast/box-sizing/panels-one.html
 fast/box-sizing/panels-two.html
-fast/canvas/canvas-composite.html
 fast/canvas/canvasDrawingIntoSelf.html
 fast/canvas/canvas-incremental-repaint-2.html
 fast/canvas/canvas-incremental-repaint.html
@@ -2640,7 +2639,6 @@ fast/canvas/canvas-transform-nan.html
 fast/canvas/canvas-transform-non-invertible.html
 fast/canvas/canvas-transforms-during-path.html
 fast/canvas/canvas-transform-skewed.html
-fast/canvas/drawImage.html
 fast/canvas/fillrect_gradient.html
 fast/canvas/fillrect-gradient-zero-stops.html
 fast/canvas/fill-stroke-clip-reset-path.html

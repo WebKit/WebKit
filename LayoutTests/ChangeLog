@@ -1,5 +1,21 @@
 2009-08-04  Ariya Hidayat  <ariya.hidayat@nokia.com>
 
+        Rubber-stamped by Simon Hausmann.
+
+        [Qt] Add passed test results, with pixel tests.
+
+        * platform/qt/Skipped:
+        * platform/qt/fast/canvas/canvas-composite-expected.checksum: Added.
+        * platform/qt/fast/canvas/canvas-composite-expected.png: Added.
+        * platform/qt/fast/canvas/canvas-composite-expected.txt: Added.
+        * platform/qt/fast/canvas/drawImage-expected.checksum: Added.
+        * platform/qt/fast/canvas/drawImage-expected.png: Added.
+        * platform/qt/fast/canvas/drawImage-expected.txt: Added.
+        * platform/qt/fast/canvas/drawImage-with-globalAlpha-expected.checksum: Added.
+        * platform/qt/fast/canvas/drawImage-with-globalAlpha-expected.png: Added.
+
+2009-08-04  Ariya Hidayat  <ariya.hidayat@nokia.com>
+
         Reviewed by Adam Treat.
 
         [Qt] Fix the metrics.
