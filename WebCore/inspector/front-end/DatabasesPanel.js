@@ -413,6 +413,9 @@ WebInspector.DatabasesPanel.prototype = {
 
     _unregisterStorageEventListener: function()
     {
+        if (!this._storageEventListener)
+            return;
+
         var inspectedWindow = InspectorController.inspectedWindow();
         if (!inspectedWindow || !inspectedWindow.document)
             return;

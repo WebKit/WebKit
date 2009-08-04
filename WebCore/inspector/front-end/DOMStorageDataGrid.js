@@ -44,6 +44,7 @@ WebInspector.DOMStorageDataGrid.prototype = {
         this._editing = true;
         this._editingNode = node;
         this._editingNode.select();
+        WebInspector.panels.databases._unregisterStorageEventListener();
 
         var element = this._editingNode._element.children[column];
         WebInspector.startEditing(element, this._editingCommitted.bind(this), this._editingCancelled.bind(this), element.textContent);
@@ -68,6 +69,7 @@ WebInspector.DOMStorageDataGrid.prototype = {
             return this._startEditingColumnOfDataGridNode(this._editingNode, 0);
 
         this._editing = true;
+        WebInspector.panels.databases._unregisterStorageEventListener();
         WebInspector.startEditing(element, this._editingCommitted.bind(this), this._editingCancelled.bind(this), element.textContent);
         window.getSelection().setBaseAndExtent(element, 0, element, 1);
     },
@@ -145,6 +147,7 @@ WebInspector.DOMStorageDataGrid.prototype = {
     {
         delete this._editing;
         this._editingNode = null;
+        WebInspector.panels.databases._registerStorageEventListener();
     },
 
     deleteSelectedRow: function()
