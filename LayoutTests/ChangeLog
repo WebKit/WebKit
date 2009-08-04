@@ -1,3 +1,9 @@
+2009-08-04  Adam Treat  <adam.treat@torchmobile.com>
+
+        Fix buildbot. This was supposed to be part of the last commit r46757, but the hunk never made it in.
+
+        * platform/qt/fast/block/float/033-expected.txt:
+
 2009-08-04  Renata Hodovan  <hodovan.renata@stud.u-szeged.hu>
 
         Reviewed by Simon Hausmann.
