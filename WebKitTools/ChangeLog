@@ -1,3 +1,14 @@
+2009-08-03  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by David Kilzer.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27323
+        Handle any kind of line endings in svn-apply and svn-unapply, instead
+        of assuming LF.
+
+        * Scripts/svn-apply:
+        * Scripts/svn-unapply:
+
 2009-08-03  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

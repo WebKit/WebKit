@@ -94,7 +94,7 @@ while (<>) {
         $filter = \&gitdiff2svndiff;
     }
     $_ = &$filter($_) if $filter;
-    if (/^Index: (.*)/) {
+    if (/^Index: (.+)/) {
         $indexPath = $1;
         if ($patch) {
             if ($copiedFromPath) {
@@ -220,7 +220,7 @@ sub patch($)
     my ($patch) = @_;
     return if !$patch;
 
-    unless ($patch =~ m|^Index: ([^\n]+)|) {
+    unless ($patch =~ m|^Index: ([^\r\n]+)|) {
         my $separator = '-' x 67;
         warn "Failed to find 'Index:' in:\n$separator\n$patch\n$separator\n";
         return;
@@ -330,7 +330,8 @@ sub svnStatus($)
         # be first (since any files with unknown status will be listed first).
         my $normalizedFullPath = File::Spec->catdir(File::Spec->splitdir($fullPath));
         while (<SVN>) {
-            chomp;
+            # Input may use a different EOL sequence than $/, so avoid chomp.
+            $_ =~ s/[\r\n]+$//g;
             my $normalizedStatPath = File::Spec->catdir(File::Spec->splitdir(substr($_, 7)));
             if ($normalizedFullPath eq $normalizedStatPath) {
                 $svnStatus = $_;

@@ -447,7 +447,8 @@ sub svnStatus($)
         # be first (since any files with unknown status will be listed first).
         my $normalizedFullPath = File::Spec->catdir(File::Spec->splitdir($fullPath));
         while (<SVN>) {
-            chomp;
+            # Input may use a different EOL sequence than $/, so avoid chomp.
+            $_ =~ s/[\r\n]+$//g;
             my $normalizedStatPath = File::Spec->catdir(File::Spec->splitdir(substr($_, 7)));
             if ($normalizedFullPath eq $normalizedStatPath) {
                 $svnStatus = $_;
