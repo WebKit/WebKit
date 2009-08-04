@@ -316,13 +316,14 @@ void RenderThemeChromiumWin::adjustSliderThumbSize(RenderObject* o) const
     // These sizes match what WinXP draws for various menus.
     const int sliderThumbAlongAxis = 11;
     const int sliderThumbAcrossAxis = 21;
-    if (o->style()->appearance() == SliderThumbHorizontalPart || o->style()->appearance() == MediaSliderThumbPart) {
+    if (o->style()->appearance() == SliderThumbHorizontalPart) {
         o->style()->setWidth(Length(sliderThumbAlongAxis, Fixed));
         o->style()->setHeight(Length(sliderThumbAcrossAxis, Fixed));
     } else if (o->style()->appearance() == SliderThumbVerticalPart) {
         o->style()->setWidth(Length(sliderThumbAcrossAxis, Fixed));
         o->style()->setHeight(Length(sliderThumbAlongAxis, Fixed));
-    }
+    } else
+        RenderThemeChromiumSkia::adjustSliderThumbSize(o);
 }
 
 bool RenderThemeChromiumWin::paintCheckbox(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
