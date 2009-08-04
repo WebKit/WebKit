@@ -120,4 +120,9 @@ void InspectorClientWx::removeSetting(const String& key)
     notImplemented();
 }
 
+void InspectorClientWx::inspectorWindowObjectCleared()
+{
+    notImplemented();
+}
+
 };

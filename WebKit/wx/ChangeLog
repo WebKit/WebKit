@@ -1,3 +1,11 @@
+2009-08-04  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix after InspectorClient API change.
+
+        * WebKitSupport/InspectorClientWx.cpp:
+        (WebCore::InspectorClientWx::inspectorWindowObjectCleared):
+        * WebKitSupport/InspectorClientWx.h:
+
 2009-08-02  Kevin Ollivier  <kevino@theolliviers.com>
 
         Reviewed by Jan Alonzo.
