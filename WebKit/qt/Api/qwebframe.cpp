@@ -538,8 +538,12 @@ QUrl QWebFrame::url() const
 */
 QUrl QWebFrame::requestedUrl() const
 {
+    // In the following edge cases (where the failing document
+    // loader does not get commited by the frame loader) it is
+    // safer to rely on outgoingReferrer than originalRequest.
     if (!d->frame->loader()->activeDocumentLoader()
-        || !d->frameLoaderClient->m_loadSucceeded)
+        || (!d->frameLoaderClient->m_loadSucceeded
+        &&  !d->frame->loader()->outgoingReferrer().isEmpty()))
         return QUrl(d->frame->loader()->outgoingReferrer());
 
     return d->frame->loader()->originalRequest().url();

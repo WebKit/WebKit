@@ -33,6 +33,8 @@
 #include <QRegExp>
 #include <QNetworkRequest>
 #include <QNetworkReply>
+#include <qsslerror.h>
+
 //TESTED_CLASS=
 //TESTED_FILES=
 
@@ -2176,7 +2178,9 @@ public:
         if (request.url() == QUrl("qrc:/test1.html")) {
             setHeader(QNetworkRequest::LocationHeader, QString("qrc:/test2.html"));
             setAttribute(QNetworkRequest::RedirectionTargetAttribute, QUrl("qrc:/test2.html"));
-        } else
+        } else if (request.url() == QUrl("qrc:/fake-ssl-error.html"))
+            setError(QNetworkReply::SslHandshakeFailedError, tr("Fake error !")); // force a ssl error
+        else if (request.url() == QUrl("http://abcdef.abcdef/"))
             setError(QNetworkReply::HostNotFoundError, tr("Invalid URL"));
 
         open(QIODevice::ReadOnly);
@@ -2202,6 +2206,8 @@ private slots:
             emit error(this->error());
         else if (request().url() == QUrl("http://abcdef.abcdef/"))
             emit metaDataChanged();
+        else if (request().url() == QUrl("qrc:/fake-ssl-error.html"))
+            return;
 
         emit readyRead();
         emit finished();
@@ -2217,10 +2223,16 @@ public:
 protected:
     virtual QNetworkReply* createRequest(Operation op, const QNetworkRequest& request, QIODevice* outgoingData)
     {
-        if (op == QNetworkAccessManager::GetOperation
-            && (request.url().toString() == "qrc:/test1.html"
-            ||  request.url().toString() == "http://abcdef.abcdef/"))
-            return new FakeReply(request, this);
+        QString url = request.url().toString();
+        if (op == QNetworkAccessManager::GetOperation)
+            if (url == "qrc:/test1.html" ||  url == "http://abcdef.abcdef/")
+                return new FakeReply(request, this);
+            else if (url == "qrc:/fake-ssl-error.html") {
+                FakeReply* reply = new FakeReply(request, this);
+                QList<QSslError> errors;
+                emit sslErrors(reply, errors << QSslError(QSslError::UnspecifiedError));
+                return reply;
+            }
 
         return QNetworkAccessManager::createRequest(op, request, outgoingData);
     }
@@ -2253,6 +2265,16 @@ void tst_QWebFrame::requestedUrl()
     QCOMPARE(spy.count(), 3);
     QCOMPARE(frame->requestedUrl(), QUrl("http://abcdef.abcdef/"));
     QCOMPARE(frame->url(), QUrl("http://abcdef.abcdef/"));
+
+    qRegisterMetaType<QList<QSslError> >("QList<QSslError>");
+    qRegisterMetaType<QNetworkReply* >("QNetworkReply*");
+
+    QSignalSpy spy2(page.networkAccessManager(), SIGNAL(sslErrors(QNetworkReply*, const QList<QSslError>&)));
+    frame->setUrl(QUrl("qrc:/fake-ssl-error.html"));
+    QTest::qWait(200);
+    QCOMPARE(spy2.count(), 1);
+    QCOMPARE(frame->requestedUrl(), QUrl("qrc:/fake-ssl-error.html"));
+    QCOMPARE(frame->url(), QUrl("qrc:/fake-ssl-error.html"));
 }
 
 void tst_QWebFrame::setHtml()
