@@ -1,3 +1,14 @@
+2009-08-04  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Missed a place that expects window.event to be hidden when it shouldn't be.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27719
+
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::ACCESSOR_GETTER): window.event is no longer hidden.
+
 2009-08-03  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Jon Honeycutt.
