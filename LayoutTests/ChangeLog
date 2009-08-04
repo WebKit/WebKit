@@ -1,3 +1,9 @@
+2009-08-04  Mark Rowe  <mrowe@apple.com>
+
+        Update test results after addition of AXRequired in r46768.
+
+        * platform/mac/accessibility/lists-expected.txt:
+
 2009-08-04  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt.

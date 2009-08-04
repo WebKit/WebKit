@@ -37,6 +37,7 @@ AXVisibleChildren: <array of size 2>
 AXOrientation: AXVerticalOrientation
 AXTitleUIElement: (null)
 AXAccessKey: (null)
+AXRequired: 0
 
 ------------
 AXRole: AXList
@@ -65,6 +66,7 @@ AXVisibleChildren: <array of size 2>
 AXOrientation: AXVerticalOrientation
 AXTitleUIElement: (null)
 AXAccessKey: (null)
+AXRequired: 0
 
 ------------
 AXRole: AXList
@@ -93,6 +95,7 @@ AXVisibleChildren: <array of size 5>
 AXOrientation: AXVerticalOrientation
 AXTitleUIElement: (null)
 AXAccessKey: (null)
+AXRequired: 0
 
 ------------
 AXRole: AXGroup
