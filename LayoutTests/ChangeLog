@@ -1,5 +1,13 @@
 2009-08-04  Ariya Hidayat  <ariya.hidayat@nokia.com>
 
+        Reviewed by Adam Treat.
+
+        [Qt] Fix the metrics.
+
+        * platform/qt/fast/canvas/canvas-before-css-expected.txt:
+
+2009-08-04  Ariya Hidayat  <ariya.hidayat@nokia.com>
+
         Reviewed by Tor Arne Vestbø.
 
         [Qt] Add pixel tests result.
