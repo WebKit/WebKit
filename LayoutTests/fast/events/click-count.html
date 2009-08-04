@@ -39,21 +39,18 @@ function test()
     }
 }
 
-var clickCount = 1;
 function testClick()
 {
-    if (clickCount > 5) {
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
-        return;
+    for (var clickCount = 1; clickCount <= 5; clickCount++) {
+        log("Clicking " + clickCount + " times<br>");
+        for (var click = 0; click < clickCount; click++) {
+            eventSender.mouseDown();
+            eventSender.mouseUp();
+        }
+        // Skip forward 1 second so that the clicks are counted as distinct.
+        eventSender.leapForward(1000);
     }
-    log("Clicking " + clickCount + " times<br>");
-    for (var click = 0; click < clickCount; click++) {
-        eventSender.mouseDown();
-        eventSender.mouseUp();
-    }
-    clickCount++;
-    setTimeout(testClick, 1000);
+    layoutTestController.notifyDone();
 }
 
 </script>

@@ -1,3 +1,14 @@
+2009-08-04  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        LayoutTests are too slow
+        https://bugs.webkit.org/show_bug.cgi?id=27995
+
+        Shave 5 seconds off of run-webkit-tests.
+
+        * fast/events/click-count.html: use eventSender.leapForward instead of setTimeout
+
 2009-08-04  Mark Rowe  <mrowe@apple.com>
 
         Update test results after addition of AXRequired in r46768.
