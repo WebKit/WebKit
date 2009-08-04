@@ -1,3 +1,15 @@
+2009-08-04  Christian Plesner Hansen  <christian.plesner.hansen@gmail.com>
+
+        Reviewed by Adam Barth.
+
+        [v8] Fix crash when converting empty v8 string to atomic webkit string.
+        https://bugs.webkit.org/show_bug.cgi?id=27975
+
+        collection-null-like-arguments.html tests for this.
+
+        * bindings/v8/V8Binding.cpp:
+        (WebCore::v8StringToAtomicWebCoreString):
+
 2009-08-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.
