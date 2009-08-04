@@ -288,7 +288,7 @@ public:
     virtual bool isPresentationalChildOfAriaRole() const { return false; }
     virtual bool ariaRoleHasPresentationalChildren() const { return false; }
     virtual AccessibilityRole roleValue() const { return UnknownRole; }
-    virtual String ariaAccessiblityName(const String&) const { return String(); }
+    virtual String ariaAccessibilityName(const String&) const { return String(); }
     virtual String ariaLabeledByAttribute() const { return String(); }
     virtual String ariaDescribedByAttribute() const { return String(); }
     virtual String accessibilityDescription() const { return String(); }

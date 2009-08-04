@@ -163,7 +163,7 @@ public:
     virtual PlainTextRange selectedTextRange() const;
     virtual VisibleSelection selection() const;
     virtual String stringValue() const;
-    virtual String ariaAccessiblityName(const String&) const;
+    virtual String ariaAccessibilityName(const String&) const;
     virtual String ariaLabeledByAttribute() const;
     virtual String title() const;
     virtual String ariaDescribedByAttribute() const;
