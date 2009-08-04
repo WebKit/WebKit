@@ -58,6 +58,7 @@
 #include "RegExpPrototype.h"
 #include "Register.h"
 #include "SamplingTool.h"
+#include <limits.h>
 #include <stdio.h>
 #include <wtf/Threading.h>
 

@@ -1,3 +1,11 @@
+2009-08-04  Benjamin C Meyer  <benjamin.meyer@torchmobile.com>
+
+        Reviewed by Adam Treat
+
+        Explicitly include limits.h header when using INT_MAX and INT_MIN
+
+        * interpreter/Interpreter.cpp
+
 2009-08-03  Harald Fernengel  <harald.fernengel@nokia.com>
 
         Reviewed by Darin Adler.
