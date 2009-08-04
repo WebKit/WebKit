@@ -39,6 +39,7 @@ from datetime import datetime # used in timestamp()
 
 # Import WebKit-specific modules.
 from modules.logging import error, log
+from modules.committers import CommitterList
 
 # WebKit includes a built copy of BeautifulSoup in Scripts/modules
 # so this import should always succeed.
@@ -119,63 +120,19 @@ def timestamp():
     return datetime.now().strftime("%Y%m%d%H%M%S")
 
 class Bugzilla:
-    def __init__(self, dryrun=False):
+    def __init__(self, dryrun=False, committers=CommitterList()):
         self.dryrun = dryrun
         self.authenticated = False
 
         self.browser = Browser()
         # Ignore bugs.webkit.org/robots.txt until we fix it to allow this script
         self.browser.set_handle_robots(False)
+        self.committers = committers
 
     # Defaults (until we support better option parsing):
     bug_server_host = "bugs.webkit.org"
     bug_server_regex = "https?://%s/" % re.sub('\.', '\\.', bug_server_host)
     bug_server_url = "https://%s/" % bug_server_host
-
-    # This could eventually be a text file
-    reviewer_usernames_to_full_names = {
-        "abarth" : "Adam Barth",
-        "adele" : "Adele Peterson",
-        "andersca" : "Anders Carlsson",
-        "aroben" : "Adam Roben",
-        "ap" : "Alexey Proskuryakov",
-        "ariya.hidayat" : "Ariya Hidayat",
-        "barraclough" : "Gavin Barraclough",
-        "beidson" : "Brady Eidson",
-        "darin" : "Darin Adler",
-        "ddkilzer" : "David Kilzer",
-        "dglazkov" : "Dimitri Glazkov",
-        "eric" : "Eric Seidel",
-        "fishd" : "Darin Fisher",
-        "gns" : "Gustavo Noronha",
-        "hausmann" : "Simon Hausmann",
-        "hyatt" : "David Hyatt",
-        "jmalonzo" : "Jan Alonzo",
-        "justin.garcia" : "Justin Garcia",
-        "kevino" : "Kevin Ollivier",
-        "kmccullough" : "Kevin McCullough",
-        "koivisto" : "Antti Koivisto",
-        "levin" : "David Levin",
-        "mitz" : "Dan Bernstein",
-        "mjs" : "Maciej Stachowiak",
-        "mrowe" : "Mark Rowe",
-        "oliver" : "Oliver Hunt",
-        "sam" : "Sam Weinig",
-        "sfalken" : "Steve Falkenburg",
-        "simon.fraser" : "Simon Fraser",
-        "staikos" : "George Staikos",
-        "timothy" : "Timothy Hatcher",
-        "treat" : "Adam Treat",
-        "vestbo" : u'Tor Arne Vestb\xf8',
-        "xan.lopez" : "Xan Lopez",
-        "zecke" : "Holger Freyther",
-        "zimmermann" : "Nikolas Zimmermann",
-    }
-
-    def full_name_from_bugzilla_name(self, bugzilla_name):
-        if not bugzilla_name in self.reviewer_usernames_to_full_names:
-            raise Exception("ERROR: Unknown reviewer! " + bugzilla_name)
-        return self.reviewer_usernames_to_full_names[bugzilla_name]
 
     def bug_url_for_bug_id(self, bug_id, xml=False):
         content_type = "&ctype=xml" if xml else ""
@@ -187,31 +144,33 @@ class Bugzilla:
             action_param = "&action=" + action
         return "%sattachment.cgi?id=%s%s" % (self.bug_server_url, attachment_id, action_param)
 
+    def _parse_attachment_element(self, element, bug_id):
+        attachment = {}
+        attachment['bug_id'] = bug_id
+        attachment['is_obsolete'] = (element.has_key('isobsolete') and element['isobsolete'] == "1")
+        attachment['is_patch'] = (element.has_key('ispatch') and element['ispatch'] == "1")
+        attachment['id'] = str(element.find('attachid').string)
+        attachment['url'] = self.attachment_url_for_id(attachment['id'])
+        attachment['name'] = unicode(element.find('desc').string)
+        attachment['type'] = str(element.find('type').string)
+
+        review_flag = element.find('flag', attrs={"name" : "review"})
+        if review_flag and review_flag['status'] == '+':
+            reviewer_email = review_flag['setter']
+            reviewer = self.committers.reviewer_by_bugzilla_email(reviewer_email)
+            attachment['reviewer'] = reviewer.full_name
+        return attachment
+
     def fetch_attachments_from_bug(self, bug_id):
         bug_url = self.bug_url_for_bug_id(bug_id, xml=True)
         log("Fetching: " + bug_url)
 
         page = urllib2.urlopen(bug_url)
         soup = BeautifulSoup(page)
-    
+
         attachments = []
         for element in soup.findAll('attachment'):
-            attachment = {}
-            attachment['bug_id'] = bug_id
-            attachment['is_obsolete'] = (element.has_key('isobsolete') and element['isobsolete'] == "1")
-            attachment['is_patch'] = (element.has_key('ispatch') and element['ispatch'] == "1")
-            attachment['id'] = str(element.find('attachid').string)
-            attachment['url'] = self.attachment_url_for_id(attachment['id'])
-            attachment['name'] = unicode(element.find('desc').string)
-            attachment['type'] = str(element.find('type').string)
-
-            review_flag = element.find('flag', attrs={"name" : "review"})
-            if review_flag and review_flag['status'] == '+':
-                reviewer_email = review_flag['setter']
-                # We could lookup the full email address instead once we update full_name_from_bugzilla_name
-                bugzilla_name = reviewer_email.split('@')[0]
-                attachment['reviewer'] = self.full_name_from_bugzilla_name(bugzilla_name)
-
+            attachment = self._parse_attachment_element(element, bug_id)
             attachments.append(attachment)
         return attachments
 
