@@ -1,3 +1,14 @@
+2009-08-04  Renata Hodovan  <hodovan.renata@stud.u-szeged.hu>
+
+        Reviewed by Simon Hausmann.
+
+        Remove LayoutTests/fast/block/float/033.html from the Qt Skipped list
+
+        The expected value was incorrect and it has been modified. The new expected value is similar to the MAC version as well.
+
+        * platform/qt/Skipped:
+        * platform/qt/fast/block/float/033-expected.txt:
+
 2009-08-03  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         [Gtk] Skip accessibility/input-slider.html as it needs

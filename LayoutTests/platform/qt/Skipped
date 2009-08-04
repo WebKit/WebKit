@@ -5022,7 +5022,6 @@ editing/selection/home-end.html
 editing/selection/user-drag-element-and-user-select-none.html
 editing/style/apply-through-end-of-document.html
 fast/block/float/009.html
-fast/block/float/033.html
 fast/block/positioning/absolute-in-inline-rtl-4.html
 fast/canvas/canvas-composite-alpha.html
 fast/canvas/canvas-gradient-addStop-error.html
