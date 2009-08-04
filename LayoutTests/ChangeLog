@@ -8,6 +8,15 @@
 
         Reviewed by Dave Hyatt.
 
+        Add support for transitions/animations of text-indent.
+
+        * transitions/text-indent-transition-expected.txt: Added.
+        * transitions/text-indent-transition.html: Added.
+
+2009-08-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt.
+
         Add support for transitions of min- and max-width, and min- and max-height.
         https://bugs.webkit.org/show_bug.cgi?id=27990
 
