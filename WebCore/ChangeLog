@@ -1,3 +1,35 @@
+2009-08-03  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Chromium code sometimes isn't sandboxed and needs to access the FS.
+        https://bugs.webkit.org/show_bug.cgi?id=27954
+
+        These changes are the WebKit side of http://codereview.chromium.org/159778 which
+        aims to make LocalStorage persistent.
+
+        This change runs all FileSystem routines through the ChromiumBridge so that
+        WebKitClients can handle them if they choose to.  For now, the only such client
+        will be the one running in the browser process.
+
+        It also adds a method called sandboxEnabled to the Chromium bridge so that the
+        SQLite file system code can shift its behavior depending on whether we're
+        inside a sandbox or not.
+
+        * platform/chromium/ChromiumBridge.h:
+        * platform/chromium/FileSystemChromium.cpp:
+        (WebCore::deleteFile):
+        (WebCore::deleteEmptyDirectory):
+        (WebCore::getFileModificationTime):
+        (WebCore::directoryName):
+        (WebCore::pathByAppendingComponent):
+        (WebCore::makeAllDirectories):
+        (WebCore::fileExists):
+        * platform/sql/chromium/SQLiteFileSystemChromium.cpp:
+        (WebCore::SQLiteFileSystem::openDatabase):
+        * platform/sql/chromium/SQLiteFileSystemChromiumWin.cpp:
+        (WebCore::SQLiteFileSystem::registerSQLiteVFS):
+
 2009-08-03  Alpha Lam  <hclam@chromium.org>
 
         Reviewed by David Levin.

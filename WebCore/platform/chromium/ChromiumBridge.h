@@ -84,7 +84,14 @@ namespace WebCore {
         static void prefetchDNS(const String& hostname);
 
         // File ---------------------------------------------------------------
-        static bool getFileSize(const String& path, long long& result);
+        static bool fileExists(const String&);
+        static bool deleteFile(const String&);
+        static bool deleteEmptyDirectory(const String&);
+        static bool getFileSize(const String&, long long& result);
+        static bool getFileModificationTime(const String&, time_t& result);
+        static String directoryName(const String& path);
+        static String pathByAppendingComponent(const String& path, const String& component);
+        static bool makeAllDirectories(const String& path);
 
         // Font ---------------------------------------------------------------
 #if PLATFORM(WIN_OS)
@@ -96,6 +103,14 @@ namespace WebCore {
 
         // Forms --------------------------------------------------------------
         static void notifyFormStateChanged(const Document*);
+        
+        // HTML5 DB -----------------------------------------------------------
+#if ENABLE(DATABASE)
+        static PlatformFileHandle databaseOpenFile(const String& fileName, int desiredFlags);
+        static bool databaseDeleteFile(const String& fileName);
+        static long databaseGetFileAttributes(const String& fileName);
+        static long long databaseGetFileSize(const String& fileName);
+#endif
 
         // JavaScript ---------------------------------------------------------
         static void notifyJSOutOfMemory(Frame*);
@@ -125,6 +140,9 @@ namespace WebCore {
 
         // Resources ----------------------------------------------------------
         static PassRefPtr<Image> loadPlatformImageResource(const char* name);
+
+        // Sandbox ------------------------------------------------------------
+        static bool sandboxEnabled();
 
         // Screen -------------------------------------------------------------
         static int screenDepth(Widget*);
@@ -178,25 +196,6 @@ namespace WebCore {
         // Widget -------------------------------------------------------------
         static void widgetSetCursor(Widget*, const Cursor&);
         static void widgetSetFocus(Widget*);
-
-        // HTML5 DB -----------------------------------------------------------
-
-#if ENABLE(DATABASE)
-        // Opens a database file
-        // 'desiredFlags' is a collection of OR'd SQLite constants that
-        // determine how the file should be opened
-        static PlatformFileHandle databaseOpenFile(const String& fileName, int desiredFlags);
-
-        // Deletes a database file
-        // Returns 'true' if the file was deleted; 'false' otherwise
-        static bool databaseDeleteFile(const String& fileName);
-
-        // Returns the file attributes of the given database file
-        static long databaseGetFileAttributes(const String& fileName);
-
-        // Returns size of the given file
-        static long long databaseGetFileSize(const String& fileName);
-#endif
     };
 
 } // namespace WebCore
