@@ -1,3 +1,16 @@
+2009-08-04  Gavin Barraclough  <barraclough@apple.com>
+
+        Rubber Stamped by Oiver Hunt.
+
+        Revert r46643 since this breaks the Yarr::Interpreter running the v8 tests.
+        https://bugs.webkit.org/show_bug.cgi?id=27874
+
+        * yarr/RegexInterpreter.cpp:
+        (JSC::Yarr::Interpreter::allocDisjunctionContext):
+        (JSC::Yarr::Interpreter::freeDisjunctionContext):
+        (JSC::Yarr::Interpreter::allocParenthesesDisjunctionContext):
+        (JSC::Yarr::Interpreter::freeParenthesesDisjunctionContext):
+
 2009-08-04  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY (build fix).

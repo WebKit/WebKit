@@ -104,12 +104,12 @@ public:
 
     DisjunctionContext* allocDisjunctionContext(ByteDisjunction* disjunction)
     {
-        return new(fastMalloc(sizeof(DisjunctionContext) + (disjunction->m_frameSize - 1) * sizeof(uintptr_t))) DisjunctionContext();
+        return new(malloc(sizeof(DisjunctionContext) + (disjunction->m_frameSize - 1) * sizeof(uintptr_t))) DisjunctionContext();
     }
 
     void freeDisjunctionContext(DisjunctionContext* context)
     {
-        fastFree(context);
+        free(context);
     }
 
     struct ParenthesesDisjunctionContext
@@ -150,12 +150,12 @@ public:
 
     ParenthesesDisjunctionContext* allocParenthesesDisjunctionContext(ByteDisjunction* disjunction, int* output, ByteTerm& term)
     {
-        return new(fastMalloc(sizeof(ParenthesesDisjunctionContext) + (((term.atom.parenthesesDisjunction->m_numSubpatterns << 1) - 1) * sizeof(int)) + sizeof(DisjunctionContext) + (disjunction->m_frameSize - 1) * sizeof(uintptr_t))) ParenthesesDisjunctionContext(output, term);
+        return new(malloc(sizeof(ParenthesesDisjunctionContext) + (((term.atom.parenthesesDisjunction->m_numSubpatterns << 1) - 1) * sizeof(int)) + sizeof(DisjunctionContext) + (disjunction->m_frameSize - 1) * sizeof(uintptr_t))) ParenthesesDisjunctionContext(output, term);
     }
 
     void freeParenthesesDisjunctionContext(ParenthesesDisjunctionContext* context)
     {
-        fastFree(context);
+        free(context);
     }
 
     class InputStream {
