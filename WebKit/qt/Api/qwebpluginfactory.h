@@ -38,6 +38,8 @@ public:
         QString name;
         QString description;
         QStringList fileExtensions;
+        bool operator==(const MimeType& other) const;
+        inline bool operator!=(const MimeType& other) const { return !operator==(other); }
     };
 
     struct Plugin {

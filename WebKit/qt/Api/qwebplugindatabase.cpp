@@ -57,13 +57,6 @@ QWebPluginDatabasePrivate::QWebPluginDatabasePrivate(PluginDatabase* pluginDatab
 {
 }
 
-bool QWebPlugin::MimeType::operator==(const MimeType& other) const
-{
-    return name == other.name
-           && description == other.description
-           && fileExtensions == other.fileExtensions;
-}
-
 /*!
     \class QWebPlugin
     \since 4.6

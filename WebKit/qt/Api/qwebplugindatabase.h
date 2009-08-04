@@ -21,6 +21,7 @@
 #define QWEBPLUGINDATABASE_H
 
 #include "qwebkitglobal.h"
+#include "qwebpluginfactory.h"
 
 #include <QtCore/qobject.h>
 #include <QtCore/qstringlist.h>
@@ -40,14 +41,7 @@ private:
     QWebPlugin(WebCore::PluginPackage* plugin);
 
 public:
-    class MimeType {
-    public:
-        QString name;
-        QString description;
-        QStringList fileExtensions;
-
-        bool operator==(const MimeType& other) const;
-    };
+    typedef QWebPluginFactory::MimeType MimeType;
 
     QString name() const;
     QString description() const;
