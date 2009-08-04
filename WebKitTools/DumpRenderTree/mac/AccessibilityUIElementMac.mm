@@ -393,10 +393,10 @@ int AccessibilityUIElement::insertionPointLineNumber()
     return -1;
 }
 
-bool AccessibilityUIElement::supportsPressAction()
+bool AccessibilityUIElement::isActionSupported(JSStringRef action)
 {
     NSArray* actions = [m_element accessibilityActionNames];
-    return [actions containsObject:NSAccessibilityPressAction];
+    return [actions containsObject:[NSString stringWithJSStringRef:action]];
 }
 
 bool AccessibilityUIElement::isEnabled()

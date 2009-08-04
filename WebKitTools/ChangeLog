@@ -1,3 +1,21 @@
+2009-08-04  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Bug 27993 - AXSliders are missing required attributes and actions
+        https://bugs.webkit.org/show_bug.cgi?id=27993
+
+        Add ability to check if any arbitrary action is supported.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (isActionSupportedCallback):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::isActionSupported):
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::isActionSupported):
+
 2009-08-04  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

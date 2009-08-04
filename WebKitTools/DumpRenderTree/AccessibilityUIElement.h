@@ -80,6 +80,7 @@ public:
     // Attributes - platform-independent implementations
     JSStringRef attributeValue(JSStringRef attribute);
     bool isAttributeSettable(JSStringRef attribute);
+    bool isActionSupported(JSStringRef action);
     JSStringRef role();
     JSStringRef title();
     JSStringRef description();
@@ -93,7 +94,6 @@ public:
     double maxValue();
     int insertionPointLineNumber();
     JSStringRef selectedTextRange();
-    bool supportsPressAction();
     bool isEnabled();
     bool isRequired() const;
     double clickPointX();

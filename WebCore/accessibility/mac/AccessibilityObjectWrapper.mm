@@ -535,12 +535,15 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
     static NSArray* actionElementActions = [[NSArray alloc] initWithObjects: NSAccessibilityPressAction, NSAccessibilityShowMenuAction, nil];
     static NSArray* defaultElementActions = [[NSArray alloc] initWithObjects: NSAccessibilityShowMenuAction, nil];
     static NSArray* menuElementActions = [[NSArray alloc] initWithObjects: NSAccessibilityCancelAction, NSAccessibilityPressAction, nil];
-    
+    static NSArray* sliderActions = [[NSArray alloc] initWithObjects: NSAccessibilityIncrementAction, NSAccessibilityDecrementAction, nil];
+
     NSArray *actions;
     if (m_object->actionElement()) 
         actions = actionElementActions;
     else if (m_object->isMenuRelated())
         actions = menuElementActions;
+    else if (m_object->isSlider())
+        actions = sliderActions;
     else if (m_object->isAttachment())
         actions = [[self attachmentView] accessibilityActionNames];
     else
@@ -660,6 +663,7 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
         [tempArray addObject:NSAccessibilityValueAttribute];
         [tempArray addObject:NSAccessibilityMinValueAttribute];
         [tempArray addObject:NSAccessibilityMaxValueAttribute];
+        [tempArray addObject:NSAccessibilityOrientationAttribute];
         rangeAttrs = [[NSArray alloc] initWithArray:tempArray];
         [tempArray release];
     }
@@ -1422,6 +1426,15 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         AccessibilityObject* obj = m_object->titleUIElement();
         if (obj)
             return obj->wrapper();
+        return nil;
+    }
+    
+    if ([attributeName isEqualToString:NSAccessibilityOrientationAttribute]) {
+        AccessibilityOrientation elementOrientation = m_object->orientation();
+        if (elementOrientation == AccessibilityOrientationVertical)
+            return NSAccessibilityVerticalOrientationValue;
+        if (elementOrientation == AccessibilityOrientationHorizontal)
+            return NSAccessibilityHorizontalOrientationValue;
         return nil;
     }
     

@@ -1,3 +1,18 @@
+2009-08-04  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Bug 27993 - AXSliders are missing required attributes and actions
+        https://bugs.webkit.org/show_bug.cgi?id=27993
+
+        Update tests to use more generic isActionSupported.
+
+        * accessibility/aria-link-supports-press.html:
+        * accessibility/button-press-action.html:
+        * accessibility/onclick-handlers.html:
+        * platform/mac/accessibility/slider-supports-actions-expected.txt: Added.
+        * platform/mac/accessibility/slider-supports-actions.html: Added.
+
 2009-08-04  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Simon Fraser.

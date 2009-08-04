@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<span tabindex="0" role="slider" id="slider1" aria-valuenow=5 aria-valuemin=0 aria-valuemax=10>X</span>
+
+<input type="range" id="slider2">
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This test makes sure that AXIncrement and Decrement are exposed on sliders (ARIA and input).");
+
+    if (window.accessibilityController) {
+
+          // test the ARIA slider
+          document.getElementById("slider1").focus();
+          var obj = accessibilityController.focusedElement;
+
+          var succeeded = obj.isActionSupported("AXIncrement") == true;
+          shouldBe("succeeded", "true");
+
+          var succeeded = obj.isActionSupported("AXDecrement") == true;
+          shouldBe("succeeded", "true");
+
+          var succeeded = obj.attributeValue("AXOrientation") == "AXVerticalOrientation";
+          shouldBe("succeeded", "true");
+
+          // test the input slider
+          document.getElementById("slider2").focus();
+          var obj = accessibilityController.focusedElement;
+
+          var succeeded = obj.isActionSupported("AXIncrement") == true;
+          shouldBe("succeeded", "true");
+
+          var succeeded = obj.isActionSupported("AXDecrement") == true;
+          shouldBe("succeeded", "true");
+
+          var succeeded = obj.attributeValue("AXOrientation") == "AXHorizontalOrientation";
+          shouldBe("succeeded", "true");
+
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

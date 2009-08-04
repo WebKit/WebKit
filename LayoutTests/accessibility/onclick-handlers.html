@@ -19,7 +19,7 @@
             var focusedElement = accessibilityController.focusedElement;
             var textElement = focusedElement.childAtIndex(0).childAtIndex(0);
 
-            if (textElement.supportsPressAction) {
+            if (textElement.isActionSupported("AXPress")) {
                 result.innerText += "Test passed\n";
             }
             else {

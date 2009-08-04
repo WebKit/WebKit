@@ -703,5 +703,18 @@ const String& AccessibilityObject::actionVerb() const
             return noAction;
     }
 }
+ 
+// Lacking concrete evidence of orientation, horizontal means width > height. vertical is height > width;
+AccessibilityOrientation AccessibilityObject::orientation() const
+{
+    IntRect bounds = elementRect();
+    if (bounds.size().width() > bounds.size().height())
+        return AccessibilityOrientationHorizontal;
+    if (bounds.size().height() > bounds.size().width())
+        return AccessibilityOrientationVertical;
+
+    // A tie goes to horizontal.
+    return AccessibilityOrientationHorizontal;
+}
     
 } // namespace WebCore

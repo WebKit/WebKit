@@ -245,7 +245,7 @@ double AccessibilityUIElement::maxValue()
     return 0;
 }
 
-bool AccessibilityUIElement::supportsPressAction()
+bool AccessibilityUIElement::isActionSupported(JSStringRef action)
 {
     return false;
 }

@@ -56,6 +56,32 @@ const AccessibilityObject::AccessibilityChildrenVector& AccessibilitySlider::chi
     return m_children;
 }
 
+AccessibilityOrientation AccessibilitySlider::orientation() const
+{
+    // Default to horizontal in the unknown case.
+    if (!m_renderer)
+        return AccessibilityOrientationHorizontal;
+    
+    RenderStyle* style = m_renderer->style();
+    if (!style)
+        return AccessibilityOrientationHorizontal;
+    
+    ControlPart styleAppearance = style->appearance();
+    switch (styleAppearance) {
+        case SliderThumbHorizontalPart:
+        case SliderHorizontalPart:
+        case MediaSliderPart:
+            return AccessibilityOrientationHorizontal;
+        
+        case SliderThumbVerticalPart: 
+        case SliderVerticalPart:
+            return AccessibilityOrientationVertical;
+            
+        default:
+            return AccessibilityOrientationHorizontal;
+    }
+}
+    
 void AccessibilitySlider::addChildren()
 {
     ASSERT(!m_haveChildren); 
