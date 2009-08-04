@@ -38,10 +38,20 @@
 
 namespace WebCore {
 
+    enum ExternalMode {
+        Externalize,
+        DoNotExternalize
+    };
+
+    enum StringType {
+        PlainStringType,
+        AtomicStringType
+    };
+
     // Convert v8 types to a WebCore::String. If the V8 string is not already
     // an external string then it is transformed into an external string at this
     // point to avoid repeated conversions.
-    String v8StringToWebCoreString(v8::Handle<v8::String>, bool externalize);
+    String v8StringToWebCoreString(v8::Handle<v8::String>, ExternalMode mode, StringType type);
     String v8ValueToWebCoreString(v8::Handle<v8::Value>);
 
     // Convert v8 types to a WebCore::AtomicString.

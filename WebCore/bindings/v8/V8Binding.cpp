@@ -49,33 +49,69 @@ namespace WebCore {
 class WebCoreStringResource : public v8::String::ExternalStringResource {
 public:
     explicit WebCoreStringResource(const String& string)
-        : m_impl(string.impl())
+        : m_plainString(string)
     {
+        ASSERT(WTF::isMainThread());
+        v8::V8::AdjustAmountOfExternalAllocatedMemory(2 * length());
+    }
+
+    explicit WebCoreStringResource(const AtomicString& string)
+        : m_plainString(string)
+        , m_atomicString(string)
+    {
+        ASSERT(WTF::isMainThread());
         v8::V8::AdjustAmountOfExternalAllocatedMemory(2 * length());
     }
 
     virtual ~WebCoreStringResource()
     {
-        v8::V8::AdjustAmountOfExternalAllocatedMemory(-2 * length());
+        ASSERT(WTF::isMainThread());
+        int reducedExternalMemory = -2 * length();
+        if (!m_plainString.impl()->inTable())
+            reducedExternalMemory *= 2;
+        v8::V8::AdjustAmountOfExternalAllocatedMemory(reducedExternalMemory);
     }
 
     const uint16_t* data() const
     {
-        return reinterpret_cast<const uint16_t*>(m_impl.characters());
+        return reinterpret_cast<const uint16_t*>(m_plainString.characters());
     }
 
-    size_t length() const { return m_impl.length(); }
+    size_t length() const { return m_plainString.length(); }
 
-    String webcoreString() { return m_impl; }
+    String webcoreString() { return m_plainString; }
+
+    AtomicString atomicString()
+    {
+        ASSERT(WTF::isMainThread());
+        if (m_atomicString.isNull()) {
+            m_atomicString = AtomicString(m_plainString);
+            if (!m_plainString.impl()->inTable())
+                v8::V8::AdjustAmountOfExternalAllocatedMemory(2 * length());
+        }
+        return m_atomicString;
+    }
+
+    static WebCoreStringResource* toStringResource(v8::Handle<v8::String> v8String)
+    {
+        return static_cast<WebCoreStringResource*>(v8String->GetExternalStringResource());
+    }
 
 private:
     // A shallow copy of the string. Keeps the string buffer alive until the V8 engine garbage collects it.
-    String m_impl;
+    String m_plainString;
+    // If this string is atomic or has been made atomic earlier the
+    // atomic string is held here. In the case where the string starts
+    // off non-atomic and becomes atomic later it is necessary to keep
+    // the original string alive because v8 may keep derived pointers
+    // into that string.
+    AtomicString m_atomicString;
 };
 
-String v8StringToWebCoreString(v8::Handle<v8::String> v8String, bool externalize)
+String v8StringToWebCoreString(v8::Handle<v8::String> v8String, ExternalMode external,
+        StringType type)
 {
-    WebCoreStringResource* stringResource = static_cast<WebCoreStringResource*>(v8String->GetExternalStringResource());
+    WebCoreStringResource* stringResource = WebCoreStringResource::toStringResource(v8String);
     if (stringResource)
         return stringResource->webcoreString();
 
@@ -89,7 +125,10 @@ String v8StringToWebCoreString(v8::Handle<v8::String> v8String, bool externalize
     String result = String::createUninitialized(length, buffer);
     v8String->Write(reinterpret_cast<uint16_t*>(buffer), 0, length);
 
-    if (externalize) {
+    if (type == AtomicStringType)
+        result = AtomicString(result);
+
+    if (external == Externalize) {
         WebCoreStringResource* resource = new WebCoreStringResource(result);
         if (!v8String->MakeExternal(resource)) {
             // In case of a failure delete the external resource as it was not used.
@@ -99,10 +138,21 @@ String v8StringToWebCoreString(v8::Handle<v8::String> v8String, bool externalize
     return result;
 }
 
+AtomicString v8StringToAtomicWebCoreString(v8::Handle<v8::String> v8String)
+{
+    WebCoreStringResource* stringResource = WebCoreStringResource::toStringResource(v8String);
+    if (!stringResource) {
+        // If this string hasn't been externalized, we force it now.
+        v8StringToWebCoreString(v8String, Externalize, AtomicStringType);
+        stringResource = WebCoreStringResource::toStringResource(v8String);
+    }
+    return stringResource->atomicString();
+}
+
 String v8ValueToWebCoreString(v8::Handle<v8::Value> object)
 {
-    if (object->IsString()) 
-        return v8StringToWebCoreString(v8::Handle<v8::String>::Cast(object), true);
+    if (object->IsString())
+        return v8StringToWebCoreString(v8::Handle<v8::String>::Cast(object), Externalize, PlainStringType);
 
     if (object->IsInt32()) {
         int value = object->Int32Value();
@@ -117,7 +167,7 @@ String v8ValueToWebCoreString(v8::Handle<v8::Value> object)
                 lowNumbers[value] = valueString;
                 webCoreString = valueString;
             }
-        } else 
+        } else
             webCoreString = String::number(value);
         return webCoreString;
     }
@@ -128,18 +178,14 @@ String v8ValueToWebCoreString(v8::Handle<v8::Value> object)
     // is thrown as part of invoking toString on the objectect.
     if (v8String.IsEmpty())
         return StringImpl::empty();
-    return v8StringToWebCoreString(v8String, false);
+    return v8StringToWebCoreString(v8String, DoNotExternalize, PlainStringType);
 }
 
-AtomicString v8StringToAtomicWebCoreString(v8::Handle<v8::String> v8String)
+AtomicString v8ValueToAtomicWebCoreString(v8::Handle<v8::Value> v8Value)
 {
-    String string = v8StringToWebCoreString(v8String, true);
-    return AtomicString(string);
-}
-
-AtomicString v8ValueToAtomicWebCoreString(v8::Handle<v8::Value> v8String)
-{
-    String string = v8ValueToWebCoreString(v8String);
+    if (v8Value->IsString())
+        return v8StringToAtomicWebCoreString(v8::Handle<v8::String>::Cast(v8Value));
+    String string = v8ValueToWebCoreString(v8Value);
     return AtomicString(string);
 }
 

@@ -462,7 +462,7 @@ sub GenerateNormalAttrGetter
     my $attrName = $attribute->signature->name;
     $implIncludes{"V8Proxy.h"} = 1;
 
-    my $attrType = $codeGenerator->StripModule($attribute->signature->type);
+    my $attrType = GetTypeFromSignature($attribute->signature);
     my $attrIsPodType = IsPodType($attrType);
 
     my $nativeType = GetNativeTypeFromSignature($attribute->signature, 0);
@@ -545,7 +545,7 @@ END
     my $getterFunc = WK_lcfirst($attrName);
     $getterFunc .= "Animated" if $codeGenerator->IsSVGAnimatedType($attribute->signature->type);
 
-    my $returnType = $codeGenerator->StripModule($attribute->signature->type);
+    my $returnType = GetTypeFromSignature($attribute->signature);
 
     my $getterString;
     if ($getterStringUsesImp) {
@@ -708,7 +708,7 @@ END
     if ($nativeType eq "int" and $attribute->signature->extendedAttributes->{"ConvertFromString"}) {
         $result .= ")";
     }
-    my $returnType = $codeGenerator->StripModule($attribute->signature->type);
+    my $returnType = GetTypeFromSignature($attribute->signature);
     if (IsRefPtrType($returnType)) {
         $result = "WTF::getPtr(" . $result . ")";
     }
@@ -1404,7 +1404,7 @@ sub GenerateFunctionCallString()
 
     my $name = $function->signature->name;
     my $isPodType = IsPodType($implClassName);
-    my $returnType = $codeGenerator->StripModule($function->signature->type);
+    my $returnType = GetTypeFromSignature($function->signature);
     my $returnsPodType = IsPodType($returnType);
     my $nativeReturnType = GetNativeType($returnType, 0);
     my $result = "";
@@ -1570,12 +1570,25 @@ sub GetClassName
 }
 
 
+sub GetTypeFromSignature
+{
+    my $signature = shift;
+
+    my $type = $codeGenerator->StripModule($signature->type);
+    if (($type eq "DOMString") && $signature->extendedAttributes->{"V8Custom"}) {
+        $type = "AtomicString";
+    }
+
+    return $type;
+}
+
+
 sub GetNativeTypeFromSignature
 {
     my $signature = shift;
     my $isParameter = shift;
 
-    my $type = $codeGenerator->StripModule($signature->type);
+    my $type = GetTypeFromSignature($signature);
 
     return GetNativeType($type, $isParameter);
 }
@@ -1766,7 +1779,7 @@ sub TranslateParameter
 sub BasicTypeCanFailConversion
 {
     my $signature = shift;
-    my $type = $codeGenerator->StripModule($signature->type);
+    my $type = GetTypeFromSignature($signature);
 
     return 1 if $type eq "SVGLength";
     return 1 if $type eq "SVGMatrix";
@@ -1780,7 +1793,7 @@ sub TypeCanFailConversion
 {
     my $signature = shift;
 
-    my $type = $codeGenerator->StripModule($signature->type);
+    my $type = GetTypeFromSignature($signature);
 
     $implIncludes{"ExceptionCode.h"} = 1 if $type eq "Attr";
 
@@ -1796,7 +1809,7 @@ sub JSValueToNative
     my $okParam = shift;
     my $maybeOkParam = $okParam ? ", ${okParam}" : "";
 
-    my $type = $codeGenerator->StripModule($signature->type);
+    my $type = GetTypeFromSignature($signature);
 
     return "$value" if $type eq "JSObject";
     return "$value->BooleanValue()" if $type eq "boolean";
@@ -1807,7 +1820,8 @@ sub JSValueToNative
     return "static_cast<Range::CompareHow>($value->Int32Value())" if $type eq "CompareHow";
     return "static_cast<SVGPaint::SVGPaintType>($value->ToInt32()->Int32Value())" if $type eq "SVGPaintType";
 
-    return "toWebCoreString($value)" if $type eq "AtomicString" or $type eq "DOMUserData";
+    return "v8ValueToAtomicWebCoreString($value)" if $type eq "AtomicString";
+    return "toWebCoreString($value)" if $type eq "DOMUserData";
     if ($type eq "DOMString") {
         return "toWebCoreStringWithNullCheck($value)" if $signature->extendedAttributes->{"ConvertNullToNullString"};
         return "toWebCoreStringWithNullOrUndefinedCheck($value)" if $signature->extendedAttributes->{"ConvertUndefinedOrNullToNullString"};
@@ -1985,7 +1999,7 @@ sub ReturnNativeToJSValue
     my $signature = shift;
     my $value = shift;
     my $indent = shift;
-    my $type = $codeGenerator->StripModule($signature->type);
+    my $type = GetTypeFromSignature($signature);
     my $className= "V8$type";
 
     return "return v8::Date::New(static_cast<double>($value))" if $type eq "DOMTimeStamp";

@@ -64,7 +64,7 @@ module core {
             raises (DOMException);
         [OldStyleObjC] NodeList getElementsByTagNameNS(in [ConvertNullToNullString] DOMString namespaceURI,
                                                        in DOMString localName);
-        Element            getElementById(in DOMString elementId);
+        Element            getElementById(in [V8Custom=HintAtomic] DOMString elementId);
 
         // DOM Level 3 Core
 
