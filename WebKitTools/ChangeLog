@@ -1,3 +1,15 @@
+2009-08-04  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        bugzilla-tool needs unit tests
+        https://bugs.webkit.org/show_bug.cgi?id=26916
+
+        Add some basic unit testing for scm.py.
+
+        * Scripts/modules/scm.py:
+        * Scripts/modules/scm_unittest.py: Added.
+
 2009-08-04  Mike Fenton  <mike.fenton@torchmobile.com>
 
         Reviewed by Adam Treat.

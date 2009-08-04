@@ -378,6 +378,7 @@ class Git(SCM):
     # A B     : [A, B]  (different from git diff, which would use "rev-list A..B")
     def commit_ids_from_commitish_arguments(self, args):
         if not len(args):
+            # FIXME: trunk is not always the remote branch name, need a way to detect the name.
             args.append('trunk..HEAD')
 
         commit_ids = []
