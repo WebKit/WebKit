@@ -1,3 +1,11 @@
+2009-08-04  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by NOBODY (build fix).
+
+        PPC64 Build fix
+
+        * wtf/Platform.h:
+
 2009-08-04  Benjamin C Meyer  <benjamin.meyer@torchmobile.com>
 
         Reviewed by Adam Treat
