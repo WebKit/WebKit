@@ -86,7 +86,7 @@ def latest_changelog_entry(changelog_path):
 def set_reviewer_in_changelog(changelog_path, reviewer):
     # inplace=1 creates a backup file and re-directs stdout to the file
     for line in fileinput.FileInput(changelog_path, inplace=1):
-        print line.replace("NOBODY (OOPS!)", reviewer.encode("utf-8"))
+        print line.replace("NOBODY (OOPS!)", reviewer.encode("utf-8")), # Trailing comma suppresses printing newline
 
 def modified_changelogs(scm):
     changelog_paths = []

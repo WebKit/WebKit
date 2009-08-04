@@ -1,3 +1,14 @@
+2009-08-04  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        REGRESSION(r46700): bugzilla-tool land-diff double-spaces ChangeLogs
+        https://bugs.webkit.org/show_bug.cgi?id=27973
+
+        The trailing comma (suppresses newlines) was lost in r46700.
+
+        * Scripts/bugzilla-tool:
+
 2009-08-04  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
