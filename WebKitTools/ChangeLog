@@ -1,3 +1,22 @@
+2009-08-04  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        bugzilla-tool --commit-queue should only land commit-queue+ patches
+        https://bugs.webkit.org/show_bug.cgi?id=27970
+
+        commit-queue mode for bugzilla-tool
+        https://bugs.webkit.org/show_bug.cgi?id=27918
+
+        Make bugzilla tool smart enough to find the commit-queue+ flags and
+        land those patches.
+        When we call land-patches with --commit-queue, we should filter the
+        patches we land to only those that have the commit-queue+ flag set.
+        That way, when we call bugzilla-tool from a main commit queue process,
+        we won't land the wrong patches.
+
+        * Scripts/bugzilla-tool:
+
 2009-08-04  Eric Seidel  <eric@webkit.org>
 
 

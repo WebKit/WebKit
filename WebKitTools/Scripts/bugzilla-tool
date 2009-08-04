@@ -144,12 +144,12 @@ class BugsInCommitQueue(Command):
     def execute(self, options, args, tool):
         bug_ids = tool.bugs.fetch_bug_ids_from_commit_queue()
         for bug_id in bug_ids:
-            print "%s" % tool.bugs.bug_url_for_bug_id(bug_id)
+            print "%s" % bug_id
 
 
 class PatchesInCommitQueue(Command):
     def __init__(self):
-        Command.__init__(self, 'Patches attached to bugs in the commit queue')
+        Command.__init__(self, 'Patches in the commit queue')
 
     def execute(self, options, args, tool):
         patches = tool.bugs.fetch_patches_from_commit_queue()
@@ -344,17 +344,22 @@ class LandPatchesFromBugs(Command):
         bugs_to_patches = {}
         patch_count = 0
         for bug_id in args:
-            patches = tool.bugs.fetch_reviewed_patches_from_bug(bug_id)
+            patches = []
+            if options.commit_queue:
+                patches = tool.bugs.fetch_commit_queue_patches_from_bug(bug_id)
+            else:
+                patches = tool.bugs.fetch_reviewed_patches_from_bug(bug_id)
             if not len(patches):
-                exit("No reviewed patches found on %s" % bug_id)
+                log("No reviewed patches found on %s." % bug_id)
+                continue
             patch_count += len(patches)
             bugs_to_patches[bug_id] = patches
 
         log("Landing %s from %s." % (pluralize("patch", patch_count), pluralize("bug", len(args))))
-        
+
         self.setup_for_landing(tool.scm(), options)
 
-        for bug_id in args:
+        for bug_id in bugs_to_patches.keys():
             self.land_patches(bug_id, bugs_to_patches[bug_id], options, tool)
 
 
@@ -561,7 +566,7 @@ class BugzillaTool:
             { 'name' : 'post-diff', 'object' : PostDiffAsPatchToBug() },
             { 'name' : 'post-commits', 'object' : PostCommitsAsPatchesToBug() },
         ]
-        
+
         self.global_option_parser = HelpPrintingOptionParser(usage=self.usage_line(), formatter=NonWrappingEpilogIndentedHelpFormatter(), epilog=self.commands_usage())
         self.global_option_parser.add_option("--dry-run", action="store_true", dest="dryrun", help="do not touch remote servers", default=False)
 

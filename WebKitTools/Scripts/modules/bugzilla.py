@@ -171,6 +171,10 @@ class Bugzilla:
         attachments = []
         for element in soup.findAll('attachment'):
             attachment = self._parse_attachment_element(element, bug_id)
+            commit_queue_flag = element.find('flag', attrs={"name" : "commit-queue"})
+            if commit_queue_flag and commit_queue_flag['status'] == '+':
+                attachment['commit-queue'] = True # FIXME: Validate that the flag was set by a committer.
+
             attachments.append(attachment)
         return attachments
 
@@ -188,27 +192,31 @@ class Bugzilla:
                 reviewed_patches.append(attachment)
         return reviewed_patches
 
+    def fetch_commit_queue_patches_from_bug(self, bug_id):
+        commit_queue_patches = []
+        for attachment in self.fetch_reviewed_patches_from_bug(bug_id):
+            if 'commit-queue' in attachment and not attachment['is_obsolete']:
+                commit_queue_patches.append(attachment)
+        return commit_queue_patches
+
     def fetch_bug_ids_from_commit_queue(self):
-        # FIXME: We should have an option for restricting the search by email.  Example:
-        # unassigned_only = "&emailassigned_to1=1&emailtype1=substring&email1=unassigned"
-        commit_queue_url = self.bug_server_url + "buglist.cgi?query_format=advanced&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&field0-0-0=flagtypes.name&type0-0-0=equals&value0-0-0=review%2B"
-        log("Loading commit queue")
+        commit_queue_url = self.bug_server_url + "buglist.cgi?query_format=advanced&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&field0-0-0=flagtypes.name&type0-0-0=equals&value0-0-0=commit-queue%2B"
 
         page = urllib2.urlopen(commit_queue_url)
         soup = BeautifulSoup(page)
-    
+
         bug_ids = []
         # Grab the cells in the first column (which happens to be the bug ids)
         for bug_link_cell in soup('td', "first-child"): # tds with the class "first-child"
             bug_link = bug_link_cell.find("a")
             bug_ids.append(bug_link.string) # the contents happen to be the bug id
-    
+
         return bug_ids
 
     def fetch_patches_from_commit_queue(self):
         patches_to_land = []
         for bug_id in self.fetch_bug_ids_from_commit_queue():
-            patches = self.fetch_reviewed_patches_from_bug(bug_id)
+            patches = self.fetch_commit_queue_patches_from_bug(bug_id)
             patches_to_land += patches
         return patches_to_land
 
