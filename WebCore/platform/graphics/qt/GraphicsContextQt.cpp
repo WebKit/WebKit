@@ -95,7 +95,8 @@ static inline QPainter::CompositionMode toQtCompositionMode(CompositeOperator op
         case CompositeXOR:
             return QPainter::CompositionMode_Xor;
         case CompositePlusDarker:
-            return QPainter::CompositionMode_SourceOver;
+            // there is no exact match, but this is the closest
+            return QPainter::CompositionMode_Darken;
         case CompositeHighlight:
             return QPainter::CompositionMode_SourceOver;
         case CompositePlusLighter:

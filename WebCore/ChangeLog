@@ -1,3 +1,13 @@
+2009-08-04  Ariya Hidayat  <ariya.hidayat@nokia.com>
+
+        Reviewed by Adam Treat.
+
+        [Qt] PlusDarker is not supported. Fall back to CompositionMode_Darken
+        (as it is the closest match) instead of CompositionMode_SourceOver.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::toQtCompositionMode):
+
 2009-08-04  Christian Plesner Hansen  <christian.plesner.hansen@gmail.com>
 
         Reviewed by Adam Barth.
