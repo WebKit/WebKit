@@ -1,3 +1,14 @@
+2009-08-04  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Gavin "Gavvy" Barraclough.
+
+        Ensure that DumpRenderTreeSupport is regenerated when switching between OS versions
+        by listing the DumpRenderTree binary as a dependency.  Xcode has the smarts to rebuild
+        DumpRenderTree itself when switching OS versions so this dependency removes the need
+        for any smarts in the Makefile.
+
+        * DumpRenderTree/mac/PerlSupport/Makefile:
+
 2009-08-04  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

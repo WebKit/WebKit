@@ -27,6 +27,7 @@ OUTPUT_DIR=$(CONFIGURATION_BUILD_DIR)
 WRAPPER=$(OUTPUT_DIR)/DerivedSources/DumpRenderTree/DumpRenderTreeSupport_wrap.c
 PERL_MODULE=$(OUTPUT_DIR)/DumpRenderTreeSupport.pm
 DYLIB=$(OUTPUT_DIR)/DumpRenderTreeSupport.dylib
+DUMPRENDERTREE=$(OUTPUT_DIR)/DumpRenderTree
 
 OSX_VERSION=$(shell sw_vers -productVersion | cut -d. -f 2)
 
@@ -35,7 +36,7 @@ ifneq "$(OSX_VERSION)" "4"
 
 all: $(DYLIB) $(PERL_MODULE)
 
-$(WRAPPER) $(PERL_MODULE): DumpRenderTreeSupport.c
+$(WRAPPER) $(PERL_MODULE): DumpRenderTreeSupport.c $(DUMPRENDERTREE)
 	mkdir -p $$(dirname $(WRAPPER))
 	swig -o $(WRAPPER) -outdir $(OUTPUT_DIR) -perl -module DumpRenderTreeSupport $<
 
