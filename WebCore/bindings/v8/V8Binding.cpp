@@ -51,7 +51,9 @@ public:
     explicit WebCoreStringResource(const String& string)
         : m_plainString(string)
     {
-        ASSERT(WTF::isMainThread());
+#ifndef NDEBUG
+        m_threadId = WTF::currentThread();
+#endif
         v8::V8::AdjustAmountOfExternalAllocatedMemory(2 * length());
     }
 
@@ -59,13 +61,17 @@ public:
         : m_plainString(string)
         , m_atomicString(string)
     {
-        ASSERT(WTF::isMainThread());
+#ifndef NDEBUG
+        m_threadId = WTF::currentThread();
+#endif
         v8::V8::AdjustAmountOfExternalAllocatedMemory(2 * length());
     }
 
     virtual ~WebCoreStringResource()
     {
-        ASSERT(WTF::isMainThread());
+#ifndef NDEBUG
+        ASSERT(m_threadId == WTF::currentThread());
+#endif
         int reducedExternalMemory = -2 * length();
         if (!m_plainString.impl()->inTable())
             reducedExternalMemory *= 2;
@@ -83,7 +89,9 @@ public:
 
     AtomicString atomicString()
     {
-        ASSERT(WTF::isMainThread());
+#ifndef NDEBUG
+        ASSERT(m_threadId == WTF::currentThread());
+#endif
         if (m_atomicString.isNull()) {
             m_atomicString = AtomicString(m_plainString);
             if (!m_plainString.impl()->inTable())
@@ -106,6 +114,10 @@ private:
     // the original string alive because v8 may keep derived pointers
     // into that string.
     AtomicString m_atomicString;
+
+#ifndef NDEBUG
+    WTF::ThreadIdentifier m_threadId;
+#endif
 };
 
 String v8StringToWebCoreString(v8::Handle<v8::String> v8String, ExternalMode external,
