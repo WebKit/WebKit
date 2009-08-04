@@ -1,6 +1,9 @@
 2009-08-03  Harald Fernengel  <harald.fernengel@nokia.com>
 
-        Reviewed by NOBODY
+        Reviewed by Darin Adler.
+
+        Fix compile error for ambigous call to abs()
+        https://bugs.webkit.org/show_bug.cgi?id=27873
 
         Fix ambiguity in abs(long int) call by calling labs() instead
 
