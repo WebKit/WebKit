@@ -251,6 +251,39 @@ HRESULT STDMETHODCALLTYPE ResourceLoadDelegate::willSendRequest(
     return S_OK;
 }
 
+HRESULT STDMETHODCALLTYPE ResourceLoadDelegate::didReceiveResponse(
+    /* [in] */ IWebView* webView, 
+    /* [in] */ unsigned long identifier, 
+    /* [in] */ IWebURLResponse* response, 
+    /* [in] */ IWebDataSource* dataSource)
+{
+    if (!done && gLayoutTestController->dumpResourceLoadCallbacks()) {
+        printf("%S - didReceiveResponse %S\n",
+            descriptionSuitableForTestResult(identifier).c_str(),
+            descriptionSuitableForTestResult(response).c_str());
+    }
+    if (!done && gLayoutTestController->dumpResourceResponseMIMETypes()) {
+        BSTR mimeTypeBSTR;
+        if (FAILED(response->MIMEType(&mimeTypeBSTR)))
+            E_FAIL;
+    
+        wstring mimeType = wstringFromBSTR(mimeTypeBSTR);
+        ::SysFreeString(mimeTypeBSTR);
+
+        BSTR urlBSTR;
+        if (FAILED(response->URL(&urlBSTR)))
+            E_FAIL;
+    
+        wstring url = urlSuitableForTestResult(wstringFromBSTR(urlBSTR));
+        ::SysFreeString(urlBSTR);
+
+        printf("%S has MIME type %S\n", url.c_str(), mimeType.c_str());
+    }
+
+    return S_OK;
+}
+
+
 HRESULT STDMETHODCALLTYPE ResourceLoadDelegate::didFinishLoadingFromDataSource( 
     /* [in] */ IWebView* webView,
     /* [in] */ unsigned long identifier,
