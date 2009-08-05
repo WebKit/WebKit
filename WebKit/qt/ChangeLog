@@ -1,3 +1,11 @@
+2009-08-05  Csaba Osztrogonac  <oszi@inf.u-szeged.hu>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Fix build error caused by http://trac.webkit.org/changeset/46763
+
+        * Api/qwebpluginfactory.h: Export macro added.
+
 2009-08-04  Antonio Gomes   <antonio.gomes@openbossa.org>
 
         Reviewed by Simon Hausmann.

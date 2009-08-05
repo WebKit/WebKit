@@ -34,7 +34,7 @@ class QWebPluginFactoryPrivate;
 class QWEBKIT_EXPORT QWebPluginFactory : public QObject {
     Q_OBJECT
 public:
-    struct MimeType {
+    struct QWEBKIT_EXPORT MimeType {
         QString name;
         QString description;
         QStringList fileExtensions;
