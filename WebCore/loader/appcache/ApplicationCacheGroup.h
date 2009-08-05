@@ -91,9 +91,8 @@ public:
     bool isCopy() const { return m_isCopy; }
 
 private:
-    typedef void (DOMApplicationCache::*ListenerFunction)();
-    static void postListenerTask(DOMApplicationCache::EventType, const HashSet<DocumentLoader*>&);
-    static void postListenerTask(DOMApplicationCache::EventType, DocumentLoader*);
+    static void postListenerTask(ApplicationCacheHost::EventID, const HashSet<DocumentLoader*>&);
+    static void postListenerTask(ApplicationCacheHost::EventID, DocumentLoader*);
     void scheduleReachedMaxAppCacheSizeCallback();
 
     PassRefPtr<ResourceHandle> createResourceHandle(const KURL&, ApplicationCacheResource* newestCachedResource);

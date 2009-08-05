@@ -31,6 +31,7 @@
 #include "config.h"
 #include "FrameLoader.h"
 
+#include "ApplicationCacheHost.h"
 #include "Archive.h"
 #include "ArchiveFactory.h"
 #include "CString.h"
@@ -94,9 +95,6 @@
 #include <wtf/CurrentTime.h>
 #include <wtf/StdLibExtras.h>
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-#include "ApplicationCacheHost.h"
-#endif
 
 #if ENABLE(SVG)
 #include "SVGDocument.h"

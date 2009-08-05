@@ -65,7 +65,7 @@ unsigned short DOMApplicationCache::status() const
 {
     ApplicationCacheHost* cacheHost = applicationCacheHost();
     if (!cacheHost)
-        return UNCACHED;
+        return ApplicationCacheHost::UNCACHED;
     return cacheHost->status();
 }
 
@@ -95,13 +95,13 @@ ScriptExecutionContext* DOMApplicationCache::scriptExecutionContext() const
     return m_frame->document();
 }
 
-void DOMApplicationCache::addEventListener(const AtomicString& eventName, PassRefPtr<EventListener> eventListener, bool)
+void DOMApplicationCache::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> eventListener, bool)
 {
-    EventListenersMap::iterator iter = m_eventListeners.find(eventName);
+    EventListenersMap::iterator iter = m_eventListeners.find(eventType);
     if (iter == m_eventListeners.end()) {
         ListenerVector listeners;
         listeners.append(eventListener);
-        m_eventListeners.add(eventName, listeners);
+        m_eventListeners.add(eventType, listeners);
     } else {
         ListenerVector& listeners = iter->second;
         for (ListenerVector::iterator listenerIter = listeners.begin(); listenerIter != listeners.end(); ++listenerIter) {
@@ -110,13 +110,13 @@ void DOMApplicationCache::addEventListener(const AtomicString& eventName, PassRe
         }
         
         listeners.append(eventListener);
-        m_eventListeners.add(eventName, listeners);
+        m_eventListeners.add(eventType, listeners);
     }    
 }
 
-void DOMApplicationCache::removeEventListener(const AtomicString& eventName, EventListener* eventListener, bool)
+void DOMApplicationCache::removeEventListener(const AtomicString& eventType, EventListener* eventListener, bool)
 {
-    EventListenersMap::iterator iter = m_eventListeners.find(eventName);
+    EventListenersMap::iterator iter = m_eventListeners.find(eventType);
     if (iter == m_eventListeners.end())
         return;
     
@@ -146,11 +146,11 @@ bool DOMApplicationCache::dispatchEvent(PassRefPtr<Event> event, ExceptionCode& 
     return !event->defaultPrevented();
 }
 
-void DOMApplicationCache::callListener(const AtomicString& eventName, EventListener* listener)
+void DOMApplicationCache::callListener(const AtomicString& eventType, EventListener* listener)
 {
     ASSERT(m_frame);
     
-    RefPtr<Event> event = Event::create(eventName, false, false);
+    RefPtr<Event> event = Event::create(eventType, false, false);
     if (listener) {
         event->setTarget(this);
         event->setCurrentTarget(this);
@@ -162,53 +162,51 @@ void DOMApplicationCache::callListener(const AtomicString& eventName, EventListe
     ASSERT(!ec);    
 }
 
-// static
-const AtomicString& DOMApplicationCache::toEventName(EventType eventType)
+const AtomicString& DOMApplicationCache::toEventType(ApplicationCacheHost::EventID id)
 {
-    switch (eventType) {
-    case CHECKING_EVENT:
+    switch (id) {
+    case ApplicationCacheHost::CHECKING_EVENT:
         return eventNames().checkingEvent;
-    case ERROR_EVENT:
+    case ApplicationCacheHost::ERROR_EVENT:
         return eventNames().errorEvent;
-    case NOUPDATE_EVENT:
+    case ApplicationCacheHost::NOUPDATE_EVENT:
         return eventNames().noupdateEvent;
-    case DOWNLOADING_EVENT:
+    case ApplicationCacheHost::DOWNLOADING_EVENT:
         return eventNames().downloadingEvent;
-    case PROGRESS_EVENT:
+    case ApplicationCacheHost::PROGRESS_EVENT:
         return eventNames().progressEvent;
-    case UPDATEREADY_EVENT:
+    case ApplicationCacheHost::UPDATEREADY_EVENT:
         return eventNames().updatereadyEvent;
-    case CACHED_EVENT:
+    case ApplicationCacheHost::CACHED_EVENT:
         return eventNames().cachedEvent;
-    case OBSOLETE_EVENT:            
+    case ApplicationCacheHost::OBSOLETE_EVENT:            
         return eventNames().obsoleteEvent;
     }
     ASSERT_NOT_REACHED();
     return eventNames().errorEvent;
 }
 
-// static
-DOMApplicationCache::EventType DOMApplicationCache::toEventType(const AtomicString& eventName)
+ApplicationCacheHost::EventID DOMApplicationCache::toEventID(const AtomicString& eventType)
 {
-    if (eventName == eventNames().checkingEvent)
-        return CHECKING_EVENT;
-    if (eventName == eventNames().errorEvent)
-        return ERROR_EVENT;
-    if (eventName == eventNames().noupdateEvent)
-        return NOUPDATE_EVENT;
-    if (eventName == eventNames().downloadingEvent)
-        return DOWNLOADING_EVENT;
-    if (eventName == eventNames().progressEvent)
-        return PROGRESS_EVENT;
-    if (eventName == eventNames().updatereadyEvent)
-        return UPDATEREADY_EVENT;
-    if (eventName == eventNames().cachedEvent)
-        return CACHED_EVENT;
-    if (eventName == eventNames().obsoleteEvent)
-        return OBSOLETE_EVENT;
+    if (eventType == eventNames().checkingEvent)
+        return ApplicationCacheHost::CHECKING_EVENT;
+    if (eventType == eventNames().errorEvent)
+        return ApplicationCacheHost::ERROR_EVENT;
+    if (eventType == eventNames().noupdateEvent)
+        return ApplicationCacheHost::NOUPDATE_EVENT;
+    if (eventType == eventNames().downloadingEvent)
+        return ApplicationCacheHost::DOWNLOADING_EVENT;
+    if (eventType == eventNames().progressEvent)
+        return ApplicationCacheHost::PROGRESS_EVENT;
+    if (eventType == eventNames().updatereadyEvent)
+        return ApplicationCacheHost::UPDATEREADY_EVENT;
+    if (eventType == eventNames().cachedEvent)
+        return ApplicationCacheHost::CACHED_EVENT;
+    if (eventType == eventNames().obsoleteEvent)
+        return ApplicationCacheHost::OBSOLETE_EVENT;
   
     ASSERT_NOT_REACHED();
-    return ERROR_EVENT;
+    return ApplicationCacheHost::ERROR_EVENT;
 }
 
 

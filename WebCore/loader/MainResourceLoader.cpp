@@ -30,6 +30,7 @@
 #include "config.h"
 #include "MainResourceLoader.h"
 
+#include "ApplicationCacheHost.h"
 #include "DocumentLoader.h"
 #include "FormState.h"
 #include "Frame.h"
@@ -40,10 +41,6 @@
 #include "ResourceError.h"
 #include "ResourceHandle.h"
 #include "Settings.h"
-
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-#include "ApplicationCacheHost.h"
-#endif
 
 // FIXME: More that is in common with SubresourceLoader should move up into ResourceLoader.
 

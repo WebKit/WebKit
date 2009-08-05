@@ -70,8 +70,7 @@ public:
     
     void empty();
     
-    static bool transferApplicationCache(const String& cacheDirectory, ApplicationCacheHost*);
-    static bool storeCopyOfCache(const String& cacheDirectory, ApplicationCache*);
+    static bool storeCopyOfCache(const String& cacheDirectory, ApplicationCacheHost*);
 
     bool manifestURLs(Vector<KURL>* urls);
     bool cacheGroupSize(const String& manifestURL, int64_t* size);

@@ -30,9 +30,7 @@
 #include "config.h"
 #include "ResourceLoader.h"
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
 #include "ApplicationCacheHost.h"
-#endif
 #include "DocumentLoader.h"
 #include "Frame.h"
 #include "FrameLoader.h"

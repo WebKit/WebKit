@@ -201,7 +201,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
         
     NSString *cacheDir = [NSString _webkit_localCacheDirectoryWithBundleIdentifier:destinationBundleIdentifier];
     
-    return ApplicationCacheStorage::transferApplicationCache(cacheDir, loader->applicationCacheHost());
+    return ApplicationCacheStorage::storeCopyOfCache(cacheDir, loader->applicationCacheHost());
 }
 
 @end

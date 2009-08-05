@@ -44,7 +44,7 @@
 namespace WebCore {
 
 ApplicationCacheHost::ApplicationCacheHost(DocumentLoader* documentLoader)
-    : m_DOMApplicationCache(0)
+    : m_domApplicationCache(0)
     , m_documentLoader(documentLoader)
     , m_candidateApplicationCacheGroup(0)
 {
@@ -221,6 +221,18 @@ bool ApplicationCacheHost::canCacheInPageCache() const
     return !applicationCache() && !candidateApplicationCacheGroup();
 }
 
+void ApplicationCacheHost::setDOMApplicationCache(DOMApplicationCache* domApplicationCache)
+{
+    ASSERT(!m_domApplicationCache || !domApplicationCache);
+    m_domApplicationCache = domApplicationCache;
+}
+
+void ApplicationCacheHost::notifyEventListener(EventID id)
+{
+    if (m_domApplicationCache)
+        m_domApplicationCache->callEventListener(id);
+}
+
 void ApplicationCacheHost::setCandidateApplicationCacheGroup(ApplicationCacheGroup* group)
 {
     ASSERT(!m_applicationCache);
@@ -302,28 +314,28 @@ bool ApplicationCacheHost::scheduleLoadFallbackResourceFromApplicationCache(Reso
     return true;
 }
 
-DOMApplicationCache::Status ApplicationCacheHost::status() const
+ApplicationCacheHost::Status ApplicationCacheHost::status() const
 {
     ApplicationCache* cache = applicationCache();    
     if (!cache)
-        return DOMApplicationCache::UNCACHED;
+        return UNCACHED;
 
     switch (cache->group()->updateStatus()) {
         case ApplicationCacheGroup::Checking:
-            return DOMApplicationCache::CHECKING;
+            return CHECKING;
         case ApplicationCacheGroup::Downloading:
-            return DOMApplicationCache::DOWNLOADING;
+            return DOWNLOADING;
         case ApplicationCacheGroup::Idle: {
             if (cache->group()->isObsolete())
-                return DOMApplicationCache::OBSOLETE;
+                return OBSOLETE;
             if (cache != cache->group()->newestCache())
-                return DOMApplicationCache::UPDATEREADY;
-            return DOMApplicationCache::IDLE;
+                return UPDATEREADY;
+            return IDLE;
         }
     }
 
     ASSERT_NOT_REACHED();
-    return DOMApplicationCache::UNCACHED;
+    return UNCACHED;
 }
 
 bool ApplicationCacheHost::update()

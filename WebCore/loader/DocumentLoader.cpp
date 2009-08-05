@@ -29,6 +29,7 @@
 #include "config.h"
 #include "DocumentLoader.h"
 
+#include "ApplicationCacheHost.h"
 #include "ArchiveFactory.h"
 #include "ArchiveResourceCollection.h"
 #include "CachedPage.h"
@@ -148,7 +149,7 @@ DocumentLoader::DocumentLoader(const ResourceRequest& req, const SubstituteData&
     , m_substituteResourceDeliveryTimer(this, &DocumentLoader::substituteResourceDeliveryTimerFired)
     , m_didCreateGlobalHistoryEntry(false)
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
-    , m_applicationCacheHost(this)
+    , m_applicationCacheHost(new ApplicationCacheHost(this))
 #endif
 {
 }
@@ -246,7 +247,7 @@ void DocumentLoader::mainReceivedError(const ResourceError& error, bool isComple
     ASSERT(!error.isNull());
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
-    m_applicationCacheHost.failedLoadingMainResource();
+    m_applicationCacheHost->failedLoadingMainResource();
 #endif
     
     if (!frameLoader())
@@ -412,7 +413,7 @@ void DocumentLoader::detachFromFrame()
 {
     ASSERT(m_frame);
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
-    m_applicationCacheHost.setDOMApplicationCache(0);
+    m_applicationCacheHost->setDOMApplicationCache(0);
 #endif
     m_frame = 0;
 }

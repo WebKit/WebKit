@@ -1,3 +1,107 @@
+2009-08-04  Michael Nordman  <michaeln@google.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27821
+
+        No new features, no new tests. Existing layout tests pass.
+
+        * WebCore.base.exp:
+
+        Export AppliationCacheGroup::storeCopyOfCache
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+        Restore DOMApplicationCache.h and ApplicationCacheHost.h to 'project' headers
+        instead of 'private' headers since they're no longer in the DocumentLoader.h
+        include graph.
+
+        * html/HTMLHtmlElement.cpp:
+        (WebCore::HTMLHtmlElement::insertedIntoDocument):
+
+        Reinstate the test for manifest.isNull instead of .isEmtpty().
+        Added a FIXME to revisit once the spec gets clarified.
+        
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::DocumentLoader):
+        (WebCore::DocumentLoader::mainReceivedError):
+        (WebCore::DocumentLoader::detachFromFrame):
+        * loader/DocumentLoader.h:
+        (WebCore::DocumentLoader::applicationCacheHost):
+
+        ApplicationCacheHost is held in an OwnPtr<> by DocumentLoader. This was done
+        for compile time friendliness, it results in a smaller include graph for files
+        dependent on DocumentLoader.h.
+
+        * loader/FrameLoader.cpp:
+        * loader/MainResourceLoader.cpp:
+        * loader/ResourceLoader.cpp:
+
+        Cleanup ussage of ENABLE(xxx) around includes, generally remove those guards.
+        This was done for readability at the include site. The included files contain appropriate guards,
+        so they're not needed at the include site.
+
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::selectCache):
+        (WebCore::ApplicationCacheGroup::finishedLoadingMainResource):
+        (WebCore::ApplicationCacheGroup::failedLoadingMainResource):
+        (WebCore::ApplicationCacheGroup::update):
+        (WebCore::ApplicationCacheGroup::didFinishLoadingManifest):
+        (WebCore::ApplicationCacheGroup::manifestNotFound):
+        (WebCore::ApplicationCacheGroup::checkIfLoadIsComplete):
+        (WebCore::ApplicationCacheGroup::startLoadingEntry):
+        (WebCore::CallCacheListenerTask::create):
+        (WebCore::CallCacheListenerTask::performTask):
+        (WebCore::CallCacheListenerTask::CallCacheListenerTask):
+        (WebCore::ApplicationCacheGroup::postListenerTask):
+        * loader/appcache/ApplicationCacheGroup.h:
+
+        Use ApplicationCachHost defined constants, no longer depends on DOMApplicationCache.
+
+        * loader/appcache/ApplicationCacheHost.cpp:
+        (WebCore::ApplicationCacheHost::ApplicationCacheHost):
+        (WebCore::ApplicationCacheHost::setDOMApplicationCache):
+        (WebCore::ApplicationCacheHost::notifyEventListener):
+        (WebCore::ApplicationCacheHost::status):
+        * loader/appcache/ApplicationCacheHost.h:
+        (WebCore::ApplicationCacheHost::):
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::storeCopyOfCache):
+        * loader/appcache/ApplicationCacheStorage.h:
+
+        Merge recently added transferApplicationCache and pre-existing storeCopyOfCache methods.
+
+        * loader/appcache/DOMApplicationCache.cpp:
+        (WebCore::DOMApplicationCache::status):
+        (WebCore::DOMApplicationCache::addEventListener):
+        (WebCore::DOMApplicationCache::removeEventListener):
+        (WebCore::DOMApplicationCache::callListener):
+        (WebCore::DOMApplicationCache::toEventType):
+        (WebCore::DOMApplicationCache::toEventID):
+        * loader/appcache/DOMApplicationCache.h:
+        (WebCore::DOMApplicationCache::setAttributeEventListener):
+        (WebCore::DOMApplicationCache::getAttributeEventListener):
+        (WebCore::DOMApplicationCache::clearAttributeEventListener):
+        (WebCore::DOMApplicationCache::callEventListener):
+        (WebCore::DOMApplicationCache::setOnchecking):
+        (WebCore::DOMApplicationCache::onchecking):
+        (WebCore::DOMApplicationCache::setOnerror):
+        (WebCore::DOMApplicationCache::onerror):
+        (WebCore::DOMApplicationCache::setOnnoupdate):
+        (WebCore::DOMApplicationCache::onnoupdate):
+        (WebCore::DOMApplicationCache::setOndownloading):
+        (WebCore::DOMApplicationCache::ondownloading):
+        (WebCore::DOMApplicationCache::setOnprogress):
+        (WebCore::DOMApplicationCache::onprogress):
+        (WebCore::DOMApplicationCache::setOnupdateready):
+        (WebCore::DOMApplicationCache::onupdateready):
+        (WebCore::DOMApplicationCache::setOncached):
+        (WebCore::DOMApplicationCache::oncached):
+        (WebCore::DOMApplicationCache::setOnobsolete):
+        (WebCore::DOMApplicationCache::onobsolete):
+
+        Use ApplicationCachHost defined constants for Status and EventIDs.
+
 2009-08-04  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Dimitri Glazkov.
