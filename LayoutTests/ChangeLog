@@ -27,6 +27,26 @@
 
         Reviewed by Simon Fraser.
 
+        fast/forms/textfield-drag-into-disabled.html has a needless 5 second delay
+        https://bugs.webkit.org/show_bug.cgi?id=28008
+
+        Updated the test not to use a 5 second delay.
+        Also made this dumpAsText.
+        I verified I didn't break the test by removing the "disabled"
+        from the <input> and validating that the drag completed correctly.
+
+        * fast/forms/textfield-drag-into-disabled-expected.txt: Added.
+        * fast/forms/textfield-drag-into-disabled.html:
+        * platform/mac/fast/forms/textfield-drag-into-disabled-expected.checksum: Removed.
+        * platform/mac/fast/forms/textfield-drag-into-disabled-expected.png: Removed.
+        * platform/mac/fast/forms/textfield-drag-into-disabled-expected.txt: Removed.
+        * platform/qt/fast/forms/textfield-drag-into-disabled-expected.txt: Removed.
+        * platform/win/fast/forms/textfield-drag-into-disabled-expected.txt: Removed.
+
+2009-08-04  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Simon Fraser.
+
         LayoutTests are too slow
         https://bugs.webkit.org/show_bug.cgi?id=27995
 
