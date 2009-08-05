@@ -1627,6 +1627,7 @@ sub IsRefPtrType
     return 1 if $type eq "HTMLElement";
     return 1 if $type eq "HTMLOptionsCollection";
     return 1 if $type eq "ImageData";
+    return 1 if $type eq "Media";
     return 1 if $type eq "MediaError";
     return 1 if $type eq "MimeType";
     return 1 if $type eq "Node";

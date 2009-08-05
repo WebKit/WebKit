@@ -1,3 +1,11 @@
+2009-08-05  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, build fix.
+
+        [Chromium] Let CodeGeneratorV8.pm know that Media is ref-counted.
+
+        * bindings/scripts/CodeGeneratorV8.pm: Added Media check to IsRefPtrType.
+
 2009-08-05  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler.
