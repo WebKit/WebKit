@@ -1,3 +1,14 @@
+2009-08-04  Alice Liu  <alice.liu@apple.com>
+
+        "Shift + Enter" should behave like "Enter" in editable fields.
+        Affects backward search in find-in-page in Safari for Windows
+
+        Reviewed by Jon Honeycutt.
+
+        * WebView.cpp:
+        Register shift+enter as InsertNewline command, similar to other 
+        modifier+Enter combinations.
+
 2009-07-29  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Part of <rdar://problem/5698113> Safari shouldn't auto-activate
