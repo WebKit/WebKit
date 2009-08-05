@@ -286,6 +286,7 @@ IDL_BINDINGS += \
     css/CSSValueList.idl \
     css/CSSVariablesDeclaration.idl \
     css/CSSVariablesRule.idl \
+    css/Media.idl \
     css/MediaList.idl \
     css/RGBColor.idl \
     css/Rect.idl \
@@ -608,6 +609,7 @@ SOURCES += \
     css/FontFamilyValue.cpp \
     css/FontValue.cpp \
     css/MediaFeatureNames.cpp \
+    css/Media.cpp \
     css/MediaList.cpp \
     css/MediaQuery.cpp \
     css/MediaQueryEvaluator.cpp \
@@ -1266,6 +1268,7 @@ HEADERS += \
     css/FontFamilyValue.h \
     css/FontValue.h \
     css/MediaFeatureNames.h \
+    css/Media.h \
     css/MediaList.h \
     css/MediaQueryEvaluator.h \
     css/MediaQueryExp.h \

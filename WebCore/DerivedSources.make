@@ -175,6 +175,7 @@ DOM_CLASSES = \
     InspectorBackend \
     KeyboardEvent \
     Location \
+    Media \
     MediaError \
     MediaList \
     MessageChannel \

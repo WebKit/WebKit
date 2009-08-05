@@ -149,6 +149,7 @@
 #include "JSJavaScriptCallFrame.cpp"
 #include "JSKeyboardEvent.cpp"
 #include "JSLocation.cpp"
+#include "JSMedia.cpp"
 #include "JSMediaError.cpp"
 #include "JSMediaList.cpp"
 #include "JSMessageChannel.cpp"

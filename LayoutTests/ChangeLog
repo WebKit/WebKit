@@ -1,3 +1,13 @@
+2009-08-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Implement the matchMedium method on the Media interface described in the CSSOM View Module.
+        https://bugs.webkit.org/show_bug.cgi?id=22495
+
+        * fast/media/matchmedium-query-api-expected.txt: Added.
+        * fast/media/matchmedium-query-api.html: Added.
+
 2009-08-05  Brady Eidson  <beidson@apple.com>
 
         Rubberstamped by Mark Rowe.

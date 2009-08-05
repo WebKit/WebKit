@@ -218,6 +218,7 @@ This file contains the list of files needed to build WebCore.
         css/FontFamilyValue.cpp
         css/FontValue.cpp
         css/MediaFeatureNames.cpp
+        css/Media.cpp
         css/MediaList.cpp
         css/MediaQuery.cpp
         css/MediaQueryEvaluator.cpp
@@ -358,6 +359,7 @@ This file contains the list of files needed to build WebCore.
         DerivedSources/WebCore/JSJavaScriptCallFrame.cpp
         DerivedSources/WebCore/JSKeyboardEvent.cpp
         DerivedSources/WebCore/JSLocation.cpp
+        DerivedSources/WebCore/JSMedia.cpp
         DerivedSources/WebCore/JSMediaList.cpp
         DerivedSources/WebCore/JSMessageChannel.cpp
         DerivedSources/WebCore/JSMessageEvent.cpp

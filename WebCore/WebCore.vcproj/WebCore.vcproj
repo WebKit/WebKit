@@ -6571,6 +6571,14 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSMedia.h"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSMedia.cpp"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSMediaError.cpp"
 				>
 				<FileConfiguration
@@ -21857,6 +21865,14 @@
 			</File>
 			<File
 				RelativePath="..\css\mediaControls.css"
+				>
+			</File>
+			<File
+				RelativePath="..\css\Media.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\css\Media.h"
 				>
 			</File>
 			<File
