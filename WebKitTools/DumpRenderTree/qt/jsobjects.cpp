@@ -147,7 +147,8 @@ void LayoutTestController::processWork()
     }
 }
 
-void LayoutTestController::maybeDump(bool)
+// Called on loadFinished on mainFrame.
+void LayoutTestController::maybeDump(bool success)
 {
     m_topLoadingFrame = 0;
     WorkQueue::shared()->setFrozen(true); // first complete load freezes the queue for the rest of this test
@@ -156,7 +157,8 @@ void LayoutTestController::maybeDump(bool)
         if (WorkQueue::shared()->count())
             QTimer::singleShot(0, this, SLOT(processWork()));
         else {
-            emit done();
+            if (success)
+                emit done();
             m_isLoading = false;
         }
     }

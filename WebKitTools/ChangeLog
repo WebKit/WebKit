@@ -2,6 +2,16 @@
 
         Reviewed by Simon Hausmann.
 
+        If load of a test fails, don't dump as it will be dumped
+        in the preceding test, resulting in a invalid incorrect layout.
+
+        * DumpRenderTree/qt/jsobjects.cpp:
+        (LayoutTestController::maybeDump):
+
+2009-08-04  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
         Make the Qt DumpRenderTree more similar to the mac one.
 
         Changes include:
