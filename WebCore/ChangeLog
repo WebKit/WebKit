@@ -1,3 +1,51 @@
+2009-08-05  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26460
+        Return multiple icon entries from the ICO decoder as separate frames,
+        sorted by decreasing quality (much like the CG ICO decoder does).
+
+        As a result of this change, we can eliminate the Skia-specific setData()
+        hack that the Chromium port used to select the desired icon size -- now
+        callers can just enumerate the frames and ask for the data from the one
+        they like.
+        
+        Under the hood, the ICO decoder now keeps vectors for a number of things
+        (including directory entries and image decoders) where it used to have
+        single members.  However, callers (that I have seen) will only request
+        one frame from the icon, so practically there aren't going to be lots of
+        instantiated image decoders.
+
+        * platform/graphics/ImageSource.h: Move |m_decoder| back to private now that Skia no longer needs to access it.
+        * platform/graphics/cairo/ImageSourceCairo.cpp:
+        (WebCore::createDecoder): Remove size argument from ICO decoder instantiation.
+        * platform/graphics/skia/ImageSourceSkia.cpp:
+        (WebCore::createDecoder): Remove size argument from ICO decoder instantiation.
+        (WebCore::ImageSource::setData): Remove function to ask for a particular icon size.
+        * platform/graphics/skia/ImageSourceSkia.h: Removed.
+        * platform/graphics/wx/ImageSourceWx.cpp:
+        (WebCore::createDecoder): Remove size argument from ICO decoder instantiation.
+        * platform/image-decoders/ico/ICOImageDecoder.cpp:
+        (WebCore::ICOImageDecoder::ICOImageDecoder):
+        (WebCore::ICOImageDecoder::~ICOImageDecoder): Delete all instantiated per-frame decoders.
+        (WebCore::ICOImageDecoder::setData): Send data to all instantiated per-frame decoders.
+        (WebCore::ICOImageDecoder::isSizeAvailable): Use size from icon directory instead of PNG decoder (if applicable) so we can report it without decoding the PNG frames.
+        (WebCore::ICOImageDecoder::size): Report frame-specific size if BMP decoder is calling.  Otherwise, use size from icon directory instead of PNG decoder (if applicable).
+        (WebCore::ICOImageDecoder::frameSizeAtIndex): Implement.
+        (WebCore::ICOImageDecoder::setSize): Sanity check value if BMP decoder is calling.
+        (WebCore::ICOImageDecoder::frameCount): Implement.
+        (WebCore::ICOImageDecoder::frameBufferAtIndex): Sanity check size for PNG frames.
+        (WebCore::ICOImageDecoder::compareEntries): Add utility function for sorting entries.
+        (WebCore::ICOImageDecoder::setDataForPNGDecoderAtIndex): Factor out utility function for passing correct data blob to a PNG decoder.
+        (WebCore::ICOImageDecoder::decodeWithCheckForDataEnded): Split decode() into two pieces.
+        (WebCore::ICOImageDecoder::decodeDirectory): The first part of the old decode().
+        (WebCore::ICOImageDecoder::decodeAtIndex): The second part of the old decode(), split off so we avoid decoding an entry until it's requested.
+        (WebCore::ICOImageDecoder::processDirectory): Add resizing of internal data structures based on directory contents.
+        (WebCore::ICOImageDecoder::processDirectoryEntries): Sort entries by quality.
+        (WebCore::ICOImageDecoder::imageTypeAtIndex): Return type to caller instead of setting a member.
+        * platform/image-decoders/ico/ICOImageDecoder.h:
+
 2009-08-05  Szabo Carol  <carol.szabo@nokia.com>
 
         Reviewed by Darin Adler.

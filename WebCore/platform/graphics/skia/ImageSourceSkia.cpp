@@ -30,7 +30,7 @@
 
 
 #include "config.h"
-#include "ImageSourceSkia.h"
+#include "ImageSource.h"
 #include "SharedBuffer.h"
 
 #include "GIFImageDecoder.h"
@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-ImageDecoder* createDecoder(const Vector<char>& data, const IntSize& preferredIconSize)
+ImageDecoder* createDecoder(const Vector<char>& data)
 {
     // We need at least 4 bytes to figure out what kind of image we're dealing with.
     int length = data.size();
@@ -79,7 +79,7 @@ ImageDecoder* createDecoder(const Vector<char>& data, const IntSize& preferredIc
     // CURs begin with 2-byte 0 followed by 2-byte 2.
     if (!memcmp(contents, "\000\000\001\000", 4) ||
         !memcmp(contents, "\000\000\002\000", 4))
-        return new ICOImageDecoder(preferredIconSize);
+        return new ICOImageDecoder();
    
     // XBMs require 8 bytes of info.
     if (length >= 8 && strncmp(contents, "#define ", 8) == 0)
@@ -124,7 +124,7 @@ void ImageSource::setData(SharedBuffer* data, bool allDataReceived)
     // If insufficient bytes are available to determine the image type, no decoder plugin will be
     // made.
     if (!m_decoder)
-        m_decoder = createDecoder(data->buffer(), IntSize());
+        m_decoder = createDecoder(data->buffer());
 
     // CreateDecoder will return NULL if the decoder could not be created. Plus,
     // we should not send more data to a decoder which has already decided it
@@ -228,16 +228,6 @@ bool ImageSource::frameHasAlphaAtIndex(size_t index)
         return false;
 
     return buffer->hasAlpha();
-}
-
-void ImageSourceSkia::setData(SharedBuffer* data,
-                              bool allDataReceived,
-                              const IntSize& preferredIconSize)
-{
-    if (!m_decoder)
-        m_decoder = createDecoder(data->buffer(), preferredIconSize);
-
-    ImageSource::setData(data, allDataReceived);
 }
 
 String ImageSource::filenameExtension() const

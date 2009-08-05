@@ -75,7 +75,7 @@ ImageDecoder* createDecoder(const Vector<char>& data)
     // CURs begin with 2-byte 0 followed by 2-byte 2.
     if (!memcmp(contents, "\000\000\001\000", 4) ||
         !memcmp(contents, "\000\000\002\000", 4))
-        return new ICOImageDecoder(IntSize());
+        return new ICOImageDecoder();
 
     // XBMs require 8 bytes of info.
     if (length >= 8 && strncmp(contents, "#define ", 8) == 0)
