@@ -1,3 +1,17 @@
+2009-08-05  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        Fix two tests to not load a resource that takes five seconds to load.
+
+        We achieve this by making the delay in slow-resource.pl configurable in a query parameter.
+        This drops the run time of each of the tests from over five seconds to less than a third
+        of a second.
+
+        * http/tests/misc/DOMContentLoaded-event.html:
+        * http/tests/navigation/multiple-back-forward-entries.html:
+        * http/tests/navigation/resources/slow-resource.pl:
+
 2009-08-05  Szabo Carol  <carol.szabo@nokia.com>
 
         Reviewed by Darin Adler.

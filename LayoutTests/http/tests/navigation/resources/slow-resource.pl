@@ -1,5 +1,13 @@
 #!/usr/bin/perl -w
 
+use strict;
+use CGI;
+use Time::HiRes qw(sleep);
+
+my $cgi = new CGI;
+my $delay = $cgi->param('delay');
+$delay = 5000 unless $delay;
+
 # flush the buffers after each print
 select (STDOUT);
 $| = 1;
@@ -11,6 +19,6 @@ print "Pragma: no-cache\n";
 print "\n";
 
 print "Test page for back/forward list that takes awhile to\n";
-sleep 5;
+sleep $delay / 1000;
 print "Finish loading\n";
 
