@@ -1,3 +1,12 @@
+2009-08-05  Brady Eidson  <beidson@apple.com>
+
+        Rubberstamped by Mark Rowe.
+
+        As a followup to http://trac.webkit.org/changeset/46809, update Tiger platform specific results for these tests.
+
+        * platform/mac-tiger/http/tests/loading/redirect-methods-expected.txt:
+        * platform/mac-tiger/http/tests/misc/favicon-loads-with-images-disabled-expected.txt:
+
 2009-08-05  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Darin Adler.

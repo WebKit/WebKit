@@ -1,6 +1,5 @@
 main frame - didStartProvisionalLoadForFrame
 main frame - didCommitLoadForFrame
-<unknown> - willCacheResponse: called
 main frame - didFinishDocumentLoadForFrame
 main frame - didHandleOnloadEventsForFrame
 main frame - didFinishLoadForFrame
@@ -19,7 +18,6 @@ http://127.0.0.1:8000/loading/resources/redirect-methods-form.html - willSendReq
 http://127.0.0.1:8000/loading/resources/redirect-methods-form.html - didReceiveResponse <NSURLResponse http://127.0.0.1:8000/loading/resources/redirect-methods-form.html, http status code 200>
 frame "0" - didCancelClientRedirectForFrame
 frame "0" - didCommitLoadForFrame
-http://127.0.0.1:8000/loading/resources/redirect-methods-form.html - willCacheResponse: called
 frame "0" - didFinishDocumentLoadForFrame
 frame "0" - didHandleOnloadEventsForFrame
 frame "0" - didFinishLoadForFrame
@@ -30,7 +28,6 @@ http://127.0.0.1:8000/loading/resources/redirect-methods-result.php - willSendRe
 frame "0" - didReceiveServerRedirectForProvisionalLoadForFrame
 http://127.0.0.1:8000/loading/resources/redirect-methods-result.php - didReceiveResponse <NSURLResponse http://127.0.0.1:8000/loading/resources/redirect-methods-result.php?redirected=true, http status code 200>
 frame "0" - didCommitLoadForFrame
-http://127.0.0.1:8000/loading/resources/redirect-methods-result.php - willCacheResponse: called
 frame "0" - didFinishDocumentLoadForFrame
 frame "1" - didStartProvisionalLoadForFrame
 about:blank - willSendRequest <NSURLRequest URL about:blank, main document URL http://127.0.0.1:8000/loading/redirect-methods.html, http method GET> redirectResponse (null)
@@ -59,7 +56,6 @@ http://127.0.0.1:8000/loading/resources/redirect-methods-result.php - willSendRe
 frame "1" - didReceiveServerRedirectForProvisionalLoadForFrame
 http://127.0.0.1:8000/loading/resources/redirect-methods-result.php - didReceiveResponse <NSURLResponse http://127.0.0.1:8000/loading/resources/redirect-methods-result.php?redirected=true, http status code 200>
 frame "1" - didCommitLoadForFrame
-http://127.0.0.1:8000/loading/resources/redirect-methods-result.php - willCacheResponse: called
 frame "1" - didFinishDocumentLoadForFrame
 frame "2" - didStartProvisionalLoadForFrame
 about:blank - willSendRequest <NSURLRequest URL about:blank, main document URL http://127.0.0.1:8000/loading/redirect-methods.html, http method GET> redirectResponse (null)
@@ -88,7 +84,6 @@ http://127.0.0.1:8000/loading/resources/redirect-methods-result.php - willSendRe
 frame "2" - didReceiveServerRedirectForProvisionalLoadForFrame
 http://127.0.0.1:8000/loading/resources/redirect-methods-result.php - didReceiveResponse <NSURLResponse http://127.0.0.1:8000/loading/resources/redirect-methods-result.php?redirected=true, http status code 200>
 frame "2" - didCommitLoadForFrame
-http://127.0.0.1:8000/loading/resources/redirect-methods-result.php - willCacheResponse: called
 frame "2" - didFinishDocumentLoadForFrame
 frame "3" - didStartProvisionalLoadForFrame
 about:blank - willSendRequest <NSURLRequest URL about:blank, main document URL http://127.0.0.1:8000/loading/redirect-methods.html, http method GET> redirectResponse (null)
@@ -117,7 +112,6 @@ http://127.0.0.1:8000/loading/resources/redirect-methods-result.php - willSendRe
 frame "3" - didReceiveServerRedirectForProvisionalLoadForFrame
 http://127.0.0.1:8000/loading/resources/redirect-methods-result.php - didReceiveResponse <NSURLResponse http://127.0.0.1:8000/loading/resources/redirect-methods-result.php?redirected=true, http status code 200>
 frame "3" - didCommitLoadForFrame
-http://127.0.0.1:8000/loading/resources/redirect-methods-result.php - willCacheResponse: called
 frame "3" - didFinishDocumentLoadForFrame
 frame "3" - didHandleOnloadEventsForFrame
 frame "3" - didFinishLoadForFrame
