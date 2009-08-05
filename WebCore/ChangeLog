@@ -1,3 +1,10 @@
+2009-08-04  Simon Hausmann  <hausmann@webkit.org>
+
+        Prospective build fix for Qt build bot: Fix dependency of HTMLNames.cpp
+        to both source files, HTMLTagNames.in and HTMLAttributeNames.in
+
+        * WebCore.pro:
+
 2009-08-04  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adele Peterson.

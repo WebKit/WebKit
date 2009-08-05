@@ -3094,6 +3094,7 @@ htmlnames.input = HTML_NAMES
 htmlnames.dependency_type = TYPE_C
 htmlnames.CONFIG = target_predeps
 htmlnames.variable_out = GENERATED_SOURCES
+htmlnames.depends = $$PWD/html/HTMLAttributeNames.in
 addExtraCompilerWithHeader(htmlnames)
 
 htmlelementfactory.output = $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}HTMLElementFactory.cpp
