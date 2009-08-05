@@ -1,3 +1,16 @@
+2009-08-04  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        REGRESSION (r45064): Drop caret remains in text control after the mouse exits
+        https://bugs.webkit.org/show_bug.cgi?id=26787
+
+        Add back missing dragController()->clear() call.
+
+        * manual-tests/drag-caret.html: Added.
+        * page/DragController.cpp:
+        (WebCore::DragController::tryDocumentDrag):
+
 2009-08-04  Chris Fleizach  <cfleizach@apple.com>
 
         Bug 27994 - WAI-ARIA: aria-valuetext needs to be implemented

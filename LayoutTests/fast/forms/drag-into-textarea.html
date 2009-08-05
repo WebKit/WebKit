@@ -21,8 +21,7 @@ function runTest() {
     
     eventSender.mouseMoveTo(x, y);
     eventSender.mouseDown();
-    // Wait a moment so that the mouseDown will kick off a drag instead of a new selection.
-    // FIXME: Ugh, don't want delays in layout tests!
+    // Leap the event time so that mouseMove will start a new drag instead of changing selection.
     eventSender.leapForward(400);
     eventSender.mouseMoveTo(tx, ty);
     eventSender.mouseUp();
