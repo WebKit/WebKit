@@ -237,6 +237,7 @@ void DumpRenderTree::open(const QUrl& aurl)
     initializeFonts();
 #endif
 
+    m_page->mainFrame()->setZoomFactor(1.0);
     qt_drt_clearFrameName(m_page->mainFrame());
 
     qt_dump_frame_loader(url.toString().contains("loading/"));
@@ -321,47 +322,58 @@ QString DumpRenderTree::dumpBackForwardList()
     return result;
 }
 
+static const char *methodNameStringForFailedTest(LayoutTestController *controller)
+{
+    const char *errorMessage;
+    if (controller->shouldDumpAsText())
+        errorMessage = "[documentElement innerText]";
+    // FIXME: Add when we have support
+    //else if (controller->dumpDOMAsWebArchive())
+    //    errorMessage = "[[mainFrame DOMDocument] webArchive]";
+    //else if (controller->dumpSourceAsWebArchive())
+    //    errorMessage = "[[mainFrame dataSource] webArchive]";
+    else
+        errorMessage = "[mainFrame renderTreeAsExternalRepresentation]";
+
+    return errorMessage;
+}
+
 void DumpRenderTree::dump()
 {
-    QWebFrame *frame = m_page->mainFrame();
+    QWebFrame *mainFrame = m_page->mainFrame();
 
     //fprintf(stderr, "    Dumping\n");
     if (!m_notifier) {
         // Dump markup in single file mode...
-        QString markup = frame->toHtml();
+        QString markup = mainFrame->toHtml();
         fprintf(stdout, "Source:\n\n%s\n", markup.toUtf8().constData());
     }
 
     // Dump render text...
-    QString renderDump;
-    if (m_controller->shouldDumpAsText()) {
-        renderDump = dumpFramesAsText(frame);
-    } else {
-        renderDump = frame->renderTreeDump();
-    }
+    QString resultString;
+    if (m_controller->shouldDumpAsText())
+        resultString = dumpFramesAsText(mainFrame);
+    else
+        resultString = mainFrame->renderTreeDump();
 
-    if (m_controller->shouldDumpBackForwardList()) {
-        renderDump.append(dumpBackForwardList());
-    }
+    if (!resultString.isEmpty()) {
+        fprintf(stdout, "%s", resultString.toUtf8().constData());
 
-    if (renderDump.isEmpty()) {
-        printf("ERROR: nil result from %s", m_controller->shouldDumpAsText() ? "[documentElement innerText]" : "[frame renderTreeAsExternalRepresentation]");
-    } else {
-        fprintf(stdout, "%s", renderDump.toUtf8().constData());
-    }
+        if (m_controller->shouldDumpBackForwardList())
+            fprintf(stdout, "%s", dumpBackForwardList().toUtf8().constData());
+
+    } else
+        printf("ERROR: nil result from %s", methodNameStringForFailedTest(m_controller));
 
     // signal end of text block
-    fprintf(stdout, "#EOF\n");
-    fflush(stdout);
-    fprintf(stderr, "#EOF\n");
-    fflush(stderr);
+    fputs("#EOF\n", stdout);
+    fputs("#EOF\n", stderr);
 
     if (m_dumpPixels) {
-
         QImage image(m_page->viewportSize(), QImage::Format_ARGB32);
         image.fill(Qt::white);
         QPainter painter(&image);
-        m_page->mainFrame()->render(&painter);
+        mainFrame->render(&painter);
         painter.end();
 
         QCryptographicHash hash(QCryptographicHash::Md5);
@@ -398,13 +410,13 @@ void DumpRenderTree::dump()
         fflush(stdout);
     }
 
-    fprintf(stdout, "#EOF\n");
-    fflush(stdout);
+    puts("#EOF");   // terminate the (possibly empty) pixels block
 
-    if (!m_notifier) {
-        // Exit now in single file mode...
-        quit();
-    }
+    fflush(stdout);
+    fflush(stderr);
+
+    if (!m_notifier)
+        quit(); // Exit now in single file mode...
 }
 
 void DumpRenderTree::titleChanged(const QString &s)

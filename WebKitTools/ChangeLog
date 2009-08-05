@@ -1,3 +1,22 @@
+2009-08-04  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        Make the Qt DumpRenderTree more similar to the mac one.
+
+        Changes include:
+        1) Reset zoom factor before each test
+        2) Only dump the backforward list when we got other dump result
+        3) When we dump the render tree, and got zero result print out:
+           [mainFrame renderTreeAsExternalRepresentation]
+           and not:
+           [frame renderTreeAsExternalRepresentation]
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::open):
+        (WebCore::methodNameStringForFailedTest):
+        (WebCore::DumpRenderTree::dump):
+
 2009-08-05  chris fleizach  <cfleizach@apple.com>
 
         Fix Tiger build breakage.
