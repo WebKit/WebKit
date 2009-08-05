@@ -87,3 +87,18 @@ void WorkQueue::clear()
     startOfQueue = 0;
     endOfQueue = 0;
 }
+
+bool WorkQueue::processWork()
+{
+    bool startedLoad = false;
+
+    while (!startedLoad && count()) {
+        WorkQueueItem* item = dequeue();
+        Q_ASSERT(item);
+        startedLoad = item->invoke();
+        delete item;
+    }
+
+    // If we're done and we didn't start a load, then we're really done, so return true.
+    return !startedLoad;
+}

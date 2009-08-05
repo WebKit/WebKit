@@ -59,7 +59,7 @@ QWebFrame *findFrameNamed(const QString &frameName, QWebFrame *frame)
     return 0;
 }
 
-void LoadItem::invoke() const
+bool LoadItem::invoke() const
 {
     //qDebug() << ">>>LoadItem::invoke";
     Q_ASSERT(m_webPage);
@@ -72,29 +72,35 @@ void LoadItem::invoke() const
         frame = findFrameNamed(t, m_webPage->mainFrame());
 
     if (!frame)
-        return;
+        return false;
 
     frame->load(url());
+    return true;
 }
 
-void ReloadItem::invoke() const
+bool ReloadItem::invoke() const
 {
     //qDebug() << ">>>ReloadItem::invoke";
     Q_ASSERT(m_webPage);
     m_webPage->triggerAction(QWebPage::Reload);
+    return true;
 }
 
-void ScriptItem::invoke() const
+bool ScriptItem::invoke() const
 {
     //qDebug() << ">>>ScriptItem::invoke";
     Q_ASSERT(m_webPage);
     m_webPage->mainFrame()->evaluateJavaScript(script());
+    return true;
 }
 
-void BackForwardItem::invoke() const
+bool BackForwardItem::invoke() const
 {
     //qDebug() << ">>>BackForwardItem::invoke";
     Q_ASSERT(m_webPage);
+    if (!m_howFar)
+        return false;
+
     if (m_howFar > 0) {
         for (int i = 0; i != m_howFar; ++i)
             m_webPage->triggerAction(QWebPage::Forward);
@@ -102,6 +108,7 @@ void BackForwardItem::invoke() const
         for (int i = 0; i != m_howFar; --i)
             m_webPage->triggerAction(QWebPage::Back);
     }
+    return true;
 }
 
 LayoutTestController::LayoutTestController(WebCore::DumpRenderTree *drt)
@@ -132,16 +139,8 @@ void LayoutTestController::processWork()
 {
     qDebug() << ">>>processWork";
 
-    // quit doing work once a load is in progress
-    while (WorkQueue::shared()->count() > 0 && !m_topLoadingFrame) {
-        WorkQueueItem* item = WorkQueue::shared()->dequeue();
-        Q_ASSERT(item);
-        item->invoke();
-        delete item;
-    }
-
     // if we didn't start a new load, then we finished all the commands, so we're ready to dump state
-    if (!m_topLoadingFrame && !shouldWaitUntilDone()) {
+    if (!WorkQueue::shared()->processWork() && !shouldWaitUntilDone()) {
         emit done();
         m_isLoading = false;
     }
@@ -150,6 +149,8 @@ void LayoutTestController::processWork()
 // Called on loadFinished on mainFrame.
 void LayoutTestController::maybeDump(bool success)
 {
+    Q_ASSERT(sender() == m_topLoadingFrame);
+
     m_topLoadingFrame = 0;
     WorkQueue::shared()->setFrozen(true); // first complete load freezes the queue for the rest of this test
 

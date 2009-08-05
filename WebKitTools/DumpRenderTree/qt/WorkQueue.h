@@ -43,6 +43,8 @@ public:
 
     void setFrozen(bool b) { m_frozen = b; }
 
+    bool processWork(); // Returns true if all work is done, false if we started a load.
+
 private:
     WorkQueue();
 
