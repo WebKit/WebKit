@@ -100,7 +100,7 @@ bool ICOImageDecoder::setSize(unsigned width, unsigned height)
 
     // The size calculated inside the BMPImageReader had better match the one in
     // the icon directory.
-    if ((width != m_frameSize.width()) || (height != m_frameSize.height()))
+    if (IntSize(width, height) != m_frameSize)
         setFailed();
     return !failed();
 }

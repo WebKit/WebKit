@@ -125,16 +125,16 @@ bool BMPImageDecoder::processFileHeader(size_t* imgDataOffset)
 
     // See if this is a bitmap filetype we understand.
     enum {
-        BMAP = 'BM',
+        BMAP = 0x424D,  // "BM"
         // The following additional OS/2 2.x header values (see
         // http://www.fileformat.info/format/os2bmp/egff.htm ) aren't widely
         // decoded, and are unlikely to be in much use.
         /*
-        ICON = 'IC',
-        POINTER = 'PT',
-        COLORICON = 'CI',
-        COLORPOINTER = 'CP',
-        BITMAPARRAY = 'BA',
+        ICON = 0x4943,  // "IC"
+        POINTER = 0x5054,  // "PT"
+        COLORICON = 0x4349,  // "CI"
+        COLORPOINTER = 0x4350,  // "CP"
+        BITMAPARRAY = 0x4241,  // "BA"
         */
     };
     if (fileType != BMAP) {
