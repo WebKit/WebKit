@@ -33,15 +33,17 @@ OSX_VERSION=$(shell sw_vers -productVersion | cut -d. -f 2)
 
 ifneq "$(OSX_VERSION)" "4"
 
+PERL=/usr/bin/perl
+SWIG=/usr/bin/swig
 
 all: $(DYLIB) $(PERL_MODULE)
 
 $(WRAPPER) $(PERL_MODULE): DumpRenderTreeSupport.c $(DUMPRENDERTREE)
 	mkdir -p $$(dirname $(WRAPPER))
-	swig -o $(WRAPPER) -outdir $(OUTPUT_DIR) -perl -module DumpRenderTreeSupport $<
+	$(SWIG) -o $(WRAPPER) -outdir $(OUTPUT_DIR) -perl -module DumpRenderTreeSupport $<
 
 $(DYLIB): DumpRenderTreeSupport.c $(WRAPPER)
-	gcc -g -dynamiclib -o $(DYLIB) `perl -MExtUtils::Embed -eperl_inc` `perl -MExtUtils::Embed -eldopts` $^
+	gcc -g -dynamiclib -o $(DYLIB) `$(PERL) -MExtUtils::Embed -eperl_inc` `$(PERL) -MExtUtils::Embed -eldopts` $^
 
 
 else

@@ -1,3 +1,14 @@
+2009-08-04  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        REGRESSION: run-webkit-tests crashes if you have non-system perl in PATH
+        https://bugs.webkit.org/show_bug.cgi?id=28006
+
+        Hard-code perl to /usr/bin/perl and swig to /usr/bin/swig
+
+        * DumpRenderTree/mac/PerlSupport/Makefile:
+
 2009-08-04  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.
