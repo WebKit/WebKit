@@ -1,3 +1,15 @@
+2009-08-05  Jeremy Orlow  <jorlow@chromium.org>
+
+       Fix DOM Storage memory leak
+       https://bugs.webkit.org/show_bug.cgi?id=28029
+
+       Forgot to use adoptRef in one place.  This caused the = operator to
+       increment the ref count when it shouldn't have, so StorageAreaImpl's were
+       never freed.
+
+        * storage/StorageNamespaceImpl.cpp:
+        (WebCore::StorageNamespaceImpl::storageArea):
+
 2009-08-05  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, build fix.

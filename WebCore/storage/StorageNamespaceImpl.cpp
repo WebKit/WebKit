@@ -110,7 +110,7 @@ PassRefPtr<StorageArea> StorageNamespaceImpl::storageArea(SecurityOrigin* origin
     if (storageArea = m_storageAreaMap.get(origin))
         return storageArea.release();
 
-    storageArea = new StorageAreaImpl(m_storageType, origin, m_syncManager);
+    storageArea = adoptRef(new StorageAreaImpl(m_storageType, origin, m_syncManager));
     m_storageAreaMap.set(origin, storageArea);
     return storageArea.release();
 }
