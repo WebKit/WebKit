@@ -36,6 +36,10 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
 
+#ifdef BUILDING_ON_TIGER
+#define NSAccessibilityValueDescriptionAttribute @"AXValueDescription"
+#endif
+
 @interface NSObject (WebKitAccessibilityArrayCategory)
 - (NSArray *)accessibilityArrayAttributeValues:(NSString *)attribute index:(NSUInteger)index maxCount:(NSUInteger)maxCount;
 @end

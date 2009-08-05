@@ -1,3 +1,9 @@
+2009-08-05  chris fleizach  <cfleizach@apple.com>
+
+        Fix Tiger build breakage.
+
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+
 2009-08-04  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

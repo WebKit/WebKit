@@ -1,3 +1,9 @@
+2009-08-05  Chris Fleizach  <cfleizach@apple.com>
+
+        Fix Tiger build breakage.
+
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+
 2009-08-04  Simon Hausmann  <hausmann@webkit.org>
 
         Prospective build fix for Qt build bot: Fix dependency of HTMLNames.cpp
