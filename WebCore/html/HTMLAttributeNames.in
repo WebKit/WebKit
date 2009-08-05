@@ -27,6 +27,7 @@ aria-required
 aria-valuemax
 aria-valuemin
 aria-valuenow
+aria-valuetext
 autobuffer
 autocomplete
 autofocus
