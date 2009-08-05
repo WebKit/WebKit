@@ -127,6 +127,9 @@ public:
     bool dumpResourceResponseMIMETypes() const { return m_dumpResourceResponseMIMETypes; }
     void setDumpResourceResponseMIMETypes(bool dumpResourceResponseMIMETypes) { m_dumpResourceResponseMIMETypes = dumpResourceResponseMIMETypes; }
 
+    bool dumpWillCacheResponse() const { return m_dumpWillCacheResponse; }
+    void setDumpWillCacheResponse(bool dumpWillCacheResponse) { m_dumpWillCacheResponse = dumpWillCacheResponse; }
+
     bool dumpFrameLoadCallbacks() const { return m_dumpFrameLoadCallbacks; }
     void setDumpFrameLoadCallbacks(bool dumpFrameLoadCallbacks) { m_dumpFrameLoadCallbacks = dumpFrameLoadCallbacks; }
 
@@ -185,6 +188,7 @@ private:
     bool m_dumpEditingCallbacks;
     bool m_dumpResourceLoadCallbacks;
     bool m_dumpResourceResponseMIMETypes;
+    bool m_dumpWillCacheResponse;
     bool m_dumpFrameLoadCallbacks;
     bool m_callCloseOnWebViews;
     bool m_canOpenWindows;

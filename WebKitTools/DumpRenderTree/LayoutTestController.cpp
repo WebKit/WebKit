@@ -51,6 +51,7 @@ LayoutTestController::LayoutTestController(const std::string& testPathOrURL, con
     , m_dumpEditingCallbacks(false)
     , m_dumpResourceLoadCallbacks(false)
     , m_dumpResourceResponseMIMETypes(false)
+    , m_dumpWillCacheResponse(false)
     , m_dumpFrameLoadCallbacks(false)
     , m_callCloseOnWebViews(true)
     , m_canOpenWindows(false)
@@ -165,6 +166,13 @@ static JSValueRef dumpTitleChangesCallback(JSContextRef context, JSObjectRef fun
 {
     LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
     controller->setDumpTitleChanges(true);
+    return JSValueMakeUndefined(context);
+}
+
+static JSValueRef dumpWillCacheResponseCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    controller->setDumpWillCacheResponse(true);
     return JSValueMakeUndefined(context);
 }
 
@@ -925,6 +933,7 @@ JSStaticFunction* LayoutTestController::staticFunctions()
         { "dumpSourceAsWebArchive", dumpSourceAsWebArchiveCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "dumpStatusCallbacks", dumpStatusCallbacksCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "dumpTitleChanges", dumpTitleChangesCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "dumpWillCacheResponse", dumpWillCacheResponseCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "elementDoesAutoCompleteForElementWithId", elementDoesAutoCompleteForElementWithIdCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "encodeHostName", encodeHostNameCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "execCommand", execCommandCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
