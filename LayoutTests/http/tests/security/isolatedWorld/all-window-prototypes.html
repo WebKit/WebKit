@@ -11,7 +11,7 @@ for (p in window) {
 
 if (window.layoutTestController) {
   layoutTestController.dumpAsText();
-  layoutTestController.queueScriptInIsolatedWorld(
+  layoutTestController.evaluateScriptInIsolatedWorld(
     "(function() {\n" +
     "  for (p in window) {\n" +
     "    var obj = window[p];\n" +

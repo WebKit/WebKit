@@ -1,3 +1,33 @@
+2009-08-04  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [V8] Teach ScheduledAction::execute about isolated worlds
+        https://bugs.webkit.org/show_bug.cgi?id=27703
+
+        Rename queueScriptInIsolatedWorld to evaluateScriptInIsolatedWorld
+        because I've changed this API to be synchronous instead of asynchronous
+        to work around some strange behavior in the work_queue_.  Turns out we
+        don't need the complexity of an asynchronous API to test this feature.
+
+        * http/tests/security/isolatedWorld/all-window-properties.html:
+        * http/tests/security/isolatedWorld/all-window-prototypes.html:
+        * http/tests/security/isolatedWorld/body-properties.html:
+        * http/tests/security/isolatedWorld/body-prototype.html:
+        * http/tests/security/isolatedWorld/click-event.html:
+        * http/tests/security/isolatedWorld/document-open.html:
+        * http/tests/security/isolatedWorld/document-properties.html:
+        * http/tests/security/isolatedWorld/document-prototype.html:
+        * http/tests/security/isolatedWorld/global-variables.html:
+        * http/tests/security/isolatedWorld/image-properties.html:
+        * http/tests/security/isolatedWorld/image-prototype.html:
+        * http/tests/security/isolatedWorld/location-properties.html:
+        * http/tests/security/isolatedWorld/location-prototype.html:
+        * http/tests/security/isolatedWorld/number-prototype.html:
+        * http/tests/security/isolatedWorld/object-prototype.html:
+        * http/tests/security/isolatedWorld/string-prototype.html:
+        * http/tests/security/isolatedWorld/window-properties.html:
+
 2009-08-04  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Simon Fraser.

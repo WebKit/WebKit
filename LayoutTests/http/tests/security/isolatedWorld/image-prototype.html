@@ -6,7 +6,7 @@
 Image.__proto__.foo = "FAIL: Visible in isolated world.";
 if (window.layoutTestController) {
   layoutTestController.dumpAsText();
-  layoutTestController.queueScriptInIsolatedWorld(
+  layoutTestController.evaluateScriptInIsolatedWorld(
     "document.getElementById('console').innerHTML = Image.foo");
 }
 </script>
