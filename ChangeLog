@@ -1,3 +1,9 @@
+2009-08-05  Xan Lopez  <xlopez@igalia.com>
+
+        Revert r46714, it was making us build debug images by default.
+
+        * autotools/webkit.m4:
+
 2009-08-03  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Eric Seidel.
