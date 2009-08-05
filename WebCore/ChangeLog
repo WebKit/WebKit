@@ -1,3 +1,16 @@
+2009-08-04  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Keypress should exit from pan scrolling mode.
+        https://bugs.webkit.org/show_bug.cgi?id=28005
+
+        Change the logic from only exiting pan scrolling on escape to exiting on any key press,
+        making it easier for users to back out of an accidental pan scroll.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::keyEvent):
+        
 2009-08-04  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Simon Fraser.

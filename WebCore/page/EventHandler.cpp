@@ -1944,10 +1944,8 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& initialKeyEvent)
 #if ENABLE(PAN_SCROLLING)
     if (Page* page = m_frame->page()) {
         if (page->mainFrame()->eventHandler()->panScrollInProgress() || m_autoscrollInProgress) {
-            static const char* const escapeKeyIdentifier = "U+001B";
-
             // If a key is pressed while the autoscroll/panScroll is in progress then we want to stop
-            if (initialKeyEvent.keyIdentifier() == escapeKeyIdentifier && initialKeyEvent.type() == PlatformKeyboardEvent::KeyUp) 
+            if (initialKeyEvent.type() == PlatformKeyboardEvent::KeyDown || initialKeyEvent.type() == PlatformKeyboardEvent::RawKeyDown) 
                 stopAutoscrollTimer();
 
             // If we were in autoscroll/panscroll mode, we swallow the key event
