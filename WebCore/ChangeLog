@@ -1,3 +1,13 @@
+2009-08-05  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
+
+        Reviewed by Simon Hausmann.
+
+        WebCore.pro bugfix
+
+        Fix the gperf lines to properly include the string.h header at compilation with gperf version 3.0.3 and newer.
+
+        * WebCore.pro:
+
 2009-08-05  Chris Fleizach  <cfleizach@apple.com>
 
         Fix Tiger build breakage.
