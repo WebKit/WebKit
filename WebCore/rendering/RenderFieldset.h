@@ -1,10 +1,8 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2006, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -34,6 +32,9 @@ class RenderFieldset : public RenderBlock {
 public:
     RenderFieldset(Node*);
 
+    RenderBox* findLegend() const;
+
+private:
     virtual const char* renderName() const { return "RenderFieldSet"; }
     virtual bool isFieldset() const { return true; }
 
@@ -43,16 +44,22 @@ public:
     virtual bool avoidsFloats() const { return true; }
     virtual bool stretchesToMinIntrinsicWidth() const { return true; }
 
-    RenderBox* findLegend() const;
-
-protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
-private:
     virtual void paintBoxDecorations(PaintInfo&, int tx, int ty);
-    virtual void paintMask(PaintInfo& paintInfo, int tx, int ty);
+    virtual void paintMask(PaintInfo&, int tx, int ty);
+
     void paintBorderMinusLegend(GraphicsContext*, int tx, int ty, int w, int h, const RenderStyle*, int lx, int lw, int lb);
 };
+
+inline RenderFieldset* toRenderFieldset(RenderObject* object)
+{
+    ASSERT(!object || object->isFieldset());
+    return static_cast<RenderFieldset*>(object);
+}
+
+// This will catch anyone doing an unnecessary cast.
+void toRenderFieldset(const RenderFieldset*);
 
 } // namespace WebCore
 

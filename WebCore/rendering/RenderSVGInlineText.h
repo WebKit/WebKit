@@ -33,6 +33,8 @@ namespace WebCore {
 class RenderSVGInlineText : public RenderText {
 public:
     RenderSVGInlineText(Node*, PassRefPtr<StringImpl>);
+
+private:
     virtual const char* renderName() const { return "RenderSVGInlineText"; }
         
     virtual void styleDidChange(StyleDifference, const RenderStyle*);
@@ -49,7 +51,6 @@ public:
 
     virtual void destroy();
 
-private:
     virtual InlineTextBox* createTextBox();
     IntRect computeRepaintRectForRange(RenderBoxModelObject* repaintContainer, int startPos, int endPos);
     FloatQuad computeRepaintQuadForRange(RenderBoxModelObject* repaintContainer, int startPos, int endPos);

@@ -1,7 +1,7 @@
 /*
  * This file is part of the select element renderer in WebCore.
  *
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,8 +39,21 @@ namespace WebCore {
 class RenderListBox : public RenderBlock, private ScrollbarClient {
 public:
     RenderListBox(Element*);
-    ~RenderListBox();
+    virtual ~RenderListBox();
 
+    void selectionChanged();
+
+    void setOptionsChanged(bool changed) { m_optionsChanged = changed; }
+
+    int listIndexAtOffset(int x, int y);
+    IntRect itemBoundingBoxRect(int tx, int ty, int index);
+
+    bool scrollToRevealElementAtListIndex(int index);
+    bool listIndexIsVisible(int index);
+
+    int scrollToward(const IntPoint&); // Returns the new index or -1 if no scroll occurred
+
+private:
     virtual const char* renderName() const { return "RenderListBox"; }
 
     virtual bool isListBox() const { return true; }
@@ -63,24 +76,12 @@ public:
 
     virtual void layout();
 
-    void selectionChanged();
-
-    void setOptionsChanged(bool changed) { m_optionsChanged = changed; }
-
-    int listIndexAtOffset(int x, int y);
-    IntRect itemBoundingBoxRect(int tx, int ty, int index);
-
-    bool scrollToRevealElementAtListIndex(int index);
-    bool listIndexIsVisible(int index);
-
     virtual bool canBeProgramaticallyScrolled(bool) const { return true; }
     virtual void autoscroll();
     virtual void stopAutoscroll();
 
     virtual bool shouldPanScroll() const { return true; }
     virtual void panScroll(const IntPoint&);
-
-    int scrollToward(const IntPoint&); // Returns the new index or -1 if no scroll occurred
 
     virtual int verticalScrollbarWidth() const;
     virtual int scrollLeft() const;
@@ -92,10 +93,8 @@ public:
 
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
 
-protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
-private:
     // ScrollbarClient interface.
     virtual void valueChanged(Scrollbar*);
     virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&);
@@ -129,6 +128,15 @@ private:
 
     RefPtr<Scrollbar> m_vBar;
 };
+
+inline RenderListBox* toRenderListBox(RenderObject* object)
+{ 
+    ASSERT(!object || object->isListBox());
+    return static_cast<RenderListBox*>(object);
+}
+
+// This will catch anyone doing an unnecessary cast.
+void toRenderListBox(const RenderListBox*);
 
 } // namepace WebCore
 

@@ -36,9 +36,8 @@ namespace WebCore {
     class RenderSVGHiddenContainer : public RenderSVGContainer {
     public:
         RenderSVGHiddenContainer(SVGStyledElement*);
-        virtual ~RenderSVGHiddenContainer();
 
-        virtual bool isSVGContainer() const { return true; }
+    private:
         virtual bool isSVGHiddenContainer() const { return true; }
 
         virtual const char* renderName() const { return "RenderSVGHiddenContainer"; }

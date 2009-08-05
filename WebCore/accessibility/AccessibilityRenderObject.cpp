@@ -697,10 +697,8 @@ String AccessibilityRenderObject::textUnderElement() const
     if (!m_renderer)
         return String();
     
-    if (isFileUploadButton()) {
-        RenderFileUploadControl* uploadControl = static_cast<RenderFileUploadControl*>(m_renderer);
-        return uploadControl->buttonValue();
-    }
+    if (isFileUploadButton())
+        return toRenderFileUploadControl(m_renderer)->buttonValue();
     
     Node* node = m_renderer->node();
     if (node) {
@@ -793,10 +791,10 @@ String AccessibilityRenderObject::stringValue() const
         return textUnderElement();
     
     if (m_renderer->isMenuList())
-        return static_cast<RenderMenuList*>(m_renderer)->text();
+        return toRenderMenuList(m_renderer)->text();
     
     if (m_renderer->isListMarker())
-        return static_cast<RenderListMarker*>(m_renderer)->text();
+        return toRenderListMarker(m_renderer)->text();
     
     if (m_renderer->isRenderButton())
         return toRenderButton(m_renderer)->text();
@@ -817,10 +815,8 @@ String AccessibilityRenderObject::stringValue() const
     if (isTextControl())
         return text();
     
-    if (isFileUploadButton()) {
-        RenderFileUploadControl* uploadControl = static_cast<RenderFileUploadControl*>(m_renderer);
-        return uploadControl->fileTextValue();
-    }
+    if (isFileUploadButton())
+        return toRenderFileUploadControl(m_renderer)->fileTextValue();
     
     // FIXME: We might need to implement a value here for more types
     // FIXME: It would be better not to advertise a value at all for the types for which we don't implement one;
@@ -1223,7 +1219,7 @@ AccessibilityObject* AccessibilityRenderObject::titleUIElement() const
     
     // if isFieldset is true, the renderer is guaranteed to be a RenderFieldset
     if (isFieldset())
-        return axObjectCache()->getOrCreate(static_cast<RenderFieldset*>(m_renderer)->findLegend());
+        return axObjectCache()->getOrCreate(toRenderFieldset(m_renderer)->findLegend());
     
     if (!exposesTitleUIElement())
         return 0;
@@ -1334,7 +1330,7 @@ bool AccessibilityRenderObject::accessibilityIsIgnored() const
         }
         
         if (node && node->hasTagName(canvasTag)) {
-            RenderHTMLCanvas* canvas = static_cast<RenderHTMLCanvas*>(m_renderer);
+            RenderHTMLCanvas* canvas = toRenderHTMLCanvas(m_renderer);
             if (canvas->height() <= 1 || canvas->width() <= 1)
                 return true;
             return false;

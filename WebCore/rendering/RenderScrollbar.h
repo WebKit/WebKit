@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2009 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,7 +33,6 @@
 namespace WebCore {
 
 class RenderBox;
-class RenderStyle;
 class RenderScrollbarPart;
 class RenderStyle;
 
@@ -46,20 +45,8 @@ public:
     static PassRefPtr<Scrollbar> createCustomScrollbar(ScrollbarClient*, ScrollbarOrientation, RenderBox*);
     virtual ~RenderScrollbar();
 
-    virtual void setParent(ScrollView*);
-    virtual void setEnabled(bool);
-
-    virtual void paint(GraphicsContext*, const IntRect& damageRect);
-
-    virtual void setHoveredPart(ScrollbarPart);
-    virtual void setPressedPart(ScrollbarPart);
-
-    void updateScrollbarParts(bool destroy = false);
-
     static ScrollbarPart partForStyleResolve();
     static RenderScrollbar* scrollbarForStyleResolve();
-
-    virtual void styleChanged();
 
     RenderBox* owningRenderer() const { return m_owner; }
 
@@ -70,15 +57,37 @@ public:
     IntRect trackPieceRectWithMargins(ScrollbarPart, const IntRect&);
 
     int minimumThumbLength();
-    virtual bool isCustomScrollbar() const { return true; }
 
 private:
+    virtual void setParent(ScrollView*);
+    virtual void setEnabled(bool);
+
+    virtual void paint(GraphicsContext*, const IntRect& damageRect);
+
+    virtual void setHoveredPart(ScrollbarPart);
+    virtual void setPressedPart(ScrollbarPart);
+
+    virtual void styleChanged();
+
+    virtual bool isCustomScrollbar() const { return true; }
+
+    void updateScrollbarParts(bool destroy = false);
+
     PassRefPtr<RenderStyle> getScrollbarPseudoStyle(ScrollbarPart, PseudoId);
     void updateScrollbarPart(ScrollbarPart, bool destroy = false);
 
     RenderBox* m_owner;
     HashMap<unsigned, RenderScrollbarPart*> m_parts;
 };
+
+inline RenderScrollbar* toRenderScrollbar(Scrollbar* scrollbar)
+{
+    ASSERT(!scrollbar || scrollbar->isCustomScrollbar());
+    return static_cast<RenderScrollbar*>(scrollbar);
+}
+
+// This will catch anyone doing an unnecessary cast.
+void toRenderScrollbar(const RenderScrollbar*);
 
 } // namespace WebCore
 

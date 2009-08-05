@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/) 
+ * Copyright (C) 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -30,14 +31,15 @@ public:
     RenderTextControlMultiLine(Node*);
     virtual ~RenderTextControlMultiLine();
 
+    void forwardEvent(Event*);
+
+private:
     virtual bool isTextArea() const { return true; }
 
     virtual void subtreeHasChanged();
 
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
-    void forwardEvent(Event*);
 
-private:
     virtual int preferredContentWidth(float charWidth) const;
     virtual void adjustControlHeightBasedOnLineHeight(int lineHeight);
     virtual int baselinePosition(bool firstLine, bool isRootLineBox) const;
@@ -47,6 +49,15 @@ private:
 
     virtual PassRefPtr<RenderStyle> createInnerTextStyle(const RenderStyle* startStyle) const;
 };
+
+inline RenderTextControlMultiLine* toRenderTextControlMultiLine(RenderObject* object)
+{ 
+    ASSERT(!object || object->isTextArea());
+    return static_cast<RenderTextControlMultiLine*>(object);
+}
+
+// This will catch anyone doing an unnecessary cast.
+void toRenderTextControlMultiLine(const RenderTextControlMultiLine*);
 
 }
 

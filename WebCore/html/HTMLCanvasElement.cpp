@@ -195,14 +195,15 @@ void HTMLCanvasElement::reset()
     if (m_2DContext)
         m_2DContext->reset();
 
-    if (RenderObject* ro = renderer())
+    if (RenderObject* renderer = this->renderer()) {
         if (m_rendererIsCanvas) {
             if (oldSize != m_size)
-                static_cast<RenderHTMLCanvas*>(ro)->canvasSizeChanged();
+                toRenderHTMLCanvas(renderer)->canvasSizeChanged();
             if (hadImageBuffer)
-                ro->repaint();
+                renderer->repaint();
         }
-        
+    }
+
     if (m_observer)
         m_observer->canvasResized(this);
 }

@@ -193,9 +193,10 @@ void HTMLFrameElementBase::attach()
 
     HTMLFrameOwnerElement::attach();
     
-    if (RenderPart* renderPart = static_cast<RenderPart*>(renderer()))
+    if (RenderPart* renderPart = toRenderPart(renderer())) {
         if (Frame* frame = contentFrame())
             renderPart->setWidget(frame->view());
+    }
 }
 
 KURL HTMLFrameElementBase::location() const

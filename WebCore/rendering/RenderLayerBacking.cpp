@@ -670,7 +670,7 @@ IntRect RenderLayerBacking::contentsBox() const
     IntRect contentsRect;
 #if ENABLE(VIDEO)
     if (renderer()->isVideo()) {
-        RenderVideo* videoRenderer = static_cast<RenderVideo*>(renderer());
+        RenderVideo* videoRenderer = toRenderVideo(renderer());
         contentsRect = videoRenderer->videoBox();
     } else
 #endif

@@ -43,6 +43,15 @@ private:
     virtual void viewCleared();
 };
 
+inline RenderFrame* toRenderFrame(RenderObject* object)
+{
+    ASSERT(!object || object->isFrame());
+    return static_cast<RenderFrame*>(object);
+}
+
+// This will catch anyone doing an unnecessary cast.
+void toRenderFrame(const RenderFrame*);
+
 } // namespace WebCore
 
 #endif // RenderFrame_h

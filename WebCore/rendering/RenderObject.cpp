@@ -247,9 +247,10 @@ bool RenderObject::isHTMLMarquee() const
 
 static void updateListMarkerNumbers(RenderObject* child)
 {
-    for (RenderObject* r = child; r; r = r->nextSibling())
-        if (r->isListItem())
-            static_cast<RenderListItem*>(r)->updateValue();
+    for (RenderObject* sibling = child; sibling; sibling = sibling->nextSibling()) {
+        if (sibling->isListItem())
+            toRenderListItem(sibling)->updateValue();
+    }
 }
 
 void RenderObject::addChild(RenderObject* newChild, RenderObject* beforeChild)

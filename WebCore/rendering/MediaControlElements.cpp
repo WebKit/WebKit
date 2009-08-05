@@ -487,9 +487,8 @@ void MediaControlTimelineElement::defaultEventHandler(Event* event)
 
     MediaControlInputElement::defaultEventHandler(event);
 
-    if (event->type() == eventNames().mouseoverEvent || event->type() == eventNames().mouseoutEvent || event->type() == eventNames().mousemoveEvent) {
+    if (event->type() == eventNames().mouseoverEvent || event->type() == eventNames().mouseoutEvent || event->type() == eventNames().mousemoveEvent)
         return;
-    }
 
     float time = narrowPrecisionToFloat(value().toDouble());
     if (time != m_mediaElement->currentTime()) {
@@ -497,9 +496,9 @@ void MediaControlTimelineElement::defaultEventHandler(Event* event)
         m_mediaElement->setCurrentTime(time, ec);
     }
 
-    RenderSlider* slider = static_cast<RenderSlider*>(renderer());
+    RenderSlider* slider = toRenderSlider(renderer());
     if (slider && slider->inDragMode())
-        static_cast<RenderMedia*>(m_mediaElement->renderer())->updateTimeDisplay();
+        toRenderMedia(m_mediaElement->renderer())->updateTimeDisplay();
 
     if (event->type() == eventNames().mouseupEvent)
         m_mediaElement->endScrubbing();

@@ -93,7 +93,7 @@ void InputElement::updatePlaceholderVisibility(InputElementData& data, InputElem
                                        && !inputElement->placeholder().isEmpty());
 
     if ((oldPlaceholderShouldBeVisible != data.placeholderShouldBeVisible() || placeholderValueChanged) && element->renderer())
-        static_cast<RenderTextControlSingleLine*>(element->renderer())->updatePlaceholderVisibility();
+        toRenderTextControlSingleLine(element->renderer())->updatePlaceholderVisibility();
 }
 
 void InputElement::updateFocusAppearance(InputElementData& data, InputElement* inputElement, Element* element, bool restorePreviousSelection)

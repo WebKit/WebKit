@@ -1154,7 +1154,7 @@ RenderPart* Frame::ownerRenderer() const
     // https://bugs.webkit.org/show_bug.cgi?id=18585
     if (!object->isRenderPart())
         return 0;
-    return static_cast<RenderPart*>(object);
+    return toRenderPart(object);
 }
 
 bool Frame::isDisconnected() const

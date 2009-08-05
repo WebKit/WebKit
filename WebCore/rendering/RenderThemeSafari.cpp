@@ -1000,7 +1000,7 @@ bool RenderThemeSafari::paintSliderThumb(RenderObject* o, const RenderObject::Pa
 
     ASSERT(o->parent()->isSlider());
 
-    bool pressed = static_cast<RenderSlider*>(o->parent())->inDragMode();
+    bool pressed = toRenderSlider(o->parent())->inDragMode();
     ThemeControlState state = determineState(o->parent());
     state &= ~SafariTheme::PressedState;
     if (pressed)

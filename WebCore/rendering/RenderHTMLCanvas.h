@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2006, 2007, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,16 +36,22 @@ class RenderHTMLCanvas : public RenderReplaced {
 public:
     RenderHTMLCanvas(HTMLCanvasElement*);
 
-    virtual const char* renderName() const { return "RenderHTMLCanvas"; }
-
-    virtual void paintReplaced(PaintInfo& paintInfo, int tx, int ty);
-
     void canvasSizeChanged();
     
-protected:
+private:
+    virtual const char* renderName() const { return "RenderHTMLCanvas"; }
+    virtual void paintReplaced(PaintInfo&, int tx, int ty);
     virtual void intrinsicSizeChanged() { canvasSizeChanged(); }
-
 };
+
+inline RenderHTMLCanvas* toRenderHTMLCanvas(RenderObject* object)
+{
+    ASSERT(!object || !strcmp(object->renderName(), "RenderHTMLCanvas"));
+    return static_cast<RenderHTMLCanvas*>(object);
+}
+
+// This will catch anyone doing an unnecessary cast.
+void toRenderHTMLCanvas(const RenderHTMLCanvas*);
 
 } // namespace WebCore
 

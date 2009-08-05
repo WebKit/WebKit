@@ -56,9 +56,9 @@ void HTMLLIElement::parseMappedAttribute(MappedAttribute* attr)
         m_requestedValue = attr->value().toInt();
         if (renderer() && renderer()->isListItem()) {
             if (m_requestedValue > 0)
-                static_cast<RenderListItem*>(renderer())->setExplicitValue(m_requestedValue);
+                toRenderListItem(renderer())->setExplicitValue(m_requestedValue);
             else
-                static_cast<RenderListItem*>(renderer())->clearExplicitValue();
+                toRenderListItem(renderer())->clearExplicitValue();
         }
     } else if (attr->name() == typeAttr) {
         if (attr->value() == "a")
@@ -84,7 +84,7 @@ void HTMLLIElement::attach()
     HTMLElement::attach();
 
     if (renderer() && renderer()->isListItem()) {
-        RenderListItem* render = static_cast<RenderListItem*>(renderer());
+        RenderListItem* render = toRenderListItem(renderer());
 
         // Find the enclosing list node.
         Node* listNode = 0;

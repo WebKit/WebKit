@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.
+ * Copyright (C) 2006, 2007, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -35,13 +35,7 @@ class HTMLInputElement;
 class RenderFileUploadControl : public RenderBlock, private FileChooserClient {
 public:
     RenderFileUploadControl(HTMLInputElement*);
-    ~RenderFileUploadControl();
-
-    virtual const char* renderName() const { return "RenderFileUploadControl"; }
-
-    virtual void updateFromElement();
-    virtual void calcPrefWidths();
-    virtual void paintObject(PaintInfo&, int tx, int ty);
+    virtual ~RenderFileUploadControl();
 
     void click();
 
@@ -54,16 +48,30 @@ public:
     
     bool allowsMultipleFiles();
 
-protected:
+private:
+    virtual const char* renderName() const { return "RenderFileUploadControl"; }
+
+    virtual void updateFromElement();
+    virtual void calcPrefWidths();
+    virtual void paintObject(PaintInfo&, int tx, int ty);
+
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
-private:
     int maxFilenameWidth() const;
     PassRefPtr<RenderStyle> createButtonStyle(const RenderStyle* parentStyle) const;
 
     RefPtr<HTMLInputElement> m_button;
     RefPtr<FileChooser> m_fileChooser;
 };
+
+inline RenderFileUploadControl* toRenderFileUploadControl(RenderObject* object)
+{
+    ASSERT(!object || !strcmp(object->renderName(), "RenderFileUploadControl"));
+    return static_cast<RenderFileUploadControl*>(object);
+}
+
+// This will catch anyone doing an unnecessary cast.
+void toRenderFileUploadControl(const RenderFileUploadControl*);
 
 } // namespace WebCore
 

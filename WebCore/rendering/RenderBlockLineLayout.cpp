@@ -1786,7 +1786,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
             
             // Optimize for a common case. If we can't find whitespace after the list
             // item, then this is all moot. -dwh
-            if (o->isListMarker() && !static_cast<RenderListMarker*>(o)->isInside()) {
+            if (o->isListMarker() && !toRenderListMarker(o)->isInside()) {
                 if (style()->collapseWhiteSpace() && shouldSkipWhitespaceAfterStartObject(this, o, lineMidpointState)) {
                     // Like with inline flows, we start ignoring spaces to make sure that any 
                     // additional spaces we see will be discarded.
@@ -2106,7 +2106,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
 
         if (!o->isFloatingOrPositioned()) {
             last = o;
-            if (last->isReplaced() && autoWrap && (!last->isImage() || allowImagesToBreak) && (!last->isListMarker() || static_cast<RenderListMarker*>(last)->isInside())) {
+            if (last->isReplaced() && autoWrap && (!last->isImage() || allowImagesToBreak) && (!last->isListMarker() || toRenderListMarker(last)->isInside())) {
                 w += tmpW;
                 tmpW = 0;
                 lBreak.obj = next;

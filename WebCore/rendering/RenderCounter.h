@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004 Allan Sandfeld Jensen (kde@carewolf.com)
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -33,20 +33,29 @@ class RenderCounter : public RenderText {
 public:
     RenderCounter(Document*, const CounterContent&);
 
+    void invalidate();
+
+    static void destroyCounterNodes(RenderObject*);
+
+private:
     virtual const char* renderName() const;
     virtual bool isCounter() const;
     virtual PassRefPtr<StringImpl> originalText() const;
     
     virtual void calcPrefWidths(int leadWidth);
 
-    void invalidate();
-
-    static void destroyCounterNodes(RenderObject*);
-
-private:
     CounterContent m_counter;
     mutable CounterNode* m_counterNode;
 };
+
+inline RenderCounter* toRenderCounter(RenderObject* object)
+{
+    ASSERT(!object || object->isCounter());
+    return static_cast<RenderCounter*>(object);
+}
+
+// This will catch anyone doing an unnecessary cast.
+void toRenderCounter(const RenderCounter*);
 
 } // namespace WebCore
 

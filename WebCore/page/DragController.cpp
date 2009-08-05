@@ -379,11 +379,10 @@ bool DragController::concludeEditDrag(DragData* dragData)
         if (filenames.isEmpty())
             return false;
 
-        // Ugly.  For security none of the API's available to us to set the input value
-        // on file inputs.  Even forcing a change in HTMLInputElement doesn't work as
-        // RenderFileUploadControl clears the file when doing updateFromElement()
-        RenderFileUploadControl* renderer = static_cast<RenderFileUploadControl*>(fileInput->renderer());
-
+        // Ugly. For security none of the APIs available to us can set the input value
+        // on file inputs. Even forcing a change in HTMLInputElement doesn't work as
+        // RenderFileUploadControl clears the file when doing updateFromElement().
+        RenderFileUploadControl* renderer = toRenderFileUploadControl(fileInput->renderer());
         if (!renderer)
             return false;
 

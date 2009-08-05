@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2007, 2009 Apple Inc. All rights reserved.
  *           (C) 2005 Rob Buis <buis@kde.org>
  *           (C) 2006 Alexander Kellett <lypanov@kde.org>
  *
@@ -31,15 +31,15 @@
 #include "SVGRenderTreeAsText.h"
 
 #include "GraphicsTypes.h"
-#include "InlineTextBox.h"
 #include "HTMLNames.h"
+#include "InlineTextBox.h"
 #include "NodeRenderStyle.h"
+#include "RenderImage.h"
 #include "RenderPath.h"
 #include "RenderSVGContainer.h"
-#include "RenderSVGImage.h"
 #include "RenderSVGInlineText.h"
-#include "RenderSVGText.h"
 #include "RenderSVGRoot.h"
+#include "RenderSVGText.h"
 #include "RenderTreeAsText.h"
 #include "SVGCharacterLayoutInfo.h"
 #include "SVGInlineTextBox.h"
@@ -322,35 +322,23 @@ static TextStream& operator<<(TextStream& ts, const RenderPath& path)
     return ts;
 }
 
-static TextStream& operator<<(TextStream& ts, const RenderSVGContainer& container)
-{
-    return writePositionAndStyle(ts, container);
-}
-
 static TextStream& operator<<(TextStream& ts, const RenderSVGRoot& root)
 {
     return writePositionAndStyle(ts, root);
 }
 
-static TextStream& operator<<(TextStream& ts, const RenderSVGImage& root)
-{
-    return writePositionAndStyle(ts, root);
-}
-
-static TextStream& operator<<(TextStream& ts, const RenderSVGText& text)
+static void writeRenderSVGTextBox(TextStream& ts, const RenderBlock& text)
 {
     SVGRootInlineBox* box = static_cast<SVGRootInlineBox*>(text.firstRootBox());
 
     if (!box)
-        return ts;
+        return;
 
     Vector<SVGTextChunk>& chunks = const_cast<Vector<SVGTextChunk>& >(box->svgTextChunks());
     ts << " at (" << text.x() << "," << text.y() << ") size " << box->width() << "x" << box->height() << " contains " << chunks.size() << " chunk(s)";
 
     if (text.parent() && (text.parent()->style()->color() != text.style()->color()))
         writeNameValuePair(ts, "color", text.style()->color().name());
-
-    return ts;
 }
 
 static inline bool containsInlineTextBox(SVGTextChunk& chunk, SVGInlineTextBox* box)
@@ -455,7 +443,7 @@ static inline void writeSVGInlineTextBox(TextStream& ts, SVGInlineTextBox* textB
     }
 }
 
-static inline void writeSVGInlineText(TextStream& ts, const RenderSVGInlineText& text, int indent)
+static inline void writeSVGInlineTextBoxes(TextStream& ts, const RenderText& text, int indent)
 {
     for (InlineTextBox* box = text.firstTextBox(); box; box = box->nextTextBox())
         writeSVGInlineTextBox(ts, static_cast<SVGInlineTextBox*>(box), indent);
@@ -476,10 +464,11 @@ static void writeChildren(TextStream& ts, const RenderObject& object, int indent
         write(ts, *child, indent + 1);
 }
 
-void write(TextStream& ts, const RenderSVGContainer& container, int indent)
+void writeSVGContainer(TextStream& ts, const RenderObject& container, int indent)
 {
     writeStandardPrefix(ts, container, indent);
-    ts << container << "\n";
+    writePositionAndStyle(ts, container);
+    ts << "\n";
     writeChildren(ts, container, indent);
 }
 
@@ -490,20 +479,21 @@ void write(TextStream& ts, const RenderSVGRoot& root, int indent)
     writeChildren(ts, root, indent);
 }
 
-void write(TextStream& ts, const RenderSVGText& text, int indent)
+void writeSVGText(TextStream& ts, const RenderBlock& text, int indent)
 {
     writeStandardPrefix(ts, text, indent);
-    ts << text << "\n";
+    writeRenderSVGTextBox(ts, text);
+    ts << "\n";
     writeChildren(ts, text, indent);
 }
 
-void write(TextStream& ts, const RenderSVGInlineText& text, int indent)
+void writeSVGInlineText(TextStream& ts, const RenderText& text, int indent)
 {
     writeStandardPrefix(ts, text, indent);
 
     // Why not just linesBoundingBox()?
     ts << " " << FloatRect(text.firstRunOrigin(), text.linesBoundingBox().size()) << "\n";
-    writeSVGInlineText(ts, text, indent);
+    writeSVGInlineTextBoxes(ts, text, indent);
 }
 
 void write(TextStream& ts, const RenderPath& path, int indent)
@@ -512,10 +502,11 @@ void write(TextStream& ts, const RenderPath& path, int indent)
     ts << path << "\n";
 }
 
-void write(TextStream& ts, const RenderSVGImage& image, int indent)
+void writeSVGImage(TextStream& ts, const RenderImage& image, int indent)
 {
     writeStandardPrefix(ts, image, indent);
-    ts << image << "\n";
+    writePositionAndStyle(ts, image);
+    ts << "\n";
 }
 
 void writeRenderResources(TextStream& ts, Node* parent)

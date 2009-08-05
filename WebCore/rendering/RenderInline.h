@@ -1,9 +1,7 @@
 /*
- * This file is part of the render object implementation for KHTML.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -35,20 +33,51 @@ class Position;
 class RenderInline : public RenderBoxModelObject {
 public:
     RenderInline(Node*);
-    virtual ~RenderInline();
 
+    virtual void destroy();
+
+    virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = 0);
+
+    virtual int marginLeft() const;
+    virtual int marginRight() const;
+    
+    virtual void absoluteRects(Vector<IntRect>&, int tx, int ty);
+    virtual void absoluteQuads(Vector<FloatQuad>&);
+
+    IntRect linesBoundingBox() const;
+
+    InlineFlowBox* createAndAppendInlineFlowBox();
+
+    void dirtyLineBoxes(bool fullLayout);
+
+    RenderLineBoxList* lineBoxes() { return &m_lineBoxes; }
+    const RenderLineBoxList* lineBoxes() const { return &m_lineBoxes; }
+
+    InlineFlowBox* firstLineBox() const { return m_lineBoxes.firstLineBox(); }
+    InlineFlowBox* lastLineBox() const { return m_lineBoxes.lastLineBox(); }
+
+    RenderBoxModelObject* continuation() const { return m_continuation; }
+
+    virtual void updateDragState(bool dragOn);
+    
+    IntSize relativePositionedInlineOffset(const RenderBox* child) const;
+
+    virtual void addFocusRingRects(GraphicsContext*, int tx, int ty);
+    void paintOutline(GraphicsContext*, int tx, int ty);
+
+    int verticalPositionFromCache(bool firstLine) const;
+    void invalidateVerticalPosition() { m_verticalPosition = PositionUndefined; }
+
+private:
     virtual RenderObjectChildList* virtualChildren() { return children(); }
     virtual const RenderObjectChildList* virtualChildren() const { return children(); }
     const RenderObjectChildList* children() const { return &m_children; }
     RenderObjectChildList* children() { return &m_children; }
 
-    virtual void destroy();
-
     virtual const char* renderName() const;
 
     virtual bool isRenderInline() const { return true; }
 
-    virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = 0);
     void addChildToContinuation(RenderObject* newChild, RenderObject* beforeChild);
     virtual void addChildIgnoringContinuation(RenderObject* newChild, RenderObject* beforeChild = 0);
 
@@ -73,95 +102,64 @@ public:
     // Just ignore top/bottom margins on RenderInlines.
     virtual int marginTop() const { return 0; }
     virtual int marginBottom() const { return 0; }
-    virtual int marginLeft() const;
-    virtual int marginRight() const;
-    
-    virtual void absoluteRects(Vector<IntRect>&, int tx, int ty);
-    virtual void absoluteQuads(Vector<FloatQuad>&);
-
     virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer);
     virtual IntRect rectWithOutlineForRepaint(RenderBoxModelObject* repaintContainer, int outlineWidth);
     virtual void computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect& rect, bool fixed);
 
     virtual VisiblePosition positionForPoint(const IntPoint&);
 
-    IntRect linesBoundingBox() const;
-    
     virtual IntRect borderBoundingBox() const
     {
         IntRect boundingBox = linesBoundingBox();
         return IntRect(0, 0, boundingBox.width(), boundingBox.height());
     }
 
-    InlineFlowBox* createAndAppendInlineFlowBox();    
     virtual InlineFlowBox* createInlineFlowBox(); // Subclassed by SVG and Ruby
 
-    void dirtyLineBoxes(bool fullLayout);
     virtual void dirtyLinesFromChangedChild(RenderObject* child) { m_lineBoxes.dirtyLinesFromChangedChild(this, child); }
-
-    RenderLineBoxList* lineBoxes() { return &m_lineBoxes; }
-    const RenderLineBoxList* lineBoxes() const { return &m_lineBoxes; }
-
-    InlineFlowBox* firstLineBox() const { return m_lineBoxes.firstLineBox(); }
-    InlineFlowBox* lastLineBox() const { return m_lineBoxes.lastLineBox(); }
 
     virtual int lineHeight(bool firstLine, bool isRootLineBox = false) const;
 
-    RenderBoxModelObject* continuation() const { return m_continuation; }
     RenderInline* inlineContinuation() const;
     void setContinuation(RenderBoxModelObject* c) { m_continuation = c; }
-    
-    virtual void updateDragState(bool dragOn);
     
     virtual void childBecameNonInline(RenderObject* child);
 
     virtual void updateHitTestResult(HitTestResult&, const IntPoint&);
 
-    IntSize relativePositionedInlineOffset(const RenderBox* child) const;
-
-    virtual void addFocusRingRects(GraphicsContext*, int tx, int ty);
-    void paintOutline(GraphicsContext*, int tx, int ty);
-
     virtual void imageChanged(WrappedImagePtr, const IntRect* = 0);
-
-    int verticalPositionFromCache(bool firstLine) const;
-    void invalidateVerticalPosition() { m_verticalPosition = PositionUndefined; }
 
 #if ENABLE(DASHBOARD_SUPPORT)
     virtual void addDashboardRegions(Vector<DashboardRegionValue>&);
 #endif
     
-protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
     virtual void updateBoxModelInfoFromStyle();
     
     static RenderInline* cloneInline(RenderInline* src);
 
-private:
     void paintOutlineForLine(GraphicsContext*, int tx, int ty, const IntRect& prevLine, const IntRect& thisLine, const IntRect& nextLine);
     RenderBoxModelObject* continuationBefore(RenderObject* beforeChild);
 
-protected:
     RenderObjectChildList m_children;
     RenderLineBoxList m_lineBoxes;   // All of the line boxes created for this inline flow.  For example, <i>Hello<br>world.</i> will have two <i> line boxes.
 
-private:
     RenderBoxModelObject* m_continuation; // Can be either a block or an inline. <b><i><p>Hello</p></i></b>. In this example the <i> will have a block as its continuation but the
                                           // <b> will just have an inline as its continuation.
     mutable int m_lineHeight;
     mutable int m_verticalPosition;
 };
 
-inline RenderInline* toRenderInline(RenderObject* o)
+inline RenderInline* toRenderInline(RenderObject* object)
 { 
-    ASSERT(!o || o->isRenderInline());
-    return static_cast<RenderInline*>(o);
+    ASSERT(!object || object->isRenderInline());
+    return static_cast<RenderInline*>(object);
 }
 
-inline const RenderInline* toRenderInline(const RenderObject* o)
+inline const RenderInline* toRenderInline(const RenderObject* object)
 { 
-    ASSERT(!o || o->isRenderInline());
-    return static_cast<const RenderInline*>(o);
+    ASSERT(!object || object->isRenderInline());
+    return static_cast<const RenderInline*>(object);
 }
 
 // This will catch anyone doing an unnecessary cast.

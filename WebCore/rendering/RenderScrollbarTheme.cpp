@@ -66,17 +66,17 @@ bool RenderScrollbarTheme::hasThumb(Scrollbar* scrollbar)
 
 int RenderScrollbarTheme::minimumThumbLength(Scrollbar* scrollbar)
 {
-    return static_cast<RenderScrollbar*>(scrollbar)->minimumThumbLength();
+    return toRenderScrollbar(scrollbar)->minimumThumbLength();
 }
 
 IntRect RenderScrollbarTheme::backButtonRect(Scrollbar* scrollbar, ScrollbarPart partType, bool)
 {
-    return static_cast<RenderScrollbar*>(scrollbar)->buttonRect(partType);
+    return toRenderScrollbar(scrollbar)->buttonRect(partType);
 }
 
 IntRect RenderScrollbarTheme::forwardButtonRect(Scrollbar* scrollbar, ScrollbarPart partType, bool)
 {
-    return static_cast<RenderScrollbar*>(scrollbar)->buttonRect(partType);
+    return toRenderScrollbar(scrollbar)->buttonRect(partType);
 }
 
 IntRect RenderScrollbarTheme::trackRect(Scrollbar* scrollbar, bool)
@@ -88,13 +88,13 @@ IntRect RenderScrollbarTheme::trackRect(Scrollbar* scrollbar, bool)
     int endLength;
     buttonSizesAlongTrackAxis(scrollbar, startLength, endLength);
     
-    return static_cast<RenderScrollbar*>(scrollbar)->trackRect(startLength, endLength);
+    return toRenderScrollbar(scrollbar)->trackRect(startLength, endLength);
 }
 
 IntRect RenderScrollbarTheme::constrainTrackRectToTrackPieces(Scrollbar* scrollbar, const IntRect& rect)
 { 
-    IntRect backRect = static_cast<RenderScrollbar*>(scrollbar)->trackPieceRectWithMargins(BackTrackPart, rect);
-    IntRect forwardRect = static_cast<RenderScrollbar*>(scrollbar)->trackPieceRectWithMargins(ForwardTrackPart, rect);
+    IntRect backRect = toRenderScrollbar(scrollbar)->trackPieceRectWithMargins(BackTrackPart, rect);
+    IntRect forwardRect = toRenderScrollbar(scrollbar)->trackPieceRectWithMargins(ForwardTrackPart, rect);
     IntRect result = rect;
     if (scrollbar->orientation() == HorizontalScrollbar) {
         result.setX(backRect.x());
@@ -114,27 +114,27 @@ void RenderScrollbarTheme::paintScrollCorner(ScrollView*, GraphicsContext* conte
 
 void RenderScrollbarTheme::paintScrollbarBackground(GraphicsContext* context, Scrollbar* scrollbar)
 {
-    static_cast<RenderScrollbar*>(scrollbar)->paintPart(context, ScrollbarBGPart, scrollbar->frameRect());
+    toRenderScrollbar(scrollbar)->paintPart(context, ScrollbarBGPart, scrollbar->frameRect());
 }
 
 void RenderScrollbarTheme::paintTrackBackground(GraphicsContext* context, Scrollbar* scrollbar, const IntRect& rect)
 {
-    static_cast<RenderScrollbar*>(scrollbar)->paintPart(context, TrackBGPart, rect);
+    toRenderScrollbar(scrollbar)->paintPart(context, TrackBGPart, rect);
 }
 
 void RenderScrollbarTheme::paintTrackPiece(GraphicsContext* context, Scrollbar* scrollbar, const IntRect& rect, ScrollbarPart part)
 {
-    static_cast<RenderScrollbar*>(scrollbar)->paintPart(context, part, rect);
+    toRenderScrollbar(scrollbar)->paintPart(context, part, rect);
 }
 
 void RenderScrollbarTheme::paintButton(GraphicsContext* context, Scrollbar* scrollbar, const IntRect& rect, ScrollbarPart part)
 {
-    static_cast<RenderScrollbar*>(scrollbar)->paintPart(context, part, rect);
+    toRenderScrollbar(scrollbar)->paintPart(context, part, rect);
 }
 
 void RenderScrollbarTheme::paintThumb(GraphicsContext* context, Scrollbar* scrollbar, const IntRect& rect)
 {
-    static_cast<RenderScrollbar*>(scrollbar)->paintPart(context, ThumbPart, rect);
+    toRenderScrollbar(scrollbar)->paintPart(context, ThumbPart, rect);
 }
 
 }

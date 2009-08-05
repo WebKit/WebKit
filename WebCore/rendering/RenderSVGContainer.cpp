@@ -42,10 +42,6 @@ RenderSVGContainer::RenderSVGContainer(SVGStyledElement* node)
 {
 }
 
-RenderSVGContainer::~RenderSVGContainer()
-{
-}
-
 bool RenderSVGContainer::drawsContents() const
 {
     return m_drawsContents;

@@ -1134,7 +1134,7 @@ bool RenderThemeMac::paintSliderThumb(RenderObject* o, const RenderObject::Paint
     else
         oldPressed = m_isSliderThumbHorizontalPressed;
 
-    bool pressed = static_cast<RenderSlider*>(o->parent())->inDragMode();
+    bool pressed = toRenderSlider(o->parent())->inDragMode();
 
     if (o->style()->appearance() == SliderThumbVerticalPart)
         m_isSliderThumbVerticalPressed = pressed;

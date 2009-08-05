@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2009 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "RenderScrollbar.h"
+
 #include "RenderScrollbarPart.h"
 #include "RenderScrollbarTheme.h"
 
@@ -173,9 +174,14 @@ static PseudoId pseudoForScrollbarPart(ScrollbarPart part)
             return SCROLLBAR_THUMB;
         case TrackBGPart:
             return SCROLLBAR_TRACK;
-        default:
+        case ScrollbarBGPart:
             return SCROLLBAR;
+        case NoPart:
+        case AllParts:
+            break;
     }
+    ASSERT_NOT_REACHED();
+    return SCROLLBAR;
 }
 
 void RenderScrollbar::updateScrollbarPart(ScrollbarPart partType, bool destroy)

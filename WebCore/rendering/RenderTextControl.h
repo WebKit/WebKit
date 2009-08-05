@@ -34,17 +34,6 @@ class RenderTextControl : public RenderBlock {
 public:
     virtual ~RenderTextControl();
 
-    virtual const char* renderName() const { return "RenderTextControl"; }
-    virtual bool isTextControl() const { return true; }
-    virtual bool hasControlClip() const { return false; }
-    virtual IntRect controlClipRect(int tx, int ty) const;
-    virtual void calcHeight();
-    virtual void calcPrefWidths();
-    virtual void removeLeftoverAnonymousBlock(RenderBlock*) { }
-    virtual void updateFromElement();
-    virtual bool canHaveChildren() const { return false; }
-    virtual bool avoidsFloats() const { return true; }
-    
     bool isEdited() const { return m_edited; }
     void setEdited(bool isEdited) { m_edited = isEdited; }
 
@@ -63,10 +52,6 @@ public:
     String text();
     String textWithHardLineBreaks();
     void selectionChanged(bool userTriggered);
-
-    virtual void addFocusRingRects(GraphicsContext*, int tx, int ty);
-
-    virtual bool canBeProgramaticallyScrolled(bool) const { return true; }
 
     VisiblePosition visiblePositionForIndex(int index);
     int indexForVisiblePosition(const VisiblePosition&);
@@ -92,10 +77,26 @@ protected:
     virtual void cacheSelection(int start, int end) = 0;
     virtual PassRefPtr<RenderStyle> createInnerTextStyle(const RenderStyle* startStyle) const = 0;
 
+    virtual void updateFromElement();
+    virtual void calcHeight();
+
     friend class TextIterator;
     HTMLElement* innerTextElement() const;
 
 private:
+    virtual const char* renderName() const { return "RenderTextControl"; }
+    virtual bool isTextControl() const { return true; }
+    virtual bool hasControlClip() const { return false; }
+    virtual IntRect controlClipRect(int tx, int ty) const;
+    virtual void calcPrefWidths();
+    virtual void removeLeftoverAnonymousBlock(RenderBlock*) { }
+    virtual bool canHaveChildren() const { return false; }
+    virtual bool avoidsFloats() const { return true; }
+    
+    virtual void addFocusRingRects(GraphicsContext*, int tx, int ty);
+
+    virtual bool canBeProgramaticallyScrolled(bool) const { return true; }
+
     String finishText(Vector<UChar>&) const;
 
     bool m_edited;

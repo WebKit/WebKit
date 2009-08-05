@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -32,6 +32,25 @@ public:
     RenderReplaced(Node*, const IntSize& intrinsicSize);
     virtual ~RenderReplaced();
 
+protected:
+    virtual void layout();
+
+    virtual IntSize intrinsicSize() const;
+
+    virtual void setSelectionState(SelectionState);
+
+    bool isSelected() const;
+
+    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
+
+    void setIntrinsicSize(const IntSize&);
+    virtual void intrinsicSizeChanged();
+
+    bool shouldPaint(PaintInfo&, int& tx, int& ty);
+    void adjustOverflowForBoxShadowAndReflect();
+    IntRect localSelectionRect(bool checkWhetherSelected = true) const;
+
+private:
     virtual const char* renderName() const { return "RenderReplaced"; }
 
     virtual bool canHaveChildren() const { return false; }
@@ -40,14 +59,11 @@ public:
     virtual int baselinePosition(bool firstLine, bool isRootLineBox = false) const;
 
     virtual void calcPrefWidths();
-    
-    virtual void layout();
+
     virtual int minimumReplacedHeight() const { return 0; }
 
     virtual void paint(PaintInfo&, int tx, int ty);
     virtual void paintReplaced(PaintInfo&, int /*tx*/, int /*ty*/) { }
-
-    virtual IntSize intrinsicSize() const;
 
     virtual int overflowHeight(bool includeInterior = true) const;
     virtual int overflowWidth(bool includeInterior = true) const;
@@ -61,22 +77,9 @@ public:
     virtual VisiblePosition positionForPoint(const IntPoint&);
     
     virtual bool canBeSelectionLeaf() const { return true; }
-    virtual void setSelectionState(SelectionState);
+
     virtual IntRect selectionRectForRepaint(RenderBoxModelObject* repaintContainer, bool clipToVisibleContent = true);
 
-    bool isSelected() const;
-
-protected:
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
-
-    void setIntrinsicSize(const IntSize&);
-    virtual void intrinsicSizeChanged();
-
-    bool shouldPaint(PaintInfo&, int& tx, int& ty);
-    void adjustOverflowForBoxShadowAndReflect();
-    IntRect localSelectionRect(bool checkWhetherSelected = true) const;
-
-private:
     IntSize m_intrinsicSize;
 };
 

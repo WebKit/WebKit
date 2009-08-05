@@ -3,8 +3,6 @@
                   2004, 2005, 2006, 2007, 2008, 2009 Rob Buis <buis@kde.org>
                   2006 Alexander Kellett <lypanov@kde.org>
 
-    This file is part of the KDE project
-
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
     License as published by the Free Software Foundation; either
@@ -130,7 +128,7 @@ void SVGImageElement::attach()
 {
     SVGStyledTransformableElement::attach();
 
-    if (RenderSVGImage* imageObj = static_cast<RenderSVGImage*>(renderer())) {
+    if (RenderImage* imageObj = toRenderImage(renderer())) {
         if (imageObj->hasImage())
             return;
 

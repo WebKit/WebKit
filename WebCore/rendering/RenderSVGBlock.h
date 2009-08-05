@@ -34,6 +34,8 @@ class SVGElement;
 class RenderSVGBlock : public RenderBlock, protected SVGRenderBase {
 public:
     RenderSVGBlock(SVGElement*);
+
+private:
     virtual void setStyle(PassRefPtr<RenderStyle>);
 };
 

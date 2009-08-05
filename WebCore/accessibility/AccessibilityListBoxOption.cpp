@@ -100,7 +100,7 @@ IntRect AccessibilityListBoxOption::elementRect() const
     IntRect parentRect = listBoxRenderer->document()->axObjectCache()->getOrCreate(listBoxRenderer)->boundingBoxRect();
     int index = listBoxOptionIndex();
     if (index != -1)
-        rect = static_cast<RenderListBox*>(listBoxRenderer)->itemBoundingBoxRect(parentRect.x(), parentRect.y(), index);
+        rect = toRenderListBox(listBoxRenderer)->itemBoundingBoxRect(parentRect.x(), parentRect.y(), index);
     
     return rect;
 }

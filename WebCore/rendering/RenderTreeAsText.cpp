@@ -312,7 +312,7 @@ static TextStream &operator<<(TextStream& ts, const RenderObject& o)
     }
 
     if (o.isListMarker()) {
-        String text = static_cast<const RenderListMarker&>(o).text();
+        String text = toRenderListMarker(&o)->text();
         if (!text.isEmpty()) {
             if (text.length() != 1)
                 text = quoteAndEscapeNonPrintables(text);
@@ -359,26 +359,26 @@ void write(TextStream& ts, const RenderObject& o, int indent)
 {
 #if ENABLE(SVG)
     if (o.isRenderPath()) {
-        write(ts, static_cast<const RenderPath&>(o), indent);
+        write(ts, *toRenderPath(&o), indent);
         return;
     }
     if (o.isSVGContainer()) {
-        write(ts, static_cast<const RenderSVGContainer&>(o), indent);
+        writeSVGContainer(ts, o, indent);
         return;
     }
     if (o.isSVGRoot()) {
-        write(ts, static_cast<const RenderSVGRoot&>(o), indent);
+        write(ts, *toRenderSVGRoot(&o), indent);
         return;
     }
     if (o.isSVGText()) {
         if (!o.isText())
-            write(ts, static_cast<const RenderSVGText&>(o), indent);
+            writeSVGText(ts, *toRenderBlock(&o), indent);
         else
-            write(ts, static_cast<const RenderSVGInlineText&>(o), indent);
+            writeSVGInlineText(ts, *toRenderText(&o), indent);
         return;
     }
     if (o.isSVGImage()) {
-        write(ts, static_cast<const RenderSVGImage&>(o), indent);
+        writeSVGImage(ts, *toRenderImage(&o), indent);
         return;
     }
 #endif
@@ -402,7 +402,7 @@ void write(TextStream& ts, const RenderObject& o, int indent)
     }
 
     if (o.isWidget()) {
-        Widget* widget = static_cast<const RenderWidget&>(o).widget();
+        Widget* widget = toRenderWidget(&o)->widget();
         if (widget && widget->isFrameView()) {
             FrameView* view = static_cast<FrameView*>(widget);
             RenderView* root = view->frame()->contentRenderer();

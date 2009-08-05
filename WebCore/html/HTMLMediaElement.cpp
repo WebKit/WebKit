@@ -765,7 +765,7 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
 
 #if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
         if (renderer() && renderer()->isVideo()) {
-            static_cast<RenderVideo*>(renderer())->videoSizeChanged();
+            toRenderVideo(renderer())->videoSizeChanged();
         }
 #endif        
         m_delayingTheLoadEvent = false;
@@ -1340,7 +1340,7 @@ void HTMLMediaElement::mediaPlayerDurationChanged(MediaPlayer*)
     if (renderer()) {
         renderer()->updateFromElement();
         if (renderer()->isVideo())
-            static_cast<RenderVideo*>(renderer())->videoSizeChanged();
+            toRenderVideo(renderer())->videoSizeChanged();
     }
 #endif        
     endProcessingMediaPlayerCallback();
@@ -1380,7 +1380,7 @@ void HTMLMediaElement::mediaPlayerSizeChanged(MediaPlayer*)
     beginProcessingMediaPlayerCallback();
 #if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     if (renderer() && renderer()->isVideo())
-        static_cast<RenderVideo*>(renderer())->videoSizeChanged();
+        toRenderVideo(renderer())->videoSizeChanged();
 #endif        
     endProcessingMediaPlayerCallback();
 }
@@ -1390,7 +1390,7 @@ bool HTMLMediaElement::mediaPlayerRenderingCanBeAccelerated(MediaPlayer*)
 {
     if (renderer() && renderer()->isVideo()) {
         ASSERT(renderer()->view());
-        return renderer()->view()->compositor()->canAccelerateVideoRendering(static_cast<RenderVideo*>(renderer()));
+        return renderer()->view()->compositor()->canAccelerateVideoRendering(toRenderVideo(renderer()));
     }
     return false;
 }
@@ -1398,7 +1398,7 @@ bool HTMLMediaElement::mediaPlayerRenderingCanBeAccelerated(MediaPlayer*)
 GraphicsLayer* HTMLMediaElement::mediaPlayerGraphicsLayer(MediaPlayer*)
 {
     if (renderer() && renderer()->isVideo())
-        return static_cast<RenderVideo*>(renderer())->videoGraphicsLayer();
+        return toRenderVideo(renderer())->videoGraphicsLayer();
     return 0;
 }
 #endif
@@ -1620,7 +1620,7 @@ void HTMLMediaElement::defaultEventHandler(Event* event)
         widget->handleEvent(event);
 #else
     if (renderer() && renderer()->isMedia())
-        static_cast<RenderMedia*>(renderer())->forwardEvent(event);
+        toRenderMedia(renderer())->forwardEvent(event);
     if (event->defaultHandled())
         return;
     HTMLElement::defaultEventHandler(event);
@@ -1637,6 +1637,7 @@ bool HTMLMediaElement::processingUserGesture() const
 }
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+
 void HTMLMediaElement::deliverNotification(MediaPlayerProxyNotificationType notification)
 {
     if (notification == MediaPlayerNotificationPlayPauseButtonPressed) {
@@ -1674,8 +1675,9 @@ void HTMLMediaElement::finishParsingChildren()
     
     document()->updateStyleIfNeeded();
     if (m_needWidgetUpdate && renderer())
-        static_cast<RenderPartObject*>(renderer())->updateWidget(true);
+        toRenderPartObject(renderer())->updateWidget(true);
 }
+
 #endif
 
 }

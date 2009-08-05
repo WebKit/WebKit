@@ -91,20 +91,20 @@ static Node* enclosingList(Node* node)
 
 static RenderListItem* previousListItem(Node* list, const RenderListItem* item)
 {
-    for (Node* n = item->node()->traversePreviousNode(); n != list; n = n->traversePreviousNode()) {
-        RenderObject* o = n->renderer();
-        if (o && o->isListItem()) {
-            Node* otherList = enclosingList(n);
-            // This item is part of our current list, so it's what we're looking for.
-            if (list == otherList)
-                return static_cast<RenderListItem*>(o);
-            // We found ourself inside another list; lets skip the rest of it.
-            // Use traverseNextNode() here because the other list itself may actually
-            // be a list item itself. We need to examine it, so we do this to counteract
-            // the traversePreviousNode() that will be done by the loop.
-            if (otherList)
-                n = otherList->traverseNextNode();
-        }
+    for (Node* node = item->node()->traversePreviousNode(); node != list; node = node->traversePreviousNode()) {
+        RenderObject* renderer = node->renderer();
+        if (!renderer || !renderer->isListItem())
+            continue;
+        Node* otherList = enclosingList(node);
+        // This item is part of our current list, so it's what we're looking for.
+        if (list == otherList)
+            return toRenderListItem(renderer);
+        // We found ourself inside another list; lets skip the rest of it.
+        // Use traverseNextNode() here because the other list itself may actually
+        // be a list item itself. We need to examine it, so we do this to counteract
+        // the traversePreviousNode() that will be done by the loop.
+        if (otherList)
+            node = otherList->traverseNextNode();
     }
     return 0;
 }
@@ -302,9 +302,9 @@ void RenderListItem::explicitValueChanged()
     RenderObject* listRenderer = 0;
     if (listNode)
         listRenderer = listNode->renderer();
-    for (RenderObject* r = this; r; r = r->nextInPreOrder(listRenderer))
-        if (r->isListItem()) {
-            RenderListItem* item = static_cast<RenderListItem*>(r);
+    for (RenderObject* renderer = this; renderer; renderer = renderer->nextInPreOrder(listRenderer))
+        if (renderer->isListItem()) {
+            RenderListItem* item = toRenderListItem(renderer);
             if (!item->m_hasExplicitValue) {
                 item->m_isValueUpToDate = false;
                 if (RenderListMarker* marker = item->m_marker)

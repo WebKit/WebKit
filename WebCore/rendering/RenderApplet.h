@@ -46,6 +46,15 @@ namespace WebCore {
         HashMap<String, String> m_args;
     };
 
+    inline RenderApplet* toRenderApplet(RenderObject* object)
+    {
+        ASSERT(!object || object->isApplet());
+        return static_cast<RenderApplet*>(object);
+    }
+
+    // This will catch anyone doing an unnecessary cast.
+    void toRenderApplet(const RenderApplet*);
+
 } // namespace WebCore
 
 #endif // RenderApplet_h

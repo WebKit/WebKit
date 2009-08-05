@@ -56,7 +56,7 @@ bool RenderTextControlInnerBlock::nodeAtPoint(const HitTestRequest& request, Hit
 
     bool placeholderIsVisible = false;
     if (renderer->isTextField())
-        placeholderIsVisible = static_cast<RenderTextControlSingleLine*>(renderer)->placeholderIsVisible();
+        placeholderIsVisible = toRenderTextControlSingleLine(renderer)->placeholderIsVisible();
 
     return RenderBlock::nodeAtPoint(request, result, x, y, tx, ty, placeholderIsVisible ? HitTestBlockBackground : hitTestAction);
 }
@@ -155,7 +155,7 @@ void SearchFieldResultsButtonElement::defaultEventHandler(Event* evt)
     if (evt->type() == eventNames().mousedownEvent && evt->isMouseEvent() && static_cast<MouseEvent*>(evt)->button() == LeftButton) {
         input->focus();
         input->select();
-        RenderTextControlSingleLine* renderer = static_cast<RenderTextControlSingleLine*>(input->renderer());
+        RenderTextControlSingleLine* renderer = toRenderTextControlSingleLine(input->renderer());
         if (renderer->popupIsVisible())
             renderer->hidePopup();
         else if (input->maxResults() > 0)

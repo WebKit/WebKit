@@ -285,14 +285,11 @@ static inline void closeTextChunk(SVGTextChunkLayoutInfo& info)
 
 RenderSVGRoot* findSVGRootObject(RenderObject* start)
 {
-    // Find associated root inline box
+    // Find associated root inline box.
     while (start && !start->isSVGRoot())
         start = start->parent();
-
     ASSERT(start);
-    ASSERT(start->isSVGRoot());
-
-    return static_cast<RenderSVGRoot*>(start);
+    return toRenderSVGRoot(start);
 }
 
 static inline FloatPoint topLeftPositionOfCharacterRange(Vector<SVGChar>& chars)

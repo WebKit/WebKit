@@ -26,9 +26,6 @@
 #include "config.h"
 #include "RenderImage.h"
 
-#include "BitmapImage.h"
-#include "Document.h"
-#include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"

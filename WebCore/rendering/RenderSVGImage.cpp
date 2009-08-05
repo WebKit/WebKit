@@ -47,10 +47,6 @@ RenderSVGImage::RenderSVGImage(SVGImageElement* impl)
 {
 }
 
-RenderSVGImage::~RenderSVGImage()
-{
-}
-
 void RenderSVGImage::adjustRectsForAspectRatio(FloatRect& destRect, FloatRect& srcRect, SVGPreserveAspectRatio* aspectRatio)
 {
     float origDestWidth = destRect.width();

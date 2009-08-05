@@ -141,7 +141,7 @@ RenderWidget* HTMLAppletElement::renderWidgetForJSBindings() const
     if (!settings || !settings->isJavaEnabled())
         return 0;
 
-    RenderApplet* applet = static_cast<RenderApplet*>(renderer());
+    RenderApplet* applet = toRenderApplet(renderer());
     if (applet)
         applet->createWidgetIfNecessary();
 

@@ -117,7 +117,7 @@ void HTMLIFrameElement::attach()
 {
     HTMLFrameElementBase::attach();
 
-    if (RenderPartObject* renderPartObject = static_cast<RenderPartObject*>(renderer()))
+    if (RenderPartObject* renderPartObject = toRenderPartObject(renderer()))
         renderPartObject->updateWidget(false);
 }
 

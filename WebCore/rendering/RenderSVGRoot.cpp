@@ -48,10 +48,6 @@ RenderSVGRoot::RenderSVGRoot(SVGStyledElement* node)
     setReplaced(true);
 }
 
-RenderSVGRoot::~RenderSVGRoot()
-{
-}
-
 int RenderSVGRoot::lineHeight(bool, bool) const
 {
     return height() + marginTop() + marginBottom();

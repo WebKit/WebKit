@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Simon Hausmann <hausmann@kde.org>
- * Copyright (C) 2006, 2009 Apple Inc.
+ * Copyright (C) 2006, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -41,6 +41,15 @@ private:
 
     virtual void viewCleared();
 };
+
+inline RenderPartObject* toRenderPartObject(RenderObject* object)
+{
+    ASSERT(!object || !strcmp(object->renderName(), "RenderPartObject"));
+    return static_cast<RenderPartObject*>(object);
+}
+
+// This will catch anyone doing an unnecessary cast.
+void toRenderPartObject(const RenderPartObject*);
 
 } // namespace WebCore
 

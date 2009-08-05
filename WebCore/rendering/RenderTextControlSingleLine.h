@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2006, 2007, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * This library is free software; you can redistribute it and/or
@@ -38,9 +39,6 @@ public:
     RenderTextControlSingleLine(Node*);
     virtual ~RenderTextControlSingleLine();
 
-    virtual bool hasControlClip() const { return m_cancelButton; }
-    virtual bool isTextField() const { return true; }
-
     bool placeholderIsVisible() const { return m_placeholderVisible; }
     bool placeholderShouldBeVisible() const;
     void updatePlaceholderVisibility();
@@ -52,14 +50,19 @@ public:
     void showPopup();
     virtual void hidePopup(); // PopupMenuClient method
 
+    void forwardEvent(Event*);
+
+    void capsLockStateMayHaveChanged();
+
+private:
+    virtual bool hasControlClip() const { return m_cancelButton; }
+    virtual bool isTextField() const { return true; }
+
     virtual void subtreeHasChanged();
     virtual void paint(PaintInfo&, int tx, int ty);
     virtual void layout();
 
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
-    void forwardEvent(Event*);
-
-    void capsLockStateMayHaveChanged();
 
     virtual void autoscroll();
 
@@ -72,7 +75,6 @@ public:
     virtual void setScrollTop(int);
     virtual bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1.0f);
 
-private:
     int textBlockWidth() const;
     virtual int preferredContentWidth(float charWidth) const;
     virtual void adjustControlHeightBasedOnLineHeight(int lineHeight);
@@ -94,7 +96,6 @@ private:
     void startSearchEventTimer();
     void searchEventTimerFired(Timer<RenderTextControlSingleLine>*);
 
-private:
     // PopupMenuClient methods
     virtual void valueChanged(unsigned listIndex, bool fireEvents = true);
     virtual String itemText(unsigned listIndex) const;
@@ -120,7 +121,6 @@ private:
 
     InputElement* inputElement() const;
 
-private:
     bool m_placeholderVisible;
     bool m_searchPopupIsVisible;
     bool m_shouldDrawCapsLockIndicator;
@@ -133,6 +133,15 @@ private:
     RefPtr<SearchPopupMenu> m_searchPopup;
     Vector<String> m_recentSearches;
 };
+
+inline RenderTextControlSingleLine* toRenderTextControlSingleLine(RenderObject* object)
+{ 
+    ASSERT(!object || object->isTextField());
+    return static_cast<RenderTextControlSingleLine*>(object);
+}
+
+// This will catch anyone doing an unnecessary cast.
+void toRenderTextControlSingleLine(const RenderTextControlSingleLine*);
 
 }
 

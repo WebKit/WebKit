@@ -166,7 +166,7 @@ IntRect AccessibilitySliderThumb::elementRect() const
     if (!m_parentSlider->renderer())
         return IntRect();
 
-    IntRect intRect = static_cast<RenderSlider*>(m_parentSlider->renderer())->thumbRect();
+    IntRect intRect = toRenderSlider(m_parentSlider->renderer())->thumbRect();
     FloatQuad floatQuad = m_parentSlider->renderer()->localToAbsoluteQuad(FloatRect(intRect));
 
     return floatQuad.enclosingBoundingBox();

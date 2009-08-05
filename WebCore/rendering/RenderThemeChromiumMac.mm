@@ -1506,7 +1506,7 @@ bool RenderThemeChromiumMac::paintSliderThumb(RenderObject* o, const RenderObjec
     else
         oldPressed = m_isSliderThumbHorizontalPressed;
 
-    bool pressed = static_cast<RenderSlider*>(o->parent())->inDragMode();
+    bool pressed = toRenderSlider(o->parent())->inDragMode();
 
     if (o->style()->appearance() == SliderThumbVerticalPart)
         m_isSliderThumbVerticalPressed = pressed;
@@ -1910,7 +1910,7 @@ bool RenderThemeChromiumMac::paintMediaSliderTrack(RenderObject* o, const Render
         currentTime = player->currentTime();
     }
 
-    bool shouldDrawEndCaps = !static_cast<RenderMedia*>(mediaElement->renderer())->shouldShowTimeDisplayControls();
+    bool shouldDrawEndCaps = !toRenderMedia(mediaElement->renderer())->shouldShowTimeDisplayControls();
     wkDrawMediaSliderTrack(MediaControllerThemeClassic, paintInfo.context->platformContext(), r, timeLoaded, currentTime, duration, shouldDrawEndCaps ? MediaUIPartDrawEndCapsFlag : 0);
 #endif
     return false;

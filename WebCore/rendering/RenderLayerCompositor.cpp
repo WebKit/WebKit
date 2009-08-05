@@ -232,7 +232,7 @@ bool RenderLayerCompositor::updateBacking(RenderLayer* layer, CompositingChangeR
 #if ENABLE(VIDEO)
     if (layerChanged && layer->renderer()->isVideo()) {
         // If it's a video, give the media player a chance to hook up to the layer.
-        RenderVideo* video = static_cast<RenderVideo*>(layer->renderer());
+        RenderVideo* video = toRenderVideo(layer->renderer());
         video->acceleratedRenderingStateChanged();
     }
 #endif
@@ -890,7 +890,7 @@ bool RenderLayerCompositor::requiresCompositingForVideo(RenderObject* renderer) 
 {
 #if ENABLE(VIDEO)
     if (renderer->isVideo()) {
-        RenderVideo* video = static_cast<RenderVideo*>(renderer);
+        RenderVideo* video = toRenderVideo(renderer);
         return canAccelerateVideoRendering(video);
     }
 #endif

@@ -35,10 +35,6 @@ RenderSVGHiddenContainer::RenderSVGHiddenContainer(SVGStyledElement* element)
 {
 }
 
-RenderSVGHiddenContainer::~RenderSVGHiddenContainer()
-{
-}
-
 void RenderSVGHiddenContainer::layout()
 {
     ASSERT(needsLayout());

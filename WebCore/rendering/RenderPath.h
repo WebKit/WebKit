@@ -40,6 +40,9 @@ class RenderPath : public RenderSVGModelObject {
 public:
     RenderPath(SVGStyledTransformableElement*);
 
+    const Path& path() const;
+
+private:
     // Hit-detection seperated for the fill and the stroke
     bool fillContains(const FloatPoint&, bool requiresFill = true) const;
     bool strokeContains(const FloatPoint&, bool requiresStroke = true) const;
@@ -49,7 +52,6 @@ public:
 
     virtual TransformationMatrix localToParentTransform() const;
 
-    const Path& path() const;
     void setPath(const Path&);
 
     virtual bool isRenderPath() const { return true; }
@@ -72,6 +74,21 @@ private:
     FloatRect m_markerBounds;
     TransformationMatrix m_localTransform;
 };
+
+inline RenderPath* toRenderPath(RenderObject* object)
+{
+    ASSERT(!object || object->isRenderPath());
+    return static_cast<RenderPath*>(object);
+}
+
+inline const RenderPath* toRenderPath(const RenderObject* object)
+{
+    ASSERT(!object || object->isRenderPath());
+    return static_cast<const RenderPath*>(object);
+}
+
+// This will catch anyone doing an unnecessary cast.
+void toRenderPath(const RenderPath*);
 
 }
 

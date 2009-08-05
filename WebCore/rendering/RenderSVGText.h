@@ -37,6 +37,7 @@ class RenderSVGText : public RenderSVGBlock {
 public:
     RenderSVGText(SVGTextElement* node);
 
+private:
     virtual const char* renderName() const { return "RenderSVGText"; }
 
     virtual bool isSVGText() const { return true; }
@@ -61,7 +62,6 @@ public:
     virtual FloatRect objectBoundingBox() const;
     virtual FloatRect repaintRectInLocalCoordinates() const;
 
-private:
     // FIXME: This can be removed when localTransform() is removed from RenderObject
     virtual TransformationMatrix localTransform() const { return m_localTransform; }
 

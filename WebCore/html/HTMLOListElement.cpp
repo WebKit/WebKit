@@ -72,7 +72,7 @@ void HTMLOListElement::parseMappedAttribute(MappedAttribute* attr)
         m_start = start;
         for (RenderObject* child = renderer(); child; child = child->nextInPreOrder(renderer())) {
             if (child->isListItem())
-                static_cast<RenderListItem*>(child)->updateValue();
+                toRenderListItem(child)->updateValue();
         }
     } else
         HTMLElement::parseMappedAttribute(attr);

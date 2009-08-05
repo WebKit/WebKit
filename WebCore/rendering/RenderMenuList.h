@@ -40,7 +40,16 @@ class RenderText;
 class RenderMenuList : public RenderFlexibleBox, private PopupMenuClient {
 public:
     RenderMenuList(Element*);
-    ~RenderMenuList();
+    virtual ~RenderMenuList();
+
+public:
+    bool popupIsVisible() const { return m_popupIsVisible; }
+    void showPopup();
+    void hidePopup();
+
+    void setOptionsChanged(bool changed) { m_optionsChanged = changed; }
+
+    String text() const;
 
 private:
     virtual bool isMenuList() const { return true; }
@@ -59,16 +68,6 @@ private:
 
     virtual void calcPrefWidths();
 
-public:
-    bool popupIsVisible() const { return m_popupIsVisible; }
-    void showPopup();
-    void hidePopup();
-
-    void setOptionsChanged(bool changed) { m_optionsChanged = changed; }
-
-    String text() const;
-
-private:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
     // PopupMenuClient methods
@@ -113,6 +112,15 @@ private:
     RefPtr<PopupMenu> m_popup;
     bool m_popupIsVisible;
 };
+
+inline RenderMenuList* toRenderMenuList(RenderObject* object)
+{ 
+    ASSERT(!object || object->isMenuList());
+    return static_cast<RenderMenuList*>(object);
+}
+
+// This will catch anyone doing an unnecessary cast.
+void toRenderMenuList(const RenderMenuList*);
 
 }
 

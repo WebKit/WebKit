@@ -1,3 +1,224 @@
+2009-08-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by David Levin.
+
+        Use checked casts for render tree
+        https://bugs.webkit.org/show_bug.cgi?id=23522
+
+        Last patch. Makes all the casts of RenderObject use checked
+        casts instead of using static_cast directly.
+
+        * accessibility/AccessibilityListBox.cpp:
+        (WebCore::AccessibilityListBox::visibleChildren):
+        (WebCore::AccessibilityListBox::doAccessibilityHitTest):
+        * accessibility/AccessibilityListBoxOption.cpp:
+        (WebCore::AccessibilityListBoxOption::elementRect):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::textUnderElement):
+        (WebCore::AccessibilityRenderObject::stringValue):
+        (WebCore::AccessibilityRenderObject::titleUIElement):
+        (WebCore::AccessibilityRenderObject::accessibilityIsIgnored):
+        * accessibility/AccessibilitySlider.cpp:
+        (WebCore::AccessibilitySliderThumb::elementRect):
+        * dom/InputElement.cpp:
+        (WebCore::InputElement::updatePlaceholderVisibility):
+        * dom/SelectElement.cpp:
+        (WebCore::SelectElement::scrollToSelection):
+        (WebCore::SelectElement::recalcStyle):
+        (WebCore::SelectElement::setRecalcListItems):
+        (WebCore::SelectElement::menuListDefaultEventHandler):
+        (WebCore::SelectElement::listBoxDefaultEventHandler):
+        * editing/BreakBlockquoteCommand.cpp:
+        (WebCore::BreakBlockquoteCommand::doApply):
+        * html/HTMLAppletElement.cpp:
+        (WebCore::HTMLAppletElement::renderWidgetForJSBindings):
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::reset):
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::updateWidget):
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::attach):
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::defaultEventHandler):
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::HTMLIFrameElement::attach):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::defaultEventHandler):
+        (WebCore::HTMLInputElement::addSearchResult):
+        (WebCore::HTMLInputElement::onSearch):
+        * html/HTMLLIElement.cpp:
+        (WebCore::HTMLLIElement::parseMappedAttribute):
+        (WebCore::HTMLLIElement::attach):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setReadyState):
+        (WebCore::HTMLMediaElement::mediaPlayerDurationChanged):
+        (WebCore::HTMLMediaElement::mediaPlayerSizeChanged):
+        (WebCore::HTMLMediaElement::mediaPlayerRenderingCanBeAccelerated):
+        (WebCore::HTMLMediaElement::mediaPlayerGraphicsLayer):
+        (WebCore::HTMLMediaElement::defaultEventHandler):
+        (WebCore::HTMLMediaElement::finishParsingChildren):
+        * html/HTMLOListElement.cpp:
+        (WebCore::HTMLOListElement::parseMappedAttribute):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::updateWidget):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::defaultEventHandler):
+        * page/DragController.cpp:
+        (WebCore::DragController::concludeEditDrag):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::selectCursor):
+        (WebCore::EventHandler::capsLockStateMayHaveChanged):
+        * page/Frame.cpp:
+        (WebCore::Frame::ownerRenderer):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::detachCustomScrollbars):
+        * page/wince/FrameWince.cpp:
+        (WebCore::computePageRectsForFrame):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::placeBoxesHorizontally):
+        * rendering/MediaControlElements.cpp:
+        (WebCore::MediaControlTimelineElement::defaultEventHandler):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::findNextLineBreak):
+        * rendering/RenderCounter.cpp:
+        (WebCore::planCounter):
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::computeEdgeInfo):
+        (WebCore::RenderFrameSet::setIsResizing):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::contentsBox):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateBacking):
+        (WebCore::RenderLayerCompositor::requiresCompositingForVideo):
+        * rendering/RenderListItem.cpp:
+        (WebCore::previousListItem):
+        (WebCore::RenderListItem::explicitValueChanged):
+        * rendering/RenderObject.cpp:
+        (WebCore::updateListMarkerNumbers):
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::updateListMarkerNumbers):
+        (WebCore::invalidateCountersInContainer):
+        * rendering/RenderScrollbarTheme.cpp:
+        (WebCore::RenderScrollbarTheme::minimumThumbLength):
+        (WebCore::RenderScrollbarTheme::backButtonRect):
+        (WebCore::RenderScrollbarTheme::forwardButtonRect):
+        (WebCore::RenderScrollbarTheme::trackRect):
+        (WebCore::RenderScrollbarTheme::constrainTrackRectToTrackPieces):
+        (WebCore::RenderScrollbarTheme::paintScrollbarBackground):
+        (WebCore::RenderScrollbarTheme::paintTrackBackground):
+        (WebCore::RenderScrollbarTheme::paintTrackPiece):
+        (WebCore::RenderScrollbarTheme::paintButton):
+        (WebCore::RenderScrollbarTheme::paintThumb):
+        * rendering/RenderSlider.cpp:
+        (WebCore::SliderThumbElement::defaultEventHandler):
+        * rendering/RenderThemeChromiumMac.mm:
+        (WebCore::RenderThemeChromiumMac::paintSliderThumb):
+        (WebCore::RenderThemeChromiumMac::paintMediaSliderTrack):
+        * rendering/RenderThemeChromiumWin.cpp:
+        (WebCore::RenderThemeChromiumWin::determineSliderThumbState):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintSliderThumb):
+        * rendering/RenderThemeSafari.cpp:
+        (WebCore::RenderThemeSafari::paintSliderThumb):
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::determineSliderThumbState):
+        * rendering/SVGCharacterLayoutInfo.cpp:
+        (WebCore::SVGCharacterLayoutInfo::addLayoutInformation):
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::findSVGRootObject):
+        * rendering/TextControlInnerElements.cpp:
+        (WebCore::RenderTextControlInnerBlock::nodeAtPoint):
+        (WebCore::SearchFieldResultsButtonElement::defaultEventHandler):
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::attach):
+        * svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::canvasResource):
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::rootInlineBoxForTextContentElement):
+        * wml/WMLInputElement.cpp:
+        (WebCore::WMLInputElement::defaultEventHandler):
+        Use checked casts.
+
+        * rendering/RenderApplet.h:
+        * rendering/RenderCounter.h:
+        * rendering/RenderFieldset.h:
+        * rendering/RenderFileUploadControl.h:
+        * rendering/RenderFrame.h:
+        * rendering/RenderFrameSet.h:
+        * rendering/RenderHTMLCanvas.h:
+        * rendering/RenderListBox.h:
+        * rendering/RenderListItem.h:
+        * rendering/RenderListMarker.h:
+        * rendering/RenderMedia.h:
+        * rendering/RenderMenuList.h:
+        * rendering/RenderPart.h:
+        * rendering/RenderPartObject.h:
+        * rendering/RenderPath.h:
+        * rendering/RenderSVGContainer.h:
+        * rendering/RenderSVGRoot.h:
+        * rendering/RenderSVGTextPath.h:
+        * rendering/RenderSVGViewportContainer.h:
+        * rendering/RenderScrollbar.h:
+        * rendering/RenderSlider.h:
+        * rendering/RenderTextControlMultiLine.h:
+        * rendering/RenderTextControlSingleLine.h:
+        * rendering/RenderVideo.h:
+        Added a checked cast. Also made most members protected or private.
+
+        * rendering/RenderBlock.h:
+        * rendering/RenderInline.h:
+        * rendering/RenderReplaced.h:
+        * rendering/RenderSVGBlock.h:
+        * rendering/RenderSVGImage.h:
+        * rendering/RenderSVGInlineText.h:
+        * rendering/RenderSVGText.h:
+        * rendering/RenderTextControl.h:
+        Made most members protected or private.
+
+        * rendering/RenderInline.cpp:
+        * rendering/RenderSVGContainer.cpp:
+        * rendering/RenderSVGHiddenContainer.cpp:
+        * rendering/RenderSVGImage.cpp:
+        * rendering/RenderSVGRoot.cpp:
+        Removed unneeded destructor.
+
+        * rendering/RenderSVGHiddenContainer.h:
+        Removed unneeded virtual function overrides that did the same as
+        the default and base class.
+
+        * rendering/RenderSVGViewportContainer.cpp:
+        (WebCore::RenderSVGViewportContainer::paint): Updated to use m_viewport
+        directly instead of using a function call.
+        (WebCore::RenderSVGViewportContainer::applyViewportClip): Ditto.
+        (WebCore::RenderSVGViewportContainer::viewportTransform): Ditto.
+        (WebCore::RenderSVGViewportContainer::localToParentTransform): Ditto.
+        (WebCore::RenderSVGViewportContainer::pointIsInsideViewportClip): Ditto.
+
+        * rendering/RenderScrollbar.cpp:
+        (WebCore::pseudoForScrollbarPart): Changed switch statement to use cases for
+        all values instead of using a default case.
+
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::operator<<): Removed dependency on casting to types that don't
+        have any public members we need to get at. Instead, use function names to
+        identify the type rather than doing so much overloading. Changed to use
+        checked casts.
+        (WebCore::write): Ditto.
+
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::renderSubtreeToImage): Changed to use a checked cast and also
+        added a comment about the fact that the code does not do sufficient type
+        checking before doing the cast.
+
+        * rendering/SVGRenderTreeAsText.cpp:
+        (WebCore::writeRenderSVGTextBox): Renamed this from operator<<.
+        (WebCore::writeSVGInlineTextBoxes): Renamed this from writeSVGInlineText.
+        (WebCore::writeSVGText): Renamed this from write.
+        (WebCore::writeSVGInlineText): Ditto.
+        (WebCore::writeSVGImage): Ditto.
+        * rendering/SVGRenderTreeAsText.h: Updated for name changes. Removed
+        unneeded default arguments.
+
 2009-08-05  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Sam Weinig.

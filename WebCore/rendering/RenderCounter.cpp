@@ -107,8 +107,8 @@ static bool planCounter(RenderObject* object, const AtomicString& counterName, b
 
     if (counterName == "list-item") {
         if (object->isListItem()) {
-            if (static_cast<RenderListItem*>(object)->hasExplicitValue()) {
-                value = static_cast<RenderListItem*>(object)->explicitValue();
+            if (toRenderListItem(object)->hasExplicitValue()) {
+                value = toRenderListItem(object)->explicitValue();
                 isReset = true;
                 return true;
             }
