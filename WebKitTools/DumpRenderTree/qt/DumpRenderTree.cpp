@@ -32,6 +32,7 @@
 #include "DumpRenderTree.h"
 #include "jsobjects.h"
 #include "testplugin.h"
+#include "WorkQueue.h"
 
 #include <QBuffer>
 #include <QCryptographicHash>
@@ -199,8 +200,29 @@ void DumpRenderTree::open()
     }
 }
 
+void DumpRenderTree::resetToConsistentStateBeforeTesting()
+{
+    closeRemainingWindows();
+
+    // Reset so that any current loads are stopped
+    m_page->blockSignals(true);
+    m_page->triggerAction(QWebPage::Stop);
+    m_page->blockSignals(false);
+
+    m_page->mainFrame()->setZoomFactor(1.0);
+    qt_drt_clearFrameName(m_page->mainFrame());
+
+    WorkQueue::shared()->clear();
+    // Causes timeout, why?
+    //WorkQueue::shared()->setFrozen(false);
+
+    m_controller->reset();
+}
+
 void DumpRenderTree::open(const QUrl& aurl)
 {
+    resetToConsistentStateBeforeTesting();
+
     QUrl url = aurl;
     m_expectedHash = QString();
     if (m_dumpPixels) {
@@ -222,13 +244,6 @@ void DumpRenderTree::open(const QUrl& aurl)
     m_page->setFixedContentsSize(QSize());
     m_page->setViewportSize(QSize(width, height));
 
-    // Reset so that any current loads are stopped
-    m_page->blockSignals(true);
-    m_page->triggerAction(QWebPage::Stop);
-    m_page->blockSignals(false);
-
-    resetJSObjects();
-
     QFocusEvent ev(QEvent::FocusIn);
     m_page->event(&ev);
 
@@ -236,9 +251,6 @@ void DumpRenderTree::open(const QUrl& aurl)
 #if defined(Q_WS_X11)
     initializeFonts();
 #endif
-
-    m_page->mainFrame()->setZoomFactor(1.0);
-    qt_drt_clearFrameName(m_page->mainFrame());
 
     qt_dump_frame_loader(url.toString().contains("loading/"));
     m_page->mainFrame()->load(url);
@@ -269,9 +281,8 @@ void DumpRenderTree::setDumpPixels(bool dump)
     m_dumpPixels = dump;
 }
 
-void DumpRenderTree::resetJSObjects()
+void DumpRenderTree::closeRemainingWindows()
 {
-    m_controller->reset();
     foreach(QWidget *widget, windows)
         delete widget;
     windows.clear();

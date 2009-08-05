@@ -64,7 +64,8 @@ public:
 
     void setDumpPixels(bool);
 
-    void resetJSObjects();
+    void closeRemainingWindows();
+    void resetToConsistentStateBeforeTesting();
 
     LayoutTestController *layoutTestController() const { return m_controller; }
     EventSender *eventSender() const { return m_eventSender; }

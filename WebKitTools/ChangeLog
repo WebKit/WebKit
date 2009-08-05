@@ -2,6 +2,26 @@
 
         Reviewed by Simon Hausmann.
 
+        A minor refactoring of the Qt DRT to be a bit more similar to
+        the other DRTs, as well as more understandable.
+
+        Splitting up resetJSObjects into a LayoutTestController->reset()
+        plus a new closeRemainingWindows() method.
+
+        Added a resetToConsistentStateBeforeTesting() method to keep
+        the code in one place, making it easier to verify that we are
+        doing things properly.
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::resetToConsistentStateBeforeTesting):
+        (WebCore::DumpRenderTree::open):
+        (WebCore::DumpRenderTree::closeRemainingWindows):
+        * DumpRenderTree/qt/DumpRenderTree.h:
+
+2009-08-05  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
         Make the Qt DRT WorkQueue work similarily to the cross platform
         one. This means that all items return true if they started
         loading.
