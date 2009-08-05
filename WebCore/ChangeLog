@@ -1,3 +1,36 @@
+2009-08-04  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Fix Windows layout test crashes.
+
+        PluginView::removeFromUnstartedListIfNecessary() would try to remove
+        any unstarted PluginView from the Page's set of unstarted plug-ins,
+        regardless of why the PluginView wasn't started. If we tried to start a
+        plug-in, but it failed to start, we would hit an assertion in
+        Page::removeUnstartedPlugin() that asserts that we would only modify the
+        unstarted plug-ins set if we were not currently starting plug-ins.
+
+        Fix this by having PluginView track whether it's waiting to be started,
+        and to check this before trying to remove itself from the Page's
+        unstarted plug-ins set.
+
+        Reviewed by Darin Adler.
+
+        * page/Page.cpp:
+        (WebCore::Page::removeUnstartedPlugin):
+        Assert that the passed PluginView is in the unstarted set.
+
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::start):
+        Set that we are not waiting to be started.
+        (WebCore::PluginView::startOrAddtoUnstartedList):
+        Set that we are waiting to be started.
+        (WebCore::PluginView::removeFromUnstartedListIfNecessary):
+        Check not whether we are started, but whether we are waiting to be
+        started.
+        (WebCore::PluginView::PluginView):
+
+        * plugins/PluginView.h:
+
 2009-08-05  Jeremy Orlow  <jorlow@chromium.org>
 
        Fix DOM Storage memory leak
