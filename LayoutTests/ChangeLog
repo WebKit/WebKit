@@ -2,6 +2,19 @@
 
         Rubberstamped by Mark Rowe.
 
+        Actually, for all 6 of these tests Tiger now matches the cross-platform results, so removing all the Tiger results.
+
+        * platform/mac-tiger/http/tests/loading/redirect-methods-expected.txt: Removed.
+        * platform/mac-tiger/http/tests/misc/favicon-loads-with-images-disabled-expected.txt: Removed.
+        * platform/mac-tiger/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-expected.txt: Removed.
+        * platform/mac-tiger/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body-expected.txt: Removed.
+        * platform/mac-tiger/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-allow-expected.txt: Removed.
+        * platform/mac-tiger/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-deny-expected.txt: Removed.
+
+2009-08-05  Brady Eidson  <beidson@apple.com>
+
+        Rubberstamped by Mark Rowe.
+
         As a followup to http://trac.webkit.org/changeset/46809, Windows-specific results now match the cross-platform results, 
         so I'm removing them.
 
