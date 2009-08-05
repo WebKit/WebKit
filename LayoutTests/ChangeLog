@@ -1,3 +1,14 @@
+2009-08-05  Szabo Carol  <carol.szabo@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Test for https://bugs.webkit.org/show_bug.cgi?id=27942
+        Form Reset does not work per w3c standard when single selection
+        SELECT element has more than one option marked as selected.
+
+        * fast/forms/select-reset-multiple-selections-4-single-selection-expected.txt: Added.
+        * fast/forms/select-reset-multiple-selections-4-single-selection.html: Added.
+
 2009-08-04  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

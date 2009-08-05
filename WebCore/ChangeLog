@@ -1,3 +1,18 @@
+2009-08-05  Szabo Carol  <carol.szabo@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27942
+
+        Test: fast/forms/select-reset-multiple-selections-4-single-selection.html
+
+        * dom/SelectElement.cpp:
+        (WebCore::SelectElement::reset):
+           Added HTML 4.01 compliant handling of broken webpages that
+           specify more than one selected option for single selection SELECT
+           element, in a manner that emulates Firefox and is similar to IE 7
+
+
 2009-08-05  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
 
         Reviewed by Simon Hausmann.
