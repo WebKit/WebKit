@@ -1,3 +1,21 @@
+2009-08-04  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Bug 27994 - WAI-ARIA: aria-valuetext needs to be implemented
+        https://bugs.webkit.org/show_bug.cgi?id=27994
+
+        Test: platform/mac/accessibility/aria-valuetext.html
+
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::valueDescription):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::valueDescription):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:]):
+        * html/HTMLAttributeNames.in:
+
 2009-08-04  Michael Nordman  <michaeln@google.com>
 
         Reviewed by Alexey Proskuryakov.

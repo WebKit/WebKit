@@ -1,3 +1,21 @@
+2009-08-04  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Bug 27994 - WAI-ARIA: aria-valuetext needs to be implemented
+        https://bugs.webkit.org/show_bug.cgi?id=27994
+
+        Expose valueDescription for accessibility. 
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (getValueDescriptionCallback):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::valueDescription):
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::valueDescription):
+
 2009-08-04  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Mark Rowe.

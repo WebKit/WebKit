@@ -92,6 +92,7 @@ public:
     double intValue();
     double minValue();
     double maxValue();
+    JSStringRef valueDescription();
     int insertionPointLineNumber();
     JSStringRef selectedTextRange();
     bool isEnabled();

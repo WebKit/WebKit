@@ -751,6 +751,15 @@ int AccessibilityRenderObject::intValue() const
     return static_cast<HTMLInputElement*>(node)->checked();
 }
 
+String AccessibilityRenderObject::valueDescription() const
+{
+    // Only sliders and progress bars support value descriptions currently.
+    if (!isProgressIndicator() && !isSlider())
+        return String();
+    
+    return getAttribute(aria_valuetextAttr).string();
+}
+    
 float AccessibilityRenderObject::valueForRange() const
 {
     if (!isProgressIndicator() && !isSlider())

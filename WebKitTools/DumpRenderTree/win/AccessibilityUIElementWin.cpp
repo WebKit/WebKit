@@ -224,6 +224,11 @@ double AccessibilityUIElement::clickPointY()
     return 0;
 }
 
+JSStringRef AccessibilityUIElement::valueDescription()
+{
+    return 0;
+}
+
 double AccessibilityUIElement::intValue()
 {
     BSTR valueBSTR;

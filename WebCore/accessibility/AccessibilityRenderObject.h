@@ -114,6 +114,7 @@ public:
     
     static int headingLevel(Node*);
     virtual int intValue() const;
+    virtual String valueDescription() const;
     virtual float valueForRange() const;
     virtual float maxValueForRange() const;
     virtual float minValueForRange() const;

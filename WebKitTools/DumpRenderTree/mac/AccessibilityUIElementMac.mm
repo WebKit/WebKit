@@ -385,6 +385,14 @@ double AccessibilityUIElement::maxValue()
     return 0.0;
 }
 
+JSStringRef AccessibilityUIElement::valueDescription()
+{
+    NSString* valueDescription = [m_element accessibilityAttributeValue:NSAccessibilityValueDescriptionAttribute];
+     if ([valueDescription isKindOfClass:[NSString class]])
+         return [valueDescription createJSStringRef];
+    return 0;
+}
+
 int AccessibilityUIElement::insertionPointLineNumber()
 {
     id value = [m_element accessibilityAttributeValue:NSAccessibilityInsertionPointLineNumberAttribute];

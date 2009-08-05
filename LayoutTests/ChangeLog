@@ -2,6 +2,16 @@
 
         Reviewed by Darin Adler.
 
+        Bug 27994 - WAI-ARIA: aria-valuetext needs to be implemented
+        https://bugs.webkit.org/show_bug.cgi?id=27994
+
+        * platform/mac/accessibility/aria-valuetext-expected.txt: Added.
+        * platform/mac/accessibility/aria-valuetext.html: Added.
+
+2009-08-04  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
         Bug 27993 - AXSliders are missing required attributes and actions
         https://bugs.webkit.org/show_bug.cgi?id=27993
 
