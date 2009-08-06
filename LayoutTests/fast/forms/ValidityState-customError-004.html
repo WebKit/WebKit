@@ -1,0 +1,40 @@
+<html>
+<head>
+<title>setCustomValidity and customError 4</title>
+<script language="JavaScript" type="text/javascript">
+    function log(message) {
+        document.getElementById("console").innerHTML += "<li>"+message+"</li>";
+    }
+
+    function test() {
+        if (window.layoutTestController)
+            layoutTestController.dumpAsText();
+
+        v = document.getElementsByName("victim");
+
+        // Blank
+        for (i = 0; i < v.length; i++) {
+            v[i].setCustomValidity("Custom string");
+            v[i].setCustomValidity();
+            log(!v[i].validity.customError ? "SUCCESS" : "FAILURE");
+            v[i].setCustomValidity("one", "two", "three");
+            log(v[i].validity.customError ? "SUCCESS" : "FAILURE");
+            v[i].setCustomValidity(null);
+            log(!v[i].validity.customError ? "SUCCESS" : "FAILURE");
+            v[i].setCustomValidity("Custom string");
+            v[i].setCustomValidity(undefined);
+            log(!v[i].validity.customError ? "SUCCESS" : "FAILURE");
+        }
+    }
+</script>
+</head>
+<body onload="test()">
+<fieldset name="victim"></fieldset>
+<button name="victim"></button>
+<select name="victim"></select>
+<textarea name="victim"></textarea>
+<input name="victim" />
+<hr>
+<ol id="console"></ol>
+</body>
+</html>

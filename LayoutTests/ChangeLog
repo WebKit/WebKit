@@ -1,3 +1,21 @@
+2009-08-06  Michelangelo De Simone  <micdesim@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27455
+        Test suite for form controls' custom validation message.
+
+        * fast/dom/domListEnumeration-expected.txt: Corrected
+        * fast/dom/resources/domListEnumeration.js: Corrected
+        * fast/forms/ValidityState-customError-001-expected.txt: Added.
+        * fast/forms/ValidityState-customError-001.html: Added.
+        * fast/forms/ValidityState-customError-002-expected.txt: Added.
+        * fast/forms/ValidityState-customError-002.html: Added.
+        * fast/forms/ValidityState-customError-003-expected.txt: Added.
+        * fast/forms/ValidityState-customError-003.html: Added.
+        * fast/forms/ValidityState-customError-004-expected.txt: Added.
+        * fast/forms/ValidityState-customError-004.html: Added.
+
 2009-08-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.

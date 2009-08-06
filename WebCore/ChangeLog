@@ -1,3 +1,31 @@
+2009-08-06  Michelangelo De Simone  <micdesim@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27455
+        Support for a custom validation message in ValidityState and related
+        form controls.
+        http://www.whatwg.org/specs/web-apps/current-work/multipage/forms.html#dom-cva-setcustomvalidity
+
+        Tests: fast/forms/ValidityState-customError-001.html
+               fast/forms/ValidityState-customError-002.html
+               fast/forms/ValidityState-customError-003.html
+               fast/forms/ValidityState-customError-004.html
+
+        * html/HTMLButtonElement.idl: setCustomValidity DOM method
+        * html/HTMLFieldSetElement.idl: ditto
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::setCustomValidity): ditto
+        * html/HTMLFormControlElement.h:
+        (WebCore::HTMLFormControlElement::valueMissing): moved down
+        * html/HTMLInputElement.idl: ditto
+        * html/HTMLSelectElement.idl: ditto
+        * html/HTMLTextAreaElement.idl:
+        * html/ValidityState.h:
+        (WebCore::ValidityState::setCustomErrorMessage): method to set custom
+        validation message
+        (WebCore::ValidityState::customError): validation flag
+
 2009-08-06  Mark Rowe  <mrowe@apple.com>
 
         Bring a little order to our otherwise out of control lives.

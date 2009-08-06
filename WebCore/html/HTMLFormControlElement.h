@@ -77,8 +77,6 @@ public:
     bool required() const;
     void setRequired(bool);
 
-    virtual bool valueMissing() const { return false; }
-
     virtual void recalcStyle(StyleChange);
 
     virtual const AtomicString& formControlName() const;
@@ -104,7 +102,9 @@ public:
     virtual short tabIndex() const;
 
     virtual bool willValidate() const;
+    void setCustomValidity(const String&);
 
+    virtual bool valueMissing() const { return false; }
     virtual bool patternMismatch() const { return false; }
 
     void formDestroyed() { m_form = 0; }

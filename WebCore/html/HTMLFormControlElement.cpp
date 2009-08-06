@@ -262,6 +262,11 @@ bool HTMLFormControlElement::willValidate() const
     //      The control is not an output element.
     return form() && name().length() && !disabled() && !isReadOnlyFormControl();
 }
+
+void HTMLFormControlElement::setCustomValidity(const String& error)
+{
+    validity()->setCustomErrorMessage(error);
+}
     
 void HTMLFormControlElement::dispatchFocusEvent()
 {
