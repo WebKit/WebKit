@@ -45,7 +45,7 @@ my $clean = 0;
 my $minimal = 0;
 my $makeArgs;
 
-my ($threeDRenderingSupport, $channelMessagingSupport, $databaseSupport, $datagridSupport, $domStorageSupport,
+my ($threeDCanvasSupport, $threeDRenderingSupport, $channelMessagingSupport, $databaseSupport, $datagridSupport, $domStorageSupport,
     $filtersSupport, $geolocationSupport, $gnomeKeyringSupport, $iconDatabaseSupport,
     $javaScriptDebuggerSupport, $offlineWebApplicationSupport, $rubySupport, $sharedWorkersSupport, 
     $svgSupport, $svgAnimationSupport, $svgAsImageSupport, $svgDOMObjCBindingsSupport, $svgFontsSupport,
@@ -53,6 +53,9 @@ my ($threeDRenderingSupport, $channelMessagingSupport, $databaseSupport, $datagr
     $xpathSupport, $xsltSupport, $coverageSupport);
 
 my @features = (
+    { option => "3d-canvas", desc => "Toggle 3D canvas support",
+      define => "ENABLE_3D_CANVAS", default => 0, value => \$threeDCanvasSupport },
+
     { option => "3d-rendering", desc => "Toggle 3D rendering support",
       define => "ENABLE_3D_RENDERING", default => (isAppleMacWebKit() && !isTiger()), value => \$threeDRenderingSupport },
 

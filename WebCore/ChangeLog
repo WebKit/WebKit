@@ -1,3 +1,11 @@
+2009-08-06  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by David Hyatt.
+
+        Added ENABLE_3D_CANVAS flag to build, default to off
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2009-08-06  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
 
         Reviewed by Simon Hausmann.
