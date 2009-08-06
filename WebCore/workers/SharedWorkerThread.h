@@ -27,38 +27,30 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-#ifndef SharedWorker_h
-#define SharedWorker_h
-
-#include "AbstractWorker.h"
-
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
+#ifndef SharedWorkerThread_h
+#define SharedWorkerThread_h
 
 #if ENABLE(SHARED_WORKERS)
 
+#include "WorkerThread.h"
+
 namespace WebCore {
 
-    class SharedWorker : public AbstractWorker {
+    class SharedWorkerThread : public WorkerThread {
     public:
-        static PassRefPtr<SharedWorker> create(const String& url, const String& name, ScriptExecutionContext* context, ExceptionCode& ec)
-        {
-            return adoptRef(new SharedWorker(url, name, context, ec));
-        }
-        ~SharedWorker();
-        MessagePort* port() const { return m_port.get(); }
+        static PassRefPtr<SharedWorkerThread> create(const String& name, const KURL&, const String& userAgent, const String& sourceCode, WorkerLoaderProxy&);
+        ~SharedWorkerThread();
 
-        virtual SharedWorker* toSharedWorker() { return this; }
+    protected:
+        virtual PassRefPtr<WorkerContext> createWorkerContext(const KURL&, const String&);
 
     private:
-        SharedWorker(const String& url, const String& name, ScriptExecutionContext*, ExceptionCode&);
+        SharedWorkerThread(const String& name, const KURL&, const String& userAgent, const String& sourceCode, WorkerLoaderProxy&);
 
-        RefPtr<MessagePort> m_port;
+        String m_name;
     };
-
 } // namespace WebCore
 
 #endif // ENABLE(SHARED_WORKERS)
 
-#endif // SharedWorker_h
+#endif // SharedWorkerThread_h

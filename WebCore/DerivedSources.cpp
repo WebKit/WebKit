@@ -176,6 +176,7 @@
 #include "JSRGBColor.cpp"
 #include "JSScreen.cpp"
 #include "JSSharedWorker.cpp"
+#include "JSSharedWorkerContext.cpp"
 #include "JSSQLError.cpp"
 #include "JSSQLResultSet.cpp"
 #include "JSSQLResultSetRowList.cpp"

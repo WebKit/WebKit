@@ -34,6 +34,7 @@
 namespace WebCore {
 
     class JSDedicatedWorkerContext;
+    class JSSharedWorkerContext;
     class JSWorkerContext;
     class WorkerContext;
 
@@ -60,6 +61,10 @@ namespace WebCore {
 
     JSDedicatedWorkerContext* toJSDedicatedWorkerContext(JSC::JSValue);
     JSWorkerContext* toJSWorkerContext(JSC::JSValue);
+
+#if ENABLE(SHARED_WORKERS)
+    JSSharedWorkerContext* toJSSharedWorkerContext(JSC::JSValue);
+#endif
 
 } // namespace WebCore
 

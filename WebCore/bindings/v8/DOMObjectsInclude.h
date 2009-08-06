@@ -31,6 +31,7 @@
 #ifndef DOMObjectsInclude_h
 #define DOMObjectsInclude_h
 
+#include "AbstractWorker.h"
 #include "BarInfo.h"
 #include "CanvasGradient.h"
 #include "CanvasPattern.h"
@@ -116,6 +117,8 @@
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
+#include "SharedWorker.h"
+#include "SharedWorkerContext.h"
 #include "SQLTransaction.h"
 #include "SQLResultSet.h"
 #include "SQLResultSetRowList.h"
@@ -205,11 +208,6 @@
 #include "WorkerLocation.h"
 #include "WorkerNavigator.h"
 #endif // WORKERS
-
-#if ENABLE(SHARED_WORKERS)
-#include "AbstractWorker.h"
-#include "SharedWorker.h"
-#endif // SHARED_WORKERS
 
 #if ENABLE(XPATH)
 #include "XPathEvaluator.h"

@@ -28,37 +28,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SharedWorker_h
-#define SharedWorker_h
-
-#include "AbstractWorker.h"
-
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
+#ifndef DefaultSharedWorkerRepository_h
+#define DefaultSharedWorkerRepository_h
 
 #if ENABLE(SHARED_WORKERS)
 
+#include "SharedWorkerRepository.h"
+
+#include <wtf/Noncopyable.h>
+
 namespace WebCore {
 
-    class SharedWorker : public AbstractWorker {
+    class KURL;
+
+    // Platform-specific implementation of the SharedWorkerRepository singleton.
+    class DefaultSharedWorkerRepository : public SharedWorkerRepository, public Noncopyable {
     public:
-        static PassRefPtr<SharedWorker> create(const String& url, const String& name, ScriptExecutionContext* context, ExceptionCode& ec)
-        {
-            return adoptRef(new SharedWorker(url, name, context, ec));
-        }
-        ~SharedWorker();
-        MessagePort* port() const { return m_port.get(); }
+        DefaultSharedWorkerRepository();
+        ~DefaultSharedWorkerRepository();
 
-        virtual SharedWorker* toSharedWorker() { return this; }
+        // Invoked once the worker script has been loaded to fire up the worker thread.
+        void workerScriptLoaded(const String& name, const KURL&, const String& userAgent, const String& workerScript, PassOwnPtr<MessagePortChannel>);
 
-    private:
-        SharedWorker(const String& url, const String& name, ScriptExecutionContext*, ExceptionCode&);
-
-        RefPtr<MessagePort> m_port;
+        static DefaultSharedWorkerRepository* instance();
     };
-
-} // namespace WebCore
+}
 
 #endif // ENABLE(SHARED_WORKERS)
 
-#endif // SharedWorker_h
+#endif // DefaultSharedWorkerRepository_h

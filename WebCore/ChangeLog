@@ -1,3 +1,126 @@
+2009-08-06  Drew Wilson  <atwilson@google.com>
+
+        Reviewed by David Levin.
+
+        Created first working implementation of SharedWorkers (execution only, no sharing).
+        https://bugs.webkit.org/show_bug.cgi?id=27927
+
+        Added initial implementations of SharedWorkerThread and SharedWorkerContext.
+        No v8 bindings yet.
+
+        * DerivedSources.cpp:
+        Added shared worker files.
+        * DerivedSources.make:
+        Added shared worker files.
+        * GNUmakefile.am:
+        Added shared worker files.
+        * WebCore.gypi:
+        Added shared worker files.
+        * WebCore.pro:
+        Added shared worker files.
+        * WebCore.vcproj/WebCore.vcproj:
+        Added shared worker files.
+        * WebCore.xcodeproj/project.pbxproj:
+        Added shared worker files.
+        * bindings/js/JSEventTarget.cpp:
+        (WebCore::toJS):
+        Added code to convert from EventTarget to correct JS class.
+        (WebCore::toEventTarget):
+        Added code to cast from JS object to appropriate EventTarget impl class.
+        * bindings/js/JSSharedWorkerConstructor.cpp:
+        (WebCore::JSSharedWorkerConstructor::JSSharedWorkerConstructor):
+        (WebCore::constructSharedWorker):
+        Tweaked the constructor code to pass in the lexical global object like normal workers.
+        * bindings/js/JSSharedWorkerContextCustom.cpp: Added.
+        (WebCore::JSSharedWorkerContext::mark):
+        Custom marking of the onconnect handler.
+        * bindings/js/JSWorkerContextBase.cpp:
+        (WebCore::toJSSharedWorkerContext):
+        (WebCore::toJSWorkerContext):
+        Added proper conversion to the correct WorkerContext derived class.
+        * bindings/js/JSWorkerContextBase.h:
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::initScript):
+        Updated WorkerScriptController to create the correct type of binding object (JSSharedWorkerContext vs JSDedicatedWorkerContext)
+        * bindings/scripts/CodeGeneratorV8.pm:
+        Added support for SharedWorkerContext.
+        * bindings/v8/DOMObjectsInclude.h:
+        Added shared worker bindings files.
+        * dom/EventNames.h:
+        Added connect event.
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::toSharedWorkerContext):
+        Added API for casting to new derived class (SharedWorkerContext).
+        * dom/EventTarget.h:
+        * workers/AbstractWorker.cpp:
+        (WebCore::AbstractWorker::resolveURL):
+        Moved code that resolves/validates URLs to base class so it can be shared between dedicated/shared workers.
+        * workers/AbstractWorker.h:
+        * workers/DedicatedWorkerContext.cpp:
+        (WebCore::DedicatedWorkerContext::logException):
+        Refactored exception handling code - moved onerror handling to base class.
+        * workers/DedicatedWorkerContext.h:
+        (WebCore::DedicatedWorkerContext::isDedicatedWorkerContext):
+        * workers/SharedWorker.cpp:
+        (WebCore::SharedWorker::SharedWorker):
+        Changed constructor to fire up worker thread.
+        * workers/SharedWorker.h:
+        * workers/SharedWorkerContext.cpp: Added.
+        (WebCore::SharedWorkerContext::SharedWorkerContext):
+        (WebCore::SharedWorkerContext::~SharedWorkerContext):
+        (WebCore::SharedWorkerContext::logException):
+        (WebCore::SharedWorkerContext::addMessage):
+        Placeholder methods until we add support for sending exceptions/messages to console.
+        (WebCore::SharedWorkerContext::dispatchConnect):
+        (WebCore::SharedWorkerContext::thread):
+        * workers/SharedWorkerContext.h: Added.
+        (WebCore::SharedWorkerContext::create):
+        (WebCore::SharedWorkerContext::isSharedWorkerContext):
+        (WebCore::SharedWorkerContext::toSharedWorkerContext):
+        (WebCore::SharedWorkerContext::setOnconnect):
+        (WebCore::SharedWorkerContext::onconnect):
+        (WebCore::SharedWorkerContext::name):
+        * workers/SharedWorkerContext.idl: Added.
+        * workers/SharedWorkerRepository.h: Added.
+        (WebCore::SharedWorkerRepository::~SharedWorkerRepository):
+        * workers/DefaultSharedWorkerRepository.cpp: Added.
+        Implementation of core singleton class that will be used to implement sharing.
+        (WebCore::SharedWorkerProxy::setThread):
+        Proxy object used to handle resource loading for a given shared worker.
+        (WebCore::SharedWorkerProxy::postTaskToLoader):
+        (WebCore::SharedWorkerProxy::postTaskForModeToWorkerContext):
+        Placeholder routines until we implement loading.
+        (WebCore::SharedWorkerConnectTask::create):
+        Creates a task to fire off a connect event on the worker thread.
+        (WebCore::SharedWorkerConnectTask::SharedWorkerConnectTask):
+        (WebCore::SharedWorkerConnectTask::performTask):
+        (WebCore::SharedWorkerLoader::SharedWorkerLoader):
+        Added helper object to load the initial script for the worker.
+        (WebCore::SharedWorkerLoader::load):
+        (WebCore::SharedWorkerLoader::notifyFinished):
+        (WebCore::SharedWorkerRepository::instance):
+        (WebCore::DefaultSharedWorkerRepository::instance):
+        (WebCore::DefaultSharedWorkerRepository::workerScriptLoaded):
+        Fires off the worker thread once the script is loaded.
+        (WebCore::SharedWorkerRepository::connect):
+        (WebCore::DefaultSharedWorkerRepository::DefaultSharedWorkerRepository):
+        (WebCore::DefaultSharedWorkerRepository::~DefaultSharedWorkerRepository):
+        * workers/DefaultSharedWorkerRepository.h: Added.
+        * workers/SharedWorkerThread.cpp: Added.
+        (WebCore::SharedWorkerThread::create):
+        (WebCore::SharedWorkerThread::SharedWorkerThread):
+        (WebCore::SharedWorkerThread::~SharedWorkerThread):
+        (WebCore::SharedWorkerThread::createWorkerContext):
+        * workers/SharedWorkerThread.h: Added.
+        * workers/Worker.cpp:
+        (WebCore::Worker::Worker):
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::reportException):
+        * workers/WorkerContext.h:
+        (WebCore::WorkerContext::isSharedWorkerContext):
+        (WebCore::WorkerContext::isDedicatedWorkerContext):
+        Added APIs to determine the type of a given context.
+
 2009-08-06  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by David Hyatt.

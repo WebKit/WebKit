@@ -1,0 +1,21 @@
+onconnect = function(event) {
+    event.messagePort.onmessage = function(evt) { handleMessage(evt, event.messagePort); };
+};
+
+function handleMessage(event, port) {
+    if (event.data == "unhandledError") {
+        // Generate an unhandled error.
+        onerror = null;
+        setTimeout(function() {
+            port.postMessage("SUCCESS: unhandled error generated");
+        }, 100);
+        generateError();  // Undefined function call
+    } else if (event.data == "handledError") {
+        onerror = function(message, url, lineno) {
+            port.postMessage("SUCCESS: error handled via onerror: " + message);
+        };
+        generateError();  // Undefined function call
+    } else {
+        port.postMessage("FAIL: Got unexpected message: " + event.data);
+    }
+};

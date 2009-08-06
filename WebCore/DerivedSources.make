@@ -204,6 +204,7 @@ DOM_CLASSES = \
     RangeException \
     Rect \
     SharedWorker \
+    SharedWorkerContext \
     SQLError \
     SQLResultSet \
     SQLResultSetRowList \

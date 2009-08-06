@@ -28,37 +28,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SharedWorker_h
-#define SharedWorker_h
-
-#include "AbstractWorker.h"
-
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
+#include "config.h"
 
 #if ENABLE(SHARED_WORKERS)
 
+#include "SharedWorkerThread.h"
+
+#include "SharedWorkerContext.h"
+
 namespace WebCore {
 
-    class SharedWorker : public AbstractWorker {
-    public:
-        static PassRefPtr<SharedWorker> create(const String& url, const String& name, ScriptExecutionContext* context, ExceptionCode& ec)
-        {
-            return adoptRef(new SharedWorker(url, name, context, ec));
-        }
-        ~SharedWorker();
-        MessagePort* port() const { return m_port.get(); }
+PassRefPtr<SharedWorkerThread> SharedWorkerThread::create(const String& name, const KURL& scriptURL, const String& userAgent, const String& sourceCode, WorkerLoaderProxy& workerLoaderProxy)
+{
+    return adoptRef(new SharedWorkerThread(name, scriptURL, userAgent, sourceCode, workerLoaderProxy));
+}
 
-        virtual SharedWorker* toSharedWorker() { return this; }
+SharedWorkerThread::SharedWorkerThread(const String& name, const KURL& url, const String& userAgent, const String& sourceCode, WorkerLoaderProxy& workerLoaderProxy)
+    : WorkerThread(url, userAgent, sourceCode, workerLoaderProxy)
+    , m_name(name.copy())
+{
+}
 
-    private:
-        SharedWorker(const String& url, const String& name, ScriptExecutionContext*, ExceptionCode&);
+SharedWorkerThread::~SharedWorkerThread()
+{
+}
 
-        RefPtr<MessagePort> m_port;
-    };
+PassRefPtr<WorkerContext> SharedWorkerThread::createWorkerContext(const KURL& url, const String& userAgent)
+{
+    return SharedWorkerContext::create(m_name, url, userAgent, this);
+}
 
 } // namespace WebCore
 
 #endif // ENABLE(SHARED_WORKERS)
-
-#endif // SharedWorker_h

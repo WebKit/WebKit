@@ -7915,6 +7915,54 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\WebCore\DerivedSources\JSSharedWorkerContext.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Internal|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Cairo|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_Cairo|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\WebCore\DerivedSources\JSSharedWorkerContext.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSQLError.cpp"
 				>
 				<FileConfiguration
@@ -24104,6 +24152,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\workers\DefaultSharedWorkerRepository.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\workers\DefaultSharedWorkerRepository.h"
+				>
+			</File>
+			<File
 				RelativePath="..\workers\GenericWorkerTask.h"
 				>
 			</File>
@@ -24113,6 +24169,26 @@
 			</File>
 			<File
 				RelativePath="..\workers\SharedWorker.h"
+				>
+			</File>
+			<File
+				RelativePath="..\workers\SharedWorkerContext.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\workers\SharedWorkerContext.h"
+				>
+			</File>
+			<File
+				RelativePath="..\workers\SharedWorkerRepository.h"
+				>
+			</File>
+			<File
+				RelativePath="..\workers\SharedWorkerThread.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\workers\SharedWorkerThread.h"
 				>
 			</File>
 			<File
@@ -28744,6 +28820,10 @@
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSSharedWorkerConstructor.h"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSSharedWorkerContextCustom.cpp"
 					>
 				</File>
 				<File

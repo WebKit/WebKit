@@ -48,6 +48,7 @@ namespace WebCore {
     class SVGElementInstance;
     class ScriptExecutionContext;
     class SharedWorker;
+    class SharedWorkerContext;
     class Worker;
     class XMLHttpRequest;
     class XMLHttpRequestUpload;
@@ -74,6 +75,7 @@ namespace WebCore {
 
 #if ENABLE(SHARED_WORKERS)
         virtual SharedWorker* toSharedWorker();
+        virtual SharedWorkerContext* toSharedWorkerContext();
 #endif
 
         virtual ScriptExecutionContext* scriptExecutionContext() const = 0;

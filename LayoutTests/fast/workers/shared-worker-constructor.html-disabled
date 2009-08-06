@@ -38,14 +38,14 @@ try {
 }
 
 try {
-    var worker = new SharedWorker("resources/worker-common.js");
+    var worker = new SharedWorker("resources/shared-worker-common.js");
     log("FAIL: Constructor succeeded when no name is passed");
 } catch (ex) {
     log("PASS: invoking SharedWorker constructor without name resulted in an exception (" + ex + ")");
 }
 
 try {
-    var worker = new SharedWorker("resources/worker-common.js", "name");
+    var worker = new SharedWorker("resources/shared-worker-common.js", "name");
     log ("PASS: SharedWorker constructor succeeded: " + worker);
 } catch (ex) {
     log("FAIL: invoking SharedWorker constructor resulted in an exception (" + ex + ")");

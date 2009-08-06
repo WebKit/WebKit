@@ -40,6 +40,7 @@ namespace WebCore {
     macro(checking) \
     macro(click) \
     macro(close) \
+    macro(connect) \
     macro(contextmenu) \
     macro(copy) \
     macro(cut) \

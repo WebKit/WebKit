@@ -27,20 +27,32 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #include "config.h"
 
 #if ENABLE(SHARED_WORKERS)
 
 #include "SharedWorker.h"
 
+#include "KURL.h"
+#include "MessageChannel.h"
 #include "MessagePort.h"
+#include "SharedWorkerRepository.h"
 
 namespace WebCore {
 
-SharedWorker::SharedWorker(const String&, const String&, ScriptExecutionContext* context, ExceptionCode&)
+SharedWorker::SharedWorker(const String& url, const String& name, ScriptExecutionContext* context, ExceptionCode& ec)
     : AbstractWorker(context)
 {
-    // Placeholder - ultimately we'll look up the worker in the SharedWorkerRepository.
+    RefPtr<MessageChannel> channel = MessageChannel::create(scriptExecutionContext());
+    m_port = channel->port1();
+    OwnPtr<MessagePortChannel> remotePort = channel->port2()->disentangle(ec);
+    ASSERT(!ec);
+
+    KURL scriptUrl = resolveURL(url, ec);
+    if (ec)
+        return;
+    SharedWorkerRepository::instance()->connect(this, remotePort.release(), scriptUrl, name, ec);
 }
 
 SharedWorker::~SharedWorker()

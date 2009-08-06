@@ -38,6 +38,8 @@
 #include "Event.h"
 #include "EventException.h"
 #include "EventNames.h"
+#include "ScriptExecutionContext.h"
+#include "SecurityOrigin.h"
 
 namespace WebCore {
 
@@ -132,6 +134,27 @@ bool AbstractWorker::dispatchScriptErrorEvent(const String& message, const Strin
     ASSERT(!ec);
 
     return handled;
+}
+
+KURL AbstractWorker::resolveURL(const String& url, ExceptionCode& ec)
+{
+    if (url.isEmpty()) {
+        ec = SYNTAX_ERR;
+        return KURL();
+    }
+
+    // FIXME: This should use the dynamic global scope (bug #27887)
+    KURL scriptURL = scriptExecutionContext()->completeURL(url);
+    if (!scriptURL.isValid()) {
+        ec = SYNTAX_ERR;
+        return KURL();
+    }
+
+    if (!scriptExecutionContext()->securityOrigin()->canAccess(SecurityOrigin::create(scriptURL).get())) {
+        ec = SECURITY_ERR;
+        return KURL();
+    }
+    return scriptURL;
 }
 
 } // namespace WebCore

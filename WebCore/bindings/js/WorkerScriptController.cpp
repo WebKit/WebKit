@@ -32,8 +32,10 @@
 
 #include "JSDOMBinding.h"
 #include "JSDedicatedWorkerContext.h"
+#include "JSSharedWorkerContext.h"
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
+#include "WorkerContext.h"
 #include "WorkerObjectProxy.h"
 #include "WorkerThread.h"
 #include <interpreter/Interpreter.h>
@@ -73,12 +75,22 @@ void WorkerScriptController::initScript()
     RefPtr<Structure> workerContextPrototypeStructure = JSWorkerContextPrototype::createStructure(jsNull());
     ProtectedPtr<JSWorkerContextPrototype> workerContextPrototype = new (m_globalData.get()) JSWorkerContextPrototype(workerContextPrototypeStructure.release());
 
-    // FIXME: When we add SharedWorkerContext, generate the correct wrapper here.
-    RefPtr<Structure> dedicatedContextPrototypeStructure = JSDedicatedWorkerContextPrototype::createStructure(workerContextPrototype);
-    ProtectedPtr<JSDedicatedWorkerContextPrototype> dedicatedContextPrototype = new (m_globalData.get()) JSDedicatedWorkerContextPrototype(dedicatedContextPrototypeStructure.release());
-    RefPtr<Structure> structure = JSDedicatedWorkerContext::createStructure(dedicatedContextPrototype);
+    if (m_workerContext->isDedicatedWorkerContext()) {
+        RefPtr<Structure> dedicatedContextPrototypeStructure = JSDedicatedWorkerContextPrototype::createStructure(workerContextPrototype);
+        ProtectedPtr<JSDedicatedWorkerContextPrototype> dedicatedContextPrototype = new (m_globalData.get()) JSDedicatedWorkerContextPrototype(dedicatedContextPrototypeStructure.release());
+        RefPtr<Structure> structure = JSDedicatedWorkerContext::createStructure(dedicatedContextPrototype);
 
-    m_workerContextWrapper = new (m_globalData.get()) JSDedicatedWorkerContext(structure.release(), static_cast<DedicatedWorkerContext*>(m_workerContext));
+        m_workerContextWrapper = new (m_globalData.get()) JSDedicatedWorkerContext(structure.release(), m_workerContext->toDedicatedWorkerContext());
+#if ENABLE(SHARED_WORKERS)
+    } else {
+        ASSERT(m_workerContext->isSharedWorkerContext());
+        RefPtr<Structure> sharedContextPrototypeStructure = JSSharedWorkerContextPrototype::createStructure(workerContextPrototype);
+        ProtectedPtr<JSSharedWorkerContextPrototype> sharedContextPrototype = new (m_globalData.get()) JSSharedWorkerContextPrototype(sharedContextPrototypeStructure.release());
+        RefPtr<Structure> structure = JSSharedWorkerContext::createStructure(sharedContextPrototype);
+
+        m_workerContextWrapper = new (m_globalData.get()) JSSharedWorkerContext(structure.release(), m_workerContext->toSharedWorkerContext());
+#endif
+    }
 }
 
 ScriptValue WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode)

@@ -434,7 +434,7 @@ END
     // context of the DOMWindow and not in the context of the caller.
     return V8DOMWrapper::getConstructor(type, window);
 END
-    } elsif ($classIndex eq "DEDICATEDWORKERCONTEXT" or $classIndex eq "WORKERCONTEXT") {
+    } elsif ($classIndex eq "DEDICATEDWORKERCONTEXT" or $classIndex eq "WORKERCONTEXT" or $classIndex eq "SHAREDWORKERCONTEXT") {
         $implIncludes{"WorkerContextExecutionProxy.h"} = 1;
         push(@implContentDecls, <<END);
     return WorkerContextExecutionProxy::retrieve()->GetConstructor(type);
@@ -2047,7 +2047,7 @@ sub ReturnNativeToJSValue
         return "return V8DOMWrapper::convertEventListenerToV8Object($value)";
     }
 
-    if ($type eq "DedicatedWorkerContext" or $type eq "WorkerContext") {
+    if ($type eq "DedicatedWorkerContext" or $type eq "WorkerContext" or $type eq "SharedWorkerContext") {
         $implIncludes{"WorkerContextExecutionProxy.h"} = 1;
         return "return WorkerContextExecutionProxy::WorkerContextToV8Object($value)";
     }

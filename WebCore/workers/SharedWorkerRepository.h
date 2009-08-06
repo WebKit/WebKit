@@ -28,37 +28,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SharedWorker_h
-#define SharedWorker_h
-
-#include "AbstractWorker.h"
-
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
+#ifndef SharedWorkerRepository_h
+#define SharedWorkerRepository_h
 
 #if ENABLE(SHARED_WORKERS)
 
+#include "ExceptionCode.h"
+
+#include <wtf/PassOwnPtr.h>
+#include <wtf/PassRefPtr.h>
+
 namespace WebCore {
 
-    class SharedWorker : public AbstractWorker {
+    class KURL;
+    class MessagePortChannel;
+    class SharedWorker;
+    class String;
+
+    // Interface to a repository which manages references to the set of active shared workers.
+    class SharedWorkerRepository {
     public:
-        static PassRefPtr<SharedWorker> create(const String& url, const String& name, ScriptExecutionContext* context, ExceptionCode& ec)
-        {
-            return adoptRef(new SharedWorker(url, name, context, ec));
-        }
-        ~SharedWorker();
-        MessagePort* port() const { return m_port.get(); }
+        // Static factory for getting the browser-specific repository implementation.
+        static SharedWorkerRepository* instance();
 
-        virtual SharedWorker* toSharedWorker() { return this; }
-
-    private:
-        SharedWorker(const String& url, const String& name, ScriptExecutionContext*, ExceptionCode&);
-
-        RefPtr<MessagePort> m_port;
+        // Connects the passed SharedWorker object with the specified worker thread, creating a new thread if necessary.
+        void connect(PassRefPtr<SharedWorker>, PassOwnPtr<MessagePortChannel>, const KURL&, const String& name, ExceptionCode&);
+    protected:
+        ~SharedWorkerRepository() { }
     };
 
 } // namespace WebCore
 
 #endif // ENABLE(SHARED_WORKERS)
 
-#endif // SharedWorker_h
+#endif // SharedWorkerRepository_h

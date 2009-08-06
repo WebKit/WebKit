@@ -55,6 +55,9 @@ namespace WebCore {
 
         virtual ScriptExecutionContext* scriptExecutionContext() const;
 
+        virtual bool isSharedWorkerContext() const { return false; }
+        virtual bool isDedicatedWorkerContext() const { return false; }
+
         const KURL& url() const { return m_url; }
         KURL completeURL(const String&) const;
 
@@ -98,6 +101,10 @@ namespace WebCore {
         typedef HashMap<AtomicString, ListenerVector> EventListenersMap;
         EventListenersMap& eventListeners() { return m_eventListeners; }
 
+        // ScriptExecutionContext
+        virtual void reportException(const String& errorMessage, int lineNumber, const String& sourceURL);
+
+        virtual void forwardException(const String& errorMessage, int lineNumber, const String& sourceURL) = 0;
 
         // These methods are used for GC marking. See JSWorkerContext::mark() in
         // JSWorkerContextCustom.cpp.

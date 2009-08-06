@@ -43,6 +43,7 @@
 
 namespace WebCore {
 
+    class KURL;
     class ScriptExecutionContext;
 
     class AbstractWorker : public RefCounted<AbstractWorker>, public ActiveDOMObject, public EventTarget {
@@ -70,8 +71,11 @@ namespace WebCore {
         AbstractWorker(ScriptExecutionContext*);
         virtual ~AbstractWorker();
 
-    private:
+    protected:
+        // Helper function that converts a URL to an absolute URL and checks the result for validity.
+        KURL resolveURL(const String& url, ExceptionCode& ec);
 
+    private:
         virtual void refEventTarget() { ref(); }
         virtual void derefEventTarget() { deref(); }
 

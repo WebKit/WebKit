@@ -264,6 +264,16 @@ void WorkerContext::importScripts(const Vector<String>& urls, const String& call
     }
 }
 
+void WorkerContext::reportException(const String& errorMessage, int lineNumber, const String& sourceURL)
+{
+    bool errorHandled = false;
+    if (onerror())
+        errorHandled = onerror()->reportError(errorMessage, sourceURL, lineNumber);
+
+    if (!errorHandled)
+        forwardException(errorMessage, lineNumber, sourceURL);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WORKERS)

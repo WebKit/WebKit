@@ -28,37 +28,66 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SharedWorker_h
-#define SharedWorker_h
-
-#include "AbstractWorker.h"
-
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
+#include "config.h"
 
 #if ENABLE(SHARED_WORKERS)
 
+#include "SharedWorkerContext.h"
+
+#include "DOMWindow.h"
+#include "EventNames.h"
+#include "MessageEvent.h"
+#include "NotImplemented.h"
+#include "SharedWorkerThread.h"
+#include "WorkerObjectProxy.h"
+
 namespace WebCore {
 
-    class SharedWorker : public AbstractWorker {
-    public:
-        static PassRefPtr<SharedWorker> create(const String& url, const String& name, ScriptExecutionContext* context, ExceptionCode& ec)
-        {
-            return adoptRef(new SharedWorker(url, name, context, ec));
-        }
-        ~SharedWorker();
-        MessagePort* port() const { return m_port.get(); }
+SharedWorkerContext::SharedWorkerContext(const String& name, const KURL& url, const String& userAgent, SharedWorkerThread* thread)
+    : WorkerContext(url, userAgent, thread)
+    , m_name(name)
+{
+}
 
-        virtual SharedWorker* toSharedWorker() { return this; }
+SharedWorkerContext::~SharedWorkerContext()
+{
+}
 
-    private:
-        SharedWorker(const String& url, const String& name, ScriptExecutionContext*, ExceptionCode&);
+void SharedWorkerContext::forwardException(const String&, int, const String&)
+{
+    // FIXME: forward to console (do not need to report to parent context).
+}
 
-        RefPtr<MessagePort> m_port;
-    };
+void SharedWorkerContext::addMessage(MessageDestination, MessageSource, MessageType, MessageLevel, const String&, unsigned, const String&)
+{
+    // FIXME: forward to console.
+    notImplemented();
+}
+
+void SharedWorkerContext::dispatchConnect(PassRefPtr<MessagePort> port)
+{
+    // Since close() stops the thread event loop, this should not ever get called while closing.
+    ASSERT(!isClosing());
+    // The connect event uses the MessageEvent interface, but has the name "connect".
+    RefPtr<Event> event = MessageEvent::create("", "", "", 0, port);
+    event->initEvent(eventNames().connectEvent, false, false);
+
+    if (m_onconnectListener.get()) {
+        event->setTarget(this);
+        event->setCurrentTarget(this);
+        m_onconnectListener->handleEvent(event.get(), false);
+    }
+
+    ExceptionCode ec = 0;
+    dispatchEvent(event.release(), ec);
+    ASSERT(!ec);
+}
+
+SharedWorkerThread* SharedWorkerContext::thread()
+{
+    return static_cast<SharedWorkerThread*>(Base::thread());
+}
 
 } // namespace WebCore
 
 #endif // ENABLE(SHARED_WORKERS)
-
-#endif // SharedWorker_h

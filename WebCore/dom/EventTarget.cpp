@@ -100,6 +100,10 @@ SharedWorker* EventTarget::toSharedWorker()
 {
     return 0;
 }
+SharedWorkerContext* EventTarget::toSharedWorkerContext()
+{
+    return 0;
+}
 #endif
 
 #ifndef NDEBUG

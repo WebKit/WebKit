@@ -53,14 +53,9 @@ DedicatedWorkerContext::~DedicatedWorkerContext()
     thread()->workerObjectProxy().workerContextDestroyed();
 }
 
-void DedicatedWorkerContext::reportException(const String& errorMessage, int lineNumber, const String& sourceURL)
+void DedicatedWorkerContext::forwardException(const String& errorMessage, int lineNumber, const String& sourceURL)
 {
-    bool errorHandled = false;
-    if (onerror())
-        errorHandled = onerror()->reportError(errorMessage, sourceURL, lineNumber);
-
-    if (!errorHandled)
-        thread()->workerObjectProxy().postExceptionToWorkerObject(errorMessage, lineNumber, sourceURL);
+    thread()->workerObjectProxy().postExceptionToWorkerObject(errorMessage, lineNumber, sourceURL);
 }
 
 void DedicatedWorkerContext::addMessage(MessageDestination destination, MessageSource source, MessageType type, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceURL)

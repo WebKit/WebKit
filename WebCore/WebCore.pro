@@ -2420,12 +2420,17 @@ contains(DEFINES, SHARED_WORKERS=1) {
     FEATURE_DEFINES_JAVASCRIPT += ENABLE_SHARED_WORKERS=1
 
     IDL_BINDINGS += \
-        workers/SharedWorker.idl
+        workers/SharedWorker.idl \
+        workers/SharedWorkerContext.idl
 
     SOURCES += \
         bindings/js/JSSharedWorkerConstructor.cpp \
+        bindings/js/JSSharedWorkerContextCustom.cpp \
         bindings/js/JSSharedWorkerCustom.cpp \
-        workers/SharedWorker.cpp
+        workers/DefaultSharedWorkerRepository.cpp \
+        workers/SharedWorker.cpp \
+        workers/SharedWorkerContext.cpp \
+        workers/SharedWorkerThread.cpp
 }
 
 contains(DEFINES, ENABLE_VIDEO=1) {
