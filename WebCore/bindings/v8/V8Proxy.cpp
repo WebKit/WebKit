@@ -626,8 +626,7 @@ void V8Proxy::clearDocumentWrapper()
 void V8Proxy::updateDocumentWrapperCache()
 {
     v8::HandleScope handleScope;
-    // FIXME: We probably don't need to make a local handle here.
-    v8::Context::Scope contextScope(v8::Local<v8::Context>::New(m_context));
+    v8::Context::Scope contextScope(context());
 
     // If the document has no frame, NodeToV8Object might get the
     // document wrapper for a document that is about to be deleted.
@@ -990,7 +989,7 @@ void V8Proxy::initContextIfNeeded()
         return;
 
     // Starting from now, use local context only.
-    v8::Local<v8::Context> v8Context = v8::Local<v8::Context>::New(m_context);
+    v8::Local<v8::Context> v8Context = context();
     v8::Context::Scope contextScope(v8Context);
 
     // Store the first global object created so we can reuse it.
@@ -1107,7 +1106,7 @@ v8::Local<v8::Context> V8Proxy::mainWorldContext(Frame* frame)
         return v8::Local<v8::Context>();
 
     proxy->initContextIfNeeded();
-    return v8::Local<v8::Context>::New(proxy->m_context);
+    return proxy->context();
 }
 
 v8::Local<v8::Context> V8Proxy::currentContext()
