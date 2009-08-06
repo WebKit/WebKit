@@ -7,24 +7,24 @@
             function loaded()
             {
                 consoleWrite("++ Test after 'load' event");
-                testExpected("media.getAttribute('autobuffer')", null, "!=");
-                testExpected("media.autobuffer", true);
+                testExpected("mediaElement.getAttribute('autobuffer')", null, "!=");
+                testExpected("mediaElement.autobuffer", true);
                 endTest();
             }
 
             function start()
             {
-                run("media = new Audio()");
+                run("mediaElement = new Audio()");
                 consoleWrite("");
 
                 consoleWrite("++ Test initial attribute value");
-                testExpected("media.getAttribute('autobuffer')", null, "!=");
-                testExpected("media.autobuffer", true);
+                testExpected("mediaElement.getAttribute('autobuffer')", null, "!=");
+                testExpected("mediaElement.autobuffer", true);
                 consoleWrite("");
 
-                media.onload = loaded;
-                run("media.src = 'content/test.wav'");
-                run("media.load()");
+                mediaElement.onload = loaded;
+                run("mediaElement.src = 'content/test.wav'");
+                run("mediaElement.load()");
 
                 consoleWrite("");
             }

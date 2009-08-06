@@ -7,29 +7,29 @@
     
     <script src=video-test.js></script>
     <script>
-        media = document.getElementsByTagName('audio')[0];
+        mediaElement = document.getElementsByTagName('audio')[0];
     
-        media.addEventListener('error', function() { 
-            consoleWrite("<span style='color:red'>FAIL</span> : caught 'error' event, audio.error = " + media.error.code);
+        mediaElement.addEventListener('error', function() { 
+            consoleWrite("<span style='color:red'>FAIL</span> : caught 'error' event, audio.error = " + mediaElement.error.code);
             endTest();
         });
     
-        media.addEventListener('load', function() { 
+        mediaElement.addEventListener('load', function() { 
             consoleWrite("EVENT(load)");
-            testExpected("media.currentTime", 0);
-            media.play(); 
+            testExpected("mediaElement.currentTime", 0);
+            mediaElement.play(); 
             setTimeout(testCurrentTime, 500) 
         });
 
         function testCurrentTime() 
         {
-            testExpected("media.currentTime", 0, '>');
+            testExpected("mediaElement.currentTime", 0, '>');
             endTest();
         }
     
         waitForEvent('play');
     
-        media.src = "content/silence.mpg";
+        mediaElement.src = "content/silence.mpg";
     </script>
 
     </body>

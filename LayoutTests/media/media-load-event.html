@@ -8,17 +8,17 @@
             {
                 consoleWrite("EVENT(load)");
                 consoleWrite("");
-                run("document.getElementById('parent').appendChild(media)");
-                run("media.play()");
+                run("document.getElementById('parent').appendChild(mediaElement)");
+                run("mediaElement.play()");
                 window.setTimeout(endTest, 250);
                 consoleWrite("");
             }
 
             function start()
             {
-                run("media = document.createElement('audio')");
+                run("mediaElement = document.createElement('audio')");
 
-                media.onload = loaded;
+                mediaElement.onload = loaded;
 
                 waitForEvent("loadstart");
                 waitForEvent("waiting");
@@ -29,8 +29,8 @@
                 waitForEvent("playing");
                 waitForEvent('loadeddata');
 
-                run("media.src = 'content/test.wav'");
-                run("media.load()");
+                run("mediaElement.src = 'content/test.wav'");
+                run("mediaElement.load()");
 
                 consoleWrite("");
             }

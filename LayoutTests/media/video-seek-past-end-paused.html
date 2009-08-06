@@ -17,7 +17,7 @@
 
         // make sure time is advancing, seek past end
         testExpected("video.paused", false);
-        testExpected("media.currentTime", 0, '>');
+        testExpected("mediaElement.currentTime", 0, '>');
         video.currentTime = 500;
         setTimeout(timeCheck2, 200);
     }
@@ -28,7 +28,7 @@
 
         // don't use "testExpected()" so we won't log the actual duration to the
         //  results file, as the floating point result may differ with different engines
-        reportExpected(media.currentTime == media.duration, "media.currentTime", "==", "media.duration", media.currentTime);
+        reportExpected(mediaElement.currentTime == mediaElement.duration, "mediaElement.currentTime", "==", "mediaElement.duration", mediaElement.currentTime);
 
         testExpected("video.ended", true);
         consoleWrite("");

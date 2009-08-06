@@ -9,7 +9,7 @@
     <script>
         findMediaElement();
 
-        media.addEventListener('loadedmetadata', function() { 
+        mediaElement.addEventListener('loadedmetadata', function() { 
             failTest("'loadedmetadata' event fired" );
         });
 
@@ -20,7 +20,7 @@
 
         waitForEvent('error', function () { 
             testExpected("relativeURL(video.currentSrc)", "content/bogus.mpeg");
-            testExpected("media.error.code", MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED);
+            testExpected("mediaElement.error.code", MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED);
             setTimeout(endTest, 200) ;
             consoleWrite("");
         });

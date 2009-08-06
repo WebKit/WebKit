@@ -8,11 +8,11 @@ RUN(video.play())
 EXPECTED (video.paused == 'false') OK
 
 EXPECTED (video.paused == 'false') OK
-EXPECTED (media.currentTime > '0') OK
+EXPECTED (mediaElement.currentTime > '0') OK
 RUN(video.currentTime = 500)
 
 EXPECTED (video.paused == 'false') OK
-EXPECTED (media.currentTime > '0') OK
+EXPECTED (mediaElement.currentTime > '0') OK
 
 END OF TEST
 

@@ -8,13 +8,13 @@
 
             function loaded()
             {
-                testExpected("media.duration.toFixed(2)", 2.94);
+                testExpected("mediaElement.duration.toFixed(2)", 2.94);
                 endTest();
             }
 
             function start()
             {
-                media = new Audio();
+                mediaElement = new Audio();
 
                 waitForEvent("error");
                 waitForEvent("loadstart");
@@ -27,9 +27,9 @@
                 waitForEvent("canplaythrough");
                 waitForEvent("load");
 
-                media.onload = loaded;
-                media.src = 'data:audio/3gpp;base64,' + data;
-                media.load();
+                mediaElement.onload = loaded;
+                mediaElement.src = 'data:audio/3gpp;base64,' + data;
+                mediaElement.load();
             }
 
         </script>

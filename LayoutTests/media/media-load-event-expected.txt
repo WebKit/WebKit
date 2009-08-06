@@ -1,16 +1,16 @@
 Test that media file is not reloaded when an element is inserted into the DOM.
 
-RUN(media = document.createElement('audio'))
-RUN(media.src = 'content/test.wav')
-RUN(media.load())
+RUN(mediaElement = document.createElement('audio'))
+RUN(mediaElement.src = 'content/test.wav')
+RUN(mediaElement.load())
 
 EVENT(loadstart)
 EVENT(durationchange)
 EVENT(loadeddata)
 EVENT(load)
 
-RUN(document.getElementById('parent').appendChild(media))
-RUN(media.play())
+RUN(document.getElementById('parent').appendChild(mediaElement))
+RUN(mediaElement.play())
 
 EVENT(play)
 EVENT(playing)

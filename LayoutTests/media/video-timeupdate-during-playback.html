@@ -32,7 +32,7 @@
             consoleWrite("");
         }
 
-        media.addEventListener("timeupdate", function () { ++timeupdateEventCount; });
+        mediaElement.addEventListener("timeupdate", function () { ++timeupdateEventCount; });
 
         waitForEvent('error');
         waitForEvent("loadstart");

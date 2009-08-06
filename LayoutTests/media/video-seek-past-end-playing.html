@@ -15,7 +15,7 @@
         // make sure time is advancing, seek past end
         consoleWrite("");
         testExpected("video.paused", false);
-        testExpected("media.currentTime", 0, '>');
+        testExpected("mediaElement.currentTime", 0, '>');
         run("video.currentTime = 500");
         setTimeout(timeCheck2, 200);
     }
@@ -24,7 +24,7 @@
     {
         consoleWrite("");
         testExpected("video.paused", false);
-        testExpected("media.currentTime", 0, '>');
+        testExpected("mediaElement.currentTime", 0, '>');
         consoleWrite("");
         endTest();
     }

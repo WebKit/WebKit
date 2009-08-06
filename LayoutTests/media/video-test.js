@@ -1,6 +1,6 @@
 
 var video = null;
-var media = null;
+var mediaElement = null;
 var console = null;
 var printFullTestDetails = true; // This is optionaly switched of by test whose tested values can differ. (see disableFullTestDetailsPrinting())
 var Failed = false;
@@ -33,7 +33,7 @@ function findMediaElement()
     try {
         video = document.getElementsByTagName('video')[0];
         if (video)
-            media = video;
+            mediaElement = video;
     } catch (ex) { }
 }
 
@@ -143,7 +143,7 @@ function waitForEvent(eventName, func, endit)
             endTest();    
     }
 
-    media.addEventListener(eventName, _eventCallback);
+    mediaElement.addEventListener(eventName, _eventCallback);
 }
 
 function waitForEventTestAndEnd(eventName, testFuncString)
@@ -165,7 +165,7 @@ function waitForEventAndTest(eventName, testFuncString, endit)
             endTest();    
     }
     
-    media.addEventListener(eventName, _eventCallback);
+    mediaElement.addEventListener(eventName, _eventCallback);
 }
 
 function testException(testString, exceptionString)

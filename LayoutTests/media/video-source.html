@@ -5,7 +5,7 @@
 </video>
 
 <script>
-    video = media = document.getElementsByTagName('video')[0];
+    video = mediaElement = document.getElementsByTagName('video')[0];
     waitForEvent("loadstart", function () {
         testExpected("relativeURL(video.currentSrc) ", "content/test.mp4");
         endTest();
