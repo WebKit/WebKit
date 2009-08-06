@@ -1,56 +1,32 @@
 <html> 
 <head>
-
-<style>
-.editing { 
-    border: 2px solid red; 
-    padding: 12px; 
-    font-size: 24px; 
-}
-</style>
-<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
-
-<script>
-
-function editingTest() {
-
-    for (i = 0; i < 21; i++) {
-            execExtendSelectionForwardByCharacterCommand();
-            execBoldCommand();
-            
-    }
- }
-
-</script>
-
-<title>Editing Test</title> 
+<title>Editing Test: extend selection and bold</title> 
 </head> 
 <body>
+<p>This tests bolding the first 21 letters in the following sentence.  Every character (including spaces) before "jumps" must be bolded.
 <div contenteditable id="root" class="editing">
 <span id="test">"The quick brown fox jumps over the lazy dog" uses every
 letter in the english language.
-
-<p>Here's to the crazy ones, the misfits, the rebels,
- the trouble makers,
- the round pegs in the square holes,
- the ones who see things differently.
- There not fond of rules, and they have no respect for the status quo,
- you can quote then,
- disagree with them,
- glorify or vilify them,
- about the only thing you can't do is ignore them. 
- Because they change things.
- They push the human race forward.
- And while some may see them as the crazy ones,
- we see genius.
- Because the people who are crazy enough to think they can change the world
- are the ones who do.
-</p>
 </span>
 </div>
+<p id="console"></p>
 
 <script>
-runEditingTest();
+
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+var e = document.getElementById("test");
+var selection = window.getSelection();
+selection.setPosition(e, 0);
+
+for (i = 0; i < 21; i++) {
+    selection.modify("extend", "forward", "character");
+    document.execCommand('bold', false, null);
+}
+
+document.body.appendChild(document.createTextNode(document.getElementById('test').innerHTML));
+
 </script>
 
 </body>

@@ -1,3 +1,21 @@
+2009-08-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        LayoutTests/editing/execCommand/boldSelection.html must be a dumpAsText test
+        https://bugs.webkit.org/show_bug.cgi?id=28055
+
+        This patch converts boldSelection.html to a dumpAsText and adds description on what it tests.
+        Namely, it tests bolding the first 21 letters  of a sentence.
+        Since bolding must be done by adding b tag instead of a style span, we print innerHTML of the result.
+
+        * editing/execCommand/boldSelection-expected.txt: Added.
+        * editing/execCommand/boldSelection.html:
+        * platform/mac/editing/execCommand/boldSelection-expected.checksum: Removed.
+        * platform/mac/editing/execCommand/boldSelection-expected.png: Removed.
+        * platform/mac/editing/execCommand/boldSelection-expected.txt: Removed.
+        * platform/qt/editing/execCommand/boldSelection-expected.txt: Removed.
+
 2009-08-06  Simon Fraser  <simon.fraser@apple.com>
 
         Rubber-stamped by Dan Bernstein.
