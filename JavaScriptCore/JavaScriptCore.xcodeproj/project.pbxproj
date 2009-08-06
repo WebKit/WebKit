@@ -1562,23 +1562,23 @@
 		9688CB120ED12B4E001D649F /* assembler */ = {
 			isa = PBXGroup;
 			children = (
-				86E116B00FE75AC800B512BC /* CodeLocation.h */,
-				863B23DF0FC60E6200703AA4 /* MacroAssemblerCodeRef.h */,
-				9688CB130ED12B4E001D649F /* AssemblerBuffer.h */,
-				86D3B2C110156BDE002865E7 /* AssemblerBufferWithConstantPool.h */,
+				860161DF0F3A83C100F84710 /* AbstractMacroAssembler.h */,
 				86D3B2BF10156BDE002865E7 /* ARMAssembler.cpp */,
 				86D3B2C010156BDE002865E7 /* ARMAssembler.h */,
 				86ADD1430FDDEA980006EEC2 /* ARMv7Assembler.h */,
-				9688CB140ED12B4E001D649F /* X86Assembler.h */,
-				860161DF0F3A83C100F84710 /* AbstractMacroAssembler.h */,
+				9688CB130ED12B4E001D649F /* AssemblerBuffer.h */,
+				86D3B2C110156BDE002865E7 /* AssemblerBufferWithConstantPool.h */,
+				86E116B00FE75AC800B512BC /* CodeLocation.h */,
+				86D3B3C110159D7F002865E7 /* LinkBuffer.h */,
+				86C36EE90EE1289D00B3DF59 /* MacroAssembler.h */,
 				86D3B2C210156BDE002865E7 /* MacroAssemblerARM.h */,
 				86ADD1440FDDEA980006EEC2 /* MacroAssemblerARMv7.h */,
-				860161E20F3A83C100F84710 /* MacroAssemblerX86Common.h */,
+				863B23DF0FC60E6200703AA4 /* MacroAssemblerCodeRef.h */,
 				860161E00F3A83C100F84710 /* MacroAssemblerX86.h */,
 				860161E10F3A83C100F84710 /* MacroAssemblerX86_64.h */,
-				86C36EE90EE1289D00B3DF59 /* MacroAssembler.h */,
-				86D3B3C110159D7F002865E7 /* LinkBuffer.h */,
+				860161E20F3A83C100F84710 /* MacroAssemblerX86Common.h */,
 				86D3B3C210159D7F002865E7 /* RepatchBuffer.h */,
+				9688CB140ED12B4E001D649F /* X86Assembler.h */,
 			);
 			path = assembler;
 			sourceTree = "<group>";
@@ -1648,12 +1648,14 @@
 				BC18C3E50E16F5CD00B34460 /* APICast.h in Headers */,
 				BCF605140E203EF800B9A64D /* ArgList.h in Headers */,
 				BC257DE80E1F51C50016B6C9 /* Arguments.h in Headers */,
+				86D3B2C410156BDE002865E7 /* ARMAssembler.h in Headers */,
 				86ADD1450FDDEA980006EEC2 /* ARMv7Assembler.h in Headers */,
 				BC18C3E60E16F5CD00B34460 /* ArrayConstructor.h in Headers */,
 				BC18C3E70E16F5CD00B34460 /* ArrayPrototype.h in Headers */,
 				BC18C5240E16FC8A00B34460 /* ArrayPrototype.lut.h in Headers */,
 				BC18C3E90E16F5CD00B34460 /* ASCIICType.h in Headers */,
 				9688CB150ED12B4E001D649F /* AssemblerBuffer.h in Headers */,
+				86D3B2C510156BDE002865E7 /* AssemblerBufferWithConstantPool.h in Headers */,
 				BC18C3EA0E16F5CD00B34460 /* Assertions.h in Headers */,
 				BC18C3EB0E16F5CD00B34460 /* AVLTree.h in Headers */,
 				147B83AC0E6DB8C9004775A4 /* BatchedTransitionOptimizer.h in Headers */,
@@ -1765,12 +1767,14 @@
 				960097A60EBABB58007A7297 /* LabelScope.h in Headers */,
 				BC18C4310E16F5CD00B34460 /* Lexer.h in Headers */,
 				BC18C52E0E16FCE100B34460 /* lexer.lut.h in Headers */,
+				86D3B3C310159D7F002865E7 /* LinkBuffer.h in Headers */,
 				BC18C4340E16F5CD00B34460 /* ListHashSet.h in Headers */,
 				BC18C4350E16F5CD00B34460 /* ListRefPtr.h in Headers */,
 				A7E2EA6B0FB460CF00601F06 /* LiteralParser.h in Headers */,
 				BC18C4360E16F5CD00B34460 /* Locker.h in Headers */,
 				BC18C4370E16F5CD00B34460 /* Lookup.h in Headers */,
 				86C36EEA0EE1289D00B3DF59 /* MacroAssembler.h in Headers */,
+				86D3B2C610156BDE002865E7 /* MacroAssemblerARM.h in Headers */,
 				86ADD1460FDDEA980006EEC2 /* MacroAssemblerARMv7.h in Headers */,
 				863B23E00FC6118900703AA4 /* MacroAssemblerCodeRef.h in Headers */,
 				860161E40F3A83C100F84710 /* MacroAssemblerX86.h in Headers */,
@@ -1842,6 +1846,7 @@
 				BC18C45D0E16F5CD00B34460 /* Register.h in Headers */,
 				BC18C45E0E16F5CD00B34460 /* RegisterFile.h in Headers */,
 				969A072B0ED1CE6900F1F681 /* RegisterID.h in Headers */,
+				86D3B3C410159D7F002865E7 /* RepatchBuffer.h in Headers */,
 				869EBCB70E8C6D4A008722CC /* ResultType.h in Headers */,
 				BC18C4600E16F5CD00B34460 /* RetainPtr.h in Headers */,
 				1429D8860ED21C3D00B89619 /* SamplingTool.h in Headers */,
@@ -1887,11 +1892,6 @@
 				1429DAE00ED2645B00B89619 /* WRECGenerator.h in Headers */,
 				1429DABF0ED263E700B89619 /* WRECParser.h in Headers */,
 				9688CB160ED12B4E001D649F /* X86Assembler.h in Headers */,
-				86D3B2C410156BDE002865E7 /* ARMAssembler.h in Headers */,
-				86D3B2C510156BDE002865E7 /* AssemblerBufferWithConstantPool.h in Headers */,
-				86D3B2C610156BDE002865E7 /* MacroAssemblerARM.h in Headers */,
-				86D3B3C310159D7F002865E7 /* LinkBuffer.h in Headers */,
-				86D3B3C410159D7F002865E7 /* RepatchBuffer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2176,6 +2176,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				659126BD0BDD1728001921FB /* AllInOneFile.cpp in Sources */,
+				86D3B2C310156BDE002865E7 /* ARMAssembler.cpp in Sources */,
 				65FDE49C0BDD1D4A00E80111 /* Assertions.cpp in Sources */,
 				A7A1F7AC0F252B3C00E184E2 /* ByteArray.cpp in Sources */,
 				1429D8DD0ED2205B00B89619 /* CallFrame.cpp in Sources */,
@@ -2254,7 +2255,6 @@
 				1429DA820ED2482900B89619 /* WRECFunctors.cpp in Sources */,
 				1429DAE10ED2645B00B89619 /* WRECGenerator.cpp in Sources */,
 				1429DAC00ED263E700B89619 /* WRECParser.cpp in Sources */,
-				86D3B2C310156BDE002865E7 /* ARMAssembler.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

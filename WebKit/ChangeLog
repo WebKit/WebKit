@@ -1,5 +1,11 @@
 2009-08-06  Mark Rowe  <mrowe@apple.com>
 
+        Bring a little order to our otherwise out of control lives.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2009-08-06  Mark Rowe  <mrowe@apple.com>
+
         Build fix.
 
         Don't attempt to build a file that Anders just deleted.
