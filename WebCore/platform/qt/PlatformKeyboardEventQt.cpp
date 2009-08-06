@@ -138,42 +138,48 @@ static String keyIdentifierForQtKeyCode(int keyCode)
     }
 }
 
-static int windowsKeyCodeForKeyEvent(unsigned int keycode)
+static int windowsKeyCodeForKeyEvent(unsigned int keycode, bool isKeypad = false)
 {
-    switch (keycode) {
-        /* FIXME: Need to supply a bool in this func, to determine wheter the event comes from the keypad
+    // Determine wheter the event comes from the keypad
+    if (isKeypad) {
+        switch (keycode) {
         case Qt::Key_0:
-            return VK_NUMPAD0;// (60) Numeric keypad 0 key
+            return VK_NUMPAD0;  // (60) Numeric keypad 0 key
         case Qt::Key_1:
-            return VK_NUMPAD1;// (61) Numeric keypad 1 key
+            return VK_NUMPAD1;  // (61) Numeric keypad 1 key
         case Qt::Key_2:
             return  VK_NUMPAD2; // (62) Numeric keypad 2 key
         case Qt::Key_3:
-            return VK_NUMPAD3; // (63) Numeric keypad 3 key
+            return VK_NUMPAD3;  // (63) Numeric keypad 3 key
         case Qt::Key_4:
-            return VK_NUMPAD4; // (64) Numeric keypad 4 key
+            return VK_NUMPAD4;  // (64) Numeric keypad 4 key
         case Qt::Key_5:
-            return VK_NUMPAD5; //(65) Numeric keypad 5 key
+            return VK_NUMPAD5;  // (65) Numeric keypad 5 key
         case Qt::Key_6:
-            return VK_NUMPAD6; // (66) Numeric keypad 6 key
+            return VK_NUMPAD6;  // (66) Numeric keypad 6 key
         case Qt::Key_7:
-            return VK_NUMPAD7; // (67) Numeric keypad 7 key
+            return VK_NUMPAD7;  // (67) Numeric keypad 7 key
         case Qt::Key_8:
-            return VK_NUMPAD8; // (68) Numeric keypad 8 key
+            return VK_NUMPAD8;  // (68) Numeric keypad 8 key
         case Qt::Key_9:
-            return VK_NUMPAD9; // (69) Numeric keypad 9 key
+            return VK_NUMPAD9;  // (69) Numeric keypad 9 key
         case Qt::Key_Asterisk:
             return VK_MULTIPLY; // (6A) Multiply key
         case Qt::Key_Plus:
-            return VK_ADD; // (6B) Add key
+            return VK_ADD;      // (6B) Add key
         case Qt::Key_Minus:
             return VK_SUBTRACT; // (6D) Subtract key
         case Qt::Key_Period:
-            return VK_DECIMAL; // (6E) Decimal key
+            return VK_DECIMAL;  // (6E) Decimal key
         case Qt::Key_Slash:
-            return VK_DIVIDE; // (6F) Divide key
+            return VK_DIVIDE;   // (6F) Divide key
+        default:
+            return 0;
+        }
 
-        */
+    } else
+
+    switch (keycode) {
         case Qt::Key_Backspace:
             return VK_BACK; // (08) BACKSPACE key
         case Qt::Key_Backtab:
@@ -494,9 +500,9 @@ PlatformKeyboardEvent::PlatformKeyboardEvent(QKeyEvent* event)
     m_ctrlKey = (state & Qt::ControlModifier) != 0;
     m_altKey = (state & Qt::AltModifier) != 0;
     m_metaKey = (state & Qt::MetaModifier) != 0;
-    m_windowsVirtualKeyCode = windowsKeyCodeForKeyEvent(event->key());
-    m_nativeVirtualKeyCode = event->nativeVirtualKey();
     m_isKeypad = (state & Qt::KeypadModifier) != 0;
+    m_windowsVirtualKeyCode = windowsKeyCodeForKeyEvent(event->key(), m_isKeypad);
+    m_nativeVirtualKeyCode = event->nativeVirtualKey();
     m_shiftKey = (state & Qt::ShiftModifier) != 0 || event->key() == Qt::Key_Backtab; // Simulate Shift+Tab with Key_Backtab
     m_qtEvent = event;
 }

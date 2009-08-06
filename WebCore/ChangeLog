@@ -1,3 +1,15 @@
+2009-08-06  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] windowsKeyCodeForKeyEvent fix
+
+        Fix windowsKeyCodeForKeyEvent to determine wheter the event comes from the keypad.
+
+        * platform/qt/PlatformKeyboardEventQt.cpp:
+        (WebCore::windowsKeyCodeForKeyEvent):
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+
 2009-08-06  George Staikos  <george.staikos@torchmobile.com>
 
         Rubber-stamped by Ariya Hidayat.
