@@ -439,17 +439,18 @@ HTMLMapElement* RenderImage::imageMap()
     return i ? i->document()->getImageMap(i->useMap()) : 0;
 }
 
-bool RenderImage::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction)
+bool RenderImage::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int x, int y, int tx, int ty, HitTestAction hitTestAction)
 {
     HitTestResult tempResult(result.point());
-    bool inside = RenderReplaced::nodeAtPoint(request, tempResult, _x, _y, _tx, _ty, hitTestAction);
+    bool inside = RenderReplaced::nodeAtPoint(request, tempResult, x, y, tx, ty, hitTestAction);
 
     if (inside && node()) {
-        int tx = _tx + x();
-        int ty = _ty + y();
-        
         if (HTMLMapElement* map = imageMap()) {
-            if (map->mapMouseEvent(_x - tx, _y - ty, IntSize(contentWidth(), contentHeight()), tempResult))
+            IntRect contentBox = contentBoxRect();
+            float zoom = style()->effectiveZoom();
+            int mapX = lroundf((x - tx - this->x() - contentBox.x()) / zoom);
+            int mapY = lroundf((y - ty - this->y() - contentBox.y()) / zoom);
+            if (map->mapMouseEvent(mapX, mapY, contentBox.size(), tempResult))
                 tempResult.setInnerNonSharedNode(node());
         }
     }

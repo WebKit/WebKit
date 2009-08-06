@@ -1,3 +1,13 @@
+2009-08-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Client side image maps did not handle zoom correctly.
+        Client side image maps did not handle border and padding correctly.
+
+        * fast/images/image-map-zoom-expected.txt: Added.
+        * fast/images/image-map-zoom.html: Added.
+
 2009-08-05  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler.
