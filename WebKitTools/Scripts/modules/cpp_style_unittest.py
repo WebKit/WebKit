@@ -287,8 +287,7 @@ class CppStyleTest(CppStyleTestBase):
         self.assert_lint(
             'int *a = (int *)DEFINED_VALUE;',
             'Using C-style cast.  Use reinterpret_cast<int *>(...) instead'
-            '  [readability/casting] [4]')
-
+            '  [readability/casting] [4]', 'foo.c')
         self.assert_lint(
             'uint16 a = (uint16)1.0;',
             'Using C-style cast.  Use static_cast<uint16>(...) instead'
@@ -1439,6 +1438,22 @@ class CppStyleTest(CppStyleTestBase):
                           'Missing space after ,  [whitespace/comma] [3]'])
         self.assert_lint('f(a, /* name */ b);', '')
         self.assert_lint('f(a, /* name */b);', '')
+
+    def test_pointer_reference_marker_location(self):
+        self.assert_lint('int* b;', '', 'foo.cpp')
+        self.assert_lint('int *b;',
+                         'Declaration has space between type name and * in int *b  [whitespace/declaration] [3]',
+                         'foo.cpp')
+        self.assert_lint('return *b;', '', 'foo.cpp')
+        self.assert_lint('int *b;', '', 'foo.c')
+        self.assert_lint('int* b;',
+                         'Declaration has space between * and variable name in int* b  [whitespace/declaration] [3]',
+                         'foo.c')
+        self.assert_lint('int& b;', '', 'foo.cpp')
+        self.assert_lint('int &b;',
+                         'Declaration has space between type name and & in int &b  [whitespace/declaration] [3]',
+                         'foo.cpp')
+        self.assert_lint('return &b;', '', 'foo.cpp')
 
     def test_indent(self):
         self.assert_lint('static int noindent;', '')

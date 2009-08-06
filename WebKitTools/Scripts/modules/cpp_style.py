@@ -151,6 +151,7 @@ _ERROR_CATEGORIES = '''\
     whitespace/braces
     whitespace/comma
     whitespace/comments
+    whitespace/declaration
     whitespace/end_of_line
     whitespace/ending_newline
     whitespace/indent
@@ -1597,6 +1598,20 @@ def check_spacing(filename, clean_lines, line_number, error):
     if search(r',[^\s]', line):
         error(filename, line_number, 'whitespace/comma', 3,
               'Missing space after ,')
+
+    if filename.endswith('.cpp'):
+        # C++ should have the & or * beside the type not the variable name.
+        matched = match(r'\s*\w+(?<!\breturn)\s+(?P<pointer_operator>\*|\&)\w+', line)
+        if matched:
+            error(filename, line_number, 'whitespace/declaration', 3,
+                  'Declaration has space between type name and %s in %s' % (matched.group('pointer_operator'), matched.group(0).strip()))
+
+    elif filename.endswith('.c'):
+        # C Pointer declaration should have the * beside the variable not the type name.
+        matched = search(r'^\s*\w+\*\s+\w+', line)
+        if matched:
+            error(filename, line_number, 'whitespace/declaration', 3,
+                  'Declaration has space between * and variable name in %s' % matched.group(0).strip())
 
     # Next we will look for issues with function calls.
     check_spacing_for_function_call(filename, line, line_number, error)
