@@ -51,13 +51,24 @@ function testMessageAfterClose(evt) {
         log("FAIL: message delivered after close(): " + evt.message);
         done();
     }
-    timeout = setTimeout(testPendingEvents, 1000);
+    timeout = setTimeout(testErrorAfterClose, 1000);
+}
+
+function testErrorAfterClose()
+{
+    log("PASS: messages sent after close() are ignored");
+    // Test that errors are delivered after close.
+    worker = new Worker('resources/worker-close.js');
+    worker.postMessage("closeWithError");
+    worker.onerror = function(event) {
+        log("PASS: Error arrived after close: " + event.message);
+        testPendingEvents();
+        return false;
+    }
 }
 
 function testPendingEvents()
 {
-    log("PASS: messages sent after close() are ignored");
-
     // Now test that workers do not deliver pending events
     worker = new Worker('resources/worker-close.js');
     worker.postMessage("closeWithPendingEvents");

@@ -22,6 +22,9 @@ onmessage = function(evt)
         postMessage("pong");
     } else if (evt.data == "throw") {
         throw "should never be executed";
+    } else if (evt.data == "closeWithError") {
+        close();
+        nonExistentFunction();  // Undefined function - throws exception
     } else {
         postMessage("FAIL: Unknown message type: " + evt.data);
     }
