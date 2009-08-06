@@ -34,7 +34,6 @@
 #import "WebDefaultUIDelegate.h"
 #import "WebFrameInternal.h" 
 #import "WebFrameView.h"
-#import "WebGraphicsExtras.h"
 #import "WebKitErrorsPrivate.h"
 #import "WebKitLogging.h"
 #import "WebNetscapeContainerCheckPrivate.h"

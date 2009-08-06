@@ -1,5 +1,11 @@
 2009-08-06  Anders Carlsson  <andersca@apple.com>
 
+        Remove WebGraphicsExtras.h include.
+        
+        * Plugins/WebNetscapePluginView.mm:
+
+2009-08-06  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Remove WebGraphicsExtras, it is no longer used.
