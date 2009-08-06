@@ -264,9 +264,9 @@ namespace JSC {
         static const RegisterID regStackPtr = ARM::sp;
         static const RegisterID regLink = ARM::lr;
 
-        static const FPRegisterID fpRegT0 = ARM::fp0; // FIXME
-        static const FPRegisterID fpRegT1 = ARM::fp0; // FIXME
-        static const FPRegisterID fpRegT2 = ARM::fp0; // FIXME
+        static const FPRegisterID fpRegT0 = ARM::d0;
+        static const FPRegisterID fpRegT1 = ARM::d1;
+        static const FPRegisterID fpRegT2 = ARM::d2;
 #else
     #error "JIT not supported on this platform."
 #endif

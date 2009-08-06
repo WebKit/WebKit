@@ -57,12 +57,11 @@ public:
     };
 
     enum DoubleCondition {
-        DoubleEqual, //FIXME
-        DoubleNotEqual, //FIXME
-        DoubleGreaterThan, //FIXME
-        DoubleGreaterThanOrEqual, //FIXME
-        DoubleLessThan, //FIXME
-        DoubleLessThanOrEqual, //FIXME
+        DoubleEqual = ARMAssembler::EQ,
+        DoubleGreaterThan = ARMAssembler::GT,
+        DoubleGreaterThanOrEqual = ARMAssembler::GE,
+        DoubleLessThan = ARMAssembler::LT,
+        DoubleLessThanOrEqual = ARMAssembler::LE,
     };
 
     static const RegisterID stackPointerRegister = ARM::sp;
@@ -640,6 +639,7 @@ public:
     // Floating point operators
     bool supportsFloatingPoint() const
     {
+        // FIXME: should be a dynamic test: VFP, FPA, or nothing
         return false;
     }
 
@@ -650,74 +650,58 @@ public:
 
     void loadDouble(ImplicitAddress address, FPRegisterID dest)
     {
-        UNUSED_PARAM(address);
-        UNUSED_PARAM(dest);
-        ASSERT_NOT_REACHED();
+        m_assembler.doubleTransfer(true, dest, address.base, address.offset);
     }
 
     void storeDouble(FPRegisterID src, ImplicitAddress address)
     {
-        UNUSED_PARAM(src);
-        UNUSED_PARAM(address);
-        ASSERT_NOT_REACHED();
+        m_assembler.doubleTransfer(false, src, address.base, address.offset);
     }
 
     void addDouble(FPRegisterID src, FPRegisterID dest)
     {
-        UNUSED_PARAM(src);
-        UNUSED_PARAM(dest);
-        ASSERT_NOT_REACHED();
+        m_assembler.faddd_r(dest, dest, src);
     }
 
     void addDouble(Address src, FPRegisterID dest)
     {
-        UNUSED_PARAM(src);
-        UNUSED_PARAM(dest);
-        ASSERT_NOT_REACHED();
+        loadDouble(src, ARM::SD0);
+        addDouble(ARM::SD0, dest);
     }
 
     void subDouble(FPRegisterID src, FPRegisterID dest)
     {
-        UNUSED_PARAM(src);
-        UNUSED_PARAM(dest);
-        ASSERT_NOT_REACHED();
+        m_assembler.fsubd_r(dest, dest, src);
     }
 
     void subDouble(Address src, FPRegisterID dest)
     {
-        UNUSED_PARAM(src);
-        UNUSED_PARAM(dest);
-        ASSERT_NOT_REACHED();
+        loadDouble(src, ARM::SD0);
+        subDouble(ARM::SD0, dest);
     }
 
     void mulDouble(FPRegisterID src, FPRegisterID dest)
     {
-        UNUSED_PARAM(src);
-        UNUSED_PARAM(dest);
-        ASSERT_NOT_REACHED();
+        m_assembler.fmuld_r(dest, dest, src);
     }
 
     void mulDouble(Address src, FPRegisterID dest)
     {
-        UNUSED_PARAM(src);
-        UNUSED_PARAM(dest);
-        ASSERT_NOT_REACHED();
+        loadDouble(src, ARM::SD0);
+        mulDouble(ARM::SD0, dest);
     }
 
     void convertInt32ToDouble(RegisterID src, FPRegisterID dest)
     {
-        UNUSED_PARAM(src);
-        UNUSED_PARAM(dest);
-        ASSERT_NOT_REACHED();
+        m_assembler.fmsr_r(dest, src);
+        m_assembler.fsitod_r(dest, dest);
     }
 
     Jump branchDouble(DoubleCondition cond, FPRegisterID left, FPRegisterID right)
     {
-        UNUSED_PARAM(cond);
-        UNUSED_PARAM(left);
-        UNUSED_PARAM(right);
-        ASSERT_NOT_REACHED();
-        return jump();
+        m_assembler.fcmpd_r(left, right);
+        m_assembler.fmstat();
+        return Jump(m_assembler.jmp(static_cast<ARMAssembler::Condition>(cond)));
     }
 
     // Truncates 'src' to an integer, and places the resulting 'dest'.

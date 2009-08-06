@@ -63,8 +63,13 @@ namespace ARM {
     } RegisterID;
 
     typedef enum {
-        fp0 //FIXME
+        d0,
+        d1,
+        d2,
+        d3,
+        SD0 = d3
     } FPRegisterID;
+
 } // namespace ARM
 
     class ARMAssembler {
@@ -115,13 +120,21 @@ namespace ARM {
             MVN = (0xf << 21),
             MUL = 0x00000090,
             MULL = 0x00c00090,
+            FADDD = 0x0e300b00,
+            FSUBD = 0x0e300b40,
+            FMULD = 0x0e200b00,
+            FCMPD = 0x0eb40b40,
             DTR = 0x05000000,
             LDRH = 0x00100090,
             STRH = 0x00000090,
             STMDB = 0x09200000,
             LDMIA = 0x08b00000,
+            FDTR = 0x0d000b00,
             B = 0x0a000000,
             BL = 0x0b000000,
+            FMSR = 0x0e000a10,
+            FSITOD = 0x0eb80bc0,
+            FMSTAT = 0x0ef1fa10,
 #if ARM_ARCH_VERSION >= 5
             CLZ = 0x016f0f10,
             BKPT = 0xe120070,
@@ -364,6 +377,26 @@ namespace ARM {
             m_buffer.putInt(static_cast<ARMWord>(cc) | MULL | RN(rdhi) | RD(rdlo) | RS(rn) | RM(rm));
         }
 
+        void faddd_r(int dd, int dn, int dm, Condition cc = AL)
+        {
+            emitInst(static_cast<ARMWord>(cc) | FADDD, dd, dn, dm);
+        }
+
+        void fsubd_r(int dd, int dn, int dm, Condition cc = AL)
+        {
+            emitInst(static_cast<ARMWord>(cc) | FSUBD, dd, dn, dm);
+        }
+
+        void fmuld_r(int dd, int dn, int dm, Condition cc = AL)
+        {
+            emitInst(static_cast<ARMWord>(cc) | FMULD, dd, dn, dm);
+        }
+
+        void fcmpd_r(int dd, int dm, Condition cc = AL)
+        {
+            emitInst(static_cast<ARMWord>(cc) | FCMPD, dd, 0, dm);
+        }
+
         void ldr_imm(int rd, ARMWord imm, Condition cc = AL)
         {
             m_buffer.putIntWithConstantInt(static_cast<ARMWord>(cc) | DTR | DT_LOAD | DT_UP | RN(ARM::pc) | RD(rd), imm, true);
@@ -414,6 +447,18 @@ namespace ARM {
             emitInst(static_cast<ARMWord>(cc) | STRH | HDT_UH | DT_UP | DT_PRE, rd, rn, rm);
         }
 
+        void fdtr_u(bool isLoad, int rd, int rb, ARMWord op2, Condition cc = AL)
+        {
+            ASSERT(op2 <= 0xff);
+            emitInst(static_cast<ARMWord>(cc) | FDTR | DT_UP | (isLoad ? DT_LOAD : 0), rd, rb, op2);
+        }
+
+        void fdtr_d(bool isLoad, int rd, int rb, ARMWord op2, Condition cc = AL)
+        {
+            ASSERT(op2 <= 0xff);
+            emitInst(static_cast<ARMWord>(cc) | FDTR | (isLoad ? DT_LOAD : 0), rd, rb, op2);
+        }
+
         void push_r(int reg, Condition cc = AL)
         {
             ASSERT(ARMWord(reg) <= 0xf);
@@ -434,6 +479,21 @@ namespace ARM {
         inline void peek_r(int reg, Condition cc = AL)
         {
             dtr_u(true, reg, ARM::sp, 0, cc);
+        }
+
+        void fmsr_r(int dd, int rn, Condition cc = AL)
+        {
+            emitInst(static_cast<ARMWord>(cc) | FMSR, rn, dd, 0);
+        }
+
+        void fsitod_r(int dd, int dm, Condition cc = AL)
+        {
+            emitInst(static_cast<ARMWord>(cc) | FSITOD, dd, 0, dm);
+        }
+
+        void fmstat(Condition cc = AL)
+        {
+            m_buffer.putInt(static_cast<ARMWord>(cc) | FMSTAT);
         }
 
 #if ARM_ARCH_VERSION >= 5
@@ -653,6 +713,7 @@ namespace ARM {
 
         void dataTransfer32(bool isLoad, RegisterID srcDst, RegisterID base, int32_t offset);
         void baseIndexTransfer32(bool isLoad, RegisterID srcDst, RegisterID base, RegisterID index, int scale, int32_t offset);
+        void doubleTransfer(bool isLoad, FPRegisterID srcDst, RegisterID base, int32_t offset);
 
         // Constant pool hnadlers
 

@@ -2,6 +2,39 @@
 
         Reviewed by Gavin Barraclough.
 
+        Add floating point support for generic ARM port.
+        https://bugs.webkit.org/show_bug.cgi?id=24986
+
+        * assembler/ARMAssembler.cpp:
+        (JSC::ARMAssembler::doubleTransfer):
+        * assembler/ARMAssembler.h:
+        (JSC::ARM::):
+        (JSC::ARMAssembler::):
+        (JSC::ARMAssembler::faddd_r):
+        (JSC::ARMAssembler::fsubd_r):
+        (JSC::ARMAssembler::fmuld_r):
+        (JSC::ARMAssembler::fcmpd_r):
+        (JSC::ARMAssembler::fdtr_u):
+        (JSC::ARMAssembler::fdtr_d):
+        (JSC::ARMAssembler::fmsr_r):
+        (JSC::ARMAssembler::fsitod_r):
+        (JSC::ARMAssembler::fmstat):
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::):
+        (JSC::MacroAssemblerARM::supportsFloatingPoint):
+        (JSC::MacroAssemblerARM::loadDouble):
+        (JSC::MacroAssemblerARM::storeDouble):
+        (JSC::MacroAssemblerARM::addDouble):
+        (JSC::MacroAssemblerARM::subDouble):
+        (JSC::MacroAssemblerARM::mulDouble):
+        (JSC::MacroAssemblerARM::convertInt32ToDouble):
+        (JSC::MacroAssemblerARM::branchDouble):
+        * jit/JIT.h:
+
+2009-08-05  Zoltan Herczeg  <zherczeg@inf.u-szeged.hu>
+
+        Reviewed by Gavin Barraclough.
+
         Add JIT support for generic ARM port without optimizations.
         https://bugs.webkit.org/show_bug.cgi?id=24986
 
