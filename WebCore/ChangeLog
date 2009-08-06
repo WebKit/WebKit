@@ -1,3 +1,25 @@
+2009-08-06  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        WebInspector: Extract style editing into a separate file that is
+        going to be loaded in page context.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27939
+
+        * inspector/front-end/InjectedScript.js: Added.
+        (InjectedScript.applyStyleText):
+        (InjectedScript.setStyleText):
+        (InjectedScript.toggleStyleEnabled):
+        (InjectedScript.setStyleRule):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylePropertiesSection.prototype.editingSelectorCommitted.callback):
+        (WebInspector.StylePropertiesSection.prototype.editingSelectorCommitted):
+        (WebInspector.StylePropertyTreeElement.prototype.):
+        (WebInspector.StylePropertyTreeElement.prototype):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+
 2009-08-06  Adam Barth  <abarth@webkit.org>
 
         Reviewed by David Levin.

@@ -185,42 +185,17 @@ WebInspector.DOMNode.prototype = {
 
     _setStyles: function(computedStyle, inlineStyle, styleAttributes, matchedCSSRules)
     {
-        this._computedStyle = this._makeStyle(computedStyle);
-        this.style = this._makeStyle(inlineStyle);
+        this._computedStyle = new WebInspector.CSSStyleDeclaration(computedStyle);
+        this.style = new WebInspector.CSSStyleDeclaration(inlineStyle);
 
         for (var name in styleAttributes) {
             if (this._attributesMap[name])
-                this._attributesMap[name].style = this._makeStyle(styleAttributes[name]);
+                this._attributesMap[name].style = new WebInspector.CSSStyleDeclaration(styleAttributes[name]);
         }
 
         this._matchedCSSRules = [];
-        for (var i = 0; i < matchedCSSRules.length; i++) {
-            var description = matchedCSSRules[i];
-
-            var rule = {};
-            rule.selectorText = description.selectorText;
-            rule.style = this._makeStyle(description.style);
-
-            if (description.parentStyleSheet) {
-                var parentStyleMock = {};
-                parentStyleMock.href = description.parentStyleSheet.href;
-                var nodeName = description.parentStyleSheet.ownerNodeName;
-                if (nodeName) {
-                    parentStyleMock.ownerNode = {
-                        "nodeName": nodeName
-                    };
-                }
-                rule.parentStyleSheet = parentStyleMock;
-            }
-            this._matchedCSSRules.push(rule);
-        }
-    },
-
-    _makeStyle: function(payload)
-    {
-        var style = new WebInspector.CSSStyleDeclaration(payload);
-        style._nodeId = this._id;
-        return style;
+        for (var i = 0; i < matchedCSSRules.length; i++)
+            this._matchedCSSRules.push(WebInspector.CSSStyleDeclaration.parseRule(matchedCSSRules[i]));
     },
 
     _clearStyles: function()
@@ -296,6 +271,7 @@ WebInspector.DOMWindow.prototype = {
     {
         return this._domAgent.document;
     },
+
     get Node()
     {
         return WebInspector.DOMNode;
@@ -477,19 +453,39 @@ WebInspector.CSSStyleDeclaration = function(payload) {
     this._id = payload.id;
     this.width = payload.width;
     this.height = payload.height;
-    this.__disabledProperties = payload.disabledProperties;
-    this.__disabledPropertyValues = payload.disabledPropertyValues;
-    this.__disabledPropertyPriorities = payload.disabledPropertyPriorities;
+    this.__disabledProperties = payload.__disabledProperties;
+    this.__disabledPropertyValues = payload.__disabledPropertyValues;
+    this.__disabledPropertyPriorities = payload.__disabledPropertyPriorities;
 
     this._propertyMap = {};
-    this.length = this._properties.length;
+    this.length = payload.properties.length;
 
     for (var i = 0; i < this.length; ++i) {
-        var property = this._properties[i];
+        var property = payload.properties[i];
         var name = property.name;
         this[i] = name;
         this._propertyMap[name] = property;
     }
+}
+
+WebInspector.CSSStyleDeclaration.parseStyle = function(payload)
+{
+    return new WebInspector.CSSStyleDeclaration(payload);
+}
+
+WebInspector.CSSStyleDeclaration.parseRule = function(payload)
+{
+    var rule = {};
+    rule._id = payload.id;
+    rule.selectorText = payload.selectorText;
+    rule.style = new WebInspector.CSSStyleDeclaration(payload.style);
+    rule.style.parentRule = rule;
+    rule.isUserAgent = payload.isUserAgent;
+    rule.isUser = payload.isUser;
+    if (payload.parentStyleSheet)
+        rule.parentStyleSheet = { href: payload.parentStyleSheet.href };
+
+    return rule;
 }
 
 WebInspector.CSSStyleDeclaration.prototype = {
@@ -555,3 +551,88 @@ WebInspector.didPerformSearch = WebInspector.Callback.processCallback;
 WebInspector.didApplyDomChange = WebInspector.Callback.processCallback;
 WebInspector.didRemoveAttribute = WebInspector.Callback.processCallback;
 WebInspector.didSetTextNodeValue = WebInspector.Callback.processCallback;
+
+// Temporary methods for DOMAgent migration.
+WebInspector.wrapNodeWithStyles = function(node, styles)
+{
+    var windowStub = new WebInspector.DOMWindow(null);
+    var docStub = new WebInspector.DOMDocument(null, windowStub);
+    var payload = {};
+    payload.nodeType = node.nodeType;
+    payload.nodeName = node.nodeName;
+    payload.nodeValue = node.nodeValue;
+    payload.attributes = [];
+    payload.childNodeCount = 0;
+
+    for (var i = 0; i < node.attributes.length; ++i) {
+        var attr = node.attributes[i];
+        payload.attributes.push(attr.name);
+        payload.attributes.push(attr.value);
+    }
+    var nodeStub = new WebInspector.DOMNode(docStub, payload);
+    nodeStub._setStyles(styles.computedStyle, styles.inlineStyle, styles.styleAttributes, styles.matchedCSSRules);
+    return nodeStub;
+}
+
+// Temporary methods that will be dispatched via InspectorController into the injected context.
+InspectorController.getStyles = function(nodeId, authorOnly, callback)
+{
+    setTimeout(function() {
+        callback(InjectedScript.getStyles(nodeId, authorOnly));
+    }, 0)
+}
+
+InspectorController.getComputedStyle = function(nodeId, callback)
+{
+    setTimeout(function() {
+        callback(InjectedScript.getComputedStyle(nodeId));
+    }, 0)
+}
+
+InspectorController.getInlineStyle = function(nodeId, callback)
+{
+    setTimeout(function() {
+        callback(InjectedScript.getInlineStyle(nodeId));
+    }, 0)
+}
+
+InspectorController.applyStyleText = function(styleId, styleText, propertyName, callback)
+{
+    setTimeout(function() {
+        callback(InjectedScript.applyStyleText(styleId, styleText, propertyName));
+    }, 0)
+}
+
+InspectorController.setStyleText = function(style, cssText, callback)
+{
+    setTimeout(function() {
+        callback(InjectedScript.setStyleText(style, cssText));
+    }, 0)
+}
+
+InspectorController.toggleStyleEnabled = function(styleId, propertyName, disabled, callback)
+{
+    setTimeout(function() {
+        callback(InjectedScript.toggleStyleEnabled(styleId, propertyName, disabled));
+    }, 0)
+}
+
+InspectorController.applyStyleRuleText = function(ruleId, newContent, selectedNode, callback)
+{
+    setTimeout(function() {
+        callback(InjectedScript.applyStyleRuleText(ruleId, newContent, selectedNode));
+    }, 0)
+}
+
+InspectorController.addStyleSelector = function(newContent, callback)
+{
+    setTimeout(function() {
+        callback(InjectedScript.addStyleSelector(newContent));
+    }, 0)
+}
+
+InspectorController.setStyleProperty = function(styleId, name, value, callback) {
+    setTimeout(function() {
+        callback(InjectedScript.setStyleProperty(styleId, name, value));
+    }, 0)
+}

@@ -23,6 +23,7 @@
     <file>ElementsTreeOutline.js</file>
     <file>FontView.js</file>
     <file>ImageView.js</file>
+    <file>InjectedScript.js</file>
     <file>inspector.js</file>
     <file>KeyboardShortcut.js</file>
     <file>MetricsSidebarPane.js</file>
