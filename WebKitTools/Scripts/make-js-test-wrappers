@@ -121,6 +121,11 @@ for my $tfile (@templates) {
         next if $file =~ m:resources/window-properties\.js$:;
         next if $file =~ m:resources/wrapper-identity-base\.js$:;
         next if $file =~ m:resources/xhtml-scripts\.js$:;
+        next if $file =~ m:resources/instanceof-operator-dummy-worker\.js$:;
+        next if $file =~ m:resources/json2-es5-compat\.js$:;
+        next if $file =~ m:resources/JSON-stringify\.js$:;
+        next if $file =~ m:resources/JSON-parse\.js$:;
+        next if $file =~ m:resources/textarea-input-event\.js$:;
 
         my $html = $file;
         $html =~ s:resources/(.*)\.js:$1.html:;

@@ -1,3 +1,12 @@
+2009-08-06  Eric Seidel  <eric@webkit.org>
+
+        No review, only changing make-js-test-wrappers.
+
+        Fix make-js-test-wrappers to ignore a few more js tests
+        with custom templates.
+
+        * Scripts/make-js-test-wrappers:
+
 2009-08-06  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by David Hyatt.
