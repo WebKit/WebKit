@@ -1,3 +1,12 @@
+2009-08-06  Mark Rowe  <mrowe@apple.com>
+
+        Fix the build some more.
+
+        Add JSWebSocket.cpp and JSWebSocket.h to the Xcode project, and move the WebSocket-related
+        files and groups in to the appropriate locations.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2009-08-06  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

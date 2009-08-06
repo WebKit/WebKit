@@ -933,6 +933,8 @@
 		5D874F130D161D3200796C3B /* NetscapePlugInStreamLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93E227DD0AF589AD00D48324 /* NetscapePlugInStreamLoader.cpp */; };
 		5D925B670F64D4DD00B847F0 /* ScrollBehavior.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D925B650F64D4DD00B847F0 /* ScrollBehavior.cpp */; };
 		5D925B680F64D4DD00B847F0 /* ScrollBehavior.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D925B660F64D4DD00B847F0 /* ScrollBehavior.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5DA5E0FC102B953800088CF9 /* JSWebSocket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DA5E0FA102B953800088CF9 /* JSWebSocket.cpp */; };
+		5DA5E0FD102B953800088CF9 /* JSWebSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DA5E0FB102B953800088CF9 /* JSWebSocket.h */; };
 		5DCF836D0D59159800953BC6 /* PluginInfoStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DCF836C0D59159800953BC6 /* PluginInfoStore.h */; };
 		5DD0A3810D9AC6070056C122 /* DOMElementTimeControl.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = E415F1680D9A165D0033CE97 /* DOMElementTimeControl.h */; };
 		5DF7F5C20F01F92A00526B4B /* CSSPropertyNames.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 656580EF09D12B20000E61D7 /* CSSPropertyNames.h */; };
@@ -5970,6 +5972,8 @@
 		5D15E3AA0F9E6AC1009E0E3F /* XMLTokenizerScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLTokenizerScope.h; sourceTree = "<group>"; };
 		5D925B650F64D4DD00B847F0 /* ScrollBehavior.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollBehavior.cpp; sourceTree = "<group>"; };
 		5D925B660F64D4DD00B847F0 /* ScrollBehavior.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollBehavior.h; sourceTree = "<group>"; };
+		5DA5E0FA102B953800088CF9 /* JSWebSocket.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebSocket.cpp; sourceTree = "<group>"; };
+		5DA5E0FB102B953800088CF9 /* JSWebSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebSocket.h; sourceTree = "<group>"; };
 		5DCF836C0D59159800953BC6 /* PluginInfoStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginInfoStore.h; sourceTree = "<group>"; };
 		63189AE20E83A33300012E41 /* NodeRareData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeRareData.h; sourceTree = "<group>"; };
 		637B7ADE0E8767B800E32194 /* ElementRareData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElementRareData.h; sourceTree = "<group>"; };
@@ -9534,7 +9538,6 @@
 		0867D691FE84028FC02AAC07 /* WebKit */ = {
 			isa = PBXGroup;
 			children = (
-				518A34BD1026C831001B6896 /* websockets */,
 				65C97AF208EA908800ACD273 /* config.h */,
 				EDEC98020AED7E170059137F /* WebCorePrefix.h */,
 				9307061309E0CA8200B17FE4 /* DerivedSources.make */,
@@ -9555,6 +9558,7 @@
 				F523D2F302DE443B018635CA /* rendering */,
 				1AE82EC90CAAE177002237AE /* storage */,
 				B22277CA0D00BF1E0071B782 /* svg */,
+				518A34BD1026C831001B6896 /* websockets */,
 				4C6B99150E52E37300487BB7 /* wml */,
 				2E4346310F546A6800B0F1BA /* workers */,
 				E1F0424309839389006694EA /* xml */,
@@ -9642,6 +9646,7 @@
 				A83B790A0CCAFF47000B0825 /* SVG */,
 				E1C8BE4B0E8BD0D10064CB7D /* Threads */,
 				BC9854530CD3DA8F00069BC1 /* Traversal */,
+				5DA5E0F9102B950400088CF9 /* WebSockets */,
 				BC9854430CD3D9D000069BC1 /* Window */,
 				A83B79220CCB00F0000B0825 /* XML */,
 				A83B790C0CCAFF83000B0825 /* XPath */,
@@ -10276,6 +10281,15 @@
 				518A34C01026C831001B6896 /* WebSocket.idl */,
 			);
 			path = websockets;
+			sourceTree = "<group>";
+		};
+		5DA5E0F9102B950400088CF9 /* WebSockets */ = {
+			isa = PBXGroup;
+			children = (
+				5DA5E0FA102B953800088CF9 /* JSWebSocket.cpp */,
+				5DA5E0FB102B953800088CF9 /* JSWebSocket.h */,
+			);
+			name = WebSockets;
 			sourceTree = "<group>";
 		};
 		5DCF83690D59157800953BC6 /* plugins */ = {
@@ -13553,9 +13567,6 @@
 		BC1A3793097C6FB10019F3D8 /* js */ = {
 			isa = PBXGroup;
 			children = (
-				518A34C41026C8C9001B6896 /* JSWebSocketConstructor.cpp */,
-				518A34C51026C8C9001B6896 /* JSWebSocketConstructor.h */,
-				518A34C61026C8C9001B6896 /* JSWebSocketCustom.cpp */,
 				BC4EDEF70C08F414007EDD49 /* Custom */,
 				14DFB33F0A7DF7630018F769 /* Derived Sources */,
 				93F8B3060A300FEA00F61AB8 /* CodeGeneratorJS.pm */,
@@ -13563,7 +13574,6 @@
 				A8EDB03C1016849400FE8113 /* DOMObjectWithSVGContext.h */,
 				1432E8480C51493F00B1500F /* GCController.cpp */,
 				1432E8460C51493800B1500F /* GCController.h */,
-				415B7C540FF598E6006770F7 /* JSAbstractWorkerCustom.cpp */,
 				E4EEFFC60D34550C00469A58 /* JSAudioConstructor.cpp */,
 				E4EEFFC70D34550C00469A58 /* JSAudioConstructor.h */,
 				E10B93C20B73C291003ED890 /* JSCustomXPathNSResolver.cpp */,
@@ -13612,6 +13622,8 @@
 				498391620F1E8EE100C23782 /* JSWebKitCSSMatrixConstructor.h */,
 				494BD7970F55C90E00747828 /* JSWebKitPointConstructor.cpp */,
 				494BD7980F55C90E00747828 /* JSWebKitPointConstructor.h */,
+				518A34C41026C8C9001B6896 /* JSWebSocketConstructor.cpp */,
+				518A34C51026C8C9001B6896 /* JSWebSocketConstructor.h */,
 				E1CA5CD50E8CDEE900E8EF90 /* JSWorkerConstructor.cpp */,
 				E1CA5CD20E8CDE8000E8EF90 /* JSWorkerConstructor.h */,
 				E1C36D320EB0A094007410BC /* JSWorkerContextBase.cpp */,
@@ -13705,6 +13717,7 @@
 		BC4EDEF70C08F414007EDD49 /* Custom */ = {
 			isa = PBXGroup;
 			children = (
+				415B7C540FF598E6006770F7 /* JSAbstractWorkerCustom.cpp */,
 				4162A453101145E300DFF3ED /* JSDedicatedWorkerContextCustom.cpp */,
 				BC2ED6BB0C6BD2F000920BFF /* JSAttrCustom.cpp */,
 				1A9EF4560A1B957D00332B63 /* JSCanvasRenderingContext2DCustom.cpp */,
@@ -13788,6 +13801,7 @@
 				B2D3FC890C2212CB00CF3618 /* JSSVGTransformListCustom.cpp */,
 				1A2C40AA0DEB55AA005AF19E /* JSTextCustom.cpp */,
 				516BB7920CE91E6800512F79 /* JSTreeWalkerCustom.cpp */,
+				518A34C61026C8C9001B6896 /* JSWebSocketCustom.cpp */,
 				E18258AB0EF3CD7000933242 /* JSWorkerContextCustom.cpp */,
 				E1CA5CBB0E8CDCAF00E8EF90 /* JSWorkerCustom.cpp */,
 				BC348BBD0DB7F531004ABAB9 /* JSXMLHttpRequestCustom.cpp */,
@@ -17147,8 +17161,9 @@
 				41D168EE10226E89009BC827 /* SharedWorkerThread.h in Headers */,
 				41D1690610238B66009BC827 /* JSSharedWorkerContext.h in Headers */,
 				4167EBF6102962BA003D252A /* DefaultSharedWorkerRepository.h in Headers */,
-                                518A34C21026C831001B6896 /* WebSocket.h in Headers */,
-                                518A34C81026C8C9001B6896 /* JSWebSocketConstructor.h in Headers */,
+				518A34C21026C831001B6896 /* WebSocket.h in Headers */,
+				518A34C81026C8C9001B6896 /* JSWebSocketConstructor.h in Headers */,
+				5DA5E0FD102B953800088CF9 /* JSWebSocket.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -19200,9 +19215,10 @@
 				41D168F010226EC4009BC827 /* JSSharedWorkerContextCustom.cpp in Sources */,
 				41D1690510238B66009BC827 /* JSSharedWorkerContext.cpp in Sources */,
 				4167EBF5102962BA003D252A /* DefaultSharedWorkerRepository.cpp in Sources */,
-                                518A34C11026C831001B6896 /* WebSocket.cpp in Sources */,
-                                518A34C71026C8C9001B6896 /* JSWebSocketConstructor.cpp in Sources */,
-                                518A34C91026C8C9001B6896 /* JSWebSocketCustom.cpp in Sources */,
+				518A34C11026C831001B6896 /* WebSocket.cpp in Sources */,
+				518A34C71026C8C9001B6896 /* JSWebSocketConstructor.cpp in Sources */,
+				518A34C91026C8C9001B6896 /* JSWebSocketCustom.cpp in Sources */,
+				5DA5E0FC102B953800088CF9 /* JSWebSocket.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
