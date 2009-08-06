@@ -37,8 +37,26 @@
 #include "V8ObjectEventListener.h"
 #include "V8Proxy.h"
 #include "V8Utilities.h"
+#include "WorkerContextExecutionProxy.h"
 
 namespace WebCore {
+
+PassRefPtr<EventListener> getEventListener(MessagePort* messagePort, v8::Local<v8::Value> value, bool findOnly, bool createObjectEventListener)
+{
+    V8Proxy* proxy = V8Proxy::retrieve(messagePort->scriptExecutionContext());
+    if (proxy) {
+        V8EventListenerList* list = proxy->objectListeners();
+        return findOnly ? list->findWrapper(value, false) : list->findOrCreateWrapper<V8ObjectEventListener>(proxy->frame(), value, false);
+    }
+
+#if ENABLE(WORKERS)
+    WorkerContextExecutionProxy* workerContextProxy = WorkerContextExecutionProxy::retrieve();
+    if (workerContextProxy)
+        return workerContextProxy->findOrCreateEventListenerHelper(value, false, findOnly, createObjectEventListener);
+#endif
+
+    return PassRefPtr<EventListener>();
+}
 
 ACCESSOR_GETTER(MessagePortOnmessage)
 {
@@ -61,11 +79,7 @@ ACCESSOR_SETTER(MessagePortOnmessage)
         messagePort->setOnmessage(0);
 
     } else {
-        V8Proxy* proxy = V8Proxy::retrieve(messagePort->scriptExecutionContext());
-        if (!proxy)
-            return;
-
-        RefPtr<EventListener> listener = proxy->objectListeners()->findOrCreateWrapper<V8ObjectEventListener>(proxy->frame(), value, false);
+        RefPtr<EventListener> listener = getEventListener(messagePort, value, false, false);
         if (listener) {
             messagePort->setOnmessage(listener);
             createHiddenDependency(info.Holder(), value, V8Custom::kMessagePortRequestCacheIndex);
@@ -75,14 +89,9 @@ ACCESSOR_SETTER(MessagePortOnmessage)
 
 CALLBACK_FUNC_DECL(MessagePortAddEventListener)
 {
-    INC_STATS("DOM.MessagePort.AddEventListener()");
+    INC_STATS("DOM.MessagePort.addEventListener()");
     MessagePort* messagePort = V8DOMWrapper::convertToNativeObject<MessagePort>(V8ClassIndex::MESSAGEPORT, args.Holder());
-
-    V8Proxy* proxy = V8Proxy::retrieve(messagePort->scriptExecutionContext());
-    if (!proxy)
-        return v8::Undefined();
-
-    RefPtr<EventListener> listener = proxy->objectListeners()->findOrCreateWrapper<V8ObjectEventListener>(proxy->frame(), args[1], false);
+    RefPtr<EventListener> listener = getEventListener(messagePort, args[1], false, true);
     if (listener) {
         String type = toWebCoreString(args[0]);
         bool useCapture = args[2]->BooleanValue();
@@ -95,15 +104,9 @@ CALLBACK_FUNC_DECL(MessagePortAddEventListener)
 
 CALLBACK_FUNC_DECL(MessagePortRemoveEventListener)
 {
-    INC_STATS("DOM.MessagePort.RemoveEventListener()");
+    INC_STATS("DOM.MessagePort.removeEventListener()");
     MessagePort* messagePort = V8DOMWrapper::convertToNativeObject<MessagePort>(V8ClassIndex::MESSAGEPORT, args.Holder());
-
-    V8Proxy* proxy = V8Proxy::retrieve(messagePort->scriptExecutionContext());
-    if (!proxy)
-        return v8::Undefined(); // probably leaked
-
-    RefPtr<EventListener> listener = proxy->objectListeners()->findWrapper(args[1], false);
-
+    RefPtr<EventListener> listener = getEventListener(messagePort, args[1], true, true);
     if (listener) {
         String type = toWebCoreString(args[0]);
         bool useCapture = args[2]->BooleanValue();
