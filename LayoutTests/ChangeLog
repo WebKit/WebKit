@@ -1,3 +1,51 @@
+2009-08-06  Drew Wilson  <atwilson@google.com>
+
+        Reviewed by David Levin.
+
+        Refactored worker tests to share code with shared worker versions. Shared worker tests are currently disabled by default.
+
+        Worker layout tests should be refactored to enable testing SharedWorkers also.
+        https://bugs.webkit.org/show_bug.cgi?id=27963
+
+        * fast/workers/resources/shared-worker-common.js:
+        (onconnect):
+        (gc):
+        (handleMessage):
+        * fast/workers/resources/shared-worker-create-common.js: Added.
+        (createWorker.worker.port.onmessage):
+        (createWorker.worker.postMessage):
+        (createWorker):
+        * fast/workers/resources/worker-context-gc.js: Added.
+        (log):
+        (worker.onmessage):
+        * fast/workers/resources/worker-create-common.js: Added.
+        (createWorker):
+        * fast/workers/resources/worker-location.js: Added.
+        (log):
+        (gc):
+        (worker.onmessage):
+        * fast/workers/resources/worker-navigator.js: Added.
+        (log):
+        (worker.onmessage):
+        * fast/workers/resources/worker-replace-global-constructor.js:
+        * fast/workers/resources/worker-replace-self.js: Added.
+        (log):
+        (worker.onmessage):
+        * fast/workers/shared-worker-context-gc-expected.txt: Added.
+        * fast/workers/shared-worker-context-gc.html-disabled: Added.
+        * fast/workers/shared-worker-location-expected.txt: Added.
+        * fast/workers/shared-worker-location.html-disabled: Added.
+        * fast/workers/shared-worker-navigator-expected.txt: Added.
+        * fast/workers/shared-worker-navigator.html-disabled: Added.
+        * fast/workers/shared-worker-replace-global-constructor.html-disabled:
+        * fast/workers/shared-worker-replace-self-expected.txt: Added.
+        * fast/workers/shared-worker-replace-self.html-disabled: Added.
+        * fast/workers/worker-context-gc.html:
+        * fast/workers/worker-location.html:
+        * fast/workers/worker-navigator.html:
+        * fast/workers/worker-replace-global-constructor.html:
+        * fast/workers/worker-replace-self.html:
+
 2009-08-06  Adam Barth  <abarth@webkit.org>
 
         Unreviewed rollout.

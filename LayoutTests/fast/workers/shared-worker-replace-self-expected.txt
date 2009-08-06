@@ -1,0 +1,6 @@
+Test that self is replaceable.
+
+self='PASS': PASS
+self: PASS
+DONE
+

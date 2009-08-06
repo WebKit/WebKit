@@ -1,13 +1,7 @@
 <body>
 <p>Test replacing global constructors in a worker context.</p>
 <div id=result></div>
-<script>
-function createWorker()
-{
-    return new Worker('resources/worker-common.js');
-}
-</script>
-
+<script src="resources/worker-create-common.js"></script>
 <script src="resources/worker-replace-global-constructor.js">
 </script>
 </body>
