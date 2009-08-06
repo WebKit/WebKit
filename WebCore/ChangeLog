@@ -1,3 +1,14 @@
+2009-08-05  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        http://bugs.webkit.org/show_bug.cgi?id=28022
+
+        Minor fix for media code on chromium/skia.
+
+        * rendering/RenderThemeChromiumSkia.cpp:
+        (WebCore::RenderThemeChromiumSkia::paintMediaSliderTrack):
+
 2009-08-05  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.
