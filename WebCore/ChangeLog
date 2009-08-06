@@ -1,3 +1,12 @@
+2009-08-06  George Staikos  <george.staikos@torchmobile.com>
+
+        Rubber-stamped by Ariya Hidayat.
+
+        Remove the dead wince/ directory that should never have gone in.
+
+        * svg/graphics/wince: Removed.
+        * svg/graphics/wince/SVGResourceFilterWince.cpp: Removed.
+
 2009-08-06  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
