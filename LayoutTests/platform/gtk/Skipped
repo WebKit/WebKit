@@ -2848,6 +2848,7 @@ fast/images/embed-image.html
 fast/images/favicon-as-image.html
 fast/images/image-in-map.html
 fast/images/image-map-anchor-children.html
+fast/images/image-map-zoom.html
 fast/images/imagemap-case.html
 fast/images/object-image.html
 fast/images/pdf-as-background.html

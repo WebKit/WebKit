@@ -1,3 +1,10 @@
+2009-08-05  Xan Lopez  <xlopez@igalia.com>
+
+        Skip new test using eventSender, since the GTK+ port does not have
+        it yet.
+
+        * platform/gtk/Skipped:
+
 2009-08-05  Drew Wilson  <atwilson@google.com>
 
         Reviewed by David Levin.
