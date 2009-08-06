@@ -1,3 +1,11 @@
+2009-08-06  Mark Rowe  <mrowe@apple.com>
+
+        Build fix.
+
+        Don't attempt to build a file that Anders just deleted.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2009-07-29  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/27788> Don't export WebPluginController.h as a private header
