@@ -1378,7 +1378,7 @@ namespace JSC {
         ParameterNode* m_next;
     };
 
-    struct ScopeNodeData {
+    struct ScopeNodeData : FastAllocBase {
         typedef DeclarationStacks::VarStack VarStack;
         typedef DeclarationStacks::FunctionStack FunctionStack;
 
