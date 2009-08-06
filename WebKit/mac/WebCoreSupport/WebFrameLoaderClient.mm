@@ -220,6 +220,11 @@ void WebFrameLoaderClient::makeRepresentation(DocumentLoader* loader)
 
 bool WebFrameLoaderClient::hasHTMLView() const
 {
+    if (![getWebView(m_webFrame.get()) _usesDocumentViews]) {
+        // FIXME (Viewless): For now we just assume that all frames have an HTML view
+        return true;
+    }
+    
     NSView <WebDocumentView> *view = [m_webFrame->_private->webFrameView documentView];
     return [view isKindOfClass:[WebHTMLView class]];
 }

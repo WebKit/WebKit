@@ -1,5 +1,13 @@
 2009-08-06  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Darin Adler and Dan Bernstein.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::hasHTMLView):
+        Always return true when we're in viewless mode.
+
+2009-08-06  Anders Carlsson  <andersca@apple.com>
+
         Remove WebGraphicsExtras.h include.
         
         * Plugins/WebNetscapePluginView.mm:
