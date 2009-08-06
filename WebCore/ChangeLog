@@ -1,3 +1,11 @@
+2009-08-06  Darin Adler  <darin@apple.com>
+
+        Fix Mac Leopard debug build.
+
+        * platform/text/StringImpl.cpp:
+        (WebCore::equalIgnoringCase): Removed meaningless assertion; an unsigned
+        is always >= 0 and checking causes a warning in the newer versions of gcc.
+
 2009-08-06  Adam Barth  <abarth@webkit.org>
 
         Unreview rollout.
