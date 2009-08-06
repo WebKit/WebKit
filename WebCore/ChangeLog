@@ -1,3 +1,16 @@
+2009-08-05  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28027
+        <rdar://7064428> Files with accents in names are submitted incorrectly due to use of
+        precomposed Unicode
+
+        * platform/network/mac/FormDataStreamMac.mm: (WebCore::setHTTPBody): Use getFileSize() from
+        FileSystem.h instead of custom code for getting file size. This adds path normalization
+        necessary with some file systems on Mac. This also loses a S_IFMT check, which didn't seem
+        important anyway.
+
 2009-08-05  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, build fix.

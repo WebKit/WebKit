@@ -32,6 +32,7 @@
 #import "FormDataStreamMac.h"
 
 #import "CString.h"
+#import "FileSystem.h"
 #import "FormData.h"
 #import "ResourceHandle.h"
 #import "ResourceHandleClient.h"
@@ -360,11 +361,9 @@ void setHTTPBody(NSMutableURLRequest *request, PassRefPtr<FormData> formData)
         if (element.m_type == FormDataElement::data)
             length += element.m_data.size();
         else {
-            const String& filename = element.m_shouldGenerateFile ? element.m_generatedFilename : element.m_filename;
-            struct stat sb;
-            int statResult = stat(filename.utf8().data(), &sb);
-            if (statResult == 0 && (sb.st_mode & S_IFMT) == S_IFREG)
-                length += sb.st_size;
+            long long fileSize;
+            if (getFileSize(element.m_shouldGenerateFile ? element.m_generatedFilename : element.m_filename, fileSize))
+                length += fileSize;
         }
     }
 
