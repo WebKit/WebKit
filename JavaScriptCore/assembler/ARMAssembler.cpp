@@ -329,7 +329,7 @@ void ARMAssembler::baseIndexTransfer32(bool isLoad, RegisterID srcDst, RegisterI
         return;
     }
 
-    moveImm(offset, ARM::S0);
+    ldr_un_imm(ARM::S0, offset);
     add_r(ARM::S0, ARM::S0, op2);
     dtr_ur(isLoad, srcDst, base, ARM::S0);
 }

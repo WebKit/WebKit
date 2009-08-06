@@ -1,3 +1,37 @@
+2009-08-05  Zoltan Herczeg  <zherczeg@inf.u-szeged.hu>
+
+        Reviewed by Gavin Barraclough.
+
+        Add JIT support for generic ARM port without optimizations.
+        https://bugs.webkit.org/show_bug.cgi?id=24986
+
+        All JIT optimizations are disabled.
+
+        Signed off by Zoltan Herczeg <zherczeg@inf.u-szeged.hu>
+        Signed off by Gabor Loki <loki@inf.u-szeged.hu>
+
+        * assembler/ARMAssembler.cpp:
+        (JSC::ARMAssembler::baseIndexTransfer32):
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::Imm32::Imm32):
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::store32):
+        (JSC::MacroAssemblerARM::move):
+        (JSC::MacroAssemblerARM::branch32):
+        (JSC::MacroAssemblerARM::add32):
+        (JSC::MacroAssemblerARM::sub32):
+        (JSC::MacroAssemblerARM::load32):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::getBytecodeIndex):
+        * jit/JIT.h:
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::restoreArgumentReference):
+        * jit/JITOpcodes.cpp:
+        * jit/JITStubs.cpp:
+        * jit/JITStubs.h:
+        (JSC::JITStackFrame::returnAddressSlot):
+        * wtf/Platform.h:
+
 2009-08-04  Gavin Barraclough  <barraclough@apple.com>
 
         Rubber Stamped by Oiver Hunt.

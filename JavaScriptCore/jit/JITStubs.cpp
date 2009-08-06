@@ -516,6 +516,49 @@ SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
     "bx lr" "\n"
 );
 
+#elif COMPILER(GCC) && PLATFORM(ARM)
+
+asm volatile (
+".globl " SYMBOL_STRING(ctiTrampoline) "\n"
+SYMBOL_STRING(ctiTrampoline) ":" "\n"
+    "stmdb sp!, {r1-r3}" "\n"
+    "stmdb sp!, {r4-r8, lr}" "\n"
+    "mov r6, pc" "\n"
+    "add r6, r6, #40" "\n"
+    "sub sp, sp, #32" "\n"
+    "ldr r4, [sp, #60]" "\n"
+    "mov r5, #512" "\n"
+    // r0 contains the code
+    "add r8, pc, #4" "\n"
+    "str r8, [sp, #-4]!" "\n"
+    "mov pc, r0" "\n"
+    "add sp, sp, #32" "\n"
+    "ldmia sp!, {r4-r8, lr}" "\n"
+    "add sp, sp, #12" "\n"
+    "mov pc, lr" "\n"
+
+    // the return instruction
+    "ldr pc, [sp], #4" "\n"
+);
+
+asm volatile (
+".globl " SYMBOL_STRING(ctiVMThrowTrampoline) "\n"
+SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
+    "mov r0, sp" "\n"
+    "mov lr, r6" "\n"
+    "add r8, pc, #4" "\n"
+    "str r8, [sp, #-4]!" "\n"
+    "b " SYMBOL_STRING(cti_vm_throw) "\n"
+
+// Both has the same return sequence
+".globl " SYMBOL_STRING(ctiOpThrowNotCaught) "\n"
+SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
+    "add sp, sp, #32" "\n"
+    "ldmia sp!, {r4-r8, lr}" "\n"
+    "add sp, sp, #12" "\n"
+    "mov pc, lr" "\n"
+);
+
 #elif COMPILER(MSVC)
 
 #if USE(JIT_STUB_ARGUMENT_VA_LIST)

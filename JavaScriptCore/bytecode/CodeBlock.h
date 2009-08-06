@@ -305,7 +305,7 @@ namespace JSC {
         unsigned getBytecodeIndex(CallFrame* callFrame, ReturnAddressPtr returnAddress)
         {
             reparseForExceptionInfoIfNecessary(callFrame);
-            return binaryChop<CallReturnOffsetToBytecodeIndex, unsigned, getCallReturnOffset>(m_exceptionInfo->m_callReturnIndexVector.begin(), m_exceptionInfo->m_callReturnIndexVector.size(), ownerNode()->generatedJITCode().offsetOf(returnAddress.value()))->bytecodeIndex;
+            return binaryChop<CallReturnOffsetToBytecodeIndex, unsigned, getCallReturnOffset>(callReturnIndexVector().begin(), callReturnIndexVector().size(), ownerNode()->generatedJITCode().offsetOf(returnAddress.value()))->bytecodeIndex;
         }
         
         bool functionRegisterForBytecodeOffset(unsigned bytecodeOffset, int& functionRegisterIndex);

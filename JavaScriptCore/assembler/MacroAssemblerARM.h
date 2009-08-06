@@ -243,20 +243,26 @@ public:
 
     void store32(Imm32 imm, ImplicitAddress address)
     {
-        move(imm, ARM::S1);
+        if (imm.m_isPointer)
+            m_assembler.ldr_un_imm(ARM::S1, imm.m_value);
+        else
+            move(imm, ARM::S1);
         store32(ARM::S1, address);
     }
 
     void store32(RegisterID src, void* address)
     {
-        m_assembler.moveImm(reinterpret_cast<ARMWord>(address), ARM::S0);
+        m_assembler.ldr_un_imm(ARM::S0, reinterpret_cast<ARMWord>(address));
         m_assembler.dtr_u(false, src, ARM::S0, 0);
     }
 
     void store32(Imm32 imm, void* address)
     {
-        m_assembler.moveImm(reinterpret_cast<ARMWord>(address), ARM::S0);
-        m_assembler.moveImm(imm.m_value, ARM::S1);
+        m_assembler.ldr_un_imm(ARM::S0, reinterpret_cast<ARMWord>(address));
+        if (imm.m_isPointer)
+            m_assembler.ldr_un_imm(ARM::S1, imm.m_value);
+        else
+            m_assembler.moveImm(imm.m_value, ARM::S1);
         m_assembler.dtr_u(false, ARM::S1, ARM::S0, 0);
     }
 
@@ -284,7 +290,10 @@ public:
 
     void move(Imm32 imm, RegisterID dest)
     {
-        m_assembler.moveImm(imm.m_value, dest);
+        if (imm.m_isPointer)
+            m_assembler.ldr_un_imm(dest, imm.m_value);
+        else
+            m_assembler.moveImm(imm.m_value, dest);
     }
 
     void move(RegisterID src, RegisterID dest)
@@ -294,7 +303,7 @@ public:
 
     void move(ImmPtr imm, RegisterID dest)
     {
-        m_assembler.mov_r(dest, m_assembler.getImm(reinterpret_cast<ARMWord>(imm.m_value), ARM::S0));
+        move(Imm32(imm), dest);
     }
 
     void swap(RegisterID reg1, RegisterID reg2)
@@ -324,7 +333,11 @@ public:
 
     Jump branch32(Condition cond, RegisterID left, Imm32 right)
     {
-        m_assembler.cmp_r(left, m_assembler.getImm(right.m_value, ARM::S0));
+        if (right.m_isPointer) {
+            m_assembler.ldr_un_imm(ARM::S0, right.m_value);
+            m_assembler.cmp_r(left, ARM::S0);
+        } else
+            m_assembler.cmp_r(left, m_assembler.getImm(right.m_value, ARM::S0));
         return Jump(m_assembler.jmp(ARMCondition(cond)));
     }
 
@@ -538,25 +551,25 @@ public:
 
     void add32(Imm32 imm, AbsoluteAddress address)
     {
-        m_assembler.moveImm(reinterpret_cast<ARMWord>(address.m_ptr), ARM::S1);
+        m_assembler.ldr_un_imm(ARM::S1, reinterpret_cast<ARMWord>(address.m_ptr));
         m_assembler.dtr_u(true, ARM::S1, ARM::S1, 0);
         add32(imm, ARM::S1);
-        m_assembler.moveImm(reinterpret_cast<ARMWord>(address.m_ptr), ARM::S0);
+        m_assembler.ldr_un_imm(ARM::S0, reinterpret_cast<ARMWord>(address.m_ptr));
         m_assembler.dtr_u(false, ARM::S1, ARM::S0, 0);
     }
 
     void sub32(Imm32 imm, AbsoluteAddress address)
     {
-        m_assembler.moveImm(reinterpret_cast<ARMWord>(address.m_ptr), ARM::S1);
+        m_assembler.ldr_un_imm(ARM::S1, reinterpret_cast<ARMWord>(address.m_ptr));
         m_assembler.dtr_u(true, ARM::S1, ARM::S1, 0);
         sub32(imm, ARM::S1);
-        m_assembler.moveImm(reinterpret_cast<ARMWord>(address.m_ptr), ARM::S0);
+        m_assembler.ldr_un_imm(ARM::S0, reinterpret_cast<ARMWord>(address.m_ptr));
         m_assembler.dtr_u(false, ARM::S1, ARM::S0, 0);
     }
 
     void load32(void* address, RegisterID dest)
     {
-        m_assembler.moveImm(reinterpret_cast<ARMWord>(address), ARM::S0);
+        m_assembler.ldr_un_imm(ARM::S0, reinterpret_cast<ARMWord>(address));
         m_assembler.dtr_u(true, dest, ARM::S0, 0);
     }
 

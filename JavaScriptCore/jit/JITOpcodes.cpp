@@ -1793,6 +1793,47 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     // so pull them off now
     addPtr(Imm32(NativeCallFrameSize - sizeof(NativeFunctionCalleeSignature)), stackPointerRegister);
 
+#elif PLATFORM(ARM) && !PLATFORM_ARM_ARCH(7)
+    emitGetFromCallFrameHeader32(RegisterFile::ArgumentCount, regT0);
+
+    // Allocate stack space for our arglist
+    COMPILE_ASSERT((sizeof(ArgList) & 0x7) == 0, ArgList_should_by_8byte_aligned);
+    subPtr(Imm32(sizeof(ArgList)), stackPointerRegister);
+
+    // Set up arguments
+    subPtr(Imm32(1), regT0); // Don't include 'this' in argcount
+
+    // Push argcount
+    storePtr(regT0, Address(stackPointerRegister, OBJECT_OFFSETOF(ArgList, m_argCount)));
+
+    // Calculate the start of the callframe header, and store in regT1
+    move(callFrameRegister, regT1);
+    sub32(Imm32(RegisterFile::CallFrameHeaderSize * (int32_t)sizeof(Register)), regT1);
+
+    // Calculate start of arguments as callframe header - sizeof(Register) * argcount (regT1)
+    mul32(Imm32(sizeof(Register)), regT0, regT0);
+    subPtr(regT0, regT1);
+
+    // push pointer to arguments
+    storePtr(regT1, Address(stackPointerRegister, OBJECT_OFFSETOF(ArgList, m_args)));
+
+    // Setup arg3: regT1 currently points to the first argument, regT1-sizeof(Register) points to 'this'
+    loadPtr(Address(regT1, -(int32_t)sizeof(Register)), regT2);
+
+    // Setup arg2:
+    emitGetFromCallFrameHeaderPtr(RegisterFile::Callee, regT1);
+
+    // Setup arg1:
+    move(callFrameRegister, regT0);
+
+    // Setup arg4: This is a plain hack
+    move(stackPointerRegister, ARM::S0);
+
+    move(ctiReturnRegister, ARM::lr);
+    call(Address(regT1, OBJECT_OFFSETOF(JSFunction, m_data)));
+
+    addPtr(Imm32(sizeof(ArgList)), stackPointerRegister);
+
 #elif ENABLE(JIT_OPTIMIZE_NATIVE_CALL)
 #error "JIT_OPTIMIZE_NATIVE_CALL not yet supported on this platform."
 #else
@@ -1840,14 +1881,16 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     patchBuffer.link(string_failureCases2Call, FunctionPtr(cti_op_get_by_id_string_fail));
     patchBuffer.link(string_failureCases3Call, FunctionPtr(cti_op_get_by_id_string_fail));
 #endif
+#if ENABLE(JIT_OPTIMIZE_CALL)
     patchBuffer.link(callArityCheck1, FunctionPtr(cti_op_call_arityCheck));
     patchBuffer.link(callArityCheck2, FunctionPtr(cti_op_call_arityCheck));
-    patchBuffer.link(callArityCheck3, FunctionPtr(cti_op_call_arityCheck));
     patchBuffer.link(callJSFunction1, FunctionPtr(cti_op_call_JSFunction));
     patchBuffer.link(callJSFunction2, FunctionPtr(cti_op_call_JSFunction));
-    patchBuffer.link(callJSFunction3, FunctionPtr(cti_op_call_JSFunction));
     patchBuffer.link(callDontLazyLinkCall, FunctionPtr(cti_vm_dontLazyLinkCall));
     patchBuffer.link(callLazyLinkCall, FunctionPtr(cti_vm_lazyLinkCall));
+#endif
+    patchBuffer.link(callArityCheck3, FunctionPtr(cti_op_call_arityCheck));
+    patchBuffer.link(callJSFunction3, FunctionPtr(cti_op_call_JSFunction));
 
     CodeRef finalCode = patchBuffer.finalizeCode();
     *executablePool = finalCode.m_executablePool;

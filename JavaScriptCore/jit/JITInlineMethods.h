@@ -102,7 +102,7 @@ ALWAYS_INLINE JIT::Call JIT::emitNakedCall(CodePtr function)
     return nakedCall;
 }
 
-#if PLATFORM(X86) || PLATFORM(X86_64)
+#if PLATFORM(X86) || PLATFORM(X86_64) || (PLATFORM(ARM) && !PLATFORM_ARM_ARCH(7))
 
 ALWAYS_INLINE void JIT::preserveReturnAddressAfterCall(RegisterID reg)
 {
@@ -149,6 +149,9 @@ ALWAYS_INLINE void JIT::restoreArgumentReference()
 {
     move(stackPointerRegister, firstArgumentRegister);
     poke(callFrameRegister, OBJECT_OFFSETOF(struct JITStackFrame, callFrame) / sizeof (void*));
+#if PLATFORM(ARM) && !PLATFORM_ARM_ARCH(7)
+    move(ctiReturnRegister, ARM::lr);
+#endif
 }
 ALWAYS_INLINE void JIT::restoreArgumentReferenceForTrampoline()
 {

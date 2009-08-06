@@ -242,6 +242,31 @@ namespace JSC {
         static const FPRegisterID fpRegT0 = ARM::d0;
         static const FPRegisterID fpRegT1 = ARM::d1;
         static const FPRegisterID fpRegT2 = ARM::d2;
+#elif PLATFORM(ARM)
+        static const RegisterID returnValueRegister = ARM::r0;
+        static const RegisterID cachedResultRegister = ARM::r0;
+        static const RegisterID firstArgumentRegister = ARM::r0;
+
+        static const RegisterID timeoutCheckRegister = ARM::r5;
+        static const RegisterID callFrameRegister = ARM::r4;
+        static const RegisterID ctiReturnRegister = ARM::r6;
+
+        static const RegisterID regT0 = ARM::r0;
+        static const RegisterID regT1 = ARM::r1;
+        static const RegisterID regT2 = ARM::r2;
+        // Callee preserved
+        static const RegisterID regT3 = ARM::r7;
+
+        static const RegisterID regS0 = ARM::S0;
+        // Callee preserved
+        static const RegisterID regS1 = ARM::S1;
+
+        static const RegisterID regStackPtr = ARM::sp;
+        static const RegisterID regLink = ARM::lr;
+
+        static const FPRegisterID fpRegT0 = ARM::fp0; // FIXME
+        static const FPRegisterID fpRegT1 = ARM::fp0; // FIXME
+        static const FPRegisterID fpRegT2 = ARM::fp0; // FIXME
 #else
     #error "JIT not supported on this platform."
 #endif

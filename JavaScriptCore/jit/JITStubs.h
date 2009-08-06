@@ -155,6 +155,27 @@ namespace JSC {
         
         ReturnAddressPtr* returnAddressSlot() { return &thunkReturnAddress; }
     };
+#elif PLATFORM(ARM)
+    struct JITStackFrame {
+        JITStubArg padding; // Unused
+        JITStubArg args[7];
+
+        void* preservedR4;
+        void* preservedR5;
+        void* preservedR6;
+        void* preservedR7;
+        void* preservedR8;
+        void* preservedLink;
+
+        RegisterFile* registerFile;
+        CallFrame* callFrame;
+        JSValue* exception;
+        Profiler** enabledProfilerReference;
+        JSGlobalData* globalData;
+
+        // When JIT code makes a call, it pushes its return address just below the rest of the stack.
+        ReturnAddressPtr* returnAddressSlot() { return reinterpret_cast<ReturnAddressPtr*>(this) - 1; }
+    };
 #else
 #error "JITStackFrame not defined for this platform."
 #endif
