@@ -1,3 +1,75 @@
+2009-08-05  Joseph Pecoraro  <joepeck02@gmail.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Color is only reported in rgb() format; should toggle between rgb() and hex
+        https://bugs.webkit.org/show_bug.cgi?id=13516
+
+          New Class to Parse and Change Between Color Representations:
+
+        * inspector/front-end/Color.js: Added.
+        (WebInspector.Color):
+
+          Representations of Colors in Raw Form. (May be Lazy Loaded):
+
+        (WebInspector.Color.prototype.get shorthex):
+        (WebInspector.Color.prototype.get hex):
+        (WebInspector.Color.prototype.set hex):
+        (WebInspector.Color.prototype.get rgb):
+        (WebInspector.Color.prototype.set rgb):
+        (WebInspector.Color.prototype.get hsl):
+        (WebInspector.Color.prototype.set hsl):
+        (WebInspector.Color.prototype.get nickname):
+        (WebInspector.Color.prototype.set nickname):
+        (WebInspector.Color.prototype.get rgba):
+        (WebInspector.Color.prototype.set rgba):
+        (WebInspector.Color.prototype.get hsla):
+        (WebInspector.Color.prototype.set hsla):
+
+          Helpers and Standard String Representations:
+
+        (WebInspector.Color.prototype.hasShortHex):
+        (WebInspector.Color.prototype.toRgb):
+        (WebInspector.Color.prototype.toHsl):
+        (WebInspector.Color.prototype.toShortHex):
+        (WebInspector.Color.prototype.toHex):
+        (WebInspector.Color.prototype.toRgba):
+        (WebInspector.Color.prototype.toHsla):
+        (WebInspector.Color.prototype.toNickname):
+
+          Conversion Functions to Determine Other Representations:
+          My Sources for all algorithms and sample data:
+          Wikipedia: http://en.wikipedia.org/wiki/HSV_color_space
+          CSS Specification: http://www.w3.org/TR/css3-color/#hsla-color
+
+        (WebInspector.Color.prototype.rgbToHex):
+        (WebInspector.Color.prototype.hexToRgb):
+        (WebInspector.Color.prototype.rgbToHsl):
+        (WebInspector.Color.prototype.hslToRgb.hueToRgb):
+        (WebInspector.Color.prototype.hslToRgb):
+        (WebInspector.Color.prototype.rgbaToHsla):
+        (WebInspector.Color.prototype.hslaToRgba):
+
+          Called from the constructor, attempts to parse and will throw an error
+          if it cannot parse.  If simple then the "hex" value is guarenteed.
+          If advanced then both the "rgba" and "hsla" are guarenteed.  If it is
+          a nickname in any way (e.g. "transparent", "black") then this is
+          guarenteed to be set as well.
+
+        (WebInspector.Color.prototype.parse):
+
+          Clicking on the swatch will rotate through Color Representations.
+            Simple:   rgb -> hsl -> nickname? -> shorthex? -> hex -> (loop around)
+            Advanced: rgba -> hsla -> nickname? -> (loop around)
+
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylePropertyTreeElement.prototype.updateTitle.value.):
+        (WebInspector.StylePropertyTreeElement.prototype.updateTitle):
+
+          Load Color.js:
+
+        * inspector/front-end/inspector.html:
+
 2009-08-05  John Abd-El-Malek  <jam@chromium.org>
 
         Reviewed by Dimitri Glazkov.

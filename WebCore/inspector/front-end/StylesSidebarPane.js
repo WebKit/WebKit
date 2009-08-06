@@ -876,7 +876,8 @@ WebInspector.StylePropertyTreeElement.prototype = {
 
         if (value) {
             // FIXME: this only covers W3C and CSS 16 valid color names
-            var colors = value.match(/((rgb|hsl)a?\([^)]+\))|(#[0-9a-fA-F]{6})|(#[0-9a-fA-F]{3})|aqua|black|blue|fuchsia|gray|green|lime|maroon|navy|olive|purple|red|silver|teal|white|yellow/g);
+            var colors = value.match(/((rgb|hsl)a?\([^)]+\))|(#[0-9a-fA-F]{6})|(#[0-9a-fA-F]{3})|aqua|black|blue|fuchsia|gray|green|lime|maroon|navy|olive|purple|red|silver|teal|white|yellow|transparent/g);
+            var swatch;
             if (colors) {
                 var colorsLength = colors.length;
                 for (var i = 0; i < colorsLength; ++i) {
@@ -884,6 +885,72 @@ WebInspector.StylePropertyTreeElement.prototype = {
                     swatchElement.className = "swatch";
                     swatchElement.style.setProperty("background-color", colors[i]);
                     this.listItemElement.appendChild(swatchElement);
+                    swatch = swatchElement;
+                }
+            }
+
+            // Rotate through Color Representations by Clicking on the Swatch
+            // Simple: rgb -> hsl -> nickname? -> shorthex? -> hex -> ...
+            // Advanced: rgba -> hsla -> nickname? -> ...            
+            if (colors && colors.length === 1) {
+                var color = new WebInspector.Color(htmlValue);
+                swatch.addEventListener("click", changeColorDisplay, false);
+                swatch.addEventListener("dblclick", function(event) {
+                    event.stopPropagation();
+                }, false);
+
+                var mode = color.mode;
+                var valueElement = this.valueElement;
+                function changeColorDisplay(event) {
+
+                    function changeTo(newMode, content) {
+                        mode = newMode;
+                        valueElement.textContent = content;
+                    }
+
+                    switch (mode) {
+                        case "rgb":
+                            changeTo("hsl", color.toHsl());
+                            break;
+
+                        case "shorthex":
+                            changeTo("hex", color.toHex());
+                            break;
+
+                        case "hex":
+                            changeTo("rgb", color.toRgb());
+                            break;
+
+                        case "nickname":
+                            if (color.simple) {
+                                if (color.hasShortHex())
+                                    changeTo("shorthex", color.toShortHex());
+                                else
+                                    changeTo("hex", color.toHex());
+                            } else
+                                changeTo("rgba", color.toRgba());
+                            break;
+
+                        case "hsl":
+                            if (color.nickname)
+                                changeTo("nickname", color.toNickname());
+                            else if (color.hasShortHex())
+                                changeTo("shorthex", color.toShortHex());
+                            else
+                                changeTo("hex", color.toHex());
+                            break;
+
+                        case "rgba":
+                            changeTo("hsla", color.toHsla());
+                            break;
+
+                        case "hsla":
+                            if (color.nickname)
+                                changeTo("nickname", color.toNickname());
+                            else
+                                changeTo("rgba", color.toRgba());
+                            break;
+                    }
                 }
             }
         }

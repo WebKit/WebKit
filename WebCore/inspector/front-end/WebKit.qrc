@@ -7,6 +7,7 @@
     <file>Callback.js</file>
     <file>CallStackSidebarPane.js</file>
     <file>ChangesView.js</file>
+    <file>Color.js</file>
     <file>ConsoleView.js</file>
     <file>Database.js</file>
     <file>DatabaseQueryView.js</file>
