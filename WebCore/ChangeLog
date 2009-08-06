@@ -1,3 +1,33 @@
+2009-08-06  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        WebInspector: move style-related utilities into InjectedScript.
+
+        http://bugs.webkit.org/show_bug.cgi?id=27939
+
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.CSSStyleDeclaration):
+        (WebInspector.CSSStyleDeclaration.prototype.isPropertyImplicit):
+        (WebInspector.CSSStyleDeclaration.prototype.styleTextWithShorthands):
+        (WebInspector.CSSStyleDeclaration.prototype.getLonghandProperties):
+        (WebInspector.CSSStyleDeclaration.prototype.getShorthandPriority):
+        * inspector/front-end/InjectedScript.js:
+        (InjectedScript.applyStyleText):
+        (InjectedScript.toggleStyleEnabled):
+        (InjectedScript._serializeStyle):
+        (InjectedScript._getUniqueStyleProperties):
+        (InjectedScript._getLonghandProperties):
+        (InjectedScript._getShorthandPriority):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.prototype._update):
+        (WebInspector.StylePropertiesSection.prototype.isPropertyOverloaded):
+        (WebInspector.StylePropertiesSection.prototype.onpopulate):
+        (WebInspector.StylePropertyTreeElement.prototype.get priority):
+        (WebInspector.StylePropertyTreeElement.prototype.get value):
+        (WebInspector.StylePropertyTreeElement.prototype):
+        * inspector/front-end/utilities.js:
+
 2009-08-06  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Unreviewed build fix, add #ifdef guards around

@@ -456,8 +456,10 @@ WebInspector.CSSStyleDeclaration = function(payload) {
     this.__disabledProperties = payload.__disabledProperties;
     this.__disabledPropertyValues = payload.__disabledPropertyValues;
     this.__disabledPropertyPriorities = payload.__disabledPropertyPriorities;
-
+    this.uniqueStyleProperties = payload.uniqueStyleProperties;
+    this._shorthandValues = payload.shorthandValues;
     this._propertyMap = {};
+    this._longhandProperties = {};
     this.length = payload.properties.length;
 
     for (var i = 0; i < this.length; ++i) {
@@ -465,6 +467,20 @@ WebInspector.CSSStyleDeclaration = function(payload) {
         var name = property.name;
         this[i] = name;
         this._propertyMap[name] = property;
+    }
+
+    // Index longhand properties.
+    for (var i = 0; i < this.uniqueStyleProperties.length; ++i) {
+        var name = this.uniqueStyleProperties[i];
+        var property = this._propertyMap[name];
+        if (property.shorthand) {
+            var longhands = this._longhandProperties[property.shorthand];
+            if (!longhands) {
+                longhands = [];
+                this._longhandProperties[property.shorthand] = longhands;
+            }
+            longhands.push(name);
+        }
     }
 }
 
@@ -511,6 +527,57 @@ WebInspector.CSSStyleDeclaration.prototype = {
     {
         var property = this._propertyMap[name];
         return property ? property.implicit : "";
+    },
+
+    styleTextWithShorthands: function()
+    {
+        var cssText = "";
+        var foundProperties = {};
+        for (var i = 0; i < this.length; ++i) {
+            var individualProperty = this[i];
+            var shorthandProperty = this.getPropertyShorthand(individualProperty);
+            var propertyName = (shorthandProperty || individualProperty);
+
+            if (propertyName in foundProperties)
+                continue;
+
+            if (shorthandProperty) {
+                var value = this.getPropertyValue(shorthandProperty);
+                var priority = this.getShorthandPriority(shorthandProperty);
+            } else {
+                var value = this.getPropertyValue(individualProperty);
+                var priority = this.getPropertyPriority(individualProperty);
+            }
+
+            foundProperties[propertyName] = true;
+
+            cssText += propertyName + ": " + value;
+            if (priority)
+                cssText += " !" + priority;
+            cssText += "; ";
+        }
+
+        return cssText;
+    },
+
+    getLonghandProperties: function(name)
+    {
+        return this._longhandProperties[name] || [];
+    },
+
+    getShorthandValue: function(shorthandProperty)
+    {
+        return this._shorthandValues[shorthandProperty];
+    },
+
+    getShorthandPriority: function(shorthandProperty)
+    {
+        var priority = this.getPropertyPriority(shorthandProperty);
+        if (priority)
+            return priority;
+
+        var longhands = this._longhandProperties[shorthandProperty];
+        return longhands ? this.getPropertyPriority(longhands[0]) : null;
     }
 }
 

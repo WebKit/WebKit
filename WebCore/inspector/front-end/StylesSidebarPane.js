@@ -204,7 +204,7 @@ WebInspector.StylesSidebarPane.prototype = {
                     continue;
 
                 var style = styleRules[i].style;
-                var uniqueProperties = getUniqueStyleProperties(style);
+                var uniqueProperties = style.uniqueStyleProperties;
                 for (var j = 0; j < uniqueProperties.length; ++j) {
                     var name = uniqueProperties[j];
                     if (style.getPropertyPriority(name).length) {
@@ -437,7 +437,7 @@ WebInspector.StylePropertiesSection.prototype = {
 
         // Find out if any of the individual longhand properties of the shorthand
         // are used, if none are then the shorthand is overloaded too.
-        var longhandProperties = getLonghandProperties(this.styleRule.style, property);
+        var longhandProperties = this.styleRule.style.getLonghandProperties(property);
         for (var j = 0; j < longhandProperties.length; ++j) {
             var individualProperty = longhandProperties[j];
             if (individualProperty in this.usedProperties)
@@ -476,7 +476,7 @@ WebInspector.StylePropertiesSection.prototype = {
         var style = this.styleRule.style;
 
         var foundShorthands = {};
-        var uniqueProperties = getUniqueStyleProperties(style);
+        var uniqueProperties = style.uniqueStyleProperties;
         var disabledProperties = style.__disabledPropertyValues || {};
 
         for (var name in disabledProperties)
@@ -777,14 +777,14 @@ WebInspector.StylePropertyTreeElement.prototype = {
     {
         if (this.disabled && this.style.__disabledPropertyPriorities && this.name in this.style.__disabledPropertyPriorities)
             return this.style.__disabledPropertyPriorities[this.name];
-        return (this.shorthand ? getShorthandPriority(this.style, this.name) : this.style.getPropertyPriority(this.name));
+        return (this.shorthand ? this.style.getShorthandPriority(this.name) : this.style.getPropertyPriority(this.name));
     },
 
     get value()
     {
         if (this.disabled && this.style.__disabledPropertyValues && this.name in this.style.__disabledPropertyValues)
             return this.style.__disabledPropertyValues[this.name];
-        return (this.shorthand ? getShorthandValue(this.style, this.name) : this.style.getPropertyValue(this.name));
+        return (this.shorthand ? this.style.getShorthandValue(this.name) : this.style.getPropertyValue(this.name));
     },
 
     onattach: function()
@@ -1027,7 +1027,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
         if (this.children.length || !this.shorthand)
             return;
 
-        var longhandProperties = getLonghandProperties(this.style, this.name);
+        var longhandProperties = this.style.getLonghandProperties(this.name);
         for (var i = 0; i < longhandProperties.length; ++i) {
             var name = longhandProperties[i];
 
@@ -1151,7 +1151,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
         if (!this.originalCSSText) {
             // Remember the rule's original CSS text, so it can be restored
             // if the editing is canceled and before each apply.
-            this.originalCSSText = getStyleTextWithShorthands(this.style);
+            this.originalCSSText = this.style.styleTextWithShorthands();
         } else {
             // Restore the original CSS text before applying user changes. This is needed to prevent
             // new properties from sticking around if the user adds one, then removes it.
@@ -1274,6 +1274,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
                 }
                 if (updateInterface)
                     self.updateTitle();
+                return;
             }
 
             var newPayload = result[0];

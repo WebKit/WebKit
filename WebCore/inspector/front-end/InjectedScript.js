@@ -92,7 +92,7 @@ InjectedScript.applyStyleText = function(styleId, styleText, propertyName)
         // original property from the real style declaration. If this represents
         // a shorthand remove all the longhand properties.
         if (style.getPropertyShorthand(propertyName)) {
-            var longhandProperties = getLonghandProperties(style, propertyName);
+            var longhandProperties = InjectedScript._getLonghandProperties(style, propertyName);
             for (var i = 0; i < longhandProperties.length; ++i)
                 style.removeProperty(longhandProperties[i]);
         } else
@@ -106,7 +106,7 @@ InjectedScript.applyStyleText = function(styleId, styleText, propertyName)
     // add them to the real style declaration. We take care to move shorthands.
     var foundShorthands = {};
     var changedProperties = [];
-    var uniqueProperties = getUniqueStyleProperties(tempStyle);
+    var uniqueProperties = InjectedScript._getUniqueStyleProperties(tempStyle);
     for (var i = 0; i < uniqueProperties.length; ++i) {
         var name = uniqueProperties[i];
         var shorthand = tempStyle.getPropertyShorthand(name);
@@ -115,8 +115,8 @@ InjectedScript.applyStyleText = function(styleId, styleText, propertyName)
             continue;
 
         if (shorthand) {
-            var value = getShorthandValue(tempStyle, shorthand);
-            var priority = getShorthandPriority(tempStyle, shorthand);
+            var value = InjectedScript._getShorthandValue(tempStyle, shorthand);
+            var priority = InjectedScript._getShorthandPriority(tempStyle, shorthand);
             foundShorthands[shorthand] = true;
         } else {
             var value = tempStyle.getPropertyValue(name);
@@ -153,7 +153,7 @@ InjectedScript.toggleStyleEnabled = function(styleId, propertyName, disabled)
         style.__disabledPropertyPriorities[propertyName] = style.getPropertyPriority(propertyName);
 
         if (style.getPropertyShorthand(propertyName)) {
-            var longhandProperties = getLonghandProperties(style, propertyName);
+            var longhandProperties = InjectedScript._getLonghandProperties(style, propertyName);
             for (var i = 0; i < longhandProperties.length; ++i) {
                 style.__disabledProperties[longhandProperties[i]] = true;
                 style.removeProperty(longhandProperties[i]);
@@ -275,16 +275,24 @@ InjectedScript._serializeStyle = function(style, doBind)
     result.__disabledPropertyValues = style.__disabledPropertyValues;
     result.__disabledPropertyPriorities = style.__disabledPropertyPriorities;
     result.properties = [];
+    result.shorthandValues = {};
+    var foundShorthands = {};
     for (var i = 0; i < style.length; ++i) {
         var property = {};
         var name = style[i];
         property.name = name;
         property.priority = style.getPropertyPriority(name);
         property.implicit = style.isPropertyImplicit(name);
-        property.shorthand = style.getPropertyShorthand(name);
+        var shorthand =  style.getPropertyShorthand(name);
+        property.shorthand = shorthand;
+        if (shorthand && !(shorthand in foundShorthands)) {
+            foundShorthands[shorthand] = true;
+            result.shorthandValues[shorthand] = InjectedScript._getShorthandValue(style, shorthand);
+        }
         property.value = style.getPropertyValue(name);
         result.properties.push(property);
     }
+    result.uniqueStyleProperties = InjectedScript._getUniqueStyleProperties(style);
 
     if (doBind) {
         if (!style._id) {
@@ -294,6 +302,83 @@ InjectedScript._serializeStyle = function(style, doBind)
         result.id = style._id;
     }
     return result;
+}
+
+InjectedScript._getUniqueStyleProperties = function(style)
+{
+    var properties = [];
+    var foundProperties = {};
+
+    for (var i = 0; i < style.length; ++i) {
+        var property = style[i];
+        if (property in foundProperties)
+            continue;
+        foundProperties[property] = true;
+        properties.push(property);
+    }
+
+    return properties;
+}
+
+
+InjectedScript._getLonghandProperties = function(style, shorthandProperty)
+{
+    var properties = [];
+    var foundProperties = {};
+
+    for (var i = 0; i < style.length; ++i) {
+        var individualProperty = style[i];
+        if (individualProperty in foundProperties || style.getPropertyShorthand(individualProperty) !== shorthandProperty)
+            continue;
+        foundProperties[individualProperty] = true;
+        properties.push(individualProperty);
+    }
+
+    return properties;
+}
+
+InjectedScript._getShorthandValue = function(style, shorthandProperty)
+{
+    var value = style.getPropertyValue(shorthandProperty);
+    if (!value) {
+        // Some shorthands (like border) return a null value, so compute a shorthand value.
+        // FIXME: remove this when http://bugs.webkit.org/show_bug.cgi?id=15823 is fixed.
+
+        var foundProperties = {};
+        for (var i = 0; i < style.length; ++i) {
+            var individualProperty = style[i];
+            if (individualProperty in foundProperties || style.getPropertyShorthand(individualProperty) !== shorthandProperty)
+                continue;
+
+            var individualValue = style.getPropertyValue(individualProperty);
+            if (style.isPropertyImplicit(individualProperty) || individualValue === "initial")
+                continue;
+
+            foundProperties[individualProperty] = true;
+
+            if (!value)
+                value = "";
+            else if (value.length)
+                value += " ";
+            value += individualValue;
+        }
+    }
+    return value;
+}
+
+InjectedScript._getShorthandPriority = function(style, shorthandProperty)
+{
+    var priority = style.getPropertyPriority(shorthandProperty);
+    if (!priority) {
+        for (var i = 0; i < style.length; ++i) {
+            var individualProperty = style[i];
+            if (style.getPropertyShorthand(individualProperty) !== shorthandProperty)
+                continue;
+            priority = style.getPropertyPriority(individualProperty);
+            break;
+        }
+    }
+    return priority;
 }
 
 InjectedScript._window = function()
