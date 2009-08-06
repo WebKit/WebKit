@@ -1,3 +1,15 @@
+2009-08-06  Zoltan Horvath  <hzoltan@inf.u-szeged.hu>
+
+        Reviewed by Darin Adler.
+
+        Allow custom memory allocation control for JavaScriptCore's PolymorphicAccessStructureList struct
+        https://bugs.webkit.org/show_bug.cgi?id=27877
+
+        Inherits PolymorphicAccessStructureList struct from FastAllocBase because it has been instantiated by
+        'new' in JavaScriptCore/jit/JITStubs.cpp:1229.
+
+        * bytecode/Instruction.h:
+
 2009-08-05  Zoltan Horvath  <hzoltan@inf.u-szeged.hu>
 
         Reviewed by Darin Adler.
