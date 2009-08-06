@@ -12,7 +12,7 @@
     waitForEvent('canplaythrough');
     waitForEvent('canplay', function () {
 
-        media.addEventListener('timeupdate', function () {
+        mediaElement.addEventListener('timeupdate', function () {
             // timeupdate events are fired as playback progresses so only verify that at least one
             // event is fired
             ++timeupdateCount;

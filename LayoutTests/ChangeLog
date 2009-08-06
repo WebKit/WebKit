@@ -18,6 +18,12 @@
 
 2009-08-06  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix a test in http/tests/media that was missed in the earlier 'media' rename.
+
+        * http/tests/media/video-play-stall.html:
+
+2009-08-06  Simon Fraser  <simon.fraser@apple.com>
+
         Rubber-stamped by Dan Bernstein.
 
         Move a video test from fast/media to media/, since fast/media is all about
