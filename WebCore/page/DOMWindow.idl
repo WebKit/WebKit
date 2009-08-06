@@ -139,9 +139,6 @@ module window {
         // DOM Level 2 AbstractView Interface
         readonly attribute Document document;
 
-        // CSSOM View Module
-        readonly attribute Media media;
-
         // DOM Level 2 Style Interface
         CSSStyleDeclaration getComputedStyle(in Element element,
                                              in DOMString pseudoElement);

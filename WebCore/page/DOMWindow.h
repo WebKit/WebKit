@@ -52,7 +52,6 @@ namespace WebCore {
     class Frame;
     class History;
     class Location;
-    class Media;
     class MessagePort;
     class Navigator;
     class Node;
@@ -172,8 +171,6 @@ namespace WebCore {
 
         // DOM Level 2 AbstractView Interface
         Document* document() const;
-        // CSSOM View Module
-        PassRefPtr<Media> media() const;
 
         // DOM Level 2 Style Interface
         PassRefPtr<CSSStyleDeclaration> getComputedStyle(Element*, const String& pseudoElt) const;

@@ -99,7 +99,6 @@ IDL_BINDINGS += \
 	WebCore/css/CSSVariablesDeclaration.idl \
 	WebCore/css/CSSVariablesRule.idl \
 	WebCore/css/Counter.idl \
-	WebCore/css/Media.idl \
 	WebCore/css/MediaList.idl \
 	WebCore/css/RGBColor.idl \
 	WebCore/css/Rect.idl \
@@ -580,8 +579,6 @@ webcore_sources += \
 	WebCore/css/FontValue.h \
 	WebCore/css/MediaFeatureNames.cpp \
 	WebCore/css/MediaFeatureNames.h \
-	WebCore/css/Media.cpp \
-	WebCore/css/Media.h \
 	WebCore/css/MediaList.cpp \
 	WebCore/css/MediaList.h \
 	WebCore/css/MediaQuery.cpp \
