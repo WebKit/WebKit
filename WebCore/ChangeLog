@@ -1,5 +1,21 @@
 2009-08-06  Adam Barth  <abarth@webkit.org>
 
+        Unreview rollout.
+
+        Revert 46840 because it broke the reliability tests.
+
+        * bindings/v8/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::ScheduledAction):
+        (WebCore::ScheduledAction::execute):
+        * bindings/v8/ScheduledAction.h:
+        (WebCore::ScheduledAction::ScheduledAction):
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::V8Custom::WindowSetTimeoutImpl):
+        * bindings/v8/custom/V8WorkerContextCustom.cpp:
+        (WebCore::SetTimeoutOrInterval):
+
+2009-08-06  Adam Barth  <abarth@webkit.org>
+
         Unreviewed rollout.
 
         Revert 46840 in preparation to revert 46838, which broke the reliability tests.
