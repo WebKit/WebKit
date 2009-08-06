@@ -867,6 +867,11 @@
 		51741D100B07259A00ED442C /* BackForwardList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51741D0C0B07259A00ED442C /* BackForwardList.cpp */; };
 		51741D110B07259A00ED442C /* HistoryItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 51741D0D0B07259A00ED442C /* HistoryItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51741D120B07259A00ED442C /* HistoryItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51741D0E0B07259A00ED442C /* HistoryItem.cpp */; };
+		518A34C11026C831001B6896 /* WebSocket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 518A34BE1026C831001B6896 /* WebSocket.cpp */; };
+		518A34C21026C831001B6896 /* WebSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = 518A34BF1026C831001B6896 /* WebSocket.h */; };
+		518A34C71026C8C9001B6896 /* JSWebSocketConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 518A34C41026C8C9001B6896 /* JSWebSocketConstructor.cpp */; };
+		518A34C81026C8C9001B6896 /* JSWebSocketConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 518A34C51026C8C9001B6896 /* JSWebSocketConstructor.h */; };
+		518A34C91026C8C9001B6896 /* JSWebSocketCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 518A34C61026C8C9001B6896 /* JSWebSocketCustom.cpp */; };
 		5196116A0CAC56570010A80C /* Database.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5196115E0CAC56570010A80C /* Database.cpp */; };
 		5196116B0CAC56570010A80C /* Database.h in Headers */ = {isa = PBXBuildFile; fileRef = 5196115F0CAC56570010A80C /* Database.h */; };
 		5196116D0CAC56570010A80C /* DatabaseThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 519611610CAC56570010A80C /* DatabaseThread.cpp */; };
@@ -5888,6 +5893,12 @@
 		51741D0C0B07259A00ED442C /* BackForwardList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BackForwardList.cpp; sourceTree = "<group>"; };
 		51741D0D0B07259A00ED442C /* HistoryItem.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HistoryItem.h; sourceTree = "<group>"; };
 		51741D0E0B07259A00ED442C /* HistoryItem.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HistoryItem.cpp; sourceTree = "<group>"; };
+		518A34BE1026C831001B6896 /* WebSocket.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSocket.cpp; sourceTree = "<group>"; };
+		518A34BF1026C831001B6896 /* WebSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSocket.h; sourceTree = "<group>"; };
+		518A34C01026C831001B6896 /* WebSocket.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebSocket.idl; sourceTree = "<group>"; };
+		518A34C41026C8C9001B6896 /* JSWebSocketConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebSocketConstructor.cpp; sourceTree = "<group>"; };
+		518A34C51026C8C9001B6896 /* JSWebSocketConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebSocketConstructor.h; sourceTree = "<group>"; };
+		518A34C61026C8C9001B6896 /* JSWebSocketCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebSocketCustom.cpp; sourceTree = "<group>"; };
 		5196115E0CAC56570010A80C /* Database.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Database.cpp; sourceTree = "<group>"; };
 		5196115F0CAC56570010A80C /* Database.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Database.h; sourceTree = "<group>"; };
 		519611600CAC56570010A80C /* Database.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Database.idl; sourceTree = "<group>"; };
@@ -9523,6 +9534,7 @@
 		0867D691FE84028FC02AAC07 /* WebKit */ = {
 			isa = PBXGroup;
 			children = (
+				518A34BD1026C831001B6896 /* websockets */,
 				65C97AF208EA908800ACD273 /* config.h */,
 				EDEC98020AED7E170059137F /* WebCorePrefix.h */,
 				9307061309E0CA8200B17FE4 /* DerivedSources.make */,
@@ -10255,6 +10267,16 @@
 			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 0;
+		};
+		518A34BD1026C831001B6896 /* websockets */ = {
+			isa = PBXGroup;
+			children = (
+				518A34BE1026C831001B6896 /* WebSocket.cpp */,
+				518A34BF1026C831001B6896 /* WebSocket.h */,
+				518A34C01026C831001B6896 /* WebSocket.idl */,
+			);
+			path = websockets;
+			sourceTree = "<group>";
 		};
 		5DCF83690D59157800953BC6 /* plugins */ = {
 			isa = PBXGroup;
@@ -13531,6 +13553,9 @@
 		BC1A3793097C6FB10019F3D8 /* js */ = {
 			isa = PBXGroup;
 			children = (
+				518A34C41026C8C9001B6896 /* JSWebSocketConstructor.cpp */,
+				518A34C51026C8C9001B6896 /* JSWebSocketConstructor.h */,
+				518A34C61026C8C9001B6896 /* JSWebSocketCustom.cpp */,
 				BC4EDEF70C08F414007EDD49 /* Custom */,
 				14DFB33F0A7DF7630018F769 /* Derived Sources */,
 				93F8B3060A300FEA00F61AB8 /* CodeGeneratorJS.pm */,
@@ -17122,6 +17147,8 @@
 				41D168EE10226E89009BC827 /* SharedWorkerThread.h in Headers */,
 				41D1690610238B66009BC827 /* JSSharedWorkerContext.h in Headers */,
 				4167EBF6102962BA003D252A /* DefaultSharedWorkerRepository.h in Headers */,
+                                518A34C21026C831001B6896 /* WebSocket.h in Headers */,
+                                518A34C81026C8C9001B6896 /* JSWebSocketConstructor.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -19173,6 +19200,9 @@
 				41D168F010226EC4009BC827 /* JSSharedWorkerContextCustom.cpp in Sources */,
 				41D1690510238B66009BC827 /* JSSharedWorkerContext.cpp in Sources */,
 				4167EBF5102962BA003D252A /* DefaultSharedWorkerRepository.cpp in Sources */,
+                                518A34C11026C831001B6896 /* WebSocket.cpp in Sources */,
+                                518A34C71026C8C9001B6896 /* JSWebSocketConstructor.cpp in Sources */,
+                                518A34C91026C8C9001B6896 /* JSWebSocketCustom.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

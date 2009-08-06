@@ -3138,9 +3138,19 @@ endif # END ENABLE_SVG
 if ENABLE_WEB_SOCKETS
 FEATURE_DEFINES_JAVASCRIPT += ENABLE_WEB_SOCKETS=1
 
+IDL_BINDINGS += \
+	WebCore/websockets/WebSocket.idl
+
 webcore_cppflags += \
 	-DENABLE_WEB_SOCKETS=1 \
 	-I$(srcdir)/WebCore/websockets
+
+webcore_sources += \
+	WebCore/bindings/js/JSWebSocketConstructor.cpp \
+	WebCore/bindings/js/JSWebSocketConstructor.h \
+	WebCore/bindings/js/JSWebSocketCustom.cpp \
+	WebCore/websockets/WebSocket.cpp \
+	WebCore/websockets/WebSocket.h
 
 else
 webcore_cppflags += -DENABLE_WEB_SOCKETS=0
@@ -3246,6 +3256,7 @@ IDL_PATH := \
     $(WebCore)/svg \
     $(WebCore)/xml \
     $(WebCore)/plugins \
+    $(WebCore)/websockets \
     $(WebCore)/workers
 
 vpath %.idl = $(IDL_PATH)

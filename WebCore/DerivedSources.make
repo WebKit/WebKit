@@ -41,6 +41,7 @@ VPATH = \
     $(WebCore)/wml \
     $(WebCore)/workers \
     $(WebCore)/svg \
+    $(WebCore)/websockets \
 #
 
 DOM_CLASSES = \
@@ -374,6 +375,7 @@ DOM_CLASSES = \
     WebKitCSSTransformValue \
     WebKitPoint \
     WebKitTransitionEvent \
+    WebSocket \
     WheelEvent \
     Worker \
     WorkerContext \
