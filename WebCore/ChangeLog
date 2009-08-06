@@ -1,3 +1,16 @@
+2009-08-05  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, build fix.
+
+        [V8] Revert http://trac.webkit.org/changeset/46821, which was
+        landed to supplement http://trac.webkit.org/changeset/46816, but
+        now that the latter is reverted, the former needs the same.
+
+        * bindings/v8/DOMObjectsInclude.h:
+        * bindings/v8/DerivedSourcesAllInOne.cpp:
+        * bindings/v8/V8Index.cpp:
+        * bindings/v8/V8Index.h:
+
 2009-08-05  Joseph Pecoraro  <joepeck02@gmail.com>
 
         Reviewed by Timothy Hatcher.
