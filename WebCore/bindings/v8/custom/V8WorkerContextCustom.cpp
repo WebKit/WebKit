@@ -32,10 +32,8 @@
 
 #if ENABLE(WORKERS)
 
-#include "WorkerContextExecutionProxy.h"
-
-#include "ExceptionCode.h"
 #include "DOMTimer.h"
+#include "ExceptionCode.h"
 #include "ScheduledAction.h"
 #include "V8Binding.h"
 #include "V8CustomBinding.h"
@@ -43,6 +41,7 @@
 #include "V8Utilities.h"
 #include "V8WorkerContextEventListener.h"
 #include "WorkerContext.h"
+#include "WorkerContextExecutionProxy.h"
 
 namespace WebCore {
 
@@ -50,7 +49,7 @@ ACCESSOR_GETTER(WorkerContextSelf)
 {
     INC_STATS(L"DOM.WorkerContext.self._get");
     WorkerContext* workerContext = V8DOMWrapper::convertDOMWrapperToNative<WorkerContext>(info.Holder());
-    return WorkerContextExecutionProxy::WorkerContextToV8Object(workerContext);
+    return WorkerContextExecutionProxy::convertWorkerContextToV8Object(workerContext);
 }
 
 ACCESSOR_GETTER(WorkerContextOnerror)
@@ -160,7 +159,8 @@ CALLBACK_FUNC_DECL(WorkerContextSetTimeout)
     return SetTimeoutOrInterval(args, true);
 }
 
-CALLBACK_FUNC_DECL(WorkerContextSetInterval) {
+CALLBACK_FUNC_DECL(WorkerContextSetInterval)
+{
     INC_STATS(L"DOM.WorkerContext.setInterval()");
     return SetTimeoutOrInterval(args, false);
 }

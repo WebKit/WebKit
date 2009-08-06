@@ -492,8 +492,17 @@ v8::Local<v8::Function> V8DOMWrapper::getConstructor(V8ClassIndex::V8WrapperType
     if (value.IsEmpty())
         return v8::Local<v8::Function>();
     // Hotmail fix, see comments above.
-    value->Set(v8::String::New("__proto__"), objectPrototype);
+    if (!objectPrototype.IsEmpty())
+        value->Set(v8::String::New("__proto__"), objectPrototype);
     return value;
+}
+
+v8::Local<v8::Function> V8DOMWrapper::getConstructorForContext(V8ClassIndex::V8WrapperType type, v8::Handle<v8::Context> context)
+{
+    // Enter the scope for this context to get the correct constructor.
+    v8::Context::Scope scope(context);
+
+    return getConstructor(type, V8Proxy::getHiddenObjectPrototype(context));
 }
 
 v8::Local<v8::Function> V8DOMWrapper::getConstructor(V8ClassIndex::V8WrapperType type, DOMWindow* window)
@@ -505,10 +514,21 @@ v8::Local<v8::Function> V8DOMWrapper::getConstructor(V8ClassIndex::V8WrapperType
     v8::Handle<v8::Context> context = V8Proxy::context(frame);
     if (context.IsEmpty())
         return v8::Local<v8::Function>();
-    // Enter the scope for this DOMWindow to get the correct constructor.
-    v8::Context::Scope scope(context);
 
-    return getConstructor(type, V8Proxy::getHiddenObjectPrototype(context));
+    return getConstructorForContext(type, context);
+}
+
+v8::Local<v8::Function> V8DOMWrapper::getConstructor(V8ClassIndex::V8WrapperType type, WorkerContext*)
+{
+    WorkerContextExecutionProxy* proxy = WorkerContextExecutionProxy::retrieve();
+    if (!proxy)
+        return v8::Local<v8::Function>();
+
+    v8::Handle<v8::Context> context = proxy->context();
+    if (context.IsEmpty())
+        return v8::Local<v8::Function>();
+
+    return getConstructorForContext(type, context);
 }
 
 v8::Handle<v8::Value> V8DOMWrapper::convertToV8Object(V8ClassIndex::V8WrapperType type, void* impl)
@@ -525,7 +545,7 @@ v8::Handle<v8::Value> V8DOMWrapper::convertToV8Object(V8ClassIndex::V8WrapperTyp
          || type == V8ClassIndex::XMLHTTPREQUESTEXCEPTION
          || type == V8ClassIndex::MESSAGEPORT)
         && WorkerContextExecutionProxy::retrieve()) {
-        return WorkerContextExecutionProxy::ToV8Object(type, impl);
+        return WorkerContextExecutionProxy::convertToV8Object(type, impl);
     }
 
     bool isActiveDomObject = false;

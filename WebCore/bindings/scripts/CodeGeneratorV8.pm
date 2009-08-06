@@ -437,7 +437,8 @@ END
     } elsif ($classIndex eq "DEDICATEDWORKERCONTEXT" or $classIndex eq "WORKERCONTEXT" or $classIndex eq "SHAREDWORKERCONTEXT") {
         $implIncludes{"WorkerContextExecutionProxy.h"} = 1;
         push(@implContentDecls, <<END);
-    return WorkerContextExecutionProxy::retrieve()->GetConstructor(type);
+    WorkerContext* workerContext = V8DOMWrapper::convertToNativeObject<WorkerContext>(V8ClassIndex::WORKERCONTEXT, info.Holder());
+    return V8DOMWrapper::getConstructor(type, workerContext);
 END
     } else {
         push(@implContentDecls, "    return v8::Undefined();");
@@ -2049,14 +2050,14 @@ sub ReturnNativeToJSValue
 
     if ($type eq "DedicatedWorkerContext" or $type eq "WorkerContext" or $type eq "SharedWorkerContext") {
         $implIncludes{"WorkerContextExecutionProxy.h"} = 1;
-        return "return WorkerContextExecutionProxy::WorkerContextToV8Object($value)";
+        return "return WorkerContextExecutionProxy::convertWorkerContextToV8Object($value)";
     }
 
     if ($type eq "WorkerLocation" or $type eq "WorkerNavigator") {
         $implIncludes{"WorkerContextExecutionProxy.h"} = 1;
         my $classIndex = uc($type);
 
-        return "return WorkerContextExecutionProxy::ToV8Object(V8ClassIndex::$classIndex, $value)";
+        return "return WorkerContextExecutionProxy::convertToV8Object(V8ClassIndex::$classIndex, $value)";
     }
 
     else {

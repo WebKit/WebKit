@@ -86,6 +86,7 @@ namespace WebCore {
     class StyleSheetList;
     class V8EventListener;
     class V8ObjectEventListener;
+    class WorkerContext;
 
     class V8DOMWrapper {
     public:
@@ -196,8 +197,10 @@ namespace WebCore {
         static PassRefPtr<NodeFilter> wrapNativeNodeFilter(v8::Handle<v8::Value>);
 
         static v8::Persistent<v8::FunctionTemplate> getTemplate(V8ClassIndex::V8WrapperType);
+        static v8::Local<v8::Function> getConstructorForContext(V8ClassIndex::V8WrapperType, v8::Handle<v8::Context>);
         static v8::Local<v8::Function> getConstructor(V8ClassIndex::V8WrapperType, v8::Handle<v8::Value> objectPrototype);
         static v8::Local<v8::Function> getConstructor(V8ClassIndex::V8WrapperType, DOMWindow*);
+        static v8::Local<v8::Function> getConstructor(V8ClassIndex::V8WrapperType, WorkerContext*);
 
         // Checks whether a DOM object has a JS wrapper.
         static bool domObjectHasJSWrapper(void*);

@@ -134,7 +134,7 @@ void ScheduledAction::execute(WorkerContext* workerContext)
 
     if (!m_function.IsEmpty() && m_function->IsFunction()) {
         v8::HandleScope handleScope;
-        v8::Local<v8::Context> v8Context = scriptController->proxy()->GetContext();
+        v8::Local<v8::Context> v8Context = scriptController->proxy()->context();
         ASSERT(!v8Context.IsEmpty());
         v8::Context::Scope scope(v8Context);
         m_function->Call(v8Context->Global(), m_argc, m_argv);
