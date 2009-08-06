@@ -5,6 +5,27 @@
         Win DRT's resource load delegate is missing didReceiveResponse
         https://bugs.webkit.org/show_bug.cgi?id=28033
 
+        * DumpRenderTree/win/FrameLoadDelegate.cpp:
+        Added:
+        (FrameLoadDelegate::didReceiveServerRedirectForProvisionalLoadForFrame):
+        (FrameLoadDelegate::willPerformClientRedirectToURL):
+        (FrameLoadDelegate::didCancelClientRedirectForFrame):
+
+        Minor style cleanup:
+        (FrameLoadDelegate::didStartProvisionalLoadForFrame): 
+        (FrameLoadDelegate::didReceiveTitle):
+        (FrameLoadDelegate::didFinishLoadForFrame):
+        (FrameLoadDelegate::willCloseFrame):
+        (FrameLoadDelegate::didClearWindowObject):
+        * DumpRenderTree/win/FrameLoadDelegate.h:
+
+2009-08-05  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Win DRT's resource load delegate is missing didReceiveResponse
+        https://bugs.webkit.org/show_bug.cgi?id=28033
+
         * DumpRenderTree/win/ResourceLoadDelegate.cpp:
         (ResourceLoadDelegate::didReceiveResponse):
         * DumpRenderTree/win/ResourceLoadDelegate.h:

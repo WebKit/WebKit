@@ -124,8 +124,8 @@ ULONG STDMETHODCALLTYPE FrameLoadDelegate::Release(void)
 
 
 HRESULT STDMETHODCALLTYPE FrameLoadDelegate::didStartProvisionalLoadForFrame( 
-        /* [in] */ IWebView* webView,
-        /* [in] */ IWebFrame* frame) 
+    /* [in] */ IWebView* webView,
+    /* [in] */ IWebFrame* frame) 
 {
     if (!done && gLayoutTestController->dumpFrameLoadCallbacks())
         printf("%s - didStartProvisionalLoadForFrame\n", descriptionSuitableForTestResult(frame).c_str());
@@ -136,6 +136,16 @@ HRESULT STDMETHODCALLTYPE FrameLoadDelegate::didStartProvisionalLoadForFrame(
         topLoadingFrame = frame;
 
     return S_OK; 
+}
+
+HRESULT STDMETHODCALLTYPE FrameLoadDelegate::didReceiveServerRedirectForProvisionalLoadForFrame( 
+    /* [in] */ IWebView *webView,
+    /* [in] */ IWebFrame *frame)
+{ 
+    if (!done && gLayoutTestController->dumpFrameLoadCallbacks())
+        printf("%s - didReceiveServerRedirectForProvisionalLoadForFrame\n", descriptionSuitableForTestResult(frame).c_str());
+
+    return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE FrameLoadDelegate::didFailProvisionalLoadWithError( 
@@ -166,9 +176,9 @@ HRESULT STDMETHODCALLTYPE FrameLoadDelegate::didCommitLoadForFrame(
 }
 
 HRESULT STDMETHODCALLTYPE FrameLoadDelegate::didReceiveTitle( 
-        /* [in] */ IWebView *webView,
-        /* [in] */ BSTR title,
-        /* [in] */ IWebFrame *frame)
+    /* [in] */ IWebView *webView,
+    /* [in] */ BSTR title,
+    /* [in] */ IWebFrame *frame)
 {
     if (::gLayoutTestController->dumpTitleChanges() && !done)
         printf("TITLE CHANGED: %S\n", title ? title : L"");
@@ -216,8 +226,8 @@ void FrameLoadDelegate::locationChangeDone(IWebError*, IWebFrame* frame)
 }
 
 HRESULT STDMETHODCALLTYPE FrameLoadDelegate::didFinishLoadForFrame( 
-        /* [in] */ IWebView* webView,
-        /* [in] */ IWebFrame* frame)
+    /* [in] */ IWebView* webView,
+    /* [in] */ IWebFrame* frame)
 {
     if (!done && gLayoutTestController->dumpFrameLoadCallbacks())
         printf("%s - didFinishLoadForFrame\n", descriptionSuitableForTestResult(frame).c_str());
@@ -238,18 +248,43 @@ HRESULT STDMETHODCALLTYPE FrameLoadDelegate::didFailLoadWithError(
     return S_OK;
 }
 
+HRESULT STDMETHODCALLTYPE FrameLoadDelegate::willPerformClientRedirectToURL( 
+    /* [in] */ IWebView *webView,
+    /* [in] */ BSTR url,  
+    /* [in] */ double delaySeconds,
+    /* [in] */ DATE fireDate,
+    /* [in] */ IWebFrame *frame)
+{
+    if (!done && gLayoutTestController->dumpFrameLoadCallbacks())
+        printf("%s - willPerformClientRedirectToURL: %S \n", descriptionSuitableForTestResult(frame).c_str(),
+                urlSuitableForTestResult(std::wstring(url, ::SysStringLen(url))).c_str());
+
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE FrameLoadDelegate::didCancelClientRedirectForFrame( 
+    /* [in] */ IWebView *webView,
+    /* [in] */ IWebFrame *frame)
+{
+    if (!done && gLayoutTestController->dumpFrameLoadCallbacks())
+        printf("%s - didCancelClientRedirectForFrame\n", descriptionSuitableForTestResult(frame).c_str());
+
+    return S_OK;
+}
+
+
 HRESULT STDMETHODCALLTYPE FrameLoadDelegate::willCloseFrame( 
-        /* [in] */ IWebView *webView,
-        /* [in] */ IWebFrame *frame)
+    /* [in] */ IWebView *webView,
+    /* [in] */ IWebFrame *frame)
 {
     return E_NOTIMPL;
 }
 
 HRESULT STDMETHODCALLTYPE FrameLoadDelegate::didClearWindowObject( 
-        /* [in] */ IWebView*webView,
-        /* [in] */ JSContextRef context,
-        /* [in] */ JSObjectRef windowObject,
-        /* [in] */ IWebFrame* frame)
+    /* [in] */ IWebView*webView,
+    /* [in] */ JSContextRef context,
+    /* [in] */ JSObjectRef windowObject,
+    /* [in] */ IWebFrame* frame)
 {
     JSValueRef exception = 0;
 

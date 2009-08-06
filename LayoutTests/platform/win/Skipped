@@ -571,6 +571,3 @@ http/tests/security/isolatedWorld/number-prototype.html
 http/tests/security/isolatedWorld/object-prototype.html
 http/tests/security/isolatedWorld/string-prototype.html
 http/tests/security/isolatedWorld/window-properties.html
-
-# <rdar://problem/7102793> Some resource load delegate callbacks are not implemented
-http/tests/loading/redirect-methods.html

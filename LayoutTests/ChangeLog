@@ -5,6 +5,15 @@
         Win DRT's resource load delegate is missing didReceiveResponse
         https://bugs.webkit.org/show_bug.cgi?id=28033
 
+        * platform/win/Skipped: 
+
+2009-08-05  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Win DRT's resource load delegate is missing didReceiveResponse
+        https://bugs.webkit.org/show_bug.cgi?id=28033
+
         * platform/win/Skipped: Remove a test that now passes
         
         Remove platform specific results for the XFrameOptions suite which now matches cross platform results:
