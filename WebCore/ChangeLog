@@ -1,3 +1,12 @@
+2009-08-06  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Unreviewed build fix, add #ifdef guards around
+        inclusions of shared worker specific files.
+
+        * bindings/js/JSEventTarget.cpp:
+        * bindings/js/JSWorkerContextBase.cpp:
+        * bindings/js/WorkerScriptController.cpp:
+
 2009-08-06  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Darin Adler.

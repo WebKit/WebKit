@@ -32,7 +32,9 @@
 #include "JSWorkerContextBase.h"
 
 #include "JSDedicatedWorkerContext.h"
+#if ENABLE(SHARED_WORKERS)
 #include "JSSharedWorkerContext.h"
+#endif
 #include "JSWorkerContext.h"
 #include "WorkerContext.h"
 

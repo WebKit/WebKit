@@ -32,7 +32,9 @@
 
 #include "JSDOMBinding.h"
 #include "JSDedicatedWorkerContext.h"
+#if ENABLE(SHARED_WORKERS)
 #include "JSSharedWorkerContext.h"
+#endif
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
 #include "WorkerContext.h"
