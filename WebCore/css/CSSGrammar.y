@@ -740,9 +740,9 @@ key:
     | IDENT {
         $$.id = 0; $$.isInt = false; $$.unit = CSSPrimitiveValue::CSS_NUMBER;
         CSSParserString& str = $1;
-        if (equalIgnoringCase(static_cast<const String&>(str), "from"))
+        if (equalIgnoringCase("from", str.characters, str.length))
             $$.fValue = 0;
-        else if (equalIgnoringCase(static_cast<const String&>(str), "to"))
+        else if (equalIgnoringCase("to", str.characters, str.length))
             $$.fValue = 100;
         else
             YYERROR;

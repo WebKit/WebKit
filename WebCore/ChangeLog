@@ -1,3 +1,19 @@
+2009-08-06  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        cssgrammar.cpp fails to compile with RVCT compiler
+        https://bugs.webkit.org/show_bug.cgi?id=27952
+
+        * css/CSSGrammar.y: Do not convert to String to get rid of the stray
+        memory allocation 
+
+        * platform/text/StringImpl.cpp:
+        (WebCore::equalIgnoringCase):
+        * platform/text/StringImpl.h: 
+        (WebCore::equalIgnoringCase): Add charactersEqualIgnoringCase
+          function that works with a character pointer and length
+
 2009-08-06  Drew Wilson  <atwilson@google.com>
 
         Reviewed by David Levin.
