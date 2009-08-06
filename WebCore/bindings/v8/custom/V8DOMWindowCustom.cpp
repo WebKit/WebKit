@@ -65,14 +65,18 @@ v8::Handle<v8::Value> V8Custom::WindowSetTimeoutImpl(const v8::Arguments& args, 
         return v8::Undefined();
 
     DOMWindow* imp = V8DOMWrapper::convertToNativeObject<DOMWindow>(V8ClassIndex::DOMWINDOW, args.Holder());
-
-    if (!imp->frame())
+    Frame* frame = imp->frame();
+    if (!frame)
         return v8::Undefined();
 
-    if (!V8Proxy::canAccessFrame(imp->frame(), true))
+    if (!V8Proxy::canAccessFrame(frame, true))
         return v8::Undefined();
 
-    ScriptExecutionContext* scriptContext = static_cast<ScriptExecutionContext*>(imp->frame()->document());
+    v8::Handle<v8::Context> v8Context = V8Proxy::context(frame);
+    if (v8Context.IsEmpty())
+        return v8::Undefined();
+
+    ScriptExecutionContext* scriptContext = static_cast<ScriptExecutionContext*>(frame->document());
 
     v8::Handle<v8::Value> function = args[0];
 
@@ -88,7 +92,7 @@ v8::Handle<v8::Value> V8Custom::WindowSetTimeoutImpl(const v8::Arguments& args, 
         if (functionString.length() == 0)
             return v8::Undefined();
 
-        id = DOMTimer::install(scriptContext, new ScheduledAction(functionString), timeout, singleShot);
+        id = DOMTimer::install(scriptContext, new ScheduledAction(v8Context, functionString), timeout, singleShot);
     } else if (function->IsFunction()) {
         int paramCount = argumentCount >= 2 ? argumentCount - 2 : 0;
         v8::Local<v8::Value>* params = 0;
@@ -100,7 +104,7 @@ v8::Handle<v8::Value> V8Custom::WindowSetTimeoutImpl(const v8::Arguments& args, 
         }
 
         // params is passed to action, and released in action's destructor
-        ScheduledAction* action = new ScheduledAction(v8::Handle<v8::Function>::Cast(function), paramCount, params);
+        ScheduledAction* action = new ScheduledAction(v8Context, v8::Handle<v8::Function>::Cast(function), paramCount, params);
 
         delete[] params;
 
