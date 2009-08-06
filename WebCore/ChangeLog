@@ -1,5 +1,18 @@
 2009-08-06  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by David Levin.
+
+        [V8] Remove bug-bait V8Proxy::context()
+        https://bugs.webkit.org/show_bug.cgi?id=27826
+
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::updateDocumentWrapperCache):
+        (WebCore::V8Proxy::initContextIfNeeded):
+        (WebCore::V8Proxy::mainWorldContext):
+        * bindings/v8/V8Proxy.h:
+
+2009-08-06  Adam Barth  <abarth@webkit.org>
+
         Unreviewed attempt to fix the Chromium Linux build.  This function is
         not used.
 

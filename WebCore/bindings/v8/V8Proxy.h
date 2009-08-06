@@ -329,12 +329,6 @@ namespace WebCore {
         static int sourceLineNumber();
         static String sourceName();
 
-        // Returns a local handle of the context.
-        v8::Local<v8::Context> context()
-        {
-            return v8::Local<v8::Context>::New(m_context);
-        }
-
         bool setContextDebugId(int id);
         static int contextDebugId(v8::Handle<v8::Context>);
 
