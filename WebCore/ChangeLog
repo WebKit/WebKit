@@ -1,5 +1,12 @@
 2009-08-06  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed attempt to fix the Chromium Linux build.  This function is
+        not used.
+
+        * bindings/v8/OwnHandle.h:
+
+2009-08-06  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         [V8] Teach ScheduledAction::execute about isolated worlds

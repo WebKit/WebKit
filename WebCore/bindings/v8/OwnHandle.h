@@ -49,8 +49,6 @@ namespace WebCore {
         v8::Persistent<T> release() { v8::Persistent<T> result = m_handle; m_handle.Clear(); return result; }
         void adopt(v8::Persistent<T> handle) { clear(); m_handle = handle; }
 
-        void swap(OwnHandle& other) { std::swap(m_handle, other.m_handle); }
-
         // Note: This is clear in the OwnPtr sense, not the v8::Handle sense.
         void clear()
         {
