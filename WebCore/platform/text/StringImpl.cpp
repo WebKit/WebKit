@@ -928,6 +928,18 @@ bool equalIgnoringCase(StringImpl* a, const char* b)
     return equal && !b[length];
 }
 
+bool equalIgnoringNullity(StringImpl* a, StringImpl* b)
+{
+    if (StringHash::equal(a, b))
+        return true;
+    if (!a && b && !b->length())
+        return true;
+    if (!b && a && !a->length())
+        return true;
+
+    return false;
+}
+
 Vector<char> StringImpl::ascii()
 {
     Vector<char> buffer(m_length + 1);

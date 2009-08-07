@@ -145,6 +145,7 @@ onemptied
 onended
 onerror
 onfocus
+onhashchange
 oninput
 onkeydown
 onkeypress

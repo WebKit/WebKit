@@ -1,3 +1,36 @@
+2009-08-07  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Implement the HTML5 hashchange event.
+        https://bugs.webkit.org/show_bug.cgi?id=21605
+
+        Test: fast/loader/hashchange-event.html
+
+        * dom/EventNames.h: Add "hashchange"
+        * html/HTMLAttributeNames.in: Add "onhashchange"
+
+        * loader/FrameLoader.cpp:
+        (WebCore::HashChangeEventTask::create):
+        (WebCore::HashChangeEventTask::performTask):
+        (WebCore::HashChangeEventTask::HashChangeEventTask):
+        (WebCore::FrameLoader::scrollToAnchor): When an anchor navigation is completed and the
+          new fragment identifier is different from the old one, queue a hash change event
+          on the Document.
+
+        Add a window event listener for the hashchange event if onhashchange is encountered:
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::parseMappedAttribute): 
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::parseMappedAttribute):
+
+        Add a new string utility method that gives "null and empty are equivalent" behavior:
+        * platform/text/PlatformString.h:
+        (WebCore::equalIgnoringNullity):
+        * platform/text/StringImpl.cpp:
+        (WebCore::equalIgnoringNullity):
+        * platform/text/StringImpl.h:
+
 2009-08-07  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Timothy Hatcher.
