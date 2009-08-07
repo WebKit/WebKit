@@ -63,27 +63,6 @@ static void reportFatalErrorInV8(const char* location, const char* message)
     CRASH();
 }
 
-static void handleConsoleMessage(v8::Handle<v8::Message> message, v8::Handle<v8::Value> data)
-{
-    WorkerContextExecutionProxy* proxy = WorkerContextExecutionProxy::retrieve();
-    if (!proxy)
-        return;
-
-    WorkerContext* workerContext = proxy->workerContext();
-    if (!workerContext)
-        return;
-
-    v8::Handle<v8::String> errorMessageString = message->Get();
-    ASSERT(!errorMessageString.IsEmpty());
-    String errorMessage = toWebCoreString(errorMessageString);
-
-    v8::Handle<v8::Value> resourceName = message->GetScriptResourceName();
-    bool useURL = (resourceName.IsEmpty() || !resourceName->IsString());
-    String resourceNameString = useURL ? workerContext->url() : toWebCoreString(resourceName);
-
-    workerContext->addMessage(ConsoleDestination, JSMessageSource, LogMessageType, ErrorMessageLevel, errorMessage, message->GetLineNumber(), resourceNameString);
-}
-
 WorkerContextExecutionProxy::WorkerContextExecutionProxy(WorkerContext* workerContext)
     : m_workerContext(workerContext)
     , m_recursion(0)
@@ -146,9 +125,6 @@ void WorkerContextExecutionProxy::initV8IfNeeded()
     // Tell V8 not to call the default OOM handler, binding code will handle it.
     v8::V8::IgnoreOutOfMemoryException();
     v8::V8::SetFatalErrorHandler(reportFatalErrorInV8);
-
-    // Set up the handler for V8 error message.
-    v8::V8::AddMessageListener(handleConsoleMessage);
 
     v8Initialized = true;
 }
