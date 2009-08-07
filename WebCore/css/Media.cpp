@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
- * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
+ * Copyright (C) 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,14 +23,52 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module views {
+#include "config.h"
 
-    // Introduced in DOM Level 2:
-    interface [
-        ObjCCustomImplementation
-    ] AbstractView {
-        readonly attribute Document document;
-        readonly attribute Media media;
-    };
+#include "Media.h"
+#include "CSSStyleSelector.h"
+#include "Frame.h"
+#include "FrameView.h"
+#include "MediaList.h"
+#include "MediaQueryEvaluator.h"
 
+namespace WebCore {
+
+Media::Media(DOMWindow* window)
+    : m_window(window)
+{
 }
+
+String Media::type() const
+{
+    Frame* frame = m_window->frame();
+    FrameView* view = frame ? frame->view() : 0;
+    if (view)
+        return view->mediaType();
+
+    return String();
+}
+
+bool Media::matchMedium(const String& query) const
+{
+    Document* document = m_window->document();
+    Frame* frame = m_window->frame();
+
+    CSSStyleSelector* styleSelector = document->styleSelector();
+    Element* docElement = document->documentElement();
+    if (!styleSelector || !docElement || !frame)
+        return false;
+
+    RefPtr<RenderStyle> rootStyle = styleSelector->styleForElement(docElement, 0 /*defaultParent*/, false /*allowSharing*/, true /*resolveForRootDefault*/);
+    RefPtr<MediaList> media = MediaList::create();
+
+    ExceptionCode ec = 0;
+    media->setMediaText(query, ec);
+    if (ec)
+        return false;
+
+    MediaQueryEvaluator screenEval(type(), frame, rootStyle.get());
+    return screenEval.eval(media.get());
+}
+
+} // namespace WebCore

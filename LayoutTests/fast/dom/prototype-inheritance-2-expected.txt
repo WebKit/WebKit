@@ -245,9 +245,12 @@ PASS History from inner.history
 PASS HistoryPrototype from inner.history.__proto__
 PASS Location from inner.document.location
 PASS LocationPrototype from inner.document.location.__proto__
+PASS Media from inner.media
+PASS MediaConstructor from inner.media.constructor
 PASS MediaList from inner.document.styleSheets.0.media
 PASS MediaListConstructor from inner.document.styleSheets.0.media.constructor
 PASS MediaListPrototype from inner.document.styleSheets.0.media.__proto__
+PASS MediaPrototype from inner.media.__proto__
 PASS MimeType from inner.clientInformation.mimeTypes.0
 PASS MimeTypeArray from inner.clientInformation.mimeTypes
 PASS MimeTypeArrayConstructor from inner.clientInformation.mimeTypes.constructor

@@ -51,6 +51,7 @@
 #include "History.h"
 #include "InspectorController.h"
 #include "Location.h"
+#include "Media.h"
 #include "MessageEvent.h"
 #include "Navigator.h"
 #include "Page.h"
@@ -1000,6 +1001,11 @@ Document* DOMWindow::document() const
 
     ASSERT(m_frame->document());
     return m_frame->document();
+}
+
+PassRefPtr<Media> DOMWindow::media() const
+{
+    return Media::create(const_cast<DOMWindow*>(this));
 }
 
 PassRefPtr<CSSStyleDeclaration> DOMWindow::getComputedStyle(Element* elt, const String&) const

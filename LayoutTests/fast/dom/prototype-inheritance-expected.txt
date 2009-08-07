@@ -421,6 +421,8 @@ PASS inner.location.isInner is true
 PASS inner.location.constructor.isInner is true
 PASS inner.locationbar.isInner is true
 PASS inner.locationbar.constructor.isInner is true
+PASS inner.media.isInner is true
+PASS inner.media.constructor.isInner is true
 PASS inner.menubar.isInner is true
 PASS inner.menubar.constructor.isInner is true
 FAIL inner.moveBy.isInner should be true. Was false.

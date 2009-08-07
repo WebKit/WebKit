@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
- * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
+ * Copyright (C) 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,14 +23,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module views {
+#ifndef Media_h
+#define Media_h
 
-    // Introduced in DOM Level 2:
-    interface [
-        ObjCCustomImplementation
-    ] AbstractView {
-        readonly attribute Document document;
-        readonly attribute Media media;
-    };
+#include "DOMWindow.h"
 
-}
+namespace WebCore {
+
+class Media : public RefCounted<Media> {
+public:
+    static PassRefPtr<Media> create(DOMWindow* window)
+    {
+        return adoptRef(new Media(window));
+    }
+    
+    Document* document() const { return m_window->document(); }
+
+    String type() const;
+
+    bool matchMedium(const String&) const;
+    
+private:
+    Media(DOMWindow*);
+
+    RefPtr<DOMWindow> m_window;
+};
+
+} // namespace
+
+#endif // Media_h
