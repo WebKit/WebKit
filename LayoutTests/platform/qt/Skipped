@@ -957,7 +957,6 @@ editing/style/remove-underline-across-paragraph-in-bold.html
 editing/style/remove-underline-across-paragraph.html
 editing/style/remove-underline-after-paragraph-in-bold.html
 editing/style/remove-underline-after-paragraph.html
-editing/style/remove-underline-from-stylesheet.html
 fast/clip/outline-overflowClip.html
 fast/css-generated-content/012.html
 fast/css-generated-content/hover-style-change.html
@@ -2267,7 +2266,6 @@ editing/style/relative-font-size-change-002.html
 editing/style/relative-font-size-change-003.html
 editing/style/relative-font-size-change-004.html
 editing/style/remove-underline.html
-editing/style/remove-underline-in-bold.html
 editing/style/smoosh-styles-001.html
 editing/style/smoosh-styles-003.html
 editing/style/style-3681552-fix-001.html
@@ -2886,7 +2884,6 @@ fast/dom/HTMLHeadElement/textInHead3.html
 fast/dom/HTMLHeadElement/textInHead4.html
 fast/dom/HTMLHeadElement/textInHead5.html
 fast/dom/HTMLImageElement/image-alt-text.html
-fast/dom/HTMLInputElement/checked-pseudo-selector.html
 fast/dom/HTMLInputElement/input-image-alt-text.html
 fast/dom/HTMLLinkElement/pending-stylesheet-count.html
 fast/dom/HTMLObjectElement/vspace-hspace-as-number.html
@@ -3124,7 +3121,6 @@ fast/forms/targeted-frame-submission.html
 fast/forms/textarea-align.html
 fast/forms/textarea-setinnerhtml.html
 fast/forms/textarea-width.html
-fast/forms/textfield-drag-into-disabled.html
 fast/forms/textfield-outline.html
 fast/forms/textfield-overflow.html
 fast/forms/thumbslider-crash.html

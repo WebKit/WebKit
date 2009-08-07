@@ -1,3 +1,22 @@
+2009-08-07  Mike Fenton  <mike.fenton@torchmobile.com>
+
+        Reviewed by Eric Seidel.
+
+        Prevent RenderThemeQt AdjustStyle based calls for TextField, MenuList and MenuListButton
+        from discarding style colour.
+
+        Add tests and remove tests from platform/qt/Skipped that now pass.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28050
+
+        Tests: fast/forms/menulist-style-color.html
+               fast/forms/text-style-color.html
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::adjustTextFieldStyle):
+        (WebCore::RenderThemeQt::adjustMenuListStyle):
+        (WebCore::RenderThemeQt::adjustMenuListButtonStyle):
+
 2009-08-05  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, build fix.

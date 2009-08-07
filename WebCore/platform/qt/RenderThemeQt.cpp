@@ -490,7 +490,6 @@ bool RenderThemeQt::paintButton(RenderObject* o, const RenderObject::PaintInfo& 
 void RenderThemeQt::adjustTextFieldStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
 {
     style->setBackgroundColor(Color::transparent);
-    style->setColor(QApplication::palette().text().color());
     style->resetBorder();
     style->resetPadding();
     computeSizeBasedOnStyle(style);
@@ -549,8 +548,6 @@ void RenderThemeQt::adjustMenuListStyle(CSSStyleSelector*, RenderStyle* style, E
 
     // Add in the padding that we'd like to use.
     setPopupPadding(style);
-
-    style->setColor(QApplication::palette().text().color());
 }
 
 void RenderThemeQt::setPopupPadding(RenderStyle* style) const
@@ -605,8 +602,6 @@ void RenderThemeQt::adjustMenuListButtonStyle(CSSStyleSelector* selector, Render
 
     // Add in the padding that we'd like to use.
     setPopupPadding(style);
-
-    style->setColor(QApplication::palette().text().color());
 }
 
 bool RenderThemeQt::paintMenuListButton(RenderObject* o, const RenderObject::PaintInfo& i,
