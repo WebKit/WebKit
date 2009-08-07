@@ -98,7 +98,10 @@ namespace WebCore {
         // Sets contents of a DOM wrapper.
         static void setDOMWrapper(v8::Handle<v8::Object>, int type, void* ptr);
 
-        static v8::Handle<v8::Object> lookupDOMWrapper(V8ClassIndex::V8WrapperType, v8::Handle<v8::Value>);
+        static v8::Handle<v8::Object> lookupDOMWrapper(V8ClassIndex::V8WrapperType type, v8::Handle<v8::Object> object)
+        {
+            return object.IsEmpty() ? object : object->FindInstanceInPrototypeChain(getTemplate(type));
+        }
 
         // A helper function extract native object pointer from a DOM wrapper
         // and cast to the specified type.

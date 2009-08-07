@@ -707,22 +707,6 @@ void* V8DOMWrapper::convertToSVGPODTypeImpl(V8ClassIndex::V8WrapperType type, v8
     return isWrapperOfType(object, type) ? convertDOMWrapperToNative<void>(v8::Handle<v8::Object>::Cast(object)) : 0;
 }
 
-v8::Handle<v8::Object> V8DOMWrapper::lookupDOMWrapper(V8ClassIndex::V8WrapperType type, v8::Handle<v8::Value> value)
-{
-    if (value.IsEmpty())
-        return notHandledByInterceptor();
-
-    v8::Handle<v8::FunctionTemplate> descriptor = getTemplate(type);
-    while (value->IsObject()) {
-        v8::Handle<v8::Object> object = v8::Handle<v8::Object>::Cast(value);
-        if (descriptor->HasInstance(object))
-            return object;
-
-        value = object->GetPrototype();
-    }
-    return notHandledByInterceptor();
-} 
-
 PassRefPtr<NodeFilter> V8DOMWrapper::wrapNativeNodeFilter(v8::Handle<v8::Value> filter)
 {
     // A NodeFilter is used when walking through a DOM tree or iterating tree
