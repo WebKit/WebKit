@@ -1,5 +1,19 @@
 2009-08-07  Mike Fenton  <mike.fenton@torchmobile.com>
 
+        Reviewed by George Staikos.
+
+        Coding style patches for RenderThemeQt.cpp based on results from cpp_style.py.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28050
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::baselinePosition):
+        (WebCore::inflateButtonRect):
+        (WebCore::RenderThemeQt::supportsFocus):
+        (WebCore::RenderThemeQt::applyTheme):
+
+2009-08-07  Mike Fenton  <mike.fenton@torchmobile.com>
+
         Reviewed by Eric Seidel.
 
         Prevent RenderThemeQt AdjustStyle based calls for TextField, MenuList and MenuListButton

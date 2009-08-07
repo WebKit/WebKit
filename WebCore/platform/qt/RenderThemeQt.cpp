@@ -28,36 +28,36 @@
  */
 
 #include "config.h"
-
-#include "qwebpage.h"
 #include "RenderThemeQt.h"
+
+#include "CSSStyleSelector.h"
+#include "CSSStyleSheet.h"
 #include "ChromeClientQt.h"
+#include "Color.h"
+#include "Document.h"
+#include "Font.h"
+#include "FontSelector.h"
+#include "GraphicsContext.h"
+#include "HTMLMediaElement.h"
+#include "HTMLNames.h"
 #include "NotImplemented.h"
+#include "Page.h"
+#include "RenderBox.h"
+#include "RenderTheme.h"
+#include "qwebpage.h"
 
 #include <QApplication>
 #include <QColor>
 #include <QDebug>
 #include <QFile>
-#include <QWidget>
+#include <QLineEdit>
 #include <QPainter>
 #include <QPushButton>
-#include <QLineEdit>
 #include <QStyleFactory>
 #include <QStyleOptionButton>
 #include <QStyleOptionFrameV2>
+#include <QWidget>
 
-#include "Color.h"
-#include "CSSStyleSelector.h"
-#include "CSSStyleSheet.h"
-#include "FontSelector.h"
-#include "Document.h"
-#include "Page.h"
-#include "Font.h"
-#include "RenderTheme.h"
-#include "GraphicsContext.h"
-#include "HTMLMediaElement.h"
-#include "HTMLNames.h"
-#include "RenderBox.h"
 
 namespace WebCore {
 
@@ -182,8 +182,7 @@ int RenderThemeQt::baselinePosition(const RenderObject* o) const
     if (!o->isBox())
         return 0;
 
-    if (o->style()->appearance() == CheckboxPart ||
-        o->style()->appearance() == RadioPart)
+    if (o->style()->appearance() == CheckboxPart || o->style()->appearance() == RadioPart)
         return toRenderBox(o)->marginTop() + toRenderBox(o)->height() - 2; // Same as in old khtml
     return RenderTheme::baselinePosition(o);
 }
@@ -227,8 +226,8 @@ static QRect inflateButtonRect(const QRect& originalRect, QStyle* style)
         int paddingBottom = originalRect.bottom() - layoutRect.bottom();
 
         return originalRect.adjusted(-paddingLeft, -paddingTop, paddingRight, paddingBottom);
-    } else
-        return originalRect;
+    }
+    return originalRect;
 }
 
 void RenderThemeQt::adjustRepaintRect(const RenderObject* o, IntRect& rect)
@@ -698,17 +697,17 @@ bool RenderThemeQt::paintSearchFieldResultsDecoration(RenderObject* o, const Ren
 bool RenderThemeQt::supportsFocus(ControlPart appearance) const
 {
     switch (appearance) {
-        case PushButtonPart:
-        case ButtonPart:
-        case TextFieldPart:
-        case TextAreaPart:
-        case ListboxPart:
-        case MenulistPart:
-        case RadioPart:
-        case CheckboxPart:
-            return true;
-        default: // No for all others...
-            return false;
+    case PushButtonPart:
+    case ButtonPart:
+    case TextFieldPart:
+    case TextAreaPart:
+    case ListboxPart:
+    case MenulistPart:
+    case RadioPart:
+    case CheckboxPart:
+        return true;
+    default: // No for all others...
+        return false;
     }
 }
 
@@ -739,20 +738,20 @@ ControlPart RenderThemeQt::applyTheme(QStyleOption& option, RenderObject* o) con
     ControlPart result = o->style()->appearance();
 
     switch (result) {
-        case PushButtonPart:
-        case SquareButtonPart:
-        case ButtonPart:
-        case ButtonBevelPart:
-        case ListItemPart:
-        case MenulistButtonPart:
-        case SearchFieldResultsButtonPart:
-        case SearchFieldCancelButtonPart: {
-            if (isPressed(o))
-                option.state |= QStyle::State_Sunken;
-            else if (result == PushButtonPart)
-                option.state |= QStyle::State_Raised;
-            break;
-        }
+    case PushButtonPart:
+    case SquareButtonPart:
+    case ButtonPart:
+    case ButtonBevelPart:
+    case ListItemPart:
+    case MenulistButtonPart:
+    case SearchFieldResultsButtonPart:
+    case SearchFieldCancelButtonPart: {
+        if (isPressed(o))
+            option.state |= QStyle::State_Sunken;
+        else if (result == PushButtonPart)
+            option.state |= QStyle::State_Raised;
+        break;
+    }
     }
 
     if (result == RadioPart || result == CheckboxPart)
