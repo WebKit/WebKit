@@ -98,6 +98,7 @@ for my $tfile (@templates) {
         next if $file =~ m:resources/WindowProperties\.js$:;
         next if $file =~ m:resources/altGlyph-dom\.js$:;
         next if $file =~ m:resources/attr-case-sensitivity\.js$:;
+        next if $file =~ m:resources/box-shadow-overflow-scroll\.js$:;
         next if $file =~ m:resources/codegen-temporaries-multiple-global-blocks-1\.js$:;
         next if $file =~ m:resources/codegen-temporaries-multiple-global-blocks-2\.js$:;
         next if $file =~ m:resources/constructors-cached-navigate\.js$:;

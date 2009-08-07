@@ -1,3 +1,16 @@
+2009-08-06  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        box-shadow's spread is ignored with <table>
+        https://bugs.webkit.org/show_bug.cgi?id=28017
+
+        Use RenderStyle::getBoxShadowExtent just like RenderBlock.
+
+        * fast/box-shadow/box-shadow-overflow-scroll-expected.txt: Added.
+        * fast/box-shadow/box-shadow-overflow-scroll.html: Added.
+        * fast/box-shadow/resources/box-shadow-overflow-scroll.js: Added.
+
 2009-08-06  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Xan Lopez.
