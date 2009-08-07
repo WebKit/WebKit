@@ -216,6 +216,7 @@ fast/frames/iframe-window-focus.html
 fast/history/clicked-link-is-visited.html
 fast/history/go-back-to-changed-name.html
 fast/html/keygen.html
+fast/images/icon-decoding.html
 fast/inline/dirtyLinesForInline.html
 fast/invalid/missing-end-tag.xhtml
 fast/invalid/residual-style.html

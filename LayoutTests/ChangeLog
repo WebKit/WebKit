@@ -1,3 +1,13 @@
+2009-08-07  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Adam Treat.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28076
+        Add fast/images/icon-decoding.html to Qt skip list until it has
+        results.
+
+        * platform/qt/Skipped:
+
 2009-08-07  Mike Fenton  <mike.fenton@torchmobile.com>
 
         Reviewed by Eric Seidel.
