@@ -36,6 +36,8 @@
 #include "Base64.h"
 #include "ChromiumBridge.h"
 #include "OpenTypeUtilities.h"
+#elif PLATFORM(LINUX)
+#include "SkStream.h"
 #endif
 
 #include "FontPlatformData.h"
@@ -46,6 +48,8 @@
 #include <objbase.h>
 #include <t2embapi.h>
 #pragma comment(lib, "t2embed")
+#elif PLATFORM(LINUX)
+#include <cstring>
 #endif
 
 namespace WebCore {
@@ -60,6 +64,9 @@ FontCustomPlatformData::~FontCustomPlatformData()
         } else
             RemoveFontMemResourceEx(m_fontReference);
     }
+#elif PLATFORM(LINUX)
+    if (m_fontReference)
+        m_fontReference->unref();
 #endif
 }
 
@@ -102,6 +109,9 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool bold, b
 
     HFONT hfont = CreateFontIndirect(&logFont);
     return FontPlatformData(hfont, size);
+#elif PLATFORM(LINUX)
+    ASSERT(m_fontReference);
+    return FontPlatformData(m_fontReference, size, bold && !m_fontReference->isBold(), italic && !m_fontReference->isItalic());
 #else
     notImplemented();
     return FontPlatformData();
@@ -186,6 +196,51 @@ static String createUniqueFontName()
 }
 #endif
 
+#if PLATFORM(LINUX)
+class RemoteFontStream : public SkStream {
+public:
+    explicit RemoteFontStream(PassRefPtr<SharedBuffer> buffer)
+        : m_buffer(buffer)
+        , m_offset(0)
+    {
+    }
+
+    virtual ~RemoteFontStream()
+    {
+    }
+
+    virtual bool rewind()
+    {
+        m_offset = 0;
+        return true;
+    }
+
+    virtual size_t read(void* buffer, size_t size)
+    {
+        if (!buffer && !size) {
+            // This is request for the length of the stream.
+            return m_buffer->size();
+        }
+        if (!buffer) {
+            // This is a request to skip bytes. This operation is not supported.
+            return 0;
+        }
+        // This is a request to read bytes.
+        if (!m_buffer->data() || !m_buffer->size())
+            return 0;
+        size_t left = m_buffer->size() - m_offset;
+        size_t toRead = (left > size) ? size : left;
+        std::memcpy(buffer, m_buffer->data() + m_offset, toRead);
+        m_offset += toRead;
+        return toRead;
+    }
+
+private:
+    RefPtr<SharedBuffer> m_buffer;
+    size_t m_offset;
+};
+#endif
+
 FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer)
 {
     ASSERT_ARG(buffer, buffer);
@@ -223,8 +278,14 @@ FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer)
     }
 
     return new FontCustomPlatformData(fontReference, fontName);
+#elif PLATFORM(LINUX)
+    RemoteFontStream stream(buffer);
+    SkTypeface* typeface = SkTypeface::CreateFromStream(&stream);
+    if (!typeface)
+        return 0;
+    return new FontCustomPlatformData(typeface);
 #else
-    notImplemented();;
+    notImplemented();
     return 0;
 #endif
 }

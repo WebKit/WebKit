@@ -32,12 +32,14 @@
 #ifndef FontCustomPlatformData_h
 #define FontCustomPlatformData_h
 
+#include "FontRenderingMode.h"
 #include <wtf/Noncopyable.h>
 
 #if PLATFORM(WIN_OS)
-#include "FontRenderingMode.h"
 #include "PlatformString.h"
 #include <windows.h>
+#elif PLATFORM(LINUX)
+#include "SkTypeface.h"
 #endif
 
 namespace WebCore {
@@ -51,6 +53,10 @@ struct FontCustomPlatformData : Noncopyable {
         : m_fontReference(fontReference)
         , m_name(name)
     {}
+#elif PLATFORM(LINUX)
+    explicit FontCustomPlatformData(SkTypeface* typeface)
+        : m_fontReference(typeface)
+    {}
 #endif
 
     ~FontCustomPlatformData();
@@ -61,6 +67,8 @@ struct FontCustomPlatformData : Noncopyable {
 #if PLATFORM(WIN_OS)
     HANDLE m_fontReference;
     String m_name;
+#elif PLATFORM(LINUX)
+    SkTypeface* m_fontReference;
 #endif
 };
 
