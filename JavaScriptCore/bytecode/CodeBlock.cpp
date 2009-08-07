@@ -230,44 +230,44 @@ static void printGlobalResolveInfo(const GlobalResolveInfo& resolveInfo, unsigne
 
 static void printStructureStubInfo(const StructureStubInfo& stubInfo, unsigned instructionOffset)
 {
-    switch (stubInfo.opcodeID) {
-    case op_get_by_id_self:
+    switch (stubInfo.accessType) {
+    case access_get_by_id_self:
         printf("  [%4d] %s: %s\n", instructionOffset, "get_by_id_self", pointerToSourceString(stubInfo.u.getByIdSelf.baseObjectStructure).UTF8String().c_str());
         return;
-    case op_get_by_id_proto:
+    case access_get_by_id_proto:
         printf("  [%4d] %s: %s, %s\n", instructionOffset, "get_by_id_proto", pointerToSourceString(stubInfo.u.getByIdProto.baseObjectStructure).UTF8String().c_str(), pointerToSourceString(stubInfo.u.getByIdProto.prototypeStructure).UTF8String().c_str());
         return;
-    case op_get_by_id_chain:
+    case access_get_by_id_chain:
         printf("  [%4d] %s: %s, %s\n", instructionOffset, "get_by_id_chain", pointerToSourceString(stubInfo.u.getByIdChain.baseObjectStructure).UTF8String().c_str(), pointerToSourceString(stubInfo.u.getByIdChain.chain).UTF8String().c_str());
         return;
-    case op_get_by_id_self_list:
+    case access_get_by_id_self_list:
         printf("  [%4d] %s: %s (%d)\n", instructionOffset, "op_get_by_id_self_list", pointerToSourceString(stubInfo.u.getByIdSelfList.structureList).UTF8String().c_str(), stubInfo.u.getByIdSelfList.listSize);
         return;
-    case op_get_by_id_proto_list:
+    case access_get_by_id_proto_list:
         printf("  [%4d] %s: %s (%d)\n", instructionOffset, "op_get_by_id_proto_list", pointerToSourceString(stubInfo.u.getByIdProtoList.structureList).UTF8String().c_str(), stubInfo.u.getByIdProtoList.listSize);
         return;
-    case op_put_by_id_transition:
+    case access_put_by_id_transition:
         printf("  [%4d] %s: %s, %s, %s\n", instructionOffset, "put_by_id_transition", pointerToSourceString(stubInfo.u.putByIdTransition.previousStructure).UTF8String().c_str(), pointerToSourceString(stubInfo.u.putByIdTransition.structure).UTF8String().c_str(), pointerToSourceString(stubInfo.u.putByIdTransition.chain).UTF8String().c_str());
         return;
-    case op_put_by_id_replace:
+    case access_put_by_id_replace:
         printf("  [%4d] %s: %s\n", instructionOffset, "put_by_id_replace", pointerToSourceString(stubInfo.u.putByIdReplace.baseObjectStructure).UTF8String().c_str());
         return;
-    case op_get_by_id:
+    case access_get_by_id:
         printf("  [%4d] %s\n", instructionOffset, "get_by_id");
         return;
-    case op_put_by_id:
+    case access_put_by_id:
         printf("  [%4d] %s\n", instructionOffset, "put_by_id");
         return;
-    case op_get_by_id_generic:
+    case access_get_by_id_generic:
         printf("  [%4d] %s\n", instructionOffset, "op_get_by_id_generic");
         return;
-    case op_put_by_id_generic:
+    case access_put_by_id_generic:
         printf("  [%4d] %s\n", instructionOffset, "op_put_by_id_generic");
         return;
-    case op_get_array_length:
+    case access_get_array_length:
         printf("  [%4d] %s\n", instructionOffset, "op_get_array_length");
         return;
-    case op_get_string_length:
+    case access_get_string_length:
         printf("  [%4d] %s\n", instructionOffset, "op_get_string_length");
         return;
     default:
@@ -1319,7 +1319,7 @@ CodeBlock::~CodeBlock()
         if (Structure* structure = m_methodCallLinkInfos[i].cachedStructure) {
             structure->deref();
             // Both members must be filled at the same time
-            ASSERT(m_methodCallLinkInfos[i].cachedPrototypeStructure);
+            ASSERT(!!m_methodCallLinkInfos[i].cachedPrototypeStructure);
             m_methodCallLinkInfos[i].cachedPrototypeStructure->deref();
         }
     }
