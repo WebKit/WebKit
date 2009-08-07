@@ -25,7 +25,7 @@
 
 module html {
 
-interface TimeRanges {
+interface [Conditional=VIDEO] TimeRanges {
     readonly attribute unsigned long length;
     float start(in unsigned long index)
         raises (DOMException);

@@ -1,3 +1,12 @@
+2009-08-07  Adam Treat  <adam.treat@torchmobile.com>
+
+        Reviewed by David Levin.
+
+        Build fix for Qt when ENABLE_VIDEO = 0.  This was necessitated by r46890 which
+        put the idl files back into play regardless of compile time defines.
+
+        * html/TimeRanges.idl:
+
 2009-08-07  Mike Fenton  <mike.fenton@torchmobile.com>
 
         Reviewed by George Staikos.
