@@ -1,3 +1,13 @@
+2009-08-06  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed revert.
+
+        http://bugs.webkit.org/show_bug.cgi?id=27879
+
+        Revert 46877 because it broke GTK.
+
+        * COMPropertyBag.h:
+
 2009-08-06  Zoltan Horvath  <hzoltan@inf.u-szeged.hu>
 
         Reviewed by Adam Barth.

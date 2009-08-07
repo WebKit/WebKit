@@ -28,7 +28,7 @@
 
 namespace WTFNoncopyable {
 
-    class Noncopyable : public FastAllocBase {
+    class Noncopyable {
         Noncopyable(const Noncopyable&);
         Noncopyable& operator=(const Noncopyable&);
     protected:
