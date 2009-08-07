@@ -802,7 +802,7 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
     // too, <div><b><br></b></div> for example.  Save it so that we can preserve it later.
     RefPtr<CSSMutableStyleDeclaration> styleInEmptyParagraph;
     if (startOfParagraphToMove == endOfParagraphToMove && preserveStyle) {
-        styleInEmptyParagraph = styleAtPosition(startOfParagraphToMove.deepEquivalent());
+        styleInEmptyParagraph = editingStyleAtPosition(startOfParagraphToMove.deepEquivalent(), IncludeTypingStyle);
         // The moved paragraph should assume the block style of the destination.
         styleInEmptyParagraph->removeBlockProperties();
     }
@@ -891,7 +891,7 @@ bool CompositeEditCommand::breakOutOfEmptyListItem()
     if (!emptyListItem)
         return false;
         
-    RefPtr<CSSMutableStyleDeclaration> style = styleAtPosition(endingSelection().start());
+    RefPtr<CSSMutableStyleDeclaration> style = editingStyleAtPosition(endingSelection().start(), IncludeTypingStyle);
 
     Node* listNode = emptyListItem->parentNode();
     

@@ -35,6 +35,7 @@
 #include "SelectionController.h"
 #include "TextIterator.h"
 #include "TypingCommand.h"
+#include "ApplyStyleCommand.h"
 
 namespace WebCore {
 
@@ -55,8 +56,8 @@ void RemoveFormatCommand::doApply()
     // Get the default style for this editable root, it's the style that we'll give the
     // content that we're operating on.
     Node* root = frame->selection()->rootEditableElement();
-    RefPtr<CSSMutableStyleDeclaration> defaultStyle = computedStyle(root)->deprecatedCopyInheritableProperties();
-    
+    RefPtr<CSSMutableStyleDeclaration> defaultStyle = editingStyleAtPosition(Position(root, 0));
+
     // Delete the selected content.
     // FIXME: We should be able to leave this to insertText, but its delete operation
     // doesn't preserve the style we're about to set.

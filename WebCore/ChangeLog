@@ -1,3 +1,48 @@
+2009-08-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Justin Garcia.
+
+        deprecatedCopyInheritableProperties must be replaced by two different functions
+        https://bugs.webkit.org/show_bug.cgi?id=28057
+
+        This patch deletes deprecatedInheritableProperties and modifies call callees to call either editingStyleAtPosition
+        or prepareEditingStyleToApplyAt. The concept of editing style is introduced in this patch,
+        which consists of all CSS properties need to be preserved under editing operations.
+
+        No test is added since this patch does not change any behavior.
+
+        * css/CSSComputedStyleDeclaration.cpp: Removed deprecatedCopyInheritableProperties
+        * css/CSSComputedStyleDeclaration.h: Removed deprecatedCopyInheritableProperties
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::):
+        (WebCore::editingStyleAtPosition): Obtains the editing-specific computed style at the position
+        (WebCore::prepareEditingStyleToApplyAt): Removes redundant editing styles at the specified position
+        (WebCore::removeStylesAddedByNode): Removes the style derived from the specified node
+        * editing/ApplyStyleCommand.h:
+        (WebCore::):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::moveParagraphs): Uses editingStyleAtPosition
+        (WebCore::CompositeEditCommand::breakOutOfEmptyListItem): Uses editingStyleAtPosition
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::removeEnclosingAnchorStyle): Uses removeStyleOfNode
+        (WebCore::DeleteSelectionCommand::saveTypingStyleState): Uses editingStyleAtPosition
+        (WebCore::DeleteSelectionCommand::calculateTypingStyleAfterDelete): Uses prepareEditingStyleToApplyAt
+        * editing/EditCommand.cpp:
+        * editing/EditCommand.h:
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::calculateStyleBeforeInsertion): Uses editingStyleAtPosition
+        (WebCore::InsertParagraphSeparatorCommand::applyStyleAfterInsertion): Uses prepareEditingStyleToApplyAt
+        * editing/RemoveFormatCommand.cpp:
+        (WebCore::RemoveFormatCommand::doApply): Uses editingStyleAtPosition
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::handleStyleSpansBeforeInsertion): Uses editingStyleAtPosition
+        (WebCore::ReplaceSelectionCommand::handleStyleSpans): Uses editingStyleAtPosition and prepareEditingStyleToApplyAt
+        (WebCore::ReplaceSelectionCommand::doApply): Uses prepareEditingStyleToApplyAt
+        * editing/markup.cpp:
+        (WebCore::removeEnclosingMailBlockquoteStyle): Uses removeStyleOfNode
+        (WebCore::removeDefaultStyles): Uses prepareEditingStyleToApplyAt
+        (WebCore::createMarkup): Uses editingStyleAtPosition
+
 2009-08-07  Steve Block  <steveblock@google.com>
 
         Reviewed by Darin Adler.

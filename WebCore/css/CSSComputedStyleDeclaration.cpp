@@ -1438,37 +1438,6 @@ String CSSComputedStyleDeclaration::item(unsigned i) const
     return getPropertyName(static_cast<CSSPropertyID>(computedProperties[i]));
 }
 
-// This is the list of properties we want to copy in the copyInheritableProperties() function.
-// It is the intersection of the list of inherited CSS properties and the
-// properties for which we have a computed implementation in this file.
-static const int inheritableProperties[] = {
-    CSSPropertyBorderCollapse,
-    CSSPropertyColor,
-    CSSPropertyFontFamily,
-    CSSPropertyFontSize,
-    CSSPropertyFontStyle,
-    CSSPropertyFontVariant,
-    CSSPropertyFontWeight,
-    CSSPropertyLetterSpacing,
-    CSSPropertyLineHeight,
-    CSSPropertyOrphans,
-    CSSPropertyTextAlign,
-    CSSPropertyTextIndent,
-    CSSPropertyTextTransform,
-    CSSPropertyWhiteSpace,
-    CSSPropertyWidows,
-    CSSPropertyWordSpacing,
-    CSSPropertyWebkitBorderHorizontalSpacing,
-    CSSPropertyWebkitBorderVerticalSpacing,
-    CSSPropertyWebkitTextDecorationsInEffect,
-    CSSPropertyWebkitTextFillColor,
-    CSSPropertyWebkitTextSizeAdjust,
-    CSSPropertyWebkitTextStrokeColor,
-    CSSPropertyWebkitTextStrokeWidth,
-};
-
-static const unsigned numInheritableProperties = sizeof(inheritableProperties) / sizeof(inheritableProperties[0]);
-
 bool CSSComputedStyleDeclaration::cssPropertyMatches(const CSSProperty* property) const
 {
     if (property->id() == CSSPropertyFontSize && property->value()->isPrimitiveValue() && m_node) {
@@ -1483,29 +1452,6 @@ bool CSSComputedStyleDeclaration::cssPropertyMatches(const CSSProperty* property
     }
 
     return CSSStyleDeclaration::cssPropertyMatches(property);
-}
-
-// FIXME: deprecatedCopyInheritableProperties is used for two purposes:
-// 1.  Calculating the typing style.
-// 2.  Moving HTML subtrees and seeking to remove redundant styles.
-// These tasks should be broken out into two separate functions.  New code should not use this function.
-PassRefPtr<CSSMutableStyleDeclaration> CSSComputedStyleDeclaration::deprecatedCopyInheritableProperties() const
-{
-    RefPtr<CSSMutableStyleDeclaration> style = copyPropertiesInSet(inheritableProperties, numInheritableProperties);
-    if (style && m_node && m_node->computedStyle()) {
-        // If a node's text fill color is invalid, then its children use 
-        // their font-color as their text fill color (they don't
-        // inherit it).  Likewise for stroke color.
-        ExceptionCode ec = 0;
-        if (!m_node->computedStyle()->textFillColor().isValid())
-            style->removeProperty(CSSPropertyWebkitTextFillColor, ec);
-        if (!m_node->computedStyle()->textStrokeColor().isValid())
-            style->removeProperty(CSSPropertyWebkitTextStrokeColor, ec);
-        ASSERT(ec == 0);
-        if (int keywordSize = m_node->computedStyle()->fontDescription().keywordSize())
-            style->setProperty(CSSPropertyFontSize, cssIdentifierForFontSizeKeyword(keywordSize));
-    }
-    return style.release();
 }
 
 PassRefPtr<CSSMutableStyleDeclaration> CSSComputedStyleDeclaration::copy() const

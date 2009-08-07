@@ -58,6 +58,7 @@
 #include "htmlediting.h"
 #include "visible_units.h"
 #include <wtf/StdLibExtras.h>
+#include "ApplyStyleCommand.h"
 
 using namespace std;
 
@@ -291,20 +292,16 @@ static void removeEnclosingMailBlockquoteStyle(CSSMutableStyleDeclaration* style
     Node* blockquote = nearestMailBlockquote(node);
     if (!blockquote || !blockquote->parentNode())
         return;
-            
-    RefPtr<CSSMutableStyleDeclaration> parentStyle = Position(blockquote->parentNode(), 0).computedStyle()->deprecatedCopyInheritableProperties();
-    RefPtr<CSSMutableStyleDeclaration> blockquoteStyle = Position(blockquote, 0).computedStyle()->deprecatedCopyInheritableProperties();
-    parentStyle->diff(blockquoteStyle.get());
-    blockquoteStyle->diff(style);
+
+    removeStylesAddedByNode(style, blockquote);
 }
 
 static void removeDefaultStyles(CSSMutableStyleDeclaration* style, Document* document)
 {
     if (!document || !document->documentElement())
         return;
-            
-    RefPtr<CSSMutableStyleDeclaration> documentStyle = computedStyle(document->documentElement())->deprecatedCopyInheritableProperties();
-    documentStyle->diff(style);
+
+    prepareEditingStyleToApplyAt(style, Position(document->documentElement(), 0));
 }
 
 static bool shouldAddNamespaceElem(const Element* elem)
@@ -1007,7 +1004,7 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
     // Add a wrapper span with the styles that all of the nodes in the markup inherit.
     Node* parentOfLastClosed = lastClosed ? lastClosed->parentNode() : 0;
     if (parentOfLastClosed && parentOfLastClosed->renderer()) {
-        RefPtr<CSSMutableStyleDeclaration> style = computedStyle(parentOfLastClosed)->deprecatedCopyInheritableProperties();
+        RefPtr<CSSMutableStyleDeclaration> style = editingStyleAtPosition(Position(parentOfLastClosed, 0));
 
         // Styles that Mail blockquotes contribute should only be placed on the Mail blockquote, to help
         // us differentiate those styles from ones that the user has applied.  This helps us
@@ -1031,8 +1028,8 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
         // Add a style span with the document's default styles.  We add these in a separate
         // span so that at paste time we can differentiate between document defaults and user
         // applied styles.
-        RefPtr<CSSMutableStyleDeclaration> defaultStyle = computedStyle(document->documentElement())->deprecatedCopyInheritableProperties();
-        
+        RefPtr<CSSMutableStyleDeclaration> defaultStyle = editingStyleAtPosition(Position(document->documentElement(), 0));
+
         if (defaultStyle->length() > 0)
             addStyleMarkup(preMarkups, markups, defaultStyle.get(), document);
     }

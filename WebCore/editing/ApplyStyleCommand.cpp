@@ -334,6 +334,94 @@ RefPtr<CSSMutableStyleDeclaration> getPropertiesNotInComputedStyle(CSSStyleDecla
 
     return result;
 }
+
+// Editing style properties must be preserved during editing operation.
+// e.g. when a user inserts a new paragraph, all properties listed here must be copied to the new paragraph.
+// FIXME: The current editingStyleProperties is identical to inheritableProperties but we may not need to preserve all inheritable properties
+static const int editingStyleProperties[] = {
+    CSSPropertyBorderCollapse,
+    CSSPropertyColor,
+    CSSPropertyFontFamily,
+    CSSPropertyFontSize,
+    CSSPropertyFontStyle,
+    CSSPropertyFontVariant,
+    CSSPropertyFontWeight,
+    CSSPropertyLetterSpacing,
+    CSSPropertyLineHeight,
+    CSSPropertyOrphans,
+    CSSPropertyTextAlign,
+    CSSPropertyTextIndent,
+    CSSPropertyTextTransform,
+    CSSPropertyWhiteSpace,
+    CSSPropertyWidows,
+    CSSPropertyWordSpacing,
+    CSSPropertyWebkitBorderHorizontalSpacing,
+    CSSPropertyWebkitBorderVerticalSpacing,
+    CSSPropertyWebkitTextDecorationsInEffect,
+    CSSPropertyWebkitTextFillColor,
+    CSSPropertyWebkitTextSizeAdjust,
+    CSSPropertyWebkitTextStrokeColor,
+    CSSPropertyWebkitTextStrokeWidth,
+};
+size_t numEditingStyleProperties = sizeof(editingStyleProperties)/sizeof(editingStyleProperties[0]);
+
+PassRefPtr<CSSMutableStyleDeclaration> editingStyleAtPosition(Position pos, ShouldIncludeTypingStyle shouldIncludeTypingStyle)
+{
+    RefPtr<CSSComputedStyleDeclaration> computedStyleAtPosition = pos.computedStyle();
+    RefPtr<CSSMutableStyleDeclaration> style = computedStyleAtPosition->copyPropertiesInSet(editingStyleProperties, numEditingStyleProperties);
+
+    if (style && pos.node() && pos.node()->computedStyle()) {
+        RenderStyle* renderStyle = pos.node()->computedStyle();
+        // If a node's text fill color is invalid, then its children use 
+        // their font-color as their text fill color (they don't
+        // inherit it).  Likewise for stroke color.
+        ExceptionCode ec = 0;
+        if (!renderStyle->textFillColor().isValid())
+            style->removeProperty(CSSPropertyWebkitTextFillColor, ec);
+        if (!renderStyle->textStrokeColor().isValid())
+            style->removeProperty(CSSPropertyWebkitTextStrokeColor, ec);
+        ASSERT(ec == 0);
+        if (renderStyle->fontDescription().keywordSize())
+            style->setProperty(CSSPropertyFontSize, computedStyleAtPosition->getFontSizeCSSValuePreferringKeyword()->cssText());
+    }
+
+    if (shouldIncludeTypingStyle == IncludeTypingStyle) {
+        CSSMutableStyleDeclaration* typingStyle = pos.node()->document()->frame()->typingStyle();
+        if (typingStyle)
+            style->merge(typingStyle);
+    }
+
+    return style.release();
+}
+
+void prepareEditingStyleToApplyAt(CSSMutableStyleDeclaration* editingStyle, Position pos)
+{
+    // ReplaceSelectionCommand::handleStyleSpans() requiers that this function only removes the editing style.
+    // If this function was modified in the futureto delete all redundant properties, then add a boolean value to indicate
+    // which one of editingStyleAtPosition or computedStyle is called.
+    RefPtr<CSSMutableStyleDeclaration> style = editingStyleAtPosition(pos);
+    style->diff(editingStyle);
+
+    // if alpha value is zero, we don't add the background color.
+    RefPtr<CSSValue> backgroundColor = editingStyle->getPropertyCSSValue(CSSPropertyBackgroundColor);
+    if (backgroundColor && backgroundColor->isPrimitiveValue()) {
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(backgroundColor.get());
+        Color color = Color(primitiveValue->getRGBA32Value());
+        ExceptionCode ec;
+        if (color.alpha() == 0)
+            editingStyle->removeProperty(CSSPropertyBackgroundColor, ec);
+    }
+}
+
+void removeStylesAddedByNode(CSSMutableStyleDeclaration* editingStyle, Node* node)
+{
+    ASSERT(node);
+    ASSERT(node->parentNode());
+    RefPtr<CSSMutableStyleDeclaration> parentStyle = editingStyleAtPosition(Position(node->parentNode(), 0));
+    RefPtr<CSSMutableStyleDeclaration> style = editingStyleAtPosition(Position(node, 0));
+    parentStyle->diff(style.get());
+    style->diff(editingStyle);
+}
     
 ApplyStyleCommand::ApplyStyleCommand(Document* document, CSSStyleDeclaration* style, EditAction editingAction, EPropertyLevel propertyLevel)
     : CompositeEditCommand(document)

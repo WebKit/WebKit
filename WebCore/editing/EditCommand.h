@@ -66,7 +66,6 @@ protected:
     void setStartingSelection(const VisibleSelection&);
     void setEndingSelection(const VisibleSelection&);
 
-    PassRefPtr<CSSMutableStyleDeclaration> styleAtPosition(const Position&);
     void updateLayout() const;
 
 private:
