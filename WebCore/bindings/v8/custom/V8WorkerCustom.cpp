@@ -93,18 +93,18 @@ CALLBACK_FUNC_DECL(WorkerConstructor)
     return wrapperObject;
 }
 
-PassRefPtr<EventListener> getEventListener(Worker* worker, v8::Local<v8::Value> value, bool findOnly)
+PassRefPtr<EventListener> getEventListener(Worker* worker, v8::Local<v8::Value> value, bool isAttribute, bool findOnly)
 {
     if (worker->scriptExecutionContext()->isWorkerContext()) {
         WorkerContextExecutionProxy* workerContextProxy = WorkerContextExecutionProxy::retrieve();
         ASSERT(workerContextProxy);
-        return workerContextProxy->findOrCreateObjectEventListener(value, false, findOnly);
+        return workerContextProxy->findOrCreateObjectEventListener(value, isAttribute, findOnly);
     }
 
     V8Proxy* proxy = V8Proxy::retrieve(worker->scriptExecutionContext());
     if (proxy) {
         V8EventListenerList* list = proxy->objectListeners();
-        return findOnly ? list->findWrapper(value, false) : list->findOrCreateWrapper<V8ObjectEventListener>(proxy->frame(), value, false);
+        return findOnly ? list->findWrapper(value, isAttribute) : list->findOrCreateWrapper<V8ObjectEventListener>(proxy->frame(), value, isAttribute);
     }
 
     return 0;
@@ -136,7 +136,7 @@ ACCESSOR_SETTER(WorkerOnmessage)
         // Clear the listener.
         worker->setOnmessage(0);
     } else {
-        RefPtr<EventListener> listener = getEventListener(worker, value, false);
+        RefPtr<EventListener> listener = getEventListener(worker, value, true, false);
         if (listener) {
             if (oldListener) {
                 v8::Local<v8::Object> oldV8Listener = oldListener->getListenerObject();
