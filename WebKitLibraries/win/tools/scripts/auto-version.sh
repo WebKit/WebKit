@@ -29,7 +29,7 @@ VERSIONPATH=$VERSIONPATH/include
 VERSIONFILE=$VERSIONPATH/autoversion.h
 mkdir -p "$VERSIONPATH"
 
-PRODUCTVERSION=`cat "$SRCPATH/PRODUCTVERSION"`
+PRODUCTVERSION=`cat $SRCPATH/PRODUCTVERSION | sed -r 's/(.*\S+)\s*$/\1/'`
 MAJORVERSION=`echo "$PRODUCTVERSION" | sed 's/\([^\.]*\)\.\([^.]*\)\(\.\([^.]*\)\)\?/\1/'`
 MINORVERSION=`echo "$PRODUCTVERSION" | sed 's/\([^\.]*\)\.\([^.]*\)\(\.\([^.]*\)\)\?/\2/'`
 TINYVERSION=`echo "$PRODUCTVERSION" | sed 's/\([^\.]*\)\.\([^.]*\)\(\.\([^.]*\)\)\?/\4/'`
@@ -38,10 +38,11 @@ if [ "$TINYVERSION" == "" ]; then
 fi
 
 if [ "$RC_PROJECTSOURCEVERSION" == "" ]; then
-    PROPOSEDVERSION=`cat $SRCPATH/VERSION | sed -r 's/(.*\S+)\s*$/\1/'`
+    PROPOSEDVERSION=`cat $SRCPATH/VERSION`
 else
     PROPOSEDVERSION="$RC_PROJECTSOURCEVERSION"
 fi
+PROPOSEDVERSION=`echo "$PROPOSEDVERSION" | sed -r 's/(.*\S+)\s*$/\1/'`
 
 BLDMAJORVERSION=`echo "$PROPOSEDVERSION" | sed 's/\([^\.]*\)\(\.\([^.]*\)\(\.\([^.]*\)\)\?\)\?/\1/'`
 BLDMINORVERSION=`echo "$PROPOSEDVERSION" | sed 's/\([^\.]*\)\(\.\([^.]*\)\(\.\([^.]*\)\)\?\)\?/\3/'`
