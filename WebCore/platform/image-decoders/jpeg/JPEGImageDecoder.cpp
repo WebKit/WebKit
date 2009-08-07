@@ -6,6 +6,8 @@
  * Other contributors:
  *   Stuart Parmenter <stuart@mozilla.com>
  *
+ * Copyright (C) 2007-2009 Torch Mobile, Inc.
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -39,6 +41,15 @@
 #include "JPEGImageDecoder.h"
 #include <assert.h>
 #include <stdio.h>  // Needed by jpeglib.h for FILE.
+
+#if PLATFORM(WINCE)
+// Remove warning: 'FAR' macro redefinition
+#undef FAR
+
+// jmorecfg.h in libjpeg checks for XMD_H with the comment: "X11/xmd.h correctly defines INT32"
+// fix INT32 redefinition error by pretending we are X11/xmd.h
+#define XMD_H
+#endif
 
 extern "C" {
 #include "jpeglib.h"
