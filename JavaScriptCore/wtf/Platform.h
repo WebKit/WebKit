@@ -220,10 +220,10 @@
 #define WTF_PLATFORM_ARM 1
 #if defined(__ARMEB__)
 #define WTF_PLATFORM_BIG_ENDIAN 1
-#elif !defined(__ARM_EABI__) && !defined(__ARMEB__) && !defined(__VFP_FP__)
+#elif !defined(__ARM_EABI__) && !defined(__EABI__) && !defined(__VFP_FP__)
 #define WTF_PLATFORM_MIDDLE_ENDIAN 1
 #endif
-#if !defined(__ARM_EABI__)
+#if !defined(__ARM_EABI__) && !defined(__EABI__)
 #define WTF_PLATFORM_FORCE_PACK 1
 #endif
 #define ARM_ARCH_VERSION 3

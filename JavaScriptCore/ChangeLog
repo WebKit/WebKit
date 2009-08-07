@@ -1,3 +1,16 @@
+2009-08-06  Norbert Leser  <norbert.leser@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Updated patch for bug #27059:
+        Symbian platform always uses little endian encoding,
+        regardless of compiler.
+        We need to make sure that we correctly detect EABI architecture
+        for armv5 targets on Symbian,
+        where __EABI__ is set but not __ARM_EABI__
+
+        * wtf/Platform.h:
+
 2009-08-06  Adam Barth  <abarth@webkit.org>
 
         Unreviewed revert.
