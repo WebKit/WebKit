@@ -225,6 +225,9 @@ public:
     TransformationMatrix& applyPerspective(double p);
     bool hasPerspective() const { return m_matrix[2][3] != 0.0f; }
 
+    // returns a transformation that maps a rect to a rect
+    static TransformationMatrix rectToRect(const FloatRect&, const FloatRect&);
+
     bool isInvertible() const;
 
     // This method returns the identity matrix if it is not invertible.

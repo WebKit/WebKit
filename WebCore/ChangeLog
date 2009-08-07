@@ -1,3 +1,19 @@
+2009-08-07  Adam Treat  <adam.treat@torchmobile.com>
+
+        Reviewed by Darin Adler and George Staikos.
+
+        Add rectToRect convenience function which returns the TransformationMatrix
+        which maps the 'from' rectangle to the 'to' rectangle.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28067
+
+        No tests as this would require binding the method to js and since it is static
+        that doesn't seem possible.  Please check the math.
+
+        * platform/graphics/transforms/TransformationMatrix.cpp:
+        (WebCore::TransformationMatrix::rectToRect):
+        * platform/graphics/transforms/TransformationMatrix.h:
+
 2009-08-07  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler.
