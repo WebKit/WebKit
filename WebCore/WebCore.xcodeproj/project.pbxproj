@@ -17195,11 +17195,11 @@
 				1C81BA330E97357C00266E07 /* Copy Inspector Resources */,
 				1C5F9D760E09A1B400E91D0A /* Streamline Inspector Source */,
 				93F19A0C08245E59001E9ABC /* Sources */,
+				1CB71D4A0B02658D0061EA45 /* Generate 64-bit Export File */,
+				93F19B1208245E59001E9ABC /* Frameworks */,
 				939D050109D9FF6B00984996 /* Check For Global Initializers */,
 				933457E60EBFDF6B00B80894 /* Check For Exit Time Destructors */,
 				5D0D540D0E9862F60029E223 /* Check For Weak VTables */,
-				93F19B1208245E59001E9ABC /* Frameworks */,
-				1CB71D4A0B02658D0061EA45 /* Generate 64-bit Export File */,
 			);
 			buildRules = (
 			);
@@ -17355,6 +17355,7 @@
 			files = (
 			);
 			inputPaths = (
+				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
 			);
 			name = "Check For Weak VTables";
 			outputPaths = (
@@ -17385,6 +17386,7 @@
 			files = (
 			);
 			inputPaths = (
+				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
 			);
 			name = "Check For Exit Time Destructors";
 			outputPaths = (
@@ -17399,6 +17401,7 @@
 			files = (
 			);
 			inputPaths = (
+				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
 			);
 			name = "Check For Global Initializers";
 			outputPaths = (

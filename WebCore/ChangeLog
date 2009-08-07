@@ -1,3 +1,11 @@
+2009-08-06  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Sam Weinig.
+
+        Add explicit dependencies for our build verification scripts to ensure that they always run after linking has completed.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2009-08-05  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler.

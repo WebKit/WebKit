@@ -265,9 +265,9 @@
 				DD66F3BA08F73ED700C75FD7 /* Headers */,
 				DD66F3C208F73ED700C75FD7 /* Resources */,
 				DD66F3C408F73ED700C75FD7 /* Sources */,
+				DD66F3CD08F73ED700C75FD7 /* Frameworks */,
 				939D055E09DA033400984996 /* Check For Global Initializers */,
 				5D0D53490E9862A70029E223 /* Check For Weak VTables */,
-				DD66F3CD08F73ED700C75FD7 /* Frameworks */,
 				5DA0F0C00DC2B48900EA22B4 /* Remove Headers If Needed */,
 			);
 			buildRules = (
@@ -318,6 +318,7 @@
 			files = (
 			);
 			inputPaths = (
+				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
 			);
 			name = "Check For Weak VTables";
 			outputPaths = (
@@ -362,6 +363,7 @@
 			files = (
 			);
 			inputPaths = (
+				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
 			);
 			name = "Check For Global Initializers";
 			outputPaths = (
