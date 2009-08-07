@@ -91,158 +91,91 @@ function test()
     generateProperties();
 
     print("DOM OBJECTS BEFORE GARBAGE COLLECTION:");
-    testProperties(expectedResultsBeforeGC);
+    testProperties();
 
     gc();
     
     print("DOM OBJECTS AFTER GARBAGE COLLECTION:");
-    testProperties(expectedResultsAfterGC);
+    testProperties(true);
 
     testEvents();
 }
 
+// By default, we expect that custom properties are not allowed.
+// If "allow custom" is specified, then custom properties are allowed and survive garbage collection.
+// If "allow custom skip" is specified, this means this property is not guaranteed to survive garbage
+// collection, so we don't test it at all, since there is a chance it might due to conservative GC algorithm.
+// All "allow custom skip" represent bugs that need to be fixed.
+
 var objectsToTest = [
-    "document.implementation", // DOMImplementation
-    "document",
-    "document.body",
-    "document.body.attributes", // NamedNodeMap
-    "document.getElementsByTagName('body')", // NodeList
-    "document.getElementsByTagName('canvas')[0].getContext('2d')", // CanvasRenderingContext2D
-    "document.getElementsByTagName('canvas')[0].getContext('2d').createLinearGradient(0, 0, 0, 0)", // CanvasGradient
-    "document.getElementsByTagName('canvas')[0].getContext('2d').createPattern(new Image(), 'no-repeat')", // CanvasPattern
-    "document.getElementsByTagName('select')[0].options",
-    "document.all",
-    "document.body.childNodes",
+    [ "document.implementation", "allow custom skip" ], // DOMImplementation
+    [ "document", "allow custom" ],
+    [ "document.body", "allow custom" ],
+    [ "document.body.attributes", "allow custom skip" ], // NamedNodeMap
+    [ "document.getElementsByTagName('body')" ], // NodeList
+    [ "document.getElementsByTagName('canvas')[0].getContext('2d')", "allow custom skip" ], // CanvasRenderingContext2D
+    [ "document.getElementsByTagName('canvas')[0].getContext('2d').createLinearGradient(0, 0, 0, 0)" ], // CanvasGradient
+    [ "document.getElementsByTagName('canvas')[0].getContext('2d').createPattern(new Image(), 'no-repeat')" ], // CanvasPattern
+    [ "document.getElementsByTagName('select')[0].options" ],
+    [ "document.all" ],
+    [ "document.body.childNodes" ],
 
-    "document.images",
-    "document.embeds",
-    "document.applets",
-    "document.links",
-    "document.forms",
-    "document.anchors",
-    "document.scripts",
+    [ "document.images" ],
+    [ "document.embeds" ],
+    [ "document.applets" ],
+    [ "document.links" ],
+    [ "document.forms" ],
+    [ "document.anchors" ],
+    [ "document.scripts" ],
 
-    "document.getElementsByTagName('form')[0].elements",
-    "document.getElementsByTagName('table')[0].rows",
-    "document.getElementsByTagName('table')[0].rows[0].cells",
-    "document.getElementsByTagName('table')[0].tBodies",
-    "document.getElementsByTagName('table')[0].tBodies[0].rows",
-    "document.body.children",
-    "document.getElementsByTagName('map')[0].areas",
+    [ "document.getElementsByTagName('form')[0].elements" ],
+    [ "document.getElementsByTagName('table')[0].rows" ],
+    [ "document.getElementsByTagName('table')[0].rows[0].cells" ],
+    [ "document.getElementsByTagName('table')[0].tBodies" ],
+    [ "document.getElementsByTagName('table')[0].tBodies[0].rows" ],
+    [ "document.body.children" ],
+    [ "document.getElementsByTagName('map')[0].areas" ],
     
-    "document.body.style",
-    "document.body.style.getPropertyCSSValue('color')",
-    "document.styleSheets",
-    "document.styleSheets[0]",
-    "document.styleSheets[0].cssRules",
-    "document.styleSheets[0].cssRules[0]",
+    [ "document.body.style", "allow custom skip" ],
+    [ "document.body.style.getPropertyCSSValue('color')", "allow custom skip" ],
+    [ "document.styleSheets", "allow custom skip" ],
+    [ "document.styleSheets[0]", "allow custom skip" ],
+    [ "document.styleSheets[0].cssRules" ],
+    [ "document.styleSheets[0].cssRules[0]", "allow custom skip" ],
 
-    "new XPathEvaluator()", // XPathEvaluator
-    "new XPathEvaluator().evaluate('/', document, null, 0, null)", // XPathResult
-    "document.createNSResolver(document)", // XPathNSResolver
-    "document.createExpression('/', document.createNSResolver(document))" // XPathExpression
+    [ "new XPathEvaluator()" ], // XPathEvaluator
+    [ "new XPathEvaluator().evaluate('/', document, null, 0, null)" ], // XPathResult
+    [ "document.createNSResolver(document)" ], // XPathNSResolver
+    [ "document.createExpression('/', document.createNSResolver(document))" ] // XPathExpression
 
     // should not cache: NodeIterator, NodeFilter, TreeWalker, XMLHttpRequest
     // add to test: DOMRect, MediaList, Counter, Range
-    
-];
-
-var expectedResultsBeforeGC = [
-    1,
-    1,
-    1,
-    1,
-    undefined,
-    1,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    1,
-    1,
-    1,
-    1,
-    undefined,
-    1,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-];
-
-var expectedResultsAfterGC = [
-    undefined,
-    1,
-    1,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
 ];
 
 function generateProperties()
 {
     for (var i = 0; i < objectsToTest.length; i++) { // >
         try {
-            eval(objectsToTest[i] + ".myCustomProperty = 1;");
+            eval(objectsToTest[i][0] + ".myCustomProperty = 1;");
         } catch(e) {
-            print("NOT SUPPORTED: " + objectsToTest[i] + "[ " + e.message + " ]");
+            print("NOT SUPPORTED: " + objectsToTest[i][0] + "[ " + e.message + " ]");
         }
     }
 }
 
-function testProperties(expectedResults)
+function testProperties(skip)
 {
     for (var i = 0; i < objectsToTest.length; i++) { // >
+        if (skip && objectsToTest[i][1] === "allow custom skip")
+            continue;
+        var expectedResult = objectsToTest[i][1] ? 1 : undefined;
         try {
-            shouldBe(objectsToTest[i] + ".myCustomProperty", expectedResults[i]);
+            shouldBe(objectsToTest[i][0] + ".myCustomProperty", expectedResult);
         } catch(e) {
         }
     }
 }
+
 </script>
 </head>
 
