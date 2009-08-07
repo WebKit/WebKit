@@ -1,3 +1,15 @@
+2009-08-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Another try at making the gc-9.html test less prone to intermittent failure.
+
+        * fast/dom/gc-9.html: Changed this to do the "before garbage collection"
+        test right after setting the properties. This practically eliminates the
+        possibility that we will get unlucky and get a garbage collection between
+        when theproperty is set and tested, which seems to have happened at least
+        once on the buildbot.
+
 2009-08-07  Mike Fenton  <mike.fenton@torchmobile.com>
 
         Reviewed by Adam Treat.

@@ -88,15 +88,13 @@ function test()
     if (window.layoutTestController)
         layoutTestController.dumpAsText();
         
-    generateProperties();
-
     print("DOM OBJECTS BEFORE GARBAGE COLLECTION:");
-    testProperties();
+    generateProperties();
 
     gc();
     
     print("DOM OBJECTS AFTER GARBAGE COLLECTION:");
-    testProperties(true);
+    testPropertiesAgain();
 
     testEvents();
 }
@@ -160,13 +158,18 @@ function generateProperties()
         } catch(e) {
             print("NOT SUPPORTED: " + objectsToTest[i][0] + "[ " + e.message + " ]");
         }
+        var expectedResult = objectsToTest[i][1] ? 1 : undefined;
+        try {
+            shouldBe(objectsToTest[i][0] + ".myCustomProperty", expectedResult);
+        } catch(e) {
+        }
     }
 }
 
-function testProperties(skip)
+function testPropertiesAgain()
 {
     for (var i = 0; i < objectsToTest.length; i++) { // >
-        if (skip && objectsToTest[i][1] === "allow custom skip")
+        if (objectsToTest[i][1] === "allow custom skip")
             continue;
         var expectedResult = objectsToTest[i][1] ? 1 : undefined;
         try {
