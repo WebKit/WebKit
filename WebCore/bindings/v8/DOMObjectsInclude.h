@@ -89,6 +89,7 @@
 #include "InspectorBackend.h"
 #include "KeyboardEvent.h"
 #include "Location.h"
+#include "Media.h"
 #include "MediaError.h"
 #include "MediaList.h"
 #include "MediaPlayer.h"
