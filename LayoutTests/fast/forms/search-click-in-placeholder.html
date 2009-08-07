@@ -1,13 +1,15 @@
 <body onload="test()">
-    <input type="search" id="target" placeholder="Placeholder text">
+    <input type="search" id="target" placeholder="Placeholder text" onfocus="window.hasFocus=1">
     <pre id="console"></pre>
     <script>
+        var hasFocus = 0;
+
         function log(message) {
             document.getElementById("console").appendChild(document.createTextNode(message + "\n"));
         }
 
         function test() {
-            if (!window.layoutTestController)
+            if (!window.eventSender)
                 return;
 
             layoutTestController.dumpAsText();
@@ -19,7 +21,8 @@
             eventSender.mouseMoveTo(x, y);
             eventSender.mouseDown();
             eventSender.mouseUp();
-            log(getSelection().baseNode == null ? "FAIL" : "PASS");
+
+            log(hasFocus ? "PASS" : "FAIL");
         }
     </script>
 </body>

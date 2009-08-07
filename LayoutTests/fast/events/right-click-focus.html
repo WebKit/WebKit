@@ -17,8 +17,6 @@ if (window.eventSender) {
     var elt = document.getElementsByTagName('textarea')[0];
     eventSender.mouseMoveTo(elt.offsetLeft + 5, elt.offsetTop + 5);
     eventSender.contextClick();
-    if (!window.getSelection().anchorNode)
-        log("FAIL: No selection after right-clicking");
     eventSender.keyDown("z");
     log(document.getElementsByTagName("textarea")[0].value == "z" ? "PASS" : "FAIL: No text in textarea");
 } else {

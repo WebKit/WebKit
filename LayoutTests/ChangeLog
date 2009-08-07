@@ -1,3 +1,19 @@
+2009-08-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Fix three tests so they are not dependent on the getSelection() result
+        reflecting selections inside <input> and <textarea> elements.
+
+        * fast/events/right-click-focus.html: Removed unneeded check of anchorNode.
+        The test works fine by just testing the actual result of typing.
+
+        * fast/forms/focus-style-pending.html: Detect focus with an onfocus
+        attribute rather than by looking at getSelection().focusNode.
+
+        * fast/forms/search-click-in-placeholder.html: Detect focus with an onfocus
+        attribute rather than by looking at getSelection().baseNode.
+
 2009-08-07  Alpha Lam  <hclam@chromium.org>
 
         Reviewed by Eric Seidel.
