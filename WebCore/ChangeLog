@@ -1,3 +1,30 @@
+2009-08-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Justin Garcia.
+
+        selectionHasStyle doesn't handle text-specific properties properly
+        https://bugs.webkit.org/show_bug.cgi?id=27858
+
+        This patch modifies selectionHasStyle so that it returns TrueTriState when text styles
+        (text-decoration, font-style, font-weight, & color) are present in all text nodes,
+        regardless of whether the style is also present in their ancestor nodes or not.
+        e.g. New behavior concludes that <b><i>hello</i><i>world</i></b> has italic style.
+
+        WebKit now applies the text styles (bold, italic, etc) if the specified style was not present on
+        at least one text node, rather than at the beginning of selection except on Mac.
+        On Mac, WebKit applies the text style if the style was not present at the beginning of style.
+
+        Test: editing/execCommand/toggle-compound-styles.html
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::getPropertiesNotInComputedStyle): bug fix, must use copy instead of makeMutable for a mutable style.
+        * editing/Editor.cpp:
+        (WebCore::):
+        (WebCore::triStateOfStyleInComputedStyle): Added a boolean type to ignore text-specific styles
+        (WebCore::Editor::selectionHasStyle): Ignores text-specific styles for all but text nodes
+        * editing/EditorCommand.cpp:
+        (WebCore::executeToggleStyle): Uses selectionHasStyle instead of selectionStartHasStyle
+
 2009-08-07  Jian Li  <jianli@chromium.org>
 
         Reviewed by Dimitri Glazkov.

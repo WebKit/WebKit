@@ -120,6 +120,9 @@ static bool executeApplyStyle(Frame* frame, EditorCommandSource source, EditActi
     return applyCommandToFrame(frame, source, action, style.get());
 }
 
+// FIXME: executeToggleStyleInList does not handle complicated cases such as <b><u>hello</u>world</b> properly.
+//        This function must use Editor::selectionHasStyle to determine the current style but we cannot fix this
+//        until https://bugs.webkit.org/show_bug.cgi?id=27818 is resolved.
 static bool executeToggleStyleInList(Frame* frame, EditorCommandSource source, EditAction action, int propertyID, CSSValue* value)
 {
     ExceptionCode ec = 0;
@@ -148,12 +151,23 @@ static bool executeToggleStyleInList(Frame* frame, EditorCommandSource source, E
     newMutableStyle->setProperty(propertyID, newStyle,ec);
     return applyCommandToFrame(frame, source, action, newMutableStyle.get());
 }
-    
+
 static bool executeToggleStyle(Frame* frame, EditorCommandSource source, EditAction action, int propertyID, const char* offValue, const char* onValue)
 {
     RefPtr<CSSMutableStyleDeclaration> style = CSSMutableStyleDeclaration::create();
-    style->setProperty(propertyID, onValue);
-    style->setProperty(propertyID, frame->editor()->selectionStartHasStyle(style.get()) ? offValue : onValue);
+    style->setProperty(propertyID, onValue); // We need to add this style to pass it to selectionStartHasStyle / selectionHasStyle
+
+    // Style is considered present when
+    // mac: present at the beginning of selection
+    // other: present throughout the selection
+    Settings* settings = frame->document()->settings();
+    bool styleIsPresent;
+    if (settings && settings->editingBehavior() == EditingMacBehavior)
+        styleIsPresent = frame->editor()->selectionStartHasStyle(style.get());
+    else
+        styleIsPresent = frame->editor()->selectionHasStyle(style.get()) == TrueTriState;
+
+    style->setProperty(propertyID, styleIsPresent ? offValue : onValue);
     return applyCommandToFrame(frame, source, action, style.get());
 }
 
