@@ -1,3 +1,16 @@
+2009-08-07  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Adele Peterson.
+
+        Cannot scroll for box-reflect:right
+        https://bugs.webkit.org/show_bug.cgi?id=27979
+
+        Update m_overflowLeft an m_overflowWidth for reflection just like
+        m_overflowTop and m_overflowHeight.
+
+        * Scripts/make-js-test-wrappers:  Added regexp to skip box-shadow-overflo
+w-scroll.js
+
 2009-08-06  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Adam Barth.

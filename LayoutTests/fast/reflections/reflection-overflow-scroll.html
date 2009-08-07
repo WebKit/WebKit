@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<div id="main">
+
+<p>
+There should be horizontal scroll bar.
+<div id="horizontal" style="overflow-x:scroll; width:150px;">
+<div style="-webkit-box-reflect:right; width:150px;">
+Madam, I am Adam.
+</div>
+</div>
+
+<p>
+Also, there should be vertical scroll bar.
+<div id="vertical" style="overflow-y:scroll; width:150px; height:80px;">
+<div style="-webkit-box-reflect:below; height:80px;">
+Madam,<br>
+I<br>
+am<br>
+Adam.
+</div>
+</div>
+
+</div>
+
+<script src="resources/reflection-overflow-scroll.js"></script>
+<script src="../js/resources/js-test-post.js"></script>
+
+</body>
+</html>

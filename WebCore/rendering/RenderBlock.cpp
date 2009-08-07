@@ -881,8 +881,11 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
         m_overflowHeight = max(m_overflowHeight, height() + shadowBottom);
 
         if (hasReflection()) {
-            m_overflowTop = min(m_overflowTop, reflectionBox().y());
-            m_overflowHeight = max(m_overflowHeight, reflectionBox().bottom());
+            IntRect reflection(reflectionBox());
+            m_overflowLeft = min(m_overflowLeft, reflection.x());
+            m_overflowWidth = max(m_overflowWidth, reflection.right());
+            m_overflowTop = min(m_overflowTop, reflection.y());
+            m_overflowHeight = max(m_overflowHeight, reflection.bottom());
         }
     }
 
