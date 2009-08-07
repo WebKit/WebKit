@@ -48,13 +48,10 @@ namespace WebCore {
     // Interface to a repository which manages references to the set of active shared workers.
     class SharedWorkerRepository {
     public:
-        // Static factory for getting the browser-specific repository implementation.
-        static SharedWorkerRepository* instance();
-
         // Connects the passed SharedWorker object with the specified worker thread, creating a new thread if necessary.
-        void connect(PassRefPtr<SharedWorker>, PassOwnPtr<MessagePortChannel>, const KURL&, const String& name, ExceptionCode&);
-    protected:
-        ~SharedWorkerRepository() { }
+        static void connect(PassRefPtr<SharedWorker>, PassOwnPtr<MessagePortChannel>, const KURL&, const String& name, ExceptionCode&);
+    private:
+        SharedWorkerRepository() { }
     };
 
 } // namespace WebCore

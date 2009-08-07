@@ -1,3 +1,44 @@
+2009-08-07  Drew Wilson  <atwilson@google.com>
+
+        Reviewed by David Levin.
+
+        SharedWorkers should be shared
+        https://bugs.webkit.org/show_bug.cgi?id=28058
+
+        Added tracking of shared workers to the SharedWorkerRepository.
+
+        * workers/DefaultSharedWorkerRepository.cpp:
+        (WebCore::SharedWorkerProxy::create):
+        Changed SharedWorkerProxy to derive from ThreadSafeShared, as it needs to outlive the repository (if closed while some documents are still loading).
+        (WebCore::SharedWorkerProxy::thread):
+        (WebCore::SharedWorkerProxy::closing):
+        Added flag used to determine whether the worker has closed itself while loading.
+        (WebCore::SharedWorkerProxy::url):
+        (WebCore::SharedWorkerProxy::name):
+        Proxy now tracks worker URL and name to allow validity checks per section 4.8.3 of the WebWorkers spec.
+        (WebCore::SharedWorkerProxy::SharedWorkerProxy):
+        (WebCore::SharedWorkerProxy::addToDocumentSet):
+        Added API to track the document set for a worker to allow worker shutdown. Currently does nothing.
+        (WebCore::SharedWorkerScriptLoader::SharedWorkerScriptLoader):
+        Renamed SharedWorkerLoader to be SharedWorkerScriptLoader for clarity.
+        (WebCore::SharedWorkerScriptLoader::load):
+        (WebCore::SharedWorkerScriptLoader::notifyFinished):
+        (WebCore::DefaultSharedWorkerRepository::instance):
+        (WebCore::DefaultSharedWorkerRepository::workerScriptLoaded):
+        Now handles "worker already loaded" case.
+        (WebCore::SharedWorkerRepository::connect):
+        Delegates to DefaultSharedWorkerRepository::connectToWorker
+        (WebCore::DefaultSharedWorkerRepository::connectToWorker):
+        Added code to track the SharedWorkerProxy in a map, and to handle the "worker already loaded" case.
+        (WebCore::DefaultSharedWorkerRepository::getProxy):
+        Atomic get-or-create operation on the internal tracking HashMap.
+        * workers/DefaultSharedWorkerRepository.h:
+        * workers/SharedWorker.cpp:
+        (WebCore::SharedWorker::SharedWorker):
+        * workers/SharedWorkerRepository.h:
+        Removed instance() API and made constructor private to prevent instantiation.
+        (WebCore::SharedWorkerRepository::SharedWorkerRepository):
+
 2009-08-07  Maxime Simon  <simon.maxime@gmail.com>
 
         Reviewed by Eric Seidel.

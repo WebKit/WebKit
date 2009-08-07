@@ -52,7 +52,7 @@ SharedWorker::SharedWorker(const String& url, const String& name, ScriptExecutio
     KURL scriptUrl = resolveURL(url, ec);
     if (ec)
         return;
-    SharedWorkerRepository::instance()->connect(this, remotePort.release(), scriptUrl, name, ec);
+    SharedWorkerRepository::connect(this, remotePort.release(), scriptUrl, name, ec);
 }
 
 SharedWorker::~SharedWorker()

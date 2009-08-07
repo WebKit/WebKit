@@ -37,6 +37,9 @@
 #include "ActiveDOMObject.h"
 #include "MessagePort.h"
 #include "NotImplemented.h"
+#include "PlatformString.h"
+#include "SecurityOrigin.h"
+#include "SecurityOriginHash.h"
 #include "SharedWorker.h"
 #include "SharedWorkerContext.h"
 #include "SharedWorkerThread.h"
@@ -44,19 +47,48 @@
 #include "WorkerScriptLoader.h"
 #include "WorkerScriptLoaderClient.h"
 
+#include <wtf/Threading.h>
+
 namespace WebCore {
 
-class SharedWorkerProxy : public WorkerLoaderProxy {
+class SharedWorkerProxy : public ThreadSafeShared<SharedWorkerProxy>, public WorkerLoaderProxy {
 public:
+    static PassRefPtr<SharedWorkerProxy> create(const String& name, const KURL& url) { return adoptRef(new SharedWorkerProxy(name, url)); }
+
     void setThread(PassRefPtr<SharedWorkerThread> thread) { m_thread = thread; }
+    SharedWorkerThread* thread() { return m_thread.get(); }
+    bool closing() const { return m_closing; }
+    KURL url() const { return m_url.copy(); }
+    String name() const { return m_name.copy(); }
 
     // WorkerLoaderProxy
     // FIXME: Implement WorkerLoaderProxy APIs by proxying to an active document.
     virtual void postTaskToLoader(PassRefPtr<ScriptExecutionContext::Task>) { notImplemented(); }
     virtual void postTaskForModeToWorkerContext(PassRefPtr<ScriptExecutionContext::Task>, const String&) { notImplemented(); }
+
+    // Updates the list of the worker's documents, per section 4.5 of the WebWorkers spec.
+    void addToWorkerDocuments(ScriptExecutionContext*);
 private:
+    SharedWorkerProxy(const String& name, const KURL&);
+    bool m_closing;
+    String m_name;
+    KURL m_url;
     RefPtr<SharedWorkerThread> m_thread;
 };
+
+SharedWorkerProxy::SharedWorkerProxy(const String& name, const KURL& url)
+    : m_closing(false)
+    , m_name(name.copy())
+    , m_url(url.copy())
+{
+}
+
+void SharedWorkerProxy::addToWorkerDocuments(ScriptExecutionContext* context)
+{
+    // Nested workers are not yet supported, so passed-in context should always be a Document.
+    ASSERT(context->isDocument());
+    // FIXME: track referring documents so we can shutdown the thread when the last one exits and remove the proxy from the cache.
+}
 
 class SharedWorkerConnectTask : public ScriptExecutionContext::Task {
 public:
@@ -84,30 +116,31 @@ private:
     OwnPtr<MessagePortChannel> m_channel;
 };
 
-class SharedWorkerLoader : public RefCounted<SharedWorkerLoader>, public ActiveDOMObject, private WorkerScriptLoaderClient {
+// Loads the script on behalf of a worker.
+class SharedWorkerScriptLoader : public RefCounted<SharedWorkerScriptLoader>, public ActiveDOMObject, private WorkerScriptLoaderClient {
 public:
-    SharedWorkerLoader(PassRefPtr<SharedWorker>, PassOwnPtr<MessagePortChannel>, const String&);
+    SharedWorkerScriptLoader(PassRefPtr<SharedWorker>, PassOwnPtr<MessagePortChannel>, PassRefPtr<SharedWorkerProxy>);
     void load(const KURL&);
 
+private:
     // WorkerScriptLoaderClient callback
     virtual void notifyFinished();
 
-private:
     RefPtr<SharedWorker> m_worker;
     OwnPtr<MessagePortChannel> m_port;
-    String m_name;
+    RefPtr<SharedWorkerProxy> m_proxy;
     OwnPtr<WorkerScriptLoader> m_scriptLoader;
 };
 
-SharedWorkerLoader::SharedWorkerLoader(PassRefPtr<SharedWorker> worker, PassOwnPtr<MessagePortChannel> port, const String& name)
+SharedWorkerScriptLoader::SharedWorkerScriptLoader(PassRefPtr<SharedWorker> worker, PassOwnPtr<MessagePortChannel> port, PassRefPtr<SharedWorkerProxy> proxy)
     : ActiveDOMObject(worker->scriptExecutionContext(), this)
     , m_worker(worker)
     , m_port(port)
-    , m_name(name)
+    , m_proxy(proxy)
 {
 }
 
-void SharedWorkerLoader::load(const KURL& url)
+void SharedWorkerScriptLoader::load(const KURL& url)
 {
     // Mark this object as active for the duration of the load.
     ASSERT(!hasPendingActivity());
@@ -118,44 +151,83 @@ void SharedWorkerLoader::load(const KURL& url)
     setPendingActivity(this);
 }
 
-void SharedWorkerLoader::notifyFinished()
+void SharedWorkerScriptLoader::notifyFinished()
 {
     // Hand off the just-loaded code to the repository to start up the worker thread.
     if (m_scriptLoader->failed())
         m_worker->dispatchLoadErrorEvent();
     else
-        DefaultSharedWorkerRepository::instance()->workerScriptLoaded(m_name, m_scriptLoader->url(), scriptExecutionContext()->userAgent(m_scriptLoader->url()), m_scriptLoader->script(), m_port.release());
+        DefaultSharedWorkerRepository::instance().workerScriptLoaded(*m_proxy, scriptExecutionContext()->userAgent(m_scriptLoader->url()), m_scriptLoader->script(), m_port.release());
 
     // This frees this object - must be the last action in this function.
     unsetPendingActivity(this);
 }
 
-SharedWorkerRepository* SharedWorkerRepository::instance()
-{
-    return DefaultSharedWorkerRepository::instance();
-}
-
-DefaultSharedWorkerRepository* DefaultSharedWorkerRepository::instance()
+DefaultSharedWorkerRepository& DefaultSharedWorkerRepository::instance()
 {
     AtomicallyInitializedStatic(DefaultSharedWorkerRepository*, instance = new DefaultSharedWorkerRepository);
-    return instance;
+    return *instance;
 }
 
-void DefaultSharedWorkerRepository::workerScriptLoaded(const String& name, const KURL& url, const String& userAgent, const String& workerScript, PassOwnPtr<MessagePortChannel> port)
+void DefaultSharedWorkerRepository::workerScriptLoaded(SharedWorkerProxy& proxy, const String& userAgent, const String& workerScript, PassOwnPtr<MessagePortChannel> port)
 {
-    // FIXME: Cache the proxy to allow sharing and to allow cleanup after the thread exits.
-    SharedWorkerProxy* proxy = new SharedWorkerProxy();
-    RefPtr<SharedWorkerThread> thread = SharedWorkerThread::create(name, url, userAgent, workerScript, *proxy);
-    proxy->setThread(thread);
-    thread->start();
-    thread->runLoop().postTask(SharedWorkerConnectTask::create(port));
+    MutexLocker lock(m_lock);
+    if (proxy.closing())
+        return;
+
+    // Another loader may have already started up a thread for this proxy - if so, just send a connect to the pre-existing thread.
+    if (!proxy.thread()) {
+        RefPtr<SharedWorkerThread> thread = SharedWorkerThread::create(proxy.name(), proxy.url(), userAgent, workerScript, proxy);
+        proxy.setThread(thread);
+        thread->start();
+    }
+    proxy.thread()->runLoop().postTask(SharedWorkerConnectTask::create(port));
 }
 
-void SharedWorkerRepository::connect(PassRefPtr<SharedWorker> worker, PassOwnPtr<MessagePortChannel> port, const KURL& url, const String& name, ExceptionCode&)
+void SharedWorkerRepository::connect(PassRefPtr<SharedWorker> worker, PassOwnPtr<MessagePortChannel> port, const KURL& url, const String& name, ExceptionCode& ec)
 {
-    // Create a loader to load/initialize the requested worker.
-    RefPtr<SharedWorkerLoader> loader = adoptRef(new SharedWorkerLoader(worker, port, name));
-    loader->load(url);
+    DefaultSharedWorkerRepository::instance().connectToWorker(worker, port, url, name, ec);
+}
+
+void DefaultSharedWorkerRepository::connectToWorker(PassRefPtr<SharedWorker> worker, PassOwnPtr<MessagePortChannel> port, const KURL& url, const String& name, ExceptionCode& ec)
+{
+    MutexLocker lock(m_lock);
+    ASSERT(worker->scriptExecutionContext()->securityOrigin()->canAccess(SecurityOrigin::create(url).get()));
+    // Fetch a proxy corresponding to this SharedWorker.
+    RefPtr<SharedWorkerProxy> proxy = getProxy(name, url);
+    proxy->addToWorkerDocuments(worker->scriptExecutionContext());
+    if (proxy->url() != url) {
+        // Proxy already existed under alternate URL - return an error.
+        ec = URL_MISMATCH_ERR;
+        return;
+    }
+    // If proxy is already running, just connect to it - otherwise, kick off a loader to load the script.
+    if (proxy->thread())
+        proxy->thread()->runLoop().postTask(SharedWorkerConnectTask::create(port));
+    else {
+        RefPtr<SharedWorkerScriptLoader> loader = adoptRef(new SharedWorkerScriptLoader(worker, port.release(), proxy.release()));
+        loader->load(url);
+    }
+}
+
+// Creates a new SharedWorkerProxy or returns an existing one from the repository. Must only be called while the repository mutex is held.
+PassRefPtr<SharedWorkerProxy> DefaultSharedWorkerRepository::getProxy(const String& name, const KURL& url)
+{
+    // Look for an existing worker, and create one if it doesn't exist.
+    // Items in the cache are freed on another thread, so copy the URL before creating the origin, to make sure no references to external strings linger.
+    RefPtr<SecurityOrigin> origin = SecurityOrigin::create(url.copy());
+    SharedWorkerNameMap* nameMap = m_cache.get(origin);
+    if (!nameMap) {
+        nameMap = new SharedWorkerNameMap();
+        m_cache.set(origin, nameMap);
+    }
+
+    RefPtr<SharedWorkerProxy> proxy = nameMap->get(name);
+    if (!proxy.get()) {
+        proxy = SharedWorkerProxy::create(name, url);
+        nameMap->set(proxy->name(), proxy);
+    }
+    return proxy;
 }
 
 DefaultSharedWorkerRepository::DefaultSharedWorkerRepository()
