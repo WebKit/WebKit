@@ -93,7 +93,7 @@ while (<LOG>) {
         }
     }
 
-    if(!isGit() || (/^#/)) {
+    if (!isGit() || /^#/) { #
         $logContents .= $_;
     } else {
         # $_ contains the current git log message
@@ -108,9 +108,7 @@ close LOG;
 # We want to match the line endings of the existing log file in case they're
 # different from perl's line endings.
 my $endl = "\n";
-if ($logContents =~ /(\r?\n)/g) {
-    $endl = $1;
-}
+$endl = $1 if $logContents =~ /(\r?\n)/;
 
 my $keepExistingLog = 1;
 if ($regenerateLog && $existingLog && scalar(@changeLogs) > 0) {
@@ -149,8 +147,8 @@ for my $changeLog (@changeLogs) {
             my $currentLineBlankLines = $blankLines;
             $blankLines = "";
 
-            # Remove identation spaces
-            $line =~ s/^\s{8}//;
+            # Remove indentation spaces
+            $line =~ s/^ {8}//;
 
             # Save the reviewed by line
             if ($line =~ m/^Reviewed by .*/) {
@@ -171,7 +169,7 @@ for my $changeLog (@changeLogs) {
 
             # Attempt to insert the "patch by" line, after the first blank line.
             if ($previousLineWasBlank && $hasAuthorInfoToWrite && $lineCount > 0) {
-                my $authorAndCommitterAreSamePerson = $email eq $ENV{'EMAIL_ADDRESS'};
+                my $authorAndCommitterAreSamePerson = $ENV{EMAIL_ADDRESS} && $email eq $ENV{EMAIL_ADDRESS};
                 if (!$authorAndCommitterAreSamePerson) {
                     $contents .= "Patch by $author <$email> on $date\n";
                     $hasAuthorInfoToWrite = 0;
