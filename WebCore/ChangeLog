@@ -1,3 +1,19 @@
+2009-08-07  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Eric Seidel.
+
+        Cairo-based Windows port does not handle cookies properly
+        https://bugs.webkit.org/show_bug.cgi?id=27414
+
+        curl handles cookies by itself, so using WinINet functions
+        to get and set cookies is wrong.
+
+        Replace CookieJarWin.cpp with CookieJarCurl.cpp so that
+        cookies can be implemented later once curl provides an API to
+        get and set cookies.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
 2009-08-07  Michael Nordman  <michaeln@google.com>
 
         Reviewed by Dimitri Glazkov.
