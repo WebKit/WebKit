@@ -1,3 +1,17 @@
+2009-08-07  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Back out r46847 and fix the Qt build system to always generate
+        all the JS binding files from IDL files. The generated files
+        have #if feature guards, so the #ifs are not needed in the
+        files using them.
+
+        * WebCore.pro:
+        * bindings/js/JSEventTarget.cpp:
+        * bindings/js/JSWorkerContextBase.cpp:
+        * bindings/js/WorkerScriptController.cpp:
+
 2009-08-07  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Adele Peterson.

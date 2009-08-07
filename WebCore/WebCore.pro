@@ -418,9 +418,12 @@ IDL_BINDINGS += \
     html/ImageData.idl \
     html/MediaError.idl \
     html/TextMetrics.idl \
+    html/TimeRanges.idl \
     html/ValidityState.idl \
     html/VoidCallback.idl \
     inspector/InspectorBackend.idl \
+    inspector/JavaScriptCallFrame.idl \
+    loader/appcache/DOMApplicationCache.idl \
     page/BarInfo.idl \
     page/Console.idl \
     page/Coordinates.idl \
@@ -434,16 +437,170 @@ IDL_BINDINGS += \
     page/PositionError.idl \
     page/Screen.idl \
     page/WebKitPoint.idl \
+    page/WorkerNavigator.idl \
     plugins/Plugin.idl \
     plugins/MimeType.idl \
     plugins/PluginArray.idl \
     plugins/MimeTypeArray.idl \
+    storage/Database.idl \
+    storage/Storage.idl \
+    storage/StorageEvent.idl \
+    storage/SQLError.idl \
+    storage/SQLResultSet.idl \
+    storage/SQLResultSetRowList.idl \
+    storage/SQLTransaction.idl \
+    svg/SVGZoomEvent.idl \
+    svg/SVGAElement.idl \
+    svg/SVGAltGlyphElement.idl \
+    svg/SVGAngle.idl \
+    svg/SVGAnimateColorElement.idl \
+    svg/SVGAnimatedAngle.idl \
+    svg/SVGAnimatedBoolean.idl \
+    svg/SVGAnimatedEnumeration.idl \
+    svg/SVGAnimatedInteger.idl \
+    svg/SVGAnimatedLength.idl \
+    svg/SVGAnimatedLengthList.idl \
+    svg/SVGAnimatedNumber.idl \
+    svg/SVGAnimatedNumberList.idl \
+    svg/SVGAnimatedPreserveAspectRatio.idl \
+    svg/SVGAnimatedRect.idl \
+    svg/SVGAnimatedString.idl \
+    svg/SVGAnimatedTransformList.idl \
+    svg/SVGAnimateElement.idl \
+    svg/SVGAnimateTransformElement.idl \
+    svg/SVGAnimationElement.idl \
+    svg/SVGCircleElement.idl \
+    svg/SVGClipPathElement.idl \
+    svg/SVGColor.idl \
+    svg/SVGComponentTransferFunctionElement.idl \
+    svg/SVGCursorElement.idl \
+    svg/SVGDefinitionSrcElement.idl \
+    svg/SVGDefsElement.idl \
+    svg/SVGDescElement.idl \
+    svg/SVGDocument.idl \
+    svg/SVGElement.idl \
+    svg/SVGElementInstance.idl \
+    svg/SVGElementInstanceList.idl \
+    svg/SVGEllipseElement.idl \
+    svg/SVGException.idl \
+    svg/SVGFEBlendElement.idl \
+    svg/SVGFEColorMatrixElement.idl \
+    svg/SVGFEComponentTransferElement.idl \
+    svg/SVGFECompositeElement.idl \
+    svg/SVGFEDiffuseLightingElement.idl \
+    svg/SVGFEDisplacementMapElement.idl \
+    svg/SVGFEDistantLightElement.idl \
+    svg/SVGFEFloodElement.idl \
+    svg/SVGFEFuncAElement.idl \
+    svg/SVGFEFuncBElement.idl \
+    svg/SVGFEFuncGElement.idl \
+    svg/SVGFEFuncRElement.idl \
+    svg/SVGFEGaussianBlurElement.idl \
+    svg/SVGFEImageElement.idl \
+    svg/SVGFEMergeElement.idl \
+    svg/SVGFEMergeNodeElement.idl \
+    svg/SVGFEOffsetElement.idl \
+    svg/SVGFEPointLightElement.idl \
+    svg/SVGFESpecularLightingElement.idl \
+    svg/SVGFESpotLightElement.idl \
+    svg/SVGFETileElement.idl \
+    svg/SVGFETurbulenceElement.idl \
+    svg/SVGFilterElement.idl \
+    svg/SVGFontElement.idl \
+    svg/SVGFontFaceElement.idl \
+    svg/SVGFontFaceFormatElement.idl \
+    svg/SVGFontFaceNameElement.idl \
+    svg/SVGFontFaceSrcElement.idl \
+    svg/SVGFontFaceUriElement.idl \
+    svg/SVGForeignObjectElement.idl \
+    svg/SVGGElement.idl \
+    svg/SVGGlyphElement.idl \
+    svg/SVGGradientElement.idl \
+    svg/SVGHKernElement.idl \
+    svg/SVGImageElement.idl \
+    svg/SVGLength.idl \
+    svg/SVGLengthList.idl \
+    svg/SVGLinearGradientElement.idl \
+    svg/SVGLineElement.idl \
+    svg/SVGMarkerElement.idl \
+    svg/SVGMaskElement.idl \
+    svg/SVGMatrix.idl \
+    svg/SVGMetadataElement.idl \
+    svg/SVGMissingGlyphElement.idl \
+    svg/SVGNumber.idl \
+    svg/SVGNumberList.idl \
+    svg/SVGPaint.idl \
+    svg/SVGPathElement.idl \
+    svg/SVGPathSegArcAbs.idl \
+    svg/SVGPathSegArcRel.idl \
+    svg/SVGPathSegClosePath.idl \
+    svg/SVGPathSegCurvetoCubicAbs.idl \
+    svg/SVGPathSegCurvetoCubicRel.idl \
+    svg/SVGPathSegCurvetoCubicSmoothAbs.idl \
+    svg/SVGPathSegCurvetoCubicSmoothRel.idl \
+    svg/SVGPathSegCurvetoQuadraticAbs.idl \
+    svg/SVGPathSegCurvetoQuadraticRel.idl \
+    svg/SVGPathSegCurvetoQuadraticSmoothAbs.idl \
+    svg/SVGPathSegCurvetoQuadraticSmoothRel.idl \
+    svg/SVGPathSeg.idl \
+    svg/SVGPathSegLinetoAbs.idl \
+    svg/SVGPathSegLinetoHorizontalAbs.idl \
+    svg/SVGPathSegLinetoHorizontalRel.idl \
+    svg/SVGPathSegLinetoRel.idl \
+    svg/SVGPathSegLinetoVerticalAbs.idl \
+    svg/SVGPathSegLinetoVerticalRel.idl \
+    svg/SVGPathSegList.idl \
+    svg/SVGPathSegMovetoAbs.idl \
+    svg/SVGPathSegMovetoRel.idl \
+    svg/SVGPatternElement.idl \
+    svg/SVGPoint.idl \
+    svg/SVGPointList.idl \
+    svg/SVGPolygonElement.idl \
+    svg/SVGPolylineElement.idl \
+    svg/SVGPreserveAspectRatio.idl \
+    svg/SVGRadialGradientElement.idl \
+    svg/SVGRectElement.idl \
+    svg/SVGRect.idl \
+    svg/SVGRenderingIntent.idl \
+    svg/SVGScriptElement.idl \
+    svg/SVGSetElement.idl \
+    svg/SVGStopElement.idl \
+    svg/SVGStringList.idl \
+    svg/SVGStyleElement.idl \
+    svg/SVGSVGElement.idl \
+    svg/SVGSwitchElement.idl \
+    svg/SVGSymbolElement.idl \
+    svg/SVGTextContentElement.idl \
+    svg/SVGTextElement.idl \
+    svg/SVGTextPathElement.idl \
+    svg/SVGTextPositioningElement.idl \
+    svg/SVGTitleElement.idl \
+    svg/SVGTransform.idl \
+    svg/SVGTransformList.idl \
+    svg/SVGTRefElement.idl \
+    svg/SVGTSpanElement.idl \
+    svg/SVGUnitTypes.idl \
+    svg/SVGUseElement.idl \
+    svg/SVGViewElement.idl \
+    workers/AbstractWorker.idl \
+    workers/DedicatedWorkerContext.idl \
+    workers/SharedWorker.idl \
+    workers/SharedWorkerContext.idl \
+    workers/Worker.idl \
+    workers/WorkerContext.idl \
+    workers/WorkerLocation.idl \
     xml/DOMParser.idl \
     xml/XMLHttpRequest.idl \
     xml/XMLHttpRequestException.idl \
     xml/XMLHttpRequestProgressEvent.idl \
     xml/XMLHttpRequestUpload.idl \
-    xml/XMLSerializer.idl
+    xml/XMLSerializer.idl \
+    xml/XPathNSResolver.idl \
+    xml/XPathException.idl \
+    xml/XPathExpression.idl \
+    xml/XPathResult.idl \
+    xml/XPathEvaluator.idl \
+    xml/XSLTProcessor.idl
 
 
 SOURCES += \
@@ -2321,13 +2478,6 @@ contains(DEFINES, ENABLE_DATABASE=1) {
         bindings/js/JSDatabaseCustom.cpp \
         bindings/js/JSSQLResultSetRowListCustom.cpp \
         bindings/js/JSSQLTransactionCustom.cpp
-
-    IDL_BINDINGS += \
-        storage/Database.idl \
-        storage/SQLError.idl \
-        storage/SQLResultSet.idl \
-        storage/SQLResultSetRowList.idl \
-        storage/SQLTransaction.idl
 }
 
 contains(DEFINES, ENABLE_DOM_STORAGE=1) {
@@ -2370,10 +2520,6 @@ contains(DEFINES, ENABLE_DOM_STORAGE=1) {
         storage/StorageNamespace.cpp \
         storage/StorageNamespaceImpl.cpp \
         storage/StorageSyncManager.cpp
-
-    IDL_BINDINGS += \
-        storage/Storage.idl \
-        storage/StorageEvent.idl
 }
 
 contains(DEFINES, ENABLE_ICONDATABASE=1) {
@@ -2388,14 +2534,6 @@ contains(DEFINES, ENABLE_ICONDATABASE=1) {
 
 contains(DEFINES, ENABLE_WORKERS=1) {
     FEATURE_DEFINES_JAVASCRIPT += ENABLE_WORKERS=1
-
-    IDL_BINDINGS += \
-        page/WorkerNavigator.idl \
-        workers/AbstractWorker.idl \
-        workers/DedicatedWorkerContext.idl \
-        workers/Worker.idl \
-        workers/WorkerContext.idl \
-        workers/WorkerLocation.idl
 
     SOURCES += \
         bindings/js/JSAbstractWorkerCustom.cpp \
@@ -2422,10 +2560,6 @@ contains(DEFINES, ENABLE_WORKERS=1) {
 contains(DEFINES, SHARED_WORKERS=1) {
     FEATURE_DEFINES_JAVASCRIPT += ENABLE_SHARED_WORKERS=1
 
-    IDL_BINDINGS += \
-        workers/SharedWorker.idl \
-        workers/SharedWorkerContext.idl
-
     SOURCES += \
         bindings/js/JSSharedWorkerConstructor.cpp \
         bindings/js/JSSharedWorkerContextCustom.cpp \
@@ -2438,9 +2572,6 @@ contains(DEFINES, SHARED_WORKERS=1) {
 
 contains(DEFINES, ENABLE_VIDEO=1) {
     FEATURE_DEFINES_JAVASCRIPT += ENABLE_VIDEO=1
-
-    IDL_BINDINGS += \
-        html/TimeRanges.idl
 
     SOURCES += \
         html/HTMLAudioElement.cpp \
@@ -2478,13 +2609,6 @@ contains(DEFINES, ENABLE_XPATH=1) {
 
     XPATHBISON = $$PWD/xml/XPathGrammar.y
 
-    IDL_BINDINGS += \
-        xml/XPathNSResolver.idl \
-        xml/XPathException.idl \
-        xml/XPathExpression.idl \
-        xml/XPathResult.idl \
-        xml/XPathEvaluator.idl
-
     SOURCES += \
         xml/NativeXPathNSResolver.cpp \
         xml/XPathEvaluator.cpp \
@@ -2518,9 +2642,6 @@ contains(DEFINES, ENABLE_XSLT=1) {
     win32-msvc* {
         LIBS += -llibxml2 -llibxslt
     }
-
-    IDL_BINDINGS += \
-        xml/XSLTProcessor.idl
 
     SOURCES += \
         bindings/js/JSXSLTProcessorConstructor.cpp \
@@ -2618,141 +2739,6 @@ contains(DEFINES, ENABLE_SVG=1) {
     SVG_NAMES = $$PWD/svg/svgtags.in
 
     XLINK_NAMES = $$PWD/svg/xlinkattrs.in
-
-    IDL_BINDINGS += \
-        svg/SVGZoomEvent.idl \
-        svg/SVGAElement.idl \
-        svg/SVGAltGlyphElement.idl \
-        svg/SVGAngle.idl \
-        svg/SVGAnimateColorElement.idl \
-        svg/SVGAnimatedAngle.idl \
-        svg/SVGAnimatedBoolean.idl \
-        svg/SVGAnimatedEnumeration.idl \
-        svg/SVGAnimatedInteger.idl \
-        svg/SVGAnimatedLength.idl \
-        svg/SVGAnimatedLengthList.idl \
-        svg/SVGAnimatedNumber.idl \
-        svg/SVGAnimatedNumberList.idl \
-        svg/SVGAnimatedPreserveAspectRatio.idl \
-        svg/SVGAnimatedRect.idl \
-        svg/SVGAnimatedString.idl \
-        svg/SVGAnimatedTransformList.idl \
-        svg/SVGAnimateElement.idl \
-        svg/SVGAnimateTransformElement.idl \
-        svg/SVGAnimationElement.idl \
-        svg/SVGCircleElement.idl \
-        svg/SVGClipPathElement.idl \
-        svg/SVGColor.idl \
-        svg/SVGComponentTransferFunctionElement.idl \
-        svg/SVGCursorElement.idl \
-        svg/SVGDefinitionSrcElement.idl \
-        svg/SVGDefsElement.idl \
-        svg/SVGDescElement.idl \
-        svg/SVGDocument.idl \
-        svg/SVGElement.idl \
-        svg/SVGElementInstance.idl \
-        svg/SVGElementInstanceList.idl \
-        svg/SVGEllipseElement.idl \
-        svg/SVGException.idl \
-        svg/SVGFEBlendElement.idl \
-        svg/SVGFEColorMatrixElement.idl \
-        svg/SVGFEComponentTransferElement.idl \
-        svg/SVGFECompositeElement.idl \
-        svg/SVGFEDiffuseLightingElement.idl \
-        svg/SVGFEDisplacementMapElement.idl \
-        svg/SVGFEDistantLightElement.idl \
-        svg/SVGFEFloodElement.idl \
-        svg/SVGFEFuncAElement.idl \
-        svg/SVGFEFuncBElement.idl \
-        svg/SVGFEFuncGElement.idl \
-        svg/SVGFEFuncRElement.idl \
-        svg/SVGFEGaussianBlurElement.idl \
-        svg/SVGFEImageElement.idl \
-        svg/SVGFEMergeElement.idl \
-        svg/SVGFEMergeNodeElement.idl \
-        svg/SVGFEOffsetElement.idl \
-        svg/SVGFEPointLightElement.idl \
-        svg/SVGFESpecularLightingElement.idl \
-        svg/SVGFESpotLightElement.idl \
-        svg/SVGFETileElement.idl \
-        svg/SVGFETurbulenceElement.idl \
-        svg/SVGFilterElement.idl \
-        svg/SVGFontElement.idl \
-        svg/SVGFontFaceElement.idl \
-        svg/SVGFontFaceFormatElement.idl \
-        svg/SVGFontFaceNameElement.idl \
-        svg/SVGFontFaceSrcElement.idl \
-        svg/SVGFontFaceUriElement.idl \
-        svg/SVGForeignObjectElement.idl \
-        svg/SVGGElement.idl \
-        svg/SVGGlyphElement.idl \
-        svg/SVGGradientElement.idl \
-        svg/SVGHKernElement.idl \
-        svg/SVGImageElement.idl \
-        svg/SVGLength.idl \
-        svg/SVGLengthList.idl \
-        svg/SVGLinearGradientElement.idl \
-        svg/SVGLineElement.idl \
-        svg/SVGMarkerElement.idl \
-        svg/SVGMaskElement.idl \
-        svg/SVGMatrix.idl \
-        svg/SVGMetadataElement.idl \
-        svg/SVGMissingGlyphElement.idl \
-        svg/SVGNumber.idl \
-        svg/SVGNumberList.idl \
-        svg/SVGPaint.idl \
-        svg/SVGPathElement.idl \
-        svg/SVGPathSegArcAbs.idl \
-        svg/SVGPathSegArcRel.idl \
-        svg/SVGPathSegClosePath.idl \
-        svg/SVGPathSegCurvetoCubicAbs.idl \
-        svg/SVGPathSegCurvetoCubicRel.idl \
-        svg/SVGPathSegCurvetoCubicSmoothAbs.idl \
-        svg/SVGPathSegCurvetoCubicSmoothRel.idl \
-        svg/SVGPathSegCurvetoQuadraticAbs.idl \
-        svg/SVGPathSegCurvetoQuadraticRel.idl \
-        svg/SVGPathSegCurvetoQuadraticSmoothAbs.idl \
-        svg/SVGPathSegCurvetoQuadraticSmoothRel.idl \
-        svg/SVGPathSeg.idl \
-        svg/SVGPathSegLinetoAbs.idl \
-        svg/SVGPathSegLinetoHorizontalAbs.idl \
-        svg/SVGPathSegLinetoHorizontalRel.idl \
-        svg/SVGPathSegLinetoRel.idl \
-        svg/SVGPathSegLinetoVerticalAbs.idl \
-        svg/SVGPathSegLinetoVerticalRel.idl \
-        svg/SVGPathSegList.idl \
-        svg/SVGPathSegMovetoAbs.idl \
-        svg/SVGPathSegMovetoRel.idl \
-        svg/SVGPatternElement.idl \
-        svg/SVGPoint.idl \
-        svg/SVGPointList.idl \
-        svg/SVGPolygonElement.idl \
-        svg/SVGPolylineElement.idl \
-        svg/SVGPreserveAspectRatio.idl \
-        svg/SVGRadialGradientElement.idl \
-        svg/SVGRectElement.idl \
-        svg/SVGRect.idl \
-        svg/SVGRenderingIntent.idl \
-        svg/SVGScriptElement.idl \
-        svg/SVGSetElement.idl \
-        svg/SVGStopElement.idl \
-        svg/SVGStringList.idl \
-        svg/SVGStyleElement.idl \
-        svg/SVGSVGElement.idl \
-        svg/SVGSwitchElement.idl \
-        svg/SVGSymbolElement.idl \
-        svg/SVGTextContentElement.idl \
-        svg/SVGTextElement.idl \
-        svg/SVGTextPathElement.idl \
-        svg/SVGTextPositioningElement.idl \
-        svg/SVGTitleElement.idl \
-        svg/SVGTransform.idl \
-        svg/SVGTransformList.idl \
-        svg/SVGTRefElement.idl \
-        svg/SVGTSpanElement.idl \
-        svg/SVGUnitTypes.idl \
-        svg/SVGUseElement.idl \
-        svg/SVGViewElement.idl 
 
     SOURCES += \
 # TODO: this-one-is-not-auto-added! FIXME! tmp/SVGElementFactory.cpp \
@@ -3032,9 +3018,6 @@ contains(DEFINES, ENABLE_SVG=1) {
 contains(DEFINES, ENABLE_JAVASCRIPT_DEBUGGER=1) {
     FEATURE_DEFINES_JAVASCRIPT += ENABLE_JAVASCRIPT_DEBUGGER=1
 
-    IDL_BINDINGS += \
-        inspector/JavaScriptCallFrame.idl
-
     SOURCES += \
         bindings/js/JSJavaScriptCallFrameCustom.cpp \
         inspector/JavaScriptCallFrame.cpp \
@@ -3045,9 +3028,6 @@ contains(DEFINES, ENABLE_JAVASCRIPT_DEBUGGER=1) {
 
 contains(DEFINES, ENABLE_OFFLINE_WEB_APPLICATIONS=1) {
     FEATURE_DEFINES_JAVASCRIPT += ENABLE_OFFLINE_WEB_APPLICATIONS=1
-
-IDL_BINDINGS += \
-    loader/appcache/DOMApplicationCache.idl
 
 SOURCES += \
     loader/appcache/ApplicationCache.cpp \
