@@ -1,3 +1,15 @@
+2009-08-07  Yongjun Zhang  <yongjun.zhang@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28069
+
+        Add inline to help winscw compiler resolve specialized argument in 
+        templated functions.  
+
+        * runtime/LiteralParser.cpp:
+        (JSC::LiteralParser::Lexer::lexString):
+
 2009-08-07  Zoltan Horvath  <hzoltan@inf.u-szeged.hu>
 
         Reviewed by Eric Seidel.
