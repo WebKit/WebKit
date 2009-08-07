@@ -400,6 +400,13 @@ WebInspector.DatabasesPanel.prototype = {
             nodes[0].selected = true;
         return dataGrid;
     },
+    
+    resize: function()
+    {
+        var visibleView = this.visibleView;
+        if (visibleView && "resize" in visibleView)
+            visibleView.resize();
+    },
 
     _registerStorageEventListener: function()
     {
@@ -480,6 +487,10 @@ WebInspector.DatabasesPanel.prototype = {
         this.storageViews.style.left = width + "px";
         this.storageViewStatusBarItemsContainer.style.left = width + "px";
         this.sidebarResizeElement.style.left = (width - 3) + "px";
+        
+        var visibleView = this.visibleView;
+        if (visibleView && "resize" in visibleView)
+            visibleView.resize();
     }
 }
 

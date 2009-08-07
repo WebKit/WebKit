@@ -324,6 +324,13 @@ WebInspector.ProfilesPanel.prototype = {
             this.recordButton.title = WebInspector.UIString("Start profiling.");
         }
     },
+    
+    resize: function()
+    {
+        var visibleView = this.visibleView;
+        if (visibleView && "resize" in visibleView)
+            visibleView.resize();
+    },
 
     _updateInterface: function()
     {
@@ -424,6 +431,10 @@ WebInspector.ProfilesPanel.prototype = {
         this.profileViews.style.left = width + "px";
         this.profileViewStatusBarItemsContainer.style.left = width + "px";
         this.sidebarResizeElement.style.left = (width - 3) + "px";
+        
+        var visibleView = this.visibleView;
+        if (visibleView && "resize" in visibleView)
+            visibleView.resize();
     }
 }
 

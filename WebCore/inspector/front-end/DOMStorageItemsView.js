@@ -75,6 +75,7 @@ WebInspector.DOMStorageItemsView.prototype = {
             else {
                 this._dataGrid = dataGrid;
                 this.element.appendChild(dataGrid.element);
+                this._dataGrid.updateWidths();
                 this.deleteButton.removeStyleClass("hidden");
             }
         }
@@ -88,6 +89,12 @@ WebInspector.DOMStorageItemsView.prototype = {
             this._dataGrid = null;
             this.deleteButton.addStyleClass("hidden");
         }
+    },
+    
+    resize: function()
+    {
+        if (this._dataGrid)
+            this._dataGrid.updateWidths();
     },
 
     _deleteButtonClicked: function(event)

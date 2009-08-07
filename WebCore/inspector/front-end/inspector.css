@@ -1881,6 +1881,15 @@ body.inactive .data-grid th.sort-ascending, body.inactive .data-grid th.sort-des
     text-indent: 10px;
 }
 
+.data-grid-resizer {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 5px;
+    z-index: 500;
+    cursor: col-resize;
+}
+
 .storage-view.query {
     font-size: initial;
     font-family: monospace;

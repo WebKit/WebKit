@@ -89,7 +89,8 @@ WebInspector.DataGrid = function(columns)
     cell.className = "corner";
     headerRow.appendChild(cell);
 
-    this._headerTable.appendChild(columnGroup);
+    this._headerTableColumnGroup = columnGroup;
+    this._headerTable.appendChild(this._headerTableColumnGroup);
     this.headerTableBody.appendChild(headerRow);
 
     var fillerRow = document.createElement("tr");
@@ -99,8 +100,9 @@ WebInspector.DataGrid = function(columns)
         var cell = document.createElement("td");
         fillerRow.appendChild(cell);
     }
-
-    this._dataTable.appendChild(columnGroup.cloneNode(true));
+    
+    this._dataTableColumnGroup = columnGroup.cloneNode(true);
+    this._dataTable.appendChild(this._dataTableColumnGroup);
     this.dataTableBody.appendChild(fillerRow);
 
     this.columns = columns || {};
@@ -114,6 +116,8 @@ WebInspector.DataGrid = function(columns)
     this.selected = false;
     this.dataGrid = this;
     this.indentWidth = 15;
+    this.resizers = [];
+    this.columnWidthsInitialized = false;
 }
 
 WebInspector.DataGrid.prototype = {
@@ -159,6 +163,63 @@ WebInspector.DataGrid.prototype = {
         }
 
         return this._dataTableBody;
+    },
+ 
+    // Updates the widths of the table, including the positions of the column
+    // resizers.
+    //
+    // IMPORTANT: This function MUST be called once after the element of the
+    // DataGrid is attached to its parent element and every subsequent time the
+    // width of the parent element is changed in order to make it possible to
+    // resize the columns.
+    //
+    // If this function is not called after the DataGrid is attached to its
+    // parent element, then the DataGrid's columns will not be resizable.
+    updateWidths: function()
+    {
+        var headerTableColumns = this._headerTableColumnGroup.children;
+        
+        var left = 0;
+        var tableWidth = this._dataTable.offsetWidth;
+        var numColumns = headerTableColumns.length;
+        
+        if (!this.columnWidthsInitialized) {
+            // Give all the columns initial widths now so that during a resize,
+            // when the two columns that get resized get a percent value for
+            // their widths, all the other columns already have percent values
+            // for their widths.
+            for (var i = 0; i < numColumns; i++) {
+                var columnWidth = this.headerTableBody.rows[0].cells[i].offsetWidth;
+                var percentWidth = ((columnWidth / tableWidth) * 100) + "%";
+                this._headerTableColumnGroup.children[i].style.width = percentWidth;
+                this._dataTableColumnGroup.children[i].style.width = percentWidth;
+            }
+            this.columnWidthsInitialized = true;
+        }
+        
+        // Make n - 1 resizers for n columns. 
+        for (var i = 0; i < numColumns - 1; i++) {
+            var resizer = this.resizers[i];
+
+            if (!resizer) {
+                // This is the first call to updateWidth, so the resizers need
+                // to be created.
+                resizer = document.createElement("div");
+                resizer.addStyleClass("data-grid-resizer");
+                // This resizer is associated with the column to its right.
+                resizer.rightNeighboringColumnID = i + 1;
+                resizer.addEventListener("mousedown", this._startResizerDragging.bind(this), false);
+                this.element.appendChild(resizer);
+                this.resizers[i] = resizer;
+            }
+
+            // Get the width of the cell in the first (and only) row of the
+            // header table in order to determine the width of the column, since
+            // it is not possible to query a column for its width.
+            left += this.headerTableBody.rows[0].cells[i].offsetWidth;
+            
+            resizer.style.left = left + "px";
+        }
     },
 
     addCreationNode: function(hasChildren)
@@ -441,7 +502,63 @@ WebInspector.DataGrid.prototype = {
             else
                 gridNode.expand();
         }
-    }
+    },
+    
+    _startResizerDragging: function(event)
+    {
+        this.currentResizer = event.target;
+        if (!this.currentResizer.rightNeighboringColumnID)
+            return;
+        WebInspector.elementDragStart(this.lastResizer, this._resizerDragging.bind(this),
+            this._endResizerDragging.bind(this), event, "col-resize");
+    },
+    
+    _resizerDragging: function(event)
+    {
+        var resizer = this.currentResizer;
+        if (!resizer)
+            return;
+        
+        // Constrain the dragpoint to be within the containing div of the
+        // datagrid.
+        var dragPoint = event.clientX - this.element.totalOffsetLeft;
+        // Constrain the dragpoint to be within the space made up by the
+        // column directly to the left and the column directly to the right.
+        var leftEdgeOfPreviousColumn = 0;
+        var firstRowCells = this.headerTableBody.rows[0].cells;
+        for (var i = 0; i < resizer.rightNeighboringColumnID - 1; i++)
+            leftEdgeOfPreviousColumn += firstRowCells[i].offsetWidth;
+            
+        var rightEdgeOfNextColumn = leftEdgeOfPreviousColumn + firstRowCells[resizer.rightNeighboringColumnID - 1].offsetWidth + firstRowCells[resizer.rightNeighboringColumnID].offsetWidth;
+        
+        // Give each column some padding so that they don't disappear.               
+        var leftMinimum = leftEdgeOfPreviousColumn + this.ColumnResizePadding;
+        var rightMaximum = rightEdgeOfNextColumn - this.ColumnResizePadding;
+        
+        dragPoint = Number.constrain(dragPoint, leftMinimum, rightMaximum);
+        
+        resizer.style.left = (dragPoint - this.CenterResizerOverBorderAdjustment) + "px";
+        
+        var percentLeftColumn = (((dragPoint - leftEdgeOfPreviousColumn) / this._dataTable.offsetWidth) * 100) + "%";
+        this._headerTableColumnGroup.children[resizer.rightNeighboringColumnID - 1].style.width = percentLeftColumn;
+        this._dataTableColumnGroup.children[resizer.rightNeighboringColumnID - 1].style.width = percentLeftColumn;
+        
+        var percentRightColumn = (((rightEdgeOfNextColumn - dragPoint) / this._dataTable.offsetWidth) * 100) + "%";
+        this._headerTableColumnGroup.children[resizer.rightNeighboringColumnID].style.width =  percentRightColumn;
+        this._dataTableColumnGroup.children[resizer.rightNeighboringColumnID].style.width = percentRightColumn;
+        
+        event.preventDefault();
+    },
+    
+    _endResizerDragging: function(event)
+    {
+        WebInspector.elementDragEnd(event);
+        this.currentResizer = null;
+    },
+    
+    ColumnResizePadding: 10,
+    
+    CenterResizerOverBorderAdjustment: 3,
 }
 
 WebInspector.DataGrid.prototype.__proto__ = WebInspector.Object.prototype;

@@ -1,3 +1,82 @@
+2009-08-07  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Add the initial implementation of the ability to resize the columns in
+        a DataGrid in the Web Inspector. Enables that functionality in both the
+        Profile View and in the Local Storage View.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=26182
+        
+        In this version, resizing a column can change the width of at most two
+        columns (the columns to the left and right of the resizer being dragged).
+        
+        Possible changes in future patches:
+        
+        1) Be able to specify the minimum size of a column and the maximum size
+           of a column. If the minimum size is equal to the maximum size, the
+           column can't be resized.
+        2) Make the behavior more in line with the following description:
+        
+        Everything before the column that is resized stays fixed size. The
+        resized column changes sizes. The other columns except the last stay
+        the same size. And the last column adjusts to fit with a minimum size.
+        If the last column is already the minimum, the next to last column
+        shrinks, etc.
+        
+        3) Make it possible to scale the column sizes appropriately when the
+           Web Inspector window gets resized.
+        
+        * inspector/front-end/DOMStorageItemsView.js:
+        (WebInspector.DOMStorageItemsView.prototype.update):
+        Once the DataGrid is added to the DOM, update the widths of the
+        DataGrid in order to put the resizers in place.
+        (WebInspector.DOMStorageItemsView.prototype.resize):
+        Update the widths of the DataGrid in order to correctly adjust the
+        positions of the resizers.
+        
+        * inspector/front-end/DataGrid.js:
+        (WebInspector.DataGrid):
+        Store column groups whose widths can later be changed when the columns
+        are resized by the user.
+        Also, keep track of whether the widths of the columns have been
+        initialized.
+        (WebInspector.DataGrid.prototype.updateWidths):
+        Create the resizers for the columns.
+        (WebInspector.DataGrid.prototype._clickInDataTable):
+        Didn't actually change anything in this method, just added a comma to
+        the end of the function.
+        (WebInspector.DataGrid.prototype._startResizerDragging):
+        Store the resizer that is currently dragging.
+        (WebInspector.DataGrid.prototype._resizerDragging):
+        Constrain the area that the resizer can be dragged to the column to
+        it's left and right, with some padding added to make sure that the
+        neighboring columns don't disappear.
+        (WebInspector.DataGrid.prototype._endResizerDragging):
+        
+        * inspector/front-end/DatabasesPanel.js:
+        (WebInspector.DatabasesPanel.prototype.resize):
+        Resize the view.
+        (WebInspector.DatabasesPanel.prototype._updateSidebarWidth):
+        ditto.
+        
+        * inspector/front-end/ProfileView.js:
+        (WebInspector.ProfileView.prototype.show):
+        Now that the DataGrid is actually attached to the DOM, update the
+        widths of the DataGrid in order to put the resizers in place.
+        (WebInspector.ProfileView.prototype.resize):
+        Update the widths of the DataGrid in order to correctly adjust the
+        positions of the resizers.
+        
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype.resize):
+        Resize the view.
+        (WebInspector.ProfilesPanel.prototype._updateSidebarWidth):
+        ditto.
+        
+        * inspector/front-end/inspector.css:
+        Add in a style rule for a resizer in the Data Grid.
+
 2009-08-07  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Tor Arne Vestbø.
