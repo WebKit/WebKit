@@ -1,0 +1,7 @@
+Test that right clicking on the timebar does not cause a seek.
+
+RUN(video.autoplay = true)
+RUN(video.src = 'content/test.mp4')
+EVENT(playing)
+END OF TEST
+

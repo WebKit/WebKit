@@ -1,0 +1,45 @@
+<html>
+    <head>
+        <title>right click on timebar test</title>
+        <script src=video-test.js></script>
+        <script>
+            if (window.layoutTestController)
+                layoutTestController.dumpAsText();
+
+            function click()
+            {
+                if (window.eventSender) {
+                    var x = video.offsetLeft + video.offsetWidth / 2;
+                    var y = video.offsetTop + video.offsetHeight - 10;
+                    eventSender.mouseMoveTo(x, y);
+                    eventSender.contextClick();
+                }
+                window.setTimeout("endTest()", 200);
+            }
+
+            function playing()
+            {
+                window.setTimeout("click()", 100);
+            }
+
+            function seeked()
+            {
+                failTest("Should not seek.");
+            }
+
+            function start()
+            {
+                findMediaElement();
+                waitForEvent('playing', playing);
+                waitForEvent('seeked', seeked);
+                run("video.autoplay = true");
+                run("video.src = 'content/test.mp4'");
+            }    
+        </script>
+    </head>
+
+    <body onload="start()">
+    <p>Test that right clicking on the timebar does not cause a seek.</p>
+    <video controls></video>
+    </body>
+</html>
