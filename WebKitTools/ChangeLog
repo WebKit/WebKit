@@ -1,3 +1,15 @@
+2009-08-07  George Wright  <george.wright@torchmobile.com>
+
+        Reviewed by Adam Treat
+
+        Fix DumpRenderTree for the Qt port to always dump the PNG data unless
+        the expected and actual hashes match.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28077
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::dump):
+
 2009-08-07  Pierre d'Herbemont  <pdherbemont@apple.com>
 
         Reviewed by Eric Seidel.

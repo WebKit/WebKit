@@ -394,10 +394,17 @@ void DumpRenderTree::dump()
 
         fprintf(stdout, "\nActualHash: %s\n", qPrintable(actualHash));
 
+        bool dumpImage = true;
+
         if (!m_expectedHash.isEmpty()) {
             Q_ASSERT(m_expectedHash.length() == 32);
             fprintf(stdout, "\nExpectedHash: %s\n", qPrintable(m_expectedHash));
 
+            if (m_expectedHash == actualHash)
+                dumpImage = false;
+        }
+
+        if (dumpImage) {
             QBuffer buffer;
             buffer.open(QBuffer::WriteOnly);
             image.save(&buffer, "PNG");
