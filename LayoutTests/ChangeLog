@@ -1,3 +1,14 @@
+2009-08-07  Mike Fenton  <mike.fenton@torchmobile.com>
+
+        Reviewed by Adam Treat.
+
+        Add Test results for mac and windows for new tests.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28050
+
+        * platform/mac/fast/forms/text-style-color-expected.txt: Added.
+        * platform/win/fast/forms/text-style-color-expected.txt: Added.
+
 2009-08-07  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Adam Treat.
