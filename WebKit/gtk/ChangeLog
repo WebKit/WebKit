@@ -7501,3 +7501,13 @@
         (WebCore::ChromeClientGdk::print):
         * gtk/WebCoreSupport/ChromeClientGdk.h: Added.
 
+2009-08-07  Luke Kenneth Casson Leighton  <lkcl@lkcl.net>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27428
+
+        * bindings/gdom/GdomDOMObject.cpp: Added.
+        * bindings/gdom/GdomDOMObject.h: Added.
+        * bindings/gdom/GdomDOMObjectPrivate.h: Added.
+
