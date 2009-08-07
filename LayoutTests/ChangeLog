@@ -2,6 +2,16 @@
 
         Reviewed by Adam Treat.
 
+        Move fast/forms/menulist-style-color.html to Skipped list for mac/win.
+        Bug filed - https://bugs.webkit.org/show_bug.cgi?id=28079
+
+        * platform/mac/Skipped:
+        * platform/win/Skipped:
+
+2009-08-07  Mike Fenton  <mike.fenton@torchmobile.com>
+
+        Reviewed by Adam Treat.
+
         Add Test results for mac and windows for new tests.
 
         https://bugs.webkit.org/show_bug.cgi?id=28050
