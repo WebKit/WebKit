@@ -436,7 +436,13 @@ WebInspector.ConsoleView.prototype = {
 
     _format: function(output, forceObjectFormat)
     {
-        var type = (forceObjectFormat ? "object" : Object.type(output, InspectorController.inspectedWindow()));
+        var inspectedWindow = InspectorController.inspectedWindow();
+        if (forceObjectFormat)
+            var type = "object";
+        else if (output instanceof inspectedWindow.NodeList)
+            var type = "array";
+        else
+            var type = Object.type(output, inspectedWindow);
 
         // We don't perform any special formatting on these types, so we just
         // pass them through the simple _formatvalue function.
