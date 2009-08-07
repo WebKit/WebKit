@@ -49,6 +49,7 @@ committers_unable_to_review = [
     Committer("Ben Murdoch", "benm@google.com"),
     Committer("Jeremy Orlow", "jorlow@chromium.org"),
     Committer("Peter Kasting", "pkasting@google.com"),
+    Committer("Pierre d'Herbemont", "pdherbemont@free.fr"),
     Committer("Shinichiro Hamaji", "hamaji@google.com"),
     Committer("Zoltan Horvath", "hzoltan@inf.u-szeged.hu"),
 ]
