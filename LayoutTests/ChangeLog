@@ -1,3 +1,9 @@
+2009-08-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Make the test a little more sloppy to try to fix sporadic failures on Windows.
+
+        * animations/play-state.html:
+
 2009-08-05  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler.
