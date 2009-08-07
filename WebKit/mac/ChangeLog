@@ -1,5 +1,12 @@
 2009-08-07  Anders Carlsson  <andersca@apple.com>
 
+        Fix Tiger build.
+        
+        * WebView/WebRenderNode.mm:
+        (-[WebRenderNode _initWithCoreFrame:]):
+
+2009-08-07  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Timothy Hatcher and Sam Weinig.
 
         Change WebRenderNode to take a WebFrame instead of a WebFrameView.

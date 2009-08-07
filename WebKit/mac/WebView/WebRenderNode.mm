@@ -38,11 +38,23 @@
 
 using namespace WebCore;
 
-@interface WebRenderNode ()
-- (id)_initWithCoreFrame:(Frame *)frame;
-@end
+static WebRenderNode *copyRenderNode(RenderObject*);
 
 @implementation WebRenderNode
+
+- (id)_initWithCoreFrame:(Frame *)frame
+{
+    [self release];
+    
+    if (!frame->loader()->client()->hasHTMLView())
+        return nil;
+    
+    RenderObject* renderer = frame->contentRenderer();
+    if (!renderer)
+        return nil;
+    
+    return copyRenderNode(renderer);
+}
 
 - (id)_initWithName:(NSString *)n position:(NSPoint)p rect:(NSRect)r coreFrame:(Frame*)coreFrame children:(NSArray *)c
 {
@@ -116,20 +128,6 @@ static WebRenderNode *copyRenderNode(RenderObject* node)
     [children release];
 
     return result;
-}
-
-- (id)_initWithCoreFrame:(Frame *)frame
-{
-    [self release];
-
-    if (!frame->loader()->client()->hasHTMLView())
-        return nil;
-
-    RenderObject* renderer = frame->contentRenderer();
-    if (!renderer)
-        return nil;
-
-    return copyRenderNode(renderer);
 }
 
 - (id)initWithWebFrame:(WebFrame *)frame
