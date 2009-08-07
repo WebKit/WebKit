@@ -83,10 +83,11 @@ namespace WebCore {
 using namespace HTMLNames;
 
 AccessibilityRenderObject::AccessibilityRenderObject(RenderObject* renderer)
-    : m_renderer(renderer)
+    : AccessibilityObject()
+    , m_renderer(renderer)
     , m_ariaRole(UnknownRole)
 {
-    setAriaRole();
+    updateAccessibilityRole();
 #ifndef NDEBUG
     m_renderer->setHasAXObject(true);
 #endif
@@ -416,23 +417,23 @@ bool AccessibilityRenderObject::isOffScreen() const
     return viewRect.isEmpty();
 }
 
-int AccessibilityRenderObject::headingLevel(Node* node)
+int AccessibilityRenderObject::headingLevel() const
 {
     // headings can be in block flow and non-block flow
+    if (!m_renderer)
+        return 0;
+    
+    Node* node = m_renderer->node();
     if (!node)
         return 0;
 
-    if (RenderObject* renderer = node->renderer()) {
-        AccessibilityObject* axObjectForNode = node->document()->axObjectCache()->getOrCreate(renderer);
-        if (axObjectForNode->ariaRoleAttribute() == HeadingRole) {
-            if (!node->isElementNode())
-                return 0;
-            Element* element = static_cast<Element*>(node);
-            return element->getAttribute(aria_levelAttr).toInt();
-        }
+    if (ariaRoleAttribute() == HeadingRole)  {
+        if (!node->isElementNode())
+            return 0;
+        Element* element = static_cast<Element*>(node);
+        return element->getAttribute(aria_levelAttr).toInt();
     }
-            
-    
+
     if (node->hasTagName(h1Tag))
         return 1;
     
@@ -732,7 +733,7 @@ int AccessibilityRenderObject::intValue() const
         return 0;
     
     if (isHeading())
-        return headingLevel(m_renderer->node());
+        return headingLevel();
     
     Node* node = m_renderer->node();
     if (!node || !isCheckboxOrRadio())
@@ -2284,20 +2285,22 @@ AccessibilityRole AccessibilityRenderObject::determineAriaRoleAttribute() const
     return UnknownRole;
 }
 
-void AccessibilityRenderObject::setAriaRole()
-{
-    m_ariaRole = determineAriaRoleAttribute();
-}
-
 AccessibilityRole AccessibilityRenderObject::ariaRoleAttribute() const
 {
     return m_ariaRole;
 }
-
-AccessibilityRole AccessibilityRenderObject::roleValue() const
+    
+void AccessibilityRenderObject::updateAccessibilityRole()
+{
+    m_role = determineAccessibilityRole();
+}
+    
+AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
 {
     if (!m_renderer)
         return UnknownRole;
+
+    m_ariaRole = determineAriaRoleAttribute();
     
     Node* node = m_renderer->node();
     AccessibilityRole ariaRole = ariaRoleAttribute();
@@ -2351,7 +2354,7 @@ AccessibilityRole AccessibilityRenderObject::roleValue() const
     if (m_renderer->isMenuList())
         return PopUpButtonRole;
     
-    if (headingLevel(m_renderer->node()) != 0)
+    if (headingLevel() != 0)
         return HeadingRole;
     
     if (node && node->hasTagName(ddTag))

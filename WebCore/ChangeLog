@@ -1,3 +1,37 @@
+2009-08-06  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        Bug 27956 - AX: roleValue should be cached for performance
+        https://bugs.webkit.org/show_bug.cgi?id=27956
+
+        Caches the role value of an accessibility object instead of calculating it everytime.
+        The changes gained a 5% speedup using VoiceOver to navigate a webpage.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::handleAriaRoleChanged):
+
+        Use generic role setter instead of specific ARIA role setter.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::AccessibilityObject):
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::headingLevel):
+
+        Make headingLevel into instance method so that it can *safely* be called in the constructor.
+
+        (WebCore::AccessibilityObject::setRoleValue):
+        (WebCore::AccessibilityObject::roleValue):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::AccessibilityRenderObject):
+        (WebCore::AccessibilityRenderObject::headingLevel):
+        (WebCore::AccessibilityRenderObject::intValue):
+        (WebCore::AccessibilityRenderObject::updateAccessibilityRole):
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (AXAttributeStringSetHeadingLevel):
+
 2009-08-06  Zoltan Horvath  <hzoltan@inf.u-szeged.hu>
 
         Reviewed by Adam Barth.

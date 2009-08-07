@@ -389,7 +389,11 @@ static void AXAttributeStringSetSpelling(NSMutableAttributedString* attrString, 
 
 static void AXAttributeStringSetHeadingLevel(NSMutableAttributedString* attrString, RenderObject* renderer, NSRange range)
 {
-    int parentHeadingLevel = AccessibilityRenderObject::headingLevel(renderer->parent()->node());
+    if (!renderer)
+        return;
+    
+    AccessibilityObject* parentObject = renderer->document()->axObjectCache()->getOrCreate(renderer->parent());
+    int parentHeadingLevel = parentObject->headingLevel();
     
     if (parentHeadingLevel)
         [attrString addAttribute:@"AXHeadingLevel" value:[NSNumber numberWithInt:parentHeadingLevel] range:range];

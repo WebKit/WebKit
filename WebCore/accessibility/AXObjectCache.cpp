@@ -343,7 +343,7 @@ void AXObjectCache::handleAriaRoleChanged(RenderObject* renderer)
         return;
     AccessibilityObject* obj = getOrCreate(renderer);
     if (obj && obj->isAccessibilityRenderObject())
-        static_cast<AccessibilityRenderObject*>(obj)->setAriaRole();
+        static_cast<AccessibilityRenderObject*>(obj)->updateAccessibilityRole();
 }
 #endif
     

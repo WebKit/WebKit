@@ -112,7 +112,7 @@ public:
     
     virtual bool accessibilityIsIgnored() const;
     
-    static int headingLevel(Node*);
+    virtual int headingLevel() const;
     virtual int intValue() const;
     virtual String valueDescription() const;
     virtual float valueForRange() const;
@@ -136,8 +136,8 @@ public:
     virtual AccessibilityRole ariaRoleAttribute() const;
     virtual bool isPresentationalChildOfAriaRole() const;
     virtual bool ariaRoleHasPresentationalChildren() const;
-    void setAriaRole();
-    virtual AccessibilityRole roleValue() const;
+    void updateAccessibilityRole();
+    
     virtual AXObjectCache* axObjectCache() const;
     
     virtual Element* actionElement() const;
@@ -234,7 +234,8 @@ private:
     bool ariaIsHidden() const;
 
     Element* menuElementForMenuButton() const;
-    Element* menuItemElementForMenu() const; 
+    Element* menuItemElementForMenu() const;
+    AccessibilityRole determineAccessibilityRole();
     AccessibilityRole determineAriaRoleAttribute() const;
 
     IntRect checkboxOrRadioRect() const;
