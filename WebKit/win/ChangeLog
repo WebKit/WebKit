@@ -1,3 +1,15 @@
+2009-08-06  Zoltan Horvath  <hzoltan@inf.u-szeged.hu>
+
+        Reviewed by Adam Barth.
+
+        Change Noncopyable inheriting to public
+        http://bugs.webkit.org/show_bug.cgi?id=27879
+
+        Since Noncopyable is inherited from FastAllocBase,
+        Noncopyable's inheriting has been changed to public.
+
+        * COMPropertyBag.h:
+
 2009-08-04  Alice Liu  <alice.liu@apple.com>
 
         "Shift + Enter" should behave like "Enter" in editable fields.

@@ -35,7 +35,7 @@
 #include "COMVariantSetter.h"
 
 template<typename ValueType, typename KeyType = typename WebCore::String, typename HashType = typename WebCore::StringHash>
-class COMPropertyBag : public IPropertyBag, public IPropertyBag2, Noncopyable {
+class COMPropertyBag : public IPropertyBag, public IPropertyBag2, public Noncopyable {
 public:
     typedef HashMap<KeyType, ValueType, HashType> HashMapType;
 
