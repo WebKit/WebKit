@@ -1,3 +1,9 @@
+2009-08-07  Mark Rowe  <mrowe@apple.com>
+
+        Handle the case where only a single test is missing results.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+
 2009-08-07  George Wright  <george.wright@torchmobile.com>
 
         Reviewed by Adam Treat
