@@ -1,3 +1,15 @@
+2009-08-07  Zoltan Horvath  <hzoltan@inf.u-szeged.hu>
+
+        Reviewed by Eric Seidel.
+
+        Allow custom memory allocation control for RegExpObjectData struct
+        http://bugs.webkit.org/show_bug.cgi?id=26750
+
+        Inherits RegExpObjectData struct from FastAllocBase because
+        it has been instantiated by 'new' in JavaScriptCore/runtime/RegExpObject.cpp:62
+
+        * runtime/RegExpObject.h:
+
 2009-08-06  Norbert Leser  <norbert.leser@nokia.com>
 
         Reviewed by Darin Adler.
