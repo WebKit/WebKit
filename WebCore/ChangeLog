@@ -23203,6 +23203,15 @@
         * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
         (webkit_accessible_class_init):
 
+2009-08-07  Luke Kenneth Casson Leighton  <lkcl@lkcl.net>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27424
+
+        * WebKit/gtk/gdom/ConvertToGCharPrivate.h: Added.
+        (copyAsGChar): added to help GObject bindings convert various types to glib's gchar* 
+
 2009-06-16  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.
