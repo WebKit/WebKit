@@ -2,6 +2,36 @@
 
         Reviewed by Eric Seidel.
 
+        Added four Haiku-specific files for WebCore:
+        PopupMenuHaiku.cpp, ScreenHaiku.cpp,
+        SearchPopupMenuHaiku.cpp and SoundHaiku.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=28080
+
+        * platform/haiku/PopupMenuHaiku.cpp: Added.
+        (WebCore::PopupMenu::PopupMenu):
+        (WebCore::PopupMenu::~PopupMenu):
+        (WebCore::PopupMenu::show):
+        (WebCore::PopupMenu::hide):
+        (WebCore::PopupMenu::updateFromElement):
+        (WebCore::PopupMenu::itemWritingDirectionIsNatural):
+        * platform/haiku/ScreenHaiku.cpp: Added.
+        (WebCore::screenRect):
+        (WebCore::screenAvailableRect):
+        (WebCore::screenDepth):
+        (WebCore::screenDepthPerComponent):
+        (WebCore::screenIsMonochrome):
+        * platform/haiku/SearchPopupMenuHaiku.cpp: Added.
+        (WebCore::SearchPopupMenu::SearchPopupMenu):
+        (WebCore::SearchPopupMenu::saveRecentSearches):
+        (WebCore::SearchPopupMenu::loadRecentSearches):
+        (WebCore::SearchPopupMenu::enabled):
+        * platform/haiku/SoundHaiku.cpp: Added.
+        (WebCore::systemBeep):
+
+2009-08-07  Maxime Simon  <simon.maxime@gmail.com>
+
+        Reviewed by Eric Seidel.
+
         Added two Haiku-specific files to WebCore:
         TemporaryLinkStubs.cpp and WidgetHaiku.cpp
         https://bugs.webkit.org/show_bug.cgi?id=28080
