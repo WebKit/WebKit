@@ -68,6 +68,9 @@
 #include "bindings/V8Document.cpp"
 #include "bindings/V8DocumentFragment.cpp"
 #include "bindings/V8DocumentType.cpp"
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+#include "bindings/V8DOMApplicationCache.cpp"
+#endif
 #include "bindings/V8DOMCoreException.cpp"
 #include "bindings/V8DOMImplementation.cpp"
 #include "bindings/V8DOMParser.cpp"

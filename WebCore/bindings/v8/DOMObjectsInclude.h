@@ -158,6 +158,10 @@
 #include "XPathNSResolver.h"
 #include "XPathResult.h"
 
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+#include "DOMApplicationCache.h"
+#endif
+
 #if ENABLE(DATAGRID)
 #include "DataGridColumn.h"
 #include "DataGridColumnList.h"

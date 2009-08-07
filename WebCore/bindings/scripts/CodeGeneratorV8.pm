@@ -963,6 +963,9 @@ sub GenerateBatchedAttributeData
             } elsif ($interfaceName eq "Element" || $interfaceName eq "Document" || $interfaceName eq "HTMLBodyElement" || $interfaceName eq "SVGElementInstance" || $interfaceName eq "HTMLFrameSetElement") {
                 $getter = "V8Custom::v8ElementEventHandlerAccessorGetter";
                 $setter = "V8Custom::v8ElementEventHandlerAccessorSetter";
+            } elsif ($interfaceName eq "DOMApplicationCache") {
+                $getter = "V8Custom::v8DOMApplicationCacheEventHandlerAccessorGetter";
+                $setter = "V8Custom::v8DOMApplicationCacheEventHandlerAccessorSetter";
             } else {
                 $getter = "V8Custom::v8${customAccessor}AccessorGetter";
                 if ($interfaceName eq "WorkerContext" and $attrName eq "self") {

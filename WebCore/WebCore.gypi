@@ -621,6 +621,7 @@
             'bindings/v8/custom/V8DataGridColumnListCustom.cpp',
             'bindings/v8/custom/V8DedicatedWorkerContextCustom.cpp',
             'bindings/v8/custom/V8DocumentLocationCustom.cpp',
+            'bindings/v8/custom/V8DOMApplicationCacheCustom.cpp',
             'bindings/v8/custom/V8DOMParserConstructor.cpp',
             'bindings/v8/custom/V8DOMWindowCustom.cpp',
             'bindings/v8/custom/V8DocumentCustom.cpp',

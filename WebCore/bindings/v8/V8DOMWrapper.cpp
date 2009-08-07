@@ -413,6 +413,15 @@ v8::Persistent<v8::FunctionTemplate> V8DOMWrapper::getTemplate(V8ClassIndex::V8W
 
 #endif // WORKERS
 
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    case V8ClassIndex::DOMAPPLICATIONCACHE: {
+        // Reserve one more internal field for keeping event listeners.
+        v8::Local<v8::ObjectTemplate> instanceTemplate = descriptor->InstanceTemplate();
+        instanceTemplate->SetInternalFieldCount(V8Custom::kDOMApplicationCacheFieldCount);
+        break;
+    }
+#endif
+
     // The following objects are created from JavaScript.
     case V8ClassIndex::DOMPARSER:
         descriptor->SetCallHandler(USE_CALLBACK(DOMParserConstructor));
@@ -1237,10 +1246,8 @@ v8::Handle<v8::Value> V8DOMWrapper::convertNodeToV8Object(Node* node)
     return result;
 }
 
-// A JS object of type EventTarget can only be the following possible types:
-// 1) EventTargetNode; 2) DOMWindow 3) XMLHttpRequest; 4) MessagePort;
-// 5) XMLHttpRequestUpload
-// check EventTarget.h for new type conversion methods
+// A JS object of type EventTarget is limited to a small number of possible classes.
+// Check EventTarget.h for new type conversion methods
 v8::Handle<v8::Value> V8DOMWrapper::convertEventTargetToV8Object(EventTarget* target)
 {
     if (!target)
@@ -1287,6 +1294,12 @@ v8::Handle<v8::Value> V8DOMWrapper::convertEventTargetToV8Object(EventTarget* ta
         ASSERT(!wrapper.IsEmpty());
         return wrapper;
     }
+
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    DOMApplicationCache* domAppCache = target->toDOMApplicationCache();
+    if (domAppCache)
+        return convertToV8Object(V8ClassIndex::DOMAPPLICATIONCACHE, domAppCache);
+#endif
 
     ASSERT(0);
     return notHandledByInterceptor();

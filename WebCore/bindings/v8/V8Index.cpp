@@ -208,6 +208,10 @@
 #include "V8XSLTProcessor.h"
 #include "V8RGBColor.h"
 
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+#include "V8DOMApplicationCache.h"
+#endif
+
 #if ENABLE(DOM_STORAGE)
 #include "V8Storage.h"
 #include "V8StorageEvent.h"
