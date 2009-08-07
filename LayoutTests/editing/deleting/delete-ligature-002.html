@@ -14,18 +14,18 @@
         }
         function editingTest() {
             if (window.layoutTestController)
-                window.layoutTestController.dumpAsText();
-            var textarea = document.getElementById("test");
-            textarea.focus();
+                layoutTestController.dumpAsText();
+            var testarea = document.getElementById("test");
+            testarea.focus();
             typeCharacterCommand(String.fromCharCode(0x0E27));
             typeCharacterCommand(String.fromCharCode(0x0E31));
             moveSelectionBackwardByCharacterCommand();
             moveSelectionForwardByCharacterCommand();
             sendBackwardDeleteKey();
-            if (textarea.value == "\u0E27")
+            if (testarea.textContent == "\u0E27")
                 log("Succeeded.");
             else
-                log("Failed. Actual: \"" + textarea.value + "\", Expected: \"\u0E27\"");
+                log("Failed. Actual: \"" + testarea.textContent + "\", Expected: \"\u0E27\"");
         }
         </script>
         <title>Editing Test (Deleting a ligature)</title> 
@@ -33,7 +33,7 @@
     <body>
         <p>This test tests whether the BackSpace key deletes only the last character of a ligature "&#x0E27;&#x0E31;".</p>
         <p>If this test succeeds, you can see "&#x0E27;" (U+0E27) and a string "succeeded" below.</p>
-        <textarea id="test" rows="1" cols="40"></textarea>
+        <div id="test" contenteditable></div>
         <ul id="console"></ul>
         <script language="javascript" type="text/javascript">
         runEditingTest();

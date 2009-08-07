@@ -11,9 +11,9 @@ function log(str) {
 }
 function editingTest() {
     if (window.layoutTestController)
-        window.layoutTestController.dumpAsText();
-    var textarea = document.getElementById("test");
-    textarea.focus();
+        layoutTestController.dumpAsText();
+    var testarea = document.getElementById("test");
+    testarea.focus();
     typeCharacterCommand(String.fromCharCode(0x0E2D));
     typeCharacterCommand(String.fromCharCode(0x0E22));
     typeCharacterCommand(String.fromCharCode(0x0E32));
@@ -31,17 +31,17 @@ function editingTest() {
     typeCharacterCommand(String.fromCharCode(0x0E44));
     typeCharacterCommand(String.fromCharCode(0x0E1B));
     var expected_result = "\u0E2D\u0E22\u0E32\u0E01\u0E44\u0E1B\u0E0D\u0E35\u0E48\u0E1B\u0E38\u0E48\u0E19";
-    if (textarea.value == expected_result)
+    if (testarea.textContent == expected_result)
         log("Succeeded.");
      else
-        log("Failed. Actual: \"" + textarea.value + "\", Expected: \"" + expected_result + "\".");
+        log("Failed. Actual: \"" + testarea.textContent.value + "\", Expected: \"" + expected_result + "\".");
 }
 </script>
 </head>
 <body>
 <p>This test tests whether we can insert a Thai character after a Thai "prepend" character.</p>
 <p>If this test succeeds, you can see a string "succeeded" below.</p>
-<textarea id="test" rows="1" cols="40"></textarea>
+<div contenteditable id="test"></div>
 <ul id="console"></ul>
 <script language="javascript" type="text/javascript">
 runEditingTest();

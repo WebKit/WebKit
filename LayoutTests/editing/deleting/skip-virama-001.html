@@ -16,26 +16,26 @@ function sendBackwardDeleteKey() {
 }
 function editingTest() {
     if (window.layoutTestController)
-        window.layoutTestController.dumpAsText();
-    var textarea = document.getElementById("test");
-    textarea.focus();
+        layoutTestController.dumpAsText();
+    var testarea = document.getElementById("test");
+    testarea.focus();
     typeCharacterCommand(String.fromCharCode(0x0915));
     typeCharacterCommand(String.fromCharCode(0x094D));
     typeCharacterCommand(String.fromCharCode(0x0937));
     moveSelectionBackwardByCharacterCommand();
     sendBackwardDeleteKey();
     var expected_result = "\u0915\u094D\u0937";
-    if (textarea.value == expected_result)
+    if (testarea.textContent == expected_result)
         log("Succeeded.");
     else
-        log("Failed. Actual: \"" + textarea.value + "\", Expected: \"" + expected_result + "\".");
+        log("Failed. Actual: \"" + testarea.textContent + "\", Expected: \"" + expected_result + "\".");
 }
 </script>
 </head>
 <body>
 <p>This test tests whether or not we can prevent a cursor from moving after a virama sign.</p>
 <p>If this test succeeds, you can see a string "succeeded" below.</p>
-<textarea id="test" rows="1" cols="40"></textarea>
+<div contenteditable id="test"></div>
 <ul id="console"></ul>
 <script language="javascript" type="text/javascript">
 runEditingTest();

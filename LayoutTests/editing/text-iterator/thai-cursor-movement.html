@@ -14,14 +14,14 @@ function log(str)
 function editingTest()
 {
     if (window.layoutTestController)
-        window.layoutTestController.dumpAsText();
-    var textarea = document.getElementById("test");
-    textarea.focus();
+        layoutTestController.dumpAsText();
+    var editableArea = document.getElementById("test");
+    editableArea.focus();
 
     var i = 1;
-    for (; i <= textarea.textContent.length; ++i) {
+    for (; i <= editableArea.firstChild.data.length; ++i) {
         moveSelectionForwardByCharacterCommand();
-        if (window.getSelection().baseOffset != i) {
+        if (getSelection().baseOffset != i) {
             log("FAIL: " + i);
             return;
         }
@@ -34,7 +34,7 @@ function editingTest()
 <body>
 <p>Test that moving insertion point over Thai text (without ligatures) always moves one character at a time.</p>
 <p>Should say PASS:</p>
-<textarea id="test" rows="1" cols="40">อยากไปความ</textarea>
+<div contenteditable id="test">อยากไปความ</textarea>
 <ul id="console"></ul>
 <script language="javascript" type="text/javascript">
 runEditingTest();

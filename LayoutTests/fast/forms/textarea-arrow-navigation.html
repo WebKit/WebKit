@@ -1,19 +1,22 @@
 <html>
 <head>
-<link rel=stylesheet href="../editingStyle.css" type="text/css">
-<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
 <script>
 
-function log(str) {
+function log(str)
+{
     var li = document.createElement("li");
     li.appendChild(document.createTextNode(str));
     var console = document.getElementById("console");
     console.appendChild(li);
 }
 
-function editingTest() {
+function runTest()
+{
     if (window.layoutTestController)
-        window.layoutTestController.dumpAsText();
+        layoutTestController.dumpAsText();
+
+    if (!window.eventSender)
+        return;
 
     var textarea = document.getElementById("test");
 
@@ -22,12 +25,11 @@ function editingTest() {
     // numbered lines:
     textarea.setSelectionRange(5, 5);
     for (var i = 0; i < 10; i++) {
-        // press the 'down arrow' a bunch of times to try to get to the end of
-        // the text area
-        moveSelectionForwardByLineCommand();
+        // press the 'down arrow' a bunch of times to try to get to the end of the text area
+        eventSender.keyDown("downArrow");
     }
     if (textarea.selectionStart != textarea.value.length)
-        log ("Fail.  Expected: selectionStart == " + textarea.value.length + ", Found: " + textarea.selectionStart);
+        log("Fail.  Expected: selectionStart == " + textarea.value.length + ", Found: " + textarea.selectionStart);
     else
         log("Success");
 }
@@ -35,7 +37,7 @@ function editingTest() {
 </script>
 
 </head>
-    <body>
+    <body onload="runTest()">
         <p>
         This tests that the cursor doesn't get 'stuck' when advancing through a
         text area with the down arrow key.  See bug #19465 for more information
@@ -51,9 +53,6 @@ function editingTest() {
 What is the expected output? What do you see instead?</textarea>
 
 <ul id="console"></ul>
-<script>
-runEditingTest();
-</script>
 
     </body>
 </html>

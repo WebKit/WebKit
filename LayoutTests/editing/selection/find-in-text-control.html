@@ -3,25 +3,15 @@
 </p>
 <div id="div">
     Lorem ip<textarea id="textarea">sum dolor si</textarea>t amet
-    Lorem ip<input type="text" value="sum dolor si">t amet
-    Lorem ip<input type="search" value="sum dolor si">t amet
-    Lorem ip<input type="password" value="sum dolor si">t amet
+    Lorem ip<input id="input: text" type="text" value="sum dolor si">t amet
+    Lorem ip<input id="input: search" type="search" value="sum dolor si">t amet
+    Lorem ip<input id="input: password" type="password" value="sum dolor si">t amet
 </div>
 <script>
     if (window.layoutTestController)
         layoutTestController.dumpAsText();
 
     var result = "";
-
-    function elementIndex(node)
-    {
-        var index = 1;
-        while (node = node.previousSibling) {
-            if (node.nodeType == Node.ELEMENT_NODE)
-                ++index;
-        }
-        return index;
-    }
 
     function textNodeIndex(node)
     {
@@ -33,32 +23,47 @@
         return index;
     }
 
+    function clearSelection()
+    {
+        getSelection().selectAllChildren(document.body);
+        getSelection().empty();
+    }
+
+    function selectionLocationAsString()
+    {
+        if (document.activeElement.selectionStart != document.activeElement.selectionEnd)
+            return document.activeElement.id + ", at offset " + document.activeElement.selectionStart;
+        if (getSelection().rangeCount == 0)
+            return "";
+        var range = getSelection().getRangeAt(0);
+        return "outer text node " + textNodeIndex(range.startContainer) + ", at offset " + range.startOffset;
+    }
+
     function findAll(target)
     {
+        var sel = getSelection();
         var ranges = [];
 
-        var sel = getSelection();
-        sel.empty();
+        clearSelection();
         document.execCommand("FindString", false, target);
-        if (!sel.rangeCount) {
+
+        var firstMatch = selectionLocationAsString();
+        if (firstMatch == "") {
             result += "Target " + target + " not matched\n";
             return;
         }
-        var range = sel.getRangeAt(0);
-        while (!ranges[0] || range.startContainer != ranges[0].startContainer || range.startOffset != ranges[0].startOffset) {
-            ranges.push(range);
-            document.execCommand("FindString", false, target);
-            range = sel.getRangeAt(0);
-        }
-        sel.empty();
 
-        var div = document.getElementById("div");
-        result += "Target " + target + " matched at:\n";
-        while (range = ranges.shift()) {
-            result += "    ";
-            result += range.startContainer.parentNode != div ? "text control" : "outer text node " + textNodeIndex(range.startContainer);
-            result += ", at offset " + range.startOffset + "\n";
+        result += "Target " + target + " matched at:\n    " + firstMatch + "\n";
+
+        document.execCommand("FindString", false, target);
+        var match = selectionLocationAsString();
+        while (match !== firstMatch) {
+            result += "    " + match + "\n";
+            document.execCommand("FindString", false, target);
+            match = selectionLocationAsString();
         }
+
+        clearSelection();
     }
 
     findAll("m");

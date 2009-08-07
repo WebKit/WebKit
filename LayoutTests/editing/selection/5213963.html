@@ -12,19 +12,24 @@ function log(msg) {
     li.appendChild(text);
 }
 
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
 var input = document.getElementById("input");
 input.focus();
 input.setSelectionRange(0, input.value.length);
-if (window.layoutTestController) {
-    if (window.getSelection().type == "None")
-        log("Failure: There was no selection inside the input field when the test began.")
+if (!input.selectionEnd)
+    log("Failure: There was no selection inside the input field when the test began.");
+if (!window.eventSender)
+    log("Test not run because there is no event sender.");
+else {
     var button = document.getElementById("button");
     var x = button.offsetParent.offsetLeft + button.offsetLeft + button.offsetWidth / 2;
     var y = button.offsetParent.offsetTop + button.offsetTop + button.offsetHeight / 2;
     eventSender.mouseMoveTo(x, y);
     eventSender.mouseDown();
     eventSender.mouseUp();
-    if (window.getSelection().type != "None")
-        log("Failure: There was still a selection after clicking a button.")
+    if (!input.selectionEnd)
+        log("Failure: There was still a selection after clicking a button.");
+    log("Success");
 }
 </script>

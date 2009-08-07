@@ -1,3 +1,62 @@
+2009-08-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        "Shadow tree" DOM nodes are being accidentally exposed to JavaScript
+        https://bugs.webkit.org/show_bug.cgi?id=28086
+
+        Rewrite tests that depend on selection inside <input> and <textarea> elements
+        from showing up with getSelection(), since does not match Firefox and needs to
+        change soon.
+
+        * editing/deleting/delete-ligature-002-expected.txt: Updated.
+        * editing/deleting/delete-ligature-002.html: Changed to use a contenteditable
+        <div> element instead of a <textarea> element.
+
+        * editing/deleting/delete-ligature-003-expected.txt: Updated.
+        * editing/deleting/delete-ligature-003.html: Changed to use a contenteditable
+        <div> element instead of a <textarea> element.
+
+        * editing/deleting/skip-virama-001-expected.txt: Updated.
+        * editing/deleting/skip-virama-001.html: Changed to use a contenteditable
+        <div> element instead of a <textarea> element.
+
+        * editing/input/textarea-arrow-navigation-expected.txt: Moved to fast/forms.
+        * editing/input/textarea-arrow-navigation.html: Ditto.
+
+        * editing/inserting/insert-thai-characters-001-expected.txt: Updated.
+        * editing/inserting/insert-thai-characters-001.html: Changed to use a contenteditable
+        <div> element instead of a <textarea> element.
+
+        * editing/selection/5213963-expected.txt: Added. This is now a text-only test.
+        * editing/selection/5213963.html: Added a call to dumpAsText(). Changed selection
+        testing to use selectionEnd instead of getSelection().type.
+
+        * editing/selection/find-in-text-control-expected.txt: Updated.
+        * editing/selection/find-in-text-control.html: Changed test to distinguish the
+        different text controls. Made it use activeElement to find out if the selection
+        is inside a control.
+
+        * editing/selection/move-begin-end-expected.txt: Updated.
+        * editing/selection/move-begin-end.html: Changed to use a contenteditable
+        <div> element instead of a <textarea> element.
+
+        * editing/text-iterator/thai-cursor-movement-expected.txt: Updated.
+        * editing/text-iterator/thai-cursor-movement.html: Changed to use a contenteditable
+        <div> element instead of a <textarea> element.
+
+        * fast/forms/textarea-arrow-navigation-expected.txt: Moved from editing/input since
+        this is a <textarea> test, not a general editing test.
+        * fast/forms/textarea-arrow-navigation.html: Ditto.
+        Changed to use eventSender instead of the editing machinery to test the down arrow.
+
+        * platform/mac/editing/selection/5213963-expected.checksum: Removed.
+        This is now a text-only test.
+        * platform/mac/editing/selection/5213963-expected.png: Ditto.
+        * platform/mac/editing/selection/5213963-expected.txt: Ditto.
+        * platform/qt/editing/selection/5213963-expected.txt: Ditto.
+        * platform/win/editing/selection/5213963-expected.txt: Ditto.
+
 2009-08-07  Drew Wilson  <atwilson@google.com>
 
         Reviewed by David Levin.
