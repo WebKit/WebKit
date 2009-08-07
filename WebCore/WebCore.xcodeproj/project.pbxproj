@@ -9490,11 +9490,9 @@
 		FE80D7BB0E9C1F25000D6F75 /* Geoposition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Geoposition.h; sourceTree = "<group>"; };
 		FE80D7BC0E9C1F25000D6F75 /* Geoposition.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Geoposition.idl; sourceTree = "<group>"; };
 		FE80D7BD0E9C1F25000D6F75 /* PositionCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PositionCallback.h; sourceTree = "<group>"; };
-		FE80D7BE0E9C1F25000D6F75 /* PositionCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PositionCallback.idl; sourceTree = "<group>"; };
 		FE80D7BF0E9C1F25000D6F75 /* PositionError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PositionError.h; sourceTree = "<group>"; };
 		FE80D7C00E9C1F25000D6F75 /* PositionError.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PositionError.idl; sourceTree = "<group>"; };
 		FE80D7C10E9C1F25000D6F75 /* PositionErrorCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PositionErrorCallback.h; sourceTree = "<group>"; };
-		FE80D7C20E9C1F25000D6F75 /* PositionErrorCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PositionErrorCallback.idl; sourceTree = "<group>"; };
 		FE80D7C30E9C1F25000D6F75 /* PositionOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PositionOptions.h; sourceTree = "<group>"; };
 		FE80DA5F0E9C4703000D6F75 /* JSGeolocation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSGeolocation.cpp; sourceTree = "<group>"; };
 		FE80DA600E9C4703000D6F75 /* JSGeolocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGeolocation.h; sourceTree = "<group>"; };
@@ -10566,11 +10564,9 @@
 				7A674BD90F9EBF4E006CF099 /* PageGroupLoadDeferrer.cpp */,
 				7A674BDA0F9EBF4E006CF099 /* PageGroupLoadDeferrer.h */,
 				FE80D7BD0E9C1F25000D6F75 /* PositionCallback.h */,
-				FE80D7BE0E9C1F25000D6F75 /* PositionCallback.idl */,
 				FE80D7BF0E9C1F25000D6F75 /* PositionError.h */,
 				FE80D7C00E9C1F25000D6F75 /* PositionError.idl */,
 				FE80D7C10E9C1F25000D6F75 /* PositionErrorCallback.h */,
-				FE80D7C20E9C1F25000D6F75 /* PositionErrorCallback.idl */,
 				FE80D7C30E9C1F25000D6F75 /* PositionOptions.h */,
 				BCEC01BA0C274DAC009F4EC9 /* Screen.cpp */,
 				BCEC01BB0C274DAC009F4EC9 /* Screen.h */,

@@ -1,3 +1,26 @@
+2009-08-07  Steve Block  <steveblock@google.com>
+
+        Reviewed by Darin Adler.
+
+        Bug 27250: Geolocation callback function IDL files are superfluous
+        https://bugs.webkit.org/show_bug.cgi?id=27250
+
+        The objects for the Geolocation success and error callbacks are created 'manually' in
+        WebCore/bindings/js/JSGeolocationCustom.cpp. Furthermore, the callback interfaces are 
+        marked 'NoInterfaceObject' in the W3C spec, so the prototype should not
+        appear on the window object. Hence IDL files for these callbacks are not required.
+
+        See http://www.w3.org/TR/geolocation-API/#geolocation_interface and
+        http://www.w3.org/TR/WebIDL/#NoInterfaceObject.
+
+        No new tests required.
+
+        * DerivedSources.make: Modified. Removed reference to IDL files.
+        * WebCore.gypi: Modified. Removed reference to IDL files.
+        * WebCore.xcodeproj/project.pbxproj: Modified. Removed reference to IDL files.
+        * page/PositionCallback.idl: Removed.
+        * page/PositionErrorCallback.idl: Removed.
+
 2009-08-07  Adam Treat  <adam.treat@torchmobile.com>
 
         Reviewed by David Levin.
