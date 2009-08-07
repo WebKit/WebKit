@@ -1,3 +1,13 @@
+2009-08-06  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Xan Lopez.
+
+        [Gtk] Copy expected (txt only) result from Mac for
+        fast/images/icon-decoding.html from r46871 since we seem to pass this
+        test as well.
+
+        * platform/gtk/fast/images/icon-decoding-expected.txt: Copied from LayoutTests/platform/mac/fast/images/icon-decoding-expected.txt.
+
 2009-08-06  Simon Fraser  <simon.fraser@apple.com>
 
         Make the test a little more sloppy to try to fix sporadic failures on Windows.
