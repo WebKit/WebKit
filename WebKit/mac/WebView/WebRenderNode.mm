@@ -29,9 +29,8 @@
 #import "WebRenderNode.h"
 
 #import "WebFrameInternal.h"
-#import "WebFrameView.h"
-#import "WebHTMLView.h"
 #import <WebCore/Frame.h>
+#import <WebCore/FrameLoaderClient.h>
 #import <WebCore/RenderText.h>
 #import <WebCore/RenderWidget.h>
 #import <WebCore/RenderView.h>
@@ -39,9 +38,13 @@
 
 using namespace WebCore;
 
+@interface WebRenderNode ()
+- (id)_initWithCoreFrame:(Frame *)frame;
+@end
+
 @implementation WebRenderNode
 
-- (id)initWithName:(NSString *)n position:(NSPoint)p rect:(NSRect)r view:(NSView *)view children:(NSArray *)c
+- (id)_initWithName:(NSString *)n position:(NSPoint)p rect:(NSRect)r coreFrame:(Frame*)coreFrame children:(NSArray *)c
 {
     NSMutableArray *collectChildren;
     
@@ -55,13 +58,8 @@ using namespace WebCore;
     rect = r;
     absolutePosition = p;
 
-    if ([view isKindOfClass:[NSScrollView class]]) {
-        NSScrollView *scrollView = (NSScrollView *)view;
-        view = [scrollView superview];
-    }
-    if ([view isKindOfClass:[WebFrameView class]]) {
-        WebFrameView *webFrameView = (WebFrameView *)view;
-        WebRenderNode *node = [[WebRenderNode alloc] initWithWebFrameView:webFrameView];
+    if (coreFrame) {
+        WebRenderNode *node = [[WebRenderNode alloc] _initWithCoreFrame:coreFrame];
         [collectChildren addObject:node];
         [node release];
     }
@@ -85,7 +83,8 @@ static WebRenderNode *copyRenderNode(RenderObject* node)
     
     RenderWidget* renderWidget = node->isWidget() ? toRenderWidget(node) : 0;
     Widget* widget = renderWidget ? renderWidget->widget() : 0;
-    NSView *view = widget ? widget->platformWidget() : nil;
+    FrameView* frameView = widget && widget->isFrameView() ? static_cast<FrameView*>(widget) : 0;
+    Frame* frame = frameView ? frameView->frame() : 0;
 
     // FIXME: broken with transforms
     FloatPoint absPos = node->localToAbsolute(FloatPoint());
@@ -109,9 +108,9 @@ static WebRenderNode *copyRenderNode(RenderObject* node)
         height = box.height();
     }
     
-    WebRenderNode *result = [[WebRenderNode alloc] initWithName:name
-        position:absPos rect:NSMakeRect(x, y, width, height)
-        view:view children:children];
+    WebRenderNode *result = [[WebRenderNode alloc] _initWithName:name
+                                                        position:absPos rect:NSMakeRect(x, y, width, height)
+                                                       coreFrame:frame children:children];
 
     [name release];
     [children release];
@@ -119,18 +118,23 @@ static WebRenderNode *copyRenderNode(RenderObject* node)
     return result;
 }
 
-- (id)initWithWebFrameView:(WebFrameView *)view
+- (id)_initWithCoreFrame:(Frame *)frame
 {
     [self release];
 
-    if (![[view documentView] isMemberOfClass:[WebHTMLView class]])
+    if (!frame->loader()->client()->hasHTMLView())
         return nil;
 
-    RenderObject* renderer = core([view webFrame])->contentRenderer();
+    RenderObject* renderer = frame->contentRenderer();
     if (!renderer)
         return nil;
 
     return copyRenderNode(renderer);
+}
+
+- (id)initWithWebFrame:(WebFrame *)frame
+{
+    return [self _initWithCoreFrame:core(frame)];
 }
 
 - (void)dealloc
