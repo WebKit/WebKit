@@ -1,3 +1,20 @@
+2009-08-07  Pierre d'Herbemont  <pdherbemont@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        commit-log-editor does not produce a git commit log that is git friendly.
+        https://bugs.webkit.org/show_bug.cgi?id=27754
+
+        We make sure we end up with:
+        - A first paragraph describing the bug. It is eventually prefixed by
+        "WebKit: <line>" or "WebCore: <line>". This used to be
+        "WebCore:\n\n<line>".
+        - The Reviewed By line.
+        - An eventual Patch By line if author and committer doesn't match.
+        - The rest of the commit.
+
+        * Scripts/commit-log-editor:
+
 2009-08-07  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.  (Darin Adler indicated he'd prefer if we landed these

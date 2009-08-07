@@ -133,17 +133,66 @@ for my $changeLog (@changeLogs) {
     open CHANGELOG, $changeLog or die "Can't open $changeLog";
     my $contents = "";
     my $blankLines = "";
+    my $reviewedByLine = "";
+    my $lineCount = 0;
+    my $date = "";
+    my $author = "";
+    my $email = "";
+    my $hasAuthorInfoToWrite = 0;
     while (<CHANGELOG>) {
         if (/^\S/) {
             last if $contents;
         }
         if (/\S/) {
-            $contents .= $blankLines if $contents;
+            my $previousLineWasBlank = 1 unless $blankLines eq "";
+            my $line = $_;
+            my $currentLineBlankLines = $blankLines;
             $blankLines = "";
-            $contents .= $_;
+
+            # Remove identation spaces
+            $line =~ s/^\s{8}//;
+
+            # Save the reviewed by line
+            if ($line =~ m/^Reviewed by .*/) {
+                $reviewedByLine = $line;
+                next;
+            }
+
+            # Grab the author and the date line
+            if ($line =~ m/^([0-9]{4}-[0-9]{2}-[0-9]{2})\s+(.*[^\s])\s+<(.*)>/ && $lineCount == 0) {
+                $date = $1;
+                $author = $2;
+                $email = $3;
+                $hasAuthorInfoToWrite = 1;
+                next;
+            }
+
+            $contents .= $currentLineBlankLines if $contents;
+
+            # Attempt to insert the "patch by" line, after the first blank line.
+            if ($previousLineWasBlank && $hasAuthorInfoToWrite && $lineCount > 0) {
+                my $authorAndCommitterAreSamePerson = $email eq $ENV{'EMAIL_ADDRESS'};
+                if (!$authorAndCommitterAreSamePerson) {
+                    $contents .= "Patch by $author <$email> on $date\n";
+                    $hasAuthorInfoToWrite = 0;
+                }
+            }
+
+            # Attempt to insert the "reviewed by" line, after the first blank line.
+            if ($previousLineWasBlank && $reviewedByLine && $lineCount > 0) {
+                $contents .= $reviewedByLine . "\n";
+                $reviewedByLine = "";
+            }
+
+
+            $lineCount++;
+            $contents .= $line;
         } else {
             $blankLines .= $_;
         }
+    }
+    if ($reviewedByLine) {
+        $contents .= "\n".$reviewedByLine;
     }
     close CHANGELOG;
 
@@ -191,7 +240,7 @@ if (isGit() && scalar keys %changeLogSort == 0) {
         if (keys %changeLogSort > 1) {
             print NEWLOG normalizeLineEndings("\n", $endl) if !$first;
             $first = 0;
-            print NEWLOG normalizeLineEndings("$label:\n\n", $endl);
+            print NEWLOG normalizeLineEndings("$label: ", $endl);
         }
         print NEWLOG normalizeLineEndings($changeLogContents{$label}, $endl);
     }
