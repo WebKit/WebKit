@@ -1,3 +1,43 @@
+2009-08-07  George Staikos <george.staikos@torchmobile.com> 
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27305
+        Implement WinCE-specific unicode layer.
+        Written by George Staikos <george.staikos@torchmobile.com>
+        with bug fixes by Yong Li <yong.li@torchmobile.com>
+        refactored by Joe Mason <joe.mason@torchmobile.com> 
+
+        * wtf/Platform.h:
+        * wtf/unicode/Unicode.h:
+        * wtf/unicode/wince/UnicodeWince.cpp: Added.
+        (WTF::Unicode::toLower):
+        (WTF::Unicode::toUpper):
+        (WTF::Unicode::foldCase):
+        (WTF::Unicode::isPrintableChar):
+        (WTF::Unicode::isSpace):
+        (WTF::Unicode::isLetter):
+        (WTF::Unicode::isUpper):
+        (WTF::Unicode::isLower):
+        (WTF::Unicode::isDigit):
+        (WTF::Unicode::isPunct):
+        (WTF::Unicode::toTitleCase):
+        (WTF::Unicode::direction):
+        (WTF::Unicode::category):
+        (WTF::Unicode::decompositionType):
+        (WTF::Unicode::combiningClass):
+        (WTF::Unicode::mirroredChar):
+        (WTF::Unicode::digitValue):
+        * wtf/unicode/wince/UnicodeWince.h: Added.
+        (WTF::Unicode::):
+        (WTF::Unicode::isSeparatorSpace):
+        (WTF::Unicode::isHighSurrogate):
+        (WTF::Unicode::isLowSurrogate):
+        (WTF::Unicode::isArabicChar):
+        (WTF::Unicode::hasLineBreakingPropertyComplexContext):
+        (WTF::Unicode::umemcasecmp):
+        (WTF::Unicode::surrogateToUcs4):
+
 2009-08-07  Yongjun Zhang  <yongjun.zhang@nokia.com>
 
         Reviewed by Eric Seidel.

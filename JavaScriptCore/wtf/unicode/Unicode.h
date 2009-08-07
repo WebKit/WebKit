@@ -1,6 +1,7 @@
 /*
  *  Copyright (C) 2006 George Staikos <staikos@kde.org>
  *  Copyright (C) 2006, 2008, 2009 Apple Inc. All rights reserved.
+ *  Copyright (C) 2007-2009 Torch Mobile, Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -30,6 +31,8 @@
 #include <wtf/unicode/icu/UnicodeIcu.h>
 #elif USE(GLIB_UNICODE)
 #include <wtf/unicode/glib/UnicodeGLib.h>
+#elif USE(WINCE_UNICODE)
+#include <wtf/unicode/wince/UnicodeWince.h>
 #else
 #error "Unknown Unicode implementation"
 #endif
