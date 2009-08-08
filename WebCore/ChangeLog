@@ -1,5 +1,24 @@
 2009-08-08  Dirk Schulze  <krit@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        SVG Filter need feColorMatrix implementation
+        [https://bugs.webkit.org/show_bug.cgi?id=27711]
+
+        Adds the filter effect feColorMatrix to SVG filters. 
+
+        There is already a test in the w3c directory.
+        Test: svg/W3C-SVG-1.1/filters-color-01-b.svg
+
+        * platform/graphics/filters/FEColorMatrix.cpp:
+        (WebCore::matrix):
+        (WebCore::saturate):
+        (WebCore::huerotate):
+        (WebCore::luminance):
+        (WebCore::FEColorMatrix::apply):
+
+2009-08-08  Dirk Schulze  <krit@webkit.org>
+
         Reviewed by Oliver Hunt.
 
         Build fix for Tiger.
