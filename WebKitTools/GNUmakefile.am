@@ -40,10 +40,12 @@ dumprendertree_cppflags := \
 Programs_DumpRenderTree_CPPFLAGS = $(dumprendertree_cppflags)
 
 Programs_DumpRenderTree_SOURCES = \
-	WebKitTools/DumpRenderTree/AccessibilityController.h \
-	WebKitTools/DumpRenderTree/AccessibilityUIElement.h \
 	WebKitTools/DumpRenderTree/DumpRenderTree.h \
 	WebKitTools/DumpRenderTree/DumpRenderTreePrefix.h \
+	WebKitTools/DumpRenderTree/AccessibilityController.cpp \
+	WebKitTools/DumpRenderTree/AccessibilityController.h \
+	WebKitTools/DumpRenderTree/AccessibilityUIElement.cpp \
+	WebKitTools/DumpRenderTree/AccessibilityUIElement.h \
 	WebKitTools/DumpRenderTree/GCController.cpp \
 	WebKitTools/DumpRenderTree/GCController.h \
 	WebKitTools/DumpRenderTree/JavaScriptThreading.h \
@@ -54,6 +56,8 @@ Programs_DumpRenderTree_SOURCES = \
 	WebKitTools/DumpRenderTree/WorkQueue.h \
 	WebKitTools/DumpRenderTree/WorkQueueItem.h \
 	WebKitTools/DumpRenderTree/config.h \
+	WebKitTools/DumpRenderTree/gtk/AccessibilityControllerGtk.cpp \
+	WebKitTools/DumpRenderTree/gtk/AccessibilityUIElementGtk.cpp \
 	WebKitTools/DumpRenderTree/gtk/DumpRenderTree.cpp \
 	WebKitTools/DumpRenderTree/gtk/DumpRenderTreeGtk.h \
 	WebKitTools/DumpRenderTree/gtk/GCControllerGtk.cpp \

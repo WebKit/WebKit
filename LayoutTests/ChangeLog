@@ -1,3 +1,14 @@
+2009-08-08  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Xan Lopez.
+
+        [Gtk] Enable accessibility in Gtk DRT
+        https://bugs.webkit.org/show_bug.cgi?id=25989
+
+        Remove passing accessibility tests from the Skipped list
+
+        * platform/gtk/Skipped:
+
 2009-08-07  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Cameron Zwarich.

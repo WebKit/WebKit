@@ -31,6 +31,7 @@
 #include "config.h"
 #include "DumpRenderTree.h"
 
+#include "AccessibilityController.h"
 #include "GCController.h"
 #include "LayoutTestController.h"
 #include "WorkQueue.h"
@@ -68,6 +69,7 @@ static bool printSeparators;
 static int dumpPixels;
 static int dumpTree = 1;
 
+AccessibilityController* axController = 0;
 LayoutTestController* gLayoutTestController = 0;
 static GCController* gcController = 0;
 static WebKitWebView* webView;
@@ -479,13 +481,17 @@ static void webViewLoadFinished(WebKitWebView* view, WebKitWebFrame* frame, void
 static void webViewWindowObjectCleared(WebKitWebView* view, WebKitWebFrame* frame, JSGlobalContextRef context, JSObjectRef windowObject, gpointer data)
 {
     JSValueRef exception = 0;
-    assert(gLayoutTestController);
+    ASSERT(gLayoutTestController);
 
     gLayoutTestController->makeWindowObject(context, windowObject, &exception);
-    assert(!exception);
+    ASSERT(!exception);
 
     gcController->makeWindowObject(context, windowObject, &exception);
     ASSERT(!exception);
+
+    axController->makeWindowObject(context, windowObject, &exception);
+    ASSERT(!exception);
+
 }
 
 static gboolean webViewConsoleMessage(WebKitWebView* view, const gchar* message, unsigned int line, const gchar* sourceId, gpointer data)
@@ -666,6 +672,7 @@ int main(int argc, char* argv[])
     setDefaultsToConsistentStateValuesForTesting();
 
     gcController = new GCController();
+    axController = new AccessibilityController();
 
     if (argc == optind+1 && strcmp(argv[optind], "-") == 0) {
         char filenameBuffer[2048];
@@ -688,6 +695,9 @@ int main(int argc, char* argv[])
 
     delete gcController;
     gcController = 0;
+
+    delete axController;
+    axController = 0;
 
     g_object_unref(webView);
 

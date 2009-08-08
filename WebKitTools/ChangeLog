@@ -1,3 +1,76 @@
+2009-08-08  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Xan Lopez.
+
+        [Gtk] Enable accessibility in Gtk DRT
+        https://bugs.webkit.org/show_bug.cgi?id=25989
+
+        Add Accessibility support to the GTK DRT.
+
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/gtk/AccessibilityControllerGtk.cpp: Added.
+        (AccessibilityController::AccessibilityController):
+        (AccessibilityController::~AccessibilityController):
+        (AccessibilityController::focusedElement):
+        (AccessibilityController::rootElement):
+        * DumpRenderTree/gtk/AccessibilityUIElementGtk.cpp: Added.
+        (AccessibilityUIElement::AccessibilityUIElement):
+        (AccessibilityUIElement::~AccessibilityUIElement):
+        (AccessibilityUIElement::getLinkedUIElements):
+        (AccessibilityUIElement::getDocumentLinks):
+        (AccessibilityUIElement::getChildren):
+        (AccessibilityUIElement::getChildrenWithRange):
+        (AccessibilityUIElement::childrenCount):
+        (AccessibilityUIElement::elementAtPoint):
+        (AccessibilityUIElement::getChildAtIndex):
+        (AccessibilityUIElement::allAttributes):
+        (AccessibilityUIElement::attributesOfLinkedUIElements):
+        (AccessibilityUIElement::attributesOfDocumentLinks):
+        (AccessibilityUIElement::titleUIElement):
+        (AccessibilityUIElement::parentElement):
+        (AccessibilityUIElement::attributesOfChildren):
+        (AccessibilityUIElement::parameterizedAttributeNames):
+        (AccessibilityUIElement::role):
+        (AccessibilityUIElement::title):
+        (AccessibilityUIElement::description):
+        (AccessibilityUIElement::language):
+        (AccessibilityUIElement::x):
+        (AccessibilityUIElement::y):
+        (AccessibilityUIElement::width):
+        (AccessibilityUIElement::height):
+        (AccessibilityUIElement::clickPointX):
+        (AccessibilityUIElement::clickPointY):
+        (AccessibilityUIElement::intValue):
+        (AccessibilityUIElement::minValue):
+        (AccessibilityUIElement::maxValue):
+        (AccessibilityUIElement::valueDescription):
+        (AccessibilityUIElement::isEnabled):
+        (AccessibilityUIElement::insertionPointLineNumber):
+        (AccessibilityUIElement::isActionSupported):
+        (AccessibilityUIElement::isRequired):
+        (AccessibilityUIElement::attributesOfColumnHeaders):
+        (AccessibilityUIElement::attributesOfRowHeaders):
+        (AccessibilityUIElement::attributesOfColumns):
+        (AccessibilityUIElement::attributesOfRows):
+        (AccessibilityUIElement::attributesOfVisibleCells):
+        (AccessibilityUIElement::attributesOfHeader):
+        (AccessibilityUIElement::indexInTable):
+        (AccessibilityUIElement::rowIndexRange):
+        (AccessibilityUIElement::columnIndexRange):
+        (AccessibilityUIElement::lineForIndex):
+        (AccessibilityUIElement::boundsForRange):
+        (AccessibilityUIElement::cellForColumnAndRow):
+        (AccessibilityUIElement::selectedTextRange):
+        (AccessibilityUIElement::setSelectedTextRange):
+        (AccessibilityUIElement::attributeValue):
+        (AccessibilityUIElement::isAttributeSettable):
+        (AccessibilityUIElement::increment):
+        (AccessibilityUIElement::decrement):
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (webViewWindowObjectCleared):
+        (main):
+        * GNUmakefile.am:
+
 2009-08-07  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Unreviewed Gtk build fix.

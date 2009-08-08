@@ -27,6 +27,7 @@
 #define AccessibilityUIElement_h
 
 #include <JavaScriptCore/JSObjectRef.h>
+#include <wtf/Platform.h>
 #include <wtf/Vector.h>
 
 #if PLATFORM(MAC)
@@ -43,6 +44,9 @@ typedef struct objc_object* PlatformUIElement;
 #include <WebCore/COMPtr.h>
 
 typedef COMPtr<IAccessible> PlatformUIElement;
+#elif PLATFORM(GTK)
+#include <atk/atk.h>
+typedef AtkObject* PlatformUIElement;
 #else
 typedef void* PlatformUIElement;
 #endif

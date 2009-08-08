@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2008 Nuanti Ltd.
  * Copyright (C) 2009 Igalia S.L.
+ * Copyright (C) 2009 Jan Alonzo
  *
  * Portions from Mozilla a11y, copyright as follows:
  *
@@ -1076,6 +1077,18 @@ void webkit_accessible_detach(WebKitAccessible* accessible)
     // provides default implementations to avoid repetitive null-checking after
     // detachment.
     accessible->m_object = fallbackObject();
+}
+
+AtkObject* webkit_accessible_get_focused_element(WebKitAccessible* accessible)
+{
+    if (!accessible->m_object)
+        return 0;
+
+    RefPtr<AccessibilityObject> focusedObj = accessible->m_object->focusedUIElement();
+    if (!focusedObj)
+        return 0;
+
+    return focusedObj->wrapper();
 }
 
 #endif // HAVE(ACCESSIBILITY)

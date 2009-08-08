@@ -1,3 +1,16 @@
+2009-08-08  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Xan Lopez.
+
+        [Gtk] Enable accessibility in Gtk DRT
+        https://bugs.webkit.org/show_bug.cgi?id=25989
+
+        Add SPI to get the focused accessible element to be used by DRT.
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (webkit_accessible_get_focused_element):
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.h:
+
 2009-08-07  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Gtk build fix - add html/canvas to the binding generator's include path

@@ -32,7 +32,9 @@
 #include "webkitmarshal.h"
 #include "webkitprivate.h"
 
+#include "AccessibilityObjectWrapperAtk.h"
 #include "AnimationController.h"
+#include "AXObjectCache.h"
 #include "CString.h"
 #include "DocumentLoader.h"
 #include "FrameLoader.h"
@@ -52,6 +54,7 @@
 #include "ScriptController.h"
 #include "SubstituteData.h"
 
+#include <atk/atk.h>
 #include <JavaScriptCore/APICast.h>
 
 /**
@@ -855,3 +858,28 @@ gsize webkit_gc_count_javascript_objects()
 
 }
 
+AtkObject* webkit_web_frame_get_focused_accessible_element(WebKitWebFrame* frame)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), NULL);
+
+#if HAVE(ACCESSIBILITY)
+    if (!AXObjectCache::accessibilityEnabled())
+        AXObjectCache::enableAccessibility();
+
+    WebKitWebFramePrivate* priv = frame->priv;
+    if (!priv->coreFrame || !priv->coreFrame->document())
+        return NULL;
+
+    RenderView* root = toRenderView(priv->coreFrame->document()->renderer());
+    if (!root)
+        return NULL;
+
+    AtkObject* wrapper =  priv->coreFrame->document()->axObjectCache()->getOrCreate(root)->wrapper();
+    if (!wrapper)
+        return NULL;
+
+    return webkit_accessible_get_focused_element(WEBKIT_ACCESSIBLE(wrapper));
+#else
+    return NULL;
+#endif
+}

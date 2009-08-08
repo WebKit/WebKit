@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008 Nuanti Ltd.
+ * Copyright (C) 2009 Jan Alonzo
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -56,6 +57,8 @@ WebKitAccessible* webkit_accessible_new (WebCore::AccessibilityObject* core_obje
 WebCore::AccessibilityObject* webkit_accessible_get_accessibility_object (WebKitAccessible* accessible);
 
 void webkit_accessible_detach (WebKitAccessible* accessible);
+
+AtkObject* webkit_accessible_get_focused_element(WebKitAccessible* accessible);
 
 G_END_DECLS
 
