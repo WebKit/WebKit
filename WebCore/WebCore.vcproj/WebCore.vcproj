@@ -24672,43 +24672,43 @@
 			Name="html"
 			>
 			<File
-				RelativePath="..\html\CanvasGradient.cpp"
+				RelativePath="..\html\canvas\CanvasGradient.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\html\CanvasGradient.h"
+				RelativePath="..\html\canvas\CanvasGradient.h"
 				>
 			</File>
 			<File
-				RelativePath="..\html\CanvasPattern.cpp"
+				RelativePath="..\html\canvas\CanvasPattern.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\html\CanvasPattern.h"
+				RelativePath="..\html\canvas\CanvasPattern.h"
 				>
 			</File>
 			<File
-				RelativePath="..\html\CanvasPixelArray.cpp"
+				RelativePath="..\html\canvas\CanvasPixelArray.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\html\CanvasPixelArray.h"
+				RelativePath="..\html\canvas\CanvasPixelArray.h"
 				>
 			</File>
 			<File
-				RelativePath="..\html\CanvasRenderingContext2D.cpp"
+				RelativePath="..\html\canvas\CanvasRenderingContext2D.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\html\CanvasRenderingContext2D.h"
+				RelativePath="..\html\canvas\CanvasRenderingContext2D.h"
 				>
 			</File>
 			<File
-				RelativePath="..\html\CanvasStyle.cpp"
+				RelativePath="..\html\canvas\CanvasStyle.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\html\CanvasStyle.h"
+				RelativePath="..\html\canvas\CanvasStyle.h"
 				>
 			</File>
 			<File

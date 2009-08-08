@@ -1,3 +1,47 @@
+2009-08-07  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Move Canvas related file to a subdirectories
+        https://bugs.webkit.org/show_bug.cgi?id=28026
+
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * html/CanvasGradient.cpp: Removed.
+        * html/CanvasGradient.h: Removed.
+        * html/CanvasGradient.idl: Removed.
+        * html/CanvasPattern.cpp: Removed.
+        * html/CanvasPattern.h: Removed.
+        * html/CanvasPattern.idl: Removed.
+        * html/CanvasPixelArray.cpp: Removed.
+        * html/CanvasPixelArray.h: Removed.
+        * html/CanvasPixelArray.idl: Removed.
+        * html/CanvasRenderingContext2D.cpp: Removed.
+        * html/CanvasRenderingContext2D.h: Removed.
+        * html/CanvasRenderingContext2D.idl: Removed.
+        * html/CanvasStyle.cpp: Removed.
+        * html/CanvasStyle.h: Removed.
+        * html/canvas: Added.
+        * html/canvas/CanvasGradient.cpp: Copied from WebCore/html/CanvasGradient.cpp.
+        * html/canvas/CanvasGradient.h: Copied from WebCore/html/CanvasGradient.h.
+        * html/canvas/CanvasGradient.idl: Copied from WebCore/html/CanvasGradient.idl.
+        * html/canvas/CanvasPattern.cpp: Copied from WebCore/html/CanvasPattern.cpp.
+        * html/canvas/CanvasPattern.h: Copied from WebCore/html/CanvasPattern.h.
+        * html/canvas/CanvasPattern.idl: Copied from WebCore/html/CanvasPattern.idl.
+        * html/canvas/CanvasPixelArray.cpp: Copied from WebCore/html/CanvasPixelArray.cpp.
+        * html/canvas/CanvasPixelArray.h: Copied from WebCore/html/CanvasPixelArray.h.
+        * html/canvas/CanvasPixelArray.idl: Copied from WebCore/html/CanvasPixelArray.idl.
+        * html/canvas/CanvasRenderingContext2D.cpp: Copied from WebCore/html/CanvasRenderingContext2D.cpp.
+        * html/canvas/CanvasRenderingContext2D.h: Copied from WebCore/html/CanvasRenderingContext2D.h.
+        * html/canvas/CanvasRenderingContext2D.idl: Copied from WebCore/html/CanvasRenderingContext2D.idl.
+        * html/canvas/CanvasStyle.cpp: Copied from WebCore/html/CanvasStyle.cpp.
+        * html/canvas/CanvasStyle.h: Copied from WebCore/html/CanvasStyle.h.
+
 2009-08-07  Szabo Carol  <carol.szabo@nokia.com>
 
         Reviewed by David Hyatt.

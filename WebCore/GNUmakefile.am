@@ -151,9 +151,9 @@ IDL_BINDINGS += \
 	WebCore/dom/WebKitAnimationEvent.idl \
 	WebCore/dom/WebKitTransitionEvent.idl \
 	WebCore/dom/WheelEvent.idl \
-	WebCore/html/CanvasGradient.idl \
-	WebCore/html/CanvasPattern.idl \
-	WebCore/html/CanvasRenderingContext2D.idl \
+	WebCore/html/canvas/CanvasGradient.idl \
+	WebCore/html/canvas/CanvasPattern.idl \
+	WebCore/html/canvas/CanvasRenderingContext2D.idl \
 	WebCore/html/DataGridColumn.idl \
 	WebCore/html/DataGridColumnList.idl \
 	WebCore/html/File.idl \
@@ -901,16 +901,16 @@ webcore_sources += \
 	WebCore/history/HistoryItem.h \
 	WebCore/history/PageCache.cpp \
 	WebCore/history/PageCache.h \
-	WebCore/html/CanvasGradient.cpp \
-	WebCore/html/CanvasGradient.h \
-	WebCore/html/CanvasPattern.cpp \
-	WebCore/html/CanvasPattern.h \
-	WebCore/html/CanvasPixelArray.cpp \
-	WebCore/html/CanvasPixelArray.h \
-	WebCore/html/CanvasRenderingContext2D.cpp \
-	WebCore/html/CanvasRenderingContext2D.h \
-	WebCore/html/CanvasStyle.cpp \
-	WebCore/html/CanvasStyle.h \
+	WebCore/html/canvas/CanvasGradient.cpp \
+	WebCore/html/canvas/CanvasGradient.h \
+	WebCore/html/canvas/CanvasPattern.cpp \
+	WebCore/html/canvas/CanvasPattern.h \
+	WebCore/html/canvas/CanvasPixelArray.cpp \
+	WebCore/html/canvas/CanvasPixelArray.h \
+	WebCore/html/canvas/CanvasRenderingContext2D.cpp \
+	WebCore/html/canvas/CanvasRenderingContext2D.h \
+	WebCore/html/canvas/CanvasStyle.cpp \
+	WebCore/html/canvas/CanvasStyle.h \
 	WebCore/html/CollectionCache.cpp \
 	WebCore/html/CollectionCache.h \
 	WebCore/html/CollectionType.h \

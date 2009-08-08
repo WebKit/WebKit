@@ -340,9 +340,9 @@ IDL_BINDINGS += \
     dom/WebKitAnimationEvent.idl \
     dom/WebKitTransitionEvent.idl \
     dom/WheelEvent.idl \
-    html/CanvasGradient.idl \
-    html/CanvasPattern.idl \
-    html/CanvasRenderingContext2D.idl \
+    html/canvas/CanvasGradient.idl \
+    html/canvas/CanvasPattern.idl \
+    html/canvas/CanvasRenderingContext2D.idl \
     html/DataGridColumn.idl \
     html/DataGridColumnList.idl \
     html/File.idl \
@@ -916,11 +916,11 @@ SOURCES += \
     history/HistoryItem.cpp \
     history/qt/HistoryItemQt.cpp \
     history/PageCache.cpp \
-    html/CanvasGradient.cpp \
-    html/CanvasPattern.cpp \
-    html/CanvasPixelArray.cpp \
-    html/CanvasRenderingContext2D.cpp \
-    html/CanvasStyle.cpp \
+    html/canvas/CanvasGradient.cpp \
+    html/canvas/CanvasPattern.cpp \
+    html/canvas/CanvasPixelArray.cpp \
+    html/canvas/CanvasRenderingContext2D.cpp \
+    html/canvas/CanvasStyle.cpp \
     html/CollectionCache.cpp \
     html/DataGridColumn.cpp \
     html/DataGridColumnList.cpp \
@@ -1570,11 +1570,11 @@ HEADERS += \
     history/CachedPage.h \
     history/HistoryItem.h \
     history/PageCache.h \
-    html/CanvasGradient.h \
-    html/CanvasPattern.h \
-    html/CanvasPixelArray.h \
-    html/CanvasRenderingContext2D.h \
-    html/CanvasStyle.h \
+    html/canvas/CanvasGradient.h \
+    html/canvas/CanvasPattern.h \
+    html/canvas/CanvasPixelArray.h \
+    html/canvas/CanvasRenderingContext2D.h \
+    html/canvas/CanvasStyle.h \
     html/CollectionCache.h \
     html/DataGridColumn.h \
     html/DataGridColumnList.h \

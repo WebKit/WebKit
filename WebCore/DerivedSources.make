@@ -32,6 +32,7 @@ VPATH = \
     $(WebCore)/css \
     $(WebCore)/dom \
     $(WebCore)/html \
+    $(WebCore)/html/canvas \
     $(WebCore)/inspector \
     $(WebCore)/loader/appcache \
     $(WebCore)/page \

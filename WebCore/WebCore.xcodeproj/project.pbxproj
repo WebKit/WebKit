@@ -742,6 +742,20 @@
 		46F9D5DD0B0D60170028EE36 /* aliasCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 46F9D5DA0B0D60170028EE36 /* aliasCursor.png */; };
 		46F9D5DE0B0D60170028EE36 /* noDropCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 46F9D5DB0B0D60170028EE36 /* noDropCursor.png */; };
 		46F9D5DF0B0D60170028EE36 /* progressCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 46F9D5DC0B0D60170028EE36 /* progressCursor.png */; };
+		49484FC1102CF23C00187DD3 /* CanvasGradient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49484FB3102CF23C00187DD3 /* CanvasGradient.cpp */; };
+		49484FC2102CF23C00187DD3 /* CanvasGradient.h in Headers */ = {isa = PBXBuildFile; fileRef = 49484FB4102CF23C00187DD3 /* CanvasGradient.h */; };
+		49484FC3102CF23C00187DD3 /* CanvasGradient.idl in Resources */ = {isa = PBXBuildFile; fileRef = 49484FB5102CF23C00187DD3 /* CanvasGradient.idl */; };
+		49484FC4102CF23C00187DD3 /* CanvasPattern.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49484FB6102CF23C00187DD3 /* CanvasPattern.cpp */; };
+		49484FC5102CF23C00187DD3 /* CanvasPattern.h in Headers */ = {isa = PBXBuildFile; fileRef = 49484FB7102CF23C00187DD3 /* CanvasPattern.h */; };
+		49484FC6102CF23C00187DD3 /* CanvasPattern.idl in Resources */ = {isa = PBXBuildFile; fileRef = 49484FB8102CF23C00187DD3 /* CanvasPattern.idl */; };
+		49484FC7102CF23C00187DD3 /* CanvasPixelArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49484FB9102CF23C00187DD3 /* CanvasPixelArray.cpp */; };
+		49484FC8102CF23C00187DD3 /* CanvasPixelArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 49484FBA102CF23C00187DD3 /* CanvasPixelArray.h */; };
+		49484FC9102CF23C00187DD3 /* CanvasPixelArray.idl in Resources */ = {isa = PBXBuildFile; fileRef = 49484FBB102CF23C00187DD3 /* CanvasPixelArray.idl */; };
+		49484FCA102CF23C00187DD3 /* CanvasRenderingContext2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49484FBC102CF23C00187DD3 /* CanvasRenderingContext2D.cpp */; };
+		49484FCB102CF23C00187DD3 /* CanvasRenderingContext2D.h in Headers */ = {isa = PBXBuildFile; fileRef = 49484FBD102CF23C00187DD3 /* CanvasRenderingContext2D.h */; };
+		49484FCC102CF23C00187DD3 /* CanvasRenderingContext2D.idl in Resources */ = {isa = PBXBuildFile; fileRef = 49484FBE102CF23C00187DD3 /* CanvasRenderingContext2D.idl */; };
+		49484FCD102CF23C00187DD3 /* CanvasStyle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49484FBF102CF23C00187DD3 /* CanvasStyle.cpp */; };
+		49484FCE102CF23C00187DD3 /* CanvasStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = 49484FC0102CF23C00187DD3 /* CanvasStyle.h */; };
 		494BD7950F55C8EE00747828 /* WebKitPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 494BD7930F55C8EE00747828 /* WebKitPoint.h */; };
 		494BD7990F55C90E00747828 /* JSWebKitPointConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 494BD7970F55C90E00747828 /* JSWebKitPointConstructor.cpp */; };
 		494BD79A0F55C90E00747828 /* JSWebKitPointConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 494BD7980F55C90E00747828 /* JSWebKitPointConstructor.h */; };
@@ -1928,7 +1942,6 @@
 		85F74E0A0AA8DF8C000DC284 /* DOMCSSUnknownRule.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 85032DD50AA8C9BE007D3B7D /* DOMCSSUnknownRule.h */; };
 		85FF315A0AAFBFCB00374F38 /* DOMKeyboardEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 85FF31580AAFBFCB00374F38 /* DOMKeyboardEvent.h */; };
 		85FF315B0AAFBFCB00374F38 /* DOMKeyboardEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = 85FF31590AAFBFCB00374F38 /* DOMKeyboardEvent.mm */; };
-		898D1FB30F27934B004BBAC7 /* CanvasPixelArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 898D1FB20F27934B004BBAC7 /* CanvasPixelArray.h */; };
 		929264770B61FC7200B41D34 /* JSDocumentCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 929264760B61FC7200B41D34 /* JSDocumentCustom.cpp */; };
 		9302B0BD0D79F82900C7EE83 /* PageGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9302B0BC0D79F82900C7EE83 /* PageGroup.cpp */; };
 		9302B0BF0D79F82C00C7EE83 /* PageGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 9302B0BE0D79F82C00C7EE83 /* PageGroup.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2124,14 +2137,6 @@
 		93EB169709F880C00091F8FF /* WebCoreSystemInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 93EB169609F880C00091F8FF /* WebCoreSystemInterface.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93EB355F09E37FD600F43799 /* MouseEventWithHitTestResults.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93EB355E09E37FD600F43799 /* MouseEventWithHitTestResults.cpp */; };
 		93EEC1FA09C2877700C515D1 /* DocPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 93EEC1E709C2877700C515D1 /* DocPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		93EEC1FF09C2877700C515D1 /* CanvasRenderingContext2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93EEC1ED09C2877700C515D1 /* CanvasRenderingContext2D.cpp */; };
-		93EEC20009C2877700C515D1 /* CanvasRenderingContext2D.h in Headers */ = {isa = PBXBuildFile; fileRef = 93EEC1EE09C2877700C515D1 /* CanvasRenderingContext2D.h */; };
-		93EEC20109C2877700C515D1 /* CanvasStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = 93EEC1EF09C2877700C515D1 /* CanvasStyle.h */; };
-		93EEC20209C2877700C515D1 /* CanvasGradient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93EEC1F009C2877700C515D1 /* CanvasGradient.cpp */; };
-		93EEC20309C2877700C515D1 /* CanvasGradient.h in Headers */ = {isa = PBXBuildFile; fileRef = 93EEC1F109C2877700C515D1 /* CanvasGradient.h */; };
-		93EEC20409C2877700C515D1 /* CanvasPattern.h in Headers */ = {isa = PBXBuildFile; fileRef = 93EEC1F209C2877700C515D1 /* CanvasPattern.h */; };
-		93EEC26F09C3218000C515D1 /* CanvasPattern.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93EEC26E09C3218000C515D1 /* CanvasPattern.cpp */; };
-		93EEC27109C3218800C515D1 /* CanvasStyle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93EEC27009C3218800C515D1 /* CanvasStyle.cpp */; };
 		93F198E508245E59001E9ABC /* HTMLDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D23C02DE4396018635CA /* HTMLDocument.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F198E608245E59001E9ABC /* HTMLElement.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D23F02DE4396018635CA /* HTMLElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F198EF08245E59001E9ABC /* HTMLParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D25102DE4396018635CA /* HTMLParser.h */; };
@@ -2200,7 +2205,6 @@
 		97DD4D870FDF4D6E00ECF9A4 /* XSSAuditor.h in Headers */ = {isa = PBXBuildFile; fileRef = 97DD4D850FDF4D6E00ECF9A4 /* XSSAuditor.h */; };
 		A17C81220F2A5CF7005DAAEB /* HTMLElementFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A17C81200F2A5CF7005DAAEB /* HTMLElementFactory.cpp */; };
 		A17C81230F2A5CF7005DAAEB /* HTMLElementFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = A17C81210F2A5CF7005DAAEB /* HTMLElementFactory.h */; };
-		A7094AFA0F27AE6000596CEC /* CanvasPixelArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7094AF90F27AE6000596CEC /* CanvasPixelArray.cpp */; };
 		A718760E0B2A120100A16ECE /* DragActions.h in Headers */ = {isa = PBXBuildFile; fileRef = A718760D0B2A120100A16ECE /* DragActions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A71878900B2D04AC00A16ECE /* DragControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A718788F0B2D04AC00A16ECE /* DragControllerMac.mm */; };
 		A7352C190B1BB89D00A986D0 /* RenderSVGBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7352C170B1BB89D00A986D0 /* RenderSVGBlock.cpp */; };
@@ -5751,6 +5755,20 @@
 		46F9D5DA0B0D60170028EE36 /* aliasCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = aliasCursor.png; sourceTree = "<group>"; };
 		46F9D5DB0B0D60170028EE36 /* noDropCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = noDropCursor.png; sourceTree = "<group>"; };
 		46F9D5DC0B0D60170028EE36 /* progressCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = progressCursor.png; sourceTree = "<group>"; };
+		49484FB3102CF23C00187DD3 /* CanvasGradient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CanvasGradient.cpp; path = canvas/CanvasGradient.cpp; sourceTree = "<group>"; };
+		49484FB4102CF23C00187DD3 /* CanvasGradient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CanvasGradient.h; path = canvas/CanvasGradient.h; sourceTree = "<group>"; };
+		49484FB5102CF23C00187DD3 /* CanvasGradient.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CanvasGradient.idl; path = canvas/CanvasGradient.idl; sourceTree = "<group>"; };
+		49484FB6102CF23C00187DD3 /* CanvasPattern.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CanvasPattern.cpp; path = canvas/CanvasPattern.cpp; sourceTree = "<group>"; };
+		49484FB7102CF23C00187DD3 /* CanvasPattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CanvasPattern.h; path = canvas/CanvasPattern.h; sourceTree = "<group>"; };
+		49484FB8102CF23C00187DD3 /* CanvasPattern.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CanvasPattern.idl; path = canvas/CanvasPattern.idl; sourceTree = "<group>"; };
+		49484FB9102CF23C00187DD3 /* CanvasPixelArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CanvasPixelArray.cpp; path = canvas/CanvasPixelArray.cpp; sourceTree = "<group>"; };
+		49484FBA102CF23C00187DD3 /* CanvasPixelArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CanvasPixelArray.h; path = canvas/CanvasPixelArray.h; sourceTree = "<group>"; };
+		49484FBB102CF23C00187DD3 /* CanvasPixelArray.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CanvasPixelArray.idl; path = canvas/CanvasPixelArray.idl; sourceTree = "<group>"; };
+		49484FBC102CF23C00187DD3 /* CanvasRenderingContext2D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CanvasRenderingContext2D.cpp; path = canvas/CanvasRenderingContext2D.cpp; sourceTree = "<group>"; };
+		49484FBD102CF23C00187DD3 /* CanvasRenderingContext2D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CanvasRenderingContext2D.h; path = canvas/CanvasRenderingContext2D.h; sourceTree = "<group>"; };
+		49484FBE102CF23C00187DD3 /* CanvasRenderingContext2D.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CanvasRenderingContext2D.idl; path = canvas/CanvasRenderingContext2D.idl; sourceTree = "<group>"; };
+		49484FBF102CF23C00187DD3 /* CanvasStyle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CanvasStyle.cpp; path = canvas/CanvasStyle.cpp; sourceTree = "<group>"; };
+		49484FC0102CF23C00187DD3 /* CanvasStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CanvasStyle.h; path = canvas/CanvasStyle.h; sourceTree = "<group>"; };
 		494BD7930F55C8EE00747828 /* WebKitPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitPoint.h; sourceTree = "<group>"; };
 		494BD7940F55C8EE00747828 /* WebKitPoint.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebKitPoint.idl; sourceTree = "<group>"; };
 		494BD7970F55C90E00747828 /* JSWebKitPointConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebKitPointConstructor.cpp; sourceTree = "<group>"; };
@@ -6928,7 +6946,6 @@
 		85F56A790A98CE3700ADB60A /* DOMProcessingInstruction.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMProcessingInstruction.mm; sourceTree = "<group>"; };
 		85FF31580AAFBFCB00374F38 /* DOMKeyboardEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMKeyboardEvent.h; sourceTree = "<group>"; };
 		85FF31590AAFBFCB00374F38 /* DOMKeyboardEvent.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMKeyboardEvent.mm; sourceTree = "<group>"; };
-		898D1FB20F27934B004BBAC7 /* CanvasPixelArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CanvasPixelArray.h; sourceTree = "<group>"; };
 		929264760B61FC7200B41D34 /* JSDocumentCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSDocumentCustom.cpp; sourceTree = "<group>"; };
 		9302B0BC0D79F82900C7EE83 /* PageGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageGroup.cpp; sourceTree = "<group>"; };
 		9302B0BE0D79F82C00C7EE83 /* PageGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageGroup.h; sourceTree = "<group>"; };
@@ -6943,9 +6960,6 @@
 		9307F1D50AF2D59000DBA31A /* HitTestResult.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HitTestResult.cpp; sourceTree = "<group>"; };
 		9307F1D60AF2D59000DBA31A /* HitTestResult.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HitTestResult.h; sourceTree = "<group>"; };
 		930908900AF7EDE40081DF01 /* HitTestRequest.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HitTestRequest.h; sourceTree = "<group>"; };
-		930CAAD609C495B600229C04 /* CanvasRenderingContext2D.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CanvasRenderingContext2D.idl; sourceTree = "<group>"; };
-		930CAB8809C49EFA00229C04 /* CanvasGradient.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CanvasGradient.idl; sourceTree = "<group>"; };
-		930CAB8F09C49F1B00229C04 /* CanvasPattern.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CanvasPattern.idl; sourceTree = "<group>"; };
 		9327A94109968D1A0068A546 /* HTMLOptionsCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLOptionsCollection.cpp; sourceTree = "<group>"; };
 		932871BF0B20DEB70049035A /* PlatformMenuDescription.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PlatformMenuDescription.h; sourceTree = "<group>"; };
 		932E16080AF578340025F408 /* FrameLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FrameLoader.cpp; sourceTree = "<group>"; };
@@ -7147,19 +7161,11 @@
 		93EEC1E909C2877700C515D1 /* DOMImplementation.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMImplementation.idl; sourceTree = "<group>"; };
 		93EEC1EA09C2877700C515D1 /* Element.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Element.idl; sourceTree = "<group>"; };
 		93EEC1EB09C2877700C515D1 /* Entity.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Entity.idl; sourceTree = "<group>"; };
-		93EEC1ED09C2877700C515D1 /* CanvasRenderingContext2D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CanvasRenderingContext2D.cpp; sourceTree = "<group>"; };
-		93EEC1EE09C2877700C515D1 /* CanvasRenderingContext2D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CanvasRenderingContext2D.h; sourceTree = "<group>"; };
-		93EEC1EF09C2877700C515D1 /* CanvasStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CanvasStyle.h; sourceTree = "<group>"; };
-		93EEC1F009C2877700C515D1 /* CanvasGradient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CanvasGradient.cpp; sourceTree = "<group>"; };
-		93EEC1F109C2877700C515D1 /* CanvasGradient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CanvasGradient.h; sourceTree = "<group>"; };
-		93EEC1F209C2877700C515D1 /* CanvasPattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CanvasPattern.h; sourceTree = "<group>"; };
 		93EEC1F309C2877700C515D1 /* MutationEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MutationEvent.idl; sourceTree = "<group>"; };
 		93EEC1F409C2877700C515D1 /* Notation.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Notation.idl; sourceTree = "<group>"; };
 		93EEC1F509C2877700C515D1 /* ProcessingInstruction.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ProcessingInstruction.idl; sourceTree = "<group>"; };
 		93EEC1F609C2877700C515D1 /* Text.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Text.idl; sourceTree = "<group>"; };
 		93EEC1F709C2877700C515D1 /* WheelEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WheelEvent.idl; sourceTree = "<group>"; };
-		93EEC26E09C3218000C515D1 /* CanvasPattern.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CanvasPattern.cpp; sourceTree = "<group>"; };
-		93EEC27009C3218800C515D1 /* CanvasStyle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CanvasStyle.cpp; sourceTree = "<group>"; };
 		93F19B1908245E59001E9ABC /* Info.plist */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		93F19B1A08245E5A001E9ABC /* WebCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WebCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		93F1D31A0558CC5C00821BC0 /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = /usr/lib/libicucore.dylib; sourceTree = "<absolute>"; };
@@ -7182,8 +7188,6 @@
 		97DD4D850FDF4D6E00ECF9A4 /* XSSAuditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XSSAuditor.h; sourceTree = "<group>"; };
 		A17C81200F2A5CF7005DAAEB /* HTMLElementFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLElementFactory.cpp; sourceTree = "<group>"; };
 		A17C81210F2A5CF7005DAAEB /* HTMLElementFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLElementFactory.h; sourceTree = "<group>"; };
-		A7094AF90F27AE6000596CEC /* CanvasPixelArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CanvasPixelArray.cpp; sourceTree = "<group>"; };
-		A7094AFB0F27AEE300596CEC /* CanvasPixelArray.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CanvasPixelArray.idl; sourceTree = "<group>"; };
 		A718760D0B2A120100A16ECE /* DragActions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DragActions.h; sourceTree = "<group>"; };
 		A718788F0B2D04AC00A16ECE /* DragControllerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DragControllerMac.mm; sourceTree = "<group>"; };
 		A7352C170B1BB89D00A986D0 /* RenderSVGBlock.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGBlock.cpp; sourceTree = "<group>"; };
@@ -10069,6 +10073,27 @@
 			name = Exports;
 			sourceTree = "<group>";
 		};
+		49484FAE102CF01E00187DD3 /* canvas */ = {
+			isa = PBXGroup;
+			children = (
+				49484FB3102CF23C00187DD3 /* CanvasGradient.cpp */,
+				49484FB4102CF23C00187DD3 /* CanvasGradient.h */,
+				49484FB5102CF23C00187DD3 /* CanvasGradient.idl */,
+				49484FB6102CF23C00187DD3 /* CanvasPattern.cpp */,
+				49484FB7102CF23C00187DD3 /* CanvasPattern.h */,
+				49484FB8102CF23C00187DD3 /* CanvasPattern.idl */,
+				49484FB9102CF23C00187DD3 /* CanvasPixelArray.cpp */,
+				49484FBA102CF23C00187DD3 /* CanvasPixelArray.h */,
+				49484FBB102CF23C00187DD3 /* CanvasPixelArray.idl */,
+				49484FBC102CF23C00187DD3 /* CanvasRenderingContext2D.cpp */,
+				49484FBD102CF23C00187DD3 /* CanvasRenderingContext2D.h */,
+				49484FBE102CF23C00187DD3 /* CanvasRenderingContext2D.idl */,
+				49484FBF102CF23C00187DD3 /* CanvasStyle.cpp */,
+				49484FC0102CF23C00187DD3 /* CanvasStyle.h */,
+			);
+			name = canvas;
+			sourceTree = "<group>";
+		};
 		49E911B20EF86D27009D0CAF /* transforms */ = {
 			isa = PBXGroup;
 			children = (
@@ -11807,20 +11832,7 @@
 		93EEC1EC09C2877700C515D1 /* html */ = {
 			isa = PBXGroup;
 			children = (
-				93EEC1F009C2877700C515D1 /* CanvasGradient.cpp */,
-				93EEC1F109C2877700C515D1 /* CanvasGradient.h */,
-				930CAB8809C49EFA00229C04 /* CanvasGradient.idl */,
-				93EEC26E09C3218000C515D1 /* CanvasPattern.cpp */,
-				93EEC1F209C2877700C515D1 /* CanvasPattern.h */,
-				930CAB8F09C49F1B00229C04 /* CanvasPattern.idl */,
-				A7094AF90F27AE6000596CEC /* CanvasPixelArray.cpp */,
-				898D1FB20F27934B004BBAC7 /* CanvasPixelArray.h */,
-				A7094AFB0F27AEE300596CEC /* CanvasPixelArray.idl */,
-				93EEC1ED09C2877700C515D1 /* CanvasRenderingContext2D.cpp */,
-				93EEC1EE09C2877700C515D1 /* CanvasRenderingContext2D.h */,
-				930CAAD609C495B600229C04 /* CanvasRenderingContext2D.idl */,
-				93EEC27009C3218800C515D1 /* CanvasStyle.cpp */,
-				93EEC1EF09C2877700C515D1 /* CanvasStyle.h */,
+				49484FAE102CF01E00187DD3 /* canvas */,
 				93C441ED0F813A1A00C1A634 /* CollectionCache.cpp */,
 				93C441EE0F813A1A00C1A634 /* CollectionCache.h */,
 				93C441FF0F813AE100C1A634 /* CollectionType.h */,
@@ -14963,11 +14975,6 @@
 				BCB16C260979C3BD00467741 /* CachedXBLDocument.h in Headers */,
 				BCB16C280979C3BD00467741 /* CachedXSLStyleSheet.h in Headers */,
 				93F1995008245E59001E9ABC /* CachePolicy.h in Headers */,
-				93EEC20309C2877700C515D1 /* CanvasGradient.h in Headers */,
-				93EEC20409C2877700C515D1 /* CanvasPattern.h in Headers */,
-				898D1FB30F27934B004BBAC7 /* CanvasPixelArray.h in Headers */,
-				93EEC20009C2877700C515D1 /* CanvasRenderingContext2D.h in Headers */,
-				93EEC20109C2877700C515D1 /* CanvasStyle.h in Headers */,
 				6550B69E099DF0270090D781 /* CDATASection.h in Headers */,
 				514185EE0CD65F0400763C99 /* ChangeVersionWrapper.h in Headers */,
 				6550B6A0099DF0270090D781 /* CharacterData.h in Headers */,
@@ -17173,6 +17180,11 @@
 				0FF50263102BA92C0066F39A /* DOMMediaInternal.h in Headers */,
 				0FF5026A102BA9430066F39A /* JSMedia.h in Headers */,
 				0FF50272102BA96A0066F39A /* Media.h in Headers */,
+				49484FC2102CF23C00187DD3 /* CanvasGradient.h in Headers */,
+				49484FC5102CF23C00187DD3 /* CanvasPattern.h in Headers */,
+				49484FC8102CF23C00187DD3 /* CanvasPixelArray.h in Headers */,
+				49484FCB102CF23C00187DD3 /* CanvasRenderingContext2D.h in Headers */,
+				49484FCE102CF23C00187DD3 /* CanvasStyle.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -17274,6 +17286,10 @@
 				85136CA80AED665900F90A3D /* westResizeCursor.png in Resources */,
 				1AB1AE7A0C051FDE00139F4F /* zoomInCursor.png in Resources */,
 				1AB1AE7B0C051FDE00139F4F /* zoomOutCursor.png in Resources */,
+				49484FC3102CF23C00187DD3 /* CanvasGradient.idl in Resources */,
+				49484FC6102CF23C00187DD3 /* CanvasPattern.idl in Resources */,
+				49484FC9102CF23C00187DD3 /* CanvasPixelArray.idl in Resources */,
+				49484FCC102CF23C00187DD3 /* CanvasRenderingContext2D.idl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -17498,11 +17514,6 @@
 				BCB16C230979C3BD00467741 /* CachedScript.cpp in Sources */,
 				BCB16C250979C3BD00467741 /* CachedXBLDocument.cpp in Sources */,
 				BCB16C270979C3BD00467741 /* CachedXSLStyleSheet.cpp in Sources */,
-				93EEC20209C2877700C515D1 /* CanvasGradient.cpp in Sources */,
-				93EEC26F09C3218000C515D1 /* CanvasPattern.cpp in Sources */,
-				A7094AFA0F27AE6000596CEC /* CanvasPixelArray.cpp in Sources */,
-				93EEC1FF09C2877700C515D1 /* CanvasRenderingContext2D.cpp in Sources */,
-				93EEC27109C3218800C515D1 /* CanvasStyle.cpp in Sources */,
 				6550B69D099DF0270090D781 /* CDATASection.cpp in Sources */,
 				514185EF0CD65F0400763C99 /* ChangeVersionWrapper.cpp in Sources */,
 				6550B69F099DF0270090D781 /* CharacterData.cpp in Sources */,
@@ -19220,6 +19231,11 @@
 				0FF5025C102BA9010066F39A /* DOMMedia.mm in Sources */,
 				0FF50269102BA9430066F39A /* JSMedia.cpp in Sources */,
 				0FF50271102BA96A0066F39A /* Media.cpp in Sources */,
+				49484FC1102CF23C00187DD3 /* CanvasGradient.cpp in Sources */,
+				49484FC4102CF23C00187DD3 /* CanvasPattern.cpp in Sources */,
+				49484FC7102CF23C00187DD3 /* CanvasPixelArray.cpp in Sources */,
+				49484FCA102CF23C00187DD3 /* CanvasRenderingContext2D.cpp in Sources */,
+				49484FCD102CF23C00187DD3 /* CanvasStyle.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
