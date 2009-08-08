@@ -222,7 +222,7 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
 #if USE(ACCELERATED_COMPOSITING) && defined(BUILDING_ON_LEOPARD)
     NSView *documentView = [self documentView];
     if ([documentView isKindOfClass:[WebHTMLView class]]) {
-        WebHTMLView* htmlView = (WebHTMLView*)documentView;
+        WebHTMLView *htmlView = (WebHTMLView *)documentView;
         if ([htmlView _isUsingAcceleratedCompositing])
             [htmlView _updateLayerHostingViewPosition];
     }

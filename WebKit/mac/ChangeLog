@@ -1,5 +1,13 @@
 2009-08-07  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix a stylistic nit related to the location of the *, which, for some
+        ridiculous reason, WebKit style dictates to be different between Objective-C and C++.
+        
+        * WebView/WebDynamicScrollBarsView.mm:
+        (-[WebDynamicScrollBarsView reflectScrolledClipView:]):
+
+2009-08-07  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Work around an issue on Leopard where composited layers are misplaced and squished when the page
