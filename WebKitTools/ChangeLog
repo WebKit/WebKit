@@ -1,3 +1,15 @@
+2009-08-08  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        bugzilla-tool needs a --quiet option
+        https://bugs.webkit.org/show_bug.cgi?id=28060
+
+        A first pass at a --quiet option.  This doesn't do all the excting
+        things we might want, but it addresses 80% of the use case.
+
+        * Scripts/bugzilla-tool:
+
 2009-08-08  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Xan Lopez.
