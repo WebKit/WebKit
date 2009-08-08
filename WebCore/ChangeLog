@@ -1,3 +1,31 @@
+2009-08-07  Maxime Simon  <simon.maxime@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        Added a fourth bunch of Haiku-specific files for WebCore.
+        https://bugs.webkit.org/show_bug.cgi?id=26988
+
+        * platform/haiku/PasteboardHaiku.cpp: Added.
+        (WebCore::Pasteboard::Pasteboard):
+        (WebCore::Pasteboard::generalPasteboard):
+        (WebCore::Pasteboard::writeSelection):
+        (WebCore::Pasteboard::canSmartReplace):
+        (WebCore::Pasteboard::plainText):
+        (WebCore::Pasteboard::documentFragment):
+        (WebCore::Pasteboard::writeURL):
+        (WebCore::Pasteboard::writeImage):
+        (WebCore::Pasteboard::clear):
+        * platform/haiku/PlatformKeyboardEventHaiku.cpp: Added.
+        (WebCore::keyIdentifierForHaikuKeyCode):
+        (WebCore::windowsKeyCodeForKeyEvent):
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+        (WebCore::PlatformKeyboardEvent::disambiguateKeyDownEvent):
+        (WebCore::PlatformKeyboardEvent::currentCapsLockState):
+        * platform/haiku/PlatformMouseEventHaiku.cpp: Added.
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+        * platform/haiku/PlatformWheelEventHaiku.cpp: Added.
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+
 2009-08-07  Nicolas Weber  <thakis@chromium.org>
 
         Teach WebKit how to decode jpegs in cmyk and ycck color spaces.
