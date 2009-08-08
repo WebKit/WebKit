@@ -5902,7 +5902,9 @@ fast/css/pseudo-cache-stale.html
 fast/css/rem-dynamic-scaling.html
 fast/css/rem-units-on-root.html
 fast/dom/HTMLTableColElement/resize-table-using-col-width.html
+fast/forms/menulist-style-color.html
 fast/forms/search-vertical-alignment.html
+fast/forms/text-style-color.html
 fast/frames/viewsource-on-image-file.html
 fast/overflow/overflow-with-local-background-attachment.html
 fast/repaint/background-generated.html

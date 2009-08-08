@@ -1,3 +1,9 @@
+2009-08-07  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        [Gtk] Skip two new tests (from r46896) needing gtk-specific results.
+
+        * platform/gtk/Skipped:
+
 2009-08-07  Darin Adler  <darin@apple.com>
 
         * platform/gtk/Skipped: Skip a newly-failing test. I filed a bug about it too.
