@@ -1,3 +1,13 @@
+2009-08-07  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        Test function declaration parsing
+
+        * fast/js/function-declaration-expected.txt: Added.
+        * fast/js/function-declaration.html: Added.
+        * fast/js/resources/function-declaration.js: Added.
+
 2009-08-07  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         [Gtk] Skip two new tests (from r46896) needing gtk-specific results.
