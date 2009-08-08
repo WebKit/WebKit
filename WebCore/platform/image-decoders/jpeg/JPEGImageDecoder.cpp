@@ -194,6 +194,10 @@ public:
                         break;
                     case JCS_CMYK:
                     case JCS_YCCK:
+                        // jpeglib cannot convert these to rgb, but it can
+                        // convert ycck to cmyk
+                        m_info.out_color_space = JCS_CMYK;
+                        break;
                     default:
                         m_state = JPEG_ERROR;
                         return false;
@@ -457,6 +461,54 @@ void JPEGImageDecoder::decode(bool sizeOnly)
     }
 }
 
+static void convertCMYKToRGBA(RGBA32Buffer& dest, JSAMPROW src, jpeg_decompress_struct* info)
+{
+    ASSERT(info->out_color_space == JCS_CMYK);
+
+    for (unsigned x = 0; x < info->output_width; ++x) {
+        unsigned c = *src++;
+        unsigned m = *src++;
+        unsigned y = *src++;
+        unsigned k = *src++;
+
+        // Source is 'Inverted CMYK', output is RGB.
+        // See: http://www.easyrgb.com/math.php?MATH=M12#text12
+        // Or:  http://www.ilkeratalay.com/colorspacesfaq.php#rgb
+
+        // From CMYK to CMY
+        // C = C * ( 1 - K ) + K
+        // M = M * ( 1 - K ) + K
+        // Y = Y * ( 1 - K ) + K
+
+        // From Inverted CMYK to CMY is thus:
+        // C = (1-iC) * (1 - (1-iK)) + (1-iK) => 1 - iC*iK
+        // Same for M and Y
+
+        // Convert from CMY (0..1) to RGB (0..1)
+        // R = 1 - C => 1 - (1 - iC*iK) => iC*iK
+        // G = 1 - M => 1 - (1 - iM*iK) => iM*iK
+        // B = 1 - Y => 1 - (1 - iY*iK) => iY*iK
+
+        // read_scanlines has increased the scanline counter, so we
+        // actually mean the previous one.
+        dest.setRGBA(x, info->output_scanline - 1, c * k / 255, m * k / 255, y * k / 255, 0xFF);
+    }
+}
+
+static void convertRGBToRGBA(RGBA32Buffer& dest, JSAMPROW src, jpeg_decompress_struct* info)
+{
+    ASSERT(info->out_color_space == JCS_RGB);
+
+    for (unsigned x = 0; x < info->output_width; ++x) {
+        unsigned r = *src++;
+        unsigned g = *src++;
+        unsigned b = *src++;
+        // read_scanlines has increased the scanline counter, so we
+        // actually mean the previous one.
+        dest.setRGBA(x, info->output_scanline - 1, r, g, b, 0xFF);
+    }
+}
+
 bool JPEGImageDecoder::outputScanlines()
 {
     if (m_frameBufferCache.isEmpty())
@@ -483,15 +535,13 @@ bool JPEGImageDecoder::outputScanlines()
         /* Request one scanline.  Returns 0 or 1 scanlines. */
         if (jpeg_read_scanlines(info, samples, 1) != 1)
             return false;
-        JSAMPLE *j1 = samples[0];
-        for (unsigned x = 0; x < info->output_width; ++x) {
-            unsigned r = *j1++;
-            unsigned g = *j1++;
-            unsigned b = *j1++;
-            // read_scanlines has increased the scanline counter, so we
-            // actually mean the previous one.
-            buffer.setRGBA(x, info->output_scanline - 1, r, g, b, 0xFF);
-        }
+
+        if (info->out_color_space == JCS_RGB)
+            convertRGBToRGBA(buffer, *samples, info);
+        else if (info->out_color_space == JCS_CMYK)
+            convertCMYKToRGBA(buffer, *samples, info);
+        else
+            return false;
     }
 
     return true;

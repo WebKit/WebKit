@@ -1,3 +1,23 @@
+2009-08-07  Nicolas Weber  <thakis@chromium.org>
+
+        Teach WebKit how to decode jpegs in cmyk and ycck color spaces.
+        Heavily inspired by Firefox's take on this issue.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27909
+
+        Reviewed by Eric Seidel.
+
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        (WebCore::JPEGImageReader::decode):
+        Tell jpeglib to convert ycck to cmyk and keep cmyk.
+        (WebCore::convertCMYKToRGBA):
+        Added function to convert cmyk to rgb.
+        (WebCore::convertRGBToRGBA):
+        Extracted existing conversion logic into its own function.
+        (WebCore::JPEGImageDecoder::outputScanlines):
+        Call convertCMYKToRGBA for cmyk images, convertRGBToRGBA for rgb
+        images.
+
 2009-08-07  Drew Wilson  <atwilson@google.com>
 
         Reviewed by David Levin.
