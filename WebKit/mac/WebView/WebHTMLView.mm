@@ -5427,7 +5427,9 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     // Parent our root layer in the container layer
     [viewLayer addSublayer:layer];
     
+#if defined(BUILDING_ON_LEOPARD)
     [self _updateLayerHostingViewPosition];
+#endif
 }
 
 - (void)detachRootLayer

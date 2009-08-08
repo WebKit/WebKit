@@ -1,5 +1,12 @@
 2009-08-07  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix the build on 10.6.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView attachRootLayer:]):
+
+2009-08-07  Simon Fraser  <simon.fraser@apple.com>
+
         Fix a stylistic nit related to the location of the *, which, for some
         ridiculous reason, WebKit style dictates to be different between Objective-C and C++.
         
