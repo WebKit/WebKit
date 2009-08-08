@@ -1,3 +1,12 @@
+2009-08-07  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Unreviewed Gtk build fix.
+
+        DRT needs internal WTF symbols so we link to libJavaScriptCore.la
+        too. Also don't force Gtk to use USE_SYSTEM_MALLOC.
+
+        * GNUmakefile.am:
+
 2009-08-07  Darin Adler  <darin@apple.com>
 
         * Scripts/commit-log-editor: Fix unchecked access to environment
