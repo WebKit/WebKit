@@ -1,3 +1,9 @@
+2009-08-07  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Gtk build fix - add html/canvas to the include path.
+
+        * GNUmakefile.am:
+
 2009-08-07  Adam Treat  <adam.treat@torchmobile.com>
 
         Prospective build fix for Qt following r46937.
