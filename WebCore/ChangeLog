@@ -2,6 +2,15 @@
 
         Reviewed by Oliver Hunt.
 
+        Build fix for Tiger.
+
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::ImageBuffer):
+
+2009-08-08  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
         This is an initial implementation for linearRGB and sRGB support for all
         platforms. Some platforms like Cg support different color spaces
         natively, others like Qt, Cairo and Skia do not. This patch uses the

@@ -76,9 +76,11 @@ ImageBuffer::ImageBuffer(const IntSize& size, ImageColorSpace imageColorSpace, b
         case GrayScale:
             colorSpace = CGColorSpaceCreateDeviceGray();
             break;
+#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER)
         case LinearRGB:
             colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGBLinear);
             break;
+#endif
         default:
             colorSpace = CGColorSpaceCreateDeviceRGB();
             break;
