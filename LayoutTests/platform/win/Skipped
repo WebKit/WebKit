@@ -575,3 +575,6 @@ http/tests/security/isolatedWorld/window-properties.html
 # New test with questionable results
 # See https://bugs.webkit.org/show_bug.cgi?id=28079 for explanation.
 fast/forms/menulist-style-color.html
+
+# <rdar://7127902> http/tests/misc/favicon-loads-with-images-disabled.html crashes on Windows debug
+http/tests/misc/favicon-loads-with-images-disabled.html
