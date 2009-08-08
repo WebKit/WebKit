@@ -1,3 +1,12 @@
+2009-08-08  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Rubber-stamped by Jan Michael Alonzo.
+
+        Add [DontEnum] to WML specific initializeWMLPageState/resetWMLPageState methods, to assure
+        fast/dom/Window/window-properties.html doesn't show any differences when WML is enabled.
+
+        * dom/Document.idl:
+
 2009-08-08  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Eric Seidel.
