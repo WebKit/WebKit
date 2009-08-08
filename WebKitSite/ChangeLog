@@ -1,3 +1,11 @@
+2009-08-07  Joseph Pecoraro  <joepeck02@gmail.com>
+
+        Reviewed by Oliver Hunt.
+
+        Fix webkit-jobs link
+
+        * contact.html:
+
 2009-08-03  Mark Rowe  <mrowe@apple.com>
 
         Update two WordPress plug-ins that we use.
