@@ -1,5 +1,12 @@
 2009-08-07  Oliver Hunt  <oliver@apple.com>
 
+        Another attempt to fix windows.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.vcproj/WebCoreCommon.vsprops:
+
+2009-08-07  Oliver Hunt  <oliver@apple.com>
+
         Windows build fix
 
         * WebCore.vcproj/WebCore.vcproj:
