@@ -218,6 +218,15 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
         [[self horizontalScroller] setNeedsDisplay: NO]; 
     }
 #endif
+
+#if USE(ACCELERATED_COMPOSITING) && defined(BUILDING_ON_LEOPARD)
+    NSView *documentView = [self documentView];
+    if ([documentView isKindOfClass:[WebHTMLView class]]) {
+        WebHTMLView* htmlView = (WebHTMLView*)documentView;
+        if ([htmlView _isUsingAcceleratedCompositing])
+            [htmlView _updateLayerHostingViewPosition];
+    }
+#endif
 }
 
 - (BOOL)allowsHorizontalScrolling

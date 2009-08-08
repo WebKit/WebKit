@@ -1166,6 +1166,10 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
                                                               _updateMouseoverTimerCallback, &context);
         CFRunLoopAddTimer(CFRunLoopGetCurrent(), _private->updateMouseoverTimer, kCFRunLoopDefaultMode);
     }
+    
+#if USE(ACCELERATED_COMPOSITING) && defined(BUILDING_ON_LEOPARD)
+    [self _updateLayerHostingViewPosition];
+#endif
 }
 
 - (void)_setAsideSubviews
@@ -5387,7 +5391,9 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 {
     if (!_private->layerHostingView) {
         NSView* hostingView = [[NSView alloc] initWithFrame:[self bounds]];
+#if !defined(BUILDING_ON_LEOPARD)
         [hostingView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
+#endif
         [self addSubview:hostingView];
         [hostingView release];
         // hostingView is owned by being a subview of self
@@ -5395,13 +5401,33 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
         [[self _webView] _startedAcceleratedCompositingForFrame:[self _frame]];
     }
 
-    // Make a container layer, which will get sized/positioned by AppKit and CA
+    // Make a container layer, which will get sized/positioned by AppKit and CA.
     CALayer* viewLayer = [CALayer layer];
+
+#if defined(BUILDING_ON_LEOPARD)
+    // Turn off default animations.
+    NSNull *nullValue = [NSNull null];
+    NSDictionary *actions = [NSDictionary dictionaryWithObjectsAndKeys:
+                             nullValue, @"anchorPoint",
+                             nullValue, @"bounds",
+                             nullValue, @"contents",
+                             nullValue, @"contentsRect",
+                             nullValue, @"opacity",
+                             nullValue, @"position",
+                             nullValue, @"sublayerTransform",
+                             nullValue, @"sublayers",
+                             nullValue, @"transform",
+                             nil];
+    [viewLayer setStyle:[NSDictionary dictionaryWithObject:actions forKey:@"actions"]];
+#endif
+
     [_private->layerHostingView setLayer:viewLayer];
     [_private->layerHostingView setWantsLayer:YES];
     
     // Parent our root layer in the container layer
     [viewLayer addSublayer:layer];
+    
+    [self _updateLayerHostingViewPosition];
 }
 
 - (void)detachRootLayer
@@ -5414,7 +5440,37 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
         [[self _webView] _stoppedAcceleratedCompositingForFrame:[self _frame]];
     }
 }
-#endif
+
+#if defined(BUILDING_ON_LEOPARD)
+// This method is necessary on Leopard to work around <rdar://problem/7067892>.
+- (void)_updateLayerHostingViewPosition
+{
+    if (!_private->layerHostingView)
+        return;
+    
+    const CGFloat maxHeight = 4096;
+    NSRect layerViewFrame = [self bounds];
+
+    if (layerViewFrame.size.height > maxHeight) {
+        CGFloat documentHeight = layerViewFrame.size.height;
+            
+        // Clamp the size of the view to <= 4096px to avoid the bug.
+        layerViewFrame.size.height = maxHeight;
+        NSRect visibleRect = [[self enclosingScrollView] documentVisibleRect];
+        
+        // Place the top of the layer-hosting view at the top of the visibleRect.
+        CGFloat topOffset = NSMinY(visibleRect);
+        layerViewFrame.origin.y = topOffset;
+
+        // Compensate for the moved view by adjusting the sublayer transform on the view's layer (using flipped coords).
+        CGFloat bottomOffset = documentHeight - layerViewFrame.size.height - topOffset;
+        [[_private->layerHostingView layer] setSublayerTransform:CATransform3DMakeTranslation(0, -bottomOffset, 0)];
+    }
+        
+    [_private->layerHostingView setFrame:layerViewFrame];
+}
+#endif // defined(BUILDING_ON_LEOPARD)
+#endif // USE(ACCELERATED_COMPOSITING)
 
 @end
 

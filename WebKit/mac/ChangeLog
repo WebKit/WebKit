@@ -1,3 +1,32 @@
+2009-08-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Work around an issue on Leopard where composited layers are misplaced and squished when the page
+        gets over 4096px tall.
+        https://bugs.webkit.org/show_bug.cgi?id=27272
+        <rdar://problem/7067892> [Leopard] Composisted layers are misplaced and squished on on long pages
+        <rdar://problem/7068252> [Leopard] When switching to a tab with HW layers, they fade in
+
+        * WebView/WebDynamicScrollBarsView.mm:
+        (-[WebDynamicScrollBarsView reflectScrolledClipView:]):
+        Call -_updateLayerHostingViewPosition after scrolling.
+        
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _frameOrBoundsChanged]):
+        Call -_updateLayerHostingViewPosition after the view changes size.
+
+        (-[WebHTMLView attachRootLayer:]):
+        Turn off default animations, to avoid animations of sublayer transform, and fading-in
+        when tab switching.
+        
+        * WebView/WebHTMLViewInternal.h:
+        (-[WebHTMLView _updateLayerHostingViewPosition]):
+        New method that constrains the height of the layer-hosting view to a max height
+        of 4096px, and compensates for the height restriction by placing the layer-hosting
+        view at the top of the visible part of the WebHTMLView, and adjusting the position
+        of the hosted layers via sublayer transform.
+
 2009-08-07  Anders Carlsson  <andersca@apple.com>
 
         Fix Tiger build.
