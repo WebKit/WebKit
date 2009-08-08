@@ -1,5 +1,9 @@
 2009-08-07  Darin Adler  <darin@apple.com>
 
+        * platform/gtk/Skipped: Skip a newly-failing test. I filed a bug about it too.
+
+2009-08-07  Darin Adler  <darin@apple.com>
+
         * platform/gtk/Skipped: Updated since textarea-arrow-navigation.html moved.
 
 2009-08-07  Brian Weinstein  <bweinstein@apple.com>
