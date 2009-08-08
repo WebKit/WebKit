@@ -167,7 +167,7 @@ Color RenderThemeChromiumMac::platformInactiveSelectionBackgroundColor() const
     return Color(static_cast<int>(255.0 * [color redComponent]), static_cast<int>(255.0 * [color greenComponent]), static_cast<int>(255.0 * [color blueComponent]));
 }
 
-Color RenderThemeChromiumMac::activeListBoxSelectionBackgroundColor() const
+Color RenderThemeChromiumMac::platformActiveListBoxSelectionBackgroundColor() const
 {
     NSColor* color = [[NSColor alternateSelectedControlColor] colorUsingColorSpaceName:NSDeviceRGBColorSpace];
     return Color(static_cast<int>(255.0 * [color redComponent]), static_cast<int>(255.0 * [color greenComponent]), static_cast<int>(255.0 * [color blueComponent]));

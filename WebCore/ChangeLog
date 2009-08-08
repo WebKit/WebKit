@@ -1,3 +1,17 @@
+2009-08-07  Nicolas Weber  <thakis@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Use correct highlight color for listboxes and completion popups.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28090
+
+        * rendering/RenderThemeChromiumMac.h:
+        * rendering/RenderThemeChromiumMac.mm:
+        Rename activeListBoxSelectionBackgroundColor to
+        platformActiveListBoxSelectionBackgroundColor, so that it actually
+        overrides a virtual method.
+
 2009-08-07  Maxime Simon  <simon.maxime@gmail.com>
 
         Reviewed by Eric Seidel.
