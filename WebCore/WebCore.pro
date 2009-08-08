@@ -187,6 +187,7 @@ INCLUDEPATH = \
     $$PWD/editing \
     $$PWD/history \
     $$PWD/html \
+    $$PWD/html/canvas \
     $$PWD/inspector \
     $$PWD/loader \
     $$PWD/loader/appcache \
