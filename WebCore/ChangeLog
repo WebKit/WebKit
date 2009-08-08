@@ -1,3 +1,25 @@
+2009-08-07  Szabo Carol  <carol.szabo@nokia.com>
+
+        Reviewed by David Hyatt.
+
+        QtWebkit ignores letter-spacing and word-spacing styles.
+        QtWebkit handles custom letter-spacing and word-spacing in the native QFont
+        class, but the values for these options are not not passed on from
+        the platform independent part of the Font class.
+        Fixed QtWebkit behavior by applying the options to QFont when it is
+        returned via Font::font()
+
+        http://bugs.webkit.org/show_bug.cgi?id=27988
+
+        LayoutTests:
+        fast/css/word-space-extra.html
+        css2.1/t1604-c542-letter-sp-00-b-a.html
+        css2.1/t1604-c541-word-sp-01-b-a.html
+        css1/text_properties/word_spacing.html
+        
+        * platform/graphics/qt/FontQt.cpp:
+        (WebCore::Font::font):
+
 2009-08-07  Nicolas Weber  <thakis@chromium.org>
 
         Reviewed by Darin Adler.

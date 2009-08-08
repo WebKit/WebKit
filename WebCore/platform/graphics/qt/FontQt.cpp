@@ -221,7 +221,10 @@ FloatRect Font::selectionRectForComplexText(const TextRun& run, const IntPoint& 
 
 QFont Font::font() const
 {
-    return primaryFont()->getQtFont();
+    QFont f = primaryFont()->getQtFont();
+    f.setLetterSpacing(QFont::AbsoluteSpacing, m_letterSpacing);
+    f.setWordSpacing(m_wordSpacing);
+    return f;
 }
 
 }
