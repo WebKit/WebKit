@@ -43,13 +43,20 @@ namespace WebCore {
     class IntRect;
     class String;
 
+    enum ImageColorSpace {
+        Unknown,
+        DeviceRGB, // like sRGB
+        GrayScale,
+        LinearRGB
+    };
+
     class ImageBuffer : public Noncopyable {
     public:
         // Will return a null pointer on allocation failure.
-        static PassOwnPtr<ImageBuffer> create(const IntSize& size, bool grayScale)
+        static PassOwnPtr<ImageBuffer> create(const IntSize& size, ImageColorSpace colorSpace = DeviceRGB)
         {
             bool success = false;
-            OwnPtr<ImageBuffer> buf(new ImageBuffer(size, grayScale, success));
+            OwnPtr<ImageBuffer> buf(new ImageBuffer(size, colorSpace, success));
             if (success)
                 return buf.release();
             return 0;
@@ -70,6 +77,8 @@ namespace WebCore {
         String toDataURL(const String& mimeType) const;
 #if !PLATFORM(CG)
         TransformationMatrix baseTransform() const { return TransformationMatrix(); }
+        void transformColorSpace(ImageColorSpace srcColorSpace, ImageColorSpace dstColorSpace);
+        void platformTransformColorSpace(const Vector<int>&);
 #else
         TransformationMatrix baseTransform() const { return TransformationMatrix(1, 0, 0, -1, 0, m_size.height()); }
 #endif
@@ -80,9 +89,14 @@ namespace WebCore {
         OwnPtr<GraphicsContext> m_context;
         mutable RefPtr<Image> m_image;
 
+#if !PLATFORM(CG)
+        Vector<int> m_linearRgbLUT;
+        Vector<int> m_deviceRgbLUT;
+#endif
+
         // This constructor will place its success into the given out-variable
         // so that create() knows when it should return failure.
-        ImageBuffer(const IntSize&, bool grayScale, bool& success);
+        ImageBuffer(const IntSize&, ImageColorSpace colorSpace, bool& success);
     };
 
 } // namespace WebCore

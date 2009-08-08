@@ -260,7 +260,7 @@ void HTMLCanvasElement::createImageBuffer() const
     if (!size.width() || !size.height())
         return;
 
-    m_imageBuffer = ImageBuffer::create(size, false);
+    m_imageBuffer = ImageBuffer::create(size);
     // The convertLogicalToDevice MaxCanvasArea check should prevent common cases
     // where ImageBuffer::create() returns NULL, however we could still be low on memory.
     if (!m_imageBuffer)

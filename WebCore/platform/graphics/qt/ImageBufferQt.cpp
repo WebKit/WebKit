@@ -40,6 +40,7 @@
 #include <QImageWriter>
 #include <QPainter>
 #include <QPixmap>
+#include <math.h>
 
 namespace WebCore {
 
@@ -67,7 +68,7 @@ ImageBufferData::ImageBufferData(const IntSize& size)
     painter->setCompositionMode(QPainter::CompositionMode_SourceOver);
 }
 
-ImageBuffer::ImageBuffer(const IntSize& size, bool grayScale, bool& success)
+ImageBuffer::ImageBuffer(const IntSize& size, ImageColorSpace imageColorSpace, bool& success)
     : m_data(size)
     , m_size(size)
 {
@@ -96,6 +97,32 @@ Image* ImageBuffer::image() const
     }
 
     return m_image.get();
+}
+
+void ImageBuffer::platformTransformColorSpace(const Vector<int>& lookUpTable)
+{
+    bool isPainting = m_data.m_painter->isActive();
+    if (isPainting)
+        m_data.m_painter->end();
+
+    QImage image = m_data.m_pixmap.toImage().convertToFormat(QImage::Format_ARGB32);
+    ASSERT(!image.isNull());
+
+    for (int y = 0; y < m_size.height(); ++y) {
+        for (int x = 0; x < m_size.width(); x++) {
+            QRgb value = image.pixel(x, y);
+            value = qRgba(lookUpTable[qRed(value)],
+                          lookUpTable[qGreen(value)],
+                          lookUpTable[qBlue(value)],
+                          lookUpTable[qAlpha(value)]);
+            image.setPixel(x, y, value);
+        }
+    }
+
+    m_data.m_pixmap = QPixmap::fromImage(image);
+
+    if (isPainting)
+        m_data.m_painter->begin(&m_data.m_pixmap);
 }
 
 PassRefPtr<ImageData> ImageBuffer::getImageData(const IntRect& rect) const

@@ -69,7 +69,7 @@ FloatRect FilterEffect::calculateDrawingRect(const FloatRect& srcRect)
 GraphicsContext* FilterEffect::getEffectContext()
 {
     IntRect bufferRect = enclosingIntRect(subRegion());
-    m_effectBuffer = ImageBuffer::create(bufferRect.size(), false);
+    m_effectBuffer = ImageBuffer::create(bufferRect.size(), LinearRGB);
     return m_effectBuffer->context();
 }
 

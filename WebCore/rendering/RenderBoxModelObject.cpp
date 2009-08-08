@@ -358,7 +358,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
         maskRect.intersect(paintInfo.rect);
         
         // Now create the mask.
-        OwnPtr<ImageBuffer> maskImage = ImageBuffer::create(maskRect.size(), false);
+        OwnPtr<ImageBuffer> maskImage = ImageBuffer::create(maskRect.size());
         if (!maskImage)
             return;
         

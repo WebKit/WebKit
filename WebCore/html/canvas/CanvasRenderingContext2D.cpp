@@ -1526,7 +1526,7 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
         // FIXME: The rect is not big enough for miters on stroked text.
         IntRect maskRect = enclosingIntRect(textRect);
 
-        OwnPtr<ImageBuffer> maskImage = ImageBuffer::create(maskRect.size(), false);
+        OwnPtr<ImageBuffer> maskImage = ImageBuffer::create(maskRect.size());
 
         GraphicsContext* maskImageContext = maskImage->context();
 

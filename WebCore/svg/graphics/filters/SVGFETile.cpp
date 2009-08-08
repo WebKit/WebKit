@@ -65,7 +65,7 @@ void FETile::apply(Filter* filter)
     if (m_in->isSourceInput())
         tileRect = enclosingIntRect(filter->filterRegion());
 
-    OwnPtr<ImageBuffer> tileImage = ImageBuffer::create(tileRect.size(), false);
+    OwnPtr<ImageBuffer> tileImage = ImageBuffer::create(tileRect.size());
     GraphicsContext* tileImageContext = tileImage->context();
     tileImageContext->drawImage(m_in->resultImage()->image(), IntPoint());
     RefPtr<Pattern> pattern = Pattern::create(tileImage->image(), true, true);

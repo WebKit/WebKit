@@ -1463,6 +1463,7 @@ webcore_sources += \
 	WebCore/platform/graphics/Icon.h \
 	WebCore/platform/graphics/Image.cpp \
 	WebCore/platform/graphics/Image.h \
+	WebCore/platform/graphics/ImageBuffer.cpp \
 	WebCore/platform/graphics/ImageBuffer.h \
 	WebCore/platform/graphics/ImageObserver.h \
 	WebCore/platform/graphics/ImageSource.h \

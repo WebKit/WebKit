@@ -118,7 +118,7 @@ bool SVGPaintServerPattern::setup(GraphicsContext*& context, const RenderObject*
         // Draw the first cell of the pattern manually to support overflow="visible" on all platforms.
         int tileWidth = static_cast<int>(patternBoundaries().width() + 0.5f);
         int tileHeight = static_cast<int>(patternBoundaries().height() + 0.5f);
-        OwnPtr<ImageBuffer> tileImage = ImageBuffer::create(IntSize(tileWidth, tileHeight), false);
+        OwnPtr<ImageBuffer> tileImage = ImageBuffer::create(IntSize(tileWidth, tileHeight));
   
         GraphicsContext* tileImageContext = tileImage->context();
 

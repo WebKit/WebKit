@@ -1,3 +1,75 @@
+2009-08-08  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        This is an initial implementation for linearRGB and sRGB support for all
+        platforms. Some platforms like Cg support different color spaces
+        natively, others like Qt, Cairo and Skia do not. This patch uses the
+        native implementation of platforms if possible and offers a common version
+        if not.
+
+        Different color spaces are used in SVG Filters. Nearly every Filter test 
+        case is a test for this patch and will be enabled, once Filters are enabled.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawTextInternal):
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::createImageBuffer):
+        * platform/graphics/GeneratedImage.cpp:
+        (WebCore::GeneratedImage::drawPattern):
+        * platform/graphics/ImageBuffer.cpp: Added.
+        (WebCore::ImageBuffer::transformColorSpace):
+        * platform/graphics/ImageBuffer.h:
+        (WebCore::):
+        (WebCore::ImageBuffer::create):
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBuffer::ImageBuffer):
+        (WebCore::ImageBuffer::platformTransformColorSpace):
+        * platform/graphics/cairo/ImageCairo.cpp:
+        (WebCore::Image::drawPattern):
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::ImageBuffer):
+        * platform/graphics/chromium/TransparencyWin.cpp:
+        (WebCore::TransparencyWin::OwnedBuffers::OwnedBuffers):
+        * platform/graphics/filters/FilterEffect.cpp:
+        (WebCore::FilterEffect::getEffectContext):
+        * platform/graphics/qt/ImageBufferQt.cpp:
+        (WebCore::ImageBuffer::ImageBuffer):
+        (WebCore::ImageBuffer::platformTransformColorSpace):
+        * platform/graphics/qt/PathQt.cpp:
+        (WebCore::Path::strokeContains):
+        (WebCore::Path::strokeBoundingRect):
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::ImageBuffer::ImageBuffer):
+        (WebCore::ImageBuffer::platformTransformColorSpace):
+        * platform/graphics/skia/SkiaUtils.cpp:
+        (WebCore::scratchContext):
+        * platform/graphics/wx/ImageBufferWx.cpp:
+        (WebCore::ImageBuffer::ImageBuffer):
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::ScrollbarThemeMac::paint):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        * svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::drawMaskerContent):
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::buildPattern):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::nativeImageForCurrentFrame):
+        * svg/graphics/SVGPaintServerGradient.cpp:
+        (WebCore::createMaskAndSwapContextForTextGradient):
+        * svg/graphics/SVGPaintServerPattern.cpp:
+        (WebCore::SVGPaintServerPattern::setup):
+        * svg/graphics/SVGResourceFilter.cpp:
+        (WebCore::SVGResourceFilter::prepareFilter):
+        (WebCore::SVGResourceFilter::applyFilter):
+        * svg/graphics/SVGResourceMasker.cpp:
+        (WebCore::SVGResourceMasker::applyMask):
+        * svg/graphics/filters/SVGFETile.cpp:
+        (WebCore::FETile::apply):
+
 2009-08-08  Xan Lopez  <xlopez@igalia.com>
 
         Roll out r46928, since it wasn't done in accordance with the

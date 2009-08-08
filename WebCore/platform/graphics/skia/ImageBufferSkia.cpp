@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Google Inc. All rights reserved.
+ * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -53,7 +54,7 @@ ImageBufferData::ImageBufferData(const IntSize& size)
 {
 }
 
-ImageBuffer::ImageBuffer(const IntSize& size, bool grayScale, bool& success)
+ImageBuffer::ImageBuffer(const IntSize& size, ImageColorSpace imageColorSpace, bool& success)
     : m_data(size)
     , m_size(size)
 {
@@ -98,6 +99,23 @@ Image* ImageBuffer::image() const
             *m_data.m_platformContext.bitmap());
     }
     return m_image.get();
+}
+
+void ImageBuffer::platformTransformColorSpace(const Vector<int>& lookUpTable)
+{
+    const SkBitmap& bitmap = *context()->platformContext()->bitmap();
+    ASSERT(bitmap.config() == SkBitmap::kARGB_8888_Config);
+    SkAutoLockPixels bitmapLock(bitmap);
+    for (int y = 0; y < m_size.height(); ++y) {
+        uint32_t* srcRow = bitmap.getAddr32(0, y);
+        for (int x = 0; x < m_size.width(); ++x) {
+            SkColor color = SkPMColorToColor(srcRow[x]);
+            srcRow[x] = SkPreMultiplyARGB(lookUpTable[SkColorGetA(color)],
+                                          lookUpTable[SkColorGetR(color)],
+                                          lookUpTable[SkColorGetG(color)],
+                                          lookUpTable[SkColorGetB(color)]);
+        }
+    }
 }
 
 PassRefPtr<ImageData> ImageBuffer::getImageData(const IntRect& rect) const

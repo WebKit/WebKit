@@ -391,7 +391,7 @@ bool ScrollbarThemeMac::paint(Scrollbar* scrollbar, GraphicsContext* context, co
         bufferRect.intersect(damageRect);
         bufferRect.move(-scrollbar->frameRect().x(), -scrollbar->frameRect().y());
         
-        OwnPtr<ImageBuffer> imageBuffer = ImageBuffer::create(bufferRect.size(), false);
+        OwnPtr<ImageBuffer> imageBuffer = ImageBuffer::create(bufferRect.size());
         if (!imageBuffer)
             return true;
         

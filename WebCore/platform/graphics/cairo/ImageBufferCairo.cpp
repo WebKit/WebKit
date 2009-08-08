@@ -39,6 +39,7 @@
 
 #include <cairo.h>
 #include <wtf/Vector.h>
+#include <math.h>
 
 using namespace std;
 
@@ -68,7 +69,7 @@ ImageBufferData::ImageBufferData(const IntSize& size)
 {
 }
 
-ImageBuffer::ImageBuffer(const IntSize& size, bool grayScale, bool& success)
+ImageBuffer::ImageBuffer(const IntSize& size, ImageColorSpace imageColorSpace, bool& success)
     : m_data(size)
     , m_size(size)
 {
@@ -115,6 +116,26 @@ Image* ImageBuffer::image() const
         m_image = BitmapImage::create(newsurface);
     }
     return m_image.get();
+}
+
+void ImageBuffer::platformTransformColorSpace(const Vector<int>& lookUpTable)
+{
+    ASSERT(cairo_surface_get_type(m_data.m_surface) == CAIRO_SURFACE_TYPE_IMAGE);
+
+    unsigned char* dataSrc = cairo_image_surface_get_data(m_data.m_surface);
+    int stride = cairo_image_surface_get_stride(m_data.m_surface);
+    for (int y = 0; y < m_size.height(); ++y) {
+        unsigned* row = reinterpret_cast<unsigned*>(dataSrc + stride * y);
+        for (int x = 0; x < m_size.width(); x++) {
+            unsigned* pixel = row + x;
+            Color pixelColor = colorFromPremultipliedARGB(*pixel);
+            pixelColor = Color(lookUpTable[pixelColor.red()],
+                               lookUpTable[pixelColor.green()],
+                               lookUpTable[pixelColor.blue()],
+                               lookUpTable[pixelColor.alpha()]);
+            *pixel = premultipliedARGBFromColor(pixelColor);
+        }
+    }
 }
 
 PassRefPtr<ImageData> ImageBuffer::getImageData(const IntRect& rect) const

@@ -211,7 +211,7 @@ NativeImagePtr SVGImage::nativeImageForCurrentFrame()
     if (!m_frameCache) {
         if (!m_page)
             return 0;
-        m_frameCache = ImageBuffer::create(size(), false);
+        m_frameCache = ImageBuffer::create(size());
         if (!m_frameCache) // failed to allocate image
             return 0;
         renderSubtreeToImage(m_frameCache.get(), m_page->mainFrame()->contentRenderer());
