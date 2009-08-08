@@ -782,7 +782,6 @@ editing/execCommand/outdent-blockquote-test3.html
 editing/execCommand/outdent-blockquote-test4.html
 editing/execCommand/queryCommandState-01.html
 editing/execCommand/unlink.html
-editing/input/textarea-arrow-navigation.html
 editing/inserting/5994480-2.html
 editing/inserting/insert-thai-characters-001.html
 editing/inserting/space-after-removeformat.html
@@ -1777,6 +1776,7 @@ fast/forms/slider-onchange-event.html
 fast/forms/slider-transformed.html
 fast/forms/slider-zoomed.html
 fast/forms/text-control-intrinsic-widths.html
+fast/forms/textarea-arrow-navigation.html
 fast/forms/textarea-input-event.html
 fast/forms/textarea-paste-newline.html
 fast/forms/textarea-scrollbar-height.html
