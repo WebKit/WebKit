@@ -1,5 +1,15 @@
 2009-08-07  Yong Li  <yong.li@torchmobile.com>
 
+        WINCE PORT: store only width for GlyphBufferAdvance, to save space on low-memory devices
+        https://bugs.webkit.org/show_bug.cgi?id=27734
+
+        * platform/graphics/GlyphBuffer.h:
+        (WebCore::GlyphBuffer::advanceAt):
+        (WebCore::GlyphBuffer::advanceData):
+        (WebCore::GlyphBuffer::add):
+
+2009-08-07  Yong Li  <yong.li@torchmobile.com>
+
         Reviewed by Eric Seidel.
 
         WINCE PORT: pass unrecognized glyphs to GDI to handle
