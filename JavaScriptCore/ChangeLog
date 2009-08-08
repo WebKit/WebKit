@@ -1,3 +1,15 @@
+2009-08-07  Zoltan Horvath  <hzoltan@inf.u-szeged.hu>
+
+        Reviewed by Eric Seidel.
+
+        Allow custom memory allocation control for Noncopyable class
+        https://bugs.webkit.org/show_bug.cgi?id=27879
+
+        Several classes which are inherited from Noncopyable are instantiated by
+        operator new, so Noncopyable class has been inherited from FastAllocBase.
+
+        * wtf/Noncopyable.h:
+
 2009-08-07  George Staikos <george.staikos@torchmobile.com> 
 
         Reviewed by Eric Seidel.
