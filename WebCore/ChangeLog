@@ -1,3 +1,10 @@
+2009-08-08  Xan Lopez  <xlopez@igalia.com>
+
+        Roll out r46928, since it wasn't done in accordance with the
+        agreed naming.
+
+        * bindings/gdom/GdomDOMObject.cpp: Removed.
+
 2009-08-08  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Xan Lopez.

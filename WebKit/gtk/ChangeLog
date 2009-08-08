@@ -1,3 +1,16 @@
+2009-08-08  Xan Lopez  <xlopez@igalia.com>
+
+        Roll out r46928, since it wasn't done in accordance with the
+        agreed naming.
+
+        * ChangeLog:
+
+        Remove the ChangeLog entry, since it was added at the bottom of
+        the file.
+
+        * gdom/GdomDOMObject.h: Removed.
+        * gdom/GdomDOMObjectPrivate.h: Removed.
+
 2009-08-08  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Xan Lopez.
@@ -7513,14 +7526,4 @@
         (WebCore::ChromeClientGdk::setToolTip):
         (WebCore::ChromeClientGdk::print):
         * gtk/WebCoreSupport/ChromeClientGdk.h: Added.
-
-2009-08-07  Luke Kenneth Casson Leighton  <lkcl@lkcl.net>
-
-        Reviewed by Eric Seidel.
-
-        https://bugs.webkit.org/show_bug.cgi?id=27428
-
-        * bindings/gdom/GdomDOMObject.cpp: Added.
-        * bindings/gdom/GdomDOMObject.h: Added.
-        * bindings/gdom/GdomDOMObjectPrivate.h: Added.
 
