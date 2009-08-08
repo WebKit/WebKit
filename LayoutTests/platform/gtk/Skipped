@@ -5873,6 +5873,7 @@ http/tests/security/drag-over-remote-content-iframe.html
 http/tests/security/clipboard/clipboard-file-access.html
 media/audio-delete-while-slider-thumb-clicked.html
 media/audio-delete-while-step-button-clicked.html
+media/controls-right-click-on-timebar.html
 scrollbars/scrollbar-miss-mousemove-disabled.html
 scrollbars/scrollbar-miss-mousemove.html
 

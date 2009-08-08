@@ -1,5 +1,12 @@
 2009-08-08  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
+        [Gtk] Skip media/controls-right-click-on-timebar.html as it needs
+        eventSender which we don't have at the moment.
+
+        * platform/gtk/Skipped:
+
+2009-08-08  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
         Reviewed by Xan Lopez.
 
         [Gtk] Enable accessibility in Gtk DRT
