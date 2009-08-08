@@ -1,3 +1,13 @@
+2009-08-07  Yong Li  <yong.li@torchmobile.com>
+
+        Reviewed by Eric Seidel.
+
+        WINCE PORT: pass unrecognized glyphs to GDI to handle
+        https://bugs.webkit.org/show_bug.cgi?id=27734
+
+        * platform/graphics/FontFastPath.cpp:
+        (WebCore::Font::glyphDataForCharacter):
+
 2009-08-07  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Oliver Hunt.

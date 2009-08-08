@@ -1,6 +1,7 @@
 /**
  * Copyright (C) 2003, 2006 Apple Computer, Inc.
  * Copyright (C) 2008 Holger Hans Peter Freyther
+ * Copyright (C) 2009 Torch Mobile, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -155,16 +156,33 @@ GlyphData Font::glyphDataForCharacter(UChar32 c, bool mirror, bool forceSmallCap
         GlyphPage* fallbackPage = GlyphPageTreeNode::getRootChild(characterFontData, pageNumber)->page();
         GlyphData data = fallbackPage && fallbackPage->fontDataForCharacter(c) ? fallbackPage->glyphDataForCharacter(c) : characterFontData->missingGlyphData();
         // Cache it so we don't have to do system fallback again next time.
-        if (!useSmallCapsFont)
+        if (!useSmallCapsFont) {
+#if PLATFORM(WINCE)
+            // missingGlyphData returns a null character, which is not suitable for GDI to display.
+            // Also, sometimes we cannot map a font for the character on WINCE, but GDI can still
+            // display the character, probably because the font package is not installed correctly.
+            // So we just always set the glyph to be same as the character, and let GDI solve it.
+            page->setGlyphDataForCharacter(c, c, characterFontData);
+            return page->glyphDataForCharacter(c);
+#else
             page->setGlyphDataForCharacter(c, data.glyph, data.fontData);
+#endif
+        }
         return data;
     }
 
     // Even system fallback can fail; use the missing glyph in that case.
     // FIXME: It would be nicer to use the missing glyph from the last resort font instead.
     GlyphData data = primaryFont()->missingGlyphData();
-    if (!useSmallCapsFont)
+    if (!useSmallCapsFont) {
+#if PLATFORM(WINCE)
+        // See comment about WINCE GDI handling near setGlyphDataForCharacter above.
+        page->setGlyphDataForCharacter(c, c, data.fontData);
+        return page->glyphDataForCharacter(c);
+#else
         page->setGlyphDataForCharacter(c, data.glyph, data.fontData);
+#endif
+    }
     return data;
 }
 
