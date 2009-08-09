@@ -31,6 +31,7 @@
 
 #include "CString.h"
 #include "ChromeClient.h"
+#include "ConsoleMessage.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameTree.h"
@@ -143,7 +144,7 @@ void Console::addMessage(MessageSource source, MessageType type, MessageLevel le
     if (!page)
         return;
 
-    if (source == JSMessageSource || source == WMLMessageSource)
+    if (source == JSMessageSource)
         page->chrome()->client()->addMessageToConsole(source, type, level, message, lineNumber, sourceURL);
 
     page->inspectorController()->addMessageToConsole(source, type, level, message, lineNumber, sourceURL);
@@ -257,6 +258,32 @@ void Console::count(ScriptCallStack* callStack)
 
     page->inspectorController()->count(title, lastCaller.lineNumber(), lastCaller.sourceURL().string());
 }
+
+#if ENABLE(WML)
+String Console::lastWMLErrorMessage() const
+{
+    Page* page = this->page();
+    if (!page)
+        return String();
+
+    const Vector<ConsoleMessage*>& consoleMessages = page->inspectorController()->consoleMessages();
+    if (consoleMessages.isEmpty())
+        return String();
+
+    Vector<ConsoleMessage*>::const_iterator it = consoleMessages.begin();
+    const Vector<ConsoleMessage*>::const_iterator end = consoleMessages.end();
+
+    for (; it != end; ++it) {
+        ConsoleMessage* message = *it;
+        if (message->source() != WMLMessageSource)
+            continue;
+
+        return message->message();
+    }
+
+    return String();
+}
+#endif
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 

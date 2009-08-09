@@ -1,3 +1,14 @@
+2009-08-09  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        [WML] Deck access control is completly broken
+        https://bugs.webkit.org/show_bug.cgi?id=27721
+
+        Synchronize WebFrameLoadType with FrameLoadType enum. Append 'WebFrameLoadTypeBackWMLDeckNotAccessible'.
+
+        * WebView/WebFramePrivate.h:
+
 2009-08-07  Simon Fraser  <simon.fraser@apple.com>
 
         Fix the build on 10.6.

@@ -25,6 +25,8 @@
 #include "WMLPageState.h"
 
 #include "CString.h"
+#include "Document.h"
+#include "Frame.h"
 #include "HistoryItem.h"
 #include "KURL.h"
 #include "Page.h"
@@ -34,7 +36,7 @@ namespace WebCore {
 WMLPageState::WMLPageState(Page* page)
     : m_page(page)
     , m_activeCard(0)
-    , m_hasDeckAccess(false)
+    , m_hasAccessControlData(false)
 {
 }
 
@@ -66,74 +68,200 @@ void WMLPageState::reset()
         list->clearWMLPageHistory();
 }
 
-bool WMLPageState::setNeedCheckDeckAccess(bool need)
+static inline String normalizedHostName(const String& passedHost)
 {
-    if (m_hasDeckAccess && need)
-        return false;
+    if (passedHost.contains("127.0.0.1")) {
+        String host = passedHost;
+        return host.replace("127.0.0.1", "localhost");
+    }
 
-    m_hasDeckAccess = need;
-    m_accessPath = String();
-    m_accessDomain = String();
-    return true;
+    return passedHost;
 }
 
-// FIXME: We may want another name, it does far more than just checking wheter the deck is accessable
-bool WMLPageState::isDeckAccessible()
+static inline String hostFromURL(const KURL& url)
 {
-    if (!m_hasDeckAccess || !m_page || !m_page->backForwardList() || !m_page->backForwardList()->backItem())
-        return true;
+    // Default to "localhost"
+    String host = normalizedHostName(url.host());
+    return host.isEmpty() ? "localhost" : host;
+}
 
-    HistoryItem* histItem = m_page->backForwardList()->backItem();
-    KURL url(histItem->urlString());
+static KURL urlForHistoryItem(Frame* frame, HistoryItem* item)
+{
+    // For LayoutTests we need to find the corresponding WML frame in the test document
+    // to be able to test access-control correctly. Remember that WML is never supposed
+    // to be embedded anywhere, so the purpose is to simulate a standalone WML document.
+    if (frame->document()->isWMLDocument())
+        return item->url();
 
-    String prevHost = url.host();
-    String prevPath = url.path();
+    const HistoryItemVector& childItems = item->children();
+    HistoryItemVector::const_iterator it = childItems.begin();
+    const HistoryItemVector::const_iterator end = childItems.end();
 
-    // for 'file' URI, the host part may be empty, so we should complete it.
-    if (prevHost.isEmpty())
-        prevHost = "localhost";
+    for (; it != end; ++it) {
+        const RefPtr<HistoryItem> childItem = *it;
+        Frame* childFrame = frame->tree()->child(childItem->target());
+        if (!childFrame)
+            continue;
 
-    histItem = m_page->backForwardList()->currentItem();
-    KURL curUrl(histItem->urlString());
-    String curPath = curUrl.path();
-
-    if (equalIgnoringRef(url, curUrl))
-       return true;
-
-    // "/" is the default value if not specified
-    if (m_accessPath.isEmpty())  
-        m_accessPath = "/";
-    else if (m_accessPath.endsWith("/") && (m_accessPath != "/"))
-        m_accessPath = m_accessPath.left((m_accessPath.length()-1));
-
-
-    // current deck domain is the default value if not specified
-    if (m_accessDomain.isEmpty())
-        m_accessDomain = prevHost;
-
-    // convert relative URL to absolute URL before performing path matching
-    if (prevHost == m_accessDomain) {
-        if (!m_accessPath.startsWith("/")) {
-           int index = curPath.reverseFind('/');
-           if (index != -1) {
-               curPath = curPath.left(index + 1);
-               curPath += m_accessPath;
-               curUrl.setPath(curPath);
-               m_accessPath = curUrl.path();
-           }
+        if (Document* childDocument = childFrame->document()) {
+            if (childDocument->isWMLDocument())
+                return childItem->url();
         }
     }
 
-    // path prefix matching
-    if (prevPath.startsWith(m_accessPath) && 
-       (prevPath[m_accessPath.length()] == '/' || prevPath.length() == m_accessPath.length())) {
-        // domain suffix matching
-        unsigned domainLength = m_accessDomain.length();
-        unsigned hostLength = prevHost.length();
-        return (prevHost.endsWith(m_accessDomain) && prevHost[hostLength - domainLength - 1] == '.') || hostLength == domainLength;
+    return item->url();
+}
+
+static bool tryAccessHistoryURLs(Page* page, KURL& previousURL, KURL& currentURL)
+{
+    if (!page)
+        return false;
+
+    Frame* frame = page->mainFrame();
+    if (!frame || !frame->document())    
+        return false;
+
+    BackForwardList* list = page->backForwardList();
+    if (!list)
+        return false;
+
+    HistoryItem* previousItem = list->backItem();
+    if (!previousItem)
+        return false;
+
+    HistoryItem* currentItem = list->currentItem();
+    if (!currentItem)
+        return false;
+
+    previousURL = urlForHistoryItem(frame, previousItem);
+    currentURL = urlForHistoryItem(frame, currentItem);
+
+    return true;
+}
+
+bool WMLPageState::processAccessControlData(const String& domain, const String& path)
+{
+    if (m_hasAccessControlData)
+        return false;
+
+    m_hasAccessControlData = true;
+
+    KURL previousURL, currentURL;
+    if (!tryAccessHistoryURLs(m_page, previousURL, currentURL))
+        return true;
+
+    // Spec: The path attribute defaults to the value "/"
+    m_accessPath = path.isEmpty() ? "/" : path;
+
+    // Spec: The domain attribute defaults to the current decks domain.
+    String previousHost = hostFromURL(previousURL);
+    m_accessDomain = domain.isEmpty() ? previousHost : normalizedHostName(domain);
+
+    // Spec: To simplify the development of applications that may not know the absolute path to the 
+    // current deck, the path attribute accepts relative URIs. The user agent converts the relative 
+    // path to an absolute path and then performs prefix matching against the PATH attribute.
+    Document* document = m_page->mainFrame() ? m_page->mainFrame()->document() : 0;
+    if (document && previousHost == m_accessDomain && !m_accessPath.startsWith("/")) {
+        String currentPath = currentURL.path();
+
+        size_t index = currentPath.reverseFind('/');
+        if (index != WTF::notFound)
+            m_accessPath = document->completeURL(currentPath.left(index + 1) + m_accessPath).path();
     }
 
-    return false;
+    return true;
+}
+
+void WMLPageState::resetAccessControlData()
+{
+    m_hasAccessControlData = false;
+    m_accessDomain = String();
+    m_accessPath = String();
+}
+
+bool WMLPageState::canAccessDeck() const
+{
+    if (!m_hasAccessControlData)
+        return true;
+
+    KURL previousURL, currentURL;
+    if (!tryAccessHistoryURLs(m_page, previousURL, currentURL))
+        return true;
+
+    if (equalIgnoringRef(previousURL, currentURL))
+       return true;
+
+    return hostIsAllowedToAccess(hostFromURL(previousURL)) && pathIsAllowedToAccess(previousURL.path());
+}
+
+bool WMLPageState::hostIsAllowedToAccess(const String& host) const
+{
+    // Spec: The access domain is suffix-matched against the domain name portion of the referring URI
+    Vector<String> subdomainsAllowed;
+    if (m_accessDomain.contains('.'))
+        m_accessDomain.split('.', subdomainsAllowed);
+    else
+        subdomainsAllowed.append(m_accessDomain);
+
+    Vector<String> subdomainsCheck;
+    if (host.contains('.'))
+        host.split('.', subdomainsCheck);
+    else
+        subdomainsCheck.append(host);
+
+    Vector<String>::iterator itAllowed = subdomainsAllowed.end() - 1;
+    Vector<String>::iterator beginAllowed = subdomainsAllowed.begin();
+
+    Vector<String>::iterator itCheck = subdomainsCheck.end() - 1;
+    Vector<String>::iterator beginCheck = subdomainsCheck.begin();
+
+    bool hostOk = true;
+    for (; itAllowed >= beginAllowed && itCheck >= beginCheck; ) {
+        if (*itAllowed != *itCheck) {
+            hostOk = false;
+            break;
+        }
+
+        --itAllowed;
+        --itCheck;
+    }
+
+    return hostOk;
+}
+
+bool WMLPageState::pathIsAllowedToAccess(const String& path) const
+{
+    // Spec: The access path is prefix matched against the path portion of the referring URI
+    Vector<String> subpathsAllowed;
+    if (m_accessPath.contains('/'))
+        m_accessPath.split('/', subpathsAllowed);
+    else
+        subpathsAllowed.append(m_accessPath);
+
+    Vector<String> subpathsCheck;
+    if (path.contains('/'))
+        path.split('/', subpathsCheck);
+    else
+        subpathsCheck.append(path);
+
+    Vector<String>::iterator itAllowed = subpathsAllowed.begin();
+    Vector<String>::iterator endAllowed = subpathsAllowed.end();
+
+    Vector<String>::iterator itCheck = subpathsCheck.begin();
+    Vector<String>::iterator endCheck = subpathsCheck.end();
+
+    bool pathOk = true;
+    for (; itAllowed != endAllowed && itCheck != endCheck; ) {
+        if (*itAllowed != *itCheck) {
+            pathOk = false;
+            break;
+        }
+
+        ++itAllowed;
+        ++itCheck;
+    }
+
+    return pathOk;
 }
 
 }

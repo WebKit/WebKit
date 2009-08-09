@@ -43,40 +43,37 @@ public:
     void dump();
 #endif
 
-    // reset the browser context when 'newcontext' attribute
-    // of card element is performed as part of go task
+    // Reset the browser context
     void reset();
 
-    // variables operations 
+    // Variable handling
     void storeVariable(const String& name, const String& value) { m_variables.set(name, value); }
     void storeVariables(WMLVariableMap& variables) { m_variables = variables; }
     String getVariable(const String& name) const { return m_variables.get(name); }
     bool hasVariables() const { return !m_variables.isEmpty(); }
-
-    int historyLength() const { return m_historyLength; }
-    void setHistoryLength(int length) { m_historyLength = length; }
 
     Page* page() const { return m_page; }
 
     WMLCardElement* activeCard() const { return m_activeCard; }
     void setActiveCard(WMLCardElement* card) { m_activeCard = card; }
 
-    // deck access control
-    void restrictDeckAccessToDomain(const String& domain) { m_accessDomain = domain; }
-    void restrictDeckAccessToPath(const String& path) { m_accessPath = path; }
-    bool hasDeckAccess() const { return m_hasDeckAccess; }
- 
-    bool setNeedCheckDeckAccess(bool);
-    bool isDeckAccessible();
+    // Deck access control
+    bool processAccessControlData(const String& dmain, const String& path);
+    void resetAccessControlData();
+
+    bool canAccessDeck() const;
+
+private:
+    bool hostIsAllowedToAccess(const String&) const;
+    bool pathIsAllowedToAccess(const String&) const;
 
 private:
     Page* m_page;
     WMLVariableMap m_variables;
-    int m_historyLength;
     WMLCardElement* m_activeCard;
     String m_accessDomain;
     String m_accessPath;
-    bool m_hasDeckAccess;
+    bool m_hasAccessControlData;
 };
 
 }

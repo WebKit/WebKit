@@ -142,6 +142,9 @@ void WMLCardElement::handleIntrinsicEventIfNeeded()
     case FrameLoadTypeBack:
         eventType = WMLIntrinsicEventOnEnterBackward;
         break;
+    case FrameLoadTypeBackWMLDeckNotAccessible:
+        reportWMLError(document(), WMLErrorDeckNotAccessible);
+        return;
     default:
         eventType = WMLIntrinsicEventOnEnterForward;
         break;

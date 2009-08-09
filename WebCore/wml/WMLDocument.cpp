@@ -59,8 +59,6 @@ void WMLDocument::finishedParsing()
     if (!hasAccess) {
         m_activeCard = 0;
 
-        // FIXME: Comment in this code once the deck-access control patch landed.
-#if 0
         WMLPageState* wmlPageState = wmlPageStateForDocument(this);
         if (!wmlPageState)
             return;
@@ -79,7 +77,6 @@ void WMLDocument::finishedParsing()
 
         page->goToItem(item, FrameLoadTypeBackWMLDeckNotAccessible);
         return;
-#endif
     }
 
     if (m_activeCard) {
@@ -91,11 +88,11 @@ void WMLDocument::finishedParsing()
 bool WMLDocument::initialize(bool aboutToFinishParsing)
 {
     WMLPageState* wmlPageState = wmlPageStateForDocument(this);
-    if (!wmlPageState || !wmlPageState->isDeckAccessible())
+    if (!wmlPageState || !wmlPageState->canAccessDeck())
         return false;
- 
+
     // Remember that we'e successfully entered the deck
-    wmlPageState->setNeedCheckDeckAccess(false);
+    wmlPageState->resetAccessControlData();
 
     // Notify the existance of templates to all cards of the current deck
     WMLTemplateElement::registerTemplatesInDocument(this);

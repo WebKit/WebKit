@@ -38,7 +38,8 @@ void reportWMLError(Document* doc, WMLErrorCode error)
         return;
 
     String errorMessage = errorMessageForErrorCode(error);
-    if (XMLTokenizer* tokenizer = static_cast<XMLTokenizer*>(doc->tokenizer())) {
+    XMLTokenizer* tokenizer = static_cast<XMLTokenizer*>(doc->tokenizer());
+    if (tokenizer && error != WMLErrorDeckNotAccessible) {
         // Some errors are reported as result of an insertedIntoDocument() call.
         // If this happened, parsing has been stopped, and the document fragment
         // is wrapped in a XHTML error document. That means insertedIntoDocument()

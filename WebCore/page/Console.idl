@@ -45,6 +45,10 @@ module window {
         [CustomArgumentHandling, ImplementationFunction=assertCondition] void assert(in boolean condition);
         [CustomArgumentHandling] void count();
 
+#if defined(ENABLE_WML) && ENABLE_WML
+        [DontEnum] DOMString lastWMLErrorMessage();
+#endif
+
 #if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
         [CustomArgumentHandling] void profile(in [ConvertUndefinedOrNullToNullString] DOMString title);
         [CustomArgumentHandling] void profileEnd(in [ConvertUndefinedOrNullToNullString] DOMString title);

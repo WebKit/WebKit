@@ -2,6 +2,57 @@
 
         Reviewed by George Staikos.
 
+        [WML] Deck access control is completly broken
+        https://bugs.webkit.org/show_bug.cgi?id=27721
+
+        Add several new tests covering WML deck-access control.
+        Update variable-reference-invalid-character.html result, as console messages aren't dump to the results anymore.
+
+        * http/tests/wml/access-target-domain-deny-expected.txt: Added.
+        * http/tests/wml/access-target-domain-deny.html: Added.
+        * http/tests/wml/access-target-expected.txt: Added.
+        * http/tests/wml/access-target-path-deny-expected.txt: Added.
+        * http/tests/wml/access-target-path-deny.html: Added.
+        * http/tests/wml/access-target.html: Added.
+        * http/tests/wml/resources/access-target-domain-deny.js: Added.
+        (setupTestDocument):
+        (prepareTest):
+        (executeTest):
+        * http/tests/wml/resources/access-target-domain-deny.wml: Added.
+        * http/tests/wml/resources/access-target-path-deny.js: Added.
+        (setupTestDocument):
+        (prepareTest):
+        (executeTest):
+        * http/tests/wml/resources/access-target-path-deny.wml: Added.
+        * http/tests/wml/resources/access-target.js: Added.
+        (setupTestDocument):
+        (prepareTest):
+        (executeTest):
+        * http/tests/wml/resources/access-target.wml: Added.
+        * http/tests/wml/resources/locked-deck.wml: Added.
+        * http/tests/wml/resources/unreachable-domain.wml: Added.
+        * http/tests/wml/resources/unreachable-path.wml: Added.
+        * wml/access-target-deny-expected.txt: Added.
+        * wml/access-target-deny.html: Added.
+        * wml/access-target-expected.txt: Added.
+        * wml/access-target.html: Added.
+        * wml/resources/access-target-deny.js: Added.
+        (setupTestDocument):
+        (prepareTest):
+        (executeTest):
+        * wml/resources/access-target-deny.wml: Added.
+        * wml/resources/access-target.js: Added.
+        (setupTestDocument):
+        (prepareTest):
+        (executeTest):
+        * wml/resources/access-target.wml: Added.
+        * wml/resources/locked-deck.wml: Added.
+        * wml/variable-reference-invalid-character-expected.txt:
+
+2009-08-09  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by George Staikos.
+
         [WML] manual-tests/wml/onevent-prev.wml crashes
         https://bugs.webkit.org/show_bug.cgi?id=27722
 

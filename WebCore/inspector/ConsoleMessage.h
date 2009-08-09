@@ -51,6 +51,9 @@ namespace WebCore {
         void incrementCount() { ++m_repeatCount; };
         bool isEqual(ScriptState*, ConsoleMessage* msg) const;
 
+        MessageSource source() const { return m_source; }
+        const String& message() const { return m_message; }
+
     private:
         MessageSource m_source;
         MessageType m_type;

@@ -93,6 +93,9 @@ namespace WebCore {
         void trace(ScriptCallStack*);
         void assertCondition(bool condition, ScriptCallStack*);
         void count(ScriptCallStack*);
+#if ENABLE(WML)
+        String lastWMLErrorMessage() const;
+#endif
 #if ENABLE(JAVASCRIPT_DEBUGGER)
         void profile(const JSC::UString&, ScriptCallStack*);
         void profileEnd(const JSC::UString&, ScriptCallStack*);

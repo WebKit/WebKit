@@ -1,0 +1,18 @@
+WML http navigation layout tests - using XHTML scripting
+
+
+Tests access control support
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+Test for Deck Access control in WML.
+This is the locked target deck, only 'access-target.wml" can access me

@@ -1,5 +1,67 @@
 2009-08-09  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
+        Reviewed by George Staikos.
+
+        [WML] Deck access control is completly broken
+        https://bugs.webkit.org/show_bug.cgi?id=27721
+
+        Rewrite WML deck access control, actually works now standalone and within LayoutTests.
+        Added several new layout tests covering local & remote access support.
+
+        In order to detect WML task execution failures from within the WML layout tests a new
+        method Console::lastWMLErrorMessage() has been added, returning the last recorded WML
+        error message. Change WML log messages to dump to InspectorClient, just like it's done
+        for HTML - we used to behave like JSMessageSource, which is wrong.
+
+        Tests: http/tests/wml/access-target-domain-deny.html
+               http/tests/wml/access-target-path-deny.html
+               http/tests/wml/access-target.html
+               wml/access-target-deny.html
+               wml/access-target.html
+
+        * inspector/ConsoleMessage.h:
+        (WebCore::ConsoleMessage::source): Added public method to fetch the message source type.
+        (WebCore::ConsoleMessage::message): Added public method to access the error message.
+        * inspector/InspectorController.h:
+        (WebCore::InspectorController::consoleMessages): Added for Console::lastWMLErrorMessage(), to be able to crawl through the list of dumped messages.
+        * loader/FrameLoader.cpp: Recognize 'FrameLoadTypeBackWMLDeckNotAccessible', all guarded by ENABLE(WML).
+        (WebCore::isBackForwardLoadType):
+        (WebCore::FrameLoader::restoreDocumentState):
+        (WebCore::FrameLoader::transitionToCommitted):
+        (WebCore::FrameLoader::loadItem):
+        * loader/FrameLoaderTypes.h:
+        (WebCore::): Add new load type 'FrameLoadTypeBackWMLDeckNotAccessible', behaving like FrameLoadTypeBack plus WML specific information.
+        * page/Console.cpp:
+        (WebCore::Console::addMessage): Don't dump WML messages using ChromeClient (as it's done for JSMessageSource), but go through InspectorController.
+        (WebCore::Console::lastWMLErrorMessage): Crawl InspectorController::consoleMssages() to look up the last WML error message, if present.
+        * page/Console.h:
+        * page/Console.idl: Add "[DontEnum] DOMString lastWMLErrorMessage()".
+        * wml/WMLAccessElement.cpp: Store path/domain as member variables and pass them to WMLPageState once in insertedIntoDocument().
+        (WebCore::WMLAccessElement::parseMappedAttribute):
+        (WebCore::WMLAccessElement::insertedIntoDocument):
+        * wml/WMLAccessElement.h:
+        * wml/WMLCardElement.cpp: Handle 'FrameLoadTypeBackWMLDeckNotAccessible' as deck-entry method. Report WML error in current deck.
+        (WebCore::WMLCardElement::handleIntrinsicEventIfNeeded):
+        * wml/WMLDocument.cpp: Enable deck-access control in finishedParsing. Take care of method name changes in WMLPageState.
+        (WebCore::WMLDocument::finishedParsing):
+        (WebCore::WMLDocument::initialize):
+        * wml/WMLErrorHandling.cpp: Never report 'WMLErrorDeckNotAccessible' messages through the tokenizer, that would alter the page into error state.
+        (WebCore::reportWMLError):
+        * wml/WMLPageState.cpp: Completly rewrote access path/domain parsing & deck-access control, strictly following the WML spec. All covered by tests.
+        (WebCore::WMLPageState::WMLPageState):
+        (WebCore::normalizedHostName):
+        (WebCore::hostFromURL):
+        (WebCore::urlForHistoryItem):
+        (WebCore::tryAccessHistoryURLs):
+        (WebCore::WMLPageState::processAccessControlData):
+        (WebCore::WMLPageState::resetAccessControlData):
+        (WebCore::WMLPageState::canAccessDeck):
+        (WebCore::WMLPageState::hostIsAllowedToAccess):
+        (WebCore::WMLPageState::pathIsAllowedToAccess):
+        * wml/WMLPageState.h:
+
+2009-08-09  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
         Reviewed by Maciej Stachowiak.
 
         FrameLoadType / WebFrameLoadType enums are out of sync

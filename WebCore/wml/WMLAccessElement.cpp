@@ -43,16 +43,14 @@ void WMLAccessElement::parseMappedAttribute(MappedAttribute* attr)
         String value = parseValueForbiddingVariableReferences(attr->value());
         if (value.isEmpty())
             return;
-            
-        if (WMLPageState* pageState = wmlPageStateForDocument(document()))
-            pageState->restrictDeckAccessToDomain(value);
+
+        m_domain = value;
     } else if (attr->name() == pathAttr) {
         String value = parseValueForbiddingVariableReferences(attr->value());
         if (value.isEmpty())
             return;
 
-        if (WMLPageState* pageState = wmlPageStateForDocument(document()))
-            pageState->restrictDeckAccessToPath(value);
+        m_path = value;
     } else
         WMLElement::parseMappedAttribute(attr);
 }
@@ -62,8 +60,11 @@ void WMLAccessElement::insertedIntoDocument()
     WMLElement::insertedIntoDocument();
 
     WMLPageState* pageState = wmlPageStateForDocument(document());
-    if (pageState && !pageState->setNeedCheckDeckAccess(true))
-        reportWMLError(document(), WMLErrorMultipleAccessElements);
+    if (!pageState || pageState->processAccessControlData(m_domain, m_path))
+        return;
+
+    pageState->resetAccessControlData();
+    reportWMLError(document(), WMLErrorMultipleAccessElements);
 }
 
 }
