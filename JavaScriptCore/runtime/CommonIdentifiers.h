@@ -42,6 +42,7 @@
     macro(exec) \
     macro(fromCharCode) \
     macro(global) \
+    macro(getPrototypeOf) \
     macro(hasOwnProperty) \
     macro(ignoreCase) \
     macro(index) \

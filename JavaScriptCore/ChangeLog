@@ -1,3 +1,20 @@
+2009-08-08  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Eric Seidel and Sam Weinig.
+
+        [ES5] Implement Object.getPrototypeOf
+        https://bugs.webkit.org/show_bug.cgi?id=28114
+
+        Implement getPrototypeOf
+
+        * runtime/CommonIdentifiers.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ObjectConstructor::ObjectConstructor):
+        (JSC::objectConsGetPrototypeOf):
+        * runtime/ObjectConstructor.h:
+
 2009-08-07  Zoltan Horvath  <hzoltan@inf.u-szeged.hu>
 
         Reviewed by Eric Seidel.

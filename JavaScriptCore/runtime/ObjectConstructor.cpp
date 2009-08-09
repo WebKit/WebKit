@@ -29,7 +29,9 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(ObjectConstructor);
 
-ObjectConstructor::ObjectConstructor(ExecState* exec, PassRefPtr<Structure> structure, ObjectPrototype* objectPrototype)
+static JSValue JSC_HOST_CALL objectConstructorGetPrototypeOf(ExecState*, JSObject*, JSValue, const ArgList&);
+
+ObjectConstructor::ObjectConstructor(ExecState* exec, PassRefPtr<Structure> structure, ObjectPrototype* objectPrototype, Structure* prototypeFunctionStructure)
     : InternalFunction(&exec->globalData(), structure, Identifier(exec, "Object"))
 {
     // ECMA 15.2.3.1
@@ -37,6 +39,8 @@ ObjectConstructor::ObjectConstructor(ExecState* exec, PassRefPtr<Structure> stru
 
     // no. of arguments for constructor
     putDirectWithoutTransition(exec->propertyNames().length, jsNumber(exec, 1), ReadOnly | DontEnum | DontDelete);
+
+    putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, prototypeFunctionStructure, 1, exec->propertyNames().getPrototypeOf, objectConstructorGetPrototypeOf), DontEnum);
 }
 
 // ECMA 15.2.2
@@ -68,6 +72,13 @@ CallType ObjectConstructor::getCallData(CallData& callData)
 {
     callData.native.function = callObjectConstructor;
     return CallTypeHost;
+}
+
+JSValue JSC_HOST_CALL objectConstructorGetPrototypeOf(ExecState* exec, JSObject*, JSValue, const ArgList& args)
+{
+    if (!args.at(0).isObject())
+        return throwError(exec, TypeError, "Requested prototype of a value that is not an object.");
+    return asObject(args.at(0))->prototype();
 }
 
 } // namespace JSC

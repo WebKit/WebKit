@@ -1,3 +1,15 @@
+2009-08-08  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Eric Seidel and Sam Weinig.
+
+        [ES5] Implement Object.getPrototypeOf
+        https://bugs.webkit.org/show_bug.cgi?id=28114
+
+        Add tests for getPrototypeOf
+
+        * fast/js/prototypes-expected.txt:
+        * fast/js/resources/prototypes.js:
+
 2009-08-08  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         [Gtk] Skip media/controls-right-click-on-timebar.html as it needs
