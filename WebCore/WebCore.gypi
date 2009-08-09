@@ -2056,6 +2056,7 @@
             'platform/graphics/Icon.h',
             'platform/graphics/Image.cpp',
             'platform/graphics/Image.h',
+            'platform/graphics/ImageBuffer.cpp',
             'platform/graphics/ImageBuffer.h',
             'platform/graphics/ImageObserver.h',
             'platform/graphics/ImageSource.h',

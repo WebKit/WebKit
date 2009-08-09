@@ -1,3 +1,12 @@
+2009-08-08  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, build fix.
+
+        [Chromium] Update WebCore.gyp to add ImageBuffer.cpp,
+        introduced by http://trac.webkit.org/changeset/46956.
+
+        * WebCore.gypi: Added ImageBuffer.cpp.
+
 2009-08-08  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Rubber-stamped by Jan Michael Alonzo.
