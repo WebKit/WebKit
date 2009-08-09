@@ -1,3 +1,28 @@
+2009-08-09  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by George Staikos.
+
+        JSON.stringify replacer returning undefined does not omit object properties
+        https://bugs.webkit.org/show_bug.cgi?id=28118
+
+        Add tests that cover the behaviour of JSON.stringify with a replacer
+        function.  In addition to testing replacer function returning undefined,
+        we test the replacer injecting a cycle, and that the replacer gets
+        called when a property has the value undefined.
+
+        * fast/js/JSON-stringify-expected.txt:
+        * fast/js/JSON-stringify-replacer-expected.txt: Added.
+        * fast/js/JSON-stringify-replacer.html: Added.
+        * fast/js/resources/JSON-stringify-replacer.js: Added.
+        (returnUndefined):
+        (returnObjectFor1):
+        (returnArrayFor1):
+        (returnUndefinedFor1):
+        (returnNullFor1):
+        (returnCycleObjectFor1):
+        (returnCycleArrayFor1):
+        (returnStringForUndefined):
+
 2009-08-09  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by George Staikos.

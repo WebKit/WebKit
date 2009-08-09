@@ -339,8 +339,6 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
     value = toJSON(value, propertyName);
     if (m_exec->hadException())
         return StringifyFailed;
-    if (value.isUndefined() && !holder->inherits(&JSArray::info))
-        return StringifyFailedDueToUndefinedValue;
 
     // Call the replacer function.
     if (m_replacerCallType != CallTypeNone) {
@@ -350,6 +348,9 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
         if (m_exec->hadException())
             return StringifyFailed;
     }
+
+    if (value.isUndefined() && !holder->inherits(&JSArray::info))
+        return StringifyFailedDueToUndefinedValue;
 
     if (value.isNull()) {
         builder.append("null");
@@ -385,7 +386,7 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
 
     // Handle cycle detection, and put the holder on the stack.
     if (!m_holderCycleDetector.add(object).second) {
-        throwError(m_exec, TypeError);
+        throwError(m_exec, TypeError, "JSON.stringify cannot serialize cyclic structures.");
         return StringifyFailed;
     }
     bool holderStackWasEmpty = m_holderStack.isEmpty();

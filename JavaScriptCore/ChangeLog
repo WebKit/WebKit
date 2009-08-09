@@ -1,3 +1,22 @@
+2009-08-09  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by George Staikos.
+
+        JSON.stringify replacer returning undefined does not omit object properties
+        https://bugs.webkit.org/show_bug.cgi?id=28118
+
+        Correct behaviour of stringify when using a replacer function that returns
+        undefined.  This is a simple change to move the undefined value check to
+        after the replacer function is called.  This means that the replacer function
+        is now called for properties with the value undefined, however i've confirmed
+        that this behaviour is correct.
+        
+        In addition I've made the cyclic object exception have a more useful error
+        message.
+
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::appendStringifiedValue):
+
 2009-08-08  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Eric Seidel and Sam Weinig.

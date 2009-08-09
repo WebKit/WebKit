@@ -296,7 +296,7 @@ function (jsonObject) {
         cycleTracker = "";
         return jsonObject.stringify(cyclicObject);
     }
-PASS tests[i](nativeJSON) threw exception TypeError: Type error.
+PASS tests[i](nativeJSON) threw exception TypeError: JSON.stringify cannot serialize cyclic structures..
 function (jsonObject) {
         cycleTracker = "";
         try { jsonObject.stringify(cyclicObject); } catch(e) { cycleTracker += " -> exception" }
@@ -307,7 +307,7 @@ function (jsonObject) {
         cycleTracker = "";
         return jsonObject.stringify(cyclicArray);
     }
-PASS tests[i](nativeJSON) threw exception TypeError: Type error.
+PASS tests[i](nativeJSON) threw exception TypeError: JSON.stringify cannot serialize cyclic structures..
 function (jsonObject) {
         cycleTracker = "";
         try { jsonObject.stringify(cyclicArray); } catch(e) { cycleTracker += " -> exception" }
