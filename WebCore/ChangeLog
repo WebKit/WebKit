@@ -1,5 +1,21 @@
 2009-08-09  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
+        Reviewed by Maciej Stachowiak.
+
+        FrameLoadType / WebFrameLoadType enums are out of sync
+        https://bugs.webkit.org/show_bug.cgi?id=28132
+
+        Modify FrameLoadType enum to match the order of WebFrameLoadType in WebFramePrivate.h / IWebFramePrivate.idl.
+        The mac/win public API exposes the old 'FrameLoadTypeReloadAllowingStaleData' value, which resides between
+        'FrameLoadTypeReload' and 'FrameLoadTypeSame'. Work around this problem, by assigning 'FrameLoadTypeSame = FrameLoadTypeReload + 2'.
+
+        Add a note to the FrameLoadType enum to keep it in sync with WebFramePrivate.h & IWebFramePrivate.idl.
+
+        * loader/FrameLoaderTypes.h:
+        (WebCore::):
+
+2009-08-09  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
         Reviewed by George Staikos.
 
         [WML] manual-tests/wml/onevent-prev.wml crashes

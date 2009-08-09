@@ -1,3 +1,14 @@
+2009-08-09  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        FrameLoadType / WebFrameLoadType enums are out of sync
+        https://bugs.webkit.org/show_bug.cgi?id=28132
+
+        Synchronize FrameLoadType <-> WebFrameLoadType enums (append missing 'WebFrameLoadTypeReloadFromOrigin' value)
+
+        * Interfaces/IWebFramePrivate.idl:
+
 2009-08-06  Adam Barth  <abarth@webkit.org>
 
         Unreviewed revert.
