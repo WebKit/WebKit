@@ -1,6 +1,6 @@
 /// [Name] ontimer-event.js
 
-createWMLTestCase("Tests ontimer non-inline event declarations", false, "resources/ontimer-event.wml");
+createStaticWMLTestCase("Tests ontimer non-inline event declarations", "resources/ontimer-event.wml");
 
 var counter = 0;
 
@@ -13,9 +13,8 @@ function prepareTest() {
 }
 
 function executeTest() {
-    if (counter == 3) {
+    if (counter == 2)
         completeTest();
-    }
 
     ++counter;
 }

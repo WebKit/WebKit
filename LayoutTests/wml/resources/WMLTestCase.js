@@ -9,18 +9,44 @@ function createWMLElement(name) {
     return testDocument.createElementNS(wmlNS, "wml:" + name);
 }
 
-function createWMLTestCase(testDescription, substitutesVariables, testName, executeImmediately) {
+function onloadHandler(resetupDocument) {
+    if (testDocument) {
+        testDocument = iframeElement.contentDocument;
+        if (resetupDocument)
+            setupTestDocument();
+
+        assureLayout();
+        executeTest();
+        return;
+    }
+
+    testDocument = iframeElement.contentDocument;
+    setupTestDocument();
+    prepareTest();
+
+    // In a regular WML document, this would happen after the parsing finished.
+    // Though as we dynamically create testcases, we have to take care of initializing WML variable state manually.
+    testDocument.initializeWMLPageState();
+}
+
+function createStaticWMLTestCase(testDescription, testName) {
+    if (testName == null)
+        return;
+
+    createWMLTestCase(testDescription, false, testName);
+}
+
+function createDynamicWMLTestCase(testDescription, resetupDocument) {
     // Setup default test options
-    if (substitutesVariables == null)
-        substitutesVariables = true;
+    if (resetupDocument == null)
+        resetupDocument = true;
 
     // Setup default test name
-    if (testName == null) {
-        executeImmediately = false; // Only honored, when testName != null
-        testName = relativePathToLayoutTests + "/wml/resources/test-document.wml";
-    } else if (executeImmediately == null)
-        executeImmediately = true;
+    var testName = relativePathToLayoutTests + "/wml/resources/test-document.wml";
+    createWMLTestCase(testDescription, resetupDocument, testName);
+}
 
+function createWMLTestCase(testDescription, resetupDocument, testName) {
     // Initialize JS test
     description(testDescription);
     bodyElement = document.getElementsByTagName("body")[0];
@@ -39,36 +65,7 @@ function createWMLTestCase(testDescription, substitutesVariables, testName, exec
     iframeElement.src = testName;
 
     // Process load events, taking care of setting up the native WML testcase
-    iframeElement.onload = function() {
-        if (testDocument) {
-            // Variable substitition mode: resetup test document, substituting all variables stored in the current WML page state.
-            // Variable substitution only happens after the initial document has been loaded and after a reload was triggered.        
-            if (substitutesVariables) {
-                testDocument = iframeElement.contentDocument;
-                setupTestDocument();
-            }
-
-            assureLayout();
-            executeTest();
-            return;
-        }
-
-        testDocument = iframeElement.contentDocument;
-        setupTestDocument();
-        prepareTest();
-
-        // In a regular WML document, this would happen after the parsing finished.
-        // Though as we dynamically create testcases, we have to take care of initializing WML variable state manually.
-        testDocument.initializeWMLPageState();
-
-        // Handle the case of a special WML test document. That's always the case for static WML testcases
-        // (which are NOT created manually using JS in prepareTest). Fire off test immediately for those.
-        if (executeImmediately) {
-            assureLayout();
-            executeTest();
-        }
-    }
-
+    iframeElement.onload = function() { window.setTimeout('onloadHandler(' + resetupDocument + ')', 0); }
     bodyElement.insertBefore(iframeElement, document.getElementById("description"));
 }
 

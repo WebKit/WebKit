@@ -1,6 +1,6 @@
 // [Name] input-format.js 
 
-createWMLTestCase("Tests input format validation");
+createDynamicWMLTestCase("Tests input format validation");
 
 var pElement1;
 var pElement2;

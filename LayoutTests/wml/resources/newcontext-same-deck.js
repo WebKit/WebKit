@@ -1,6 +1,6 @@
 /// [Name] newcontext-same-deck.js
 
-createWMLTestCase("Tests newcontext attribute handling on cards within the same deck", true, "resources/newcontext-same-deck.wml", false);
+createStaticWMLTestCase("Tests newcontext attribute handling on cards within the same deck", "resources/newcontext-same-deck.wml");
 
 var counter = 0;
 
@@ -9,9 +9,7 @@ var result2;
 var result3;
 
 function setupTestDocument() {
-    result1 = testDocument.getElementById("result1");
-    result2 = testDocument.getElementById("result2");
-    result3 = testDocument.getElementById("result3");
+    // no-op
 }
 
 function prepareTest() {
@@ -19,6 +17,10 @@ function prepareTest() {
 }
 
 function executeTest() {
+    result1 = testDocument.getElementById("result1");
+    result2 = testDocument.getElementById("result2");
+    result3 = testDocument.getElementById("result3");
+
     if (counter == 0) {
         shouldBeEqualToString("result1.textContent", "Test 1/3: var1=''");
         startTest(25, 15);

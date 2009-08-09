@@ -1,6 +1,6 @@
 // [Name] go-task-post-method.js
 
-createWMLTestCase("Tests POST method of &lt;go&gt; element", false);
+createDynamicWMLTestCase("Tests POST method of &lt;go&gt; element", false);
 
 function setupTestDocument() {
     var cardElement = testDocument.documentElement.firstChild;

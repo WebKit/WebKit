@@ -1,6 +1,6 @@
 // [Name] variable-reference-invalid-character.js 
 
-createWMLTestCase("Test that invalid variable references aren't detected until variable substitution is executed");
+createDynamicWMLTestCase("Test that invalid variable references aren't detected until variable substitution is executed");
 
 var pElement1;
 var pElement2;

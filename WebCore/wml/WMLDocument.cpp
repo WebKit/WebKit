@@ -23,6 +23,7 @@
 #if ENABLE(WML)
 #include "WMLDocument.h"
 
+#include "Frame.h"
 #include "Page.h"
 #include "Tokenizer.h"
 #include "WMLCardElement.h"
@@ -34,6 +35,7 @@ namespace WebCore {
 
 WMLDocument::WMLDocument(Frame* frame)
     : Document(frame, false) 
+    , m_activeCard(0)
 {
     clearXMLVersion();
 }
@@ -51,38 +53,68 @@ void WMLDocument::finishedParsing()
         }
     }
 
-    WMLPageState* wmlPageState = wmlPageStateForDocument(this);
-    if (!wmlPageState->isDeckAccessible()) {
-        reportWMLError(this, WMLErrorDeckNotAccessible);
-        Document::finishedParsing();
+    bool hasAccess = initialize(true);
+    Document::finishedParsing();
+
+    if (!hasAccess) {
+        m_activeCard = 0;
+
+        // FIXME: Comment in this code once the deck-access control patch landed.
+#if 0
+        WMLPageState* wmlPageState = wmlPageStateForDocument(this);
+        if (!wmlPageState)
+            return;
+
+        Page* page = wmlPageState->page();
+        if (!page)
+            return;
+
+        BackForwardList* list = page->backForwardList();
+        if (!list)
+            return;
+
+        HistoryItem* item = list->backItem();
+        if (!item)
+            return;
+
+        page->goToItem(item, FrameLoadTypeBackWMLDeckNotAccessible);
         return;
+#endif
     }
 
+    if (m_activeCard) {
+        m_activeCard->handleIntrinsicEventIfNeeded();
+        m_activeCard = 0;
+    }
+}
+
+bool WMLDocument::initialize(bool aboutToFinishParsing)
+{
+    WMLPageState* wmlPageState = wmlPageStateForDocument(this);
+    if (!wmlPageState || !wmlPageState->isDeckAccessible())
+        return false;
+ 
     // Remember that we'e successfully entered the deck
     wmlPageState->setNeedCheckDeckAccess(false);
 
-    initialize();
-    Document::finishedParsing();
-}
-
-void WMLDocument::initialize()
-{
     // Notify the existance of templates to all cards of the current deck
     WMLTemplateElement::registerTemplatesInDocument(this);
 
     // Set destination card
-    WMLCardElement* card = WMLCardElement::determineActiveCard(this);
-    if (!card) {
+    m_activeCard = WMLCardElement::determineActiveCard(this);
+    if (!m_activeCard) {
         reportWMLError(this, WMLErrorNoCardInDocument);
-        Document::finishedParsing();
-        return;
+        return true;
     }
 
     // Handle deck-level task overrides
-    card->handleDeckLevelTaskOverridesIfNeeded();
+    m_activeCard->handleDeckLevelTaskOverridesIfNeeded();
 
     // Handle card-level intrinsic event
-    card->handleIntrinsicEventIfNeeded();
+    if (!aboutToFinishParsing)
+        m_activeCard->handleIntrinsicEventIfNeeded();
+
+    return true;
 }
 
 WMLPageState* wmlPageStateForDocument(Document* doc)

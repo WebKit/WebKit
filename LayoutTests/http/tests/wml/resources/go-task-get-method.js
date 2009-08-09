@@ -1,6 +1,6 @@
 // [Name] go-task-get-method.js
 
-createWMLTestCase("Tests GET method of &lt;go&gt; element", false);
+createDynamicWMLTestCase("Tests GET method of &lt;go&gt; element", false);
 
 function setupTestDocument() {
     var cardElement = testDocument.documentElement.firstChild;

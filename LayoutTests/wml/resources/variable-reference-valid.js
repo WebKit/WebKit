@@ -1,6 +1,6 @@
 // [Name] variable-reference-valid.js 
 
-createWMLTestCase("Tests valid variable references");
+createDynamicWMLTestCase("Tests valid variable references");
 
 function setupTestDocument() {
     var cardElement = testDocument.documentElement.firstChild;

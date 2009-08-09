@@ -1,8 +1,8 @@
 /// [Name] enter-card-with-events.js
 
-createWMLTestCase("Tests entering cards in forward and backward directions that have intrinsic events set", false, "resources/enter-card-with-events.wml", false);
+createStaticWMLTestCase("Tests entering cards in forward and backward directions that have intrinsic events set", "resources/enter-card-with-events.wml");
 
-var ranOnce = false;
+var counter = 0;
 
 function setupTestDocument() {
     // no-op
@@ -13,12 +13,12 @@ function prepareTest() {
 }
 
 function executeTest() {
-    if (ranOnce)
+    if (counter == 3)
         completeTest();
-    else {
-        ranOnce = true;
+    else if (counter == 1)
         startTest(25, 15);
-    }
+        
+    ++counter;
 }
 
 var successfullyParsed = true;

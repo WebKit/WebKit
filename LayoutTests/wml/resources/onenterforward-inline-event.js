@@ -1,6 +1,6 @@
 /// [Name] onenterforward-inline-event.js
 
-createWMLTestCase("Tests onenterforward inline event declarations", false, "resources/onenterforward-inline-event.wml");
+createStaticWMLTestCase("Tests onenterforward inline event declarations", "resources/onenterforward-inline-event.wml");
 
 function setupTestDocument() {
     // no-op

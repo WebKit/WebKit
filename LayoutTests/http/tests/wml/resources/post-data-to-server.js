@@ -1,6 +1,6 @@
 // [Name] post-data-to-server.js
 
-createWMLTestCase("Complex data posting example", false);
+createDynamicWMLTestCase("Complex data posting example", false);
 
 var categorySelect;
 var descInput;

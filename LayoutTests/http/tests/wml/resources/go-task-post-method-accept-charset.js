@@ -1,6 +1,6 @@
 // [Name] go-task-post-method-accept-charset.js
 
-createWMLTestCase("Tests POST method of &lt;go&gt; element - accept-charset attribute", false);
+createDynamicWMLTestCase("Tests POST method of &lt;go&gt; element - accept-charset attribute", false);
 
 function setupTestDocument() {
     var cardElement = testDocument.documentElement.firstChild;

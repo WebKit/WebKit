@@ -1,6 +1,6 @@
 // [Name] select-element-variables.js
 
-createWMLTestCase("Tests variable references in conjuction with select elements");
+createDynamicWMLTestCase("Tests variable references in conjuction with select elements");
 
 var resultElement;
 

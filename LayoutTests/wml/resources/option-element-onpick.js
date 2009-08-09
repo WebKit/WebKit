@@ -1,6 +1,6 @@
 // [Name] option-element-onpick.js
 
-createWMLTestCase("Tests onpick intrinsic event support of option elements");
+createDynamicWMLTestCase("Tests onpick intrinsic event support of option elements", false);
 
 function setupTestDocument() {
     var cardElement = testDocument.documentElement.firstChild;

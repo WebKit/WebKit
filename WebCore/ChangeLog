@@ -1,3 +1,22 @@
+2009-08-09  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        [WML] manual-tests/wml/onevent-prev.wml crashes
+        https://bugs.webkit.org/show_bug.cgi?id=27722
+
+        Fix intrinsic event execution, leading to crashes.
+        First finish parsing the document, then execute the events. Not the other way round.
+        -> exposes bugs all over the WML layout tests, which relied on that quirk.
+
+        Fixes manual-tests/wml/onevent-prev.wml.
+
+        * wml/WMLDocument.cpp:
+        (WebCore::WMLDocument::WMLDocument):
+        (WebCore::WMLDocument::finishedParsing):
+        (WebCore::WMLDocument::initialize):
+        * wml/WMLDocument.h:
+
 2009-08-08  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, build fix.

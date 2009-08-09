@@ -1,3 +1,48 @@
+2009-08-09  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        [WML] manual-tests/wml/onevent-prev.wml crashes
+        https://bugs.webkit.org/show_bug.cgi?id=27722
+
+        Reorganize WML testcases to not rely on the fact that intrinsic events are executed before the document finished parsing.
+
+        * http/tests/wml/resources/go-task-get-method-accept-charset.js:
+        * http/tests/wml/resources/go-task-get-method.js:
+        * http/tests/wml/resources/go-task-post-method-accept-charset.js:
+        * http/tests/wml/resources/go-task-post-method.js:
+        * http/tests/wml/resources/post-data-to-server.js:
+        * wml/resources/WMLTestCase.js:
+        (onloadHandler):
+        (createStaticWMLTestCase):
+        (createDynamicWMLTestCase):
+        (createWMLTestCase.iframeElement.onload):
+        (createWMLTestCase):
+        * wml/resources/enter-card-with-events.js:
+        (executeTest):
+        * wml/resources/enter-first-card-with-events.js:
+        (setupTestDocument):
+        (prepareTest):
+        (executeTest):
+        * wml/resources/go-task-get-method-external-deck-with-href.js:
+        * wml/resources/go-task-get-method-external-deck.js:
+        * wml/resources/go-task-get-method-same-deck.js:
+        * wml/resources/input-format.js:
+        * wml/resources/newcontext-same-deck.js:
+        (setupTestDocument):
+        (executeTest):
+        * wml/resources/onenterforward-event.js:
+        (executeTest):
+        * wml/resources/onenterforward-inline-event.js:
+        * wml/resources/ontimer-event.js:
+        (executeTest):
+        * wml/resources/ontimer-inline-event.js:
+        (executeTest):
+        * wml/resources/option-element-onpick.js:
+        * wml/resources/select-element-variables.js:
+        * wml/resources/variable-reference-invalid-character.js:
+        * wml/resources/variable-reference-valid.js:
+
 2009-08-08  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Eric Seidel and Sam Weinig.
