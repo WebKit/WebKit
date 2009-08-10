@@ -291,7 +291,7 @@ static void finishedCallback(SoupSession *session, SoupMessage* msg, gpointer da
         return;
 
     if (SOUP_STATUS_IS_TRANSPORT_ERROR(msg->status_code)) {
-        char *uri=soup_uri_to_string(soup_message_get_uri(msg), false);
+        char* uri = soup_uri_to_string(soup_message_get_uri(msg), false);
         ResourceError error(g_quark_to_string(SOUP_HTTP_ERROR),
                             msg->status_code,
                             uri,

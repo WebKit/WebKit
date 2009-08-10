@@ -1,3 +1,11 @@
+2009-08-10  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        [Gtk] Unreviewed. Fix the nit as suggested by Darin in bug #28144
+        for r46989.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::finishedCallback):
+
 2009-08-10  John Kjellberg  <john.kjellberg@power.alstom.com>
 
         Reviewed by Darin Adler.
