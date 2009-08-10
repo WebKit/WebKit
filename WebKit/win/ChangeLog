@@ -1,3 +1,16 @@
+2009-08-10  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28048.
+        Move various WinCairo build settings into *.vsprops file.
+
+        * WebKit.vcproj/WebKit.vcproj: Add new cURL.vsprops property sheet
+          (which contains link settings for cURL and its dependencies), and
+          remove the corresponding entries from the vcproj file.  Remove
+          png, jpeg, cairo library linking flags from vcproj, now that they
+          are in the WinCairo.vsprops file.
+
 2009-08-09  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by George Staikos.

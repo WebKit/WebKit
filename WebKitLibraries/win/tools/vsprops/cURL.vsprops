@@ -2,14 +2,12 @@
 <VisualStudioPropertySheet
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="WinCairo"
+	Name="cURL"
 	>
 	<Tool
-		Name="VCCLCompilerTool"
-		PreprocessorDefinitions="WIN_CAIRO=1"
-	/>
-	<Tool
 		Name="VCLinkerTool"
-		AdditionalDependencies="cairo.lib jpeg.lib libpng.lib"
+		AdditionalDependencies="ws2_32.lib wininet.lib Wldap32.lib libeay32.lib ssleay32.lib libcurl_imp.lib"
+		IgnoreAllDefaultLibraries="false"
+		IgnoreDefaultLibraryNames=""
 	/>
 </VisualStudioPropertySheet>
