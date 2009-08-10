@@ -1,3 +1,14 @@
+2009-08-10  Mark Rowe  <mrowe@apple.com>
+        
+        Reviewed by Darin Adler.
+
+        Fix hundreds of "pointer being freed was not allocated" errors seen on the build bot.
+
+        * wtf/FastMalloc.h: Implement nothrow variants of the delete and delete[] operators since
+        we implement the nothrow variants of new and new[].  The nothrow variant of delete is called
+        explicitly in the implementation of std::sort which was resulting in FastMalloc-allocated
+        memory being passed to the system allocator to free.
+
 2009-08-10  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         [Gtk] Unreviewed build fix. Move JSAPIValueWrapper.cpp/.h in the debug

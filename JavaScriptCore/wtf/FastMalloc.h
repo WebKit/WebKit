@@ -184,9 +184,11 @@ using WTF::fastMallocAllow;
 WTF_PRIVATE_INLINE void* operator new(size_t size) { return fastMalloc(size); }
 WTF_PRIVATE_INLINE void* operator new(size_t size, const std::nothrow_t&) throw() { return fastMalloc(size); }
 WTF_PRIVATE_INLINE void operator delete(void* p) { fastFree(p); }
+WTF_PRIVATE_INLINE void operator delete(void* p, const std::nothrow_t&) throw() { fastFree(p); }
 WTF_PRIVATE_INLINE void* operator new[](size_t size) { return fastMalloc(size); }
 WTF_PRIVATE_INLINE void* operator new[](size_t size, const std::nothrow_t&) throw() { return fastMalloc(size); }
 WTF_PRIVATE_INLINE void operator delete[](void* p) { fastFree(p); }
+WTF_PRIVATE_INLINE void operator delete[](void* p, const std::nothrow_t&) throw() { fastFree(p); }
 
 #endif
 
