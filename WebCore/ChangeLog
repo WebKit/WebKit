@@ -1,3 +1,15 @@
+2009-08-10  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Provide graceful handling of the situation when an embedder invokes
+        visited link update methods before a Page constructor has been called.
+        https://bugs.webkit.org/show_bug.cgi?id=28149
+
+        * page/Page.cpp:
+        (WebCore::Page::allVisitedStateChanged): Added a null-check for allPages.
+        (WebCore::Page::visitedStateChanged): Ditto.
+
 2009-08-10  Xan Lopez  <xlopez@igalia.com>
 
         Fix GTK+ build.
