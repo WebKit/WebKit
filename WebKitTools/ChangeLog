@@ -1,3 +1,12 @@
+2009-08-10  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by David Kilzer.
+
+        https://bugs.webkit.org/show_bug.cgi?id=18599
+        Work around apparent bug in abs2rel() with symlinked directories.
+
+        * Scripts/resolve-ChangeLogs:
+
 2009-08-10  Dan Bernstein  <mitz@apple.com>
 
         Build fix

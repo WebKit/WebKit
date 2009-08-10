@@ -149,7 +149,7 @@ sub canonicalRelativePath($)
 {
     my ($originalPath) = @_;
     my $absolutePath = Cwd::abs_path($originalPath);
-    return File::Spec->abs2rel($absolutePath);
+    return File::Spec->abs2rel($absolutePath, Cwd::getcwd());
 }
 
 sub conflictFiles($)
