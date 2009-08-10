@@ -6,6 +6,7 @@
  * Copyright (C) 2009 Gustavo Noronha Silva <gns@gnome.org>
  * Copyright (C) 2009 Christian Dywan <christian@imendio.com>
  * Copyright (C) 2009 Igalia S.L.
+ * Copyright (C) 2009 John Kjellberg <john.kjellberg@power.alstom.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -290,10 +291,12 @@ static void finishedCallback(SoupSession *session, SoupMessage* msg, gpointer da
         return;
 
     if (SOUP_STATUS_IS_TRANSPORT_ERROR(msg->status_code)) {
+        char *uri=soup_uri_to_string(soup_message_get_uri(msg), false);
         ResourceError error(g_quark_to_string(SOUP_HTTP_ERROR),
                             msg->status_code,
-                            soup_uri_to_string(soup_message_get_uri(msg), false),
+                            uri,
                             String::fromUTF8(msg->reason_phrase));
+        g_free(uri);
         client->didFail(handle.get(), error);
         return;
     }
@@ -680,10 +683,12 @@ static void readCallback(GObject* source, GAsyncResult* res, gpointer)
 
     gssize bytesRead = g_input_stream_read_finish(d->m_inputStream, res, &error);
     if (error) {
+        char* uri = g_file_get_uri(d->m_gfile);
         ResourceError resourceError(g_quark_to_string(G_IO_ERROR),
                                     error->code,
-                                    g_file_get_uri(d->m_gfile),
+                                    uri,
                                     error ? String::fromUTF8(error->message) : String());
+        g_free(uri);
         g_error_free(error);
         cleanupGioOperation(d);
         client->didFail(handle.get(), resourceError);
@@ -726,11 +731,12 @@ static void openCallback(GObject* source, GAsyncResult* res, gpointer)
     GError *error = 0;
     GFileInputStream* in = g_file_read_finish(G_FILE(source), res, &error);
     if (error) {
+        char* uri = g_file_get_uri(d->m_gfile);
         ResourceError resourceError(g_quark_to_string(G_IO_ERROR),
                                     error->code,
-                                    g_file_get_uri(d->m_gfile),
+                                    uri,
                                     error ? String::fromUTF8(error->message) : String());
-
+        g_free(uri);
         g_error_free(error);
         cleanupGioOperation(d);
         client->didFail(handle, resourceError);
@@ -777,10 +783,12 @@ static void queryInfoCallback(GObject* source, GAsyncResult* res, gpointer)
         // server (and then keep track of the fact that we mounted it,
         // and set a timeout to unmount it later after it's been idle
         // for a while).
+        char* uri = g_file_get_uri(d->m_gfile);
         ResourceError resourceError(g_quark_to_string(G_IO_ERROR),
                                     error->code,
-                                    g_file_get_uri(d->m_gfile),
+                                    uri,
                                     error ? String::fromUTF8(error->message) : String());
+        g_free(uri);
         g_error_free(error);
         cleanupGioOperation(d);
         client->didFail(handle, resourceError);
@@ -790,10 +798,12 @@ static void queryInfoCallback(GObject* source, GAsyncResult* res, gpointer)
     if (g_file_info_get_file_type(info) != G_FILE_TYPE_REGULAR) {
         // FIXME: what if the URI points to a directory? Should we
         // generate a listing? How? What do other backends do here?
+        char* uri = g_file_get_uri(d->m_gfile);
         ResourceError resourceError(g_quark_to_string(G_IO_ERROR),
                                     G_IO_ERROR_FAILED,
-                                    g_file_get_uri(d->m_gfile),
+                                    uri,
                                     String());
+        g_free(uri);
         cleanupGioOperation(d);
         client->didFail(handle, resourceError);
         return;

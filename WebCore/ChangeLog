@@ -1,3 +1,16 @@
+2009-08-10  John Kjellberg  <john.kjellberg@power.alstom.com>
+
+        Reviewed by Darin Adler.
+
+        Memory leak in error handling code for SOUP interface
+        https://bugs.webkit.org/show_bug.cgi?id=28144
+
+        Freed memory leaked in error handling code for soup requests.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::finishedCallback):
+        (WebCore::):
+
 2009-08-10  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Adler.
