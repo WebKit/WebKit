@@ -469,6 +469,15 @@ static bool startHttp(ResourceHandle* handle, String urlString)
     ResourceHandleInternal* d = handle->getInternal();
 
     d->m_msg = handle->request().toSoupMessage();
+    if (!d->m_msg) {
+        ResourceError resourceError(g_quark_to_string(SOUP_HTTP_ERROR),
+                                    SOUP_STATUS_MALFORMED,
+                                    urlString,
+                                    handle->request().httpMethod());
+        d->client()->didFail(handle, resourceError);
+        return false;
+    }
+
     g_signal_connect(d->m_msg, "restarted", G_CALLBACK(restartedCallback), handle);
     g_signal_connect(d->m_msg, "got-headers", G_CALLBACK(gotHeadersCallback), handle);
     g_signal_connect(d->m_msg, "content-sniffed", G_CALLBACK(contentSniffedCallback), handle);
@@ -582,11 +591,7 @@ bool ResourceHandle::start(Frame* frame)
     if (equalIgnoringCase(protocol, "data"))
         return startData(this, urlString);
 
-    SoupURI* uri = soup_uri_new(urlString.utf8().data());
-    bool isHTTPOrHTTPS = (equalIgnoringCase(protocol, "http") || equalIgnoringCase(protocol, "https")) && SOUP_URI_VALID_FOR_HTTP(uri);
-    soup_uri_free(uri);
-
-    if (isHTTPOrHTTPS)
+    if (equalIgnoringCase(protocol, "http") || equalIgnoringCase(protocol, "https"))
         return startHttp(this, urlString);
 
     if (equalIgnoringCase(protocol, "file") || equalIgnoringCase(protocol, "ftp") || equalIgnoringCase(protocol, "ftps"))

@@ -1,3 +1,13 @@
+2009-08-10  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Let startHttp validate the URI instead of doing it, with potential
+        crashes, in ::start.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::startHttp):
+
 2009-08-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.
