@@ -1,3 +1,10 @@
+2009-08-10  Dan Bernstein  <mitz@apple.com>
+
+        Build fix
+
+        * DumpRenderTree/TestNetscapePlugIn.subproj/main.cpp:
+        (NPP_New):
+
 2009-08-10  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Adam Roben.
