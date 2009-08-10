@@ -1,3 +1,18 @@
+2009-08-10  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        Stop sending QEvent::CursorChange to Qt for mouse move.
+
+        Verify if the cursor didn't change in WidgetQt::setCursor,
+        just like the mac port does.
+
+        Thanks to Adriano Rezendo for spotting and debugging the
+        issue.
+
+        * platform/qt/WidgetQt.cpp:
+        (WebCore::Widget::setCursor):
+
 2009-08-10  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Brady Eidson.
