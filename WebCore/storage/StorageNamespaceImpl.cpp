@@ -66,9 +66,7 @@ StorageNamespaceImpl::StorageNamespaceImpl(StorageType storageType, const String
     : m_storageType(storageType)
     , m_path(path.copy())  // Copy makes it safe for our other thread to access the path.
     , m_syncManager(0)
-#ifndef NDEBUG
     , m_isShutdown(false)
-#endif
 {
     if (m_storageType == LocalStorage && !m_path.isEmpty())
         m_syncManager = StorageSyncManager::create(m_path);
@@ -82,6 +80,9 @@ StorageNamespaceImpl::~StorageNamespaceImpl()
         ASSERT(localStorageNamespaceMap().get(m_path) == this);
         localStorageNamespaceMap().remove(m_path);
     }
+    
+    if (!m_isShutdown)
+        close();
 }
 
 PassRefPtr<StorageNamespace> StorageNamespaceImpl::copy()
@@ -93,11 +94,8 @@ PassRefPtr<StorageNamespace> StorageNamespaceImpl::copy()
     StorageNamespaceImpl* newNamespace = new StorageNamespaceImpl(m_storageType, m_path);
 
     StorageAreaMap::iterator end = m_storageAreaMap.end();
-    for (StorageAreaMap::iterator i = m_storageAreaMap.begin(); i != end; ++i) {
-        RefPtr<StorageAreaImpl> areaCopy = i->second->copy(i->first.get());
-        newNamespace->m_storageAreaMap.set(i->first, areaCopy.release());
-    }
-
+    for (StorageAreaMap::iterator i = m_storageAreaMap.begin(); i != end; ++i)
+        newNamespace->m_storageAreaMap.set(i->first, i->second->copy());
     return adoptRef(newNamespace);
 }
 
@@ -119,14 +117,21 @@ void StorageNamespaceImpl::close()
 {
     ASSERT(isMainThread());
     ASSERT(!m_isShutdown);
+    
+    // If we're session storage, we shouldn't need to do any work here.
+    if (m_storageType == SessionStorage) {
+        ASSERT(!m_syncManager);
+        return;
+    }
 
     StorageAreaMap::iterator end = m_storageAreaMap.end();
     for (StorageAreaMap::iterator it = m_storageAreaMap.begin(); it != end; ++it)
         it->second->close();
+    
+    if (m_syncManager)
+        m_syncManager->close();
 
-#ifndef NDEBUG
     m_isShutdown = true;
-#endif
 }
 
 } // namespace WebCore

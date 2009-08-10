@@ -47,7 +47,7 @@ StorageAreaImpl::~StorageAreaImpl()
 {
 }
 
-StorageAreaImpl::StorageAreaImpl(StorageType storageType, SecurityOrigin* origin, PassRefPtr<StorageSyncManager> syncManager)
+StorageAreaImpl::StorageAreaImpl(StorageType storageType, PassRefPtr<SecurityOrigin> origin, PassRefPtr<StorageSyncManager> syncManager)
     : m_storageType(storageType)
     , m_securityOrigin(origin)
     , m_storageMap(StorageMap::create())
@@ -67,15 +67,15 @@ StorageAreaImpl::StorageAreaImpl(StorageType storageType, SecurityOrigin* origin
     }
 }
 
-PassRefPtr<StorageAreaImpl> StorageAreaImpl::copy(SecurityOrigin* origin)
+PassRefPtr<StorageAreaImpl> StorageAreaImpl::copy()
 {
     ASSERT(!m_isShutdown);
-    return adoptRef(new StorageAreaImpl(origin, this));
+    return adoptRef(new StorageAreaImpl(this));
 }
 
-StorageAreaImpl::StorageAreaImpl(SecurityOrigin* origin, StorageAreaImpl* area)
+StorageAreaImpl::StorageAreaImpl(StorageAreaImpl* area)
     : m_storageType(area->m_storageType)
-    , m_securityOrigin(origin)
+    , m_securityOrigin(area->m_securityOrigin)
     , m_storageMap(area->m_storageMap)
     , m_storageSyncManager(area->m_storageSyncManager)
 #ifndef NDEBUG

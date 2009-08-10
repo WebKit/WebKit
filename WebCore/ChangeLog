@@ -1,3 +1,32 @@
+2009-08-08  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Cleanup DOM Storage namespace shutdown code + usage of security origin.
+        https://bugs.webkit.org/show_bug.cgi?id=28094
+
+        If a storage namespace is not explicitly closed, be sure to do so on
+        destruction of the object.  In addition, the close call should wait
+        on the background thread finishing its syncing.  (Not doing so is actually
+        a regression from the original LocalStorage code.)
+
+        There's no point to passing in the SecurityOrigin when copying a storage
+        area since what was passed in is exactly what is stored within each
+        storage area.  In addition, the non-copy constructor should take in a
+        PassRefPtr rather than a pointer since that pointer was only passed into
+        the constuctor for RefPtr's anyway.
+
+        * storage/StorageAreaImpl.cpp:
+        (WebCore::StorageAreaImpl::StorageAreaImpl):
+        (WebCore::StorageAreaImpl::copy):
+        * storage/StorageAreaImpl.h:
+        * storage/StorageNamespaceImpl.cpp:
+        (WebCore::StorageNamespaceImpl::StorageNamespaceImpl):
+        (WebCore::StorageNamespaceImpl::~StorageNamespaceImpl):
+        (WebCore::StorageNamespaceImpl::copy):
+        (WebCore::StorageNamespaceImpl::close):
+        * storage/StorageNamespaceImpl.h:
+
 2009-08-10  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Not reviewed, build fix.
