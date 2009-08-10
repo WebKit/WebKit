@@ -152,39 +152,7 @@ static void fillResponseFromMessage(SoupMessage* msg, ResourceResponse* response
     while (soup_message_headers_iter_next(&iter, &name, &value))
         response->setHTTPHeaderField(name, value);
 
-    GHashTable* contentTypeParameters = 0;
-    String contentType = soup_message_headers_get_content_type(msg->response_headers, &contentTypeParameters);
-
-    // When the server sends multiple Content-Type headers, soup will
-    // give us their values concatenated with commas as a separator;
-    // we need to handle this and use only one value. We use the first
-    // value, and add all the parameters, afterwards, if any.
-    Vector<String> contentTypes;
-    contentType.split(',', true, contentTypes);
-    contentType = contentTypes[0];
-
-    if (contentTypeParameters) {
-        GString* parametersString = g_string_new(0);
-        GHashTableIter hashTableIter;
-        const char* hashKey;
-        const char* hashValue;
-
-        g_hash_table_iter_init(&hashTableIter, contentTypeParameters);
-        while (g_hash_table_iter_next(&hashTableIter, reinterpret_cast<void**>(const_cast<char**>(&hashKey)), reinterpret_cast<void**>(const_cast<char**>(&hashValue)))) {
-            // Work-around bug in soup which causes a crash;
-            // See http://bugzilla.gnome.org/show_bug.cgi?id=577728
-            if (!hashValue)
-                hashValue = "";
-
-            g_string_append(parametersString, "; ");
-            soup_header_g_string_append_param(parametersString, hashKey, hashValue);
-        }
-        contentType += String(parametersString->str);
-
-        g_string_free(parametersString, true);
-        g_hash_table_destroy(contentTypeParameters);
-    }
-
+    String contentType = soup_message_headers_get_one(msg->response_headers, "Content-Type");
     response->setMimeType(extractMIMETypeFromMediaType(contentType));
 
     char* uri = soup_uri_to_string(soup_message_get_uri(msg), false);

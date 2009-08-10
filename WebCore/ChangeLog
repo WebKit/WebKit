@@ -2,6 +2,15 @@
 
         Reviewed by Gustavo Noronha.
 
+        Remove workaround for older libsoup versions.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::fillResponseFromMessage):
+
+2009-08-10  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
         Let startHttp validate the URI instead of doing it, with potential
         crashes, in ::start.
 
