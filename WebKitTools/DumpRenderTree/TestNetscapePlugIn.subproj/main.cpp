@@ -104,31 +104,25 @@ NPError NPP_New(NPMIMEType pluginType, NPP instance, uint16 mode, int16 argc, ch
         }
     }
         
-    
-    if (forceCarbon) {
-        NPBool supportsCarbon;
+    NPBool supportsCarbon = false;
+    NPBool supportsCocoa = false;
 
 #ifndef NP_NO_CARBON
-        if (browser->getvalue(instance, NPNVsupportsCarbonBool, &supportsCarbon) != NPERR_NO_ERROR)
-            supportsCarbon = false;
-#else
+    if (browser->getvalue(instance, NPNVsupportsCarbonBool, &supportsCarbon) != NPERR_NO_ERROR)
         supportsCarbon = false;
 #endif
-        if (!supportsCarbon)
-            return NPERR_INCOMPATIBLE_VERSION_ERROR;
 
+    if (browser->getvalue(instance, NPNVsupportsCocoaBool, &supportsCocoa) != NPERR_NO_ERROR)
+        supportsCocoa = false;
+
+    if (supportsCocoa && !forceCarbon) {
+        obj->eventModel = NPEventModelCocoa;
 #ifndef NP_NO_CARBON
+    } else if (supportsCarbon) {
         obj->eventModel = NPEventModelCarbon;
 #endif
     } else {
-        NPBool supportsCocoa;
-        if (browser->getvalue(instance, NPNVsupportsCocoaBool, &supportsCocoa) != NPERR_NO_ERROR)
-            supportsCocoa = FALSE;
-
-        if (!supportsCocoa)
-            return NPERR_INCOMPATIBLE_VERSION_ERROR;
-        
-        obj->eventModel = NPEventModelCocoa;
+        return NPERR_INCOMPATIBLE_VERSION_ERROR;
     }
     
     browser->setvalue(instance, NPPVpluginEventModel, (void *)obj->eventModel);

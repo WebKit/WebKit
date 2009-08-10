@@ -1,3 +1,23 @@
+2009-08-10  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Adam Roben.
+        
+        Allow TestNetscapePlugIn to fall back to the Carbon event model
+        
+        Previously the plugin would fail, even though the Carbon event
+        model was available. The only way to get the Carbon event model
+        was to pass the "forcecarbon" argument in the test markup, but no
+        tests were using this.
+        
+        Now the plugin uses carbon either if it's forced, or if the Cocoa
+        event model is not supported.
+        
+        This helps us run most of the plugin tests on Qt/Mac, which still
+        does not support the Cocoa event model.
+        
+        * DumpRenderTree/TestNetscapePlugIn.subproj/main.cpp:
+        (NPP_New):
+
 2009-08-08  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
