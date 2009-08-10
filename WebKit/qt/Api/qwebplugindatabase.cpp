@@ -27,24 +27,9 @@
 using namespace WebCore;
 
 /*!
-    \class QWebPluginInfo::MimeType
+    \typedef QWebPluginInfo::MimeType
     \since 4.6
     \brief Represents a single MIME type supported by a plugin.
-*/
-
-/*!
-    \variable QWebPluginInfo::MimeType::name
-    \brief the name of the MIME type e.g. text/plain
-*/
-
-/*!
-    \variable QWebPluginInfo::MimeType::description
-    \brief the description of the MIME type
-*/
-
-/*!
-    \variable QWebPluginInfo::MimeType::fileExtensions
-    \brief a list of file extensions that are associated with the mime type
 */
 
 QWebPluginInfoPrivate::QWebPluginInfoPrivate(RefPtr<PluginPackage> pluginPackage)
@@ -62,13 +47,15 @@ QWebPluginDatabasePrivate::QWebPluginDatabasePrivate(PluginDatabase* pluginDatab
     \since 4.6
     \brief The QWebPluginInfo class represents a single Netscape plugin.
 
-    The QWebPluginInfo represents a Netscape plugin, that is picked up by WebKit
-    and included in the plugin database. The class contains information about
-    the plugin: its name(), description(), a list of MIME types that it supports:
-    mimeTypes() and the path of the plugin file.
+    A QWebPluginInfo object represents a Netscape plugin picked up by WebKit
+    and included in the plugin database. This class contains information about
+    the plugin, such as its name(), description(), a list of MIME types that it
+    supports (can be accessed with mimeTypes()) and the path of the plugin
+    file.
 
-    Particular plugins can be disabled, this way they won't be used by WebKit
-    for handling supported MIME types: setEnabled(), enabled().
+    Plugins can be enabled and disabled with setEnabled(). If a plugin is
+    disabled, it will not be used by WebKit to handle supported MIME types. To
+    check if a plugin is enabled or not, use enabled().
 
     \sa QWebPluginDatabase
 */
@@ -94,6 +81,9 @@ QWebPluginInfo::QWebPluginInfo(const QWebPluginInfo& other)
 {
 }
 
+/*!
+    Destroys the plugin info.
+*/
 QWebPluginInfo::~QWebPluginInfo()
 {
     delete d;
@@ -124,7 +114,7 @@ QString QWebPluginInfo::description() const
 }
 
 /*!
-    Returns a list of MIME types that are supported by the plugin.
+    Returns a list of MIME types supported by the plugin.
 
     \sa supportsMimeType()
 */
@@ -155,7 +145,8 @@ QList<QWebPluginInfo::MimeType> QWebPluginInfo::mimeTypes() const
 }
 
 /*!
-    Returns true if the plugin supports a specific \a mimeType, false otherwise.
+    Returns true if the plugin supports a specific \a mimeType; otherwise
+    returns false.
 
     \sa mimeTypes()
 */
@@ -181,7 +172,7 @@ QString QWebPluginInfo::path() const
 }
 
 /*!
-    Returns true if the plugin is a null plugin, false otherwise.
+    Returns true if the plugin is a null plugin; otherwise returns false.
 */
 bool QWebPluginInfo::isNull() const
 {
@@ -189,10 +180,10 @@ bool QWebPluginInfo::isNull() const
 }
 
 /*!
-    Enables or disables the plugin.
+    Enables or disables the plugin, depending on the \a enabled parameter.
 
-    Disabled plugins will not be picked up by WebKit when looking for a plugin supporting
-    a particular MIME type.
+    Disabled plugins will not be picked up by WebKit when looking for a plugin
+    supporting a particular MIME type.
 
     \sa isEnabled()
 */
@@ -204,7 +195,7 @@ void QWebPluginInfo::setEnabled(bool enabled)
 }
 
 /*!
-    Returns true if the plugin is enabled, false otherwise.
+    Returns true if the plugin is enabled; otherwise returns false.
 
     \sa setEnabled()
 */
@@ -257,7 +248,7 @@ QWebPluginInfo &QWebPluginInfo::operator=(const QWebPluginInfo& other)
     To change the way of resolving MIME types ambiguity, you can explicitly set
     a preferred plugin for a specific MIME type, using setPreferredPluginForMimeType().
 
-    \sa QWebPlugin, QWebSettings::pluginDatabase()
+    \sa QWebPluginInfo, QWebSettings::pluginDatabase()
 */
 
 QWebPluginDatabase::QWebPluginDatabase(QObject* parent)
@@ -273,7 +264,9 @@ QWebPluginDatabase::~QWebPluginDatabase()
 
 /*!
     Returns a list of plugins installed in the search paths.
-    The list includes disabled plugins, even though they are not used.
+
+    This list will contain disabled plugins, although they will not be used by
+    WebKit.
 
     \sa pluginForMimeType()
 */

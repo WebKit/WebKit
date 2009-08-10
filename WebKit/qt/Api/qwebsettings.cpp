@@ -795,7 +795,7 @@ qint64 QWebSettings::offlineStorageDefaultQuota()
     return QWebSettings::globalSettings()->d->offlineStorageDefaultQuota;
 }
 
-/*
+/*!
     \since 4.6
     \relates QWebSettings
 
@@ -822,14 +822,14 @@ void QWebSettings::setOfflineWebApplicationCachePath(const QString& path)
 #endif
 }
 
-/*
+/*!
     \since 4.6
     \relates QWebSettings
 
     Returns the path of the HTML5 offline web application cache storage
     or an empty string if the feature is disabled.
 
-    \sa setWebApplicationCachePath()
+    \sa setOfflineWebApplicationCachePath()
 */
 QString QWebSettings::offlineWebApplicationCachePath()
 {
