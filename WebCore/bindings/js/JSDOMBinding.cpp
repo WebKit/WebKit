@@ -18,11 +18,6 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-// gcc 3.x can't handle including the HashMap pointer specialization in this file
-#if defined __GNUC__ && !defined __GLIBCXX__ // less than gcc 3.4
-#define HASH_MAP_PTR_SPEC_WORKAROUND 1
-#endif
-
 #include "config.h"
 #include "JSDOMBinding.h"
 

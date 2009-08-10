@@ -1,3 +1,11 @@
+2009-08-10  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Remove a dead #define.
+
+        * bindings/js/JSDOMBinding.cpp:
+
 2009-08-10  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, build fix.
