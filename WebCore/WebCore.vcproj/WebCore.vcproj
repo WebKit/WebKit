@@ -6331,7 +6331,7 @@
 				>
 			</File>
 			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSInspectorBackend.cpcpp"
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSInspectorBackend.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -6377,10 +6377,6 @@
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSInspectorBackend.cpp"
 				>
-			</File>
-			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSInspectorBackend.cpp"
-				>
 				<FileConfiguration
 					Name="Debug|Win32"
 					ExcludedFromBuild="true"
@@ -6421,6 +6417,10 @@
 						Name="VCCLCompilerTool"
 					/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSInspectorBackend.cpp"
+				>
 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSInspectorBackend.h"
@@ -6571,11 +6571,51 @@
 				>
 			</File>
 			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSMedia.h"
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSMedia.cpp"
 				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Internal|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Cairo|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_Cairo|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSMedia.cpp"
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSMedia.h"
 				>
 			</File>
 			<File
@@ -21912,15 +21952,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\css\mediaControls.css"
-				>
-			</File>
-			<File
 				RelativePath="..\css\Media.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\css\Media.h"
+				>
+			</File>
+			<File
+				RelativePath="..\css\mediaControls.css"
 				>
 			</File>
 			<File
@@ -21976,11 +22016,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\css\RGBColor.h"
+				RelativePath="..\css\RGBColor.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\css\RGBColor.cpp"
+				RelativePath="..\css\RGBColor.h"
 				>
 			</File>
 			<File
@@ -28711,15 +28751,15 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\JSInspectorBackendCustom.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\JSInspectorCallbackWrapper.cpp"
 					>
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSInspectorCallbackWrapper.h"
-					>
-				</File>
-				<File
-					RelativePath="..\bindings\js\JSInspectorBackendCustom.cpp"
 					>
 				</File>
 				<File
@@ -28982,14 +29022,14 @@
 					RelativePath="..\bindings\js\ScheduledAction.h"
 					>
 				</File>
-                                <File
-                                        RelativePath="..\bindings\js\ScriptArray.cpp"
-                                        >
-                                </File>
-                                <File
-                                        RelativePath="..\bindings\js\ScriptArray.h"
-                                        >
-                                </File>
+				<File
+					RelativePath="..\bindings\js\ScriptArray.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\ScriptArray.h"
+					>
+				</File>
 				<File
 					RelativePath="..\bindings\js\ScriptCachedFrameData.cpp"
 					>

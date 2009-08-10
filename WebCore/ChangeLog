@@ -1,3 +1,16 @@
+2009-08-10  Steve Falkenburg  <sfalken@apple.com>
+
+        Windows build fix.
+
+        Exclude JSMedia.cpp from build since it is included in DerivedSources.cpp.
+        Fixes linker warnings.        
+        
+        Corrected spelling of JSInspectorBackend.cpp.
+        
+        Other changes related to actually using a Visual Studio to open/save the vcproj file.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
 2009-08-10  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
