@@ -1,3 +1,13 @@
+2009-08-10  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by George Staikos.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27323
+        Even more line ending-stripping for auto-version.sh, based on output
+        provided by Jessie Berlin.
+
+        * win/tools/scripts/auto-version.sh:
+
 2009-08-10  Brent Fulgham  <bfulgham@webkit.org>
 
         Reviewed by Adam Roben.

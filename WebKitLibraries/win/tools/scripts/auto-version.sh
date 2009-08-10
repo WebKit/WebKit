@@ -60,7 +60,9 @@ BLDNMBRSHORT="$BLDNMBR"
 
 if [ "$RC_PROJECTSOURCEVERSION" == "" ]; then
     BLDNMBRSHORT="$BLDNMBRSHORT+"
-    BLDNMBR="$BLDNMBRSHORT $(whoami) - $(date) - r$SVNOPENSOURCEREVISION"
+    BLDUSERNAME=`echo "$(whoami)" | sed -r 's/(.*\S+)\s*$/\1/'`
+    BLDDATE=`echo "$(date)" | sed -r 's/(.*\S+)\s*$/\1/'`
+    BLDNMBR="$BLDNMBRSHORT $BLDUSERNAME - $BLDDATE - r$SVNOPENSOURCEREVISION"
 fi
 
 cat > "$VERSIONFILE" <<EOF
