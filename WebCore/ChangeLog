@@ -1,3 +1,31 @@
+2009-08-10  Vitaly Repeshko  <vitalyr@quad.spb.corp.google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        [V8] Fix memory leak in node event listeners. See http://crbug.com/17400.
+        https://bugs.webkit.org/show_bug.cgi?id=28156
+
+        * bindings/scripts/CodeGeneratorV8.pm: Custom event handler accessors now apply to all Node descendants.
+        * bindings/v8/V8AbstractEventListener.h:
+        (WebCore::V8AbstractEventListener::isObjectListener): Added virtual method to detect listeners that have weak references to JS objects.
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::getTemplate):
+        * bindings/v8/V8ObjectEventListener.cpp:
+        * bindings/v8/V8ObjectEventListener.h:
+        (WebCore::V8ObjectEventListener::isObjectListener):
+        * bindings/v8/V8Utilities.cpp:
+        (WebCore::removeHiddenDependency):
+        * bindings/v8/custom/V8CustomBinding.h:
+        * bindings/v8/custom/V8ElementCustom.cpp:
+        * bindings/v8/custom/V8NodeCustom.cpp: Moved custom accessors from V8ElementCustom.cpp.
+        (WebCore::toEventType):
+        (WebCore::getEventListener):
+        (WebCore::ACCESSOR_SETTER):
+        (WebCore::ACCESSOR_GETTER):
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8XMLHttpRequestCustom.cpp:
+        (WebCore::getEventListener): Made static.
+
 2009-08-10  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Darin Fisher.

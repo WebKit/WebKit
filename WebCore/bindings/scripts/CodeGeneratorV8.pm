@@ -961,8 +961,8 @@ sub GenerateBatchedAttributeData
                 $getter = "V8Custom::v8DOMWindowEventHandlerAccessorGetter";
                 $setter = "V8Custom::v8DOMWindowEventHandlerAccessorSetter";
             } elsif ($interfaceName eq "Element" || $interfaceName eq "Document" || $interfaceName eq "HTMLBodyElement" || $interfaceName eq "SVGElementInstance" || $interfaceName eq "HTMLFrameSetElement") {
-                $getter = "V8Custom::v8ElementEventHandlerAccessorGetter";
-                $setter = "V8Custom::v8ElementEventHandlerAccessorSetter";
+                $getter = "V8Custom::v8NodeEventHandlerAccessorGetter";
+                $setter = "V8Custom::v8NodeEventHandlerAccessorSetter";
             } elsif ($interfaceName eq "DOMApplicationCache") {
                 $getter = "V8Custom::v8DOMApplicationCacheEventHandlerAccessorGetter";
                 $setter = "V8Custom::v8DOMApplicationCacheEventHandlerAccessorSetter";
@@ -1243,7 +1243,18 @@ END
     push(@implContent,  <<END);
 static v8::Persistent<v8::FunctionTemplate> Configure${className}Template(v8::Persistent<v8::FunctionTemplate> desc) {
   v8::Local<v8::ObjectTemplate> instance = desc->InstanceTemplate();
-  instance->SetInternalFieldCount(2);
+END
+    if (IsNodeSubType($dataNode)) {
+        push(@implContent, <<END);
+  instance->SetInternalFieldCount(V8Custom::kNodeMinimumInternalFieldCount);
+END
+    } else {
+        push(@implContent, <<END);
+  instance->SetInternalFieldCount(V8Custom::kDefaultWrapperInternalFieldCount);
+END
+    }
+
+    push(@implContent,  <<END);
   v8::Local<v8::Signature> default_signature = v8::Signature::New(desc);
   v8::Local<v8::ObjectTemplate> proto = desc->PrototypeTemplate();
   $access_check

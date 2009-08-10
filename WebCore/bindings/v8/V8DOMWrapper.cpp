@@ -259,7 +259,7 @@ v8::Persistent<v8::FunctionTemplate> V8DOMWrapper::getTemplate(V8ClassIndex::V8W
         // document.all is not shadowed and some other value if
         // document.all is shadowed.
         v8::Local<v8::ObjectTemplate> instanceTemplate = descriptor->InstanceTemplate();
-        ASSERT(instanceTemplate->InternalFieldCount() == V8Custom::kDefaultWrapperInternalFieldCount);
+        ASSERT(instanceTemplate->InternalFieldCount() == V8Custom::kNodeMinimumInternalFieldCount);
         instanceTemplate->SetInternalFieldCount(V8Custom::kHTMLDocumentInternalFieldCount);
         break;
     }
@@ -270,7 +270,7 @@ v8::Persistent<v8::FunctionTemplate> V8DOMWrapper::getTemplate(V8ClassIndex::V8W
         // We add an extra internal field to all Document wrappers for
         // storing a per document DOMImplementation wrapper.
         v8::Local<v8::ObjectTemplate> instanceTemplate = descriptor->InstanceTemplate();
-        ASSERT(instanceTemplate->InternalFieldCount() == V8Custom::kDefaultWrapperInternalFieldCount);
+        ASSERT(instanceTemplate->InternalFieldCount() == V8Custom::kNodeMinimumInternalFieldCount);
         instanceTemplate->SetInternalFieldCount( V8Custom::kDocumentMinimumInternalFieldCount);
         break;
     }

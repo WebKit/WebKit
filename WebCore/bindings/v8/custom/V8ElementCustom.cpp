@@ -34,7 +34,6 @@
 #include "Attr.h"
 #include "CSSHelper.h"
 #include "Document.h"
-#include "EventListener.h"
 #include "ExceptionCode.h"
 #include "HTMLFrameElementBase.h"
 #include "HTMLNames.h"
@@ -43,7 +42,6 @@
 #include "V8Attr.h"
 #include "V8Binding.h"
 #include "V8CustomBinding.h"
-#include "V8CustomEventListener.h"
 #include "V8Proxy.h"
 
 #include <wtf/RefPtr.h>
@@ -125,44 +123,6 @@ CALLBACK_FUNC_DECL(ElementSetAttributeNodeNS)
         throwError(ec);
 
     return V8DOMWrapper::convertNodeToV8Object(result.release());
-}
-
-static inline String toEventType(v8::Local<v8::String> value)
-{
-    String key = toWebCoreString(value);
-    ASSERT(key.startsWith("on"));
-    return key.substring(2);
-}
-
-ACCESSOR_SETTER(ElementEventHandler)
-{
-    Node* node = V8DOMWrapper::convertDOMWrapperToNode<Node>(info.Holder());
-
-    String eventType = toEventType(name);
-
-    // Set handler if the value is a function.  Otherwise, clear the
-    // event handler.
-    if (value->IsFunction()) {
-        V8Proxy* proxy = V8Proxy::retrieve(node->document()->frame());
-        // the document might be created using createDocument,
-        // which does not have a frame, use the active frame
-        if (!proxy)
-            proxy = V8Proxy::retrieve(V8Proxy::retrieveFrameForEnteredContext());
-        if (!proxy)
-            return;
-
-        if (RefPtr<EventListener> listener = proxy->eventListeners()->findOrCreateWrapper<V8EventListener>(proxy->frame(), value, true))
-            node->setAttributeEventListener(eventType, listener);
-    } else
-        node->clearAttributeEventListener(eventType);
-}
-
-ACCESSOR_GETTER(ElementEventHandler)
-{
-    Node* node = V8DOMWrapper::convertDOMWrapperToNode<Node>(info.Holder());
-
-    EventListener* listener = node->getAttributeEventListener(toEventType(name));
-    return V8DOMWrapper::convertEventListenerToV8Object(listener);
 }
 
 } // namespace WebCore
