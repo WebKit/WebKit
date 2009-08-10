@@ -1,3 +1,12 @@
+2009-08-10  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Fix an annoying indentation issue.
+
+        * runtime/DateConstructor.cpp:
+        (JSC::constructDate):
+
 2009-08-10  Xan Lopez  <xlopez@igalia.com>
 
         Unreviewed build fix.

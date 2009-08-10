@@ -36,7 +36,7 @@
 #include <wtf/MathExtras.h>
 
 #if PLATFORM(WINCE) && !PLATFORM(QT)
-extern "C" time_t time(time_t* timer); //provided by libce
+extern "C" time_t time(time_t* timer); // Provided by libce.
 #endif
 
 #if HAVE(SYS_TIME_H)
@@ -50,8 +50,6 @@ extern "C" time_t time(time_t* timer); //provided by libce
 using namespace WTF;
 
 namespace JSC {
-
-// TODO: MakeTime (15.9.11.1) etc. ?
 
 ASSERT_CLASS_FITS_IN_CELL(DateConstructor);
 
@@ -100,17 +98,17 @@ JSObject* constructDate(ExecState* exec, const ArgList& args)
                 || (numArgs >= 7 && isnan(args.at(6).toNumber(exec))))
             value = NaN;
         else {
-          GregorianDateTime t;
-          int year = args.at(0).toInt32(exec);
-          t.year = (year >= 0 && year <= 99) ? year : year - 1900;
-          t.month = args.at(1).toInt32(exec);
-          t.monthDay = (numArgs >= 3) ? args.at(2).toInt32(exec) : 1;
-          t.hour = args.at(3).toInt32(exec);
-          t.minute = args.at(4).toInt32(exec);
-          t.second = args.at(5).toInt32(exec);
-          t.isDST = -1;
-          double ms = (numArgs >= 7) ? args.at(6).toNumber(exec) : 0;
-          value = gregorianDateTimeToMS(t, ms, false);
+            GregorianDateTime t;
+            int year = args.at(0).toInt32(exec);
+            t.year = (year >= 0 && year <= 99) ? year : year - 1900;
+            t.month = args.at(1).toInt32(exec);
+            t.monthDay = (numArgs >= 3) ? args.at(2).toInt32(exec) : 1;
+            t.hour = args.at(3).toInt32(exec);
+            t.minute = args.at(4).toInt32(exec);
+            t.second = args.at(5).toInt32(exec);
+            t.isDST = -1;
+            double ms = (numArgs >= 7) ? args.at(6).toNumber(exec) : 0;
+            value = gregorianDateTimeToMS(t, ms, false);
         }
     }
 
