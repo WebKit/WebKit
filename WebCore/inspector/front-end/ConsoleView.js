@@ -513,7 +513,7 @@ WebInspector.ConsoleView.prototype = {
 
     _formatobject: function(obj, elem)
     {
-        elem.appendChild(new WebInspector.ObjectPropertiesSection(obj, null, null, null, true).element);
+        elem.appendChild(new WebInspector.ObjectPropertiesSection(new WebInspector.ObjectProxy(obj), Object.describe(obj, true), null, null, true).element);
     },
 
     _formaterror: function(obj, elem)

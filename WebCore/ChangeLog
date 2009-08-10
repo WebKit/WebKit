@@ -1,3 +1,33 @@
+2009-08-10  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        WebInspector: Make properties inspection serialized.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28078
+
+        * inspector/front-end/DOMAgent.js:
+        (InspectorController.getPrototypes):
+        (InspectorController.getProperties):
+        * inspector/front-end/InjectedScript.js:
+        (InjectedScript.getPrototypes):
+        (InjectedScript.getProperties):
+        (InjectedScript.setPropertyValue):
+        * inspector/front-end/ObjectPropertiesSection.js:
+        (WebInspector.ObjectRef):
+        (WebInspector.ObjectPropertyRef):
+        (WebInspector.ObjectPropertiesSection.prototype.onpopulate):
+        (WebInspector.ObjectPropertiesSection.prototype.update.callback):
+        (WebInspector.ObjectPropertiesSection.prototype.update):
+        (WebInspector.ObjectPropertiesSection.prototype._update):
+        (WebInspector.ObjectPropertyTreeElement.prototype.onpopulate.callback):
+        (WebInspector.ObjectPropertyTreeElement.prototype.onpopulate):
+        (WebInspector.ObjectPropertyTreeElement.prototype.onattach):
+        (WebInspector.ObjectPropertyTreeElement.prototype.update):
+        * inspector/front-end/PropertiesSidebarPane.js:
+        (WebInspector.PropertiesSidebarPane.prototype.update.callback):
+        (WebInspector.PropertiesSidebarPane.prototype.update):
+
 2009-08-09  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by George Staikos.

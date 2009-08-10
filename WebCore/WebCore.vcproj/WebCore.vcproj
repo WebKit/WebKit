@@ -30879,7 +30879,15 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\Console.js"
+					RelativePath="..\inspector\front-end\ChangesView.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\Color.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\ConsoleView.js"
 					>
 				</File>
 				<File
@@ -30919,6 +30927,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\Drawer.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\ElementsPanel.js"
 					>
 				</File>
@@ -30928,6 +30940,10 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\ImageView.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\InjectedScript.js"
 					>
 				</File>
 				<File
@@ -30952,6 +30968,10 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\ObjectPropertiesSection.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\ObjectProxy.js"
 					>
 				</File>
 				<File

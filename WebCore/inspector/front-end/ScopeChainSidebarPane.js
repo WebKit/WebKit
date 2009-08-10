@@ -85,7 +85,7 @@ WebInspector.ScopeChainSidebarPane.prototype = {
             if (!title || title === subtitle)
                 subtitle = null;
 
-            var section = new WebInspector.ObjectPropertiesSection(scopeObject, title, subtitle, emptyPlaceholder, true, extraProperties, WebInspector.ScopeVariableTreeElement);
+            var section = new WebInspector.ObjectPropertiesSection(new WebInspector.ObjectProxy(scopeObject), title, subtitle, emptyPlaceholder, true, extraProperties, WebInspector.ScopeVariableTreeElement);
             section.editInSelectedCallFrameWhenPaused = true;
             section.pane = this;
 
@@ -100,9 +100,9 @@ WebInspector.ScopeChainSidebarPane.prototype = {
 
 WebInspector.ScopeChainSidebarPane.prototype.__proto__ = WebInspector.SidebarPane.prototype;
 
-WebInspector.ScopeVariableTreeElement = function(parentObject, propertyName)
+WebInspector.ScopeVariableTreeElement = function(property)
 {
-    WebInspector.ObjectPropertyTreeElement.call(this, parentObject, propertyName);
+    WebInspector.ObjectPropertyTreeElement.call(this, property);
 }
 
 WebInspector.ScopeVariableTreeElement.prototype = {
@@ -142,9 +142,9 @@ WebInspector.ScopeVariableTreeElement.prototype = {
 
         do {
             if (result)
-                result = current.propertyName + "." + result;
+                result = current.property.name + "." + result;
             else
-                result = current.propertyName;
+                result = current.property.name;
             current = current.parent;
         } while (current && !current.root);
 

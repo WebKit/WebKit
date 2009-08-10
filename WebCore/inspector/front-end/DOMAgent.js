@@ -703,3 +703,22 @@ InspectorController.setStyleProperty = function(styleId, name, value, callback) 
         callback(InjectedScript.setStyleProperty(styleId, name, value));
     }, 0)
 }
+
+InspectorController.getPrototypes = function(objectProxy, callback) {
+    setTimeout(function() {
+        callback(InjectedScript.getPrototypes(objectProxy));
+    }, 0)
+}
+
+InspectorController.getProperties = function(objectProxy, ignoreHasOwnProperty, callback) {
+    setTimeout(function() {
+        callback(InjectedScript.getProperties(objectProxy, ignoreHasOwnProperty));
+    }, 0)
+}
+
+InspectorController.setPropertyValue = function(objectProxy, propertyName, expression, callback) {
+    setTimeout(function() {
+        callback(InjectedScript.setPropertyValue(objectProxy, propertyName, expression));
+    }, 0)
+}
+

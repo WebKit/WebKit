@@ -38,7 +38,7 @@ InjectedScript.getStyles = function(nodeId, authorOnly)
 {
     var node = InjectedScript._nodeForId(nodeId);
     if (!node)
-        return null;
+        return false;
     var matchedRules = InjectedScript._window().getMatchedCSSRules(node, "", authorOnly);
     var matchedCSSRules = [];
     for (var i = 0; matchedRules && i < matchedRules.length; ++i)
@@ -381,12 +381,136 @@ InjectedScript._getShorthandPriority = function(style, shorthandProperty)
     return priority;
 }
 
+InjectedScript.getPrototypes = function(nodeId)
+{
+    var node = InjectedScript._nodeForId(nodeId);
+    if (!node)
+        return false;
+
+    var result = [];
+    for (var prototype = node; prototype; prototype = prototype.__proto__) {
+        var title = Object.describe(prototype);
+        if (title.match(/Prototype$/)) {
+            title = title.replace(/Prototype$/, "");
+        }
+        result.push(title);
+    }
+    return result;
+}
+
+InjectedScript.getProperties = function(objectProxy, ignoreHasOwnProperty)
+{
+    var object = InjectedScript._resolveObject(objectProxy);
+    if (!object)
+        return false;
+
+    var properties = [];
+    // Go over properties, prepare results.
+    for (var propertyName in object) {
+        if (!ignoreHasOwnProperty && "hasOwnProperty" in object && !object.hasOwnProperty(propertyName))
+            continue;
+
+        //TODO: remove this once object becomes really remote.
+        if (propertyName === "__treeElementIdentifier")
+            continue;
+        var property = {};
+        property.name = propertyName;
+        var isGetter = object["__lookupGetter__"] && object.__lookupGetter__(propertyName);
+        if (!property.isGetter) {
+            var childObject = object[propertyName];
+            property.type = typeof childObject;
+            property.textContent = Object.describe(childObject, true);
+            property.parentObjectProxy = objectProxy;
+            var parentPath = objectProxy.path.slice();
+            property.childObjectProxy = {
+                objectId : objectProxy.objectId,
+                path : parentPath.splice(parentPath.length, 0, propertyName),
+                protoDepth : objectProxy.protoDepth
+            };
+            if (childObject && (property.type === "object" || property.type === "function")) {
+                for (var subPropertyName in childObject) {
+                    if (propertyName === "__treeElementIdentifier")
+                        continue;
+                    property.hasChildren = true;
+                    break;
+                }
+            }
+        } else {
+            // FIXME: this should show something like "getter" (bug 16734).
+            property.textContent = "\u2014"; // em dash
+            property.isGetter = true;
+        }
+        properties.push(property);
+    }
+    return properties;
+}
+
+InjectedScript.setPropertyValue = function(objectProxy, propertyName, expression)
+{
+    var object = InjectedScript._resolveObject(objectProxy);
+    if (!object)
+        return false;
+
+    var expressionLength = expression.length;
+    if (!expressionLength) {
+        delete object[propertyName];
+        return !(propertyName in object);
+    }
+
+    try {
+        // Surround the expression in parenthesis so the result of the eval is the result
+        // of the whole expression not the last potential sub-expression.
+
+        // There is a regression introduced here: eval is now happening against global object,
+        // not call frame while on a breakpoint.
+        // TODO: bring evaluation against call frame back.
+        var result = InjectedScript._window().eval("(" + expression + ")");
+        // Store the result in the property.
+        object[propertyName] = result;
+        return true;
+    } catch(e) {
+        try {
+            var result = InjectedScript._window().eval("\"" + expression.escapeCharacters("\"") + "\"");
+            object[propertyName] = result;
+            return true;
+        } catch(e) {
+            return false;
+        }
+    }
+}
+
+InjectedScript._resolveObject = function(objectProxy)
+{
+    var object = InjectedScript._objectForId(objectProxy.objectId);
+    var path = objectProxy.path;
+    var protoDepth = objectProxy.protoDepth;
+
+    // Follow the property path.
+    for (var i = 0; object && i < path.length; ++i)
+        object = object[path[i]];
+
+    // Get to the necessary proto layer.
+    for (var i = 0; object && i < protoDepth; ++i)
+        object = object.__proto__;
+
+    return object;
+}
+
 InjectedScript._window = function()
 {
+    // TODO: replace with 'return window;' once this script is injected into
+    // the page's context.
     return InspectorController.inspectedWindow();
 }
 
 InjectedScript._nodeForId = function(nodeId)
 {
+    // TODO: replace with node lookup in the InspectorDOMAgent once DOMAgent nodes are used.
     return nodeId;
+}
+
+InjectedScript._objectForId = function(objectId)
+{
+    // TODO: replace with node lookups for node ids and evaluation result lookups for the rest of ids.
+    return objectId;
 }

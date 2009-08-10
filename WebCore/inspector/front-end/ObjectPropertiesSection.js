@@ -26,15 +26,6 @@
 
 WebInspector.ObjectPropertiesSection = function(object, title, subtitle, emptyPlaceholder, ignoreHasOwnProperty, extraProperties, treeElementConstructor)
 {
-    if (!title) {
-        title = Object.describe(object);
-        if (title.match(/Prototype$/)) {
-            title = title.replace(/Prototype$/, "");
-            if (!subtitle)
-                subtitle = WebInspector.UIString("Prototype");
-        }
-    }
-
     this.emptyPlaceholder = (emptyPlaceholder || WebInspector.UIString("No Properties"));
     this.object = object;
     this.ignoreHasOwnProperty = ignoreHasOwnProperty;
@@ -53,27 +44,26 @@ WebInspector.ObjectPropertiesSection.prototype = {
 
     update: function()
     {
-        var properties = [];
-        for (var prop in this.object)
-            properties.push(prop);
+        var self = this;
+        var callback = function(properties) {
+            if (!properties)
+                return;
+            self._update(properties);
+        };
+        InspectorController.getProperties(this.object, this.ignoreHasOwnProperty, callback);
+    },
+
+    _update: function(properties)
+    {
         if (this.extraProperties)
             for (var prop in this.extraProperties)
-                properties.push(prop);
+                properties.push(new WebInspector.ObjectPropertyProxy(prop, this.extraProperties[prop]));
         properties.sort(this._displaySort);
 
         this.propertiesTreeOutline.removeChildren();
 
-        for (var i = 0; i < properties.length; ++i) {
-            var object = this.object;
-            var propertyName = properties[i];
-            if (this.extraProperties && propertyName in this.extraProperties)
-                object = this.extraProperties;
-            if (propertyName === "__treeElementIdentifier")
-                continue;
-            if (!this.ignoreHasOwnProperty && "hasOwnProperty" in object && !object.hasOwnProperty(propertyName))
-                continue;
-            this.propertiesTreeOutline.appendChild(new this.treeElementConstructor(object, propertyName));
-        }
+        for (var i = 0; i < properties.length; ++i)
+            this.propertiesTreeOutline.appendChild(new this.treeElementConstructor(properties[i]));
 
         if (!this.propertiesTreeOutline.children.length) {
             var title = "<div class=\"info\">" + this.emptyPlaceholder + "</div>";
@@ -82,7 +72,9 @@ WebInspector.ObjectPropertiesSection.prototype = {
         }
     },
 
-    _displaySort: function(a,b) {
+    _displaySort: function(propertyA, propertyB) {
+        var a = propertyA.name;
+        var b = propertyB.name;
 
         // if used elsewhere make sure to
         //  - convert a and b to strings (not needed here, properties are all strings)
@@ -123,10 +115,9 @@ WebInspector.ObjectPropertiesSection.prototype = {
 
 WebInspector.ObjectPropertiesSection.prototype.__proto__ = WebInspector.PropertiesSection.prototype;
 
-WebInspector.ObjectPropertyTreeElement = function(parentObject, propertyName)
+WebInspector.ObjectPropertyTreeElement = function(property)
 {
-    this.parentObject = parentObject;
-    this.propertyName = propertyName;
+    this.property = property;
 
     // Pass an empty title, the title gets made later in onattach.
     TreeElement.call(this, "", null, false);
@@ -145,16 +136,18 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
         if (this.children.length && !this.shouldRefreshChildren)
             return;
 
-        this.removeChildren();
+        var self = this;
+        var callback = function(properties) {
+            self.removeChildren();
+            if (!properties)
+                return;
 
-        var childObject = this.safePropertyValue(this.parentObject, this.propertyName);
-        var properties = Object.sortedProperties(childObject, WebInspector.ObjectPropertiesSection.prototype._displaySort);
-        for (var i = 0; i < properties.length; ++i) {
-            var propertyName = properties[i];
-            if (propertyName === "__treeElementIdentifier")
-                continue;
-            this.appendChild(new this.treeOutline.section.treeElementConstructor(childObject, propertyName));
-        }
+            properties.sort(self._displaySort);
+            for (var i = 0; i < properties.length; ++i) {
+                self.appendChild(new self.treeOutline.section.treeElementConstructor(properties[i]));
+            }
+        };
+        InspectorController.getProperties(this.property.childObjectProxy, false, callback);
     },
 
     ondblclick: function(element, event)
@@ -169,41 +162,22 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
 
     update: function()
     {
-        var childObject = this.safePropertyValue(this.parentObject, this.propertyName);
-        var isGetter = ("__lookupGetter__" in this.parentObject && this.parentObject.__lookupGetter__(this.propertyName));
-
         var nameElement = document.createElement("span");
         nameElement.className = "name";
-        nameElement.textContent = this.propertyName;
+        nameElement.textContent = this.property.name;
 
         this.valueElement = document.createElement("span");
         this.valueElement.className = "value";
-        if (!isGetter) {
-            this.valueElement.textContent = Object.describe(childObject, true);
-        } else {
-            // FIXME: this should show something like "getter" (bug 16734).
-            this.valueElement.textContent = "\u2014"; // em dash
-            this.valueElement.addStyleClass("dimmed");
-        }
+        this.valueElement.textContent = this.property.textContent;
+        if (this.property.isGetter)
+           this.valueElement.addStyleClass("dimmed");
 
         this.listItemElement.removeChildren();
 
         this.listItemElement.appendChild(nameElement);
         this.listItemElement.appendChild(document.createTextNode(": "));
         this.listItemElement.appendChild(this.valueElement);
-
-        var hasSubProperties = false;
-        var type = typeof childObject;
-        if (childObject && (type === "object" || type === "function")) {
-            for (var subPropertyName in childObject) {
-                if (subPropertyName === "__treeElementIdentifier")
-                    continue;
-                hasSubProperties = true;
-                break;
-            }
-        }
-
-        this.hasChildren = hasSubProperties;
+        this.hasChildren = this.property.hasChildren;
     },
 
     updateSiblings: function()
@@ -253,67 +227,27 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
         this.editingEnded(context);
     },
 
-    evaluateExpression: function(expression, callback)
-    {
-        // Evaluate in the currently selected call frame if the debugger is paused.
-        // Otherwise evaluate in against the inspected window.
-        if (WebInspector.panels.scripts && WebInspector.panels.scripts.paused && this.treeOutline.section.editInSelectedCallFrameWhenPaused)
-            return WebInspector.panels.scripts.evaluateInSelectedCallFrame(expression, false, callback);
-        try {
-            var result = InspectorController.inspectedWindow().eval(expression);
-            callback(result);
-        } catch (e) {
-            callback(e, true);
-        }
-    },
-
     applyExpression: function(expression, updateInterface)
     {
-        var expressionLength = expression.trimWhitespace().length;
-
-        if (!expressionLength) {
-            // The user deleted everything, so try to delete the property.
-            delete this.parentObject[this.propertyName];
-
-            if (updateInterface) {
-                if (this.propertyName in this.parentObject) {
-                    // The property was not deleted, so update.
-                    this.update();
-                } else {
-                    // The property was deleted, so remove this tree element.
-                    this.parent.removeChild(this);
-                }
-            }
-
-            return;
-        }
-
-        try {
-            // Surround the expression in parenthesis so the result of the eval is the result
-            // of the whole expression not the last potential sub-expression.
-            var result = this.evaluateExpression("(" + expression + ")");
-
-            // Store the result in the property.
-            this.parentObject[this.propertyName] = result;
-        } catch(e) {
-            try {
-                // Try to update as a string
-                var result = this.evaluateExpression("\"" + expression.escapeCharacters("\"") + "\"");
-
-                // Store the result in the property.
-                this.parentObject[this.propertyName] = result;
-            } catch(e) {
-                // The expression failed so don't change the value. So just update and return.
-                if (updateInterface)
-                    this.update();
+        expression = expression.trimWhitespace();
+        var expressionLength = expression.length;
+        var self = this;
+        var callback = function(success) {
+            if (!updateInterface)
                 return;
-            }
-        }
 
-        if (updateInterface) {
-            // Call updateSiblings since their value might be based on the value that just changed.
-            this.updateSiblings();
-        }
+            if (!success)
+                self.update();
+
+            if (!expressionLength) {
+                // The property was deleted, so remove this tree element.
+                self.parent.removeChild(this);
+            } else {
+                // Call updateSiblings since their value might be based on the value that just changed.
+                self.updateSiblings();
+            }
+        };
+        InspectorController.setPropertyValue(this.property.parentObjectProxy, this.property.name, expression.trimWhitespace(), callback);
     }
 }
 
