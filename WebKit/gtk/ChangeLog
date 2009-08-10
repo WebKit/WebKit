@@ -1,3 +1,10 @@
+2009-08-10  Brady Eidson  <beidson@apple.com>
+
+        GTK build fix.
+
+        * webkit/webkitdownload.cpp:
+        (webkit_download_get_suggested_filename):
+
 2009-08-08  Xan Lopez  <xlopez@igalia.com>
 
         Roll out r46928, since it wasn't done in accordance with the

@@ -533,7 +533,7 @@ const gchar* webkit_download_get_suggested_filename(WebKitDownload* download)
 
     KURL url = KURL(KURL(), webkit_network_request_get_uri(priv->networkRequest));
     url.setQuery(String());
-    url.removeRef();
+    url.removeFragmentIdentifier();
     priv->suggestedFilename = g_strdup(decodeURLEscapeSequences(url.lastPathComponent()).utf8().data());
     return priv->suggestedFilename;
 }
