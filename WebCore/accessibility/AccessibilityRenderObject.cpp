@@ -1122,16 +1122,16 @@ AccessibilityObject* AccessibilityRenderObject::internalLinkElement() const
     HTMLAnchorElement* anchor = static_cast<HTMLAnchorElement*>(element);
     
     KURL linkURL = anchor->href();
-    String ref = linkURL.ref();
-    if (ref.isEmpty())
+    String fragmentIdentifier = linkURL.fragmentIdentifier();
+    if (fragmentIdentifier.isEmpty())
         return 0;
     
     // check if URL is the same as current URL
-    linkURL.removeRef();
+    linkURL.removeFragmentIdentifier();
     if (m_renderer->document()->url() != linkURL)
         return 0;
     
-    Node* linkedNode = m_renderer->document()->findAnchor(ref);
+    Node* linkedNode = m_renderer->document()->findAnchor(fragmentIdentifier);
     if (!linkedNode)
         return 0;
     

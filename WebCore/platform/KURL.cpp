@@ -590,7 +590,7 @@ String KURL::user() const
     return decodeURLEscapeSequences(m_string.substring(m_userStart, m_userEnd - m_userStart));
 }
 
-String KURL::ref() const
+String KURL::fragmentIdentifier() const
 {
     if (m_fragmentEnd == m_queryEnd)
         return String();
@@ -598,7 +598,7 @@ String KURL::ref() const
     return m_string.substring(m_queryEnd + 1, m_fragmentEnd - (m_queryEnd + 1));
 }
 
-bool KURL::hasRef() const
+bool KURL::hasFragmentIdentifier() const
 {
     return m_fragmentEnd != m_queryEnd;
 }
@@ -760,16 +760,16 @@ void KURL::setPass(const String& password)
     parse(m_string.left(m_userEnd) + p + m_string.substring(end));
 }
 
-void KURL::setRef(const String& s)
+void KURL::setFragmentIdentifier(const String& s)
 {
     if (!m_isValid)
         return;
 
     // FIXME: Non-ASCII characters must be encoded and escaped to match parse() expectations.
-    parse(m_string.left(m_queryEnd) + (s.isNull() ? "" : "#" + s));
+    parse(m_string.left(m_queryEnd) + "#" + s);
 }
 
-void KURL::removeRef()
+void KURL::removeFragmentIdentifier()
 {
     if (!m_isValid)
         return;
@@ -843,7 +843,7 @@ String KURL::prettyURL() const
 
     if (m_fragmentEnd != m_queryEnd) {
         result.append('#');
-        append(result, ref());
+        append(result, fragmentIdentifier());
     }
 
     return String::adopt(result);
@@ -1316,7 +1316,7 @@ void KURL::parse(const char* url, const String* originalString)
     m_isValid = true;
 }
 
-bool equalIgnoringRef(const KURL& a, const KURL& b)
+bool equalIgnoringFragmentIdentifier(const KURL& a, const KURL& b)
 {
     if (a.m_queryEnd != b.m_queryEnd)
         return false;

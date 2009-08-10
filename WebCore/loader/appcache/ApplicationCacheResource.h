@@ -44,7 +44,7 @@ public:
         
     static PassRefPtr<ApplicationCacheResource> create(const KURL& url, const ResourceResponse& response, unsigned type, PassRefPtr<SharedBuffer> buffer = SharedBuffer::create())
     {
-        ASSERT(!url.hasRef());
+        ASSERT(!url.hasFragmentIdentifier());
         return adoptRef(new ApplicationCacheResource(url, response, type, buffer));
     }
 

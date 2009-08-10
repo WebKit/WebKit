@@ -114,8 +114,8 @@ bool parseManifest(const KURL& manifestURL, const char* data, int length, Manife
             if (!url.isValid())
                 continue;
 
-            if (url.hasRef())
-                url.setRef(String());
+            if (url.hasFragmentIdentifier())
+                url.removeFragmentIdentifier();
             
             if (!equalIgnoringCase(url.protocol(), manifestURL.protocol()))
                 continue;
@@ -141,8 +141,8 @@ bool parseManifest(const KURL& manifestURL, const char* data, int length, Manife
             KURL namespaceURL(manifestURL, String(line.characters(), p - line.characters()));
             if (!namespaceURL.isValid())
                 continue;
-            if (namespaceURL.hasRef())
-                namespaceURL.setRef(String());
+            if (namespaceURL.hasFragmentIdentifier())
+                namespaceURL.removeFragmentIdentifier();
 
             if (!protocolHostAndPortAreEqual(manifestURL, namespaceURL))
                 continue;
@@ -159,8 +159,8 @@ bool parseManifest(const KURL& manifestURL, const char* data, int length, Manife
             KURL fallbackURL(manifestURL, String(fallbackStart, p - fallbackStart));
             if (!fallbackURL.isValid())
                 continue;
-            if (fallbackURL.hasRef())
-                fallbackURL.setRef(String());
+            if (fallbackURL.hasFragmentIdentifier())
+                fallbackURL.removeFragmentIdentifier();
 
             if (!protocolHostAndPortAreEqual(manifestURL, fallbackURL))
                 continue;

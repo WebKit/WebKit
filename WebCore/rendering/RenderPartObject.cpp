@@ -72,7 +72,7 @@ static bool isURLAllowed(Document* doc, const String& url)
     KURL completeURL = doc->completeURL(url);
     bool foundSelfReference = false;
     for (Frame* frame = doc->frame(); frame; frame = frame->tree()->parent()) {
-        if (equalIgnoringRef(frame->loader()->url(), completeURL)) {
+        if (equalIgnoringFragmentIdentifier(frame->loader()->url(), completeURL)) {
             if (foundSelfReference)
                 return false;
             foundSelfReference = true;

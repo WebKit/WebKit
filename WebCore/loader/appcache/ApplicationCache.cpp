@@ -111,7 +111,7 @@ unsigned ApplicationCache::removeResource(const String& url)
     
 ApplicationCacheResource* ApplicationCache::resourceForURL(const String& url)
 {
-    ASSERT(!KURL(url).hasRef());
+    ASSERT(!KURL(url).hasFragmentIdentifier());
     return m_resources.get(url).get();
 }    
 
@@ -133,8 +133,8 @@ ApplicationCacheResource* ApplicationCache::resourceForRequest(const ResourceReq
         return false;
 
     KURL url(request.url());
-    if (url.hasRef())
-        url.removeRef();
+    if (url.hasFragmentIdentifier())
+        url.removeFragmentIdentifier();
 
     return resourceForURL(url);
 }

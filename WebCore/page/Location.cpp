@@ -125,8 +125,8 @@ String Location::hash() const
     if (!m_frame)
         return String();
 
-    const KURL& url = this->url();
-    return url.ref().isEmpty() ? "" : "#" + url.ref();
+    const String& fragmentIdentifier = this->url().fragmentIdentifier();
+    return fragmentIdentifier.isEmpty() ? "" : "#" + fragmentIdentifier;
 }
 
 String Location::toString() const

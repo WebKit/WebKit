@@ -245,13 +245,13 @@ void JSLocation::setHash(ExecState* exec, JSValue value)
     ASSERT(frame);
 
     KURL url = frame->loader()->url();
-    String oldRef = url.ref();
+    String oldFragmentIdentifier = url.fragmentIdentifier();
     String str = value.toString(exec);
     if (str.startsWith("#"))
         str = str.substring(1);
-    if (oldRef == str || (oldRef.isNull() && str.isEmpty()))
+    if (equalIgnoringNullity(oldFragmentIdentifier, str))
         return;
-    url.setRef(str);
+    url.setFragmentIdentifier(str);
 
     navigateIfAllowed(exec, frame, url, !frame->script()->anyPageIsProcessingUserGesture(), false);
 }

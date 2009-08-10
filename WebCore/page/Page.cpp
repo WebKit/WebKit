@@ -213,7 +213,7 @@ void Page::goToItem(HistoryItem* item, FrameLoadType type)
     const KURL& currentURL = m_mainFrame->loader()->url();
     const KURL& newURL = item->url();
 
-    if (newURL.hasRef() && equalIgnoringRef(currentURL, newURL))
+    if (newURL.hasFragmentIdentifier() && equalIgnoringFragmentIdentifier(currentURL, newURL))
         databasePolicy = DatabasePolicyContinue;
 #endif
     m_mainFrame->loader()->stopAllLoaders(databasePolicy);

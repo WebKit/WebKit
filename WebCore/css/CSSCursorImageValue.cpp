@@ -40,7 +40,7 @@ namespace WebCore {
 static inline bool isSVGCursorIdentifier(const String& url)
 {
     KURL kurl(url);
-    return kurl.hasRef();
+    return kurl.hasFragmentIdentifier();
 }
 
 static inline SVGCursorElement* resourceReferencedByCursorElement(const String& fragmentId, Document* document)

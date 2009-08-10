@@ -1,3 +1,72 @@
+2009-08-07  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        KURL ref() methods should be fragmentIdentifier() methods 
+        https://bugs.webkit.org/show_bug.cgi?id=28084
+
+        In addition to the renames, also took the chance to replace all use of:
+        setRef(String());
+        with:
+        removeFragmentIdentifier();
+
+        * platform/KURL.cpp:
+        (WebCore::KURL::fragmentIdentifier):
+        (WebCore::KURL::hasFragmentIdentifier):
+        (WebCore::KURL::setFragmentIdentifier):
+        (WebCore::KURL::removeFragmentIdentifier):
+        (WebCore::KURL::prettyURL):
+        (WebCore::equalIgnoringFragmentIdentifier):
+        * platform/KURL.h:
+
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::JSLocation::setHash): Rework with new names, and to use the new equalIgnoringNullity() method.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::internalLinkElement):
+        * css/CSSCursorImageValue.cpp:
+        (WebCore::isSVGCursorIdentifier):
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::isCurrentDocument):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::hash):
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::isURLAllowed):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::begin):
+        (WebCore::FrameLoader::gotoAnchor):
+        (WebCore::FrameLoader::scheduleLocationChange):
+        (WebCore::FrameLoader::scrollToAnchor):
+        (WebCore::FrameLoader::shouldReload):
+        (WebCore::FrameLoader::urlsMatchItem):
+        * loader/appcache/ApplicationCache.cpp:
+        (WebCore::ApplicationCache::resourceForURL):
+        (WebCore::ApplicationCache::resourceForRequest):
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::cacheForMainRequest):
+        (WebCore::ApplicationCacheGroup::fallbackCacheForMainRequest):
+        (WebCore::ApplicationCacheGroup::selectCache):
+        (WebCore::ApplicationCacheGroup::finishedLoadingMainResource):
+        (WebCore::ApplicationCacheGroup::didReceiveResponse):
+        (WebCore::ApplicationCacheGroup::didFail):
+        (WebCore::ApplicationCacheGroup::addEntry):
+        * loader/appcache/ApplicationCacheResource.h:
+        (WebCore::ApplicationCacheResource::create):
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::findOrCreateCacheGroup):
+        (WebCore::ApplicationCacheStorage::cacheGroupForURL):
+        (WebCore::ApplicationCacheStorage::fallbackCacheGroupForURL):
+        * loader/appcache/ManifestParser.cpp:
+        (WebCore::parseManifest):
+        * page/Location.cpp:
+        (WebCore::Location::hash):
+        * page/Page.cpp:
+        (WebCore::Page::goToItem):
+        * rendering/RenderPartObject.cpp:
+        (WebCore::isURLAllowed):
+        * workers/WorkerLocation.cpp:
+        (WebCore::WorkerLocation::hash):
+
 2009-08-10  Andy Shaw <andy.shaw@nokia.com>
 
         Reviewed by Simon Hausmann.
