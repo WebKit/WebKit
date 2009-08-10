@@ -1,3 +1,21 @@
+2009-08-10  Andy Shaw <andy.shaw@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Fix endless loop when the application is quit by a secondary thread during a sync xml http request.
+
+        Replace the m_finished state variable and the call to QCoreApplication::processEvents() with
+        a dedicated QEventLoop, that can be terminated from within WebCoreSynchronousLoader as well
+        as from Qt through its knowledge of globally registered eventloops.
+
+        There is no unit test for this bug as it would require exporting additional symbols and
+        introduce the synchronous loader as global variable just for the test.
+
+        * platform/network/qt/ResourceHandleQt.cpp:
+        (WebCore::WebCoreSynchronousLoader::didFinishLoading):
+        (WebCore::WebCoreSynchronousLoader::didFail):
+        (WebCore::WebCoreSynchronousLoader::waitForCompletion):
+
 2009-08-10  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
