@@ -1,3 +1,11 @@
+2009-08-10  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        Rebase Qt letter spacing DRT result after r46936
+
+        * platform/qt/fast/text/text-letter-spacing-expected.txt:
+
 2009-08-09  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by George Staikos.
