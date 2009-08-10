@@ -1,3 +1,23 @@
+2009-08-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        When empty <input> is focused, getSelection() exposes shadow tree nodes
+        https://bugs.webkit.org/show_bug.cgi?id=15903
+
+        Also updated a recently introduced non-standard test to work in a more
+        standard way.
+
+        * fast/forms/resources/shadow-tree-exposure.js: Added.
+        * fast/forms/shadow-tree-exposure-expected.txt: Added.
+        * fast/forms/shadow-tree-exposure.html: Added.
+
+        * fast/js/method-check-expected.txt: Updated.
+        * fast/js/method-check.html: Regenerated using the make-js-test-wrappers script.
+        * fast/js/resources/method-check.js: Replaced a comment talking about the lack
+        of a gc() function with a call to GCController.collect(). Also removed the
+        shouldBeTrue call at the end of the fiel that wasn't needed.
+
 2009-08-10  Renata Hodovan  <hodovan.renata@stud.u-szeged.hu>
 
         Reviewed by Simon Hausmann.
