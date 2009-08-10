@@ -1,3 +1,16 @@
+2009-08-10  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Not reviewed, build fix.
+
+        Rename ref() to fragmentIdentifier() in the wml/ subdirectory.
+
+        * wml/WMLCardElement.cpp:
+        (WebCore::WMLCardElement::determineActiveCard):
+        * wml/WMLGoElement.cpp:
+        (WebCore::WMLGoElement::executeTask):
+        * wml/WMLPageState.cpp:
+        (WebCore::WMLPageState::canAccessDeck):
+
 2009-08-10  Steve Falkenburg  <sfalken@apple.com>
 
         Windows build fix.

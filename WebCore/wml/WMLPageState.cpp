@@ -188,7 +188,7 @@ bool WMLPageState::canAccessDeck() const
     if (!tryAccessHistoryURLs(m_page, previousURL, currentURL))
         return true;
 
-    if (equalIgnoringRef(previousURL, currentURL))
+    if (equalIgnoringFragmentIdentifier(previousURL, currentURL))
        return true;
 
     return hostIsAllowedToAccess(hostFromURL(previousURL)) && pathIsAllowedToAccess(previousURL.path());

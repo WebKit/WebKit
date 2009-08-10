@@ -109,8 +109,8 @@ void WMLGoElement::executeTask(Event*)
 
     // FIXME: 'newcontext' handling not implemented for external cards
     bool inSameDeck = doc->url().path() == url.path();
-    if (inSameDeck && url.hasRef()) {
-        if (WMLCardElement* card = WMLCardElement::findNamedCardInDocument(doc, url.ref())) {
+    if (inSameDeck && url.hasFragmentIdentifier()) {
+        if (WMLCardElement* card = WMLCardElement::findNamedCardInDocument(doc, url.fragmentIdentifier())) {
             if (card->isNewContext())
                 pageState->reset();
         }
