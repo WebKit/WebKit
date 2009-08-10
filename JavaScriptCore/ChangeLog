@@ -1,3 +1,19 @@
+2009-08-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        FastMalloc.h has cross-platform code but marked as WinCE-only
+        https://bugs.webkit.org/show_bug.cgi?id=28160
+
+        1) The support for nothrow was inside #if PLATFORM(WINCE) even though it is
+           not platform-specific.
+        2) The code tried to override operator delete nothrow, which does not exist.
+        3) The code in the header checks the value of USE_SYSTEM_MALLOC, but the code
+           in FastMalloc.cpp checks only if the macro is defined.
+
+        * wtf/FastMalloc.h: See above.
+        * wtf/FastMalloc.cpp: Ditto.
+
 2009-08-10  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

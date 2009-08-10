@@ -1,6 +1,6 @@
 // Copyright (c) 2005, 2007, Google Inc.
 // All rights reserved.
-// Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+// Copyright (C) 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
 // 
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -89,12 +89,11 @@
 #endif
 #endif
 
-#if !defined(USE_SYSTEM_MALLOC) && defined(NDEBUG)
+#if !(defined(USE_SYSTEM_MALLOC) && USE_SYSTEM_MALLOC) && defined(NDEBUG)
 #define FORCE_SYSTEM_MALLOC 0
 #else
 #define FORCE_SYSTEM_MALLOC 1
 #endif
-
 
 // Use a background thread to periodically scavenge memory to release back to the system
 // https://bugs.webkit.org/show_bug.cgi?id=27900: don't turn this on for Tiger until we have figured out why it caused a crash.
