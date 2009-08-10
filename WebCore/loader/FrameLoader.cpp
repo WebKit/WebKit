@@ -210,9 +210,7 @@ bool isBackForwardLoadType(FrameLoadType type)
         case FrameLoadTypeReplace:
             return false;
         case FrameLoadTypeBack:
-#if ENABLE(WML)
         case FrameLoadTypeBackWMLDeckNotAccessible:
-#endif
         case FrameLoadTypeForward:
         case FrameLoadTypeIndexedBackForward:
             return true;
@@ -1164,9 +1162,7 @@ void FrameLoader::restoreDocumentState()
         case FrameLoadTypeReplace:
             break;
         case FrameLoadTypeBack:
-#if ENABLE(WML)
         case FrameLoadTypeBackWMLDeckNotAccessible:
-#endif
         case FrameLoadTypeForward:
         case FrameLoadTypeIndexedBackForward:
         case FrameLoadTypeRedirectWithLockedBackForwardList:
@@ -2912,9 +2908,7 @@ void FrameLoader::transitionToCommitted(PassRefPtr<CachedPage> cachedPage)
     switch (m_loadType) {
         case FrameLoadTypeForward:
         case FrameLoadTypeBack:
-#if ENABLE(WML)
         case FrameLoadTypeBackWMLDeckNotAccessible:
-#endif
         case FrameLoadTypeIndexedBackForward:
             if (Page* page = m_frame->page())
                 if (page->backForwardList()) {
@@ -4552,9 +4546,7 @@ void FrameLoader::loadItem(HistoryItem* item, FrameLoadType loadType)
                         request.setCachePolicy(ReloadIgnoringCacheData);
                         break;
                     case FrameLoadTypeBack:
-#if ENABLE(WML)
                     case FrameLoadTypeBackWMLDeckNotAccessible:
-#endif
                     case FrameLoadTypeForward:
                     case FrameLoadTypeIndexedBackForward:
                         if (itemURL.protocol() != "https")

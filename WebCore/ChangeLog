@@ -1,5 +1,17 @@
 2009-08-09  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
+        Reviewed by Oliver Hunt.
+
+        Fix non-WML enabled builds. Remove ENABLE(WML) guards around the switch cases 'FrameLoadTypeBackWMLDeckNotAccessible'.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::isBackForwardLoadType):
+        (WebCore::FrameLoader::restoreDocumentState):
+        (WebCore::FrameLoader::transitionToCommitted):
+        (WebCore::FrameLoader::loadItem):
+
+2009-08-09  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
         Reviewed by George Staikos.
 
         [WML] Deck access control is completly broken
