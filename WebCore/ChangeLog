@@ -1,3 +1,52 @@
+2009-08-10  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Make all status bar button images glyph-based.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28124
+
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel):
+        * inspector/front-end/Images/clearConsoleButtonGlyph.png: Added.
+        * inspector/front-end/Images/clearConsoleButtons.png: Removed.
+        * inspector/front-end/Images/consoleButtonGlyph.png: Added.
+        * inspector/front-end/Images/consoleButtons.png: Removed.
+        * inspector/front-end/Images/dockButtonGlyph.png: Added.
+        * inspector/front-end/Images/dockButtons.png: Removed.
+        * inspector/front-end/Images/enableButtons.png: Removed.
+        * inspector/front-end/Images/enableOutlineButtonGlyph.png: Added.
+        * inspector/front-end/Images/enableSolidButtonGlyph.png: Added.
+        * inspector/front-end/Images/excludeButtonGlyph.png: Added.
+        * inspector/front-end/Images/excludeButtons.png: Removed.
+        * inspector/front-end/Images/focusButtonGlyph.png: Added.
+        * inspector/front-end/Images/focusButtons.png: Removed.
+        * inspector/front-end/Images/largerResourcesButtonGlyph.png: Added.
+        * inspector/front-end/Images/largerResourcesButtons.png: Removed.
+        * inspector/front-end/Images/nodeSearchButtonGlyph.png: Added.
+        * inspector/front-end/Images/nodeSearchButtons.png: Removed.
+        * inspector/front-end/Images/pauseOnExceptionButtonGlyph.png: Added.
+        * inspector/front-end/Images/pauseOnExceptionButtons.png: Removed.
+        * inspector/front-end/Images/percentButtonGlyph.png: Added.
+        * inspector/front-end/Images/percentButtons.png: Removed.
+        * inspector/front-end/Images/recordButtonGlyph.png: Added.
+        * inspector/front-end/Images/recordButtons.png: Removed.
+        * inspector/front-end/Images/recordToggledButtonGlyph.png: Added.
+        * inspector/front-end/Images/reloadButtonGlyph.png: Added.
+        * inspector/front-end/Images/reloadButtons.png: Removed.
+        * inspector/front-end/Images/undockButtonGlyph.png: Added.
+        * inspector/front-end/Panel.js:
+        (WebInspector.Panel.prototype.createStatusBarButton):
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.css:
+        * inspector/front-end/inspector.html:
+
 2009-08-07  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler.

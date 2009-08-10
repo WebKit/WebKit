@@ -151,11 +151,11 @@ WebInspector.ScriptsPanel = function()
     this.element.appendChild(this.sidebarElement);
     this.element.appendChild(this.sidebarResizeElement);
 
-    this.enableToggleButton = document.createElement("button");
+    this.enableToggleButton = this.createStatusBarButton();
     this.enableToggleButton.className = "enable-toggle-status-bar-item status-bar-item";
     this.enableToggleButton.addEventListener("click", this._toggleDebugging.bind(this), false);
 
-    this.pauseOnExceptionButton = document.createElement("button");
+    this.pauseOnExceptionButton = this.createStatusBarButton();
     this.pauseOnExceptionButton.id = "scripts-pause-on-exceptions-status-bar-item";
     this.pauseOnExceptionButton.className = "status-bar-item";
     this.pauseOnExceptionButton.addEventListener("click", this._togglePauseOnExceptions.bind(this), false);

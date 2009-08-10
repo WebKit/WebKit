@@ -59,9 +59,9 @@
     <file>inspector.css</file>
     <file>Images/back.png</file>
     <file>Images/checker.png</file>
-    <file>Images/clearConsoleButtons.png</file>
+    <file>Images/clearConsoleButtonGlyph.png</file>
     <file>Images/closeButtons.png</file>
-    <file>Images/consoleButtons.png</file>
+    <file>Images/consoleButtonGlyph.png</file>
     <file>Images/database.png</file>
     <file>Images/databasesIcon.png</file>
     <file>Images/databaseTable.png</file>
@@ -79,14 +79,15 @@
     <file>Images/disclosureTriangleSmallRightDownBlack.png</file>
     <file>Images/disclosureTriangleSmallRightDownWhite.png</file>
     <file>Images/disclosureTriangleSmallRightWhite.png</file>
-    <file>Images/dockButtons.png</file>
+    <file>Images/dockButtonGlyph.png</file>
     <file>Images/domStorage.png</file>
     <file>Images/elementsIcon.png</file>
-    <file>Images/enableButtons.png</file>
+    <file>Images/enableOutlineButtonGlyph.png</file>
+    <file>Images/enableSolidButtonGlyph.png</file>
     <file>Images/errorIcon.png</file>
     <file>Images/errorMediumIcon.png</file>
-    <file>Images/excludeButtons.png</file>
-    <file>Images/focusButtons.png</file>
+    <file>Images/excludeButtonGlyph.png</file>
+    <file>Images/focusButtonGlyph.png</file>
     <file>Images/forward.png</file>
     <file>Images/glossyHeader.png</file>
     <file>Images/glossyHeaderPressed.png</file>
@@ -95,21 +96,22 @@
     <file>Images/goArrow.png</file>
     <file>Images/graphLabelCalloutLeft.png</file>
     <file>Images/graphLabelCalloutRight.png</file>
-    <file>Images/largerResourcesButtons.png</file>
-    <file>Images/nodeSearchButtons.png</file>
+    <file>Images/largerResourcesButtonGlyph.png</file>
+    <file>Images/nodeSearchButtonGlyph.png</file>
     <file>Images/paneBottomGrow.png</file>
     <file>Images/paneBottomGrowActive.png</file>
     <file>Images/paneGrowHandleLine.png</file>
-    <file>Images/pauseOnExceptionButtons.png</file>
-    <file>Images/percentButtons.png</file>
+    <file>Images/pauseOnExceptionButtonGlyph.png</file>
+    <file>Images/percentButtonGlyph.png</file>
     <file>Images/profileGroupIcon.png</file>
     <file>Images/profileIcon.png</file>
     <file>Images/profilesIcon.png</file>
     <file>Images/profileSmallIcon.png</file>
     <file>Images/profilesSilhouette.png</file>
     <file>Images/radioDot.png</file>
-    <file>Images/recordButtons.png</file>
-    <file>Images/reloadButtons.png</file>
+    <file>Images/recordButtonGlyph.png</file>
+    <file>Images/recordToggledButtonGlyph.png</file>
+    <file>Images/reloadButtonGlyph.png</file>
     <file>Images/resourceCSSIcon.png</file>
     <file>Images/resourceDocumentIcon.png</file>
     <file>Images/resourceDocumentIconSmall.png</file>
@@ -166,6 +168,7 @@
     <file>Images/treeRightTriangleWhite.png</file>
     <file>Images/treeUpTriangleBlack.png</file>
     <file>Images/treeUpTriangleWhite.png</file>
+    <file>Images/undockButtonGlyph.png</file>
     <file>Images/userInputIcon.png</file>
     <file>Images/userInputPreviousIcon.png</file>
     <file>Images/userInputResultIcon.png</file>

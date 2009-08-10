@@ -97,7 +97,7 @@ WebInspector.ElementsPanel = function()
     this.sidebarResizeElement.className = "sidebar-resizer-vertical";
     this.sidebarResizeElement.addEventListener("mousedown", this.rightSidebarResizerDragStart.bind(this), false);
 
-    this.nodeSearchButton = document.createElement("button");
+    this.nodeSearchButton = this.createStatusBarButton();
     this.nodeSearchButton.title = WebInspector.UIString("Select an element in the page to inspect it.");
     this.nodeSearchButton.id = "node-search-status-bar-item";
     this.nodeSearchButton.className = "status-bar-item";

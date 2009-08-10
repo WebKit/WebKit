@@ -135,11 +135,11 @@ WebInspector.ResourcesPanel = function()
 
     this.element.appendChild(this.panelEnablerView.element);
 
-    this.enableToggleButton = document.createElement("button");
+    this.enableToggleButton = this.createStatusBarButton();
     this.enableToggleButton.className = "enable-toggle-status-bar-item status-bar-item";
     this.enableToggleButton.addEventListener("click", this._toggleResourceTracking.bind(this), false);
 
-    this.largerResourcesButton = document.createElement("button");
+    this.largerResourcesButton = this.createStatusBarButton();
     this.largerResourcesButton.id = "resources-larger-resources-status-bar-item";
     this.largerResourcesButton.className = "status-bar-item toggled-on";
     this.largerResourcesButton.title = WebInspector.UIString("Use small resource rows.");

@@ -59,11 +59,11 @@ WebInspector.ProfilesPanel = function()
     this.profileViews.id = "profile-views";
     this.element.appendChild(this.profileViews);
 
-    this.enableToggleButton = document.createElement("button");
+    this.enableToggleButton = this.createStatusBarButton();
     this.enableToggleButton.className = "enable-toggle-status-bar-item status-bar-item";
     this.enableToggleButton.addEventListener("click", this._toggleProfiling.bind(this), false);
 
-    this.recordButton = document.createElement("button");
+    this.recordButton = this.createStatusBarButton();
     this.recordButton.title = WebInspector.UIString("Start profiling.");
     this.recordButton.id = "record-profile-status-bar-item";
     this.recordButton.className = "status-bar-item";
