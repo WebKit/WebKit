@@ -179,8 +179,6 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/InitializeThreading.h \
 	JavaScriptCore/runtime/JSActivation.cpp \
 	JavaScriptCore/runtime/JSActivation.h \
-	JavaScriptCore/runtime/JSAPIValueWrapper.cpp \
-	JavaScriptCore/runtime/JSAPIValueWrapper.h \
 	JavaScriptCore/runtime/JSByteArray.cpp \
 	JavaScriptCore/runtime/JSByteArray.h \
 	JavaScriptCore/runtime/JSGlobalData.cpp \
@@ -407,6 +405,8 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/Completion.cpp \
 	JavaScriptCore/runtime/JSArray.cpp \
 	JavaScriptCore/runtime/JSArray.h \
+	JavaScriptCore/runtime/JSAPIValueWrapper.cpp \
+	JavaScriptCore/runtime/JSAPIValueWrapper.h \
 	JavaScriptCore/runtime/JSCell.cpp \
 	JavaScriptCore/runtime/JSCell.h \
 	JavaScriptCore/runtime/JSFunction.cpp \

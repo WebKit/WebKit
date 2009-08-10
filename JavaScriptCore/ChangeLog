@@ -1,3 +1,10 @@
+2009-08-10  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        [Gtk] Unreviewed build fix. Move JSAPIValueWrapper.cpp/.h in the debug
+        section. This file is already part of AllInOneFile in Release builds.
+
+        * GNUmakefile.am:
+
 2009-08-10  Darin Adler  <darin@apple.com>
 
         * wtf/FastMalloc.h: Fix build.
