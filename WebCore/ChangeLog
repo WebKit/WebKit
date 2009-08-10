@@ -1,3 +1,14 @@
+2009-08-10  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28165
+        Application cache maximum size cannot be set before the database is opened
+
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::vacuumDatabaseFile): Open appcache database if it isn't
+        open yet.
+
 2009-08-10  Vitaly Repeshko  <vitalyr@quad.spb.corp.google.com>
 
         Reviewed by Dimitri Glazkov.

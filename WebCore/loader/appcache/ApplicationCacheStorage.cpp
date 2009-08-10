@@ -1068,6 +1068,10 @@ bool ApplicationCacheStorage::deleteCacheGroup(const String& manifestURL)
 
 void ApplicationCacheStorage::vacuumDatabaseFile()
 {
+    openDatabase(false);
+    if (!m_database.isOpen())
+        return;
+
     m_database.runVacuumCommand();
 }
 
