@@ -1,3 +1,14 @@
+2009-08-10  David Levin  <levin@chromium.org>
+
+        Reviewed by David Kilzer.
+
+        check-webkit-style doesn't catch braces around single line statements when followed by else.
+        https://bugs.webkit.org/show_bug.cgi?id=28164
+
+        * Scripts/modules/cpp_style.py: Added else to the regex that finds ending }'s when
+          checking the no braces for "single lines" rule.
+        * Scripts/modules/cpp_style_unittest.py: Added test case.
+
 2009-08-10  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/28163> bugzilla-tool: scm module should not import bugzilla module

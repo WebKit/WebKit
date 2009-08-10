@@ -3301,6 +3301,13 @@ class WebKitStyleTest(CppStyleTestBase):
 
         self.assert_multi_line_lint(
             'if (true) {\n'
+            '    int foo;\n'
+            '} else\n'
+            '    int foo;\n',
+            'One line control clauses should not use braces.  [whitespace/braces] [4]')
+
+        self.assert_multi_line_lint(
+            'if (true) {\n'
             '    // Some comment\n'
             '    int foo;\n'
             '}\n',

@@ -1845,7 +1845,7 @@ def check_braces(filename, clean_lines, line_number, error):
         error(filename, line_number, 'whitespace/braces', 4,
               'Place brace on its own line for function definitions.')
 
-    if (match(r'\s*}\s*$', line) and line_number > 1):
+    if (match(r'\s*}\s*(else\s*({\s*)?)?$', line) and line_number > 1):
         # We check if a closed brace has started a line to see if a
         # one line control statement was previous.
         previous_line = clean_lines.elided[line_number - 2]
