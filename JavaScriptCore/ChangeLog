@@ -1,3 +1,10 @@
+2009-08-10  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Fix compilation with the interpreter instead of the JIT by including
+        PrototypeFunction.h as forward-declared through NativeFunctionWrapper.h.
+
+        * runtime/ObjectConstructor.cpp:
+
 2009-08-09  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by George Staikos.
