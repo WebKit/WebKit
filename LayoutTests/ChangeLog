@@ -1,3 +1,15 @@
+2009-08-09  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        [WML] wml.css lacks <pre> support
+        https://bugs.webkit.org/show_bug.cgi?id=28135
+
+        Extend fast/wml/text-emphasis.wml test, to cover <pre> formatting.
+
+        * fast/wml/text-emphasis.wml:
+        * platform/mac/fast/wml/text-emphasis-expected.txt:
+
 2009-08-09  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by George Staikos.

@@ -1,5 +1,17 @@
 2009-08-09  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
+        Reviewed by George Staikos.
+
+        [WML] wml.css lacks <pre> support
+        https://bugs.webkit.org/show_bug.cgi?id=28135
+
+        Add <pre> support for WML.
+        Extended fast/wml/text-emphasis.wml to cover <pre> support.
+
+        * css/wml.css: <pre> section copied from html.css
+
+2009-08-09  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
         Reviewed by Oliver Hunt.
 
         Fix non-WML enabled builds. Remove ENABLE(WML) guards around the switch cases 'FrameLoadTypeBackWMLDeckNotAccessible'.

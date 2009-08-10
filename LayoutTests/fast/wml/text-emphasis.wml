@@ -13,5 +13,10 @@
    <big>big</big><br/>
    <small>small</small>
   </p>
+  <pre>  This text, should appear
+as
+pre
+formatted
+           text, preserving any white    space.</pre>
  </card>
 </wml>

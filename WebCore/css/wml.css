@@ -223,6 +223,13 @@ small {
     font-size: smaller
 }
 
+pre {
+    display: block;
+    font-family: monospace;
+    white-space: pre;
+    margin: 1__qem 0
+}
+
 /* states */
 
 :focus { 

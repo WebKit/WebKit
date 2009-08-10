@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x214
-  RenderBlock {wml} at (0,0) size 800x214
-    RenderBlock {card} at (8,16) size 784x182
+layer at (0,0) size 800x302
+  RenderBlock {wml} at (0,0) size 800x302
+    RenderBlock {card} at (8,16) size 784x273
       RenderBlock {p} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 198x18
           text run at (0,0) width 198: "Test for text emphasis of WML"
@@ -38,3 +38,14 @@ layer at (0,0) size 800x214
           RenderText {#text} at (0,132) size 29x15
             text run at (0,132) width 29: "small"
         RenderText {#text} at (0,0) size 0x0
+      RenderBlock {pre} at (0,198) size 784x75
+        RenderText {#text} at (0,0) size 376x75
+          text run at (0,0) width 208: "  This text, should appear"
+          text run at (208,0) width 0: " "
+          text run at (0,15) width 16: "as"
+          text run at (16,15) width 0: " "
+          text run at (0,30) width 24: "pre"
+          text run at (24,30) width 0: " "
+          text run at (0,45) width 72: "formatted"
+          text run at (72,45) width 0: " "
+          text run at (0,60) width 376: "           text, preserving any white    space."
