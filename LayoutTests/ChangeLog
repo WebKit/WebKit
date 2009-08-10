@@ -1,3 +1,12 @@
+2009-08-10  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Rubber-stamped by George Staikos.
+
+        Forgot to update pixel test result in my last commit.
+
+        * platform/mac/fast/wml/text-emphasis-expected.checksum:
+        * platform/mac/fast/wml/text-emphasis-expected.png:
+
 2009-08-07  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.
