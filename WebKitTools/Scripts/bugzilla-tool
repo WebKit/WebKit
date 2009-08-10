@@ -96,6 +96,16 @@ def modified_changelogs(scm):
             changelog_paths.append(path)
     return changelog_paths
 
+def parse_bug_id(commit_message):
+    message = commit_message.message()
+    match = re.search("http\://webkit\.org/b/(?P<bug_id>\d+)", message)
+    if match:
+        return match.group('bug_id')
+    match = re.search(Bugzilla.bug_server_regex + "show_bug\.cgi\?id=(?P<bug_id>\d+)", message)
+    if match:
+        return match.group('bug_id')
+    return None
+
 def commit_message_for_this_commit(scm):
     changelog_paths = modified_changelogs(scm)
     if not len(changelog_paths):
@@ -448,7 +458,7 @@ class PostCommitsAsPatchesToBug(Command):
             # the ChangeLogs should have the bug id, but the local commit message might not.
             commit_message = tool.scm().commit_message_for_local_commit(commit_id)
 
-            bug_id = options.bug_id or commit_message.parse_bug_id()
+            bug_id = options.bug_id or parse_bug_id(commit_message)
             if not bug_id:
                 log("Skipping %s: No bug id found in commit log or specified with --bug-id." % commit_id)
                 continue

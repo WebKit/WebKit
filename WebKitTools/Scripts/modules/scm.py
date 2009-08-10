@@ -35,7 +35,6 @@ import subprocess
 
 # Import WebKit-specific modules.
 from modules.logging import error, log
-from modules.bugzilla import Bugzilla # FIXME: This should not be imported by scm.py
 
 def detect_scm_system(path):
     if SVN.in_working_directory(path):
@@ -76,16 +75,6 @@ class CommitMessage:
 
     def message(self):
         return "\n".join(self.message_lines) + "\n"
-
-    def parse_bug_id(self):
-        for line in self.message_lines:
-            match = re.search("http\://webkit\.org/b/(?P<bug_id>\d+)", line)
-            if match:
-                return match.group('bug_id')
-            match = re.search(Bugzilla.bug_server_regex + "show_bug\.cgi\?id=(?P<bug_id>\d+)", line)
-            if match:
-                return match.group('bug_id')
-        return None
 
 
 class ScriptError(Exception):

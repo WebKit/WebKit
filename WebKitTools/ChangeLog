@@ -1,3 +1,15 @@
+2009-08-10  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/28163> bugzilla-tool: scm module should not import bugzilla module
+
+        Reviewed by David Levin.
+
+        * Scripts/bugzilla-tool:
+        (parse_bug_id): Added.  Moved from CommitMessage.parse_bug_id()
+        in scm module.
+        * Scripts/modules/scm.py: Removed import of bugzilla module.
+        (CommitMessage.parse_bug_id): Deleted.
+
 2009-08-10  Peter Kasting  <pkasting@google.com>
 
         Reviewed by David Kilzer.
