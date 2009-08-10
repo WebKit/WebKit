@@ -4997,7 +4997,6 @@ editing/deleting/smart-editing-disabled.html
 editing/execCommand/19089.html
 editing/inserting/5803706-1.html
 editing/inserting/5994480-2.html
-editing/pasteboard/5780697-2.html
 editing/pasteboard/copy-crash.html
 editing/pasteboard/get-data-text-plain-drop.html
 editing/pasteboard/paste-plaintext-user-select-none.html
@@ -5011,7 +5010,6 @@ editing/selection/hit-test-anonymous.html
 editing/selection/home-end.html
 editing/selection/user-drag-element-and-user-select-none.html
 editing/style/apply-through-end-of-document.html
-fast/block/float/009.html
 fast/block/positioning/absolute-in-inline-rtl-4.html
 fast/canvas/canvas-composite-alpha.html
 fast/canvas/canvas-gradient-addStop-error.html
@@ -5026,7 +5024,6 @@ fast/dom/HTMLScriptElement/nested-execution.html
 fast/dom/Window/custom-constructors.html
 fast/dom/Window/webkitConvertPoint.html
 fast/dom/Window/window-lookup-precedence.html
-fast/dynamic/genContentDestroyChildren.html
 fast/encoding/char-encoding-mac.html
 fast/encoding/hebrew/8859-8-e.html
 fast/encoding/hebrew/8859-8-i.html
@@ -5054,9 +5051,6 @@ fast/forms/textarea-scrollbar-height.html
 fast/forms/textarea-setvalue-submit.html
 fast/history/back-forward-is-asynchronous.html
 fast/history/window-open.html
-fast/images/image-in-map.html
-fast/inline-block/004.html
-fast/inline-block/005.html
 fast/loader/cancel-load-during-port-block-timer.html
 fast/loader/javascript-url-hierarchical-execution.html
 fast/loader/main-document-url-for-non-http-loads.html
@@ -5066,8 +5060,6 @@ fast/loader/reload-policy-delegate.html
 fast/loading/subframe-removes-itself.html
 fast/parser/xml-declaration-missing-ending-mark.html
 fast/replaced/table-percent-height-text-controls.html
-fast/table/giantRowspan.html
-fast/table/height-percent-test.html
 fast/xmlhttprequest/xmlhttprequest-gc.html
 fast/xmlhttprequest/xmlhttprequest-get.xhtml
 fast/xmlhttprequest/xmlhttprequest-nonexistent-file.html
@@ -5079,9 +5071,6 @@ svg/custom/text-dom-removal.svg
 svg/custom/use-clipped-transform.svg
 svg/dom/length-list-parser.html
 svg/dom/SVGScriptElement/script-load-and-error-events.svg
-tables/mozilla/bugs/adforce_imgis_com.html
-tables/mozilla/bugs/bug50695-2.html
-tables/mozilla_expected_failures/bugs/bug23847.html
 transforms/2d/transform-2d.html
 editing/selection/extend-selection-after-double-click.html
 

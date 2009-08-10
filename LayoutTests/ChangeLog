@@ -1,3 +1,26 @@
+2009-08-10  Renata Hodovan  <hodovan.renata@stud.u-szeged.hu>
+
+        Reviewed by Simon Hausmann.
+
+         [Qt] After ChangeSet https://bugs.webkit.org/show_bug.cgi?id=26896, the
+         DefaultFontSize was changed in Qt DumpRenderTree from 14 to 13. But
+         any expected file works with the original value. The expected values
+         should follow this change. This patch contains the new expected
+         files.
+
+        * platform/qt/Skipped:
+        * platform/qt/editing/pasteboard/5780697-2-expected.txt: Add.
+        * platform/qt/fast/block/float/009-expected.txt:
+        * platform/qt/fast/dynamic/genContentDestroyChildren-expected.txt:
+        * platform/qt/fast/images/image-in-map-expected.txt:
+        * platform/qt/fast/inline-block/004-expected.txt:
+        * platform/qt/fast/inline-block/005-expected.txt:
+        * platform/qt/fast/table/giantRowspan-expected.txt:
+        * platform/qt/fast/table/height-percent-test-expected.txt:
+        * platform/qt/tables/mozilla/bugs/adforce_imgis_com-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug50695-2-expected.txt:
+        * platform/qt/tables/mozilla_expected_failures/bugs/bug23847-expected.txt:
+
 2009-08-10  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Ariya Hidayat.
