@@ -1,5 +1,9 @@
 2009-08-10  Darin Adler  <darin@apple.com>
 
+        * wtf/FastMalloc.h: Fix build.
+
+2009-08-10  Darin Adler  <darin@apple.com>
+
         Reviewed by Mark Rowe.
 
         FastMalloc.h has cross-platform code but marked as WinCE-only

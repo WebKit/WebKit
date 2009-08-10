@@ -181,7 +181,7 @@ using WTF::fastMallocAllow;
 // debug-only code to make sure we don't use the system malloc via the default operator
 // new by accident.
 
-WTF_PRIVATE_INLINE void* operator new(size_t size) { return fastMalloc(s); }
+WTF_PRIVATE_INLINE void* operator new(size_t size) { return fastMalloc(size); }
 WTF_PRIVATE_INLINE void* operator new(size_t size, const std::nothrow_t&) throw() { return fastMalloc(size); }
 WTF_PRIVATE_INLINE void operator delete(void* p) { fastFree(p); }
 WTF_PRIVATE_INLINE void* operator new[](size_t size) { return fastMalloc(size); }
