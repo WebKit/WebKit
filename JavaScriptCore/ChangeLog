@@ -1,3 +1,11 @@
+2009-08-10  Xan Lopez  <xlopez@igalia.com>
+
+        Unreviewed build fix.
+
+        Add new files to makefile.
+
+        * GNUmakefile.am:
+
 2009-08-10  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Fix compilation with the interpreter instead of the JIT by including

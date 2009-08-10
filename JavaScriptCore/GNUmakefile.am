@@ -179,6 +179,8 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/InitializeThreading.h \
 	JavaScriptCore/runtime/JSActivation.cpp \
 	JavaScriptCore/runtime/JSActivation.h \
+	JavaScriptCore/runtime/JSAPIValueWrapper.cpp \
+	JavaScriptCore/runtime/JSAPIValueWrapper.h \
 	JavaScriptCore/runtime/JSByteArray.cpp \
 	JavaScriptCore/runtime/JSByteArray.h \
 	JavaScriptCore/runtime/JSGlobalData.cpp \
