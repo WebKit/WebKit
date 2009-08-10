@@ -337,8 +337,10 @@ RefPtr<CSSMutableStyleDeclaration> getPropertiesNotInComputedStyle(CSSStyleDecla
 
 // Editing style properties must be preserved during editing operation.
 // e.g. when a user inserts a new paragraph, all properties listed here must be copied to the new paragraph.
-// FIXME: The current editingStyleProperties is identical to inheritableProperties but we may not need to preserve all inheritable properties
+// FIXME: The current editingStyleProperties contains all inheritableProperties but we may not need to preserve all inheritable properties
 static const int editingStyleProperties[] = {
+    CSSPropertyBackgroundColor,
+    // CSS inheritable properties
     CSSPropertyBorderCollapse,
     CSSPropertyColor,
     CSSPropertyFontFamily,
