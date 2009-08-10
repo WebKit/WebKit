@@ -131,13 +131,6 @@ public:
 #endif
     }
 
-#if PLATFORM(WINCE)
-    const GlyphBufferAdvance* advanceData() const
-    {
-        return m_advances.data();
-    }
-#endif
-
     FloatSize offsetAt(int index) const
     {
 #if PLATFORM(WIN)

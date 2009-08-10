@@ -1,3 +1,14 @@
+2009-08-10  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Remove the redundant, Windows CE-only GlyphBuffer::advnaceData()
+
+        * platform/graphics/GlyphBuffer.h: Removed advanceData().
+        * platform/graphics/wince/GraphicsContextWince.cpp:
+        (WebCore::GraphicsContext::drawText): Changed to use advances(from)
+            instead of advanceData() + from.
+
 2009-08-10  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.

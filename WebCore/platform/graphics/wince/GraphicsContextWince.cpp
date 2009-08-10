@@ -1551,7 +1551,7 @@ void GraphicsContext::drawText(const SimpleFontData* fontData, const GlyphBuffer
 
     if (!hFont) {
         double offset = trPoint.x();
-        const GlyphBufferAdvance* advance = glyphBuffer.advanceData() + from;
+        const GlyphBufferAdvance* advance = glyphBuffer.advances(from);
         if (scaleX == 1.)
             for (int i = 1; i < numGlyphs; ++i)
                 offset += *advance++;
@@ -1603,7 +1603,7 @@ void GraphicsContext::drawText(const SimpleFontData* fontData, const GlyphBuffer
         *curChar++ = *srcChar++;
         int firstOffset = stableRound(offset);
         int lastOffset = firstOffset;
-        const GlyphBufferAdvance* advance = glyphBuffer.advanceData() + from;
+        const GlyphBufferAdvance* advance = glyphBuffer.advances(from);
         // FIXME: ExtTextOut() can flip over each word for RTL languages, even when TA_RTLREADING is off.
         // (this can be GDI bug or font driver bug?)
         // We are not clear how it processes characters and handles specified spaces. On the other side,
