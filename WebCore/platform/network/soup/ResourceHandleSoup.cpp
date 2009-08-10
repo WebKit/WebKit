@@ -828,7 +828,7 @@ static bool startGio(ResourceHandle* handle, KURL url)
     // GIO doesn't know how to handle refs and queries, so remove them
     // TODO: use KURL.fileSystemPath after KURLGtk and FileSystemGtk are
     // using GIO internally, and providing URIs instead of file paths
-    url.removeRef();
+    url.removeFragmentIdentifier();
     url.setQuery(String());
     url.setPort(0);
 

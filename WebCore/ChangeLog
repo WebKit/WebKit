@@ -1,3 +1,10 @@
+2009-08-10  Xan Lopez  <xlopez@igalia.com>
+
+        Fix GTK+ build.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::):
+
 2009-08-10  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson.
