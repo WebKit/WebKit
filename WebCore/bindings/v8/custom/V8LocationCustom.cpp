@@ -70,13 +70,13 @@ ACCESSOR_SETTER(LocationHash)
         return;
 
     KURL url = frame->loader()->url();
-    String oldRef = url.ref();
+    String oldRef = url.fragmentIdentifier();
 
     if (hash.startsWith("#"))
         hash = hash.substring(1);
     if (oldRef == hash || (oldRef.isNull() && hash.isEmpty()))
         return;
-    url.setRef(hash);
+    url.setFragmentIdentifier(hash);
 
     navigateIfAllowed(frame, url, false, false);
 }
