@@ -40,6 +40,7 @@
 #include "NPV8Object.h"
 #include "V8NPObject.h"
 #include "V8Proxy.h"
+#include "npruntime_impl.h"
 #include "npruntime_priv.h"
 
 void convertV8ObjectToNPVariant(v8::Local<v8::Value> object, NPObject* owner, NPVariant* result)
@@ -121,9 +122,9 @@ NPIdentifier getStringIdentifier(v8::Handle<v8::String> str)
         // than the string length.
         char stackBuffer[kStackBufferSize];
         str->WriteUtf8(stackBuffer, bufferLength);
-        return NPN_GetStringIdentifier(stackBuffer);
+        return _NPN_GetStringIdentifier(stackBuffer);
     }
 
     v8::String::Utf8Value utf8(str);
-    return NPN_GetStringIdentifier(*utf8);
+    return _NPN_GetStringIdentifier(*utf8);
 }

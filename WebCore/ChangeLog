@@ -1,5 +1,50 @@
 2009-08-10  Jeremy Orlow  <jorlow@chromium.org>
 
+        Reviewed by Eric Seidel.
+
+        Renamed all V8 NPN_ functions to _NPN_ to match JSC and make them "private".
+        https://bugs.webkit.org/show_bug.cgi?id=28089
+
+        Rename all the NPN_foo functions to _NPN_foo so that they can't directly be
+        called by mistake.  This roughly matches the way JSC does it, which is an
+        additional advantage.
+
+        * bindings/v8/NPV8Object.cpp:
+        (npCreateV8ScriptObject):
+        (_NPN_Invoke):
+        (_NPN_InvokeDefault):
+        (_NPN_Evaluate):
+        (_NPN_EvaluateHelper):
+        (_NPN_GetProperty):
+        (_NPN_SetProperty):
+        (_NPN_RemoveProperty):
+        (_NPN_HasProperty):
+        (_NPN_HasMethod):
+        (_NPN_SetException):
+        (_NPN_Enumerate):
+        (_NPN_Construct):
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::clearScriptObjects):
+        (WebCore::ScriptController::createScriptInstanceForWidget):
+        (WebCore::ScriptController::cleanupScriptObjectsForPlugin):
+        * bindings/v8/V8NPObject.cpp:
+        (npObjectInvokeImpl):
+        (npObjectGetProperty):
+        (npObjectIndexedPropertyGetter):
+        (npObjectGetIndexedProperty):
+        (npObjectSetProperty):
+        (npObjectIndexedPropertySetter):
+        (npObjectSetIndexedProperty):
+        (weakNPObjectCallback):
+        (createV8ObjectForNPObject):
+        (forgetV8ObjectForNPObject):
+        * bindings/v8/V8NPUtils.cpp:
+        (getStringIdentifier):
+        * bindings/v8/npruntime.cpp:
+        * bindings/v8/npruntime_impl.h:
+
+2009-08-10  Jeremy Orlow  <jorlow@chromium.org>
+
         Reviewed by Brady Eidson.
 
         Change ___Storage.key() to match current spec behavior.

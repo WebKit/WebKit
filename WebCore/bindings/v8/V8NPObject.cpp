@@ -42,6 +42,7 @@
 #include "V8Helpers.h"
 #include "V8NPUtils.h"
 #include "V8Proxy.h"
+#include "npruntime_impl.h"
 #include "npruntime_priv.h"
 #include "wtf/OwnArrayPtr.h"
 
@@ -113,11 +114,11 @@ static v8::Handle<v8::Value> npObjectInvokeImpl(const v8::Arguments& args, Invok
     }
 
     for (int i=0; i < numArgs; i++)
-        NPN_ReleaseVariantValue(&npArgs[i]);
+        _NPN_ReleaseVariantValue(&npArgs[i]);
 
     // Unwrap return values.
     v8::Handle<v8::Value> returnValue = convertNPVariantToV8Object(&result, npObject);
-    NPN_ReleaseVariantValue(&result);
+    _NPN_ReleaseVariantValue(&result);
 
     return returnValue;
 }
@@ -172,7 +173,7 @@ static v8::Handle<v8::Value> npObjectGetProperty(v8::Local<v8::Object> self, NPI
             return v8::Handle<v8::Value>();
 
         v8::Handle<v8::Value> returnValue = convertNPVariantToV8Object(&result, npObject);
-        NPN_ReleaseVariantValue(&result);
+        _NPN_ReleaseVariantValue(&result);
         return returnValue;
 
     } else if (key->IsString() && npObject->_class->hasMethod && npObject->_class->hasMethod(npObject, identifier)) {
@@ -204,7 +205,7 @@ v8::Handle<v8::Value> npObjectNamedPropertyGetter(v8::Local<v8::String> name, co
 
 v8::Handle<v8::Value> npObjectIndexedPropertyGetter(uint32_t index, const v8::AccessorInfo& info)
 {
-    NPIdentifier identifier = NPN_GetIntIdentifier(index);
+    NPIdentifier identifier = _NPN_GetIntIdentifier(index);
     return npObjectGetProperty(info.Holder(), identifier, v8::Number::New(index));
 }
 
@@ -216,7 +217,7 @@ v8::Handle<v8::Value> npObjectGetNamedProperty(v8::Local<v8::Object> self, v8::L
 
 v8::Handle<v8::Value> npObjectGetIndexedProperty(v8::Local<v8::Object> self, uint32_t index)
 {
-    NPIdentifier identifier = NPN_GetIntIdentifier(index);
+    NPIdentifier identifier = _NPN_GetIntIdentifier(index);
     return npObjectGetProperty(self, identifier, v8::Number::New(index));
 }
 
@@ -237,7 +238,7 @@ static v8::Handle<v8::Value> npObjectSetProperty(v8::Local<v8::Object> self, NPI
         VOID_TO_NPVARIANT(npValue);
         convertV8ObjectToNPVariant(value, npObject, &npValue);
         bool success = npObject->_class->setProperty(npObject, identifier, &npValue);
-        NPN_ReleaseVariantValue(&npValue);
+        _NPN_ReleaseVariantValue(&npValue);
         if (success)
             return value; // Intercept the call.
     }
@@ -254,7 +255,7 @@ v8::Handle<v8::Value> npObjectNamedPropertySetter(v8::Local<v8::String> name, v8
 
 v8::Handle<v8::Value> npObjectIndexedPropertySetter(uint32_t index, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
-    NPIdentifier identifier = NPN_GetIntIdentifier(index);
+    NPIdentifier identifier = _NPN_GetIntIdentifier(index);
     return npObjectSetProperty(info.Holder(), identifier, value);
 }
 
@@ -266,7 +267,7 @@ v8::Handle<v8::Value> npObjectSetNamedProperty(v8::Local<v8::Object> self, v8::L
 
 v8::Handle<v8::Value> npObjectSetIndexedProperty(v8::Local<v8::Object> self, uint32_t index, v8::Local<v8::Value> value)
 {
-    NPIdentifier identifier = NPN_GetIntIdentifier(index);
+    NPIdentifier identifier = _NPN_GetIntIdentifier(index);
     return npObjectSetProperty(self, identifier, value);
 }
 
@@ -281,12 +282,12 @@ static void weakNPObjectCallback(v8::Persistent<v8::Value> object, void* paramet
     ASSERT(staticNPObjectMap.contains(npObject));
     ASSERT(npObject);
 
-    // Must remove from our map before calling NPN_ReleaseObject(). NPN_ReleaseObject can call ForgetV8ObjectForNPObject, which
+    // Must remove from our map before calling _NPN_ReleaseObject(). _NPN_ReleaseObject can call ForgetV8ObjectForNPObject, which
     // uses the table as well.
     staticNPObjectMap.forget(npObject);
 
     if (_NPN_IsAlive(npObject))
-        NPN_ReleaseObject(npObject);
+        _NPN_ReleaseObject(npObject);
 }
 
 
@@ -327,7 +328,7 @@ v8::Local<v8::Object> createV8ObjectForNPObject(NPObject* object, NPObject* root
     wrapNPObject(value, object);
 
     // KJS retains the object as part of its wrapper (see Bindings::CInstance).
-    NPN_RetainObject(object);
+    _NPN_RetainObject(object);
 
     _NPN_RegisterObject(object, root);
 
@@ -345,6 +346,6 @@ void forgetV8ObjectForNPObject(NPObject* object)
         v8::Persistent<v8::Object> handle(staticNPObjectMap.get(object));
         V8DOMWrapper::setDOMWrapper(handle, WebCore::V8ClassIndex::NPOBJECT, 0);
         staticNPObjectMap.forget(object);
-        NPN_ReleaseObject(object);
+        _NPN_ReleaseObject(object);
     }
 }

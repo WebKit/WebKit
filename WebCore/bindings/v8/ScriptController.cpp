@@ -42,6 +42,7 @@
 #include "Frame.h"
 #include "Node.h"
 #include "NotImplemented.h"
+#include "npruntime_impl.h"
 #include "npruntime_priv.h"
 #include "NPV8Object.h"
 #include "ScriptSourceCode.h"
@@ -109,7 +110,7 @@ void ScriptController::clearScriptObjects()
     PluginObjectMap::iterator it = m_pluginObjects.begin();
     for (; it != m_pluginObjects.end(); ++it) {
         _NPN_UnregisterObject(it->second);
-        NPN_ReleaseObject(it->second);
+        _NPN_ReleaseObject(it->second);
     }
     m_pluginObjects.clear();
 
@@ -309,7 +310,7 @@ PassScriptInstance ScriptController::createScriptInstanceForWidget(Widget* widge
     //
     // Inside the javascript engine, the engine can keep a reference to the
     // NPObject as part of its wrapper. However, before accessing the object
-    // it must consult the NPN_Registry.
+    // it must consult the _NPN_Registry.
 
     v8::Local<v8::Object> wrapper = createV8ObjectForNPObject(npObject, 0);
 
@@ -325,7 +326,7 @@ void ScriptController::cleanupScriptObjectsForPlugin(void* nativeHandle)
     if (it == m_pluginObjects.end())
         return;
     _NPN_UnregisterObject(it->second);
-    NPN_ReleaseObject(it->second);
+    _NPN_ReleaseObject(it->second);
     m_pluginObjects.remove(it);
 }
 
