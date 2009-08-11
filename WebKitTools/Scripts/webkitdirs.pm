@@ -952,23 +952,21 @@ sub setupCygwinEnv()
     return if !isCygwin();
     return if $vcBuildPath;
 
-    my $programFilesPath = `cygpath "$ENV{'PROGRAMFILES'}"`;
-    chomp $programFilesPath;
-    $vcBuildPath = "$programFilesPath/Microsoft Visual Studio 8/Common7/IDE/devenv.com";
+    my $vsInstallDir;
+    my $programFilesPath = $ENV{'PROGRAMFILES'} || "C:\\Program Files";
+    if ($ENV{'VSINSTALLDIR'}) {
+        $vsInstallDir = $ENV{'VSINSTALLDIR'};
+    } else {
+        $vsInstallDir = "$programFilesPath/Microsoft Visual Studio 8";
+    }
+    $vsInstallDir = `cygpath "$vsInstallDir"`;
+    chomp $vsInstallDir;
+    $vcBuildPath = "$vsInstallDir/Common7/IDE/devenv.com";
     if (-e $vcBuildPath) {
         # Visual Studio is installed; we can use pdevenv to build.
         $vcBuildPath = File::Spec->catfile(sourceDir(), qw(WebKitTools Scripts pdevenv));
     } else {
         # Visual Studio not found, try VC++ Express
-        my $vsInstallDir;
-        if ($ENV{'VSINSTALLDIR'}) {
-            $vsInstallDir = $ENV{'VSINSTALLDIR'};
-        } else {
-            $programFilesPath = $ENV{'PROGRAMFILES'} || "C:\\Program Files";
-            $vsInstallDir = "$programFilesPath/Microsoft Visual Studio 8";
-        }
-        $vsInstallDir = `cygpath "$vsInstallDir"`;
-        chomp $vsInstallDir;
         $vcBuildPath = "$vsInstallDir/Common7/IDE/VCExpress.exe";
         if (! -e $vcBuildPath) {
             print "*************************************************************\n";

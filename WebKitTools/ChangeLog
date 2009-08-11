@@ -1,3 +1,13 @@
+2009-08-11  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28183
+        Support VS2008 as well as VS2005 in a few scripts.
+
+        * Scripts/pdevenv: Check both $VS80COMNTOOLS and $VS90COMNTOOLS.
+        * Scripts/webkitdirs.pm: Use $VSINSTALLDIR if available instead of hardcoding the VS2005 dir.
+
 2009-08-11  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Darin Adler.
