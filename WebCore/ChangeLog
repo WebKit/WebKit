@@ -1,3 +1,12 @@
+2009-08-11  Drew Wilson  <atwilson@google.com>
+
+        Reviewed by NOBODY (build break).
+
+        Speculative Windows build fix
+
+        * WebCore.vcproj/WebCore.vcproj:
+        Added missing build steps for non-debug targets.
+
 2009-08-11  Drew Wilson <atwilson@google.com>
 
         Reviewed by NOBODY (build break)

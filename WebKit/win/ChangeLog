@@ -1,3 +1,11 @@
+2009-08-11  Drew Wilson  <atwilson@google.com>
+
+        Reviewed by NOBODY (build break).
+
+        Speculative Windows build fix - undo previous unnecessary change.
+
+        * WebCoreSupport/WebDesktopNotificationsDelegate.h:
+
 2009-08-11  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Steve Falkenburg.
