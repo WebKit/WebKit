@@ -1,3 +1,15 @@
+2009-08-11  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        bugzilla-tool: Re-factor shared landing logic into helper class to share more code
+        https://bugs.webkit.org/show_bug.cgi?id=28193
+
+        Added new WebKitLandingScripts class to hold this shared logic.
+        Also added a view_source_url function to move more webkit-specific urls out of bugzilla-tool core.
+
+        * Scripts/bugzilla-tool:
+
 2009-08-11  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Adam Treat.

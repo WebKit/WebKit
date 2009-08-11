@@ -56,6 +56,9 @@ def pluralize(noun, count):
         noun = plural(noun)
     return "%d %s" % (count, noun)
 
+def view_source_url(revision_number):
+     return "http://trac.webkit.org/changeset/%s" % revision_number
+
 # These could be put in some sort of changelogs.py.
 def latest_changelog_entry(changelog_path):
     # e.g. 2009-06-03  Eric Seidel  <eric@webkit.org>
@@ -215,20 +218,85 @@ class ApplyPatchesFromBug(Command):
 def bug_comment_from_commit_text(scm, commit_text):
     match = re.search(scm.commit_success_regexp(), commit_text, re.MULTILINE)
     svn_revision = match.group('svn_revision')
-    commit_text += ("\nhttp://trac.webkit.org/changeset/%s" % svn_revision)
+    commit_text += ("\n%s" % view_source_url(svn_revision))
     return commit_text
+
+
+class WebKitLandingScripts:
+     @staticmethod
+     def cleaning_options():
+         return [
+             make_option("--force-clean", action="store_true", dest="force_clean", default=False, help="Clean working directory before applying patches (removes local changes and commits)"),
+             make_option("--no-clean", action="store_false", dest="clean", default=True, help="Don't check if the working directory is clean before applying patches"),
+         ]
+
+     @staticmethod
+     def land_options():
+         return [
+             make_option("--no-close", action="store_false", dest="close_bug", default=True, help="Leave bug open after landing."),
+             make_option("--no-build", action="store_false", dest="build", default=True, help="Commit without building first, implies --no-test."),
+             make_option("--no-test", action="store_false", dest="test", default=True, help="Commit without running run-webkit-tests."),
+             make_option("--quiet", action="store_true", dest="quiet", default=False, help="Produce less console output."),
+             make_option("--commit-queue", action="store_true", dest="commit_queue", default=False, help="Run in commit queue mode (no user interaction)."),
+         ]
+
+     @staticmethod
+     def run_and_throw_if_fail(args, quiet=False):
+         child_stdout = subprocess.PIPE if quiet else None
+         child_process = subprocess.Popen(args, stdout=child_stdout)
+         if child_process.stdout:
+             child_process.communicate()
+         return_code = child_process.wait()
+         if return_code:
+             raise ScriptError("%s failed with exit code %d" % (" ".join(args), return_code))
+
+     # We might need to pass scm into this function for scm.checkout_root
+     @staticmethod
+     def webkit_script_path(script_name):
+         return os.path.join("WebKitTools", "Scripts", script_name)
+
+     @classmethod
+     def run_webkit_script(cls, script_name, quiet=False):
+         print "Running WebKit Script " + script_name
+         cls.run_and_throw_if_fail(cls.webkit_script_path(script_name), quiet)
+
+     @classmethod
+     def build_webkit(cls, quiet=False):
+         cls.run_webkit_script("build-webkit", quiet)
+
+     @classmethod
+     def run_webkit_tests(cls, launch_safari, quiet=False):
+         args = [cls.webkit_script_path("run-webkit-tests")]
+         if not launch_safari:
+             args.append("--no-launch-safari")
+         if quiet:
+             args.append("--quiet")
+         cls.run_and_throw_if_fail(args)
+
+     @staticmethod
+     def setup_for_landing(scm, options):
+         os.chdir(scm.checkout_root)
+         scm.ensure_no_local_commits(options.force_clean)
+         if options.clean:
+             scm.ensure_clean_working_directory(options.force_clean)
+
+     @classmethod
+     def build_and_commit(cls, scm, options):
+         if options.build:
+             cls.build_webkit(quiet=options.quiet)
+             if options.test:
+                 cls.run_webkit_tests(launch_safari=not options.commit_queue, quiet=options.quiet)
+         commit_message = commit_message_for_this_commit(scm)
+         commit_log = scm.commit_with_message(commit_message.message())
+         return bug_comment_from_commit_text(scm, commit_log)
 
 
 class LandAndUpdateBug(Command):
     def __init__(self):
         options = [
             make_option("-r", "--reviewer", action="store", type="string", dest="reviewer", help="Update ChangeLogs to say Reviewed by REVIEWER."),
-            make_option("--no-close", action="store_false", dest="close_bug", default=True, help="Leave bug open after landing."),
-            make_option("--no-build", action="store_false", dest="build", default=True, help="Commit without building first, implies --no-test."),
-            make_option("--no-test", action="store_false", dest="test", default=True, help="Commit without running run-webkit-tests."),
-            make_option("--quiet", action="store_true", dest="quiet", default=False, help="Produce less console output."),
-            make_option("--commit-queue", action="store_true", dest="commit_queue", default=False, help="Run in commit queue mode (no user interaction)."),
         ]
+        options += WebKitLandingScripts.land_options()
         Command.__init__(self, 'Lands the current working directory diff and updates the bug if provided.', '[BUGID]', options=options)
 
     def guess_reviewer_from_bug(self, bugs, bug_id):
@@ -262,7 +330,7 @@ class LandAndUpdateBug(Command):
 
         self.update_changelogs_with_reviewer(options.reviewer, bug_id, tool)
 
-        comment_text = LandPatchesFromBugs.build_and_commit(tool.scm(), options)
+        comment_text = WebKitLandingScripts.build_and_commit(tool.scm(), options)
         if bug_id:
             log("Updating bug %s" % bug_id)
             if options.close_bug:
@@ -278,66 +346,9 @@ class LandAndUpdateBug(Command):
 
 class LandPatchesFromBugs(Command):
     def __init__(self):
-        options = [
-            make_option("--force-clean", action="store_true", dest="force_clean", default=False, help="Clean working directory before applying patches (removes local changes and commits)"),
-            make_option("--no-clean", action="store_false", dest="clean", default=True, help="Don't check if the working directory is clean before applying patches"),
-            make_option("--no-close", action="store_false", dest="close_bug", default=True, help="Leave bug open after landing."),
-            make_option("--no-build", action="store_false", dest="build", default=True, help="Commit without building first, implies --no-test."),
-            make_option("--no-test", action="store_false", dest="test", default=True, help="Commit without running run-webkit-tests."),
-            make_option("--quiet", action="store_true", dest="quiet", default=False, help="Produce less console output."),
-            make_option("--commit-queue", action="store_true", dest="commit_queue", default=False, help="Run in commit queue mode (no user interaction)."),
-        ]
+        options = WebKitLandingScripts.cleaning_options()
+        options += WebKitLandingScripts.land_options()
         Command.__init__(self, 'Lands all patches on a bug optionally testing them first', 'BUGID', options=options)
-
-    @staticmethod
-    def run_and_throw_if_fail(args, quiet=False):
-        child_stdout = subprocess.PIPE if quiet else None
-        child_process = subprocess.Popen(args, stdout=child_stdout)
-        if child_process.stdout:
-            child_process.communicate()
-        return_code = child_process.wait()
-        if return_code:
-            raise ScriptError("%s failed with exit code %d" % (" ".join(args), return_code))
-
-    # We might need to pass scm into this function for scm.checkout_root
-    @staticmethod
-    def webkit_script_path(script_name):
-        return os.path.join("WebKitTools", "Scripts", script_name)
-
-    @classmethod
-    def run_webkit_script(cls, script_name, quiet=False):
-        print "Running WebKit Script " + script_name
-        cls.run_and_throw_if_fail(cls.webkit_script_path(script_name), quiet)
-
-    @classmethod
-    def build_webkit(cls, quiet=False):
-        cls.run_webkit_script("build-webkit", quiet)
-
-    @classmethod
-    def run_webkit_tests(cls, launch_safari, quiet=False):
-        args = [cls.webkit_script_path("run-webkit-tests")]
-        if not launch_safari:
-            args.append("--no-launch-safari")
-        if quiet:
-            args.append("--quiet")
-        cls.run_and_throw_if_fail(args)
-
-    @staticmethod
-    def setup_for_landing(scm, options):
-        os.chdir(scm.checkout_root)
-        scm.ensure_no_local_commits(options.force_clean)
-        if options.clean:
-            scm.ensure_clean_working_directory(options.force_clean)
-
-    @classmethod
-    def build_and_commit(cls, scm, options):
-        if options.build:
-            cls.build_webkit(quiet=options.quiet)
-            if options.test:
-                cls.run_webkit_tests(launch_safari=not options.commit_queue, quiet=options.quiet)
-        commit_message = commit_message_for_this_commit(scm)
-        commit_log = scm.commit_with_message(commit_message.message())
-        return bug_comment_from_commit_text(scm, commit_log)
 
     @classmethod
     def land_patches(cls, bug_id, patches, options, tool):
@@ -346,7 +357,7 @@ class LandPatchesFromBugs(Command):
             for patch in patches:
                 tool.scm().update_webkit() # Update before every patch in case the tree has changed
                 tool.scm().apply_patch(patch, force=options.commit_queue)
-                comment_text = cls.build_and_commit(tool.scm(), options)
+                comment_text = WebKitLandingScripts.build_and_commit(tool.scm(), options)
                 tool.bugs.clear_attachment_review_flag(patch['id'], comment_text)
 
             if options.close_bug:
@@ -375,7 +386,7 @@ class LandPatchesFromBugs(Command):
 
         log("Landing %s from %s." % (pluralize("patch", patch_count), pluralize("bug", len(args))))
 
-        self.setup_for_landing(tool.scm(), options)
+        WebKitLandingScripts.setup_for_landing(tool.scm(), options)
 
         for bug_id in bugs_to_patches.keys():
             self.land_patches(bug_id, bugs_to_patches[bug_id], options, tool)
