@@ -1,3 +1,11 @@
+2009-08-11  Drew Wilson  <atwilson@google.com>
+
+        Reviewed by NOBODY (Build break).
+
+        Speculative fix for GTK build break.
+
+        * WebKit.pro:
+
 2009-08-11  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Simon Hausmann.
