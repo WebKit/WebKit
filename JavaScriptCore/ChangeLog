@@ -2,6 +2,14 @@
 
         Reviewed by NOBODY (Build fix).
 
+        Fix export file for last build fix
+
+        * JavaScriptCore.exp:
+
+2009-08-10  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by NOBODY (Build fix).
+
         Hoist page size initialization into platform specific code.
 
         * jit/ExecutableAllocatorPosix.cpp:
