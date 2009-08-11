@@ -1,3 +1,11 @@
+2009-08-11  Csaba Osztrogonac  <oszi@inf.u-szeged.hu>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Buildfix for Qt-win platforms.
+
+        * JavaScriptCore.pri: Choose MarkStackPosix.cpp or MarkStackWin.cpp depend on platform.
+
 2009-08-10  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY (And another build fix).
