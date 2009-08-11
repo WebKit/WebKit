@@ -1,3 +1,11 @@
+2009-08-11  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Fix windows build.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore_debug.def:
+
 2009-08-11  Csaba Osztrogonac  <oszi@inf.u-szeged.hu>
 
         Reviewed by Tor Arne Vestbø.

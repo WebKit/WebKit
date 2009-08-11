@@ -46,6 +46,7 @@ EXPORTS
     ?addSlowCase@Identifier@JSC@@CA?AV?$PassRefPtr@URep@UString@JSC@@@WTF@@PAVJSGlobalData@2@PAURep@UString@2@@Z
     ?allocate@Heap@JSC@@QAEPAXI@Z
     ?allocatePropertyStorage@JSObject@JSC@@QAEXII@Z
+    ?allocateStack@MarkStack@JSC@@CAPAXI@Z
     ?append@UString@JSC@@QAEAAV12@ABV12@@Z
     ?append@UString@JSC@@QAEAAV12@PBD@Z
     ?ascii@UString@JSC@@QBEPADXZ
