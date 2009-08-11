@@ -2199,6 +2199,20 @@ ULONG STDMETHODCALLTYPE WebView::Release(void)
 
 // IWebView --------------------------------------------------------------------
 
+HRESULT STDMETHODCALLTYPE WebView::MIMETypeForExtension(
+    /* [in] */ BSTR extension,
+    /* [retval][out] */ BSTR* mimeType)
+{
+    if (!mimeType)
+        return E_POINTER;
+
+    String extensionStr(extension, SysStringLen(extension));
+
+    *mimeType = BString(MIMETypeRegistry::getMIMETypeForExtension(extensionStr)).release();
+
+    return S_OK;
+}
+
 HRESULT STDMETHODCALLTYPE WebView::canShowMIMEType( 
     /* [in] */ BSTR mimeType,
     /* [retval][out] */ BOOL* canShow)

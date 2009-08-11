@@ -1,3 +1,18 @@
+2009-08-11  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Fix of <rdar://5016504> SVG file cannot be dragged to webview,
+        but can be opened via Open File.
+        
+        Added a new function to IWebView that gets the MIME type for a given 
+        extension from the MIMETypeRegistry.
+
+        * Interfaces/IWebView.idl:
+        * WebView.cpp:
+        (WebView::MIMETypeForExtension):
+        * WebView.h:
+
 2009-08-11  Dmitry Titov <dimich@chromium.org>
 
         Reviewed by Adam Roben.
