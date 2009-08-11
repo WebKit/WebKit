@@ -44,6 +44,7 @@
 #include "SharedWorkerContext.h"
 #include "SharedWorkerThread.h"
 #include "WorkerLoaderProxy.h"
+#include "WorkerReportingProxy.h"
 #include "WorkerScriptLoader.h"
 #include "WorkerScriptLoaderClient.h"
 
@@ -51,7 +52,7 @@
 
 namespace WebCore {
 
-class SharedWorkerProxy : public ThreadSafeShared<SharedWorkerProxy>, public WorkerLoaderProxy {
+class SharedWorkerProxy : public ThreadSafeShared<SharedWorkerProxy>, public WorkerLoaderProxy, public WorkerReportingProxy {
 public:
     static PassRefPtr<SharedWorkerProxy> create(const String& name, const KURL& url) { return adoptRef(new SharedWorkerProxy(name, url)); }
 
@@ -66,8 +67,15 @@ public:
     virtual void postTaskToLoader(PassRefPtr<ScriptExecutionContext::Task>) { notImplemented(); }
     virtual void postTaskForModeToWorkerContext(PassRefPtr<ScriptExecutionContext::Task>, const String&) { notImplemented(); }
 
+    // WorkerReportingProxy
+    virtual void postExceptionToWorkerObject(const String& errorMessage, int lineNumber, const String& sourceURL);
+    virtual void postConsoleMessageToWorkerObject(MessageDestination, MessageSource, MessageType, MessageLevel, const String& message, int lineNumber, const String& sourceURL);
+    virtual void workerContextClosed();
+    virtual void workerContextDestroyed();
+
     // Updates the list of the worker's documents, per section 4.5 of the WebWorkers spec.
     void addToWorkerDocuments(ScriptExecutionContext*);
+
 private:
     SharedWorkerProxy(const String& name, const KURL&);
     bool m_closing;
@@ -81,6 +89,29 @@ SharedWorkerProxy::SharedWorkerProxy(const String& name, const KURL& url)
     , m_name(name.copy())
     , m_url(url.copy())
 {
+}
+
+void SharedWorkerProxy::postExceptionToWorkerObject(const String&, int, const String&)
+{
+    // FIXME: Log exceptions to all parent documents.
+    notImplemented();
+}
+
+void SharedWorkerProxy::postConsoleMessageToWorkerObject(MessageDestination, MessageSource, MessageType, MessageLevel, const String&, int, const String&)
+{
+    // FIXME: Log console messages to all parent documents.
+    notImplemented();
+}
+
+void SharedWorkerProxy::workerContextClosed()
+{
+    m_closing = true;
+}
+
+void SharedWorkerProxy::workerContextDestroyed()
+{
+    // FIXME: Remove the proxy from the repository once the worker context is destroyed.
+    notImplemented();
 }
 
 void SharedWorkerProxy::addToWorkerDocuments(ScriptExecutionContext* context)
@@ -177,7 +208,7 @@ void DefaultSharedWorkerRepository::workerScriptLoaded(SharedWorkerProxy& proxy,
 
     // Another loader may have already started up a thread for this proxy - if so, just send a connect to the pre-existing thread.
     if (!proxy.thread()) {
-        RefPtr<SharedWorkerThread> thread = SharedWorkerThread::create(proxy.name(), proxy.url(), userAgent, workerScript, proxy);
+        RefPtr<SharedWorkerThread> thread = SharedWorkerThread::create(proxy.name(), proxy.url(), userAgent, workerScript, proxy, proxy);
         proxy.setThread(thread);
         thread->start();
     }

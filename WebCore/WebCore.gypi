@@ -3353,6 +3353,7 @@
             'workers/WorkerMessagingProxy.cpp',
             'workers/WorkerMessagingProxy.h',
             'workers/WorkerObjectProxy.h',
+            'workers/WorkerReportingProxy.h',
             'workers/WorkerRunLoop.cpp',
             'workers/WorkerRunLoop.h',
             'workers/WorkerScriptLoader.cpp',

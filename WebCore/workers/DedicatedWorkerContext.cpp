@@ -46,23 +46,6 @@ DedicatedWorkerContext::DedicatedWorkerContext(const KURL& url, const String& us
 {
 }
 
-DedicatedWorkerContext::~DedicatedWorkerContext()
-{
-    ASSERT(currentThread() == thread()->threadID());
-    // Notify parent worker we are going away. This can free the WorkerThread object, so do not access it after this.
-    thread()->workerObjectProxy().workerContextDestroyed();
-}
-
-void DedicatedWorkerContext::forwardException(const String& errorMessage, int lineNumber, const String& sourceURL)
-{
-    thread()->workerObjectProxy().postExceptionToWorkerObject(errorMessage, lineNumber, sourceURL);
-}
-
-void DedicatedWorkerContext::addMessage(MessageDestination destination, MessageSource source, MessageType type, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceURL)
-{
-    thread()->workerObjectProxy().postConsoleMessageToWorkerObject(destination, source, type, level, message, lineNumber, sourceURL);
-}
-
 void DedicatedWorkerContext::postMessage(const String& message, ExceptionCode& ec)
 {
     postMessage(message, 0, ec);

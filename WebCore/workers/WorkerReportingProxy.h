@@ -28,33 +28,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WorkerObjectProxy_h
-#define WorkerObjectProxy_h
+#ifndef WorkerReportingProxy_h
+#define WorkerReportingProxy_h
 
 #if ENABLE(WORKERS)
 
-#include "WorkerReportingProxy.h"
-
-#include <wtf/PassOwnPtr.h>
+#include "Console.h"
 
 namespace WebCore {
 
-    class MessagePortChannel;
+    class String;
 
-    // A proxy to talk to the worker object.
-    class WorkerObjectProxy : public WorkerReportingProxy {
+    // APIs used by workers to report console activity.
+    class WorkerReportingProxy {
     public:
-        virtual void postMessageToWorkerObject(const String&, PassOwnPtr<MessagePortChannel>) = 0;
+        virtual ~WorkerReportingProxy() {}
 
-        virtual void confirmMessageFromWorkerObject(bool hasPendingActivity) = 0;
-        virtual void reportPendingActivity(bool hasPendingActivity) = 0;
+        virtual void postExceptionToWorkerObject(const String& errorMessage, int lineNumber, const String& sourceURL) = 0;
 
-        // No need to notify the parent page context when dedicated workers are closing.
-        virtual void workerContextClosed() { }
+        virtual void postConsoleMessageToWorkerObject(MessageDestination, MessageSource, MessageType, MessageLevel, const String& message, int lineNumber, const String& sourceURL) = 0;
+
+        // Invoked when close() is invoked on the worker context.
+        virtual void workerContextClosed() = 0;
+
+        // Invoked when the thread has stopped.
+        virtual void workerContextDestroyed() = 0;
     };
-
 } // namespace WebCore
 
 #endif // ENABLE(WORKERS)
 
-#endif // WorkerObjectProxy_h
+#endif // WorkerReportingProxy_h

@@ -24292,6 +24292,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\workers\WorkerReportingProxy.h"
+				>
+			</File>
+			<File
 				RelativePath="..\workers\WorkerRunLoop.cpp"
 				>
 			</File>

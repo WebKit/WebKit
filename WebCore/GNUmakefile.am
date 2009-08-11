@@ -2370,6 +2370,7 @@ webcore_sources += \
 	WebCore/workers/WorkerMessagingProxy.cpp \
 	WebCore/workers/WorkerMessagingProxy.h \
 	WebCore/workers/WorkerObjectProxy.h \
+	WebCore/workers/WorkerReportingProxy.h \
 	WebCore/workers/WorkerRunLoop.cpp \
 	WebCore/workers/WorkerRunLoop.h \
 	WebCore/workers/WorkerScriptLoader.cpp \

@@ -46,17 +46,11 @@ namespace WebCore {
         {
             return adoptRef(new DedicatedWorkerContext(url, userAgent, thread));
         }
-        virtual ~DedicatedWorkerContext();
 
         virtual bool isDedicatedWorkerContext() const { return true; }
 
         // Overridden to allow us to check our pending activity after executing imported script.
         virtual void importScripts(const Vector<String>& urls, const String& callerURL, int callerLine, ExceptionCode&);
-
-        // ScriptExecutionContext
-        virtual void addMessage(MessageDestination, MessageSource, MessageType, MessageLevel, const String& message, unsigned lineNumber, const String& sourceURL);
-
-        virtual void forwardException(const String& errorMessage, int lineNumber, const String& sourceURL);
 
         // EventTarget
         virtual DedicatedWorkerContext* toDedicatedWorkerContext() { return this; }

@@ -38,14 +38,14 @@ namespace WebCore {
 
     class SharedWorkerThread : public WorkerThread {
     public:
-        static PassRefPtr<SharedWorkerThread> create(const String& name, const KURL&, const String& userAgent, const String& sourceCode, WorkerLoaderProxy&);
+        static PassRefPtr<SharedWorkerThread> create(const String& name, const KURL&, const String& userAgent, const String& sourceCode, WorkerLoaderProxy&, WorkerReportingProxy&);
         ~SharedWorkerThread();
 
     protected:
         virtual PassRefPtr<WorkerContext> createWorkerContext(const KURL&, const String&);
 
     private:
-        SharedWorkerThread(const String& name, const KURL&, const String& userAgent, const String& sourceCode, WorkerLoaderProxy&);
+        SharedWorkerThread(const String& name, const KURL&, const String& userAgent, const String& sourceCode, WorkerLoaderProxy&, WorkerReportingProxy&);
 
         String m_name;
     };

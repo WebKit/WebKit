@@ -1,3 +1,67 @@
+2009-08-11  Drew Wilson  <atwilson@google.com>
+
+        Reviewed by David Levin.
+
+        Need to refactor WorkerObjectProxy.
+        https://bugs.webkit.org/show_bug.cgi?id=28136
+
+        Added WorkerReportingProxy for reporting worker state (exceptions, console messages, thread exited) to the parent.
+
+        Existing tests are sufficient, as this is only a refactoring.
+
+        * GNUmakefile.am:
+        Added WorkerReportingProxy.h to build.
+        * WebCore.gypi:
+        Added WorkerReportingProxy.h to build.
+        * WebCore.vcproj/WebCore.vcproj:
+        Added WorkerReportingProxy.h to build.
+        * WebCore.xcodeproj/project.pbxproj:
+        Added WorkerReportingProxy.h to build.
+        * workers/DedicatedWorkerContext.cpp:
+        * workers/DedicatedWorkerContext.h:
+        Removed addMessage/forwardException() APIs - now handled by WorkerReportingProxy.
+        * workers/DedicatedWorkerThread.cpp:
+        (WebCore::DedicatedWorkerThread::DedicatedWorkerThread):
+        Changed constructor to pass WorkerReportingProxy to base class.
+        * workers/DefaultSharedWorkerRepository.cpp:
+        Updated SharedWorkerProxy to implement WorkerReportingProxy interface.
+        (WebCore::SharedWorkerProxy::postExceptionToWorkerObject):
+        (WebCore::SharedWorkerProxy::postConsoleMessageToWorkerObject):
+        (WebCore::SharedWorkerProxy::workerContextClosed):
+        (WebCore::SharedWorkerProxy::workerContextDestroyed):
+        (WebCore::DefaultSharedWorkerRepository::workerScriptLoaded):
+        Now passes in WorkerReportingProxy when creating SharedWorkerThread.
+        * workers/SharedWorkerContext.cpp:
+        * workers/SharedWorkerContext.h:
+        Removed addMessage/forwardException() APIs - now handled by WorkerReportingProxy.
+        * workers/SharedWorkerThread.cpp:
+        (WebCore::SharedWorkerThread::create):
+        (WebCore::SharedWorkerThread::SharedWorkerThread):
+        Passes WorkerReportingProxy to base class constructor.
+        * workers/SharedWorkerThread.h:
+        Constructor now takes a WorkerReportingProxy.
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::~WorkerContext):
+        Moved code that calls workerContextDestroyed() into base class so shared workers share this functionality.
+        (WebCore::WorkerContext::close):
+        Now notifies WorkerReportingProxy when the thread is closing.
+        (WebCore::WorkerContext::reportException):
+        Reports exceptions via WorkerReportingProxy.
+        (WebCore::WorkerContext::addMessage):
+        Reports console messages via WorkerReportingProxy.
+        * workers/WorkerContext.h:
+        * workers/WorkerObjectProxy.h:
+        (WebCore::WorkerObjectProxy::workerContextClosed):
+        Default empty implementation for dedicated workers.
+        * workers/WorkerReportingProxy.h: Added.
+        Base interface that contains APIs moved from WorkerObjectProxy.
+        (WebCore::WorkerReportingProxy::~WorkerReportingProxy):
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThread::WorkerThread):
+        Updated constructor to accept a WorkerReportingProxy.
+        * workers/WorkerThread.h:
+        (WebCore::WorkerThread::workerReportingProxy):
+
 2009-08-11  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by NOBODY (build fix).
