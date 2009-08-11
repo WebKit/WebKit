@@ -117,6 +117,10 @@ extern NSString *WebPreferencesRemovedNotification;
 - (WebTextDirectionSubmenuInclusionBehavior)textDirectionSubmenuInclusionBehavior;
 - (void)setTextDirectionSubmenuInclusionBehavior:(WebTextDirectionSubmenuInclusionBehavior)behavior;
 
+// Used to set preference specified in the test via LayoutTestController.overridePreference(..).
+// For use with DumpRenderTree only.
+- (void)_setPreferenceForTestWithValue:(NSString *)value forKey:(NSString *)key;
+
 // If site-specific spoofing is enabled, some pages that do inappropriate user-agent string checks will be
 // passed a nonstandard user-agent string to get them to work correctly. This method might be removed in
 // the future when there's no more need for it.

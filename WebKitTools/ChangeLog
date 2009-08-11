@@ -1,3 +1,34 @@
+2009-08-11  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Adam Roben.
+
+        Originally implemented by Glenn Wilson  <gwilson@chromium.org>.
+
+        Added support for overriding default preferences per-test.
+        See https://bugs.webkit.org/show_bug.cgi?id=20534
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (overridePreferenceCallback): add wiring for layoutTestController.overridePreference.
+        (LayoutTestController::staticFunctions): same.
+        * DumpRenderTree/LayoutTestController.h: same.
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::overridePreference): added empty overridePreference method.
+        * DumpRenderTree/mac/DumpRenderTree.mm: implemented preference override.
+        (resetDefaultsToConsistentValues): new method, resets preferences to same set of value before every test.
+        (setDefaultsToConsistentValuesForTesting): new method, sets other details of testing environment, every time  DRT starts.
+        (resetWebViewToConsistentStateBeforeTesting): move some preference setting from here to new resetDefaultsToConsistentValues().
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::overridePreference):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (resetDefaultsToConsistentValues): new method, resets preferences to same set of value before every test.
+        (resetWebViewToConsistentStateBeforeTesting): move some preference setting from here to new resetDefaultsToConsistentValues().
+        (createWebViewAndOffscreenWindow): same.
+        (main): same.
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::overridePreference):
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::overridePreference):
+
 2009-08-11  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Sam Weinig.
