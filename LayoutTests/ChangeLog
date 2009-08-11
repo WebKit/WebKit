@@ -1,3 +1,10 @@
+2009-08-11  Brady Eidson  <beidson@apple.com>
+
+        Rubberstamped by Mark Rowe.
+
+        * platform/mac-snowleopard/Skipped: Remove http/tests/navigation/post-goback-repost-policy.html,
+          as it has already been disabled globally, and re-enabling is tracked by <rdar://problem/6778137>
+
 2009-08-07  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Eric Seidel.
