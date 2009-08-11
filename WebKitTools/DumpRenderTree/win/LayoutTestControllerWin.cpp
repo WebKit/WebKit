@@ -707,27 +707,6 @@ void LayoutTestController::clearAllDatabases()
     databaseManager->deleteAllDatabases();
 }
 
-void LayoutTestController::overridePreference(JSStringRef key, JSStringRef value)
-{
-    COMPtr<IWebView> webView;
-    if (FAILED(frame->webView(&webView)))
-        return;
-
-    COMPtr<IWebPreferences> preferences;
-    if (FAILED(webView->preferences(&preferences)))
-        return;
-
-    COMPtr<IWebPreferencesPrivate> prefsPrivate(Query, preferences);
-    if (!prefsPrivate)
-        return;
-
-    BSTR keyBSTR = JSStringCopyBSTR(key);
-    BSTR valueBSTR = JSStringCopyBSTR(value);
-    prefsPrivate->setPreferenceForTest(keyBSTR, valueBSTR);
-    SysFreeString(keyBSTR);
-    SysFreeString(valueBSTR);
-}
-
 void LayoutTestController::setDatabaseQuota(unsigned long long quota)
 {
     printf("ERROR: LayoutTestController::setDatabaseQuota() not implemented\n");

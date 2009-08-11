@@ -1,22 +1,3 @@
-2009-08-10  Dmitry Titov  <dimich@chromium.org>
-
-        Reviewed by Adam Roben.
-
-        Originally implemented by Glenn Wilson  <gwilson@chromium.org>.
-
-        Added tests to verify that default preferences can be overridden per-test
-        and that overridden values are reset between each test.
-        See https://bugs.webkit.org/show_bug.cgi?id=20534
-
-        * fast/harness/override-preferences-2-expected.txt: Added.
-        * fast/harness/override-preferences-2.html: Added. Verifies overridePreverence("WebKitDefaultFontSize", "24").
-        * fast/harness/override-preferences-expected.txt: Added.
-        * fast/harness/override-preferences.html: Added. Verifies overridePreference("WebKitJavaScriptEnabled", false).
-        * fast/harness/override-zzz-reset-expected.txt: Added.
-        * fast/harness/override-zzz-reset.html: Added. Because of 'zzz' this test will run after the tests above and
-        verify that override of preferences does not 'spill' to the subsequent tests in a batch.
-        * platform/gtk/Skipped: Tests above disabled for GTK until GTK DRT implements preference override.
-
 2009-08-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Justin Garcia.

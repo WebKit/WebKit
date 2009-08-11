@@ -1301,17 +1301,6 @@ HRESULT WebPreferences::zoomsTextOnly(BOOL* zoomsTextOnly)
     return S_OK;
 }
 
-HRESULT WebPreferences::setPreferenceForTest(BSTR key, BSTR value)
-{
-    if (!SysStringLen(key) || !SysStringLen(value))
-        return E_FAIL;
-    RetainPtr<CFStringRef> keyString(AdoptCF, CFStringCreateWithCharacters(0, reinterpret_cast<UniChar*>(key), SysStringLen(key)));
-    RetainPtr<CFStringRef> valueString(AdoptCF, CFStringCreateWithCharacters(0, reinterpret_cast<UniChar*>(value), SysStringLen(value)));
-    setValueForKey(keyString.get(), valueString.get());
-    postPreferencesChangesNotification();
-    return S_OK;
-}
-
 void WebPreferences::willAddToWebView()
 {
     ++m_numWebViews;

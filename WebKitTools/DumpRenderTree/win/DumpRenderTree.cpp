@@ -657,66 +657,6 @@ static bool shouldLogFrameLoadDelegates(const char* pathOrURL)
     return strstr(pathOrURL, "/loading/") || strstr(pathOrURL, "\\loading\\");
 }
 
-static void resetDefaultsToConsistentValues(IWebPreferences* preferences)
-{
-#ifdef USE_MAC_FONTS
-    static BSTR standardFamily = SysAllocString(TEXT("Times"));
-    static BSTR fixedFamily = SysAllocString(TEXT("Courier"));
-    static BSTR sansSerifFamily = SysAllocString(TEXT("Helvetica"));
-    static BSTR cursiveFamily = SysAllocString(TEXT("Apple Chancery"));
-    static BSTR fantasyFamily = SysAllocString(TEXT("Papyrus"));
-#else
-    static BSTR standardFamily = SysAllocString(TEXT("Times New Roman"));
-    static BSTR fixedFamily = SysAllocString(TEXT("Courier New"));
-    static BSTR sansSerifFamily = SysAllocString(TEXT("Arial"));
-    static BSTR cursiveFamily = SysAllocString(TEXT("Comic Sans MS")); // Not actually cursive, but it's what IE and Firefox use.
-    static BSTR fantasyFamily = SysAllocString(TEXT("Times New Roman"));
-#endif
-
-    preferences->setStandardFontFamily(standardFamily);
-    preferences->setFixedFontFamily(fixedFamily);
-    preferences->setSerifFontFamily(standardFamily);
-    preferences->setSansSerifFontFamily(sansSerifFamily);
-    preferences->setCursiveFontFamily(cursiveFamily);
-    preferences->setFantasyFontFamily(fantasyFamily);
-
-    preferences->setAutosaves(FALSE);
-    preferences->setDefaultFontSize(16);
-    preferences->setDefaultFixedFontSize(13);
-    preferences->setMinimumFontSize(1);
-    preferences->setJavaEnabled(FALSE);
-    preferences->setPlugInsEnabled(TRUE);
-    preferences->setDOMPasteAllowed(TRUE);
-    preferences->setEditableLinkBehavior(WebKitEditableLinkOnlyLiveWithShiftKey);
-    preferences->setFontSmoothing(FontSmoothingTypeStandard);
-    preferences->setUsesPageCache(FALSE);
-    preferences->setPrivateBrowsingEnabled(FALSE);
-    preferences->setJavaScriptCanOpenWindowsAutomatically(TRUE);
-    preferences->setJavaScriptEnabled(TRUE);
-    preferences->setTabsToLinks(FALSE);
-    preferences->setShouldPrintBackgrounds(TRUE);
-    preferences->setLoadsImagesAutomatically(TRUE);
-
-    if (persistentUserStyleSheetLocation) {
-        Vector<wchar_t> urlCharacters(CFStringGetLength(persistentUserStyleSheetLocation.get()));
-        CFStringGetCharacters(persistentUserStyleSheetLocation.get(), CFRangeMake(0, CFStringGetLength(persistentUserStyleSheetLocation.get())), (UniChar *)urlCharacters.data());
-        BSTR url = SysAllocStringLen(urlCharacters.data(), urlCharacters.size());
-        preferences->setUserStyleSheetLocation(url);
-        SysFreeString(url);
-        preferences->setUserStyleSheetEnabled(TRUE);
-    } else
-        preferences->setUserStyleSheetEnabled(FALSE);
-
-    COMPtr<IWebPreferencesPrivate> prefsPrivate(Query, preferences);
-    if (prefsPrivate) {
-        prefsPrivate->setAuthorAndUserStylesEnabled(TRUE);
-        prefsPrivate->setDeveloperExtrasEnabled(FALSE);
-        prefsPrivate->setShouldPaintNativeControls(FALSE); // FIXME - need to make DRT pass with Windows native controls <http://bugs.webkit.org/show_bug.cgi?id=25592>
-        prefsPrivate->setXSSAuditorEnabled(FALSE);
-        prefsPrivate->setOfflineWebApplicationCacheEnabled(FALSE);
-    }
-}
-
 static void resetWebViewToConsistentStateBeforeTesting()
 {
     COMPtr<IWebView> webView;
@@ -732,7 +672,6 @@ static void resetWebViewToConsistentStateBeforeTesting()
         webIBActions->makeTextStandardSize(0);
         webIBActions->resetPageZoom(0);
     }
-
 
     COMPtr<IWebPreferences> preferences;
     if (SUCCEEDED(webView->preferences(&preferences))) {
@@ -889,6 +828,44 @@ exit:
     ::gLayoutTestController = 0;
 
     return;
+}
+
+static void initializePreferences(IWebPreferences* preferences)
+{
+#ifdef USE_MAC_FONTS
+    BSTR standardFamily = SysAllocString(TEXT("Times"));
+    BSTR fixedFamily = SysAllocString(TEXT("Courier"));
+    BSTR sansSerifFamily = SysAllocString(TEXT("Helvetica"));
+    BSTR cursiveFamily = SysAllocString(TEXT("Apple Chancery"));
+    BSTR fantasyFamily = SysAllocString(TEXT("Papyrus"));
+#else
+    BSTR standardFamily = SysAllocString(TEXT("Times New Roman"));
+    BSTR fixedFamily = SysAllocString(TEXT("Courier New"));
+    BSTR sansSerifFamily = SysAllocString(TEXT("Arial"));
+    BSTR cursiveFamily = SysAllocString(TEXT("Comic Sans MS")); // Not actually cursive, but it's what IE and Firefox use.
+    BSTR fantasyFamily = SysAllocString(TEXT("Times New Roman"));
+#endif
+
+    preferences->setStandardFontFamily(standardFamily);
+    preferences->setFixedFontFamily(fixedFamily);
+    preferences->setSerifFontFamily(standardFamily);
+    preferences->setSansSerifFontFamily(sansSerifFamily);
+    preferences->setCursiveFontFamily(cursiveFamily);
+    preferences->setFantasyFontFamily(fantasyFamily);
+
+    preferences->setAutosaves(FALSE);
+    preferences->setJavaEnabled(FALSE);
+    preferences->setPlugInsEnabled(TRUE);
+    preferences->setDOMPasteAllowed(TRUE);
+    preferences->setEditableLinkBehavior(WebKitEditableLinkOnlyLiveWithShiftKey);
+    preferences->setFontSmoothing(FontSmoothingTypeStandard);
+    preferences->setUsesPageCache(FALSE);
+
+    SysFreeString(standardFamily);
+    SysFreeString(fixedFamily);
+    SysFreeString(sansSerifFamily);
+    SysFreeString(cursiveFamily);
+    SysFreeString(fantasyFamily);
 }
 
 static Boolean pthreadEqualCallback(const void* value1, const void* value2)
@@ -1075,6 +1052,12 @@ IWebView* createWebViewAndOffscreenWindow(HWND* webViewWindow)
     if (FAILED(webView->setResourceLoadDelegate(sharedResourceLoadDelegate.get())))
         return 0;
 
+    COMPtr<IWebPreferences> preferences;
+    if (FAILED(webView->preferences(&preferences)))
+        return 0;
+
+    initializePreferences(preferences.get());
+
     openWindows().append(hostWindow);
     windowToWebViewMap().set(hostWindow, webView);
     return webView;
@@ -1141,6 +1124,18 @@ int main(int argc, char* argv[])
     sharedUIDelegate.adoptRef(new UIDelegate);
     sharedEditingDelegate.adoptRef(new EditingDelegate);
     sharedResourceLoadDelegate.adoptRef(new ResourceLoadDelegate);
+
+    // FIXME - need to make DRT pass with Windows native controls <http://bugs.webkit.org/show_bug.cgi?id=25592>
+    COMPtr<IWebPreferences> tmpPreferences;
+    if (FAILED(WebKitCreateInstance(CLSID_WebPreferences, 0, IID_IWebPreferences, reinterpret_cast<void**>(&tmpPreferences))))
+        return -1;
+    COMPtr<IWebPreferences> standardPreferences;
+    if (FAILED(tmpPreferences->standardPreferences(&standardPreferences)))
+        return -1;
+    COMPtr<IWebPreferencesPrivate> standardPreferencesPrivate;
+    if (FAILED(standardPreferences->QueryInterface(&standardPreferencesPrivate)))
+        return -1;
+    standardPreferencesPrivate->setShouldPaintNativeControls(FALSE);
 
     COMPtr<IWebView> webView(AdoptCOM, createWebViewAndOffscreenWindow(&webViewWindow));
     if (!webView)

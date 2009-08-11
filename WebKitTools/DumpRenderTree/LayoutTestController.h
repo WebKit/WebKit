@@ -53,7 +53,6 @@ public:
     bool isCommandEnabled(JSStringRef name);
     void keepWebHistory();
     void notifyDone();
-    void overridePreference(JSStringRef key, JSStringRef value);
     JSStringRef pathToLocalResource(JSContextRef, JSStringRef url);
     void queueBackNavigation(int howFarBackward);
     void queueForwardNavigation(int howFarForward);
