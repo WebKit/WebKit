@@ -1,3 +1,18 @@
+2009-08-11  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        REGRESSION: Hang/crash in BytecodeGenerator::constRegisterFor loading simple page
+        https://bugs.webkit.org/show_bug.cgi?id=28169
+
+        Handle the case where someone has attempted to shadow a property
+        on the global object with a constant.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::constRegisterFor):
+        * parser/Nodes.cpp:
+        (JSC::ConstDeclNode::emitCodeSingle):
+
 2009-08-11  John Gregg  <johnnyg@google.com>
 
         Reviewed by Maciej Stachowiak.

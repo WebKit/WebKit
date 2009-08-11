@@ -470,7 +470,8 @@ RegisterID* BytecodeGenerator::constRegisterFor(const Identifier& ident)
         return 0;
 
     SymbolTableEntry entry = symbolTable().get(ident.ustring().rep());
-    ASSERT(!entry.isNull());
+    if (entry.isNull())
+        return 0;
 
     return &registerFor(entry.getIndex());
 }

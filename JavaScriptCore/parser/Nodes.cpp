@@ -1205,7 +1205,13 @@ RegisterID* ConstDeclNode::emitCodeSingle(BytecodeGenerator& generator)
 
         return generator.emitNode(local, m_init);
     }
-    
+
+    if (generator.codeType() != EvalCode) {
+        if (m_init)
+            return generator.emitNode(m_init);
+        else
+            return generator.emitResolve(generator.newTemporary(), m_ident);
+    }
     // FIXME: While this code should only be hit in eval code, it will potentially
     // assign to the wrong base if m_ident exists in an intervening dynamic scope.
     RefPtr<RegisterID> base = generator.emitResolveBase(generator.newTemporary(), m_ident);

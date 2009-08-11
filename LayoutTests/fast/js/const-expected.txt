@@ -49,6 +49,8 @@ PASS inWith2 is 'RIGHT'
 PASS (function(){ one = 2; return one; })() is 1
 PASS f() is f
 PASS const a; is undefined
+PASS bodyId is document.getElementById('bodyId')
+PASS ranConstInitialiser is true
 PASS successfullyParsed is true
 
 TEST COMPLETE
