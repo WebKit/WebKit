@@ -10,7 +10,7 @@ SUBDIRS += \
 !win32:!symbian {
     SUBDIRS += WebKitTools/DumpRenderTree/qt/DumpRenderTree.pro
     SUBDIRS += WebKitTools/DumpRenderTree/qt/ImageDiff.pro
-    !mac: SUBDIRS += WebKitTools/DumpRenderTree/qt/TestNetscapePlugin/TestNetscapePlugin.pro
+    SUBDIRS += WebKitTools/DumpRenderTree/qt/TestNetscapePlugin/TestNetscapePlugin.pro
 }
 
 include(WebKit/qt/docs/docs.pri)

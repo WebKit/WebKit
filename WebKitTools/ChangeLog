@@ -1,3 +1,11 @@
+2009-08-11  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Build the TestNetscapePlugin on Qt/Mac
+
+        * DumpRenderTree/qt/TestNetscapePlugin/TestNetscapePlugin.pro:
+
 2009-08-11  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by NOBODY (build fix).
