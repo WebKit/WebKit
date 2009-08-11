@@ -1,3 +1,11 @@
+2009-08-11  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Remove dead declarations.
+        
+        * WebView/WebViewInternal.h:
+
 2009-08-11  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Adam Roben.
