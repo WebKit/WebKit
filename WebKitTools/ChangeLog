@@ -1,3 +1,12 @@
+2009-08-10  Steve Falkenburg  <sfalken@apple.com>
+
+        Windows nightly fix.
+
+        Reviewed by Ada Chan.
+
+        * FindSafari/FindSafari.cpp:
+        (_tmain): Copy Safari.dll if it exists.
+
 2009-08-10  David Levin  <levin@chromium.org>
 
         Reviewed by David Kilzer.
