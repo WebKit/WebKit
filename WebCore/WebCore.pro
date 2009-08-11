@@ -3047,6 +3047,12 @@ idl.output = $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}JS${QMAKE_FILE_BASE}.cpp
 idl.variable_out = GENERATED_SOURCES
 idl.input = IDL_BINDINGS
 idl.commands = perl -I$$PWD/bindings/scripts $$PWD/bindings/scripts/generate-bindings.pl --defines \"$${FEATURE_DEFINES_JAVASCRIPT}\" --generator JS --include $$PWD/dom --include $$PWD/html --include $$PWD/xml --include $$PWD/svg --outputDir $$GENERATED_SOURCES_DIR --preprocessor \"$${QMAKE_MOC} -E\" ${QMAKE_FILE_NAME}
+idl.depends = $$PWD/bindings/scripts/generate-bindings.pl \
+              $$PWD/bindings/scripts/CodeGenerator.pm \
+              $$PWD/bindings/scripts/CodeGeneratorJS.pm \
+              $$PWD/bindings/scripts/IDLParser.pm \
+              $$PWD/bindings/scripts/IDLStructure.pm \
+              $$PWD/bindings/scripts/InFilesParser.pm
 idl.CONFIG += target_predeps
 addExtraCompilerWithHeader(idl)
 

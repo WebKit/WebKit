@@ -1,3 +1,12 @@
+2009-08-11  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Holger Freyther.
+
+        Fix the build on the Qt build bot by making the generated JS bindings
+        files depend on the code generator itself.
+
+        * WebCore.pro:
+
 2009-08-07  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Sam Weinig
