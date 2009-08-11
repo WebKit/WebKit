@@ -26,12 +26,8 @@ function runTest()
     log("Length is " + localStorage.length);
     log("Value for FOO is " + localStorage.getItem("FOO"));
     log("Key for index 0 is " + localStorage.key(0));
-    try {
-        localStorage.key(1);
-    } catch(e) {
-        log("Correctly caught exception trying to access key at index 1");
-        log(e);
-    }
+    log("Key for index 1 is " + localStorage.key(1));
+    log("Key for index -1 is " + localStorage.key(-1));
     
     localStorage.setItem("FOO", "BAZ");
     

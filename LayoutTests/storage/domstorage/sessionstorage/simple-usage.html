@@ -26,12 +26,8 @@ function runTest()
     log("Length is " + window.sessionStorage.length);
     log("Value for FOO is " + window.sessionStorage.getItem("FOO"));
     log("Key for index 0 is " + window.sessionStorage.key(0));
-    try {
-        window.sessionStorage.key(1);
-    } catch(e) {
-        log("Correctly caught exception trying to access key at index 1");
-        log(e);
-    }
+    log("Key for index 1 is " + window.sessionStorage.key(1));
+    log("Key for index -1 is " + window.sessionStorage.key(-1));
     
     window.sessionStorage.setItem("FOO", "BAZ");
     

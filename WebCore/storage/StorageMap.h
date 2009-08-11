@@ -42,7 +42,7 @@ namespace WebCore {
         static PassRefPtr<StorageMap> create();
 
         unsigned length() const;
-        bool key(unsigned index, String& key) const;
+        String key(unsigned index) const;
         String getItem(const String&) const;
         PassRefPtr<StorageMap> setItem(const String& key, const String& value, String& oldValue);
         PassRefPtr<StorageMap> removeItem(const String&, String& oldValue);

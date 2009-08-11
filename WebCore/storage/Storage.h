@@ -45,7 +45,7 @@ namespace WebCore {
         ~Storage();
 
         unsigned length() const;
-        String key(unsigned index, ExceptionCode&) const;
+        String key(unsigned index) const;
         String getItem(const String&) const;
         void setItem(const String& key, const String& value, ExceptionCode&);
         void removeItem(const String&);

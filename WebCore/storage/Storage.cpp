@@ -59,13 +59,12 @@ unsigned Storage::length() const
     return m_storageArea->length();
 }
 
-String Storage::key(unsigned index, ExceptionCode& ec) const
+String Storage::key(unsigned index) const
 {
-    ec = 0;
     if (!m_frame)
         return String();
 
-    return m_storageArea->key(index, ec);
+    return m_storageArea->key(index);
 }
 
 String Storage::getItem(const String& key) const

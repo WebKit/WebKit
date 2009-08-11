@@ -45,7 +45,7 @@ namespace WebCore {
 
         // The HTML5 DOM Storage API (and contains)
         virtual unsigned length() const;
-        virtual String key(unsigned index, ExceptionCode& ec) const;
+        virtual String key(unsigned index) const;
         virtual String getItem(const String& key) const;
         virtual void setItem(const String& key, const String& value, ExceptionCode& ec, Frame* sourceFrame);
         virtual void removeItem(const String& key, Frame* sourceFrame);

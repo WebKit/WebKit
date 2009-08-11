@@ -106,19 +106,11 @@ unsigned StorageAreaImpl::length() const
     return m_storageMap->length();
 }
 
-String StorageAreaImpl::key(unsigned index, ExceptionCode& ec) const
+String StorageAreaImpl::key(unsigned index) const
 {
     ASSERT(!m_isShutdown);
     blockUntilImportComplete();
-
-    String key;
-
-    if (!m_storageMap->key(index, key)) {
-        ec = INDEX_SIZE_ERR;
-        return String();
-    }
-
-    return key;
+    return m_storageMap->key(index);
 }
 
 String StorageAreaImpl::getItem(const String& key) const

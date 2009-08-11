@@ -46,9 +46,8 @@ v8::Handle<v8::Array> V8Custom::v8StorageNamedPropertyEnumerator(const v8::Acces
     unsigned int length = storage->length();
     v8::Handle<v8::Array> properties = v8::Array::New(length);
     for (unsigned int i = 0; i < length; ++i) {
-        ExceptionCode ec = 0;
-        String key = storage->key(i, ec);
-        ASSERT(!ec);
+        String key = storage->key(i);
+        ASSERT(!key.isNull());
         String val = storage->getItem(key);
         properties->Set(v8::Integer::New(i), v8String(key));
     }

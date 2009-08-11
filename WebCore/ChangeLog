@@ -1,3 +1,30 @@
+2009-08-10  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Brady Eidson.
+
+        Change ___Storage.key() to match current spec behavior.
+        https://bugs.webkit.org/show_bug.cgi?id=28112
+
+        The current WebStorage spec says that ___Storage.key() should return null when
+        the index is out of bounds, rather than an exception.  A bunch of logic can be
+        simplified after this change.
+
+        * bindings/js/JSStorageCustom.cpp:
+        (WebCore::JSStorage::getPropertyNames):
+        * bindings/v8/custom/V8StorageCustom.cpp:
+        (WebCore::V8Custom::v8StorageNamedPropertyEnumerator):
+        * storage/Storage.cpp:
+        (WebCore::Storage::key):
+        * storage/Storage.h:
+        * storage/Storage.idl:
+        * storage/StorageArea.h:
+        * storage/StorageAreaImpl.cpp:
+        (WebCore::StorageAreaImpl::key):
+        * storage/StorageAreaImpl.h:
+        * storage/StorageMap.cpp:
+        (WebCore::StorageMap::key):
+        * storage/StorageMap.h:
+
 2009-08-07  Michael Nordman  <michaeln@google.com>
 
         Reviewed by Darin Fisher.
