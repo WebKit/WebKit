@@ -1121,6 +1121,20 @@ int main(int argc, char* argv[])
     sharedEditingDelegate.adoptRef(new EditingDelegate);
     sharedResourceLoadDelegate.adoptRef(new ResourceLoadDelegate);
 
+    // FIXME - need to make DRT pass with Windows native controls <http://bugs.webkit.org/show_bug.cgi?id=25592>
+    COMPtr<IWebPreferences> tmpPreferences;
+    if (FAILED(WebKitCreateInstance(CLSID_WebPreferences, 0, IID_IWebPreferences, reinterpret_cast<void**>(&tmpPreferences))))
+        return -1;
+    COMPtr<IWebPreferences> standardPreferences;
+    if (FAILED(tmpPreferences->standardPreferences(&standardPreferences)))
+        return -1;
+    COMPtr<IWebPreferencesPrivate> standardPreferencesPrivate;
+    if (FAILED(standardPreferences->QueryInterface(&standardPreferencesPrivate)))
+        return -1;
+    standardPreferencesPrivate->setShouldPaintNativeControls(FALSE);
+    standardPreferences->setJavaScriptEnabled(TRUE);
+    standardPreferences->setDefaultFontSize(16);
+
     COMPtr<IWebView> webView(AdoptCOM, createWebViewAndOffscreenWindow(&webViewWindow));
     if (!webView)
         return -1;

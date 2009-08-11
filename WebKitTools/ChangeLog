@@ -14,6 +14,16 @@
 
 2009-08-11  Dmitry Titov  <dimich@chromium.org>
 
+        Reviewed by NOBODY (Windows layout tests fix).
+
+        Fix for layout tests failures. Need to initialize some preferences early
+        because WebView on Windows uses them during create time.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (main):
+
+2009-08-11  Dmitry Titov  <dimich@chromium.org>
+
         Reviewed by Adam Roben.
 
         Originally implemented by Glenn Wilson  <gwilson@chromium.org>.
