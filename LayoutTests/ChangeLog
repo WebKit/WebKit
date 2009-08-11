@@ -1,6 +1,14 @@
 2009-08-11  Brady Eidson  <beidson@apple.com>
 
-        Rubberstamped by Mark Rowe.
+        Rubber-stamped by Mark Rowe.
+
+        Resolve <rdar://problem/6877291>.
+
+        * platform/mac-snowleopard/Skipped: media/video-size-intrinsic-scale.html no longer fails - stop skipping it!
+
+2009-08-11  Brady Eidson  <beidson@apple.com>
+
+        Rubber-stamped by Mark Rowe.
 
         * platform/mac-snowleopard/Skipped: Remove http/tests/navigation/post-goback-repost-policy.html,
           as it has already been disabled globally, and re-enabling is tracked by <rdar://problem/6778137>
