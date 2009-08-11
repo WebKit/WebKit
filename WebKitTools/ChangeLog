@@ -61,6 +61,15 @@
 
 2009-08-10  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
+        Reviewed by Simon Hausmann.
+
+        Fix a bunch of build warnings in TestNetscapePlugin
+        
+        * DumpRenderTree/TestNetscapePlugIn.subproj/TestObject.cpp:
+        * DumpRenderTree/gtk/TestNetscapePlugin/TestNetscapePlugin.cpp:
+
+2009-08-10  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
         Reviewed by Adam Roben.
         
         Allow TestNetscapePlugIn to fall back to the Carbon event model
