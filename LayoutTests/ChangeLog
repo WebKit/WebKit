@@ -1,3 +1,14 @@
+2009-08-07  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28073
+        Treat icons with no bit count and no color count as 256-color for
+        purposes of quality ranking.
+
+        * fast/images/icon-0colors.html: Added.
+        * fast/images/resources/0colors.ico: Added.
+
 2009-08-11  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Adam Roben.

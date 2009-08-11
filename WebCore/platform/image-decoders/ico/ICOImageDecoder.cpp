@@ -249,7 +249,7 @@ bool ICOImageDecoder::processDirectory()
         ICON = 1,
         CURSOR = 2,
     };
-    if (((fileType != ICON) && (fileType != CURSOR)) || (idCount == 0)) {
+    if (((fileType != ICON) && (fileType != CURSOR)) || (!idCount)) {
         setFailed();
         return false;
     }
@@ -303,10 +303,10 @@ ICOImageDecoder::IconDirectoryEntry ICOImageDecoder::readDirectoryEntry()
     // matching uint8_ts) is so we can record dimensions of size 256 (which is
     // what a zero byte really means).
     int width = static_cast<uint8_t>(m_data->data()[m_decodedOffset]);
-    if (width == 0)
+    if (!width)
         width = 256;
     int height = static_cast<uint8_t>(m_data->data()[m_decodedOffset + 1]);
-    if (height == 0)
+    if (!height)
         height = 256;
     IconDirectoryEntry entry;
     entry.m_size = IntSize(width, height);
@@ -318,11 +318,12 @@ ICOImageDecoder::IconDirectoryEntry ICOImageDecoder::readDirectoryEntry()
     // this isn't quite what the bitmap info header says later, as we only use
     // this value to determine which icon entry is best.
     if (!entry.m_bitCount) {
-        uint8_t colorCount = m_data->data()[m_decodedOffset + 2];
-        if (colorCount) {
-            for (--colorCount; colorCount; colorCount >>= 1)
-                ++entry.m_bitCount;
-        }
+        int colorCount =
+            static_cast<uint8_t>(m_data->data()[m_decodedOffset + 2]);
+        if (!colorCount)
+            colorCount = 256;  // Vague in the spec, needed by real-world icons.
+        for (--colorCount; colorCount; colorCount >>= 1)
+            ++entry.m_bitCount;
     }
 
     m_decodedOffset += sizeOfDirEntry;
