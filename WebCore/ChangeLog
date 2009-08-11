@@ -1,3 +1,16 @@
+2009-08-10  Crystal Zhang  <crystal.zhang@staikos.net>
+
+        Reviewed by George Staikos.
+
+        Implement GraphicsContext::fillRoundRect() for WINCE port
+        https://bugs.webkit.org/show_bug.cgi?id=27842
+
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/wince/GraphicsContextWince.cpp:
+        (WebCore::rectCenterPoint):
+        (WebCore::GraphicsContext::fillRoundedRect):
+        (WebCore::GraphicsContext::drawRoundCorner):
+
 2009-08-10  Anthony Ricaud  <rik@webkit.org>
 
         Reviewed by Timothy Hatcher.

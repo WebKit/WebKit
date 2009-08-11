@@ -1229,10 +1229,101 @@ void GraphicsContext::clipOutEllipseInRect(const IntRect&)
     notImplemented();
 }
 
-void GraphicsContext::fillRoundedRect(const IntRect&, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight, const Color&)
+static inline IntPoint rectCenterPoint(const RECT& rect)
 {
-    notImplemented();
+    return IntPoint(rect.left + (rect.right - rect.left) / 2, rect.top + (rect.bottom - rect.top) / 2);
 }
+void GraphicsContext::fillRoundedRect(const IntRect& fillRect, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight, const Color& c)
+{
+    ScopeDCProvider dcProvider(m_data);
+    if (!m_data->m_dc)
+        return;
+
+    IntSize shadowSize;
+    int shadowBlur = 0;
+    Color shadowColor;
+        
+    getShadow(shadowSize, shadowBlur, shadowColor);
+    
+    IntRect dstRect = fillRect;
+    
+    dstRect.move(shadowSize);
+    dstRect.inflate(shadowBlur);
+    dstRect = m_data->mapRect(dstRect);
+  
+    FloatSize newTopLeft(m_data->mapSize(topLeft));
+    FloatSize newTopRight(m_data->mapSize(topRight));
+    FloatSize newBottomLeft(m_data->mapSize(bottomLeft));
+    FloatSize newBottomRight(m_data->mapSize(bottomRight));
+
+    TransparentLayerDC transparentDc(m_data, dstRect, &fillRect);
+    HDC dc = transparentDc.hdc();
+    if (!dc)
+        return;
+
+    dstRect.move(transparentDc.toShift());
+
+    RECT rectWin = dstRect;
+
+    HGDIOBJ brush = createBrush(shadowColor);
+    HGDIOBJ oldBrush = SelectObject(dc, brush);
+   
+    SelectObject(dc, GetStockObject(NULL_PEN));
+
+    IntPoint centerPoint = rectCenterPoint(rectWin);
+    // Draw top left half
+    RECT clipRect(rectWin);
+    clipRect.right = centerPoint.x();
+    clipRect.bottom = centerPoint.y();
+
+    OwnPtr<HRGN> clipRgn(CreateRectRgn(0, 0, 0, 0));
+    bool needsNewClip = (GetClipRgn(dc, clipRgn.get()) <= 0);
+    
+    drawRoundCorner(needsNewClip, clipRect, rectWin, dc, stableRound(newTopLeft.width() * 2), stableRound(newTopLeft.height() * 2));
+
+    // Draw top right
+    clipRect = rectWin;
+    clipRect.left = centerPoint.x();
+    clipRect.bottom = centerPoint.y();
+
+    drawRoundCorner(needsNewClip, clipRect, rectWin, dc, stableRound(newTopRight.width() * 2), stableRound(newTopRight.height() * 2));
+
+     // Draw bottom left
+    clipRect = rectWin;
+    clipRect.right = centerPoint.x();
+    clipRect.top = centerPoint.y();
+
+    drawRoundCorner(needsNewClip, clipRect, rectWin, dc, stableRound(newBottomLeft.width() * 2), stableRound(newBottomLeft.height() * 2));
+
+    // Draw bottom right
+    clipRect = rectWin;
+    clipRect.left = centerPoint.x();
+    clipRect.top = centerPoint.y();
+
+    drawRoundCorner(needsNewClip, clipRect, rectWin, dc, stableRound(newBottomRight.width() * 2), stableRound(newBottomRight.height() * 2));
+
+    SelectObject(dc, oldBrush);
+    DeleteObject(brush);
+}
+
+
+void GraphicsContext::drawRoundCorner(bool needsNewClip, RECT clipRect, RECT rectWin, HDC dc, int width, int height)
+{
+    if (!dc)
+        return;
+
+    OwnPtr<HRGN> clipRgn(CreateRectRgn(0, 0, 0, 0));
+    if (needsNewClip)  {
+        clipRgn.set(CreateRectRgn(clipRect.left, clipRect.top, clipRect.right, clipRect.bottom));
+        SelectClipRgn(dc, clipRgn.get());
+    } else 
+        IntersectClipRect(dc, clipRect.left, clipRect.top, clipRect.right, clipRect.bottom);
+    
+    ::RoundRect(dc, rectWin.left , rectWin.top , rectWin.right , rectWin.bottom , width, height);
+    
+    SelectClipRgn(dc, needsNewClip ? 0 : clipRgn.get());
+}
+
 
 FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& frect)
 {
