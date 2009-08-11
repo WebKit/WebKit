@@ -1,3 +1,56 @@
+2009-08-07  Michael Nordman  <michaeln@google.com>
+
+        Reviewed by Darin Fisher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28087
+
+        Mods for a chrome specific impl of ApplicationCacheHost.
+
+        * The public section of the interface is the same, but we use
+        PLATFORM(CHROMIUM) to identify which parts of the private
+        section are shared. The chrome specific internals are encapsulated
+        in a seperate ApplicationCacheHostInternal class. WebCore common
+        code only contains a forward reference to this class.
+
+        * Cleanup a couple of stale comments.
+
+        * Have window.applicationCache return null to script when the
+        feature is disabled in the preferences.
+        
+        No new tests.
+
+        * loader/appcache/ApplicationCacheHost.cpp:
+        * loader/appcache/ApplicationCacheHost.h:
+        (WebCore::ApplicationCacheHost::documentLoader):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::applicationCache):
+
+<<<<<<< .mine
+2009-08-10  Michael Nordman  <michaeln@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Mods for a chrome specific impl of ApplicationCacheHost.
+        https://bugs.webkit.org/show_bug.cgi?id=28087
+
+        * The public section of the interface is the same, but we use
+        PLATFORM(CHROMIUM) to identify which parts of the private
+        section are shared. The chrome specific internals are encapsulated
+        in a seperate ApplicationCacheHostInternal class. WebCore common
+        code only contains a forward reference to this class.
+
+        * Cleanup a couple of stale comments.
+
+        * Have window.applicationCache return null to script when the
+        feature is disabled in the preferences.
+
+        * loader/appcache/ApplicationCacheHost.cpp:
+        * loader/appcache/ApplicationCacheHost.h:
+        (WebCore::ApplicationCacheHost::documentLoader):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::applicationCache):
+
+=======
 2009-08-10  Crystal Zhang  <crystal.zhang@staikos.net>
 
         Reviewed by George Staikos.
@@ -1618,6 +1671,7 @@
 
         * WebCore.xcodeproj/project.pbxproj:
 
+>>>>>>> .r47014
 2009-08-06  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
