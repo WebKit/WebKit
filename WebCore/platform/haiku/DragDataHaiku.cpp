@@ -27,10 +27,9 @@
 #include "config.h"
 #include "DragData.h"
 
+#include "ClipboardHaiku.h"
 #include "Document.h"
 #include "DocumentFragment.h"
-#include "ClipboardHaiku.h"
-
 #include "NotImplemented.h"
 
 
@@ -79,7 +78,7 @@ Color DragData::asColor() const
 
 WTF::PassRefPtr<Clipboard> DragData::createClipboard(ClipboardAccessPolicy policy) const
 {
-    return new ClipboardHaiku(policy, true);
+    return ClipboardHaiku::create(policy, true);
 }
 
 bool DragData::containsCompatibleContent() const
@@ -104,6 +103,6 @@ PassRefPtr<DocumentFragment> DragData::asFragment(Document*) const
     notImplemented();
     return 0;
 }
-    
+
 } // namespace WebCore
 

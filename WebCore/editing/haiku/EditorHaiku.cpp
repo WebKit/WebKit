@@ -28,9 +28,8 @@
 #include "config.h"
 #include "Editor.h"
 
-#include "ClipboardAccessPolicy.h"
 #include "Clipboard.h"
-
+#include "ClipboardAccessPolicy.h"
 #include "ClipboardHaiku.h"
 
 
@@ -38,7 +37,7 @@ namespace WebCore {
 
 PassRefPtr<Clipboard> Editor::newGeneralClipboard(ClipboardAccessPolicy policy)
 {
-    return new ClipboardHaiku(policy, false);
+    return ClipboardHaiku::create(policy, false);
 }
 
 } // namespace WebCore

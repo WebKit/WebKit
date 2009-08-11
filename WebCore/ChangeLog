@@ -1,3 +1,33 @@
+2009-08-11  Maxime Simon  <simon.maxime@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        [Haiku] Use Clipboard::create() instead of the constructor of Clipboard.
+        https://bugs.webkit.org/show_bug.cgi?id=28127
+
+        * editing/haiku/EditorHaiku.cpp:
+        (WebCore::Editor::newGeneralClipboard):
+        * page/haiku/EventHandlerHaiku.cpp:
+        (WebCore::EventHandler::passWheelEventToWidget):
+        (WebCore::EventHandler::createDraggingClipboard):
+        * platform/haiku/ClipboardHaiku.cpp: Style cleanup. There were many whitespace end of lines.
+        (WebCore::ClipboardHaiku::ClipboardHaiku):
+        (WebCore::ClipboardHaiku::clearAllData):
+        (WebCore::ClipboardHaiku::getData):
+        (WebCore::ClipboardHaiku::setData):
+        (WebCore::ClipboardHaiku::types):
+        (WebCore::ClipboardHaiku::dragLocation):
+        (WebCore::ClipboardHaiku::dragImage):
+        (WebCore::ClipboardHaiku::setDragImage):
+        (WebCore::ClipboardHaiku::dragImageElement):
+        (WebCore::ClipboardHaiku::createDragImage):
+        (WebCore::ClipboardHaiku::declareAndWriteDragImage):
+        (WebCore::ClipboardHaiku::writeURL):
+        (WebCore::ClipboardHaiku::writeRange):
+        (WebCore::ClipboardHaiku::hasData):
+        * platform/haiku/DragDataHaiku.cpp:
+        (WebCore::DragData::createClipboard):
+
 2009-08-11  Drew Wilson  <atwilson@google.com>
 
         Reviewed by NOBODY (build break).

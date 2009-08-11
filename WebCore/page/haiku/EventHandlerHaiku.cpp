@@ -36,13 +36,12 @@
 #include "HitTestResult.h"
 #include "KeyboardEvent.h"
 #include "MouseEventWithHitTestResults.h"
+#include "NotImplemented.h"
 #include "Page.h"
 #include "PlatformKeyboardEvent.h"
 #include "PlatformScrollBar.h"
 #include "PlatformWheelEvent.h"
 #include "RenderWidget.h"
-
-#include "NotImplemented.h"
 
 #include <interface/View.h>
 
@@ -117,13 +116,15 @@ bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& eve
 
 bool EventHandler::passWheelEventToWidget(PlatformWheelEvent& event, Widget* widget)
 {
-    notImplemented();
-    return false;
+    if (!widget->isFrameView())
+        return false;
+
+    return static_cast<FrameView*>(widget)->frame()->eventHandler()->handleWheelEvent(event);
 }
 
 PassRefPtr<Clipboard> EventHandler::createDraggingClipboard() const
 {
-    return new ClipboardHaiku(ClipboardWritable, true);
+    return ClipboardHaiku::create(ClipboardWritable, true);
 }
 
 bool EventHandler::passMousePressEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe)

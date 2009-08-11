@@ -27,8 +27,8 @@
 #include "config.h"
 #include "ClipboardHaiku.h"
 
-#include "IntPoint.h"
 #include "FileList.h"
+#include "IntPoint.h"
 #include "NotImplemented.h"
 #include "PlatformString.h"
 #include "StringHash.h"
@@ -42,7 +42,7 @@
 
 namespace WebCore {
 
-ClipboardHaiku::ClipboardHaiku(ClipboardAccessPolicy policy, bool forDragging) 
+ClipboardHaiku::ClipboardHaiku(ClipboardAccessPolicy policy, bool forDragging)
     : Clipboard(policy, forDragging)
 {
 }
@@ -61,7 +61,7 @@ void ClipboardHaiku::clearData(const String& type)
     }
 }
 
-void ClipboardHaiku::clearAllData() 
+void ClipboardHaiku::clearAllData()
 {
     if (be_clipboard->Lock()) {
         be_clipboard->Clear();
@@ -70,7 +70,7 @@ void ClipboardHaiku::clearAllData()
     }
 }
 
-String ClipboardHaiku::getData(const String& type, bool& success) const 
+String ClipboardHaiku::getData(const String& type, bool& success) const
 {
     BString result;
     success = false;
@@ -88,7 +88,7 @@ String ClipboardHaiku::getData(const String& type, bool& success) const
     return result;
 }
 
-bool ClipboardHaiku::setData(const String& type, const String& data) 
+bool ClipboardHaiku::setData(const String& type, const String& data)
 {
     bool result = false;
 
@@ -110,7 +110,7 @@ bool ClipboardHaiku::setData(const String& type, const String& data)
 }
 
 // Extensions beyond IE's API.
-HashSet<String> ClipboardHaiku::types() const 
+HashSet<String> ClipboardHaiku::types() const
 {
     HashSet<String> result;
 
@@ -138,27 +138,27 @@ PassRefPtr<FileList> ClipboardHaiku::files() const
     return 0;
 }
 
-IntPoint ClipboardHaiku::dragLocation() const 
-{ 
+IntPoint ClipboardHaiku::dragLocation() const
+{
     notImplemented();
     return IntPoint(0, 0);
 }
 
-CachedImage* ClipboardHaiku::dragImage() const 
+CachedImage* ClipboardHaiku::dragImage() const
 {
     notImplemented();
-    return 0; 
+    return 0;
 }
 
-void ClipboardHaiku::setDragImage(CachedImage*, const IntPoint&) 
+void ClipboardHaiku::setDragImage(CachedImage*, const IntPoint&)
 {
     notImplemented();
 }
 
-Node* ClipboardHaiku::dragImageElement() 
+Node* ClipboardHaiku::dragImageElement()
 {
     notImplemented();
-    return 0; 
+    return 0;
 }
 
 void ClipboardHaiku::setDragImageElement(Node*, const IntPoint&)
@@ -167,27 +167,27 @@ void ClipboardHaiku::setDragImageElement(Node*, const IntPoint&)
 }
 
 DragImageRef ClipboardHaiku::createDragImage(IntPoint& dragLocation) const
-{ 
+{
     notImplemented();
     return 0;
 }
 
-void ClipboardHaiku::declareAndWriteDragImage(Element*, const KURL&, const String&, Frame*) 
+void ClipboardHaiku::declareAndWriteDragImage(Element*, const KURL&, const String&, Frame*)
 {
     notImplemented();
 }
 
-void ClipboardHaiku::writeURL(const KURL&, const String&, Frame*) 
+void ClipboardHaiku::writeURL(const KURL&, const String&, Frame*)
 {
     notImplemented();
 }
 
-void ClipboardHaiku::writeRange(Range*, Frame*) 
+void ClipboardHaiku::writeRange(Range*, Frame*)
 {
     notImplemented();
 }
 
-bool ClipboardHaiku::hasData() 
+bool ClipboardHaiku::hasData()
 {
     bool result = false;
 
