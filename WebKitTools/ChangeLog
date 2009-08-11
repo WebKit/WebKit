@@ -1,3 +1,17 @@
+2009-08-11  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Exception in land-patches
+        https://bugs.webkit.org/show_bug.cgi?id=27962
+
+        Use ("%s" % object) instead of ("" + object).
+        Added unit tests for logging.py.
+
+        * Scripts/modules/logging.py:
+        * Scripts/modules/logging_unittest.py: Added.
+        * Scripts/run-webkit-unittests:
+
 2009-08-11  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Adam Roben.
