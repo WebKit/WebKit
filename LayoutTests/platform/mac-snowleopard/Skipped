@@ -10,7 +10,6 @@ plugins/return-error-from-new-stream-doesnt-invoke-destroy-stream.html
 
 # Radar bugs needed for these
 fast/canvas/set-colors.html
-platform/mac/fast/text/myanmar-shaping.html
 svg/W3C-SVG-1.1/coords-viewattr-01-b.svg
 svg/W3C-SVG-1.1/coords-viewattr-02-b.svg
 svg/W3C-SVG-1.1/render-elems-03-t.svg

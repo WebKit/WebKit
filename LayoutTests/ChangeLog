@@ -1,5 +1,21 @@
 2009-08-11  Brady Eidson  <beidson@apple.com>
 
+        Rubberstamped by Mark Rowe.
+
+        -Stop skipping platform/mac/fast/text/myanmar-shaping.html on SnowLeopard.
+        -Move the previous results aside for Tiger and Leopard only.
+        -Generate new results for SnowLeopard.
+
+        * platform/mac-snowleopard/Skipped: Remove platform/mac/fast/text/myanmar-shaping.html
+        * platform/mac-leopard/fast/text/myanmar-shaping-expected.checksum: Copied from platform/mac/fast/text/myanmar-shaping-expected.checksum.
+        * platform/mac-leopard/fast/text/myanmar-shaping-expected.png: Copied from platform/mac/fast/text/myanmar-shaping-expected.png.
+        * platform/mac-leopard/fast/text/myanmar-shaping-expected.txt: Copied from platform/mac/fast/text/myanmar-shaping-expected.txt.
+        * platform/mac/fast/text/myanmar-shaping-expected.checksum: Replaced.
+        * platform/mac/fast/text/myanmar-shaping-expected.png: Replaced.
+        * platform/mac/fast/text/myanmar-shaping-expected.txt: Replaced.
+
+2009-08-11  Brady Eidson  <beidson@apple.com>
+
         Rubber-stamped by Anders Carlsson.
 
         Resolve <rdar://problem/6733642>.
