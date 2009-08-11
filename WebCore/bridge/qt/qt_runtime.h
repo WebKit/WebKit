@@ -167,7 +167,7 @@ public:
 
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
 
-    virtual void mark();
+    virtual void markChildren(MarkStack& markStack);
 
 protected:
     QtRuntimeMetaMethodData* d_func() const {return reinterpret_cast<QtRuntimeMetaMethodData*>(d_ptr);}

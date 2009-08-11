@@ -56,12 +56,12 @@ public:
 
     static const ClassInfo s_info;
 
-    virtual void mark()
+    virtual void markChildren(MarkStack& markStack)
     {
+        RuntimeObjectImp::markChildren(markStack);
         QtInstance* instance = static_cast<QtInstance*>(getInternalInstance());
         if (instance)
-            instance->mark();
-        RuntimeObjectImp::mark();
+            instance->markAggregate(markStack);
     }
 
 protected:
@@ -202,13 +202,13 @@ RuntimeObjectImp* QtInstance::createRuntimeObject(ExecState* exec)
     return ret;
 }
 
-void QtInstance::mark()
+void QtInstance::markAggregate(MarkStack& markStack)
 {
-    if (m_defaultMethod && !m_defaultMethod->marked())
-        m_defaultMethod->mark();
+    if (m_defaultMethod)
+        markStack.append(m_defaultMethod);
     foreach(JSObject* val, m_methods.values()) {
-        if (val && !val->marked())
-            val->mark();
+        if (val)
+            markStack.append(val);
     }
 }
 

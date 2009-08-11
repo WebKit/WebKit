@@ -1,5 +1,21 @@
 2009-08-11  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        Reviewed by NOBODY (build fix).
+
+        Fix the Qt build after r47022.
+
+        Use the new markChildren() pattern for marking aggregate/child objects.
+
+        * bridge/qt/qt_instance.cpp:
+        (JSC::Bindings::QtRuntimeObjectImp::markChildren):
+        (JSC::Bindings::QtInstance::markAggregate):
+        * bridge/qt/qt_instance.h:
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::QtRuntimeMetaMethod::markChildren):
+        * bridge/qt/qt_runtime.h:
+
+2009-08-11  Simon Hausmann  <simon.hausmann@nokia.com>
+
         Reviewed by Holger Freyther.
 
         Fix the build on the Qt build bot by making the generated JS bindings
