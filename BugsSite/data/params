@@ -48,7 +48,7 @@
            'insidergroup' => '',
            'letsubmitterchoosemilestone' => 1,
            'letsubmitterchoosepriority' => 1,
-           'loginnetmask' => '32',
+           'loginnetmask' => '0',
            'lxr_root' => '',
            'lxr_url' => '',
            'mail_delivery_method' => 'Sendmail',

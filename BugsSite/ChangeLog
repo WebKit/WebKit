@@ -1,3 +1,11 @@
+2009-08-11  David Kilzer  <ddkilzer@apple.com>
+
+        Updated data/params parameter
+
+        * data/params: Updated 'loginnetmask' parameter to allow users
+        to choose whether their cookies are restricted to a single IP
+        address or not.
+
 2009-07-07  David Kilzer  <ddkilzer@apple.com>
 
         Updated BugsSite with local changes on server
