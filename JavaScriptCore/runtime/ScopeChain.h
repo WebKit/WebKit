@@ -28,6 +28,7 @@ namespace JSC {
     class JSGlobalData;
     class JSGlobalObject;
     class JSObject;
+    class MarkStack;
     class ScopeChainIterator;
     
     class ScopeChainNode : public FastAllocBase {

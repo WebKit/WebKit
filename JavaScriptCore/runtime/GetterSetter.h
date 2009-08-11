@@ -25,6 +25,8 @@
 
 #include "JSCell.h"
 
+#include "CallFrame.h"
+
 namespace JSC {
 
     class JSObject;
