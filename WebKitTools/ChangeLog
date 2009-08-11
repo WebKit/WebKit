@@ -71,6 +71,15 @@
 
 2009-08-11  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Adam Barth.
+
+        run-webkit-tests --quiet should not output build-dumprendertree output
+        https://bugs.webkit.org/show_bug.cgi?id=28189
+
+        * Scripts/run-webkit-tests:
+
+2009-08-11  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Darin Adler.
 
         Exception in land-patches

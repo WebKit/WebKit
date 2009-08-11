@@ -297,10 +297,20 @@ $productDir .= "/Programs" if isGtk();
 chdirWebKit();
 
 if (!defined($root)) {
-    # Push the parameters to build-dumprendertree as an array
-    my @args = argumentsForConfiguration();
+    print STDERR "Running build-dumprendertree\n";
 
-    my $buildResult = system "WebKitTools/Scripts/build-dumprendertree", @args;
+    my ($childIn, $childOut, $childErr);
+    if (!$quiet) {
+        # When not quiet, let the child use our stdout/stderr.
+        $childOut = ">&STDOUT";
+        $childErr = ">&STDERR";
+    }
+
+    my @args = argumentsForConfiguration();
+    my $buildProcess = open3($childIn, $childOut, $childErr, "WebKitTools/Scripts/build-dumprendertree", @args);
+    waitpid $buildProcess, 0;
+    my $buildResult = $?;
+
     if ($buildResult) {
         print STDERR "Compiling DumpRenderTree failed!\n";
         exit exitStatus($buildResult);
