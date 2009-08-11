@@ -36,7 +36,6 @@
 #include "PNGImageDecoder.h"
 #include "XBMImageDecoder.h"
 #include "SharedBuffer.h"
-#include <cairo.h>
 
 namespace WebCore {
 

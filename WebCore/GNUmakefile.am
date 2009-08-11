@@ -1469,6 +1469,7 @@ webcore_sources += \
 	WebCore/platform/graphics/ImageBuffer.cpp \
 	WebCore/platform/graphics/ImageBuffer.h \
 	WebCore/platform/graphics/ImageObserver.h \
+	WebCore/platform/graphics/ImageSource.cpp \
 	WebCore/platform/graphics/ImageSource.h \
 	WebCore/platform/graphics/IntPoint.h \
 	WebCore/platform/graphics/IntRect.cpp \
@@ -1860,7 +1861,6 @@ webcoregtk_sources += \
 	WebCore/platform/graphics/cairo/ImageBufferCairo.cpp \
 	WebCore/platform/graphics/cairo/ImageBufferData.h \
 	WebCore/platform/graphics/cairo/ImageCairo.cpp \
-	WebCore/platform/graphics/cairo/ImageSourceCairo.cpp \
 	WebCore/platform/graphics/cairo/PathCairo.cpp \
 	WebCore/platform/graphics/cairo/PatternCairo.cpp \
 	WebCore/platform/graphics/cairo/TransformationMatrixCairo.cpp \

@@ -1,3 +1,17 @@
+2009-08-11  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Adam Treat.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27965
+        Move cairo/ImageSourceCairo.cpp to ImageSource.cpp in preparation for
+        merging most of the other ImageSource*.cpp files with it.
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * platform/graphics/ImageSource.cpp: Copied from WebCore/platform/graphics/cairo/ImageSourceCairo.cpp.
+        * platform/graphics/cairo/ImageSourceCairo.cpp: Removed.
+
 2009-08-10  Brent Fulgham  <bfulgham@webkit.org>
 
         Reviewed by Adam Roben.
