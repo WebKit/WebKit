@@ -413,17 +413,17 @@ $(WEBKIT_MARSHAL).h: stamp-webkitmarshal.h
 
 stamp-webkitmarshal.cpp: $(WEBKIT_MARSHAL_LIST)
 	echo "extern \"C\" {" > $(WEBKIT_MARSHAL).cpp && \
-	$(GLIB_GENMARSHAL) --prefix=webkit_marshal $(WEBKIT_MARSHAL_LIST) --body >> $(WEBKIT_MARSHAL).cpp && echo '}' >> $(WEBKIT_MARSHAL).cpp && \
+	$(AM_V_GEN)$(GLIB_GENMARSHAL) --prefix=webkit_marshal $(WEBKIT_MARSHAL_LIST) --body >> $(WEBKIT_MARSHAL).cpp && echo '}' >> $(WEBKIT_MARSHAL).cpp && \
 	echo timestamp > $(@F)
 
 stamp-webkitmarshal.h: $(WEBKIT_MARSHAL_LIST)
-	$(GLIB_GENMARSHAL) --prefix=webkit_marshal $(WEBKIT_MARSHAL_LIST) --header > $(WEBKIT_MARSHAL).h && \
+	$(AM_V_GEN)$(GLIB_GENMARSHAL) --prefix=webkit_marshal $(WEBKIT_MARSHAL_LIST) --header > $(WEBKIT_MARSHAL).h && \
 	echo timestamp > $(@F)
 
 WebKit/gtk/webkit/webkitenumtypes.h: stamp-webkitenumtypes.h
 	@true
 stamp-webkitenumtypes.h: $(webkitgtk_h_api) GNUmakefile
-	(cd $(srcdir) \
+	$(AM_V_GEN)(cd $(srcdir) \
 	&& glib-mkenums \
 			--fhead "#ifndef WEBKIT_ENUM_TYPES_H\n" \
 			--fhead "#define WEBKIT_ENUM_TYPES_H\n\n" \
@@ -445,7 +445,7 @@ stamp-webkitenumtypes.h: $(webkitgtk_h_api) GNUmakefile
 	&& echo timestamp > $(@F)
 
 DerivedSources/webkitenumtypes.cpp: $(webkitgtk_h_api) GNUmakefile
-	(cd $(srcdir) \
+	$(AM_V_GEN)(cd $(srcdir) \
 	&& glib-mkenums \
 			--fhead "#include <config.h>\n" \
 			--fhead "#include <glib-object.h>\n" \

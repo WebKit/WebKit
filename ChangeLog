@@ -1,3 +1,12 @@
+2009-08-11  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Jan Alonzo.
+
+        Prefix lengthy commands with AM_V_GEN so that they produce an
+        output like 'GEN <filename>' when in silent mode.
+
+        * GNUmakefile.am:
+
 2009-08-05  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Xan Lopez.
