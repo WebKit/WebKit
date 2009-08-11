@@ -27,9 +27,17 @@
 
 
 #include "MarkStack.h"
+
+#include <unistd.h>
 #include <sys/mman.h>
 
 namespace JSC {
+
+void MarkStack::initializePagesize()
+{
+    MarkStack::s_pageSize = getpagesize();
+}
+
 void* MarkStack::allocateStack(size_t size)
 {
     return mmap(0, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);

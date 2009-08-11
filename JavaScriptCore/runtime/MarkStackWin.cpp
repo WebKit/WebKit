@@ -31,6 +31,14 @@
 #include "windows.h"
 
 namespace JSC {
+
+void MarkStack::initializePagesize()
+{
+    SYSTEM_INFO system_info;
+    GetSystemInfo(&system_info);
+    MarkStack::s_pageSize = system_info.dwPageSize;
+}
+
 void* MarkStack::allocateStack(size_t size)
 {
     return VirtualAlloc(0, size, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);

@@ -1,3 +1,18 @@
+2009-08-10  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by NOBODY (Build fix).
+
+        Hoist page size initialization into platform specific code.
+
+        * jit/ExecutableAllocatorPosix.cpp:
+        * jit/ExecutableAllocatorWin.cpp:
+        * runtime/MarkStack.h:
+        (JSC::MarkStack::pageSize):
+        * runtime/MarkStackPosix.cpp:
+        (JSC::MarkStack::initializePagesize):
+        * runtime/MarkStackWin.cpp:
+        (JSC::MarkStack::initializePagesize):
+
 2009-08-07  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
