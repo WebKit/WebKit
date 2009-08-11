@@ -80,6 +80,10 @@
 #include "DOMApplicationCache.h"
 #endif
 
+#if ENABLE(NOTIFICATIONS)
+#include "NotificationCenter.h"
+#endif
+
 using std::min;
 using std::max;
 
@@ -454,6 +458,10 @@ void DOMWindow::clear()
         m_applicationCache->disconnectFrame();
     m_applicationCache = 0;
 #endif
+
+#if ENABLE(NOTIFICATIONS)
+    m_notifications = 0;
+#endif
 }
 
 Screen* DOMWindow::screen() const
@@ -590,6 +598,28 @@ Storage* DOMWindow::localStorage() const
     }
 
     return m_localStorage.get();
+}
+#endif
+
+#if ENABLE(NOTIFICATIONS)
+NotificationCenter* DOMWindow::webkitNotifications() const
+{
+    if (m_notifications)
+        return m_notifications.get();
+
+    Document* document = this->document();
+    if (!document)
+        return 0;
+    
+    Page* page = document->page();
+    if (!page)
+        return 0;
+
+    NotificationPresenter* provider = page->chrome()->notificationPresenter();
+    if (provider) 
+        m_notifications = NotificationCenter::create(document, provider);    
+      
+    return m_notifications.get();
 }
 #endif
 

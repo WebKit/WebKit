@@ -324,6 +324,9 @@ public:
         /* [in] */ HDC hDC,
         /* [in] */ RECT rect) { return E_NOTIMPL; }
 
+    virtual HRESULT STDMETHODCALLTYPE desktopNotificationsDelegate(
+        /* [retval][out] */ IWebDesktopNotificationsDelegate **result) { return E_NOTIMPL; }
+
 private:
     WebInspectorDelegate();
 

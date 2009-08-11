@@ -1,3 +1,14 @@
+2009-08-11  John Gregg  <johnnyg@google.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Desktop Notifications API
+        https://bugs.webkit.org/show_bug.cgi?id=25643
+
+        Adds ENABLE_NOTIFICATION flag.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2009-08-11  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

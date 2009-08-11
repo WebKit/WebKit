@@ -1,3 +1,111 @@
+2009-08-11  John Gregg  <johnnyg@google.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Desktop Notifications API
+        https://bugs.webkit.org/show_bug.cgi?id=25463
+
+        Adds an implementation of desktop notifications, behind the compile-time
+        flag ENABLE(NOTIFICATIONS).  This code simply relays calls on the JavaScript
+        API through a NotificationProvider interface, which must provide the services
+        to actually notify the user and manage the desktop.  This provider is injected
+        into WebKit through the ChromeClient for normal page contexts and through the
+        WorkerThread for worker contexts.
+
+        A permissions API is defined on a per-origin basis, which allows a web page
+        to check if its origin is allowed to show desktop notifications, and to request
+        permission for its origin.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.vcproj/WebCoreCommon.vsprops:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        * bindings/js/JSDesktopNotificationsCustom.cpp: Added.
+        (WebCore::JSNotificationCenter::requestPermission):
+        (WebCore::JSNotification::addEventListener):
+        (WebCore::JSNotification::removeEventListener):
+        * bindings/js/JSEventTarget.cpp:
+        (WebCore::toJS):
+        (WebCore::toEventTarget):
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::toNotification):
+        * dom/EventTarget.h:
+        * loader/EmptyClients.h:
+        (WebCore::EmptyChromeClient::notificationPresenter):
+        * notifications: Added.
+        * notifications/Notification.cpp: Added.
+        (WebCore::Notification::Notification):
+        (WebCore::Notification::~Notification):
+        (WebCore::Notification::show):
+        (WebCore::Notification::cancel):
+        (WebCore::Notification::ondisplay):
+        (WebCore::Notification::setOndisplay):
+        (WebCore::Notification::onerror):
+        (WebCore::Notification::setOnerror):
+        (WebCore::Notification::onclose):
+        (WebCore::Notification::setOnclose):
+        (WebCore::Notification::getAttributeEventListener):
+        (WebCore::Notification::setAttributeEventListener):
+        (WebCore::Notification::clearAttributeEventListener):
+        (WebCore::Notification::dispatchDisplayEvent):
+        (WebCore::Notification::dispatchErrorEvent):
+        (WebCore::Notification::dispatchCloseEvent):
+        (WebCore::Notification::addEventListener):
+        (WebCore::Notification::removeEventListener):
+        (WebCore::Notification::handleEvent):
+        (WebCore::Notification::dispatchEvent):
+        * notifications/Notification.h: Added.
+        (WebCore::Notification::create):
+        (WebCore::Notification::isHTML):
+        (WebCore::Notification::url):
+        (WebCore::Notification::contents):
+        (WebCore::Notification::scriptExecutionContext):
+        (WebCore::Notification::toNotification):
+        (WebCore::Notification::refEventTarget):
+        (WebCore::Notification::derefEventTarget):
+        * notifications/Notification.idl: Added.
+        * notifications/NotificationCenter.cpp: Added.
+        (WebCore::NotificationCenter::NotificationCenter):
+        (WebCore::NotificationCenter::checkPermission):
+        (WebCore::NotificationCenter::requestPermission):
+        * notifications/NotificationCenter.h: Added.
+        (WebCore::NotificationCenter::create):
+        (WebCore::NotificationCenter::createHTMLNotification):
+        (WebCore::NotificationCenter::createNotification):
+        (WebCore::NotificationCenter::context):
+        (WebCore::NotificationCenter::presenter):
+        * notifications/NotificationCenter.idl: Added.
+        * notifications/NotificationContents.h: Added.
+        (WebCore::NotificationContents::NotificationContents):
+        (WebCore::NotificationContents::icon):
+        (WebCore::NotificationContents::title):
+        (WebCore::NotificationContents::body):
+        * notifications/NotificationPresenter.h: Added.
+        (WebCore::NotificationPresenter::):
+        (WebCore::NotificationPresenter::~NotificationPresenter):
+        * page/Chrome.cpp:
+        (WebCore::Chrome::notificationPresenter):
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::clear):
+        (WebCore::DOMWindow::webkitNotifications):
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+        * page/Page.h:
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::~WorkerContext):
+        (WebCore::WorkerContext::webkitNotifications):
+        * workers/WorkerContext.h:
+        * workers/WorkerContext.idl:
+        * workers/WorkerThread.h:
+        (WebCore::WorkerThread::getNotificationPresenter):
+        (WebCore::WorkerThread::setNotificationPresenter):
+
 2009-08-11  Joseph Pecoraro  <joepeck02@gmail.com>
 
         Reviewed by Timothy Hatcher.

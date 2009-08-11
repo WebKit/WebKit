@@ -26,6 +26,7 @@ webcore_cppflags += \
 	-I$(srcdir)/WebCore/loader/appcache \
 	-I$(srcdir)/WebCore/loader/archive \
 	-I$(srcdir)/WebCore/loader/icon \
+	-I$(srcdir)/WebCore/notifications \
 	-I$(srcdir)/WebCore/page \
 	-I$(srcdir)/WebCore/page/animation \
 	-I$(srcdir)/WebCore/platform \
@@ -234,6 +235,8 @@ IDL_BINDINGS += \
 	WebCore/html/VoidCallback.idl \
 	WebCore/inspector/JavaScriptCallFrame.idl \
 	WebCore/inspector/InspectorBackend.idl \
+	WebCore/notifications/Notification.idl \
+	WebCore/notifications/Notifications.idl \
 	WebCore/page/BarInfo.idl \
 	WebCore/page/Console.idl \
 	WebCore/page/Coordinates.idl \
@@ -2510,6 +2513,24 @@ webcoregtk_sources += \
 	WebCore/platform/gtk/GeolocationServiceGtk.h
 endif # END ENABLE_GEOLOCATION
 
+# ----
+# Notifications support
+# ----
+if ENABLE_NOTIFICATIONS
+FEATURE_DEFINES_JAVASCRIPT += ENABLE_NOTIFICATIONS=1
+
+webcore_cppflags += \
+	-DENABLE_NOTIFICATIONS=1
+
+webcore_sources += \
+	WebCore/notifications/Notification.cpp \
+	WebCore/notifications/Notification.h \
+	WebCore/notifications/NotificationCenter.cpp \
+	WebCore/notifications/NotificationCenter.h \
+	WebCore/notifications/NotificationPresenter.h \
+	WebCore/notifications/NotificationContents.h
+
+endif # END ENABLE_NOTIFICATIONS
 
 # ----
 # SVG Support
@@ -3382,4 +3403,3 @@ dist_webresources_DATA = \
 
 CLEANFILES += \
 	libWebCoreJS.la
-

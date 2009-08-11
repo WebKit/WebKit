@@ -2063,6 +2063,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\WebCoreSupport\WebDesktopNotificationsDelegate.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\WebCoreSupport\WebDesktopNotificationsDelegate.h"
+				>
+			</File>
+			<File
 				RelativePath="..\WebCoreSupport\WebDragClient.cpp"
 				>
 			</File>

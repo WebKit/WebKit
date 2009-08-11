@@ -29,8 +29,10 @@
 #include <WebCore/FocusDirection.h>
 #include <WebCore/ScrollTypes.h>
 #include <wtf/Forward.h>
+#include <wtf/PassRefPtr.h>
 
 class WebView;
+class WebDesktopNotificationsDelegate;
 
 interface IWebUIDelegate;
 
@@ -131,8 +133,16 @@ public:
 
     virtual void requestGeolocationPermissionForFrame(WebCore::Frame*, WebCore::Geolocation*);
 
+#if ENABLE(NOTIFICATIONS)
+    virtual WebCore::NotificationPresenter* notificationPresenter() const { return reinterpret_cast<WebCore::NotificationPresenter*>(m_notificationsDelegate.get()); }
+#endif
+
 private:
     COMPtr<IWebUIDelegate> uiDelegate();
 
     WebView* m_webView;
+
+#if ENABLE(NOTIFICATIONS)
+    OwnPtr<WebDesktopNotificationsDelegate> m_notificationsDelegate;
+#endif
 };

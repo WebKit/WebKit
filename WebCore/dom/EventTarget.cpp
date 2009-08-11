@@ -106,6 +106,13 @@ SharedWorkerContext* EventTarget::toSharedWorkerContext()
 }
 #endif
 
+#if ENABLE(NOTIFICATIONS)
+Notification* EventTarget::toNotification()
+{
+    return 0;
+}
+#endif
+
 #ifndef NDEBUG
 void forbidEventDispatch()
 {

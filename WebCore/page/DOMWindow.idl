@@ -166,6 +166,9 @@ module window {
         readonly attribute Storage sessionStorage;
         readonly attribute Storage localStorage;
 #endif
+#if defined(ENABLE_NOTIFICATIONS) && ENABLE_NOTIFICATIONS
+        readonly attribute NotificationCenter webkitNotifications;
+#endif
 
                  attribute [Replaceable] Console console;
 

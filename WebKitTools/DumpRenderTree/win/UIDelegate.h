@@ -29,11 +29,13 @@
 #ifndef UIDelegate_h
 #define UIDelegate_h
 
+#include <WebCore/COMPtr.h>
 #include <WebKit/WebKit.h>
 #include <wtf/OwnPtr.h>
 #include <windef.h>
 
 class DRTUndoManager;
+class DRTDesktopNotificationPresenter;
 
 class UIDelegate : public IWebUIDelegate, IWebUIDelegatePrivate {
 public:
@@ -399,11 +401,16 @@ protected:
     virtual HRESULT STDMETHODCALLTYPE webViewDidInvalidate( 
         /* [in] */ IWebView *sender);
 
+    virtual HRESULT STDMETHODCALLTYPE desktopNotificationsDelegate(
+        /* [out] */ IWebDesktopNotificationsDelegate** result);
+
     ULONG                   m_refCount;
 
 private:
     RECT m_frame;
     OwnPtr<DRTUndoManager> m_undoManager;
+
+    COMPtr<IWebDesktopNotificationsDelegate> m_desktopNotifications;
 };
 
 #endif

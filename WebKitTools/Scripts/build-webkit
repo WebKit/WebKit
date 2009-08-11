@@ -50,7 +50,7 @@ my ($threeDCanvasSupport, $threeDRenderingSupport, $channelMessagingSupport, $da
     $javaScriptDebuggerSupport, $offlineWebApplicationSupport, $rubySupport, $sharedWorkersSupport, 
     $svgSupport, $svgAnimationSupport, $svgAsImageSupport, $svgDOMObjCBindingsSupport, $svgFontsSupport,
     $svgForeignObjectSupport, $svgUseSupport, $videoSupport, $webSocketsSupport, $wmlSupport, $workersSupport,
-    $xpathSupport, $xsltSupport, $coverageSupport);
+    $xpathSupport, $xsltSupport, $coverageSupport, $notificationsSupport);
 
 my @features = (
     { option => "3d-canvas", desc => "Toggle 3D canvas support",
@@ -88,6 +88,9 @@ my @features = (
 
     { option => "javascript-debugger", desc => "Toggle JavaScript Debugger/Profiler support",
       define => "ENABLE_JAVASCRIPT_DEBUGGER", default => 1, value => \$javaScriptDebuggerSupport },
+
+    { option => "notifications", desc => "Toggle Desktop Notifications Support",
+      define => "ENABLE_NOTIFICATIONS", default => 0, value => \$notificationsSupport },
 
     { option => "offline-web-applications", desc => "Toggle Offline Web Application Support",
       define => "ENABLE_OFFLINE_WEB_APPLICATIONS", default => 1, value => \$offlineWebApplicationSupport },

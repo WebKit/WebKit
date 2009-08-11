@@ -1,3 +1,33 @@
+2009-08-11  John Gregg  <johnnyg@google.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Desktop Notifications API
+        https://bugs.webkit.org/show_bug.cgi?id=25463
+
+        Adding layout tests for desktop notifications.  Currently these
+        are all disabled because the flag for this feature is set to 0.
+
+        * fast/notifications: Added.
+        * fast/notifications/notifications-check-permission-expected.txt: Added.
+        * fast/notifications/notifications-check-permission.html-disabled: Added.
+         - Validates that checking permission for notifications works correctly.
+        * fast/notifications/notifications-display-close-events-expected.txt: Added.
+        * fast/notifications/notifications-display-close-events.html-disabled: Added.
+         - Validates that the display and close events are fired correctly.
+        * fast/notifications/notifications-double-show-expected.txt: Added.
+        * fast/notifications/notifications-double-show.html-disabled: Added.
+         - Validates that the same notification object cannot be shown twice.
+        * fast/notifications/notifications-request-permission-expected.txt: Added.
+        * fast/notifications/notifications-request-permission.html-disabled: Added.
+         - Validates that requesting permission works correctly.
+        * fast/notifications/notifications-with-permission-expected.txt: Added.
+        * fast/notifications/notifications-with-permission.html-disabled: Added.
+         - Validates that, with permission, showing a notification works correctly.
+        * fast/notifications/notifications-without-permission-expected.txt: Added.
+        * fast/notifications/notifications-without-permission.html-disabled: Added.
+         - Validates that, without permission, showing a notification fails.
+
 2009-08-11  Brady Eidson  <beidson@apple.com>
 
         Rubberstamped by Mark Rowe.

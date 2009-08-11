@@ -137,6 +137,10 @@ public:
     virtual void reachedMaxAppCacheSize(int64_t) { }
 #endif
 
+#if ENABLE(NOTIFICATIONS)
+    virtual NotificationPresenter* notificationPresenter() const { return 0; }
+#endif
+
     virtual void runOpenPanel(Frame*, PassRefPtr<FileChooser>) { }
 
     virtual void formStateDidChange(const Node*) { }

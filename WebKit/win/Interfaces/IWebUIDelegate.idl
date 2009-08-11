@@ -755,4 +755,6 @@ interface IWebUIDelegate : IUnknown
     HRESULT paintCustomScrollbar([in] IWebView* webView, [in] HDC hDC, [in] RECT rect, [in] WebScrollBarControlSize size, [in] WebScrollbarControlState state, 
                                  [in] WebScrollbarControlPart pressedPart, [in] BOOL vertical, [in] float value, [in] float proportion, [in] WebScrollbarControlPartMask parts);
     HRESULT paintCustomScrollCorner([in] IWebView* webView, [in] HDC hDC, [in] RECT rect);
+
+    HRESULT desktopNotificationsDelegate([out, retval] IWebDesktopNotificationsDelegate** result);
 }

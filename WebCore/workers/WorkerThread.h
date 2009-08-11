@@ -37,6 +37,7 @@
 namespace WebCore {
 
     class KURL;
+    class NotificationPresenter;
     class String;
     class WorkerContext;
     class WorkerLoaderProxy;
@@ -66,6 +67,11 @@ namespace WebCore {
 
         WorkerContext* workerContext() { return m_workerContext.get(); }
 
+#if ENABLE(NOTIFICATIONS)
+        NotificationPresenter* getNotificationPresenter() { return m_notificationPresenter; }
+        void setNotificationPresenter(NotificationPresenter* presenter) { m_notificationPresenter = presenter; }
+#endif
+
     private:
         // Static function executed as the core routine on the new thread. Passed a pointer to a WorkerThread object.
         static void* workerThreadStart(void*);
@@ -80,6 +86,10 @@ namespace WebCore {
         Mutex m_threadCreationMutex;
 
         OwnPtr<WorkerThreadStartupData> m_startupData;
+
+#if ENABLE(NOTIFICATIONS)
+        NotificationPresenter* m_notificationPresenter;
+#endif
     };
 
 } // namespace WebCore

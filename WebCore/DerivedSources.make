@@ -35,6 +35,7 @@ VPATH = \
     $(WebCore)/html/canvas \
     $(WebCore)/inspector \
     $(WebCore)/loader/appcache \
+    $(WebCore)/notifications \
     $(WebCore)/page \
     $(WebCore)/plugins \
     $(WebCore)/storage \
@@ -194,6 +195,8 @@ DOM_CLASSES = \
     NodeIterator \
     NodeList \
     Notation \
+    Notification \
+    NotificationCenter \
     OverflowEvent \
     Plugin \
     PluginArray \
@@ -683,7 +686,7 @@ endif
 # JavaScript bindings
 
 GENERATE_BINDINGS = perl -I $(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/generate-bindings.pl \
-    --include dom --include html --include css --include page --include xml --include svg --outputDir .
+    --include dom --include html --include css --include page --include notifications --include xml --include svg --outputDir .
 
 GENERATE_BINDINGS_SCRIPTS = \
     bindings/scripts/CodeGenerator.pm \

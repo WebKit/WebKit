@@ -73,6 +73,7 @@ import "ocidl.idl";
 #include "IWebCoreStatistics.idl"
 #include "IWebDataSource.idl"
 #include "IWebDatabaseManager.idl"
+#include "IWebDesktopNotificationsDelegate.idl"
 #include "IWebDocument.idl"
 #include "IWebDownload.idl"
 #include "IWebEditingDelegate.idl"

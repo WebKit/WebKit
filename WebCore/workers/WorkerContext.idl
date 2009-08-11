@@ -69,6 +69,10 @@ module threads {
         boolean dispatchEvent(in Event evt)
             raises(EventException);
 
+#if defined(ENABLE_NOTIFICATIONS) && ENABLE_NOTIFICATIONS
+        // Notification interface
+        readonly attribute NotificationCenter webkitNotifications;
+#endif
 
         // Constructors
         attribute MessageEventConstructor MessageEvent;

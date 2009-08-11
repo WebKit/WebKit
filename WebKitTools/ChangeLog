@@ -1,3 +1,34 @@
+2009-08-11  John Gregg  <johnnyg@google.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Add support for desktop notifications API to DumpRenderTree,
+        and support for ENABLE_NOTIFICATIONS flag to build-webkit.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (grantDesktopNotificationPermissionCallback):
+        (LayoutTestController::staticFunctions):
+        (LayoutTestController::grantDesktopNotificationPermission):
+        (LayoutTestController::checkDesktopNotificationPermission):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/win/DRTDesktopNotificationPresenter.cpp: Added.
+        (DRTDesktopNotificationPresenter::DRTDesktopNotificationPresenter):
+        (DRTDesktopNotificationPresenter::QueryInterface):
+        (DRTDesktopNotificationPresenter::AddRef):
+        (DRTDesktopNotificationPresenter::Release):
+        (DRTDesktopNotificationPresenter::showDesktopNotification):
+        (DRTDesktopNotificationPresenter::cancelDesktopNotification):
+        (DRTDesktopNotificationPresenter::notificationDestroyed):
+        (DRTDesktopNotificationPresenter::checkNotificationPermission):
+        (DRTDesktopNotificationPresenter::requestNotificationPermission):
+        * DumpRenderTree/win/DRTDesktopNotificationPresenter.h: Added.
+        * DumpRenderTree/win/DumpRenderTree.vcproj:
+        * DumpRenderTree/win/UIDelegate.cpp:
+        (UIDelegate::UIDelegate):
+        (UIDelegate::desktopNotificationsDelegate):
+        * DumpRenderTree/win/UIDelegate.h:
+        * Scripts/build-webkit:
+
 2009-08-11  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Darin Adler.

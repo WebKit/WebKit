@@ -50,6 +50,10 @@
 #include "XMLHttpRequestException.h"
 #include <wtf/RefPtr.h>
 
+#if ENABLE(NOTIFICATIONS)
+#include "NotificationCenter.h"
+#endif
+
 namespace WebCore {
 
 WorkerContext::WorkerContext(const KURL& url, const String& userAgent, WorkerThread* thread)
@@ -65,6 +69,9 @@ WorkerContext::WorkerContext(const KURL& url, const String& userAgent, WorkerThr
 WorkerContext::~WorkerContext()
 {
     ASSERT(currentThread() == thread()->threadID());
+#if ENABLE(NOTIFICATIONS)
+    m_notifications.clear();
+#endif
     // Notify proxy that we are going away. This can free the WorkerThread object, so do not access it after this.
     thread()->workerReportingProxy().workerContextDestroyed();
 }
@@ -283,6 +290,15 @@ void WorkerContext::addMessage(MessageDestination destination, MessageSource sou
 {
     thread()->workerReportingProxy().postConsoleMessageToWorkerObject(destination, source, type, level, message, lineNumber, sourceURL);
 }
+
+#if ENABLE(NOTIFICATIONS)
+NotificationCenter* WorkerContext::webkitNotifications() const
+{
+    if (!m_notifications)
+        m_notifications = NotificationCenter::create(scriptExecutionContext(), m_thread->getNotificationPresenter());
+    return m_notifications.get();
+}
+#endif
 
 } // namespace WebCore
 

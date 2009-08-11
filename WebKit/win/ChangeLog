@@ -1,3 +1,47 @@
+2009-08-11  John Gregg  <johnnyg@google.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Desktop Notifications API
+        https://bugs.webkit.org/show_bug.cgi?id=25643
+
+        Adds test hooks for notification features to WebCoreSupport for
+        use in DumpRenderTree.
+
+        * Interfaces/IWebDesktopNotificationsDelegate.idl: Added.
+        * Interfaces/IWebUIDelegate.idl:
+        * Interfaces/WebKit.idl:
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::WebChromeClient):
+        * WebCoreSupport/WebChromeClient.h:
+        (WebChromeClient::notificationPresenter):
+        * WebCoreSupport/WebDesktopNotificationsDelegate.cpp: Added.
+        (NotificationCOMWrapper::create):
+        (NotificationCOMWrapper::NotificationCOMWrapper):
+        (NotificationCOMWrapper::QueryInterface):
+        (NotificationCOMWrapper::AddRef):
+        (NotificationCOMWrapper::Release):
+        (NotificationCOMWrapper::isHTML):
+        (NotificationCOMWrapper::contentsURL):
+        (NotificationCOMWrapper::iconURL):
+        (NotificationCOMWrapper::title):
+        (NotificationCOMWrapper::text):
+        (NotificationCOMWrapper::notifyDisplay):
+        (NotificationCOMWrapper::notifyError):
+        (NotificationCOMWrapper::notifyClose):
+        (WebDesktopNotificationsDelegate::WebDesktopNotificationsDelegate):
+        (WebDesktopNotificationsDelegate::show):
+        (WebDesktopNotificationsDelegate::cancel):
+        (WebDesktopNotificationsDelegate::notificationObjectDestroyed):
+        (WebDesktopNotificationsDelegate::requestPermission):
+        (WebDesktopNotificationsDelegate::checkPermission):
+        (WebDesktopNotificationsDelegate::notificationDelegate):
+        * WebCoreSupport/WebDesktopNotificationsDelegate.h: Added.
+        * WebCoreSupport/WebInspectorDelegate.h:
+        (WebInspectorDelegate::desktopNotificationsDelegate):
+        * WebKit.vcproj/Interfaces.vcproj:
+        * WebKit.vcproj/WebKit.vcproj:
+
 2009-08-11  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben.

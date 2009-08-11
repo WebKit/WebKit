@@ -432,6 +432,14 @@
 			Name="Delegates"
 			>
 			<File
+				RelativePath=".\DRTDesktopNotificationPresenter.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\DRTDesktopNotificationPresenter.h"
+				>
+			</File>
+			<File
 				RelativePath=".\EditingDelegate.cpp"
 				>
 			</File>

@@ -60,6 +60,11 @@
 #include "Worker.h"
 #endif
 
+#if ENABLE(NOTIFICATIONS)
+#include "JSNotification.h"
+#include "Notification.h"
+#endif
+
 using namespace JSC;
 
 namespace WebCore {
@@ -111,6 +116,11 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, EventTarget* targ
         return toJSDOMGlobalObject(workerContext);
 #endif
 
+#if ENABLE(NOTIFICATIONS)
+    if (Notification* notification = target->toNotification())
+        return toJS(exec, notification);
+#endif
+
     ASSERT_NOT_REACHED();
     return jsNull();
 }
@@ -145,6 +155,10 @@ EventTarget* toEventTarget(JSC::JSValue value)
 #if ENABLE(SHARED_WORKERS)
     CONVERT_TO_EVENT_TARGET(SharedWorker)
     CONVERT_TO_EVENT_TARGET(SharedWorkerContext)
+#endif
+
+#if ENABLE(NOTIFICATIONS)
+    CONVERT_TO_EVENT_TARGET(Notification)
 #endif
 
     return 0;

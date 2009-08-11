@@ -45,6 +45,7 @@ namespace WebCore {
     class EventListener;
     class MessagePort;
     class Node;
+    class Notification;
     class SVGElementInstance;
     class ScriptExecutionContext;
     class SharedWorker;
@@ -76,6 +77,10 @@ namespace WebCore {
 #if ENABLE(SHARED_WORKERS)
         virtual SharedWorker* toSharedWorker();
         virtual SharedWorkerContext* toSharedWorkerContext();
+#endif
+
+#if ENABLE(NOTIFICATIONS)
+        virtual Notification* toNotification();
 #endif
 
         virtual ScriptExecutionContext* scriptExecutionContext() const = 0;

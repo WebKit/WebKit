@@ -56,6 +56,7 @@ namespace WebCore {
     class MessagePort;
     class Navigator;
     class Node;
+    class NotificationCenter;
     class PostMessageTimer;
     class ScheduledAction;
     class Screen;
@@ -200,6 +201,10 @@ namespace WebCore {
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
         DOMApplicationCache* applicationCache() const;
+#endif
+
+#if ENABLE(NOTIFICATIONS)
+        NotificationCenter* webkitNotifications() const;
 #endif
 
         void postMessage(const String& message, MessagePort*, const String& targetOrigin, DOMWindow* source, ExceptionCode&);
@@ -426,6 +431,9 @@ namespace WebCore {
 #endif
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
         mutable RefPtr<DOMApplicationCache> m_applicationCache;
+#endif
+#if ENABLE(NOTIFICATIONS)
+        mutable RefPtr<NotificationCenter> m_notifications;
 #endif
 
         RegisteredEventListenerVector m_eventListeners;

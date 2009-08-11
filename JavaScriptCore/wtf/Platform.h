@@ -570,6 +570,10 @@
 #define ENABLE_GEOLOCATION 0
 #endif
 
+#if !defined(ENABLE_NOTIFICATIONS)
+#define ENABLE_NOTIFICATIONS 0
+#endif
+
 #if !defined(ENABLE_TEXT_CARET)
 #define ENABLE_TEXT_CARET 1
 #endif

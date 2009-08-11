@@ -54,6 +54,7 @@
 #include "Location.h"
 #include "MediaPlayer.h"
 #include "MessagePort.h"
+#include "NotificationCenter.h"
 #include "Page.h"
 #include "PlatformScreen.h"
 #include "RegisteredEventListener.h"

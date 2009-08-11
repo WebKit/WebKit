@@ -1,0 +1,4 @@
+Sending notifications without permission...
+
+PASS: Exception thrown.
+

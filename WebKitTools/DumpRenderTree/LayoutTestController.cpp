@@ -362,6 +362,19 @@ static JSValueRef execCommandCallback(JSContextRef context, JSObjectRef function
     return JSValueMakeUndefined(context);
 }
 
+static JSValueRef grantDesktopNotificationPermissionCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    // Has Windows implementation
+    if (argumentCount < 1)
+        return JSValueMakeUndefined(context);
+
+    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+
+    controller->grantDesktopNotificationPermission(JSValueToStringCopy(context, arguments[0], NULL));
+        
+    return JSValueMakeUndefined(context);
+}
+
 static JSValueRef isCommandEnabledCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     // Has Mac implementation.
@@ -953,6 +966,7 @@ JSStaticFunction* LayoutTestController::staticFunctions()
         { "elementDoesAutoCompleteForElementWithId", elementDoesAutoCompleteForElementWithIdCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "encodeHostName", encodeHostNameCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "execCommand", execCommandCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "grantDesktopNotificationPermission", grantDesktopNotificationPermissionCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete }, 
         { "isCommandEnabled", isCommandEnabledCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "keepWebHistory", keepWebHistoryCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "notifyDone", notifyDoneCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
@@ -1028,4 +1042,21 @@ void LayoutTestController::queueNonLoadingScript(JSStringRef script)
 void LayoutTestController::queueReload()
 {
     WorkQueue::shared()->queue(new ReloadItem);
+}
+
+void LayoutTestController::grantDesktopNotificationPermission(JSStringRef origin)
+{
+    m_desktopNotificationAllowedOrigins.push_back(JSStringRetain(origin));
+}
+
+bool LayoutTestController::checkDesktopNotificationPermission(JSStringRef origin)
+{
+    std::vector<JSStringRef>::iterator i;
+    for (i = m_desktopNotificationAllowedOrigins.begin();
+         i != m_desktopNotificationAllowedOrigins.end();
+         ++i) {
+        if (JSStringIsEqual(*i, origin))
+            return true;
+    }
+    return false;
 }

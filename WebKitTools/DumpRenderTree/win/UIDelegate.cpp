@@ -33,6 +33,7 @@
 #include "DraggingInfo.h"
 #include "EventSender.h"
 #include "LayoutTestController.h"
+#include "DRTDesktopNotificationPresenter.h"
 
 #include <WebCore/COMPtr.h>
 #include <wtf/Platform.h>
@@ -155,6 +156,7 @@ void DRTUndoManager::undo()
 UIDelegate::UIDelegate()
     : m_refCount(1)
     , m_undoManager(new DRTUndoManager)
+    , m_desktopNotifications(new DRTDesktopNotificationPresenter)
 {
     m_frame.bottom = 0;
     m_frame.top = 0;
@@ -602,5 +604,11 @@ HRESULT STDMETHODCALLTYPE UIDelegate::setStatusText(IWebView*, BSTR text)
 { 
     if (gLayoutTestController->dumpStatusCallbacks())
         printf("UI DELEGATE STATUS CALLBACK: setStatusText:%S\n", text ? text : L"");
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE UIDelegate::desktopNotificationsDelegate(IWebDesktopNotificationsDelegate** result)
+{
+    m_desktopNotifications.copyRefTo(result);
     return S_OK;
 }
