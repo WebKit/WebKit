@@ -339,8 +339,6 @@ WMLCardElement* WMLCardElement::determineActiveCard(Document* doc)
     // Update the document title
     doc->setTitle(activeCard->title());
 
-    // Set the active activeCard in the WMLPageState object
-    pageState->setActiveCard(activeCard);
     return activeCard;
 }
 

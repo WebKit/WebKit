@@ -79,10 +79,8 @@ void WMLDocument::finishedParsing()
         return;
     }
 
-    if (m_activeCard) {
+    if (m_activeCard)
         m_activeCard->handleIntrinsicEventIfNeeded();
-        m_activeCard = 0;
-    }
 }
 
 bool WMLDocument::initialize(bool aboutToFinishParsing)

@@ -54,9 +54,6 @@ public:
 
     Page* page() const { return m_page; }
 
-    WMLCardElement* activeCard() const { return m_activeCard; }
-    void setActiveCard(WMLCardElement* card) { m_activeCard = card; }
-
     // Deck access control
     bool processAccessControlData(const String& dmain, const String& path);
     void resetAccessControlData();
@@ -70,7 +67,6 @@ private:
 private:
     Page* m_page;
     WMLVariableMap m_variables;
-    WMLCardElement* m_activeCard;
     String m_accessDomain;
     String m_accessPath;
     bool m_hasAccessControlData;

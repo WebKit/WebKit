@@ -42,11 +42,14 @@ WMLPrevElement::~WMLPrevElement()
 
 void WMLPrevElement::executeTask(Event*)
 {
-    WMLPageState* pageState = wmlPageStateForDocument(document());
+    ASSERT(document()->isWMLDocument());
+    WMLDocument* document = static_cast<WMLDocument*>(this->document());
+
+    WMLPageState* pageState = wmlPageStateForDocument(document);
     if (!pageState)
         return;
 
-    WMLCardElement* card = pageState->activeCard();
+    WMLCardElement* card = document->activeCard();
     if (!card)
         return;
 

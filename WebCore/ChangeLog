@@ -1,3 +1,35 @@
+2009-08-11  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        [WML] WMLPageState is not allowed to store the active card, it needs to be done per document
+        https://bugs.webkit.org/show_bug.cgi?id=28180
+
+        Don't store the active WMLCardElement in WMLPageState, but in WMLDocument.
+        Otherwhise this may lead to crashes related to intrinsic event exeuction.
+
+        Unfortunately select elements aren't testable by the layout tests, so adding
+        a new manual test reproducing the crash.
+
+        * manual-tests/wml/select-onpick-event-crash.wml: Added.
+        * wml/WMLCardElement.cpp:
+        (WebCore::WMLCardElement::determineActiveCard):
+        * wml/WMLDoElement.cpp:
+        (WebCore::WMLDoElement::defaultEventHandler):
+        * wml/WMLDocument.cpp:
+        (WebCore::WMLDocument::finishedParsing):
+        * wml/WMLDocument.h:
+        (WebCore::WMLDocument::activeCard):
+        * wml/WMLGoElement.cpp:
+        (WebCore::WMLGoElement::executeTask):
+        * wml/WMLPageState.cpp:
+        (WebCore::WMLPageState::WMLPageState):
+        * wml/WMLPageState.h:
+        * wml/WMLPrevElement.cpp:
+        (WebCore::WMLPrevElement::executeTask):
+        * wml/WMLRefreshElement.cpp:
+        (WebCore::WMLRefreshElement::executeTask):
+
 2009-08-07  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Eric Seidel.

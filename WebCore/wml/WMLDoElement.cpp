@@ -72,12 +72,15 @@ void WMLDoElement::defaultEventHandler(Event* event)
         if (m_task)
             m_task->executeTask(event);
     } else if (m_type == "prev") {
-        WMLPageState* pageState = wmlPageStateForDocument(document());
+        ASSERT(document()->isWMLDocument());
+        WMLDocument* document = static_cast<WMLDocument*>(this->document());
+
+        WMLPageState* pageState = wmlPageStateForDocument(document);
         if (!pageState)
             return;
-
+    
         // Stop the timer of the current card if it is active
-        if (WMLCardElement* card = pageState->activeCard()) {
+        if (WMLCardElement* card = document->activeCard()) {
             if (WMLTimerElement* eventTimer = card->eventTimer())
                 eventTimer->stop();
         }
