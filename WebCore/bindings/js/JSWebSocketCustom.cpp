@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc.  All rights reserved.
+ * Copyright (C) 2009 Apple, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -42,11 +43,11 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSWebSocket::mark()
+void JSWebSocket::markChildren(MarkStack& markStack)
 {
-    Base::mark();
+    Base::markChildren(markStack);
     if (m_impl->readyState() != WebSocket::CLOSED)
-        markIfNotNull(m_impl->onmessage());
+        markIfNotNull(markStack, m_impl->onmessage());
     // FIXME: mark if EventListeners is registered.
 }
 

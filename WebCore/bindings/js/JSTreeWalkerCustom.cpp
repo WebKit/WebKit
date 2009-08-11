@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2008, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,12 +29,12 @@ using namespace JSC;
 
 namespace WebCore {
     
-void JSTreeWalker::mark()
+void JSTreeWalker::markChildren(MarkStack& markStack)
 {
+    Base::markChildren(markStack);
+
     if (NodeFilter* filter = m_impl->filter())
-        filter->mark();
-    
-    Base::mark();
+        filter->markAggregate(markStack);
 }
     
 JSValue JSTreeWalker::parentNode(ExecState* exec, const ArgList&)

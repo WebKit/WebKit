@@ -1818,14 +1818,14 @@ ScopeNodeData::ScopeNodeData(ParserArena& arena, SourceElements* children, VarSt
         children->releaseContentsIntoVector(m_children);
 }
 
-void ScopeNodeData::mark()
+void ScopeNodeData::markAggregate(MarkStack& markStack)
 {
     FunctionStack::iterator end = m_functionStack.end();
     for (FunctionStack::iterator ptr = m_functionStack.begin(); ptr != end; ++ptr) {
         FunctionBodyNode* body = (*ptr)->body();
         if (!body->isGenerated())
             continue;
-        body->generatedBytecode().mark();
+        body->generatedBytecode().markAggregate(markStack);
     }
 }
 
@@ -1972,10 +1972,10 @@ EvalCodeBlock& EvalNode::bytecodeForExceptionInfoReparse(ScopeChainNode* scopeCh
     return *m_code;
 }
 
-void EvalNode::mark()
+void EvalNode::markAggregate(MarkStack& markStack)
 {
     // We don't need to mark our own CodeBlock as the JSGlobalObject takes care of that
-    data()->mark();
+    data()->markAggregate(markStack);
 }
 
 #if ENABLE(JIT)
@@ -2030,10 +2030,10 @@ void FunctionBodyNode::finishParsing(Identifier* parameters, size_t parameterCou
     m_parameterCount = parameterCount;
 }
 
-void FunctionBodyNode::mark()
+void FunctionBodyNode::markAggregate(MarkStack& markStack)
 {
     if (m_code)
-        m_code->mark();
+        m_code->markAggregate(markStack);
 }
 
 #if ENABLE(JIT)

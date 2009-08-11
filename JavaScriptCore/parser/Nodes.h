@@ -1390,7 +1390,7 @@ namespace JSC {
         int m_numConstants;
         StatementVector m_children;
 
-        void mark();
+        void markAggregate(MarkStack&);
     };
 
     class ScopeNode : public StatementNode, public ParserArenaRefCounted {
@@ -1436,7 +1436,7 @@ namespace JSC {
             return m_data->m_numConstants + 2;
         }
 
-        virtual void mark() { }
+        virtual void markAggregate(MarkStack&) { }
 
 #if ENABLE(JIT)
         JITCode& generatedJITCode()
@@ -1515,7 +1515,7 @@ namespace JSC {
 
         EvalCodeBlock& bytecodeForExceptionInfoReparse(ScopeChainNode*, CodeBlock*);
 
-        virtual void mark();
+        virtual void markAggregate(MarkStack&);
 
 #if ENABLE(JIT)
         JITCode& jitCode(ScopeChainNode* scopeChain)
@@ -1563,7 +1563,7 @@ namespace JSC {
 
         bool isHostFunction() const;
 
-        virtual void mark();
+        virtual void markAggregate(MarkStack&);
 
         void finishParsing(const SourceCode&, ParameterNode*);
         void finishParsing(Identifier* parameters, size_t parameterCount);

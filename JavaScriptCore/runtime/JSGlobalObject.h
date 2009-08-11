@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2007 Eric Seidel <eric@webkit.org>
- *  Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -166,7 +166,7 @@ namespace JSC {
     public:
         virtual ~JSGlobalObject();
 
-        virtual void mark();
+        virtual void markChildren(MarkStack&);
 
         virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
         virtual bool hasOwnPropertyForWrite(ExecState*, const Identifier&);

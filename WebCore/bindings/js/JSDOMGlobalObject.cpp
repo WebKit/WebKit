@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2009 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -58,19 +58,17 @@ JSDOMGlobalObject::~JSDOMGlobalObject()
         it->second->clearGlobalObject();
 }
 
-void JSDOMGlobalObject::mark()
+void JSDOMGlobalObject::markChildren(MarkStack& markStack)
 {
-    Base::mark();
+    Base::markChildren(markStack);
 
     JSDOMStructureMap::iterator end = structures().end();
     for (JSDOMStructureMap::iterator it = structures().begin(); it != end; ++it)
-        it->second->mark();
+        it->second->markAggregate(markStack);
 
     JSDOMConstructorMap::iterator end2 = constructors().end();
-    for (JSDOMConstructorMap::iterator it2 = constructors().begin(); it2 != end2; ++it2) {
-        if (!it2->second->marked())
-            it2->second->mark();
-    }
+    for (JSDOMConstructorMap::iterator it2 = constructors().begin(); it2 != end2; ++it2)
+        markStack.append(it2->second);
 }
 
 JSEventListener* JSDOMGlobalObject::findJSEventListener(JSValue val)

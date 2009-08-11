@@ -1,3 +1,157 @@
+2009-08-07  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Stack overflow crash in JavaScript garbage collector mark pass
+        https://bugs.webkit.org/show_bug.cgi?id=12216
+
+        Make the GC mark phase iterative by using an explicit mark stack.
+        To do this marking any single object is performed in multiple stages
+          * The object is appended to the MarkStack, this sets the marked
+            bit for the object using the new markDirect() function, and then
+            returns
+          * When the MarkStack is drain()ed the object is popped off the stack
+            and markChildren(MarkStack&) is called on the object to collect 
+            all of its children.  drain() then repeats until the stack is empty.
+
+        Additionally I renamed a number of methods from 'mark' to 'markAggregate'
+        in order to make it more clear that marking of those object was not
+        going to result in an actual recursive mark.
+
+        * GNUmakefile.am
+        * JavaScriptCore.exp:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::markAggregate):
+        * bytecode/CodeBlock.h:
+        * bytecode/EvalCodeCache.h:
+        (JSC::EvalCodeCache::markAggregate):
+        * debugger/DebuggerActivation.cpp:
+        (JSC::DebuggerActivation::markChildren):
+        * debugger/DebuggerActivation.h:
+        * interpreter/Register.h:
+        * interpreter/RegisterFile.h:
+        (JSC::RegisterFile::markGlobals):
+        (JSC::RegisterFile::markCallFrames):
+        * parser/Nodes.cpp:
+        (JSC::ScopeNodeData::markAggregate):
+        (JSC::EvalNode::markAggregate):
+        (JSC::FunctionBodyNode::markAggregate):
+        * parser/Nodes.h:
+        (JSC::ScopeNode::markAggregate):
+        * runtime/ArgList.cpp:
+        (JSC::MarkedArgumentBuffer::markLists):
+        * runtime/ArgList.h:
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::markChildren):
+        * runtime/Arguments.h:
+        * runtime/Collector.cpp:
+        (JSC::Heap::markConservatively):
+        (JSC::Heap::markCurrentThreadConservativelyInternal):
+        (JSC::Heap::markCurrentThreadConservatively):
+        (JSC::Heap::markOtherThreadConservatively):
+        (JSC::Heap::markStackObjectsConservatively):
+        (JSC::Heap::markProtectedObjects):
+        (JSC::Heap::collect):
+        * runtime/Collector.h:
+        * runtime/GetterSetter.cpp:
+        (JSC::GetterSetter::markChildren):
+        * runtime/GetterSetter.h:
+        (JSC::GetterSetter::GetterSetter):
+        (JSC::GetterSetter::createStructure):
+        * runtime/GlobalEvalFunction.cpp:
+        (JSC::GlobalEvalFunction::markChildren):
+        * runtime/GlobalEvalFunction.h:
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::markChildren):
+        * runtime/JSActivation.h:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::markChildren):
+        * runtime/JSArray.h:
+        * runtime/JSCell.h:
+        (JSC::JSCell::markCellDirect):
+        (JSC::JSCell::markChildren):
+        (JSC::JSValue::markDirect):
+        (JSC::JSValue::markChildren):
+        (JSC::JSValue::hasChildren):
+        (JSC::MarkStack::append):
+        (JSC::MarkStack::drain):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::markChildren):
+        * runtime/JSFunction.h:
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSGlobalData.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::markIfNeeded):
+        (JSC::JSGlobalObject::markChildren):
+        * runtime/JSGlobalObject.h:
+        * runtime/JSNotAnObject.cpp:
+        (JSC::JSNotAnObject::markChildren):
+        * runtime/JSNotAnObject.h:
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::markAggregate):
+        (JSC::JSONObject::markStringifiers):
+        * runtime/JSONObject.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::markChildren):
+        (JSC::JSObject::defineGetter):
+        (JSC::JSObject::defineSetter):
+        * runtime/JSObject.h:
+        * runtime/JSPropertyNameIterator.cpp:
+        (JSC::JSPropertyNameIterator::markChildren):
+        * runtime/JSPropertyNameIterator.h:
+        (JSC::JSPropertyNameIterator::createStructure):
+        (JSC::JSPropertyNameIterator::JSPropertyNameIterator):
+        (JSC::JSPropertyNameIterator::create):
+        * runtime/JSStaticScopeObject.cpp:
+        (JSC::JSStaticScopeObject::markChildren):
+        * runtime/JSStaticScopeObject.h:
+        * runtime/JSType.h:
+        (JSC::):
+        * runtime/JSValue.h:
+        * runtime/JSWrapperObject.cpp:
+        (JSC::JSWrapperObject::markChildren):
+        * runtime/JSWrapperObject.h:
+        * runtime/MarkStack.cpp: Added.
+        (JSC::MarkStack::compact):
+        * runtime/MarkStack.h: Added.
+        (JSC::):
+        (JSC::MarkStack::MarkStack):
+        (JSC::MarkStack::append):
+        (JSC::MarkStack::appendValues):
+        (JSC::MarkStack::~MarkStack):
+        (JSC::MarkStack::MarkSet::MarkSet):
+        (JSC::MarkStack::pageSize):
+        
+        MarkStackArray is a non-shrinking, mmap-based vector type
+        used for storing objects to be marked.
+        (JSC::MarkStack::MarkStackArray::MarkStackArray):
+        (JSC::MarkStack::MarkStackArray::~MarkStackArray):
+        (JSC::MarkStack::MarkStackArray::expand):
+        (JSC::MarkStack::MarkStackArray::append):
+        (JSC::MarkStack::MarkStackArray::removeLast):
+        (JSC::MarkStack::MarkStackArray::isEmpty):
+        (JSC::MarkStack::MarkStackArray::size):
+        (JSC::MarkStack::MarkStackArray::shrinkAllocation):
+        * runtime/MarkStackPosix.cpp: Added.
+        (JSC::MarkStack::allocateStack):
+        (JSC::MarkStack::releaseStack):
+        * runtime/MarkStackWin.cpp: Added.
+        (JSC::MarkStack::allocateStack):
+        (JSC::MarkStack::releaseStack):
+
+        * runtime/ScopeChain.h:
+        * runtime/ScopeChainMark.h:
+        (JSC::ScopeChain::markAggregate):
+        * runtime/SmallStrings.cpp:
+        (JSC::SmallStrings::mark):
+        * runtime/Structure.h:
+        (JSC::Structure::markAggregate):
+
 2009-08-10  Mark Rowe  <mrowe@apple.com>
         
         Reviewed by Darin Adler.

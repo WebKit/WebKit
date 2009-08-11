@@ -884,6 +884,18 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\runtime\MarkStack.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\MarkStack.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\MarkStackWin.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\runtime\MathObject.cpp"
 				>
 			</File>

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -10,10 +10,10 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
@@ -24,34 +24,20 @@
  */
 
 #include "config.h"
-#include "JSNodeFilter.h"
 
-#include "JSNode.h"
-#include "JSNodeFilterCondition.h"
-#include "NodeFilter.h"
-#include "JSDOMBinding.h"
 
-using namespace JSC;
+#include "MarkStack.h"
 
-namespace WebCore {
+#include "windows.h"
 
-void JSNodeFilter::markChildren(MarkStack& markStack)
+namespace JSC {
+void* MarkStack::allocateStack(size_t size)
 {
-    Base::markChildren(markStack);
-    impl()->markAggregate(markStack);
+    return VirtualAlloc(0, size, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+}
+void MarkStack::releaseStack(void* addr, size_t size)
+{
+    VirtualFree(addr, size, MEM_RELEASE);
 }
 
-JSValue JSNodeFilter::acceptNode(ExecState* exec, const ArgList& args)
-{
-    return jsNumber(exec, impl()->acceptNode(exec, toNode(args.at(0))));
 }
-
-PassRefPtr<NodeFilter> toNodeFilter(JSValue value)
-{
-    if (value.isObject(&JSNodeFilter::s_info))
-        return static_cast<JSNodeFilter*>(asObject(value))->impl();
-
-    return NodeFilter::create(JSNodeFilterCondition::create(value));
-}
-
-} // namespace WebCore

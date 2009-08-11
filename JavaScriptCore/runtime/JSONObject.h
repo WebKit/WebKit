@@ -44,7 +44,7 @@ namespace JSC {
             return Structure::create(prototype, TypeInfo(ObjectType));
         }
 
-        static void markStringifiers(Stringifier*);
+        static void markStringifiers(MarkStack&, Stringifier*);
 
     private:
         virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);

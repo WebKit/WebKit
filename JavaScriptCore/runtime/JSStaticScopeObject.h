@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2009 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,7 +50,7 @@ namespace JSC{
             symbolTable().add(ident.ustring().rep(), SymbolTableEntry(-1, attributes));
         }
         virtual ~JSStaticScopeObject();
-        virtual void mark();
+        virtual void markChildren(MarkStack&);
         bool isDynamicScope() const;
         virtual JSObject* toThisObject(ExecState*) const;
         virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);

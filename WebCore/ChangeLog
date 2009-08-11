@@ -1,3 +1,88 @@
+2009-08-07  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam Weinig
+
+        Stack overflow crash in JavaScript garbage collector mark pass
+        https://bugs.webkit.org/show_bug.cgi?id=12216
+
+        Make WebCore use the new iterative marking logic.
+
+        Tests: fast/js/nested-object-gc.html
+
+        * bindings/js/JSAbstractWorkerCustom.cpp:
+        (WebCore::JSAbstractWorker::markChildren):
+        * bindings/js/JSDOMApplicationCacheCustom.cpp:
+        (WebCore::JSDOMApplicationCache::markChildren):
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::markDOMNodesForDocument):
+        (WebCore::markActiveObjectsForContext):
+        (WebCore::markDOMObjectWrapper):
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::DOMObjectWithGlobalPointer::markChildren):
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::markChildren):
+        * bindings/js/JSDOMGlobalObject.h:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::markChildren):
+        * bindings/js/JSDOMWindowShell.cpp:
+        (WebCore::JSDOMWindowShell::markChildren):
+        * bindings/js/JSDOMWindowShell.h:
+        * bindings/js/JSDedicatedWorkerContextCustom.cpp:
+        (WebCore::JSDedicatedWorkerContext::markChildren):
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::markChildren):
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::markJSFunction):
+        * bindings/js/JSEventListener.h:
+        * bindings/js/JSMessageChannelCustom.cpp:
+        (WebCore::JSMessageChannel::markChildren):
+        * bindings/js/JSMessagePortCustom.cpp:
+        (WebCore::JSMessagePort::markChildren):
+        * bindings/js/JSNavigatorCustom.cpp:
+        (WebCore::JSNavigator::markChildren):
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::JSNode::markChildren):
+        * bindings/js/JSNodeFilterCondition.cpp:
+        (WebCore::JSNodeFilterCondition::markAggregate):
+        * bindings/js/JSNodeFilterCondition.h:
+        * bindings/js/JSNodeFilterCustom.cpp:
+        (WebCore::JSNodeFilter::markChildren):
+        * bindings/js/JSNodeIteratorCustom.cpp:
+        (WebCore::JSNodeIterator::markChildren):
+        * bindings/js/JSQuarantinedObjectWrapper.cpp:
+        (WebCore::JSQuarantinedObjectWrapper::markChildren):
+        * bindings/js/JSQuarantinedObjectWrapper.h:
+        * bindings/js/JSSVGElementInstanceCustom.cpp:
+        (WebCore::JSSVGElementInstance::markChildren):
+        * bindings/js/JSSharedWorkerCustom.cpp:
+        (WebCore::JSSharedWorker::markChildren):
+        * bindings/js/JSStyleSheetCustom.cpp:
+        (WebCore::JSStyleSheet::markChildren):
+        * bindings/js/JSTreeWalkerCustom.cpp:
+        (WebCore::JSTreeWalker::markChildren):
+        * bindings/js/JSWebSocketCustom.cpp:
+        (WebCore::JSWebSocket::markChildren):
+        * bindings/js/JSWorkerContextCustom.cpp:
+        (WebCore::JSWorkerContext::markChildren):
+        * bindings/js/JSWorkerCustom.cpp:
+        (WebCore::JSWorker::markChildren):
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::markChildren):
+        * bindings/js/JSXMLHttpRequestUploadCustom.cpp:
+        (WebCore::JSXMLHttpRequestUpload::markChildren):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * dom/EventListener.h:
+        (WebCore::EventListener::markJSFunction):
+        (WebCore::markIfNotNull):
+        * dom/NodeFilter.h:
+        (WebCore::NodeFilter::markAggregate):
+        * dom/NodeFilterCondition.h:
+        (WebCore::NodeFilterCondition::markAggregate):
+        * dom/RegisteredEventListener.h:
+        (WebCore::markEventListeners):
+        * page/DOMWindow.h:
+        * workers/WorkerContext.h:
+
 2009-08-10  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Eric Seidel.

@@ -41,14 +41,14 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSSharedWorker::mark()
+void JSSharedWorker::markChildren(MarkStack& markStack)
 {
-    Base::mark();
+    Base::markChildren(markStack);
 
     if (MessagePort* port = impl()->port()) {
         DOMObject* wrapper = getCachedDOMObjectWrapper(*Heap::heap(this)->globalData(), port);
-        if (wrapper && !wrapper->marked())
-            wrapper->mark();
+        if (wrapper)
+            markStack.append(wrapper);
     }
 }
 

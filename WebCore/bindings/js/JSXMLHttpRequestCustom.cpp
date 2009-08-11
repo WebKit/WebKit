@@ -49,29 +49,29 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSXMLHttpRequest::mark()
+void JSXMLHttpRequest::markChildren(MarkStack& markStack)
 {
-    Base::mark();
+    Base::markChildren(markStack);
 
     if (XMLHttpRequestUpload* upload = m_impl->optionalUpload()) {
         DOMObject* wrapper = getCachedDOMObjectWrapper(*Heap::heap(this)->globalData(), upload);
-        if (wrapper && !wrapper->marked())
-            wrapper->mark();
+        if (wrapper)
+            markStack.append(wrapper);
     }
 
-    markIfNotNull(m_impl->onreadystatechange());
-    markIfNotNull(m_impl->onabort());
-    markIfNotNull(m_impl->onerror());
-    markIfNotNull(m_impl->onload());
-    markIfNotNull(m_impl->onloadstart());
-    markIfNotNull(m_impl->onprogress());
+    markIfNotNull(markStack, m_impl->onreadystatechange());
+    markIfNotNull(markStack, m_impl->onabort());
+    markIfNotNull(markStack, m_impl->onerror());
+    markIfNotNull(markStack, m_impl->onload());
+    markIfNotNull(markStack, m_impl->onloadstart());
+    markIfNotNull(markStack, m_impl->onprogress());
     
     typedef XMLHttpRequest::EventListenersMap EventListenersMap;
     typedef XMLHttpRequest::ListenerVector ListenerVector;
     EventListenersMap& eventListeners = m_impl->eventListeners();
     for (EventListenersMap::iterator mapIter = eventListeners.begin(); mapIter != eventListeners.end(); ++mapIter) {
         for (ListenerVector::iterator vecIter = mapIter->second.begin(); vecIter != mapIter->second.end(); ++vecIter)
-            (*vecIter)->markJSFunction();
+            (*vecIter)->markJSFunction(markStack);
     }
 }
 

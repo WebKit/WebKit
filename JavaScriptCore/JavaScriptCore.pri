@@ -98,6 +98,8 @@ SOURCES += \
     runtime/JSNotAnObject.cpp \
     runtime/JSONObject.cpp \
     runtime/LiteralParser.cpp \
+    runtime/MarkStack.cpp \
+    runtime/MarkStackPosix.cpp \
     runtime/TimeoutChecker.cpp \
     bytecode/CodeBlock.cpp \
     bytecode/StructureStubInfo.cpp \

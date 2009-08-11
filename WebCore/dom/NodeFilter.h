@@ -3,7 +3,7 @@
  * Copyright (C) 2000 Frederik Holljen (frederik.holljen@hig.no)
  * Copyright (C) 2001 Peter Kelly (pmk@post.com)
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2004, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2008, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -71,7 +71,7 @@ namespace WebCore {
         }
 
         short acceptNode(ScriptState*, Node*) const;
-        void mark() { m_condition->mark(); };
+        void markAggregate(JSC::MarkStack& markStack) { m_condition->markAggregate(markStack); };
 
         // For non-JS bindings. Silently ignores the JavaScript exception if any.
         short acceptNode(Node* node) const { return acceptNode(scriptStateFromNode(node), node); }

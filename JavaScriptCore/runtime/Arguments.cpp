@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2002 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Cameron Zwarich (cwzwarich@uwaterloo.ca)
  *  Copyright (C) 2007 Maks Orlovich
  *
@@ -43,30 +43,22 @@ Arguments::~Arguments()
         delete [] d->extraArguments;
 }
 
-void Arguments::mark()
+void Arguments::markChildren(MarkStack& markStack)
 {
-    JSObject::mark();
+    JSObject::markChildren(markStack);
 
-    if (d->registerArray) {
-        for (unsigned i = 0; i < d->numParameters; ++i) {
-            if (!d->registerArray[i].marked())
-                d->registerArray[i].mark();
-        }
-    }
+    if (d->registerArray)
+        markStack.appendValues(reinterpret_cast<JSValue*>(d->registerArray.get()), d->numParameters);
 
     if (d->extraArguments) {
         unsigned numExtraArguments = d->numArguments - d->numParameters;
-        for (unsigned i = 0; i < numExtraArguments; ++i) {
-            if (!d->extraArguments[i].marked())
-                d->extraArguments[i].mark();
-        }
+        markStack.appendValues(reinterpret_cast<JSValue*>(d->extraArguments), numExtraArguments);
     }
 
-    if (!d->callee->marked())
-        d->callee->mark();
+    markStack.append(d->callee);
 
-    if (d->activation && !d->activation->marked())
-        d->activation->mark();
+    if (d->activation)
+        markStack.append(d->activation);
 }
 
 void Arguments::copyToRegisters(ExecState* exec, Register* buffer, uint32_t maxSize)

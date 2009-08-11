@@ -33,6 +33,7 @@
 #include "ExecutableAllocator.h"
 #include "JITStubs.h"
 #include "JSValue.h"
+#include "MarkStack.h"
 #include "SmallStrings.h"
 #include "TimeoutChecker.h"
 #include <wtf/Forward.h>
@@ -97,6 +98,10 @@ namespace JSC {
         RefPtr<Structure> stringStructure;
         RefPtr<Structure> notAnObjectErrorStubStructure;
         RefPtr<Structure> notAnObjectStructure;
+        RefPtr<Structure> propertyNameIteratorStructure;
+        RefPtr<Structure> getterSetterStructure;
+        RefPtr<Structure> apiWrapperStructure;
+
 #if USE(JSVALUE32)
         RefPtr<Structure> numberStructure;
 #endif
@@ -143,6 +148,7 @@ namespace JSC {
         ScopeNode* scopeNodeBeingReparsed;
         Stringifier* firstStringifierToMark;
 
+        MarkStack markStack;
     private:
         JSGlobalData(bool isShared, const VPtrSet&);
         static JSGlobalData*& sharedInstanceInternal();

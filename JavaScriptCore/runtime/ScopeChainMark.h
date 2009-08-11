@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2003, 2006, 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2006, 2008, 2009 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -25,13 +25,10 @@
 
 namespace JSC {
 
-    inline void ScopeChain::mark() const
+    inline void ScopeChain::markAggregate(MarkStack& markStack) const
     {
-        for (ScopeChainNode* n = m_node; n; n = n->next) {
-            JSObject* o = n->object;
-            if (!o->marked())
-                o->mark();
-        }
+        for (ScopeChainNode* n = m_node; n; n = n->next)
+            markStack.append(n->object);
     }
 
 } // namespace JSC

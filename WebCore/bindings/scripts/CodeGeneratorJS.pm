@@ -504,7 +504,7 @@ sub GenerateHeader
     }
 
     # Custom mark function
-    push(@headerContent, "    virtual void mark();\n\n") if $dataNode->extendedAttributes->{"CustomMarkFunction"};
+    push(@headerContent, "    virtual void markChildren(JSC::MarkStack&);\n\n") if $dataNode->extendedAttributes->{"CustomMarkFunction"};
 
     # Custom pushEventHandlerScope function
     push(@headerContent, "    virtual void pushEventHandlerScope(JSC::ExecState*, JSC::ScopeChain&) const;\n\n") if $dataNode->extendedAttributes->{"CustomPushEventHandlerScope"};

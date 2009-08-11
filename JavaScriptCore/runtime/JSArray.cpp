@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2007, 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *  Copyright (C) 2003 Peter Kelly (pmk@post.com)
  *  Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
@@ -601,26 +601,19 @@ void JSArray::push(ExecState* exec, JSValue value)
     putSlowCase(exec, m_storage->m_length++, value);
 }
 
-void JSArray::mark()
+void JSArray::markChildren(MarkStack& markStack)
 {
-    JSObject::mark();
+    JSObject::markChildren(markStack);
 
     ArrayStorage* storage = m_storage;
 
     unsigned usedVectorLength = min(storage->m_length, storage->m_vectorLength);
-    for (unsigned i = 0; i < usedVectorLength; ++i) {
-        JSValue value = storage->m_vector[i];
-        if (value && !value.marked())
-            value.mark();
-    }
+    markStack.appendValues(storage->m_vector, usedVectorLength, MayContainNullValues);
 
     if (SparseArrayValueMap* map = storage->m_sparseValueMap) {
         SparseArrayValueMap::iterator end = map->end();
-        for (SparseArrayValueMap::iterator it = map->begin(); it != end; ++it) {
-            JSValue value = it->second;
-            if (!value.marked())
-                value.mark();
-        }
+        for (SparseArrayValueMap::iterator it = map->begin(); it != end; ++it)
+            markStack.append(it->second);
     }
 }
 

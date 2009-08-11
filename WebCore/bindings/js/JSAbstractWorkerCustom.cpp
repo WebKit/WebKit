@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2009 Apple, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -43,18 +44,18 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSAbstractWorker::mark()
+void JSAbstractWorker::markChildren(MarkStack& markStack)
 {
-    Base::mark();
+    Base::markChildren(markStack);
 
-    markIfNotNull(m_impl->onerror());
+    markIfNotNull(markStack, m_impl->onerror());
 
     typedef AbstractWorker::EventListenersMap EventListenersMap;
     typedef AbstractWorker::ListenerVector ListenerVector;
     EventListenersMap& eventListeners = m_impl->eventListeners();
     for (EventListenersMap::iterator mapIter = eventListeners.begin(); mapIter != eventListeners.end(); ++mapIter) {
         for (ListenerVector::iterator vecIter = mapIter->second.begin(); vecIter != mapIter->second.end(); ++vecIter)
-            (*vecIter)->markJSFunction();
+            (*vecIter)->markJSFunction(markStack);
     }
 }
 

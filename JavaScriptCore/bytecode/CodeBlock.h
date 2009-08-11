@@ -255,7 +255,7 @@ namespace JSC {
         CodeBlock(ScopeNode* ownerNode, CodeType, PassRefPtr<SourceProvider>, unsigned sourceOffset);
         ~CodeBlock();
 
-        void mark();
+        void markAggregate(MarkStack&);
         void refStructures(Instruction* vPC) const;
         void derefStructures(Instruction* vPC) const;
 #if ENABLE(JIT_OPTIMIZE_CALL)

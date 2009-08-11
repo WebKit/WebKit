@@ -371,7 +371,7 @@ namespace WebCore {
         void captureEvents();
         void releaseEvents();
 
-        // These methods are used for GC marking. See JSDOMWindow::mark() in
+        // These methods are used for GC marking. See JSDOMWindow::markChildren(MarkStack&) in
         // JSDOMWindowCustom.cpp.
         Screen* optionalScreen() const { return m_screen.get(); }
         DOMSelection* optionalSelection() const { return m_selection.get(); }

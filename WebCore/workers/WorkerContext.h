@@ -106,7 +106,7 @@ namespace WebCore {
 
         virtual void forwardException(const String& errorMessage, int lineNumber, const String& sourceURL) = 0;
 
-        // These methods are used for GC marking. See JSWorkerContext::mark() in
+        // These methods are used for GC marking. See JSWorkerContext::markChildren(MarkStack&) in
         // JSWorkerContextCustom.cpp.
         WorkerNavigator* optionalNavigator() const { return m_navigator.get(); }
         WorkerLocation* optionalLocation() const { return m_location.get(); }

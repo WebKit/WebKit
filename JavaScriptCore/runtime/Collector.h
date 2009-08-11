@@ -39,11 +39,12 @@
 
 namespace JSC {
 
-    class MarkedArgumentBuffer;
     class CollectorBlock;
     class JSCell;
     class JSGlobalData;
     class JSValue;
+    class MarkedArgumentBuffer;
+    class MarkStack;
 
     enum OperationInProgress { NoOperation, Allocation, Collection };
     enum HeapType { PrimaryHeap, NumberHeap };
@@ -111,7 +112,7 @@ namespace JSC {
         static bool isCellMarked(const JSCell*);
         static void markCell(JSCell*);
 
-        void markConservatively(void* start, void* end);
+        void markConservatively(MarkStack&, void* start, void* end);
 
         HashSet<MarkedArgumentBuffer*>& markListSet() { if (!m_markListSet) m_markListSet = new HashSet<MarkedArgumentBuffer*>; return *m_markListSet; }
 
@@ -133,11 +134,11 @@ namespace JSC {
         ~Heap();
 
         void recordExtraCost(size_t);
-        void markProtectedObjects();
-        void markCurrentThreadConservatively();
-        void markCurrentThreadConservativelyInternal();
-        void markOtherThreadConservatively(Thread*);
-        void markStackObjectsConservatively();
+        void markProtectedObjects(MarkStack&);
+        void markCurrentThreadConservatively(MarkStack&);
+        void markCurrentThreadConservativelyInternal(MarkStack&);
+        void markOtherThreadConservatively(MarkStack&, Thread*);
+        void markStackObjectsConservatively(MarkStack&);
 
         typedef HashCountedSet<JSCell*> ProtectCountSet;
 

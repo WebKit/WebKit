@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -74,11 +74,10 @@ JSObject* JSNotAnObject::toObject(ExecState* exec) const
 }
 
 // Marking
-void JSNotAnObject::mark()
+void JSNotAnObject::markChildren(MarkStack& markStack)
 {
-    JSCell::mark();
-    if (!m_exception->marked())
-        m_exception->mark();
+    JSObject::markChildren(markStack);
+    markStack.append(m_exception);
 }
 
 // JSObject methods

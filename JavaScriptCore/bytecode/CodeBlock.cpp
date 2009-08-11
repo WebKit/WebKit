@@ -1428,20 +1428,21 @@ void CodeBlock::refStructures(Instruction* vPC) const
     ASSERT(vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id) || vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_generic) || vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id_generic));
 }
 
-void CodeBlock::mark()
+void CodeBlock::markAggregate(MarkStack& markStack)
 {
-    for (size_t i = 0; i < m_constantRegisters.size(); ++i)
+    for (size_t i = 0; i < m_constantRegisters.size(); ++i) {
         if (!m_constantRegisters[i].marked())
-            m_constantRegisters[i].mark();
+            markStack.append(m_constantRegisters[i].jsValue());
+    }
 
     for (size_t i = 0; i < m_functionExpressions.size(); ++i)
-        m_functionExpressions[i]->body()->mark();
+        m_functionExpressions[i]->body()->markAggregate(markStack);
 
     if (m_rareData) {
         for (size_t i = 0; i < m_rareData->m_functions.size(); ++i)
-            m_rareData->m_functions[i]->body()->mark();
+            m_rareData->m_functions[i]->body()->markAggregate(markStack);
 
-        m_rareData->m_evalCodeCache.mark();
+        m_rareData->m_evalCodeCache.markAggregate(markStack);
     }
 }
 

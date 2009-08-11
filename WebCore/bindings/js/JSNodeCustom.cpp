@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -136,22 +136,21 @@ void JSNode::pushEventHandlerScope(ExecState*, ScopeChain&) const
 {
 }
 
-void JSNode::mark()
+void JSNode::markChildren(MarkStack& markStack)
 {
-    ASSERT(!marked());
-
     Node* node = m_impl.get();
+
+    Base::markChildren(markStack);
+    markEventListeners(markStack, node->eventListeners());
 
     // Nodes in the document are kept alive by JSDocument::mark, so, if we're in
     // the document, we need to mark the document, but we don't need to explicitly
     // mark any other nodes.
     if (node->inDocument()) {
-        Base::mark();
-        markEventListeners(node->eventListeners());
-        if (Document* doc = node->ownerDocument())
+        if (Document* doc = node->ownerDocument()) {
             if (DOMObject* docWrapper = getCachedDOMObjectWrapper(*Heap::heap(this)->globalData(), doc))
-                if (!docWrapper->marked())
-                    docWrapper->mark();
+                markStack.append(docWrapper);
+        }
         return;
     }
 
@@ -163,33 +162,17 @@ void JSNode::mark()
 
     // Nodes in a subtree are marked by the tree's root, so, if the root is already
     // marking the tree, we don't need to explicitly mark any other nodes.
-    if (root->inSubtreeMark()) {
-        Base::mark();
-        markEventListeners(node->eventListeners());
+    if (root->inSubtreeMark())
         return;
-    }
 
     // Mark the whole tree subtree.
     root->setInSubtreeMark(true);
     for (Node* nodeToMark = root; nodeToMark; nodeToMark = nodeToMark->traverseNextNode()) {
         JSNode* wrapper = getCachedDOMNodeWrapper(m_impl->document(), nodeToMark);
-        if (wrapper) {
-            if (!wrapper->marked())
-                wrapper->mark();
-        } else if (nodeToMark == node) {
-            // This is the case where the map from the document to wrappers has
-            // been cleared out, but a wrapper is being marked. For now, we'll
-            // let the rest of the tree of wrappers get collected, because we have
-            // no good way of finding them. Later we should test behavior of other
-            // browsers and see if we need to preserve other wrappers in this case.
-            if (!marked())
-                mark();
-        }
+        if (wrapper)
+            markStack.append(wrapper);
     }
     root->setInSubtreeMark(false);
-
-    // Double check that we actually ended up marked. This assert caught problems in the past.
-    ASSERT(marked());
 }
 
 static ALWAYS_INLINE JSValue createWrapper(ExecState* exec, JSDOMGlobalObject* globalObject, Node* node)

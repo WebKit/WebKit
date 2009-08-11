@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -71,11 +71,11 @@ void JSDOMWindowShell::setWindow(PassRefPtr<DOMWindow> domWindow)
 // JSObject methods
 // ----
 
-void JSDOMWindowShell::mark()
+void JSDOMWindowShell::markChildren(MarkStack& markStack)
 {
-    Base::mark();
-    if (m_window && !m_window->marked())
-        m_window->mark();
+    Base::markChildren(markStack);
+    if (m_window)
+        markStack.append(m_window);
 }
 
 UString JSDOMWindowShell::className() const

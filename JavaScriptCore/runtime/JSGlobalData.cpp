@@ -33,14 +33,17 @@
 #include "Collector.h"
 #include "CommonIdentifiers.h"
 #include "FunctionConstructor.h"
+#include "GetterSetter.h"
 #include "Interpreter.h"
 #include "JSActivation.h"
+#include "JSAPIValueWrapper.h"
 #include "JSArray.h"
 #include "JSByteArray.h"
 #include "JSClassRef.h"
 #include "JSFunction.h"
 #include "JSLock.h"
 #include "JSNotAnObject.h"
+#include "JSPropertyNameIterator.h"
 #include "JSStaticScopeObject.h"
 #include "Parser.h"
 #include "Lexer.h"
@@ -118,6 +121,9 @@ JSGlobalData::JSGlobalData(bool isShared, const VPtrSet& vptrSet)
     , stringStructure(JSString::createStructure(jsNull()))
     , notAnObjectErrorStubStructure(JSNotAnObjectErrorStub::createStructure(jsNull()))
     , notAnObjectStructure(JSNotAnObject::createStructure(jsNull()))
+    , propertyNameIteratorStructure(JSPropertyNameIterator::createStructure(jsNull()))
+    , getterSetterStructure(GetterSetter::createStructure(jsNull()))
+    , apiWrapperStructure(JSAPIValueWrapper::createStructure(jsNull()))
 #if USE(JSVALUE32)
     , numberStructure(JSNumberCell::createStructure(jsNull()))
 #endif

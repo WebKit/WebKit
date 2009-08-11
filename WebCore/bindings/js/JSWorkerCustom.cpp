@@ -36,11 +36,11 @@ using namespace JSC;
 
 namespace WebCore {
     
-void JSWorker::mark()
+void JSWorker::markChildren(MarkStack& markStack)
 {
-    Base::mark();
+    Base::markChildren(markStack);
 
-    markIfNotNull(static_cast<Worker*>(impl())->onmessage());
+    markIfNotNull(markStack, static_cast<Worker*>(impl())->onmessage());
 }
 
 } // namespace WebCore

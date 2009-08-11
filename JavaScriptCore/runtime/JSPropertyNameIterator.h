@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,14 +51,18 @@ namespace JSC {
         virtual UString toString(ExecState*) const;
         virtual JSObject* toObject(ExecState*) const;
 
-        virtual void mark();
+        virtual void markChildren(MarkStack&);
 
         JSValue next(ExecState*);
         void invalidate();
-
+        
+        static PassRefPtr<Structure> createStructure(JSValue prototype)
+        {
+            return Structure::create(prototype, TypeInfo(CompoundType));
+        }
     private:
-        JSPropertyNameIterator();
-        JSPropertyNameIterator(JSObject*, PassRefPtr<PropertyNameArrayData> propertyNameArrayData);
+        JSPropertyNameIterator(ExecState*);
+        JSPropertyNameIterator(ExecState*, JSObject*, PassRefPtr<PropertyNameArrayData> propertyNameArrayData);
 
         JSObject* m_object;
         RefPtr<PropertyNameArrayData> m_data;
@@ -66,16 +70,16 @@ namespace JSC {
         PropertyNameArrayData::const_iterator m_end;
     };
 
-inline JSPropertyNameIterator::JSPropertyNameIterator()
-    : JSCell(0)
+inline JSPropertyNameIterator::JSPropertyNameIterator(ExecState* exec)
+    : JSCell(exec->globalData().propertyNameIteratorStructure.get())
     , m_object(0)
     , m_position(0)
     , m_end(0)
 {
 }
 
-inline JSPropertyNameIterator::JSPropertyNameIterator(JSObject* object, PassRefPtr<PropertyNameArrayData> propertyNameArrayData)
-    : JSCell(0)
+inline JSPropertyNameIterator::JSPropertyNameIterator(ExecState* exec, JSObject* object, PassRefPtr<PropertyNameArrayData> propertyNameArrayData)
+    : JSCell(exec->globalData().propertyNameIteratorStructure.get())
     , m_object(object)
     , m_data(propertyNameArrayData)
     , m_position(m_data->begin())
@@ -86,12 +90,12 @@ inline JSPropertyNameIterator::JSPropertyNameIterator(JSObject* object, PassRefP
 inline JSPropertyNameIterator* JSPropertyNameIterator::create(ExecState* exec, JSValue v)
 {
     if (v.isUndefinedOrNull())
-        return new (exec) JSPropertyNameIterator;
+        return new (exec) JSPropertyNameIterator(exec);
 
     JSObject* o = v.toObject(exec);
     PropertyNameArray propertyNames(exec);
     o->getPropertyNames(exec, propertyNames);
-    return new (exec) JSPropertyNameIterator(o, propertyNames.releaseData());
+    return new (exec) JSPropertyNameIterator(exec, o, propertyNames.releaseData());
 }
 
 inline JSValue JSPropertyNameIterator::next(ExecState* exec)

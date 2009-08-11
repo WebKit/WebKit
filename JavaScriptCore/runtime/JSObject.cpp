@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Eric Seidel (eric@webkit.org)
  *
  *  This library is free software; you can redistribute it and/or
@@ -62,21 +62,16 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(JSObject);
 
-void JSObject::mark()
+void JSObject::markChildren(MarkStack& markStack)
 {
     JSOBJECT_MARK_BEGIN();
 
-    JSCell::mark();
-    m_structure->mark();
+    JSCell::markChildren(markStack);
+    m_structure->markAggregate(markStack);
 
     PropertyStorage storage = propertyStorage();
-
     size_t storageSize = m_structure->propertyStorageSize();
-    for (size_t i = 0; i < storageSize; ++i) {
-        JSValue v = JSValue::decode(storage[i]);
-        if (!v.marked())
-            v.mark();
-    }
+    markStack.appendValues(reinterpret_cast<JSValue*>(storage), storageSize);
 
     JSOBJECT_MARK_END();
 }
@@ -310,7 +305,7 @@ void JSObject::defineGetter(ExecState* exec, const Identifier& propertyName, JSO
     }
 
     PutPropertySlot slot;
-    GetterSetter* getterSetter = new (exec) GetterSetter;
+    GetterSetter* getterSetter = new (exec) GetterSetter(exec);
     putDirectInternal(exec->globalData(), propertyName, getterSetter, Getter, true, slot);
 
     // putDirect will change our Structure if we add a new property. For
@@ -337,7 +332,7 @@ void JSObject::defineSetter(ExecState* exec, const Identifier& propertyName, JSO
     }
 
     PutPropertySlot slot;
-    GetterSetter* getterSetter = new (exec) GetterSetter;
+    GetterSetter* getterSetter = new (exec) GetterSetter(exec);
     putDirectInternal(exec->globalData(), propertyName, getterSetter, Setter, true, slot);
 
     // putDirect will change our Structure if we add a new property. For

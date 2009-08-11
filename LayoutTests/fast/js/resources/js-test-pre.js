@@ -186,3 +186,19 @@ function shouldThrow(_a, _e)
   else
     testFailed(_a + " should throw " + (typeof _e == "undefined" ? "an exception" : _ev) + ". Was " + _av + ".");
 }
+
+function gc() {
+    if (typeof GCController !== "undefined")
+        GCController.collect();
+    else {
+        function gcRec(n) {
+            if (n < 1)
+                return {};
+            var temp = {i: "ab" + i + (i / 100000)};
+            temp += "foo";
+            gcRec(n-1);
+        }
+        for (var i = 0; i < 1000; i++)
+            gcRec(10)
+    }
+}

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,7 +36,7 @@ namespace JSC {
     public:
         DebuggerActivation(JSObject*);
 
-        virtual void mark();
+        virtual void markChildren(MarkStack&);
         virtual UString className() const;
         virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
         virtual void put(ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);

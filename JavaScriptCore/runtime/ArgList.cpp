@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2009 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -37,16 +37,12 @@ void ArgList::getSlice(int startIndex, ArgList& result) const
     result = ArgList(m_args + startIndex, m_argCount - startIndex);
 }
 
-void MarkedArgumentBuffer::markLists(ListSet& markSet)
+void MarkedArgumentBuffer::markLists(MarkStack& markStack, ListSet& markSet)
 {
     ListSet::iterator end = markSet.end();
     for (ListSet::iterator it = markSet.begin(); it != end; ++it) {
         MarkedArgumentBuffer* list = *it;
-
-        iterator end2 = list->end();
-        for (iterator it2 = list->begin(); it2 != end2; ++it2)
-            if (!(*it2).marked())
-                (*it2).mark();
+        markStack.appendValues(reinterpret_cast<JSValue*>(list->m_buffer), list->m_size);
     }
 }
 

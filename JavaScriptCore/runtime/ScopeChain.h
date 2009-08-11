@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2003, 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2008, 2009 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -204,7 +204,7 @@ namespace JSC {
         
         JSGlobalObject* globalObject() const { return m_node->globalObject(); }
 
-        void mark() const;
+        void markAggregate(MarkStack&) const;
 
         // Caution: this should only be used if the codeblock this is being used
         // with needs a full scope chain, otherwise this returns the depth of

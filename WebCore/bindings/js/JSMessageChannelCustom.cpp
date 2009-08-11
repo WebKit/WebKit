@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2009 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,20 +32,20 @@ using namespace JSC;
 
 namespace WebCore {
     
-void JSMessageChannel::mark()
+void JSMessageChannel::markChildren(MarkStack& markStack)
 {
-    Base::mark();
+    Base::markChildren(markStack);
 
     if (MessagePort* port = m_impl->port1()) {
         DOMObject* wrapper = getCachedDOMObjectWrapper(*Heap::heap(this)->globalData(), port);
-        if (wrapper && !wrapper->marked())
-            wrapper->mark();
+        if (wrapper)
+            markStack.append(wrapper);
     }
 
     if (MessagePort* port = m_impl->port2()) {
         DOMObject* wrapper = getCachedDOMObjectWrapper(*Heap::heap(this)->globalData(), port);
-        if (wrapper && !wrapper->marked())
-            wrapper->mark();
+        if (wrapper)
+            markStack.append(wrapper);
     }
 }
 

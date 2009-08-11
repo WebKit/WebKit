@@ -191,6 +191,9 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/JSPropertyNameIterator.h \
 	JavaScriptCore/runtime/LiteralParser.cpp \
 	JavaScriptCore/runtime/LiteralParser.h \
+	JavaScriptCore/runtime/MarkStack.cpp \
+	JavaScriptCore/runtime/MarkStack.h \
+	JavaScriptCore/runtime/MarkStackPosix.cpp \
 	JavaScriptCore/runtime/SmallStrings.cpp \
 	JavaScriptCore/runtime/SmallStrings.h \
 	JavaScriptCore/runtime/Structure.cpp \
@@ -436,6 +439,9 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/JSWrapperObject.h \
 	JavaScriptCore/runtime/Lookup.cpp \
 	JavaScriptCore/runtime/Lookup.h \
+	JavaScriptCore/runtime/MarkStack.cpp \
+	JavaScriptCore/runtime/MarkStack.h \
+	JavaScriptCore/runtime/MarkStackWin.cpp \
 	JavaScriptCore/runtime/MathObject.cpp \
 	JavaScriptCore/runtime/MathObject.h \
 	JavaScriptCore/runtime/NativeErrorConstructor.cpp \

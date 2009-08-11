@@ -80,16 +80,16 @@ static const int initialTickCountThreshold = 255;
 // Preferred number of milliseconds between each timeout check
 static const int preferredScriptCheckTimeInterval = 1000;
 
-static inline void markIfNeeded(JSValue v)
+static inline void markIfNeeded(MarkStack& markStack, JSValue v)
 {
-    if (v && !v.marked())
-        v.mark();
+    if (v)
+        markStack.append(v);
 }
 
-static inline void markIfNeeded(const RefPtr<Structure>& s)
+static inline void markIfNeeded(MarkStack& markStack, const RefPtr<Structure>& s)
 {
     if (s)
-        s->mark();
+        s->markAggregate(markStack);
 }
 
 JSGlobalObject::~JSGlobalObject()
@@ -357,43 +357,43 @@ void JSGlobalObject::resetPrototype(JSValue prototype)
         oldLastInPrototypeChain->setPrototype(objectPrototype);
 }
 
-void JSGlobalObject::mark()
+void JSGlobalObject::markChildren(MarkStack& markStack)
 {
-    JSVariableObject::mark();
+    JSVariableObject::markChildren(markStack);
     
     HashSet<ProgramCodeBlock*>::const_iterator end = codeBlocks().end();
     for (HashSet<ProgramCodeBlock*>::const_iterator it = codeBlocks().begin(); it != end; ++it)
-        (*it)->mark();
+        (*it)->markAggregate(markStack);
 
     RegisterFile& registerFile = globalData()->interpreter->registerFile();
     if (registerFile.globalObject() == this)
-        registerFile.markGlobals(&globalData()->heap);
+        registerFile.markGlobals(markStack, &globalData()->heap);
 
-    markIfNeeded(d()->regExpConstructor);
-    markIfNeeded(d()->errorConstructor);
-    markIfNeeded(d()->evalErrorConstructor);
-    markIfNeeded(d()->rangeErrorConstructor);
-    markIfNeeded(d()->referenceErrorConstructor);
-    markIfNeeded(d()->syntaxErrorConstructor);
-    markIfNeeded(d()->typeErrorConstructor);
-    markIfNeeded(d()->URIErrorConstructor);
+    markIfNeeded(markStack, d()->regExpConstructor);
+    markIfNeeded(markStack, d()->errorConstructor);
+    markIfNeeded(markStack, d()->evalErrorConstructor);
+    markIfNeeded(markStack, d()->rangeErrorConstructor);
+    markIfNeeded(markStack, d()->referenceErrorConstructor);
+    markIfNeeded(markStack, d()->syntaxErrorConstructor);
+    markIfNeeded(markStack, d()->typeErrorConstructor);
+    markIfNeeded(markStack, d()->URIErrorConstructor);
 
-    markIfNeeded(d()->evalFunction);
-    markIfNeeded(d()->callFunction);
-    markIfNeeded(d()->applyFunction);
+    markIfNeeded(markStack, d()->evalFunction);
+    markIfNeeded(markStack, d()->callFunction);
+    markIfNeeded(markStack, d()->applyFunction);
 
-    markIfNeeded(d()->objectPrototype);
-    markIfNeeded(d()->functionPrototype);
-    markIfNeeded(d()->arrayPrototype);
-    markIfNeeded(d()->booleanPrototype);
-    markIfNeeded(d()->stringPrototype);
-    markIfNeeded(d()->numberPrototype);
-    markIfNeeded(d()->datePrototype);
-    markIfNeeded(d()->regExpPrototype);
+    markIfNeeded(markStack, d()->objectPrototype);
+    markIfNeeded(markStack, d()->functionPrototype);
+    markIfNeeded(markStack, d()->arrayPrototype);
+    markIfNeeded(markStack, d()->booleanPrototype);
+    markIfNeeded(markStack, d()->stringPrototype);
+    markIfNeeded(markStack, d()->numberPrototype);
+    markIfNeeded(markStack, d()->datePrototype);
+    markIfNeeded(markStack, d()->regExpPrototype);
 
-    markIfNeeded(d()->methodCallDummy);
+    markIfNeeded(markStack, d()->methodCallDummy);
 
-    markIfNeeded(d()->errorStructure);
+    markIfNeeded(markStack, d()->errorStructure);
 
     // No need to mark the other structures, because their prototypes are all
     // guaranteed to be referenced elsewhere.
@@ -403,11 +403,7 @@ void JSGlobalObject::mark()
         return;
 
     size_t size = d()->registerArraySize;
-    for (size_t i = 0; i < size; ++i) {
-        Register& r = registerArray[i];
-        if (!r.marked())
-            r.mark();
-    }
+    markStack.appendValues(reinterpret_cast<JSValue*>(registerArray), size);
 }
 
 ExecState* JSGlobalObject::globalExec()

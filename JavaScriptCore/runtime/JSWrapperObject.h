@@ -36,7 +36,7 @@ namespace JSC {
         JSValue internalValue() const { return m_internalValue; }
         void setInternalValue(JSValue);
         
-        virtual void mark();
+        virtual void markChildren(MarkStack&);
         
     private:
         JSValue m_internalValue;

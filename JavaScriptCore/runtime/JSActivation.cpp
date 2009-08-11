@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,9 +49,9 @@ JSActivation::~JSActivation()
     delete d();
 }
 
-void JSActivation::mark()
+void JSActivation::markChildren(MarkStack& markStack)
 {
-    Base::mark();
+    Base::markChildren(markStack);
 
     Register* registerArray = d()->registerArray.get();
     if (!registerArray)
@@ -59,25 +59,13 @@ void JSActivation::mark()
 
     size_t numParametersMinusThis = d()->functionBody->generatedBytecode().m_numParameters - 1;
 
-    size_t i = 0;
-    size_t count = numParametersMinusThis; 
-    for ( ; i < count; ++i) {
-        Register& r = registerArray[i];
-        if (!r.marked())
-            r.mark();
-    }
+    size_t count = numParametersMinusThis;
+    markStack.appendValues(registerArray, count);
 
     size_t numVars = d()->functionBody->generatedBytecode().m_numVars;
 
     // Skip the call frame, which sits between the parameters and vars.
-    i += RegisterFile::CallFrameHeaderSize;
-    count += RegisterFile::CallFrameHeaderSize + numVars;
-
-    for ( ; i < count; ++i) {
-        Register& r = registerArray[i];
-        if (r.jsValue() && !r.marked())
-            r.mark();
-    }
+    markStack.appendValues(registerArray + count + RegisterFile::CallFrameHeaderSize, numVars, MayContainNullValues);
 }
 
 bool JSActivation::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)

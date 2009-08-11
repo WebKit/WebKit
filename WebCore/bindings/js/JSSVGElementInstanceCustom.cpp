@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2009 Apple, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,14 +38,14 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSSVGElementInstance::mark()
+void JSSVGElementInstance::markChildren(MarkStack& markStack)
 {
-    Base::mark();
+    Base::markChildren(markStack);
 
     // Mark the wrapper for our corresponding element, so it can mark its event handlers.
     JSNode* correspondingWrapper = getCachedDOMNodeWrapper(impl()->correspondingElement()->document(), impl()->correspondingElement());
-    if (correspondingWrapper && !correspondingWrapper->marked())
-        correspondingWrapper->mark();
+    if (correspondingWrapper)
+        markStack.append(correspondingWrapper);
 }
 
 JSValue JSSVGElementInstance::addEventListener(ExecState* exec, const ArgList& args)

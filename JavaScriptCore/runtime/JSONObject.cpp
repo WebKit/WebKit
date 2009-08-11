@@ -67,7 +67,7 @@ public:
     ~Stringifier();
     JSValue stringify(JSValue);
 
-    void mark();
+    void markAggregate(MarkStack&);
 
 private:
     typedef UString StringBuilder;
@@ -221,15 +221,12 @@ Stringifier::~Stringifier()
     m_exec->globalData().firstStringifierToMark = m_nextStringifierToMark;
 }
 
-void Stringifier::mark()
+void Stringifier::markAggregate(MarkStack& markStack)
 {
     for (Stringifier* stringifier = this; stringifier; stringifier = stringifier->m_nextStringifierToMark) {
         size_t size = m_holderStack.size();
-        for (size_t i = 0; i < size; ++i) {
-            JSObject* object = m_holderStack[i].object();
-            if (!object->marked())
-                object->mark();
-        }
+        for (size_t i = 0; i < size; ++i)
+            markStack.append(m_holderStack[i].object());
     }
 }
 
@@ -584,9 +581,9 @@ bool JSONObject::getOwnPropertySlot(ExecState* exec, const Identifier& propertyN
     return true;
 }
 
-void JSONObject::markStringifiers(Stringifier* stringifier)
+void JSONObject::markStringifiers(MarkStack& markStack, Stringifier* stringifier)
 {
-    stringifier->mark();
+    stringifier->markAggregate(markStack);
 }
 
 class Walker {

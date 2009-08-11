@@ -74,7 +74,7 @@ namespace WebCore {
         void setCurrentEvent(Event*);
         Event* currentEvent() const;
 
-        virtual void mark();
+        virtual void markChildren(JSC::MarkStack&);
 
     protected:
         struct JSDOMGlobalObjectData : public JSC::JSGlobalObject::JSGlobalObjectData {

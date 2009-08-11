@@ -51,12 +51,12 @@ JSObject* JSEventListener::jsFunction() const
     return m_jsFunction;
 }
 
-void JSEventListener::markJSFunction()
+void JSEventListener::markJSFunction(MarkStack& markStack)
 {
-    if (m_jsFunction && !m_jsFunction->marked())
-        m_jsFunction->mark();
-    if (m_globalObject && !m_globalObject->marked())
-        m_globalObject->mark();
+    if (m_jsFunction)
+        markStack.append(m_jsFunction);
+    if (m_globalObject)
+        markStack.append(m_globalObject);
 }
 
 void JSEventListener::handleEvent(Event* event, bool isWindowEvent)

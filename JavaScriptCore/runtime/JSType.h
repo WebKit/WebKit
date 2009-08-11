@@ -33,8 +33,11 @@ namespace JSC {
         NumberType        = 3,
         NullType          = 4,
         StringType        = 5,
-        ObjectType        = 6,
-        GetterSetterType  = 7
+        
+        // The CompoundType value must come before any JSType that may have children
+        CompoundType      = 6,
+        ObjectType        = 7,
+        GetterSetterType  = 8
     };
 
 } // namespace JSC

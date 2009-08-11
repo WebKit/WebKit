@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -39,11 +39,11 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSDocument::mark()
+void JSDocument::markChildren(MarkStack& markStack)
 {
-    JSNode::mark();
-    markDOMNodesForDocument(impl());
-    markActiveObjectsForContext(*Heap::heap(this)->globalData(), impl());
+    JSNode::markChildren(markStack);
+    markDOMNodesForDocument(markStack, impl());
+    markActiveObjectsForContext(markStack, *Heap::heap(this)->globalData(), impl());
 }
 
 JSValue JSDocument::location(ExecState* exec) const

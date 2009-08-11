@@ -85,10 +85,10 @@ SmallStrings::~SmallStrings()
 void SmallStrings::mark()
 {
     if (m_emptyString && !m_emptyString->marked())
-        m_emptyString->mark();
+        m_emptyString->markCellDirect();
     for (unsigned i = 0; i < numCharactersToStore; ++i) {
         if (m_singleCharacterStrings[i] && !m_singleCharacterStrings[i]->marked())
-            m_singleCharacterStrings[i]->mark();
+            m_singleCharacterStrings[i]->markCellDirect();
     }
 }
 

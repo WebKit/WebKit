@@ -29,13 +29,13 @@ namespace WebCore {
 
 using namespace JSC;
 
-void JSNavigator::mark()
+void JSNavigator::markChildren(MarkStack& markStack)
 {
-    Base::mark();
+    Base::markChildren(markStack);
 
     JSGlobalData& globalData = *Heap::heap(this)->globalData();
 
-    markDOMObjectWrapper(globalData, impl()->optionalGeolocation());
+    markDOMObjectWrapper(markStack, globalData, impl()->optionalGeolocation());
 }
 
 }

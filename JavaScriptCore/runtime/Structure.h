@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #include "Identifier.h"
 #include "JSType.h"
 #include "JSValue.h"
+#include "MarkStack.h"
 #include "PropertyMapHashTable.h"
 #include "StructureChain.h"
 #include "StructureTransitionTable.h"
@@ -72,10 +73,9 @@ namespace JSC {
 
         ~Structure();
 
-        void mark()
+        void markAggregate(MarkStack& markStack)
         {
-            if (!m_prototype.marked())
-                m_prototype.mark();
+            markStack.append(m_prototype);
         }
 
         // These should be used with caution.  
