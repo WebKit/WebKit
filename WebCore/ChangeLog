@@ -2,6 +2,15 @@
 
         Reviewed by NOBODY (build break).
 
+        Speculative GTK build fix
+
+        * GNUmakefile.am:
+        Added missing .idl file, and added notifications directory to IDL_PATH.
+
+2009-08-11  Drew Wilson  <atwilson@google.com>
+
+        Reviewed by NOBODY (build break).
+
         Speculative Windows build fix
 
         * WebCore.vcproj/WebCore.vcproj:

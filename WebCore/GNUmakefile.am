@@ -236,7 +236,7 @@ IDL_BINDINGS += \
 	WebCore/inspector/JavaScriptCallFrame.idl \
 	WebCore/inspector/InspectorBackend.idl \
 	WebCore/notifications/Notification.idl \
-	WebCore/notifications/Notifications.idl \
+	WebCore/notifications/NotificationCenter.idl \
 	WebCore/page/BarInfo.idl \
 	WebCore/page/Console.idl \
 	WebCore/page/Coordinates.idl \
@@ -3279,6 +3279,7 @@ IDL_PATH := \
     $(WebCore)/html/canvas \
     $(WebCore)/inspector \
     $(WebCore)/loader/appcache \
+    $(WebCore)/notifications \
     $(WebCore)/page \
     $(WebCore)/storage \
     $(WebCore)/svg \
