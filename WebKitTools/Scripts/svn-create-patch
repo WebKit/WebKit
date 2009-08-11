@@ -156,7 +156,7 @@ sub findBaseUrl($)
     my $baseUrl;
     open INFO, "svn info '$infoPath' |" or die;
     while (<INFO>) {
-        if (/^URL: (.+)/) {
+        if (/^URL: (.*\S+)\s*$/) {
             $baseUrl = $1;
         }
     }
@@ -200,7 +200,7 @@ sub findSourceFileAndRevision($)
     my $sourceRevision;
     open INFO, "svn info '$file' |" or die;
     while (<INFO>) {
-        if (/^Copied From URL: (.+)/) {
+        if (/^Copied From URL: (.*\S+)\s*$/) {
             $sourceFile = File::Spec->abs2rel($1, $baseUrl);
         } elsif (/^Copied From Rev: ([0-9]+)/) {
             $sourceRevision = $1;
