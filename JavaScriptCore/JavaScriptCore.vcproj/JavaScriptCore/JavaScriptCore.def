@@ -176,9 +176,6 @@ EXPORTS
     ?lockAtomicallyInitializedStaticMutex@WTF@@YAXXZ
     ?lookupGetter@JSObject@JSC@@UAE?AVJSValue@2@PAVExecState@2@ABVIdentifier@2@@Z
     ?lookupSetter@JSObject@JSC@@UAE?AVJSValue@2@PAVExecState@2@ABVIdentifier@2@@Z
-    ?mark@JSGlobalObject@JSC@@UAEXXZ
-    ?mark@JSObject@JSC@@UAEXXZ
-    ?mark@JSWrapperObject@JSC@@UAEXXZ
     ?materializePropertyMap@Structure@JSC@@AAEXXZ
     ?name@InternalFunction@JSC@@QAEABVUString@2@PAVJSGlobalData@2@@Z
     ?objectCount@Heap@JSC@@QAEIXZ

@@ -1,5 +1,14 @@
 2009-08-10  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by NOBODY (yet another build fix).
+
+        Remove obsolete entries from MSVC exports file
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore_debug.def:
+
+2009-08-10  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by NOBODY (Build fix).
 
         Add includes needed for non-allinonefile builds
