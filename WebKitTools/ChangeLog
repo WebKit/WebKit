@@ -1,3 +1,23 @@
+2009-08-11  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Adam Treat.
+
+        Fix the current failures on the buildbot.
+
+        As Qt hooks up the maybeDump to loadFinished, we need to make
+        sure that calling dump() will not call maybeDump on loadFinished.
+
+        As dump is called my emitting done() which calls dump() and then
+        setting m_isLoading to false. So in the case m_isLoading is false,
+        do not dump again.
+
+        The current code is confusing, and should be made more clear
+        in another commit.
+
+        * DumpRenderTree/qt/jsobjects.cpp:
+        (LayoutTestController::maybeDump):
+        (LayoutTestController::notifyDone):
+
 2009-08-11  John Gregg  <johnnyg@google.com>
 
         Reviewed by Maciej Stachowiak.

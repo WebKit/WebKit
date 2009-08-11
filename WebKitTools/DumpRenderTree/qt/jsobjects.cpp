@@ -151,6 +151,12 @@ void LayoutTestController::maybeDump(bool success)
 {
     Q_ASSERT(sender() == m_topLoadingFrame);
 
+    // as the function is called on loadFinished, the test might
+    // already have dumped and thus no longer be active, thus
+    // bail out here.
+    if (!m_isLoading)
+        return;
+
     m_topLoadingFrame = 0;
     WorkQueue::shared()->setFrozen(true); // first complete load freezes the queue for the rest of this test
 
@@ -180,6 +186,7 @@ void LayoutTestController::notifyDone()
     m_timeoutTimer.stop();
     emit done();
     m_isLoading = false;
+    m_waitForDone = false;
 }
 
 int LayoutTestController::windowCount()
