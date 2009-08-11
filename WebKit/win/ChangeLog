@@ -1,3 +1,17 @@
+2009-08-10  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Link drag images specify Lucida Grande on Windows and end up using Times
+        New Roman
+        <rdar://problem/7117835>
+
+        * WebCoreSupport/WebDragClient.cpp:
+        (dragLabelFont): Added a RenderingMode parameter and changed to use the
+            same typeface as the Windows small caption font.
+        (WebDragClient::createDragImageForLink): Changed to respect the
+            page’s rendering mode.
+
 2009-08-10  Brent Fulgham  <bfulgham@webkit.org>
 
         Reviewed by Adam Roben.

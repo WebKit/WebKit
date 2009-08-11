@@ -40,6 +40,7 @@
 #include <WebCore/FrameView.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/Page.h>
+#include <WebCore/Settings.h>
 #include <WebCore/StringTruncator.h>
 #include <WebCore/WebCoreTextRenderer.h>
 #pragma warning(pop) 
@@ -168,25 +169,43 @@ void WebDragClient::startDrag(DragImageRef image, const IntPoint& imageOrigin, c
     }
 }
 
-static Font dragLabelFont(int size, bool bold)
+static Font dragLabelFont(int size, bool bold, FontRenderingMode renderingMode)
 {
+    NONCLIENTMETRICS metrics;
+    metrics.cbSize = sizeof(metrics);
+    SystemParametersInfo(SPI_GETNONCLIENTMETRICS, metrics.cbSize, &metrics, 0);
     FontDescription desc;
     desc.setWeight(bold ? FontWeightBold : FontWeightNormal);
     FontFamily family;
-    family.setFamily("Lucida Grande");
+    family.setFamily(metrics.lfSmCaptionFont.lfFaceName);
     desc.setFamily(family);
     desc.setSpecifiedSize((float)size);
     desc.setComputedSize((float)size);
+    desc.setRenderingMode(renderingMode);
     Font result = Font(desc, 0, 0); 
     result.update(0);
     return result;
 }
 
-DragImageRef WebDragClient::createDragImageForLink(KURL& url, const String& inLabel, Frame*)
+DragImageRef WebDragClient::createDragImageForLink(KURL& url, const String& inLabel, Frame* frame)
 {
-    //This is more or less an exact match for the MacOS code
-    static const Font labelFont = dragLabelFont(DRAG_LINK_LABEL_FONT_SIZE, true);
-    static const Font urlFont = dragLabelFont(DRAG_LINK_URL_FONT_SIZE, false);
+    // This is more or less an exact match for the Mac OS X code.
+
+    const Font* labelFont;
+    const Font* urlFont;
+
+    if (frame->settings() && frame->settings()->fontRenderingMode() == AlternateRenderingMode) {
+        static const Font alternateRenderingModeLabelFont = dragLabelFont(DRAG_LINK_LABEL_FONT_SIZE, true, AlternateRenderingMode);
+        static const Font alternateRenderingModeURLFont = dragLabelFont(DRAG_LINK_URL_FONT_SIZE, false, AlternateRenderingMode);
+        labelFont = &alternateRenderingModeLabelFont;
+        urlFont = &alternateRenderingModeURLFont;
+    } else {
+        static const Font normalRenderingModeLabelFont = dragLabelFont(DRAG_LINK_LABEL_FONT_SIZE, true, NormalRenderingMode);
+        static const Font normalRenderingModeURLFont = dragLabelFont(DRAG_LINK_URL_FONT_SIZE, false, NormalRenderingMode);
+        labelFont = &normalRenderingModeLabelFont;
+        urlFont = &normalRenderingModeURLFont;
+    }
+
     bool drawURLString = true;
     bool clipURLString = false;
     bool clipLabelString = false;
@@ -201,7 +220,7 @@ DragImageRef WebDragClient::createDragImageForLink(KURL& url, const String& inLa
     //First step in drawing the link drag image width
     TextRun labelRun(label.impl());
     TextRun urlRun(urlString.impl());
-    IntSize labelSize(labelFont.width(labelRun), labelFont.ascent() + labelFont.descent());
+    IntSize labelSize(labelFont->width(labelRun), labelFont->ascent() + labelFont->descent());
 
     if (labelSize.width() > MAX_DRAG_LABEL_STRING_WIDTH){
         labelSize.setWidth(MAX_DRAG_LABEL_STRING_WIDTH);
@@ -213,8 +232,8 @@ DragImageRef WebDragClient::createDragImageForLink(KURL& url, const String& inLa
                       labelSize.height() + DRAG_LABEL_BORDER_Y * 2);
 
     if (drawURLString) {
-        urlStringSize.setWidth(urlFont.width(urlRun));
-        urlStringSize.setHeight(urlFont.ascent() + urlFont.descent()); 
+        urlStringSize.setWidth(urlFont->width(urlRun));
+        urlStringSize.setHeight(urlFont->ascent() + urlFont->descent()); 
         imageSize.setHeight(imageSize.height() + urlStringSize.height());
         if (urlStringSize.width() > MAX_DRAG_LABEL_STRING_WIDTH) {
             imageSize.setWidth(MAX_DRAG_LABEL_WIDTH);
@@ -256,16 +275,16 @@ DragImageRef WebDragClient::createDragImageForLink(KURL& url, const String& inLa
     static const Color bottomColor(255, 255, 255, 127); //original alpha = 0.5
     if (drawURLString) {
         if (clipURLString)
-            urlString = StringTruncator::rightTruncate(urlString, imageSize.width() - (DRAG_LABEL_BORDER_X * 2.0f), urlFont, false);
-        IntPoint textPos(DRAG_LABEL_BORDER_X, imageSize.height() - (DRAG_LABEL_BORDER_Y_OFFSET + urlFont.descent()));
-        WebCoreDrawDoubledTextAtPoint(context, urlString, textPos, urlFont, topColor, bottomColor);
+            urlString = StringTruncator::rightTruncate(urlString, imageSize.width() - (DRAG_LABEL_BORDER_X * 2.0f), *urlFont, false);
+        IntPoint textPos(DRAG_LABEL_BORDER_X, imageSize.height() - (DRAG_LABEL_BORDER_Y_OFFSET + urlFont->descent()));
+        WebCoreDrawDoubledTextAtPoint(context, urlString, textPos, *urlFont, topColor, bottomColor);
     }
     
     if (clipLabelString)
-        label = StringTruncator::rightTruncate(label, imageSize.width() - (DRAG_LABEL_BORDER_X * 2.0f), labelFont, false);
+        label = StringTruncator::rightTruncate(label, imageSize.width() - (DRAG_LABEL_BORDER_X * 2.0f), *labelFont, false);
 
-    IntPoint textPos(DRAG_LABEL_BORDER_X, DRAG_LABEL_BORDER_Y + labelFont.pixelSize());
-    WebCoreDrawDoubledTextAtPoint(context, label, textPos, labelFont, topColor, bottomColor);
+    IntPoint textPos(DRAG_LABEL_BORDER_X, DRAG_LABEL_BORDER_Y + labelFont->pixelSize());
+    WebCoreDrawDoubledTextAtPoint(context, label, textPos, *labelFont, topColor, bottomColor);
 
     deallocContext(contextRef);
     DeleteDC(workingDC);
