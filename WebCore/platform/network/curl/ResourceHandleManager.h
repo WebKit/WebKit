@@ -29,6 +29,7 @@
 #define ResourceHandleManager_h
 
 #include "Frame.h"
+#include "CString.h"
 #include "Timer.h"
 #include "ResourceHandleClient.h"
 
@@ -71,6 +72,7 @@ private:
     char* m_cookieJarFileName;
     char m_curlErrorBuffer[CURL_ERROR_SIZE];
     Vector<ResourceHandle*> m_resourceHandleList;
+    const CString m_certificatePath;
     int m_runningJobs;
 };
 

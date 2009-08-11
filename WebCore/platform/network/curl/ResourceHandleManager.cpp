@@ -5,6 +5,8 @@
  * Copyright (C) 2007 Holger Hans Peter Freyther
  * Copyright (C) 2008 Collabora Ltd.
  * Copyright (C) 2008 Nuanti Ltd.
+ * Copyright (C) 2009 Appcelerator Inc.
+ * Copyright (C) 2009 Brent Fulgham <bfulgham@webkit.org>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -54,10 +56,25 @@ const int maxRunningJobs = 5;
 
 static const bool ignoreSSLErrors = getenv("WEBKIT_IGNORE_SSL_ERRORS");
 
+static CString certificatePath()
+{
+#if PLATFORM(CF)
+    CFBundleRef webKitBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.apple.WebKit"));
+    RetainPtr<CFURLRef> certURLRef(AdoptCF, CFBundleCopyResourceURL(webKitBundle, CFSTR("cacert"), CFSTR("pem"), CFSTR("certificates")));
+    if (certURLRef) {
+        char path[MAX_PATH];
+        CFURLGetFileSystemRepresentation(certURLRef.get(), false, reinterpret_cast<UInt8*>(path), MAX_PATH);
+        return path;
+    }
+#endif
+    return getenv("CURL_CA_BUNDLE_PATH");
+}
+
 ResourceHandleManager::ResourceHandleManager()
     : m_downloadTimer(this, &ResourceHandleManager::downloadTimerCallback)
     , m_cookieJarFileName(0)
     , m_runningJobs(0)
+    , m_certificatePath (certificatePath())
 {
     curl_global_init(CURL_GLOBAL_ALL);
     m_curlMultiHandle = curl_multi_init();
@@ -629,6 +646,10 @@ void ResourceHandleManager::initializeHandle(ResourceHandle* job)
     // and/or reporting SSL errors to the user.
     if (ignoreSSLErrors)
         curl_easy_setopt(d->m_handle, CURLOPT_SSL_VERIFYPEER, false);
+
+    if (!m_certificatePath.isNull())
+       curl_easy_setopt(d->m_handle, CURLOPT_CAINFO, m_certificatePath.data());
+
     // enable gzip and deflate through Accept-Encoding:
     curl_easy_setopt(d->m_handle, CURLOPT_ENCODING, "");
 

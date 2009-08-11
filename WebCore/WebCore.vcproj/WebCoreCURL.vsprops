@@ -7,5 +7,6 @@
 	<Tool
 		Name="VCCLCompilerTool"
 		AdditionalIncludeDirectories="$(ProjectDir)..\platform\network\curl"
+		PreprocessorDefinitions="USE_WINDOWS_SSPI;USE_SSLEAY;HAVE_ZLIB"
 	/>
 </VisualStudioPropertySheet>
