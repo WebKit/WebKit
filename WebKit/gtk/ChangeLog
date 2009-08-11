@@ -1,3 +1,13 @@
+2009-08-11  Benjamin Otte  <otte@gnome.org>
+
+        Reviewed by Xan Lopez.
+
+        When instructed to print an out-of-range page, print an empty page
+        instead of crashing.
+
+        * webkit/webkitwebframe.cpp:
+        (draw_page_callback):
+
 2009-08-10  Brady Eidson  <beidson@apple.com>
 
         GTK build fix.
