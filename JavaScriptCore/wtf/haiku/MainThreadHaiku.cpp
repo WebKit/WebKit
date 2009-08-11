@@ -30,6 +30,7 @@
 #include "config.h"
 #include "MainThread.h"
 
+#include "NotImplemented.h"
 
 namespace WTF {
 

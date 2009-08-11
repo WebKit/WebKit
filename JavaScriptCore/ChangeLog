@@ -1,3 +1,15 @@
+2009-08-11  Maxime Simon  <simon.maxime@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        Modifications on JavaScriptCore to allow Haiku port.
+        https://bugs.webkit.org/show_bug.cgi?id=28121
+
+        * runtime/Collector.cpp: Haiku doesn't have sys/mman.h, using OS.h instead.
+        (JSC::currentThreadStackBase): Haiku uses its own threading system.
+        * wtf/Platform.h: Defining all Haiku platform values.
+        * wtf/haiku/MainThreadHaiku.cpp: Adding a missing header (NotImplemented.h).
+
 2009-08-11  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Adam Roben.

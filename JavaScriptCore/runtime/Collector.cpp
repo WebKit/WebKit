@@ -59,10 +59,16 @@
 
 #include <windows.h>
 
+#elif PLATFORM(HAIKU)
+
+#include <OS.h>
+
 #elif PLATFORM(UNIX)
 
 #include <stdlib.h>
+#if !PLATFORM(HAIKU)
 #include <sys/mman.h>
+#endif
 #include <unistd.h>
 
 #if PLATFORM(SOLARIS)
@@ -529,6 +535,10 @@ static inline void* currentThreadStackBase()
         stackBase = (void*)info.iBase;
     }
     return (void*)stackBase;
+#elif PLATFORM(HAIKU)
+    thread_info threadInfo;
+    get_thread_info(find_thread(NULL), &threadInfo);
+    return threadInfo.stack_end;
 #elif PLATFORM(UNIX)
     static void* stackBase = 0;
     static size_t stackSize = 0;
