@@ -64,6 +64,12 @@ WebInspector.Drawer.prototype = {
         }
     },
 
+    showView: function(view)
+    {
+        if (!this.visible || this.visibleView !== view)
+            this.visibleView = view;
+    },
+
     show: function()
     {
         if (this._animating || this.visible)

@@ -853,12 +853,12 @@ WebInspector.elementDragEnd = function(event)
 
 WebInspector.showConsole = function()
 {
-    this.drawer.visibleView = this.console;
+    this.drawer.showView(this.console);
 }
 
 WebInspector.showChanges = function()
 {
-    this.drawer.visibleView = this.changes;
+    this.drawer.showView(this.changes);
 }
 
 WebInspector.showElementsPanel = function()

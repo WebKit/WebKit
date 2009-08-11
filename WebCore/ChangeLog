@@ -1,3 +1,16 @@
+2009-08-11  Joseph Pecoraro  <joepeck02@gmail.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Inspector: Console Drawer is Toggling instead of Staying Open
+        https://bugs.webkit.org/show_bug.cgi?id=28115
+
+        * inspector/front-end/Drawer.js:
+        (WebInspector.Drawer.prototype.showView): ensures the drawer will be open and showing the provided view
+        * inspector/front-end/inspector.js:
+        (WebInspector.showConsole): usees the new showView to guarantee the Drawer will be open
+        (WebInspector.showChanges): uses the new showView guarantee the Drawer will be open
+
 2009-08-11  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by George Staikos.
