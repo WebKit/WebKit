@@ -29,8 +29,8 @@
  */
 
 #include <WebCore/COMPtr.h>
-#include <WebCore/Notification.h>
-#include <WebCore/NotificationPresenter.h>
+#include <WebCore/notifications/Notification.h>
+#include <WebCore/notifications/NotificationPresenter.h>
 
 #if ENABLE(NOTIFICATIONS)
 

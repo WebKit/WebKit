@@ -1,3 +1,12 @@
+2009-08-11  Drew Wilson <atwilson@google.com>
+
+        Reviewed by NOBODY (build break)
+
+        Speculative fix for windows build break.
+
+        * WebKitSupport/WebDesktopNotificationsDelegate.h:
+        WebCore/Notification*.h => WebCore/notifications/Notification*.h
+
 2009-08-11  John Gregg  <johnnyg@google.com>
 
         Reviewed by Maciej Stachowiak.
