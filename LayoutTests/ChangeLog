@@ -1,5 +1,14 @@
 2009-08-11  Brady Eidson  <beidson@apple.com>
 
+        Rubber-stamped by Anders Carlsson.
+
+        Resolve <rdar://problem/6733642>.
+
+        * platform/mac-snowleopard/Skipped: Re-enable plugins/netscape-plugin-setwindow-size.html and
+          plugins/netscape-plugin-setwindow-size-2.html, as they now reliably pass.
+
+2009-08-11  Brady Eidson  <beidson@apple.com>
+
         Rubber-stamped by Mark Rowe.
 
         Resolve <rdar://problem/6877291>.

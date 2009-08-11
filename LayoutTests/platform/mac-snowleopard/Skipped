@@ -1,10 +1,6 @@
 # <rdar://problem/6530010> NPN_SetException is not working
 plugins/netscape-throw-exception.html
 
-# <rdar://problem/6733642> Mistimed NPP_SetWindow log messages
-plugins/netscape-plugin-setwindow-size.html
-plugins/netscape-plugin-setwindow-size-2.html
-
 # <rdar://problem/7091352> Two plug-in tests show missing NPP_Destroy call
 plugins/netscape-destroy-plugin-script-objects.html
 plugins/open-and-close-window-with-plugin.html
