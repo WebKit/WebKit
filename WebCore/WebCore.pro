@@ -193,6 +193,7 @@ INCLUDEPATH = \
     $$PWD/loader/appcache \
     $$PWD/loader/archive \
     $$PWD/loader/icon \
+    $$PWD/notifications \
     $$PWD/page \
     $$PWD/page/animation \
     $$PWD/platform \
