@@ -1,3 +1,16 @@
+2009-08-11  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Steve Falkenburg.
+
+        Refactored MIMETypeforExtension to be a member of IWebViewPrivate
+        instead of IWebView.
+
+        * Interfaces/IWebView.idl:
+        * Interfaces/IWebViewPrivate.idl:
+        * WebView.cpp:
+        (WebView::MIMETypeForExtension):
+        * WebView.h:
+
 2009-08-11  Drew Wilson <atwilson@google.com>
 
         Reviewed by NOBODY (build break)

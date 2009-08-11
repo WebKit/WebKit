@@ -735,15 +735,6 @@ interface IWebView : IUnknown
         from doing any more loading and firing any future delegate methods.
     */
     HRESULT close();
-
-    /*!
-        @method MIMETypeForExtension:
-        @abstract Returns the mime type for a certian file extension.
-        @param path The extension of the file to check.
-        @result The mime type of the specified extension.
-        + (BSTR)MIMETypeForPath:(NSString *)path;
-    */
-    HRESULT MIMETypeForExtension([in] BSTR extension, [out, retval] BSTR* mimeType);
 }
 
 /*
