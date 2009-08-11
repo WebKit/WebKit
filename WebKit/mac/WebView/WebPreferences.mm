@@ -1152,6 +1152,12 @@ static NSString *classIBCreatorID = nil;
 {
     ++_private->numWebViews;
 }
+
+- (void)_setPreferenceForTestWithValue:(NSString *)value forKey:(NSString *)key
+{
+    [self _setStringValue:value forKey:key];
+}
+
 @end
 
 @implementation WebPreferences (WebInternal)

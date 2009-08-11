@@ -340,7 +340,7 @@ public:
 
     virtual HRESULT STDMETHODCALLTYPE fontSmoothingContrast( 
     /* [retval][out] */ float* contrast);
-    
+
     virtual HRESULT STDMETHODCALLTYPE setFontSmoothingContrast( 
     /* [in] */ float contrast);
 
@@ -361,6 +361,11 @@ public:
 
     virtual HRESULT STDMETHODCALLTYPE setXSSAuditorEnabled(
     /* [in] */ BOOL enabled);
+
+    virtual HRESULT STDMETHODCALLTYPE setPreferenceForTest(
+    /* [in] */ BSTR key,
+    /* [in] */ BSTR value);
+
 
     // WebPreferences
 

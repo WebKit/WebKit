@@ -354,7 +354,8 @@ static NSString *libraryPathForDumpRenderTree()
     return [@"~/Library/Application Support/DumpRenderTree" stringByExpandingTildeInPath];
 }
 
-static void setDefaultsToConsistentValuesForTesting()
+// Called before each test.
+static void resetDefaultsToConsistentValues()
 {
     // Give some clear to undocumented defaults values
     static const int NoFontSmoothing = 0;
@@ -384,12 +385,6 @@ static void setDefaultsToConsistentValuesForTesting()
     NSString *path = libraryPathForDumpRenderTree();
     [defaults setObject:[path stringByAppendingPathComponent:@"Databases"] forKey:WebDatabaseDirectoryDefaultsKey];
     [defaults setObject:[path stringByAppendingPathComponent:@"LocalCache"] forKey:WebKitLocalCacheDefaultsKey];
-    NSURLCache *sharedCache =
-        [[NSURLCache alloc] initWithMemoryCapacity:1024 * 1024
-                                      diskCapacity:0
-                                          diskPath:[path stringByAppendingPathComponent:@"URLCache"]];
-    [NSURLCache setSharedURLCache:sharedCache];
-    [sharedCache release];
 
     WebPreferences *preferences = [WebPreferences standardPreferences];
 
@@ -411,9 +406,37 @@ static void setDefaultsToConsistentValuesForTesting()
     [preferences setCacheModel:WebCacheModelDocumentBrowser];
     [preferences setXSSAuditorEnabled:NO];
 
+    [preferences setPrivateBrowsingEnabled:NO];
+    [preferences setAuthorAndUserStylesEnabled:YES];
+    [preferences setJavaScriptCanOpenWindowsAutomatically:YES];
+    [preferences setOfflineWebApplicationCacheEnabled:YES];
+    [preferences setDeveloperExtrasEnabled:NO];
+    [preferences setXSSAuditorEnabled:NO];
+    [preferences setLoadsImagesAutomatically:YES];
+    if (persistentUserStyleSheetLocation) {
+        [preferences setUserStyleSheetLocation:[NSURL URLWithString:(NSString *)(persistentUserStyleSheetLocation.get())]];
+        [preferences setUserStyleSheetEnabled:YES];
+    } else
+        [preferences setUserStyleSheetEnabled:NO];
+
     // The back/forward cache is causing problems due to layouts during transition from one page to another.
     // So, turn it off for now, but we might want to turn it back on some day.
     [preferences setUsesPageCache:NO];
+}
+
+// Called once on DumpRenderTree startup.
+static void setDefaultsToConsistentValuesForTesting()
+{
+    resetDefaultsToConsistentValues();
+
+    NSString *path = libraryPathForDumpRenderTree();
+    NSURLCache *sharedCache =
+        [[NSURLCache alloc] initWithMemoryCapacity:1024 * 1024
+                                      diskCapacity:0
+                                          diskPath:[path stringByAppendingPathComponent:@"URLCache"]];
+    [NSURLCache setSharedURLCache:sharedCache];
+    [sharedCache release];
+
 }
 
 static void crashHandler(int sig)
@@ -1052,20 +1075,7 @@ static void resetWebViewToConsistentStateBeforeTesting()
     [webView _clearMainFrameName];
     [[webView undoManager] removeAllActions];
 
-    WebPreferences *preferences = [webView preferences];
-    [preferences setPrivateBrowsingEnabled:NO];
-    [preferences setAuthorAndUserStylesEnabled:YES];
-    [preferences setJavaScriptCanOpenWindowsAutomatically:YES];
-    [preferences setOfflineWebApplicationCacheEnabled:YES];
-    [preferences setDeveloperExtrasEnabled:NO];
-    [preferences setXSSAuditorEnabled:NO];
-    [preferences setLoadsImagesAutomatically:YES];
-
-    if (persistentUserStyleSheetLocation) {
-        [preferences setUserStyleSheetLocation:[NSURL URLWithString:(NSString *)(persistentUserStyleSheetLocation.get())]];
-        [preferences setUserStyleSheetEnabled:YES];
-    } else
-        [preferences setUserStyleSheetEnabled:NO];
+    resetDefaultsToConsistentValues();
 
     [[mainFrame webView] setSmartInsertDeleteEnabled:YES];
     [[[mainFrame webView] inspector] setJavaScriptProfilingEnabled:NO];

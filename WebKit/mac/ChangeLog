@@ -1,3 +1,17 @@
+2009-08-10  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Adam Roben.
+
+        Originally implemented by Glenn Wilson <gwilson@chromium.org>.
+
+        Added new methods for overriding default WebPreference values
+        and for resetting preferences to their defaults.
+        See https://bugs.webkit.org/show_bug.cgi?id=20534
+
+        * WebView/WebPreferences.mm:
+        (-[WebPreferences _setPreferenceForTestWithValue:withKey:]): added.
+        * WebView/WebPreferencesPrivate.h: same.
+
 2009-08-09  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by George Staikos.
