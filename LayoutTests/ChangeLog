@@ -1,3 +1,16 @@
+2009-08-11  Eric Seidel  <eric@webkit.org>
+
+        No review, just adding results.
+
+        Cross-platform ICO decoder gets wrong bit depth for icons w/o color count
+        https://bugs.webkit.org/show_bug.cgi?id=28073
+
+        Land test results (as pkasting asked me to do hours ago, sorry).
+
+        * fast/images/icon-0colors-expected.checksum: Added.
+        * fast/images/icon-0colors-expected.png: Added.
+        * fast/images/icon-0colors-expected.txt: Added.
+
 2009-08-11  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoff Garen.
