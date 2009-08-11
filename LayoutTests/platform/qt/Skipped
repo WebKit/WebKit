@@ -5114,6 +5114,5 @@ printing/media-queries-print.html
 # Final four tests before Qt buildbot is green
 # https://bugs.webkit.org/show_bug.cgi?id=27914
 fast/css/positioned-overflow-scroll.html
-fast/borders/border-radius-split-inline.html
 fast/forms/select-popup-pagekeys.html
 fast/dom/prototype-inheritance-2.html
