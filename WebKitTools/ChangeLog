@@ -1,3 +1,17 @@
+2009-08-11  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Added support for DRT to support arguments for eventSender.mouseDown and eventSender.mouseUp for Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=28166.
+        
+        This is a step towards fixing fast/events/mouse-click-events.html on Windows.
+
+        * DumpRenderTree/win/EventSender.cpp:
+        (mouseDownCallback):
+        (mouseUpCallback):
+        (replaySavedEvents):
+
 2009-08-11  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Simon Hausmann.
