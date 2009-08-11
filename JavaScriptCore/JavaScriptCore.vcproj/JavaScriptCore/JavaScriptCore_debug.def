@@ -176,6 +176,9 @@ EXPORTS
     ?lockAtomicallyInitializedStaticMutex@WTF@@YAXXZ
     ?lookupGetter@JSObject@JSC@@UAE?AVJSValue@2@PAVExecState@2@ABVIdentifier@2@@Z
     ?lookupSetter@JSObject@JSC@@UAE?AVJSValue@2@PAVExecState@2@ABVIdentifier@2@@Z
+    ?markChildren@JSGlobalObject@JSC@@UAEXAAVMarkStack@2@@Z
+    ?markChildren@JSObject@JSC@@UAEXAAVMarkStack@2@@Z
+    ?markChildren@JSWrapperObject@JSC@@UAEXAAVMarkStack@2@@Z
     ?materializePropertyMap@Structure@JSC@@AAEXXZ
     ?name@InternalFunction@JSC@@QAEABVUString@2@PAVJSGlobalData@2@@Z
     ?objectCount@Heap@JSC@@QAEIXZ
@@ -202,6 +205,7 @@ EXPORTS
     ?putWithAttributes@JSObject@JSC@@UAEXPAVExecState@2@IVJSValue@2@I@Z
     ?randomNumber@WTF@@YANXZ
     ?recordExtraCost@Heap@JSC@@AAEXI@Z
+    ?releaseStack@MarkStack@JSC@@CAXPAXI@Z
     ?reset@ParserArena@JSC@@QAEXXZ
     ?reset@TimeoutChecker@JSC@@QAEXXZ
     ?restoreAll@Profile@JSC@@QAEXXZ

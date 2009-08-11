@@ -1,5 +1,15 @@
 2009-08-10  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by NOBODY (And another build fix).
+
+        Add new exports for MSVC
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore_debug.def:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
+2009-08-10  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by NOBODY (yet another build fix).
 
         Remove obsolete entries from MSVC exports file
