@@ -1,3 +1,16 @@
+2009-08-11  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by NOBODY (build fix).
+
+        Attempt to fix the Windows test bot. Reverted r47015 caused one of the Windows
+        bots that runs Layout Tests to save "JS disabled" and "default font 24pt"
+        preferences permanently. Since these preferences are not initialized explicitly in DRT,
+        almost all Layout tests are failing. Attempt to fix by explicit
+        initialization of these into defaults (enabled, 16pt) at the beginning of the DRT.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (main):  see above.
+
 2009-08-10  Steve Falkenburg  <sfalken@apple.com>
 
         Windows nightly fix.
