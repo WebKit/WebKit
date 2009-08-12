@@ -71,7 +71,6 @@ editing/selection/fake-doubleclick.html
 editing/selection/fake-drag.html
 editing/selection/inline-closest-leaf-child.html
 editing/selection/mixed-editability-1.html
-editing/selection/move-begin-end.html
 editing/selection/paragraph-granularity.html
 editing/selection/select-from-textfield-outwards.html
 editing/selection/selection-actions.html
@@ -165,7 +164,6 @@ fast/encoding/GBK/iso-ir-58.html
 fast/encoding/GBK/x-euc-cn.html
 fast/encoding/GBK/x-gbk.html
 fast/events/5056619.html
-fast/events/arrow-navigation.html
 fast/events/autoscroll.html
 fast/events/click-count.html
 fast/events/content-changed-during-drop.html
@@ -202,7 +200,6 @@ fast/forms/onchange-enter-submit.html
 fast/forms/onselect-textarea.html
 fast/forms/onselect-textfield.html
 fast/forms/password-doubleclick-selection.html
-fast/forms/search-event-delay.html
 fast/forms/search-rtl.html
 fast/forms/select-accesskey.html
 fast/forms/select-writing-direction-natural.html
@@ -895,7 +892,6 @@ css2.1/t040306-syntax-01-f.html
 editing/deleting/5144139-2.html
 editing/deleting/5300379.html
 editing/deleting/5408255.html
-editing/deleting/5729680.html
 editing/deleting/delete-block-merge-contents-001.html
 editing/deleting/delete-block-merge-contents-019.html
 editing/deleting/delete-block-merge-contents-020.html
@@ -910,7 +906,6 @@ editing/deleting/smart-delete-003.html
 editing/deleting/smart-delete-004.html
 editing/execCommand/4920488.html
 editing/execCommand/4920742-1.html
-editing/execCommand/boldSelection.html
 editing/execCommand/create-list-with-hr.html
 editing/execCommand/modifyForeColorByCharacter.html
 editing/execCommand/print.html
@@ -2138,7 +2133,6 @@ editing/selection/5131716-1.html
 editing/selection/5131716-2.html
 editing/selection/5131716-3.html
 editing/selection/5131716-4.html
-editing/selection/5213963.html
 editing/selection/5234383-1.html
 editing/selection/5234383-2.html
 editing/selection/5240265.html
@@ -5039,7 +5033,6 @@ fast/events/stopPropagation-submit.html
 fast/events/tabindex-focus-blur-all.html
 fast/forms/option-mouseevents.html
 fast/forms/search-abs-pos-cancel-button.html
-fast/forms/select-cache-desynchronization.html
 fast/forms/slider-transformed.html
 fast/forms/slider-zoomed.html
 fast/forms/submit-to-url-fragment.html

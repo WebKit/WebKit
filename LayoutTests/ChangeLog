@@ -1,3 +1,14 @@
+2009-08-11  Mike Fenton  <mike.fenton@torchmobile.com>
+
+        Reviewed by Adam Treat.
+
+        Remove tests from Skipped that now pass correctly after the addition
+        of keyDown named event handling to Qt's DumpRenderTree.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28161
+
+        * platform/qt/Skipped:
+
 2009-08-11  Drew Wilson  <atwilson@google.com>
 
         Reviewed by David Levin.
