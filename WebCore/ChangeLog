@@ -1,3 +1,14 @@
+2009-08-12  David Levin  <levin@chromium.org>
+
+        No review, rolling out r47106.
+        https://bugs.webkit.org/show_bug.cgi?id=28215
+
+        This patch relied on a new version of v8 which is not available
+        in chromium yet.
+
+        * bindings/v8/V8Binding.cpp:
+        (WebCore::v8StringToAtomicWebCoreString):
+
 2009-08-12  Steve Block  <steveblock@google.com>
 
         Reviewed by Eric Seidel.

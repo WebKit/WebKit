@@ -154,12 +154,14 @@ AtomicString v8StringToAtomicWebCoreString(v8::Handle<v8::String> v8String)
 {
     WebCoreStringResource* stringResource = WebCoreStringResource::toStringResource(v8String);
     if (!stringResource) {
-        if (!v8String->CanMakeExternal())
-            return v8StringToWebCoreString(v8String, DoNotExternalize, AtomicStringType);
         // If this string hasn't been externalized, we force it now.
-        v8StringToWebCoreString(v8String, Externalize, AtomicStringType);
+        String plain = v8StringToWebCoreString(v8String, Externalize, AtomicStringType);
+        // If the string is empty there's no room to cache an atomic
+        // string so we bail out.
+        if (plain.isEmpty())
+            return plain;
         stringResource = WebCoreStringResource::toStringResource(v8String);
-        ASSERT(stringResource);
+        ASSERT(stringResource != NULL);
     }
     return stringResource->atomicString();
 }
