@@ -65,6 +65,11 @@ class wxWindow;
 typedef wxWindow* PlatformWidget;
 #endif
 
+#if PLATFORM(HAIKU)
+class BView;
+typedef BView* PlatformWidget;
+#endif
+
 #if PLATFORM(CHROMIUM)
 #include "PlatformWidget.h"
 #endif

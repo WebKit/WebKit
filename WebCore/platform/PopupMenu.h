@@ -59,6 +59,8 @@ class wxMenu;
 #include <wx/event.h>
 #elif PLATFORM(CHROMIUM)
 #include "PopupMenuPrivate.h"
+#elif PLATFORM(HAIKU)
+class BMenu;
 #endif
 
 namespace WebCore {
@@ -177,6 +179,8 @@ private:
     void OnMenuItemSelected(wxCommandEvent&);
 #elif PLATFORM(CHROMIUM)
     PopupMenuPrivate p;
+#elif PLATFORM(HAIKU)
+    BMenu* m_menu;
 #endif
 
 };
