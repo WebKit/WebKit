@@ -554,7 +554,16 @@ class CreateBug(Command):
         bug_title = raw_input("Bug title: ")
         print "Bug comment (hit ^D on blank line to end):"
         lines = sys.stdin.readlines()
-        sys.stdin.seek(0, os.SEEK_END)
+        try:
+            sys.stdin.seek(0, os.SEEK_END)
+        except IOError:
+            # Cygwin raises an Illegal Seek (errno 29) exception when the above
+            # seek() call is made. Ignoring it seems to cause no harm.
+            # FIXME: Figure out a way to get avoid the exception in the first
+            # place.
+            pass
+        else:
+            raise
         comment_text = ''.join(lines)
         return (bug_title, comment_text)
 
