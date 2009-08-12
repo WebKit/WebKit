@@ -1,3 +1,15 @@
+2009-08-12  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/6952336>
+        CrashTracer: [USER] 3 crashes in Safari at com.apple.WebCore • WebCore::SecurityOrigin::canAccess const + 27
+
+        Make sure to set the security origin before calling dispatchWindowObjectAvailable.
+        
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::begin):
+
 2009-08-12  Xiaomei Ji  <xji@chromium.org>
 
         Reviewed by Eric Seidel.
