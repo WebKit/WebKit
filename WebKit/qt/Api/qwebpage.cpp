@@ -108,7 +108,7 @@ void QWEBKIT_EXPORT qt_drt_overwritePluginDirectories()
     PluginDatabase* db = PluginDatabase::installedPlugins(/* populate */ false);
 
     Vector<String> paths;
-    String qtPath(getenv("QTWEBKIT_PLUGIN_PATH"));
+    String qtPath(qgetenv("QTWEBKIT_PLUGIN_PATH").data());
     qtPath.split(UChar(':'), /* allowEmptyEntries */ false, paths);
 
     db->setPluginDirectories(paths);

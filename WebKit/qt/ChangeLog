@@ -1,3 +1,14 @@
+2009-08-12  Joerg Bornemann  <joerg.bornemann@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
+        QtWebKit compile fix for Windows CE
+
+        There's no getenv on Windows CE, use qgetenv instead.
+
+        * Api/qwebpage.cpp:
+        (qt_drt_overwritePluginDirectories):
+
 2009-08-10  Kavindra Palaraja  <kavindra.palaraja@nokia.com>
 
         Reviewed by Simon Hausmann.
