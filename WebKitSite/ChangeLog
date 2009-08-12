@@ -1,3 +1,14 @@
+2009-08-11  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Document relation between major objects in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=28210
+
+        Added a diagram showing the relation between major objects.
+
+        * coding/major-objects.html: Added.
+
 2009-08-07  Joseph Pecoraro  <joepeck02@gmail.com>
 
         Reviewed by Oliver Hunt.
