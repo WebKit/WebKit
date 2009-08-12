@@ -37,3 +37,6 @@ media/video-display-toggle.html
 
 #<rdar://problem/7135553> - Intermittent crash
 plugins/root-object-premature-delete-crash.html
+
+#<rdar://problem/7135864> - Intermittent failure
+fast/dom/frame-loading-via-document-write.html
