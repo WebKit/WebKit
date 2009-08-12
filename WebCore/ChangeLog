@@ -1,3 +1,13 @@
+2009-08-12  Yong Li  <yong.li@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        WINCE PORT: Add SharedTimerWince.cpp and SystemTimeWince.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=27543
+
+        * platform/wince/SharedTimerWince.cpp: Added.
+        * platform/wince/SystemTimeWince.cpp: Added.
+
 2009-08-12  Mark Mentovai  <mark@chromium.org>
 
         Reviewed by Darin Adler.
