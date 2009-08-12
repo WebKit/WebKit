@@ -1,5 +1,18 @@
 2009-08-11  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by Gavin Barraclough.
+
+        Native JSON.stringify does not omit functions
+        https://bugs.webkit.org/show_bug.cgi?id=28117
+
+        Objects that are callable should be treated as undefined when
+        serialising to JSON.
+
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::appendStringifiedValue):
+
+2009-08-11  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Geoff Garen.
 
         REGRESSION: Hang/crash in BytecodeGenerator::constRegisterFor loading simple page

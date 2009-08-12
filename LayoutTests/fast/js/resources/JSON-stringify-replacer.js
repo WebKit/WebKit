@@ -33,6 +33,11 @@ function returnCycleArrayFor1(k, v) {
         return array;
     return v;
 }
+function returnFunctionFor1(k, v) {
+    if (k == "1")
+        return function(){};
+    return v;
+}
 function returnStringForUndefined(k, v) {
     if (v === undefined)
         return "undefined value";
@@ -50,6 +55,9 @@ shouldBe("JSON.stringify(array, returnArrayFor1)", '\'[0,[],2,null]\'');
 
 shouldBe("JSON.stringify(object, returnUndefinedFor1)", '\'{"0":0,"2":2}\'');
 shouldBe("JSON.stringify(array, returnUndefinedFor1)", '\'[0,null,2,null]\'');
+
+shouldBe("JSON.stringify(object, returnFunctionFor1)", '\'{"0":0,"2":2}\'');
+shouldBe("JSON.stringify(array, returnFunctionFor1)", '\'[0,null,2,null]\'');
 
 shouldBe("JSON.stringify(object, returnNullFor1)", '\'{"0":0,"1":null,"2":2}\'');
 shouldBe("JSON.stringify(array, returnNullFor1)", '\'[0,null,2,null]\'');

@@ -1,3 +1,18 @@
+2009-08-11  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Native JSON.stringify does not omit functions
+        https://bugs.webkit.org/show_bug.cgi?id=28117
+
+        Test serialisation of function objects.
+
+        * fast/js/JSON-stringify-expected.txt:
+        * fast/js/JSON-stringify-replacer-expected.txt:
+        * fast/js/resources/JSON-stringify-replacer.js:
+        * fast/js/resources/JSON-stringify.js:
+        (createTests.result.push.):
+
 2009-08-11  Brady Eidson  <beidson@apple.com>
 
         Rubberstamped by Mark Rowe.

@@ -381,6 +381,15 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
 
     JSObject* object = asObject(value);
 
+    CallData callData;
+    if (object->getCallData(callData) != CallTypeNone) {
+        if (holder->inherits(&JSArray::info)) {
+            builder.append("null");
+            return StringifySucceeded;
+        }
+        return StringifyFailedDueToUndefinedValue;
+    }
+
     // Handle cycle detection, and put the holder on the stack.
     if (!m_holderCycleDetector.add(object).second) {
         throwError(m_exec, TypeError, "JSON.stringify cannot serialize cyclic structures.");

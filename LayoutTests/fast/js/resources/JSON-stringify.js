@@ -316,6 +316,12 @@ function createTests() {
         return jsonObject.stringify({a:{toJSON:function(){ return null; }}});
     });
     result.push(function(jsonObject){
+        return jsonObject.stringify({a:{toJSON:function(){ return function(){}; }}});
+    });
+    result.push(function(jsonObject){
+        return jsonObject.stringify({a:function(){}});
+    });
+    result.push(function(jsonObject){
         var deepObject = {};
         for (var i = 0; i < 2048; i++)
             deepObject = {next:deepObject};
