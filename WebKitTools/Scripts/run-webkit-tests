@@ -299,17 +299,27 @@ chdirWebKit();
 if (!defined($root)) {
     print STDERR "Running build-dumprendertree\n";
 
+    local *DEVNULL;
     my ($childIn, $childOut, $childErr);
-    if (!$quiet) {
+    if ($quiet) {
+        open(DEVNULL, ">", File::Spec->devnull) or die "Failed to open /dev/null";
+        $childOut = ">&DEVNULL";
+        $childErr = ">&DEVNULL";
+    } else {
         # When not quiet, let the child use our stdout/stderr.
         $childOut = ">&STDOUT";
         $childErr = ">&STDERR";
     }
 
     my @args = argumentsForConfiguration();
-    my $buildProcess = open3($childIn, $childOut, $childErr, "WebKitTools/Scripts/build-dumprendertree", @args);
+    my $buildProcess = open3($childIn, $childOut, $childErr, "WebKitTools/Scripts/build-dumprendertree", @args) or die "Failed to run build-dumprendertree";
+    close($childIn);
     waitpid $buildProcess, 0;
     my $buildResult = $?;
+    close($childOut);
+    close($childErr);
+
+    close DEVNULL if ($quiet);
 
     if ($buildResult) {
         print STDERR "Compiling DumpRenderTree failed!\n";

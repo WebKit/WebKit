@@ -1,3 +1,15 @@
+2009-08-11  Eric Seidel  <eric@webkit.org>
+
+        No review, script regression fix only.
+
+        run-webkit-tests --quiet hangs
+        https://bugs.webkit.org/show_bug.cgi?id=28202
+
+        Do a huge dance to get open3 to pipe to /dev/null w/o blocking.
+        This was what I came up with after discussions in #perl.
+
+        * Scripts/run-webkit-tests:
+
 2009-08-11  John Gregg  <johnnyg@google.com>
 
         Reviewed by Maciej Stachowiak.
