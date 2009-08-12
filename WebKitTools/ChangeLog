@@ -1,3 +1,14 @@
+2009-08-11  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by NOBODY (Speculative fix for the layout test failure).
+
+        Fix fast/dom/prototype-inheritance.html
+        and fast/dom/prototype-inheritance-2.html
+        broken on Windows by http://trac.webkit.org/changeset/47018
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (resetDefaultsToConsistentValues): enable app cache in Windows DRT.
+
 2009-08-11  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
