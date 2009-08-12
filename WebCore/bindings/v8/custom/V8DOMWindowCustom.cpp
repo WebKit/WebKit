@@ -153,6 +153,21 @@ ACCESSOR_GETTER(DOMWindowEvent)
     return jsEvent;
 }
 
+ACCESSOR_SETTER(DOMWindowEvent)
+{
+    v8::Handle<v8::Object> holder = V8DOMWrapper::lookupDOMWrapper(V8ClassIndex::DOMWINDOW, info.This());
+    if (holder.IsEmpty())
+        return;
+
+    Frame* frame = V8DOMWrapper::convertToNativeObject<DOMWindow>(V8ClassIndex::DOMWINDOW, holder)->frame();
+    if (!frame || !V8Proxy::canAccessFrame(frame, true))
+        return;
+
+    v8::Local<v8::Context> context = V8Proxy::context(frame);
+    v8::Local<v8::String> eventSymbol = v8::String::NewSymbol("event");
+    context->Global()->SetHiddenValue(eventSymbol, value);
+}
+
 ACCESSOR_GETTER(DOMWindowCrypto)
 {
     // FIXME: Implement me.

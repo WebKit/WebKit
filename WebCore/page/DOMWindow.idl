@@ -55,7 +55,7 @@ module window {
         attribute [Replaceable] Navigator clientInformation;
         attribute [DoNotCheckDomainSecurity, JSCCustom, V8CustomSetter, V8DisallowShadowing] Location location;
 
-        attribute [Replaceable, CustomGetter] Event event;
+        attribute [Replaceable, CustomGetter, V8CustomSetter] Event event;
 
         readonly attribute [Custom] Crypto crypto;
 

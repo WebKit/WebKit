@@ -218,7 +218,7 @@ namespace WebCore {
 
         DECLARE_PROPERTY_ACCESSOR(CanvasRenderingContext2DStrokeStyle);
         DECLARE_PROPERTY_ACCESSOR(CanvasRenderingContext2DFillStyle);
-        DECLARE_PROPERTY_ACCESSOR_GETTER(DOMWindowEvent);
+        DECLARE_PROPERTY_ACCESSOR(DOMWindowEvent);
         DECLARE_PROPERTY_ACCESSOR_GETTER(DOMWindowCrypto);
         DECLARE_PROPERTY_ACCESSOR_SETTER(DOMWindowLocation);
         DECLARE_PROPERTY_ACCESSOR_SETTER(DOMWindowOpener);

@@ -1,3 +1,17 @@
+2009-08-12  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Add a layout test to ensure that window.event can be properly accessed
+        after it has been nulled by a script on a page.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27719
+
+        * fast/events/set-event-in-another-frame-expected.txt: Added.
+        * fast/events/set-event-in-another-frame.html: Added.
+        * fast/events/set-event-to-null-expected.txt: Added.
+        * fast/events/set-event-to-null.html: Added.
+
 2009-08-12  Eric Seidel  <eric@webkit.org>
 
         No review, just skipping tests to make the bots green.
