@@ -66,6 +66,10 @@ class wxWindowDC;
 #endif
 #elif PLATFORM(SKIA)
 typedef class PlatformContextSkia PlatformGraphicsContext;
+#elif PLATFORM(HAIKU)
+class BView;
+typedef BView PlatformGraphicsContext;
+struct pattern;
 #elif PLATFORM(WINCE)
 typedef struct HDC__ PlatformGraphicsContext;
 #else
@@ -379,6 +383,10 @@ namespace WebCore {
         void setGdkExposeEvent(GdkEventExpose*);
         GdkDrawable* gdkDrawable() const;
         GdkEventExpose* gdkExposeEvent() const;
+#endif
+
+#if PLATFORM(HAIKU)
+        pattern getHaikuStrokeStyle();
 #endif
 
     private:

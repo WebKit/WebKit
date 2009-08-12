@@ -45,6 +45,10 @@ typedef struct OpaqueATSUStyle* ATSUStyle;
 #include <QFont>
 #endif
 
+#if PLATFORM(HAIKU)
+#include <Font.h>
+#endif
+
 namespace WebCore {
 
 class FontDescription;

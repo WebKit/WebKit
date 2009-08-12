@@ -78,6 +78,8 @@ private:
 #elif PLATFORM(CHROMIUM)
     Icon(const PlatformIcon&);
     PlatformIcon m_icon;
+#elif PLATFORM(HAIKU)
+    Icon();
 #endif
 };
 

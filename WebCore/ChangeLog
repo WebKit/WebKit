@@ -2,6 +2,32 @@
 
         Reviewed by Eric Seidel.
 
+        [Haiku] Modifying WebCore/platform/graphics files to allow Haiku port.
+        https://bugs.webkit.org/show_bug.cgi?id=28128
+
+        * platform/graphics/BitmapImage.h: Adding getBBitmap() function.
+        * platform/graphics/Color.h: rgb_color is the Color struct in Haiku.
+        * platform/graphics/FloatPoint.h: BPoint is the Point class in Haiku.
+        * platform/graphics/FloatRect.h: BRect is the Rect class in Haiku.
+        * platform/graphics/GraphicsContext.cpp: 
+        * platform/graphics/GraphicsContext.h: BView is the PlatformGraphicsContext
+        class for Haiku. Adding getHaikuStrokeStyle() function.
+        * platform/graphics/Icon.h: Adding an empty Icon() constructor because
+        this class isn't implemented for the moment.
+        * platform/graphics/ImageSource.h: BBitmap is the native bitmap class 
+        for Haiku.
+        * platform/graphics/IntPoint.h: BPoint is the Point class in Haiku.
+        * platform/graphics/IntRect.h: BRect is the Rect class in Haiku.
+        * platform/graphics/IntSize.h: BSize is the Size class in Haiku.
+        * platform/graphics/Path.h: BRegion is the Path class in Haiku.
+        * platform/graphics/Pattern.h: Adding the GraphicsDef.h header and the 
+        native pattern type.
+        * platform/graphics/SimpleFontData.h: Adding Haiku's Font.h header.
+
+2009-08-12  Maxime Simon  <simon.maxime@gmail.com>
+
+        Reviewed by Eric Seidel.
+
         [Haiku] Adding modification to the WebCore/platform/ files to allow
         the Haiku port.
         https://bugs.webkit.org/show_bug.cgi?id=28128

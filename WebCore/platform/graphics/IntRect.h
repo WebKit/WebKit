@@ -49,6 +49,8 @@ class QRect;
 QT_END_NAMESPACE
 #elif PLATFORM(GTK)
 typedef struct _GdkRectangle GdkRectangle;
+#elif PLATFORM(HAIKU)
+class BRect;
 #endif
 
 #if PLATFORM(WX)
@@ -144,6 +146,9 @@ public:
 #elif PLATFORM(GTK)
     IntRect(const GdkRectangle&);
     operator GdkRectangle() const;
+#elif PLATFORM(HAIKU)
+    explicit IntRect(const BRect&);
+    operator BRect() const;
 #endif
 
 #if PLATFORM(CG)
