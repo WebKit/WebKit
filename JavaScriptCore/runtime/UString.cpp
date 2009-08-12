@@ -940,6 +940,35 @@ UString UString::from(int i)
     return UString(p, static_cast<int>(end - p));
 }
 
+UString UString::from(long long i)
+{
+    UChar buf[1 + sizeof(i) * 3];
+    UChar* end = buf + sizeof(buf) / sizeof(UChar);
+    UChar* p = end;
+
+    if (i == 0)
+        *--p = '0';
+    else if (i == LLONG_MIN) {
+        char minBuf[1 + sizeof(i) * 3];
+        snprintf(minBuf, sizeof(minBuf) - 1, "%I64d", LLONG_MIN);
+        return UString(minBuf);
+    } else {
+        bool negative = false;
+        if (i < 0) {
+            negative = true;
+            i = -i;
+        }
+        while (i) {
+            *--p = static_cast<unsigned short>((i % 10) + '0');
+            i /= 10;
+        }
+        if (negative)
+            *--p = '-';
+    }
+
+    return UString(p, static_cast<int>(end - p));
+}
+
 UString UString::from(unsigned int u)
 {
     UChar buf[sizeof(u) * 3];

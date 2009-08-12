@@ -1,3 +1,18 @@
+2009-08-12  Prasanth Ullattil  <prasanth.ullattil@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Fix compile error on 64Bit Windows, when UString::from
+        is called with an intptr_t.
+
+        Added new UString::From overload with long long parameter.
+
+        Thanks to Holger for the long long idea.
+
+        * runtime/UString.cpp:
+        (JSC::UString::from):
+        * runtime/UString.h:
+
 2009-08-11  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Mark Rowe.
