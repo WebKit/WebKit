@@ -1,3 +1,12 @@
+2009-08-12  Benjamin Otte  <otte@gnome.org>
+
+        Reviewed by Jan Alonzo.
+
+        Buildfix for Gtk platforms debug builds.
+
+        * GNUmakefile.am: Choose MarkStackPosix.cpp or MarkStackWin.cpp
+        depending on platform.
+
 2009-08-12  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Prospective build fix for Mac and 32-bit Windows.

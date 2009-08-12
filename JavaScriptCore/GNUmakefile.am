@@ -193,7 +193,6 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/LiteralParser.h \
 	JavaScriptCore/runtime/MarkStack.cpp \
 	JavaScriptCore/runtime/MarkStack.h \
-	JavaScriptCore/runtime/MarkStackPosix.cpp \
 	JavaScriptCore/runtime/SmallStrings.cpp \
 	JavaScriptCore/runtime/SmallStrings.h \
 	JavaScriptCore/runtime/Structure.cpp \
@@ -288,10 +287,12 @@ javascriptcore_sources += \
 if TARGET_WIN32
 javascriptcore_sources += \
 	JavaScriptCore/wtf/ThreadSpecificWin.cpp \
-	JavaScriptCore/jit/ExecutableAllocatorWin.cpp
+	JavaScriptCore/jit/ExecutableAllocatorWin.cpp \
+	JavaScriptCore/runtime/MarkStackWin.cpp
 else
 javascriptcore_sources += \
-	JavaScriptCore/jit/ExecutableAllocatorPosix.cpp
+	JavaScriptCore/jit/ExecutableAllocatorPosix.cpp \
+	JavaScriptCore/runtime/MarkStackPosix.cpp
 endif
 
 # ----
@@ -439,9 +440,6 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/JSWrapperObject.h \
 	JavaScriptCore/runtime/Lookup.cpp \
 	JavaScriptCore/runtime/Lookup.h \
-	JavaScriptCore/runtime/MarkStack.cpp \
-	JavaScriptCore/runtime/MarkStack.h \
-	JavaScriptCore/runtime/MarkStackWin.cpp \
 	JavaScriptCore/runtime/MathObject.cpp \
 	JavaScriptCore/runtime/MathObject.h \
 	JavaScriptCore/runtime/NativeErrorConstructor.cpp \
