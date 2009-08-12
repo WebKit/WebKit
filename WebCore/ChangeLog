@@ -1,3 +1,21 @@
+2009-08-12  Xiaomei Ji  <xji@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Fix [Chromium] drop down menu letter selection, skip selections
+        https://bugs.webkit.org/show_bug.cgi?id=28205
+
+        Not auto-testable since it is chromim platform specific code, and it involves sending a keyboard 
+        event to the popup, which is not possible (eventSender sends the key
+        events through webview, we want to go through the webwidget).
+
+        * manual-tests/keyboard_select_elements_with_same_beginning.html: Added.
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::isCharacterTypeEvent): style change.
+        (WebCore::PopupListBox::handleKeyEvent): typeAheadFind should be called only when the event is
+        a character type event to avoid calling twice for English.
+        (WebCore::PopupListBox::typeAheadFind): remove unnecessary checking of isCharacterTypeEvent() since the whole function is only called under that condition.
+
 2009-08-12  Maxime Simon  <simon.maxime@gmail.com>
 
         Reviewed by Eric Seidel.
