@@ -146,42 +146,59 @@ WebDesktopNotificationsDelegate::WebDesktopNotificationsDelegate(WebView* webVie
 
 bool WebDesktopNotificationsDelegate::show(Notification* object)
 {
-    notificationDelegate()->showDesktopNotification(NotificationCOMWrapper::create(object));
+    if (hasNotificationDelegate())
+        notificationDelegate()->showDesktopNotification(NotificationCOMWrapper::create(object));
     return true;
 }
 
 void WebDesktopNotificationsDelegate::cancel(Notification* object)
 {
-    notificationDelegate()->cancelDesktopNotification(NotificationCOMWrapper::create(object));
+    if (hasNotificationDelegate())
+        notificationDelegate()->cancelDesktopNotification(NotificationCOMWrapper::create(object));
 }
 
 void WebDesktopNotificationsDelegate::notificationObjectDestroyed(Notification* object)
 {
-    notificationDelegate()->notificationDestroyed(NotificationCOMWrapper::create(object));
+    if (hasNotificationDelegate())
+        notificationDelegate()->notificationDestroyed(NotificationCOMWrapper::create(object));
 }
 
 void WebDesktopNotificationsDelegate::requestPermission(SecurityOrigin* origin, PassRefPtr<VoidCallback> callback)
 {
     BString org(origin->toString());
-    notificationDelegate()->requestNotificationPermission(org);
+    if (hasNotificationDelegate())
+        notificationDelegate()->requestNotificationPermission(org);
 }
 
 NotificationPresenter::Permission WebDesktopNotificationsDelegate::checkPermission(SecurityOrigin* origin)
-{  
-    int out;
+{
+    int out = 0;
     BString org(origin->toString());
-    notificationDelegate()->checkNotificationPermission(org, &out);
+    if (hasNotificationDelegate())
+        notificationDelegate()->checkNotificationPermission(org, &out);
     return (NotificationPresenter::Permission) out;
+}
+
+bool WebDesktopNotificationsDelegate::hasNotificationDelegate()
+{
+    COMPtr<IWebUIDelegate> ui;
+    m_webView->uiDelegate(&ui);
+
+    COMPtr<IWebUIDelegate2> ui2;
+    if (SUCCEEDED(ui->QueryInterface(IID_IWebUIDelegate2, &ui2)))
+        return true;
 }
 
 COMPtr<IWebDesktopNotificationsDelegate> WebDesktopNotificationsDelegate::notificationDelegate()
 {
     COMPtr<IWebUIDelegate> ui;
     m_webView->uiDelegate(&ui);
-    
+
+    COMPtr<IWebUIDelegate2> ui2;
     COMPtr<IWebDesktopNotificationsDelegate> delegate;
-    ui->desktopNotificationsDelegate(&delegate);
-    
+    if (SUCCEEDED(ui->QueryInterface(IID_IWebUIDelegate2, &ui2)))
+        ui2->desktopNotificationsDelegate(&delegate);
+
     return delegate;
 }
 

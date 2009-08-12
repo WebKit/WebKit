@@ -28,30 +28,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <WebCore/COMPtr.h>
-#include <WebCore/Notification.h>
-#include <WebCore/NotificationPresenter.h>
-
-#if ENABLE(NOTIFICATIONS)
-
-interface IWebDesktopNotificationPresenter;
-
-class WebDesktopNotificationsDelegate : public WebCore::NotificationPresenter {
-public:
-    WebDesktopNotificationsDelegate(WebView* view);
-
-    /* WebCore::NotificationPresenter interface */
-    virtual bool show(WebCore::Notification* object);
-    virtual void cancel(WebCore::Notification* object);
-    virtual void notificationObjectDestroyed(WebCore::Notification* object);
-    virtual void requestPermission(WebCore::SecurityOrigin* origin, PassRefPtr<WebCore::VoidCallback> callback);
-    virtual WebCore::NotificationPresenter::Permission checkPermission(WebCore::SecurityOrigin* origin);
-
-private:
-    bool hasNotificationDelegate();
-    COMPtr<IWebDesktopNotificationsDelegate> notificationDelegate();
-
-    WebView* m_webView;
-};
-
+#ifndef DO_NO_IMPORTS
+import "oaidl.idl";
+import "ocidl.idl";
 #endif
+
+/*!
+    @category WebUIDelegate2
+    @discussion An extension of WebUIDelegate which additionally
+    provides access to a notification presenter.
+    @interface NSObject (WebUIDelegate2)
+*/
+[
+    object,
+    oleautomation,
+    uuid(C6DEF152-86CD-11de-8BF4-ADD456D89593),
+    pointer_default(unique)
+]
+
+interface IWebUIDelegate2 : IWebUIDelegate
+{
+    /*!
+        @method desktopNotificationsDelegate:
+        @abstract Returns the notifications delegate object.
+    */
+    HRESULT desktopNotificationsDelegate([out, retval] IWebDesktopNotificationsDelegate** result);
+}

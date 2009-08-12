@@ -112,6 +112,7 @@ import "ocidl.idl";
 #include "IWebSecurityOrigin.idl"
 #include "IWebTextRenderer.idl"
 #include "IWebUIDelegate.idl"
+#include "IWebUIDelegate2.idl"
 #include "IWebUIDelegatePrivate.idl"
 #include "IWebURLAuthenticationChallenge.idl"
 #include "IWebURLRequest.idl"

@@ -1,3 +1,26 @@
+2009-08-11  John Gregg  <johnnyg@google.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Move the accessor for notifications presenter from WebUIDelegate
+        to WebUIDelegate2 which extends it.  When making this call from
+        WebCoreSupport, check using QueryInterface before calling.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28198
+
+        * Interfaces/IWebUIDelegate.idl:
+        * Interfaces/IWebUIDelegate2.idl: Added.
+        * Interfaces/WebKit.idl:
+        * WebCoreSupport/WebDesktopNotificationsDelegate.cpp:
+        (WebDesktopNotificationsDelegate::show):
+        (WebDesktopNotificationsDelegate::cancel):
+        (WebDesktopNotificationsDelegate::notificationObjectDestroyed):
+        (WebDesktopNotificationsDelegate::requestPermission):
+        (WebDesktopNotificationsDelegate::checkPermission):
+        (WebDesktopNotificationsDelegate::hasNotificationDelegate):
+        (WebDesktopNotificationsDelegate::notificationDelegate):
+        * WebCoreSupport/WebDesktopNotificationsDelegate.h:
+
 2009-08-11  Drew Wilson  <atwilson@google.com>
 
         Reviewed by NOBODY (build break).

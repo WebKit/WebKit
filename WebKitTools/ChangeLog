@@ -1,3 +1,13 @@
+2009-08-11  John Gregg  <johnnyg@google.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Switch DumpRenderTree to contain a WebUIDelegate2, which extends
+        WebUIDelegate, so that the notifications tests will still work.
+        https://bugs.webkit.org/show_bug.cgi?id=28198
+
+        * DumpRenderTree/win/UIDelegate.h:
+
 2009-08-11  Darin Adler  <darin@apple.com>
 
         Try to fix GTK build.
