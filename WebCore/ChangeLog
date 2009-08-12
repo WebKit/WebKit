@@ -1,3 +1,14 @@
+2009-08-12  Brent Fulgham  <bfulgham@webkit.org>
+
+        Rubber-stamped by Kevin Ollivier.
+
+        Handle crash in wx due to null value passed to strlen in
+        the CString constructor.
+
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::certificatePath):  Check for null return from getenv
+        and use default CString constructor instead.
+
 2009-08-12  Yong Li  <yong.li@torchmobile.com>
 
         Reviewed by Eric Seidel.
