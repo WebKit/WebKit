@@ -40,6 +40,3 @@ plugins/root-object-premature-delete-crash.html
 
 #<rdar://problem/7135864> - Intermittent failure
 fast/dom/frame-loading-via-document-write.html
-
-#<rdar://problem/7136851> - "FAIL succeeded should be true. Was false."
-platform/mac/accessibility/string-range-contains-listmarker.html
