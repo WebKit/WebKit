@@ -1,5 +1,18 @@
 2009-08-12  Peter Kasting  <pkasting@google.com>
 
+        Reviewed by Adam Treat.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27965
+        Merge wx/ImageSourceWx.cpp into ImageSource.cpp.  No changes to
+        ImageSource.cpp were needed, so this just deletes ImageSourceWx.cpp.
+
+        * WebCore.gypi:
+        * WebCoreSources.bkl:
+        * platform/graphics/wx/ImageSourceWx.cpp: Removed.
+        * webcore-wx.bkl:
+
+2009-08-12  Peter Kasting  <pkasting@google.com>
+
         Reviewed by Dave Levin.
 
         https://bugs.webkit.org/show_bug.cgi?id=27933

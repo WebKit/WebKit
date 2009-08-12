@@ -836,6 +836,7 @@ This file contains the list of files needed to build WebCore.
         platform/graphics/GraphicsContext.cpp
         platform/graphics/GraphicsTypes.cpp
         platform/graphics/Image.cpp
+        platform/graphics/ImageSource.cpp
         platform/graphics/IntRect.cpp
         platform/graphics/Path.cpp
         platform/graphics/PathTraversalState.cpp

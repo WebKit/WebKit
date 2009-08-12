@@ -1995,7 +1995,6 @@
             'platform/graphics/wx/GraphicsContextWx.cpp',
             'platform/graphics/wx/ImageBufferData.h',
             'platform/graphics/wx/ImageBufferWx.cpp',
-            'platform/graphics/wx/ImageSourceWx.cpp',
             'platform/graphics/wx/ImageWx.cpp',
             'platform/graphics/wx/IntPointWx.cpp',
             'platform/graphics/wx/IntRectWx.cpp',
