@@ -314,6 +314,7 @@ webcore_sources += \
 	WebCore/bindings/js/JSDataGridDataSource.cpp \
 	WebCore/bindings/js/JSDataGridDataSource.h \
 	WebCore/bindings/js/JSCSSRuleCustom.cpp \
+	WebCore/bindings/js/JSCSSRuleListCustom.cpp \
 	WebCore/bindings/js/JSCSSStyleDeclarationCustom.cpp \
 	WebCore/bindings/js/JSCSSStyleDeclarationCustom.h \
 	WebCore/bindings/js/JSCSSValueCustom.cpp \
@@ -352,6 +353,7 @@ webcore_sources += \
 	WebCore/bindings/js/JSHTMLAllCollection.h \
 	WebCore/bindings/js/JSHTMLAppletElementCustom.cpp \
 	WebCore/bindings/js/JSHTMLAppletElementCustom.h \
+	WebCore/bindings/js/JSHTMLCanvasElementCustom.cpp \
 	WebCore/bindings/js/JSHTMLCollectionCustom.cpp \
 	WebCore/bindings/js/JSHTMLDataGridElementCustom.cpp \
 	WebCore/bindings/js/JSHTMLDocumentCustom.cpp \

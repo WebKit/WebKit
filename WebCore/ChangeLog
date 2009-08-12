@@ -1,3 +1,69 @@
+2009-08-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Custom properties on DOM objects are lost after GC (as demonstrated by the gc-9.html test)
+        https://bugs.webkit.org/show_bug.cgi?id=28194
+
+        * GNUmakefile.am: Added the two new source files.
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * WebCoreSources.bkl: Ditto.
+
+        * bindings/js/JSCSSRuleListCustom.cpp: Added.
+        (WebCore::JSCSSRuleList::markChildren): Call markDOMObjectWrapper
+        on rules in the list.
+
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore::JSCSSStyleDeclaration::markChildren): Added. Call
+        markDOMObjectWrapper on the CSSValue objects that are owned by the
+        declaration as values of the properties.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::isObservableThroughDOM): Added code to handle some
+        cases where nodes are observable because they own objects that
+        in turn have custom properties.
+
+        * bindings/js/JSDOMBinding.h: Fix a typo in the header.
+
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::markChildren): Added call to markDOMObjectWrapper
+        for implementation and styleSheets.
+
+        * bindings/js/JSElementCustom.cpp:
+        (WebCore::JSElement::markChildren): Added. Calls markDOMObjectWrapper
+        for attributes and style.
+
+        * bindings/js/JSHTMLCanvasElementCustom.cpp: Added.
+        (WebCore::JSHTMLCanvasElement::markChildren): Call markDOMObjectWrapper
+        on the rendering context.
+
+        * bindings/js/JSStyleSheetCustom.cpp:
+        (WebCore::JSStyleSheet::markChildren): Call markDOMObjectWrapper on
+        items in the stylesheet.
+
+        * bindings/js/JSStyleSheetListCustom.cpp:
+        (WebCore::JSStyleSheetList::markChildren): Added. Calls
+        markDOMObjectWrapper on stylesheets in the list.
+
+        * css/CSSRuleList.idl: Added CustomMarkFunction.
+        * css/CSSStyleDeclaration.idl: Ditto.
+        * css/StyleSheetList.idl: Ditto.
+        * dom/Element.idl: Ditto.
+        * html/HTMLCanvasElement.idl: Ditto.
+
+        * dom/Element.h: Made everything private that could be.
+        Added access to the attributeMap that does returns
+        the existing map without doing any of the lazy-updating work. This
+        is needed to get at the existing attributes during garbage collection
+        without having side effects.
+
+        * html/HTMLCanvasElement.h: Cleaned up the header a bit, making
+        members private. Added renderingContext2D function for use in
+        JSHTMLCanvasElement::markChildren.
+
 2009-08-12  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Eric Seidel.

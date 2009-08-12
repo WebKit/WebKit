@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,8 +27,8 @@
 #include "JSCSSStyleDeclarationCustom.h"
 
 #include "AtomicString.h"
+#include "CSSMutableStyleDeclaration.h"
 #include "CSSPrimitiveValue.h"
-#include "CSSStyleDeclaration.h"
 #include "CSSValue.h"
 #include "PlatformString.h"
 #include <runtime/StringObjectThatMasqueradesAsUndefined.h>
@@ -39,6 +39,21 @@ using namespace JSC;
 using namespace WTF;
 
 namespace WebCore {
+
+void JSCSSStyleDeclaration::markChildren(MarkStack& markStack)
+{
+    Base::markChildren(markStack);
+
+    CSSStyleDeclaration* declaration = impl();
+    JSGlobalData& globalData = *Heap::heap(this)->globalData();
+
+    if (declaration->isMutableStyleDeclaration()) {
+        CSSMutableStyleDeclaration* mutableDeclaration = static_cast<CSSMutableStyleDeclaration*>(declaration);
+        CSSMutableStyleDeclaration::const_iterator end = mutableDeclaration->end();
+        for (CSSMutableStyleDeclaration::const_iterator it = mutableDeclaration->begin(); it != end; ++it)
+            markDOMObjectWrapper(markStack, globalData, it->value());
+    }
+}
 
 // Check for a CSS prefix.
 // Passed prefix is all lowercase.

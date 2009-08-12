@@ -61,7 +61,7 @@ namespace WebCore {
 #endif
     };
 
-    // FIXME: This class should colapse into DOMObject once all DOMObjects are
+    // FIXME: This class should collapse into DOMObject once all DOMObjects are
     // updated to store a globalObject pointer.
     class DOMObjectWithGlobalPointer : public DOMObject {
     public:

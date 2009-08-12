@@ -103,15 +103,15 @@ function test()
 // If "allow custom" is specified, then custom properties are allowed and survive garbage collection.
 // If "allow custom skip" is specified, this means this property is not guaranteed to survive garbage
 // collection, so we don't test it at all, since there is a chance it might due to conservative GC algorithm.
-// All "allow custom skip" represent bugs that need to be fixed.
+// Any uses of "allow custom skip" represent bugs that need to be fixed.
 
 var objectsToTest = [
-    [ "document.implementation", "allow custom skip" ], // DOMImplementation
+    [ "document.implementation", "allow custom" ], // DOMImplementation
     [ "document", "allow custom" ],
     [ "document.body", "allow custom" ],
-    [ "document.body.attributes", "allow custom skip" ], // NamedNodeMap
+    [ "document.body.attributes", "allow custom" ], // NamedNodeMap
     [ "document.getElementsByTagName('body')" ], // NodeList
-    [ "document.getElementsByTagName('canvas')[0].getContext('2d')", "allow custom skip" ], // CanvasRenderingContext2D
+    [ "document.getElementsByTagName('canvas')[0].getContext('2d')", "allow custom" ], // CanvasRenderingContext2D
     [ "document.getElementsByTagName('canvas')[0].getContext('2d').createLinearGradient(0, 0, 0, 0)" ], // CanvasGradient
     [ "document.getElementsByTagName('canvas')[0].getContext('2d').createPattern(new Image(), 'no-repeat')" ], // CanvasPattern
     [ "document.getElementsByTagName('select')[0].options" ],
@@ -134,12 +134,12 @@ var objectsToTest = [
     [ "document.body.children" ],
     [ "document.getElementsByTagName('map')[0].areas" ],
     
-    [ "document.body.style", "allow custom skip" ],
-    [ "document.body.style.getPropertyCSSValue('color')", "allow custom skip" ],
-    [ "document.styleSheets", "allow custom skip" ],
-    [ "document.styleSheets[0]", "allow custom skip" ],
+    [ "document.body.style", "allow custom" ],
+    [ "document.body.style.getPropertyCSSValue('color')", "allow custom" ],
+    [ "document.styleSheets", "allow custom" ],
+    [ "document.styleSheets[0]", "allow custom" ],
     [ "document.styleSheets[0].cssRules" ],
-    [ "document.styleSheets[0].cssRules[0]", "allow custom skip" ],
+    [ "document.styleSheets[0].cssRules[0]", "allow custom" ],
 
     [ "new XPathEvaluator()" ], // XPathEvaluator
     [ "new XPathEvaluator().evaluate('/', document, null, 0, null)" ], // XPathResult

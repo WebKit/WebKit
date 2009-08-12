@@ -629,6 +629,7 @@ SOURCES += \
     bindings/js/JSClipboardCustom.cpp \
     bindings/js/JSConsoleCustom.cpp \
     bindings/js/JSCSSRuleCustom.cpp \
+    bindings/js/JSCSSRuleListCustom.cpp \
     bindings/js/JSCSSStyleDeclarationCustom.cpp \
     bindings/js/JSCSSValueCustom.cpp \
     bindings/js/JSCoordinatesCustom.cpp \
@@ -651,6 +652,7 @@ SOURCES += \
     bindings/js/JSHTMLAllCollection.cpp \
     bindings/js/JSHistoryCustom.cpp \
     bindings/js/JSHTMLAppletElementCustom.cpp \
+    bindings/js/JSHTMLCanvasElementCustom.cpp \
     bindings/js/JSHTMLCollectionCustom.cpp \
     bindings/js/JSHTMLDataGridElementCustom.cpp \
     bindings/js/JSHTMLDocumentCustom.cpp \

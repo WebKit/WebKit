@@ -42,8 +42,14 @@ namespace WebCore {
 void JSDocument::markChildren(MarkStack& markStack)
 {
     JSNode::markChildren(markStack);
-    markDOMNodesForDocument(markStack, impl());
-    markActiveObjectsForContext(markStack, *Heap::heap(this)->globalData(), impl());
+
+    Document* document = impl();
+    JSGlobalData& globalData = *Heap::heap(this)->globalData();
+
+    markDOMNodesForDocument(markStack, document);
+    markActiveObjectsForContext(markStack, globalData, document);
+    markDOMObjectWrapper(markStack, globalData, document->implementation());
+    markDOMObjectWrapper(markStack, globalData, document->styleSheets());
 }
 
 JSValue JSDocument::location(ExecState* exec) const

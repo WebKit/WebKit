@@ -41,9 +41,12 @@ PASS: new XPathEvaluator().evaluate('/', document, null, 0, null).myCustomProper
 PASS: document.createNSResolver(document).myCustomProperty should be undefined and is.
 PASS: document.createExpression('/', document.createNSResolver(document)).myCustomProperty should be undefined and is.
 DOM OBJECTS AFTER GARBAGE COLLECTION:
+PASS: document.implementation.myCustomProperty should be 1 and is.
 PASS: document.myCustomProperty should be 1 and is.
 PASS: document.body.myCustomProperty should be 1 and is.
+PASS: document.body.attributes.myCustomProperty should be 1 and is.
 PASS: document.getElementsByTagName('body').myCustomProperty should be undefined and is.
+PASS: document.getElementsByTagName('canvas')[0].getContext('2d').myCustomProperty should be 1 and is.
 PASS: document.getElementsByTagName('canvas')[0].getContext('2d').createLinearGradient(0, 0, 0, 0).myCustomProperty should be undefined and is.
 PASS: document.getElementsByTagName('canvas')[0].getContext('2d').createPattern(new Image(), 'no-repeat').myCustomProperty should be undefined and is.
 PASS: document.getElementsByTagName('select')[0].options.myCustomProperty should be undefined and is.
@@ -63,7 +66,12 @@ PASS: document.getElementsByTagName('table')[0].tBodies.myCustomProperty should 
 PASS: document.getElementsByTagName('table')[0].tBodies[0].rows.myCustomProperty should be undefined and is.
 PASS: document.body.children.myCustomProperty should be undefined and is.
 PASS: document.getElementsByTagName('map')[0].areas.myCustomProperty should be undefined and is.
+PASS: document.body.style.myCustomProperty should be 1 and is.
+PASS: document.body.style.getPropertyCSSValue('color').myCustomProperty should be 1 and is.
+PASS: document.styleSheets.myCustomProperty should be 1 and is.
+PASS: document.styleSheets[0].myCustomProperty should be 1 and is.
 PASS: document.styleSheets[0].cssRules.myCustomProperty should be undefined and is.
+PASS: document.styleSheets[0].cssRules[0].myCustomProperty should be 1 and is.
 PASS: new XPathEvaluator().myCustomProperty should be undefined and is.
 PASS: new XPathEvaluator().evaluate('/', document, null, 0, null).myCustomProperty should be undefined and is.
 PASS: document.createNSResolver(document).myCustomProperty should be undefined and is.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009 Apple Inc. All right reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,28 +20,28 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module html {
+#include "config.h"
+#include "JSCSSRuleList.h"
 
-    interface [
-        CustomMarkFunction,
-        GenerateConstructor,
-        InterfaceUUID=a14d88c8-c6af-4e34-ad17-659700c77a10,
-        ImplementationUUID=7ae731bc-c264-4ee3-a4b4-5d4540af26c3
-    ] HTMLCanvasElement : HTMLElement {
+#include "CSSRuleList.h"
 
-        attribute long width;
-        attribute long height;
+using namespace JSC;
 
-        DOMString toDataURL(in [ConvertUndefinedOrNullToNullString] DOMString type)
-            raises(DOMException);
+namespace WebCore {
 
-#if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
-        [V8Custom] DOMObject getContext(in DOMString contextId);
-#endif
+void JSCSSRuleList::markChildren(MarkStack& markStack)
+{
+    Base::markChildren(markStack);
 
-    };
+    CSSRuleList* list = impl();
+    JSGlobalData& globalData = *Heap::heap(this)->globalData();
+
+    unsigned length = list->length();
+    for (unsigned i = 0; i < length; ++i)
+        markDOMObjectWrapper(markStack, globalData, list->item(i));
+}
 
 }

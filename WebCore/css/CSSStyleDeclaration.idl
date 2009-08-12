@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -22,6 +22,7 @@ module css {
 
     // Introduced in DOM Level 2:
     interface [
+        CustomMarkFunction,
         GenerateConstructor,
         DelegatingPutFunction,
         HasNameGetter,

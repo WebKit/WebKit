@@ -21,6 +21,7 @@
 module core {
 
     interface [
+        CustomMarkFunction,
         GenerateConstructor,
         GenerateNativeConverter,
         InlineGetOwnPropertySlot,
