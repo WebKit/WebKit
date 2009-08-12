@@ -94,6 +94,8 @@ public:
 #if PLATFORM(WIN)
     Scrollbar* scrollbar() const { return m_scrollbar.get(); }
 
+    static LPCTSTR popupClassName();
+
     bool up(unsigned lines = 1);
     bool down(unsigned lines = 1);
 

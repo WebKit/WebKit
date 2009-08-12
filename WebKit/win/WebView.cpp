@@ -94,6 +94,7 @@
 #include <WebCore/PluginDatabase.h>
 #include <WebCore/PluginInfoStore.h>
 #include <WebCore/PluginView.h>
+#include <WebCore/PopupMenu.h>
 #include <WebCore/ProgressTracker.h>
 #include <WebCore/RenderTheme.h>
 #include <WebCore/RenderView.h>
@@ -1453,6 +1454,23 @@ bool WebView::mouseWheel(WPARAM wParam, LPARAM lParam, bool isMouseHWheel)
         else
             makeTextLarger(0);
         return true;
+    }
+    
+    // FIXME: This doesn't fix https://bugs.webkit.org/show_bug.cgi?id=28217. This only fixes https://bugs.webkit.org/show_bug.cgi?id=28203.
+    HWND focusedWindow = GetFocus();
+    if (focusedWindow && focusedWindow != m_viewWindow) {
+        // Our focus is on a different hwnd, see if it's a PopupMenu and if so, set the focus back on us (which will hide the popup).
+        TCHAR className[256];
+
+        // Make sure truncation won't affect the comparison.
+        ASSERT(ARRAYSIZE(className) > _tcslen(PopupMenu::popupClassName));
+
+        if (GetClassName(focusedWindow, className, ARRAYSIZE(className)) && !_tcscmp(className, PopupMenu::popupClassName())) {
+            // We don't let the WebView scroll here for two reasons - 1) To match Firefox behavior, 2) If we do scroll, we lose the
+            // focus ring around the select menu.
+            SetFocus(m_viewWindow);
+            return true;
+        }
     }
 
     PlatformWheelEvent wheelEvent(m_viewWindow, wParam, lParam, isMouseHWheel);

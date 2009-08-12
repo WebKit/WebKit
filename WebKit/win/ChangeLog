@@ -1,3 +1,16 @@
+2009-08-12  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed Adam Roben.
+
+        Fix of <rdar://6728361> Mouse wheel scrolling on a page with expanded drop down 
+        list detaches drop down.
+        
+        Added a check in mouseWheel to see if our focus is currently in a popup, if so, close
+        the popup (matches other browser behavior).
+
+        * WebView.cpp:
+        (WebView::mouseWheel):
+
 2009-08-12  Adam Roben  <aroben@apple.com>
 
         Make WebPreferenceKeysPrivate.h available for client use

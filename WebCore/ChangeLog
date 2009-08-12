@@ -1,3 +1,16 @@
+2009-08-12  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Fix of <rdar://6728361> Mouse wheel scrolling on a page with expanded drop down 
+        list detaches drop down.
+
+        Added a function for Windows PopupMenu's to return their class name.
+
+         * platform/PopupMenu.h:
+         * platform/win/PopupMenuWin.cpp:
+         (WebCore::PopupMenu::popupClassName):
+
 2009-08-12  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Dan Bernstein.
