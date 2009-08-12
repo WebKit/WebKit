@@ -1,3 +1,22 @@
+2009-08-11  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Bug 28200 - ListMarker should be included as part of the text value to parse
+        https://bugs.webkit.org/show_bug.cgi?id=28200
+
+        Add the ability to retrieve a string given a plain NSRange.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (stringForRangeCallback):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::valueDescription):
+        (AccessibilityUIElement::stringForRange):
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::stringForRange):
+
 2009-08-11  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by NOBODY (Speculative fix for the layout test failure).

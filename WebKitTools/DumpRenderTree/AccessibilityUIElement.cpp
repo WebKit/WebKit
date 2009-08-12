@@ -140,6 +140,18 @@ static JSValueRef boundsForRangeCallback(JSContextRef context, JSObjectRef funct
     return JSValueMakeString(context, boundsDescription.get());    
 }
 
+static JSValueRef stringForRangeCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    unsigned location = UINT_MAX, length = 0;
+    if (argumentCount == 2) {
+        location = JSValueToNumber(context, arguments[0], exception);
+        length = JSValueToNumber(context, arguments[1], exception);
+    }
+    
+    JSRetainPtr<JSStringRef> stringDescription(Adopt, toAXElement(thisObject)->stringForRange(location, length));
+    return JSValueMakeString(context, stringDescription.get());    
+}
+
 static JSValueRef childAtIndexCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     int indexNumber = -1;
@@ -392,6 +404,7 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "parameterizedAttributeNames", parameterizedAttributeNamesCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "lineForIndex", lineForIndexCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "boundsForRange", boundsForRangeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "stringForRange", stringForRangeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "childAtIndex", childAtIndexCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "elementAtPoint", elementAtPointCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "attributesOfColumnHeaders", attributesOfColumnHeadersCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

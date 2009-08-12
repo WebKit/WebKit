@@ -1,3 +1,29 @@
+2009-08-11  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Bug 28200 - ListMarker should be included as part of the text value to parse
+        https://bugs.webkit.org/show_bug.cgi?id=28200
+
+        When returning text through the marker range attributes, the list marker text should
+        also be included. It isn't included by default because a TextIterator is used which
+        only looks at Nodes for text. A list marker does not have a corresponding node,
+        so its text is not returned through accessibility. That is, until now.
+
+        Test: platform/mac/accessibility/string-range-contains-listmarker.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::listMarkerTextForRange):
+        (WebCore::AccessibilityObject::stringForVisiblePositionRange):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper doAXAttributedStringForTextMarkerRange:]):
+        (-[AccessibilityObjectWrapper accessibilityParameterizedAttributeNames]):
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+        * rendering/RenderListItem.h:
+
+        Make markerText() public so that accessibility code can access it.
+
 2009-08-11  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Adam Treat.

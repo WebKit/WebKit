@@ -119,6 +119,7 @@ public:
     int lineForIndex(int);
     JSStringRef boundsForRange(unsigned location, unsigned length);
     void setSelectedTextRange(unsigned location, unsigned length);
+    JSStringRef stringForRange(unsigned location, unsigned length);
     
     // Table-specific
     AccessibilityUIElement cellForColumnAndRow(unsigned column, unsigned row);

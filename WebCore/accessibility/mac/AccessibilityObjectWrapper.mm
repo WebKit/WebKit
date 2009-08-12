@@ -478,6 +478,9 @@ static NSString* nsStringForReplacedNode(Node* replacedNode)
 
 - (NSAttributedString*)doAXAttributedStringForTextMarkerRange:(WebCoreTextMarkerRange*)textMarkerRange
 {
+    if (!m_object)
+        return nil;
+    
     // extract the start and end VisiblePosition
     VisiblePosition startVisiblePosition = visiblePositionForStartOfTextMarkerRange(textMarkerRange);
     if (startVisiblePosition.isNull())
@@ -487,6 +490,7 @@ static NSString* nsStringForReplacedNode(Node* replacedNode)
     if (endVisiblePosition.isNull())
         return nil;
 
+    VisiblePositionRange visiblePositionRange(startVisiblePosition, endVisiblePosition);
     // iterate over the range to build the AX attributed string
     NSMutableAttributedString* attrString = [[NSMutableAttributedString alloc] init];
     TextIterator it(makeRange(startVisiblePosition, endVisiblePosition).get());
@@ -499,6 +503,11 @@ static NSString* nsStringForReplacedNode(Node* replacedNode)
 
         // non-zero length means textual node, zero length means replaced node (AKA "attachments" in AX)
         if (it.length() != 0) {
+            // Add the text of the list marker item if necessary.
+            String listMarkerText = m_object->listMarkerTextForNodeAndPosition(node, VisiblePosition(it.range()->startPosition()));
+            if (!listMarkerText.isEmpty())
+                AXAttributedStringAppendText(attrString, node, offset, listMarkerText.characters(), listMarkerText.length());
+            
             AXAttributedStringAppendText(attrString, node, offset, it.characters(), it.length());
         } else {
             Node* replacedNode = node->childNode(offset);
@@ -1581,6 +1590,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
                       @"AXStyleTextMarkerRangeForTextMarker",
                       @"AXLengthForTextMarkerRange",
                       NSAccessibilityBoundsForRangeParameterizedAttribute,
+                      NSAccessibilityStringForRangeParameterizedAttribute,
                       nil];
     }
 
@@ -1931,6 +1941,14 @@ static RenderObject* rendererForView(NSView* view)
             return nil;
         NSRect rect = m_object->boundsForVisiblePositionRange(VisiblePositionRange(start, end));
         return [NSValue valueWithRect:rect];
+    }
+    
+    if ([attribute isEqualToString:NSAccessibilityStringForRangeParameterizedAttribute]) {
+        VisiblePosition start = m_object->visiblePositionForIndex(range.location);
+        VisiblePosition end = m_object->visiblePositionForIndex(range.location+range.length);
+        if (start.isNull() || end.isNull())
+            return nil;
+        return m_object->stringForVisiblePositionRange(VisiblePositionRange(start, end));
     }
 
     if ([attribute isEqualToString: @"AXAttributedStringForTextMarkerRange"])

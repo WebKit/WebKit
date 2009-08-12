@@ -392,7 +392,7 @@ double AccessibilityUIElement::maxValue()
 JSStringRef AccessibilityUIElement::valueDescription()
 {
     NSString* valueDescription = [m_element accessibilityAttributeValue:NSAccessibilityValueDescriptionAttribute];
-     if ([valueDescription isKindOfClass:[NSString class]])
+    if ([valueDescription isKindOfClass:[NSString class]])
          return [valueDescription createJSStringRef];
     return 0;
 }
@@ -447,6 +447,16 @@ JSStringRef AccessibilityUIElement::boundsForRange(unsigned location, unsigned l
     // don't return position information because it is platform dependent
     NSMutableString* boundsDescription = [NSMutableString stringWithFormat:@"{{%f, %f}, {%f, %f}}",-1.0f,-1.0f,rect.size.width,rect.size.height];
     return [boundsDescription createJSStringRef];
+}
+
+JSStringRef AccessibilityUIElement::stringForRange(unsigned location, unsigned length)
+{
+    NSRange range = NSMakeRange(location, length);
+    id string = [m_element accessibilityAttributeValue:NSAccessibilityStringForRangeParameterizedAttribute forParameter:[NSValue valueWithRange:range]];
+    if (![string isKindOfClass:[NSString class]])
+        return 0;
+    
+    return [string createJSStringRef];
 }
 
 JSStringRef AccessibilityUIElement::attributesOfColumnHeaders()

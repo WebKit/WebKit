@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<ol>
+<li>test
+</ol>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests makes sure that the list marker text is included when the text is asked for.");
+
+    if (window.accessibilityController) {
+
+          // this text field should be required.
+          document.getElementById("body").focus();
+          var webArea = accessibilityController.focusedElement.childAtIndex(0).childAtIndex(1);
+          var string = webArea.stringForRange(0,4);
+          var succeeded = string == "1. test";
+          shouldBe("succeeded", "true");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

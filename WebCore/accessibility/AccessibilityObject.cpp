@@ -41,6 +41,7 @@
 #include "NotImplemented.h"
 #include "Page.h"
 #include "RenderImage.h"
+#include "RenderListItem.h"
 #include "RenderListMarker.h"
 #include "RenderMenuList.h"
 #include "RenderTextControl.h"
@@ -363,6 +364,49 @@ static bool replacedNodeNeedsCharacter(Node* replacedNode)
     return true;
 }
 
+// Finds a RenderListItem parent give a node.
+RenderListItem* AccessibilityObject::renderListItemContainerForNode(Node* node) const
+{
+    for (Node* stringNode = node; stringNode; stringNode = stringNode->parent()) {
+        RenderObject* renderObject = stringNode->renderer();
+        if (!renderObject || !renderObject->isListItem())
+            continue;
+        
+        return toRenderListItem(renderObject);
+    }
+    
+    return 0;
+}
+    
+// Returns the text associated with a list marker if this node is contained within a list item.
+String AccessibilityObject::listMarkerTextForNodeAndPosition(Node* node, const VisiblePosition& visiblePositionStart) const
+{
+    // If the range does not contain the start of the line, the list marker text should not be included.
+    if (!isStartOfLine(visiblePositionStart))
+        return String();
+
+    RenderListItem* listItem = renderListItemContainerForNode(node);
+    if (!listItem)
+        return String();
+        
+    // If this is in a list item, we need to manually add the text for the list marker 
+    // because a RenderListMarker does not have a Node equivalent and thus does not appear
+    // when iterating text.
+    const String& markerText = listItem->markerText();
+    if (markerText.isEmpty())
+        return String();
+                
+    // Append text, plus the period that follows the text.
+    // FIXME: Not all list marker styles are followed by a period, but this
+    // sounds much better when there is a synthesized pause because of a period.
+    Vector<UChar> resultVector;
+    resultVector.append(markerText.characters(), markerText.length());
+    resultVector.append('.');
+    resultVector.append(' ');
+    
+    return String::adopt(resultVector);
+}
+    
 String AccessibilityObject::stringForVisiblePositionRange(const VisiblePositionRange& visiblePositionRange) const
 {
     if (visiblePositionRange.isNull())
@@ -373,6 +417,11 @@ String AccessibilityObject::stringForVisiblePositionRange(const VisiblePositionR
     for (TextIterator it(range.get()); !it.atEnd(); it.advance()) {
         // non-zero length means textual node, zero length means replaced node (AKA "attachments" in AX)
         if (it.length() != 0) {
+            // Add a textual representation for list marker text
+            String listMarkerText = listMarkerTextForNodeAndPosition(it.node(), visiblePositionRange.start);
+            if (!listMarkerText.isEmpty())
+                resultVector.append(listMarkerText.characters(), listMarkerText.length());
+                
             resultVector.append(it.characters(), it.length());
         } else {
             // locate the node and starting offset for this replaced range
