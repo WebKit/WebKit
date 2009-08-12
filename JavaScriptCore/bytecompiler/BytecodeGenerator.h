@@ -254,7 +254,7 @@ namespace JSC {
         RegisterID* emitNewObject(RegisterID* dst);
         RegisterID* emitNewArray(RegisterID* dst, ElementNode*); // stops at first elision
 
-        RegisterID* emitNewFunction(RegisterID* dst, FuncDeclNode* func);
+        RegisterID* emitNewFunction(RegisterID* dst, FunctionBodyNode* body);
         RegisterID* emitNewFunctionExpression(RegisterID* dst, FuncExprNode* func);
         RegisterID* emitNewRegExp(RegisterID* dst, RegExp* regExp);
 
@@ -413,8 +413,7 @@ namespace JSC {
             return m_globals[-index - 1];
         }
 
-        unsigned addConstant(FuncDeclNode*);
-        unsigned addConstant(FuncExprNode*);
+        unsigned addConstant(FunctionBodyNode*);
         unsigned addConstant(const Identifier&);
         RegisterID* addConstantValue(JSValue);
         unsigned addRegExp(RegExp*);

@@ -1,3 +1,66 @@
+2009-08-11  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Restrict use of FuncDeclNode & FuncExprNode to the parser.
+        https://bugs.webkit.org/show_bug.cgi?id=28209
+
+        These objects were also being referenced from the CodeBlock.  By changing this
+        to just retain pointers to FunctionBodyNodes these classes can be restricted to
+        use during parsing.
+
+        No performance impact (or sub-percent progression).
+
+        * JavaScriptCore.exp:
+            Update symbols.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::mark):
+        (JSC::CodeBlock::reparseForExceptionInfoIfNecessary):
+        (JSC::CodeBlock::shrinkToFit):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::addFunction):
+        (JSC::CodeBlock::function):
+            Unify m_functions & m_functionExpressions into a single Vector<RefPtr<FuncExprNode> >.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::addConstant):
+        (JSC::BytecodeGenerator::emitNewFunction):
+        (JSC::BytecodeGenerator::emitNewFunctionExpression):
+        * bytecompiler/BytecodeGenerator.h:
+            FunctionStacks now contain FunctionBodyNodes not FuncDeclNodes.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::privateExecute):
+            Update to reflect chnages in CodeBlock.
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_new_func_exp):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * jit/JITStubs.h:
+        (JSC::):
+            Update to reflect chnages in CodeBlock.
+
+        * parser/Grammar.y:
+            FunctionStacks now contain FunctionBodyNodes not FuncDeclNodes.
+
+        * parser/NodeConstructors.h:
+        (JSC::FuncExprNode::FuncExprNode):
+        (JSC::FuncDeclNode::FuncDeclNode):
+        * parser/Nodes.cpp:
+        (JSC::ScopeNodeData::mark):
+        (JSC::FunctionBodyNode::finishParsing):
+        * parser/Nodes.h:
+        (JSC::FunctionBodyNode::ident):
+            Move m_ident & make methods from FuncDeclNode & FuncExprNode to FunctionBodyNode.
+
+        * runtime/JSFunction.h:
+        (JSC::FunctionBodyNode::make):
+            Make this method inline (was FuncDeclNode::makeFunction).
+
 2009-08-11  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

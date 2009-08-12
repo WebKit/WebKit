@@ -42,6 +42,7 @@ namespace JSC {
 
     class CodeBlock;
     class ExecutablePool;
+    class FunctionBodyNode;
     class Identifier;
     class JSGlobalData;
     class JSGlobalData;
@@ -53,8 +54,6 @@ namespace JSC {
     class PropertySlot;
     class PutPropertySlot;
     class RegisterFile;
-    class FuncDeclNode;
-    class FuncExprNode;
     class JSGlobalObject;
     class RegExp;
 
@@ -67,8 +66,7 @@ namespace JSC {
         Identifier& identifier() { return *static_cast<Identifier*>(asPointer); }
         int32_t int32() { return asInt32; }
         CodeBlock* codeBlock() { return static_cast<CodeBlock*>(asPointer); }
-        FuncDeclNode* funcDeclNode() { return static_cast<FuncDeclNode*>(asPointer); }
-        FuncExprNode* funcExprNode() { return static_cast<FuncExprNode*>(asPointer); }
+        FunctionBodyNode* function() { return static_cast<FunctionBodyNode*>(asPointer); }
         RegExp* regExp() { return static_cast<RegExp*>(asPointer); }
         JSPropertyNameIterator* propertyNameIterator() { return static_cast<JSPropertyNameIterator*>(asPointer); }
         JSGlobalObject* globalObject() { return static_cast<JSGlobalObject*>(asPointer); }

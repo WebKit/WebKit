@@ -133,6 +133,11 @@ namespace JSC {
         return static_cast<JSFunction*>(asObject(value));
     }
 
+    inline JSFunction* FunctionBodyNode::make(ExecState* exec, ScopeChainNode* scopeChain)
+    {
+        return new (exec) JSFunction(exec, m_ident, this, scopeChain);
+    }
+
 } // namespace JSC
 
 #endif // JSFunction_h

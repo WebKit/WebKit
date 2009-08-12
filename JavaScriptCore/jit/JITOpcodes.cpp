@@ -1180,7 +1180,7 @@ void JIT::emit_op_resolve_with_base(Instruction* currentInstruction)
 void JIT::emit_op_new_func_exp(Instruction* currentInstruction)
 {
     JITStubCall stubCall(this, cti_op_new_func_exp);
-    stubCall.addArgument(ImmPtr(m_codeBlock->functionExpression(currentInstruction[2].u.operand)));
+    stubCall.addArgument(ImmPtr(m_codeBlock->function(currentInstruction[2].u.operand)));
     stubCall.call(currentInstruction[1].u.operand);
 }
 
@@ -2325,7 +2325,7 @@ void JIT::emit_op_resolve_with_base(Instruction* currentInstruction)
 void JIT::emit_op_new_func_exp(Instruction* currentInstruction)
 {
     JITStubCall stubCall(this, cti_op_new_func_exp);
-    stubCall.addArgument(ImmPtr(m_codeBlock->functionExpression(currentInstruction[2].u.operand)));
+    stubCall.addArgument(ImmPtr(m_codeBlock->function(currentInstruction[2].u.operand)));
     stubCall.call(currentInstruction[1].u.operand);
 }
 

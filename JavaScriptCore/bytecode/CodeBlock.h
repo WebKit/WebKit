@@ -428,13 +428,8 @@ namespace JSC {
         ALWAYS_INLINE bool isConstantRegisterIndex(int index) { return index >= FirstConstantRegisterIndex; }
         ALWAYS_INLINE JSValue getConstant(int index) const { return m_constantRegisters[index - FirstConstantRegisterIndex].jsValue(); }
 
-        unsigned addFunctionExpression(FuncExprNode* n) { unsigned size = m_functionExpressions.size(); m_functionExpressions.append(n); return size; }
-        FuncExprNode* functionExpression(int index) const { return m_functionExpressions[index].get(); }
-
-        unsigned addFunction(FuncDeclNode* n) { createRareDataIfNecessary(); unsigned size = m_rareData->m_functions.size(); m_rareData->m_functions.append(n); return size; }
-        FuncDeclNode* function(int index) const { ASSERT(m_rareData); return m_rareData->m_functions[index].get(); }
-
-        bool hasFunctions() const { return m_functionExpressions.size() || (m_rareData && m_rareData->m_functions.size()); }
+        unsigned addFunction(PassRefPtr<FunctionBodyNode> n) { unsigned size = m_functions.size(); m_functions.append(n); return size; }
+        FunctionBodyNode* function(int index) { return m_functions[index].get(); }
 
         unsigned addRegExp(RegExp* r) { createRareDataIfNecessary(); unsigned size = m_rareData->m_regexps.size(); m_rareData->m_regexps.append(r); return size; }
         RegExp* regexp(int index) const { ASSERT(m_rareData); return m_rareData->m_regexps[index].get(); }
@@ -517,7 +512,7 @@ namespace JSC {
         // Constant Pool
         Vector<Identifier> m_identifiers;
         Vector<Register> m_constantRegisters;
-        Vector<RefPtr<FuncExprNode> > m_functionExpressions;
+        Vector< RefPtr<FunctionBodyNode> > m_functions;
 
         SymbolTable m_symbolTable;
 
@@ -536,7 +531,6 @@ namespace JSC {
             Vector<HandlerInfo> m_exceptionHandlers;
 
             // Rare Constants
-            Vector<RefPtr<FuncDeclNode> > m_functions;
             Vector<RefPtr<RegExp> > m_regexps;
 
             // Jump Tables

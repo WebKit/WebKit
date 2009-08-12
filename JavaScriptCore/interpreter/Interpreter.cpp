@@ -851,7 +851,7 @@ JSValue Interpreter::execute(EvalNode* evalNode, CallFrame* callFrame, JSObject*
         DeclarationStacks::FunctionStack::const_iterator functionStackEnd = functionStack.end();
         for (DeclarationStacks::FunctionStack::const_iterator it = functionStack.begin(); it != functionStackEnd; ++it) {
             PutPropertySlot slot;
-            variableObject->put(callFrame, (*it)->m_ident, (*it)->makeFunction(callFrame, scopeChain), slot);
+            variableObject->put(callFrame, (*it)->ident(), (*it)->make(callFrame, scopeChain), slot);
         }
 
     }
@@ -2919,9 +2919,24 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
            puts the result in register dst.
         */
         int dst = (++vPC)->u.operand;
-        int func = (++vPC)->u.operand;
+        int funcIndex = (++vPC)->u.operand;
 
-        callFrame->r(dst) = JSValue(callFrame->codeBlock()->function(func)->makeFunction(callFrame, callFrame->scopeChain()));
+        FunctionBodyNode* body = callFrame->codeBlock()->function(funcIndex);
+        JSFunction* func = body->make(callFrame, callFrame->scopeChain());
+
+        /* 
+            The Identifier in a FunctionExpression can be referenced from inside
+            the FunctionExpression's FunctionBody to allow the function to call
+            itself recursively. However, unlike in a FunctionDeclaration, the
+            Identifier in a FunctionExpression cannot be referenced from and
+            does not affect the scope enclosing the FunctionExpression.
+         */
+        if (!body->ident().isNull()) {
+            JSStaticScopeObject* functionScopeObject = new (callFrame) JSStaticScopeObject(callFrame, body->ident(), func, ReadOnly | DontDelete);
+            func->scope().push(functionScopeObject);
+        }
+
+        callFrame->r(dst) = JSValue(func);
 
         ++vPC;
         NEXT_INSTRUCTION();
@@ -2937,7 +2952,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         int dst = (++vPC)->u.operand;
         int func = (++vPC)->u.operand;
 
-        callFrame->r(dst) = JSValue(callFrame->codeBlock()->functionExpression(func)->makeFunction(callFrame, callFrame->scopeChain()));
+        callFrame->r(dst) = JSValue(callFrame->codeBlock()->function(func)->make(callFrame, callFrame->scopeChain()));
 
         ++vPC;
         NEXT_INSTRUCTION();

@@ -814,20 +814,16 @@ namespace JSC {
 
     inline FuncExprNode::FuncExprNode(JSGlobalData* globalData, const Identifier& ident, FunctionBodyNode* body, const SourceCode& source, ParameterNode* parameter)
         : ExpressionNode(globalData)
-        , ParserArenaRefCounted(globalData)
-        , m_ident(ident)
         , m_body(body)
     {
-        m_body->finishParsing(source, parameter);
+        m_body->finishParsing(source, parameter, ident);
     }
 
     inline FuncDeclNode::FuncDeclNode(JSGlobalData* globalData, const Identifier& ident, FunctionBodyNode* body, const SourceCode& source, ParameterNode* parameter)
         : StatementNode(globalData)
-        , ParserArenaRefCounted(globalData)
-        , m_ident(ident)
         , m_body(body)
     {
-        m_body->finishParsing(source, parameter);
+        m_body->finishParsing(source, parameter, ident);
     }
 
     inline CaseClauseNode::CaseClauseNode(JSGlobalData*, ExpressionNode* expr)
