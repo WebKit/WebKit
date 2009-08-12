@@ -1,3 +1,25 @@
+2009-08-12  Viet-Trung Luu  <viettrungluu@gmail.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Explicitly set control tints for Chromium/Mac, since the controls'
+        NSCell(s) lack an NSView and hence their tint isn't updated
+        automatically when the application is activated/deactivated.
+        https://bugs.webkit.org/show_bug.cgi?id=28108
+        http://crbug.com/18199
+
+        * rendering/RenderThemeChromiumMac.mm:
+        (WebCore::updateNSCellControlTint):
+        (WebCore::RenderThemeChromiumMac::paintCheckbox):
+        (WebCore::RenderThemeChromiumMac::paintRadio):
+        (WebCore::RenderThemeChromiumMac::paintButton):
+        (WebCore::RenderThemeChromiumMac::paintMenuList):
+        (WebCore::RenderThemeChromiumMac::paintSliderThumb):
+        (WebCore::RenderThemeChromiumMac::paintSearchField):
+        (WebCore::RenderThemeChromiumMac::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeChromiumMac::paintSearchFieldResultsDecoration):
+        (WebCore::RenderThemeChromiumMac::paintSearchFieldResultsButton):
+
 2009-08-12  Christian Plesner Hansen  <christian.plesner.hansen@gmail.com>
 
         Reviewed by Dimitri Glazkov.

@@ -549,6 +549,25 @@ IntRect RenderThemeChromiumMac::inflateRect(const IntRect& r, const IntSize& siz
     return result;
 }
 
+// Updates the control tint (a.k.a. active state) of |cell| (from |o|).
+// In the Chromium port, the renderer runs as a background process and controls'
+// NSCell(s) lack a parent NSView. Therefore controls don't have their tint
+// color updated correctly when the application is activated/deactivated.
+// FocusController's setActive() is called when the application is
+// activated/deactivated, which causes a repaint at which time this code is
+// called.
+// This function should be called before drawing any NSCell-derived controls,
+// unless you're sure it isn't needed.
+void RenderThemeChromiumMac::updateActiveState(NSCell* cell, const RenderObject* o)
+{
+    NSControlTint oldTint = [cell controlTint];
+    NSControlTint tint = isActive(o) ? [NSColor currentControlTint] :
+                                       NSClearControlTint;
+
+    if (tint != oldTint)
+        [cell setControlTint:tint];
+}
+
 void RenderThemeChromiumMac::updateCheckedState(NSCell* cell, const RenderObject* o)
 {
     bool oldIndeterminate = [cell state] == NSMixedState;
@@ -765,6 +784,7 @@ void RenderThemeChromiumMac::setCheckboxCellState(const RenderObject* o, const I
     setControlSize(checkbox, checkboxSizes(), r.size(), o->style()->effectiveZoom());
 
     // Update the various states we respond to.
+    updateActiveState(checkbox, o);
     updateCheckedState(checkbox, o);
     updateEnabledState(checkbox, o);
     updatePressedState(checkbox, o);
@@ -846,6 +866,7 @@ void RenderThemeChromiumMac::setRadioCellState(const RenderObject* o, const IntR
     setControlSize(radio, radioSizes(), r.size(), o->style()->effectiveZoom());
 
     // Update the various states we respond to.
+    updateActiveState(radio, o);
     updateCheckedState(radio, o);
     updateEnabledState(radio, o);
     updatePressedState(radio, o);
@@ -976,6 +997,7 @@ void RenderThemeChromiumMac::setButtonCellState(const RenderObject* o, const Int
     [button setKeyEquivalent:(isDefaultButton ? @"\r" : @"")];
 
     // Update the various states we respond to.
+    updateActiveState(button, o);
     updateCheckedState(button, o);
     updateEnabledState(button, o);
     updatePressedState(button, o);
@@ -1414,6 +1436,7 @@ void RenderThemeChromiumMac::setPopupButtonCellState(const RenderObject* o, cons
     setControlSize(popupButton, popupButtonSizes(), r.size(), o->style()->effectiveZoom());
 
     // Update the various states we respond to.
+    updateActiveState(popupButton, o);
     updateCheckedState(popupButton, o);
     updateEnabledState(popupButton, o);
     updatePressedState(popupButton, o);
@@ -1496,6 +1519,7 @@ bool RenderThemeChromiumMac::paintSliderThumb(RenderObject* o, const RenderObjec
     LocalCurrentGraphicsContext localContext(paintInfo.context);
 
     // Update the various states we respond to.
+    updateActiveState(sliderThumbCell, o);
     updateEnabledState(sliderThumbCell, o->parent());
     updateFocusedState(sliderThumbCell, o->parent());
 
@@ -1607,6 +1631,7 @@ void RenderThemeChromiumMac::setSearchCellState(RenderObject* o, const IntRect& 
     [search setControlSize:controlSizeForFont(o->style())];
 
     // Update the various states we respond to.
+    updateActiveState(search, o);
     updateEnabledState(search, o);
     updateFocusedState(search, o);
 }
@@ -1667,6 +1692,7 @@ bool RenderThemeChromiumMac::paintSearchFieldCancelButton(RenderObject* o, const
 
     NSSearchFieldCell* search = this->search();
 
+    updateActiveState([search cancelButtonCell], o);
     updatePressedState([search cancelButtonCell], o);
 
     paintInfo.context->save();
@@ -1742,6 +1768,8 @@ bool RenderThemeChromiumMac::paintSearchFieldResultsDecoration(RenderObject* o, 
 
     NSSearchFieldCell* search = this->search();
 
+    updateActiveState([search searchButtonCell], o);
+
     if ([search searchMenuTemplate] != nil)
         [search setSearchMenuTemplate:nil];
 
@@ -1768,6 +1796,8 @@ bool RenderThemeChromiumMac::paintSearchFieldResultsButton(RenderObject* o, cons
     setSearchCellState(input->renderer(), r);
 
     NSSearchFieldCell* search = this->search();
+
+    updateActiveState([search searchButtonCell], o);
 
     if (![search searchMenuTemplate])
         [search setSearchMenuTemplate:searchMenuTemplate()];
