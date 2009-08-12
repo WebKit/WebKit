@@ -122,14 +122,12 @@ template <Multiply multiplied>
 PassRefPtr<ImageData> getImageData(const IntRect& rect, const SkBitmap& bitmap, 
                                    const IntSize& size)
 {
-    ASSERT(context());
-
     RefPtr<ImageData> result = ImageData::create(rect.width(), rect.height());
     unsigned char* data = result->data()->data()->data();
 
     if (rect.x() < 0 || rect.y() < 0 ||
-        (rect.x() + rect.width()) > m_size.width() ||
-        (rect.y() + rect.height()) > m_size.height())
+        (rect.x() + rect.width()) > size.width() ||
+        (rect.y() + rect.height()) > size.height())
         memset(data, 0, result->data()->length());
 
     int originX = rect.x();
@@ -139,8 +137,8 @@ PassRefPtr<ImageData> getImageData(const IntRect& rect, const SkBitmap& bitmap,
         originX = 0;
     }
     int endX = rect.x() + rect.width();
-    if (endX > m_size.width())
-        endX = m_size.width();
+    if (endX > size.width())
+        endX = size.width();
     int numColumns = endX - originX;
 
     int originY = rect.y();
@@ -150,8 +148,8 @@ PassRefPtr<ImageData> getImageData(const IntRect& rect, const SkBitmap& bitmap,
         originY = 0;
     }
     int endY = rect.y() + rect.height();
-    if (endY > m_size.height())
-        endY = m_size.height();
+    if (endY > size.height())
+        endY = size.height();
     int numRows = endY - originY;
 
     ASSERT(bitmap.config() == SkBitmap::kARGB_8888_Config);
@@ -197,24 +195,24 @@ void putImageData(ImageData*& source, const IntRect& sourceRect, const IntPoint&
     int originX = sourceRect.x();
     int destX = destPoint.x() + sourceRect.x();
     ASSERT(destX >= 0);
-    ASSERT(destX < m_size.width());
+    ASSERT(destX < size.width());
     ASSERT(originX >= 0);
     ASSERT(originX < sourceRect.right());
 
     int endX = destPoint.x() + sourceRect.right();
-    ASSERT(endX <= m_size.width());
+    ASSERT(endX <= size.width());
 
     int numColumns = endX - destX;
 
     int originY = sourceRect.y();
     int destY = destPoint.y() + sourceRect.y();
     ASSERT(destY >= 0);
-    ASSERT(destY < m_size.height());
+    ASSERT(destY < size.height());
     ASSERT(originY >= 0);
     ASSERT(originY < sourceRect.bottom());
 
     int endY = destPoint.y() + sourceRect.bottom();
-    ASSERT(endY <= m_size.height());
+    ASSERT(endY <= size.height());
     int numRows = endY - destY;
 
     ASSERT(bitmap.config() == SkBitmap::kARGB_8888_Config);

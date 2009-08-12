@@ -1,3 +1,14 @@
+2009-08-12  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Dave Levin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27933
+        Build fix after r47099.
+
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::getImageData):
+        (WebCore::putImageData):
+
 2009-08-08  Yong Li  <yong.li@torchmobile.com>
 
         Reviewed by Adam Treat.
