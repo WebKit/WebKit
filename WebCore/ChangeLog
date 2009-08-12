@@ -1,3 +1,13 @@
+2009-08-12  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Ariya Hidayat.
+
+        Minor build-fix for SVG Filter. Use getUnmultipliedImageData instead
+        of getImageData. This changed since r47099.
+
+        * platform/graphics/filters/FEColorMatrix.cpp:
+        (WebCore::FEColorMatrix::apply):
+
 2009-08-12  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Oliver Hunt.
