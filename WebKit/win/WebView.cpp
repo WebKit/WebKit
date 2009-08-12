@@ -1463,7 +1463,7 @@ bool WebView::mouseWheel(WPARAM wParam, LPARAM lParam, bool isMouseHWheel)
         TCHAR className[256];
 
         // Make sure truncation won't affect the comparison.
-        ASSERT(ARRAYSIZE(className) > _tcslen(PopupMenu::popupClassName));
+        ASSERT(ARRAYSIZE(className) > _tcslen(PopupMenu::popupClassName()));
 
         if (GetClassName(focusedWindow, className, ARRAYSIZE(className)) && !_tcscmp(className, PopupMenu::popupClassName())) {
             // We don't let the WebView scroll here for two reasons - 1) To match Firefox behavior, 2) If we do scroll, we lose the
