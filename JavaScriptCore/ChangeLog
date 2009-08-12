@@ -1,5 +1,12 @@
 2009-08-11  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by NOBODY (build fix part deux).
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore_debug.def:
+
+2009-08-11  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by NOBODY (build fix).
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
