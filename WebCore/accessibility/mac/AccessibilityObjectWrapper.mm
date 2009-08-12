@@ -122,6 +122,7 @@ using namespace std;
 #ifdef BUILDING_ON_TIGER
 typedef unsigned NSUInteger;
 #define NSAccessibilityValueDescriptionAttribute @"AXValueDescription"
+#define NSAccessibilityTimelineSubrole @"AXTimeline"
 #endif
 
 @interface NSObject (WebKitAccessibilityArrayCategory)
