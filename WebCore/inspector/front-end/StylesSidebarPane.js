@@ -896,63 +896,70 @@ WebInspector.StylePropertyTreeElement.prototype = {
             // Simple: rgb -> hsl -> nickname? -> shorthex? -> hex -> ...
             // Advanced: rgba -> hsla -> nickname? -> ...            
             if (colors && colors.length === 1) {
-                var color = new WebInspector.Color(htmlValue);
-                swatch.addEventListener("click", changeColorDisplay, false);
-                swatch.addEventListener("dblclick", function(event) {
-                    event.stopPropagation();
-                }, false);
+                try {
+                    var color = new WebInspector.Color(htmlValue);
+                } catch(e) {
+                    var color = null;
+                }
 
-                var mode = color.mode;
-                var valueElement = this.valueElement;
-                function changeColorDisplay(event) {
+                if (color) {
+                    swatch.addEventListener("click", changeColorDisplay, false);
+                    swatch.addEventListener("dblclick", function(event) {
+                        event.stopPropagation();
+                    }, false);
 
-                    function changeTo(newMode, content) {
-                        mode = newMode;
-                        valueElement.textContent = content;
-                    }
+                    var mode = color.mode;
+                    var valueElement = this.valueElement;
+                    function changeColorDisplay(event) {
 
-                    switch (mode) {
-                        case "rgb":
-                            changeTo("hsl", color.toHsl());
-                            break;
+                        function changeTo(newMode, content) {
+                            mode = newMode;
+                            valueElement.textContent = content;
+                        }
 
-                        case "shorthex":
-                            changeTo("hex", color.toHex());
-                            break;
+                        switch (mode) {
+                            case "rgb":
+                                changeTo("hsl", color.toHsl());
+                                break;
 
-                        case "hex":
-                            changeTo("rgb", color.toRgb());
-                            break;
+                            case "shorthex":
+                                changeTo("hex", color.toHex());
+                                break;
 
-                        case "nickname":
-                            if (color.simple) {
-                                if (color.hasShortHex())
+                            case "hex":
+                                changeTo("rgb", color.toRgb());
+                                break;
+
+                            case "nickname":
+                                if (color.simple) {
+                                    if (color.hasShortHex())
+                                        changeTo("shorthex", color.toShortHex());
+                                    else
+                                        changeTo("hex", color.toHex());
+                                } else
+                                    changeTo("rgba", color.toRgba());
+                                break;
+
+                            case "hsl":
+                                if (color.nickname)
+                                    changeTo("nickname", color.toNickname());
+                                else if (color.hasShortHex())
                                     changeTo("shorthex", color.toShortHex());
                                 else
                                     changeTo("hex", color.toHex());
-                            } else
-                                changeTo("rgba", color.toRgba());
-                            break;
+                                break;
 
-                        case "hsl":
-                            if (color.nickname)
-                                changeTo("nickname", color.toNickname());
-                            else if (color.hasShortHex())
-                                changeTo("shorthex", color.toShortHex());
-                            else
-                                changeTo("hex", color.toHex());
-                            break;
+                            case "rgba":
+                                changeTo("hsla", color.toHsla());
+                                break;
 
-                        case "rgba":
-                            changeTo("hsla", color.toHsla());
-                            break;
-
-                        case "hsla":
-                            if (color.nickname)
-                                changeTo("nickname", color.toNickname());
-                            else
-                                changeTo("rgba", color.toRgba());
-                            break;
+                            case "hsla":
+                                if (color.nickname)
+                                    changeTo("nickname", color.toNickname());
+                                else
+                                    changeTo("rgba", color.toRgba());
+                                break;
+                        }
                     }
                 }
             }
