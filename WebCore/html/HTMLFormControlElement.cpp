@@ -294,6 +294,11 @@ HTMLFormElement* HTMLFormControlElement::virtualForm() const
     return m_form;
 }
 
+bool HTMLFormControlElement::isDefaultButtonForForm() const
+{
+    return isSuccessfulSubmitButton() && m_form && m_form->defaultButton() == this;
+}
+
 void HTMLFormControlElement::removeFromForm()
 {
     if (!m_form)

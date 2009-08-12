@@ -77,6 +77,7 @@ void CSSSelector::extractPseudoType() const
     DEFINE_STATIC_LOCAL(AtomicString, before, ("before"));
     DEFINE_STATIC_LOCAL(AtomicString, checked, ("checked"));
     DEFINE_STATIC_LOCAL(AtomicString, fileUploadButton, ("-webkit-file-upload-button"));
+    DEFINE_STATIC_LOCAL(AtomicString, defaultString, ("default"));
     DEFINE_STATIC_LOCAL(AtomicString, disabled, ("disabled"));
     DEFINE_STATIC_LOCAL(AtomicString, readOnly, ("read-only"));
     DEFINE_STATIC_LOCAL(AtomicString, readWrite, ("read-write"));
@@ -170,7 +171,9 @@ void CSSSelector::extractPseudoType() const
     else if (m_value == fileUploadButton) {
         m_pseudoType = PseudoFileUploadButton;
         element = true;
-    } else if (m_value == disabled)
+    } else if (m_value == defaultString)
+        m_pseudoType = PseudoDefault;
+    else if (m_value == disabled)
         m_pseudoType = PseudoDisabled;
     else if (m_value == readOnly)
         m_pseudoType = PseudoReadOnly;

@@ -1,3 +1,36 @@
+2009-08-12  Michelangelo De Simone  <micdesim@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27458
+        Support for the :default CSS pseudoclass, as per HTML5 spec.
+        http://www.whatwg.org/specs/web-apps/current-work/multipage/interactive-elements.html#selector-default
+
+        Tests: fast/css/pseudo-default-001.html
+               fast/css/pseudo-default-002.html
+               fast/css/pseudo-default-003.html
+               fast/css/pseudo-default-004.html
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::extractPseudoType): pseudoDefault
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::canShareStyleWithElement): sharing stuff is
+        aware that only one default button can be present in a form
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector): applies
+        the :default CSS pseudoclass
+        * dom/Element.h:
+        (WebCore::Element::isDefaultButtonForForm): new method to determine
+        whether a FormControl is a default button for a given form
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::isDefaultButtonForForm): ditto
+        * html/HTMLFormControlElement.h:
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::defaultButton): extracts the default button
+        from the form
+        * html/HTMLFormElement.h:
+
 2009-08-12  David Levin  <levin@chromium.org>
 
         No review, rolling out r47106.

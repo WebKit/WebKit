@@ -214,6 +214,7 @@ public:
     virtual bool isTextFormControl() const { return false; }
     virtual bool isOptionalFormControl() const { return false; }
     virtual bool isRequiredFormControl() const { return false; }
+    virtual bool isDefaultButtonForForm() const { return false; }
 
     virtual bool formControlValueMatchesRenderer() const { return false; }
     virtual void setFormControlValueMatchesRenderer(bool) { }

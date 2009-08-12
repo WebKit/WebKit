@@ -577,6 +577,17 @@ void HTMLFormElement::setTarget(const String &value)
     setAttribute(targetAttr, value);
 }
 
+HTMLFormControlElement* HTMLFormElement::defaultButton() const
+{
+    for (unsigned i = 0; i < formElements.size(); ++i) {
+        HTMLFormControlElement* control = formElements[i];
+        if (control->isSuccessfulSubmitButton())
+            return control;
+    }
+
+    return 0;
+}
+
 PassRefPtr<HTMLFormControlElement> HTMLFormElement::elementForAlias(const AtomicString& alias)
 {
     if (alias.isEmpty() || !m_elementAliases)

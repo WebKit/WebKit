@@ -117,6 +117,7 @@ protected:
 
 private:
     virtual HTMLFormElement* virtualForm() const;
+    virtual bool isDefaultButtonForForm() const;
 
     HTMLFormElement* m_form;
     RefPtr<ValidityState> m_validityState;

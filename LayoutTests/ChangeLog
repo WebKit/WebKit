@@ -1,3 +1,19 @@
+2009-08-12  Michelangelo De Simone  <micdesim@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27458
+        Test suite for the :default CSS pseudoclass.
+
+        * fast/css/pseudo-default-001-expected.txt: Added.
+        * fast/css/pseudo-default-001.html: Added.
+        * fast/css/pseudo-default-002-expected.txt: Added.
+        * fast/css/pseudo-default-002.html: Added.
+        * fast/css/pseudo-default-003-expected.txt: Added.
+        * fast/css/pseudo-default-003.html: Added.
+        * fast/css/pseudo-default-004-expected.txt: Added.
+        * fast/css/pseudo-default-004.html: Added.
+
 2009-08-12  Eric Seidel  <eric@webkit.org>
 
         No review, just fixing line-endings.
