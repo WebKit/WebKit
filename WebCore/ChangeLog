@@ -1,3 +1,54 @@
+2009-08-11  Drew Wilson  <atwilson@google.com>
+
+        Reviewed by David Levin.
+
+        SharedWorkers do not exit when the last parent document exits
+        https://bugs.webkit.org/show_bug.cgi?id=28170
+
+        Prevents Documents from being suspended/placed in the page cache if they are associated with shared workers.
+
+        Added vector cache instead of nested hash tables for SharedWorker repository.
+
+        Added SharedWorkerRepository::documentDetached API.
+
+        * dom/Document.cpp:
+        (WebCore::Document::detach):
+        Notifies SharedWorkerRepository when the document is closing.
+        * loader/FrameLoader.cpp:
+        Updated FrameLoader to not cache the Document if it is associated with a SharedWorker (since we can't suspend workers yet, we need to shut them down).
+        (WebCore::FrameLoader::canCachePageContainingThisFrame):
+        (WebCore::FrameLoader::logCanCacheFrameDecision):
+        * workers/DefaultSharedWorkerRepository.cpp:
+        (WebCore::SharedWorkerProxy::create):
+        (WebCore::SharedWorkerProxy::isClosing):
+        Renamed from closing().
+        (WebCore::SharedWorkerProxy::matches):
+        Added manual equality function to replace old hash lookup.
+        (WebCore::SharedWorkerProxy::isDocumentInWorkerDocuments):
+        Checks to see if a document is in the worker's list of documents. Used to determine if page is suspendable.
+        (WebCore::SharedWorkerProxy::SharedWorkerProxy):
+        (WebCore::SharedWorkerProxy::addToWorkerDocuments):
+        Added tracking of the worker's list of documents for lifecycle purposes.
+        (WebCore::SharedWorkerProxy::documentDetached):
+        Shuts down the proxy when the last associated document is detached.
+        (WebCore::SharedWorkerProxy::close):
+        Marks the proxy as closed so it is no longer shared with new instances.
+        (WebCore::SharedWorkerProxy::workerContextDestroyed):
+        Removes the proxy from the repository/frees the proxy when the associated SharedWorkerContext is destroyed.
+        (WebCore::DefaultSharedWorkerRepository::workerScriptLoaded):
+        closing()->isClosing()
+        (WebCore::SharedWorkerRepository::documentDetached):
+        (WebCore::SharedWorkerRepository::hasSharedWorkers):
+        Used by FrameLoader to determine if a page has shared workers and so cannot be suspended/cached.
+        (WebCore::DefaultSharedWorkerRepository::hasSharedWorkers):
+        (WebCore::DefaultSharedWorkerRepository::removeProxy):
+        Invoked by workerContextDestroyed() to remove a SharedWorkerProxy from the repository.
+        (WebCore::DefaultSharedWorkerRepository::documentDetached):
+        (WebCore::DefaultSharedWorkerRepository::connectToWorker):
+        (WebCore::DefaultSharedWorkerRepository::getProxy):
+        * workers/DefaultSharedWorkerRepository.h:
+        * workers/SharedWorkerRepository.h:
+
 2009-08-11  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

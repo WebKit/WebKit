@@ -2,6 +2,6 @@
 <p>Test replacing global constructors in a worker context.</p>
 <div id=result></div>
 <script src="resources/shared-worker-create-common.js"></script>
-<script src="worker-replace-global-constructor.js">
+<script src="resources/worker-replace-global-constructor.js">
 </script>
 </body>

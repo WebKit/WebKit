@@ -1,3 +1,20 @@
+2009-08-11  Drew Wilson  <atwilson@google.com>
+
+        Reviewed by David Levin.
+
+        SharedWorkers do not exit when the last parent document exits.
+        https://bugs.webkit.org/show_bug.cgi?id=28170
+
+        Added more tests to check that previous incarnations of the SharedWorker "name" are shut down.
+
+        * fast/workers/shared-worker-replace-global-constructor.html-disabled:
+        Fixed incorrect path to common script.
+        * fast/workers/shared-worker-shared-expected.txt:
+        * fast/workers/shared-worker-shared.html-disabled:
+        Added more tests for sharing, including initial test to make sure previous incarnations of shared worker were closed.
+        * fast/workers/worker-replace-global-constructor.html:
+        Removed extraneous closing HTML tag.
+
 2009-08-11  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
