@@ -204,7 +204,6 @@ GTK_REQUIRED_VERSION=2.10
 LIBXSLT_REQUIRED_VERSION=1.1.7
 SQLITE_REQUIRED_VERSION=3.0
 GSTREAMER_REQUIRED_VERSION=0.10
-GNOME_KEYRING_REQUIRED_VERSION=2.26.0
 ENCHANT_REQUIRED_VERSION=0.22
 GAIL_REQUIRED_VERSION=1.8
 
@@ -395,14 +394,6 @@ AC_ARG_ENABLE(geolocation,
                              [enable support for geolocation [default=no]]),
               [],[enable_geolocation="no"])
 AC_MSG_RESULT([$enable_geolocation])
-
-# check whether to enable gnomekeyring support
-AC_MSG_CHECKING([whether to enable gnomekeyring support])
-AC_ARG_ENABLE(gnomekeyring,
-              AC_HELP_STRING([--enable-gnomekeyring],
-                             [enable support for gnomekeyring [default=no]]),
-              [],[enable_gnomekeyring="no"])
-AC_MSG_RESULT([$enable_gnomekeyring])
 
 # check whether to enable SVG support
 AC_MSG_CHECKING([whether to enable SVG support])
@@ -596,13 +587,6 @@ PKG_CHECK_MODULES([LIBSOUP],
 AC_SUBST([LIBSOUP_CFLAGS])
 AC_SUBST([LIBSOUP_LIBS])
 
-if test "$enable_gnomekeyring" = "yes"; then
-   PKG_CHECK_MODULES([GNOMEKEYRING],
-                     [gnome-keyring-1 >= $GNOME_KEYRING_REQUIRED_VERSION])
-   AC_SUBST([GNOMEKEYRING_CFLAGS])
-   AC_SUBST([GNOMEKEYRING_LIBS])
-fi
-
 # check if FreeType/FontConfig are available
 if test "$with_font_backend" = "freetype"; then
    if test "$with_target" = "directfb"; then
@@ -686,9 +670,6 @@ AM_CONDITIONAL([TARGET_DIRECTFB], [test "$with_target" = "directfb"])
 AM_CONDITIONAL([USE_ICU_UNICODE], [test "$with_unicode_backend" = "icu"])
 AM_CONDITIONAL([USE_GLIB_UNICODE], [test "$with_unicode_backend" = "glib"])
 
-# Auth backend conditionals
-AM_CONDITIONAL([USE_GNOMEKEYRING], [test "$enable_gnomekeyring" = "yes"])
-
 # Font backend conditionals
 AM_CONDITIONAL([USE_FREETYPE], [test "$with_font_backend" = "freetype"])
 AM_CONDITIONAL([USE_PANGO], [test "$with_font_backend" = "pango"])
@@ -752,7 +733,6 @@ Features:
  Dashboard support                                        : $enable_dashboard_support
  Filters support                                          : $enable_filters
  Geolocation support                                      : $enable_geolocation
- GNOME Keyring support                                    : $enable_gnomekeyring
  JavaScript debugger/profiler support                     : $enable_javascript_debugger
  HTML5 offline web applications support                   : $enable_offline_web_applications
  HTML5 channel messaging support                          : $enable_channel_messaging

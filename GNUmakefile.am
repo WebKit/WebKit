@@ -87,7 +87,6 @@ corekit_cflags += \
 	$(GAIL_CFLAGS) \
 	$(GEOCLUE_CFLAGS) \
 	$(GLIB_CFLAGS) \
-	$(GNOMEKEYRING_CFLAGS) \
 	$(GSTREAMER_CFLAGS) \
 	$(GTK_CFLAGS) \
 	$(HILDON_CFLAGS) \
@@ -247,7 +246,6 @@ libwebkit_1_0_la_LIBADD = \
 	$(GAIL_LIBS) \
 	$(GEOCLUE_LIBS) \
 	$(GLIB_LIBS) \
-	$(GNOMEKEYRING_LIBS) \
 	$(GSTREAMER_LIBS) \
 	$(GTK_LIBS) \
 	$(HILDON_LIBS) \
@@ -379,11 +377,6 @@ webkitgtk_cppflags += \
 	-I$(srcdir)/WebKit/gtk/WebCoreSupport \
 	-I$(srcdir)/WebKit/gtk/webkit \
 	-I$(top_builddir)/WebKit/gtk/webkit
-
-if USE_GNOMEKEYRING
-webkitgtk_cppflags += \
-	-DWTF_USE_GNOMEKEYRING=1
-endif
 
 webkitgtk_cleanfiles += \
 	$(top_builddir)/WebKit/gtk/docs/version.xml \

@@ -1,3 +1,19 @@
+2009-08-12  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Jan Alonzo.
+
+        [GTK] Remove keyring optional features
+        https://bugs.webkit.org/show_bug.cgi?id=28173
+
+        Remove keyring support from our code and rely on libsoup to store
+        the authentication data if the user requests that support in their
+        application/library.
+
+        * webkit/webkitsoupauthdialog.c:
+        (response_callback):
+        (show_auth_dialog):
+        (session_authenticate):
+
 2009-08-11  Benjamin Otte  <otte@gnome.org>
 
         Reviewed by Xan Lopez.

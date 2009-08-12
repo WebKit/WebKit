@@ -1,3 +1,17 @@
+2009-08-12  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Jan Alonzo.
+
+        [GTK] Remove keyring optional features
+        https://bugs.webkit.org/show_bug.cgi?id=28173
+
+        Remove keyring support, we now do authentication storage through
+        libsoup. We depend on libsoup master now, will bump the dependency
+        when there's a new release.
+
+        * GNUmakefile.am:
+        * configure.ac:
+
 2009-08-11  Drew Wilson  <atwilson@google.com>
 
         Reviewed by NOBODY (Build break).
