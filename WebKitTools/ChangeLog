@@ -1,3 +1,10 @@
+2009-08-11  Darin Adler  <darin@apple.com>
+
+        Try to fix GTK build.
+
+        * DumpRenderTree/gtk/AccessibilityUIElementGtk.cpp:
+        (AccessibilityUIElement::stringForRange): Added.
+
 2009-08-10  Mike Fenton  <mike.fenton@torchmobile.com>
 
         Reviewed by Adam Treat.
