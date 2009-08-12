@@ -410,6 +410,11 @@ bool RenderBox::scroll(ScrollDirection direction, ScrollGranularity granularity,
         return b->scroll(direction, granularity, multiplier);
     return false;
 }
+
+bool RenderBox::canBeScrolledAndHasScrollableArea() const
+{
+   return canBeProgramaticallyScrolled(false) && (scrollHeight() != clientHeight() || scrollWidth() != clientWidth());
+}
     
 bool RenderBox::canBeProgramaticallyScrolled(bool) const
 {

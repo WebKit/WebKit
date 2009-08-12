@@ -997,6 +997,9 @@ void RenderLayer::panScrollFromPoint(const IntPoint& sourcePoint)
 
 void RenderLayer::scrollByRecursively(int xDelta, int yDelta)
 {
+    if (!xDelta && !yDelta)
+        return;
+
     bool restrictedByLineClamp = false;
     if (renderer()->parent())
         restrictedByLineClamp = renderer()->parent()->style()->lineClamp() >= 0;
@@ -1006,17 +1009,30 @@ void RenderLayer::scrollByRecursively(int xDelta, int yDelta)
         int newOffsetY = scrollYOffset() + yDelta;
         scrollToOffset(newOffsetX, newOffsetY);
 
-        // If this layer can't do the scroll we ask its parent
+        // If this layer can't do the scroll we ask the next layer up that can scroll to try
         int leftToScrollX = newOffsetX - scrollXOffset();
         int leftToScrollY = newOffsetY - scrollYOffset();
         if ((leftToScrollX || leftToScrollY) && renderer()->parent()) {
-            renderer()->parent()->enclosingLayer()->scrollByRecursively(leftToScrollX, leftToScrollY);
+            RenderObject* nextRenderer = renderer()->parent();
+            while (nextRenderer) {
+                if (nextRenderer->isBox() && toRenderBox(nextRenderer)->canBeScrolledAndHasScrollableArea()) {
+                    nextRenderer->enclosingLayer()->scrollByRecursively(leftToScrollX, leftToScrollY);
+                    break;
+                }
+                nextRenderer = nextRenderer->parent();
+            }
+
             Frame* frame = renderer()->document()->frame();
             if (frame)
                 frame->eventHandler()->updateAutoscrollRenderer();
         }
-    } else if (renderer()->view()->frameView())
+    } else if (renderer()->view()->frameView()) {
+        // If we are here, we were called on a renderer that can be programatically scrolled, but doesn't
+        // have an overflow clip. Which means that it is a document node that can be scrolled.
         renderer()->view()->frameView()->scrollBy(IntSize(xDelta, yDelta));
+        // FIXME: If we didn't scroll the whole way, do we want to try looking at the frames ownerElement? 
+        // https://bugs.webkit.org/show_bug.cgi?id=28237
+    }
 }
 
 

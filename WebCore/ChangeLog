@@ -1,5 +1,29 @@
 2009-08-12  Brian Weinstein  <bweinstein@apple.com>
 
+        Reviewed by Eric Seidel.
+
+        Fixes two bugs about Pan Scrolling - Scrolling with middle mouse button doesn't 
+        work in Expanded view on reader.google.com, and Can enter auto scroll from a non-scrollable area.
+        https://bugs.webkit.org/show_bug.cgi?id=28023
+        https://bugs.webkit.org/show_bug.cgi?id=24794
+        
+        Added a new method to RenderBox seeing if the Box can be scrolled and actually has something to
+        scroll, and use that for pan scrolling.
+
+        Test: platform/win/fast/events/panScroll-nested-divs.html
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMouseDraggedEvent):
+        (WebCore::EventHandler::updateAutoscrollRenderer):
+        (WebCore::EventHandler::handleMousePressEvent):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::canBeScrolledAndHasScrollableArea):
+        * rendering/RenderBox.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollByRecursively):
+
+2009-08-12  Brian Weinstein  <bweinstein@apple.com>
+
         Reviewed by Adam Roben.
 
         Fix of <rdar://6728361> Mouse wheel scrolling on a page with expanded drop down 
