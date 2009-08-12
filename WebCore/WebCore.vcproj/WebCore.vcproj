@@ -16585,6 +16585,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\accessibility\AccessibilityMediaControls.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\accessibility\AccessibilityMediaControls.h"
+				>
+			</File>
+			<File
 				RelativePath="..\accessibility\AccessibilityObject.cpp"
 				>
 			</File>

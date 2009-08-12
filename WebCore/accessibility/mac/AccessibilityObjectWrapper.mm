@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -678,6 +678,7 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
         [tempArray addObject:NSAccessibilityMinValueAttribute];
         [tempArray addObject:NSAccessibilityMaxValueAttribute];
         [tempArray addObject:NSAccessibilityOrientationAttribute];
+        [tempArray addObject:NSAccessibilityValueDescriptionAttribute];
         rangeAttrs = [[NSArray alloc] initWithArray:tempArray];
         [tempArray release];
     }
@@ -979,9 +980,7 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
         { DefinitionListDefinitionRole, NSAccessibilityGroupRole },
         { DefinitionListTermRole, NSAccessibilityGroupRole },
         
-        { SliderThumbRole, NSAccessibilityValueIndicatorRole },
-        
-
+        { SliderThumbRole, NSAccessibilityValueIndicatorRole }
     };
     AccessibilityRoleMap& roleMap = *new AccessibilityRoleMap;
     
@@ -1028,6 +1027,9 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             return NSAccessibilityDefinitionListSubrole;
     }
     
+    if (m_object->isMediaTimeline())
+        return NSAccessibilityTimelineSubrole;
+
     return nil;
 }
 
@@ -1119,7 +1121,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     
     if ([axRole isEqualToString:NSAccessibilityToolbarRole])
         return NSAccessibilityRoleDescription(NSAccessibilityToolbarRole, [self subrole]);
-
+    
     return NSAccessibilityRoleDescription(NSAccessibilityUnknownRole, nil);
 }
 
@@ -1253,7 +1255,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         }
         return m_object->accessibilityDescription();
     }
-    
+
     if ([attributeName isEqualToString: NSAccessibilityValueAttribute]) {
         if (m_object->isAttachment()) {
             if ([[[self attachmentView] accessibilityAttributeNames] containsObject:NSAccessibilityValueAttribute]) 

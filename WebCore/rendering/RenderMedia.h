@@ -60,8 +60,6 @@ public:
     HTMLMediaElement* mediaElement() const;
     MediaPlayer* player() const;
 
-    static String formatTime(float time);
-
     bool shouldShowTimeDisplayControls() const;
 
     void updateFromElement();

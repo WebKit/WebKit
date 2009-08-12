@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,6 +36,7 @@
 #include "AccessibilityListBox.h"
 #include "AccessibilityListBoxOption.h"
 #include "AccessibilityImageMapLink.h"
+#include "AccessibilityMediaControls.h"
 #include "AccessibilityRenderObject.h"
 #include "AccessibilitySlider.h"
 #include "AccessibilityTable.h"
@@ -45,6 +46,9 @@
 #include "AccessibilityTableRow.h"
 #include "InputElement.h"
 #include "HTMLNames.h"
+#if ENABLE(VIDEO)
+#include "MediaControlElements.h"
+#endif
 #include "RenderObject.h"
 #include "RenderView.h"
 
@@ -126,6 +130,12 @@ AccessibilityObject* AXObjectCache::getOrCreate(RenderObject* renderer)
             newObj = AccessibilityTableRow::create(renderer);
         else if (renderer->isTableCell())
             newObj = AccessibilityTableCell::create(renderer);
+
+#if ENABLE(VIDEO)
+        // media controls
+        else if (renderer->node() && renderer->node()->isMediaControlElement())
+            newObj = AccessibilityMediaControl::create(renderer);
+#endif
 
         // input type=range
         else if (renderer->isSlider())

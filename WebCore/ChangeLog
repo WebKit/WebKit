@@ -1,3 +1,90 @@
+2009-08-12  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <video> and <audio> controller should be accessible
+        https://bugs.webkit.org/show_bug.cgi?id=28081
+
+        Test: accessibility/media-element.html
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+            Add AccessibilityMediaControls.cpp/.h
+
+        * accessibility/AXObjectCache.cpp:
+        * accessibility/AXObjectCache.h:
+        (WebCore::AXObjectCache::getOrCreate):
+            Create AccessibilityMediaControl. Update Copyright
+
+        * accessibility/AccessibilityMediaControls.cpp:
+        * accessibility/AccessibilityMediaControls.h:
+            Added.
+
+        * accessibility/AccessibilityObject.cpp:
+        * accessibility/AccessibilityObject.h:
+            Add isMediaTimeline. Update Copyright.
+
+        * accessibility/AccessibilitySlider.h:
+            Make constructor protected instead of private so AccessibilityMediaTimeline can
+            call it.
+
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper accessibilityAttributeNames]):
+            Add NSAccessibilityValueDescriptionAttribute to range attributes. 
+        (-[AccessibilityObjectWrapper subrole]):
+            Return NSAccessibilityTimelineSubrole for AccessibilityMediaTimeline.
+
+        * dom/Node.h:
+            add isMediaControlElement.
+
+        * page/mac/WebCoreViewFactory.h:
+        * platform/LocalizedStrings.h:
+        * platform/mac/LocalizedStringsMac.mm:
+        (WebCore::localizedMediaControlElementString): 
+        (WebCore::localizedMediaControlElementHelpText):
+        (WebCore::localizedMediaTimeDescription): 
+            New, return localized media controller strings.
+
+        * rendering/MediaControlElements.cpp:
+        (WebCore::MediaControlElement::MediaControlElement):
+            Initialize m_displayType.
+        (WebCore::MediaControlElement::MediaControlElement):
+        (WebCore::MediaControlStatusDisplayElement::MediaControlStatusDisplayElement):
+            Fix style.
+        (WebCore::MediaControlInputElement::MediaControlInputElement):
+            Set m_displayType based on pseudo style ID.
+        (WebCore::MediaControlInputElement::MediaControlInputElement):
+            rename local "o" to "object".
+        (WebCore::MediaControlMuteButtonElement::MediaControlMuteButtonElement):
+        (WebCore::MediaControlPlayButtonElement::MediaControlPlayButtonElement):
+        (WebCore::MediaControlSeekButtonElement::MediaControlSeekButtonElement):
+        (WebCore::MediaControlRewindButtonElement::MediaControlRewindButtonElement):
+        (WebCore::MediaControlReturnToRealtimeButtonElement::MediaControlReturnToRealtimeButtonElement):
+        (WebCore::MediaControlTimelineElement::MediaControlTimelineElement):
+        (WebCore::MediaControlFullscreenButtonElement::MediaControlFullscreenButtonElement):
+        (WebCore::MediaControlTimelineElement::MediaControlTimelineElement):
+        (WebCore::MediaControlTimelineElement::MediaControlTimelineElement):
+        (WebCore::MediaControlTimelineElement::MediaControlTimelineElement):
+            Update for MediaControlInputElement constructor change.
+        (WebCore::MediaControlTimeDisplayElement::formatTime):
+            New, moved here from RenderMedia so AccessibilityMediaTimeDisplay can use it.
+        (WebCore::MediaControlTimeDisplayElement::setCurrentValue):
+            New, set text to current time.
+        * rendering/MediaControlElements.h:
+
+        * rendering/RenderMedia.cpp:
+        (WebCore::RenderMedia::updateControls):
+            Create controls in tab order.
+        (WebCore::RenderMedia::formatTime):
+            Moved to MediaControlTimeDisplayElement::formatTime.
+        (WebCore::RenderMedia::updateTimeDisplay):
+            Call MediaControlTimeDisplayElement::setCurrentValue.
+        * rendering/RenderMedia.h:
+
 2009-08-12  Viet-Trung Luu  <viettrungluu@gmail.com>
 
         Reviewed by Dimitri Glazkov.
