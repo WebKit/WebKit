@@ -1,3 +1,17 @@
+2009-08-12  Greg Bolsinga  <bolsinga@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        Add delegate methods about focus and blur and state change
+        https://bugs.webkit.org/show_bug.cgi?id=27153
+        
+        Have ObjC delegate methods match C++ method names in the ChromeClient.
+
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::formDidFocus):
+        (WebChromeClient::formDidBlur):
+        * WebView/WebUIDelegatePrivate.h:
+
 2009-08-12  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Oliver Hunt.

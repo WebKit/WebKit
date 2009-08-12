@@ -127,8 +127,8 @@ enum {
 - (BOOL)webView:(WebView *)sender frame:(WebFrame *)frame requestGeolocationPermission:(WebGeolocation *)geolocation securityOrigin:(WebSecurityOrigin *)origin;
 
 - (void)webView:(WebView *)sender formStateDidChangeForNode:(DOMNode *)node;
-- (void)webView:(WebView *)sender formStateDidFocusNode:(DOMNode *)node;
-- (void)webView:(WebView *)sender formStateDidBlurNode:(DOMNode *)node;
+- (void)webView:(WebView *)sender formDidFocusNode:(DOMNode *)node;
+- (void)webView:(WebView *)sender formDidBlurNode:(DOMNode *)node;
 
 /*!
     @method webView:printFrame:

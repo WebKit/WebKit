@@ -670,12 +670,12 @@ void WebChromeClient::formStateDidChange(const WebCore::Node* node)
 
 void WebChromeClient::formDidFocus(const WebCore::Node* node)
 {
-    CallUIDelegate(m_webView, @selector(webView:formStateDidFocusNode:), kit(const_cast<WebCore::Node*>(node)));
+    CallUIDelegate(m_webView, @selector(webView:formDidFocusNode:), kit(const_cast<WebCore::Node*>(node)));
 }
 
 void WebChromeClient::formDidBlur(const WebCore::Node* node)
 {
-    CallUIDelegate(m_webView, @selector(webView:formStateDidBlurNode:), kit(const_cast<WebCore::Node*>(node)));
+    CallUIDelegate(m_webView, @selector(webView:formDidBlurNode:), kit(const_cast<WebCore::Node*>(node)));
 }
 
 #if USE(ACCELERATED_COMPOSITING)
