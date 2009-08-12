@@ -299,7 +299,7 @@ static void session_authenticate(SoupSession* session, SoupMessage* msg, SoupAut
     if (users) {
         login = users->data;
         password = soup_auth_get_saved_password(auth, login);
-        soup_auth_free_saved_users(auth, users);
+        g_slist_free(users);
     }
 
     show_auth_dialog(authData, login, password);

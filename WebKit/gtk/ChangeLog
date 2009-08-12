@@ -1,3 +1,14 @@
+2009-08-12  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Unreviewed build fix.
+
+        Last-minute change on the new soup API to use the keyring was not
+        reflected in our usage - the documentation says we should use
+        g_slist_free, and soup_auth_free_saved_users doesn't exist.
+
+        * webkit/webkitsoupauthdialog.c:
+        (session_authenticate):
+
 2009-08-12  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Jan Alonzo.
