@@ -103,11 +103,12 @@ public:
             urlEdit->setText(qurl.toEncoded());
             view->load(qurl);
 
-            // the zoom values are chosen to be like in Mozilla Firefox 3
-            zoomLevels << 30 << 50 << 67 << 80 << 90;
-            zoomLevels << 100;
-            zoomLevels << 110 << 120 << 133 << 150 << 170 << 200 << 240 << 300;
         }
+
+        // the zoom values are chosen to be like in Mozilla Firefox 3
+        zoomLevels << 30 << 50 << 67 << 80 << 90;
+        zoomLevels << 100;
+        zoomLevels << 110 << 120 << 133 << 150 << 170 << 200 << 240 << 300;
     }
 
     QWebPage* webPage() const {
