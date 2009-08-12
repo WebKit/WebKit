@@ -125,8 +125,11 @@
 #define delete ("if you use new/delete make sure to include config.h at the top of the file"()) 
 #endif
 
-/* Work around a bug with C++ library that screws up Objective-C++ when exception support is disabled. */
-#if defined(__APPLE__)
+/* When C++ exceptions are disabled, the C++ library defines |try| and |catch|
+ * to allow C++ code that expects exceptions to build. These definitions
+ * interfere with Objective-C++ uses of Objective-C exception handlers, which
+ * use |@try| and |@catch|. As a workaround, undefine these macros. */
+#ifdef __OBJC__
 #undef try
 #undef catch
 #endif
