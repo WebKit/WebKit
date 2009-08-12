@@ -622,7 +622,7 @@
         * page/DOMWindow.cpp:
         (WebCore::DOMWindow::applicationCache):
 
-2009-08-10  Crystal Zhang  <crystal.zhang@staikos.net>
+2009-08-10  Crystal Zhang  <crystal.zhang@torchmobile.com>
 
         Reviewed by George Staikos.
 
