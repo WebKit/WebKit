@@ -1,3 +1,18 @@
+2009-08-08  Yong Li  <yong.li@torchmobile.com>
+
+        Reviewed by Adam Treat.
+
+        WINCE PORT: Implement Path for WINCE. Most code can be
+        reused for other ports that don't have native path support
+        https://bugs.webkit.org/show_bug.cgi?id=28188
+
+        Written also by George Staikos (including quadCurve() and bezier())
+
+        * platform/graphics/wince/PathWince.cpp: Added.
+        * platform/graphics/wince/PlatformPathWince.cpp: Added.
+        * platform/graphics/wince/PlatformPathWince.h: Added.
+        * platform/graphics/wince/WinceGraphicsExtras.h: Added.
+
 2009-08-12  Joseph Pecoraro  <joepeck02@gmail.com>
 
         "Double-click to add" new style button does not always show up [quick fix]
