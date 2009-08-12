@@ -1,3 +1,12 @@
+2009-08-12  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        <rdar://problem/6017913> Replace use of HISearchWindowShow in -[WebView _searchWithSpotlightFromMenu].
+
+        * WebView/WebView.mm:
+        (-[WebView _searchWithSpotlightFromMenu:]): Use -[NSWorkspace showSearchResultsForQueryString:] post-Leopard.
+
 2009-08-12  Greg Bolsinga  <bolsinga@apple.com>
 
         Reviewed by Eric Seidel.

@@ -5091,13 +5091,16 @@ static WebFrameView *containingFrameView(NSView *view)
     id documentView = [[[self selectedFrame] frameView] documentView];
     if (![documentView conformsToProtocol:@protocol(WebDocumentText)])
         return;
-    
-    NSString *selectedString = [(id <WebDocumentText>)documentView selectedString];
-    if ([selectedString length] == 0) {
-        return;
-    }
 
+    NSString *selectedString = [(id <WebDocumentText>)documentView selectedString];
+    if (![selectedString length])
+        return;
+
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+    [[NSWorkspace sharedWorkspace] showSearchResultsForQueryString:selectedString];
+#else
     (void)HISearchWindowShow((CFStringRef)selectedString, kNilOptions);
+#endif
 }
 
 #if USE(ACCELERATED_COMPOSITING)
