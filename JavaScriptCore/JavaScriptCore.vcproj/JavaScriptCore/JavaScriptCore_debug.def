@@ -74,7 +74,6 @@ EXPORTS
     ?convertUTF16ToUTF8@Unicode@WTF@@YA?AW4ConversionResult@12@PAPB_WPB_WPAPADPAD_N@Z
     ?copyParameters@FunctionBodyNode@JSC@@QAEPAVIdentifier@2@XZ
     ?create@ByteArray@WTF@@SA?AV?$PassRefPtr@VByteArray@WTF@@@2@I@Z
-    ?create@FunctionBodyNode@JSC@@SA?AV?$PassRefPtr@VFunctionBodyNode@JSC@@@WTF@@PAVJSGlobalData@2@PAVSourceElements@2@PAV?$Vector@U?$pair@VIdentifier@JSC@@I@std@@$0A@@4@PAV?$Vector@PAVFuncDeclNode@JSC@@$0A@@4@ABVSourceCode@2@IH@Z
     ?create@JSGlobalData@JSC@@SA?AV?$PassRefPtr@VJSGlobalData@JSC@@@WTF@@_N@Z
     ?create@OpaqueJSString@@SA?AV?$PassRefPtr@UOpaqueJSString@@@WTF@@ABVUString@JSC@@@Z
     ?create@Rep@UString@JSC@@SA?AV?$PassRefPtr@URep@UString@JSC@@@WTF@@PA_WHV?$PassRefPtr@V?$CrossThreadRefCounted@V?$OwnFastMallocPtr@_W@WTF@@@WTF@@@5@@Z
@@ -119,7 +118,6 @@ EXPORTS
     ?fastRealloc@WTF@@YAPAXPAXI@Z
     ?fastZeroedMalloc@WTF@@YAPAXI@Z
     ?fillGetterPropertySlot@JSObject@JSC@@QAEXAAVPropertySlot@2@PAVJSValue@2@@Z
-    ?finishParsing@FunctionBodyNode@JSC@@QAEXPAVIdentifier@2@I@Z
     ?focus@Profile@JSC@@QAEXPBVProfileNode@2@@Z
     ?from@UString@JSC@@SA?AV12@H@Z
     ?from@UString@JSC@@SA?AV12@I@Z
