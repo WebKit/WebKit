@@ -56,7 +56,8 @@ namespace WTF {
         mutable void* m_data;
     };
     
-    template <typename T> bool TryMallocReturnValue::getValue(T& data) {
+    template <typename T> bool TryMallocReturnValue::getValue(T& data)
+    {
         union u { void* data; T target; } res;
         res.data = m_data;
         data = res.target;

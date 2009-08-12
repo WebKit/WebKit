@@ -91,7 +91,7 @@ namespace JSC {
             {
                 // Guard against integer overflow
                 if (size < (std::numeric_limits<size_t>::max() / sizeof(UChar))) {
-                    void * buf = 0;
+                    void* buf = 0;
                     if (tryFastMalloc(size * sizeof(UChar)).getValue(buf))
                         return adoptRef(new BaseString(static_cast<UChar*>(buf), 0, size));
                 }
