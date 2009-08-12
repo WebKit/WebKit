@@ -139,7 +139,7 @@ void Geolocation::setIsAllowed(bool allowed)
     
     if (isAllowed()) {
         startTimers();
-        geolocationServicePositionChanged(m_service.get());
+        makeSuccessCallbacks();
     } else {
         WTF::RefPtr<WebCore::PositionError> error = WebCore::PositionError::create(PositionError::PERMISSION_DENIED, "User disallowed GeoLocation");
         handleError(error.get());
@@ -270,14 +270,28 @@ void Geolocation::requestPermission()
 
 void Geolocation::geolocationServicePositionChanged(GeolocationService* service)
 {
-    ASSERT(service->lastPosition());
+    ASSERT_UNUSED(service, service == m_service);
+    ASSERT(m_service->lastPosition());
     
-    requestPermission();
-    if (!isAllowed())
+    if (!isAllowed()) {
+        // requestPermission() will ask the chrome for permission. This may be
+        // implemented synchronously or asynchronously. In both cases,
+        // makeSuccessCallbacks() will be called if permission is granted, so
+        // there's nothing more to do here.
+        requestPermission();
         return;
+    }
+
+    makeSuccessCallbacks();
+}
+
+void Geolocation::makeSuccessCallbacks()
+{
+    ASSERT(m_service->lastPosition());
+    ASSERT(isAllowed());
     
-    sendPositionToOneShots(service->lastPosition());
-    sendPositionToWatchers(service->lastPosition());
+    sendPositionToOneShots(m_service->lastPosition());
+    sendPositionToWatchers(m_service->lastPosition());
         
     m_oneShots.clear();
 

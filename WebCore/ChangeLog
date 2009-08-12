@@ -1,3 +1,22 @@
+2009-08-12  Steve Block  <steveblock@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Bug 26993 : Geolocation::requestPermission()
+        https://bugs.webkit.org/show_bug.cgi?id=26993
+
+        Second patch to allow the Geolocation permission request to chrome to be asynchronous
+        or synchronous. Fixes a bug where callbacks were called twice when permissions
+        are granted synchronously.
+
+        No new tests required.
+
+        * page/Geolocation.cpp:
+        (WebCore::Geolocation::setIsAllowed): Modified. Calls makeSuccessCallbacks() rather than geolocationServicePositionChanged().
+        (WebCore::Geolocation::geolocationServicePositionChanged): Modified. Updated logic to avoid repeated callbacks when permissions are granted synchronously.
+        (WebCore::Geolocation::makeSuccessCallbacks): Added. Calls success callbacks.
+        * page/Geolocation.h: Modified. Adds makeSuccessCallbacks().
+
 2009-08-12  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

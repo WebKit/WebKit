@@ -102,6 +102,7 @@ private:
     void startTimersForWatchers();
     void startTimers();
     
+    void makeSuccessCallbacks();
     void handleError(PositionError*);
 
     void requestPermission();
