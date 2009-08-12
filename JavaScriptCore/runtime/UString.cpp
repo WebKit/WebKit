@@ -32,6 +32,7 @@
 #include <ctype.h>
 #include <float.h>
 #include <limits.h>
+#include <limits>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -949,12 +950,12 @@ UString UString::from(long long i)
 
     if (i == 0)
         *--p = '0';
-    else if (i == LLONG_MIN) {
+    else if (i == std::numeric_limits<long long>::min()) {
         char minBuf[1 + sizeof(i) * 3];
 #if PLATFORM(WIN_OS)
-        snprintf(minBuf, sizeof(minBuf) - 1, "%I64d", LLONG_MIN);
+        snprintf(minBuf, sizeof(minBuf) - 1, "%I64d", std::numeric_limits<long long>::min());
 #else
-        snprintf(minBuf, sizeof(minBuf) - 1, "%lld", LLONG_MIN);
+        snprintf(minBuf, sizeof(minBuf) - 1, "%lld", std::numeric_limits<long long>::min());
 #endif
         return UString(minBuf);
     } else {

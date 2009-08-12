@@ -1,3 +1,13 @@
+2009-08-12  Balazs Kelemen  <kelemen.balazs.3@stud.u-szeged.hu>
+
+        Reviewed by Ariya Hidayat.
+
+        Build fix: use std::numeric_limits<long long>::min() instead of LLONG_MIN
+        since LLONG_MIN is not defined in standard c++.
+
+        * runtime/UString.cpp:
+        (JSC::UString::from):
+
 2009-08-12  Benjamin Otte  <otte@gnome.org>
 
         Reviewed by Jan Alonzo.
