@@ -1,3 +1,37 @@
+2009-08-12  Ariya Hidayat  <ariya.hidayat@nokia.com>
+
+        Reviewed by Adam Treat.
+
+        [Qt] Fix coding style in GraphicsContextQt.cpp
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::toQtCompositionMode):
+        (WebCore::toQtLineCap):
+        (WebCore::toQtLineJoin):
+        (WebCore::GraphicsContextPlatformPrivate::p):
+        (WebCore::GraphicsContext::drawLine):
+        (WebCore::GraphicsContext::strokeArc):
+        (WebCore::GraphicsContext::drawConvexPolygon):
+        (WebCore::GraphicsContext::pen):
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::clipPath):
+        (WebCore::GraphicsContext::drawFocusRing):
+        (WebCore::GraphicsContext::beginTransparencyLayer):
+        (WebCore::GraphicsContext::endTransparencyLayer):
+        (WebCore::GraphicsContext::clearRect):
+        (WebCore::GraphicsContext::setLineCap):
+        (WebCore::GraphicsContext::setLineJoin):
+        (WebCore::GraphicsContext::setMiterLimit):
+        (WebCore::GraphicsContext::setAlpha):
+        (WebCore::GraphicsContext::clipOut):
+        (WebCore::GraphicsContext::clipOutEllipseInRect):
+        (WebCore::GraphicsContext::addInnerRoundedRectClip):
+        (WebCore::GraphicsContext::setPlatformStrokeColor):
+        (WebCore::GraphicsContext::setPlatformStrokeStyle):
+        (WebCore::GraphicsContext::setPlatformStrokeThickness):
+
 2009-08-12  Szabo Carol  <carol.szabo@nokia.com>
 
         Reviewed by Simon Hausmann and Ariya Hidayat.
