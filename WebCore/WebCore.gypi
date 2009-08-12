@@ -1911,8 +1911,6 @@
             'platform/graphics/skia/GraphicsContextSkia.cpp',
             'platform/graphics/skia/ImageBufferSkia.cpp',
             'platform/graphics/skia/ImageSkia.cpp',
-            'platform/graphics/skia/ImageSourceSkia.cpp',
-            'platform/graphics/skia/ImageSourceSkia.h',
             'platform/graphics/skia/IntPointSkia.cpp',
             'platform/graphics/skia/IntRectSkia.cpp',
             'platform/graphics/skia/NativeImageSkia.cpp',

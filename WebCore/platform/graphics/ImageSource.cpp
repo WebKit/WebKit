@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2007 Alp Toker <alp.toker@collabora.co.uk>
+ * Copyright (C) 2008, Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,8 +27,6 @@
 
 #include "config.h"
 #include "ImageSource.h"
-
-#if PLATFORM(CAIRO)
 
 #include "BMPImageDecoder.h"
 #include "GIFImageDecoder.h"
@@ -122,18 +121,13 @@ void ImageSource::setData(SharedBuffer* data, bool allDataReceived)
     if (!m_decoder)
         m_decoder = createDecoder(data->buffer());
 
-    if (!m_decoder)
-        return;
-
-    m_decoder->setData(data, allDataReceived);
+    if (m_decoder)
+        m_decoder->setData(data, allDataReceived);
 }
 
 String ImageSource::filenameExtension() const
 {
-    if (!m_decoder)
-        return String();
-
-    return m_decoder->filenameExtension();
+    return m_decoder ? m_decoder->filenameExtension() : String();
 }
 
 bool ImageSource::isSizeAvailable()
@@ -175,9 +169,6 @@ size_t ImageSource::frameCount() const
 
 NativeImagePtr ImageSource::createFrameAtIndex(size_t index)
 {
-    if (!initialized())
-        return 0;
-
     if (!m_decoder)
         return 0;
 
@@ -185,11 +176,13 @@ NativeImagePtr ImageSource::createFrameAtIndex(size_t index)
     if (!buffer || buffer->status() == RGBA32Buffer::FrameEmpty)
         return 0;
 
-    // Cairo does not like zero height images.
-    // If we have a zero height image, just pretend we don't have enough data yet.
-    if (!size().height())
+    // Zero-height images can cause problems for some ports.  If we have an
+    // empty image dimension, just bail.
+    if (size().isEmpty())
         return 0;
 
+    // Return the buffer contents as a native image.  For some ports, the data
+    // is already in a native container, and this just increments its refcount.
     return buffer->asNewNativeImage();
 }
 
@@ -222,17 +215,14 @@ float ImageSource::frameDurationAtIndex(size_t index)
 
 bool ImageSource::frameHasAlphaAtIndex(size_t index)
 {
-    // When a frame has not finished decoding, always mark it as having alpha,
-    // so we don't get a black background for the undecoded sections.
-    // TODO: A better solution is probably to have the underlying buffer's
-    // hasAlpha() return true in these cases, since it is, in fact, technically
-    // true.
-    if (!frameIsCompleteAtIndex(index))
-        return true;
-
-    return m_decoder->frameBufferAtIndex(index)->hasAlpha();
+    // When a frame has not finished decoding, always mark it as having alpha.
+    // Ports that check the result of this function to determine their
+    // compositing op need this in order to not draw the undecoded portion as
+    // black.
+    // TODO: Perhaps we should ensure that each individual decoder returns true
+    // in this case.
+    return frameIsCompleteAtIndex(index) ?
+        m_decoder->frameBufferAtIndex(index)->hasAlpha() : true;
 }
 
 }
-
-#endif // PLATFORM(CAIRO)

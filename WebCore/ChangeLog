@@ -1,3 +1,18 @@
+2009-08-11  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Adam Treat.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27965
+        Merge skia/ImageSourceSkia.cpp into ImageSource.cpp.
+
+        * WebCore.gypi: Remove deleted file, plus a file that was deleted a while back.
+        * platform/graphics/ImageSource.cpp:
+        (WebCore::ImageSource::setData): Use slightly shorter syntax.
+        (WebCore::ImageSource::filenameExtension): Use shorter syntax.
+        (WebCore::ImageSource::createFrameAtIndex): Remove redundant call, clarify comments, reject all empty images.
+        (WebCore::ImageSource::frameHasAlphaAtIndex): Clarify comments, use shorter syntax.
+        * platform/graphics/skia/ImageSourceSkia.cpp: Removed.
+
 2009-08-11  Drew Wilson  <atwilson@google.com>
 
         Reviewed by David Levin.
