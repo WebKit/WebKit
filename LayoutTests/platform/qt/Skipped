@@ -2613,7 +2613,6 @@ fast/borders/fieldsetBorderRadius.html
 fast/borders/inline-mask-overlay-image.html
 fast/borders/svg-as-border-image-2.html
 fast/borders/svg-as-border-image.html
-fast/box-shadow/basic-shadows.html
 fast/box-shadow/border-radius-big.html
 fast/box-sizing/box-sizing.html
 fast/box-sizing/panels-one.html

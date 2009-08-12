@@ -1,3 +1,16 @@
+2009-08-12  Szabo Carol  <carol.szabo@nokia.com>
+
+        Reviewed by Simon Hausmann and Ariya Hidayat.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23291
+
+        [Qt] Partial support for -webkit-box-shadow. Blur is not support and
+        the shadow still does not go well with border radius.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::drawRect):
+        (WebCore::GraphicsContext::fillRect):
+
 2009-08-12  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Jan Alonzo.

@@ -1,3 +1,13 @@
+2009-08-12  Ariya Hidayat  <ariya.hidayat@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Pixel tests for (partial) -webkit-box-shadow support.
+
+        * platform/qt/fast/box-shadow/basic-shadows-expected.checksum: Added.
+        * platform/qt/fast/box-shadow/basic-shadows-expected.png: Added.
+        * platform/qt/fast/box-shadow/basic-shadows-expected.txt: Adjusted.
+
 2009-08-11  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

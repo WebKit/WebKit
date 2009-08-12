@@ -411,9 +411,21 @@ void GraphicsContext::drawRect(const IntRect& rect)
     if (paintingDisabled())
         return;
 
-    QPainter *p = m_data->p();
+    QPainter* p = m_data->p();
     const bool antiAlias = p->testRenderHint(QPainter::Antialiasing);
     p->setRenderHint(QPainter::Antialiasing, m_data->antiAliasingForRectsAndLines);
+
+    IntSize shadowSize;
+    int shadowBlur;
+    Color shadowColor;
+    if (textDrawingMode() == cTextFill && getShadow(shadowSize, shadowBlur, shadowColor)) {
+        p->save();
+        p->translate(shadowSize.width(), shadowSize.height());
+        p->setPen(QColor(shadowColor));
+        p->setBrush(QBrush(QColor(shadowColor)));
+        p->drawRect(rect);
+        p->restore();
+    }
 
     p->drawRect(rect);
 
@@ -703,7 +715,19 @@ void GraphicsContext::fillRect(const FloatRect& rect, const Color& c)
         return;
 
     m_data->solidColor.setColor(QColor(c));
-    m_data->p()->fillRect(rect, m_data->solidColor);
+    IntSize shadowSize;
+    int shadowBlur;
+    Color shadowColor;
+    QPainter* p = m_data->p();
+    if (textDrawingMode() == cTextFill && getShadow(shadowSize, shadowBlur, shadowColor)) {
+        p->save();
+        p->translate(shadowSize.width(), shadowSize.height());
+        p->setPen(QColor(shadowColor));
+        p->setBrush(QBrush(QColor(shadowColor)));
+        p->drawRect(rect);
+        p->restore();
+    }
+    p->fillRect(rect, m_data->solidColor);
 }
 
 void GraphicsContext::fillRoundedRect(const IntRect& rect, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight, const Color& color)
