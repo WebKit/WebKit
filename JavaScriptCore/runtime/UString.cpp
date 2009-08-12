@@ -38,6 +38,7 @@
 #include <wtf/ASCIICType.h>
 #include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>
+#include <wtf/StringExtras.h>
 #include <wtf/Vector.h>
 #include <wtf/unicode/UTF8.h>
 
@@ -950,7 +951,11 @@ UString UString::from(long long i)
         *--p = '0';
     else if (i == LLONG_MIN) {
         char minBuf[1 + sizeof(i) * 3];
+#if PLATFORM(WIN_OS)
         snprintf(minBuf, sizeof(minBuf) - 1, "%I64d", LLONG_MIN);
+#else
+        snprintf(minBuf, sizeof(minBuf) - 1, "%lld", LLONG_MIN);
+#endif
         return UString(minBuf);
     } else {
         bool negative = false;

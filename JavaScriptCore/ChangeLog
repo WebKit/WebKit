@@ -1,3 +1,11 @@
+2009-08-12  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Prospective build fix for Mac and 32-bit Windows.
+
+        * runtime/UString.cpp: Include wtf/StringExtras.h for snprintf.
+        (JSC::UString::from): Use %lld instead of %I64d for snprintf
+        on non-windows platforms.
+
 2009-08-12  Prasanth Ullattil  <prasanth.ullattil@nokia.com>
 
         Reviewed by Simon Hausmann.
