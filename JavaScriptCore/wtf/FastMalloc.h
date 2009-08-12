@@ -22,6 +22,7 @@
 #define WTF_FastMalloc_h
 
 #include "Platform.h"
+#include "PossiblyNull.h"
 #include <stdlib.h>
 #include <new>
 
@@ -33,11 +34,41 @@ namespace WTF {
     void* fastCalloc(size_t numElements, size_t elementSize);
     void* fastRealloc(void*, size_t);
 
-    // These functions return 0 if an allocation fails.
-    void* tryFastMalloc(size_t);
-    void* tryFastZeroedMalloc(size_t);
-    void* tryFastCalloc(size_t numElements, size_t elementSize);
-    void* tryFastRealloc(void*, size_t);
+    struct TryMallocReturnValue {
+        TryMallocReturnValue(void* data)
+            : m_data(data)
+        {
+        }
+        TryMallocReturnValue(const TryMallocReturnValue& source)
+            : m_data(source.m_data)
+        {
+            source.m_data = 0;
+        }
+        ~TryMallocReturnValue() { ASSERT(!m_data); }
+        template <typename T> bool getValue(T& data) WARN_UNUSED_RETURN;
+        template <typename T> operator PossiblyNull<T>()
+        { 
+            T value; 
+            getValue(value); 
+            return PossiblyNull<T>(value);
+        } 
+    private:
+        mutable void* m_data;
+    };
+    
+    template <typename T> bool TryMallocReturnValue::getValue(T& data) {
+        union u { void* data; T target; } res;
+        res.data = m_data;
+        data = res.target;
+        bool returnValue = !!m_data;
+        m_data = 0;
+        return returnValue;
+    }
+
+    TryMallocReturnValue tryFastMalloc(size_t n);
+    TryMallocReturnValue tryFastZeroedMalloc(size_t n);
+    TryMallocReturnValue tryFastCalloc(size_t n_elements, size_t element_size);
+    TryMallocReturnValue tryFastRealloc(void* p, size_t n);
 
     void fastFree(void*);
 
