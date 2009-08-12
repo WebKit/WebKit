@@ -1,3 +1,17 @@
+2009-08-12  Adam Roben  <aroben@apple.com>
+
+        Make WebPreferenceKeysPrivate.h available for client use
+
+        Reviewed by Dave Hyatt.
+
+        Fixes <http://webkit.org/b/28227>.
+
+        * WebKit.vcproj/WebKit.vcproj: Copy WebPreferenceKeysPrivate.h to
+        $WebKitOutputDir, just like we do for a few other headers. Also let VS
+        reorder some XML attributes.
+
+        * WebPreferenceKeysPrivate.h: Touched this file to force a build.
+
 2009-08-11  Adam Roben  <aroben@apple.com>
 
         Remove support for a window resizer within the WebView
