@@ -32,10 +32,9 @@
 #include <InterfaceDefs.h>
 
 
-namespace WebCore
-{
+namespace WebCore {
 
-// FIXME: These values are straight out of DragControllerMac, so probably have 
+// FIXME: These values are straight out of DragControllerMac, so probably have
 // little correlation with Haiku standards...
 const int DragController::LinkDragBorderInset = 2;
 const int DragController::MaxOriginalImageArea = 1500 * 1500;

@@ -31,7 +31,7 @@
 #include "CachedResourceClientWalker.h"
 #include "DOMImplementation.h"
 #include "FontPlatformData.h"
-#if PLATFORM(CG) || PLATFORM(QT) || PLATFORM(GTK) || (PLATFORM(CHROMIUM) && (PLATFORM(WIN_OS) || PLATFORM(LINUX)))
+#if PLATFORM(CG) || PLATFORM(QT) || PLATFORM(GTK) || (PLATFORM(CHROMIUM) && (PLATFORM(WIN_OS) || PLATFORM(LINUX))) || PLATFORM(HAIKU)
 #include "FontCustomPlatformData.h"
 #endif
 #include "TextResourceDecoder.h"
@@ -60,7 +60,7 @@ CachedFont::CachedFont(const String &url)
 
 CachedFont::~CachedFont()
 {
-#if PLATFORM(CG) || PLATFORM(QT) || PLATFORM(GTK) || (PLATFORM(CHROMIUM) && (PLATFORM(WIN_OS) || PLATFORM(LINUX)))
+#if PLATFORM(CG) || PLATFORM(QT) || PLATFORM(GTK) || (PLATFORM(CHROMIUM) && (PLATFORM(WIN_OS) || PLATFORM(LINUX))) || PLATFORM(HAIKU)
     delete m_fontData;
 #endif
 }
@@ -98,7 +98,7 @@ void CachedFont::beginLoadIfNeeded(DocLoader* dl)
 
 bool CachedFont::ensureCustomFontData()
 {
-#if PLATFORM(CG) || PLATFORM(QT) || PLATFORM(GTK) || (PLATFORM(CHROMIUM) && (PLATFORM(WIN_OS) || PLATFORM(LINUX)))
+#if PLATFORM(CG) || PLATFORM(QT) || PLATFORM(GTK) || (PLATFORM(CHROMIUM) && (PLATFORM(WIN_OS) || PLATFORM(LINUX))) || PLATFORM(HAIKU)
 #if ENABLE(SVG_FONTS)
     ASSERT(!m_isSVGFont);
 #endif
@@ -117,7 +117,7 @@ FontPlatformData CachedFont::platformDataFromCustomData(float size, bool bold, b
     if (m_externalSVGDocument)
         return FontPlatformData(size, bold, italic);
 #endif
-#if PLATFORM(CG) || PLATFORM(QT) || PLATFORM(GTK) || (PLATFORM(CHROMIUM) && (PLATFORM(WIN_OS) || PLATFORM(LINUX)))
+#if PLATFORM(CG) || PLATFORM(QT) || PLATFORM(GTK) || (PLATFORM(CHROMIUM) && (PLATFORM(WIN_OS) || PLATFORM(LINUX))) || PLATFORM(HAIKU)
     ASSERT(m_fontData);
     return m_fontData->fontPlatformData(static_cast<int>(size), bold, italic, renderingMode);
 #else
@@ -173,7 +173,7 @@ SVGFontElement* CachedFont::getSVGFontById(const String& fontName) const
 
 void CachedFont::allClientsRemoved()
 {
-#if PLATFORM(CG) || PLATFORM(QT) || PLATFORM(GTK) || (PLATFORM(CHROMIUM) && (PLATFORM(WIN_OS) || PLATFORM(LINUX)))
+#if PLATFORM(CG) || PLATFORM(QT) || PLATFORM(GTK) || (PLATFORM(CHROMIUM) && (PLATFORM(WIN_OS) || PLATFORM(LINUX))) || PLATFORM(HAIKU)
     if (m_fontData) {
         delete m_fontData;
         m_fontData = 0;

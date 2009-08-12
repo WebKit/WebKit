@@ -2,6 +2,32 @@
 
         Reviewed by Eric Seidel.
 
+        [Haiku] Tiny modifications on WebCore files to allow Haiku port.
+        https://bugs.webkit.org/show_bug.cgi?id=28128
+
+        * bindings/js/ScriptControllerHaiku.cpp: Style cleanup.
+        * loader/CachedFont.cpp: Haiku behaves like Qt, Gtk, or Chromium,
+        so many PLATFORM(HAIKU) were added to these functions.
+        (WebCore::CachedFont::~CachedFont):
+        (WebCore::CachedFont::ensureCustomFontData):
+        (WebCore::CachedFont::platformDataFromCustomData):
+        (WebCore::CachedFont::allClientsRemoved):
+        * page/EventHandler.cpp: Like the mac and Qt port, Haiku doesn't need the
+        invertSenseOfTabsToLinks() function.
+        * page/haiku/DragControllerHaiku.cpp: Style cleanup.
+        * platform/image-decoders/ImageDecoder.h: For image decoding Haiku
+        behaves like Cairo or Wx, (not like Skia).
+        (WebCore::RGBA32Buffer::getAddr):
+        * platform/text/PlatformString.h: Adding the String(BString&) and BString()
+        methods specific to Haiku.
+        * platform/text/UnicodeRange.h: Haiku needs to include stdint.h.
+        * platform/text/haiku/TextBreakIteratorInternalICUHaiku.cpp:
+        (WebCore::currentSearchLocaleID): Missing function.
+
+2009-08-12  Maxime Simon  <simon.maxime@gmail.com>
+
+        Reviewed by Eric Seidel.
+
         [Haiku] Adding the ScrollbarTheme files.
         https://bugs.webkit.org/show_bug.cgi?id=28125
 
