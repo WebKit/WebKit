@@ -1,5 +1,14 @@
 2009-08-11  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed.
+
+        Remove a few characters from the ASCII art to make it fit better in the
+        template.
+
+        * coding/major-objects.html:
+
+2009-08-11  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Oliver Hunt.
 
         Document relation between major objects in WebCore

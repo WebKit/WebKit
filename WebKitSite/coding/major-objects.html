@@ -34,18 +34,18 @@ the "detached" case and gracefully handle null pointers.</p>
        |
        +-------------------------- ... other Frame objects
        |
-   +---+---+   +-------------+                   +-------------------+
-   | Frame +---+ FrameLoader +                   | JSDOMWindowShell  |
-   +---+---+   +-------------+                   +---------+---------+
-       |                                                   |
-       |         /\  Re-used after navigation   /\         |
-.......|...................................................|............
-       |         \/  Replaced after navigation  \/         |
-       |                                                   |
-       | <-- Null after navigation                         |
-       |                                                   |
- +-----+-----+         +-------------+                     |
- | DOMWindow |<--impl--+ JSDOMWindow |<-------window-------+
+   +---+---+   +-------------+                 +-------------------+
+   | Frame +---+ FrameLoader +                 | JSDOMWindowShell  |
+   +---+---+   +-------------+                 +---------+---------+
+       |                                                 |
+       |        /\  Re-used after navigation   /\        |
+.......|.................................................|...........
+       |        \/  Replaced after navigation  \/        |
+       |                                                 |
+       | <-- Null after navigation                       |
+       |                                                 |
+ +-----+-----+         +-------------+                   |
+ | DOMWindow |<--impl--+ JSDOMWindow |<------window------+
  +-----+-----+         +-------------+
        |
        | <-- Can be null for Documents created by XMLHttpRequest
