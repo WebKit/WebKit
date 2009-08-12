@@ -1,5 +1,12 @@
 2009-08-12  Eric Carlson  <eric.carlson@apple.com>
 
+        Windows build fix.
+
+        * WebCoreLocalizedStrings.cpp:
+        (WebCore::localizedMediaTimeDescription):
+
+2009-08-12  Eric Carlson  <eric.carlson@apple.com>
+
         Reviewed by Oliver Hunt.
 
         <video> and <audio> controller should be accessible

@@ -196,7 +196,7 @@ String WebCore::localizedMediaControlElementHelpText(const String& name)
 String WebCore::localizedMediaTimeDescription(float time)
 {
     if (!isfinite(time))
-        return return String(LPCTSTR_UI_STRING("indefinite time", "string for an indefinite movie time"));
+        return String(LPCTSTR_UI_STRING("indefinite time", "string for an indefinite movie time"));
 
     int seconds = (int)fabsf(time); 
     int days = seconds / (60 * 60 * 24);
