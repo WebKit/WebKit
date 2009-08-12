@@ -1,6 +1,6 @@
 2009-08-12  Brian Weinstein  <bweinstein@apple.com>
 
-        Reviewed Adam Roben.
+        Reviewed by Adam Roben.
 
         Fix of <rdar://6728361> Mouse wheel scrolling on a page with expanded drop down 
         list detaches drop down.
