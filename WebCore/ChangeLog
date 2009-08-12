@@ -2,6 +2,16 @@
 
         Reviewed by Dan Bernstein.
 
+        WINCE PORT: Color and Gradient
+        https://bugs.webkit.org/show_bug.cgi?id=27511
+
+        * platform/graphics/wince/ColorWince.cpp: Added.
+        * platform/graphics/wince/GradientWince.cpp: Added.
+
+2009-08-12  Yong Li  <yong.li@torchmobile.com>
+
+        Reviewed by Eric Seidel.
+
         fix a typo in platform/graphics/skia/PlatformContextSkia.cpp
         https://bugs.webkit.org/show_bug.cgi?id=28172
 
