@@ -1,3 +1,16 @@
+2009-08-12  Ada Chan  <adachan@apple.com>
+
+        Added workaround for the limitation that VirtualFree with MEM_RELEASE
+        can only accept the base address returned by VirtualAlloc when the region
+        was reserved and it can only free the entire region, and not a part of it.
+
+        Reviewed by Oliver Hunt.
+
+        * runtime/MarkStack.h:
+        (JSC::MarkStack::MarkStackArray::shrinkAllocation):
+        * runtime/MarkStackWin.cpp:
+        (JSC::MarkStack::releaseStack):
+
 2009-08-12  Balazs Kelemen  <kelemen.balazs.3@stud.u-szeged.hu>
 
         Reviewed by Ariya Hidayat.

@@ -150,7 +150,14 @@ namespace JSC {
                 ASSERT(0 == (size % MarkStack::pageSize()));
                 if (size == m_allocated)
                     return;
+#if PLATFORM(WIN)
+                // We cannot release a part of a region with VirtualFree.  To get around this,
+                // we'll release the entire region and reallocate the size that we want.
+                releaseStack(m_data, m_allocated);
+                m_data = reinterpret_cast<T*>(allocateStack(size));
+#else
                 releaseStack(reinterpret_cast<char*>(m_data) + size, m_allocated - size);
+#endif
                 m_allocated = size;
                 m_capacity = m_allocated / sizeof(T);
             }
