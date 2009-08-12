@@ -2465,7 +2465,7 @@ webcore_sources += \
 DerivedSources/WMLNames.cpp: DerivedSources/WMLElementFactory.cpp;
 
 DerivedSources/WMLElementFactory.cpp: $(WebCore)/dom/make_names.pl $(WebCore)/wml/WMLTagNames.in $(WebCore)/wml/WMLAttributeNames.in
-	$(PERL) -I$(WebCore)/bindings/scripts $< --tags $(WebCore)/wml/WMLTagNames.in --attrs $(WebCore)/wml/WMLAttributeNames.in --factory --wrapperFactory --outputDir "$(GENSOURCES)"
+	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --tags $(WebCore)/wml/WMLTagNames.in --attrs $(WebCore)/wml/WMLAttributeNames.in --factory --wrapperFactory --outputDir "$(GENSOURCES)"
 endif # END ENABLE_WML
 
 # ----
@@ -3143,10 +3143,10 @@ DerivedSources/JSSVGElementWrapperFactory.cpp: DerivedSources/SVGElementFactory.
 
 if SVG_FLAGS
 DerivedSources/SVGElementFactory.cpp: $(WebCore)/dom/make_names.pl $(WebCore)/svg/svgtags.in $(WebCore)/svg/svgattrs.in
-	$(PERL) -I$(WebCore)/bindings/scripts $< --tags $(WebCore)/svg/svgtags.in --attrs $(WebCore)/svg/svgattrs.in --extraDefines "$(SVG_FEATURES)" --factory --wrapperFactory --outputDir "$(GENSOURCES)"
+	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --tags $(WebCore)/svg/svgtags.in --attrs $(WebCore)/svg/svgattrs.in --extraDefines "$(SVG_FEATURES)" --factory --wrapperFactory --outputDir "$(GENSOURCES)"
 else
 DerivedSources/SVGElementFactory.cpp: $(WebCore)/dom/make_names.pl $(WebCore)/svg/svgtags.in $(WebCore)/svg/svgattrs.in
-	$(PERL) -I$(WebCore)/bindings/scripts $< --tags $(WebCore)/svg/svgtags.in --attrs $(WebCore)/svg/svgattrs.in --factory --wrapperFactory --outputDir "$(GENSOURCES)"
+	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --tags $(WebCore)/svg/svgtags.in --attrs $(WebCore)/svg/svgattrs.in --factory --wrapperFactory --outputDir "$(GENSOURCES)"
 
 endif # SVG_FLAGS
 
@@ -3155,7 +3155,7 @@ endif # SVG_FLAGS
 DerivedSources/XLinkNames.h: DerivedSources/XLinkNames.cpp;
 
 DerivedSources/XLinkNames.cpp : $(WebCore)/dom/make_names.pl $(WebCore)/svg/xlinkattrs.in
-	$(PERL) -I$(WebCore)/bindings/scripts $< --attrs $(WebCore)/svg/xlinkattrs.in --outputDir "$(GENSOURCES)"
+	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --attrs $(WebCore)/svg/xlinkattrs.in --outputDir "$(GENSOURCES)"
 
 endif # END ENABLE_SVG
 
@@ -3199,20 +3199,20 @@ DerivedSources/CSSValueKeywords.h : $(WEBCORE_CSS_VALUE_KEYWORDS) $(WebCore)/css
 
 # DOCTYPE strings
 DerivedSources/DocTypeStrings.cpp : $(WebCore)/html/DocTypeStrings.gperf
-	$(GPERF) -CEot -L ANSI-C -k "*" -N findDoctypeEntry -F ,PubIDInfo::eAlmostStandards,PubIDInfo::eAlmostStandards $(WebCore)/html/DocTypeStrings.gperf > $@
+	$(AM_V_GEN)$(GPERF) -CEot -L ANSI-C -k "*" -N findDoctypeEntry -F ,PubIDInfo::eAlmostStandards,PubIDInfo::eAlmostStandards $(WebCore)/html/DocTypeStrings.gperf > $@
 
 # HTML entity names
 DerivedSources/HTMLEntityNames.c : $(WebCore)/html/HTMLEntityNames.gperf
-	$(GPERF) -a -L ANSI-C -C -G -c -o -t -k '*' -N findEntity -D -s 2 \
+	$(AM_V_GEN)$(GPERF) -a -L ANSI-C -C -G -c -o -t -k '*' -N findEntity -D -s 2 \
 	$(WebCore)/html/HTMLEntityNames.gperf > $@
 
 # color names
 DerivedSources/ColorData.c: $(WebCore)/platform/ColorData.gperf
-	$(GPERF) -CDEot -L ANSI-C -k '*' -N findColor -D -s 2 $< > $@
+	$(AM_V_GEN)$(GPERF) -CDEot -L ANSI-C -k '*' -N findColor -D -s 2 $< > $@
 
 # CSS tokenizer
 DerivedSources/tokenizer.cpp : $(WebCore)/css/tokenizer.flex $(WebCore)/css/maketokenizer
-	$(FLEX) -t $< | $(PERL) $(WebCore)/css/maketokenizer > $@
+	$(AM_V_GEN)$(FLEX) -t $< | $(PERL) $(WebCore)/css/maketokenizer > $@
 
 # CSS grammar
 
@@ -3249,7 +3249,7 @@ SCRIPTS_BINDINGS = \
 DerivedSources/UserAgentStyleSheetsData.cpp: DerivedSources/UserAgentStyleSheets.h;
 
 DerivedSources/UserAgentStyleSheets.h: $(WebCore)/css/make-css-file-arrays.pl $(USER_AGENT_STYLE_SHEETS)
-	$(PERL) $< $@ DerivedSources/UserAgentStyleSheetsData.cpp $(USER_AGENT_STYLE_SHEETS)
+	$(AM_V_GEN)$(PERL) $< $@ DerivedSources/UserAgentStyleSheetsData.cpp $(USER_AGENT_STYLE_SHEETS)
 
 # HTML tag and attribute names
 DerivedSources/HTMLElementFactory.cpp: DerivedSources/HTMLNames.cpp;
@@ -3260,16 +3260,16 @@ DerivedSources/JSHTMLElementWrapperFactory.h: DerivedSources/JSHTMLElementWrappe
 
 if HTML_FLAGS
 DerivedSources/HTMLNames.cpp: $(WebCore)/dom/make_names.pl $(WebCore)/html/HTMLTagNames.in $(WebCore)/html/HTMLAttributeNames.in
-	$(PERL) -I$(WebCore)/bindings/scripts $< --tags $(WebCore)/html/HTMLTagNames.in --attrs $(WebCore)/html/HTMLAttributeNames.in --extraDefines "$(HTML_FEATURES)" --factory --wrapperFactory --outputDir "$(GENSOURCES)"
+	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --tags $(WebCore)/html/HTMLTagNames.in --attrs $(WebCore)/html/HTMLAttributeNames.in --extraDefines "$(HTML_FEATURES)" --factory --wrapperFactory --outputDir "$(GENSOURCES)"
 else
 DerivedSources/HTMLNames.cpp: $(WebCore)/dom/make_names.pl $(WebCore)/html/HTMLTagNames.in $(WebCore)/html/HTMLAttributeNames.in
-	$(PERL) -I$(WebCore)/bindings/scripts $< --tags $(WebCore)/html/HTMLTagNames.in --attrs $(WebCore)/html/HTMLAttributeNames.in --factory --wrapperFactory --outputDir "$(GENSOURCES)"
+	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --tags $(WebCore)/html/HTMLTagNames.in --attrs $(WebCore)/html/HTMLAttributeNames.in --factory --wrapperFactory --outputDir "$(GENSOURCES)"
 endif # HTML_FLAGS
 
 DerivedSources/XMLNames.h: DerivedSources/XMLNames.cpp;
 
 DerivedSources/XMLNames.cpp: $(WebCore)/dom/make_names.pl $(WebCore)/xml/xmlattrs.in
-	$(PERL) -I$(WebCore)/bindings/scripts $< --attrs $(WebCore)/xml/xmlattrs.in --outputDir "$(GENSOURCES)"
+	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --attrs $(WebCore)/xml/xmlattrs.in --outputDir "$(GENSOURCES)"
 
 IDL_PATH := \
     $(WebCore)/bindings/js \
@@ -3294,7 +3294,7 @@ DerivedSources/JS%.h: DerivedSources/JS%.cpp;
 
 .SECONDARY:
 DerivedSources/JS%.cpp: %.idl $(SCRIPTS_BINDINGS) $(WebCore)/bindings/scripts/CodeGeneratorJS.pm
-	$(PERL) -I$(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/generate-bindings.pl $(IDL_PATH:%=--include "%") --outputDir "$(GENSOURCES)" --defines "$(FEATURE_DEFINES_JAVASCRIPT)" --generator JS $<
+	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/generate-bindings.pl $(IDL_PATH:%=--include "%") --outputDir "$(GENSOURCES)" --defines "$(FEATURE_DEFINES_JAVASCRIPT)" --generator JS $<
 
 IDL_BINDINGS_JS_PURE := \
 	WebCore/svg/ElementTimeControl.idl \

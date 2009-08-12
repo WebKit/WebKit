@@ -1,3 +1,11 @@
+2009-08-12  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Jan Alonzo.
+
+        Use AM_V_GEN in a few more places, for less noisy builds.
+
+        * GNUmakefile.am:
+
 2009-08-12  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Oliver Hunt.
