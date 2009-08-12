@@ -326,7 +326,7 @@ if (@logs && $updateChangeLogs && $isSVN) {
     my @conflictedChangeLogs;
     while (my $line = <ERRORS>) {
         print STDERR "    ", $line;
-        push @conflictedChangeLogs, $1 if $line =~ m/^C\s+(.*\S+)\s*$/;
+        push @conflictedChangeLogs, $1 if $line =~ m/^C\s+(.+?)[\r\n]*$/;
     }
     close ERRORS;
 
@@ -1323,7 +1323,7 @@ sub createPatchCommand($)
 
 sub diffHeaderFormat()
 {
-    return qr/^Index: (\S+)\s*$/ if $isSVN;
+    return qr/^Index: (\S+)[\r\n]*$/ if $isSVN;
     return qr/^diff --git a\/.+ b\/(.+)$/ if $isGit;
 }
 
@@ -1333,7 +1333,7 @@ sub findOriginalFileFromSvn($)
     my $baseUrl;
     open INFO, "$SVN info . |" or die;
     while (<INFO>) {
-        if (/^URL: (.*\S+)\s*$/) {
+        if (/^URL: (.+?)[\r\n]*$/) {
             $baseUrl = $1;
         }
     }
@@ -1341,7 +1341,7 @@ sub findOriginalFileFromSvn($)
     my $sourceFile;
     open INFO, "$SVN info '$file' |" or die;
     while (<INFO>) {
-        if (/^Copied From URL: (.*\S+)\s*$/) {
+        if (/^Copied From URL: (.+?)[\r\n]*$/) {
             $sourceFile = File::Spec->abs2rel($1, $baseUrl);
         }
     }
@@ -1362,11 +1362,11 @@ sub generateFileList(\@\@\%)
         if ($isSVN) {
             my $matches;
             if (eval "v$svnVersion" ge v1.6) {
-                $matches = /^([ACDMR]).{6} (.*\S+)\s*$/;
+                $matches = /^([ACDMR]).{6} (.+?)[\r\n]*$/;
                 $status = $1;
                 $file = $2;
             } else {
-                $matches = /^([ACDMR]).{5} (.*\S+)\s*$/;
+                $matches = /^([ACDMR]).{5} (.+?)[\r\n]*$/;
                 $status = $1;
                 $file = $2;
             }

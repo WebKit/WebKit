@@ -256,10 +256,10 @@ sub findUnmergedChangeLogs()
             my $matches;
             my $file;
             if (eval "v$svnVersion" ge v1.6) {
-                $matches = /^([C]).{6} (.*\S+)\s*$/;
+                $matches = /^([C]).{6} (.+?)[\r\n]*$/;
                 $file = $2;
             } else {
-                $matches = /^([C]).{5} (.*\S+)\s*$/;
+                $matches = /^([C]).{5} (.+?)[\r\n]*$/;
                 $file = $2;
             }
             if ($matches) {

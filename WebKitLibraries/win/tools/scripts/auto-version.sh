@@ -29,7 +29,7 @@ VERSIONPATH=$VERSIONPATH/include
 VERSIONFILE=$VERSIONPATH/autoversion.h
 mkdir -p "$VERSIONPATH"
 
-PRODUCTVERSION=`cat $SRCPATH/PRODUCTVERSION | sed -r 's/(.*\S+)\s*$/\1/'`
+PRODUCTVERSION=`cat $SRCPATH/PRODUCTVERSION | sed -r 's/(.+?)[\r\n]*$/\1/'`
 MAJORVERSION=`echo "$PRODUCTVERSION" | sed 's/\([^\.]*\)\.\([^.]*\)\(\.\([^.]*\)\)\?/\1/'`
 MINORVERSION=`echo "$PRODUCTVERSION" | sed 's/\([^\.]*\)\.\([^.]*\)\(\.\([^.]*\)\)\?/\2/'`
 TINYVERSION=`echo "$PRODUCTVERSION" | sed 's/\([^\.]*\)\.\([^.]*\)\(\.\([^.]*\)\)\?/\4/'`
@@ -42,7 +42,7 @@ if [ "$RC_PROJECTSOURCEVERSION" == "" ]; then
 else
     PROPOSEDVERSION="$RC_PROJECTSOURCEVERSION"
 fi
-PROPOSEDVERSION=`echo "$PROPOSEDVERSION" | sed -r 's/(.*\S+)\s*$/\1/'`
+PROPOSEDVERSION=`echo "$PROPOSEDVERSION" | sed -r 's/(.+?)[\r\n]*$/\1/'`
 
 BLDMAJORVERSION=`echo "$PROPOSEDVERSION" | sed 's/\([^\.]*\)\(\.\([^.]*\)\(\.\([^.]*\)\)\?\)\?/\1/'`
 BLDMINORVERSION=`echo "$PROPOSEDVERSION" | sed 's/\([^\.]*\)\(\.\([^.]*\)\(\.\([^.]*\)\)\?\)\?/\3/'`
@@ -53,15 +53,15 @@ fi
 if [ "$BLDVARIANTVERSION" == "" ]; then
     BLDVARIANTVERSION=0
 fi
-SVNOPENSOURCEREVISION=`svn info | grep '^Revision' | sed -r 's/^Revision: (.*\S+)\s*$/\1/'`
+SVNOPENSOURCEREVISION=`svn info | grep '^Revision' | sed -r 's/^Revision: (.+?)[\r\n]*$/\1/'`
 
 BLDNMBR="$PROPOSEDVERSION"
 BLDNMBRSHORT="$BLDNMBR"
 
 if [ "$RC_PROJECTSOURCEVERSION" == "" ]; then
     BLDNMBRSHORT="$BLDNMBRSHORT+"
-    BLDUSERNAME=`echo "$(whoami)" | sed -r 's/(.*\S+)\s*$/\1/'`
-    BLDDATE=`echo "$(date)" | sed -r 's/(.*\S+)\s*$/\1/'`
+    BLDUSERNAME=`echo "$(whoami)" | sed -r 's/(.+?)[\r\n]*$/\1/'`
+    BLDDATE=`echo "$(date)" | sed -r 's/(.+?)[\r\n]*$/\1/'`
     BLDNMBR="$BLDNMBRSHORT $BLDUSERNAME - $BLDDATE - r$SVNOPENSOURCEREVISION"
 fi
 
