@@ -450,6 +450,37 @@ void EventSender::keyDown(const QString &string, const QStringList &modifiers)
         } else {
             code = string.unicode()->toUpper().unicode();
         }
+    } else {
+        qDebug() << ">>>>>>>>> keyDown" << string;
+        // map special keycode strings used by the tests to something that works for Qt/X11
+        if (string == QLatin1String("leftArrow")) {
+            s = QString();
+            code = Qt::Key_Left;
+        } else if (string == QLatin1String("rightArrow")) {
+            s = QString();
+            code = Qt::Key_Right;
+        } else if (string == QLatin1String("upArrow")) {
+            s = QString();
+            code = Qt::Key_Up;
+        } else if (string == QLatin1String("downArrow")) {
+            s = QString();
+            code = Qt::Key_Down;
+        } else if (string == QLatin1String("pageUp")) {
+            s = QString();
+            code = Qt::Key_PageUp;
+        } else if (string == QLatin1String("pageDown")) {
+            s = QString();
+            code = Qt::Key_PageDown;
+        } else if (string == QLatin1String("home")) {
+            s = QString();
+            code = Qt::Key_Home;
+        } else if (string == QLatin1String("end")) {
+            s = QString();
+            code = Qt::Key_End;
+        } else if (string == QLatin1String("delete")) {
+            s = QString();
+            code = Qt::Key_Delete;
+        }
     }
     QKeyEvent event(QEvent::KeyPress, code, modifs, s);
     QApplication::sendEvent(m_page, &event);

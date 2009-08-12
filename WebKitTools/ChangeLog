@@ -1,3 +1,19 @@
+2009-08-10  Mike Fenton  <mike.fenton@torchmobile.com>
+
+        Reviewed by Adam Treat.
+
+        Add processing for string constants used by the tests to trigger
+        common actions like up, down, left, right, etc. for the Qt
+        implementation of DumpRenderTree.
+
+        Note this allows fast/forms/textarea-arrow-navigation.html to pass
+        correctly.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28161
+
+        * DumpRenderTree/qt/jsobjects.cpp:
+        (EventSender::keyDown):
+
 2009-08-11  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
