@@ -419,12 +419,10 @@ void GraphicsContext::drawRect(const IntRect& rect)
     int shadowBlur;
     Color shadowColor;
     if (textDrawingMode() == cTextFill && getShadow(shadowSize, shadowBlur, shadowColor)) {
-        p->save();
-        p->translate(shadowSize.width(), shadowSize.height());
-        p->setPen(QColor(shadowColor));
-        p->setBrush(QBrush(QColor(shadowColor)));
-        p->drawRect(rect);
-        p->restore();
+        IntRect shadowRect = rect;
+        shadowRect.move(shadowSize.width(), shadowSize.height());
+        shadowRect.inflate(p->pen().widthF());
+        p->fillRect(shadowRect, QColor(shadowColor));
     }
 
     p->drawRect(rect);
@@ -720,12 +718,10 @@ void GraphicsContext::fillRect(const FloatRect& rect, const Color& c)
     Color shadowColor;
     QPainter* p = m_data->p();
     if (textDrawingMode() == cTextFill && getShadow(shadowSize, shadowBlur, shadowColor)) {
-        p->save();
-        p->translate(shadowSize.width(), shadowSize.height());
-        p->setPen(QColor(shadowColor));
-        p->setBrush(QBrush(QColor(shadowColor)));
-        p->drawRect(rect);
-        p->restore();
+        FloatRect shadowRect = rect;
+        shadowRect.move(shadowSize.width(), shadowSize.height());
+        shadowRect.inflate(p->pen().widthF());
+        p->fillRect(shadowRect, QColor(shadowColor));
     }
     p->fillRect(rect, m_data->solidColor);
 }

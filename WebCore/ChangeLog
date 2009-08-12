@@ -1,5 +1,16 @@
 2009-08-12  Ariya Hidayat  <ariya.hidayat@nokia.com>
 
+        Reviewed by Holger Freyther.
+
+        [Qt] Fix box-shadow painting in r47103. The edge should not be blurry.
+        Also optimize by not having to save and restore painter state.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::drawRect):
+        (WebCore::GraphicsContext::fillRect):
+
+2009-08-12  Ariya Hidayat  <ariya.hidayat@nokia.com>
+
         Reviewed by Adam Treat.
 
         [Qt] Fix coding style in GraphicsContextQt.cpp

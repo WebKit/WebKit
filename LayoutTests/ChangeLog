@@ -1,5 +1,14 @@
 2009-08-12  Ariya Hidayat  <ariya.hidayat@nokia.com>
 
+        Reviewed by Holger Hans Peter Freyther.
+
+        [Qt] Update the pixel tests for shadow edge fix.
+
+        * platform/qt/fast/box-shadow/basic-shadows-expected.checksum:
+        * platform/qt/fast/box-shadow/basic-shadows-expected.png:
+
+2009-08-12  Ariya Hidayat  <ariya.hidayat@nokia.com>
+
         Reviewed by Simon Hausmann.
 
         [Qt] Pixel tests for (partial) -webkit-box-shadow support.
