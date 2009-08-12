@@ -53,13 +53,24 @@ GraphicsContext* ImageBuffer::context() const
     return 0;
 }
 
-PassRefPtr<ImageData> ImageBuffer::getImageData(const IntRect&) const
+PassRefPtr<ImageData> ImageBuffer::getUnmultipliedImageData(const IntRect& rect) const
 {
     notImplemented();
     return 0;
 }
 
-void ImageBuffer::putImageData(ImageData*, const IntRect&, const IntPoint&)
+PassRefPtr<ImageData> ImageBuffer::getPremultipliedImageData(const IntRect& rect) const
+{
+    notImplemented();
+    return 0;
+}
+
+void ImageBuffer::putUnmultipliedImageData(ImageData* source, const IntRect& sourceRect, const IntPoint& destPoint)
+{
+    notImplemented();
+}
+
+void ImageBuffer::putPremultipliedImageData(ImageData* source, const IntRect& sourceRect, const IntPoint& destPoint)
 {
     notImplemented();
 }

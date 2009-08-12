@@ -76,8 +76,8 @@ void SVGResourceMasker::applyMask(GraphicsContext* context, const FloatRect& bou
     if (!luminancedImage)
         return;
 
-    PassRefPtr<CanvasPixelArray> srcPixelArray(m_mask->getImageData(intImageRect)->data());
-    PassRefPtr<ImageData> destImageData(luminancedImage->getImageData(intImageRect));
+    PassRefPtr<CanvasPixelArray> srcPixelArray(m_mask->getUnmultipliedImageData(intImageRect)->data());
+    PassRefPtr<ImageData> destImageData(luminancedImage->getUnmultipliedImageData(intImageRect));
 
     for (unsigned pixelOffset = 0; pixelOffset < srcPixelArray->length(); pixelOffset++) {
         unsigned pixelByteOffset = pixelOffset * 4;
@@ -93,7 +93,7 @@ void SVGResourceMasker::applyMask(GraphicsContext* context, const FloatRect& bou
         destImageData->data()->set(pixelByteOffset + 3, luma);
     }
 
-    luminancedImage->putImageData(destImageData.get(), intImageRect, IntPoint(0, 0));
+    luminancedImage->putUnmultipliedImageData(destImageData.get(), intImageRect, IntPoint(0, 0));
 
     context->clipToImageBuffer(m_maskRect, luminancedImage.get());
 }

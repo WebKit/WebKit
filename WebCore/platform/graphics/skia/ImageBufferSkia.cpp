@@ -118,7 +118,9 @@ void ImageBuffer::platformTransformColorSpace(const Vector<int>& lookUpTable)
     }
 }
 
-PassRefPtr<ImageData> ImageBuffer::getImageData(const IntRect& rect) const
+template <Multiply multiplied>
+PassRefPtr<ImageData> getImageData(const IntRect& rect, const SkBitmap& bitmap, 
+                                   const IntSize& size)
 {
     ASSERT(context());
 
@@ -152,7 +154,6 @@ PassRefPtr<ImageData> ImageBuffer::getImageData(const IntRect& rect) const
         endY = m_size.height();
     int numRows = endY - originY;
 
-    const SkBitmap& bitmap = *context()->platformContext()->bitmap();
     ASSERT(bitmap.config() == SkBitmap::kARGB_8888_Config);
     SkAutoLockPixels bitmapLock(bitmap);
 
@@ -162,6 +163,7 @@ PassRefPtr<ImageData> ImageBuffer::getImageData(const IntRect& rect) const
     for (int y = 0; y < numRows; ++y) {
         uint32_t* srcRow = bitmap.getAddr32(originX, originY + y);
         for (int x = 0; x < numColumns; ++x) {
+            // TODO: Support for premultiplied colors
             SkColor color = SkPMColorToColor(srcRow[x]);
             unsigned char* destPixel = &destRow[x * 4];
             destPixel[0] = SkColorGetR(color);
@@ -175,8 +177,19 @@ PassRefPtr<ImageData> ImageBuffer::getImageData(const IntRect& rect) const
     return result;
 }
 
-void ImageBuffer::putImageData(ImageData* source, const IntRect& sourceRect,
-                               const IntPoint& destPoint)
+PassRefPtr<ImageData> ImageBuffer::getUnmultipliedImageData(const IntRect& rect) const
+{
+    return getImageData<Unmultiplied>(rect, *context()->platformContext()->bitmap(), m_size);
+}
+
+PassRefPtr<ImageData> ImageBuffer::getPremultipliedImageData(const IntRect& rect) const
+{
+    return getImageData<Premultiplied>(rect, *context()->platformContext()->bitmap(), m_size);
+}
+
+template <Multiply multiplied>
+void putImageData(ImageData*& source, const IntRect& sourceRect, const IntPoint& destPoint, 
+                  const SkBitmap& bitmap, const IntSize& size)
 {
     ASSERT(sourceRect.width() > 0);
     ASSERT(sourceRect.height() > 0);
@@ -204,7 +217,6 @@ void ImageBuffer::putImageData(ImageData* source, const IntRect& sourceRect,
     ASSERT(endY <= m_size.height());
     int numRows = endY - destY;
 
-    const SkBitmap& bitmap = *context()->platformContext()->bitmap();
     ASSERT(bitmap.config() == SkBitmap::kARGB_8888_Config);
     SkAutoLockPixels bitmapLock(bitmap);
 
@@ -215,12 +227,23 @@ void ImageBuffer::putImageData(ImageData* source, const IntRect& sourceRect,
     for (int y = 0; y < numRows; ++y) {
         uint32_t* destRow = bitmap.getAddr32(destX, destY + y);
         for (int x = 0; x < numColumns; ++x) {
+            // TODO: Support for premultiplied colors
             const unsigned char* srcPixel = &srcRow[x * 4];
             destRow[x] = SkPreMultiplyARGB(srcPixel[3], srcPixel[0],
                                            srcPixel[1], srcPixel[2]);
         }
         srcRow += srcBytesPerRow;
     }
+}
+
+void ImageBuffer::putUnmultipliedImageData(ImageData* source, const IntRect& sourceRect, const IntPoint& destPoint)
+{
+    putImageData<Unmultiplied>(source, sourceRect, destPoint, *context()->platformContext()->bitmap(), m_size);
+}
+
+void ImageBuffer::putPremultipliedImageData(ImageData* source, const IntRect& sourceRect, const IntPoint& destPoint)
+{
+    putImageData<Premultiplied>(source, sourceRect, destPoint, *context()->platformContext()->bitmap(), m_size);
 }
 
 String ImageBuffer::toDataURL(const String&) const

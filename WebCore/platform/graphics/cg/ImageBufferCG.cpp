@@ -124,12 +124,13 @@ Image* ImageBuffer::image() const
     return m_image.get();
 }
 
-PassRefPtr<ImageData> ImageBuffer::getImageData(const IntRect& rect) const
+template <Multiply multiplied>
+PassRefPtr<ImageData> getImageData(const IntRect& rect, const ImageBufferData& imageData, const IntSize& size)
 {
     PassRefPtr<ImageData> result = ImageData::create(rect.width(), rect.height());
     unsigned char* data = result->data()->data()->data();
 
-    if (rect.x() < 0 || rect.y() < 0 || (rect.x() + rect.width()) > m_size.width() || (rect.y() + rect.height()) > m_size.height())
+    if (rect.x() < 0 || rect.y() < 0 || (rect.x() + rect.width()) > size.width() || (rect.y() + rect.height()) > size.height())
         memset(data, 0, result->data()->length());
 
     int originx = rect.x();
@@ -139,8 +140,8 @@ PassRefPtr<ImageData> ImageBuffer::getImageData(const IntRect& rect) const
         originx = 0;
     }
     int endx = rect.x() + rect.width();
-    if (endx > m_size.width())
-        endx = m_size.width();
+    if (endx > size.width())
+        endx = size.width();
     int numColumns = endx - originx;
 
     int originy = rect.y();
@@ -150,20 +151,21 @@ PassRefPtr<ImageData> ImageBuffer::getImageData(const IntRect& rect) const
         originy = 0;
     }
     int endy = rect.y() + rect.height();
-    if (endy > m_size.height())
-        endy = m_size.height();
+    if (endy > size.height())
+        endy = size.height();
     int numRows = endy - originy;
 
-    unsigned srcBytesPerRow = 4 * m_size.width();
+    unsigned srcBytesPerRow = 4 * size.width();
     unsigned destBytesPerRow = 4 * rect.width();
 
     // ::create ensures that all ImageBuffers have valid data, so we don't need to check it here.
-    unsigned char* srcRows = reinterpret_cast<unsigned char*>(m_data.m_data) + originy * srcBytesPerRow + originx * 4;
+    unsigned char* srcRows = reinterpret_cast<unsigned char*>(imageData.m_data) + originy * srcBytesPerRow + originx * 4;
     unsigned char* destRows = data + desty * destBytesPerRow + destx * 4;
     for (int y = 0; y < numRows; ++y) {
         for (int x = 0; x < numColumns; x++) {
             int basex = x * 4;
-            if (unsigned char alpha = srcRows[basex + 3]) {
+            unsigned char alpha = srcRows[basex + 3];
+            if (multiplied == Unmultiplied && alpha) {
                 destRows[basex] = (srcRows[basex] * 255) / alpha;
                 destRows[basex + 1] = (srcRows[basex + 1] * 255) / alpha;
                 destRows[basex + 2] = (srcRows[basex + 2] * 255) / alpha;
@@ -177,7 +179,18 @@ PassRefPtr<ImageData> ImageBuffer::getImageData(const IntRect& rect) const
     return result;
 }
 
-void ImageBuffer::putImageData(ImageData* source, const IntRect& sourceRect, const IntPoint& destPoint)
+PassRefPtr<ImageData> ImageBuffer::getUnmultipliedImageData(const IntRect& rect) const
+{
+    return getImageData<Unmultiplied>(rect, m_data, m_size);
+}
+
+PassRefPtr<ImageData> ImageBuffer::getPremultipliedImageData(const IntRect& rect) const
+{
+    return getImageData<Premultiplied>(rect, m_data, m_size);
+}
+
+template <Multiply multiplied>
+void putImageData(ImageData*& source, const IntRect& sourceRect, const IntPoint& destPoint, ImageBufferData& imageData, const IntSize& size)
 {
     ASSERT(sourceRect.width() > 0);
     ASSERT(sourceRect.height() > 0);
@@ -185,36 +198,36 @@ void ImageBuffer::putImageData(ImageData* source, const IntRect& sourceRect, con
     int originx = sourceRect.x();
     int destx = destPoint.x() + sourceRect.x();
     ASSERT(destx >= 0);
-    ASSERT(destx < m_size.width());
+    ASSERT(destx < size.width());
     ASSERT(originx >= 0);
     ASSERT(originx <= sourceRect.right());
 
     int endx = destPoint.x() + sourceRect.right();
-    ASSERT(endx <= m_size.width());
+    ASSERT(endx <= size.width());
 
     int numColumns = endx - destx;
 
     int originy = sourceRect.y();
     int desty = destPoint.y() + sourceRect.y();
     ASSERT(desty >= 0);
-    ASSERT(desty < m_size.height());
+    ASSERT(desty < size.height());
     ASSERT(originy >= 0);
     ASSERT(originy <= sourceRect.bottom());
 
     int endy = destPoint.y() + sourceRect.bottom();
-    ASSERT(endy <= m_size.height());
+    ASSERT(endy <= size.height());
     int numRows = endy - desty;
 
     unsigned srcBytesPerRow = 4 * source->width();
-    unsigned destBytesPerRow = 4 * m_size.width();
+    unsigned destBytesPerRow = 4 * size.width();
 
     unsigned char* srcRows = source->data()->data()->data() + originy * srcBytesPerRow + originx * 4;
-    unsigned char* destRows = reinterpret_cast<unsigned char*>(m_data.m_data) + desty * destBytesPerRow + destx * 4;
+    unsigned char* destRows = reinterpret_cast<unsigned char*>(imageData.m_data) + desty * destBytesPerRow + destx * 4;
     for (int y = 0; y < numRows; ++y) {
         for (int x = 0; x < numColumns; x++) {
             int basex = x * 4;
             unsigned char alpha = srcRows[basex + 3];
-            if (alpha != 255) {
+            if (multiplied == Unmultiplied && alpha != 255) {
                 destRows[basex] = (srcRows[basex] * alpha + 254) / 255;
                 destRows[basex + 1] = (srcRows[basex + 1] * alpha + 254) / 255;
                 destRows[basex + 2] = (srcRows[basex + 2] * alpha + 254) / 255;
@@ -225,6 +238,16 @@ void ImageBuffer::putImageData(ImageData* source, const IntRect& sourceRect, con
         destRows += destBytesPerRow;
         srcRows += srcBytesPerRow;
     }
+}
+
+void ImageBuffer::putUnmultipliedImageData(ImageData* source, const IntRect& sourceRect, const IntPoint& destPoint)
+{
+    putImageData<Unmultiplied>(source, sourceRect, destPoint, m_data, m_size);
+}
+
+void ImageBuffer::putPremultipliedImageData(ImageData* source, const IntRect& sourceRect, const IntPoint& destPoint)
+{
+    putImageData<Premultiplied>(source, sourceRect, destPoint, m_data, m_size);
 }
 
 static RetainPtr<CFStringRef> utiFromMIMEType(const String& mimeType)
