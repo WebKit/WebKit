@@ -1,3 +1,17 @@
+2009-08-12  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        HTML 5 database and LocalStorage is not persistent on the Symbian port of QtWebKit
+        https://bugs.webkit.org/show_bug.cgi?id=28175
+
+        Call QDir::toNativeSeparators() before the path is passed to the OS.
+
+        Based on work by David Leong.
+        
+        * platform/qt/FileSystemQt.cpp:
+        (WebCore::pathByAppendingComponent):
+
 2009-08-12  Eric Carlson  <eric.carlson@apple.com>
 
         Tiger build fix.

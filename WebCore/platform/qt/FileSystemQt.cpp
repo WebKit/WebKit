@@ -81,7 +81,7 @@ bool makeAllDirectories(const String& path)
 
 String pathByAppendingComponent(const String& path, const String& component)
 {
-    return QDir(path).filePath(component);
+    return QDir::toNativeSeparators(QDir(path).filePath(component));
 }
 
 String homeDirectoryPath()
