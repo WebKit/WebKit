@@ -34,3 +34,6 @@ media/video-controls-transformed.html
 media/video-controls-visible-audio-only.html
 media/video-controls-zoomed.html
 media/video-display-toggle.html
+
+#<rdar://problem/7135553> - Intermittent crash
+plugins/root-object-premature-delete-crash.html
