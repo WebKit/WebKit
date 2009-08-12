@@ -1,3 +1,13 @@
+2009-08-12  Eric Seidel  <eric@webkit.org>
+
+        No review, just fixing line-endings.
+
+        Change from DOS to unix line endings on tests from
+        http://trac.webkit.org/changeset/47130
+
+        * fast/events/set-event-in-another-frame-expected.txt:
+        * fast/events/set-event-to-null-expected.txt:
+
 2009-08-12  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Adam Barth.
