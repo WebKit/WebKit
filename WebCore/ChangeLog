@@ -1,3 +1,14 @@
+2009-08-12  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Changed Number.bytesToString to support low-resolution output.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28146
+
+        * inspector/front-end/utilities.js:
+        (Number.bytesToString):
+
 2009-08-12  Prasanth Ullattil  <prasanth.ullattil@nokia.com>
 
         Reviewed by Simon Hausmann.

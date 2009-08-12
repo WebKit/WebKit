@@ -790,20 +790,27 @@ Number.secondsToString = function(seconds, formatterFunction, higherResolution)
     return formatterFunction("%.1f days", days);
 }
 
-Number.bytesToString = function(bytes, formatterFunction)
+Number.bytesToString = function(bytes, formatterFunction, higherResolution)
 {
     if (!formatterFunction)
         formatterFunction = String.sprintf;
+    if (typeof higherResolution === "undefined")
+        higherResolution = true;
 
     if (bytes < 1024)
         return formatterFunction("%.0fB", bytes);
 
     var kilobytes = bytes / 1024;
-    if (kilobytes < 1024)
+    if (higherResolution && kilobytes < 1024)
         return formatterFunction("%.2fKB", kilobytes);
+    else if (kilobytes < 1024)
+        return formatterFunction("%.0fKB", kilobytes);
 
     var megabytes = kilobytes / 1024;
-    return formatterFunction("%.3fMB", megabytes);
+    if (higherResolution)
+        return formatterFunction("%.3fMB", megabytes);
+    else
+        return formatterFunction("%.0fMB", megabytes);
 }
 
 Number.constrain = function(num, min, max)
