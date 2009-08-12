@@ -123,7 +123,7 @@ class SCM:
     def apply_patch(self, patch, force=False):
         # It's possible that the patch was not made from the root directory.
         # We should detect and handle that case.
-        curl_process = subprocess.Popen(['curl', patch['url']], stdout=subprocess.PIPE)
+        curl_process = subprocess.Popen(['curl', '--silent', '--show-error', patch['url']], stdout=subprocess.PIPE)
         args = [self.script_path('svn-apply'), '--reviewer', patch['reviewer']]
         if force:
             args.append('--force')

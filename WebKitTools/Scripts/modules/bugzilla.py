@@ -95,7 +95,7 @@ def is_mac_os_x():
 # FIXME: This should not depend on git for config storage
 def read_config(key):
     # Need a way to read from svn too
-    config_process = subprocess.Popen("git config --get bugzilla." + key, stdout=subprocess.PIPE, shell=True)
+    config_process = subprocess.Popen("git config --get bugzilla.%s" % key, stdout=subprocess.PIPE, shell=True)
     value = config_process.communicate()[0]
     return_code = config_process.wait()
 
@@ -141,7 +141,7 @@ class Bugzilla:
     def attachment_url_for_id(self, attachment_id, action="view"):
         action_param = ""
         if action and action != "view":
-            action_param = "&action=" + action
+            action_param = "&action=%s" % action
         return "%sattachment.cgi?id=%s%s" % (self.bug_server_url, attachment_id, action_param)
 
     def _parse_attachment_element(self, element, bug_id):
@@ -170,7 +170,7 @@ class Bugzilla:
 
     def fetch_attachments_from_bug(self, bug_id):
         bug_url = self.bug_url_for_bug_id(bug_id, xml=True)
-        log("Fetching: " + bug_url)
+        log("Fetching: %s" % bug_url)
 
         page = urllib2.urlopen(bug_url)
         soup = BeautifulSoup(page)
@@ -257,7 +257,7 @@ class Bugzilla:
             log(comment_text)
             return
         
-        self.browser.open(self.bug_server_url + "attachment.cgi?action=enter&bugid=" + bug_id)
+        self.browser.open("%sattachment.cgi?action=enter&bugid=%s" % (self.bug_server_url, bug_id))
         self.browser.select_form(name="entryform")
         self.browser['description'] = description
         self.browser['ispatch'] = ("1",)
@@ -317,15 +317,23 @@ class Bugzilla:
 
         bug_id = self._check_create_bug_response(response.read())
         log("Bug %s created." % bug_id)
-        log(self.bug_server_url + "show_bug.cgi?id=" + bug_id)
+        log("%sshow_bug.cgi?id=%s" % (self.bug_server_url, bug_id))
         return bug_id
 
-    def clear_attachment_review_flag(self, attachment_id, additional_comment_text=None):
+    def _find_select_element_for_flag(self, flag_name):
+        # FIXME: This will break if we ever re-order attachment flags
+        if flag_name == "review":
+            return self.browser.find_control(type='select', nr=0)
+        if flag_name == "commit-queue":
+            return self.browser.find_control(type='select', nr=1)
+        raise Exception("Don't know how to find flag named \"%s\"" % flag_name)
+
+    def clear_attachment_flags(self, attachment_id, additional_comment_text=None):
         self.authenticate()
 
-        comment_text = "Clearing review flag on attachment: %s" % attachment_id
+        comment_text = "Clearing flags on attachment: %s" % attachment_id
         if additional_comment_text:
-            comment_text += "\n\n" + additional_comment_text
+            comment_text += "\n\n%s" % additional_comment_text
         log(comment_text)
 
         if self.dryrun:
@@ -334,7 +342,26 @@ class Bugzilla:
         self.browser.open(self.attachment_url_for_id(attachment_id, 'edit'))
         self.browser.select_form(nr=1)
         self.browser.set_value(comment_text, name='comment', nr=0)
-        self.browser.find_control(type='select', nr=0).value = ("X",)
+        self._find_select_element_for_flag('review').value = ("X",)
+        self._find_select_element_for_flag('commit-queue').value = ("X",)
+        self.browser.submit()
+
+    # FIXME: We need a way to test this on a live bugzilla instance.
+    def reject_patch_from_commit_queue(self, attachment_id, additional_comment_text=None):
+        self.authenticate()
+
+        comment_text = "Rejecting patch %s from commit-queue.  This patch will require manual commit." % attachment_id
+        if additional_comment_text:
+            comment_text += "\n\n%s" % additional_comment_text
+        log(comment_text)
+
+        if self.dryrun:
+            return
+
+        self.browser.open(self.attachment_url_for_id(attachment_id, 'edit'))
+        self.browser.select_form(nr=1)
+        self.browser.set_value(comment_text, name='comment', nr=0)
+        self._find_select_element_for_flag('commit-queue').value = ("-",)
         self.browser.submit()
 
     def obsolete_attachment(self, attachment_id, comment_text = None):
@@ -349,7 +376,8 @@ class Bugzilla:
         self.browser.select_form(nr=1)
         self.browser.find_control('isobsolete').items[0].selected = True
         # Also clear any review flag (to remove it from review/commit queues)
-        self.browser.find_control(type='select', nr=0).value = ("X",)
+        self._find_select_element_for_flag('review').value = ("X",)
+        self._find_select_element_for_flag('commit-queue').value = ("X",)
         if comment_text:
             log(comment_text)
             # Bugzilla has two textareas named 'comment', one is somehow hidden.  We want the first.

@@ -242,11 +242,15 @@ class WebKitLandingScripts:
 
      @staticmethod
      def run_and_throw_if_fail(args, quiet=False):
-         child_stdout = subprocess.PIPE if quiet else None
-         child_process = subprocess.Popen(args, stdout=child_stdout)
-         if child_process.stdout:
-             child_process.communicate()
+         # Passing None will use the default input/outputs
+         child_output = open(os.devnull, "w") if quiet else None
+
+         child_process = subprocess.Popen(args, stdout=child_output, stderr=child_output)
          return_code = child_process.wait()
+
+         if child_output:
+             child_output.close()
+
          if return_code:
              raise ScriptError("%s failed with exit code %d" % (" ".join(args), return_code))
 
@@ -257,7 +261,7 @@ class WebKitLandingScripts:
 
      @classmethod
      def run_webkit_script(cls, script_name, quiet=False):
-         print "Running WebKit Script " + script_name
+         log("Running %s" % script_name)
          cls.run_and_throw_if_fail(cls.webkit_script_path(script_name), quiet)
 
      @classmethod
@@ -356,13 +360,15 @@ class LandPatchesFromBugs(Command):
             comment_text = ""
             for patch in patches:
                 tool.scm().update_webkit() # Update before every patch in case the tree has changed
+                log("Applying %s from bug %s." % (patch['id'], bug_id))
                 tool.scm().apply_patch(patch, force=options.commit_queue)
                 comment_text = WebKitLandingScripts.build_and_commit(tool.scm(), options)
-                tool.bugs.clear_attachment_review_flag(patch['id'], comment_text)
+                tool.bugs.clear_attachment_flags(patch['id'], comment_text)
 
             if options.close_bug:
                 tool.bugs.close_bug_as_fixed(bug_id, "All reviewed patches have been landed.  Closing bug.")
         except ScriptError, e:
+            tool.bugs.reject_patch_from_commit_queue(patch['id'], e)
             # We should add a comment to the bug, and r- the patch on failure
             error(e)
 
@@ -378,11 +384,13 @@ class LandPatchesFromBugs(Command):
                 patches = tool.bugs.fetch_commit_queue_patches_from_bug(bug_id)
             else:
                 patches = tool.bugs.fetch_reviewed_patches_from_bug(bug_id)
-            if not len(patches):
-                log("No reviewed patches found on %s." % bug_id)
-                continue
-            patch_count += len(patches)
-            bugs_to_patches[bug_id] = patches
+
+            patches_found = len(patches)
+            log("%s found on %s." % (pluralize("reviewed patch", patches_found), bug_id))
+
+            patch_count += patches_found
+            if patches_found:
+                bugs_to_patches[bug_id] = patches
 
         log("Landing %s from %s." % (pluralize("patch", patch_count), pluralize("bug", len(args))))
 
@@ -544,7 +552,7 @@ class CreateBug(Command):
 
     def prompt_for_bug_title_and_comment(self):
         bug_title = raw_input("Bug title: ")
-        print("Bug comment (hit ^D on blank line to end):")
+        print "Bug comment (hit ^D on blank line to end):"
         lines = sys.stdin.readlines()
         sys.stdin.seek(0, os.SEEK_END)
         comment_text = ''.join(lines)

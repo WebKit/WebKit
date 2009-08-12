@@ -1,5 +1,26 @@
 2009-08-11  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Adam Barth.
+
+        bugzilla-tool : various improvements for running the commit-queue
+        https://bugs.webkit.org/show_bug.cgi?id=28199
+
+        Make run_and_throw_if_fail silence STDERR as well as STDIN.
+        I also changed run_and_throw_if_fail to use the /dev/null trick instead of .communicate() to avoid ever buffering the out
+        Change a few "print" statements to "log" so they appear in the output.
+        Changed all string + uses to use string formatting instead (this is less error prone as it will automatically convert non
+        Added a little more logging so that --quiet mode is easier to understand.
+        Changed clear_attachment_review_flag to clear_attachment_flags and made it clear the commit-queue flag as well.
+        Added the ability for bugzilla-tool to reject patches from the commit-queue when they fail to compile/apply/etc.
+        Added _find_select_element_for_flag to make the code for finding flag <select> elements clearer.
+        Made curl call (downloading patch files) quieter.
+
+        * Scripts/bugzilla-tool:
+        * Scripts/modules/bugzilla.py:
+        * Scripts/modules/scm.py:
+
+2009-08-11  Eric Seidel  <eric@webkit.org>
+
         No review, script regression fix only.
 
         run-webkit-tests --quiet hangs
