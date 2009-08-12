@@ -1,3 +1,11 @@
+2009-08-12  Brady Eidson  <beidson@apple.com>
+
+        (no review) Disabling a failing test.
+
+        <rdar://problem/7136851> platform/mac/accessibility/string-range-contains-listmarker.html fails.
+
+        * platform/mac-snowleopard/Skipped:
+
 2009-08-12  Ariya Hidayat  <ariya.hidayat@nokia.com>
 
         Reviewed by Holger Hans Peter Freyther.
