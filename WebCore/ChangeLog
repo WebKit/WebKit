@@ -2,6 +2,29 @@
 
         Reviewed by Eric Seidel.
 
+        [Haiku] Adding the ScrollbarTheme files.
+        https://bugs.webkit.org/show_bug.cgi?id=28125
+
+        * platform/haiku/ScrollbarThemeHaiku.cpp: Added.
+        (buttonWidth):
+        (WebCore::ScrollbarTheme::nativeTheme):
+        (WebCore::ScrollbarThemeHaiku::ScrollbarThemeHaiku):
+        (WebCore::ScrollbarThemeHaiku::~ScrollbarThemeHaiku):
+        (WebCore::ScrollbarThemeHaiku::scrollbarThickness):
+        (WebCore::ScrollbarThemeHaiku::hasButtons):
+        (WebCore::ScrollbarThemeHaiku::hasThumb):
+        (WebCore::ScrollbarThemeHaiku::backButtonRect):
+        (WebCore::ScrollbarThemeHaiku::forwardButtonRect):
+        (WebCore::ScrollbarThemeHaiku::trackRect):
+        (WebCore::ScrollbarThemeHaiku::paintScrollbarBackground):
+        (WebCore::ScrollbarThemeHaiku::paintButton):
+        (WebCore::ScrollbarThemeHaiku::paintThumb):
+        * platform/haiku/ScrollbarThemeHaiku.h: Added.
+
+2009-08-12  Maxime Simon  <simon.maxime@gmail.com>
+
+        Reviewed by Eric Seidel.
+
         [Haiku] Adding eight simple files to WebCore/platform/graphics/haiku.
         https://bugs.webkit.org/show_bug.cgi?id=28122
 
