@@ -1,3 +1,21 @@
+2009-08-12  Prasanth Ullattil  <prasanth.ullattil@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Add support for hooking BeginPaint/EndPaint on 64Bit Windows
+
+        Webkit uses the runtime patching trick explained by "Feng Yuan" for
+        hooking these paint functions. It currently supports only 32bit assembly
+        code. This patch adds support for 64Bit version. Since inline-assemblies
+        are not supported for 64Bit, we have use a seperate .asm file.
+
+        * WebCore.pro:
+        * plugins/win/PaintHooks.asm: Added.
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::hookedBeginPaint):
+        (WebCore::PluginView::hookedEndPaint):
+        (WebCore::hook):
+
 2009-08-11  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

@@ -115,6 +115,14 @@ static BYTE* beginPaint;
 static unsigned endPaintSysCall;
 static BYTE* endPaint;
 
+typedef HDC (WINAPI *PtrBeginPaint)(HWND, PAINTSTRUCT*);
+typedef BOOL (WINAPI *PtrEndPaint)(HWND, const PAINTSTRUCT*);
+
+#if PLATFORM(WIN_OS) && PLATFORM(X86_64) && COMPILER(MSVC)
+extern "C" HDC __stdcall _HBeginPaint(HWND hWnd, LPPAINTSTRUCT lpPaint);
+extern "C" BOOL __stdcall _HEndPaint(HWND hWnd, const PAINTSTRUCT* lpPaint);
+#endif
+
 HDC WINAPI PluginView::hookedBeginPaint(HWND hWnd, PAINTSTRUCT* lpPaint)
 {
     PluginView* pluginView = reinterpret_cast<PluginView*>(GetProp(hWnd, kWebPluginViewProperty));
@@ -137,12 +145,14 @@ HDC WINAPI PluginView::hookedBeginPaint(HWND hWnd, PAINTSTRUCT* lpPaint)
          : "memory"
         );
     return result;
-#else
+#elif defined(_M_IX86)
     // Call through to the original BeginPaint.
     __asm   mov     eax, beginPaintSysCall
     __asm   push    lpPaint
     __asm   push    hWnd
     __asm   call    beginPaint
+#else
+    return _HBeginPaint(hWnd, lpPaint);
 #endif
 }
 
@@ -164,12 +174,14 @@ BOOL WINAPI PluginView::hookedEndPaint(HWND hWnd, const PAINTSTRUCT* lpPaint)
          : "a" (endPaintSysCall), "g" (lpPaint), "g" (hWnd), "m" (*endPaint)
         );
     return result;
-#else
+#elif defined (_M_IX86)
     // Call through to the original EndPaint.
     __asm   mov     eax, endPaintSysCall
     __asm   push    lpPaint
     __asm   push    hWnd
     __asm   call    endPaint
+#else
+    return _HEndPaint(hWnd, lpPaint);
 #endif
 }
 
@@ -182,6 +194,7 @@ static void hook(const char* module, const char* proc, unsigned& sysCallID, BYTE
 
     pProc = reinterpret_cast<BYTE*>(reinterpret_cast<ptrdiff_t>(GetProcAddress(hMod, proc)));
 
+#if COMPILER(GCC) || defined(_M_IX86)
     if (pProc[0] != 0xB8)
         return;
 
@@ -197,6 +210,35 @@ static void hook(const char* module, const char* proc, unsigned& sysCallID, BYTE
     *reinterpret_cast<unsigned*>(pProc + 1) = reinterpret_cast<intptr_t>(pNewProc) - reinterpret_cast<intptr_t>(pProc + 5);
 
     pProc += 5;
+#else
+    /* Disassembly of BeginPaint()
+    00000000779FC5B0 4C 8B D1         mov         r10,rcx
+    00000000779FC5B3 B8 17 10 00 00   mov         eax,1017h
+    00000000779FC5B8 0F 05            syscall
+    00000000779FC5BA C3               ret
+    00000000779FC5BB 90               nop
+    00000000779FC5BC 90               nop
+    00000000779FC5BD 90               nop
+    00000000779FC5BE 90               nop
+    00000000779FC5BF 90               nop
+    00000000779FC5C0 90               nop
+    00000000779FC5C1 90               nop
+    00000000779FC5C2 90               nop
+    00000000779FC5C3 90               nop
+    */
+    // Check for the signature as in the above disassembly
+    DWORD guard = 0xB8D18B4C;
+    if (*reinterpret_cast<DWORD*>(pProc) != guard)
+        return;
+
+    DWORD flOldProtect;
+    VirtualProtect(pProc, 12, PAGE_EXECUTE_READWRITE, & flOldProtect);
+    pProc[0] = 0x48;    // mov rax, this
+    pProc[1] = 0xb8;
+    *(__int64*)(pProc+2) = (__int64)pNewProc;
+    pProc[10] = 0xff;   // jmp rax
+    pProc[11] = 0xe0;
+#endif
 }
 
 static void setUpOffscreenPaintingHooks(HDC (WINAPI*hookedBeginPaint)(HWND, PAINTSTRUCT*), BOOL (WINAPI*hookedEndPaint)(HWND, const PAINTSTRUCT*))
