@@ -48,8 +48,8 @@ interface IWebView;
 ]
 interface IWebUIDelegatePrivate : IUnknown
 {
-    HRESULT webViewResizerRect([in] IWebView* sender, [out, retval] RECT* rect);
-    HRESULT webViewDrawResizer([in] IWebView* sender, [in] HDC dc, [in] BOOL overlapsContent, [in] RECT* rect);
+    HRESULT unused1();
+    HRESULT unused2();
     HRESULT webViewScrolled([in] IWebView* sender);
     HRESULT webViewAddMessageToConsole([in] IWebView* sender, [in] BSTR message, [in] int lineNumber, [in] BSTR url, [in] BOOL isError);
     HRESULT webViewShouldInterruptJavaScript([in] IWebView* sender, [out, retval] BOOL* result);
@@ -60,7 +60,7 @@ interface IWebUIDelegatePrivate : IUnknown
     HRESULT webViewPainted([in] IWebView* sender);
     HRESULT exceededDatabaseQuota([in] IWebView* sender, [in] IWebFrame* frame, [in] IWebSecurityOrigin* origin, [in] BSTR databaseIdentifier);
     HRESULT embeddedViewWithArguments([in] IWebView* sender, [in] IWebFrame* frame, [in] IPropertyBag* arguments, [out, retval] IWebEmbeddedView** view);
-    HRESULT webViewSendResizeMessage([in] UINT uMsg, [in] WPARAM wParam, [in] LPARAM lParam);
+    HRESULT unused3();
     HRESULT webViewClosing([in] IWebView* sender);
     HRESULT webViewSetCursor([in] IWebView* sender, [in] OLE_HANDLE cursor);
     HRESULT webViewDidInvalidate([in] IWebView* sender);

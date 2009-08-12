@@ -1,3 +1,31 @@
+2009-08-11  Adam Roben  <aroben@apple.com>
+
+        Remove support for a window resizer within the WebView
+
+        Starting with Safari 4, there is never a window resizer inside the
+        WebView, so we no longer need to support that functionality.
+
+        Fixes <http://webkit.org/b/28190> Remove support for a window resizer
+        within the WebView
+
+        Reviewed by Dave Hyatt.
+
+        * Interfaces/IWebUIDelegatePrivate.idl: Replaced the delegate
+        functions related to the window resizer with unused*() functions. We
+        can't remove them entirely because we need to keep the vtable
+        unchanged so new versions of WebKit will work with old versions of
+        Safari (e.g., for nightlies and WebKit development).
+
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::windowResizerRect): Now always returns an empty
+        rect.
+
+        * WebView.cpp:
+        (WebView::paint):
+        (WebView::handleMouseEvent):
+        * WebView.h:
+        Removed window-resizer-related code.
+
 2009-08-12  Eric Carlson  <eric.carlson@apple.com>
 
         Windows build fix.

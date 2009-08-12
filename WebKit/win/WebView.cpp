@@ -930,19 +930,6 @@ void WebView::paint(HDC dc, LPARAM options)
 
     ::DeleteDC(bitmapDC);
 
-    // Paint the gripper.
-    COMPtr<IWebUIDelegate> ui;
-    if (SUCCEEDED(uiDelegate(&ui))) {
-        COMPtr<IWebUIDelegatePrivate> uiPrivate;
-        if (SUCCEEDED(ui->QueryInterface(IID_IWebUIDelegatePrivate, (void**)&uiPrivate))) {
-            RECT r;
-            if (SUCCEEDED(uiPrivate->webViewResizerRect(this, &r))) {
-                LOCAL_GDI_COUNTER(2, __FUNCTION__" webViewDrawResizer delegate call");
-                uiPrivate->webViewDrawResizer(this, hdc, (frameView->containsScrollbarsAvoidingResizer() ? true : false), &r);
-            }
-        }
-    }
-
     if (!dc)
         EndPaint(m_viewWindow, &ps);
 
@@ -1269,12 +1256,6 @@ bool WebView::handleMouseEvent(UINT message, WPARAM wParam, LPARAM lParam)
     bool insideThreshold = abs(globalPrevPoint.x() - mouseEvent.pos().x()) < ::GetSystemMetrics(SM_CXDOUBLECLK) &&
                            abs(globalPrevPoint.y() - mouseEvent.pos().y()) < ::GetSystemMetrics(SM_CYDOUBLECLK);
     LONG messageTime = ::GetMessageTime();
-
-    if (inResizer(position)) {
-        if (m_uiDelegatePrivate)
-            m_uiDelegatePrivate->webViewSendResizeMessage(message, wParam, position);
-        return true;
-    }
 
     bool handled = false;
 
@@ -1738,21 +1719,6 @@ bool WebView::keyPress(WPARAM charCode, LPARAM keyData, bool systemKeyDown)
     if (systemKeyDown)
         return frame->eventHandler()->handleAccessKey(keyEvent);
     return frame->eventHandler()->keyEvent(keyEvent);
-}
-
-bool WebView::inResizer(LPARAM lParam)
-{
-    if (!m_uiDelegatePrivate)
-        return false;
-
-    RECT r;
-    if (FAILED(m_uiDelegatePrivate->webViewResizerRect(this, &r)))
-        return false;
-
-    POINT pt;
-    pt.x = LOWORD(lParam);
-    pt.y = HIWORD(lParam);
-    return !!PtInRect(&r, pt);
 }
 
 static bool registerWebViewWindowClass()
