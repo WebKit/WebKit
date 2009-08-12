@@ -89,15 +89,9 @@ public:
     void update();
     virtual void updateStyle();
 
-    MediaControlElementType displayType() const { return m_displayType; }
-
-    HTMLMediaElement* mediaElement() const { return m_mediaElement; }
-    virtual bool isMediaControlElement() const { return true; }
-
 protected:
     HTMLMediaElement* m_mediaElement;   
     PseudoId m_pseudoStyleId;
-    MediaControlElementType m_displayType;  // some elements can show multiple types (e.g. play/pause)
 };
 
 // ----------------------------
@@ -124,7 +118,7 @@ private:
 
 class MediaControlInputElement : public HTMLInputElement {
 public:
-    MediaControlInputElement(Document*, PseudoId, const String& type, HTMLMediaElement*);
+    MediaControlInputElement(Document*, PseudoId, const String& type, HTMLMediaElement*, MediaControlElementType);
     virtual void attach();
     virtual bool rendererIsNeeded(RenderStyle*);
 
@@ -136,16 +130,13 @@ public:
     bool hitTest(const IntPoint& absPoint);
     MediaControlElementType displayType() const { return m_displayType; }
 
-    HTMLMediaElement* mediaElement() const { return m_mediaElement; }
-    virtual bool isMediaControlElement() const { return true; }
-
 protected:
     virtual void updateDisplayType() { }
     void setDisplayType(MediaControlElementType);
 
     HTMLMediaElement* m_mediaElement;   
     PseudoId m_pseudoStyleId;
-    MediaControlElementType m_displayType;
+    MediaControlElementType m_displayType;  // some elements can show multiple types (e.g. play/pause)
 };
 
 // ----------------------------
@@ -226,13 +217,7 @@ public:
     void setVisible(bool);
     virtual PassRefPtr<RenderStyle> styleForElement();
 
-    void setCurrentValue(float);
-    float currentValue() const { return m_currentValue; }
-
 private:
-    String formatTime(float time);
-
-    float m_currentValue;
     bool m_isVisible;
 };
 

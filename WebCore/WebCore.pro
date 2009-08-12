@@ -607,7 +607,6 @@ IDL_BINDINGS += \
 
 SOURCES += \
     accessibility/AccessibilityImageMapLink.cpp \
-    accessibility/AccessibilityMediaControls.cpp \    
     accessibility/AccessibilityObject.cpp \    
     accessibility/AccessibilityList.cpp \    
     accessibility/AccessibilityListBox.cpp \    
@@ -1295,7 +1294,6 @@ HEADERS += \
     accessibility/AccessibilityListBox.h \
     accessibility/AccessibilityListBoxOption.h \
     accessibility/AccessibilityList.h \
-    accessibility/AccessibilityMediaControls.h \
     accessibility/AccessibilityObject.h \
     accessibility/AccessibilityRenderObject.h \
     accessibility/AccessibilitySlider.h \

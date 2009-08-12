@@ -369,8 +369,6 @@
             'accessibility/AccessibilityListBox.h',
             'accessibility/AccessibilityListBoxOption.cpp',
             'accessibility/AccessibilityListBoxOption.h',
-            'accessibility/AccessibilityMediaControls.cpp',
-            'accessibility/AccessibilityMediaControls.h',
             'accessibility/AccessibilityObject.cpp',
             'accessibility/AccessibilityObject.h',
             'accessibility/AccessibilityRenderObject.cpp',

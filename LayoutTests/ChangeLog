@@ -33,34 +33,6 @@
         * platform/mac-snowleopard/Skipped:
         * platform/mac/accessibility/string-range-contains-listmarker.html:
 
-2009-08-12  Eric Carlson  <eric.carlson@apple.com>
-
-        Reviewed by Oliver Hunt.
-
-        <video> and <audio> controller should be accessible
-        https://bugs.webkit.org/show_bug.cgi?id=28081
-
-        * accessibility/media-element.html: Added.
-        * platform/mac-leopard/accessibility/media-element-expected.txt:
-        * platform/mac-leopard/media/controls-strict-expected.txt: 
-        * platform/mac/accessibility/media-element-expected.txt:
-            Added.
-
-        * platform/mac-leopard/media/controls-after-reload-expected.txt:
-        * platform/mac-leopard/media/controls-styling-expected.txt:
-        * platform/mac-leopard/media/video-empty-source-expected.txt:
-        * platform/mac-leopard/media/video-zoom-controls-expected.txt:
-        * media/video-controls-visible-audio-only.html:
-        * platform/mac-leopard/media/audio-controls-rendering-expected.txt:
-        * platform/mac/media/audio-controls-rendering-expected.txt:
-        * platform/mac/media/controls-after-reload-expected.txt:
-        * platform/mac/media/controls-styling-expected.txt:
-        * platform/mac/media/video-controls-rendering-expected.txt:
-        * platform/mac/media/video-display-toggle-expected.txt:
-        * platform/mac/media/video-empty-source-expected.txt:
-        * platform/mac/media/video-zoom-controls-expected.txt:
-            Update for controller element tab order change.
-
 2009-08-12  Brady Eidson  <beidson@apple.com>
 
         (no review) Disabling a failing test.

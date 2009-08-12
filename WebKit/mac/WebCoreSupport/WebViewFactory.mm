@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2009 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -606,105 +606,6 @@
 - (NSString*)mediaElementLiveBroadcastStateText
 {
     return UI_STRING("Live Broadcast", "Media controller status message when watching a live broadcast");
-}
-
-- (NSString*)localizedMediaControlElementString:(NSString*)name
-{
-    if ([name isEqualToString:@"AudioElement"])
-        return UI_STRING("audio element controller", "accessibility role description for audio element controller");
-    if ([name isEqualToString:@"VideoElement"])
-        return UI_STRING("video element controller", "accessibility role description for video element controller");
-
-    if ([name isEqualToString:@"MuteButton"])
-        return UI_STRING("mute", "accessibility role description for mute button");
-    if ([name isEqualToString:@"UnMuteButton"])
-        return UI_STRING("unmute", "accessibility role description for turn mute off button");
-    if ([name isEqualToString:@"PlayButton"])
-        return UI_STRING("play", "accessibility role description for play button");
-    if ([name isEqualToString:@"PauseButton"])
-        return UI_STRING("pause", "accessibility role description for pause button");
-    if ([name isEqualToString:@"Slider"])
-        return UI_STRING("movie time", "accessibility role description for timeline slider");
-    if ([name isEqualToString:@"SliderThumb"])
-        return UI_STRING("timeline slider thumb", "accessibility role description for timeline thumb");
-    if ([name isEqualToString:@"RewindButton"])
-        return UI_STRING("back 30 seconds", "accessibility role description for seek back 30 seconds button");
-    if ([name isEqualToString:@"ReturnToRealtimeButton"])
-        return UI_STRING("return to realtime", "accessibility role description for return to real time button");
-    if ([name isEqualToString:@"CurrentTimeDisplay"])
-        return UI_STRING("elapsed time", "accessibility role description for elapsed time display");
-    if ([name isEqualToString:@"TimeRemainingDisplay"])
-        return UI_STRING("remaining time", "accessibility role description for time remaining display");
-    if ([name isEqualToString:@"StatusDisplay"])
-        return UI_STRING("status", "accessibility role description for movie status");
-    if ([name isEqualToString:@"FullscreenButton"])
-        return UI_STRING("fullscreen", "accessibility role description for enter fullscreen button");
-    if ([name isEqualToString:@"SeekForwardButton"])
-        return UI_STRING("fast forward", "accessibility role description for fast forward button");
-    if ([name isEqualToString:@"SeekBackButton"])
-        return UI_STRING("fast reverse", "accessibility role description for fast reverse button");
-    ASSERT_NOT_REACHED();
-    return @"";
-}
-
-- (NSString*)localizedMediaControlElementHelpText:(NSString*)name
-{
-    if ([name isEqualToString:@"AudioElement"])
-        return UI_STRING("audio element playback controls and status display", "accessibility role description for audio element controller");
-    if ([name isEqualToString:@"VideoElement"])
-        return UI_STRING("video element playback controls and status display", "accessibility role description for video element controller");
-
-    if ([name isEqualToString:@"MuteButton"])
-        return UI_STRING("mute audio tracks", "accessibility help text for mute button");
-    if ([name isEqualToString:@"UnMuteButton"])
-        return UI_STRING("unmute audio tracks", "accessibility help text for un mute button");
-    if ([name isEqualToString:@"PlayButton"])
-        return UI_STRING("begin playback", "accessibility help text for play button");
-    if ([name isEqualToString:@"PauseButton"])
-        return UI_STRING("pause playback", "accessibility help text for pause button");
-    if ([name isEqualToString:@"Slider"])
-        return UI_STRING("movie time scrubber", "accessibility help text for timeline slider");
-    if ([name isEqualToString:@"SliderThumb"])
-        return UI_STRING("movie time scrubber thumb", "accessibility help text for timeline slider thumb");
-    if ([name isEqualToString:@"RewindButton"])
-        return UI_STRING("seek movie back 30 seconds", "accessibility help text for jump back 30 seconds button");
-    if ([name isEqualToString:@"ReturnToRealtimeButton"])
-        return UI_STRING("return streaming movie to real time", "accessibility help text for return streaming movie to real time button");
-    if ([name isEqualToString:@"CurrentTimeDisplay"])
-        return UI_STRING("current movie time in seconds", "accessibility help text for elapsed time display");
-    if ([name isEqualToString:@"TimeRemainingDisplay"])
-        return UI_STRING("number of seconds of movie remaining", "accessibility help text for remaining time display");
-    if ([name isEqualToString:@"StatusDisplay"])
-        return UI_STRING("current movie status", "accessibility help text for movie status display");
-    if ([name isEqualToString:@"SeekBackButton"])
-        return UI_STRING("seek quickly back", "accessibility help text for fast rewind button");
-    if ([name isEqualToString:@"SeekForwardButton"])
-        return UI_STRING("seek quickly forward", "accessibility help text for fast forward button");
-    if ([name isEqualToString:@"FullscreenButton"])
-        return UI_STRING("Play movie in fullscreen mode", "accessibility help text for enter fullscreen button");
-    ASSERT_NOT_REACHED();
-    return @"";
-}
-
-- (NSString*)localizedMediaTimeDescription:(float)time
-{
-    if (!isfinite(time))
-        return UI_STRING("indefinite time", "string for an indefinite movie time");
-
-    int seconds = (int)fabsf(time); 
-    int days = seconds / (60 * 60 * 24);
-    int hours = seconds / (60 * 60);
-    int minutes = (seconds / 60) % 60;
-    seconds %= 60;
-
-    if (days)
-        return [NSString stringWithFormat:UI_STRING("date.format.for.days", "string for days, hours, minutes & seconds"), days, hours, minutes, seconds];
-    else if (hours)
-        return [NSString stringWithFormat:UI_STRING("date.format.for.hours", "string for hours, minutes & seconds"), hours, minutes, seconds];
-    else if (minutes)
-        return [NSString stringWithFormat:UI_STRING("date.format.for.minutes", "string for minutes & seconds"), minutes, seconds];
-
-    return [NSString stringWithFormat:UI_STRING("date.format.for.seconds", "string for seconds"), seconds];
 }
 
 @end

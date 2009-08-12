@@ -288,8 +288,6 @@ webcore_sources += \
 	WebCore/accessibility/AccessibilityListBox.h \
 	WebCore/accessibility/AccessibilityListBoxOption.cpp \
 	WebCore/accessibility/AccessibilityListBoxOption.h \
-	WebCore/accessibility/AccessibilityMediaControls.cpp \
-	WebCore/accessibility/AccessibilityMediaControls.h \
 	WebCore/accessibility/AccessibilityObject.cpp \
 	WebCore/accessibility/AccessibilityObject.h \
 	WebCore/accessibility/AccessibilityRenderObject.cpp \
