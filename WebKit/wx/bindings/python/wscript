@@ -61,7 +61,11 @@ def configure(conf):
     
 def build(bld):
     if Options.options.wxpython:
-        wx_swig_args = ['-DSWIG_TYPE_TABLE=_wxPython_table', '-DWXP_USE_THREAD=1', '-DSWIG_PYTHON_OUTPUT_TUPLE']
+        defines = ['SWIG_TYPE_TABLE=_wxPython_table', 'WXP_USE_THREAD=1', 'SWIG_PYTHON_OUTPUT_TUPLE']
+        wx_swig_args = []
+        for define in defines:
+            wx_swig_args.append('-D%s' % define)
+
         try:
             import wx.build.config
             wx_swig_args += wx.build.config.swig_args
@@ -81,6 +85,7 @@ def build(bld):
             includes = ' '.join(include_paths),
             source = 'webview.i',
             swig_flags = ' '.join(wx_swig_args),
+            defines = defines,
             target = '_webview',
             uselib = 'WX CURL ICU XSLT XML SQLITE3 WXWEBKIT ' + waf_configname,
             

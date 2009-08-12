@@ -1,3 +1,9 @@
+2009-08-12  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wxPython build fix, the SWIG defines must also be available when compiling.
+
+        * bindings/python/wscript:
+
 2009-08-05  Kevin Ollivier  <kevino@theolliviers.com>
 
         Reviewed by Eric Seidel.
