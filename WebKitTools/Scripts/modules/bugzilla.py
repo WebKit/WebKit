@@ -304,7 +304,8 @@ class Bugzilla:
         if not component or component not in component_names:
             component = self.prompt_for_component(component_names)
         self.browser['component'] = [component]
-        self.browser['cc'] = cc
+        if cc:
+            self.browser['cc'] = cc
         self.browser['short_desc'] = bug_title
         if bug_description:
             log(bug_description)

@@ -1,3 +1,17 @@
+2009-08-12  Adam Roben  <aroben@apple.com>
+
+        Don't raise an exception when --cc is not passed to create-bug
+
+        Fixes <http://webkit.org/b/28158> create-bug throws an exception if
+        --cc is not specified
+
+        Reviewed by Dave Kilzer.
+
+        * Scripts/modules/bugzilla.py:
+        (Bugzilla.create_bug_with_patch): Only set the "cc" field if a CC
+        string was specified. Otherwise we'll generate an exception about the
+        "cc" variable not being a string.
+
 2009-08-11  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
