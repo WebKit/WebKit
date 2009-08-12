@@ -1,3 +1,9 @@
+2009-08-12  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx waf build fix, add new directories to the build.
+
+        * wx/build/settings.py:
+
 2009-08-11  Adam Roben  <aroben@apple.com>
 
         Update DumpRenderTree for IWebUIDelegatePrivate changes
