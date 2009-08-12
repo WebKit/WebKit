@@ -24,41 +24,41 @@ pointers.  When traversing these pointers, code must be careful to consider
 the "detached" case and gracefully handle null pointers.</p>
 
 <pre class="asciiart">
-  +---------+
-  | Chrome  |
-  +----+----+
-       |
-   +---+---+     +----------+
-   | Page  +---->| Settings |
-   +---+---+     +----------+
-       |
-       +-------------------------- ... other Frame objects
-       |
-   +---+---+   +-------------+                 +-------------------+
-   | Frame +---+ FrameLoader +                 | JSDOMWindowShell  |
-   +---+---+   +-------------+                 +---------+---------+
-       |                                                 |
-       |        /\  Re-used after navigation   /\        |
-.......|.................................................|...........
-       |        \/  Replaced after navigation  \/        |
-       |                                                 |
-       | <-- Null after navigation                       |
-       |                                                 |
- +-----+-----+         +-------------+                   |
- | DOMWindow |<--impl--+ JSDOMWindow |<------window------+
- +-----+-----+         +-------------+
-       |
-       | <-- Can be null for Documents created by XMLHttpRequest
-       |
- +-----+-----+         +-------------+
- | Document  |<--impl--+ JSDocument  |
- +-----+-----+         +-------------+
-       |
-       | <-- Can be null for DocumentType objects
-       |
-   +---+---+           +--------+
-   | Node  |<---impl---| JSNode |
-   +-------+           +--------+
+ +---------+
+ | Chrome  |
+ +----+----+
+      |
+  +---+---+     +----------+
+  | Page  +---->| Settings |
+  +---+---+     +----------+
+      |
+      +-------------------------- ... other Frame objects
+      |
+  +---+---+   +-------------+                 +-------------------+
+  | Frame +---+ FrameLoader +                 | JSDOMWindowShell  |
+  +---+---+   +-------------+                 +---------+---------+
+      |                                                 |
+      |        /\  Re-used after navigation   /\        |
+......|.................................................|..........
+      |        \/  Replaced after navigation  \/        |
+      |                                                 |
+      | <-- Null after navigation                       |
+      |                                                 |
++-----+-----+         +-------------+                   |
+| DOMWindow |<--impl--+ JSDOMWindow |<------window------+
++-----+-----+         +-------------+
+      |
+      | <-- Can be null for Documents created by XMLHttpRequest
+      |
++-----+-----+         +-------------+
+| Document  |<--impl--+ JSDocument  |
++-----+-----+         +-------------+
+      |
+      | <-- Can be null for DocumentType objects
+      |
+  +---+---+           +--------+
+  | Node  |<---impl---| JSNode |
+  +-------+           +--------+
 </pre>
 
 <p>If you have any comments on the above or other ideas about improving the clarity,
