@@ -48,6 +48,7 @@ committers_unable_to_review = [
     Committer("Adam Langley", "agl@chromium.org"),
     Committer("Albert J. Wong", "ajwong@chromium.org"),
     Committer("Ben Murdoch", "benm@google.com"),
+    Committer("Brent Fulgham", "bfulgham@webkit.org"),
     Committer("Dirk Schulze", "krit@webkit.org"),
     Committer("Eric Carlson", "eric.carlson@apple.com"),
     Committer("Greg Bolsinga", "bolsinga@apple.com"),
