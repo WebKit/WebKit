@@ -1,3 +1,19 @@
+2009-08-12  Eric Seidel  <eric@webkit.org>
+
+        No review, just fixing mismerged ChangeLogs.
+
+2009-08-12  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        run-webkit-tests needs a --exit-after-failures=N option
+        https://bugs.webkit.org/show_bug.cgi?id=28192
+
+        Added the option and deployed it to bugzilla-tool.
+
+        * Scripts/bugzilla-tool:
+        * Scripts/run-webkit-tests:
+
 2009-08-11  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Mark Rowe.
@@ -19,7 +35,6 @@
         * Scripts/modules/bugzilla.py:
         * Scripts/modules/scm.py:
 
-<<<<<<< HEAD:WebKitTools/ChangeLog
 2009-08-12  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Darin Adler.
@@ -33,19 +48,6 @@
         * Scripts/resolve-ChangeLogs:
         * Scripts/svn-create-patch:
         * Scripts/update-webkit:
-=======
-2009-08-12  Eric Seidel  <eric@webkit.org>
-
-        Reviewed by Mark Rowe.
-
-        run-webkit-tests needs a --exit-after-failures=N option
-        https://bugs.webkit.org/show_bug.cgi?id=28192
-
-        Added the option and deployed it to bugzilla-tool.
-
-        * Scripts/bugzilla-tool:
-        * Scripts/run-webkit-tests:
->>>>>>> 2009-08-12  Eric Seidel  <eric@webkit.org>:WebKitTools/ChangeLog
 
 2009-08-12  Kevin Ollivier  <kevino@theolliviers.com>
 
