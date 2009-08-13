@@ -1,3 +1,15 @@
+2009-08-12  Eric Seidel  <eric@webkit.org>
+
+        No review, finishing previous commit.
+
+        Add Geolocation layout tests.
+        https://bugs.webkit.org/show_bug.cgi?id=27716
+
+        Add changes missed in http://trac.webkit.org/changeset/47168
+
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2009-08-12  Steve Block  <steveblock@google.com>
 
         Reviewed by Eric Seidel.

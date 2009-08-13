@@ -578,3 +578,6 @@ fast/forms/menulist-style-color.html
 
 # <rdar://7127902> http/tests/misc/favicon-loads-with-images-disabled.html crashes on Windows debug
 http/tests/misc/favicon-loads-with-images-disabled.html
+
+# This port doesn't support Geolocation.
+fast/dom/Geolocation

@@ -3,9 +3,8 @@ description("Tests that the navigator.geolocation object is present.");
 function hasGeolocationProperty()
 {
     for (var property in navigator) {
-        if (property == "geolocation") {
+        if (property == "geolocation")
             return true;
-        }
     }
     return false;
 }
