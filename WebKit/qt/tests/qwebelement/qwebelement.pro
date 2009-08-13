@@ -5,3 +5,5 @@ SOURCES  += tst_qwebelement.cpp
 RESOURCES += qwebelement.qrc
 QT += testlib network
 QMAKE_RPATHDIR = $$OUTPUT_DIR/lib $$QMAKE_RPATHDIR
+
+symbian:TARGET.UID3 = 0x200267C3

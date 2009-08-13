@@ -1,3 +1,20 @@
+2009-08-13  Norbert Leser  <norbert.leser@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Symbian target components (library and executable files)
+        require Unique Identifiers (i.e., UID3).
+        These identifiers are defined in the respective project
+        files, conditionally for "symbian" platform.
+
+        * QtLauncher/QtLauncher.pro:
+        * tests/qwebelement/qwebelement.pro:
+        * tests/qwebframe/qwebframe.pro:
+        * tests/qwebhistory/qwebhistory.pro:
+        * tests/qwebhistoryinterface/qwebhistoryinterface.pro:
+        * tests/qwebpage/qwebpage.pro:
+        * tests/qwebview/qwebview.pro:
+
 2009-08-12  George Wright  <george.wright@torchmobile.com>
 
         Reviewed by Adam Treat.

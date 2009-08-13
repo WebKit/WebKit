@@ -1,3 +1,14 @@
+2009-08-13  Norbert Leser  <norbert.leser@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Symbian target components (library and executable files)
+        require Unique Identifiers (i.e., UID3).
+        These identifiers are defined in the respective project
+        file, conditionally for "symbian" platform.
+
+        * WebCore.pro:
+
 2009-08-13  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Eric Seidel.

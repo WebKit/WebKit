@@ -10,6 +10,8 @@ symbian: {
     webkitlibs.sources = QtWebKit.dll
     webkitlibs.path = /sys/bin
     DEPLOYMENT += webkitlibs
+
+    TARGET.UID3 = 0x200267C2
 }
 
 include($$PWD/../WebKit.pri)
