@@ -1626,6 +1626,7 @@ sub IsRefPtrType
     return 1 if $type eq "Plugin";
     return 1 if $type eq "ProcessingInstruction";
     return 1 if $type eq "Range";
+    return 1 if $type eq "RGBColor";
     return 1 if $type eq "Text";
     return 1 if $type eq "TextMetrics";
     return 1 if $type eq "TimeRanges";

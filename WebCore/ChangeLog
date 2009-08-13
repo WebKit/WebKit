@@ -1,3 +1,11 @@
+2009-08-13  David Levin  <levin@chromium.org>
+
+        Unreviewed chromium build fix.
+
+        [Chromium] Let CodeGeneratorV8.pm know that RGBColor is ref-counted.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+
 2009-08-13  Drew Wilson  <atwilson@google.com>
 
         Reviewed by David Levin.
