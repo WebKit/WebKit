@@ -1,3 +1,12 @@
+2009-08-13  Steve Block  <steveblock@google.com>
+
+        Reviewed by David Levin.
+
+        Disables Geolocation 'enabled' test for GTK port, as the GTK Geolocation implementation is incomplete.
+        https://bugs.webkit.org/show_bug.cgi?id=27716
+
+        * platform/gtk/Skipped: Modified. Disables Geolocation 'enabled' test.
+
 2009-08-13  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Xan Lopez.
