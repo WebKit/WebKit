@@ -1,3 +1,23 @@
+2009-08-12  Steve Block  <steveblock@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Bug 27716: Add Geolocation layout tests.
+        https://bugs.webkit.org/show_bug.cgi?id=27716
+
+        Adds the first, basic Geolocation layout test. This simply tests that
+        navigator.geolocation is present when it should be.
+
+        * fast/dom/Geolocation: Added. Directory for Geolocation layout tests.
+        * fast/dom/Geolocation/enabled.html: Added. HTML wrapper for enabled.js test.
+        * fast/dom/Geolocation/resources: Added. Directory for Geolocation layout tests JS source.
+        * fast/dom/Geolocation/resources/enabled.js: Added. Tests that navigator.geolocation is present.
+        * fast/dom/Geolocation/resources/TEMPLATE.html: Added. Template for creating HTML wrapper files for JS tests with make-js-test-wrappers.
+        * fast/dom/Geolocation/enabled-expected.txt: Added. Expected result for above test.
+        * platform/mac/Skipped: Modified. Skip Geolocation tests.
+        * platform/qt/Skipped: Modified. Skip Geolocation tests.
+        * platform/win/Skipped: Modified. Skip Geolocation tests.
+
 2009-08-12  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff Garen.
