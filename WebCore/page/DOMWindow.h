@@ -276,6 +276,8 @@ namespace WebCore {
         void setOnerror(PassRefPtr<EventListener>);
         EventListener* onfocus() const;
         void setOnfocus(PassRefPtr<EventListener>);
+        EventListener* onhashchange() const;
+        void setOnhashchange(PassRefPtr<EventListener>);
         EventListener* onkeydown() const;
         void setOnkeydown(PassRefPtr<EventListener>);
         EventListener* onkeypress() const;

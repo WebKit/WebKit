@@ -1,3 +1,30 @@
+2009-08-13  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        <rdar://problem/7138591> and https://bugs.webkit.org/show_bug.cgi?id=28260
+        onhashchange property cannot be set from javascript.
+
+        Test: fast/loader/onhashchange-attribute-listeners.html
+
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::onhashchange):
+        (WebCore::HTMLBodyElement::setOnhashchange):
+        * html/HTMLBodyElement.h:
+        * html/HTMLBodyElement.idl:
+
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::onhashchange):
+        (WebCore::HTMLFrameSetElement::setOnhashchange):
+        * html/HTMLFrameSetElement.h:
+        * html/HTMLFrameSetElement.idl:
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::onhashchange):
+        (WebCore::DOMWindow::setOnhashchange):
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+
 2009-08-13  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Geoff Garen.

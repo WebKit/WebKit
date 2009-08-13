@@ -214,6 +214,7 @@ module window {
         attribute EventListener onended;
         attribute EventListener onerror;
         attribute EventListener onfocus;
+        attribute EventListener onhashchange;
         attribute EventListener oninput;
         attribute EventListener onkeydown;
         attribute EventListener onkeypress;

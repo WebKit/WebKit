@@ -33,6 +33,7 @@ module html {
 #if !defined(LANGUAGE_COM) || !LANGUAGE_COM
         // Event handler attributes
         attribute [DontEnum] EventListener onbeforeunload;
+        attribute [DontEnum] EventListener onhashchange;
         attribute [DontEnum] EventListener onmessage;
         attribute [DontEnum] EventListener onoffline;
         attribute [DontEnum] EventListener ononline;

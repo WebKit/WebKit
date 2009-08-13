@@ -1,3 +1,14 @@
+2009-08-13  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        <rdar://problem/7138591> and https://bugs.webkit.org/show_bug.cgi?id=28260
+        onhashchange property cannot be set from javascript.
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/loader/onhashchange-attribute-listeners-expected.txt: Added.
+        * fast/loader/onhashchange-attribute-listeners.html: Added.
+
 2009-08-13  Eric Seidel  <eric@webkit.org>
 
         Reviewed by David Hyatt.

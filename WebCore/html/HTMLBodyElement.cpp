@@ -368,6 +368,16 @@ void HTMLBodyElement::setOnbeforeunload(PassRefPtr<EventListener> eventListener)
     document()->setAttributeEventListener(eventNames().beforeunloadEvent, eventListener);
 }
 
+EventListener* HTMLBodyElement::onhashchange() const
+{
+    return document()->getWindowAttributeEventListener(eventNames().hashchangeEvent);
+}
+
+void HTMLBodyElement::setOnhashchange(PassRefPtr<EventListener> eventListener)
+{
+    document()->setWindowAttributeEventListener(eventNames().hashchangeEvent, eventListener);
+}    
+                                                                                
 EventListener* HTMLBodyElement::onmessage() const
 {
     return document()->getWindowAttributeEventListener(eventNames().messageEvent);

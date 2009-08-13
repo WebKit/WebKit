@@ -260,6 +260,16 @@ void HTMLFrameSetElement::setOnfocus(PassRefPtr<EventListener> eventListener)
     document()->setAttributeEventListener(eventNames().focusEvent, eventListener);
 }
 
+EventListener* HTMLFrameSetElement::onhashchange() const
+{
+    return document()->getWindowAttributeEventListener(eventNames().hashchangeEvent);
+}
+
+void HTMLFrameSetElement::setOnhashchange(PassRefPtr<EventListener> eventListener)
+{
+    document()->setWindowAttributeEventListener(eventNames().hashchangeEvent, eventListener);
+}   
+
 EventListener* HTMLFrameSetElement::onload() const
 {
     return document()->getWindowAttributeEventListener(eventNames().loadEvent);

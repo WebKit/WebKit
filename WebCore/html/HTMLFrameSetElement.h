@@ -79,6 +79,8 @@ public:
 
     EventListener* onbeforeunload() const;
     void setOnbeforeunload(PassRefPtr<EventListener>);
+    EventListener* onhashchange() const;
+    void setOnhashchange(PassRefPtr<EventListener>);
     EventListener* onmessage() const;
     void setOnmessage(PassRefPtr<EventListener>);
     EventListener* onoffline() const;
