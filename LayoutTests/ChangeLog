@@ -1,3 +1,13 @@
+2009-08-12  Alpha Lam < hclam@chromium.org>
+
+        Not reviewed, Windows test fix after http://trac.webkit.org/changeset/47171.
+
+        This splits the expected result file into mac and Windows
+        versions since the result is different on Windows.
+
+        * platform/mac/media/controls-drag-timebar-expected.txt: Renamed from LayoutTests/media/controls-drag-timebar-expected.txt.
+        * platform/win/media/controls-drag-timebar-expected.txt: Added.
+
 2009-08-12  Eric Seidel  <eric@webkit.org>
 
         No review, just adding missing results.
