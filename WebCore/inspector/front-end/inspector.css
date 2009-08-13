@@ -2095,7 +2095,7 @@ button.enable-toggle-status-bar-item.toggled-on .glyph {
     -webkit-mask-image: url(Images/enableSolidButtonGlyph.png);
 }
 
-#scripts-pause-on-exceptions-status-bar-item .glyph {
+.scripts-pause-on-exceptions-status-bar-item .glyph {
     -webkit-mask-image: url(Images/pauseOnExceptionButtonGlyph.png);
 }
 
@@ -2213,7 +2213,7 @@ button.enable-toggle-status-bar-item.toggled-on .glyph {
     overflow: auto;
 }
 
-#resources-larger-resources-status-bar-item .glyph {
+.resources-larger-resources-status-bar-item .glyph {
     -webkit-mask-image: url(Images/largerResourcesButtonGlyph.png);
 }
 
@@ -3097,16 +3097,16 @@ body.inactive .sidebar-tree-item.selected .bubble.search-matches {
 button.enable-toggle-status-bar-item .glyph {
 }
 
-#record-profile-status-bar-item .glyph {
+.record-profile-status-bar-item .glyph {
     -webkit-mask-image: url(Images/recordButtonGlyph.png);
 }
 
-#record-profile-status-bar-item.toggled-on .glyph {
+.record-profile-status-bar-item.toggled-on .glyph {
     -webkit-mask-image: url(Images/recordToggledButtonGlyph.png);
-    background-color: rgb(216, 0, 0);
+    background-color: rgb(216, 0, 0) !important;
 }
 
-#node-search-status-bar-item .glyph {
+.node-search-status-bar-item .glyph {
     -webkit-mask-image: url(Images/nodeSearchButtonGlyph.png);
 }
 
@@ -3140,12 +3140,8 @@ button.enable-toggle-status-bar-item .glyph {
     margin-left: -1px;
 }
 
-.refresh-storage-status-bar-item {
-    background-image: url(Images/reloadButtons.png) !important;
-}
-
-.refresh-storage-status-bar-item:active {
-    background-position: 32px 0;
+.refresh-storage-status-bar-item .glyph {
+    -webkit-mask-image: url(Images/reloadButtonGlyph.png);
 }
 
 #storage-view-status-bar-items {

@@ -1,3 +1,66 @@
+2009-08-13  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Introduced StatusBarButton class that encapsulates glyphs support.
+        Views updated accordingly.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28174
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/CookieItemsView.js:
+        (WebInspector.CookieItemsView):
+        (WebInspector.CookieItemsView.prototype.get statusBarItems): Updated to retrieve DOM element from StatusBarButton instance (here and in similar getters below.)
+        (WebInspector.CookieItemsView.prototype.hide):
+        (WebInspector.CookieItemsView.prototype.update):
+        * inspector/front-end/DOMStorageItemsView.js:
+        (WebInspector.DOMStorageItemsView):
+        (WebInspector.DOMStorageItemsView.prototype.get statusBarItems):
+        (WebInspector.DOMStorageItemsView.prototype.hide):
+        (WebInspector.DOMStorageItemsView.prototype.update):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel):
+        (WebInspector.ElementsPanel.prototype.get statusBarItems):
+        (WebInspector.ElementsPanel.prototype.hide):
+        (WebInspector.ElementsPanel.prototype._nodeSearchButtonClicked):
+        * inspector/front-end/Panel.js:
+        * inspector/front-end/ProfileView.js:
+        (WebInspector.ProfileView):
+        (WebInspector.ProfileView.prototype.get statusBarItems):
+        (WebInspector.ProfileView.prototype._updatePercentButton):
+        (WebInspector.ProfileView.prototype._focusClicked):
+        (WebInspector.ProfileView.prototype._excludeClicked):
+        (WebInspector.ProfileView.prototype._resetClicked):
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel):
+        (WebInspector.ProfilesPanel.prototype.get statusBarItems):
+        (WebInspector.ProfilesPanel.prototype.setRecordingProfile):
+        (WebInspector.ProfilesPanel.prototype._updateInterface):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.get statusBarItems):
+        (WebInspector.ResourcesPanel.prototype.reset):
+        (WebInspector.ResourcesPanel.prototype._toggleLargerResources):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel):
+        (WebInspector.ScriptsPanel.prototype.get statusBarItems):
+        (WebInspector.ScriptsPanel.prototype._updatePauseOnExceptionsButton):
+        (WebInspector.ScriptsPanel.prototype._updateDebuggerButtons):
+        * inspector/front-end/StatusBarButton.js: Added.
+        (WebInspector.StatusBarButton):
+        (WebInspector.StatusBarButton.prototype._clicked):
+        (WebInspector.StatusBarButton.prototype.get disabled):
+        (WebInspector.StatusBarButton.prototype.set disabled):
+        (WebInspector.StatusBarButton.prototype.get title):
+        (WebInspector.StatusBarButton.prototype.set title):
+        (WebInspector.StatusBarButton.prototype.get toggled):
+        (WebInspector.StatusBarButton.prototype.set toggled):
+        (WebInspector.StatusBarButton.prototype.get visible):
+        (WebInspector.StatusBarButton.prototype.set visible):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.css: For uniformity, class names are always used to identify status bar buttons. Also, fixed "Reload" button style to use glyphs.
+        * inspector/front-end/inspector.html:
+
 2009-08-12  Ariya Hidayat  <ariya.hidayat@nokia.com>
 
         Reviewed by Simon Hausmann.

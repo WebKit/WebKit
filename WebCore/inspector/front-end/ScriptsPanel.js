@@ -151,13 +151,10 @@ WebInspector.ScriptsPanel = function()
     this.element.appendChild(this.sidebarElement);
     this.element.appendChild(this.sidebarResizeElement);
 
-    this.enableToggleButton = this.createStatusBarButton();
-    this.enableToggleButton.className = "enable-toggle-status-bar-item status-bar-item";
+    this.enableToggleButton = new WebInspector.StatusBarButton("", "enable-toggle-status-bar-item");
     this.enableToggleButton.addEventListener("click", this._toggleDebugging.bind(this), false);
 
-    this.pauseOnExceptionButton = this.createStatusBarButton();
-    this.pauseOnExceptionButton.id = "scripts-pause-on-exceptions-status-bar-item";
-    this.pauseOnExceptionButton.className = "status-bar-item";
+    this.pauseOnExceptionButton = new WebInspector.StatusBarButton("", "scripts-pause-on-exceptions-status-bar-item");
     this.pauseOnExceptionButton.addEventListener("click", this._togglePauseOnExceptions.bind(this), false);
 
     this._breakpointsURLMap = {};
@@ -208,7 +205,7 @@ WebInspector.ScriptsPanel.prototype = {
 
     get statusBarItems()
     {
-        return [this.enableToggleButton, this.pauseOnExceptionButton];
+        return [this.enableToggleButton.element, this.pauseOnExceptionButton.element];
     },
 
     get paused()
@@ -764,10 +761,10 @@ WebInspector.ScriptsPanel.prototype = {
     {
         if (InspectorController.pauseOnExceptions()) {
             this.pauseOnExceptionButton.title = WebInspector.UIString("Don't pause on exceptions.");
-            this.pauseOnExceptionButton.addStyleClass("toggled-on");
+            this.pauseOnExceptionButton.toggled = true;
         } else {
             this.pauseOnExceptionButton.title = WebInspector.UIString("Pause on exceptions.");
-            this.pauseOnExceptionButton.removeStyleClass("toggled-on");
+            this.pauseOnExceptionButton.toggled = false;
         }
     },
 
@@ -775,13 +772,13 @@ WebInspector.ScriptsPanel.prototype = {
     {
         if (InspectorController.debuggerEnabled()) {
             this.enableToggleButton.title = WebInspector.UIString("Debugging enabled. Click to disable.");
-            this.enableToggleButton.addStyleClass("toggled-on");
-            this.pauseOnExceptionButton.removeStyleClass("hidden");
+            this.enableToggleButton.toggled = true;
+            this.pauseOnExceptionButton.visible = true;
             this.panelEnablerView.visible = false;
         } else {
             this.enableToggleButton.title = WebInspector.UIString("Debugging disabled. Click to enable.");
-            this.enableToggleButton.removeStyleClass("toggled-on");
-            this.pauseOnExceptionButton.addStyleClass("hidden");
+            this.enableToggleButton.toggled = false;
+            this.pauseOnExceptionButton.visible = false;
             this.panelEnablerView.visible = true;
         }
 

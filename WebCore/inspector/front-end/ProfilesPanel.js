@@ -59,14 +59,10 @@ WebInspector.ProfilesPanel = function()
     this.profileViews.id = "profile-views";
     this.element.appendChild(this.profileViews);
 
-    this.enableToggleButton = this.createStatusBarButton();
-    this.enableToggleButton.className = "enable-toggle-status-bar-item status-bar-item";
+    this.enableToggleButton = new WebInspector.StatusBarButton("", "enable-toggle-status-bar-item");
     this.enableToggleButton.addEventListener("click", this._toggleProfiling.bind(this), false);
 
-    this.recordButton = this.createStatusBarButton();
-    this.recordButton.title = WebInspector.UIString("Start profiling.");
-    this.recordButton.id = "record-profile-status-bar-item";
-    this.recordButton.className = "status-bar-item";
+    this.recordButton = new WebInspector.StatusBarButton(WebInspector.UIString("Start profiling."), "record-profile-status-bar-item");
     this.recordButton.addEventListener("click", this._recordClicked.bind(this), false);
 
     this.recording = false;
@@ -87,7 +83,7 @@ WebInspector.ProfilesPanel.prototype = {
 
     get statusBarItems()
     {
-        return [this.enableToggleButton, this.recordButton, this.profileViewStatusBarItemsContainer];
+        return [this.enableToggleButton.element, this.recordButton.element, this.profileViewStatusBarItemsContainer];
     },
 
     show: function()
@@ -317,10 +313,10 @@ WebInspector.ProfilesPanel.prototype = {
         this.recording = isProfiling;
 
         if (isProfiling) {
-            this.recordButton.addStyleClass("toggled-on");
+            this.recordButton.toggled = true;
             this.recordButton.title = WebInspector.UIString("Stop profiling.");
         } else {
-            this.recordButton.removeStyleClass("toggled-on");
+            this.recordButton.toggled = false;
             this.recordButton.title = WebInspector.UIString("Start profiling.");
         }
     },
@@ -336,14 +332,14 @@ WebInspector.ProfilesPanel.prototype = {
     {
         if (InspectorController.profilerEnabled()) {
             this.enableToggleButton.title = WebInspector.UIString("Profiling enabled. Click to disable.");
-            this.enableToggleButton.addStyleClass("toggled-on");
-            this.recordButton.removeStyleClass("hidden");
+            this.enableToggleButton.toggled = true;
+            this.recordButton.visible = true;
             this.profileViewStatusBarItemsContainer.removeStyleClass("hidden");
             this.panelEnablerView.visible = false;
         } else {
             this.enableToggleButton.title = WebInspector.UIString("Profiling disabled. Click to enable.");
-            this.enableToggleButton.removeStyleClass("toggled-on");
-            this.recordButton.addStyleClass("hidden");
+            this.enableToggleButton.toggled = false;
+            this.recordButton.visible = false;
             this.profileViewStatusBarItemsContainer.addStyleClass("hidden");
             this.panelEnablerView.visible = true;
         }

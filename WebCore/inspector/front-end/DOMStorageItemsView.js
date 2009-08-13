@@ -32,21 +32,18 @@ WebInspector.DOMStorageItemsView = function(domStorage)
     this.element.addStyleClass("storage-view");
     this.element.addStyleClass("table");
 
-    this.deleteButton = document.createElement("button");
-    this.deleteButton.title = WebInspector.UIString("Delete");
-    this.deleteButton.className = "delete-storage-status-bar-item status-bar-item hidden";
+    this.deleteButton = new WebInspector.StatusBarButton(WebInspector.UIString("Delete"), "delete-storage-status-bar-item");
+    this.deleteButton.visible = false;
     this.deleteButton.addEventListener("click", this._deleteButtonClicked.bind(this), false);
 
-    this.refreshButton = document.createElement("button");
-    this.refreshButton.title = WebInspector.UIString("Refresh");
-    this.refreshButton.className = "refresh-storage-status-bar-item status-bar-item";
+    this.refreshButton = new WebInspector.StatusBarButton(WebInspector.UIString("Refresh"), "refresh-storage-status-bar-item");
     this.refreshButton.addEventListener("click", this._refreshButtonClicked.bind(this), false);
 }
 
 WebInspector.DOMStorageItemsView.prototype = {
     get statusBarItems()
     {
-        return [this.refreshButton, this.deleteButton];
+        return [this.refreshButton.element, this.deleteButton.element];
     },
 
     show: function(parentElement)
@@ -58,7 +55,7 @@ WebInspector.DOMStorageItemsView.prototype = {
     hide: function()
     {
         WebInspector.View.prototype.hide.call(this);
-        this.deleteButton.addStyleClass("hidden");
+        this.deleteButton.visible = false;
     },
 
     update: function()
@@ -76,7 +73,7 @@ WebInspector.DOMStorageItemsView.prototype = {
                 this._dataGrid = dataGrid;
                 this.element.appendChild(dataGrid.element);
                 this._dataGrid.updateWidths();
-                this.deleteButton.removeStyleClass("hidden");
+                this.deleteButton.visible = true;
             }
         }
 
@@ -87,7 +84,7 @@ WebInspector.DOMStorageItemsView.prototype = {
             emptyMsgElement.textContent = WebInspector.UIString("This storage is empty.");
             this.element.appendChild(emptyMsgElement);
             this._dataGrid = null;
-            this.deleteButton.addStyleClass("hidden");
+            this.deleteButton.visible = false;
         }
     },
     

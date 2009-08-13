@@ -66,18 +66,6 @@ WebInspector.Panel.prototype = {
         return this._toolbarItem;
     },
 
-    createStatusBarButton: function()
-    {
-        var button = document.createElement("button");
-        var glyph = document.createElement("div");
-        glyph.className = "glyph";
-        button.appendChild(glyph);
-        var glyphShadow = document.createElement("div");
-        glyphShadow.className = "glyph shadow";
-        button.appendChild(glyphShadow);
-        return button;
-    },
-
     show: function()
     {
         WebInspector.View.prototype.show.call(this);

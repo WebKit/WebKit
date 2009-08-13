@@ -3468,6 +3468,7 @@
             'inspector/front-end/SidebarTreeElement.js',
             'inspector/front-end/SourceFrame.js',
             'inspector/front-end/SourceView.js',
+            'inspector/front-end/StatusBarButton.js',
             'inspector/front-end/StylesSidebarPane.js',
             'inspector/front-end/TextPrompt.js',
             'inspector/front-end/TopDownProfileDataGridTree.js',

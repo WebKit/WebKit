@@ -97,10 +97,7 @@ WebInspector.ElementsPanel = function()
     this.sidebarResizeElement.className = "sidebar-resizer-vertical";
     this.sidebarResizeElement.addEventListener("mousedown", this.rightSidebarResizerDragStart.bind(this), false);
 
-    this.nodeSearchButton = this.createStatusBarButton();
-    this.nodeSearchButton.title = WebInspector.UIString("Select an element in the page to inspect it.");
-    this.nodeSearchButton.id = "node-search-status-bar-item";
-    this.nodeSearchButton.className = "status-bar-item";
+    this.nodeSearchButton = new WebInspector.StatusBarButton(WebInspector.UIString("Select an element in the page to inspect it."), "node-search-status-bar-item");
     this.nodeSearchButton.addEventListener("click", this._nodeSearchButtonClicked.bind(this), false);
 
     this.searchingForNode = false;
@@ -130,7 +127,7 @@ WebInspector.ElementsPanel.prototype = {
 
     get statusBarItems()
     {
-        return [this.nodeSearchButton, this.crumbsElement];
+        return [this.nodeSearchButton.element, this.crumbsElement];
     },
 
     updateStatusBarItems: function()
@@ -156,7 +153,7 @@ WebInspector.ElementsPanel.prototype = {
 
         if (InspectorController.searchingForNode()) {
             InspectorController.toggleNodeSearch();
-            this.nodeSearchButton.removeStyleClass("toggled-on");
+            this.nodeSearchButton.toggled = false;
         }
     },
 
@@ -175,7 +172,7 @@ WebInspector.ElementsPanel.prototype = {
 
         if (InspectorController.searchingForNode()) {
             InspectorController.toggleNodeSearch();
-            this.nodeSearchButton.removeStyleClass("toggled-on");
+            this.nodeSearchButton.toggled = false;
         }
 
         this.recentlyModifiedNodes = [];
@@ -1316,10 +1313,7 @@ WebInspector.ElementsPanel.prototype = {
     {
         InspectorController.toggleNodeSearch();
 
-        if (InspectorController.searchingForNode())
-            this.nodeSearchButton.addStyleClass("toggled-on");
-        else
-            this.nodeSearchButton.removeStyleClass("toggled-on");
+        this.nodeSearchButton.toggled = InspectorController.searchingForNode();
     }
 }
 
