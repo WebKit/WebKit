@@ -68,8 +68,6 @@ module core {
         void disableResourceTracking(in boolean always);
         void storeLastActivePanel(in DOMString panelName);
 
-        [Custom] Array cookies();
-
 #if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
         boolean debuggerEnabled();
         void enableDebugger(in boolean always);
