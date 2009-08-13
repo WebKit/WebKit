@@ -1167,33 +1167,33 @@ DebuggerStatement:
 ;
 
 FunctionDeclaration:
-    FUNCTION IDENT '(' ')' OPENBRACE FunctionBody CLOSEBRACE { $$ = createNodeDeclarationInfo<StatementNode*>(new FuncDeclNode(GLOBAL_DATA, *$2, $6, LEXER->sourceCode($5, $7, @5.first_line)), 0, new (GLOBAL_DATA) ParserArenaData<DeclarationStacks::FunctionStack>, ((*$2 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0) | ClosureFeature, 0); DBG($6, @5, @7); $$.m_funcDeclarations->data.append(static_cast<FuncDeclNode*>($$.m_node)->body()); }
+    FUNCTION IDENT '(' ')' OPENBRACE FunctionBody CLOSEBRACE { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) FuncDeclNode(GLOBAL_DATA, *$2, $6, LEXER->sourceCode($5, $7, @5.first_line)), 0, new (GLOBAL_DATA) ParserArenaData<DeclarationStacks::FunctionStack>, ((*$2 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0) | ClosureFeature, 0); DBG($6, @5, @7); $$.m_funcDeclarations->data.append(static_cast<FuncDeclNode*>($$.m_node)->body()); }
   | FUNCTION IDENT '(' FormalParameterList ')' OPENBRACE FunctionBody CLOSEBRACE
-      { 
-          $$ = createNodeDeclarationInfo<StatementNode*>(new FuncDeclNode(GLOBAL_DATA, *$2, $7, LEXER->sourceCode($6, $8, @6.first_line), $4.m_node.head), 0, new (GLOBAL_DATA) ParserArenaData<DeclarationStacks::FunctionStack>, ((*$2 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0) | $4.m_features | ClosureFeature, 0); 
+      {
+          $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) FuncDeclNode(GLOBAL_DATA, *$2, $7, LEXER->sourceCode($6, $8, @6.first_line), $4.m_node.head), 0, new (GLOBAL_DATA) ParserArenaData<DeclarationStacks::FunctionStack>, ((*$2 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0) | $4.m_features | ClosureFeature, 0);
           if ($4.m_features & ArgumentsFeature)
-              $7->setUsesArguments(); 
+              $7->setUsesArguments();
           DBG($7, @6, @8);
           $$.m_funcDeclarations->data.append(static_cast<FuncDeclNode*>($$.m_node)->body());
       }
 ;
 
 FunctionExpr:
-    FUNCTION '(' ')' OPENBRACE FunctionBody CLOSEBRACE { $$ = createNodeInfo(new FuncExprNode(GLOBAL_DATA, GLOBAL_DATA->propertyNames->nullIdentifier, $5, LEXER->sourceCode($4, $6, @4.first_line)), ClosureFeature, 0); DBG($5, @4, @6); }
-    | FUNCTION '(' FormalParameterList ')' OPENBRACE FunctionBody CLOSEBRACE 
-      { 
-          $$ = createNodeInfo(new FuncExprNode(GLOBAL_DATA, GLOBAL_DATA->propertyNames->nullIdentifier, $6, LEXER->sourceCode($5, $7, @5.first_line), $3.m_node.head), $3.m_features | ClosureFeature, 0); 
-          if ($3.m_features & ArgumentsFeature) 
+    FUNCTION '(' ')' OPENBRACE FunctionBody CLOSEBRACE { $$ = createNodeInfo(new (GLOBAL_DATA) FuncExprNode(GLOBAL_DATA, GLOBAL_DATA->propertyNames->nullIdentifier, $5, LEXER->sourceCode($4, $6, @4.first_line)), ClosureFeature, 0); DBG($5, @4, @6); }
+    | FUNCTION '(' FormalParameterList ')' OPENBRACE FunctionBody CLOSEBRACE
+      {
+          $$ = createNodeInfo(new (GLOBAL_DATA) FuncExprNode(GLOBAL_DATA, GLOBAL_DATA->propertyNames->nullIdentifier, $6, LEXER->sourceCode($5, $7, @5.first_line), $3.m_node.head), $3.m_features | ClosureFeature, 0);
+          if ($3.m_features & ArgumentsFeature)
               $6->setUsesArguments();
-          DBG($6, @5, @7); 
+          DBG($6, @5, @7);
       }
-  | FUNCTION IDENT '(' ')' OPENBRACE FunctionBody CLOSEBRACE { $$ = createNodeInfo(new FuncExprNode(GLOBAL_DATA, *$2, $6, LEXER->sourceCode($5, $7, @5.first_line)), ClosureFeature, 0); DBG($6, @5, @7); }
-  | FUNCTION IDENT '(' FormalParameterList ')' OPENBRACE FunctionBody CLOSEBRACE 
-      { 
-          $$ = createNodeInfo(new FuncExprNode(GLOBAL_DATA, *$2, $7, LEXER->sourceCode($6, $8, @6.first_line), $4.m_node.head), $4.m_features | ClosureFeature, 0); 
+  | FUNCTION IDENT '(' ')' OPENBRACE FunctionBody CLOSEBRACE { $$ = createNodeInfo(new (GLOBAL_DATA) FuncExprNode(GLOBAL_DATA, *$2, $6, LEXER->sourceCode($5, $7, @5.first_line)), ClosureFeature, 0); DBG($6, @5, @7); }
+  | FUNCTION IDENT '(' FormalParameterList ')' OPENBRACE FunctionBody CLOSEBRACE
+      {
+          $$ = createNodeInfo(new (GLOBAL_DATA) FuncExprNode(GLOBAL_DATA, *$2, $7, LEXER->sourceCode($6, $8, @6.first_line), $4.m_node.head), $4.m_features | ClosureFeature, 0); 
           if ($4.m_features & ArgumentsFeature)
               $7->setUsesArguments();
-          DBG($7, @6, @8); 
+          DBG($7, @6, @8);
       }
 ;
 
@@ -1970,7 +1970,7 @@ static PropertyNode* makeGetterOrSetterPropertyNode(void* globalPtr, const Ident
         type = PropertyNode::Setter;
     else
         return 0;
-    return new (GLOBAL_DATA) PropertyNode(GLOBAL_DATA, name, new FuncExprNode(GLOBAL_DATA, GLOBAL_DATA->propertyNames->nullIdentifier, body, source, params), type);
+    return new (GLOBAL_DATA) PropertyNode(GLOBAL_DATA, name, new (GLOBAL_DATA) FuncExprNode(GLOBAL_DATA, GLOBAL_DATA->propertyNames->nullIdentifier, body, source, params), type);
 }
 
 static ExpressionNode* makeNegateNode(void* globalPtr, ExpressionNode* n)

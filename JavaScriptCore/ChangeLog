@@ -1,3 +1,12 @@
+2009-08-13  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Darin Adler.
+
+        Use the version of operator new that takes a JSGlobalData when allocating FuncDeclNode and FuncExprNode
+        from within the grammar to prevent these nodes from being leaked.
+
+        * parser/Grammar.y:
+
 2009-08-13  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Ariya Hidayat.
