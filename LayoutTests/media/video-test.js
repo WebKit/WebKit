@@ -7,7 +7,6 @@ var Failed = false;
 
 findMediaElement();
 logConsole();
-setTimeout(hanged, 10000);
 
 if (window.layoutTestController) {
     layoutTestController.dumpAsText();
@@ -35,13 +34,6 @@ function findMediaElement()
         if (video)
             mediaElement = video;
     } catch (ex) { }
-}
-
-function hanged()
-{
-    logResult(Failed, "FAIL: timed out");
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();  
 }
 
 function testAndEnd(testFuncString)

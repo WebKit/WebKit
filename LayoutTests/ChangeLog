@@ -1,3 +1,14 @@
+2009-08-13  Adam Roben  <aroben@apple.com>
+
+        Remove media/video-test.js's redundant hang timer
+
+        DRT already has a timer that does the same thing.
+
+        Reviewed by Mark Rowe.
+
+        * media/video-test.js: Remove the hang timer, since DRT does the same
+        thing.
+
 2009-08-13  Brian Weinstein  <bweinstein@apple.com>
 
         Rubber-stamped by Adam Roben.
