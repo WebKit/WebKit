@@ -1,3 +1,11 @@
+2009-08-13  Drew Wilson <atwilson@chromium.org>
+
+        Unreviewed.
+
+        Add myself to list of committers.
+
+        * Scripts/modules/committers.py:
+
 2009-08-13  John Sullivan  <sullivan@apple.com>
 
         Unreviewed.
