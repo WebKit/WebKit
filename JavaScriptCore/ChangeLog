@@ -1,5 +1,13 @@
 2009-08-12  Gavin Barraclough  <barraclough@apple.com>
 
+        Rubber Stamped by Dave Kilzer.
+
+        Disable WTF_USE_JSVALUE32_64 on iPhone for now (support not yet added for ARMv7).
+
+        * wtf/Platform.h:
+
+2009-08-12  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Maciej Stachoviak.
 
         Ooops - moved code that had been accidentally added to op_new_func instead of
