@@ -1,3 +1,16 @@
+2009-08-13  Kyle Prete  <kylep@chromium.org>
+
+        Reviewed by Dave Levin.
+
+        Chromium: Show a "Playback Disabled" button on media error.
+        https://bugs.webkit.org/show_bug.cgi?id=28196
+        Use a disabled play button when the media file cannot be played.
+
+        No new tests needed. Covered by LayoutTests/media/video-empty-source.html
+
+        * rendering/RenderThemeChromiumSkia.cpp:
+        (WebCore::RenderThemeChromiumSkia::paintMediaPlayButton):
+
 2009-08-13  Mark Rowe  <mrowe@apple.com>
 
         Try and fix the Qt build.
