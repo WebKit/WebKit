@@ -30,7 +30,7 @@
 import unittest
 
 from modules.bugzilla_unittest import *
-from modules.commiters_unittest import *
+from modules.committers_unittest import *
 from modules.cpp_style_unittest import *
 from modules.diff_parser_unittest import *
 from modules.logging_unittest import *

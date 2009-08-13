@@ -1,5 +1,12 @@
 2009-08-13  Eric Seidel  <eric@webkit.org>
 
+        Correct spelling error in file name.  No review.
+
+        * Scripts/modules/committers_unittest.py: Renamed from WebKitTools/Scripts/modules/commiters_unittest.py.
+        * Scripts/run-webkit-unittests:
+
+2009-08-13  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Simon Fraser.
 
         REGRESSION(r47175): error running run-webkit-tests
