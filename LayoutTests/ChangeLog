@@ -1,3 +1,30 @@
+2009-08-13  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by David Hyatt.
+
+        wrong font size when css font-family includes monospace
+        https://bugs.webkit.org/show_bug.cgi?id=19161
+
+        Update test results now that only "font-family: monospace" is 13px.
+        All other combinations of font-family are 16px default size.
+
+        Add two tests:
+        font-family-fallback-reset: catches a bug in inheriting font-family fallback.
+        computed-style-font-family-monospace: tests this bug, that only "font-family: monospace" is 13px.
+
+        * fast/css/getComputedStyle/computed-style-font-family-expected.txt:
+        * fast/css/getComputedStyle/computed-style-font-family-monospace-expected.txt: Added.
+        * fast/css/getComputedStyle/computed-style-font-family-monospace.html: Added.
+        * fast/css/getComputedStyle/font-family-fallback-reset-expected.txt: Added.
+        * fast/css/getComputedStyle/font-family-fallback-reset.html: Added.
+        * fast/css/getComputedStyle/resources/computed-style-font-family-monospace.js: Added.
+        (fontSizeForFamilies):
+        * fast/css/getComputedStyle/resources/font-family-fallback-reset.js: Added.
+        * fast/js/method-check.html:
+        * platform/mac/css1/font_properties/font_family-expected.txt:
+        * platform/mac/css2.1/t1503-c522-font-family-00-b-expected.txt:
+        * platform/mac/fast/text/monospace-width-cache-expected.txt:
+
 2009-08-13  Adam Roben  <aroben@apple.com>
 
         Remove media/video-test.js's redundant hang timer

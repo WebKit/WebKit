@@ -1,3 +1,38 @@
+2009-08-13  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by David Hyatt.
+
+        wrong font size when css font-family includes monospace
+        https://bugs.webkit.org/show_bug.cgi?id=19161
+
+        Firefox only uses fixed-width default size for exactly "font-family: monospace;".
+        WebKit has historically used fixed-width default size any time a
+        font-family includes monospace in the fallback list.
+
+        This patch corrects WebKit's behavior to match Firefox.
+        I also had to fix a bug in WebKit's font-family fallback behavior where
+        child elements would inherit parts of their parents fallback lists.
+
+        This patch is mostly just replacing all cases where we used to check for:
+        fontDescription.genericFontFamily() == MonospaceFamily
+        with:
+        fontDescription.useFixedDefaultSize()
+
+        Tests: fast/css/getComputedStyle/computed-style-font-family-monospace.html
+               fast/css/getComputedStyle/font-family-fallback-reset.html
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+           Deploy useFixedDefaultSize().  Also fix the bug where child
+           FontDescriptions would carry part of the parent font-family fallback list.
+        (WebCore::CSSStyleSelector::checkForGenericFamilyChange):
+           It's no longer alright to just check genericFontFamily(),
+           we have to check to make sure the changed style has a matching useFixedDefaultSize().
+        * platform/graphics/FontDescription.h:
+        (WebCore::FontDescription::useFixedDefaultSize):
+           Only use the fixed default size if we have one font family and it is "monospace".
+           "-webkit-monospace" is the internal representation of the CSS identifier "monospace".
+
 2009-08-13  Christian Plesner Hansen  <christian.plesner.hansen@gmail.com>
 
         Reviewed by Dimitri Glazkov.
