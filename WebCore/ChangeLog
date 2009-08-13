@@ -1,3 +1,14 @@
+2009-08-12  George Staikos  <george.staikos@torchmobile.com>
+
+        Reviewed by Adam Treat.
+
+        Mark unused variables to avoid compile failures in -Werror.
+
+        * wml/WMLAnchorElement.cpp:
+        (WebCore::WMLAnchorElement::deregisterTask):
+        * wml/WMLDoElement.cpp:
+        (WebCore::WMLDoElement::deregisterTask):
+
 2009-08-12  Charles Wei  <charles.wei@torchmobile.com.cn>
 
         Reviewed by Niko Zimmermann.
