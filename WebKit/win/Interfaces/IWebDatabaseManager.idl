@@ -59,6 +59,4 @@ interface IWebDatabaseManager : IUnknown
     HRESULT deleteAllDatabases();
     HRESULT deleteOrigin([in] IWebSecurityOrigin* origin);
     HRESULT deleteDatabase([in] BSTR databaseName, [in] IWebSecurityOrigin* origin);
-
-    HRESULT setQuota([in] BSTR origin, [in] unsigned long long quota);
 }

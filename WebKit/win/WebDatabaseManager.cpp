@@ -286,21 +286,6 @@ HRESULT STDMETHODCALLTYPE WebDatabaseManager::deleteAllDatabases()
 
     return S_OK;
 }
-
-HRESULT STDMETHODCALLTYPE WebDatabaseManager::setQuota(
-    /* [in] */ BSTR origin,
-    /* [in] */ unsigned long long quota)
-{
-    if (!origin)
-        return E_POINTER;
-
-    if (this != s_sharedWebDatabaseManager)
-        return E_FAIL;
-
-    DatabaseTracker::tracker().setQuota(SecurityOrigin::createFromString(origin).get(), quota);
-
-    return S_OK;
-}
    
 HRESULT STDMETHODCALLTYPE WebDatabaseManager::deleteOrigin( 
     /* [in] */ IWebSecurityOrigin* origin)
