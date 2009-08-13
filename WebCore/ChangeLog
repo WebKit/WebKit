@@ -1,3 +1,14 @@
+2009-08-13  George Staikos  <george.staikos@torchmobile.com>
+
+        Rubberstamped by Darin Adler.
+
+        Use ASSERT_UNUSED instead of UNUSED_PARAM
+
+        * wml/WMLAnchorElement.cpp:
+        (WebCore::WMLAnchorElement::deregisterTask):
+        * wml/WMLDoElement.cpp:
+        (WebCore::WMLDoElement::deregisterTask):
+
 2009-08-13  Steve Block  <steveblock@google.com>
 
         Reviewed by Darin Adler.
