@@ -1,3 +1,20 @@
+2009-08-13  Christian Plesner Hansen  <christian.plesner.hansen@gmail.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        [v8] Fix atomic string externalization crash.
+        Atomic string externalization assumes that all non-empty strings
+        can be externalized which is untrue on 64-bit.  This change fixed
+        that.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28215
+
+        This bug causes loads of test crashes, no need to add new tests
+        specifically for this.
+
+        * bindings/v8/V8Binding.cpp:
+        (WebCore::v8StringToAtomicWebCoreString):
+
 2009-08-13  George Staikos  <george.staikos@torchmobile.com>
 
         Rubberstamped by Darin Adler.
