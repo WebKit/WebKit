@@ -1,3 +1,13 @@
+2009-08-12  George Wright  <george.wright@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        Add SQLTransactionCoordinator.[h,cpp] to WebCore.pro.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28246
+
+        * WebCore.pro:
+
 2009-08-12  George Staikos  <george.staikos@torchmobile.com>
 
         Reviewed by Adam Treat.
