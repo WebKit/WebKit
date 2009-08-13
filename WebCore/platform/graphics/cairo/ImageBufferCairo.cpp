@@ -148,7 +148,7 @@ PassRefPtr<ImageData> getImageData(const IntRect& rect, const ImageBufferData& d
     unsigned char* dataDst = result->data()->data()->data();
 
     if (rect.x() < 0 || rect.y() < 0 || (rect.x() + rect.width()) > size.width() || (rect.y() + rect.height()) > size.height())
-        memset(dataSrc, 0, result->data()->length());
+        memset(dataDst, 0, result->data()->length());
 
     int originx = rect.x();
     int destx = 0;

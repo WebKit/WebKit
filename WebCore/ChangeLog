@@ -1,3 +1,20 @@
+2009-08-13  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [CAIRO] getImageData fails on a given rect bigger than the image rect
+
+        The destination image and the source image was mixed up on creating the
+        imageData.
+
+        This is just a clean up and doesn't affect the current behavior. It's not
+        possible to test this failure in a LayoutTest. Only canvas uses getImageData
+        at the moment and returns before calling getImageData, if the image rect does
+        not contain the requested rect.
+
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::getImageData):
+
 2009-08-13  Maxime Simon  <simon.maxime@gmail.com>
 
         Reviewed by Eric Seidel.
