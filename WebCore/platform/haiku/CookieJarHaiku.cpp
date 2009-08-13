@@ -29,6 +29,7 @@
 #include "config.h"
 #include "CookieJar.h"
 
+#include "Cookie.h"
 #include "KURL.h"
 #include "PlatformString.h"
 #include "StringHash.h"
@@ -41,20 +42,26 @@ namespace WebCore {
 // FIXME: Shouldn't this be saved to and restored from disk too?
 static HashMap<String, String> cookieJar;
 
-void setCookies(const KURL& url, const KURL& /*policyURL*/, const String& value)
+void setCookies(Document*, const KURL& url, const String& value)
 {
     cookieJar.set(url.string(), value);
 }
 
-String cookies(const KURL& url)
+String cookies(const Document*, const KURL& url)
 {
     return cookieJar.get(url.string());
 }
 
-bool cookiesEnabled()
+bool cookiesEnabled(const Document*)
 {
     // FIXME: This should probably be a setting
     return true;
+}
+
+void getRawCookies(const Document*, const KURL&, Vector<Cookie>& rawCookies)
+{
+    // FIXME: Not yet implemented
+    rawCookies.clear();
 }
 
 } // namespace WebCore

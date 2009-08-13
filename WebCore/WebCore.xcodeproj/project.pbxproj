@@ -4399,6 +4399,7 @@
 		D23CA55D0AB0EAAE005108A5 /* JSRangeException.h in Headers */ = {isa = PBXBuildFile; fileRef = D23CA55C0AB0EAAE005108A5 /* JSRangeException.h */; };
 		D23CA55F0AB0EAB6005108A5 /* JSRangeException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D23CA55E0AB0EAB6005108A5 /* JSRangeException.cpp */; };
 		D23CA56C0AB0EB8D005108A5 /* RangeException.h in Headers */ = {isa = PBXBuildFile; fileRef = D23CA56B0AB0EB8D005108A5 /* RangeException.h */; };
+		D8B6152F1032495100C8554A /* Cookie.h in Headers */ = {isa = PBXBuildFile; fileRef = D8B6152E1032495100C8554A /* Cookie.h */; };
 		DB23C2CB0A508D29002489EB /* IndentOutdentCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DB23C2C90A508D29002489EB /* IndentOutdentCommand.cpp */; };
 		DB23C2CC0A508D29002489EB /* IndentOutdentCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = DB23C2CA0A508D29002489EB /* IndentOutdentCommand.h */; };
 		DD05FE0D0B8BA3C6009ACDFE /* WebCoreObjCExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = DD05FE0B0B8BA3C6009ACDFE /* WebCoreObjCExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9330,6 +9331,7 @@
 		D23CA55C0AB0EAAE005108A5 /* JSRangeException.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSRangeException.h; sourceTree = "<group>"; };
 		D23CA55E0AB0EAB6005108A5 /* JSRangeException.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSRangeException.cpp; sourceTree = "<group>"; };
 		D23CA56B0AB0EB8D005108A5 /* RangeException.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RangeException.h; sourceTree = "<group>"; };
+		D8B6152E1032495100C8554A /* Cookie.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cookie.h; sourceTree = "<group>"; };
 		DB23C2C90A508D29002489EB /* IndentOutdentCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = IndentOutdentCommand.cpp; sourceTree = "<group>"; };
 		DB23C2CA0A508D29002489EB /* IndentOutdentCommand.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = IndentOutdentCommand.h; sourceTree = "<group>"; };
 		DD05FE0B0B8BA3C6009ACDFE /* WebCoreObjCExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCoreObjCExtras.h; sourceTree = "<group>"; };
@@ -14132,6 +14134,7 @@
 				93B6A0E70B0BCA6700F5027A /* ContextMenu.cpp */,
 				93B6A0E50B0BCA5C00F5027A /* ContextMenu.h */,
 				06027CAC0B1CBFC000884B2D /* ContextMenuItem.h */,
+				D8B6152E1032495100C8554A /* Cookie.h */,
 				9352088109BD45E900F2038D /* CookieJar.h */,
 				2E4346560F546A9900B0F1BA /* CrossThreadCopier.cpp */,
 				2E4346570F546A9900B0F1BA /* CrossThreadCopier.h */,
@@ -17259,6 +17262,7 @@
 				49484FCE102CF23C00187DD3 /* CanvasStyle.h in Headers */,
 				416E29A6102FA962007FC14E /* WorkerReportingProxy.h in Headers */,
 				B5C1123C102B6C4600096578 /* SQLTransactionCoordinator.h in Headers */,
+				D8B6152F1032495100C8554A /* Cookie.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
