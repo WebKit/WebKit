@@ -1,3 +1,11 @@
+2009-08-12  George Staikos  <george.staikos@torchmobile.com>
+
+        Reviewed by Adam Treat.
+
+        Enable WCSS and XHTML-MP flags for build-webkit.
+
+        * Scripts/build-webkit:
+
 2009-08-12  David Kilzer  <ddkilzer@apple.com>
 
         run-webkit-tests: document --nthly flag in help message

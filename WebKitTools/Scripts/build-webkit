@@ -49,7 +49,7 @@ my ($threeDCanvasSupport, $threeDRenderingSupport, $channelMessagingSupport, $da
     $filtersSupport, $geolocationSupport, $gnomeKeyringSupport, $iconDatabaseSupport,
     $javaScriptDebuggerSupport, $offlineWebApplicationSupport, $rubySupport, $sharedWorkersSupport, 
     $svgSupport, $svgAnimationSupport, $svgAsImageSupport, $svgDOMObjCBindingsSupport, $svgFontsSupport,
-    $svgForeignObjectSupport, $svgUseSupport, $videoSupport, $webSocketsSupport, $wmlSupport, $workersSupport,
+    $svgForeignObjectSupport, $svgUseSupport, $videoSupport, $webSocketsSupport, $wmlSupport, $wcssSupport, $xhtmlmpSupport, $workersSupport,
     $xpathSupport, $xsltSupport, $coverageSupport, $notificationsSupport);
 
 my @features = (
@@ -130,6 +130,12 @@ my @features = (
 
     { option => "wml", desc => "Toggle WML support",
       define => "ENABLE_WML", default => 0, value => \$wmlSupport },
+
+    { option => "xhtmlmp", desc => "Toggle XHTML-MP support",
+      define => "ENABLE_XHTMLMP", default => 0, value => \$xhtmlmpSupport },
+
+    { option => "wcss", desc => "Toggle WCSS support",
+      define => "ENABLE_WCSS", default => 0, value => \$wcssSupport },
 
     { option => "workers", desc => "Toggle Web Workers support",
       define => "ENABLE_WORKERS", default => (isAppleWebKit() || isGtk()), value => \$workersSupport },
