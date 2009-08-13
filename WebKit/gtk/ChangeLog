@@ -1,3 +1,33 @@
+2009-08-13  Zan Dobersek  <zandobersek@gmail.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] Drag and drop support
+        https://bugs.webkit.org/show_bug.cgi?id=23642
+
+        Adds support for drag actions in WebKitWebView and DragClient.
+
+        Defines a support structure that can hold additional drag and drop data,
+        such as selection data or target IDs (infos) and can be passed through
+        clipboard requests.
+
+        Implements DragClient functions that gather start position of the drag
+        and start the GTK drag.
+
+        * WebCoreSupport/DragClientGtk.cpp:
+        (WebKit::DragClient::DragClient):
+        (WebKit::DragClient::willPerformDragSourceAction):
+        (WebKit::DragClient::startDrag):
+        (WebKit::DragClient::createDragImageForLink): A small style fix.
+        * WebCoreSupport/DragClientGtk.h:
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_drag_end):
+        (clipboard_contents_received): GtkClipboard callback.
+        (webkit_web_view_drag_data_get):
+        (webkit_web_view_class_init):
+        (webkit_web_view_init):
+        * webkit/webkitwebview.h: Add GTK selection targets.
+
 2009-08-12  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Unreviewed build fix.

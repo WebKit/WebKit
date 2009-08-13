@@ -1081,6 +1081,128 @@ static void webkit_web_view_screen_changed(GtkWidget* widget, GdkScreen* previou
     settings->setMinimumLogicalFontSize(minimumLogicalFontSize / 72.0 * DPI);
 }
 
+static void webkit_web_view_drag_end(GtkWidget* widget, GdkDragContext* context)
+{
+    g_object_unref(context);
+}
+
+struct DNDContentsRequest
+{
+    gint info;
+    GtkSelectionData* dnd_selection_data;
+
+    gboolean is_url_label_request;
+    gchar* url;
+};
+
+void clipboard_contents_received(GtkClipboard* clipboard, GtkSelectionData* selection_data, gpointer data)
+{
+    DNDContentsRequest* contents_request = reinterpret_cast<DNDContentsRequest*>(data);
+
+    if (contents_request->is_url_label_request) {
+        // We have received contents of the label clipboard. Use them to form
+        // required structures. When formed, enhance the dnd's selection data
+        // with them and return.
+
+        // If the label is empty, use the url itself.
+        gchar* url_label = reinterpret_cast<gchar*>(gtk_selection_data_get_text(selection_data));
+        if (!url_label)
+            url_label = g_strdup(contents_request->url);
+
+        gchar* data;
+        switch (contents_request->info) {
+        case WEBKIT_WEB_VIEW_TARGET_INFO_URI_LIST:
+            data = g_strdup_printf("%s\r\n%s\r\n", contents_request->url, url_label);
+            break;
+        case WEBKIT_WEB_VIEW_TARGET_INFO_NETSCAPE_URL:
+            data = g_strdup_printf("%s\n%s", contents_request->url, url_label);
+            break;
+        }
+
+        gtk_selection_data_set(contents_request->dnd_selection_data,
+                               contents_request->dnd_selection_data->target, 8,
+                               reinterpret_cast<const guchar*>(data), strlen(data));
+
+        g_free(url_label);
+        g_free(data);
+        g_free(contents_request->url);
+        g_free(contents_request);
+
+        return;
+    }
+
+    switch (contents_request->info) {
+    case WEBKIT_WEB_VIEW_TARGET_INFO_HTML:
+    case WEBKIT_WEB_VIEW_TARGET_INFO_TEXT:
+        {
+        gchar* data = reinterpret_cast<gchar*>(gtk_selection_data_get_text(selection_data));
+        if (data) {
+            gtk_selection_data_set(contents_request->dnd_selection_data,
+                                   contents_request->dnd_selection_data->target, 8,
+                                   reinterpret_cast<const guchar*>(data),
+                                   strlen(data));
+            g_free(data);
+        }
+        break;
+        }
+    case WEBKIT_WEB_VIEW_TARGET_INFO_IMAGE:
+        {
+        GdkPixbuf* pixbuf = gtk_selection_data_get_pixbuf(selection_data);
+        if (pixbuf) {
+            gtk_selection_data_set_pixbuf(contents_request->dnd_selection_data, pixbuf);
+            g_object_unref(pixbuf);
+        }
+        break;
+        }
+    case WEBKIT_WEB_VIEW_TARGET_INFO_URI_LIST:
+    case WEBKIT_WEB_VIEW_TARGET_INFO_NETSCAPE_URL:
+        // URL's label is stored in another clipboard, so we store URL into
+        // contents request, mark the latter as an url label request
+        // and request for contents of the label clipboard.
+        contents_request->is_url_label_request = TRUE;
+        contents_request->url = reinterpret_cast<gchar*>(gtk_selection_data_get_text(selection_data));
+
+        gtk_clipboard_request_contents(gtk_clipboard_get(gdk_atom_intern_static_string("WebKitClipboardUrlLabel")),
+                                       selection_data->target, clipboard_contents_received, contents_request);
+        break;
+    }
+}
+
+static void webkit_web_view_drag_data_get(GtkWidget* widget, GdkDragContext* context, GtkSelectionData* selection_data, guint info, guint time_)
+{
+    GdkAtom selection_atom;
+    GdkAtom target_atom = selection_data->target;
+
+    switch (info) {
+        case WEBKIT_WEB_VIEW_TARGET_INFO_HTML:
+            selection_atom = gdk_atom_intern_static_string("WebKitClipboardHtml");
+            // HTML markup data is set as text, therefor, we need a text-like target atom
+            target_atom = gdk_atom_intern_static_string("UTF8_STRING");
+            break;
+        case WEBKIT_WEB_VIEW_TARGET_INFO_TEXT:
+            selection_atom = gdk_atom_intern_static_string("WebKitClipboardText");
+            break;
+        case WEBKIT_WEB_VIEW_TARGET_INFO_IMAGE:
+            selection_atom = gdk_atom_intern_static_string("WebKitClipboardImage");
+            break;
+        case WEBKIT_WEB_VIEW_TARGET_INFO_URI_LIST:
+        case WEBKIT_WEB_VIEW_TARGET_INFO_NETSCAPE_URL:
+            selection_atom = gdk_atom_intern_static_string("WebKitClipboardUrl");
+            // We require URL and label, which are both stored in text format
+            // and are needed to be retrieved as such.
+            target_atom = gdk_atom_intern_static_string("UTF8_STRING");
+            break;
+    }
+
+    DNDContentsRequest* contents_request = g_new(DNDContentsRequest, 1);
+    contents_request->info = info;
+    contents_request->is_url_label_request = FALSE;
+    contents_request->dnd_selection_data = selection_data;
+
+    gtk_clipboard_request_contents(gtk_clipboard_get(selection_atom), target_atom,
+                                   clipboard_contents_received, contents_request);
+}
+
 static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 {
     GtkBindingSet* binding_set;
@@ -1816,6 +1938,8 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     widgetClass->focus_out_event = webkit_web_view_focus_out_event;
     widgetClass->get_accessible = webkit_web_view_get_accessible;
     widgetClass->screen_changed = webkit_web_view_screen_changed;
+    widgetClass->drag_end = webkit_web_view_drag_end;
+    widgetClass->drag_data_get = webkit_web_view_drag_data_get;
 
     GtkContainerClass* containerClass = GTK_CONTAINER_CLASS(webViewClass);
     containerClass->add = webkit_web_view_container_add;
@@ -2256,7 +2380,7 @@ static void webkit_web_view_init(WebKitWebView* webView)
     priv->imContext = gtk_im_multicontext_new();
 
     WebKit::InspectorClient* inspectorClient = new WebKit::InspectorClient(webView);
-    priv->corePage = new Page(new WebKit::ChromeClient(webView), new WebKit::ContextMenuClient(webView), new WebKit::EditorClient(webView), new WebKit::DragClient, inspectorClient);
+    priv->corePage = new Page(new WebKit::ChromeClient(webView), new WebKit::ContextMenuClient(webView), new WebKit::EditorClient(webView), new WebKit::DragClient(webView), inspectorClient);
 
     // We also add a simple wrapper class to provide the public
     // interface for the Web Inspector.
