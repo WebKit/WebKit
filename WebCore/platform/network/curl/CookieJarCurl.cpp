@@ -17,6 +17,7 @@
 #include "config.h"
 #include "CookieJar.h"
 
+#include "Cookie.h"
 #include "Document.h"
 #include "KURL.h"
 #include "PlatformString.h"
@@ -41,6 +42,12 @@ String cookies(const Document* /*document*/, const KURL& url)
 bool cookiesEnabled(const Document* /*document*/)
 {
     return true;
+}
+
+void getRawCookies(const Document*, const KURL&, Vector<Cookie>& rawCookies)
+{
+    // FIXME: Not yet implemented
+    rawCookies.clear();
 }
 
 }

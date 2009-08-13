@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2009 Joseph Pecoraro. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,25 +20,40 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CookieJar_h
-#define CookieJar_h
+#ifndef Cookie_h
+#define Cookie_h
 
-#include <wtf/Vector.h>
+#include "PlatformString.h"
 
 namespace WebCore {
 
-    class Cookie;
-    class Document;
-    class KURL;
-    class String;
+    struct Cookie {
+        Cookie(const String& name, const String& value, const String& domain,
+                const String& path, double expires, bool httpOnly, bool secure,
+                bool session)
+            : name(name)
+            , value(value)
+            , domain(domain)
+            , path(path)
+            , expires(expires)
+            , httpOnly(httpOnly)
+            , secure(secure)
+            , session(session)
+        {
+        }
 
-    String cookies(const Document*, const KURL&);
-    void setCookies(Document*, const KURL&, const String&);
-    bool cookiesEnabled(const Document*);
-    void getRawCookies(const Document*, const KURL&, Vector<Cookie>&);
+        String name;
+        String value;
+        String domain;
+        String path;
+        double expires;
+        bool httpOnly;
+        bool secure;
+        bool session;
+    };
 
 }
 

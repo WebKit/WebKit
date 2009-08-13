@@ -1,3 +1,53 @@
+2009-08-12  Joseph Pecoraro  <joepeck02@gmail.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Inspector: Show Hidden Cookie Data
+        https://bugs.webkit.org/show_bug.cgi?id=28185
+
+          Added new file Cookie.h to the WebCore XCode
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+          InspectorController.cookies() binding
+
+        * bindings/js/JSInspectorBackendCustom.cpp:
+        (WebCore::JSInspectorBackend::cookies):
+        * inspector/InspectorBackend.idl:
+
+          Struct for static Cookie information
+          (name, value, path, domain, expires, httpOnly, secure, session)
+
+        * platform/Cookie.h: Added.
+        (WebCore::Cookie::Cookie):
+        
+          Getter for the a list of raw Cookies
+          getRawCookies(., ., out Vector<Cookie>)
+        
+        * platform/CookieJar.h:
+
+          Implementation of getRawCookies for the mac platform.
+
+        * platform/mac/CookieJar.mm:
+        (WebCore::getRawCookies):
+
+          Stub other CookieJar implementations to satisfy the interface.
+
+        * platform/haiku/CookieJarHaiku.cpp:
+        (WebCore::getRawCookies):
+        * platform/network/chromium/CookieJarChromium.cpp:
+        (WebCore::getRawCookies):
+        * platform/network/curl/CookieJarCurl.cpp:
+        (WebCore::getRawCookies):
+        * platform/network/soup/CookieJarSoup.cpp:
+        (WebCore::getRawCookies):
+        * platform/network/win/CookieJarCFNetWin.cpp:
+        (WebCore::getRawCookies):
+        * platform/network/win/CookieJarWin.cpp:
+        (WebCore::getRawCookies):
+        * platform/qt/CookieJarQt.cpp:
+        (WebCore::getRawCookies):
+
 2009-08-08  Joseph Pecoraro  <joepeck02@gmail.com>
 
         Reviewed by Timothy Hatcher.
