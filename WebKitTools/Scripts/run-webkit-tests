@@ -109,6 +109,7 @@ sub writeToFile($$);
 # Argument handling
 my $addPlatformExceptions = 0;
 my $complexText = 0;
+my $exitAfterNFailures = 0;
 my $guardMalloc = '';
 my $httpdPort = 8000;
 my $httpdSSLPort = 8443;
@@ -193,6 +194,7 @@ Usage: $programName [options] [testdir|testpath ...]
   --complex-text                  Use the complex text code path for all text (Mac OS X and Windows only)
   -c|--configuration config       Set DumpRenderTree build configuration
   -g|--guard-malloc               Enable malloc guard
+  --exit-after-n-failures N       Exit after the first N failures instead of running all tests
   --help                          Show this help message
   --[no-]http                     Run (or do not run) http tests (default: $httpDefault)
   -i|--ignore-tests               Comma-separated list of directories or tests to ignore
@@ -230,6 +232,7 @@ setConfiguration();
 
 my $getOptionsResult = GetOptions(
     'complex-text' => \$complexText,
+    'exit-after-n-failures=i' => \$exitAfterNFailures,
     'guard-malloc|g' => \$guardMalloc,
     'help' => \$showHelp,
     'http!' => \$testHTTP,
@@ -991,6 +994,13 @@ for my $test (@tests) {
     }
 
     countFinishedTest($test, $base, $result, $isText);
+
+    my $failureCount = $count - $counts{match}; # Includes new tests, timeouts, crashes, etc.
+    if ($exitAfterNFailures && $failureCount >= $exitAfterNFailures) {
+        print "\nExiting early after $failureCount failures.  $count tests run.";
+        closeDumpTool();
+        last;
+    }
 }
 printf "\n%0.2fs total testing time\n", (time - $overallStartTime) . "";
 

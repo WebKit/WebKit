@@ -275,6 +275,8 @@ class WebKitLandingScripts:
              args.append("--no-launch-safari")
          if quiet:
              args.append("--quiet")
+         # When landing patches we almost always want to fail as fast as possible.
+         args.append("--exit-after-n-failures=1")
          cls.run_and_throw_if_fail(args)
 
      @staticmethod
