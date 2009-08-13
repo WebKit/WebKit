@@ -1,3 +1,12 @@
+2009-08-13  Eric Seidel  <eric@webkit.org>
+
+        No review, correcting obvious python error seen in the commit queue.
+
+        args can be a string or an array.  Assuming args is always an array results in
+        double-spaced text in error logs.
+
+        * Scripts/bugzilla-tool:
+
 2009-08-13  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Unreviewed build fix. Include stdio.h for using stdout, stderr,

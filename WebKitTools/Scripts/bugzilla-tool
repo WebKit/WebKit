@@ -252,7 +252,7 @@ class WebKitLandingScripts:
              child_output.close()
 
          if return_code:
-             raise ScriptError("%s failed with exit code %d" % (" ".join(args), return_code))
+             raise ScriptError("%s failed with exit code %d" % (args, return_code))
 
      # We might need to pass scm into this function for scm.checkout_root
      @staticmethod
