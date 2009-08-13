@@ -57,8 +57,8 @@ namespace WebCore {
         // 'SVGColor' functions
         unsigned short colorType() const;
 
-        RGBColor* rgbColor() const;
-        
+        PassRefPtr<RGBColor> rgbColor() const;
+
         static Color colorFromRGBColorString(const String&);
 
         void setRGBColor(const String& rgbColor) { ExceptionCode ignored = 0; setRGBColor(rgbColor, ignored); }

@@ -62,9 +62,9 @@ unsigned short SVGColor::colorType() const
     return m_colorType;
 }
 
-RGBColor* SVGColor::rgbColor() const
+PassRefPtr<RGBColor> SVGColor::rgbColor() const
 {
-    return RGBColor::create(m_color.rgb()).releaseRef();
+    return RGBColor::create(m_color.rgb());
 }
 
 void SVGColor::setRGBColor(const String& rgbColor, ExceptionCode& ec)
