@@ -1,3 +1,53 @@
+2009-08-12  Gabor Loki  <loki@inf.u-szeged.hu>
+
+        Reviewed by Gavin Barraclough.
+
+        Add optimize call and property access support for ARM JIT.
+        https://bugs.webkit.org/show_bug.cgi?id=24986
+
+        For tightly coupled sequences the BEGIN_UNINTERRUPTED_SEQUENCE and
+        END_UNINTERRUPTED_SEQUENCE macros have been introduced which ensure
+        space for instructions and constants of the named sequence. This
+        method is vital for those architecture which are using constant pool.
+
+        The 'latePatch' method - which was linked to JmpSrc - is replaced with
+        a port specific solution (each calls are marked to place their address
+        on the constant pool).
+
+        * assembler/ARMAssembler.cpp:
+        (JSC::ARMAssembler::linkBranch):
+        (JSC::ARMAssembler::executableCopy): Add extra align for constant pool.
+        * assembler/ARMAssembler.h:
+        (JSC::ARMAssembler::JmpSrc::JmpSrc):
+        (JSC::ARMAssembler::sizeOfConstantPool):
+        (JSC::ARMAssembler::jmp):
+        (JSC::ARMAssembler::linkCall):
+        * assembler/ARMv7Assembler.h:
+        * assembler/AbstractMacroAssembler.h:
+        * assembler/AssemblerBufferWithConstantPool.h:
+        (JSC::AssemblerBufferWithConstantPool::flushIfNoSpaceFor): Fix the
+        computation of the remaining space.
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::branch32):
+        (JSC::MacroAssemblerARM::nearCall):
+        (JSC::MacroAssemblerARM::call):
+        (JSC::MacroAssemblerARM::branchPtrWithPatch):
+        (JSC::MacroAssemblerARM::ensureSpace):
+        (JSC::MacroAssemblerARM::sizeOfConstantPool):
+        (JSC::MacroAssemblerARM::prepareCall):
+        * assembler/X86Assembler.h:
+        * jit/JIT.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCall):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::beginUninterruptedSequence):
+        (JSC::JIT::endUninterruptedSequence):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_method_check):
+        (JSC::JIT::compileGetByIdHotPath):
+        (JSC::JIT::compileGetByIdSlowCase):
+        (JSC::JIT::emit_op_put_by_id):
+
 2009-08-12  Gavin Barraclough  <barraclough@apple.com>
 
         Rubber Stamped by Dave Kilzer.

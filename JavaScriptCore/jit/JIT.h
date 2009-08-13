@@ -595,8 +595,61 @@ namespace JSC {
         static const int patchOffsetMethodCheckProtoObj = 18;
         static const int patchOffsetMethodCheckProtoStruct = 28;
         static const int patchOffsetMethodCheckPutFunction = 46;
+#elif PLATFORM(ARM)
+        // These architecture specific value are used to enable patching - see comment on op_put_by_id.
+        static const int patchOffsetPutByIdStructure = 4;
+        static const int patchOffsetPutByIdExternalLoad = 16;
+        static const int patchLengthPutByIdExternalLoad = 4;
+        static const int patchOffsetPutByIdPropertyMapOffset = 20;
+        // These architecture specific value are used to enable patching - see comment on op_get_by_id.
+        static const int patchOffsetGetByIdStructure = 4;
+        static const int patchOffsetGetByIdBranchToSlowCase = 16;
+        static const int patchOffsetGetByIdExternalLoad = 16;
+        static const int patchLengthGetByIdExternalLoad = 4;
+        static const int patchOffsetGetByIdPropertyMapOffset = 20;
+        static const int patchOffsetGetByIdPutResult = 28;
+#if ENABLE(OPCODE_SAMPLING)
+        #error "OPCODE_SAMPLING is not yet supported"
+#else
+        static const int patchOffsetGetByIdSlowCaseCall = 36;
+#endif
+        static const int patchOffsetOpCallCompareToJump = 12;
+
+        static const int patchOffsetMethodCheckProtoObj = 12;
+        static const int patchOffsetMethodCheckProtoStruct = 20;
+        static const int patchOffsetMethodCheckPutFunction = 32;
 #endif
 #endif // USE(JSVALUE32_64)
+
+#if PLATFORM(ARM) && !PLATFORM_ARM_ARCH(7)
+        // sequenceOpCall
+        static const int sequenceOpCallInstructionSpace = 12;
+        static const int sequenceOpCallConstantSpace = 2;
+        // sequenceMethodCheck
+        static const int sequenceMethodCheckInstructionSpace = 40;
+        static const int sequenceMethodCheckConstantSpace = 6;
+        // sequenceGetByIdHotPath
+        static const int sequenceGetByIdHotPathInstructionSpace = 28;
+        static const int sequenceGetByIdHotPathConstantSpace = 3;
+        // sequenceGetByIdSlowCase
+        static const int sequenceGetByIdSlowCaseInstructionSpace = 40;
+        static const int sequenceGetByIdSlowCaseConstantSpace = 2;
+        // sequencePutById
+        static const int sequencePutByIdInstructionSpace = 28;
+        static const int sequencePutByIdConstantSpace = 3;
+#endif
+
+#if defined(ASSEMBLER_HAS_CONSTANT_POOL) && ASSEMBLER_HAS_CONSTANT_POOL
+#define BEGIN_UNINTERRUPTED_SEQUENCE(name) beginUninterruptedSequence(name ## InstructionSpace, name ## ConstantSpace)
+#define END_UNINTERRUPTED_SEQUENCE(name) endUninterruptedSequence(name ## InstructionSpace, name ## ConstantSpace)
+
+        void beginUninterruptedSequence(int, int);
+        void endUninterruptedSequence(int, int);
+
+#else
+#define BEGIN_UNINTERRUPTED_SEQUENCE(name)
+#define END_UNINTERRUPTED_SEQUENCE(name)
+#endif
 
         void emit_op_add(Instruction*);
         void emit_op_bitand(Instruction*);
@@ -834,6 +887,13 @@ namespace JSC {
 #else
         int m_lastResultBytecodeRegister;
         unsigned m_jumpTargetsPosition;
+#endif
+
+#ifndef NDEBUG
+#if defined(ASSEMBLER_HAS_CONSTANT_POOL) && ASSEMBLER_HAS_CONSTANT_POOL
+        Label m_uninterruptedInstructionSequenceBegin;
+        int m_uninterruptedConstantSequenceBegin;
+#endif
 #endif
     } JIT_CLASS_ALIGNMENT;
 } // namespace JSC

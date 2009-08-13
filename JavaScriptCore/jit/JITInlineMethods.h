@@ -102,6 +102,39 @@ ALWAYS_INLINE JIT::Call JIT::emitNakedCall(CodePtr function)
     return nakedCall;
 }
 
+#if defined(ASSEMBLER_HAS_CONSTANT_POOL) && ASSEMBLER_HAS_CONSTANT_POOL
+
+ALWAYS_INLINE void JIT::beginUninterruptedSequence(int insnSpace, int constSpace)
+{
+#if PLATFORM(ARM) && !PLATFORM_ARM_ARCH(7)
+#ifndef NDEBUG
+    // Ensure the label after the sequence can also fit
+    insnSpace += sizeof(ARMWord);
+    constSpace += sizeof(uint64_t);
+#endif
+
+    ensureSpace(insnSpace, constSpace);
+
+#endif
+
+#if defined(ASSEMBLER_HAS_CONSTANT_POOL) && ASSEMBLER_HAS_CONSTANT_POOL
+#ifndef NDEBUG
+    m_uninterruptedInstructionSequenceBegin = label();
+    m_uninterruptedConstantSequenceBegin = sizeOfConstantPool();
+#endif
+#endif
+}
+
+ALWAYS_INLINE void JIT::endUninterruptedSequence(int insnSpace, int constSpace)
+{
+#if defined(ASSEMBLER_HAS_CONSTANT_POOL) && ASSEMBLER_HAS_CONSTANT_POOL
+    ASSERT(differenceBetween(m_uninterruptedInstructionSequenceBegin, label()) == insnSpace);
+    ASSERT(sizeOfConstantPool() - m_uninterruptedConstantSequenceBegin == constSpace);
+#endif
+}
+
+#endif
+
 #if PLATFORM(X86) || PLATFORM(X86_64) || (PLATFORM(ARM) && !PLATFORM_ARM_ARCH(7))
 
 ALWAYS_INLINE void JIT::preserveReturnAddressAfterCall(RegisterID reg)

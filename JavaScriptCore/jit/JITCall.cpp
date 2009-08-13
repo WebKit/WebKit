@@ -617,7 +617,13 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
     // This deliberately leaves the callee in ecx, used when setting up the stack frame below
     emitGetVirtualRegister(callee, regT2);
     DataLabelPtr addressOfLinkedFunctionCheck;
+
+    BEGIN_UNINTERRUPTED_SEQUENCE(sequenceOpCall);
+
     Jump jumpToSlow = branchPtrWithPatch(NotEqual, regT2, addressOfLinkedFunctionCheck, ImmPtr(JSValue::encode(JSValue())));
+
+    END_UNINTERRUPTED_SEQUENCE(sequenceOpCall);
+
     addSlowCase(jumpToSlow);
     ASSERT(differenceBetween(addressOfLinkedFunctionCheck, jumpToSlow) == patchOffsetOpCallCompareToJump);
     m_callStructureStubCompilationInfo[callLinkInfoIndex].hotPathBegin = addressOfLinkedFunctionCheck;
