@@ -1,3 +1,13 @@
+2009-08-13  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        Remove the special-case for Qt wrt JSVALUE_32 introduced in
+        r46709. It must've been a dependency issue on the bot, as
+        after a manual build all the tests pass on amd64 and ia32.
+
+        * wtf/Platform.h:
+
 2009-08-12  Gabor Loki  <loki@inf.u-szeged.hu>
 
         Reviewed by Gavin Barraclough.
