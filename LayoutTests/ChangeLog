@@ -1,5 +1,16 @@
 2009-08-13  Eric Seidel  <eric@webkit.org>
 
+        No review, it is expected that this would change.
+
+        wrong font size when css font-family includes monospace
+        https://bugs.webkit.org/show_bug.cgi?id=19161
+
+        Update Tiger results from the bot.  I have no way to update the pixel results.
+
+        * platform/mac-tiger/fast/text/monospace-width-cache-expected.txt:
+
+2009-08-13  Eric Seidel  <eric@webkit.org>
+
         Rubber-stamped by Adam Roben.
 
         REGRESSION: 6 media tests regressed while the windows bot was broken
