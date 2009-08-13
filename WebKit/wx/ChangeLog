@@ -1,3 +1,10 @@
+2009-08-13  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix. Make sure that the wxWebKit dynamic library is rebuilt whenever
+        webcore or jscore libs change.
+
+        * wscript:
+
 2009-08-12  Kevin Ollivier  <kevino@theolliviers.com>
 
         wxPython build fix, the SWIG defines must also be available when compiling.

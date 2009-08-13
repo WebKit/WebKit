@@ -54,7 +54,23 @@ def set_options(opt):
 def configure(conf):
     common_configure(conf)
     
+def pre_build(bld):
+    """
+    The wxWebKit library should be rebuilt if jscore or webcore changes,
+    so we make those static libs as dependencies.
+    """
+    libjscore = os.path.join(output_dir, 'libjscore.a')
+    libwebcore = os.path.join(output_dir, 'libwebcore.a')
+    
+    assert os.path.exists(libjscore)
+    assert os.path.exists(libwebcore)
+    
+    bld.env.CXXDEPS_JSCORE = Utils.h_file(libjscore)
+    bld.env.CXXDEPS_WEBCORE = Utils.h_file(libwebcore)
+    
 def build(bld):
+    bld.add_pre_fun(pre_build)
+
     obj = bld.new_task_gen(
         features = 'cxx cshlib implib',
         includes = ' '.join(include_paths + js_include_dirs),
