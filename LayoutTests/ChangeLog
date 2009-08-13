@@ -52,7 +52,7 @@
         Regression test. Tests that two transactions that run on two
         different handles for the same DB do not cause a deadlock.
 
-        https://bugs.webkit.org/show_bug?id=27966
+        https://bugs.webkit.org/show_bug.cgi?id=27966
 
         * storage/multiple-transactions-on-different-handles-expected.txt: Added.
         * storage/multiple-transactions-on-different-handles.html: Added.
