@@ -1,3 +1,12 @@
+2009-08-13  Brian Weinstein  <bweinstein@apple.com>
+
+        Rubber-stamped by Adam Roben.
+
+        Due to fixes in http://trac.webkit.org/changeset/47038 and http://trac.webkit.org/changeset/47163,
+        fast/events/mouse-click-events.html now passes, removing it from Skipped List.
+
+        * platform/win/Skipped:
+
 2009-08-13  Steve Block  <steveblock@google.com>
 
         Reviewed by David Levin.

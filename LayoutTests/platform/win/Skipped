@@ -380,7 +380,6 @@ fast/dom/navigator-detached-no-crash.html
 fast/dom/HTMLDocument/hasFocus.html
 fast/dom/Window/window-properties.html
 fast/events/key-events-in-input-button.html
-fast/events/mouse-click-events.html
 fast/events/mouseup-from-button2.html
 fast/events/special-key-events-in-input-text.html
 fast/forms/HTMLOptionElement_label05.html
