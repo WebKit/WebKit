@@ -209,6 +209,13 @@ CALLBACK_FUNC_DECL(InspectorBackendSetSetting)
     return v8::Undefined();
 }
 
+CALLBACK_FUNC_DECL(InspectorBackendCookies)
+{
+    INC_STATS("InspectorBackend.cookies()");
+    // FIXME: Not yet implemented.
+    return v8::Undefined();
+}
+
 CALLBACK_FUNC_DECL(InspectorBackendWrapCallback)
 {
     INC_STATS("InspectorBackend.wrapCallback()");

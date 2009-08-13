@@ -1,3 +1,15 @@
+2009-08-13  David Levin  <levin@chromium.org>
+
+        Unreviewed build fix for chromium.
+
+        The chromium build broke due to r47185 which added
+        a cookies array to inspector/InspectorBackend.idl.
+
+        * bindings/v8/custom/V8CustomBinding.h: Added the declaration for the cookies callback.
+        * bindings/v8/custom/V8InspectorBackendCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL(InspectorBackendCookies)): Stubbed out an implementation
+         for the cookies callback.
+
 2009-08-12  Joseph Pecoraro  <joepeck02@gmail.com>
 
         Reviewed by Timothy Hatcher.
