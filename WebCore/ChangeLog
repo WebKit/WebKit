@@ -1,3 +1,16 @@
+2009-08-13  Drew Wilson  <atwilson@google.com>
+
+        Reviewed by David Levin.
+
+        Merge error in SharedWorker code
+        https://bugs.webkit.org/show_bug.cgi?id=28277
+
+        Fixed merge error that prevents WebKit from compiling with SHARED_WORKERS enabled.
+        No new tests needed.
+
+        * workers/DefaultSharedWorkerRepository.cpp:
+        Removed duplicated functions.
+
 2009-08-13  Kyle Prete  <kylep@chromium.org>
 
         Reviewed by Dave Levin.

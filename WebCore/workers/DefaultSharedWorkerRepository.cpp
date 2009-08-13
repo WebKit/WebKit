@@ -125,8 +125,8 @@ void SharedWorkerProxy::workerContextClosed()
 
 void SharedWorkerProxy::workerContextDestroyed()
 {
-    // FIXME: Remove the proxy from the repository once the worker context is destroyed.
-    notImplemented();
+    // The proxy may be freed by this call, so do not reference it any further.
+    DefaultSharedWorkerRepository::instance().removeProxy(this);
 }
 
 void SharedWorkerProxy::addToWorkerDocuments(ScriptExecutionContext* context)
@@ -155,30 +155,6 @@ void SharedWorkerProxy::close()
     // Stop the worker thread - the proxy will stay around until we get workerThreadExited() notification.
     if (m_thread)
         m_thread->stop();
-}
-
-void SharedWorkerProxy::postExceptionToWorkerObject(const String&, int, const String&)
-{
-    // FIXME: Log exceptions to all parent documents.
-    notImplemented();
-}
-
-void SharedWorkerProxy::postConsoleMessageToWorkerObject(MessageDestination, MessageSource, MessageType, MessageLevel, const String&, int, const String&)
-{
-    // FIXME: Log console messages to all parent documents.
-    notImplemented();
-}
-
-// When close() is invoked, mark the proxy as closing so we don't share it with any new requests.
-void SharedWorkerProxy::workerContextClosed()
-{
-    m_closing = true;
-}
-
-void SharedWorkerProxy::workerContextDestroyed()
-{
-    // The proxy may be freed by this call, so do not reference it any further.
-    DefaultSharedWorkerRepository::instance().removeProxy(this);
 }
 
 class SharedWorkerConnectTask : public ScriptExecutionContext::Task {
