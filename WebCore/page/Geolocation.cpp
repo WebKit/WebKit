@@ -41,11 +41,15 @@ Geolocation::GeoNotifier::GeoNotifier(PassRefPtr<PositionCallback> successCallba
     , m_options(options)
     , m_timer(this, &Geolocation::GeoNotifier::timerFired)
 {
+    ASSERT(m_successCallback);
+    // If no options were supplied from JS, we should have created a default set
+    // of options in JSGeolocationCustom.cpp.
+    ASSERT(m_options);
 }
 
 void Geolocation::GeoNotifier::startTimer()
 {
-    if (m_errorCallback && m_options)
+    if (m_errorCallback && m_options->hasTimeout())
         m_timer.startOneShot(m_options->timeout() / 1000.0);
 }
 

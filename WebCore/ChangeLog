@@ -1,3 +1,37 @@
+2009-08-13  Steve Block  <steveblock@google.com>
+
+        Reviewed by Darin Adler.
+
+        Geolocation PositionOptions does not use correct default values.
+        https://bugs.webkit.org/show_bug.cgi?id=27254
+
+        Sets the correct default values for the properties of the PositionOptions object
+        passed to Geolocation methods. See http://www.w3.org/TR/geolocation-API/.
+
+        Also adds checking to throw an exception if arguments of the incorrect type are
+        passed to Geolocation methods. Adds a layout test to test this. This test should
+        pass on all platforms where Geolocation is implemented.
+
+        Test: fast/dom/Geolocation/argument-types.html
+
+        * bindings/js/JSGeolocationCustom.cpp:
+        (WebCore::createPositionCallback): Added. Creates the callback.
+        (WebCore::createPositionErrorCallback): Added. Creates the calback.
+        (WebCore::createPositionOptions): Added. Creates the PositionOptions object, setting defaults where required.
+        (WebCore::JSGeolocation::getCurrentPosition): Modified. Now uses above helper functions.
+        (WebCore::JSGeolocation::watchPosition): Modified. Now uses above helper functions.
+        * page/Geolocation.cpp:
+        (WebCore::Geolocation::GeoNotifier::GeoNotifier): Modified. Asserts that PositionOptions object is present.
+        (WebCore::Geolocation::GeoNotifier::startTimer): Modified. Only starts timer if timeout has been set.
+        * page/PositionOptions.h:
+        (WebCore::PositionOptions::create): Modified. Creates object with default values.
+        (WebCore::PositionOptions::timeout): Modified. Uses correct type.
+        (WebCore::PositionOptions::hasTimeout): Added. Determines whether a timeout has been set.
+        (WebCore::PositionOptions::setTimeout): Modified. Uses correct type.
+        (WebCore::PositionOptions::maximumAge): Modified. Uses correct type.
+        (WebCore::PositionOptions::setMaximumAge): Modified. Uses correct type.
+        (WebCore::PositionOptions::PositionOptions): Modified. Creates object with default values.
+
 2009-08-13  David Levin  <levin@chromium.org>
 
         Unreviewed chromium build fix.
