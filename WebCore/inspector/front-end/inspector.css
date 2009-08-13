@@ -1626,6 +1626,10 @@ body.inactive .sidebar {
     content: url(Images/domStorage.png);
 }
 
+.cookie-sidebar-tree-item .icon {
+    content: url(Images/cookie.png);
+}
+
 #storage-views {
     position: absolute;
     top: 0;

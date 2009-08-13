@@ -1,3 +1,58 @@
+2009-08-08  Joseph Pecoraro  <joepeck02@gmail.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Inspector: Cookies in Storage Panel
+        https://bugs.webkit.org/show_bug.cgi?id=27202
+
+          Data Structure for a Cookie. Just Key/Value for Now:
+
+        * inspector/front-end/Cookie.js: Added.
+        (WebInspector.Cookie):
+        (WebInspector.Cookie.prototype.get key):
+        (WebInspector.Cookie.prototype.set key):
+        (WebInspector.Cookie.prototype.get value):
+        (WebInspector.Cookie.prototype.set value):
+
+          A Storage View for Cookies.  Allows for Refresh/Delete:
+
+        * inspector/front-end/CookieItemsView.js: Added.
+        (WebInspector.CookieItemsView):
+        (WebInspector.CookieItemsView.prototype.get statusBarItems): refresh and delete buttons
+        (WebInspector.CookieItemsView.prototype.show):
+        (WebInspector.CookieItemsView.prototype.hide):
+        (WebInspector.CookieItemsView.prototype.update):
+        (WebInspector.CookieItemsView.prototype.buildCookies): parses the inspected window's document.cookie string
+        (WebInspector.CookieItemsView.prototype.dataGridForCookies): creates a datagrid for cookies
+        (WebInspector.CookieItemsView.prototype._deleteButtonClicked): attempt at deleting the cookie (not flawless)
+        (WebInspector.CookieItemsView.prototype._refreshButtonClicked): rebuild the datagrid
+
+          Include a SidebarSection Section in the Databases Panel:
+
+        * inspector/front-end/DatabasesPanel.js:
+        (WebInspector.DatabasesPanel):
+        (WebInspector.DatabasesPanel.prototype.show): calls populateInterface
+        (WebInspector.DatabasesPanel.prototype.populateInterface): adds cookies if they don't exist
+        (WebInspector.DatabasesPanel.prototype.reset): remove cookie specific parts
+        (WebInspector.DatabasesPanel.prototype.addCookies): add cookies sidebar tree element
+        (WebInspector.DatabasesPanel.prototype.showCookies): sets the visible view to a CookiesItemView
+        (WebInspector.CookieSidebarTreeElement):
+        (WebInspector.CookieSidebarTreeElement.prototype.onselect):
+        (WebInspector.CookieSidebarTreeElement.prototype.get mainTitle): just "Cookies" at the moment
+        (WebInspector.CookieSidebarTreeElement.prototype.set mainTitle):
+        (WebInspector.CookieSidebarTreeElement.prototype.get subtitle): no subtitle yet
+        (WebInspector.CookieSidebarTreeElement.prototype.set subtitle):
+
+          New "Cookies" Image for the Sidebar:
+
+        * inspector/front-end/Images/cookie.png: Added.
+        * inspector/front-end/inspector.css:
+
+          Include the Added Files where appropriate:
+
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+
 2009-08-12  George Wright  <george.wright@torchmobile.com>
 
         Reviewed by George Staikos.
