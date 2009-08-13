@@ -124,7 +124,7 @@ sub testapiPath($)
 }
 
 #run api tests
-if (isAppleMacWebKit()) {
+if (isAppleMacWebKit() || isAppleWinWebKit()) {
     chdirWebKit();
     chdir($productDir) or die;
     my $testapiResult = system testapiPath($productDir);

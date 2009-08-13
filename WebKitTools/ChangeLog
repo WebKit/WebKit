@@ -1,5 +1,17 @@
 2009-08-13  Adam Roben  <aroben@apple.com>
 
+        Enable running testapi in run-javascriptcore-tests on Windows
+
+        Fixes <http://webkit.org/b/24856> run-javascriptcore-tests should run
+        testapi on Windows
+
+        Reviewed by Mark Rowe.
+
+        * Scripts/run-javascriptcore-tests: Allow testapi to run if we're in
+        the AppleWinWebKit configuration.
+
+2009-08-13  Adam Roben  <aroben@apple.com>
+
         Re-enable testapi in run-javascriptcore-tests on Mac
 
         This seems to have been mistakenly disabled in r47089.
