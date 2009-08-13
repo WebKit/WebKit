@@ -1,5 +1,20 @@
 2009-08-13  Ariya Hidayat  <ariya.hidayat@nokia.com>
 
+        Rubber-stamped by George Staikos.
+
+        [Qt] These tests pass, update the metrics and exclude from Skipped.
+
+        * platform/qt/Skipped:
+        * platform/qt/fast/canvas/canvas-transform-identity-expected.txt:
+        * platform/qt/fast/canvas/canvas-transform-infinity-expected.txt:
+        * platform/qt/fast/canvas/canvas-transform-multiply-expected.txt:
+        * platform/qt/fast/canvas/canvas-transform-nan-expected.txt:
+        * platform/qt/fast/canvas/canvas-transform-non-invertible-expected.txt:
+        * platform/qt/fast/canvas/canvas-transform-skewed-expected.txt:
+        * platform/qt/fast/canvas/canvas-transforms-during-path-expected.txt:
+
+2009-08-13  Ariya Hidayat  <ariya.hidayat@nokia.com>
+
         Rubber-stamped by Simon Hausmann.
 
         [Qt] Test result for quadraticCurveTo.
