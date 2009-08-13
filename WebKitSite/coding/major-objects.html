@@ -15,7 +15,7 @@
 
 <h1>Major Objects in WebCore</h1>
 <div>Adam Barth</div>
-<div>first draft, 2009-08-11</div>
+<div>first draft, 2009-08-12</div>
 
 <p>WebCore uses a number of objects to represent a web page in memory.  This
 document describes the major objects and the relation between them.  In some
@@ -42,7 +42,7 @@ the "detached" case and gracefully handle null pointers.</p>
 ......|.................................................|..........
       |        \/  Replaced after navigation  \/        |
       |                                                 |
-      | <-- Null after navigation                       |
+      | <-- Ptr to Frame is null after navigation[1]    |
       |                                                 |
 +-----+-----+         +-------------+                   |
 | DOMWindow |<--impl--+ JSDOMWindow |<------window------+
@@ -60,6 +60,8 @@ the "detached" case and gracefully handle null pointers.</p>
   | Node  |<---impl---| JSNode |
   +-------+           +--------+
 </pre>
+
+<p>[1] After navigating to a new page, the old DOMWindow points to a null Frame, and the Frame points to a new DOMWindow.
 
 <p>If you have any comments on the above or other ideas about improving the clarity,
 scope, or presentation, please send mail to the <a href="/contact.html">WebKit mailing list</a>.</p>
