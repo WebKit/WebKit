@@ -125,6 +125,7 @@ contains(DEFINES, ENABLE_SINGLE_THREADED=1) {
 !contains(DEFINES, ENABLE_XPATH=.): DEFINES += ENABLE_XPATH=1
 !contains(DEFINES, ENABLE_XSLT=.): DEFINES += ENABLE_XSLT=0
 #!contains(DEFINES, ENABLE_XBL=.): DEFINES += ENABLE_XBL=1
+!contains(DEFINES, ENABLE_WCSS=.): DEFINES += ENABLE_WCSS=0
 !contains(DEFINES, ENABLE_WML=.): DEFINES += ENABLE_WML=0
 !contains(DEFINES, ENABLE_SHARED_WORKERS=.): DEFINES += ENABLE_SHARED_WORKERS=0
 !contains(DEFINES, ENABLE_WORKERS=.): DEFINES += ENABLE_WORKERS=1
@@ -255,9 +256,16 @@ WALDOCSSVALUES = $$PWD/css/CSSValueKeywords.in
 
 DASHBOARDSUPPORTCSSPROPERTIES = $$PWD/css/DashboardSupportCSSPropertyNames.in
 
-SVGCSSPROPERTIES = $$PWD/css/SVGCSSPropertyNames.in
 
-SVGCSSVALUES = $$PWD/css/SVGCSSValueKeywords.in
+contains(DEFINES, ENABLE_SVG=1) {
+    EXTRACSSPROPERTIES += $$PWD/css/SVGCSSPropertyNames.in
+    EXTRACSSVALUES += $$PWD/css/SVGCSSValueKeywords.in
+}
+
+contains(DEFINES, ENABLE_WCSS=1) {
+    EXTRACSSPROPERTIES += $$PWD/css/WCSSPropertyNames.in
+    EXTRACSSVALUES += $$PWD/css/WCSSValueKeywords.in
+}
 
 STYLESHEETS_EMBED = \
     $$PWD/css/html.css \
@@ -2675,6 +2683,14 @@ contains(DEFINES, ENABLE_FILTERS=1) {
     FEATURE_DEFINES_JAVASCRIPT += ENABLE_FILTERS=1
 }
 
+contains(DEFINES, ENABLE_WCSS=1) {
+    FEATURE_DEFINES_JAVASCRIPT += ENABLE_WCSS=1
+    contains(DEFINES, ENABLE_XHTMLMP=0) {
+        DEFINES -= ENABLE_XHTMLMP=0
+        DEFINES += ENABLE_XHTMLMP=1
+    }
+}
+
 contains(DEFINES, ENABLE_WML=1) {
     SOURCES += \
         wml/WMLAElement.cpp \
@@ -2983,42 +2999,25 @@ contains(DEFINES, ENABLE_SVG=1) {
         xlinknames.variable_out = GENERATED_SOURCES
         addExtraCompilerWithHeader(xlinknames)
 
-    # GENERATOR 6-A:
-    cssprops.output = $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.cpp
-    cssprops.input = WALDOCSSPROPS
-    cssprops.commands = perl -ne \"print lc\" ${QMAKE_FILE_NAME} $$DASHBOARDSUPPORTCSSPROPERTIES $$SVGCSSPROPERTIES > $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.in && cd $$GENERATED_SOURCES_DIR && perl $$PWD/css/makeprop.pl && $(DEL_FILE) ${QMAKE_FILE_BASE}.strip ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.gperf
-    cssprops.CONFIG = target_predeps no_link
-    cssprops.variable_out =
-    cssprops.depend = ${QMAKE_FILE_NAME} DASHBOARDSUPPORTCSSPROPERTIES SVGCSSPROPERTIES
-    addExtraCompilerWithHeader(cssprops)
+} 
+# GENERATOR 6-A:
+cssprops.output = $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.cpp
+cssprops.input = WALDOCSSPROPS
+cssprops.commands = perl -ne \"print lc\" ${QMAKE_FILE_NAME} $$DASHBOARDSUPPORTCSSPROPERTIES $$EXTRACSSPROPERTIES > $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.in && cd $$GENERATED_SOURCES_DIR && perl $$PWD/css/makeprop.pl && $(DEL_FILE) ${QMAKE_FILE_BASE}.strip ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.gperf
+cssprops.CONFIG = target_predeps no_link
+cssprops.variable_out =
+cssprops.depend = ${QMAKE_FILE_NAME} DASHBOARDSUPPORTCSSPROPERTIES EXTRACSSPROPERTIES
+addExtraCompilerWithHeader(cssprops)
 
-    # GENERATOR 6-B:
-    cssvalues.output = $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.c
-    cssvalues.input = WALDOCSSVALUES
-    cssvalues.commands = perl -ne \"print lc\" ${QMAKE_FILE_NAME} $$SVGCSSVALUES > $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.in && cd $$GENERATED_SOURCES_DIR && perl $$PWD/css/makevalues.pl && $(DEL_FILE) ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.strip ${QMAKE_FILE_BASE}.gperf
-    cssvalues.CONFIG = target_predeps no_link
-    cssvalues.variable_out =
-    cssvalues.depend = ${QMAKE_FILE_NAME} SVGCSSVALUES
-    addExtraCompilerWithHeader(cssvalues)
-} else {
-    # GENERATOR 6-A:
-    cssprops.output = $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.cpp
-    cssprops.input = WALDOCSSPROPS
-    cssprops.commands = perl -ne \"print lc\" ${QMAKE_FILE_NAME} $$DASHBOARDSUPPORTCSSPROPERTIES > $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.in && cd $$GENERATED_SOURCES_DIR && perl $$PWD/css/makeprop.pl && $(DEL_FILE) ${QMAKE_FILE_BASE}.strip ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.gperf
-    cssprops.CONFIG = target_predeps no_link
-    cssprops.variable_out =
-    cssprops.depend = ${QMAKE_FILE_NAME} DASHBOARDSUPPORTCSSPROPERTIES
-    addExtraCompilerWithHeader(cssprops)
-
-    # GENERATOR 6-B:
-    cssvalues.output = $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.c
-    cssvalues.input = WALDOCSSVALUES
-    cssvalues.commands = perl -ne \"print lc\" ${QMAKE_FILE_NAME} > $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.in && cd $$GENERATED_SOURCES_DIR && perl $$PWD/css/makevalues.pl && $(DEL_FILE) ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.strip ${QMAKE_FILE_BASE}.gperf
-    cssvalues.CONFIG = target_predeps no_link
-    cssvalues.variable_out =
-    cssvalues.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_GENERATED_SOURCES_DIR_SLASH}${QMAKE_FILE_BASE}.h
-    addExtraCompiler(cssvalues)
-}
+# GENERATOR 6-B:
+cssvalues.output = $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.c
+cssvalues.input = WALDOCSSVALUES
+cssvalues.commands = perl -ne \"print lc\" ${QMAKE_FILE_NAME} $$EXTRACSSVALUES > $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.in && cd $$GENERATED_SOURCES_DIR && perl $$PWD/css/makevalues.pl && $(DEL_FILE) ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.strip ${QMAKE_FILE_BASE}.gperf
+cssvalues.CONFIG = target_predeps no_link
+cssvalues.variable_out =
+cssvalues.depend = ${QMAKE_FILE_NAME} EXTRACSSVALUES
+cssvalues.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_GENERATED_SOURCES_DIR_SLASH}${QMAKE_FILE_BASE}.h
+addExtraCompiler(cssvalues)
 
 contains(DEFINES, ENABLE_JAVASCRIPT_DEBUGGER=1) {
     FEATURE_DEFINES_JAVASCRIPT += ENABLE_JAVASCRIPT_DEBUGGER=1

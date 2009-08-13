@@ -260,6 +260,7 @@ table-cell
 table-caption
 -webkit-box
 -webkit-inline-box
+-wap-marquee
 #none
 #
 # CSS_PROP_CURSOR:

@@ -1,3 +1,31 @@
+2009-08-12  Charles Wei  <charles.wei@torchmobile.com.cn>
+
+        Reviewed by Niko Zimmermann.
+
+        This is to add WCSS marquee support , which is defined by OMA and is an extension for CSS2, 
+        It extends CSS display with "display:-wap-marquee;-wap-marquee-dir:xxx;-wap-marquee-speed:xxx;-wap-marquee-style:xxx"
+        Minor fixes by Eric Seidel and George Staikos.
+        https://bugs.webkit.org/show_bug.cgi?id=23727
+
+        No new tests, the tests have already been landed at LayoutTests/fast/wcss/
+
+        * WebCore.pro:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * css/CSSValueKeywords.in:
+        * css/WCSSPropertyNames.in: Added.
+        * css/WCSSValueKeywords.in: Added.
+        * rendering/RenderMarquee.cpp:
+        (WebCore::RenderMarquee::start):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::createObject):
+        * rendering/style/RenderStyleConstants.h:
+        (WebCore::):
+
 2009-08-12  George Wright  <george.wright@torchmobile.com>
 
         Reviewed by David Hyatt.
