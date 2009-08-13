@@ -1,3 +1,14 @@
+2009-08-13  Adam Roben  <aroben@apple.com>
+
+        Re-enable testapi in run-javascriptcore-tests on Mac
+
+        This seems to have been mistakenly disabled in r47089.
+
+        Rubber-stamped by Mark Rowe.
+
+        * Scripts/run-javascriptcore-tests: Removed comment markers that were
+        preventing running testapi.
+
 2009-08-12  George Staikos  <george.staikos@torchmobile.com>
 
         Reviewed by Adam Treat.

@@ -124,12 +124,12 @@ sub testapiPath($)
 }
 
 #run api tests
-#if (isAppleMacWebKit()) {
-#    chdirWebKit();
-#    chdir($productDir) or die;
-#    my $testapiResult = system testapiPath($productDir);
-#    exit exitStatus($testapiResult)  if $testapiResult;
-#}
+if (isAppleMacWebKit()) {
+    chdirWebKit();
+    chdir($productDir) or die;
+    my $testapiResult = system testapiPath($productDir);
+    exit exitStatus($testapiResult)  if $testapiResult;
+}
 
 # Find JavaScriptCore directory
 chdirWebKit();
