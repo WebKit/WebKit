@@ -1,3 +1,10 @@
+2009-08-13  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Unreviewed build fix. Include stdio.h for using stdout, stderr,
+        and fprintf.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+
 2009-08-13  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Eric Seidel.
