@@ -1,11 +1,6 @@
 LIBRARY    "JavaScriptCore_debug"
 
 EXPORTS
-	?from@UString@JSC@@SA?AV12@N@Z
-	?nonInlineNaN@JSC@@YANXZ
-	?synthesizePrototype@JSValue@JSC@@ABEPAVJSObject@2@PAVExecState@2@@Z
-	?toObjectSlowCase@JSValue@JSC@@ABEPAVJSObject@2@PAVExecState@2@@Z
-	?toThisObjectSlowCase@JSValue@JSC@@ABEPAVJSObject@2@PAVExecState@2@@Z
     ??0Collator@WTF@@QAE@PBD@Z
     ??0DropAllLocks@JSLock@JSC@@QAE@W4JSLockBehavior@2@@Z
     ??0InternalFunction@JSC@@IAE@PAVJSGlobalData@1@V?$PassRefPtr@VStructure@JSC@@@WTF@@ABVIdentifier@1@@Z
@@ -122,6 +117,7 @@ EXPORTS
     ?focus@Profile@JSC@@QAEXPBVProfileNode@2@@Z
     ?from@UString@JSC@@SA?AV12@H@Z
     ?from@UString@JSC@@SA?AV12@I@Z
+    ?from@UString@JSC@@SA?AV12@N@Z
     ?functionName@DebuggerCallFrame@JSC@@QBEPBVUString@2@XZ
     ?get@Structure@JSC@@QAEIPBURep@UString@2@AAIAAPAVJSCell@2@@Z
     ?getCallData@JSCell@JSC@@UAE?AW4CallType@2@AATCallData@2@@Z
@@ -181,6 +177,7 @@ EXPORTS
     ?markChildren@JSWrapperObject@JSC@@UAEXAAVMarkStack@2@@Z
     ?materializePropertyMap@Structure@JSC@@AAEXXZ
     ?name@InternalFunction@JSC@@QAEABVUString@2@PAVJSGlobalData@2@@Z
+    ?nonInlineNaN@JSC@@YANXZ
     ?objectCount@Heap@JSC@@QAEIXZ
     ?objectProtoFuncToString@JSC@@YI?AVJSValue@1@PAVExecState@1@PAVJSObject@1@V21@ABVArgList@1@@Z
     ?parse@Parser@JSC@@AAEXPAVJSGlobalData@2@PAHPAVUString@2@@Z
@@ -204,6 +201,7 @@ EXPORTS
     ?putWithAttributes@JSObject@JSC@@UAEXPAVExecState@2@ABVIdentifier@2@VJSValue@2@I_NAAVPutPropertySlot@2@@Z
     ?putWithAttributes@JSObject@JSC@@UAEXPAVExecState@2@IVJSValue@2@I@Z
     ?randomNumber@WTF@@YANXZ
+    ?recompileAllJSFunctions@Debugger@JSC@@QAEXPAVJSGlobalData@2@@Z
     ?recordExtraCost@Heap@JSC@@AAEXI@Z
     ?releaseStack@MarkStack@JSC@@CAXPAXI@Z
     ?reset@ParserArena@JSC@@QAEXXZ
@@ -226,6 +224,7 @@ EXPORTS
     ?stopProfiling@Profiler@JSC@@QAE?AV?$PassRefPtr@VProfile@JSC@@@WTF@@PAVExecState@2@ABVUString@2@@Z
     ?strtod@WTF@@YANPBDPAPAD@Z
     ?substr@UString@JSC@@QBE?AV12@HH@Z
+    ?synthesizePrototype@JSValue@JSC@@ABEPAVJSObject@2@PAVExecState@2@@Z
     ?thisObject@DebuggerCallFrame@JSC@@QBEPAVJSObject@2@XZ
     ?throwError@JSC@@YAPAVJSObject@1@PAVExecState@1@W4ErrorType@1@@Z
     ?throwError@JSC@@YAPAVJSObject@1@PAVExecState@1@W4ErrorType@1@ABVUString@1@@Z
@@ -243,6 +242,7 @@ EXPORTS
     ?toObject@JSAPIValueWrapper@JSC@@UBEPAVJSObject@2@PAVExecState@2@@Z
     ?toObject@JSObject@JSC@@UBEPAV12@PAVExecState@2@@Z
     ?toObject@JSString@JSC@@EBEPAVJSObject@2@PAVExecState@2@@Z
+    ?toObjectSlowCase@JSValue@JSC@@ABEPAVJSObject@2@PAVExecState@2@@Z
     ?toPrimitive@JSAPIValueWrapper@JSC@@UBE?AVJSValue@2@PAVExecState@2@W4PreferredPrimitiveType@2@@Z
     ?toPrimitive@JSString@JSC@@EBE?AVJSValue@2@PAVExecState@2@W4PreferredPrimitiveType@2@@Z
     ?toStrictUInt32@UString@JSC@@QBEIPA_N@Z
@@ -256,6 +256,7 @@ EXPORTS
     ?toThisObject@JSCell@JSC@@UBEPAVJSObject@2@PAVExecState@2@@Z
     ?toThisObject@JSObject@JSC@@UBEPAV12@PAVExecState@2@@Z
     ?toThisObject@JSString@JSC@@EBEPAVJSObject@2@PAVExecState@2@@Z
+    ?toThisObjectSlowCase@JSValue@JSC@@ABEPAVJSObject@2@PAVExecState@2@@Z
     ?toThisString@JSCell@JSC@@UBE?AVUString@2@PAVExecState@2@@Z
     ?toThisString@JSString@JSC@@EBE?AVUString@2@PAVExecState@2@@Z
     ?toThisString@StringObject@JSC@@EBE?AVUString@2@PAVExecState@2@@Z
