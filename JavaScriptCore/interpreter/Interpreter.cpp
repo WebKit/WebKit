@@ -2919,6 +2919,22 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
            puts the result in register dst.
         */
         int dst = (++vPC)->u.operand;
+        int func = (++vPC)->u.operand;
+
+        callFrame->r(dst) = JSValue(callFrame->codeBlock()->function(func)->make(callFrame, callFrame->scopeChain()));
+
+        ++vPC;
+        NEXT_INSTRUCTION();
+    }
+    DEFINE_OPCODE(op_new_func_exp) {
+        /* new_func_exp dst(r) func(f)
+
+           Constructs a new Function instance from function func and
+           the current scope chain using the original Function
+           constructor, using the rules for function expressions, and
+           puts the result in register dst.
+        */
+        int dst = (++vPC)->u.operand;
         int funcIndex = (++vPC)->u.operand;
 
         FunctionBodyNode* body = callFrame->codeBlock()->function(funcIndex);
@@ -2937,22 +2953,6 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         }
 
         callFrame->r(dst) = JSValue(func);
-
-        ++vPC;
-        NEXT_INSTRUCTION();
-    }
-    DEFINE_OPCODE(op_new_func_exp) {
-        /* new_func_exp dst(r) func(f)
-
-           Constructs a new Function instance from function func and
-           the current scope chain using the original Function
-           constructor, using the rules for function expressions, and
-           puts the result in register dst.
-        */
-        int dst = (++vPC)->u.operand;
-        int func = (++vPC)->u.operand;
-
-        callFrame->r(dst) = JSValue(callFrame->codeBlock()->function(func)->make(callFrame, callFrame->scopeChain()));
 
         ++vPC;
         NEXT_INSTRUCTION();
