@@ -1,3 +1,25 @@
+2009-08-13  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        wrong calculation of overflow size for flexbox and table
+        https://bugs.webkit.org/show_bug.cgi?id=28064
+
+        RenderFlexibleBox and RenderTable were using the width of overflow
+        to update height of overflow, so height became wrong value and
+        width was not updated. As the corresponding code of RenderBlock
+        was sane, I factored it out and used from RenderFlexibleBox and
+        RenderTable.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateOverflowWithShadowAndReflection): created from code of layoutBlock
+        (WebCore::RenderBlock::layoutBlock):
+        * rendering/RenderBlock.h:
+        * rendering/RenderFlexibleBox.cpp: use updateOverflowWithShadowAndReflection
+        (WebCore::RenderFlexibleBox::layoutBlock):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::layout): use updateOverflowWithShadowAndReflection
+
 2009-08-13  Mark Rowe  <mrowe@apple.com>
 
         Revert r47185, the fix for <https://bugs.webkit.org/show_bug.cgi?id=28185>, as it broke the

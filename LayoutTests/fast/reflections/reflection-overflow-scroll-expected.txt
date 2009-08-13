@@ -5,6 +5,10 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS element.scrollLeft is 150
 PASS element.scrollTop is 80
+PASS element.scrollLeft is 150
+PASS element.scrollTop is 80
+PASS element.scrollLeft is 150
+PASS element.scrollTop is 80
 PASS successfullyParsed is true
 
 TEST COMPLETE

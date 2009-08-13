@@ -730,6 +730,31 @@ void RenderBlock::updateScrollInfoAfterLayout()
     }
 }
 
+void RenderBlock::updateOverflowWithShadowAndReflection()
+{
+    if (hasOverflowClip())
+        return;
+
+    int shadowLeft;
+    int shadowRight;
+    int shadowTop;
+    int shadowBottom;
+    style()->getBoxShadowExtent(shadowTop, shadowRight, shadowBottom, shadowLeft);
+
+    m_overflowLeft = min(m_overflowLeft, shadowLeft);
+    m_overflowWidth = max(m_overflowWidth, width() + shadowRight);
+    m_overflowTop = min(m_overflowTop, shadowTop);
+    m_overflowHeight = max(m_overflowHeight, height() + shadowBottom);
+
+    if (hasReflection()) {
+        IntRect reflection(reflectionBox());
+        m_overflowLeft = min(m_overflowLeft, reflection.x());
+        m_overflowWidth = max(m_overflowWidth, reflection.right());
+        m_overflowTop = min(m_overflowTop, reflection.y());
+        m_overflowHeight = max(m_overflowHeight, reflection.bottom());
+    }
+}
+
 void RenderBlock::layout()
 {
     // Update our first letter info now.
@@ -868,26 +893,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
     m_overflowWidth = max(m_overflowWidth, width());
     m_overflowHeight = max(m_overflowHeight, height());
 
-    if (!hasOverflowClip()) {
-        int shadowLeft;
-        int shadowRight;
-        int shadowTop;
-        int shadowBottom;
-        style()->getBoxShadowExtent(shadowTop, shadowRight, shadowBottom, shadowLeft);
-
-        m_overflowLeft = min(m_overflowLeft, shadowLeft);
-        m_overflowWidth = max(m_overflowWidth, width() + shadowRight);
-        m_overflowTop = min(m_overflowTop, shadowTop);
-        m_overflowHeight = max(m_overflowHeight, height() + shadowBottom);
-
-        if (hasReflection()) {
-            IntRect reflection(reflectionBox());
-            m_overflowLeft = min(m_overflowLeft, reflection.x());
-            m_overflowWidth = max(m_overflowWidth, reflection.right());
-            m_overflowTop = min(m_overflowTop, reflection.y());
-            m_overflowHeight = max(m_overflowHeight, reflection.bottom());
-        }
-    }
+    updateOverflowWithShadowAndReflection();
 
     statePusher.pop();
 

@@ -389,26 +389,7 @@ void RenderTable::layout()
     // FIXME: Only pass true if width or height changed.
     layoutPositionedObjects(true);
 
-    if (!hasOverflowClip()) {
-        int shadowLeft;
-        int shadowRight;
-        int shadowTop;
-        int shadowBottom;
-        style()->getBoxShadowExtent(shadowTop, shadowRight, shadowBottom, shadowLeft);
-
-        m_overflowLeft = min(m_overflowLeft, shadowLeft);
-        m_overflowWidth = max(m_overflowWidth, width() + shadowRight);
-        m_overflowTop = min(m_overflowTop, shadowTop);
-        m_overflowHeight = max(m_overflowHeight, height() + shadowBottom);
-
-        if (hasReflection()) {
-            IntRect reflection(reflectionBox());
-            m_overflowTop = min(m_overflowTop, reflection.y());
-            m_overflowHeight = max(m_overflowHeight, reflection.bottom());
-            m_overflowLeft = min(m_overflowLeft, reflection.x());
-            m_overflowHeight = max(m_overflowWidth, reflection.right());
-        }
-    }
+    updateOverflowWithShadowAndReflection();
 
     statePusher.pop();
 

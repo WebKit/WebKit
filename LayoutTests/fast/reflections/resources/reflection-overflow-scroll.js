@@ -7,8 +7,21 @@ var element = null;
 element = document.getElementById("horizontal");
 element.scrollLeft = 500;
 shouldBe("element.scrollLeft", "150");
-
 element = document.getElementById("vertical");
+element.scrollTop = 500;
+shouldBe("element.scrollTop", "80");
+
+element = document.getElementById("horizontal_flex");
+element.scrollLeft = 500;
+shouldBe("element.scrollLeft", "150");
+element = document.getElementById("vertical_flex");
+element.scrollTop = 500;
+shouldBe("element.scrollTop", "80");
+
+element = document.getElementById("horizontal_table");
+element.scrollLeft = 500;
+shouldBe("element.scrollLeft", "150");
+element = document.getElementById("vertical_table");
 element.scrollTop = 500;
 shouldBe("element.scrollTop", "80");
 
