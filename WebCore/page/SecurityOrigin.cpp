@@ -281,15 +281,16 @@ PassRefPtr<SecurityOrigin> SecurityOrigin::createFromDatabaseIdentifier(const St
     if (separator2 == -1)
         return create(KURL());
         
-    // Ensure there were at least 2 seperator characters. Some hostnames on intranets have
+    // Ensure there were at least 2 separator characters. Some hostnames on intranets have
     // underscores in them, so we'll assume that any additional underscores are part of the host.
-    if (separator1 != separator2)
+    if (separator1 == separator2)
         return create(KURL());
         
     // Make sure the port section is a valid port number or doesn't exist
     bool portOkay;
     int port = databaseIdentifier.right(databaseIdentifier.length() - separator2 - 1).toInt(&portOkay);
-    if (!portOkay && separator2 + 1 == static_cast<int>(databaseIdentifier.length()))
+    bool portAbsent = (separator2 == static_cast<int>(databaseIdentifier.length()) - 1);
+    if (!(portOkay || portAbsent))
         return create(KURL());
     
     if (port < 0 || port > 65535)

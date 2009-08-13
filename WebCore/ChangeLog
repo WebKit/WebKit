@@ -1,3 +1,15 @@
+2009-08-13  Steve Block  <steveblock@google.com>
+
+        Reviewed by Darin Adler.
+
+        Fixes a couple of bugs in SecurityOrigin::createFromDatabaseIdentifier.
+        https://bugs.webkit.org/show_bug.cgi?id=28262
+
+        No new tests possible.
+
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::createFromDatabaseIdentifier):
+
 2009-08-13  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Eric Seidel.
