@@ -1,3 +1,28 @@
+2009-08-13  Zan Dobersek  <zandobersek@gmail.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] Drag and drop support
+        https://bugs.webkit.org/show_bug.cgi?id=23642
+
+        Utilizes functions that are being called upon drag and drop actions.
+        Uses different GTK clipboards that hold different types
+        of drag data - images, HTML markup, text, URL, URL label.
+        Also clears each clipboard before setting new data to it.
+
+        No new tests - despite some implementations, no new functionality
+        is added until implementations of the GTK drag and drop protocol
+        in WebKit part.
+
+        * platform/gtk/ClipboardGtk.cpp:
+        (WebCore::ClipboardGtk::ClipboardGtk):
+        (WebCore::ClipboardGtk::~ClipboardGtk):
+        (WebCore::getCachedImage):
+        (WebCore::ClipboardGtk::declareAndWriteDragImage):
+        (WebCore::ClipboardGtk::writeURL):
+        (WebCore::ClipboardGtk::writeRange):
+        * platform/gtk/ClipboardGtk.h: ClipboardGdk -> ClipboardGtk
+
 2009-08-13  Darin Adler  <darin@apple.com>
 
         Reviewed by David Levin.

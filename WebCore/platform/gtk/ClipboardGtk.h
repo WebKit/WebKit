@@ -24,8 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ClipboardGdk_h
-#define ClipboardGdk_h
+#ifndef ClipboardGtk_h
+#define ClipboardGtk_h
 
 #include "Clipboard.h"
 
