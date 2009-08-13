@@ -1,3 +1,10 @@
+2009-08-13  Adam Langley  <agl@chromium.org>
+
+        Review not required.
+
+        * Scripts/modules/committers.py:
+          Adding myself to this list because Eric told me to.
+
 2009-08-13  Greg Bolsinga  <bolsinga@apple.com>
 
         Unreviewed.
