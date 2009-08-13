@@ -2116,6 +2116,8 @@ webcore_sources += \
 	WebCore/storage/SQLTransaction.cpp \
 	WebCore/storage/SQLTransaction.h \
 	WebCore/storage/SQLTransactionCallback.h \
+	WebCore/storage/SQLTransactionCoordinator.h \
+	WebCore/storage/SQLTransactionCoordinator.cpp \
 	WebCore/storage/SQLTransactionErrorCallback.h
 
 else

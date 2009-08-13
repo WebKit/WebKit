@@ -50,6 +50,7 @@
 #include "SQLiteFileSystem.h"
 #include "SQLiteStatement.h"
 #include "SQLResultSet.h"
+#include "SQLTransactionCoordinator.h"
 #include <wtf/MainThread.h>
 #endif
 
@@ -539,13 +540,17 @@ void Database::scheduleTransaction()
         m_transactionInProgress = false;
 }
 
-void Database::scheduleTransactionStep(SQLTransaction* transaction)
+void Database::scheduleTransactionStep(SQLTransaction* transaction, bool immediately)
 {
-    if (m_document->databaseThread()) {
-        RefPtr<DatabaseTransactionTask> task = DatabaseTransactionTask::create(transaction);
-        LOG(StorageAPI, "Scheduling DatabaseTransactionTask %p for the transaction step\n", task.get());
+    if (!m_document->databaseThread())
+        return;
+
+    RefPtr<DatabaseTransactionTask> task = DatabaseTransactionTask::create(transaction);
+    LOG(StorageAPI, "Scheduling DatabaseTransactionTask %p for the transaction step\n", task.get());
+    if (immediately)
+        m_document->databaseThread()->scheduleImmediateTask(task.release());
+    else
         m_document->databaseThread()->scheduleTask(task.release());
-    }
 }
 
 void Database::scheduleTransactionCallback(SQLTransaction* transaction)
@@ -581,6 +586,11 @@ Vector<String> Database::performGetTableNames()
     }
 
     return tableNames;
+}
+
+SQLTransactionCoordinator* Database::transactionCoordinator() const
+{
+    return m_document->databaseThread()->transactionCoordinator();
 }
 
 String Database::version() const
