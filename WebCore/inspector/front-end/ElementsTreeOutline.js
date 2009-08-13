@@ -83,7 +83,7 @@ WebInspector.ElementsTreeOutline.prototype = {
             this.focusedNodeChanged();
 
             if (x && !this.suppressSelectHighlight) {
-                InspectorController.highlightDOMNode(x);
+                InspectorController.highlightDOMNode(x.id);
 
                 if ("_restorePreviousHighlightNodeTimeout" in this)
                     clearTimeout(this._restorePreviousHighlightNodeTimeout);
@@ -92,7 +92,7 @@ WebInspector.ElementsTreeOutline.prototype = {
                 {
                     var hoveredNode = WebInspector.hoveredDOMNode;
                     if (hoveredNode)
-                        InspectorController.highlightDOMNode(hoveredNode);
+                        InspectorController.highlightDOMNode(hoveredNode.id);
                     else
                         InspectorController.hideDOMNodeHighlight();
                 }
@@ -387,8 +387,13 @@ WebInspector.ElementsTreeElement.prototype = {
 
         this.updateChildren();
     },
-
+    
     updateChildren: function(fullRefresh)
+    {
+        WebInspector.domAgent.getChildNodesAsync(this.representedObject, this._updateChildren.bind(this, fullRefresh));
+    },
+
+    _updateChildren: function(fullRefresh)
     {
         if (fullRefresh) {
             var selectedTreeElement = this.treeOutline.selectedTreeElement;
@@ -693,7 +698,7 @@ WebInspector.ElementsTreeElement.prototype = {
         }
 
         if (!parseElement.hasAttributes()) {
-            InspectorController.inspectedWindow().Element.prototype.removeAttribute.call(this.representedObject, attributeName);
+            this.representedObject.removeAttribute(attributeName);
             this._updateTitle();
             moveToNextAttributeIfNeeded.call(this);
             return;
@@ -704,12 +709,12 @@ WebInspector.ElementsTreeElement.prototype = {
             var attr = parseElement.attributes[i];
             foundOriginalAttribute = foundOriginalAttribute || attr.name === attributeName;
             try {
-                InspectorController.inspectedWindow().Element.prototype.setAttribute.call(this.representedObject, attr.name, attr.value);
+                this.representedObject.setAttribute(attr.name, attr.value);
             } catch(e) {} // ignore invalid attribute (innerHTML doesn't throw errors, but this can)
         }
 
         if (!foundOriginalAttribute)
-            InspectorController.inspectedWindow().Element.prototype.removeAttribute.call(this.representedObject, attributeName);
+            this.representedObject.removeAttribute(attributeName);
 
         this._updateTitle();
 

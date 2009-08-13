@@ -175,7 +175,7 @@ WebInspector.ConsoleView.prototype = {
     clearMessages: function(clearInspectorController)
     {
         if (clearInspectorController)
-            InspectorController.clearMessages();
+            InspectorController.clearMessages(false);
         if (WebInspector.panels.resources)
             WebInspector.panels.resources.clearMessages();
 
@@ -211,11 +211,28 @@ WebInspector.ConsoleView.prototype = {
         if (!expressionString && !prefix)
             return;
 
+        if (!expressionString)
+            expressionString = "this";
+
         var reportCompletions = this._reportCompletions.bind(this, bestMatchOnly, completionsReadyCallback, dotNotation, bracketNotation, prefix);
-        this._evalInInspectedWindow(expressionString, reportCompletions);
+        // Collect comma separated object properties for the completion.
+        this._evalInInspectedWindow(
+            "(function() {" +
+                "var props = [];" +
+                "for (var prop in (" + expressionString + ")) props.push(prop);" +
+                ((!dotNotation && !bracketNotation) ?
+                "for (var prop in window._inspectorCommandLineAPI)" +
+                    "if (prop.charAt(0) !== '_') props.push(prop);"
+                : "") +
+                "return props.join(',');" +
+            "})()",
+            reportCompletions);
     },
 
-    _reportCompletions: function(bestMatchOnly, completionsReadyCallback, dotNotation, bracketNotation, prefix, result) {
+    _reportCompletions: function(bestMatchOnly, completionsReadyCallback, dotNotation, bracketNotation, prefix, result, isException) {
+        if (isException)
+            return;
+
         if (bracketNotation) {
             if (prefix.length && prefix[0] === "'")
                 var quoteUsed = "'";
@@ -224,15 +241,7 @@ WebInspector.ConsoleView.prototype = {
         }
 
         var results = [];
-        var properties = Object.properties(result);
-        if (!dotNotation && !bracketNotation && result._inspectorCommandLineAPI) {
-            var commandLineAPI = Object.properties(result._inspectorCommandLineAPI);
-            for (var i = 0; i < commandLineAPI.length; ++i) {
-                var property = commandLineAPI[i];
-                if (property.charAt(0) !== "_")
-                    properties.push(property);
-            }
-        }
+        var properties = result.split(",");
         properties.sort();
 
         for (var i = 0; i < properties.length; ++i) {
@@ -288,7 +297,7 @@ WebInspector.ConsoleView.prototype = {
         if (!link || !link.representedNode)
             return;
 
-        WebInspector.updateFocusedNode(link.representedNode);
+        WebInspector.updateFocusedNode(link.representedNode.id);
         event.stopPropagation();
         event.preventDefault();
     },
@@ -313,74 +322,6 @@ WebInspector.ConsoleView.prototype = {
         this.doEvalInWindow(expression, callback);
     },
 
-    _ensureCommandLineAPIInstalled: function(inspectedWindow)
-    {
-        if (!inspectedWindow._inspectorCommandLineAPI) {
-            inspectedWindow.eval("window._inspectorCommandLineAPI = { \
-                $: function() { return document.getElementById.apply(document, arguments) }, \
-                $$: function() { return document.querySelectorAll.apply(document, arguments) }, \
-                $x: function(xpath, context) { \
-                    var nodes = []; \
-                    try { \
-                        var doc = context || document; \
-                        var results = doc.evaluate(xpath, doc, null, XPathResult.ANY_TYPE, null); \
-                        var node; \
-                        while (node = results.iterateNext()) nodes.push(node); \
-                    } catch (e) {} \
-                    return nodes; \
-                }, \
-                dir: function() { return console.dir.apply(console, arguments) }, \
-                dirxml: function() { return console.dirxml.apply(console, arguments) }, \
-                keys: function(o) { var a = []; for (var k in o) a.push(k); return a; }, \
-                values: function(o) { var a = []; for (var k in o) a.push(o[k]); return a; }, \
-                profile: function() { return console.profile.apply(console, arguments) }, \
-                profileEnd: function() { return console.profileEnd.apply(console, arguments) }, \
-                _inspectedNodes: [], \
-                get $0() { return _inspectorCommandLineAPI._inspectedNodes[0] }, \
-                get $1() { return _inspectorCommandLineAPI._inspectedNodes[1] }, \
-                get $2() { return _inspectorCommandLineAPI._inspectedNodes[2] }, \
-                get $3() { return _inspectorCommandLineAPI._inspectedNodes[3] }, \
-                get $4() { return _inspectorCommandLineAPI._inspectedNodes[4] } \
-            };");
-
-            inspectedWindow._inspectorCommandLineAPI.clear = InspectorController.wrapCallback(this.clearMessages.bind(this));
-            inspectedWindow._inspectorCommandLineAPI.inspect = InspectorController.wrapCallback(inspectObject.bind(this));
-
-            function inspectObject(o)
-            {
-                if (arguments.length === 0)
-                    return;
-
-                InspectorController.inspectedWindow().console.log(o);
-                if (Object.type(o, InspectorController.inspectedWindow()) === "node") {
-                    WebInspector.showElementsPanel();
-                    WebInspector.panels.elements.treeOutline.revealAndSelectNode(o);
-                } else {
-                    switch (Object.describe(o)) {
-                        case "Database":
-                            WebInspector.showDatabasesPanel();
-                            WebInspector.panels.databases.selectDatabase(o);
-                            break;
-                        case "Storage":
-                            WebInspector.showDatabasesPanel();
-                            WebInspector.panels.databases.selectDOMStorage(o);
-                            break;
-                    }
-                }
-            }
-        }
-    },
-
-    addInspectedNode: function(node)
-    {
-        var inspectedWindow = InspectorController.inspectedWindow();
-        this._ensureCommandLineAPIInstalled(inspectedWindow);
-        var inspectedNodes = inspectedWindow._inspectorCommandLineAPI._inspectedNodes;
-        inspectedNodes.unshift(node);
-        if (inspectedNodes.length >= 5)
-            inspectedNodes.pop();
-    },
-
     doEvalInWindow: function(expression, callback)
     {
         if (!expression) {
@@ -388,22 +329,15 @@ WebInspector.ConsoleView.prototype = {
             expression = "this";
         }
 
-        // Surround the expression in with statements to inject our command line API so that
-        // the window object properties still take more precedent than our API functions.
-        expression = "with (window._inspectorCommandLineAPI) { with (window) { " + expression + " } }";
-
         var self = this;
-        function delayedEvaluation()
+        function evalCallback(result)
         {
-            var inspectedWindow = InspectorController.inspectedWindow();
-            self._ensureCommandLineAPIInstalled(inspectedWindow);
-            try {
-                callback(inspectedWindow.eval(expression));
-            } catch (e) {
-                callback(e, true);
-            }
-        }
-        setTimeout(delayedEvaluation, 0);
+            if (result.exception)
+                callback(result.exception, true);
+            else
+                callback(result.value, false);
+        };
+        InspectorController.evaluate(expression, evalCallback);
     },
 
     _enterKeyPressed: function(event)
@@ -436,13 +370,10 @@ WebInspector.ConsoleView.prototype = {
 
     _format: function(output, forceObjectFormat)
     {
-        var inspectedWindow = InspectorController.inspectedWindow();
         if (forceObjectFormat)
             var type = "object";
-        else if (output instanceof inspectedWindow.NodeList)
-            var type = "array";
         else
-            var type = Object.type(output, inspectedWindow);
+            var type = Object.proxyType(output);
 
         // We don't perform any special formatting on these types, so we just
         // pass them through the simple _formatvalue function.
@@ -451,8 +382,6 @@ WebInspector.ConsoleView.prototype = {
             "null": 1,
             "boolean": 1,
             "number": 1,
-            "date": 1,
-            "function": 1,
         };
 
         var formatter;
@@ -479,6 +408,16 @@ WebInspector.ConsoleView.prototype = {
         elem.appendChild(document.createTextNode(val));
     },
 
+    _formatfunction: function(func, elem)
+    {
+        elem.appendChild(document.createTextNode(func.description));
+    },
+
+    _formatdate: function(date, elem)
+    {
+        elem.appendChild(document.createTextNode(date.description));
+    },
+
     _formatstring: function(str, elem)
     {
         elem.appendChild(document.createTextNode("\"" + str + "\""));
@@ -486,7 +425,7 @@ WebInspector.ConsoleView.prototype = {
 
     _formatregexp: function(re, elem)
     {
-        var formatted = String(re).replace(/([\\\/])/g, "\\$1").replace(/\\(\/[gim]*)$/, "$1").substring(1);
+        var formatted = String(re.description).replace(/([\\\/])/g, "\\$1").replace(/\\(\/[gim]*)$/, "$1").substring(1);
         elem.appendChild(document.createTextNode(formatted));
     },
 
@@ -501,10 +440,10 @@ WebInspector.ConsoleView.prototype = {
         elem.appendChild(document.createTextNode("]"));
     },
 
-    _formatnode: function(node, elem)
+    _formatnode: function(object, elem)
     {
         var treeOutline = new WebInspector.ElementsTreeOutline();
-        treeOutline.rootDOMNode = node;
+        treeOutline.rootDOMNode = WebInspector.domAgent.nodeForId(object.nodeId);
         treeOutline.element.addStyleClass("outline-disclosure");
         if (!treeOutline.children[0].hasChildren)
             treeOutline.element.addStyleClass("single-node");
@@ -513,7 +452,7 @@ WebInspector.ConsoleView.prototype = {
 
     _formatobject: function(obj, elem)
     {
-        elem.appendChild(new WebInspector.ObjectPropertiesSection(new WebInspector.ObjectProxy(obj), Object.describe(obj, true), null, null, true).element);
+        elem.appendChild(new WebInspector.ObjectPropertiesSection(obj, obj.description, null, true).element);
     },
 
     _formaterror: function(obj, elem)

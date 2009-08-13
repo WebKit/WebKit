@@ -64,7 +64,7 @@ void InspectorDOMStorageResource::bind(InspectorFrontend* frontend)
 
     ScriptObject jsonObject = frontend->newScriptObject();
     ScriptObject domStorage;
-    if (!getQuarantinedScriptObject(m_frame.get(), m_domStorage.get(), domStorage))
+    if (!getQuarantinedScriptObject(m_domStorage.get(), domStorage))
         return;
     jsonObject.set("domStorage", domStorage);
     jsonObject.set("host", m_frame->document()->securityOrigin()->host());

@@ -35,14 +35,14 @@ module core {
         GenerateConstructor
     ] InspectorBackend {
         void hideDOMNodeHighlight();
-        [Custom] void highlightDOMNode(in Node node);
-        void loaded(in boolean enableDOMAgent);
+        [Custom] void highlightDOMNode(in long elementId);
+        void loaded();
         void windowUnloading();
         void attach();
         void detach();
 
         void closeWindow();
-        void clearMessages();
+        void clearMessages(in boolean clearUI);
         void toggleNodeSearch();
 
         boolean isWindowVisible();
@@ -103,5 +103,19 @@ module core {
         void setAttribute(in long callId, in long elementId, in DOMString name, in DOMString value);
         void removeAttribute(in long callId, in long elementId, in DOMString name);
         void setTextNodeValue(in long callId, in long elementId, in DOMString value);
+
+        // Called from InjectedScript.
+        [Custom] DOMObject nodeForId(in long nodeId);
+        [Custom] long idForNode(in DOMObject node);
+        [Custom] long wrapObject(in DOMObject object);
+        [Custom] DOMObject unwrapObject(in long objectId);
+        [Custom] int pushNodePathToFrontend(in DOMObject node, in boolean selectInUI);
+        void addNodesToSearchResult(in DOMString nodeIds);
+#if defined(ENABLE_DATABASE) && ENABLE_DATABASE
+        [Custom] void selectDatabase(in DOMObject database);
+#endif
+#if defined(ENABLE_DOM_STORAGE) && ENABLE_DOM_STORAGE
+        [Custom] void selectDOMStorage(in DOMObject storage);
+#endif
     };
- }
+}

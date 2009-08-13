@@ -61,7 +61,9 @@
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "ScriptCallStack.h"
+#include "ScriptFunctionCall.h"
 #include "ScriptObject.h"
+#include "ScriptObjectQuarantine.h"
 #include "ScriptString.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
@@ -125,6 +127,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* client)
     , m_resourceTrackingEnabled(false)
     , m_resourceTrackingSettingsLoaded(false)
     , m_inspectorBackend(InspectorBackend::create(this, client))
+    , m_lastBoundObjectId(1)
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     , m_debuggerEnabled(false)
     , m_attachDebuggerWhenShown(false)
@@ -270,7 +273,8 @@ void InspectorController::focusNode()
     ASSERT(m_frontend);
     ASSERT(m_nodeToFocus);
 
-    m_frontend->updateFocusedNode(m_nodeToFocus.get());
+    long id = m_domAgent->pushNodePathToFrontend(m_nodeToFocus.get());
+    m_frontend->updateFocusedNode(id);
     m_nodeToFocus = 0;
 }
 
@@ -350,7 +354,24 @@ void InspectorController::addMessageToConsole(MessageSource source, MessageType 
     if (!enabled())
         return;
 
-    addConsoleMessage(callStack->state(), new ConsoleMessage(source, type, level, callStack, m_groupLevel, type == TraceMessageType));
+    Vector<ScriptValue> wrappedArguments(callStack->at(0).argumentCount());
+    bool storeTrace = type == TraceMessageType;
+    Vector<ScriptString> frames(storeTrace ? callStack->size() : 0);
+
+    const ScriptCallFrame& lastCaller = callStack->at(0);
+
+    // FIXME: For now, just store function names as strings.
+    // As ScriptCallStack start storing line number and source URL for all
+    // frames, refactor to use that, as well.
+    if (storeTrace) {
+        for (unsigned i = 0; i < callStack->size(); ++i)
+            frames[i] = callStack->at(i).functionName();
+    }
+
+    for (unsigned i = 0; i < lastCaller.argumentCount(); ++i)
+        wrappedArguments[i] = wrapObject(quarantineValue(callStack->state(), lastCaller.argumentAt(i)));
+
+    addConsoleMessage(callStack->state(), new ConsoleMessage(source, type, level, frames, wrappedArguments, lastCaller.lineNumber(), lastCaller.sourceURL().string(), m_groupLevel));
 }
 
 void InspectorController::addMessageToConsole(MessageSource source, MessageType type, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceID)
@@ -378,19 +399,22 @@ void InspectorController::addConsoleMessage(ScriptState* scriptState, ConsoleMes
         m_previousMessage->addToConsole(m_frontend.get());
 }
 
-void InspectorController::clearConsoleMessages()
+void InspectorController::clearConsoleMessages(bool clearUI)
 {
     deleteAllValues(m_consoleMessages);
     m_consoleMessages.clear();
     m_previousMessage = 0;
     m_groupLevel = 0;
+    m_idToConsoleObject.clear();
+    if (clearUI && m_frontend)
+        m_frontend->clearConsoleMessages();
 }
 
 void InspectorController::startGroup(MessageSource source, ScriptCallStack* callStack)
 {
     ++m_groupLevel;
 
-    addConsoleMessage(callStack->state(), new ConsoleMessage(source, StartGroupMessageType, LogMessageLevel, callStack, m_groupLevel));
+    addMessageToConsole(source, StartGroupMessageType, LogMessageLevel, callStack);
 }
 
 void InspectorController::endGroup(MessageSource source, unsigned lineNumber, const String& sourceURL)
@@ -511,7 +535,7 @@ void InspectorController::windowScriptObjectAvailable()
     ScriptGlobalObject::set(m_scriptState, "InspectorController", m_inspectorBackend.get());
 }
 
-void InspectorController::scriptObjectReady(bool enableDOMAgent)
+void InspectorController::scriptObjectReady()
 {
     ASSERT(m_scriptState);
     if (!m_scriptState)
@@ -520,9 +544,10 @@ void InspectorController::scriptObjectReady(bool enableDOMAgent)
     ScriptObject webInspectorObj;
     if (!ScriptGlobalObject::get(m_scriptState, "WebInspector", webInspectorObj))
         return;
-    setFrontendProxyObject(m_scriptState, webInspectorObj);
-    if (enableDOMAgent)
-        m_domAgent = new InspectorDOMAgent(m_frontend.get());
+    ScriptObject injectedScriptObj;
+    if (!ScriptGlobalObject::get(m_scriptState, "InjectedScript", injectedScriptObj))
+        return;
+    setFrontendProxyObject(m_scriptState, webInspectorObj, injectedScriptObj);
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     Setting debuggerEnabled = setting(debuggerEnabledSettingName);
@@ -539,9 +564,12 @@ void InspectorController::scriptObjectReady(bool enableDOMAgent)
     m_client->inspectorWindowObjectCleared();
 }
 
-void InspectorController::setFrontendProxyObject(ScriptState* scriptState, ScriptObject webInspectorObj)
+void InspectorController::setFrontendProxyObject(ScriptState* scriptState, ScriptObject webInspectorObj, ScriptObject injectedScriptObj)
 {
+    m_scriptState = scriptState;
+    m_injectedScriptObj = injectedScriptObj;
     m_frontend.set(new InspectorFrontend(scriptState, webInspectorObj));
+    m_domAgent = new InspectorDOMAgent(m_frontend.get());
 }
 
 void InspectorController::show()
@@ -595,6 +623,7 @@ void InspectorController::close()
     closeWindow();
 
     m_frontend.set(0);
+    m_injectedScriptObj = ScriptObject();
     if (m_domAgent) {
         m_domAgent->setDocument(0);
         m_domAgent = 0;
@@ -706,7 +735,7 @@ void InspectorController::didCommitLoad(DocumentLoader* loader)
     if (loader->frame() == m_inspectedPage->mainFrame()) {
         m_client->inspectedURLChanged(loader->url().string());
 
-        clearConsoleMessages();
+        clearConsoleMessages(false);
 
         m_times.clear();
         m_counts.clear();
@@ -1476,6 +1505,30 @@ InspectorController::SpecialPanels InspectorController::specialPanelForJSName(co
         return DatabasesPanel;
     else
         return ElementsPanel;
+}
+
+ScriptValue InspectorController::wrapObject(const ScriptValue& quarantinedObject)
+{
+    if (quarantinedObject.isObject()) {
+        long id = m_lastBoundObjectId++;
+        String objectId = String::format("object#%ld", id);
+        m_idToConsoleObject.set(objectId, quarantinedObject);
+
+        ScriptFunctionCall function(m_scriptState, m_injectedScriptObj, "_createProxyObject");
+        function.appendArgument(quarantinedObject);
+        function.appendArgument(objectId);
+        ScriptValue wrapper = function.call();
+        return wrapper;
+    }
+    return quarantinedObject;
+}
+
+ScriptValue InspectorController::unwrapObject(const String& objectId)
+{
+    HashMap<String, ScriptValue>::iterator it = m_idToConsoleObject.find(objectId);
+    if (it != m_idToConsoleObject.end())
+        return it->second;
+    return ScriptValue();
 }
 
 } // namespace WebCore

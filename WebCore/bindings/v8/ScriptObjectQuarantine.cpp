@@ -38,6 +38,7 @@
 #include "Page.h"
 #include "ScriptObject.h"
 #include "ScriptValue.h"
+#include "Storage.h"
 
 #include "V8Binding.h"
 #include "V8Proxy.h"
@@ -61,10 +62,11 @@ bool getQuarantinedScriptObject(Database* database, ScriptObject& quarantinedObj
     return false;
 }
 
-bool getQuarantinedScriptObject(Frame* frame, Storage* storage, ScriptObject& quarantinedObject)
+bool getQuarantinedScriptObject(Storage* storage, ScriptObject& quarantinedObject)
 {
-    ASSERT(frame);
     ASSERT(storage);
+    Frame* frame = storage->frame();
+    ASSERT(frame);
 
 #if ENABLE(DOM_STORAGE)
     v8::HandleScope handleScope;

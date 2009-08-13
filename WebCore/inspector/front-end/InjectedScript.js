@@ -31,7 +31,9 @@ var InjectedScript = {
     _styles: {},
     _styleRules: {},
     _lastStyleId: 0,
-    _lastStyleRuleId: 0
+    _lastStyleRuleId: 0,
+    _searchResults: [],
+    _includedInSearchResultsPropertyName: "__includedInInspectorSearchResults"
 };
 
 InjectedScript.getStyles = function(nodeId, authorOnly)
@@ -174,11 +176,13 @@ InjectedScript.toggleStyleEnabled = function(styleId, propertyName, disabled)
     return InjectedScript._serializeStyle(style, true);
 }
 
-InjectedScript.applyStyleRuleText = function(ruleId, newContent, selectedNode)
+InjectedScript.applyStyleRuleText = function(ruleId, newContent, selectedNodeId)
 {
     var rule = InjectedScript._styleRules[ruleId];
     if (!rule)
         return false;
+
+    var selectedNode = InjectedScript._nodeForId(selectedNodeId);
 
     try {
         var stylesheet = rule.parentStyleSheet;
@@ -194,20 +198,14 @@ InjectedScript.applyStyleRuleText = function(ruleId, newContent, selectedNode)
             }
         }
 
-        var nodes = selectedNode.ownerDocument.querySelectorAll(newContent);
-        for (var i = 0; i < nodes.length; ++i) {
-            if (nodes[i] === selectedNode) {
-                return [InjectedScript._serializeRule(newRule), true];
-            }
-        }
-        return [InjectedScript._serializeRule(newRule), false];
+        return [InjectedScript._serializeRule(newRule), InjectedScript._doesSelectorAffectNode(newContent, selectedNode)];
     } catch(e) {
         // Report invalid syntax.
         return false;
     }
 }
 
-InjectedScript.addStyleSelector = function(newContent)
+InjectedScript.addStyleSelector = function(newContent, selectedNodeId)
 {
     var stylesheet = InjectedScript.stylesheet;
     if (!stylesheet) {
@@ -227,7 +225,22 @@ InjectedScript.addStyleSelector = function(newContent)
         return false;
     }
 
-    return InjectedScript._serializeRule(stylesheet.cssRules[stylesheet.cssRules.length - 1]);
+    var selectedNode = InjectedScript._nodeForId(selectedNodeId);
+
+    return [ InjectedScript._serializeRule(stylesheet.cssRules[stylesheet.cssRules.length - 1]), InjectedScript._doesSelectorAffectNode(newContent, selectedNode) ];
+}
+
+InjectedScript._doesSelectorAffectNode = function(selectorText, node)
+{
+    if (!node)
+        return false;
+    var nodes = node.ownerDocument.querySelectorAll(selectorText);
+    for (var i = 0; i < nodes.length; ++i) {
+        if (nodes[i] === node) {
+            return true;
+        }
+    }
+    return false;
 }
 
 InjectedScript.setStyleProperty = function(styleId, name, value) {
@@ -257,11 +270,11 @@ InjectedScript._serializeRule = function(rule)
     ruleValue.style = InjectedScript._serializeStyle(rule.style, doBind);
 
     if (doBind) {
-        if (!rule._id) {
-            rule._id = InjectedScript._lastStyleRuleId++;
-            InjectedScript._styleRules[rule._id] = rule;
+        if (!rule.id) {
+            rule.id = InjectedScript._lastStyleRuleId++;
+            InjectedScript._styleRules[rule.id] = rule;
         }
-        ruleValue.id = rule._id;
+        ruleValue.id = rule.id;
     }
     return ruleValue;
 }
@@ -295,11 +308,11 @@ InjectedScript._serializeStyle = function(style, doBind)
     result.uniqueStyleProperties = InjectedScript._getUniqueStyleProperties(style);
 
     if (doBind) {
-        if (!style._id) {
-            style._id = InjectedScript._lastStyleId++;
-            InjectedScript._styles[style._id] = style;
+        if (!style.id) {
+            style.id = InjectedScript._lastStyleId++;
+            InjectedScript._styles[style.id] = style;
         }
-        result.id = style._id;
+        result.id = style.id;
     }
     return result;
 }
@@ -405,6 +418,7 @@ InjectedScript.getProperties = function(objectProxy, ignoreHasOwnProperty)
         return false;
 
     var properties = [];
+
     // Go over properties, prepare results.
     for (var propertyName in object) {
         if (!ignoreHasOwnProperty && "hasOwnProperty" in object && !object.hasOwnProperty(propertyName))
@@ -415,29 +429,31 @@ InjectedScript.getProperties = function(objectProxy, ignoreHasOwnProperty)
             continue;
         var property = {};
         property.name = propertyName;
+        property.parentObjectProxy = objectProxy;
         var isGetter = object["__lookupGetter__"] && object.__lookupGetter__(propertyName);
         if (!property.isGetter) {
             var childObject = object[propertyName];
-            property.type = typeof childObject;
-            property.textContent = Object.describe(childObject, true);
-            property.parentObjectProxy = objectProxy;
-            var parentPath = objectProxy.path.slice();
-            property.childObjectProxy = {
-                objectId : objectProxy.objectId,
-                path : parentPath.splice(parentPath.length, 0, propertyName),
-                protoDepth : objectProxy.protoDepth
-            };
-            if (childObject && (property.type === "object" || property.type === "function")) {
+            var childObjectProxy = {};
+            childObjectProxy.objectId = objectProxy.objectId;
+            childObjectProxy.path = objectProxy.path ? objectProxy.path.slice() : [];
+            childObjectProxy.path.push(propertyName);
+
+            childObjectProxy.protoDepth = objectProxy.protoDepth || 0;
+            childObjectProxy.description = Object.describe(childObject, true);
+            property.value = childObjectProxy;
+
+            var type = typeof childObject;
+            if (type === "object" || type === "function") {
                 for (var subPropertyName in childObject) {
                     if (propertyName === "__treeElementIdentifier")
                         continue;
-                    property.hasChildren = true;
+                    childObjectProxy.hasChildren = true;
                     break;
                 }
             }
         } else {
             // FIXME: this should show something like "getter" (bug 16734).
-            property.textContent = "\u2014"; // em dash
+            property.value = { description: "\u2014" }; // em dash
             property.isGetter = true;
         }
         properties.push(property);
@@ -479,6 +495,333 @@ InjectedScript.setPropertyValue = function(objectProxy, propertyName, expression
     }
 }
 
+InjectedScript.evaluate = function(expression)
+{
+    InjectedScript._ensureCommandLineAPIInstalled();
+    // Surround the expression in with statements to inject our command line API so that
+    // the window object properties still take more precedent than our API functions.
+    expression = "with (window._inspectorCommandLineAPI) { with (window) { " + expression + " } }";
+
+    var result = {};
+    try {
+        var value = InjectedScript._window().eval(expression);
+        var wrapper = InspectorController.wrapObject(value);
+        if (typeof wrapper === "object" && wrapper.exception)
+            result.exception = wrapper.exception;
+        else
+            result.value = wrapper;
+    } catch (e) {
+        result.exception = e.toString();
+    }
+    return result;
+}
+
+InjectedScript.addInspectedNode = function(nodeId)
+{
+    var node = InjectedScript._nodeForId(nodeId);
+    if (!node)
+        return false;
+
+    InjectedScript._ensureCommandLineAPIInstalled();
+    var inspectedNodes = InjectedScript._window()._inspectorCommandLineAPI._inspectedNodes;
+    inspectedNodes.unshift(node);
+    if (inspectedNodes.length >= 5)
+        inspectedNodes.pop();
+    return true;
+}
+
+InjectedScript.performSearch = function(whitespaceTrimmedQuery, searchResultsProperty)
+{
+    var tagNameQuery = whitespaceTrimmedQuery;
+    var attributeNameQuery = whitespaceTrimmedQuery;
+    var startTagFound = (tagNameQuery.indexOf("<") === 0);
+    var endTagFound = (tagNameQuery.lastIndexOf(">") === (tagNameQuery.length - 1));
+
+    if (startTagFound || endTagFound) {
+        var tagNameQueryLength = tagNameQuery.length;
+        tagNameQuery = tagNameQuery.substring((startTagFound ? 1 : 0), (endTagFound ? (tagNameQueryLength - 1) : tagNameQueryLength));
+    }
+
+    // Check the tagNameQuery is it is a possibly valid tag name.
+    if (!/^[a-zA-Z0-9\-_:]+$/.test(tagNameQuery))
+        tagNameQuery = null;
+
+    // Check the attributeNameQuery is it is a possibly valid tag name.
+    if (!/^[a-zA-Z0-9\-_:]+$/.test(attributeNameQuery))
+        attributeNameQuery = null;
+
+    const escapedQuery = whitespaceTrimmedQuery.escapeCharacters("'");
+    const escapedTagNameQuery = (tagNameQuery ? tagNameQuery.escapeCharacters("'") : null);
+    const escapedWhitespaceTrimmedQuery = whitespaceTrimmedQuery.escapeCharacters("'");
+    const searchResultsProperty = InjectedScript._includedInSearchResultsPropertyName;
+
+    function addNodesToResults(nodes, length, getItem)
+    {
+        if (!length)
+            return;
+
+        var nodeIds = [];
+        for (var i = 0; i < length; ++i) {
+            var node = getItem.call(nodes, i);
+            // Skip this node if it already has the property.
+            if (searchResultsProperty in node)
+                continue;
+
+            if (!InjectedScript._searchResults.length) {
+                InjectedScript._currentSearchResultIndex = 0;
+            }
+
+            node[searchResultsProperty] = true;
+            InjectedScript._searchResults.push(node);
+            var nodeId = InspectorController.pushNodePathToFrontend(node, false);
+            nodeIds.push(nodeId);
+        }
+        InspectorController.addNodesToSearchResult(nodeIds.join(","));
+    }
+
+    function matchExactItems(doc)
+    {
+        matchExactId.call(this, doc);
+        matchExactClassNames.call(this, doc);
+        matchExactTagNames.call(this, doc);
+        matchExactAttributeNames.call(this, doc);
+    }
+
+    function matchExactId(doc)
+    {
+        const result = doc.__proto__.getElementById.call(doc, whitespaceTrimmedQuery);
+        addNodesToResults.call(this, result, (result ? 1 : 0), function() { return this });
+    }
+
+    function matchExactClassNames(doc)
+    {
+        const result = doc.__proto__.getElementsByClassName.call(doc, whitespaceTrimmedQuery);
+        addNodesToResults.call(this, result, result.length, result.item);
+    }
+
+    function matchExactTagNames(doc)
+    {
+        if (!tagNameQuery)
+            return;
+        const result = doc.__proto__.getElementsByTagName.call(doc, tagNameQuery);
+        addNodesToResults.call(this, result, result.length, result.item);
+    }
+
+    function matchExactAttributeNames(doc)
+    {
+        if (!attributeNameQuery)
+            return;
+        const result = doc.__proto__.querySelectorAll.call(doc, "[" + attributeNameQuery + "]");
+        addNodesToResults.call(this, result, result.length, result.item);
+    }
+
+    function matchPartialTagNames(doc)
+    {
+        if (!tagNameQuery)
+            return;
+        const result = doc.__proto__.evaluate.call(doc, "//*[contains(name(), '" + escapedTagNameQuery + "')]", doc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE);
+        addNodesToResults.call(this, result, result.snapshotLength, result.snapshotItem);
+    }
+
+    function matchStartOfTagNames(doc)
+    {
+        if (!tagNameQuery)
+            return;
+        const result = doc.__proto__.evaluate.call(doc, "//*[starts-with(name(), '" + escapedTagNameQuery + "')]", doc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE);
+        addNodesToResults.call(this, result, result.snapshotLength, result.snapshotItem);
+    }
+
+    function matchPartialTagNamesAndAttributeValues(doc)
+    {
+        if (!tagNameQuery) {
+            matchPartialAttributeValues.call(this, doc);
+            return;
+        }
+
+        const result = doc.__proto__.evaluate.call(doc, "//*[contains(name(), '" + escapedTagNameQuery + "') or contains(@*, '" + escapedQuery + "')]", doc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE);
+        addNodesToResults.call(this, result, result.snapshotLength, result.snapshotItem);
+    }
+
+    function matchPartialAttributeValues(doc)
+    {
+        const result = doc.__proto__.evaluate.call(doc, "//*[contains(@*, '" + escapedQuery + "')]", doc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE);
+        addNodesToResults.call(this, result, result.snapshotLength, result.snapshotItem);
+    }
+
+    function matchStyleSelector(doc)
+    {
+        const result = doc.__proto__.querySelectorAll.call(doc, whitespaceTrimmedQuery);
+        addNodesToResults.call(this, result, result.length, result.item);
+    }
+
+    function matchPlainText(doc)
+    {
+        const result = doc.__proto__.evaluate.call(doc, "//text()[contains(., '" + escapedQuery + "')] | //comment()[contains(., '" + escapedQuery + "')]", doc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE);
+        addNodesToResults.call(this, result, result.snapshotLength, result.snapshotItem);
+    }
+
+    function matchXPathQuery(doc)
+    {
+        const result = doc.__proto__.evaluate.call(doc, whitespaceTrimmedQuery, doc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE);
+        addNodesToResults.call(this, result, result.snapshotLength, result.snapshotItem);
+    }
+
+    function finishedSearching()
+    {
+        // Remove the searchResultsProperty now that the search is finished.
+        for (var i = 0; i < InjectedScript._searchResults.length; ++i)
+            delete InjectedScript._searchResults[i][searchResultsProperty];
+    }
+
+    const mainFrameDocument = InjectedScript._window().document;
+    const searchDocuments = [mainFrameDocument];
+    var searchFunctions;
+    if (tagNameQuery && startTagFound && endTagFound)
+        searchFunctions = [matchExactTagNames, matchPlainText];
+    else if (tagNameQuery && startTagFound)
+        searchFunctions = [matchStartOfTagNames, matchPlainText];
+    else if (tagNameQuery && endTagFound) {
+        // FIXME: we should have a matchEndOfTagNames search function if endTagFound is true but not startTagFound.
+        // This requires ends-with() support in XPath, WebKit only supports starts-with() and contains().
+        searchFunctions = [matchPartialTagNames, matchPlainText];
+    } else if (whitespaceTrimmedQuery === "//*" || whitespaceTrimmedQuery === "*") {
+        // These queries will match every node. Matching everything isn't useful and can be slow for large pages,
+        // so limit the search functions list to plain text and attribute matching.
+        searchFunctions = [matchPartialAttributeValues, matchPlainText];
+    } else
+        searchFunctions = [matchExactItems, matchStyleSelector, matchPartialTagNamesAndAttributeValues, matchPlainText, matchXPathQuery];
+
+    // Find all frames, iframes and object elements to search their documents.
+    const querySelectorAllFunction = InjectedScript._window().Document.prototype.querySelectorAll;
+    const subdocumentResult = querySelectorAllFunction.call(mainFrameDocument, "iframe, frame, object");
+
+    for (var i = 0; i < subdocumentResult.length; ++i) {
+        var element = subdocumentResult.item(i);
+        if (element.contentDocument)
+            searchDocuments.push(element.contentDocument);
+    }
+
+    const panel = InjectedScript;
+    var documentIndex = 0;
+    var searchFunctionIndex = 0;
+    var chunkIntervalIdentifier = null;
+
+    // Split up the work into chunks so we don't block the UI thread while processing.
+
+    function processChunk()
+    {
+        var searchDocument = searchDocuments[documentIndex];
+        var searchFunction = searchFunctions[searchFunctionIndex];
+
+        if (++searchFunctionIndex > searchFunctions.length) {
+            searchFunction = searchFunctions[0];
+            searchFunctionIndex = 0;
+
+            if (++documentIndex > searchDocuments.length) {
+                if (panel._currentSearchChunkIntervalIdentifier === chunkIntervalIdentifier)
+                    delete panel._currentSearchChunkIntervalIdentifier;
+                clearInterval(chunkIntervalIdentifier);
+                finishedSearching.call(panel);
+                return;
+            }
+
+            searchDocument = searchDocuments[documentIndex];
+        }
+
+        if (!searchDocument || !searchFunction)
+            return;
+
+        try {
+            searchFunction.call(panel, searchDocument);
+        } catch(err) {
+            // ignore any exceptions. the query might be malformed, but we allow that.
+        }
+    }
+
+    processChunk();
+
+    chunkIntervalIdentifier = setInterval(processChunk, 25);
+    InjectedScript._currentSearchChunkIntervalIdentifier = chunkIntervalIdentifier;
+    return true;
+}
+
+InjectedScript.searchCanceled = function()
+{
+    if (InjectedScript._searchResults) {
+        const searchResultsProperty = InjectedScript._includedInSearchResultsPropertyName;
+        for (var i = 0; i < this._searchResults.length; ++i) {
+            var node = this._searchResults[i];
+
+            // Remove the searchResultsProperty since there might be an unfinished search.
+            delete node[searchResultsProperty];
+        }
+    }
+
+    if (InjectedScript._currentSearchChunkIntervalIdentifier) {
+        clearInterval(InjectedScript._currentSearchChunkIntervalIdentifier);
+        delete InjectedScript._currentSearchChunkIntervalIdentifier;
+    }
+    InjectedScript._searchResults = [];
+    return true;
+}
+
+InjectedScript._ensureCommandLineAPIInstalled = function(inspectedWindow)
+{
+    var inspectedWindow = InjectedScript._window();
+    if (inspectedWindow._inspectorCommandLineAPI)
+        return;
+    
+    inspectedWindow.eval("window._inspectorCommandLineAPI = { \
+        $: function() { return document.getElementById.apply(document, arguments) }, \
+        $$: function() { return document.querySelectorAll.apply(document, arguments) }, \
+        $x: function(xpath, context) { \
+            var nodes = []; \
+            try { \
+                var doc = context || document; \
+                var results = doc.evaluate(xpath, doc, null, XPathResult.ANY_TYPE, null); \
+                var node; \
+                while (node = results.iterateNext()) nodes.push(node); \
+            } catch (e) {} \
+            return nodes; \
+        }, \
+        dir: function() { return console.dir.apply(console, arguments) }, \
+        dirxml: function() { return console.dirxml.apply(console, arguments) }, \
+        keys: function(o) { var a = []; for (var k in o) a.push(k); return a; }, \
+        values: function(o) { var a = []; for (var k in o) a.push(o[k]); return a; }, \
+        profile: function() { return console.profile.apply(console, arguments) }, \
+        profileEnd: function() { return console.profileEnd.apply(console, arguments) }, \
+        _inspectedNodes: [], \
+        get $0() { return _inspectorCommandLineAPI._inspectedNodes[0] }, \
+        get $1() { return _inspectorCommandLineAPI._inspectedNodes[1] }, \
+        get $2() { return _inspectorCommandLineAPI._inspectedNodes[2] }, \
+        get $3() { return _inspectorCommandLineAPI._inspectedNodes[3] }, \
+        get $4() { return _inspectorCommandLineAPI._inspectedNodes[4] } \
+    };");
+
+    inspectedWindow._inspectorCommandLineAPI.clear = InspectorController.wrapCallback(InspectorController.clearMessages.bind(InspectorController, true));
+    inspectedWindow._inspectorCommandLineAPI.inspect = InspectorController.wrapCallback(inspectObject.bind(this));
+
+    function inspectObject(o)
+    {
+        if (arguments.length === 0)
+            return;
+
+        inspectedWindow.console.log(o);
+        if (Object.type(o, inspectedWindow) === "node") {
+            InspectorController.pushNodePathToFrontend(o, true);
+        } else {
+            switch (Object.describe(o)) {
+                case "Database":
+                    InspectorController.selectDatabase(o);
+                    break;
+                case "Storage":
+                    InspectorController.selectDOMStorage(o);
+                    break;
+            }
+        }
+    }
+}
+
 InjectedScript._resolveObject = function(objectProxy)
 {
     var object = InjectedScript._objectForId(objectProxy.objectId);
@@ -486,11 +829,11 @@ InjectedScript._resolveObject = function(objectProxy)
     var protoDepth = objectProxy.protoDepth;
 
     // Follow the property path.
-    for (var i = 0; object && i < path.length; ++i)
+    for (var i = 0; object && path && i < path.length; ++i)
         object = object[path[i]];
 
     // Get to the necessary proto layer.
-    for (var i = 0; object && i < protoDepth; ++i)
+    for (var i = 0; object && protoDepth && i < protoDepth; ++i)
         object = object.__proto__;
 
     return object;
@@ -505,12 +848,33 @@ InjectedScript._window = function()
 
 InjectedScript._nodeForId = function(nodeId)
 {
-    // TODO: replace with node lookup in the InspectorDOMAgent once DOMAgent nodes are used.
-    return nodeId;
+    if (!nodeId)
+        return null;
+    return InspectorController.nodeForId(nodeId);
 }
 
 InjectedScript._objectForId = function(objectId)
 {
-    // TODO: replace with node lookups for node ids and evaluation result lookups for the rest of ids.
+    if (typeof objectId === "number")
+        return InjectedScript._nodeForId(objectId);
+    else if (typeof objectId === "string")
+        return InspectorController.unwrapObject(objectId);
+
+    // TODO: move scope chain objects to proxy-based schema.
     return objectId;
+}
+
+InjectedScript._createProxyObject = function(object, objectId)
+{
+    var result = {};
+    result.objectId = objectId;
+    result.type = Object.type(object, InjectedScript._window());
+    if (result.type === "node")
+        result.nodeId = InspectorController.pushNodePathToFrontend(object, false);
+    try {
+        result.description = Object.describe(object, true, InjectedScript._window());
+    } catch (e) {
+        result.exception = e.toString();
+    }
+    return result;
 }

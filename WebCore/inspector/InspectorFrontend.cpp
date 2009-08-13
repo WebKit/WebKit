@@ -85,6 +85,11 @@ void InspectorFrontend::addMessageToConsole(const ScriptObject& messageObj, cons
     function->call();
 }
 
+void InspectorFrontend::clearConsoleMessages()
+{
+    callSimpleFunction("clearConsoleMessages");
+}
+
 bool InspectorFrontend::addResource(long long identifier, const ScriptObject& resourceObj)
 {
     OwnPtr<ScriptFunctionCall> function(newFunctionCall("addResource"));
@@ -112,14 +117,10 @@ void InspectorFrontend::removeResource(long long identifier)
     function->call();
 }
 
-void InspectorFrontend::updateFocusedNode(Node* node)
+void InspectorFrontend::updateFocusedNode(long long nodeId)
 {
-    ScriptObject quarantinedNode;
-    if (!getQuarantinedScriptObject(node, quarantinedNode))
-        return;
-
     OwnPtr<ScriptFunctionCall> function(newFunctionCall("updateFocusedNode"));
-    function->appendArgument(quarantinedNode);
+    function->appendArgument(nodeId);
     function->call();
 }
 
@@ -286,9 +287,9 @@ bool InspectorFrontend::addDOMStorage(const ScriptObject& domStorageObj)
 }
 #endif
 
-void InspectorFrontend::setDocumentElement(const ScriptObject& root)
+void InspectorFrontend::setDocument(const ScriptObject& root)
 {
-    OwnPtr<ScriptFunctionCall> function(newFunctionCall("setDocumentElement"));
+    OwnPtr<ScriptFunctionCall> function(newFunctionCall("setDocument"));
     function->appendArgument(root);
     function->call();
 }
@@ -346,6 +347,37 @@ void InspectorFrontend::didApplyDomChange(int callId, bool success)
     OwnPtr<ScriptFunctionCall> function(newFunctionCall("didApplyDomChange"));
     function->appendArgument(callId);
     function->appendArgument(success);
+    function->call();
+}
+
+#if ENABLE(DATABASE)
+void InspectorFrontend::selectDatabase(Database* database)
+{
+    OwnPtr<ScriptFunctionCall> function(newFunctionCall("selectDatabase"));
+    ScriptObject quarantinedObject;
+    if (!getQuarantinedScriptObject(database, quarantinedObject))
+        return;
+    function->appendArgument(quarantinedObject);
+    function->call();
+}
+#endif
+
+#if ENABLE(DOM_STORAGE)
+void InspectorFrontend::selectDOMStorage(Storage* storage)
+{
+    OwnPtr<ScriptFunctionCall> function(newFunctionCall("selectDOMStorage"));
+    ScriptObject quarantinedObject;
+    if (!getQuarantinedScriptObject(storage, quarantinedObject))
+        return;
+    function->appendArgument(quarantinedObject);
+    function->call();
+}
+#endif
+
+void InspectorFrontend::addNodesToSearchResult(const String& nodeIds)
+{
+    OwnPtr<ScriptFunctionCall> function(newFunctionCall("addNodesToSearchResult"));
+    function->appendArgument(nodeIds);
     function->call();
 }
 

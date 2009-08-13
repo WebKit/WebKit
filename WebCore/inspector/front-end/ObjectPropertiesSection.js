@@ -124,13 +124,6 @@ WebInspector.ObjectPropertyTreeElement = function(property)
 }
 
 WebInspector.ObjectPropertyTreeElement.prototype = {
-    safePropertyValue: function(object, propertyName)
-    {
-        if (object["__lookupGetter__"] && object.__lookupGetter__(propertyName))
-            return;
-        return object[propertyName];
-    },
-
     onpopulate: function()
     {
         if (this.children.length && !this.shouldRefreshChildren)
@@ -147,7 +140,7 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
                 self.appendChild(new self.treeOutline.section.treeElementConstructor(properties[i]));
             }
         };
-        InspectorController.getProperties(this.property.childObjectProxy, false, callback);
+        InspectorController.getProperties(this.property.value, false, callback);
     },
 
     ondblclick: function(element, event)
@@ -168,7 +161,7 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
 
         this.valueElement = document.createElement("span");
         this.valueElement.className = "value";
-        this.valueElement.textContent = this.property.textContent;
+        this.valueElement.textContent = this.property.value.description;
         if (this.property.isGetter)
            this.valueElement.addStyleClass("dimmed");
 
@@ -177,7 +170,7 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
         this.listItemElement.appendChild(nameElement);
         this.listItemElement.appendChild(document.createTextNode(": "));
         this.listItemElement.appendChild(this.valueElement);
-        this.hasChildren = this.property.hasChildren;
+        this.hasChildren = this.property.value.hasChildren;
     },
 
     updateSiblings: function()

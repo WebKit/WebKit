@@ -56,6 +56,18 @@ Object.type = function(obj, win)
     return type;
 }
 
+Object.proxyType = function(objectProxy)
+{
+    if (objectProxy === null)
+        return "null";
+
+    var type = typeof objectProxy;
+    if (type !== "object" && type !== "function")
+        return type;
+
+    return objectProxy.type;
+}
+
 Object.hasProperties = function(obj)
 {
     if (typeof obj === "undefined" || typeof obj === "null")
@@ -65,9 +77,9 @@ Object.hasProperties = function(obj)
     return false;
 }
 
-Object.describe = function(obj, abbreviated)
+Object.describe = function(obj, abbreviated, win)
 {
-    var type1 = Object.type(obj);
+    var type1 = Object.type(obj, win);
     var type2 = Object.prototype.toString.call(obj).replace(/^\[object (.*)\]$/i, "$1");
 
     switch (type1) {

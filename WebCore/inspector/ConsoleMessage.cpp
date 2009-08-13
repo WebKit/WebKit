@@ -50,29 +50,18 @@ ConsoleMessage::ConsoleMessage(MessageSource s, MessageType t, MessageLevel l, c
 {
 }
 
-ConsoleMessage::ConsoleMessage(MessageSource s, MessageType t, MessageLevel l, ScriptCallStack* callStack, unsigned g, bool storeTrace)
+ConsoleMessage::ConsoleMessage(MessageSource s, MessageType t, MessageLevel l, const Vector<ScriptString>& frames, const Vector<ScriptValue>& wrappedArguments, unsigned li, const String& u, unsigned g)
     : m_source(s)
     , m_type(t)
     , m_level(l)
-    , m_wrappedArguments(callStack->at(0).argumentCount())
-    , m_frames(storeTrace ? callStack->size() : 0)
+    , m_frames(frames)
+    , m_wrappedArguments(wrappedArguments)
+    , m_line(li)
+    , m_url(u)
     , m_groupLevel(g)
     , m_repeatCount(1)
 {
-    const ScriptCallFrame& lastCaller = callStack->at(0);
-    m_line = lastCaller.lineNumber();
-    m_url = lastCaller.sourceURL().string();
 
-    // FIXME: For now, just store function names as strings.
-    // As ScriptCallStack start storing line number and source URL for all
-    // frames, refactor to use that, as well.
-    if (storeTrace) {
-        for (unsigned i = 0; i < callStack->size(); ++i)
-            m_frames[i] = callStack->at(i).functionName();
-    }
-
-    for (unsigned i = 0; i < lastCaller.argumentCount(); ++i)
-        m_wrappedArguments[i] = quarantineValue(callStack->state(), lastCaller.argumentAt(i));
 }
 
 void ConsoleMessage::addToConsole(InspectorFrontend* frontend)

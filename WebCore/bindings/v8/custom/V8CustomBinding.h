@@ -407,8 +407,17 @@ namespace WebCore {
         DECLARE_CALLBACK(InspectorBackendDebuggerEnabled);
         DECLARE_CALLBACK(InspectorBackendPauseOnExceptions);
         DECLARE_CALLBACK(InspectorBackendProfilerEnabled);
+        DECLARE_CALLBACK(InspectorBackendNodeForId);
+        DECLARE_CALLBACK(InspectorBackendIdForNode);
+        DECLARE_CALLBACK(InspectorBackendWrapObject);
+        DECLARE_CALLBACK(InspectorBackendUnwrapObject);
+        DECLARE_CALLBACK(InspectorBackendPushNodePathToFrontend);
 #if ENABLE(DATABASE)
         DECLARE_CALLBACK(InspectorBackendDatabaseTableNames);
+        DECLARE_CALLBACK(InspectorBackendSelectDatabase);
+#endif
+#if ENABLE(DOM_STORAGE)
+        DECLARE_CALLBACK(InspectorBackendSelectDOMStorage);
 #endif
         DECLARE_CALLBACK(InspectorBackendWrapCallback);
 

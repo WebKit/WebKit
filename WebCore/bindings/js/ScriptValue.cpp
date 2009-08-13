@@ -74,4 +74,11 @@ bool ScriptValue::isUndefined() const
     return m_value.get().isUndefined();
 }
 
+bool ScriptValue::isObject() const
+{
+    if (!m_value)
+        return false;
+    return m_value.get().isObject();
+}
+
 } // namespace WebCore

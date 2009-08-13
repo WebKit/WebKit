@@ -31,7 +31,7 @@
 WebInspector.DOMNode = function(doc, payload) {
     this.ownerDocument = doc;
 
-    this._id = payload.id;
+    this.id = payload.id;
     this.nodeType = payload.nodeType;
     this.nodeName = payload.nodeName;
     this._nodeValue = payload.nodeValue;
@@ -48,14 +48,20 @@ WebInspector.DOMNode = function(doc, payload) {
     this.nextSibling = null;
     this.prevSibling = null;
     this.firstChild = null;
+    this.lastChild = null;
     this.parentNode = null;
 
-    if (payload.childNodes)
-        this._setChildrenPayload(payload.childNodes);
+    if (payload.children)
+        this._setChildrenPayload(payload.children);
 
     this._computedStyle = null;
     this.style = null;
     this._matchedCSSRules = [];
+
+    if (this.nodeType == Node.DOCUMENT_NODE)
+        this.ownerDocument.documentElement = this;
+    if (this.nodeType == Node.ELEMENT_NODE && this.nodeName == "BODY")
+        this.ownerDocument.body = this;
 }
 
 WebInspector.DOMNode.prototype = {
@@ -161,9 +167,11 @@ WebInspector.DOMNode.prototype = {
         this._childNodeCount = this.children.length;
         if (this._childNodeCount == 0) {
             this.firstChild = null;
+            this.lastChild = null;
             return;
         }
         this.firstChild = this.children[0];
+        this.lastChild = this.children[this._childNodeCount - 1];
         for (var i = 0; i < this._childNodeCount; ++i) {
             var child = this.children[i];
             child.nextSibling = i + 1 < this._childNodeCount ? this.children[i + 1] : null;
@@ -208,17 +216,9 @@ WebInspector.DOMNode.prototype = {
     }
 }
 
-WebInspector.DOMDocument = function(domAgent, defaultView)
+WebInspector.DOMDocument = function(domAgent, defaultView, payload)
 {
-    WebInspector.DOMNode.call(this, null,
-        {
-            id: 0,
-            nodeType: Node.DOCUMENT_NODE,
-            nodeName: "",
-            nodeValue: "",
-            attributes: [],
-            childNodeCount: 0
-        });
+    WebInspector.DOMNode.call(this, this, payload);
     this._listeners = {};
     this._domAgent = domAgent;
     this.defaultView = defaultView;
@@ -302,23 +302,8 @@ WebInspector.DOMAgent = function() {
     this._idToDOMNode = null;
     this.document = null;
 
-    // Install onpopulate handler. This is a temporary measure.
-    // TODO: add this code into the original updateChildren once domAgent
-    // becomes primary source of DOM information.
-    // TODO2: update ElementsPanel to not track embedded iframes - it is already being handled
+    // TODO: update ElementsPanel to not track embedded iframes - it is already being handled
     // in the agent backend.
-    var domAgent = this;
-    var originalUpdateChildren = WebInspector.ElementsTreeElement.prototype.updateChildren;
-    WebInspector.ElementsTreeElement.prototype.updateChildren = function()
-    {
-        domAgent.getChildNodesAsync(this.representedObject, originalUpdateChildren.bind(this));
-    };
-
-    // Mute console handle to avoid crash on selection change.
-    // TODO: Re-implement inspectorConsoleAPI to work in a serialized way and remove this workaround.
-    WebInspector.Console.prototype.addInspectedNode = function()
-    {
-    };
 
     // Whitespace is ignored in InspectorDOMAgent already -> no need to filter.
     // TODO: Either remove all of its usages or push value into the agent backend.
@@ -344,25 +329,25 @@ WebInspector.DOMAgent.prototype = {
             }
         };
         var callId = WebInspector.Callback.wrap(mycallback);
-        InspectorController.getChildNodes(callId, parent._id);
+        InspectorController.getChildNodes(callId, parent.id);
     },
 
     setAttributeAsync: function(node, name, value, callback)
     {
         var mycallback = this._didApplyDomChange.bind(this, node, callback);
-        InspectorController.setAttribute(WebInspector.Callback.wrap(mycallback), node._id, name, value);
+        InspectorController.setAttribute(WebInspector.Callback.wrap(mycallback), node.id, name, value);
     },
 
     removeAttributeAsync: function(node, name, callback)
     {
         var mycallback = this._didApplyDomChange.bind(this, node, callback);
-        InspectorController.removeAttribute(WebInspector.Callback.wrap(mycallback), node._id, name);
+        InspectorController.removeAttribute(WebInspector.Callback.wrap(mycallback), node.id, name);
     },
 
     setTextNodeValueAsync: function(node, text, callback)
     {
         var mycallback = this._didApplyDomChange.bind(this, node, callback);
-        InspectorController.setTextNodeValue(WebInspector.Callback.wrap(mycallback), node._id, text);
+        InspectorController.setTextNodeValue(WebInspector.Callback.wrap(mycallback), node.id, text);
     },
 
     _didApplyDomChange: function(node, callback, success)
@@ -383,26 +368,24 @@ WebInspector.DOMAgent.prototype = {
         node._setAttributesPayload(attrsArray);
     },
 
-    getNodeForId: function(nodeId) {
+    nodeForId: function(nodeId) {
         return this._idToDOMNode[nodeId];
     },
 
-    _setDocumentElement: function(payload)
+    _setDocument: function(payload)
     {
-        this.document = new WebInspector.DOMDocument(this, this._window);
-        this._idToDOMNode = { 0 : this.document };
-        this._setChildNodes(0, [payload]);
-        this.document.documentElement = this.document.firstChild;
-        this.document.documentElement.ownerDocument = this.document;
+        this.document = new WebInspector.DOMDocument(this, this._window, payload);
+        this._idToDOMNode = {};
+        this._idToDOMNode[payload.id] = this.document;
+        this._bindNodes(this.document.children);
         WebInspector.panels.elements.reset();
     },
 
     _setChildNodes: function(parentId, payloads)
     {
         var parent = this._idToDOMNode[parentId];
-        if (parent.children) {
+        if (parent.children)
           return;
-        }
         parent._setChildrenPayload(payloads);
         this._bindNodes(parent.children);
     },
@@ -411,7 +394,7 @@ WebInspector.DOMAgent.prototype = {
     {
         for (var i = 0; i < children.length; ++i) {
             var child = children[i];
-            this._idToDOMNode[child._id] = child;
+            this._idToDOMNode[child.id] = child;
             if (child.children)
                 this._bindNodes(child.children);
         }
@@ -433,7 +416,7 @@ WebInspector.DOMAgent.prototype = {
         var parent = this._idToDOMNode[parentId];
         var prev = this._idToDOMNode[prevId];
         var node = parent._insertChild(prev, payload);
-        this._idToDOMNode[node._id] = node;
+        this._idToDOMNode[node.id] = node;
         var event = { target : node, relatedNode : parent };
         this.document._fireDomEvent("DOMNodeInserted", event);
     },
@@ -450,7 +433,7 @@ WebInspector.DOMAgent.prototype = {
 }
 
 WebInspector.CSSStyleDeclaration = function(payload) {
-    this._id = payload.id;
+    this.id = payload.id;
     this.width = payload.width;
     this.height = payload.height;
     this.__disabledProperties = payload.__disabledProperties;
@@ -492,7 +475,7 @@ WebInspector.CSSStyleDeclaration.parseStyle = function(payload)
 WebInspector.CSSStyleDeclaration.parseRule = function(payload)
 {
     var rule = {};
-    rule._id = payload.id;
+    rule.id = payload.id;
     rule.selectorText = payload.selectorText;
     rule.style = new WebInspector.CSSStyleDeclaration(payload.style);
     rule.style.parentRule = rule;
@@ -586,9 +569,9 @@ WebInspector.attributesUpdated = function()
     this.domAgent._attributesUpdated.apply(this.domAgent, arguments);
 }
 
-WebInspector.setDocumentElement = function()
+WebInspector.setDocument = function()
 {
-    this.domAgent._setDocumentElement.apply(this.domAgent, arguments);
+    this.domAgent._setDocument.apply(this.domAgent, arguments);
 }
 
 WebInspector.setChildNodes = function()
@@ -619,106 +602,115 @@ WebInspector.didApplyDomChange = WebInspector.Callback.processCallback;
 WebInspector.didRemoveAttribute = WebInspector.Callback.processCallback;
 WebInspector.didSetTextNodeValue = WebInspector.Callback.processCallback;
 
-// Temporary methods for DOMAgent migration.
-WebInspector.wrapNodeWithStyles = function(node, styles)
-{
-    var windowStub = new WebInspector.DOMWindow(null);
-    var docStub = new WebInspector.DOMDocument(null, windowStub);
-    var payload = {};
-    payload.nodeType = node.nodeType;
-    payload.nodeName = node.nodeName;
-    payload.nodeValue = node.nodeValue;
-    payload.attributes = [];
-    payload.childNodeCount = 0;
-
-    for (var i = 0; i < node.attributes.length; ++i) {
-        var attr = node.attributes[i];
-        payload.attributes.push(attr.name);
-        payload.attributes.push(attr.value);
-    }
-    var nodeStub = new WebInspector.DOMNode(docStub, payload);
-    nodeStub._setStyles(styles.computedStyle, styles.inlineStyle, styles.styleAttributes, styles.matchedCSSRules);
-    return nodeStub;
-}
-
 // Temporary methods that will be dispatched via InspectorController into the injected context.
 InspectorController.getStyles = function(nodeId, authorOnly, callback)
 {
     setTimeout(function() {
         callback(InjectedScript.getStyles(nodeId, authorOnly));
-    }, 0)
+    }, 0);
 }
 
 InspectorController.getComputedStyle = function(nodeId, callback)
 {
     setTimeout(function() {
         callback(InjectedScript.getComputedStyle(nodeId));
-    }, 0)
+    }, 0);
 }
 
 InspectorController.getInlineStyle = function(nodeId, callback)
 {
     setTimeout(function() {
         callback(InjectedScript.getInlineStyle(nodeId));
-    }, 0)
+    }, 0);
 }
 
 InspectorController.applyStyleText = function(styleId, styleText, propertyName, callback)
 {
     setTimeout(function() {
         callback(InjectedScript.applyStyleText(styleId, styleText, propertyName));
-    }, 0)
+    }, 0);
 }
 
 InspectorController.setStyleText = function(style, cssText, callback)
 {
     setTimeout(function() {
         callback(InjectedScript.setStyleText(style, cssText));
-    }, 0)
+    }, 0);
 }
 
 InspectorController.toggleStyleEnabled = function(styleId, propertyName, disabled, callback)
 {
     setTimeout(function() {
         callback(InjectedScript.toggleStyleEnabled(styleId, propertyName, disabled));
-    }, 0)
+    }, 0);
 }
 
-InspectorController.applyStyleRuleText = function(ruleId, newContent, selectedNode, callback)
+InspectorController.applyStyleRuleText = function(ruleId, newContent, selectedNodeId, callback)
 {
     setTimeout(function() {
-        callback(InjectedScript.applyStyleRuleText(ruleId, newContent, selectedNode));
-    }, 0)
+        callback(InjectedScript.applyStyleRuleText(ruleId, newContent, selectedNodeId));
+    }, 0);
 }
 
-InspectorController.addStyleSelector = function(newContent, callback)
+InspectorController.addStyleSelector = function(newContent, selectedNodeId, callback)
 {
     setTimeout(function() {
-        callback(InjectedScript.addStyleSelector(newContent));
-    }, 0)
+        callback(InjectedScript.addStyleSelector(newContent, selectedNodeId));
+    }, 0);
 }
 
-InspectorController.setStyleProperty = function(styleId, name, value, callback) {
+InspectorController.setStyleProperty = function(styleId, name, value, callback)
+{
     setTimeout(function() {
         callback(InjectedScript.setStyleProperty(styleId, name, value));
-    }, 0)
+    }, 0);
 }
 
-InspectorController.getPrototypes = function(objectProxy, callback) {
+InspectorController.getPrototypes = function(nodeId, callback)
+{
     setTimeout(function() {
-        callback(InjectedScript.getPrototypes(objectProxy));
-    }, 0)
+        callback(InjectedScript.getPrototypes(nodeId));
+    }, 0);
 }
 
-InspectorController.getProperties = function(objectProxy, ignoreHasOwnProperty, callback) {
+InspectorController.getProperties = function(objectProxy, ignoreHasOwnProperty, callback)
+{
     setTimeout(function() {
         callback(InjectedScript.getProperties(objectProxy, ignoreHasOwnProperty));
-    }, 0)
+    }, 0);
 }
 
-InspectorController.setPropertyValue = function(objectProxy, propertyName, expression, callback) {
+InspectorController.setPropertyValue = function(objectProxy, propertyName, expression, callback)
+{
     setTimeout(function() {
         callback(InjectedScript.setPropertyValue(objectProxy, propertyName, expression));
-    }, 0)
+    }, 0);
 }
 
+InspectorController.evaluate = function(expression, callback)
+{
+    setTimeout(function() {
+        callback(InjectedScript.evaluate(expression));
+    }, 0);
+}
+
+InspectorController.addInspectedNode = function(nodeId, callback)
+{
+    setTimeout(function() {
+        callback(InjectedScript.addInspectedNode(nodeId));
+    }, 0);
+}
+
+InspectorController.performSearch = function(whitespaceTrimmedQuery, callback)
+{
+    setTimeout(function() {
+        callback(InjectedScript.performSearch(whitespaceTrimmedQuery));
+    }, 0);
+}
+
+InspectorController.searchCanceled = function(callback)
+{
+    setTimeout(function() {
+        callback(InjectedScript.searchCanceled());
+    }, 0);
+}

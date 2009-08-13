@@ -57,13 +57,8 @@ CALLBACK_FUNC_DECL(InspectorBackendHighlightDOMNode)
     if (args.Length() < 1)
         return v8::Undefined();
 
-    Node* node = V8DOMWrapper::convertDOMWrapperToNode<Node>(v8::Handle<v8::Object>::Cast(args[0]));
-    if (!node)
-        return v8::Undefined();
-
     InspectorBackend* inspectorBackend = V8DOMWrapper::convertToNativeObject<InspectorBackend>(V8ClassIndex::INSPECTORBACKEND, args.Holder());
-    inspectorBackend->highlight(node);
-
+    inspectorBackend->highlight(args[0]->ToInt32()->Value());
     return v8::Undefined();
 }
 
@@ -221,5 +216,104 @@ CALLBACK_FUNC_DECL(InspectorBackendWrapCallback)
     INC_STATS("InspectorBackend.wrapCallback()");
     return args[0];
 }
+
+CALLBACK_FUNC_DECL(InspectorBackendNodeForId)
+{
+    INC_STATS("InspectorBackend.nodeForId()");
+    if (args.Length() < 1)
+        return v8::Undefined();
+
+    InspectorBackend* inspectorBackend = V8DOMWrapper::convertToNativeObject<InspectorBackend>(V8ClassIndex::INSPECTORBACKEND, args.Holder());
+    
+    Node* node = inspectorBackend->nodeForId(args[0]->ToInt32()->Value());
+    if (!node)
+        return v8::Undefined();
+
+    InspectorController* ic = inspectorBackend->inspectorController();
+    if (!ic)
+        return v8::Undefined();
+
+    return V8DOMWrapper::convertToV8Object(V8ClassIndex::NODE, node);
+}
+
+CALLBACK_FUNC_DECL(InspectorBackendIdForNode)
+{
+    INC_STATS("InspectorBackend.idForNode()");
+    if (args.Length() < 1)
+        return v8::Undefined();
+
+    InspectorBackend* inspectorBackend = V8DOMWrapper::convertToNativeObject<InspectorBackend>(V8ClassIndex::INSPECTORBACKEND, args.Holder());
+    Node* node = V8DOMWrapper::convertDOMWrapperToNode<Node>(v8::Handle<v8::Object>::Cast(args[0]));
+    if (node)
+        return v8::Number::New(inspectorBackend->idForNode(node));
+    return v8::Undefined();
+}
+
+CALLBACK_FUNC_DECL(InspectorBackendWrapObject)
+{
+    INC_STATS("InspectorBackend.wrapObject()");
+    if (args.Length() < 1)
+        return v8::Undefined();
+
+    InspectorBackend* inspectorBackend = V8DOMWrapper::convertToNativeObject<InspectorBackend>(V8ClassIndex::INSPECTORBACKEND, args.Holder());
+    return inspectorBackend->wrapObject(ScriptValue(args[0])).v8Value();
+}
+
+CALLBACK_FUNC_DECL(InspectorBackendUnwrapObject)
+{
+    INC_STATS("InspectorBackend.unwrapObject()");
+    if (args.Length() < 1)
+        return v8::Undefined();
+
+    InspectorBackend* inspectorBackend = V8DOMWrapper::convertToNativeObject<InspectorBackend>(V8ClassIndex::INSPECTORBACKEND, args.Holder());
+    return inspectorBackend->unwrapObject(toWebCoreStringWithNullCheck(args[0])).v8Value();
+}
+
+CALLBACK_FUNC_DECL(InspectorBackendPushNodePathToFrontend)
+{
+    INC_STATS("InspectorBackend.pushNodePathToFrontend()");
+    if (args.Length() < 2)
+        return v8::Undefined();
+
+    InspectorBackend* inspectorBackend = V8DOMWrapper::convertToNativeObject<InspectorBackend>(V8ClassIndex::INSPECTORBACKEND, args.Holder());
+    Node* node = V8DOMWrapper::convertDOMWrapperToNode<Node>(v8::Handle<v8::Object>::Cast(args[0]));
+    bool selectInUI = args[1]->ToBoolean()->Value();
+    if (node)
+        return v8::Number::New(inspectorBackend->pushNodePathToFrontend(node, selectInUI));
+
+    return v8::Undefined();
+}
+
+#if ENABLE(DATABASE)
+CALLBACK_FUNC_DECL(InspectorBackendSelectDatabase)
+{
+    INC_STATS("InspectorBackend.selectDatabase()");
+    if (args.Length() < 1)
+        return v8::Undefined();
+
+    InspectorBackend* inspectorBackend = V8DOMWrapper::convertToNativeObject<InspectorBackend>(V8ClassIndex::INSPECTORBACKEND, args.Holder());
+    Database* database = V8DOMWrapper::convertToNativeObject<Database>(V8ClassIndex::DATABASE, v8::Handle<v8::Object>::Cast(args[0]));
+    if (database)
+        inspectorBackend->selectDatabase(database);
+
+    return v8::Undefined();
+}
+#endif
+
+#if ENABLE(DOM_STORAGE)
+CALLBACK_FUNC_DECL(InspectorBackendSelectDOMStorage)
+{
+    INC_STATS("InspectorBackend.selectDOMStorage()");
+    if (args.Length() < 1)
+        return v8::Undefined();
+
+    InspectorBackend* inspectorBackend = V8DOMWrapper::convertToNativeObject<InspectorBackend>(V8ClassIndex::INSPECTORBACKEND, args.Holder());
+    Storage* storage = V8DOMWrapper::convertToNativeObject<Storage>(V8ClassIndex::STORAGE, v8::Handle<v8::Object>::Cast(args[0]));
+    if (storage)
+        inspectorBackend->selectDOMStorage(storage);
+
+    return v8::Undefined();
+}
+#endif
 
 } // namespace WebCore

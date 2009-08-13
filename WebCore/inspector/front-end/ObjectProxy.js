@@ -28,18 +28,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ObjectProxy = function(objectId, path, protoDepth)
+WebInspector.ObjectProxy = function(objectId, path, protoDepth, description, hasChildren)
 {
     this.objectId = objectId;
     this.path = path || [];
     this.protoDepth = protoDepth || 0;
+    this.description = description;
+    this.hasChildren = hasChildren;
 }
 
 WebInspector.ObjectPropertyProxy = function(name, object)
 {
     this.name = name;
-    this.type = "object";
-    this.hasChildren = true;
-    this.textContent = Object.describe(object, true);
-    this.childObjectProxy = new WebInspector.ObjectProxy(object);
+    this.value = new WebInspector.ObjectProxy(object, [], 0, Object.describe(object, true), true);
 }

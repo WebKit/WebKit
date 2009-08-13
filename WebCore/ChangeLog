@@ -1,3 +1,205 @@
+2009-08-13  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        WebInspector: Migrate to DOMAgent (serialized access to DOM).
+
+        https://bugs.webkit.org/show_bug.cgi?id=28177
+
+        * bindings/js/JSInspectorBackendCustom.cpp:
+        (WebCore::JSInspectorBackend::highlightDOMNode):
+        (WebCore::JSInspectorBackend::nodeForId):
+        (WebCore::JSInspectorBackend::idForNode):
+        (WebCore::JSInspectorBackend::wrapObject):
+        (WebCore::JSInspectorBackend::unwrapObject):
+        (WebCore::JSInspectorBackend::pushNodePathToFrontend):
+        (WebCore::JSInspectorBackend::selectDatabase):
+        (WebCore::JSInspectorBackend::selectDOMStorage):
+        * bindings/js/ScriptObjectQuarantine.cpp:
+        (WebCore::getQuarantinedScriptObject):
+        * bindings/js/ScriptObjectQuarantine.h:
+        * bindings/js/ScriptValue.cpp:
+        (WebCore::ScriptValue::isObject):
+        * bindings/js/ScriptValue.h:
+        * bindings/v8/ScriptObjectQuarantine.cpp:
+        (WebCore::getQuarantinedScriptObject):
+        * bindings/v8/ScriptObjectQuarantine.h:
+        * bindings/v8/ScriptValue.h:
+        (WebCore::ScriptValue::isObject):
+        * bindings/v8/custom/V8CustomBinding.h:
+        * bindings/v8/custom/V8InspectorBackendCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * inspector/ConsoleMessage.cpp:
+        (WebCore::ConsoleMessage::ConsoleMessage):
+        * inspector/ConsoleMessage.h:
+        * inspector/InspectorBackend.cpp:
+        (WebCore::InspectorBackend::clearMessages):
+        (WebCore::InspectorBackend::loaded):
+        (WebCore::InspectorBackend::highlight):
+        (WebCore::InspectorBackend::nodeForId):
+        (WebCore::InspectorBackend::idForNode):
+        (WebCore::InspectorBackend::wrapObject):
+        (WebCore::InspectorBackend::unwrapObject):
+        (WebCore::InspectorBackend::pushNodePathToFrontend):
+        (WebCore::InspectorBackend::addNodesToSearchResult):
+        (WebCore::InspectorBackend::selectDatabase):
+        (WebCore::InspectorBackend::selectDOMStorage):
+        * inspector/InspectorBackend.h:
+        * inspector/InspectorBackend.idl:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::focusNode):
+        (WebCore::InspectorController::addMessageToConsole):
+        (WebCore::InspectorController::clearConsoleMessages):
+        (WebCore::InspectorController::startGroup):
+        (WebCore::InspectorController::scriptObjectReady):
+        (WebCore::InspectorController::setFrontendProxyObject):
+        (WebCore::InspectorController::close):
+        (WebCore::InspectorController::didCommitLoad):
+        (WebCore::InspectorController::wrapObject):
+        (WebCore::InspectorController::unwrapObject):
+        * inspector/InspectorController.h:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::setDocument):
+        (WebCore::InspectorDOMAgent::handleEvent):
+        (WebCore::InspectorDOMAgent::pushDocumentToFrontend):
+        (WebCore::InspectorDOMAgent::pushChildNodesToFrontend):
+        (WebCore::InspectorDOMAgent::nodeForId):
+        (WebCore::InspectorDOMAgent::pushNodePathToFrontend):
+        (WebCore::InspectorDOMAgent::buildObjectForNode):
+        (WebCore::InspectorDOMAgent::buildArrayForContainerChildren):
+        (WebCore::InspectorDOMAgent::innerParentElement):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorDOMStorageResource.cpp:
+        (WebCore::InspectorDOMStorageResource::bind):
+        * inspector/InspectorFrontend.cpp:
+        (WebCore::InspectorFrontend::clearConsoleMessages):
+        (WebCore::InspectorFrontend::updateFocusedNode):
+        (WebCore::InspectorFrontend::setDocument):
+        (WebCore::InspectorFrontend::selectDatabase):
+        (WebCore::InspectorFrontend::selectDOMStorage):
+        (WebCore::InspectorFrontend::addNodesToSearchResult):
+        * inspector/InspectorFrontend.h:
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype.clearMessages):
+        (WebInspector.ConsoleView.prototype.completions):
+        (WebInspector.ConsoleView.prototype._reportCompletions):
+        (WebInspector.ConsoleView.prototype._messagesClicked):
+        (WebInspector.ConsoleView.prototype.doEvalInWindow.evalCallback):
+        (WebInspector.ConsoleView.prototype.doEvalInWindow):
+        (WebInspector.ConsoleView.prototype._format):
+        (WebInspector.ConsoleView.prototype._formatfunction):
+        (WebInspector.ConsoleView.prototype._formatdate):
+        (WebInspector.ConsoleView.prototype._formatregexp):
+        (WebInspector.ConsoleView.prototype._formatnode):
+        (WebInspector.ConsoleView.prototype._formatobject):
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMNode):
+        (WebInspector.DOMNode.prototype._renumber):
+        (WebInspector.DOMDocument):
+        (WebInspector.DOMAgent):
+        (WebInspector.DOMAgent.prototype.getChildNodesAsync):
+        (WebInspector.DOMAgent.prototype.setAttributeAsync):
+        (WebInspector.DOMAgent.prototype.removeAttributeAsync):
+        (WebInspector.DOMAgent.prototype.setTextNodeValueAsync):
+        (WebInspector.DOMAgent.prototype.nodeForId):
+        (WebInspector.DOMAgent.prototype._setDocument):
+        (WebInspector.DOMAgent.prototype._setChildNodes):
+        (WebInspector.DOMAgent.prototype._bindNodes):
+        (WebInspector.DOMAgent.prototype._childNodeInserted):
+        (WebInspector.CSSStyleDeclaration):
+        (WebInspector.CSSStyleDeclaration.parseRule):
+        (WebInspector.setDocument):
+        (InspectorController.getStyles):
+        (InspectorController.getComputedStyle):
+        (InspectorController.getInlineStyle):
+        (InspectorController.applyStyleText):
+        (InspectorController.setStyleText):
+        (InspectorController.toggleStyleEnabled):
+        (InspectorController.applyStyleRuleText):
+        (InspectorController.addStyleSelector):
+        (InspectorController.setStyleProperty):
+        (InspectorController.getPrototypes):
+        (InspectorController.getProperties):
+        (InspectorController.setPropertyValue):
+        (InspectorController.evaluate):
+        (InspectorController.addInspectedNode):
+        (InspectorController.performSearch):
+        (InspectorController.searchCanceled):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.this.treeOutline.focusedNodeChanged):
+        (WebInspector.ElementsPanel.prototype.searchCanceled):
+        (WebInspector.ElementsPanel.prototype.performSearch):
+        (WebInspector.ElementsPanel.prototype._updateMatchesCount):
+        (WebInspector.ElementsPanel.prototype._updateMatchesCountSoon):
+        (WebInspector.ElementsPanel.prototype.addNodesToSearchResult):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeOutline.prototype.set focusedDOMNode.restoreHighlightToHoveredNode):
+        (WebInspector.ElementsTreeOutline.prototype.set focusedDOMNode):
+        (WebInspector.ElementsTreeElement.prototype.updateChildren):
+        (WebInspector.ElementsTreeElement.prototype._attributeEditingCommitted):
+        * inspector/front-end/InjectedScript.js:
+        (InjectedScript.applyStyleRuleText):
+        (InjectedScript.addStyleSelector):
+        (InjectedScript._doesSelectorAffectNode):
+        (InjectedScript._serializeRule):
+        (InjectedScript._serializeStyle):
+        (InjectedScript.getProperties):
+        (InjectedScript.evaluate):
+        (InjectedScript.addInspectedNode):
+        (InjectedScript.performSearch.addNodesToResults):
+        (InjectedScript.performSearch.matchExactItems):
+        (InjectedScript.performSearch.matchExactId.addNodesToResults.call):
+        (InjectedScript.performSearch.matchExactId):
+        (InjectedScript.performSearch):
+        (InjectedScript.performSearch.matchExactTagNames):
+        (InjectedScript.performSearch.matchExactAttributeNames):
+        (InjectedScript.performSearch.matchPartialTagNames):
+        (InjectedScript.performSearch.matchStartOfTagNames):
+        (InjectedScript.performSearch.matchPartialTagNamesAndAttributeValues):
+        (InjectedScript.performSearch.matchPartialAttributeValues):
+        (InjectedScript.performSearch.matchStyleSelector):
+        (InjectedScript.performSearch.matchPlainText):
+        (InjectedScript.performSearch.matchXPathQuery):
+        (InjectedScript.performSearch.finishedSearching):
+        (InjectedScript.performSearch.processChunk):
+        (InjectedScript.searchCanceled):
+        (InjectedScript._ensureCommandLineAPIInstalled.inspectObject):
+        (InjectedScript._ensureCommandLineAPIInstalled):
+        (InjectedScript._resolveObject):
+        (InjectedScript._nodeForId):
+        (InjectedScript._objectForId):
+        (InjectedScript._createProxyObject):
+        * inspector/front-end/ObjectPropertiesSection.js:
+        (WebInspector.ObjectPropertyTreeElement.prototype.onpopulate):
+        (WebInspector.ObjectPropertyTreeElement.prototype.update):
+        * inspector/front-end/ObjectProxy.js:
+        (WebInspector.ObjectProxy):
+        (WebInspector.ObjectPropertyProxy):
+        * inspector/front-end/PropertiesSidebarPane.js:
+        (WebInspector.PropertiesSidebarPane.prototype.update.callback):
+        (WebInspector.PropertiesSidebarPane.prototype.update):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.prototype.update.callback):
+        (WebInspector.StylesSidebarPane.prototype.update):
+        (WebInspector.StylePropertiesSection.prototype.editingSelectorCommitted):
+        (WebInspector.StylePropertiesSection.prototype.editingSelectorCancelled):
+        (WebInspector.BlankStylePropertiesSection.prototype.editingCommitted.callback):
+        (WebInspector.BlankStylePropertiesSection.prototype.editingCommitted):
+        (WebInspector.StylePropertyTreeElement.prototype):
+        * inspector/front-end/inspector.js:
+        (WebInspector._updateHoverHighlight):
+        (WebInspector.loaded):
+        (WebInspector.clearConsoleMessages):
+        (WebInspector.selectDatabase):
+        (WebInspector.selectDOMStorage):
+        (WebInspector.updateFocusedNode):
+        (WebInspector.addNodesToSearchResult):
+        * inspector/front-end/utilities.js:
+        (Object.proxyType):
+        * storage/Storage.h:
+        (WebCore::Storage::frame):
+
 2009-08-13  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Geoff Garen.
