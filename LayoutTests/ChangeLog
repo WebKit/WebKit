@@ -1,3 +1,16 @@
+2009-08-12  Eric Seidel  <eric@webkit.org>
+
+        No review, just adding missing results.
+
+        <canvas> without CSS width/height is unaffected by full page zoom
+        https://bugs.webkit.org/show_bug.cgi?id=26908
+
+        Adding missing test results.  Unsure why run-webkit-tests didn't fail.
+
+        * fast/canvas/canvas-zoom-expected.checksum: Added.
+        * fast/canvas/canvas-zoom-expected.png: Added.
+        * fast/canvas/canvas-zoom-expected.txt: Added.
+
 2009-08-12  George Wright  <george.wright@torchmobile.com>
 
         Reviewed by David Hyatt.
