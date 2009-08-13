@@ -1,3 +1,16 @@
+2009-08-13  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        REGRESSION(r47175): error running run-webkit-tests
+        https://bugs.webkit.org/show_bug.cgi?id=28261
+
+        Fix "Use of uninitialized value in concatenation (.) or string at
+        WebKitTools/Scripts/run-webkit-tests line 191." by setting
+        $testsPerDumpTool to 1000 by default.
+
+        * Scripts/run-webkit-tests:
+
 2009-08-13  Nate Chapin  <japhet@chromium.org>
 
         Unreviewed.
