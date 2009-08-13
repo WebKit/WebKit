@@ -1,3 +1,11 @@
+2009-08-13  Kavindra Devi Palaraja  <kavindra.palaraja@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Doc - Some cleanup on the documentation of QWebElement
+
+        * Api/qwebelement.cpp:
+
 2009-08-13  Norbert Leser  <norbert.leser@nokia.com>
 
         Reviewed by Simon Hausmann.
