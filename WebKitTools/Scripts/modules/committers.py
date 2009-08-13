@@ -54,6 +54,7 @@ committers_unable_to_review = [
     Committer("Eric Carlson", "eric.carlson@apple.com"),
     Committer("Greg Bolsinga", "bolsinga@apple.com"),
     Committer("Jeremy Orlow", "jorlow@chromium.org"),
+    Committer("Nate Chapin", "japhet@chromium.org"),
     Committer("Peter Kasting", "pkasting@google.com"),
     Committer("Pierre d'Herbemont", "pdherbemont@free.fr"),
     Committer("Shinichiro Hamaji", "hamaji@google.com"),
