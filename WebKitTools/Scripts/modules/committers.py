@@ -48,6 +48,7 @@ committers_unable_to_review = [
     Committer("Albert J. Wong", "ajwong@chromium.org"),
     Committer("Ben Murdoch", "benm@google.com"),
     Committer("Dirk Schulze", "krit@webkit.org"),
+    Committer("Eric Carlson", "eric.carlson@apple.com"),
     Committer("Jeremy Orlow", "jorlow@chromium.org"),
     Committer("Peter Kasting", "pkasting@google.com"),
     Committer("Pierre d'Herbemont", "pdherbemont@free.fr"),
