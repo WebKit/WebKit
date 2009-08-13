@@ -1,3 +1,13 @@
+2009-08-13  Patrick Mueller  <Patrick_Mueller@us.ibm.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Add a new gesture in Web Inspector to remove breakpoints
+        https://bugs.webkit.org/show_bug.cgi?id=19131
+        
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._documentMouseDown):
+
 2009-08-13  Norbert Leser  <norbert.leser@nokia.com>
 
         Reviewed by Simon Hausmann.

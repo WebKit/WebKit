@@ -289,8 +289,10 @@ WebInspector.SourceFrame.prototype = {
             return;
 
         var sourceRow = event.target.enclosingNodeOrSelfWithNodeName("tr");
-        if (sourceRow._breakpointObject)
-            sourceRow._breakpointObject.enabled = !sourceRow._breakpointObject.enabled;
+        if (sourceRow._breakpointObject && sourceRow._breakpointObject.enabled)
+            sourceRow._breakpointObject.enabled = false;
+        else if (sourceRow._breakpointObject) 
+            WebInspector.panels.scripts.removeBreakpoint(sourceRow._breakpointObject);
         else if (this.addBreakpointDelegate)
             this.addBreakpointDelegate(this.lineNumberForSourceRow(sourceRow));
     },
