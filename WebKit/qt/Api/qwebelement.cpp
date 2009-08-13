@@ -23,8 +23,8 @@
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSMutableStyleDeclaration.h"
 #include "CSSParser.h"
-#include "CSSRuleList.h"
 #include "CSSRule.h"
+#include "CSSRuleList.h"
 #include "CSSStyleRule.h"
 #include "CString.h"
 #include "Document.h"
@@ -42,6 +42,7 @@
 #include "qwebframe.h"
 #include "qwebframe_p.h"
 #include "runtime_root.h"
+#include <parser/SourceCode.h>
 #include <wtf/Vector.h>
 
 using namespace WebCore;

@@ -20,6 +20,7 @@
 #include "config.h"
 #include "qt_runtime.h"
 
+#include "BooleanObject.h"
 #include "DateInstance.h"
 #include "DateMath.h"
 #include "DatePrototype.h"
@@ -46,9 +47,9 @@
 #include <JSFunction.h>
 #include <limits.h>
 #include <runtime.h>
+#include <runtime/Error.h>
 #include <runtime_array.h>
 #include <runtime_object.h>
-#include "BooleanObject.h"
 
 // QtScript has these
 Q_DECLARE_METATYPE(QObjectList);
