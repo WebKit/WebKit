@@ -85,6 +85,7 @@ reviewers_list = [
     Reviewer("Gustavo Noronha", "gns@gnome.org"),
     Reviewer("Holger Freyther", "zecke@selfish.org"),
     Reviewer("Jan Alonzo", "jmalonzo@gmail.com"),
+    Reviewer("John Sullivan", "sullivan@apple.com"),
     Reviewer("Justin Garcia", "justin.garcia@apple.com"),
     Reviewer("Kevin McCullough", "kmccullough@apple.com"),
     Reviewer("Kevin Ollivier", "kevino@theolliviers.com"),
