@@ -619,10 +619,7 @@ static const CFTimeInterval waitToDumpWatchdogInterval = 10.0;
 
 static void CALLBACK waitUntilDoneWatchdogFired(HWND, UINT, UINT_PTR, DWORD)
 {
-    const char* message = "FAIL: Timed out waiting for notifyDone to be called\n";
-    fprintf(stderr, message);
-    fprintf(stdout, message);
-    dump();
+    gLayoutTestController->waitToDumpWatchdogTimerFired();
 }
 
 void LayoutTestController::setWaitToDump(bool waitUntilDone)

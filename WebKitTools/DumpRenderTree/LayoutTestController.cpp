@@ -1060,3 +1060,11 @@ bool LayoutTestController::checkDesktopNotificationPermission(JSStringRef origin
     }
     return false;
 }
+
+void LayoutTestController::waitToDumpWatchdogTimerFired()
+{
+    const char* message = "FAIL: Timed out waiting for notifyDone to be called\n";
+    fprintf(stderr, "%s", message);
+    fprintf(stdout, "%s", message);
+    notifyDone();
+}

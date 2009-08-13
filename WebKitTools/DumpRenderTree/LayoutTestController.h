@@ -161,6 +161,7 @@ public:
 
     bool waitToDump() const { return m_waitToDump; }
     void setWaitToDump(bool waitToDump);
+    void waitToDumpWatchdogTimerFired();
 
     bool willSendRequestReturnsNullOnRedirect() const { return m_willSendRequestReturnsNullOnRedirect; }
     void setWillSendRequestReturnsNullOnRedirect(bool returnsNull) { m_willSendRequestReturnsNullOnRedirect = returnsNull; }

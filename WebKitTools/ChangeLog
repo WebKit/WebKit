@@ -1,3 +1,40 @@
+2009-08-13  Adam Roben  <aroben@apple.com>
+
+        Fix off-by-one result comparisons in media tests on Windows Debug
+        builds
+
+        media/video-played.html seems always to time out in Windows Debug
+        builds. A race condition between media/video-test.js's "hang" timer and
+        DumpRenderTree's built-in "watchdog" timer was causing results for
+        media/video-played.html to be printed twice, causing all future media
+        tests to be compared to the previous test's results.
+
+        The fix is to make the watchdog timer got through the same code path
+        as calling notifyDone manually, so that the results will only get
+        printed once. A subsequent patch will remove video-test.js's hang
+        timer entirely, since it is redundant.
+
+        Fixes <http://webkit.org/b/28265>.
+
+        Reviewed by Mark Rowe.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (LayoutTestController::waitToDumpWatchdogTimerFired): Added. Code came
+        from Gtk/Mac/Win's watchdog timer handlers, but we now call
+        notifyDone() instead of dump() so that a subsequent call to
+        notifyDone() won't print the results out again.
+
+        * DumpRenderTree/LayoutTestController.h: Added
+        waitToDumpWatchdogTimerFired.
+
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (waitToDumpWatchdogFired):
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (waitUntilDoneWatchdogFired):
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (waitUntilDoneWatchdogFired):
+        Changed to call waitToDumpWatchdogTimerFired.
+
 2009-08-13  Eric Carlson  <eric.carlson@apple.com>
 
         Unreviewed.

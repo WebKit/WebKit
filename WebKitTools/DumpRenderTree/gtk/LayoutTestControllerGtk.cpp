@@ -213,11 +213,8 @@ void LayoutTestController::setSmartInsertDeleteEnabled(bool flag)
 
 static gboolean waitToDumpWatchdogFired(void*)
 {
-    const char* message = "FAIL: Timed out waiting for notifyDone to be called\n";
-    fprintf(stderr, "%s", message);
-    fprintf(stdout, "%s", message);
     waitToDumpWatchdog = 0;
-    dump();
+    gLayoutTestController->waitToDumpWatchdogTimerFired();
     return FALSE;
 }
 
