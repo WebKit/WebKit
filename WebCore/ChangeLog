@@ -1,3 +1,20 @@
+2009-08-12  George Wright  <george.wright@torchmobile.com>
+
+        Reviewed by David Hyatt.
+
+        Update the canvas renderer's intrinsic size with the zoomed
+        lengths and ensure the intrinsic size is correct when setting
+        an initial style.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26908
+
+        Test: fast/canvas/canvas-zoom.html
+
+        * rendering/RenderHTMLCanvas.cpp:
+        (WebCore::RenderHTMLCanvas::canvasSizeChanged):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::styleDidChange):
+
 2009-08-12  Alpha Lam  <hclam@chromium.org>
 
         Reviewed by Simon Fraser.

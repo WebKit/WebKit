@@ -55,10 +55,13 @@ void RenderHTMLCanvas::canvasSizeChanged()
     IntSize canvasSize = static_cast<HTMLCanvasElement*>(node())->size();
     IntSize zoomedSize(canvasSize.width() * style()->effectiveZoom(), canvasSize.height() * style()->effectiveZoom());
 
-    if (canvasSize == intrinsicSize())
+    if (zoomedSize == intrinsicSize())
         return;
 
-    setIntrinsicSize(canvasSize);
+    setIntrinsicSize(zoomedSize);
+
+    if (!parent())
+        return;
 
     if (!prefWidthsDirty())
         setPrefWidthsDirty(true);
