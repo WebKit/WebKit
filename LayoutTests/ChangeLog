@@ -1,3 +1,32 @@
+2009-08-13  Ariya Hidayat  <ariya.hidayat@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Add pixel tests result for canvas shadow support.
+
+        * platform/qt/Skipped: Exclude new passing tests.
+        * platform/qt/fast/canvas/shadow-offset-1-expected.checksum: Added.
+        * platform/qt/fast/canvas/shadow-offset-1-expected.png: Added.
+        * platform/qt/fast/canvas/shadow-offset-1-expected.txt: Added.
+        * platform/qt/fast/canvas/shadow-offset-2-expected.checksum: Added.
+        * platform/qt/fast/canvas/shadow-offset-2-expected.png: Added.
+        * platform/qt/fast/canvas/shadow-offset-2-expected.txt: Added.
+        * platform/qt/fast/canvas/shadow-offset-3-expected.checksum: Added.
+        * platform/qt/fast/canvas/shadow-offset-3-expected.png: Added.
+        * platform/qt/fast/canvas/shadow-offset-3-expected.txt: Added.
+        * platform/qt/fast/canvas/shadow-offset-4-expected.checksum: Added.
+        * platform/qt/fast/canvas/shadow-offset-4-expected.png: Added.
+        * platform/qt/fast/canvas/shadow-offset-4-expected.txt: Added.
+        * platform/qt/fast/canvas/shadow-offset-5-expected.checksum: Added.
+        * platform/qt/fast/canvas/shadow-offset-5-expected.png: Added.
+        * platform/qt/fast/canvas/shadow-offset-5-expected.txt: Added.
+        * platform/qt/fast/canvas/shadow-offset-6-expected.checksum: Added.
+        * platform/qt/fast/canvas/shadow-offset-6-expected.png: Added.
+        * platform/qt/fast/canvas/shadow-offset-6-expected.txt: Added.
+        * platform/qt/fast/canvas/shadow-offset-7-expected.checksum: Added.
+        * platform/qt/fast/canvas/shadow-offset-7-expected.png: Added.
+        * platform/qt/fast/canvas/shadow-offset-7-expected.txt: Added.
+
 2009-08-12  Alpha Lam < hclam@chromium.org>
 
         Not reviewed, Windows test fix after http://trac.webkit.org/changeset/47171.

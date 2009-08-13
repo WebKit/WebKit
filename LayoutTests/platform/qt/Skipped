@@ -2637,13 +2637,6 @@ fast/canvas/fill-stroke-clip-reset-path.html
 fast/canvas/image-object-in-canvas.html
 fast/canvas/patternfill-repeat.html
 fast/canvas/quadraticCurveTo.xml
-fast/canvas/shadow-offset-1.html
-fast/canvas/shadow-offset-2.html
-fast/canvas/shadow-offset-3.html
-fast/canvas/shadow-offset-4.html
-fast/canvas/shadow-offset-5.html
-fast/canvas/shadow-offset-6.html
-fast/canvas/shadow-offset-7.html
 fast/canvas/zero-size-fill-rect.html
 fast/clip/001.html
 fast/clip/002.html

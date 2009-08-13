@@ -688,6 +688,15 @@ void GraphicsContext::fillRect(const FloatRect& rect)
 
     QPainter* p = m_data->p();
 
+    IntSize shadowSize;
+    int shadowBlur;
+    Color shadowColor;
+    if (getShadow(shadowSize, shadowBlur, shadowColor)) {
+        FloatRect shadowRect = rect;
+        shadowRect.move(shadowSize.width(), shadowSize.height());
+        p->fillRect(shadowRect, QColor(shadowColor));
+    }
+
     switch (m_common->state.fillColorSpace) {
     case SolidColorSpace:
         if (fillColor().alpha())
@@ -849,10 +858,16 @@ FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& frect)
     return FloatRect(QRectF(result));
 }
 
-void GraphicsContext::setPlatformShadow(const IntSize& pos, int blur, const Color &color)
+void GraphicsContext::setPlatformShadow(const IntSize& size, int blur, const Color &color)
 {
     // Qt doesn't support shadows natively, they are drawn manually in the draw*
     // functions
+
+    if (m_common->state.shadowsIgnoreTransforms) {
+        // Meaning that this graphics context is associated with a CanvasRenderingContext
+        // We flip the height since CG and HTML5 Canvas have opposite Y axis
+        m_common->state.shadowSize = IntSize(size.width(), -size.height());
+    }
 }
 
 void GraphicsContext::clearPlatformShadow()
