@@ -1,3 +1,12 @@
+2009-08-12  David Kilzer  <ddkilzer@apple.com>
+
+        run-webkit-tests: document --nthly flag in help message
+
+        Reviewed by Simon Fraser.
+
+        * Scripts/run-webkit-tests: Added --nthly flag to $usage string.
+        Also noted that -1|--singly implies --nthly 1.
+
 2009-08-12  Eric Seidel  <eric@webkit.org>
 
         No review, just fixing mismerged ChangeLogs.

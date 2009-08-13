@@ -201,6 +201,7 @@ Usage: $programName [options] [testdir|testpath ...]
   --[no-]launch-safari            Launch (or do not launch) Safari to display test results (default: $launchSafariDefault)
   -l|--leaks                      Enable leaks checking
   --[no-]new-test-results         Generate results for new tests
+  --nthly n                       Restart DumpRenderTree every n tests (default: $testsPerDumpTool)
   -p|--pixel-tests                Enable pixel tests
   --tolerance t                   Ignore image differences less than this percentage (default: $tolerance)
   --platform                      Override the detected platform to use for tests and results (default: $platform)
@@ -212,7 +213,7 @@ Usage: $programName [options] [testdir|testpath ...]
   --reverse                       Run the tests in reverse alphabetical order
   --root                          Path to root tools build
   --[no-]sample-on-timeout        Run sample on timeout (default: $sampleDefault) (Mac OS X only)
-  -1|--singly                     Isolate each test case run (implies --verbose)
+  -1|--singly                     Isolate each test case run (implies --nthly 1 --verbose)
   --skipped=[default|ignore|only] Specifies how to treat the Skipped file
                                      default: Tests/directories listed in the Skipped file are not tested
                                      ignore:  The Skipped file is ignored
