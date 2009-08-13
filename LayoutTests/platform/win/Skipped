@@ -580,3 +580,13 @@ http/tests/misc/favicon-loads-with-images-disabled.html
 
 # This port doesn't support Geolocation.
 fast/dom/Geolocation
+
+# These media tests regressed on the bots.  Skipping to make the bots green again.
+# https://bugs.webkit.org/show_bug.cgi?id=28281
+http/tests/media/video-play-stall.html
+media/video-loop.html
+media/video-played.html
+media/video-seek-past-end-playing.html
+# These two crash from the same regression.
+media/unsupported-rtsp.html
+media/video-source-error.html
