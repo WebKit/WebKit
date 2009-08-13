@@ -1,5 +1,12 @@
 2009-08-13  Mark Rowe  <mrowe@apple.com>
 
+        Try some more to fix the Windows build.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def: Export a new symbol.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore_debug.def: Ditto.
+
+2009-08-13  Mark Rowe  <mrowe@apple.com>
+
         Try and fix the Windows build.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def: Export a new symbol.
