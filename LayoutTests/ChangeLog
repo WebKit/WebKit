@@ -1,5 +1,15 @@
 2009-08-13  Ariya Hidayat  <ariya.hidayat@nokia.com>
 
+        Rubber-stamped by Simon Hausmann.
+
+        [Qt] Fix test result and add pixel test.
+
+        * platform/qt/fast/canvas/canvas-zoom-expected.checksum: Added.
+        * platform/qt/fast/canvas/canvas-zoom-expected.png: Added.
+        * platform/qt/fast/canvas/canvas-zoom-expected.txt: Added.
+
+2009-08-13  Ariya Hidayat  <ariya.hidayat@nokia.com>
+
         Reviewed by Simon Hausmann.
 
         [Qt] Add pixel tests result for canvas shadow support.
