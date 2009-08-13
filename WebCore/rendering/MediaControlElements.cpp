@@ -482,8 +482,8 @@ MediaControlTimelineElement::MediaControlTimelineElement(Document* document, HTM
 
 void MediaControlTimelineElement::defaultEventHandler(Event* event)
 {
-    // Left button is 0. Accepts only if mouse event is from left button.
-    if (!event->isMouseEvent() || static_cast<MouseEvent*>(event)->button())
+    // Left button is 0. Rejects mouse events not from left button.
+    if (event->isMouseEvent() && static_cast<MouseEvent*>(event)->button())
         return;
 
     if (event->type() == eventNames().mousedownEvent)

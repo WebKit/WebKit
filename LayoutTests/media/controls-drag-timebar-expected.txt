@@ -1,0 +1,13 @@
+Test that drag the timebar thumb causes seeks.
+
+RUN(video.autoplay = true)
+RUN(video.src = 'content/test.mp4')
+EVENT(playing)
+EVENT(seeked)
+Time: 1.7
+EVENT(seeked)
+Time: 2.2
+EVENT(seeked)
+Time: 2.7
+END OF TEST
+

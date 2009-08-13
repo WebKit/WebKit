@@ -1,0 +1,66 @@
+<html>
+    <head>
+        <title>drag timebar test</title>
+        <script src=video-test.js></script>
+        <script>
+            var x, y, time, count;
+            var seek = 0;
+
+            if (window.layoutTestController)
+                layoutTestController.dumpAsText();
+
+            function test()
+            {
+                if (window.eventSender) {
+                    x = video.offsetLeft + (video.offsetWidth / 3);
+                    y = video.offsetTop + video.offsetHeight - 10;
+                    time = video.currentTime.toFixed(1);
+                    count = 0;
+
+                    eventSender.dragMode = false;
+                    eventSender.mouseMoveTo(x, y);
+                    eventSender.mouseDown();
+                }
+                window.setTimeout("move()", 100);
+            }
+
+            function move()
+            {
+                if (window.eventSender) {
+                    x += 20;
+                    eventSender.mouseMoveTo(x, y);
+                }
+                if (++count >= 3)
+                    eventSender.mouseUp();
+                window.setTimeout("move()", 100);
+            }
+
+            function playing()
+            {
+                window.setTimeout("test()", 100);
+            }
+
+            function seeked()
+            {
+                consoleWrite("Time: " + video.currentTime.toFixed(1));
+                if (++seek == 3)
+                    endTest();
+            }
+
+            function start()
+            {
+                findMediaElement();
+                waitForEvent('playing', playing);
+                waitForEvent('seeked', seeked);
+                run("video.autoplay = true");
+                run("video.src = 'content/test.mp4'");
+            }    
+        </script>
+    </head>
+
+    <body onload="start()">
+    <p>Test that drag the timebar thumb causes seeks.</p>
+    <video controls></video>
+    </body>
+</html>
+
