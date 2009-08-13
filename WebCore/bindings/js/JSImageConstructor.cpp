@@ -25,6 +25,7 @@
 #include "JSHTMLImageElement.h"
 #include "JSNode.h"
 #include "ScriptExecutionContext.h"
+#include <runtime/Error.h>
 
 using namespace JSC;
 

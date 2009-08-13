@@ -23,6 +23,7 @@
 #include "JSXMLHttpRequest.h"
 #include "ScriptExecutionContext.h"
 #include "XMLHttpRequest.h"
+#include <runtime/Error.h>
 
 using namespace JSC;
 

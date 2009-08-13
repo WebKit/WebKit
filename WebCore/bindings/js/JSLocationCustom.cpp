@@ -31,6 +31,7 @@
 #include "KURL.h"
 #include "Location.h"
 #include "ScriptController.h"
+#include <runtime/JSFunction.h>
 #include <runtime/PrototypeFunction.h>
 
 using namespace JSC;

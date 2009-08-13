@@ -37,6 +37,7 @@
 #include "JSWebSocket.h"
 #include "ScriptExecutionContext.h"
 #include "WebSocket.h"
+#include <runtime/Error.h>
 
 using namespace JSC;
 

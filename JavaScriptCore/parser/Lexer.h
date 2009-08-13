@@ -50,9 +50,8 @@ namespace JSC {
         int lineNumber() const { return m_lineNumber; }
         bool prevTerminator() const { return m_terminator; }
         SourceCode sourceCode(int openBrace, int closeBrace, int firstLine);
-        bool scanRegExp();
-        const UString& pattern() const { return m_pattern; }
-        const UString& flags() const { return m_flags; }
+        bool scanRegExp(const Identifier*& pattern, const Identifier*& flags, UChar patternPrefix = 0);
+        bool skipRegExp();
 
         // Functions for use after parsing.
         bool sawError() const { return m_error; }
@@ -111,9 +110,6 @@ namespace JSC {
         WTF::SegmentedVector<JSC::Identifier, initialIdentifierTableCapacity> m_identifiers;
 
         JSGlobalData* m_globalData;
-
-        UString m_pattern;
-        UString m_flags;
 
         const HashTable m_keywordTable;
 

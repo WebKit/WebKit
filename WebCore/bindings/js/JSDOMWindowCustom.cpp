@@ -62,6 +62,8 @@
 #include "ScriptController.h"
 #include "Settings.h"
 #include "WindowFeatures.h"
+#include <runtime/Error.h>
+#include <runtime/JSFunction.h>
 #include <runtime/JSObject.h>
 #include <runtime/PrototypeFunction.h>
 

@@ -25,10 +25,6 @@
 #define JSFunction_h
 
 #include "InternalFunction.h"
-#include "JSVariableObject.h"
-#include "SymbolTable.h"
-#include "Nodes.h"
-#include "JSObject.h"
 
 namespace JSC {
 
@@ -43,20 +39,10 @@ namespace JSC {
 
         typedef InternalFunction Base;
 
-        JSFunction(PassRefPtr<Structure> structure)
-            : InternalFunction(structure)
-        {
-            clearScopeChain();
-        }
-
     public:
         JSFunction(ExecState*, PassRefPtr<Structure>, int length, const Identifier&, NativeFunction);
-        JSFunction(ExecState*, const Identifier&, FunctionBodyNode*, ScopeChainNode*);
-        ~JSFunction();
-
-        virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
-        virtual void put(ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
-        virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
+        JSFunction(ExecState*, const Identifier&, PassRefPtr<FunctionBodyNode>, ScopeChainNode*);
+        virtual ~JSFunction();
 
         JSObject* construct(ExecState*, const ArgList&);
         JSValue call(ExecState*, JSValue thisValue, const ArgList&);
@@ -64,11 +50,8 @@ namespace JSC {
         void setScope(const ScopeChain& scopeChain) { setScopeChain(scopeChain); }
         ScopeChain& scope() { return scopeChain(); }
 
-        void setBody(FunctionBodyNode* body) { m_body = body; }
-        void setBody(PassRefPtr<FunctionBodyNode> body) { m_body = body; }
+        void setBody(PassRefPtr<FunctionBodyNode>);
         FunctionBodyNode* body() const { return m_body.get(); }
-
-        virtual void markChildren(MarkStack&);
 
         static JS_EXPORTDATA const ClassInfo info;
 
@@ -77,11 +60,6 @@ namespace JSC {
             return Structure::create(prototype, TypeInfo(ObjectType, ImplementsHasInstance)); 
         }
 
-#if ENABLE(JIT)
-        bool isHostFunction() const { return m_body && m_body->isHostFunction(); }
-#else
-        bool isHostFunction() const { return false; }
-#endif
         NativeFunction nativeFunction()
         {
             return *reinterpret_cast<NativeFunction*>(m_data);
@@ -91,6 +69,17 @@ namespace JSC {
         virtual CallType getCallData(CallData&);
 
     private:
+        JSFunction(PassRefPtr<Structure>);
+
+        bool isHostFunction() const;
+        bool isHostFunctionNonInline() const;
+
+        virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
+        virtual void put(ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
+        virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
+
+        virtual void markChildren(MarkStack&);
+
         virtual const ClassInfo* classInfo() const { return &info; }
 
         static JSValue argumentsGetter(ExecState*, const Identifier&, const PropertySlot&);
@@ -100,22 +89,22 @@ namespace JSC {
         RefPtr<FunctionBodyNode> m_body;
         ScopeChain& scopeChain()
         {
-            ASSERT(!isHostFunction());
+            ASSERT(!isHostFunctionNonInline());
             return *reinterpret_cast<ScopeChain*>(m_data);
         }
         void clearScopeChain()
         {
-            ASSERT(!isHostFunction());
+            ASSERT(!isHostFunctionNonInline());
             new (m_data) ScopeChain(NoScopeChain());
         }
         void setScopeChain(ScopeChainNode* sc)
         {
-            ASSERT(!isHostFunction());
+            ASSERT(!isHostFunctionNonInline());
             new (m_data) ScopeChain(sc);
         }
         void setScopeChain(const ScopeChain& sc)
         {
-            ASSERT(!isHostFunction());
+            ASSERT(!isHostFunctionNonInline());
             *reinterpret_cast<ScopeChain*>(m_data) = sc;
         }
         void setNativeFunction(NativeFunction func)
@@ -131,11 +120,6 @@ namespace JSC {
     {
         ASSERT(asObject(value)->inherits(&JSFunction::info));
         return static_cast<JSFunction*>(asObject(value));
-    }
-
-    inline JSFunction* FunctionBodyNode::make(ExecState* exec, ScopeChainNode* scopeChain)
-    {
-        return new (exec) JSFunction(exec, m_ident, this, scopeChain);
     }
 
 } // namespace JSC

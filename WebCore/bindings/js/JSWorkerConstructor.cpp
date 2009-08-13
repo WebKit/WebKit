@@ -34,6 +34,7 @@
 #include "JSDOMWindowCustom.h"
 #include "JSWorker.h"
 #include "Worker.h"
+#include <runtime/Error.h>
 
 using namespace JSC;
 

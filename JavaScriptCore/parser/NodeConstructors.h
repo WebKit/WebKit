@@ -89,7 +89,7 @@ namespace JSC {
     {
     }
 
-    inline RegExpNode::RegExpNode(JSGlobalData* globalData, const UString& pattern, const UString& flags)
+    inline RegExpNode::RegExpNode(JSGlobalData* globalData, const Identifier& pattern, const Identifier& flags)
         : ExpressionNode(globalData)
         , m_pattern(pattern)
         , m_flags(flags)

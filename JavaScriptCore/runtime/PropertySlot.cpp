@@ -23,7 +23,6 @@
 
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
-#include "JSObject.h"
 
 namespace JSC {
 
@@ -39,7 +38,7 @@ JSValue PropertySlot::functionGetter(ExecState* exec, const Identifier&, const P
         return callData.native.function(exec, slot.m_data.getterFunc, slot.slotBase(), exec->emptyList());
     ASSERT(callType == CallTypeJS);
     // FIXME: Can this be done more efficiently using the callData?
-    return static_cast<JSFunction*>(slot.m_data.getterFunc)->call(exec, slot.slotBase(), exec->emptyList());
+    return asFunction(slot.m_data.getterFunc)->call(exec, slot.slotBase(), exec->emptyList());
 }
 
 } // namespace JSC

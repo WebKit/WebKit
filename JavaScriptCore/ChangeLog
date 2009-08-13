@@ -1,3 +1,97 @@
+2009-08-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by David Levin.
+
+        JavaScriptCore tweaks to get ready for the parser arena
+        https://bugs.webkit.org/show_bug.cgi?id=28243
+
+        Eliminate dependencies on Nodes.h outside JavaScriptCore,
+        and cut down on them inside JavaScriptCore.
+
+        Change regular expression parsing to use identifiers as
+        with other strings we parse.
+
+        Fix a couple things that are needed to use const Identifier
+        more, which will be part of the parser arena work.
+
+        * JavaScriptCore.exp: Resorted and updated.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Changed
+        CollectorHeapIterator.h to be project-internal.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitPushNewScope): Added const.
+        * bytecompiler/BytecodeGenerator.h: Ditto.
+
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::recompileAllJSFunctions): Moved this function
+        here from WebCore. Here is better since it uses so many internals.
+        Removed unimportant optimization for the no listener case.
+        * debugger/Debugger.h: Ditto. Also removed unneeded include
+        and tweaked formatting and comments.
+
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::functionName): Call asFunction instead
+        of doing the unchecked static_cast.
+        (JSC::DebuggerCallFrame::calculatedFunctionName): Ditto.
+
+        * jit/JITStubs.cpp:
+        (JSC::op_call_JSFunction): Call isHostFunction on the body rather
+        than on the JSFunction.
+        (JSC::vm_lazyLinkCall): Ditto.
+        (JSC::op_construct_JSConstruct): Ditto.
+
+        * parser/Grammar.y: Changed callers to use new scanRegExp with
+        out arguments instead of relying on state in the Lexer. And
+        callers that just want to skip a regular expression to use
+        skipRegExp.
+
+        * parser/Lexer.cpp:
+        (JSC::Lexer::scanRegExp): Changed to use out arguments, and to
+        add a prefix argument so we can add in the "=" character as needed.
+        Also rewrote to streamline the logic a bit inspired by suggestions
+        by David Levin.
+        (JSC::Lexer::skipRegExp): Added. Version of the function above that
+        does not actually put the regular expression into a string.
+        (JSC::Lexer::clear): Removed code to clear m_pattern and m_flags.
+        * parser/Lexer.h: Changed scanRegExp to have out arguments. Added
+        skipRegExp. Eliminated pattern, flags, m_pattern, and m_flags.
+
+        * parser/NodeConstructors.h:
+        (JSC::RegExpNode::RegExpNode): Changed to take const Identifier&.
+        * parser/Nodes.cpp:
+        (JSC::RegExpNode::emitBytecode): Changed since m_pattern and
+        m_flags are now Identifier instead of UString.
+        (JSC::FunctionBodyNode::make): Moved this function here instead
+        of putting it in the JSFunction.h header.
+        * parser/Nodes.h: Changed RegExpNode to use Identifier.
+
+        * profiler/Profiler.cpp:
+        (JSC::Profiler::createCallIdentifier): Changed to use isHostFunction
+        on the body instead of on the JSFunction object.
+        * runtime/FunctionPrototype.cpp:
+        (JSC::functionProtoFuncToString): Ditto.
+
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::isHostFunction): Moved here from header.
+        (JSC::JSFunction::isHostFunctionNonInline): Added.
+        (JSC::JSFunction::JSFunction): Removed unneeded initialization of
+        m_body to 0.
+        (JSC::JSFunction::setBody): Moved here from header.
+
+        * runtime/JSFunction.h: Removed unneeded includes. Moved private
+        constructor down to the private section. Made virtual functions
+        private. Removed unneeded overload of setBody and moved the body
+        of the function into the .cpp file. Changed assertions to use
+        the non-inline version of isHostFunction.
+
+        * runtime/PropertySlot.cpp:
+        (JSC::PropertySlot::functionGetter): Use asFunction instead
+        of doing the unchecked static_cast.
+
+        * wtf/SegmentedVector.h:
+        (WTF::SegmentedVector::isEmpty): Added.
+
 2009-08-13  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Darin Adler.

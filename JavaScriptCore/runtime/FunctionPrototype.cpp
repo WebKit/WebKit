@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -86,10 +86,11 @@ JSValue JSC_HOST_CALL functionProtoFuncToString(ExecState* exec, JSObject*, JSVa
 {
     if (thisValue.isObject(&JSFunction::info)) {
         JSFunction* function = asFunction(thisValue);
-        if (!function->isHostFunction()) {
-            UString functionBody = function->body()->toSourceString();
-            insertSemicolonIfNeeded(functionBody);
-            return jsString(exec, "function " + function->name(&exec->globalData()) + "(" + function->body()->paramString() + ") " + functionBody);
+        FunctionBodyNode* body = function->body();
+        if (!body->isHostFunction()) {
+            UString bodySourceString = body->toSourceString();
+            insertSemicolonIfNeeded(bodySourceString);
+            return jsString(exec, "function " + function->name(&exec->globalData()) + "(" + body->paramString() + ") " + bodySourceString);
         }
     }
 

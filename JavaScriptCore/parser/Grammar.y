@@ -292,19 +292,23 @@ Literal:
   | STRING                              { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) StringNode(GLOBAL_DATA, *$1), 0, 1); }
   | '/' /* regexp */                    {
                                             Lexer& l = *LEXER;
-                                            if (!l.scanRegExp())
+                                            const Identifier* pattern;
+                                            const Identifier* flags;
+                                            if (!l.scanRegExp(pattern, flags))
                                                 YYABORT;
-                                            RegExpNode* node = new (GLOBAL_DATA) RegExpNode(GLOBAL_DATA, l.pattern(), l.flags());
-                                            int size = l.pattern().size() + 2; // + 2 for the two /'s
+                                            RegExpNode* node = new (GLOBAL_DATA) RegExpNode(GLOBAL_DATA, *pattern, *flags);
+                                            int size = pattern->size() + 2; // + 2 for the two /'s
                                             SET_EXCEPTION_LOCATION(node, @1.first_column, @1.first_column + size, @1.first_column + size);
                                             $$ = createNodeInfo<ExpressionNode*>(node, 0, 0);
                                         }
   | DIVEQUAL /* regexp with /= */       {
                                             Lexer& l = *LEXER;
-                                            if (!l.scanRegExp())
+                                            const Identifier* pattern;
+                                            const Identifier* flags;
+                                            if (!l.scanRegExp(pattern, flags, '='))
                                                 YYABORT;
-                                            RegExpNode* node = new (GLOBAL_DATA) RegExpNode(GLOBAL_DATA, "=" + l.pattern(), l.flags());
-                                            int size = l.pattern().size() + 2; // + 2 for the two /'s
+                                            RegExpNode* node = new (GLOBAL_DATA) RegExpNode(GLOBAL_DATA, *pattern, *flags);
+                                            int size = pattern->size() + 2; // + 2 for the two /'s
                                             SET_EXCEPTION_LOCATION(node, @1.first_column, @1.first_column + size, @1.first_column + size);
                                             $$ = createNodeInfo<ExpressionNode*>(node, 0, 0);
                                         }
@@ -1241,8 +1245,8 @@ Literal_NoNode:
   | FALSETOKEN
   | NUMBER { }
   | STRING { }
-  | '/' /* regexp */ { Lexer& l = *LEXER; if (!l.scanRegExp()) YYABORT; }
-  | DIVEQUAL /* regexp with /= */ { Lexer& l = *LEXER; if (!l.scanRegExp()) YYABORT; }
+  | '/' /* regexp */ { if (!LEXER->skipRegExp()) YYABORT; }
+  | DIVEQUAL /* regexp with /= */ { if (!LEXER->skipRegExp()) YYABORT; }
 ;
 
 Property_NoNode:

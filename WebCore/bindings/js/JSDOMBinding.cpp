@@ -43,6 +43,7 @@
 #include "RangeException.h"
 #include "ScriptController.h"
 #include "XMLHttpRequestException.h"
+#include <runtime/JSFunction.h>
 #include <runtime/PrototypeFunction.h>
 #include <wtf/StdLibExtras.h>
 

@@ -32,13 +32,14 @@
 #import "WebFrameInternal.h"
 #import "WebScriptDebugDelegate.h"
 #import "WebViewInternal.h"
+#import <JavaScriptCore/DebuggerCallFrame.h>
+#import <JavaScriptCore/JSGlobalObject.h>
+#import <JavaScriptCore/SourceCode.h>
 #import <WebCore/DOMWindow.h>
 #import <WebCore/Frame.h>
 #import <WebCore/JSDOMWindow.h>
 #import <WebCore/KURL.h>
 #import <WebCore/ScriptController.h>
-#import <debugger/DebuggerCallFrame.h>
-#import <runtime/JSGlobalObject.h>
 
 using namespace JSC;
 using namespace WebCore;

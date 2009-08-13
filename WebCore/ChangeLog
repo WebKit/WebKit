@@ -1,3 +1,42 @@
+2009-08-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by David Levin.
+
+        JavaScriptCore tweaks to get ready for the parser arena
+        https://bugs.webkit.org/show_bug.cgi?id=28243
+
+        * ForwardingHeaders/runtime/CollectorHeapIterator.h: Removed.
+
+        * WebCore.xcodeproj/project.pbxproj: Exposed a couple header
+        files as Private that are now needed to compile Mac WebKit.
+
+        * bindings/js/JSAudioConstructor.cpp:
+        * bindings/js/JSDOMBinding.cpp:
+        * bindings/js/JSDOMBinding.h:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        * bindings/js/JSHTMLInputElementCustom.cpp:
+        * bindings/js/JSHistoryCustom.cpp:
+        * bindings/js/JSImageConstructor.cpp:
+        * bindings/js/JSLazyEventListener.cpp:
+        * bindings/js/JSLocationCustom.cpp:
+        * bindings/js/JSMessageChannelConstructor.cpp:
+        * bindings/js/JSOptionConstructor.cpp:
+        * bindings/js/JSWebSocketConstructor.cpp:
+        * bindings/js/JSWebSocketCustom.cpp:
+        * bindings/js/JSWorkerConstructor.cpp:
+        * bindings/js/JSXMLHttpRequestConstructor.cpp:
+        * bridge/jni/jni_jsobject.mm:
+        Updated includes.
+
+        * inspector/JavaScriptDebugServer.cpp:
+        (WebCore::JavaScriptDebugServer::sourceParsed):
+        Change to not assert if this is called with no listeners.
+        I don't think this was guaranteed before, and we now use
+        this code path when recompiling. Slightly less efficient,
+        but this is a one-time cost when turning on the debugger.
+        (WebCore::JavaScriptDebugServer::recompileAllJSFunctions):
+        Change to call Debugger::recompileAllJSFunctions.
+
 2009-08-13  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Eric Seidel.

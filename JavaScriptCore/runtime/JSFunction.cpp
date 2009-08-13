@@ -45,12 +45,26 @@ ASSERT_CLASS_FITS_IN_CELL(JSFunction);
 
 const ClassInfo JSFunction::info = { "Function", &InternalFunction::info, 0, 0 };
 
+inline bool JSFunction::isHostFunction() const
+{
+    return m_body && m_body->isHostFunction();
+}
+
+bool JSFunction::isHostFunctionNonInline() const
+{
+    return isHostFunction();
+}
+
+JSFunction::JSFunction(PassRefPtr<Structure> structure)
+    : Base(structure)
+{
+    clearScopeChain();
+}
+
 JSFunction::JSFunction(ExecState* exec, PassRefPtr<Structure> structure, int length, const Identifier& name, NativeFunction func)
     : Base(&exec->globalData(), structure, name)
 #if ENABLE(JIT)
     , m_body(FunctionBodyNode::createNativeThunk(&exec->globalData()))
-#else
-    , m_body(0)
 #endif
 {
 #if ENABLE(JIT)
@@ -63,7 +77,7 @@ JSFunction::JSFunction(ExecState* exec, PassRefPtr<Structure> structure, int len
 #endif
 }
 
-JSFunction::JSFunction(ExecState* exec, const Identifier& name, FunctionBodyNode* body, ScopeChainNode* scopeChainNode)
+JSFunction::JSFunction(ExecState* exec, const Identifier& name, PassRefPtr<FunctionBodyNode> body, ScopeChainNode* scopeChainNode)
     : Base(&exec->globalData(), exec->lexicalGlobalObject()->functionStructure(), name)
     , m_body(body)
 {
@@ -210,6 +224,11 @@ JSObject* JSFunction::construct(ExecState* exec, const ArgList& args)
     if (exec->hadException() || !result.isObject())
         return thisObj;
     return asObject(result);
+}
+
+void JSFunction::setBody(PassRefPtr<FunctionBodyNode> body)
+{
+    m_body = body;
 }
 
 } // namespace JSC

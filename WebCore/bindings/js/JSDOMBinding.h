@@ -26,7 +26,6 @@
 #include "Document.h" // For DOMConstructorWithDocument
 #include <runtime/Completion.h>
 #include <runtime/Lookup.h>
-#include <runtime/JSFunction.h>
 #include <wtf/Noncopyable.h>
 
 namespace JSC {
