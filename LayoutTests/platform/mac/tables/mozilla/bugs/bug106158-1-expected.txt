@@ -3,17 +3,17 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 450x78 [border: (1px solid #000000)]
-        RenderTableSection {TBODY} at (1,1) size 448x76
-          RenderTableRow {TR} at (0,2) size 448x72
-            RenderTableCell {TD} at (2,2) size 444x72 [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,0) size 450x104 [border: (1px solid #000000)]
+        RenderTableSection {TBODY} at (1,1) size 448x102
+          RenderTableRow {TR} at (0,2) size 448x98
+            RenderTableCell {TD} at (2,2) size 444x98 [r=0 c=0 rs=1 cs=1]
               RenderTable {TABLE} at (1,1) size 442x26 [border: (1px solid #FF0000)]
                 RenderTableSection {TBODY} at (1,1) size 440x24
                   RenderTableRow {TR} at (0,2) size 440x20
                     RenderTableCell {TD} at (2,2) size 436x20 [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (1,1) size 21x18
                         text run at (1,1) width 21: "test"
-              RenderTable {TABLE} at (1,1) size 437x70 [border: (1px solid #000000)]
+              RenderTable {TABLE} at (1,27) size 437x70 [border: (1px solid #000000)]
                 RenderTableSection {TBODY} at (1,1) size 435x68
                   RenderTableRow {TR} at (0,2) size 435x64
                     RenderTableCell {TD} at (2,2) size 431x64 [r=0 c=0 rs=1 cs=1]

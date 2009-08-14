@@ -1,3 +1,23 @@
+2009-08-13  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        misalignment because of float:left of <div> tag
+        https://bugs.webkit.org/show_bug.cgi?id=15869
+
+        One section of http://edgar.sec.gov site draws to the right of the rest
+        of the content
+        <rdar://problem/7135951>
+
+        Tests: fast/block/float/avoidance-percent-width-compat.html
+               fast/block/float/avoidance-percent-width-strict.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::getClearDelta): Changed to apply the same float
+            avoidance logic in strict mode and in compatibility mode, which
+            matches Firefox and IE. Changed to compute and use the computed
+            width of the child, instead of ignoring non-fixed widths.
+
 2009-08-13  Steve Block  <steveblock@google.com>
 
         Reviewed by Darin Adler.

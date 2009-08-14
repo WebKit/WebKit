@@ -1,3 +1,38 @@
+2009-08-13  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        misalignment because of float:left of <div> tag
+        https://bugs.webkit.org/show_bug.cgi?id=15869
+
+        One section of http://edgar.sec.gov site draws to the right of the rest
+        of the content
+        <rdar://problem/7135951>
+
+        * fast/block/float/avoidance-percent-width-compat.html: Added.
+        * fast/block/float/avoidance-percent-width-strict.html: Added.
+        * platform/mac/fast/block/float/035-expected.checksum:
+        * platform/mac/fast/block/float/035-expected.png:
+        * platform/mac/fast/block/float/035-expected.txt:
+        * platform/mac/fast/block/float/avoidance-percent-width-compat-expected.checksum: Added.
+        * platform/mac/fast/block/float/avoidance-percent-width-compat-expected.png: Added.
+        * platform/mac/fast/block/float/avoidance-percent-width-compat-expected.txt: Added.
+        * platform/mac/fast/block/float/avoidance-percent-width-strict-expected.checksum: Added.
+        * platform/mac/fast/block/float/avoidance-percent-width-strict-expected.png: Added.
+        * platform/mac/fast/block/float/avoidance-percent-width-strict-expected.txt: Added.
+        * platform/mac/fast/block/float/float-avoidance-expected.checksum:
+        * platform/mac/fast/block/float/float-avoidance-expected.png:
+        * platform/mac/fast/block/float/float-avoidance-expected.txt:
+        * platform/mac/fast/overflow/004-expected.checksum:
+        * platform/mac/fast/overflow/004-expected.png:
+        * platform/mac/fast/overflow/004-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug106158-1-expected.checksum:
+        * platform/mac/tables/mozilla/bugs/bug106158-1-expected.png:
+        * platform/mac/tables/mozilla/bugs/bug106158-1-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug106158-2-expected.checksum:
+        * platform/mac/tables/mozilla/bugs/bug106158-2-expected.png:
+        * platform/mac/tables/mozilla/bugs/bug106158-2-expected.txt:
+
 2009-08-13  Eric Seidel  <eric@webkit.org>
 
         No review, only skipping tests.
