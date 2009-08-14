@@ -207,12 +207,8 @@ RenderLayer::~RenderLayer()
     // Make sure we have no lingering clip rects.
     ASSERT(!m_clipRects);
     
-    if (m_reflection) {
-        if (!m_reflection->documentBeingDestroyed())
-            m_reflection->removeLayers(this);
-        m_reflection->setParent(0);
-        m_reflection->destroy();
-    }
+    if (m_reflection)
+        removeReflection();
     
     if (m_scrollCorner)
         m_scrollCorner->destroy();
@@ -3194,10 +3190,9 @@ void RenderLayer::styleChanged(StyleDifference diff, const RenderStyle*)
         m_marquee = 0;
     }
     
-    if (!hasReflection() && m_reflection) {
-        m_reflection->destroy();
-        m_reflection = 0;
-    } else if (hasReflection()) {
+    if (!hasReflection() && m_reflection)
+        removeReflection();
+    else if (hasReflection()) {
         if (!m_reflection)
             createReflection();
         updateReflectionStyle();
@@ -3269,6 +3264,16 @@ void RenderLayer::createReflection()
     ASSERT(!m_reflection);
     m_reflection = new (renderer()->renderArena()) RenderReplica(renderer()->document());
     m_reflection->setParent(renderer()); // We create a 1-way connection.
+}
+
+void RenderLayer::removeReflection()
+{
+    if (!m_reflection->documentBeingDestroyed())
+        m_reflection->removeLayers(this);
+
+    m_reflection->setParent(0);
+    m_reflection->destroy();
+    m_reflection = 0;
 }
 
 void RenderLayer::updateReflectionStyle()
