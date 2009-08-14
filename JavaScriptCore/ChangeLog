@@ -1,3 +1,14 @@
+2009-08-14  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by NOBODY (Build fix).
+
+        Remove MarkStack::drain from the JSC exports file
+
+        MarkStack::drain is now marked inline, the including it in the exports file
+        produces an ld warning
+
+        * JavaScriptCore.exp:
+
 2009-08-13  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver Hunt.
