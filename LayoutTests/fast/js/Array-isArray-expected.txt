@@ -1,0 +1,23 @@
+Test to ensure correct behaviour of Array.array
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Array.isArray([]) is true
+PASS Array.isArray(new Array) is true
+PASS Array.isArray(Array()) is true
+PASS Array.isArray('abc'.match(/(a)*/g)) is true
+PASS (function(){ return Array.isArray(arguments); })() is false
+PASS Array.isArray() is false
+PASS Array.isArray(null) is false
+PASS Array.isArray(undefined) is false
+PASS Array.isArray(true) is false
+PASS Array.isArray(false) is false
+PASS Array.isArray('a string') is false
+PASS Array.isArray({}) is false
+PASS Array.isArray({length: 5}) is false
+PASS Array.isArray({__proto__: Array.prototype, length:1, 0:1, 1:2}) is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

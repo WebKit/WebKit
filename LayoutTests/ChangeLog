@@ -1,3 +1,16 @@
+2009-08-13  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        [ES5] Implement Array.isArray
+        https://bugs.webkit.org/show_bug.cgi?id=28296
+
+        Add tests for Array.isArray
+
+        * fast/js/Array-isArray-expected.txt: Added.
+        * fast/js/Array-isArray.html: Added.
+        * fast/js/resources/Array-isArray.js: Added.
+
 2009-08-13  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
