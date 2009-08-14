@@ -699,7 +699,7 @@ int main(int argc, char* argv[])
     delete axController;
     axController = 0;
 
-    g_object_unref(webView);
+    gtk_widget_destroy(window);
 
     return 0;
 }

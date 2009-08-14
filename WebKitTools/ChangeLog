@@ -1,3 +1,15 @@
+2009-08-14  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Jan Alonzo.
+
+        Do not unref the main webview, it's owned by its parent
+        container. Instead destroy the container, which should take care
+        of everything (not terribly important since we exit right after
+        that, but still).
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (main):
+
 2009-08-13  Eric Seidel  <eric@webkit.org>
 
         No review, correcting obvious python error seen in the commit queue.
