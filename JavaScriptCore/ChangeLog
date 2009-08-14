@@ -1,5 +1,13 @@
 2009-08-13  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by NOBODY (Buildfix).
+
+        Attempt to fix windows build
+
+        * runtime/Collector.cpp:
+
+2009-08-13  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Maciej Stachowiak.
 
         Devirtualise marking

@@ -25,6 +25,7 @@
 #include "CallFrame.h"
 #include "CollectorHeapIterator.h"
 #include "Interpreter.h"
+#include "JSArray.h"
 #include "JSGlobalObject.h"
 #include "JSLock.h"
 #include "JSONObject.h"
