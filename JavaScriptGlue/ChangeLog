@@ -1,3 +1,15 @@
+2009-08-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Rename the confusing isObject(<class>) to inherits(<class>).
+        It still works on non-objects, returning false.
+
+        * JSUtils.cpp:
+        (KJSValueToJSObject):
+        (KJSValueToCFTypeInternal):
+        Changed from isObject to inherits.
+
 2009-08-13  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.
