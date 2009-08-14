@@ -145,8 +145,16 @@ static v8::Handle<v8::Value> convertBase64(const String& str, bool encode)
 
 ACCESSOR_GETTER(DOMWindowEvent)
 {
+    v8::Handle<v8::Object> holder = V8DOMWrapper::lookupDOMWrapper(V8ClassIndex::DOMWINDOW, info.This());
+    if (holder.IsEmpty())
+        return v8::Undefined();
+
+    Frame* frame = V8DOMWrapper::convertToNativeObject<DOMWindow>(V8ClassIndex::DOMWINDOW, holder)->frame();
+    if (!frame || !V8Proxy::canAccessFrame(frame, true))
+        return v8::Undefined();
+
+    v8::Local<v8::Context> context = V8Proxy::context(frame);
     v8::Local<v8::String> eventSymbol = v8::String::NewSymbol("event");
-    v8::Local<v8::Context> context = v8::Context::GetCurrent();
     v8::Handle<v8::Value> jsEvent = context->Global()->GetHiddenValue(eventSymbol);
     if (jsEvent.IsEmpty())
         return v8::Undefined();
