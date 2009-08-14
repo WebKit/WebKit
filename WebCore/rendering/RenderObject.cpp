@@ -1616,14 +1616,15 @@ void RenderObject::styleDidChange(StyleDifference diff, const RenderStyle*)
 
 void RenderObject::updateFillImages(const FillLayer* oldLayers, const FillLayer* newLayers)
 {
-    // FIXME: This will be slow when a large number of images is used.  Fix by using a dict.
-    for (const FillLayer* currOld = oldLayers; currOld; currOld = currOld->next()) {
-        if (currOld->image() && (!newLayers || !newLayers->containsImage(currOld->image())))
-            currOld->image()->removeClient(this);
-    }
+    // Go through the new layers and addClients first, to avoid removing all clients of an image.
     for (const FillLayer* currNew = newLayers; currNew; currNew = currNew->next()) {
-        if (currNew->image() && (!oldLayers || !oldLayers->containsImage(currNew->image())))
+        if (currNew->image())
             currNew->image()->addClient(this);
+    }
+
+    for (const FillLayer* currOld = oldLayers; currOld; currOld = currOld->next()) {
+        if (currOld->image())
+            currOld->image()->removeClient(this);
     }
 }
 

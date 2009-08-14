@@ -1,3 +1,17 @@
+2009-08-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fix logic in RenderObject::updateFillImages() that led to incorrect client
+        counts if an image was used twice in the background-image property.
+        https://bugs.webkit.org/show_bug.cgi?id=28295
+        
+        Test that changes background-image from one reference to an image
+        to two references to the same image.
+
+        * fast/backgrounds/multiple-backgrounds-assert-expected.txt: Added.
+        * fast/backgrounds/multiple-backgrounds-assert.html: Added.
+
     2009-08-13  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Eric Seidel.
