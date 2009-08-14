@@ -26,7 +26,7 @@
  */
 
 #include "config.h"
-#include "RenderTheme.h"
+#include "RenderThemeHaiku.h"
 
 #include "GraphicsContext.h"
 #include "NotImplemented.h"
@@ -107,7 +107,7 @@ void RenderThemeHaiku::systemFont(int propId, FontDescription&) const
     notImplemented();
 }
 
-virtual bool RenderThemeHaiku::paintCheckbox(RenderObject*, const RenderObject::PaintInfo& info, const IntRect& intRect)
+bool RenderThemeHaiku::paintCheckbox(RenderObject*, const RenderObject::PaintInfo& info, const IntRect& intRect)
 {
     if (info.context->paintingDisabled())
         return false;
@@ -139,7 +139,7 @@ void RenderThemeHaiku::setCheckboxSize(RenderStyle* style) const
         style->setHeight(Length(size, Fixed));
 }
 
-virtual bool RenderThemeHaiku::paintRadio(RenderObject*, const RenderObject::PaintInfo& info, const IntRect& intRect)
+bool RenderThemeHaiku::paintRadio(RenderObject*, const RenderObject::PaintInfo& info, const IntRect& intRect)
 {
     if (info.context->paintingDisabled())
         return false;

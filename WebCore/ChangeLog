@@ -2,6 +2,21 @@
 
         Reviewed by Oliver Hunt.
 
+        [Haiku] Fix RenderThemeHaiku build.
+        https://bugs.webkit.org/show_bug.cgi?id=28307
+
+        * platform/haiku/RenderThemeHaiku.cpp: Included RenderThemeHaiku.h
+        instead of RenderTheme.h.
+        (WebCore::RenderThemeHaiku::paintCheckbox): Removed the wrong 'virtual'
+        before the function.
+        (WebCore::RenderThemeHaiku::paintRadio): Removed the wrong 'virtual'
+        before the function.
+        * platform/haiku/RenderThemeHaiku.h: Corrected wrong function definitions.
+
+2009-08-14  Maxime Simon  <simon.maxime@gmail.com>
+
+        Reviewed by Oliver Hunt.
+
         [Haiku] Adding SharedBufferHaiku to WebCore.
         https://bugs.webkit.org/show_bug.cgi?id=28309
 
