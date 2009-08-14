@@ -38,9 +38,14 @@ media/video-display-toggle.html
 #<rdar://problem/7135553> - Intermittent crash
 plugins/root-object-premature-delete-crash.html
 
+#<rdar://problem/7144571> - Intermittent crash
+plugins/throw-on-dealloc.html
+
 #<rdar://problem/7135864> - Intermittent failure
 fast/dom/frame-loading-via-document-write.html
 
-#<rdar://problem/7144385> media/controls-drag-timebar.html fails
+#<rdar://problem/7144385> - media/controls-drag-timebar.html fails
 media/controls-drag-timebar.html
 
+#<rdar://problem/7144583> - Intermittent failure
+svg/css/glyph-orientation-rounding-test.xhtml

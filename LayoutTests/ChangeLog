@@ -1,5 +1,12 @@
 2009-08-14  Brady Eidson  <beidson@apple.com>
 
+        Adding two more to the skipped list.
+        Radars 7144571 and 7144583 track exploring them.
+
+        * platform/mac-snowleopard/Skipped:
+
+2009-08-14  Brady Eidson  <beidson@apple.com>
+
         Disable media/controls-drag-timebar.html on SnowLeopard.
         <rdar://problem/7144385> tracks exploring the failure.
 
