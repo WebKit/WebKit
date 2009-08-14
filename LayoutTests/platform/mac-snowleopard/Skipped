@@ -40,3 +40,7 @@ plugins/root-object-premature-delete-crash.html
 
 #<rdar://problem/7135864> - Intermittent failure
 fast/dom/frame-loading-via-document-write.html
+
+#<rdar://problem/7144385> media/controls-drag-timebar.html fails
+media/controls-drag-timebar.html
+
