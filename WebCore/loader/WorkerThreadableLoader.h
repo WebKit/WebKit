@@ -55,10 +55,10 @@ namespace WebCore {
 
     class WorkerThreadableLoader : public RefCounted<WorkerThreadableLoader>, public ThreadableLoader {
     public:
-        static void loadResourceSynchronously(WorkerContext*, const ResourceRequest&, ThreadableLoaderClient&, StoredCredentials, CrossOriginRedirectPolicy);
-        static PassRefPtr<WorkerThreadableLoader> create(WorkerContext* workerContext, ThreadableLoaderClient* client, const String& taskMode, const ResourceRequest& request, LoadCallbacks callbacksSetting, ContentSniff contentSniff, StoredCredentials storedCredentials, CrossOriginRedirectPolicy crossOriginRedirectPolicy)
+        static void loadResourceSynchronously(WorkerContext*, const ResourceRequest&, ThreadableLoaderClient&, const ThreadableLoaderOptions&);
+        static PassRefPtr<WorkerThreadableLoader> create(WorkerContext* workerContext, ThreadableLoaderClient* client, const String& taskMode, const ResourceRequest& request, const ThreadableLoaderOptions& options)
         {
-            return adoptRef(new WorkerThreadableLoader(workerContext, client, taskMode, request, callbacksSetting, contentSniff, storedCredentials, crossOriginRedirectPolicy));
+            return adoptRef(new WorkerThreadableLoader(workerContext, client, taskMode, request, options));
         }
 
         ~WorkerThreadableLoader();
@@ -97,7 +97,7 @@ namespace WebCore {
         class MainThreadBridge : ThreadableLoaderClient {
         public:
             // All executed on the worker context's thread.
-            MainThreadBridge(PassRefPtr<ThreadableLoaderClientWrapper>, WorkerLoaderProxy&, const String& taskMode, const ResourceRequest&, LoadCallbacks, ContentSniff, StoredCredentials, CrossOriginRedirectPolicy);
+            MainThreadBridge(PassRefPtr<ThreadableLoaderClientWrapper>, WorkerLoaderProxy&, const String& taskMode, const ResourceRequest&, const ThreadableLoaderOptions&);
             void cancel();
             void destroy();
 
@@ -109,7 +109,7 @@ namespace WebCore {
             static void mainThreadDestroy(ScriptExecutionContext*, MainThreadBridge*);
             ~MainThreadBridge();
 
-            static void mainThreadCreateLoader(ScriptExecutionContext*, MainThreadBridge*, std::auto_ptr<CrossThreadResourceRequestData>, LoadCallbacks, ContentSniff, StoredCredentials, CrossOriginRedirectPolicy);
+            static void mainThreadCreateLoader(ScriptExecutionContext*, MainThreadBridge*, std::auto_ptr<CrossThreadResourceRequestData>, ThreadableLoaderOptions);
             static void mainThreadCancel(ScriptExecutionContext*, MainThreadBridge*);
             virtual void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent);
             virtual void didReceiveResponse(const ResourceResponse&);
@@ -133,7 +133,7 @@ namespace WebCore {
             String m_taskMode;
         };
 
-        WorkerThreadableLoader(WorkerContext*, ThreadableLoaderClient*, const String& taskMode, const ResourceRequest&, LoadCallbacks, ContentSniff, StoredCredentials, CrossOriginRedirectPolicy);
+        WorkerThreadableLoader(WorkerContext*, ThreadableLoaderClient*, const String& taskMode, const ResourceRequest&, const ThreadableLoaderOptions&);
 
         RefPtr<WorkerContext> m_workerContext;
         RefPtr<ThreadableLoaderClientWrapper> m_workerClientWrapper;

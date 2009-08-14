@@ -1,3 +1,54 @@
+2009-08-14  Aaron Boodman  <aa@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        BUG 28134: Move the remaining parts of Access Control from XMLHttpRequest to ThreadableDocumentLoader.
+        https://bugs.webkit.org/show_bug.cgi?id=28134
+
+        No new tests added since Access Control was already well tested and this is a pure refactor.
+
+        * loader/DocumentThreadableLoader.cpp: Move a lot of the access control code from XHR in, preserving its
+        basic strategy. Also, modify the synchronous path to not be a special case, but reuse more of the async
+        path.
+
+        (WebCore::DocumentThreadableLoader::loadResourceSynchronously): Go through the async path and pass additional flags.
+        (WebCore::DocumentThreadableLoader::create): Group enum params into an options struct.
+        (WebCore::DocumentThreadableLoader::DocumentThreadableLoader): Ditto.
+        (WebCore::DocumentThreadableLoader::makeSimpleCrossOriginAccessRequest): Brought mostly from XHR.
+        (WebCore::DocumentThreadableLoader::makeCrossOriginAccessRequestWithPreflight): Ditto.
+        (WebCore::DocumentThreadableLoader::willSendRequest): Handle preflight case.
+        (WebCore::DocumentThreadableLoader::didReceiveResponse): Ditto.
+        (WebCore::DocumentThreadableLoader::didFinishLoading): Ditto.
+        (WebCore::DocumentThreadableLoader::getShouldUseCredentialStorage): Ditto.
+        (WebCore::DocumentThreadableLoader::preflightSuccess): Preflight handling.
+        (WebCore::DocumentThreadableLoader::preflightFailure): Ditto.
+        (WebCore::DocumentThreadableLoader::loadRequest): Common request function that handles async/sync.
+        * loader/DocumentThreadableLoader.h: Group enum params into an options struct.
+        * loader/ThreadableLoader.cpp: Ditto.
+        (WebCore::ThreadableLoader::create): Ditto.
+        (WebCore::ThreadableLoader::loadResourceSynchronously): Ditto.
+        * loader/ThreadableLoader.h: Ditto.
+        (WebCore::ThreadableLoaderOptions::ThreadableLoaderOptions): Ditto.
+        * loader/WorkerThreadableLoader.cpp: Ditto.
+        (WebCore::WorkerThreadableLoader::WorkerThreadableLoader):Ditto.
+        (WebCore::WorkerThreadableLoader::loadResourceSynchronously): Ditto.
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::MainThreadBridge): Ditto.
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::mainThreadCreateLoader): Ditto.
+        * loader/WorkerThreadableLoader.h: Ditto.
+        (WebCore::WorkerThreadableLoader::create): Ditto.
+        * platform/CrossThreadCopier.h: Allow ThreadableLoaderOptions to be copied across threads.
+        (WebCore::):
+        * workers/WorkerScriptLoader.cpp: More enum->struct grouping.
+        (WebCore::WorkerScriptLoader::loadSynchronously): More enum->struct grouping.
+        (WebCore::WorkerScriptLoader::loadAsynchronously): More enum->struct grouping.
+        * xml/XMLHttpRequest.cpp: Remove all the access control code and some supporting state.
+        (WebCore::XMLHttpRequest::XMLHttpRequest): Ditto.
+        (WebCore::XMLHttpRequest::createRequest): Ditto.
+        (WebCore::XMLHttpRequest::didFinishLoading): Ditto.
+        (WebCore::XMLHttpRequest::didReceiveResponse): Ditto.
+        (WebCore::XMLHttpRequest::didReceiveData): Ditto.
+        * xml/XMLHttpRequest.h: Ditto.
+
 2009-08-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

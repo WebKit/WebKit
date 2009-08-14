@@ -117,7 +117,7 @@ public:
 
 private:
     XMLHttpRequest(ScriptExecutionContext*);
-    
+
     virtual void refEventTarget() { ref(); }
     virtual void derefEventTarget() { deref(); }
 
@@ -134,10 +134,6 @@ private:
     virtual void didFail(const ResourceError&);
     virtual void didFailRedirectCheck();
     virtual void didReceiveAuthenticationCancellation(const ResourceResponse&);
-
-    // Special versions for the preflight
-    void didReceiveResponsePreflight(const ResourceResponse&);
-    void didFinishLoadingPreflight();
 
     void updateAndDispatchOnProgress(unsigned int len);
 
@@ -158,16 +154,6 @@ private:
     void clearRequest();
 
     void createRequest(ExceptionCode&);
-
-    void makeSameOriginRequest(ExceptionCode&);
-    void makeCrossOriginAccessRequest(ExceptionCode&);
-
-    void makeSimpleCrossOriginAccessRequest(ExceptionCode&);
-    void makeCrossOriginAccessRequestWithPreflight(ExceptionCode&);
-    void handleAsynchronousPreflightResult();
-
-    void loadRequestSynchronously(ResourceRequest&, ExceptionCode&);
-    void loadRequestAsynchronously(ResourceRequest&);
 
     void genericError();
     void networkError();
@@ -223,13 +209,11 @@ private:
     bool m_uploadComplete;
 
     bool m_sameOriginRequest;
-    bool m_allowAccess;
-    bool m_inPreflight;
     bool m_didTellLoaderAboutRequest;
 
     // Used for onprogress tracking
     long long m_receivedLength;
-    
+
     unsigned m_lastSendLineNumber;
     String m_lastSendURL;
     ExceptionCode m_exceptionCode;
