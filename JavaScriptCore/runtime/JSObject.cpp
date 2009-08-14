@@ -37,26 +37,6 @@
 #include <math.h>
 #include <wtf/Assertions.h>
 
-#define JSOBJECT_MARK_TRACING 0
-
-#if JSOBJECT_MARK_TRACING
-
-#define JSOBJECT_MARK_BEGIN() \
-    static int markStackDepth = 0; \
-    for (int i = 0; i < markStackDepth; i++) \
-        putchar('-'); \
-    printf("%s (%p)\n", className().UTF8String().c_str(), this); \
-    markStackDepth++; \
-
-#define JSOBJECT_MARK_END() \
-    markStackDepth--;
-
-#else // JSOBJECT_MARK_TRACING
-
-#define JSOBJECT_MARK_BEGIN()
-#define JSOBJECT_MARK_END()
-
-#endif // JSOBJECT_MARK_TRACING
 
 namespace JSC {
 
@@ -64,16 +44,7 @@ ASSERT_CLASS_FITS_IN_CELL(JSObject);
 
 void JSObject::markChildren(MarkStack& markStack)
 {
-    JSOBJECT_MARK_BEGIN();
-
-    JSCell::markChildren(markStack);
-    m_structure->markAggregate(markStack);
-
-    PropertyStorage storage = propertyStorage();
-    size_t storageSize = m_structure->propertyStorageSize();
-    markStack.appendValues(reinterpret_cast<JSValue*>(storage), storageSize);
-
-    JSOBJECT_MARK_END();
+    markChildrenDirect(markStack);
 }
 
 UString JSObject::className() const

@@ -667,6 +667,12 @@ sub GenerateHeader
         push(@headerContent,
             "    static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue prototype)\n" .
             "    {\n" .
+            "        return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType" . ($dataNode->extendedAttributes->{"CustomMarkFunction"} ? "" : ", JSC::HasDefaultMark") . "));\n" .
+            "    }\n");
+    } elsif ($dataNode->extendedAttributes->{"CustomMarkFunction"}) {
+        push(@headerContent,
+            "    static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue prototype)\n" .
+            "    {\n" .
             "        return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType));\n" .
             "    }\n");
     }

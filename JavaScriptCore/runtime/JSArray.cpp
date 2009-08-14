@@ -602,18 +602,7 @@ void JSArray::push(ExecState* exec, JSValue value)
 
 void JSArray::markChildren(MarkStack& markStack)
 {
-    JSObject::markChildren(markStack);
-
-    ArrayStorage* storage = m_storage;
-
-    unsigned usedVectorLength = min(storage->m_length, storage->m_vectorLength);
-    markStack.appendValues(storage->m_vector, usedVectorLength, MayContainNullValues);
-
-    if (SparseArrayValueMap* map = storage->m_sparseValueMap) {
-        SparseArrayValueMap::iterator end = map->end();
-        for (SparseArrayValueMap::iterator it = map->begin(); it != end; ++it)
-            markStack.append(it->second);
-    }
+    markChildrenDirect(markStack);
 }
 
 static int compareNumbersForQSort(const void* a, const void* b)

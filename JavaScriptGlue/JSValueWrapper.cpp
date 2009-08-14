@@ -29,6 +29,7 @@
 #include "config.h"
 #include "JSValueWrapper.h"
 #include "JSRun.h"
+#include <JavaScriptCore/JSArray.h>
 #include <JavaScriptCore/PropertyNameArray.h>
 #include <pthread.h>
 
@@ -197,7 +198,10 @@ void JSValueWrapper::JSObjectMark(void *data)
     if (ptr && !ptr->fValue.get().marked())
     {
         // This results in recursive marking but will be otherwise safe and correct.
-        MarkStack markStack;
+        // We claim the array vptr is 0 because we don't have access to it here, and
+        // claiming 0 is functionally harmless -- it merely means that we can't
+        // devirtualise marking of arrays when recursing from this point.
+        MarkStack markStack(0);
         markStack.append(ptr->fValue.get());
         markStack.drain();
     }

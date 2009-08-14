@@ -1,3 +1,74 @@
+2009-08-13  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Devirtualise marking
+        https://bugs.webkit.org/show_bug.cgi?id=28294
+
+        Add a bit to TypeInfo to indicate that an object uses the standard
+        JSObject::markChildren method.  This allows us to devirtualise marking
+        of most objects (though a branch is still needed).  We also add a branch
+        to identify arrays thus devirtualising marking in that case as well.
+
+        In order to make the best use of this devirtualisation I've also reworked
+        the MarkStack::drain() logic to make the iteration more efficient.
+
+        * API/JSCallbackConstructor.h:
+        (JSC::JSCallbackConstructor::createStructure):
+        * API/JSCallbackFunction.h:
+        (JSC::JSCallbackFunction::createStructure):
+        * JavaScriptCore.exp:
+        * runtime/BooleanObject.h:
+        (JSC::BooleanObject::createStructure):
+        * runtime/FunctionPrototype.h:
+        (JSC::FunctionPrototype::createStructure):
+        * runtime/InternalFunction.h:
+        (JSC::InternalFunction::createStructure):
+        * runtime/JSAPIValueWrapper.h:
+        (JSC::JSAPIValueWrapper::JSAPIValueWrapper):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::markChildren):
+        * runtime/JSArray.h:
+        (JSC::JSArray::markChildrenDirect):
+        (JSC::MarkStack::drain):
+        * runtime/JSByteArray.cpp:
+        (JSC::JSByteArray::createStructure):
+        * runtime/JSCell.h:
+        (JSC::MarkStack::append):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSNumberCell.h:
+        (JSC::JSNumberCell::createStructure):
+        * runtime/JSONObject.h:
+        (JSC::JSONObject::createStructure):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::markChildren):
+        * runtime/JSObject.h:
+        (JSC::JSObject::markChildrenDirect):
+        (JSC::JSObject::createStructure):
+        * runtime/JSString.h:
+        (JSC::JSString::createStructure):
+        * runtime/JSType.h:
+        (JSC::):
+        * runtime/MarkStack.h:
+        (JSC::MarkStack::MarkStack):
+        (JSC::MarkStack::MarkSet::MarkSet):
+        (JSC::MarkStack::MarkStackArray::last):
+        * runtime/MathObject.h:
+        (JSC::MathObject::createStructure):
+        * runtime/NumberConstructor.h:
+        (JSC::NumberConstructor::createStructure):
+        * runtime/NumberObject.h:
+        (JSC::NumberObject::createStructure):
+        * runtime/RegExpConstructor.h:
+        (JSC::RegExpConstructor::createStructure):
+        * runtime/RegExpObject.h:
+        (JSC::RegExpObject::createStructure):
+        * runtime/StringObjectThatMasqueradesAsUndefined.h:
+        (JSC::StringObjectThatMasqueradesAsUndefined::createStructure):
+        * runtime/TypeInfo.h:
+        (JSC::TypeInfo::hasDefaultMark):
+
 2009-08-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Mark Rowe.

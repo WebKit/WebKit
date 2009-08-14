@@ -45,7 +45,7 @@ JSByteArray::JSByteArray(ExecState* exec, PassRefPtr<Structure> structure, ByteA
     
 PassRefPtr<Structure> JSByteArray::createStructure(JSValue prototype)
 {
-    PassRefPtr<Structure> result = Structure::create(prototype, TypeInfo(ObjectType));
+    PassRefPtr<Structure> result = Structure::create(prototype, TypeInfo(ObjectType, HasDefaultMark));
     return result;
 }
 

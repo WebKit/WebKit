@@ -1,3 +1,16 @@
+2009-08-13  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Devirtualise marking
+        https://bugs.webkit.org/show_bug.cgi?id=28294
+
+        Continue to jump through hoops to deal with the exposed marking routines
+        in JavaScriptGlue.
+
+        * JSValueWrapper.cpp:
+        (JSValueWrapper::JSObjectMark):
+
 2009-08-07  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Sam Weinig.
