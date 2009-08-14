@@ -1,3 +1,12 @@
+2009-08-13  Eric Seidel  <eric@webkit.org>
+
+        No review, only skipping tests.
+
+        Qt: Font Sizes are wrong for font families including monospace
+        https://bugs.webkit.org/show_bug.cgi?id=28288
+
+        * platform/qt/Skipped:
+
 2009-08-13  Steve Block  <steveblock@google.com>
 
         Reviewed by Darin Adler.
