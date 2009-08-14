@@ -1,3 +1,12 @@
+2009-08-14  Csaba Osztrogonac  <oszi@inf.u-szeged.hu>
+
+        Reviewed by Simon Hausmann.
+
+        Add the blog of University of Szeged.
+        https://bugs.webkit.org/show_bug.cgi?id=28301
+
+        * config.ini:
+
 2009-08-06  Brent Fulgham  <bfulgham@webkit.org>
 
         Rubber-stamped by Adam Barth.
