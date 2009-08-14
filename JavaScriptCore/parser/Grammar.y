@@ -25,18 +25,12 @@
 
 #include "config.h"
 
-#include <string.h>
-#include <stdlib.h>
-#include "JSValue.h"
 #include "JSObject.h"
-#include "NodeConstructors.h"
-#include "Lexer.h"
 #include "JSString.h"
-#include "JSGlobalData.h"
-#include "CommonIdentifiers.h"
+#include "NodeConstructors.h"
 #include "NodeInfo.h"
-#include "Parser.h"
-#include <wtf/FastMalloc.h>
+#include <stdlib.h>
+#include <string.h>
 #include <wtf/MathExtras.h>
 
 #define YYMALLOC fastMalloc
@@ -45,20 +39,21 @@
 #define YYMAXDEPTH 10000
 #define YYENABLE_NLS 0
 
-/* default values for bison */
+// Default values for bison.
 #define YYDEBUG 0 // Set to 1 to debug a parse error.
 #define jscyydebug 0 // Set to 1 to debug a parse error.
 #if !PLATFORM(DARWIN)
-    // avoid triggering warnings in older bison
+// Avoid triggering warnings in older bison by not setting this on the Darwin platform.
+// FIXME: Is this still needed?
 #define YYERROR_VERBOSE
 #endif
 
 int jscyylex(void* lvalp, void* llocp, void* globalPtr);
 int jscyyerror(const char*);
+
 static inline bool allowAutomaticSemicolon(JSC::Lexer&, int);
 
 #define GLOBAL_DATA static_cast<JSGlobalData*>(globalPtr)
-
 #define AUTO_SEMICOLON do { if (!allowAutomaticSemicolon(*GLOBAL_DATA->lexer, yychar)) YYABORT; } while (0)
 
 using namespace JSC;
@@ -94,17 +89,17 @@ static ExpressionNode* combineCommaNodes(void*, ExpressionNode* list, Expression
 #define YYPARSE_PARAM globalPtr
 #define YYLEX_PARAM globalPtr
 
-template <typename T> NodeDeclarationInfo<T> createNodeDeclarationInfo(T node, ParserArenaData<DeclarationStacks::VarStack>* varDecls, 
-                                                                       ParserArenaData<DeclarationStacks::FunctionStack>* funcDecls,
-                                                                       CodeFeatures info,
-                                                                       int numConstants) 
+template <typename T> inline NodeDeclarationInfo<T> createNodeDeclarationInfo(T node,
+    ParserArenaData<DeclarationStacks::VarStack>* varDecls,
+    ParserArenaData<DeclarationStacks::FunctionStack>* funcDecls,
+    CodeFeatures info, int numConstants) 
 {
     ASSERT((info & ~AllFeatures) == 0);
     NodeDeclarationInfo<T> result = { node, varDecls, funcDecls, info, numConstants };
     return result;
 }
 
-template <typename T> NodeInfo<T> createNodeInfo(T node, CodeFeatures info, int numConstants)
+template <typename T> inline NodeInfo<T> createNodeInfo(T node, CodeFeatures info, int numConstants)
 {
     ASSERT((info & ~AllFeatures) == 0);
     NodeInfo<T> result = { node, info, numConstants };
@@ -2072,13 +2067,13 @@ static ExpressionNode* makeRightShiftNode(void* globalPtr, ExpressionNode* expr1
     return new (GLOBAL_DATA) RightShiftNode(GLOBAL_DATA, expr1, expr2, rightHasAssignments);
 }
 
-/* called by yyparse on error */
+// Called by yyparse on error.
 int yyerror(const char *)
 {
     return 1;
 }
 
-/* may we automatically insert a semicolon ? */
+// May we automatically insert a semicolon?
 static bool allowAutomaticSemicolon(Lexer& lexer, int yychar)
 {
     return yychar == CLOSEBRACE || yychar == 0 || lexer.prevTerminator();

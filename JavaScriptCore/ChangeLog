@@ -4,6 +4,15 @@
 
         Another part of https://bugs.webkit.org/show_bug.cgi?id=28287
 
+        * parser/Grammar.y: Reduced and sorted includes. Tweaked comment
+        format. Marked a few more functions inline.
+
+2009-08-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by George Staikos.
+
+        Another part of https://bugs.webkit.org/show_bug.cgi?id=28287
+
         * parser/Grammar.y: Pass the number to the PropertyNode instead of
         first turning it into an Identifier.
 
