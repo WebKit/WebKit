@@ -1,3 +1,14 @@
+2009-08-14  Ariya Hidayat  <ariya.hidayat@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] Update test result after r47255.
+        Also while I am at it, add pixel test result.
+
+        * platform/qt/fast/block/float/035-expected.checksum: Added.
+        * platform/qt/fast/block/float/035-expected.png: Added.
+        * platform/qt/fast/block/float/035-expected.txt: Adjusted.
+
 2009-08-13  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.
