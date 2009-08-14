@@ -58,9 +58,8 @@ int jscyyerror(const char*);
 static inline bool allowAutomaticSemicolon(JSC::Lexer&, int);
 
 #define GLOBAL_DATA static_cast<JSGlobalData*>(globalPtr)
-#define LEXER (GLOBAL_DATA->lexer)
 
-#define AUTO_SEMICOLON do { if (!allowAutomaticSemicolon(*LEXER, yychar)) YYABORT; } while (0)
+#define AUTO_SEMICOLON do { if (!allowAutomaticSemicolon(*GLOBAL_DATA->lexer, yychar)) YYABORT; } while (0)
 #define SET_EXCEPTION_LOCATION(node, start, divot, end) node->setExceptionSourceCode((divot), (divot) - (start), (end) - (divot))
 #define DBG(l, s, e) (l)->setLoc((s).first_line, (e).last_line)
 
@@ -291,7 +290,7 @@ Literal:
   | NUMBER                              { $$ = createNodeInfo<ExpressionNode*>(makeNumberNode(GLOBAL_DATA, $1), 0, 1); }
   | STRING                              { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) StringNode(GLOBAL_DATA, *$1), 0, 1); }
   | '/' /* regexp */                    {
-                                            Lexer& l = *LEXER;
+                                            Lexer& l = *GLOBAL_DATA->lexer;
                                             const Identifier* pattern;
                                             const Identifier* flags;
                                             if (!l.scanRegExp(pattern, flags))
@@ -302,7 +301,7 @@ Literal:
                                             $$ = createNodeInfo<ExpressionNode*>(node, 0, 0);
                                         }
   | DIVEQUAL /* regexp with /= */       {
-                                            Lexer& l = *LEXER;
+                                            Lexer& l = *GLOBAL_DATA->lexer;
                                             const Identifier* pattern;
                                             const Identifier* flags;
                                             if (!l.scanRegExp(pattern, flags, '='))
@@ -318,10 +317,10 @@ Property:
     IDENT ':' AssignmentExpr            { $$ = createNodeInfo<PropertyNode*>(new (GLOBAL_DATA) PropertyNode(GLOBAL_DATA, *$1, $3.m_node, PropertyNode::Constant), $3.m_features, $3.m_numConstants); }
   | STRING ':' AssignmentExpr           { $$ = createNodeInfo<PropertyNode*>(new (GLOBAL_DATA) PropertyNode(GLOBAL_DATA, *$1, $3.m_node, PropertyNode::Constant), $3.m_features, $3.m_numConstants); }
   | NUMBER ':' AssignmentExpr           { $$ = createNodeInfo<PropertyNode*>(new (GLOBAL_DATA) PropertyNode(GLOBAL_DATA, Identifier(GLOBAL_DATA, UString::from($1)), $3.m_node, PropertyNode::Constant), $3.m_features, $3.m_numConstants); }
-  | IDENT IDENT '(' ')' OPENBRACE FunctionBody CLOSEBRACE    { $$ = createNodeInfo<PropertyNode*>(makeGetterOrSetterPropertyNode(globalPtr, *$1, *$2, 0, $6, LEXER->sourceCode($5, $7, @5.first_line)), ClosureFeature, 0); DBG($6, @5, @7); if (!$$.m_node) YYABORT; }
+  | IDENT IDENT '(' ')' OPENBRACE FunctionBody CLOSEBRACE    { $$ = createNodeInfo<PropertyNode*>(makeGetterOrSetterPropertyNode(globalPtr, *$1, *$2, 0, $6, GLOBAL_DATA->lexer->sourceCode($5, $7, @5.first_line)), ClosureFeature, 0); DBG($6, @5, @7); if (!$$.m_node) YYABORT; }
   | IDENT IDENT '(' FormalParameterList ')' OPENBRACE FunctionBody CLOSEBRACE
                                                              {
-                                                                 $$ = createNodeInfo<PropertyNode*>(makeGetterOrSetterPropertyNode(globalPtr, *$1, *$2, $4.m_node.head, $7, LEXER->sourceCode($6, $8, @6.first_line)), $4.m_features | ClosureFeature, 0); 
+                                                                 $$ = createNodeInfo<PropertyNode*>(makeGetterOrSetterPropertyNode(globalPtr, *$1, *$2, $4.m_node.head, $7, GLOBAL_DATA->lexer->sourceCode($6, $8, @6.first_line)), $4.m_features | ClosureFeature, 0); 
                                                                  if ($4.m_features & ArgumentsFeature)
                                                                      $7->setUsesArguments(); 
                                                                  DBG($7, @6, @8); 
@@ -1171,10 +1170,10 @@ DebuggerStatement:
 ;
 
 FunctionDeclaration:
-    FUNCTION IDENT '(' ')' OPENBRACE FunctionBody CLOSEBRACE { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) FuncDeclNode(GLOBAL_DATA, *$2, $6, LEXER->sourceCode($5, $7, @5.first_line)), 0, new (GLOBAL_DATA) ParserArenaData<DeclarationStacks::FunctionStack>, ((*$2 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0) | ClosureFeature, 0); DBG($6, @5, @7); $$.m_funcDeclarations->data.append(static_cast<FuncDeclNode*>($$.m_node)->body()); }
+    FUNCTION IDENT '(' ')' OPENBRACE FunctionBody CLOSEBRACE { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) FuncDeclNode(GLOBAL_DATA, *$2, $6, GLOBAL_DATA->lexer->sourceCode($5, $7, @5.first_line)), 0, new (GLOBAL_DATA) ParserArenaData<DeclarationStacks::FunctionStack>, ((*$2 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0) | ClosureFeature, 0); DBG($6, @5, @7); $$.m_funcDeclarations->data.append(static_cast<FuncDeclNode*>($$.m_node)->body()); }
   | FUNCTION IDENT '(' FormalParameterList ')' OPENBRACE FunctionBody CLOSEBRACE
       {
-          $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) FuncDeclNode(GLOBAL_DATA, *$2, $7, LEXER->sourceCode($6, $8, @6.first_line), $4.m_node.head), 0, new (GLOBAL_DATA) ParserArenaData<DeclarationStacks::FunctionStack>, ((*$2 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0) | $4.m_features | ClosureFeature, 0);
+          $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) FuncDeclNode(GLOBAL_DATA, *$2, $7, GLOBAL_DATA->lexer->sourceCode($6, $8, @6.first_line), $4.m_node.head), 0, new (GLOBAL_DATA) ParserArenaData<DeclarationStacks::FunctionStack>, ((*$2 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0) | $4.m_features | ClosureFeature, 0);
           if ($4.m_features & ArgumentsFeature)
               $7->setUsesArguments();
           DBG($7, @6, @8);
@@ -1183,18 +1182,18 @@ FunctionDeclaration:
 ;
 
 FunctionExpr:
-    FUNCTION '(' ')' OPENBRACE FunctionBody CLOSEBRACE { $$ = createNodeInfo(new (GLOBAL_DATA) FuncExprNode(GLOBAL_DATA, GLOBAL_DATA->propertyNames->nullIdentifier, $5, LEXER->sourceCode($4, $6, @4.first_line)), ClosureFeature, 0); DBG($5, @4, @6); }
+    FUNCTION '(' ')' OPENBRACE FunctionBody CLOSEBRACE { $$ = createNodeInfo(new (GLOBAL_DATA) FuncExprNode(GLOBAL_DATA, GLOBAL_DATA->propertyNames->nullIdentifier, $5, GLOBAL_DATA->lexer->sourceCode($4, $6, @4.first_line)), ClosureFeature, 0); DBG($5, @4, @6); }
     | FUNCTION '(' FormalParameterList ')' OPENBRACE FunctionBody CLOSEBRACE
       {
-          $$ = createNodeInfo(new (GLOBAL_DATA) FuncExprNode(GLOBAL_DATA, GLOBAL_DATA->propertyNames->nullIdentifier, $6, LEXER->sourceCode($5, $7, @5.first_line), $3.m_node.head), $3.m_features | ClosureFeature, 0);
+          $$ = createNodeInfo(new (GLOBAL_DATA) FuncExprNode(GLOBAL_DATA, GLOBAL_DATA->propertyNames->nullIdentifier, $6, GLOBAL_DATA->lexer->sourceCode($5, $7, @5.first_line), $3.m_node.head), $3.m_features | ClosureFeature, 0);
           if ($3.m_features & ArgumentsFeature)
               $6->setUsesArguments();
           DBG($6, @5, @7);
       }
-  | FUNCTION IDENT '(' ')' OPENBRACE FunctionBody CLOSEBRACE { $$ = createNodeInfo(new (GLOBAL_DATA) FuncExprNode(GLOBAL_DATA, *$2, $6, LEXER->sourceCode($5, $7, @5.first_line)), ClosureFeature, 0); DBG($6, @5, @7); }
+  | FUNCTION IDENT '(' ')' OPENBRACE FunctionBody CLOSEBRACE { $$ = createNodeInfo(new (GLOBAL_DATA) FuncExprNode(GLOBAL_DATA, *$2, $6, GLOBAL_DATA->lexer->sourceCode($5, $7, @5.first_line)), ClosureFeature, 0); DBG($6, @5, @7); }
   | FUNCTION IDENT '(' FormalParameterList ')' OPENBRACE FunctionBody CLOSEBRACE
       {
-          $$ = createNodeInfo(new (GLOBAL_DATA) FuncExprNode(GLOBAL_DATA, *$2, $7, LEXER->sourceCode($6, $8, @6.first_line), $4.m_node.head), $4.m_features | ClosureFeature, 0); 
+          $$ = createNodeInfo(new (GLOBAL_DATA) FuncExprNode(GLOBAL_DATA, *$2, $7, GLOBAL_DATA->lexer->sourceCode($6, $8, @6.first_line), $4.m_node.head), $4.m_features | ClosureFeature, 0); 
           if ($4.m_features & ArgumentsFeature)
               $7->setUsesArguments();
           DBG($7, @6, @8);
@@ -1245,8 +1244,8 @@ Literal_NoNode:
   | FALSETOKEN
   | NUMBER { }
   | STRING { }
-  | '/' /* regexp */ { if (!LEXER->skipRegExp()) YYABORT; }
-  | DIVEQUAL /* regexp with /= */ { if (!LEXER->skipRegExp()) YYABORT; }
+  | '/' /* regexp */ { if (!GLOBAL_DATA->lexer->skipRegExp()) YYABORT; }
+  | DIVEQUAL /* regexp with /= */ { if (!GLOBAL_DATA->lexer->skipRegExp()) YYABORT; }
 ;
 
 Property_NoNode:

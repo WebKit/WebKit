@@ -1,3 +1,13 @@
+2009-08-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by George Staikos.
+
+        George asked me to break the patch from
+        https://bugs.webkit.org/show_bug.cgi?id=28287
+        into smaller pieces and land it in stages.
+
+        * parser/Grammar.y: Eliminate the LEXER macro.
+
 2009-08-13  Mark Rowe  <mrowe@apple.com>
 
         Try some more to fix the Windows build.
