@@ -1037,10 +1037,10 @@ bool NetscapePluginInstanceProxy::enumerate(uint32_t objectID, data_t& resultDat
     for (unsigned i = 0; i < propertyNames.size(); i++) {
         uint64_t methodName = reinterpret_cast<uint64_t>(_NPN_GetStringIdentifier(propertyNames[i].ustring().UTF8String().c_str()));
 
-        [array addObject:[NSNumber numberWithLongLong:methodName]];
+        [array.get() addObject:[NSNumber numberWithLongLong:methodName]];
     }
 
-    NSData *data = [NSPropertyListSerialization dataFromPropertyList:array format:NSPropertyListBinaryFormat_v1_0 errorDescription:0];
+    NSData *data = [NSPropertyListSerialization dataFromPropertyList:array.get() format:NSPropertyListBinaryFormat_v1_0 errorDescription:0];
     ASSERT(data);
 
     resultLength = [data length];
