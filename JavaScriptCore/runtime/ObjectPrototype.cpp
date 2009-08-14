@@ -40,11 +40,15 @@ static JSValue JSC_HOST_CALL objectProtoFuncLookupSetter(ExecState*, JSObject*, 
 static JSValue JSC_HOST_CALL objectProtoFuncPropertyIsEnumerable(ExecState*, JSObject*, JSValue, const ArgList&);
 static JSValue JSC_HOST_CALL objectProtoFuncToLocaleString(ExecState*, JSObject*, JSValue, const ArgList&);
 
-ObjectPrototype::ObjectPrototype(ExecState* exec, PassRefPtr<Structure> stucture, Structure* prototypeFunctionStructure)
+ObjectPrototype::ObjectPrototype(ExecState* exec, PassRefPtr<Structure> stucture, Structure* prototypeFunctionStructure, NativeFunctionWrapper** toStringFunction, NativeFunctionWrapper** toLocaleStringFunction)
     : JSObject(stucture)
 {
-    putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, prototypeFunctionStructure, 0, exec->propertyNames().toString, objectProtoFuncToString), DontEnum);
-    putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, prototypeFunctionStructure, 0, exec->propertyNames().toLocaleString, objectProtoFuncToLocaleString), DontEnum);
+    NativeFunctionWrapper* toString = new (exec) NativeFunctionWrapper(exec, prototypeFunctionStructure, 0, exec->propertyNames().toString, objectProtoFuncToString);
+    NativeFunctionWrapper* toLocaleString = new (exec) NativeFunctionWrapper(exec, prototypeFunctionStructure, 0, exec->propertyNames().toLocaleString, objectProtoFuncToLocaleString);
+    *toStringFunction = toString;
+    *toLocaleStringFunction = toLocaleString;
+    putDirectFunctionWithoutTransition(exec, toString, DontEnum);
+    putDirectFunctionWithoutTransition(exec, toLocaleString, DontEnum);
     putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, prototypeFunctionStructure, 0, exec->propertyNames().valueOf, objectProtoFuncValueOf), DontEnum);
     putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, prototypeFunctionStructure, 1, exec->propertyNames().hasOwnProperty, objectProtoFuncHasOwnProperty), DontEnum);
     putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, prototypeFunctionStructure, 1, exec->propertyNames().propertyIsEnumerable, objectProtoFuncPropertyIsEnumerable), DontEnum);

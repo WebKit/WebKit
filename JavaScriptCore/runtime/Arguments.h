@@ -28,6 +28,7 @@
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
 #include "Interpreter.h"
+#include "ObjectConstructor.h"
 
 namespace JSC {
 
@@ -98,6 +99,7 @@ namespace JSC {
         virtual const ClassInfo* classInfo() const { return &info; }
 
         void init(CallFrame*);
+        void initializeStandardProperties(CallFrame*);
 
         OwnPtr<ArgumentsData> d;
     };
@@ -131,6 +133,7 @@ namespace JSC {
         : JSObject(callFrame->lexicalGlobalObject()->argumentsStructure())
         , d(new ArgumentsData)
     {
+        initializeStandardProperties(callFrame);
         JSFunction* callee;
         ptrdiff_t firstParameterIndex;
         Register* argv;
@@ -169,7 +172,8 @@ namespace JSC {
         , d(new ArgumentsData)
     {
         ASSERT(!callFrame->callee()->body()->parameterCount());
-
+        
+        initializeStandardProperties(callFrame);
         unsigned numArguments = callFrame->argumentCount() - 1;
 
         d->numParameters = 0;
@@ -237,6 +241,13 @@ namespace JSC {
         return asArguments(jsValue());
     }
     
+    
+    inline void Arguments::initializeStandardProperties(CallFrame* callFrame)
+    {
+        putDirectFunction(callFrame->propertyNames().constructor, callFrame->lexicalGlobalObject()->objectConstructor(), DontEnum);
+        putDirectFunction(callFrame->propertyNames().toString, callFrame->lexicalGlobalObject()->objectToStringFunction(), DontEnum);
+        putDirectFunction(callFrame->propertyNames().toLocaleString, callFrame->lexicalGlobalObject()->objectToLocaleStringFunction(), DontEnum);
+    }
 
 } // namespace JSC
 

@@ -49,11 +49,11 @@ expect = true;
 addThis();
 
 actual = a instanceof Array;
-expect = false;
+expect = true;
 addThis();
 
 actual = a.length;
-expect = undefined;
+expect = 0;
 addThis();
 
 
@@ -65,11 +65,11 @@ expect = true;
 addThis();
 
 actual = a instanceof Array;
-expect = false;
+expect = true;
 addThis();
 
 actual = a.length;
-expect = undefined;
+expect = 0;
 addThis();
 
 actual = a[0];

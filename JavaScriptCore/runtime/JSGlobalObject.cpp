@@ -210,18 +210,22 @@ void JSGlobalObject::reset(JSValue prototype)
     d()->functionPrototype->addFunctionProperties(exec, d()->prototypeFunctionStructure.get(), &callFunction, &applyFunction);
     d()->callFunction = callFunction;
     d()->applyFunction = applyFunction;
-    d()->objectPrototype = new (exec) ObjectPrototype(exec, ObjectPrototype::createStructure(jsNull()), d()->prototypeFunctionStructure.get());
+    NativeFunctionWrapper* objectToStringFunction = 0;
+    NativeFunctionWrapper* objectToLocaleStringFunction = 0;
+    d()->objectPrototype = new (exec) ObjectPrototype(exec, ObjectPrototype::createStructure(jsNull()), d()->prototypeFunctionStructure.get(), &objectToStringFunction, &objectToLocaleStringFunction);
+    d()->objectToStringFunction = objectToStringFunction;
+    d()->objectToLocaleStringFunction = objectToLocaleStringFunction;
     d()->functionPrototype->structure()->setPrototypeWithoutTransition(d()->objectPrototype);
 
     d()->emptyObjectStructure = d()->objectPrototype->inheritorID();
 
     d()->functionStructure = JSFunction::createStructure(d()->functionPrototype);
     d()->callbackFunctionStructure = JSCallbackFunction::createStructure(d()->functionPrototype);
-    d()->argumentsStructure = Arguments::createStructure(d()->objectPrototype);
     d()->callbackConstructorStructure = JSCallbackConstructor::createStructure(d()->objectPrototype);
     d()->callbackObjectStructure = JSCallbackObject<JSObject>::createStructure(d()->objectPrototype);
 
     d()->arrayPrototype = new (exec) ArrayPrototype(ArrayPrototype::createStructure(d()->objectPrototype));
+    d()->argumentsStructure = Arguments::createStructure(d()->arrayPrototype);
     d()->arrayStructure = JSArray::createStructure(d()->arrayPrototype);
     d()->regExpMatchesArrayStructure = RegExpMatchesArray::createStructure(d()->arrayPrototype);
 
@@ -256,7 +260,7 @@ void JSGlobalObject::reset(JSValue prototype)
 
     // Constructors
 
-    JSCell* objectConstructor = new (exec) ObjectConstructor(exec, ObjectConstructor::createStructure(d()->functionPrototype), d()->objectPrototype, d()->prototypeFunctionStructure.get());
+    ObjectConstructor* objectConstructor = new (exec) ObjectConstructor(exec, ObjectConstructor::createStructure(d()->functionPrototype), d()->objectPrototype, d()->prototypeFunctionStructure.get());
     JSCell* functionConstructor = new (exec) FunctionConstructor(exec, FunctionConstructor::createStructure(d()->functionPrototype), d()->functionPrototype);
     JSCell* arrayConstructor = new (exec) ArrayConstructor(exec, ArrayConstructor::createStructure(d()->functionPrototype), d()->arrayPrototype, d()->prototypeFunctionStructure.get());
     JSCell* stringConstructor = new (exec) StringConstructor(exec, StringConstructor::createStructure(d()->functionPrototype), d()->prototypeFunctionStructure.get(), d()->stringPrototype);
@@ -270,6 +274,7 @@ void JSGlobalObject::reset(JSValue prototype)
 
     RefPtr<Structure> nativeErrorStructure = NativeErrorConstructor::createStructure(d()->functionPrototype);
 
+    d()->objectConstructor = objectConstructor;
     d()->evalErrorConstructor = new (exec) NativeErrorConstructor(exec, nativeErrorStructure, evalErrorPrototype);
     d()->rangeErrorConstructor = new (exec) NativeErrorConstructor(exec, nativeErrorStructure, rangeErrorPrototype);
     d()->referenceErrorConstructor = new (exec) NativeErrorConstructor(exec, nativeErrorStructure, referenceErrorPrototype);
@@ -368,7 +373,8 @@ void JSGlobalObject::markChildren(MarkStack& markStack)
     RegisterFile& registerFile = globalData()->interpreter->registerFile();
     if (registerFile.globalObject() == this)
         registerFile.markGlobals(markStack, &globalData()->heap);
-
+    
+    markIfNeeded(markStack, d()->objectConstructor);
     markIfNeeded(markStack, d()->regExpConstructor);
     markIfNeeded(markStack, d()->errorConstructor);
     markIfNeeded(markStack, d()->evalErrorConstructor);
@@ -381,6 +387,8 @@ void JSGlobalObject::markChildren(MarkStack& markStack)
     markIfNeeded(markStack, d()->evalFunction);
     markIfNeeded(markStack, d()->callFunction);
     markIfNeeded(markStack, d()->applyFunction);
+    markIfNeeded(markStack, d()->objectToStringFunction);
+    markIfNeeded(markStack, d()->objectToLocaleStringFunction);
 
     markIfNeeded(markStack, d()->objectPrototype);
     markIfNeeded(markStack, d()->functionPrototype);

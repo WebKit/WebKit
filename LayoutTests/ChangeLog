@@ -1,3 +1,23 @@
+2009-08-14  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        [ES5] Arguments object should inherit from Array
+        https://bugs.webkit.org/show_bug.cgi?id=28298
+
+        Tests that an arguments object is created with the correct
+        properties and prototype (per ES5), and that the are always
+        the initial "pristine" versions.
+
+        * fast/js/arguments-expected.txt:
+        * fast/js/resources/arguments.js:
+        (shouldBe.getArguments):
+        (Object):
+        (Array):
+        (originalObject.prototype.toString):
+        (originalObject.prototype.toLocaleString):
+        (Array.prototype):
+
 2009-08-14  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Adam Roben.

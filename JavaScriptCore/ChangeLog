@@ -131,6 +131,45 @@
 
 2009-08-14  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by Gavin Barraclough.
+
+        [ES5] Arguments object should inherit from Array
+        https://bugs.webkit.org/show_bug.cgi?id=28298
+
+        Make the Arguments object conform to the behaviour specified in ES5.
+        The simple portion of this is to make Arguments use Array.prototype
+        as its prototype rather than Object.prototype.
+
+        The spec then requires us to set instance.constructor to the pristine
+        Object constructor, and instance.toString and instance.toLocaleString
+        to the pristine versions from Object.prototype.  To do this we now 
+        make the ObjectPrototype constructor return its toString and
+        toLocaleString functions (similar to the call and apply functions
+        from FunctionPrototype).
+
+        Oddly enough this reports itself as a slight win, but given the code
+        isn't hit in the tests that claim to have improved I put this down to
+        code motion.
+
+        * runtime/Arguments.h:
+        (JSC::Arguments::Arguments):
+        (JSC::Arguments::initializeStandardProperties):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+        (JSC::JSGlobalObject::markChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::JSGlobalObjectData::JSGlobalObjectData):
+        (JSC::JSGlobalObject::objectConstructor):
+        (JSC::JSGlobalObject::objectToStringFunction):
+        (JSC::JSGlobalObject::objectToLocaleStringFunction):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::ObjectPrototype::ObjectPrototype):
+        * runtime/ObjectPrototype.h:
+        * tests/mozilla/ecma_3/Function/arguments-001.js:
+          Update test to new es5 behaviour
+
+2009-08-14  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by NOBODY (Build fix).
 
         Remove MarkStack::drain from the JSC exports file
