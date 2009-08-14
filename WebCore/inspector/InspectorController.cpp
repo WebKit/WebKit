@@ -354,24 +354,7 @@ void InspectorController::addMessageToConsole(MessageSource source, MessageType 
     if (!enabled())
         return;
 
-    Vector<ScriptValue> wrappedArguments(callStack->at(0).argumentCount());
-    bool storeTrace = type == TraceMessageType;
-    Vector<ScriptString> frames(storeTrace ? callStack->size() : 0);
-
-    const ScriptCallFrame& lastCaller = callStack->at(0);
-
-    // FIXME: For now, just store function names as strings.
-    // As ScriptCallStack start storing line number and source URL for all
-    // frames, refactor to use that, as well.
-    if (storeTrace) {
-        for (unsigned i = 0; i < callStack->size(); ++i)
-            frames[i] = callStack->at(i).functionName();
-    }
-
-    for (unsigned i = 0; i < lastCaller.argumentCount(); ++i)
-        wrappedArguments[i] = wrapObject(quarantineValue(callStack->state(), lastCaller.argumentAt(i)));
-
-    addConsoleMessage(callStack->state(), new ConsoleMessage(source, type, level, frames, wrappedArguments, lastCaller.lineNumber(), lastCaller.sourceURL().string(), m_groupLevel));
+    addConsoleMessage(callStack->state(), new ConsoleMessage(source, type, level, callStack, m_groupLevel, type == TraceMessageType));
 }
 
 void InspectorController::addMessageToConsole(MessageSource source, MessageType type, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceID)
@@ -414,7 +397,7 @@ void InspectorController::startGroup(MessageSource source, ScriptCallStack* call
 {
     ++m_groupLevel;
 
-    addMessageToConsole(source, StartGroupMessageType, LogMessageLevel, callStack);
+    addConsoleMessage(callStack->state(), new ConsoleMessage(source, StartGroupMessageType, LogMessageLevel, callStack, m_groupLevel));
 }
 
 void InspectorController::endGroup(MessageSource source, unsigned lineNumber, const String& sourceURL)
@@ -568,7 +551,7 @@ void InspectorController::setFrontendProxyObject(ScriptState* scriptState, Scrip
 {
     m_scriptState = scriptState;
     m_injectedScriptObj = injectedScriptObj;
-    m_frontend.set(new InspectorFrontend(scriptState, webInspectorObj));
+    m_frontend.set(new InspectorFrontend(this, scriptState, webInspectorObj));
     m_domAgent = new InspectorDOMAgent(m_frontend.get());
 }
 
