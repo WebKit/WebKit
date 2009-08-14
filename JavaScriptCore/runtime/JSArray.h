@@ -196,7 +196,6 @@ namespace JSC {
                     current->markChildren(*this);
             }
         }
-       // printf("virtual: %d nonvirtual: %d\n", virtualMark, nonVirtualMark);
     }
     
 } // namespace JSC

@@ -1,3 +1,12 @@
+2009-08-13  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Remove accidentally left in debugging statement.
+
+        * runtime/JSArray.h:
+        (JSC::MarkStack::drain):
+
 2009-08-13  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY (Buildfix).
