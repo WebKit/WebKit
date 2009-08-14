@@ -82,6 +82,13 @@
 #include <pthread_np.h>
 #endif
 
+#if PLATFORM(QNX)
+#include <fcntl.h>
+#include <sys/procfs.h>
+#include <stdio.h>
+#include <errno.h>
+#endif
+
 #endif
 
 #define DEBUG_COLLECTOR 0
@@ -493,6 +500,33 @@ static void* getStackBase(void* previousFrame)
 }
 #endif
 
+#if PLATFORM(QNX)
+static inline void *currentThreadStackBaseQNX()
+{
+    static void* stackBase = 0;
+    static size_t stackSize = 0;
+    static pthread_t stackThread;
+    pthread_t thread = pthread_self();
+    if (stackBase == 0 || thread != stackThread) {
+        struct _debug_thread_info threadInfo;
+        memset(&threadInfo, 0, sizeof(threadInfo));
+        threadInfo.tid = pthread_self();
+        int fd = open("/proc/self", O_RDONLY);
+        if (fd == -1) {
+            LOG_ERROR("Unable to open /proc/self (errno: %d)", errno);
+            return 0;
+        }
+        devctl(fd, DCMD_PROC_TIDSTATUS, &threadInfo, sizeof(threadInfo), 0);
+        close(fd);
+        stackBase = reinterpret_cast<void*>(threadInfo.stkbase);
+        stackSize = threadInfo.stksize;
+        ASSERT(stackBase);
+        stackThread = thread;
+    }
+    return static_cast<char*>(stackBase) + stackSize;
+}
+#endif
+
 static inline void* currentThreadStackBase()
 {
 #if PLATFORM(DARWIN)
@@ -518,6 +552,8 @@ static inline void* currentThreadStackBase()
           : "=r" (pTib)
         );
     return static_cast<void*>(pTib->StackBase);
+#elif PLATFORM(QNX)
+    return currentThreadStackBaseQNX();
 #elif PLATFORM(SOLARIS)
     stack_t s;
     thr_stksegment(&s);

@@ -114,6 +114,14 @@
 /*             Definition of Basic Types                                */
 /*----------------------------------------------------------------------*/
 
+/* QNX sets the _INT16 and friends defines, but does not typedef the types */
+#ifdef __QNXNTO__
+#undef _UINT16
+#undef _INT16
+#undef _UINT32
+#undef _INT32
+#endif
+
 #ifndef _UINT16
 #define _UINT16
 typedef unsigned short uint16;

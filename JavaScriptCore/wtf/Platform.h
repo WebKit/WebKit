@@ -108,6 +108,13 @@
 #define WTF_PLATFORM_NETBSD 1
 #endif
 
+/* PLATFORM(QNX) */
+/* Operating system level dependencies for QNX that should be used */
+/* regardless of operating environment */
+#if defined(__QNXNTO__)
+#define WTF_PLATFORM_QNX 1
+#endif
+
 /* PLATFORM(UNIX) */
 /* Operating system level dependencies for Unix-like systems that */
 /* should be used regardless of operating environment */
@@ -119,7 +126,8 @@
    || defined(__unix)      \
    || defined(__unix__)    \
    || defined(_AIX)        \
-   || defined(__HAIKU__)
+   || defined(__HAIKU__)   \
+   || defined(__QNXNTO__)
 #define WTF_PLATFORM_UNIX 1
 #endif
 
@@ -448,7 +456,8 @@
 #define HAVE_SIGNAL_H 1
 #endif
 
-#if !PLATFORM(WIN_OS) && !PLATFORM(SOLARIS) && !PLATFORM(SYMBIAN) && !PLATFORM(HAIKU) && !COMPILER(RVCT)
+#if !PLATFORM(WIN_OS) && !PLATFORM(SOLARIS) && !PLATFORM(QNX) \
+    && !PLATFORM(SYMBIAN) && !PLATFORM(HAIKU) && !COMPILER(RVCT)
 #define HAVE_TM_GMTOFF 1
 #define HAVE_TM_ZONE 1
 #define HAVE_TIMEGM 1
@@ -497,6 +506,15 @@
 #if !COMPILER(RVCT)
 #define HAVE_SYS_PARAM_H 1
 #endif
+
+#elif PLATFORM(QNX)
+
+#define HAVE_ERRNO_H 1
+#define HAVE_MMAP 1
+#define HAVE_SBRK 1
+#define HAVE_STRINGS_H 1
+#define HAVE_SYS_PARAM_H 1
+#define HAVE_SYS_TIME_H 1
 
 #else
 

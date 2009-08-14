@@ -1,3 +1,17 @@
+2009-07-31  Harald Fernengel  <harald.fernengel@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Adding QNX as a platform. Currently only tested with Qt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27885
+
+        * JavaScriptCore/runtime/Collector.cpp: Added retrieving of stack base
+          since QNX doesn't have the pthread _nt functions
+        * JavaScriptCore/wtf/Platform.h: Added WTF_PLATFORM_QNX and corresponding
+          defines
+        * WebCore/bridge/npapi.h: Build fix for missing typedefs on QNX
+
 2009-08-14  Gabor Loki  <loki@inf.u-szeged.hu>
 
         Reviewed by Simon Hausmann.
