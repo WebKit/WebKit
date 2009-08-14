@@ -12,12 +12,9 @@
                 JumpBackAndPlayToNewRange,
                 JumpAndExtendRangeStart,
                 JumpAndExtendRangeEnd,
-                JumpFwdWithoutPlaying, 
-                JumpBackWithoutPlaying,
-                JumpAndExtendRangeStartAndEnd
             ];
     
-            // NOTE: Result details are not printed for this test because time values are different from machine
+            // NOTE: Detailed results are not printed for this test because time values are different from machine
             // to machine and run to run. Commenting out the following line turns on detailed logging back on, which
             // can be useful for debugging test failure.
             disableFullTestDetailsPrinting(); 
@@ -27,6 +24,9 @@
                 consoleWrite("<br><b><em>Test playing when there are no ranges</em></b>");
 
                 timeRangeCount = currentTimeRange = 0;
+                willPauseInExistingRange = false;
+                willExtendAnExistingRange = false;
+
                 startPlayingInNewRange();
             }
     
@@ -34,9 +34,13 @@
             {
                 consoleWrite("<br><b><em>Test jumping forward into a new range and play</em></b>");
 
-                var newTime = video.duration - 0.5;
+                var newTime = video.duration - 1.0;
                 runSilently("video.currentTime = " + (newTime.toFixed(2)));
+
                 currentTimeRange = 1;
+                willPauseInExistingRange = false;
+                willExtendAnExistingRange = false;
+
                 startPlayingInNewRange();
             }
     
@@ -48,6 +52,9 @@
                 runSilently("video.currentTime = " + newTime);
     
                 currentTimeRange = 1;
+                willPauseInExistingRange = false;
+                willExtendAnExistingRange = false;
+
                 startPlayingInNewRange();
             }
                         
@@ -79,48 +86,13 @@
                 playForMillisecs(30);
             }
 
-            function JumpFwdWithoutPlaying()
-            {
-                consoleWrite("<br><b><em>Test jumping forward without playing, should not create new range</em></b>");
-    
-                var newTime = (video.played.end(1) + 0.5).toFixed(2);
-                runSilently("video.currentTime = " + newTime);
-    
-                setTimeout(function () { testRanges(); nextTest() }, 10);
-            }
-    
-            function JumpBackWithoutPlaying()
-            {
-                consoleWrite("<br><b><em>Test jumping back without playing, should not create new range</em></b>");
-    
-                var newTime = (video.played.start(1) - 0.5).toFixed(2);
-                runSilently("video.currentTime = " + newTime);
-
-                setTimeout(function () { testRanges(); nextTest() }, 10);
-            }
-
-            function JumpAndExtendRangeStartAndEnd()
-            {
-                consoleWrite("<br><b><em>Test jumping before an existing range and play beyond its end, should extend start and end</em></b>");
-    
-                currentTimeRange = 1;
-    
-                var newTime = (video.played.start(currentTimeRange) - 0.05).toFixed(2);
-                runSilently("video.currentTime = " + newTime);
-                expectedStartTimes[currentTimeRange] = newTime;
-
-                willPauseInExistingRange = false;
-                willExtendAnExistingRange = true;
-                playForMillisecs(secToMilli(video.played.end(currentTimeRange) - video.played.start(currentTimeRange) + 0.1));
-            }
-
         </script>
      </head>
 
 <body onload="videoPlayedMain()">
 
     <video controls></video>
-    <p>Test of the media element 'played' attribute</p>
+    <p>Test of the media element 'played' attribute, ranges part 1.</p>
 
 </body>
 </html>

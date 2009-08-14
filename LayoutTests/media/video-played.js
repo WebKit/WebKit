@@ -1,3 +1,4 @@
+
 var expectedStartTimes = new Array();
 var expectedEndTimes = new Array();
 var timeRangeCount = 0;
@@ -6,8 +7,29 @@ var currentTest = 0;
 var willPauseInExistingRange = false;
 var willExtendAnExistingRange = false;
 
+var testStartTime = 0;
+var logTestTiming = false;
+
+//@@@@@ Uncomment the following line to log the time each "video-played" sub-test takes in test output
+//@@@@@ logTestTiming = true;
+
+function logRanges()
+{
+    consoleWrite("");
+    for (i = 0; i < timeRangeCount; i++) {
+        consoleWrite("****  range " + i + " ( " + video.played.start(i).toFixed(2) + ".." + video.played.end(i).toFixed(2) + ")");
+    }
+}
+
 function testRanges()
 {
+    if (testStartTime) {
+        logRanges();
+
+        var duration = (new Date().getTime() - testStartTime) / 1000;
+        consoleWrite("**** Test " + currentTest + " took " + duration.toFixed(2) + " seconds");
+    }
+
     testExpected("video.played.length", timeRangeCount);
     
     for (i = 0; i < timeRangeCount; i++) {
@@ -18,6 +40,9 @@ function testRanges()
 
 function nextTest()
 {
+    if (logTestTiming)
+        testStartTime = new Date().getTime();
+
     if (currentTest >= testFunctions.length)
         endTest();
     else
@@ -58,7 +83,7 @@ function startPlayingInNewRange()
 
 function startPlaying()
 {
-    playForMillisecs(250); // Triggers pause()
+    playForMillisecs(100); // Triggers pause()
 }
 
 function secToMilli(seconds)
@@ -74,12 +99,15 @@ function milliToSecs(milliseconds)
 function playForMillisecs(milliseconds)
 {
     if (milliToSecs(milliseconds) > video.duration) {
-        consoleWrite("WARNING: playForMillisecs() does not support range ("+milliToSecs(milliseconds)+") bigger than video duration ("+video.duration+") (yet)");
+        failTest("WARNING: playForMillisecs() does not support range ("+milliToSecs(milliseconds)+") bigger than video duration ("+video.duration+") (yet)");
         return;
     }
-    var playedFromTime = video.currentTime;
+
     run("video.play()");
+
+    var playedFromTime = video.currentTime;
     var callCount = 0;
+    var playDuration = milliToSecs(milliseconds);
     var callPauseIfTimeIsReached = function ()
     {
         var playedTime = video.currentTime - playedFromTime;
@@ -92,18 +120,22 @@ function playForMillisecs(milliseconds)
         
         if (callCount++ > 10) {
             // Just in case something goes wrong.
-            consoleWrite("WARNING: Call count exceeded");
+            var elapsed = milliToSecs(callCount * milliseconds);
+            failTest("ERROR: test stalled, waited " + milliToSecs(elapsed) + "seconds for movie to play " + playedTime + " seconds");
             return;
         }
         
-        if (playedTime >= milliToSecs(milliseconds) || video.currentTime == video.duration) {
+        if (playedTime >= playDuration || video.currentTime == video.duration)
             run("video.pause()");
-        } else {
-            var waitingTime = milliseconds - playedTime  * 1000;
-            setTimeout(callPauseIfTimeIsReached, waitingTime);
+        else {
+            var delta = milliseconds - playedTime  * 1000;
+            setTimeout(callPauseIfTimeIsReached, delta);
         }
     }
-    setTimeout(callPauseIfTimeIsReached, milliseconds);
+
+    // Add a small amount to the timer because it will take a non-zero amount of time for the 
+    // video to start playing.
+    setTimeout(callPauseIfTimeIsReached, milliseconds + 100);
 }
 
 function videoPlayedMain()

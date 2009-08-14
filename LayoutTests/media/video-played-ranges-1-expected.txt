@@ -1,4 +1,4 @@
-Test of the media element 'played' attribute
+Test of the media element 'played' attribute, ranges part 1.
 
 EVENT(loadstart)
 EVENT(loadedmetadata)
@@ -58,35 +58,5 @@ Test 27 OK
 Test 28 OK
 Test 29 OK
 Test 30 OK
-
-Test jumping forward without playing, should not create new range
-Test 31 OK
-Test 32 OK
-Test 33 OK
-Test 34 OK
-Test 35 OK
-Test 36 OK
-Test 37 OK
-
-Test jumping back without playing, should not create new range
-Test 38 OK
-Test 39 OK
-Test 40 OK
-Test 41 OK
-Test 42 OK
-Test 43 OK
-Test 44 OK
-
-Test jumping before an existing range and play beyond its end, should extend start and end
-RUN(video.play())
-RUN(video.pause())
-EVENT(pause)
-Test 45 OK
-Test 46 OK
-Test 47 OK
-Test 48 OK
-Test 49 OK
-Test 50 OK
-Test 51 OK
 END OF TEST
 

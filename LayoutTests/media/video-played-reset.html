@@ -23,6 +23,9 @@
                 consoleWrite("<br><b><em>Test playing when there are no ranges</em></b>");
 
                 timeRangeCount = currentTimeRange = 0;
+                willPauseInExistingRange = false;
+                willExtendAnExistingRange = false;
+
                 startPlayingInNewRange();
             }
         
@@ -33,6 +36,7 @@
                 timeRangeCount = currentTimeRange = 0;
                 expectedStartTimes = new Array();
                 expectedEndTimes = new Array();
+
                 willPauseInExistingRange = false;
                 willExtendAnExistingRange = false;
 
@@ -46,7 +50,11 @@
 
                 var newTime = video.duration - 0.5;
                 runSilently("video.currentTime = " + (newTime.toFixed(2)));
+
+                willPauseInExistingRange = false;
+                willExtendAnExistingRange = false;
                 currentTimeRange = 1;
+
                 startPlayingInNewRange();
             }
 
@@ -54,7 +62,10 @@
             {
                 consoleWrite("<br><b><em>Test to reset to an empty video source</em></b>");
     
+                willPauseInExistingRange = false;
+                willExtendAnExistingRange = false;
                 timeRangeCount = currentTimeRange = 0;
+
                 expectedStartTimes = new Array();
                 expectedEndTimes = new Array();
 

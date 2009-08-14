@@ -22,7 +22,10 @@
             {
                 consoleWrite("<br><b><em>Test playing when there are no ranges</em></b>");
 
+                willPauseInExistingRange = false;
+                willExtendAnExistingRange = false;
                 timeRangeCount = currentTimeRange = 0;
+
                 runSilently("video.currentTime = 0.5");
 
                 currentTimeRange++;
@@ -36,6 +39,9 @@
         
                 var newTime = (video.played.end(0) + 0.05).toFixed(2);
                 runSilently("video.currentTime = " + newTime);
+
+                willPauseInExistingRange = false;
+                willExtendAnExistingRange = false;
 
                 startPlayingInNewRange();
             }
@@ -51,6 +57,7 @@
                 expectedEndTimes[0] = expectedEndTimes[1];
 
                 willPauseInExistingRange = false;
+                willExtendAnExistingRange = false;
                 runSilently("video.currentTime = " + startTime);
 
                 playForMillisecs(secToMilli(expectedEndTimes[1] - startTime + 0.1)); // Triggers pause()

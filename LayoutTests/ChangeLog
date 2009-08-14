@@ -1,3 +1,35 @@
+2009-08-14  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        media/video-played.html always times out on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=28275
+
+        * media/video-played-collapse.html:
+            Make sub-test assumptions obvious for someone reading this later.
+
+        * media/video-played.html: Removed.
+        * media/video-played-expected.txt: Removed.
+        * media/video-played-ranges-1-expected.txt: Copied from LayoutTests/media/video-played-expected.txt.
+        * media/video-played-ranges-1.html: Copied from LayoutTests/media/video-played.html.
+            Split video-played.html into video-played-ranges-1.html and video-played-ranges-2.html.
+
+        * media/video-played-reset.html:
+            Make sub-test assumptions obvious for someone reading this later.
+
+        * media/video-played.js:
+        (logRanges):
+            New but not currently called. Allows all ranges to be logged for debugging.
+        (testRanges):
+            Log ranges and the amount of time each test takes when logTestTiming != 0.
+        (nextTest):
+            Record test start time when logTestTiming is true;
+        (startPlaying):
+            Run each sub-test for 100ms instead of 250ms to decrease overall test time.
+        (playForMillisecs.callPauseIfTimeIsReached):
+        (playForMillisecs):
+            Make error conditions trigger immediate failure instead of just logging.
+
 2009-08-14  Ariya Hidayat  <ariya.hidayat@nokia.com>
 
         Rubber-stamped by Tor Arne Vestbø.
