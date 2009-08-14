@@ -47,7 +47,6 @@
 #include "ScriptController.h"
 #include <debugger/DebuggerCallFrame.h>
 #include <runtime/JSLock.h>
-#include <parser/Parser.h>
 #include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/UnusedParam.h>

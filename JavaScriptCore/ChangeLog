@@ -1,5 +1,21 @@
 2009-08-13  Darin Adler  <darin@apple.com>
 
+        Reviewed by Mark Rowe.
+
+        Some small bits of housekeeping.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Make Parser.h
+        project instead of private. Remove JSONObject.lut.h.
+
+        * assembler/ARMAssembler.h: Remove unneeded WTF prefix.
+        * assembler/AssemblerBufferWithConstantPool.h: Ditto.
+        * bytecompiler/BytecodeGenerator.h: Ditto.
+
+        * wtf/SegmentedVector.h: Add a "using" statement as we do
+        with the other WTF headers.
+
+2009-08-13  Darin Adler  <darin@apple.com>
+
         Fix Tiger build.
 
         * parser/Grammar.y: Use a template function so we can compile

@@ -250,4 +250,6 @@ namespace WTF {
 
 } // namespace WTF
 
+using WTF::SegmentedVector;
+
 #endif // SegmentedVector_h

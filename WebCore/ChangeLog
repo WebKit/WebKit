@@ -1,3 +1,13 @@
+2009-08-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Follow-up to earlier work to remove dependencies on JavaScriptCore.
+
+        * ForwardingHeaders/parser/Parser.h: Removed.
+        * inspector/JavaScriptDebugServer.cpp: Removed now-unneeded includes
+        of Parser.h.
+
 2009-08-13  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Eric Seidel.

@@ -61,7 +61,7 @@ namespace JSC {
         FinallyContext finallyContext;
     };
 
-    class BytecodeGenerator : public WTF::FastAllocBase {
+    class BytecodeGenerator : public FastAllocBase {
     public:
         typedef DeclarationStacks::VarStack VarStack;
         typedef DeclarationStacks::FunctionStack FunctionStack;
@@ -444,12 +444,12 @@ namespace JSC {
         RegisterID m_thisRegister;
         RegisterID m_argumentsRegister;
         int m_activationRegisterIndex;
-        WTF::SegmentedVector<RegisterID, 32> m_constantPoolRegisters;
-        WTF::SegmentedVector<RegisterID, 32> m_calleeRegisters;
-        WTF::SegmentedVector<RegisterID, 32> m_parameters;
-        WTF::SegmentedVector<RegisterID, 32> m_globals;
-        WTF::SegmentedVector<Label, 32> m_labels;
-        WTF::SegmentedVector<LabelScope, 8> m_labelScopes;
+        SegmentedVector<RegisterID, 32> m_constantPoolRegisters;
+        SegmentedVector<RegisterID, 32> m_calleeRegisters;
+        SegmentedVector<RegisterID, 32> m_parameters;
+        SegmentedVector<RegisterID, 32> m_globals;
+        SegmentedVector<Label, 32> m_labels;
+        SegmentedVector<LabelScope, 8> m_labelScopes;
         RefPtr<RegisterID> m_lastVar;
         int m_finallyDepth;
         int m_dynamicScopeDepth;

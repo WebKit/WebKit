@@ -86,7 +86,7 @@ namespace JSC {
 
 template <int maxPoolSize, int barrierSize, int maxInstructionSize, class AssemblerType>
 class AssemblerBufferWithConstantPool: public AssemblerBuffer {
-    typedef WTF::SegmentedVector<uint32_t, 512> LoadOffsets;
+    typedef SegmentedVector<uint32_t, 512> LoadOffsets;
 public:
     enum {
         UniqueConst,
