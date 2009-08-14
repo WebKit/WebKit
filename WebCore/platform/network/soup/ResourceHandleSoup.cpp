@@ -531,9 +531,6 @@ static bool startHttp(ResourceHandle* handle, String urlString)
     // use it here instead.
     soup_message_headers_replace(d->m_msg->request_headers, "Accept-Encoding", "identity");
 
-    if(!handle->shouldContentSniff())
-        soup_message_disable_feature(d->m_msg, SOUP_TYPE_CONTENT_SNIFFER);
-
     // Balanced in ResourceHandleInternal's destructor; we need to
     // keep our own ref, because after queueing the message, the
     // session owns the initial reference.

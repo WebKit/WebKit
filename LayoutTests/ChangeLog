@@ -180,17 +180,6 @@
 
         * platform/gtk/Skipped: Modified. Disables Geolocation 'enabled' test.
 
-2009-08-13  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
-
-        Reviewed by Xan Lopez.
-
-        [Gtk][REGRESSION] XHR test failures after r45558
-        https://bugs.webkit.org/show_bug.cgi?id=27143
-
-        Reenable the test that is fixed by this changeset.
-
-        * platform/gtk/Skipped:
-
 2009-08-13  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Eric Seidel.
