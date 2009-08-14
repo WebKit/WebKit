@@ -1,13 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
- * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com
- * Copyright (C) 2006 George Staikos <staikos@kde.org>
- * Copyright (C) 2006 Dirk Mueller <mueller@kde.org>
- * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
- * Copyright (C) 2007 Ryan Leavengood <leavengood@gmail.com>
  * Copyright (C) 2009 Maxime Simon <simon.maxime@gmail.com>
- *
- * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,53 +20,36 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
 #include "config.h"
+#include "SharedBuffer.h"
 
-#include "KURL.h"
-#include "NotImplemented.h"
-#include "PlatformString.h"
-#include "SSLKeyGenerator.h"
-#include "SystemTime.h"
-
-using namespace WebCore;
-
-Vector<char> loadResourceIntoArray(const char*)
-{
-    notImplemented();
-    return Vector<char>();
-}
+#include <File.h>
+#include <String.h>
 
 namespace WebCore {
 
-String signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String &challengeString, const KURL &url)
+PassRefPtr<SharedBuffer> SharedBuffer::createWithContentsOfFile(const String& fileName)
 {
-    return String();
-}
+    if (fileName.isEmpty())
+        return 0;
 
-void getSupportedKeySizes(Vector<String>&)
-{
-    notImplemented();
-}
+    BFile file(BString(fileName).String(), B_READ_ONLY);
+    if (file.InitCheck() != B_OK)
+        return 0;
 
-float userIdleTime()
-{
-    notImplemented();
-    return 0;
-}
+    RefPtr<SharedBuffer> result = SharedBuffer::create();
 
-void callOnMainThread(void (*)())
-{
-    notImplemented();
-}
+    off_t size;
+    file.GetSize(&size);
+    result->m_buffer.resize(size);
+    if (result->m_buffer.size() != size)
+        return 0;
 
-String KURL::fileSystemPath() const
-{
-    notImplemented();
-    return String();
+    file.Read(result->m_buffer.data(), result->m_buffer.size());
+    return result.release();
 }
 
 } // namespace WebCore
-
