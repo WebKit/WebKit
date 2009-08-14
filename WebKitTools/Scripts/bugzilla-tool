@@ -223,78 +223,78 @@ def bug_comment_from_commit_text(scm, commit_text):
 
 
 class WebKitLandingScripts:
-     @staticmethod
-     def cleaning_options():
-         return [
-             make_option("--force-clean", action="store_true", dest="force_clean", default=False, help="Clean working directory before applying patches (removes local changes and commits)"),
-             make_option("--no-clean", action="store_false", dest="clean", default=True, help="Don't check if the working directory is clean before applying patches"),
-         ]
+    @staticmethod
+    def cleaning_options():
+        return [
+            make_option("--force-clean", action="store_true", dest="force_clean", default=False, help="Clean working directory before applying patches (removes local changes and commits)"),
+            make_option("--no-clean", action="store_false", dest="clean", default=True, help="Don't check if the working directory is clean before applying patches"),
+        ]
 
-     @staticmethod
-     def land_options():
-         return [
-             make_option("--no-close", action="store_false", dest="close_bug", default=True, help="Leave bug open after landing."),
-             make_option("--no-build", action="store_false", dest="build", default=True, help="Commit without building first, implies --no-test."),
-             make_option("--no-test", action="store_false", dest="test", default=True, help="Commit without running run-webkit-tests."),
-             make_option("--quiet", action="store_true", dest="quiet", default=False, help="Produce less console output."),
-             make_option("--commit-queue", action="store_true", dest="commit_queue", default=False, help="Run in commit queue mode (no user interaction)."),
-         ]
+    @staticmethod
+    def land_options():
+        return [
+            make_option("--no-close", action="store_false", dest="close_bug", default=True, help="Leave bug open after landing."),
+            make_option("--no-build", action="store_false", dest="build", default=True, help="Commit without building first, implies --no-test."),
+            make_option("--no-test", action="store_false", dest="test", default=True, help="Commit without running run-webkit-tests."),
+            make_option("--quiet", action="store_true", dest="quiet", default=False, help="Produce less console output."),
+            make_option("--commit-queue", action="store_true", dest="commit_queue", default=False, help="Run in commit queue mode (no user interaction)."),
+        ]
 
-     @staticmethod
-     def run_and_throw_if_fail(args, quiet=False):
-         # Passing None will use the default input/outputs
-         child_output = open(os.devnull, "w") if quiet else None
+    @staticmethod
+    def run_and_throw_if_fail(args, quiet=False):
+        # Passing None will use the default input/outputs
+        child_output = open(os.devnull, "w") if quiet else None
 
-         child_process = subprocess.Popen(args, stdout=child_output, stderr=child_output)
-         return_code = child_process.wait()
+        child_process = subprocess.Popen(args, stdout=child_output, stderr=child_output)
+        return_code = child_process.wait()
 
-         if child_output:
-             child_output.close()
+        if child_output:
+            child_output.close()
 
-         if return_code:
-             raise ScriptError("%s failed with exit code %d" % (args, return_code))
+        if return_code:
+            raise ScriptError("%s failed with exit code %d" % (args, return_code))
 
-     # We might need to pass scm into this function for scm.checkout_root
-     @staticmethod
-     def webkit_script_path(script_name):
-         return os.path.join("WebKitTools", "Scripts", script_name)
+    # We might need to pass scm into this function for scm.checkout_root
+    @staticmethod
+    def webkit_script_path(script_name):
+        return os.path.join("WebKitTools", "Scripts", script_name)
 
-     @classmethod
-     def run_webkit_script(cls, script_name, quiet=False):
-         log("Running %s" % script_name)
-         cls.run_and_throw_if_fail(cls.webkit_script_path(script_name), quiet)
+    @classmethod
+    def run_webkit_script(cls, script_name, quiet=False):
+        log("Running %s" % script_name)
+        cls.run_and_throw_if_fail(cls.webkit_script_path(script_name), quiet)
 
-     @classmethod
-     def build_webkit(cls, quiet=False):
-         cls.run_webkit_script("build-webkit", quiet)
+    @classmethod
+    def build_webkit(cls, quiet=False):
+        cls.run_webkit_script("build-webkit", quiet)
 
-     @classmethod
-     def run_webkit_tests(cls, launch_safari, quiet=False):
-         args = [cls.webkit_script_path("run-webkit-tests")]
-         if not launch_safari:
-             args.append("--no-launch-safari")
-         if quiet:
-             args.append("--quiet")
-         # When landing patches we almost always want to fail as fast as possible.
-         args.append("--exit-after-n-failures=1")
-         cls.run_and_throw_if_fail(args)
+    @classmethod
+    def run_webkit_tests(cls, launch_safari, quiet=False):
+        args = [cls.webkit_script_path("run-webkit-tests")]
+        if not launch_safari:
+            args.append("--no-launch-safari")
+        if quiet:
+            args.append("--quiet")
+        # When landing patches we almost always want to fail as fast as possible.
+        args.append("--exit-after-n-failures=1")
+        cls.run_and_throw_if_fail(args)
 
-     @staticmethod
-     def setup_for_landing(scm, options):
-         os.chdir(scm.checkout_root)
-         scm.ensure_no_local_commits(options.force_clean)
-         if options.clean:
-             scm.ensure_clean_working_directory(options.force_clean)
+    @staticmethod
+    def setup_for_landing(scm, options):
+        os.chdir(scm.checkout_root)
+        scm.ensure_no_local_commits(options.force_clean)
+        if options.clean:
+            scm.ensure_clean_working_directory(options.force_clean)
 
-     @classmethod
-     def build_and_commit(cls, scm, options):
-         if options.build:
-             cls.build_webkit(quiet=options.quiet)
-             if options.test:
-                 cls.run_webkit_tests(launch_safari=not options.commit_queue, quiet=options.quiet)
-         commit_message = commit_message_for_this_commit(scm)
-         commit_log = scm.commit_with_message(commit_message.message())
-         return bug_comment_from_commit_text(scm, commit_log)
+    @classmethod
+    def build_and_commit(cls, scm, options):
+        if options.build:
+            cls.build_webkit(quiet=options.quiet)
+            if options.test:
+                cls.run_webkit_tests(launch_safari=not options.commit_queue, quiet=options.quiet)
+        commit_message = commit_message_for_this_commit(scm)
+        commit_log = scm.commit_with_message(commit_message.message())
+        return bug_comment_from_commit_text(scm, commit_log)
 
 
 class LandAndUpdateBug(Command):
