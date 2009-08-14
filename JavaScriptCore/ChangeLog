@@ -4,6 +4,14 @@
 
         Another part of https://bugs.webkit.org/show_bug.cgi?id=28287
 
+        * parser/Grammar.y: Eliminate the DBG macro.
+
+2009-08-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by George Staikos.
+
+        Another part of https://bugs.webkit.org/show_bug.cgi?id=28287
+
         * parser/Grammar.y: Eliminate the SET_EXCEPTION_LOCATION macro.
 
 2009-08-13  Darin Adler  <darin@apple.com>

@@ -60,7 +60,6 @@ static inline bool allowAutomaticSemicolon(JSC::Lexer&, int);
 #define GLOBAL_DATA static_cast<JSGlobalData*>(globalPtr)
 
 #define AUTO_SEMICOLON do { if (!allowAutomaticSemicolon(*GLOBAL_DATA->lexer, yychar)) YYABORT; } while (0)
-#define DBG(l, s, e) (l)->setLoc((s).first_line, (e).last_line)
 
 using namespace JSC;
 using namespace std;
@@ -183,6 +182,11 @@ static inline void appendToVarDeclarationList(void* globalPtr, ParserArenaData<D
 }
 
 %{
+
+static inline void setStatementLocation(StatementNode* statement, const YYLTYPE& start, const YYLTYPE& end)
+{
+    statement->setLoc(start.first_line, end.last_line);
+}
 
 static inline void setExceptionLocation(ThrowableExpressionData* node, unsigned start, unsigned divot, unsigned end)
 {
@@ -325,13 +329,13 @@ Property:
     IDENT ':' AssignmentExpr            { $$ = createNodeInfo<PropertyNode*>(new (GLOBAL_DATA) PropertyNode(GLOBAL_DATA, *$1, $3.m_node, PropertyNode::Constant), $3.m_features, $3.m_numConstants); }
   | STRING ':' AssignmentExpr           { $$ = createNodeInfo<PropertyNode*>(new (GLOBAL_DATA) PropertyNode(GLOBAL_DATA, *$1, $3.m_node, PropertyNode::Constant), $3.m_features, $3.m_numConstants); }
   | NUMBER ':' AssignmentExpr           { $$ = createNodeInfo<PropertyNode*>(new (GLOBAL_DATA) PropertyNode(GLOBAL_DATA, Identifier(GLOBAL_DATA, UString::from($1)), $3.m_node, PropertyNode::Constant), $3.m_features, $3.m_numConstants); }
-  | IDENT IDENT '(' ')' OPENBRACE FunctionBody CLOSEBRACE    { $$ = createNodeInfo<PropertyNode*>(makeGetterOrSetterPropertyNode(globalPtr, *$1, *$2, 0, $6, GLOBAL_DATA->lexer->sourceCode($5, $7, @5.first_line)), ClosureFeature, 0); DBG($6, @5, @7); if (!$$.m_node) YYABORT; }
+  | IDENT IDENT '(' ')' OPENBRACE FunctionBody CLOSEBRACE    { $$ = createNodeInfo<PropertyNode*>(makeGetterOrSetterPropertyNode(globalPtr, *$1, *$2, 0, $6, GLOBAL_DATA->lexer->sourceCode($5, $7, @5.first_line)), ClosureFeature, 0); setStatementLocation($6, @5, @7); if (!$$.m_node) YYABORT; }
   | IDENT IDENT '(' FormalParameterList ')' OPENBRACE FunctionBody CLOSEBRACE
                                                              {
                                                                  $$ = createNodeInfo<PropertyNode*>(makeGetterOrSetterPropertyNode(globalPtr, *$1, *$2, $4.m_node.head, $7, GLOBAL_DATA->lexer->sourceCode($6, $8, @6.first_line)), $4.m_features | ClosureFeature, 0); 
                                                                  if ($4.m_features & ArgumentsFeature)
                                                                      $7->setUsesArguments(); 
-                                                                 DBG($7, @6, @8); 
+                                                                 setStatementLocation($7, @6, @8); 
                                                                  if (!$$.m_node) 
                                                                      YYABORT; 
                                                              }
@@ -821,17 +825,17 @@ Statement:
 ;
 
 Block:
-    OPENBRACE CLOSEBRACE                             { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) BlockNode(GLOBAL_DATA, 0), 0, 0, 0, 0);
-                                          DBG($$.m_node, @1, @2); }
-  | OPENBRACE SourceElements CLOSEBRACE              { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) BlockNode(GLOBAL_DATA, $2.m_node), $2.m_varDeclarations, $2.m_funcDeclarations, $2.m_features, $2.m_numConstants);
-                                          DBG($$.m_node, @1, @3); }
+    OPENBRACE CLOSEBRACE                { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) BlockNode(GLOBAL_DATA, 0), 0, 0, 0, 0);
+                                          setStatementLocation($$.m_node, @1, @2); }
+  | OPENBRACE SourceElements CLOSEBRACE { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) BlockNode(GLOBAL_DATA, $2.m_node), $2.m_varDeclarations, $2.m_funcDeclarations, $2.m_features, $2.m_numConstants);
+                                          setStatementLocation($$.m_node, @1, @3); }
 ;
 
 VariableStatement:
     VAR VariableDeclarationList ';'     { $$ = createNodeDeclarationInfo<StatementNode*>(makeVarStatementNode(GLOBAL_DATA, $2.m_node), $2.m_varDeclarations, $2.m_funcDeclarations, $2.m_features, $2.m_numConstants);
-                                          DBG($$.m_node, @1, @3); }
+                                          setStatementLocation($$.m_node, @1, @3); }
   | VAR VariableDeclarationList error   { $$ = createNodeDeclarationInfo<StatementNode*>(makeVarStatementNode(GLOBAL_DATA, $2.m_node), $2.m_varDeclarations, $2.m_funcDeclarations, $2.m_features, $2.m_numConstants);
-                                          DBG($$.m_node, @1, @2);
+                                          setStatementLocation($$.m_node, @1, @2);
                                           AUTO_SEMICOLON; }
 ;
 
@@ -911,10 +915,10 @@ VariableDeclarationListNoIn:
 
 ConstStatement:
     CONSTTOKEN ConstDeclarationList ';' { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) ConstStatementNode(GLOBAL_DATA, $2.m_node.head), $2.m_varDeclarations, $2.m_funcDeclarations, $2.m_features, $2.m_numConstants);
-                                          DBG($$.m_node, @1, @3); }
+                                          setStatementLocation($$.m_node, @1, @3); }
   | CONSTTOKEN ConstDeclarationList error
                                         { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) ConstStatementNode(GLOBAL_DATA, $2.m_node.head), $2.m_varDeclarations, $2.m_funcDeclarations, $2.m_features, $2.m_numConstants);
-                                          DBG($$.m_node, @1, @2); AUTO_SEMICOLON; }
+                                          setStatementLocation($$.m_node, @1, @2); AUTO_SEMICOLON; }
 ;
 
 ConstDeclarationList:
@@ -956,36 +960,36 @@ EmptyStatement:
 
 ExprStatement:
     ExprNoBF ';'                        { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) ExprStatementNode(GLOBAL_DATA, $1.m_node), 0, 0, $1.m_features, $1.m_numConstants);
-                                          DBG($$.m_node, @1, @2); }
+                                          setStatementLocation($$.m_node, @1, @2); }
   | ExprNoBF error                      { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) ExprStatementNode(GLOBAL_DATA, $1.m_node), 0, 0, $1.m_features, $1.m_numConstants);
-                                          DBG($$.m_node, @1, @1); AUTO_SEMICOLON; }
+                                          setStatementLocation($$.m_node, @1, @1); AUTO_SEMICOLON; }
 ;
 
 IfStatement:
     IF '(' Expr ')' Statement %prec IF_WITHOUT_ELSE
                                         { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) IfNode(GLOBAL_DATA, $3.m_node, $5.m_node), $5.m_varDeclarations, $5.m_funcDeclarations, $3.m_features | $5.m_features, $3.m_numConstants + $5.m_numConstants);
-                                          DBG($$.m_node, @1, @4); }
+                                          setStatementLocation($$.m_node, @1, @4); }
   | IF '(' Expr ')' Statement ELSE Statement
                                         { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) IfElseNode(GLOBAL_DATA, $3.m_node, $5.m_node, $7.m_node), 
                                                                                          mergeDeclarationLists($5.m_varDeclarations, $7.m_varDeclarations),
                                                                                          mergeDeclarationLists($5.m_funcDeclarations, $7.m_funcDeclarations),
                                                                                          $3.m_features | $5.m_features | $7.m_features,
                                                                                          $3.m_numConstants + $5.m_numConstants + $7.m_numConstants); 
-                                          DBG($$.m_node, @1, @4); }
+                                          setStatementLocation($$.m_node, @1, @4); }
 ;
 
 IterationStatement:
     DO Statement WHILE '(' Expr ')' ';'    { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) DoWhileNode(GLOBAL_DATA, $2.m_node, $5.m_node), $2.m_varDeclarations, $2.m_funcDeclarations, $2.m_features | $5.m_features, $2.m_numConstants + $5.m_numConstants);
-                                             DBG($$.m_node, @1, @3); }
+                                             setStatementLocation($$.m_node, @1, @3); }
   | DO Statement WHILE '(' Expr ')' error  { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) DoWhileNode(GLOBAL_DATA, $2.m_node, $5.m_node), $2.m_varDeclarations, $2.m_funcDeclarations, $2.m_features | $5.m_features, $2.m_numConstants + $5.m_numConstants);
-                                             DBG($$.m_node, @1, @3); } // Always performs automatic semicolon insertion.
+                                             setStatementLocation($$.m_node, @1, @3); } // Always performs automatic semicolon insertion.
   | WHILE '(' Expr ')' Statement        { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) WhileNode(GLOBAL_DATA, $3.m_node, $5.m_node), $5.m_varDeclarations, $5.m_funcDeclarations, $3.m_features | $5.m_features, $3.m_numConstants + $5.m_numConstants);
-                                          DBG($$.m_node, @1, @4); }
+                                          setStatementLocation($$.m_node, @1, @4); }
   | FOR '(' ExprNoInOpt ';' ExprOpt ';' ExprOpt ')' Statement
                                         { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) ForNode(GLOBAL_DATA, $3.m_node, $5.m_node, $7.m_node, $9.m_node, false), $9.m_varDeclarations, $9.m_funcDeclarations, 
                                                                                          $3.m_features | $5.m_features | $7.m_features | $9.m_features,
                                                                                          $3.m_numConstants + $5.m_numConstants + $7.m_numConstants + $9.m_numConstants);
-                                          DBG($$.m_node, @1, @8); 
+                                          setStatementLocation($$.m_node, @1, @8); 
                                         }
   | FOR '(' VAR VariableDeclarationListNoIn ';' ExprOpt ';' ExprOpt ')' Statement
                                         { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) ForNode(GLOBAL_DATA, $4.m_node, $6.m_node, $8.m_node, $10.m_node, true),
@@ -993,7 +997,7 @@ IterationStatement:
                                                                                          mergeDeclarationLists($4.m_funcDeclarations, $10.m_funcDeclarations),
                                                                                          $4.m_features | $6.m_features | $8.m_features | $10.m_features,
                                                                                          $4.m_numConstants + $6.m_numConstants + $8.m_numConstants + $10.m_numConstants);
-                                          DBG($$.m_node, @1, @9); }
+                                          setStatementLocation($$.m_node, @1, @9); }
   | FOR '(' LeftHandSideExpr INTOKEN Expr ')' Statement
                                         {
                                             ForInNode* node = new (GLOBAL_DATA) ForInNode(GLOBAL_DATA, $3.m_node, $5.m_node, $7.m_node);
@@ -1001,14 +1005,14 @@ IterationStatement:
                                             $$ = createNodeDeclarationInfo<StatementNode*>(node, $7.m_varDeclarations, $7.m_funcDeclarations,
                                                                                            $3.m_features | $5.m_features | $7.m_features,
                                                                                            $3.m_numConstants + $5.m_numConstants + $7.m_numConstants);
-                                            DBG($$.m_node, @1, @6);
+                                            setStatementLocation($$.m_node, @1, @6);
                                         }
   | FOR '(' VAR IDENT INTOKEN Expr ')' Statement
                                         { ForInNode *forIn = new (GLOBAL_DATA) ForInNode(GLOBAL_DATA, *$4, 0, $6.m_node, $8.m_node, @5.first_column, @5.first_column - @4.first_column, @6.last_column - @5.first_column);
                                           setExceptionLocation(forIn, @4.first_column, @5.first_column + 1, @6.last_column);
                                           appendToVarDeclarationList(GLOBAL_DATA, $8.m_varDeclarations, *$4, DeclarationStacks::HasInitializer);
                                           $$ = createNodeDeclarationInfo<StatementNode*>(forIn, $8.m_varDeclarations, $8.m_funcDeclarations, ((*$4 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0) | $6.m_features | $8.m_features, $6.m_numConstants + $8.m_numConstants);
-                                          DBG($$.m_node, @1, @7); }
+                                          setStatementLocation($$.m_node, @1, @7); }
   | FOR '(' VAR IDENT InitializerNoIn INTOKEN Expr ')' Statement
                                         { ForInNode *forIn = new (GLOBAL_DATA) ForInNode(GLOBAL_DATA, *$4, $5.m_node, $7.m_node, $9.m_node, @5.first_column, @5.first_column - @4.first_column, @5.last_column - @5.first_column);
                                           setExceptionLocation(forIn, @4.first_column, @6.first_column + 1, @7.last_column);
@@ -1016,7 +1020,7 @@ IterationStatement:
                                           $$ = createNodeDeclarationInfo<StatementNode*>(forIn, $9.m_varDeclarations, $9.m_funcDeclarations,
                                                                                          ((*$4 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0) | $5.m_features | $7.m_features | $9.m_features,
                                                                                          $5.m_numConstants + $7.m_numConstants + $9.m_numConstants);
-                                          DBG($$.m_node, @1, @8); }
+                                          setStatementLocation($$.m_node, @1, @8); }
 ;
 
 ExprOpt:
@@ -1033,61 +1037,61 @@ ContinueStatement:
     CONTINUE ';'                        { ContinueNode* node = new (GLOBAL_DATA) ContinueNode(GLOBAL_DATA);
                                           setExceptionLocation(node, @1.first_column, @1.last_column, @1.last_column); 
                                           $$ = createNodeDeclarationInfo<StatementNode*>(node, 0, 0, 0, 0);
-                                          DBG($$.m_node, @1, @2); }
+                                          setStatementLocation($$.m_node, @1, @2); }
   | CONTINUE error                      { ContinueNode* node = new (GLOBAL_DATA) ContinueNode(GLOBAL_DATA);
                                           setExceptionLocation(node, @1.first_column, @1.last_column, @1.last_column); 
                                           $$ = createNodeDeclarationInfo<StatementNode*>(node, 0, 0, 0, 0);
-                                          DBG($$.m_node, @1, @1); AUTO_SEMICOLON; }
+                                          setStatementLocation($$.m_node, @1, @1); AUTO_SEMICOLON; }
   | CONTINUE IDENT ';'                  { ContinueNode* node = new (GLOBAL_DATA) ContinueNode(GLOBAL_DATA, *$2);
                                           setExceptionLocation(node, @1.first_column, @2.last_column, @2.last_column); 
                                           $$ = createNodeDeclarationInfo<StatementNode*>(node, 0, 0, 0, 0);
-                                          DBG($$.m_node, @1, @3); }
+                                          setStatementLocation($$.m_node, @1, @3); }
   | CONTINUE IDENT error                { ContinueNode* node = new (GLOBAL_DATA) ContinueNode(GLOBAL_DATA, *$2);
                                           setExceptionLocation(node, @1.first_column, @2.last_column, @2.last_column); 
                                           $$ = createNodeDeclarationInfo<StatementNode*>(node, 0, 0, 0, 0);
-                                          DBG($$.m_node, @1, @2); AUTO_SEMICOLON; }
+                                          setStatementLocation($$.m_node, @1, @2); AUTO_SEMICOLON; }
 ;
 
 BreakStatement:
     BREAK ';'                           { BreakNode* node = new (GLOBAL_DATA) BreakNode(GLOBAL_DATA);
                                           setExceptionLocation(node, @1.first_column, @1.last_column, @1.last_column);
-                                          $$ = createNodeDeclarationInfo<StatementNode*>(node, 0, 0, 0, 0); DBG($$.m_node, @1, @2); }
+                                          $$ = createNodeDeclarationInfo<StatementNode*>(node, 0, 0, 0, 0); setStatementLocation($$.m_node, @1, @2); }
   | BREAK error                         { BreakNode* node = new (GLOBAL_DATA) BreakNode(GLOBAL_DATA);
                                           setExceptionLocation(node, @1.first_column, @1.last_column, @1.last_column);
-                                          $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) BreakNode(GLOBAL_DATA), 0, 0, 0, 0); DBG($$.m_node, @1, @1); AUTO_SEMICOLON; }
+                                          $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) BreakNode(GLOBAL_DATA), 0, 0, 0, 0); setStatementLocation($$.m_node, @1, @1); AUTO_SEMICOLON; }
   | BREAK IDENT ';'                     { BreakNode* node = new (GLOBAL_DATA) BreakNode(GLOBAL_DATA, *$2);
                                           setExceptionLocation(node, @1.first_column, @2.last_column, @2.last_column);
-                                          $$ = createNodeDeclarationInfo<StatementNode*>(node, 0, 0, 0, 0); DBG($$.m_node, @1, @3); }
+                                          $$ = createNodeDeclarationInfo<StatementNode*>(node, 0, 0, 0, 0); setStatementLocation($$.m_node, @1, @3); }
   | BREAK IDENT error                   { BreakNode* node = new (GLOBAL_DATA) BreakNode(GLOBAL_DATA, *$2);
                                           setExceptionLocation(node, @1.first_column, @2.last_column, @2.last_column);
-                                          $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) BreakNode(GLOBAL_DATA, *$2), 0, 0, 0, 0); DBG($$.m_node, @1, @2); AUTO_SEMICOLON; }
+                                          $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) BreakNode(GLOBAL_DATA, *$2), 0, 0, 0, 0); setStatementLocation($$.m_node, @1, @2); AUTO_SEMICOLON; }
 ;
 
 ReturnStatement:
     RETURN ';'                          { ReturnNode* node = new (GLOBAL_DATA) ReturnNode(GLOBAL_DATA, 0); 
                                           setExceptionLocation(node, @1.first_column, @1.last_column, @1.last_column); 
-                                          $$ = createNodeDeclarationInfo<StatementNode*>(node, 0, 0, 0, 0); DBG($$.m_node, @1, @2); }
+                                          $$ = createNodeDeclarationInfo<StatementNode*>(node, 0, 0, 0, 0); setStatementLocation($$.m_node, @1, @2); }
   | RETURN error                        { ReturnNode* node = new (GLOBAL_DATA) ReturnNode(GLOBAL_DATA, 0); 
                                           setExceptionLocation(node, @1.first_column, @1.last_column, @1.last_column); 
-                                          $$ = createNodeDeclarationInfo<StatementNode*>(node, 0, 0, 0, 0); DBG($$.m_node, @1, @1); AUTO_SEMICOLON; }
+                                          $$ = createNodeDeclarationInfo<StatementNode*>(node, 0, 0, 0, 0); setStatementLocation($$.m_node, @1, @1); AUTO_SEMICOLON; }
   | RETURN Expr ';'                     { ReturnNode* node = new (GLOBAL_DATA) ReturnNode(GLOBAL_DATA, $2.m_node); 
                                           setExceptionLocation(node, @1.first_column, @2.last_column, @2.last_column);
-                                          $$ = createNodeDeclarationInfo<StatementNode*>(node, 0, 0, $2.m_features, $2.m_numConstants); DBG($$.m_node, @1, @3); }
+                                          $$ = createNodeDeclarationInfo<StatementNode*>(node, 0, 0, $2.m_features, $2.m_numConstants); setStatementLocation($$.m_node, @1, @3); }
   | RETURN Expr error                   { ReturnNode* node = new (GLOBAL_DATA) ReturnNode(GLOBAL_DATA, $2.m_node); 
                                           setExceptionLocation(node, @1.first_column, @2.last_column, @2.last_column); 
-                                          $$ = createNodeDeclarationInfo<StatementNode*>(node, 0, 0, $2.m_features, $2.m_numConstants); DBG($$.m_node, @1, @2); AUTO_SEMICOLON; }
+                                          $$ = createNodeDeclarationInfo<StatementNode*>(node, 0, 0, $2.m_features, $2.m_numConstants); setStatementLocation($$.m_node, @1, @2); AUTO_SEMICOLON; }
 ;
 
 WithStatement:
     WITH '(' Expr ')' Statement         { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) WithNode(GLOBAL_DATA, $3.m_node, $5.m_node, @3.last_column, @3.last_column - @3.first_column),
                                                                                          $5.m_varDeclarations, $5.m_funcDeclarations, $3.m_features | $5.m_features | WithFeature, $3.m_numConstants + $5.m_numConstants);
-                                          DBG($$.m_node, @1, @4); }
+                                          setStatementLocation($$.m_node, @1, @4); }
 ;
 
 SwitchStatement:
     SWITCH '(' Expr ')' CaseBlock       { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) SwitchNode(GLOBAL_DATA, $3.m_node, $5.m_node), $5.m_varDeclarations, $5.m_funcDeclarations,
                                                                                          $3.m_features | $5.m_features, $3.m_numConstants + $5.m_numConstants);
-                                          DBG($$.m_node, @1, @4); }
+                                          setStatementLocation($$.m_node, @1, @4); }
 ;
 
 CaseBlock:
@@ -1140,11 +1144,11 @@ LabelledStatement:
 ThrowStatement:
     THROW Expr ';'                      { ThrowNode* node = new (GLOBAL_DATA) ThrowNode(GLOBAL_DATA, $2.m_node);
                                           setExceptionLocation(node, @1.first_column, @2.last_column, @2.last_column);
-                                          $$ = createNodeDeclarationInfo<StatementNode*>(node, 0, 0, $2.m_features, $2.m_numConstants); DBG($$.m_node, @1, @2);
+                                          $$ = createNodeDeclarationInfo<StatementNode*>(node, 0, 0, $2.m_features, $2.m_numConstants); setStatementLocation($$.m_node, @1, @2);
                                         }
   | THROW Expr error                    { ThrowNode* node = new (GLOBAL_DATA) ThrowNode(GLOBAL_DATA, $2.m_node);
                                           setExceptionLocation(node, @1.first_column, @2.last_column, @2.last_column);
-                                          $$ = createNodeDeclarationInfo<StatementNode*>(node, 0, 0, $2.m_features, $2.m_numConstants); DBG($$.m_node, @1, @2); AUTO_SEMICOLON; 
+                                          $$ = createNodeDeclarationInfo<StatementNode*>(node, 0, 0, $2.m_features, $2.m_numConstants); setStatementLocation($$.m_node, @1, @2); AUTO_SEMICOLON; 
                                         }
 ;
 
@@ -1154,57 +1158,57 @@ TryStatement:
                                                                                          mergeDeclarationLists($2.m_funcDeclarations, $4.m_funcDeclarations),
                                                                                          $2.m_features | $4.m_features,
                                                                                          $2.m_numConstants + $4.m_numConstants);
-                                          DBG($$.m_node, @1, @2); }
+                                          setStatementLocation($$.m_node, @1, @2); }
   | TRY Block CATCH '(' IDENT ')' Block { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) TryNode(GLOBAL_DATA, $2.m_node, *$5, ($7.m_features & EvalFeature) != 0, $7.m_node, 0),
                                                                                          mergeDeclarationLists($2.m_varDeclarations, $7.m_varDeclarations),
                                                                                          mergeDeclarationLists($2.m_funcDeclarations, $7.m_funcDeclarations),
                                                                                          $2.m_features | $7.m_features | CatchFeature,
                                                                                          $2.m_numConstants + $7.m_numConstants);
-                                          DBG($$.m_node, @1, @2); }
+                                          setStatementLocation($$.m_node, @1, @2); }
   | TRY Block CATCH '(' IDENT ')' Block FINALLY Block
                                         { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) TryNode(GLOBAL_DATA, $2.m_node, *$5, ($7.m_features & EvalFeature) != 0, $7.m_node, $9.m_node),
                                                                                          mergeDeclarationLists(mergeDeclarationLists($2.m_varDeclarations, $7.m_varDeclarations), $9.m_varDeclarations),
                                                                                          mergeDeclarationLists(mergeDeclarationLists($2.m_funcDeclarations, $7.m_funcDeclarations), $9.m_funcDeclarations),
                                                                                          $2.m_features | $7.m_features | $9.m_features | CatchFeature,
                                                                                          $2.m_numConstants + $7.m_numConstants + $9.m_numConstants);
-                                          DBG($$.m_node, @1, @2); }
+                                          setStatementLocation($$.m_node, @1, @2); }
 ;
 
 DebuggerStatement:
     DEBUGGER ';'                        { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) DebuggerStatementNode(GLOBAL_DATA), 0, 0, 0, 0);
-                                          DBG($$.m_node, @1, @2); }
+                                          setStatementLocation($$.m_node, @1, @2); }
   | DEBUGGER error                      { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) DebuggerStatementNode(GLOBAL_DATA), 0, 0, 0, 0);
-                                          DBG($$.m_node, @1, @1); AUTO_SEMICOLON; }
+                                          setStatementLocation($$.m_node, @1, @1); AUTO_SEMICOLON; }
 ;
 
 FunctionDeclaration:
-    FUNCTION IDENT '(' ')' OPENBRACE FunctionBody CLOSEBRACE { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) FuncDeclNode(GLOBAL_DATA, *$2, $6, GLOBAL_DATA->lexer->sourceCode($5, $7, @5.first_line)), 0, new (GLOBAL_DATA) ParserArenaData<DeclarationStacks::FunctionStack>, ((*$2 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0) | ClosureFeature, 0); DBG($6, @5, @7); $$.m_funcDeclarations->data.append(static_cast<FuncDeclNode*>($$.m_node)->body()); }
+    FUNCTION IDENT '(' ')' OPENBRACE FunctionBody CLOSEBRACE { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) FuncDeclNode(GLOBAL_DATA, *$2, $6, GLOBAL_DATA->lexer->sourceCode($5, $7, @5.first_line)), 0, new (GLOBAL_DATA) ParserArenaData<DeclarationStacks::FunctionStack>, ((*$2 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0) | ClosureFeature, 0); setStatementLocation($6, @5, @7); $$.m_funcDeclarations->data.append(static_cast<FuncDeclNode*>($$.m_node)->body()); }
   | FUNCTION IDENT '(' FormalParameterList ')' OPENBRACE FunctionBody CLOSEBRACE
       {
           $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) FuncDeclNode(GLOBAL_DATA, *$2, $7, GLOBAL_DATA->lexer->sourceCode($6, $8, @6.first_line), $4.m_node.head), 0, new (GLOBAL_DATA) ParserArenaData<DeclarationStacks::FunctionStack>, ((*$2 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0) | $4.m_features | ClosureFeature, 0);
           if ($4.m_features & ArgumentsFeature)
               $7->setUsesArguments();
-          DBG($7, @6, @8);
+          setStatementLocation($7, @6, @8);
           $$.m_funcDeclarations->data.append(static_cast<FuncDeclNode*>($$.m_node)->body());
       }
 ;
 
 FunctionExpr:
-    FUNCTION '(' ')' OPENBRACE FunctionBody CLOSEBRACE { $$ = createNodeInfo(new (GLOBAL_DATA) FuncExprNode(GLOBAL_DATA, GLOBAL_DATA->propertyNames->nullIdentifier, $5, GLOBAL_DATA->lexer->sourceCode($4, $6, @4.first_line)), ClosureFeature, 0); DBG($5, @4, @6); }
+    FUNCTION '(' ')' OPENBRACE FunctionBody CLOSEBRACE { $$ = createNodeInfo(new (GLOBAL_DATA) FuncExprNode(GLOBAL_DATA, GLOBAL_DATA->propertyNames->nullIdentifier, $5, GLOBAL_DATA->lexer->sourceCode($4, $6, @4.first_line)), ClosureFeature, 0); setStatementLocation($5, @4, @6); }
     | FUNCTION '(' FormalParameterList ')' OPENBRACE FunctionBody CLOSEBRACE
       {
           $$ = createNodeInfo(new (GLOBAL_DATA) FuncExprNode(GLOBAL_DATA, GLOBAL_DATA->propertyNames->nullIdentifier, $6, GLOBAL_DATA->lexer->sourceCode($5, $7, @5.first_line), $3.m_node.head), $3.m_features | ClosureFeature, 0);
           if ($3.m_features & ArgumentsFeature)
               $6->setUsesArguments();
-          DBG($6, @5, @7);
+          setStatementLocation($6, @5, @7);
       }
-  | FUNCTION IDENT '(' ')' OPENBRACE FunctionBody CLOSEBRACE { $$ = createNodeInfo(new (GLOBAL_DATA) FuncExprNode(GLOBAL_DATA, *$2, $6, GLOBAL_DATA->lexer->sourceCode($5, $7, @5.first_line)), ClosureFeature, 0); DBG($6, @5, @7); }
+  | FUNCTION IDENT '(' ')' OPENBRACE FunctionBody CLOSEBRACE { $$ = createNodeInfo(new (GLOBAL_DATA) FuncExprNode(GLOBAL_DATA, *$2, $6, GLOBAL_DATA->lexer->sourceCode($5, $7, @5.first_line)), ClosureFeature, 0); setStatementLocation($6, @5, @7); }
   | FUNCTION IDENT '(' FormalParameterList ')' OPENBRACE FunctionBody CLOSEBRACE
       {
           $$ = createNodeInfo(new (GLOBAL_DATA) FuncExprNode(GLOBAL_DATA, *$2, $7, GLOBAL_DATA->lexer->sourceCode($6, $8, @6.first_line), $4.m_node.head), $4.m_features | ClosureFeature, 0); 
           if ($4.m_features & ArgumentsFeature)
               $7->setUsesArguments();
-          DBG($7, @6, @8);
+          setStatementLocation($7, @6, @8);
       }
 ;
 
