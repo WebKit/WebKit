@@ -219,9 +219,7 @@ void HostedNetscapePluginStream::cancelLoad(NSError *error)
         ASSERT(!m_loader);
         
         DocumentLoader* documentLoader = m_frameLoader->activeDocumentLoader();
-        ASSERT(documentLoader);
-        
-        if (documentLoader->isLoadingMainResource())
+        if (documentLoader && documentLoader->isLoadingMainResource())
             documentLoader->cancelMainResourceLoad(error);
         return;
     }

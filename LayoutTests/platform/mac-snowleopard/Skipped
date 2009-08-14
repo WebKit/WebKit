@@ -5,9 +5,6 @@ plugins/netscape-throw-exception.html
 plugins/netscape-destroy-plugin-script-objects.html
 plugins/open-and-close-window-with-plugin.html
 
-# <rdar://problem/7091546> Assertion failure in return-error-from-new-stream-doesnt-invoke-destroy-stream.html
-plugins/return-error-from-new-stream-doesnt-invoke-destroy-stream.html
-
 # Radar bugs needed for these
 fast/canvas/set-colors.html
 svg/W3C-SVG-1.1/coords-viewattr-01-b.svg
@@ -34,12 +31,6 @@ media/video-controls-transformed.html
 media/video-controls-visible-audio-only.html
 media/video-controls-zoomed.html
 media/video-display-toggle.html
-
-#<rdar://problem/7135553> - Intermittent crash
-plugins/root-object-premature-delete-crash.html
-
-#<rdar://problem/7144571> - Intermittent crash
-plugins/throw-on-dealloc.html
 
 #<rdar://problem/7135864> - Intermittent failure
 fast/dom/frame-loading-via-document-write.html

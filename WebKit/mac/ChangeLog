@@ -1,3 +1,14 @@
+2009-08-14  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        <rdar://problem/7091546> - Assertion failure in plugins/return-error-from-new-stream-doesnt-invoke-destroy-stream.html 
+        on 64-bit SnowLeopard
+
+        * Plugins/Hosted/HostedNetscapePluginStream.mm:
+        (WebKit::HostedNetscapePluginStream::cancelLoad): Since this might be called while the FrameLoader is switching DocumentLoaders
+          during the brief moment where there is no activeDocumentLoader(), accept and handle a validly null DocumentLoader.
+
 2009-08-14  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Brady Eidson.

@@ -1,5 +1,13 @@
 2009-08-14  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by Anders Carlsson.
+
+        <rdar://problem/7091546> - Re-enable 3 plugins tests that now won't crash
+
+        * platform/mac-snowleopard/Skipped:
+
+2009-08-14  Brady Eidson  <beidson@apple.com>
+
         Adding two more to the skipped list.
         Radars 7144571 and 7144583 track exploring them.
 
