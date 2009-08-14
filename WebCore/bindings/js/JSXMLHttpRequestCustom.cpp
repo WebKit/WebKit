@@ -123,9 +123,9 @@ JSValue JSXMLHttpRequest::send(ExecState* exec, const ArgList& args)
         JSValue val = args.at(0);
         if (val.isUndefinedOrNull())
             impl()->send(ec);
-        else if (val.isObject(&JSDocument::s_info))
+        else if (val.inherits(&JSDocument::s_info))
             impl()->send(toDocument(val), ec);
-        else if (val.isObject(&JSFile::s_info))
+        else if (val.inherits(&JSFile::s_info))
             impl()->send(toFile(val), ec);
         else
             impl()->send(val.toString(exec), ec);

@@ -504,7 +504,7 @@ NEVER_INLINE bool Interpreter::unwindCallFrame(CallFrame*& callFrame, JSValue ex
 
     // If this call frame created an activation or an 'arguments' object, tear it off.
     if (oldCodeBlock->codeType() == FunctionCode && oldCodeBlock->needsFullScopeChain()) {
-        while (!scopeChain->object->isObject(&JSActivation::info))
+        while (!scopeChain->object->inherits(&JSActivation::info))
             scopeChain = scopeChain->pop();
         static_cast<JSActivation*>(scopeChain->object)->copyRegisters(callFrame->optionalCalleeArguments());
     } else if (Arguments* arguments = callFrame->optionalCalleeArguments()) {

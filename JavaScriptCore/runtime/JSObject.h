@@ -82,8 +82,6 @@ namespace JSC {
         // in the class as it results in the vtable being generated as a weak symbol
         virtual ~JSObject();
 
-        bool inherits(const ClassInfo* classInfo) const { return JSCell::isObject(classInfo); }
-
         JSValue prototype() const;
         void setPrototype(JSValue prototype);
         
@@ -208,6 +206,18 @@ namespace JSC {
         }
 
     private:
+        // Nobody should ever ask any of these questions on something already known to be a JSObject.
+        using JSCell::isAPIValueWrapper;
+        using JSCell::isGetterSetter;
+        using JSCell::toObject;
+        void getObject();
+        void getString();
+        void isObject();
+        void isString();
+#if USE(JSVALUE32)
+        void isNumber();
+#endif
+
         ConstPropertyStorage propertyStorage() const { return (isUsingInlineStorage() ? m_inlineStorage : m_externalStorage); }
         PropertyStorage propertyStorage() { return (isUsingInlineStorage() ? m_inlineStorage : m_externalStorage); }
 
@@ -296,7 +306,7 @@ inline bool Structure::isUsingInlineStorage() const
     return (propertyStorageCapacity() == JSObject::inlineStorageCapacity);
 }
 
-inline bool JSCell::isObject(const ClassInfo* info) const
+inline bool JSCell::inherits(const ClassInfo* info) const
 {
     for (const ClassInfo* ci = classInfo(); ci; ci = ci->parentClass) {
         if (ci == info)
@@ -305,10 +315,10 @@ inline bool JSCell::isObject(const ClassInfo* info) const
     return false;
 }
 
-// this method is here to be after the inline declaration of JSCell::isObject
-inline bool JSValue::isObject(const ClassInfo* classInfo) const
+// this method is here to be after the inline declaration of JSCell::inherits
+inline bool JSValue::inherits(const ClassInfo* classInfo) const
 {
-    return isCell() && asCell()->isObject(classInfo);
+    return isCell() && asCell()->inherits(classInfo);
 }
 
 ALWAYS_INLINE bool JSObject::inlineGetOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)

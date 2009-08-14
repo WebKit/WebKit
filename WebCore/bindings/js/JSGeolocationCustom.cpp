@@ -44,7 +44,7 @@ namespace WebCore {
 static PassRefPtr<PositionCallback> createPositionCallback(ExecState* exec, JSValue value)
 {
     // The spec specifies 'FunctionOnly' for this object.
-    if (!value.isObject(&InternalFunction::info)) {
+    if (!value.inherits(&InternalFunction::info)) {
         setDOMException(exec, TYPE_MISMATCH_ERR);
         return 0;
     }
@@ -61,7 +61,7 @@ static PassRefPtr<PositionErrorCallback> createPositionErrorCallback(ExecState* 
         return 0;
 
     // The spec specifies 'FunctionOnly' for this object.
-    if (!value.isObject(&InternalFunction::info)) {
+    if (!value.inherits(&InternalFunction::info)) {
         setDOMException(exec, TYPE_MISMATCH_ERR);
         return 0;
     }

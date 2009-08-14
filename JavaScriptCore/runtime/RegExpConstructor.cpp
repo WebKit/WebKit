@@ -330,7 +330,7 @@ JSObject* constructRegExp(ExecState* exec, const ArgList& args)
     JSValue arg0 = args.at(0);
     JSValue arg1 = args.at(1);
 
-    if (arg0.isObject(&RegExpObject::info)) {
+    if (arg0.inherits(&RegExpObject::info)) {
         if (!arg1.isUndefined())
             return throwError(exec, TypeError, "Cannot supply flags when constructing one RegExp from another.");
         return asObject(arg0);

@@ -48,7 +48,7 @@ JSValue JSNodeFilter::acceptNode(ExecState* exec, const ArgList& args)
 
 PassRefPtr<NodeFilter> toNodeFilter(JSValue value)
 {
-    if (value.isObject(&JSNodeFilter::s_info))
+    if (value.inherits(&JSNodeFilter::s_info))
         return static_cast<JSNodeFilter*>(asObject(value))->impl();
 
     return NodeFilter::create(JSNodeFilterCondition::create(value));

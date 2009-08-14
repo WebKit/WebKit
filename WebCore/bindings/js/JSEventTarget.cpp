@@ -128,7 +128,7 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, EventTarget* targ
 EventTarget* toEventTarget(JSC::JSValue value)
 {
     #define CONVERT_TO_EVENT_TARGET(type) \
-        if (value.isObject(&JS##type::s_info)) \
+        if (value.inherits(&JS##type::s_info)) \
             return static_cast<JS##type*>(asObject(value))->impl();
 
     CONVERT_TO_EVENT_TARGET(Node)
@@ -136,7 +136,7 @@ EventTarget* toEventTarget(JSC::JSValue value)
     CONVERT_TO_EVENT_TARGET(XMLHttpRequestUpload)
     CONVERT_TO_EVENT_TARGET(MessagePort)
 
-    if (value.isObject(&JSDOMWindowShell::s_info))
+    if (value.inherits(&JSDOMWindowShell::s_info))
         return static_cast<JSDOMWindowShell*>(asObject(value))->impl();
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)

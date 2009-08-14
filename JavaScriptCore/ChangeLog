@@ -1,3 +1,93 @@
+2009-08-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Rename the confusing isObject(<class>) to inherits(<class>).
+        It still works on non-objects, returning false.
+
+        * runtime/ArrayConstructor.cpp:
+        (JSC::arrayConstructorIsArray): Removed unneeded isObject call
+        and updated remaining isObject call to new name, inherits.
+
+        * runtime/JSCell.h: Renamed isObject(<class>) to inherits(<class>)
+        but more importantly, made it non-virtual (it was already inline)
+        so it is now as fast as JSObject::inherits was.
+
+        * runtime/JSObject.h: Removed inherits function since the one
+        in the base class is fine as-is. Also made various JSCell functions
+        that should not be called on JSObject uncallable by making them
+        both private and not implemented.
+        (JSC::JSCell::inherits): Updated name.
+        (JSC::JSValue::inherits): Ditto.
+
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::recompileAllJSFunctions):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::unwindCallFrame):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncToString):
+        (JSC::arrayProtoFuncToLocaleString):
+        (JSC::arrayProtoFuncConcat):
+        * runtime/BooleanPrototype.cpp:
+        (JSC::booleanProtoFuncToString):
+        (JSC::booleanProtoFuncValueOf):
+        * runtime/DateConstructor.cpp:
+        (JSC::constructDate):
+        * runtime/DatePrototype.cpp:
+        (JSC::dateProtoFuncToString):
+        (JSC::dateProtoFuncToUTCString):
+        (JSC::dateProtoFuncToISOString):
+        (JSC::dateProtoFuncToDateString):
+        (JSC::dateProtoFuncToTimeString):
+        (JSC::dateProtoFuncToLocaleString):
+        (JSC::dateProtoFuncToLocaleDateString):
+        (JSC::dateProtoFuncToLocaleTimeString):
+        (JSC::dateProtoFuncGetTime):
+        (JSC::dateProtoFuncGetFullYear):
+        (JSC::dateProtoFuncGetUTCFullYear):
+        (JSC::dateProtoFuncToGMTString):
+        (JSC::dateProtoFuncGetMonth):
+        (JSC::dateProtoFuncGetUTCMonth):
+        (JSC::dateProtoFuncGetDate):
+        (JSC::dateProtoFuncGetUTCDate):
+        (JSC::dateProtoFuncGetDay):
+        (JSC::dateProtoFuncGetUTCDay):
+        (JSC::dateProtoFuncGetHours):
+        (JSC::dateProtoFuncGetUTCHours):
+        (JSC::dateProtoFuncGetMinutes):
+        (JSC::dateProtoFuncGetUTCMinutes):
+        (JSC::dateProtoFuncGetSeconds):
+        (JSC::dateProtoFuncGetUTCSeconds):
+        (JSC::dateProtoFuncGetMilliSeconds):
+        (JSC::dateProtoFuncGetUTCMilliseconds):
+        (JSC::dateProtoFuncGetTimezoneOffset):
+        (JSC::dateProtoFuncSetTime):
+        (JSC::setNewValueFromTimeArgs):
+        (JSC::setNewValueFromDateArgs):
+        (JSC::dateProtoFuncSetYear):
+        (JSC::dateProtoFuncGetYear):
+        * runtime/FunctionPrototype.cpp:
+        (JSC::functionProtoFuncToString):
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::argumentsGetter):
+        * runtime/JSValue.h:
+        * runtime/RegExpConstructor.cpp:
+        (JSC::constructRegExp):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::regExpProtoFuncTest):
+        (JSC::regExpProtoFuncExec):
+        (JSC::regExpProtoFuncCompile):
+        (JSC::regExpProtoFuncToString):
+        * runtime/ScopeChain.cpp:
+        (JSC::ScopeChain::localDepth):
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncReplace):
+        (JSC::stringProtoFuncToString):
+        (JSC::stringProtoFuncMatch):
+        (JSC::stringProtoFuncSearch):
+        (JSC::stringProtoFuncSplit):
+        Updated to new name, inherits, from old name, isObject.
+
 2009-07-31  Harald Fernengel  <harald.fernengel@nokia.com>
 
         Reviewed by Simon Hausmann.

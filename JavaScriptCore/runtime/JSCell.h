@@ -55,7 +55,7 @@ namespace JSC {
         bool isString() const;
         bool isObject() const;
         virtual bool isGetterSetter() const;
-        virtual bool isObject(const ClassInfo*) const;
+        bool inherits(const ClassInfo*) const;
         virtual bool isAPIValueWrapper() const { return false; }
 
         Structure* structure() const;

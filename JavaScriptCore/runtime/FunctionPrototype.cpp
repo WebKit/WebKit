@@ -84,7 +84,7 @@ static inline void insertSemicolonIfNeeded(UString& functionBody)
 
 JSValue JSC_HOST_CALL functionProtoFuncToString(ExecState* exec, JSObject*, JSValue thisValue, const ArgList&)
 {
-    if (thisValue.isObject(&JSFunction::info)) {
+    if (thisValue.inherits(&JSFunction::info)) {
         JSFunction* function = asFunction(thisValue);
         FunctionBodyNode* body = function->body();
         if (!body->isHostFunction()) {
@@ -94,7 +94,7 @@ JSValue JSC_HOST_CALL functionProtoFuncToString(ExecState* exec, JSObject*, JSVa
         }
     }
 
-    if (thisValue.isObject(&InternalFunction::info)) {
+    if (thisValue.inherits(&InternalFunction::info)) {
         InternalFunction* function = asInternalFunction(thisValue);
         return jsString(exec, "function " + function->name(&exec->globalData()) + "() {\n    [native code]\n}");
     }

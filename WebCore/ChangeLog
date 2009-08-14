@@ -1,3 +1,30 @@
+2009-08-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Rename the confusing isObject(<class>) to inherits(<class>).
+        It still works on non-objects, returning false.
+
+        * bindings/js/JSEventTarget.cpp:
+        (WebCore::toEventTarget):
+        * bindings/js/JSGeolocationCustom.cpp:
+        (WebCore::createPositionCallback):
+        (WebCore::createPositionErrorCallback):
+        * bindings/js/JSNodeFilterCustom.cpp:
+        (WebCore::toNodeFilter):
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::send):
+        * bindings/js/JSXSLTProcessorCustom.cpp:
+        (WebCore::JSXSLTProcessor::importStylesheet):
+        (WebCore::JSXSLTProcessor::transformToFragment):
+        (WebCore::JSXSLTProcessor::transformToDocument):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bridge/objc/objc_runtime.mm:
+        (JSC::Bindings::callObjCFallbackObject):
+        * bridge/runtime_method.cpp:
+        (JSC::callRuntimeMethod):
+        Updated to new name, inherits, from old name, isObject.
+
 2009-08-14  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Simon Hausmann.

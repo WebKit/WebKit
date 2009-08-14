@@ -59,7 +59,7 @@ JSValue JSC_HOST_CALL booleanProtoFuncToString(ExecState* exec, JSObject*, JSVal
     if (thisValue == jsBoolean(true))
         return jsNontrivialString(exec, "true");
 
-    if (!thisValue.isObject(&BooleanObject::info))
+    if (!thisValue.inherits(&BooleanObject::info))
         return throwError(exec, TypeError);
 
     if (asBooleanObject(thisValue)->internalValue() == jsBoolean(false))
@@ -74,7 +74,7 @@ JSValue JSC_HOST_CALL booleanProtoFuncValueOf(ExecState* exec, JSObject*, JSValu
     if (thisValue.isBoolean())
         return thisValue;
 
-    if (!thisValue.isObject(&BooleanObject::info))
+    if (!thisValue.inherits(&BooleanObject::info))
         return throwError(exec, TypeError);
 
     return asBooleanObject(thisValue)->internalValue();

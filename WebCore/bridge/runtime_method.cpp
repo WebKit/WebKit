@@ -82,13 +82,13 @@ static JSValue JSC_HOST_CALL callRuntimeMethod(ExecState* exec, JSObject* functi
     
     RuntimeObjectImp* imp;
 
-    if (thisValue.isObject(&RuntimeObjectImp::s_info)) {
+    if (thisValue.inherits(&RuntimeObjectImp::s_info)) {
         imp = static_cast<RuntimeObjectImp*>(asObject(thisValue));
     } else {
         // If thisObj is the DOM object for a plugin, get the corresponding
         // runtime object from the DOM object.
         JSValue value = thisValue.get(exec, Identifier(exec, "__apple_runtime_object"));
-        if (value.isObject(&RuntimeObjectImp::s_info))    
+        if (value.inherits(&RuntimeObjectImp::s_info))    
             imp = static_cast<RuntimeObjectImp*>(asObject(value));
         else
             return throwError(exec, TypeError);
