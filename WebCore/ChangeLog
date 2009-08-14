@@ -1,3 +1,17 @@
+2009-08-13  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        'box-orient: block-axis' behaves like 'box-orient: horizontal', causes
+        an assertion failure in debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=28279
+
+        Test: fast/flexbox/block-axis.html
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::operator EBoxOrient): Map block-axis to
+        vertical.
+
 2009-08-13  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
