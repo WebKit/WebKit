@@ -328,7 +328,7 @@ Literal:
 Property:
     IDENT ':' AssignmentExpr            { $$ = createNodeInfo<PropertyNode*>(new (GLOBAL_DATA) PropertyNode(GLOBAL_DATA, *$1, $3.m_node, PropertyNode::Constant), $3.m_features, $3.m_numConstants); }
   | STRING ':' AssignmentExpr           { $$ = createNodeInfo<PropertyNode*>(new (GLOBAL_DATA) PropertyNode(GLOBAL_DATA, *$1, $3.m_node, PropertyNode::Constant), $3.m_features, $3.m_numConstants); }
-  | NUMBER ':' AssignmentExpr           { $$ = createNodeInfo<PropertyNode*>(new (GLOBAL_DATA) PropertyNode(GLOBAL_DATA, Identifier(GLOBAL_DATA, UString::from($1)), $3.m_node, PropertyNode::Constant), $3.m_features, $3.m_numConstants); }
+  | NUMBER ':' AssignmentExpr           { $$ = createNodeInfo<PropertyNode*>(new (GLOBAL_DATA) PropertyNode(GLOBAL_DATA, $1, $3.m_node, PropertyNode::Constant), $3.m_features, $3.m_numConstants); }
   | IDENT IDENT '(' ')' OPENBRACE FunctionBody CLOSEBRACE    { $$ = createNodeInfo<PropertyNode*>(makeGetterOrSetterPropertyNode(globalPtr, *$1, *$2, 0, $6, GLOBAL_DATA->lexer->sourceCode($5, $7, @5.first_line)), ClosureFeature, 0); setStatementLocation($6, @5, @7); if (!$$.m_node) YYABORT; }
   | IDENT IDENT '(' FormalParameterList ')' OPENBRACE FunctionBody CLOSEBRACE
                                                              {
