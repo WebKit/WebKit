@@ -32,14 +32,9 @@
 #include "CString.h"
 #include "FrameLoader.h"
 #include "KURL.h"
-#include "PlatformString.h"
-#include "StringHash.h"
-#include <wtf/HashSet.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
-
-typedef HashSet<String, CaseFoldingHash> URLSchemesMap;
 
 static URLSchemesMap& localSchemes()
 {
@@ -343,6 +338,28 @@ bool SecurityOrigin::isSameSchemeHostPort(const SecurityOrigin* other) const
 void SecurityOrigin::registerURLSchemeAsLocal(const String& scheme)
 {
     localSchemes().add(scheme);
+}
+
+// static
+void SecurityOrigin::removeURLSchemeRegisteredAsLocal(const String& scheme)
+{
+    if (scheme == "file")
+        return;
+#if PLATFORM(MAC)
+    if (scheme == "applewebdata")
+        return;
+#endif
+#if PLATFORM(QT)
+    if (scheme == "qrc")
+        return;
+#endif
+    localSchemes().remove(scheme);
+}
+
+// static
+const URLSchemesMap&  SecurityOrigin::localURLSchemes()
+{
+    return localSchemes();
 }
 
 // static

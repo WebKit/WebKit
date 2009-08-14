@@ -1,3 +1,18 @@
+2009-08-14  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Allow applications to register their own local URL scheme.
+        https://bugs.webkit.org/show_bug.cgi?id=28240
+
+        * Api/qwebsecurityorigin.cpp:
+        (QWebSecurityOrigin::addLocalScheme):
+        (QWebSecurityOrigin::removeLocalScheme):
+        (QWebSecurityOrigin::localSchemes):
+        * Api/qwebsecurityorigin.h:
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::localURLSchemes):
+
 2009-08-13  Mark Rowe  <mrowe@apple.com>
 
         Try and fix the Qt build.

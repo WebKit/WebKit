@@ -110,6 +110,7 @@ private slots:
     void frameAt();
     void requestCache();
     void protectBindingsRuntimeObjectsFromCollector();
+    void localURLSchemes();
 
 private:
 
@@ -1188,6 +1189,23 @@ void tst_QWebPage::protectBindingsRuntimeObjectsFromCollector()
 
     // don't crash!
     newPage->mainFrame()->evaluateJavaScript("testme('bar')");
+}
+
+void tst_QWebPage::localURLSchemes()
+{
+    int i = QWebSecurityOrigin::localSchemes().size();
+    QWebSecurityOrigin::removeLocalScheme("file");
+    QTRY_COMPARE(QWebSecurityOrigin::localSchemes().size(), i);
+    QWebSecurityOrigin::addLocalScheme("file");
+    QTRY_COMPARE(QWebSecurityOrigin::localSchemes().size(), i);
+    QString myscheme = "myscheme";
+    QWebSecurityOrigin::addLocalScheme(myscheme);
+    QTRY_COMPARE(QWebSecurityOrigin::localSchemes().size(), i + 1);
+    QVERIFY(QWebSecurityOrigin::localSchemes().contains(myscheme));
+    QWebSecurityOrigin::removeLocalScheme(myscheme);
+    QTRY_COMPARE(QWebSecurityOrigin::localSchemes().size(), i);
+    QWebSecurityOrigin::removeLocalScheme(myscheme);
+    QTRY_COMPARE(QWebSecurityOrigin::localSchemes().size(), i);
 }
 
 QTEST_MAIN(tst_QWebPage)
