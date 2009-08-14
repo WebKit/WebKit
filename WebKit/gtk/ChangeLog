@@ -1,3 +1,13 @@
+2009-08-14  Benjamin Otte  <otte@gnome.org>
+
+        Reviewed by Gustavo Noronha.
+
+        Fix webkit_web_view_set_highlight_text_matches() so that highlighting
+        works properly in documents with frames.
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_set_highlight_text_matches):
+
 2009-08-13  Zan Dobersek  <zandobersek@gmail.com>
 
         Reviewed by Gustavo Noronha.

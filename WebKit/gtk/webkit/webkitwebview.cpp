@@ -2929,7 +2929,11 @@ void webkit_web_view_set_highlight_text_matches(WebKitWebView* webView, gboolean
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
-    core(webView)->mainFrame()->setMarkedTextMatchesAreHighlighted(shouldHighlight);
+    Frame *frame = core(webView)->mainFrame();
+    do {
+        frame->setMarkedTextMatchesAreHighlighted(shouldHighlight);
+        frame = frame->tree()->traverseNextWithWrap(false);
+    } while (frame);
 }
 
 /**
