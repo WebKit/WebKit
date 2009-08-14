@@ -1,3 +1,35 @@
+2009-08-14  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Public API to configure the storage path for HTML5 localStorage
+        https://bugs.webkit.org/show_bug.cgi?id=28036
+
+        Disables LocalStorage for QtWebKit by default by setting
+        QWebSettings::LocalStorageEnabled to false.
+
+        Sets up a default for the LocalStorage path so that clients would only
+        need to enable the LocalStorageEnabled setting to turn on LocalStoragre
+        support.
+
+        Turn on LocalStorage support for QtLauncher and the relevant test
+        since LocalStorage is now disabled by default for QtWebkit.
+
+        * Api/qwebpage.cpp:
+        (defaultCachePath):
+        (initializeApplicationCachePathIfNecessary):
+        (QWebPagePrivate::QWebPagePrivate):
+        * Api/qwebsettings.cpp:
+        (QWebSettingsPrivate::apply):
+        (QWebSettings::QWebSettings):
+        (QWebSettings::setLocalStoragePath):
+        (QWebSettings::localStoragePath):
+        * Api/qwebsettings.h:
+        * QtLauncher/main.cpp:
+        (main):
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::multiplePageGroupsAndLocalStorage):
+
 2009-08-14  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Simon Hausmann.

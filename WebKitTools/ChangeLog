@@ -1,3 +1,16 @@
+2009-08-14  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Public API to configure the storage path for HTML5 localStorage
+        https://bugs.webkit.org/show_bug.cgi?id=28036
+
+        Turn on LocalStorage support for Qt DumpRenderTree since
+        LocalStorage is now disabled by defult for QtWebkit.
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp: 
+        (WebCore::WebPage::WebPage):
+
 2009-08-14  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Jan Alonzo.

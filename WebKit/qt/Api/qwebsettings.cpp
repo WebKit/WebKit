@@ -55,7 +55,7 @@ public:
     QHash<int, bool> attributes;
     QUrl userStyleSheetLocation;
     QString defaultTextEncoding;
-    QString localStorageDatabasePath;
+    QString localStoragePath;
     QString offlineWebApplicationCachePath;
     qint64 offlineStorageDefaultQuota;
 
@@ -167,8 +167,8 @@ void QWebSettingsPrivate::apply()
         QString encoding = !defaultTextEncoding.isEmpty() ? defaultTextEncoding: global->defaultTextEncoding;
         settings->setDefaultTextEncodingName(encoding);
 
-        QString localStoragePath = !localStorageDatabasePath.isEmpty() ? localStorageDatabasePath : global->localStorageDatabasePath;
-        settings->setLocalStorageDatabasePath(localStoragePath);
+        QString storagePath = !localStoragePath.isEmpty() ? localStoragePath : global->localStoragePath;
+        settings->setLocalStorageDatabasePath(storagePath);
 
         value = attributes.value(QWebSettings::ZoomTextOnly,
                                  global->attributes.value(QWebSettings::ZoomTextOnly));
@@ -186,8 +186,9 @@ void QWebSettingsPrivate::apply()
                                       global->attributes.value(QWebSettings::OfflineWebApplicationCacheEnabled));
         settings->setOfflineWebApplicationCacheEnabled(value);
 
-        value = attributes.value(QWebSettings::LocalStorageDatabaseEnabled,
-                                      global->attributes.value(QWebSettings::LocalStorageDatabaseEnabled));
+        value = attributes.value(QWebSettings::LocalStorageEnabled,
+                                      global->attributes.value(QWebSettings::LocalStorageEnabled));
+                                                                                                                                  
         settings->setLocalStorageEnabled(value);
 
         value = attributes.value(QWebSettings::LocalContentCanAccessRemoteUrls,
@@ -326,8 +327,8 @@ QWebSettings* QWebSettings::globalSettings()
         offline storage feature is enabled or not.
     \value OfflineWebApplicationCacheEnabled Specifies whether support for the HTML 5
         web application cache feature is enabled or not.
-    \value LocalStorageDatabaseEnabled Specifies whether support for the HTML 5
-        local storage feature is enabled or not.
+    \value LocalStorageEnabled Specifies whether support for the HTML 5
+        local storage feature is enabled or not. Disabled by default.
     \value LocalContentCanAccessRemoteUrls Specifies whether locally loaded documents are allowed to access remote urls.
 */
 
@@ -356,7 +357,7 @@ QWebSettings::QWebSettings()
     d->attributes.insert(QWebSettings::PrintElementBackgrounds, true);
     d->attributes.insert(QWebSettings::OfflineStorageDatabaseEnabled, true);
     d->attributes.insert(QWebSettings::OfflineWebApplicationCacheEnabled, true);
-    d->attributes.insert(QWebSettings::LocalStorageDatabaseEnabled, true);
+    d->attributes.insert(QWebSettings::LocalStorageEnabled, false);
     d->attributes.insert(QWebSettings::LocalContentCanAccessRemoteUrls, true);
     d->offlineStorageDefaultQuota = 5 * 1024 * 1024;
 }
@@ -867,37 +868,41 @@ qint64 QWebSettings::offlineWebApplicationCacheQuota()
 #endif
 }
 
-/*
-    \since 4.5
+/*!
+    \since 4.6
     \relates QWebSettings
 
-    Sets the path for HTML5 local storage databases to \a path.
+    Sets the path for HTML5 local storage to \a path.
+    
+    For more information on HTML5 local storage see the
+    \l{http://www.w3.org/TR/webstorage/#the-localstorage-attribute}{Web Storage standard}.
+    
+    Support for local storage can enabled by setting the
+    \l{QWebSettings::LocalStorageEnabled}{LocalStorageEnabled} attribute.     
 
-    \a path must point to an existing directory where the cache is stored.
-
-    Setting an empty path disables the feature.
-
-    \sa localStorageDatabasePath()
+    \sa localStoragePath()
 */
-void QWEBKIT_EXPORT qt_websettings_setLocalStorageDatabasePath(QWebSettings* settings, const QString& path)
+void QWebSettings::setLocalStoragePath(const QString& path)
 {
-    QWebSettingsPrivate* d = settings->handle();
-    d->localStorageDatabasePath = path;
+    d->localStoragePath = path;
     d->apply();
 }
 
-/*
-    \since 4.5
+/*!
+    \since 4.6
     \relates QWebSettings
 
-    Returns the path for HTML5 local storage databases
-    or an empty string if the feature is disabled.
-
-    \sa setLocalStorageDatabasePath()
+    Returns the path for HTML5 local storage.
+    
+    The path is initialized to a directory called LocalStorage under
+    the user-specific cache data location specified by
+    \l{QDesktopServices::CacheLocation}{CacheLocation}.
+    
+    \sa setLocalStoragePath()
 */
-QString QWEBKIT_EXPORT qt_websettings_localStorageDatabasePath(QWebSettings* settings)
+QString QWebSettings::localStoragePath() const
 {
-    return settings->handle()->localStorageDatabasePath;
+    return d->localStoragePath;
 }
 
 /*!

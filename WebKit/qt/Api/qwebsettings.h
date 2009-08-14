@@ -62,7 +62,10 @@ public:
         PrintElementBackgrounds,
         OfflineStorageDatabaseEnabled,
         OfflineWebApplicationCacheEnabled,
-        LocalStorageDatabaseEnabled,
+        LocalStorageEnabled,
+#ifdef QT_DEPRECATED
+        LocalStorageDatabaseEnabled = LocalStorageEnabled,
+#endif
         LocalContentCanAccessRemoteUrls
     };
     enum WebGraphic {
@@ -121,6 +124,9 @@ public:
     static QString offlineWebApplicationCachePath();
     static void setOfflineWebApplicationCacheQuota(qint64 maximumSize);
     static qint64 offlineWebApplicationCacheQuota();
+    
+    void setLocalStoragePath(const QString& path);
+    QString localStoragePath() const; 
 
     static void clearMemoryCaches();
 

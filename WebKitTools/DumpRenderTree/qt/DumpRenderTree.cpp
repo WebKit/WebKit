@@ -109,6 +109,7 @@ WebPage::WebPage(QWidget *parent, DumpRenderTree *drt)
     settings()->setAttribute(QWebSettings::JavascriptCanAccessClipboard, true);
     settings()->setAttribute(QWebSettings::LinksIncludedInFocusChain, false);
     settings()->setAttribute(QWebSettings::PluginsEnabled, true);
+    settings()->setAttribute(QWebSettings::LocalStorageEnabled, true);
     connect(this, SIGNAL(geometryChangeRequested(const QRect &)),
             this, SLOT(setViewGeometry(const QRect & )));
 

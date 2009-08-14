@@ -265,28 +265,35 @@ static inline Qt::DropAction dragOpToDropAction(unsigned actions)
     return result;
 }
 
+static QString defaultCachePath()
+{
+    // Determine the default cache location
+    QString cachePath;
+    
+#if QT_VERSION >= 0x040500
+    cachePath = QDesktopServices::storageLocation(QDesktopServices::CacheLocation);
+#else
+    cachePath = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
+#endif
+                                
+    if (cachePath.isEmpty())
+        cachePath = QDir::homePath() + QLatin1String("/.") + QCoreApplication::applicationName();
+        
+   return cachePath;
+}
+
 static void initializeApplicationCachePathIfNecessary()
 {
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+
     static bool initialized = false;
-        
+    
     if (initialized)
         return;
 
-    // Determine the path for HTML5 Application Cache DB
-    QString appCachePath;
-#if QT_VERSION >= 0x040500
-    appCachePath = QDesktopServices::storageLocation(QDesktopServices::CacheLocation);
-#else
-    appCachePath = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
-#endif
-
-    if (appCachePath.isEmpty())
-        appCachePath = QDir::homePath() + QLatin1String("/.") + QCoreApplication::applicationName();
-
-    WebCore::cacheStorage().setCacheDirectory(appCachePath);
+    // Set HTML5 Application Cache default location
+    QWebSettings::setOfflineWebApplicationCachePath(defaultCachePath());
+    
     initialized = true;
-#endif
 }                                                
 
 QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
@@ -309,6 +316,9 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     page->settings()->setDefaultTextEncodingName("iso-8859-1");
 
     settings = new QWebSettings(page->settings());
+    
+    // Set HTML5 localStorage default location
+    settings->setLocalStoragePath(WebCore::pathByAppendingComponent(defaultCachePath(), "LocalStorage"));
 
 #ifndef QT_NO_UNDOSTACK
     undoStack = 0;
