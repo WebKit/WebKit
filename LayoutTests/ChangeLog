@@ -1,5 +1,16 @@
 2009-08-14  Eric Carlson  <eric.carlson@apple.com>
 
+        Reviewed by Adam Roben.
+
+        Remove media/video-played.html from the Windows skipped list and add 
+        media/video-played-collapse.html.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=28275
+
+        * platform/win/Skipped:
+
+2009-08-14  Eric Carlson  <eric.carlson@apple.com>
+
         Reviewed by Simon Fraser.
 
         media/video-played.html always times out on Windows
