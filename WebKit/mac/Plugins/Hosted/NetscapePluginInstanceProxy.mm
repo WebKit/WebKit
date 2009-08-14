@@ -1032,8 +1032,8 @@ bool NetscapePluginInstanceProxy::enumerate(uint32_t objectID, data_t& resultDat
  
     PropertyNameArray propertyNames(exec);
     object->getPropertyNames(exec, propertyNames);
-    
-    NSMutableArray *array = [[NSMutableArray alloc] init];
+
+    RetainPtr<NSMutableArray*> array(AdoptNS, [[NSMutableArray alloc] init]);
     for (unsigned i = 0; i < propertyNames.size(); i++) {
         uint64_t methodName = reinterpret_cast<uint64_t>(_NPN_GetStringIdentifier(propertyNames[i].ustring().UTF8String().c_str()));
 
@@ -1042,12 +1042,12 @@ bool NetscapePluginInstanceProxy::enumerate(uint32_t objectID, data_t& resultDat
 
     NSData *data = [NSPropertyListSerialization dataFromPropertyList:array format:NSPropertyListBinaryFormat_v1_0 errorDescription:0];
     ASSERT(data);
-    
+
     resultLength = [data length];
     mig_allocate(reinterpret_cast<vm_address_t*>(&resultData), resultLength);
-    
+
     memcpy(resultData, [data bytes], resultLength);
-    
+
     exec->clearException();
 
     return true;

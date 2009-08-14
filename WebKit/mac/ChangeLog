@@ -1,5 +1,14 @@
 2009-08-14  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed by Brady Eidson.
+
+        Fix leaks of NSNumber and NSMutableArray objects seen during layout tests.
+
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::enumerate): Don't leak an NSMutableArray that we allocate.
+
+2009-08-14  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Anders Carlsson.
 
         Fix leaks of HostedNetscapePluginStream and NetscapePlugInStreamLoader objects seen during layout tests.
