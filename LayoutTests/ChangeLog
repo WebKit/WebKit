@@ -1,5 +1,14 @@
 2009-08-14  Ariya Hidayat  <ariya.hidayat@nokia.com>
 
+        Rubber-stamped by Tor Arne Vestbø.
+
+        [Qt] Add test result after r47255.
+
+        * platform/qt/fast/block/float/avoidance-percent-width-compat-expected.txt: Added.
+        * platform/qt/fast/block/float/avoidance-percent-width-strict-expected.txt: Added.
+
+2009-08-14  Ariya Hidayat  <ariya.hidayat@nokia.com>
+
         Reviewed by Tor Arne Vestbø.
 
         [Qt] Update test result after r47255.
