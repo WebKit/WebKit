@@ -1,3 +1,13 @@
+2009-08-14  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Fix leaks of HostedNetscapePluginStream and NetscapePlugInStreamLoader objects seen during layout tests.
+
+        * Plugins/Hosted/HostedNetscapePluginStream.mm:
+        (WebKit::HostedNetscapePluginStream::didFail): Disconnect the stream from the plug-in instance proxy
+        when the load fails.
+
 2009-08-13  Darin Adler  <darin@apple.com>
 
         * Plugins/Hosted/NetscapePluginInstanceProxy.mm: Updated includes.

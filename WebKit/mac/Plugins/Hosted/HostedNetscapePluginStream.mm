@@ -178,8 +178,9 @@ void HostedNetscapePluginStream::didFail(WebCore::NetscapePlugInStreamLoader*, c
 {
     if (NetscapePluginHostProxy* hostProxy = m_instance->hostProxy())
         _WKPHStreamDidFail(hostProxy->port(), m_instance->pluginID(), m_streamID, reasonForError(error));
+    m_instance->disconnectStream(this);
 }
-    
+
 bool HostedNetscapePluginStream::wantsAllStreams() const
 {
     // FIXME: Implement.
