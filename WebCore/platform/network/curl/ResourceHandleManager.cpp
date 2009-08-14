@@ -109,6 +109,23 @@ ResourceHandleManager* ResourceHandleManager::sharedInstance()
     return sharedInstance;
 }
 
+static void handleLocalReceiveResponse (CURL* handle, ResourceHandle* job, ResourceHandleInternal* d)
+{
+    // since the code in headerCallback will not have run for local files
+    // the code to set the URL and fire didReceiveResponse is never run,
+    // which means the ResourceLoader's response does not contain the URL.
+    // Run the code here for local files to resolve the issue.
+    // TODO: See if there is a better approach for handling this.
+     const char* hdr;
+     CURLcode err = curl_easy_getinfo(handle, CURLINFO_EFFECTIVE_URL, &hdr);
+     ASSERT(CURLE_OK == err);
+     d->m_response.setURL(KURL(hdr));
+     if (d->client())
+         d->client()->didReceiveResponse(job, d->m_response);
+     d->m_response.setResponseFired(true);
+}
+
+
 // called with data after all headers have been processed via headerCallback
 static size_t writeCallback(void* ptr, size_t size, size_t nmemb, void* data)
 {
@@ -133,19 +150,8 @@ static size_t writeCallback(void* ptr, size_t size, size_t nmemb, void* data)
     if (CURLE_OK == err && httpCode >= 300 && httpCode < 400)
         return totalSize;
 
-    // since the code in headerCallback will not have run for local files
-    // the code to set the URL and fire didReceiveResponse is never run,
-    // which means the ResourceLoader's response does not contain the URL.
-    // Run the code here for local files to resolve the issue.
-    // TODO: See if there is a better approach for handling this.
-    if (!d->m_response.responseFired()) {
-        const char* hdr;
-        err = curl_easy_getinfo(h, CURLINFO_EFFECTIVE_URL, &hdr);
-        d->m_response.setURL(KURL(hdr));
-        if (d->client())
-            d->client()->didReceiveResponse(job, d->m_response);
-        d->m_response.setResponseFired(true);
-    }
+    if (!d->m_response.responseFired())
+       handleLocalReceiveResponse(h, job, d);
 
     if (d->client())
         d->client()->didReceiveData(job, static_cast<char*>(ptr), totalSize, 0);
@@ -243,6 +249,7 @@ size_t readCallback(void* ptr, size_t size, size_t nmemb, void* data)
 {
     ResourceHandle* job = static_cast<ResourceHandle*>(data);
     ResourceHandleInternal* d = job->getInternal();
+
     if (d->m_cancelled)
         return 0;
 
@@ -332,6 +339,9 @@ void ResourceHandleManager::downloadTimerCallback(Timer<ResourceHandleManager>* 
             continue;
 
         if (CURLE_OK == msg->data.result) {
+            if (!d->m_response.responseFired())
+                handleLocalReceiveResponse(d->m_handle, job, d);
+
             if (d->client())
                 d->client()->didFinishLoading(job);
         } else {
