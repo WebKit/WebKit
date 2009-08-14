@@ -178,7 +178,7 @@ static inline void appendToVarDeclarationList(JSGlobalData* globalData, ParserAr
 
 %{
 
-static inline void setStatementLocation(StatementNode* statement, const YYLTYPE& start, const YYLTYPE& end)
+template <typename T> inline void setStatementLocation(StatementNode* statement, const T& start, const T& end)
 {
     statement->setLoc(start.first_line, end.last_line);
 }

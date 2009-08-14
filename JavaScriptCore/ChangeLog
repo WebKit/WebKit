@@ -1,5 +1,12 @@
 2009-08-13  Darin Adler  <darin@apple.com>
 
+        Fix Tiger build.
+
+        * parser/Grammar.y: Use a template function so we can compile
+        setStatementLocation even if it comes before YYLTYPE is defined.
+
+2009-08-13  Darin Adler  <darin@apple.com>
+
         Reviewed by George Staikos.
 
         Too much use of void* in Grammar.y
