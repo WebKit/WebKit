@@ -1,1 +1,0 @@
-You should NOT have seen an unload alert appear. This test attaches an unload handler via document.body.onunload. This works in Internet Explorer because JS properties are linked directly to HTML attributes, and the onunload attribute has this behavior. But it should not work in browsers that don't have this quirk.

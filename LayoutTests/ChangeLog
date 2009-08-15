@@ -1,5 +1,13 @@
 2009-08-15  Sam Weinig  <sam@webkit.org>
 
+        Remove no longer correct and now failing test.  document.body.onunload
+        has now been spec'ed in HTML5. 
+
+        * fast/events/onunload-body-property-expected.txt: Removed.
+        * fast/events/onunload-body-property.html: Removed.
+
+2009-08-15  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Dan Bernstein.
 
         Setting attribute event listeners to the body does not set them on the window
