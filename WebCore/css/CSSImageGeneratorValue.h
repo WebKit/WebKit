@@ -57,8 +57,11 @@ protected:
     Image* getImage(RenderObject*, const IntSize&);
     void putImage(const IntSize&, PassRefPtr<Image>);
 
+    typedef pair<IntSize, int> SizeCountPair;
+    typedef HashMap<RenderObject*, SizeCountPair> RenderObjectSizeCountMap;
+
     HashCountedSet<IntSize> m_sizes; // A count of how many times a given image size is in use.
-    HashMap<RenderObject*, IntSize> m_clients; // A map from RenderObjects to image sizes.
+    RenderObjectSizeCountMap m_clients; // A map from RenderObjects (with entry count) to image sizes.
     HashMap<IntSize, RefPtr<Image> > m_images; // A cache of Image objects by image size.
     
     RefPtr<StyleGeneratedImage> m_image;

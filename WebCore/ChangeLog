@@ -1,3 +1,26 @@
+2009-08-14  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Fix an assertion when bringing up the Inspector.
+        https://bugs.webkit.org/show_bug.cgi?id=28318
+        
+        The fix for bug 28295 assumed that image clients count the number of times
+        addClient/removeClient is called. That was true for CachedResource clients,
+        but not StyleGeneratedImage clients, which pass the call onto CSSImageGeneratorValue.
+        
+        Fix by making CSSImageGeneratorValue count the number of times a client is
+        added/removed.
+
+        * css/CSSCanvasValue.cpp:
+        (WebCore::CSSCanvasValue::canvasChanged):
+        (WebCore::CSSCanvasValue::canvasResized):
+        * css/CSSImageGeneratorValue.cpp:
+        (WebCore::CSSImageGeneratorValue::addClient):
+        (WebCore::CSSImageGeneratorValue::removeClient):
+        (WebCore::CSSImageGeneratorValue::getImage):
+        * css/CSSImageGeneratorValue.h:
+
 2009-08-14  Brent Fulgham  <bfulgham@webkit.org>
 
         Reviewed by Kevin Ollivier.

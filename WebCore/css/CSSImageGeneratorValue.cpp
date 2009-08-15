@@ -49,24 +49,42 @@ void CSSImageGeneratorValue::addClient(RenderObject* renderer, const IntSize& si
     ref();
     if (!size.isEmpty())
         m_sizes.add(size);
-    m_clients.add(renderer, size);
+    
+    RenderObjectSizeCountMap::iterator it = m_clients.find(renderer);
+    if (it == m_clients.end())
+        m_clients.add(renderer, SizeCountPair(size, 1));
+    else {
+        SizeCountPair& sizeCount = it->second;
+        ++sizeCount.second;
+    }
 }
 
 void CSSImageGeneratorValue::removeClient(RenderObject* renderer)
 {
-    IntSize size = m_clients.get(renderer);
+    RenderObjectSizeCountMap::iterator it = m_clients.find(renderer);
+    ASSERT(it != m_clients.end());
+
+    SizeCountPair& sizeCount = it->second;
+    IntSize size = sizeCount.first;
     if (!size.isEmpty()) {
         m_sizes.remove(size);
         if (!m_sizes.contains(size))
             m_images.remove(size);
     }
-    m_clients.remove(renderer);
+    
+    if (!--sizeCount.second)
+        m_clients.remove(renderer);
+
     deref();
 }
 
 Image* CSSImageGeneratorValue::getImage(RenderObject* renderer, const IntSize& size)
 {
-    IntSize oldSize = m_clients.get(renderer);
+    RenderObjectSizeCountMap::iterator it = m_clients.find(renderer);
+    ASSERT(it != m_clients.end());
+
+    SizeCountPair& sizeCount = it->second;
+    IntSize oldSize = sizeCount.first;
     if (oldSize != size) {
         removeClient(renderer);
         addClient(renderer, size);
