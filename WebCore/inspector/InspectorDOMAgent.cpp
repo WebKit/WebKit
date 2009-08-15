@@ -231,7 +231,7 @@ void InspectorDOMAgent::discardBindings()
 Node* InspectorDOMAgent::nodeForId(long id)
 {
     if (!id)
-        return mainFrameDocument();
+        return 0;
 
     HashMap<long, Node*>::iterator it = m_idToNode.find(id);
     if (it != m_idToNode.end())

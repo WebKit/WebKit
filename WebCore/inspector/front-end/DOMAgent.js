@@ -58,10 +58,12 @@ WebInspector.DOMNode = function(doc, payload) {
     this.style = null;
     this._matchedCSSRules = [];
 
-    if (this.nodeType == Node.DOCUMENT_NODE)
-        this.ownerDocument.documentElement = this;
-    if (this.nodeType == Node.ELEMENT_NODE && this.nodeName == "BODY")
-        this.ownerDocument.body = this;
+    if (this.nodeType == Node.ELEMENT_NODE) {
+        if (this.nodeName == "HTML")
+            this.ownerDocument.documentElement = this;
+        if (this.nodeName == "BODY")
+            this.ownerDocument.body = this;
+    }
 }
 
 WebInspector.DOMNode.prototype = {

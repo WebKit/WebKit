@@ -61,7 +61,8 @@ WebInspector.ElementsPanel = function()
             InspectorController.toggleNodeSearch();
             this.panel.nodeSearchButton.removeStyleClass("toggled-on");
         }
-        InspectorController.addInspectedNode(this._focusedDOMNode.id, function() {});
+        if (this._focusedDOMNode)
+            InspectorController.addInspectedNode(this._focusedDOMNode.id, function() {});
     };
 
     this.contentElement.appendChild(this.treeOutline.element);
