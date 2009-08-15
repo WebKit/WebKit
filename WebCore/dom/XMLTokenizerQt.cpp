@@ -692,7 +692,7 @@ void XMLTokenizer::parseCdata()
 {
     exitText();
 
-    RefPtr<Node> newNode = new CDATASection(m_doc, m_stream.text());
+    RefPtr<Node> newNode = CDATASection::create(m_doc, m_stream.text());
     if (!m_currentNode->addChild(newNode.get()))
         return;
     if (m_view && !newNode->attached())
@@ -703,7 +703,7 @@ void XMLTokenizer::parseComment()
 {
     exitText();
 
-    RefPtr<Node> newNode = new Comment(m_doc, m_stream.text());
+    RefPtr<Node> newNode = Comment::create(m_doc, m_stream.text());
     m_currentNode->addChild(newNode.get());
     if (m_view && !newNode->attached())
         newNode->attach();

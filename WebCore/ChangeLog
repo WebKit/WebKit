@@ -1,3 +1,10 @@
+2009-08-15  Darin Adler  <darin@apple.com>
+
+        Fix Qt build.
+
+        * dom/XMLTokenizerQt.cpp: Use create functions instead of calling new
+        directly to make CDATASection and Comment nodes.
+
 2009-08-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.
