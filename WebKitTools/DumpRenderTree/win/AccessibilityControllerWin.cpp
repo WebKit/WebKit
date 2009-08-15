@@ -43,8 +43,7 @@ AccessibilityController::AccessibilityController()
 
 AccessibilityController::~AccessibilityController()
 {
-    if (m_focusEventHook)
-        UnhookWinEvent(m_focusEventHook);
+    setLogFocusEvents(false);
 }
 
 AccessibilityUIElement AccessibilityController::focusedElement()
@@ -112,9 +111,16 @@ static void CALLBACK logFocusEventProc(HWINEVENTHOOK hWinEventHook, DWORD event,
     printf("Received focus event for object '%S'.\n", name.c_str());
 }
 
-void AccessibilityController::logFocusEvents()
+void AccessibilityController::setLogFocusEvents(bool logFocusEvents)
 {
-    ASSERT(!m_focusEventHook);
+    if (!!m_focusEventHook == logFocusEvents)
+        return;
+
+    if (!logFocusEvents) {
+        UnhookWinEvent(m_focusEventHook);
+        m_focusEventHook = 0;
+        return;
+    }
 
     // Ensure that accessibility is initialized for the WebView by querying for
     // the root accessible object.

@@ -55,7 +55,7 @@ void AccessibilityController::makeWindowObject(JSContextRef context, JSObjectRef
 static JSValueRef logFocusEventsCallback(JSContextRef ctx, JSObjectRef, JSObjectRef thisObject, size_t, const JSValueRef[], JSValueRef*)
 {
     AccessibilityController* controller = static_cast<AccessibilityController*>(JSObjectGetPrivate(thisObject));
-    controller->logFocusEvents();
+    controller->setLogFocusEvents(true);
     return JSValueMakeUndefined(ctx);
 }
 
@@ -79,4 +79,9 @@ JSClassRef AccessibilityController::getJSClass()
 
     static JSClassRef accessibilityControllerClass = JSClassCreate(&classDefinition);
     return accessibilityControllerClass;
+}
+
+void AccessibilityController::resetToConsistentState()
+{
+    setLogFocusEvents(false);
 }

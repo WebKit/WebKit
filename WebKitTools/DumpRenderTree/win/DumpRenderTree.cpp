@@ -757,6 +757,8 @@ static void resetWebViewToConsistentStateBeforeTesting()
     webViewPrivate->clearMainFrameName();
 
     sharedUIDelegate->resetUndoManager();
+
+    sharedFrameLoadDelegate->resetToConsistentState();
 }
 
 static void runTest(const string& testPathOrURL)

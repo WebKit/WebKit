@@ -1,3 +1,59 @@
+2009-08-15  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Fix layout test failures after r47312.
+
+        Reviewed by Cameron Zwarich.
+
+        * DumpRenderTree/AccessibilityController.h:
+        Replaced logFocusEvents() with setLogFocusEvents(), which takes a
+        boolean argument to turn logging of focus events on or off.
+        Added a function to reset the AccessibilityController to a consistent
+        state.
+
+        * DumpRenderTree/AccessibilityController.cpp:
+        (logFocusEventsCallback):
+        Call setLogFocusEvents() to enable logging.
+        (AccessibilityController::resetToConsistentState):
+        Call setLogFocusEvents() to disable logging.
+
+        * DumpRenderTree/gtk/AccessibilityControllerGtk.cpp:
+        (AccessibilityController::setLogFocusEvents):
+        Update stub.
+
+        * DumpRenderTree/mac/AccessibilityControllerMac.mm:
+        (AccessibilityController::setLogFocusEvents):
+        Update stub.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebViewToConsistentStateBeforeTesting):
+        Call the FrameLoadDelegate's resetToConsistentState method.
+
+        * DumpRenderTree/mac/FrameLoadDelegate.h:
+        Declare the resetToConsistentState method.
+
+        * DumpRenderTree/mac/FrameLoadDelegate.mm:
+        (-[FrameLoadDelegate resetToConsistentState]):
+        Call the AccessibilityController's resetToConsistentState() function.
+
+        * DumpRenderTree/win/AccessibilityControllerWin.cpp:
+        (AccessibilityController::~AccessibilityController):
+        Turn off focus event logging when the controller is destroyed.
+        (AccessibilityController::setLogFocusEvents):
+        If the caller passes false, unhook the focus event, and clear
+        m_focusEventHook.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (resetWebViewToConsistentStateBeforeTesting):
+        Call the FrameLoadDelegate's resetToConsistentState function.
+
+        * DumpRenderTree/win/FrameLoadDelegate.h:
+        Declare the resetToConsistentState() function.
+
+        * DumpRenderTree/win/FrameLoadDelegate.cpp:
+        (FrameLoadDelegate::resetToConsistentState):
+        Call the AccessibilityController's resetToConsistentState() function.
+
+
 2009-08-14  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Add a mechanism for logging MSAA focus events.

@@ -36,4 +36,7 @@ class GCController;
     AccessibilityController* accessibilityController;
     GCController* gcController;
 }
+
+- (void)resetToConsistentState;
+
 @end
