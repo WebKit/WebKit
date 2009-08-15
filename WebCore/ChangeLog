@@ -1,3 +1,72 @@
+2009-08-13  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Part of <rdar://problem/6218721> No MSAA focus events fired for Webkit
+        nightly (20866)
+
+        https://bugs.webkit.org/show_bug.cgi?id=20866
+
+        Reviewed by Oliver Hunt.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::AXObjectCache):
+        Changed to take a pointer to its owner document. This is used by
+        AXObjectCache::handleFocusedUIElementChanged().
+        (WebCore::AXObjectCache::focusedUIElementForPage):
+        Code moved from AccessibilityRenderObject::focusedUIElement(). Modified
+        to be a static function and to take a pointer to a Page.
+        (WebCore::AXObjectCache::platformGenerateAXID):
+        Moved the code to generate the next AXID from getAXID() to here. Added
+        a #if to make this non-WIN only, because Windows has its own
+        implementation.
+        (WebCore::AXObjectCache::getAXID):
+        Ensure that we generate a positive AXID, ranging from 1 to LONG_MAX.
+
+        * accessibility/AXObjectCache.h:
+        Add a declaration for Document and Page. Removed the declaration of
+        AccessibilityObject, because we include the header. Reordered the
+        declaration of Node alphabetically. Moved the typedef for AXID to
+        AccessibilityObject. Removed some trailing whitespace. Added a member
+        variable to hold a pointer to the owner Document.
+        (WebCore::AXObjectCache::AXObjectCache):
+        Changed to take a pointer to its owner Document.
+        (WebCore::AXObjectCache::focusedUIElementForPage):
+        Added; code moved from AccessiblityRenderObject::focusedUIElement().
+        Returns the focused element with respect to accessibility.
+        (WebCore::AXObjectCache::platformGenerateAXID):
+        Declare a function to generate an AXID.
+        (WebCore::AXObjectCache::objectFromAXID):
+        Return the AccessibilityObject with the given AXID.
+
+        * accessibility/AccessibilityObject.h:
+        Moved the typedef for AXID from AXObjectCache to here. Made the m_id
+        member use the typedef.
+        (WebCore::AccessibilityObject::axObjectID):
+        Changed the return type to use the typedef.
+        (WebCore::AccessibilityObject::setAXObjectID):
+        Changed the argument type to use the typedef.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        Removed some unneeded #includes.
+        (WebCore::AccessibilityRenderObject::focusedUIElement):
+        Moved the code to AXObjectCache::focusedUIElementForPage(), which we now
+        call.
+
+        * accessibility/win/AXObjectCacheWin.cpp:
+        (WebCore::AXObjectCache::platformGenerateAXID):
+        Ensure that we generate an AXID that is in the range 1 to LONG_MAX.
+        (WebCore::AXObjectCache::handleFocusedUIElementChanged):
+        If the Document has no Page, return. If the Page has not focused
+        element (respecting accessibility), return. Assert that the
+        accessibility of the focused element is not ignored, and that the
+        object's AXID will be negative and fit into a LONG when negated.
+        Broadcast a focus event for the object.
+
+        * dom/Document.cpp:
+        (WebCore::Document::axObjectCache):
+        Pass this when creating the AXObjectCache.
+        (WebCore::Document::setFocusedNode):
+        Call AXObjectCache::handleFocusedUIElementChanged() on Windows.
+
 2009-08-14  Jiahua Huang  <jhuangjiahua@gmail.com>
 
         Reviewed by Jan Alonzo.

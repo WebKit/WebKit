@@ -91,6 +91,8 @@ class VisibleSelection;
 class String;
 class Widget;
 
+typedef unsigned AXID;
+
 enum AccessibilityRole {
     UnknownRole = 1,
     ButtonRole,
@@ -305,8 +307,8 @@ public:
     virtual PassRefPtr<Range> ariaSelectedTextDOMRange() const { return 0; }
 
     virtual AXObjectCache* axObjectCache() const { return 0; }
-    unsigned axObjectID() const { return m_id; }
-    void setAXObjectID(unsigned axObjectID) { m_id = axObjectID; }
+    AXID axObjectID() const { return m_id; }
+    void setAXObjectID(AXID axObjectID) { m_id = axObjectID; }
     
     static AccessibilityObject* anchorElementForNode(Node*);
     virtual Element* anchorElement() const { return 0; }
@@ -438,7 +440,7 @@ public:
     virtual void updateBackingStore() { }
     
 protected:
-    unsigned m_id;
+    AXID m_id;
     AccessibilityChildrenVector m_children;
     mutable bool m_haveChildren;
     AccessibilityRole m_role;

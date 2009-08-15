@@ -1,3 +1,16 @@
+2009-08-13  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Part of <rdar://problem/6218721> No MSAA focus events fired for Webkit
+        nightly (20866)
+
+        https://bugs.webkit.org/show_bug.cgi?id=20866
+
+        Reviewed by Oliver Hunt.
+
+        * AccessibleBase.cpp:
+        (AccessibleBase::getAccessibilityObjectForChild):
+        If the child ID is negative, negate it and treat it as an AXID.
+
 2009-08-12  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben.

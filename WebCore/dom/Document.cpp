@@ -1467,7 +1467,7 @@ AXObjectCache* Document::axObjectCache() const
         return doc->axObjectCache();
     
     // this is the top-level document, so install a new cache
-    m_axObjectCache = new AXObjectCache;
+    m_axObjectCache = new AXObjectCache(this);
     return m_axObjectCache;
 }
 
@@ -2622,7 +2622,7 @@ bool Document::setFocusedNode(PassRefPtr<Node> newFocusedNode)
         }
     }
 
-#if PLATFORM(MAC) && !PLATFORM(CHROMIUM)
+#if (PLATFORM(MAC) || PLATFORM(WIN)) && !PLATFORM(CHROMIUM)
     if (!focusChangeBlocked && m_focusedNode && AXObjectCache::accessibilityEnabled())
         axObjectCache()->handleFocusedUIElementChanged();
 #elif PLATFORM(GTK)

@@ -43,8 +43,11 @@
 #include "AccessibilityTableColumn.h"
 #include "AccessibilityTableHeaderContainer.h"
 #include "AccessibilityTableRow.h"
-#include "InputElement.h"
+#include "FocusController.h"
+#include "Frame.h"
 #include "HTMLNames.h"
+#include "InputElement.h"
+#include "Page.h"
 #include "RenderObject.h"
 #include "RenderView.h"
 
@@ -57,8 +60,9 @@ using namespace HTMLNames;
 bool AXObjectCache::gAccessibilityEnabled = false;
 bool AXObjectCache::gAccessibilityEnhancedUserInterfaceEnabled = false;
 
-AXObjectCache::AXObjectCache()
+AXObjectCache::AXObjectCache(const Document* document)
     : m_notificationPostTimer(this, &AXObjectCache::notificationPostTimerFired)
+    , m_document(document)
 {
 }
 
@@ -71,6 +75,32 @@ AXObjectCache::~AXObjectCache()
         obj->detach();
         removeAXID(obj);
     }
+}
+
+AccessibilityObject* AXObjectCache::focusedUIElementForPage(const Page* page)
+{
+    // get the focused node in the page
+    Document* focusedDocument = page->focusController()->focusedOrMainFrame()->document();
+    Node* focusedNode = focusedDocument->focusedNode();
+    if (!focusedNode)
+        focusedNode = focusedDocument;
+
+    RenderObject* focusedNodeRenderer = focusedNode->renderer();
+    if (!focusedNodeRenderer)
+        return 0;
+
+    AccessibilityObject* obj = focusedNodeRenderer->document()->axObjectCache()->getOrCreate(focusedNodeRenderer);
+
+    if (obj->shouldFocusActiveDescendant()) {
+        if (AccessibilityObject* descendant = obj->activeDescendant())
+            obj = descendant;
+    }
+
+    // the HTML element, for example, is focusable but has an AX object that is ignored
+    if (obj->accessibilityIsIgnored())
+        obj = obj->parentObjectUnignored();
+
+    return obj;
 }
 
 AccessibilityObject* AXObjectCache::get(RenderObject* renderer)
@@ -213,6 +243,23 @@ void AXObjectCache::remove(RenderObject* renderer)
     m_renderObjectMapping.remove(renderer);
 }
 
+#if !PLATFORM(WIN)
+AXID AXObjectCache::platformGenerateAXID() const
+{
+    static AXID lastUsedID = 0;
+
+    // Generate a new ID.
+    AXID objID = lastUsedID;
+    do {
+        ++objID;
+    } while (objID == 0 || HashTraits<AXID>::isDeletedValue(objID) || m_idsInUse.contains(objID));
+
+    lastUsedID = objID;
+
+    return objID;
+}
+#endif
+
 AXID AXObjectCache::getAXID(AccessibilityObject* obj)
 {
     // check for already-assigned ID
@@ -221,15 +268,10 @@ AXID AXObjectCache::getAXID(AccessibilityObject* obj)
         ASSERT(m_idsInUse.contains(objID));
         return objID;
     }
-    
-    // generate a new ID
-    static AXID lastUsedID = 0;
-    objID = lastUsedID;
-    do
-        ++objID;
-    while (objID == 0 || HashTraits<AXID>::isDeletedValue(objID) || m_idsInUse.contains(objID));
+
+    objID = platformGenerateAXID();
+
     m_idsInUse.add(objID);
-    lastUsedID = objID;
     obj->setAXObjectID(objID);
     
     return objID;

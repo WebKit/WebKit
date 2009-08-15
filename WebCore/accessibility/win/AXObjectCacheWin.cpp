@@ -28,6 +28,10 @@
 #include "AXObjectCache.h"
 
 #include "AccessibilityObject.h"
+#include "Document.h"
+#include "Page.h"
+
+using namespace std;
 
 namespace WebCore {
 
@@ -50,8 +54,43 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject*, const String&
 {
 }
 
+AXID AXObjectCache::platformGenerateAXID() const
+{
+    static AXID lastUsedID = 0;
+
+    // Generate a new ID. Windows accessibility relies on a positive AXID,
+    // ranging from 1 to LONG_MAX.
+    AXID objID = lastUsedID;
+    do {
+        ++objID;
+        objID %= std::numeric_limits<LONG>::max();
+    } while (objID == 0 || HashTraits<AXID>::isDeletedValue(objID) || m_idsInUse.contains(objID));
+
+    ASSERT(objID >= 1 && objID <= std::numeric_limits<LONG>::max());
+
+    lastUsedID = objID;
+
+    return objID;
+}
+
 void AXObjectCache::handleFocusedUIElementChanged()
 {
+    Page* page = m_document->page();
+    if (!page || !page->chrome()->platformWindow())
+        return;
+
+    AccessibilityObject* focusedObject = focusedUIElementForPage(page);
+    if (!focusedObject)
+        return;
+
+    ASSERT(!focusedObject->accessibilityIsIgnored());
+    ASSERT(focusedObject->axObjectID() >= 1 && focusedObject->axObjectID() <= numeric_limits<LONG>::max());
+
+    // Windows will end up calling get_accChild() on the root accessible
+    // object for the WebView, passing the child ID that we specify below. We
+    // negate the AXID so we know that the caller is passing the ID of an
+    // element, not the index of a child element.
+    NotifyWinEvent(EVENT_OBJECT_FOCUS, page->chrome()->platformWindow(), OBJID_CLIENT, -static_cast<LONG>(focusedObject->axObjectID()));
 }
 
 } // namespace WebCore
