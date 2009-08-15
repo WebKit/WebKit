@@ -1,5 +1,13 @@
 2009-08-14  Jon Honeycutt  <jhoneycutt@apple.com>
 
+        Remove two tests from the skipped list that don't exist.
+
+        Rubber-stamped by Mark Rowe.
+
+        * platform/win/Skipped:
+
+2009-08-14  Jon Honeycutt  <jhoneycutt@apple.com>
+
         Add a layout test for <rdar://problem/6218721> No MSAA focus events
         fired for Webkit nightly (20866)
 
