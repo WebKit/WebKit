@@ -41,7 +41,7 @@ module html {
         attribute [DontEnum] EventListener onstorage;
         attribute [DontEnum] EventListener onunload;
 
-        // Overrides of Element attributes.
+        // Overrides of Element attributes (left in for completeness).
         // attribute [DontEnum] EventListener onblur;
         // attribute [DontEnum] EventListener onerror;
         // attribute [DontEnum] EventListener onfocus;
@@ -50,7 +50,6 @@ module html {
         // Not implemented yet.
         // attribute [DontEnum] EventListener onafterprint;
         // attribute [DontEnum] EventListener onbeforeprint;
-        // attribute [DontEnum] EventListener onhashchange;
         // attribute [DontEnum] EventListener onpopstate;
         // attribute [DontEnum] EventListener onredo;
         // attribute [DontEnum] EventListener onundo;

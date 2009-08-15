@@ -1,3 +1,12 @@
+2009-08-15  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Fix up some IDL comments.
+
+        * html/HTMLBodyElement.idl:
+        * html/HTMLFrameSetElement.idl:
+
 2009-08-15  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         Reviewed by Sam Weinig.
