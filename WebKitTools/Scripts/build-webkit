@@ -46,7 +46,7 @@ my $minimal = 0;
 my $makeArgs;
 
 my ($threeDCanvasSupport, $threeDRenderingSupport, $channelMessagingSupport, $databaseSupport, $datagridSupport, $domStorageSupport,
-    $filtersSupport, $geolocationSupport, $gnomeKeyringSupport, $iconDatabaseSupport,
+    $eventsourceSupport, $filtersSupport, $geolocationSupport, $gnomeKeyringSupport, $iconDatabaseSupport,
     $javaScriptDebuggerSupport, $offlineWebApplicationSupport, $rubySupport, $sharedWorkersSupport, 
     $svgSupport, $svgAnimationSupport, $svgAsImageSupport, $svgDOMObjCBindingsSupport, $svgFontsSupport,
     $svgForeignObjectSupport, $svgUseSupport, $videoSupport, $webSocketsSupport, $wmlSupport, $wcssSupport, $xhtmlmpSupport, $workersSupport,
@@ -73,6 +73,9 @@ my @features = (
           
     { option => "dom-storage", desc => "Toggle DOM Storage Support",
       define => "ENABLE_DOM_STORAGE", default => 1, value => \$domStorageSupport },
+
+    { option => "eventsource", desc => "Toggle server-sent events support",
+      define => "ENABLE_EVENTSOURCE", default => 1, value => \$eventsourceSupport },
 
     { option => "filters", desc => "Toggle Filters support",
       define => "ENABLE_FILTERS", default => 0, value => \$filtersSupport },

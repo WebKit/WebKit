@@ -108,6 +108,7 @@ contains(DEFINES, ENABLE_SINGLE_THREADED=1) {
 
 !contains(DEFINES, ENABLE_JAVASCRIPT_DEBUGGER=.): DEFINES += ENABLE_JAVASCRIPT_DEBUGGER=1
 !contains(DEFINES, ENABLE_DATABASE=.): DEFINES += ENABLE_DATABASE=1
+!contains(DEFINES, ENABLE_EVENTSOURCE=.): DEFINES += ENABLE_EVENTSOURCE=1
 !contains(DEFINES, ENABLE_OFFLINE_WEB_APPLICATIONS=.): DEFINES += ENABLE_OFFLINE_WEB_APPLICATIONS=1
 !contains(DEFINES, ENABLE_DOM_STORAGE=.): DEFINES += ENABLE_DOM_STORAGE=1
 !contains(DEFINES, ENABLE_ICONDATABASE=.): DEFINES += ENABLE_ICONDATABASE=1
@@ -441,6 +442,7 @@ IDL_BINDINGS += \
     page/Coordinates.idl \
     page/DOMSelection.idl \
     page/DOMWindow.idl \
+    page/EventSource.idl \
     page/Geolocation.idl \
     page/Geoposition.idl \
     page/History.idl \
@@ -657,6 +659,8 @@ SOURCES += \
     bindings/js/JSDOMWindowShell.cpp \
     bindings/js/JSElementCustom.cpp \
     bindings/js/JSEventCustom.cpp \
+    bindings/js/JSEventSourceConstructor.cpp \
+    bindings/js/JSEventSourceCustom.cpp \
     bindings/js/JSEventTarget.cpp \
     bindings/js/JSGeolocationCustom.cpp \
     bindings/js/JSHTMLAllCollection.cpp \
@@ -1089,6 +1093,7 @@ SOURCES += \
     page/NavigatorBase.cpp \
     page/DragController.cpp \
     page/EventHandler.cpp \
+    page/EventSource.cpp \
     page/FocusController.cpp \
     page/Frame.cpp \
     page/FrameTree.cpp \
@@ -1336,6 +1341,7 @@ HEADERS += \
     bindings/js/JSDOMWindowCustom.h \
     bindings/js/JSDOMWindowShell.h \
     bindings/js/JSEventListener.h \
+    bindings/js/JSEventSourceConstructor.h \
     bindings/js/JSEventTarget.h \
     bindings/js/JSHistoryCustom.h \
     bindings/js/JSHTMLAllCollection.h \
@@ -1761,6 +1767,7 @@ HEADERS += \
     page/DOMWindow.h \
     page/DragController.h \
     page/EventHandler.h \
+    page/EventSource.h \
     page/FocusController.h \
     page/Frame.h \
     page/FrameTree.h \
@@ -2437,6 +2444,10 @@ contains(DEFINES, ENABLE_DASHBOARD_SUPPORT=0) {
 
 contains(DEFINES, ENABLE_DATAGRID=1) {
     FEATURE_DEFINES_JAVASCRIPT += ENABLE_DATAGRID=1
+}
+
+contains(DEFINES, ENABLE_EVENTSOURCE=1) {
+    FEATURE_DEFINES_JAVASCRIPT += ENABLE_EVENTSOURCE=1
 }
 
 contains(DEFINES, ENABLE_SQLITE=1) {

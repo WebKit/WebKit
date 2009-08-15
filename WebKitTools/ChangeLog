@@ -1,3 +1,12 @@
+2009-08-14  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        Reviewed by Sam Weinig.
+
+        Added EventSource to the build script (default on).
+        https://bugs.webkit.org/show_bug.cgi?id=14997 
+
+        * Scripts/build-webkit:
+
 2009-08-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed.

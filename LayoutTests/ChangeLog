@@ -1,3 +1,38 @@
+2009-08-14  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        Reviewed by Sam Weinig.
+
+        Tests for EventSource.
+        https://bugs.webkit.org/show_bug.cgi?id=14997 
+
+        * fast/eventsource: Added.
+        * fast/eventsource/eventsource-attribute-listeners-expected.txt: Added.
+        * fast/eventsource/eventsource-attribute-listeners.html: Added.
+        * fast/eventsource/eventsource-constructor-expected.txt: Added.
+        * fast/eventsource/eventsource-constructor.html: Added.
+        * http/tests/eventsource: Added.
+        * http/tests/eventsource/eventsource-bad-mime-type-expected.txt: Added.
+        * http/tests/eventsource/eventsource-bad-mime-type.html: Added.
+        * http/tests/eventsource/eventsource-parse-event-stream-expected.txt: Added.
+        * http/tests/eventsource/eventsource-parse-event-stream.html: Added.
+        * http/tests/eventsource/eventsource-reconnect-expected.txt: Added.
+        * http/tests/eventsource/eventsource-reconnect.html: Added.
+        * http/tests/eventsource/eventsource-status-code-states-expected.txt: Added.
+        * http/tests/eventsource/eventsource-status-code-states.html: Added.
+        * http/tests/eventsource/resources: Added.
+        * http/tests/eventsource/resources/bad-mime-type.asis: Added.
+        * http/tests/eventsource/resources/event-stream.php: Added.
+        * http/tests/eventsource/resources/reconnect.php: Added.
+        * http/tests/eventsource/resources/simple-event-stream.asis: Added.
+        * http/tests/eventsource/resources/status-codes.php: Added.
+        * http/tests/eventsource/workers: Added.
+        * http/tests/eventsource/workers/eventsource-simple-expected.txt: Added.
+        * http/tests/eventsource/workers/eventsource-simple.html: Added.
+        * http/tests/eventsource/workers/resources: Added.
+        * http/tests/eventsource/workers/resources/simple-worker.js: Added.
+        (es.onmessage):
+        (es.onerror):
+
 2009-08-14  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Remove two tests from the skipped list that don't exist.

@@ -43,6 +43,10 @@
 #include "WorkerNavigator.h"
 #include <interpreter/Interpreter.h>
 
+#if ENABLE(EVENTSOURCE)
+#include "JSEventSourceConstructor.h"
+#endif
+
 using namespace JSC;
 
 namespace WebCore {
@@ -76,6 +80,13 @@ bool JSWorkerContext::getOwnPropertySlotDelegate(ExecState* exec, const Identifi
         return true;
     return false;
 }
+
+#if ENABLE(EVENTSOURCE)
+JSValue JSWorkerContext::eventSource(ExecState* exec) const
+{
+    return getDOMConstructor<JSEventSourceConstructor>(exec, this);
+}
+#endif
 
 JSValue JSWorkerContext::xmlHttpRequest(ExecState* exec) const
 {

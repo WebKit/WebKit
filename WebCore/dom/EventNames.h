@@ -73,6 +73,7 @@ namespace WebCore {
     macro(obsolete) \
     macro(offline) \
     macro(online) \
+    macro(open) \
     macro(overflowchanged) \
     macro(paste) \
     macro(readystatechange) \

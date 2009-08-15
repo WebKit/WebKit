@@ -73,6 +73,7 @@
 #include "JSErrorEvent.cpp"
 #include "JSEvent.cpp"
 #include "JSEventException.cpp"
+#include "JSEventSource.cpp"
 #include "JSFile.cpp"
 #include "JSFileList.cpp"
 #include "JSHistory.cpp"

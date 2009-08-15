@@ -86,6 +86,8 @@ This file contains the list of files needed to build WebCore.
         bindings/js/JSDocumentFragmentCustom.cpp
         bindings/js/JSElementCustom.cpp
         bindings/js/JSEventCustom.cpp
+        bindings/js/JSEventSourceConstructor.cpp
+        bindings/js/JSEventSourceCustom.cpp
         bindings/js/JSEventTarget.cpp
         bindings/js/JSGeolocationCustom.cpp
         bindings/js/JSHTMLAllCollection.cpp
@@ -285,6 +287,7 @@ This file contains the list of files needed to build WebCore.
         DerivedSources/WebCore/JSEntityReference.cpp
         DerivedSources/WebCore/JSErrorEvent.cpp
         DerivedSources/WebCore/JSEvent.cpp
+        DerivedSources/WebCore/JSEventSource.cpp
         DerivedSources/WebCore/JSEventException.cpp
         DerivedSources/WebCore/JSFile.cpp
         DerivedSources/WebCore/JSFileList.cpp
@@ -749,6 +752,7 @@ This file contains the list of files needed to build WebCore.
         page/DOMWindow.cpp
         page/DragController.cpp
         page/EventHandler.cpp
+        page/EventSource.cpp
         page/FocusController.cpp
         page/Frame.cpp
         page/FrameTree.cpp

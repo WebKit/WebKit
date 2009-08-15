@@ -242,6 +242,7 @@ IDL_BINDINGS += \
 	WebCore/page/Coordinates.idl \
 	WebCore/page/DOMSelection.idl \
 	WebCore/page/DOMWindow.idl \
+	WebCore/page/EventSource.idl \
 	WebCore/page/Geolocation.idl \
 	WebCore/page/Geoposition.idl \
 	WebCore/page/History.idl \
@@ -346,6 +347,9 @@ webcore_sources += \
 	WebCore/bindings/js/JSEventCustom.cpp \
 	WebCore/bindings/js/JSEventListener.cpp \
 	WebCore/bindings/js/JSEventListener.h \
+	WebCore/bindings/js/JSEventSourceConstructor.cpp \
+	WebCore/bindings/js/JSEventSourceConstructor.h \
+	WebCore/bindings/js/JSEventSourceCustom.cpp \
 	WebCore/bindings/js/JSEventTarget.cpp \
 	WebCore/bindings/js/JSEventTarget.h \
 	WebCore/bindings/js/JSGeolocationCustom.cpp \
@@ -1271,6 +1275,8 @@ webcore_sources += \
 	WebCore/page/EditorClient.h \
 	WebCore/page/EventHandler.cpp \
 	WebCore/page/EventHandler.h \
+	WebCore/page/EventSource.cpp \
+	WebCore/page/EventSource.h \
 	WebCore/page/FocusController.cpp \
 	WebCore/page/FocusController.h \
 	WebCore/page/FocusDirection.h \
@@ -2123,6 +2129,20 @@ else
 webcore_cppflags += -DENABLE_DATABASE=0
 
 endif # END ENABLE_DATABASE
+
+# ----
+# HTML5 server-sent events
+# ----
+if !ENABLE_EVENTSOURCE
+global_cppflags += -DENABLE_EVENTSOURCE=0
+endif
+
+if ENABLE_EVENTSOURCE
+FEATURE_DEFINES_JAVASCRIPT += ENABLE_EVENTSOURCE=1
+
+webcore_cppflags += \
+	-DENABLE_EVENTSOURCE=1
+endif # ENABLE_EVENTSOURCE
 
 # ----
 # HTML5 client-side session and persistent storage

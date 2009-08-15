@@ -1,3 +1,90 @@
+2009-08-15  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        Reviewed by Sam Weinig.
+
+        Added implementation of the EventSource object that enables
+        server-sent events from HTML5.
+        http://dev.w3.org/html5/eventsource/
+        https://bugs.webkit.org/show_bug.cgi?id=14997
+
+        Tests: fast/eventsource/eventsource-attribute-listeners.html
+               fast/eventsource/eventsource-constructor.html
+               http/tests/eventsource/eventsource-bad-mime-type.html
+               http/tests/eventsource/eventsource-parse-event-stream.html
+               http/tests/eventsource/eventsource-reconnect.html
+               http/tests/eventsource/eventsource-status-code-states.html
+               http/tests/eventsource/workers/eventsource-simple.html
+
+        * Configurations/FeatureDefines.xcconfig:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::eventSource):
+        * bindings/js/JSEventSourceConstructor.cpp: Added.
+        (WebCore::):
+        (WebCore::JSEventSourceConstructor::JSEventSourceConstructor):
+        (WebCore::constructEventSource):
+        (WebCore::JSEventSourceConstructor::getConstructData):
+        * bindings/js/JSEventSourceConstructor.h: Added.
+        (WebCore::JSEventSourceConstructor::classInfo):
+        * bindings/js/JSEventSourceCustom.cpp: Added.
+        (WebCore::JSEventSource::markChildren):
+        (WebCore::JSEventSource::addEventListener):
+        (WebCore::JSEventSource::removeEventListener):
+        * bindings/js/JSEventTarget.cpp:
+        (WebCore::toJS):
+        (WebCore::toEventTarget):
+        * bindings/js/JSWorkerContextCustom.cpp:
+        (WebCore::JSWorkerContext::eventSource):
+        * dom/EventNames.h:
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::toEventSource):
+        * dom/EventTarget.h:
+        * page/DOMWindow.idl:
+        * page/EventSource.cpp: Added.
+        (WebCore::EventSource::EventSource):
+        (WebCore::EventSource::~EventSource):
+        (WebCore::EventSource::connect):
+        (WebCore::EventSource::endRequest):
+        (WebCore::EventSource::scheduleReconnect):
+        (WebCore::EventSource::reconnectTimerFired):
+        (WebCore::EventSource::url):
+        (WebCore::EventSource::readyState):
+        (WebCore::EventSource::close):
+        (WebCore::EventSource::scriptExecutionContext):
+        (WebCore::EventSource::addEventListener):
+        (WebCore::EventSource::removeEventListener):
+        (WebCore::EventSource::dispatchEvent):
+        (WebCore::EventSource::didReceiveResponse):
+        (WebCore::EventSource::didReceiveData):
+        (WebCore::EventSource::didFinishLoading):
+        (WebCore::EventSource::didFail):
+        (WebCore::EventSource::didFailRedirectCheck):
+        (WebCore::EventSource::parseEventStream):
+        (WebCore::EventSource::parseEventStreamLine):
+        (WebCore::EventSource::dispatchGenericEvent):
+        (WebCore::EventSource::dispatchMessageEvent):
+        (WebCore::EventSource::stop):
+        * page/EventSource.h: Added.
+        (WebCore::EventSource::create):
+        (WebCore::EventSource::):
+        (WebCore::EventSource::setOnopen):
+        (WebCore::EventSource::onopen):
+        (WebCore::EventSource::setOnmessage):
+        (WebCore::EventSource::onmessage):
+        (WebCore::EventSource::setOnerror):
+        (WebCore::EventSource::onerror):
+        (WebCore::EventSource::toEventSource):
+        (WebCore::EventSource::eventListeners):
+        (WebCore::EventSource::refEventTarget):
+        (WebCore::EventSource::derefEventTarget):
+        * page/EventSource.idl: Added.
+        * workers/WorkerContext.idl:
+
 2009-08-15  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

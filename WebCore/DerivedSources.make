@@ -100,6 +100,7 @@ DOM_CLASSES = \
     Event \
     EventException \
     EventListener \
+    EventSource \
     EventTarget \
     File \
     FileList \

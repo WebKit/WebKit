@@ -1,3 +1,12 @@
+2009-08-15  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        Reviewed by Sam Weinig.
+
+        Added ENABLE_EVENTSOURCE flag.
+        https://bugs.webkit.org/show_bug.cgi?id=14997
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2009-08-14  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by NOBODY (build fix).

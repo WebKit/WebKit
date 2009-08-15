@@ -2779,6 +2779,54 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSEventSource.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Internal|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Cairo|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_Cairo|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSEventSource.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSFile.cpp"
 				>
 				<FileConfiguration
@@ -16813,6 +16861,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\page\EventSource.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\EventSource.h"
+				>
+			</File>
+			<File
 				RelativePath="..\page\FocusController.cpp"
 				>
 			</File>
@@ -28772,6 +28828,18 @@
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSEventListener.h"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSEventSourceConstructor.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSEventSourceConstructor.h"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSEventSourceCustom.cpp"
 					>
 				</File>
 				<File
