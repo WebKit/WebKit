@@ -25,6 +25,7 @@
 
 #include "Debugger.h"
 #include "Executable.h"
+#include "JSGlobalObject.h"
 #include "Nodes.h"
 #include "SourceProvider.h"
 #include <wtf/Forward.h>
@@ -149,13 +150,21 @@ namespace JSC {
         return body.release();
     }
 
-    template<class ASTNodeType, class CodeBlockType>
-    inline JSObject* TemplateExecutable<ASTNodeType, CodeBlockType>::parse(ExecState* exec, bool allowDebug)
+    inline JSObject* EvalExecutable::parse(ExecState* exec, bool allowDebug)
     {
         int errLine;
         UString errMsg;
-        m_node = exec->globalData().parser->parse<ASTNodeType>(exec, allowDebug ? exec->dynamicGlobalObject()->debugger() : 0, m_source, &errLine, &errMsg);
+        m_node = exec->globalData().parser->parse<EvalNode>(exec, allowDebug ? exec->dynamicGlobalObject()->debugger() : 0, m_source, &errLine, &errMsg);
+        if (!m_node)
+            return Error::create(exec, SyntaxError, errMsg, errLine, m_source.provider()->asID(), m_source.provider()->url());
+        return 0;
+    }
 
+    inline JSObject* ProgramExecutable::parse(ExecState* exec, bool allowDebug)
+    {
+        int errLine;
+        UString errMsg;
+        m_node = exec->globalData().parser->parse<ProgramNode>(exec, allowDebug ? exec->dynamicGlobalObject()->debugger() : 0, m_source, &errLine, &errMsg);
         if (!m_node)
             return Error::create(exec, SyntaxError, errMsg, errLine, m_source.provider()->asID(), m_source.provider()->url());
         return 0;

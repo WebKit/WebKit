@@ -38,8 +38,6 @@ namespace JSC {
         {
         }
 
-        JSObject* parse(ExecState* exec, bool allowDebug = true);
-
         void markAggregate(MarkStack& markStack)
         {
             m_node->markAggregate(markStack);
@@ -61,6 +59,8 @@ namespace JSC {
             : TemplateExecutable<EvalNode, EvalCodeBlock>(source)
         {
         }
+
+        JSObject* parse(ExecState* exec, bool allowDebug = true);
     };
 
     class ProgramExecutable : public TemplateExecutable<ProgramNode, ProgramCodeBlock> {
@@ -69,6 +69,8 @@ namespace JSC {
             : TemplateExecutable<ProgramNode, ProgramCodeBlock>(source)
         {
         }
+
+        JSObject* parse(ExecState* exec, bool allowDebug = true);
     };
 
 };

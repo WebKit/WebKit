@@ -1,5 +1,14 @@
 2009-08-14  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by NOBODY (build fix).
+
+        * parser/Parser.h:
+        (JSC::EvalExecutable::parse):
+        (JSC::ProgramExecutable::parse):
+        * runtime/Executable.h:
+
+2009-08-14  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Oliver Hunt.
 
         Remove AST nodes from use within the Runtime (outside of parsing), stage 1
