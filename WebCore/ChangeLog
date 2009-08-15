@@ -2,6 +2,41 @@
 
         Reviewed by Dan Bernstein.
 
+        Setting attribute event listeners to the body does not set them on the window
+        https://bugs.webkit.org/show_bug.cgi?id=28343
+
+        Tests: fast/dom/Window/HTMLBodyElement-window-eventListener-attributes.html
+               fast/dom/Window/HTMLFrameSetElement-window-eventListener-attributes.html
+
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::setOnblur): Use setWindowAttributeEventListener instead of setAttributeEventListener.
+        (WebCore::HTMLBodyElement::setOnerror): Ditto.
+        (WebCore::HTMLBodyElement::setOnfocus): Ditto.
+        (WebCore::HTMLBodyElement::setOnload): Ditto.
+        (WebCore::HTMLBodyElement::setOnbeforeunload): Ditto.
+        (WebCore::HTMLBodyElement::setOnmessage): Ditto.
+        (WebCore::HTMLBodyElement::setOnoffline): Ditto.
+        (WebCore::HTMLBodyElement::setOnonline): Ditto.
+        (WebCore::HTMLBodyElement::setOnresize): Ditto.
+        (WebCore::HTMLBodyElement::setOnstorage): Ditto.
+        (WebCore::HTMLBodyElement::setOnunload): Ditto.
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::setOnblur): Ditto.
+        (WebCore::HTMLFrameSetElement::setOnerror): Ditto.
+        (WebCore::HTMLFrameSetElement::setOnfocus): Ditto.
+        (WebCore::HTMLFrameSetElement::setOnload): Ditto.
+        (WebCore::HTMLFrameSetElement::setOnbeforeunload): Ditto.
+        (WebCore::HTMLFrameSetElement::setOnmessage): Ditto.
+        (WebCore::HTMLFrameSetElement::setOnoffline): Ditto.
+        (WebCore::HTMLFrameSetElement::setOnonline): Ditto.
+        (WebCore::HTMLFrameSetElement::setOnresize): Ditto.
+        (WebCore::HTMLFrameSetElement::setOnstorage): Ditto.
+        (WebCore::HTMLFrameSetElement::setOnunload): Ditto.
+
+2009-08-15  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
         Fix up some IDL comments.
 
         * html/HTMLBodyElement.idl:

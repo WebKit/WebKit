@@ -1,3 +1,17 @@
+2009-08-15  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Setting attribute event listeners to the body does not set them on the window
+        https://bugs.webkit.org/show_bug.cgi?id=28343
+
+        * fast/dom/Window/HTMLBodyElement-window-eventListener-attributes-expected.txt: Added.
+        * fast/dom/Window/HTMLBodyElement-window-eventListener-attributes.html: Added.
+        * fast/dom/Window/HTMLFrameSetElement-window-eventListener-attributes-expected.txt: Added.
+        * fast/dom/Window/HTMLFrameSetElement-window-eventListener-attributes.html: Added.
+        * fast/dom/Window/resources/HTMLBodyElement-window-eventListener-attributes.js: Added.
+        * fast/dom/Window/resources/HTMLFrameSetElement-window-eventListener-attributes.js: Added.
+
 2009-08-14  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         Reviewed by Sam Weinig.
