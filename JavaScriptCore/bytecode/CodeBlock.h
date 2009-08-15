@@ -250,9 +250,10 @@ namespace JSC {
 
     class CodeBlock : public FastAllocBase {
         friend class JIT;
-    public:
+    protected:
         CodeBlock(ScopeNode* ownerNode);
         CodeBlock(ScopeNode* ownerNode, CodeType, PassRefPtr<SourceProvider>, unsigned sourceOffset);
+    public:
         ~CodeBlock();
 
         void markAggregate(MarkStack&);
@@ -550,16 +551,16 @@ namespace JSC {
     // Program code is not marked by any function, so we make the global object
     // responsible for marking it.
 
-    class ProgramCodeBlock : public CodeBlock {
+    class GlobalCodeBlock : public CodeBlock {
     public:
-        ProgramCodeBlock(ScopeNode* ownerNode, CodeType codeType, JSGlobalObject* globalObject, PassRefPtr<SourceProvider> sourceProvider)
-            : CodeBlock(ownerNode, codeType, sourceProvider, 0)
+        GlobalCodeBlock(ScopeNode* ownerNode, CodeType codeType, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset, JSGlobalObject* globalObject)
+            : CodeBlock(ownerNode, codeType, sourceProvider, sourceOffset)
             , m_globalObject(globalObject)
         {
             m_globalObject->codeBlocks().add(this);
         }
 
-        ~ProgramCodeBlock()
+        ~GlobalCodeBlock()
         {
             if (m_globalObject)
                 m_globalObject->codeBlocks().remove(this);
@@ -571,10 +572,18 @@ namespace JSC {
         JSGlobalObject* m_globalObject; // For program and eval nodes, the global object that marks the constant pool.
     };
 
-    class EvalCodeBlock : public ProgramCodeBlock {
+    class ProgramCodeBlock : public GlobalCodeBlock {
+    public:
+        ProgramCodeBlock(ScopeNode* ownerNode, CodeType codeType, JSGlobalObject* globalObject, PassRefPtr<SourceProvider> sourceProvider)
+            : GlobalCodeBlock(ownerNode, codeType, sourceProvider, 0, globalObject)
+        {
+        }
+    };
+
+    class EvalCodeBlock : public GlobalCodeBlock {
     public:
         EvalCodeBlock(ScopeNode* ownerNode, JSGlobalObject* globalObject, PassRefPtr<SourceProvider> sourceProvider, int baseScopeDepth)
-            : ProgramCodeBlock(ownerNode, EvalCode, globalObject, sourceProvider)
+            : GlobalCodeBlock(ownerNode, EvalCode, sourceProvider, 0, globalObject)
             , m_baseScopeDepth(baseScopeDepth)
         {
         }
@@ -583,6 +592,22 @@ namespace JSC {
 
     private:
         int m_baseScopeDepth;
+    };
+
+    class FunctionCodeBlock : public CodeBlock {
+    public:
+        FunctionCodeBlock(ScopeNode* ownerNode, CodeType codeType, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset)
+            : CodeBlock(ownerNode, codeType, sourceProvider, sourceOffset)
+        {
+        }
+    };
+
+    class NativeCodeBlock : public CodeBlock {
+    public:
+        NativeCodeBlock(ScopeNode* ownerNode)
+            : CodeBlock(ownerNode)
+        {
+        }
     };
 
     inline Register& ExecState::r(int index)

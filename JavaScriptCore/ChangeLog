@@ -1,3 +1,73 @@
+2009-08-14  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Remove AST nodes from use within the Runtime (outside of parsing), stage 1
+        https://bugs.webkit.org/show_bug.cgi?id=28330
+
+        Remove the EvalNode and ProgramNode from use in the runtime.  They still exist
+        after this patch, but are hidden behind EvalExecutable and FunctionExecutable,
+        and are also still reachable behind CodeBlock::m_ownerNode.
+
+        The next step will be to beat back FunctionBodyNode in the same fashion.
+        Then remove the usage via CodeBlock, then only construct these nodes only on
+        demand during bytecode generation.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.h:
+        (JSC::GlobalCodeBlock::GlobalCodeBlock):
+        (JSC::GlobalCodeBlock::~GlobalCodeBlock):
+        (JSC::ProgramCodeBlock::ProgramCodeBlock):
+        (JSC::EvalCodeBlock::EvalCodeBlock):
+        (JSC::FunctionCodeBlock::FunctionCodeBlock):
+        (JSC::NativeCodeBlock::NativeCodeBlock):
+        * bytecode/EvalCodeCache.h:
+        (JSC::EvalCodeCache::get):
+        * debugger/Debugger.cpp:
+        (JSC::evaluateInGlobalCallFrame):
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::evaluate):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::callEval):
+        (JSC::Interpreter::execute):
+        * interpreter/Interpreter.h:
+        * parser/Nodes.cpp:
+        (JSC::FunctionBodyNode::createNativeThunk):
+        (JSC::FunctionBodyNode::generateBytecode):
+        (JSC::FunctionBodyNode::bytecodeForExceptionInfoReparse):
+        * parser/Parser.h:
+        (JSC::Parser::parse):
+        (JSC::Parser::reparse):
+        (JSC::Parser::parseFunctionFromGlobalCode):
+        (JSC::::parse):
+        * runtime/Completion.cpp:
+        (JSC::checkSyntax):
+        (JSC::evaluate):
+        * runtime/Error.cpp:
+        (JSC::throwError):
+        * runtime/Error.h:
+        * runtime/Executable.h: Added.
+        (JSC::TemplateExecutable::TemplateExecutable):
+        (JSC::TemplateExecutable::markAggregate):
+        (JSC::TemplateExecutable::sourceURL):
+        (JSC::TemplateExecutable::lineNo):
+        (JSC::TemplateExecutable::bytecode):
+        (JSC::TemplateExecutable::jitCode):
+        (JSC::EvalExecutable::EvalExecutable):
+        (JSC::ProgramExecutable::ProgramExecutable):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunction):
+        * runtime/FunctionConstructor.h:
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::numericCompareFunction):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::~JSGlobalObject):
+        (JSC::JSGlobalObject::markChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::codeBlocks):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncEval):
+
 2009-08-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

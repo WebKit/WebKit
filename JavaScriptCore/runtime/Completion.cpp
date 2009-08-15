@@ -41,30 +41,27 @@ Completion checkSyntax(ExecState* exec, const SourceCode& source)
 {
     JSLock lock(exec);
 
-    int errLine;
-    UString errMsg;
+    ProgramExecutable program(source);
+    JSObject* error = program.parse(exec);
+    if (error)
+        return Completion(Throw, error);
 
-    RefPtr<ProgramNode> progNode = exec->globalData().parser->parse<ProgramNode>(exec, exec->dynamicGlobalObject()->debugger(), source, &errLine, &errMsg);
-    if (!progNode)
-        return Completion(Throw, Error::create(exec, SyntaxError, errMsg, errLine, source.provider()->asID(), source.provider()->url()));
     return Completion(Normal);
 }
 
 Completion evaluate(ExecState* exec, ScopeChain& scopeChain, const SourceCode& source, JSValue thisValue)
 {
     JSLock lock(exec);
-    
-    int errLine;
-    UString errMsg;
-    RefPtr<ProgramNode> programNode = exec->globalData().parser->parse<ProgramNode>(exec, exec->dynamicGlobalObject()->debugger(), source, &errLine, &errMsg);
 
-    if (!programNode)
-        return Completion(Throw, Error::create(exec, SyntaxError, errMsg, errLine, source.provider()->asID(), source.provider()->url()));
+    ProgramExecutable program(source);
+    JSObject* error = program.parse(exec);
+    if (error)
+        return Completion(Throw, error);
 
     JSObject* thisObj = (!thisValue || thisValue.isUndefinedOrNull()) ? exec->dynamicGlobalObject() : thisValue.toObject(exec);
 
     JSValue exception;
-    JSValue result = exec->interpreter()->execute(programNode.get(), exec, scopeChain.node(), thisObj, &exception);
+    JSValue result = exec->interpreter()->execute(&program, exec, scopeChain.node(), thisObj, &exception);
 
     if (exception) {
         if (exception.isObject() && asObject(exception)->isWatchdogException())

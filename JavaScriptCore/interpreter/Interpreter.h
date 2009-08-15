@@ -42,12 +42,12 @@
 namespace JSC {
 
     class CodeBlock;
-    class EvalNode;
+    class EvalExecutable;
     class FunctionBodyNode;
     class InternalFunction;
     class JSFunction;
     class JSGlobalObject;
-    class ProgramNode;
+    class ProgramExecutable;
     class Register;
     class ScopeChainNode;
     class SamplingTool;
@@ -95,9 +95,9 @@ namespace JSC {
 
         bool isOpcode(Opcode);
         
-        JSValue execute(ProgramNode*, CallFrame*, ScopeChainNode*, JSObject* thisObj, JSValue* exception);
+        JSValue execute(ProgramExecutable*, CallFrame*, ScopeChainNode*, JSObject* thisObj, JSValue* exception);
         JSValue execute(FunctionBodyNode*, CallFrame*, JSFunction*, JSObject* thisObj, const ArgList& args, ScopeChainNode*, JSValue* exception);
-        JSValue execute(EvalNode* evalNode, CallFrame* exec, JSObject* thisObj, ScopeChainNode* scopeChain, JSValue* exception);
+        JSValue execute(EvalExecutable* evalNode, CallFrame* exec, JSObject* thisObj, ScopeChainNode* scopeChain, JSValue* exception);
 
         JSValue retrieveArguments(CallFrame*, JSFunction*) const;
         JSValue retrieveCaller(CallFrame*, InternalFunction*) const;
@@ -119,7 +119,7 @@ namespace JSC {
         void endRepeatCall(CallFrameClosure&);
         JSValue execute(CallFrameClosure&, JSValue* exception);
 
-        JSValue execute(EvalNode*, CallFrame*, JSObject* thisObject, int globalRegisterOffset, ScopeChainNode*, JSValue* exception);
+        JSValue execute(EvalExecutable*, CallFrame*, JSObject* thisObject, int globalRegisterOffset, ScopeChainNode*, JSValue* exception);
 
 #if USE(INTERPRETER)
         NEVER_INLINE bool resolve(CallFrame*, Instruction*, JSValue& exceptionValue);
