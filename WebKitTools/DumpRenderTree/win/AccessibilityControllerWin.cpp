@@ -32,13 +32,19 @@
 #include <WebCore/COMPtr.h>
 #include <WebKit/WebKit.h>
 #include <oleacc.h>
+#include <string>
+
+using namespace std;
 
 AccessibilityController::AccessibilityController()
+    : m_focusEventHook(0)
 {
 }
 
 AccessibilityController::~AccessibilityController()
 {
+    if (m_focusEventHook)
+        UnhookWinEvent(m_focusEventHook);
 }
 
 AccessibilityUIElement AccessibilityController::focusedElement()
@@ -81,4 +87,40 @@ AccessibilityUIElement AccessibilityController::rootElement()
         return 0;
 
     return rootAccessible;
+}
+
+static void CALLBACK logFocusEventProc(HWINEVENTHOOK hWinEventHook, DWORD event, HWND hwnd, LONG idObject, LONG idChild, DWORD, DWORD)
+{
+    ASSERT_ARG(event, event == EVENT_OBJECT_FOCUS);
+
+    // Get the accessible object for this event.
+    COMPtr<IAccessible> parentObject;
+
+    VARIANT vChild;
+    VariantInit(&vChild);
+
+    HRESULT hr = AccessibleObjectFromEvent(hwnd, idObject, idChild, &parentObject, &vChild);
+    ASSERT(SUCCEEDED(hr));
+
+    // Get the name of the focused element, and log it to stdout.
+    BSTR nameBSTR;
+    hr = parentObject->get_accName(vChild, &nameBSTR);
+    ASSERT(SUCCEEDED(hr));
+    wstring name(nameBSTR, ::SysStringLen(nameBSTR));
+    SysFreeString(nameBSTR);
+
+    printf("Received focus event for object '%S'.\n", name.c_str());
+}
+
+void AccessibilityController::logFocusEvents()
+{
+    ASSERT(!m_focusEventHook);
+
+    // Ensure that accessibility is initialized for the WebView by querying for
+    // the root accessible object.
+    rootElement();
+
+    m_focusEventHook = SetWinEventHook(EVENT_OBJECT_FOCUS, EVENT_OBJECT_FOCUS, GetModuleHandle(0), logFocusEventProc, GetCurrentProcessId(), 0, WINEVENT_INCONTEXT);
+
+    ASSERT(m_focusEventHook);
 }

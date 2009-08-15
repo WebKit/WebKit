@@ -27,6 +27,9 @@
 #define AccessibilityController_h
 
 #include <JavaScriptCore/JSObjectRef.h>
+#if PLATFORM(WIN)
+#include <windows.h>
+#endif
 
 class AccessibilityUIElement;
 
@@ -41,8 +44,14 @@ public:
     AccessibilityUIElement rootElement();
     AccessibilityUIElement focusedElement();
 
+    void logFocusEvents();
+
 private:
     static JSClassRef getJSClass();
+
+#if PLATFORM(WIN)
+    HWINEVENTHOOK m_focusEventHook;
+#endif
 };
 
 #endif // AccessibilityController_h

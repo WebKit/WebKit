@@ -1,3 +1,19 @@
+2009-08-14  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Add a layout test for <rdar://problem/6218721> No MSAA focus events
+        fired for Webkit nightly (20866)
+
+        https://bugs.webkit.org/show_bug.cgi?id=20866
+
+        Reviewed by Oliver Hunt.
+
+        * platform/win/Skipped:
+        Remove the blanket skipping of accessibility/, and add the individual
+        tests.
+
+        * platform/win/accessibility/focus-events-expected.txt: Added.
+        * platform/win/accessibility/focus-events.html: Added.
+
 2009-08-14  Dmitry Titov  <dimich@chromium.org>
 
         Not reviewed, adding new test to Skipped on gtk and Qt.

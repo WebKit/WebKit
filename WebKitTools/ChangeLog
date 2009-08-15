@@ -1,3 +1,44 @@
+2009-08-14  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Add a mechanism for logging MSAA focus events.
+
+        Part of <rdar://problem/6218721> No MSAA focus events fired for Webkit
+        nightly (20866)
+
+        https://bugs.webkit.org/show_bug.cgi?id=20866
+
+        Reviewed by Oliver Hunt.
+
+        * DumpRenderTree/AccessibilityController.cpp:
+        (logFocusEventsCallback):
+        Call the AccessibilityController's logFocusEvents() function.
+        (AccessibilityController::getJSClass):
+        Add a "logFocusEvents" function to the AccessibilityController's JS
+        class definition.
+
+        * DumpRenderTree/AccessibilityController.h:
+        On Windows, include windows.h, and add a member variable to hold the
+        handle to the event hook for focus events. Add a declaration for a
+        function that enables logging of focus events.
+
+        * DumpRenderTree/gtk/AccessibilityControllerGtk.cpp:
+        (AccessibilityController::logFocusEvents):
+        Stubbed.
+
+        * DumpRenderTree/mac/AccessibilityControllerMac.mm:
+        (AccessibilityController::logFocusEvents):
+        Stubbed.
+
+        * DumpRenderTree/win/AccessibilityControllerWin.cpp:
+        (AccessibilityController::AccessibilityController):
+        (AccessibilityController::~AccessibilityController):
+        If we hooked the focus event, unhook it.
+        (logFocusEventProc):
+        When we receive a focus event, get the accessible object for the event,
+        and log its name to stdout.
+        (AccessibilityController::logFocusEvents):
+        Setup the focus event hook to listen for events in the current process.
+
 2009-08-14  Eric Seidel  <eric@webkit.org>
 
         No review.  Fix 5-space indent to be 4-spaces.

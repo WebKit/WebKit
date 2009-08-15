@@ -355,8 +355,60 @@ http/tests/appcache
 http/tests/xmlhttprequest/access-control-basic-non-simple-allow-async.html
 http/tests/xmlhttprequest/access-control-basic-non-simple-allow.html
 
-# Still need to implement AccessibilityController for DumpRenderTree on Windows
-accessibility
+# Accessibility tests without results or with Mac-specific results.
+accessibility/aria-describedby-on-input.html
+accessibility/aria-disabled.html
+accessibility/aria-hidden.html
+accessibility/aria-label.html
+accessibility/aria-labelledby-on-input.html
+accessibility/aria-labelledby-stay-within.html
+accessibility/aria-link-supports-press.html
+accessibility/aria-readonly.html
+accessibility/aria-roles.html
+accessibility/aria-tables.html
+accessibility/button-press-action.html
+accessibility/canvas.html
+accessibility/editable-webarea-context-menu-point.html
+accessibility/iframe-bastardization.html
+accessibility/ignore-spacer-elements.html
+accessibility/image-map1.html
+accessibility/image-map2.html
+accessibility/img-aria-button-alt-tag.html
+accessibility/input-image-alt.html
+accessibility/input-slider.html
+accessibility/internal-link-anchors2.html
+accessibility/language-attribute.html
+accessibility/legend.html
+accessibility/listelements-detection.html
+accessibility/lists.html
+accessibility/nochildren-elements.html
+accessibility/non-data-table-cell-title-ui-element.html
+accessibility/non-native-image-crash.html
+accessibility/onclick-handlers.html
+accessibility/parent-element.html
+accessibility/placeholder.html
+accessibility/plugin.html
+accessibility/radio-button-checkbox-size.html
+accessibility/radio-button-group-members.html
+accessibility/radio-button-title-label.html
+accessibility/secure-textfield-title-ui.html
+accessibility/table-attributes.html
+accessibility/table-cell-spans.html
+accessibility/table-cells.html
+accessibility/table-detection.html
+accessibility/table-modification-crash.html
+accessibility/table-nofirstbody.html
+accessibility/table-notbody.html
+accessibility/table-one-cell.html
+accessibility/table-sections.html
+accessibility/table-with-aria-role.html
+accessibility/table-with-rules.html
+accessibility/textarea-insertion-point-line-number.html
+accessibility/textarea-line-for-index.html
+accessibility/textarea-selected-text-range.html
+accessibility/th-as-title-ui.html
+accessibility/transformed-element.html
+accessibility/visible-elements.html
 
 # No support for print-to-pdf in Windows DRT
 printing

@@ -1,0 +1,7 @@
+Received focus event for object 'field 1'.
+Received focus event for object 'field 2'.
+Received focus event for object 'field 3'.
+This tests that we broadcast focus events when the focused element changes.
+
+
+  
