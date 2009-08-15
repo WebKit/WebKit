@@ -211,22 +211,37 @@ WebInspector.ConsoleView.prototype = {
         if (!expressionString && !prefix)
             return;
 
-        if (!expressionString)
-            expressionString = "this";
-
         var reportCompletions = this._reportCompletions.bind(this, bestMatchOnly, completionsReadyCallback, dotNotation, bracketNotation, prefix);
         // Collect comma separated object properties for the completion.
+
+        if (!expressionString) {
+            if (WebInspector.panels.scripts && WebInspector.panels.scripts.paused) {
+                // Evaluate into properties in scope of the selected call frame.
+                reportCompletions(WebInspector.panels.scripts.variablesInSelectedCallFrame());
+                return;
+            } else {
+                expressionString = "this";
+            }
+        }
+
+        function parsingCallback(result, isException)
+        {
+            if (!isException)
+                result = JSON.parse(result);
+            reportCompletions(result, isException);
+        }
+
         this._evalInInspectedWindow(
             "(function() {" +
-                "var props = [];" +
-                "for (var prop in (" + expressionString + ")) props.push(prop);" +
+                "var props = {};" +
+                "for (var prop in (" + expressionString + ")) props[prop] = true;" +
                 ((!dotNotation && !bracketNotation) ?
                 "for (var prop in window._inspectorCommandLineAPI)" +
-                    "if (prop.charAt(0) !== '_') props.push(prop);"
+                    "if (prop.charAt(0) !== '_') props[prop] = true;"
                 : "") +
-                "return props.join(',');" +
+                "return JSON.stringify(props);" +
             "})()",
-            reportCompletions);
+            parsingCallback);
     },
 
     _reportCompletions: function(bestMatchOnly, completionsReadyCallback, dotNotation, bracketNotation, prefix, result, isException) {
@@ -241,8 +256,7 @@ WebInspector.ConsoleView.prototype = {
         }
 
         var results = [];
-        var properties = result.split(",");
-        properties.sort();
+        var properties = Object.sortedProperties(result);
 
         for (var i = 0; i < properties.length; ++i) {
             var property = properties[i];
