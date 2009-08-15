@@ -347,6 +347,14 @@ AC_ARG_ENABLE(database,
               [],[enable_database="yes"])
 AC_MSG_RESULT([$enable_database])
 
+# check whether to build with server-sent events support
+AC_MSG_CHECKING([whether to enable HTML5 server-sent events support])
+AC_ARG_ENABLE(eventsource,
+              AC_HELP_STRING([--enable-eventsource],
+                             [enable HTML5 server-sent events support [default=yes]]),
+              [],[enable_eventsource="yes"])
+AC_MSG_RESULT([$enable_eventsource])
+
 # check whether to build with icon database support
 AC_MSG_CHECKING([whether to enable icon database support])
 AC_ARG_ENABLE(icon_database,
@@ -683,6 +691,7 @@ AM_CONDITIONAL([ENABLE_JAVASCRIPT_DEBUGGER],[test "$enable_javascript_debugger" 
 AM_CONDITIONAL([ENABLE_OFFLINE_WEB_APPLICATIONS],[test "$enable_offline_web_applications" = "yes"])
 AM_CONDITIONAL([ENABLE_DOM_STORAGE],[test "$enable_dom_storage" = "yes"])
 AM_CONDITIONAL([ENABLE_DATABASE],[test "$enable_database" = "yes"])
+AM_CONDITIONAL([ENABLE_EVENTSOURCE],[test "$enable_eventsource" = "yes"])
 AM_CONDITIONAL([ENABLE_ICONDATABASE],[test "$enable_icon_database" = "yes"])
 AM_CONDITIONAL([ENABLE_XPATH],[test "$enable_xpath" = "yes"])
 AM_CONDITIONAL([ENABLE_XSLT],[test "$enable_xslt" = "yes"])
@@ -739,6 +748,7 @@ Features:
  HTML5 client-side session and persistent storage support : $enable_dom_storage
  HTML5 client-side database storage support               : $enable_database
  HTML5 ruby support                                       : $enable_ruby
+ HTML5 server-sent events support                         : $enable_eventsource
  HTML5 video element support                              : $enable_video
  Icon database support                                    : $enable_icon_database
  SharedWorkers support                                    : $enable_shared_workers

@@ -1,3 +1,12 @@
+2009-08-14  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        Reviewed by Sam Weinig.
+
+        [GTK] Added EventSource to the build (default on).
+        https://bugs.webkit.org/show_bug.cgi?id=14997 
+
+        * configure.ac:
+
 2009-08-14  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Rubber-stamped by Gustavo Noronha.
