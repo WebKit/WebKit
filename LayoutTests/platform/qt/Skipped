@@ -5098,6 +5098,7 @@ fast/dom/prototype-inheritance-2.html
 fast/harness/override-preferences.html
 fast/harness/override-preferences-2.html
 fast/harness/override-zzz-reset.html
+fast/harness/use-page-cache.html
 
 # This port doesn't support Geolocation.
 fast/dom/Geolocation
