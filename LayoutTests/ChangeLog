@@ -1,3 +1,18 @@
+2009-08-14  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28324
+        First ever test using page cache!
+        The test verifies that override setting that enables page cache works correctly.
+        It navigates forward and then back and checks that onload is not fired again
+        but the timer continues firing.
+
+        * fast/harness/resources/cached-page-1.html: Added.
+        * fast/harness/resources/cached-page-2.html: Added.
+        * fast/harness/use-page-cache-expected.txt: Added.
+        * fast/harness/use-page-cache.html: Added.
+
 2009-08-14  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders Carlsson.
@@ -130,7 +145,7 @@
         * fast/backgrounds/multiple-backgrounds-assert-expected.txt: Added.
         * fast/backgrounds/multiple-backgrounds-assert.html: Added.
 
-    2009-08-13  Dan Bernstein  <mitz@apple.com>
+2009-08-13  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Eric Seidel.
 
