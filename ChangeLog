@@ -1,3 +1,12 @@
+2009-08-14  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Rubber-stamped by Gustavo Noronha.
+
+        Initialize CFLAGS and CXXFLAGS before the main body of the
+        WEBKIT_INIT macro so C files don't get built with "-g -O2".
+
+        * autotools/webkit.m4:
+
 2009-08-12  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Jan Alonzo.

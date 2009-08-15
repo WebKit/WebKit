@@ -6,7 +6,7 @@ dnl WebKit and JavaScriptCore builds.
 # global states
 m4_define([initialized], [no])
 
-AC_DEFUN([BEFORE_AC_PROG_CXX],
+AC_DEFUN([INIT_C_CXX_FLAGS],
 [dnl
 # If CXXFLAGS and CFLAGS are unset, default to empty.
 # This is to tell automake not to include '-g' if CXXFLAGS is not set
@@ -19,11 +19,14 @@ if test -z "$CFLAGS"; then
 fi
 ])
 
-# check for pkg-config
 AC_DEFUN_ONCE([WEBKIT_INIT],
 [dnl
 dnl check if we have the required packages to have successful checks
 dnl
+# Make sure CXXFLAGS and CFLAGS are set before expanding AC_PROG_CXX to avoid
+# building with '-g -O2' on Release builds.
+AC_REQUIRE([INIT_C_CXX_FLAGS])
+
 # check for -fvisibility=hidden compiler support (GCC >= 4)
 saved_CFLAGS="$CFLAGS"
 CFLAGS="$CFLAGS -fvisibility=hidden -fvisibility-inlines-hidden"
@@ -36,6 +39,7 @@ CFLAGS="$saved_CFLAGS"
 AC_SUBST(SYMBOL_VISIBILITY)
 AC_SUBST(SYMBOL_VISIBILITY_INLINES)
 
+# check for pkg-config
 AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
 if test "$PKG_CONFIG" = "no"; then
    AC_MSG_ERROR([Cannot find pkg-config, make sure it is installed in your PATH])
@@ -56,12 +60,10 @@ if test -z "$MV"; then
    AC_MSG_ERROR([You need 'mv' to compile WebKit])
 fi
 
+AC_REQUIRE([AC_PROG_CC])
+AC_REQUIRE([AC_PROG_CXX])
 AM_PROG_CC_STDC
 AM_PROG_CC_C_O
-# Make sure CXXFLAGS and CFLAGS are set before expanding AC_PROG_CXX to avoid
-# building with '-g -O2' on Release builds.
-AC_REQUIRE([BEFORE_AC_PROG_CXX])
-AC_REQUIRE([AC_PROG_CXX])
 AC_PROG_INSTALL
 AC_SYS_LARGEFILE
 
