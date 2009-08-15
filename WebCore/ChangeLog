@@ -1,5 +1,12 @@
 2009-08-15  Darin Adler  <darin@apple.com>
 
+        Fix GTK build.
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (fallbackObject): Pass 0 for document. Should be OK at least for now.
+
+2009-08-15  Darin Adler  <darin@apple.com>
+
         Fix Qt build.
 
         * dom/XMLTokenizerQt.cpp: Use create functions instead of calling new
