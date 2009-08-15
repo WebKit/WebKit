@@ -136,7 +136,7 @@ bool XMLTokenizer::enterText()
 #if !USE(QXMLSTREAM)
     ASSERT(m_bufferedText.size() == 0);
 #endif
-    RefPtr<Node> newNode = new Text(m_doc, "");
+    RefPtr<Node> newNode = Text::create(m_doc, "");
     if (!m_currentNode->addChild(newNode.get()))
         return false;
     setCurrentNode(newNode.get());

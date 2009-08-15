@@ -57,8 +57,8 @@ namespace WebCore {
 using namespace HTMLNames;
 using namespace XMLNames;
     
-Element::Element(const QualifiedName& tagName, Document* doc)
-    : ContainerNode(doc, true)
+Element::Element(const QualifiedName& tagName, Document* document)
+    : ContainerNode(document, CreateElementZeroRefCount)
     , m_tagName(tagName)
 {
 }

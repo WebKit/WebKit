@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -38,7 +38,6 @@ namespace Private {
 
 class ContainerNode : public Node {
 public:
-    ContainerNode(Document*, bool isElement = false);
     virtual ~ContainerNode();
 
     Node* firstChild() const { return m_firstChild; }
@@ -74,6 +73,8 @@ public:
     void cloneChildNodes(ContainerNode* clone);
 
 protected:
+    ContainerNode(Document*, ConstructionType = CreateContainer);
+
     static void queuePostAttachCallback(NodeCallback, Node*);
     void suspendPostAttachCallbacks();
     void resumePostAttachCallbacks();
@@ -97,8 +98,8 @@ private:
     Node* m_lastChild;
 };
 
-inline ContainerNode::ContainerNode(Document* document, bool isElement)
-    : Node(document, isElement, true)
+inline ContainerNode::ContainerNode(Document* document, ConstructionType type)
+    : Node(document, type)
     , m_firstChild(0)
     , m_lastChild(0)
 {

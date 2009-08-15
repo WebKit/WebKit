@@ -247,7 +247,7 @@ PassRefPtr<DocumentFragment> HTMLElement::createContextualFragment(const String 
         hasLocalName(headTag) || hasLocalName(styleTag) || hasLocalName(titleTag))
         return 0;
 
-    RefPtr<DocumentFragment> fragment = new DocumentFragment(document());
+    RefPtr<DocumentFragment> fragment = DocumentFragment::create(document());
     
     if (document()->isHTMLDocument())
          parseHTMLDocumentFragment(html, fragment.get());
@@ -309,7 +309,7 @@ static void replaceChildrenWithFragment(HTMLElement* element, PassRefPtr<Documen
     }
 
     if (hasOneTextChild(element) && hasOneTextChild(fragment.get())) {
-        static_cast<Text*>(element->firstChild())->setData(static_cast<Text*>(fragment->firstChild())->string(), ec);
+        static_cast<Text*>(element->firstChild())->setData(static_cast<Text*>(fragment->firstChild())->data(), ec);
         return;
     }
 
@@ -329,7 +329,7 @@ static void replaceChildrenWithText(HTMLElement* element, const String& text, Ex
         return;
     }
 
-    RefPtr<Text> textNode = new Text(element->document(), text);
+    RefPtr<Text> textNode = Text::create(element->document(), text);
 
     if (hasOneChild(element)) {
         element->replaceChild(textNode.release(), element->firstChild(), ec);
@@ -415,7 +415,7 @@ void HTMLElement::setInnerText(const String& text, ExceptionCode& ec)
 
     // Add text nodes and <br> elements.
     ec = 0;
-    RefPtr<DocumentFragment> fragment = new DocumentFragment(document());
+    RefPtr<DocumentFragment> fragment = DocumentFragment::create(document());
     int lineStart = 0;
     UChar prev = 0;
     int length = text.length();
@@ -423,7 +423,7 @@ void HTMLElement::setInnerText(const String& text, ExceptionCode& ec)
         UChar c = text[i];
         if (c == '\n' || c == '\r') {
             if (i > lineStart) {
-                fragment->appendChild(new Text(document(), text.substring(lineStart, i - lineStart)), ec);
+                fragment->appendChild(Text::create(document(), text.substring(lineStart, i - lineStart)), ec);
                 if (ec)
                     return;
             }
@@ -437,7 +437,7 @@ void HTMLElement::setInnerText(const String& text, ExceptionCode& ec)
         prev = c;
     }
     if (length > lineStart)
-        fragment->appendChild(new Text(document(), text.substring(lineStart, length - lineStart)), ec);
+        fragment->appendChild(Text::create(document(), text.substring(lineStart, length - lineStart)), ec);
     replaceChildrenWithFragment(this, fragment.release(), ec);
 }
 
@@ -465,7 +465,7 @@ void HTMLElement::setOuterText(const String &text, ExceptionCode& ec)
     // FIXME: This creates a new text node even when the text is empty.
     // FIXME: This creates a single text node even when the text has CR and LF
     // characters in it. Instead it should create <br> elements.
-    RefPtr<Text> t = new Text(document(), text);
+    RefPtr<Text> t = Text::create(document(), text);
     ec = 0;
     parent->replaceChild(t, this, ec);
     if (ec)

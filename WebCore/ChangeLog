@@ -1,3 +1,252 @@
+2009-08-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Make DOM classes start with a reference count of 1, like all other RefCounted
+        https://bugs.webkit.org/show_bug.cgi?id=28068
+
+        First half, everything except for element classes.
+
+        * GNUmakefile.am: Removed DocPtr.h.
+        * WebCore.gypi: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * dom/Attr.cpp:
+        (WebCore::Attr::Attr): Added a call to createTextChild here so callers don't
+        have to call it explicitly.
+        (WebCore::Attr::create): Added.
+        (WebCore::Attr::setValue): Changed to take AtomicString.
+        (WebCore::Attr::cloneNode): Use create.
+
+        * dom/Attr.h: Added a create function. Made the constructor private,
+        and a lot of other functions private as well.
+
+        * dom/Attribute.cpp:
+        (WebCore::Attribute::createAttrIfNeeded): Use Attr::create.
+
+        * dom/CDATASection.cpp:
+        (WebCore::CDATASection::create): Added.
+        (WebCore::CDATASection::cloneNode): Use create.
+        (WebCore::CDATASection::virtualCreate): Ditto.
+
+        * dom/CDATASection.h: Added a create function. Made everything private.
+        Removed unneeded destructor declaration.
+
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::CharacterData): Replaced the multiple constructors
+        with a single one that takes ConstructionType.
+
+        * dom/CharacterData.h: Made more functions be protected and private.
+        Made m_data be private.
+
+        * dom/Comment.cpp:
+        (WebCore::Comment::Comment): Got rid of an extra constructor.
+        (WebCore::Comment::create): Added.
+        (WebCore::Comment::cloneNode): Call create.
+
+        * dom/Comment.h: Added a create function. Made everything private.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::dispatchChildInsertionEvents): Use RefPtr instead of DocPtr.
+        (WebCore::dispatchChildRemovalEvents): Ditto.
+
+        * dom/ContainerNode.h: Made the constructor protected and passed
+        ConstructionType instead of an isElement boolean.
+
+        * dom/DocPtr.h: Removed.
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document): Simplified the code that sets m_document
+        since it's no longer a smart pointer.
+        (WebCore::Document::removedLastRef): Use explicit calls to selfOnlyRef
+        and selfOnlyDeref instead of a DocPtr in here.
+        (WebCore::Document::~Document): Simplified the code that sets m_document
+        since it's no longer a smart pointer.
+        (WebCore::Document::createDocumentFragment): Call create.
+        (WebCore::Document::createTextNode): Ditto.
+        (WebCore::Document::createComment): Ditto.
+        (WebCore::Document::createCDATASection): Ditto.
+        (WebCore::Document::createProcessingInstruction): Ditto.
+        (WebCore::Document::createEntityReference): Ditto.
+        (WebCore::Document::createEditingTextNode): Ditto.
+        (WebCore::Document::importNode): Call Attr::create.
+        (WebCore::Document::createAttributeNS): Ditto.
+
+        * dom/Document.h: Call adoptRef. Made a lot of functions private and
+        protected and sorted them so public functions come first.
+
+        * dom/DocumentFragment.cpp:
+        (WebCore::DocumentFragment::create): Added.
+        (WebCore::DocumentFragment::cloneNode): Call create.
+        * dom/DocumentFragment.h: Added create.
+
+        * dom/DocumentType.cpp:
+        (WebCore::DocumentType::DocumentType): Pass type to Node constructor.
+        (WebCore::DocumentType::cloneNode): Use create.
+        * dom/DocumentType.h:
+        (WebCore::DocumentType::create): Call adoptRef.
+
+        * dom/EditingText.cpp:
+        (WebCore::EditingText::create): Added.
+        * dom/EditingText.h: Added a create function. Made everything private.
+
+        * dom/Element.cpp:
+        (WebCore::Element::Element): Pass CreateElementZeroRefCount to preserve
+        the zero reference count behavior for classes derived from Element.
+
+        * dom/EntityReference.cpp:
+        (WebCore::EntityReference::create): Added.
+        (WebCore::EntityReference::cloneNode): Call create.
+        * dom/EntityReference.h: Added create. Made everything private.
+
+        * dom/Node.cpp:
+        (WebCore::Node::initialRefCount): Added. Inline helper function for
+        the constructor.
+        (WebCore::Node::isContainer): Ditto.
+        (WebCore::Node::isElement): Ditto.
+        (WebCore::Node::isText): Ditto.
+        (WebCore::Node::Node): Changed to take a construction type argument.
+        Since m_document is now a normal pointer, added a call to selfOnlyRef.
+        (WebCore::Node::~Node): Ditto, but selfOnlyDeref.
+        (WebCore::Node::setDocument): Added selfOnlyRef/Deref calls.
+        (WebCore::Node::appendTextContent): Use the data function instead of
+        calling nodeValue functions, which do the same thing in a roundabout way.
+
+        * dom/Node.h: Made the constructor protected and replaced the multiple
+        arguments iwth a single ConstructionType argument. Sorted the public
+        things first.
+
+        * dom/Notation.h: Made most things private.
+        * dom/Notation.cpp: Removed extra constructor.
+
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::create): Added.
+        (WebCore::ProcessingInstruction::cloneNode): Call create.
+        * dom/ProcessingInstruction.h: Added create function. Made many other
+        members private.
+
+        * dom/Range.cpp:
+        (WebCore::Range::processContents): Use DocumentFragment::create.
+
+        * dom/Text.cpp:
+        (WebCore::Text::Text): Updated for base class change.
+        (WebCore::Text::create): Added.
+        (WebCore::Text::splitText): Changed to not require access to m_data.
+        (WebCore::Text::cloneNode): Call create.
+        (WebCore::Text::createRenderer): Call dataImpl.
+        (WebCore::Text::attach): Call data.
+        (WebCore::Text::recalcStyle): Call dataImpl.
+        (WebCore::Text::virtualCreate): Call create.
+        (WebCore::Text::createWithLengthLimit): Call create.
+        (WebCore::Text::formatForDebugger): Call data.
+
+        * dom/Text.h: Added a create function. Made many other members private.
+        Renamed createNew to virtualCreate.
+
+        * dom/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::enterText): Call Text::create.
+
+        * dom/XMLTokenizerLibxml2.cpp:
+        (WebCore::XMLTokenizer::cdataBlock): Call CDATASection::create.
+        (WebCore::XMLTokenizer::comment): Call Comment::create.
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::deleteInsignificantText):
+        Call data instead of string.
+
+        * editing/CreateLinkCommand.cpp:
+        (WebCore::CreateLinkCommand::doApply): Call Text::create.
+
+        * editing/EditorCommand.cpp:
+        (WebCore::executeInsertNode): Call DocumentFragment::create.
+
+        * editing/SplitTextNodeCommand.cpp:
+        (WebCore::SplitTextNodeCommand::doApply): Call Text::create.
+
+        * editing/markup.cpp:
+        (WebCore::appendStartMarkup): Call data instead of nodeValue.
+
+        * html/HTMLDocument.h:
+        (WebCore::HTMLDocument::create): Call adoptRef.
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::createContextualFragment): Call DocumentFragment::create.
+        (WebCore::replaceChildrenWithFragment): Call data instead of string.
+        (WebCore::replaceChildrenWithText): Call Text::create.
+        (WebCore::HTMLElement::setInnerText): Call DocumentFragment::create and
+        Text::create.
+        (WebCore::HTMLElement::setOuterText): Call Text::create.
+
+        * html/HTMLKeygenElement.cpp:
+        (WebCore::HTMLKeygenElement::HTMLKeygenElement): Call Text::create.
+
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::setText): Call Text::create.
+
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::textCreateErrorCheck): Call Text::create.
+        (WebCore::HTMLParser::commentCreateErrorCheck): Call Comment::create.
+        (WebCore::HTMLParser::handleIsindex): Call Text::create.
+
+        * html/HTMLViewSourceDocument.cpp:
+        (WebCore::HTMLViewSourceDocument::addText): Call Text::create.
+
+        * html/HTMLViewSourceDocument.h:
+        (WebCore::HTMLViewSourceDocument::create): Call adoptRef.
+
+        * loader/FTPDirectoryDocument.cpp:
+        (WebCore::FTPDirectoryTokenizer::appendEntry): Call Text::create.
+        (WebCore::FTPDirectoryTokenizer::createTDForFilename): Call Text::create.
+
+        * loader/FTPDirectoryDocument.h:
+        (WebCore::FTPDirectoryDocument::create): Call adoptRef.
+        * loader/ImageDocument.h:
+        (WebCore::ImageDocument::create): Ditto.
+        * loader/MediaDocument.h:
+        (WebCore::MediaDocument::create): Ditto.
+        * loader/PlaceholderDocument.h:
+        (WebCore::PlaceholderDocument::create): Ditto.
+        * loader/PluginDocument.h:
+        (WebCore::PluginDocument::create): Ditto.
+        * loader/TextDocument.h:
+        (WebCore::TextDocument::create): Ditto.
+
+        * loader/loader.cpp:
+        (WebCore::Loader::Host::didFinishLoading): Use RefPtr instead of DocPtr.
+        (WebCore::Loader::Host::didFail): Ditto.
+
+        * platform/TreeShared.h:
+        (WebCore::TreeShared::TreeShared): Added an initialRefCount argument,
+        defaulting to 1. Node still sometimes initializes it to 0 instead for now.
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::originalText): Use dataImpl instead of string.
+
+        * rendering/RenderTextFragment.cpp:
+        (WebCore::RenderTextFragment::originalText): Use dataImpl instead of string.
+        (WebCore::RenderTextFragment::previousCharacter): Ditto.
+
+        * svg/SVGDocument.h:
+        (WebCore::SVGDocument::create): Use adoptRef.
+
+        * svg/SVGElementInstance.cpp:
+        (WebCore::SVGElementInstance::SVGElementInstance): Updated to take a
+        PassRefPtr.
+
+        * svg/SVGElementInstance.h: Made everything private.
+
+        * wml/WMLDocument.h:
+        (WebCore::WMLDocument::create): Called adoptRef.
+
+        * xml/XPathNamespace.cpp:
+        (WebCore::XPathNamespace::XPathNamespace): Take AtomicString arguments.
+        * xml/XPathNamespace.h: Made everything private.
+
+        * xml/XSLTProcessor.cpp:
+        (WebCore::createFragmentFromSource): Use DocumentFragment::create and
+        Text::create.
+
 2009-08-13  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Part of <rdar://problem/6218721> No MSAA focus events fired for Webkit

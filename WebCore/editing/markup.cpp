@@ -420,7 +420,7 @@ static void appendStartMarkup(Vector<UChar>& result, const Node* node, const Ran
         case Node::COMMENT_NODE:
             // FIXME: Comment content is not escaped, but XMLSerializer (and possibly other callers) should raise an exception if it includes "-->".
             append(result, "<!--");
-            append(result, static_cast<const Comment*>(node)->nodeValue());
+            append(result, static_cast<const Comment*>(node)->data());
             append(result, "-->");
             break;
         case Node::DOCUMENT_NODE:

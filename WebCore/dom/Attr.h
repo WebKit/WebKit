@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Peter Kelly (pmk@post.com)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -39,38 +39,15 @@ namespace WebCore {
 class Attr : public ContainerNode {
     friend class NamedNodeMap;
 public:
-    Attr(Element*, Document*, PassRefPtr<Attribute>);
-    ~Attr();
+    static PassRefPtr<Attr> create(Element*, Document*, PassRefPtr<Attribute>);
+    virtual ~Attr();
 
-    // Call this after calling the constructor so the
-    // Attr node isn't floating when we append the text node.
-    void createTextChild();
-    
-    // DOM methods & attributes for Attr
     String name() const { return qualifiedName().toString(); }
     bool specified() const { return m_specified; }
     Element* ownerElement() const { return m_element; }
 
-    String value() const { return m_attribute->value(); }
-    void setValue(const String&, ExceptionCode&);
-
-    // DOM methods overridden from parent classes
-    virtual String nodeName() const;
-    virtual NodeType nodeType() const;
-    const AtomicString& localName() const;
-    const AtomicString& namespaceURI() const;
-    const AtomicString& prefix() const;
-    virtual void setPrefix(const AtomicString&, ExceptionCode&);
-
-    virtual String nodeValue() const;
-    virtual void setNodeValue(const String&, ExceptionCode&);
-    virtual PassRefPtr<Node> cloneNode(bool deep);
-
-    // Other methods (not part of DOM)
-    virtual bool isAttributeNode() const { return true; }
-    virtual bool childTypeAllowed(NodeType);
-
-    virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
+    const AtomicString& value() const { return m_attribute->value(); }
+    void setValue(const AtomicString&, ExceptionCode&);
 
     Attribute* attr() const { return m_attribute.get(); }
     const QualifiedName& qualifiedName() const { return m_attribute->name(); }
@@ -81,6 +58,28 @@ public:
     void setSpecified(bool specified) { m_specified = specified; }
 
 private:
+    Attr(Element*, Document*, PassRefPtr<Attribute>);
+
+    void createTextChild();
+
+    virtual String nodeName() const;
+    virtual NodeType nodeType() const;
+
+    const AtomicString& localName() const;
+    const AtomicString& namespaceURI() const;
+    const AtomicString& prefix() const;
+
+    virtual void setPrefix(const AtomicString&, ExceptionCode&);
+
+    virtual String nodeValue() const;
+    virtual void setNodeValue(const String&, ExceptionCode&);
+    virtual PassRefPtr<Node> cloneNode(bool deep);
+
+    virtual bool isAttributeNode() const { return true; }
+    virtual bool childTypeAllowed(NodeType);
+
+    virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
+
     virtual const AtomicString& virtualPrefix() const { return prefix(); }
     virtual const AtomicString& virtualLocalName() const { return localName(); }
     virtual const AtomicString& virtualNamespaceURI() const { return namespaceURI(); }

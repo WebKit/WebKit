@@ -951,7 +951,7 @@ void XMLTokenizer::cdataBlock(const xmlChar* s, int len)
     
     exitText();
 
-    RefPtr<Node> newNode = new CDATASection(m_doc, toString(s, len));
+    RefPtr<Node> newNode = CDATASection::create(m_doc, toString(s, len));
     if (!m_currentNode->addChild(newNode.get()))
         return;
     if (m_view && !newNode->attached())
@@ -970,7 +970,7 @@ void XMLTokenizer::comment(const xmlChar* s)
     
     exitText();
 
-    RefPtr<Node> newNode = new Comment(m_doc, toString(s));
+    RefPtr<Node> newNode = Comment::create(m_doc, toString(s));
     m_currentNode->addChild(newNode.get());
     if (m_view && !newNode->attached())
         newNode->attach();

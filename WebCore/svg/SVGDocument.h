@@ -35,13 +35,11 @@ namespace WebCore {
     public:
         static PassRefPtr<SVGDocument> create(Frame* frame)
         {
-            return new SVGDocument(frame);
+            return adoptRef(new SVGDocument(frame));
         }
 
         virtual ~SVGDocument();
         
-        virtual bool isSVGDocument() const { return true; }
-
         SVGSVGElement* rootElement() const;
         
         void dispatchZoomEvent(float prevScale, float newScale);
@@ -52,10 +50,12 @@ namespace WebCore {
         void startPan(const FloatPoint& start);
         void updatePan(const FloatPoint& pos) const;
 
-        virtual bool childShouldCreateRenderer(Node*) const;
-
     private:
         SVGDocument(Frame*);
+
+        virtual bool isSVGDocument() const { return true; }
+
+        virtual bool childShouldCreateRenderer(Node*) const;
 
         FloatPoint m_translate;
     };

@@ -34,7 +34,7 @@ class WMLDocument : public Document {
 public:
     static PassRefPtr<WMLDocument> create(Frame* frame)
     {
-        return new WMLDocument(frame);
+        return adoptRef(new WMLDocument(frame));
     }
 
     virtual ~WMLDocument();

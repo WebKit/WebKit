@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2008, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,11 +29,11 @@
 
 namespace WebCore {
 
-DocumentType::DocumentType(Document* document, const String& n, const String& p, const String& s)
-    : Node(document)
-    , m_name(n)
-    , m_publicId(p)
-    , m_systemId(s)
+DocumentType::DocumentType(Document* document, const String& name, const String& publicId, const String& systemId)
+    : Node(document, CreateOther)
+    , m_name(name)
+    , m_publicId(publicId)
+    , m_systemId(systemId)
 {
 }
 
@@ -54,7 +54,7 @@ Node::NodeType DocumentType::nodeType() const
 
 PassRefPtr<Node> DocumentType::cloneNode(bool /*deep*/)
 {
-    return new DocumentType(document(), m_name, m_publicId, m_systemId);
+    return create(document(), m_name, m_publicId, m_systemId);
 }
 
 void DocumentType::insertedIntoDocument()

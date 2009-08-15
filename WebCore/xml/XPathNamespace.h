@@ -1,6 +1,6 @@
 /*
  * Copyright 2005 Frerich Raabe <raabe@kde.org>
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,13 +34,11 @@
 
 namespace WebCore {
 
-    class Document;
-    class Element;
+    // FIXME: This class is never instantiated. Maybe it should be removed.
 
     class XPathNamespace : public Node {
-    public:
-        XPathNamespace(PassRefPtr<Element> ownerElement, const String& prefix, const String& uri);
-        virtual ~XPathNamespace();
+    private:
+        XPathNamespace(PassRefPtr<Element> ownerElement, const AtomicString& prefix, const AtomicString& uri);
 
         virtual Document* ownerDocument() const;
         virtual Element* ownerElement() const;
@@ -50,9 +48,8 @@ namespace WebCore {
         virtual String nodeValue() const;
         virtual const AtomicString& namespaceURI() const;
 
-        virtual Node::NodeType nodeType() const;
+        virtual NodeType nodeType() const;
 
-    private:
         RefPtr<Element> m_ownerElement;
         AtomicString m_prefix;
         AtomicString m_uri;

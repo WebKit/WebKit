@@ -25,7 +25,6 @@
 #ifndef Node_h
 #define Node_h
 
-#include "DocPtr.h"
 #include "EventTarget.h"
 #include "KURLHash.h"
 #include "PlatformString.h"
@@ -108,7 +107,6 @@ public:
     enum StyleChange { NoChange, NoInherit, Inherit, Detach, Force };    
     static StyleChange diff(const RenderStyle*, const RenderStyle*);
 
-    Node(Document*, bool isElement = false, bool isContainer = false, bool isText = false);
     virtual ~Node();
 
     // DOM methods & attributes for Node
@@ -316,7 +314,7 @@ public:
     {
         ASSERT(this);
         ASSERT(m_document || (nodeType() == DOCUMENT_TYPE_NODE && !inDocument()));
-        return m_document.get();
+        return m_document;
     }
     void setDocument(Document*);
 
@@ -499,19 +497,6 @@ public:
 
     unsigned short compareDocumentPosition(Node*);
 
-protected:
-    virtual void willMoveToNewOwnerDocument();
-    virtual void didMoveToNewOwnerDocument();
-    
-    virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const { }
-    void setTabIndexExplicitly(short);
-    
-    bool hasRareData() const { return m_hasRareData; }
-    
-    NodeRareData* rareData() const;
-    NodeRareData* ensureRareData();
-
-public:
     virtual Node* toNode() { return this; }
 
     virtual ScriptExecutionContext* scriptExecutionContext() const;
@@ -651,14 +636,35 @@ public:
 
     using TreeShared<Node>::ref;
     using TreeShared<Node>::deref;
- 
+
+protected:
+    // CreateElementZeroRefCount is deprecated and can be removed once we convert all element
+    // classes to start with a reference count of 1.
+    enum ConstructionType { CreateContainer, CreateElement, CreateOther, CreateText, CreateElementZeroRefCount };
+    Node(Document*, ConstructionType);
+
+    virtual void willMoveToNewOwnerDocument();
+    virtual void didMoveToNewOwnerDocument();
+    
+    virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const { }
+    void setTabIndexExplicitly(short);
+    
+    bool hasRareData() const { return m_hasRareData; }
+    
+    NodeRareData* rareData() const;
+    NodeRareData* ensureRareData();
+
 private:
+    static bool initialRefCount(ConstructionType);
+    static bool isContainer(ConstructionType);
+    static bool isElement(ConstructionType);
+    static bool isText(ConstructionType);
+
     virtual void refEventTarget() { ref(); }
     virtual void derefEventTarget() { deref(); }
 
     void removeAllEventListenersSlowCase();
 
-private:
     virtual NodeRareData* createRareData();
     Node* containerChildNode(unsigned index) const;
     unsigned containerChildNodeCount() const;
@@ -676,7 +682,7 @@ private:
 
     void appendTextContent(bool convertBRsToNewlines, StringBuilder&) const;
 
-    DocPtr<Document> m_document;
+    Document* m_document;
     Node* m_previous;
     Node* m_next;
     RenderObject* m_renderer;
@@ -699,22 +705,16 @@ private:
     const bool m_isText : 1;
 
 protected:
-    // These bits are used by the Element derived class, pulled up here so they can
+    // These bits are used by derived classes, pulled up here so they can
     // be stored in the same memory word as the Node bits above.
-    bool m_parsingChildrenFinished : 1;
-#if ENABLE(SVG)
-    mutable bool m_areSVGAttributesValid : 1;
-#endif
 
-    // These bits are used by the StyledElement derived class, and live here for the
-    // same reason as above.
-    mutable bool m_isStyleAttributeValid : 1;
-    mutable bool m_synchronizingStyleAttribute : 1;
+    bool m_parsingChildrenFinished : 1; // Element
+    mutable bool m_isStyleAttributeValid : 1; // StyledElement
+    mutable bool m_synchronizingStyleAttribute : 1; // StyledElement
 
 #if ENABLE(SVG)
-    // This bit is used by the SVGElement derived class, and lives here for the same
-    // reason as above.
-    mutable bool m_synchronizingSVGAttributes : 1;
+    mutable bool m_areSVGAttributesValid : 1; // Element
+    mutable bool m_synchronizingSVGAttributes : 1; // SVGElement
 #endif
 
     // 11 bits remaining

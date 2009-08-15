@@ -34,7 +34,7 @@ class PlaceholderDocument : public Document {
 public:
     static PassRefPtr<PlaceholderDocument> create(Frame* frame)
     {
-        return new PlaceholderDocument(frame);
+        return adoptRef(new PlaceholderDocument(frame));
     }
 
     virtual void attach();

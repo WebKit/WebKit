@@ -1,9 +1,7 @@
-/**
- * This file is part of the DOM implementation for KDE.
- *
+/*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) 2003, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,22 +22,16 @@
 #include "config.h"
 #include "Comment.h"
 
-#include "Document.h"
-
 namespace WebCore {
 
-Comment::Comment(Document* doc, const String& text)
-    : CharacterData(doc, text)
+inline Comment::Comment(Document* document, const String& text)
+    : CharacterData(document, text, CreateOther)
 {
 }
 
-Comment::Comment(Document* doc)
-    : CharacterData(doc)
+PassRefPtr<Comment> Comment::create(Document* document, const String& text)
 {
-}
-
-Comment::~Comment()
-{
+    return adoptRef(new Comment(document, text));
 }
 
 String Comment::nodeName() const
@@ -54,10 +46,9 @@ Node::NodeType Comment::nodeType() const
 
 PassRefPtr<Node> Comment::cloneNode(bool /*deep*/)
 {
-    return document()->createComment(m_data);
+    return create(document(), data());
 }
 
-// DOM Section 1.1.1
 bool Comment::childTypeAllowed(NodeType)
 {
     return false;

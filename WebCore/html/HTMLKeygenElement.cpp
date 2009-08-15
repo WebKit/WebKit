@@ -51,7 +51,7 @@ HTMLKeygenElement::HTMLKeygenElement(const QualifiedName& tagName, Document* doc
     for (Vector<String>::const_iterator it = keys.begin(); it != end; ++it) {
         HTMLOptionElement* o = new HTMLOptionElement(optionTag, doc, form());
         addChild(o);
-        o->addChild(new Text(doc, *it));
+        o->addChild(Text::create(doc, *it));
     }
 }
 

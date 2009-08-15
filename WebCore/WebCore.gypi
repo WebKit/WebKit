@@ -949,7 +949,6 @@
             'dom/DOMCoreException.h',
             'dom/DOMImplementation.cpp',
             'dom/DOMImplementation.h',
-            'dom/DocPtr.h',
             'dom/Document.cpp',
             'dom/Document.h',
             'dom/DocumentFragment.cpp',

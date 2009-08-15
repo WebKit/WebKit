@@ -23728,10 +23728,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\dom\DocPtr.h"
-				>
-			</File>
-			<File
 				RelativePath="..\dom\Document.cpp"
 				>
 			</File>

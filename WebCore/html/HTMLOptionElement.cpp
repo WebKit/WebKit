@@ -92,7 +92,7 @@ void HTMLOptionElement::setText(const String &text, ExceptionCode& ec)
     }
 
     removeChildren();
-    appendChild(new Text(document(), text), ec);
+    appendChild(Text::create(document(), text), ec);
 }
 
 void HTMLOptionElement::accessKeyAction(bool)

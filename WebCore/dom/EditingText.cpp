@@ -1,9 +1,5 @@
-/**
- * This file is part of the DOM implementation for KDE.
- *
- * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
- *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003 Apple Computer, Inc.
+/*
+ * Copyright (C) 2003, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,24 +20,19 @@
 #include "config.h"
 #include "EditingText.h"
 
-// FIXME: does this really require a class? Perhaps any Text node
-// inside an editable element should have the "always create a renderer"
-// behavior.
+// FIXME: Does this really require a class? Perhaps instead any text node
+// inside an editable element could have the "always create a renderer" behavior.
 
 namespace WebCore {
 
-EditingText::EditingText(Document *impl, const String &text)
-    : Text(impl, text)
+inline EditingText::EditingText(Document* document, const String& data)
+    : Text(document, data)
 {
 }
 
-EditingText::EditingText(Document *impl)
-    : Text(impl)
+PassRefPtr<EditingText> EditingText::create(Document* document, const String& data)
 {
-}
-
-EditingText::~EditingText()
-{
+    return adoptRef(new EditingText(document, data));
 }
 
 bool EditingText::rendererIsNeeded(RenderStyle*)
