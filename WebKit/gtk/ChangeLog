@@ -1,3 +1,13 @@
+2009-08-15  Zan Dobersek  <zandobersek@gmail.com>
+
+        Reviewed by Xan Lopez.
+
+        Fix compiler warnings.
+
+        * webkit/webkitwebview.cpp:
+        (clipboard_contents_received):
+        (webkit_web_view_drag_data_get):
+
 2009-08-14  Jiahua Huang  <jhuangjiahua@gmail.com>
 
         Reviewed by Jan Alonzo.

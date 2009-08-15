@@ -1109,7 +1109,7 @@ void clipboard_contents_received(GtkClipboard* clipboard, GtkSelectionData* sele
         if (!url_label)
             url_label = g_strdup(contents_request->url);
 
-        gchar* data;
+        gchar* data = 0;
         switch (contents_request->info) {
         case WEBKIT_WEB_VIEW_TARGET_INFO_URI_LIST:
             data = g_strdup_printf("%s\r\n%s\r\n", contents_request->url, url_label);
@@ -1119,12 +1119,14 @@ void clipboard_contents_received(GtkClipboard* clipboard, GtkSelectionData* sele
             break;
         }
 
-        gtk_selection_data_set(contents_request->dnd_selection_data,
-                               contents_request->dnd_selection_data->target, 8,
-                               reinterpret_cast<const guchar*>(data), strlen(data));
+        if (data) {
+            gtk_selection_data_set(contents_request->dnd_selection_data,
+                                   contents_request->dnd_selection_data->target, 8,
+                                   reinterpret_cast<const guchar*>(data), strlen(data));
+            g_free(data);
+        }
 
         g_free(url_label);
-        g_free(data);
         g_free(contents_request->url);
         g_free(contents_request);
 
@@ -1170,7 +1172,7 @@ void clipboard_contents_received(GtkClipboard* clipboard, GtkSelectionData* sele
 
 static void webkit_web_view_drag_data_get(GtkWidget* widget, GdkDragContext* context, GtkSelectionData* selection_data, guint info, guint time_)
 {
-    GdkAtom selection_atom;
+    GdkAtom selection_atom = GDK_NONE;
     GdkAtom target_atom = selection_data->target;
 
     switch (info) {
