@@ -1,3 +1,18 @@
+2009-08-14  Jiahua Huang  <jhuangjiahua@gmail.com>
+
+        Reviewed by Jan Alonzo.
+
+        [gtk] Pasteboard/GtkClipboard can't handle the "text/html" target.
+        https://bugs.webkit.org/show_bug.cgi?id=27028
+
+        Add a function in WebKit::PasteboardHelperGtk that will return the
+        value of WEBKIT_WEB_VIEW_TARGET_INFO_HTML,
+        and WebCore::clipboard_get_contents_cb will use that.
+
+        * WebCoreSupport/PasteboardHelperGtk.cpp:
+        (WebKit::PasteboardHelperGtk::getWebViewTargetInfoHtml):
+        * WebCoreSupport/PasteboardHelperGtk.h:
+
 2009-08-14  Benjamin Otte  <otte@gnome.org>
 
         Reviewed by Gustavo Noronha.

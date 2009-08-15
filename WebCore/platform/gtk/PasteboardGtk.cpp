@@ -35,13 +35,6 @@
 
 namespace WebCore {
 
-/* FIXME: we must get rid of this and use the enum in webkitwebview.h someway */
-typedef enum
-{
-    WEBKIT_WEB_VIEW_TARGET_INFO_HTML = - 1,
-    WEBKIT_WEB_VIEW_TARGET_INFO_TEXT = - 2
-} WebKitWebViewTargetInfo;
-
 class PasteboardSelectionData {
 public:
     PasteboardSelectionData(gchar* text, gchar* markup)
@@ -65,11 +58,11 @@ static void clipboard_get_contents_cb(GtkClipboard *clipboard, GtkSelectionData 
                                       guint info, gpointer data) {
     PasteboardSelectionData* clipboardData = reinterpret_cast<PasteboardSelectionData*>(data);
     ASSERT(clipboardData);
-    if ((gint)info == WEBKIT_WEB_VIEW_TARGET_INFO_HTML) {
+    if ((gint)info == Pasteboard::generalPasteboard()->m_helper->getWebViewTargetInfoHtml())
         gtk_selection_data_set(selection_data, selection_data->target, 8,
                                reinterpret_cast<const guchar*>(clipboardData->markup()),
                                g_utf8_strlen(clipboardData->markup(), -1));
-    } else
+    else
         gtk_selection_data_set_text(selection_data, clipboardData->text(), -1);
 }
 

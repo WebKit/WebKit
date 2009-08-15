@@ -102,6 +102,7 @@ public:
 
 #if PLATFORM(GTK)
     void setHelper(PasteboardHelper*);
+    PasteboardHelper* m_helper;
 #endif
 
 private:
@@ -115,10 +116,6 @@ private:
 
 #if PLATFORM(WIN)
     HWND m_owner;
-#endif
-
-#if PLATFORM(GTK)
-    PasteboardHelper* m_helper;
 #endif
 
 #if PLATFORM(QT)

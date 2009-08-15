@@ -43,6 +43,7 @@ public:
     virtual GtkClipboard* getPrimary(Frame*) const = 0;
     virtual GtkTargetList* getCopyTargetList(Frame*) const = 0;
     virtual GtkTargetList* getPasteTargetList(Frame*) const = 0;
+    virtual gint getWebViewTargetInfoHtml() const = 0;
 };
 
 }

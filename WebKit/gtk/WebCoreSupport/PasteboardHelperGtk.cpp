@@ -67,4 +67,9 @@ GtkTargetList* PasteboardHelperGtk::getPasteTargetList(Frame* frame) const
     return webkit_web_view_get_paste_target_list(webView);
 }
 
+gint PasteboardHelperGtk::getWebViewTargetInfoHtml() const
+{
+    return WEBKIT_WEB_VIEW_TARGET_INFO_HTML;
+}
+
 }
