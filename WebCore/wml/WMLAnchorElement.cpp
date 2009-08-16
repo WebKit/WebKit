@@ -54,7 +54,7 @@ void WMLAnchorElement::defaultEventHandler(Event* event)
         shouldHandle = static_cast<KeyboardEvent*>(event)->keyIdentifier() == "Enter";
 
     if (shouldHandle && m_task) {
-        m_task->executeTask(event);
+        m_task->executeTask();
         event->setDefaultHandled();
         return;
     }

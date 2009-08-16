@@ -41,7 +41,7 @@ WMLRefreshElement::~WMLRefreshElement()
 {
 }
 
-void WMLRefreshElement::executeTask(Event*)
+void WMLRefreshElement::executeTask()
 {
     ASSERT(document()->isWMLDocument());
     WMLDocument* document = static_cast<WMLDocument*>(this->document());

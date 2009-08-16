@@ -1,3 +1,29 @@
+2009-08-16  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        [WML] Cleanup WMLIntrinsicEventHandling code
+        https://bugs.webkit.org/show_bug.cgi?id=28358
+
+        Remove superflous "Event* evt" parameter from executeTask() methods. It's a leftover from the initial WML merge.
+
+        * wml/WMLAnchorElement.cpp:
+        (WebCore::WMLAnchorElement::defaultEventHandler):
+        * wml/WMLDoElement.cpp:
+        (WebCore::WMLDoElement::defaultEventHandler):
+        * wml/WMLGoElement.cpp:
+        (WebCore::WMLGoElement::executeTask):
+        * wml/WMLGoElement.h:
+        * wml/WMLIntrinsicEventHandler.cpp:
+        (WebCore::WMLIntrinsicEventHandler::triggerIntrinsicEvent):
+        * wml/WMLPrevElement.cpp:
+        (WebCore::WMLPrevElement::executeTask):
+        * wml/WMLPrevElement.h:
+        * wml/WMLRefreshElement.cpp:
+        (WebCore::WMLRefreshElement::executeTask):
+        * wml/WMLRefreshElement.h:
+        * wml/WMLTaskElement.h:
+
 2009-08-16  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

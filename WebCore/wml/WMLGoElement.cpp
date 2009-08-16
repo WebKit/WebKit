@@ -73,7 +73,7 @@ void WMLGoElement::parseMappedAttribute(MappedAttribute* attr)
         WMLTaskElement::parseMappedAttribute(attr);
 }
 
-void WMLGoElement::executeTask(Event*)
+void WMLGoElement::executeTask()
 {
     ASSERT(document()->isWMLDocument());
     WMLDocument* document = static_cast<WMLDocument*>(this->document());

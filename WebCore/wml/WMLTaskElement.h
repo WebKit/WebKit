@@ -40,7 +40,7 @@ public:
 
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
-    virtual void executeTask(Event*) = 0;
+    virtual void executeTask() = 0;
 
     void registerVariableSetter(WMLSetvarElement*);
     void deregisterVariableSetter(WMLSetvarElement*);

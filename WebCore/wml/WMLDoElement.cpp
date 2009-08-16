@@ -70,7 +70,7 @@ void WMLDoElement::defaultEventHandler(Event* event)
 
     if (m_type == "accept" || m_type == "options") {
         if (m_task)
-            m_task->executeTask(event);
+            m_task->executeTask();
     } else if (m_type == "prev") {
         ASSERT(document()->isWMLDocument());
         WMLDocument* document = static_cast<WMLDocument*>(this->document());
