@@ -1,0 +1,10 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x53
+  RenderBlock {HTML} at (0,0) size 800x53
+    RenderBody {BODY} at (8,8) size 784x37
+      RenderFieldSet {FIELDSET} at (2,0) size 780x37 [border: (2px groove #C0C0C0)]
+        RenderBlock {LABEL} at (14,7) size 752x0
+        RenderBlock (anonymous) at (14,7) size 752x18
+          RenderText {#text} at (0,0) size 7x18
+            text run at (0,0) width 7: "a"
