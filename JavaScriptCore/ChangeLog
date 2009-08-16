@@ -1,3 +1,38 @@
+2009-08-16  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Mark Rowe.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28352
+
+        Fix coding style violations. Use m_ for C++ class members. Remove
+        trailing whitespace on empty lines.
+
+        * yarr/RegexInterpreter.cpp:
+        (JSC::Yarr::Interpreter::ParenthesesDisjunctionContext::ParenthesesDisjunctionContext):
+        (JSC::Yarr::Interpreter::tryConsumeCharacter):
+        (JSC::Yarr::Interpreter::tryConsumeBackReference):
+        (JSC::Yarr::Interpreter::parenthesesDoBacktrack):
+        (JSC::Yarr::Interpreter::backtrackParentheses):
+        (JSC::Yarr::ByteCompiler::ByteCompiler):
+        (JSC::Yarr::ByteCompiler::compile):
+        (JSC::Yarr::ByteCompiler::checkInput):
+        (JSC::Yarr::ByteCompiler::assertionBOL):
+        (JSC::Yarr::ByteCompiler::assertionEOL):
+        (JSC::Yarr::ByteCompiler::assertionWordBoundary):
+        (JSC::Yarr::ByteCompiler::atomPatternCharacter):
+        (JSC::Yarr::ByteCompiler::atomCharacterClass):
+        (JSC::Yarr::ByteCompiler::atomBackReference):
+        (JSC::Yarr::ByteCompiler::atomParenthesesSubpatternBegin):
+        (JSC::Yarr::ByteCompiler::atomParentheticalAssertionBegin):
+        (JSC::Yarr::ByteCompiler::popParenthesesStack):
+        (JSC::Yarr::ByteCompiler::closeAlternative):
+        (JSC::Yarr::ByteCompiler::closeBodyAlternative):
+        (JSC::Yarr::ByteCompiler::atomParenthesesEnd):
+        (JSC::Yarr::ByteCompiler::regexBegin):
+        (JSC::Yarr::ByteCompiler::alterantiveBodyDisjunction):
+        (JSC::Yarr::ByteCompiler::alterantiveDisjunction):
+        (JSC::Yarr::ByteCompiler::emitDisjunction):
+
 2009-08-15  Mark Rowe  <mrowe@apple.com>
 
         Fix the build with JIT disabled.
