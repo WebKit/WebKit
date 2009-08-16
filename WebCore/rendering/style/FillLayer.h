@@ -63,14 +63,14 @@ public:
     bool isSizeSet() const { return m_sizeSet; }
     
     void setImage(StyleImage* i) { m_image = i; m_imageSet = true; }
-    void setXPosition(const Length& l) { m_xPosition = l; m_xPosSet = true; }
-    void setYPosition(const Length& l) { m_yPosition = l; m_yPosSet = true; }
+    void setXPosition(Length l) { m_xPosition = l; m_xPosSet = true; }
+    void setYPosition(Length l) { m_yPosition = l; m_yPosSet = true; }
     void setAttachment(EFillAttachment attachment) { m_attachment = attachment; m_attachmentSet = true; }
     void setClip(EFillBox b) { m_clip = b; m_clipSet = true; }
     void setOrigin(EFillBox b) { m_origin = b; m_originSet = true; }
     void setRepeat(EFillRepeat r) { m_repeat = r; m_repeatSet = true; }
     void setComposite(CompositeOperator c) { m_composite = c; m_compositeSet = true; }
-    void setSize(const LengthSize& b) { m_size = b; m_sizeSet = true; }
+    void setSize(LengthSize b) { m_size = b; m_sizeSet = true; }
     
     void clearImage() { m_imageSet = false; }
     void clearXPosition() { m_xPosSet = false; }

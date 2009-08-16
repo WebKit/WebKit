@@ -1,3 +1,17 @@
+2009-08-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Make transitions work for position and size of multiple backgrounds and masks.
+        https://bugs.webkit.org/show_bug.cgi?id=28266
+
+        * transitions/multiple-background-size-transitions-expected.txt: Added.
+        * transitions/multiple-background-size-transitions.html: Added.
+        * transitions/multiple-background-transitions-expected.txt: Added.
+        * transitions/multiple-background-transitions.html: Added.
+        * transitions/multiple-mask-transitions-expected.txt: Added.
+        * transitions/multiple-mask-transitions.html: Added.
+
 2009-08-15  George Staikos  <george.staikos@torchmobile.com>
 
         Reviewed by Jan Alonzo.

@@ -365,6 +365,124 @@ private:
     void (RenderStyle::*m_setter)(const Color&);
 };
 
+// Wrapper base class for an animatable property in a FillLayer
+class FillLayerPropertyWrapperBase {
+public:
+    FillLayerPropertyWrapperBase()
+    {
+    }
+
+    virtual ~FillLayerPropertyWrapperBase() { }
+    
+    virtual bool equals(const FillLayer* a, const FillLayer* b) const = 0;
+    virtual void blend(const AnimationBase* anim, FillLayer* dst, const FillLayer* a, const FillLayer* b, double progress) const = 0;
+};
+
+template <typename T>
+class FillLayerPropertyWrapperGetter : public FillLayerPropertyWrapperBase {
+public:
+    FillLayerPropertyWrapperGetter(T (FillLayer::*getter)() const)
+        : m_getter(getter)
+    {
+    }
+
+    virtual bool equals(const FillLayer* a, const FillLayer* b) const
+    {
+       // If the style pointers are the same, don't bother doing the test.
+       // If either is null, return false. If both are null, return true.
+       if ((!a && !b) || a == b)
+           return true;
+       if (!a || !b)
+            return false;
+        return (a->*m_getter)() == (b->*m_getter)();
+    }
+
+protected:
+    T (FillLayer::*m_getter)() const;
+};
+
+template <typename T>
+class FillLayerPropertyWrapper : public FillLayerPropertyWrapperGetter<T> {
+public:
+    FillLayerPropertyWrapper(T (FillLayer::*getter)() const, void (FillLayer::*setter)(T))
+        : FillLayerPropertyWrapperGetter<T>(getter)
+        , m_setter(setter)
+    {
+    }
+    
+    virtual void blend(const AnimationBase* anim, FillLayer* dst, const FillLayer* a, const FillLayer* b, double progress) const
+    {
+        (dst->*m_setter)(blendFunc(anim, (a->*FillLayerPropertyWrapperGetter<T>::m_getter)(), (b->*FillLayerPropertyWrapperGetter<T>::m_getter)(), progress));
+    }
+
+protected:
+    void (FillLayer::*m_setter)(T);
+};
+
+
+class FillLayersPropertyWrapper : public PropertyWrapperBase {
+public:
+    typedef const FillLayer* (RenderStyle::*LayersGetter)() const;
+    typedef FillLayer* (RenderStyle::*LayersAccessor)();
+    
+    FillLayersPropertyWrapper(int prop, LayersGetter getter, LayersAccessor accessor)
+        : PropertyWrapperBase(prop)
+        , m_layersGetter(getter)
+        , m_layersAccessor(accessor)
+    {
+        switch (prop) {
+            case CSSPropertyBackgroundPositionX:
+            case CSSPropertyWebkitMaskPositionX:
+                m_fillLayerPropertyWrapper = new FillLayerPropertyWrapper<Length>(&FillLayer::xPosition, &FillLayer::setXPosition);
+                break;
+            case CSSPropertyBackgroundPositionY:
+            case CSSPropertyWebkitMaskPositionY:
+                m_fillLayerPropertyWrapper = new FillLayerPropertyWrapper<Length>(&FillLayer::yPosition, &FillLayer::setYPosition);
+                break;
+            case CSSPropertyWebkitBackgroundSize:
+            case CSSPropertyWebkitMaskSize:
+                m_fillLayerPropertyWrapper = new FillLayerPropertyWrapper<LengthSize>(&FillLayer::size, &FillLayer::setSize);
+                break;
+        }
+    }
+
+    virtual bool equals(const RenderStyle* a, const RenderStyle* b) const
+    {
+        const FillLayer* fromLayer = (a->*m_layersGetter)();
+        const FillLayer* toLayer = (b->*m_layersGetter)();
+
+        while (fromLayer && toLayer) {
+            if (!m_fillLayerPropertyWrapper->equals(fromLayer, toLayer))
+                return false;
+            
+            fromLayer = fromLayer->next();
+            toLayer = toLayer->next();
+        }
+
+        return true;
+    }
+
+    virtual void blend(const AnimationBase* anim, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const
+    {
+        const FillLayer* aLayer = (a->*m_layersGetter)();
+        const FillLayer* bLayer = (b->*m_layersGetter)();
+        FillLayer* dstLayer = (dst->*m_layersAccessor)();
+
+        while (aLayer && bLayer && dstLayer) {
+            m_fillLayerPropertyWrapper->blend(anim, dstLayer, aLayer, bLayer, progress);
+            aLayer = aLayer->next();
+            bLayer = bLayer->next();
+            dstLayer = dstLayer->next();
+        }
+    }
+
+private:
+    FillLayerPropertyWrapperBase* m_fillLayerPropertyWrapper;
+    
+    LayersGetter m_layersGetter;
+    LayersAccessor m_layersAccessor;
+};
+
 class ShorthandPropertyWrapper : public PropertyWrapperBase {
 public:
     ShorthandPropertyWrapper(int property, const CSSPropertyLonghand& longhand)
@@ -442,13 +560,14 @@ static void ensurePropertyMap()
         gPropertyWrappers->append(new PropertyWrapper<const Color&>(CSSPropertyColor, &RenderStyle::color, &RenderStyle::setColor));
 
         gPropertyWrappers->append(new PropertyWrapper<const Color&>(CSSPropertyBackgroundColor, &RenderStyle::backgroundColor, &RenderStyle::setBackgroundColor));
-        gPropertyWrappers->append(new PropertyWrapper<Length>(CSSPropertyBackgroundPositionX, &RenderStyle::backgroundXPosition, &RenderStyle::setBackgroundXPosition));
-        gPropertyWrappers->append(new PropertyWrapper<Length>(CSSPropertyBackgroundPositionY, &RenderStyle::backgroundYPosition, &RenderStyle::setBackgroundYPosition));
-        gPropertyWrappers->append(new PropertyWrapper<LengthSize>(CSSPropertyWebkitBackgroundSize, &RenderStyle::backgroundSize, &RenderStyle::setBackgroundSize));
 
-        gPropertyWrappers->append(new PropertyWrapper<Length>(CSSPropertyWebkitMaskPositionX, &RenderStyle::maskXPosition, &RenderStyle::setMaskXPosition));
-        gPropertyWrappers->append(new PropertyWrapper<Length>(CSSPropertyWebkitMaskPositionY, &RenderStyle::maskYPosition, &RenderStyle::setMaskYPosition));
-        gPropertyWrappers->append(new PropertyWrapper<LengthSize>(CSSPropertyWebkitMaskSize, &RenderStyle::maskSize, &RenderStyle::setMaskSize));
+        gPropertyWrappers->append(new FillLayersPropertyWrapper(CSSPropertyBackgroundPositionX, &RenderStyle::backgroundLayers, &RenderStyle::accessBackgroundLayers));
+        gPropertyWrappers->append(new FillLayersPropertyWrapper(CSSPropertyBackgroundPositionY, &RenderStyle::backgroundLayers, &RenderStyle::accessBackgroundLayers));
+        gPropertyWrappers->append(new FillLayersPropertyWrapper(CSSPropertyWebkitBackgroundSize, &RenderStyle::backgroundLayers, &RenderStyle::accessBackgroundLayers));
+
+        gPropertyWrappers->append(new FillLayersPropertyWrapper(CSSPropertyWebkitMaskPositionX, &RenderStyle::maskLayers, &RenderStyle::accessMaskLayers));
+        gPropertyWrappers->append(new FillLayersPropertyWrapper(CSSPropertyWebkitMaskPositionY, &RenderStyle::maskLayers, &RenderStyle::accessMaskLayers));
+        gPropertyWrappers->append(new FillLayersPropertyWrapper(CSSPropertyWebkitMaskSize, &RenderStyle::maskLayers, &RenderStyle::accessMaskLayers));
 
         gPropertyWrappers->append(new PropertyWrapper<int>(CSSPropertyFontSize, &RenderStyle::fontSize, &RenderStyle::setBlendedFontSize));
         gPropertyWrappers->append(new PropertyWrapper<unsigned short>(CSSPropertyWebkitColumnRuleWidth, &RenderStyle::columnRuleWidth, &RenderStyle::setColumnRuleWidth));
