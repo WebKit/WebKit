@@ -32,6 +32,22 @@ function isCloseEnough(actual, desired, tolerance)
     return diff <= tolerance;
 }
 
+function isShadow(property)
+{
+  return (property == '-webkit-box-shadow' || property == 'text-shadow');
+}
+
+function getShadowXY(cssValue)
+{
+    var text = cssValue.cssText;
+    // Shadow cssText looks like "rgb(0, 0, 255) 0px -3px 10px 0px"
+    var shadowPositionRegExp = /\)\s*(\d+)px\s*(-?\d+)px/;
+    var result = shadowPositionRegExp.exec(cssValue.cssText);
+
+    var result = [parseInt(result[1]), parseInt(result[2])];
+    return result;
+}
+
 function checkExpectedValue(expected, index)
 {
     var time = expected[index][0];
@@ -66,10 +82,22 @@ function checkExpectedValue(expected, index)
     } else {
         var computedStyle = window.getComputedStyle(document.getElementById(elementId)).getPropertyCSSValue(property);
         if (computedStyle.cssValueType == CSSValue.CSS_VALUE_LIST) {
-            // For now, assume that value lists are simple lists of number values (e.g. transform-origin)
             var values = [];
             for (var i = 0; i < computedStyle.length; ++i) {
-                values.push(computedStyle[i].getFloatValue(CSSPrimitiveValue.CSS_NUMBER));
+                switch (computedStyle[i].cssValueType) {
+                  case CSSValue.CSS_PRIMITIVE_VALUE:
+                    values.push(computedStyle[i].getFloatValue(CSSPrimitiveValue.CSS_NUMBER));
+                    break;
+                  case CSSValue.CSS_CUSTOM:
+                    // arbitrarily pick shadow-x and shadow-y
+                    if (isShadow) {
+                      var shadowXY = getShadowXY(computedStyle[i]);
+                      values.push(shadowXY[0]);
+                      values.push(shadowXY[1]);
+                    } else
+                      values.push(computedStyle[i].cssText);
+                    break;
+                }
             }
             computedValue = values.join(',');
             pass = true;

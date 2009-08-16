@@ -2,6 +2,19 @@
 
         Reviewed by Anders Carlsson.
 
+        Animate multiple shadows
+        https://bugs.webkit.org/show_bug.cgi?id=28266
+
+        * transitions/multiple-shadow-transitions-expected.txt: Added.
+        * transitions/multiple-shadow-transitions.html: Added.
+        * transitions/transition-test-helpers.js:
+        Add some special-case code for shadows so we can at least tell of the shadow
+        position is changing.
+
+2009-08-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Anders Carlsson.
+
         Make transitions work for position and size of multiple backgrounds and masks.
         https://bugs.webkit.org/show_bug.cgi?id=28266
 

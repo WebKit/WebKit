@@ -2,6 +2,19 @@
 
         Reviewed by Anders Carlsson.
 
+        Implement animations of multiple text-shadows and -webkit-box-shadows.
+        https://bugs.webkit.org/show_bug.cgi?id=28266
+        
+        Test: transitions/multiple-shadow-transitions.html
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::PropertyWrapperShadow::equals):
+        (WebCore::PropertyWrapperShadow::blend):
+
+2009-08-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Anders Carlsson.
+
         Make transitions work for position and size of multiple backgrounds and masks.
         https://bugs.webkit.org/show_bug.cgi?id=28266
         
