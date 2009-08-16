@@ -29,6 +29,7 @@
 #include "JSGlobalObject.h"
 #include "Interpreter.h"
 #include "ObjectConstructor.h"
+#include "PrototypeFunction.h"
 
 namespace JSC {
 

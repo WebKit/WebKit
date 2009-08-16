@@ -1,3 +1,11 @@
+2009-08-15  Mark Rowe  <mrowe@apple.com>
+
+        Fix the build with JIT disabled.
+
+        * runtime/Arguments.h: Only compile the jitCode method when the JIT is enabled.
+        * runtime/Executable.h: Include PrototypeFunction.h so the compiler knows what
+        NativeFunctionWrapper is when the JIT is disabled.
+
 2009-08-15  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         Reviewed by Sam Weinig.
