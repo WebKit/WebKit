@@ -1,5 +1,18 @@
 2009-08-15  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Dave Hyatt
+
+        Optimize updateFillImages() to not add/remove clients every time
+        https://bugs.webkit.org/show_bug.cgi?id=28334
+
+        Optimize the case where old and new just have a single layer pointing to the same (or no)
+        image.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::updateFillImages):
+
+2009-08-15  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Anders Carlsson.
 
         Implement animations of multiple text-shadows and -webkit-box-shadows.

@@ -1616,6 +1616,10 @@ void RenderObject::styleDidChange(StyleDifference diff, const RenderStyle*)
 
 void RenderObject::updateFillImages(const FillLayer* oldLayers, const FillLayer* newLayers)
 {
+    // Optimize the common case
+    if (oldLayers && !oldLayers->next() && newLayers && !newLayers->next() && (oldLayers->image() == newLayers->image()))
+        return;
+    
     // Go through the new layers and addClients first, to avoid removing all clients of an image.
     for (const FillLayer* currNew = newLayers; currNew; currNew = currNew->next()) {
         if (currNew->image())
