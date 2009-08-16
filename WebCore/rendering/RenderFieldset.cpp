@@ -108,10 +108,11 @@ RenderBox* RenderFieldset::findLegend() const
 {
     for (RenderObject* legend = firstChild(); legend; legend = legend->nextSibling()) {
         if (!legend->isFloatingOrPositioned() && legend->node() &&
-            legend->node()->hasTagName(legendTag)
+            (legend->node()->hasTagName(legendTag)
 #if ENABLE(WML)
             || legend->node()->hasTagName(WMLNames::insertedLegendTag)
 #endif
+            )
            )
             return toRenderBox(legend);
     }

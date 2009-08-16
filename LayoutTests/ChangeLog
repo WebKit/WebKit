@@ -1,3 +1,13 @@
+2009-08-15  George Staikos  <george.staikos@torchmobile.com>
+
+        Reviewed by Jan Alonzo.
+
+        Test to demonstrate crash in fieldset code when WML is enabled.
+        Test provided by red47514f7@yandex.ru
+        https://bugs.webkit.org/show_bug.cgi?id=28012
+
+        * fast/wml/html-fieldset-crash.html: Added.
+
 2009-08-15  Sam Weinig  <sam@webkit.org>
 
         Remove no longer correct and now failing test.  document.body.onunload
