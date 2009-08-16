@@ -1,5 +1,11 @@
 2009-08-15  Sam Weinig  <sam@webkit.org>
 
+        Make Mark Rowe a bit less grumpy.
+
+        * http/tests/history/back-to-post.php:
+
+2009-08-15  Sam Weinig  <sam@webkit.org>
+
         Make http/tests/history/back-to-post.php's output a bit more reliable.
 
         * http/tests/history/back-to-post-expected.txt:
