@@ -226,8 +226,10 @@ InjectedScript.addStyleSelector = function(newContent, selectedNodeId)
     }
 
     var selectedNode = InjectedScript._nodeForId(selectedNodeId);
+    var rule = stylesheet.cssRules[stylesheet.cssRules.length - 1];
+    rule.__isViaInspector = true;
 
-    return [ InjectedScript._serializeRule(stylesheet.cssRules[stylesheet.cssRules.length - 1]), InjectedScript._doesSelectorAffectNode(newContent, selectedNode) ];
+    return [ InjectedScript._serializeRule(rule), InjectedScript._doesSelectorAffectNode(newContent, selectedNode) ];
 }
 
 InjectedScript._doesSelectorAffectNode = function(selectorText, node)
@@ -264,6 +266,7 @@ InjectedScript._serializeRule = function(rule)
     }
     ruleValue.isUserAgent = parentStyleSheet && !parentStyleSheet.ownerNode && !parentStyleSheet.href;
     ruleValue.isUser = parentStyleSheet && parentStyleSheet.ownerNode && parentStyleSheet.ownerNode.nodeName == "#document";
+    ruleValue.isViaInspector = !!rule.__isViaInspector;
 
     // Bind editable scripts only.
     var doBind = !ruleValue.isUserAgent && !ruleValue.isUser;

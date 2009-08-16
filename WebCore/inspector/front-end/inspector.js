@@ -306,7 +306,7 @@ var WebInspector = {
 
     set hoveredDOMNode(x)
     {
-        if (objectsAreSame(this._hoveredDOMNode, x))
+        if (this._hoveredDOMNode === x)
             return;
 
         this._hoveredDOMNode = x;
@@ -1085,11 +1085,6 @@ WebInspector.reset = function()
     delete this.mainResource;
 
     this.console.clearMessages();
-}
-
-WebInspector.inspectedWindowCleared = function(inspectedWindow)
-{
-    this.panels.elements.inspectedWindowCleared(inspectedWindow);
 }
 
 WebInspector.resourceURLChanged = function(resource, oldURL)

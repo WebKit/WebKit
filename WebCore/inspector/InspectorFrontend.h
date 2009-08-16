@@ -71,7 +71,6 @@ namespace WebCore {
 
         void updateFocusedNode(long long nodeId);
         void setAttachedWindow(bool attached);
-        void inspectedWindowScriptObjectCleared(Frame* frame);
         void showPanel(int panel);
         void populateInterface();
         void reset();

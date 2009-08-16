@@ -1,3 +1,89 @@
+2009-08-16  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        WebInspector: A handful of DOMAgent-related fixes and cleanups.
+
+        - renamed elementId to nodeId in operations on nodes.
+        - added load listeners to frame owners in InspectorDOMAgent.
+        - removed InspectorController::inspectedWindowScriptObjectCleared event.
+        - preserved isViaInspector flag for 'via inspector' marker to survive styles update.
+        - removed contentDocument-related logic from ElementsPanel since it is handled in
+            the InspectorDOMAgent.
+        - removed DOM listeners unregistration and corresponding events from InspectorController.
+        - made this.styles 'private' in ElementsPanel.
+        - added TODO for the handleCopy processing.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28356
+
+        * WebCore.order:
+        * inspector/InspectorBackend.cpp:
+        (WebCore::InspectorBackend::getChildNodes):
+        (WebCore::InspectorBackend::setTextNodeValue):
+        * inspector/InspectorBackend.h:
+        * inspector/InspectorBackend.idl:
+        * inspector/InspectorController.cpp:
+        * inspector/InspectorController.h:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::startListening):
+        (WebCore::InspectorDOMAgent::stopListening):
+        (WebCore::InspectorDOMAgent::handleEvent):
+        (WebCore::InspectorDOMAgent::pushChildNodesToFrontend):
+        (WebCore::InspectorDOMAgent::getChildNodes):
+        (WebCore::InspectorDOMAgent::pushNodePathToFrontend):
+        (WebCore::InspectorDOMAgent::setTextNodeValue):
+        (WebCore::InspectorDOMAgent::buildObjectForNode):
+        (WebCore::InspectorDOMAgent::buildArrayForContainerChildren):
+        (WebCore::InspectorDOMAgent::innerParentNode):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorFrontend.cpp:
+        * inspector/InspectorFrontend.h:
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMDocument.prototype.addEventListener):
+        (WebInspector.DOMDocument.prototype.removeEventListener):
+        (WebInspector.DOMDocument.prototype._fireDomEvent):
+        (WebInspector.DOMAgent.prototype.getChildNodesAsync.mycallback):
+        (WebInspector.DOMAgent.prototype.getChildNodesAsync):
+        (WebInspector.DOMAgent.prototype._setChildNodes):
+        (WebInspector.CSSStyleDeclaration.parseRule):
+        (WebInspector.childNodeInserted):
+        (WebInspector.childNodeRemoved):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel):
+        (WebInspector.ElementsPanel.prototype.reset):
+        (WebInspector.ElementsPanel.prototype.addStyleChange):
+        (WebInspector.ElementsPanel.prototype.removeStyleChange):
+        (WebInspector.ElementsPanel.prototype._updateModifiedNodes):
+        (WebInspector.ElementsPanel.prototype.updateBreadcrumb):
+        (WebInspector.ElementsPanel.prototype.handleCopyEvent):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeOutline.prototype.set rootDOMNode):
+        (WebInspector.ElementsTreeOutline.prototype.findTreeElement):
+        (WebInspector.ElementsTreeElement):
+        (WebInspector.ElementsTreeElement.prototype._updateChildren.updateChildrenOfNode):
+        (WebInspector.ElementsTreeElement.prototype._updateChildren):
+        (WebInspector.ElementsTreeElement.prototype.onexpand):
+        * inspector/front-end/InjectedScript.js:
+        (InjectedScript.addStyleSelector):
+        (InjectedScript._serializeRule):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylePropertiesSection):
+        * inspector/front-end/inspector.js:
+        (WebInspector.set hoveredDOMNode):
+        * inspector/front-end/treeoutline.js:
+        (TreeOutline.prototype.findTreeElement):
+        * inspector/front-end/utilities.js:
+        (Node.prototype.enclosingNodeOrSelfWithNodeNameInArray):
+        (Node.prototype.enclosingNodeOrSelfWithClass):
+        (isAncestorNode):
+        (firstCommonNodeAncestor):
+        (traverseNextNode):
+        (traversePreviousNode):
+        ():
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::dispatchWindowObjectAvailable):
+        * page/android/InspectorControllerAndroid.cpp:
+
 2009-08-15  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt

@@ -132,17 +132,6 @@ void InspectorFrontend::setAttachedWindow(bool attached)
     function->call();
 }
 
-void InspectorFrontend::inspectedWindowScriptObjectCleared(Frame* frame)
-{
-    ScriptObject domWindow;
-    if (!getQuarantinedScriptObject(frame->domWindow(), domWindow))
-        return;
-
-    OwnPtr<ScriptFunctionCall> function(newFunctionCall("inspectedWindowCleared"));
-    function->appendArgument(domWindow);
-    function->call();
-}
-
 void InspectorFrontend::showPanel(int panel)
 {
     const char* showFunctionName;

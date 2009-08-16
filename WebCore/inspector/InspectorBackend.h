@@ -125,10 +125,10 @@ public:
     void stepOutOfFunctionInDebugger();
 #endif
 
-    void getChildNodes(long callId, long elementId);
+    void getChildNodes(long callId, long nodeId);
     void setAttribute(long callId, long elementId, const String& name, const String& value);
     void removeAttribute(long callId, long elementId, const String& name);
-    void setTextNodeValue(long callId, long elementId, const String& value);
+    void setTextNodeValue(long callId, long nodeId, const String& value);
 
     // Generic code called from custom implementations.
     void highlight(long nodeId);

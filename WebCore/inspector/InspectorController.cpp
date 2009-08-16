@@ -499,14 +499,6 @@ void InspectorController::handleMousePressOnNode(Node* node)
     inspect(node);
 }
 
-void InspectorController::inspectedWindowScriptObjectCleared(Frame* frame)
-{
-    if (!enabled() || !m_frontend)
-        return;
-
-    m_frontend->inspectedWindowScriptObjectCleared(frame);
-}
-
 void InspectorController::windowScriptObjectAvailable()
 {
     if (!m_page || !enabled())

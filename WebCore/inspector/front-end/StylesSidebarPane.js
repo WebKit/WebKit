@@ -322,8 +322,9 @@ WebInspector.StylePropertiesSection = function(styleRule, subtitle, computedStyl
     this.editable = (editable && !computedStyle);
 
     // Prevent editing the user agent and user rules.
-    var isUserAgent = this.styleRule.isUserAgent;
-    var isUser = this.styleRule.isUser;
+    var isUserAgent = this.rule && this.rule.isUserAgent;
+    var isUser = this.rule && this.rule.isUser;
+    var isViaInspector = this.rule && this.rule.isViaInspector;
 
     if (isUserAgent || isUser)
         this.editable = false;
@@ -366,7 +367,7 @@ WebInspector.StylePropertiesSection = function(styleRule, subtitle, computedStyl
                 subtitle = WebInspector.UIString("user agent stylesheet");
             else if (isUser)
                 subtitle = WebInspector.UIString("user stylesheet");
-            else if (this.styleRule.parentStyleSheet === WebInspector.panels.elements.stylesheet)
+            else if (isViaInspector)
                 subtitle = WebInspector.UIString("via inspector");
             else
                 subtitle = WebInspector.UIString("inline stylesheet");

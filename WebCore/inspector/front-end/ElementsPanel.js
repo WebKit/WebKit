@@ -107,13 +107,7 @@ WebInspector.ElementsPanel = function()
     this.element.appendChild(this.sidebarElement);
     this.element.appendChild(this.sidebarResizeElement);
 
-    this._mutationMonitoredWindows = [];
-    this._nodeInsertedEventListener = InspectorController.wrapCallback(this._nodeInserted.bind(this));
-    this._nodeRemovedEventListener = InspectorController.wrapCallback(this._nodeRemoved.bind(this));
-    this._contentLoadedEventListener = InspectorController.wrapCallback(this._contentLoaded.bind(this));
-
-    this.stylesheet = null;
-    this.styles = {};
+    this._changedStyles = {};
 
     this.reset();
 }
@@ -177,36 +171,23 @@ WebInspector.ElementsPanel.prototype = {
         }
 
         this.recentlyModifiedNodes = [];
-        this.unregisterAllMutationEventListeners();
 
         delete this.currentQuery;
         this.searchCanceled();
 
         var inspectedWindow = WebInspector.domAgent.inspectedWindow;
-        if (!inspectedWindow || !inspectedWindow.document)
+        if (!inspectedWindow || !inspectedWindow.document || !inspectedWindow.document.firstChild)
             return;
-
-        if (!inspectedWindow.document.firstChild) {
-            function contentLoaded()
-            {
-                inspectedWindow.document.removeEventListener("DOMContentLoaded", contentLoadedCallback, false);
-
-                this.reset();
-            }
-
-            var contentLoadedCallback = InspectorController.wrapCallback(contentLoaded.bind(this));
-            inspectedWindow.document.addEventListener("DOMContentLoaded", contentLoadedCallback, false);
-            return;
-        }
 
         // If the window isn't visible, return early so the DOM tree isn't built
         // and mutation event listeners are not added.
         if (!InspectorController.isWindowVisible())
             return;
 
-        this.registerMutationEventListeners(inspectedWindow);
-
         var inspectedRootDocument = inspectedWindow.document;
+        inspectedRootDocument.addEventListener("DOMNodeInserted", this._nodeInserted.bind(this));
+        inspectedRootDocument.addEventListener("DOMNodeRemoved", this._nodeRemoved.bind(this));
+
         this.rootDOMNode = inspectedRootDocument;
 
         var canidateFocusNode = inspectedRootDocument.body || inspectedRootDocument.documentElement;
@@ -316,12 +297,6 @@ WebInspector.ElementsPanel.prototype = {
         this.focusedDOMNode = this._searchResults[this._currentSearchResultIndex];
     },
 
-    inspectedWindowCleared: function(window)
-    {
-        if (InspectorController.isWindowVisible())
-            this.updateMutationEventListeners(window);
-    },
-
     renameSelector: function(oldIdentifier, newIdentifier, oldSelector, newSelector)
     {
         // TODO: Implement Shifting the oldSelector, and its contents to a newSelector
@@ -333,16 +308,16 @@ WebInspector.ElementsPanel.prototype = {
             return;
 
         var selector = style.parentRule.selectorText;
-        if (!this.styles[identifier])
-            this.styles[identifier] = {};
+        if (!this._changedStyles[identifier])
+            this._changedStyles[identifier] = {};
 
-        if (!this.styles[identifier][selector])
-            this.styles[identifier][selector] = {};
+        if (!this._changedStyles[identifier][selector])
+            this._changedStyles[identifier][selector] = {};
 
-        if (!this.styles[identifier][selector][property])
+        if (!this._changedStyles[identifier][selector][property])
             WebInspector.styleChanges += 1;
 
-        this.styles[identifier][selector][property] = style.getPropertyValue(property);
+        this._changedStyles[identifier][selector][property] = style.getPropertyValue(property);
     },
 
     removeStyleChange: function(identifier, style, property)
@@ -351,11 +326,11 @@ WebInspector.ElementsPanel.prototype = {
             return;
 
         var selector = style.parentRule.selectorText;
-        if (!this.styles[identifier] || !this.styles[identifier][selector])
+        if (!this._changedStyles[identifier] || !this._changedStyles[identifier][selector])
             return;
 
-        if (this.styles[identifier][selector][property]) {
-            delete this.styles[identifier][selector][property];
+        if (this._changedStyles[identifier][selector][property]) {
+            delete this._changedStyles[identifier][selector][property];
             WebInspector.styleChanges -= 1;
         }
     },
@@ -367,20 +342,20 @@ WebInspector.ElementsPanel.prototype = {
 
         // Merge Down to Just Selectors
         var mergedSelectors = {};
-        for (var identifier in this.styles) {
-            for (var selector in this.styles[identifier]) {
+        for (var identifier in this._changedStyles) {
+            for (var selector in this._changedStyles[identifier]) {
                 if (!mergedSelectors[selector])
-                    mergedSelectors[selector] = this.styles[identifier][selector];
+                    mergedSelectors[selector] = this._changedStyles[identifier][selector];
                 else { // merge on selector
                     var merge = {};
                     for (var property in mergedSelectors[selector])
                         merge[property] = mergedSelectors[selector][property];
-                    for (var property in this.styles[identifier][selector]) {
+                    for (var property in this._changedStyles[identifier][selector]) {
                         if (!merge[property])
-                            merge[property] = this.styles[identifier][selector][property];
+                            merge[property] = this._changedStyles[identifier][selector][property];
                         else { // merge on property within a selector, include comment to notify user
                             var value1 = merge[property];
-                            var value2 = this.styles[identifier][selector][property];
+                            var value2 = this._changedStyles[identifier][selector][property];
 
                             if (value1 === value2)
                                 merge[property] = [value1];
@@ -437,53 +412,6 @@ WebInspector.ElementsPanel.prototype = {
         InspectorController.inspectedWindow().console.log(result);
     },
 
-    _addMutationEventListeners: function(monitoredWindow)
-    {
-        monitoredWindow.document.addEventListener("DOMNodeInserted", this._nodeInsertedEventListener, true);
-        monitoredWindow.document.addEventListener("DOMNodeRemoved", this._nodeRemovedEventListener, true);
-        if (monitoredWindow.frameElement)
-            monitoredWindow.addEventListener("DOMContentLoaded", this._contentLoadedEventListener, true);
-    },
-
-    _removeMutationEventListeners: function(monitoredWindow)
-    {
-        if (monitoredWindow.frameElement)
-            monitoredWindow.removeEventListener("DOMContentLoaded", this._contentLoadedEventListener, true);
-        if (!monitoredWindow.document)
-            return;
-        monitoredWindow.document.removeEventListener("DOMNodeInserted", this._nodeInsertedEventListener, true);
-        monitoredWindow.document.removeEventListener("DOMNodeRemoved", this._nodeRemovedEventListener, true);
-    },
-
-    updateMutationEventListeners: function(monitoredWindow)
-    {
-        this._addMutationEventListeners(monitoredWindow);
-    },
-
-    registerMutationEventListeners: function(monitoredWindow)
-    {
-        if (!monitoredWindow || this._mutationMonitoredWindows.indexOf(monitoredWindow) !== -1)
-            return;
-        this._mutationMonitoredWindows.push(monitoredWindow);
-        if (InspectorController.isWindowVisible())
-            this._addMutationEventListeners(monitoredWindow);
-    },
-
-    unregisterMutationEventListeners: function(monitoredWindow)
-    {
-        if (!monitoredWindow || this._mutationMonitoredWindows.indexOf(monitoredWindow) === -1)
-            return;
-        this._mutationMonitoredWindows.remove(monitoredWindow);
-        this._removeMutationEventListeners(monitoredWindow);
-    },
-
-    unregisterAllMutationEventListeners: function()
-    {
-        for (var i = 0; i < this._mutationMonitoredWindows.length; ++i)
-            this._removeMutationEventListeners(this._mutationMonitoredWindows[i]);
-        this._mutationMonitoredWindows = [];
-    },
-
     get rootDOMNode()
     {
         return this.treeOutline.rootDOMNode;
@@ -502,13 +430,6 @@ WebInspector.ElementsPanel.prototype = {
     set focusedDOMNode(x)
     {
         this.treeOutline.focusedDOMNode = x;
-    },
-
-    _contentLoaded: function(event)
-    {
-        this.recentlyModifiedNodes.push({node: event.target, parent: event.target.defaultView.frameElement, replaced: true});
-        if (this.visible)
-            this._updateModifiedNodesSoon();
     },
 
     _nodeInserted: function(event)
@@ -548,14 +469,14 @@ WebInspector.ElementsPanel.prototype = {
             if (!parent)
                 continue;
 
-            var parentNodeItem = this.treeOutline.findTreeElement(parent, null, null, objectsAreSame);
+            var parentNodeItem = this.treeOutline.findTreeElement(parent);
             if (parentNodeItem && !parentNodeItem.alreadyUpdatedChildren) {
                 parentNodeItem.updateChildren(replaced);
                 parentNodeItem.alreadyUpdatedChildren = true;
                 updatedParentTreeElements.push(parentNodeItem);
             }
 
-            if (!updateBreadcrumbs && (objectsAreSame(this.focusedDOMNode, parent) || isAncestorIncludingParentFrames(this.focusedDOMNode, parent)))
+            if (!updateBreadcrumbs && (this.focusedDOMNode === parent || isAncestorIncludingParentFrames(this.focusedDOMNode, parent)))
                 updateBreadcrumbs = true;
         }
 
@@ -615,7 +536,7 @@ WebInspector.ElementsPanel.prototype = {
         var foundRoot = false;
         var crumb = crumbs.firstChild;
         while (crumb) {
-            if (objectsAreSame(crumb.representedObject, this.rootDOMNode))
+            if (crumb.representedObject === this.rootDOMNode)
                 foundRoot = true;
 
             if (foundRoot)
@@ -623,7 +544,7 @@ WebInspector.ElementsPanel.prototype = {
             else
                 crumb.removeStyleClass("dimmed");
 
-            if (objectsAreSame(crumb.representedObject, this.focusedDOMNode)) {
+            if (crumb.representedObject === this.focusedDOMNode) {
                 crumb.addStyleClass("selected");
                 handled = true;
             } else {
@@ -680,7 +601,7 @@ WebInspector.ElementsPanel.prototype = {
             if (current.nodeType === Node.DOCUMENT_NODE)
                 continue;
 
-            if (objectsAreSame(current, this.rootDOMNode))
+            if (current === this.rootDOMNode)
                 foundRoot = true;
 
             var crumb = document.createElement("span");
@@ -763,7 +684,7 @@ WebInspector.ElementsPanel.prototype = {
 
             if (foundRoot)
                 crumb.addStyleClass("dimmed");
-            if (objectsAreSame(current, this.focusedDOMNode))
+            if (current === this.focusedDOMNode)
                 crumb.addStyleClass("selected");
             if (!crumbs.childNodes.length)
                 crumb.addStyleClass("end");
@@ -1070,7 +991,8 @@ WebInspector.ElementsPanel.prototype = {
 
         switch (this.focusedDOMNode.nodeType) {
             case Node.ELEMENT_NODE:
-                var data = this.focusedDOMNode.outerHTML;
+                // TODO: Introduce InspectorController.copyEvent that pushes appropriate markup into the clipboard.
+                var data = null;
                 break;
 
             case Node.COMMENT_NODE:

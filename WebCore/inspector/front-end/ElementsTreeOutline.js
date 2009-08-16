@@ -51,7 +51,7 @@ WebInspector.ElementsTreeOutline.prototype = {
 
     set rootDOMNode(x)
     {
-        if (objectsAreSame(this._rootDOMNode, x))
+        if (this._rootDOMNode === x)
             return;
 
         this._rootDOMNode = x;
@@ -66,7 +66,7 @@ WebInspector.ElementsTreeOutline.prototype = {
 
     set focusedDOMNode(x)
     {
-        if (objectsAreSame(this._focusedDOMNode, x)) {
+        if (this._focusedDOMNode === x) {
             this.revealAndSelectNode(x);
             return;
         }
@@ -79,7 +79,7 @@ WebInspector.ElementsTreeOutline.prototype = {
         // and the select() call would change the focusedDOMNode and reenter this setter. So to
         // avoid calling focusedNodeChanged() twice, first check if _focusedDOMNode is the same
         // node as the one passed in.
-        if (objectsAreSame(this._focusedDOMNode, x)) {
+        if (this._focusedDOMNode === x) {
             this.focusedNodeChanged();
 
             if (x && !this.suppressSelectHighlight) {
@@ -138,19 +138,17 @@ WebInspector.ElementsTreeOutline.prototype = {
 
     focusedNodeChanged: function(forceUpdate) {},
 
-    findTreeElement: function(node, isAncestor, getParent, equal)
+    findTreeElement: function(node, isAncestor, getParent)
     {
         if (typeof isAncestor === "undefined")
             isAncestor = isAncestorIncludingParentFrames;
         if (typeof getParent === "undefined")
             getParent = parentNodeOrFrameElement;
-        if (typeof equal === "undefined")
-            equal = objectsAreSame;
 
-        var treeElement = TreeOutline.prototype.findTreeElement.call(this, node, isAncestor, getParent, equal);
+        var treeElement = TreeOutline.prototype.findTreeElement.call(this, node, isAncestor, getParent);
         if (!treeElement && node.nodeType === Node.TEXT_NODE) {
             // The text node might have been inlined if it was short, so try to find the parent element.
-            treeElement = TreeOutline.prototype.findTreeElement.call(this, node.parentNode, isAncestor, getParent, equal);
+            treeElement = TreeOutline.prototype.findTreeElement.call(this, node.parentNode, isAncestor, getParent);
         }
 
         return treeElement;
@@ -248,7 +246,7 @@ WebInspector.ElementsTreeOutline.prototype.__proto__ = TreeOutline.prototype;
 
 WebInspector.ElementsTreeElement = function(node)
 {
-    var hasChildren = node.contentDocument || (Preferences.ignoreWhitespace ? (firstChildSkippingWhitespace.call(node) ? true : false) : node.hasChildNodes());
+    var hasChildren = Preferences.ignoreWhitespace ? (firstChildSkippingWhitespace.call(node) ? true : false) : node.hasChildNodes();
     var titleInfo = nodeTitleInfo.call(node, hasChildren, WebInspector.linkifyURL);
 
     if (titleInfo.hasChildren) 
@@ -411,11 +409,11 @@ WebInspector.ElementsTreeElement.prototype = {
             var child = (Preferences.ignoreWhitespace ? firstChildSkippingWhitespace.call(node) : node.firstChild);
             while (child) {
                 var currentTreeElement = treeElement.children[treeChildIndex];
-                if (!currentTreeElement || !objectsAreSame(currentTreeElement.representedObject, child)) {
+                if (!currentTreeElement || currentTreeElement.representedObject !== child) {
                     // Find any existing element that is later in the children list.
                     var existingTreeElement = null;
                     for (var i = (treeChildIndex + 1); i < treeElement.children.length; ++i) {
-                        if (objectsAreSame(treeElement.children[i].representedObject, child)) {
+                        if (treeElement.children[i].representedObject === child) {
                             existingTreeElement = treeElement.children[i];
                             break;
                         }
@@ -450,9 +448,7 @@ WebInspector.ElementsTreeElement.prototype = {
             var currentNode = currentChild.representedObject;
             var currentParentNode = currentNode.parentNode;
 
-            if (objectsAreSame(currentParentNode, this.representedObject))
-                continue;
-            if (this.representedObject.contentDocument && objectsAreSame(currentParentNode, this.representedObject.contentDocument))
+            if (currentParentNode === this.representedObject)
                 continue;
 
             var selectedTreeElement = this.treeOutline.selectedTreeElement;
@@ -460,13 +456,8 @@ WebInspector.ElementsTreeElement.prototype = {
                 this.select();
 
             this.removeChildAtIndex(i);
-
-            if (this.treeOutline.panel && currentNode.contentDocument)
-                this.treeOutline.panel.unregisterMutationEventListeners(currentNode.contentDocument.defaultView);
         }
 
-        if (this.representedObject.contentDocument)
-            updateChildrenOfNode(this.representedObject.contentDocument);
         updateChildrenOfNode(this.representedObject);
 
         var lastChild = this.children[this.children.length - 1];
@@ -482,9 +473,6 @@ WebInspector.ElementsTreeElement.prototype = {
     onexpand: function()
     {
         this.treeOutline.updateSelection();
-
-        if (this.treeOutline.panel && this.representedObject.contentDocument)
-            this.treeOutline.panel.registerMutationEventListeners(this.representedObject.contentDocument.defaultView);
     },
 
     oncollapse: function()

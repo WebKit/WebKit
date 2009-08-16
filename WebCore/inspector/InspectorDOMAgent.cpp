@@ -95,6 +95,7 @@ void InspectorDOMAgent::startListening(Document* doc)
     doc->addEventListener(eventNames().DOMNodeRemovedEvent, this, false);
     doc->addEventListener(eventNames().DOMNodeRemovedFromDocumentEvent, this, true);
     doc->addEventListener(eventNames().DOMAttrModifiedEvent, this, false);
+    doc->addEventListener(eventNames().loadEvent, this, true);
     m_documents.add(doc);
 }
 
@@ -108,6 +109,7 @@ void InspectorDOMAgent::stopListening(Document* doc)
     doc->removeEventListener(eventNames().DOMNodeRemovedEvent, this, false);
     doc->removeEventListener(eventNames().DOMNodeRemovedFromDocumentEvent, this, true);
     doc->removeEventListener(eventNames().DOMAttrModifiedEvent, this, false);
+    doc->removeEventListener(eventNames().loadEvent, this, true);
     m_documents.remove(doc);
 }
 
@@ -171,6 +173,24 @@ void InspectorDOMAgent::handleEvent(Event* event, bool)
         // Re-push document once it is loaded.
         discardBindings();
         pushDocumentToFrontend();
+    } else if (type == eventNames().loadEvent) {
+        long frameOwnerId = idForNode(node);
+        if (!frameOwnerId)
+            return;
+
+        if (!m_childrenRequested.contains(frameOwnerId)) {
+            // No children are mapped yet -> only notify on changes of hasChildren.
+            m_frontend->hasChildrenUpdated(frameOwnerId, true);
+        } else {
+            // Re-add frame owner element together with its new children.
+            long parentId = idForNode(innerParentNode(node));
+            m_frontend->childNodeRemoved(parentId, frameOwnerId);
+            long prevId = idForNode(innerPreviousSibling(node));
+            ScriptObject value = buildObjectForNode(node, 0);
+            m_frontend->childNodeInserted(parentId, prevId, value);
+            // Invalidate children requested flag for the element.
+            m_childrenRequested.remove(m_childrenRequested.find(frameOwnerId));
+        }
     }
 }
 
@@ -215,8 +235,7 @@ void InspectorDOMAgent::pushChildNodesToFrontend(long nodeId)
     if (m_childrenRequested.contains(nodeId))
         return;
 
-    ContainerNode* container = static_cast<ContainerNode*>(node);
-    ScriptArray children = buildArrayForContainerChildren(container, 1);
+    ScriptArray children = buildArrayForContainerChildren(node, 1);
     m_childrenRequested.add(nodeId);
     m_frontend->setChildNodes(nodeId, children);
 }
@@ -249,9 +268,9 @@ long InspectorDOMAgent::idForNode(Node* node)
     return 0;
 }
 
-void InspectorDOMAgent::getChildNodes(long callId, long elementId)
+void InspectorDOMAgent::getChildNodes(long callId, long nodeId)
 {
-    pushChildNodesToFrontend(elementId);
+    pushChildNodesToFrontend(nodeId);
     m_frontend->didGetChildNodes(callId);
 }
 
@@ -267,18 +286,18 @@ long InspectorDOMAgent::pushNodePathToFrontend(Node* nodeToPush)
     if (result)
         return result;
 
-    Element* element = innerParentElement(nodeToPush);
-    ASSERT(element);  // Node is detached or is a document itself
+    Node* node = innerParentNode(nodeToPush);
+    ASSERT(node);  // Node is detached or is a document itself
 
-    Vector<Element*> path;
-    while (element && !idForNode(element)) {
-        path.append(element);
-        element = innerParentElement(element);
+    Vector<Node*> path;
+    while (node && !idForNode(node)) {
+        path.append(node);
+        node = innerParentNode(node);
     }
 
     // element is known to the client
-    ASSERT(element);
-    path.append(element);
+    ASSERT(node);
+    path.append(node);
     for (int i = path.size() - 1; i >= 0; --i) {
         long nodeId = idForNode(path.at(i));
         ASSERT(nodeId);
@@ -313,9 +332,9 @@ void InspectorDOMAgent::removeAttribute(long callId, long elementId, const Strin
     }
 }
 
-void InspectorDOMAgent::setTextNodeValue(long callId, long elementId, const String& value)
+void InspectorDOMAgent::setTextNodeValue(long callId, long nodeId, const String& value)
 {
-    Node* node = nodeForId(elementId);
+    Node* node = nodeForId(nodeId);
     if (node && (node->nodeType() == Node::TEXT_NODE)) {
         Text* text_node = static_cast<Text*>(node);
         ExceptionCode ec = 0;
@@ -359,10 +378,9 @@ ScriptObject InspectorDOMAgent::buildObjectForNode(Node* node, int depth)
         value.set("attributes", buildArrayForElementAttributes(element));
     }
     if (node->nodeType() == Node::ELEMENT_NODE || node->nodeType() == Node::DOCUMENT_NODE) {
-        ContainerNode* container = static_cast<ContainerNode*>(node);
-        int nodeCount = innerChildNodeCount(container);
+        int nodeCount = innerChildNodeCount(node);
         value.set("childNodeCount", nodeCount);
-        ScriptArray children = buildArrayForContainerChildren(container, depth);
+        ScriptArray children = buildArrayForContainerChildren(node, depth);
         if (children.length() > 0)
             value.set("children", children);
     }
@@ -387,7 +405,7 @@ ScriptArray InspectorDOMAgent::buildArrayForElementAttributes(Element* element)
     return attributesValue;
 }
 
-ScriptArray InspectorDOMAgent::buildArrayForContainerChildren(ContainerNode* container, int depth)
+ScriptArray InspectorDOMAgent::buildArrayForContainerChildren(Node* container, int depth)
 {
     ScriptArray children = m_frontend->newScriptArray();
     if (depth == 0) {
@@ -452,12 +470,12 @@ int InspectorDOMAgent::innerChildNodeCount(Node* node)
     return count;
 }
 
-Element* InspectorDOMAgent::innerParentElement(Node* node)
+Node* InspectorDOMAgent::innerParentNode(Node* node)
 {
-    Element* element = node->parentElement();
-    if (!element && node->ownerDocument())
-        return node->ownerDocument()->ownerElement();
-    return element;
+    Node* parent = node->parentNode();
+    if (parent && parent->nodeType() == Node::DOCUMENT_NODE)
+        return static_cast<Document*>(parent)->ownerElement();
+    return parent;
 }
 
 bool InspectorDOMAgent::isWhitespace(Node* node)

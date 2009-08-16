@@ -57,10 +57,10 @@ namespace WebCore {
         ~InspectorDOMAgent();
 
         // Methods called from the frontend.
-        void getChildNodes(long callId, long elementId);
+        void getChildNodes(long callId, long nodeId);
         void setAttribute(long callId, long elementId, const String& name, const String& value);
         void removeAttribute(long callId, long elementId, const String& name);
-        void setTextNodeValue(long callId, long elementId, const String& value);
+        void setTextNodeValue(long callId, long nodeId, const String& value);
 
         // Methods called from the InspectorController.
         void setDocument(Document* document);
@@ -79,11 +79,11 @@ namespace WebCore {
         void unbind(Node* node);
 
         void pushDocumentToFrontend();
-        void pushChildNodesToFrontend(long elementId);
+        void pushChildNodesToFrontend(long nodeId);
 
         ScriptObject buildObjectForNode(Node* node, int depth);
         ScriptArray buildArrayForElementAttributes(Element* element);
-        ScriptArray buildArrayForContainerChildren(ContainerNode* container, int depth);
+        ScriptArray buildArrayForContainerChildren(Node* container, int depth);
 
         // We represent embedded doms as a part of the same hierarchy. Hence we treat children of frame owners differently.
         // We also skip whitespace text nodes conditionally. Following methods encapsulate these specifics.
@@ -91,7 +91,7 @@ namespace WebCore {
         Node* innerNextSibling(Node* node);
         Node* innerPreviousSibling(Node* node);
         int innerChildNodeCount(Node* node);
-        Element* innerParentElement(Node* node);
+        Node* innerParentNode(Node* node);
         bool isWhitespace(Node* node);
 
         Document* mainFrameDocument();

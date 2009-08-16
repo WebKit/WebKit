@@ -35,7 +35,7 @@ module core {
         GenerateConstructor
     ] InspectorBackend {
         void hideDOMNodeHighlight();
-        [Custom] void highlightDOMNode(in long elementId);
+        [Custom] void highlightDOMNode(in long nodeId);
         void loaded();
         void windowUnloading();
         void attach();
@@ -99,10 +99,10 @@ module core {
 
         [Custom] Array profiles();
 #endif
-        void getChildNodes(in long callId, in long elementId);
+        void getChildNodes(in long callId, in long nodeId);
         void setAttribute(in long callId, in long elementId, in DOMString name, in DOMString value);
         void removeAttribute(in long callId, in long elementId, in DOMString name);
-        void setTextNodeValue(in long callId, in long elementId, in DOMString value);
+        void setTextNodeValue(in long callId, in long nodeId, in DOMString value);
 
         // Called from InjectedScript.
         [Custom] DOMObject nodeForId(in long nodeId);
