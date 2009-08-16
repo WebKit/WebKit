@@ -2,6 +2,22 @@
 
         Reviewed by Mark Rowe.
 
+        Fix crash on ./ecma_2/RegExp/exec-002.js.
+        https://bugs.webkit.org/show_bug.cgi?id=28353
+
+        Change the order of freeParenthesesDisjunctionContext and
+        popParenthesesDisjunctionContext on all call sites as the pop
+        method is accessing backTrack->lastContext which is the context
+        that is about to be freed.
+
+        * yarr/RegexInterpreter.cpp:
+        (JSC::Yarr::Interpreter::parenthesesDoBacktrack):
+        (JSC::Yarr::Interpreter::backtrackParentheses):
+
+2009-08-16  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Mark Rowe.
+
         https://bugs.webkit.org/show_bug.cgi?id=28352
 
         Fix coding style violations. Use m_ for C++ class members. Remove

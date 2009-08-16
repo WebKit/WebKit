@@ -608,8 +608,8 @@ public:
                 return true;
 
             resetMatches(term, context);
-            freeParenthesesDisjunctionContext(context);
             popParenthesesDisjunctionContext(backTrack);
+            freeParenthesesDisjunctionContext(context);
         }
 
         return false;
@@ -910,8 +910,8 @@ public:
                 }
             } else {
                 resetMatches(term, context);
-                freeParenthesesDisjunctionContext(context);
                 popParenthesesDisjunctionContext(backTrack);
+                freeParenthesesDisjunctionContext(context);
             }
 
             if (backTrack->matchAmount) {
@@ -949,8 +949,8 @@ public:
 
                 // pop a match off the stack
                 resetMatches(term, context);
-                freeParenthesesDisjunctionContext(context);
                 popParenthesesDisjunctionContext(backTrack);
+                freeParenthesesDisjunctionContext(context);
             }
 
             return false;
