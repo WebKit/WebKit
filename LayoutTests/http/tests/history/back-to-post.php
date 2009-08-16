@@ -19,8 +19,10 @@ if (window.layoutTestController) {
     layoutTestController.waitUntilDone();
 }
 
-// Disable b/f cache.
-window.onunload = function() {}
+// Disable b/f cache (not necessary in DRT since the b/f cache is disabled by default).
+if (!window.layoutTestController) {
+    window.onunload = function() {}
+}
 
 if (document.location.search == "") {
     window.name = ""; // Use window.name to communicate between steps.
