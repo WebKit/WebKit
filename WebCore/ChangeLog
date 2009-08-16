@@ -1,3 +1,15 @@
+2009-08-16  Anthony Ricaud  <rik@webkit.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Inspector Resource filtering: keyboard Navigation always uses ALL resources
+        https://bugs.webkit.org/show_bug.cgi?id=28231
+        
+        Determine if a resource is selectable on user action.
+        
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourceSidebarTreeElement.prototype.get selectable):
+
 2009-08-16  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/28355> Replace MAX()/MIN() macros with type-safe std::max()/min() templates

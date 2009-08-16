@@ -1543,6 +1543,11 @@ WebInspector.ResourceSidebarTreeElement.prototype = {
         // Do nothing.
     },
 
+    get selectable()
+    {
+        return WebInspector.panels.resources._filterCategory == "all" || WebInspector.panels.resources._filterCategory == this.resource.category.name;
+    },
+
     createIconElement: function()
     {
         var previousIconElement = this.iconElement;
