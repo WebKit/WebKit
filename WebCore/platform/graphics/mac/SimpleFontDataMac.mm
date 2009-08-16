@@ -50,6 +50,8 @@
 - (BOOL)_isFakeFixedPitch;
 @end
 
+using namespace std;
+
 namespace WebCore {
   
 const float smallCapsFontSizeMultiplier = 0.7f;
@@ -269,7 +271,7 @@ void SimpleFontData::platformInit()
         // and web pages that foolishly use this metric for width will be laid out
         // poorly if we return an accurate height. Classic case is Times 13 point,
         // which has an "x" that is 7x6 pixels.
-        m_xHeight = MAX(NSMaxX(xBox), NSMaxY(xBox));
+        m_xHeight = max(NSMaxX(xBox), NSMaxY(xBox));
     } else
         m_xHeight = [m_platformData.font() xHeight];
 }

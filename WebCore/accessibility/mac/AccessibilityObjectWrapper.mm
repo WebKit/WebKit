@@ -378,7 +378,7 @@ static void AXAttributeStringSetSpelling(NSMutableAttributedString* attrString, 
         
         // add misspelling attribute for the intersection of the marker and the range
         int rStart = range.location + (marker.startOffset - offset);
-        int rLength = MIN(marker.endOffset, endOffset) - marker.startOffset;
+        int rLength = min(marker.endOffset, endOffset) - marker.startOffset;
         NSRange spellRange = NSMakeRange(rStart, rLength);
         AXAttributeStringSetNumber(attrString, NSAccessibilityMisspelledTextAttribute, [NSNumber numberWithBool:YES], spellRange);
         

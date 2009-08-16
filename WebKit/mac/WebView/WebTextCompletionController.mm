@@ -39,6 +39,7 @@
 @end
 
 using namespace WebCore;
+using namespace std;
 
 // This class handles the complete: operation.
 // It counts on its host view to call endRevertingChange: whenever the current completion needs to be aborted.
@@ -131,7 +132,7 @@ using namespace WebCore;
     windowFrame.size.height = numberToShow * [_tableView rowHeight] + (numberToShow + 1) * [_tableView intercellSpacing].height;
     windowFrame.origin.y -= windowFrame.size.height;
     NSDictionary *attributes = [NSDictionary dictionaryWithObjectsAndKeys:[NSFont systemFontOfSize:12.0f], NSFontAttributeName, nil];
-    float maxWidth = 0.0f;
+    CGFloat maxWidth = 0;
     int maxIndex = -1;
     int i;
     for (i = 0; i < numberToShow; i++) {
@@ -146,8 +147,8 @@ using namespace WebCore;
         maxWidth = ceilf([NSScrollView frameSizeForContentSize:NSMakeSize(maxWidth, 100.0f) hasHorizontalScroller:NO hasVerticalScroller:YES borderType:NSNoBorder].width);
         maxWidth = ceilf([NSWindow frameRectForContentRect:NSMakeRect(0.0f, 0.0f, maxWidth, 100.0f) styleMask:NSBorderlessWindowMask].size.width);
         maxWidth += 5.0f;
-        windowFrame.size.width = MAX(maxWidth, windowFrame.size.width);
-        maxWidth = MIN(400.0f, windowFrame.size.width);
+        windowFrame.size.width = max(maxWidth, windowFrame.size.width);
+        maxWidth = min<CGFloat>(400, windowFrame.size.width);
     }
     [_popupWindow setFrame:windowFrame display:NO];
     

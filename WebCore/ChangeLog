@@ -1,3 +1,21 @@
+2009-08-16  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/28355> Replace MAX()/MIN() macros with type-safe std::max()/min() templates
+
+        Reviewed by Dan Bernstein.
+
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (AXAttributeStringSetSpelling): Changed MIN() to min().
+        * platform/graphics/mac/FontMacATSUI.mm:
+        (WebCore::Font::selectionRectForComplexText): Changed MAX() to
+        max() and MIN() to min().
+        (WebCore::Font::floatWidthForComplexText): Ditto.
+        * platform/graphics/mac/SimpleFontDataMac.mm: Added using
+        std::max statement.
+        (WebCore::SimpleFontData::platformInit): Changed MAX() to max().
+        * platform/text/mac/TextCodecMac.cpp:
+        (WebCore::TextCodecMac::decode): Changed MIN() to min().
+
 2009-08-16  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by George Staikos.

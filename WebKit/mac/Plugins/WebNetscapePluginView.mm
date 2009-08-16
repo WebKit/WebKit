@@ -78,13 +78,12 @@
 #import <wtf/Assertions.h>
 #import <objc/objc-runtime.h>
 
-using std::max;
-
 #define LoginWindowDidSwitchFromUserNotification    @"WebLoginWindowDidSwitchFromUserNotification"
 #define LoginWindowDidSwitchToUserNotification      @"WebLoginWindowDidSwitchToUserNotification"
 
 using namespace WebCore;
 using namespace WebKit;
+using namespace std;
 
 static inline bool isDrawingModelQuickDraw(NPDrawingModel drawingModel)
 {
@@ -1794,7 +1793,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
                 NSString *contentLength = [header objectForKey:@"Content-Length"];
 
                 if (contentLength != nil)
-                    dataLength = MIN((unsigned)[contentLength intValue], dataLength);
+                    dataLength = min<unsigned>([contentLength intValue], dataLength);
                 [header removeObjectForKey:@"Content-Length"];
 
                 if ([header count] > 0) {

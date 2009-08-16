@@ -1,3 +1,29 @@
+2009-08-16  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/28355> Replace MAX()/MIN() macros with type-safe std::max()/min() templates
+
+        Reviewed by Dan Bernstein.
+
+        * Plugins/WebBaseNetscapePluginStream.mm: Added using std::min
+        statement.
+        (WebNetscapePluginStream::deliverData): Changed MIN() to min().
+        Changed C-style cast to a static_cast.
+        * Plugins/WebNetscapePluginView.mm: Added using std::min
+        statement.
+        (-[WebNetscapePluginView _postURL:target:len:buf:file:notifyData:sendNotification:allowHeaders:]):
+        Changed MIN() to min().  Changed C-style cast to a static_cast.
+        * WebView/WebHTMLView.mm: Added using std::max statement.
+        (-[WebHTMLView _dragImageForURL:withLabel:]): Changed MAX() to
+        max().
+        (-[WebHTMLView _scaleFactorForPrintOperation:]): Ditto.
+        * WebView/WebTextCompletionController.mm: Added using std::max
+        and using std::min statements.
+        (-[WebTextCompletionController _placePopupWindow:]): Changed
+        type of maxWidth variable from float to CGFloat to prevent a
+        type mismatch on x86_64.  Changed MAX() to max() and MIN() to
+        min().  Added static_cast for a constant value since CGFloat is
+        defined as a float on i386 and as a double on x86_64.
+
 2009-08-15  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         Reviewed by Sam Weinig.

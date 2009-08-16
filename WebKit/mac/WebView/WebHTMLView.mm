@@ -125,6 +125,7 @@
 using namespace WebCore;
 using namespace HTMLNames;
 using namespace WTF;
+using namespace std;
 
 @interface NSWindow (BorderViewAccess)
 - (NSView*)_web_borderView;
@@ -1649,10 +1650,10 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
         urlStringSize.height = [urlFont ascender] - [urlFont descender];
         imageSize.height += urlStringSize.height;
         if (urlStringSize.width > MAX_DRAG_LABEL_WIDTH) {
-            imageSize.width = MAX(MAX_DRAG_LABEL_WIDTH + DRAG_LABEL_BORDER_X * 2.0f, MIN_DRAG_LABEL_WIDTH_BEFORE_CLIP);
+            imageSize.width = max(MAX_DRAG_LABEL_WIDTH + DRAG_LABEL_BORDER_X * 2, MIN_DRAG_LABEL_WIDTH_BEFORE_CLIP);
             clipURLString = YES;
         } else {
-            imageSize.width = MAX(labelSize.width + DRAG_LABEL_BORDER_X * 2.0f, urlStringSize.width + DRAG_LABEL_BORDER_X * 2.0f);
+            imageSize.width = max(labelSize.width + DRAG_LABEL_BORDER_X * 2, urlStringSize.width + DRAG_LABEL_BORDER_X * 2);
         }
     }
     NSImage *dragImage = [[[NSImage alloc] initWithSize: imageSize] autorelease];
@@ -3715,7 +3716,7 @@ static BOOL isInPasswordField(Frame* coreFrame)
 #ifdef __LP64__
     // If the new bottom is equal to the old bottom (when both are treated as floats), we just copy
     // oldBottom over to newBottom. This prevents rounding errors that can occur when converting newBottomFloat to a double.
-    if (fabs((float)oldBottom - newBottomFloat) <= std::numeric_limits<float>::epsilon()) 
+    if (fabs((float)oldBottom - newBottomFloat) <= numeric_limits<float>::epsilon()) 
         *newBottom = oldBottom;
     else
 #endif
@@ -3750,7 +3751,7 @@ static BOOL isInPasswordField(Frame* coreFrame)
     float maxShrinkToFitScaleFactor = 1.0f / PrintingMaximumShrinkFactor;
     float shrinkToFitScaleFactor = [self _availablePaperWidthForPrintOperation:printOperation]/viewWidth;
     float shrinkToAvoidOrphan = _private->avoidingPrintOrphan ? (1.0f / PrintingOrphanShrinkAdjustment) : 1.0f;
-    return userScaleFactor * MAX(maxShrinkToFitScaleFactor, shrinkToFitScaleFactor) * shrinkToAvoidOrphan;
+    return userScaleFactor * max(maxShrinkToFitScaleFactor, shrinkToFitScaleFactor) * shrinkToAvoidOrphan;
 }
 
 // FIXME 3491344: This is a secret AppKit-internal method that we need to override in order
