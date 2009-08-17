@@ -2300,24 +2300,36 @@ static bool matchesExtensionOrEquivalent(NSString *filename, NSString *extension
     return [[webView _editingDelegateForwarder] webView:webView doCommandBySelector:selector];
 }
 
+typedef HashMap<SEL, String> SelectorNameMap;
+
+// Map selectors into Editor command names.
+// This is not needed for any selectors that have the same name as the Editor command.
+static const SelectorNameMap* createSelectorExceptionMap()
+{
+    SelectorNameMap* map = new HashMap<SEL, String>;
+
+    map->add(@selector(insertNewlineIgnoringFieldEditor:), "InsertNewline");
+    map->add(@selector(insertParagraphSeparator:), "InsertNewline");
+    map->add(@selector(insertTabIgnoringFieldEditor:), "InsertTab");
+    map->add(@selector(pageDown:), "MovePageDown");
+    map->add(@selector(pageDownAndModifySelection:), "MovePageDownAndModifySelection");
+    map->add(@selector(pageUp:), "MovePageUp");
+    map->add(@selector(pageUpAndModifySelection:), "MovePageUpAndModifySelection");
+
+    return map;
+}
+
 static String commandNameForSelector(SEL selector)
 {
-    // Change a few command names into ones supported by WebCore::Editor.
-    // If this list gets too long we might decide we need to use a hash table.
-    if (selector == @selector(insertParagraphSeparator:) || selector == @selector(insertNewlineIgnoringFieldEditor:))
-        return "InsertNewline";
-    if (selector == @selector(insertTabIgnoringFieldEditor:))
-        return "InsertTab";
-    if (selector == @selector(pageDown:))
-        return "MovePageDown";
-    if (selector == @selector(pageDownAndModifySelection:))
-        return "MovePageDownAndModifySelection";
-    if (selector == @selector(pageUp:))
-        return "MovePageUp";
-    if (selector == @selector(pageUpAndModifySelection:))
-        return "MovePageUpAndModifySelection";
+    // Check the exception map first.
+    static const SelectorNameMap* exceptionMap = createSelectorExceptionMap();
+    SelectorNameMap::const_iterator it = exceptionMap->find(selector);
+    if (it != exceptionMap->end())
+        return it->second;
 
     // Remove the trailing colon.
+    // No need to capitalize the command name since Editor command names are
+    // not case sensitive.
     const char* selectorName = sel_getName(selector);
     size_t selectorNameLength = strlen(selectorName);
     if (selectorNameLength < 2 || selectorName[selectorNameLength - 1] != ':')

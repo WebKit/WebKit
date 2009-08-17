@@ -1,3 +1,14 @@
+2009-08-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Use a HashMap instead of a list of if statements for the command
+        name exception map.
+
+        * WebView/WebHTMLView.mm:
+        (createSelectorExceptionMap): Added.
+        (commandNameForSelector): Use createSelectorExceptionMap.
+
 2009-08-16  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/28366> WebHTMLViewInternal.h: add @class CALayer declaration
