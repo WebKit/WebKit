@@ -331,7 +331,7 @@ static NSDictionary* nullActionsDictionary()
     return actions;
 }
 
-GraphicsLayer* GraphicsLayer::createGraphicsLayer(GraphicsLayerClient* client)
+PassOwnPtr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerClient* client)
 {
     return new GraphicsLayerCA(client);
 }

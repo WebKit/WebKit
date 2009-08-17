@@ -1,3 +1,40 @@
+2009-08-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        Use OwnPtrs for GraphicsLayers
+        https://bugs.webkit.org/show_bug.cgi?id=28399
+
+        Convert RenderLayerBacking and RenderLayerCompositor to use OwnPtrs
+        for their references to GraphicsLayers.
+
+        * platform/graphics/GraphicsLayer.h:
+        * platform/graphics/mac/GraphicsLayerCA.mm:
+        (WebCore::GraphicsLayer::create):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::RenderLayerBacking):
+        (WebCore::RenderLayerBacking::createGraphicsLayer):
+        (WebCore::RenderLayerBacking::destroyGraphicsLayer):
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+        (WebCore::RenderLayerBacking::updateInternalHierarchy):
+        (WebCore::RenderLayerBacking::updateClippingLayers):
+        (WebCore::RenderLayerBacking::updateForegroundLayer):
+        (WebCore::RenderLayerBacking::setContentsNeedDisplayInRect):
+        * rendering/RenderLayerBacking.h:
+        (WebCore::RenderLayerBacking::graphicsLayer):
+        (WebCore::RenderLayerBacking::clippingLayer):
+        (WebCore::RenderLayerBacking::ancestorClippingLayer):
+        (WebCore::RenderLayerBacking::foregroundLayer):
+        (WebCore::RenderLayerBacking::parentForSublayers):
+        (WebCore::RenderLayerBacking::childForSuperlayers):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::~RenderLayerCompositor):
+        (WebCore::RenderLayerCompositor::rootPlatformLayer):
+        (WebCore::RenderLayerCompositor::didMoveOnscreen):
+        (WebCore::RenderLayerCompositor::ensureRootPlatformLayer):
+        (WebCore::RenderLayerCompositor::destroyRootPlatformLayer):
+        * rendering/RenderLayerCompositor.h:
+
 2009-08-17  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

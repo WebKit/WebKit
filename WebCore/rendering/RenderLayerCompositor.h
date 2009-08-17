@@ -167,7 +167,7 @@ private:
 
 private:
     RenderView* m_renderView;
-    GraphicsLayer* m_rootPlatformLayer;
+    OwnPtr<GraphicsLayer> m_rootPlatformLayer;
     bool m_hasAcceleratedCompositing;
     bool m_compositingConsultsOverlap;
     bool m_compositing;

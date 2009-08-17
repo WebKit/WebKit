@@ -92,7 +92,6 @@ RenderLayerCompositor::RenderLayerCompositor(RenderView* renderView)
 RenderLayerCompositor::~RenderLayerCompositor()
 {
     ASSERT(!m_rootLayerAttached);
-    delete m_rootPlatformLayer;
 }
 
 void RenderLayerCompositor::enableCompositingMode(bool enable /* = true */)
@@ -759,7 +758,7 @@ RenderLayer* RenderLayerCompositor::rootRenderLayer() const
 
 GraphicsLayer* RenderLayerCompositor::rootPlatformLayer() const
 {
-    return m_rootPlatformLayer;
+    return m_rootPlatformLayer.get();
 }
 
 void RenderLayerCompositor::didMoveOnscreen()
@@ -772,7 +771,7 @@ void RenderLayerCompositor::didMoveOnscreen()
     if (!page)
         return;
 
-    page->chrome()->client()->attachRootGraphicsLayer(frame, m_rootPlatformLayer);
+    page->chrome()->client()->attachRootGraphicsLayer(frame, m_rootPlatformLayer.get());
     m_rootLayerAttached = true;
 }
 
@@ -919,7 +918,7 @@ void RenderLayerCompositor::ensureRootPlatformLayer()
     if (m_rootPlatformLayer)
         return;
 
-    m_rootPlatformLayer = GraphicsLayer::createGraphicsLayer(0);
+    m_rootPlatformLayer = GraphicsLayer::create(0);
     m_rootPlatformLayer->setSize(FloatSize(m_renderView->overflowWidth(), m_renderView->overflowHeight()));
     m_rootPlatformLayer->setPosition(FloatPoint(0, 0));
     // The root layer does flipping if we need it on this platform.
@@ -937,7 +936,6 @@ void RenderLayerCompositor::destroyRootPlatformLayer()
         return;
 
     willMoveOffscreen();
-    delete m_rootPlatformLayer;
     m_rootPlatformLayer = 0;
 }
 

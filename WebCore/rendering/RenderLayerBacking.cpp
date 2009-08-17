@@ -55,10 +55,6 @@ static bool hasBoxDecorationsWithBackgroundImage(const RenderStyle*);
 
 RenderLayerBacking::RenderLayerBacking(RenderLayer* layer)
     : m_owningLayer(layer)
-    , m_ancestorClippingLayer(0)
-    , m_graphicsLayer(0)
-    , m_foregroundLayer(0)
-    , m_clippingLayer(0)
     , m_hasDirectlyCompositedContent(false)
 {
     createGraphicsLayer();
@@ -73,7 +69,7 @@ RenderLayerBacking::~RenderLayerBacking()
 
 void RenderLayerBacking::createGraphicsLayer()
 {
-    m_graphicsLayer = GraphicsLayer::createGraphicsLayer(this);
+    m_graphicsLayer = GraphicsLayer::create(this);
     
 #ifndef NDEBUG
     if (renderer()->node()) {
@@ -98,13 +94,8 @@ void RenderLayerBacking::destroyGraphicsLayer()
     if (m_graphicsLayer)
         m_graphicsLayer->removeFromParent();
 
-    delete m_graphicsLayer;
     m_graphicsLayer = 0;
-
-    delete m_foregroundLayer;
     m_foregroundLayer = 0;
-
-    delete m_clippingLayer;
     m_clippingLayer = 0;
 }
 
@@ -313,12 +304,12 @@ void RenderLayerBacking::updateInternalHierarchy()
     if (m_ancestorClippingLayer) {
         m_ancestorClippingLayer->removeAllChildren();
         m_graphicsLayer->removeFromParent();
-        m_ancestorClippingLayer->addChild(m_graphicsLayer);
+        m_ancestorClippingLayer->addChild(m_graphicsLayer.get());
     }
 
     if (m_clippingLayer) {
         m_clippingLayer->removeFromParent();
-        m_graphicsLayer->addChild(m_clippingLayer);
+        m_graphicsLayer->addChild(m_clippingLayer.get());
     }
 }
 
@@ -329,7 +320,7 @@ bool RenderLayerBacking::updateClippingLayers(bool needsAncestorClip, bool needs
 
     if (needsAncestorClip) {
         if (!m_ancestorClippingLayer) {
-            m_ancestorClippingLayer = GraphicsLayer::createGraphicsLayer(this);
+            m_ancestorClippingLayer = GraphicsLayer::create(this);
 #ifndef NDEBUG
             m_ancestorClippingLayer->setName("Ancestor clipping Layer");
 #endif
@@ -338,14 +329,13 @@ bool RenderLayerBacking::updateClippingLayers(bool needsAncestorClip, bool needs
         }
     } else if (m_ancestorClippingLayer) {
         m_ancestorClippingLayer->removeFromParent();
-        delete m_ancestorClippingLayer;
         m_ancestorClippingLayer = 0;
         layersChanged = true;
     }
     
     if (needsDescendantClip) {
         if (!m_clippingLayer) {
-            m_clippingLayer = GraphicsLayer::createGraphicsLayer(0);
+            m_clippingLayer = GraphicsLayer::create(0);
 #ifndef NDEBUG
             m_clippingLayer->setName("Child clipping Layer");
 #endif
@@ -354,7 +344,6 @@ bool RenderLayerBacking::updateClippingLayers(bool needsAncestorClip, bool needs
         }
     } else if (m_clippingLayer) {
         m_clippingLayer->removeFromParent();
-        delete m_clippingLayer;
         m_clippingLayer = 0;
         layersChanged = true;
     }
@@ -370,7 +359,7 @@ bool RenderLayerBacking::updateForegroundLayer(bool needsForegroundLayer)
     bool layerChanged = false;
     if (needsForegroundLayer) {
         if (!m_foregroundLayer) {
-            m_foregroundLayer = GraphicsLayer::createGraphicsLayer(this);
+            m_foregroundLayer = GraphicsLayer::create(this);
 #ifndef NDEBUG
             m_foregroundLayer->setName("Contents");
 #endif
@@ -381,7 +370,6 @@ bool RenderLayerBacking::updateForegroundLayer(bool needsForegroundLayer)
         }
     } else if (m_foregroundLayer) {
         m_foregroundLayer->removeFromParent();
-        delete m_foregroundLayer;
         m_foregroundLayer = 0;
         m_graphicsLayer->setDrawingPhase(GraphicsLayerPaintAllMask);
         layerChanged = true;
@@ -713,7 +701,7 @@ void RenderLayerBacking::setContentsNeedDisplay()
 void RenderLayerBacking::setContentsNeedDisplayInRect(const IntRect& r)
 {
     if (m_graphicsLayer && m_graphicsLayer->drawsContent()) {
-        FloatPoint dirtyOrigin = contentsToGraphicsLayerCoordinates(m_graphicsLayer, FloatPoint(r.x(), r.y()));
+        FloatPoint dirtyOrigin = contentsToGraphicsLayerCoordinates(m_graphicsLayer.get(), FloatPoint(r.x(), r.y()));
         FloatRect dirtyRect(dirtyOrigin, r.size());
         FloatRect bounds(FloatPoint(), m_graphicsLayer->size());
         if (bounds.intersects(dirtyRect))
