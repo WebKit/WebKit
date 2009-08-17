@@ -42,6 +42,10 @@ module window {
 #if defined(ENABLE_GEOLOCATION) && ENABLE_GEOLOCATION
         readonly attribute Geolocation geolocation;
 #endif
+
+#if defined(ENABLE_DOM_STORAGE) && ENABLE_DOM_STORAGE
+        void getStorageUpdates();
+#endif
     };
 
 }

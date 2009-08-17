@@ -134,6 +134,11 @@ void StorageNamespaceImpl::close()
     m_isShutdown = true;
 }
 
+void StorageNamespaceImpl::unlock()
+{
+    // Because there's a single event loop per-process, this is a no-op.
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(DOM_STORAGE)

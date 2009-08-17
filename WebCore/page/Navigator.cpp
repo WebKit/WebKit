@@ -31,11 +31,13 @@
 #include "Language.h"
 #include "MimeTypeArray.h"
 #include "Page.h"
+#include "PageGroup.h"
 #include "PlatformString.h"
 #include "PluginArray.h"
 #include "PluginData.h"
 #include "ScriptController.h"
 #include "Settings.h"
+#include "StorageNamespace.h"
 
 namespace WebCore {
 
@@ -150,5 +152,21 @@ Geolocation* Navigator::geolocation() const
         m_geolocation = Geolocation::create(m_frame);
     return m_geolocation.get();
 }
-    
+
+#if ENABLE(DOM_STORAGE)
+void Navigator::getStorageUpdates()
+{
+    if (!m_frame)
+        return;
+
+    Page* page = m_frame->page();
+    if (!page)
+        return;
+
+    StorageNamespace* localStorage = page->group().localStorage();
+    if (localStorage)
+        localStorage->unlock();
+}
+#endif
+
 } // namespace WebCore

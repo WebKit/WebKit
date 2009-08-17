@@ -1,3 +1,27 @@
+2009-08-17  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Add a way to release the storage lock
+        https://bugs.webkit.org/show_bug.cgi?id=28411
+
+        Two scripts within the same origin that are accessing LocalStorage must not do
+        it simultaneously, according to the spec.  There are some cases, however, where
+        a script might want to override this behavior.  navigator.getStorageUpdates()
+        was added for this reason:
+        http://dev.w3.org/html5/spec/Overview.html#manually-releasing-the-storage-mutex
+
+        Add this function to navigator and hook it up to DOM Storage.
+
+        * page/Navigator.cpp:
+        (WebCore::Navigator::getStorageUpdates):
+        * page/Navigator.h:
+        * page/Navigator.idl:
+        * storage/StorageNamespace.h:
+        * storage/StorageNamespaceImpl.cpp:
+        (WebCore::StorageNamespaceImpl::unlock):
+        * storage/StorageNamespaceImpl.h:
+
 2009-08-17  Mark Rowe  <mrowe@apple.com>
 
         Build fix.
