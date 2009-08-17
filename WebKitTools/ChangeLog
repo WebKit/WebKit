@@ -1,5 +1,12 @@
 2009-08-16  David Kilzer  <ddkilzer@apple.com>
 
+        Backed out r47343 which was mistakenly committed
+
+        * Scripts/bugzilla-tool:
+        * Scripts/modules/scm.py:
+
+2009-08-16  David Kilzer  <ddkilzer@apple.com>
+
         <http://webkit.org/b/28367> bugzilla.py: replace ScriptError class with BugzillaError class
 
         Reviewed by David Levin.

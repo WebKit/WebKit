@@ -76,9 +76,6 @@ class CommitMessage:
     def message(self):
         return "\n".join(self.message_lines) + "\n"
 
-    def replace_text(self, placeholder, new_value):
-        self.message_lines = map(lambda line: line.replace(placeholder, new_value), self.message_lines)
-
 
 class ScriptError(Exception):
     pass
@@ -126,22 +123,15 @@ class SCM:
     def apply_patch(self, patch, force=False):
         # It's possible that the patch was not made from the root directory.
         # We should detect and handle that case.
-        patch_apply_process = None
+        curl_process = subprocess.Popen(['curl', '--silent', '--show-error', patch['url']], stdout=subprocess.PIPE)
         args = [self.script_path('svn-apply'), '--reviewer', patch['reviewer']]
         if force:
             args.append('--force')
-        if patch.get('url'):
-            curl_process = subprocess.Popen(['curl', '--silent', '--show-error', patch['url']], stdout=subprocess.PIPE)
-            patch_apply_process = subprocess.Popen(args, stdin=curl_process.stdout)
-        elif patch.get('diff'):
-            patch_apply_process = subprocess.Popen(args, stdin=subprocess.PIPE)
-            patch_apply_process.communicate(patch['diff'])
-        else:
-            error("Unknown patch object.")
+        patch_apply_process = subprocess.Popen(args, stdin=curl_process.stdout)
 
         return_code = patch_apply_process.wait()
         if return_code:
-            raise ScriptError("Patch %s from bug %s failed to download and apply." % (patch.get('url') or patch.get('commit_id'), patch['bug_id']))
+            raise ScriptError("Patch %s from bug %s failed to download and apply." % (patch['url'], patch['bug_id']))
 
     def run_status_and_extract_filenames(self, status_command, status_regexp):
         filenames = []
@@ -385,7 +375,7 @@ class Git(SCM):
             if '...' in commitish:
                 raise ScriptError("'...' is not supported (found in '%s'). Did you mean '..'?" % commitish)
             elif '..' in commitish:
-                commit_ids += reversed(self.run_command(['git', 'rev-list', commitish]).splitlines())
+                commit_ids += self.run_command(['git', 'rev-list', commitish]).splitlines()
             else:
                 # Turn single commits or branch or tag names into commit ids.
                 commit_ids += self.run_command(['git', 'rev-parse', '--revs-only', commitish]).splitlines()
