@@ -1,3 +1,10 @@
+2009-08-17  Adam Treat  <adam.treat@torchmobile.com>
+
+        Blind build fix for Leopard.
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::adjustLineToPixelBoundaries):
+
 2009-08-13  Mike Fenton  <mike.fenton@torchmobile.com>
 
         Reviewed by Adam Treat.

@@ -565,12 +565,12 @@ void GraphicsContext::adjustLineToPixelBoundaries(FloatPoint& p1, FloatPoint& p2
     if (static_cast<int>(strokeWidth) % 2) { //odd
         if (p1.x() == p2.x()) {
             // We're a vertical line.  Adjust our x.
-            p1.setX(p1.x() + 0.5);
-            p2.setX(p2.x() + 0.5);
+            p1.setX(p1.x() + 0.5f);
+            p2.setX(p2.x() + 0.5f);
         } else {
             // We're a horizontal line. Adjust our y.
-            p1.setY(p1.y() + 0.5);
-            p2.setY(p2.y() + 0.5);
+            p1.setY(p1.y() + 0.5f);
+            p2.setY(p2.y() + 0.5f);
         }
     }
 }
