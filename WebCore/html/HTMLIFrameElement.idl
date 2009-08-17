@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -26,16 +26,16 @@ module html {
         ImplementationUUID=370c6318-f804-49f9-bc8a-46b99cd87399
     ] HTMLIFrameElement : HTMLElement {
 
-                 attribute [ConvertNullToNullString] DOMString       align;
-                 attribute [ConvertNullToNullString] DOMString       frameBorder;
-                 attribute [ConvertNullToNullString] DOMString       height;
-                 attribute [ConvertNullToNullString] DOMString       longDesc;
-                 attribute [ConvertNullToNullString] DOMString       marginHeight;
-                 attribute [ConvertNullToNullString] DOMString       marginWidth;
-                 attribute [ConvertNullToNullString] DOMString       name;
-                 attribute [ConvertNullToNullString] DOMString       scrolling;
-                 attribute [ConvertNullToNullString, CustomSetter] DOMString       src;
-                 attribute [ConvertNullToNullString] DOMString       width;
+                 attribute [ConvertNullToNullString, Reflect] DOMString       align;
+                 attribute [ConvertNullToNullString, Reflect=frameborder] DOMString       frameBorder;
+                 attribute [ConvertNullToNullString, Reflect] DOMString       height;
+                 attribute [ConvertNullToNullString, Reflect=longdesc] DOMString       longDesc;
+                 attribute [ConvertNullToNullString, Reflect=marginheight] DOMString       marginHeight;
+                 attribute [ConvertNullToNullString, Reflect=marginwidth] DOMString       marginWidth;
+                 attribute [ConvertNullToNullString, Reflect] DOMString       name;
+                 attribute [ConvertNullToNullString, Reflect] DOMString       scrolling;
+                 attribute [ConvertNullToNullString, CustomSetter, Reflect] DOMString       src;
+                 attribute [ConvertNullToNullString, Reflect] DOMString       width;
 
         // Introduced in DOM Level 2:
         readonly attribute [CheckFrameSecurity] Document        contentDocument;

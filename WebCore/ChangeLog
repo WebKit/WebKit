@@ -2,6 +2,21 @@
 
         Reviewed by Sam Weinig.
 
+        DOM attribute getter/setter functions should use const AtomicString& type
+        https://bugs.webkit.org/show_bug.cgi?id=25425
+
+        Convert 4 more classes. These are classes I am going to make other changes
+        to soon, so it's good to have this use of Reflect in the IDL out of the way.
+
+        * html/HTMLEmbedElement.idl: Use Reflect for many attributes.
+        * html/HTMLFrameElement.idl: Ditto.
+        * html/HTMLIFrameElement.idl: Ditto.
+        * html/HTMLObjectElement.idl: Ditto.
+
+2009-08-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Script to create element factory needs changes to accommodate calling create
         https://bugs.webkit.org/show_bug.cgi?id=28379
 

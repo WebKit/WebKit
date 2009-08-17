@@ -26,14 +26,14 @@ module html {
         ImplementationUUID=38c9e3c8-3384-40b6-a484-cb845c48b67d
     ] HTMLFrameElement : HTMLElement {
 
-                 attribute [ConvertNullToNullString] DOMString       frameBorder;
-                 attribute [ConvertNullToNullString] DOMString       longDesc;
-                 attribute [ConvertNullToNullString] DOMString       marginHeight;
-                 attribute [ConvertNullToNullString] DOMString       marginWidth;
-                 attribute [ConvertNullToNullString] DOMString       name;
+                 attribute [ConvertNullToNullString, Reflect=frameborder] DOMString       frameBorder;
+                 attribute [ConvertNullToNullString, Reflect=longdesc] DOMString       longDesc;
+                 attribute [ConvertNullToNullString, Reflect=marginheight] DOMString       marginHeight;
+                 attribute [ConvertNullToNullString, Reflect=marginwidth] DOMString       marginWidth;
+                 attribute [ConvertNullToNullString, Reflect] DOMString       name;
                  attribute boolean         noResize;
-                 attribute [ConvertNullToNullString] DOMString       scrolling;
-                 attribute [ConvertNullToNullString, CustomSetter] DOMString       src;
+                 attribute [ConvertNullToNullString, Reflect] DOMString       scrolling;
+                 attribute [ConvertNullToNullString, CustomSetter, ReflectURL] DOMString       src;
 
         // Introduced in DOM Level 2:
         readonly attribute [CheckFrameSecurity] Document        contentDocument;
