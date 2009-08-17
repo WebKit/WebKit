@@ -713,3 +713,10 @@ InspectorController.searchCanceled = function(callback)
         callback(InjectedScript.searchCanceled());
     }, 0);
 }
+
+InspectorController.getCookies = function(callback)
+{
+    setTimeout(function() {
+        callback(InjectedScript.getCookies());
+    }, 0);
+}

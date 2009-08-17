@@ -2,6 +2,7 @@
  * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Matt Lilek <webkit@mattlilek.com>
  * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2009 Joseph Pecoraro
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -163,7 +164,10 @@ JSValue JSInspectorBackend::cookies(ExecState* exec, const ArgList&)
 
     Document* document = ic->inspectedPage()->mainFrame()->document();
     Vector<Cookie> cookies;
-    getRawCookies(document, document->cookieURL(), cookies);
+    bool isImplemented = getRawCookies(document, document->cookieURL(), cookies);
+
+    if (!isImplemented)
+        return jsUndefined();
 
     MarkedArgumentBuffer result;
     Identifier nameIdentifier(exec, "name");
@@ -193,6 +197,25 @@ JSValue JSInspectorBackend::cookies(ExecState* exec, const ArgList&)
     }
 
     return constructArray(exec, result);
+}
+
+JSValue JSInspectorBackend::deleteCookie(ExecState* exec, const ArgList& args)
+{
+    if (args.size() < 1)
+        return jsUndefined();
+
+    InspectorController* ic = impl()->inspectorController();
+    if (!ic)
+        return jsUndefined();
+
+    String cookieName = args.at(0).toString(exec);
+    if (exec->hadException())
+        return jsUndefined();
+
+    Document* document = ic->inspectedPage()->mainFrame()->document();
+    WebCore::deleteCookie(document, document->cookieURL(), cookieName);
+
+    return jsUndefined();
 }
 
 JSValue JSInspectorBackend::setting(ExecState* exec, const ArgList& args)

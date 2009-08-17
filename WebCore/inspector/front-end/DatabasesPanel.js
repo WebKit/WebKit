@@ -400,7 +400,7 @@ WebInspector.DatabasesPanel.prototype = {
         columns[0].title = WebInspector.UIString("Key");
         columns[0].width = columns[0].title.length;
         columns[1].title = WebInspector.UIString("Value");
-        columns[1].width = columns[0].title.length;
+        columns[1].width = columns[1].title.length;
 
         var nodes = [];
         
@@ -423,7 +423,7 @@ WebInspector.DatabasesPanel.prototype = {
         }
 
         var totalColumnWidths = columns[0].width + columns[1].width;
-        width = Math.round((columns[0].width * 100) / totalColumnWidths);
+        var width = Math.round((columns[0].width * 100) / totalColumnWidths);
         const minimumPrecent = 10;
         if (width < minimumPrecent)
             width = minimumPrecent;

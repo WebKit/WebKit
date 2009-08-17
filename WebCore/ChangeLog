@@ -1,3 +1,100 @@
+2009-08-13  Joseph Pecoraro  <joepeck02@gmail.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Inspector: Improve Cookie DataGrid to Show Hidden Data
+        https://bugs.webkit.org/show_bug.cgi?id=28269
+
+        * English.lproj/localizedStrings.js: DataGrid Headers "Name", "Value", "Size", ...
+        * WebCore.gypi: added missing files
+
+          Implemented Bindings for InspectorController.deleteCookie(name)
+
+        * inspector/InspectorBackend.idl:
+        * bindings/js/JSInspectorBackendCustom.cpp:
+        (WebCore::JSInspectorBackend::cookies):
+        (WebCore::JSInspectorBackend::deleteCookie):
+
+          v8 Bindings Stubs
+
+        * bindings/v8/custom/V8CustomBinding.h:
+        * bindings/v8/custom/V8InspectorBackendCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+
+          Removed WebInspector.Cookie
+
+        * inspector/front-end/Cookie.js: Removed.
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/WebKit.qrc:
+
+          Improved DataGrid and Kept Fallback Behavior for Platforms that don't
+          yet provide access to raw cookies.
+
+        * inspector/front-end/CookieItemsView.js:
+        (WebInspector.CookieItemsView):
+        (WebInspector.CookieItemsView.prototype.get statusBarItems):
+        (WebInspector.CookieItemsView.prototype.update):
+        (WebInspector.CookieItemsView.prototype.buildCookies):
+        (WebInspector.CookieItemsView.prototype.dataGridForCookies):
+        (WebInspector.CookieItemsView.prototype.fallbackUpdate.callback):
+        (WebInspector.CookieItemsView.prototype.fallbackUpdate):
+        (WebInspector.CookieItemsView.prototype.fallbackBuildCookiesFromString):
+        (WebInspector.CookieItemsView.prototype.fallbackDataGridForCookies):
+        (WebInspector.CookieItemsView.prototype._deleteButtonClicked):
+
+          Interaction with the page through Injected Script (for fallback behavior)
+
+        * inspector/front-end/DOMAgent.js:
+        (InspectorController.getCookies):
+        * inspector/front-end/InjectedScript.js:
+        (InjectedScript.setStyleProperty): style fix
+        (InjectedScript.getCookies):
+
+          Allow alignment of text inside DataGrids.
+
+        * inspector/front-end/DataGrid.js:
+        (WebInspector.DataGrid):
+        (WebInspector.DataGridNode.prototype.createCell):
+        * inspector/front-end/DatabasesPanel.js:
+        (WebInspector.DatabasesPanel.prototype.dataGridForDOMStorage):
+        * inspector/front-end/inspector.css:
+
+          Added deleteCookie(., ., String name)
+          Modified getRawCookies to return a bool to know if its implemented
+
+        * platform/CookieJar.h:
+
+
+          Implemented deleteCookie for Macs
+
+        * platform/mac/CookieJar.mm:
+        (WebCore::getRawCookies):
+        (WebCore::deleteCookie):
+
+          Stub Implementations for Other Platforms
+
+        * platform/haiku/CookieJarHaiku.cpp:
+        (WebCore::getRawCookies):
+        (WebCore::deleteCookie):
+        * platform/network/chromium/CookieJarChromium.cpp:
+        (WebCore::getRawCookies):
+        (WebCore::deleteCookie):
+        * platform/network/curl/CookieJarCurl.cpp:
+        (WebCore::getRawCookies):
+        (WebCore::deleteCookie):
+        * platform/network/soup/CookieJarSoup.cpp:
+        (WebCore::getRawCookies):
+        (WebCore::deleteCookie):
+        * platform/network/win/CookieJarCFNetWin.cpp:
+        (WebCore::getRawCookies):
+        (WebCore::deleteCookie):
+        * platform/network/win/CookieJarWin.cpp:
+        (WebCore::getRawCookies):
+        (WebCore::deleteCookie):
+        * platform/qt/CookieJarQt.cpp:
+        (WebCore::getRawCookies):
+        (WebCore::deleteCookie):
+
 2009-08-17  Adam Treat  <adam.treat@torchmobile.com>
 
         Blind build fix for Leopard.

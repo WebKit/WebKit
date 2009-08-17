@@ -69,6 +69,7 @@ module core {
         void storeLastActivePanel(in DOMString panelName);
 
         [Custom] Array cookies();
+        [Custom] void deleteCookie(in DOMString cookieName);
 
 #if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
         boolean debuggerEnabled();

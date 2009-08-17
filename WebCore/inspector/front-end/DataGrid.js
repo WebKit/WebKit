@@ -39,6 +39,8 @@ WebInspector.DataGrid = function(columns)
     this._dataTable.addEventListener("mousedown", this._mouseDownInDataTable.bind(this), true);
     this._dataTable.addEventListener("click", this._clickInDataTable.bind(this), true);
 
+    this.aligned = {};
+
     var scrollContainer = document.createElement("div");
     scrollContainer.className = "data-container";
     scrollContainer.appendChild(this._dataTable);
@@ -76,6 +78,11 @@ WebInspector.DataGrid = function(columns)
         if (column.sortable) {
             cell.addEventListener("click", this._clickInHeaderCell.bind(this), false);
             cell.addStyleClass("sortable");
+        }
+
+        if (column.aligned) {
+            cell.addStyleClass(column.aligned);
+            this.aligned[columnIdentifier] = column.aligned;
         }
 
         headerRow.appendChild(cell);
@@ -751,6 +758,10 @@ WebInspector.DataGridNode.prototype = {
     {
         var cell = document.createElement("td");
         cell.className = columnIdentifier + "-column";
+
+        var alignment = this.dataGrid.aligned[columnIdentifier];
+        if (alignment)
+            cell.addStyleClass(alignment);
 
         var div = document.createElement("div");
         div.textContent = this.data[columnIdentifier];

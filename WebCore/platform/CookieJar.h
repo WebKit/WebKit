@@ -39,7 +39,8 @@ namespace WebCore {
     String cookies(const Document*, const KURL&);
     void setCookies(Document*, const KURL&, const String&);
     bool cookiesEnabled(const Document*);
-    void getRawCookies(const Document*, const KURL&, Vector<Cookie>&);
+    bool getRawCookies(const Document*, const KURL&, Vector<Cookie>&);
+    void deleteCookie(const Document*, const KURL&, const String&);
 
 }
 

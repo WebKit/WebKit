@@ -1789,6 +1789,14 @@ body.inactive .sidebar {
     overflow: hidden;
 }
 
+.data-grid .centered div {
+    text-align: center;
+}
+
+.data-grid .right div {
+    text-align: right;
+}
+
 .data-grid th.sortable div {
     position: relative;
 }

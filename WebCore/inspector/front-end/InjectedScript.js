@@ -245,7 +245,8 @@ InjectedScript._doesSelectorAffectNode = function(selectorText, node)
     return false;
 }
 
-InjectedScript.setStyleProperty = function(styleId, name, value) {
+InjectedScript.setStyleProperty = function(styleId, name, value)
+{
     var style = InjectedScript._styles[styleId];
     if (!style)
         return false;
@@ -766,6 +767,11 @@ InjectedScript.searchCanceled = function()
     }
     InjectedScript._searchResults = [];
     return true;
+}
+
+InjectedScript.getCookies = function()
+{
+    return InjectedScript._window().document.cookie;
 }
 
 InjectedScript._ensureCommandLineAPIInstalled = function(inspectedWindow)

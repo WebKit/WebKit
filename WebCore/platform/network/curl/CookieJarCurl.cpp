@@ -44,10 +44,16 @@ bool cookiesEnabled(const Document* /*document*/)
     return true;
 }
 
-void getRawCookies(const Document*, const KURL&, Vector<Cookie>& rawCookies)
+bool getRawCookies(const Document*, const KURL&, Vector<Cookie>& rawCookies)
 {
     // FIXME: Not yet implemented
     rawCookies.clear();
+    return false; // return true when implemented
+}
+
+void deleteCookie(const Document*, const KURL&, const String&)
+{
+    // FIXME: Not yet implemented
 }
 
 }
