@@ -1,3 +1,14 @@
+2009-08-17  Alexey Proskuryakov  <ap@apple.com>
+
+        Rubber-stamped by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28403
+        Update Apache2 module list from Leopard defaults
+
+        No change in functionality, only commented out modules needed an update.
+
+        * http/conf/apache2-httpd.conf:
+
 2009-08-17  Aaron Boodman  <aa@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
