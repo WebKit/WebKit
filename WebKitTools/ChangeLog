@@ -1,3 +1,16 @@
+2009-08-17  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/26920> bugzilla-tool dumps too much junk the the commit comment from git
+
+        Reviewed by Adam Roben.
+
+        New commit message:
+            Committed r12345: <http://trac.webkit.org/changeset/12345>
+
+        * Scripts/bugzilla-tool:
+        (bug_comment_from_commit_text): Print out a compact,
+        standardized commit message for both git and svn.
+
 2009-08-17  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Steve Falkenburg.

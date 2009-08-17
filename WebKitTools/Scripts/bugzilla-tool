@@ -218,8 +218,7 @@ class ApplyPatchesFromBug(Command):
 def bug_comment_from_commit_text(scm, commit_text):
     match = re.search(scm.commit_success_regexp(), commit_text, re.MULTILINE)
     svn_revision = match.group('svn_revision')
-    commit_text += ("\n%s" % view_source_url(svn_revision))
-    return commit_text
+    return "Committed r%s: <%s>" % (svn_revision, view_source_url(svn_revision))
 
 
 class WebKitLandingScripts:
