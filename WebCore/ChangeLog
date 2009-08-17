@@ -1,3 +1,25 @@
+2009-08-17  Adam Langley  <agl@google.com>
+
+        Reviewed by Dan Bernstein (relanding of r47157).
+
+        Fix a typo in platform/graphics/skia/PlatformContextSkia.cpp
+
+        https://bugs.webkit.org/show_bug.cgi?id=28172
+
+        This was originally fixed in r47157, however it triggered a bug in
+        Skia which caused Chromium Linux to fail layout tests in debug mode.
+        It was reverted in r47189 while we sorted it out.
+
+        The Skia bug was fixed in Skia's r321 [1] and rolled into Chromium in
+        Chromium's r23523. This is a reland of the original patch.
+
+        No new tests because it's a just typo fix.
+
+        [1] http://code.google.com/p/skia/source/detail?r=321
+
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (PlatformContextSkia::setupPaintCommon):
+
 2009-08-17  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Xan Lopez.
