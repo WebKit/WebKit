@@ -55,31 +55,31 @@
                      layoutTestController.dumpAsText();
 
                 // Test with 1 argument.
-                test('document.execCommand("InsertHorizontalRule")', '<hr></hr>');
+                test('document.execCommand("InsertHorizontalRule")', '<hr>');
 
                 // Test with 2 arguments.
-                test('document.execCommand("InsertHorizontalRule", false)', '<hr></hr>');
+                test('document.execCommand("InsertHorizontalRule", false)', '<hr>');
 
                 // Test with 3 arguments.
-                test('document.execCommand("InsertHorizontalRule", false, "foo")', '<hr id="foo"></hr>');
+                test('document.execCommand("InsertHorizontalRule", false, "foo")', '<hr id="foo">');
 
                 // Test with 4 arguments. (should ignore the fourth argument silently)
-                test('document.execCommand("InsertHorizontalRule", false, "foo", "bar")', '<hr id="foo"></hr>');
+                test('document.execCommand("InsertHorizontalRule", false, "foo", "bar")', '<hr id="foo">');
 
                 // Test empty String 3rd parameter. (should not add an empty id value)
-                test('document.execCommand("InsertHorizontalRule", false, "")', '<hr></hr>');
+                test('document.execCommand("InsertHorizontalRule", false, "")', '<hr>');
 
                 // Test null 3rd parameter. (should treat as if only two arguments were passed, same as undefined)
-                test('document.execCommand("InsertHorizontalRule", false, null)', '<hr></hr>');
+                test('document.execCommand("InsertHorizontalRule", false, null)', '<hr>');
 
                 // Test undefined 3rd parameter. (should treat as if only two arguments were passed, same as null)
-                test('document.execCommand("InsertHorizontalRule", false, undefined)', '<hr></hr>');
+                test('document.execCommand("InsertHorizontalRule", false, undefined)', '<hr>');
 
                 // Test 0 for 3rd parameter. (nothing special, id value should equal the string 0)
-                test('document.execCommand("InsertHorizontalRule", false, 0)', '<hr id="0"></hr>');
+                test('document.execCommand("InsertHorizontalRule", false, 0)', '<hr id="0">');
 
                 // Test undefined 3rd parameter implicitly using helper function. (should treat as if only two arguments were passed, same as null)
-                test('function ExecCommand(command, commandParam) { document.execCommand(command, false, commandParam); } ExecCommand("InsertHorizontalRule");', '<hr></hr>');
+                test('function ExecCommand(command, commandParam) { document.execCommand(command, false, commandParam); } ExecCommand("InsertHorizontalRule");', '<hr>');
             }
         </script>
     </head>
