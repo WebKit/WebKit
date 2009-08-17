@@ -1,3 +1,17 @@
+2009-08-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Script to create element factory needs changes to accommodate calling create
+        https://bugs.webkit.org/show_bug.cgi?id=28379
+
+        * dom/make_names.pl: Tweak formatting. Remove lots of unneeded quotes
+        around names used inside {}. Added new createWithNew property for tags
+        that makes the factory use a create function instead of calling new.
+        Renamed functions with initialize in their name to have default in their
+        name, since they return an array full of default values and don't themselves
+        initialize anything.
+
 2009-08-16  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.
