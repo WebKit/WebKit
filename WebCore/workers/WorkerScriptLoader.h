@@ -46,8 +46,8 @@ namespace WebCore {
     public:
         WorkerScriptLoader();
 
-        void loadSynchronously(ScriptExecutionContext*, const KURL&, CrossOriginRedirectPolicy);
-        void loadAsynchronously(ScriptExecutionContext*, const KURL&, CrossOriginRedirectPolicy, WorkerScriptLoaderClient*);
+        void loadSynchronously(ScriptExecutionContext*, const KURL&, CrossOriginRequestPolicy);
+        void loadAsynchronously(ScriptExecutionContext*, const KURL&, CrossOriginRequestPolicy, WorkerScriptLoaderClient*);
 
         void notifyError();
 

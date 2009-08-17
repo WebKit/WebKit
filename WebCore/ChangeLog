@@ -1,3 +1,40 @@
+2009-08-17  Aaron Boodman  <aa@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28313: Combine ThreadableLoaderOptions::crossOriginRequestPolicy and
+        ThreadableLoaderOptions::crossOriginRedirectPolicy since they are always set the same way.
+
+        Also, tightened up behavior of XMLHttpRequest with cross-origin redirects and access control. We have not implemented
+        redirects access control, so we should never redirect across origins. But in two edge cases, we were:
+
+        * Asynchronous XHR: Script on origin A requests resource from origin B. Server redirects (without sending access control
+          authorization headers) to a resource on origin A.
+        * Synchronous XHR: Script on origin A requests resource from origin B. Server redirects (without sending access control
+          authorization headers) to another resource on origin B (this time sending access control authorization headers).
+
+        Test: http/tests/xmlhttprequest/access-control-and-redirects.html
+
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::willSendRequest): Refactor redirect checking code into shared location.
+        (WebCore::DocumentThreadableLoader::loadRequest): Ditto.
+        (WebCore::DocumentThreadableLoader::isAllowedRedirect): Ditto.
+        * loader/DocumentThreadableLoader.h:
+        * loader/ThreadableLoader.h:
+        (WebCore::ThreadableLoaderOptions::ThreadableLoaderOptions): Remove ThreadableLoaderOptions::crossOriginRedirectPolicy.
+        * page/EventSource.cpp:
+        (WebCore::EventSource::connect): Ditto.
+        * workers/Worker.cpp: Ditto.
+        (WebCore::Worker::Worker): Ditto.
+        * workers/WorkerContext.cpp: Ditto.
+        (WebCore::WorkerContext::importScripts): Ditto.
+        * workers/WorkerScriptLoader.cpp:
+        (WebCore::WorkerScriptLoader::loadSynchronously): Ditto.
+        (WebCore::WorkerScriptLoader::loadAsynchronously): Ditto.
+        * workers/WorkerScriptLoader.h: 
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::createRequest): Ditto.
+
 2009-08-17  Adam Langley  <agl@google.com>
 
         Reviewed by Dan Bernstein (relanding of r47157).

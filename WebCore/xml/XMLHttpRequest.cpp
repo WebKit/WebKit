@@ -498,7 +498,6 @@ void XMLHttpRequest::createRequest(ExceptionCode& ec)
     options.forcePreflight = forcePreflight;
     options.allowCredentials = m_sameOriginRequest || m_includeCredentials;
     options.crossOriginRequestPolicy = UseAccessControl;
-    options.crossOriginRedirectPolicy = DenyCrossOriginRedirect;
 
     m_exceptionCode = 0;
     m_error = false;

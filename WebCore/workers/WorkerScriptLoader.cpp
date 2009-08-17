@@ -50,7 +50,7 @@ WorkerScriptLoader::WorkerScriptLoader()
 {
 }
 
-void WorkerScriptLoader::loadSynchronously(ScriptExecutionContext* scriptExecutionContext, const KURL& url, CrossOriginRedirectPolicy crossOriginRedirectPolicy)
+void WorkerScriptLoader::loadSynchronously(ScriptExecutionContext* scriptExecutionContext, const KURL& url, CrossOriginRequestPolicy crossOriginRequestPolicy)
 {
     m_url = url;
 
@@ -62,13 +62,12 @@ void WorkerScriptLoader::loadSynchronously(ScriptExecutionContext* scriptExecuti
 
     ThreadableLoaderOptions options;
     options.allowCredentials = true;
-    options.crossOriginRequestPolicy = AllowCrossOriginRequests;
-    options.crossOriginRedirectPolicy = crossOriginRedirectPolicy;
+    options.crossOriginRequestPolicy = crossOriginRequestPolicy;
 
     WorkerThreadableLoader::loadResourceSynchronously(static_cast<WorkerContext*>(scriptExecutionContext), *request, *this, options);
 }
     
-void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext* scriptExecutionContext, const KURL& url, CrossOriginRedirectPolicy crossOriginRedirectPolicy, WorkerScriptLoaderClient* client)
+void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext* scriptExecutionContext, const KURL& url, CrossOriginRequestPolicy crossOriginRequestPolicy, WorkerScriptLoaderClient* client)
 {
     ASSERT(client);
     m_client = client;
@@ -80,8 +79,7 @@ void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext* scriptExecut
 
     ThreadableLoaderOptions options;
     options.allowCredentials = true;
-    options.crossOriginRequestPolicy = AllowCrossOriginRequests;
-    options.crossOriginRedirectPolicy = crossOriginRedirectPolicy;
+    options.crossOriginRequestPolicy = crossOriginRequestPolicy;
 
     m_threadableLoader = ThreadableLoader::create(scriptExecutionContext, this, *request, options);
 }

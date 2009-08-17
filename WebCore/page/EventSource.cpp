@@ -94,7 +94,6 @@ void EventSource::connect()
     options.sendLoadCallbacks = true;
     options.sniffContent = false;
     options.allowCredentials = true;
-    options.crossOriginRedirectPolicy = DenyCrossOriginRedirect;
 
     m_loader = ThreadableLoader::create(scriptExecutionContext(), this, request, options);
 

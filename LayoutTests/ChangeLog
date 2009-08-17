@@ -1,3 +1,21 @@
+2009-08-17  Aaron Boodman  <aa@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28313: Combine ThreadableLoaderOptions::crossOriginRequestPolicy and
+        ThreadableLoaderOptions::crossOriginRedirectPolicy since they are always set the same way.
+
+        Also, tightened up behavior of XMLHttpRequest with cross-origin redirects and access control. We have not implemented redirects
+        for access control, so we should never redirect across origins. But in two edge cases, we were:
+
+        * Asynchronous XHR: Script on origin A requests resource from origin B. Server redirects (without sending access control
+          authorization headers) to a resource on origin A.
+        * Synchronous XHR: Script on origin A requests resource from origin B. Server redirects (without sending access control
+          authorization headers) to another resource on origin B (this time sending access control authorization headers).
+
+        * http/tests/xmlhttprequest/access-control-and-redirects-expected.txt: Added.
+        * http/tests/xmlhttprequest/access-control-and-redirects.html: Added.
+
 2009-08-16  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.

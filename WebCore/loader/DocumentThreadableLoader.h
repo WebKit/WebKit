@@ -40,6 +40,7 @@
 
 namespace WebCore {
     class Document;
+    class KURL;
     struct ResourceRequest;
     class ThreadableLoaderClient;
 
@@ -85,6 +86,7 @@ namespace WebCore {
         void preflightFailure();
 
         void loadRequest(const ResourceRequest&, bool skipCanLoadCheck);
+        bool isAllowedRedirect(const KURL&);
 
         RefPtr<SubresourceLoader> m_loader;
         ThreadableLoaderClient* m_client;

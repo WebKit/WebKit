@@ -169,8 +169,7 @@ void DocumentThreadableLoader::willSendRequest(SubresourceLoader* loader, Resour
     ASSERT(m_client);
     ASSERT_UNUSED(loader, loader == m_loader);
 
-    // FIXME: This needs to be fixed to follow the redirect correctly even for cross-domain requests.
-    if (m_options.crossOriginRedirectPolicy == DenyCrossOriginRedirect && !m_document->securityOrigin()->canRequest(request.url())) {
+    if (!isAllowedRedirect(request.url())) {
         RefPtr<DocumentThreadableLoader> protect(this);
         m_client->didFailRedirectCheck();
         request = ResourceRequest();
@@ -322,9 +321,10 @@ void DocumentThreadableLoader::loadRequest(const ResourceRequest& request, bool 
         return;
     }
 
-    // FIXME: This check along with the one in willSendRequest is specific to xhr and
-    // should be made more generic.
-    if (m_sameOriginRequest && !m_document->securityOrigin()->canRequest(response.url())) {
+    // FIXME: FrameLoader::loadSynchronously() does not tell us whether a redirect happened or not, so we guess by comparing the
+    // request and response URLs. This isn't a perfect test though, since a server can serve a redirect to the same URL that was
+    // requested.
+    if (request.url() != response.url() && !isAllowedRedirect(response.url())) {
         m_client->didFailRedirectCheck();
         return;
     }
@@ -336,6 +336,17 @@ void DocumentThreadableLoader::loadRequest(const ResourceRequest& request, bool 
     didReceiveData(0, bytes, len);
 
     didFinishLoading(identifier);
+}
+
+bool DocumentThreadableLoader::isAllowedRedirect(const KURL& url)
+{
+    if (m_options.crossOriginRequestPolicy == AllowCrossOriginRequests)
+        return true;
+
+    // FIXME: We need to implement access control for each redirect. This will require some refactoring though, because the code
+    // that processes redirects doesn't know about access control and expects a synchronous answer from its client about whether
+    // a redirect should proceed.
+    return m_sameOriginRequest && m_document->securityOrigin()->canRequest(url);
 }
 
 } // namespace WebCore
