@@ -28,7 +28,7 @@
 #include "DNS.h"
 
 #include "PlatformString.h"
-#include <CFNetwork/CFHost.h>
+#include <CFNetwork/CFNetwork.h>
 #include <wtf/RetainPtr.h>
 
 #ifdef BUILDING_ON_TIGER
