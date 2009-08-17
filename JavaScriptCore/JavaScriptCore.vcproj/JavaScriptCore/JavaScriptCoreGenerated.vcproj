@@ -23,9 +23,9 @@
 			>
 			<Tool
 				Name="VCNMakeTool"
-				BuildCommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;&#x0D;&#x0A;nmake /nologo -f JavaScriptCoreGenerated.make"
-				ReBuildCommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;&#x0D;&#x0A;nmake /nologo -f JavaScriptCoreGenerated.make clean&#x0D;&#x0A;nmake -f JavaScriptCoreGenerated.make"
-				CleanCommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;&#x0D;&#x0A;nmake /nologo -f JavaScriptCoreGenerated.make clean"
+				BuildCommandLine="%SystemDrive%\cygwin\bin\which.exe bash&#x0D;&#x0A;if errorlevel 1 set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;cmd /c&#x0D;&#x0A;&#x0D;&#x0A;nmake /nologo -f JavaScriptCoreGenerated.make"
+				ReBuildCommandLine="%SystemDrive%\cygwin\bin\which.exe bash&#x0D;&#x0A;if errorlevel 1 set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;cmd /c&#x0D;&#x0A;&#x0D;&#x0A;nmake /nologo -f JavaScriptCoreGenerated.make clean&#x0D;&#x0A;nmake -f JavaScriptCoreGenerated.make"
+				CleanCommandLine="%SystemDrive%\cygwin\bin\which.exe bash&#x0D;&#x0A;if errorlevel 1 set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;cmd /c&#x0D;&#x0A;&#x0D;&#x0A;nmake /nologo -f JavaScriptCoreGenerated.make clean"
 				Output=""
 				PreprocessorDefinitions="WIN32;NDEBUG"
 				IncludeSearchPath=""
