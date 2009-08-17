@@ -28,14 +28,15 @@
 #include "config.h"
 #include "GraphicsContext.h"
 
-#include "TransformationMatrix.h"
 #include "FloatConversion.h"
-#include "GraphicsContextPrivate.h"
 #include "GraphicsContextPlatformPrivateCG.h"
+#include "GraphicsContextPrivate.h"
 #include "ImageBuffer.h"
 #include "KURL.h"
 #include "Path.h"
 #include "Pattern.h"
+#include "TransformationMatrix.h"
+
 #include <CoreGraphics/CGBitmapContext.h>
 #include <CoreGraphics/CGPDFContext.h>
 #include <wtf/MathExtras.h>
@@ -178,19 +179,19 @@ void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
     
     int patWidth = 0;
     switch (strokeStyle()) {
-        case NoStroke:
-        case SolidStroke:
-            break;
-        case DottedStroke:
-            patWidth = (int)width;
-            break;
-        case DashedStroke:
-            patWidth = 3 * (int)width;
-            break;
+    case NoStroke:
+    case SolidStroke:
+        break;
+    case DottedStroke:
+        patWidth = (int)width;
+        break;
+    case DashedStroke:
+        patWidth = 3 * (int)width;
+        break;
     }
 
     CGContextRef context = platformContext();
-    
+
     if (shouldAntialias())
         CGContextSetShouldAntialias(context, false);
 
@@ -221,7 +222,7 @@ void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
         if (patWidth == 1)
             patternOffset = 1.0f;
         else {
-            bool evenNumberOfSegments = numSegments % 2 == 0;
+            bool evenNumberOfSegments = !(numSegments % 2);
             if (remainder)
                 evenNumberOfSegments = !evenNumberOfSegments;
             if (evenNumberOfSegments) {
@@ -235,7 +236,7 @@ void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
                     patternOffset = (patWidth - remainder)/2;
             }
         }
-        
+
         const CGFloat dottedLine[2] = { patWidth, patWidth };
         CGContextSetLineDash(context, patternOffset, dottedLine, 2);
     }
@@ -248,7 +249,7 @@ void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
 
     if (patWidth)
         CGContextRestoreGState(context);
-        
+
     if (shouldAntialias())
         CGContextSetShouldAntialias(context, true);
 }
@@ -263,7 +264,7 @@ void GraphicsContext::drawEllipse(const IntRect& rect)
 
     if (paintingDisabled())
         return;
-        
+
     CGContextRef context = platformContext();
     CGContextBeginPath(context);
     float r = (float)rect.width() / 2;
@@ -275,25 +276,25 @@ void GraphicsContext::drawEllipse(const IntRect& rect)
 
 
 void GraphicsContext::strokeArc(const IntRect& rect, int startAngle, int angleSpan)
-{ 
+{
     if (paintingDisabled() || strokeStyle() == NoStroke || strokeThickness() <= 0.0f)
         return;
-    
+
     CGContextRef context = platformContext();
     CGContextSaveGState(context);
     CGContextBeginPath(context);
     CGContextSetShouldAntialias(context, false);
-    
+
     int x = rect.x();
     int y = rect.y();
     float w = (float)rect.width();
     float h = (float)rect.height();
     float scaleFactor = h / w;
     float reverseScaleFactor = w / h;
-    
+
     if (w != h)
         scale(FloatSize(1, scaleFactor));
-    
+
     float hRadius = w / 2;
     float vRadius = h / 2;
     float fa = startAngle;
@@ -304,22 +305,21 @@ void GraphicsContext::strokeArc(const IntRect& rect, int startAngle, int angleSp
 
     if (w != h)
         scale(FloatSize(1, reverseScaleFactor));
-    
-    
+
     float width = strokeThickness();
     int patWidth = 0;
-    
+
     switch (strokeStyle()) {
-        case DottedStroke:
-            patWidth = (int)(width / 2);
-            break;
-        case DashedStroke:
-            patWidth = 3 * (int)(width / 2);
-            break;
-        default:
-            break;
+    case DottedStroke:
+        patWidth = (int)(width / 2);
+        break;
+    case DashedStroke:
+        patWidth = 3 * (int)(width / 2);
+        break;
+    default:
+        break;
     }
-    
+
     if (patWidth) {
         // Example: 80 pixels with a width of 30 pixels.
         // Remainder is 20.  The maximum pixels of line we could paint
@@ -329,7 +329,7 @@ void GraphicsContext::strokeArc(const IntRect& rect, int startAngle, int angleSp
             distance = static_cast<int>((piFloat * hRadius) / 2.0f);
         else // We are elliptical and will have to estimate the distance
             distance = static_cast<int>((piFloat * sqrtf((hRadius * hRadius + vRadius * vRadius) / 2.0f)) / 2.0f);
-        
+
         int remainder = distance % patWidth;
         int coverage = distance - remainder;
         int numSegments = coverage / patWidth;
@@ -339,7 +339,7 @@ void GraphicsContext::strokeArc(const IntRect& rect, int startAngle, int angleSp
         if (patWidth == 1)
             patternOffset = 1.0f;
         else {
-            bool evenNumberOfSegments = numSegments % 2 == 0;
+            bool evenNumberOfSegments = !(numSegments % 2);
             if (remainder)
                 evenNumberOfSegments = !evenNumberOfSegments;
             if (evenNumberOfSegments) {
@@ -353,13 +353,13 @@ void GraphicsContext::strokeArc(const IntRect& rect, int startAngle, int angleSp
                     patternOffset = (patWidth - remainder) / 2.0f;
             }
         }
-    
+
         const CGFloat dottedLine[2] = { patWidth, patWidth };
         CGContextSetLineDash(context, patternOffset, dottedLine, 2);
     }
 
     CGContextStrokePath(context);
-    
+
     CGContextRestoreGState(context);
 }
 
@@ -375,7 +375,7 @@ void GraphicsContext::drawConvexPolygon(size_t npoints, const FloatPoint* points
 
     if (antialiased != shouldAntialias())
         CGContextSetShouldAntialias(context, antialiased);
-    
+
     CGContextBeginPath(context);
     CGContextMoveToPoint(context, points[0].x(), points[0].y());
     for (size_t i = 1; i < npoints; i++)
@@ -383,7 +383,7 @@ void GraphicsContext::drawConvexPolygon(size_t npoints, const FloatPoint* points
     CGContextClosePath(context);
 
     drawPath();
-    
+
     if (antialiased != shouldAntialias())
         CGContextSetShouldAntialias(context, shouldAntialias());
 }
@@ -391,7 +391,7 @@ void GraphicsContext::drawConvexPolygon(size_t npoints, const FloatPoint* points
 void GraphicsContext::applyStrokePattern()
 {
     CGContextRef cgContext = platformContext();
-    
+
     CGPatternRef platformPattern = m_common->state.strokePattern.get()->createPlatformPattern(getCTM());
     if (!platformPattern)
         return;
@@ -463,7 +463,7 @@ void GraphicsContext::drawPath()
         strokePath();
         return;
     }
-    
+
     if (state.fillColorSpace == PatternColorSpace)
         applyFillPattern();
     if (state.strokeColorSpace == PatternColorSpace)
@@ -599,7 +599,7 @@ void GraphicsContext::clipOut(const IntRect& rect)
 {
     if (paintingDisabled())
         return;
-        
+
     CGRect rects[2] = { CGContextGetClipBoundingBox(platformContext()), rect };
     CGContextBeginPath(platformContext());
     CGContextAddRects(platformContext(), rects, 2);
@@ -610,7 +610,7 @@ void GraphicsContext::clipOutEllipseInRect(const IntRect& rect)
 {
     if (paintingDisabled())
         return;
-        
+
     CGContextBeginPath(platformContext());
     CGContextAddRect(platformContext(), CGContextGetClipBoundingBox(platformContext()));
     CGContextAddEllipseInRect(platformContext(), rect);
@@ -639,13 +639,13 @@ void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect, int thickness
 
     clip(rect);
     CGContextRef context = platformContext();
-    
+
     // Add outer ellipse
     CGContextAddEllipseInRect(context, CGRectMake(rect.x(), rect.y(), rect.width(), rect.height()));
     // Add inner ellipse.
     CGContextAddEllipseInRect(context, CGRectMake(rect.x() + thickness, rect.y() + thickness,
         rect.width() - (thickness * 2), rect.height() - (thickness * 2)));
-    
+
     CGContextEOClip(context);
 }
 
@@ -653,7 +653,7 @@ void GraphicsContext::clipToImageBuffer(const FloatRect& rect, const ImageBuffer
 {
     if (paintingDisabled())
         return;
-    
+
     CGContextTranslateCTM(platformContext(), rect.x(), rect.y() + rect.height());
     CGContextScaleCTM(platformContext(), 1, -1);
     CGContextClipToMask(platformContext(), FloatRect(FloatPoint(), rect.size()), imageBuffer->image()->getCGImageRef());
@@ -734,7 +734,7 @@ void GraphicsContext::setPlatformShadow(const IntSize& size, int blur, const Col
         CGColorRef colorCG = createCGColor(color);
         CGContextSetShadowWithColor(context,
                                     CGSizeMake(width, height),
-                                    blurRadius, 
+                                    blurRadius,
                                     colorCG);
         CGColorRelease(colorCG);
     }
@@ -799,15 +799,15 @@ void GraphicsContext::setLineCap(LineCap cap)
     if (paintingDisabled())
         return;
     switch (cap) {
-        case ButtCap:
-            CGContextSetLineCap(platformContext(), kCGLineCapButt);
-            break;
-        case RoundCap:
-            CGContextSetLineCap(platformContext(), kCGLineCapRound);
-            break;
-        case SquareCap:
-            CGContextSetLineCap(platformContext(), kCGLineCapSquare);
-            break;
+    case ButtCap:
+        CGContextSetLineCap(platformContext(), kCGLineCapButt);
+        break;
+    case RoundCap:
+        CGContextSetLineCap(platformContext(), kCGLineCapRound);
+        break;
+    case SquareCap:
+        CGContextSetLineCap(platformContext(), kCGLineCapSquare);
+        break;
     }
 }
 
@@ -821,15 +821,15 @@ void GraphicsContext::setLineJoin(LineJoin join)
     if (paintingDisabled())
         return;
     switch (join) {
-        case MiterJoin:
-            CGContextSetLineJoin(platformContext(), kCGLineJoinMiter);
-            break;
-        case RoundJoin:
-            CGContextSetLineJoin(platformContext(), kCGLineJoinRound);
-            break;
-        case BevelJoin:
-            CGContextSetLineJoin(platformContext(), kCGLineJoinBevel);
-            break;
+    case MiterJoin:
+        CGContextSetLineJoin(platformContext(), kCGLineJoinMiter);
+        break;
+    case RoundJoin:
+        CGContextSetLineJoin(platformContext(), kCGLineJoinRound);
+        break;
+    case BevelJoin:
+        CGContextSetLineJoin(platformContext(), kCGLineJoinBevel);
+        break;
     }
 }
 
@@ -858,7 +858,7 @@ void GraphicsContext::clipOut(const Path& path)
 {
     if (paintingDisabled())
         return;
-        
+
     CGContextBeginPath(platformContext());
     CGContextAddRect(platformContext(), CGContextGetClipBoundingBox(platformContext()));
     CGContextAddPath(platformContext(), path.platformPath());
@@ -909,9 +909,9 @@ TransformationMatrix GraphicsContext::getCTM() const
 
 FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& rect)
 {
-    // It is not enough just to round to pixels in device space. The rotation part of the 
+    // It is not enough just to round to pixels in device space. The rotation part of the
     // affine transform matrix to device space can mess with this conversion if we have a
-    // rotating image like the hands of the world clock widget. We just need the scale, so 
+    // rotating image like the hands of the world clock widget. We just need the scale, so
     // we get the affine transform matrix and extract the scale.
 
     if (m_data->m_userToDeviceTransformKnownToBeIdentity)
@@ -934,11 +934,11 @@ FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& rect)
     deviceOrigin.y = roundf(deviceOrigin.y);
     deviceLowerRight.x = roundf(deviceLowerRight.x);
     deviceLowerRight.y = roundf(deviceLowerRight.y);
-    
+
     // Don't let the height or width round to 0 unless either was originally 0
-    if (deviceOrigin.y == deviceLowerRight.y && rect.height() != 0)
+    if (deviceOrigin.y == deviceLowerRight.y && rect.height())
         deviceLowerRight.y += 1;
-    if (deviceOrigin.x == deviceLowerRight.x && rect.width() != 0)
+    if (deviceOrigin.x == deviceLowerRight.x && rect.width())
         deviceLowerRight.x += 1;
 
     FloatPoint roundedOrigin = FloatPoint(deviceOrigin.x / deviceScaleX, deviceOrigin.y / deviceScaleY);
@@ -984,13 +984,13 @@ void GraphicsContext::drawLineForText(const IntPoint& point, int width, bool pri
             }
         }
     }
-    
+
     if (fillColor() != strokeColor())
         setCGFillColor(platformContext(), strokeColor());
     CGContextFillRect(platformContext(), CGRectMake(x, y, lineLength, thickness));
     if (fillColor() != strokeColor())
         setCGFillColor(platformContext(), fillColor());
-        
+
     if (restoreAntialiasMode)
         CGContextSetShouldAntialias(platformContext(), true);
 }
@@ -999,11 +999,11 @@ void GraphicsContext::setURLForRect(const KURL& link, const IntRect& destRect)
 {
     if (paintingDisabled())
         return;
-        
+
     CFURLRef urlRef = link.createCFURL();
     if (urlRef) {
         CGContextRef context = platformContext();
-        
+
         // Get the bounding box to handle clipping.
         CGRect box = CGContextGetClipBoundingBox(context);
 
@@ -1022,28 +1022,28 @@ void GraphicsContext::setImageInterpolationQuality(InterpolationQuality mode)
 {
     if (paintingDisabled())
         return;
-    
+
     CGInterpolationQuality quality = kCGInterpolationDefault;
     switch (mode) {
-        case InterpolationDefault:
-            quality = kCGInterpolationDefault;
-            break;
-        case InterpolationNone:
-            quality = kCGInterpolationNone;
-            break;
-        case InterpolationLow:
-            quality = kCGInterpolationLow;
-            break;
+    case InterpolationDefault:
+        quality = kCGInterpolationDefault;
+        break;
+    case InterpolationNone:
+        quality = kCGInterpolationNone;
+        break;
+    case InterpolationLow:
+        quality = kCGInterpolationLow;
+        break;
 
-        // Fall through to InterpolationHigh if kCGInterpolationMedium is not available
-        case InterpolationMedium:
+    // Fall through to InterpolationHigh if kCGInterpolationMedium is not available
+    case InterpolationMedium:
 #if HAVE(CG_INTERPOLATION_MEDIUM)
-            quality = kCGInterpolationMedium;
-            break;
+        quality = kCGInterpolationMedium;
+        break;
 #endif
-        case InterpolationHigh:
-            quality = kCGInterpolationHigh;
-            break;
+    case InterpolationHigh:
+        quality = kCGInterpolationHigh;
+        break;
     }
     CGContextSetInterpolationQuality(platformContext(), quality);
 }
@@ -1055,18 +1055,18 @@ InterpolationQuality GraphicsContext::imageInterpolationQuality() const
 
     CGInterpolationQuality quality = CGContextGetInterpolationQuality(platformContext());
     switch (quality) {
-        case kCGInterpolationDefault:
-            return InterpolationDefault;
-        case kCGInterpolationNone:
-            return InterpolationNone;
-        case kCGInterpolationLow:
-            return InterpolationLow;
+    case kCGInterpolationDefault:
+        return InterpolationDefault;
+    case kCGInterpolationNone:
+        return InterpolationNone;
+    case kCGInterpolationLow:
+        return InterpolationLow;
 #if HAVE(CG_INTERPOLATION_MEDIUM)
-        case kCGInterpolationMedium:
-            return InterpolationMedium;
+    case kCGInterpolationMedium:
+        return InterpolationMedium;
 #endif
-        case kCGInterpolationHigh:
-            return InterpolationHigh;
+    case kCGInterpolationHigh:
+        return InterpolationHigh;
     }
     return InterpolationDefault;
 }
@@ -1079,32 +1079,32 @@ void GraphicsContext::setPlatformTextDrawingMode(int mode)
     // Wow, wish CG had used bits here.
     CGContextRef context = platformContext();
     switch (mode) {
-        case cTextInvisible: // Invisible
-            CGContextSetTextDrawingMode(context, kCGTextInvisible);
-            break;
-        case cTextFill: // Fill
-            CGContextSetTextDrawingMode(context, kCGTextFill);
-            break;
-        case cTextStroke: // Stroke
-            CGContextSetTextDrawingMode(context, kCGTextStroke);
-            break;
-        case 3: // Fill | Stroke
-            CGContextSetTextDrawingMode(context, kCGTextFillStroke);
-            break;
-        case cTextClip: // Clip
-            CGContextSetTextDrawingMode(context, kCGTextClip);
-            break;
-        case 5: // Fill | Clip
-            CGContextSetTextDrawingMode(context, kCGTextFillClip);
-            break;
-        case 6: // Stroke | Clip
-            CGContextSetTextDrawingMode(context, kCGTextStrokeClip);
-            break;
-        case 7: // Fill | Stroke | Clip
-            CGContextSetTextDrawingMode(context, kCGTextFillStrokeClip);
-            break;
-        default:
-            break;
+    case cTextInvisible: // Invisible
+        CGContextSetTextDrawingMode(context, kCGTextInvisible);
+        break;
+    case cTextFill: // Fill
+        CGContextSetTextDrawingMode(context, kCGTextFill);
+        break;
+    case cTextStroke: // Stroke
+        CGContextSetTextDrawingMode(context, kCGTextStroke);
+        break;
+    case 3: // Fill | Stroke
+        CGContextSetTextDrawingMode(context, kCGTextFillStroke);
+        break;
+    case cTextClip: // Clip
+        CGContextSetTextDrawingMode(context, kCGTextClip);
+        break;
+    case 5: // Fill | Clip
+        CGContextSetTextDrawingMode(context, kCGTextFillClip);
+        break;
+    case 6: // Stroke | Clip
+        CGContextSetTextDrawingMode(context, kCGTextStrokeClip);
+        break;
+    case 7: // Fill | Stroke | Clip
+        CGContextSetTextDrawingMode(context, kCGTextFillStrokeClip);
+        break;
+    default:
+        break;
     }
 }
 
@@ -1138,54 +1138,54 @@ void GraphicsContext::setPlatformShouldAntialias(bool enable)
 
 #ifndef BUILDING_ON_TIGER // Tiger's setCompositeOperation() is defined in GraphicsContextMac.mm.
 void GraphicsContext::setCompositeOperation(CompositeOperator mode)
-{   
+{
     if (paintingDisabled())
         return;
 
-    CGBlendMode target = kCGBlendModeNormal;   
+    CGBlendMode target = kCGBlendModeNormal;
     switch (mode) {
-        case CompositeClear:
-            target = kCGBlendModeClear;
-            break;
-        case CompositeCopy:
-            target = kCGBlendModeCopy;
-            break;
-        case CompositeSourceOver:
-            //kCGBlendModeNormal
-            break;
-        case CompositeSourceIn:
-            target = kCGBlendModeSourceIn;
-            break;
-        case CompositeSourceOut:
-            target = kCGBlendModeSourceOut;
-            break;
-        case CompositeSourceAtop:
-            target = kCGBlendModeSourceAtop; 
-            break;
-        case CompositeDestinationOver:
-            target = kCGBlendModeDestinationOver;
-            break;
-        case CompositeDestinationIn:
-            target = kCGBlendModeDestinationIn;
-            break;
-        case CompositeDestinationOut:
-            target = kCGBlendModeDestinationOut;
-            break;
-        case CompositeDestinationAtop:
-            target = kCGBlendModeDestinationAtop;
-            break;
-        case CompositeXOR:
-            target = kCGBlendModeXOR;
-            break;
-        case CompositePlusDarker:
-            target = kCGBlendModePlusDarker;
-            break;
-        case CompositeHighlight:
-            // currently unsupported
-            break;
-        case CompositePlusLighter:
-            target = kCGBlendModePlusLighter;
-            break;
+    case CompositeClear:
+        target = kCGBlendModeClear;
+        break;
+    case CompositeCopy:
+        target = kCGBlendModeCopy;
+        break;
+    case CompositeSourceOver:
+        //kCGBlendModeNormal
+        break;
+    case CompositeSourceIn:
+        target = kCGBlendModeSourceIn;
+        break;
+    case CompositeSourceOut:
+        target = kCGBlendModeSourceOut;
+        break;
+    case CompositeSourceAtop:
+        target = kCGBlendModeSourceAtop;
+        break;
+    case CompositeDestinationOver:
+        target = kCGBlendModeDestinationOver;
+        break;
+    case CompositeDestinationIn:
+        target = kCGBlendModeDestinationIn;
+        break;
+    case CompositeDestinationOut:
+        target = kCGBlendModeDestinationOut;
+        break;
+    case CompositeDestinationAtop:
+        target = kCGBlendModeDestinationAtop;
+        break;
+    case CompositeXOR:
+        target = kCGBlendModeXOR;
+        break;
+    case CompositePlusDarker:
+        target = kCGBlendModePlusDarker;
+        break;
+    case CompositeHighlight:
+        // currently unsupported
+        break;
+    case CompositePlusLighter:
+        target = kCGBlendModePlusLighter;
+        break;
     }
     CGContextSetBlendMode(platformContext(), target);
 }
