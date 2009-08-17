@@ -113,6 +113,13 @@
 #include <stdio.h>
 #else
 #include <CoreServices/CoreServices.h>
+
+#if defined(WIN32) || defined(_WIN32)
+/* Including CoreServices.h on Windows doesn't include CFNetwork.h, so we do
+   it explicitly here to make Windows more consistent with Mac. */
+#include <CFNetwork/CFNetwork.h>
+#endif
+
 #endif
 #endif
 

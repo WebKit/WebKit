@@ -1,3 +1,15 @@
+2009-08-17  Mark Rowe  <mrowe@apple.com>
+
+        Build fix.
+
+        CFNetwork isn't present in the framework search path on Mac OS X so we can't directly include its headers.
+        We include CoreServices.h, the umbrella framework that contains CFNetwork, from the prefix header which
+        results in the CFNetwork headers being included on Mac OS X.  CoreServices.h doesn't include CFNetwork.h on
+        Windows though so we explicitly include this header from the prefix header when on Windows.
+
+        * WebCorePrefix.h:
+        * platform/network/cf/DNSCFNet.cpp: Remove #include that is no longer needed.
+
 2009-08-17  Alexey Proskuryakov  <ap@apple.com>
 
         Trying a better build fix (the previous one broke Leopard bots, although it did build for me).
