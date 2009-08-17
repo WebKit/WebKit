@@ -1,3 +1,21 @@
+2009-08-17  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Unreviewed. Reverts 47371, since it breaks GTK+.
+
+        * platform/graphics/ImageSource.cpp:
+        (WebCore::ImageSource::setData):
+        * platform/image-decoders/ImageDecoder.cpp: Removed.
+        * platform/image-decoders/ImageDecoder.h:
+        (WebCore::ImageDecoder::ImageDecoder):
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        (WebCore::convertCMYKToRGBA):
+        (WebCore::convertRGBToRGBA):
+        (WebCore::JPEGImageDecoder::outputScanlines):
+        * platform/image-decoders/jpeg/JPEGImageDecoder.h:
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        (WebCore::PNGImageDecoder::headerAvailable):
+        (WebCore::PNGImageDecoder::rowAvailable):
+
 2009-08-17  Yong Li  <yong.li@torchmobile.com>
 
         Reviewed by Adam Treat.
