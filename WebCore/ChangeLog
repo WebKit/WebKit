@@ -1,3 +1,28 @@
+2009-08-13  Mike Fenton  <mike.fenton@torchmobile.com>
+
+        Reviewed by Adam Treat.
+
+        Style fixes based on cpp_style.py and WebKit Style guide for
+        GraphicsContext.cpp/h, GraphicsContextCairo.cpp and GraphicsContextQt.cpp.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28268
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::save):
+        (WebCore::GraphicsContext::restore):
+        (GraphicsContext::drawText):
+        (GraphicsContext::initFocusRing):
+        (GraphicsContext::focusRingBoundingRect):
+        (GraphicsContext::drawImage):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::drawLine):
+        (WebCore::GraphicsContext::strokeArc):
+        (WebCore::GraphicsContext::setLineCap):
+        (WebCore::GraphicsContext::setLineJoin):
+        (WebCore::toCairoOperator):
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+
 2009-08-17  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.

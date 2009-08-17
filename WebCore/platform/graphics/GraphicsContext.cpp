@@ -27,9 +27,9 @@
 #include "GraphicsContext.h"
 
 #include "BidiResolver.h"
+#include "Font.h"
 #include "Generator.h"
 #include "GraphicsContextPrivate.h"
-#include "Font.h"
 
 using namespace std;
 
@@ -89,7 +89,7 @@ void GraphicsContext::save()
         return;
 
     m_common->stack.append(m_common->state);
-    
+
     savePlatformState();
 }
 
@@ -104,7 +104,7 @@ void GraphicsContext::restore()
     }
     m_common->state = m_common->stack.last();
     m_common->stack.removeLast();
-    
+
     restorePlatformState();
 }
 
@@ -305,7 +305,7 @@ bool GraphicsContext::paintingDisabled() const
 }
 
 void GraphicsContext::drawImage(Image* image, const IntPoint& p, CompositeOperator op)
-{        
+{
     drawImage(image, p, IntRect(0, 0, -1, -1), op);
 }
 
@@ -329,7 +329,7 @@ void GraphicsContext::drawText(const Font& font, const TextRun& run, const IntPo
 {
     if (paintingDisabled())
         return;
-    
+
     font.drawText(this, run, point, from, to);
 }
 #endif
@@ -383,7 +383,7 @@ void GraphicsContext::initFocusRing(int width, int offset)
     if (paintingDisabled())
         return;
     clearFocusRing();
-    
+
     m_common->m_focusRingWidth = width;
     m_common->m_focusRingOffset = offset;
 }
@@ -396,12 +396,12 @@ void GraphicsContext::clearFocusRing()
 IntRect GraphicsContext::focusRingBoundingRect()
 {
     IntRect result = IntRect(0, 0, 0, 0);
-    
+
     const Vector<IntRect>& rects = focusRingRects();
     unsigned rectCount = rects.size();
     for (unsigned i = 0; i < rectCount; i++)
         result.unite(rects[i]);
-        
+
     return result;
 }
 
@@ -436,7 +436,7 @@ void GraphicsContext::drawImage(Image* image, const FloatRect& dest, const Float
     float tsh = src.height();
     float tw = dest.width();
     float th = dest.height();
-        
+
     if (tsw == -1)
         tsw = image->width();
     if (tsh == -1)

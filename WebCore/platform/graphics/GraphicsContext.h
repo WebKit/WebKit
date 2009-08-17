@@ -49,8 +49,8 @@ typedef QPainter PlatformGraphicsContext;
 class wxGCDC;
 class wxWindowDC;
 
-// wxGraphicsContext allows us to support Path, etc. 
-// but on some platforms, e.g. Linux, it requires fairly 
+// wxGraphicsContext allows us to support Path, etc.
+// but on some platforms, e.g. Linux, it requires fairly
 // new software.
 #if USE(WXGC)
 // On OS X, wxGCDC is just a typedef for wxDC, so use wxDC explicitly to make
@@ -122,7 +122,7 @@ namespace WebCore {
     const int cTextFill = 1;
     const int cTextStroke = 2;
     const int cTextClip = 4;
-    
+
     enum StrokeStyle {
         NoStroke,
         SolidStroke,
@@ -130,12 +130,12 @@ namespace WebCore {
         DashedStroke
     };
 
-// FIXME: This is a place-holder until we decide to add
-// real color space support to WebCore.  At that time, ColorSpace will be a
-// class and instances will be held  off of Colors.   There will be
-// special singleton Gradient and Pattern color spaces to mark when
-// a fill or stroke is using a gradient or pattern instead of a solid color.
-// https://bugs.webkit.org/show_bug.cgi?id=20558
+    // FIXME: This is a place-holder until we decide to add
+    // real color space support to WebCore.  At that time, ColorSpace will be a
+    // class and instances will be held  off of Colors.   There will be
+    // special singleton Gradient and Pattern color spaces to mark when
+    // a fill or stroke is using a gradient or pattern instead of a solid color.
+    // https://bugs.webkit.org/show_bug.cgi?id=20558
     enum ColorSpace {
         SolidColorSpace,
         PatternColorSpace,
@@ -154,11 +154,11 @@ namespace WebCore {
     public:
         GraphicsContext(PlatformGraphicsContext*);
         ~GraphicsContext();
-       
+
 #if !PLATFORM(WINCE) || PLATFORM(QT)
         PlatformGraphicsContext* platformContext() const;
 #endif
-        
+
         float strokeThickness() const;
         void setStrokeThickness(float);
         StrokeStyle strokeStyle() const;
@@ -234,7 +234,7 @@ namespace WebCore {
                        CompositeOperator = CompositeSourceOver, bool useLowQualityScale = false);
         void drawTiledImage(Image*, const IntRect& destRect, const IntPoint& srcPoint, const IntSize& tileSize,
                        CompositeOperator = CompositeSourceOver);
-        void drawTiledImage(Image*, const IntRect& destRect, const IntRect& srcRect, 
+        void drawTiledImage(Image*, const IntRect& destRect, const IntRect& srcRect,
                             Image::TileRule hRule = Image::StretchTile, Image::TileRule vRule = Image::StretchTile,
                             CompositeOperator = CompositeSourceOver);
 
@@ -258,13 +258,13 @@ namespace WebCore {
         void drawHighlightForText(const Font&, const TextRun&, const IntPoint&, int h, const Color& backgroundColor, int from = 0, int to = -1);
 
         FloatRect roundToDevicePixels(const FloatRect&);
-        
+
         void drawLineForText(const IntPoint&, int width, bool printing);
         void drawLineForMisspellingOrBadGrammar(const IntPoint&, int width, bool grammar);
-        
+
         bool paintingDisabled() const;
         void setPaintingDisabled(bool);
-        
+
         bool updatingControlTints() const;
         void setUpdatingControlTints(bool);
 
@@ -303,7 +303,7 @@ namespace WebCore {
         void rotate(float angleInRadians);
         void translate(float x, float y);
         IntPoint origin();
-        
+
         void setURLForRect(const KURL&, const IntRect&);
 
         void concatCTM(const TransformationMatrix&);
