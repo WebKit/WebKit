@@ -1,3 +1,10 @@
+2009-08-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Speculative fix for Windows build bustage.
+
+        * DOMHTMLClasses.cpp:
+        (DOMHTMLElement::idName):
+
 2009-08-13  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Part of <rdar://problem/6218721> No MSAA focus events fired for Webkit

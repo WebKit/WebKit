@@ -367,7 +367,7 @@ HRESULT STDMETHODCALLTYPE DOMHTMLElement::idName(
         return E_POINTER;
 
     ASSERT(m_element && m_element->isHTMLElement());
-    String idString = static_cast<HTMLElement*>(m_element)->id();
+    String idString = static_cast<HTMLElement*>(m_element)->getAttribute(idAttr);
     *result = BString(idString).release();
     return S_OK;
 }
