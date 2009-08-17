@@ -1,3 +1,17 @@
+2009-08-17  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Xan Lopez.
+
+        Protect ResourceHandle for g_file_query_info_async call, using the
+        same technique we already use for HTTP requests that take the soup
+        path.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ResourceHandleInternal::~ResourceHandleInternal):
+        (WebCore::ResourceHandle::~ResourceHandle):
+        (WebCore::finishedCallback):
+        (WebCore::):
+
 2009-08-17  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
