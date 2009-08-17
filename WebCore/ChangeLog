@@ -1,3 +1,11 @@
+2009-08-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setFocusedNode): Removed unneeded calls
+        to RefPtr::get.
+
 2009-08-17  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
