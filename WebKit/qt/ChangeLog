@@ -1,5 +1,11 @@
 2009-08-17  Darin Adler  <darin@apple.com>
 
+        Try to fix Qt build again.
+
+        * WebCoreSupport/EditorClientQt.cpp: Move "using namespace".
+
+2009-08-17  Darin Adler  <darin@apple.com>
+
         Try to fix Qt build.
 
         * WebCoreSupport/EditorClientQt.cpp:

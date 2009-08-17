@@ -55,8 +55,6 @@
 #include <QUndoStack>
 #define methodDebug() qDebug("EditorClientQt: %s", __FUNCTION__);
 
-using namespace HTMLNames;
-
 static bool dumpEditingCallbacks = false;
 static bool acceptsEditing = true;
 void QWEBKIT_EXPORT qt_dump_editing_callbacks(bool b)
@@ -99,6 +97,7 @@ static QString dumpRange(WebCore::Range *range)
 
 namespace WebCore {
 
+using namespace HTMLNames;
 
 bool EditorClientQt::shouldDeleteRange(Range* range)
 {
