@@ -1,3 +1,9 @@
+2009-08-17  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Unreviewed. Skip new tests.
+
+        * platform/gtk/Skipped:
+
 2009-08-17  Alexey Proskuryakov  <ap@apple.com>
 
         Rubber-stamped by Dan Bernstein.
