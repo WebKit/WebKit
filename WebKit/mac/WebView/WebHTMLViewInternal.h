@@ -30,6 +30,9 @@
 
 #import "WebHTMLViewPrivate.h"
 
+#if USE(ACCELERATED_COMPOSITING)
+@class CALayer;
+#endif
 @class WebFrame;
 
 namespace WebCore {

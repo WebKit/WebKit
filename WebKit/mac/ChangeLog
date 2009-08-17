@@ -1,5 +1,17 @@
 2009-08-16  David Kilzer  <ddkilzer@apple.com>
 
+        <http://webkit.org/b/28366> WebHTMLViewInternal.h: add @class CALayer declaration
+
+        Reviewed by Simon Fraser.
+
+        Without WebKitPrefix.h, the missing @class CALayer declaration
+        causes a compile-time error.
+
+        * WebView/WebHTMLViewInternal.h: Added @class CALayer
+        declaration with USE(ACCELERATED_COMPOSITING).
+
+2009-08-16  David Kilzer  <ddkilzer@apple.com>
+
         <http://webkit.org/b/28355> Replace MAX()/MIN() macros with type-safe std::max()/min() templates
 
         Reviewed by Dan Bernstein.
