@@ -47,9 +47,9 @@ namespace WebCore {
 using namespace HTMLNames;
 
 // FIXME: These constants may need to be tweaked to better match the seeking in the QuickTime plug-in.
-static const float cSeekRepeatDelay = 0.1;
-static const float cStepTime = 0.07;
-static const float cSeekTime = 0.2;
+static const float cSeekRepeatDelay = 0.1f;
+static const float cStepTime = 0.07f;
+static const float cSeekTime = 0.2f;
 
 MediaControlShadowRootElement::MediaControlShadowRootElement(Document* document, HTMLMediaElement* mediaElement)
     : HTMLDivElement(divTag, document)

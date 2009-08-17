@@ -26,6 +26,12 @@
 
 2009-08-17  Simon Fraser  <simon.fraser@apple.com>
 
+        Build fix: fix float literals to avoid casting warnings.
+
+        * rendering/MediaControlElements.cpp:
+
+2009-08-17  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Eric Seidel.
 
         Use OwnPtrs for GraphicsLayers
