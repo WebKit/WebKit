@@ -119,6 +119,11 @@ def read_credentials():
 def timestamp():
     return datetime.now().strftime("%Y%m%d%H%M%S")
 
+
+class BugzillaError(Exception):
+    pass
+
+
 class Bugzilla:
     def __init__(self, dryrun=False, committers=CommitterList()):
         self.dryrun = dryrun
@@ -245,7 +250,7 @@ class Bugzilla:
         # If the resulting page has a title, and it contains the word "invalid" assume it's the login failure page.
         if match and re.search("Invalid", match.group(1), re.IGNORECASE):
             # FIXME: We could add the ability to try again on failure.
-            raise ScriptError("Bugzilla login failed: %s" % match.group(1))
+            raise BugzillaError("Bugzilla login failed: %s" % match.group(1))
 
         self.authenticated = True
 
@@ -287,7 +292,7 @@ class Bugzilla:
         if match:
             text_lines = BeautifulSoup(match.group('error_message')).findAll(text=True)
             error_message = "\n" + '\n'.join(["  " + line.strip() for line in text_lines if line.strip()])
-        raise ScriptError("Bug not created: %s" % error_message)
+        raise BugzillaError("Bug not created: %s" % error_message)
 
     def create_bug_with_patch(self, bug_title, bug_description, component, patch_file_object, patch_description, cc, mark_for_review=False):
         self.authenticate()

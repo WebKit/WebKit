@@ -1,3 +1,22 @@
+2009-08-16  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/28367> bugzilla.py: replace ScriptError class with BugzillaError class
+
+        Reviewed by David Levin.
+
+        The ScriptError class doesn't exist in bugzilla.py, so any
+        errors print error messages about ScriptError instead of the
+        actual error:
+
+            NameError: global name 'ScriptError' is not defined
+
+        * Scripts/modules/bugzilla.py:
+        (BugzillaError): Added class.  Modeled after ScriptError class
+        in scm.py.
+        (Bugzilla.authenticate): Changed to use BugzillaError instead of
+        ScriptError.
+        (Bugzilla._check_create_bug_response): Ditto.
+
 2009-08-14  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         Reviewed by Sam Weinig.
