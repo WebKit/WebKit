@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008 Collin Jackson  <collinj@webkit.org>
+ * Copyright (C) 2009 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,13 +27,33 @@
 #include "config.h"
 #include "DNS.h"
 
-#include "NotImplemented.h"
+#include "PlatformString.h"
+#include <wtf/RetainPtr.h>
+
+#ifdef BUILDING_ON_TIGER
+// This function is available on Tiger, but not declared in the CFRunLoop.h header on Tiger.
+extern "C" CFRunLoopRef CFRunLoopGetMain();
+#endif
 
 namespace WebCore {
 
-void prefetchDNS(const String&)
+static void clientCallback(CFHostRef theHost, CFHostInfoType, const CFStreamError*, void*)
 {
-    notImplemented();
+    CFRelease(theHost);
+}
+
+void prefetchDNS(const String& hostname)
+{
+    RetainPtr<CFStringRef> hostnameCF(AdoptCF, hostname.createCFString());
+    RetainPtr<CFHostRef> host(AdoptCF, CFHostCreateWithName(0, hostnameCF.get()));
+    if (!host)
+        return;
+    CFHostClientContext context = { 0, 0, 0, 0, 0 };
+    Boolean result = CFHostSetClient(host.get(), clientCallback, &context);
+    ASSERT_UNUSED(result, result);
+    CFHostScheduleWithRunLoop(host.get(), CFRunLoopGetMain(), kCFRunLoopCommonModes);
+    CFHostStartInfoResolution(host.get(), kCFHostAddresses, 0);
+    host.releaseRef(); // The host will be released from clientCallback().
 }
 
 }

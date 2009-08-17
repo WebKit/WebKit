@@ -1,3 +1,17 @@
+2009-08-17  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28401
+        Add support for DNS prefetching with CFNetwork
+
+        This is just an optimization, no behavior change, so no tests.
+
+        * platform/network/cf/DNSCFNet.cpp:
+        (WebCore::clientCallback):
+        (WebCore::prefetchDNS):
+        Use async CFHostStartInfoResolution() for implementation.
+
 2009-08-17  Aaron Boodman  <aa@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
