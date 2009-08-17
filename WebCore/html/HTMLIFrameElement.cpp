@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Simon Hausmann (hausmann@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2006, 2008, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -89,7 +89,7 @@ void HTMLIFrameElement::parseMappedAttribute(MappedAttribute* attr)
 
 bool HTMLIFrameElement::rendererIsNeeded(RenderStyle* style)
 {
-    return isURLAllowed(m_URL) && style->display() != NONE;
+    return isURLAllowed() && style->display() != NONE;
 }
 
 RenderObject* HTMLIFrameElement::createRenderer(RenderArena* arena, RenderStyle*)

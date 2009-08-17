@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Simon Hausmann <hausmann@kde.org>
- * Copyright (C) 2004, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2006, 2008, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -84,7 +84,7 @@ public:
 protected:
     HTMLFrameElementBase(const QualifiedName&, Document*);
 
-    bool isURLAllowed(const AtomicString&) const;
+    bool isURLAllowed() const;
     void setNameAndOpenURL();
     void openURL();
 

@@ -2,6 +2,23 @@
 
         Reviewed by Dan Bernstein.
 
+        Tweak HTMLFrameElementBase so that m_URL can be private
+        https://bugs.webkit.org/show_bug.cgi?id=28385
+
+        * html/HTMLFrameElement.cpp:
+        (WebCore::HTMLFrameElement::rendererIsNeeded): Removed m_URL argument.
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::isURLAllowed): Use m_URL instead of
+        taking an argument.
+        (WebCore::HTMLFrameElementBase::openURL): Removed m_URL argument.
+        * html/HTMLFrameElementBase.h: Removed argument from isURLAllowed function.
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::HTMLIFrameElement::rendererIsNeeded): Removed m_URL argument.
+
+2009-08-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
         HTMLViewSourceDocument should use smart pointers
         https://bugs.webkit.org/show_bug.cgi?id=28378
 

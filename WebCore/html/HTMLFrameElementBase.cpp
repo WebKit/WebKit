@@ -56,12 +56,12 @@ HTMLFrameElementBase::HTMLFrameElementBase(const QualifiedName& tagName, Documen
 {
 }
 
-bool HTMLFrameElementBase::isURLAllowed(const AtomicString& URLString) const
+bool HTMLFrameElementBase::isURLAllowed() const
 {
-    if (URLString.isEmpty())
+    if (m_URL.isEmpty())
         return true;
 
-    const KURL& completeURL = document()->completeURL(URLString);
+    const KURL& completeURL = document()->completeURL(m_URL);
 
     // Don't allow more than 200 total frames in a set. This seems
     // like a reasonable upper bound, and otherwise mutually recursive
@@ -93,7 +93,7 @@ void HTMLFrameElementBase::openURL()
 {
     ASSERT(!m_frameName.isEmpty());
 
-    if (!isURLAllowed(m_URL))
+    if (!isURLAllowed())
         return;
 
     if (m_URL.isEmpty())
