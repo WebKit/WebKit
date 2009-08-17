@@ -47,6 +47,8 @@ using namespace std;
 
 namespace WebCore {
 
+using namespace HTMLNames;
+
 static bool hasBorderOutlineOrShadow(const RenderStyle*);
 static bool hasBoxDecorations(const RenderStyle*);
 static bool hasBoxDecorationsWithBackgroundImage(const RenderStyle*);
@@ -79,7 +81,7 @@ void RenderLayerBacking::createGraphicsLayer()
             m_graphicsLayer->setName("Document Node");
         else {
             if (renderer()->node()->isHTMLElement() && renderer()->node()->hasID())
-                m_graphicsLayer->setName(renderer()->renderName() + String(" ") + static_cast<HTMLElement*>(renderer()->node())->id());
+                m_graphicsLayer->setName(renderer()->renderName() + String(" ") + static_cast<HTMLElement*>(renderer()->node())->getAttribute(idAttr));
             else
                 m_graphicsLayer->setName(renderer()->renderName());
         }
@@ -500,7 +502,7 @@ bool RenderLayerBacking::isSimpleContainerCompositingLayer() const
         
         // Now look at the body's renderer.
         HTMLElement* body = renderObject->document()->body();
-        RenderObject* bodyObject = (body && body->hasLocalName(HTMLNames::bodyTag)) ? body->renderer() : 0;
+        RenderObject* bodyObject = (body && body->hasLocalName(bodyTag)) ? body->renderer() : 0;
         if (!bodyObject)
             return false;
         

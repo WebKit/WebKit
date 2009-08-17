@@ -2,6 +2,50 @@
 
         Reviewed by Sam Weinig.
 
+        Removed functions now unneeded due to use of Reflect to create
+        language bindings.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::accessibilityParentForImageMap):
+        Get at usemap attribute directly.
+
+        * editing/DeleteButtonController.cpp:
+        (WebCore::DeleteButtonController::createDeletionUI):
+        Get at id attribute directly.
+        * editing/EditorCommand.cpp:
+        (WebCore::executeInsertHorizontalRule): Ditto.
+
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::dir): Get at dir attribute of body directly.
+        (WebCore::HTMLDocument::setDir): Ditto.
+
+        * html/HTMLElement.cpp: Deleted unused functions.
+        * html/HTMLElement.h: Ditto.
+
+        * html/HTMLImageElement.cpp: Deleted unused functions.
+        (WebCore::HTMLImageElement::alt): Changed to return const AtomicString&.
+        (WebCore::HTMLImageElement::addSubresourceAttributeURLs): Changed to
+        get at usemap attribute directly, but added a FIXME because although
+        it is what the old code did, it looks to not be entirely correct.
+
+        * html/HTMLImageElement.h: Deleted unused functions.
+
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::altDisplayString): Get at alt attribute directly.
+
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::imageMap): Get at usemap attribute directly.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::createGraphicsLayer): Get at id attribute
+        directly.
+        (WebCore::RenderLayerBacking::isSimpleContainerCompositingLayer): Removed
+        explicit HTMLNames namespace qualification.
+
+2009-08-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
         * dom/Document.cpp:
         (WebCore::Document::setFocusedNode): Removed unneeded calls
         to RefPtr::get.

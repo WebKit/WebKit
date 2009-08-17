@@ -209,7 +209,7 @@ String HitTestResult::altDisplayString() const
     
     if (m_innerNonSharedNode->hasTagName(imgTag)) {
         HTMLImageElement* image = static_cast<HTMLImageElement*>(m_innerNonSharedNode.get());
-        return displayString(image->alt(), m_innerNonSharedNode.get());
+        return displayString(image->getAttribute(altAttr), m_innerNonSharedNode.get());
     }
     
     if (m_innerNonSharedNode->hasTagName(inputTag)) {

@@ -47,16 +47,7 @@ public:
 
     PassRefPtr<HTMLCollection> children();
     
-    String id() const;
-    void setId(const String&);
     virtual String title() const;
-    void setTitle(const String&);
-    String lang() const;
-    void setLang(const String&);
-    String dir() const;
-    void setDir(const String&);
-    String className() const;
-    void setClassName(const String&);
     virtual short tabIndex() const;
     void setTabIndex(int);
 

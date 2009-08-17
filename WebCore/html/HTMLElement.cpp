@@ -727,54 +727,9 @@ void HTMLElement::accessKeyAction(bool sendToAnyElement)
         dispatchSimulatedClick(0, true);
 }
 
-String HTMLElement::id() const
-{
-    return getAttribute(idAttr);
-}
-
-void HTMLElement::setId(const String& value)
-{
-    setAttribute(idAttr, value);
-}
-
 String HTMLElement::title() const
 {
     return getAttribute(titleAttr);
-}
-
-void HTMLElement::setTitle(const String& value)
-{
-    setAttribute(titleAttr, value);
-}
-
-String HTMLElement::lang() const
-{
-    return getAttribute(langAttr);
-}
-
-void HTMLElement::setLang(const String& value)
-{
-    setAttribute(langAttr, value);
-}
-
-String HTMLElement::dir() const
-{
-    return getAttribute(dirAttr);
-}
-
-void HTMLElement::setDir(const String &value)
-{
-    setAttribute(dirAttr, value);
-}
-
-String HTMLElement::className() const
-{
-    return getAttribute(classAttr);
-}
-
-void HTMLElement::setClassName(const String &value)
-{
-    setAttribute(classAttr, value);
 }
 
 short HTMLElement::tabIndex() const

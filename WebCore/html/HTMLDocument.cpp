@@ -109,14 +109,14 @@ String HTMLDocument::dir()
     HTMLElement* b = body();
     if (!b)
         return String();
-    return b->dir();
+    return b->getAttribute(dirAttr);
 }
 
 void HTMLDocument::setDir(const String& value)
 {
     HTMLElement* b = body();
     if (b)
-        b->setDir(value);
+        b->setAttribute(dirAttr, value);
 }
 
 String HTMLDocument::designMode() const
