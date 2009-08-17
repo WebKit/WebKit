@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2008-2009 Torch Mobile, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,6 +57,16 @@ namespace WebCore {
 
         bool outputScanlines();
         void jpegComplete();
+
+#if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
+        bool setSize(int width, int height)
+        {
+            if (!ImageDecoder::setSize(width, height))
+                return false;
+            prepareScaleDataIfNecessary();
+            return true;
+        }
+#endif
 
     private:
         JPEGImageReader* m_reader;

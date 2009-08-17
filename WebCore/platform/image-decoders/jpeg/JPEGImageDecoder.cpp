@@ -461,11 +461,27 @@ void JPEGImageDecoder::decode(bool sizeOnly)
     }
 }
 
-static void convertCMYKToRGBA(RGBA32Buffer& dest, JSAMPROW src, jpeg_decompress_struct* info)
+static void convertCMYKToRGBA(RGBA32Buffer& dest, int destY, JSAMPROW src, int srcWidth
+#if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
+                              , bool scaled, const Vector<int>& scaledColumns
+#endif
+                              )
 {
-    ASSERT(info->out_color_space == JCS_CMYK);
-
-    for (unsigned x = 0; x < info->output_width; ++x) {
+#if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
+    if (scaled) {
+        int numColumns = scaledColumns.size();
+        for (int x = 0; x < numColumns; ++x) {
+            JSAMPLE* jsample = src + scaledColumns[x] * 3;
+            unsigned c = jsample[0];
+            unsigned m = jsample[1];
+            unsigned y = jsample[2];
+            unsigned k = jsample[3];
+            dest.setRGBA(x, destY, c * k / 255, m * k / 255, y * k / 255, 0xFF);
+        }
+        return;
+    }
+#endif
+    for (unsigned x = 0; x < srcWidth; ++x) {
         unsigned c = *src++;
         unsigned m = *src++;
         unsigned y = *src++;
@@ -489,23 +505,31 @@ static void convertCMYKToRGBA(RGBA32Buffer& dest, JSAMPROW src, jpeg_decompress_
         // G = 1 - M => 1 - (1 - iM*iK) => iM*iK
         // B = 1 - Y => 1 - (1 - iY*iK) => iY*iK
 
-        // read_scanlines has increased the scanline counter, so we
-        // actually mean the previous one.
-        dest.setRGBA(x, info->output_scanline - 1, c * k / 255, m * k / 255, y * k / 255, 0xFF);
+        dest.setRGBA(x, destY, c * k / 255, m * k / 255, y * k / 255, 0xFF);
     }
 }
 
-static void convertRGBToRGBA(RGBA32Buffer& dest, JSAMPROW src, jpeg_decompress_struct* info)
+static void convertRGBToRGBA(RGBA32Buffer& dest, int destY, JSAMPROW src, int srcWidth
+#if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
+                              , bool scaled, const Vector<int>& scaledColumns
+#endif
+                              )
 {
-    ASSERT(info->out_color_space == JCS_RGB);
-
-    for (unsigned x = 0; x < info->output_width; ++x) {
+#if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
+    if (scaled) {
+        int numColumns = scaledColumns.size();
+        for (int x = 0; x < numColumns; ++x) {
+            JSAMPLE* jsample = src + scaledColumns[x] * 3;
+            dest.setRGBA(x, destY, jsample[0], jsample[1], jsample[2], 0xFF);
+        }
+        return;
+    }
+#endif
+    for (unsigned x = 0; x < srcWidth; ++x) {
         unsigned r = *src++;
         unsigned g = *src++;
         unsigned b = *src++;
-        // read_scanlines has increased the scanline counter, so we
-        // actually mean the previous one.
-        dest.setRGBA(x, info->output_scanline - 1, r, g, b, 0xFF);
+        dest.setRGBA(x, destY, r, g, b, 0xFF);
     }
 }
 
@@ -517,7 +541,17 @@ bool JPEGImageDecoder::outputScanlines()
     // Initialize the framebuffer if needed.
     RGBA32Buffer& buffer = m_frameBufferCache[0];
     if (buffer.status() == RGBA32Buffer::FrameEmpty) {
-        if (!buffer.setSize(size().width(), size().height())) {
+        int bufferWidth = size().width();
+        int bufferHeight = size().height();
+#if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
+        // Let's resize our buffer now to the correct width/height.
+        if (m_scaled) {
+            bufferWidth = m_scaledColumns.size();
+            bufferHeight = m_scaledRows.size();
+        }
+#endif
+
+        if (!buffer.setSize(bufferWidth, bufferHeight)) {
             m_failed = true;
             return false;
         }
@@ -532,16 +566,34 @@ bool JPEGImageDecoder::outputScanlines()
     JSAMPARRAY samples = m_reader->samples();
 
     while (info->output_scanline < info->output_height) {
+        // jpeg_read_scanlines will increase the scanline counter, so we
+        // save the scanline before calling it.
+        int sourceY = info->output_scanline;
         /* Request one scanline.  Returns 0 or 1 scanlines. */
         if (jpeg_read_scanlines(info, samples, 1) != 1)
             return false;
 
+        int destY = sourceY;
+#if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
+        if (m_scaled) {
+            destY = scaledY(sourceY);
+            if (destY < 0)
+                continue;
+        }
         if (info->out_color_space == JCS_RGB)
-            convertRGBToRGBA(buffer, *samples, info);
+            convertRGBToRGBA(buffer, destY, *samples, info->output_width, m_scaled, m_scaledColumns);
         else if (info->out_color_space == JCS_CMYK)
-            convertCMYKToRGBA(buffer, *samples, info);
+            convertCMYKToRGBA(buffer, destY, *samples, info->output_width, m_scaled, m_scaledColumns);
         else
             return false;
+#else
+        if (info->out_color_space == JCS_RGB)
+            convertRGBToRGBA(buffer, destY, *samples, info->output_width);
+        else if (info->out_color_space == JCS_CMYK)
+            convertCMYKToRGBA(buffer, destY, *samples, info->output_width);
+        else
+            return false;
+#endif
     }
 
     return true;
