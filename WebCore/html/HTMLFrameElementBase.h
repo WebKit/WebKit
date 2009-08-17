@@ -67,9 +67,6 @@ public:
     String name() const;
     void setName(const String&);
 
-    bool noResize() const { return m_noResize; }
-    void setNoResize(bool);
-
     String scrolling() const;
     void setScrolling(const String&);
 
@@ -98,7 +95,6 @@ protected:
     int m_marginWidth;
     int m_marginHeight;
 
-    bool m_noResize;
     bool m_viewSource;
 
     bool m_shouldOpenURLAfterAttach;

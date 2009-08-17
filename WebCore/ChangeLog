@@ -2,6 +2,31 @@
 
         Reviewed by Dan Bernstein.
 
+        Move noResize from HTMLFrameElementBase to HTMLFrameElement
+        https://bugs.webkit.org/show_bug.cgi?id=28384
+
+        * html/HTMLFrameElement.cpp:
+        (WebCore::HTMLFrameElement::HTMLFrameElement): Initialize m_noResize.
+        (WebCore::HTMLFrameElement::parseMappedAttribute): Set m_noResize to true
+        here if noresizeAttr is changed. This code was moved here from
+        HTMLFrameElementBase, but I added some FIXME comments.
+        (WebCore::HTMLFrameElement::setNoResize): Set the attribute based on
+        boolean argument. Moved here from HTMLFrameElementBase.
+
+        * html/HTMLFrameElement.h: Moved noResize, setNoResize, and m_noResize
+        here from HTMLFrameElementBase.
+
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::HTMLFrameElementBase): Removed m_noResize.
+        (WebCore::HTMLFrameElementBase::parseMappedAttribute): Removed code to parse
+        noresizeAttr.
+
+        * html/HTMLFrameElementBase.h: Removed noResize, setNoResize, and m_noResize.
+
+2009-08-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
         Tweak HTMLFrameElementBase so that m_URL can be private
         https://bugs.webkit.org/show_bug.cgi?id=28385
 
