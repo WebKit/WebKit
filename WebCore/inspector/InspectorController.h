@@ -285,6 +285,8 @@ private:
     // TODO: extract these into a separate interface.
     ScriptValue wrapObject(const ScriptValue& object);
     ScriptValue unwrapObject(const String& objectId);
+    
+    void resetInjectedScript();
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     void startUserInitiatedProfilingSoon();

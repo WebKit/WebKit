@@ -1,3 +1,23 @@
+2009-08-17  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        WebInspector: Reset InjectedScript styles cache on document change.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28390
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::close):
+        (WebCore::InspectorController::populateScriptObjects):
+        (WebCore::InspectorController::didCommitLoad):
+        (WebCore::InspectorController::resetInjectedScript):
+        * inspector/InspectorController.h:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::setDocument):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/front-end/InjectedScript.js:
+        (InjectedScript._reset):
+
 2009-08-17  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

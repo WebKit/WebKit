@@ -27,14 +27,20 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-var InjectedScript = {
-    _styles: {},
-    _styleRules: {},
-    _lastStyleId: 0,
-    _lastStyleRuleId: 0,
-    _searchResults: [],
-    _includedInSearchResultsPropertyName: "__includedInInspectorSearchResults"
-};
+var InjectedScript = {};
+
+// Called from within InspectorController on the 'inspected page' side.
+InjectedScript.reset = function()
+{
+    InjectedScript._styles = {};
+    InjectedScript._styleRules = {};
+    InjectedScript._lastStyleId = 0;
+    InjectedScript._lastStyleRuleId = 0;
+    InjectedScript._searchResults = [];
+    InjectedScript._includedInSearchResultsPropertyName = "__includedInInspectorSearchResults";
+}
+
+InjectedScript.reset();
 
 InjectedScript.getStyles = function(nodeId, authorOnly)
 {
@@ -873,7 +879,8 @@ InjectedScript._objectForId = function(objectId)
     return objectId;
 }
 
-InjectedScript._createProxyObject = function(object, objectId)
+// Called from within InspectorController on the 'inspected page' side.
+InjectedScript.createProxyObject = function(object, objectId)
 {
     var result = {};
     result.objectId = objectId;
