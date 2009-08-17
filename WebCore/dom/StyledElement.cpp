@@ -280,14 +280,6 @@ CSSStyleDeclaration* StyledElement::style()
     return getInlineStyleDecl();
 }
 
-static inline int toHex(UChar c)
-{
-    return ((c >= '0' && c <= '9') ? (c - '0')
-        : ((c >= 'a' && c <= 'f') ? (c - 'a' + 10)
-        : ((c >= 'A' && c <= 'F') ? (c - 'A' + 10)
-        : -1)));
-}
-
 void StyledElement::addCSSProperty(MappedAttribute* attr, int id, const String &value)
 {
     if (!attr->decl()) createMappedDecl(attr);
@@ -393,10 +385,9 @@ void StyledElement::addCSSColor(MappedAttribute* attr, int id, const String& c)
                 // search forward for digits in the string
                 int numDigits = 0;
                 while (pos < (int)color.length() && numDigits < basicLength) {
-                    int hex = toHex(color[pos]);
-                    colors[component] = (colors[component] << 4);
-                    if (hex > 0) {
-                        colors[component] += hex;
+                    colors[component] <<= 4;
+                    if (isASCIIHexDigit(color[pos])) {
+                        colors[component] += toASCIIHexValue(color[pos]);
                         maxDigit = min(maxDigit, numDigits);
                     }
                     numDigits++;
@@ -410,10 +401,9 @@ void StyledElement::addCSSColor(MappedAttribute* attr, int id, const String& c)
             
             // normalize to 00-ff. The highest filled digit counts, minimum is 2 digits
             maxDigit -= 2;
-            colors[0] >>= 4*maxDigit;
-            colors[1] >>= 4*maxDigit;
-            colors[2] >>= 4*maxDigit;
-            // ASSERT(colors[0] < 0x100 && colors[1] < 0x100 && colors[2] < 0x100);
+            colors[0] >>= 4 * maxDigit;
+            colors[1] >>= 4 * maxDigit;
+            colors[2] >>= 4 * maxDigit;
             
             color = String::format("#%02x%02x%02x", colors[0], colors[1], colors[2]);
             if (attr->decl()->setProperty(id, color, false))

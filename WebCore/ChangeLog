@@ -2,6 +2,16 @@
 
         Reviewed by Dan Bernstein.
 
+        StyledElement should use ASCIICType instead of having its own toHex function
+        https://bugs.webkit.org/show_bug.cgi?id=28377
+
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::addCSSColor): Use isASCIIHexDigit and toASCIIHexValue.
+
+2009-08-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
         execCommand("InsertHorizontalRule") inserts a broken <hr> element
         https://bugs.webkit.org/show_bug.cgi?id=28375
 
