@@ -640,7 +640,7 @@ sub printDefinitions
     print "\n";
 
     for my $name (sort keys %$namesRef) {
-        print F "    new (&$name","${shortCamelType}) QualifiedName(nullAtom, $name","${shortCamelType}String, $namespaceURI);\n";
+        print F "    new ((void*)&$name","${shortCamelType}) QualifiedName(nullAtom, $name","${shortCamelType}String, $namespaceURI);\n";
     }
 }
 

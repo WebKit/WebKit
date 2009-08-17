@@ -1,5 +1,11 @@
 2009-08-17  Darin Adler  <darin@apple.com>
 
+        Fix Windows build.
+
+        * dom/make_names.pl: Add back cast to (void*) needed on Windows.
+
+2009-08-17  Darin Adler  <darin@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Move noResize from HTMLFrameElementBase to HTMLFrameElement
