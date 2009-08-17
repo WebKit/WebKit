@@ -226,7 +226,9 @@ void* fastMalloc(size_t n)
     ASSERT(!isForbidden());
 
 #if ENABLE(FAST_MALLOC_MATCH_VALIDATION)
-    void* result = tryFastMalloc(n);
+    TryMallocReturnValue returnValue = tryFastMalloc(n);
+    void* result;
+    returnValue.getValue(result);
 #else
     void* result = malloc(n);
 #endif
@@ -264,7 +266,9 @@ void* fastCalloc(size_t n_elements, size_t element_size)
     ASSERT(!isForbidden());
 
 #if ENABLE(FAST_MALLOC_MATCH_VALIDATION)
-    void* result = tryFastCalloc(n_elements, element_size);
+    TryMallocReturnValue returnValue = tryFastCalloc(n_elements, element_size);
+    void* result;
+    returnValue.getValue(result);
 #else
     void* result = calloc(n_elements, element_size);
 #endif
@@ -323,7 +327,9 @@ void* fastRealloc(void* p, size_t n)
     ASSERT(!isForbidden());
 
 #if ENABLE(FAST_MALLOC_MATCH_VALIDATION)
-    void* result = tryFastRealloc(p, n);
+    TryMallocReturnValue returnValue = tryFastRealloc(p, n);
+    void* result;
+    returnValue.getValue(result);
 #else
     void* result = realloc(p, n);
 #endif

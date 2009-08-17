@@ -1,3 +1,14 @@
+2009-08-17  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Mark Rowe.
+
+        Fix build with FAST_MALLOC_MATCH_VALIDATION enabled.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::fastMalloc):
+        (WTF::fastCalloc):
+        (WTF::fastRealloc):
+
 2009-08-16  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Mark Rowe.
