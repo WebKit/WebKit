@@ -27,19 +27,20 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include <jsobjects.h>
-#include <qwebpage.h>
-#include <qwebhistory.h>
-#include <qwebframe.h>
-#include <qwebsecurityorigin.h>
-#include <qwebdatabase.h>
-#include <qevent.h>
+
+#include "DumpRenderTree.h"
+#include "WorkQueue.h"
+#include "WorkQueueItem.h"
+
 #include <qapplication.h>
 #include <qevent.h>
 #include <qtimer.h>
+#include <qwebdatabase.h>
+#include <qwebframe.h>
+#include <qwebhistory.h>
+#include <qwebpage.h>
+#include <qwebsecurityorigin.h>
 
-#include "DumpRenderTree.h"
-#include "WorkQueueItem.h"
-#include "WorkQueue.h"
 extern void qt_dump_editing_callbacks(bool b);
 extern void qt_dump_resource_load_callbacks(bool b);
 extern void qt_drt_setJavaScriptProfilingEnabled(QWebFrame*, bool enabled);
@@ -47,7 +48,7 @@ extern bool qt_drt_pauseAnimation(QWebFrame*, const QString &name, double time, 
 extern bool qt_drt_pauseTransitionOfProperty(QWebFrame*, const QString &name, double time, const QString &elementId);
 extern int qt_drt_numberOfActiveAnimations(QWebFrame*);
 
-QWebFrame *findFrameNamed(const QString &frameName, QWebFrame *frame)
+QWebFrame* findFrameNamed(const QString &frameName, QWebFrame* frame)
 {
     if (frame->frameName() == frameName)
         return frame;
@@ -64,7 +65,7 @@ bool LoadItem::invoke() const
     //qDebug() << ">>>LoadItem::invoke";
     Q_ASSERT(m_webPage);
 
-    QWebFrame *frame = 0;
+    QWebFrame* frame = 0;
     const QString t = target();
     if (t.isEmpty())
         frame = m_webPage->mainFrame();
@@ -244,7 +245,7 @@ void LayoutTestController::queueScript(const QString &url)
 
 void LayoutTestController::provisionalLoad()
 {
-    QWebFrame *frame = qobject_cast<QWebFrame*>(sender());
+    QWebFrame* frame = qobject_cast<QWebFrame*>(sender());
     if (!m_topLoadingFrame && m_isLoading)
         m_topLoadingFrame = frame;
 }
@@ -254,9 +255,8 @@ void LayoutTestController::timerEvent(QTimerEvent *ev)
     if (ev->timerId() == m_timeoutTimer.timerId()) {
         qDebug() << ">>>>>>>>>>>>> timeout";
         notifyDone();
-    } else {
+    } else
         QObject::timerEvent(ev);
-    }
 }
 
 QString LayoutTestController::encodeHostName(const QString &host)
@@ -293,7 +293,7 @@ bool LayoutTestController::pauseAnimationAtTimeOnElementWithId(const QString &an
                                                                double time,
                                                                const QString &elementId)
 {
-    QWebFrame *frame = m_drt->webPage()->mainFrame();
+    QWebFrame* frame = m_drt->webPage()->mainFrame();
     Q_ASSERT(frame);
     return qt_drt_pauseAnimation(frame, animationName, time, elementId);
 }
@@ -302,14 +302,14 @@ bool LayoutTestController::pauseTransitionAtTimeOnElementWithId(const QString &p
                                                                 double time,
                                                                 const QString &elementId)
 {
-    QWebFrame *frame = m_drt->webPage()->mainFrame();
+    QWebFrame* frame = m_drt->webPage()->mainFrame();
     Q_ASSERT(frame);
     return qt_drt_pauseTransitionOfProperty(frame, propertyName, time, elementId);
 }
 
 unsigned LayoutTestController::numberOfActiveAnimations() const
 {
-    QWebFrame *frame = m_drt->webPage()->mainFrame();
+    QWebFrame* frame = m_drt->webPage()->mainFrame();
     Q_ASSERT(frame);
     return qt_drt_numberOfActiveAnimations(frame);
 }
@@ -447,9 +447,8 @@ void EventSender::keyDown(const QString &string, const QStringList &modifiers)
             s = QString();
             code = Qt::Key_Home;
             modifs = 0;
-        } else {
+        } else
             code = string.unicode()->toUpper().unicode();
-        }
     } else {
         qDebug() << ">>>>>>>>> keyDown" << string;
         // map special keycode strings used by the tests to something that works for Qt/X11
@@ -486,9 +485,9 @@ void EventSender::keyDown(const QString &string, const QStringList &modifiers)
     QApplication::sendEvent(m_page, &event);
 }
 
-QWebFrame *EventSender::frameUnderMouse() const
+QWebFrame* EventSender::frameUnderMouse() const
 {
-    QWebFrame *frame = m_page->mainFrame();
+    QWebFrame* frame = m_page->mainFrame();
 
 redo:
     QList<QWebFrame*> children = frame->childFrames();
@@ -516,81 +515,81 @@ void TextInputController::doCommand(const QString &command)
     if (command == "moveBackwardAndModifySelection:") {
         modifiers |= Qt::ShiftModifier;
         keycode = Qt::Key_Left;
-    } else if(command =="moveDown:") {
+    } else if (command =="moveDown:") {
         keycode = Qt::Key_Down;
-    } else if(command =="moveDownAndModifySelection:") {
+    } else if (command =="moveDownAndModifySelection:") {
         modifiers |= Qt::ShiftModifier;
         keycode = Qt::Key_Down;
-    } else if(command =="moveForward:") {
+    } else if (command =="moveForward:") {
         keycode = Qt::Key_Right;
-    } else if(command =="moveForwardAndModifySelection:") {
+    } else if (command =="moveForwardAndModifySelection:") {
         modifiers |= Qt::ShiftModifier;
         keycode = Qt::Key_Right;
-    } else if(command =="moveLeft:") {
+    } else if (command =="moveLeft:") {
         keycode = Qt::Key_Left;
-    } else if(command =="moveLeftAndModifySelection:") {
+    } else if (command =="moveLeftAndModifySelection:") {
         modifiers |= Qt::ShiftModifier;
         keycode = Qt::Key_Left;
-    } else if(command =="moveRight:") {
+    } else if (command =="moveRight:") {
         keycode = Qt::Key_Right;
-    } else if(command =="moveRightAndModifySelection:") {
+    } else if (command =="moveRightAndModifySelection:") {
         modifiers |= Qt::ShiftModifier;
         keycode = Qt::Key_Right;
-    } else if(command =="moveToBeginningOfDocument:") {
+    } else if (command =="moveToBeginningOfDocument:") {
         modifiers |= Qt::ControlModifier;
         keycode = Qt::Key_Home;
-    } else if(command =="moveToBeginningOfLine:") {
+    } else if (command =="moveToBeginningOfLine:") {
         keycode = Qt::Key_Home;
-//     } else if(command =="moveToBeginningOfParagraph:") {
-    } else if(command =="moveToEndOfDocument:") {
+//     } else if (command =="moveToBeginningOfParagraph:") {
+    } else if (command =="moveToEndOfDocument:") {
         modifiers |= Qt::ControlModifier;
         keycode = Qt::Key_End;
-    } else if(command =="moveToEndOfLine:") {
+    } else if (command =="moveToEndOfLine:") {
         keycode = Qt::Key_End;
-//     } else if(command =="moveToEndOfParagraph:") {
-    } else if(command =="moveUp:") {
+//     } else if (command =="moveToEndOfParagraph:") {
+    } else if (command =="moveUp:") {
         keycode = Qt::Key_Up;
-    } else if(command =="moveUpAndModifySelection:") {
+    } else if (command =="moveUpAndModifySelection:") {
         modifiers |= Qt::ShiftModifier;
         keycode = Qt::Key_Up;
-    } else if(command =="moveWordBackward:") {
+    } else if (command =="moveWordBackward:") {
         modifiers |= Qt::ControlModifier;
         keycode = Qt::Key_Up;
-    } else if(command =="moveWordBackwardAndModifySelection:") {
+    } else if (command =="moveWordBackwardAndModifySelection:") {
         modifiers |= Qt::ShiftModifier;
         modifiers |= Qt::ControlModifier;
         keycode = Qt::Key_Left;
-    } else if(command =="moveWordForward:") {
+    } else if (command =="moveWordForward:") {
         modifiers |= Qt::ControlModifier;
         keycode = Qt::Key_Right;
-    } else if(command =="moveWordForwardAndModifySelection:") {
+    } else if (command =="moveWordForwardAndModifySelection:") {
         modifiers |= Qt::ControlModifier;
         modifiers |= Qt::ShiftModifier;
         keycode = Qt::Key_Right;
-    } else if(command =="moveWordLeft:") {
+    } else if (command =="moveWordLeft:") {
         modifiers |= Qt::ControlModifier;
         keycode = Qt::Key_Left;
-    } else if(command =="moveWordRight:") {
+    } else if (command =="moveWordRight:") {
         modifiers |= Qt::ControlModifier;
         keycode = Qt::Key_Left;
-    } else if(command =="moveWordRightAndModifySelection:") {
+    } else if (command =="moveWordRightAndModifySelection:") {
         modifiers |= Qt::ShiftModifier;
         modifiers |= Qt::ControlModifier;
         keycode = Qt::Key_Right;
-    } else if(command =="moveWordLeftAndModifySelection:") {
+    } else if (command =="moveWordLeftAndModifySelection:") {
         modifiers |= Qt::ShiftModifier;
         modifiers |= Qt::ControlModifier;
         keycode = Qt::Key_Left;
-    } else if(command =="pageDown:") {
-        keycode = Qt::Key_PageDown;        
-    } else if(command =="pageUp:") {
-        keycode = Qt::Key_PageUp;        
-    } else if(command == "deleteWordBackward:") {
+    } else if (command =="pageDown:") {
+        keycode = Qt::Key_PageDown;
+    } else if (command =="pageUp:") {
+        keycode = Qt::Key_PageUp;
+    } else if (command == "deleteWordBackward:") {
         modifiers |= Qt::ControlModifier;
         keycode = Qt::Key_Backspace;
-    } else if(command == "deleteBackward:") {
+    } else if (command == "deleteBackward:") {
         keycode = Qt::Key_Backspace;
-    } else if(command == "deleteForward:") {
+    } else if (command == "deleteForward:") {
         keycode = Qt::Key_Delete;
     }
     QKeyEvent event(QEvent::KeyPress, keycode, modifiers);

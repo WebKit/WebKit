@@ -1,3 +1,24 @@
+2009-08-10  Mike Fenton  <mike.fenton@torchmobile.com>
+
+        Reviewed by Adam Treat.
+
+        Style fixes for DumpRenderTree/qt/jsobjects.cpp based on cpp_style.py and
+        WebKit style guide.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28161
+
+        * DumpRenderTree/qt/jsobjects.cpp:
+        (findFrameNamed):
+        (LoadItem::invoke):
+        (LayoutTestController::provisionalLoad):
+        (LayoutTestController::timerEvent):
+        (LayoutTestController::pauseAnimationAtTimeOnElementWithId):
+        (LayoutTestController::pauseTransitionAtTimeOnElementWithId):
+        (LayoutTestController::numberOfActiveAnimations):
+        (EventSender::keyDown):
+        (EventSender::frameUnderMouse):
+        (TextInputController::doCommand):
+
 2009-08-16  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/28370> check-webkit-style: add check for 'using std::foo;' statements
