@@ -1,5 +1,27 @@
 2009-08-17  Darin Adler  <darin@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        HTMLViewSourceDocument should use smart pointers
+        https://bugs.webkit.org/show_bug.cgi?id=28378
+
+        * html/HTMLViewSourceDocument.cpp:
+        (WebCore::HTMLViewSourceDocument::HTMLViewSourceDocument): Don't initialize
+        pointers any more since RefPtr starts 0 by default.
+        (WebCore::HTMLViewSourceDocument::createContainingTable): Use more specific
+        types for local variables.
+        (WebCore::HTMLViewSourceDocument::addSpanWithClassName): Return a PassRefPtr,
+        and use a RefPtr of a more specific type for a local variable.
+        (WebCore::HTMLViewSourceDocument::addLine): Use more specific types for local
+        variables, and use RefPtr as well.
+        (WebCore::HTMLViewSourceDocument::addLink): Return a PassRefPtr, and use a
+        RefPtr of a more specific type for a local variable.
+
+        * html/HTMLViewSourceDocument.h: Change return types to PassRefPtr and
+        data member types to RefPtr.
+
+2009-08-17  Darin Adler  <darin@apple.com>
+
         Reviewed by Sam Weinig.
 
         DOM attribute getter/setter functions should use const AtomicString& type
