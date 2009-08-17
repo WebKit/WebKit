@@ -1,3 +1,18 @@
+2009-08-13  Mike Fenton  <mike.fenton@torchmobile.com>
+
+        Reviewed by Eric Seidel.
+
+        Move adjustLineToPixelBoundaries overlapping function to GraphicsContext.cpp
+        and remove from GraphicsContextCairo.cpp and GraphicsContextQt.cpp.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28268
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::adjustLineToPixelBoundaries):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+
 2009-08-10  Mike Fenton  <mike.fenton@torchmobile.com>
 
         Reviewed by Adam Treat.

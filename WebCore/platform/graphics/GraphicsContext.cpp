@@ -546,4 +546,33 @@ void GraphicsContext::setPlatformStrokeStyle(const StrokeStyle&)
 }
 #endif
 
+void GraphicsContext::adjustLineToPixelBoundaries(FloatPoint& p1, FloatPoint& p2, float strokeWidth, const StrokeStyle& penStyle)
+{
+    // For odd widths, we add in 0.5 to the appropriate x/y so that the float arithmetic
+    // works out.  For example, with a border width of 3, WebKit will pass us (y1+y2)/2, e.g.,
+    // (50+53)/2 = 103/2 = 51 when we want 51.5.  It is always true that an even width gave
+    // us a perfect position, but an odd width gave us a position that is off by exactly 0.5.
+    if (penStyle == DottedStroke || penStyle == DashedStroke) {
+        if (p1.x() == p2.x()) {
+            p1.setY(p1.y() + strokeWidth);
+            p2.setY(p2.y() - strokeWidth);
+        } else {
+            p1.setX(p1.x() + strokeWidth);
+            p2.setX(p2.x() - strokeWidth);
+        }
+    }
+
+    if (static_cast<int>(strokeWidth) % 2) { //odd
+        if (p1.x() == p2.x()) {
+            // We're a vertical line.  Adjust our x.
+            p1.setX(p1.x() + 0.5);
+            p2.setX(p2.x() + 0.5);
+        } else {
+            // We're a horizontal line. Adjust our y.
+            p1.setY(p1.y() + 0.5);
+            p2.setY(p2.y() + 0.5);
+        }
+    }
+}
+
 }

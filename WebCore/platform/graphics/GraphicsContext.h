@@ -411,6 +411,8 @@ namespace WebCore {
         void setPlatformShadow(const IntSize&, int blur, const Color&);
         void clearPlatformShadow();
 
+        static void adjustLineToPixelBoundaries(FloatPoint& p1, FloatPoint& p2, float strokeWidth, const StrokeStyle&);
+
         int focusRingWidth() const;
         int focusRingOffset() const;
         const Vector<IntRect>& focusRingRects() const;
