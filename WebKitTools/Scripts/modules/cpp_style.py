@@ -3,6 +3,7 @@
 #
 # Copyright (C) 2009 Google Inc. All rights reserved.
 # Copyright (C) 2009 Torch Mobile Inc.
+# Copyright (C) 2009 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -117,6 +118,7 @@ _ERROR_CATEGORIES = '''\
     build/namespaces
     build/printf_format
     build/storage_class
+    build/using_std
     legal/copyright
     readability/braces
     readability/casting
@@ -1741,6 +1743,31 @@ def check_namespace_indentation(filename, clean_lines, line_number, file_extensi
             break
 
 
+def check_using_std(filename, clean_lines, line_number, error):
+    """Looks for 'using std::foo;' statements which should be replaced with 'using namespace std;'.
+
+    Args:
+      filename: The name of the current file.
+      clean_lines: A CleansedLines instance containing the file.
+      line_number: The number of the line to check.
+      error: The function to call with any errors found.
+    """
+
+    # This check doesn't apply to C or Objective-C implementation files.
+    if filename.endswith('.c') or filename.endswith('.m'):
+        return
+
+    line = clean_lines.elided[line_number] # Get rid of comments and strings.
+
+    using_std_match = match(r'\s*using\s+std::(?P<method_name>\S+)\s*;\s*$', line)
+    if not using_std_match:
+        return
+
+    method_name = using_std_match.group('method_name')
+    error(filename, line_number, 'build/using_std', 4,
+          "Use 'using namespace std;' instead of 'using std::%s;'." % method_name)
+
+
 def check_switch_indentation(filename, clean_lines, line_number, error):
     """Looks for indentation errors inside of switch statements.
 
@@ -2174,6 +2201,7 @@ def check_style(filename, clean_lines, line_number, file_extension, error):
 
     # Some more style checks
     check_namespace_indentation(filename, clean_lines, line_number, file_extension, error)
+    check_using_std(filename, clean_lines, line_number, error)
     check_switch_indentation(filename, clean_lines, line_number, error)
     check_braces(filename, clean_lines, line_number, error)
     check_exit_statement_simplifications(filename, clean_lines, line_number, error)

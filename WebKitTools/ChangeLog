@@ -1,5 +1,23 @@
 2009-08-16  David Kilzer  <ddkilzer@apple.com>
 
+        <http://webkit.org/b/28370> check-webkit-style: add check for 'using std::foo;' statements
+
+        Reviewed by David Levin.
+
+        In <http://webkit.org/b/28355#c1>, it was noted that new source
+        files use 'using namespace std;' instead of individual
+        'using std::foo;' statements.  This adds a level 4 check for
+        such statements.
+
+        * Scripts/modules/cpp_style.py:
+        (_ERROR_CATEGORIES): Added 'build/using_std'.
+        (check_using_std): Added.
+        (check_style): Added call to check_using_std().
+        * Scripts/modules/cpp_style_unittest.py:
+        (WebKitStyleTest.test_using_std): Added unit test.
+
+2009-08-16  David Kilzer  <ddkilzer@apple.com>
+
         Backed out r47343 which was mistakenly committed
 
         * Scripts/bugzilla-tool:

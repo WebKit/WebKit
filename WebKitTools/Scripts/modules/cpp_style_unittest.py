@@ -3,6 +3,7 @@
 #
 # Copyright (C) 2009 Google Inc. All rights reserved.
 # Copyright (C) 2009 Torch Mobile Inc.
+# Copyright (C) 2009 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -3424,6 +3425,13 @@ class WebKitStyleTest(CppStyleTestBase):
         self.assert_lint(
             'if (othertrue == fontType)',
             '')
+
+    def test_using_std(self):
+        self.assert_lint(
+            'using std::min;',
+            "Use 'using namespace std;' instead of 'using std::min;'."
+            "  [build/using_std] [4]",
+            'foo.cpp')
 
     def test_names(self):
         # FIXME: Implement this.
