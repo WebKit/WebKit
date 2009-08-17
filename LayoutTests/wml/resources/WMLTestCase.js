@@ -29,11 +29,14 @@ function onloadHandler(resetupDocument) {
     testDocument.initializeWMLPageState();
 }
 
-function createStaticWMLTestCase(testDescription, testName) {
+function createStaticWMLTestCase(testDescription, testName, resetPageState) {
     if (testName == null)
         return;
 
-    createWMLTestCase(testDescription, false, testName);
+    if (resetPageState == null)
+        resetPageState = true;
+
+    createWMLTestCase(testDescription, false, testName, resetPageState);
 }
 
 function createDynamicWMLTestCase(testDescription, resetupDocument) {
@@ -43,16 +46,17 @@ function createDynamicWMLTestCase(testDescription, resetupDocument) {
 
     // Setup default test name
     var testName = relativePathToLayoutTests + "/wml/resources/test-document.wml";
-    createWMLTestCase(testDescription, resetupDocument, testName);
+    createWMLTestCase(testDescription, resetupDocument, testName, true);
 }
 
-function createWMLTestCase(testDescription, resetupDocument, testName) {
+function createWMLTestCase(testDescription, resetupDocument, testName, resetPageState) {
     // Initialize JS test
     description(testDescription);
     bodyElement = document.getElementsByTagName("body")[0];
 
     // Clear variable state & history
-    document.resetWMLPageState();
+    if (resetPageState)
+        document.resetWMLPageState();
 
     // Setup DRT specific settings
     if (window.layoutTestController) {

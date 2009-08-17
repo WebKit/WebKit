@@ -23,7 +23,7 @@ function setupTestDocument() {
 }
 
 function prepareTest() {
-    startTest(25, 15);
+    window.setTimeout('startTest(25, 15)', 0);
 }
 
 function executeTest() {

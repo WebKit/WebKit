@@ -1,5 +1,27 @@
 2009-08-16  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
+        Reviewed by George Staikos.
+
+        [WML] <option> element & 'onpick' events - history navigation is broken
+        https://bugs.webkit.org/show_bug.cgi?id=28371
+
+        Add new test covering history navigation & 'onpick' event handling.
+
+        * wml/option-element-onpick-recursion-expected.txt: Added.
+        * wml/option-element-onpick-recursion.html: Added.
+        * wml/resources/WMLTestCase.js:
+        (createStaticWMLTestCase):
+        (createDynamicWMLTestCase):
+        * wml/resources/option-element-onpick-recursion.js: Added.
+        (setupTestDocument):
+        (prepareTest):
+        (executeTest):
+        * wml/resources/option-element-onpick-recursion.wml: Added.
+        * wml/resources/option-element-onpick.js:
+        (prepareTest):
+
+2009-08-16  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
         Not reviewed. Add missing WML specific layout test result.
 
         * platform/mac/fast/wml/html-fieldset-crash-expected.txt: Added.

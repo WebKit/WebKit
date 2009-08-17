@@ -85,6 +85,8 @@ public:
     void scrollToSelection();
     void selectInitialOptions();
 
+    bool initialized() const { return m_initialized; }
+
 private:
     virtual void insertedIntoTree(bool);
 
@@ -104,6 +106,7 @@ private:
     String ivalue() const;
 
     SelectElementData m_data;
+    bool m_initialized;
     Vector<unsigned> m_defaultOptionIndices;
 };
 

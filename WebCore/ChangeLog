@@ -1,3 +1,24 @@
+2009-08-16  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        [WML] <option> element & 'onpick' events - history navigation is broken
+        https://bugs.webkit.org/show_bug.cgi?id=28371
+
+        After selecting an option element with an 'onpick' event associated with a 'go' task,
+        the navigation is executed. When going back in history, the same 'onpick' event is fired
+        again. Fix that problem, add wml/option-element-onpick-recursion.html covering the bug.
+
+        Test: wml/option-element-onpick-recursion.html
+
+        * wml/WMLOptionElement.cpp:
+        (WebCore::WMLOptionElement::handleIntrinsicEventIfNeeded):
+        * wml/WMLSelectElement.cpp:
+        (WebCore::WMLSelectElement::WMLSelectElement):
+        (WebCore::WMLSelectElement::selectInitialOptions):
+        * wml/WMLSelectElement.h:
+        (WebCore::WMLSelectElement::initialized):
+
 2009-08-16  Anthony Ricaud  <rik@webkit.org>
 
         Reviewed by Timothy Hatcher.

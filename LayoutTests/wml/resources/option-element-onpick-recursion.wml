@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN" "http://www.wapforum.org/DTD/wml_1.1.xml">
+<wml>
+    <card>
+        <select name="result" multiple="false">
+            <option onpick="#card2" value="finished">Dog</option>
+            <option value="error">Cat</option>
+        </select>
+    </card>
+
+    <card id="card2">
+        <p>Test passes, if this text is not visible in the dumped output</p>
+        <p id="result">$result</p>
+    </card>
+</wml>
