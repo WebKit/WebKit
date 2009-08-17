@@ -1,5 +1,19 @@
 2009-08-17  Darin Adler  <darin@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Change HTMLAreaElement to use OwnArrayPtr
+        https://bugs.webkit.org/show_bug.cgi?id=28386
+
+        * html/HTMLAreaElement.cpp:
+        (WebCore::HTMLAreaElement::HTMLAreaElement): Removed unneeded initializer.
+        (WebCore::HTMLAreaElement::~HTMLAreaElement): Removed unneeded delete call.
+        (WebCore::HTMLAreaElement::parseMappedAttribute): Use the set function
+        instead of deletion followed by assignment.
+        * html/HTMLAreaElement.h: Use OwnArrayPtr.
+
+2009-08-17  Darin Adler  <darin@apple.com>
+
         Fix Windows build.
 
         * dom/make_names.pl: Add back cast to (void*) needed on Windows.
