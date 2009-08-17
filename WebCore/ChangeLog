@@ -1,3 +1,9 @@
+2009-08-17  Alexey Proskuryakov  <ap@apple.com>
+
+        Trying to fix Windows build.
+
+        * platform/network/cf/DNSCFNet.cpp: Include CFNetwork/CFHost.h.
+
 2009-08-17  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Steve Falkenburg.
