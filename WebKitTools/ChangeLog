@@ -1,3 +1,18 @@
+2009-08-17  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/28393> check-webkit-style: add check for use of std::max()/std::min() instead of MAX()/MIN()
+
+        Reviewed by David Levin.
+
+        * Scripts/modules/cpp_style.py:
+        (_ERROR_CATEGORIES): Added 'runtime/max_min_macros'.
+        (check_max_min_macros): Added.  Returns level 4 error when MAX()
+        and MIN() macros are used in header files and C++ source files.
+        (check_style): Added call to check_max_min_macros().
+        * Scripts/modules/cpp_style_unittest.py: Added unit tests.
+        (test_max_macro): Added.
+        (test_min_macro): Added.
+
 2009-08-13  Mike Fenton  <mike.fenton@torchmobile.com>
 
         Reviewed by Eric Seidel.

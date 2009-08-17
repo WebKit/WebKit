@@ -3433,6 +3433,42 @@ class WebKitStyleTest(CppStyleTestBase):
             "  [build/using_std] [4]",
             'foo.cpp')
 
+    def test_max_macro(self):
+        self.assert_lint(
+            'int i = MAX(0, 1);',
+            '',
+            'foo.c')
+
+        self.assert_lint(
+            'int i = MAX(0, 1);',
+            'Use std::max() or std::max<type>() instead of the MAX() macro.'
+            '  [runtime/max_min_macros] [4]',
+            'foo.cpp')
+
+        self.assert_lint(
+            'inline int foo() { return MAX(0, 1); }',
+            'Use std::max() or std::max<type>() instead of the MAX() macro.'
+            '  [runtime/max_min_macros] [4]',
+            'foo.h')
+
+    def test_min_macro(self):
+        self.assert_lint(
+            'int i = MIN(0, 1);',
+            '',
+            'foo.c')
+
+        self.assert_lint(
+            'int i = MIN(0, 1);',
+            'Use std::min() or std::min<type>() instead of the MIN() macro.'
+            '  [runtime/max_min_macros] [4]',
+            'foo.cpp')
+
+        self.assert_lint(
+            'inline int foo() { return MIN(0, 1); }',
+            'Use std::min() or std::min<type>() instead of the MIN() macro.'
+            '  [runtime/max_min_macros] [4]',
+            'foo.h')
+
     def test_names(self):
         # FIXME: Implement this.
         pass

@@ -140,6 +140,7 @@ _ERROR_CATEGORIES = '''\
     runtime/int
     runtime/init
     runtime/invalid_increment
+    runtime/max_min_macros
     runtime/memset
     runtime/printf
     runtime/printf_format
@@ -1768,6 +1769,33 @@ def check_using_std(filename, clean_lines, line_number, error):
           "Use 'using namespace std;' instead of 'using std::%s;'." % method_name)
 
 
+def check_max_min_macros(filename, clean_lines, line_number, error):
+    """Looks use of MAX() and MIN() macros that should be replaced with std::max() and std::min().
+
+    Args:
+      filename: The name of the current file.
+      clean_lines: A CleansedLines instance containing the file.
+      line_number: The number of the line to check.
+      error: The function to call with any errors found.
+    """
+
+    # This check doesn't apply to C or Objective-C implementation files.
+    if filename.endswith('.c') or filename.endswith('.m'):
+        return
+
+    line = clean_lines.elided[line_number] # Get rid of comments and strings.
+
+    max_min_macros_search = search(r'\b(?P<max_min_macro>(MAX|MIN))\s*\(', line)
+    if not max_min_macros_search:
+        return
+
+    max_min_macro = max_min_macros_search.group('max_min_macro')
+    max_min_macro_lower = max_min_macro.lower()
+    error(filename, line_number, 'runtime/max_min_macros', 4,
+          'Use std::%s() or std::%s<type>() instead of the %s() macro.'
+          % (max_min_macro_lower, max_min_macro_lower, max_min_macro))
+
+
 def check_switch_indentation(filename, clean_lines, line_number, error):
     """Looks for indentation errors inside of switch statements.
 
@@ -2202,6 +2230,7 @@ def check_style(filename, clean_lines, line_number, file_extension, error):
     # Some more style checks
     check_namespace_indentation(filename, clean_lines, line_number, file_extension, error)
     check_using_std(filename, clean_lines, line_number, error)
+    check_max_min_macros(filename, clean_lines, line_number, error)
     check_switch_indentation(filename, clean_lines, line_number, error)
     check_braces(filename, clean_lines, line_number, error)
     check_exit_statement_simplifications(filename, clean_lines, line_number, error)
