@@ -1,3 +1,11 @@
+2009-08-17  Darin Adler  <darin@apple.com>
+
+        Try to fix Qt build.
+
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::shouldShowDeleteInterface):
+        Use getAttribute(classAttr) instead of className() function.
+
 2009-08-14  Yongjun Zhang  <yongjun.zhang@nokia.com>
 
         Reviewed by Simon Hausmann.
