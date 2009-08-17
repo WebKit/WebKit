@@ -1,3 +1,18 @@
+2009-08-17  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by Kevin Ollivier.
+
+        Correct crash when processing local cancelled requests.
+
+        No new tests. Existing fast/images/favicon-as-image.html
+        displays the problem.
+
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::writeCallback): Add check for m_cancelled after
+          performing local-file processing.
+        (WebCore::ResourceHandleManager::downloadTimerCallback): Add
+          check for m_cancelled after performing local-file processing.
+
 2009-08-17  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Unreviewed. Reverts 47371, since it breaks GTK+.

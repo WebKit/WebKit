@@ -150,8 +150,11 @@ static size_t writeCallback(void* ptr, size_t size, size_t nmemb, void* data)
     if (CURLE_OK == err && httpCode >= 300 && httpCode < 400)
         return totalSize;
 
-    if (!d->m_response.responseFired())
-       handleLocalReceiveResponse(h, job, d);
+    if (!d->m_response.responseFired()) {
+        handleLocalReceiveResponse(h, job, d);
+        if (d->m_cancelled)
+            return 0;
+    }
 
     if (d->client())
         d->client()->didReceiveData(job, static_cast<char*>(ptr), totalSize, 0);
@@ -339,8 +342,13 @@ void ResourceHandleManager::downloadTimerCallback(Timer<ResourceHandleManager>* 
             continue;
 
         if (CURLE_OK == msg->data.result) {
-            if (!d->m_response.responseFired())
+            if (!d->m_response.responseFired()) {
                 handleLocalReceiveResponse(d->m_handle, job, d);
+                if (d->m_cancelled) {
+                    removeFromCurl(job);
+                    continue;
+                }
+            }
 
             if (d->client())
                 d->client()->didFinishLoading(job);
