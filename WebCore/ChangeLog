@@ -1,3 +1,23 @@
+2009-08-17  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (r47255): MediaWiki's (including Wikipedia) navigation pane
+        appears below the main content
+        https://bugs.webkit.org/show_bug.cgi?id=28350
+
+        A particular version of the MediaWiki software detects WebKit through
+        user agent sniffing and imports a style sheet called KHTMLFixes.css,
+        which contains a single rule that was meant to work around some KHTML
+        bug, but currently has the sole effect of causing the float containing
+        the main article content to extend all the way to the left and thus push
+        down the left navigation pane.
+
+        * css/CSSImportRule.cpp:
+        (WebCore::CSSImportRule::setCSSStyleSheet): If site specific hacks are
+        enabled, check if the imported style sheet is the MediaWiki
+        KHTMLFixes.css. If so, remove the offending rule.
+
 2009-08-17  Brent Fulgham  <bfulgham@webkit.org>
 
         Reviewed by Kevin Ollivier.

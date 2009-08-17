@@ -1,7 +1,7 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
  * (C) 2002-2003 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2002, 2005, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2002, 2005, 2006, 2008, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,6 +26,8 @@
 #include "DocLoader.h"
 #include "Document.h"
 #include "MediaList.h"
+#include "Settings.h"
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
@@ -60,7 +62,20 @@ void CSSImportRule::setCSSStyleSheet(const String& url, const String& charset, c
 
     CSSStyleSheet* parent = parentStyleSheet();
     bool strict = !parent || parent->useStrictParsing();
-    m_styleSheet->parseString(sheet->sheetText(strict), strict);
+    String sheetText = sheet->sheetText(strict);
+    m_styleSheet->parseString(sheetText, strict);
+
+    if (strict && parent && parent->doc() && parent->doc()->settings() && parent->doc()->settings()->needsSiteSpecificQuirks()) {
+        // Work around <https://bugs.webkit.org/show_bug.cgi?id=28350>.
+        DEFINE_STATIC_LOCAL(const String, slashKHTMLFixesDotCss, ("/KHTMLFixes.css"));
+        DEFINE_STATIC_LOCAL(const String, mediaWikiKHTMLFixesStyleSheet, ("/* KHTML fix stylesheet */\n/* work around the horizontal scrollbars */\n#column-content { margin-left: 0; }\n\n"));
+        if (url.endsWith(slashKHTMLFixesDotCss) && sheetText == mediaWikiKHTMLFixesStyleSheet) {
+            ASSERT(m_styleSheet->length() == 1);
+            ExceptionCode ec;
+            m_styleSheet->deleteRule(0, ec);
+        }
+    }
+
     m_loading = false;
 
     if (parent)
