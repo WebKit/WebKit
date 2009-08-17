@@ -68,6 +68,7 @@ void InspectorDOMAgent::setDocument(Document* doc)
 {
     if (doc == mainFrameDocument())
         return;
+    discardBindings();
 
     ListHashSet<RefPtr<Document> > copy = m_documents;
     for (ListHashSet<RefPtr<Document> >::iterator it = copy.begin(); it != copy.end(); ++it)
@@ -80,8 +81,6 @@ void InspectorDOMAgent::setDocument(Document* doc)
         if (doc->documentElement()) {
             pushDocumentToFrontend();
         }
-    } else {
-        discardBindings();
     }
 }
 

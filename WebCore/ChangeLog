@@ -1,3 +1,14 @@
+2009-08-17  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        WebInspector: Discard DOM Node bindings on any document change.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28389
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::setDocument):
+
 2009-08-13  Joseph Pecoraro  <joepeck02@gmail.com>
 
         Reviewed by Timothy Hatcher.
