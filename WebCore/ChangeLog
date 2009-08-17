@@ -2,6 +2,13 @@
 
         Reviewed by Sam Weinig.
 
+        * rendering/MediaControlElements.cpp: Removed unneeded include of CString.h,
+        resorted includes, renamed "doc" to "document" and fixed formatting.
+
+2009-08-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Removed functions now unneeded due to use of Reflect to create
         language bindings.
 
