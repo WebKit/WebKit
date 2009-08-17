@@ -1,3 +1,29 @@
+2009-08-17  Yong Li  <yong.li@torchmobile.com>
+
+        Reviewed by Adam Treat.
+
+        Allow image decoders to down-sample the image directly
+        to scaled output buffer. This can be enabled/disabled by
+        macro ENABLE(IMAGE_DECODER_DOWN_SAMPLING).
+        Only JPEG and PNG decoders are modified to support it now.
+        https://bugs.webkit.org/show_bug.cgi?id=28308
+
+        * platform/graphics/ImageSource.cpp:
+        (WebCore::ImageSource::setData):
+        * platform/image-decoders/ImageDecoder.cpp: Added.
+        * platform/image-decoders/ImageDecoder.h:
+        (WebCore::ImageDecoder::ImageDecoder):
+        (WebCore::ImageDecoder::setMaxNumPixels):
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        (WebCore::convertCMYKToRGBA):
+        (WebCore::convertRGBToRGBA):
+        (WebCore::JPEGImageDecoder::outputScanlines):
+        * platform/image-decoders/jpeg/JPEGImageDecoder.h:
+        (WebCore::JPEGImageDecoder::setSize):
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        (WebCore::PNGImageDecoder::headerAvailable):
+        (WebCore::PNGImageDecoder::rowAvailable):
+
 2009-08-17  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Eric Seidel.

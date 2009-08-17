@@ -2,6 +2,7 @@
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2007 Alp Toker <alp.toker@collabora.co.uk>
  * Copyright (C) 2008, Google Inc. All rights reserved.
+ * Copyright (C) 2007-2009 Torch Mobile, Inc
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,8 +34,14 @@
 #include "ICOImageDecoder.h"
 #include "JPEGImageDecoder.h"
 #include "PNGImageDecoder.h"
-#include "XBMImageDecoder.h"
 #include "SharedBuffer.h"
+#include "XBMImageDecoder.h"
+
+#if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
+#ifndef IMAGE_DECODER_DOWN_SAMPLING_MAX_NUMBER_OF_PIXELS
+#define IMAGE_DECODER_DOWN_SAMPLING_MAX_NUMBER_OF_PIXELS (1024 * 1024)
+#endif
+#endif
 
 namespace WebCore {
 
@@ -118,8 +125,13 @@ void ImageSource::setData(SharedBuffer* data, bool allDataReceived)
     // This method will examine the data and instantiate an instance of the appropriate decoder plugin.
     // If insufficient bytes are available to determine the image type, no decoder plugin will be
     // made.
-    if (!m_decoder)
+    if (!m_decoder) {
         m_decoder = createDecoder(data->buffer());
+#if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
+        if (m_decoder)
+            m_decoder->setMaxNumPixels(IMAGE_DECODER_DOWN_SAMPLING_MAX_NUMBER_OF_PIXELS);
+#endif
+    }
 
     if (m_decoder)
         m_decoder->setData(data, allDataReceived);
