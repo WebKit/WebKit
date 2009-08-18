@@ -631,10 +631,10 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer* layer, stru
         }
 
         if (updateHierarchy && layerBacking && layerBacking->foregroundLayer()) {
-            // we only have a contents layer if we have an m_layer
             layerBacking->foregroundLayer()->removeFromParent();
-
-            GraphicsLayer* hostingLayer = layerBacking->clippingLayer() ? layerBacking->clippingLayer() : layerBacking->graphicsLayer();
+            
+            // The foreground layer has to be correctly sorted with child layers, so needs to become a child of the clipping layer.
+            GraphicsLayer* hostingLayer = layerBacking->parentForSublayers();
             hostingLayer->addChild(layerBacking->foregroundLayer());
         }
     }

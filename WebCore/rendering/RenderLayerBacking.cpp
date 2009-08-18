@@ -244,8 +244,9 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     }
 
     // If we have a layer that clips children, position it.
+    IntRect clippingBox;
     if (m_clippingLayer) {
-        IntRect clippingBox = toRenderBox(renderer())->overflowClipRect(0, 0);
+        clippingBox = toRenderBox(renderer())->overflowClipRect(0, 0);
         m_clippingLayer->setPosition(FloatPoint() + (clippingBox.location() - localCompositingBounds.location()));
         m_clippingLayer->setSize(clippingBox.size());
         m_clippingLayer->setOffsetFromRenderer(clippingBox.location() - IntPoint());
@@ -286,10 +287,20 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     }
 
     if (m_foregroundLayer) {
-        // The contents layer is always coincidental with the graphicsLayer for now.
-        m_foregroundLayer->setPosition(IntPoint(0, 0));
-        m_foregroundLayer->setSize(newSize);
-        m_foregroundLayer->setOffsetFromRenderer(m_graphicsLayer->offsetFromRenderer());
+        FloatPoint foregroundPosition;
+        FloatSize foregroundSize = newSize;
+        IntSize foregroundOffset = m_graphicsLayer->offsetFromRenderer();
+        // If we have a clipping layer (which clips descendants), then the foreground layer is a child of it,
+        // so that it gets correctly sorted with children. In that case, position relative to the clipping layer.
+        if (m_clippingLayer) {
+            foregroundPosition = FloatPoint() + (localCompositingBounds.location() - clippingBox.location());
+            foregroundSize = FloatSize(clippingBox.size());
+            foregroundOffset = clippingBox.location() - IntPoint();
+        }
+
+        m_foregroundLayer->setPosition(foregroundPosition);
+        m_foregroundLayer->setSize(foregroundSize);
+        m_foregroundLayer->setOffsetFromRenderer(foregroundOffset);
     }
 
     m_graphicsLayer->setContentsRect(contentsBox());
@@ -361,7 +372,7 @@ bool RenderLayerBacking::updateForegroundLayer(bool needsForegroundLayer)
         if (!m_foregroundLayer) {
             m_foregroundLayer = GraphicsLayer::create(this);
 #ifndef NDEBUG
-            m_foregroundLayer->setName("Contents");
+            m_foregroundLayer->setName("Foreground");
 #endif
             m_foregroundLayer->setDrawsContent(true);
             m_foregroundLayer->setDrawingPhase(GraphicsLayerPaintForegroundMask);

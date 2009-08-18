@@ -821,10 +821,12 @@ void GraphicsLayerCA::updateSublayerList()
     NSMutableArray* newSublayers = nil;
 
     if (m_transformLayer) {
-        // FIXME: add the primary layer in the correct order with negative z-order children.
+        // Add the primary layer first. Even if we have negative z-order children, the primary layer always comes behind.
         newSublayers = [[NSMutableArray alloc] initWithObjects:m_layer.get(), nil];
     } else if (m_contentsLayer) {
         // FIXME: add the contents layer in the correct order with negative z-order children.
+        // This does not cause visible rendering issues because currently contents layers are only used
+        // for replaced elements that don't have children.
         newSublayers = [[NSMutableArray alloc] initWithObjects:m_contentsLayer.get(), nil];
     }
     

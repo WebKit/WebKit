@@ -1,3 +1,28 @@
+2009-08-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Layer content misplaced with compositing, z-index and overflow
+        https://bugs.webkit.org/show_bug.cgi?id=28361
+        
+        The foreground GraphicsLayer (used to render element foreground when the element has 
+        negative z-order children) was misplaced when there is a clipping layer (which clips
+        children). The foreground layer is parented under the clipping layer so that the foreground
+        depth-sorts with the layer's children, so its geometry needs to be computed relative to
+        that clipping layer.
+        
+        Also clarified some FIXME comments, and corrected a debug-only layer name.
+
+        Test: compositing/geometry/clipping-foreground.html
+
+        * platform/graphics/mac/GraphicsLayerCA.mm:
+        (WebCore::GraphicsLayerCA::updateSublayerList):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+        (WebCore::RenderLayerBacking::updateForegroundLayer):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::rebuildCompositingLayerTree):
+
 2009-08-17  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Sam Weinig.

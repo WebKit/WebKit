@@ -1,3 +1,17 @@
+2009-08-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Layer content misplaced with compositing, z-index and overflow
+        https://bugs.webkit.org/show_bug.cgi?id=28361
+        
+        Testcase with compositing layers, negative z-order children, and overflow:hidden.
+
+        * compositing/geometry/clipping-foreground.html: Added.
+        * platform/mac/compositing/geometry/clipping-foreground-expected.checksum: Added.
+        * platform/mac/compositing/geometry/clipping-foreground-expected.png: Added.
+        * platform/mac/compositing/geometry/clipping-foreground-expected.txt: Added.
+
 2009-08-17  Brian Weinstein  <bweinstein@apple.com>
 
         Rubber-stamped by Adele Peterson.
