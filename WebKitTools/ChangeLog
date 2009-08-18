@@ -1,3 +1,14 @@
+2009-08-17  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Can no longer --reset-results of a layout test directory
+        https://bugs.webkit.org/show_bug.cgi?id=28336
+
+        --reset-results and --exit-after-n-failures are incompatible.
+
+        * Scripts/run-webkit-tests:
+
 2009-08-17  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/26920> bugzilla-tool dumps too much junk the the commit comment from git

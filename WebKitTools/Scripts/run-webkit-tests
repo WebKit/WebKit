@@ -994,11 +994,15 @@ for my $test (@tests) {
 
     countFinishedTest($test, $base, $result, $isText);
 
-    my $failureCount = $count - $counts{match}; # Includes new tests, timeouts, crashes, etc.
-    if ($exitAfterNFailures && $failureCount >= $exitAfterNFailures) {
-        print "\nExiting early after $failureCount failures.  $count tests run.";
-        closeDumpTool();
-        last;
+    # --reset-results does not check pass vs. fail, so exitAfterNFailures makes no sense with --reset-results.
+    if ($exitAfterNFailures && !$resetResults) {
+        my $passCount = $counts{match} || 0; # $counts{match} will be undefined if we've not yet passed a test (e.g. the first test fails).
+        my $failureCount = $count - $passCount; # "Failure" here includes new tests, timeouts, crashes, etc.
+        if ($failureCount >= $exitAfterNFailures) {
+            print "\nExiting early after $failureCount failures.  $count tests run.";
+            closeDumpTool();
+            last;
+        }
     }
 }
 printf "\n%0.2fs total testing time\n", (time - $overallStartTime) . "";
