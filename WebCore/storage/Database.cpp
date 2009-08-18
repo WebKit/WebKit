@@ -442,14 +442,6 @@ bool Database::performOpenAndVerify(ExceptionCode& e)
     m_sqliteDatabase.setAuthorizer(m_databaseAuthorizer);
     m_sqliteDatabase.setBusyTimeout(maxSqliteBusyWaitTime);
 
-    if (!m_sqliteDatabase.tableExists(databaseInfoTableName())) {
-        if (!m_sqliteDatabase.executeCommand("CREATE TABLE " + databaseInfoTableName() + " (key TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE,value TEXT NOT NULL ON CONFLICT FAIL);")) {
-            LOG_ERROR("Unable to create table %s in database %s", databaseInfoTableName().ascii().data(), databaseDebugName().ascii().data());
-            e = INVALID_STATE_ERR;
-            return false;
-        }
-    }
-
     String currentVersion;
     {
         MutexLocker locker(guidMutex());
@@ -467,6 +459,15 @@ bool Database::performOpenAndVerify(ExceptionCode& e)
             LOG(StorageAPI, "Current cached version for guid %i is %s", m_guid, currentVersion.ascii().data());
         } else {
             LOG(StorageAPI, "No cached version for guid %i", m_guid);
+
+            if (!m_sqliteDatabase.tableExists(databaseInfoTableName())) {
+                if (!m_sqliteDatabase.executeCommand("CREATE TABLE " + databaseInfoTableName() + " (key TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE,value TEXT NOT NULL ON CONFLICT FAIL);")) {
+                    LOG_ERROR("Unable to create table %s in database %s", databaseInfoTableName().ascii().data(), databaseDebugName().ascii().data());
+                    e = INVALID_STATE_ERR;
+                    return false;
+                }
+            }
+
             if (!getVersionFromDatabase(currentVersion)) {
                 LOG_ERROR("Failed to get current version from database %s", databaseDebugName().ascii().data());
                 e = INVALID_STATE_ERR;

@@ -1,0 +1,3 @@
+This is a test to see if opening a database while a transaction is running on a different handle to the same database results in a deadlock.
+openDatabase() succeeded.
+
