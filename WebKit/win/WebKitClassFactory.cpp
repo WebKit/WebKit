@@ -52,6 +52,7 @@
 #include "WebURLProtectionSpace.h"
 #include "WebURLResponse.h"
 #include "WebView.h"
+#include "WebWorkersPrivate.h"
 #pragma warning(push, 0)
 #include <JavaScriptCore/InitializeThreading.h>
 #include <WebCore/FontDatabase.h>

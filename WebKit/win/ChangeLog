@@ -1,3 +1,11 @@
+2009-08-18  Drew Wilson  <atwilson@google.com>
+
+        Unreviewed (build break).
+
+        Added missing include for WebWorkersPrivate.h.
+
+        * WebKitClassFactory.cpp:
+
 2009-08-18  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Eric Seidel.
