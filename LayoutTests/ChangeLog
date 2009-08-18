@@ -1,3 +1,11 @@
+2009-08-18  Drew Wilson  <atwilson@google.com>
+
+        Unreviewed - skipping test on GTK.
+
+        Added worker-lifecycle.html tests to skipped tests on GTK platform due to missing DRT functionality.
+
+        * platform/gtk/Skipped:
+
 2009-08-18  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Simon Fraser.
