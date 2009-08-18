@@ -1,3 +1,29 @@
+2009-08-18  Drew Wilson  <atwilson@google.com>
+
+        Reviewed by David Levin.
+
+        SharedWorkers need to forward exceptions to parent documents
+        https://bugs.webkit.org/show_bug.cgi?id=28320
+
+        Changed SharedWorkerProxy to have individual mutexes (so workers can interact with their parent documents without contention).
+
+        Updated SharedWorkerProxy to forward exceptions/console messages to all parent documents.
+
+        * bindings/js/JSSharedWorkerConstructor.cpp:
+        Cleaned up bitrot - added missing include.
+        * workers/DefaultSharedWorkerRepository.cpp:
+        (WebCore::postExceptionTask):
+        Callback used to deliver exceptions to a document.
+        (WebCore::SharedWorkerProxy::postExceptionToWorkerObject):
+        Forwards exceptions to all parent documents for presentation to the user.
+        (WebCore::postConsoleMessageTask):
+        (WebCore::SharedWorkerProxy::postConsoleMessageToWorkerObject):
+        Forwards console messages to all parent documents for presentation to the user.
+        (WebCore::SharedWorkerProxy::addToWorkerDocuments):
+        Grabs the mutex before accessing workerDocuments.
+        (WebCore::SharedWorkerProxy::documentDetached):
+        Grabs the mutex before accessing workerDocuments.
+
 2009-08-18  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adele Peterson.

@@ -36,6 +36,7 @@
 
 #include "ActiveDOMObject.h"
 #include "Document.h"
+#include "GenericWorkerTask.h"
 #include "MessagePort.h"
 #include "NotImplemented.h"
 #include "PlatformString.h"
@@ -94,6 +95,8 @@ private:
     RefPtr<SharedWorkerThread> m_thread;
     RefPtr<SecurityOrigin> m_origin;
     HashSet<Document*> m_workerDocuments;
+    // Ensures exclusive access to the worker documents. Must not grab any other locks (such as the DefaultSharedWorkerRepository lock) while holding this one.
+    Mutex m_workerDocumentsLock;
 };
 
 SharedWorkerProxy::SharedWorkerProxy(const String& name, const KURL& url, PassRefPtr<SecurityOrigin> origin)
@@ -106,16 +109,28 @@ SharedWorkerProxy::SharedWorkerProxy(const String& name, const KURL& url, PassRe
     ASSERT(m_origin->hasOneRef());
 }
 
-void SharedWorkerProxy::postExceptionToWorkerObject(const String&, int, const String&)
+static void postExceptionTask(ScriptExecutionContext* context, const String& errorMessage, int lineNumber, const String& sourceURL)
 {
-    // FIXME: Log exceptions to all parent documents.
-    notImplemented();
+    context->reportException(errorMessage, lineNumber, sourceURL);
 }
 
-void SharedWorkerProxy::postConsoleMessageToWorkerObject(MessageDestination, MessageSource, MessageType, MessageLevel, const String&, int, const String&)
+void SharedWorkerProxy::postExceptionToWorkerObject(const String& errorMessage, int lineNumber, const String& sourceURL)
 {
-    // FIXME: Log console messages to all parent documents.
-    notImplemented();
+    MutexLocker lock(m_workerDocumentsLock);
+    for (HashSet<Document*>::iterator iter = m_workerDocuments.begin(); iter != m_workerDocuments.end(); ++iter)
+        (*iter)->postTask(createCallbackTask(&postExceptionTask, errorMessage, lineNumber, sourceURL));
+}
+
+static void postConsoleMessageTask(ScriptExecutionContext* document, MessageDestination destination, MessageSource source, MessageType type, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceURL)
+{
+    document->addMessage(destination, source, type, level, message, lineNumber, sourceURL);
+}
+
+void SharedWorkerProxy::postConsoleMessageToWorkerObject(MessageDestination destination, MessageSource source, MessageType type, MessageLevel level, const String& message, int lineNumber, const String& sourceURL)
+{
+    MutexLocker lock(m_workerDocumentsLock);
+    for (HashSet<Document*>::iterator iter = m_workerDocuments.begin(); iter != m_workerDocuments.end(); ++iter)
+        (*iter)->postTask(createCallbackTask(&postConsoleMessageTask, destination, source, type, level, message, lineNumber, sourceURL));
 }
 
 void SharedWorkerProxy::workerContextClosed()
@@ -134,6 +149,7 @@ void SharedWorkerProxy::addToWorkerDocuments(ScriptExecutionContext* context)
     // Nested workers are not yet supported, so passed-in context should always be a Document.
     ASSERT(context->isDocument());
     ASSERT(!isClosing());
+    MutexLocker lock(m_workerDocumentsLock);
     Document* document = static_cast<Document*>(context);
     m_workerDocuments.add(document);
 }
@@ -143,6 +159,7 @@ void SharedWorkerProxy::documentDetached(Document* document)
     if (isClosing())
         return;
     // Remove the document from our set (if it's there) and if that was the last document in the set, mark the proxy as closed.
+    MutexLocker lock(m_workerDocumentsLock);
     m_workerDocuments.remove(document);
     if (!m_workerDocuments.size())
         close();

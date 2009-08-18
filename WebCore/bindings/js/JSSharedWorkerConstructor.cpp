@@ -37,6 +37,7 @@
 #include "JSDOMWindowCustom.h"
 #include "JSSharedWorker.h"
 #include "SharedWorker.h"
+#include <runtime/Error.h>
 
 using namespace JSC;
 

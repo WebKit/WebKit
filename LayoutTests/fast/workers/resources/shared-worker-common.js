@@ -1,3 +1,9 @@
+function generateError()
+{
+    // Generate an exception by accessing an undefined variable.
+    foo.bar = 0;
+}
+
 onconnect = function(event) {
     event.messagePort.onmessage = function(evt) { handleMessage(evt, event.messagePort); };
 };
@@ -16,6 +22,8 @@ function handleMessage(event, port) {
         close();
     else if (event.data == "done")
         port.postMessage("DONE");
+    else if (event.data == "throw")
+        generateError();
     else if (/eval.+/.test(event.data)) {
         try {
             port.postMessage(event.data.substr(5) + ": " + eval(event.data.substr(5)));

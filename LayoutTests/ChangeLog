@@ -1,3 +1,22 @@
+2009-08-18  Drew Wilson  <atwilson@google.com>
+
+        Reviewed by David Levin.
+
+        SharedWorkers need to forward exceptions to parent documents
+        https://bugs.webkit.org/show_bug.cgi?id=28320
+
+        Wrote test to generate exception and make sure it gets logged to the console.
+        Started switching over to using the same test utilities that the tests under fast/js use.
+
+        * fast/workers/resources/shared-worker-common.js:
+        (generateError):
+        (handleMessage):
+        * fast/workers/resources/shared-worker-exception.js: Added.
+        (worker.onmessage):
+        (done):
+        * fast/workers/shared-worker-exception-expected.txt: Added.
+        * fast/workers/shared-worker-exception.html-disabled: Added.
+
 2009-08-18  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Dimitri Glazkov.
