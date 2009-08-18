@@ -158,7 +158,6 @@ EXPORTS
     ?isBusy@Heap@JSC@@QAE_NXZ
     ?isDynamicScope@JSGlobalObject@JSC@@UBE_NXZ
     ?isGetterSetter@JSCell@JSC@@UBE_NXZ
-    ?isHostFunction@FunctionBodyNode@JSC@@QBE_NXZ
     ?isHostFunctionNonInline@JSFunction@JSC@@ABE_NXZ
     ?isMainThread@WTF@@YA_NXZ
     ?isVariableObject@JSVariableObject@JSC@@UBE_NXZ
