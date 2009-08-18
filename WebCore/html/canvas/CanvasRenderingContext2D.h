@@ -178,7 +178,7 @@ namespace WebCore {
         PassRefPtr<CanvasPattern> createPattern(HTMLImageElement*, const String& repetitionType, ExceptionCode&);
         PassRefPtr<CanvasPattern> createPattern(HTMLCanvasElement*, const String& repetitionType, ExceptionCode&);
         
-        PassRefPtr<ImageData> createImageData(float width, float height) const;
+        PassRefPtr<ImageData> createImageData(float width, float height, ExceptionCode&) const;
         PassRefPtr<ImageData> getImageData(float sx, float sy, float sw, float sh, ExceptionCode&) const;
         void putImageData(ImageData*, float dx, float dy, ExceptionCode&);
         void putImageData(ImageData*, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight, ExceptionCode&);

@@ -1278,8 +1278,13 @@ static PassRefPtr<ImageData> createEmptyImageData(const IntSize& size)
     return data.get();
 }
 
-PassRefPtr<ImageData> CanvasRenderingContext2D::createImageData(float sw, float sh) const
+PassRefPtr<ImageData> CanvasRenderingContext2D::createImageData(float sw, float sh, ExceptionCode& ec) const
 {
+    ec = 0;
+    if (!isfinite(sw) || !isfinite(sh)) {
+        ec = NOT_SUPPORTED_ERR;
+        return 0;
+    }
     FloatSize unscaledSize(sw, sh);
     IntSize scaledSize = m_canvas->convertLogicalToDevice(unscaledSize);
     if (scaledSize.width() < 1)

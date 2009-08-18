@@ -1,3 +1,24 @@
+2009-08-17  Benjamin C Meyer  <benjamin.meyer@torchmobile.com>
+
+        Reviewed by Darin Adler.
+
+        Fix createImageData to raise the NOT_SUPPORTED_ERR exception when
+        either of the arguments are not finite.
+
+        According to
+        http://www.whatwg.org/specs/web-apps/current-work/#pixel-manipulation:
+        "If any of the arguments to createImageData() or getImageData() are
+        infinite or NaN, or if the createImageData()  method is invoked with
+        only one argument but that argument is null, the method must instead
+        raise a NOT_SUPPORTED_ERR  exception."
+
+        Test: http://philip.html5.org/tests/canvas/suite/tests/2d.imageData.create.nonfinite.html
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::createImageData):
+        * html/canvas/CanvasRenderingContext2D.h:
+        * html/canvas/CanvasRenderingContext2D.idl:
+
 2009-08-17  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Darin Fisher.

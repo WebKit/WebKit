@@ -113,7 +113,8 @@ module html {
         attribute [Custom] custom fillStyle;
         
         // pixel manipulation
-        ImageData createImageData(in float sw, in float sh);
+        ImageData createImageData(in float sw, in float sh)
+            raises (DOMException);
         ImageData getImageData(in float sx, in float sy, in float sw, in float sh)
             raises(DOMException);
         [Custom] void putImageData(/* in ImageData imagedata, in float dx, in float dy [, in float dirtyX, in float dirtyY, in float dirtyWidth, in float dirtyHeight] */);
