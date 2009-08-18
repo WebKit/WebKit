@@ -1,3 +1,19 @@
+2009-08-17  Roland Steiner  <rolandsteiner@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Moved implementation of isAfterContent to RenderObject
+        (as inline method to avoid potential performance regressions).
+
+        BUG 28376 -  [Cleanup] isAfterContent() implemented twice, should be member of RenderObject
+        (https://bugs.webkit.org/show_bug.cgi?id=28376)
+
+        * rendering/RenderBox.cpp:
+        * rendering/RenderBox.h:
+        * rendering/RenderInline.cpp:
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isAfterContent):
+
 2009-08-17  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Darin Adler.

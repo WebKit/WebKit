@@ -131,18 +131,6 @@ void RenderInline::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
     }
 }
 
-static inline bool isAfterContent(RenderObject* child)
-{
-    if (!child)
-        return false;
-    if (child->style()->styleType() != AFTER)
-        return false;
-    // Text nodes don't have their own styles, so ignore the style on a text node.
-    if (child->isText() && !child->isBR())
-        return false;
-    return true;
-}
-
 void RenderInline::addChild(RenderObject* newChild, RenderObject* beforeChild)
 {
     if (continuation())

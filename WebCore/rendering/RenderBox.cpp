@@ -2655,11 +2655,6 @@ int RenderBox::leftmostPosition(bool /*includeOverflowInterior*/, bool includeSe
     return left;
 }
 
-bool RenderBox::isAfterContent(RenderObject* child) const
-{
-    return (child && child->style()->styleType() == AFTER && (!child->isText() || child->isBR()));
-}
-
 VisiblePosition RenderBox::positionForPoint(const IntPoint& point)
 {
     // no children...return this render object's element, if there is one, and offset 0
