@@ -534,36 +534,4 @@ function argumentCalleeInException() {
 }
 shouldBe("argumentCalleeInException()", "argumentCalleeInException")
 
-function getArguments() {
-    return arguments;
-}
-
-shouldBeTrue("getArguments() instanceof Object");
-shouldBeTrue("getArguments() instanceof Array");
-shouldBe("getArguments().constructor", "Object");
-shouldBe("Object.getPrototypeOf(getArguments())", "Array.prototype");
-shouldBe("getArguments().toString", "Object.prototype.toString");
-shouldBe("getArguments().toLocaleString", "Object.prototype.toLocaleString");
-
-var originalObject = Object;
-Object = function NewObject() {};
-var originalArray = Array;
-Array = function NewArray() {};
-shouldBeTrue("getArguments() instanceof originalObject");
-shouldBeTrue("getArguments() instanceof originalArray");
-shouldBe("getArguments().constructor", "originalObject");
-shouldBe("originalObject.getPrototypeOf(getArguments())", "originalArray.prototype");
-shouldBe("getArguments().toString", "originalObject.prototype.toString");
-shouldBe("getArguments().toLocaleString", "originalObject.prototype.toLocaleString");
-
-var originalObjectToString = originalObject.prototype.toString;
-originalObject.prototype.toString = function NewObjectPrototypeToString() {};
-var originalObjectToLocaleString = originalObject.prototype.toLocaleString;
-originalObject.prototype.toLocaleString = function NewObjectPrototypeToLocaleString() {};
-var originalArrayPrototype = originalArray.prototype;
-Array.prototype = function NewArrayPrototype() {};
-shouldBe("originalObject.getPrototypeOf(getArguments())", "originalArrayPrototype");
-shouldBe("getArguments().toString", "originalObjectToString");
-shouldBe("getArguments().toLocaleString", "originalObjectToLocaleString");
-
 var successfullyParsed = true;

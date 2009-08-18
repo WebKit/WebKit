@@ -1,3 +1,28 @@
+2009-08-17  Oliver Hunt  <oliver@apple.com>
+
+        RS=Mark Rowe.
+
+        REGRESSION (r47292): Prototype.js is broken by ES5 Arguments changes
+        https://bugs.webkit.org/show_bug.cgi?id=28341
+        <rdar://problem/7145615>
+
+        Reverting r47292.  Alas Prototype.js breaks with Arguments inheriting
+        from Array as ES5 attempted.  Prototype.js defines $A in terms of a 
+        function it places on (among other global objects) the Array prototype,
+        thus breaking $A for arrays.
+
+        * runtime/Arguments.h:
+        (JSC::Arguments::Arguments):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+        (JSC::JSGlobalObject::markChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::JSGlobalObjectData::JSGlobalObjectData):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::ObjectPrototype::ObjectPrototype):
+        * runtime/ObjectPrototype.h:
+        * tests/mozilla/ecma_3/Function/arguments-001.js:
+
 2009-08-17  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Steve Falkenburg.

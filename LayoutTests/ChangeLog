@@ -1,3 +1,15 @@
+2009-08-17  Oliver Hunt  <oliver@apple.com>
+
+        RS=Mark Rowe.
+
+        REGRESSION (r47291-r47308): MobileMe applications do not load data
+        https://bugs.webkit.org/show_bug.cgi?id=28341
+
+        Reverting r47292
+
+        * fast/js/arguments-expected.txt:
+        * fast/js/resources/arguments.js:
+
 2009-08-17  Brian Weinstein  <bweinstein@apple.com>
 
         Rubber-stamped by Adele Peterson.

@@ -129,21 +129,6 @@ PASS argumentsFunctionConstructorParam(true) is true
 FAIL argumentsVarUndefined() should be undefined. Was [object Arguments]
 FAIL argumentsConstUndefined() should be undefined. Was [object Arguments]
 PASS argumentCalleeInException() is argumentCalleeInException
-PASS getArguments() instanceof Object is true
-PASS getArguments() instanceof Array is true
-PASS getArguments().constructor is Object
-PASS Object.getPrototypeOf(getArguments()) is Array.prototype
-PASS getArguments().toString is Object.prototype.toString
-PASS getArguments().toLocaleString is Object.prototype.toLocaleString
-PASS getArguments() instanceof originalObject is true
-PASS getArguments() instanceof originalArray is true
-PASS getArguments().constructor is originalObject
-PASS originalObject.getPrototypeOf(getArguments()) is originalArray.prototype
-PASS getArguments().toString is originalObject.prototype.toString
-PASS getArguments().toLocaleString is originalObject.prototype.toLocaleString
-PASS originalObject.getPrototypeOf(getArguments()) is originalArrayPrototype
-PASS getArguments().toString is originalObjectToString
-PASS getArguments().toLocaleString is originalObjectToLocaleString
 PASS successfullyParsed is true
 
 TEST COMPLETE

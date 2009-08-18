@@ -27,7 +27,7 @@ namespace JSC {
 
     class ObjectPrototype : public JSObject {
     public:
-        ObjectPrototype(ExecState*, PassRefPtr<Structure>, Structure* prototypeFunctionStructure, NativeFunctionWrapper** toStringFunction, NativeFunctionWrapper** toLocaleStringFunction);
+        ObjectPrototype(ExecState*, PassRefPtr<Structure>, Structure* prototypeFunctionStructure);
     };
 
     JSValue JSC_HOST_CALL objectProtoFuncToString(ExecState*, JSObject*, JSValue, const ArgList&);
