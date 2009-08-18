@@ -57,7 +57,7 @@ WebInspector.MetricsSidebarPane.prototype = {
             var style = WebInspector.CSSStyleDeclaration.parseStyle(stylePayload);
             self._update(node, body, style);
         };
-        InspectorController.getComputedStyle(node, callback);
+        InspectorController.getComputedStyle(node.id, callback);
 
         var inlineStyleCallback = function(stylePayload) {
             if (!stylePayload)
