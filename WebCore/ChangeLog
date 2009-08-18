@@ -1,3 +1,38 @@
+2009-08-18  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Support for parsing <datalist> element and generating HTMLDataListElement nodes.
+        https://bugs.webkit.org/show_bug.cgi?id=26915
+
+        Tests: fast/forms/datalist-nonoption-child.html
+               fast/forms/datalist.html
+
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.vcproj/WebCoreCommon.vsprops:
+        * WebCore.vcproj/build-generated-files.sh:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * css/html.css:
+        * html/CollectionType.h:
+        (WebCore::):
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::itemAfter):
+        * html/HTMLDataListElement.cpp: Added.
+        (WebCore::HTMLDataListElement::HTMLDataListElement):
+        (WebCore::HTMLDataListElement::~HTMLDataListElement):
+        (WebCore::HTMLDataListElement::checkDTD):
+        (WebCore::HTMLDataListElement::options):
+        * html/HTMLDataListElement.h: Added.
+        * html/HTMLDataListElement.idl: Added.
+        * html/HTMLElement.cpp:
+        (WebCore::inlineTagList):
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::isAffectedByResidualStyle):
+        * html/HTMLTagNames.in:
+
 2009-08-17  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Eric Seidel.

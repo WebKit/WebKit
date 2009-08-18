@@ -363,6 +363,14 @@ AC_ARG_ENABLE(icon_database,
               [],[enable_icon_database="yes"])
 AC_MSG_RESULT([$enable_icon_database])
 
+# check whether to enable HTML5 datalist support
+AC_MSG_CHECKING([whether to enable HTML5 datalist support])
+AC_ARG_ENABLE(datalist,
+              AC_HELP_STRING([--enable-datalist],
+                             [enable HTML5 datalist support [default=yes]]),
+              [],[enable_datalist="yes"])
+AC_MSG_RESULT([$enable_datalist])
+
 # check whether to enable HTML5 ruby support
 AC_MSG_CHECKING([whether to enable HTML5 ruby support])
 AC_ARG_ENABLE(ruby,
@@ -691,6 +699,7 @@ AM_CONDITIONAL([ENABLE_JAVASCRIPT_DEBUGGER],[test "$enable_javascript_debugger" 
 AM_CONDITIONAL([ENABLE_OFFLINE_WEB_APPLICATIONS],[test "$enable_offline_web_applications" = "yes"])
 AM_CONDITIONAL([ENABLE_DOM_STORAGE],[test "$enable_dom_storage" = "yes"])
 AM_CONDITIONAL([ENABLE_DATABASE],[test "$enable_database" = "yes"])
+AM_CONDITIONAL([ENABLE_DATALIST],[test "$enable_datalist" = "yes"])
 AM_CONDITIONAL([ENABLE_EVENTSOURCE],[test "$enable_eventsource" = "yes"])
 AM_CONDITIONAL([ENABLE_ICONDATABASE],[test "$enable_icon_database" = "yes"])
 AM_CONDITIONAL([ENABLE_XPATH],[test "$enable_xpath" = "yes"])

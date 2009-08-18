@@ -176,6 +176,7 @@ IDL_BINDINGS += \
 	WebCore/html/HTMLDataGridCellElement.idl \
 	WebCore/html/HTMLDataGridColElement.idl \
 	WebCore/html/HTMLDataGridRowElement.idl \
+	WebCore/html/HTMLDataListElement.idl \
 	WebCore/html/HTMLDListElement.idl \
 	WebCore/html/HTMLDirectoryElement.idl \
 	WebCore/html/HTMLDivElement.idl \
@@ -966,6 +967,8 @@ webcore_sources += \
 	WebCore/html/HTMLDataGridColElement.h \
 	WebCore/html/HTMLDataGridRowElement.cpp \
 	WebCore/html/HTMLDataGridRowElement.h \
+	WebCore/html/HTMLDataListElement.cpp \
+	WebCore/html/HTMLDataListElement.h \
 	WebCore/html/HTMLDListElement.cpp \
 	WebCore/html/HTMLDListElement.h \
 	WebCore/html/HTMLDirectoryElement.cpp \
@@ -2129,6 +2132,16 @@ else
 webcore_cppflags += -DENABLE_DATABASE=0
 
 endif # END ENABLE_DATABASE
+
+# ----
+# HTML5 datalist Support
+# ----
+if ENABLE_DATALIST
+
+HTML_FEATURES += ENABLE_DATALIST=1
+webcore_cppflags += -DENABLE_DATALIST=1
+
+endif # END ENABLE_DATALIST
 
 # ----
 # HTML5 server-sent events

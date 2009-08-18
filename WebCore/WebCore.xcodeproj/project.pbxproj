@@ -4541,6 +4541,13 @@
 		ED501DC60B249F2900AE18D9 /* EditorMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = ED501DC50B249F2900AE18D9 /* EditorMac.mm */; };
 		EDE3A5000C7A430600956A37 /* ColorMac.h in Headers */ = {isa = PBXBuildFile; fileRef = EDE3A4FF0C7A430600956A37 /* ColorMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EDEC98030AED7E170059137F /* WebCorePrefix.h in Headers */ = {isa = PBXBuildFile; fileRef = EDEC98020AED7E170059137F /* WebCorePrefix.h */; };
+		F5C041DA0FFCA7CE00839D4A /* HTMLDataListElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5C041D70FFCA7CE00839D4A /* HTMLDataListElement.cpp */; };
+		F5C041DB0FFCA7CE00839D4A /* HTMLDataListElement.h in Headers */ = {isa = PBXBuildFile; fileRef = F5C041D80FFCA7CE00839D4A /* HTMLDataListElement.h */; };
+		F5C041E30FFCA96D00839D4A /* DOMHTMLDataListElement.h in Headers */ = {isa = PBXBuildFile; fileRef = F5C041DE0FFCA96D00839D4A /* DOMHTMLDataListElement.h */; };
+		F5C041E40FFCA96D00839D4A /* DOMHTMLDataListElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = F5C041DF0FFCA96D00839D4A /* DOMHTMLDataListElement.mm */; };
+		F5C041E50FFCA96D00839D4A /* DOMHTMLDataListElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = F5C041E00FFCA96D00839D4A /* DOMHTMLDataListElementInternal.h */; };
+		F5C041E60FFCA96D00839D4A /* JSHTMLDataListElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5C041E10FFCA96D00839D4A /* JSHTMLDataListElement.cpp */; };
+		F5C041E70FFCA96D00839D4A /* JSHTMLDataListElement.h in Headers */ = {isa = PBXBuildFile; fileRef = F5C041E20FFCA96D00839D4A /* JSHTMLDataListElement.h */; };
 		F916C48D0DB510F80076CD83 /* JSXMLHttpRequestProgressEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F916C48B0DB510F80076CD83 /* JSXMLHttpRequestProgressEvent.cpp */; };
 		F916C48E0DB510F80076CD83 /* JSXMLHttpRequestProgressEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = F916C48C0DB510F80076CD83 /* JSXMLHttpRequestProgressEvent.h */; };
 		F9F0ED7A0DB50CA200D16DB9 /* XMLHttpRequestProgressEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = F9F0ED770DB50CA200D16DB9 /* XMLHttpRequestProgressEvent.h */; };
@@ -9515,6 +9522,14 @@
 		F587868402DE3B8601EA4122 /* Cursor.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = Cursor.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587869902DE3B8601EA4122 /* DeprecatedPtrList.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = DeprecatedPtrList.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58EF58E02DFDFB7018635CA /* WebCore.base.exp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.exports; path = WebCore.base.exp; sourceTree = "<group>"; tabWidth = 4; usesTabs = 0; };
+		F5C041D70FFCA7CE00839D4A /* HTMLDataListElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLDataListElement.cpp; sourceTree = "<group>"; };
+		F5C041D80FFCA7CE00839D4A /* HTMLDataListElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLDataListElement.h; sourceTree = "<group>"; };
+		F5C041D90FFCA7CE00839D4A /* HTMLDataListElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLDataListElement.idl; sourceTree = "<group>"; };
+		F5C041DE0FFCA96D00839D4A /* DOMHTMLDataListElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMHTMLDataListElement.h; sourceTree = "<group>"; };
+		F5C041DF0FFCA96D00839D4A /* DOMHTMLDataListElement.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMHTMLDataListElement.mm; sourceTree = "<group>"; };
+		F5C041E00FFCA96D00839D4A /* DOMHTMLDataListElementInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMHTMLDataListElementInternal.h; sourceTree = "<group>"; };
+		F5C041E10FFCA96D00839D4A /* JSHTMLDataListElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLDataListElement.cpp; sourceTree = "<group>"; };
+		F5C041E20FFCA96D00839D4A /* JSHTMLDataListElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLDataListElement.h; sourceTree = "<group>"; };
 		F5C2869302846DCD018635CA /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = /System/Library/Frameworks/ApplicationServices.framework; sourceTree = "<absolute>"; };
 		F5C2869402846DCD018635CA /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		F5C2869502846DCD018635CA /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
@@ -11403,6 +11418,8 @@
 				93F9B6540BA0F35E00854064 /* DOMHTMLCanvasElement.mm */,
 				85DF2F8C0AA3C88100AD64C5 /* DOMHTMLCollection.h */,
 				85DF2F8D0AA3C88100AD64C5 /* DOMHTMLCollection.mm */,
+				F5C041DE0FFCA96D00839D4A /* DOMHTMLDataListElement.h */,
+				F5C041DF0FFCA96D00839D4A /* DOMHTMLDataListElement.mm */,
 				85BA4CFD0AA688680088052D /* DOMHTMLDirectoryElement.h */,
 				85BA4CFE0AA688680088052D /* DOMHTMLDirectoryElement.mm */,
 				85BA4CFF0AA688680088052D /* DOMHTMLDivElement.h */,
@@ -11557,6 +11574,7 @@
 				85E711520AC5D5340053270F /* DOMHTMLButtonElementInternal.h */,
 				93F9B6550BA0F35E00854064 /* DOMHTMLCanvasElementInternal.h */,
 				85E711530AC5D5340053270F /* DOMHTMLCollectionInternal.h */,
+				F5C041E00FFCA96D00839D4A /* DOMHTMLDataListElementInternal.h */,
 				85E711540AC5D5340053270F /* DOMHTMLDirectoryElementInternal.h */,
 				85E711550AC5D5340053270F /* DOMHTMLDivElementInternal.h */,
 				85E711560AC5D5340053270F /* DOMHTMLDListElementInternal.h */,
@@ -11984,6 +12002,9 @@
 				BC77CD410FEFE0C40070887B /* HTMLDataGridRowElement.cpp */,
 				BC77CCED0FEFDE6C0070887B /* HTMLDataGridRowElement.h */,
 				BC77CC6B0FEC3D5F0070887B /* HTMLDataGridRowElement.idl */,
+				F5C041D70FFCA7CE00839D4A /* HTMLDataListElement.cpp */,
+				F5C041D80FFCA7CE00839D4A /* HTMLDataListElement.h */,
+				F5C041D90FFCA7CE00839D4A /* HTMLDataListElement.idl */,
 				A8EA79ED0A1916DF00A8EF5F /* HTMLDirectoryElement.cpp */,
 				A8EA79EE0A1916DF00A8EF5F /* HTMLDirectoryElement.h */,
 				1A85B1D90A1B23A400D8C87C /* HTMLDirectoryElement.idl */,
@@ -12266,6 +12287,8 @@
 				BC212A400FE83A1800EC3708 /* JSHTMLDataGridElement.h */,
 				BC77CD4C0FEFE1610070887B /* JSHTMLDataGridRowElement.cpp */,
 				BC77CD4D0FEFE1610070887B /* JSHTMLDataGridRowElement.h */,
+				F5C041E10FFCA96D00839D4A /* JSHTMLDataListElement.cpp */,
+				F5C041E20FFCA96D00839D4A /* JSHTMLDataListElement.h */,
 				1A85B1E00A1B240500D8C87C /* JSHTMLDirectoryElement.cpp */,
 				1A85B1E10A1B240500D8C87C /* JSHTMLDirectoryElement.h */,
 				1A85B2B40A1B2AC700D8C87C /* JSHTMLDivElement.cpp */,
@@ -15298,6 +15321,8 @@
 				93F9B6580BA0F35E00854064 /* DOMHTMLCanvasElementInternal.h in Headers */,
 				85DF2F8E0AA3C88100AD64C5 /* DOMHTMLCollection.h in Headers */,
 				85E711A20AC5D5350053270F /* DOMHTMLCollectionInternal.h in Headers */,
+				F5C041E30FFCA96D00839D4A /* DOMHTMLDataListElement.h in Headers */,
+				F5C041E50FFCA96D00839D4A /* DOMHTMLDataListElementInternal.h in Headers */,
 				85BA4D0B0AA688680088052D /* DOMHTMLDirectoryElement.h in Headers */,
 				85E711A30AC5D5350053270F /* DOMHTMLDirectoryElementInternal.h in Headers */,
 				85BA4D0D0AA688680088052D /* DOMHTMLDivElement.h in Headers */,
@@ -16052,6 +16077,7 @@
 				BC77CB870FEBF5AF0070887B /* HTMLDataGridColElement.h in Headers */,
 				BC212A1F0FE8333200EC3708 /* HTMLDataGridElement.h in Headers */,
 				BC77CCEE0FEFDE6C0070887B /* HTMLDataGridRowElement.h in Headers */,
+				F5C041DB0FFCA7CE00839D4A /* HTMLDataListElement.h in Headers */,
 				A8EA79FA0A1916DF00A8EF5F /* HTMLDirectoryElement.h in Headers */,
 				A8EA7CB70A192B9C00A8EF5F /* HTMLDivElement.h in Headers */,
 				A8EA79F70A1916DF00A8EF5F /* HTMLDListElement.h in Headers */,
@@ -16266,6 +16292,7 @@
 				BC77CBD40FEBF8310070887B /* JSHTMLDataGridColElement.h in Headers */,
 				BC212A420FE83A1800EC3708 /* JSHTMLDataGridElement.h in Headers */,
 				BC77CD4F0FEFE1610070887B /* JSHTMLDataGridRowElement.h in Headers */,
+				F5C041E70FFCA96D00839D4A /* JSHTMLDataListElement.h in Headers */,
 				1A85B1E70A1B240500D8C87C /* JSHTMLDirectoryElement.h in Headers */,
 				1A85B2B70A1B2AC700D8C87C /* JSHTMLDivElement.h in Headers */,
 				1A85B1E90A1B240500D8C87C /* JSHTMLDListElement.h in Headers */,
@@ -17774,6 +17801,7 @@
 				85BA4CDE0AA6861B0088052D /* DOMHTMLButtonElement.mm in Sources */,
 				93F9B6570BA0F35E00854064 /* DOMHTMLCanvasElement.mm in Sources */,
 				85DF2F8F0AA3C88100AD64C5 /* DOMHTMLCollection.mm in Sources */,
+				F5C041E40FFCA96D00839D4A /* DOMHTMLDataListElement.mm in Sources */,
 				85BA4D0C0AA688680088052D /* DOMHTMLDirectoryElement.mm in Sources */,
 				85BA4D0E0AA688680088052D /* DOMHTMLDivElement.mm in Sources */,
 				85BA4D100AA688680088052D /* DOMHTMLDListElement.mm in Sources */,
@@ -18117,6 +18145,7 @@
 				BC77CBAA0FEBF6C90070887B /* HTMLDataGridColElement.cpp in Sources */,
 				BCF524600FEBEE5D0095BF26 /* HTMLDataGridElement.cpp in Sources */,
 				BC77CD420FEFE0C40070887B /* HTMLDataGridRowElement.cpp in Sources */,
+				F5C041DA0FFCA7CE00839D4A /* HTMLDataListElement.cpp in Sources */,
 				A8EA79F90A1916DF00A8EF5F /* HTMLDirectoryElement.cpp in Sources */,
 				A8EA7CB10A192B9C00A8EF5F /* HTMLDivElement.cpp in Sources */,
 				A8EA79F50A1916DF00A8EF5F /* HTMLDListElement.cpp in Sources */,
@@ -18358,6 +18387,7 @@
 				BC212A410FE83A1800EC3708 /* JSHTMLDataGridElement.cpp in Sources */,
 				BCBCAE540FF1A29E000762AE /* JSHTMLDataGridElementCustom.cpp in Sources */,
 				BC77CD4E0FEFE1610070887B /* JSHTMLDataGridRowElement.cpp in Sources */,
+				F5C041E60FFCA96D00839D4A /* JSHTMLDataListElement.cpp in Sources */,
 				1A85B1E60A1B240500D8C87C /* JSHTMLDirectoryElement.cpp in Sources */,
 				1A85B2B60A1B2AC700D8C87C /* JSHTMLDivElement.cpp in Sources */,
 				1A85B1E80A1B240500D8C87C /* JSHTMLDListElement.cpp in Sources */,

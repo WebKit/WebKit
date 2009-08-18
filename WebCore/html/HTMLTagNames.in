@@ -26,6 +26,7 @@ code interfaceName=HTMLElement
 col interfaceName=HTMLTableColElement
 colgroup interfaceName=HTMLTableColElement
 datagrid interfaceName=HTMLDataGridElement,conditional=DATAGRID
+datalist interfaceName=HTMLDataListElement,conditional=DATALIST
 dcell interfaceName=HTMLDataGridCellElement,conditional=DATAGRID
 dcol interfaceName=HTMLDataGridColElement,conditional=DATAGRID
 drow interfaceName=HTMLDataGridRowElement,conditional=DATAGRID

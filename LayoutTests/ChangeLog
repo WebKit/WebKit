@@ -1,3 +1,15 @@
+2009-08-18  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Tests for <datalist> element.
+        https://bugs.webkit.org/show_bug.cgi?id=26915
+
+        * fast/forms/datalist-expected.txt: Added.
+        * fast/forms/datalist-nonoption-child-expected.txt: Added.
+        * fast/forms/datalist-nonoption-child.html: Added.
+        * fast/forms/datalist.html: Added.
+
 2009-08-17  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Darin Adler.

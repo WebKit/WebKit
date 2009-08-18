@@ -1,3 +1,11 @@
+2009-08-18  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Add --enable-datalist option.
+
+        * configure.ac:
+
 2009-08-14  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         Reviewed by Sam Weinig.

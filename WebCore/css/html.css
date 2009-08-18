@@ -483,6 +483,10 @@ select[size="1"] {
     white-space: pre;
 }
 
+datalist {
+    display: none;
+}
+
 optgroup {
     font-weight: bolder;
 }

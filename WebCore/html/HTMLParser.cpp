@@ -1093,6 +1093,7 @@ bool HTMLParser::isAffectedByResidualStyle(const AtomicString& tagName)
         unaffectedTags.add(selectTag.localName().impl());
         unaffectedTags.add(objectTag.localName().impl());
         unaffectedTags.add(datagridTag.localName().impl());
+        unaffectedTags.add(datalistTag.localName().impl());
     }
     
     return !unaffectedTags.contains(tagName.impl());

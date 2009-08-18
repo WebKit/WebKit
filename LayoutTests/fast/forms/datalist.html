@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<datalist id="dl1">
+ The choices are
+ <option>value1</option>, 
+ <option value="value2">label2</option>,
+ <option label="label3">value3</option>, and
+ <option id="o4">value4</option>.
+ <option></option>
+</datalist>
+
+<script>
+description('Test for the datalist element.');
+
+var datalist = document.getElementById('dl1');
+// An option element with empty value is not included.
+shouldBe('datalist.options.length', '4');
+
+document.getElementById('o4').disabled = true;
+// A disabled option element is not included.
+shouldBe('datalist.options.length', '3');
+
+var successfullyParsed = true;
+// The expected text should not contain the text in the datalist element.
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

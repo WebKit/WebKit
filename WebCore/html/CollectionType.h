@@ -51,6 +51,7 @@ enum CollectionType {
     TSectionRows, // all row elements in this table section
     TRCells,      // all cells in this row
     SelectOptions,
+    DataListOptions,
     MapAreas,
 
     OtherCollection

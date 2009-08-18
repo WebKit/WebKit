@@ -122,6 +122,7 @@ DOM_CLASSES = \
     HTMLDataGridCellElement \
     HTMLDataGridColElement \
     HTMLDataGridRowElement \
+    HTMLDataListElement \
     HTMLDListElement \
     HTMLDirectoryElement \
     HTMLDivElement \
@@ -557,6 +558,10 @@ UserAgentStyleSheets.h : css/make-css-file-arrays.pl $(USER_AGENT_STYLE_SHEETS)
 # --------
 
 # HTML tag and attribute names
+
+ifeq ($(findstring ENABLE_DATALIST,$(FEATURE_DEFINES)), ENABLE_DATALIST)
+    HTML_FLAGS := $(HTML_FLAGS) ENABLE_DATALIST=1
+endif
 
 ifeq ($(findstring ENABLE_VIDEO,$(FEATURE_DEFINES)), ENABLE_VIDEO)
     HTML_FLAGS := $(HTML_FLAGS) ENABLE_VIDEO=1

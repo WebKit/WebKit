@@ -1,0 +1,32 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<datalist id="dl1">Text is ok.</datalist>
+<datalist id="dl2"><b>An inline element is ok.</b></datalist>
+<datalist id="dl3"><div>A block element is not ok.</div></datalist>
+
+<script>
+description('Test for child elements of a datalist element.');
+
+var datalist = document.getElementById('dl1');
+shouldBe('datalist.firstChild.nodeName', '"#text"');
+
+datalist = document.getElementById('dl2');
+shouldBe('datalist.firstChild.nodeName', '"B"');
+
+datalist = document.getElementById('dl3');
+// <div> tag should be ignored.
+shouldBe('datalist.firstChild.nodeName', '"#text"');
+
+var successfullyParsed = true;
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
