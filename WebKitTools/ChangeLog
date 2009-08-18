@@ -1,3 +1,17 @@
+2009-08-18  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28415
+        Set svn:eol-style CRLF on all .sln and .vcproj files that don't already
+        have it.
+
+        * record-memory-win/record-memory-win.vcproj:
+        * WinLauncher/WinLauncher.vcproj:
+        * WebKitLauncherWin/WebKitLauncherWin.vcproj:
+        * DumpRenderTree/win/ImageDiff.vcproj:
+        * FindSafari/FindSafari.vcproj:
+
 2009-08-18  Drew Wilson  <atwilson@google.com>
 
         Reviewed by Eric Seidel.
