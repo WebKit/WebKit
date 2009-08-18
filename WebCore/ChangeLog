@@ -1,3 +1,17 @@
+2009-08-17  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Assertion failure in WebCore::RenderHTMLCanvas::layout
+        https://bugs.webkit.org/show_bug.cgi?id=12052
+
+        Don't handle run-in if the element is not a block element.
+
+        Test: fast/runin/nonblock-runin.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::handleRunInChild):
+
 2009-08-17  Benjamin C Meyer  <benjamin.meyer@torchmobile.com>
 
         Reviewed by Darin Adler.

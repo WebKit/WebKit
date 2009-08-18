@@ -1022,7 +1022,10 @@ bool RenderBlock::handleRunInChild(RenderBox* child)
     // See if we have a run-in element with inline children.  If the
     // children aren't inline, then just treat the run-in as a normal
     // block.
-    if (!child->isRunIn() || !child->childrenInline() && !child->isReplaced())
+    if (!child->isRunIn() || !child->childrenInline())
+        return false;
+    // FIXME: We don't handle non-block elements with run-in for now.
+    if (!child->isRenderBlock())
         return false;
 
     // Get the next non-positioned/non-floating RenderBlock.
