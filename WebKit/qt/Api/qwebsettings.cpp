@@ -303,6 +303,8 @@ QWebSettings* QWebSettings::globalSettings()
 
     \value AutoLoadImages Specifies whether images are automatically loaded in
         web pages.
+    \value DnsPrefetchEnabled Specifies whether QtWebkit will try to pre-fetch DNS entries to
+        speed up browsing. This only works as a global attribute. Only for Qt 4.6 and later.
     \value JavascriptEnabled Enables or disables the running of JavaScript
         programs.
     \value JavaEnabled Enables or disables Java applets.
@@ -351,6 +353,7 @@ QWebSettings::QWebSettings()
     d->fontFamilies.insert(QWebSettings::FantasyFont, QLatin1String("Arial"));
 
     d->attributes.insert(QWebSettings::AutoLoadImages, true);
+    d->attributes.insert(QWebSettings::DnsPrefetchEnabled, false);
     d->attributes.insert(QWebSettings::JavascriptEnabled, true);
     d->attributes.insert(QWebSettings::LinksIncludedInFocusChain, true);
     d->attributes.insert(QWebSettings::ZoomTextOnly, false);

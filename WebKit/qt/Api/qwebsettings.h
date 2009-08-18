@@ -50,6 +50,7 @@ public:
     };
     enum WebAttribute {
         AutoLoadImages,
+        DnsPrefetchEnabled,
         JavascriptEnabled,
         JavaEnabled,
         PluginsEnabled,

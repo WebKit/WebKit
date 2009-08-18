@@ -2262,6 +2262,7 @@ HEADERS += \
     xml/XSLTProcessor.h \
     xml/XSLTUnicodeSort.h \
     $$PWD/../WebKit/qt/WebCoreSupport/FrameLoaderClientQt.h \
+    $$PWD/platform/network/qt/DnsPrefetchHelper.h
 
 SOURCES += \
     accessibility/qt/AccessibilityObjectQt.cpp \
@@ -2294,6 +2295,7 @@ SOURCES += \
     platform/graphics/qt/StillImageQt.cpp \
     platform/network/qt/ResourceHandleQt.cpp \
     platform/network/qt/ResourceRequestQt.cpp \
+    platform/network/qt/DnsPrefetchHelper.cpp \
     platform/network/qt/QNetworkReplyHandler.cpp \
     editing/qt/EditorQt.cpp \
     platform/qt/ClipboardQt.cpp \

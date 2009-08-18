@@ -1,3 +1,12 @@
+2009-08-18  Markus Goetz <Markus.Goetz@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Implement prefetchDNS() function.
+
+        * WebCore.pro:
+        * platform/qt/TemporaryLinkStubs.cpp:
+
 2009-08-18  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Eric Seidel.

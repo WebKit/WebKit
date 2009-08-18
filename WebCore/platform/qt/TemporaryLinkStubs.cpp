@@ -114,11 +114,6 @@ float userIdleTime()
 }
 #endif
 
-void prefetchDNS(const String& hostname)
-{
-    notImplemented();
-}
-
 }
 
 // vim: ts=4 sw=4 et

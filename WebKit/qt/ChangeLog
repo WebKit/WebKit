@@ -1,3 +1,14 @@
+2009-08-18  Markus Goetz <Markus.Goetz@nokia.com>
+
+        Reviwed by Ariya Hidayat.
+
+        [Qt] For prefecthDNS, the pre-fetching has to be enabled in the
+        WebSettings.
+
+        * Api/qwebsettings.cpp:
+        (QWebSettings::QWebSettings):
+        * Api/qwebsettings.h:
+
 2009-08-17  Darin Adler  <darin@apple.com>
 
         Try to fix Qt build again.
