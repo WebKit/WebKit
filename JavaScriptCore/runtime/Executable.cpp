@@ -197,7 +197,9 @@ void FunctionExecutable::recompile(ExecState* exec)
     m_node = newBody;
     delete m_codeBlock;
     m_codeBlock = 0;
+#if ENABLE(JIT)
     m_jitCode = JITCode();
+#endif
 }
 
 #if ENABLE(JIT)
