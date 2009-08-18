@@ -1,3 +1,11 @@
+2009-08-18  Drew Wilson  <atwilson@google.com>
+
+        Reviewed by NOBODY (Build Break).
+
+        Speculative fix for GTK DumpRenderTree.
+
+        * GNUmakefile.am:
+
 2009-08-18  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Eric Seidel.
