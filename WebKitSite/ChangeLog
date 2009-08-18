@@ -1,3 +1,12 @@
+2009-08-18  Anton Muhin  <antonm@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Mention handy --bug flag of prepare-ChangeLog script.
+        https://bugs.webkit.org/show_bug.cgi?id=28425
+
+        * coding/contributing.html: Add a reference for --bug flag
+
 2009-08-12  Joe Mason  <joe.mason@torchmobile.com>
 
         Reviewed by Adam Barth.
