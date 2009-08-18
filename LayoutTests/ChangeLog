@@ -1,3 +1,12 @@
+2009-08-17  Brian Weinstein  <bweinstein@apple.com>
+
+        Rubber-stamped by Adele Peterson.
+
+        http/tests/misc/favicon-loads-with-images-disabled.html is passing on my
+        machine, trying to remove it from the Skipped list on Windows.
+
+        * platform/win/Skipped:
+
 2009-08-17  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Darin Adler.
