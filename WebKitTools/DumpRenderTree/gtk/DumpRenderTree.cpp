@@ -407,6 +407,7 @@ static void runTest(const string& testPathOrURL)
 
     bool isSVGW3CTest = (gLayoutTestController->testPathOrURL().find("svg/W3C-SVG-1.1") != string::npos);
     GtkAllocation size;
+    size.x = size.y = 0;
     size.width = isSVGW3CTest ? 480 : maxViewWidth;
     size.height = isSVGW3CTest ? 360 : maxViewHeight;
     gtk_widget_size_allocate(container, &size);

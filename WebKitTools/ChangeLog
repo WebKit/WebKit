@@ -1,3 +1,13 @@
+2009-08-18  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Jan Alonzo.
+
+        Initialize x and y in the GtkAllocation structure to shut up
+        valgrind.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (runTest):
+
 2009-08-17  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Darin Adler.
