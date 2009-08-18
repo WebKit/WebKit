@@ -26,12 +26,12 @@ layer at (18,257) size 320x25
     RenderFlexibleBox {DIV} at (49,5) size 246x15
       RenderSlider {INPUT} at (45,2) size 156x13
         RenderBlock {DIV} at (0,1) size 12x10
-layer at (67,264) size 45x11 scrollHeight 13
+layer at (67,264) size 45x11
   RenderFlexibleBox {DIV} at (0,2) size 45x11 [color=#FFFFFF]
     RenderBlock (anonymous) at (9,0) size 26x11
       RenderText {#text} at (0,0) size 26x11
         text run at (0,0) width 26: "00:00"
-layer at (268,264) size 45x11 scrollHeight 13
+layer at (268,264) size 45x11
   RenderFlexibleBox {DIV} at (201,2) size 45x11 [color=#FFFFFF]
     RenderBlock (anonymous) at (6,0) size 32x11
       RenderText {#text} at (0,0) size 32x11
@@ -46,12 +46,12 @@ layer at (8,497) size 320x25
     RenderFlexibleBox {DIV} at (49,5) size 246x15
       RenderSlider {INPUT} at (45,2) size 156x13
         RenderBlock {DIV} at (0,1) size 12x10
-layer at (57,504) size 45x11 scrollHeight 13
+layer at (57,504) size 45x11
   RenderFlexibleBox {DIV} at (0,2) size 45x11 [color=#FFFFFF]
     RenderBlock (anonymous) at (9,0) size 26x11
       RenderText {#text} at (0,0) size 26x11
         text run at (0,0) width 26: "00:00"
-layer at (258,504) size 45x11 scrollHeight 13
+layer at (258,504) size 45x11
   RenderFlexibleBox {DIV} at (201,2) size 45x11 [color=#FFFFFF]
     RenderBlock (anonymous) at (6,0) size 32x11
       RenderText {#text} at (0,0) size 32x11

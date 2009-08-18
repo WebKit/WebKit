@@ -1,3 +1,11 @@
+2009-08-18  Mark Rowe  <mrowe@apple.com>
+
+        Update SnowLeopard-specific layout test results after r47440.
+
+        * platform/mac/media/audio-controls-rendering-expected.txt:
+        * platform/mac/media/controls-after-reload-expected.txt:
+        * platform/mac/media/controls-styling-expected.txt:
+
 2009-08-18  David Hyatt  <hyatt@apple.com>
 
         Land updated results after my last patch.
