@@ -123,6 +123,7 @@ import "ocidl.idl";
 #include "IWebUndoTarget.idl"
 #include "IWebView.idl"
 #include "IWebViewPrivate.idl"
+#include "IWebWorkersPrivate.idl"
 
 #include "IGEN_DOMObject.idl"
 #include "IGEN_DOMCharacterData.idl"
@@ -358,6 +359,11 @@ library WebKit
     [uuid(3F35F332-BB2B-49b3-AEDD-27B317687E07)]
     coclass WebCookieManager{
         [default] interface IWebCookieManager;
+    }
+
+    [uuid(0967AAFF-2FFE-4fcc-81F3-3FF2A9C6DCE2)]
+    coclass WebWorkersPrivate{
+        [default] interface IWebWorkersPrivate;
     }
 }
 

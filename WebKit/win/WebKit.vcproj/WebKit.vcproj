@@ -743,6 +743,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\WebWorkersPrivate.h"
+				>
+			</File>
+			<File
 				RelativePath="..\WindowsTouch.h"
 				>
 			</File>
@@ -1092,6 +1096,10 @@
 			</File>
 			<File
 				RelativePath="..\WebView.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\WebWorkersPrivate.cpp"
 				>
 			</File>
 		</Filter>

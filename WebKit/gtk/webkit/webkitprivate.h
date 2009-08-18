@@ -250,6 +250,9 @@ extern "C" {
 
     WEBKIT_API void
     webkit_application_cache_set_maximum_size(unsigned long long size);
+
+    WEBKIT_API unsigned int
+    webkit_worker_thread_count();
 }
 
 #endif

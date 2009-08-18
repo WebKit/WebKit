@@ -1,3 +1,26 @@
+2009-08-18  Drew Wilson  <atwilson@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Need to extend DumpRenderTree to expose number of worker threads
+        https://bugs.webkit.org/show_bug.cgi?id=28292
+
+        Expose WorkerThread::workerThreadCount() for DumpRenderTree so we can write worker lifecycle tests.
+
+        Tests: fast/workers/shared-worker-lifecycle.html-disabled
+               fast/workers/worker-lifecycle.html
+
+        * WebCore.base.exp:
+        Exported WorkerThread::workerThreadCount().
+        * WebCore.xcodeproj/project.pbxproj:
+        * workers/WorkerThread.cpp:
+        Added tracking of the number of worker threads.
+        (WebCore::threadCountMutex):
+        (WebCore::WorkerThread::workerThreadCount):
+        (WebCore::WorkerThread::WorkerThread):
+        (WebCore::WorkerThread::~WorkerThread):
+        * workers/WorkerThread.h:
+
 2009-08-18  Ariya Hidayat  <ariya.hidayat@nokia.com>
 
         Unreviewed, build fix.

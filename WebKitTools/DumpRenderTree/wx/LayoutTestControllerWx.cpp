@@ -217,6 +217,12 @@ unsigned LayoutTestController::numberOfActiveAnimations() const
     return 0;
 }
 
+unsigned LayoutTestController::workerThreadCount() const
+{
+    // FIXME: implement
+    return 0;
+}
+
 void LayoutTestController::setSelectTrailingWhitespaceEnabled(bool flag)
 {
     // FIXME: implement

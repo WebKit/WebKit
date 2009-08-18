@@ -183,6 +183,17 @@ size_t LayoutTestController::webHistoryItemCount()
     return count;
 }
 
+unsigned LayoutTestController::workerThreadCount() const
+{
+    COMPtr<IWebWorkersPrivate> workers;
+    if (FAILED(WebKitCreateInstance(CLSID_WebWorkersPrivate, 0, __uuidof(workers), reinterpret_cast<void**>(&workers))))
+        return 0;
+    unsigned count;
+    if (FAILED(workers->workerThreadCount(&count)))
+        return 0;
+    return count;
+}
+
 void LayoutTestController::notifyDone()
 {
     // Same as on mac.  This can be shared.

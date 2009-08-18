@@ -48,6 +48,7 @@ bool webkit_web_frame_pause_animation(WebKitWebFrame* frame, const gchar* name, 
 bool webkit_web_frame_pause_transition(WebKitWebFrame* frame, const gchar* name, double time, const gchar* element);
 unsigned int webkit_web_frame_number_of_active_animations(WebKitWebFrame* frame);
 void webkit_application_cache_set_maximum_size(unsigned long long size);
+unsigned int webkit_worker_thread_count(void);
 }
 
 LayoutTestController::~LayoutTestController()
@@ -108,6 +109,11 @@ size_t LayoutTestController::webHistoryItemCount()
 {
     // FIXME: implement
     return 0;
+}
+
+unsigned LayoutTestController::workerThreadCount() const
+{
+    return webkit_worker_thread_count();
 }
 
 void LayoutTestController::notifyDone()

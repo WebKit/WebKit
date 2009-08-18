@@ -1,3 +1,20 @@
+2009-08-18  Drew Wilson  <atwilson@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Need to extend DumpRenderTree to expose number of worker threads
+        https://bugs.webkit.org/show_bug.cgi?id=28292
+
+        Added simple layout tests that use the new layoutTestController.workerThreadCount() API
+
+        * fast/workers/resources/shared-worker-common.js:
+        Added support for "close" command to match worker-common.js.
+        * fast/workers/resources/worker-lifecycle.js: Added.
+        * fast/workers/shared-worker-lifecycle-expected.txt: Added.
+        * fast/workers/shared-worker-lifecycle.html-disabled: Added.
+        * fast/workers/worker-lifecycle-expected.txt: Added.
+        * fast/workers/worker-lifecycle.html: Added.
+
 2009-08-18  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
 
         Reviewed by Ariya Hidayat.

@@ -1,3 +1,17 @@
+2009-08-18  Drew Wilson  <atwilson@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Need to extend DumpRenderTree to expose number of worker threads.
+        https://bugs.webkit.org/show_bug.cgi?id=28292
+
+        * WebKit.exp:
+        Exported WebWorkersPrivate so DumpRenderTree can access it.
+        * Workers/WebWorkersPrivate.h: Added.
+        * Workers/WebWorkersPrivate.mm: Added.
+        (+[WebWorkersPrivate workerThreadCount]):
+        Added WebWorkersPrivate::workerThreadCount() API for DumpRenderTree.
+
 2009-08-17  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

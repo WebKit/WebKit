@@ -1,3 +1,30 @@
+2009-08-18  Drew Wilson  <atwilson@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Need to extend DumpRenderTree to expose number of worker threads
+        https://bugs.webkit.org/show_bug.cgi?id=28292
+
+        Defined/implemented COM interfaces to expose WorkerThread::workerThreadCount() for DumpRenderTree.
+
+        * ForEachCoClass.h:
+        Added WebWorkersPrivate.
+        * Interfaces/IWebWorkersPrivate.idl: Added.
+        * Interfaces/WebKit.idl:
+        Added WebWorkersPrivate.
+        * WebKit.vcproj/Interfaces.vcproj:
+        * WebKit.vcproj/WebKit.vcproj:
+        * WebWorkersPrivate.cpp: Added.
+        Implementation of the IWebWorkersPrivate COM interface, to expose workerThreadCount() for DumpRenderTree.
+        (WebWorkersPrivate::QueryInterface):
+        (WebWorkersPrivate::AddRef):
+        (WebWorkersPrivate::Release):
+        (WebWorkersPrivate::workerThreadCount):
+        (WebWorkersPrivate::createInstance):
+        (WebWorkersPrivate::WebWorkersPrivate):
+        (WebWorkersPrivate::~WebWorkersPrivate):
+        * WebWorkersPrivate.h: Added.
+
 2009-08-17  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Steve Falkenburg.

@@ -62,6 +62,7 @@
     macro(WebArchive) \
     macro(WebCoreStatistics) \
     macro(WebCookieManager) \
+    macro(WebWorkersPrivate) \
     // end of macro
 
 // Everything below this point is deprecated. Please do not use.

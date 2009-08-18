@@ -582,9 +582,9 @@
 		2E4346500F546A8200B0F1BA /* WorkerMessagingProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E43463E0F546A8200B0F1BA /* WorkerMessagingProxy.h */; };
 		2E4346510F546A8200B0F1BA /* WorkerObjectProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E43463F0F546A8200B0F1BA /* WorkerObjectProxy.h */; };
 		2E4346520F546A8200B0F1BA /* WorkerRunLoop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E4346400F546A8200B0F1BA /* WorkerRunLoop.cpp */; };
-		2E4346530F546A8200B0F1BA /* WorkerRunLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E4346410F546A8200B0F1BA /* WorkerRunLoop.h */; };
+		2E4346530F546A8200B0F1BA /* WorkerRunLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E4346410F546A8200B0F1BA /* WorkerRunLoop.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2E4346540F546A8200B0F1BA /* WorkerThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E4346420F546A8200B0F1BA /* WorkerThread.cpp */; };
-		2E4346550F546A8200B0F1BA /* WorkerThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E4346430F546A8200B0F1BA /* WorkerThread.h */; };
+		2E4346550F546A8200B0F1BA /* WorkerThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E4346430F546A8200B0F1BA /* WorkerThread.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2E4346580F546A9900B0F1BA /* CrossThreadCopier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E4346560F546A9900B0F1BA /* CrossThreadCopier.cpp */; };
 		2E4346590F546A9900B0F1BA /* CrossThreadCopier.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E4346570F546A9900B0F1BA /* CrossThreadCopier.h */; };
 		2EA768040FE7126400AB9C8A /* WorkerScriptLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EA768030FE7126400AB9C8A /* WorkerScriptLoaderClient.h */; };
