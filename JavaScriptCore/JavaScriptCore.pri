@@ -158,7 +158,7 @@ SOURCES += \
     runtime/ErrorInstance.cpp \
     runtime/ErrorPrototype.cpp \
     interpreter/CallFrame.cpp \
-    runtime/Execute.cpp \
+    runtime/Executable.cpp \
     runtime/FunctionConstructor.cpp \
     runtime/FunctionPrototype.cpp \
     runtime/GetterSetter.cpp \
