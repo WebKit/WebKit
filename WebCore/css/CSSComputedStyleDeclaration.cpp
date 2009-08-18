@@ -58,6 +58,7 @@ static const int computedProperties[] = {
     CSSPropertyBackgroundOrigin,
     CSSPropertyBackgroundPosition, // more-specific background-position-x/y are non-standard
     CSSPropertyBackgroundRepeat,
+    CSSPropertyBackgroundSize,
     CSSPropertyBorderBottomColor,
     CSSPropertyBorderBottomLeftRadius,
     CSSPropertyBorderBottomRightRadius,
@@ -156,7 +157,6 @@ static const int computedProperties[] = {
     CSSPropertyWebkitBackgroundClip,
     CSSPropertyWebkitBackgroundComposite,
     CSSPropertyWebkitBackgroundOrigin,
-    CSSPropertyWebkitBackgroundSize,
     CSSPropertyWebkitBorderFit,
     CSSPropertyWebkitBorderHorizontalSpacing,
     CSSPropertyWebkitBorderImage,
@@ -649,7 +649,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             if (style->backgroundImage())
                 return style->backgroundImage()->cssValue();
             return CSSPrimitiveValue::createIdentifier(CSSValueNone);
-        case CSSPropertyWebkitBackgroundSize: {
+        case CSSPropertyBackgroundSize: {
             RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
             list->append(CSSPrimitiveValue::create(style->backgroundSize().width()));
             list->append(CSSPrimitiveValue::create(style->backgroundSize().height()));

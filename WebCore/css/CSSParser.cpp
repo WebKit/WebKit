@@ -873,7 +873,7 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSSPropertyBackgroundPosition:
     case CSSPropertyBackgroundPositionX:
     case CSSPropertyBackgroundPositionY:
-    case CSSPropertyWebkitBackgroundSize:
+    case CSSPropertyBackgroundSize:
     case CSSPropertyBackgroundRepeat:
     case CSSPropertyWebkitMaskAttachment:
     case CSSPropertyWebkitMaskClip:
@@ -1529,7 +1529,7 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSSPropertyBackground: {
         // Position must come before color in this array because a plain old "0" is a legal color
         // in quirks mode but it's usually the X coordinate of a position.
-        // FIXME: Add CSSPropertyWebkitBackgroundSize to the shorthand.
+        // FIXME: Add CSSPropertyBackgroundSize to the shorthand.
         const int properties[] = { CSSPropertyBackgroundImage, CSSPropertyBackgroundRepeat, 
                                    CSSPropertyBackgroundAttachment, CSSPropertyBackgroundPosition, CSSPropertyBackgroundOrigin, 
                                    CSSPropertyBackgroundColor };
@@ -2374,7 +2374,7 @@ bool CSSParser::parseFillProperty(int propId, int& propId1, int& propId2,
                         m_valueList->next();
                     }
                     break;
-                case CSSPropertyWebkitBackgroundSize:
+                case CSSPropertyBackgroundSize:
                 case CSSPropertyWebkitMaskSize:
                     currValue = parseFillSize();
                     if (currValue)
@@ -5092,6 +5092,11 @@ static int cssPropertyID(const UChar* propertyName, unsigned length)
                 const char* const boxShadow = "box-shadow";
                 name = boxShadow;
                 length = strlen(boxShadow);
+            } else if (strcmp(buffer, "-webkit-background-size") == 0) {
+                // CSS Backgrounds/Borders.  -webkit-background-size worked in Safari 4 and earlier.
+                const char* const backgroundSize = "background-size";
+                name = backgroundSize;
+                length = strlen(backgroundSize);
             } else if (hasPrefix(buffer + 7, length - 7, "-border-")) {
                 // -webkit-border-*-*-radius worked in Safari 4 and earlier. -webkit-border-radius syntax
                 // differs from border-radius, so it is remains as a distinct property.

@@ -18,6 +18,7 @@ background-position
 background-position-x
 background-position-y
 background-repeat
+background-size
 border
 border-bottom
 border-bottom-color
@@ -157,7 +158,6 @@ zoom
 -webkit-background-clip
 -webkit-background-composite
 -webkit-background-origin
--webkit-background-size
 -webkit-binding
 -webkit-border-fit
 -webkit-border-horizontal-spacing
