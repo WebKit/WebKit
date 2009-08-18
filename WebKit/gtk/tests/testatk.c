@@ -60,6 +60,8 @@ static void test_webkit_atk_get_text_at_offset(void)
 
     webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
     g_object_ref_sink(webView);
+    GtkAllocation alloc = { 0, 0, 800, 600 };
+    gtk_widget_size_allocate(GTK_WIDGET(webView), &alloc);
     webkit_web_view_load_string(webView, contents, NULL, NULL, NULL);
     loop = g_main_loop_new(NULL, TRUE);
 

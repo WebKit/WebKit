@@ -1,3 +1,16 @@
+2009-08-18  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Fix the ATK unit test.
+
+        We now support line boundaries in the get_text functions, so we
+        need to make sure the test has the layout we expect by giving it
+        enough space to fit in one line.
+
+        * tests/testatk.c:
+        (test_webkit_atk_get_text_at_offset):
+
 2009-08-15  Zan Dobersek  <zandobersek@gmail.com>
 
         Reviewed by Xan Lopez.
