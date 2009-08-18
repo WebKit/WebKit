@@ -1,3 +1,10 @@
+2009-08-18  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Not reviewed. Forgot to add pixel test results for html-fieldset-crash.html some time ago.
+
+        * platform/mac/fast/wml/html-fieldset-crash-expected.checksum: Added.
+        * platform/mac/fast/wml/html-fieldset-crash-expected.png: Added.
+
 2009-08-18  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by NOBODY (build fix).
