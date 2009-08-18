@@ -1,3 +1,40 @@
+2009-08-18  Maxime Simon  <simon.maxime@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        [Haiku] Adding four image-specific files to WebCore:
+        IconHaiku.cpp, ImageBufferData.h, ImageBufferHaiku.cpp, ImageHaiku.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=28130
+
+        * platform/graphics/Icon.h:
+        * platform/graphics/haiku/IconHaiku.cpp: Added.
+        (WebCore::Icon::~Icon):
+        (WebCore::Icon::createIconForFile):
+        (WebCore::Icon::createIconForFiles):
+        (WebCore::Icon::paint):
+        * platform/graphics/haiku/ImageBufferData.h: Added.
+        * platform/graphics/haiku/ImageBufferHaiku.cpp: Added.
+        (WebCore::ImageBufferData::ImageBufferData):
+        (WebCore::ImageBuffer::ImageBuffer):
+        (WebCore::ImageBuffer::~ImageBuffer):
+        (WebCore::ImageBuffer::context):
+        (WebCore::ImageBuffer::getUnmultipliedImageData):
+        (WebCore::ImageBuffer::getPremultipliedImageData):
+        (WebCore::ImageBuffer::putUnmultipliedImageData):
+        (WebCore::ImageBuffer::putPremultipliedImageData):
+        (WebCore::ImageBuffer::toDataURL):
+        (WebCore::ImageBuffer::image):
+        (WebCore::ImageBuffer::platformTransformColorSpace):
+        * platform/graphics/haiku/ImageHaiku.cpp: Added.
+        (WebCore::FrameData::clear):
+        (WebCore::Image::loadPlatformResource):
+        (WebCore::BitmapImage::initPlatformData):
+        (WebCore::BitmapImage::invalidatePlatformData):
+        (WebCore::BitmapImage::draw):
+        (WebCore::Image::drawPattern):
+        (WebCore::BitmapImage::checkForSolidColor):
+        (WebCore::BitmapImage::getBBitmap):
+
 2009-08-18  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Dan Bernstein.
