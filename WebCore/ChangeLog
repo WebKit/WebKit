@@ -1,3 +1,18 @@
+2009-08-18  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by John Sullivan and David Hyatt.
+
+        Fix <rdar://problem/7147996>
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::setHasHorizontalScrollbar):
+        (WebCore::ScrollView::setHasVerticalScrollbar):
+        Update the style of the scroll bars.
+        
+        * rendering/RenderScrollbar.cpp:
+        (WebCore::RenderScrollbar::RenderScrollbar):
+        Calculate the size of the scrollbar and set it as the frame size.
+
 2009-08-18  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Simon Fraser.
