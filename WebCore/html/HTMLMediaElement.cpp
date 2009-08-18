@@ -38,6 +38,7 @@
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "FrameLoaderClient.h"
 #include "HTMLDocument.h"
 #include "HTMLNames.h"
 #include "HTMLSourceElement.h"
@@ -564,8 +565,8 @@ bool HTMLMediaElement::isSafeToLoadURL(const KURL& url, InvalidSourceAction acti
     Frame* frame = document()->frame();
     FrameLoader* loader = frame ? frame->loader() : 0;
 
-    // don't allow remote to local urls
-    if (!loader || !loader->canLoad(url, String(), document())) {
+    // don't allow remote to local urls, and check with the frame loader client.
+    if (!loader || !loader->canLoad(url, String(), document()) || !loader->client()->shouldLoadMediaElementURL(url)) {
         if (actionIfInvalid == Complain)
             FrameLoader::reportLocalLoadFailed(frame, url.string());
         return false;

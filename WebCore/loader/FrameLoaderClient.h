@@ -234,6 +234,7 @@ namespace WebCore {
 #endif
 
         virtual bool shouldUsePluginDocument(const String& /*mimeType*/) const { return false; }
+        virtual bool shouldLoadMediaElementURL(const KURL&) const { return true; }
     };
 
 } // namespace WebCore

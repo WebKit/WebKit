@@ -1,3 +1,18 @@
+2009-08-18  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Mac specific part of
+        
+        <rdar://problem/7135588> HTMLMediaElement should ask WebPolicyLoadDelegate before loading resource
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        Implement shouldLoadMediaElementURL by asking the policy delegate.
+        
+        * WebView/WebPolicyDelegatePrivate.h:
+        Add new delegate method, remove some unused cruft.
+
 2009-08-18  Drew Wilson  <atwilson@google.com>
 
         Reviewed by Eric Seidel.

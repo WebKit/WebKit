@@ -1676,6 +1676,16 @@ jobject WebFrameLoaderClient::javaApplet(NSView* view)
 }
 #endif
 
+bool WebFrameLoaderClient::shouldLoadMediaElementURL(const KURL& url) const {
+    WebView *webView = getWebView(m_webFrame.get());
+    
+    if (id policyDelegate = [webView policyDelegate]) {
+        if ([policyDelegate respondsToSelector:@selector(webView:shouldLoadMediaURL:inFrame:)])
+            return [policyDelegate webView:webView shouldLoadMediaURL:url inFrame:m_webFrame.get()];
+    }
+    return true;
+}
+
 @implementation WebFramePolicyListener
 
 + (void)initialize
