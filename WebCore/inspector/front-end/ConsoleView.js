@@ -391,7 +391,7 @@ WebInspector.ConsoleView.prototype = {
         else
             var type = Object.proxyType(output);
 
-        if (isProxy && type !== "object" && type !== "function" & type !== "array") {
+        if (isProxy && type !== "object" && type !== "function" && type !== "array" && type !== "node") {
             // Unwrap primitive value, skip decoration.
             output = output.description;
             type = "undecorated"
