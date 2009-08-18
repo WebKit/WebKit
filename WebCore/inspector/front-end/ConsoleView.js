@@ -384,10 +384,18 @@ WebInspector.ConsoleView.prototype = {
 
     _format: function(output, forceObjectFormat)
     {
+        var isProxy = typeof output === "object";
+
         if (forceObjectFormat)
             var type = "object";
         else
             var type = Object.proxyType(output);
+
+        if (isProxy && type !== "object" && type !== "function" & type !== "array") {
+            // Unwrap primitive value, skip decoration.
+            output = output.description;
+            type = "undecorated"
+        }
 
         // We don't perform any special formatting on these types, so we just
         // pass them through the simple _formatvalue function.
@@ -396,6 +404,7 @@ WebInspector.ConsoleView.prototype = {
             "null": 1,
             "boolean": 1,
             "number": 1,
+            "undecorated": 1
         };
 
         var formatter;
@@ -429,7 +438,7 @@ WebInspector.ConsoleView.prototype = {
 
     _formatdate: function(date, elem)
     {
-        elem.appendChild(document.createTextNode(date.description));
+        elem.appendChild(document.createTextNode(date));
     },
 
     _formatstring: function(str, elem)
@@ -445,13 +454,21 @@ WebInspector.ConsoleView.prototype = {
 
     _formatarray: function(arr, elem)
     {
-        elem.appendChild(document.createTextNode("["));
-        for (var i = 0; i < arr.length; ++i) {
-            elem.appendChild(this._format(arr[i]));
-            if (i < arr.length - 1)
-                elem.appendChild(document.createTextNode(", "));
+        var self = this;
+        function printResult(properties)
+        {
+            if (!properties)
+                return;
+            elem.appendChild(document.createTextNode("["));
+            for (var i = 0; i < properties.length; ++i) {
+                var property = properties[i].value;
+                elem.appendChild(self._format(property));
+                if (i < properties.length - 1)
+                    elem.appendChild(document.createTextNode(", "));
+            }
+            elem.appendChild(document.createTextNode("]"));
         }
-        elem.appendChild(document.createTextNode("]"));
+        InspectorController.getProperties(arr, true, printResult);
     },
 
     _formatnode: function(object, elem)

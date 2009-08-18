@@ -434,33 +434,17 @@ InjectedScript.getProperties = function(objectProxy, ignoreHasOwnProperty)
         if (!ignoreHasOwnProperty && "hasOwnProperty" in object && !object.hasOwnProperty(propertyName))
             continue;
 
-        //TODO: remove this once object becomes really remote.
-        if (propertyName === "__treeElementIdentifier")
-            continue;
         var property = {};
         property.name = propertyName;
         property.parentObjectProxy = objectProxy;
         var isGetter = object["__lookupGetter__"] && object.__lookupGetter__(propertyName);
         if (!property.isGetter) {
             var childObject = object[propertyName];
-            var childObjectProxy = {};
-            childObjectProxy.objectId = objectProxy.objectId;
+            var childObjectProxy = new InjectedScript.createProxyObject(childObject, objectProxy.objectId);
             childObjectProxy.path = objectProxy.path ? objectProxy.path.slice() : [];
             childObjectProxy.path.push(propertyName);
-
             childObjectProxy.protoDepth = objectProxy.protoDepth || 0;
-            childObjectProxy.description = Object.describe(childObject, true);
             property.value = childObjectProxy;
-
-            var type = typeof childObject;
-            if (type === "object" || type === "function") {
-                for (var subPropertyName in childObject) {
-                    if (propertyName === "__treeElementIdentifier")
-                        continue;
-                    childObjectProxy.hasChildren = true;
-                    break;
-                }
-            }
         } else {
             // FIXME: this should show something like "getter" (bug 16734).
             property.value = { description: "\u2014" }; // em dash
@@ -887,6 +871,14 @@ InjectedScript.createProxyObject = function(object, objectId)
     result.type = Object.type(object, InjectedScript._window());
     if (result.type === "node")
         result.nodeId = InspectorController.pushNodePathToFrontend(object, false);
+
+    var type = typeof object;
+    if (type === "object" || type === "function") {
+        for (var subPropertyName in object) {
+            result.hasChildren = true;
+            break;
+        }
+    }
     try {
         result.description = Object.describe(object, true, InjectedScript._window());
     } catch (e) {
