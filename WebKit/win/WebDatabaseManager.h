@@ -73,6 +73,10 @@ public:
         /* [in] */ BSTR databaseName,
         /* [in] */ IWebSecurityOrigin* origin);
 
+    virtual HRESULT STDMETHODCALLTYPE setQuota(
+        /* [in] */ BSTR origin,
+        /* [in] */ unsigned long long quota);
+
     // DatabaseTrackerClient
     virtual void dispatchDidModifyOrigin(WebCore::SecurityOrigin*);
     virtual void dispatchDidModifyDatabase(WebCore::SecurityOrigin*, const WebCore::String& databaseName);

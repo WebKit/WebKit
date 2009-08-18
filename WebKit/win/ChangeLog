@@ -1,3 +1,17 @@
+2009-08-18  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Fix of <https://bugs.webkit.org/show_bug.cgi?id=28326> DRT on Windows doesn't support 
+        LayoutTestController::setQuota or print a callback on UIDelegate::exceededDatabaseQuota.
+        
+        Added a setQuota interface method to IWebDatabaseManager and implemented it.
+
+        * Interfaces/IWebDatabaseManager.idl:
+        * WebDatabaseManager.cpp:
+        (WebDatabaseManager::setQuota):
+        * WebDatabaseManager.h:
+
 2009-08-18  Drew Wilson  <atwilson@google.com>
 
         Unreviewed (build break).

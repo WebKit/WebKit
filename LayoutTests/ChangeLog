@@ -1,3 +1,11 @@
+2009-08-18  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Removed now passing storage tests from the Skipped list, now we pass all storage tests on Windows.
+
+        * platform/win/Skipped:
+
 2009-08-18  Michelangelo De Simone  <micdesim@gmail.com>
 
         Reviewed by Adele Peterson.
