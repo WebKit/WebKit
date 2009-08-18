@@ -81,6 +81,8 @@ void CSSSelector::extractPseudoType() const
     DEFINE_STATIC_LOCAL(AtomicString, disabled, ("disabled"));
     DEFINE_STATIC_LOCAL(AtomicString, readOnly, ("read-only"));
     DEFINE_STATIC_LOCAL(AtomicString, readWrite, ("read-write"));
+    DEFINE_STATIC_LOCAL(AtomicString, valid, ("valid"));
+    DEFINE_STATIC_LOCAL(AtomicString, invalid, ("invalid"));
     DEFINE_STATIC_LOCAL(AtomicString, drag, ("-webkit-drag"));
     DEFINE_STATIC_LOCAL(AtomicString, dragAlias, ("-khtml-drag")); // was documented with this name in Apple documentation, so keep an alia
     DEFINE_STATIC_LOCAL(AtomicString, empty, ("empty"));
@@ -179,6 +181,10 @@ void CSSSelector::extractPseudoType() const
         m_pseudoType = PseudoReadOnly;
     else if (m_value == readWrite)
         m_pseudoType = PseudoReadWrite;
+    else if (m_value == valid)
+        m_pseudoType = PseudoValid;
+    else if (m_value == invalid)
+        m_pseudoType = PseudoInvalid;
     else if (m_value == drag || m_value == dragAlias)
         m_pseudoType = PseudoDrag;
     else if (m_value == enabled)

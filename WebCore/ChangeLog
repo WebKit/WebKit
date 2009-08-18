@@ -1,3 +1,44 @@
+2009-08-18  Michelangelo De Simone  <micdesim@gmail.com>
+
+        Reviewed by Adele Peterson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27357
+        Support for :valid and :invalid CSS selectors, from HTML5 specs.
+        http://www.whatwg.org/specs/web-apps/current-work/#selector-valid
+
+        Tests: fast/css/pseudo-invalid-001.html
+               fast/css/pseudo-invalid-002.html
+               fast/css/pseudo-valid-001.html
+               fast/css/pseudo-valid-002.html
+               fast/css/pseudo-valid-003.html
+               fast/css/pseudo-valid-004.html
+               fast/css/pseudo-valid-005.html
+               fast/css/pseudo-valid-006.html
+               fast/css/pseudo-valid-007.html
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::extractPseudoType): extracts new pseudo-classes
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::canShareStyleWithElement): Make sure we don't share style between
+form controls that have different validity states.
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector): applies
+        style associated to new pseudo-classes
+        * dom/Element.h:
+        (WebCore::Element::willValidate): pushed up in hierarchy
+        (WebCore::Element::isValidFormControlElement): checks for valid form
+        control elements (wraps ValidityState::valid())
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::willValidate): minor clean up
+        (WebCore::HTMLFormControlElement::isValidFormControlElement): ditto
+        * html/HTMLFormControlElement.h:
+        * html/HTMLKeygenElement.h:
+        (WebCore::HTMLKeygenElement::willValidate): added
+        * html/HTMLObjectElement.h:
+        (WebCore::HTMLObjectElement::willValidate): added
+        * html/HTMLObjectElement.idl:
+
 2009-08-18  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

@@ -104,6 +104,8 @@ public:
 
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 
+    virtual bool willValidate() const { return false; }
+
 private:
     void updateDocNamedItem();
 

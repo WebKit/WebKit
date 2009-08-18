@@ -46,6 +46,7 @@ module html {
                  attribute [ConvertNullToNullString, Reflect=usemap] DOMString       useMap;
                  attribute long            vspace;
                  attribute [ConvertNullToNullString, Reflect] DOMString       width;
+        readonly attribute boolean         willValidate;
 
         // Introduced in DOM Level 2:
         readonly attribute [CheckFrameSecurity] Document        contentDocument;

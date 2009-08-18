@@ -133,6 +133,8 @@ namespace WebCore {
             PseudoRequired,
             PseudoReadOnly,
             PseudoReadWrite,
+            PseudoValid,
+            PseudoInvalid,
             PseudoIndeterminate,
             PseudoTarget,
             PseudoBefore,

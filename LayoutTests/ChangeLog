@@ -1,3 +1,31 @@
+2009-08-18  Michelangelo De Simone  <micdesim@gmail.com>
+
+        Reviewed by Adele Peterson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27357
+        Tests for :valid and :invalid CSS selectors, from HTML5 specs.
+        http://www.whatwg.org/specs/web-apps/current-work/#selector-valid
+
+        * fast/css/pseudo-invalid-001-expected.txt: Added.
+        * fast/css/pseudo-invalid-001.html: Added.
+        * fast/css/pseudo-invalid-002-expected.txt: Added.
+        * fast/css/pseudo-invalid-002.html: Added.
+        * fast/css/pseudo-valid-001-expected.txt: Added.
+        * fast/css/pseudo-valid-001.html: Added.
+        * fast/css/pseudo-valid-002-expected.txt: Added.
+        * fast/css/pseudo-valid-002.html: Added.
+        * fast/css/pseudo-valid-003-expected.txt: Added.
+        * fast/css/pseudo-valid-003.html: Added.
+        * fast/css/pseudo-valid-004-expected.txt: Added.
+        * fast/css/pseudo-valid-004.html: Added.
+        * fast/css/pseudo-valid-005-expected.txt: Added.
+        * fast/css/pseudo-valid-005.html: Added.
+        * fast/css/pseudo-valid-006-expected.txt: Added.
+        * fast/css/pseudo-valid-006.html: Added.
+        * fast/css/pseudo-valid-007-expected.txt: Added.
+        * fast/css/pseudo-valid-007.html: Added.
+        * fast/dom/plugin-attributes-enumeration-expected.txt:
+
 2009-08-16  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.

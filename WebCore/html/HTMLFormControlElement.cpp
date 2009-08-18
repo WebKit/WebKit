@@ -260,7 +260,7 @@ bool HTMLFormControlElement::willValidate() const
     //      The control does not have a repetition template as an ancestor.
     //      The control does not have a datalist element as an ancestor.
     //      The control is not an output element.
-    return form() && name().length() && !disabled() && !isReadOnlyFormControl();
+    return form() && !name().isEmpty() && !disabled() && !isReadOnlyFormControl();
 }
 
 void HTMLFormControlElement::setCustomValidity(const String& error)
@@ -297,6 +297,11 @@ HTMLFormElement* HTMLFormControlElement::virtualForm() const
 bool HTMLFormControlElement::isDefaultButtonForForm() const
 {
     return isSuccessfulSubmitButton() && m_form && m_form->defaultButton() == this;
+}
+
+bool HTMLFormControlElement::isValidFormControlElement()
+{
+    return validity()->valid();
 }
 
 void HTMLFormControlElement::removeFromForm()

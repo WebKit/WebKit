@@ -1,0 +1,31 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+<style>
+ :valid { background: lime; }
+ :invalid { background: red; }
+ input { background: red; }
+</style>
+</head>
+<body>
+<p id="description"></p>
+<form method="get">
+<input name="victim" type="text" value="Lorem ipsum"/>
+<input name="victim" type="text" value="Lorem ipsum" required/>
+<input name="victim" type="text" value="Lorem ipsum" pattern="Lorem ipsum"/>
+</form>
+<div id="console"></div>
+<script>
+description("This test performs a check for the :valid CSS selector on various input elements.");
+
+v = document.getElementsByName("victim");
+for (i = 0; i < v.length; i++)
+    shouldBe("document.defaultView.getComputedStyle(v[i], null).getPropertyValue('background-color')", "'rgb(0, 255, 0)'");
+
+var successfullyParsed = true;
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>
