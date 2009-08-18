@@ -1,3 +1,23 @@
+2009-08-17  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix 300,000+ leaks seen during the regression tests.
+
+        EvalCodeCache::get was heap-allocating an EvalExecutable instance without adopting the initial reference.
+        While fixing this we noticed that EvalExecutable was a RefCounted type that was sometimes stack allocated.
+        To make this cleaner and to prevent clients from attempting to ref a stack-allocated instance, we move the
+        refcounting down to a new CacheableEvalExecutable class that derives from EvalExecutable. EvalCodeCache::get
+        now uses CacheableEvalExecutable::create and avoids the leak.
+
+        * bytecode/EvalCodeCache.h:
+        (JSC::EvalCodeCache::get):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::callEval):
+        * runtime/Executable.h:
+        (JSC::CacheableEvalExecutable::create):
+        (JSC::CacheableEvalExecutable::CacheableEvalExecutable):
+
 2009-08-17  Oliver Hunt  <oliver@apple.com>
 
         RS=Mark Rowe.

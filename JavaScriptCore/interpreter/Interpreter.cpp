@@ -350,11 +350,10 @@ NEVER_INLINE JSValue Interpreter::callEval(CallFrame* callFrame, RegisterFile* r
     LiteralParser preparser(callFrame, programSource, LiteralParser::NonStrictJSON);
     if (JSValue parsedObject = preparser.tryLiteralParse())
         return parsedObject;
-    
-    
+
     ScopeChainNode* scopeChain = callFrame->scopeChain();
     CodeBlock* codeBlock = callFrame->codeBlock();
-    RefPtr<EvalExecutable> eval = codeBlock->evalCodeCache().get(callFrame, programSource, scopeChain, exceptionValue);
+    RefPtr<CacheableEvalExecutable> eval = codeBlock->evalCodeCache().get(callFrame, programSource, scopeChain, exceptionValue);
 
     JSValue result = jsUndefined();
     if (eval)

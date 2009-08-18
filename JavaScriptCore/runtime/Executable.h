@@ -56,7 +56,7 @@ namespace JSC {
         SourceCode m_source;
     };
 
-    class EvalExecutable : public TemplateExecutable<EvalNode, EvalCodeBlock>, public RefCounted<EvalExecutable> {
+    class EvalExecutable : public TemplateExecutable<EvalNode, EvalCodeBlock> {
     public:
         EvalExecutable(const SourceCode& source)
             : TemplateExecutable<EvalNode, EvalCodeBlock>(source)
@@ -64,6 +64,17 @@ namespace JSC {
         }
 
         JSObject* parse(ExecState* exec, bool allowDebug = true);
+    };
+
+    class CacheableEvalExecutable : public EvalExecutable, public RefCounted<CacheableEvalExecutable> {
+    public:
+        static PassRefPtr<CacheableEvalExecutable> create(const SourceCode& source) { return adoptRef(new CacheableEvalExecutable(source)); }
+
+    private:
+        CacheableEvalExecutable(const SourceCode& source)
+            : EvalExecutable(source)
+        {
+        }
     };
 
     class ProgramExecutable : public TemplateExecutable<ProgramNode, ProgramCodeBlock> {
