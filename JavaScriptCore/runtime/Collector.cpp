@@ -23,6 +23,7 @@
 
 #include "ArgList.h"
 #include "CallFrame.h"
+#include "CodeBlock.h"
 #include "CollectorHeapIterator.h"
 #include "Interpreter.h"
 #include "JSArray.h"
