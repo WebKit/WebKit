@@ -1,3 +1,18 @@
+2009-08-18  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28431
+        <rdar://problem/7137610> Application Cache doesn't work with HTTP authentication
+
+        * http/tests/appcache/auth-expected.txt: Added.
+        * http/tests/appcache/auth.html: Added.
+        * http/tests/appcache/resources/auth: Added.
+        * http/tests/appcache/resources/auth/iframe.php: Added.
+        * http/tests/appcache/resources/auth/manifest.php: Added.
+        * http/tests/appcache/resources/auth/setup.php: Added.
+        * http/tests/appcache/resources/auth/subresource.php: Added.
+
 2009-08-18  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Not reviewed. Forgot to add pixel test results for html-fieldset-crash.html some time ago.

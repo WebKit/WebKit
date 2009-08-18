@@ -97,6 +97,10 @@ private:
 
     PassRefPtr<ResourceHandle> createResourceHandle(const KURL&, ApplicationCacheResource* newestCachedResource);
 
+    // For normal resource loading, WebKit client is asked about each resource individually. Since application cache does not belong to any particular document,
+    // the existing client callback cannot be used, so assume that any client that enables application cache also wants it to use credential storage.
+    virtual bool shouldUseCredentialStorage(ResourceHandle*) { return true; }
+
     virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&);
     virtual void didReceiveData(ResourceHandle*, const char*, int, int lengthReceived);
     virtual void didFinishLoading(ResourceHandle*);

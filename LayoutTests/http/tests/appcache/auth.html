@@ -1,0 +1,28 @@
+<body>
+<p>Test that appcache works with authentication. Should say SUCCESS:</p>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+// Store authentication credentials.
+var req = new XMLHttpRequest;
+req.open("GET", "resources/auth/setup.php", false, "login", "pasword");
+req.send();
+
+var ifr = document.createElement("iframe");
+ifr.setAttribute("src", "resources/auth/iframe.php");
+document.body.appendChild(ifr);
+
+function success()
+{
+    var text = document.createElement("p");
+    text.appendChild(document.createTextNode("SUCCESS"));
+    document.body.replaceChild(text, document.getElementsByTagName("iframe")[0]);
+
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+</script>
+</body>
