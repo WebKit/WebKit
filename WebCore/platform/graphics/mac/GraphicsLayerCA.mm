@@ -432,6 +432,15 @@ void GraphicsLayerCA::removeFromParent()
     GraphicsLayer::removeFromParent();
 }
 
+void GraphicsLayerCA::setMaskLayer(GraphicsLayer* layer)
+{
+    if (layer == m_maskLayer)
+        return;
+
+    GraphicsLayer::setMaskLayer(layer);
+    noteLayerPropertyChanged(MaskLayerChanged);
+}
+
 void GraphicsLayerCA::setPosition(const FloatPoint& point)
 {
     if (point == m_position)
@@ -733,6 +742,9 @@ void GraphicsLayerCA::recursiveCommitChanges()
 {
     commitLayerChanges();
 
+    if (m_maskLayer)
+        static_cast<GraphicsLayerCA*>(m_maskLayer)->commitLayerChanges();
+
     const Vector<GraphicsLayer*>& childLayers = children();
     size_t numChildren = childLayers.size();
     for (size_t i = 0; i < numChildren; ++i) {
@@ -811,6 +823,9 @@ void GraphicsLayerCA::commitLayerChanges()
 
     if (m_uncommittedChanges & GeometryOrientationChanged)
         updateGeometryOrientation();
+
+    if (m_uncommittedChanges & MaskLayerChanged)
+        updateMaskLayer();
 
     m_uncommittedChanges = NoChange;
     END_BLOCK_OBJC_EXCEPTIONS
@@ -1094,6 +1109,12 @@ void GraphicsLayerCA::updateGeometryOrientation()
     // Geometry orientation is mapped onto children transform in older QuartzCores,
     // so is handled via setGeometryOrientation().
 #endif
+}
+
+void GraphicsLayerCA::updateMaskLayer()
+{
+    CALayer* maskCALayer = m_maskLayer ? m_maskLayer->platformLayer() : 0;
+    [m_layer.get() setMask:maskCALayer];
 }
 
 void GraphicsLayerCA::updateLayerAnimations()

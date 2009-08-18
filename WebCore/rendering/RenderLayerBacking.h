@@ -76,6 +76,8 @@ public:
     bool hasContentsLayer() const { return m_foregroundLayer != 0; }
     GraphicsLayer* foregroundLayer() const { return m_foregroundLayer.get(); }
     
+    bool hasMaskLayer() const { return m_maskLayer != 0; }
+
     GraphicsLayer* parentForSublayers() const { return m_clippingLayer ? m_clippingLayer.get() : m_graphicsLayer.get(); }
     GraphicsLayer* childForSuperlayers() const { return m_ancestorClippingLayer ? m_ancestorClippingLayer.get() : m_graphicsLayer.get(); }
 
@@ -127,7 +129,10 @@ private:
 
     bool updateClippingLayers(bool needsAncestorClip, bool needsDescendantClip);
     bool updateForegroundLayer(bool needsForegroundLayer);
+    bool updateMaskLayer(bool needsMaskLayer);
 
+    GraphicsLayerPaintingPhase paintingPhaseForPrimaryLayer() const;
+    
     IntSize contentOffsetInCompostingLayer() const;
     // Result is transform origin in pixels.
     FloatPoint3D computeTransformOrigin(const IntRect& borderBox) const;
@@ -166,6 +171,7 @@ private:
     OwnPtr<GraphicsLayer> m_graphicsLayer;
     OwnPtr<GraphicsLayer> m_foregroundLayer;       // only used in cases where we need to draw the foreground separately
     OwnPtr<GraphicsLayer> m_clippingLayer;         // only used if we have clipping on a stacking context, with compositing children
+    OwnPtr<GraphicsLayer> m_maskLayer;             // only used if we have a mask
 
     IntRect m_compositedBounds;
 

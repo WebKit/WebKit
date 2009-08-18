@@ -2,6 +2,24 @@
 
         Reviewed by Dave Hyatt.
 
+        Render -webkit-mask via compositing layers when possible
+        https://bugs.webkit.org/show_bug.cgi?id=28414
+        
+        Tests for masked, composited layers.
+
+        * compositing/masks/masked-ancestor.html: Added.
+        * compositing/masks/simple-composited-mask.html: Added.
+        * platform/mac/compositing/masks/masked-ancestor-expected.checksum: Added.
+        * platform/mac/compositing/masks/masked-ancestor-expected.png: Added.
+        * platform/mac/compositing/masks/masked-ancestor-expected.txt: Added.
+        * platform/mac/compositing/masks/simple-composited-mask-expected.checksum: Added.
+        * platform/mac/compositing/masks/simple-composited-mask-expected.png: Added.
+        * platform/mac/compositing/masks/simple-composited-mask-expected.txt: Added.
+
+2009-08-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt.
+
         Layer content misplaced with compositing, z-index and overflow
         https://bugs.webkit.org/show_bug.cgi?id=28361
         

@@ -62,6 +62,8 @@ public:
 
     virtual void removeFromParent();
 
+    virtual void setMaskLayer(GraphicsLayer*);
+
     virtual void setPosition(const FloatPoint&);
     virtual void setAnchorPoint(const FloatPoint3D&);
     virtual void setSize(const FloatSize&);
@@ -172,6 +174,7 @@ private:
     void updateContentsVideo();
     void updateContentsRect();
     void updateGeometryOrientation();
+    void updateMaskLayer();
 
     void updateLayerAnimations();
 
@@ -200,7 +203,8 @@ private:
         ContentsImageChanged = 1 << 17,
         ContentsVideoChanged = 1 << 18,
         ContentsRectChanged = 1 << 19,
-        GeometryOrientationChanged = 1 << 20
+        GeometryOrientationChanged = 1 << 20,
+        MaskLayerChanged = 1 << 21
     };
     typedef unsigned LayerChangeFlags;
     void noteLayerPropertyChanged(LayerChangeFlags flags);

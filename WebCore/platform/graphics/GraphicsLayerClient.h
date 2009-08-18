@@ -37,9 +37,10 @@ class IntRect;
 class FloatPoint;
 
 enum GraphicsLayerPaintingPhase {
-    GraphicsLayerPaintBackgroundMask = (1 << 0),
-    GraphicsLayerPaintForegroundMask = (1 << 1),
-    GraphicsLayerPaintAllMask = (GraphicsLayerPaintBackgroundMask | GraphicsLayerPaintForegroundMask)
+    GraphicsLayerPaintBackground = (1 << 0),
+    GraphicsLayerPaintForeground = (1 << 1),
+    GraphicsLayerPaintMask = (1 << 2),
+    GraphicsLayerPaintAll = (GraphicsLayerPaintBackground | GraphicsLayerPaintForeground | GraphicsLayerPaintMask)
 };
 
 enum AnimatedPropertyID {

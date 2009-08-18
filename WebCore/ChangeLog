@@ -1,6 +1,81 @@
 2009-08-17  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt.
+        
+        Render -webkit-mask via compositing layers when possible
+        https://bugs.webkit.org/show_bug.cgi?id=28414
+        
+        Implement accelerated compositing of -webkit-mask, when combined
+        with already-composited content.
+        
+        RenderLayerBacking now creates an additional GraphicsLayer for the mask contents,
+        and sets this as the mask on another GraphicsLayer via the setMaskLayer() method.
+        GraphicsLayerCA then applies the mask using -[CALayer setMask:].
+        
+        The enum values for GraphicsLayerPaintingPhase were renamed to avoid the
+        confusion with "mask", and a new value, GraphicsLayerPaintMask, was added which
+        indicates that just the mask is painting.
+        
+        When painting the composited mask, we need to paint with the normal compositing
+        mode rather than CompositeDestinationIn, so InlineFlowBox and RenderBox now consult
+        layer()->hasCompositedMask() to pick the mode. If the mask is composited, they no longer
+        need to make transparency layers.
+        
+        We no longer have to throw video rendering into software because of masks.
+        
+        When a masked element has composited descendants, that element needs to
+        become composited so that the mask can be applied via compositing.
+
+        Tests: compositing/masks/masked-ancestor.html
+               compositing/masks/simple-composited-mask.html
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::GraphicsLayer):
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::maskLayer):
+        (WebCore::GraphicsLayer::setMaskLayer):
+        (WebCore::GraphicsLayer::paintingPhase):
+        (WebCore::GraphicsLayer::setPaintingPhase):
+        * platform/graphics/GraphicsLayerClient.h:
+        (WebCore::):
+        * platform/graphics/mac/GraphicsLayerCA.h:
+        (WebCore::GraphicsLayerCA::):
+        * platform/graphics/mac/GraphicsLayerCA.mm:
+        (WebCore::GraphicsLayerCA::setMaskLayer):
+        (WebCore::GraphicsLayerCA::recursiveCommitChanges):
+        (WebCore::GraphicsLayerCA::commitLayerChanges):
+        (WebCore::GraphicsLayerCA::updateMaskLayer):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paintMask):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintMaskImages):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::hasCompositedMask):
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::hasCompositedMask):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::~RenderLayerBacking):
+        (WebCore::RenderLayerBacking::destroyGraphicsLayer):
+        (WebCore::RenderLayerBacking::updateGraphicsLayerConfiguration):
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+        (WebCore::RenderLayerBacking::updateForegroundLayer):
+        (WebCore::RenderLayerBacking::updateMaskLayer):
+        (WebCore::RenderLayerBacking::paintingPhaseForPrimaryLayer):
+        (WebCore::RenderLayerBacking::setContentsNeedDisplay):
+        (WebCore::RenderLayerBacking::setContentsNeedDisplayInRect):
+        (WebCore::RenderLayerBacking::paintIntoLayer):
+        (WebCore::RenderLayerBacking::paintContents):
+        * rendering/RenderLayerBacking.h:
+        (WebCore::RenderLayerBacking::hasMaskLayer):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+        (WebCore::RenderLayerCompositor::canAccelerateVideoRendering):
+        (WebCore::RenderLayerCompositor::requiresCompositingWhenDescendantsAreCompositing):
+        * rendering/RenderLayerCompositor.h:
+
+2009-08-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt.
 
         Layer content misplaced with compositing, z-index and overflow
         https://bugs.webkit.org/show_bug.cgi?id=28361

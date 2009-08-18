@@ -69,10 +69,11 @@ GraphicsLayer::GraphicsLayer(GraphicsLayerClient* client)
     , m_usingTiledLayer(false)
     , m_masksToBounds(false)
     , m_drawsContent(false)
-    , m_paintingPhase(GraphicsLayerPaintAllMask)
+    , m_paintingPhase(GraphicsLayerPaintAll)
     , m_geometryOrientation(CompositingCoordinatesTopDown)
     , m_contentsOrientation(CompositingCoordinatesTopDown)
     , m_parent(0)
+    , m_maskLayer(0)
 #ifndef NDEBUG
     , m_repaintCount(0)
 #endif

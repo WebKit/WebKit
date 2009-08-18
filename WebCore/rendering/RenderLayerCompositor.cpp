@@ -502,8 +502,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* layer, O
     // If we have a software transform, and we have layers under us, we need to also
     // be composited. Also, if we have opacity < 1, then we need to be a layer so that
     // the child layers are opaque, then rendered with opacity on this layer.
-    if (childState.m_subtreeIsCompositing &&
-        (layer->renderer()->hasTransform() || layer->renderer()->style()->opacity() < 1)) {
+    if (childState.m_subtreeIsCompositing && requiresCompositingWhenDescendantsAreCompositing(layer->renderer())) {
         layer->setMustOverlapCompositedLayers(true);
         if (overlapMap)
             addToOverlapMap(*overlapMap, layer, absBounds, haveComputedBounds);
@@ -572,7 +571,7 @@ bool RenderLayerCompositor::canAccelerateVideoRendering(RenderVideo* o) const
 {
     // FIXME: ideally we need to look at all ancestors for mask or video. But for now,
     // just bail on the obvious cases.
-    if (o->hasMask() || o->hasReflection() || !m_hasAcceleratedCompositing)
+    if (o->hasReflection() || !m_hasAcceleratedCompositing)
         return false;
 
     return o->supportsAcceleratedRendering();
@@ -903,6 +902,11 @@ bool RenderLayerCompositor::requiresCompositingForAnimation(RenderObject* render
             || animController->isAnimatingPropertyOnRenderer(renderer, CSSPropertyWebkitTransform);
     }
     return false;
+}
+
+bool RenderLayerCompositor::requiresCompositingWhenDescendantsAreCompositing(RenderObject* renderer) const
+{
+    return renderer->hasTransform() || renderer->isTransparent() || renderer->hasMask();
 }
 
 // If an element has negative z-index children, those children render in front of the 

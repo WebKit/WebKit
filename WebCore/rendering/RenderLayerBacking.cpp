@@ -64,6 +64,7 @@ RenderLayerBacking::~RenderLayerBacking()
 {
     updateClippingLayers(false, false);
     updateForegroundLayer(false);
+    updateMaskLayer(false);
     destroyGraphicsLayer();
 }
 
@@ -97,6 +98,7 @@ void RenderLayerBacking::destroyGraphicsLayer()
     m_graphicsLayer = 0;
     m_foregroundLayer = 0;
     m_clippingLayer = 0;
+    m_maskLayer = 0;
 }
 
 void RenderLayerBacking::updateLayerOpacity()
@@ -150,6 +152,9 @@ bool RenderLayerBacking::updateGraphicsLayerConfiguration()
     
     if (updateClippingLayers(compositor->clippedByAncestor(m_owningLayer), compositor->clipsCompositingDescendants(m_owningLayer)))
         layerConfigChanged = true;
+
+    if (updateMaskLayer(m_owningLayer->renderer()->hasMask()))
+        m_graphicsLayer->setMaskLayer(m_maskLayer.get());
 
     m_hasDirectlyCompositedContent = false;
     if (canUseDirectCompositing()) {
@@ -250,6 +255,11 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
         m_clippingLayer->setPosition(FloatPoint() + (clippingBox.location() - localCompositingBounds.location()));
         m_clippingLayer->setSize(clippingBox.size());
         m_clippingLayer->setOffsetFromRenderer(clippingBox.location() - IntPoint());
+    }
+    
+    if (m_maskLayer) {
+        m_maskLayer->setSize(m_graphicsLayer->size());
+        m_maskLayer->setPosition(FloatPoint());
     }
     
     if (m_owningLayer->hasTransform()) {
@@ -375,17 +385,54 @@ bool RenderLayerBacking::updateForegroundLayer(bool needsForegroundLayer)
             m_foregroundLayer->setName("Foreground");
 #endif
             m_foregroundLayer->setDrawsContent(true);
-            m_foregroundLayer->setDrawingPhase(GraphicsLayerPaintForegroundMask);
-            m_graphicsLayer->setDrawingPhase(GraphicsLayerPaintBackgroundMask);
+            m_foregroundLayer->setPaintingPhase(GraphicsLayerPaintForeground);
             layerChanged = true;
         }
     } else if (m_foregroundLayer) {
         m_foregroundLayer->removeFromParent();
         m_foregroundLayer = 0;
-        m_graphicsLayer->setDrawingPhase(GraphicsLayerPaintAllMask);
         layerChanged = true;
     }
+
+    if (layerChanged)
+        m_graphicsLayer->setPaintingPhase(paintingPhaseForPrimaryLayer());
+
     return layerChanged;
+}
+
+bool RenderLayerBacking::updateMaskLayer(bool needsMaskLayer)
+{
+    bool layerChanged = false;
+    if (needsMaskLayer) {
+        if (!m_maskLayer) {
+            m_maskLayer = GraphicsLayer::create(this);
+#ifndef NDEBUG
+            m_maskLayer->setName("Mask");
+#endif
+            m_maskLayer->setDrawsContent(true);
+            m_maskLayer->setPaintingPhase(GraphicsLayerPaintMask);
+            layerChanged = true;
+        }
+    } else if (m_maskLayer) {
+        m_maskLayer = 0;
+        layerChanged = true;
+    }
+
+    if (layerChanged)
+        m_graphicsLayer->setPaintingPhase(paintingPhaseForPrimaryLayer());
+
+    return layerChanged;
+}
+
+GraphicsLayerPaintingPhase RenderLayerBacking::paintingPhaseForPrimaryLayer() const
+{
+    unsigned phase = GraphicsLayerPaintBackground;
+    if (!m_foregroundLayer)
+        phase |= GraphicsLayerPaintForeground;
+    if (!m_maskLayer)
+        phase |= GraphicsLayerPaintMask;
+
+    return static_cast<GraphicsLayerPaintingPhase>(phase);
 }
 
 float RenderLayerBacking::compositingOpacity(float rendererOpacity) const
@@ -706,6 +753,9 @@ void RenderLayerBacking::setContentsNeedDisplay()
     
     if (m_foregroundLayer && m_foregroundLayer->drawsContent())
         m_foregroundLayer->setNeedsDisplay();
+
+    if (m_maskLayer && m_maskLayer->drawsContent())
+        m_maskLayer->setNeedsDisplay();
 }
 
 // r is in the coordinate space of the layer's render object
@@ -722,6 +772,11 @@ void RenderLayerBacking::setContentsNeedDisplayInRect(const IntRect& r)
     if (m_foregroundLayer && m_foregroundLayer->drawsContent()) {
         // FIXME: do incremental repaint
         m_foregroundLayer->setNeedsDisplay();
+    }
+
+    if (m_maskLayer && m_maskLayer->drawsContent()) {
+        // FIXME: do incremental repaint
+        m_maskLayer->setNeedsDisplay();
     }
 }
 
@@ -780,7 +835,7 @@ void RenderLayerBacking::paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*
 
     bool shouldPaint = m_owningLayer->hasVisibleContent() && m_owningLayer->isSelfPaintingLayer();
 
-    if (shouldPaint && (paintingPhase & GraphicsLayerPaintBackgroundMask)) {
+    if (shouldPaint && (paintingPhase & GraphicsLayerPaintBackground)) {
         // If this is the root then we need to send in a bigger bounding box
         // because we'll be painting the background as well (see RenderBox::paintRootBoxDecorations()).
         IntRect paintBox = clipRectToApply;
@@ -824,7 +879,10 @@ void RenderLayerBacking::paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*
         restoreClip(context, paintDirtyRect, damageRect);
     }
                 
-    if (shouldPaint && (paintingPhase & GraphicsLayerPaintForegroundMask)) {
+    bool forceBlackText = paintRestriction == PaintRestrictionSelectionOnlyBlackText;
+    bool selectionOnly  = paintRestriction == PaintRestrictionSelectionOnly || paintRestriction == PaintRestrictionSelectionOnlyBlackText;
+
+    if (shouldPaint && (paintingPhase & GraphicsLayerPaintForeground)) {
         // Now walk the sorted list of children with negative z-indices. Only RenderLayers without compositing layers will paint.
         // FIXME: should these be painted as background?
         Vector<RenderLayer*>* negZOrderList = m_owningLayer->negZOrderList();
@@ -832,9 +890,6 @@ void RenderLayerBacking::paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*
             for (Vector<RenderLayer*>::iterator it = negZOrderList->begin(); it != negZOrderList->end(); ++it)
                 it[0]->paintLayer(rootLayer, context, paintDirtyRect, paintRestriction, paintingRoot);
         }
-
-        bool forceBlackText = paintRestriction == PaintRestrictionSelectionOnlyBlackText;
-        bool selectionOnly  = paintRestriction == PaintRestrictionSelectionOnly || paintRestriction == PaintRestrictionSelectionOnlyBlackText;
 
         // Set up the clip used when painting our children.
         setClip(context, paintDirtyRect, clipRectToApply);
@@ -878,7 +933,9 @@ void RenderLayerBacking::paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*
             for (Vector<RenderLayer*>::iterator it = posZOrderList->begin(); it != posZOrderList->end(); ++it)
                 it[0]->paintLayer(rootLayer, context, paintDirtyRect, paintRestriction, paintingRoot);
         }
-        
+    }
+    
+    if (shouldPaint && (paintingPhase & GraphicsLayerPaintMask)) {
         if (renderer()->hasMask() && !selectionOnly && !damageRect.isEmpty()) {
             setClip(context, paintDirtyRect, damageRect);
 
@@ -895,7 +952,7 @@ void RenderLayerBacking::paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*
 }
 
 // Up-call from compositing layer drawing callback.
-void RenderLayerBacking::paintContents(const GraphicsLayer*, GraphicsContext& context, GraphicsLayerPaintingPhase drawingPhase, const IntRect& clip)
+void RenderLayerBacking::paintContents(const GraphicsLayer*, GraphicsContext& context, GraphicsLayerPaintingPhase paintingPhase, const IntRect& clip)
 {
     // We have to use the same root as for hit testing, because both methods
     // can compute and cache clipRects.
@@ -913,7 +970,7 @@ void RenderLayerBacking::paintContents(const GraphicsLayer*, GraphicsContext& co
     IntRect dirtyRect = enclosingBBox;
     dirtyRect.intersect(clipRect);
 
-    paintIntoLayer(m_owningLayer, &context, dirtyRect, PaintRestrictionNone, drawingPhase, renderer());
+    paintIntoLayer(m_owningLayer, &context, dirtyRect, PaintRestrictionNone, paintingPhase, renderer());
 }
 
 bool RenderLayerBacking::startAnimation(double beginTime, const Animation* anim, const KeyframeList& keyframes)
