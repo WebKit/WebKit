@@ -17,7 +17,7 @@ layer at (0,0) size 800x600
           text run at (0,0) width 31: "hello"
       RenderBlock {DIV} at (0,18) size 784x56 [border: (2px solid #FF0000)]
         RenderInline {SPAN} at (0,0) size 0x18
-          RenderInline {FONT} at (0,0) size 0x28
+          RenderInline {FONT} at (0,0) size 0x37
             RenderInline {SPAN} at (0,0) size 0x28
               RenderBR {BR} at (14,14) size 0x28
       RenderBlock (anonymous) at (0,74) size 784x0

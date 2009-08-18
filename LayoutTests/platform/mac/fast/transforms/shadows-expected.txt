@@ -22,37 +22,37 @@ layer at (0,0) size 800x600
       RenderBlock (floating) {DIV} at (20,500) size 40x40 [bgcolor=#FFFFE0]
         RenderText {#text} at (5,5) size 20x20
           text run at (5,5) width 20: "X"
-layer at (100,20) size 50x50
+layer at (100,20) size 40x40
   RenderBlock (floating) {DIV} at (100,20) size 40x40 [bgcolor=#FFFFE0]
-layer at (180,20) size 50x50
+layer at (180,20) size 40x40
   RenderBlock (floating) {DIV} at (180,20) size 40x40 [bgcolor=#FFFFE0]
-layer at (260,20) size 50x50
+layer at (260,20) size 40x40
   RenderBlock (floating) {DIV} at (260,20) size 40x40 [bgcolor=#FFFFE0]
-layer at (340,20) size 50x50
+layer at (340,20) size 40x40
   RenderBlock (floating) {DIV} at (340,20) size 40x40 [bgcolor=#FFFFE0]
-layer at (100,100) size 50x50
+layer at (100,100) size 40x40
   RenderBlock (floating) {DIV} at (100,100) size 40x40 [bgcolor=#FFFFE0]
-layer at (180,100) size 50x50
+layer at (180,100) size 40x40
   RenderBlock (floating) {DIV} at (180,100) size 40x40 [bgcolor=#FFFFE0]
-layer at (260,100) size 50x50
+layer at (260,100) size 40x40
   RenderBlock (floating) {DIV} at (260,100) size 40x40 [bgcolor=#FFFFE0]
-layer at (340,100) size 50x50
+layer at (340,100) size 40x40
   RenderBlock (floating) {DIV} at (340,100) size 40x40 [bgcolor=#FFFFE0]
-layer at (100,180) size 60x60
+layer at (100,180) size 40x40
   RenderBlock (floating) {DIV} at (100,180) size 40x40 [bgcolor=#FFFFE0]
-layer at (180,180) size 60x60
+layer at (180,180) size 40x40
   RenderBlock (floating) {DIV} at (180,180) size 40x40 [bgcolor=#FFFFE0]
-layer at (260,180) size 60x60
+layer at (260,180) size 40x40
   RenderBlock (floating) {DIV} at (260,180) size 40x40 [bgcolor=#FFFFE0]
-layer at (340,180) size 60x60
+layer at (340,180) size 40x40
   RenderBlock (floating) {DIV} at (340,180) size 40x40 [bgcolor=#FFFFE0]
-layer at (100,260) size 60x60
+layer at (100,260) size 40x40
   RenderBlock (floating) {DIV} at (100,260) size 40x40 [bgcolor=#FFFFE0]
-layer at (180,260) size 60x60
+layer at (180,260) size 40x40
   RenderBlock (floating) {DIV} at (180,260) size 40x40 [bgcolor=#FFFFE0]
-layer at (260,260) size 60x60
+layer at (260,260) size 40x40
   RenderBlock (floating) {DIV} at (260,260) size 40x40 [bgcolor=#FFFFE0]
-layer at (340,260) size 60x60
+layer at (340,260) size 40x40
   RenderBlock (floating) {DIV} at (340,260) size 40x40 [bgcolor=#FFFFE0]
 layer at (100,340) size 40x40
   RenderBlock (floating) {DIV} at (100,340) size 40x40 [bgcolor=#FFFFE0]
@@ -70,19 +70,19 @@ layer at (340,340) size 40x40
   RenderBlock (floating) {DIV} at (340,340) size 40x40 [bgcolor=#FFFFE0]
     RenderText {#text} at (5,5) size 20x20
       text run at (5,5) width 20: "X"
-layer at (100,420) size 45x40
+layer at (100,420) size 40x40
   RenderBlock (floating) {DIV} at (100,420) size 40x40 [bgcolor=#FFFFE0]
     RenderText {#text} at (5,5) size 20x20
       text run at (5,5) width 20: "X"
-layer at (180,420) size 45x40
+layer at (180,420) size 40x40
   RenderBlock (floating) {DIV} at (180,420) size 40x40 [bgcolor=#FFFFE0]
     RenderText {#text} at (5,5) size 20x20
       text run at (5,5) width 20: "X"
-layer at (260,420) size 45x40
+layer at (260,420) size 40x40
   RenderBlock (floating) {DIV} at (260,420) size 40x40 [bgcolor=#FFFFE0]
     RenderText {#text} at (5,5) size 20x20
       text run at (5,5) width 20: "X"
-layer at (340,420) size 45x40
+layer at (340,420) size 40x40
   RenderBlock (floating) {DIV} at (340,420) size 40x40 [bgcolor=#FFFFE0]
     RenderText {#text} at (5,5) size 20x20
       text run at (5,5) width 20: "X"

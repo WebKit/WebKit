@@ -38,28 +38,8 @@ namespace WebCore {
 typedef WTF::HashMap<const RootInlineBox*, EllipsisBox*> EllipsisBoxMap;
 static EllipsisBoxMap* gEllipsisBoxMap = 0;
 
-void* RootInlineBox::Overflow::operator new(size_t sz, RenderArena* renderArena) throw()
-{
-    return renderArena->allocate(sz);
-}
-
-void RootInlineBox::Overflow::operator delete(void* ptr, size_t sz)
-{
-    // Stash size where destroy can find it.
-    *(size_t *)ptr = sz;
-}
-
-void RootInlineBox::Overflow::destroy(RenderArena* renderArena)
-{
-    delete this;
-    // Recover the size left there for us by operator delete and free the memory.
-    renderArena->free(*(size_t *)this, this);
-}
-
 void RootInlineBox::destroy(RenderArena* arena)
 {
-    if (m_overflow)
-        m_overflow->destroy(arena);
     detachEllipsisBox(arena);
     InlineFlowBox::destroy(arena);
 }
@@ -155,8 +135,8 @@ void RootInlineBox::addHighlightOverflow()
     // Highlight acts as a selection inflation.
     FloatRect rootRect(0, selectionTop(), width(), selectionHeight());
     IntRect inflatedRect = enclosingIntRect(page->chrome()->client()->customHighlightRect(renderer()->node(), renderer()->style()->highlight(), rootRect));
-    setHorizontalOverflowPositions(min(leftOverflow(), inflatedRect.x()), max(rightOverflow(), inflatedRect.right()));
-    setVerticalOverflowPositions(min(topOverflow(), inflatedRect.y()), max(bottomOverflow(), inflatedRect.bottom()));
+    setHorizontalOverflowPositions(leftLayoutOverflow(), rightLayoutOverflow(), min(leftVisualOverflow(), inflatedRect.x()), max(rightVisualOverflow(), inflatedRect.right()));
+    setVerticalOverflowPositions(topLayoutOverflow(), bottomLayoutOverflow(), min(topVisualOverflow(), inflatedRect.y()), max(bottomVisualOverflow(), inflatedRect.bottom()), height());
 }
 
 void RootInlineBox::paintCustomHighlight(RenderObject::PaintInfo& paintInfo, int tx, int ty, const AtomicString& highlightType)
@@ -205,12 +185,8 @@ bool RootInlineBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
 void RootInlineBox::adjustPosition(int dx, int dy)
 {
     InlineFlowBox::adjustPosition(dx, dy);
-    if (m_overflow) {
-        m_overflow->m_topOverflow += dy;
-        m_overflow->m_bottomOverflow += dy;
-        m_overflow->m_selectionTop += dy;
-        m_overflow->m_selectionBottom += dy;
-    }
+    m_lineTop += dy;
+    m_lineBottom += dy;
     m_blockHeight += dy;
 }
 
@@ -223,6 +199,37 @@ void RootInlineBox::childRemoved(InlineBox* box)
         prev->setLineBreakInfo(0, 0, BidiStatus());
         prev->markDirty();
     }
+}
+
+int RootInlineBox::verticallyAlignBoxes(int heightOfBlock)
+{
+    int maxPositionTop = 0;
+    int maxPositionBottom = 0;
+    int maxAscent = 0;
+    int maxDescent = 0;
+
+    // Figure out if we're in strict mode.  Note that we can't simply use !style()->htmlHacks(),
+    // because that would match almost strict mode as well.
+    RenderObject* curr = renderer();
+    while (curr && !curr->node())
+        curr = curr->container();
+    bool strictMode = (curr && curr->document()->inStrictMode());
+
+    computeLogicalBoxHeights(maxPositionTop, maxPositionBottom, maxAscent, maxDescent, strictMode);
+
+    if (maxAscent + maxDescent < max(maxPositionTop, maxPositionBottom))
+        adjustMaxAscentAndDescent(maxAscent, maxDescent, maxPositionTop, maxPositionBottom);
+
+    int maxHeight = maxAscent + maxDescent;
+    int lineTop = heightOfBlock;
+    int lineBottom = heightOfBlock;
+    placeBoxesVertically(heightOfBlock, maxHeight, maxAscent, strictMode, lineTop, lineBottom);
+    computeVerticalOverflow(lineTop, lineBottom, strictMode);
+    setLineTopBottomPositions(lineTop, lineBottom);
+    
+    heightOfBlock += maxHeight;
+    
+    return heightOfBlock;
 }
 
 GapRects RootInlineBox::fillLineSelectionGap(int selTop, int selHeight, RenderBlock* rootBlock, int blockX, int blockY, int tx, int ty,
@@ -321,9 +328,9 @@ InlineBox* RootInlineBox::lastSelectedBox()
     return 0;
 }
 
-int RootInlineBox::selectionTop()
+int RootInlineBox::selectionTop() const
 {
-    int selectionTop = m_overflow ? m_overflow->m_selectionTop : m_y;
+    int selectionTop = m_lineTop;
     if (!prevRootBox())
         return selectionTop;
 
@@ -405,18 +412,6 @@ EllipsisBox* RootInlineBox::ellipsisBox() const
     if (!m_hasEllipsisBox)
         return false;
     return gEllipsisBoxMap->get(this);
-}
-
-void RootInlineBox::setVerticalOverflowPositions(int top, int bottom) 
-{ 
-    if (!m_overflow) {
-        const Font& font = renderer()->style(m_firstLine)->font();
-        if (top == m_y && bottom == m_y + font.height())
-            return;
-        m_overflow = new (renderer()->renderArena()) Overflow(this);
-    }
-    m_overflow->m_topOverflow = top; 
-    m_overflow->m_bottomOverflow = bottom; 
 }
 
 void RootInlineBox::removeLineBoxFromRenderObject()

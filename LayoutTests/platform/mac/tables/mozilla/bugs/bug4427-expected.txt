@@ -30,7 +30,7 @@ layer at (0,0) size 800x600
                       RenderImage {IMG} at (0,0) size 7x2
                   RenderTableRow {TR} at (0,2) size 175x29
                     RenderTableCell {TD} at (0,2) size 175x29 [r=1 c=0 rs=1 cs=8]
-                      RenderInline {A} at (0,0) size 156x14 [color=#0000EE]
+                      RenderInline {A} at (0,0) size 156x18 [color=#0000EE]
                         RenderImage {IMG} at (0,0) size 156x29
                       RenderImage {IMG} at (156,0) size 19x29
                   RenderTableRow {TR} at (0,31) size 175x1

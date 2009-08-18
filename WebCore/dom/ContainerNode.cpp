@@ -690,7 +690,7 @@ bool ContainerNode::getUpperLeftCorner(FloatPoint& point) const
             point = o->container()->localToAbsolute();
             if (o->isText() && toRenderText(o)->firstTextBox()) {
                 point.move(toRenderText(o)->linesBoundingBox().x(),
-                           toRenderText(o)->firstTextBox()->root()->topOverflow());
+                           toRenderText(o)->firstTextBox()->root()->lineTop());
             } else if (o->isBox()) {
                 RenderBox* box = toRenderBox(o);
                 point.move(box->x(), box->y());

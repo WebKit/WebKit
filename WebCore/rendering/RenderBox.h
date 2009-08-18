@@ -24,6 +24,7 @@
 #define RenderBox_h
 
 #include "RenderBoxModelObject.h"
+#include "RenderOverflow.h"
 #include "ScrollTypes.h"
 
 namespace WebCore {
@@ -80,16 +81,31 @@ public:
     RenderBox* nextSiblingBox() const;
     RenderBox* parentBox() const;
 
-    // The height of a block when you include normal flow overflow spillage out of the bottom
-    // of the block (e.g., a <div style="height:25px"> that has a 100px tall image inside
-    // it would have an overflow height of borderTop() + paddingTop() + 100px.
-    virtual int overflowHeight(bool /*includeInterior*/ = true) const { return height(); }
-    virtual int overflowWidth(bool /*includeInterior*/ = true) const { return width(); }
-    virtual void setOverflowHeight(int) { }
-    virtual void setOverflowWidth(int) { }
-    virtual int overflowLeft(bool /*includeInterior*/ = true) const { return 0; }
-    virtual int overflowTop(bool /*includeInterior*/ = true) const { return 0; }
-    virtual IntRect overflowRect(bool /*includeInterior*/ = true) const { return borderBoxRect(); }
+    IntRect combinedOverflowRect() const { return hasOverflowClip() ? visualOverflowRect() : (m_overflow ? m_overflow->combinedOverflowRect() : borderBoxRect()); }
+    int topCombinedOverflow() const { return hasOverflowClip() ? topVisualOverflow() : std::min(topLayoutOverflow(), topVisualOverflow()); }
+    int bottomCombinedOverflow() const { return hasOverflowClip() ? bottomVisualOverflow() : std::max(bottomLayoutOverflow(), bottomVisualOverflow()); }
+    int leftCombinedOverflow() const { return hasOverflowClip() ? leftVisualOverflow() : std::min(leftLayoutOverflow(), leftVisualOverflow()); }
+    int rightCombinedOverflow() const { return hasOverflowClip() ? rightVisualOverflow() :  std::max(rightLayoutOverflow(), rightVisualOverflow()); }
+    
+    IntRect layoutOverflowRect() const { return m_overflow ? m_overflow->layoutOverflowRect() : borderBoxRect(); }
+    int topLayoutOverflow() const { return m_overflow? m_overflow->topLayoutOverflow() : 0; }
+    int bottomLayoutOverflow() const { return m_overflow ? m_overflow->bottomLayoutOverflow() : height(); }
+    int leftLayoutOverflow() const { return m_overflow ? m_overflow->leftLayoutOverflow() : 0; }
+    int rightLayoutOverflow() const { return m_overflow ? m_overflow->rightLayoutOverflow() : width(); }
+    
+    IntRect visualOverflowRect() const { return m_overflow ? m_overflow->visualOverflowRect() : borderBoxRect(); }
+    int topVisualOverflow() const { return m_overflow? m_overflow->topVisualOverflow() : 0; }
+    int bottomVisualOverflow() const { return m_overflow ? m_overflow->bottomVisualOverflow() : height(); }
+    int leftVisualOverflow() const { return m_overflow ? m_overflow->leftVisualOverflow() : 0; }
+    int rightVisualOverflow() const { return m_overflow ? m_overflow->rightVisualOverflow() : width(); }
+
+    void addLayoutOverflow(const IntRect&);
+    void addVisualOverflow(const IntRect&);
+    
+    void addShadowOverflow();
+    void addOverflowFromChild(RenderBox* child) { addOverflowFromChild(child, IntSize(child->x(), child->y())); }
+    void addOverflowFromChild(RenderBox* child, const IntSize& delta);
+    void clearLayoutOverflow();
 
     int contentWidth() const { return clientWidth() - paddingLeft() - paddingRight(); }
     int contentHeight() const { return clientHeight() - paddingTop() - paddingBottom(); }
@@ -352,6 +368,9 @@ protected:
 
     // For inline replaced elements, the inline box that owns us.
     InlineBox* m_inlineBoxWrapper;
+
+    // Our overflow information.
+    OwnPtr<RenderOverflow> m_overflow;
 
 private:
     // Used to store state between styleWillChange and styleDidChange

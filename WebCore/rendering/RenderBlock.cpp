@@ -129,10 +129,6 @@ RenderBlock::RenderBlock(Node* node)
       , m_positionedObjects(0)
       , m_inlineContinuation(0)
       , m_maxMargin(0)
-      , m_overflowHeight(0)
-      , m_overflowWidth(0)
-      , m_overflowLeft(0)
-      , m_overflowTop(0)
       , m_lineHeight(-1)
 {
     setChildrenInline(true);
@@ -551,103 +547,6 @@ void RenderBlock::removeChild(RenderObject* oldChild)
     }
 }
 
-int RenderBlock::overflowHeight(bool includeInterior) const
-{
-    if (!includeInterior && hasOverflowClip()) {
-        int shadowTop;
-        int shadowBottom;
-        style()->getBoxShadowVerticalExtent(shadowTop, shadowBottom);
-
-        int inflatedHeight = height() + shadowBottom;
-        if (hasReflection())
-            inflatedHeight = max(inflatedHeight, reflectionBox().bottom());
-        return inflatedHeight;
-    }
-    return m_overflowHeight;
-}
-
-int RenderBlock::overflowWidth(bool includeInterior) const
-{
-    if (!includeInterior && hasOverflowClip()) {
-        int shadowLeft;
-        int shadowRight;
-        style()->getBoxShadowHorizontalExtent(shadowLeft, shadowRight);
-
-        int inflatedWidth = width() + shadowRight;
-        if (hasReflection())
-            inflatedWidth = max(inflatedWidth, reflectionBox().right());
-        return inflatedWidth;
-    }
-    return m_overflowWidth;
-}
-
-int RenderBlock::overflowLeft(bool includeInterior) const
-{
-    if (!includeInterior && hasOverflowClip()) {
-        int shadowLeft;
-        int shadowRight;
-        style()->getBoxShadowHorizontalExtent(shadowLeft, shadowRight);
-
-        int left = shadowLeft;
-        if (hasReflection())
-            left = min(left, reflectionBox().x());
-        return left;
-    }
-    return m_overflowLeft;
-}
-
-int RenderBlock::overflowTop(bool includeInterior) const
-{
-    if (!includeInterior && hasOverflowClip()) {
-        int shadowTop;
-        int shadowBottom;
-        style()->getBoxShadowVerticalExtent(shadowTop, shadowBottom);
-
-        int top = shadowTop;
-        if (hasReflection())
-            top = min(top, reflectionBox().y());
-        return top;
-    }
-    return m_overflowTop;
-}
-
-IntRect RenderBlock::overflowRect(bool includeInterior) const
-{
-    if (!includeInterior && hasOverflowClip()) {
-        IntRect box = borderBoxRect();
-
-        int shadowLeft;
-        int shadowRight;
-        int shadowTop;
-        int shadowBottom;
-        style()->getBoxShadowExtent(shadowTop, shadowRight, shadowBottom, shadowLeft);
-
-        box.move(shadowLeft, shadowTop);
-        box.setWidth(box.width() - shadowLeft + shadowRight);
-        box.setHeight(box.height() - shadowTop + shadowBottom);
-
-        if (hasReflection()) {
-            IntRect reflection(reflectionBox());
-            int reflectTop = min(box.y(), reflection.y());
-            int reflectBottom = max(box.bottom(), reflection.bottom());
-            box.setHeight(reflectBottom - reflectTop);
-            box.setY(reflectTop);
-            
-            int reflectLeft = min(box.x(), reflection.x());
-            int reflectRight = max(box.right(), reflection.right());
-            box.setWidth(reflectRight - reflectLeft);
-            box.setX(reflectLeft);
-        }
-        return box;
-    }
-
-    if (!includeInterior && hasOverflowClip())
-        return borderBoxRect();
-    int l = overflowLeft(includeInterior);
-    int t = overflowTop(includeInterior);
-    return IntRect(l, t, overflowWidth(includeInterior) - l, max(overflowHeight(includeInterior), height()) - t);
-}
-
 bool RenderBlock::isSelfCollapsingBlock() const
 {
     // We are not self-collapsing if we
@@ -731,31 +630,6 @@ void RenderBlock::updateScrollInfoAfterLayout()
     }
 }
 
-void RenderBlock::updateOverflowWithShadowAndReflection()
-{
-    if (hasOverflowClip())
-        return;
-
-    int shadowLeft;
-    int shadowRight;
-    int shadowTop;
-    int shadowBottom;
-    style()->getBoxShadowExtent(shadowTop, shadowRight, shadowBottom, shadowLeft);
-
-    m_overflowLeft = min(m_overflowLeft, shadowLeft);
-    m_overflowWidth = max(m_overflowWidth, width() + shadowRight);
-    m_overflowTop = min(m_overflowTop, shadowTop);
-    m_overflowHeight = max(m_overflowHeight, height() + shadowBottom);
-
-    if (hasReflection()) {
-        IntRect reflection(reflectionBox());
-        m_overflowLeft = min(m_overflowLeft, reflection.x());
-        m_overflowWidth = max(m_overflowWidth, reflection.right());
-        m_overflowTop = min(m_overflowTop, reflection.y());
-        m_overflowHeight = max(m_overflowHeight, reflection.bottom());
-    }
-}
-
 void RenderBlock::layout()
 {
     // Update our first letter info now.
@@ -766,13 +640,9 @@ void RenderBlock::layout()
     layoutBlock(false);
     
     // It's safe to check for control clip here, since controls can never be table cells.
-    if (hasControlClip()) {
-        // Because of the lightweight clip, there can never be any overflow from children.
-        m_overflowWidth = width();
-        m_overflowHeight = height();
-        m_overflowLeft = 0;
-        m_overflowTop = 0;
-    }
+    // If we have a lightweight clip, there can never be any overflow from children.
+    if (hasControlClip() && m_overflow)
+        clearLayoutOverflow();
 }
 
 void RenderBlock::layoutBlock(bool relayoutChildren)
@@ -794,8 +664,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
     calcWidth();
     calcColumnWidth();
 
-    m_overflowWidth = width();
-    m_overflowLeft = 0;
+    m_overflow.clear();
 
     if (oldWidth != width() || oldColumnWidth != desiredColumnWidth())
         relayoutChildren = true;
@@ -804,8 +673,6 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
 
     int previousHeight = height();
     setHeight(0);
-
-    m_overflowHeight = 0;
 
     // We use four values, maxTopPos, maxTopNeg, maxBottomPos, and maxBottomNeg, to track
     // our current maximal positive and negative margins.  These values are used when we
@@ -871,31 +738,35 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
                 }
             }
         }
+        
         // We have to rebalance columns to the new height.
         layoutColumns(singleColumnBottom);
-
-        // If the block got expanded in size, then increase our overflowheight to match.
-        if (m_overflowHeight > height())
-            m_overflowHeight -= toAdd;
-        if (m_overflowHeight < height())
-            m_overflowHeight = height();
     }
+
     if (previousHeight != height())
         relayoutChildren = true;
 
-    if ((isCell || isInline() || isFloatingOrPositioned() || isRoot()) && !hasOverflowClip() && !hasControlClip())
-        addVisualOverflow(floatRect());
+    // It's weird that we're treating float information as normal flow overflow, but we do this because floatRect() isn't
+    // able to be propagated up the render tree yet.  Overflow information is however.  This check is designed to catch anyone
+    // who wasn't going to propagate float information up to the parent and yet could potentially be painted by its ancestor.
+    if (isRoot() || expandsToEncloseOverhangingFloats())
+        addOverflowFromFloats();
+
+    // Add overflow from children (unless we're multi-column, since in that case all our child overflow is clipped anyway).
+    if (!hasColumns()) {
+        if (childrenInline())
+            addOverflowFromInlineChildren();
+        else
+            addOverflowFromBlockChildren();
+    }
+
+    // Add visual overflow from box-shadow and reflections.
+    addShadowOverflow();
 
     layoutPositionedObjects(relayoutChildren || isRoot());
 
     positionListMarker();
-
-    // Always ensure our overflow width/height are at least as large as our width/height.
-    m_overflowWidth = max(m_overflowWidth, width());
-    m_overflowHeight = max(m_overflowHeight, height());
-
-    updateOverflowWithShadowAndReflection();
-
+    
     statePusher.pop();
 
     // Update our scroll information if we're overflow:auto/scroll/hidden now that we know if
@@ -905,7 +776,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
     // Repaint with our new bounds if they are different from our old bounds.
     bool didFullRepaint = repainter.repaintAfterLayout();
     if (!didFullRepaint && repaintTop != repaintBottom && (style()->visibility() == VISIBLE || enclosingLayer()->hasVisibleContent())) {
-        IntRect repaintRect(m_overflowLeft, repaintTop, m_overflowWidth - m_overflowLeft, repaintBottom - repaintTop);
+        IntRect repaintRect(leftCombinedOverflow(), repaintTop, rightCombinedOverflow() - leftCombinedOverflow(), repaintBottom - repaintTop);
 
         // FIXME: Deal with multiple column repainting.  We have to split the repaint
         // rect up into multiple rects if it spans columns.
@@ -932,6 +803,28 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
         }
     }
     setNeedsLayout(false);
+}
+
+void RenderBlock::addOverflowFromBlockChildren()
+{
+    for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
+        if (!child->isFloatingOrPositioned())
+            addOverflowFromChild(child);
+    }
+}
+
+void RenderBlock::addOverflowFromFloats()
+{
+    IntRect result;
+    if (!m_floatingObjects)
+        return;
+    FloatingObject* r;
+    DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
+    for (; (r = it.current()); ++it) {
+        if (r->m_shouldPaint && !r->m_renderer->hasSelfPaintingLayer())
+            addOverflowFromChild(r->m_renderer, IntSize(r->m_left + r->m_renderer->marginLeft(), r->m_top + r->m_renderer->marginTop()));
+    }
+    return;
 }
 
 bool RenderBlock::expandsToEncloseOverhangingFloats() const
@@ -1314,9 +1207,6 @@ void RenderBlock::handleBottomOfBlock(int top, int bottom, MarginInfo& marginInf
     // If this happens, ensure that the computed height is increased to the minimal height.
     setHeight(max(height(), top + bottom));
 
-    // Always make sure our overflow height is at least our height.
-    m_overflowHeight = max(height(), m_overflowHeight);
-
     // Update our bottom collapsed margin info.
     setCollapsedBottomMargin(marginInfo);
 }
@@ -1344,8 +1234,7 @@ void RenderBlock::layoutBlockChildren(bool relayoutChildren, int& maxFloatBottom
     int top = borderTop() + paddingTop();
     int bottom = borderBottom() + paddingBottom() + horizontalScrollbarHeight();
 
-    m_overflowHeight = top;
-    setHeight(m_overflowHeight);
+    setHeight(top);
 
     // The margin struct caches all our current margin collapsing state.  The compact struct caches state when we encounter compacts,
     MarginInfo marginInfo(this, top, bottom);
@@ -1474,15 +1363,6 @@ void RenderBlock::layoutBlockChildren(bool relayoutChildren, int& maxFloatBottom
         if (child->isBlockFlow() && toRenderBlock(child)->containsFloats())
             maxFloatBottom = max(maxFloatBottom, addOverhangingFloats(toRenderBlock(child), -child->x(), -child->y(), !childNeededLayout));
 
-        // Update our visual overflow in case the child spills out the block, but only if we were going to paint
-        // the child block ourselves.
-        if (!child->hasSelfPaintingLayer()) {
-            m_overflowTop = min(m_overflowTop, child->y() + child->overflowTop(false));
-            m_overflowHeight = max(m_overflowHeight, height() + child->overflowHeight(false) - child->height());
-            m_overflowWidth = max(child->x() + child->overflowWidth(false), m_overflowWidth);
-            m_overflowLeft = min(child->x() + child->overflowLeft(false), m_overflowLeft);
-        }
-
         IntSize childOffset(child->x() - oldRect.x(), child->y() - oldRect.y());
         if (childOffset.width() || childOffset.height()) {
             view()->addLayoutDelta(childOffset);
@@ -1501,7 +1381,7 @@ void RenderBlock::layoutBlockChildren(bool relayoutChildren, int& maxFloatBottom
 
         ASSERT(oldLayoutDelta == view()->layoutDelta());
     }
-
+    
     // Now do the handling of the bottom of the block, adding in our bottom border/padding and
     // determining the correct collapsed bottom margin information.
     handleBottomOfBlock(top, bottom, marginInfo);
@@ -1610,7 +1490,7 @@ void RenderBlock::paint(PaintInfo& paintInfo, int tx, int ty)
     // FIXME: Could eliminate the isRoot() check if we fix background painting so that the RenderView
     // paints the root's background.
     if (!isRoot()) {
-        IntRect overflowBox = overflowRect(false);
+        IntRect overflowBox = combinedOverflowRect();
         overflowBox.inflate(maximalOutlineSize(paintInfo.phase));
         overflowBox.move(tx, ty);
         if (!overflowBox.intersects(paintInfo.rect))
@@ -2147,9 +2027,9 @@ GapRects RenderBlock::fillInlineSelectionGaps(RenderBlock* rootBlock, int blockX
 
     if (lastSelectedLine && selectionState() != SelectionEnd && selectionState() != SelectionBoth) {
         // Go ahead and update our lastY to be the bottom of the last selected line.
-        lastTop = (ty - blockY) + lastSelectedLine->bottomOverflow();
-        lastLeft = leftSelectionOffset(rootBlock, lastSelectedLine->bottomOverflow());
-        lastRight = rightSelectionOffset(rootBlock, lastSelectedLine->bottomOverflow());
+        lastTop = (ty - blockY) + lastSelectedLine->selectionBottom();
+        lastLeft = leftSelectionOffset(rootBlock, lastSelectedLine->selectionBottom());
+        lastRight = rightSelectionOffset(rootBlock, lastSelectedLine->selectionBottom());
     }
     return result;
 }
@@ -2700,13 +2580,13 @@ RenderBlock::floatBottom() const
 IntRect RenderBlock::floatRect() const
 {
     IntRect result;
-    if (!m_floatingObjects || hasOverflowClip())
+    if (!m_floatingObjects || hasOverflowClip() || hasColumns())
         return result;
     FloatingObject* r;
     DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
     for (; (r = it.current()); ++it) {
         if (r->m_shouldPaint && !r->m_renderer->hasSelfPaintingLayer()) {
-            IntRect childRect = r->m_renderer->overflowRect(false);
+            IntRect childRect = r->m_renderer->combinedOverflowRect();
             childRect.move(r->m_left + r->m_renderer->marginLeft(), r->m_top + r->m_renderer->marginTop());
             result.unite(childRect);
         }
@@ -2717,10 +2597,11 @@ IntRect RenderBlock::floatRect() const
 
 int RenderBlock::lowestPosition(bool includeOverflowInterior, bool includeSelf) const
 {
-    if (!includeOverflowInterior && (hasOverflowClip() || hasControlClip()))
-        return includeSelf && width() > 0 ? overflowHeight(false) : 0;
-    
     int bottom = includeSelf && width() > 0 ? height() : 0;
+
+    if (!includeOverflowInterior && (hasOverflowClip() || hasControlClip()))
+        return bottom;
+    
     if (!hasColumns()) {
         // FIXME: Come up with a way to use the layer tree to avoid visiting all the kids.
         // For now, we have to descend into all the children, since we may have a huge abs div inside
@@ -2744,7 +2625,7 @@ int RenderBlock::lowestPosition(bool includeOverflowInterior, bool includeSelf) 
     int relativeOffset = includeSelf && isRelPositioned() ? relativePositionOffsetY() : 0;
 
     if (includeSelf)
-        bottom = max(bottom, m_overflowHeight + relativeOffset);
+        bottom = max(bottom, bottomLayoutOverflow() + relativeOffset);
         
     if (m_positionedObjects) {
         RenderBox* r;
@@ -2786,8 +2667,8 @@ int RenderBlock::lowestPosition(bool includeOverflowInterior, bool includeSelf) 
     if (!includeSelf) {
         bottom = max(bottom, borderTop() + paddingTop() + paddingBottom() + relativeOffset);
         if (childrenInline()) {
-            if (lastLineBox()) {
-                int childBottomEdge = lastLineBox()->y() + lastLineBox()->height();
+            if (lastRootBox()) {
+                int childBottomEdge = lastRootBox()->selectionBottom();
                 bottom = max(bottom, childBottomEdge + paddingBottom() + relativeOffset);
             }
         } else {
@@ -2807,10 +2688,10 @@ int RenderBlock::lowestPosition(bool includeOverflowInterior, bool includeSelf) 
 
 int RenderBlock::rightmostPosition(bool includeOverflowInterior, bool includeSelf) const
 {
-    if (!includeOverflowInterior && (hasOverflowClip() || hasControlClip()))
-        return includeSelf && height() > 0 ? overflowWidth(false) : 0;
-
     int right = includeSelf && height() > 0 ? width() : 0;
+
+    if (!includeOverflowInterior && (hasOverflowClip() || hasControlClip()))
+        return right;
 
     if (!hasColumns()) {
         // FIXME: Come up with a way to use the layer tree to avoid visiting all the kids.
@@ -2834,7 +2715,7 @@ int RenderBlock::rightmostPosition(bool includeOverflowInterior, bool includeSel
     int relativeOffset = includeSelf && isRelPositioned() ? relativePositionOffsetX() : 0;
 
     if (includeSelf)
-        right = max(right, m_overflowWidth + relativeOffset);
+        right = max(right, rightLayoutOverflow() + relativeOffset);
 
     if (m_positionedObjects) {
         RenderBox* r;
@@ -2901,10 +2782,11 @@ int RenderBlock::rightmostPosition(bool includeOverflowInterior, bool includeSel
 
 int RenderBlock::leftmostPosition(bool includeOverflowInterior, bool includeSelf) const
 {
-    if (!includeOverflowInterior && (hasOverflowClip() || hasControlClip()))
-        return includeSelf && height() > 0 ? overflowLeft(false) : width();
-
     int left = includeSelf && height() > 0 ? 0 : width();
+    
+    if (!includeOverflowInterior && (hasOverflowClip() || hasControlClip()))
+        return left;
+
     if (!hasColumns()) {
         // FIXME: Come up with a way to use the layer tree to avoid visiting all the kids.
         // For now, we have to descend into all the children, since we may have a huge abs div inside
@@ -2927,7 +2809,7 @@ int RenderBlock::leftmostPosition(bool includeOverflowInterior, bool includeSelf
     int relativeOffset = includeSelf && isRelPositioned() ? relativePositionOffsetX() : 0;
 
     if (includeSelf)
-        left = min(left, m_overflowLeft + relativeOffset);
+        left = min(left, leftLayoutOverflow() + relativeOffset);
 
     if (m_positionedObjects) {
         RenderBox* r;
@@ -3121,9 +3003,8 @@ int RenderBlock::addOverhangingFloats(RenderBlock* child, int xoff, int yoff, bo
 
     int lowestFloatBottom = 0;
 
-    // Floats that will remain the child's responsiblity to paint should factor into its
-    // visual overflow.
-    IntRect floatsOverflowRect;
+    // Floats that will remain the child's responsibility to paint should factor into its
+    // overflow.
     DeprecatedPtrListIterator<FloatingObject> it(*child->m_floatingObjects);
     for (FloatingObject* r; (r = it.current()); ++it) {
         int bottom = child->y() + r->m_bottom;
@@ -3164,13 +3045,9 @@ int RenderBlock::addOverhangingFloats(RenderBlock* child, int xoff, int yoff, bo
             // it should paint.
             r->m_shouldPaint = true;
 
-        if (r->m_shouldPaint && !r->m_renderer->hasSelfPaintingLayer()) {
-            IntRect floatOverflowRect = r->m_renderer->overflowRect(false);
-            floatOverflowRect.move(r->m_left + r->m_renderer->marginLeft(), r->m_top + r->m_renderer->marginTop());
-            floatsOverflowRect.unite(floatOverflowRect);
-        }
+        if (r->m_shouldPaint && !r->m_renderer->hasSelfPaintingLayer())
+            child->addOverflowFromChild(r->m_renderer, IntSize(r->m_left + r->m_renderer->marginLeft(), r->m_top + r->m_renderer->marginTop()));
     }
-    child->addVisualOverflow(floatsOverflowRect);
     return lowestFloatBottom;
 }
 
@@ -3299,16 +3176,6 @@ int RenderBlock::getClearDelta(RenderBox* child, int yPos)
     return result;
 }
 
-void RenderBlock::addVisualOverflow(const IntRect& r)
-{
-    if (r.isEmpty())
-        return;
-    m_overflowLeft = min(m_overflowLeft, r.x());
-    m_overflowWidth = max(m_overflowWidth, r.right());
-    m_overflowTop = min(m_overflowTop, r.y());
-    m_overflowHeight = max(m_overflowHeight, r.bottom());
-}
-
 bool RenderBlock::isPointInOverflowControl(HitTestResult& result, int _x, int _y, int _tx, int _ty)
 {
     if (!scrollsOverflow())
@@ -3324,7 +3191,7 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
 
     if (!isRenderView()) {
         // Check if we need to do anything at all.
-        IntRect overflowBox = overflowRect(false);
+        IntRect overflowBox = combinedOverflowRect();
         overflowBox.move(tx, ty);
         if (!overflowBox.contains(_x, _y))
             return false;
@@ -3533,9 +3400,9 @@ VisiblePosition RenderBlock::positionForPointWithInlineChildren(const IntPoint& 
         if (root->nextRootBox()) {
             // FIXME: We would prefer to make the break point halfway between the bottom
             // of the previous root box and the top of the next root box.
-            bottom = root->nextRootBox()->topOverflow();
+            bottom = root->nextRootBox()->lineTop();
         } else
-            bottom = root->bottomOverflow() + verticalLineClickFudgeFactor;
+            bottom = root->lineBottom() + verticalLineClickFudgeFactor;
 
         // check if this root line box is located at this y coordinate
         if (pointInContents.y() < bottom) {
@@ -3554,7 +3421,7 @@ VisiblePosition RenderBlock::positionForPointWithInlineChildren(const IntPoint& 
     }
 
     if (closestBox) {
-        if (!useWindowsBehavior && pointInContents.y() < firstRootBoxWithChildren->topOverflow() - verticalLineClickFudgeFactor) {
+        if (!useWindowsBehavior && pointInContents.y() < firstRootBoxWithChildren->lineTop() - verticalLineClickFudgeFactor) {
             // y coordinate is above first root line box, so return the start of the first
             return VisiblePosition(positionForBox(firstRootBoxWithChildren->firstLeafChild(), true), DOWNSTREAM);
         }
@@ -3827,14 +3694,16 @@ int RenderBlock::layoutColumns(int endOfContent)
             colCount++;
     }
 
-    m_overflowWidth = max(width(), currX - colGap);
-    m_overflowLeft = min(0, currX + desiredColumnWidth + colGap);
-
-    m_overflowHeight = maxColBottom;
+    int overflowRight = max(width(), currX - colGap);
+    int overflowLeft = min(0, currX + desiredColumnWidth + colGap);
+    int overflowHeight = maxColBottom;
     int toAdd = borderBottom() + paddingBottom() + horizontalScrollbarHeight();
         
     if (computeIntrinsicHeight)
-        setHeight(m_overflowHeight + toAdd);
+        setHeight(maxColBottom + toAdd);
+
+    m_overflow.clear();
+    addLayoutOverflow(IntRect(overflowLeft, 0, overflowRight - overflowLeft, overflowHeight));
 
     v->setPrintRect(IntRect());
     v->setTruncatedAt(0);
@@ -4754,7 +4623,7 @@ static int getHeightForLineCount(RenderBlock* block, int l, bool includeBottom, 
         if (block->childrenInline()) {
             for (RootInlineBox* box = block->firstRootBox(); box; box = box->nextRootBox()) {
                 if (++count == l)
-                    return box->bottomOverflow() + (includeBottom ? (block->borderBottom() + block->paddingBottom()) : 0);
+                    return box->lineBottom() + (includeBottom ? (block->borderBottom() + block->paddingBottom()) : 0);
             }
         }
         else {

@@ -1072,7 +1072,7 @@ IntRect RenderBox::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintCo
     if (style()->visibility() != VISIBLE && !enclosingLayer()->hasVisibleContent())
         return IntRect();
 
-    IntRect r = overflowRect(false);
+    IntRect r = combinedOverflowRect();
 
     RenderView* v = view();
     if (v) {
@@ -2605,9 +2605,9 @@ IntRect RenderBox::localCaretRect(InlineBox* box, int caretOffset, int* extraWid
 
     if (box) {
         RootInlineBox* rootBox = box->root();
-        int top = rootBox->topOverflow();
+        int top = rootBox->lineTop();
         rect.setY(top);
-        rect.setHeight(rootBox->bottomOverflow() - top);
+        rect.setHeight(rootBox->lineBottom() - top);
     }
 
     // If height of box is smaller than font height, use the latter one,
@@ -2765,6 +2765,81 @@ bool RenderBox::shrinkToAvoidFloats() const
 bool RenderBox::avoidsFloats() const
 {
     return isReplaced() || hasOverflowClip() || isHR();
+}
+
+void RenderBox::addShadowOverflow()
+{
+    int shadowLeft;
+    int shadowRight;
+    int shadowTop;
+    int shadowBottom;
+    style()->getBoxShadowExtent(shadowTop, shadowRight, shadowBottom, shadowLeft);
+    IntRect borderBox = borderBoxRect();
+    int overflowLeft = borderBox.x() + shadowLeft;
+    int overflowRight = borderBox.right() + shadowRight;
+    int overflowTop = borderBox.y() + shadowTop;
+    int overflowBottom = borderBox.bottom() + shadowBottom;
+    addVisualOverflow(IntRect(overflowLeft, overflowTop, overflowRight - overflowLeft, overflowBottom - overflowTop));
+}
+
+void RenderBox::addOverflowFromChild(RenderBox* child, const IntSize& delta)
+{
+    // Update our overflow in case the child spills out the block, but only if we were going to paint
+    // the child block ourselves.
+    if (child->hasSelfPaintingLayer())
+        return;
+
+    // Only propagate layout overflow from the child if the child isn't clipping its overflow.  If it is, then
+    // its overflow is internal to it, and we don't care about it.
+    IntRect childLayoutOverflowRect = child->hasOverflowClip() ? child->borderBoxRect() : child->layoutOverflowRect();
+    childLayoutOverflowRect.move(delta);
+    addLayoutOverflow(childLayoutOverflowRect);
+            
+    // Add in visual overflow from the child.  Even if the child clips its overflow, it may still
+    // have visual overflow of its own set from box shadows or reflections.  It is unnecessary to propagate this
+    // overflow if we are clipping our own overflow.
+    if (hasOverflowClip())
+        return;
+    IntRect childVisualOverflowRect = child->visualOverflowRect();
+    childVisualOverflowRect.move(delta);
+    addVisualOverflow(childVisualOverflowRect);
+}
+
+void RenderBox::addLayoutOverflow(const IntRect& rect)
+{
+    IntRect borderBox = borderBoxRect();
+    if (borderBox.contains(rect))
+        return;
+        
+    if (!m_overflow)
+        m_overflow.set(new RenderOverflow(borderBox));
+    
+    m_overflow->addLayoutOverflow(rect);
+}
+
+void RenderBox::addVisualOverflow(const IntRect& rect)
+{
+    IntRect borderBox = borderBoxRect();
+    if (borderBox.contains(rect))
+        return;
+        
+    if (!m_overflow)
+        m_overflow.set(new RenderOverflow(borderBox));
+    
+    m_overflow->addVisualOverflow(rect);
+}
+
+void RenderBox::clearLayoutOverflow()
+{
+    if (!m_overflow)
+        return;
+    
+    if (visualOverflowRect() == borderBoxRect()) {
+        m_overflow.clear();
+        return;
+    }
+    
+    m_overflow->resetLayoutOverflow(borderBoxRect());
 }
 
 #if ENABLE(SVG)

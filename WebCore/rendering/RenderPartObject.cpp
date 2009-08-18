@@ -350,7 +350,7 @@ void RenderPartObject::layout()
 
     calcWidth();
     calcHeight();
-    adjustOverflowForBoxShadowAndReflect();
+    addShadowOverflow();
 
     RenderPart::layout();
 

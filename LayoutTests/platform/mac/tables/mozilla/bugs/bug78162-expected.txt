@@ -20,7 +20,7 @@ layer at (0,0) size 800x600
                         RenderTableSection {TBODY} at (0,0) size 496x80
                           RenderTableRow {TR} at (0,10) size 496x60
                             RenderTableCell {TD} at (10,10) size 476x60 [r=0 c=0 rs=1 cs=1]
-                              RenderInline {A} at (0,0) size 468x14 [color=#0000EE]
+                              RenderInline {A} at (0,0) size 468x18 [color=#0000EE]
                                 RenderImage {IMG} at (0,0) size 468x60
                       RenderBlock (anonymous) at (2,82) size 496x72
                         RenderText {#text} at (0,0) size 480x72

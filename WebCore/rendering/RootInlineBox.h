@@ -38,31 +38,33 @@ class RootInlineBox : public InlineFlowBox {
 public:
     RootInlineBox(RenderObject* obj)
         : InlineFlowBox(obj)
-        , m_overflow(0)
         , m_lineBreakObj(0)
         , m_lineBreakPos(0)
+        , m_lineTop(0)
+        , m_lineBottom(0)
     {
     }
 
+    virtual void destroy(RenderArena*);
+
     virtual bool isRootInlineBox() const { return true; }
 
-    virtual void destroy(RenderArena*);
     void detachEllipsisBox(RenderArena*);
 
-    RootInlineBox* nextRootBox() { return static_cast<RootInlineBox*>(m_nextLine); }
-    RootInlineBox* prevRootBox() { return static_cast<RootInlineBox*>(m_prevLine); }
+    RootInlineBox* nextRootBox() const { return static_cast<RootInlineBox*>(m_nextLine); }
+    RootInlineBox* prevRootBox() const { return static_cast<RootInlineBox*>(m_prevLine); }
 
     virtual void adjustPosition(int dx, int dy);
 
-    virtual int topOverflow() const { return m_overflow ? m_overflow->m_topOverflow : m_y; }
-    virtual int bottomOverflow() const { return m_overflow ? m_overflow->m_bottomOverflow : m_y + m_renderer->style(m_firstLine)->font().height(); }
-    virtual int leftOverflow() const { return m_overflow ? m_overflow->m_leftOverflow : m_x; }
-    virtual int rightOverflow() const { return m_overflow ? m_overflow->m_rightOverflow : m_x + m_width; }
+    int lineTop() const { return m_lineTop; }
+    int lineBottom() const { return m_lineBottom; }
 
-    virtual void setVerticalOverflowPositions(int top, int bottom);
-    void setHorizontalOverflowPositions(int left, int right);
+    int selectionTop() const;
+    int selectionBottom() const { return lineBottom(); }
+    int selectionHeight() const { return max(0, selectionBottom() - selectionTop()); }
 
-    virtual void setVerticalSelectionPositions(int top, int bottom);
+    virtual int verticallyAlignBoxes(int heightOfBlock);
+    void setLineTopBottomPositions(int top, int bottom);
 
     virtual RenderLineBoxList* rendererLineBoxes() const;
 
@@ -116,67 +118,35 @@ public:
 
     RenderBlock* block() const;
 
-    int selectionTop();
-    int selectionBottom() { return m_overflow ? m_overflow->m_selectionBottom : m_y + height(); }
-    int selectionHeight() { return max(0, selectionBottom() - selectionTop()); }
-
     InlineBox* closestLeafChildForXPos(int x, bool onlyEditableLeaves = false);
 
     Vector<RenderBox*>& floats()
     {
         ASSERT(!isDirty());
-        if (!m_overflow)
-            m_overflow = new (m_renderer->renderArena()) Overflow(this);
-        return m_overflow->floats;
+        if (!m_floats)
+            m_floats.set(new Vector<RenderBox*>());
+        return *m_floats;
     }
 
-    Vector<RenderBox*>* floatsPtr() { ASSERT(!isDirty()); return m_overflow ? &m_overflow->floats : 0; }
+    Vector<RenderBox*>* floatsPtr() { ASSERT(!isDirty()); return m_floats.get(); }
 
     virtual void extractLineBoxFromRenderObject();
     virtual void attachLineBoxToRenderObject();
     virtual void removeLineBoxFromRenderObject();
 
 protected:
-    // Normally we are only as tall as the style on our block dictates, but we might have content
-    // that spills out above the height of our font (e.g, a tall image), or something that extends further
-    // below our line (e.g., a child whose font has a huge descent).
-        
-    // Allocated only when some of these fields have non-default values
-    struct Overflow {
-        Overflow(RootInlineBox* box) 
-            : m_topOverflow(box->m_y)
-            , m_bottomOverflow(box->m_y + box->height())
-            , m_leftOverflow(box->m_x)
-            , m_rightOverflow(box->m_x + box->m_width)
-            , m_selectionTop(box->m_y)
-            , m_selectionBottom(box->m_y + box->height())
-        {
-        }
-
-        void destroy(RenderArena*);
-        void* operator new(size_t, RenderArena*) throw();
-        void operator delete(void*, size_t);
-        
-        int m_topOverflow;
-        int m_bottomOverflow;
-        int m_leftOverflow;
-        int m_rightOverflow;
-        int m_selectionTop;
-        int m_selectionBottom;
-        // Floats hanging off the line are pushed into this vector during layout. It is only
-        // good for as long as the line has not been marked dirty.
-        Vector<RenderBox*> floats;
-    private:
-        void* operator new(size_t) throw();
-    };
-    
-    Overflow* m_overflow;
-
     // Where this line ended.  The exact object and the position within that object are stored so that
     // we can create an InlineIterator beginning just after the end of this line.
     RenderObject* m_lineBreakObj;
     unsigned m_lineBreakPos;
     RefPtr<BidiContext> m_lineBreakContext;
+
+    int m_lineTop;
+    int m_lineBottom;
+
+    // Floats hanging off the line are pushed into this vector during layout. It is only
+    // good for as long as the line has not been marked dirty.
+    OwnPtr<Vector<RenderBox*> > m_floats;
 
     // The height of the block at the end of this line.  This is where the next line starts.
     int m_blockHeight;
@@ -186,27 +156,10 @@ protected:
     WTF::Unicode::Direction m_lineBreakBidiStatusLast : 5;
 };
 
-inline void RootInlineBox::setHorizontalOverflowPositions(int left, int right) 
+inline void RootInlineBox::setLineTopBottomPositions(int top, int bottom) 
 { 
-    if (!m_overflow) {
-        if (left == m_x && right == m_x + m_width)
-            return;
-        m_overflow = new (m_renderer->renderArena()) Overflow(this);       
-    }
-    m_overflow->m_leftOverflow = left; 
-    m_overflow->m_rightOverflow = right; 
-}
-
-inline void RootInlineBox::setVerticalSelectionPositions(int top, int bottom) 
-{ 
-    if (!m_overflow) {
-        const Font& font = m_renderer->style(m_firstLine)->font();
-        if (top == m_y && bottom == m_y + font.height())
-            return;
-        m_overflow = new (m_renderer->renderArena()) Overflow(this);
-    }
-    m_overflow->m_selectionTop = top; 
-    m_overflow->m_selectionBottom = bottom; 
+    m_lineTop = top; 
+    m_lineBottom = bottom; 
 }
 
 } // namespace WebCore

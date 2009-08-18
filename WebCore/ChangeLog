@@ -1,3 +1,240 @@
+2009-08-16  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20329, shadows and reflections incorrectly
+        considered part of scrollable overflow.
+
+        This patch takes the engine's concept of overflow and splits it into two types:
+        layout overflow and visual overflow.
+        
+        Layout overflow is about other boxes that spill out of an enclosing box,  For example,
+        in the inline flow case a tall image could spill out of a line box. Examples of 
+        visual overflow are shadows, text stroke (and eventually outline and
+        border-image).
+
+        Three objects tracked overflow before this patch: RenderBlock had 
+        m_overflowLeft/Top/Width/Height variables.  RootInlineBox had an Overflow*
+        that also had four overflow values.  Finally RenderReplaced elements tracked shadow/reflection
+        overflow using a map that cached four values.
+        
+        This patch takes all of these different overflow models and unifies them into a single
+        new class called RenderOverflow.   This class is now a member variable in RenderBox and
+        InlineFlowBoxes.  It is only allocated if overflow actually exists.  Instead of tracking
+        four values, it tracks eight: left/top/right/bottom for layout overflow and 
+        left/top/right/bottom for visual overflow.
+        
+        Overflow computation is now done after layout is finished rather than during layout
+        (when child objects can be churning and moving around).  A number of layout tests progressed
+        by deferring overflow computation to a separate pass.
+        
+        All inline flow boxes now track overflow (and not just the root line box).  This allows
+        repainting of line boxes to actually be tight and bail early if the overflow rect of a box
+        doesn't intersect.  The old code always visited all object on a line if the root line box
+        intersected at all.
+        
+        Line box overflow no longer propagates across self-painting layers.  This fixes a number of
+        issues with incorrect scrollbars appearing when relative positioned inlines were used in a page.
+        
+        Layer bounds have been modified to exclude visual overflow.  The width/height members only really
+        have one reason for continued existence, and that is that they happen to be used in repaint()
+        when an overflow clip object's height isn't accurate.  In this case, the bounds should exclude
+        visual overflow anyway, so this change tightens that repaint up.
+        
+        Root lines have renamed m_selectionTop/Bottom to m_lineTop/Bottom and positionForPoint methods have
+        been changed to use these instead of relying on overflow (which was totally wrong).
+
+        Significant changes have been made to the "almost strict mode" line box quirk where objects with no
+        text children have no effect on the height of a line.  Instead of making the height() of the objects
+        variable and dependent on overflow, the objects now have their full height and get placed on
+        the baseline properly.  They simply don't contribute to overflow above lineTop/Bottom.
+        
+        Reflections are no longer considered overflow of any kind.  Because reflections have their own layers,
+        it is not necessary to treat them as visual or layout overflow in the RenderObject tree.  The end result
+        of not incorporating them into RenderOverflow is that they have no effect on scrolling.  transparencyClipBox
+        has been extended to support fully reflecting the entire clip box when a reflection exists.  This fixes
+        numerous repaint bugs in transparent objects with reflections when the transparent objects had self-painting
+        sublayers.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::getUpperLeftCorner):
+        * editing/visible_units.cpp:
+        (WebCore::previousLinePosition):
+        (WebCore::nextLinePosition):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::adjustViewSize):
+        (WebCore::FrameView::adjustPageHeight):
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::height):
+        * rendering/InlineBox.h:
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::adjustPosition):
+        (WebCore::InlineFlowBox::placeBoxesHorizontally):
+        (WebCore::InlineFlowBox::placeBoxesVertically):
+        (WebCore::InlineFlowBox::computeVerticalOverflow):
+        (WebCore::InlineFlowBox::nodeAtPoint):
+        (WebCore::InlineFlowBox::paint):
+        * rendering/InlineFlowBox.h:
+        (WebCore::InlineFlowBox::InlineFlowBox):
+        (WebCore::InlineFlowBox::topCombinedOverflow):
+        (WebCore::InlineFlowBox::bottomCombinedOverflow):
+        (WebCore::InlineFlowBox::leftCombinedOverflow):
+        (WebCore::InlineFlowBox::rightCombinedOverflow):
+        (WebCore::InlineFlowBox::combinedOverflowRect):
+        (WebCore::InlineFlowBox::topLayoutOverflow):
+        (WebCore::InlineFlowBox::bottomLayoutOverflow):
+        (WebCore::InlineFlowBox::leftLayoutOverflow):
+        (WebCore::InlineFlowBox::rightLayoutOverflow):
+        (WebCore::InlineFlowBox::layoutOverflowRect):
+        (WebCore::InlineFlowBox::topVisualOverflow):
+        (WebCore::InlineFlowBox::bottomVisualOverflow):
+        (WebCore::InlineFlowBox::leftVisualOverflow):
+        (WebCore::InlineFlowBox::rightVisualOverflow):
+        (WebCore::InlineFlowBox::visualOverflowRect):
+        (WebCore::InlineFlowBox::setHorizontalOverflowPositions):
+        (WebCore::InlineFlowBox::setVerticalOverflowPositions):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::RenderBlock):
+        (WebCore::RenderBlock::layout):
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::addOverflowFromBlockChildren):
+        (WebCore::RenderBlock::handleBottomOfBlock):
+        (WebCore::RenderBlock::layoutBlockChildren):
+        (WebCore::RenderBlock::paint):
+        (WebCore::RenderBlock::fillInlineSelectionGaps):
+        (WebCore::RenderBlock::floatRect):
+        (WebCore::RenderBlock::lowestPosition):
+        (WebCore::RenderBlock::rightmostPosition):
+        (WebCore::RenderBlock::leftmostPosition):
+        (WebCore::RenderBlock::addOverhangingFloats):
+        (WebCore::RenderBlock::nodeAtPoint):
+        (WebCore::RenderBlock::positionForPointWithInlineChildren):
+        (WebCore::RenderBlock::layoutColumns):
+        (WebCore::getHeightForLineCount):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::computeHorizontalPositionsForLine):
+        (WebCore::RenderBlock::computeVerticalPositionsForLine):
+        (WebCore::RenderBlock::layoutInlineChildren):
+        (WebCore::RenderBlock::matchedEndLine):
+        (WebCore::RenderBlock::addOverflowFromInlineChildren):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::destroy):
+        (WebCore::RenderBox::clippedOverflowRectForRepaint):
+        (WebCore::RenderBox::localCaretRect):
+        (WebCore::RenderBox::addShadowAndReflectionOverflow):
+        (WebCore::RenderBox::addOverflowFromChild):
+        (WebCore::RenderBox::addLayoutOverflow):
+        (WebCore::RenderBox::addVisualOverflow):
+        (WebCore::RenderBox::clearLayoutOverflow):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::combinedOverflowRect):
+        (WebCore::RenderBox::topCombinedOverflow):
+        (WebCore::RenderBox::bottomCombinedOverflow):
+        (WebCore::RenderBox::leftCombinedOverflow):
+        (WebCore::RenderBox::rightCombinedOverflow):
+        (WebCore::RenderBox::layoutOverflowRect):
+        (WebCore::RenderBox::topLayoutOverflow):
+        (WebCore::RenderBox::bottomLayoutOverflow):
+        (WebCore::RenderBox::leftLayoutOverflow):
+        (WebCore::RenderBox::rightLayoutOverflow):
+        (WebCore::RenderBox::visualOverflowRect):
+        (WebCore::RenderBox::topVisualOverflow):
+        (WebCore::RenderBox::bottomVisualOverflow):
+        (WebCore::RenderBox::leftVisualOverflow):
+        (WebCore::RenderBox::rightVisualOverflow):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock):
+        (WebCore::RenderFlexibleBox::layoutHorizontalBox):
+        (WebCore::RenderFlexibleBox::layoutVerticalBox):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPosition):
+        (WebCore::RenderLayer::localBoundingBox):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateRootLayerPosition):
+        (WebCore::RenderLayerCompositor::ensureRootPlatformLayer):
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::paint):
+        (WebCore::RenderLineBoxList::hitTest):
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::positionListMarker):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::RenderObject):
+        * rendering/RenderObject.h:
+        * rendering/RenderOverflow.h: Added.
+        (WebCore::RenderOverflow::RenderOverflow):
+        (WebCore::RenderOverflow::topLayoutOverflow):
+        (WebCore::RenderOverflow::bottomLayoutOverflow):
+        (WebCore::RenderOverflow::leftLayoutOverflow):
+        (WebCore::RenderOverflow::rightLayoutOverflow):
+        (WebCore::RenderOverflow::topVisualOverflow):
+        (WebCore::RenderOverflow::bottomVisualOverflow):
+        (WebCore::RenderOverflow::leftVisualOverflow):
+        (WebCore::RenderOverflow::rightVisualOverflow):
+        (WebCore::RenderOverflow::setTopLayoutOverflow):
+        (WebCore::RenderOverflow::setBottomLayoutOverflow):
+        (WebCore::RenderOverflow::setLeftLayoutOverflow):
+        (WebCore::RenderOverflow::setRightLayoutOverflow):
+        (WebCore::RenderOverflow::setTopVisualOverflow):
+        (WebCore::RenderOverflow::setBottomVisualOverflow):
+        (WebCore::RenderOverflow::setLeftVisualOverflow):
+        (WebCore::RenderOverflow::setRightVisualOverflow):
+        (WebCore::RenderOverflow::layoutOverflowRect):
+        (WebCore::RenderOverflow::visualOverflowRect):
+        (WebCore::RenderOverflow::combinedOverflowRect):
+        (WebCore::RenderOverflow::move):
+        (WebCore::RenderOverflow::addLayoutOverflow):
+        (WebCore::RenderOverflow::addVisualOverflow):
+        (WebCore::RenderOverflow::resetLayoutOverflow):
+        * rendering/RenderPartObject.cpp:
+        (WebCore::RenderPartObject::layout):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::~RenderReplaced):
+        (WebCore::RenderReplaced::layout):
+        (WebCore::RenderReplaced::shouldPaint):
+        (WebCore::RenderReplaced::positionForPoint):
+        (WebCore::RenderReplaced::clippedOverflowRectForRepaint):
+        * rendering/RenderReplaced.h:
+        * rendering/RenderScrollbarPart.cpp:
+        (WebCore::RenderScrollbarPart::layout):
+        (WebCore::RenderScrollbarPart::paintIntoRect):
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::layout):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::layout):
+        (WebCore::RenderTable::paint):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::clippedOverflowRectForRepaint):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::layoutRows):
+        * rendering/RenderTableSection.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::positionForPoint):
+        (WebCore::RenderText::localCaretRect):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::layout):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::addHighlightOverflow):
+        (WebCore::RootInlineBox::adjustPosition):
+        (WebCore::RootInlineBox::verticallyAlignBoxes):
+        (WebCore::RootInlineBox::selectionTop):
+        * rendering/RootInlineBox.h:
+        (WebCore::RootInlineBox::RootInlineBox):
+        (WebCore::RootInlineBox::nextRootBox):
+        (WebCore::RootInlineBox::prevRootBox):
+        (WebCore::RootInlineBox::lineTop):
+        (WebCore::RootInlineBox::lineBottom):
+        (WebCore::RootInlineBox::selectionBottom):
+        (WebCore::RootInlineBox::selectionHeight):
+        (WebCore::RootInlineBox::floats):
+        (WebCore::RootInlineBox::floatsPtr):
+        (WebCore::RootInlineBox::setLineTopBottomPositions):
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBox::layoutInlineBoxes):
+
 2009-08-18  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

@@ -419,10 +419,7 @@ int RenderTableSection::layoutRows(int toAdd)
     
     // Set the width of our section now.  The rows will also be this width.
     setWidth(table()->contentWidth());
-    m_overflowLeft = 0;
-    m_overflowWidth = width();
-    m_overflowTop = 0;
-    m_overflowHeight = 0;
+    m_overflow.clear();
     m_hasOverflowingCell = false;
 
     if (toAdd && totalRows && (m_rowPos[totalRows] || !nextSibling())) {
@@ -623,11 +620,9 @@ int RenderTableSection::layoutRows(int toAdd)
             } else
                 cell->setLocation(table()->columnPositions()[c] + hspacing, m_rowPos[rindx]);
 
-            m_overflowLeft = min(m_overflowLeft, cell->x() + cell->overflowLeft(false));
-            m_overflowWidth = max(m_overflowWidth, cell->x() + cell->overflowWidth(false));
-            m_overflowTop = min(m_overflowTop, cell->y() + cell->overflowTop(false));
-            m_overflowHeight = max(m_overflowHeight, cell->y() + cell->overflowHeight(false));
-            m_hasOverflowingCell |= cell->overflowLeft(false) || cell->overflowWidth(false) > cell->width() || cell->overflowTop(false) || cell->overflowHeight(false) > cell->height();
+            addOverflowFromChild(cell);
+
+            
 
             // If the cell moved, we have to repaint it as well as any floating/positioned
             // descendants.  An exception is if we need a layout.  In this case, we know we're going to
@@ -636,6 +631,8 @@ int RenderTableSection::layoutRows(int toAdd)
                 cell->repaintDuringLayoutIfMoved(oldCellRect);
         }
     }
+
+    m_hasOverflowingCell = m_overflow;
 
 #ifndef NDEBUG
     setNeedsLayoutIsForbidden(false);

@@ -29,7 +29,7 @@ layer at (0,0) size 800x600
                         RenderTableSection {TBODY} at (0,0) size 128x111
                           RenderTableRow {TR} at (0,0) size 128x111
                             RenderTableCell {TD} at (0,0) size 128x111 [r=0 c=0 rs=1 cs=1]
-                              RenderInline {A} at (0,0) size 112x14 [color=#0000EE]
+                              RenderInline {A} at (0,0) size 112x18 [color=#0000EE]
                                 RenderImage {IMG} at (0,0) size 112x111
           RenderTableRow {TR} at (0,231) size 778x184
             RenderTableCell {TD} at (0,322) size 134x2 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]

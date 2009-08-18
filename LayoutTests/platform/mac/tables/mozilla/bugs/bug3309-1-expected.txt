@@ -21,7 +21,7 @@ layer at (0,0) size 800x600
           RenderBlock {DIV} at (0,38) size 784x54
             RenderBR {BR} at (784,0) size 0x18
             RenderBR {BR} at (784,18) size 0x18
-            RenderInline {A} at (0,0) size 134x17 [color=#0000EE]
+            RenderInline {A} at (0,0) size 134x18 [color=#0000EE]
               RenderInline {FONT} at (0,0) size 134x17 [color=#FFCC33]
                 RenderText {#text} at (650,36) size 134x17
                   text run at (650,36) width 83: "Back to the "

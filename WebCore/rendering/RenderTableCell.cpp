@@ -193,9 +193,9 @@ IntRect RenderTableCell::clippedOverflowRectForRepaint(RenderBoxModelObject* rep
             right = max(right, below->borderHalfRight(true));
         }
     }
-    left = max(left, -overflowLeft(false));
-    top = max(top, -overflowTop(false));
-    IntRect r(-left, - top, left + max(width() + right, overflowWidth(false)), top + max(height() + bottom, overflowHeight(false)));
+    left = max(left, -leftCombinedOverflow());
+    top = max(top, -topCombinedOverflow());
+    IntRect r(-left, - top, left + max(width() + right, rightCombinedOverflow()), top + max(height() + bottom, bottomCombinedOverflow()));
 
     if (RenderView* v = view()) {
         // FIXME: layoutDelta needs to be applied in parts before/after transforms and

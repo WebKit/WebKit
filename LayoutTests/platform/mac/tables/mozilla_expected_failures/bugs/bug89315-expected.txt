@@ -28,14 +28,14 @@ layer at (0,0) size 785x4619
                       RenderInline {O:P} at (0,0) size 0x0
             RenderTableRow {TR} at (0,21) size 473x34
               RenderTableCell {TD} at (0,21) size 98x34 [r=1 c=0 rs=1 cs=1]
-                RenderInline {B} at (0,0) size 54x34
+                RenderInline {B} at (0,0) size 54x35
                   RenderInline {SPAN} at (0,0) size 54x34
                     RenderText {#text} at (22,0) size 54x34
                       text run at (22,0) width 54: "Channel"
                       text run at (24,17) width 50: "number"
                 RenderText {#text} at (0,0) size 0x0
               RenderTableCell {TD} at (98,21) size 170x17 [r=1 c=1 rs=1 cs=1]
-                RenderInline {B} at (0,0) size 94x17
+                RenderInline {B} at (0,0) size 94x18
                   RenderInline {SPAN} at (0,0) size 94x17
                     RenderText {#text} at (38,0) size 94x17
                       text run at (38,0) width 94: "Member name"
@@ -189,7 +189,7 @@ layer at (0,0) size 785x4619
                     text run at (32,0) width 20: "Yes"
               RenderTableCell {TD} at (367,153) size 106x32 [r=6 c=3 rs=1 cs=1]
                 RenderBlock (anonymous) at (7,0) size 92x16
-                  RenderInline {SPAN} at (0,0) size 16x15
+                  RenderInline {SPAN} at (0,0) size 16x18
                     RenderInline {FONT} at (0,0) size 16x15
                       RenderText {#text} at (38,0) size 16x15
                         text run at (38,0) width 16: "No"

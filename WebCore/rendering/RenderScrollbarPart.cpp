@@ -51,9 +51,6 @@ void RenderScrollbarPart::layout()
     else
         layoutVerticalPart();
 
-    m_overflowWidth = max(width(), m_overflowWidth);
-    m_overflowHeight = max(height(), m_overflowHeight);
-    
     setNeedsLayout(false);
 }
 
@@ -153,8 +150,6 @@ void RenderScrollbarPart::paintIntoRect(GraphicsContext* graphicsContext, int tx
     setLocation(rect.x() - tx, rect.y() - ty);
     setWidth(rect.width());
     setHeight(rect.height());
-    setOverflowWidth(max(rect.width(), overflowWidth()));
-    setOverflowHeight(max(rect.height(), overflowHeight()));
 
     if (graphicsContext->paintingDisabled())
         return;

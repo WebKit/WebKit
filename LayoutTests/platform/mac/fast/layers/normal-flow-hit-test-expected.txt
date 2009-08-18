@@ -19,5 +19,5 @@ layer at (0,0) size 800x320
       RenderBlock {DIV} at (0,278) size 784x18
         RenderText {#text} at (0,0) size 169x18
           text run at (0,0) width 169: "Found link node, so PASS"
-layer at (18,60) size 100x200
+layer at (18,60) size 100x100
   RenderBlock {DIV} at (10,10) size 100x100 [bgcolor=#808080]

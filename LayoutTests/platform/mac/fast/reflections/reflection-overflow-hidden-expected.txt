@@ -16,7 +16,7 @@ layer at (0,0) size 800x136 layerType: foreground only
           text run at (305,0) width 61: ". Test for "
           text run at (366,0) width 331: "reflection painting on overflow:hidden element. You"
           text run at (0,18) width 188: "should not see any red below."
-layer at (50,100) size 400x410
+layer at (50,100) size 400x200
   RenderBlock (positioned) {DIV} at (50,100) size 400x200
 layer at (50,100) size 400x200
   RenderBlock (relative positioned) {DIV} at (0,0) size 400x200

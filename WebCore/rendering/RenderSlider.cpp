@@ -336,8 +336,6 @@ void RenderSlider::layout()
     calcWidth();
     calcHeight();
 
-    IntRect overflowRect(IntPoint(), size());
-
     if (thumb) {
         if (oldSize != size())
             thumb->setChildNeedsLayout(true, false);
@@ -354,18 +352,9 @@ void RenderSlider::layout()
             thumb->repaintDuringLayoutIfMoved(oldThumbRect);
 
         statePusher.pop();
-
-        IntRect thumbOverflowRect = thumb->overflowRect();
-        thumbOverflowRect.move(thumb->x(), thumb->y());
-        overflowRect.unite(thumbOverflowRect);
     }
 
-    // FIXME: m_overflowWidth and m_overflowHeight should be renamed
-    // m_overflowRight and m_overflowBottom.
-    m_overflowLeft = overflowRect.x();
-    m_overflowTop = overflowRect.y();
-    m_overflowWidth = overflowRect.right();
-    m_overflowHeight = overflowRect.bottom();
+    addOverflowFromChild(thumb);
 
     repainter.repaintAfterLayout();    
 

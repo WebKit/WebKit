@@ -35,7 +35,7 @@ layer at (0,0) size 800x600
               RenderBlock {INPUT} at (4,4) size 12x13
           RenderTableRow {TR} at (0,116) size 784x24
             RenderTableCell {TD} at (0,119) size 622x17 [r=3 c=0 rs=1 cs=2]
-              RenderInline {A} at (0,0) size 76x15 [color=#0000EE]
+              RenderInline {A} at (0,0) size 76x18 [color=#0000EE]
                 RenderInline {FONT} at (0,0) size 76x15
                   RenderText {#text} at (273,1) size 76x15
                     text run at (273,1) width 76: "View Results"

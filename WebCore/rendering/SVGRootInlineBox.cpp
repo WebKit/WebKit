@@ -1087,8 +1087,8 @@ void SVGRootInlineBox::layoutInlineBoxes(InlineFlowBox* start, Vector<SVGChar>::
         start->setWidth(highX - lowX);
         static_cast<SVGRootInlineBox*>(start)->setHeight(highY - lowY);
 
-        start->setVerticalOverflowPositions(top, bottom);
-        start->setVerticalSelectionPositions(top, bottom);
+        start->computeVerticalOverflow(top, bottom, true);
+        static_cast<SVGRootInlineBox*>(start)->setLineTopBottomPositions(top, bottom);
     }
 }
 

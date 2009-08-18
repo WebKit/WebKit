@@ -98,18 +98,11 @@ int InlineBox::height() const
         return toRenderBox(m_renderer)->height();
 
     ASSERT(isInlineFlowBox());
-    const InlineFlowBox* flowBox = static_cast<const InlineFlowBox*>(this);
     RenderBoxModelObject* flowObject = boxModelObject();
     const Font& font = renderer()->style(m_firstLine)->font();
     int result = font.height();
-    bool strictMode = renderer()->document()->inStrictMode();
     if (parent())
         result += flowObject->borderTop() + flowObject->paddingTop() + flowObject->borderBottom() + flowObject->paddingBottom();
-    if (strictMode || flowBox->hasTextChildren() || flowObject->hasHorizontalBordersOrPadding())
-        return result;
-    int bottom = root()->bottomOverflow();
-    if (y() + result > bottom)
-        result = bottom - y();
     return result;
 }
 

@@ -312,8 +312,12 @@ void InlineTextBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
 
     ASSERT(paintInfo.phase != PaintPhaseSelfOutline && paintInfo.phase != PaintPhaseChildOutlines);
 
-    int xPos = tx + m_x - parent()->maxHorizontalVisualOverflow();
-    int w = width() + 2 * parent()->maxHorizontalVisualOverflow();
+    // FIXME: Technically we're potentially incorporating other visual overflow that had nothing to do with us.
+    // Would it be simpler to just check our own shadow and stroke overflow by hand here?
+    int leftOverflow = parent()->x() - parent()->leftVisualOverflow();
+    int rightOverflow = parent()->rightVisualOverflow() - (parent()->x() + parent()->width());
+    int xPos = tx + m_x - leftOverflow;
+    int w = width() + leftOverflow + rightOverflow;
     if (xPos >= paintInfo.rect.right() || xPos + w <= paintInfo.rect.x())
         return;
 

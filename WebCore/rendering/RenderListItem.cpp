@@ -247,21 +247,30 @@ void RenderListItem::positionListMarker()
         int markerXPos;
         RootInlineBox* root = m_marker->inlineBoxWrapper()->root();
 
+        // FIXME: Inline flows in the line box hierarchy that have self-painting layers should act as cutoff points
+        // and really shouldn't keep propagating overflow up.  This won't really break anything other than repainting
+        // not being as tight as it could be though.
         if (style()->direction() == LTR) {
             int leftLineOffset = leftRelOffset(yOffset, leftOffset(yOffset, false), false);
             markerXPos = leftLineOffset - xOffset - paddingLeft() - borderLeft() + m_marker->marginLeft();
             m_marker->inlineBoxWrapper()->adjustPosition(markerXPos - markerOldX, 0);
-            if (markerXPos < root->leftOverflow()) {
-                root->setHorizontalOverflowPositions(markerXPos, root->rightOverflow());
-                adjustOverflow = true;
+            for (InlineFlowBox* box = m_marker->inlineBoxWrapper()->parent(); box; box = box->parent()) {
+                if (markerXPos < box->leftLayoutOverflow()) {
+                    box->setHorizontalOverflowPositions(markerXPos, box->rightLayoutOverflow(), box->leftVisualOverflow(), box->rightVisualOverflow());
+                    if (box == root)
+                        adjustOverflow = true;
+                }
             }
         } else {
             int rightLineOffset = rightRelOffset(yOffset, rightOffset(yOffset, false), false);
             markerXPos = rightLineOffset - xOffset + paddingRight() + borderRight() + m_marker->marginLeft();
             m_marker->inlineBoxWrapper()->adjustPosition(markerXPos - markerOldX, 0);
-            if (markerXPos + m_marker->width() > root->rightOverflow()) {
-                root->setHorizontalOverflowPositions(root->leftOverflow(), markerXPos + m_marker->width());
-                adjustOverflow = true;
+            for (InlineFlowBox* box = m_marker->inlineBoxWrapper()->parent(); box; box = box->parent()) {
+                if (markerXPos + m_marker->width() > box->rightLayoutOverflow()) {
+                    box->setHorizontalOverflowPositions(box->leftLayoutOverflow(), markerXPos + m_marker->width(), box->leftVisualOverflow(), box->rightVisualOverflow());
+                    if (box == root)
+                        adjustOverflow = true;
+                }
             }
         }
 
@@ -271,9 +280,9 @@ void RenderListItem::positionListMarker()
             do {
                 o = o->parentBox();
                 if (o->isRenderBlock())
-                    toRenderBlock(o)->addVisualOverflow(markerRect);
+                    toRenderBlock(o)->addLayoutOverflow(markerRect);
                 markerRect.move(-o->x(), -o->y());
-            } while (o != this);
+            } while (o != this && !o->hasSelfPaintingLayer());
         }
     }
 }
