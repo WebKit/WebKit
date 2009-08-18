@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2009 Torch Mobile, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,12 +27,16 @@
 #include "config.h"
 #include "CachedFont.h"
 
+#if PLATFORM(CG) || PLATFORM(QT) || PLATFORM(GTK) || (PLATFORM(CHROMIUM) && (PLATFORM(WIN_OS) || PLATFORM(LINUX))) || PLATFORM(HAIKU) || PLATFORM(WINCE)
+#define STORE_FONT_CUSTOM_PLATFORM_DATA
+#endif
+
 #include "Cache.h"
 #include "CachedResourceClient.h"
 #include "CachedResourceClientWalker.h"
 #include "DOMImplementation.h"
 #include "FontPlatformData.h"
-#if PLATFORM(CG) || PLATFORM(QT) || PLATFORM(GTK) || (PLATFORM(CHROMIUM) && (PLATFORM(WIN_OS) || PLATFORM(LINUX))) || PLATFORM(HAIKU)
+#ifdef STORE_FONT_CUSTOM_PLATFORM_DATA
 #include "FontCustomPlatformData.h"
 #endif
 #include "TextResourceDecoder.h"
@@ -60,7 +65,7 @@ CachedFont::CachedFont(const String &url)
 
 CachedFont::~CachedFont()
 {
-#if PLATFORM(CG) || PLATFORM(QT) || PLATFORM(GTK) || (PLATFORM(CHROMIUM) && (PLATFORM(WIN_OS) || PLATFORM(LINUX))) || PLATFORM(HAIKU)
+#ifdef STORE_FONT_CUSTOM_PLATFORM_DATA
     delete m_fontData;
 #endif
 }
@@ -98,7 +103,7 @@ void CachedFont::beginLoadIfNeeded(DocLoader* dl)
 
 bool CachedFont::ensureCustomFontData()
 {
-#if PLATFORM(CG) || PLATFORM(QT) || PLATFORM(GTK) || (PLATFORM(CHROMIUM) && (PLATFORM(WIN_OS) || PLATFORM(LINUX))) || PLATFORM(HAIKU)
+#ifdef STORE_FONT_CUSTOM_PLATFORM_DATA
 #if ENABLE(SVG_FONTS)
     ASSERT(!m_isSVGFont);
 #endif
@@ -117,7 +122,7 @@ FontPlatformData CachedFont::platformDataFromCustomData(float size, bool bold, b
     if (m_externalSVGDocument)
         return FontPlatformData(size, bold, italic);
 #endif
-#if PLATFORM(CG) || PLATFORM(QT) || PLATFORM(GTK) || (PLATFORM(CHROMIUM) && (PLATFORM(WIN_OS) || PLATFORM(LINUX))) || PLATFORM(HAIKU)
+#ifdef STORE_FONT_CUSTOM_PLATFORM_DATA
     ASSERT(m_fontData);
     return m_fontData->fontPlatformData(static_cast<int>(size), bold, italic, renderingMode);
 #else
@@ -173,7 +178,7 @@ SVGFontElement* CachedFont::getSVGFontById(const String& fontName) const
 
 void CachedFont::allClientsRemoved()
 {
-#if PLATFORM(CG) || PLATFORM(QT) || PLATFORM(GTK) || (PLATFORM(CHROMIUM) && (PLATFORM(WIN_OS) || PLATFORM(LINUX))) || PLATFORM(HAIKU)
+#ifdef STORE_FONT_CUSTOM_PLATFORM_DATA
     if (m_fontData) {
         delete m_fontData;
         m_fontData = 0;

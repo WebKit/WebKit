@@ -1,3 +1,16 @@
+2009-08-17  Joe Mason  <joe.mason@torchmobile.com>
+
+        Reviewed by George Staikos
+
+        Replace repeated string of PLATFORM(FOO) with a single define
+        https://bugs.webkit.org/show_bug.cgi?id=27734
+
+        * loader/CachedFont.cpp:
+        (WebCore::CachedFont::~CachedFont):
+        (WebCore::CachedFont::ensureCustomFontData):
+        (WebCore::CachedFont::platformDataFromCustomData):
+        (WebCore::CachedFont::allClientsRemoved):
+
 2009-08-16  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.
