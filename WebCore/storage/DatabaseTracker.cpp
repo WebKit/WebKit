@@ -227,7 +227,7 @@ String DatabaseTracker::fullPathForDatabase(SecurityOrigin* origin, const String
     }
     statement.finalize();
     
-    String fileName = SQLiteFileSystem::getFileNameForNewDatabase(originPath, origin->databaseIdentifier(), name, &m_database);
+    String fileName = SQLiteFileSystem::getFileNameForNewDatabase(originPath, name, origin->databaseIdentifier(), &m_database);
     if (!addDatabase(origin, name, fileName))
         return String();
 

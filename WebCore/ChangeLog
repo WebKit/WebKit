@@ -1,3 +1,15 @@
+2009-08-18  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Fixing a DB file naming bug in Chromium. The origin should come
+        before the DB name in the file name.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28331
+
+        * storage/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::fullPathForDatabase):
+
 2009-08-18  Maxime Simon  <simon.maxime@gmail.com>
 
         Reviewed by Eric Seidel.
