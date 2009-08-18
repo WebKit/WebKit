@@ -1,3 +1,17 @@
+2009-08-17  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        -webkit-box-orient:horizontal doesn't work on <button> tag
+        https://bugs.webkit.org/show_bug.cgi?id=34445
+
+        Make a flexible button's anonymous child flexible and pass the
+        parent's box-orient to the anonymous child.
+
+        Also, added a renderName for anonymous flexible boxes.
+
+        * Scripts/make-script-test-wrappers:
+
 2009-08-17  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Darin Adler.

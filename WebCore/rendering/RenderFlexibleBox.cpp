@@ -1125,6 +1125,8 @@ const char *RenderFlexibleBox::renderName() const
         return "RenderFlexibleBox (floating)";
     if (isPositioned())
         return "RenderFlexibleBox (positioned)";
+    if (isAnonymous())
+        return "RenderFlexibleBox (generated)";
     if (isRelPositioned())
         return "RenderFlexibleBox (relative positioned)";
     return "RenderFlexibleBox";

@@ -33,6 +33,7 @@
 #include "HTMLNames.h"
 #include "HitTestResult.h"
 #include "InlineTextBox.h"
+#include "RenderFlexibleBox.h"
 #include "RenderImage.h"
 #include "RenderInline.h"
 #include "RenderMarquee.h"
@@ -5107,13 +5108,20 @@ void RenderBlock::addFocusRingRects(GraphicsContext* graphicsContext, int tx, in
                                                 ty - y() + inlineContinuation()->containingBlock()->y());
 }
 
-RenderBlock* RenderBlock::createAnonymousBlock() const
+RenderBlock* RenderBlock::createAnonymousBlock(bool isFlexibleBox) const
 {
     RefPtr<RenderStyle> newStyle = RenderStyle::create();
     newStyle->inheritFrom(style());
-    newStyle->setDisplay(BLOCK);
 
-    RenderBlock* newBox = new (renderArena()) RenderBlock(document() /* anonymous box */);
+    RenderBlock* newBox = 0;
+    if (isFlexibleBox) {
+        newStyle->setDisplay(BOX);
+        newBox = new (renderArena()) RenderFlexibleBox(document() /* anonymous box */);
+    } else {
+        newStyle->setDisplay(BLOCK);
+        newBox = new (renderArena()) RenderBlock(document() /* anonymous box */);
+    }
+
     newBox->setStyle(newStyle.release());
     return newBox;
 }
