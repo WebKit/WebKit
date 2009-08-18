@@ -1,3 +1,38 @@
+2009-08-18  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        SVG Filter feBlend implementation missing
+        [https://bugs.webkit.org/show_bug.cgi?id=28133]
+
+        Implementation of SVG Filter feBlend.
+
+        FilterEffect.cp needed changes to optimize the rendering. With the old code
+        we drew a subEffect on the current FilterEffect by drawImage, got the PixelArray,
+        cleared the drawing area, drew the next FilterEffect with drawImage and picked this
+        PixelArray again. This was unefficient and slow. Now we calculate the requested area
+        of the subEffect and ask the FilterEffect's ImageBuffer for the PixelArray directly,
+        without any drawing operations on GraphicsContext.
+
+        There is already a test case
+        Test: svg/W3C-SVG-1.1/filters-blend-01-b.svg
+
+        * html/canvas/CanvasPixelArray.h:
+        (WebCore::CanvasPixelArray::set):
+        (WebCore::CanvasPixelArray::get):
+        * platform/graphics/filters/FEBlend.cpp:
+        (WebCore::unknown):
+        (WebCore::normal):
+        (WebCore::multiply):
+        (WebCore::screen):
+        (WebCore::darken):
+        (WebCore::lighten):
+        (WebCore::FEBlend::apply):
+        * platform/graphics/filters/FEBlend.h:
+        * platform/graphics/filters/FilterEffect.cpp:
+        (WebCore::FilterEffect::calculateDrawingIntRect):
+        * platform/graphics/filters/FilterEffect.h:
+
 2009-08-18  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

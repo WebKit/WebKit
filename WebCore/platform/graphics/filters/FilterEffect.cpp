@@ -59,6 +59,13 @@ FloatRect FilterEffect::calculateEffectRect(Filter* filter)
     return subRegion();
 }
 
+IntRect FilterEffect::calculateDrawingIntRect(const FloatRect& effectRect)
+{
+    IntPoint location = roundedIntPoint(FloatPoint(subRegion().x() - effectRect.x(),
+                                                   subRegion().y() - effectRect.y()));
+    return IntRect(location, resultImage()->size());
+}
+
 FloatRect FilterEffect::calculateDrawingRect(const FloatRect& srcRect)
 {
     FloatPoint startPoint = FloatPoint(srcRect.x() - subRegion().x(), srcRect.y() - subRegion().y());

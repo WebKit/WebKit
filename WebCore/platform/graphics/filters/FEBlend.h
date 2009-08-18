@@ -41,7 +41,7 @@ namespace WebCore {
     class FEBlend : public FilterEffect {
     public:
         static PassRefPtr<FEBlend> create(FilterEffect*, FilterEffect*, BlendModeType);
-        
+
         FilterEffect* in2() const;
         void setIn2(FilterEffect*);
 

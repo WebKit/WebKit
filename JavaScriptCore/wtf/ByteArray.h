@@ -45,12 +45,25 @@ namespace WTF {
             m_data[index] = static_cast<unsigned char>(value + 0.5);
         }
 
+        void set(unsigned index, unsigned char value)
+        {
+            if (index >= m_size)
+                return;
+            m_data[index] = value;
+        }
+
         bool get(unsigned index, unsigned char& result) const
         {
             if (index >= m_size)
                 return false;
             result = m_data[index];
             return true;
+        }
+
+        unsigned char get(unsigned index) const
+        {
+            ASSERT(index < m_size);
+            return m_data[index];
         }
 
         unsigned char* data() { return m_data; }

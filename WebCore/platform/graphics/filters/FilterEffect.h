@@ -77,6 +77,7 @@ namespace WebCore {
 
         GraphicsContext* getEffectContext();
         FloatRect calculateDrawingRect(const FloatRect&);
+        IntRect calculateDrawingIntRect(const FloatRect&);
 
         virtual FloatRect uniteChildEffectSubregions(Filter* filter) { return filter->filterRegion(); }
         virtual FloatRect calculateEffectRect(Filter*);

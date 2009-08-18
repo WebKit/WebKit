@@ -1,3 +1,14 @@
+2009-08-18  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Added additional getter to ByteArray with an unsigned char as return.
+        ByteArray can take unsigned char directly now.
+
+        * wtf/ByteArray.h:
+        (WTF::ByteArray::set):
+        (WTF::ByteArray::get):
+
 2009-08-18  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Eric Seidel.
