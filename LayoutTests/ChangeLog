@@ -1,3 +1,13 @@
+2009-08-17  Brian Weinstein  <bweinstein@apple.com>
+
+        Rubber-stamped by Adele Peterson.
+
+        http/tests/misc/favicon-loads-with-images-disabled.html was passing on my machine
+        (when I ran all http tests), but failed on the bot, so adding it back to the
+        Skipped list.
+
+        * platform/win/Skipped:
+
 2009-08-17  Oliver Hunt  <oliver@apple.com>
 
         RS=Mark Rowe.
