@@ -14,9 +14,9 @@ layer at (0,0) size 785x616
         RenderText {#text} at (0,0) size 0x0
 layer at (8,42) size 262x562
   RenderBlock {DIV} at (0,0) size 262x562 [border: (1px solid #000000)]
-layer at (39,73) size 204x208
+layer at (39,73) size 200x200
   RenderBlock (relative positioned) {DIV} at (31,31) size 200x200 [bgcolor=#6464FFCC] [border: (10px solid #000000)]
 layer at (274,42) size 262x562
   RenderBlock {DIV} at (266,0) size 262x562 [border: (1px solid #000000)]
-layer at (305,73) size 204x208
+layer at (305,73) size 200x200
   RenderBlock (relative positioned) {DIV} at (31,31) size 200x200 [bgcolor=#6464FFCC] [border: (10px solid #000000)]

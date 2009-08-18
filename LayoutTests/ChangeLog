@@ -1,3 +1,16 @@
+2009-08-18  David Hyatt  <hyatt@apple.com>
+
+        Land updated results after my last patch.
+
+        * platform/mac/compositing/geometry/clipping-foreground-expected.txt:
+        * platform/mac/compositing/masks/masked-ancestor-expected.txt:
+        * platform/mac/compositing/masks/multiple-masks-expected.txt:
+        * platform/mac/compositing/masks/simple-composited-mask-expected.txt:
+        * platform/mac/fast/clip/008-expected.txt:
+        * platform/mac/fast/clip/011-expected.txt:
+        * platform/mac/fast/clip/012-expected.txt:
+        * platform/mac/fast/overflow/scrollRevealButton-expected.txt:
+
 2009-08-18  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Oliver Hunt.
