@@ -24,11 +24,11 @@
 #ifndef JSFunction_h
 #define JSFunction_h
 
+#include "Executable.h"
 #include "InternalFunction.h"
 
 namespace JSC {
 
-    class FunctionBodyNode;
     class FunctionPrototype;
     class JSActivation;
     class JSGlobalObject;
@@ -41,7 +41,7 @@ namespace JSC {
 
     public:
         JSFunction(ExecState*, PassRefPtr<Structure>, int length, const Identifier&, NativeFunction);
-        JSFunction(ExecState*, const Identifier&, PassRefPtr<FunctionBodyNode>, ScopeChainNode*);
+        JSFunction(ExecState*, PassRefPtr<FunctionExecutable>, ScopeChainNode*);
         virtual ~JSFunction();
 
         JSObject* construct(ExecState*, const ArgList&);
@@ -50,8 +50,7 @@ namespace JSC {
         void setScope(const ScopeChain& scopeChain) { setScopeChain(scopeChain); }
         ScopeChain& scope() { return scopeChain(); }
 
-        void setBody(PassRefPtr<FunctionBodyNode>);
-        FunctionBodyNode* body() const { return m_body.get(); }
+        FunctionExecutable* executable() const { return m_executable.get(); }
 
         static JS_EXPORTDATA const ClassInfo info;
 
@@ -86,7 +85,7 @@ namespace JSC {
         static JSValue callerGetter(ExecState*, const Identifier&, const PropertySlot&);
         static JSValue lengthGetter(ExecState*, const Identifier&, const PropertySlot&);
 
-        RefPtr<FunctionBodyNode> m_body;
+        RefPtr<FunctionExecutable> m_executable;
         ScopeChain& scopeChain()
         {
             ASSERT(!isHostFunctionNonInline());
@@ -120,6 +119,11 @@ namespace JSC {
     {
         ASSERT(asObject(value)->inherits(&JSFunction::info));
         return static_cast<JSFunction*>(asObject(value));
+    }
+
+    inline JSFunction* FunctionExecutable::make(ExecState* exec, ScopeChainNode* scopeChain)
+    {
+        return new (exec) JSFunction(exec, this, scopeChain);
     }
 
 } // namespace JSC

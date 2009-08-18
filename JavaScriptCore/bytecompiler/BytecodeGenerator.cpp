@@ -273,7 +273,7 @@ BytecodeGenerator::BytecodeGenerator(ProgramNode* programNode, const Debugger* d
     } else {
         for (size_t i = 0; i < functionStack.size(); ++i) {
             FunctionBodyNode* function = functionStack[i];
-            globalObject->putWithAttributes(exec, function->ident(), function->make(exec, scopeChain.node()), DontDelete);
+            globalObject->putWithAttributes(exec, function->ident(), new (exec) JSFunction(exec, adoptRef(new FunctionExecutable(function->ident(), function)), scopeChain.node()), DontDelete);
         }
         for (size_t i = 0; i < varStack.size(); ++i) {
             if (globalObject->hasProperty(exec, varStack[i].first))
@@ -396,6 +396,12 @@ BytecodeGenerator::BytecodeGenerator(EvalNode* evalNode, const Debugger* debugge
     emitOpcode(op_enter);
     codeBlock->setGlobalData(m_globalData);
     m_codeBlock->m_numParameters = 1; // Allocate space for "this"
+
+    const DeclarationStacks::FunctionStack& functionStack = evalNode->functionStack();
+    for (size_t i = 0; i < functionStack.size(); ++i) {
+        FunctionBodyNode* function = functionStack[i];
+        m_codeBlock->addFunctionDecl(adoptRef(new FunctionExecutable(function->ident(), function)));
+    }
 
     preserveLastVar();
 }
@@ -764,12 +770,6 @@ PassRefPtr<Label> BytecodeGenerator::emitJumpIfNotFunctionApply(RegisterID* cond
     instructions().append(m_scopeChain->globalObject()->d()->applyFunction);
     instructions().append(target->offsetFrom(instructions().size()));
     return target;
-}
-
-unsigned BytecodeGenerator::addConstant(FunctionBodyNode* n)
-{
-    // No need to explicitly unique function body nodes -- they're unique already.
-    return m_codeBlock->addFunction(n);
 }
 
 unsigned BytecodeGenerator::addConstant(const Identifier& ident)
@@ -1308,11 +1308,13 @@ RegisterID* BytecodeGenerator::emitNewArray(RegisterID* dst, ElementNode* elemen
     return dst;
 }
 
-RegisterID* BytecodeGenerator::emitNewFunction(RegisterID* dst, FunctionBodyNode* body)
+RegisterID* BytecodeGenerator::emitNewFunction(RegisterID* dst, FunctionBodyNode* function)
 {
+    unsigned index = m_codeBlock->addFunctionDecl(adoptRef(new FunctionExecutable(function->ident(), function)));
+
     emitOpcode(op_new_func);
     instructions().append(dst->index());
-    instructions().append(addConstant(body));
+    instructions().append(index);
     return dst;
 }
 
@@ -1327,9 +1329,12 @@ RegisterID* BytecodeGenerator::emitNewRegExp(RegisterID* dst, RegExp* regExp)
 
 RegisterID* BytecodeGenerator::emitNewFunctionExpression(RegisterID* r0, FuncExprNode* n)
 {
+    FunctionBodyNode* function = n->body();
+    unsigned index = m_codeBlock->addFunctionExpr(adoptRef(new FunctionExecutable(function->ident(), function)));
+
     emitOpcode(op_new_func_exp);
     instructions().append(r0->index());
-    instructions().append(addConstant(n->body()));
+    instructions().append(index);
     return r0;
 }
 

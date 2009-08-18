@@ -116,7 +116,7 @@ namespace JSC {
     {
         function = callFrame->callee();
     
-        CodeBlock* codeBlock = &function->body()->generatedBytecode();
+        CodeBlock* codeBlock = &function->executable()->generatedBytecode();
         int numParameters = codeBlock->m_numParameters;
         argc = callFrame->argumentCount();
 
@@ -139,7 +139,7 @@ namespace JSC {
         int numArguments;
         getArgumentsData(callFrame, callee, firstParameterIndex, argv, numArguments);
 
-        d->numParameters = callee->body()->parameterCount();
+        d->numParameters = callee->executable()->parameterCount();
         d->firstParameterIndex = firstParameterIndex;
         d->numArguments = numArguments;
 
@@ -170,7 +170,7 @@ namespace JSC {
         : JSObject(callFrame->lexicalGlobalObject()->argumentsStructure())
         , d(new ArgumentsData)
     {
-        ASSERT(!callFrame->callee()->body()->parameterCount());
+        ASSERT(!callFrame->callee()->executable()->parameterCount());
 
         unsigned numArguments = callFrame->argumentCount() - 1;
 
@@ -216,8 +216,8 @@ namespace JSC {
     {
         ASSERT(!d()->registerArray);
 
-        size_t numParametersMinusThis = d()->functionBody->generatedBytecode().m_numParameters - 1;
-        size_t numVars = d()->functionBody->generatedBytecode().m_numVars;
+        size_t numParametersMinusThis = d()->functionExecutable->generatedBytecode().m_numParameters - 1;
+        size_t numVars = d()->functionExecutable->generatedBytecode().m_numVars;
         size_t numLocals = numVars + numParametersMinusThis;
 
         if (!numLocals)

@@ -61,46 +61,34 @@ void Debugger::recompileAllJSFunctions(JSGlobalData* globalData)
     if (globalData->dynamicGlobalObject)
         return;
 
-    Vector<ProtectedPtr<JSFunction> > functions;
-    Heap::iterator heapEnd = globalData->heap.primaryHeapEnd();
-    for (Heap::iterator it = globalData->heap.primaryHeapBegin(); it != heapEnd; ++it) {
-        if ((*it)->inherits(&JSFunction::info)) {
-            JSFunction* function = asFunction(*it);
-            if (!function->body()->isHostFunction())
-                functions.append(function);
-        }
-    }
-
-    typedef HashMap<RefPtr<FunctionBodyNode>, RefPtr<FunctionBodyNode> > FunctionBodyMap;
+    typedef HashSet<FunctionExecutable*> FunctionExecutableSet;
     typedef HashMap<SourceProvider*, ExecState*> SourceProviderMap;
 
-    FunctionBodyMap functionBodies;
+    FunctionExecutableSet functionExecutables;
     SourceProviderMap sourceProviders;
 
-    size_t size = functions.size();
-    for (size_t i = 0; i < size; ++i) {
-        JSFunction* function = functions[i];
-
-        FunctionBodyNode* oldBody = function->body();
-        pair<FunctionBodyMap::iterator, bool> result = functionBodies.add(oldBody, 0);
-        if (!result.second) {
-            function->setBody(result.first->second);
+    Heap::iterator heapEnd = globalData->heap.primaryHeapEnd();
+    for (Heap::iterator it = globalData->heap.primaryHeapBegin(); it != heapEnd; ++it) {
+        if (!(*it)->inherits(&JSFunction::info))
             continue;
-        }
+
+        JSFunction* function = asFunction(*it);
+        if (function->executable()->isHostFunction())
+            continue;
+
+        FunctionExecutable* executable = function->executable();
+
+        // Check if the function is already in the set - if so,
+        // we've already retranslated it, nothing to do here.
+        if (!functionExecutables.add(executable).second)
+            continue;
 
         ExecState* exec = function->scope().globalObject()->JSGlobalObject::globalExec();
-        const SourceCode& sourceCode = oldBody->source();
-
-        RefPtr<FunctionBodyNode> newBody = globalData->parser->parse<FunctionBodyNode>(exec, 0, sourceCode);
-        ASSERT(newBody);
-        newBody->finishParsing(oldBody->copyParameters(), oldBody->parameterCount(), oldBody->ident());
-
-        result.first->second = newBody;
-        function->setBody(newBody.release());
-
+        executable->recompile(exec);
         if (function->scope().globalObject()->debugger() == this)
-            sourceProviders.add(sourceCode.provider(), exec);
+            sourceProviders.add(executable->source().provider(), exec);
     }
+
 
     // Call sourceParsed() after reparsing all functions because it will execute
     // JavaScript in the inspector.

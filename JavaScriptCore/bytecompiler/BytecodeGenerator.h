@@ -413,7 +413,6 @@ namespace JSC {
             return m_globals[-index - 1];
         }
 
-        unsigned addConstant(FunctionBodyNode*);
         unsigned addConstant(const Identifier&);
         RegisterID* addConstantValue(JSValue);
         unsigned addRegExp(RegExp*);

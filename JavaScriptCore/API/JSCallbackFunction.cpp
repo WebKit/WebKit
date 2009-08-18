@@ -28,6 +28,7 @@
 #include "JSCallbackFunction.h"
 
 #include "APICast.h"
+#include "CodeBlock.h"
 #include "JSFunction.h"
 #include "FunctionPrototype.h"
 #include <runtime/JSGlobalObject.h>

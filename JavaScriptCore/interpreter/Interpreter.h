@@ -43,7 +43,7 @@ namespace JSC {
 
     class CodeBlock;
     class EvalExecutable;
-    class FunctionBodyNode;
+    class FunctionExecutable;
     class InternalFunction;
     class JSFunction;
     class JSGlobalObject;
@@ -96,7 +96,7 @@ namespace JSC {
         bool isOpcode(Opcode);
         
         JSValue execute(ProgramExecutable*, CallFrame*, ScopeChainNode*, JSObject* thisObj, JSValue* exception);
-        JSValue execute(FunctionBodyNode*, CallFrame*, JSFunction*, JSObject* thisObj, const ArgList& args, ScopeChainNode*, JSValue* exception);
+        JSValue execute(FunctionExecutable*, CallFrame*, JSFunction*, JSObject* thisObj, const ArgList& args, ScopeChainNode*, JSValue* exception);
         JSValue execute(EvalExecutable* evalNode, CallFrame* exec, JSObject* thisObj, ScopeChainNode* scopeChain, JSValue* exception);
 
         JSValue retrieveArguments(CallFrame*, JSFunction*) const;
@@ -115,7 +115,7 @@ namespace JSC {
     private:
         enum ExecutionFlag { Normal, InitializeAndReturn };
 
-        CallFrameClosure prepareForRepeatCall(FunctionBodyNode*, CallFrame*, JSFunction*, int argCount, ScopeChainNode*, JSValue* exception);
+        CallFrameClosure prepareForRepeatCall(FunctionExecutable*, CallFrame*, JSFunction*, int argCount, ScopeChainNode*, JSValue* exception);
         void endRepeatCall(CallFrameClosure&);
         JSValue execute(CallFrameClosure&, JSValue* exception);
 

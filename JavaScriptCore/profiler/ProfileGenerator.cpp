@@ -27,6 +27,7 @@
 #include "ProfileGenerator.h"
 
 #include "CallFrame.h"
+#include "CodeBlock.h"
 #include "JSGlobalObject.h"
 #include "JSStringRef.h"
 #include "JSFunction.h"

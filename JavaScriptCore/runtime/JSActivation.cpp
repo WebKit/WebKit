@@ -39,8 +39,8 @@ ASSERT_CLASS_FITS_IN_CELL(JSActivation);
 
 const ClassInfo JSActivation::info = { "JSActivation", 0, 0, 0 };
 
-JSActivation::JSActivation(CallFrame* callFrame, PassRefPtr<FunctionBodyNode> functionBody)
-    : Base(callFrame->globalData().activationStructure, new JSActivationData(functionBody, callFrame->registers()))
+JSActivation::JSActivation(CallFrame* callFrame, PassRefPtr<FunctionExecutable> functionExecutable)
+    : Base(callFrame->globalData().activationStructure, new JSActivationData(functionExecutable, callFrame->registers()))
 {
 }
 
@@ -57,12 +57,12 @@ void JSActivation::markChildren(MarkStack& markStack)
     if (!registerArray)
         return;
 
-    size_t numParametersMinusThis = d()->functionBody->generatedBytecode().m_numParameters - 1;
+    size_t numParametersMinusThis = d()->functionExecutable->generatedBytecode().m_numParameters - 1;
 
     size_t count = numParametersMinusThis;
     markStack.appendValues(registerArray, count);
 
-    size_t numVars = d()->functionBody->generatedBytecode().m_numVars;
+    size_t numVars = d()->functionExecutable->generatedBytecode().m_numVars;
 
     // Skip the call frame, which sits between the parameters and vars.
     markStack.appendValues(registerArray + count + RegisterFile::CallFrameHeaderSize, numVars, MayContainNullValues);
@@ -136,14 +136,14 @@ JSObject* JSActivation::toThisObject(ExecState* exec) const
 
 bool JSActivation::isDynamicScope() const
 {
-    return d()->functionBody->usesEval();
+    return d()->functionExecutable->usesEval();
 }
 
 JSValue JSActivation::argumentsGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
     JSActivation* activation = asActivation(slot.slotBase());
 
-    if (activation->d()->functionBody->usesArguments()) {
+    if (activation->d()->functionExecutable->usesArguments()) {
         PropertySlot slot;
         activation->symbolTableGet(exec->propertyNames().arguments, slot);
         return slot.getValue(exec, exec->propertyNames().arguments);

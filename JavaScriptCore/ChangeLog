@@ -1,3 +1,180 @@
+2009-08-17  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        No, silly runtime, AST nodes are not for you.
+
+        We still use AST nodes (ScopeNodes, particularly FunctionBodyNodes) within
+        the runtime, which means that these nodes must be persisted outside of the
+        arena, contain both parser & runtime data, etc.  This is all a bit of a mess.
+
+        Move functionality into a new FunctionExecutable class.
+
+        * API/JSCallbackFunction.cpp:
+        * API/JSObjectRef.cpp:
+        * JavaScriptCore.exp:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::markAggregate):
+        (JSC::CodeBlock::reparseForExceptionInfoIfNecessary):
+        (JSC::CodeBlock::lineNumberForBytecodeOffset):
+        (JSC::CodeBlock::shrinkToFit):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::getBytecodeIndex):
+        (JSC::CodeBlock::discardBytecode):
+        (JSC::CodeBlock::instructionCount):
+        (JSC::CodeBlock::getJITCode):
+        (JSC::CodeBlock::executablePool):
+        (JSC::CodeBlock::ownerExecutable):
+        (JSC::CodeBlock::extractExceptionInfo):
+        (JSC::CodeBlock::addFunctionDecl):
+        (JSC::CodeBlock::functionDecl):
+        (JSC::CodeBlock::numberOfFunctionDecls):
+        (JSC::CodeBlock::addFunctionExpr):
+        (JSC::CodeBlock::functionExpr):
+        (JSC::GlobalCodeBlock::GlobalCodeBlock):
+        (JSC::ProgramCodeBlock::ProgramCodeBlock):
+        (JSC::EvalCodeBlock::EvalCodeBlock):
+        (JSC::FunctionCodeBlock::FunctionCodeBlock):
+        (JSC::NativeCodeBlock::NativeCodeBlock):
+        * bytecode/EvalCodeCache.h:
+        * bytecode/SamplingTool.cpp:
+        (JSC::SamplingTool::doRun):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitNewFunction):
+        (JSC::BytecodeGenerator::emitNewFunctionExpression):
+        * bytecompiler/BytecodeGenerator.h:
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::recompileAllJSFunctions):
+        * interpreter/CachedCall.h:
+        (JSC::CachedCall::CachedCall):
+        * interpreter/CallFrameClosure.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::unwindCallFrame):
+        (JSC::Interpreter::throwException):
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::prepareForRepeatCall):
+        (JSC::Interpreter::debug):
+        (JSC::Interpreter::privateExecute):
+        (JSC::Interpreter::retrieveLastCaller):
+        * interpreter/Interpreter.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        * jit/JIT.h:
+        (JSC::JIT::compile):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        (JSC::JIT::emit_op_new_func):
+        (JSC::JIT::emit_op_new_func_exp):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * jit/JITStubs.h:
+        (JSC::):
+        * parser/Nodes.cpp:
+        (JSC::FunctionBodyNode::reparseDataIfNecessary):
+        * parser/Nodes.h:
+        (JSC::EvalNode::partialDestroyData):
+        * parser/Parser.h:
+        * profiler/ProfileGenerator.cpp:
+        * profiler/Profiler.cpp:
+        (JSC::Profiler::createCallIdentifier):
+        (JSC::createCallIdentifierFromFunctionImp):
+        * runtime/Arguments.h:
+        (JSC::Arguments::getArgumentsData):
+        (JSC::Arguments::Arguments):
+        (JSC::JSActivation::copyRegisters):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::isNumericCompareFunction):
+        * runtime/CallData.h:
+        (JSC::):
+        * runtime/Collector.cpp:
+        (JSC::Heap::collect):
+        * runtime/ConstructData.h:
+        (JSC::):
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::createUndefinedVariableError):
+        (JSC::createInvalidParamError):
+        (JSC::createNotAConstructorError):
+        (JSC::createNotAFunctionError):
+        (JSC::createNotAnObjectError):
+        * runtime/Executable.cpp: Added.
+        (JSC::EvalExecutable::generateBytecode):
+        (JSC::ProgramExecutable::generateBytecode):
+        (JSC::FunctionExecutable::generateBytecode):
+        (JSC::EvalExecutable::generateJITCode):
+        (JSC::ProgramExecutable::generateJITCode):
+        (JSC::FunctionExecutable::generateJITCode):
+        (JSC::FunctionExecutable::isHostFunction):
+        (JSC::FunctionExecutable::markAggregate):
+        (JSC::FunctionExecutable::reparseExceptionInfo):
+        (JSC::EvalExecutable::reparseExceptionInfo):
+        (JSC::FunctionExecutable::recompile):
+        (JSC::FunctionExecutable::FunctionExecutable):
+        * runtime/Executable.h:
+        (JSC::ExecutableBase::~ExecutableBase):
+        (JSC::ExecutableBase::ExecutableBase):
+        (JSC::ExecutableBase::source):
+        (JSC::ExecutableBase::sourceID):
+        (JSC::ExecutableBase::lastLine):
+        (JSC::ExecutableBase::usesEval):
+        (JSC::ExecutableBase::usesArguments):
+        (JSC::ExecutableBase::needsActivation):
+        (JSC::ExecutableBase::astNode):
+        (JSC::ExecutableBase::generatedJITCode):
+        (JSC::ExecutableBase::getExecutablePool):
+        (JSC::EvalExecutable::EvalExecutable):
+        (JSC::EvalExecutable::bytecode):
+        (JSC::EvalExecutable::varStack):
+        (JSC::EvalExecutable::evalNode):
+        (JSC::EvalExecutable::jitCode):
+        (JSC::ProgramExecutable::ProgramExecutable):
+        (JSC::ProgramExecutable::reparseExceptionInfo):
+        (JSC::ProgramExecutable::bytecode):
+        (JSC::ProgramExecutable::programNode):
+        (JSC::ProgramExecutable::jitCode):
+        (JSC::FunctionExecutable::FunctionExecutable):
+        (JSC::FunctionExecutable::name):
+        (JSC::FunctionExecutable::bytecode):
+        (JSC::FunctionExecutable::generatedBytecode):
+        (JSC::FunctionExecutable::usesEval):
+        (JSC::FunctionExecutable::usesArguments):
+        (JSC::FunctionExecutable::parameterCount):
+        (JSC::FunctionExecutable::paramString):
+        (JSC::FunctionExecutable::isGenerated):
+        (JSC::FunctionExecutable::body):
+        (JSC::FunctionExecutable::jitCode):
+        (JSC::FunctionExecutable::createNativeThunk):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunction):
+        * runtime/FunctionPrototype.cpp:
+        (JSC::functionProtoFuncToString):
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::JSActivation):
+        (JSC::JSActivation::markChildren):
+        (JSC::JSActivation::isDynamicScope):
+        (JSC::JSActivation::argumentsGetter):
+        * runtime/JSActivation.h:
+        (JSC::JSActivation::JSActivationData::JSActivationData):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::isHostFunction):
+        (JSC::JSFunction::JSFunction):
+        (JSC::JSFunction::~JSFunction):
+        (JSC::JSFunction::markChildren):
+        (JSC::JSFunction::getCallData):
+        (JSC::JSFunction::call):
+        (JSC::JSFunction::lengthGetter):
+        (JSC::JSFunction::getConstructData):
+        (JSC::JSFunction::construct):
+        * runtime/JSFunction.h:
+        (JSC::JSFunction::executable):
+        (JSC::FunctionExecutable::make):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        (JSC::JSGlobalData::numericCompareFunction):
+        * runtime/JSGlobalData.h:
+
 2009-08-17  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Darin Adler.

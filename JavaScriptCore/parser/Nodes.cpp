@@ -1824,17 +1824,6 @@ ScopeNodeData::ScopeNodeData(ParserArena& arena, SourceElements* children, VarSt
         children->releaseContentsIntoVector(m_children);
 }
 
-void ScopeNodeData::markAggregate(MarkStack& markStack)
-{
-    FunctionStack::iterator end = m_functionStack.end();
-    for (FunctionStack::iterator ptr = m_functionStack.begin(); ptr != end; ++ptr) {
-        FunctionBodyNode* body = *ptr;
-        if (!body->isGenerated())
-            continue;
-        body->generatedBytecode().markAggregate(markStack);
-    }
-}
-
 // ------------------------------ ScopeNode -----------------------------
 
 ScopeNode::ScopeNode(JSGlobalData* globalData)
@@ -1892,30 +1881,6 @@ RegisterID* ProgramNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
     return 0;
 }
 
-void ProgramNode::generateBytecode(ScopeChainNode* scopeChainNode)
-{
-    ScopeChain scopeChain(scopeChainNode);
-    JSGlobalObject* globalObject = scopeChain.globalObject();
-    
-    m_code.set(new ProgramCodeBlock(this, GlobalCode, globalObject, source().provider()));
-    
-    OwnPtr<BytecodeGenerator> generator(new BytecodeGenerator(this, globalObject->debugger(), scopeChain, &globalObject->symbolTable(), m_code.get()));
-    generator->generate();
-
-    destroyData();
-}
-
-#if ENABLE(JIT)
-void ProgramNode::generateJITCode(ScopeChainNode* scopeChainNode)
-{
-    bytecode(scopeChainNode);
-    ASSERT(m_code);
-    ASSERT(!m_jitCode);
-    JIT::compile(scopeChainNode->globalData, m_code.get());
-    ASSERT(m_jitCode);
-}
-#endif
-
 // ------------------------------ EvalNode -----------------------------
 
 inline EvalNode::EvalNode(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, const SourceCode& source, CodeFeatures features, int numConstants)
@@ -1946,54 +1911,6 @@ RegisterID* EvalNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
     generator.emitEnd(dstRegister.get());
     return 0;
 }
-
-void EvalNode::generateBytecode(ScopeChainNode* scopeChainNode)
-{
-    ScopeChain scopeChain(scopeChainNode);
-    JSGlobalObject* globalObject = scopeChain.globalObject();
-
-    m_code.set(new EvalCodeBlock(this, globalObject, source().provider(), scopeChain.localDepth()));
-
-    OwnPtr<BytecodeGenerator> generator(new BytecodeGenerator(this, globalObject->debugger(), scopeChain, &m_code->symbolTable(), m_code.get()));
-    generator->generate();
-
-    // Eval code needs to hang on to its declaration stacks to keep declaration info alive until Interpreter::execute time,
-    // so the entire ScopeNodeData cannot be destoyed.
-    children().clear();
-}
-
-EvalCodeBlock& EvalNode::bytecodeForExceptionInfoReparse(ScopeChainNode* scopeChainNode, CodeBlock* codeBlockBeingRegeneratedFrom)
-{
-    ASSERT(!m_code);
-
-    ScopeChain scopeChain(scopeChainNode);
-    JSGlobalObject* globalObject = scopeChain.globalObject();
-
-    m_code.set(new EvalCodeBlock(this, globalObject, source().provider(), scopeChain.localDepth()));
-
-    OwnPtr<BytecodeGenerator> generator(new BytecodeGenerator(this, globalObject->debugger(), scopeChain, &m_code->symbolTable(), m_code.get()));
-    generator->setRegeneratingForExceptionInfo(codeBlockBeingRegeneratedFrom);
-    generator->generate();
-
-    return *m_code;
-}
-
-void EvalNode::markAggregate(MarkStack& markStack)
-{
-    // We don't need to mark our own CodeBlock as the JSGlobalObject takes care of that
-    data()->markAggregate(markStack);
-}
-
-#if ENABLE(JIT)
-void EvalNode::generateJITCode(ScopeChainNode* scopeChainNode)
-{
-    bytecode(scopeChainNode);
-    ASSERT(m_code);
-    ASSERT(!m_jitCode);
-    JIT::compile(scopeChainNode->globalData, m_code.get());
-    ASSERT(m_jitCode);
-}
-#endif
 
 // ------------------------------ FunctionBodyNode -----------------------------
 
@@ -2037,28 +1954,6 @@ void FunctionBodyNode::finishParsing(Identifier* parameters, size_t parameterCou
     m_ident = ident;
 }
 
-void FunctionBodyNode::markAggregate(MarkStack& markStack)
-{
-    if (m_code)
-        m_code->markAggregate(markStack);
-}
-
-#if ENABLE(JIT)
-PassRefPtr<FunctionBodyNode> FunctionBodyNode::createNativeThunk(JSGlobalData* globalData)
-{
-    RefPtr<FunctionBodyNode> body = new FunctionBodyNode(globalData);
-    globalData->parser->arena().reset();
-    body->m_code.set(new NativeCodeBlock(body.get()));
-    body->m_jitCode = JITCode(JITCode::HostFunction(globalData->jitStubs.ctiNativeCallThunk()));
-    return body.release();
-}
-#endif
-
-bool FunctionBodyNode::isHostFunction() const
-{
-    return m_code && m_code->codeType() == NativeCode;
-}
-
 FunctionBodyNode* FunctionBodyNode::create(JSGlobalData* globalData)
 {
     return new FunctionBodyNode(globalData);
@@ -2075,50 +1970,13 @@ PassRefPtr<FunctionBodyNode> FunctionBodyNode::create(JSGlobalData* globalData, 
     return node.release();
 }
 
-void FunctionBodyNode::generateBytecode(ScopeChainNode* scopeChainNode)
+void FunctionBodyNode::reparseDataIfNecessary(ScopeChainNode* scopeChainNode)
 {
     // This branch is only necessary since you can still create a non-stub FunctionBodyNode by
     // calling Parser::parse<FunctionBodyNode>().   
     if (!data())
         scopeChainNode->globalData->parser->reparseInPlace(scopeChainNode->globalData, this);
     ASSERT(data());
-
-    ScopeChain scopeChain(scopeChainNode);
-    JSGlobalObject* globalObject = scopeChain.globalObject();
-
-    m_code.set(new FunctionCodeBlock(this, FunctionCode, source().provider(), source().startOffset()));
-
-    OwnPtr<BytecodeGenerator> generator(new BytecodeGenerator(this, globalObject->debugger(), scopeChain, &m_code->symbolTable(), m_code.get()));
-    generator->generate();
-
-    destroyData();
-}
-
-#if ENABLE(JIT)
-void FunctionBodyNode::generateJITCode(ScopeChainNode* scopeChainNode)
-{
-    bytecode(scopeChainNode);
-    ASSERT(m_code);
-    ASSERT(!m_jitCode);
-    JIT::compile(scopeChainNode->globalData, m_code.get());
-    ASSERT(m_jitCode);
-}
-#endif
-
-CodeBlock& FunctionBodyNode::bytecodeForExceptionInfoReparse(ScopeChainNode* scopeChainNode, CodeBlock* codeBlockBeingRegeneratedFrom)
-{
-    ASSERT(!m_code);
-
-    ScopeChain scopeChain(scopeChainNode);
-    JSGlobalObject* globalObject = scopeChain.globalObject();
-
-    m_code.set(new FunctionCodeBlock(this, FunctionCode, source().provider(), source().startOffset()));
-
-    OwnPtr<BytecodeGenerator> generator(new BytecodeGenerator(this, globalObject->debugger(), scopeChain, &m_code->symbolTable(), m_code.get()));
-    generator->setRegeneratingForExceptionInfo(codeBlockBeingRegeneratedFrom);
-    generator->generate();
-
-    return *m_code;
 }
 
 RegisterID* FunctionBodyNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
@@ -2154,11 +2012,6 @@ Identifier* FunctionBodyNode::copyParameters()
     Identifier* parameters = static_cast<Identifier*>(fastMalloc(m_parameterCount * sizeof(Identifier)));
     VectorCopier<false, Identifier>::uninitializedCopy(m_parameters, m_parameters + m_parameterCount, parameters);
     return parameters;
-}
-
-JSFunction* FunctionBodyNode::make(ExecState* exec, ScopeChainNode* scopeChain)
-{
-    return new (exec) JSFunction(exec, m_ident, this, scopeChain);
 }
 
 // ------------------------------ FuncDeclNode ---------------------------------

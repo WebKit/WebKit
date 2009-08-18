@@ -39,12 +39,16 @@
 namespace JSC {
 
     class ArgumentListNode;
-    class CodeBlock;
     class BytecodeGenerator;
-    class FuncDeclNode;
+    class CodeBlock;
     class EvalCodeBlock;
+    class EvalExecutable;
+    class FuncDeclNode;
+    class FunctionBodyNode;
+    class FunctionCodeBlock;
     class JSFunction;
     class ProgramCodeBlock;
+    class ProgramExecutable;
     class PropertyListNode;
     class ReadModifyResolveNode;
     class RegisterID;
@@ -1390,8 +1394,6 @@ namespace JSC {
         FunctionStack m_functionStack;
         int m_numConstants;
         StatementVector m_children;
-
-        void markAggregate(MarkStack&);
     };
 
     class ScopeNode : public StatementNode, public ParserArenaRefCounted {
@@ -1437,32 +1439,8 @@ namespace JSC {
             return m_data->m_numConstants + 2;
         }
 
-        virtual void markAggregate(MarkStack&) { }
-
-#if ENABLE(JIT)
-        JITCode& generatedJITCode()
-        {
-            ASSERT(m_jitCode);
-            return m_jitCode;
-        }
-
-        ExecutablePool* getExecutablePool()
-        {
-            return m_jitCode.getExecutablePool();
-        }
-
-        void setJITCode(const JITCode jitCode)
-        {
-            m_jitCode = jitCode;
-        }
-#endif
-
     protected:
         void setSource(const SourceCode& source) { m_source = source; }
-
-#if ENABLE(JIT)
-        JITCode m_jitCode;
-#endif
 
     private:
         OwnPtr<ScopeNodeData> m_data;
@@ -1474,78 +1452,32 @@ namespace JSC {
     public:
         static PassRefPtr<ProgramNode> create(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, const SourceCode&, CodeFeatures, int numConstants);
 
-        ProgramCodeBlock& bytecode(ScopeChainNode* scopeChain) 
-        {
-            if (!m_code)
-                generateBytecode(scopeChain);
-            return *m_code;
-        }
-
-#if ENABLE(JIT)
-        JITCode& jitCode(ScopeChainNode* scopeChain)
-        {
-            if (!m_jitCode)
-                generateJITCode(scopeChain);
-            return m_jitCode;
-        }
-#endif
-
     private:
         ProgramNode(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, const SourceCode&, CodeFeatures, int numConstants);
 
-        void generateBytecode(ScopeChainNode*);
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
-
-#if ENABLE(JIT)
-        void generateJITCode(ScopeChainNode*);
-#endif
-
-        OwnPtr<ProgramCodeBlock> m_code;
     };
 
     class EvalNode : public ScopeNode {
     public:
         static PassRefPtr<EvalNode> create(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, const SourceCode&, CodeFeatures, int numConstants);
 
-        EvalCodeBlock& bytecode(ScopeChainNode* scopeChain) 
+        void partialDestroyData()
         {
-            if (!m_code)
-                generateBytecode(scopeChain);
-            return *m_code;
+            // Eval code needs to hang on to its declaration stacks to keep declaration info alive until Interpreter::execute time,
+            // so the entire ScopeNodeData cannot be destoyed.
+            children().clear();
         }
-
-        EvalCodeBlock& bytecodeForExceptionInfoReparse(ScopeChainNode*, CodeBlock*);
-
-        virtual void markAggregate(MarkStack&);
-
-#if ENABLE(JIT)
-        JITCode& jitCode(ScopeChainNode* scopeChain)
-        {
-            if (!m_jitCode)
-                generateJITCode(scopeChain);
-            return m_jitCode;
-        }
-#endif
 
     private:
         EvalNode(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, const SourceCode&, CodeFeatures, int numConstants);
 
-        void generateBytecode(ScopeChainNode*);
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
-
-#if ENABLE(JIT)
-        void generateJITCode(ScopeChainNode*);
-#endif
-        
-        OwnPtr<EvalCodeBlock> m_code;
     };
 
     class FunctionBodyNode : public ScopeNode {
         friend class JIT;
     public:
-#if ENABLE(JIT)
-        static PassRefPtr<FunctionBodyNode> createNativeThunk(JSGlobalData*);
-#endif
         static FunctionBodyNode* create(JSGlobalData*);
         static PassRefPtr<FunctionBodyNode> create(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, const SourceCode&, CodeFeatures, int numConstants);
         virtual ~FunctionBodyNode();
@@ -1557,60 +1489,19 @@ namespace JSC {
 
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
 
-        bool isGenerated() const
-        {
-            return m_code;
-        }
-
-        bool isHostFunction() const;
-
-        virtual void markAggregate(MarkStack&);
-
         void finishParsing(const SourceCode&, ParameterNode*, const Identifier& ident);
         void finishParsing(Identifier* parameters, size_t parameterCount, const Identifier& ident);
         
-        UString toSourceString() const { return source().toString(); }
-
-        CodeBlock& bytecodeForExceptionInfoReparse(ScopeChainNode*, CodeBlock*);
-#if ENABLE(JIT)
-        JITCode& jitCode(ScopeChainNode* scopeChain)
-        {
-            if (!m_jitCode)
-                generateJITCode(scopeChain);
-            return m_jitCode;
-        }
-#endif
-
-        CodeBlock& bytecode(ScopeChainNode* scopeChain) 
-        {
-            ASSERT(scopeChain);
-            if (!m_code)
-                generateBytecode(scopeChain);
-            return *m_code;
-        }
-        
-        CodeBlock& generatedBytecode()
-        {
-            ASSERT(m_code);
-            return *m_code;
-        }
-
         const Identifier& ident() { return m_ident; }
 
-        JSFunction* make(ExecState*, ScopeChainNode*);
+        void reparseDataIfNecessary(ScopeChainNode* scopeChainNode);
 
     private:
         FunctionBodyNode(JSGlobalData*);
         FunctionBodyNode(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, const SourceCode&, CodeFeatures, int numConstants);
-
-        void generateBytecode(ScopeChainNode*);
-#if ENABLE(JIT)
-        void generateJITCode(ScopeChainNode*);
-#endif
         Identifier m_ident;
         Identifier* m_parameters;
         size_t m_parameterCount;
-        OwnPtr<CodeBlock> m_code;
     };
 
     class FuncExprNode : public ExpressionNode {

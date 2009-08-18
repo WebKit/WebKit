@@ -30,40 +30,108 @@
 
 namespace JSC {
 
-    template<class ASTNodeType, class CodeBlockType>
-    class TemplateExecutable {
+    class CodeBlock;
+    class EvalCodeBlock;
+    class ProgramCodeBlock;
+    class ScopeChainNode;
+
+    struct ExceptionInfo;
+
+    class ExecutableBase {
+        friend class JIT;
     public:
-        TemplateExecutable(const SourceCode& source)
+        virtual ~ExecutableBase() {}
+
+        ExecutableBase(const SourceCode& source)
             : m_source(source)
         {
         }
 
-        void markAggregate(MarkStack& markStack)
-        {
-            m_node->markAggregate(markStack);
-        }
-
+        const SourceCode& source() { return m_source; }
+        intptr_t sourceID() const { return m_node->sourceID(); }
         const UString& sourceURL() const { return m_node->sourceURL(); }
         int lineNo() const { return m_node->lineNo(); }
-        CodeBlockType& bytecode(ScopeChainNode* scopeChainNode) { return m_node->bytecode(scopeChainNode); }
+        int lastLine() const { return m_node->lastLine(); }
 
-#if ENABLE(JIT)
-        JITCode& jitCode(ScopeChainNode* scopeChainNode) { return m_node->jitCode(scopeChainNode); }
-#endif
+        bool usesEval() const { return m_node->usesEval(); }
+        bool usesArguments() const { return m_node->usesArguments(); }
+        bool needsActivation() const { return m_node->needsActivation(); }
+
+        virtual ExceptionInfo* reparseExceptionInfo(JSGlobalData*, ScopeChainNode*, CodeBlock*) = 0;
+
+        ScopeNode* astNode() { return m_node.get(); }
 
     protected:
-        RefPtr<ASTNodeType> m_node;
+        RefPtr<ScopeNode> m_node;
         SourceCode m_source;
-    };
 
-    class EvalExecutable : public TemplateExecutable<EvalNode, EvalCodeBlock> {
-    public:
-        EvalExecutable(const SourceCode& source)
-            : TemplateExecutable<EvalNode, EvalCodeBlock>(source)
+    private:
+        // For use making native thunk.
+        friend class FunctionExecutable;
+        ExecutableBase()
         {
         }
 
+#if ENABLE(JIT)
+    public:
+        JITCode& generatedJITCode()
+        {
+            ASSERT(m_jitCode);
+            return m_jitCode;
+        }
+
+        ExecutablePool* getExecutablePool()
+        {
+            return m_jitCode.getExecutablePool();
+        }
+
+    protected:
+        JITCode m_jitCode;
+#endif
+    };
+
+    class EvalExecutable : public ExecutableBase {
+    public:
+        EvalExecutable(const SourceCode& source)
+            : ExecutableBase(source)
+            , m_evalCodeBlock(0)
+        {
+        }
+
+        ~EvalExecutable();
+
         JSObject* parse(ExecState* exec, bool allowDebug = true);
+
+        EvalCodeBlock& bytecode(ScopeChainNode* scopeChainNode)
+        {
+            if (!m_evalCodeBlock)
+                generateBytecode(scopeChainNode);
+            return *m_evalCodeBlock;
+        }
+
+        DeclarationStacks::VarStack& varStack() { return m_node->varStack(); }
+
+        ExceptionInfo* reparseExceptionInfo(JSGlobalData*, ScopeChainNode*, CodeBlock*);
+
+    private:
+        EvalNode* evalNode() { return static_cast<EvalNode*>(m_node.get()); }
+
+        void generateBytecode(ScopeChainNode*);
+
+        EvalCodeBlock* m_evalCodeBlock;
+
+#if ENABLE(JIT)
+    public:
+        JITCode& jitCode(ScopeChainNode* scopeChainNode)
+        {
+            if (!m_jitCode)
+                generateJITCode(scopeChainNode);
+            return m_jitCode;
+        }
+
+    private:
+        void generateJITCode(ScopeChainNode*);
+#endif
     };
 
     class CacheableEvalExecutable : public EvalExecutable, public RefCounted<CacheableEvalExecutable> {
@@ -77,14 +145,122 @@ namespace JSC {
         }
     };
 
-    class ProgramExecutable : public TemplateExecutable<ProgramNode, ProgramCodeBlock> {
+    class ProgramExecutable : public ExecutableBase {
     public:
         ProgramExecutable(const SourceCode& source)
-            : TemplateExecutable<ProgramNode, ProgramCodeBlock>(source)
+            : ExecutableBase(source)
+            , m_programCodeBlock(0)
         {
         }
+        
+        ~ProgramExecutable();
 
         JSObject* parse(ExecState* exec, bool allowDebug = true);
+
+        // CodeBlocks for program code are transient and therefore to not gain from from throwing out there exception information.
+        ExceptionInfo* reparseExceptionInfo(JSGlobalData*, ScopeChainNode*, CodeBlock*) { ASSERT_NOT_REACHED(); return 0; }
+
+        ProgramCodeBlock& bytecode(ScopeChainNode* scopeChainNode)
+        {
+            if (!m_programCodeBlock)
+                generateBytecode(scopeChainNode);
+            return *m_programCodeBlock;
+        }
+
+    private:
+        ProgramNode* programNode() { return static_cast<ProgramNode*>(m_node.get()); }
+
+        void generateBytecode(ScopeChainNode*);
+
+        ProgramCodeBlock* m_programCodeBlock;
+
+#if ENABLE(JIT)
+    public:
+        JITCode& jitCode(ScopeChainNode* scopeChainNode)
+        {
+            if (!m_jitCode)
+                generateJITCode(scopeChainNode);
+            return m_jitCode;
+        }
+
+    private:
+        void generateJITCode(ScopeChainNode*);
+#endif
+    };
+
+    class FunctionExecutable : public ExecutableBase, public RefCounted<FunctionExecutable> {
+        friend class JIT;
+    public:
+        FunctionExecutable(const Identifier& name, FunctionBodyNode* body)
+            : ExecutableBase(body->source())
+            , m_codeBlock(0)
+            , m_name(name)
+        {
+            m_node = body;
+        }
+
+        ~FunctionExecutable();
+
+        const Identifier& name() { return m_name; }
+
+        JSFunction* make(ExecState* exec, ScopeChainNode* scopeChain);
+
+        CodeBlock& bytecode(ScopeChainNode* scopeChainNode) 
+        {
+            ASSERT(scopeChainNode);
+            if (!m_codeBlock)
+                generateBytecode(scopeChainNode);
+            return *m_codeBlock;
+        }
+        CodeBlock& generatedBytecode()
+        {
+            ASSERT(m_codeBlock);
+            return *m_codeBlock;
+        }
+
+        bool usesEval() const { return body()->usesEval(); }
+        bool usesArguments() const { return body()->usesArguments(); }
+        size_t parameterCount() const { return body()->parameterCount(); }
+        UString paramString() const { return body()->paramString(); }
+
+        bool isHostFunction() const;
+        bool isGenerated() const
+        {
+            return m_codeBlock;
+        }
+
+        void recompile(ExecState* exec);
+
+        ExceptionInfo* reparseExceptionInfo(JSGlobalData*, ScopeChainNode*, CodeBlock*);
+
+        void markAggregate(MarkStack& markStack);
+
+    private:
+        FunctionBodyNode* body() const { return static_cast<FunctionBodyNode*>(m_node.get()); }
+
+        void generateBytecode(ScopeChainNode*);
+
+        CodeBlock* m_codeBlock;
+        const Identifier& m_name;
+
+#if ENABLE(JIT)
+    public:
+        JITCode& jitCode(ScopeChainNode* scopeChainNode)
+        {
+            if (!m_jitCode)
+                generateJITCode(scopeChainNode);
+            return m_jitCode;
+        }
+
+        static PassRefPtr<FunctionExecutable> createNativeThunk(ExecState* exec)
+        {
+            return adoptRef(new FunctionExecutable(exec));
+        }
+
+    private:
+        FunctionExecutable(ExecState* exec);
+        void generateJITCode(ScopeChainNode*);
+#endif
     };
 
 };

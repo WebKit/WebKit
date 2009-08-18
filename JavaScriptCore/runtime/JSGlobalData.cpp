@@ -144,7 +144,7 @@ JSGlobalData::JSGlobalData(bool isShared, const VPtrSet& vptrSet)
     , initializingLazyNumericCompareFunction(false)
     , head(0)
     , dynamicGlobalObject(0)
-    , scopeNodeBeingReparsed(0)
+    , functionCodeBlockBeingReparsed(0)
     , firstStringifierToMark(0)
     , markStack(vptrSet.jsArrayVPtr)
 {
@@ -237,7 +237,8 @@ const Vector<Instruction>& JSGlobalData::numericCompareFunction(ExecState* exec)
     if (!lazyNumericCompareFunction.size() && !initializingLazyNumericCompareFunction) {
         initializingLazyNumericCompareFunction = true;
         RefPtr<FunctionBodyNode> functionBody = parser->parseFunctionFromGlobalCode(exec, 0, makeSource(UString("(function (v1, v2) { return v1 - v2; })")), 0, 0);
-        lazyNumericCompareFunction = functionBody->bytecode(exec->scopeChain()).instructions();
+        FunctionExecutable function(functionBody->ident(), functionBody.get());
+        lazyNumericCompareFunction = function.bytecode(exec->scopeChain()).instructions();
         initializingLazyNumericCompareFunction = false;
     }
 

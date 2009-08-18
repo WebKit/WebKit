@@ -68,8 +68,8 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     Label virtualCallLinkBegin = align();
 
     // regT0 holds callee, regT1 holds argCount.
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_body)), regT2);
-    loadPtr(Address(regT2, OBJECT_OFFSETOF(FunctionBodyNode, m_code)), regT2);
+    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_executable)), regT2);
+    loadPtr(Address(regT2, OBJECT_OFFSETOF(FunctionExecutable, m_codeBlock)), regT2);
     Jump hasCodeBlock2 = branchTestPtr(NonZero, regT2);
 
     // Lazily generate a CodeBlock.
@@ -114,8 +114,8 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     Label virtualCallBegin = align();
 
     // regT0 holds callee, regT1 holds argCount.
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_body)), regT2);
-    loadPtr(Address(regT2, OBJECT_OFFSETOF(FunctionBodyNode, m_code)), regT2);
+    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_executable)), regT2);
+    loadPtr(Address(regT2, OBJECT_OFFSETOF(FunctionExecutable, m_codeBlock)), regT2);
     Jump hasCodeBlock3 = branchTestPtr(NonZero, regT2);
 
     // Lazily generate a CodeBlock.
@@ -146,8 +146,8 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     arityCheckOkay3.link(this);
     isNativeFunc3.link(this);
     compileOpCallInitializeCallFrame();
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_body)), regT0);
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(FunctionBodyNode, m_jitCode)), regT0);
+    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_executable)), regT0);
+    loadPtr(Address(regT0, OBJECT_OFFSETOF(FunctionExecutable, m_jitCode)), regT0);
     jump(regT0);
 
 #if PLATFORM(X86)
@@ -544,7 +544,7 @@ void JIT::emitSlow_op_instanceof(Instruction* currentInstruction, Vector<SlowCas
 void JIT::emit_op_new_func(Instruction* currentInstruction)
 {
     JITStubCall stubCall(this, cti_op_new_func);
-    stubCall.addArgument(ImmPtr(m_codeBlock->function(currentInstruction[2].u.operand)));
+    stubCall.addArgument(ImmPtr(m_codeBlock->functionDecl(currentInstruction[2].u.operand)));
     stubCall.call(currentInstruction[1].u.operand);
 }
 
@@ -1180,7 +1180,7 @@ void JIT::emit_op_resolve_with_base(Instruction* currentInstruction)
 void JIT::emit_op_new_func_exp(Instruction* currentInstruction)
 {
     JITStubCall stubCall(this, cti_op_new_func_exp);
-    stubCall.addArgument(ImmPtr(m_codeBlock->function(currentInstruction[2].u.operand)));
+    stubCall.addArgument(ImmPtr(m_codeBlock->functionExpr(currentInstruction[2].u.operand)));
     stubCall.call(currentInstruction[1].u.operand);
 }
 
@@ -1487,8 +1487,8 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     Label virtualCallLinkBegin = align();
 
     // Load the callee CodeBlock* into eax
-    loadPtr(Address(regT2, OBJECT_OFFSETOF(JSFunction, m_body)), regT3);
-    loadPtr(Address(regT3, OBJECT_OFFSETOF(FunctionBodyNode, m_code)), regT0);
+    loadPtr(Address(regT2, OBJECT_OFFSETOF(JSFunction, m_executable)), regT3);
+    loadPtr(Address(regT3, OBJECT_OFFSETOF(FunctionExecutable, m_codeBlock)), regT0);
     Jump hasCodeBlock2 = branchTestPtr(NonZero, regT0);
     preserveReturnAddressAfterCall(regT3);
     restoreArgumentReference();
@@ -1527,8 +1527,8 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     Label virtualCallBegin = align();
 
     // Load the callee CodeBlock* into eax
-    loadPtr(Address(regT2, OBJECT_OFFSETOF(JSFunction, m_body)), regT3);
-    loadPtr(Address(regT3, OBJECT_OFFSETOF(FunctionBodyNode, m_code)), regT0);
+    loadPtr(Address(regT2, OBJECT_OFFSETOF(JSFunction, m_executable)), regT3);
+    loadPtr(Address(regT3, OBJECT_OFFSETOF(FunctionExecutable, m_codeBlock)), regT0);
     Jump hasCodeBlock3 = branchTestPtr(NonZero, regT0);
     preserveReturnAddressAfterCall(regT3);
     restoreArgumentReference();
@@ -1536,7 +1536,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     emitGetJITStubArg(1, regT2);
     emitGetJITStubArg(3, regT1);
     restoreReturnAddressBeforeReturn(regT3);
-    loadPtr(Address(regT2, OBJECT_OFFSETOF(JSFunction, m_body)), regT3); // reload the function body nody, so we can reload the code pointer.
+    loadPtr(Address(regT2, OBJECT_OFFSETOF(JSFunction, m_executable)), regT3); // reload the function body nody, so we can reload the code pointer.
     hasCodeBlock3.link(this);
     
     Jump isNativeFunc3 = branch32(Equal, Address(regT0, OBJECT_OFFSETOF(CodeBlock, m_codeType)), Imm32(NativeCode));
@@ -1552,12 +1552,12 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     emitGetJITStubArg(1, regT2);
     emitGetJITStubArg(3, regT1);
     restoreReturnAddressBeforeReturn(regT3);
-    loadPtr(Address(regT2, OBJECT_OFFSETOF(JSFunction, m_body)), regT3); // reload the function body nody, so we can reload the code pointer.
+    loadPtr(Address(regT2, OBJECT_OFFSETOF(JSFunction, m_executable)), regT3); // reload the function body nody, so we can reload the code pointer.
     arityCheckOkay3.link(this);
     isNativeFunc3.link(this);
 
     // load ctiCode from the new codeBlock.
-    loadPtr(Address(regT3, OBJECT_OFFSETOF(FunctionBodyNode, m_jitCode)), regT0);
+    loadPtr(Address(regT3, OBJECT_OFFSETOF(FunctionExecutable, m_jitCode)), regT0);
     
     compileOpCallInitializeCallFrame();
     jump(regT0);
@@ -1971,7 +1971,7 @@ void JIT::emit_op_instanceof(Instruction* currentInstruction)
 void JIT::emit_op_new_func(Instruction* currentInstruction)
 {
     JITStubCall stubCall(this, cti_op_new_func);
-    stubCall.addArgument(ImmPtr(m_codeBlock->function(currentInstruction[2].u.operand)));
+    stubCall.addArgument(ImmPtr(m_codeBlock->functionDecl(currentInstruction[2].u.operand)));
     stubCall.call(currentInstruction[1].u.operand);
 }
 
@@ -2325,7 +2325,7 @@ void JIT::emit_op_resolve_with_base(Instruction* currentInstruction)
 void JIT::emit_op_new_func_exp(Instruction* currentInstruction)
 {
     JITStubCall stubCall(this, cti_op_new_func_exp);
-    stubCall.addArgument(ImmPtr(m_codeBlock->function(currentInstruction[2].u.operand)));
+    stubCall.addArgument(ImmPtr(m_codeBlock->functionExpr(currentInstruction[2].u.operand)));
     stubCall.call(currentInstruction[1].u.operand);
 }
 

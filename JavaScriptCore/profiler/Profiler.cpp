@@ -31,6 +31,7 @@
 
 #include "CommonIdentifiers.h"
 #include "CallFrame.h"
+#include "CodeBlock.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
 #include "Nodes.h"
@@ -142,7 +143,7 @@ CallIdentifier Profiler::createCallIdentifier(JSGlobalData* globalData, JSValue 
         return CallIdentifier("(unknown)", defaultSourceURL, defaultLineNumber);
     if (asObject(functionValue)->inherits(&JSFunction::info)) {
         JSFunction* function = asFunction(functionValue);
-        if (!function->body()->isHostFunction())
+        if (!function->executable()->isHostFunction())
             return createCallIdentifierFromFunctionImp(globalData, function);
     }
     if (asObject(functionValue)->inherits(&InternalFunction::info))
@@ -153,7 +154,7 @@ CallIdentifier Profiler::createCallIdentifier(JSGlobalData* globalData, JSValue 
 CallIdentifier createCallIdentifierFromFunctionImp(JSGlobalData* globalData, JSFunction* function)
 {
     const UString& name = function->calculatedDisplayName(globalData);
-    return CallIdentifier(name.isEmpty() ? AnonymousFunction : name, function->body()->sourceURL(), function->body()->lineNo());
+    return CallIdentifier(name.isEmpty() ? AnonymousFunction : name, function->executable()->sourceURL(), function->executable()->lineNo());
 }
 
 } // namespace JSC
