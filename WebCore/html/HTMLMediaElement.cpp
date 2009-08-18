@@ -710,6 +710,10 @@ void HTMLMediaElement::setNetworkState(MediaPlayer::NetworkState state)
         if (oldState < NETWORK_LOADED || oldState == NETWORK_NO_SOURCE) {
             m_progressEventTimer.stop();
 
+            // Schedule one last progress event so we guarantee that at least one is fired
+            // for files that load very quickly.
+            scheduleProgressEvent(eventNames().progressEvent);
+
             // Check to see if readyState changes need to be dealt with before sending the 
             // 'load' event so we report 'canplaythrough' first. This is necessary because a
             //  media engine reports readyState and networkState changes separately

@@ -1,3 +1,16 @@
+2009-08-18  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        HTMLMediaElement should fire 'progress' event before 'load'
+        https://bugs.webkit.org/show_bug.cgi?id=28314
+
+        Test: media/progress-event-at-least-one.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setNetworkState):
+            Schedule 'progress' event before 'load'.
+
 2009-08-18  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Eric Seidel.

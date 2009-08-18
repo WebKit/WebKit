@@ -1,0 +1,58 @@
+<html>
+    <head>
+        <script src=video-test.js></script>
+
+        <script>
+
+            var progressEventCount = 0;
+
+            function progress()
+            {
+                // 'progress' events can fire an arbitrary number of times if the
+                // file loads slowly, we only want to ensure that AT LEAST one is
+                // fired so only log the first one so test results are consistent.
+                if (++progressEventCount > 1)
+                    return;
+                consoleWrite("EVENT(progress)");
+            }
+
+            function loaded()
+            {
+                consoleWrite("EVENT(load)");
+                
+                testExpected('progressEventCount', 1, '>=');
+                endTest();
+            }
+
+            function start()
+            {
+                run("mediaElement = document.createElement('audio')");
+
+                mediaElement.setAttribute('onload', "loaded()");
+                mediaElement.setAttribute('onprogress', "progress()");
+
+                waitForEvent("loadstart");
+                waitForEvent("waiting");
+                waitForEvent("ratechange");
+                waitForEvent("durationchange");
+                waitForEvent("pause");
+                waitForEvent("play");
+                waitForEvent("playing");
+                waitForEvent('loadedmetadata');
+                waitForEvent('loadeddata');
+
+                run("mediaElement.src = 'content/test.wav'");
+                run("mediaElement.load()");
+
+                consoleWrite("");
+            }
+
+        </script>
+    </head>
+
+    <body onload="start()">
+
+    <p>Test that at least one 'progress' event is fired before the 'load' event.</p>
+
+    </body>
+</html>
