@@ -13,6 +13,17 @@
 
 2009-08-18  Drew Wilson  <atwilson@google.com>
 
+        Unreviewed (Updating skipped tests).
+
+        Re-enabled test on GTK platform (DRT supports layoutTestController.workerThreadCount on GTK).
+
+        Disabled test on QT platform (DRT does not support workerThreadCount on QT).
+
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+
+2009-08-18  Drew Wilson  <atwilson@google.com>
+
         Unreviewed - skipping test on GTK.
 
         Added worker-lifecycle.html tests to skipped tests on GTK platform due to missing DRT functionality.
