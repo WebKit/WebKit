@@ -100,8 +100,10 @@ for my $tfile (@templates) {
         next if $file =~ m:resources/attr-case-sensitivity\.js$:;
         next if $file =~ m:resources/box-orient-button\.js$:;
         next if $file =~ m:resources/box-shadow-overflow-scroll\.js$:;
+        next if $file =~ m:resources/canvas-2d-imageData-create-nonfinite\.js$:;
         next if $file =~ m:resources/codegen-temporaries-multiple-global-blocks-1\.js$:;
         next if $file =~ m:resources/codegen-temporaries-multiple-global-blocks-2\.js$:;
+        next if $file =~ m:resources/const\.js$:;
         next if $file =~ m:resources/constructors-cached-navigate\.js$:;
         next if $file =~ m:resources/frame-loading-via-document-write\.js$:;
         next if $file =~ m:resources/id-fastpath-almost-strict\.js$:;

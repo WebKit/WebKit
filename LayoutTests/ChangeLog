@@ -1,5 +1,22 @@
 2009-08-17  Shinichiro Hamaji  <hamaji@chromium.org>
 
+        Reviewed by Darin Adler.
+
+        Some HTMLs are modified by make-script-test-wrappers
+        https://bugs.webkit.org/show_bug.cgi?id=28213
+
+        Add fast/js/const.js and fast/canvas/canvas-2d-imageData-create-nonfinite.js into
+        the exclude list, modified fast/dom/Geolocation/resources/TEMPLATE.html, and
+        re-generated wml/* and Geolocation/* .
+
+        * fast/dom/Geolocation/enabled.html:
+        * fast/dom/Geolocation/resources/TEMPLATE.html:
+        * http/tests/wml/access-target-domain-deny.html:
+        * http/tests/wml/access-target-path-deny.html:
+        * http/tests/wml/access-target.html:
+
+2009-08-17  Shinichiro Hamaji  <hamaji@chromium.org>
+
         Reviewed by Eric Seidel.
 
         -webkit-box-orient:horizontal doesn't work on <button> tag
