@@ -1,3 +1,30 @@
+2009-08-17  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Some cleanup towards https://bugs.webkit.org/show_bug.cgi?id=13631
+        Page Cache should support pages with frames.
+
+        - Re-factor all remaining page cache code out of DocumentLoader, as CachedPage/CacheFrame loads
+          are solely the responsibility of FrameLoader.
+        - Enhance some page cache related Logging to help development.
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::didCommitLoad):
+        (WebCore::InspectorController::identifierForInitialRequest):
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::DocumentLoader):
+        * loader/DocumentLoader.h:
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::FrameLoader):
+        (WebCore::FrameLoader::commitProvisionalLoad):
+        (WebCore::FrameLoader::continueLoadAfterWillSubmitForm):
+        (WebCore::FrameLoader::loadProvisionalItemFromCachedPage):
+        * loader/FrameLoader.h:
+        (WebCore::FrameLoader::isLoadingFromCachedPage):
+
 2009-08-17  Roland Steiner  <rolandsteiner@google.com>
 
         Reviewed by Eric Seidel.

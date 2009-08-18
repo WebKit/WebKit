@@ -267,6 +267,7 @@ FrameLoader::FrameLoader(Frame* frame, FrameLoaderClient* client)
     , m_isDisplayingInitialEmptyDocument(false)
     , m_committedFirstRealDocumentLoad(false)
     , m_didPerformFirstNavigation(false)
+    , m_loadingFromCachedPage(false)
 #ifndef NDEBUG
     , m_didDispatchDidCommitLoad(false)
 #endif
@@ -2808,7 +2809,8 @@ void FrameLoader::commitProvisionalLoad(PassRefPtr<CachedPage> prpCachedPage)
     RefPtr<CachedPage> cachedPage = prpCachedPage;
     RefPtr<DocumentLoader> pdl = m_provisionalDocumentLoader;
 
-    LOG(Loading, "WebCoreLoading %s: About to commit provisional load from previous URL %s", m_frame->tree()->name().string().utf8().data(), m_URL.string().utf8().data());
+    LOG(PageCache, "WebCoreLoading %s: About to commit provisional load from previous URL '%s' to new URL '%s'", m_frame->tree()->name().string().utf8().data(), m_URL.string().utf8().data(), 
+        pdl ? pdl->url().string().utf8().data() : "<no provisional DocumentLoader>");
 
     // Check to see if we need to cache the page we are navigating away from into the back/forward cache.
     // We are doing this here because we know for sure that a new page is about to be loaded.
@@ -2849,7 +2851,7 @@ void FrameLoader::commitProvisionalLoad(PassRefPtr<CachedPage> prpCachedPage)
     if (m_loadType == FrameLoadTypeStandard && m_documentLoader->isClientRedirect())
         updateHistoryForClientRedirect();
 
-    if (m_documentLoader->isLoadingFromCachedPage()) {
+    if (m_loadingFromCachedPage) {
         m_frame->document()->documentDidBecomeActive();
         
         // Force a layout to update view size and thereby update scrollbars.
@@ -3416,7 +3418,7 @@ void FrameLoader::continueLoadAfterWillSubmitForm(PolicyAction)
     if (activeDocLoader && activeDocLoader->isLoadingMainResource())
         return;
 
-    m_provisionalDocumentLoader->setLoadingFromCachedPage(false);
+    m_loadingFromCachedPage = false;
 
     unsigned long identifier = 0;
 
@@ -4199,7 +4201,17 @@ bool FrameLoader::loadProvisionalItemFromCachedPage()
     RefPtr<CachedPage> cachedPage = pageCache()->get(m_provisionalHistoryItem.get());
     if (!cachedPage || !cachedPage->document())
         return false;
-    provisionalDocumentLoader()->loadFromCachedPage(cachedPage.release());
+
+    DocumentLoader *provisionalLoader = provisionalDocumentLoader();
+    LOG(PageCache, "WebCorePageCache: FrameLoader %p loading provisional DocumentLoader %p with URL '%s' from CachedPage %p", this, provisionalLoader, provisionalLoader->url().string().utf8().data(), cachedPage.get());
+    
+    provisionalLoader->prepareForLoadStart();
+
+    m_loadingFromCachedPage = true;
+
+    provisionalLoader->setCommitted(true);
+    commitProvisionalLoad(cachedPage);
+    
     return true;
 }
 
