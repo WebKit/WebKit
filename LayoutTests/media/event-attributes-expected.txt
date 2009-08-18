@@ -2,7 +2,6 @@ EVENT(loadstart)
 EVENT(durationchange)
 EVENT(loadedmetadata)
 EVENT(loadeddata)
-EVENT(progress)
 EVENT(canplay)
 EVENT(canplaythrough)
 EVENT(load)
@@ -34,5 +33,6 @@ RUN(video.load())
 EVENT(emptied)
 EVENT(loadstart)
 EVENT(error)
+EXPECTED (progressEventCount >= '1') OK
 END OF TEST
 

@@ -9,11 +9,12 @@
             function progress()
             {
                 // 'progress' events can fire an arbitrary number of times if the
-                // file loads slowly, we only want to ensure that AT LEAST one is
-                // fired so only log the first one so test results are consistent.
+                // file loads slowly, and the order of the first event in relation
+                // to the other events is not guaranteed, and we only want to ensure
+                // that AT LEAST one is fired so just count the number of events instead
+                // of logging them.
                 if (++progressEventCount > 1)
                     return;
-                consoleWrite("EVENT(progress)");
             }
 
             function loaded()

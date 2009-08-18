@@ -5,10 +5,14 @@
         <script>
             var ratechangeCount = 0;
             var playingCount = 0;
+            var progressEventCount = 0;
 
             function eventHandler()
             {
-                consoleWrite("EVENT(" + event.type + ")");
+                // Don't log progress event since the number and order are platform
+                // specific.
+                if (event.type != "progress")
+                    consoleWrite("EVENT(" + event.type + ")");
                 switch (event.type)
                 {
                     case "load":
@@ -44,7 +48,11 @@
                         run("video.src = 'content/garbage.mp4'");
                         run("video.load()");
                         break;
+                    case "progress":
+                        ++progressEventCount;
+                        break;
                     case "error":
+                        testExpected('progressEventCount', 1, '>=');
                         endTest();
                         break;
                     default:

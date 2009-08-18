@@ -8,7 +8,6 @@ EVENT(loadstart)
 EVENT(durationchange)
 EVENT(loadedmetadata)
 EVENT(loadeddata)
-EVENT(progress)
 EVENT(load)
 EXPECTED (progressEventCount >= '1') OK
 END OF TEST
