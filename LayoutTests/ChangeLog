@@ -1,3 +1,20 @@
+2009-08-18  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] These tests pass now. Fixed metrics related to default font size and added some expected files for new tests.
+
+        * platform/qt/Skipped:
+        * platform/qt/fast/images/animated-gif-with-offsets-expected.txt:
+        * platform/qt/fast/images/animated-svg-as-image-expected.txt: Added.
+        * platform/qt/fast/images/embed-image-expected.txt: Added.
+        * platform/qt/fast/images/favicon-as-image-expected.txt: Added.
+        * platform/qt/fast/images/object-image-expected.txt: Added.
+        * platform/qt/fast/images/svg-as-background-expected.txt:
+        * platform/qt/fast/images/svg-as-image-expected.txt:
+        * platform/qt/fast/images/svg-as-relative-image-expected.txt: Added.
+        * platform/qt/fast/images/svg-width-100p-as-background-expected.txt: Added.
+
 2009-08-18  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Eric Seidel.
