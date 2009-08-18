@@ -1,3 +1,15 @@
+2009-08-18  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Assertion failure in WebCore::RenderHTMLCanvas::layout
+        https://bugs.webkit.org/show_bug.cgi?id=12052
+
+        Remove string "foo" in <video> tag. This made Qt layout test fail.
+        Qt doesn't support video yet and the string will be rendered.
+
+        * fast/runin/nonblock-runin.html:
+
 2009-08-18  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Eric Seidel.
