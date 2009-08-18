@@ -324,7 +324,7 @@ void SVGUseElement::buildPendingResource()
     // Spec: If the 'use' element references a simple graphics element such as a 'rect', then there is only a
     // single SVGElementInstance object, and the correspondingElement attribute on this SVGElementInstance object
     // is the SVGRectElement that corresponds to the referenced 'rect' element.
-    m_targetElementInstance = new SVGElementInstance(this, target);
+    m_targetElementInstance = SVGElementInstance::create(this, target);
 
     // Eventually enter recursion to build SVGElementInstance objects for the sub-tree children
     bool foundProblem = false;
@@ -474,17 +474,17 @@ void SVGUseElement::buildInstanceTree(SVGElement* target, SVGElementInstance* ta
             continue;
 
         // Create SVGElementInstance object, for both container/non-container nodes.
-        SVGElementInstance* instancePtr = new SVGElementInstance(this, element);
-        targetInstance->appendChild(instancePtr);
+        RefPtr<SVGElementInstance> instancePtr = SVGElementInstance::create(this, element);
+        targetInstance->appendChild(instancePtr.get());
 
         // Enter recursion, appending new instance tree nodes to the "instance" object.
         if (element->hasChildNodes())
-            buildInstanceTree(element, instancePtr, foundProblem);
+            buildInstanceTree(element, instancePtr.get(), foundProblem);
 
         // Spec: If the referenced object is itself a 'use', or if there are 'use' subelements within the referenced
         // object, the instance tree will contain recursive expansion of the indirect references to form a complete tree.
         if (element->hasTagName(SVGNames::useTag))
-            handleDeepUseReferencing(static_cast<SVGUseElement*>(element), instancePtr, foundProblem);
+            handleDeepUseReferencing(static_cast<SVGUseElement*>(element), instancePtr.get(), foundProblem);
     }
 
     // Spec: If the referenced object is itself a 'use', or if there are 'use' subelements within the referenced
@@ -524,11 +524,11 @@ void SVGUseElement::handleDeepUseReferencing(SVGUseElement* use, SVGElementInsta
     }
 
     // Create an instance object, even if we're dealing with a cycle
-    SVGElementInstance* newInstance = new SVGElementInstance(this, target);
+    RefPtr<SVGElementInstance> newInstance = SVGElementInstance::create(this, target);
     targetInstance->appendChild(newInstance);
 
     // Eventually enter recursion to build SVGElementInstance objects for the sub-tree children
-    buildInstanceTree(target, newInstance, foundProblem);
+    buildInstanceTree(target, newInstance.get(), foundProblem);
 }
 
 void SVGUseElement::alterShadowTreeForSVGTag(SVGElement* target)

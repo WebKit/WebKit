@@ -27,8 +27,6 @@
 
 namespace WebCore {
 
-    // FIXME: This class is never instantiated. Should it be removed?
-
     namespace Private { 
         template<class GenericNode, class GenericNodeContainer>
         void addChildNodesToDeletionQueue(GenericNode*& head, GenericNode*& tail, GenericNodeContainer* container);
@@ -41,6 +39,11 @@ namespace WebCore {
     class SVGElementInstance : public TreeShared<SVGElementInstance>,
                                public EventTarget {
     public:
+        static PassRefPtr<SVGElementInstance> create(SVGUseElement* useElement, PassRefPtr<SVGElement> originalElement)
+        {
+            return adoptRef(new SVGElementInstance(useElement, originalElement));
+        }
+
         virtual ~SVGElementInstance();
 
         bool needsUpdate() const { return m_needsUpdate; }
