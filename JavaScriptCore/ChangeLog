@@ -1,3 +1,9 @@
+2009-08-18  Xan Lopez  <xlopez@igalia.com>
+
+        Try to fix the GTK+ build.
+
+        * GNUmakefile.am:
+
 2009-08-17  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.

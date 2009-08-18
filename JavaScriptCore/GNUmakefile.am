@@ -175,6 +175,8 @@ javascriptcore_sources += \
 	JavaScriptCore/interpreter/CallFrameClosure.h \
 	JavaScriptCore/runtime/TimeoutChecker.cpp \
 	JavaScriptCore/runtime/TimeoutChecker.h \
+	JavaScriptCore/runtime/Executable.cpp \
+	JavaScriptCore/runtime/Executable.h \
 	JavaScriptCore/runtime/InitializeThreading.cpp \
 	JavaScriptCore/runtime/InitializeThreading.h \
 	JavaScriptCore/runtime/JSActivation.cpp \
@@ -394,7 +396,6 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/ErrorInstance.h \
 	JavaScriptCore/runtime/ErrorPrototype.cpp \
 	JavaScriptCore/runtime/ErrorPrototype.h \
-	JavaScriptCore/runtime/Executable.cpp \
 	JavaScriptCore/runtime/FunctionConstructor.cpp \
 	JavaScriptCore/runtime/FunctionConstructor.h \
 	JavaScriptCore/runtime/FunctionPrototype.cpp \
