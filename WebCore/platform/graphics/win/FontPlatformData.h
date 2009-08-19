@@ -78,7 +78,6 @@ public:
 #if PLATFORM(CG)
     CGFontRef cgFont() const { return m_cgFont.get(); }
 #elif PLATFORM(CAIRO)
-    void setFont(cairo_t* ft) const;
     cairo_font_face_t* fontFace() const { return m_fontFace; }
     cairo_scaled_font_t* scaledFont() const { return m_scaledFont; }
 #endif

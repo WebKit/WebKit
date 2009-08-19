@@ -96,12 +96,6 @@ FontPlatformData::FontPlatformData(const FontPlatformData& source)
         m_scaledFont = cairo_scaled_font_reference(source.m_scaledFont);
 }
 
-void FontPlatformData::setFont(cairo_t* cr) const
-{
-    ASSERT(m_scaledFont);
-
-    cairo_set_scaled_font(cr, m_scaledFont);
-}
 
 FontPlatformData::~FontPlatformData()
 {

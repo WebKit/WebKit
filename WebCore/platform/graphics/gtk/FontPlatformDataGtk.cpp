@@ -224,10 +224,8 @@ FontPlatformData::~FontPlatformData()
         m_fallbacks = 0;
     }
 
-    if (m_scaledFont) {
+    if (m_scaledFont)
         cairo_scaled_font_destroy(m_scaledFont);
-        m_scaledFont = 0;
-    }
 }
 
 bool FontPlatformData::isFixedPitch()
@@ -240,13 +238,6 @@ bool FontPlatformData::isFixedPitch()
     if (FcPatternGetInteger(m_pattern, FC_SPACING, 0, &spacing) == FcResultMatch)
         return spacing == FC_MONO;
     return false;
-}
-
-void FontPlatformData::setFont(cairo_t* cr) const
-{
-    ASSERT(m_scaledFont);
-
-    cairo_set_scaled_font(cr, m_scaledFont);
 }
 
 bool FontPlatformData::operator==(const FontPlatformData& other) const

@@ -87,7 +87,7 @@ public:
     bool syntheticBold() const { return m_syntheticBold; }
     bool syntheticOblique() const { return m_syntheticOblique; }
 
-    void setFont(cairo_t*) const;
+    cairo_scaled_font_t* scaledFont() const { return m_scaledFont; }
 
     unsigned hash() const
     {

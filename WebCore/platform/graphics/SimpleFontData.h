@@ -145,10 +145,6 @@ public:
     static bool shouldApplyMacAscentHack();
 #endif
 
-#if PLATFORM(CAIRO)
-    void setFont(cairo_t*) const;
-#endif
-
 #if PLATFORM(WX)
     wxFont* getWxFont() const { return m_platformData.font(); }
 #endif

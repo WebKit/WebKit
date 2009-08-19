@@ -1,3 +1,26 @@
+2009-08-19  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [CAIRO] Remove setFont indirection
+        https://bugs.webkit.org/show_bug.cgi?id=28453
+
+        Remove the indirection and just set the font in Font::drawGlyphs.
+
+        * platform/graphics/SimpleFontData.h:
+        * platform/graphics/cairo/FontCairo.cpp:
+        (WebCore::Font::drawGlyphs):
+        * platform/graphics/gtk/FontPlatformData.h:
+        (WebCore::FontPlatformData::scaledFont):
+        * platform/graphics/gtk/FontPlatformDataGtk.cpp:
+        (WebCore::FontPlatformData::~FontPlatformData):
+        * platform/graphics/gtk/FontPlatformDataPango.cpp:
+        * platform/graphics/gtk/SimpleFontDataGtk.cpp:
+        * platform/graphics/gtk/SimpleFontDataPango.cpp:
+        * platform/graphics/win/FontPlatformData.h:
+        * platform/graphics/win/FontPlatformDataCairoWin.cpp:
+        * platform/graphics/win/SimpleFontDataCairoWin.cpp:
+
 2009-08-19  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

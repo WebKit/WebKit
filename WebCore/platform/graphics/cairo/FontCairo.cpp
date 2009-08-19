@@ -46,7 +46,7 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
     cairo_t* cr = context->platformContext();
     cairo_save(cr);
 
-    font->setFont(cr);
+    cairo_set_scaled_font(cr, font->platformData().scaledFont());
 
     GlyphBufferGlyph* glyphs = (GlyphBufferGlyph*)glyphBuffer.glyphs(from);
 

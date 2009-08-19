@@ -214,13 +214,6 @@ bool FontPlatformData::isFixedPitch()
     return pango_font_family_is_monospace(family);
 }
 
-void FontPlatformData::setFont(cairo_t* cr) const
-{
-    ASSERT(m_scaledFont);
-
-    cairo_set_scaled_font(cr, m_scaledFont);
-}
-
 FontPlatformData& FontPlatformData::operator=(const FontPlatformData& other)
 {
     // Check for self-assignment.
