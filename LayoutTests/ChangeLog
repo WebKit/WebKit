@@ -1,3 +1,15 @@
+2009-08-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - Tests for: Implement HTML5 nav element
+        https://bugs.webkit.org/show_bug.cgi?id=27937
+
+        Test aspects of <nav>, including residual style, <p> closing, and FormatBlock.
+        
+        * fast/html/nav-element-expected.txt: Added.
+        * fast/html/nav-element.html: Added.
+
 2009-08-18  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY (Build fix).

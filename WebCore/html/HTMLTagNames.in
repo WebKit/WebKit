@@ -72,6 +72,7 @@ map createWithNew
 marquee createWithNew
 menu createWithNew
 meta createWithNew
+nav interfaceName=HTMLElement, createWithNew
 nobr interfaceName=HTMLElement, createWithNew
 noembed interfaceName=HTMLElement, createWithNew
 noframes interfaceName=HTMLElement, createWithNew

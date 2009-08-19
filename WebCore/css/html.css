@@ -72,6 +72,10 @@ layer {
     display: block
 }
 
+nav {
+    display: block
+}
+
 marquee {
     display: inline-block;
     overflow: -webkit-marquee
