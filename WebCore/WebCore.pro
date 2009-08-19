@@ -2504,7 +2504,6 @@ contains(DEFINES, ENABLE_DATABASE=1) {
         storage/SQLResultSetRowList.cpp \
         storage/SQLStatement.cpp \
         storage/SQLTransaction.cpp \
-        storage/SQLTransactionClient.cpp \
         storage/SQLTransactionCoordinator.cpp \
         bindings/js/JSCustomSQLStatementCallback.cpp \
         bindings/js/JSCustomSQLStatementErrorCallback.cpp \
@@ -2533,7 +2532,6 @@ contains(DEFINES, ENABLE_DOM_STORAGE=1) {
         storage/SQLResultSetRowList.h \
         storage/SQLStatement.h \
         storage/SQLTransaction.h \
-        storage/SQLTransactionClient.h \
         storage/SQLTransactionCoordinator.h \
         storage/StorageArea.h \
         storage/StorageAreaImpl.h \

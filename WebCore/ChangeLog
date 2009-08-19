@@ -1,3 +1,25 @@
+2009-08-18  Mark Rowe  <mrowe@apple.com>
+
+        Roll out r47477 as it introduced assertion failures and crashes on the build bots.
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * storage/Database.cpp:
+        * storage/Database.h:
+        * storage/DatabaseThread.cpp:
+        (WebCore::DatabaseThread::DatabaseThread):
+        * storage/DatabaseThread.h:
+        * storage/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::runCurrentStatement):
+        (WebCore::SQLTransaction::deliverQuotaIncreaseCallback):
+        (WebCore::SQLTransaction::postflightAndCommit):
+        * storage/SQLTransactionClient.cpp: Removed.
+        * storage/SQLTransactionClient.h: Removed.
+
 2009-08-18  Maxime Simon  <simon.maxime@gmail.com>
 
         Reviewed by Eric Seidel.
