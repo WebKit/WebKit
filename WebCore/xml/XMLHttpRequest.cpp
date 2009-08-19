@@ -46,13 +46,15 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/RefCountedLeakCounter.h>
 
-static WTF::RefCountedLeakCounter xmlHttpRequestCounter("XMLHttpRequest");
-
 #if USE(JSC)
 #include "JSDOMWindow.h"
 #endif
 
 namespace WebCore {
+
+#ifndef NDEBUG
+static WTF::RefCountedLeakCounter xmlHttpRequestCounter("XMLHttpRequest");
+#endif
 
 struct XMLHttpRequestStaticData {
     XMLHttpRequestStaticData();
@@ -153,8 +155,10 @@ XMLHttpRequest::XMLHttpRequest(ScriptExecutionContext* context)
     , m_lastSendLineNumber(0)
     , m_exceptionCode(0)
 {
-    xmlHttpRequestCounter.increment();
     initializeXMLHttpRequestStaticData();
+#ifndef NDEBUG
+    xmlHttpRequestCounter.increment();
+#endif
 }
 
 XMLHttpRequest::~XMLHttpRequest()
@@ -166,7 +170,9 @@ XMLHttpRequest::~XMLHttpRequest()
     if (m_upload)
         m_upload->disconnectXMLHttpRequest();
 
+#ifndef NDEBUG
     xmlHttpRequestCounter.decrement();
+#endif
 }
 
 Document* XMLHttpRequest::document() const

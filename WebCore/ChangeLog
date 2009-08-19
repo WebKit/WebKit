@@ -1,3 +1,11 @@
+2009-08-18  Mark Rowe  <mrowe@apple.com>
+
+        Release build fix.
+
+        * xml/XMLHttpRequest.cpp: Sprinkle some #ifndef NDEBUG around.
+        (WebCore::XMLHttpRequest::XMLHttpRequest):
+        (WebCore::XMLHttpRequest::~XMLHttpRequest):
+
 2009-08-18  Aaron Boodman  <aa@chromium.org>
 
         Reviewed by Maciej Stachowiak.
