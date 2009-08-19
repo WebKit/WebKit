@@ -38,8 +38,6 @@ public:
     virtual void parseMappedAttribute(MappedAttribute*);
     virtual bool appendFormData(FormDataList&, bool);
 
-    virtual bool willValidate() const { return false; }
-
 private:
     AtomicString m_challenge;
     AtomicString m_keyType;
