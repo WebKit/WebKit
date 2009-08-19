@@ -459,26 +459,30 @@ bool isSpecialElement(const Node *n)
 }
 
 // Checks if a string is a valid tag for the FormatBlockCommand function of execCommand. Expects lower case strings.
-bool validBlockTag(const String& blockTag)
+bool validBlockTag(const AtomicString& blockTag)
 {
-    // FIXME: convert this to a HashSet
-    if (blockTag == "address" ||
-        blockTag == "blockquote" ||
-        blockTag == "dd" ||
-        blockTag == "div" ||
-        blockTag == "dl" ||
-        blockTag == "dt" ||
-        blockTag == "h1" ||
-        blockTag == "h2" ||
-        blockTag == "h3" ||
-        blockTag == "h4" ||
-        blockTag == "h5" ||
-        blockTag == "h6" ||
-        blockTag == "nav" ||
-        blockTag == "p" ||
-        blockTag == "pre")
-        return true;
-    return false;
+    if (blockTag.isEmpty())
+        return false;
+
+    DEFINE_STATIC_LOCAL(HashSet<AtomicString>, blockTags, ());
+    if (blockTags.isEmpty()) {
+        blockTags.add(addressTag.localName());
+        blockTags.add(blockquoteTag.localName());
+        blockTags.add(ddTag.localName());
+        blockTags.add(divTag.localName());
+        blockTags.add(dlTag.localName());
+        blockTags.add(dtTag.localName());
+        blockTags.add(h1Tag.localName());
+        blockTags.add(h2Tag.localName());
+        blockTags.add(h3Tag.localName());
+        blockTags.add(h4Tag.localName());
+        blockTags.add(h5Tag.localName());
+        blockTags.add(h6Tag.localName());
+        blockTags.add(navTag.localName());
+        blockTags.add(pTag.localName());
+        blockTags.add(preTag.localName());
+    }
+    return blockTags.contains(blockTag);
 }
 
 static Node* firstInSpecialElement(const Position& pos)

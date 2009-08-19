@@ -81,7 +81,7 @@ PassRefPtr<Range> avoidIntersectionWithNode(const Range*, Node*);
 VisibleSelection avoidIntersectionWithNode(const VisibleSelection&, Node*);
 
 bool isSpecialElement(const Node*);
-bool validBlockTag(const String&);
+bool validBlockTag(const AtomicString&);
 
 PassRefPtr<HTMLElement> createDefaultParagraphElement(Document*);
 PassRefPtr<HTMLElement> createBreakElement(Document*);
