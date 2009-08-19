@@ -1,3 +1,40 @@
+2009-08-18  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Added a client to SQLTransaction. In addition to being a place to
+        get notifications about certain events in a transaction, it is
+        also an abstraction layer that allows us to plug in different
+        implementations for each port for how transactions interract with
+        the main DB. For example, WebCore's default implementation will
+        make direct calls to DatabaseTracker's methods. At the same time,
+        Chromium's implementation will send IPCs to the browser process
+        whenever a transaction needs something from the main DB.
+
+        All storage tests pass.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27967
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * storage/Database.cpp:
+        (WebCore::Database::transactionClient):
+        * storage/Database.h:
+        * storage/DatabaseThread.cpp:
+        (WebCore::DatabaseThread::DatabaseThread):
+        * storage/DatabaseThread.h:
+        (WebCore::DatabaseThread::transactionClient):
+        * storage/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::runCurrentStatement):
+        (WebCore::SQLTransaction::deliverQuotaIncreaseCallback):
+        (WebCore::SQLTransaction::postflightAndCommit):
+        * storage/SQLTransactionClient.cpp: Added.
+        * storage/SQLTransactionClient.h: Added.
+
 2009-08-18  Julie Parent  <jparent@chromium.org>
 
         Not reviewed, build fix for Chromium.

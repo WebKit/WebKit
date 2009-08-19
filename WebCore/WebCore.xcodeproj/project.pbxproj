@@ -3859,6 +3859,8 @@
 		B2FA3E180AB75A6F000E5AC4 /* JSSVGZoomEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2FA3D300AB75A6F000E5AC4 /* JSSVGZoomEvent.cpp */; };
 		B2FA3E190AB75A6F000E5AC4 /* JSSVGZoomEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = B2FA3D310AB75A6F000E5AC4 /* JSSVGZoomEvent.h */; };
 		B50F5B810E96CD9900AD71A6 /* WebCoreObjCExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = B50F5B800E96CD9900AD71A6 /* WebCoreObjCExtras.mm */; settings = {COMPILER_FLAGS = "-Wno-deprecated-declarations"; }; };
+		B51BF6F0102C9E590002C15A /* SQLTransactionClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B51BF6EE102C9E590002C15A /* SQLTransactionClient.cpp */; };
+		B51BF6F1102C9E590002C15A /* SQLTransactionClient.h in Headers */ = {isa = PBXBuildFile; fileRef = B51BF6EF102C9E590002C15A /* SQLTransactionClient.h */; };
 		B5A684220FFABE9800D24689 /* SQLiteFileSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = B5A684210FFABE9800D24689 /* SQLiteFileSystem.h */; };
 		B5A684240FFABEAA00D24689 /* SQLiteFileSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B5A684230FFABEAA00D24689 /* SQLiteFileSystem.cpp */; };
 		B5C1123B102B6C4600096578 /* SQLTransactionCoordinator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B5C11239102B6C4600096578 /* SQLTransactionCoordinator.cpp */; };
@@ -8768,6 +8770,8 @@
 		B2FA3D300AB75A6F000E5AC4 /* JSSVGZoomEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGZoomEvent.cpp; sourceTree = "<group>"; };
 		B2FA3D310AB75A6F000E5AC4 /* JSSVGZoomEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGZoomEvent.h; sourceTree = "<group>"; };
 		B50F5B800E96CD9900AD71A6 /* WebCoreObjCExtras.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreObjCExtras.mm; sourceTree = "<group>"; };
+		B51BF6EE102C9E590002C15A /* SQLTransactionClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLTransactionClient.cpp; sourceTree = "<group>"; };
+		B51BF6EF102C9E590002C15A /* SQLTransactionClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLTransactionClient.h; sourceTree = "<group>"; };
 		B5A684210FFABE9800D24689 /* SQLiteFileSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SQLiteFileSystem.h; path = sql/SQLiteFileSystem.h; sourceTree = "<group>"; };
 		B5A684230FFABEAA00D24689 /* SQLiteFileSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SQLiteFileSystem.cpp; path = sql/SQLiteFileSystem.cpp; sourceTree = "<group>"; };
 		B5C11239102B6C4600096578 /* SQLTransactionCoordinator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLTransactionCoordinator.cpp; sourceTree = "<group>"; };
@@ -9875,6 +9879,8 @@
 		1AE82EC90CAAE177002237AE /* storage */ = {
 			isa = PBXGroup;
 			children = (
+				B51BF6EE102C9E590002C15A /* SQLTransactionClient.cpp */,
+				B51BF6EF102C9E590002C15A /* SQLTransactionClient.h */,
 				B5C11239102B6C4600096578 /* SQLTransactionCoordinator.cpp */,
 				B5C1123A102B6C4600096578 /* SQLTransactionCoordinator.h */,
 				514185ED0CD65F0400763C99 /* ChangeVersionWrapper.cpp */,
@@ -17316,6 +17322,7 @@
 				B5C1123C102B6C4600096578 /* SQLTransactionCoordinator.h in Headers */,
 				D8B6152F1032495100C8554A /* Cookie.h in Headers */,
 				BCFA930810333193007B25D1 /* RenderOverflow.h in Headers */,
+				B51BF6F1102C9E590002C15A /* SQLTransactionClient.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -19382,6 +19389,7 @@
 				9392262D1032107B006E7D5D /* JSHTMLCanvasElementCustom.cpp in Sources */,
 				9392262F10321084006E7D5D /* JSCSSRuleListCustom.cpp in Sources */,
 				B5C1123B102B6C4600096578 /* SQLTransactionCoordinator.cpp in Sources */,
+				B51BF6F0102C9E590002C15A /* SQLTransactionClient.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

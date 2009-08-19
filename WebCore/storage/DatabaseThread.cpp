@@ -35,12 +35,14 @@
 #include "Database.h"
 #include "DatabaseTask.h"
 #include "Logging.h"
+#include "SQLTransactionClient.h"
 #include "SQLTransactionCoordinator.h"
 
 namespace WebCore {
 
 DatabaseThread::DatabaseThread()
     : m_threadID(0)
+    , m_transactionClient(new SQLTransactionClient())
     , m_transactionCoordinator(new SQLTransactionCoordinator())
 {
     m_selfRef = this;
