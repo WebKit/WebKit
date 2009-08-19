@@ -626,7 +626,7 @@ void LayoutTestController::setSelectTrailingWhitespaceEnabled(bool flag)
     viewEditing->setSelectTrailingWhitespaceEnabled(flag ? TRUE : FALSE);
 }
 
-static const CFTimeInterval waitToDumpWatchdogInterval = 10.0;
+static const CFTimeInterval waitToDumpWatchdogInterval = 15.0;
 
 static void CALLBACK waitUntilDoneWatchdogFired(HWND, UINT, UINT_PTR, DWORD)
 {
