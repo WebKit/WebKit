@@ -71,13 +71,13 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (0,0) size 0x0
             RenderTableRow {TR} at (0,105) size 600x50
               RenderTableCell {TD} at (2,114) size 159x32 [r=2 c=0 rs=1 cs=1]
-                RenderInline {A} at (0,0) size 115x30 [color=#0000EE]
+                RenderInline {A} at (0,0) size 115x33 [color=#0000EE]
                   RenderInline {FONT} at (0,0) size 115x30 [color=#CC0033]
                     RenderText {#text} at (22,1) size 115x30
                       text run at (22,1) width 115: "Download Netscape"
                       text run at (26,16) width 106: "Communicator 4.5"
               RenderTableCell {TD} at (163,105) size 270x50 [r=2 c=1 rs=1 cs=1]
-                RenderInline {A} at (0,0) size 232x27 [color=#0000EE]
+                RenderInline {A} at (0,0) size 232x28 [color=#0000EE]
                   RenderImage {IMG} at (19,1) size 232x35 [border: (1px solid #0000EE)]
                   RenderBR {BR} at (251,36) size 0x0
                   RenderInline {FONT} at (0,0) size 46x13
@@ -85,7 +85,7 @@ layer at (0,0) size 800x600
                       text run at (112,36) width 46: "Click Here!"
                 RenderBR {BR} at (158,46) size 0x0
               RenderTableCell {TD} at (435,121) size 161x17 [r=2 c=2 rs=1 cs=1]
-                RenderInline {A} at (0,0) size 129x15 [color=#0000EE]
+                RenderInline {A} at (0,0) size 129x18 [color=#0000EE]
                   RenderInline {FONT} at (0,0) size 129x15 [color=#0066FF]
                     RenderText {#text} at (16,1) size 129x15
                       text run at (16,1) width 129: "Hassle-Free Upgrades"
