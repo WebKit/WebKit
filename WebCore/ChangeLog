@@ -1,3 +1,23 @@
+2009-08-19  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        SVG feComponentTransfer needs to be implemented
+        [https://bugs.webkit.org/show_bug.cgi?id=27768]
+
+        Implementation of SVG Filter feComponentTransfer.
+
+        There is already a test case
+        Test: svg/W3C-SVG-1.1/filters-comptran-01-b.svg
+
+        * platform/graphics/filters/FEComponentTransfer.cpp:
+        (WebCore::identity):
+        (WebCore::table):
+        (WebCore::discrete):
+        (WebCore::linear):
+        (WebCore::gamma):
+        (WebCore::FEComponentTransfer::apply):
+
 2009-08-19  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.
