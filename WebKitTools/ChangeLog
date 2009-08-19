@@ -1,3 +1,13 @@
+2009-08-18  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Oliver Hunt.
+
+        Add a new build configuration that checks for leaks during the layout tests,
+        and hook a new machine up to it.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+
 2009-08-18  Aaron Boodman  <aa@chromium.org>
 
         Reviewed by Maciej Stachowiak.

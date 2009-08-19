@@ -9,6 +9,8 @@
 
                     { "name": "apple-pixel-1", "platform": "mac-leopard" },
 
+                    { "name": "apple-macpro-1", "platform": "mac-snowleopard" },
+
                     { "name": "apple-windows-1", "platform": "win"},
                     { "name": "apple-windows-2", "platform": "win"},
                     { "name": "apple-windows-3", "platform": "win"},
@@ -42,6 +44,10 @@
                     { "name": "Leopard Intel Debug (Tests)", "type": "Test", "builddir": "leopard-intel-debug-tests",
                       "platform": "mac-leopard", "configuration": "debug", "architectures": ["i386"],
                       "slavenames": ["apple-xserve-3", "test-slave"]
+                    },
+                    { "name": "SnowLeopard Intel Leaks", "type": "BuildAndTestLeaks", "builddir": "snowleopard-intel-leaks",
+                      "platform": "mac-snowleopard", "configuration": "debug", "architectures": ["x86_64"],
+                      "slavenames": ["apple-macpro-1", "test-slave"]
                     },
                     {
                       "name": "Windows Release (Build)", "type": "Build", "builddir": "win-release",
@@ -79,7 +85,7 @@
 
     "schedulers": [ { "type": "AnyBranchScheduler", "name": "trunk", "branches": ["trunk"], "treeStableTimer": 45.0,
                       "builderNames": ["Tiger Intel Release", "Leopard Intel Release (Build)", "Leopard Intel Debug (Build)",
-                                       "Windows Release (Build)", "Windows Debug (Build)",
+                                       "SnowLeopard Intel Leaks", "Windows Release (Build)", "Windows Debug (Build)",
                                        "GTK Linux Release", "Qt Linux Release"]
                     },
                     { "type": "Triggerable", "name": "leopard-intel-release-tests",
