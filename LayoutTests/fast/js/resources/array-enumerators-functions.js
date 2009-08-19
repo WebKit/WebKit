@@ -42,9 +42,9 @@ var testFunctions = ["returnFalse", "returnTrue", "returnElem", "returnIndex", "
 
 var simpleArray = [0,1,2,3,4,5];
 var emptyArray = [];
-var largeEmptyArray = new Array(1000);
+var largeEmptyArray = new Array(300);
 var largeSparseArray = [0,1,2,3,4,5];
-largeSparseArray[1999] = 1999;
+largeSparseArray[299] = 299;
 
 var arrays = ["simpleArray", "emptyArray", "largeEmptyArray", "largeSparseArray"];
 function copyArray(a) {
@@ -53,7 +53,7 @@ function copyArray(a) {
         g[i] = a[i];
     return g;
 }
-
+var start = new Date;
 // Test object and array behaviour matches
 for (var f = 0; f < functions.length; f++) {
     for (var t = 0; t < testFunctions.length; t++) {
@@ -120,4 +120,6 @@ for (var f = 0; f < functions.length; f++) {
         }
     }
 }
+var end = new Date;
+debug("Time: " + (end-start));
 successfullyParsed = true;
