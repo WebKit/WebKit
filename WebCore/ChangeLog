@@ -1,3 +1,20 @@
+2009-08-18  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adele Peterson, David Hyatt and Dan Bernstein.
+
+        - Fix <rdar://problem/7152727>
+
+        If a page has custom scroll bars, they will not update correctly when the window is activated/deactivated.
+        
+        * page/FrameView.cpp:
+        (WebCore::FrameView::hasCustomScrollbars):
+        Check if the frame view or any of its subviews have custom scroll bars.
+        
+        (WebCore::FrameView::updateControlTints):
+        Go ahead and update control tints if the frame view has custom scroll bars.
+        
+        * page/FrameView.h:
+
 2009-08-18  Mark Rowe  <mrowe@apple.com>
 
         Roll out r47477 as it introduced assertion failures and crashes on the build bots.
