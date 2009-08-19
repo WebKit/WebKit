@@ -3960,7 +3960,8 @@ media/video-play-pause-events.html
 media/video-play-pause-exception.html
 media/video-played-collapse.html
 media/video-played-reset.html
-media/video-played.html
+media/video-played-ranges-1.html
+media/video-played-ranges-2.html
 media/video-seek-past-end-paused.html
 media/video-seek-past-end-playing.html
 media/video-seekable.html
@@ -3995,6 +3996,7 @@ media/video-transformed.html
 media/video-zoom-controls.html
 media/video-zoom.html
 media/audio-data-url.html
+media/video-no-audio.html
 
 # Tests in plugins/ directory
 #   These tests require ObjC plugin, do not bother trying to get them to work

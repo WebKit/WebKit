@@ -2,6 +2,14 @@
 
         Reviewed by NOBODY (Build fix).
 
+        Disable new media tests.
+
+        * platform/gtk/Skipped:
+
+2009-08-19  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by NOBODY (Build fix).
+
         Generate new results for fast/layers/video-layer.html after r47515.
 
         * platform/mac-leopard/fast/layers/video-layer-expected.txt:
