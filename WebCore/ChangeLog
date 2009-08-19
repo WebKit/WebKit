@@ -1,3 +1,19 @@
+2009-08-19  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        <rdar://problem/7141522> Incorrect layout of product table at henry.com
+
+        Test: fast/block/basic/quirk-percent-height-table-cell.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::calcPercentageHeight): Tweak the quirk that allows
+        percentage-height children of auto-height blocks to look for an ancestor
+        with non-auto height and compute their height based on it. The change is
+        that if that ancestor is a table cell, it is ignored and the percent
+        height computes to zero (just like in strict mode). This matches Firefox
+        and IE.
+
 2009-08-19  Jungshik Shin  <jshin@chromium.org>
 
         Reviewed by Eric Seidel.

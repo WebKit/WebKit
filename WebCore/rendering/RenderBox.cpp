@@ -1479,7 +1479,7 @@ int RenderBox::calcHeightUsing(const Length& h)
 int RenderBox::calcPercentageHeight(const Length& height)
 {
     int result = -1;
-    bool includeBorderPadding = isTable();
+    bool skippedAutoHeightContainingBlock = false;
     RenderBlock* cb = containingBlock();
     if (style()->htmlHacks()) {
         // In quirks mode, blocks with auto height are skipped, and we keep looking for an enclosing
@@ -1487,6 +1487,7 @@ int RenderBox::calcPercentageHeight(const Length& height)
         // specification, which states that percentage heights just revert to auto if the containing
         // block has an auto height.
         while (!cb->isRenderView() && !cb->isBody() && !cb->isTableCell() && !cb->isPositioned() && cb->style()->height().isAuto()) {
+            skippedAutoHeightContainingBlock = true;
             cb = cb->containingBlock();
             cb->addPercentHeightDescendant(this);
         }
@@ -1496,25 +1497,29 @@ int RenderBox::calcPercentageHeight(const Length& height)
     // explicitly specified that can be used for any percentage computations.
     bool isPositionedWithSpecifiedHeight = cb->isPositioned() && (!cb->style()->height().isAuto() || (!cb->style()->top().isAuto() && !cb->style()->bottom().isAuto()));
 
+    bool includeBorderPadding = isTable();
+
     // Table cells violate what the CSS spec says to do with heights.  Basically we
     // don't care if the cell specified a height or not.  We just always make ourselves
     // be a percentage of the cell's current content height.
     if (cb->isTableCell()) {
-        result = cb->overrideSize();
-        if (result == -1) {
-            // Normally we would let the cell size intrinsically, but scrolling overflow has to be
-            // treated differently, since WinIE lets scrolled overflow regions shrink as needed.
-            // While we can't get all cases right, we can at least detect when the cell has a specified
-            // height or when the table has a specified height.  In these cases we want to initially have
-            // no size and allow the flexing of the table or the cell to its specified height to cause us
-            // to grow to fill the space.  This could end up being wrong in some cases, but it is
-            // preferable to the alternative (sizing intrinsically and making the row end up too big).
-            RenderTableCell* cell = toRenderTableCell(cb);
-            if (scrollsOverflowY() && (!cell->style()->height().isAuto() || !cell->table()->style()->height().isAuto()))
-                return 0;
-            return -1;
+        if (!skippedAutoHeightContainingBlock) {
+            result = cb->overrideSize();
+            if (result == -1) {
+                // Normally we would let the cell size intrinsically, but scrolling overflow has to be
+                // treated differently, since WinIE lets scrolled overflow regions shrink as needed.
+                // While we can't get all cases right, we can at least detect when the cell has a specified
+                // height or when the table has a specified height.  In these cases we want to initially have
+                // no size and allow the flexing of the table or the cell to its specified height to cause us
+                // to grow to fill the space.  This could end up being wrong in some cases, but it is
+                // preferable to the alternative (sizing intrinsically and making the row end up too big).
+                RenderTableCell* cell = toRenderTableCell(cb);
+                if (scrollsOverflowY() && (!cell->style()->height().isAuto() || !cell->table()->style()->height().isAuto()))
+                    return 0;
+                return -1;
+            }
+            includeBorderPadding = true;
         }
-        includeBorderPadding = true;
     }
     // Otherwise we only use our percentage height if our containing block had a specified
     // height.

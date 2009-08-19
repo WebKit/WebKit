@@ -1,3 +1,17 @@
+2009-08-19  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Test and updated results for
+        <rdar://problem/7141522> Incorrect layout of product table at henry.com
+
+        * fast/block/basic/quirk-percent-height-table-cell-expected.checksum: Added.
+        * fast/block/basic/quirk-percent-height-table-cell-expected.png: Added.
+        * fast/block/basic/quirk-percent-height-table-cell-expected.txt: Added.
+        * fast/block/basic/quirk-percent-height-table-cell.html: Added.
+        * fast/replaced/table-percent-height-text-controls-expected.txt:
+        * fast/replaced/table-percent-height-text-controls.html:
+
 2009-08-19  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by NOBODY (Build fix).
