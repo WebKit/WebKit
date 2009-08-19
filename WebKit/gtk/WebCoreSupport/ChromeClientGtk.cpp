@@ -215,6 +215,10 @@ void ChromeClient::setResizable(bool)
 
 void ChromeClient::closeWindowSoon()
 {
+    // We may not have a WebView as create-web-view can return NULL.
+    if (!m_webView)
+        return;
+
     webkit_web_view_stop_loading(m_webView);
 
     gboolean isHandled = false;
@@ -226,7 +230,6 @@ void ChromeClient::closeWindowSoon()
     // FIXME: should we clear the frame group name here explicitly? Mac does it.
     // But this gets cleared in Page's destructor anyway.
     // webkit_web_view_set_group_name(m_webView, "");
-    g_object_unref(m_webView);
 }
 
 bool ChromeClient::canTakeFocus(FocusDirection)

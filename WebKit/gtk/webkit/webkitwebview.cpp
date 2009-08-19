@@ -1228,9 +1228,9 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * The new #WebKitWebView should not be displayed to the user
      * until the #WebKitWebView::web-view-ready signal is emitted.
      *
-     * The signal handlers should not try to deal with the reference
-     * count for the new #WebKitWebView. The widget to which the
-     * widget is added will handle that.
+     * The signal handlers should not try to deal with the reference count for
+     * the new #WebKitWebView. The widget to which the widget is added will
+     * handle that.
      *
      * Since 1.0.3
      */
@@ -1278,8 +1278,10 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * @return: %TRUE to stop handlers from being invoked for the event or
      * %FALSE to propagate the event furter
      *
-     * Emitted when closing a WebView is requested. This occurs when a call
-     * is made from JavaScript's window.close function.
+     * Emitted when closing a #WebKitWebView is requested. This occurs when a
+     * call is made from JavaScript's window.close function. The default
+     * signal handler does not do anything. It is the owner's responsibility
+     * to hide or delete the web view, if necessary.
      *
      * Since 1.1.11
      */
