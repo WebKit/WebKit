@@ -29,15 +29,15 @@
 #import "DOMInternal.h" // import first to make the private/public trick work
 #import "DOM.h"
 
-#import "DOMRangeInternal.h"
 #import "DOMElementInternal.h"
-#import "DOMNodeInternal.h"
 #import "DOMHTMLCanvasElement.h"
+#import "DOMNodeInternal.h"
+#import "DOMRangeInternal.h"
 #import "Frame.h"
-#import "HTMLNames.h"
 #import "HTMLElement.h"
-#import "RenderImage.h"
+#import "HTMLNames.h"
 #import "NodeFilter.h"
+#import "RenderImage.h"
 #import "WebScriptObjectPrivate.h"
 #import <wtf/HashMap.h>
 

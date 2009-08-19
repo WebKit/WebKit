@@ -49,10 +49,6 @@ HTMLEmbedElement::HTMLEmbedElement(const QualifiedName& tagName, Document* doc)
     ASSERT(hasTagName(embedTag));
 }
 
-HTMLEmbedElement::~HTMLEmbedElement()
-{
-}
-
 static inline RenderWidget* findWidgetRenderer(const Node* n) 
 {
     if (!n->renderer())
@@ -238,31 +234,11 @@ const QualifiedName& HTMLEmbedElement::imageSourceAttributeName() const
     return srcAttr;
 }
 
-String HTMLEmbedElement::src() const
-{
-    return getAttribute(srcAttr);
-}
-
-void HTMLEmbedElement::setSrc(const String& value)
-{
-    setAttribute(srcAttr, value);
-}
-
-String HTMLEmbedElement::type() const
-{
-    return getAttribute(typeAttr);
-}
-
-void HTMLEmbedElement::setType(const String& value)
-{
-    setAttribute(typeAttr, value);
-}
-
 void HTMLEmbedElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
 {
     HTMLPlugInImageElement::addSubresourceAttributeURLs(urls);
 
-    addSubresourceURL(urls, document()->completeURL(src()));
+    addSubresourceURL(urls, document()->completeURL(getAttribute(srcAttr)));
 }
 
 }

@@ -27,9 +27,6 @@
 
 namespace WebCore {
 
-class HTMLFormElement;
-class HTMLImageLoader;
-
 class HTMLAppletElement : public HTMLPlugInElement {
 public:
     HTMLAppletElement(const QualifiedName&, Document*);

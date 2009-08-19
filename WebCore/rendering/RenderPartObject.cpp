@@ -282,7 +282,7 @@ void RenderPartObject::updateWidget(bool onlyCreateNonNetscapePlugins)
                 return;
         }
 
-        bool success = frame->loader()->requestObject(this, url, AtomicString(o->name()), serviceType, paramNames, paramValues);
+        bool success = frame->loader()->requestObject(this, url, o->getAttribute(nameAttr), serviceType, paramNames, paramValues);
         if (!success && m_hasFallbackContent)
             o->renderFallbackContent();
     } else if (node()->hasTagName(embedTag)) {

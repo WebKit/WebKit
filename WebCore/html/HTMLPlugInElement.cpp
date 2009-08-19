@@ -91,16 +91,6 @@ PassScriptInstance HTMLPlugInElement::getInstance() const
     return m_instance;
 }
 
-String HTMLPlugInElement::align() const
-{
-    return getAttribute(alignAttr);
-}
-
-void HTMLPlugInElement::setAlign(const String& value)
-{
-    setAttribute(alignAttr, value);
-}
-
 String HTMLPlugInElement::height() const
 {
     return getAttribute(heightAttr);
@@ -109,16 +99,6 @@ String HTMLPlugInElement::height() const
 void HTMLPlugInElement::setHeight(const String& value)
 {
     setAttribute(heightAttr, value);
-}
-
-String HTMLPlugInElement::name() const
-{
-    return getAttribute(nameAttr);
-}
-
-void HTMLPlugInElement::setName(const String& value)
-{
-    setAttribute(nameAttr, value);
 }
 
 String HTMLPlugInElement::width() const

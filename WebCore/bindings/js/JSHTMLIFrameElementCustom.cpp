@@ -32,11 +32,14 @@
 #include "CSSHelper.h"
 #include "Document.h"
 #include "HTMLIFrameElement.h"
+#include "HTMLNames.h"
 #include "JSDOMBinding.h"
 
 using namespace JSC;
 
 namespace WebCore {
+
+using namespace HTMLNames;
 
 void JSHTMLIFrameElement::setSrc(ExecState* exec, JSValue value)
 {
@@ -49,7 +52,7 @@ void JSHTMLIFrameElement::setSrc(ExecState* exec, JSValue value)
             return;
     }
 
-    imp->setSrc(srcValue);
+    imp->setAttribute(srcAttr, srcValue);
 }
 
 } // namespace WebCore

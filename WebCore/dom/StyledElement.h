@@ -48,17 +48,16 @@ public:
     bool hasMappedAttributes() const { return namedAttrMap && mappedAttributes()->hasMappedAttributes(); }
     bool isMappedAttribute(const QualifiedName& name) const { MappedAttributeEntry res = eNone; mapToEntry(name, res); return res != eNone; }
 
-    void addCSSLength(MappedAttribute* attr, int id, const String &value);
-    void addCSSProperty(MappedAttribute* attr, int id, const String &value);
-    void addCSSProperty(MappedAttribute* attr, int id, int value);
-    void addCSSStringProperty(MappedAttribute* attr, int id, const String &value, CSSPrimitiveValue::UnitTypes = CSSPrimitiveValue::CSS_STRING);
+    void addCSSLength(MappedAttribute*, int id, const String& value);
+    void addCSSProperty(MappedAttribute*, int id, const String& value);
+    void addCSSProperty(MappedAttribute*, int id, int value);
     void addCSSImageProperty(MappedAttribute*, int propertyID, const String& url);
-    void addCSSColor(MappedAttribute* attr, int id, const String &c);
-    void createMappedDecl(MappedAttribute* attr);
+    void addCSSColor(MappedAttribute*, int id, const String& color);
+    void createMappedDecl(MappedAttribute*);
     
-    static CSSMappedAttributeDeclaration* getMappedAttributeDecl(MappedAttributeEntry type, const QualifiedName& name, const AtomicString& value);
+    static CSSMappedAttributeDeclaration* getMappedAttributeDecl(MappedAttributeEntry, const QualifiedName& name, const AtomicString& value);
     static void setMappedAttributeDecl(MappedAttributeEntry, const QualifiedName& name, const AtomicString& value, CSSMappedAttributeDeclaration*);
-    static void removeMappedAttributeDecl(MappedAttributeEntry type, const QualifiedName& name, const AtomicString& value);
+    static void removeMappedAttributeDecl(MappedAttributeEntry, const QualifiedName& name, const AtomicString& value);
 
     static CSSMappedAttributeDeclaration* getMappedAttributeDecl(MappedAttributeEntry, Attribute*);
     static void setMappedAttributeDecl(MappedAttributeEntry, Attribute*, CSSMappedAttributeDeclaration*);
@@ -95,6 +94,11 @@ protected:
 
     RefPtr<CSSMutableStyleDeclaration> m_inlineStyleDecl;
 };
+
+inline void StyledElement::invalidateStyleAttribute()
+{
+    m_isStyleAttributeValid = false;
+}
 
 } //namespace
 

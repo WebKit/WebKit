@@ -93,7 +93,7 @@ sub defaultTagPropertyHash
     return (
         'constructorNeedsCreatedByParser' => 0,
         'constructorNeedsFormElement' => 0,
-        'createWithNew' => 1,
+        'createWithNew' => 0,
         'exportString' => 0,
         'interfaceName' => defaultInterfaceName($_[0]),
         # By default, the JSInterfaceName is the same as the interfaceName.

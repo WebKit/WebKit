@@ -48,15 +48,6 @@ public:
     
     virtual bool isURLAttribute(Attribute*) const;
 
-    String align() const;
-    void setAlign(const String&);
-
-    String height() const;
-    void setHeight(const String&);
-
-    String width() const;
-    void setWidth(const String&);
-
 private:
     AtomicString m_name;
 };

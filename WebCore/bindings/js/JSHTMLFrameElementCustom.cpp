@@ -32,11 +32,14 @@
 #include "CSSHelper.h"
 #include "Document.h"
 #include "HTMLFrameElement.h"
+#include "HTMLNames.h"
 #include "JSDOMBinding.h"
 
 using namespace JSC;
 
 namespace WebCore {
+
+using namespace HTMLNames;
 
 static inline bool allowSettingJavascriptURL(ExecState* exec, HTMLFrameElement* imp, const String& value)
 {
@@ -55,8 +58,7 @@ void JSHTMLFrameElement::setSrc(ExecState* exec, JSValue value)
     if (!allowSettingJavascriptURL(exec, imp, srcValue))
         return;
 
-    imp->setSrc(srcValue);
-    return;
+    imp->setAttribute(srcAttr, srcValue);
 }
 
 void JSHTMLFrameElement::setLocation(ExecState* exec, JSValue value)
@@ -68,7 +70,6 @@ void JSHTMLFrameElement::setLocation(ExecState* exec, JSValue value)
         return;
 
     imp->setLocation(locationValue);
-    return;
 }
 
 } // namespace WebCore

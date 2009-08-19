@@ -226,8 +226,8 @@ void MediaDocument::replaceMediaElementTimerFired(Timer<MediaDocument>*)
         embedElement->setAttribute(widthAttr, "100%");
         embedElement->setAttribute(heightAttr, "100%");
         embedElement->setAttribute(nameAttr, "plugin");
-        embedElement->setSrc(url().string());
-        embedElement->setType(frame()->loader()->responseMIMEType());
+        embedElement->setAttribute(srcAttr, url().string());
+        embedElement->setAttribute(typeAttr, frame()->loader()->responseMIMEType());
 
         ExceptionCode ec;
         videoElement->parent()->replaceChild(embedElement, videoElement, ec);

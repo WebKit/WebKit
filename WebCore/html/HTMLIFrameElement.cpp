@@ -126,34 +126,4 @@ bool HTMLIFrameElement::isURLAttribute(Attribute* attr) const
     return attr->name() == srcAttr;
 }
 
-String HTMLIFrameElement::align() const
-{
-    return getAttribute(alignAttr);
-}
-
-void HTMLIFrameElement::setAlign(const String &value)
-{
-    setAttribute(alignAttr, value);
-}
-
-String HTMLIFrameElement::height() const
-{
-    return getAttribute(heightAttr);
-}
-
-void HTMLIFrameElement::setHeight(const String &value)
-{
-    setAttribute(heightAttr, value);
-}
-
-String HTMLIFrameElement::width() const
-{
-    return getAttribute(widthAttr);
-}
-
-void HTMLIFrameElement::setWidth(const String &value)
-{
-    setAttribute(widthAttr, value);
-}
-
 }

@@ -1018,7 +1018,7 @@ String AccessibilityRenderObject::accessibilityDescription() const
                 const AtomicString& title = static_cast<HTMLFrameElementBase*>(owner)->getAttribute(titleAttr);
                 if (!title.isEmpty())
                     return title;
-                return static_cast<HTMLFrameElementBase*>(owner)->name();
+                return static_cast<HTMLFrameElementBase*>(owner)->getAttribute(nameAttr);
             }
             if (owner->isHTMLElement())
                 return static_cast<HTMLElement*>(owner)->getAttribute(nameAttr);

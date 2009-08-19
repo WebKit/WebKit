@@ -28,11 +28,6 @@
 
 namespace WebCore {
 
-class Document;
-class RenderObject;
-class RenderArena;
-class RenderStyle;
-
 class HTMLFrameElement : public HTMLFrameElementBase {
 public:
     HTMLFrameElement(const QualifiedName&, Document*);

@@ -3,114 +3,114 @@ namespaceURI="http://www.w3.org/2000/svg"
 guardFactoryWith="ENABLE(SVG)"
 exportStrings
 
-a
+a createWithNew
 #if ENABLE_SVG_FONTS
-altGlyph
+altGlyph createWithNew
 #endif
 #if 0
-altGlyphDef
-altGlyphItem
+altGlyphDef createWithNew
+altGlyphItem createWithNew
 #endif
 #if ENABLE_SVG_ANIMATION
-animate
-animateColor
-animateMotion JSInterfaceName=SVGElement
-animateTransform
-set
+animate createWithNew
+animateColor createWithNew
+animateMotion JSInterfaceName=SVGElement, createWithNew
+animateTransform createWithNew
+set createWithNew
 #endif
-circle
-clipPath
+circle createWithNew
+clipPath createWithNew
 #if 0
-color_profile
+color_profile createWithNew
 #endif
-cursor
+cursor createWithNew
 #if ENABLE_SVG_FONTS
-definition_src
+definition_src createWithNew
 #endif
-defs
-desc
-ellipse
+defs createWithNew
+desc createWithNew
+ellipse createWithNew
 #if ENABLE_FILTERS
-feBlend
-feColorMatrix
-feComponentTransfer
-feComposite
+feBlend createWithNew
+feColorMatrix createWithNew
+feComponentTransfer createWithNew
+feComposite createWithNew
 #if 0
-feConvolveMatrix
+feConvolveMatrix createWithNew
 #endif
-feDiffuseLighting
-feDisplacementMap
-feDistantLight
-feFlood
-feFuncA
-feFuncB
-feFuncG
-feFuncR
-feGaussianBlur
-feImage
-feMerge
-feMergeNode
+feDiffuseLighting createWithNew
+feDisplacementMap createWithNew
+feDistantLight createWithNew
+feFlood createWithNew
+feFuncA createWithNew
+feFuncB createWithNew
+feFuncG createWithNew
+feFuncR createWithNew
+feGaussianBlur createWithNew
+feImage createWithNew
+feMerge createWithNew
+feMergeNode createWithNew
 #if 0
-feMorphology
+feMorphology createWithNew
 #endif
-feOffset
-fePointLight
-feSpecularLighting
-feSpotLight
-feTile
-feTurbulence
-filter
+feOffset createWithNew
+fePointLight createWithNew
+feSpecularLighting createWithNew
+feSpotLight createWithNew
+feTile createWithNew
+feTurbulence createWithNew
+filter createWithNew
 #endif
 #if ENABLE_SVG_FONTS
-font
-font_face
-font_face_format
-font_face_name
-font_face_src
-font_face_uri
+font createWithNew
+font_face createWithNew
+font_face_format createWithNew
+font_face_name createWithNew
+font_face_src createWithNew
+font_face_uri createWithNew
 #endif
 #if ENABLE_SVG_FOREIGN_OBJECT
-foreignObject
+foreignObject createWithNew
 #endif
-g
+g createWithNew
 #if ENABLE_SVG_FONTS
-glyph
+glyph createWithNew
 #endif
 #if 0
-glyphRef
+glyphRef createWithNew
 #endif
 #if ENABLE_SVG_FONTS
-hkern interfaceName=SVGHKernElement, JSInterfaceName=SVGElement
+hkern interfaceName=SVGHKernElement, JSInterfaceName=SVGElement, createWithNew
 #endif
-image
-line
-linearGradient
-marker
-mask
-metadata
+image createWithNew
+line createWithNew
+linearGradient createWithNew
+marker createWithNew
+mask createWithNew
+metadata createWithNew
 #if ENABLE_SVG_FONTS
-missing_glyph
+missing_glyph createWithNew
 #endif
-mpath interfaceName=SVGMPathElement, JSInterfaceName=SVGElement
-path
-pattern
-polygon
-polyline
-radialGradient
-rect
-script constructorNeedsCreatedByParser
-stop
-style constructorNeedsCreatedByParser
-svg interfaceName=SVGSVGElement
-switch
-symbol
-text
-textPath
-title
-tref interfaceName=SVGTRefElement
-tspan interfaceName=SVGTSpanElement
-use
-view
+mpath interfaceName=SVGMPathElement, JSInterfaceName=SVGElement, createWithNew
+path createWithNew
+pattern createWithNew
+polygon createWithNew
+polyline createWithNew
+radialGradient createWithNew
+rect createWithNew
+script constructorNeedsCreatedByParser, createWithNew
+stop createWithNew
+style constructorNeedsCreatedByParser, createWithNew
+svg interfaceName=SVGSVGElement, createWithNew
+switch createWithNew
+symbol createWithNew
+text createWithNew
+textPath createWithNew
+title createWithNew
+tref interfaceName=SVGTRefElement, createWithNew
+tspan interfaceName=SVGTSpanElement, createWithNew
+use createWithNew
+view createWithNew
 #if 0
-vkern interfaceName=SVGVKernElement
+vkern interfaceName=SVGVKernElement, createWithNew
 #endif

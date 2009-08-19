@@ -32,7 +32,6 @@ class KURL;
 class HTMLObjectElement : public HTMLPlugInImageElement {
 public:
     HTMLObjectElement(const QualifiedName&, Document*, bool createdByParser);
-    ~HTMLObjectElement();
 
     virtual int tagPriority() const { return 5; }
 
@@ -60,38 +59,11 @@ public:
 
     virtual RenderWidget* renderWidgetForJSBindings() const;
 
-    String archive() const;
-    void setArchive(const String&);
-
-    String border() const;
-    void setBorder(const String&);
-
-    String code() const;
-    void setCode(const String&);
-    
-    String codeBase() const;
-    void setCodeBase(const String&);
-
-    String codeType() const;
-    void setCodeType(const String&);
-    
-    KURL data() const;
-    void setData(const String&);
-
     bool declare() const;
     void setDeclare(bool);
 
     int hspace() const;
     void setHspace(int);
-
-    String standby() const;
-    void setStandby(const String&);
-
-    String type() const;
-    void setType(const String&);
-
-    String useMap() const;
-    void setUseMap(const String&);
 
     int vspace() const;
     void setVspace(int);

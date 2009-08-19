@@ -54,10 +54,6 @@ HTMLObjectElement::HTMLObjectElement(const QualifiedName& tagName, Document* doc
     ASSERT(hasTagName(objectTag));
 }
 
-HTMLObjectElement::~HTMLObjectElement()
-{
-}
-
 RenderWidget* HTMLObjectElement::renderWidgetForJSBindings() const
 {
     RenderWidget* renderWidget = (renderer() && renderer()->isWidget()) ? toRenderWidget(renderer()) : 0;
@@ -297,66 +293,6 @@ void HTMLObjectElement::updateDocNamedItem()
     m_docNamedItem = isNamedItem;
 }
 
-String HTMLObjectElement::code() const
-{
-    return getAttribute(codeAttr);
-}
-
-void HTMLObjectElement::setCode(const String& value)
-{
-    setAttribute(codeAttr, value);
-}
-
-String HTMLObjectElement::archive() const
-{
-    return getAttribute(archiveAttr);
-}
-
-void HTMLObjectElement::setArchive(const String& value)
-{
-    setAttribute(archiveAttr, value);
-}
-
-String HTMLObjectElement::border() const
-{
-    return getAttribute(borderAttr);
-}
-
-void HTMLObjectElement::setBorder(const String& value)
-{
-    setAttribute(borderAttr, value);
-}
-
-String HTMLObjectElement::codeBase() const
-{
-    return getAttribute(codebaseAttr);
-}
-
-void HTMLObjectElement::setCodeBase(const String& value)
-{
-    setAttribute(codebaseAttr, value);
-}
-
-String HTMLObjectElement::codeType() const
-{
-    return getAttribute(codetypeAttr);
-}
-
-void HTMLObjectElement::setCodeType(const String& value)
-{
-    setAttribute(codetypeAttr, value);
-}
-
-KURL HTMLObjectElement::data() const
-{
-    return document()->completeURL(getAttribute(dataAttr));
-}
-
-void HTMLObjectElement::setData(const String& value)
-{
-    setAttribute(dataAttr, value);
-}
-
 bool HTMLObjectElement::declare() const
 {
     return !getAttribute(declareAttr).isNull();
@@ -377,36 +313,6 @@ void HTMLObjectElement::setHspace(int value)
     setAttribute(hspaceAttr, String::number(value));
 }
 
-String HTMLObjectElement::standby() const
-{
-    return getAttribute(standbyAttr);
-}
-
-void HTMLObjectElement::setStandby(const String& value)
-{
-    setAttribute(standbyAttr, value);
-}
-
-String HTMLObjectElement::type() const
-{
-    return getAttribute(typeAttr);
-}
-
-void HTMLObjectElement::setType(const String& value)
-{
-    setAttribute(typeAttr, value);
-}
-
-String HTMLObjectElement::useMap() const
-{
-    return getAttribute(usemapAttr);
-}
-
-void HTMLObjectElement::setUseMap(const String& value)
-{
-    setAttribute(usemapAttr, value);
-}
-
 int HTMLObjectElement::vspace() const
 {
     return getAttribute(vspaceAttr).toInt();
@@ -419,7 +325,7 @@ void HTMLObjectElement::setVspace(int value)
 
 bool HTMLObjectElement::containsJavaApplet() const
 {
-    if (MIMETypeRegistry::isJavaAppletMIMEType(type()))
+    if (MIMETypeRegistry::isJavaAppletMIMEType(getAttribute(typeAttr)))
         return true;
         
     Node* child = firstChild();
@@ -443,9 +349,13 @@ void HTMLObjectElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) con
 {
     HTMLPlugInImageElement::addSubresourceAttributeURLs(urls);
 
-    addSubresourceURL(urls, data());
-    if (useMap().startsWith("#"))
-        addSubresourceURL(urls, document()->completeURL(useMap()));
+    addSubresourceURL(urls, document()->completeURL(getAttribute(dataAttr)));
+
+    // FIXME: Passing a string that starts with "#" to the completeURL function does
+    // not seem like it would work. The image element has similar but not identical code.
+    const AtomicString& useMap = getAttribute(usemapAttr);
+    if (useMap.startsWith("#"))
+        addSubresourceURL(urls, document()->completeURL(useMap));
 }
 
 }

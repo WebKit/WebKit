@@ -197,7 +197,7 @@ void HTMLFrameElementBase::attach()
 
 KURL HTMLFrameElementBase::location() const
 {
-    return src();
+    return document()->completeURL(getAttribute(srcAttr));
 }
 
 void HTMLFrameElementBase::setLocation(const String& str)
@@ -227,76 +227,6 @@ void HTMLFrameElementBase::setFocus(bool received)
 bool HTMLFrameElementBase::isURLAttribute(Attribute *attr) const
 {
     return attr->name() == srcAttr;
-}
-
-String HTMLFrameElementBase::frameBorder() const
-{
-    return getAttribute(frameborderAttr);
-}
-
-void HTMLFrameElementBase::setFrameBorder(const String &value)
-{
-    setAttribute(frameborderAttr, value);
-}
-
-String HTMLFrameElementBase::longDesc() const
-{
-    return getAttribute(longdescAttr);
-}
-
-void HTMLFrameElementBase::setLongDesc(const String &value)
-{
-    setAttribute(longdescAttr, value);
-}
-
-String HTMLFrameElementBase::marginHeight() const
-{
-    return getAttribute(marginheightAttr);
-}
-
-void HTMLFrameElementBase::setMarginHeight(const String &value)
-{
-    setAttribute(marginheightAttr, value);
-}
-
-String HTMLFrameElementBase::marginWidth() const
-{
-    return getAttribute(marginwidthAttr);
-}
-
-void HTMLFrameElementBase::setMarginWidth(const String &value)
-{
-    setAttribute(marginwidthAttr, value);
-}
-
-String HTMLFrameElementBase::name() const
-{
-    return getAttribute(nameAttr);
-}
-
-void HTMLFrameElementBase::setName(const String &value)
-{
-    setAttribute(nameAttr, value);
-}
-
-String HTMLFrameElementBase::scrolling() const
-{
-    return getAttribute(scrollingAttr);
-}
-
-void HTMLFrameElementBase::setScrolling(const String &value)
-{
-    setAttribute(scrollingAttr, value);
-}
-
-KURL HTMLFrameElementBase::src() const
-{
-    return document()->completeURL(getAttribute(srcAttr));
-}
-
-void HTMLFrameElementBase::setSrc(const String &value)
-{
-    setAttribute(srcAttr, value);
 }
 
 int HTMLFrameElementBase::width() const

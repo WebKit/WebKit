@@ -52,27 +52,6 @@ public:
     int getMarginWidth() const { return m_marginWidth; }
     int getMarginHeight() const { return m_marginHeight; }
 
-    String frameBorder() const;
-    void setFrameBorder(const String&);
-
-    String longDesc() const;
-    void setLongDesc(const String&);
-
-    String marginHeight() const;
-    void setMarginHeight(const String&);
-
-    String marginWidth() const;
-    void setMarginWidth(const String&);
-
-    String name() const;
-    void setName(const String&);
-
-    String scrolling() const;
-    void setScrolling(const String&);
-
-    KURL src() const;
-    void setSrc(const String&);
-
     int width() const;
     int height() const;
 
