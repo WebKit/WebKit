@@ -1,3 +1,15 @@
+2009-08-19  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        WebInspector: When adding style selector, generate default name based
+        on id / class / type.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28468
+
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.prototype.appropriateSelectorForNode):
+
 2009-08-19  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.

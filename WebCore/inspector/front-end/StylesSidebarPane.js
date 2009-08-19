@@ -293,15 +293,17 @@ WebInspector.StylesSidebarPane.prototype = {
         if (!node)
             return;
 
-        if (node.id)
-            return "#" + node.id;
+        var id = node.getAttribute("id");
+        if (id)
+            return "#" + id;
 
-        if (node.className)
-            return "." + node.className.replace(/\s+/, ".");
+        var className = node.getAttribute("class");
+        if (className)
+            return "." + className.replace(/\s+/, ".");
 
         var nodeName = node.nodeName.toLowerCase();
-        if (nodeName === "input" && node.type)
-            return nodeName + "[type=\"" + node.type + "\"]";
+        if (nodeName === "input" && node.getAttribute("type"))
+            return nodeName + "[type=\"" + node.getAttribute("type") + "\"]";
 
         return nodeName;
     }
