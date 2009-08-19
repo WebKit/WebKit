@@ -521,7 +521,7 @@ void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
         return;
 
     SkPaint paint;
-    if (!isPointSkiaSafe(getCTM(), pts[0]) || !isPointSkiaSafe(getCTM(), pts[1]))
+    if (!isPointSkiaSafe(getCTM(), point1) || !isPointSkiaSafe(getCTM(), point2))
         return;
 
     FloatPoint p1 = point1;
@@ -532,8 +532,8 @@ void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
     // We know these are vertical or horizontal lines, so the length will just
     // be the sum of the displacement component vectors give or take 1 -
     // probably worth the speed up of no square root, which also won't be exact.
-    FloatPoint disp = p2 - p1;
-    int length = SkScalarRound(disp.x() + disp.y());
+    FloatSize disp = p2 - p1;
+    int length = SkScalarRound(disp.width() + disp.height());
     platformContext()->setupPaintForStroking(&paint, 0, length);
 
     if (strokeStyle() == DottedStroke || strokeStyle() == DashedStroke) {
