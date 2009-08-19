@@ -53,7 +53,7 @@ function copyArray(a) {
         g[i] = a[i];
     return g;
 }
-var start = new Date;
+
 // Test object and array behaviour matches
 for (var f = 0; f < functions.length; f++) {
     for (var t = 0; t < testFunctions.length; t++) {
@@ -120,6 +120,5 @@ for (var f = 0; f < functions.length; f++) {
         }
     }
 }
-var end = new Date;
-debug("Time: " + (end-start));
+
 successfullyParsed = true;

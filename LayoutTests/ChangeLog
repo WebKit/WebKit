@@ -1,5 +1,13 @@
 2009-08-18  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by NOBODY (Build fix).
+
+        Remove accidentally committed logging
+
+        * fast/js/resources/array-enumerators-functions.js:
+
+2009-08-18  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Mark Rowe.
 
         Make test faster so leaks bot won't time out.
