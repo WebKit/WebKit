@@ -385,7 +385,7 @@ PassRefPtr<Structure> Structure::addPropertyTransitionToExistingStructure(Struct
         Structure* existingTransition = structure->m_transitions.singleTransition;
         if (existingTransition && existingTransition->m_nameInPrevious.get() == propertyName.ustring().rep()
             && existingTransition->m_attributesInPrevious == attributes
-            && existingTransition->m_specificValueInPrevious == specificValue) {
+            && (existingTransition->m_specificValueInPrevious == specificValue || existingTransition->m_specificValueInPrevious == 0)) {
 
             ASSERT(structure->m_transitions.singleTransition->m_offset != noOffset);
             offset = structure->m_transitions.singleTransition->m_offset;

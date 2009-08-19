@@ -1,3 +1,15 @@
+2009-08-18  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Assigning a function to an object should always use the existing transition, even if the transition is not specialized
+        https://bugs.webkit.org/show_bug.cgi?id=28442
+
+        Check for an unspecialized transition as an alternative to always failing if specialisation does not match.
+
+        * runtime/Structure.cpp:
+        (JSC::Structure::addPropertyTransitionToExistingStructure):
+
 2009-08-18  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Oliver Hunt.
