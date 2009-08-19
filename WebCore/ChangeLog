@@ -1,3 +1,22 @@
+2009-08-18  Maxime Simon  <simon.maxime@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        [Haiku] Adding the SharedTimer file for WebCore.
+        https://bugs.webkit.org/show_bug.cgi?id=28126
+
+        * platform/haiku/SharedTimerHaiku.cpp: Added.
+        (WebCore::):
+        (WebCore::SharedTimerHaiku::SharedTimerHaiku):
+        (WebCore::SharedTimerHaiku::~SharedTimerHaiku):
+        (WebCore::SharedTimerHaiku::instance):
+        (WebCore::SharedTimerHaiku::start):
+        (WebCore::SharedTimerHaiku::stop):
+        (WebCore::SharedTimerHaiku::Filter):
+        (WebCore::setSharedTimerFiredFunction):
+        (WebCore::setSharedTimerFireTime):
+        (WebCore::stopSharedTimer):
+
 2009-08-18  Mark Rowe  <mrowe@apple.com>
 
         Release build fix.
