@@ -38,6 +38,7 @@ namespace WebCore {
         Vector<KURL> onlineWhitelistedURLs;
         HashSet<String> explicitURLs;
         FallbackURLVector fallbackURLs;
+        bool allowAllNetworkRequests; // Wildcard found in NETWORK section.
     };
 
     bool parseManifest(const KURL& manifestURL, const char* data, int length, Manifest&);

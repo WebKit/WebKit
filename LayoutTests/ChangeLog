@@ -1,3 +1,14 @@
+2009-08-19  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27464
+        Implement application cache online whitelist wildcard flag
+
+        * http/tests/appcache/resources/whitelist-wildcard.manifest: Added.
+        * http/tests/appcache/whitelist-wildcard-expected.txt: Added.
+        * http/tests/appcache/whitelist-wildcard.html: Added.
+
 2009-08-19  Yuta Kitamura  <yutak@chromium.org>
 
         Reviewed by Eric Seidel.

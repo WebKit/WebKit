@@ -43,7 +43,8 @@ bool parseManifest(const KURL& manifestURL, const char* data, int length, Manife
     ASSERT(manifest.explicitURLs.isEmpty());
     ASSERT(manifest.onlineWhitelistedURLs.isEmpty());
     ASSERT(manifest.fallbackURLs.isEmpty());
-    
+    manifest.allowAllNetworkRequests = false;
+
     Mode mode = Explicit;
 
     RefPtr<TextResourceDecoder> decoder = TextResourceDecoder::create("text/cache-manifest", "UTF-8");
@@ -108,6 +109,12 @@ bool parseManifest(const KURL& manifestURL, const char* data, int length, Manife
             // Look for whitespace separating the URL from subsequent ignored tokens.
             while (p < lineEnd && *p != '\t' && *p != ' ') 
                 p++;
+
+            if (mode == OnlineWhitelist && p - line.characters() == 1 && *line.characters() == '*') {
+                // Wildcard was found.
+                manifest.allowAllNetworkRequests = true;
+                continue;
+            }
 
             KURL url(manifestURL, String(line.characters(), p - line.characters()));
             

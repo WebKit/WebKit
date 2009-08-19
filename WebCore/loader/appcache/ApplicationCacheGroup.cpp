@@ -672,6 +672,7 @@ void ApplicationCacheGroup::didFinishLoadingManifest()
     
     m_cacheBeingUpdated->setOnlineWhitelist(manifest.onlineWhitelistedURLs);
     m_cacheBeingUpdated->setFallbackURLs(manifest.fallbackURLs);
+    m_cacheBeingUpdated->setAllowsAllNetworkRequests(manifest.allowAllNetworkRequests);
     
     startLoadingEntry();
 }

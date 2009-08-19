@@ -1,3 +1,29 @@
+2009-08-19  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27464
+        Implement application cache online whitelist wildcard flag
+
+        Test: http/tests/appcache/whitelist-wildcard.html
+
+        A "*" in NETWORK section means that network loading needn't be blocked.
+
+        * loader/appcache/ApplicationCache.cpp:
+        (WebCore::ApplicationCache::isURLInOnlineWhitelist):
+        * loader/appcache/ApplicationCache.h:
+        (WebCore::ApplicationCache::setAllowsAllNetworkRequests):
+        (WebCore::ApplicationCache::allowsAllNetworkRequests):
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::didFinishLoadingManifest):
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::openDatabase):
+        (WebCore::ApplicationCacheStorage::store):
+        (WebCore::ApplicationCacheStorage::loadCache):
+        * loader/appcache/ManifestParser.cpp:
+        (WebCore::parseManifest):
+        * loader/appcache/ManifestParser.h:
+
 2009-08-19  Brady Eidson <beidson@apple.com>
 
         Reviewed by Kevin Decker.

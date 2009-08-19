@@ -65,6 +65,8 @@ public:
     ApplicationCacheResource* resourceForRequest(const ResourceRequest&);
     ApplicationCacheResource* resourceForURL(const String& url);
 
+    void setAllowsAllNetworkRequests(bool value) { m_allowAllNetworkRequests = value; }
+    bool allowsAllNetworkRequests() const { return m_allowAllNetworkRequests; }
     void setOnlineWhitelist(const Vector<KURL>& onlineWhitelist);
     const Vector<KURL>& onlineWhitelist() const { return m_onlineWhitelist; }
     bool isURLInOnlineWhitelist(const KURL&); // There is an entry in online whitelist that has the same origin as the resource's URL and that is a prefix match for the resource's URL.
@@ -96,6 +98,7 @@ private:
     ResourceMap m_resources;
     ApplicationCacheResource* m_manifest;
 
+    bool m_allowAllNetworkRequests;
     Vector<KURL> m_onlineWhitelist;
     FallbackURLVector m_fallbackURLs;
 

@@ -427,7 +427,7 @@ bool ApplicationCacheStorage::executeSQLCommand(const String& sql)
     return result;
 }
 
-static const int schemaVersion = 4;
+static const int schemaVersion = 5;
     
 void ApplicationCacheStorage::verifySchemaVersion()
 {
@@ -479,6 +479,7 @@ void ApplicationCacheStorage::openDatabase(bool createIfDoesNotExist)
                       "manifestHostHash INTEGER NOT NULL ON CONFLICT FAIL, manifestURL TEXT UNIQUE ON CONFLICT FAIL, newestCache INTEGER)");
     executeSQLCommand("CREATE TABLE IF NOT EXISTS Caches (id INTEGER PRIMARY KEY AUTOINCREMENT, cacheGroup INTEGER, size INTEGER)");
     executeSQLCommand("CREATE TABLE IF NOT EXISTS CacheWhitelistURLs (url TEXT NOT NULL ON CONFLICT FAIL, cache INTEGER NOT NULL ON CONFLICT FAIL)");
+    executeSQLCommand("CREATE TABLE IF NOT EXISTS CacheAllowsAllNetworkRequests (wildcard INTEGER NOT NULL ON CONFLICT FAIL, cache INTEGER NOT NULL ON CONFLICT FAIL)");
     executeSQLCommand("CREATE TABLE IF NOT EXISTS FallbackURLs (namespace TEXT NOT NULL ON CONFLICT FAIL, fallbackURL TEXT NOT NULL ON CONFLICT FAIL, "
                       "cache INTEGER NOT NULL ON CONFLICT FAIL)");
     executeSQLCommand("CREATE TABLE IF NOT EXISTS CacheEntries (cache INTEGER NOT NULL ON CONFLICT FAIL, type INTEGER, resource INTEGER NOT NULL)");
@@ -491,6 +492,7 @@ void ApplicationCacheStorage::openDatabase(bool createIfDoesNotExist)
                       " FOR EACH ROW BEGIN"
                       "  DELETE FROM CacheEntries WHERE cache = OLD.id;"
                       "  DELETE FROM CacheWhitelistURLs WHERE cache = OLD.id;"
+                      "  DELETE FROM CacheAllowsAllNetworkRequests WHERE cache = OLD.id;"
                       "  DELETE FROM FallbackURLs WHERE cache = OLD.id;"
                       " END");
 
@@ -583,6 +585,18 @@ bool ApplicationCacheStorage::store(ApplicationCache* cache, ResourceStorageIDJo
             if (!executeStatement(statement))
                 return false;
         }
+    }
+
+    // Store online whitelist wildcard flag.
+    {
+        SQLiteStatement statement(m_database, "INSERT INTO CacheAllowsAllNetworkRequests (wildcard, cache) VALUES (?, ?)");
+        statement.prepare();
+
+        statement.bindInt64(1, cache->allowsAllNetworkRequests());
+        statement.bindInt64(2, cacheStorageID);
+
+        if (!executeStatement(statement))
+            return false;
     }
     
     // Store fallback URLs.
@@ -863,6 +877,21 @@ PassRefPtr<ApplicationCache> ApplicationCacheStorage::loadCache(unsigned storage
         LOG_ERROR("Could not load cache online whitelist, error \"%s\"", m_database.lastErrorMsg());
 
     cache->setOnlineWhitelist(whitelist);
+
+    // Load online whitelist wildcard flag.
+    SQLiteStatement whitelistWildcardStatement(m_database, "SELECT wildcard FROM CacheAllowsAllNetworkRequests WHERE cache=?");
+    if (whitelistWildcardStatement.prepare() != SQLResultOk)
+        return 0;
+    whitelistWildcardStatement.bindInt64(1, storageID);
+    
+    result = whitelistWildcardStatement.step();
+    if (result != SQLResultRow)
+        LOG_ERROR("Could not load cache online whitelist wildcard flag, error \"%s\"", m_database.lastErrorMsg());
+
+    cache->setAllowsAllNetworkRequests(whitelistWildcardStatement.getColumnInt64(0));
+
+    if (whitelistWildcardStatement.step() != SQLResultDone)
+        LOG_ERROR("Too many rows for online whitelist wildcard flag");
 
     // Load fallback URLs.
     SQLiteStatement fallbackStatement(m_database, "SELECT namespace, fallbackURL FROM FallbackURLs WHERE cache=?");
