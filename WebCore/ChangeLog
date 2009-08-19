@@ -1,3 +1,15 @@
+2009-08-19  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Xan Lopez.
+
+        [Gtk] Remove bogus dependency rules for built sources that derive
+        from HTMLTagNames.in, HTMLAttributeNames.in and xmlattrs.in. The
+        header files should be generated regardless of whether the source
+        file changed or not. We should only rely on the *.in files being
+        changed.
+
+        * GNUmakefile.am:
+
 2009-08-18  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver Hunt.
