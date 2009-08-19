@@ -1,3 +1,10 @@
+2009-08-18  Dan Bernstein  <mitz@apple.com>
+
+        Build fix.
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::getIdentifierValue):
+
 2009-08-18  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

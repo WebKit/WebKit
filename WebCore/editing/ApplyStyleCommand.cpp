@@ -136,7 +136,7 @@ void StyleChange::reconcileTextDecorationProperties(CSSMutableStyleDeclaration* 
         style->removeProperty(CSSPropertyTextDecoration);
 }
 
-int getIdentifierValue(CSSMutableStyleDeclaration* style, int propertyID)
+static int getIdentifierValue(CSSMutableStyleDeclaration* style, int propertyID)
 {
     if (!style)
         return 0;
