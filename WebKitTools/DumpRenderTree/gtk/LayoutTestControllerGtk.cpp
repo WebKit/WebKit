@@ -226,7 +226,7 @@ static gboolean waitToDumpWatchdogFired(void*)
 
 void LayoutTestController::setWaitToDump(bool waitUntilDone)
 {
-    static const int timeoutSeconds = 10;
+    static const int timeoutSeconds = 15;
 
     m_waitToDump = waitUntilDone;
     if (m_waitToDump && !waitToDumpWatchdog)

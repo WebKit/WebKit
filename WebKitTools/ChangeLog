@@ -1,3 +1,14 @@
+2009-08-19  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Gustavo Noronha.
+
+        [Gtk] Bump waitToDumpWatchdog interval to 15 seconds to match the
+        default timeout used by run-webkit-tests. Mac and Win ports were
+        recently bumped in http://trac.webkit.org/changeset/r47465.
+
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::setWaitToDump):
+
 2009-08-19  David D. Kilzer  <ddkilzer@webkit.org>
 
         DumpRenderTreeSupport.pm: provide pre-generated swig source for Tiger
