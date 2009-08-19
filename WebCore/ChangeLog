@@ -1,3 +1,19 @@
+2009-08-18  Mike Fenton  <mike.fenton@torchmobile.com>
+
+        Reviewed by Eric Seidel.
+
+        Style fixes based on cpp_style.py and WebKit Style guide for
+        GraphicsContextSkia.cpp
+
+        https://bugs.webkit.org/show_bug.cgi?id=28268
+
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::addInnerRoundedRectClip):
+        (WebCore::GraphicsContext::drawFocusRing):
+        (WebCore::GraphicsContext::roundToDevicePixels):
+        (WebCore::GraphicsContext::setLineDash):
+        (WebCore::GraphicsContext::setPlatformShadow):
+
 2009-08-18  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Maciej Stachowiak.
