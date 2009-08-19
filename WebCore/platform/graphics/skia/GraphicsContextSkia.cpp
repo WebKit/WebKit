@@ -521,26 +521,28 @@ void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
         return;
 
     SkPaint paint;
-    SkPoint pts[2] = { (SkPoint)point1, (SkPoint)point2 };
     if (!isPointSkiaSafe(getCTM(), pts[0]) || !isPointSkiaSafe(getCTM(), pts[1]))
         return;
+
+    FloatPoint p1 = point1;
+    FloatPoint p2 = point2;
+    bool isVerticalLine = (p1.x() == p2.x());
+    int width = roundf(strokeThickness());
 
     // We know these are vertical or horizontal lines, so the length will just
     // be the sum of the displacement component vectors give or take 1 -
     // probably worth the speed up of no square root, which also won't be exact.
-    SkPoint disp = pts[1] - pts[0];
-    int length = SkScalarRound(disp.fX + disp.fY);
+    FloatPoint disp = p2 - p1;
+    int length = SkScalarRound(disp.x() + disp.y());
     platformContext()->setupPaintForStroking(&paint, 0, length);
-    int width = roundf(strokeThickness());
-    bool isVerticalLine = pts[0].fX == pts[1].fX;
 
     if (strokeStyle() == DottedStroke || strokeStyle() == DashedStroke) {
         // Do a rect fill of our endpoints.  This ensures we always have the
         // appearance of being a border.  We then draw the actual dotted/dashed line.
 
         SkRect r1, r2;
-        r1.set(pts[0].fX, pts[0].fY, pts[0].fX + width, pts[0].fY + width);
-        r2.set(pts[1].fX, pts[1].fY, pts[1].fX + width, pts[1].fY + width);
+        r1.set(p1.x(), p1.y(), p1.x() + width, p1.y() + width);
+        r2.set(p2.x(), p2.y(), p2.x() + width, p2.y() + width);
 
         if (isVerticalLine) {
             r1.offset(-width / 2, 0);
@@ -553,35 +555,11 @@ void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
         fillPaint.setColor(paint.getColor());
         platformContext()->canvas()->drawRect(r1, fillPaint);
         platformContext()->canvas()->drawRect(r2, fillPaint);
-
-        // Since we've already rendered the endcaps, adjust the endpoints to
-        // exclude them from the line itself.
-        if (isVerticalLine) {
-            pts[0].fY += width;
-            pts[1].fY -= width;
-        } else {
-            pts[0].fX += width;
-            pts[1].fX -= width;
-        }
     }
 
-    // "Borrowed" this comment and idea from GraphicsContextCG.cpp
-    //
-    // For odd widths, we add in 0.5 to the appropriate x/y so that the float
-    // arithmetic works out.  For example, with a border width of 3, KHTML will
-    // pass us (y1+y2)/2, e.g., (50+53)/2 = 103/2 = 51 when we want 51.5.  It is
-    // always true that an even width gave us a perfect position, but an odd
-    // width gave us a position that is off by exactly 0.5.
+    adjustLineToPixelBoundaries(p1, p2, width, penStyle);
+    SkPoint pts[2] = { (SkPoint)p1, (SkPoint)p2 };
 
-    if (width & 1) {  // Odd.
-        if (isVerticalLine) {
-            pts[0].fX = pts[0].fX + SK_ScalarHalf;
-            pts[1].fX = pts[0].fX;
-        } else {  // Horizontal line
-            pts[0].fY = pts[0].fY + SK_ScalarHalf;
-            pts[1].fY = pts[0].fY;
-        }
-    }
     platformContext()->canvas()->drawPoints(SkCanvas::kLines_PointMode, 2, pts, paint);
 }
 
