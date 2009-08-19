@@ -385,6 +385,11 @@
 #include "V8WorkerNavigator.h"
 #endif
 
+#if ENABLE(NOTIFICATIONS)
+#include "V8Notification.h"
+#include "V8NotificationCenter.h"
+#endif
+
 #if ENABLE(SHARED_WORKERS)
 #include "V8SharedWorker.h"
 #endif

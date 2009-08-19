@@ -379,6 +379,15 @@ v8::Persistent<v8::FunctionTemplate> V8DOMWrapper::getTemplate(V8ClassIndex::V8W
         break;
     }
 
+#if ENABLE(NOTIFICATIONS)
+    case V8ClassIndex::NOTIFICATION: {
+        // Reserve one more internal field for keeping event listeners.
+        v8::Local<v8::ObjectTemplate> instanceTemplate = descriptor->InstanceTemplate();
+        instanceTemplate->SetInternalFieldCount(V8Custom::kNotificationInternalFieldCount);
+        break;
+    }
+#endif // NOTIFICATIONS
+
 #if ENABLE(WORKERS)
     case V8ClassIndex::ABSTRACTWORKER: {
         // Reserve one more internal field for keeping event listeners.
@@ -1248,6 +1257,12 @@ v8::Handle<v8::Value> V8DOMWrapper::convertEventTargetToV8Object(EventTarget* ta
     if (worker)
         return convertToV8Object(V8ClassIndex::WORKER, worker);
 #endif // WORKERS
+
+#if ENABLE(NOTIFICATIONS)
+    Notification* notification = target->toNotification();
+    if (notification)
+        return convertToV8Object(V8ClassIndex::NOTIFICATION, notification);
+#endif
 
     Node* node = target->toNode();
     if (node)

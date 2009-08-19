@@ -38,6 +38,8 @@
 #include "DOMCoreException.h"
 #include "DedicatedWorkerContext.h"
 #include "Event.h"
+#include "Notification.h"
+#include "NotificationCenter.h"
 #include "EventException.h"
 #include "MessagePort.h"
 #include "RangeException.h"
@@ -219,6 +221,14 @@ v8::Handle<v8::Value> WorkerContextExecutionProxy::convertToV8Object(V8ClassInde
             case V8ClassIndex::WORKERNAVIGATOR:
                 static_cast<WorkerNavigator*>(impl)->ref();
                 break;
+#if ENABLE(NOTIFICATIONS)
+            case V8ClassIndex::NOTIFICATIONCENTER:
+                static_cast<NotificationCenter*>(impl)->ref();
+                break;
+            case V8ClassIndex::NOTIFICATION:
+                static_cast<Notification*>(impl)->ref();
+                break;
+#endif
             case V8ClassIndex::DOMCOREEXCEPTION:
                 static_cast<DOMCoreException*>(impl)->ref();
                 break;

@@ -59,6 +59,11 @@ namespace WebCore {
         // Number of active worker threads.
         static unsigned workerThreadCount();
 
+#if ENABLE(NOTIFICATIONS)
+        NotificationPresenter* getNotificationPresenter() { return m_notificationPresenter; }
+        void setNotificationPresenter(NotificationPresenter* presenter) { m_notificationPresenter = presenter; }
+#endif
+
     protected:
         WorkerThread(const KURL&, const String& userAgent, const String& sourceCode, WorkerLoaderProxy&, WorkerReportingProxy&);
 
@@ -69,11 +74,6 @@ namespace WebCore {
         virtual void runEventLoop();
 
         WorkerContext* workerContext() { return m_workerContext.get(); }
-
-#if ENABLE(NOTIFICATIONS)
-        NotificationPresenter* getNotificationPresenter() { return m_notificationPresenter; }
-        void setNotificationPresenter(NotificationPresenter* presenter) { m_notificationPresenter = presenter; }
-#endif
 
     private:
         // Static function executed as the core routine on the new thread. Passed a pointer to a WorkerThread object.

@@ -966,6 +966,9 @@ sub GenerateBatchedAttributeData
             } elsif ($interfaceName eq "DOMApplicationCache") {
                 $getter = "V8Custom::v8DOMApplicationCacheEventHandlerAccessorGetter";
                 $setter = "V8Custom::v8DOMApplicationCacheEventHandlerAccessorSetter";
+            } elsif ($interfaceName eq "Notification") {
+                $getter = "V8Custom::v8NotificationEventHandlerAccessorGetter";
+                $setter = "V8Custom::v8NotificationEventHandlerAccessorSetter";
             } else {
                 $getter = "V8Custom::v8${customAccessor}AccessorGetter";
                 if ($interfaceName eq "WorkerContext" and $attrName eq "self") {
@@ -2041,7 +2044,7 @@ sub ReturnNativeToJSValue
         return "return WorkerContextExecutionProxy::convertWorkerContextToV8Object($value)";
     }
 
-    if ($type eq "WorkerLocation" or $type eq "WorkerNavigator") {
+    if ($type eq "WorkerLocation" or $type eq "WorkerNavigator" or $type eq "NotificationCenter") {
         $implIncludes{"WorkerContextExecutionProxy.h"} = 1;
         my $classIndex = uc($type);
 

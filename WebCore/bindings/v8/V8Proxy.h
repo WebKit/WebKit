@@ -86,6 +86,10 @@ namespace WebCore {
     class Node;
     class NodeFilter;
     class NodeList;
+#if ENABLE(NOTIFICATIONS)
+    class Notification;
+    class NotificationCenter;
+#endif
     class Plugin;
     class PluginArray;
     class SVGElement;

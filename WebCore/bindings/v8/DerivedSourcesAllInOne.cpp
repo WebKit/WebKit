@@ -175,6 +175,8 @@
 #include "bindings/V8NodeIterator.cpp"
 #include "bindings/V8NodeList.cpp"
 #include "bindings/V8Notation.cpp"
+#include "bindings/V8Notification.cpp"
+#include "bindings/V8NotificationCenter.cpp"
 #include "bindings/V8OverflowEvent.cpp"
 #include "bindings/V8Plugin.cpp"
 #include "bindings/V8PluginArray.cpp"

@@ -86,7 +86,12 @@ namespace WebCore {
         virtual void removeEventListener(const AtomicString&, EventListener*, bool);
         virtual bool dispatchEvent(PassRefPtr<Event>, ExceptionCode&);
         virtual Notification* toNotification() { return this; }
-      
+
+        // These methods are for onEvent style listeners.
+        EventListener* getAttributeEventListener(const AtomicString&) const;
+        void setAttributeEventListener(const AtomicString&, PassRefPtr<EventListener>);
+        void clearAttributeEventListener(const AtomicString&);
+
     private:
         Notification(const String& url, ScriptExecutionContext* context, ExceptionCode& ec, NotificationPresenter* provider);
         Notification(const NotificationContents& fields, ScriptExecutionContext* context, ExceptionCode& ec, NotificationPresenter* provider);
@@ -96,9 +101,6 @@ namespace WebCore {
         virtual void derefEventTarget() { deref(); }
   
         void handleEvent(PassRefPtr<Event> event, bool useCapture);
-        EventListener* getAttributeEventListener(const AtomicString&) const;
-        void setAttributeEventListener(const AtomicString&, PassRefPtr<EventListener>);
-        void clearAttributeEventListener(const AtomicString&);
 
         bool m_isHTML;
         KURL m_notificationURL;

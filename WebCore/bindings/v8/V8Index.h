@@ -88,6 +88,14 @@ typedef v8::Persistent<v8::FunctionTemplate> (*FunctionTemplateFactory)();
 #define APPLICATIONCACHE_NONNODE_WRAPPER_TYPES(V)
 #endif
 
+#if ENABLE(NOTIFICATIONS)
+#define NOTIFICATIONS_NONNODE_WRAPPER_TYPES(V)                          \
+    V(NOTIFICATION, Notification)                                       \
+    V(NOTIFICATIONCENTER, NotificationCenter)
+#else
+#define NOTIFICATIONS_NONNODE_WRAPPER_TYPES(V)
+#endif
+
 #if ENABLE(SHARED_WORKERS)
 #define SHARED_WORKER_ACTIVE_OBJECT_WRAPPER_TYPES(V)                    \
     V(SHAREDWORKER, SharedWorker)
@@ -397,6 +405,7 @@ typedef v8::Persistent<v8::FunctionTemplate> (*FunctionTemplateFactory)();
     APPLICATIONCACHE_NONNODE_WRAPPER_TYPES(V)                           \
     DATAGRID_NONNODE_TYPES(V)                                           \
     VIDEO_NONNODE_TYPES(V)                                              \
+    NOTIFICATIONS_NONNODE_WRAPPER_TYPES(V)                              \
     SHARED_WORKER_NONNODE_WRAPPER_TYPES(V)                              \
     WORKER_NONNODE_WRAPPER_TYPES(V)
 

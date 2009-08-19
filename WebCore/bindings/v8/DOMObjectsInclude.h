@@ -214,6 +214,11 @@
 #include "WorkerNavigator.h"
 #endif // WORKERS
 
+#if ENABLE(NOTIFICATIONS)
+#include "Notification.h"
+#include "NotificationCenter.h"
+#endif // NOTIFICATIONS
+
 #if ENABLE(XPATH)
 #include "XPathEvaluator.h"
 #endif // XPATH
