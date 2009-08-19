@@ -1,3 +1,19 @@
+2009-08-19  Adam Roben  <aroben@apple.com>
+
+        Fix linker warnings on Windows
+
+        Reviewed by Anders Carlsson.
+
+        Fixes <http://webkit.org/b/28462> WebCore causes linker warnings on
+        Windows about multiply-defined JSHTMLDataListElement symbols
+
+        * WebCore.vcproj/WebCore.vcproj: Exclude JSHTMLDataListElement.cpp
+        from the build (just like we do for the other generated bindings
+        files) so that we don't get warnings about multiply-defined symbols in
+        JSHTMLDataListElement.cpp and DerivedSources.cpp. Also removed
+        duplicate versions of JSSVGElementWrapperFactory.cpp, and let VS
+        reorder a few files.
+
 2009-08-19  Jungshik Shin  <jshin@chromium.org>
 
         Reviewed by Eric Seidel
