@@ -25,6 +25,10 @@
 #include "webkitwebview.h"
 
 #include <gtk/gtk.h>
+#include <gtk/gtkversion.h>
+#if !GTK_CHECK_VERSION(2, 14, 0)
+#define gtk_widget_get_window(widget) (widget)->window
+#endif
 
 using namespace WebCore;
 
@@ -115,4 +119,3 @@ void DragClient::dragControllerDestroyed()
     delete this;
 }
 }
-

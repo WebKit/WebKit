@@ -1,3 +1,16 @@
+2009-08-18  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28443
+        Fix build break with gtk older than 2.14.
+
+        WebKit gtk port requires gtk 2.10 or later, but DragClientGtk.cpp
+        uses gtk_widget_get_window that is introduced in 2.14.
+
+        * WebCoreSupport/DragClientGtk.cpp:
+         define gtk_widget_get_window for gtk older than 2.14.
+
 2009-08-18  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Oliver Hunt.
