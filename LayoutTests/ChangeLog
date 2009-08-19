@@ -1,3 +1,14 @@
+2009-08-18  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Mark Rowe
+
+        Update Windows and Qt results after r47462.
+
+        * platform/qt/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/qt/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/win/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/win/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+
 2009-08-18  Drew Wilson  <atwilson@google.com>
 
         Reviewed by David Levin.
