@@ -2,72 +2,10 @@
 <p>Test that loading the worker's script does not allow a cross origin redirect (<a href="https://bugs.webkit.org/show_bug.cgi?id=26146">bug 26146</a>)</p>
 <div id=result></div>
 <script>
-function log(message)
+function createWorker(url)
 {
-    document.getElementById("result").innerHTML += message + "<br>";
+    return new Worker(url);
 }
-
-var testCases = [
-    "testCrossOriginLoad",
-    "testCrossOriginRedirectedLoad",
-];
-var testIndex = 0;
-
-function runNextTest()
-{
-    if (testIndex < testCases.length) {
-        testIndex++;
-        window[testCases[testIndex - 1]]();
-    } else {
-        log("DONE");
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
-    }
-}
-
-function testCrossOriginLoad()
-{
-    try {
-        var worker = new Worker('http://localhost:8000/workers/resources/worker-redirect-target.js');
-        worker.onerror = function(evt) {
-            log("FAIL: threw error when attempting to cross origin while loading the worker script.");
-            runNextTest();
-        }
-        worker.onmessage = function(evt) {
-            log("FAIL: executed script when redirect cross origin.");
-            runNextTest();
-        }
-    } catch (ex) {
-        log("SUCCESS: threw exception (" + ex + ") when attempting to cross origin while loading the worker script.");
-        runNextTest();
-    }
-}
-
-function testCrossOriginRedirectedLoad()
-{
-    try {
-        var worker = new Worker('/resources/redirect.php?url=http://localhost:8000/workers/resources/worker-redirect-target.js');
-        worker.onerror = function(evt) {
-            log("SUCCESS: threw error when attempting to redirected cross origin while loading the worker script.");
-            runNextTest();
-        }
-        worker.onmessage = function(evt) {
-            log("FAIL: executed script when redirect cross origin.");
-            runNextTest();
-        }
-    } catch (ex) {
-        log("FAIL: unexpected exception " + ex);
-        runNextTest();
-    }
-}
-
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
-}
-
-runNextTest();
-
 </script>
+<script src="resources/worker-redirect.js"></script>
 </body>
-</html>

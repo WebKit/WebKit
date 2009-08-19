@@ -1,3 +1,5 @@
+importScripts("worker-pre.js");
+
 onmessage = function(evt)
 {
     if (evt.data == "START")

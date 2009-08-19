@@ -1,3 +1,99 @@
+2009-08-18  Drew Wilson  <atwilson@google.com>
+
+        Reviewed by David Levin.
+
+        SharedWorkers need to support loading
+        https://bugs.webkit.org/show_bug.cgi?id=28342
+
+        Refactored worker network tests to also test SharedWorkers.
+
+        * http/tests/workers/resources/worker-importScripts.js:
+        Refactored to run in either a dedicated or shared worker.
+        (handleConnect.self.postMessage):
+        (handleConnect):
+        (runTests.try.resetLoadFlags):
+        (runTests):
+        * http/tests/workers/resources/worker-redirect-target.js:
+        Refactored to run in either a dedicated or shared worker.
+        (else.self.onconnect):
+        * http/tests/workers/resources/worker-redirect.js: Added.
+        Moved test code out of worker-redirect.html so it can be shared with shared worker tests.
+        (log):
+        (runNextTest):
+        (testCrossOriginLoad.try.worker.onerror):
+        (testCrossOriginLoad.try.worker.onmessage):
+        (testCrossOriginLoad):
+        (testCrossOriginRedirectedLoad.try.worker.onerror):
+        (testCrossOriginRedirectedLoad.try.worker.onmessage):
+        (testCrossOriginRedirectedLoad):
+        * http/tests/workers/shared-worker-importScripts-expected.txt: Added.
+        * http/tests/workers/shared-worker-importScripts.html-disabled: Added.
+        * http/tests/workers/shared-worker-redirect-expected.txt: Added
+        * http/tests/workers/shared-worker-redirect.html-disabled: Added.
+        * http/tests/workers/worker-redirect.html:
+        Moved test code into worker-redirect.js.
+        * http/tests/xmlhttprequest/workers/close.html:
+        Moved test code into close-test.js.
+        * http/tests/xmlhttprequest/workers/methods-async.html:
+        Moved test code into methods-async-test.js.
+        * http/tests/xmlhttprequest/workers/methods.html:
+        Moved test code into methods.js.
+        * http/tests/xmlhttprequest/workers/resources/close-test.js: Added.
+        Contains test code moved from close.html, so tests can be shared with SharedWorkers.
+        (log):
+        (testAsync.worker.onmessage.else):
+        (testAsync.worker.onmessage):
+        (testAsync):
+        (testSync.worker.onmessage.else):
+        (testSync.worker.onmessage):
+        (testSync):
+        (done):
+        (handleException):
+        * http/tests/xmlhttprequest/workers/resources/close.js:
+        Modified worker code so it runs in shared workers also.
+        * http/tests/xmlhttprequest/workers/resources/file-not-found.js: Added.
+        Contains test code moved from xmlhttprequest-file-not-found.html (now shared with shared worker tests).
+        (log):
+        (worker.onmessage):
+        * http/tests/xmlhttprequest/workers/resources/methods-async-test.js: Added.
+        Contains test code moved from methods-async.html (now shared with shared worker tests).
+        (log):
+        (worker.onmessage):
+        * http/tests/xmlhttprequest/workers/resources/methods-async.js:
+        Changed code to run in shared workers also.
+        * http/tests/xmlhttprequest/workers/resources/methods-test.js: Added.
+        Contains test code moved from methods.html (now shared with shared worker tests).
+        (log):
+        (worker.onmessage):
+        * http/tests/xmlhttprequest/workers/resources/methods.js:
+        Now can run in either dedicated or shared workers.
+        (init):
+        * http/tests/xmlhttprequest/workers/resources/shared-worker-create.js: Added.
+        Utility code to allow shared workers to look like dedicated workers to enable sharing test code.
+        (createWorker.worker.port.onmessage):
+        (createWorker.worker.postMessage):
+        (createWorker):
+        * http/tests/xmlhttprequest/workers/resources/worker-create.js: Added.
+        (createWorker):
+        * http/tests/xmlhttprequest/workers/resources/worker-pre.js: Added.
+        Utility code to make SharedWorkerGlobalScope look like DedicatedWorkerGlobalScope, to enable test code sharing.
+        (else.self.onconnect.self.postMessage):
+        (else.self.onconnect.event.messagePort.onmessage):
+        (else.self.onconnect):
+        * http/tests/xmlhttprequest/workers/resources/xmlhttprequest-file-not-found.js:
+        (init):
+        Updated code so it runs in shared workers also.
+        * http/tests/xmlhttprequest/workers/shared-worker-close-expected.txt: Added.
+        * http/tests/xmlhttprequest/workers/shared-worker-close.html-disabled: Added.
+        * http/tests/xmlhttprequest/workers/shared-worker-methods-async-expected.txt: Added.
+        * http/tests/xmlhttprequest/workers/shared-worker-methods-async.html-disabled: Added.
+        * http/tests/xmlhttprequest/workers/shared-worker-methods-expected.txt: Added.
+        * http/tests/xmlhttprequest/workers/shared-worker-methods.html-disabled: Added.
+        * http/tests/xmlhttprequest/workers/shared-worker-xhr-file-not-found-expected.txt: Added.
+        * http/tests/xmlhttprequest/workers/shared-worker-xhr-file-not-found.html-disabled: Added.
+        * http/tests/xmlhttprequest/workers/xmlhttprequest-file-not-found.html:
+        Moved test code into file-not-found.js.
+
 2009-08-18  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Dan Bernstein.

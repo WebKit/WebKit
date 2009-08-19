@@ -1,3 +1,18 @@
+2009-08-18  Drew Wilson  <atwilson@google.com>
+
+        Reviewed by David Levin.
+
+        SharedWorkers need to support loading.
+        https://bugs.webkit.org/show_bug.cgi?id=28342
+
+        Added loader support to shared workers, and refactored worker tests to also test SharedWorkers
+
+        * workers/DefaultSharedWorkerRepository.cpp:
+        (WebCore::SharedWorkerProxy::postTaskToLoader):
+        Forwards load requests to an arbitrary document from the list of worker's documents.
+        (WebCore::SharedWorkerProxy::postTaskForModeToWorkerContext):
+        Posts responses back to the shared worker thread.
+
 2009-08-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.

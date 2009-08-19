@@ -1,3 +1,5 @@
+importScripts("worker-pre.js");
+
 function done()
 {
     postMessage("DONE");

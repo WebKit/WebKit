@@ -68,9 +68,8 @@ public:
     bool matches(const String& name, PassRefPtr<SecurityOrigin> origin) const { return name == m_name && origin->equal(m_origin.get()); }
 
     // WorkerLoaderProxy
-    // FIXME: Implement WorkerLoaderProxy APIs by proxying to an active document.
-    virtual void postTaskToLoader(PassRefPtr<ScriptExecutionContext::Task>) { notImplemented(); }
-    virtual void postTaskForModeToWorkerContext(PassRefPtr<ScriptExecutionContext::Task>, const String&) { notImplemented(); }
+    virtual void postTaskToLoader(PassRefPtr<ScriptExecutionContext::Task>);
+    virtual void postTaskForModeToWorkerContext(PassRefPtr<ScriptExecutionContext::Task>, const String&);
 
     // WorkerReportingProxy
     virtual void postExceptionToWorkerObject(const String& errorMessage, int lineNumber, const String& sourceURL);
@@ -107,6 +106,30 @@ SharedWorkerProxy::SharedWorkerProxy(const String& name, const KURL& url, PassRe
 {
     // We should be the sole owner of the SecurityOrigin, as we will free it on another thread.
     ASSERT(m_origin->hasOneRef());
+}
+
+void SharedWorkerProxy::postTaskToLoader(PassRefPtr<ScriptExecutionContext::Task> task)
+{
+    MutexLocker lock(m_workerDocumentsLock);
+
+    if (isClosing())
+        return;
+
+    // If we aren't closing, then we must have at least one document.
+    ASSERT(m_workerDocuments.size());
+
+    // Just pick an arbitrary active document from the HashSet and pass load requests to it.
+    // FIXME: Do we need to deal with the case where the user closes the document mid-load, via a shadow document or some other solution?
+    Document* document = *(m_workerDocuments.begin());
+    document->postTask(task);
+}
+
+void SharedWorkerProxy::postTaskForModeToWorkerContext(PassRefPtr<ScriptExecutionContext::Task> task, const String& mode)
+{
+    if (isClosing())
+        return;
+    ASSERT(m_thread);
+    m_thread->runLoop().postTaskForMode(task, mode);
 }
 
 static void postExceptionTask(ScriptExecutionContext* context, const String& errorMessage, int lineNumber, const String& sourceURL)
