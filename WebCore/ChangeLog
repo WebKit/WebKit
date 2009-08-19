@@ -1,3 +1,51 @@
+2009-08-19  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Rename combinedOverflow to visibleOverflow, since that's what it actually represents.
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::nodeAtPoint):
+        (WebCore::InlineFlowBox::paint):
+        * rendering/InlineFlowBox.h:
+        (WebCore::InlineFlowBox::topvisibleOverflow):
+        (WebCore::InlineFlowBox::bottomvisibleOverflow):
+        (WebCore::InlineFlowBox::leftvisibleOverflow):
+        (WebCore::InlineFlowBox::rightvisibleOverflow):
+        (WebCore::InlineFlowBox::visibleOverflowRect):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::paint):
+        (WebCore::RenderBlock::floatRect):
+        (WebCore::RenderBlock::nodeAtPoint):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren):
+        (WebCore::RenderBlock::matchedEndLine):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::clippedOverflowRectForRepaint):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::visibleOverflowRect):
+        (WebCore::RenderBox::topvisibleOverflow):
+        (WebCore::RenderBox::bottomvisibleOverflow):
+        (WebCore::RenderBox::leftvisibleOverflow):
+        (WebCore::RenderBox::rightvisibleOverflow):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::localBoundingBox):
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::paint):
+        (WebCore::RenderLineBoxList::hitTest):
+        * rendering/RenderOverflow.h:
+        (WebCore::RenderOverflow::visibleOverflowRect):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::shouldPaint):
+        (WebCore::RenderReplaced::clippedOverflowRectForRepaint):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::layout):
+        (WebCore::RenderTable::paint):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::clippedOverflowRectForRepaint):
+
 2009-08-19  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Eric Seidel.

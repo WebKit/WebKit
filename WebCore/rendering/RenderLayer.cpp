@@ -2805,8 +2805,8 @@ IntRect RenderLayer::localBoundingBox() const
         InlineFlowBox* firstBox = inlineFlow->firstLineBox();
         if (!firstBox)
             return result;
-        int top = firstBox->topCombinedOverflow();
-        int bottom = inlineFlow->lastLineBox()->bottomCombinedOverflow();
+        int top = firstBox->topVisibleOverflow();
+        int bottom = inlineFlow->lastLineBox()->bottomVisibleOverflow();
         int left = firstBox->x();
         for (InlineRunBox* curr = firstBox->nextLineBox(); curr; curr = curr->nextLineBox())
             left = min(left, curr->x());
@@ -2817,7 +2817,7 @@ IntRect RenderLayer::localBoundingBox() const
             if (child->isTableCell()) {
                 IntRect bbox = toRenderBox(child)->borderBoxRect();
                 result.unite(bbox);
-                IntRect overflowRect = renderBox()->combinedOverflowRect();
+                IntRect overflowRect = renderBox()->visibleOverflowRect();
                 if (bbox != overflowRect)
                     result.unite(overflowRect);
             }
@@ -2830,7 +2830,7 @@ IntRect RenderLayer::localBoundingBox() const
         else {
             IntRect bbox = box->borderBoxRect();
             result = bbox;
-            IntRect overflowRect = box->combinedOverflowRect();
+            IntRect overflowRect = box->visibleOverflowRect();
             if (bbox != overflowRect)
                 result.unite(overflowRect);
         }

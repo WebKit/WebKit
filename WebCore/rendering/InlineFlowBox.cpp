@@ -600,7 +600,7 @@ void InlineFlowBox::computeVerticalOverflow(int lineTop, int lineBottom, bool st
 
 bool InlineFlowBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int x, int y, int tx, int ty)
 {
-    IntRect overflowRect(combinedOverflowRect());
+    IntRect overflowRect(visibleOverflowRect());
     overflowRect.move(tx, ty);
     if (!overflowRect.contains(x, y))
         return false;
@@ -625,7 +625,7 @@ bool InlineFlowBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
 
 void InlineFlowBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
 {
-    IntRect overflowRect(combinedOverflowRect());
+    IntRect overflowRect(visibleOverflowRect());
     overflowRect.inflate(renderer()->maximalOutlineSize(paintInfo.phase));
     overflowRect.move(tx, ty);
     

@@ -63,7 +63,7 @@ public:
     int rightVisualOverflow() const { return m_rightVisualOverflow; }
     IntRect visualOverflowRect() const;
 
-    IntRect combinedOverflowRect() const;
+    IntRect visibleOverflowRect() const;
 
     void setTopLayoutOverflow(int overflow) { m_topLayoutOverflow = overflow; }
     void setBottomLayoutOverflow(int overflow) { m_bottomLayoutOverflow = overflow; }
@@ -104,7 +104,7 @@ inline IntRect RenderOverflow::visualOverflowRect() const
     return IntRect(m_leftVisualOverflow, m_topVisualOverflow, m_rightVisualOverflow - m_leftVisualOverflow, m_bottomVisualOverflow - m_topVisualOverflow);
 }
 
-inline IntRect RenderOverflow::combinedOverflowRect() const
+inline IntRect RenderOverflow::visibleOverflowRect() const
 {
     IntRect combinedRect(layoutOverflowRect());
     combinedRect.unite(visualOverflowRect());

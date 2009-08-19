@@ -1072,7 +1072,7 @@ IntRect RenderBox::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintCo
     if (style()->visibility() != VISIBLE && !enclosingLayer()->hasVisibleContent())
         return IntRect();
 
-    IntRect r = combinedOverflowRect();
+    IntRect r = visibleOverflowRect();
 
     RenderView* v = view();
     if (v) {

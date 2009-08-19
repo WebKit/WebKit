@@ -140,11 +140,11 @@ public:
     void checkConsistency() const;
     void setHasBadChildList();
 
-    int topCombinedOverflow() const { return std::min(topLayoutOverflow(), topVisualOverflow()); }
-    int bottomCombinedOverflow() const { return std::max(bottomLayoutOverflow(), bottomVisualOverflow()); }
-    int leftCombinedOverflow() const { return std::min(leftLayoutOverflow(), leftVisualOverflow()); }
-    int rightCombinedOverflow() const { return std::max(rightLayoutOverflow(), rightVisualOverflow()); }
-    IntRect combinedOverflowRect() const { return m_overflow ? m_overflow->combinedOverflowRect() : IntRect(m_x, m_y, m_width, height());  }
+    int topVisibleOverflow() const { return std::min(topLayoutOverflow(), topVisualOverflow()); }
+    int bottomVisibleOverflow() const { return std::max(bottomLayoutOverflow(), bottomVisualOverflow()); }
+    int leftVisibleOverflow() const { return std::min(leftLayoutOverflow(), leftVisualOverflow()); }
+    int rightVisibleOverflow() const { return std::max(rightLayoutOverflow(), rightVisualOverflow()); }
+    IntRect visibleOverflowRect() const { return m_overflow ? m_overflow->visibleOverflowRect() : IntRect(m_x, m_y, m_width, height());  }
 
     int topLayoutOverflow() const { return m_overflow ? m_overflow->topLayoutOverflow() : m_y; }
     int bottomLayoutOverflow() const { return m_overflow ? m_overflow->bottomLayoutOverflow() : m_y + height(); }

@@ -164,8 +164,8 @@ bool RenderReplaced::shouldPaint(PaintInfo& paintInfo, int& tx, int& ty)
     int currentTY = ty + y();
 
     // Early exit if the element touches the edges.
-    int top = currentTY + topCombinedOverflow();
-    int bottom = currentTY + bottomCombinedOverflow();
+    int top = currentTY + topVisibleOverflow();
+    int bottom = currentTY + bottomVisibleOverflow();
     if (isSelected() && m_inlineBoxWrapper) {
         int selTop = ty + m_inlineBoxWrapper->root()->selectionTop();
         int selBottom = ty + selTop + m_inlineBoxWrapper->root()->selectionHeight();
@@ -174,7 +174,7 @@ bool RenderReplaced::shouldPaint(PaintInfo& paintInfo, int& tx, int& ty)
     }
     
     int os = 2 * maximalOutlineSize(paintInfo.phase);
-    if (currentTX + leftCombinedOverflow() >= paintInfo.rect.right() + os || currentTX + rightCombinedOverflow() <= paintInfo.rect.x() - os)
+    if (currentTX + leftVisibleOverflow() >= paintInfo.rect.right() + os || currentTX + rightVisibleOverflow() <= paintInfo.rect.x() - os)
         return false;
     if (top >= paintInfo.rect.bottom() + os || bottom <= paintInfo.rect.y() - os)
         return false;
@@ -329,7 +329,7 @@ IntRect RenderReplaced::clippedOverflowRectForRepaint(RenderBoxModelObject* repa
 
     // The selectionRect can project outside of the overflowRect, so take their union
     // for repainting to avoid selection painting glitches.
-    IntRect r = unionRect(localSelectionRect(false), combinedOverflowRect());
+    IntRect r = unionRect(localSelectionRect(false), visibleOverflowRect());
 
     RenderView* v = view();
     if (v) {

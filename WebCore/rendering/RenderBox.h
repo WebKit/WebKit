@@ -81,11 +81,11 @@ public:
     RenderBox* nextSiblingBox() const;
     RenderBox* parentBox() const;
 
-    IntRect combinedOverflowRect() const { return hasOverflowClip() ? visualOverflowRect() : (m_overflow ? m_overflow->combinedOverflowRect() : borderBoxRect()); }
-    int topCombinedOverflow() const { return hasOverflowClip() ? topVisualOverflow() : std::min(topLayoutOverflow(), topVisualOverflow()); }
-    int bottomCombinedOverflow() const { return hasOverflowClip() ? bottomVisualOverflow() : std::max(bottomLayoutOverflow(), bottomVisualOverflow()); }
-    int leftCombinedOverflow() const { return hasOverflowClip() ? leftVisualOverflow() : std::min(leftLayoutOverflow(), leftVisualOverflow()); }
-    int rightCombinedOverflow() const { return hasOverflowClip() ? rightVisualOverflow() :  std::max(rightLayoutOverflow(), rightVisualOverflow()); }
+    IntRect visibleOverflowRect() const { return hasOverflowClip() ? visualOverflowRect() : (m_overflow ? m_overflow->visibleOverflowRect() : borderBoxRect()); }
+    int topVisibleOverflow() const { return hasOverflowClip() ? topVisualOverflow() : std::min(topLayoutOverflow(), topVisualOverflow()); }
+    int bottomVisibleOverflow() const { return hasOverflowClip() ? bottomVisualOverflow() : std::max(bottomLayoutOverflow(), bottomVisualOverflow()); }
+    int leftVisibleOverflow() const { return hasOverflowClip() ? leftVisualOverflow() : std::min(leftLayoutOverflow(), leftVisualOverflow()); }
+    int rightVisibleOverflow() const { return hasOverflowClip() ? rightVisualOverflow() :  std::max(rightLayoutOverflow(), rightVisualOverflow()); }
     
     IntRect layoutOverflowRect() const { return m_overflow ? m_overflow->layoutOverflowRect() : borderBoxRect(); }
     int topLayoutOverflow() const { return m_overflow? m_overflow->topLayoutOverflow() : 0; }

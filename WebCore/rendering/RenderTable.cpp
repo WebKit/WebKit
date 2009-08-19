@@ -347,7 +347,7 @@ void RenderTable::layout()
     while (section) {
         if (!sectionMoved && section->y() != height()) {
             sectionMoved = true;
-            movedSectionTop = min(height(), section->y()) + section->topCombinedOverflow();
+            movedSectionTop = min(height(), section->y()) + section->topVisibleOverflow();
         }
         section->setLocation(bl, height());
 
@@ -401,7 +401,7 @@ void RenderTable::layout()
     bool didFullRepaint = repainter.repaintAfterLayout();
     // Repaint with our new bounds if they are different from our old bounds.
     if (!didFullRepaint && sectionMoved)
-        repaintRectangle(IntRect(leftCombinedOverflow(), movedSectionTop, rightCombinedOverflow() - leftCombinedOverflow(), bottomCombinedOverflow() - movedSectionTop));
+        repaintRectangle(IntRect(leftVisibleOverflow(), movedSectionTop, rightVisibleOverflow() - leftVisibleOverflow(), bottomVisibleOverflow() - movedSectionTop));
     
     setNeedsLayout(false);
 }
@@ -422,9 +422,9 @@ void RenderTable::paint(PaintInfo& paintInfo, int tx, int ty)
     PaintPhase paintPhase = paintInfo.phase;
 
     int os = 2 * maximalOutlineSize(paintPhase);
-    if (ty + topCombinedOverflow() >= paintInfo.rect.bottom() + os || ty + bottomCombinedOverflow() <= paintInfo.rect.y() - os)
+    if (ty + topVisibleOverflow() >= paintInfo.rect.bottom() + os || ty + bottomVisibleOverflow() <= paintInfo.rect.y() - os)
         return;
-    if (tx + leftCombinedOverflow() >= paintInfo.rect.right() + os || tx + rightCombinedOverflow() <= paintInfo.rect.x() - os)
+    if (tx + leftVisibleOverflow() >= paintInfo.rect.right() + os || tx + rightVisibleOverflow() <= paintInfo.rect.x() - os)
         return;
 
     bool pushedClip = pushContentsClip(paintInfo, tx, ty);    
