@@ -51,10 +51,6 @@ RenderTableSection::RenderTableSection(Node* node)
     , m_outerBorderRight(0)
     , m_outerBorderTop(0)
     , m_outerBorderBottom(0)
-    , m_overflowLeft(0)
-    , m_overflowWidth(0)
-    , m_overflowTop(0)
-    , m_overflowHeight(0)
     , m_needsCellRecalc(false)
     , m_hasOverflowingCell(false)
 {
@@ -620,10 +616,6 @@ int RenderTableSection::layoutRows(int toAdd)
             } else
                 cell->setLocation(table()->columnPositions()[c] + hspacing, m_rowPos[rindx]);
 
-            addOverflowFromChild(cell);
-
-            
-
             // If the cell moved, we have to repaint it as well as any floating/positioned
             // descendants.  An exception is if we need a layout.  In this case, we know we're going to
             // repaint ourselves (and the cell) anyway.
@@ -632,18 +624,29 @@ int RenderTableSection::layoutRows(int toAdd)
         }
     }
 
-    m_hasOverflowingCell = m_overflow;
-
 #ifndef NDEBUG
     setNeedsLayoutIsForbidden(false);
 #endif
 
     ASSERT(!needsLayout());
 
+    setHeight(m_rowPos[totalRows]);
+
+    // Now that our height has been determined, add in overflow from cells.
+    for (int r = 0; r < totalRows; r++) {
+        for (int c = 0; c < nEffCols; c++) {
+            RenderTableCell* cell = cellAt(r, c).cell;
+            if (!cell)
+                continue;
+            if (r < totalRows - 1 && cell == cellAt(r + 1, c).cell)
+                continue;
+            addOverflowFromChild(cell);
+        }
+    }
+    m_hasOverflowingCell = m_overflow;
+    
     statePusher.pop();
 
-    setHeight(m_rowPos[totalRows]);
-    m_overflowHeight = max(m_overflowHeight, height());
     return height();
 }
 

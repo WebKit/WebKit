@@ -1,3 +1,17 @@
+2009-08-19  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Cleanup from my patch thet rewrote overflow.  Remove unused member variables from RenderTableSection and
+        move the addition of overflow from children into a separate pass after the height of the section has been
+        set.  This prevents the RenderOverflow struct from being aggressively allocated for all table sections.
+        (Not a a correctness issue, just a memory issue.)
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::RenderTableSection):
+        (WebCore::RenderTableSection::layoutRows):
+        * rendering/RenderTableSection.h:
+
 2009-08-19  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Xan Lopez.

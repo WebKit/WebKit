@@ -147,10 +147,6 @@ private:
     int m_outerBorderRight;
     int m_outerBorderTop;
     int m_outerBorderBottom;
-    int m_overflowLeft;
-    int m_overflowWidth;
-    int m_overflowTop;
-    int m_overflowHeight;
 
     bool m_needsCellRecalc;
     bool m_hasOverflowingCell;
