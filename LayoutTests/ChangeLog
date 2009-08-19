@@ -1,3 +1,19 @@
+2009-08-19  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        Sound button appears in controller with movies that have no audio
+        https://bugs.webkit.org/show_bug.cgi?id=28464
+
+        * media/video-controls-visible-audio-only.html:
+        * media/video-no-audio.html: Added.
+        * platform/mac-leopard/media/video-empty-source-expected.txt:
+        * platform/mac-leopard/media/video-no-audio-expected.txt: Added.
+        * platform/mac/media/video-empty-source-expected.txt:
+        * platform/mac/media/video-no-audio-expected.txt: Added.
+        * platform/win/media/video-empty-source-expected.txt: Added.
+        * platform/win/media/video-no-audio-expected.txt: Added.
+
 2009-08-19  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Anders Carlsson.

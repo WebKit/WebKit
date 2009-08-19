@@ -916,6 +916,11 @@ MediaPlayer::MovieLoadType HTMLMediaElement::movieLoadType() const
     return m_player ? m_player->movieLoadType() : MediaPlayer::Unknown;
 }
 
+bool HTMLMediaElement::hasAudio() const
+{
+    return m_player ? m_player->hasAudio() : false;
+}
+
 bool HTMLMediaElement::seeking() const
 {
     return m_seeking;

@@ -241,6 +241,13 @@ bool MediaPlayerPrivate::hasVideo() const
     return m_qtMovie->hasVideo();
 }
 
+bool MediaPlayerPrivate::hasAudio() const
+{
+    if (!m_qtMovie)
+        return false;
+    return m_qtMovie->hasAudio();
+}
+
 void MediaPlayerPrivate::setVolume(float volume)
 {
     if (!m_qtMovie)

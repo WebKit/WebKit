@@ -325,6 +325,14 @@ bool MediaPlayerPrivate::hasVideo() const
     return currentVideo > -1;
 }
 
+bool MediaPlayerPrivate::hasAudio() const
+{
+    gint currentAudio = -1;
+    if (m_playBin)
+        g_object_get(G_OBJECT(m_playBin), "current-audio", &currentAudio, 0);
+    return currentAudio > -1;
+}
+
 void MediaPlayerPrivate::setVolume(float volume)
 {
     m_volume = volume;

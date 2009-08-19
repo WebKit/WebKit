@@ -84,6 +84,7 @@ SOFT_LINK_POINTER(QTKit, QTMovieAskUnresolvedDataRefsAttribute, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMovieDataSizeAttribute, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMovieDidEndNotification, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMovieHasVideoAttribute, NSString *)
+SOFT_LINK_POINTER(QTKit, QTMovieHasAudioAttribute, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMovieIsActiveAttribute, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMovieLoadStateAttribute, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMovieLoadStateDidChangeNotification, NSString *)
@@ -119,6 +120,7 @@ SOFT_LINK_POINTER(QTKit, QTMovieApertureModeAttribute, NSString *)
 #define QTMovieDataSizeAttribute getQTMovieDataSizeAttribute()
 #define QTMovieDidEndNotification getQTMovieDidEndNotification()
 #define QTMovieHasVideoAttribute getQTMovieHasVideoAttribute()
+#define QTMovieHasAudioAttribute getQTMovieHasAudioAttribute()
 #define QTMovieIsActiveAttribute getQTMovieIsActiveAttribute()
 #define QTMovieLoadStateAttribute getQTMovieLoadStateAttribute()
 #define QTMovieLoadStateDidChangeNotification getQTMovieLoadStateDidChangeNotification()
@@ -717,6 +719,13 @@ bool MediaPlayerPrivate::hasVideo() const
     if (!metaDataAvailable())
         return false;
     return [[m_qtMovie.get() attributeForKey:QTMovieHasVideoAttribute] boolValue];
+}
+
+bool MediaPlayerPrivate::hasAudio() const
+{
+    if (!m_qtMovie)
+        return false;
+    return [[m_qtMovie.get() attributeForKey:QTMovieHasAudioAttribute] boolValue];
 }
 
 void MediaPlayerPrivate::setVolume(float volume)

@@ -69,6 +69,7 @@ public:
     virtual IntSize naturalSize() const { return IntSize(0, 0); }
 
     virtual bool hasVideo() const { return false; }
+    virtual bool hasAudio() const { return false; }
 
     virtual void setVisible(bool) { }
 
@@ -318,9 +319,14 @@ IntSize MediaPlayer::naturalSize()
     return m_private->naturalSize();
 }
 
-bool MediaPlayer::hasVideo()
+bool MediaPlayer::hasVideo() const
 {
     return m_private->hasVideo();
+}
+
+bool MediaPlayer::hasAudio() const
+{
+    return m_private->hasAudio();
 }
 
 bool MediaPlayer::inMediaDocument()

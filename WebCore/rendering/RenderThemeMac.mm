@@ -1500,7 +1500,9 @@ static unsigned getMediaUIPartStateFlags(Node* node)
 {
     unsigned flags = 0;
 
-    if (node->active())
+    if (node->disabled())
+        flags |= MediaUIPartDisabledFlag;
+    else if (node->active())
         flags |= MediaUIPartPressedFlag;
     return flags;
 }

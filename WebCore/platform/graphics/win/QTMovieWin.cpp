@@ -867,6 +867,13 @@ bool QTMovieWin::hasVideo() const
     return (GetMovieIndTrackType(m_private->m_movie, 1, VisualMediaCharacteristic, movieTrackCharacteristic | movieTrackEnabledOnly));
 }
 
+bool QTMovieWin::hasAudio() const
+{
+    if (!m_private->m_movie)
+        return false;
+    return (GetMovieIndTrackType(m_private->m_movie, 1, AudioMediaCharacteristic, movieTrackCharacteristic | movieTrackEnabledOnly));
+}
+
 pascal OSErr movieDrawingCompleteProc(Movie movie, long data)
 {
     UppParam param;

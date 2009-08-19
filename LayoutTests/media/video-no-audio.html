@@ -1,0 +1,18 @@
+<html>
+    <head>
+        <script>
+            if (window.layoutTestController)
+                layoutTestController.waitUntilDone();
+    
+            function finish()
+            {
+                if (window.layoutTestController)
+                    layoutTestController.notifyDone();
+            }
+        </script>
+    </head>
+    <body>
+        <p>Movie with no audio track. The volume button should not render.</p>
+        <video src="content/scaled-matrix.mov" controls onload="finish()"></video>
+    </body>
+</html>

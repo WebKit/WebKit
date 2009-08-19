@@ -52,6 +52,7 @@ public:
     virtual IntSize naturalSize() const = 0;
 
     virtual bool hasVideo() const = 0;
+    virtual bool hasAudio() const = 0;
 
     virtual void setVisible(bool) = 0;
 

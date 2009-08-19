@@ -1,3 +1,66 @@
+2009-08-19  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        Sound button appears in controller with movies that have no audio
+        https://bugs.webkit.org/show_bug.cgi?id=28464
+
+        Test: media/video-no-audio.html
+
+        * html/HTMLMediaElement.cpp:
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::hasAudio):
+            Added hasAudio.
+
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::NullMediaPlayerPrivate::hasAudio):
+        (WebCore::MediaPlayer::hasVideo):
+            Make const.
+        (WebCore::MediaPlayer::hasAudio):
+            Added hasAudio.
+
+        * platform/graphics/MediaPlayerPrivate.h:
+            Add hasAudio.
+
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.h:
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivate::hasAudio):
+            Ditto.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::hasAudio):
+            Ditto.
+
+        * platform/graphics/qt/MediaPlayerPrivatePhonon.h:
+        * platform/graphics/qt/MediaPlayerPrivatePhonon.cpp:
+        (WebCore::MediaPlayerPrivate::hasAudio):
+            Ditto.
+
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.h:
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.cpp:
+        (WebCore::MediaPlayerPrivate::hasAudio):
+            Ditto.
+
+        * platform/graphics/win/QTMovieWin.h:
+        * platform/graphics/win/QTMovieWin.cpp:
+        (QTMovieWin::hasAudio):
+            Ditto.
+
+        * rendering/MediaControlElements.cpp:
+        (WebCore::MediaControlMuteButtonElement::disabled):
+            New, return true if media element doesn't have audio.
+        (WebCore::MediaControlMuteButtonElement::rendererIsNeeded):
+            Renderer is not needed if element has no audio.
+        * rendering/MediaControlElements.h:
+        (WebCore::MediaControlInputElement::disabled):
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::getMediaUIPartStateFlags):
+            Return MediaUIPartDisabledFlag if node is disabled.
+            
+
 2009-08-19  Michelangelo De Simone  <micdesim@gmail.com>
 
         Reviewed by Darin Adler.
