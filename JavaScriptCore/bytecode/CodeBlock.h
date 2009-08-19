@@ -598,8 +598,17 @@ namespace JSC {
 
         int baseScopeDepth() const { return m_baseScopeDepth; }
 
+        const Identifier& variable(unsigned index) { return m_variables[index]; }
+        unsigned numVariables() { return m_variables.size(); }
+        void adoptVariables(Vector<Identifier>& variables)
+        {
+            ASSERT(m_variables.isEmpty());
+            m_variables.swap(variables);
+        }
+
     private:
         int m_baseScopeDepth;
+        Vector<Identifier> m_variables;
     };
 
     class FunctionCodeBlock : public CodeBlock {

@@ -836,10 +836,9 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSObjec
 
         BatchedTransitionOptimizer optimizer(variableObject);
 
-        const DeclarationStacks::VarStack& varStack = static_cast<EvalExecutable*>(codeBlock->ownerExecutable())->varStack();
-        DeclarationStacks::VarStack::const_iterator varStackEnd = varStack.end();
-        for (DeclarationStacks::VarStack::const_iterator it = varStack.begin(); it != varStackEnd; ++it) {
-            const Identifier& ident = (*it).first;
+        unsigned numVariables = codeBlock->numVariables();
+        for (unsigned i = 0; i < numVariables; ++i) {
+            const Identifier& ident = codeBlock->variable(i);
             if (!variableObject->hasProperty(callFrame, ident)) {
                 PutPropertySlot slot;
                 variableObject->put(callFrame, ident, jsUndefined(), slot);

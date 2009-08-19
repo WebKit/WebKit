@@ -58,7 +58,7 @@ void EvalExecutable::generateBytecode(ScopeChainNode* scopeChainNode)
     OwnPtr<BytecodeGenerator> generator(new BytecodeGenerator(evalNode(), globalObject->debugger(), scopeChain, &m_evalCodeBlock->symbolTable(), m_evalCodeBlock));
     generator->generate();
     
-    evalNode()->partialDestroyData();
+    evalNode()->destroyData();
 }
 
 void ProgramExecutable::generateBytecode(ScopeChainNode* scopeChainNode)

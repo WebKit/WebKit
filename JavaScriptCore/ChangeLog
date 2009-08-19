@@ -1,3 +1,26 @@
+2009-08-19  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Darin Adler.
+
+         We probably shouldn't be keeping the AST for eval nodes around forevar.
+        https://bugs.webkit.org/show_bug.cgi?id=28469
+
+        EvalNodes don't destroyData() (delete their parser data) since they need to hold onto
+        their varStack.  Copy a list of variable onto EvalCodeBlock, and this can go away.
+
+        * bytecode/CodeBlock.h:
+        (JSC::EvalCodeBlock::variable):
+        (JSC::EvalCodeBlock::numVariables):
+        (JSC::EvalCodeBlock::adoptVariables):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        * parser/Nodes.h:
+        * runtime/Executable.cpp:
+        (JSC::EvalExecutable::generateBytecode):
+        * runtime/Executable.h:
+
 2009-08-19  Jungshik Shin  <jshin@chromium.org>
 
         Reviewed by Darin Adler.
