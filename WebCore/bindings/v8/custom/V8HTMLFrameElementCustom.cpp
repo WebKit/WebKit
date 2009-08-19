@@ -38,6 +38,8 @@
 
 namespace WebCore {
 
+using namespace HTMLNames; 
+
 ACCESSOR_SETTER(HTMLFrameElementSrc)
 {
     HTMLFrameElement* frame = V8DOMWrapper::convertDOMWrapperToNode<HTMLFrameElement>(info.Holder());

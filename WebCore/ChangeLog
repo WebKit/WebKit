@@ -2,6 +2,14 @@
 
         Not reviewed, build fix for Chromium.
 
+        Final change for v8 corresponding to http://trac.webkit.org/changeset/47469.
+
+        * bindings/v8/custom/V8HTMLFrameElementCustom.cpp: Added missing using statment
+
+2009-08-18  Julie Parent  <jparent@chromium.org>
+
+        Not reviewed, build fix for Chromium.
+
        More corresponding changes to V8 from http://trac.webkit.org/changeset/47469.
 
         * bindings/v8/custom/V8HTMLIFrameElementCustom.cpp:
