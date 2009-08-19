@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -327,23 +327,6 @@ static NSDictionary *createExtensionToMIMETypeMap()
     ];
 }
 
-static IMP oldNSURLResponseMIMETypeIMP = 0;
-static NSString *webNSURLResponseMIMEType(id, SEL);
-
-void swizzleMIMETypeMethodIfNecessary()
-{
-    if (!oldNSURLResponseMIMETypeIMP) {
-        Method nsURLResponseMIMETypeMethod = class_getInstanceMethod([NSURLResponse class], @selector(MIMEType));
-        ASSERT(nsURLResponseMIMETypeMethod);
-#ifdef BUILDING_ON_TIGER
-        oldNSURLResponseMIMETypeIMP = nsURLResponseMIMETypeMethod->method_imp;
-        nsURLResponseMIMETypeMethod->method_imp = (IMP)webNSURLResponseMIMEType;
-#else
-        oldNSURLResponseMIMETypeIMP = method_setImplementation(nsURLResponseMIMETypeMethod, (IMP)webNSURLResponseMIMEType);
-#endif
-    }
-}
-
 static NSString *mimeTypeFromUTITree(CFStringRef uti)
 {
     // Check if this UTI has a MIME type.
@@ -379,10 +362,12 @@ static NSString *mimeTypeFromUTITree(CFStringRef uti)
     return nil;
 }
 
-static NSString *webNSURLResponseMIMEType(id self, SEL _cmd)
+@implementation NSURLResponse (WebCoreURLResponse)
+
+-(void)adjustMIMETypeIfNecessary
 {
-    ASSERT(oldNSURLResponseMIMETypeIMP);
-    NSString *result = oldNSURLResponseMIMETypeIMP(self, _cmd);
+    NSString *result = [self MIMEType];
+    NSString *originalResult = result;
 
 #ifdef BUILDING_ON_TIGER
     // When content sniffing is disabled, Tiger's CFNetwork automatically returns application/octet-stream for certain
@@ -418,7 +403,7 @@ static NSString *webNSURLResponseMIMEType(id self, SEL _cmd)
 #ifndef BUILDING_ON_TIGER
     // <rdar://problem/5321972> Plain text document from HTTP server detected as application/octet-stream
     // Make the best guess when deciding between "generic binary" and "generic text" using a table of known binary MIME types.
-    if ([result isEqualToString:@"application/octet-stream"] && [self respondsToSelector:@selector(allHeaderFields)] && [[[self allHeaderFields] objectForKey:@"Content-Type"] hasPrefix:@"text/plain"]) {
+    if ([result isEqualToString:@"application/octet-stream"] && [self respondsToSelector:@selector(allHeaderFields)] && [[[self performSelector:@selector(allHeaderFields)] objectForKey:@"Content-Type"] hasPrefix:@"text/plain"]) {
         static NSSet *binaryExtensions = createBinaryExtensionsSet();
         if (![binaryExtensions containsObject:[[[self suggestedFilename] pathExtension] lowercaseString]])
             result = @"text/plain";
@@ -432,15 +417,8 @@ static NSString *webNSURLResponseMIMEType(id self, SEL _cmd)
         result = @"application/xml";
 #endif
 
-    return result;
-}
-
-@implementation NSURLResponse (WebCoreURLResponse)
-
--(NSString *)_webcore_reportedMIMEType
-{
-    swizzleMIMETypeMethodIfNecessary();
-    return oldNSURLResponseMIMETypeIMP(self, @selector(_webcore_realMIMEType));
+    if (result != originalResult)
+        [self _setMIMEType:result];
 }
 
 @end

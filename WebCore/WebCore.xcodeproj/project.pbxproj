@@ -17551,7 +17551,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ]; then\n    exit 0;\nfi\n\nif [ -f ../WebKitTools/Scripts/check-for-global-initializers ]; then\n    ../WebKitTools/Scripts/check-for-global-initializers || exit $?\nfi";
+			shellScript = "";
 		};
 		DD041FBD09D9DDBE0010AF2A /* Generate Derived Sources */ = {
 			isa = PBXShellScriptBuildPhase;

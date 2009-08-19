@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +27,9 @@
  */
 
 @interface NSURLResponse (WebCoreURLResponse)
--(NSString *)_webcore_reportedMIMEType;
+-(void)adjustMIMETypeIfNecessary;
 @end
 
-void swizzleMIMETypeMethodIfNecessary();
+@interface NSURLResponse (Details)
+- (void)_setMIMEType:(NSString *)type;
+@end

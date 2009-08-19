@@ -1,3 +1,18 @@
+2009-08-19  Brady Eidson <beidson@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        <rdar://problem/7042555> Loading certain pages on Tiger will start a spurious download
+        
+        Get rid of method swizzling entirely. This created problems when lower level
+        Foundation code would call into our own swizzled method.
+        
+        * platform/network/mac/ResourceHandleMac.mm: 
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveResponse:]): 
+        * platform/network/mac/WebCoreURLResponse.h:
+        * platform/network/mac/WebCoreURLResponse.mm:
+        (-[NSURLResponse adjustMIMETypeIfNecessary]):
+
 2009-08-19  Adam Roben  <aroben@apple.com>
 
         Fix linker warnings on Windows
