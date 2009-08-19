@@ -1,3 +1,12 @@
+2009-08-19  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Add a new expected file to the Qt port since we pass it.
+
+        * platform/qt/fast/reflections: Added.
+        * platform/qt/fast/reflections/transparent-reflected-sublayers-expected.txt: Added.
+
 2009-08-18  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Maciej Stachowiak.
