@@ -1,3 +1,16 @@
+2009-08-18  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28446
+        Custom request headers shouldn't be sent with cross-origin preflight request
+
+        * http/tests/xmlhttprequest/access-control-preflight-headers-async-expected.txt: Added.
+        * http/tests/xmlhttprequest/access-control-preflight-headers-async.html: Added.
+        * http/tests/xmlhttprequest/access-control-preflight-headers-sync-expected.txt: Added.
+        * http/tests/xmlhttprequest/access-control-preflight-headers-sync.html: Added.
+        * http/tests/xmlhttprequest/resources/no-custom-header.php: Added.
+
 2009-08-13  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Sam Weinig.
