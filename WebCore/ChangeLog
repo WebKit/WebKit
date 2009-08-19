@@ -1,3 +1,12 @@
+2009-08-18  Julie Parent  <jparent@chromium.org>
+
+        Not reviewed, build fix for Chromium.
+
+        Make corresponding changes to V8 from http://trac.webkit.org/changeset/47469.
+
+        * bindings/v8/custom/V8HTMLFrameElementCustom.cpp:
+        (WebCore::ACCESSOR_SETTER): Use srcAttr instead of the src function.
+
 2009-08-18  Dan Bernstein  <mitz@apple.com>
 
         Build fix.

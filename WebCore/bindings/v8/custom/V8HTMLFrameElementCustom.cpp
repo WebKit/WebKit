@@ -30,6 +30,7 @@
 
 #include "config.h"
 #include "HTMLFrameElement.h"
+#include "HTMLNames.h"
 
 #include "V8Binding.h"
 #include "V8CustomBinding.h"
@@ -45,7 +46,7 @@ ACCESSOR_SETTER(HTMLFrameElementSrc)
     if (!allowSettingFrameSrcToJavascriptUrl(frame, srcValue))
         return;
 
-    frame->setSrc(srcValue);
+    frame->setAttribute(srcAttr, srcValue); 
 }
 
 ACCESSOR_SETTER(HTMLFrameElementLocation)
