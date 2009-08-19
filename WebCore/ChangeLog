@@ -1,3 +1,16 @@
+2009-08-19  Jungshik Shin  <jshin@chromium.org>
+
+        Reviewed by Eric Seidel
+
+        Add 'icu::' qualifier when refering to ICU C++ names.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28410
+
+        No change in the test result.
+
+        * platform/graphics/chromium/FontCacheChromiumWin.cpp:
+        (WebCore::fontContainsCharacter):
+
 2009-08-19  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.

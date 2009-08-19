@@ -261,7 +261,7 @@ static HFONT createFontIndirectAndGetWinName(const String& family, LOGFONT* winf
 // characters. Because it's family names rather than font faces we use
 // as keys, there might be edge cases where one face of a font family
 // has a different repertoire from another face of the same family. 
-typedef HashMap<const wchar_t*, UnicodeSet*> FontCmapCache;
+typedef HashMap<const wchar_t*, icu::UnicodeSet*> FontCmapCache;
 
 static bool fontContainsCharacter(const FontPlatformData* fontData,
                                   const wchar_t* family, UChar32 character)
@@ -277,7 +277,7 @@ static bool fontContainsCharacter(const FontPlatformData* fontData,
     if (!fontCmapCache)
         fontCmapCache = new FontCmapCache;
 
-    HashMap<const wchar_t*, UnicodeSet*>::iterator it = fontCmapCache->find(family);
+    HashMap<const wchar_t*, icu::UnicodeSet*>::iterator it = fontCmapCache->find(family);
     if (it != fontCmapCache->end()) 
         return it->second->contains(character);
     
@@ -308,7 +308,7 @@ static bool fontContainsCharacter(const FontPlatformData* fontData,
     // 1) port back ICU 4.0's faster look-up code for UnicodeSet
     // 2) port Mozilla's CompressedCharMap or gfxSparseBitset
     unsigned i = 0;
-    UnicodeSet* cmap = new UnicodeSet;
+    icu::UnicodeSet* cmap = new icu::UnicodeSet;
     while (i < glyphset->cRanges) {
         WCHAR start = glyphset->ranges[i].wcLow; 
         cmap->add(start, start + glyphset->ranges[i].cGlyphs - 1);
