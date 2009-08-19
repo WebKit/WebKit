@@ -1,3 +1,17 @@
+2009-08-19  Jungshik Shin  <jshin@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        http://bugs.webkit.org/show_bug.cgi?id=28441
+
+        Fix a build issue with ICU 4.2 or later on Windows with Visual C++. 
+        Instead of defining all isXXX and toupper/tolower as 
+          WTF_Please_use_ASCIICType_instead_of_ctype_see_comment_in_ASCIICType_h,
+        #define them to be different by prepending 'WTF_...ASCIIType_h' with
+        the originial names like 'toupper_WTF_...ASCIIType_h'. 
+
+        * wtf/DisallowCType.h:
+
 2009-08-18  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
