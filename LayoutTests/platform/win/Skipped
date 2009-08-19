@@ -633,3 +633,6 @@ media/video-played-collapse.html
 # These two crash from the same regression.
 media/unsupported-rtsp.html
 media/video-source-error.html
+
+# <http://webkit.org/b/28467>
+http/tests/loading/preload-img-test.html

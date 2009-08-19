@@ -1,3 +1,12 @@
+2009-08-19  Adam Roben  <aroben@apple.com>
+
+        Skip a failing test on Windows
+
+        See <http://webkit.org/b/28467>.
+
+        * platform/win/Skipped: Added
+        http/tests/loading/preload-img-test.html.
+
 2009-08-19  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Simon Fraser.
