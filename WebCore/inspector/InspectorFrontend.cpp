@@ -284,6 +284,13 @@ void InspectorFrontend::setDocument(const ScriptObject& root)
     function->call();
 }
 
+void InspectorFrontend::setDetachedRoot(const ScriptObject& root)
+{
+    OwnPtr<ScriptFunctionCall> function(newFunctionCall("setDetachedRoot"));
+    function->appendArgument(root);
+    function->call();
+}
+
 void InspectorFrontend::setChildNodes(int parentId, const ScriptArray& nodes)
 {
     OwnPtr<ScriptFunctionCall> function(newFunctionCall("setChildNodes"));
@@ -292,9 +299,9 @@ void InspectorFrontend::setChildNodes(int parentId, const ScriptArray& nodes)
     function->call();
 }
 
-void InspectorFrontend::hasChildrenUpdated(int id, bool newValue)
+void InspectorFrontend::childNodeCountUpdated(int id, int newValue)
 {
-    OwnPtr<ScriptFunctionCall> function(newFunctionCall("hasChildrenUpdated"));
+    OwnPtr<ScriptFunctionCall> function(newFunctionCall("childNodeCountUpdated"));
     function->appendArgument(id);
     function->appendArgument(newValue);
     function->call();

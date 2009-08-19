@@ -107,7 +107,6 @@ module core {
 
         // Called from InjectedScript.
         [Custom] DOMObject nodeForId(in long nodeId);
-        [Custom] long idForNode(in DOMObject node);
         [Custom] long wrapObject(in DOMObject object);
         [Custom] DOMObject unwrapObject(in long objectId);
         [Custom] int pushNodePathToFrontend(in DOMObject node, in boolean selectInUI);

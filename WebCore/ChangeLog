@@ -1,3 +1,49 @@
+2009-08-19  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        WebInspector: Allow dumping dangling nodes to the console.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28458
+
+        * bindings/js/JSInspectorBackendCustom.cpp:
+        * bindings/v8/custom/V8CustomBinding.h:
+        * bindings/v8/custom/V8InspectorBackendCustom.cpp:
+        * inspector/InspectorBackend.cpp:
+        * inspector/InspectorBackend.h:
+        * inspector/InspectorBackend.idl:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::clearConsoleMessages):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::releaseDanglingNodes):
+        (WebCore::InspectorDOMAgent::startListening):
+        (WebCore::InspectorDOMAgent::stopListening):
+        (WebCore::InspectorDOMAgent::handleEvent):
+        (WebCore::InspectorDOMAgent::bind):
+        (WebCore::InspectorDOMAgent::unbind):
+        (WebCore::InspectorDOMAgent::pushDocumentToFrontend):
+        (WebCore::InspectorDOMAgent::pushChildNodesToFrontend):
+        (WebCore::InspectorDOMAgent::discardBindings):
+        (WebCore::InspectorDOMAgent::pushNodePathToFrontend):
+        (WebCore::InspectorDOMAgent::buildObjectForNode):
+        (WebCore::InspectorDOMAgent::buildArrayForContainerChildren):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorFrontend.cpp:
+        (WebCore::InspectorFrontend::setDetachedRoot):
+        (WebCore::InspectorFrontend::childNodeCountUpdated):
+        * inspector/InspectorFrontend.h:
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype._formatnode):
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMAgent.prototype._setDetachedRoot):
+        (WebInspector.DOMAgent.prototype._childNodeCountUpdated):
+        (WebInspector.setDetachedRoot):
+        (WebInspector.childNodeCountUpdated):
+        (InspectorController.pushNodeToFrontend):
+        * inspector/front-end/InjectedScript.js:
+        (InjectedScript.pushNodeToFrontend):
+        (InjectedScript.createProxyObject):
+
 2009-08-19  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Anders Carlsson.

@@ -103,8 +103,9 @@ namespace WebCore {
 #endif
 
         void setDocument(const ScriptObject& root);
+        void setDetachedRoot(const ScriptObject& root);
         void setChildNodes(int parentId, const ScriptArray& nodes);
-        void hasChildrenUpdated(int id, bool newValue);
+        void childNodeCountUpdated(int id, int newValue);
         void childNodeInserted(int parentId, int prevId, const ScriptObject& node);
         void childNodeRemoved(int parentId, int id);
         void attributesUpdated(int id, const ScriptArray& attributes);

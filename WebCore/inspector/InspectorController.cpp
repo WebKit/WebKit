@@ -389,6 +389,8 @@ void InspectorController::clearConsoleMessages(bool clearUI)
     m_previousMessage = 0;
     m_groupLevel = 0;
     m_idToConsoleObject.clear();
+    if (m_domAgent)
+        m_domAgent->releaseDanglingNodes();
     if (clearUI && m_frontend)
         m_frontend->clearConsoleMessages();
 }

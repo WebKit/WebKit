@@ -382,6 +382,12 @@ WebInspector.DOMAgent.prototype = {
         this._bindNodes(this.document.children);
         WebInspector.panels.elements.reset();
     },
+    
+    _setDetachedRoot: function(payload)
+    {
+        var root = new WebInspector.DOMNode(this.document, payload);
+        this._idToDOMNode[payload.id] = root;
+    },
 
     _setChildNodes: function(parentId, payloads)
     {
@@ -400,9 +406,10 @@ WebInspector.DOMAgent.prototype = {
         }
     },
 
-    _hasChildrenUpdated: function(nodeId, newValue)
+    _childNodeCountUpdated: function(nodeId, newValue)
     {
         var node = this._idToDOMNode[nodeId];
+        node._childNodeCount = newValue;
         var outline = WebInspector.panels.elements.treeOutline;
         var treeElement = outline.findTreeElement(node);
         if (treeElement) {
@@ -575,14 +582,19 @@ WebInspector.setDocument = function()
     this.domAgent._setDocument.apply(this.domAgent, arguments);
 }
 
+WebInspector.setDetachedRoot = function()
+{
+    this.domAgent._setDetachedRoot.apply(this.domAgent, arguments);
+}
+
 WebInspector.setChildNodes = function()
 {
     this.domAgent._setChildNodes.apply(this.domAgent, arguments);
 }
 
-WebInspector.hasChildrenUpdated = function()
+WebInspector.childNodeCountUpdated = function()
 {
-    this.domAgent._hasChildrenUpdated.apply(this.domAgent, arguments);
+    this.domAgent._childNodeCountUpdated.apply(this.domAgent, arguments);
 }
 
 WebInspector.childNodeInserted = function()
@@ -697,6 +709,13 @@ InspectorController.addInspectedNode = function(nodeId, callback)
 {
     setTimeout(function() {
         callback(InjectedScript.addInspectedNode(nodeId));
+    }, 0);
+}
+
+InspectorController.pushNodeToFrontend = function(nodeId, callback)
+{
+    setTimeout(function() {
+        callback(InjectedScript.pushNodeToFrontend(nodeId));
     }, 0);
 }
 

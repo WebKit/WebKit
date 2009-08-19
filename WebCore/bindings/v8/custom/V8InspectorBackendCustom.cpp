@@ -243,19 +243,6 @@ CALLBACK_FUNC_DECL(InspectorBackendNodeForId)
     return V8DOMWrapper::convertToV8Object(V8ClassIndex::NODE, node);
 }
 
-CALLBACK_FUNC_DECL(InspectorBackendIdForNode)
-{
-    INC_STATS("InspectorBackend.idForNode()");
-    if (args.Length() < 1)
-        return v8::Undefined();
-
-    InspectorBackend* inspectorBackend = V8DOMWrapper::convertToNativeObject<InspectorBackend>(V8ClassIndex::INSPECTORBACKEND, args.Holder());
-    Node* node = V8DOMWrapper::convertDOMWrapperToNode<Node>(v8::Handle<v8::Object>::Cast(args[0]));
-    if (node)
-        return v8::Number::New(inspectorBackend->idForNode(node));
-    return v8::Undefined();
-}
-
 CALLBACK_FUNC_DECL(InspectorBackendWrapObject)
 {
     INC_STATS("InspectorBackend.wrapObject()");

@@ -863,14 +863,20 @@ InjectedScript._objectForId = function(objectId)
     return objectId;
 }
 
+InjectedScript.pushNodeToFrontend = function(objectProxy)
+{
+    var object = InjectedScript._resolveObject(objectProxy);
+    if (!object || Object.type(object, InjectedScript._window()) !== "node")
+        return false;
+    return InspectorController.pushNodePathToFrontend(object, false);
+}
+
 // Called from within InspectorController on the 'inspected page' side.
 InjectedScript.createProxyObject = function(object, objectId)
 {
     var result = {};
     result.objectId = objectId;
     result.type = Object.type(object, InjectedScript._window());
-    if (result.type === "node")
-        result.nodeId = InspectorController.pushNodePathToFrontend(object, false);
 
     var type = typeof object;
     if (type === "object" || type === "function") {

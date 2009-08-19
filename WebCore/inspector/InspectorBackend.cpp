@@ -404,13 +404,6 @@ Node* InspectorBackend::nodeForId(long nodeId)
     return 0;
 }
 
-long InspectorBackend::idForNode(Node* node)
-{
-    if (m_inspectorController)
-        return m_inspectorController->domAgent()->idForNode(node);
-    return -1;
-}
-
 ScriptValue InspectorBackend::wrapObject(const ScriptValue& object)
 {
     if (m_inspectorController)

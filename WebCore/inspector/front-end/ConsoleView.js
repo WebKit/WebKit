@@ -473,12 +473,18 @@ WebInspector.ConsoleView.prototype = {
 
     _formatnode: function(object, elem)
     {
-        var treeOutline = new WebInspector.ElementsTreeOutline();
-        treeOutline.rootDOMNode = WebInspector.domAgent.nodeForId(object.nodeId);
-        treeOutline.element.addStyleClass("outline-disclosure");
-        if (!treeOutline.children[0].hasChildren)
-            treeOutline.element.addStyleClass("single-node");
-        elem.appendChild(treeOutline.element);
+        function printNode(nodeId)
+        {
+            if (!nodeId)
+                return;
+            var treeOutline = new WebInspector.ElementsTreeOutline();
+            treeOutline.rootDOMNode = WebInspector.domAgent.nodeForId(nodeId);
+            treeOutline.element.addStyleClass("outline-disclosure");
+            if (!treeOutline.children[0].hasChildren)
+                treeOutline.element.addStyleClass("single-node");
+            elem.appendChild(treeOutline.element);
+        }
+        InspectorController.pushNodeToFrontend(object, printNode);
     },
 
     _formatobject: function(obj, elem)

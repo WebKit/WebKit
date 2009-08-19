@@ -358,21 +358,6 @@ JSValue JSInspectorBackend::nodeForId(ExecState* exec, const ArgList& args)
     return JSInspectedObjectWrapper::wrap(inspectedWindow->globalExec(), toJS(exec, deprecatedGlobalObjectForPrototype(inspectedWindow->globalExec()), node));
 }
 
-JSValue JSInspectorBackend::idForNode(ExecState* exec, const ArgList& args)
-{
-    if (args.size() < 1)
-        return jsUndefined();
-
-    JSQuarantinedObjectWrapper* wrapper = JSQuarantinedObjectWrapper::asWrapper(args.at(0));
-    if (!wrapper)
-        return jsUndefined();
-
-    Node* node = toNode(wrapper->unwrappedObject());
-    if (node)
-        return jsNumber(exec, impl()->idForNode(node));
-    return jsUndefined();
-}
-
 JSValue JSInspectorBackend::wrapObject(ExecState*, const ArgList& args)
 {
     if (args.size() < 1)
