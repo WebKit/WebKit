@@ -1,3 +1,26 @@
+2009-08-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        StyleChange::init needs clean up before fixing the bug 23892
+        https://bugs.webkit.org/show_bug.cgi?id=27749
+
+        This patch simplifies StyleChange::init by removing the iteration on CSS properties,
+        and adding functions reconcileTextDecorationProperties and extractTextStyle to handle the style.
+
+        Because there is a bug in how text decorations are processes in getPropertiesNotInComputedStyle,
+        this patch simplifies the treatment in order to preserve the original behavior of WebKit.
+        However, the current implementation is not best (adds redundant text-decorations) and we should fix it later.
+
+        No test is added since there is no change in behavior.
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::StyleChange::init): Uses getPropertiesNotInComputedStyle instead of iterating through the properties
+        (WebCore::StyleChange::reconcileTextDecorationProperties): Removes -webkit-text-decorations-in-effects and redundant "none"
+        (WebCore::getIdentifierValue): Obtains the identifier of a CSSPrimitiveValue
+        (WebCore::StyleChange::extractTextStyles): Converts properties in style to m_apply* and removes the property
+        (WebCore::getPropertiesNotInComputedStyle): Fixed a bug with how text decorations are treated
+
 2009-08-18  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Dimitri Glazkov.

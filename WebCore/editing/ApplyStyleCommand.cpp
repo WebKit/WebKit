@@ -70,9 +70,9 @@ public:
 
 private:
     void init(PassRefPtr<CSSStyleDeclaration>, const Position&);
-    bool checkForLegacyHTMLStyleChange(const CSSProperty*);
-    static bool currentlyHasStyle(const Position&, const CSSProperty*);
-    
+    void reconcileTextDecorationProperties(CSSMutableStyleDeclaration*);
+    void extractTextStyles(CSSMutableStyleDeclaration*);
+
     String m_cssStyle;
     bool m_applyBold;
     bool m_applyItalic;
@@ -99,103 +99,107 @@ void StyleChange::init(PassRefPtr<CSSStyleDeclaration> style, const Position& po
     if (!document || !document->frame())
         return;
 
-    bool useHTMLFormattingTags = !document->frame()->editor()->shouldStyleWithCSS();
-    RefPtr<CSSMutableStyleDeclaration> mutableStyle = style->makeMutable();
-    // We shouldn't have both text-decoration and -webkit-text-decorations-in-effect because that wouldn't make sense.
-    ASSERT(!mutableStyle->getPropertyCSSValue(CSSPropertyTextDecoration) || !mutableStyle->getPropertyCSSValue(CSSPropertyWebkitTextDecorationsInEffect));
-    String styleText("");
-    bool addedDirection = false;
-    CSSMutableStyleDeclaration::const_iterator end = mutableStyle->end();
-    for (CSSMutableStyleDeclaration::const_iterator it = mutableStyle->begin(); it != end; ++it) {
-        const CSSProperty *property = &*it;
+    RefPtr<CSSComputedStyleDeclaration> computedStyle = position.computedStyle();
+    RefPtr<CSSMutableStyleDeclaration> mutableStyle = getPropertiesNotInComputedStyle(style.get(), computedStyle.get());
 
-        // If position is empty or the position passed in already has the 
-        // style, just move on.
-        if (position.isNotNull() && currentlyHasStyle(position, property))
-            continue;
-        
-        // Changing the whitespace style in a tab span would collapse the tab into a space.
-        if (property->id() == CSSPropertyWhiteSpace && (isTabSpanTextNode(position.node()) || isTabSpanNode((position.node()))))
-            continue;
-        
-        // If needed, figure out if this change is a legacy HTML style change.
-        if (useHTMLFormattingTags && checkForLegacyHTMLStyleChange(property))
-            continue;
+    reconcileTextDecorationProperties(mutableStyle.get());
+    if (!document->frame()->editor()->shouldStyleWithCSS())
+        extractTextStyles(mutableStyle.get());
 
-        if (property->id() == CSSPropertyDirection) {
-            if (addedDirection)
-                continue;
-            addedDirection = true;
-        }
+    // Changing the whitespace style in a tab span would collapse the tab into a space.
+    if (isTabSpanTextNode(position.node()) || isTabSpanNode((position.node())))
+        mutableStyle->removeProperty(CSSPropertyWhiteSpace);
 
-        // Add this property
-        if (property->id() == CSSPropertyTextDecoration || property->id() == CSSPropertyWebkitTextDecorationsInEffect) {
-            // Always use text-decoration because -webkit-text-decoration-in-effect is internal.
-            CSSProperty alteredProperty(CSSPropertyTextDecoration, property->value(), property->isImportant());
-            // We don't add "text-decoration: none" because it doesn't override the existing text decorations; i.e. redundant
-            if (!equalIgnoringCase(alteredProperty.value()->cssText(), "none"))
-                styleText += alteredProperty.cssText();
-        } else
-            styleText += property->cssText();
-
-        if (!addedDirection && property->id() == CSSPropertyUnicodeBidi) {
-            styleText += "direction: " + style->getPropertyValue(CSSPropertyDirection) + "; ";
-            addedDirection = true;
-        }
-    }
+    // If unicode-bidi is present in mutableStyle and direction is not, then add direction to mutableStyle.
+    // FIXME: Shouldn't this be done in getPropertiesNotInComputedStyle?
+    if (mutableStyle->getPropertyCSSValue(CSSPropertyUnicodeBidi) && !style->getPropertyCSSValue(CSSPropertyDirection))
+        mutableStyle->setProperty(CSSPropertyDirection, style->getPropertyValue(CSSPropertyDirection));
 
     // Save the result for later
-    m_cssStyle = styleText.stripWhiteSpace();
+    m_cssStyle = mutableStyle->cssText().stripWhiteSpace();
 }
 
-// This function is the mapping from CSS styles to styling tags (like font-weight: bold to <b>)
-bool StyleChange::checkForLegacyHTMLStyleChange(const CSSProperty* property)
+void StyleChange::reconcileTextDecorationProperties(CSSMutableStyleDeclaration* style)
+{    
+    RefPtr<CSSValue> textDecorationsInEffect = style->getPropertyCSSValue(CSSPropertyWebkitTextDecorationsInEffect);
+    RefPtr<CSSValue> textDecoration = style->getPropertyCSSValue(CSSPropertyTextDecoration);
+    // We shouldn't have both text-decoration and -webkit-text-decorations-in-effect because that wouldn't make sense.
+    ASSERT(!textDecorationsInEffect || !textDecoration);
+    if (textDecorationsInEffect) {
+        style->setProperty(CSSPropertyTextDecoration, textDecorationsInEffect->cssText());
+        style->removeProperty(CSSPropertyWebkitTextDecorationsInEffect);
+        textDecoration = textDecorationsInEffect;
+    }
+
+    // If text-decration is set to "none", remove the property because we don't want to add redundant "text-decoration: none".
+    if (textDecoration && !textDecoration->isValueList())
+        style->removeProperty(CSSPropertyTextDecoration);
+}
+
+int getIdentifierValue(CSSMutableStyleDeclaration* style, int propertyID)
 {
-    if (!property || !property->value())
-        return false;
-    
-    String valueText(property->value()->cssText());
-    switch (property->id()) {
-        case CSSPropertyFontWeight:
-            if (equalIgnoringCase(valueText, "bold")) {
-                m_applyBold = true;
-                return true;
-            }
-            break;
-        case CSSPropertyVerticalAlign:
-            if (equalIgnoringCase(valueText, "sub")) {
-                m_applySubscript = true;
-                return true;
-            }
-            if (equalIgnoringCase(valueText, "super")) {
-                m_applySuperscript = true;
-                return true;
-            }
-            break;
-        case CSSPropertyFontStyle:
-            if (equalIgnoringCase(valueText, "italic") || equalIgnoringCase(valueText, "oblique")) {
-                m_applyItalic = true;
-                return true;
-            }
-            break;
-        case CSSPropertyColor: {
-            RGBA32 rgba = 0;
-            CSSParser::parseColor(rgba, valueText);
-            Color color(rgba);
-            m_applyFontColor = color.name();
-            return true;
-        }
-        case CSSPropertyFontFamily:
-            m_applyFontFace = valueText;
-            return true;
-        case CSSPropertyFontSize:
-            if (property->value()->cssValueType() == CSSValue::CSS_PRIMITIVE_VALUE) {
-                CSSPrimitiveValue *value = static_cast<CSSPrimitiveValue *>(property->value());
+    if (!style)
+        return 0;
 
-                if (value->primitiveType() < CSSPrimitiveValue::CSS_PX || value->primitiveType() > CSSPrimitiveValue::CSS_PC)
-                    // Size keyword or relative unit.
-                    return false;
+    RefPtr<CSSValue> value = style->getPropertyCSSValue(propertyID);
+    if (!value || !value->isPrimitiveValue())
+        return 0;
 
+    return static_cast<CSSPrimitiveValue*>(value.get())->getIdent();
+}
+
+void StyleChange::extractTextStyles(CSSMutableStyleDeclaration* style)
+{
+    ASSERT(style);
+
+    if (getIdentifierValue(style, CSSPropertyFontWeight) == CSSValueBold) {
+        style->removeProperty(CSSPropertyFontWeight);
+        m_applyBold = true;
+    }
+
+    int fontStyle = getIdentifierValue(style, CSSPropertyFontStyle);
+    if (fontStyle == CSSValueItalic || fontStyle == CSSValueOblique) {
+        style->removeProperty(CSSPropertyFontStyle);
+        m_applyItalic = true;
+    }
+
+    int verticalAlign = getIdentifierValue(style, CSSPropertyVerticalAlign);
+    switch (verticalAlign) {
+    case CSSValueSub:
+        style->removeProperty(CSSPropertyVerticalAlign);
+        m_applySubscript = true;
+        break;
+    case CSSValueSuper:
+        style->removeProperty(CSSPropertyVerticalAlign);
+        m_applySuperscript = true;
+        break;
+    }
+
+    if (RefPtr<CSSValue> colorValue = style->getPropertyCSSValue(CSSPropertyColor)) {
+        ASSERT(colorValue->isPrimitiveValue());
+        CSSPrimitiveValue* primitiveColor = static_cast<CSSPrimitiveValue*>(colorValue.get());
+        RGBA32 rgba;
+        if (primitiveColor->primitiveType() != CSSPrimitiveValue::CSS_RGBCOLOR) {
+            CSSParser::parseColor(rgba, colorValue->cssText());
+            // Need to take care of named color such as green and black
+            // This code should be removed after https://bugs.webkit.org/show_bug.cgi?id=28282 is fixed.
+        } else
+            rgba = primitiveColor->getRGBA32Value();
+        m_applyFontColor = Color(rgba).name();
+        style->removeProperty(CSSPropertyColor);
+    }
+
+    m_applyFontFace = style->getPropertyValue(CSSPropertyFontFamily);
+    style->removeProperty(CSSPropertyFontFamily);
+
+    if (RefPtr<CSSValue> fontSize = style->getPropertyCSSValue(CSSPropertyFontSize)) {
+        if (!fontSize->isPrimitiveValue())
+            style->removeProperty(CSSPropertyFontSize); // Can't make sense of the number. Put no font size.
+        else {
+            CSSPrimitiveValue* value = static_cast<CSSPrimitiveValue*>(fontSize.get());
+
+            // Only accept absolute scale
+            if (value->primitiveType() >= CSSPrimitiveValue::CSS_PX && value->primitiveType() <= CSSPrimitiveValue::CSS_PC) {
                 float number = value->getFloatValue(CSSPrimitiveValue::CSS_PX);
                 if (number <= 9)
                     m_applyFontSize = "1";
@@ -211,34 +215,12 @@ bool StyleChange::checkForLegacyHTMLStyleChange(const CSSProperty* property)
                     m_applyFontSize = "6";
                 else
                     m_applyFontSize = "7";
-                // Huge quirk in Microsft Entourage is that they understand CSS font-size, but also write 
-                // out legacy 1-7 values in font tags (I guess for mailers that are not CSS-savvy at all, 
-                // like Eudora). Yes, they write out *both*. We need to write out both as well. Return false.
-                return false; 
             }
-            else {
-                // Can't make sense of the number. Put no font size.
-                return true;
-            }
+            // Huge quirk in Microsft Entourage is that they understand CSS font-size, but also write 
+            // out legacy 1-7 values in font tags (I guess for mailers that are not CSS-savvy at all, 
+            // like Eudora). Yes, they write out *both*. We need to write out both as well.
+        }
     }
-    return false;
-}
-
-bool StyleChange::currentlyHasStyle(const Position &pos, const CSSProperty *property)
-{
-    ASSERT(pos.isNotNull());
-    RefPtr<CSSComputedStyleDeclaration> style = pos.computedStyle();
-    RefPtr<CSSValue> value;
-    if (property->id() == CSSPropertyFontSize)
-        value = style->getFontSizeCSSValuePreferringKeyword();
-    // We need to use -webkit-text-decorations-in-effect to take care of text decorations set by u, s, and strike
-    else if (property->id() == CSSPropertyTextDecoration)
-        value = style->getPropertyCSSValue(CSSPropertyWebkitTextDecorationsInEffect);
-    else
-        value = style->getPropertyCSSValue(property->id());
-    if (!value)
-        return false;
-    return equalIgnoringCase(value->cssText(), property->value()->cssText());
 }
 
 static String& styleSpanClassString()
@@ -310,27 +292,9 @@ RefPtr<CSSMutableStyleDeclaration> getPropertiesNotInComputedStyle(CSSStyleDecla
     RefPtr<CSSMutableStyleDeclaration> result = style->copy();
     computedStyle->diff(result.get());
 
-    // If text decorations in effect is not present in the computed style, then there is nothing to remove from result
-    RefPtr<CSSValue> computedValue = computedStyle->getPropertyCSSValue(CSSPropertyWebkitTextDecorationsInEffect);
-    if (!computedValue || !computedValue->isValueList())
-        return result;
-
-    // Take care of both text-decoration and -webkit-text-decorations-in-effect
-    static const int textDecorationProperties[]={CSSPropertyTextDecoration, CSSPropertyWebkitTextDecorationsInEffect};
-    for (size_t n = 0; n < sizeof(textDecorationProperties)/sizeof(textDecorationProperties[1]); n++) {
-        RefPtr<CSSValue> styleValue = style->getPropertyCSSValue(textDecorationProperties[n]);
-        if (!styleValue || !styleValue->isValueList())
-            continue;
-
-        CSSValueList* desiredValueList = static_cast<CSSValueList*>(styleValue.get());
-        CSSValueList* computedValueList = static_cast<CSSValueList*>(computedValue.get());
-        for (size_t i = 0; i < desiredValueList->length(); i++) {
-            if (!computedValueList->hasValue(desiredValueList->item(i))) {
-                result->removeProperty(textDecorationProperties[n]);
-                break;
-            }
-        }
-    }
+    // if text-decoration is equal to -webkit-text-decorations-in-effect, then don't add the property.
+    if (result->getPropertyValue(CSSPropertyTextDecoration) == computedStyle->getPropertyValue(CSSPropertyWebkitTextDecorationsInEffect))
+        result->removeProperty(CSSPropertyTextDecoration);
 
     return result;
 }
