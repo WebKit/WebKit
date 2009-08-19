@@ -102,7 +102,7 @@ sub buildPlatformResultHierarchy();
 sub buildPlatformTestHierarchy(@);
 sub epiloguesAndPrologues($$);
 sub parseLeaksandPrintUniqueLeaks();
-sub readFromDumpToolWithTimer(*;$);
+sub readFromDumpToolWithTimer(**);
 sub setFileHandleNonBlocking(*$);
 sub writeToFile($$);
 
@@ -670,14 +670,12 @@ for my $test (@tests) {
     # The first block is the output of the test (in text, RenderTree or other formats).
     # The second block is for optional pixel data in PNG format, and may be empty if
     # pixel tests are not being run, or the test does not dump pixels (e.g. text tests).
-    
-    my $actualRead = readFromDumpToolWithTimer(IN);
-    my $errorRead = readFromDumpToolWithTimer(ERROR, $actualRead->{status} eq "timedOut");
+    my $readResults = readFromDumpToolWithTimer(IN, ERROR);
 
-    my $actual = $actualRead->{output};
-    my $error = $errorRead->{output};
+    my $actual = $readResults->{output};
+    my $error = $readResults->{error};
 
-    $expectedExtension = $actualRead->{extension};
+    $expectedExtension = $readResults->{extension};
     my $expectedFileName = "$base-$expectedTag.$expectedExtension";
 
     my $isText = isTextOnlyTest($actual);
@@ -685,12 +683,12 @@ for my $test (@tests) {
     my $expectedDir = expectedDirectoryForTest($base, $isText, $expectedExtension);
     $expectedResultPaths{$base} = "$expectedDir/$expectedFileName";
 
-    unless ($actualRead->{status} eq "success" && $errorRead->{status} eq "success") {
-        my $crashed = $actualRead->{status} eq "crashed" || $errorRead->{status} eq "crashed";
+    unless ($readResults->{status} eq "success") {
+        my $crashed = $readResults->{status} eq "crashed";
         testCrashedOrTimedOut($test, $base, $crashed, $actual, $error);
         countFinishedTest($test, $base, $crashed ? "crash" : "timedout", 0);
         next;
-     }
+    }
 
     $durations{$test} = time - $startTime if $report10Slowest;
 
@@ -1959,11 +1957,12 @@ sub extensionForMimeType($)
 }
 
 # Read up to the first #EOF (the content block of the test), or until detecting crashes or timeouts.
-sub readFromDumpToolWithTimer(*;$)
+sub readFromDumpToolWithTimer(**)
 {
-    my ($fh, $dontWaitForTimeOut) = @_;
+    my ($fhIn, $fhError) = @_;
 
-    setFileHandleNonBlocking($fh, 1);
+    setFileHandleNonBlocking($fhIn, 1);
+    setFileHandleNonBlocking($fhError, 1);
 
     my $maximumSecondsWithoutOutput = $timeoutSeconds;
     $maximumSecondsWithoutOutput *= 10 if $guardMalloc;
@@ -1972,11 +1971,14 @@ sub readFromDumpToolWithTimer(*;$)
     my $timeOfLastSuccessfulRead = time;
 
     my @output = ();
+    my @error = ();
     my $status = "success";
     my $mimeType = "text/plain";
     # We don't have a very good way to know when the "headers" stop
     # and the content starts, so we use this as a hack:
     my $haveSeenContentType = 0;
+    my $haveSeenEofIn = 0;
+    my $haveSeenEofError = 0;
 
     while (1) {
         if (time - $timeOfLastSuccessfulRead > $maximumSecondsWithoutOutput) {
@@ -1984,14 +1986,14 @@ sub readFromDumpToolWithTimer(*;$)
             last;
         }
 
-        my $line = readline($fh);
-        if (!defined($line)) {
+        # Once we've seen the EOF, we must not read anymore.
+        my $lineIn = readline($fhIn) unless $haveSeenEofIn;
+        my $lineError = readline($fhError) unless $haveSeenEofError;
+        if (!defined($lineIn) && !defined($lineError)) {
+            last if ($haveSeenEofIn && $haveSeenEofError);
+
             if ($! != EAGAIN) {
                 $status = "crashed";
-                last;
-            }
-
-            if ($dontWaitForTimeOut) {
                 last;
             }
 
@@ -2001,20 +2003,31 @@ sub readFromDumpToolWithTimer(*;$)
         }
 
         $timeOfLastSuccessfulRead = time;
-        
-        if (!$haveSeenContentType && $line =~ /^Content-Type: (\S+)$/) {
-            $mimeType = $1;
-            $haveSeenContentType = 1;
-            next;
+
+        if (defined($lineIn)) {
+            if (!$haveSeenContentType && $lineIn =~ /^Content-Type: (\S+)$/) {
+                $mimeType = $1;
+                $haveSeenContentType = 1;
+            } elsif ($lineIn =~ /#EOF/) {
+                $haveSeenEofIn = 1;
+            } else {
+                push @output, $lineIn;
+            }
         }
-        last  if ($line =~ /#EOF/);
-        
-        push @output, $line;
+        if (defined($lineError)) {
+            if ($lineError =~ /#EOF/) {
+                $haveSeenEofError = 1;
+            } else {
+                push @error, $lineError;
+            }
+        }
     }
 
-    setFileHandleNonBlocking($fh, 0);
+    setFileHandleNonBlocking($fhIn, 0);
+    setFileHandleNonBlocking($fhError, 0);
     return {
         output => join("", @output),
+        error => join("", @error),
         status => $status,
         mimeType => $mimeType,
         extension => extensionForMimeType($mimeType)
