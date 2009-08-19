@@ -44,6 +44,9 @@
 #include "XMLHttpRequestUpload.h"
 #include "markup.h"
 #include <wtf/StdLibExtras.h>
+#include <wtf/RefCountedLeakCounter.h>
+
+static WTF::RefCountedLeakCounter xmlHttpRequestCounter("XMLHttpRequest");
 
 #if USE(JSC)
 #include "JSDOMWindow.h"
@@ -150,6 +153,7 @@ XMLHttpRequest::XMLHttpRequest(ScriptExecutionContext* context)
     , m_lastSendLineNumber(0)
     , m_exceptionCode(0)
 {
+    xmlHttpRequestCounter.increment();
     initializeXMLHttpRequestStaticData();
 }
 
@@ -161,6 +165,8 @@ XMLHttpRequest::~XMLHttpRequest()
     }
     if (m_upload)
         m_upload->disconnectXMLHttpRequest();
+
+    xmlHttpRequestCounter.decrement();
 }
 
 Document* XMLHttpRequest::document() const
@@ -503,9 +509,30 @@ void XMLHttpRequest::createRequest(ExceptionCode& ec)
     m_error = false;
 
     if (m_async) {
-        request.setReportUploadProgress(true);
-        setPendingActivity(this);
+        if (m_upload)
+            request.setReportUploadProgress(true);
+
+        // ThreadableLoader::create can return null here, for example if we're no longer attached to a page.
+        // This is true while running onunload handlers.
+        // FIXME: Maybe we need to be able to send XMLHttpRequests from onunload, <http://bugs.webkit.org/show_bug.cgi?id=10904>.
+        // FIXME: Maybe create() can return null for other reasons too?
         m_loader = ThreadableLoader::create(scriptExecutionContext(), this, request, options);
+        if (m_loader) {
+            // Neither this object nor the JavaScript wrapper should be deleted while
+            // a request is in progress because we need to keep the listeners alive,
+            // and they are referenced by the JavaScript wrapper.
+            setPendingActivity(this);
+
+            // For now we should only balance the nonCached request count for main-thread XHRs and not
+            // Worker XHRs, as the Cache is not thread-safe.
+            // This will become irrelevant after https://bugs.webkit.org/show_bug.cgi?id=27165 is resolved.
+            if (!scriptExecutionContext()->isWorkerContext()) {
+                ASSERT(isMainThread());
+                ASSERT(!m_didTellLoaderAboutRequest);
+                cache()->loader()->nonCacheRequestInFlight(m_url);
+                m_didTellLoaderAboutRequest = true;
+            }
+        }
     } else
         ThreadableLoader::loadResourceSynchronously(scriptExecutionContext(), request, *this, options);
 

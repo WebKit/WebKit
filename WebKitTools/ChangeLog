@@ -1,3 +1,13 @@
+2009-08-18  Aaron Boodman  <aa@chromium.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28412: Leak of WebCore::XMLHttpRequest object during layout tests.
+
+        No new tests: Already covered by existing tests.
+
+        * Scripts/check-for-global-initializers: Allow global initialization of WTF::RefCountedLeakCounter for XMLHttpRequest.
+
 2009-08-18  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Geoff Garen.

@@ -1,3 +1,17 @@
+2009-08-18  Aaron Boodman  <aa@chromium.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28412: Leak of WebCore::XMLHttpRequest object during layout tests.
+
+        No new tests: Already covered by existing tests.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::XMLHttpRequest): Add instrumentation for this kind of leak.
+        (WebCore::XMLHttpRequest::~XMLHttpRequest): Ditto.
+        (WebCore::XMLHttpRequest::createRequest): Only setPendingActivity() if we actually started a request. Also,
+        restore a call to nonCacheRequestInFlight() that got lost in a recent refactor.
+
 2009-08-18  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Dimitri Glazkov.
