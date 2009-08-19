@@ -100,11 +100,11 @@ void initializeScriptFontMap(ScriptToFontMap& scriptFontMap)
     // Initialize the locale-dependent mapping.
     // Since Chrome synchronizes the ICU default locale with its UI locale,
     // this ICU locale tells the current UI locale of Chrome.
-    Locale locale = Locale::getDefault();
+    icu::Locale locale = icu::Locale::getDefault();
     const UChar* localeFamily = 0;
-    if (locale == Locale::getJapanese())
+    if (locale == icu::Locale::getJapanese())
         localeFamily = scriptFontMap[USCRIPT_HIRAGANA];
-    else if (locale == Locale::getKorean())
+    else if (locale == icu::Locale::getKorean())
         localeFamily = scriptFontMap[USCRIPT_HANGUL];
     else {
         // Use Simplified Chinese font for all other locales including
