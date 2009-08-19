@@ -1,3 +1,11 @@
+2009-08-18  Xan Lopez  <xlopez@igalia.com>
+
+        Rubber-stamped by Holger Freyther.
+
+        Remove an unneeded include.
+
+        * WebCoreSupport/DragClientGtk.cpp:
+
 2009-08-18  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Eric Seidel.
