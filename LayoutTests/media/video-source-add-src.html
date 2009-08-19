@@ -25,18 +25,17 @@
         waitForEvent("waiting");
         waitForEvent("ratechange");
         waitForEvent("durationchange");
-        waitForEvent("loadedmetadata");
         waitForEvent("loadeddata");
         waitForEvent("canplay");
-        waitForEvent("canplaythrough");
+        waitForEvent("loadedmetadata");
         waitForEvent("play");
-        waitForEvent('loadstart', checkLoad);
+        waitForEvent("canplaythrough", checkLoad);
 
     </script>
 
-<p>Test that adding a 'src' attribute does nothing when a &lt;source&gt; element has already 
-been chosen
-</p>
+    <p>Test that adding a 'src' attribute does nothing when a &lt;source&gt; element has already 
+    been chosen
+    </p>
 
 </body>
 </html>
