@@ -1,3 +1,31 @@
+2009-08-19  Yuta Kitamura  <yutak@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Convert two layout tests so that they use dumpAsText().
+        
+        These tests check if the renderer crashes or not. Hence, we do not need to
+        dump the entire render tree. I verified DumpRenderTree at r24513 still crashed
+        when it opened the updated test cases.
+        
+        See bug 14714 for details about these test cases.
+
+        Two layout tests are convertible to dumpAsText
+        https://bugs.webkit.org/show_bug.cgi?id=28423
+
+        * fast/multicol/negativeColumnWidth-expected.txt: Added.
+        * fast/multicol/negativeColumnWidth.html:
+        * fast/multicol/zeroColumnCount-expected.txt: Added.
+        * fast/multicol/zeroColumnCount.html:
+        * platform/mac/fast/multicol/negativeColumnWidth-expected.checksum: Removed.
+        * platform/mac/fast/multicol/negativeColumnWidth-expected.png: Removed.
+        * platform/mac/fast/multicol/negativeColumnWidth-expected.txt: Removed.
+        * platform/mac/fast/multicol/zeroColumnCount-expected.checksum: Removed.
+        * platform/mac/fast/multicol/zeroColumnCount-expected.png: Removed.
+        * platform/mac/fast/multicol/zeroColumnCount-expected.txt: Removed.
+        * platform/qt/fast/multicol/negativeColumnWidth-expected.txt: Removed.
+        * platform/qt/fast/multicol/zeroColumnCount-expected.txt: Removed.
+
 2009-08-19  David Hyatt  <hyatt@apple.com>
 
         Land updated results after my last change.
