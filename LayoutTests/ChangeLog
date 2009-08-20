@@ -2,6 +2,18 @@
 
         Reviewed by Eric Seidel.
 
+        underline tests in /editing/style/ need not to be pixel tests but need to print markup
+        https://bugs.webkit.org/show_bug.cgi?id=28471
+
+        This patch modifies remove-underline-in-bold.html to use runDumpAsTextEditingTest.
+
+        * editing/style/remove-underline-in-bold-expected.txt:
+        * editing/style/remove-underline-in-bold.html:
+
+2009-08-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Some tests using editing.js in editing/execCommand should use runDumpAsTextEditingTest
         https://bugs.webkit.org/show_bug.cgi?id=28494
 
