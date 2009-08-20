@@ -320,7 +320,7 @@ PassScriptInstance ScriptController::createScriptInstanceForWidget(Widget* widge
     return V8ScriptInstance::create(wrapper);
 }
 
-void ScriptController::cleanupScriptObjectsForPlugin(void* nativeHandle)
+void ScriptController::cleanupScriptObjectsForPlugin(Widget* nativeHandle)
 {
     PluginObjectMap::iterator it = m_pluginObjects.find(nativeHandle);
     if (it == m_pluginObjects.end())

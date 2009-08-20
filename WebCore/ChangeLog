@@ -1,3 +1,16 @@
+2009-08-20  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28483
+        The V8 ScriptController's cleanupScriptObjectsForPlugin should take a
+        Widget* instead of void* to avoid the need for manual casting to Widget*
+        at the callsite.
+
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::cleanupScriptObjectsForPlugin):
+        * bindings/v8/ScriptController.h:
+
 2009-08-19  David Levin  <levin@chromium.org>
 
         Unreviewed speculative build fix for qt.
