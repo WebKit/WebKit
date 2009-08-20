@@ -37,34 +37,36 @@ the "detached" case and gracefully handle null pointers.</p>
   +---+---+   +-------------+                 +-------------------+
   | Frame +---+ FrameLoader +                 | JSDOMWindowShell  |
   +---+---+   +-------------+                 +---------+---------+
-      |                                                 |
-      |        /\  Re-used after navigation   /\        |
-......|.................................................|..........
-      |        \/  Replaced after navigation  \/        |
-      |                                                 |
-      | <-- Ptr to Frame is null after navigation[1]    |
-      |                                                 |
-+-----+-----+         +-------------+                   |
-| DOMWindow |<--impl--+ JSDOMWindow |<------window------+
-+-----+-----+         +-------------+
-      |
-      | <-- Can be null for Documents created by XMLHttpRequest
-      |
-+-----+-----+         +-------------+
-| Document  |<--impl--+ JSDocument  |
-+-----+-----+         +-------------+
-      |
-      | <-- Can be null for DocumentType objects
-      |
-  +---+---+           +--------+
-  | Node  |<---impl---| JSNode |
-  +-------+           +--------+
+     / \                                                |
+    /   \      /\  Re-used after navigation   /\        |
+.../....|...............................................|..........
+  /     |      \/  Replaced after navigation  \/        |
+ /      |                                               |
+/<------|<-- Ptrs to Frame are null after navigation[1] |
+|       |                                               |
+| +-----+-----+         +-------------+                 |
+| | DOMWindow |<--impl--+ JSDOMWindow |<------window----+
+| +-----+-----+         +-------------+
+|       |
+|       |<-- Can be null for Documents created by XMLHttpRequest
+|       |
+| +-----+-----+         +-------------+
++-+ Document  |<--impl--+ JSDocument  |
+  +-----+-----+         +-------------+
+        |
+        |<-- Can be null for DocumentType objects
+        |
+    +---+---+           +--------+
+    | Node  |<---impl---| JSNode |
+    +-------+           +--------+
 </pre>
 
-<p>[1] After navigating to a new page, the old DOMWindow points to a null Frame, and the Frame points to a new DOMWindow.
+<p>[1] After navigating to a new page, the old DOMWindow and old Document point
+to a null Frame, and the Frame points to a new DOMWindow and a new Document.</p>
 
 <p>If you have any comments on the above or other ideas about improving the clarity,
-scope, or presentation, please send mail to the <a href="/contact.html">WebKit mailing list</a>.</p>
+scope, or presentation, please send mail to the <a href="/contact.html">WebKit
+mailing list</a>.</p>
 
 <?php
     include("../footer.inc");
