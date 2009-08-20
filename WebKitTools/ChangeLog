@@ -1,3 +1,17 @@
+2009-08-19  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        bugzilla-tool needs a way to ask build.webkit.org if the bots are passing
+        https://bugs.webkit.org/show_bug.cgi?id=28222
+
+        Basic support for now.  This has been in testing for 24 hours now and worked great!
+
+        * Scripts/bugzilla-tool:
+        * Scripts/modules/buildbot.py: Added.
+        * Scripts/modules/buildbot_unittest.py: Added.
+        * Scripts/run-webkit-unittests:
+
 2009-08-19  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Gustavo Noronha.
