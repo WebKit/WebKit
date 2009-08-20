@@ -60,11 +60,13 @@ static CString certificatePath()
 {
 #if PLATFORM(CF)
     CFBundleRef webKitBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.apple.WebKit"));
-    RetainPtr<CFURLRef> certURLRef(AdoptCF, CFBundleCopyResourceURL(webKitBundle, CFSTR("cacert"), CFSTR("pem"), CFSTR("certificates")));
-    if (certURLRef) {
-        char path[MAX_PATH];
-        CFURLGetFileSystemRepresentation(certURLRef.get(), false, reinterpret_cast<UInt8*>(path), MAX_PATH);
-        return path;
+    if (webKitBundle) {
+        RetainPtr<CFURLRef> certURLRef(AdoptCF, CFBundleCopyResourceURL(webKitBundle, CFSTR("cacert"), CFSTR("pem"), CFSTR("certificates")));
+        if (certURLRef) {
+            char path[MAX_PATH];
+            CFURLGetFileSystemRepresentation(certURLRef.get(), false, reinterpret_cast<UInt8*>(path), MAX_PATH);
+            return path;
+        }
     }
 #endif
     char* envPath = getenv("CURL_CA_BUNDLE_PATH");
