@@ -1095,7 +1095,6 @@ fast/loader/stop-provisional-loads.html
 # Skip tests with metrics for now
 animations/animation-drt-api.html
 animations/animation-drt-api-multiple-keyframes.html
-css1/box_properties/acid_test.html
 css1/box_properties/clear_float.html
 css1/box_properties/float_elements_in_series.html
 css1/box_properties/float.html

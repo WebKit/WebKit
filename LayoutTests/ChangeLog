@@ -2,6 +2,15 @@
 
         Rubber-stamped by Simon Hausmann.
 
+        [Qt] Of course we pass ACID1 tests. Update the metrics.
+
+        * platform/qt/Skipped:
+        * platform/qt/css1/box_properties/acid_test-expected.txt:
+
+2009-08-20  Ariya Hidayat  <ariya.hidayat@nokia.com>
+
+        Rubber-stamped by Simon Hausmann.
+
         [Qt] Update the (outdated) metrics for css1 borders tests. All tests pass.
 
         * platform/qt/Skipped: Excluded passed tests.
