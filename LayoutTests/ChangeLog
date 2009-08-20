@@ -1,3 +1,19 @@
+2009-08-20  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Updated results after fixing
+        <rdar://problem/7154605> Loading page with 1px wide <select> makes the
+        toolbar go blank
+        and
+        <rdar://problem/7154521> Lots of "<Error>: doClip: empty path." spew in
+        the console with certain content
+
+        * platform/mac/fast/forms/001-expected.checksum:
+        * platform/mac/fast/forms/001-expected.png:
+        * platform/mac/fast/forms/menulist-narrow-width-expected.checksum:
+        * platform/mac/fast/forms/menulist-narrow-width-expected.png:
+
 2009-08-20  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Gustavo Noronha.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc.
+ * Copyright (C) 2007, 2008, 2009 Apple Inc.
  * Copyright (C) 2009 Kenneth Rohde Christiansen
  *
  * This library is free software; you can redistribute it and/or
@@ -744,11 +744,21 @@ static void TrackGradientInterpolate(void* info, const CGFloat* inData, CGFloat*
 
 void RenderThemeSafari::paintMenuListButtonGradients(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
+    if (r.isEmpty())
+        return;
+
     CGContextRef context = paintInfo.context->platformContext();
 
     paintInfo.context->save();
 
-    int radius = o->style()->borderTopLeftRadius().width();
+    IntSize topLeftRadius;
+    IntSize topRightRadius;
+    IntSize bottomLeftRadius;
+    IntSize bottomRightRadius;
+
+    o->style()->getBorderRadiiForRect(r, topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius);
+
+    int radius = topLeftRadius.width();
 
     RetainPtr<CGColorSpaceRef> cspace(AdoptCF, CGColorSpaceCreateDeviceRGB());
 
@@ -771,33 +781,27 @@ void RenderThemeSafari::paintMenuListButtonGradients(RenderObject* o, const Rend
     RetainPtr<CGShadingRef> rightShading(AdoptCF, CGShadingCreateAxial(cspace.get(), CGPointMake(r.right(),  r.y()), CGPointMake(r.right() - radius, r.y()), mainFunction.get(), false, false));
     paintInfo.context->save();
     CGContextClipToRect(context, r);
-    paintInfo.context->addRoundedRectClip(r,
-        o->style()->borderTopLeftRadius(), o->style()->borderTopRightRadius(),
-        o->style()->borderBottomLeftRadius(), o->style()->borderBottomRightRadius());
+    paintInfo.context->addRoundedRectClip(r, topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius);
     CGContextDrawShading(context, mainShading.get());
     paintInfo.context->restore();
 
     paintInfo.context->save();
     CGContextClipToRect(context, topGradient);
-    paintInfo.context->addRoundedRectClip(enclosingIntRect(topGradient),
-        o->style()->borderTopLeftRadius(), o->style()->borderTopRightRadius(),
-        IntSize(), IntSize());
+    paintInfo.context->addRoundedRectClip(enclosingIntRect(topGradient), topLeftRadius, topRightRadius, IntSize(), IntSize());
     CGContextDrawShading(context, topShading.get());
     paintInfo.context->restore();
 
-    paintInfo.context->save();
-    CGContextClipToRect(context, bottomGradient);
-    paintInfo.context->addRoundedRectClip(enclosingIntRect(bottomGradient),
-        IntSize(), IntSize(),
-        o->style()->borderBottomLeftRadius(), o->style()->borderBottomRightRadius());
-    CGContextDrawShading(context, bottomShading.get());
-    paintInfo.context->restore();
+    if (!bottomGradient.isEmpty()) {
+        paintInfo.context->save();
+        CGContextClipToRect(context, bottomGradient);
+        paintInfo.context->addRoundedRectClip(enclosingIntRect(bottomGradient), IntSize(), IntSize(), bottomLeftRadius, bottomRightRadius);
+        CGContextDrawShading(context, bottomShading.get());
+        paintInfo.context->restore();
+    }
 
     paintInfo.context->save();
     CGContextClipToRect(context, r);
-    paintInfo.context->addRoundedRectClip(r,
-        o->style()->borderTopLeftRadius(), o->style()->borderTopRightRadius(),
-        o->style()->borderBottomLeftRadius(), o->style()->borderBottomRightRadius());
+    paintInfo.context->addRoundedRectClip(r, topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius);
     CGContextDrawShading(context, leftShading.get());
     CGContextDrawShading(context, rightShading.get());
     paintInfo.context->restore();
@@ -807,8 +811,6 @@ void RenderThemeSafari::paintMenuListButtonGradients(RenderObject* o, const Rend
 
 bool RenderThemeSafari::paintMenuListButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
-    paintInfo.context->save();
-
     IntRect bounds = IntRect(r.x() + o->style()->borderLeftWidth(),
                              r.y() + o->style()->borderTopWidth(),
                              r.width() - o->style()->borderLeftWidth() - o->style()->borderRightWidth(),
@@ -825,6 +827,8 @@ bool RenderThemeSafari::paintMenuListButton(RenderObject* o, const RenderObject:
 
     if (bounds.width() < arrowWidth + arrowPaddingLeft)
         return false;
+
+    paintInfo.context->save();
 
     paintInfo.context->setFillColor(o->style()->color());
     paintInfo.context->setStrokeColor(NoStroke);

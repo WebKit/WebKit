@@ -1,3 +1,28 @@
+2009-08-20  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/7154605> Loading page with 1px wide <select> makes the
+        toolbar go blank
+        and
+        <rdar://problem/7154521> Lots of "<Error>: doClip: empty path." spew in
+        the console with certain content
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintMenuListButtonGradients): Return early
+        if the rectangle is empty. Use RenderStyle::getBorderRadiiForRect() to
+        adjust the radii in case the sides of the rectangle are smaller than sum
+        of the radii, so that the gradient background matches the border (which
+        already uses getBorderRadiiForRect()). Check if bottomGradient is empty
+        to avoid clipping to an empty path.
+        (WebCore::RenderThemeMac::paintMenuListButton): Moved a
+        GraphicContext::save() down to avoid a save/restore imbalance in the
+        early return case.
+
+        * rendering/RenderThemeSafari.cpp: Made the same changes.
+        (WebCore::RenderThemeSafari::paintMenuListButtonGradients):
+        (WebCore::RenderThemeSafari::paintMenuListButton):
+
 2009-08-20  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Gustavo Noronha.
