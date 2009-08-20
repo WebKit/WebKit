@@ -1,3 +1,18 @@
+2009-08-20  Andrew Scherkus  <scherkus@chromium.org>
+
+        Reviewed by David Levin.
+
+        Render disabled mute button during an error or if no audio is present.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28475
+
+        Covered by existing layout tests:
+        media/video-controls-visible-audio-only.html
+        media/video-no-audio.html
+
+        * rendering/RenderThemeChromiumSkia.cpp:
+        (WebCore::RenderThemeChromiumSkia::paintMediaMuteButton):
+
 2009-08-20  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
