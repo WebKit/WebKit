@@ -28,6 +28,19 @@ namespace WTF {
     template<typename T> class RefPtr;
     template<typename T> class PassRefPtr;
     template <typename T> PassRefPtr<T> adoptRef(T*);
+    
+    // Remove inline for winscw compiler to prevent the compiler agressively resolving 
+    // T::deref(), which will fail compiling when PassRefPtr<T> is used as class member 
+    // or function arguments before T is defined.
+    template<typename T> 
+#if !COMPILER(WINSCW)
+    inline 
+#endif
+    void derefIfNotNull(T* ptr)
+    {
+        if (UNLIKELY(ptr != 0))
+            ptr->deref();
+    }
 
     template<typename T> class PassRefPtr {
     public:
@@ -40,8 +53,8 @@ namespace WTF {
         PassRefPtr(const PassRefPtr& o) : m_ptr(o.releaseRef()) {}
         template <typename U> PassRefPtr(const PassRefPtr<U>& o) : m_ptr(o.releaseRef()) { }
 
-        ALWAYS_INLINE ~PassRefPtr() { if (UNLIKELY(m_ptr != 0)) m_ptr->deref(); }
-        
+        ALWAYS_INLINE ~PassRefPtr() { derefIfNotNull<T>(m_ptr); }
+
         template <class U> 
         PassRefPtr(const RefPtr<U>& o) : m_ptr(o.get()) { if (T* ptr = m_ptr) ptr->ref(); }
         
@@ -56,12 +69,10 @@ namespace WTF {
         bool operator!() const { return !m_ptr; }
 
         // This conversion operator allows implicit conversion to bool but not to other integer types.
-#if COMPILER(WINSCW)
-        operator bool() const { return m_ptr; }
-#else
-        typedef T* PassRefPtr::*UnspecifiedBoolType;
+        // Parenthesis is needed for winscw compiler to resolve class qualifier in this case.
+        typedef T* (PassRefPtr::*UnspecifiedBoolType);
         operator UnspecifiedBoolType() const { return m_ptr ? &PassRefPtr::m_ptr : 0; }
-#endif
+
         PassRefPtr& operator=(T*);
         PassRefPtr& operator=(const PassRefPtr&);
         template <typename U> PassRefPtr& operator=(const PassRefPtr<U>&);
