@@ -1,3 +1,21 @@
+2009-08-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        queryCommandState('underline') returns false if the selected text is also bold and italic
+        https://bugs.webkit.org/show_bug.cgi?id=11022
+
+        This patch modifies stateStrikethrough and stateUnderline to use the value -webkit-text-decorations-in-effect
+        instead of text-decoration.  Because text-decoration only retrieves explicit styling at the node on which
+        the query was sent, we need to use -webkit-text-decorations-in-effect to include decorations added by ancestors
+        and also u, s, and strike tags.
+
+        Test: editing/style/text-decoration-state.html
+
+        * editing/EditorCommand.cpp:
+        (WebCore::stateStrikethrough): Use -webkit-test-decorations-in-effect instead of text-decoration.
+        (WebCore::stateUnderline): Ditto.
+
 2009-08-19  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.

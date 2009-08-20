@@ -1194,7 +1194,7 @@ static TriState stateOrderedList(Frame* frame, Event*)
 
 static TriState stateStrikethrough(Frame* frame, Event*)
 {
-    return stateStyle(frame, CSSPropertyTextDecoration, "line-through");
+    return stateStyle(frame, CSSPropertyWebkitTextDecorationsInEffect, "line-through");
 }
 
 static TriState stateStyleWithCSS(Frame* frame, Event*)
@@ -1229,7 +1229,7 @@ static TriState stateTextWritingDirectionRightToLeft(Frame* frame, Event*)
 
 static TriState stateUnderline(Frame* frame, Event*)
 {
-    return stateStyle(frame, CSSPropertyTextDecoration, "underline");
+    return stateStyle(frame, CSSPropertyWebkitTextDecorationsInEffect, "underline");
 }
 
 static TriState stateUnorderedList(Frame* frame, Event*)

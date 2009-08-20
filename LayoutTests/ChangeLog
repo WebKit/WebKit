@@ -1,5 +1,21 @@
 2009-08-19  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Reviewed by Darin Adler.
+
+        queryCommandState('underline') returns false if the selected text is also bold and italic
+        https://bugs.webkit.org/show_bug.cgi?id=11022
+
+        This patch adds a test to make sure queryCommandState returns correct boolean value for underline and strikethrough.
+
+        * editing/style/resources: Added.
+        * editing/style/resources/TEMPLATE.html: Added.
+        * editing/style/resources/text-decoration-state.js: Added.
+        (textdecorationState):
+        * editing/style/text-decoration-state-expected.txt: Added.
+        * editing/style/text-decoration-state.html: Added.
+
+2009-08-19  Ryosuke Niwa  <rniwa@webkit.org>
+
         Reviewed by Eric Seidel.
 
         underline tests in /editing/style/ need not to be pixel tests but need to print markup
