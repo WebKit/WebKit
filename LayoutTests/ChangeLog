@@ -1,3 +1,14 @@
+2009-08-20  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Ariya Hidayat.
+
+        Check if the combination of getImageData and the afterward use of putImageData 
+        still gives the right result.
+
+        * fast/canvas/canvas-copyPixels-expected.txt: Added.
+        * fast/canvas/canvas-copyPixels.html: Added.
+        * fast/canvas/resources/canvas-copyPixels.js: Added.
+
 2009-08-20  Ariya Hidayat  <ariya.hidayat@nokia.com>
 
         Rubber-stamped by Simon Hausmann.
