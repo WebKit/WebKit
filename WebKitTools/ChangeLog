@@ -1,3 +1,13 @@
+2009-08-19  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fix <http://webkit.org/b/28484> Plug-in-related leaks seen on the build bot
+
+        Update check-for-global-initializers to accommodate the new uses of RefCountedLeakCounter in WebKit.
+
+        * Scripts/check-for-global-initializers:
+
 2009-08-19  Aaron Boodman  <aa@chromium.org>
 
         Reviewed by David Levin.

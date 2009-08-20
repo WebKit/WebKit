@@ -40,10 +40,15 @@
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/WebCoreURLResponse.h>
+#import <wtf/RefCountedLeakCounter.h>
 
 using namespace WebCore;
 
 namespace WebKit {
+
+#ifndef NDEBUG
+static WTF::RefCountedLeakCounter hostedNetscapePluginStreamCounter("HostedNetscapePluginStream");
+#endif
 
 HostedNetscapePluginStream::HostedNetscapePluginStream(NetscapePluginInstanceProxy* instance, uint32_t streamID, NSURLRequest *request)
     : m_instance(instance)
@@ -55,6 +60,10 @@ HostedNetscapePluginStream::HostedNetscapePluginStream(NetscapePluginInstancePro
 {
     if (core([instance->pluginView() webFrame])->loader()->shouldHideReferrer([request URL], core([instance->pluginView() webFrame])->loader()->outgoingReferrer()))
         [m_request.get() _web_setHTTPReferrer:nil];
+
+#ifndef NDEBUG
+    hostedNetscapePluginStreamCounter.increment();
+#endif
 }
 
 HostedNetscapePluginStream::HostedNetscapePluginStream(NetscapePluginInstanceProxy* instance, WebCore::FrameLoader* frameLoader)
@@ -63,6 +72,16 @@ HostedNetscapePluginStream::HostedNetscapePluginStream(NetscapePluginInstancePro
     , m_isTerminated(false)
     , m_frameLoader(frameLoader)
 {
+#ifndef NDEBUG
+    hostedNetscapePluginStreamCounter.increment();
+#endif
+}
+
+HostedNetscapePluginStream::~HostedNetscapePluginStream()
+{
+#ifndef NDEBUG
+    hostedNetscapePluginStreamCounter.decrement();
+#endif
 }
 
 void HostedNetscapePluginStream::startStreamWithResponse(NSURLResponse *response)

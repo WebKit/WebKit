@@ -1,3 +1,27 @@
+2009-08-19  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fix <http://webkit.org/b/28484> Plug-in-related leaks seen on the build bot
+
+        When the plug-in data is being loaded manually there is a reference cycle between the
+        NetscapePluginInstanceProxy and the HostedNetscapePluginStream.  We need to explicitly
+        break the reference cycle in NetscapePluginInstanceProxy::cleanup so that both objects
+        will be destroyed.
+
+        Take the opportunity to add RefCountedLeakCounter support to HostedNetscapePluginStream
+        and NetscapePluginInstanceProxy to simplify tracking down leaks of these objects in the future.
+
+        * Plugins/Hosted/HostedNetscapePluginStream.h:
+        * Plugins/Hosted/HostedNetscapePluginStream.mm:
+        (WebKit::HostedNetscapePluginStream::HostedNetscapePluginStream):
+        (WebKit::HostedNetscapePluginStream::~HostedNetscapePluginStream):
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::NetscapePluginInstanceProxy):
+        (WebKit::NetscapePluginInstanceProxy::~NetscapePluginInstanceProxy):
+        (WebKit::NetscapePluginInstanceProxy::cleanup): Clear m_manualStream to break the reference
+        cycle.
+
 2009-08-19  Aaron Boodman  <aa@chromium.org>
 
         Reviewed by David Levin.

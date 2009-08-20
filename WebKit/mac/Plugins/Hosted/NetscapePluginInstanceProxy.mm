@@ -57,6 +57,7 @@
 #import <WebKitSystemInterface.h>
 #import <mach/mach.h>
 #import <utility>
+#import <wtf/RefCountedLeakCounter.h>
 
 extern "C" {
 #import "WebKitPluginClientServer.h"
@@ -94,6 +95,10 @@ private:
 
 static uint32_t pluginIDCounter;
 
+#ifndef NDEBUG
+static WTF::RefCountedLeakCounter netscapePluginInstanceProxyCounter("NetscapePluginInstanceProxy");
+#endif
+
 NetscapePluginInstanceProxy::NetscapePluginInstanceProxy(NetscapePluginHostProxy* pluginHostProxy, WebHostedNetscapePluginView *pluginView, bool fullFramePlugin)
     : m_pluginHostProxy(pluginHostProxy)
     , m_pluginView(pluginView)
@@ -123,6 +128,10 @@ NetscapePluginInstanceProxy::NetscapePluginInstanceProxy(NetscapePluginHostProxy
     } while (pluginHostProxy->pluginInstance(m_pluginID) || !m_pluginID);
     
     pluginHostProxy->addPluginInstance(this);
+
+#ifndef NDEBUG
+    netscapePluginInstanceProxyCounter.increment();
+#endif
 }
 
 NetscapePluginInstanceProxy::~NetscapePluginInstanceProxy()
@@ -131,6 +140,10 @@ NetscapePluginInstanceProxy::~NetscapePluginInstanceProxy()
     
     m_pluginID = 0;
     deleteAllValues(m_replies);
+
+#ifndef NDEBUG
+    netscapePluginInstanceProxyCounter.decrement();
+#endif
 }
 
 void NetscapePluginInstanceProxy::resize(NSRect size, NSRect clipRect, bool sync)
@@ -178,6 +191,7 @@ void NetscapePluginInstanceProxy::cleanup()
         (*it)->invalidate();
     
     m_pluginView = nil;
+    m_manualStream = 0;
 }
 
 void NetscapePluginInstanceProxy::invalidate()

@@ -113,6 +113,10 @@ for my $file (sort @files) {
                 next if $shortName eq "SVGElementInstance.o";
                 next if $shortName eq "XMLHttpRequest.o";
             }
+            if ($target eq "WebKit") {
+                next if $shortName eq "HostedNetscapePluginStream.o";
+                next if $shortName eq "NetscapePluginInstanceProxy.o";
+            }
         }
 
         print "ERROR: $shortName has a global initializer in it! ($file)\n";

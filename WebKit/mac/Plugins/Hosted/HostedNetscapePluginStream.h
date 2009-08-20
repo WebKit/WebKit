@@ -43,7 +43,7 @@ namespace WebCore {
 namespace WebKit {
 
 class NetscapePluginInstanceProxy;
-    
+
 class HostedNetscapePluginStream : public RefCounted<HostedNetscapePluginStream>
                                  , private WebCore::NetscapePlugInStreamLoaderClient {
 public:
@@ -55,9 +55,11 @@ public:
     {
         return adoptRef(new HostedNetscapePluginStream(instance, frameLoader));
     }
-                                     
+
+    ~HostedNetscapePluginStream();
+
     uint32_t streamID() const { return m_streamID; }
-    
+
     void startStreamWithResponse(NSURLResponse *response);
     void didReceiveData(WebCore::NetscapePlugInStreamLoader*, const char* bytes, int length);
     void didFinishLoading(WebCore::NetscapePlugInStreamLoader*);
