@@ -1255,9 +1255,6 @@ void RenderBlock::layoutBlockChildren(bool relayoutChildren, int& maxFloatBottom
         if (legend == child)
             continue; // Skip the legend, since it has already been positioned up in the fieldset's border.
 
-        int oldTopPosMargin = maxTopPosMargin();
-        int oldTopNegMargin = maxTopNegMargin();
-
         // Make sure we layout children if they need it.
         // FIXME: Technically percentage height objects only need a relayout if their percentage isn't going to be turned into
         // an auto value.  Add a method to determine this, so that we can avoid the relayout.
@@ -1273,118 +1270,127 @@ void RenderBlock::layoutBlockChildren(bool relayoutChildren, int& maxFloatBottom
         if (handleSpecialChild(child, marginInfo))
             continue;
 
-        // The child is a normal flow object.  Compute its vertical margins now.
-        child->calcVerticalMargins();
-
-        // Do not allow a collapse if the margin top collapse style is set to SEPARATE.
-        if (child->style()->marginTopCollapse() == MSEPARATE) {
-            marginInfo.setAtTopOfBlock(false);
-            marginInfo.clearMargin();
-        }
-
-        // Try to guess our correct y position.  In most cases this guess will
-        // be correct.  Only if we're wrong (when we compute the real y position)
-        // will we have to potentially relayout.
-        int yPosEstimate = estimateVerticalPosition(child, marginInfo);
-
-        // Cache our old rect so that we can dirty the proper repaint rects if the child moves.
-        IntRect oldRect(child->x(), child->y() , child->width(), child->height());
-#ifndef NDEBUG
-        IntSize oldLayoutDelta = view()->layoutDelta();
-#endif
-        // Go ahead and position the child as though it didn't collapse with the top.
-        view()->addLayoutDelta(IntSize(0, child->y() - yPosEstimate));
-        child->setLocation(child->x(), yPosEstimate);
-
-        bool markDescendantsWithFloats = false;
-        if (yPosEstimate != oldRect.y() && !child->avoidsFloats() && child->isBlockFlow() && toRenderBlock(child)->containsFloats())
-            markDescendantsWithFloats = true;
-        else if (!child->avoidsFloats() || child->shrinkToAvoidFloats()) {
-            // If an element might be affected by the presence of floats, then always mark it for
-            // layout.
-            int fb = max(previousFloatBottom, floatBottom());
-            if (fb > yPosEstimate)
-                markDescendantsWithFloats = true;
-        }
-
-        if (child->isRenderBlock()) {
-            if (markDescendantsWithFloats)
-                toRenderBlock(child)->markAllDescendantsWithFloatsForLayout();
-
-            previousFloatBottom = max(previousFloatBottom, oldRect.y() + toRenderBlock(child)->floatBottom());
-        }
-
-        bool childHadLayout = child->m_everHadLayout;
-        bool childNeededLayout = child->needsLayout();
-        if (childNeededLayout)
-            child->layout();
-
-        // Now determine the correct ypos based off examination of collapsing margin
-        // values.
-        int yBeforeClear = collapseMargins(child, marginInfo);
-
-        // Now check for clear.
-        int yAfterClear = clearFloatsIfNeeded(child, marginInfo, oldTopPosMargin, oldTopNegMargin, yBeforeClear);
-        
-        view()->addLayoutDelta(IntSize(0, yPosEstimate - yAfterClear));
-        child->setLocation(child->x(), yAfterClear);
-    
-        // Now we have a final y position.  See if it really does end up being different from our estimate.
-        if (yAfterClear != yPosEstimate) {
-            if (child->shrinkToAvoidFloats()) {
-                // The child's width depends on the line width.
-                // When the child shifts to clear an item, its width can
-                // change (because it has more available line width).
-                // So go ahead and mark the item as dirty.
-                child->setChildNeedsLayout(true, false);
-            }
-            if (!child->avoidsFloats() && child->isBlockFlow() && toRenderBlock(child)->containsFloats())
-                toRenderBlock(child)->markAllDescendantsWithFloatsForLayout();
-            // Our guess was wrong. Make the child lay itself out again.
-            child->layoutIfNeeded();
-        }
-
-        // We are no longer at the top of the block if we encounter a non-empty child.  
-        // This has to be done after checking for clear, so that margins can be reset if a clear occurred.
-        if (marginInfo.atTopOfBlock() && !child->isSelfCollapsingBlock())
-            marginInfo.setAtTopOfBlock(false);
-
-        // Now place the child in the correct horizontal position
-        determineHorizontalPosition(child);
-
-        // Update our height now that the child has been placed in the correct position.
-        setHeight(height() + child->height());
-        if (child->style()->marginBottomCollapse() == MSEPARATE) {
-            setHeight(height() + child->marginBottom());
-            marginInfo.clearMargin();
-        }
-        // If the child has overhanging floats that intrude into following siblings (or possibly out
-        // of this block), then the parent gets notified of the floats now.
-        if (child->isBlockFlow() && toRenderBlock(child)->containsFloats())
-            maxFloatBottom = max(maxFloatBottom, addOverhangingFloats(toRenderBlock(child), -child->x(), -child->y(), !childNeededLayout));
-
-        IntSize childOffset(child->x() - oldRect.x(), child->y() - oldRect.y());
-        if (childOffset.width() || childOffset.height()) {
-            view()->addLayoutDelta(childOffset);
-
-            // If the child moved, we have to repaint it as well as any floating/positioned
-            // descendants.  An exception is if we need a layout.  In this case, we know we're going to
-            // repaint ourselves (and the child) anyway.
-            if (childHadLayout && !selfNeedsLayout() && child->checkForRepaintDuringLayout())
-                child->repaintDuringLayoutIfMoved(oldRect);
-        }
-
-        if (!childHadLayout && child->checkForRepaintDuringLayout()) {
-            child->repaint();
-            child->repaintOverhangingFloats(true);
-        }
-
-        ASSERT(oldLayoutDelta == view()->layoutDelta());
+        // Lay out the child.
+        layoutBlockChild(child, marginInfo, previousFloatBottom, maxFloatBottom);
     }
     
     // Now do the handling of the bottom of the block, adding in our bottom border/padding and
     // determining the correct collapsed bottom margin information.
     handleBottomOfBlock(top, bottom, marginInfo);
+}
+
+void RenderBlock::layoutBlockChild(RenderBox* child, MarginInfo& marginInfo, int& previousFloatBottom, int& maxFloatBottom)
+{
+    int oldTopPosMargin = maxTopPosMargin();
+    int oldTopNegMargin = maxTopNegMargin();
+
+    // The child is a normal flow object.  Compute its vertical margins now.
+    child->calcVerticalMargins();
+
+    // Do not allow a collapse if the margin top collapse style is set to SEPARATE.
+    if (child->style()->marginTopCollapse() == MSEPARATE) {
+        marginInfo.setAtTopOfBlock(false);
+        marginInfo.clearMargin();
+    }
+
+    // Try to guess our correct y position.  In most cases this guess will
+    // be correct.  Only if we're wrong (when we compute the real y position)
+    // will we have to potentially relayout.
+    int yPosEstimate = estimateVerticalPosition(child, marginInfo);
+
+    // Cache our old rect so that we can dirty the proper repaint rects if the child moves.
+    IntRect oldRect(child->x(), child->y() , child->width(), child->height());
+#ifndef NDEBUG
+    IntSize oldLayoutDelta = view()->layoutDelta();
+#endif
+    // Go ahead and position the child as though it didn't collapse with the top.
+    view()->addLayoutDelta(IntSize(0, child->y() - yPosEstimate));
+    child->setLocation(child->x(), yPosEstimate);
+
+    bool markDescendantsWithFloats = false;
+    if (yPosEstimate != oldRect.y() && !child->avoidsFloats() && child->isBlockFlow() && toRenderBlock(child)->containsFloats())
+        markDescendantsWithFloats = true;
+    else if (!child->avoidsFloats() || child->shrinkToAvoidFloats()) {
+        // If an element might be affected by the presence of floats, then always mark it for
+        // layout.
+        int fb = max(previousFloatBottom, floatBottom());
+        if (fb > yPosEstimate)
+            markDescendantsWithFloats = true;
+    }
+
+    if (child->isRenderBlock()) {
+        if (markDescendantsWithFloats)
+            toRenderBlock(child)->markAllDescendantsWithFloatsForLayout();
+
+        previousFloatBottom = max(previousFloatBottom, oldRect.y() + toRenderBlock(child)->floatBottom());
+    }
+
+    bool childHadLayout = child->m_everHadLayout;
+    bool childNeededLayout = child->needsLayout();
+    if (childNeededLayout)
+        child->layout();
+
+    // Now determine the correct ypos based off examination of collapsing margin
+    // values.
+    int yBeforeClear = collapseMargins(child, marginInfo);
+
+    // Now check for clear.
+    int yAfterClear = clearFloatsIfNeeded(child, marginInfo, oldTopPosMargin, oldTopNegMargin, yBeforeClear);
+    
+    view()->addLayoutDelta(IntSize(0, yPosEstimate - yAfterClear));
+    child->setLocation(child->x(), yAfterClear);
+
+    // Now we have a final y position.  See if it really does end up being different from our estimate.
+    if (yAfterClear != yPosEstimate) {
+        if (child->shrinkToAvoidFloats()) {
+            // The child's width depends on the line width.
+            // When the child shifts to clear an item, its width can
+            // change (because it has more available line width).
+            // So go ahead and mark the item as dirty.
+            child->setChildNeedsLayout(true, false);
+        }
+        if (!child->avoidsFloats() && child->isBlockFlow() && toRenderBlock(child)->containsFloats())
+            toRenderBlock(child)->markAllDescendantsWithFloatsForLayout();
+        // Our guess was wrong. Make the child lay itself out again.
+        child->layoutIfNeeded();
+    }
+
+    // We are no longer at the top of the block if we encounter a non-empty child.  
+    // This has to be done after checking for clear, so that margins can be reset if a clear occurred.
+    if (marginInfo.atTopOfBlock() && !child->isSelfCollapsingBlock())
+        marginInfo.setAtTopOfBlock(false);
+
+    // Now place the child in the correct horizontal position
+    determineHorizontalPosition(child);
+
+    // Update our height now that the child has been placed in the correct position.
+    setHeight(height() + child->height());
+    if (child->style()->marginBottomCollapse() == MSEPARATE) {
+        setHeight(height() + child->marginBottom());
+        marginInfo.clearMargin();
+    }
+    // If the child has overhanging floats that intrude into following siblings (or possibly out
+    // of this block), then the parent gets notified of the floats now.
+    if (child->isBlockFlow() && toRenderBlock(child)->containsFloats())
+        maxFloatBottom = max(maxFloatBottom, addOverhangingFloats(toRenderBlock(child), -child->x(), -child->y(), !childNeededLayout));
+
+    IntSize childOffset(child->x() - oldRect.x(), child->y() - oldRect.y());
+    if (childOffset.width() || childOffset.height()) {
+        view()->addLayoutDelta(childOffset);
+
+        // If the child moved, we have to repaint it as well as any floating/positioned
+        // descendants.  An exception is if we need a layout.  In this case, we know we're going to
+        // repaint ourselves (and the child) anyway.
+        if (childHadLayout && !selfNeedsLayout() && child->checkForRepaintDuringLayout())
+            child->repaintDuringLayoutIfMoved(oldRect);
+    }
+
+    if (!childHadLayout && child->checkForRepaintDuringLayout()) {
+        child->repaint();
+        child->repaintOverhangingFloats(true);
+    }
+
+    ASSERT(oldLayoutDelta == view()->layoutDelta());
 }
 
 bool RenderBlock::layoutOnlyPositionedObjects()
