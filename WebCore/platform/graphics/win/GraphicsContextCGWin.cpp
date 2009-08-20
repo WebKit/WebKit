@@ -67,7 +67,7 @@ GraphicsContext::GraphicsContext(HDC hdc, bool hasAlpha)
 {
     CGContextRelease(m_data->m_cgContext.get());
     m_data->m_hdc = hdc;
-    setPaintingDisabled(!m_data->m_cgContext.get());
+    setPaintingDisabled(!m_data->m_cgContext);
     if (m_data->m_cgContext) {
         // Make sure the context starts in sync with our state.
         setPlatformFillColor(fillColor());
@@ -243,7 +243,7 @@ void GraphicsContext::drawLineForMisspellingOrBadGrammar(const IntPoint& point, 
 
 void GraphicsContextPlatformPrivate::flush()
 {
-    CGContextFlush(m_cgContext);
+    CGContextFlush(m_cgContext.get());
 }
 
 }
