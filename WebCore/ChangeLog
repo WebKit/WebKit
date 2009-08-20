@@ -1,3 +1,18 @@
+2009-08-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Images flash as you hover them on http://www.atebits.com/scribbles/
+        <rdar://problem/7143958>
+        
+        Tag images with the device colorspace with the colorspace of the main display, rather than
+        GenericRGB, so that composited images color-match those rendered via Core Graphics.
+        
+        Covered by LayoutTests/compositing/color-matching/image-color-matching.html
+
+        * platform/graphics/mac/GraphicsLayerCA.mm:
+        (WebCore::GraphicsLayerCA::setContentsToImage):
+
 2009-08-19  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by David Hyatt and Dan Bernstein.
