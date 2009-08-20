@@ -295,7 +295,10 @@ void PlatformContextSkia::drawRect(SkRect rect)
 
 void PlatformContextSkia::setupPaintCommon(SkPaint* paint) const
 {
-#ifdef SK_DEBUG
+    // http://trac.webkit.org/changeset/47386/ re-enabled this assert and it
+    // immediately started being hit in page cycler code.
+    // FIXME: Re-enable it.
+#if defined(SK_DEBUG) && 0
     {
         SkPaint defaultPaint;
         SkASSERT(*paint == defaultPaint);

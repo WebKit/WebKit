@@ -1,3 +1,17 @@
+2009-08-19  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Disable a bad SKIA assert
+        https://bugs.webkit.org/show_bug.cgi?id=28482
+
+        In http://trac.webkit.org/changeset/47386/ an assert was "fixed" in SKIA code. 
+        When this was pulled into Chromium, it started breaking the page cycler. 
+        Disable it again until we can figure out what's going on.
+
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (PlatformContextSkia::setupPaintCommon):
+
 2009-08-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.
