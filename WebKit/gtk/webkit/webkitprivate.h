@@ -254,10 +254,10 @@ extern "C" {
     WEBKIT_API unsigned int
     webkit_worker_thread_count();
     
-    WEBKIT API void
+    WEBKIT_API void
     webkit_white_list_access_to_origin(const gchar* sourceOrigin, const gchar* destinationProtocol, const gchar* destinationHost, bool allowDestinationSubdomains);
     
-    WEBKIT API void
+    WEBKIT_API void
     webkit_reset_origin_access_white_lists();
 }
 

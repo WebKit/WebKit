@@ -1,5 +1,11 @@
 2009-08-19  Aaron Boodman  <aa@chromium.org>
 
+        Fix build break.
+
+        * webkit/webkitprivate.h: "WEBKIT API" -> "WEBKIT_API"
+
+2009-08-19  Aaron Boodman  <aa@chromium.org>
+
         Reviewed by David Levin.
 
         https://bugs.webkit.org/show_bug.cgi?id=24853: Provide a way for WebKit clients to
