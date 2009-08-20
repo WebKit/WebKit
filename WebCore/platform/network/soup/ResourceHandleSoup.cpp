@@ -144,6 +144,19 @@ ResourceHandle::~ResourceHandle()
     cleanupGioOperation(this, true);
 }
 
+// All other kinds of redirections, except for the *304* status code
+// (SOUP_STATUS_NOT_MODIFIED) which needs to be fed into WebCore, will be
+// handled by soup directly.
+static gboolean statusWillBeHandledBySoup(guint statusCode)
+{
+    if (SOUP_STATUS_IS_TRANSPORT_ERROR(statusCode)
+        || (SOUP_STATUS_IS_REDIRECTION(statusCode) && (statusCode != SOUP_STATUS_NOT_MODIFIED))
+        || (statusCode == SOUP_STATUS_UNAUTHORIZED))
+        return true;
+
+    return false;
+}
+
 static void fillResponseFromMessage(SoupMessage* msg, ResourceResponse* response)
 {
     SoupMessageHeadersIter iter;
@@ -204,22 +217,25 @@ static void gotHeadersCallback(SoupMessage* msg, gpointer data)
     // we got, when we finish downloading.
     soup_message_body_set_accumulate(msg->response_body, FALSE);
 
-    if (msg->status_code == SOUP_STATUS_NOT_MODIFIED) {
-        RefPtr<ResourceHandle> handle = static_cast<ResourceHandle*>(data);
-        if (!handle)
-            return;
-        ResourceHandleInternal* d = handle->getInternal();
-        if (d->m_cancelled)
-            return;
-        ResourceHandleClient* client = handle->client();
-        if (!client)
-            return;
+    RefPtr<ResourceHandle> handle = static_cast<ResourceHandle*>(data);
 
-        fillResponseFromMessage(msg, &d->m_response);
-        client->didReceiveResponse(handle.get(), d->m_response);
-    }
+    // The content-sniffed callback will handle the response if WebCore
+    // require us to sniff.
+    if(!handle || statusWillBeHandledBySoup(msg->status_code) || handle->shouldContentSniff())
+        return;
+
+    ResourceHandleInternal* d = handle->getInternal();
+    if (d->m_cancelled)
+        return;
+    ResourceHandleClient* client = handle->client();
+    if (!client)
+        return;
+
+    fillResponseFromMessage(msg, &d->m_response);
+    client->didReceiveResponse(handle.get(), d->m_response);
 }
 
+// This callback will not be called if the content sniffer is disabled in startHttp.
 static void contentSniffedCallback(SoupMessage* msg, const char* sniffedType, GHashTable *params, gpointer data)
 {
     if (sniffedType) {
@@ -229,13 +245,7 @@ static void contentSniffedCallback(SoupMessage* msg, const char* sniffedType, GH
             soup_message_headers_set_content_type(msg->response_headers, sniffedType, params);
     }
 
-    // The 304 status code (SOUP_STATUS_NOT_MODIFIED) needs to be fed
-    // into WebCore, as opposed to other kinds of redirections, which
-    // are handled by soup directly, so we special-case it here and in
-    // gotChunk.
-    if (SOUP_STATUS_IS_TRANSPORT_ERROR(msg->status_code)
-        || (SOUP_STATUS_IS_REDIRECTION(msg->status_code) && (msg->status_code != SOUP_STATUS_NOT_MODIFIED))
-        || (msg->status_code == SOUP_STATUS_UNAUTHORIZED))
+    if (statusWillBeHandledBySoup(msg->status_code))
         return;
 
     RefPtr<ResourceHandle> handle = static_cast<ResourceHandle*>(data);
@@ -254,9 +264,7 @@ static void contentSniffedCallback(SoupMessage* msg, const char* sniffedType, GH
 
 static void gotChunkCallback(SoupMessage* msg, SoupBuffer* chunk, gpointer data)
 {
-    if (SOUP_STATUS_IS_TRANSPORT_ERROR(msg->status_code)
-        || (SOUP_STATUS_IS_REDIRECTION(msg->status_code) && (msg->status_code != SOUP_STATUS_NOT_MODIFIED))
-        || (msg->status_code == SOUP_STATUS_UNAUTHORIZED))
+    if (statusWillBeHandledBySoup(msg->status_code))
         return;
 
     RefPtr<ResourceHandle> handle = static_cast<ResourceHandle*>(data);
@@ -448,6 +456,9 @@ static bool startHttp(ResourceHandle* handle, String urlString)
         d->client()->didFail(handle, resourceError);
         return false;
     }
+
+    if(!handle->shouldContentSniff())
+        soup_message_disable_feature(d->m_msg, SOUP_TYPE_CONTENT_SNIFFER);
 
     g_signal_connect(d->m_msg, "restarted", G_CALLBACK(restartedCallback), handle);
     g_signal_connect(d->m_msg, "got-headers", G_CALLBACK(gotHeadersCallback), handle);

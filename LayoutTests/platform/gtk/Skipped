@@ -5935,11 +5935,6 @@ svg/filters/feTile.svg
 # Tests with bugs attached : Enable these tests again once these bugs are fixed.
 # ------------------
 
-# REGRESSION: See Bug #27143 - https://bugs.webkit.org/show_bug.cgi?id=27143
-http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache.html
-http/tests/xmlhttprequest/cache-override.html
-http/tests/xmlhttprequest/small-chunks-response-text.html
-
 # REGRESSION: See Bug #27144 - https://bugs.webkit.org/show_bug.cgi?id=27144
 storage/database-lock-after-reload.html
 

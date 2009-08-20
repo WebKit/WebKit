@@ -1,3 +1,21 @@
+2009-08-20  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Gustavo Noronha.
+
+        [Gtk][REGRESSION] XHR test failures after r45558
+        https://bugs.webkit.org/show_bug.cgi?id=27143
+
+        http/tests/xmlhttprequest/small-chunks-response-text.html
+        - Enable test fixed by this patch.
+
+        http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache.html
+        http/tests/xmlhttprequest/cache-override.html
+        - Enable tests already passing.
+
+        Updated patch originally by Gustavo Noronha.
+
+        * platform/gtk/Skipped:
+
 2009-08-20  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Ariya Hidayat.

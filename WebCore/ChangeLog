@@ -1,3 +1,20 @@
+2009-08-20  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Gustavo Noronha.
+
+        [Gtk][REGRESSION] XHR test failures after r45558
+        https://bugs.webkit.org/show_bug.cgi?id=27143
+
+        Disable sniffing if it's explicitly requested. Updated patch
+        originally by Gustavo Noronha.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::statusWillBeHandledBySoup):
+        (WebCore::gotHeadersCallback):
+        (WebCore::contentSniffedCallback):
+        (WebCore::gotChunkCallback):
+        (WebCore::startHttp):
+
 2009-08-20  Ariya Hidayat  <ariya.hidayat@nokia.com>
 
         Reviewed by Simon Hausmann.
