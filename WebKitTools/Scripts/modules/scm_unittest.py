@@ -27,6 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
+import stat
 import subprocess
 import tempfile
 import unittest
@@ -103,6 +104,28 @@ class SVNTest(unittest.TestCase):
 
     def tearDown(self):
         SVNTestRepository.tear_down(self)
+
+    def test_create_patch_is_full_patch(self):
+        test_dir_path = os.path.join(self.svn_checkout_path, 'test_dir')
+        os.mkdir(test_dir_path)
+        test_file_path = os.path.join(test_dir_path, 'test_file2')
+        write_into_file_at_path(test_file_path, 'test content')
+        run(['svn', 'add', 'test_dir'])
+
+        # create_patch depends on 'svn-create-patch', so make a dummy version.
+        scripts_path = os.path.join(self.svn_checkout_path, 'WebKitTools', 'Scripts')
+        os.makedirs(scripts_path)
+        create_patch_path = os.path.join(scripts_path, 'svn-create-patch')
+        write_into_file_at_path(create_patch_path, '#!/bin/sh\necho $PWD')
+        os.chmod(create_patch_path, stat.S_IXUSR | stat.S_IRUSR)
+
+        # Change into our test directory and run the create_patch command.
+        os.chdir(test_dir_path)
+        scm = detect_scm_system(test_dir_path)
+        self.assertEqual(scm.checkout_root, self.svn_checkout_path) # Sanity check that detection worked right.
+        patch_contents = scm.create_patch()
+        # Our fake 'svn-create-patch' returns $PWD instead of a patch, check that it was executed from the root of the repo.
+        self.assertEqual(os.path.realpath(scm.checkout_root), patch_contents)
 
     def test_detection(self):
         scm = detect_scm_system(self.svn_checkout_path)

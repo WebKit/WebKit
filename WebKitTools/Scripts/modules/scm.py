@@ -274,7 +274,7 @@ class SVN(SCM):
         return "svn"
 
     def create_patch(self):
-        return self.run_command(self.script_path("svn-create-patch"))
+        return self.run_command(self.script_path("svn-create-patch"), cwd=self.checkout_root)
 
     def commit_with_message(self, message):
         if self.dryrun:
