@@ -339,7 +339,7 @@ void LayoutTestController::clearAllDatabases()
 
 void LayoutTestController::whiteListAccessFromOrigin(const QString& sourceOrigin, const QString& destinationProtocol, const QString& destinationHost, bool allowDestinationSubdomains)
 {
-    SecurityOrigin::whiteListAccessFromOrigin(sourceOrigin, destinationProtocol, destinationHost, allowDestinationSubdomains);
+    QWebSecurityOrigin::whiteListAccessFromOrigin(sourceOrigin, destinationProtocol, destinationHost, allowDestinationSubdomains);
 }
 
 EventSender::EventSender(QWebPage *parent)
