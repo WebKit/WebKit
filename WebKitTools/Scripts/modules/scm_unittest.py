@@ -36,8 +36,20 @@ from modules.scm import detect_scm_system, SCM, ScriptError
 # Eventually we will want to write tests which work for both scms. (like update_webkit, changed_files, etc.)
 # Perhaps through some SCMTest base-class which both SVNTest and GitTest inherit from.
 
-def run(args):
-    SCM.run_command(args)
+def run(args, cwd=None):
+    SCM.run_command(args, cwd=cwd)
+
+def run_silent(args, cwd=None):
+    process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=cwd)
+    process.communicate() # ignore output
+    exit_code = process.wait()
+    if exit_code:
+        raise ScriptError('Failed to run "%s"  exit_code: %d  cwd: %s' % (args, exit_code, cwd))
+
+def write_into_file_at_path(file_path, contents):
+    file = open(file_path, 'w')
+    file.write(contents)
+    file.close()
 
 # Exists to share svn repository creation code between the git and svn tests
 class SVNTestRepository:
@@ -101,11 +113,8 @@ class GitTest(unittest.TestCase):
 
     def _setup_git_clone_of_svn_repository(self):
         self.git_checkout_path = tempfile.mkdtemp(suffix="git_test_checkout")
-        # --quiet doesn't make git svn silent, so we redirect output
-        args = ['git', 'svn', '--quiet', 'clone', self.svn_repo_url, self.git_checkout_path]
-        git_svn_clone = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        git_svn_clone.communicate() # ignore output
-        git_svn_clone.wait()
+        # --quiet doesn't make git svn silent, so we use run_silent to redirect output
+        run_silent(['git', 'svn', '--quiet', 'clone', self.svn_repo_url, self.git_checkout_path])
 
     def _tear_down_git_clone_of_svn_repository(self):
         run(['rm', '-rf', self.git_checkout_path])
@@ -124,13 +133,35 @@ class GitTest(unittest.TestCase):
         self.assertEqual(scm.display_name(), "git")
         self.assertEqual(scm.supports_local_commits(), True)
 
+    def test_rebase_in_progress(self):
+        svn_test_file = os.path.join(self.svn_checkout_path, 'test_file')
+        write_into_file_at_path(svn_test_file, "svn_checkout")
+        run(['svn', 'commit', '--message', 'commit to conflict with git commit'], cwd=self.svn_checkout_path)
+
+        git_test_file = os.path.join(self.git_checkout_path, 'test_file')
+        write_into_file_at_path(git_test_file, "git_checkout")
+        run(['git', 'commit', '-a', '-m', 'commit to be thrown away by rebase abort'])
+
+        # --quiet doesn't make git svn silent, so use run_silent to redirect output
+        self.assertRaises(ScriptError, run_silent, ['git', 'svn', '--quiet', 'rebase']) # Will fail due to a conflict leaving us mid-rebase.
+
+        scm = detect_scm_system(self.git_checkout_path)
+        self.assertTrue(scm.rebase_in_progress())
+
+        # Make sure our cleanup works.
+        scm.clean_working_directory()
+        self.assertFalse(scm.rebase_in_progress())
+
+        # Make sure cleanup doesn't throw when no rebase is in progress.
+        scm.clean_working_directory()
+
     def test_commitish_parsing(self):
         scm = detect_scm_system(self.git_checkout_path)
-
+    
         # Multiple revisions are cherry-picked.
         self.assertEqual(len(scm.commit_ids_from_commitish_arguments(['HEAD~2'])), 1)
         self.assertEqual(len(scm.commit_ids_from_commitish_arguments(['HEAD', 'HEAD~2'])), 2)
-
+    
         # ... is an invalid range specifier
         self.assertRaises(ScriptError, scm.commit_ids_from_commitish_arguments, ['trunk...HEAD'])
 
