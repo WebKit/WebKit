@@ -5,6 +5,26 @@
         underline tests in /editing/style/ need not to be pixel tests but need to print markup
         https://bugs.webkit.org/show_bug.cgi?id=28471
 
+        * editing/style/remove-underline-across-paragraph-expected.txt: Added.
+        * editing/style/remove-underline-across-paragraph-in-bold-expected.txt: Added.
+        * editing/style/remove-underline-across-paragraph-in-bold.html:
+        * editing/style/remove-underline-across-paragraph.html:
+        * platform/mac/editing/style/remove-underline-across-paragraph-expected.checksum: Removed.
+        * platform/mac/editing/style/remove-underline-across-paragraph-expected.png: Removed.
+        * platform/mac/editing/style/remove-underline-across-paragraph-expected.txt: Removed.
+        * platform/mac/editing/style/remove-underline-across-paragraph-in-bold-expected.checksum: Removed.
+        * platform/mac/editing/style/remove-underline-across-paragraph-in-bold-expected.png: Removed.
+        * platform/mac/editing/style/remove-underline-across-paragraph-in-bold-expected.txt: Removed.
+        * platform/qt/editing/style/remove-underline-across-paragraph-expected.txt: Removed.
+        * platform/qt/editing/style/remove-underline-across-paragraph-in-bold-expected.txt: Removed.
+
+2009-08-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        underline tests in /editing/style/ need not to be pixel tests but need to print markup
+        https://bugs.webkit.org/show_bug.cgi?id=28471
+
         This patch converts the following tests to dumpAsText tests using runDumpAsTextEditingTest
 
         * editing/style/remove-underline-after-paragraph-expected.txt: Added.
