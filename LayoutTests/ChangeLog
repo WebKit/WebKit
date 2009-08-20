@@ -2,6 +2,21 @@
 
         Rubber-stamped by Simon Hausmann.
 
+        [Qt] Update the (outdated) metrics for css1/basic tests. All tests pass.
+
+        * platform/qt/Skipped: Excluded passed tests.
+        * platform/qt/css1/basic/class_as_selector-expected.txt:
+        * platform/qt/css1/basic/comments-expected.txt:
+        * platform/qt/css1/basic/containment-expected.txt:
+        * platform/qt/css1/basic/contextual_selectors-expected.txt:
+        * platform/qt/css1/basic/grouping-expected.txt:
+        * platform/qt/css1/basic/id_as_selector-expected.txt:
+        * platform/qt/css1/basic/inheritance-expected.txt:
+
+2009-08-20  Ariya Hidayat  <ariya.hidayat@nokia.com>
+
+        Rubber-stamped by Simon Hausmann.
+
         [Qt] Update the metrics after recent refactoring. All tests pass.
 
         * platform/qt/fast/box-shadow/basic-shadows-expected.txt:
