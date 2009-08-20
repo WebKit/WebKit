@@ -2,6 +2,38 @@
 
         Rubber-stamped by Simon Hausmann.
 
+        [Qt] Update the (outdated) metrics for css1 borders tests. All tests pass.
+
+        * platform/qt/Skipped: Excluded passed tests.
+        * platform/qt/css1/box_properties/border-expected.txt:
+        * platform/qt/css1/box_properties/border_bottom-expected.txt:
+        * platform/qt/css1/box_properties/border_bottom_inline-expected.txt:
+        * platform/qt/css1/box_properties/border_bottom_width-expected.txt:
+        * platform/qt/css1/box_properties/border_bottom_width_inline-expected.txt:
+        * platform/qt/css1/box_properties/border_color-expected.txt:
+        * platform/qt/css1/box_properties/border_color_inline-expected.txt:
+        * platform/qt/css1/box_properties/border_inline-expected.txt:
+        * platform/qt/css1/box_properties/border_left-expected.txt:
+        * platform/qt/css1/box_properties/border_left_inline-expected.txt:
+        * platform/qt/css1/box_properties/border_left_width-expected.txt:
+        * platform/qt/css1/box_properties/border_left_width_inline-expected.txt:
+        * platform/qt/css1/box_properties/border_right-expected.txt:
+        * platform/qt/css1/box_properties/border_right_inline-expected.txt:
+        * platform/qt/css1/box_properties/border_right_width-expected.txt:
+        * platform/qt/css1/box_properties/border_right_width_inline-expected.txt:
+        * platform/qt/css1/box_properties/border_style-expected.txt:
+        * platform/qt/css1/box_properties/border_style_inline-expected.txt:
+        * platform/qt/css1/box_properties/border_top-expected.txt:
+        * platform/qt/css1/box_properties/border_top_inline-expected.txt:
+        * platform/qt/css1/box_properties/border_top_width-expected.txt:
+        * platform/qt/css1/box_properties/border_top_width_inline-expected.txt:
+        * platform/qt/css1/box_properties/border_width-expected.txt:
+        * platform/qt/css1/box_properties/border_width_inline-expected.txt:
+
+2009-08-20  Ariya Hidayat  <ariya.hidayat@nokia.com>
+
+        Rubber-stamped by Simon Hausmann.
+
         [Qt] Update the (outdated) metrics for css1/basic tests. All tests pass.
 
         * platform/qt/Skipped: Excluded passed tests.

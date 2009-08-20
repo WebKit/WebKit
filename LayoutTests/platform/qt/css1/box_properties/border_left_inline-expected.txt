@@ -3,59 +3,59 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#CCCCCC]
-      RenderBlock {P} at (20,0) size 764x19
-        RenderText {#text} at (0,0) size 354x19
-          text run at (0,0) width 354: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,33) size 784x76
-        RenderText {#text} at (0,0) size 242x76
-          text run at (0,0) width 134: "P {margin-left: 20px;}"
-          text run at (134,0) width 0: " "
-          text run at (0,19) width 242: ".one {border-left: purple double 10px;}"
-          text run at (242,19) width 0: " "
-          text run at (0,38) width 218: ".two {border-left: purple thin solid;}"
-          text run at (218,38) width 0: " "
-          text run at (0,57) width 0: " "
-      RenderBlock {HR} at (0,123) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (20,139) size 764x57 [bgcolor=#C0C0C0]
-        RenderText {#text} at (0,0) size 763x19
-          text run at (0,0) width 763: "This paragraph has a background color of silver and a 20-pixel left margin, and it contains inline elements with classes of"
-        RenderInline {SPAN} at (0,0) size 70x19 [border: (10px double #800080)]
-          RenderText {#text} at (10,19) size 60x19
-            text run at (10,19) width 60: "class one"
-        RenderText {#text} at (70,19) size 387x19
-          text run at (70,19) width 387: ", which should have a 10-pixel purple double left border; and "
-        RenderInline {SPAN} at (0,0) size 59x19 [border: (1px solid #800080)]
-          RenderText {#text} at (458,19) size 58x19
-            text run at (458,19) width 58: "class two"
-        RenderText {#text} at (516,19) size 757x38
-          text run at (516,19) width 241: ", which should have a thin solid purple"
-          text run at (0,38) width 73: "left border. "
-          text run at (73,38) width 433: "The line-height of the parent element should not change on any line."
-      RenderTable {TABLE} at (0,210) size 784x95 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 782x93
-          RenderTableRow {TR} at (0,0) size 782x28
-            RenderTableCell {TD} at (0,0) size 782x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 159x20
-                RenderText {#text} at (4,4) size 159x20
-                  text run at (4,4) width 159: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,28) size 782x65
-            RenderTableCell {TD} at (0,47) size 12x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 4x19
+      RenderBlock {P} at (20,0) size 764x17
+        RenderText {#text} at (0,0) size 326x17
+          text run at (0,0) width 326: "The style declarations which apply to the text below are:"
+      RenderBlock {PRE} at (0,30) size 784x68
+        RenderText {#text} at (0,0) size 216x68
+          text run at (0,0) width 122: "P {margin-left: 20px;}"
+          text run at (122,0) width 0: " "
+          text run at (0,17) width 216: ".one {border-left: purple double 10px;}"
+          text run at (216,17) width 0: " "
+          text run at (0,34) width 197: ".two {border-left: purple thin solid;}"
+          text run at (197,34) width 0: " "
+          text run at (0,51) width 0: " "
+      RenderBlock {HR} at (0,111) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (20,126) size 764x51 [bgcolor=#C0C0C0]
+        RenderText {#text} at (0,0) size 704x17
+          text run at (0,0) width 704: "This paragraph has a background color of silver and a 20-pixel left margin, and it contains inline elements with classes of "
+        RenderInline {SPAN} at (0,0) size 745x34 [border: (10px double #800080)]
+          RenderText {#text} at (714,0) size 745x34
+            text run at (714,0) width 31: "class"
+            text run at (0,17) width 21: "one"
+        RenderText {#text} at (21,17) size 351x17
+          text run at (21,17) width 351: ", which should have a 10-pixel purple double left border; and "
+        RenderInline {SPAN} at (0,0) size 56x17 [border: (1px solid #800080)]
+          RenderText {#text} at (373,17) size 55x17
+            text run at (373,17) width 55: "class two"
+        RenderText {#text} at (428,17) size 741x34
+          text run at (428,17) width 291: ", which should have a thin solid purple left border. "
+          text run at (719,17) width 22: "The"
+          text run at (0,34) width 367: "line-height of the parent element should not change on any line."
+      RenderTable {TABLE} at (0,190) size 784x87 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x85
+          RenderTableRow {TR} at (0,0) size 782x26
+            RenderTableCell {TD} at (0,0) size 782x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 144x17
+                RenderText {#text} at (4,4) size 144x17
+                  text run at (4,4) width 144: "TABLE Testing Section"
+          RenderTableRow {TR} at (0,26) size 782x59
+            RenderTableCell {TD} at (0,43) size 12x25 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x17
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,28) size 770x65 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock {P} at (24,4) size 742x57 [bgcolor=#C0C0C0]
-                RenderText {#text} at (0,0) size 696x38
-                  text run at (0,0) width 696: "This paragraph has a background color of silver and a 20-pixel left margin, and it contains inline elements with"
-                  text run at (0,19) width 67: "classes of "
-                RenderInline {SPAN} at (0,0) size 70x19 [border: (10px double #800080)]
-                  RenderText {#text} at (77,19) size 60x19
-                    text run at (77,19) width 60: "class one"
-                RenderText {#text} at (137,19) size 387x19
-                  text run at (137,19) width 387: ", which should have a 10-pixel purple double left border; and "
-                RenderInline {SPAN} at (0,0) size 59x19 [border: (1px solid #800080)]
-                  RenderText {#text} at (525,19) size 58x19
-                    text run at (525,19) width 58: "class two"
-                RenderText {#text} at (583,19) size 720x38
-                  text run at (583,19) width 137: ", which should have a"
-                  text run at (0,38) width 177: "thin solid purple left border. "
-                  text run at (177,38) width 433: "The line-height of the parent element should not change on any line."
+            RenderTableCell {TD} at (12,26) size 770x59 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (24,4) size 742x51 [bgcolor=#C0C0C0]
+                RenderText {#text} at (0,0) size 700x17
+                  text run at (0,0) width 700: "This paragraph has a background color of silver and a 20-pixel left margin, and it contains inline elements with classes of"
+                RenderInline {SPAN} at (0,0) size 66x17 [border: (10px double #800080)]
+                  RenderText {#text} at (10,17) size 56x17
+                    text run at (10,17) width 56: "class one"
+                RenderText {#text} at (66,17) size 351x17
+                  text run at (66,17) width 351: ", which should have a 10-pixel purple double left border; and "
+                RenderInline {SPAN} at (0,0) size 56x17 [border: (1px solid #800080)]
+                  RenderText {#text} at (418,17) size 55x17
+                    text run at (418,17) width 55: "class two"
+                RenderText {#text} at (473,17) size 716x34
+                  text run at (473,17) width 243: ", which should have a thin solid purple left"
+                  text run at (0,34) width 44: "border. "
+                  text run at (44,34) width 393: "The line-height of the parent element should not change on any line."
