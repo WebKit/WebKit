@@ -94,7 +94,7 @@ namespace JSC {
             return deletable;
         }
 
-        void derefWithArena(PassRefPtr<ParserArenaRefCounted> object) { m_refCountedObjects.append(object); }
+        void derefWithArena(PassRefPtr<ParserArenaRefCounted>);
         bool contains(ParserArenaRefCounted*) const;
         ParserArenaRefCounted* last() const;
         void removeLast();

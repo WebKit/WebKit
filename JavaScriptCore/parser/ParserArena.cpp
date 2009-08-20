@@ -116,4 +116,9 @@ bool ParserArena::isEmpty() const
         && m_refCountedObjects.isEmpty();
 }
 
+void ParserArena::derefWithArena(PassRefPtr<ParserArenaRefCounted> object)
+{
+    m_refCountedObjects.append(object);
+}
+
 }
