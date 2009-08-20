@@ -89,12 +89,13 @@ JSFunction::~JSFunction()
     // JIT code for other functions may have had calls linked directly to the code for this function; these links
     // are based on a check for the this pointer value for this JSFunction - which will no longer be valid once
     // this memory is freed and may be reused (potentially for another, different JSFunction).
+    if (!isHostFunction()) {
 #if ENABLE(JIT_OPTIMIZE_CALL)
-    if (m_executable && m_executable->isGenerated())
-        m_executable->generatedBytecode().unlinkCallers();
+        if (m_executable && m_executable->isGenerated())
+            m_executable->generatedBytecode().unlinkCallers();
 #endif
-    if (!isHostFunction())
         scopeChain().~ScopeChain(); // FIXME: Don't we need to do this in the interpreter too?
+    }
 }
 
 void JSFunction::markChildren(MarkStack& markStack)

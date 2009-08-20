@@ -1,3 +1,88 @@
+2009-08-20  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Remove FunctionCodeBlock.
+        https://bugs.webkit.org/show_bug.cgi?id=28502
+
+        These only exist to allow JIT code to dereference properties off the
+        CodeBlock for any callee, regardless of whether it is a host function.
+
+        Instead just use the FunctionExecutable.  Copy the m_parameters field
+        from the CodeBlock into the Executable, and use this to distinguish
+        between host functions, functions that have been bytecompiled, and
+        functions that have not.
+
+        m_parameters is moved to ExecutableBase rather than FunctionExecutable
+        so that (as a separate change) we can move make a separate class of
+        executable for host code, which is not devived from FunctionExecutable
+        (host code does not feature any of the properties that normal executable
+        do and will provide, such as source, attributes, and a parsed name).
+
+        1% win on v8 tests, 0.5% on sunspider.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::derefStructures):
+        (JSC::CodeBlock::refStructures):
+        (JSC::CodeBlock::reparseForExceptionInfoIfNecessary):
+        (JSC::CodeBlock::handlerForBytecodeOffset):
+        (JSC::CodeBlock::lineNumberForBytecodeOffset):
+        (JSC::CodeBlock::expressionRangeForBytecodeOffset):
+        (JSC::CodeBlock::getByIdExceptionInfoForBytecodeOffset):
+        (JSC::CodeBlock::functionRegisterForBytecodeOffset):
+        (JSC::CodeBlock::hasGlobalResolveInstructionAtBytecodeOffset):
+        (JSC::CodeBlock::hasGlobalResolveInfoAtBytecodeOffset):
+        * bytecode/CodeBlock.h:
+        (JSC::):
+        (JSC::CodeBlock::source):
+        (JSC::CodeBlock::sourceOffset):
+        (JSC::CodeBlock::evalCodeCache):
+        (JSC::CodeBlock::createRareDataIfNecessary):
+        
+            remove NativeCodeBlocks and the NativeCode code type.
+        
+        * jit/JIT.cpp:
+        (JSC::JIT::linkCall):
+
+            Revert to previous behaviour (as currently still commented!) that Hhost functions have a null codeblock.
+
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCallInitializeCallFrame):
+        (JSC::JIT::compileOpCallSetupArgs):
+        (JSC::JIT::compileOpCallVarargsSetupArgs):
+        (JSC::JIT::compileOpConstructSetupArgs):
+        (JSC::JIT::compileOpCallVarargs):
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+
+            Bring the 32_64 & non-32_64 JITs into line with each other, callee in regT0.
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+
+            Rewrite call trampolines to not use the CodeBlock.
+
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+
+            Make call_JSFunction & call_arityCheck return the callee, don't expect to be passed the CodeBlock.
+
+        * runtime/Executable.cpp:
+        (JSC::FunctionExecutable::generateBytecode):
+        (JSC::FunctionExecutable::recompile):
+        (JSC::FunctionExecutable::FunctionExecutable):
+        * runtime/Executable.h:
+        (JSC::ExecutableBase::):
+        (JSC::ExecutableBase::ExecutableBase):
+        (JSC::FunctionExecutable::isHostFunction):
+
+            Add m_numParameters.
+
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::~JSFunction):
+
+            Only call generatedBytecode() on JSFunctions non-host FunctionExecutables.
+
 2009-08-20  Yongjun Zhang  <yongjun.zhang@nokia.com>
 
         Reviewed by Eric Seidel.

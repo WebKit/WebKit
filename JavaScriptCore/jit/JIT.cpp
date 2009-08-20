@@ -587,12 +587,11 @@ void JIT::unlinkCall(CallLinkInfo* callLinkInfo)
 
 void JIT::linkCall(JSFunction* callee, CodeBlock* callerCodeBlock, CodeBlock* calleeCodeBlock, JITCode& code, CallLinkInfo* callLinkInfo, int callerArgCount, JSGlobalData* globalData)
 {
-    ASSERT(calleeCodeBlock);
     RepatchBuffer repatchBuffer(callerCodeBlock);
 
     // Currently we only link calls with the exact number of arguments.
     // If this is a native call calleeCodeBlock is null so the number of parameters is unimportant
-    if (callerArgCount == calleeCodeBlock->m_numParameters || calleeCodeBlock->codeType() == NativeCode) {
+    if (!calleeCodeBlock || (callerArgCount == calleeCodeBlock->m_numParameters)) {
         ASSERT(!callLinkInfo->isLinked());
     
         if (calleeCodeBlock)

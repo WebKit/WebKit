@@ -85,6 +85,8 @@ void FunctionExecutable::generateBytecode(ScopeChainNode* scopeChainNode)
     m_codeBlock = new FunctionCodeBlock(this, FunctionCode, source().provider(), source().startOffset());
     OwnPtr<BytecodeGenerator> generator(new BytecodeGenerator(body(), globalObject->debugger(), scopeChain, &m_codeBlock->symbolTable(), m_codeBlock));
     generator->generate();
+    m_numParameters = m_codeBlock->m_numParameters;
+    ASSERT(m_numParameters);
 
     body()->destroyData();
 }
@@ -125,11 +127,6 @@ void FunctionExecutable::generateJITCode(ScopeChainNode* scopeChainNode)
 }
 
 #endif
-
-bool FunctionExecutable::isHostFunction() const
-{
-    return m_codeBlock && m_codeBlock->codeType() == NativeCode;
-}
 
 void FunctionExecutable::markAggregate(MarkStack& markStack)
 {
@@ -197,6 +194,7 @@ void FunctionExecutable::recompile(ExecState* exec)
     m_node = newBody;
     delete m_codeBlock;
     m_codeBlock = 0;
+    m_numParameters = NUM_PARAMETERS_NOT_COMPILED;
 #if ENABLE(JIT)
     m_jitCode = JITCode();
 #endif
@@ -204,10 +202,11 @@ void FunctionExecutable::recompile(ExecState* exec)
 
 #if ENABLE(JIT)
 FunctionExecutable::FunctionExecutable(ExecState* exec)
-    : m_codeBlock(new NativeCodeBlock(this))
+    : m_codeBlock(0)
     , m_name(Identifier(exec, "<native thunk>"))
 {
     m_jitCode = JITCode(JITCode::HostFunction(exec->globalData().jitStubs.ctiNativeCallThunk()));
+    m_numParameters = NUM_PARAMETERS_IS_HOST;
 }
 #endif
 

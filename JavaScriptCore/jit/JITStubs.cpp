@@ -1485,7 +1485,7 @@ DEFINE_STUB_FUNCTION(void*, op_call_JSFunction)
     ScopeChainNode* callDataScopeChain = function->scope().node();
     executable->jitCode(callDataScopeChain);
 
-    return &executable->generatedBytecode();
+    return function;
 }
 
 DEFINE_STUB_FUNCTION(VoidPtrPair, op_call_arityCheck)
@@ -1493,8 +1493,8 @@ DEFINE_STUB_FUNCTION(VoidPtrPair, op_call_arityCheck)
     STUB_INIT_STACK_FRAME(stackFrame);
 
     CallFrame* callFrame = stackFrame.callFrame;
-    CodeBlock* newCodeBlock = stackFrame.args[3].codeBlock();
-    ASSERT(newCodeBlock->codeType() != NativeCode);
+    JSFunction* callee = asFunction(stackFrame.args[0].jsValue());
+    CodeBlock* newCodeBlock = &callee->executable()->generatedBytecode();
     int argCount = stackFrame.args[2].int32();
 
     ASSERT(argCount != newCodeBlock->m_numParameters);
@@ -1531,7 +1531,7 @@ DEFINE_STUB_FUNCTION(VoidPtrPair, op_call_arityCheck)
         callFrame->setCallerFrame(oldCallFrame);
     }
 
-    RETURN_POINTER_PAIR(newCodeBlock, callFrame);
+    RETURN_POINTER_PAIR(callee, callFrame);
 }
 
 #if ENABLE(JIT_OPTIMIZE_CALL)
@@ -1545,8 +1545,6 @@ DEFINE_STUB_FUNCTION(void*, vm_lazyLinkCall)
     CodeBlock* codeBlock = 0;
     if (!executable->isHostFunction())
         codeBlock = &executable->bytecode(callee->scope().node());
-    else
-        codeBlock = &executable->generatedBytecode();
     CallLinkInfo* callLinkInfo = &stackFrame.callFrame->callerFrame()->codeBlock()->getCallLinkInfo(stackFrame.args[1].returnAddress());
 
     if (!callLinkInfo->seenOnce())
