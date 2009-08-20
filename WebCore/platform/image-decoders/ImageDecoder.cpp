@@ -18,9 +18,10 @@
  *
  */
 
+#include "config.h"
+
 #if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
 
-#include "config.h"
 #include "ImageDecoder.h"
 
 #include <algorithm>

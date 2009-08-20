@@ -1,3 +1,9 @@
+2009-08-19  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Non-precomp headers build fix.
+
+        * platform/image-decoders/ImageDecoder.cpp:
+
 2009-08-19  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Darin Fisher.
