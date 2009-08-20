@@ -1,3 +1,9 @@
+2009-08-20  Dmitry Titov  <dimich@chromium.org>
+
+        Not reviewed, Chromium build fix.
+
+        * WebCore.gypi: add new Webinspector image files (localStorage.png and sessionStorage.png)
+
 2009-08-20  Dan Bernstein  <mitz@apple.com>
 
         Windows build fix after the last change
