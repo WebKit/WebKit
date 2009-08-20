@@ -133,7 +133,7 @@ void PopupMenu::show(const IntRect& r, FrameView* v, int index)
             m_scrollbar = client()->createScrollbar(this, VerticalScrollbar, SmallScrollbar);
         }
 
-    ::SetWindowPos(m_popup, HWND_TOP, m_windowRect.x(), m_windowRect.y(), m_windowRect.width(), m_windowRect.height(), 0);
+    ::SetWindowPos(m_popup, HWND_TOP, m_windowRect.x(), m_windowRect.y(), m_windowRect.width(), m_windowRect.height(), SWP_NOACTIVATE);
 
     // Determine whether we should animate our popups
     // Note: Must use 'BOOL' and 'FALSE' instead of 'bool' and 'false' to avoid stack corruption with SystemParametersInfo
@@ -150,11 +150,12 @@ void PopupMenu::show(const IntRect& r, FrameView* v, int index)
             // NOTE: This may have to change for Vista
             DWORD slideDirection = (m_windowRect.y() < viewRect.top + v->contentsToWindow(r.location()).y()) ? AW_VER_NEGATIVE : AW_VER_POSITIVE;
 
-            ::AnimateWindow(m_popup, defaultAnimationDuration, AW_SLIDE | slideDirection | AW_ACTIVATE);
+            ::AnimateWindow(m_popup, defaultAnimationDuration, AW_SLIDE | slideDirection);
         }
     } else
 #endif
-        ::ShowWindow(m_popup, SW_SHOWNORMAL);
+    
+        ::ShowWindow(m_popup, SW_SHOWNOACTIVATE);
     ::SetCapture(m_popup);
 
     if (client()) {
@@ -843,6 +844,11 @@ static LRESULT CALLBACK PopupWndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
                 lResult = 0;
             }
             break;
+        case WM_MOUSEACTIVATE:
+            // We don't want to activate the window when someone clicks on it.
+            lResult = MA_NOACTIVATE;
+            break;
+
 #if !PLATFORM(WINCE)
         case WM_PRINTCLIENT:
             if (popup)

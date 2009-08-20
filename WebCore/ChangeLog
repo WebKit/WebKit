@@ -1,3 +1,18 @@
+2009-08-19  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - Fix <rdar://problem/7155710>
+        HTML selects on windows cause containing window to become inactive when opened.
+
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenu::show):
+        Pass SWP_NOACTIVATE to SetWindowPos, remove AW_ACTIVATE from AnimateWindow and pass
+        SW_SHOWNOACTIVATE to ShowWindow.
+        
+        (WebCore::PopupWndProc):
+        Prevent mouse activation from activating the window.
+
 2009-08-19  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler.
