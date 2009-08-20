@@ -990,9 +990,9 @@ void RenderLayer::panScrollFromPoint(const IntPoint& sourcePoint)
     int xDelta = currentMousePosition.x() - sourcePoint.x();
     int yDelta = currentMousePosition.y() - sourcePoint.y();
 
-    if (abs(xDelta) < ScrollView::noPanScrollRadius) // at the center we let the space for the icon
+    if (abs(xDelta) <= ScrollView::noPanScrollRadius) // at the center we let the space for the icon
         xDelta = 0;
-    if (abs(yDelta) < ScrollView::noPanScrollRadius)
+    if (abs(yDelta) <= ScrollView::noPanScrollRadius)
         yDelta = 0;
 
     // Let's attenuate the speed for the short distances

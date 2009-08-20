@@ -1,3 +1,19 @@
+2009-08-20  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Fix of <https://bugs.webkit.org/show_bug.cgi?id=28504>. 
+        Pan Scrolling can scroll while showing the middlePanScroll icon.
+        
+        Fixed an off by one error between RenderLayer::panScrollFromPoint and EventHandler::updatePanScrollState. 
+        In RenderLayer::panScrollFromPoint, we were setting the icon to be an arrow if the difference between the start
+        of the pan scroll and the current mouseposition is > 15. However, in EventHandler::updatePanScrollState, we would
+        set our amount to scroll to 0 only if the difference in mouse position is < 15. I made this check a <= 15, to fix
+        the off by one error.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::panScrollFromPoint):
+
 2009-08-20  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.
