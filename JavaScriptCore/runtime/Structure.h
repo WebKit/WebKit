@@ -105,6 +105,15 @@ namespace JSC {
             ASSERT(!propertyName.isNull());
             return get(propertyName._ustring.rep(), attributes, specificValue);
         }
+        bool transitionedFor(const JSCell* specificValue)
+        {
+            return m_specificValueInPrevious == specificValue;
+        }
+        bool hasTransition(UString::Rep* rep, unsigned attributes);
+        bool hasTransition(const Identifier& propertyName, unsigned attributes)
+        {
+            return hasTransition(propertyName._ustring.rep(), attributes);
+        }
 
         void getEnumerablePropertyNames(ExecState*, PropertyNameArray&, JSObject*);
 
@@ -166,12 +175,12 @@ namespace JSC {
 
         RefPtr<Structure> m_previous;
         RefPtr<UString::Rep> m_nameInPrevious;
+        JSCell* m_specificValueInPrevious;
 
         union {
             Structure* singleTransition;
             StructureTransitionTable* table;
         } m_transitions;
-        JSCell* m_specificValueInPrevious;
 
         RefPtr<PropertyNameArrayData> m_cachedPropertyNameArrayData;
 
@@ -231,7 +240,24 @@ namespace JSC {
                 return m_propertyTable->entries()[entryIndex - 1].offset;
         }
     }
+    
+    bool StructureTransitionTable::contains(const StructureTransitionTableHash::Key& key, JSCell* specificValue)
+    {
+        const TransitionTable::iterator find = m_table.find(key);
+        if (find == m_table.end()) {
+            ASSERT(!m_table.contains(key));
+            return false;
+        }
+        return find->second.first || find->second.second->transitionedFor(specificValue);
+    }
 
+    Structure* StructureTransitionTable::get(const StructureTransitionTableHash::Key& key, JSCell* specificValue) const
+    {
+        Transition transition = m_table.get(key);
+        if (transition.second && transition.second->transitionedFor(specificValue))
+            return transition.second;
+        return transition.first;
+    }
 } // namespace JSC
 
 #endif // Structure_h

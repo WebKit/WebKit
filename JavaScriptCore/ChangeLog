@@ -1,3 +1,48 @@
+2009-08-20  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        REGRESSION: significant slowdown on Celtic Kane "AJAX declaration" subtest
+        https://bugs.webkit.org/show_bug.cgi?id=28332
+
+        The method check optimisation made transitions aware of the value being
+        assigned when a transition was assigning a function.  This had the side
+        effect of making every assignment of a function expression result in a
+        new transition, and thus a new Structure.  The net result of this is that
+        the common JS idiom of
+
+            function MyObject() {
+                this.myFunction = function(...){...};
+            }
+            new MyObject();
+
+        Will produce a unique structure on every iteration, meaning that all
+        caching is defeated and there is a significant amount of structure churn.
+
+        The fix is to return the transition to its original form where it is
+        keyed off a property name + attributes tuple, but have each transition
+        support an optional transition on a specific value.
+
+        * JavaScriptCore.exp:
+        * runtime/JSObject.h:
+        (JSC::JSObject::putDirectInternal):
+        * runtime/Structure.cpp:
+        (JSC::Structure::~Structure):
+        (JSC::Structure::addPropertyTransitionToExistingStructure):
+        (JSC::Structure::addPropertyTransition):
+        (JSC::Structure::hasTransition):
+        * runtime/Structure.h:
+        (JSC::Structure::transitionedFor):
+        (JSC::Structure::hasTransition):
+        (JSC::Structure::):
+        (JSC::StructureTransitionTable::contains):
+        (JSC::StructureTransitionTable::get):
+        * runtime/StructureTransitionTable.h:
+        (JSC::StructureTransitionTableHashTraits::emptyValue):
+        (JSC::StructureTransitionTable::hasTransition):
+        (JSC::StructureTransitionTable::remove):
+        (JSC::StructureTransitionTable::add):
+
 2009-08-20  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
