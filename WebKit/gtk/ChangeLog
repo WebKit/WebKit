@@ -1,3 +1,10 @@
+2009-08-20  David Levin  <levin@chromium.org>
+
+        Speculative build for gtk.
+
+        * webkit/webkitprivate.cpp:
+        (webkit_white_list_access_to_origin):
+
 2009-08-19  Aaron Boodman  <aa@chromium.org>
 
         Fix build break.
