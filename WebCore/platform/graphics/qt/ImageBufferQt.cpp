@@ -237,8 +237,11 @@ void putImageData(ImageData*& source, const IntRect& sourceRect, const IntPoint&
     for (int y = 0; y < numRows; ++y) {
         quint32* scanLine = reinterpret_cast<quint32*>(image.scanLine(y + desty));
         for (int x = 0; x < numColumns; x++) {
+            // ImageData stores the pixels in RGBA while QImage is ARGB
             int basex = x * 4;
-            scanLine[x + destx] = reinterpret_cast<quint32*>(srcRows + basex)[0];
+            quint32 pixel = reinterpret_cast<quint32*>(srcRows + 4 * x)[0];
+            pixel = ((pixel << 16) & 0xff0000) | ((pixel >> 16) & 0xff) | (pixel & 0xff00ff00);
+            scanLine[x + destx] = pixel;
         }
 
         srcRows += srcBytesPerRow;

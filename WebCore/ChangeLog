@@ -1,3 +1,15 @@
+2009-08-20  Ariya Hidayat  <ariya.hidayat@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Swap the pixels since QImage expect ARGB while ImageData
+        stores them as RGBA.
+
+        This fixes the fast/canvas/canvas-copyPixels.html test.
+
+        * platform/graphics/qt/ImageBufferQt.cpp:
+        (WebCore::putImageData):
+
 2009-08-20  Christian Plesner Hansen  <christian.plesner.hansen@gmail.com>
 
         Reviewed by David Levin.
