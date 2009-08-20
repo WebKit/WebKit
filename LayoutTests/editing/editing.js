@@ -279,6 +279,7 @@ function extendSelectionBackwardByLineCommand() {
 
 function execBoldCommand() {
     document.execCommand("Bold");
+    debugForDumpAsText("execBoldCommand");
 }
 function boldCommand() {
     if (commandDelay > 0) {
@@ -294,6 +295,7 @@ function boldCommand() {
 
 function execUnderlineCommand() {
     document.execCommand("Underline");
+    debugForDumpAsText("execUnderlineCommand");
 }
 function underlineCommand() {
     if (commandDelay > 0) {
@@ -309,6 +311,7 @@ function underlineCommand() {
 
 function execFontNameCommand() {
     document.execCommand("FontName", false, "Courier");
+    debugForDumpAsText("execFontNameCommand");
 }
 function fontNameCommand() {
     if (commandDelay > 0) {
@@ -326,6 +329,7 @@ function execFontSizeCommand(s) {
     if (arguments.length == 0 || s == undefined || s.length == 0)
         s = '12px';
     document.execCommand("FontSize", false, s);
+    debugForDumpAsText("execFontSizeCommand");
 }
 function fontSizeCommand(s) {
     if (commandDelay > 0) {
@@ -343,6 +347,7 @@ function execFontSizeDeltaCommand(s) {
     if (arguments.length == 0 || s == undefined || s.length == 0)
         s = '1px';
     document.execCommand("FontSizeDelta", false, s);
+    debugForDumpAsText("execFontSizeDeltaCommand");
 }
 function fontSizeDeltaCommand(s) {
     if (commandDelay > 0) {
@@ -358,6 +363,7 @@ function fontSizeDeltaCommand(s) {
 
 function execItalicCommand() {
     document.execCommand("Italic");
+    debugForDumpAsText("execItalicCommand");
 }
 function italicCommand() {
     if (commandDelay > 0) {
@@ -374,6 +380,7 @@ function italicCommand() {
 
 function execJustifyCenterCommand() {
     document.execCommand("JustifyCenter");
+    debugForDumpAsText("execJustifyCenterCommand");
 }
 function justifyCenterCommand() {
     if (commandDelay > 0) {
@@ -390,6 +397,7 @@ function justifyCenterCommand() {
 
 function execJustifyLeftCommand() {
     document.execCommand("JustifyLeft");
+    debugForDumpAsText("execJustifyLeftCommand");
 }
 function justifyLeftCommand() {
     if (commandDelay > 0) {
@@ -406,6 +414,7 @@ function justifyLeftCommand() {
 
 function execJustifyRightCommand() {
     document.execCommand("JustifyRight");
+    debugForDumpAsText("execJustifyRightCommand");
 }
 function justifyRightCommand() {
     if (commandDelay > 0) {
@@ -421,6 +430,7 @@ function justifyRightCommand() {
 
 function execInsertHTMLCommand(html) {
     document.execCommand("InsertHTML", false, html);
+    debugForDumpAsText("execInsertHTMLCommand");
 }
 function insertHTMLCommand(html) {
     if (commandDelay > 0) {
@@ -436,6 +446,7 @@ function insertHTMLCommand(html) {
 
 function execInsertImageCommand(imgSrc) {
     document.execCommand("InsertImage", false, imgSrc);
+    debugForDumpAsText("execInsertImageCommand");
 }
 function insertImageCommand(imgSrc) {
     if (commandDelay > 0) {
@@ -451,6 +462,7 @@ function insertImageCommand(imgSrc) {
 
 function execInsertLineBreakCommand() {
     document.execCommand("InsertLineBreak");
+    debugForDumpAsText("execInsertLineBreakCommand");
 }
 function insertLineBreakCommand() {
     if (commandDelay > 0) {
@@ -466,6 +478,7 @@ function insertLineBreakCommand() {
  
 function execInsertParagraphCommand() {
     document.execCommand("InsertParagraph");
+    debugForDumpAsText("execInsertParagraphCommand");
 }
 function insertParagraphCommand() {
     if (commandDelay > 0) {
@@ -481,6 +494,7 @@ function insertParagraphCommand() {
 
 function execInsertNewlineInQuotedContentCommand() {
     document.execCommand("InsertNewlineInQuotedContent");
+    debugForDumpAsText("execInsertNewlineInQuotedContentCommand");
 }
 function insertNewlineInQuotedContentCommand() {
     if (commandDelay > 0) {
@@ -498,6 +512,7 @@ function execTypeCharacterCommand(c) {
     if (arguments.length == 0 || c == undefined || c.length == 0 || c.length > 1)
         c = 'x';
     document.execCommand("InsertText", false, c);
+    debugForDumpAsText("execTypeCharacterCommand");
 }
 function typeCharacterCommand(c) {
     if (commandDelay > 0) {
@@ -528,6 +543,7 @@ function selectAllCommand() {
 
 function execStrikethroughCommand() {
     document.execCommand("Strikethrough");
+    debugForDumpAsText("execStrikethroughCommand");
 }
 function strikethroughCommand() {
     if (commandDelay > 0) {
@@ -543,6 +559,7 @@ function strikethroughCommand() {
 
 function execUndoCommand() {
     document.execCommand("Undo");
+    debugForDumpAsText("execUndoCommand");
 }
 function undoCommand() {
     if (commandDelay > 0) {
@@ -558,6 +575,7 @@ function undoCommand() {
 
 function execRedoCommand() {
     document.execCommand("Redo");
+    debugForDumpAsText("execRedoCommand");
 }
 function redoCommand() {
     if (commandDelay > 0) {
@@ -588,6 +606,7 @@ function changeRootSize() {
 
 function execCutCommand() {
     document.execCommand("Cut");
+    debugForDumpAsText("execCutCommand");
 }
 function cutCommand() {
     if (commandDelay > 0) {
@@ -603,6 +622,7 @@ function cutCommand() {
 
 function execCopyCommand() {
     document.execCommand("Copy");
+    debugForDumpAsText("execCopyCommand");
 }
 function copyCommand() {
     if (commandDelay > 0) {
@@ -618,6 +638,7 @@ function copyCommand() {
 
 function execPasteCommand() {
     document.execCommand("Paste");
+    debugForDumpAsText("execPasteCommand");
 }
 function pasteCommand() {
     if (commandDelay > 0) {
@@ -633,6 +654,7 @@ function pasteCommand() {
 
 function execCreateLinkCommand(url) {
     document.execCommand("CreateLink", false, url);
+    debugForDumpAsText("execCreateLinkCommand");
 }
 function createLinkCommand(url) {
     if (commandDelay > 0) {
@@ -646,6 +668,7 @@ function createLinkCommand(url) {
 
 function execUnlinkCommand() {
     document.execCommand("Unlink");
+    debugForDumpAsText("execUnlinkCommand");
 }
 function unlinkCommand() {
     if (commandDelay > 0) {
@@ -659,6 +682,7 @@ function unlinkCommand() {
 
 function execPasteAndMatchStyleCommand() {
     document.execCommand("PasteAndMatchStyle");
+    debugForDumpAsText("execPasteAndMatchStyleCommand");
 }
 function pasteAndMatchStyleCommand() {
     if (commandDelay > 0) {
@@ -674,6 +698,7 @@ function pasteAndMatchStyleCommand() {
 
 function execDeleteCommand() {
     document.execCommand("Delete");
+    debugForDumpAsText("execDeleteCommand");
 }
 function deleteCommand() {
     if (commandDelay > 0) {
@@ -689,6 +714,7 @@ function deleteCommand() {
 
 function execForwardDeleteCommand() {
     document.execCommand("ForwardDelete");
+    debugForDumpAsText("execForwardDeleteCommand");
 }
 function forwardDeleteCommand() {
     if (commandDelay > 0) {
@@ -705,11 +731,39 @@ function forwardDeleteCommand() {
 function runEditingTest() {
     if (window.layoutTestController)
         layoutTestController.dumpEditingCallbacks();
-    
+
     var elem = document.getElementById("test");
     var selection = window.getSelection();
     selection.setPosition(elem, 0);
     editingTest();
+}
+
+var dumpAsText = false;
+var markupResultList = document.createElement('ol');
+
+function runDumpAsTextEditingTest(enableCallbacks) {
+    if (window.layoutTestController) {
+         layoutTestController.dumpAsText();
+         if (enableCallbacks)
+            layoutTestController.dumpEditingCallbacks();
+     }
+
+    dumpAsText = true;
+
+    var elem = document.getElementById("test");
+    var selection = window.getSelection();
+    selection.setPosition(elem, 0);
+    editingTest();
+
+    document.body.appendChild(markupResultList);
+}
+
+function debugForDumpAsText(name) {
+    if (dumpAsText && document.getElementById("root")) {
+        var newItem = document.createElement('li');
+        newItem.appendChild(document.createTextNode(name+": "+document.getElementById("root").innerHTML));
+        markupResultList.appendChild(newItem);
+    }
 }
 
 //-------------------------------------------------------------------------------------------------------
@@ -717,6 +771,7 @@ function runEditingTest() {
 
 function execBackColorCommand() {
     document.execCommand("BackColor", false, "Chartreuse");
+    logDumpAsText();
 }
 function backColorCommand() {
     if (commandDelay > 0) {

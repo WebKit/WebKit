@@ -1,3 +1,52 @@
+2009-08-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        underline tests in /editing/style/ need not to be pixel tests but need to print markup
+        https://bugs.webkit.org/show_bug.cgi?id=28471
+
+        This patch converts editing/style/underline.html and editing/style/remove-underline.html to a dumpAsText test.
+
+        It also adds runDumpAsTextEditingTest which invokes a new testing mode.
+        runDumpAsTextEditingTest calls user-defined editingTest just like runEditingTest but does not enable editing delegates by default.
+        It logs innerHTML of the node with id "root" whenever the DOM is changed by exec* functions with the name of function in front.
+        It should be used in tests where logging of selection and caret positions is not required but logging
+        of how DOM changed over editing operations is required.
+
+        * editing/editing.js:
+        (debugForDumpAsText): logs innerHTML of the node with id "root" when using runDumpAsTextEditingTest
+        (execBoldCommand): Calls debugForDumpAsText
+        (execUnderlineCommand): ditto
+        (execFontNameCommand): ditto
+        (execFontSizeCommand): ditto
+        (execFontSizeDeltaCommand): ditto
+        (execItalicCommand): ditto
+        (execJustifyCenterCommand): ditto
+        (execJustifyLeftCommand): ditto
+        (execJustifyRightCommand): ditto
+        (execInsertHTMLCommand): ditto
+        (execInsertImageCommand): ditto
+        (execInsertLineBreakCommand): ditto
+        (execInsertParagraphCommand): ditto
+        (execInsertNewlineInQuotedContentCommand): ditto
+        (execTypeCharacterCommand): ditto
+        (execStrikethroughCommand): ditto
+        (execUndoCommand): ditto
+        (execRedoCommand): ditto
+        (execCutCommand): ditto
+        (execPasteCommand): ditto
+        (execPasteAndMatchStyleCommand): ditto
+        (execCreateLinkCommand): ditto
+        (execUnlinkCommand): ditto
+        (execDeleteCommand): ditto
+        (execForwardDeleteCommand): ditto
+        (execBackColorCommand): ditto
+        (runDumpAsTextEditingTest): Added.
+        * editing/style/remove-underline-expected.txt: Added.
+        * editing/style/remove-underline.html:
+        * editing/style/underline-expected.txt: Added.
+        * editing/style/underline.html:
+
 2009-08-19  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.
