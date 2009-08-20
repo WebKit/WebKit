@@ -922,6 +922,7 @@ protected:
     OwnPtr<HashSet<WebCore::String> > m_embeddedViewMIMETypes;
 
     //Variables needed to store gesture information
+    RefPtr<WebCore::Node> m_gestureTargetNode;
     long m_lastPanX;
     long m_lastPanY;
     long m_xOverpan;

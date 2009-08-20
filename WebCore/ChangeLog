@@ -1,3 +1,15 @@
+2009-08-20  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Made subframeForHitTargetNode a public static method, so WebView can call it
+        during hit testing.
+
+        * page/EventHandler.cpp:
+        (WebCore::subframeForHitTestResult):
+        (WebCore::EventHandler::subframeForTargetNode):
+        * page/EventHandler.h:
+
 2009-08-20  Brent Fulgham  <bfulgham@webkit.org>
 
         Rubberstamped by Kevin Ollivier.
@@ -1375,7 +1387,7 @@
         No known change in functionality, so no test.
 
         * platform/text/cf/StringCF.cpp: (WebCore::String::createCFString): Retain the CFSTR result.
-
+    
 2009-08-18  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Oliver Hunt.

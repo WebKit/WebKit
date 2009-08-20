@@ -1331,25 +1331,65 @@ bool WebView::gestureNotify(WPARAM wParam, LPARAM lParam)
     // If we don't have this function, we shouldn't be receiving this message
     ASSERT(SetGestureConfigPtr());
 
-    DWORD dwPanWant;
-    DWORD dwPanBlock;
-
-    // Translate gesture location to client to hit test on scrollbars
+    bool hitScrollbar = false;
     POINT gestureBeginPoint = {gn->ptsLocation.x, gn->ptsLocation.y};
-    IntPoint eventHandlerPoint = m_page->mainFrame()->view()->screenToContents(gestureBeginPoint);
+    HitTestRequest request(HitTestRequest::ReadOnly);
+    for (Frame* childFrame = m_page->mainFrame(); childFrame; childFrame = EventHandler::subframeForTargetNode(m_gestureTargetNode.get())) {
+        FrameView* frameView = childFrame->view();
+        if (!frameView)
+            break;
+        RenderView* renderView = childFrame->document()->renderView();
+        if (!renderView)
+            break;
+        RenderLayer* layer = renderView->layer();
+        if (!layer)
+            break;
 
-    HitTestResult scrollbarTest = m_page->mainFrame()->eventHandler()->hitTestResultAtPoint(eventHandlerPoint, true, false, ShouldHitTestScrollbars);
+        HitTestResult result(frameView->screenToContents(gestureBeginPoint));
+        layer->hitTest(request, result);
+        m_gestureTargetNode = result.innerNode();
 
-    if (eventHandlerPoint.x() > view->visibleWidth() || scrollbarTest.scrollbar()) {
-        // We are in the scrollbar, turn off panning, need to be able to drag the scrollbar
-        dwPanWant = GC_PAN  | GC_PAN_WITH_INERTIA | GC_PAN_WITH_GUTTER;
-        dwPanBlock = GC_PAN_WITH_SINGLE_FINGER_HORIZONTALLY | GC_PAN_WITH_SINGLE_FINGER_VERTICALLY;
-    } else {
-        dwPanWant = GC_PAN  | GC_PAN_WITH_SINGLE_FINGER_VERTICALLY | GC_PAN_WITH_INERTIA | GC_PAN_WITH_GUTTER;
-        dwPanBlock = GC_PAN_WITH_SINGLE_FINGER_HORIZONTALLY;
+        if (!hitScrollbar)
+            hitScrollbar = result.scrollbar();
     }
 
-    GESTURECONFIG gc = { GID_PAN, dwPanWant , dwPanBlock } ;
+    if (!hitScrollbar) {
+        // The hit testing above won't detect if we've hit the main frame's vertical scrollbar. Check that manually now.
+        RECT webViewRect;
+        GetWindowRect(m_viewWindow, &webViewRect);
+        hitScrollbar = view->verticalScrollbar() && (gestureBeginPoint.x > (webViewRect.right - view->verticalScrollbar()->theme()->scrollbarThickness()));  
+    }
+
+    bool canBeScrolled = false;
+    if (m_gestureTargetNode) {
+        for (RenderObject* renderer = m_gestureTargetNode->renderer(); renderer; renderer = renderer->parent()) {
+            if (renderer->isBox() && toRenderBox(renderer)->canBeScrolledAndHasScrollableArea()) {
+                canBeScrolled = true;
+                break;
+            }
+        }
+    }
+
+    // We always allow two-fingered panning with inertia and a gutter (which limits movement to one
+    // direction in most cases).
+    DWORD dwPanWant = GC_PAN | GC_PAN_WITH_INERTIA | GC_PAN_WITH_GUTTER;
+    // We never allow single-fingered horizontal panning. That gesture is reserved for creating text
+    // selections. This matches IE.
+    DWORD dwPanBlock = GC_PAN_WITH_SINGLE_FINGER_HORIZONTALLY;
+
+    if (hitScrollbar || !canBeScrolled) {
+        // The part of the page under the gesture can't be scrolled, or the gesture is on a scrollbar.
+        // Disallow single-fingered vertical panning in this case, too, so we'll fall back to the default
+        // behavior (which allows the scrollbar thumb to be dragged, text selections to be made, etc.).
+        dwPanBlock |= GC_PAN_WITH_SINGLE_FINGER_VERTICALLY;
+    } else {
+        // The part of the page the gesture is under can be scrolled, and we're not under a scrollbar.
+        // Allow single-fingered vertical panning in this case, so the user will be able to pan the page
+        // with one or two fingers.
+        dwPanWant |= GC_PAN_WITH_SINGLE_FINGER_VERTICALLY;
+    }
+
+    GESTURECONFIG gc = { GID_PAN, dwPanWant, dwPanBlock };
     return SetGestureConfigPtr()(m_viewWindow, 0, 1, &gc, sizeof(GESTURECONFIG));
 }
 
@@ -1372,21 +1412,20 @@ bool WebView::gesture(WPARAM wParam, LPARAM lParam)
         m_lastPanX = gi.ptsLocation.x;
         m_lastPanY = gi.ptsLocation.y;
 
-        CloseGestureInfoHandlePtr()(gestureHandle);
+        break;
+    case GID_END:
+        m_gestureTargetNode = 0;
         break;
     case GID_PAN: {
         // Where are the fingers currently?
         long currentX = gi.ptsLocation.x;
         long currentY = gi.ptsLocation.y;
-        
         // How far did we pan in each direction?
         long deltaX = currentX - m_lastPanX;
         long deltaY = currentY - m_lastPanY;
-
         // Calculate the overpan for window bounce
         m_yOverpan -= m_lastPanY - currentY;
         m_xOverpan -= m_lastPanX - currentX;
-        
         // Update our class variables with updated values
         m_lastPanX = currentX;
         m_lastPanY = currentY;
@@ -1396,10 +1435,13 @@ bool WebView::gesture(WPARAM wParam, LPARAM lParam)
             CloseGestureInfoHandlePtr()(gestureHandle);
             return false;
         }
-        // Represent the pan gesture as a mouse wheel event
-        PlatformWheelEvent wheelEvent(m_viewWindow, FloatSize(deltaX, deltaY), FloatPoint(currentX, currentY));
-        coreFrame->eventHandler()->handleWheelEvent(wheelEvent);
 
+        if (!m_gestureTargetNode || !m_gestureTargetNode->renderer())
+            return false;
+
+        // We negate here since panning up moves the content up, but moves the scrollbar down.
+        m_gestureTargetNode->renderer()->enclosingLayer()->scrollByRecursively(-deltaX, -deltaY);
+           
         if (!(UpdatePanningFeedbackPtr() && BeginPanningFeedbackPtr() && EndPanningFeedbackPtr())) {
             CloseGestureInfoHandlePtr()(gestureHandle);
             return true;
@@ -1416,7 +1458,7 @@ bool WebView::gesture(WPARAM wParam, LPARAM lParam)
         ScrollView* view = coreFrame->view();
         if (!view) {
             CloseGestureInfoHandlePtr()(gestureHandle);
-            return false;
+            return true;
         }
         Scrollbar* vertScrollbar = view->verticalScrollbar();
         if (!vertScrollbar) {
@@ -1424,22 +1466,26 @@ bool WebView::gesture(WPARAM wParam, LPARAM lParam)
             return true;
         }
 
-        // FIXME: Support Horizontal Window Bounce
+        // FIXME: Support Horizontal Window Bounce. <https://webkit.org/b/28500>.
+        // FIXME: If the user starts panning down after a window bounce has started, the window doesn't bounce back 
+        // until they release their finger. <https://webkit.org/b/28501>.
         if (vertScrollbar->currentPos() == 0)
             UpdatePanningFeedbackPtr()(m_viewWindow, 0, m_yOverpan, gi.dwFlags & GF_INERTIA);
         else if (vertScrollbar->currentPos() >= vertScrollbar->maximum())
             UpdatePanningFeedbackPtr()(m_viewWindow, 0, m_yOverpan, gi.dwFlags & GF_INERTIA);
 
         CloseGestureInfoHandlePtr()(gestureHandle);
-        break;
+        return true;
     }
     default:
-        // We have encountered an unknown gesture - return false to pass it to DefWindowProc
-        CloseGestureInfoHandlePtr()(gestureHandle);
         break;
     }
 
-    return true;
+    // If we get to this point, the gesture has not been handled. We forward
+    // the call to DefWindowProc by returning false, and we don't need to 
+    // to call CloseGestureInfoHandle. 
+    // http://msdn.microsoft.com/en-us/library/dd353228(VS.85).aspx
+    return false;
 }
 
 bool WebView::mouseWheel(WPARAM wParam, LPARAM lParam, bool isMouseHWheel)

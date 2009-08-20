@@ -97,7 +97,6 @@ using namespace SVGNames;
 // When the autoscroll or the panScroll is triggered when do the scroll every 0.05s to make it smooth
 const double autoscrollInterval = 0.05;
 
-static Frame* subframeForTargetNode(Node*);
 static Frame* subframeForHitTestResult(const MouseEventWithHitTestResults&);
 
 static inline void scrollAndAcceptEvent(float delta, ScrollDirection positiveDirection, ScrollDirection negativeDirection, PlatformWheelEvent& e, Node* node)
@@ -902,10 +901,10 @@ Frame* subframeForHitTestResult(const MouseEventWithHitTestResults& hitTestResul
 {
     if (!hitTestResult.isOverWidget())
         return 0;
-    return subframeForTargetNode(hitTestResult.targetNode());
+    return EventHandler::subframeForTargetNode(hitTestResult.targetNode());
 }
 
-Frame* subframeForTargetNode(Node* node)
+Frame* EventHandler::subframeForTargetNode(Node* node)
 {
     if (!node)
         return 0;

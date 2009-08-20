@@ -1,3 +1,19 @@
+2009-08-20  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Fix of <http://webkit.org/b/27850>. Panning by emulating Mouse Wheel Events breaks Google Maps.
+        
+        Switched to using RenderLayer::scrollByRecursively instead of emulating a mouse wheel,
+        and switched to handling the hit testing in WebView from doing it as part of the mouse wheel event.
+        One downside of this fix is that panning will not jump out of frames anymore (same behavior as pan-scrolling), but
+        this is tracked in <http://webkit.org/b/28237>.
+
+        * WebView.cpp:
+        (WebView::gestureNotify): Added hit testing here to figure out the node the user started the gesture on.
+        (WebView::gesture): Switched from emulating mouse wheel events for panning to calling RenderLayer::scrollByRecursively.
+        * WebView.h:
+
 2009-08-18  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Oliver Hunt.
