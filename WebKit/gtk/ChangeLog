@@ -1,3 +1,11 @@
+2009-08-20  Aaron Boodman  <aa@chromium.org>
+
+        Hopefully the last speculative build for gtk.
+
+        * webkit/webkitprivate.cpp:
+        (webkit_white_list_access_from_origin):
+        * webkit/webkitprivate.h:
+
 2009-08-20  David Levin  <levin@chromium.org>
 
         Another speculative build for gtk.

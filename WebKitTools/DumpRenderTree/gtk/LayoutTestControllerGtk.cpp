@@ -170,12 +170,12 @@ void LayoutTestController::waitForPolicyDelegate()
     setWaitToDump(true);
 }
 
-void LayoutTestController::whiteListAccessToOrigin(JSStringRef sourceOrigin, JSStringRef protocol, JSStringRef host, bool includeSubdomains)
+void LayoutTestController::whiteListAccessFromOrigin(JSStringRef sourceOrigin, JSStringRef protocol, JSStringRef host, bool includeSubdomains)
 {
     gchar* sourceOriginGChar = JSStringCopyUTF8CString(sourceOrigin);
     gchar* protocolGChar = JSStringCopyUTF8CString(protocol);
     gchar* hostGChar = JSStringCopyUTF8CString(host);
-    webkit_white_list_access_to_origin(sourceOriginGChar, protocolGChar, hostGChar, includeSubdomains);
+    webkit_white_list_access_from_origin(sourceOriginGChar, protocolGChar, hostGChar, includeSubdomains);
 }
 
 void LayoutTestController::setMainFrameIsFirstResponder(bool flag)
