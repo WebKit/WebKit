@@ -278,6 +278,7 @@ void PlatformContextSkia::drawRect(SkRect rect)
         SkShader* oldFillShader = m_state->m_fillShader;
         oldFillShader->safeRef();
         setFillColor(m_state->m_strokeColor);
+        paint.reset();
         setupPaintForFilling(&paint);
         SkRect topBorder = { rect.fLeft, rect.fTop, rect.fRight, rect.fTop + 1 };
         canvas()->drawRect(topBorder, paint);
@@ -295,10 +296,7 @@ void PlatformContextSkia::drawRect(SkRect rect)
 
 void PlatformContextSkia::setupPaintCommon(SkPaint* paint) const
 {
-    // http://trac.webkit.org/changeset/47386/ re-enabled this assert and it
-    // immediately started being hit in page cycler code.
-    // FIXME: Re-enable it.
-#if defined(SK_DEBUG) && 0
+#if defined(SK_DEBUG)
     {
         SkPaint defaultPaint;
         SkASSERT(*paint == defaultPaint);

@@ -1,3 +1,20 @@
+2009-08-20  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Fix for assert in Chromium page cycler:  drawRect() was re-using
+        an SkPaint, but not resetting it before calling
+        PlatformGraphicsSkia::setupPaintForFilling() a second time.  This
+        CL fixes drawRect(), and re-enables the assert.
+        http://bugs.webkit.org/show_bug.cgi?id=28172
+        http://crbug.com/19797
+
+        Covered by Chromium page cycler tests.
+
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (PlatformContextSkia::drawRect):
+        (PlatformContextSkia::setupPaintCommon):
+
 2009-08-20  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.
