@@ -1,3 +1,15 @@
+2009-08-19  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+
+        Use FrameLoader::load() for loading pages from a HTML page string to address
+        bugs with using begin/write/end loading.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=28488
+
+        * WebFrame.cpp:
+        (wxWebFrame::SetPageSource):
+
 2009-08-13  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. Make sure that the wxWebKit dynamic library is rebuilt whenever

@@ -42,6 +42,7 @@
 #include "RenderView.h"
 #include "ScriptController.h"
 #include "ScriptValue.h"
+#include "SubstituteData.h"
 #include "TextEncoding.h"
 
 #include "JSDOMBinding.h"
@@ -142,10 +143,16 @@ wxString wxWebFrame::GetPageSource()
 void wxWebFrame::SetPageSource(const wxString& source, const wxString& baseUrl)
 {
     if (m_impl->frame && m_impl->frame->loader()) {
-        WebCore::FrameLoader* loader = m_impl->frame->loader();
-        loader->begin(WebCore::KURL(WebCore::KURL(), static_cast<const char*>(baseUrl.mb_str(wxConvUTF8)), WebCore::UTF8Encoding()));
-        loader->write(static_cast<const WebCore::String>(source));
-        loader->end();
+        WebCore::KURL url(static_cast<const char*>(baseUrl.mb_str(wxConvUTF8)));
+
+        wxCharBuffer charBuffer(source.mb_str(wxConvUTF8));
+        const char* contents = charBuffer;
+
+        WTF::PassRefPtr<WebCore::SharedBuffer> sharedBuffer = WebCore::SharedBuffer::create(contents, strlen(contents));
+        WebCore::SubstituteData substituteData(sharedBuffer, WebCore::String("text/html"), WebCore::String("UTF-8"), WebCore::KURL("about:blank"), url);
+
+        m_impl->frame->loader()->stop();
+        m_impl->frame->loader()->load(WebCore::ResourceRequest(url), substituteData, false);
     }
 }
 
