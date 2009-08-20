@@ -1,3 +1,21 @@
+2009-08-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Some tests using editing.js in editing/execCommand should use runDumpAsTextEditingTest
+        https://bugs.webkit.org/show_bug.cgi?id=28494
+
+        This patch modifies the following tests to use runDumpAsTextEditingTest
+
+        * editing/editing.js: Fixed typo and added foreColorCommand.
+        (execBackColorCommand):
+        * editing/execCommand/italicizeByCharacter-expected.txt: Added.
+        * editing/execCommand/italicizeByCharacter.html:
+        * editing/execCommand/modifyForeColorByCharacter-expected.txt: Added.
+        * editing/execCommand/modifyForeColorByCharacter.html:
+        * editing/execCommand/strikethroughSelection-expected.txt: Added.
+        * editing/execCommand/strikethroughSelection.html:
+
 2009-08-20  Eric Seidel  <eric@webkit.org>
 
         No review, just disabling a crashing test.

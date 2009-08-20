@@ -771,7 +771,7 @@ function debugForDumpAsText(name) {
 
 function execBackColorCommand() {
     document.execCommand("BackColor", false, "Chartreuse");
-    logDumpAsText();
+    debugForDumpAsText('execBackColorCommand');
 }
 function backColorCommand() {
     if (commandDelay > 0) {
@@ -781,6 +781,19 @@ function backColorCommand() {
     else {
         execBackColorCommand();
     }
+}
+
+
+function execForeColorCommand(color) {
+    document.execCommand("ForeColor", false, color);
+    debugForDumpAsText('execForeColorCommand');
+}
+function foreColorCommand(color) {
+    if (commandDelay > 0) {
+        window.setTimeout(execForeColorCommand, commandCount * commandDelay, color);
+        commandCount++;
+    } else
+        execForeColorCommand(color);
 }
 
 //-------------------------------------------------------------------------------------------------------
