@@ -1,3 +1,15 @@
+2009-08-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        REGESSION(r45316), Crash: WebKit crashes in Google Sites when indenting a table
+        https://bugs.webkit.org/show_bug.cgi?id=28474
+
+        This patch adds a test to make sure WebKit does not crash when indenting immediately right to a table.
+
+        * editing/execCommand/indent-right-after-table-expected.txt: Added.
+        * editing/execCommand/indent-right-after-table.html: Added.
+
 2009-08-20  Ariya Hidayat  <ariya.hidayat@nokia.com>
 
         Rubber-stamped by Simon Hausmann.

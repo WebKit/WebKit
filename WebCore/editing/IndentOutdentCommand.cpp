@@ -211,7 +211,7 @@ void IndentOutdentCommand::indentRegion()
             blockquoteForNextIndent = 0;
         else {
             VisiblePosition startOfCurrentParagraph = startOfParagraph(endOfCurrentParagraph);
-            Node* blockNode = enclosingBlock(endOfCurrentParagraph.deepEquivalent().node());
+            Node* blockNode = enclosingBlock(endOfCurrentParagraph.deepEquivalent().node()->parentNode());
             // extend the region so that it contains all the ancestor blocks within the selection
             ExceptionCode ec;
             Element* unsplittableNode = unsplittableElementForPosition(endOfCurrentParagraph.deepEquivalent());
