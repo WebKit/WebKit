@@ -69,8 +69,11 @@ namespace JSC {
         typedef std::pair<Structure*, Structure*> Transition;
         typedef HashMap<StructureTransitionTableHash::Key, Transition, StructureTransitionTableHash, StructureTransitionTableHashTraits> TransitionTable;
     public:
-        inline bool contains(const StructureTransitionTableHash::Key& key, JSCell* specificValue);
-        inline Structure* get(const StructureTransitionTableHash::Key& key, JSCell* specificValue) const;
+        // The contains and get methods accept imprecise matches, so if an unspecialised transition exists
+        // for the given key they will consider that transition to be a match.  If a specialised transition
+        // exists and it matches the provided specificValue, get will return the specific transition.
+        inline bool contains(const StructureTransitionTableHash::Key&, JSCell* specificValue);
+        inline Structure* get(const StructureTransitionTableHash::Key&, JSCell* specificValue) const;
         bool hasTransition(const StructureTransitionTableHash::Key& key)
         {
             return m_table.contains(key);
@@ -99,7 +102,6 @@ namespace JSC {
                 ASSERT(!m_table.contains(key));
                 m_table.add(key, Transition(0, structure));
             }
-                
 
         }
     private:

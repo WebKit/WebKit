@@ -830,9 +830,9 @@ size_t Structure::put(const Identifier& propertyName, unsigned attributes, JSCel
 bool Structure::hasTransition(UString::Rep* rep, unsigned attributes)
 {
     if (m_usingSingleTransitionSlot) {
-        return m_transitions.singleTransition &&
-            m_transitions.singleTransition->m_nameInPrevious.get() == rep &&
-            m_transitions.singleTransition->m_attributesInPrevious == attributes;
+        return m_transitions.singleTransition
+            && m_transitions.singleTransition->m_nameInPrevious == rep
+            && m_transitions.singleTransition->m_attributesInPrevious == attributes;
     }
     return m_transitions.table->hasTransition(make_pair(rep, attributes));
 }
