@@ -1566,7 +1566,7 @@ sub GetTypeFromSignature
     my $signature = shift;
 
     my $type = $codeGenerator->StripModule($signature->type);
-    if (($type eq "DOMString") && $signature->extendedAttributes->{"V8Custom"}) {
+    if (($type eq "DOMString") && $signature->extendedAttributes->{"HintAtomic"}) {
         $type = "AtomicString";
     }
 
@@ -1813,7 +1813,11 @@ sub JSValueToNative
     return "static_cast<Range::CompareHow>($value->Int32Value())" if $type eq "CompareHow";
     return "static_cast<SVGPaint::SVGPaintType>($value->ToInt32()->Int32Value())" if $type eq "SVGPaintType";
 
-    return "v8ValueToAtomicWebCoreString($value)" if $type eq "AtomicString";
+    if ($type eq "AtomicString") {
+        return "v8ValueToAtomicWebCoreStringWithNullCheck($value)" if $signature->extendedAttributes->{"ConvertNullToNullString"};
+        return "v8ValueToAtomicWebCoreString($value)";
+    }
+
     return "toWebCoreString($value)" if $type eq "DOMUserData";
     if ($type eq "DOMString") {
         return "toWebCoreStringWithNullCheck($value)" if $signature->extendedAttributes->{"ConvertNullToNullString"};

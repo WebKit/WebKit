@@ -309,7 +309,11 @@ sub ParseInterface
                 $methodException =~ s/\s+//g;
                 @{$newDataNode->raisesExceptions} = split(/,/, $methodException);
 
-                my @params = split(/,/, $methodSignature);
+                # Split arguments at commas but only if the comma
+                # is not within attribute brackets, expressed here
+                # as being followed by a ']' without a preceding '['.
+                # Note that this assumes that attributes don't nest.
+                my @params = split(/,(?![^[]*\])/, $methodSignature);
                 foreach(@params) {
                     my $line = $_;
 

@@ -31,6 +31,7 @@
 #ifndef V8Binding_h
 #define V8Binding_h
 
+#include "AtomicString.h"
 #include "MathExtras.h"
 #include "PlatformString.h"
 
@@ -145,12 +146,19 @@ namespace WebCore {
     {
         return value ? v8::True() : v8::False();
     }
-   
+
     inline String toWebCoreStringWithNullCheck(v8::Handle<v8::Value> value)
     {
         if (value->IsNull()) 
             return String();
         return v8ValueToWebCoreString(value);
+    }
+
+    inline AtomicString v8ValueToAtomicWebCoreStringWithNullCheck(v8::Handle<v8::Value> value)
+    {
+        if (value->IsNull())
+            return AtomicString();
+        return v8ValueToAtomicWebCoreString(value);
     }
 
     inline String toWebCoreStringWithNullOrUndefinedCheck(v8::Handle<v8::Value> value)
