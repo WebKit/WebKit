@@ -27,6 +27,7 @@
 #include "RenderScrollbarPart.h"
 #include "RenderScrollbar.h"
 #include "RenderScrollbarTheme.h"
+#include "RenderView.h"
 
 using namespace std;
 
@@ -140,8 +141,16 @@ void RenderScrollbarPart::imageChanged(WrappedImagePtr image, const IntRect* rec
 {
     if (m_scrollbar && m_part != NoPart)
         m_scrollbar->theme()->invalidatePart(m_scrollbar, m_part);
-    else
+    else {
+        if (FrameView* frameView = view()->frameView()) {
+            if (frameView->isFrameViewScrollCorner(this)) {
+                frameView->invalidateScrollCorner();
+                return;
+            }
+        }
+        
         RenderBlock::imageChanged(image, rect);
+    }
 }
 
 void RenderScrollbarPart::paintIntoRect(GraphicsContext* graphicsContext, int tx, int ty, const IntRect& rect)

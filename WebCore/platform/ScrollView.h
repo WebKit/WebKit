@@ -239,6 +239,10 @@ protected:
     void setHasHorizontalScrollbar(bool);
     void setHasVerticalScrollbar(bool);
 
+    IntRect scrollCornerRect() const;
+    virtual void updateScrollCorner();
+    virtual void paintScrollCorner(GraphicsContext*, const IntRect& cornerRect);
+    
 private:
     RefPtr<Scrollbar> m_horizontalScrollbar;
     RefPtr<Scrollbar> m_verticalScrollbar;

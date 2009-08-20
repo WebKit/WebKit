@@ -1,3 +1,47 @@
+2009-08-19  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by David Hyatt and Dan Bernstein.
+
+        - Fix <rdar://problem/7152589> Stylable scrollbar corners aren't working.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView):
+        Initialize m_scrollCorner.
+
+        (WebCore::FrameView::~FrameView):
+        Assert that m_scrollCorner is null.
+
+        (WebCore::FrameView::detachCustomScrollbars):
+        Destroy m_scrollCorner.
+
+        (WebCore::FrameView::invalidateScrollCorner):
+        Invalidate the scroll corner.
+        
+        (WebCore::FrameView::updateScrollCorner):
+        Create/destroy the scroll corner.
+        
+        (WebCore::FrameView::paintScrollCorner):
+        Paint the scroll corner.
+        
+        * page/FrameView.h:
+        (WebCore::FrameView::isFrameViewScrollCorner):
+        Return whether a RenderScrollbarPart is the frame view scroll corner.
+        
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::updateScrollbars):
+        Go ahead and update the scroll corner.
+        
+        (WebCore::ScrollView::setScrollbarsSuppressed):
+        Pass the scroll corner rect to invalidateRect.
+        
+        (WebCore::ScrollView::scrollCornerRect):
+        Return the scroll corner rect.
+        
+        * platform/ScrollView.h:
+        * rendering/RenderScrollbarPart.cpp:
+        (WebCore::RenderScrollbarPart::imageChanged):
+        If this scrollbar part is the frame view scroll corner, invalidate it.
+
 2009-08-19  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Oliver Hunt.

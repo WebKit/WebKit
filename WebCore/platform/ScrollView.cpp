@@ -462,8 +462,10 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
             m_verticalScrollbar->setSuppressInvalidation(false);
     }
 
-    if (hasHorizontalScrollbar != (m_horizontalScrollbar != 0) || hasVerticalScrollbar != (m_verticalScrollbar != 0))
+    if (hasHorizontalScrollbar != (m_horizontalScrollbar != 0) || hasVerticalScrollbar != (m_verticalScrollbar != 0)) {
         frameRectsChanged();
+        updateScrollCorner();
+    }
 
     // See if our offset has changed in a situation where we might not have scrollbars.
     // This can happen when editing a body with overflow:hidden and scrolling to reveal selection.
@@ -623,23 +625,7 @@ void ScrollView::setScrollbarsSuppressed(bool suppressed, bool repaintOnUnsuppre
             m_verticalScrollbar->invalidate();
 
         // Invalidate the scroll corner too on unsuppress.
-        IntRect hCorner;
-        if (m_horizontalScrollbar && width() - m_horizontalScrollbar->width() > 0) {
-            hCorner = IntRect(m_horizontalScrollbar->width(),
-                              height() - m_horizontalScrollbar->height(),
-                              width() - m_horizontalScrollbar->width(),
-                              m_horizontalScrollbar->height());
-            invalidateRect(hCorner);
-        }
-
-        if (m_verticalScrollbar && height() - m_verticalScrollbar->height() > 0) {
-            IntRect vCorner(width() - m_verticalScrollbar->width(),
-                            m_verticalScrollbar->height(),
-                            m_verticalScrollbar->width(),
-                            height() - m_verticalScrollbar->height());
-            if (vCorner != hCorner)
-                invalidateRect(vCorner);
-        }
+        invalidateRect(scrollCornerRect());
     }
 }
 
@@ -731,6 +717,36 @@ void ScrollView::repaintContentRectangle(const IntRect& rect, bool now)
         hostWindow()->repaint(contentsToWindow(rect), true, now);
 }
 
+IntRect ScrollView::scrollCornerRect() const
+{
+    IntRect cornerRect;
+    
+    if (m_horizontalScrollbar && width() - m_horizontalScrollbar->width() > 0) {
+        cornerRect.unite(IntRect(m_horizontalScrollbar->width(),
+                                 height() - m_horizontalScrollbar->height(),
+                                 width() - m_horizontalScrollbar->width(),
+                                 m_horizontalScrollbar->height()));
+    }
+
+    if (m_verticalScrollbar && height() - m_verticalScrollbar->height() > 0) {
+        cornerRect.unite(IntRect(width() - m_verticalScrollbar->width(),
+                                 m_verticalScrollbar->height(),
+                                 m_verticalScrollbar->width(),
+                                 height() - m_verticalScrollbar->height()));
+    }
+    
+    return cornerRect;
+}
+
+void ScrollView::updateScrollCorner()
+{
+}
+
+void ScrollView::paintScrollCorner(GraphicsContext* context, const IntRect& cornerRect)
+{
+    ScrollbarTheme::nativeTheme()->paintScrollCorner(this, context, cornerRect);
+}
+
 void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
 {
     if (platformWidget()) {
@@ -770,25 +786,7 @@ void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
         if (m_verticalScrollbar)
             m_verticalScrollbar->paint(context, scrollViewDirtyRect);
 
-        IntRect hCorner;
-        if (m_horizontalScrollbar && width() - m_horizontalScrollbar->width() > 0) {
-            hCorner = IntRect(m_horizontalScrollbar->width(),
-                              height() - m_horizontalScrollbar->height(),
-                              width() - m_horizontalScrollbar->width(),
-                              m_horizontalScrollbar->height());
-            if (hCorner.intersects(scrollViewDirtyRect))
-                ScrollbarTheme::nativeTheme()->paintScrollCorner(this, context, hCorner);
-        }
-
-        if (m_verticalScrollbar && height() - m_verticalScrollbar->height() > 0) {
-            IntRect vCorner(width() - m_verticalScrollbar->width(),
-                            m_verticalScrollbar->height(),
-                            m_verticalScrollbar->width(),
-                            height() - m_verticalScrollbar->height());
-            if (vCorner != hCorner && vCorner.intersects(scrollViewDirtyRect))
-                ScrollbarTheme::nativeTheme()->paintScrollCorner(this, context, vCorner);
-        }
-
+        paintScrollCorner(context, scrollCornerRect());
         context->restore();
     }
 
