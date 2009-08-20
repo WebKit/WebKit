@@ -191,82 +191,82 @@ namespace JSC {
         // MacroAssembler will need to plant register swaps if it is not -
         // however the code will still function correctly.
 #if PLATFORM(X86_64)
-        static const RegisterID returnValueRegister = X86::eax;
-        static const RegisterID cachedResultRegister = X86::eax;
-        static const RegisterID firstArgumentRegister = X86::edi;
+        static const RegisterID returnValueRegister = X86Registers::eax;
+        static const RegisterID cachedResultRegister = X86Registers::eax;
+        static const RegisterID firstArgumentRegister = X86Registers::edi;
 
-        static const RegisterID timeoutCheckRegister = X86::r12;
-        static const RegisterID callFrameRegister = X86::r13;
-        static const RegisterID tagTypeNumberRegister = X86::r14;
-        static const RegisterID tagMaskRegister = X86::r15;
+        static const RegisterID timeoutCheckRegister = X86Registers::r12;
+        static const RegisterID callFrameRegister = X86Registers::r13;
+        static const RegisterID tagTypeNumberRegister = X86Registers::r14;
+        static const RegisterID tagMaskRegister = X86Registers::r15;
 
-        static const RegisterID regT0 = X86::eax;
-        static const RegisterID regT1 = X86::edx;
-        static const RegisterID regT2 = X86::ecx;
-        static const RegisterID regT3 = X86::ebx;
+        static const RegisterID regT0 = X86Registers::eax;
+        static const RegisterID regT1 = X86Registers::edx;
+        static const RegisterID regT2 = X86Registers::ecx;
+        static const RegisterID regT3 = X86Registers::ebx;
 
-        static const FPRegisterID fpRegT0 = X86::xmm0;
-        static const FPRegisterID fpRegT1 = X86::xmm1;
-        static const FPRegisterID fpRegT2 = X86::xmm2;
+        static const FPRegisterID fpRegT0 = X86Registers::xmm0;
+        static const FPRegisterID fpRegT1 = X86Registers::xmm1;
+        static const FPRegisterID fpRegT2 = X86Registers::xmm2;
 #elif PLATFORM(X86)
-        static const RegisterID returnValueRegister = X86::eax;
-        static const RegisterID cachedResultRegister = X86::eax;
+        static const RegisterID returnValueRegister = X86Registers::eax;
+        static const RegisterID cachedResultRegister = X86Registers::eax;
         // On x86 we always use fastcall conventions = but on
         // OS X if might make more sense to just use regparm.
-        static const RegisterID firstArgumentRegister = X86::ecx;
+        static const RegisterID firstArgumentRegister = X86Registers::ecx;
 
-        static const RegisterID timeoutCheckRegister = X86::esi;
-        static const RegisterID callFrameRegister = X86::edi;
+        static const RegisterID timeoutCheckRegister = X86Registers::esi;
+        static const RegisterID callFrameRegister = X86Registers::edi;
 
-        static const RegisterID regT0 = X86::eax;
-        static const RegisterID regT1 = X86::edx;
-        static const RegisterID regT2 = X86::ecx;
-        static const RegisterID regT3 = X86::ebx;
+        static const RegisterID regT0 = X86Registers::eax;
+        static const RegisterID regT1 = X86Registers::edx;
+        static const RegisterID regT2 = X86Registers::ecx;
+        static const RegisterID regT3 = X86Registers::ebx;
 
-        static const FPRegisterID fpRegT0 = X86::xmm0;
-        static const FPRegisterID fpRegT1 = X86::xmm1;
-        static const FPRegisterID fpRegT2 = X86::xmm2;
+        static const FPRegisterID fpRegT0 = X86Registers::xmm0;
+        static const FPRegisterID fpRegT1 = X86Registers::xmm1;
+        static const FPRegisterID fpRegT2 = X86Registers::xmm2;
 #elif PLATFORM_ARM_ARCH(7)
-        static const RegisterID returnValueRegister = ARM::r0;
-        static const RegisterID cachedResultRegister = ARM::r0;
-        static const RegisterID firstArgumentRegister = ARM::r0;
+        static const RegisterID returnValueRegister = ARMRegisters::r0;
+        static const RegisterID cachedResultRegister = ARMRegisters::r0;
+        static const RegisterID firstArgumentRegister = ARMRegisters::r0;
 
-        static const RegisterID regT0 = ARM::r0;
-        static const RegisterID regT1 = ARM::r1;
-        static const RegisterID regT2 = ARM::r2;
-        static const RegisterID regT3 = ARM::r4;
+        static const RegisterID regT0 = ARMRegisters::r0;
+        static const RegisterID regT1 = ARMRegisters::r1;
+        static const RegisterID regT2 = ARMRegisters::r2;
+        static const RegisterID regT3 = ARMRegisters::r4;
 
-        static const RegisterID callFrameRegister = ARM::r5;
-        static const RegisterID timeoutCheckRegister = ARM::r6;
+        static const RegisterID callFrameRegister = ARMRegisters::r5;
+        static const RegisterID timeoutCheckRegister = ARMRegisters::r6;
 
-        static const FPRegisterID fpRegT0 = ARM::d0;
-        static const FPRegisterID fpRegT1 = ARM::d1;
-        static const FPRegisterID fpRegT2 = ARM::d2;
+        static const FPRegisterID fpRegT0 = ARMRegisters::d0;
+        static const FPRegisterID fpRegT1 = ARMRegisters::d1;
+        static const FPRegisterID fpRegT2 = ARMRegisters::d2;
 #elif PLATFORM(ARM)
-        static const RegisterID returnValueRegister = ARM::r0;
-        static const RegisterID cachedResultRegister = ARM::r0;
-        static const RegisterID firstArgumentRegister = ARM::r0;
+        static const RegisterID returnValueRegister = ARMRegisters::r0;
+        static const RegisterID cachedResultRegister = ARMRegisters::r0;
+        static const RegisterID firstArgumentRegister = ARMRegisters::r0;
 
-        static const RegisterID timeoutCheckRegister = ARM::r5;
-        static const RegisterID callFrameRegister = ARM::r4;
-        static const RegisterID ctiReturnRegister = ARM::r6;
+        static const RegisterID timeoutCheckRegister = ARMRegisters::r5;
+        static const RegisterID callFrameRegister = ARMRegisters::r4;
+        static const RegisterID ctiReturnRegister = ARMRegisters::r6;
 
-        static const RegisterID regT0 = ARM::r0;
-        static const RegisterID regT1 = ARM::r1;
-        static const RegisterID regT2 = ARM::r2;
+        static const RegisterID regT0 = ARMRegisters::r0;
+        static const RegisterID regT1 = ARMRegisters::r1;
+        static const RegisterID regT2 = ARMRegisters::r2;
         // Callee preserved
-        static const RegisterID regT3 = ARM::r7;
+        static const RegisterID regT3 = ARMRegisters::r7;
 
-        static const RegisterID regS0 = ARM::S0;
+        static const RegisterID regS0 = ARMRegisters::S0;
         // Callee preserved
-        static const RegisterID regS1 = ARM::S1;
+        static const RegisterID regS1 = ARMRegisters::S1;
 
-        static const RegisterID regStackPtr = ARM::sp;
-        static const RegisterID regLink = ARM::lr;
+        static const RegisterID regStackPtr = ARMRegisters::sp;
+        static const RegisterID regLink = ARMRegisters::lr;
 
-        static const FPRegisterID fpRegT0 = ARM::d0;
-        static const FPRegisterID fpRegT1 = ARM::d1;
-        static const FPRegisterID fpRegT2 = ARM::d2;
+        static const FPRegisterID fpRegT0 = ARMRegisters::d0;
+        static const FPRegisterID fpRegT1 = ARMRegisters::d1;
+        static const FPRegisterID fpRegT2 = ARMRegisters::d2;
 #else
     #error "JIT not supported on this platform."
 #endif

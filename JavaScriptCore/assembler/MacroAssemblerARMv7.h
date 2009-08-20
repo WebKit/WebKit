@@ -39,9 +39,9 @@ class MacroAssemblerARMv7 : public AbstractMacroAssembler<ARMv7Assembler> {
     // FIXME: switch dataTempRegister & addressTempRegister, or possibly use r7?
     //        - dTR is likely used more than aTR, and we'll get better instruction
     //        encoding if it's in the low 8 registers.
-    static const ARM::RegisterID dataTempRegister = ARM::ip;
-    static const RegisterID addressTempRegister = ARM::r3;
-    static const FPRegisterID fpTempRegister = ARM::d7;
+    static const ARMRegisters::RegisterID dataTempRegister = ARMRegisters::ip;
+    static const RegisterID addressTempRegister = ARMRegisters::r3;
+    static const FPRegisterID fpTempRegister = ARMRegisters::d7;
 
     struct ArmAddress {
         enum AddressType {
@@ -102,8 +102,8 @@ public:
         DoubleLessThanOrEqual = ARMv7Assembler::ConditionLS,
     };
 
-    static const RegisterID stackPointerRegister = ARM::sp;
-    static const RegisterID linkRegister = ARM::lr;
+    static const RegisterID stackPointerRegister = ARMRegisters::sp;
+    static const RegisterID linkRegister = ARMRegisters::lr;
 
     // Integer arithmetic operations:
     //
@@ -546,13 +546,13 @@ public:
     void pop(RegisterID dest)
     {
         // store postindexed with writeback
-        m_assembler.ldr(dest, ARM::sp, sizeof(void*), false, true);
+        m_assembler.ldr(dest, ARMRegisters::sp, sizeof(void*), false, true);
     }
 
     void push(RegisterID src)
     {
         // store preindexed with writeback
-        m_assembler.str(src, ARM::sp, -sizeof(void*), true, true);
+        m_assembler.str(src, ARMRegisters::sp, -sizeof(void*), true, true);
     }
 
     void push(Address address)

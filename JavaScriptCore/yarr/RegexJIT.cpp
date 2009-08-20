@@ -45,35 +45,35 @@ class RegexGenerator : private MacroAssembler {
     friend void jitCompileRegex(JSGlobalData* globalData, RegexCodeBlock& jitObject, const UString& pattern, unsigned& numSubpatterns, const char*& error, bool ignoreCase, bool multiline);
 
 #if PLATFORM(ARM)
-    static const RegisterID input = ARM::r0;
-    static const RegisterID index = ARM::r1;
-    static const RegisterID length = ARM::r2;
-    static const RegisterID output = ARM::r4;
+    static const RegisterID input = ARMRegisters::r0;
+    static const RegisterID index = ARMRegisters::r1;
+    static const RegisterID length = ARMRegisters::r2;
+    static const RegisterID output = ARMRegisters::r4;
 
-    static const RegisterID regT0 = ARM::r5;
-    static const RegisterID regT1 = ARM::r6;
+    static const RegisterID regT0 = ARMRegisters::r5;
+    static const RegisterID regT1 = ARMRegisters::r6;
 
-    static const RegisterID returnRegister = ARM::r0;
+    static const RegisterID returnRegister = ARMRegisters::r0;
 #elif PLATFORM(X86)
-    static const RegisterID input = X86::eax;
-    static const RegisterID index = X86::edx;
-    static const RegisterID length = X86::ecx;
-    static const RegisterID output = X86::edi;
+    static const RegisterID input = X86Registers::eax;
+    static const RegisterID index = X86Registers::edx;
+    static const RegisterID length = X86Registers::ecx;
+    static const RegisterID output = X86Registers::edi;
 
-    static const RegisterID regT0 = X86::ebx;
-    static const RegisterID regT1 = X86::esi;
+    static const RegisterID regT0 = X86Registers::ebx;
+    static const RegisterID regT1 = X86Registers::esi;
 
-    static const RegisterID returnRegister = X86::eax;
+    static const RegisterID returnRegister = X86Registers::eax;
 #elif PLATFORM(X86_64)
-    static const RegisterID input = X86::edi;
-    static const RegisterID index = X86::esi;
-    static const RegisterID length = X86::edx;
-    static const RegisterID output = X86::ecx;
+    static const RegisterID input = X86Registers::edi;
+    static const RegisterID index = X86Registers::esi;
+    static const RegisterID length = X86Registers::edx;
+    static const RegisterID output = X86Registers::ecx;
 
-    static const RegisterID regT0 = X86::eax;
-    static const RegisterID regT1 = X86::ebx;
+    static const RegisterID regT0 = X86Registers::eax;
+    static const RegisterID regT1 = X86Registers::ebx;
 
-    static const RegisterID returnRegister = X86::eax;
+    static const RegisterID returnRegister = X86Registers::eax;
 #endif
 
     void optimizeAlternative(PatternAlternative* alternative)
@@ -1289,50 +1289,50 @@ class RegexGenerator : private MacroAssembler {
     void generateEnter()
     {
 #if PLATFORM(X86_64)
-        push(X86::ebp);
-        move(stackPointerRegister, X86::ebp);
-        push(X86::ebx);
+        push(X86Registers::ebp);
+        move(stackPointerRegister, X86Registers::ebp);
+        push(X86Registers::ebx);
 #elif PLATFORM(X86)
-        push(X86::ebp);
-        move(stackPointerRegister, X86::ebp);
+        push(X86Registers::ebp);
+        move(stackPointerRegister, X86Registers::ebp);
         // TODO: do we need spill registers to fill the output pointer if there are no sub captures?
-        push(X86::ebx);
-        push(X86::edi);
-        push(X86::esi);
+        push(X86Registers::ebx);
+        push(X86Registers::edi);
+        push(X86Registers::esi);
         // load output into edi (2 = saved ebp + return address).
     #if COMPILER(MSVC)
-        loadPtr(Address(X86::ebp, 2 * sizeof(void*)), input);
-        loadPtr(Address(X86::ebp, 3 * sizeof(void*)), index);
-        loadPtr(Address(X86::ebp, 4 * sizeof(void*)), length);
-        loadPtr(Address(X86::ebp, 5 * sizeof(void*)), output);
+        loadPtr(Address(X86Registers::ebp, 2 * sizeof(void*)), input);
+        loadPtr(Address(X86Registers::ebp, 3 * sizeof(void*)), index);
+        loadPtr(Address(X86Registers::ebp, 4 * sizeof(void*)), length);
+        loadPtr(Address(X86Registers::ebp, 5 * sizeof(void*)), output);
     #else
-        loadPtr(Address(X86::ebp, 2 * sizeof(void*)), output);
+        loadPtr(Address(X86Registers::ebp, 2 * sizeof(void*)), output);
     #endif
 #elif PLATFORM(ARM)
 #if !PLATFORM_ARM_ARCH(7)
-        push(ARM::lr);
+        push(ARMRegisters::lr);
 #endif
-        push(ARM::r4);
-        push(ARM::r5);
-        push(ARM::r6);
-        move(ARM::r3, output);
+        push(ARMRegisters::r4);
+        push(ARMRegisters::r5);
+        push(ARMRegisters::r6);
+        move(ARMRegisters::r3, output);
 #endif
     }
 
     void generateReturn()
     {
 #if PLATFORM(X86_64)
-        pop(X86::ebx);
-        pop(X86::ebp);
+        pop(X86Registers::ebx);
+        pop(X86Registers::ebp);
 #elif PLATFORM(X86)
-        pop(X86::esi);
-        pop(X86::edi);
-        pop(X86::ebx);
-        pop(X86::ebp);
+        pop(X86Registers::esi);
+        pop(X86Registers::edi);
+        pop(X86Registers::ebx);
+        pop(X86Registers::ebp);
 #elif PLATFORM(ARM)
-        pop(ARM::r6);
-        pop(ARM::r5);
-        pop(ARM::r4);
+        pop(ARMRegisters::r6);
+        pop(ARMRegisters::r5);
+        pop(ARMRegisters::r4);
 #endif
         ret();
     }

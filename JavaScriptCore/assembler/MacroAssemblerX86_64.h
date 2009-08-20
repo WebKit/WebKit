@@ -38,7 +38,7 @@ namespace JSC {
 
 class MacroAssemblerX86_64 : public MacroAssemblerX86Common {
 protected:
-    static const X86::RegisterID scratchRegister = X86::r11;
+    static const X86Registers::RegisterID scratchRegister = X86Registers::r11;
 
 public:
     static const Scale ScalePtr = TimesEight;
@@ -79,12 +79,12 @@ public:
 
     void load32(void* address, RegisterID dest)
     {
-        if (dest == X86::eax)
+        if (dest == X86Registers::eax)
             m_assembler.movl_mEAX(address);
         else {
-            move(X86::eax, dest);
+            move(X86Registers::eax, dest);
             m_assembler.movl_mEAX(address);
-            swap(X86::eax, dest);
+            swap(X86Registers::eax, dest);
         }
     }
 
@@ -102,10 +102,10 @@ public:
 
     void store32(Imm32 imm, void* address)
     {
-        move(X86::eax, scratchRegister);
-        move(imm, X86::eax);
+        move(X86Registers::eax, scratchRegister);
+        move(imm, X86Registers::eax);
         m_assembler.movl_EAXm(address);
-        move(scratchRegister, X86::eax);
+        move(scratchRegister, X86Registers::eax);
     }
 
     Call call()
@@ -196,20 +196,20 @@ public:
     {
         // On x86 we can only shift by ecx; if asked to shift by another register we'll
         // need rejig the shift amount into ecx first, and restore the registers afterwards.
-        if (shift_amount != X86::ecx) {
-            swap(shift_amount, X86::ecx);
+        if (shift_amount != X86Registers::ecx) {
+            swap(shift_amount, X86Registers::ecx);
 
             // E.g. transform "shll %eax, %eax" -> "xchgl %eax, %ecx; shll %ecx, %ecx; xchgl %eax, %ecx"
             if (dest == shift_amount)
-                m_assembler.sarq_CLr(X86::ecx);
+                m_assembler.sarq_CLr(X86Registers::ecx);
             // E.g. transform "shll %eax, %ecx" -> "xchgl %eax, %ecx; shll %ecx, %eax; xchgl %eax, %ecx"
-            else if (dest == X86::ecx)
+            else if (dest == X86Registers::ecx)
                 m_assembler.sarq_CLr(shift_amount);
             // E.g. transform "shll %eax, %ebx" -> "xchgl %eax, %ecx; shll %ecx, %ebx; xchgl %eax, %ecx"
             else
                 m_assembler.sarq_CLr(dest);
         
-            swap(shift_amount, X86::ecx);
+            swap(shift_amount, X86Registers::ecx);
         } else
             m_assembler.sarq_CLr(dest);
     }
@@ -258,12 +258,12 @@ public:
 
     void loadPtr(void* address, RegisterID dest)
     {
-        if (dest == X86::eax)
+        if (dest == X86Registers::eax)
             m_assembler.movq_mEAX(address);
         else {
-            move(X86::eax, dest);
+            move(X86Registers::eax, dest);
             m_assembler.movq_mEAX(address);
-            swap(X86::eax, dest);
+            swap(X86Registers::eax, dest);
         }
     }
 
@@ -285,12 +285,12 @@ public:
     
     void storePtr(RegisterID src, void* address)
     {
-        if (src == X86::eax)
+        if (src == X86Registers::eax)
             m_assembler.movq_EAXm(address);
         else {
-            swap(X86::eax, src);
+            swap(X86Registers::eax, src);
             m_assembler.movq_EAXm(address);
-            swap(X86::eax, src);
+            swap(X86Registers::eax, src);
         }
     }
 

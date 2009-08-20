@@ -42,8 +42,8 @@ void Generator::generateEnter()
 {
 #if PLATFORM(X86)
     // On x86 edi & esi are callee preserved registers.
-    push(X86::edi);
-    push(X86::esi);
+    push(X86Registers::edi);
+    push(X86Registers::esi);
     
 #if COMPILER(MSVC)
     // Move the arguments into registers.
@@ -72,8 +72,8 @@ void Generator::generateReturnSuccess()
     
     // Restore callee save registers.
 #if PLATFORM(X86)
-    pop(X86::esi);
-    pop(X86::edi);
+    pop(X86Registers::esi);
+    pop(X86Registers::edi);
 #endif
     ret();
 }
@@ -111,8 +111,8 @@ void Generator::generateReturnFailure()
     move(Imm32(-1), returnRegister);
 
 #if PLATFORM(X86)
-    pop(X86::esi);
-    pop(X86::edi);
+    pop(X86Registers::esi);
+    pop(X86Registers::edi);
 #endif
     ret();
 }

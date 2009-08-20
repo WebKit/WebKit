@@ -1053,33 +1053,33 @@ void JIT::emit_op_mod(Instruction* currentInstruction)
     unsigned op2 = currentInstruction[3].u.operand;
 
     if (isOperandConstantImmediateInt(op2) && getConstantOperand(op2).asInt32() != 0) {
-        emitLoad(op1, X86::edx, X86::eax);
-        move(Imm32(getConstantOperand(op2).asInt32()), X86::ecx);
-        addSlowCase(branch32(NotEqual, X86::edx, Imm32(JSValue::Int32Tag)));
+        emitLoad(op1, X86Registers::edx, X86Registers::eax);
+        move(Imm32(getConstantOperand(op2).asInt32()), X86Registers::ecx);
+        addSlowCase(branch32(NotEqual, X86Registers::edx, Imm32(JSValue::Int32Tag)));
         if (getConstantOperand(op2).asInt32() == -1)
-            addSlowCase(branch32(Equal, X86::eax, Imm32(0x80000000))); // -2147483648 / -1 => EXC_ARITHMETIC
+            addSlowCase(branch32(Equal, X86Registers::eax, Imm32(0x80000000))); // -2147483648 / -1 => EXC_ARITHMETIC
     } else {
-        emitLoad2(op1, X86::edx, X86::eax, op2, X86::ebx, X86::ecx);
-        addSlowCase(branch32(NotEqual, X86::edx, Imm32(JSValue::Int32Tag)));
-        addSlowCase(branch32(NotEqual, X86::ebx, Imm32(JSValue::Int32Tag)));
+        emitLoad2(op1, X86Registers::edx, X86Registers::eax, op2, X86Registers::ebx, X86Registers::ecx);
+        addSlowCase(branch32(NotEqual, X86Registers::edx, Imm32(JSValue::Int32Tag)));
+        addSlowCase(branch32(NotEqual, X86Registers::ebx, Imm32(JSValue::Int32Tag)));
 
-        addSlowCase(branch32(Equal, X86::eax, Imm32(0x80000000))); // -2147483648 / -1 => EXC_ARITHMETIC
-        addSlowCase(branch32(Equal, X86::ecx, Imm32(0))); // divide by 0
+        addSlowCase(branch32(Equal, X86Registers::eax, Imm32(0x80000000))); // -2147483648 / -1 => EXC_ARITHMETIC
+        addSlowCase(branch32(Equal, X86Registers::ecx, Imm32(0))); // divide by 0
     }
 
-    move(X86::eax, X86::ebx); // Save dividend payload, in case of 0.
+    move(X86Registers::eax, X86Registers::ebx); // Save dividend payload, in case of 0.
     m_assembler.cdq();
-    m_assembler.idivl_r(X86::ecx);
+    m_assembler.idivl_r(X86Registers::ecx);
     
     // If the remainder is zero and the dividend is negative, the result is -0.
-    Jump storeResult1 = branchTest32(NonZero, X86::edx);
-    Jump storeResult2 = branchTest32(Zero, X86::ebx, Imm32(0x80000000)); // not negative
+    Jump storeResult1 = branchTest32(NonZero, X86Registers::edx);
+    Jump storeResult2 = branchTest32(Zero, X86Registers::ebx, Imm32(0x80000000)); // not negative
     emitStore(dst, jsNumber(m_globalData, -0.0));
     Jump end = jump();
 
     storeResult1.link(this);
     storeResult2.link(this);
-    emitStoreInt32(dst, X86::edx, (op1 == dst || op2 == dst));
+    emitStoreInt32(dst, X86Registers::edx, (op1 == dst || op2 == dst));
     end.link(this);
 }
 
@@ -1847,21 +1847,21 @@ void JIT::emit_op_mod(Instruction* currentInstruction)
     unsigned op1 = currentInstruction[2].u.operand;
     unsigned op2 = currentInstruction[3].u.operand;
 
-    emitGetVirtualRegisters(op1, X86::eax, op2, X86::ecx);
-    emitJumpSlowCaseIfNotImmediateInteger(X86::eax);
-    emitJumpSlowCaseIfNotImmediateInteger(X86::ecx);
+    emitGetVirtualRegisters(op1, X86Registers::eax, op2, X86Registers::ecx);
+    emitJumpSlowCaseIfNotImmediateInteger(X86Registers::eax);
+    emitJumpSlowCaseIfNotImmediateInteger(X86Registers::ecx);
 #if USE(JSVALUE64)
-    addSlowCase(branchPtr(Equal, X86::ecx, ImmPtr(JSValue::encode(jsNumber(m_globalData, 0)))));
+    addSlowCase(branchPtr(Equal, X86Registers::ecx, ImmPtr(JSValue::encode(jsNumber(m_globalData, 0)))));
     m_assembler.cdq();
-    m_assembler.idivl_r(X86::ecx);
+    m_assembler.idivl_r(X86Registers::ecx);
 #else
-    emitFastArithDeTagImmediate(X86::eax);
-    addSlowCase(emitFastArithDeTagImmediateJumpIfZero(X86::ecx));
+    emitFastArithDeTagImmediate(X86Registers::eax);
+    addSlowCase(emitFastArithDeTagImmediateJumpIfZero(X86Registers::ecx));
     m_assembler.cdq();
-    m_assembler.idivl_r(X86::ecx);
-    signExtend32ToPtr(X86::edx, X86::edx);
+    m_assembler.idivl_r(X86Registers::ecx);
+    signExtend32ToPtr(X86Registers::edx, X86Registers::edx);
 #endif
-    emitFastArithReTagImmediate(X86::edx, X86::eax);
+    emitFastArithReTagImmediate(X86Registers::edx, X86Registers::eax);
     emitPutVirtualRegister(result);
 }
 
@@ -1877,14 +1877,14 @@ void JIT::emitSlow_op_mod(Instruction* currentInstruction, Vector<SlowCaseEntry>
     Jump notImm1 = getSlowCase(iter);
     Jump notImm2 = getSlowCase(iter);
     linkSlowCase(iter);
-    emitFastArithReTagImmediate(X86::eax, X86::eax);
-    emitFastArithReTagImmediate(X86::ecx, X86::ecx);
+    emitFastArithReTagImmediate(X86Registers::eax, X86Registers::eax);
+    emitFastArithReTagImmediate(X86Registers::ecx, X86Registers::ecx);
     notImm1.link(this);
     notImm2.link(this);
 #endif
     JITStubCall stubCall(this, cti_op_mod);
-    stubCall.addArgument(X86::eax);
-    stubCall.addArgument(X86::ecx);
+    stubCall.addArgument(X86Registers::eax);
+    stubCall.addArgument(X86Registers::ecx);
     stubCall.call(result);
 }
 

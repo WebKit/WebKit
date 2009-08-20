@@ -1,3 +1,27 @@
+2009-08-19  Yong Li  <yong.li@torchmobile.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Change namespace ARM to ARMRegisters
+        X86 to X86Registers to avoid conflict with macros
+        https://bugs.webkit.org/show_bug.cgi?id=28428
+
+        * assembler/ARMAssembler.cpp:
+        * assembler/ARMAssembler.h:
+        * assembler/ARMv7Assembler.h:
+        * assembler/MacroAssemblerARM.h:
+        * assembler/MacroAssemblerARMv7.h:
+        * assembler/MacroAssemblerX86Common.h:
+        * assembler/MacroAssemblerX86_64.h:
+        * assembler/X86Assembler.h:
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        * jit/JITInlineMethods.h:
+        * jit/JITOpcodes.cpp:
+        * wrec/WRECGenerator.cpp:
+        * wrec/WRECGenerator.h:
+        * yarr/RegexJIT.cpp:
+
 2009-08-19  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
