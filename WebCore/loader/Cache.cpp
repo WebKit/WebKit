@@ -182,6 +182,7 @@ void Cache::revalidateResource(CachedResource* resource, DocLoader* docLoader)
 {
     ASSERT(resource);
     ASSERT(resource->inCache());
+    ASSERT(resource == m_resources.get(resource->url()));
     ASSERT(!disabled());
     if (resource->resourceToRevalidate())
         return;
@@ -205,6 +206,7 @@ void Cache::revalidationSucceeded(CachedResource* revalidatingResource, const Re
     ASSERT(resource);
     ASSERT(!resource->inCache());
     ASSERT(resource->isLoaded());
+    ASSERT(revalidatingResource->inCache());
     
     evict(revalidatingResource);
 
@@ -351,7 +353,7 @@ void Cache::pruneDeadResources()
         current = m_allResources[i].m_tail;
         while (current) {
             CachedResource* prev = current->m_prevInAllResourcesList;
-            if (!current->hasClients() && !current->isPreloaded()) {
+            if (!current->hasClients() && !current->isPreloaded() && !current->isCacheValidator()) {
                 evict(current);
                 // If evict() caused pruneDeadResources() to be re-entered, bail out. This can happen when removing an
                 // SVG CachedImage that has subresources.

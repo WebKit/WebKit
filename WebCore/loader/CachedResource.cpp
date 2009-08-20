@@ -59,7 +59,7 @@ CachedResource::CachedResource(const String& url, Type type)
     , m_docLoader(0)
     , m_handleCount(0)
     , m_resourceToRevalidate(0)
-    , m_isBeingRevalidated(false)
+    , m_proxyResource(0)
 {
 #ifndef NDEBUG
     cachedResourceLeakCounter.increment();
@@ -89,6 +89,8 @@ CachedResource::CachedResource(const String& url, Type type)
 
 CachedResource::~CachedResource()
 {
+    ASSERT(!m_resourceToRevalidate); // Should be true because canDelete() checks this.
+    ASSERT(canDelete());
     ASSERT(!inCache());
     ASSERT(!m_deleted);
     ASSERT(url().isNull() || cache()->resourceForURL(url()) != this);
@@ -96,9 +98,6 @@ CachedResource::~CachedResource()
     m_deleted = true;
     cachedResourceLeakCounter.decrement();
 #endif
-
-    if (m_resourceToRevalidate)
-        m_resourceToRevalidate->m_isBeingRevalidated = false;
 
     if (m_docLoader)
         m_docLoader->removeCachedResource(this);
@@ -298,18 +297,26 @@ void CachedResource::setResourceToRevalidate(CachedResource* resource)
     ASSERT(resource);
     ASSERT(!m_resourceToRevalidate);
     ASSERT(resource != this);
-    ASSERT(!resource->m_isBeingRevalidated);
     ASSERT(m_handlesToRevalidate.isEmpty());
     ASSERT(resource->type() == type());
-    resource->m_isBeingRevalidated = true;
+
+    // The following assert should be investigated whenever it occurs. Although it should never fire, it currently does in rare circumstances.
+    // https://bugs.webkit.org/show_bug.cgi?id=28507.
+    // So the code needs to be robust to this assert failing thus the "if (m_resourceToRevalidate->m_proxyResource == this)" in CachedResource::clearResourceToRevalidate.
+    ASSERT(!resource->m_proxyResource);
+
+    resource->m_proxyResource = this;
     m_resourceToRevalidate = resource;
 }
 
 void CachedResource::clearResourceToRevalidate() 
 { 
     ASSERT(m_resourceToRevalidate);
-    m_resourceToRevalidate->m_isBeingRevalidated = false;
-    m_resourceToRevalidate->deleteIfPossible();
+    // A resource may start revalidation before this method has been called, so check that this resource is still the proxy resource before clearing it out.
+    if (m_resourceToRevalidate->m_proxyResource == this) {
+        m_resourceToRevalidate->m_proxyResource = 0;
+        m_resourceToRevalidate->deleteIfPossible();
+    }
     m_handlesToRevalidate.clear();
     m_resourceToRevalidate = 0;
     deleteIfPossible();
@@ -403,7 +410,7 @@ bool CachedResource::mustRevalidate(CachePolicy cachePolicy) const
 
 bool CachedResource::isSafeToMakePurgeable() const
 { 
-    return !hasClients() && !m_isBeingRevalidated && !m_resourceToRevalidate; 
+    return !hasClients() && !m_proxyResource && !m_resourceToRevalidate;
 }
 
 bool CachedResource::makePurgeable(bool purgeable) 

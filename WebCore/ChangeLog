@@ -1,3 +1,43 @@
+2009-08-20  David Levin  <levin@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Crashes on sites with lots of images
+        https://bugs.webkit.org/show_bug.cgi?id=28473
+
+        The problem is that m_resourceToRevalidate::m_isBeingRevalidated is false while
+        CachedResource is still referring to it, so it may get deleted before
+        Cache::revalidationSucceeded calls CachedResource::clearResourceToRevalidate.
+
+        * loader/Cache.cpp:
+        (WebCore::Cache::revalidateResource): Added assert to verify the resource
+        being revalidated is physically in the cache.
+        (WebCore::Cache::revalidationSucceeded): Changed to do one call to switch from the revalidating
+        resource to the revalidated resource.  This allows for proper lifetime management of the
+        revalidated resource. Added assert to verify that the revalidatingResource is in the cache.
+        (WebCore::Cache::pruneDeadResources): Don't remove items from the cache that are in the
+        process of being validated (or else they can get added twice: Once through the normal mechanism
+        and then again during revalidateResource).
+
+        * loader/CachedResource.cpp:
+        (WebCore::CachedResource::CachedResource):
+        (WebCore::CachedResource::isSafeToMakePurgeable):
+        Changed m_isBeingRevalidated to m_proxyResource to allow finding out
+        who the validating resource (or proxy) is.
+
+        (WebCore::CachedResource::~CachedResource): Removed code to handle m_resourceToRevalidate
+        being non-zero because this shouldn't be possible due to checks in canDelete. Added asserts
+        as well.
+        (WebCore::CachedResource::setResourceToRevalidate): Adjusted for the change to m_proxyResource
+        and added a comment about the assert.
+        (WebCore::CachedResource::clearResourceToRevalidate):
+        Only clean up the resourceToRevalidate if it hasn't gotten a new proxy resource.
+        * loader/CachedResource.h:
+        (WebCore::CachedResource::setInCache): Don't clear m_proxyResource because the resource
+        is still being referred to by it and the code it robust to this being switched to a new proxy
+        resource without it being cleared first.
+        (WebCore::CachedResource::canDelete): Changed m_isBeingRevalidated to m_proxyResource.
+
 2009-08-20  Xiaomei Ji  <xji@chromium.org>
 
         Reviewed by Eric Seidel.
