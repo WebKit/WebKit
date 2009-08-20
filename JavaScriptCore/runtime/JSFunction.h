@@ -24,11 +24,11 @@
 #ifndef JSFunction_h
 #define JSFunction_h
 
-#include "Executable.h"
 #include "InternalFunction.h"
 
 namespace JSC {
 
+    class FunctionExecutable;
     class FunctionPrototype;
     class JSActivation;
     class JSGlobalObject;
@@ -119,11 +119,6 @@ namespace JSC {
     {
         ASSERT(asObject(value)->inherits(&JSFunction::info));
         return static_cast<JSFunction*>(asObject(value));
-    }
-
-    inline JSFunction* FunctionExecutable::make(ExecState* exec, ScopeChainNode* scopeChain)
-    {
-        return new (exec) JSFunction(exec, this, scopeChain);
     }
 
 } // namespace JSC

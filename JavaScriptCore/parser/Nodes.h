@@ -34,25 +34,17 @@
 #include "SourceCode.h"
 #include "SymbolTable.h"
 #include <wtf/MathExtras.h>
-#include <wtf/OwnPtr.h>
 
 namespace JSC {
 
     class ArgumentListNode;
     class BytecodeGenerator;
-    class CodeBlock;
-    class EvalCodeBlock;
-    class EvalExecutable;
-    class FuncDeclNode;
     class FunctionBodyNode;
-    class FunctionCodeBlock;
-    class JSFunction;
-    class ProgramCodeBlock;
-    class ProgramExecutable;
     class PropertyListNode;
     class ReadModifyResolveNode;
     class RegisterID;
     class ScopeChainNode;
+    class ScopeNode;
 
     typedef unsigned CodeFeatures;
 
@@ -90,7 +82,7 @@ namespace JSC {
 
     namespace DeclarationStacks {
         enum VarAttrs { IsConstant = 1, HasInitializer = 2 };
-        typedef Vector<std::pair<Identifier, unsigned> > VarStack;
+        typedef Vector<std::pair<const Identifier*, unsigned> > VarStack;
         typedef Vector<FunctionBodyNode*> FunctionStack;
     }
 
@@ -100,24 +92,23 @@ namespace JSC {
         SwitchType switchType;
     };
 
-    class ParserArenaDeletable {
-    protected:
-        ParserArenaDeletable() { }
+    class ParserArenaFreeable {
+    public:
+        // ParserArenaFreeable objects are are freed when the arena is deleted.
+        // Destructors are not called. Clients must not call delete on such objects.
+        void* operator new(size_t, JSGlobalData*);
+    };
 
+    class ParserArenaDeletable {
     public:
         virtual ~ParserArenaDeletable() { }
 
-        // Objects created with this version of new are deleted when the arena is deleted.
+        // ParserArenaDeletable objects are deleted when the arena is deleted.
+        // Clients must not call delete directly on such objects.
         void* operator new(size_t, JSGlobalData*);
-
-        // Objects created with this version of new are not deleted when the arena is deleted.
-        // Other arrangements must be made.
-        void* operator new(size_t);
-
-        void operator delete(void*);
     };
 
-    class ParserArenaRefCounted : public RefCountedCustomAllocated<ParserArenaRefCounted> {
+    class ParserArenaRefCounted : public RefCounted<ParserArenaRefCounted> {
     protected:
         ParserArenaRefCounted(JSGlobalData*);
 
@@ -128,34 +119,14 @@ namespace JSC {
         }
     };
 
-    class Node : public ParserArenaDeletable {
+    class Node : public ParserArenaFreeable {
     protected:
         Node(JSGlobalData*);
 
     public:
-        /*
-            Return value: The register holding the production's value.
-                     dst: An optional parameter specifying the most efficient
-                          destination at which to store the production's value.
-                          The callee must honor dst.
+        virtual ~Node() { }
 
-            dst provides for a crude form of copy propagation. For example,
-
-            x = 1
-
-            becomes
-            
-            load r[x], 1
-            
-            instead of 
-
-            load r0, 1
-            mov r[x], r0
-            
-            because the assignment node, "x =", passes r[x] as dst to the number
-            node, "1".
-        */
-        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* dst = 0) = 0;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* destination = 0) = 0;
 
         int lineNo() const { return m_line; }
 
@@ -164,9 +135,10 @@ namespace JSC {
     };
 
     class ExpressionNode : public Node {
-    public:
+    protected:
         ExpressionNode(JSGlobalData*, ResultType = ResultType::unknownType());
 
+    public:
         virtual bool isNumber() const { return false; }
         virtual bool isString() const { return false; }
         virtual bool isNull() const { return false; }
@@ -184,18 +156,16 @@ namespace JSC {
 
         ResultType resultDescriptor() const { return m_resultType; }
 
-        // This needs to be in public in order to compile using GCC 3.x 
-        typedef enum { EvalOperator, FunctionCall } CallerType;
-
     private:
         ResultType m_resultType;
     };
 
     class StatementNode : public Node {
-    public:
+    protected:
         StatementNode(JSGlobalData*);
 
-        void setLoc(int line0, int line1);
+    public:
+        void setLoc(int firstLine, int lastLine);
         int firstLine() const { return lineNo(); }
         int lastLine() const { return m_lastLine; }
 
@@ -233,10 +203,10 @@ namespace JSC {
 
     class NumberNode : public ExpressionNode {
     public:
-        NumberNode(JSGlobalData*, double v);
+        NumberNode(JSGlobalData*, double value);
 
-        double value() const { return m_double; }
-        void setValue(double d) { m_double = d; }
+        double value() const { return m_value; }
+        void setValue(double value) { m_value = value; }
 
     private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
@@ -244,22 +214,23 @@ namespace JSC {
         virtual bool isNumber() const { return true; }
         virtual bool isPure(BytecodeGenerator&) const { return true; }
 
-        double m_double;
+        double m_value;
     };
 
     class StringNode : public ExpressionNode {
     public:
-        StringNode(JSGlobalData*, const Identifier& v);
+        StringNode(JSGlobalData*, const Identifier&);
 
         const Identifier& value() { return m_value; }
-        virtual bool isPure(BytecodeGenerator&) const { return true; }
 
     private:
+        virtual bool isPure(BytecodeGenerator&) const { return true; }
+
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
         
         virtual bool isString() const { return true; }
 
-        Identifier m_value;
+        const Identifier& m_value;
     };
     
     class ThrowableExpressionData {
@@ -291,6 +262,7 @@ namespace JSC {
 
     protected:
         RegisterID* emitThrowError(BytecodeGenerator&, ErrorType, const char* msg);
+        RegisterID* emitThrowError(BytecodeGenerator&, ErrorType, const char* msg, const UString&);
         RegisterID* emitThrowError(BytecodeGenerator&, ErrorType, const char* msg, const Identifier&);
 
     private:
@@ -366,8 +338,8 @@ namespace JSC {
     private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
 
-        Identifier m_pattern;
-        Identifier m_flags;
+        const Identifier& m_pattern;
+        const Identifier& m_flags;
     };
 
     class ThisNode : public ExpressionNode {
@@ -391,11 +363,11 @@ namespace JSC {
         virtual bool isLocation() const { return true; }
         virtual bool isResolveNode() const { return true; }
 
-        Identifier m_ident;
+        const Identifier& m_ident;
         int32_t m_startOffset;
     };
 
-    class ElementNode : public ParserArenaDeletable {
+    class ElementNode : public ParserArenaFreeable {
     public:
         ElementNode(JSGlobalData*, int elision, ExpressionNode*);
         ElementNode(JSGlobalData*, ElementNode*, int elision, ExpressionNode*);
@@ -428,7 +400,7 @@ namespace JSC {
         bool m_optional;
     };
 
-    class PropertyNode : public ParserArenaDeletable {
+    class PropertyNode : public ParserArenaFreeable {
     public:
         enum Type { Constant, Getter, Setter };
 
@@ -439,7 +411,7 @@ namespace JSC {
 
     private:
         friend class PropertyListNode;
-        Identifier m_name;
+        const Identifier& m_name;
         ExpressionNode* m_assign;
         Type m_type;
     };
@@ -499,7 +471,7 @@ namespace JSC {
         virtual bool isDotAccessorNode() const { return true; }
 
         ExpressionNode* m_base;
-        Identifier m_ident;
+        const Identifier& m_ident;
     };
 
     class ArgumentListNode : public Node {
@@ -514,7 +486,7 @@ namespace JSC {
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
     };
 
-    class ArgumentsNode : public ParserArenaDeletable {
+    class ArgumentsNode : public ParserArenaFreeable {
     public:
         ArgumentsNode(JSGlobalData*);
         ArgumentsNode(JSGlobalData*, ArgumentListNode*);
@@ -562,7 +534,7 @@ namespace JSC {
     private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
 
-        Identifier m_ident;
+        const Identifier& m_ident;
         ArgumentsNode* m_args;
         size_t m_index; // Used by LocalVarFunctionCallNode.
         size_t m_scopeDepth; // Used by ScopedVarFunctionCallNode and NonLocalVarFunctionCallNode
@@ -589,7 +561,7 @@ namespace JSC {
 
     protected:
         ExpressionNode* m_base;
-        const Identifier m_ident;
+        const Identifier& m_ident;
         ArgumentsNode* m_args;
     };
 
@@ -614,7 +586,7 @@ namespace JSC {
         PrePostResolveNode(JSGlobalData*, const Identifier&, unsigned divot, unsigned startOffset, unsigned endOffset);
 
     protected:
-        const Identifier m_ident;
+        const Identifier& m_ident;
     };
 
     class PostfixResolveNode : public PrePostResolveNode {
@@ -647,7 +619,7 @@ namespace JSC {
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
 
         ExpressionNode* m_base;
-        Identifier m_ident;
+        const Identifier& m_ident;
         Operator m_operator;
     };
 
@@ -669,7 +641,7 @@ namespace JSC {
     private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
 
-        Identifier m_ident;
+        const Identifier& m_ident;
     };
 
     class DeleteBracketNode : public ExpressionNode, public ThrowableExpressionData {
@@ -691,7 +663,7 @@ namespace JSC {
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
 
         ExpressionNode* m_base;
-        Identifier m_ident;
+        const Identifier& m_ident;
     };
 
     class DeleteValueNode : public ExpressionNode {
@@ -723,7 +695,7 @@ namespace JSC {
     private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
 
-        Identifier m_ident;
+        const Identifier& m_ident;
     };
 
     class TypeOfValueNode : public ExpressionNode {
@@ -766,7 +738,7 @@ namespace JSC {
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
 
         ExpressionNode* m_base;
-        Identifier m_ident;
+        const Identifier& m_ident;
         Operator m_operator;
     };
 
@@ -825,7 +797,7 @@ namespace JSC {
         BinaryOpNode(JSGlobalData*, ExpressionNode* expr1, ExpressionNode* expr2, OpcodeID, bool rightHasAssignments);
         BinaryOpNode(JSGlobalData*, ResultType, ExpressionNode* expr1, ExpressionNode* expr2, OpcodeID, bool rightHasAssignments);
 
-        RegisterID* emitStrcat(BytecodeGenerator& generator, RegisterID* dst, RegisterID* lhs = 0, ReadModifyResolveNode* emitExpressionInfoForMe = 0);
+        RegisterID* emitStrcat(BytecodeGenerator& generator, RegisterID* destination, RegisterID* lhs = 0, ReadModifyResolveNode* emitExpressionInfoForMe = 0);
 
     private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
@@ -1008,7 +980,7 @@ namespace JSC {
     private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
 
-        Identifier m_ident;
+        const Identifier& m_ident;
         ExpressionNode* m_right;
         size_t m_index; // Used by ReadModifyLocalVarNode.
         Operator m_operator;
@@ -1022,7 +994,7 @@ namespace JSC {
     private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
 
-        Identifier m_ident;
+        const Identifier& m_ident;
         ExpressionNode* m_right;
         size_t m_index; // Used by ReadModifyLocalVarNode.
         bool m_rightHasAssignments;
@@ -1065,7 +1037,7 @@ namespace JSC {
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
 
         ExpressionNode* m_base;
-        Identifier m_ident;
+        const Identifier& m_ident;
         ExpressionNode* m_right;
         bool m_rightHasAssignments;
     };
@@ -1078,7 +1050,7 @@ namespace JSC {
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
 
         ExpressionNode* m_base;
-        Identifier m_ident;
+        const Identifier& m_ident;
         ExpressionNode* m_right;
         Operator m_operator : 31;
         bool m_rightHasAssignments : 1;
@@ -1122,7 +1094,7 @@ namespace JSC {
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
         virtual RegisterID* emitCodeSingle(BytecodeGenerator&);
 
-        Identifier m_ident;
+        const Identifier& m_ident;
 
     public:
         ConstDeclNode* m_next;
@@ -1141,36 +1113,33 @@ namespace JSC {
         ConstDeclNode* m_next;
     };
 
-    typedef Vector<StatementNode*> StatementVector;
-
     class SourceElements : public ParserArenaDeletable {
     public:
         SourceElements(JSGlobalData*);
 
         void append(StatementNode*);
-        void releaseContentsIntoVector(StatementVector& destination)
-        {
-            ASSERT(destination.isEmpty());
-            m_statements.swap(destination);
-            destination.shrinkToFit();
-        }
+
+        StatementNode* singleStatement() const;
+        StatementNode* lastStatement() const;
+
+        void emitBytecode(BytecodeGenerator&, RegisterID* destination);
 
     private:
-        StatementVector m_statements;
+        Vector<StatementNode*> m_statements;
     };
 
     class BlockNode : public StatementNode {
     public:
-        BlockNode(JSGlobalData*, SourceElements* children);
+        BlockNode(JSGlobalData*, SourceElements* = 0);
 
-        StatementVector& children() { return m_children; }
+        StatementNode* lastStatement() const;
 
     private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
 
         virtual bool isBlock() const { return true; }
 
-        StatementVector m_children;
+        SourceElements* m_statements;
     };
 
     class EmptyStatementNode : public StatementNode {
@@ -1280,7 +1249,7 @@ namespace JSC {
     private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
 
-        Identifier m_ident;
+        const Identifier& m_ident;
         ExpressionNode* m_init;
         ExpressionNode* m_lexpr;
         ExpressionNode* m_expr;
@@ -1296,7 +1265,7 @@ namespace JSC {
     private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
 
-        Identifier m_ident;
+        const Identifier& m_ident;
     };
 
     class BreakNode : public StatementNode, public ThrowableExpressionData {
@@ -1307,7 +1276,7 @@ namespace JSC {
     private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
 
-        Identifier m_ident;
+        const Identifier& m_ident;
     };
 
     class ReturnNode : public StatementNode, public ThrowableExpressionData {
@@ -1342,7 +1311,7 @@ namespace JSC {
     private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
 
-        Identifier m_name;
+        const Identifier& m_name;
         StatementNode* m_statement;
     };
 
@@ -1361,16 +1330,16 @@ namespace JSC {
         TryNode(JSGlobalData*, StatementNode* tryBlock, const Identifier& exceptionIdent, bool catchHasEval, StatementNode* catchBlock, StatementNode* finallyBlock);
 
     private:
-        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* dst = 0);
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
 
         StatementNode* m_tryBlock;
-        Identifier m_exceptionIdent;
+        const Identifier& m_exceptionIdent;
         StatementNode* m_catchBlock;
         StatementNode* m_finallyBlock;
         bool m_catchHasEval;
     };
 
-    class ParameterNode : public ParserArenaDeletable {
+    class ParameterNode : public ParserArenaFreeable {
     public:
         ParameterNode(JSGlobalData*, const Identifier&);
         ParameterNode(JSGlobalData*, ParameterNode*, const Identifier&);
@@ -1379,7 +1348,7 @@ namespace JSC {
         ParameterNode* nextParam() const { return m_next; }
 
     private:
-        Identifier m_ident;
+        const Identifier& m_ident;
         ParameterNode* m_next;
     };
 
@@ -1393,7 +1362,7 @@ namespace JSC {
         VarStack m_varStack;
         FunctionStack m_functionStack;
         int m_numConstants;
-        StatementVector m_children;
+        SourceElements* m_statements;
     };
 
     class ScopeNode : public StatementNode, public ParserArenaRefCounted {
@@ -1403,6 +1372,8 @@ namespace JSC {
 
         ScopeNode(JSGlobalData*);
         ScopeNode(JSGlobalData*, const SourceCode&, SourceElements*, VarStack*, FunctionStack*, CodeFeatures, int numConstants);
+
+        using ParserArenaRefCounted::operator new;
 
         void adoptData(std::auto_ptr<ScopeNodeData> data)
         {
@@ -1429,8 +1400,6 @@ namespace JSC {
         VarStack& varStack() { ASSERT(m_data); return m_data->m_varStack; }
         FunctionStack& functionStack() { ASSERT(m_data); return m_data->m_functionStack; }
 
-        StatementVector& children() { ASSERT(m_data); return m_data->m_children; }
-
         int neededConstants()
         {
             ASSERT(m_data);
@@ -1438,6 +1407,10 @@ namespace JSC {
             // because of the various uses of jsUndefined() and jsNull().
             return m_data->m_numConstants + 2;
         }
+
+        StatementNode* singleStatement() const;
+
+        void emitStatementsBytecode(BytecodeGenerator&, RegisterID* destination);
 
     protected:
         void setSource(const SourceCode& source) { m_source = source; }
@@ -1487,7 +1460,7 @@ namespace JSC {
         
         const Identifier& ident() { return m_ident; }
 
-        void reparseDataIfNecessary(ScopeChainNode* scopeChainNode);
+        void reparseDataIfNecessary(ScopeChainNode*);
 
     private:
         FunctionBodyNode(JSGlobalData*);
@@ -1523,20 +1496,20 @@ namespace JSC {
         RefPtr<FunctionBodyNode> m_body;
     };
 
-    class CaseClauseNode : public ParserArenaDeletable {
+    class CaseClauseNode : public ParserArenaFreeable {
     public:
-        CaseClauseNode(JSGlobalData*, ExpressionNode*);
-        CaseClauseNode(JSGlobalData*, ExpressionNode*, SourceElements*);
+        CaseClauseNode(JSGlobalData*, ExpressionNode*, SourceElements* = 0);
 
         ExpressionNode* expr() const { return m_expr; }
-        StatementVector& children() { return m_children; }
+
+        void emitBytecode(BytecodeGenerator&, RegisterID* destination);
 
     private:
         ExpressionNode* m_expr;
-        StatementVector m_children;
+        SourceElements* m_statements;
     };
 
-    class ClauseListNode : public ParserArenaDeletable {
+    class ClauseListNode : public ParserArenaFreeable {
     public:
         ClauseListNode(JSGlobalData*, CaseClauseNode*);
         ClauseListNode(JSGlobalData*, ClauseListNode*, CaseClauseNode*);
@@ -1549,11 +1522,11 @@ namespace JSC {
         ClauseListNode* m_next;
     };
 
-    class CaseBlockNode : public ParserArenaDeletable {
+    class CaseBlockNode : public ParserArenaFreeable {
     public:
         CaseBlockNode(JSGlobalData*, ClauseListNode* list1, CaseClauseNode* defaultClause, ClauseListNode* list2);
 
-        RegisterID* emitBytecodeForBlock(BytecodeGenerator&, RegisterID* input, RegisterID* dst = 0);
+        RegisterID* emitBytecodeForBlock(BytecodeGenerator&, RegisterID* input, RegisterID* destination);
 
     private:
         SwitchInfo::SwitchType tryOptimizedSwitch(Vector<ExpressionNode*, 8>& literalVector, int32_t& min_num, int32_t& max_num);
