@@ -1,3 +1,15 @@
+2009-08-20  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/7159016> Popup menus don't disappear when you click outside the window.
+        
+        Revert r47535 which introduced this.
+        
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenu::show):
+        (WebCore::PopupWndProc):
+
 2009-08-20  David Levin  <levin@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
