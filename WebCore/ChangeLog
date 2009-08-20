@@ -1,5 +1,14 @@
 2009-08-20  Dan Bernstein  <mitz@apple.com>
 
+        Windows build fix after the last change
+
+        * platform/graphics/win/GraphicsContextCGWin.cpp:
+        (WebCore::GraphicsContext::GraphicsContext):
+        (WebCore::GraphicsContext::releaseWindowsContext):
+        (WebCore::GraphicsContext::drawWindowsBitmap):
+
+2009-08-20  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Geoffrey Garen.
 
         Replace many manually-released CFTypeRefs with RetainPtrs
