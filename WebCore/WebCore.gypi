@@ -3534,7 +3534,7 @@
             'inspector/front-end/Images/graphLabelCalloutLeft.png',
             'inspector/front-end/Images/graphLabelCalloutRight.png',
             'inspector/front-end/Images/largerResourcesButtonGlyph.png',
-            'inspector/front-end/Images/localSession.png',
+            'inspector/front-end/Images/localStorage.png',
             'inspector/front-end/Images/nodeSearchButtonGlyph.png',
             'inspector/front-end/Images/paneBottomGrow.png',
             'inspector/front-end/Images/paneBottomGrowActive.png',

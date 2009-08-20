@@ -1,3 +1,9 @@
+2009-08-20  Dmitry Titov  <dimich@chromium.org>
+
+        Another attempt to fix Chromium build.
+
+        * WebCore.gypi: now use the correct name of the image file.
+
 2009-08-20  Dan Bernstein  <mitz@apple.com>
 
         Make the Windows build even fixeder
