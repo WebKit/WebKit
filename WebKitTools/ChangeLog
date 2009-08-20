@@ -1,3 +1,11 @@
+2009-08-19  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Dan Bernstein.
+
+        Ignore some leaks that are known to originate from QTKit.
+
+        * Scripts/run-webkit-tests:
+
 2009-08-19  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

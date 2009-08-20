@@ -1174,6 +1174,12 @@ sub countAndPrintLeaks($$$)
         );
     }
 
+    if (isSnowLeopard()) {
+        push @callStacksToExclude, (
+            "QTKitMovieControllerView completeUISetup", # <rdar://problem/7155156> leak in QTKit
+        );
+    }
+
     my $leaksTool = sourceDir() . "/WebKitTools/Scripts/run-leaks";
     my $excludeString = "--exclude-callstack '" . (join "' --exclude-callstack '", @callStacksToExclude) . "'";
     $excludeString .= " --exclude-type '" . (join "' --exclude-type '", @typesToExclude) . "'" if @typesToExclude;
