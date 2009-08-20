@@ -1,3 +1,15 @@
+2009-08-20  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Output actual values of counters in showTree
+        https://bugs.webkit.org/show_bug.cgi?id=28481
+
+        No new tests because this patch just improves debugging outputs.
+
+        * rendering/CounterNode.cpp:
+        (WebCore::showTreeAndMark):
+
 2009-08-20  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by NOBODY (build fix).

@@ -167,13 +167,13 @@ static void showTreeAndMark(const CounterNode* node)
 
     for (const CounterNode* c = root; c; c = nextInPreOrder(c)) {
         if (c == node)
-            fprintf(stderr, "*");                        
+            fprintf(stderr, "*");
         for (const CounterNode* d = c; d && d != root; d = d->parent())
             fprintf(stderr, "\t");
         if (c->isReset())
-            fprintf(stderr, "reset: %d\n", c->value());
+            fprintf(stderr, "reset: %d %d\n", c->value(), c->countInParent());
         else
-            fprintf(stderr, "increment: %d\n", c->value());
+            fprintf(stderr, "increment: %d %d\n", c->value(), c->countInParent());
     }
 }
 
