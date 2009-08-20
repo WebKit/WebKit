@@ -53,7 +53,7 @@ void Parser::parse(JSGlobalData* globalData, int* errLine, UString* errMsg)
     *errMsg = 0;
 
     Lexer& lexer = *globalData->lexer;
-    lexer.setCode(*m_source, m_arena);
+    lexer.setCode(*m_source);
 
     int parseError = jscyyparse(globalData);
     bool lexError = lexer.sawError();

@@ -23,7 +23,6 @@
 #define Lexer_h
 
 #include "Lookup.h"
-#include "ParserArena.h"
 #include "SourceCode.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/SegmentedVector.h>
@@ -43,7 +42,7 @@ namespace JSC {
         static UChar convertUnicode(int c1, int c2, int c3, int c4);
 
         // Functions to set up parsing.
-        void setCode(const SourceCode&, ParserArena&);
+        void setCode(const SourceCode&);
         void setIsReparsing() { m_isReparsing = true; }
 
         // Functions for the parser itself.
@@ -79,11 +78,12 @@ namespace JSC {
         int currentOffset() const;
         const UChar* currentCharacter() const;
 
-        const Identifier* makeIdentifier(const UChar* characters, size_t length);
+        JSC::Identifier* makeIdentifier(const UChar* buffer, size_t length);
 
         bool lastTokenWasRestrKeyword() const;
 
         static const size_t initialReadBufferCapacity = 32;
+        static const size_t initialIdentifierTableCapacity = 64;
 
         int m_lineNumber;
 
@@ -107,7 +107,7 @@ namespace JSC {
         int m_next2;
         int m_next3;
         
-        IdentifierArena* m_arena;
+        WTF::SegmentedVector<JSC::Identifier, initialIdentifierTableCapacity> m_identifiers;
 
         JSGlobalData* m_globalData;
 

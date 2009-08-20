@@ -27,7 +27,6 @@
 #include "Executable.h"
 #include "JSGlobalObject.h"
 #include "Nodes.h"
-#include "ParserArena.h"
 #include "SourceProvider.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
@@ -126,10 +125,15 @@ namespace JSC {
     inline PassRefPtr<FunctionBodyNode> Parser::parseFunctionFromGlobalCode(ExecState* exec, Debugger* debugger, const SourceCode& source, int* errLine, UString* errMsg)
     {
         RefPtr<ProgramNode> program = parse<ProgramNode>(exec, debugger, source, errLine, errMsg);
+
         if (!program)
             return 0;
 
-        StatementNode* exprStatement = program->singleStatement();
+        StatementVector& children = program->children();
+        if (children.size() != 1)
+            return 0;
+
+        StatementNode* exprStatement = children[0];
         ASSERT(exprStatement);
         ASSERT(exprStatement->isExprStatement());
         if (!exprStatement || !exprStatement->isExprStatement())
@@ -141,9 +145,9 @@ namespace JSC {
         if (!funcExpr || !funcExpr->isFuncExprNode())
             return 0;
 
-        FunctionBodyNode* body = static_cast<FuncExprNode*>(funcExpr)->body();
+        RefPtr<FunctionBodyNode> body = static_cast<FuncExprNode*>(funcExpr)->body();
         ASSERT(body);
-        return body;
+        return body.release();
     }
 
     inline JSObject* EvalExecutable::parse(ExecState* exec, bool allowDebug)

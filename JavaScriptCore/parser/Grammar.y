@@ -125,12 +125,13 @@ template <typename T> inline T mergeDeclarationLists(T decls1, T decls2)
     return decls1;
 }
 
-static inline void appendToVarDeclarationList(JSGlobalData* globalData, ParserArenaData<DeclarationStacks::VarStack>*& varDecls, const Identifier& ident, unsigned attrs)
+static void appendToVarDeclarationList(JSGlobalData* globalData, ParserArenaData<DeclarationStacks::VarStack>*& varDecls, const Identifier& ident, unsigned attrs)
 {
     if (!varDecls)
         varDecls = new (globalData) ParserArenaData<DeclarationStacks::VarStack>;
 
-    varDecls->data.append(make_pair(&ident, attrs));
+    varDecls->data.append(make_pair(ident, attrs));
+
 }
 
 static inline void appendToVarDeclarationList(JSGlobalData* globalData, ParserArenaData<DeclarationStacks::VarStack>*& varDecls, ConstDeclNode* decl)
@@ -146,7 +147,7 @@ static inline void appendToVarDeclarationList(JSGlobalData* globalData, ParserAr
 %union {
     int                 intValue;
     double              doubleValue;
-    const Identifier*   ident;
+    Identifier*         ident;
 
     // expression subtrees
     ExpressionNodeInfo  expressionNode;
