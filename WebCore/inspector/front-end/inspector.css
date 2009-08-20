@@ -1622,8 +1622,12 @@ body.inactive .sidebar {
     content: url(Images/databaseTable.png);
 }
 
-.domstorage-sidebar-tree-item .icon {
-    content: url(Images/domStorage.png);
+.domstorage-sidebar-tree-item.local-storage .icon {
+    content: url(Images/localStorage.png);
+}
+
+.domstorage-sidebar-tree-item.session-storage .icon {
+    content: url(Images/sessionStorage.png);
 }
 
 .cookie-sidebar-tree-item .icon {

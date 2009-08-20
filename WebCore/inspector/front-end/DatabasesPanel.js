@@ -155,7 +155,7 @@ WebInspector.DatabasesPanel.prototype = {
     addDOMStorage: function(domStorage)
     {
         this._domStorage.push(domStorage);
-        var domStorageTreeElement = new WebInspector.DOMStorageSidebarTreeElement(domStorage);
+        var domStorageTreeElement = new WebInspector.DOMStorageSidebarTreeElement(domStorage, (domStorage.isLocalStorage ? "local-storage" : "session-storage"));
         domStorage._domStorageTreeElement = domStorageTreeElement;
         if (domStorage.isLocalStorage)
             this.localStorageListTreeElement.appendChild(domStorageTreeElement);
@@ -611,12 +611,12 @@ WebInspector.SidebarDatabaseTableTreeElement.prototype = {
 
 WebInspector.SidebarDatabaseTableTreeElement.prototype.__proto__ = WebInspector.SidebarTreeElement.prototype;
 
-WebInspector.DOMStorageSidebarTreeElement = function(domStorage)
+WebInspector.DOMStorageSidebarTreeElement = function(domStorage, className)
 {
 
     this.domStorage = domStorage;
 
-    WebInspector.SidebarTreeElement.call(this, "domstorage-sidebar-tree-item", domStorage, "", null, false);
+    WebInspector.SidebarTreeElement.call(this, "domstorage-sidebar-tree-item " + className, domStorage, "", null, false);
 
     this.refreshTitles();
 }
