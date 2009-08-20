@@ -237,7 +237,7 @@ QStringList QWebSecurityOrigin::localSchemes()
 
 void QWebSecurityOrigin::whiteListAccessFromOrigin(const QString& sourceOrigin, const QString& destinationProtocol, const QString& destinationHost, bool allowDestinationSubdomains)
 {
-    SecurityOrigin::whiteListAccessFromOrigin(sourceOrigin, destinationProtocol, destinationHost, allowDestinationSubdomains);
+    SecurityOrigin::whiteListAccessFromOrigin(*SecurityOrigin::createFromString(sourceOrigin), destinationProtocol, destinationHost, allowDestinationSubdomains);
 }
 
 void QWebSecurityOrigin::resetOriginAccessWhiteLists()
