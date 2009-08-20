@@ -1,3 +1,12 @@
+2009-08-20  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Don't leak the JSStringRef returned by AccessibilityUIElement::attributeValue.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (attributeValueCallback):
+
 2009-08-20  Ariya Hidayat  <ariya.hidayat@nokia.com>
 
         Unreviewed, build fix.

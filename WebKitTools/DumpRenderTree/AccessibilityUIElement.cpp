@@ -202,7 +202,8 @@ static JSValueRef attributeValueCallback(JSContextRef context, JSObjectRef funct
     JSStringRef attribute = NULL;
     if (argumentCount == 1)
         attribute = JSValueToStringCopy(context, arguments[0], exception);
-    JSValueRef result = JSValueMakeString(context, toAXElement(thisObject)->attributeValue(attribute));
+    JSRetainPtr<JSStringRef> attributeValue(Adopt, toAXElement(thisObject)->attributeValue(attribute));
+    JSValueRef result = JSValueMakeString(context, attributeValue.get());
     if (attribute)
         JSStringRelease(attribute);
     return result;
