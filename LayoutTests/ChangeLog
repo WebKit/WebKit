@@ -1,5 +1,18 @@
 2009-08-19  Ryosuke Niwa  <rniwa@webkit.org>
 
+        No review.
+
+        Delete files that should have been deleted in http://trac.webkit.org/changeset/47542.
+
+        * platform/mac/editing/style/remove-underline-after-paragraph-expected.checksum: Removed.
+        * platform/mac/editing/style/remove-underline-after-paragraph-expected.txt: Removed.
+        * platform/mac/editing/style/remove-underline-after-paragraph-in-bold-expected.checksum: Removed.
+        * platform/mac/editing/style/remove-underline-after-paragraph-in-bold-expected.txt: Removed.
+        * platform/qt/editing/style/remove-underline-after-paragraph-expected.txt: Removed.
+        * platform/qt/editing/style/remove-underline-after-paragraph-in-bold-expected.txt: Removed.
+
+2009-08-19  Ryosuke Niwa  <rniwa@webkit.org>
+
         Reviewed by Eric Seidel.
 
         underline tests in /editing/style/ need not to be pixel tests but need to print markup
