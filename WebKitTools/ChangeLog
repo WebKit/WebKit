@@ -1,5 +1,11 @@
 2009-08-20  Aaron Boodman  <aa@chromium.org>
 
+        One more speculative build for gtk.
+
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+
+2009-08-20  Aaron Boodman  <aa@chromium.org>
+
         Speculative build for gtk.
 
         * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
