@@ -1,3 +1,18 @@
+2009-08-20  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28497, images don't propagate overflow properly when they change
+        size on a line.
+        
+        Add a new layout test and update an existing layout test.
+
+        * fast/repaint/inline-block-resize.html: Added.
+        * platform/mac/fast/repaint/inline-block-resize-expected.checksum: Added.
+        * platform/mac/fast/repaint/inline-block-resize-expected.png: Added.
+        * platform/mac/fast/repaint/inline-block-resize-expected.txt: Added.
+        * platform/mac/fast/replaced/border-radius-clip-expected.txt:
+
 2009-08-20  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Anders Carlsson.

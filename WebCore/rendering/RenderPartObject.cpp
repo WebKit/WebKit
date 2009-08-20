@@ -350,9 +350,11 @@ void RenderPartObject::layout()
 
     calcWidth();
     calcHeight();
-    addShadowOverflow();
 
     RenderPart::layout();
+
+    m_overflow.clear();
+    addShadowOverflow();
 
     if (!widget() && frameView())
         frameView()->addWidgetToUpdate(this);

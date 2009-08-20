@@ -1,3 +1,30 @@
+2009-08-20  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28497, images and inline replaced elements don't propagate overflow properly on a line.
+
+        Added fast/repaint/inline-block-overflow.html and updated another test.
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::placeBoxesHorizontally):
+        (WebCore::InlineFlowBox::computeVerticalOverflow):
+        Make sure to still propagate the border box of the replaced element as layout overflow when overflow clip is set on the
+        replaced element.  Make sure to use the InlineBox x/y positions instead of the RenderBox x/y, since the position of the
+        RenderBox has not been updated to the new values yet.
+        
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::paint):
+        Don't use the root line box's overflow.  Use the actual line box overflow values instead.  In the case of an inline
+        with a layer, our overflow didn't propagate to the root line, so we always need to use our values.
+
+        * rendering/RenderPartObject.cpp:
+        (WebCore::RenderPartObject::layout):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::layout):
+        Make sure to clear shadow overflow when doing layout of replaced elements, so that we don't leave a stale overflow
+        value around if a box-shadow goes away.
+
 2009-08-20  Dmitry Titov  <dimich@chromium.org>
 
         Another attempt to fix Chromium build.

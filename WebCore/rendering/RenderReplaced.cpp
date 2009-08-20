@@ -72,9 +72,11 @@ void RenderReplaced::layout()
     LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
     
     setHeight(minimumReplacedHeight());
-    
+
     calcWidth();
     calcHeight();
+
+    m_overflow.clear();
     addShadowOverflow();
     
     repainter.repaintAfterLayout();    
