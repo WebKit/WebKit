@@ -1176,6 +1176,7 @@ sub countAndPrintLeaks($$$)
 
     if (isSnowLeopard()) {
         push @callStacksToExclude, (
+            "readMakerNoteProps", # <rdar://problem/7156432> leak in ImageIO
             "QTKitMovieControllerView completeUISetup", # <rdar://problem/7155156> leak in QTKit
         );
     }
