@@ -1,3 +1,31 @@
+2009-08-20  Ariya Hidayat  <ariya.hidayat@nokia.com>
+
+        Rubber-stamped by Simon Hausmann.
+
+        [Qt] Update the (outdated) metrics for css1 padding and margin tests. All tests pass.
+
+        * platform/qt/Skipped: Excluded passed tests.
+        * platform/qt/css1/box_properties/margin-expected.txt:
+        * platform/qt/css1/box_properties/margin_bottom-expected.txt:
+        * platform/qt/css1/box_properties/margin_bottom_inline-expected.txt:
+        * platform/qt/css1/box_properties/margin_inline-expected.txt:
+        * platform/qt/css1/box_properties/margin_left-expected.txt:
+        * platform/qt/css1/box_properties/margin_left_inline-expected.txt:
+        * platform/qt/css1/box_properties/margin_right-expected.txt:
+        * platform/qt/css1/box_properties/margin_right_inline-expected.txt:
+        * platform/qt/css1/box_properties/margin_top-expected.txt:
+        * platform/qt/css1/box_properties/margin_top_inline-expected.txt:
+        * platform/qt/css1/box_properties/padding-expected.txt:
+        * platform/qt/css1/box_properties/padding_bottom-expected.txt:
+        * platform/qt/css1/box_properties/padding_bottom_inline-expected.txt:
+        * platform/qt/css1/box_properties/padding_inline-expected.txt:
+        * platform/qt/css1/box_properties/padding_left-expected.txt:
+        * platform/qt/css1/box_properties/padding_left_inline-expected.txt:
+        * platform/qt/css1/box_properties/padding_right-expected.txt:
+        * platform/qt/css1/box_properties/padding_right_inline-expected.txt:
+        * platform/qt/css1/box_properties/padding_top-expected.txt:
+        * platform/qt/css1/box_properties/padding_top_inline-expected.txt:
+
 2009-08-20  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

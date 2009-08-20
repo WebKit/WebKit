@@ -1,138 +1,137 @@
-layer at (0,0) size 800x1698
+layer at (0,0) size 800x1559
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x1698
-  RenderBlock {HTML} at (0,0) size 800x1698
-    RenderBody {BODY} at (8,8) size 784x1682 [bgcolor=#CCCCCC]
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 354x19
-          text run at (0,0) width 354: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,33) size 784x152
-        RenderText {#text} at (0,0) size 319x152
-          text run at (0,0) width 295: ".zero {background-color: silver; margin-top: 0;}"
-          text run at (295,0) width 0: " "
-          text run at (0,19) width 313: ".one {margin-top: 0.5in; background-color: aqua;}"
-          text run at (313,19) width 0: " "
-          text run at (0,38) width 311: ".two {margin-top: 25px; background-color: aqua;}"
-          text run at (311,38) width 0: " "
-          text run at (0,57) width 319: ".three {margin-top: 5em; background-color: aqua;}"
-          text run at (319,57) width 0: " "
-          text run at (0,76) width 311: ".four {margin-top: 25%; background-color: aqua;}"
-          text run at (311,76) width 0: " "
-          text run at (0,95) width 152: ".five {margin-top: 25px;}"
-          text run at (152,95) width 0: " "
-          text run at (0,114) width 311: ".six {margin-top: -10px; background-color: aqua;}"
-          text run at (311,114) width 0: " "
-          text run at (0,133) width 162: "P, UL {margin-bottom: 0;}"
-          text run at (162,133) width 0: " "
-      RenderBlock {HR} at (0,199) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,208) size 784x19 [bgcolor=#C0C0C0]
-        RenderText {#text} at (0,0) size 209x19
-          text run at (0,0) width 209: "This element has a class of zero."
-      RenderBlock {P} at (0,227) size 784x19 [bgcolor=#C0C0C0]
-        RenderText {#text} at (0,0) size 239x19
-          text run at (0,0) width 239: "This element also has a class of zero."
-      RenderBlock {P} at (0,294) size 784x38 [bgcolor=#00FFFF]
-        RenderText {#text} at (0,0) size 759x38
-          text run at (0,0) width 759: "This element should have a top margin of half an inch, which will require extra text in order to make sure that the margin"
-          text run at (0,19) width 156: "isn't applied to each line."
-      RenderBlock {P} at (0,357) size 784x38 [bgcolor=#00FFFF]
-        RenderText {#text} at (0,0) size 771x38
-          text run at (0,0) width 771: "This element should have a top margin of 25 pixels, which will require extra text in order to make sure that the margin isn't"
-          text run at (0,19) width 127: "applied to each line."
-      RenderBlock {P} at (0,465) size 784x38 [bgcolor=#00FFFF]
-        RenderText {#text} at (0,0) size 747x38
-          text run at (0,0) width 747: "This element should have a top margin of 5 em, which will require extra text in order to make sure that the margin isn't"
-          text run at (0,19) width 127: "applied to each line."
-      RenderBlock {P} at (0,699) size 784x38 [bgcolor=#00FFFF]
-        RenderText {#text} at (0,0) size 776x38
-          text run at (0,0) width 726: "This element should have a top margin of 25%, which is calculated with respect to the width of the parent element. "
-          text run at (726,0) width 50: "This will"
-          text run at (0,19) width 208: "require extra text in order to test."
-      RenderBlock {UL} at (0,762) size 784x101 [bgcolor=#00FFFF]
-        RenderListItem {LI} at (40,0) size 744x19
-          RenderListMarker at (-17,0) size 7x19: bullet
-          RenderText {#text} at (0,0) size 399x19
-            text run at (0,0) width 399: "This list has a margin-top of 25px, and a light blue background."
-        RenderListItem {LI} at (40,19) size 744x19
-          RenderListMarker at (-17,0) size 7x19: bullet
-          RenderText {#text} at (0,0) size 267x19
-            text run at (0,0) width 267: "Therefore, it ought to have such a margin."
-        RenderListItem {LI} at (40,63) size 744x19
-          RenderListMarker at (-17,0) size 7x19: bullet
-          RenderText {#text} at (0,0) size 567x19
-            text run at (0,0) width 567: "This list item has a top margin of 25px, which should cause it to be offset in some fashion."
-        RenderListItem {LI} at (40,82) size 744x19
-          RenderListMarker at (-17,0) size 7x19: bullet
-          RenderText {#text} at (0,0) size 295x19
-            text run at (0,0) width 295: "This list item has no special styles applied to it."
-      RenderBlock {P} at (0,863) size 784x19 [bgcolor=#C0C0C0]
-        RenderText {#text} at (0,0) size 209x19
-          text run at (0,0) width 209: "This element has a class of zero."
-      RenderBlock {P} at (0,872) size 784x57 [bgcolor=#00FFFF]
-        RenderText {#text} at (0,0) size 767x57
-          text run at (0,0) width 767: "This element has a top margin of -10px, which should cause it to be shifted \"upward\" on the page, and no bottom margin."
-          text run at (0,19) width 491: "No other styles have been applied to it besides a light blue background color. "
-          text run at (491,19) width 274: "In all other respects, the element should be"
-          text run at (0,38) width 48: "normal."
-      RenderTable {TABLE} at (0,929) size 784x753 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 782x751
-          RenderTableRow {TR} at (0,0) size 782x28
-            RenderTableCell {TD} at (0,0) size 782x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 159x20
-                RenderText {#text} at (4,4) size 159x20
-                  text run at (4,4) width 159: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,28) size 782x723
-            RenderTableCell {TD} at (0,376) size 12x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 4x19
+layer at (0,0) size 800x1559
+  RenderBlock {HTML} at (0,0) size 800x1559
+    RenderBody {BODY} at (8,8) size 784x1543 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 784x17
+        RenderText {#text} at (0,0) size 326x17
+          text run at (0,0) width 326: "The style declarations which apply to the text below are:"
+      RenderBlock {PRE} at (0,30) size 784x136
+        RenderText {#text} at (0,0) size 286x136
+          text run at (0,0) width 267: ".zero {background-color: silver; margin-top: 0;}"
+          text run at (267,0) width 0: " "
+          text run at (0,17) width 281: ".one {margin-top: 0.5in; background-color: aqua;}"
+          text run at (281,17) width 0: " "
+          text run at (0,34) width 280: ".two {margin-top: 25px; background-color: aqua;}"
+          text run at (280,34) width 0: " "
+          text run at (0,51) width 286: ".three {margin-top: 5em; background-color: aqua;}"
+          text run at (286,51) width 0: " "
+          text run at (0,68) width 280: ".four {margin-top: 25%; background-color: aqua;}"
+          text run at (280,68) width 0: " "
+          text run at (0,85) width 138: ".five {margin-top: 25px;}"
+          text run at (138,85) width 0: " "
+          text run at (0,102) width 281: ".six {margin-top: -10px; background-color: aqua;}"
+          text run at (281,102) width 0: " "
+          text run at (0,119) width 147: "P, UL {margin-bottom: 0;}"
+          text run at (147,119) width 0: " "
+      RenderBlock {HR} at (0,179) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,187) size 784x17 [bgcolor=#C0C0C0]
+        RenderText {#text} at (0,0) size 194x17
+          text run at (0,0) width 194: "This element has a class of zero."
+      RenderBlock {P} at (0,204) size 784x17 [bgcolor=#C0C0C0]
+        RenderText {#text} at (0,0) size 222x17
+          text run at (0,0) width 222: "This element also has a class of zero."
+      RenderBlock {P} at (0,269) size 784x34 [bgcolor=#00FFFF]
+        RenderText {#text} at (0,0) size 781x34
+          text run at (0,0) width 781: "This element should have a top margin of half an inch, which will require extra text in order to make sure that the margin isn't applied to"
+          text run at (0,17) width 56: "each line."
+      RenderBlock {P} at (0,328) size 784x34 [bgcolor=#00FFFF]
+        RenderText {#text} at (0,0) size 766x34
+          text run at (0,0) width 766: "This element should have a top margin of 25 pixels, which will require extra text in order to make sure that the margin isn't applied to"
+          text run at (0,17) width 56: "each line."
+      RenderBlock {P} at (0,427) size 784x34 [bgcolor=#00FFFF]
+        RenderText {#text} at (0,0) size 775x34
+          text run at (0,0) width 775: "This element should have a top margin of 5 em, which will require extra text in order to make sure that the margin isn't applied to each"
+          text run at (0,17) width 24: "line."
+      RenderBlock {P} at (0,657) size 784x34 [bgcolor=#00FFFF]
+        RenderText {#text} at (0,0) size 758x34
+          text run at (0,0) width 668: "This element should have a top margin of 25%, which is calculated with respect to the width of the parent element. "
+          text run at (668,0) width 90: "This will require"
+          text run at (0,17) width 147: "extra text in order to test."
+      RenderBlock {UL} at (0,716) size 784x93 [bgcolor=#00FFFF]
+        RenderListItem {LI} at (40,0) size 744x17
+          RenderListMarker at (-16,0) size 6x17: bullet
+          RenderText {#text} at (0,0) size 365x17
+            text run at (0,0) width 365: "This list has a margin-top of 25px, and a light blue background."
+        RenderListItem {LI} at (40,17) size 744x17
+          RenderListMarker at (-16,0) size 6x17: bullet
+          RenderText {#text} at (0,0) size 243x17
+            text run at (0,0) width 243: "Therefore, it ought to have such a margin."
+        RenderListItem {LI} at (40,59) size 744x17
+          RenderListMarker at (-16,0) size 6x17: bullet
+          RenderText {#text} at (0,0) size 526x17
+            text run at (0,0) width 526: "This list item has a top margin of 25px, which should cause it to be offset in some fashion."
+        RenderListItem {LI} at (40,76) size 744x17
+          RenderListMarker at (-16,0) size 6x17: bullet
+          RenderText {#text} at (0,0) size 277x17
+            text run at (0,0) width 277: "This list item has no special styles applied to it."
+      RenderBlock {P} at (0,809) size 784x17 [bgcolor=#C0C0C0]
+        RenderText {#text} at (0,0) size 194x17
+          text run at (0,0) width 194: "This element has a class of zero."
+      RenderBlock {P} at (0,816) size 784x34 [bgcolor=#00FFFF]
+        RenderText {#text} at (0,0) size 754x34
+          text run at (0,0) width 705: "This element has a top margin of -10px, which should cause it to be shifted \"upward\" on the page, and no bottom margin. "
+          text run at (705,0) width 49: "No other"
+          text run at (0,17) width 397: "styles have been applied to it besides a light blue background color. "
+          text run at (397,17) width 298: "In all other respects, the element should be normal."
+      RenderTable {TABLE} at (0,850) size 784x693 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x691
+          RenderTableRow {TR} at (0,0) size 782x26
+            RenderTableCell {TD} at (0,0) size 782x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 144x17
+                RenderText {#text} at (4,4) size 144x17
+                  text run at (4,4) width 144: "TABLE Testing Section"
+          RenderTableRow {TR} at (0,26) size 782x665
+            RenderTableCell {TD} at (0,346) size 12x25 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x17
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,28) size 770x723 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock {P} at (4,4) size 762x19 [bgcolor=#C0C0C0]
-                RenderText {#text} at (0,0) size 209x19
-                  text run at (0,0) width 209: "This element has a class of zero."
-              RenderBlock {P} at (4,23) size 762x19 [bgcolor=#C0C0C0]
-                RenderText {#text} at (0,0) size 239x19
-                  text run at (0,0) width 239: "This element also has a class of zero."
-              RenderBlock {P} at (4,90) size 762x38 [bgcolor=#00FFFF]
-                RenderText {#text} at (0,0) size 759x38
-                  text run at (0,0) width 759: "This element should have a top margin of half an inch, which will require extra text in order to make sure that the margin"
-                  text run at (0,19) width 156: "isn't applied to each line."
-              RenderBlock {P} at (4,153) size 762x38 [bgcolor=#00FFFF]
-                RenderText {#text} at (0,0) size 742x38
-                  text run at (0,0) width 742: "This element should have a top margin of 25 pixels, which will require extra text in order to make sure that the margin"
-                  text run at (0,19) width 156: "isn't applied to each line."
-              RenderBlock {P} at (4,261) size 762x38 [bgcolor=#00FFFF]
-                RenderText {#text} at (0,0) size 747x38
-                  text run at (0,0) width 747: "This element should have a top margin of 5 em, which will require extra text in order to make sure that the margin isn't"
-                  text run at (0,19) width 127: "applied to each line."
-              RenderBlock {P} at (4,489) size 762x38 [bgcolor=#00FFFF]
-                RenderText {#text} at (0,0) size 753x38
-                  text run at (0,0) width 726: "This element should have a top margin of 25%, which is calculated with respect to the width of the parent element. "
-                  text run at (726,0) width 27: "This"
-                  text run at (0,19) width 231: "will require extra text in order to test."
-              RenderBlock {UL} at (4,552) size 762x101 [bgcolor=#00FFFF]
-                RenderListItem {LI} at (40,0) size 722x19
-                  RenderListMarker at (-17,0) size 7x19: bullet
-                  RenderText {#text} at (0,0) size 399x19
-                    text run at (0,0) width 399: "This list has a margin-top of 25px, and a light blue background."
-                RenderListItem {LI} at (40,19) size 722x19
-                  RenderListMarker at (-17,0) size 7x19: bullet
-                  RenderText {#text} at (0,0) size 267x19
-                    text run at (0,0) width 267: "Therefore, it ought to have such a margin."
-                RenderListItem {LI} at (40,63) size 722x19
-                  RenderListMarker at (-17,0) size 7x19: bullet
-                  RenderText {#text} at (0,0) size 567x19
-                    text run at (0,0) width 567: "This list item has a top margin of 25px, which should cause it to be offset in some fashion."
-                RenderListItem {LI} at (40,82) size 722x19
-                  RenderListMarker at (-17,0) size 7x19: bullet
-                  RenderText {#text} at (0,0) size 295x19
-                    text run at (0,0) width 295: "This list item has no special styles applied to it."
-              RenderBlock {P} at (4,653) size 762x19 [bgcolor=#C0C0C0]
-                RenderText {#text} at (0,0) size 209x19
-                  text run at (0,0) width 209: "This element has a class of zero."
-              RenderBlock {P} at (4,662) size 762x57 [bgcolor=#00FFFF]
-                RenderText {#text} at (0,0) size 751x57
-                  text run at (0,0) width 715: "This element has a top margin of -10px, which should cause it to be shifted \"upward\" on the page, and no bottom"
-                  text run at (0,19) width 52: "margin. "
-                  text run at (52,19) width 491: "No other styles have been applied to it besides a light blue background color. "
-                  text run at (543,19) width 208: "In all other respects, the element"
-                  text run at (0,38) width 114: "should be normal."
+            RenderTableCell {TD} at (12,26) size 770x665 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 762x17 [bgcolor=#C0C0C0]
+                RenderText {#text} at (0,0) size 194x17
+                  text run at (0,0) width 194: "This element has a class of zero."
+              RenderBlock {P} at (4,21) size 762x17 [bgcolor=#C0C0C0]
+                RenderText {#text} at (0,0) size 222x17
+                  text run at (0,0) width 222: "This element also has a class of zero."
+              RenderBlock {P} at (4,86) size 762x34 [bgcolor=#00FFFF]
+                RenderText {#text} at (0,0) size 721x34
+                  text run at (0,0) width 721: "This element should have a top margin of half an inch, which will require extra text in order to make sure that the margin isn't"
+                  text run at (0,17) width 116: "applied to each line."
+              RenderBlock {P} at (4,145) size 762x34 [bgcolor=#00FFFF]
+                RenderText {#text} at (0,0) size 751x34
+                  text run at (0,0) width 751: "This element should have a top margin of 25 pixels, which will require extra text in order to make sure that the margin isn't applied"
+                  text run at (0,17) width 71: "to each line."
+              RenderBlock {P} at (4,244) size 762x34 [bgcolor=#00FFFF]
+                RenderText {#text} at (0,0) size 743x34
+                  text run at (0,0) width 743: "This element should have a top margin of 5 em, which will require extra text in order to make sure that the margin isn't applied to"
+                  text run at (0,17) width 56: "each line."
+              RenderBlock {P} at (4,468) size 762x34 [bgcolor=#00FFFF]
+                RenderText {#text} at (0,0) size 758x34
+                  text run at (0,0) width 668: "This element should have a top margin of 25%, which is calculated with respect to the width of the parent element. "
+                  text run at (668,0) width 90: "This will require"
+                  text run at (0,17) width 147: "extra text in order to test."
+              RenderBlock {UL} at (4,527) size 762x93 [bgcolor=#00FFFF]
+                RenderListItem {LI} at (40,0) size 722x17
+                  RenderListMarker at (-16,0) size 6x17: bullet
+                  RenderText {#text} at (0,0) size 365x17
+                    text run at (0,0) width 365: "This list has a margin-top of 25px, and a light blue background."
+                RenderListItem {LI} at (40,17) size 722x17
+                  RenderListMarker at (-16,0) size 6x17: bullet
+                  RenderText {#text} at (0,0) size 243x17
+                    text run at (0,0) width 243: "Therefore, it ought to have such a margin."
+                RenderListItem {LI} at (40,59) size 722x17
+                  RenderListMarker at (-16,0) size 6x17: bullet
+                  RenderText {#text} at (0,0) size 526x17
+                    text run at (0,0) width 526: "This list item has a top margin of 25px, which should cause it to be offset in some fashion."
+                RenderListItem {LI} at (40,76) size 722x17
+                  RenderListMarker at (-16,0) size 6x17: bullet
+                  RenderText {#text} at (0,0) size 277x17
+                    text run at (0,0) width 277: "This list item has no special styles applied to it."
+              RenderBlock {P} at (4,620) size 762x17 [bgcolor=#C0C0C0]
+                RenderText {#text} at (0,0) size 194x17
+                  text run at (0,0) width 194: "This element has a class of zero."
+              RenderBlock {P} at (4,627) size 762x34 [bgcolor=#00FFFF]
+                RenderText {#text} at (0,0) size 754x34
+                  text run at (0,0) width 705: "This element has a top margin of -10px, which should cause it to be shifted \"upward\" on the page, and no bottom margin. "
+                  text run at (705,0) width 49: "No other"
+                  text run at (0,17) width 397: "styles have been applied to it besides a light blue background color. "
+                  text run at (397,17) width 298: "In all other respects, the element should be normal."
