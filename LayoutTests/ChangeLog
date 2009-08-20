@@ -1,3 +1,17 @@
+2009-08-20  Ariya Hidayat  <ariya.hidayat@nokia.com>
+
+        Rubber-stamped by Simon Hausmann.
+
+        [Qt] Update the metrics after recent refactoring. All tests pass.
+
+        * platform/qt/fast/box-shadow/basic-shadows-expected.txt:
+        * platform/qt/fast/box-shadow/transform-fringing-expected.txt:
+        * platform/qt/fast/dynamic/genContentDestroyChildren-expected.txt:
+        * platform/qt/fast/dynamic/window-resize-scrollbars-test-expected.txt:
+        * platform/qt/fast/images/image-in-map-expected.txt:
+        * platform/qt/tables/mozilla/bugs/adforce_imgis_com-expected.txt:
+        * platform/qt/tables/mozilla_expected_failures/bugs/bug23847-expected.txt:
+
 2009-08-19  Aaron Boodman  <aa@chromium.org>
 
         Reviewed by David Levin.
