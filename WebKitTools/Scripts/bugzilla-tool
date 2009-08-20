@@ -30,7 +30,6 @@
 #
 # A tool for automating dealing with bugzilla, posting patches, committing patches, etc.
 
-import fileinput # inplace file editing for set_reviewer_in_changelog
 import os
 import re
 import StringIO # for add_patch_to_bug file wrappers
@@ -41,6 +40,7 @@ from optparse import OptionParser, IndentedHelpFormatter, SUPPRESS_USAGE, make_o
 
 # Import WebKit-specific modules.
 from modules.bugzilla import Bugzilla
+from modules.changelogs import ChangeLog, view_source_url
 from modules.logging import error, log
 from modules.scm import CommitMessage, detect_scm_system, ScriptError
 from modules.buildbot import BuildBot
@@ -57,41 +57,6 @@ def pluralize(noun, count):
         noun = plural(noun)
     return "%d %s" % (count, noun)
 
-def view_source_url(revision_number):
-     return "http://trac.webkit.org/changeset/%s" % revision_number
-
-# These could be put in some sort of changelogs.py.
-def latest_changelog_entry(changelog_path):
-    # e.g. 2009-06-03  Eric Seidel  <eric@webkit.org>
-    changelog_date_line_regexp = re.compile('^(\d{4}-\d{2}-\d{2})' # Consume the date.
-                                  + '\s+(.+)\s+' # Consume the name.
-                                  + '<([^<>]+)>$') # And finally the email address.
-    
-    entry_lines = []
-    changelog = open(changelog_path)
-    try:
-        log("Parsing ChangeLog: " + changelog_path)
-        # The first line should be a date line.
-        first_line = changelog.readline()
-        if not changelog_date_line_regexp.match(first_line):
-            return None
-        entry_lines.append(first_line)
-        
-        for line in changelog:
-            # If we've hit the next entry, return.
-            if changelog_date_line_regexp.match(line):
-                return ''.join(entry_lines)
-            entry_lines.append(line)
-    finally:
-        changelog.close()
-    # We never found a date line!
-    return None
-
-def set_reviewer_in_changelog(changelog_path, reviewer):
-    # inplace=1 creates a backup file and re-directs stdout to the file
-    for line in fileinput.FileInput(changelog_path, inplace=1):
-        print line.replace("NOBODY (OOPS!)", reviewer.encode("utf-8")), # Trailing comma suppresses printing newline
-
 def modified_changelogs(scm):
     changelog_paths = []
     paths = scm.changed_files()
@@ -100,8 +65,7 @@ def modified_changelogs(scm):
             changelog_paths.append(path)
     return changelog_paths
 
-def parse_bug_id(commit_message):
-    message = commit_message.message()
+def parse_bug_id(message):
     match = re.search("http\://webkit\.org/b/(?P<bug_id>\d+)", message)
     if match:
         return match.group('bug_id')
@@ -118,12 +82,13 @@ def commit_message_for_this_commit(scm):
                           "http://webkit.org/coding/contributing.html")
 
     changelog_messages = []
-    for path in changelog_paths:
-        changelog_entry = latest_changelog_entry(path)
+    for changelog_path in changelog_paths:
+        log("Parsing ChangeLog: %s" % changelog_path)
+        changelog_entry = ChangeLog(changelog_path).latest_entry()
         if not changelog_entry:
-            error("Failed to parse ChangeLog: " + os.path.abspath(path))
+            error("Failed to parse ChangeLog: " + os.path.abspath(changelog_path))
         changelog_messages.append(changelog_entry)
-    
+
     # FIXME: We should sort and label the ChangeLog messages like commit-log-editor does.
     return CommitMessage(''.join(changelog_messages).splitlines())
 
@@ -187,10 +152,9 @@ class ApplyPatchesFromBug(Command):
     def __init__(self):
         options = [
             make_option("--no-update", action="store_false", dest="update", default=True, help="Don't update the working directory before applying patches"),
-            make_option("--force-clean", action="store_true", dest="force_clean", default=False, help="Clean working directory before applying patches (removes local changes and commits)"),
-            make_option("--no-clean", action="store_false", dest="clean", default=True, help="Don't check if the working directory is clean before applying patches"),
             make_option("--local-commit", action="store_true", dest="local_commit", default=False, help="Make a local commit for each applied patch"),
         ]
+        options += WebKitLandingScripts.cleaning_options()
         Command.__init__(self, 'Applies all patches on a bug to the local working directory without committing.', 'BUGID', options=options)
 
     @staticmethod
@@ -334,8 +298,8 @@ class LandAndUpdateBug(Command):
             return
 
         changelogs = modified_changelogs(tool.scm())
-        for changelog in changelogs:
-            set_reviewer_in_changelog(changelog, reviewer)
+        for changelog_path in changelogs:
+            ChangeLog(changelog_path).set_reviewer(reviewer)
 
     def execute(self, options, args, tool):
         bug_id = args[0] if len(args) else None
@@ -499,7 +463,7 @@ class PostCommitsAsPatchesToBug(Command):
             # the ChangeLogs should have the bug id, but the local commit message might not.
             commit_message = tool.scm().commit_message_for_local_commit(commit_id)
 
-            bug_id = options.bug_id or parse_bug_id(commit_message)
+            bug_id = options.bug_id or parse_bug_id(commit_message.message())
             if not bug_id:
                 log("Skipping %s: No bug id found in commit log or specified with --bug-id." % commit_id)
                 continue
