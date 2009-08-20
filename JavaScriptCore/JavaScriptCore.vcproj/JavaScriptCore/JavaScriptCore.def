@@ -148,6 +148,7 @@ EXPORTS
     ?hasInstance@JSObject@JSC@@UAE_NPAVExecState@2@VJSValue@2@1@Z
     ?hasProperty@JSObject@JSC@@QBE_NPAVExecState@2@ABVIdentifier@2@@Z
     ?hasProperty@JSObject@JSC@@QBE_NPAVExecState@2@I@Z
+    ?hasTransition@Structure@JSC@@QAE_NPAURep@UString@2@I@Z
     ?heap@Heap@JSC@@SAPAV12@VJSValue@2@@Z
     ?increment@RefCountedLeakCounter@WTF@@QAEXXZ
     ?init@JSGlobalObject@JSC@@AAEXPAVJSObject@2@@Z
