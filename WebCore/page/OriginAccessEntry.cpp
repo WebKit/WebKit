@@ -31,7 +31,6 @@
 #include "config.h"
 #include "OriginAccessEntry.h"
 
-#include "CType.h"
 #include "SecurityOrigin.h"
 
 namespace WebCore {

@@ -1,3 +1,9 @@
+2009-08-19  David Levin  <levin@chromium.org>
+
+        Unreviewed speculative build fix for qt.
+
+        * page/OriginAccessEntry.cpp:
+
 2009-08-19  Aaron Boodman  <aa@chromium.org>
 
         Reviewed by David Levin.
