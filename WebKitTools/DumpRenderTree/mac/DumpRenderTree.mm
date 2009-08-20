@@ -1082,6 +1082,7 @@ static void resetWebViewToConsistentStateBeforeTesting()
     [[[mainFrame webView] inspector] setJavaScriptProfilingEnabled:NO];
 
     [WebView _setUsesTestModeFocusRingColor:YES];
+    [WebView _resetOriginAccessWhiteLists];
 }
 
 static void runTest(const string& testPathOrURL)

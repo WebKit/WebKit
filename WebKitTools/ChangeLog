@@ -1,3 +1,29 @@
+2009-08-19  Aaron Boodman  <aa@chromium.org>
+
+        Reviewed by David Levin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24853: Provide a way for WebKit clients to
+        specify a more granular policy for cross-origin XHR access.
+
+        * DumpRenderTree/LayoutTestController.cpp: Expose whiteListAccessFromOrigin() to layout tests.
+        (whiteListAccessFromOriginCallback): Ditto.
+        (LayoutTestController::staticFunctions): Ditto.
+        * DumpRenderTree/LayoutTestController.h: Ditto.
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp: Ditto.
+        (LayoutTestController::whiteListAccessToOrigin): Ditto.
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm: Ditto.
+        (LayoutTestController::whiteListAccessFromOrigin): Ditto.
+        * DumpRenderTree/qt/jsobjects.cpp: Ditto.
+        (LayoutTestController::whiteListAccessFromOrigin): Ditto.
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp: Stub out whiteListAccessFromOrigin().
+        (LayoutTestController::whiteListAccessFromOrigin): Ditto.
+        * DumpRenderTree/gtk/DumpRenderTree.cpp: Reset origin access lists before each test.
+        (resetWebViewToConsistentStateBeforeTesting): Ditto.
+        * DumpRenderTree/mac/DumpRenderTree.mm: Ditto.
+        (resetWebViewToConsistentStateBeforeTesting): Ditto.
+        * DumpRenderTree/qt/DumpRenderTree.cpp: Ditto.
+        (WebCore::DumpRenderTree::resetToConsistentStateBeforeTesting): Ditto.
+
 2009-08-19  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Dan Bernstein.

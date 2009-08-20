@@ -21,6 +21,8 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		0014628A103CD1DE000B20DB /* OriginAccessEntry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 00146288103CD1DE000B20DB /* OriginAccessEntry.cpp */; };
+		0014628B103CD1DE000B20DB /* OriginAccessEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 00146289103CD1DE000B20DB /* OriginAccessEntry.h */; };
 		06027CAD0B1CBFC000884B2D /* ContextMenuItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 06027CAC0B1CBFC000884B2D /* ContextMenuItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		06027CB30B1CC03D00884B2D /* ContextMenuItemMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 06027CB20B1CC03D00884B2D /* ContextMenuItemMac.mm */; };
 		062287840B4DB322000C34DF /* FocusDirection.h in Headers */ = {isa = PBXBuildFile; fileRef = 062287830B4DB322000C34DF /* FocusDirection.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5006,6 +5008,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		00146288103CD1DE000B20DB /* OriginAccessEntry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OriginAccessEntry.cpp; sourceTree = "<group>"; };
+		00146289103CD1DE000B20DB /* OriginAccessEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OriginAccessEntry.h; sourceTree = "<group>"; };
 		06027CAC0B1CBFC000884B2D /* ContextMenuItem.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ContextMenuItem.h; sourceTree = "<group>"; };
 		06027CB20B1CC03D00884B2D /* ContextMenuItemMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = ContextMenuItemMac.mm; sourceTree = "<group>"; };
 		062287830B4DB322000C34DF /* FocusDirection.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FocusDirection.h; sourceTree = "<group>"; };
@@ -10681,6 +10685,8 @@
 				A9C6E65D0D746694006442E9 /* Navigator.idl */,
 				E12719C90EEEC21300F61213 /* NavigatorBase.cpp */,
 				E12719C60EEEC16800F61213 /* NavigatorBase.h */,
+				00146288103CD1DE000B20DB /* OriginAccessEntry.cpp */,
+				00146289103CD1DE000B20DB /* OriginAccessEntry.h */,
 				65FEA86809833ADE00BED4AB /* Page.cpp */,
 				65A21467097A329100B9050A /* Page.h */,
 				9302B0BC0D79F82900C7EE83 /* PageGroup.cpp */,
@@ -17316,6 +17322,7 @@
 				B5C1123C102B6C4600096578 /* SQLTransactionCoordinator.h in Headers */,
 				D8B6152F1032495100C8554A /* Cookie.h in Headers */,
 				BCFA930810333193007B25D1 /* RenderOverflow.h in Headers */,
+				0014628B103CD1DE000B20DB /* OriginAccessEntry.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -19382,6 +19389,7 @@
 				9392262D1032107B006E7D5D /* JSHTMLCanvasElementCustom.cpp in Sources */,
 				9392262F10321084006E7D5D /* JSCSSRuleListCustom.cpp in Sources */,
 				B5C1123B102B6C4600096578 /* SQLTransactionCoordinator.cpp in Sources */,
+				0014628A103CD1DE000B20DB /* OriginAccessEntry.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

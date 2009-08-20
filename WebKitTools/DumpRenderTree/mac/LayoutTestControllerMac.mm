@@ -443,3 +443,14 @@ void LayoutTestController::waitForPolicyDelegate()
     [policyDelegate setControllerToNotifyDone:this];
     [[mainFrame webView] setPolicyDelegate:policyDelegate];
 }
+
+void LayoutTestController::whiteListAccessFromOrigin(JSStringRef sourceOrigin, JSStringRef destinationProtocol, JSStringRef destinationHost, bool allowDestinationSubdomains)
+{
+    RetainPtr<CFStringRef> sourceOriginCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, sourceOrigin));
+    NSString *sourceOriginNS = (NSString *)sourceOriginCF.get();
+    RetainPtr<CFStringRef> protocolCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, destinationProtocol));
+    NSString *destinationProtocolNS = (NSString *)protocolCF.get();
+    RetainPtr<CFStringRef> hostCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, destinationHost));
+    NSString *destinationHostNS = (NSString *)hostCF.get();
+    [WebView _whiteListAccessFromOrigin:sourceOriginNS destinationProtocol:destinationProtocolNS destinationHost:destinationHostNS allowDestinationSubdomains:allowDestinationSubdomains];
+}

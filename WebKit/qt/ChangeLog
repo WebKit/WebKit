@@ -1,3 +1,15 @@
+2009-08-19  Aaron Boodman  <aa@chromium.org>
+
+        Reviewed by David Levin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24853: Provide a way for WebKit clients to
+        specify a more granular policy for cross-origin XHR access.
+
+        * Api/qwebsecurityorigin.cpp: Add API to manipulate origin access whitelists.
+        (QWebSecurityOrigin::whiteListAccessFromOrigin): Ditto.
+        (QWebSecurityOrigin::resetOriginAccessWhiteLists): Ditto.
+        * Api/qwebsecurityorigin.h: Ditto.
+
 2009-08-18  Markus Goetz <Markus.Goetz@nokia.com>
 
         Reviwed by Ariya Hidayat.

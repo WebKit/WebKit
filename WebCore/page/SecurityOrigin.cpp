@@ -32,9 +32,19 @@
 #include "CString.h"
 #include "FrameLoader.h"
 #include "KURL.h"
+#include "OriginAccessEntry.h"
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
+
+typedef Vector<OriginAccessEntry> OriginAccessWhiteList;
+typedef HashMap<String, OriginAccessWhiteList*> OriginAccessMap;
+
+static OriginAccessMap& originAccessMap()
+{
+    DEFINE_STATIC_LOCAL(OriginAccessMap, originAccessMap, ());
+    return originAccessMap;
+}
 
 static URLSchemesMap& localSchemes()
 {
@@ -198,7 +208,17 @@ bool SecurityOrigin::canRequest(const KURL& url) const
 
     // We call isSameSchemeHostPort here instead of canAccess because we want
     // to ignore document.domain effects.
-    return isSameSchemeHostPort(targetOrigin.get());
+    if (isSameSchemeHostPort(targetOrigin.get()))
+        return true;
+
+    if (OriginAccessWhiteList* list = originAccessMap().get(toString())) {
+        for (size_t i = 0; i < list->size(); ++i) {
+            if (list->at(i).matchesOrigin(*targetOrigin))
+                return true;
+        }
+    }
+
+    return false;
 }
 
 void SecurityOrigin::grantLoadLocalResources()
@@ -412,6 +432,30 @@ void SecurityOrigin::registerURLSchemeAsNoAccess(const String& scheme)
 bool SecurityOrigin::shouldTreatURLSchemeAsNoAccess(const String& scheme)
 {
     return noAccessSchemes().contains(scheme);
+}
+
+void SecurityOrigin::whiteListAccessFromOrigin(const SecurityOrigin& sourceOrigin, const String& destinationProtocol, const String& destinationDomains, bool allowDestinationSubdomains)
+{
+    ASSERT(isMainThread());
+    ASSERT(!sourceOrigin.isEmpty());
+    if (sourceOrigin.isEmpty())
+        return;
+
+    String sourceString = sourceOrigin.toString();
+    OriginAccessWhiteList* list = originAccessMap().get(sourceString);
+    if (!list) {
+        list = new OriginAccessWhiteList;
+        originAccessMap().set(sourceString, list);
+    }
+    list->append(OriginAccessEntry(destinationProtocol, destinationDomains, allowDestinationSubdomains ? OriginAccessEntry::AllowSubdomains : OriginAccessEntry::DisallowSubdomains));
+}
+
+void SecurityOrigin::resetOriginAccessWhiteLists()
+{
+    ASSERT(isMainThread());
+    OriginAccessMap& map = originAccessMap();
+    deleteAllValues(map);
+    map.clear();
 }
 
 } // namespace WebCore

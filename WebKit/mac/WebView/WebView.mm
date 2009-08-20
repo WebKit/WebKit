@@ -2092,6 +2092,15 @@ static inline IMP getMethod(id o, SEL s)
     return _private ? _private->insertionPasteboard : nil;
 }
 
++ (void)_whiteListAccessFromOrigin:(NSString *)sourceOrigin destinationProtocol:(NSString *)destinationProtocol destinationHost:(NSString *)destinationHost allowDestinationSubdomains:(BOOL)allowDestinationSubdomains
+{
+    SecurityOrigin::whiteListAccessFromOrigin(*SecurityOrigin::createFromString(sourceOrigin), destinationProtocol, destinationHost, allowDestinationSubdomains);
+}
+
++(void)_resetOriginAccessWhiteLists
+{
+    SecurityOrigin::resetOriginAccessWhiteLists();
+}
 
 - (void)_updateActiveState
 {

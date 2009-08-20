@@ -1661,6 +1661,8 @@
             'page/Navigator.h',
             'page/NavigatorBase.cpp',
             'page/NavigatorBase.h',
+            'page/OriginAccessEntry.cpp',
+            'page/OriginAccessEntry.h',
             'page/Page.cpp',
             'page/Page.h',
             'page/PageGroup.cpp',

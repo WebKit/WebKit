@@ -16941,6 +16941,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\page\OriginAccessEntry.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\OriginAccessEntry.h"
+				>
+			</File>
+			<File
 				RelativePath="..\page\Page.cpp"
 				>
 			</File>

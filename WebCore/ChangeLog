@@ -1,3 +1,36 @@
+2009-08-19  Aaron Boodman  <aa@chromium.org>
+
+        Reviewed by David Levin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24853: Provide a way for WebKit clients to
+        specify a more granular policy for cross-origin XHR access.
+
+        Tests: http/tests/xmlhttprequest/origin-whitelisting-all.html
+               http/tests/xmlhttprequest/origin-whitelisting-exact-match.html
+               http/tests/xmlhttprequest/origin-whitelisting-https.html
+               http/tests/xmlhttprequest/origin-whitelisting-ip-addresses-with-subdomains.html
+               http/tests/xmlhttprequest/origin-whitelisting-ip-addresses.html
+               http/tests/xmlhttprequest/origin-whitelisting-subdomains.html
+
+        * WebCore.base.exp: Export methods to manipulate origin access whitelists to enable
+        testing via layout tests.
+
+        * WebCore.xcodeproj/project.pbxproj: Add OriginAccessEntry.*
+        * GNUmakefile.am: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCoreSources.blk: Ditto.
+
+        * page/SecurityOrigin.h: Implement origin access whitelists.
+        (WebCore::originAccessMap): Static getter for access whitelists.
+        (WebCore::SecurityOrigin::canRequest): Modify request checking logic to check whitelists.
+        (WebCore::SecurityOrigin::whiteListAccessFromOrigin): Add an entry to a whitelist.
+        (WebCore::SecurityOrigin::resetOriginAccessWhiteLists): Clear all the whitelists.
+
+        * page/OriginAccessEntry.h: Added. An entry in an origin access whitelist.
+        * page/OriginAccessEntry.cpp: Ditto.
+
 2009-08-19  Kevin Ollivier  <kevino@theolliviers.com>
 
         Non-precomp headers build fix.

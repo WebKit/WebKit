@@ -816,3 +816,8 @@ unsigned LayoutTestController::numberOfActiveAnimations() const
 
     return number;
 }
+
+void LayoutTestController::whiteListAccessFromOrigin(JSStringRef sourceOrigin, JSStringRef destinationProtocol, JSStringRef destinationHost, bool allowDestinationSubdomains)
+{
+    printf("LayoutTestController::whiteListAccessFromOrigin not implemented\n");
+}

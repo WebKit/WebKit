@@ -1108,6 +1108,7 @@ SOURCES += \
     page/History.cpp \
     page/Location.cpp \
     page/MouseEventWithHitTestResults.cpp \
+    page/OriginAccessEntry.cpp \
     page/Page.cpp \
     page/PageGroup.cpp \
     page/PageGroupLoadDeferrer.cpp \

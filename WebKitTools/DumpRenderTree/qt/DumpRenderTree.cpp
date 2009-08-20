@@ -218,6 +218,7 @@ void DumpRenderTree::resetToConsistentStateBeforeTesting()
     //WorkQueue::shared()->setFrozen(false);
 
     m_controller->reset();
+    QWebSecurityOrigin::resetOriginAccessWhiteLists();
 }
 
 void DumpRenderTree::open(const QUrl& aurl)

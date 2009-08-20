@@ -766,6 +766,7 @@ This file contains the list of files needed to build WebCore.
         page/MouseEventWithHitTestResults.cpp
         page/Navigator.cpp
         page/NavigatorBase.cpp
+        page/OriginAccessEntry.cpp
         page/Page.cpp
         page/PageGroup.cpp
         page/PageGroupLoadDeferrer.cpp

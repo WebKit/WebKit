@@ -141,6 +141,9 @@ namespace WebCore {
         static void registerURLSchemeAsNoAccess(const String&);
         static bool shouldTreatURLSchemeAsNoAccess(const String&);
 
+        static void whiteListAccessFromOrigin(const SecurityOrigin& sourceOrigin, const String& destinationProtocol, const String& destinationDomains, bool allowDestinationSubdomains);
+        static void resetOriginAccessWhiteLists();
+
     private:
         explicit SecurityOrigin(const KURL&);
         explicit SecurityOrigin(const SecurityOrigin*);

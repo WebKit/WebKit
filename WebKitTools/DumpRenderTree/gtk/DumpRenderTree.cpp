@@ -62,6 +62,7 @@ extern void webkit_web_settings_add_extra_plugin_directory(WebKitWebView* view, 
 extern gchar* webkit_web_frame_get_response_mime_type(WebKitWebFrame* frame);
 extern void webkit_web_frame_clear_main_frame_name(WebKitWebFrame* frame);
 extern void webkit_web_view_set_group_name(WebKitWebView* view, const gchar* groupName);
+extern void webkit_reset_origin_access_white_lists();
 }
 
 volatile bool done;
@@ -280,6 +281,8 @@ static void resetWebViewToConsistentStateBeforeTesting()
 
     WebKitWebInspector* inspector = webkit_web_view_get_inspector(webView);
     g_object_set(G_OBJECT(inspector), "javascript-profiling-enabled", FALSE, NULL);
+
+    webkit_reset_origin_access_white_lists();
 }
 
 void dump()

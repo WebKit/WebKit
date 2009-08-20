@@ -49,6 +49,7 @@ bool webkit_web_frame_pause_transition(WebKitWebFrame* frame, const gchar* name,
 unsigned int webkit_web_frame_number_of_active_animations(WebKitWebFrame* frame);
 void webkit_application_cache_set_maximum_size(unsigned long long size);
 unsigned int webkit_worker_thread_count(void);
+void webkit_white_list_access_to_origin(const gchar* sourceOrigin, const gchar* destinationProtocol, const gchar* destinationHost, bool allowDestinationSubdomains);
 }
 
 LayoutTestController::~LayoutTestController()
@@ -167,6 +168,14 @@ void LayoutTestController::waitForPolicyDelegate()
 {
     waitForPolicy = true;
     setWaitToDump(true);
+}
+
+void LayoutTestController::whiteListAccessToOrigin(JSStringRef sourceOrigin, JSStringRef protocol, JSStringRef host, bool includeSubdomains)
+{
+    gchar* sourceOriginGChar = JSStringCopyUTF8CString(sourceOrigin);
+    gchar* protocolGChar = JSStringCopyUTF8CString(protocol);
+    gchar* hostGChar = JSStringCopyUTF8CString(host);
+    webkit_white_list_access_to_origin(sourceOriginGChar, protocolGChar, hostGChar, includeSubdomains);
 }
 
 void LayoutTestController::setMainFrameIsFirstResponder(bool flag)

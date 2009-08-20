@@ -1,0 +1,7 @@
+Tests origin whitelisting subdomain behavior.
+
+Testing: http://localhost:8000/xmlhttprequest/resources/get.txt (sync)
+PASS: PASS
+Testing: http://localhost:8000/xmlhttprequest/resources/get.txt (async)
+PASS: PASS
+

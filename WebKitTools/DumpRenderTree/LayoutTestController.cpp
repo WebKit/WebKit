@@ -874,6 +874,24 @@ static JSValueRef waitForPolicyDelegateCallback(JSContextRef context, JSObjectRe
     return JSValueMakeUndefined(context);
 }
 
+static JSValueRef whiteListAccessFromOriginCallback(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    if (argumentCount != 4)
+        return JSValueMakeUndefined(context);
+
+    JSRetainPtr<JSStringRef> sourceOrigin(Adopt, JSValueToStringCopy(context, arguments[0], exception));
+    ASSERT(!*exception);
+    JSRetainPtr<JSStringRef> destinationProtocol(Adopt, JSValueToStringCopy(context, arguments[1], exception));
+    ASSERT(!*exception);
+    JSRetainPtr<JSStringRef> destinationHost(Adopt, JSValueToStringCopy(context, arguments[2], exception));
+    ASSERT(!*exception);
+    bool allowDestinationSubdomains = JSValueToBoolean(context, arguments[3]);
+
+    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    controller->whiteListAccessFromOrigin(sourceOrigin.get(), destinationProtocol.get(), destinationHost.get(), allowDestinationSubdomains);
+    return JSValueMakeUndefined(context);
+}
+
 // Static Values
 
 static JSValueRef getGlobalFlagCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
@@ -1021,6 +1039,7 @@ JSStaticFunction* LayoutTestController::staticFunctions()
         { "waitForPolicyDelegate", waitForPolicyDelegateCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "waitUntilDone", waitUntilDoneCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "windowCount", windowCountCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "whiteListAccessFromOrigin", whiteListAccessFromOriginCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { 0, 0, 0 }
     };
 

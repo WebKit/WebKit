@@ -1,3 +1,24 @@
+2009-08-19  Aaron Boodman  <aa@chromium.org>
+
+        Reviewed by David Levin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24853: Provide a way for WebKit clients to
+        specify a more granular policy for cross-origin XHR access.
+
+        * http/tests/xmlhttprequest/origin-whitelisting-all-expected.txt: Added.
+        * http/tests/xmlhttprequest/origin-whitelisting-all.html: Added.
+        * http/tests/xmlhttprequest/origin-whitelisting-exact-match-expected.txt: Added.
+        * http/tests/xmlhttprequest/origin-whitelisting-exact-match.html: Added.
+        * http/tests/xmlhttprequest/origin-whitelisting-https-expected.txt: Added.
+        * http/tests/xmlhttprequest/origin-whitelisting-https.html: Added.
+        * http/tests/xmlhttprequest/origin-whitelisting-ip-addresses-expected.txt: Added.
+        * http/tests/xmlhttprequest/origin-whitelisting-ip-addresses-with-subdomains-expected.txt: Added.
+        * http/tests/xmlhttprequest/origin-whitelisting-ip-addresses-with-subdomains.html: Added.
+        * http/tests/xmlhttprequest/origin-whitelisting-ip-addresses.html: Added.
+        * http/tests/xmlhttprequest/origin-whitelisting-subdomains-expected.txt: Added.
+        * http/tests/xmlhttprequest/origin-whitelisting-subdomains.html: Added.
+        * http/tests/xmlhttprequest/resources/origin-whitelisting-ip-address-test.html: Added.
+
 2009-08-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         No review.

@@ -443,6 +443,15 @@ Could be worth adding to the API.
 // Which pasteboard text is coming from in editing delegate methods such as shouldInsertNode.
 - (NSPasteboard *)_insertionPasteboard;
 
+// Whitelists access from an origin (sourceOrigin) to a set of one or more origins described by the parameters:
+// - destinationProtocol: The protocol to grant access to.
+// - destinationHost: The host to grant access to.
+// - allowDestinationSubdomains: If host is a domain, setting this to YES will whitelist host and all its subdomains, recursively.
++ (void)_whiteListAccessFromOrigin:(NSString *)sourceOrigin destinationProtocol:(NSString *)destinationProtocol destinationHost:(NSString *)destinationHost allowDestinationSubdomains:(BOOL)allowDestinationSubdomains;
+
+// Removes all white list entries created with _whiteListAccessFromOrigin.
++ (void)_resetOriginAccessWhiteLists;
+
 @end
 
 @interface WebView (WebViewPrintingPrivate)
