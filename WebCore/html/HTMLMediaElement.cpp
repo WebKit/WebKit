@@ -179,6 +179,8 @@ void HTMLMediaElement::parseMappedAttribute(MappedAttribute* attr)
         setAttributeEventListener(eventNames().loadeddataEvent, createAttributeEventListener(this, attr));
     else if (attrName == onloadedmetadataAttr)
         setAttributeEventListener(eventNames().loadedmetadataEvent, createAttributeEventListener(this, attr));
+    else if (attrName == onloadendAttr)
+        setAttributeEventListener(eventNames().loadendEvent, createAttributeEventListener(this, attr));
     else if (attrName == onloadstartAttr)
         setAttributeEventListener(eventNames().loadstartEvent, createAttributeEventListener(this, attr));
     else if (attrName == onpauseAttr)
@@ -432,20 +434,23 @@ void HTMLMediaElement::loadInternal()
     // one of the task queues, then remove those tasks.
     cancelPendingEventsAndCallbacks();
     
-    // 4 - If the media element's networkState is set to NETWORK_LOADING or NETWORK_IDLE, set the 
-    // error attribute to a new MediaError object whose code attribute is set to MEDIA_ERR_ABORTED, 
-    // and fire a progress event called abort at the media element.
+    // 4 - If the media element's networkState is set to NETWORK_LOADING or NETWORK_IDLE, set
+    // the error attribute to a new MediaError object whose code attribute is set to
+    // MEDIA_ERR_ABORTED, fire a progress event called abort at the media element, in the
+    // context of the fetching process that is in progress for the element, and fire a progress
+    // event called loadend at the media element, in the context of the same fetching process.
     if (m_networkState == NETWORK_LOADING || m_networkState == NETWORK_IDLE) {
         m_error = MediaError::create(MediaError::MEDIA_ERR_ABORTED);
-        
-        // fire synchronous 'abort'
+
+        // fire synchronous 'abort' and 'loadend'
         bool totalKnown = m_player && m_player->totalBytesKnown();
         unsigned loaded = m_player ? m_player->bytesLoaded() : 0;
         unsigned total = m_player ? m_player->totalBytes() : 0;
         dispatchProgressEvent(eventNames().abortEvent, totalKnown, loaded, total);
+        dispatchProgressEvent(eventNames().loadendEvent, totalKnown, loaded, total);
     }
-    
-    // 5 
+
+    // 5
     m_error = 0;
     m_autoplaying = true;
     m_playedTimeRanges = TimeRanges::create();
@@ -453,7 +458,7 @@ void HTMLMediaElement::loadInternal()
 
     // 6
     setPlaybackRate(defaultPlaybackRate());
-    
+
     // 7
     if (m_networkState != NETWORK_EMPTY) {
         m_networkState = NETWORK_EMPTY;
@@ -467,7 +472,7 @@ void HTMLMediaElement::loadInternal()
         }
         dispatchEvent(eventNames().emptiedEvent, false, true);
     }
-    
+
     selectMediaResource();
     m_processingLoad = false;
 }
@@ -592,22 +597,29 @@ void HTMLMediaElement::noneSupported()
     m_loadState = WaitingForSource;
     m_currentSourceNode = 0;
 
-    // 3 - Reaching this step indicates that either the URL failed to resolve, or the media 
-    // resource failed to load. Set the error attribute to a new MediaError object whose 
+    // 4 - Reaching this step indicates that either the URL failed to resolve, or the media
+    // resource failed to load. Set the error attribute to a new MediaError object whose
     // code attribute is set to MEDIA_ERR_SRC_NOT_SUPPORTED.
     m_error = MediaError::create(MediaError::MEDIA_ERR_SRC_NOT_SUPPORTED);
 
-    // 4- Set the element's networkState attribute to the NETWORK_NO_SOURCE value.
+    // 5 - Set the element's networkState attribute to the NETWORK_NO_SOURCE value.
     m_networkState = NETWORK_NO_SOURCE;
 
-    // 5 - Queue a task to fire a progress event called error at the media element.
-    scheduleProgressEvent(eventNames().errorEvent); 
+    // 6 - Queue a task to fire a progress event called error at the media element, in
+    // the context of the fetching process that was used to try to obtain the media
+    // resource in the resource fetch algorithm.
+    scheduleProgressEvent(eventNames().errorEvent);
 
-    // 6 - Set the element's delaying-the-load-event flag to false. This stops delaying the load event.
+    // 7 - Queue a task to fire a progress event called loadend at the media element, in
+    // the context of the fetching process that was used to try to obtain the media
+    // resource in the resource fetch algorithm.
+    scheduleProgressEvent(eventNames().loadendEvent);
+
+    // 8 - Set the element's delaying-the-load-event flag to false. This stops delaying the load event.
     m_delayingTheLoadEvent = false;
 
-    // Abort these steps. Until the load() method is invoked, the element won't attempt to load another resource.
-    
+    // 9 -Abort these steps. Until the load() method is invoked, the element won't attempt to load another resource.
+
     if (isVideo())
         static_cast<HTMLVideoElement*>(this)->updatePosterImage();
     if (renderer())
@@ -624,20 +636,24 @@ void HTMLMediaElement::mediaEngineError(PassRefPtr<MediaError> err)
     // set to MEDIA_ERR_NETWORK/MEDIA_ERR_DECODE.
     m_error = err;
 
-    // 3 - Queue a task to fire a progress event called error at the media element.
-    scheduleProgressEvent(eventNames().errorEvent); 
+    // 3 - Queue a task to fire a progress event called error at the media element, in
+    // the context of the fetching process started by this instance of this algorithm.
+    scheduleProgressEvent(eventNames().errorEvent);
 
-    // 3 - Set the element's networkState attribute to the NETWORK_EMPTY value and queue a 
+    // 4 - Queue a task to fire a progress event called loadend at the media element, in
+    // the context of the fetching process started by this instance of this algorithm.
+    scheduleProgressEvent(eventNames().loadendEvent);
+
+    // 5 - Set the element's networkState attribute to the NETWORK_EMPTY value and queue a
     // task to fire a simple event called emptied at the element.
     m_networkState = NETWORK_EMPTY;
     scheduleEvent(eventNames().emptiedEvent);
 
-    // 4 - Set the element's delaying-the-load-event flag to false. This stops delaying the load event.
+    // 6 - Set the element's delaying-the-load-event flag to false. This stops delaying the load event.
     m_delayingTheLoadEvent = false;
 
-    // 5 - Abort the overall resource selection algorithm.
+    // 7 - Abort the overall resource selection algorithm.
     m_currentSourceNode = 0;
-
 }
 
 void HTMLMediaElement::cancelPendingEventsAndCallbacks()
@@ -722,7 +738,8 @@ void HTMLMediaElement::setNetworkState(MediaPlayer::NetworkState state)
             if (static_cast<ReadyState>(currentState) != m_readyState)
                 setReadyState(currentState);
 
-             scheduleProgressEvent(eventNames().loadEvent); 
+            scheduleProgressEvent(eventNames().loadEvent);
+            scheduleProgressEvent(eventNames().loadendEvent);
         }
     }
 }
@@ -1562,12 +1579,17 @@ void HTMLMediaElement::userCancelledLoad()
         // 2 - Set the error attribute to a new MediaError object whose code attribute is set to MEDIA_ERR_ABORT.
         m_error = MediaError::create(MediaError::MEDIA_ERR_ABORTED);
 
-        // 3 - Queue a task to fire a progress event called abort at the media element.
+        // 3 - Queue a task to fire a progress event called abort at the media element, in the context
+        // of the fetching process started by this instance of this algorithm.
         scheduleProgressEvent(eventNames().abortEvent);
 
-        // 4 - If the media element's readyState attribute has a value equal to HAVE_NOTHING, set the 
-        // element's networkState attribute to the NETWORK_EMPTY value and queue a task to fire a 
-        // simple event called emptied at the element. Otherwise, set set the element's networkState 
+        // 4 - Queue a task to fire a progress event called loadend at the media element, in the context
+        // of the fetching process started by this instance of this algorithm.
+        scheduleProgressEvent(eventNames().loadendEvent);
+
+        // 5 - If the media element's readyState attribute has a value equal to HAVE_NOTHING, set the
+        // element's networkState attribute to the NETWORK_EMPTY value and queue a task to fire a
+        // simple event called emptied at the element. Otherwise, set set the element's networkState
         // attribute to the NETWORK_IDLE value.
         if (m_networkState >= NETWORK_LOADING) {
             m_networkState = NETWORK_EMPTY;
@@ -1575,8 +1597,11 @@ void HTMLMediaElement::userCancelledLoad()
             scheduleEvent(eventNames().emptiedEvent);
         }
 
-        // 5 - Set the element's delaying-the-load-event flag to false. This stops delaying the load event.
+        // 6 - Set the element's delaying-the-load-event flag to false. This stops delaying the load event.
         m_delayingTheLoadEvent = false;
+
+        // 7 - Abort the overall resource selection algorithm.
+        m_currentSourceNode = 0;
     }
 }
 
@@ -1608,7 +1633,7 @@ void HTMLMediaElement::documentDidBecomeActive()
         ExceptionCode ec;
         load(ec);
     }
-        
+
     if (renderer())
         renderer()->updateFromElement();
 }

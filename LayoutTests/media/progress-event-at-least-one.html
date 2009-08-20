@@ -17,9 +17,9 @@
                     return;
             }
 
-            function loaded()
+            function loadend()
             {
-                consoleWrite("EVENT(load)");
+                consoleWrite("EVENT(loadend)");
                 
                 testExpected('progressEventCount', 1, '>=');
                 endTest();
@@ -29,10 +29,12 @@
             {
                 run("mediaElement = document.createElement('audio')");
 
-                mediaElement.setAttribute('onload', "loaded()");
+                mediaElement.setAttribute('onloadend', "loadend()");
                 mediaElement.setAttribute('onprogress', "progress()");
 
                 waitForEvent("loadstart");
+                waitForEvent("loadend");
+                waitForEvent("loaded");
                 waitForEvent("waiting");
                 waitForEvent("ratechange");
                 waitForEvent("durationchange");

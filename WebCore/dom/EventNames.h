@@ -61,6 +61,7 @@ namespace WebCore {
     macro(keypress) \
     macro(keyup) \
     macro(load) \
+    macro(loadend) \
     macro(loadstart) \
     macro(message) \
     macro(mousedown) \

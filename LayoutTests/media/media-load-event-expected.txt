@@ -8,11 +8,13 @@ EVENT(loadstart)
 EVENT(durationchange)
 EVENT(loadeddata)
 EVENT(load)
+EVENT(loadend)
 
 RUN(document.getElementById('parent').appendChild(mediaElement))
 RUN(mediaElement.play())
 
 EVENT(play)
 EVENT(playing)
+
 END OF TEST
 

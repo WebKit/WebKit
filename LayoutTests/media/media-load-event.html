@@ -4,13 +4,18 @@
 
         <script>
 
-            function loaded()
+            function playing()
             {
-                consoleWrite("EVENT(load)");
+                consoleWrite("EVENT(playing)<br>");
+                endTest();
+            }
+
+            function loadend()
+            {
+                consoleWrite("EVENT(loadend)");
                 consoleWrite("");
                 run("document.getElementById('parent').appendChild(mediaElement)");
                 run("mediaElement.play()");
-                window.setTimeout(endTest, 250);
                 consoleWrite("");
             }
 
@@ -18,15 +23,16 @@
             {
                 run("mediaElement = document.createElement('audio')");
 
-                mediaElement.onload = loaded;
+                mediaElement.setAttribute('onloadend', "loadend()");
+                mediaElement.setAttribute('onplaying', "playing()");
 
                 waitForEvent("loadstart");
+                waitForEvent("load");
                 waitForEvent("waiting");
                 waitForEvent("ratechange");
                 waitForEvent("durationchange");
                 waitForEvent("pause");
                 waitForEvent("play");
-                waitForEvent("playing");
                 waitForEvent('loadeddata');
 
                 run("mediaElement.src = 'content/test.wav'");

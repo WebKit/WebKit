@@ -1,3 +1,19 @@
+2009-08-20  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        HTML5 media elements must fire 'loadend' progress event
+        https://bugs.webkit.org/show_bug.cgi?id=28419
+
+        Add 'loadend' to existing tests.
+
+        * media/event-attributes-expected.txt:
+        * media/event-attributes.html:
+        * media/media-load-event-expected.txt:
+        * media/media-load-event.html:
+        * media/progress-event-at-least-one-expected.txt:
+        * media/progress-event-at-least-one.html:
+
 2009-08-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.

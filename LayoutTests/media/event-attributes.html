@@ -15,36 +15,36 @@
                     consoleWrite("EVENT(" + event.type + ")");
                 switch (event.type)
                 {
-                    case "load":
-                        consoleWrite("");
+                    case "loadend":
+                        consoleWrite("<br>*** starting playback");
                         run("video.play()"); 
                         break;
                     case "playing":
                         if (++playingCount == 1) {
-                            consoleWrite("");
+                            consoleWrite("<br>*** changing playback rate");
                             run("video.playbackRate = 2");
                         }
                         break;
                     case "ratechange":
                         if (++ratechangeCount == 1) {
-                            consoleWrite("");
+                            consoleWrite("<br>*** setting volume");
                             run("video.volume = 0.5");
                         }
                         break;
                     case "volumechange":
-                        consoleWrite("");
+                        consoleWrite("<br>*** pausing playback");
                         run("video.pause()");
                         break;
                     case "pause":
-                        consoleWrite("");
+                        consoleWrite("<br>*** seeking");
                         run("video.currentTime = 5.6");
                         break;
                     case "seeked":
-                        consoleWrite("");
+                        consoleWrite("<br>*** beginning playback");
                         run("video.play()");
                         break;
                     case "ended":
-                        consoleWrite("");
+                        consoleWrite("<br>*** played to end, setting 'src' to an invalid movie");
                         run("video.src = 'content/garbage.mp4'");
                         run("video.load()");
                         break;
@@ -58,7 +58,6 @@
                     default:
                         break;
                 }
-                        
             }
 
             function start()
@@ -83,6 +82,7 @@
             onloadeddata="eventHandler()"
             onloadedmetadata="eventHandler()"
             onloadstart="eventHandler()"
+            onloadend="eventHandler()"
             onpause="eventHandler()"
             onplay="eventHandler()"
             onplaying="eventHandler()"

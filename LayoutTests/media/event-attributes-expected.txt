@@ -5,29 +5,37 @@ EVENT(loadeddata)
 EVENT(canplay)
 EVENT(canplaythrough)
 EVENT(load)
+EVENT(loadend)
 
+*** starting playback
 RUN(video.play())
 EVENT(play)
 EVENT(playing)
 
+*** changing playback rate
 RUN(video.playbackRate = 2)
 EVENT(ratechange)
 
+*** setting volume
 RUN(video.volume = 0.5)
 EVENT(volumechange)
 
+*** pausing playback
 RUN(video.pause())
 EVENT(pause)
 
+*** seeking
 RUN(video.currentTime = 5.6)
 EVENT(seeked)
 
+*** beginning playback
 RUN(video.play())
 EVENT(ratechange)
 EVENT(play)
 EVENT(playing)
 EVENT(ended)
 
+*** played to end, setting 'src' to an invalid movie
 RUN(video.src = 'content/garbage.mp4')
 RUN(video.load())
 EVENT(emptied)
