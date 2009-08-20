@@ -1,3 +1,11 @@
+2009-08-20  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by NOBODY (build fix).
+
+        Add file missed in last check-in.
+
+        * html/HTMLAttributeNames.in:
+
 2009-08-19  Timothy Hatcher  <timothy@apple.com>
 
         Adds new icons to the Web Inspector for Local Storage,
