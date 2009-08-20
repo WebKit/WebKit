@@ -38,12 +38,10 @@ public:
 #endif
         , m_userToDeviceTransformKnownToBeIdentity(false)
     {
-        CGContextRetain(m_cgContext);
     }
     
     ~GraphicsContextPlatformPrivate()
     {
-        CGContextRelease(m_cgContext);
     }
 
 #if PLATFORM(MAC) || PLATFORM(CHROMIUM)
@@ -80,7 +78,7 @@ public:
     bool m_shouldIncludeChildWindows;
 #endif
 
-    CGContextRef m_cgContext;
+    RetainPtr<CGContextRef> m_cgContext;
     bool m_userToDeviceTransformKnownToBeIdentity;
 };
 

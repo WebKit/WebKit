@@ -94,16 +94,15 @@ CFDataRef BitmapImage::getTIFFRepresentation()
     
     RetainPtr<CFMutableDataRef> data(AdoptCF, CFDataCreateMutable(0, 0));
     // FIXME:  Use type kCGImageTypeIdentifierTIFF constant once is becomes available in the API
-    CGImageDestinationRef destination = CGImageDestinationCreateWithData(data.get(), CFSTR("public.tiff"), numValidFrames, 0);
-    
+    RetainPtr<CGImageDestinationRef> destination(AdoptCF, CGImageDestinationCreateWithData(data.get(), CFSTR("public.tiff"), numValidFrames, 0));
+
     if (!destination)
         return 0;
     
     for (unsigned i = 0; i < numValidFrames; ++i)
-        CGImageDestinationAddImage(destination, images[i], 0);
+        CGImageDestinationAddImage(destination.get(), images[i], 0);
 
-    CGImageDestinationFinalize(destination);
-    CFRelease(destination);
+    CGImageDestinationFinalize(destination.get());
 
     m_tiffRep = data;
     return m_tiffRep.get();

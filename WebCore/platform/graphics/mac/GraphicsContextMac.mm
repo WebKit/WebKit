@@ -50,27 +50,26 @@ void GraphicsContext::drawFocusRing(const Color& color)
 
     int radius = (focusRingWidth() - 1) / 2;
     int offset = radius + focusRingOffset();
-    CGColorRef colorRef = color.isValid() ? createCGColor(color) : 0;
+    RetainPtr<CGColorRef> colorRef;
+    if (color.isValid())
+        colorRef.adoptCF(createCGColor(color));
 
-    CGMutablePathRef focusRingPath = CGPathCreateMutable();
+    RetainPtr<CGMutablePathRef> focusRingPath(AdoptCF, CGPathCreateMutable());
     const Vector<IntRect>& rects = focusRingRects();
     unsigned rectCount = rects.size();
     for (unsigned i = 0; i < rectCount; i++)
-        CGPathAddRect(focusRingPath, 0, CGRectInset(rects[i], -offset, -offset));
+        CGPathAddRect(focusRingPath.get(), 0, CGRectInset(rects[i], -offset, -offset));
 
     CGContextRef context = platformContext();
 #ifdef BUILDING_ON_TIGER
     CGContextBeginTransparencyLayer(context, NULL);
 #endif
     CGContextBeginPath(context);
-    CGContextAddPath(context, focusRingPath);
-    wkDrawFocusRing(context, colorRef, radius);
+    CGContextAddPath(context, focusRingPath.get());
+    wkDrawFocusRing(context, colorRef.get(), radius);
 #ifdef BUILDING_ON_TIGER
     CGContextEndTransparencyLayer(context);
 #endif
-    CGColorRelease(colorRef);
-
-    CGPathRelease(focusRingPath);
 }
 
 #ifdef BUILDING_ON_TIGER // Post-Tiger's setCompositeOperation() is defined in GraphicsContextCG.cpp.

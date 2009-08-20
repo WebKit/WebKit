@@ -82,10 +82,9 @@ static NSString *cocoaTypeFromMIMEType(const String& type)
     
     // Try UTI now
     NSString *mimeType = qType;
-    CFStringRef UTIType = UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, (CFStringRef)mimeType, NULL);
-    if (UTIType) {
-        CFStringRef pbType = UTTypeCopyPreferredTagWithClass(UTIType, kUTTagClassNSPboardType);
-        CFRelease(UTIType);
+    RetainPtr<CFStringRef> utiType(AdoptCF, UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, (CFStringRef)mimeType, NULL));
+    if (utiType) {
+        CFStringRef pbType = UTTypeCopyPreferredTagWithClass(utiType.get(), kUTTagClassNSPboardType);
         if (pbType)
             return HardAutorelease(pbType);
     }
@@ -103,15 +102,11 @@ static String MIMETypeFromCocoaType(NSString *type)
         return "text/uri-list";
     
     // Now try the general UTI mechanism
-    CFStringRef UTIType = UTTypeCreatePreferredIdentifierForTag(kUTTagClassNSPboardType, (CFStringRef)type, NULL);
-    if (UTIType) {
-        CFStringRef mimeType = UTTypeCopyPreferredTagWithClass(UTIType, kUTTagClassMIMEType);
-        CFRelease(UTIType);
-        if (mimeType) {
-            String result = mimeType;
-            CFRelease(mimeType);
-            return result;
-        }
+    RetainPtr<CFStringRef> utiType(AdoptCF, UTTypeCreatePreferredIdentifierForTag(kUTTagClassNSPboardType, (CFStringRef)type, NULL));
+    if (utiType) {
+        RetainPtr<CFStringRef> mimeType(AdoptCF, UTTypeCopyPreferredTagWithClass(utiType.get(), kUTTagClassMIMEType));
+        if (mimeType)
+            return String(mimeType.get());
     }
 
     // No mapping, just pass the whole string though

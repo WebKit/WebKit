@@ -70,34 +70,32 @@ ImageBuffer::ImageBuffer(const IntSize& size, ImageColorSpace imageColorSpace, b
 
     ASSERT((reinterpret_cast<size_t>(m_data.m_data) & 2) == 0);
 
-    CGColorSpaceRef colorSpace;
+    RetainPtr<CGColorSpaceRef> colorSpace;
     switch(imageColorSpace) {
         case DeviceRGB:
-            colorSpace = CGColorSpaceCreateDeviceRGB();
+            colorSpace.adoptCF(CGColorSpaceCreateDeviceRGB());
             break;
         case GrayScale:
-            colorSpace = CGColorSpaceCreateDeviceGray();
+            colorSpace.adoptCF(CGColorSpaceCreateDeviceGray());
             break;
 #if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER)
         case LinearRGB:
-            colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGBLinear);
+            colorSpace.adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceGenericRGBLinear));
             break;
 #endif
         default:
-            colorSpace = CGColorSpaceCreateDeviceRGB();
+            colorSpace.adoptCF(CGColorSpaceCreateDeviceRGB());
             break;
     }
 
-    CGContextRef cgContext = CGBitmapContextCreate(m_data.m_data, size.width(), size.height(), 8, bytesPerRow,
-        colorSpace, (imageColorSpace == GrayScale) ? kCGImageAlphaNone : kCGImageAlphaPremultipliedLast);
-    CGColorSpaceRelease(colorSpace);
+    RetainPtr<CGContextRef> cgContext(AdoptCF, CGBitmapContextCreate(m_data.m_data, size.width(), size.height(), 8, bytesPerRow,
+        colorSpace.get(), (imageColorSpace == GrayScale) ? kCGImageAlphaNone : kCGImageAlphaPremultipliedLast));
     if (!cgContext)
         return;
 
-    m_context.set(new GraphicsContext(cgContext));
+    m_context.set(new GraphicsContext(cgContext.get()));
     m_context->scale(FloatSize(1, -1));
     m_context->translate(0, -size.height());
-    CGContextRelease(cgContext);
     success = true;
 }
 

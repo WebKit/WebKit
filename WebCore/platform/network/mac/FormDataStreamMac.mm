@@ -161,11 +161,9 @@ static void advanceCurrentStream(FormStreamFields *form)
         form->currentData = data;
     } else {
         const String& path = nextInput.m_shouldGenerateFile ? nextInput.m_generatedFilename : nextInput.m_filename;
-        CFStringRef filename = path.createCFString();
-        CFURLRef fileURL = CFURLCreateWithFileSystemPath(0, filename, kCFURLPOSIXPathStyle, FALSE);
-        CFRelease(filename);
-        form->currentStream = CFReadStreamCreateWithFile(0, fileURL);
-        CFRelease(fileURL);
+        RetainPtr<CFStringRef> filename(AdoptCF, path.createCFString());
+        RetainPtr<CFURLRef> fileURL(AdoptCF, CFURLCreateWithFileSystemPath(0, filename.get(), kCFURLPOSIXPathStyle, FALSE));
+        form->currentStream = CFReadStreamCreateWithFile(0, fileURL.get());
     }
     form->remainingElements.removeLast();
 
@@ -375,11 +373,10 @@ void setHTTPBody(NSMutableURLRequest *request, PassRefPtr<FormData> formData)
     // Pass the length along with the formData so it does not have to be recomputed.
     FormContext formContext = { formData.releaseRef(), length };
 
-    CFReadStreamRef stream = wkCreateCustomCFReadStream(formCreate, formFinalize,
+    RetainPtr<CFReadStreamRef> stream(AdoptCF, wkCreateCustomCFReadStream(formCreate, formFinalize,
         formOpen, formRead, formCanRead, formClose, formSchedule, formUnschedule,
-        &formContext);
-    [request setHTTPBodyStream:(NSInputStream *)stream];
-    CFRelease(stream);
+        &formContext));
+    [request setHTTPBodyStream:(NSInputStream *)stream.get()];
 }
 
 FormData* httpBodyFromStream(NSInputStream* stream)

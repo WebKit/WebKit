@@ -283,28 +283,28 @@ CString TextCodecMac::encode(const UChar* characters, size_t length, Unencodable
     // Encoding will change the yen sign back into a backslash.
     String copy(characters, length);
     copy.replace('\\', m_backslashAsCurrencySymbol);
-    CFStringRef cfs = copy.createCFString();
+    RetainPtr<CFStringRef> cfs(AdoptCF, copy.createCFString());
 
     CFIndex startPos = 0;
-    CFIndex charactersLeft = CFStringGetLength(cfs);
+    CFIndex charactersLeft = CFStringGetLength(cfs.get());
     Vector<char> result;
     size_t size = 0;
     UInt8 lossByte = handling == QuestionMarksForUnencodables ? '?' : 0;
     while (charactersLeft > 0) {
         CFRange range = CFRangeMake(startPos, charactersLeft);
         CFIndex bufferLength;
-        CFStringGetBytes(cfs, range, m_encoding, lossByte, false, NULL, 0x7FFFFFFF, &bufferLength);
+        CFStringGetBytes(cfs.get(), range, m_encoding, lossByte, false, NULL, 0x7FFFFFFF, &bufferLength);
 
         result.grow(size + bufferLength);
         unsigned char* buffer = reinterpret_cast<unsigned char*>(result.data() + size);
-        CFIndex charactersConverted = CFStringGetBytes(cfs, range, m_encoding, lossByte, false, buffer, bufferLength, &bufferLength);
+        CFIndex charactersConverted = CFStringGetBytes(cfs.get(), range, m_encoding, lossByte, false, buffer, bufferLength, &bufferLength);
         size += bufferLength;
 
         if (charactersConverted != charactersLeft) {
-            unsigned badChar = CFStringGetCharacterAtIndex(cfs, startPos + charactersConverted);
+            unsigned badChar = CFStringGetCharacterAtIndex(cfs.get(), startPos + charactersConverted);
             ++charactersConverted;
             if ((badChar & 0xFC00) == 0xD800 && charactersConverted != charactersLeft) { // is high surrogate
-                UniChar low = CFStringGetCharacterAtIndex(cfs, startPos + charactersConverted);
+                UniChar low = CFStringGetCharacterAtIndex(cfs.get(), startPos + charactersConverted);
                 if ((low & 0xFC00) == 0xDC00) { // is low surrogate
                     badChar <<= 10;
                     badChar += low;
@@ -322,7 +322,6 @@ CString TextCodecMac::encode(const UChar* characters, size_t length, Unencodable
         startPos += charactersConverted;
         charactersLeft -= charactersConverted;
     }
-    CFRelease(cfs);
     return CString(result.data(), size);
 }
 

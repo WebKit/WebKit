@@ -1,3 +1,57 @@
+2009-08-20  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Replace many manually-released CFTypeRefs with RetainPtrs
+        https://bugs.webkit.org/show_bug.cgi?id=28498
+
+        * platform/graphics/cg/ColorCG.cpp:
+        (WebCore::createCGColor):
+        * platform/graphics/cg/GradientCG.cpp:
+        (WebCore::Gradient::platformGradient):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::platformContext):
+        (WebCore::GraphicsContext::applyStrokePattern):
+        (WebCore::GraphicsContext::applyFillPattern):
+        (WebCore::GraphicsContext::setPlatformShadow):
+        (WebCore::GraphicsContext::setURLForRect):
+        * platform/graphics/cg/GraphicsContextPlatformPrivateCG.h:
+        (WebCore::GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate):
+        (WebCore::GraphicsContextPlatformPrivate::~GraphicsContextPlatformPrivate):
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::ImageBuffer):
+        * platform/graphics/cg/ImageCG.cpp:
+        (WebCore::BitmapImage::checkForSolidColor):
+        (WebCore::Image::drawPattern):
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::ImageSource::setData):
+        (WebCore::ImageSource::isSizeAvailable):
+        (WebCore::ImageSource::frameSizeAtIndex):
+        (WebCore::ImageSource::repetitionCount):
+        (WebCore::ImageSource::createFrameAtIndex):
+        (WebCore::ImageSource::frameDurationAtIndex):
+        * platform/graphics/cg/PDFDocumentImage.cpp:
+        (WebCore::PDFDocumentImage::dataChanged):
+        * platform/graphics/cg/PathCG.cpp:
+        (WebCore::createScratchContext):
+        (WebCore::Path::contains):
+        * platform/graphics/mac/FontCustomPlatformData.cpp:
+        (WebCore::createFontCustomPlatformData):
+        * platform/graphics/mac/GraphicsContextMac.mm:
+        (WebCore::GraphicsContext::drawFocusRing):
+        * platform/graphics/mac/ImageMac.mm:
+        (WebCore::BitmapImage::getTIFFRepresentation):
+        * platform/mac/ClipboardMac.mm:
+        (WebCore::cocoaTypeFromMIMEType):
+        (WebCore::MIMETypeFromCocoaType):
+        * platform/mac/WebCoreNSStringExtras.mm:
+        (stringEncodingForResource):
+        * platform/network/mac/FormDataStreamMac.mm:
+        (WebCore::advanceCurrentStream):
+        (WebCore::setHTTPBody):
+        * platform/text/mac/TextCodecMac.cpp:
+        (WebCore::TextCodecMac::encode):
+
 2009-08-20  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Eric Seidel.

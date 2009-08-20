@@ -68,16 +68,14 @@ bool PDFDocumentImage::dataChanged(bool allDataReceived)
 #if PLATFORM(MAC)
         // On Mac the NSData inside the SharedBuffer can be secretly appended to without the SharedBuffer's knowledge.  We use SharedBuffer's ability
         // to wrap itself inside CFData to get around this, ensuring that ImageIO is really looking at the SharedBuffer.
-        CFDataRef data = this->data()->createCFData();
+        RetainPtr<CFDataRef> data(AdoptCF, this->data()->createCFData());
 #else
         // If no NSData is available, then we know SharedBuffer will always just be a vector.  That means no secret changes can occur to it behind the
         // scenes.  We use CFDataCreateWithBytesNoCopy in that case.
-        CFDataRef data = CFDataCreateWithBytesNoCopy(0, reinterpret_cast<const UInt8*>(this->data()->data()), this->data()->size(), kCFAllocatorNull);
+        RetainPtr<CFDataRef> data(AdoptCF, CFDataCreateWithBytesNoCopy(0, reinterpret_cast<const UInt8*>(this->data()->data()), this->data()->size(), kCFAllocatorNull));
 #endif
-        CGDataProviderRef dataProvider = CGDataProviderCreateWithCFData(data);
-        CFRelease(data);
-        m_document = CGPDFDocumentCreateWithProvider(dataProvider);
-        CGDataProviderRelease(dataProvider);
+        RetainPtr<CGDataProviderRef> dataProvider(AdoptCF, CGDataProviderCreateWithCFData(data.get()));
+        m_document = CGPDFDocumentCreateWithProvider(dataProvider.get());
         setCurrentPage(0);
     }
     return m_document; // return true if size is available

@@ -87,7 +87,7 @@ CGContextRef GraphicsContext::platformContext() const
 {
     ASSERT(!paintingDisabled());
     ASSERT(m_data->m_cgContext);
-    return m_data->m_cgContext;
+    return m_data->m_cgContext.get();
 }
 
 void GraphicsContext::savePlatformState()
@@ -392,34 +392,30 @@ void GraphicsContext::applyStrokePattern()
 {
     CGContextRef cgContext = platformContext();
 
-    CGPatternRef platformPattern = m_common->state.strokePattern.get()->createPlatformPattern(getCTM());
+    RetainPtr<CGPatternRef> platformPattern(AdoptCF, m_common->state.strokePattern.get()->createPlatformPattern(getCTM()));
     if (!platformPattern)
         return;
 
-    CGColorSpaceRef patternSpace = CGColorSpaceCreatePattern(0);
-    CGContextSetStrokeColorSpace(cgContext, patternSpace);
-    CGColorSpaceRelease(patternSpace);
+    RetainPtr<CGColorSpaceRef> patternSpace(AdoptCF, CGColorSpaceCreatePattern(0));
+    CGContextSetStrokeColorSpace(cgContext, patternSpace.get());
 
     const CGFloat patternAlpha = 1;
-    CGContextSetStrokePattern(cgContext, platformPattern, &patternAlpha);
-    CGPatternRelease(platformPattern);
+    CGContextSetStrokePattern(cgContext, platformPattern.get(), &patternAlpha);
 }
 
 void GraphicsContext::applyFillPattern()
 {
     CGContextRef cgContext = platformContext();
 
-    CGPatternRef platformPattern = m_common->state.fillPattern.get()->createPlatformPattern(getCTM());
+    RetainPtr<CGPatternRef> platformPattern(AdoptCF, m_common->state.fillPattern.get()->createPlatformPattern(getCTM()));
     if (!platformPattern)
         return;
 
-    CGColorSpaceRef patternSpace = CGColorSpaceCreatePattern(0);
-    CGContextSetFillColorSpace(cgContext, patternSpace);
-    CGColorSpaceRelease(patternSpace);
+    RetainPtr<CGColorSpaceRef> patternSpace(AdoptCF, CGColorSpaceCreatePattern(0));
+    CGContextSetFillColorSpace(cgContext, patternSpace.get());
 
     const CGFloat patternAlpha = 1;
-    CGContextSetFillPattern(cgContext, platformPattern, &patternAlpha);
-    CGPatternRelease(platformPattern);
+    CGContextSetFillPattern(cgContext, platformPattern.get(), &patternAlpha);
 }
 
 static inline bool calculateDrawingMode(const GraphicsContextState& state, CGPathDrawingMode& mode)
@@ -731,12 +727,11 @@ void GraphicsContext::setPlatformShadow(const IntSize& size, int blur, const Col
     if (!color.isValid())
         CGContextSetShadow(context, CGSizeMake(width, height), blurRadius);
     else {
-        CGColorRef colorCG = createCGColor(color);
+        RetainPtr<CGColorRef> colorCG(AdoptCF, createCGColor(color));
         CGContextSetShadowWithColor(context,
                                     CGSizeMake(width, height),
                                     blurRadius,
-                                    colorCG);
-        CGColorRelease(colorCG);
+                                    colorCG.get());
     }
 }
 
@@ -1000,22 +995,21 @@ void GraphicsContext::setURLForRect(const KURL& link, const IntRect& destRect)
     if (paintingDisabled())
         return;
 
-    CFURLRef urlRef = link.createCFURL();
-    if (urlRef) {
-        CGContextRef context = platformContext();
+    RetainPtr<CFURLRef> urlRef(AdoptCF, link.createCFURL());
+    if (!urlRef)
+        return;
 
-        // Get the bounding box to handle clipping.
-        CGRect box = CGContextGetClipBoundingBox(context);
+    CGContextRef context = platformContext();
 
-        IntRect intBox((int)box.origin.x, (int)box.origin.y, (int)box.size.width, (int)box.size.height);
-        IntRect rect = destRect;
-        rect.intersect(intBox);
+    // Get the bounding box to handle clipping.
+    CGRect box = CGContextGetClipBoundingBox(context);
 
-        CGPDFContextSetURLForRect(context, urlRef,
-            CGRectApplyAffineTransform(rect, CGContextGetCTM(context)));
+    IntRect intBox((int)box.origin.x, (int)box.origin.y, (int)box.size.width, (int)box.size.height);
+    IntRect rect = destRect;
+    rect.intersect(intBox);
 
-        CFRelease(urlRef);
-    }
+    CGPDFContextSetURLForRect(context, urlRef.get(),
+        CGRectApplyAffineTransform(rect, CGContextGetCTM(context)));
 }
 
 void GraphicsContext::setImageInterpolationQuality(InterpolationQuality mode)

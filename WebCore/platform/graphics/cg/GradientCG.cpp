@@ -58,17 +58,14 @@ CGShadingRef Gradient::platformGradient()
     const CGFloat intervalRanges[2] = { 0, 1 };
     const CGFloat colorComponentRanges[4 * 2] = { 0, 1, 0, 1, 0, 1, 0, 1 };
     const CGFunctionCallbacks gradientCallbacks = { 0, gradientCallback, 0 };
-    CGFunctionRef colorFunction = CGFunctionCreate(this, 1, intervalRanges, 4, colorComponentRanges, &gradientCallbacks);
+    RetainPtr<CGFunctionRef> colorFunction(AdoptCF, CGFunctionCreate(this, 1, intervalRanges, 4, colorComponentRanges, &gradientCallbacks));
 
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    static CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
 
     if (m_radial)
-        m_gradient = CGShadingCreateRadial(colorSpace, m_p0, m_r0, m_p1, m_r1, colorFunction, true, true);
+        m_gradient = CGShadingCreateRadial(colorSpace, m_p0, m_r0, m_p1, m_r1, colorFunction.get(), true, true);
     else
-        m_gradient = CGShadingCreateAxial(colorSpace, m_p0, m_p1, colorFunction, true, true);
-
-    CGColorSpaceRelease(colorSpace);
-    CGFunctionRelease(colorFunction);
+        m_gradient = CGShadingCreateAxial(colorSpace, m_p0, m_p1, colorFunction.get(), true, true);
 
     return m_gradient;
 }
