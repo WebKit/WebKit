@@ -1,3 +1,12 @@
+2009-08-20  Ariya Hidayat  <ariya.hidayat@nokia.com>
+
+        Unreviewed, build fix.
+
+        [Qt] The template-based qMax() compares two qreals.
+
+        * DumpRenderTree/qt/ImageDiff.cpp:
+        (main):
+
 2009-08-20  David Levin  <levin@chromium.org>
 
         Reviewed by David Kilzer.

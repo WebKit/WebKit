@@ -119,7 +119,7 @@ int main(int argc, char* argv[])
                     difference = 0;
                 } else {
                     difference = round(difference * 100) / 100;
-                    difference = qMax(difference, 0.01);
+                    difference = qMax(difference, qreal(0.01));
                 }
 
                 if (!count) {
