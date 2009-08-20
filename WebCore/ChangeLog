@@ -1,3 +1,12 @@
+2009-08-20  Ariya Hidayat  <ariya.hidayat@nokia.com>
+
+        Not reviewed, build fix after r47515.
+
+        [Qt] There is no Phonon::MediaObject::hasAudio() function.
+
+        * platform/graphics/qt/MediaPlayerPrivatePhonon.cpp:
+        (WebCore::MediaPlayerPrivate::hasAudio): Assume true.
+
 2009-08-20  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Eric Seidel.

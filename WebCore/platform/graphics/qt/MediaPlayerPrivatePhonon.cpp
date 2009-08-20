@@ -162,7 +162,8 @@ bool MediaPlayerPrivate::hasVideo() const
 
 bool MediaPlayerPrivate::hasAudio() const
 {
-    bool hasAudio = m_mediaObject->hasAudio();
+    // FIXME: Phonon::MediaObject does not have such a hasAudio() function
+    bool hasAudio = true;
     LOG(Media, "MediaPlayerPrivatePhonon::hasAudio() -> %s", hasAudio ? "true" : "false");
     return hasAudio;
 }
