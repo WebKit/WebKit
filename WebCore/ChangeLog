@@ -1,3 +1,47 @@
+2009-08-20  Xiaomei Ji  <xji@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Fix "Chromium RTL autocomplete popup is not layout correctly".
+        https://bugs.webkit.org/show_bug.cgi?id=27889
+
+        The complete fix of the issue consists 2 parts: the patch in webkit
+        and the patch in Chromium's own code.
+
+        This webkit patch only affects Chromium autofill. It
+        1. introduces a new flag in WebCore::PopupContainerSettings to
+           distinguish whether the width of the drop-down should be restricted
+           or not.
+           For autofill, the width of the drop-down is restricted to
+           be the same as that of the input field (the new flag is set in
+           Chromium's own code). But width is not restricted for <select> (same as before).
+        2. introduce a new flag in WebCore::PopContainerSettings to
+           indicate what heuristics to use when displaying text in drop-down menu.
+           For autofill, use drop-down item's directionality to display drop-down items.
+           Previously, drop-down item is displayed in the its first strong
+           directional character's directionality.
+           (drop-down item's directionality is set in Chromium's own code.
+           It is set the same as the directionality of the element. 
+           For autofill, it is the same directionality as that of the input field.)
+           For <select>, still use the text's first strong directional character's
+           directionality to display the text.
+
+
+        Since the patch only affects the chromium client, not webcore part or
+        other clients. No automatic tests is possible.
+
+        * manual-tests/autofill-popup-width-and-item-direction.html: Added.
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::):
+        (WebCore::PopupListBox::paintRow): If list box width is restricted and 
+        an item is longer to fit in a list box, truncate it and draw part of the text and append ellipses.
+        (WebCore::PopupListBox::layout): Restrict width of list box if applicable.
+        * platform/chromium/PopupMenuChromium.h: 
+        (WebCore::PopupItem::PopupItem): style change.
+        (WebCore::PopupContainerSettings::): Add 2 new flags in PopupContainerSetting to 
+        distinguish whether to restrict width of list box and 
+        in what directionality to display the text in drop-down.
+
 2009-08-20  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adele Peterson.

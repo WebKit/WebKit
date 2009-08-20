@@ -50,6 +50,7 @@
 #include "PopupMenu.h"
 #include "RenderTheme.h"
 #include "ScrollbarTheme.h"
+#include "StringTruncator.h"
 #include "SystemTime.h"
 
 #include <wtf/CurrentTime.h>
@@ -72,10 +73,13 @@ static const TimeStamp kTypeAheadTimeoutMs = 1000;
 // The settings used for the drop down menu.
 // This is the delegate used if none is provided.
 static const PopupContainerSettings dropDownSettings = {
-    true, // focusOnShow
-    true, // setTextOnIndexChange
-    true, // acceptOnAbandon
-    false // loopSelectionNavigation
+    true,   // focusOnShow
+    true,   // setTextOnIndexChange
+    true,   // acceptOnAbandon
+    false,  // loopSelectionNavigation
+    false,  // restrictWidthOfListBox
+    // display item text in its first strong directional character's directionality.
+    PopupContainerSettings::FirstStrongDirectionalCharacterDirection,
 };
 
 // This class uses WebCore code to paint and handle events for a drop-down list
@@ -818,25 +822,32 @@ void PopupListBox::paintRow(GraphicsContext* gc, const IntRect& rect, int rowInd
         return;
     }
     
+    if (!style.isVisible())
+        return;
+
     gc->setFillColor(textColor);
 
-    // Bunch of shit to deal with RTL text...
+    Font itemFont = getRowFont(rowIndex);
+    // FIXME: http://crbug.com/19872 We should get the padding of individual option
+    // elements.  This probably implies changes to PopupMenuClient.
+    int textX = max(0, m_popupClient->clientPaddingLeft() - m_popupClient->clientInsetLeft());
+    int textY = rowRect.y() + itemFont.ascent() + (rowRect.height() - itemFont.height()) / 2;
+    // Prepare text to be drawn.
     String itemText = m_popupClient->itemText(rowIndex);
+    if (m_settings.restrictWidthOfListBox)  // truncate string to fit in.
+        itemText = StringTruncator::rightTruncate(itemText, rowRect.width() - textX, itemFont);
     unsigned length = itemText.length();
     const UChar* str = itemText.characters();
-
-    TextRun textRun(str, length, false, 0, 0, itemText.defaultWritingDirection() == WTF::Unicode::RightToLeft);
-
-    // FIXME: http://b/1210481 We should get the padding of individual option
-    // elements.  This probably implies changes to PopupMenuClient.
-
-    // Draw the item text
-    if (style.isVisible()) {
-        Font itemFont = getRowFont(rowIndex);
-        int textX = max(0, m_popupClient->clientPaddingLeft() - m_popupClient->clientInsetLeft());
-        int textY = rowRect.y() + itemFont.ascent() + (rowRect.height() - itemFont.height()) / 2;
-        gc->drawBidiText(itemFont, textRun, IntPoint(textX, textY));
-    }
+    // Prepare the directionality to draw text.
+    bool rtl = false;
+    if (m_settings.itemTextDirectionalityHint == PopupContainerSettings::DOMElementDirection)
+        rtl = style.textDirection() == RTL;
+    else if (m_settings.itemTextDirectionalityHint ==
+             PopupContainerSettings::FirstStrongDirectionalCharacterDirection)
+        rtl = itemText.defaultWritingDirection() == WTF::Unicode::RightToLeft;
+    TextRun textRun(str, length, false, 0, 0, rtl);
+    // Draw the item text.
+    gc->drawBidiText(itemFont, textRun, IntPoint(textX, textY));
 }
 
 Font PopupListBox::getRowFont(int rowIndex)
@@ -1091,10 +1102,11 @@ void PopupListBox::layout()
             baseWidth = max(baseWidth, width);
         }
         // FIXME: http://b/1210481 We should get the padding of individual option elements.
-        paddingWidth = max(paddingWidth, 
+        paddingWidth = max(paddingWidth,
             m_popupClient->clientPaddingLeft() + m_popupClient->clientPaddingRight());
     }
 
+    // Calculate scroll bar width.
     int windowHeight = 0;
 
 #if PLATFORM(DARWIN)
@@ -1125,14 +1137,20 @@ void PopupListBox::layout()
     if (m_visibleRows < numItems())
         scrollbarWidth = ScrollbarTheme::nativeTheme()->scrollbarThickness();
 
-    int windowWidth = baseWidth + scrollbarWidth + paddingWidth;
-    int contentWidth = baseWidth;
-
-    if (windowWidth < m_baseWidth) {
+    int windowWidth;
+    int contentWidth;
+    if (m_settings.restrictWidthOfListBox) {
         windowWidth = m_baseWidth;
         contentWidth = m_baseWidth - scrollbarWidth - paddingWidth;
     } else {
-        m_baseWidth = baseWidth;
+        windowWidth = baseWidth + scrollbarWidth + paddingWidth;
+        contentWidth = baseWidth;
+
+        if (windowWidth < m_baseWidth) {
+            windowWidth = m_baseWidth;
+            contentWidth = m_baseWidth - scrollbarWidth - paddingWidth;
+        } else
+            m_baseWidth = baseWidth;
     }
 
     resize(windowWidth, windowHeight);

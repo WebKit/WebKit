@@ -52,7 +52,11 @@ namespace WebCore {
         };
 
         PopupItem(const String& label, Type type)
-            : label(label), type(type), yOffset(0) { }
+            : label(label)
+            , type(type)
+            , yOffset(0)
+        {
+        }
         String label;
         Type type;
         int yOffset;  // y offset of this item, relative to the top of the popup.
@@ -83,10 +87,30 @@ namespace WebCore {
         // regardless of this setting.
         bool acceptOnAbandon;
 
-        // Whether the we should move the selection to the first/last item when
+        // Whether we should move the selection to the first/last item when
         // the user presses down/up arrow keys and the last/first item is
         // selected.
         bool loopSelectionNavigation;
+
+        // Whether we should restrict the width of the PopupListBox or not.
+        // Autocomplete popups are restricted, combo-boxes (select tags) aren't.
+        bool restrictWidthOfListBox;
+
+        // A hint on the display directionality of the item text in popup menu.
+        //
+        // We could either display the items in the drop-down using its DOM element's
+        // directionality, or we could display the items in the drop-down using heuristics:
+        // such as in its first strong directionality character's direction.
+        // Please refer to the discussion (especially comment #7 and #10) in
+        // https://bugs.webkit.org/show_bug.cgi?id=27889 for details.
+        enum DirectionalityHint {
+            // Use the DOM element's directionality to display the item text in popup menu.
+            DOMElementDirection,
+            // Use the item text's first strong-directional character's directionality
+            // to display the item text in popup menu.
+            FirstStrongDirectionalCharacterDirection,
+        };
+        DirectionalityHint itemTextDirectionalityHint;
     };
 
     class PopupContainer : public FramelessScrollView {
