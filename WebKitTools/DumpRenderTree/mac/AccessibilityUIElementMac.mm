@@ -311,6 +311,12 @@ JSStringRef AccessibilityUIElement::role()
     return concatenateAttributeAndValue(@"AXRole", role);
 }
 
+JSStringRef AccessibilityUIElement::subrole()
+{
+    NSString* role = descriptionOfValue([m_element accessibilityAttributeValue:NSAccessibilitySubroleAttribute], m_element);
+    return concatenateAttributeAndValue(@"AXSubrole", role);
+}
+
 JSStringRef AccessibilityUIElement::title()
 {
     NSString* title = descriptionOfValue([m_element accessibilityAttributeValue:NSAccessibilityTitleAttribute], m_element);

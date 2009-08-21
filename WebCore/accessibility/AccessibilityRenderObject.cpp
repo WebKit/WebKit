@@ -2193,32 +2193,50 @@ static const ARIARoleMap& createARIARoleMap()
     };
 
     const RoleEntry roles[] = {
+        { "application", LandmarkApplicationRole },
+        { "article", DocumentArticleRole },
+        { "banner", LandmarkBannerRole },
         { "button", ButtonRole },
         { "checkbox", CheckBoxRole },
+        { "complementary", LandmarkComplementaryRole },
+        { "contentinfo", LandmarkContentInfoRole },
         { "grid", TableRole },
         { "gridcell", CellRole },
         { "columnheader", ColumnHeaderRole },
+        { "defintion", DefinitionListDefinitionRole },
+        { "document", DocumentRole },
         { "rowheader", RowHeaderRole },
         { "group", GroupRole },
         { "heading", HeadingRole },
         { "img", ImageRole },
         { "link", WebCoreLinkRole },
         { "listbox", ListBoxRole },
+        { "log", ApplicationLogRole },
         // "option" isn't here because it may map to different roles depending on the parent element's role
+        { "main", LandmarkMainRole },
+        { "marquee", ApplicationMarqueeRole },
         { "menu", MenuRole },
         { "menubar", GroupRole },
         // "menuitem" isn't here because it may map to different roles depending on the parent element's role
         { "menuitemcheckbox", MenuItemRole },
         { "menuitemradio", MenuItemRole },
+        { "note", DocumentNoteRole },
+        { "navigation", LandmarkNavigationRole },
         { "progressbar", ProgressIndicatorRole },
         { "radio", RadioButtonRole },
         { "radiogroup", RadioGroupRole },
+        { "region", DocumentRegionRole },
         { "row", RowRole },
         { "range", SliderRole },
+        { "search", LandmarkSearchRole },
+        { "separator", SplitterRole },
         { "slider", SliderRole },
         { "spinbutton", ProgressIndicatorRole },
+        { "status", ApplicationStatusRole },
         { "textbox", TextAreaRole },
-        { "toolbar", ToolbarRole }
+        { "timer", ApplicationTimerRole },
+        { "toolbar", ToolbarRole },
+        { "tooltip", UserInterfaceTooltipRole }
     };
     ARIARoleMap& roleMap = *new ARIARoleMap;
         

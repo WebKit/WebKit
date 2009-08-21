@@ -553,6 +553,11 @@
     return UI_STRING("definition", "definition phrase");
 }
 
+- (NSString *)AXARIAContentGroupText:(NSString *)ariaType
+{
+    return UI_STRING([ariaType UTF8String], "A description for a specified ARIA grouping role.");    
+}
+
 - (NSString *)AXButtonActionVerb
 {
     return UI_STRING("press", "Verb stating the action that will occur when a button is pressed, as used by accessibility");

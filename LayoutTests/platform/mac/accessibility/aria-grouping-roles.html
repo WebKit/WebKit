@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div role="application">application role</div>
+<div role="article">article role</div>
+<div role="banner">banner role</div>
+<div role="complementary">complementary role</div>
+<div role="contentinfo">content info role</div>
+<div role="document">document role</div>
+<div role="log">log role</div>
+<div role="main">main role</div>
+<div role="marquee">marquee role</div>
+<div role="note">note role</div>
+<div role="navigation">navigation role</div>
+<div role="region">region role</div>
+<div role="search">search role</div>
+<div role="status">status role</div>
+<div role="tooltip">tooltip role</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that each of these ARIA grouping type roles map to the right role and subrole.");
+
+    if (window.accessibilityController) {
+
+          // this text field should be required.
+          document.getElementById("body").focus();
+          var obj = accessibilityController.focusedElement;
+
+          var subroles = new Array("AXLandmarkApplication","AXDocumentArticle","AXLandmarkBanner","AXLandmarkComplementary",
+                          "AXLandmarkContentInfo", "AXDocument", "AXApplicationLog", "AXLandmarkMain", "AXApplicationMarquee",
+                          "AXDocumentNote", "AXLandmarkNavigation", "AXDocumentRegion", "AXLandmarkSearch", "AXApplicationStatus", 
+                          "AXUserInterfaceTooltip");
+
+          for (var k = 0; k < subroles.length; k++) {
+              shouldBe("obj.childAtIndex(k).role", "'AXRole: AXGroup'");
+              shouldBe("obj.childAtIndex(k).subrole", '"AXSubrole: ' + subroles[k] + '"');
+          }
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

@@ -159,7 +159,28 @@ enum AccessibilityRole {
     DefinitionListTermRole,
     DefinitionListDefinitionRole,
     AnnotationRole,
-    SliderThumbRole
+    SliderThumbRole,
+    
+    // ARIA Grouping roles
+    LandmarkApplicationRole,
+    LandmarkBannerRole,
+    LandmarkComplementaryRole,
+    LandmarkContentInfoRole,
+    LandmarkMainRole,
+    LandmarkNavigationRole,
+    LandmarkSearchRole,
+    
+    ApplicationLogRole,
+    ApplicationMarqueeRole,
+    ApplicationStatusRole,
+    ApplicationTimerRole,
+    
+    DocumentRole,
+    DocumentArticleRole,
+    DocumentNoteRole,
+    DocumentRegionRole,
+    
+    UserInterfaceTooltipRole
 };
 
 enum AccessibilityOrientation {

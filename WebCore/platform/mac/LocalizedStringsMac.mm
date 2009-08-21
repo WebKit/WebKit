@@ -625,6 +625,14 @@ String AXDefinitionListDefinitionText()
     return String();
 }
     
+String AXARIAContentGroupText(const String& ariaType)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] AXARIAContentGroupText:ariaType];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();        
+}
+    
 String AXButtonActionVerb()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;

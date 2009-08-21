@@ -978,8 +978,23 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
         { TableHeaderContainerRole, NSAccessibilityGroupRole },
         { DefinitionListDefinitionRole, NSAccessibilityGroupRole },
         { DefinitionListTermRole, NSAccessibilityGroupRole },
-        
         { SliderThumbRole, NSAccessibilityValueIndicatorRole },
+        { LandmarkApplicationRole, NSAccessibilityGroupRole },
+        { LandmarkBannerRole, NSAccessibilityGroupRole },
+        { LandmarkComplementaryRole, NSAccessibilityGroupRole },
+        { LandmarkContentInfoRole, NSAccessibilityGroupRole },
+        { LandmarkMainRole, NSAccessibilityGroupRole },
+        { LandmarkNavigationRole, NSAccessibilityGroupRole },
+        { LandmarkSearchRole, NSAccessibilityGroupRole },
+        { ApplicationLogRole, NSAccessibilityGroupRole },
+        { ApplicationMarqueeRole, NSAccessibilityGroupRole },
+        { ApplicationStatusRole, NSAccessibilityGroupRole },
+        { ApplicationTimerRole, NSAccessibilityGroupRole },
+        { DocumentRole, NSAccessibilityGroupRole },
+        { DocumentArticleRole, NSAccessibilityGroupRole },
+        { DocumentNoteRole, NSAccessibilityGroupRole },
+        { DocumentRegionRole, NSAccessibilityGroupRole },
+        { UserInterfaceTooltipRole, NSAccessibilityGroupRole },
         
 
     };
@@ -1028,6 +1043,44 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             return NSAccessibilityDefinitionListSubrole;
     }
     
+    // ARIA content subroles.
+    switch (m_object->roleValue()) {
+        case LandmarkApplicationRole:
+            return @"AXLandmarkApplication";
+        case LandmarkBannerRole:
+            return @"AXLandmarkBanner";
+        case LandmarkComplementaryRole:
+            return @"AXLandmarkComplementary";
+        case LandmarkContentInfoRole:
+            return @"AXLandmarkContentInfo";
+        case LandmarkMainRole:
+            return @"AXLandmarkMain";
+        case LandmarkNavigationRole:
+            return @"AXLandmarkNavigation";
+        case LandmarkSearchRole:
+            return @"AXLandmarkSearch";
+        case ApplicationLogRole:
+            return @"AXApplicationLog";
+        case ApplicationMarqueeRole:
+            return @"AXApplicationMarquee";
+        case ApplicationStatusRole:
+            return @"AXApplicationStatus";
+        case ApplicationTimerRole:
+            return @"AXApplicationTimer";
+        case DocumentRole:
+            return @"AXDocument";
+        case DocumentArticleRole:
+            return @"AXDocumentArticle";
+        case DocumentNoteRole:
+            return @"AXDocumentNote";
+        case DocumentRegionRole:
+            return @"AXDocumentRegion";
+        case UserInterfaceTooltipRole:
+            return @"AXUserInterfaceTooltip";
+        default:
+            return nil;
+    }
+    
     return nil;
 }
 
@@ -1056,8 +1109,44 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     if ([axRole isEqualToString:NSAccessibilityImageRole])
         return NSAccessibilityRoleDescription(NSAccessibilityImageRole, [self subrole]);
     
-    if ([axRole isEqualToString:NSAccessibilityGroupRole])
-        return NSAccessibilityRoleDescription(NSAccessibilityGroupRole, [self subrole]);
+    if ([axRole isEqualToString:NSAccessibilityGroupRole]) {
+        switch (m_object->roleValue()) {
+            default:
+                return NSAccessibilityRoleDescription(NSAccessibilityGroupRole, [self subrole]);
+            case LandmarkApplicationRole:
+                return AXARIAContentGroupText(@"ARIALandmarkApplication");
+            case LandmarkBannerRole:
+                return AXARIAContentGroupText(@"ARIALandmarkBanner");
+            case LandmarkComplementaryRole:
+                return AXARIAContentGroupText(@"ARIALandmarkComplementary");
+            case LandmarkContentInfoRole:
+                return AXARIAContentGroupText(@"ARIALandmarkContentInfo");
+            case LandmarkMainRole:
+                return AXARIAContentGroupText(@"ARIALandmarkMain");
+            case LandmarkNavigationRole:
+                return AXARIAContentGroupText(@"ARIALandmarkNavigation");
+            case LandmarkSearchRole:
+                return AXARIAContentGroupText(@"ARIALandmarkSearch");
+            case ApplicationLogRole:
+                return AXARIAContentGroupText(@"ARIAApplicationLog");
+            case ApplicationMarqueeRole:
+                return AXARIAContentGroupText(@"ARIAApplicationMarquee");
+            case ApplicationStatusRole:
+                return AXARIAContentGroupText(@"ARIAApplicationStatus");
+            case ApplicationTimerRole:
+                return AXARIAContentGroupText(@"ARIAApplicationTimer");
+            case DocumentRole:
+                return AXARIAContentGroupText(@"ARIADocument");
+            case DocumentArticleRole:
+                return AXARIAContentGroupText(@"ARIADocumentArticle");
+            case DocumentNoteRole:
+                return AXARIAContentGroupText(@"ARIADocumentNote");
+            case DocumentRegionRole:
+                return AXARIAContentGroupText(@"ARIADocumentRegion");
+            case UserInterfaceTooltipRole:
+                return AXARIAContentGroupText(@"ARIAUserInterfaceTooltip");
+        }
+    }        
     
     if ([axRole isEqualToString:NSAccessibilityCheckBoxRole])
         return NSAccessibilityRoleDescription(NSAccessibilityCheckBoxRole, [self subrole]);
@@ -1120,6 +1209,9 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     if ([axRole isEqualToString:NSAccessibilityToolbarRole])
         return NSAccessibilityRoleDescription(NSAccessibilityToolbarRole, [self subrole]);
 
+    if ([axRole isEqualToString:NSAccessibilitySplitterRole])
+        return NSAccessibilityRoleDescription(NSAccessibilitySplitterRole, [self subrole]);
+    
     return NSAccessibilityRoleDescription(NSAccessibilityUnknownRole, nil);
 }
 

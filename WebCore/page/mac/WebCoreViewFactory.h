@@ -129,6 +129,7 @@
 - (NSString *)AXHeadingText;
 - (NSString *)AXDefinitionListTermText;
 - (NSString *)AXDefinitionListDefinitionText;
+- (NSString *)AXARIAContentGroupText:(NSString *)ariaType;
 
 - (NSString *)AXButtonActionVerb;
 - (NSString *)AXRadioButtonActionVerb;
