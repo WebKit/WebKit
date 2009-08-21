@@ -325,7 +325,7 @@ static void diffTextDecorations(CSSMutableStyleDeclaration* style, int propertID
     if (!textDecoration || !textDecoration->isValueList() || !refTextDecoration || !refTextDecoration->isValueList())
         return;
 
-    RefPtr<CSSValueList> newTextDecoration = static_cast<const CSSValueList*>(textDecoration.get())->copy();
+    RefPtr<CSSValueList> newTextDecoration = static_cast<CSSValueList*>(textDecoration.get())->copy();
     CSSValueList* valuesInRefTextDecoration = static_cast<CSSValueList*>(refTextDecoration);
 
     for (size_t i = 0; i < valuesInRefTextDecoration->length(); i++)
