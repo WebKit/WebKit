@@ -176,6 +176,9 @@ void LayoutTestController::whiteListAccessFromOrigin(JSStringRef sourceOrigin, J
     gchar* protocolGChar = JSStringCopyUTF8CString(protocol);
     gchar* hostGChar = JSStringCopyUTF8CString(host);
     webkit_white_list_access_from_origin(sourceOriginGChar, protocolGChar, hostGChar, includeSubdomains);
+    g_free(sourceOriginGChar);
+    g_free(protocolGChar);
+    g_free(hostGChar);
 }
 
 void LayoutTestController::setMainFrameIsFirstResponder(bool flag)
@@ -360,14 +363,20 @@ bool LayoutTestController::pauseAnimationAtTimeOnElementWithId(JSStringRef anima
 {    
     gchar* name = JSStringCopyUTF8CString(animationName);
     gchar* element = JSStringCopyUTF8CString(elementId);
-    return webkit_web_frame_pause_animation(mainFrame, name, time, element);
+    bool returnValue = webkit_web_frame_pause_animation(mainFrame, name, time, element);
+    g_free(name);
+    g_free(element);
+    return returnValue;
 }
 
 bool LayoutTestController::pauseTransitionAtTimeOnElementWithId(JSStringRef propertyName, double time, JSStringRef elementId)
 {    
     gchar* name = JSStringCopyUTF8CString(propertyName);
     gchar* element = JSStringCopyUTF8CString(elementId);
-    return webkit_web_frame_pause_transition(mainFrame, name, time, element);
+    bool returnValue = webkit_web_frame_pause_transition(mainFrame, name, time, element);
+    g_free(name);
+    g_free(element);
+    return returnValue;
 }
 
 unsigned LayoutTestController::numberOfActiveAnimations() const
