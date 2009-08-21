@@ -261,7 +261,7 @@ namespace JSC {
     class CodeBlock : public FastAllocBase {
         friend class JIT;
     protected:
-        CodeBlock(ExecutableBase* ownerExecutable, CodeType, PassRefPtr<SourceProvider>, unsigned sourceOffset, SymbolTable* symbolTable);
+        CodeBlock(ScriptExecutable* ownerExecutable, CodeType, PassRefPtr<SourceProvider>, unsigned sourceOffset, SymbolTable* symbolTable);
     public:
         virtual ~CodeBlock();
 
@@ -361,7 +361,7 @@ namespace JSC {
         ExecutablePool* executablePool() { return ownerExecutable()->getExecutablePool(); }
 #endif
 
-        ExecutableBase* ownerExecutable() const { return m_ownerExecutable; }
+        ScriptExecutable* ownerExecutable() const { return m_ownerExecutable; }
 
         void setGlobalData(JSGlobalData* globalData) { m_globalData = globalData; }
 
@@ -492,7 +492,7 @@ namespace JSC {
                 m_rareData.set(new RareData);
         }
 
-        ExecutableBase* m_ownerExecutable;
+        ScriptExecutable* m_ownerExecutable;
         JSGlobalData* m_globalData;
 
         Vector<Instruction> m_instructions;
@@ -560,7 +560,7 @@ namespace JSC {
 
     class GlobalCodeBlock : public CodeBlock {
     public:
-        GlobalCodeBlock(ExecutableBase* ownerExecutable, CodeType codeType, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset, JSGlobalObject* globalObject)
+        GlobalCodeBlock(ScriptExecutable* ownerExecutable, CodeType codeType, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset, JSGlobalObject* globalObject)
             : CodeBlock(ownerExecutable, codeType, sourceProvider, sourceOffset, &m_unsharedSymbolTable)
             , m_globalObject(globalObject)
         {

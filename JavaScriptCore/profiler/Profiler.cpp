@@ -153,8 +153,9 @@ CallIdentifier Profiler::createCallIdentifier(JSGlobalData* globalData, JSValue 
 
 CallIdentifier createCallIdentifierFromFunctionImp(JSGlobalData* globalData, JSFunction* function)
 {
+    ASSERT(!function->isHostFunction());
     const UString& name = function->calculatedDisplayName(globalData);
-    return CallIdentifier(name.isEmpty() ? AnonymousFunction : name, function->executable()->sourceURL(), function->executable()->lineNo());
+    return CallIdentifier(name.isEmpty() ? AnonymousFunction : name, function->jsExecutable()->sourceURL(), function->jsExecutable()->lineNo());
 }
 
 } // namespace JSC

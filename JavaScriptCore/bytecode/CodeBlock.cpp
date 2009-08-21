@@ -1248,7 +1248,7 @@ void CodeBlock::dumpStatistics()
 #endif
 }
 
-CodeBlock::CodeBlock(ExecutableBase* ownerExecutable, CodeType codeType, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset, SymbolTable* symTab)
+CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, CodeType codeType, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset, SymbolTable* symTab)
     : m_numCalleeRegisters(0)
     , m_numVars(0)
     , m_numParameters(0)

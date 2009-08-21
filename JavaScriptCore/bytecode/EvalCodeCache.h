@@ -42,15 +42,15 @@ namespace JSC {
 
     class EvalCodeCache {
     public:
-        PassRefPtr<CacheableEvalExecutable> get(ExecState* exec, const UString& evalSource, ScopeChainNode* scopeChain, JSValue& exceptionValue)
+        PassRefPtr<EvalExecutable> get(ExecState* exec, const UString& evalSource, ScopeChainNode* scopeChain, JSValue& exceptionValue)
         {
-            RefPtr<CacheableEvalExecutable> evalExecutable;
+            RefPtr<EvalExecutable> evalExecutable;
 
             if (evalSource.size() < maxCacheableSourceLength && (*scopeChain->begin())->isVariableObject())
                 evalExecutable = m_cacheMap.get(evalSource.rep());
 
             if (!evalExecutable) {
-                evalExecutable = CacheableEvalExecutable::create(makeSource(evalSource));
+                evalExecutable = EvalExecutable::create(makeSource(evalSource));
                 exceptionValue = evalExecutable->parse(exec);
                 if (exceptionValue)
                     return 0;
@@ -68,7 +68,7 @@ namespace JSC {
         static const int maxCacheableSourceLength = 256;
         static const int maxCacheEntries = 64;
 
-        typedef HashMap<RefPtr<UString::Rep>, RefPtr<CacheableEvalExecutable> > EvalCacheMap;
+        typedef HashMap<RefPtr<UString::Rep>, RefPtr<EvalExecutable> > EvalCacheMap;
         EvalCacheMap m_cacheMap;
     };
 

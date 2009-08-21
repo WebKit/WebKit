@@ -116,7 +116,7 @@ namespace JSC {
     {
         function = callFrame->callee();
 
-        int numParameters = function->executable()->parameterCount();
+        int numParameters = function->jsExecutable()->parameterCount();
         argc = callFrame->argumentCount();
 
         if (argc <= numParameters)
@@ -138,7 +138,7 @@ namespace JSC {
         int numArguments;
         getArgumentsData(callFrame, callee, firstParameterIndex, argv, numArguments);
 
-        d->numParameters = callee->executable()->parameterCount();
+        d->numParameters = callee->jsExecutable()->parameterCount();
         d->firstParameterIndex = firstParameterIndex;
         d->numArguments = numArguments;
 
@@ -169,7 +169,7 @@ namespace JSC {
         : JSObject(callFrame->lexicalGlobalObject()->argumentsStructure())
         , d(new ArgumentsData)
     {
-        ASSERT(!callFrame->callee()->executable()->parameterCount());
+        ASSERT(!callFrame->callee()->jsExecutable()->parameterCount());
 
         unsigned numArguments = callFrame->argumentCount() - 1;
 

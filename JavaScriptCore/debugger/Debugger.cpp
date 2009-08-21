@@ -76,7 +76,7 @@ void Debugger::recompileAllJSFunctions(JSGlobalData* globalData)
         if (function->executable()->isHostFunction())
             continue;
 
-        FunctionExecutable* executable = function->executable();
+        FunctionExecutable* executable = function->jsExecutable();
 
         // Check if the function is already in the set - if so,
         // we've already retranslated it, nothing to do here.

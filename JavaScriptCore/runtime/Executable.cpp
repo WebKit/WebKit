@@ -33,6 +33,14 @@
 
 namespace JSC {
 
+NativeExecutable::~NativeExecutable()
+{
+}
+
+VPtrHackExecutable::~VPtrHackExecutable()
+{
+}
+
 EvalExecutable::~EvalExecutable()
 {
     delete m_evalCodeBlock;
@@ -200,16 +208,6 @@ void FunctionExecutable::recompile(ExecState* exec)
     m_jitCode = JITCode();
 #endif
 }
-
-#if ENABLE(JIT)
-FunctionExecutable::FunctionExecutable(ExecState* exec)
-    : m_codeBlock(0)
-    , m_name(Identifier(exec, "<native thunk>"))
-{
-    m_jitCode = JITCode(JITCode::HostFunction(exec->globalData().jitStubs.ctiNativeCallThunk()));
-    m_numParameters = NUM_PARAMETERS_IS_HOST;
-}
-#endif
 
 };
 

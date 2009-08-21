@@ -353,7 +353,7 @@ NEVER_INLINE JSValue Interpreter::callEval(CallFrame* callFrame, RegisterFile* r
 
     ScopeChainNode* scopeChain = callFrame->scopeChain();
     CodeBlock* codeBlock = callFrame->codeBlock();
-    RefPtr<CacheableEvalExecutable> eval = codeBlock->evalCodeCache().get(callFrame, programSource, scopeChain, exceptionValue);
+    RefPtr<EvalExecutable> eval = codeBlock->evalCodeCache().get(callFrame, programSource, scopeChain, exceptionValue);
 
     JSValue result = jsUndefined();
     if (eval)
@@ -3082,7 +3082,8 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
                 exceptionValue = createStackOverflowError(callFrame);
                 goto vm_throw;
             }
-            int32_t expectedParams = callFrame->callee()->executable()->parameterCount();
+            ASSERT(!callFrame->callee()->isHostFunction());
+            int32_t expectedParams = callFrame->callee()->jsExecutable()->parameterCount();
             int32_t inplaceArgs = min(argCount, expectedParams);
             int32_t i = 0;
             Register* argStore = callFrame->registers() + argsOffset;

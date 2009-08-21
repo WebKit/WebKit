@@ -1,3 +1,118 @@
+2009-08-21  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Restructure Executable types so that host functions do not hold a FunctionExecutable.
+        https://bugs.webkit.org/show_bug.cgi?id=28621
+
+        All JSFunction objects have a pointer to an Executable*.  This is currently always a
+        FunctionExecutable, however this has a couple of drawbacks.  Host functions do not
+        store a range of information that the FunctionExecutable provides (source, name,
+        CodeBlock & information presently held on the FunctionBodyNode). 
+
+        [ * nearly all... see below! ]
+
+        Instead, make JSFunctions hold a pointer to an ExecutableBase, move fields specific
+        to JS sourced executable types (source, node) into a new subclass (ScriptExecutable),
+        and create a new NativeExecutable type.  We now provide a new method in JSFunction
+        to access & downcast to FunctionExecutable, but in doing so we can make an early
+        check (with an ASSERT) to ensure that the Executable read from a function will only
+        be treated as a FunctionExecutable (and thus the JS sepcific fields will only be
+        accessed) if the JSFunction is not a host function.
+
+        There is one JSFunction that currently does not have an Executable, which is the
+        object created to allow us to read out the vtable pointer.  By making this change
+        we can also add a new Executable type fror this object (VPtrHackExecutable).
+        Since this means that really all JSFunctions have an Executable we no longer have
+        to null-check m_executable before us it - particularly in isHostFunction().
+
+        This patch removes CacheableEvalExecutable, since all subclasses of ExecutableBase
+        can now be ref-counted - since both JSFunction holds (and ref-counts) an ExecutableBase
+        that might be a FunctionExecutable or a NativeExecutable.  This does now mean that all
+        ProgramExecutables and EvalExecutables (unnecessarily) provide an interface to be
+        ref-counted, however this seems less-bad than host functions unnecessarily providing
+        interface to access non-host specific information.
+
+        The class hierarcy has changed from this:
+        
+        - ExecutableBase
+            - ProgramExecutable
+            - EvalExecutable
+                - CacheableEvalExecutable (also RefCounted by multiple-inheritance)
+            - FunctionExecutable (also RefCounted by multiple-inheritance, 'special' FunctionExecutable also used for host functions)
+
+        To this:
+        
+        - RefCounted
+            - ExecutableBase
+                - NativeExecutable
+                - VPtrHackExecutable
+                - ScriptExecutable
+                    - ProgramExecutable
+                    - EvalExecutable
+                    - FunctionExecutable
+
+        This patch speeds up sunspidey by a couple of ms (presumably due to the changes to isHostFunction()).
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::ownerExecutable):
+        (JSC::GlobalCodeBlock::GlobalCodeBlock):
+        * bytecode/EvalCodeCache.h:
+        (JSC::EvalCodeCache::get):
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::recompileAllJSFunctions):
+        * interpreter/CachedCall.h:
+        (JSC::CachedCall::CachedCall):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::callEval):
+        (JSC::Interpreter::privateExecute):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * profiler/Profiler.cpp:
+        (JSC::createCallIdentifierFromFunctionImp):
+        * runtime/Arguments.h:
+        (JSC::Arguments::getArgumentsData):
+        (JSC::Arguments::Arguments):
+        * runtime/Executable.cpp:
+        (JSC::NativeExecutable::~NativeExecutable):
+        (JSC::VPtrHackExecutable::~VPtrHackExecutable):
+        * runtime/Executable.h:
+        (JSC::ExecutableBase::ExecutableBase):
+        (JSC::ExecutableBase::~ExecutableBase):
+        (JSC::ExecutableBase::isHostFunction):
+        (JSC::NativeExecutable::NativeExecutable):
+        (JSC::VPtrHackExecutable::VPtrHackExecutable):
+        (JSC::ScriptExecutable::ScriptExecutable):
+        (JSC::ScriptExecutable::source):
+        (JSC::ScriptExecutable::sourceID):
+        (JSC::ScriptExecutable::sourceURL):
+        (JSC::ScriptExecutable::lineNo):
+        (JSC::ScriptExecutable::lastLine):
+        (JSC::ScriptExecutable::usesEval):
+        (JSC::ScriptExecutable::usesArguments):
+        (JSC::ScriptExecutable::needsActivation):
+        (JSC::EvalExecutable::EvalExecutable):
+        (JSC::EvalExecutable::create):
+        (JSC::ProgramExecutable::ProgramExecutable):
+        (JSC::FunctionExecutable::FunctionExecutable):
+        * runtime/FunctionPrototype.cpp:
+        (JSC::functionProtoFuncToString):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::JSFunction):
+        (JSC::JSFunction::~JSFunction):
+        (JSC::JSFunction::markChildren):
+        (JSC::JSFunction::getCallData):
+        (JSC::JSFunction::call):
+        (JSC::JSFunction::lengthGetter):
+        (JSC::JSFunction::getConstructData):
+        (JSC::JSFunction::construct):
+        * runtime/JSFunction.h:
+        (JSC::JSFunction::executable):
+        (JSC::JSFunction::jsExecutable):
+        (JSC::JSFunction::isHostFunction):
+
 2009-08-20  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.
@@ -106,7 +221,7 @@
         Reviewed by Oliver Hunt.
 
         Numbering of arguments to emitGetJITStubArg/emitPutJITStubArg incorrect
-        https://bugs.webkit.org/show_bug.cgi?id=28513
+        <bug lost in the great bug disasteroony of 08/20/09!>
 
         The argumentNumber argument to emitGetJITStubArg/emitPutJITStubArg should match
         the argument number used within the stub functions in JITStubs.cpp, but it doesn't.
