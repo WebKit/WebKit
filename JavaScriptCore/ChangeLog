@@ -1,5 +1,13 @@
 2009-08-21  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by NOBODY (build fix).
+
+        Speculative QT build fix.
+
+        * runtime/StringPrototype.cpp:
+
+2009-08-21  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Oliver Hunt.
 
         Restructure Executable types so that host functions do not hold a FunctionExecutable.

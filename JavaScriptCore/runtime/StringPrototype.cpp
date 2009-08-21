@@ -24,6 +24,7 @@
 
 #include "CachedCall.h"
 #include "Error.h"
+#include "Executable.h"
 #include "JSArray.h"
 #include "JSFunction.h"
 #include "ObjectPrototype.h"
