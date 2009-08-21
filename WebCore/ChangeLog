@@ -1,5 +1,15 @@
 2009-08-21  Joseph Pecoraro  <joepeck@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        Inspector: Remove Unused Variable
+        https://bugs.webkit.org/show_bug.cgi?id=28616
+
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource.prototype._checkWarning):
+
+2009-08-21  Joseph Pecoraro  <joepeck@webkit.org>
+
         Reviewed by Timothy Hatcher.
 
         Inspector: Console Array Formatter Shows Extra Properties

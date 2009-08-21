@@ -538,7 +538,6 @@ WebInspector.Resource.prototype = {
 
     _checkWarning: function(warning)
     {
-        var addWarning = false;
         var msg;
         switch (warning.id) {
             case WebInspector.Warnings.IncorrectMIMEType.id:
