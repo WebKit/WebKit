@@ -44,7 +44,7 @@ WebInspector.DOMStorageDataGrid.prototype = {
         this._editing = true;
         this._editingNode = node;
         this._editingNode.select();
-        WebInspector.panels.databases._unregisterStorageEventListener();
+        WebInspector.panels.storage._unregisterStorageEventListener();
 
         var element = this._editingNode._element.children[column];
         WebInspector.startEditing(element, this._editingCommitted.bind(this), this._editingCancelled.bind(this), element.textContent);
@@ -69,7 +69,7 @@ WebInspector.DOMStorageDataGrid.prototype = {
             return this._startEditingColumnOfDataGridNode(this._editingNode, 0);
 
         this._editing = true;
-        WebInspector.panels.databases._unregisterStorageEventListener();
+        WebInspector.panels.storage._unregisterStorageEventListener();
         WebInspector.startEditing(element, this._editingCommitted.bind(this), this._editingCancelled.bind(this), element.textContent);
         window.getSelection().setBaseAndExtent(element, 0, element, 1);
     },
@@ -118,7 +118,7 @@ WebInspector.DOMStorageDataGrid.prototype = {
             return;
         }
 
-        var domStorage = WebInspector.panels.databases.visibleView.domStorage.domStorage;
+        var domStorage = WebInspector.panels.storage.visibleView.domStorage.domStorage;
         if (domStorage) {
             if (columnIdentifier == 0) {
                 if (domStorage.getItem(newText) != null) {
@@ -147,7 +147,7 @@ WebInspector.DOMStorageDataGrid.prototype = {
     {
         delete this._editing;
         this._editingNode = null;
-        WebInspector.panels.databases._registerStorageEventListener();
+        WebInspector.panels.storage._registerStorageEventListener();
     },
 
     deleteSelectedRow: function()
@@ -156,7 +156,7 @@ WebInspector.DOMStorageDataGrid.prototype = {
         if (this.selectedNode.isCreationNode)
             return;
 
-        var domStorage = WebInspector.panels.databases.visibleView.domStorage.domStorage;
+        var domStorage = WebInspector.panels.storage.visibleView.domStorage.domStorage;
         if (node && domStorage)
             domStorage.removeItem(node.data[0]);
     }

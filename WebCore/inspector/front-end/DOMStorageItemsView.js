@@ -66,7 +66,7 @@ WebInspector.DOMStorageItemsView.prototype = {
             hasDOMStorage = this.domStorage.domStorage;
 
         if (hasDOMStorage) {
-            var dataGrid = WebInspector.panels.databases.dataGridForDOMStorage(this.domStorage.domStorage);
+            var dataGrid = WebInspector.panels.storage.dataGridForDOMStorage(this.domStorage.domStorage);
             if (!dataGrid)
                 hasDOMStorage = 0;
             else {

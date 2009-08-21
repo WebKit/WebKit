@@ -1,3 +1,55 @@
+2009-08-21  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Inspector: Rename "Databases" Panel as "Storage"
+        https://bugs.webkit.org/show_bug.cgi?id=28620
+
+          Updated enum from "DatabasesPanel" to "StoragePanel" and wherever it was used.
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::specialPanelForJSName): string to display StoragePanel can be either "databases" or "storage"
+        * inspector/InspectorController.h:
+        (WebCore::InspectorController::):
+        * inspector/InspectorFrontend.cpp:
+        (WebCore::InspectorFrontend::showPanel):
+
+          Updated All Direct Access from WebInspector.panels.databases to WebInspector.panels.storage,
+          any DatabasesPanel constructors and appropriate function names.
+
+        * inspector/front-end/DOMStorageDataGrid.js:
+        (WebInspector.DOMStorageDataGrid.prototype._startEditingColumnOfDataGridNode):
+        (WebInspector.DOMStorageDataGrid.prototype._startEditing):
+        (WebInspector.DOMStorageDataGrid.prototype._editingCommitted):
+        (WebInspector.DOMStorageDataGrid.prototype._editingCancelled):
+        (WebInspector.DOMStorageDataGrid.prototype.deleteSelectedRow):
+        * inspector/front-end/DOMStorageItemsView.js:
+        (WebInspector.DOMStorageItemsView.prototype.update):
+        * inspector/front-end/DatabaseQueryView.js:
+        (WebInspector.DatabaseQueryView.prototype._queryFinished):
+        * inspector/front-end/DatabaseTableView.js:
+        (WebInspector.DatabaseTableView.prototype._queryFinished):
+        * inspector/front-end/inspector.js:
+        (WebInspector._createPanels): updated string that comes from hiddenPanels to be "databases" or "storage"
+        (WebInspector.showStoragePanel):
+        (WebInspector.selectDatabase):
+        (WebInspector.selectDOMStorage):
+        (WebInspector.addDatabase):
+        (WebInspector.addDOMStorage):
+
+          Renamed some files and Updated Accordingly.
+
+        * inspector/front-end/StoragePanel.js: Renamed from WebCore/inspector/front-end/DatabasesPanel.js.
+        * inspector/front-end/Images/storageIcon.png: Renamed from WebCore/inspector/front-end/Images/databasesIcon.png.
+        * inspector/front-end/WebKit.qrc: use new file names
+        * inspector/front-end/inspector.css: use new images name and class names
+        * inspector/front-end/inspector.html: use new file name
+        * WebCore.gypi: use new file names
+
+          Miscellaneous Updates.
+
+        * English.lproj/localizedStrings.js: Updated Tooltip from "Databases" to "Storage"
+
 2009-08-21  Maxime Simon  <simon.maxime@gmail.com>
 
         Reviewed by Oliver Hunt.

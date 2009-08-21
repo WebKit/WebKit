@@ -199,8 +199,8 @@ body.attached #search-results-matches {
     background-image: url(Images/scriptsIcon.png);
 }
 
-.toolbar-item.databases .toolbar-icon {
-    background-image: url(Images/databasesIcon.png);
+.toolbar-item.storage .toolbar-icon {
+    background-image: url(Images/storageIcon.png);
 }
 
 .toolbar-item.profiles .toolbar-icon {

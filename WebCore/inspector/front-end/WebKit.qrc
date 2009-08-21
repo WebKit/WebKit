@@ -12,7 +12,6 @@
     <file>CookieItemsView.js</file>
     <file>Database.js</file>
     <file>DatabaseQueryView.js</file>
-    <file>DatabasesPanel.js</file>
     <file>DatabaseTableView.js</file>
     <file>DataGrid.js</file>
     <file>DOMAgent.js</file>
@@ -52,6 +51,7 @@
     <file>SourceFrame.js</file>
     <file>SourceView.js</file>
     <file>StatusBarButton.js</file>
+    <file>StoragePanel.js</file>
     <file>StylesSidebarPane.js</file>
     <file>TextPrompt.js</file>
     <file>TopDownProfileDataGridTree.js</file>
@@ -66,7 +66,6 @@
     <file>Images/consoleButtonGlyph.png</file>
     <file>Images/cookie.png</file>
     <file>Images/database.png</file>
-    <file>Images/databasesIcon.png</file>
     <file>Images/databaseTable.png</file>
     <file>Images/debuggerContinue.png</file>
     <file>Images/debuggerPause.png</file>
@@ -147,6 +146,7 @@
     <file>Images/statusbarMenuButtonSelected.png</file>
     <file>Images/statusbarResizerHorizontal.png</file>
     <file>Images/statusbarResizerVertical.png</file>
+    <file>Images/storageIcon.png</file>
     <file>Images/timelineHollowPillBlue.png</file>
     <file>Images/timelineHollowPillGray.png</file>
     <file>Images/timelineHollowPillGreen.png</file>

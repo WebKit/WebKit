@@ -142,12 +142,12 @@ WebInspector.DatabaseQueryView.prototype = {
 
     _queryFinished: function(query, tx, result)
     {
-        var dataGrid = WebInspector.panels.databases.dataGridForResult(result);
+        var dataGrid = WebInspector.panels.storage.dataGridForResult(result);
         dataGrid.element.addStyleClass("inline");
         this._appendQueryResult(query, dataGrid.element);
 
         if (query.match(/^create /i) || query.match(/^drop table /i))
-            WebInspector.panels.databases.updateDatabaseTables(this.database);
+            WebInspector.panels.storage.updateDatabaseTables(this.database);
     },
 
     _queryError: function(query, error)

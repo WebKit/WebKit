@@ -27,12 +27,12 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DatabasesPanel = function(database)
+WebInspector.StoragePanel = function(database)
 {
     WebInspector.Panel.call(this);
 
     this.sidebarElement = document.createElement("div");
-    this.sidebarElement.id = "databases-sidebar";
+    this.sidebarElement.id = "storage-sidebar";
     this.sidebarElement.className = "sidebar";
     this.element.appendChild(this.sidebarElement);
 
@@ -73,12 +73,12 @@ WebInspector.DatabasesPanel = function(database)
     this.reset();
 }
 
-WebInspector.DatabasesPanel.prototype = {
-    toolbarItemClass: "databases",
+WebInspector.StoragePanel.prototype = {
+    toolbarItemClass: "storage",
 
     get toolbarItemLabel()
     {
-        return WebInspector.UIString("Databases");
+        return WebInspector.UIString("Storage");
     },
 
     get statusBarItems()
@@ -537,7 +537,7 @@ WebInspector.DatabasesPanel.prototype = {
     }
 }
 
-WebInspector.DatabasesPanel.prototype.__proto__ = WebInspector.Panel.prototype;
+WebInspector.StoragePanel.prototype.__proto__ = WebInspector.Panel.prototype;
 
 WebInspector.DatabaseSidebarTreeElement = function(database)
 {
@@ -551,7 +551,7 @@ WebInspector.DatabaseSidebarTreeElement = function(database)
 WebInspector.DatabaseSidebarTreeElement.prototype = {
     onselect: function()
     {
-        WebInspector.panels.databases.showDatabase(this.database);
+        WebInspector.panels.storage.showDatabase(this.database);
     },
 
     oncollapse: function()
@@ -605,7 +605,7 @@ WebInspector.SidebarDatabaseTableTreeElement = function(database, tableName)
 WebInspector.SidebarDatabaseTableTreeElement.prototype = {
     onselect: function()
     {
-        WebInspector.panels.databases.showDatabase(this.database, this.tableName);
+        WebInspector.panels.storage.showDatabase(this.database, this.tableName);
     }
 }
 
@@ -624,7 +624,7 @@ WebInspector.DOMStorageSidebarTreeElement = function(domStorage, className)
 WebInspector.DOMStorageSidebarTreeElement.prototype = {
     onselect: function()
     {
-        WebInspector.panels.databases.showDOMStorage(this.domStorage);
+        WebInspector.panels.storage.showDOMStorage(this.domStorage);
     },
 
     get mainTitle()
@@ -660,7 +660,7 @@ WebInspector.CookieSidebarTreeElement = function()
 WebInspector.CookieSidebarTreeElement.prototype = {
     onselect: function()
     {
-        WebInspector.panels.databases.showCookies();
+        WebInspector.panels.storage.showCookies();
     },
 
     get mainTitle()

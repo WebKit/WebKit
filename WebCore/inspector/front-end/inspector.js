@@ -136,8 +136,8 @@ var WebInspector = {
             this.panels.scripts = new WebInspector.ScriptsPanel();
         if (hiddenPanels.indexOf("profiles") === -1)
             this.panels.profiles = new WebInspector.ProfilesPanel();
-        if (hiddenPanels.indexOf("databases") === -1)
-            this.panels.databases = new WebInspector.DatabasesPanel();      
+        if (hiddenPanels.indexOf("storage") === -1 && hiddenPanels.indexOf("databases") === -1)
+            this.panels.storage = new WebInspector.StoragePanel();      
     },
 
     get attached()
@@ -878,9 +878,9 @@ WebInspector.showProfilesPanel = function()
     this.currentPanel = this.panels.profiles;
 }
 
-WebInspector.showDatabasesPanel = function()
+WebInspector.showStoragePanel = function()
 {
-    this.currentPanel = this.panels.databases;
+    this.currentPanel = this.panels.storage;
 }
 
 WebInspector.addResource = function(identifier, payload)
@@ -913,14 +913,14 @@ WebInspector.clearConsoleMessages = function()
 
 WebInspector.selectDatabase = function(o)
 {
-    WebInspector.showDatabasesPanel();
-    WebInspector.panels.databases.selectDatabase(o);
+    WebInspector.showStoragePanel();
+    WebInspector.panels.storage.selectDatabase(o);
 }
 
 WebInspector.selectDOMStorage = function(o)
 {
-    WebInspector.showDatabasesPanel();
-    WebInspector.panels.databases.selectDOMStorage(o);
+    WebInspector.showStoragePanel();
+    WebInspector.panels.storage.selectDOMStorage(o);
 }
 
 WebInspector.updateResource = function(identifier, payload)
@@ -991,7 +991,7 @@ WebInspector.addDatabase = function(payload)
         payload.domain,
         payload.name,
         payload.version);
-    this.panels.databases.addDatabase(database);
+    this.panels.storage.addDatabase(database);
 }
 
 WebInspector.addDOMStorage = function(payload)
@@ -1000,7 +1000,7 @@ WebInspector.addDOMStorage = function(payload)
         payload.domStorage,
         payload.host,
         payload.isLocalStorage);
-    this.panels.databases.addDOMStorage(domStorage);
+    this.panels.storage.addDOMStorage(domStorage);
 }
 
 WebInspector.resourceTrackingWasEnabled = function()

@@ -65,7 +65,7 @@ WebInspector.DatabaseTableView.prototype = {
     {
         this.element.removeChildren();
 
-        var dataGrid = WebInspector.panels.databases.dataGridForResult(result);
+        var dataGrid = WebInspector.panels.storage.dataGridForResult(result);
         if (!dataGrid) {
             var emptyMsgElement = document.createElement("div");
             emptyMsgElement.className = "storage-table-empty";
