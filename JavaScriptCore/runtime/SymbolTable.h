@@ -121,6 +121,10 @@ namespace JSC {
 
     typedef HashMap<RefPtr<UString::Rep>, SymbolTableEntry, IdentifierRepHash, HashTraits<RefPtr<UString::Rep> >, SymbolTableIndexHashTraits> SymbolTable;
 
+    class SharedSymbolTable : public SymbolTable, public RefCounted<SharedSymbolTable>
+    {
+    };
+    
 } // namespace JSC
 
 #endif // SymbolTable_h

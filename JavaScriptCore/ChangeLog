@@ -1,3 +1,40 @@
+2009-08-20  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Browser hangs on opening Web Inspector.
+        https://bugs.webkit.org/show_bug.cgi?id=28438
+
+        Code generation needs to be able to walk the entire scopechain in some
+        cases, however the symbol table used by activations was a member of the
+        codeblock.  Following recompilation this may no longer exist, leading
+        to a crash or hang on lookup.
+
+        We fix this by introducing a refcounted SymbolTable subclass, SharedSymbolTable,
+        for the CodeBlocks used by function code.  This allows activations to
+        maintain ownership of a copy of the symbol table even after recompilation so
+        they can continue to work.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::symbolTable):
+        (JSC::CodeBlock::sharedSymbolTable):
+        (JSC::GlobalCodeBlock::GlobalCodeBlock):
+        (JSC::FunctionCodeBlock::FunctionCodeBlock):
+        (JSC::FunctionCodeBlock::~FunctionCodeBlock):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::retrieveArguments):
+        * runtime/Executable.cpp:
+        (JSC::EvalExecutable::generateBytecode):
+        (JSC::FunctionExecutable::generateBytecode):
+        (JSC::FunctionExecutable::reparseExceptionInfo):
+        (JSC::EvalExecutable::reparseExceptionInfo):
+        * runtime/JSActivation.h:
+        (JSC::JSActivation::JSActivationData::JSActivationData):
+        (JSC::JSActivation::JSActivationData::~JSActivationData):
+        * runtime/SymbolTable.h:
+
 2009-08-20  Xan Lopez  <xlopez@igalia.com>
 
         Add new file to GTK+ build.

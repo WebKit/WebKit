@@ -1248,7 +1248,7 @@ void CodeBlock::dumpStatistics()
 #endif
 }
 
-CodeBlock::CodeBlock(ExecutableBase* ownerExecutable, CodeType codeType, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset)
+CodeBlock::CodeBlock(ExecutableBase* ownerExecutable, CodeType codeType, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset, SymbolTable* symTab)
     : m_numCalleeRegisters(0)
     , m_numVars(0)
     , m_numParameters(0)
@@ -1263,6 +1263,7 @@ CodeBlock::CodeBlock(ExecutableBase* ownerExecutable, CodeType codeType, PassRef
     , m_codeType(codeType)
     , m_source(sourceProvider)
     , m_sourceOffset(sourceOffset)
+    , m_symbolTable(symTab)
     , m_exceptionInfo(new ExceptionInfo)
 {
     ASSERT(m_source);

@@ -55,7 +55,7 @@ void EvalExecutable::generateBytecode(ScopeChainNode* scopeChainNode)
 
     ASSERT(!m_evalCodeBlock);
     m_evalCodeBlock = new EvalCodeBlock(this, globalObject, source().provider(), scopeChain.localDepth());
-    OwnPtr<BytecodeGenerator> generator(new BytecodeGenerator(evalNode(), globalObject->debugger(), scopeChain, &m_evalCodeBlock->symbolTable(), m_evalCodeBlock));
+    OwnPtr<BytecodeGenerator> generator(new BytecodeGenerator(evalNode(), globalObject->debugger(), scopeChain, m_evalCodeBlock->symbolTable(), m_evalCodeBlock));
     generator->generate();
     
     evalNode()->destroyData();
@@ -83,7 +83,7 @@ void FunctionExecutable::generateBytecode(ScopeChainNode* scopeChainNode)
 
     ASSERT(!m_codeBlock);
     m_codeBlock = new FunctionCodeBlock(this, FunctionCode, source().provider(), source().startOffset());
-    OwnPtr<BytecodeGenerator> generator(new BytecodeGenerator(body(), globalObject->debugger(), scopeChain, &m_codeBlock->symbolTable(), m_codeBlock));
+    OwnPtr<BytecodeGenerator> generator(new BytecodeGenerator(body(), globalObject->debugger(), scopeChain, m_codeBlock->symbolTable(), m_codeBlock));
     generator->generate();
     m_numParameters = m_codeBlock->m_numParameters;
     ASSERT(m_numParameters);
@@ -147,7 +147,7 @@ ExceptionInfo* FunctionExecutable::reparseExceptionInfo(JSGlobalData* globalData
     OwnPtr<CodeBlock> newCodeBlock(new FunctionCodeBlock(this, FunctionCode, source().provider(), source().startOffset()));
     globalData->functionCodeBlockBeingReparsed = newCodeBlock.get();
 
-    OwnPtr<BytecodeGenerator> generator(new BytecodeGenerator(newFunctionBody.get(), globalObject->debugger(), scopeChain, &newCodeBlock->symbolTable(), newCodeBlock.get()));
+    OwnPtr<BytecodeGenerator> generator(new BytecodeGenerator(newFunctionBody.get(), globalObject->debugger(), scopeChain, newCodeBlock->symbolTable(), newCodeBlock.get()));
     generator->setRegeneratingForExceptionInfo(static_cast<FunctionCodeBlock*>(codeBlock));
     generator->generate();
 
@@ -172,7 +172,7 @@ ExceptionInfo* EvalExecutable::reparseExceptionInfo(JSGlobalData* globalData, Sc
 
     OwnPtr<EvalCodeBlock> newCodeBlock(new EvalCodeBlock(this, globalObject, source().provider(), scopeChain.localDepth()));
 
-    OwnPtr<BytecodeGenerator> generator(new BytecodeGenerator(newEvalBody.get(), globalObject->debugger(), scopeChain, &newCodeBlock->symbolTable(), newCodeBlock.get()));
+    OwnPtr<BytecodeGenerator> generator(new BytecodeGenerator(newEvalBody.get(), globalObject->debugger(), scopeChain, newCodeBlock->symbolTable(), newCodeBlock.get()));
     generator->setRegeneratingForExceptionInfo(static_cast<EvalCodeBlock*>(codeBlock));
     generator->generate();
 

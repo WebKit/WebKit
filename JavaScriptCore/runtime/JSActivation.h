@@ -70,10 +70,17 @@ namespace JSC {
 
     private:
         struct JSActivationData : public JSVariableObjectData {
-            JSActivationData(PassRefPtr<FunctionExecutable> functionExecutable, Register* registers)
-                : JSVariableObjectData(&functionExecutable->generatedBytecode().symbolTable(), registers)
-                , functionExecutable(functionExecutable)
+            JSActivationData(PassRefPtr<FunctionExecutable> _functionExecutable, Register* registers)
+                : JSVariableObjectData(_functionExecutable->generatedBytecode().symbolTable(), registers)
+                , functionExecutable(_functionExecutable)
             {
+                // We have to manually ref and deref the symbol table as JSVariableObjectData
+                // doesn't know about SharedSymbolTable
+                functionExecutable->generatedBytecode().sharedSymbolTable()->ref();
+            }
+            ~JSActivationData()
+            {
+                static_cast<SharedSymbolTable*>(symbolTable)->deref();
             }
 
             RefPtr<FunctionExecutable> functionExecutable;
