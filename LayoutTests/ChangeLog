@@ -1,3 +1,11 @@
+2009-08-21  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Gustavo Noronha.
+
+        [Gtk] Check-in result for http://trac.webkit.org/changeset/47590.
+
+        * platform/gtk/fast/repaint/inline-block-resize-expected.txt: Copied from LayoutTests/platform/mac/fast/repaint/inline-block-resize-expected.txt.
+
 2009-08-20  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
