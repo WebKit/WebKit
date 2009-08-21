@@ -323,6 +323,14 @@ function (jsonObject) {
 PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
 json2.js did not throw for a test we expect to throw.
 function (jsonObject) {
+        return jsonObject.parse('{/* block comments are not allowed */}');
+    }
+PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
+function (jsonObject) {
+        return jsonObject.parse('{// line comments are not allowed \n}');
+    }
+PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
+function (jsonObject) {
         return jsonObject.parse('true');
     }
 PASS JSON.stringify(tests[i](nativeJSON)) is JSON.stringify(tests[i](JSON))

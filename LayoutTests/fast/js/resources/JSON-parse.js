@@ -288,6 +288,14 @@ function createTests() {
     });
     result[result.length - 1].throws = true;
     result.push(function(jsonObject){
+        return jsonObject.parse('{/* block comments are not allowed */}');
+    });
+    result[result.length - 1].throws = true;
+    result.push(function(jsonObject){
+        return jsonObject.parse('{// line comments are not allowed \n}');
+    });
+    result[result.length - 1].throws = true;
+    result.push(function(jsonObject){
         return jsonObject.parse('true');
     });
     result.push(function(jsonObject){

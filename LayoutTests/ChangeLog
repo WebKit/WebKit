@@ -1,3 +1,13 @@
+2009-08-21  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Add test to ensure JSON parser does not accept comments.
+
+        * fast/js/JSON-parse-expected.txt:
+        * fast/js/resources/JSON-parse.js:
+        (createTests.result):
+
 2009-08-21  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Dan Bernstein.
