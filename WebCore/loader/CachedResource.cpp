@@ -301,7 +301,7 @@ void CachedResource::setResourceToRevalidate(CachedResource* resource)
     ASSERT(resource->type() == type());
 
     // The following assert should be investigated whenever it occurs. Although it should never fire, it currently does in rare circumstances.
-    // https://bugs.webkit.org/show_bug.cgi?id=28507.
+    // https://bugs.webkit.org/show_bug.cgi?id=28604.
     // So the code needs to be robust to this assert failing thus the "if (m_resourceToRevalidate->m_proxyResource == this)" in CachedResource::clearResourceToRevalidate.
     ASSERT(!resource->m_proxyResource);
 

@@ -1,3 +1,12 @@
+2009-08-20  David Levin  <levin@chromium.org>
+
+        Unreviewed trivial comment fix.
+
+        Update a bug link in a comment due to bugzilla amnesia.
+
+        * loader/CachedResource.cpp:
+        (WebCore::CachedResource::setResourceToRevalidate):
+
 2009-08-20  Albert J. Wong  <ajwong@chromium.org>
 
         Reviewed by David Levin.
