@@ -1,3 +1,14 @@
+2009-08-21  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] Remove inspector resources for Symbian
+        https://bugs.webkit.org/show_bug.cgi?id=28610
+
+        Based on an idea from Simon Hausmann.
+
+        * WebCore.pro:
+
 2009-08-21  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Eric Seidel.

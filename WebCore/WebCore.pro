@@ -177,8 +177,11 @@ CONFIG(compute_defaults) {
 }
 
 RESOURCES += \
-    $$PWD/../WebCore/inspector/front-end/WebKit.qrc \
     $$PWD/../WebCore/WebCore.qrc
+
+!symbian {
+    RESOURCES += $$PWD/../WebCore/inspector/front-end/WebKit.qrc
+}
 
 include($$PWD/../JavaScriptCore/JavaScriptCore.pri)
 
