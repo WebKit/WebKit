@@ -1,3 +1,16 @@
+2009-08-21  Philippe Beauchamp  <philippe.beauchamp@gmail.com>
+
+        Reviewed by Adam Roben.
+
+        Middle click panning icon is offset by 3 pixels
+        https://bugs.webkit.org/show_bug.cgi?id=28611
+
+        * platform/ScrollView.cpp:
+        panIconSizeLength initialized to 20 instead of 16 to match icon dimension (2 pixels offset)
+        * platform/win/CursorWin.cpp:
+        (WebCore::middlePanningCursor):
+        Hotspot initialized to (8,8) instead of (7,7) (one pixel offset)
+        
 2009-08-21  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Eric Seidel.
