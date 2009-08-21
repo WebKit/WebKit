@@ -1,3 +1,35 @@
+2009-08-21  Maxime Simon  <simon.maxime@gmail.com>
+
+        Reviewed by Oliver Hunt.
+
+        [Haiku] Adding three font-specific files to WebCore:
+        FontCacheHaiku.cpp, FontHaiku.cpp, and SimpleFontDataHaiku.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=28131
+
+        * platform/graphics/haiku/FontCacheHaiku.cpp: Added.
+        (WebCore::FontCache::platformInit):
+        (WebCore::FontCache::getFontDataForCharacters):
+        (WebCore::FontCache::getSimilarFontPlatformData):
+        (WebCore::FontCache::getLastResortFallbackFont):
+        (WebCore::FontCache::createFontPlatformData):
+        (WebCore::FontCache::getTraitsInFamily):
+        * platform/graphics/haiku/FontHaiku.cpp: Added.
+        (charUnicodeToUTF8HACK):
+        (WebCore::Font::canReturnFallbackFontsForComplexText):
+        (WebCore::Font::drawGlyphs):
+        (WebCore::Font::drawComplexText):
+        (WebCore::Font::floatWidthForComplexText):
+        (WebCore::Font::selectionRectForComplexText):
+        (WebCore::Font::offsetForPositionForComplexText):
+        * platform/graphics/haiku/SimpleFontDataHaiku.cpp: Added.
+        (WebCore::SimpleFontData::platformInit):
+        (WebCore::SimpleFontData::platformCharWidthInit):
+        (WebCore::SimpleFontData::platformDestroy):
+        (WebCore::SimpleFontData::smallCapsFontData):
+        (WebCore::SimpleFontData::containsCharacters):
+        (WebCore::SimpleFontData::determinePitch):
+        (WebCore::SimpleFontData::platformWidthForGlyph):
+
 2009-08-21  Philippe Beauchamp  <philippe.beauchamp@gmail.com>
 
         Reviewed by Adam Roben.
