@@ -498,11 +498,11 @@ IntSize RenderBoxModelObject::calculateBackgroundSize(const FillLayer* bgLayer, 
     StyleImage* bg = bgLayer->image();
     bg->setImageContainerSize(IntSize(scaledWidth, scaledHeight)); // Use the box established by background-origin.
 
-    if (bgLayer->isSizeSet()) {
+    if (bgLayer->size().type == SizeLength) {
         int w = scaledWidth;
         int h = scaledHeight;
-        Length bgWidth = bgLayer->size().width();
-        Length bgHeight = bgLayer->size().height();
+        Length bgWidth = bgLayer->size().size.width();
+        Length bgHeight = bgLayer->size().size.height();
 
         if (bgWidth.isFixed())
             w = bgWidth.value();

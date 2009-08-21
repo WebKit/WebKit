@@ -2375,11 +2375,17 @@ bool CSSParser::parseFillProperty(int propId, int& propId1, int& propId2,
                     }
                     break;
                 case CSSPropertyBackgroundSize:
-                case CSSPropertyWebkitMaskSize:
-                    currValue = parseFillSize();
-                    if (currValue)
+                case CSSPropertyWebkitMaskSize: {
+                    if (val->id == CSSValueContain || val->id == CSSValueCover) {
+                        currValue = CSSPrimitiveValue::createIdentifier(val->id);
                         m_valueList->next();
+                    } else {
+                        currValue = parseFillSize();
+                        if (currValue)
+                            m_valueList->next();
+                    }
                     break;
+                }
             }
             if (!currValue)
                 return false;

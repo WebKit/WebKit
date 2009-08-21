@@ -5315,17 +5315,27 @@ void CSSStyleSelector::mapFillRepeat(FillLayer* layer, CSSValue* value)
 
 void CSSStyleSelector::mapFillSize(FillLayer* layer, CSSValue* value)
 {
-    LengthSize b = FillLayer::initialFillSize(layer->type());
-    
-    if (value->cssValueType() == CSSValue::CSS_INITIAL) {
-        layer->setSize(b);
+    if (!value->isPrimitiveValue()) {
+        layer->setSizeType(SizeNone);
         return;
     }
-    
-    if (!value->isPrimitiveValue())
-        return;
-        
+
     CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
+    if (primitiveValue->getIdent() == CSSValueContain)
+        layer->setSizeType(Contain);
+    else if (primitiveValue->getIdent() == CSSValueCover)
+        layer->setSizeType(Cover);
+    else
+        layer->setSizeType(SizeLength);
+    
+    LengthSize b = FillLayer::initialFillSizeLength(layer->type());
+    
+    if (value->cssValueType() == CSSValue::CSS_INITIAL || primitiveValue->getIdent() == CSSValueContain
+        || primitiveValue->getIdent() == CSSValueCover) {
+        layer->setSizeLength(b);
+        return;
+    }
+
     Pair* pair = primitiveValue->getPairValue();
     if (!pair)
         return;
@@ -5362,7 +5372,7 @@ void CSSStyleSelector::mapFillSize(FillLayer* layer, CSSValue* value)
     
     b.setWidth(firstLength);
     b.setHeight(secondLength);
-    layer->setSize(b);
+    layer->setSizeLength(b);
 }
 
 void CSSStyleSelector::mapFillXPosition(FillLayer* layer, CSSValue* value)

@@ -650,9 +650,14 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
                 return style->backgroundImage()->cssValue();
             return CSSPrimitiveValue::createIdentifier(CSSValueNone);
         case CSSPropertyBackgroundSize: {
+            EFillSizeType size = style->backgroundSizeType();
+            if (size == Contain)
+                return CSSPrimitiveValue::createIdentifier(CSSValueContain);
+            if (size == Cover)
+                return CSSPrimitiveValue::createIdentifier(CSSValueCover);
             RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
-            list->append(CSSPrimitiveValue::create(style->backgroundSize().width()));
-            list->append(CSSPrimitiveValue::create(style->backgroundSize().height()));
+            list->append(CSSPrimitiveValue::create(style->backgroundSizeLength().width()));
+            list->append(CSSPrimitiveValue::create(style->backgroundSizeLength().height()));
             return list.release();
         }  
         case CSSPropertyBackgroundRepeat:

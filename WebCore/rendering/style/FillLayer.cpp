@@ -33,7 +33,8 @@ FillLayer::FillLayer(EFillLayerType type)
     , m_origin(FillLayer::initialFillOrigin(type))
     , m_repeat(FillLayer::initialFillRepeat(type))
     , m_composite(FillLayer::initialFillComposite(type))
-    , m_size(FillLayer::initialFillSize(type))
+    , m_sizeType(FillLayer::initialFillSizeType(type))
+    , m_sizeLength(FillLayer::initialFillSizeLength(type))
     , m_imageSet(false)
     , m_attachmentSet(false)
     , m_clipSet(false)
@@ -42,7 +43,6 @@ FillLayer::FillLayer(EFillLayerType type)
     , m_xPosSet(false)
     , m_yPosSet(false)
     , m_compositeSet(type == MaskFillLayer)
-    , m_sizeSet(false)
     , m_type(type)
     , m_next(0)
 {
@@ -57,7 +57,8 @@ FillLayer::FillLayer(const FillLayer& o)
     , m_origin(o.m_origin)
     , m_repeat(o.m_repeat)
     , m_composite(o.m_composite)
-    , m_size(o.m_size)
+    , m_sizeType(o.m_sizeType)
+    , m_sizeLength(o.m_sizeLength)
     , m_imageSet(o.m_imageSet)
     , m_attachmentSet(o.m_attachmentSet)
     , m_clipSet(o.m_clipSet)
@@ -66,7 +67,6 @@ FillLayer::FillLayer(const FillLayer& o)
     , m_xPosSet(o.m_xPosSet)
     , m_yPosSet(o.m_yPosSet)
     , m_compositeSet(o.m_compositeSet)
-    , m_sizeSet(o.m_sizeSet)
     , m_type(o.m_type)
     , m_next(o.m_next ? new FillLayer(*o.m_next) : 0)
 {
@@ -92,7 +92,8 @@ FillLayer& FillLayer::operator=(const FillLayer& o)
     m_composite = o.m_composite;
     m_origin = o.m_origin;
     m_repeat = o.m_repeat;
-    m_size = o.m_size;
+    m_sizeType = o.m_sizeType;
+    m_sizeLength = o.m_sizeLength;
 
     m_imageSet = o.m_imageSet;
     m_attachmentSet = o.m_attachmentSet;
@@ -102,7 +103,6 @@ FillLayer& FillLayer::operator=(const FillLayer& o)
     m_repeatSet = o.m_repeatSet;
     m_xPosSet = o.m_xPosSet;
     m_yPosSet = o.m_yPosSet;
-    m_sizeSet = o.m_sizeSet;
     
     m_type = o.m_type;
 
@@ -116,7 +116,7 @@ bool FillLayer::operator==(const FillLayer& o) const
     return StyleImage::imagesEquivalent(m_image.get(), o.m_image.get()) && m_xPosition == o.m_xPosition && m_yPosition == o.m_yPosition &&
            m_attachment == o.m_attachment && m_clip == o.m_clip && 
            m_composite == o.m_composite && m_origin == o.m_origin && m_repeat == o.m_repeat &&
-           m_size == o.m_size && m_type == o.m_type &&
+           m_sizeType == o.m_sizeType && m_sizeLength == o.m_sizeLength && m_type == o.m_type &&
            ((m_next && o.m_next) ? *m_next == *o.m_next : m_next == o.m_next);
 }
 
@@ -215,7 +215,8 @@ void FillLayer::fillUnsetProperties()
     if (curr && curr != this) {
         // We need to fill in the remaining values with the pattern specified.
         for (FillLayer* pattern = this; curr; curr = curr->next()) {
-            curr->m_size = pattern->m_size;
+            curr->m_sizeType = pattern->m_sizeType;
+            curr->m_sizeLength = pattern->m_sizeLength;
             pattern = pattern->next();
             if (pattern == curr || !pattern)
                 pattern = this;

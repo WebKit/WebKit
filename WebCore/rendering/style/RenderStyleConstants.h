@@ -139,6 +139,9 @@ enum EFillLayerType {
     BackgroundFillLayer, MaskFillLayer
 };
 
+// CSS3 Background Values
+enum EFillSizeType { Contain, Cover, SizeLength, SizeNone };
+
 // CSS3 Marquee Properties
 
 enum EMarqueeBehavior { MNONE, MSCROLL, MSLIDE, MALTERNATE };

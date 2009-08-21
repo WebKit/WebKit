@@ -1,3 +1,77 @@
+2009-08-21  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        The CSS part of https://bugs.webkit.org/show_bug.cgi?id=27574 [CSS3 
+        Backgrounds and Borders] Add support for the "contain" value for 
+        background-size
+        -and-
+        https://bugs.webkit.org/show_bug.cgi?id=27573 [CSS3 Backgrounds and 
+        Borders] Add support for the "cover" value for background-size
+
+        Return contain or cover when appropriate, and otherwise do what we 
+        used to do.
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+
+        Accept contain and cover as valid values for background-size.
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseFillProperty):
+
+        Handle setting the size and the sizeLength if appropriate.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::mapFillSize):
+
+        Added new keywords contain and cover.
+        * css/CSSValueKeywords.in:
+
+        Use just sizeLength instead of size to match old behavior.
+        * page/animation/AnimationBase.cpp:
+        (WebCore::FillLayersPropertyWrapper::FillLayersPropertyWrapper):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::calculateBackgroundSize):
+        * rendering/RenderObject.cpp:
+        (WebCore::mustRepaintFillLayers):
+
+        The variable m_sizeType is an EBackgroundSize, and m_sizeLength is 
+        a LengthSize (the equivalent of what m_size used to be). I got rid 
+        of m_sizeSet and made isSizeSet() dynamic. I also defined a new 
+        struct, FillSize that can be used to set or get m_size and 
+        m_sizeLength both at once. 
+        * rendering/style/FillLayer.cpp:
+        (WebCore::FillLayer::FillLayer):
+        (WebCore::FillLayer::operator=):
+        (WebCore::FillLayer::operator==):
+        (WebCore::FillLayer::fillUnsetProperties):
+        * rendering/style/FillLayer.h:
+        (WebCore::FillSize::FillSize):
+        (WebCore::FillSize::operator==):
+        (WebCore::FillSize::operator!=):
+        (WebCore::FillLayer::sizeLength):
+        (WebCore::FillLayer::size):
+        (WebCore::FillLayer::isSizeSet):
+        (WebCore::FillLayer::setSizeType):
+        (WebCore::FillLayer::setSizeLength):
+        (WebCore::FillLayer::setSize):
+        (WebCore::FillLayer::clearSize):
+        (WebCore::FillLayer::initialFillSizeType):
+        (WebCore::FillLayer::initialFillSizeLength):
+        (WebCore::FillLayer::initialFillSize):
+
+        This is all boiler-plate stuff to adjust to the new size() vs. 
+        sizeType() vs. sizeLength() distinction.
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::backgroundSizeType):
+        (WebCore::InheritedFlags::backgroundSizeLength):
+        (WebCore::InheritedFlags::maskSize):
+        (WebCore::InheritedFlags::setBackgroundSize):
+        (WebCore::InheritedFlags::setBackgroundSizeLength):
+        (WebCore::InheritedFlags::setMaskSize):
+
+        Definition for EBackgroundSizeType.
+        * rendering/style/RenderStyleConstants.h:
+        (WebCore::):
+
 2009-08-21  Ariya Hidayat  <ariya.hidayat@nokia.com>
 
         Not reviewed, build fix after r47580.

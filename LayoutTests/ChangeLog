@@ -1,3 +1,22 @@
+2009-08-21  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Tests for the CSS part of https://bugs.webkit.org/show_bug.cgi?id=27574 [CSS3 Backgrounds and Borders] Add support for the "contain" value 
+        for background-size
+        -and-
+        https://bugs.webkit.org/show_bug.cgi?id=27573 [CSS3 Backgrounds and 
+        Borders] Add support for the "cover" value for background-size
+
+        * fast/backgrounds/size/parsing-background-size-values-expected.txt: Added.
+        * fast/backgrounds/size/parsing-background-size-values.html: Added.
+        * fast/backgrounds/size/parsing-inherit-expected.txt: Added.
+        * fast/backgrounds/size/parsing-inherit.html: Added.
+        * fast/backgrounds/size/resources/parsing-background-size-values.js: Added.
+        (test):
+        * fast/backgrounds/size/resources/parsing-inherit.js: Added.
+        (test):
+
 2009-08-21  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Gustavo Noronha.

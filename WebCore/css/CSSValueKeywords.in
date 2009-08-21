@@ -552,6 +552,12 @@ padding
 padding-box
 
 #
+# background-size
+#
+contain
+cover
+
+#
 # CSS_PROP__KHTML_RTL_ORDERING
 #
 logical

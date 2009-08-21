@@ -461,7 +461,7 @@ public:
                 break;
             case CSSPropertyBackgroundSize:
             case CSSPropertyWebkitMaskSize:
-                m_fillLayerPropertyWrapper = new FillLayerPropertyWrapper<LengthSize>(&FillLayer::size, &FillLayer::setSize);
+                m_fillLayerPropertyWrapper = new FillLayerPropertyWrapper<LengthSize>(&FillLayer::sizeLength, &FillLayer::setSizeLength);
                 break;
         }
     }

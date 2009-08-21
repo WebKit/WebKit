@@ -528,7 +528,8 @@ public:
     EFillBox backgroundOrigin() const { return static_cast<EFillBox>(background->m_background.m_origin); }
     Length backgroundXPosition() const { return background->m_background.m_xPosition; }
     Length backgroundYPosition() const { return background->m_background.m_yPosition; }
-    LengthSize backgroundSize() const { return background->m_background.m_size; }
+    EFillSizeType backgroundSizeType() const { return static_cast<EFillSizeType>(background->m_background.m_sizeType); }
+    LengthSize backgroundSizeLength() const { return background->m_background.m_sizeLength; }
     FillLayer* accessBackgroundLayers() { return &(background.access()->m_background); }
     const FillLayer* backgroundLayers() const { return &(background->m_background); }
 
@@ -540,7 +541,7 @@ public:
     EFillBox maskOrigin() const { return static_cast<EFillBox>(rareNonInheritedData->m_mask.m_origin); }
     Length maskXPosition() const { return rareNonInheritedData->m_mask.m_xPosition; }
     Length maskYPosition() const { return rareNonInheritedData->m_mask.m_yPosition; }
-    LengthSize maskSize() const { return rareNonInheritedData->m_mask.m_size; }
+    LengthSize maskSize() const { return rareNonInheritedData->m_mask.m_sizeLength; }
     FillLayer* accessMaskLayers() { return &(rareNonInheritedData.access()->m_mask); }
     const FillLayer* maskLayers() const { return &(rareNonInheritedData->m_mask); }
     const NinePieceImage& maskBoxImage() const { return rareNonInheritedData->m_maskBoxImage; }
@@ -751,7 +752,8 @@ public:
 
     void setBackgroundXPosition(Length l) { SET_VAR(background, m_background.m_xPosition, l) }
     void setBackgroundYPosition(Length l) { SET_VAR(background, m_background.m_yPosition, l) }
-    void setBackgroundSize(LengthSize l) { SET_VAR(background, m_background.m_size, l) }
+    void setBackgroundSize(EFillSizeType b) { SET_VAR(background, m_background.m_sizeType, b) }
+    void setBackgroundSizeLength(LengthSize l) { SET_VAR(background, m_background.m_sizeLength, l) }
     
     void setBorderImage(const NinePieceImage& b) { SET_VAR(surround, border.image, b) }
 
@@ -864,7 +866,7 @@ public:
     void setMaskBoxImage(const NinePieceImage& b) { SET_VAR(rareNonInheritedData, m_maskBoxImage, b) }
     void setMaskXPosition(Length l) { SET_VAR(rareNonInheritedData, m_mask.m_xPosition, l) }
     void setMaskYPosition(Length l) { SET_VAR(rareNonInheritedData, m_mask.m_yPosition, l) }
-    void setMaskSize(LengthSize l) { SET_VAR(rareNonInheritedData, m_mask.m_size, l) }
+    void setMaskSize(LengthSize l) { SET_VAR(rareNonInheritedData, m_mask.m_sizeLength, l) }
 
     void setBorderCollapse(bool collapse) { inherited_flags._border_collapse = collapse; }
     void setHorizontalBorderSpacing(short v) { SET_VAR(inherited, horizontal_border_spacing, v) }
