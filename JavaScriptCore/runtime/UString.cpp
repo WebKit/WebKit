@@ -1027,6 +1027,8 @@ UString UString::from(double d)
     // avoid ever printing -NaN, in JS conceptually there is only one NaN value
     if (isnan(d))
         return "NaN";
+    if (!d)
+        return "0"; // -0 -> "0"
 
     char buf[80];
     int decimalPoint;
@@ -1206,18 +1208,6 @@ UString& UString::append(const UString &t)
 UString& UString::append(const UChar* tData, int tSize)
 {
     m_rep = concatenate(m_rep.release(), tData, tSize);
-    return *this;
-}
-
-UString& UString::appendNumeric(int i)
-{
-    m_rep = concatenate(rep(), i);
-    return *this;
-}
-
-UString& UString::appendNumeric(double d)
-{
-    m_rep = concatenate(rep(), d);
     return *this;
 }
 

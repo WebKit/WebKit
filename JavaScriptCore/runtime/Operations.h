@@ -308,20 +308,13 @@ namespace JSC {
             resultRep = UString::Rep::createEmptyBuffer(bufferSize);
         UString result(resultRep);
 
-        // Loop over the openards, writing them into the output buffer.
+        // Loop over the operands, writing them into the output buffer.
         for (unsigned i = 0; i < count; ++i) {
             JSValue v = strings[i].jsValue();
             if (LIKELY(v.isString()))
                 result.append(asString(v)->value());
-            else if (v.isInt32())
-                result.appendNumeric(v.asInt32());
-            else {
-                double d;
-                if (v.getNumber(d))
-                    result.appendNumeric(d);
-                else
-                    result.append(v.toString(callFrame));
-            }
+            else
+                result.append(v.toString(callFrame));
         }
 
         return jsString(callFrame, result);

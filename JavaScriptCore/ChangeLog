@@ -1,3 +1,37 @@
+2009-08-20  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Added a number => string cache.
+        
+        1.07x faster on v8 (1.7x faster on v8-splay).
+        1.004x faster on SunSpider.
+
+        * runtime/JSCell.h: Moved JSValue::toString to JSString.h.
+        * runtime/JSGlobalData.h: Holds the cache.
+        * runtime/JSNumberCell.cpp:
+        (JSC::JSNumberCell::toString):
+        (JSC::JSNumberCell::toThisString): Removed -0 special case.
+        UString handles this now, since too many clients were
+        special-casing it.
+
+        * runtime/JSString.h:
+        (JSC::JSValue::toString): Use the cache when converting
+        an int or double to string.
+
+        * runtime/Operations.h:
+        (JSC::concatenateStrings): Call toString to take advantage
+        of the cache.
+
+        * runtime/SmallStrings.h:
+        (JSC::NumericStrings::add):
+        (JSC::NumericStrings::lookup): The cache.
+
+        * runtime/UString.cpp:
+        (JSC::UString::from): Added -0 special case mentioned above.
+        Removed appendNumeric because it's mutually exclusive with the
+        cache.
+
 2009-08-20  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

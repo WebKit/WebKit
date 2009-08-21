@@ -211,6 +211,26 @@ namespace JSC {
         return isCell() ? asCell()->toThisJSString(exec) : jsString(exec, toString(exec));
     }
 
+    inline UString JSValue::toString(ExecState* exec) const
+    {
+        if (isString())
+            return static_cast<JSString*>(asCell())->value();
+        if (isInt32())
+            return exec->globalData().numericStrings.add(asInt32());
+        if (isDouble())
+            return exec->globalData().numericStrings.add(asDouble());
+        if (isTrue())
+            return "true";
+        if (isFalse())
+            return "false";
+        if (isNull())
+            return "null";
+        if (isUndefined())
+            return "undefined";
+        ASSERT(isCell());
+        return asCell()->toString(exec);
+    }
+
 } // namespace JSC
 
 #endif // JSString_h

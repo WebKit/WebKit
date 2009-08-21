@@ -54,15 +54,11 @@ double JSNumberCell::toNumber(ExecState*) const
 
 UString JSNumberCell::toString(ExecState*) const
 {
-    if (m_value == 0.0) // +0.0 or -0.0
-        return "0";
     return UString::from(m_value);
 }
 
 UString JSNumberCell::toThisString(ExecState*) const
 {
-    if (m_value == 0.0) // +0.0 or -0.0
-        return "0";
     return UString::from(m_value);
 }
 

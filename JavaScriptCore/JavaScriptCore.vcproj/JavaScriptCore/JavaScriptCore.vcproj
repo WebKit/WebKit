@@ -952,6 +952,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\runtime\NumericStrings.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\runtime\ObjectConstructor.cpp"
 				>
 			</File>
