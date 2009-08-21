@@ -183,11 +183,15 @@ void RenderWidget::paint(PaintInfo& paintInfo, int tx, int ty)
 #endif
 
     if (style()->hasBorderRadius()) {
+        IntRect borderRect = IntRect(tx, ty, width(), height());
+
+        if (borderRect.isEmpty())
+            return;
+
         // Push a clip if we have a border radius, since we want to round the foreground content that gets painted.
         paintInfo.context->save();
         
         IntSize topLeft, topRight, bottomLeft, bottomRight;
-        IntRect borderRect = IntRect(tx, ty, width(), height());
         style()->getBorderRadiiForRect(borderRect, topLeft, topRight, bottomLeft, bottomRight);
 
         paintInfo.context->addRoundedRectClip(borderRect, topLeft, topRight, bottomLeft, bottomRight);

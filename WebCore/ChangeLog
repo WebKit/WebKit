@@ -1,3 +1,21 @@
+2009-08-20  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Fix more cases of
+        <rdar://problem/7154521> Lots of "<Error>: doClip: empty path." spew in
+        the console with certain content
+
+        If the border box is empty, simply avoid painting instead of trying to
+        clip to the empty path.
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::paint):
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::paint):
+
 2009-08-20  Jeremy Orlow  <jorlow@chromium.org>
 
         Build fix.  Forgot a svn add for a patch I landed.  :-(

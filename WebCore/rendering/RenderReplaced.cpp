@@ -124,21 +124,29 @@ void RenderReplaced::paint(PaintInfo& paintInfo, int tx, int ty)
         drawSelectionTint = false;
     }
 
+    bool completelyClippedOut = false;
     if (style()->hasBorderRadius()) {
-        // Push a clip if we have a border radius, since we want to round the foreground content that gets painted.
-        paintInfo.context->save();
-        
-        IntSize topLeft, topRight, bottomLeft, bottomRight;
         IntRect borderRect = IntRect(tx, ty, width(), height());
-        style()->getBorderRadiiForRect(borderRect, topLeft, topRight, bottomLeft, bottomRight);
 
-        paintInfo.context->addRoundedRectClip(borderRect, topLeft, topRight, bottomLeft, bottomRight);
+        if (borderRect.isEmpty())
+            completelyClippedOut = true;
+        else {
+            // Push a clip if we have a border radius, since we want to round the foreground content that gets painted.
+            paintInfo.context->save();
+            
+            IntSize topLeft, topRight, bottomLeft, bottomRight;
+            style()->getBorderRadiiForRect(borderRect, topLeft, topRight, bottomLeft, bottomRight);
+
+            paintInfo.context->addRoundedRectClip(borderRect, topLeft, topRight, bottomLeft, bottomRight);
+        }
     }
 
-    paintReplaced(paintInfo, tx, ty);
+    if (!completelyClippedOut) {
+        paintReplaced(paintInfo, tx, ty);
 
-    if (style()->hasBorderRadius())
-        paintInfo.context->restore();
+        if (style()->hasBorderRadius())
+            paintInfo.context->restore();
+    }
         
     // The selection tint never gets clipped by border-radius rounding, since we want it to run right up to the edges of
     // surrounding content.
