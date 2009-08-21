@@ -1,5 +1,15 @@
 2009-08-21  Ryosuke Niwa  <rniwa@webkit.org>
 
+        No Review.
+
+        Windows build fix.
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::setTextDecorationProperty): Made it static
+        (WebCore::diffTextDecorations): Made it static
+
+2009-08-21  Ryosuke Niwa  <rniwa@webkit.org>
+
         Reviewed by Eric Seidel.
 
         execCommand("Underline") uses CSS even when styleWithCSS has been turned off
