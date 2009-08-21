@@ -70,8 +70,6 @@ sub main()
     for (my $i = 0; $i < @file; $i++) {
         my $line = $file[$i];
         my ($callCount, $byteCount);
-        
-        next if $line =~ /^\-/;
 
         # First try malloc_history format
         #   6 calls for 664 bytes thread_ffffffff |0x0 | start
@@ -90,6 +88,28 @@ sub main()
                     $i++;
                     $line = $file[$i];
                 }
+            }
+        }
+        
+        # Then try LeakFinder format
+        # --------------- Key: 213813, 84 bytes ---------
+        # c:\cygwin\home\buildbot\webkit\opensource\webcore\rendering\renderarena.cpp(78): WebCore::RenderArena::allocate
+        # c:\cygwin\home\buildbot\webkit\opensource\webcore\rendering\renderobject.cpp(82): WebCore::RenderObject::operator new
+        if (!$callCount || !$byteCount) {
+            $callCount = 1;
+            ($byteCount) = ($line =~ /Key: (?:\d+), (\d+) bytes/);
+            if ($byteCount) {
+                $line = $file[++$i];
+                my @tempStack;
+                while ($file[$i+1] !~ /^(?:-|\d)/) {
+                    if ($line =~ /\): (.*)$/) {
+                        my $call = $1;
+                        $call =~ s/\r$//;
+                        unshift(@tempStack, $call);
+                    }
+                    $line = $file[++$i];
+                }            
+                $line = join(" | ", @tempStack);
             }
         }
         
