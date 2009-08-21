@@ -218,3 +218,15 @@ function relativeURL(url)
 {
     return url.substr(url.indexOf('/media/')+7);
 }
+
+
+function isInTimeRanges(ranges, time)
+{
+    var i = 0;
+    for (i = 0; i < ranges.length; ++i) {
+        if (time >= ranges.start(i) && time <= ranges.end(i)) {
+          return true;
+        }
+    }
+    return false;
+}

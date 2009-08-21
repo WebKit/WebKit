@@ -1,3 +1,17 @@
+2009-08-20  Albert J. Wong  <ajwong@chromium.org>
+
+        Reviewed by David Levin.
+
+        HTML5 media elements do not fire waiting events correctly
+        https://bugs.webkit.org/show_bug.cgi?id=28335
+
+        New manual test to check if waiting/seeking events are fired
+        when seeking into a non-buffered region.
+
+        * http/tests/media/video-throttled-load.cgi: Added.
+        * media/video-test.js:
+        (isInTimeRanges):
+
 2009-08-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.

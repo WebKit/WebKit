@@ -191,6 +191,7 @@ private:
     void stopPeriodicTimers();
 
     void seek(float time, ExceptionCode&);
+    void finishSeek();
     void checkIfSeekNeeded();
     
     void scheduleTimeupdateEvent(bool periodicEvent);

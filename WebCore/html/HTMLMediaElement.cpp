@@ -764,21 +764,29 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
     if (m_readyState == oldState)
         return;
     
-    if (m_readyState >= HAVE_CURRENT_DATA)
-        m_seeking = false;
-    
     if (m_networkState == NETWORK_EMPTY)
         return;
 
-    if (m_seeking && m_readyState < HAVE_CURRENT_DATA) {
-        // 4.8.10.10, step 9
-        scheduleEvent(eventNames().seekingEvent);
-    }
+    if (m_seeking) {
+        // 4.8.10.10, step 8
+        if (wasPotentiallyPlaying && m_readyState < HAVE_FUTURE_DATA)
+            scheduleEvent(eventNames().waitingEvent);
 
-    if (wasPotentiallyPlaying && m_readyState < HAVE_FUTURE_DATA) {
-        // 4.8.10.9
-        scheduleTimeupdateEvent(false);
-        scheduleEvent(eventNames().waitingEvent);
+        // 4.8.10.10, step 9
+        if (m_readyState < HAVE_CURRENT_DATA) {
+            if (oldState >= HAVE_CURRENT_DATA)
+                scheduleEvent(eventNames().seekingEvent);
+        } else {
+            // 4.8.10.10 step 12 & 13.
+            finishSeek();
+        }
+
+    } else {
+        if (wasPotentiallyPlaying && m_readyState < HAVE_FUTURE_DATA) {
+            // 4.8.10.9
+            scheduleTimeupdateEvent(false);
+            scheduleEvent(eventNames().waitingEvent);
+        }
     }
 
     if (m_readyState >= HAVE_METADATA && oldState < HAVE_METADATA) {
@@ -921,6 +929,15 @@ void HTMLMediaElement::seek(float time, ExceptionCode& ec)
     // 10
     m_player->seek(time);
     m_sentEndEvent = false;
+}
+
+void HTMLMediaElement::finishSeek()
+{
+    // 4.8.10.10 Seeking step 12
+    m_seeking = false;
+
+    // 4.8.10.10 Seeking step 13
+    scheduleEvent(eventNames().seekedEvent);
 }
 
 HTMLMediaElement::ReadyState HTMLMediaElement::readyState() const
@@ -1325,9 +1342,9 @@ void HTMLMediaElement::mediaPlayerTimeChanged(MediaPlayer*)
 {
     beginProcessingMediaPlayerCallback();
 
+    // 4.8.10.10 step 12 & 13.  Needed if no ReadyState change is associated with the seek.
     if (m_readyState >= HAVE_CURRENT_DATA && m_seeking) {
-        scheduleEvent(eventNames().seekedEvent);
-        m_seeking = false;
+        finishSeek();
     }
     
     float now = currentTime();
