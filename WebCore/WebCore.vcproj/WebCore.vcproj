@@ -30776,6 +30776,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\storage\SQLTransactionClient.h"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\SQLTransactionClient.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\storage\SQLTransactionCoordinator.cpp"
 				>
 			</File>

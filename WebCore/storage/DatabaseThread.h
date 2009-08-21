@@ -43,6 +43,7 @@ namespace WebCore {
 class Database;
 class DatabaseTask;
 class Document;
+class SQLTransactionClient;
 class SQLTransactionCoordinator;
 
 class DatabaseThread : public ThreadSafeShared<DatabaseThread> {
@@ -62,6 +63,7 @@ public:
     void recordDatabaseClosed(Database*);
     ThreadIdentifier getThreadID() { return m_threadID; }
 
+    SQLTransactionClient* transactionClient() { return m_transactionClient.get(); }
     SQLTransactionCoordinator* transactionCoordinator() { return m_transactionCoordinator.get(); }
 
 private:
@@ -80,6 +82,7 @@ private:
     typedef HashSet<RefPtr<Database> > DatabaseSet;
     DatabaseSet m_openDatabaseSet;
 
+    OwnPtr<SQLTransactionClient> m_transactionClient;
     OwnPtr<SQLTransactionCoordinator> m_transactionCoordinator;
 };
 

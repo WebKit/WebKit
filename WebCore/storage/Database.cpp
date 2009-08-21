@@ -50,6 +50,7 @@
 #include "SQLiteFileSystem.h"
 #include "SQLiteStatement.h"
 #include "SQLResultSet.h"
+#include "SQLTransactionClient.h"
 #include "SQLTransactionCoordinator.h"
 #include <wtf/MainThread.h>
 #endif
@@ -587,6 +588,11 @@ Vector<String> Database::performGetTableNames()
     }
 
     return tableNames;
+}
+
+SQLTransactionClient* Database::transactionClient() const
+{
+    return m_document->databaseThread()->transactionClient();
 }
 
 SQLTransactionCoordinator* Database::transactionCoordinator() const

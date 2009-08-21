@@ -2976,6 +2976,8 @@
             'storage/SQLTransaction.cpp',
             'storage/SQLTransaction.h',
             'storage/SQLTransactionCallback.h',
+            'storage/SQLTransactionClient.h',
+            'storage/SQLTransactionClient.cpp',
             'storage/SQLTransactionCoordinator.h',
             'storage/SQLTransactionCoordinator.cpp',
             'storage/SQLTransactionErrorCallback.h',

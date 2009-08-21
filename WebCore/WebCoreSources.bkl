@@ -1040,6 +1040,8 @@ This file contains the list of files needed to build WebCore.
         storage/SQLResultSetRowList.cpp
         storage/SQLStatement.cpp
         storage/SQLTransaction.cpp
+        storage/SQLTransactionClient.cpp
+        storage/SQLTransactionCoordinator.cpp
         storage/Storage.cpp
         storage/StorageAreaImpl.cpp
         storage/StorageAreaSync.cpp
