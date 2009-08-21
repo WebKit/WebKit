@@ -1,0 +1,13 @@
+This test checks if checkValidity() returns correctly a false (meaning error) result on invalid elements.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+  
+PASS v[i].checkValidity() is false
+PASS v[i].checkValidity() is false
+PASS v[i].checkValidity() is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

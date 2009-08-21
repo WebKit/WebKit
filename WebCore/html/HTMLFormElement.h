@@ -109,7 +109,9 @@ public:
     void setTarget(const String&);
 
     HTMLFormControlElement* defaultButton() const;
-    
+
+    bool checkValidity();
+
     PassRefPtr<HTMLFormControlElement> elementForAlias(const AtomicString&);
     void addElementAlias(HTMLFormControlElement*, const AtomicString& alias);
 

@@ -147,6 +147,7 @@ onerror
 onfocus
 onhashchange
 oninput
+oninvalid
 onkeydown
 onkeypress
 onkeyup

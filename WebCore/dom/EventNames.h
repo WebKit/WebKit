@@ -57,6 +57,7 @@ namespace WebCore {
     macro(focus) \
     macro(hashchange) \
     macro(input) \
+    macro(invalid) \
     macro(keydown) \
     macro(keypress) \
     macro(keyup) \

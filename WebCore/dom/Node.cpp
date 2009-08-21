@@ -3068,6 +3068,16 @@ void Node::setOninput(PassRefPtr<EventListener> eventListener)
     setAttributeEventListener(eventNames().inputEvent, eventListener);
 }
 
+EventListener* Node::oninvalid() const
+{
+    return getAttributeEventListener(eventNames().invalidEvent);
+}
+
+void Node::setOninvalid(PassRefPtr<EventListener> eventListener)
+{
+    setAttributeEventListener(eventNames().invalidEvent, eventListener);
+}
+
 EventListener* Node::onkeydown() const
 {
     return getAttributeEventListener(eventNames().keydownEvent);

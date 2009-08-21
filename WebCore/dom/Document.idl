@@ -264,6 +264,7 @@ module core {
         attribute [DontEnum] EventListener onerror;
         attribute [DontEnum] EventListener onfocus;
         attribute [DontEnum] EventListener oninput;
+        attribute [DontEnum] EventListener oninvalid;
         attribute [DontEnum] EventListener onkeydown;
         attribute [DontEnum] EventListener onkeypress;
         attribute [DontEnum] EventListener onkeyup;
@@ -285,7 +286,6 @@ module core {
         // attribute [DontEnum] EventListener onended;
         // attribute [DontEnum] EventListener onformchange;
         // attribute [DontEnum] EventListener onforminput;
-        // attribute [DontEnum] EventListener oninvalid;
         // attribute [DontEnum] EventListener onloadeddata;
         // attribute [DontEnum] EventListener onloadedmetadata;
         // attribute [DontEnum] EventListener onloadstart;

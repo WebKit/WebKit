@@ -45,6 +45,7 @@ module html {
         readonly attribute ValidityState   validity;
 #endif
         readonly attribute boolean         willValidate;
+        boolean            checkValidity();
         void               setCustomValidity(in [ConvertUndefinedOrNullToNullString] DOMString error);
 
         // Modified in DOM Level 2:

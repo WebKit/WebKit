@@ -102,6 +102,7 @@ public:
     virtual short tabIndex() const;
 
     virtual bool willValidate() const;
+    bool checkValidity();
     void setCustomValidity(const String&);
 
     virtual bool valueMissing() const { return false; }

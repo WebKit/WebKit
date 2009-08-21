@@ -39,5 +39,6 @@ module html {
         
         [Custom] void submit();
         void reset();
+        boolean  checkValidity();
     };
 }

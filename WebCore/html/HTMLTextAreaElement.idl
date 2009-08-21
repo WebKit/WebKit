@@ -44,6 +44,7 @@ module html {
         void     select();
 
         readonly attribute boolean         willValidate;
+        boolean  checkValidity();
         void     setCustomValidity(in [ConvertUndefinedOrNullToNullString] DOMString error);
 
        // WinIE & FireFox extension:
