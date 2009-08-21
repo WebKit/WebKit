@@ -87,6 +87,7 @@ void FunctionExecutable::generateBytecode(ScopeChainNode* scopeChainNode)
     generator->generate();
     m_numParameters = m_codeBlock->m_numParameters;
     ASSERT(m_numParameters);
+    m_numVariables = m_codeBlock->m_numVars;
 
     body()->destroyData();
 }

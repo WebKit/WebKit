@@ -201,6 +201,7 @@ namespace JSC {
             : ExecutableBase(body->source())
             , m_codeBlock(0)
             , m_name(name)
+            , m_numVariables(0)
         {
             m_node = body;
         }
@@ -227,6 +228,7 @@ namespace JSC {
         bool usesEval() const { return body()->usesEval(); }
         bool usesArguments() const { return body()->usesArguments(); }
         size_t parameterCount() const { return body()->parameterCount(); }
+        size_t variableCount() const { return m_numVariables; }
         UString paramString() const { return body()->paramString(); }
 
         bool isHostFunction() const { return m_numParameters == NUM_PARAMETERS_IS_HOST; }
@@ -248,6 +250,7 @@ namespace JSC {
 
         CodeBlock* m_codeBlock;
         const Identifier& m_name;
+        size_t m_numVariables;
 
 #if ENABLE(JIT)
     public:

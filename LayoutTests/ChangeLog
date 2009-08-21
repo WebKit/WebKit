@@ -1,3 +1,14 @@
+2009-08-20  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        REGRESSION: fast/profiler/call.html is crashing occasionally
+        https://bugs.webkit.org/show_bug.cgi?id=28476
+
+        Re-enable the test now that the crash has been fixed.
+
+        * fast/profiler/call.html: Renamed from LayoutTests/fast/profiler/call.html-disabled.
+
 2009-08-20  Albert J. Wong  <ajwong@chromium.org>
 
         Reviewed by David Levin.

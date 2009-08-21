@@ -57,12 +57,12 @@ void JSActivation::markChildren(MarkStack& markStack)
     if (!registerArray)
         return;
 
-    size_t numParametersMinusThis = d()->functionExecutable->generatedBytecode().m_numParameters - 1;
+    size_t numParametersMinusThis = d()->functionExecutable->parameterCount();
 
     size_t count = numParametersMinusThis;
     markStack.appendValues(registerArray, count);
 
-    size_t numVars = d()->functionExecutable->generatedBytecode().m_numVars;
+    size_t numVars = d()->functionExecutable->variableCount();
 
     // Skip the call frame, which sits between the parameters and vars.
     markStack.appendValues(registerArray + count + RegisterFile::CallFrameHeaderSize, numVars, MayContainNullValues);

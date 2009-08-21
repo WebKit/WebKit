@@ -1,3 +1,29 @@
+2009-08-20  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        REGRESSION: fast/profiler/call.html is crashing occasionally
+        https://bugs.webkit.org/show_bug.cgi?id=28476
+
+        Using the codeblock for information about how many parameters and
+        locals a function has is unsafe in certain circumstances.  The
+        basic scenario is all function code being cleared in response to
+        the debugger or profiler being enabled, and then an activation is
+        marked before its associated function is re-executed.
+
+        To deal with this scenario we store the variable count of a function
+        directly in the FunctionExecutable, and then use that information.
+
+        * runtime/Arguments.h:
+        (JSC::Arguments::getArgumentsData):
+        * runtime/Executable.cpp:
+        (JSC::FunctionExecutable::generateBytecode):
+        * runtime/Executable.h:
+        (JSC::FunctionExecutable::FunctionExecutable):
+        (JSC::FunctionExecutable::variableCount):
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::markChildren):
+
 2009-08-20  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
