@@ -1,3 +1,16 @@
+2009-08-20  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Steve Falkenburg.
+
+        Fix of <https://bugs.webkit.org/show_bug.cgi?id=24793>
+        Auto scroll speed is faster than in IE, Firefox.
+        
+        Changed pan scrolling speed to match Firefox's algorithm.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::adjustedScrollDelta):
+        (WebCore::RenderLayer::panScrollFromPoint):
+
 2009-08-20  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by Eric Seidel.

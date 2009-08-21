@@ -968,12 +968,22 @@ RenderLayer::convertToLayerCoords(const RenderLayer* ancestorLayer, int& xPos, i
     yPos += y();
 }
 
+static inline int adjustedScrollDelta(int beginningDelta) {
+    // This implemention matches Firefox's.
+    // http://mxr.mozilla.org/firefox/source/toolkit/content/widgets/browser.xml#856.
+    const int speedReducer = 12;
+
+    int adjustedDelta = beginningDelta / speedReducer;
+    if (adjustedDelta > 1)
+        adjustedDelta = adjustedDelta * sqrt(static_cast<double>(adjustedDelta)) - 1;
+    else if (adjustedDelta < -1)
+        adjustedDelta = adjustedDelta * sqrt(static_cast<double>(-adjustedDelta)) + 1;
+
+    return adjustedDelta;
+}
+
 void RenderLayer::panScrollFromPoint(const IntPoint& sourcePoint) 
 {
-    // We want to reduce the speed if we're close from the original point to improve the handleability of the scroll
-    const int shortDistanceLimit = 100;  // We delimit a 200 pixels long square enclosing the original point
-    const int speedReducer = 2;          // Within this square we divide the scrolling speed by 2
-    
     Frame* frame = renderer()->document()->frame();
     if (!frame)
         return;
@@ -995,13 +1005,7 @@ void RenderLayer::panScrollFromPoint(const IntPoint& sourcePoint)
     if (abs(yDelta) <= ScrollView::noPanScrollRadius)
         yDelta = 0;
 
-    // Let's attenuate the speed for the short distances
-    if (abs(xDelta) < shortDistanceLimit)
-        xDelta /= speedReducer;
-    if (abs(yDelta) < shortDistanceLimit)
-        yDelta /= speedReducer;
-
-    scrollByRecursively(xDelta, yDelta);
+    scrollByRecursively(adjustedScrollDelta(xDelta), adjustedScrollDelta(yDelta));
 }
 
 void RenderLayer::scrollByRecursively(int xDelta, int yDelta)
