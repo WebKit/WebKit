@@ -1,3 +1,29 @@
+2009-08-21  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by NOBODY Oliver Hunt.
+
+        New files for Canvas 3D feature
+        https://bugs.webkit.org/show_bug.cgi?id=28018
+
+        This is all the new files for implementing Canvas 3D. None of them are hooked up and
+        are not even included in the build yet. This incorporates the reviews from Simon
+        and Ollie for these files.
+
+        * bindings/js/JSCanvasNumberArrayCustom.cpp: Added. Custom JS binding to do implicit conversion from JS Array
+        * html/CanvasObject.cpp: Added. Base class for all GL object containers
+        * html/CanvasObject.h: Added.
+        * html/CanvasRenderingContext.cpp: Added. Base class for CanvasRenderingContext2D and CanvasRenderingContext3D
+        * html/CanvasRenderingContext.h: Added.
+        * html/CanvasRenderingContext.idl: Added.
+        * html/CanvasRenderingContext3D.cpp: Added. 3D context returned from Canvas.getContext()
+        * html/CanvasRenderingContext3D.h: Added.
+        * html/CanvasRenderingContext3D.idl: Added.
+        * platform/graphics/GraphicsContext3D.cpp: Added. Platform interface between CanvasRenderingContext3D and 3D graphics engine
+        * platform/graphics/GraphicsContext3D.h: Added.
+        * platform/graphics/mac/Canvas3DLayer.h: Added. CALayer subclass to composite 3D canvas
+        * platform/graphics/mac/Canvas3DLayer.mm: Added.
+        * platform/graphics/mac/GraphicsContext3DMac.cpp: Added. Mac specific interface (OpenGL based)
+
 2009-08-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         No Review.

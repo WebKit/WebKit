@@ -1,0 +1,596 @@
+/*
+ * Copyright (C) 2009 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+module html {
+
+    interface [
+        Conditional=3D_CANVAS,
+        GenerateConstructor,
+        InterfaceUUID=98fb48ae-7216-489c-862b-8e1217fc4443,
+        ImplementationUUID=ab4f0781-152f-450e-9546-5b3987491a54
+    ] CanvasRenderingContext3D {
+
+        /* ClearBufferMask */
+        const unsigned int GL_DEPTH_BUFFER_BIT               = 0x00000100;
+        const unsigned int GL_STENCIL_BUFFER_BIT             = 0x00000400;
+        const unsigned int GL_COLOR_BUFFER_BIT               = 0x00004000;
+
+        /* Boolean */
+        const unsigned int GL_FALSE                          = 0;
+        const unsigned int GL_TRUE                           = 1;
+
+        /* BeginMode */
+        const unsigned int GL_POINTS                         = 0x0000;
+        const unsigned int GL_LINES                          = 0x0001;
+        const unsigned int GL_LINE_LOOP                      = 0x0002;
+        const unsigned int GL_LINE_STRIP                     = 0x0003;
+        const unsigned int GL_TRIANGLES                      = 0x0004;
+        const unsigned int GL_TRIANGLE_STRIP                 = 0x0005;
+        const unsigned int GL_TRIANGLE_FAN                   = 0x0006;
+
+        /* AlphaFunction (not supported in ES20) */
+        /*      GL_NEVER */
+        /*      GL_LESS */
+        /*      GL_EQUAL */
+        /*      GL_LEQUAL */
+        /*      GL_GREATER */
+        /*      GL_NOTEQUAL */
+        /*      GL_GEQUAL */
+        /*      GL_ALWAYS */
+
+        /* BlendingFactorDest */
+        const unsigned int GL_ZERO                           = 0;
+        const unsigned int GL_ONE                            = 1;
+        const unsigned int GL_SRC_COLOR                      = 0x0300;
+        const unsigned int GL_ONE_MINUS_SRC_COLOR            = 0x0301;
+        const unsigned int GL_SRC_ALPHA                      = 0x0302;
+        const unsigned int GL_ONE_MINUS_SRC_ALPHA            = 0x0303;
+        const unsigned int GL_DST_ALPHA                      = 0x0304;
+        const unsigned int GL_ONE_MINUS_DST_ALPHA            = 0x0305;
+
+        /* BlendingFactorSrc */
+        /*      GL_ZERO */
+        /*      GL_ONE */
+        const unsigned int GL_DST_COLOR                      = 0x0306;
+        const unsigned int GL_ONE_MINUS_DST_COLOR            = 0x0307;
+        const unsigned int GL_SRC_ALPHA_SATURATE             = 0x0308;
+        /*      GL_SRC_ALPHA */
+        /*      GL_ONE_MINUS_SRC_ALPHA */
+        /*      GL_DST_ALPHA */
+        /*      GL_ONE_MINUS_DST_ALPHA */
+
+        /* BlendEquationSeparate */
+        const unsigned int GL_FUNC_ADD                       = 0x8006;
+        const unsigned int GL_BLEND_EQUATION                 = 0x8009;
+        const unsigned int GL_BLEND_EQUATION_RGB             = 0x8009;   /* same as BLEND_EQUATION */
+        const unsigned int GL_BLEND_EQUATION_ALPHA           = 0x883D;
+
+        /* BlendSubtract */
+        const unsigned int GL_FUNC_SUBTRACT                  = 0x800A;
+        const unsigned int GL_FUNC_REVERSE_SUBTRACT          = 0x800B;
+
+        /* Separate Blend Functions */
+        const unsigned int GL_BLEND_DST_RGB                  = 0x80C8;
+        const unsigned int GL_BLEND_SRC_RGB                  = 0x80C9;
+        const unsigned int GL_BLEND_DST_ALPHA                = 0x80CA;
+        const unsigned int GL_BLEND_SRC_ALPHA                = 0x80CB;
+        const unsigned int GL_CONSTANT_COLOR                 = 0x8001;
+        const unsigned int GL_ONE_MINUS_CONSTANT_COLOR       = 0x8002;
+        const unsigned int GL_CONSTANT_ALPHA                 = 0x8003;
+        const unsigned int GL_ONE_MINUS_CONSTANT_ALPHA       = 0x8004;
+        const unsigned int GL_BLEND_COLOR                    = 0x8005;
+
+        /* Buffer Objects */
+        const unsigned int GL_ARRAY_BUFFER                   = 0x8892;
+        const unsigned int GL_ELEMENT_ARRAY_BUFFER           = 0x8893;
+        const unsigned int GL_ARRAY_BUFFER_BINDING           = 0x8894;
+        const unsigned int GL_ELEMENT_ARRAY_BUFFER_BINDING   = 0x8895;
+
+        const unsigned int GL_STREAM_DRAW                    = 0x88E0;
+        const unsigned int GL_STATIC_DRAW                    = 0x88E4;
+        const unsigned int GL_DYNAMIC_DRAW                   = 0x88E8;
+
+        const unsigned int GL_BUFFER_SIZE                    = 0x8764;
+        const unsigned int GL_BUFFER_USAGE                   = 0x8765;
+
+        const unsigned int GL_CURRENT_VERTEX_ATTRIB          = 0x8626;
+
+        /* CullFaceMode */
+        const unsigned int GL_FRONT                          = 0x0404;
+        const unsigned int GL_BACK                           = 0x0405;
+        const unsigned int GL_FRONT_AND_BACK                 = 0x0408;
+
+        /* DepthFunction */
+        /*      GL_NEVER */
+        /*      GL_LESS */
+        /*      GL_EQUAL */
+        /*      GL_LEQUAL */
+        /*      GL_GREATER */
+        /*      GL_NOTEQUAL */
+        /*      GL_GEQUAL */
+        /*      GL_ALWAYS */
+
+        /* EnableCap */
+        const unsigned int GL_TEXTURE_2D                     = 0x0DE1;
+        const unsigned int GL_CULL_FACE                      = 0x0B44;
+        const unsigned int GL_BLEND                          = 0x0BE2;
+        const unsigned int GL_DITHER                         = 0x0BD0;
+        const unsigned int GL_STENCIL_TEST                   = 0x0B90;
+        const unsigned int GL_DEPTH_TEST                     = 0x0B71;
+        const unsigned int GL_SCISSOR_TEST                   = 0x0C11;
+        const unsigned int GL_POLYGON_OFFSET_FILL            = 0x8037;
+        const unsigned int GL_SAMPLE_ALPHA_TO_COVERAGE       = 0x809E;
+        const unsigned int GL_SAMPLE_COVERAGE                = 0x80A0;
+
+        /* ErrorCode */
+        const unsigned int GL_NO_ERROR                       = 0;
+        const unsigned int GL_INVALID_ENUM                   = 0x0500;
+        const unsigned int GL_INVALID_VALUE                  = 0x0501;
+        const unsigned int GL_INVALID_OPERATION              = 0x0502;
+        const unsigned int GL_OUT_OF_MEMORY                  = 0x0505;
+
+        /* FrontFaceDirection */
+        const unsigned int GL_CW                             = 0x0900;
+        const unsigned int GL_CCW                            = 0x0901;
+
+        /* GetPName */
+        const unsigned int GL_LINE_WIDTH                     = 0x0B21;
+        const unsigned int GL_ALIASED_POINT_SIZE_RANGE       = 0x846D;
+        const unsigned int GL_ALIASED_LINE_WIDTH_RANGE       = 0x846E;
+        const unsigned int GL_CULL_FACE_MODE                 = 0x0B45;
+        const unsigned int GL_FRONT_FACE                     = 0x0B46;
+        const unsigned int GL_DEPTH_RANGE                    = 0x0B70;
+        const unsigned int GL_DEPTH_WRITEMASK                = 0x0B72;
+        const unsigned int GL_DEPTH_CLEAR_VALUE              = 0x0B73;
+        const unsigned int GL_DEPTH_FUNC                     = 0x0B74;
+        const unsigned int GL_STENCIL_CLEAR_VALUE            = 0x0B91;
+        const unsigned int GL_STENCIL_FUNC                   = 0x0B92;
+        const unsigned int GL_STENCIL_FAIL                   = 0x0B94;
+        const unsigned int GL_STENCIL_PASS_DEPTH_FAIL        = 0x0B95;
+        const unsigned int GL_STENCIL_PASS_DEPTH_PASS        = 0x0B96;
+        const unsigned int GL_STENCIL_REF                    = 0x0B97;
+        const unsigned int GL_STENCIL_VALUE_MASK             = 0x0B93;
+        const unsigned int GL_STENCIL_WRITEMASK              = 0x0B98;
+        const unsigned int GL_STENCIL_BACK_FUNC              = 0x8800;
+        const unsigned int GL_STENCIL_BACK_FAIL              = 0x8801;
+        const unsigned int GL_STENCIL_BACK_PASS_DEPTH_FAIL   = 0x8802;
+        const unsigned int GL_STENCIL_BACK_PASS_DEPTH_PASS   = 0x8803;
+        const unsigned int GL_STENCIL_BACK_REF               = 0x8CA3;
+        const unsigned int GL_STENCIL_BACK_VALUE_MASK        = 0x8CA4;
+        const unsigned int GL_STENCIL_BACK_WRITEMASK         = 0x8CA5;
+        const unsigned int GL_VIEWPORT                       = 0x0BA2;
+        const unsigned int GL_SCISSOR_BOX                    = 0x0C10;
+        /*      GL_SCISSOR_TEST */
+        const unsigned int GL_COLOR_CLEAR_VALUE              = 0x0C22;
+        const unsigned int GL_COLOR_WRITEMASK                = 0x0C23;
+        const unsigned int GL_UNPACK_ALIGNMENT               = 0x0CF5;
+        const unsigned int GL_PACK_ALIGNMENT                 = 0x0D05;
+        const unsigned int GL_MAX_TEXTURE_SIZE               = 0x0D33;
+        const unsigned int GL_MAX_VIEWPORT_DIMS              = 0x0D3A;
+        const unsigned int GL_SUBPIXEL_BITS                  = 0x0D50;
+        const unsigned int GL_RED_BITS                       = 0x0D52;
+        const unsigned int GL_GREEN_BITS                     = 0x0D53;
+        const unsigned int GL_BLUE_BITS                      = 0x0D54;
+        const unsigned int GL_ALPHA_BITS                     = 0x0D55;
+        const unsigned int GL_DEPTH_BITS                     = 0x0D56;
+        const unsigned int GL_STENCIL_BITS                   = 0x0D57;
+        const unsigned int GL_POLYGON_OFFSET_UNITS           = 0x2A00;
+        /*      GL_POLYGON_OFFSET_FILL */
+        const unsigned int GL_POLYGON_OFFSET_FACTOR          = 0x8038;
+        const unsigned int GL_TEXTURE_BINDING_2D             = 0x8069;
+        const unsigned int GL_SAMPLE_BUFFERS                 = 0x80A8;
+        const unsigned int GL_SAMPLES                        = 0x80A9;
+        const unsigned int GL_SAMPLE_COVERAGE_VALUE          = 0x80AA;
+        const unsigned int GL_SAMPLE_COVERAGE_INVERT         = 0x80AB;
+
+        /* GetTextureParameter */
+        /*      GL_TEXTURE_MAG_FILTER */
+        /*      GL_TEXTURE_MIN_FILTER */
+        /*      GL_TEXTURE_WRAP_S */
+        /*      GL_TEXTURE_WRAP_T */
+
+        const unsigned int GL_NUM_COMPRESSED_TEXTURE_FORMATS = 0x86A2;
+        const unsigned int GL_COMPRESSED_TEXTURE_FORMATS     = 0x86A3;
+
+        /* HintMode */
+        const unsigned int GL_DONT_CARE                      = 0x1100;
+        const unsigned int GL_FASTEST                        = 0x1101;
+        const unsigned int GL_NICEST                         = 0x1102;
+
+        /* HintTarget */
+        const unsigned int GL_GENERATE_MIPMAP_HINT            = 0x8192;
+
+        /* DataType */
+        const unsigned int GL_BYTE                           = 0x1400;
+        const unsigned int GL_UNSIGNED_BYTE                  = 0x1401;
+        const unsigned int GL_SHORT                          = 0x1402;
+        const unsigned int GL_UNSIGNED_SHORT                 = 0x1403;
+        const unsigned int GL_INT                            = 0x1404;
+        const unsigned int GL_UNSIGNED_INT                   = 0x1405;
+        const unsigned int GL_FLOAT                          = 0x1406;
+        const unsigned int GL_FIXED                          = 0x140C;
+
+        /* PixelFormat */
+        const unsigned int GL_DEPTH_COMPONENT                = 0x1902;
+        const unsigned int GL_ALPHA                          = 0x1906;
+        const unsigned int GL_RGB                            = 0x1907;
+        const unsigned int GL_RGBA                           = 0x1908;
+        const unsigned int GL_LUMINANCE                      = 0x1909;
+        const unsigned int GL_LUMINANCE_ALPHA                = 0x190A;
+
+        /* PixelType */
+        /*      GL_UNSIGNED_BYTE */
+        const unsigned int GL_UNSIGNED_SHORT_4_4_4_4         = 0x8033;
+        const unsigned int GL_UNSIGNED_SHORT_5_5_5_1         = 0x8034;
+        const unsigned int GL_UNSIGNED_SHORT_5_6_5           = 0x8363;
+
+        /* Shaders */
+        const unsigned int GL_FRAGMENT_SHADER                  = 0x8B30;
+        const unsigned int GL_VERTEX_SHADER                    = 0x8B31;
+        const unsigned int GL_MAX_VERTEX_ATTRIBS               = 0x8869;
+        const unsigned int GL_MAX_VERTEX_UNIFORM_VECTORS       = 0x8DFB;
+        const unsigned int GL_MAX_VARYING_VECTORS              = 0x8DFC;
+        const unsigned int GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS = 0x8B4D;
+        const unsigned int GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS   = 0x8B4C;
+        const unsigned int GL_MAX_TEXTURE_IMAGE_UNITS          = 0x8872;
+        const unsigned int GL_MAX_FRAGMENT_UNIFORM_VECTORS     = 0x8DFD;
+        const unsigned int GL_SHADER_TYPE                      = 0x8B4F;
+        const unsigned int GL_DELETE_STATUS                    = 0x8B80;
+        const unsigned int GL_LINK_STATUS                      = 0x8B82;
+        const unsigned int GL_VALIDATE_STATUS                  = 0x8B83;
+        const unsigned int GL_ATTACHED_SHADERS                 = 0x8B85;
+        const unsigned int GL_ACTIVE_UNIFORMS                  = 0x8B86;
+        const unsigned int GL_ACTIVE_UNIFORM_MAX_LENGTH        = 0x8B87;
+        const unsigned int GL_ACTIVE_ATTRIBUTES                = 0x8B89;
+        const unsigned int GL_ACTIVE_ATTRIBUTE_MAX_LENGTH      = 0x8B8A;
+        const unsigned int GL_SHADING_LANGUAGE_VERSION         = 0x8B8C;
+        const unsigned int GL_CURRENT_PROGRAM                  = 0x8B8D;
+
+        /* StencilFunction */
+        const unsigned int GL_NEVER                          = 0x0200;
+        const unsigned int GL_LESS                           = 0x0201;
+        const unsigned int GL_EQUAL                          = 0x0202;
+        const unsigned int GL_LEQUAL                         = 0x0203;
+        const unsigned int GL_GREATER                        = 0x0204;
+        const unsigned int GL_NOTEQUAL                       = 0x0205;
+        const unsigned int GL_GEQUAL                         = 0x0206;
+        const unsigned int GL_ALWAYS                         = 0x0207;
+
+        /* StencilOp */
+        /*      GL_ZERO */
+        const unsigned int GL_KEEP                           = 0x1E00;
+        const unsigned int GL_REPLACE                        = 0x1E01;
+        const unsigned int GL_INCR                           = 0x1E02;
+        const unsigned int GL_DECR                           = 0x1E03;
+        const unsigned int GL_INVERT                         = 0x150A;
+        const unsigned int GL_INCR_WRAP                      = 0x8507;
+        const unsigned int GL_DECR_WRAP                      = 0x8508;
+
+        /* StringName */
+        const unsigned int GL_VENDOR                         = 0x1F00;
+        const unsigned int GL_RENDERER                       = 0x1F01;
+        const unsigned int GL_VERSION                        = 0x1F02;
+        const unsigned int GL_EXTENSIONS                     = 0x1F03;
+
+        /* TextureMagFilter */
+        const unsigned int GL_NEAREST                        = 0x2600;
+        const unsigned int GL_LINEAR                         = 0x2601;
+
+        /* TextureMinFilter */
+        /*      GL_NEAREST */
+        /*      GL_LINEAR */
+        const unsigned int GL_NEAREST_MIPMAP_NEAREST         = 0x2700;
+        const unsigned int GL_LINEAR_MIPMAP_NEAREST          = 0x2701;
+        const unsigned int GL_NEAREST_MIPMAP_LINEAR          = 0x2702;
+        const unsigned int GL_LINEAR_MIPMAP_LINEAR           = 0x2703;
+
+        /* TextureParameterName */
+        const unsigned int GL_TEXTURE_MAG_FILTER             = 0x2800;
+        const unsigned int GL_TEXTURE_MIN_FILTER             = 0x2801;
+        const unsigned int GL_TEXTURE_WRAP_S                 = 0x2802;
+        const unsigned int GL_TEXTURE_WRAP_T                 = 0x2803;
+
+        /* TextureTarget */
+        /*      GL_TEXTURE_2D */
+        const unsigned int GL_TEXTURE                        = 0x1702;
+
+        const unsigned int GL_TEXTURE_CUBE_MAP               = 0x8513;
+        const unsigned int GL_TEXTURE_BINDING_CUBE_MAP       = 0x8514;
+        const unsigned int GL_TEXTURE_CUBE_MAP_POSITIVE_X    = 0x8515;
+        const unsigned int GL_TEXTURE_CUBE_MAP_NEGATIVE_X    = 0x8516;
+        const unsigned int GL_TEXTURE_CUBE_MAP_POSITIVE_Y    = 0x8517;
+        const unsigned int GL_TEXTURE_CUBE_MAP_NEGATIVE_Y    = 0x8518;
+        const unsigned int GL_TEXTURE_CUBE_MAP_POSITIVE_Z    = 0x8519;
+        const unsigned int GL_TEXTURE_CUBE_MAP_NEGATIVE_Z    = 0x851A;
+        const unsigned int GL_MAX_CUBE_MAP_TEXTURE_SIZE      = 0x851C;
+
+        /* TextureUnit */
+        const unsigned int GL_TEXTURE0                       = 0x84C0;
+        const unsigned int GL_TEXTURE1                       = 0x84C1;
+        const unsigned int GL_TEXTURE2                       = 0x84C2;
+        const unsigned int GL_TEXTURE3                       = 0x84C3;
+        const unsigned int GL_TEXTURE4                       = 0x84C4;
+        const unsigned int GL_TEXTURE5                       = 0x84C5;
+        const unsigned int GL_TEXTURE6                       = 0x84C6;
+        const unsigned int GL_TEXTURE7                       = 0x84C7;
+        const unsigned int GL_TEXTURE8                       = 0x84C8;
+        const unsigned int GL_TEXTURE9                       = 0x84C9;
+        const unsigned int GL_TEXTURE10                      = 0x84CA;
+        const unsigned int GL_TEXTURE11                      = 0x84CB;
+        const unsigned int GL_TEXTURE12                      = 0x84CC;
+        const unsigned int GL_TEXTURE13                      = 0x84CD;
+        const unsigned int GL_TEXTURE14                      = 0x84CE;
+        const unsigned int GL_TEXTURE15                      = 0x84CF;
+        const unsigned int GL_TEXTURE16                      = 0x84D0;
+        const unsigned int GL_TEXTURE17                      = 0x84D1;
+        const unsigned int GL_TEXTURE18                      = 0x84D2;
+        const unsigned int GL_TEXTURE19                      = 0x84D3;
+        const unsigned int GL_TEXTURE20                      = 0x84D4;
+        const unsigned int GL_TEXTURE21                      = 0x84D5;
+        const unsigned int GL_TEXTURE22                      = 0x84D6;
+        const unsigned int GL_TEXTURE23                      = 0x84D7;
+        const unsigned int GL_TEXTURE24                      = 0x84D8;
+        const unsigned int GL_TEXTURE25                      = 0x84D9;
+        const unsigned int GL_TEXTURE26                      = 0x84DA;
+        const unsigned int GL_TEXTURE27                      = 0x84DB;
+        const unsigned int GL_TEXTURE28                      = 0x84DC;
+        const unsigned int GL_TEXTURE29                      = 0x84DD;
+        const unsigned int GL_TEXTURE30                      = 0x84DE;
+        const unsigned int GL_TEXTURE31                      = 0x84DF;
+        const unsigned int GL_ACTIVE_TEXTURE                 = 0x84E0;
+
+        /* TextureWrapMode */
+        const unsigned int GL_REPEAT                         = 0x2901;
+        const unsigned int GL_CLAMP_TO_EDGE                  = 0x812F;
+        const unsigned int GL_MIRRORED_REPEAT                = 0x8370;
+
+        /* Uniform Types */
+        const unsigned int GL_FLOAT_VEC2                     = 0x8B50;
+        const unsigned int GL_FLOAT_VEC3                     = 0x8B51;
+        const unsigned int GL_FLOAT_VEC4                     = 0x8B52;
+        const unsigned int GL_INT_VEC2                       = 0x8B53;
+        const unsigned int GL_INT_VEC3                       = 0x8B54;
+        const unsigned int GL_INT_VEC4                       = 0x8B55;
+        const unsigned int GL_BOOL                           = 0x8B56;
+        const unsigned int GL_BOOL_VEC2                      = 0x8B57;
+        const unsigned int GL_BOOL_VEC3                      = 0x8B58;
+        const unsigned int GL_BOOL_VEC4                      = 0x8B59;
+        const unsigned int GL_FLOAT_MAT2                     = 0x8B5A;
+        const unsigned int GL_FLOAT_MAT3                     = 0x8B5B;
+        const unsigned int GL_FLOAT_MAT4                     = 0x8B5C;
+        const unsigned int GL_SAMPLER_2D                     = 0x8B5E;
+        const unsigned int GL_SAMPLER_CUBE                   = 0x8B60;
+
+        /* Vertex Arrays */
+        const unsigned int GL_VERTEX_ATTRIB_ARRAY_ENABLED        = 0x8622;
+        const unsigned int GL_VERTEX_ATTRIB_ARRAY_SIZE           = 0x8623;
+        const unsigned int GL_VERTEX_ATTRIB_ARRAY_STRIDE         = 0x8624;
+        const unsigned int GL_VERTEX_ATTRIB_ARRAY_TYPE           = 0x8625;
+        const unsigned int GL_VERTEX_ATTRIB_ARRAY_NORMALIZED     = 0x886A;
+        const unsigned int GL_VERTEX_ATTRIB_ARRAY_POINTER        = 0x8645;
+        const unsigned int GL_VERTEX_ATTRIB_ARRAY_BUFFER_BINDING = 0x889F;
+
+        /* Read Format */
+        const unsigned int GL_IMPLEMENTATION_COLOR_READ_TYPE   = 0x8B9A;
+        const unsigned int GL_IMPLEMENTATION_COLOR_READ_FORMAT = 0x8B9B;
+
+        /* Shader Source */
+        const unsigned int GL_COMPILE_STATUS                 = 0x8B81;
+        const unsigned int GL_INFO_LOG_LENGTH                = 0x8B84;
+        const unsigned int GL_SHADER_SOURCE_LENGTH           = 0x8B88;
+        const unsigned int GL_SHADER_COMPILER                = 0x8DFA;
+
+        /* Shader Binary */
+        const unsigned int GL_SHADER_BINARY_FORMATS          = 0x8DF8;
+        const unsigned int GL_NUM_SHADER_BINARY_FORMATS      = 0x8DF9;
+
+        /* Shader Precision-Specified Types */
+        const unsigned int GL_LOW_FLOAT                      = 0x8DF0;
+        const unsigned int GL_MEDIUM_FLOAT                   = 0x8DF1;
+        const unsigned int GL_HIGH_FLOAT                     = 0x8DF2;
+        const unsigned int GL_LOW_INT                        = 0x8DF3;
+        const unsigned int GL_MEDIUM_INT                     = 0x8DF4;
+        const unsigned int GL_HIGH_INT                       = 0x8DF5;
+
+        /* Framebuffer Object. */
+        const unsigned int GL_FRAMEBUFFER                    = 0x8D40;
+        const unsigned int GL_RENDERBUFFER                   = 0x8D41;
+
+        const unsigned int GL_RGBA4                          = 0x8056;
+        const unsigned int GL_RGB5_A1                        = 0x8057;
+        const unsigned int GL_RGB565                         = 0x8D62;
+        const unsigned int GL_DEPTH_COMPONENT16              = 0x81A5;
+        const unsigned int GL_STENCIL_INDEX                  = 0x1901;
+        const unsigned int GL_STENCIL_INDEX8                 = 0x8D48;
+
+        const unsigned int GL_RENDERBUFFER_WIDTH             = 0x8D42;
+        const unsigned int GL_RENDERBUFFER_HEIGHT            = 0x8D43;
+        const unsigned int GL_RENDERBUFFER_INTERNAL_FORMAT   = 0x8D44;
+        const unsigned int GL_RENDERBUFFER_RED_SIZE          = 0x8D50;
+        const unsigned int GL_RENDERBUFFER_GREEN_SIZE        = 0x8D51;
+        const unsigned int GL_RENDERBUFFER_BLUE_SIZE         = 0x8D52;
+        const unsigned int GL_RENDERBUFFER_ALPHA_SIZE        = 0x8D53;
+        const unsigned int GL_RENDERBUFFER_DEPTH_SIZE        = 0x8D54;
+        const unsigned int GL_RENDERBUFFER_STENCIL_SIZE      = 0x8D55;
+
+        const unsigned int GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE           = 0x8CD0;
+        const unsigned int GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME           = 0x8CD1;
+        const unsigned int GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL         = 0x8CD2;
+        const unsigned int GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE = 0x8CD3;
+
+        const unsigned int GL_COLOR_ATTACHMENT0              = 0x8CE0;
+        const unsigned int GL_DEPTH_ATTACHMENT               = 0x8D00;
+        const unsigned int GL_STENCIL_ATTACHMENT             = 0x8D20;
+
+        const unsigned int GL_NONE                           = 0;
+
+        const unsigned int GL_FRAMEBUFFER_COMPLETE                      = 0x8CD5;
+        const unsigned int GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT         = 0x8CD6;
+        const unsigned int GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT = 0x8CD7;
+        const unsigned int GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS         = 0x8CD9;
+        const unsigned int GL_FRAMEBUFFER_UNSUPPORTED                   = 0x8CDD;
+
+        const unsigned int GL_FRAMEBUFFER_BINDING            = 0x8CA6;
+        const unsigned int GL_RENDERBUFFER_BINDING           = 0x8CA7;
+        const unsigned int GL_MAX_RENDERBUFFER_SIZE          = 0x84E8;
+
+        const unsigned int GL_INVALID_FRAMEBUFFER_OPERATION  = 0x0506;
+
+        readonly attribute HTMLCanvasElement canvas;
+        
+        void         glActiveTexture(in unsigned long texture);
+        void         glAttachShader(in CanvasProgram program, in CanvasShader shader);
+        void         glBindAttribLocation(in CanvasProgram program, in unsigned long index, in DOMString name);
+        void         glBindBuffer(in unsigned long target, in CanvasBuffer buffer);
+        void         glBindFramebuffer(in unsigned long target, in CanvasFramebuffer framebuffer);
+        void         glBindRenderbuffer(in unsigned long target, in CanvasRenderbuffer renderbuffer);
+        void         glBindTexture(in unsigned long target, in CanvasTexture texture);
+        void         glBlendColor(in double red, in double green, in double blue, in double alpha);
+        void         glBlendEquation( in unsigned long mode );
+        void         glBlendEquationSeparate(in unsigned long modeRGB, in unsigned long modeAlpha);
+        void         glBlendFunc(in unsigned long sfactor, in unsigned long dfactor);
+        void         glBlendFuncSeparate(in unsigned long srcRGB, in unsigned long dstRGB, in unsigned long srcAlpha, in unsigned long dstAlpha);
+        [Custom] void glBufferData(in unsigned long target, in CanvasByteArray data, in unsigned long usage);
+        [Custom] void glBufferSubData(in unsigned long target, in long offset, in CanvasByteArray data);
+        unsigned long glCheckFramebufferStatus(in CanvasFramebuffer framebuffer);
+        void         glClear(in unsigned long mask);
+        void         glClearColor(in double red, in double green, in double blue, in double alpha);
+        void         glClearDepth(in double depth);
+        void         glClearStencil(in long s);
+        void         glColorMask(in boolean red, in boolean green, in boolean blue, in boolean alpha);
+        void         glCompileShader(in CanvasShader shader);
+        
+        //void         glCompressedTexImage2D(in unsigned long target, in long level, in unsigned long internalformat, in unsigned long width, in unsigned long height, in long border, in unsigned long imageSize, const void* data);
+        //void         glCompressedTexSubImage2D(in unsigned long target, in long level, in long xoffset, in long yoffset, in unsigned long width, in unsigned long height, in unsigned long format, in unsigned long imageSize, const void* data);
+        
+        void         glCopyTexImage2D(in unsigned long target, in long level, in unsigned long internalformat, in long x, in long y, in unsigned long width, in unsigned long height, in long border);
+        void         glCopyTexSubImage2D(in unsigned long target, in long level, in long xoffset, in long yoffset, in long x, in long y, in unsigned long width, in unsigned long height);
+        void         glCullFace(in unsigned long mode);
+        void         glDepthFunc(in unsigned long func);
+        void         glDepthMask(in boolean flag);
+        void         glDepthRange(in double zNear, in double zFar);
+        void         glDetachShader(in CanvasProgram program, in CanvasShader shader);
+        void         glDisable(in unsigned long cap);
+        void         glDisableVertexAttribArray(in unsigned long index);
+        void         glDrawArrays(in unsigned long mode, in long first, in unsigned long count);
+        [Custom] void glDrawElements(in unsigned long mode, in unsigned long type, CanvasByteArray);
+        void         glEnable(in unsigned long cap);
+        void         glEnableVertexAttribArray(in unsigned long index);
+        void         glFinish();
+        void         glFlush();
+        void         glFramebufferRenderbuffer(in unsigned long target, in unsigned long attachment, in unsigned long renderbuffertarget, in CanvasRenderbuffer renderbuffer);
+        void         glFramebufferTexture2D(in unsigned long target, in unsigned long attachment, in unsigned long textarget, in CanvasTexture texture, in long level);
+        void         glFrontFace(in unsigned long mode);
+        void         glGenerateMipmap(in unsigned long target);
+        
+        //void         glGetAttachedShaders(in CanvasProgram program, in unsigned long maxcount, in unsigned long* count, in unsigned long* shaders);
+        
+        int          glGetAttribLocation(in CanvasProgram program, in DOMString name);
+        unsigned long glGetError();
+        DOMString    glGetShaderSource(in CanvasShader shader);
+        DOMString    glGetString(in unsigned long name);
+        void         glHint(in unsigned long target, in unsigned long mode);
+        boolean      glIsBuffer(in CanvasBuffer buffer);
+        boolean      glIsEnabled(in unsigned long cap);
+        boolean      glIsFramebuffer(in CanvasFramebuffer framebuffer);
+        boolean      glIsProgram(in CanvasProgram program);
+        boolean      glIsRenderbuffer(in CanvasRenderbuffer renderbuffer);
+        boolean      glIsShader(in CanvasShader shader);
+        boolean      glIsTexture(in CanvasTexture texture);
+        void         glLineWidth(in double width);
+        void         glLinkProgram(in CanvasProgram program);
+        void         glPixelStorei(in unsigned long pname, in long param);
+        void         glPolygonOffset(in double factor, in double units);
+        
+        //void         glReadPixels(in long x, in long y, in unsigned long width, in unsigned long height, in unsigned long format, in unsigned long type, void* pixels);
+        
+        void         glReleaseShaderCompiler();
+        void         glRenderbufferStorage(in unsigned long target, in unsigned long internalformat, in unsigned long width, in unsigned long height);
+        void         glSampleCoverage(in double value, in boolean invert);
+        void         glScissor(in long x, in long y, in unsigned long width, in unsigned long height);
+        void         glShaderSource(in CanvasShader shader, in DOMString string);
+        void         glStencilFunc(in unsigned long func, in long ref, in unsigned long mask);
+        void         glStencilFuncSeparate(in unsigned long face, in unsigned long func, in long ref, in unsigned long mask);
+        void         glStencilMask(in unsigned long mask);
+        void         glStencilMaskSeparate(in unsigned long face, in unsigned long mask);
+        void         glStencilOp(in unsigned long fail, in unsigned long zfail, in unsigned long zpass);
+        void         glStencilOpSeparate(in unsigned long face, in unsigned long fail, in unsigned long zfail, in unsigned long zpass);
+        [Custom] void glTexParameter(in unsigned long target, in unsigned long pname, in CanvasNumberArray params);
+        [Custom] void glUniformi(in long location, in CanvasNumberArray params);
+        [Custom] void glUniformf(in long location, in CanvasNumberArray params);
+        [Custom] void glUniformMatrix(in long location, in long count, in boolean transpose, in CanvasNumberArray params);
+        void         glUseProgram(in CanvasProgram program);
+        void         glValidateProgram(in CanvasProgram program);
+        [Custom] void glVertexAttrib(in unsigned long indx, in CanvasNumberArray);
+        [Custom] void glVertexAttribPointer(in unsigned long indx, in long size, in unsigned long type, in boolean normalized, in unsigned long stride, in CanvasByteArray array);
+        void         glViewport(in long x, in long y, in unsigned long width, in unsigned long height);
+
+        // Non-GL functions
+        CanvasBuffer createBuffer();                        // replaces glGenBuffers
+        CanvasFramebuffer createFramebuffer();              // replaces glGenFramebuffers
+        CanvasProgram createProgram();                     // replaces glCreateProgram
+        CanvasShader createShader(in unsigned long type);  // replaces glCreateShader
+        CanvasTexture createTexture();                      // replaces glGenTextures
+
+        void deleteBuffer(in CanvasBuffer buffer);                // replaces glDeleteBuffers
+        void deleteFramebuffer(in CanvasFramebuffer framebuffer);      // replaces glDeleteFramebuffers
+        void deleteProgram(in CanvasProgram program);              // replaces glDeleteProgram
+        void deleteRenderbuffer(in CanvasRenderbuffer renderbuffer);    // replaces glDeleteRenderbuffers
+        void deleteShader(in CanvasShader shader);                // replaces glDeleteShader
+        void deleteTexture(in CanvasTexture texture);              // replaces glDeleteTextures
+        
+        CanvasNumberArray get(in unsigned long pname);      // replaces glGetBooleanv, glGetFloatv and glGetIntegerv
+        CanvasNumberArray getBufferParameter(in unsigned long target, in unsigned long pname); // replaces glGetBufferParameteriv
+        CanvasNumberArray getFramebufferAttachmentParameter(in unsigned long target, in unsigned long attachment, in unsigned long pname); // replaces glGetFramebufferAttachmentParameteriv
+        CanvasNumberArray getProgram(in CanvasProgram program, in unsigned long pname); // replaces glGetProgramiv
+        DOMString glGetProgramInfoLog(in CanvasProgram program); // replaces glGetProgramInfoLog
+        CanvasNumberArray getRenderbufferParameter(in unsigned long target, in unsigned long pname); // replaces glGetRenderbufferParameteriv
+        CanvasNumberArray getShader(in CanvasShader shader, in unsigned long pname); // replaces glGetShaderiv
+        DOMString glGetShaderInfoLog(in CanvasShader shader);
+
+        CanvasNumberArray getTexParameter(in unsigned long target, in unsigned long pname); // replaces glGetTexParameterfv
+        
+        // FIXME: I don't like the idea of passing a size to this function. We should be able to figure it out.
+        // But the only way to do that is to search through all active uniforms and determine the type.
+        CanvasNumberArray getUniform(in CanvasProgram program, in long location, in long size); // replaces glGetUniformfv
+        
+        long getUniformLocation(in CanvasProgram program, in DOMString name); // replaces glGetUniformLocation
+        CanvasNumberArray getVertexAttrib(in unsigned long index, in unsigned long pname); // replaces glGetVertexAttribfv
+        
+        [Custom] void texImage2D(in unsigned long target, in unsigned long level, in HTMLImageElement image); // replaces glTexImage2D
+        [Custom] void texSubImage2D(in unsigned long target, in unsigned long level, in unsigned long xoff, in unsigned long yoff, in unsigned long width, in unsigned long height, in HTMLImageElement image); // replaces glTexSubImage2D
+
+        // FIXME: This is tricky. We obviously can't return a pointer. But sometimes this function returns an offset.
+        // Also, do we want to use this to give a reference to a CanvasNumberArray? If so, would this merely be a copy
+        // or the actual mutable array?
+        //void         glGetVertexAttribPointerv(in unsigned long index, in unsigned long pname, void** pointer);
+
+        // FIXME: These will have to be done by returning a data type which has the returned attributes
+        //void glGetActiveAttrib(in CanvasProgram program, in unsigned long index, out long size, out unsigned long type, out DOMString name);
+        //void glGetActiveUniform(in CanvasProgram program, in unsigned long index, out long size, out unsigned long type, out DOMString name);
+        //void glGetShaderPrecisionFormat(in unsigned long shadertype, in unsigned long precisiontype, out long rangeMin, out long rangeMax, out long precision);
+    };
+}
+
