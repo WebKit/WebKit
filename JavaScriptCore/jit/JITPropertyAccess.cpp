@@ -1403,7 +1403,7 @@ void JIT::privateCompilePutByIdTransition(StructureStubInfo* stubInfo, Structure
         stubCall.addArgument(Imm32(oldStructure->propertyStorageCapacity()));
         stubCall.addArgument(Imm32(newStructure->propertyStorageCapacity()));
         stubCall.call(regT0);
-        emitGetJITStubArg(3, regT1);
+        emitGetJITStubArg(2, regT1);
 
         restoreReturnAddressBeforeReturn(regT3);
     }

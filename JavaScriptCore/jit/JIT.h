@@ -793,6 +793,7 @@ namespace JSC {
         /* These functions are deprecated: Please use JITStubCall instead. */
         void emitPutJITStubArg(RegisterID src, unsigned argumentNumber);
 #if USE(JSVALUE32_64)
+        void emitPutJITStubArg(RegisterID tag, RegisterID payload, unsigned argumentNumber);
         void emitPutJITStubArgFromVirtualRegister(unsigned src, unsigned argumentNumber, RegisterID scratch1, RegisterID scratch2);
 #else
         void emitPutJITStubArgFromVirtualRegister(unsigned src, unsigned argumentNumber, RegisterID scratch);

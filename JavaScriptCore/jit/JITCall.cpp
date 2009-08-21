@@ -64,10 +64,9 @@ void JIT::compileOpCallSetupArgs(Instruction* instruction)
     int argCount = instruction[3].u.operand;
     int registerOffset = instruction[4].u.operand;
 
-    emitPutJITStubArg(regT0, 1);
-    emitPutJITStubArg(regT1, 2);
-    emitPutJITStubArgConstant(registerOffset, 3);
-    emitPutJITStubArgConstant(argCount, 5);
+    emitPutJITStubArg(regT1, regT0, 0);
+    emitPutJITStubArgConstant(registerOffset, 1);
+    emitPutJITStubArgConstant(argCount, 2);
 }
           
 void JIT::compileOpConstructSetupArgs(Instruction* instruction)
@@ -77,20 +76,18 @@ void JIT::compileOpConstructSetupArgs(Instruction* instruction)
     int proto = instruction[5].u.operand;
     int thisRegister = instruction[6].u.operand;
 
-    emitPutJITStubArg(regT0, 1);
-    emitPutJITStubArg(regT1, 2);
-    emitPutJITStubArgConstant(registerOffset, 3);
-    emitPutJITStubArgConstant(argCount, 5);
-    emitPutJITStubArgFromVirtualRegister(proto, 7, regT2, regT3);
-    emitPutJITStubArgConstant(thisRegister, 9);
+    emitPutJITStubArg(regT1, regT0, 0);
+    emitPutJITStubArgConstant(registerOffset, 1);
+    emitPutJITStubArgConstant(argCount, 2);
+    emitPutJITStubArgFromVirtualRegister(proto, 3, regT2, regT3);
+    emitPutJITStubArgConstant(thisRegister, 4);
 }
 
 void JIT::compileOpCallVarargsSetupArgs(Instruction*)
 {
-    emitPutJITStubArg(regT0, 1);
-    emitPutJITStubArg(regT1, 2);
-    emitPutJITStubArg(regT3, 3); // registerOffset
-    emitPutJITStubArg(regT2, 5); // argCount
+    emitPutJITStubArg(regT1, regT0, 0);
+    emitPutJITStubArg(regT3, 1); // registerOffset
+    emitPutJITStubArg(regT2, 2); // argCount
 }
 
 void JIT::compileOpCallVarargs(Instruction* instruction)
@@ -452,9 +449,9 @@ void JIT::compileOpCallSetupArgs(Instruction* instruction)
     int registerOffset = instruction[4].u.operand;
 
     // ecx holds func
-    emitPutJITStubArg(regT0, 1);
-    emitPutJITStubArgConstant(argCount, 3);
-    emitPutJITStubArgConstant(registerOffset, 2);
+    emitPutJITStubArg(regT0, 0);
+    emitPutJITStubArgConstant(argCount, 2);
+    emitPutJITStubArgConstant(registerOffset, 1);
 }
           
 void JIT::compileOpCallVarargsSetupArgs(Instruction* instruction)
@@ -462,10 +459,10 @@ void JIT::compileOpCallVarargsSetupArgs(Instruction* instruction)
     int registerOffset = instruction[4].u.operand;
     
     // ecx holds func
-    emitPutJITStubArg(regT0, 1);
-    emitPutJITStubArg(regT1, 3);
+    emitPutJITStubArg(regT0, 0);
+    emitPutJITStubArg(regT1, 2);
     addPtr(Imm32(registerOffset), regT1, regT2);
-    emitPutJITStubArg(regT2, 2);
+    emitPutJITStubArg(regT2, 1);
 }
 
 void JIT::compileOpConstructSetupArgs(Instruction* instruction)
@@ -476,11 +473,11 @@ void JIT::compileOpConstructSetupArgs(Instruction* instruction)
     int thisRegister = instruction[6].u.operand;
 
     // ecx holds func
-    emitPutJITStubArg(regT0, 1);
-    emitPutJITStubArgConstant(registerOffset, 2);
-    emitPutJITStubArgConstant(argCount, 3);
-    emitPutJITStubArgFromVirtualRegister(proto, 4, regT2);
-    emitPutJITStubArgConstant(thisRegister, 5);
+    emitPutJITStubArg(regT0, 0);
+    emitPutJITStubArgConstant(registerOffset, 1);
+    emitPutJITStubArgConstant(argCount, 2);
+    emitPutJITStubArgFromVirtualRegister(proto, 3, regT2);
+    emitPutJITStubArgConstant(thisRegister, 4);
 }
 
 void JIT::compileOpCallVarargs(Instruction* instruction)
@@ -635,8 +632,8 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
         int proto = instruction[5].u.operand;
         int thisRegister = instruction[6].u.operand;
 
-        emitPutJITStubArg(regT0, 1);
-        emitPutJITStubArgFromVirtualRegister(proto, 4, regT2);
+        emitPutJITStubArg(regT0, 0);
+        emitPutJITStubArgFromVirtualRegister(proto, 3, regT2);
         JITStubCall stubCall(this, cti_op_construct_JSConstruct);
         stubCall.call(thisRegister);
         emitGetVirtualRegister(callee, regT0);

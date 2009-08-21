@@ -1,3 +1,35 @@
+2009-08-20  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Numbering of arguments to emitGetJITStubArg/emitPutJITStubArg incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=28513
+
+        The argumentNumber argument to emitGetJITStubArg/emitPutJITStubArg should match
+        the argument number used within the stub functions in JITStubs.cpp, but it doesn't.
+
+        Firstly, all the numbers changed when we added a void* 'reserved' as the first slot
+        (rather than leaving argument 0 unused), and secondly in 32_64 builds the index to
+        peek/poke needs to be multiplies by 2 (since the argument to peek/poke is a number
+        of machine words, and on 32_64 build the argument slots to stub functions are two
+        words wide).
+
+        * jit/JIT.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCallSetupArgs):
+        (JSC::JIT::compileOpConstructSetupArgs):
+        (JSC::JIT::compileOpCallVarargsSetupArgs):
+        (JSC::JIT::compileOpCall):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitPutJITStubArg):
+        (JSC::JIT::emitPutJITStubArgConstant):
+        (JSC::JIT::emitGetJITStubArg):
+        (JSC::JIT::emitPutJITStubArgFromVirtualRegister):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::privateCompilePutByIdTransition):
+
 2009-08-20  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoff Garen.
