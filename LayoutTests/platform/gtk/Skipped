@@ -1600,6 +1600,7 @@ fast/canvas/canvas-transform-multiply.html
 fast/canvas/canvas-transform-nan.html
 fast/canvas/canvas-transform-non-invertible.html
 fast/canvas/canvas-transform-skewed.html
+fast/canvas/canvas-zoom.html
 fast/canvas/pointInPath.html
 fast/canvas/set-colors.html
 fast/canvas/toDataURL-supportedTypes.html
@@ -1615,6 +1616,10 @@ fast/dom/client-width-height-quirks.html
 fast/dom/client-width-height.html
 fast/dom/cssTarget-crash.html
 fast/dom/frame-loading-via-document-write.html
+
+# See https://bugs.webkit.org/show_bug.cgi?id=28619
+fast/dom/Geolocation/argument-types.html
+
 fast/dom/Geolocation/enabled.html
 fast/dom/getBoundingClientRect.html
 fast/dom/location-new-window-no-crash.html
@@ -3121,6 +3126,7 @@ fast/reflections/reflection-masks.html
 fast/reflections/reflection-nesting.html
 fast/reflections/reflection-overflow-hidden.html
 fast/reflections/table-cell.html
+fast/reflections/transparent-reflected-sublayers.html
 fast/repaint/4774354.html
 fast/repaint/4776765.html
 fast/repaint/backgroundSizeRepaint.html

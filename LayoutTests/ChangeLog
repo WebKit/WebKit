@@ -1,3 +1,11 @@
+2009-08-21  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Skipping a new test, a test that requires geolocation support (we
+        do not enable it yet), and a test which needs font sizing to be
+        properly setup.
+
+        * platform/gtk/Skipped:
+
 2009-08-21  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Tim Hatcher.
