@@ -132,7 +132,7 @@ enum EFillBox {
 };
 
 enum EFillRepeat {
-    RepeatFill, RepeatXFill, RepeatYFill, NoRepeatFill
+    RepeatFill, RepeatXFill, RepeatYFill, NoRepeatFill, RoundFill, SpaceFill
 };
 
 enum EFillLayerType {

@@ -2369,7 +2369,8 @@ bool CSSParser::parseFillProperty(int propId, int& propId1, int& propId2,
                     break;
                 case CSSPropertyBackgroundRepeat:
                 case CSSPropertyWebkitMaskRepeat:
-                    if (val->id >= CSSValueRepeat && val->id <= CSSValueNoRepeat) {
+                    if (val->id >= CSSValueRepeat && val->id <= CSSValueNoRepeat
+                        || val->id == CSSValueRound || val->id == CSSValueSpace) {
                         currValue = CSSPrimitiveValue::createIdentifier(val->id);
                         m_valueList->next();
                     }

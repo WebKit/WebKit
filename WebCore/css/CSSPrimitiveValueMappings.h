@@ -384,6 +384,10 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EFillRepeat e)
             break;
         case NoRepeatFill:
             m_value.ident = CSSValueNoRepeat;
+        case RoundFill:
+            m_value.ident = CSSValueRound;
+        case SpaceFill:
+            m_value.ident = CSSValueSpace;
             break;
     }
 }
@@ -399,6 +403,10 @@ template<> inline CSSPrimitiveValue::operator EFillRepeat() const
             return RepeatYFill;
         case CSSValueNoRepeat:
             return NoRepeatFill;
+        case CSSValueRound:
+            return RoundFill;
+        case CSSValueSpace:
+            return SpaceFill;
         default:
             ASSERT_NOT_REACHED();
             return RepeatFill;

@@ -169,6 +169,8 @@ repeat
 repeat-x
 repeat-y
 no-repeat
+# round
+# space
 #
 # CSS_PROP__WEBKIT_BACKGROUND_COMPOSITE:
 #

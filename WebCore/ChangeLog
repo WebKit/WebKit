@@ -1,3 +1,24 @@
+2009-08-21  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        The CSS part of https://bugs.webkit.org/show_bug.cgi?id=27571 [CSS3 
+        Backgrounds and Borders] Add support for the "round" value for 
+        background-repeat
+        -and-
+        https://bugs.webkit.org/show_bug.cgi?id=27570 [CSS3 Backgrounds and 
+        Borders] Add support for the "space" value for background-repeat
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseFillProperty):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator EFillRepeat):
+        * css/CSSValueKeywords.in:
+        * rendering/style/FillLayer.h:
+        * rendering/style/RenderStyleConstants.h:
+        (WebCore::):
+
 2009-08-21  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by NOBODY Oliver Hunt.

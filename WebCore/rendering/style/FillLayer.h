@@ -167,7 +167,7 @@ public:
     unsigned m_attachment : 2; // EFillAttachment
     unsigned m_clip : 2; // EFillBox
     unsigned m_origin : 2; // EFillBox
-    unsigned m_repeat : 2; // EFillRepeat
+    unsigned m_repeat : 3; // EFillRepeat
     unsigned m_composite : 4; // CompositeOperator
     unsigned m_sizeType : 2; // EFillSizeType
     

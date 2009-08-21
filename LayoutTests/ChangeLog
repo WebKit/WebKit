@@ -1,3 +1,18 @@
+2009-08-21  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Test for the CSS part of https://bugs.webkit.org/show_bug.cgi?id=27571 [CSS3 Backgrounds and Borders] Add support for the "round" value 
+        for background-repeat
+        -and-
+        https://bugs.webkit.org/show_bug.cgi?id=27570 [CSS3 Backgrounds and 
+        Borders] Add support for the "space" value for background-repeat
+
+        * fast/backgrounds/repeat/parsing-background-repeat-expected.txt: Added.
+        * fast/backgrounds/repeat/parsing-background-repeat.html: Added.
+        * fast/backgrounds/repeat/resources/parsing-background-repeat.js: Added.
+        (test):
+
 2009-08-21  Christian Plesner Hansen  <christian.plesner.hansen@gmail.com>
 
         Reviewed by Eric Seidel.
