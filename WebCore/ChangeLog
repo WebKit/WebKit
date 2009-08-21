@@ -1,3 +1,13 @@
+2009-08-21  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Inspector: Console Array Formatter Shows Extra Properties
+        https://bugs.webkit.org/show_bug.cgi?id=28615
+
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype._formatarray): do not ignore hasOwnProperties
+
 2009-08-21  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Dan Bernstein.

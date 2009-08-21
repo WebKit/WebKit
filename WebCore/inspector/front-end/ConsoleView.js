@@ -468,7 +468,7 @@ WebInspector.ConsoleView.prototype = {
             }
             elem.appendChild(document.createTextNode("]"));
         }
-        InspectorController.getProperties(arr, true, printResult);
+        InspectorController.getProperties(arr, false, printResult);
     },
 
     _formatnode: function(object, elem)
