@@ -1,3 +1,37 @@
+2009-08-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        execCommand("Underline") uses CSS even when styleWithCSS has been turned off
+        https://bugs.webkit.org/show_bug.cgi?id=23892
+
+        This patch rebaselines tests contained spans to decorate texts even though styleWithCSS is turned off.
+        It replaces those spans with either u or s accordingly.
+
+        It modifies the order in which tag appear in toggle-style-2 to match the actual result
+        since the original ordering was rather arbitrary.
+
+        This patch breaks /editing/style/font-family-with-space.html for Qt platform.
+        Manual rebaseline is required once the patch is landed.
+
+        * editing/execCommand/resources/toggle-style-2.js: Modified the order in which tag appear
+        * editing/execCommand/resources/toggle-text-decorations.js: execCommand('styleWithCSS') is called after selection is set
+        (testSingleToggle):
+        * editing/execCommand/strikethroughSelection-expected.txt: span with line-through was replaced by s
+        * editing/execCommand/toggle-style-2-expected.txt: Passes all but the last two tests.
+        * editing/style/remove-underline-across-paragraph-expected.txt: Underline is added by u instead of CSS.
+        * editing/style/remove-underline-across-paragraph-in-bold-expected.txt: Ditto.
+        * editing/style/remove-underline-after-paragraph-expected.txt: Ditto.
+        * editing/style/remove-underline-after-paragraph-in-bold-expected.txt: Ditto.
+        * editing/style/remove-underline-expected.txt: Ditto.
+        * editing/style/remove-underline-in-bold-expected.txt: Ditto.
+        * editing/style/underline-expected.txt: Ditto.
+        * platform/mac/editing/execCommand/5190926-expected.txt: Ditto.
+        * platform/mac/editing/pasteboard/5075944-expected.txt: Ditto.
+        * platform/mac/editing/style/font-family-with-space-expected.txt: Ditto.
+        * platform/qt/editing/execCommand/5190926-expected.txt: Ditto.
+        * platform/qt/editing/pasteboard/5075944-expected.txt: Ditto.
+
 2009-08-21  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Skipping a new test, a test that requires geolocation support (we

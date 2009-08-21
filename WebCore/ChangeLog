@@ -1,3 +1,25 @@
+2009-08-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        execCommand("Underline") uses CSS even when styleWithCSS has been turned off
+        https://bugs.webkit.org/show_bug.cgi?id=23892
+
+        This patch adds support for u and s in StyleChange and addInlineStyleIfNeeded so that
+        WebKit does not use CSS to decorate texts when styleWithCSS is set to false.
+
+        * css/CSSValueList.cpp:
+        (WebCore::CSSValueList::copy): Added.
+        * css/CSSValueList.h: Added copy.
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::StyleChange::applyUnderline):
+        (WebCore::StyleChange::applyLineThrough):
+        (WebCore::StyleChange::StyleChange): Added a boolean trimTextDecorations argument.
+        (WebCore::StyleChange::init): Ditto.
+        (WebCore::StyleChange::extractTextStyles): Handles text decorations.
+        (WebCore::getPropertiesNotInComputedStyle): Handles text decorations properly.
+        (WebCore::ApplyStyleCommand::addInlineStyleIfNeeded): Adds u and s if needed.
+
 2009-08-21  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Timothy Hatcher.

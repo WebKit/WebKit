@@ -8,6 +8,7 @@ function testSingleToggle(toggleCommand, initialContents, expectedContents)
 {
     testContainer.innerHTML = initialContents;
     window.getSelection().selectAllChildren(testContainer);
+    document.execCommand("styleWithCSS", false, true);
     document.execCommand(toggleCommand, false, null);
     if (testContainer.innerHTML === expectedContents) {
         testPassed("one " + toggleCommand + " command converted " + initialContents + " to " + expectedContents);
@@ -16,7 +17,6 @@ function testSingleToggle(toggleCommand, initialContents, expectedContents)
     }
 }
 
-document.execCommand("styleWithCSS", true, null);
 testSingleToggle("underline", "test", "<span class=\"Apple-style-span\" style=\"text-decoration: underline;\">test</span>");
 testSingleToggle("underline", "<span class=\"Apple-style-span\" style=\"text-decoration: underline;\">test</span>", "test");
 testSingleToggle("underline", "<span class=\"Apple-style-span\" style=\"text-decoration: underline line-through overline;\">test</span>", "<span class=\"Apple-style-span\" style=\"text-decoration: overline line-through;\">test</span>");

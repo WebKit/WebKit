@@ -58,6 +58,8 @@ public:
     String cssStyle() const { return m_cssStyle; }
     bool applyBold() const { return m_applyBold; }
     bool applyItalic() const { return m_applyItalic; }
+    bool applyUnderline() const { return m_applyUnderline; }
+    bool applyLineThrough() const { return m_applyLineThrough; }
     bool applySubscript() const { return m_applySubscript; }
     bool applySuperscript() const { return m_applySuperscript; }
     bool applyFontColor() const { return m_applyFontColor.length() > 0; }
@@ -76,6 +78,8 @@ private:
     String m_cssStyle;
     bool m_applyBold;
     bool m_applyItalic;
+    bool m_applyUnderline;
+    bool m_applyLineThrough;
     bool m_applySubscript;
     bool m_applySuperscript;
     String m_applyFontColor;
@@ -87,6 +91,8 @@ private:
 StyleChange::StyleChange(CSSStyleDeclaration* style, const Position& position)
     : m_applyBold(false)
     , m_applyItalic(false)
+    , m_applyUnderline(false)
+    , m_applyLineThrough(false)
     , m_applySubscript(false)
     , m_applySuperscript(false)
 {
@@ -148,6 +154,17 @@ static int getIdentifierValue(CSSMutableStyleDeclaration* style, int propertyID)
     return static_cast<CSSPrimitiveValue*>(value.get())->getIdent();
 }
 
+void setTextDecorationProperty(CSSMutableStyleDeclaration* style, const CSSValueList* newTextDecoration, int propertyID)
+{
+    if (newTextDecoration->length())
+        style->setProperty(propertyID, newTextDecoration->cssText(), style->getPropertyPriority(propertyID));
+    else {
+        // text-decoration: none is redundant since it does not remove any text decorations.
+        ASSERT(!style->getPropertyPriority(propertyID));
+        style->removeProperty(propertyID);
+    }
+}
+
 void StyleChange::extractTextStyles(CSSMutableStyleDeclaration* style)
 {
     ASSERT(style);
@@ -161,6 +178,23 @@ void StyleChange::extractTextStyles(CSSMutableStyleDeclaration* style)
     if (fontStyle == CSSValueItalic || fontStyle == CSSValueOblique) {
         style->removeProperty(CSSPropertyFontStyle);
         m_applyItalic = true;
+    }
+
+    // Assuming reconcileTextDecorationProperties has been called, there should not be -webkit-text-decorations-in-effect
+    // Furthermore, text-decoration: none has been trimmed so that text-decoration property is always a CSSValueList.
+    if (RefPtr<CSSValue> textDecoration = style->getPropertyCSSValue(CSSPropertyTextDecoration)) {
+        ASSERT(textDecoration->isValueList());
+        DEFINE_STATIC_LOCAL(RefPtr<CSSPrimitiveValue>, underline, (CSSPrimitiveValue::createIdentifier(CSSValueUnderline)));
+        DEFINE_STATIC_LOCAL(RefPtr<CSSPrimitiveValue>, lineThrough, (CSSPrimitiveValue::createIdentifier(CSSValueLineThrough)));
+
+        RefPtr<CSSValueList> newTextDecoration = static_cast<CSSValueList*>(textDecoration.get())->copy();
+        if (newTextDecoration->removeAll(underline.get()))
+            m_applyUnderline = true;
+        if (newTextDecoration->removeAll(lineThrough.get()))
+            m_applyLineThrough = true;
+
+        // If trimTextDecorations, delete underline and line-through
+        setTextDecorationProperty(style, newTextDecoration.get(), CSSPropertyTextDecoration);
     }
 
     int verticalAlign = getIdentifierValue(style, CSSPropertyVerticalAlign);
@@ -284,7 +318,22 @@ PassRefPtr<HTMLElement> createStyleSpanElement(Document* document)
     styleElement->setAttribute(classAttr, styleSpanClassString());
     return styleElement.release();
 }
-    
+
+void diffTextDecorations(CSSMutableStyleDeclaration* style, int propertID, CSSValue* refTextDecoration)
+{
+    RefPtr<CSSValue> textDecoration = style->getPropertyCSSValue(propertID);
+    if (!textDecoration || !textDecoration->isValueList() || !refTextDecoration || !refTextDecoration->isValueList())
+        return;
+
+    RefPtr<CSSValueList> newTextDecoration = static_cast<const CSSValueList*>(textDecoration.get())->copy();
+    CSSValueList* valuesInRefTextDecoration = static_cast<CSSValueList*>(refTextDecoration);
+
+    for (size_t i = 0; i < valuesInRefTextDecoration->length(); i++)
+        newTextDecoration->removeAll(valuesInRefTextDecoration->item(i));
+
+    setTextDecorationProperty(style, newTextDecoration.get(), propertID);
+}
+
 RefPtr<CSSMutableStyleDeclaration> getPropertiesNotInComputedStyle(CSSStyleDeclaration* style, CSSComputedStyleDeclaration* computedStyle)
 {
     ASSERT(style);
@@ -292,9 +341,9 @@ RefPtr<CSSMutableStyleDeclaration> getPropertiesNotInComputedStyle(CSSStyleDecla
     RefPtr<CSSMutableStyleDeclaration> result = style->copy();
     computedStyle->diff(result.get());
 
-    // if text-decoration is equal to -webkit-text-decorations-in-effect, then don't add the property.
-    if (result->getPropertyValue(CSSPropertyTextDecoration) == computedStyle->getPropertyValue(CSSPropertyWebkitTextDecorationsInEffect))
-        result->removeProperty(CSSPropertyTextDecoration);
+    RefPtr<CSSValue> computedTextDecorationsInEffect = computedStyle->getPropertyCSSValue(CSSPropertyWebkitTextDecorationsInEffect);
+    diffTextDecorations(result.get(), CSSPropertyTextDecoration, computedTextDecorationsInEffect.get());
+    diffTextDecorations(result.get(), CSSPropertyWebkitTextDecorationsInEffect, computedTextDecorationsInEffect.get());
 
     return result;
 }
@@ -1264,7 +1313,7 @@ void ApplyStyleCommand::applyTextDecorationStyle(Node *node, CSSMutableStyleDecl
         return;
 
     HTMLElement *element = static_cast<HTMLElement *>(node);
-        
+
     StyleChange styleChange(style, Position(element, 0));
     if (styleChange.cssStyle().length()) {
         String cssText = styleChange.cssStyle();
@@ -1273,6 +1322,12 @@ void ApplyStyleCommand::applyTextDecorationStyle(Node *node, CSSMutableStyleDecl
             cssText += decl->cssText();
         setNodeAttribute(element, styleAttr, cssText);
     }
+
+    if (styleChange.applyUnderline())
+        surroundNodeRangeWithElement(node, node, createHTMLElement(document(), uTag));
+
+    if (styleChange.applyLineThrough())
+        surroundNodeRangeWithElement(node, node, createHTMLElement(document(), sTag));    
 }
 
 void ApplyStyleCommand::pushDownTextDecorationStyleAroundNode(Node* targetNode, bool forceNegate)
@@ -1706,6 +1761,12 @@ void ApplyStyleCommand::addInlineStyleIfNeeded(CSSMutableStyleDeclaration *style
 
     if (styleChange.applyItalic())
         surroundNodeRangeWithElement(startNode, endNode, createHTMLElement(document(), iTag));
+
+    if (styleChange.applyUnderline())
+        surroundNodeRangeWithElement(startNode, endNode, createHTMLElement(document(), uTag));
+
+    if (styleChange.applyLineThrough())
+        surroundNodeRangeWithElement(startNode, endNode, createHTMLElement(document(), sTag));
 
     if (styleChange.applySubscript())
         surroundNodeRangeWithElement(startNode, endNode, createHTMLElement(document(), subTag));

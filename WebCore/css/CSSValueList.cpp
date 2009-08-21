@@ -96,6 +96,14 @@ bool CSSValueList::hasValue(CSSValue* val)
     return false;
 }
 
+PassRefPtr<CSSValueList> CSSValueList::copy()
+{
+    PassRefPtr<CSSValueList> newList = m_isSpaceSeparated ? createSpaceSeparated() : createCommaSeparated();
+    for (size_t index = 0; index < m_values.size(); index++)
+        newList->append(item(index));
+    return newList;
+}
+
 String CSSValueList::cssText() const
 {
     String result = "";

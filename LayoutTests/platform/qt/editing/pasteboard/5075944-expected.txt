@@ -7,11 +7,11 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 301x19
           text run at (0,0) width 301: "This test for a bug copy/pasting underlined text."
       RenderBlock {DIV} at (0,33) size 784x19
-        RenderInline {SPAN} at (0,0) size 168x19
+        RenderInline {U} at (0,0) size 168x19
           RenderText {#text} at (0,0) size 168x19
             text run at (0,0) width 168: "This should be underlined."
       RenderBlock {DIV} at (0,52) size 784x19
-        RenderInline {SPAN} at (0,0) size 168x19
+        RenderInline {U} at (0,0) size 168x19
           RenderText {#text} at (0,0) size 168x19
             text run at (0,0) width 168: "This should be underlined."
-caret: position 26 of child 0 {#text} of child 0 {SPAN} of child 4 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 26 of child 0 {#text} of child 0 {U} of child 4 {DIV} of child 1 {BODY} of child 0 {HTML} of document

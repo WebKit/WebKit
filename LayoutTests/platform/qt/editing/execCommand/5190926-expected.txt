@@ -6,19 +6,19 @@ layer at (0,0) size 800x600
       RenderBlock {OL} at (0,0) size 784x57
         RenderListItem {LI} at (40,0) size 744x19
           RenderListMarker at (-20,0) size 16x19: "1"
-          RenderInline {SPAN} at (0,0) size 499x19
+          RenderInline {U} at (0,0) size 499x19
             RenderText {#text} at (0,0) size 499x19
               text run at (0,0) width 499: "This tests for a crash when making and removing lists from underlined content."
         RenderListItem {LI} at (40,19) size 744x19
           RenderListMarker at (-20,0) size 16x19: "2"
-          RenderInline {SPAN} at (0,0) size 273x19
+          RenderInline {U} at (0,0) size 273x19
             RenderText {#text} at (0,0) size 273x19
               text run at (0,0) width 273: "All three paragraphs should be in list items."
         RenderListItem {LI} at (40,38) size 744x19
           RenderListMarker at (-20,0) size 16x19: "3"
-          RenderInline {SPAN} at (0,0) size 221x19
+          RenderInline {U} at (0,0) size 221x19
             RenderText {#text} at (0,0) size 221x19
               text run at (0,0) width 221: "And all three should be underlined."
       RenderBlock (anonymous) at (0,71) size 784x0
-selection start: position 0 of child 0 {#text} of child 0 {SPAN} of child 0 {LI} of child 0 {OL} of child 1 {BODY} of child 0 {HTML} of document
-selection end:   position 35 of child 0 {#text} of child 0 {SPAN} of child 2 {LI} of child 0 {OL} of child 1 {BODY} of child 0 {HTML} of document
+selection start: position 0 of child 0 {#text} of child 0 {U} of child 0 {LI} of child 0 {OL} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 35 of child 0 {#text} of child 0 {U} of child 2 {LI} of child 0 {OL} of child 1 {BODY} of child 0 {HTML} of document

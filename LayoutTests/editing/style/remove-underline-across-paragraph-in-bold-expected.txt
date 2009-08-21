@@ -2,32 +2,32 @@ xxxxxx xxxxxx
  xxxxxx xxxxxx
 execBoldCommand: <span id="test"></span>
 execUnderlineCommand: <span id="test"></span>
-execTypeCharacterCommand: <span class="Apple-style-span" style="text-decoration: underline;"><b>x</b></span> <span id="test"></span>
-execTypeCharacterCommand: <span class="Apple-style-span" style="text-decoration: underline;"><b>xx</b></span><span id="test"></span>
-execTypeCharacterCommand: <span class="Apple-style-span" style="text-decoration: underline;"><b>xxx</b></span><span id="test"></span>
-execTypeCharacterCommand: <span class="Apple-style-span" style="text-decoration: underline;"><b>xxxx</b></span><span id="test"></span>
-execTypeCharacterCommand: <span class="Apple-style-span" style="text-decoration: underline;"><b>xxxxx</b></span><span id="test"></span>
-execTypeCharacterCommand: <span class="Apple-style-span" style="text-decoration: underline;"><b>xxxxxx</b></span><span id="test"></span>
-execTypeCharacterCommand: <span class="Apple-style-span" style="text-decoration: underline;"><b>xxxxxx&nbsp;</b></span><span id="test"></span>
-execTypeCharacterCommand: <span class="Apple-style-span" style="text-decoration: underline;"><b>xxxxxx x</b></span><span id="test"></span>
-execTypeCharacterCommand: <span class="Apple-style-span" style="text-decoration: underline;"><b>xxxxxx xx</b></span><span id="test"></span>
-execTypeCharacterCommand: <span class="Apple-style-span" style="text-decoration: underline;"><b>xxxxxx xxx</b></span><span id="test"></span>
-execTypeCharacterCommand: <span class="Apple-style-span" style="text-decoration: underline;"><b>xxxxxx xxxx</b></span><span id="test"></span>
-execTypeCharacterCommand: <span class="Apple-style-span" style="text-decoration: underline;"><b>xxxxxx xxxxx</b></span><span id="test"></span>
-execTypeCharacterCommand: <span class="Apple-style-span" style="text-decoration: underline;"><b>xxxxxx xxxxxx</b></span><span id="test"></span>
-execInsertParagraphCommand: <span class="Apple-style-span" style="text-decoration: underline;"><b>xxxxxx xxxxxx</b></span><span id="test"></span><div><span class="Apple-style-span" style="text-decoration: underline;"><b><br></b></span></div>
-execTypeCharacterCommand: <span class="Apple-style-span" style="text-decoration: underline;"><b>xxxxxx xxxxxx</b></span><span id="test"></span><div><span class="Apple-style-span" style="text-decoration: underline;"><b>&nbsp;</b></span></div>
-execTypeCharacterCommand: <span class="Apple-style-span" style="text-decoration: underline;"><b>xxxxxx xxxxxx</b></span><span id="test"></span><div><span class="Apple-style-span" style="text-decoration: underline;"><b>&nbsp;x</b></span></div>
-execTypeCharacterCommand: <span class="Apple-style-span" style="text-decoration: underline;"><b>xxxxxx xxxxxx</b></span><span id="test"></span><div><span class="Apple-style-span" style="text-decoration: underline;"><b>&nbsp;xx</b></span></div>
-execTypeCharacterCommand: <span class="Apple-style-span" style="text-decoration: underline;"><b>xxxxxx xxxxxx</b></span><span id="test"></span><div><span class="Apple-style-span" style="text-decoration: underline;"><b>&nbsp;xxx</b></span></div>
-execTypeCharacterCommand: <span class="Apple-style-span" style="text-decoration: underline;"><b>xxxxxx xxxxxx</b></span><span id="test"></span><div><span class="Apple-style-span" style="text-decoration: underline;"><b>&nbsp;xxxx</b></span></div>
-execTypeCharacterCommand: <span class="Apple-style-span" style="text-decoration: underline;"><b>xxxxxx xxxxxx</b></span><span id="test"></span><div><span class="Apple-style-span" style="text-decoration: underline;"><b>&nbsp;xxxxx</b></span></div>
-execTypeCharacterCommand: <span class="Apple-style-span" style="text-decoration: underline;"><b>xxxxxx xxxxxx</b></span><span id="test"></span><div><span class="Apple-style-span" style="text-decoration: underline;"><b>&nbsp;xxxxxx</b></span></div>
-execTypeCharacterCommand: <span class="Apple-style-span" style="text-decoration: underline;"><b>xxxxxx xxxxxx</b></span><span id="test"></span><div><span class="Apple-style-span" style="text-decoration: underline;"><b>&nbsp;xxxxxx&nbsp;</b></span></div>
-execTypeCharacterCommand: <span class="Apple-style-span" style="text-decoration: underline;"><b>xxxxxx xxxxxx</b></span><span id="test"></span><div><span class="Apple-style-span" style="text-decoration: underline;"><b>&nbsp;xxxxxx x</b></span></div>
-execTypeCharacterCommand: <span class="Apple-style-span" style="text-decoration: underline;"><b>xxxxxx xxxxxx</b></span><span id="test"></span><div><span class="Apple-style-span" style="text-decoration: underline;"><b>&nbsp;xxxxxx xx</b></span></div>
-execTypeCharacterCommand: <span class="Apple-style-span" style="text-decoration: underline;"><b>xxxxxx xxxxxx</b></span><span id="test"></span><div><span class="Apple-style-span" style="text-decoration: underline;"><b>&nbsp;xxxxxx xxx</b></span></div>
-execTypeCharacterCommand: <span class="Apple-style-span" style="text-decoration: underline;"><b>xxxxxx xxxxxx</b></span><span id="test"></span><div><span class="Apple-style-span" style="text-decoration: underline;"><b>&nbsp;xxxxxx xxxx</b></span></div>
-execTypeCharacterCommand: <span class="Apple-style-span" style="text-decoration: underline;"><b>xxxxxx xxxxxx</b></span><span id="test"></span><div><span class="Apple-style-span" style="text-decoration: underline;"><b>&nbsp;xxxxxx xxxxx</b></span></div>
-execTypeCharacterCommand: <span class="Apple-style-span" style="text-decoration: underline;"><b>xxxxxx xxxxxx</b></span><span id="test"></span><div><span class="Apple-style-span" style="text-decoration: underline;"><b>&nbsp;xxxxxx xxxxxx</b></span></div>
-execUnderlineCommand: <b style="text-decoration: underline;">xxxxxx </b><b>xxxxxx</b><span id="test"></span><div><b>&nbsp;xxxxxx</b><b style="text-decoration: underline;"> xxxxxx</b></div>
+execTypeCharacterCommand: <b><u>x</u></b> <span id="test"></span>
+execTypeCharacterCommand: <b><u>xx</u></b><span id="test"></span>
+execTypeCharacterCommand: <b><u>xxx</u></b><span id="test"></span>
+execTypeCharacterCommand: <b><u>xxxx</u></b><span id="test"></span>
+execTypeCharacterCommand: <b><u>xxxxx</u></b><span id="test"></span>
+execTypeCharacterCommand: <b><u>xxxxxx</u></b><span id="test"></span>
+execTypeCharacterCommand: <b><u>xxxxxx&nbsp;</u></b><span id="test"></span>
+execTypeCharacterCommand: <b><u>xxxxxx x</u></b><span id="test"></span>
+execTypeCharacterCommand: <b><u>xxxxxx xx</u></b><span id="test"></span>
+execTypeCharacterCommand: <b><u>xxxxxx xxx</u></b><span id="test"></span>
+execTypeCharacterCommand: <b><u>xxxxxx xxxx</u></b><span id="test"></span>
+execTypeCharacterCommand: <b><u>xxxxxx xxxxx</u></b><span id="test"></span>
+execTypeCharacterCommand: <b><u>xxxxxx xxxxxx</u></b><span id="test"></span>
+execInsertParagraphCommand: <b><u>xxxxxx xxxxxx</u></b><span id="test"></span><div><b><u><br></u></b></div>
+execTypeCharacterCommand: <b><u>xxxxxx xxxxxx</u></b><span id="test"></span><div><b><u>&nbsp;</u></b></div>
+execTypeCharacterCommand: <b><u>xxxxxx xxxxxx</u></b><span id="test"></span><div><b><u>&nbsp;x</u></b></div>
+execTypeCharacterCommand: <b><u>xxxxxx xxxxxx</u></b><span id="test"></span><div><b><u>&nbsp;xx</u></b></div>
+execTypeCharacterCommand: <b><u>xxxxxx xxxxxx</u></b><span id="test"></span><div><b><u>&nbsp;xxx</u></b></div>
+execTypeCharacterCommand: <b><u>xxxxxx xxxxxx</u></b><span id="test"></span><div><b><u>&nbsp;xxxx</u></b></div>
+execTypeCharacterCommand: <b><u>xxxxxx xxxxxx</u></b><span id="test"></span><div><b><u>&nbsp;xxxxx</u></b></div>
+execTypeCharacterCommand: <b><u>xxxxxx xxxxxx</u></b><span id="test"></span><div><b><u>&nbsp;xxxxxx</u></b></div>
+execTypeCharacterCommand: <b><u>xxxxxx xxxxxx</u></b><span id="test"></span><div><b><u>&nbsp;xxxxxx&nbsp;</u></b></div>
+execTypeCharacterCommand: <b><u>xxxxxx xxxxxx</u></b><span id="test"></span><div><b><u>&nbsp;xxxxxx x</u></b></div>
+execTypeCharacterCommand: <b><u>xxxxxx xxxxxx</u></b><span id="test"></span><div><b><u>&nbsp;xxxxxx xx</u></b></div>
+execTypeCharacterCommand: <b><u>xxxxxx xxxxxx</u></b><span id="test"></span><div><b><u>&nbsp;xxxxxx xxx</u></b></div>
+execTypeCharacterCommand: <b><u>xxxxxx xxxxxx</u></b><span id="test"></span><div><b><u>&nbsp;xxxxxx xxxx</u></b></div>
+execTypeCharacterCommand: <b><u>xxxxxx xxxxxx</u></b><span id="test"></span><div><b><u>&nbsp;xxxxxx xxxxx</u></b></div>
+execTypeCharacterCommand: <b><u>xxxxxx xxxxxx</u></b><span id="test"></span><div><b><u>&nbsp;xxxxxx xxxxxx</u></b></div>
+execUnderlineCommand: <b><u>xxxxxx </u>xxxxxx</b><span id="test"></span><div><b>&nbsp;xxxxxx<u> xxxxxx</u></b></div>
