@@ -1,3 +1,11 @@
+2009-08-21  Ariya Hidayat  <ariya.hidayat@nokia.com>
+
+        Not reviewed, build fix after r47580.
+
+        [Qt] Adjust the files.
+
+        * inspector/front-end/WebKit.qrc:
+
 2009-08-20  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

@@ -83,7 +83,6 @@
     <file>Images/disclosureTriangleSmallRightDownWhite.png</file>
     <file>Images/disclosureTriangleSmallRightWhite.png</file>
     <file>Images/dockButtonGlyph.png</file>
-    <file>Images/domStorage.png</file>
     <file>Images/elementsIcon.png</file>
     <file>Images/enableOutlineButtonGlyph.png</file>
     <file>Images/enableSolidButtonGlyph.png</file>
@@ -100,6 +99,7 @@
     <file>Images/graphLabelCalloutLeft.png</file>
     <file>Images/graphLabelCalloutRight.png</file>
     <file>Images/largerResourcesButtonGlyph.png</file>
+    <file>Images/localStorage.png</file>
     <file>Images/nodeSearchButtonGlyph.png</file>
     <file>Images/paneBottomGrow.png</file>
     <file>Images/paneBottomGrowActive.png</file>
@@ -137,6 +137,7 @@
     <file>Images/segmentHoverEnd.png</file>
     <file>Images/segmentSelected.png</file>
     <file>Images/segmentSelectedEnd.png</file>
+    <file>Images/sessionStorage.png</file>
     <file>Images/splitviewDimple.png</file>
     <file>Images/splitviewDividerBackground.png</file>
     <file>Images/statusbarBackground.png</file>
