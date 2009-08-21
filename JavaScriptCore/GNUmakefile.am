@@ -96,8 +96,6 @@ javascriptcore_sources += \
 	JavaScriptCore/bytecode/JumpTable.cpp \
 	JavaScriptCore/bytecode/JumpTable.h \
 	JavaScriptCore/bytecode/EvalCodeCache.h \
-	JavaScriptCore/runtime/ExceptionHelpers.cpp \
-	JavaScriptCore/runtime/ExceptionHelpers.h \
 	JavaScriptCore/bytecode/Instruction.h \
 	JavaScriptCore/bytecompiler/Label.h \
 	JavaScriptCore/interpreter/Interpreter.cpp \
@@ -173,8 +171,8 @@ javascriptcore_sources += \
 	JavaScriptCore/interpreter/CallFrame.cpp \
 	JavaScriptCore/interpreter/CallFrame.h \
 	JavaScriptCore/interpreter/CallFrameClosure.h \
-	JavaScriptCore/runtime/TimeoutChecker.cpp \
-	JavaScriptCore/runtime/TimeoutChecker.h \
+	JavaScriptCore/runtime/ExceptionHelpers.cpp \
+	JavaScriptCore/runtime/ExceptionHelpers.h \
 	JavaScriptCore/runtime/Executable.cpp \
 	JavaScriptCore/runtime/Executable.h \
 	JavaScriptCore/runtime/InitializeThreading.cpp \
@@ -195,6 +193,7 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/LiteralParser.h \
 	JavaScriptCore/runtime/MarkStack.cpp \
 	JavaScriptCore/runtime/MarkStack.h \
+	JavaScriptCore/runtime/NumericStrings.h \
 	JavaScriptCore/runtime/SmallStrings.cpp \
 	JavaScriptCore/runtime/SmallStrings.h \
 	JavaScriptCore/runtime/Structure.cpp \
@@ -202,6 +201,8 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/StructureChain.cpp \
 	JavaScriptCore/runtime/StructureChain.h \
 	JavaScriptCore/runtime/StructureTransitionTable.h \
+	JavaScriptCore/runtime/TimeoutChecker.cpp \
+	JavaScriptCore/runtime/TimeoutChecker.h \
 	JavaScriptCore/runtime/TypeInfo.h \
 	JavaScriptCore/wrec/CharacterClass.h \
 	JavaScriptCore/wrec/CharacterClassConstructor.h \
