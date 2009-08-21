@@ -4960,8 +4960,11 @@ void RenderBlock::addFocusRingRects(GraphicsContext* graphicsContext, int tx, in
         graphicsContext->addFocusRingRect(IntRect(tx, ty, width(), height()));
 
     if (!hasOverflowClip() && !hasControlClip()) {
-        for (InlineRunBox* curr = firstLineBox(); curr; curr = curr->nextLineBox())
-            graphicsContext->addFocusRingRect(IntRect(tx + curr->x(), ty + curr->y(), curr->width(), curr->height()));
+        for (RootInlineBox* curr = firstRootBox(); curr; curr = curr->nextRootBox()) {
+            int top = max(curr->lineTop(), curr->y());
+            int bottom = min(curr->lineBottom(), curr->y() + curr->height());
+            graphicsContext->addFocusRingRect(IntRect(tx + curr->x(), ty + top, curr->width(), bottom - top));
+        }
 
         for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {
             if (!curr->isText() && !curr->isListMarker() && curr->isBox()) {

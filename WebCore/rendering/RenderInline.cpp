@@ -818,8 +818,12 @@ void RenderInline::imageChanged(WrappedImagePtr, const IntRect*)
 
 void RenderInline::addFocusRingRects(GraphicsContext* graphicsContext, int tx, int ty)
 {
-    for (InlineRunBox* curr = firstLineBox(); curr; curr = curr->nextLineBox())
-        graphicsContext->addFocusRingRect(IntRect(tx + curr->x(), ty + curr->y(), curr->width(), curr->height()));
+    for (InlineRunBox* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
+        RootInlineBox* root = curr->root();
+        int top = max(root->lineTop(), curr->y());
+        int bottom = min(root->lineBottom(), curr->y() + curr->height());
+        graphicsContext->addFocusRingRect(IntRect(tx + curr->x(), ty + top, curr->width(), bottom - top));
+    }
 
     for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {
         if (!curr->isText() && !curr->isListMarker()) {
@@ -871,9 +875,12 @@ void RenderInline::paintOutline(GraphicsContext* graphicsContext, int tx, int ty
     Vector<IntRect> rects;
 
     rects.append(IntRect());
-    for (InlineRunBox* curr = firstLineBox(); curr; curr = curr->nextLineBox())
-        rects.append(IntRect(curr->x(), curr->y(), curr->width(), curr->height()));
-
+    for (InlineRunBox* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
+        RootInlineBox* root = curr->root();
+        int top = max(root->lineTop(), curr->y());
+        int bottom = min(root->lineBottom(), curr->y() + curr->height());
+        rects.append(IntRect(curr->x(), top, curr->width(), bottom - top));
+    }
     rects.append(IntRect());
 
     for (unsigned i = 1; i < rects.size() - 1; i++)
