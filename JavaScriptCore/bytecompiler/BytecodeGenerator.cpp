@@ -263,8 +263,8 @@ BytecodeGenerator::BytecodeGenerator(ProgramNode* programNode, const Debugger* d
 
         Vector<RegisterID*, 32> newVars;
         for (size_t i = 0; i < varStack.size(); ++i)
-            if (!globalObject->hasProperty(exec, varStack[i].first))
-                newVars.append(addGlobalVar(varStack[i].first, varStack[i].second & DeclarationStacks::IsConstant));
+            if (!globalObject->hasProperty(exec, *varStack[i].first))
+                newVars.append(addGlobalVar(*varStack[i].first, varStack[i].second & DeclarationStacks::IsConstant));
 
         preserveLastVar();
 
@@ -276,12 +276,12 @@ BytecodeGenerator::BytecodeGenerator(ProgramNode* programNode, const Debugger* d
             globalObject->putWithAttributes(exec, function->ident(), new (exec) JSFunction(exec, adoptRef(new FunctionExecutable(function->ident(), function)), scopeChain.node()), DontDelete);
         }
         for (size_t i = 0; i < varStack.size(); ++i) {
-            if (globalObject->hasProperty(exec, varStack[i].first))
+            if (globalObject->hasProperty(exec, *varStack[i].first))
                 continue;
             int attributes = DontDelete;
             if (varStack[i].second & DeclarationStacks::IsConstant)
                 attributes |= ReadOnly;
-            globalObject->putWithAttributes(exec, varStack[i].first, jsUndefined(), attributes);
+            globalObject->putWithAttributes(exec, *varStack[i].first, jsUndefined(), attributes);
         }
 
         preserveLastVar();
@@ -347,7 +347,7 @@ BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, const Debug
 
     const DeclarationStacks::VarStack& varStack = functionBody->varStack();
     for (size_t i = 0; i < varStack.size(); ++i)
-        addVar(varStack[i].first, varStack[i].second & DeclarationStacks::IsConstant);
+        addVar(*varStack[i].first, varStack[i].second & DeclarationStacks::IsConstant);
 
     const Identifier* parameters = functionBody->parameters();
     size_t parameterCount = functionBody->parameterCount();
@@ -408,7 +408,7 @@ BytecodeGenerator::BytecodeGenerator(EvalNode* evalNode, const Debugger* debugge
     Vector<Identifier> variables;
     variables.reserveCapacity(numVariables);
     for (size_t i = 0; i < numVariables; ++i)
-        variables.append(varStack[i].first);
+        variables.append(*varStack[i].first);
     codeBlock->adoptVariables(variables);
 
     preserveLastVar();

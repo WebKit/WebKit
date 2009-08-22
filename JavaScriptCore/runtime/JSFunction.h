@@ -24,16 +24,15 @@
 #ifndef JSFunction_h
 #define JSFunction_h
 
-//#include "Executable.h"
 #include "InternalFunction.h"
 
 namespace JSC {
 
+    class ExecutableBase;
+    class FunctionExecutable;
     class FunctionPrototype;
     class JSActivation;
     class JSGlobalObject;
-    class ExecutableBase;
-    class FunctionExecutable;
 
     class JSFunction : public InternalFunction {
         friend class JIT;

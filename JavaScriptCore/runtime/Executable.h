@@ -26,8 +26,8 @@
 #ifndef Executable_h
 #define Executable_h
 
-#include "Nodes.h"
 #include "JSFunction.h"
+#include "Nodes.h"
 
 namespace JSC {
 
@@ -134,7 +134,7 @@ namespace JSC {
 
         ~EvalExecutable();
 
-        JSObject* parse(ExecState* exec, bool allowDebug = true);
+        JSObject* parse(ExecState*, bool allowDebug = true);
 
         EvalCodeBlock& bytecode(ScopeChainNode* scopeChainNode)
         {
@@ -178,7 +178,7 @@ namespace JSC {
         
         ~ProgramExecutable();
 
-        JSObject* parse(ExecState* exec, bool allowDebug = true);
+        JSObject* parse(ExecState*, bool allowDebug = true);
 
         // CodeBlocks for program code are transient and therefore to not gain from from throwing out there exception information.
         ExceptionInfo* reparseExceptionInfo(JSGlobalData*, ScopeChainNode*, CodeBlock*) { ASSERT_NOT_REACHED(); return 0; }
@@ -227,7 +227,7 @@ namespace JSC {
 
         const Identifier& name() { return m_name; }
 
-        JSFunction* make(ExecState* exec, ScopeChainNode* scopeChain);
+        JSFunction* make(ExecState*, ScopeChainNode* scopeChain);
 
         CodeBlock& bytecode(ScopeChainNode* scopeChainNode) 
         {
@@ -253,7 +253,7 @@ namespace JSC {
             return m_codeBlock;
         }
 
-        void recompile(ExecState* exec);
+        void recompile(ExecState*);
 
         ExceptionInfo* reparseExceptionInfo(JSGlobalData*, ScopeChainNode*, CodeBlock*);
 
@@ -278,11 +278,16 @@ namespace JSC {
         }
 
     private:
+        FunctionExecutable(ExecState*);
         void generateJITCode(ScopeChainNode*);
 #endif
     };
 
-    inline FunctionExecutable* JSFunction::jsExecutable() const { ASSERT(!isHostFunctionNonInline()); return static_cast<FunctionExecutable*>(m_executable.get()); }
+    inline FunctionExecutable* JSFunction::jsExecutable() const
+    {
+        ASSERT(!isHostFunctionNonInline());
+        return static_cast<FunctionExecutable*>(m_executable.get());
+    }
 
     inline JSFunction* FunctionExecutable::make(ExecState* exec, ScopeChainNode* scopeChain)
     {
