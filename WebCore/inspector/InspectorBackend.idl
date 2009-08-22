@@ -68,8 +68,8 @@ module core {
         void disableResourceTracking(in boolean always);
         void storeLastActivePanel(in DOMString panelName);
 
-        [Custom] Array cookies();
-        [Custom] void deleteCookie(in DOMString cookieName);
+        void getCookies(in long callId);
+        void deleteCookie(in DOMString cookieName);
 
 #if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
         boolean debuggerEnabled();

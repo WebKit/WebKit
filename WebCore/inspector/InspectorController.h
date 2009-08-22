@@ -288,6 +288,8 @@ private:
     
     void resetInjectedScript();
 
+    void deleteCookie(const String& cookieName);
+
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     void startUserInitiatedProfilingSoon();
     void toggleRecordButton(bool);

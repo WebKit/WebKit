@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2009 Joseph Pecoraro
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -439,7 +440,41 @@ WebInspector.DOMAgent.prototype = {
     }
 }
 
-WebInspector.CSSStyleDeclaration = function(payload) {
+WebInspector.Cookies = {}
+
+WebInspector.Cookies.getCookiesAsync = function(callback)
+{
+    function mycallback(cookies, cookiesString) {
+        if (cookiesString)
+            callback(WebInspector.Cookies.buildCookiesFromString(cookiesString), false);
+        else
+            callback(cookies, true);
+    }
+    var callId = WebInspector.Callback.wrap(mycallback);
+    InspectorController.getCookies(callId);
+}
+
+WebInspector.Cookies.buildCookiesFromString = function(rawCookieString)
+{
+    var rawCookies = rawCookieString.split(/;\s*/);
+    var cookies = [];
+
+    if (!(/^\s*$/.test(rawCookieString))) {
+        for (var i = 0; i < rawCookies.length; ++i) {
+            var cookie = rawCookies[i];
+            var delimIndex = cookie.indexOf("=");
+            var name = cookie.substring(0, delimIndex);
+            var value = cookie.substring(delimIndex + 1);
+            var size = name.length + value.length;
+            cookies.push({ name: name, value: value, size: size });
+        }
+    }
+
+    return cookies;
+}
+
+WebInspector.CSSStyleDeclaration = function(payload)
+{
     this.id = payload.id;
     this.width = payload.width;
     this.height = payload.height;
@@ -607,6 +642,7 @@ WebInspector.childNodeRemoved = function()
     this.domAgent._childNodeRemoved.apply(this.domAgent, arguments);
 }
 
+WebInspector.didGetCookies = WebInspector.Callback.processCallback;
 WebInspector.didGetChildNodes = WebInspector.Callback.processCallback;
 WebInspector.didPerformSearch = WebInspector.Callback.processCallback;
 WebInspector.didApplyDomChange = WebInspector.Callback.processCallback;
@@ -730,12 +766,5 @@ InspectorController.searchCanceled = function(callback)
 {
     setTimeout(function() {
         callback(InjectedScript.searchCanceled());
-    }, 0);
-}
-
-InspectorController.getCookies = function(callback)
-{
-    setTimeout(function() {
-        callback(InjectedScript.getCookies());
     }, 0);
 }

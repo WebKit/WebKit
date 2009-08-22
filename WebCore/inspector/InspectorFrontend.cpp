@@ -347,6 +347,15 @@ void InspectorFrontend::didApplyDomChange(int callId, bool success)
     function->call();
 }
 
+void InspectorFrontend::didGetCookies(int callId, const ScriptArray& cookies, const String& cookiesString)
+{
+    OwnPtr<ScriptFunctionCall> function(newFunctionCall("didGetCookies"));
+    function->appendArgument(callId);
+    function->appendArgument(cookies);
+    function->appendArgument(cookiesString);
+    function->call();
+}
+
 #if ENABLE(DATABASE)
 void InspectorFrontend::selectDatabase(Database* database)
 {

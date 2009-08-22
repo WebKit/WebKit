@@ -251,6 +251,22 @@ const String& InspectorBackend::platform() const
     return platform;
 }
 
+void InspectorBackend::getCookies(long callId)
+{
+    if (!m_inspectorController)
+        return;
+    if (!m_inspectorController->m_domAgent || !m_inspectorController->m_frontend)
+        return;
+    m_inspectorController->domAgent()->getCookies(callId);
+}
+
+void InspectorBackend::deleteCookie(const String& cookieName)
+{
+    if (!m_inspectorController)
+        return;
+    m_inspectorController->deleteCookie(cookieName);
+}
+
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 const ProfilesArray& InspectorBackend::profiles() const
 {    

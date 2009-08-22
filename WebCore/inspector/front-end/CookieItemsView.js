@@ -31,13 +31,6 @@ WebInspector.CookieItemsView = function()
 {
     WebInspector.View.call(this);
 
-    // Some Platforms have not yet implemented access to raw cookies
-    // Those platforms will return undefined instead of an Array
-    // For these platforms we:
-    //   - resort to document.cookie
-    //   - do not show the delete cookie status bar button
-    this._useFallback = typeof InspectorController.cookies() === "undefined";
-
     this.element.addStyleClass("storage-view");
     this.element.addStyleClass("table");
 
@@ -52,10 +45,7 @@ WebInspector.CookieItemsView = function()
 WebInspector.CookieItemsView.prototype = {
     get statusBarItems()
     {
-        if (this._useFallback)
-            return [this.refreshButton.element];
-        else
-            return [this.refreshButton.element, this.deleteButton.element];
+        return [this.refreshButton.element, this.deleteButton.element];
     },
 
     show: function(parentElement)
@@ -72,45 +62,36 @@ WebInspector.CookieItemsView.prototype = {
 
     update: function()
     {
-        if (this._useFallback) {
-            this.fallbackUpdate();
-            return;
-        }
-
         this.element.removeChildren();
-        var dataGrid = this.dataGridForCookies();
-        if (dataGrid) {
-            this._dataGrid = dataGrid;
-            this.element.appendChild(dataGrid.element);
-            this.deleteButton.visible = true;
-        } else {
-            var emptyMsgElement = document.createElement("div");
-            emptyMsgElement.className = "storage-table-empty";
-            emptyMsgElement.textContent = WebInspector.UIString("This site has no cookies.");
-            this.element.appendChild(emptyMsgElement);
-            this._dataGrid = null;
-            this.deleteButton.visible = false;
-        }
-    },
 
-    buildCookies: function()
-    {
-        var rawCookies = InspectorController.cookies();
-        var cookies = [];
-        for (var i = 0; i < rawCookies.length; ++i) {
-            var cookie = rawCookies[i];
-            cookie.expires = new Date(cookie.expires);
-            cookies.push(cookie);
+        var self = this;
+        function callback(cookies, isAdvanced) {
+            var dataGrid = (isAdvanced ? self.dataGridForCookies(cookies) : self.simpleDataGridForCookies(cookies));
+            if (dataGrid) {
+                self._dataGrid = dataGrid;
+                self.element.appendChild(dataGrid.element);
+                if (isAdvanced)
+                    self.deleteButton.visible = true;
+            } else {
+                var emptyMsgElement = document.createElement("div");
+                emptyMsgElement.className = "storage-table-empty";
+                emptyMsgElement.textContent = WebInspector.UIString("This site has no cookies.");
+                self.element.appendChild(emptyMsgElement);
+                self._dataGrid = null;
+                self.deleteButton.visible = false;
+            }
         }
 
-        return cookies;
+        WebInspector.Cookies.getCookiesAsync(callback);
     },
 
-    dataGridForCookies: function()
+    dataGridForCookies: function(cookies)
     {
-        var cookies = this.buildCookies();
         if (!cookies.length)
             return null;
+
+        for (var i = 0; i < cookies.length; ++i)
+            cookies[i].expires = new Date(cookies[i].expires);
 
         var columns = { 0: {}, 1: {}, 2: {}, 3: {}, 4: {}, 5: {}, 6: {}, 7: {} };
         columns[0].title = WebInspector.UIString("Name");
@@ -149,7 +130,7 @@ WebInspector.CookieItemsView.prototype = {
             updateDataAndColumn(1, cookie.value);
             updateDataAndColumn(2, cookie.domain);
             updateDataAndColumn(3, cookie.path);
-            updateDataAndColumn(4, (cookie.session ? "Session" : cookie.expires.toGMTString()));
+            updateDataAndColumn(4, (cookie.session ? WebInspector.UIString("Session") : cookie.expires.toGMTString()));
             updateDataAndColumn(5, Number.bytesToString(cookie.size, WebInspector.UIString));
             updateDataAndColumn(6, (cookie.httpOnly ? "\u2713" : "")); // Checkmark
             updateDataAndColumn(7, (cookie.secure ? "\u2713" : "")); // Checkmark
@@ -211,51 +192,7 @@ WebInspector.CookieItemsView.prototype = {
         return dataGrid;
     },
 
-    fallbackUpdate: function()
-    {
-        this.element.removeChildren();
-
-        var self = this;
-        function callback(rawCookieString) {
-            var cookies = self.fallbackBuildCookiesFromString(rawCookieString);
-            var dataGrid = self.fallbackDataGridForCookies(cookies);
-            if (dataGrid) {
-                self._dataGrid = dataGrid;
-                self.element.appendChild(dataGrid.element);
-                self.deleteButton.visible = true;
-            } else {
-                var emptyMsgElement = document.createElement("div");
-                emptyMsgElement.className = "storage-table-empty";
-                emptyMsgElement.textContent = WebInspector.UIString("This site has no cookies.");
-                self.element.appendChild(emptyMsgElement);
-                self._dataGrid = null;
-                self.deleteButton.visible = false;
-            }
-        }
-
-        InspectorController.getCookies(callback);
-    },
-
-    fallbackBuildCookiesFromString: function(rawCookieString)
-    {
-        var rawCookies = rawCookieString.split(/;\s*/);
-        var cookies = [];
-
-        if (!(/^\s*$/.test(rawCookieString))) {
-            for (var i = 0; i < rawCookies.length; ++i) {
-                var cookie = rawCookies[i];
-                var delimIndex = cookie.indexOf("=");
-                var name = cookie.substring(0, delimIndex);
-                var value = cookie.substring(delimIndex + 1);
-                var size = name.length + value.length;
-                cookies.push({ name: name, value: value, size: size });
-            }
-        }
-
-        return cookies;
-    },
-
-    fallbackDataGridForCookies: function(cookies)
+    simpleDataGridForCookies: function(cookies)
     {
         if (!cookies.length)
             return null;
@@ -312,7 +249,7 @@ WebInspector.CookieItemsView.prototype = {
 
     _deleteButtonClicked: function(event)
     {
-        if (!this._dataGrid || this._useFallback)
+        if (!this._dataGrid)
             return;
 
         var cookie = this._dataGrid.selectedNode.cookie;

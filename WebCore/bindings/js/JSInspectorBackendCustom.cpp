@@ -2,7 +2,6 @@
  * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Matt Lilek <webkit@mattlilek.com>
  * Copyright (C) 2009 Google Inc. All rights reserved.
- * Copyright (C) 2009 Joseph Pecoraro
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -35,8 +34,6 @@
 #include "JSInspectorBackend.h"
 
 #include "Console.h"
-#include "Cookie.h"
-#include "CookieJar.h"
 #if ENABLE(DATABASE)
 #include "Database.h"
 #include "JSDatabase.h"
@@ -154,68 +151,6 @@ JSValue JSInspectorBackend::inspectedWindow(ExecState*, const ArgList&)
         return jsUndefined();
     JSDOMWindow* inspectedWindow = toJSDOMWindow(ic->inspectedPage()->mainFrame());
     return JSInspectedObjectWrapper::wrap(inspectedWindow->globalExec(), inspectedWindow);
-}
-
-JSValue JSInspectorBackend::cookies(ExecState* exec, const ArgList&)
-{
-    InspectorController* ic = impl()->inspectorController();
-    if (!ic)
-        return jsUndefined();
-
-    Document* document = ic->inspectedPage()->mainFrame()->document();
-    Vector<Cookie> cookies;
-    bool isImplemented = getRawCookies(document, document->cookieURL(), cookies);
-
-    if (!isImplemented)
-        return jsUndefined();
-
-    MarkedArgumentBuffer result;
-    Identifier nameIdentifier(exec, "name");
-    Identifier valueIdentifier(exec, "value");
-    Identifier domainIdentifier(exec, "domain");
-    Identifier pathIdentifier(exec, "path");
-    Identifier expiresIdentifier(exec, "expires");
-    Identifier sizeIdentifier(exec, "size");
-    Identifier httpOnlyIdentifier(exec, "httpOnly");
-    Identifier secureIdentifier(exec, "secure");
-    Identifier sessionIdentifier(exec, "session");
-
-    unsigned length = cookies.size();
-    for (unsigned i = 0; i < length; ++i) {
-        const Cookie& cookie = cookies[i];
-        JSObject* cookieObject = constructEmptyObject(exec);
-        cookieObject->putDirect(nameIdentifier, jsString(exec, cookie.name));
-        cookieObject->putDirect(valueIdentifier, jsString(exec, cookie.value));
-        cookieObject->putDirect(domainIdentifier, jsString(exec, cookie.domain));
-        cookieObject->putDirect(pathIdentifier, jsString(exec, cookie.path));
-        cookieObject->putDirect(expiresIdentifier, jsNumber(exec, cookie.expires));
-        cookieObject->putDirect(sizeIdentifier, jsNumber(exec, cookie.name.length() + cookie.value.length()));
-        cookieObject->putDirect(httpOnlyIdentifier, jsBoolean(cookie.httpOnly));
-        cookieObject->putDirect(secureIdentifier, jsBoolean(cookie.secure));
-        cookieObject->putDirect(sessionIdentifier, jsBoolean(cookie.session));
-        result.append(cookieObject);
-    }
-
-    return constructArray(exec, result);
-}
-
-JSValue JSInspectorBackend::deleteCookie(ExecState* exec, const ArgList& args)
-{
-    if (args.size() < 1)
-        return jsUndefined();
-
-    InspectorController* ic = impl()->inspectorController();
-    if (!ic)
-        return jsUndefined();
-
-    String cookieName = args.at(0).toString(exec);
-    if (exec->hadException())
-        return jsUndefined();
-
-    Document* document = ic->inspectedPage()->mainFrame()->document();
-    WebCore::deleteCookie(document, document->cookieURL(), cookieName);
-
-    return jsUndefined();
 }
 
 JSValue JSInspectorBackend::setting(ExecState* exec, const ArgList& args)

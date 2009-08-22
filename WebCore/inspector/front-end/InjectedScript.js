@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2007 Apple Inc.  All rights reserved.
- * Copyright (C) 2009 Joseph Pecoraro
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -757,11 +756,6 @@ InjectedScript.searchCanceled = function()
     }
     InjectedScript._searchResults = [];
     return true;
-}
-
-InjectedScript.getCookies = function()
-{
-    return InjectedScript._window().document.cookie;
 }
 
 InjectedScript._ensureCommandLineAPIInstalled = function(inspectedWindow)

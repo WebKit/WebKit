@@ -1,3 +1,65 @@
+2009-08-19  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Inspector: Improve Cookie DataGrid to Show Hidden Data
+        https://bugs.webkit.org/show_bug.cgi?id=28269
+
+          Removed Custom Bindings
+
+        * bindings/js/JSInspectorBackendCustom.cpp:
+        * bindings/v8/custom/V8CustomBinding.h:
+        * bindings/v8/custom/V8InspectorBackendCustom.cpp:
+        * inspector/InspectorBackend.cpp:
+
+          Made Non-Custom Bindings in the Backend
+
+        (WebCore::InspectorBackend::getCookies):
+        (WebCore::InspectorBackend::deleteCookie):
+        * inspector/InspectorBackend.h:
+        * inspector/InspectorBackend.idl:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::deleteCookie):
+        * inspector/InspectorController.h:
+
+          Build the Cookie ScriptObjects, handles using document.cookie in
+          case the platform hasn't implemented raw cookie access.
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::getCookies):
+        (WebCore::InspectorDOMAgent::buildObjectForCookie):
+        (WebCore::InspectorDOMAgent::buildArrayForCookies):
+        * inspector/InspectorDOMAgent.h:
+
+          Complete the Asynchronous Calls
+
+        * inspector/InspectorFrontend.cpp:
+        (WebCore::InspectorFrontend::didGetCookies):
+        * inspector/InspectorFrontend.h:
+
+          Asynchronous Functions to get Cookie Data
+
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.Cookies.getCookiesAsync):
+        (WebInspector.Cookies.buildCookiesFromString): fallback behavior
+
+          Refactor to use the Asynchronous Functions
+
+        * inspector/front-end/CookieItemsView.js:
+        (WebInspector.CookieItemsView):
+        (WebInspector.CookieItemsView.prototype.get statusBarItems):
+        (WebInspector.CookieItemsView.prototype.update.callback):
+        (WebInspector.CookieItemsView.prototype.update):
+        (WebInspector.CookieItemsView.prototype.simpleDataGridForCookies):
+        (WebInspector.CookieItemsView.prototype._deleteButtonClicked):
+
+          Cleaned/Commented Related Code
+
+        (InspectorController.searchCanceled):
+        * inspector/front-end/InjectedScript.js:
+        * platform/Cookie.h:
+        * English.lproj/localizedStrings.js: the new strings that were supposed to have gone in last time
+
 2009-08-21  Michelangelo De Simone  <micdesim@gmail.com>
 
         Reviewed by Adele Peterson.

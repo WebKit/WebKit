@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2009 Joseph Pecoraro
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +33,8 @@
 
 #include "AtomicString.h"
 #include "ContainerNode.h"
+#include "Cookie.h"
+#include "CookieJar.h"
 #include "DOMWindow.h"
 #include "Document.h"
 #include "Event.h"
@@ -358,6 +361,18 @@ void InspectorDOMAgent::setTextNodeValue(long callId, long nodeId, const String&
     }
 }
 
+void InspectorDOMAgent::getCookies(long callId)
+{
+    Document* doc = mainFrameDocument();
+    Vector<Cookie> cookiesList;
+    bool isImplemented = getRawCookies(doc, doc->cookieURL(), cookiesList);
+
+    if (!isImplemented)
+        m_frontend->didGetCookies(callId, m_frontend->newScriptArray(), doc->cookie());
+    else
+        m_frontend->didGetCookies(callId, buildArrayForCookies(cookiesList), String());
+}
+
 ScriptObject InspectorDOMAgent::buildObjectForNode(Node* node, int depth, NodeToIdMap* nodesMap)
 {
     ScriptObject value = m_frontend->newScriptObject();
@@ -438,6 +453,32 @@ ScriptArray InspectorDOMAgent::buildArrayForContainerChildren(Node* container, i
     for (Node *child = innerFirstChild(container); child; child = innerNextSibling(child))
         children.set(index++, buildObjectForNode(child, depth, nodesMap));
     return children;
+}
+
+ScriptObject InspectorDOMAgent::buildObjectForCookie(const Cookie& cookie)
+{
+    ScriptObject value = m_frontend->newScriptObject();
+    value.set("name", cookie.name);
+    value.set("value", cookie.value);
+    value.set("domain", cookie.domain);
+    value.set("path", cookie.path);
+    value.set("expires", cookie.expires);
+    value.set("size", static_cast<int>(cookie.name.length() + cookie.value.length()));
+    value.set("httpOnly", cookie.httpOnly);
+    value.set("secure", cookie.secure);
+    value.set("session", cookie.session);
+    return value;
+}
+
+ScriptArray InspectorDOMAgent::buildArrayForCookies(const Vector<Cookie>& cookiesList)
+{
+    ScriptArray cookies = m_frontend->newScriptArray();
+    unsigned length = cookiesList.size();
+    for (unsigned i = 0; i < length; ++i) {
+        const Cookie& cookie = cookiesList[i];
+        cookies.set(i, buildObjectForCookie(cookie));
+    }
+    return cookies;
 }
 
 Node* InspectorDOMAgent::innerFirstChild(Node* node)
