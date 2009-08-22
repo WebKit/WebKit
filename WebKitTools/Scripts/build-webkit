@@ -46,7 +46,7 @@ my $minimal = 0;
 my $makeArgs;
 
 my ($threeDCanvasSupport, $threeDRenderingSupport, $channelMessagingSupport, $databaseSupport, $datagridSupport, $domStorageSupport,
-    $eventsourceSupport, $filtersSupport, $geolocationSupport, $gnomeKeyringSupport, $iconDatabaseSupport,
+    $eventsourceSupport, $filtersSupport, $geolocationSupport, $iconDatabaseSupport,
     $javaScriptDebuggerSupport, $offlineWebApplicationSupport, $rubySupport, $sharedWorkersSupport, 
     $svgSupport, $svgAnimationSupport, $svgAsImageSupport, $svgDOMObjCBindingsSupport, $svgFontsSupport,
     $svgForeignObjectSupport, $svgUseSupport, $videoSupport, $webSocketsSupport, $wmlSupport, $wcssSupport, $xhtmlmpSupport, $workersSupport,
@@ -82,9 +82,6 @@ my @features = (
 
     { option => "geolocation", desc => "Toggle Geolocation support",
       define => "ENABLE_GEOLOCATION", default => 0, value => \$geolocationSupport },
-
-    { option => "gnomekeyring", desc => "Toggle GNOME Keyring Support (GTK+ port only)",
-      define => "WTF_USE_GNOMEKEYRING", default => 0, value => \$gnomeKeyringSupport },
 
     { option => "icon-database", desc => "Toggle Icon database support",
       define => "ENABLE_ICONDATABASE", default => 1, value => \$iconDatabaseSupport },

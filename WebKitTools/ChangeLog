@@ -1,3 +1,12 @@
+2009-08-21  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Rubberstamped by Simon Fraser.
+
+        Remove GNOME keyring support in build-webkit. This dependency's
+        already been removed in the Gtk port.
+
+        * Scripts/build-webkit:
+
 2009-08-20  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben.
