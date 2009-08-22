@@ -68,6 +68,6 @@ Actual list:
 
 Broccoli
 Beets
-This test PASSES in DumpRenderTree. The role is AXRole: AXGroup
+This test PASSES in DumpRenderTree. The role is AXRole: AXList
 
 

@@ -1,3 +1,18 @@
+2009-08-22  chris fleizach  <cfleizach@apple.com>
+
+        Need to implement ARIA role="listitem" and role="list"
+        https://bugs.webkit.org/show_bug.cgi?id=28606
+
+        Fixing LayoutTest bustage.
+
+        The SnowLeopard results are the latest, so they need to move to platform/mac
+        The Tiger/Leopard results will default to the SnowLeopard results, so we need to move
+        the current test from platform/mac to platform/mac-leopard         
+
+        * platform/mac-leopard/accessibility/aria-roles-expected.txt: Copied from LayoutTests/platform/mac/accessibility/aria-roles-expected.txt.
+        * platform/mac-snowleopard/accessibility/aria-roles-expected.txt: Removed.
+        * platform/mac/accessibility/aria-roles-expected.txt: Replaced with LayoutTests/platform/mac-snowleopard/accessibility/aria-roles-expected.txt.
+
 2009-08-22  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
