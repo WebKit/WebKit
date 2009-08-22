@@ -1,3 +1,15 @@
+2009-08-21  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/7161454> Leaks seen during http/tests/xmlhttprequest/cross-origin-no-authorization.html
+
+        Also fixes leaks seen on appcache tests.
+
+        * platform/network/mac/ResourceHandleMac.mm: (WebCore::ResourceHandle::cancel): Work around
+        something that's likely a CFNetwork issue. Note that on Windows, there is no matching API
+        to call, and we do not think that the leak occurs there anyway.
+
 2009-08-21  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by David Levin.

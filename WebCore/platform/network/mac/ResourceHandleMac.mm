@@ -245,6 +245,10 @@ void ResourceHandle::cancel()
 {
     LOG(Network, "Handle %p cancel connection %p", this, d->m_connection.get());
 
+    // Leaks were seen on HTTP tests without this; can be removed once <rdar://problem/6886937> is fixed.
+    if (d->m_currentMacChallenge)
+        [[d->m_currentMacChallenge sender] cancelAuthenticationChallenge:d->m_currentMacChallenge];
+
     if (!ResourceHandle::didSendBodyDataDelegateExists())
         disassociateStreamWithResourceHandle([d->m_request.nsURLRequest() HTTPBodyStream]);
     [d->m_connection.get() cancel];
