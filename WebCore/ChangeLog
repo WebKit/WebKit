@@ -1,3 +1,9 @@
+2009-08-21  Darin Adler  <darin@apple.com>
+
+        * WebCore.vcproj/build-generated-files.sh:
+        * make-generated-sources.sh:
+        Removed obsolete code to set up CREATE_HASH_TABLE.
+
 2009-08-21  Adele Peterson  <adele@apple.com>
 
         Reviewed by Mark Rowe.
