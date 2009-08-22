@@ -1,3 +1,12 @@
+2009-08-21  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        <rdar://problem/7162322> Custom style sheet ignored if UAC is enabled 
+
+        * platform/win/SharedBufferWin.cpp: (WebCore::SharedBuffer::createWithContentsOfFile): 
+        No need to open the file with write access.  Only read access is needed.
+
 2009-08-21  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

@@ -38,8 +38,8 @@ PassRefPtr<SharedBuffer> SharedBuffer::createWithContentsOfFile(const String& fi
 
     String nullifiedPath = filePath;
     FILE* fileDescriptor = 0;
-    if (_wfopen_s(&fileDescriptor, nullifiedPath.charactersWithNullTermination(), TEXT("r+b")) || !fileDescriptor) {
-        LOG_ERROR("Failed to open file %s to create shared buffer", filePath.ascii().data());
+    if (_wfopen_s(&fileDescriptor, nullifiedPath.charactersWithNullTermination(), TEXT("rb")) || !fileDescriptor) {
+        LOG_ERROR("Failed to open file %s to create shared buffer, errno(%i)", filePath.ascii().data(), errno);
         return 0;
     }
 
