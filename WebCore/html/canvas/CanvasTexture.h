@@ -23,37 +23,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#ifndef CanvasTexture_h
+#define CanvasTexture_h
 
-#if ENABLE(3D_CANVAS)
-
-#include "GraphicsContext3D.h"
 #include "CanvasObject.h"
 
-using namespace std;
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
     
-void GraphicsContext3D::removeObject(CanvasObject* object)
-{
-    m_canvasObjects.remove(object);
-}
-
-void GraphicsContext3D::addObject(CanvasObject* object)
-{
-    removeObject(object);
-    m_canvasObjects.add(object);
-}
-
-void GraphicsContext3D::detachAndRemoveAllObjects()
-{
-    HashSet<CanvasObject*>::iterator pend = m_canvasObjects.end();
-    for (HashSet<CanvasObject*>::iterator it = m_canvasObjects.begin(); it != pend; ++it)
-        (*it)->detachContext();
+    class CanvasTexture : public CanvasObject {
+    public:
+        virtual ~CanvasTexture() { deleteObject(); }
         
-    m_canvasObjects.clear();
-}
+        static PassRefPtr<CanvasTexture> create(GraphicsContext3D*);
+    
+    protected:
+        CanvasTexture(GraphicsContext3D*);
 
-}
+        virtual void _deleteObject(Platform3DObject);
+    };
+    
+} // namespace WebCore
 
-#endif // ENABLE(3D_CANVAS)
+#endif // CanvasTexture_h

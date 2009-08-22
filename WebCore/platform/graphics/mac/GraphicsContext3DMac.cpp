@@ -42,6 +42,7 @@
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
 #include "ImageBuffer.h"
+#include "NotImplemented.h"
 #include "WebKitCSSMatrix.h"
 
 #include <CoreGraphics/CGBitmapContext.h>
@@ -98,9 +99,6 @@ GraphicsContext3D::GraphicsContext3D()
 
  GraphicsContext3D::~GraphicsContext3D()
 {
-    // tell all the objects we're going away
-    detachAndRemoveAllObjects();
-    
     CGLSetCurrentContext(m_contextObj);
     ::glDeleteRenderbuffersEXT(1, & m_depthBuffer);
     ::glDeleteTextures(1, &m_texture);
@@ -858,109 +856,6 @@ void GraphicsContext3D::glViewport(long x, long y, unsigned long width, unsigned
     ::glViewport(static_cast<GLint>(x), static_cast<GLint>(y), static_cast<GLsizei>(width), static_cast<GLsizei>(height));
 }
 
-// Non-GL functions
-PassRefPtr<CanvasBuffer> GraphicsContext3D::createBuffer()
-{
-    ensureContext(m_contextObj);
-    RefPtr<CanvasBuffer> o = CanvasBuffer::create(this);
-    addObject(o.get());
-    return o;
-}
-
-PassRefPtr<CanvasFramebuffer> GraphicsContext3D::createFramebuffer()
-{
-    ensureContext(m_contextObj);
-    RefPtr<CanvasFramebuffer> o = CanvasFramebuffer::create(this);
-    addObject(o.get());
-    return o;
-}
-
-PassRefPtr<CanvasTexture> GraphicsContext3D::createTexture()
-{
-    ensureContext(m_contextObj);
-    RefPtr<CanvasTexture> o = CanvasTexture::create(this);
-    addObject(o.get());
-    return o;
-}
-
-PassRefPtr<CanvasProgram> GraphicsContext3D::createProgram()
-{
-    ensureContext(m_contextObj);
-    RefPtr<CanvasProgram> o = CanvasProgram::create(this);
-    addObject(o.get());
-    return o;
-}
-
-PassRefPtr<CanvasRenderbuffer> GraphicsContext3D::createRenderbuffer()
-{
-    ensureContext(m_contextObj);
-    RefPtr<CanvasRenderbuffer> o = CanvasRenderbuffer::create(this);
-    addObject(o.get());
-    return o;
-}
-
-PassRefPtr<CanvasShader> GraphicsContext3D::createShader(unsigned long type)
-{
-    ensureContext(m_contextObj);
-    RefPtr<CanvasShader> o = CanvasShader::create(this, type);
-    addObject(o.get());
-    return o;
-}
-
-void GraphicsContext3D::deleteBuffer(CanvasBuffer* buffer)
-{
-    if (!buffer)
-        return;
-    
-    ensureContext(m_contextObj);
-    buffer->deleteObject();
-}
-
-void GraphicsContext3D::deleteFramebuffer(CanvasFramebuffer* framebuffer)
-{
-    if (!framebuffer)
-        return;
-    
-    ensureContext(m_contextObj);
-    framebuffer->deleteObject();
-}
-
-void GraphicsContext3D::deleteProgram(CanvasProgram* program)
-{
-    if (!program)
-        return;
-    
-    ensureContext(m_contextObj);
-    program->deleteObject();
-}
-
-void GraphicsContext3D::deleteRenderbuffer(CanvasRenderbuffer* renderbuffer)
-{
-    if (!renderbuffer)
-        return;
-    
-    ensureContext(m_contextObj);
-    renderbuffer->deleteObject();
-}
-
-void GraphicsContext3D::deleteShader(CanvasShader* shader)
-{
-    if (!shader)
-        return;
-    
-    ensureContext(m_contextObj);
-    shader->deleteObject();
-}
-
-void GraphicsContext3D::deleteTexture(CanvasTexture* texture)
-{
-    if (!texture)
-        return;
-    
-    ensureContext(m_contextObj);
-    texture->deleteObject();
-}
-
 static int sizeForGetParam(unsigned long pname)
 {
     switch(pname) {
@@ -1508,6 +1403,86 @@ int GraphicsContext3D::texSubImage2D(unsigned target, unsigned level, unsigned x
     UNUSED_PARAM(height);
     UNUSED_PARAM(canvas);
     return -1;
+}
+
+unsigned GraphicsContext3D::createBuffer()
+{
+    ensureContext(m_contextObj);
+    GLuint o;
+    glGenBuffers(1, &o);
+    return o;
+}
+
+unsigned GraphicsContext3D::createFramebuffer()
+{
+    ensureContext(m_contextObj);
+    GLuint o;
+    glGenFramebuffersEXT(1, &o);
+    return o;
+}
+
+unsigned GraphicsContext3D::createProgram()
+{
+    ensureContext(m_contextObj);
+    return glCreateProgram();
+}
+
+unsigned GraphicsContext3D::createRenderbuffer()
+{
+    ensureContext(m_contextObj);
+    GLuint o;
+    glGenRenderbuffersEXT(1, &o);
+    return o;
+}
+
+unsigned GraphicsContext3D::createShader(ShaderType type)
+{
+    ensureContext(m_contextObj);
+    return glCreateShader((type == FRAGMENT_SHADER) ? GL_FRAGMENT_SHADER : GL_VERTEX_SHADER);
+}
+
+unsigned GraphicsContext3D::createTexture()
+{
+    ensureContext(m_contextObj);
+    GLuint o;
+    glGenTextures(1, &o);
+    return o;
+}
+
+void GraphicsContext3D::deleteBuffer(unsigned buffer)
+{
+    ensureContext(m_contextObj);
+    glDeleteBuffers(1, &buffer);
+}
+
+void GraphicsContext3D::deleteFramebuffer(unsigned framebuffer)
+{
+    ensureContext(m_contextObj);
+    glDeleteFramebuffersEXT(1, &framebuffer);
+}
+
+void GraphicsContext3D::deleteProgram(unsigned program)
+{
+    ensureContext(m_contextObj);
+    glDeleteProgram(program);
+}
+
+void GraphicsContext3D::deleteRenderbuffer(unsigned renderbuffer)
+{
+    ensureContext(m_contextObj);
+    glDeleteRenderbuffersEXT(1, &renderbuffer);
+}
+
+void GraphicsContext3D::deleteShader(unsigned shader)
+{
+    ensureContext(m_contextObj);
+    glDeleteShader(shader);
+}
+
+void GraphicsContext3D::deleteTexture(unsigned texture)
+{
+    ensureContext(m_contextObj);
+    glDeleteTextures(1, &texture);
 }
 
 }

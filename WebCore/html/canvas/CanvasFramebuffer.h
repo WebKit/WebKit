@@ -23,43 +23,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CanvasObject_h
-#define CanvasObject_h
+#ifndef CanvasFramebuffer_h
+#define CanvasFramebuffer_h
+
+#include "CanvasObject.h"
 
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
-#include "GraphicsContext3D.h"
-
 namespace WebCore {
-
-    class GraphicsContext3D;
     
-    class CanvasObject : public RefCounted<CanvasObject> {
+    class CanvasFramebuffer : public CanvasObject {
     public:
-        virtual ~CanvasObject();
+        virtual ~CanvasFramebuffer() { deleteObject(); }
         
-        Platform3DObject object() const { return m_object; }
-        void setObject(Platform3DObject);
-        void deleteObject();
-        
-        void detachContext()
-        {
-            deleteObject();
-            m_context = 0;
-        }
+        static PassRefPtr<CanvasFramebuffer> create(GraphicsContext3D*);
         
     protected:
-        CanvasObject(GraphicsContext3D*);
-        virtual void _deleteObject(Platform3DObject) = 0;
+        CanvasFramebuffer(GraphicsContext3D*);
         
-        GraphicsContext3D* context() const { return m_context; }
-    
-    private:
-        Platform3DObject m_object;
-        GraphicsContext3D* m_context;
+        virtual void _deleteObject(Platform3DObject);
     };
     
 } // namespace WebCore
 
-#endif // CanvasObject_h
+#endif // CanvasFramebuffer_h

@@ -190,6 +190,10 @@ class WebKitCSSMatrix;
         void reshape(int width, int height);
         
     private:
+        void addObject(CanvasObject*);
+        void removeObject(CanvasObject*);
+        void detachAndRemoveAllObjects();
+
         void markContextChanged();
         void cleanupAfterGraphicsCall(bool changed)
         {
@@ -200,6 +204,7 @@ class WebKitCSSMatrix;
         
         GraphicsContext3D m_context;
         bool m_needsUpdate;
+        HashSet<CanvasObject*> m_canvasObjects;
     };
 
 } // namespace WebCore

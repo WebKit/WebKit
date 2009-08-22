@@ -23,43 +23,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CanvasObject_h
-#define CanvasObject_h
+#include "config.h"
 
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
+#if ENABLE(3D_CANVAS)
 
-#include "GraphicsContext3D.h"
+#include "CanvasFramebuffer.h"
 
 namespace WebCore {
+    
+PassRefPtr<CanvasFramebuffer> CanvasFramebuffer::create(GraphicsContext3D* ctx)
+{
+    return adoptRef(new CanvasFramebuffer(ctx));
+}
 
-    class GraphicsContext3D;
-    
-    class CanvasObject : public RefCounted<CanvasObject> {
-    public:
-        virtual ~CanvasObject();
-        
-        Platform3DObject object() const { return m_object; }
-        void setObject(Platform3DObject);
-        void deleteObject();
-        
-        void detachContext()
-        {
-            deleteObject();
-            m_context = 0;
-        }
-        
-    protected:
-        CanvasObject(GraphicsContext3D*);
-        virtual void _deleteObject(Platform3DObject) = 0;
-        
-        GraphicsContext3D* context() const { return m_context; }
-    
-    private:
-        Platform3DObject m_object;
-        GraphicsContext3D* m_context;
-    };
-    
-} // namespace WebCore
+CanvasFramebuffer::CanvasFramebuffer(GraphicsContext3D* ctx)
+    : CanvasObject(ctx)
+{
+    setObject(context()->createFramebuffer());
+}
 
-#endif // CanvasObject_h
+void CanvasFramebuffer::_deleteObject(Platform3DObject object)
+{
+    context()->deleteFramebuffer(object);
+}
+
+}
+
+#endif // ENABLE(3D_CANVAS)

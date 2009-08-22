@@ -1,3 +1,35 @@
+2009-08-21  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        New files implementing GL buffer wrappers, and support to make them platform independent
+        https://bugs.webkit.org/show_bug.cgi?id=28018
+
+        * html/canvas/CanvasBuffer.cpp: Added. Wrapper around GL Buffer object
+        * html/canvas/CanvasBuffer.h: Added.
+        * html/canvas/CanvasBuffer.idl: Added.
+        * html/canvas/CanvasFramebuffer.cpp: Added. Wrapper around GL Framebuffer object
+        * html/canvas/CanvasFramebuffer.h: Added.
+        * html/canvas/CanvasFramebuffer.idl: Added.
+        * html/canvas/CanvasObject.h: Expose m_context
+        * html/canvas/CanvasProgram.cpp: Added. Wrapper around GL Program object
+        * html/canvas/CanvasProgram.h: Added.
+        * html/canvas/CanvasProgram.idl: Added.
+        * html/canvas/CanvasRenderbuffer.cpp: Added. Wrapper around GL Renderbuffer object
+        * html/canvas/CanvasRenderbuffer.h: Added.
+        * html/canvas/CanvasRenderbuffer.idl: Added.
+        * html/canvas/CanvasRenderingContext3D.cpp: Move m_objects hash table from GraphicsContext3D to here
+        * html/canvas/CanvasRenderingContext3D.h:
+        * html/canvas/CanvasShader.cpp: Added. Wrapper around GL Shader object
+        * html/canvas/CanvasShader.h: Added.
+        * html/canvas/CanvasShader.idl: Added.
+        * html/canvas/CanvasTexture.cpp: Added. Wrapper around GL Texture object
+        * html/canvas/CanvasTexture.h: Added.
+        * html/canvas/CanvasTexture.idl: Added.
+        * platform/graphics/GraphicsContext3D.cpp: Removed.
+        * platform/graphics/GraphicsContext3D.h: Move m_objects hash table from here to CanvasRenderingContext3D
+        * platform/graphics/mac/GraphicsContext3DMac.cpp: Implement platform dependent code for GL object creation/destruction
+
 2009-08-21  Darin Adler  <darin@apple.com>
 
         * WebCore.vcproj/build-generated-files.sh:
@@ -229,7 +261,7 @@
 
 2009-08-21  Chris Marrin  <cmarrin@apple.com>
 
-        Reviewed by NOBODY Oliver Hunt.
+        Reviewed by Oliver Hunt.
 
         New files for Canvas 3D feature
         https://bugs.webkit.org/show_bug.cgi?id=28018

@@ -49,6 +49,7 @@ CanvasRenderingContext3D::CanvasRenderingContext3D(HTMLCanvasElement* canvas)
 
 CanvasRenderingContext3D::~CanvasRenderingContext3D()
 {
+    detachAndRemoveAllObjects();
 }
 
 void CanvasRenderingContext3D::markContextChanged()
@@ -640,68 +641,98 @@ void CanvasRenderingContext3D::glViewport(long x, long y, unsigned long width, u
 // Non-GL functions
 PassRefPtr<CanvasBuffer> CanvasRenderingContext3D::createBuffer()
 {
-    return m_context.createBuffer();
+    RefPtr<CanvasBuffer> o = CanvasBuffer::create(&m_context);
+    addObject(o.get());
+    return o;
 }
         
 PassRefPtr<CanvasFramebuffer> CanvasRenderingContext3D::createFramebuffer()
 {
-    return m_context.createFramebuffer();
+    RefPtr<CanvasFramebuffer> o = CanvasFramebuffer::create(&m_context);
+    addObject(o.get());
+    return o;
 }
 
 PassRefPtr<CanvasTexture> CanvasRenderingContext3D::createTexture()
 {
-    return m_context.createTexture();
+    RefPtr<CanvasTexture> o = CanvasTexture::create(&m_context);
+    addObject(o.get());
+    return o;
 }
 
 PassRefPtr<CanvasProgram> CanvasRenderingContext3D::createProgram()
 {
-    return m_context.createProgram();
+    RefPtr<CanvasProgram> o = CanvasProgram::create(&m_context);
+    addObject(o.get());
+    return o;
 }
 
 PassRefPtr<CanvasRenderbuffer> CanvasRenderingContext3D::createRenderbuffer()
 {
-    return m_context.createRenderbuffer();
+    RefPtr<CanvasRenderbuffer> o = CanvasRenderbuffer::create(&m_context);
+    addObject(o.get());
+    return o;
 }
 
 PassRefPtr<CanvasShader> CanvasRenderingContext3D::createShader(unsigned long type)
 {
-    return m_context.createShader(type);
+    // FIXME: Need to include GL_ constants for internal use
+    // FIXME: Need to do param checking and throw exception if an illegal value is passed in
+    GraphicsContext3D::ShaderType shaderType = GraphicsContext3D::VERTEX_SHADER;
+    if (type == 0x8B30) // GL_FRAGMENT_SHADER
+        shaderType = GraphicsContext3D::FRAGMENT_SHADER;
+        
+    RefPtr<CanvasShader> o = CanvasShader::create(&m_context, shaderType);
+    addObject(o.get());
+    return o;
 }
 
 void CanvasRenderingContext3D::deleteBuffer(CanvasBuffer* buffer)
 {
-    m_context.deleteBuffer(buffer);
-    cleanupAfterGraphicsCall(false);
+    if (!buffer)
+        return;
+    
+    buffer->deleteObject();
 }
 
 void CanvasRenderingContext3D::deleteFramebuffer(CanvasFramebuffer* framebuffer)
 {
-    m_context.deleteFramebuffer(framebuffer);
-    cleanupAfterGraphicsCall(false);
+    if (!framebuffer)
+        return;
+    
+    framebuffer->deleteObject();
 }
 
 void CanvasRenderingContext3D::deleteProgram(CanvasProgram* program)
 {
-    m_context.deleteProgram(program);
-    cleanupAfterGraphicsCall(false);
+    if (!program)
+        return;
+    
+    program->deleteObject();
 }
 
 void CanvasRenderingContext3D::deleteRenderbuffer(CanvasRenderbuffer* renderbuffer)
 {
-    m_context.deleteRenderbuffer(renderbuffer);
-    cleanupAfterGraphicsCall(false);
+    if (!renderbuffer)
+        return;
+    
+    renderbuffer->deleteObject();
 }
 
 void CanvasRenderingContext3D::deleteShader(CanvasShader* shader)
 {
-    m_context.deleteShader(shader);
-    cleanupAfterGraphicsCall(false);
+    if (!shader)
+        return;
+    
+    shader->deleteObject();
 }
 
 void CanvasRenderingContext3D::deleteTexture(CanvasTexture* texture)
 {
-    m_context.deleteTexture(texture);
-    cleanupAfterGraphicsCall(false);
+    if (!texture)
+        return;
+    
+    texture->deleteObject();
 }
 
 PassRefPtr<CanvasNumberArray> CanvasRenderingContext3D::get(unsigned long pname)
@@ -825,6 +856,26 @@ void CanvasRenderingContext3D::texSubImage2D(unsigned target, unsigned level, un
     ec = 0;
     m_context.texSubImage2D(target, level, xoff, yoff, width, height, canvas);
     cleanupAfterGraphicsCall(false);
+}
+
+void CanvasRenderingContext3D::removeObject(CanvasObject* object)
+{
+    m_canvasObjects.remove(object);
+}
+
+void CanvasRenderingContext3D::addObject(CanvasObject* object)
+{
+    removeObject(object);
+    m_canvasObjects.add(object);
+}
+
+void CanvasRenderingContext3D::detachAndRemoveAllObjects()
+{
+    HashSet<CanvasObject*>::iterator pend = m_canvasObjects.end();
+    for (HashSet<CanvasObject*>::iterator it = m_canvasObjects.begin(); it != pend; ++it)
+        (*it)->detachContext();
+        
+    m_canvasObjects.clear();
 }
 
 } // namespace WebCore
