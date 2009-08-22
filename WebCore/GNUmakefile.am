@@ -913,6 +913,8 @@ webcore_sources += \
 	WebCore/html/canvas/CanvasPattern.h \
 	WebCore/html/canvas/CanvasPixelArray.cpp \
 	WebCore/html/canvas/CanvasPixelArray.h \
+	WebCore/html/canvas/CanvasRenderingContext.cpp \
+	WebCore/html/canvas/CanvasRenderingContext.h \
 	WebCore/html/canvas/CanvasRenderingContext2D.cpp \
 	WebCore/html/canvas/CanvasRenderingContext2D.h \
 	WebCore/html/canvas/CanvasStyle.cpp \

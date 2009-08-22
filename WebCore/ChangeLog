@@ -1,3 +1,17 @@
+2009-08-22  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Anders Carlsson.
+
+        Build fix, add CanvasRenderingContext to build systems.
+        https://bugs.webkit.org/show_bug.cgi?id=28018
+
+        * DerivedSources.make: Added CanvasRenderinContext.
+        * GNUmakefile.am: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * WebCoreSources.bkl: Ditto.
+
 2009-08-21  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Oliver Hunt.

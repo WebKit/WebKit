@@ -70,6 +70,7 @@ DOM_CLASSES = \
     CSSVariablesDeclaration \
     CanvasGradient \
     CanvasPattern \
+    CanvasRenderingContext \
     CanvasRenderingContext2D \
     CharacterData \
     ClientRect \

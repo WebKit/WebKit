@@ -674,6 +674,9 @@
 		41002CCE0F66EDEF009E660D /* ScriptFunctionCall.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41002CCC0F66EDEF009E660D /* ScriptFunctionCall.cpp */; };
 		411046410FA222A600BA436A /* ScriptEventListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 4110463F0FA222A600BA436A /* ScriptEventListener.h */; };
 		411046420FA222A600BA436A /* ScriptEventListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 411046400FA222A600BA436A /* ScriptEventListener.cpp */; };
+		4121D6A710403D35002C73DD /* CanvasRenderingContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4121D6A510403D35002C73DD /* CanvasRenderingContext.cpp */; };
+		4121D6A810403D35002C73DD /* CanvasRenderingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 4121D6A610403D35002C73DD /* CanvasRenderingContext.h */; };
+		4121D6AF10403D67002C73DD /* CanvasRenderingContext.idl in Resources */ = {isa = PBXBuildFile; fileRef = 4121D6AE10403D67002C73DD /* CanvasRenderingContext.idl */; };
 		4127D5370F8AAB1D00E424F5 /* ScriptState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4127D5360F8AAB1D00E424F5 /* ScriptState.cpp */; };
 		412A68470F6B03DD000EA66E /* ScriptObjectQuarantine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 412A68460F6B03DD000EA66E /* ScriptObjectQuarantine.cpp */; };
 		415B7C570FF598E6006770F7 /* JSAbstractWorkerCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 415B7C540FF598E6006770F7 /* JSAbstractWorkerCustom.cpp */; };
@@ -5708,6 +5711,9 @@
 		41002CCC0F66EDEF009E660D /* ScriptFunctionCall.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptFunctionCall.cpp; sourceTree = "<group>"; };
 		4110463F0FA222A600BA436A /* ScriptEventListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptEventListener.h; sourceTree = "<group>"; };
 		411046400FA222A600BA436A /* ScriptEventListener.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptEventListener.cpp; sourceTree = "<group>"; };
+		4121D6A510403D35002C73DD /* CanvasRenderingContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CanvasRenderingContext.cpp; path = canvas/CanvasRenderingContext.cpp; sourceTree = "<group>"; };
+		4121D6A610403D35002C73DD /* CanvasRenderingContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CanvasRenderingContext.h; path = canvas/CanvasRenderingContext.h; sourceTree = "<group>"; };
+		4121D6AE10403D67002C73DD /* CanvasRenderingContext.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CanvasRenderingContext.idl; path = canvas/CanvasRenderingContext.idl; sourceTree = "<group>"; };
 		4127D5360F8AAB1D00E424F5 /* ScriptState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptState.cpp; sourceTree = "<group>"; };
 		412A68460F6B03DD000EA66E /* ScriptObjectQuarantine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptObjectQuarantine.cpp; sourceTree = "<group>"; };
 		415B7C540FF598E6006770F7 /* JSAbstractWorkerCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAbstractWorkerCustom.cpp; sourceTree = "<group>"; };
@@ -10191,6 +10197,9 @@
 				49484FB9102CF23C00187DD3 /* CanvasPixelArray.cpp */,
 				49484FBA102CF23C00187DD3 /* CanvasPixelArray.h */,
 				49484FBB102CF23C00187DD3 /* CanvasPixelArray.idl */,
+				4121D6A510403D35002C73DD /* CanvasRenderingContext.cpp */,
+				4121D6A610403D35002C73DD /* CanvasRenderingContext.h */,
+				4121D6AE10403D67002C73DD /* CanvasRenderingContext.idl */,
 				49484FBC102CF23C00187DD3 /* CanvasRenderingContext2D.cpp */,
 				49484FBD102CF23C00187DD3 /* CanvasRenderingContext2D.h */,
 				49484FBE102CF23C00187DD3 /* CanvasRenderingContext2D.idl */,
@@ -17330,6 +17339,7 @@
 				BCFA930810333193007B25D1 /* RenderOverflow.h in Headers */,
 				0014628B103CD1DE000B20DB /* OriginAccessEntry.h in Headers */,
 				B51BF6F1102C9E590002C15A /* SQLTransactionClient.h in Headers */,
+				4121D6A810403D35002C73DD /* CanvasRenderingContext.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -17435,6 +17445,7 @@
 				49484FC6102CF23C00187DD3 /* CanvasPattern.idl in Resources */,
 				49484FC9102CF23C00187DD3 /* CanvasPixelArray.idl in Resources */,
 				49484FCC102CF23C00187DD3 /* CanvasRenderingContext2D.idl in Resources */,
+				4121D6AF10403D67002C73DD /* CanvasRenderingContext.idl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -17659,6 +17670,7 @@
 				BCB16C230979C3BD00467741 /* CachedScript.cpp in Sources */,
 				BCB16C250979C3BD00467741 /* CachedXBLDocument.cpp in Sources */,
 				BCB16C270979C3BD00467741 /* CachedXSLStyleSheet.cpp in Sources */,
+				4121D6A710403D35002C73DD /* CanvasRenderingContext.cpp in Sources */,
 				6550B69D099DF0270090D781 /* CDATASection.cpp in Sources */,
 				514185EF0CD65F0400763C99 /* ChangeVersionWrapper.cpp in Sources */,
 				6550B69F099DF0270090D781 /* CharacterData.cpp in Sources */,
