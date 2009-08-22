@@ -1,3 +1,10 @@
+2009-08-22  Darin Adler  <darin@apple.com>
+
+        Fix storage leak from syntax tree arena allocation patch.
+
+        * parser/Nodes.h: CommaNode needs to inherit from ParserArenaDeletable
+        because it has a vector.
+
 2009-08-21  Darin Adler  <darin@apple.com>
 
         Fix Qt build.
