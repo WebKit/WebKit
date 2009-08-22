@@ -278,7 +278,6 @@ namespace JSC {
         }
 
     private:
-        FunctionExecutable(ExecState*);
         void generateJITCode(ScopeChainNode*);
 #endif
     };
