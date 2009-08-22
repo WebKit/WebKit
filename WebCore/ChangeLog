@@ -1,3 +1,21 @@
+2009-08-21  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Clean up fill image geometry calculation
+        https://bugs.webkit.org/show_bug.cgi?id=28652
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::calculateFillTileSize): Renamed
+            calculateBackgroundSize() to this. Replaced separate scaledWidth and
+            scaledHeight parameters with a single scaledSize parameter. Renamed
+            parameters and local variables.
+        (WebCore::RenderBoxModelObject::calculateBackgroundImageGeometry): Changed
+            to use CSS3 Backgrounds and Borders terminology in comments and
+            local variable names. Renamed, clarified and consolidated some local
+            variables.
+        * rendering/RenderBoxModelObject.h: Made calculateFillTileSize() private.
+
 2009-08-22  Chris Marrin  <cmarrin@apple.com>
 
         Unreviewed, build fix.

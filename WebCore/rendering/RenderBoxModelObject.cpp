@@ -493,50 +493,50 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
         context->restore();
 }
 
-IntSize RenderBoxModelObject::calculateBackgroundSize(const FillLayer* bgLayer, int scaledWidth, int scaledHeight) const
+IntSize RenderBoxModelObject::calculateFillTileSize(const FillLayer* fillLayer, IntSize positioningAreaSize) const
 {
-    StyleImage* bg = bgLayer->image();
-    bg->setImageContainerSize(IntSize(scaledWidth, scaledHeight)); // Use the box established by background-origin.
+    StyleImage* image = fillLayer->image();
+    image->setImageContainerSize(positioningAreaSize); // Use the box established by background-origin.
 
-    EFillSizeType type = bgLayer->size().type;
+    EFillSizeType type = fillLayer->size().type;
 
     switch (type) {
         case SizeLength: {
-            int w = scaledWidth;
-            int h = scaledHeight;
-            Length bgWidth = bgLayer->size().size.width();
-            Length bgHeight = bgLayer->size().size.height();
+            int w = positioningAreaSize.width();
+            int h = positioningAreaSize.height();
+            Length layerWidth = fillLayer->size().size.width();
+            Length layerHeight = fillLayer->size().size.height();
 
-            if (bgWidth.isFixed())
-                w = bgWidth.value();
-            else if (bgWidth.isPercent())
-                w = bgWidth.calcValue(scaledWidth);
+            if (layerWidth.isFixed())
+                w = layerWidth.value();
+            else if (layerWidth.isPercent())
+                w = layerWidth.calcValue(positioningAreaSize.width());
             
-            if (bgHeight.isFixed())
-                h = bgHeight.value();
-            else if (bgHeight.isPercent())
-                h = bgHeight.calcValue(scaledHeight);
+            if (layerHeight.isFixed())
+                h = layerHeight.value();
+            else if (layerHeight.isPercent())
+                h = layerHeight.calcValue(positioningAreaSize.height());
             
             // If one of the values is auto we have to use the appropriate
             // scale to maintain our aspect ratio.
-            if (bgWidth.isAuto() && !bgHeight.isAuto())
-                w = bg->imageSize(this, style()->effectiveZoom()).width() * h / bg->imageSize(this, style()->effectiveZoom()).height();        
-            else if (!bgWidth.isAuto() && bgHeight.isAuto())
-                h = bg->imageSize(this, style()->effectiveZoom()).height() * w / bg->imageSize(this, style()->effectiveZoom()).width();
-            else if (bgWidth.isAuto() && bgHeight.isAuto()) {
+            if (layerWidth.isAuto() && !layerHeight.isAuto())
+                w = image->imageSize(this, style()->effectiveZoom()).width() * h / image->imageSize(this, style()->effectiveZoom()).height();        
+            else if (!layerWidth.isAuto() && layerHeight.isAuto())
+                h = image->imageSize(this, style()->effectiveZoom()).height() * w / image->imageSize(this, style()->effectiveZoom()).width();
+            else if (layerWidth.isAuto() && layerHeight.isAuto()) {
                 // If both width and height are auto, we just want to use the image's
                 // intrinsic size.
-                w = bg->imageSize(this, style()->effectiveZoom()).width();
-                h = bg->imageSize(this, style()->effectiveZoom()).height();
+                w = image->imageSize(this, style()->effectiveZoom()).width();
+                h = image->imageSize(this, style()->effectiveZoom()).height();
             }
             
             return IntSize(max(1, w), max(1, h));
         }
         case Contain:
         case Cover: {
-            IntSize imageIntrinsicSize = bg->imageSize(this, 1);
-            float horizontalScaleFactor = static_cast<float>(scaledWidth) / imageIntrinsicSize.width();
-            float verticalScaleFactor = static_cast<float>(scaledHeight) / imageIntrinsicSize.height();
+            IntSize imageIntrinsicSize = image->imageSize(this, 1);
+            float horizontalScaleFactor = static_cast<float>(positioningAreaSize.width()) / imageIntrinsicSize.width();
+            float verticalScaleFactor = static_cast<float>(positioningAreaSize.height()) / imageIntrinsicSize.height();
             float scaleFactor = type == Contain ? min(horizontalScaleFactor, verticalScaleFactor) : max(horizontalScaleFactor, verticalScaleFactor);
 
             return IntSize(max<int>(1, imageIntrinsicSize.width() * scaleFactor), max<int>(1, imageIntrinsicSize.height() * scaleFactor));
@@ -545,117 +545,78 @@ IntSize RenderBoxModelObject::calculateBackgroundSize(const FillLayer* bgLayer, 
             ASSERT_NOT_REACHED();
             break;
     }
-    return bg->imageSize(this, style()->effectiveZoom());
+    return image->imageSize(this, style()->effectiveZoom());
 }
 
-void RenderBoxModelObject::calculateBackgroundImageGeometry(const FillLayer* bgLayer, int tx, int ty, int w, int h, 
+void RenderBoxModelObject::calculateBackgroundImageGeometry(const FillLayer* fillLayer, int tx, int ty, int w, int h, 
                                                             IntRect& destRect, IntPoint& phase, IntSize& tileSize)
 {
-    int pw;
-    int ph;
     int left = 0;
-    int right = 0;
     int top = 0;
-    int bottom = 0;
-    int cx;
-    int cy;
-    int rw = 0;
-    int rh = 0;
+    IntSize positioningAreaSize;
 
-    // CSS2 chapter 14.2.1
-    bool fixedAttachment = bgLayer->attachment() == FixedBackgroundAttachment;
+    // Determine the background positioning area and set destRect to the background painting area.
+    // destRect will be adjusted later if the background is non-repeating.
+    bool fixedAttachment = fillLayer->attachment() == FixedBackgroundAttachment;
     if (!fixedAttachment) {
-        // Scroll and Local
-        if (bgLayer->origin() != BorderFillBox) {
+        destRect = IntRect(tx, ty, w, h);
+
+        int right = 0;
+        int bottom = 0;
+        // Scroll and Local.
+        if (fillLayer->origin() != BorderFillBox) {
             left = borderLeft();
             right = borderRight();
             top = borderTop();
             bottom = borderBottom();
-            if (bgLayer->origin() == ContentFillBox) {
+            if (fillLayer->origin() == ContentFillBox) {
                 left += paddingLeft();
                 right += paddingRight();
                 top += paddingTop();
                 bottom += paddingBottom();
             }
         }
-        
+
         // The background of the box generated by the root element covers the entire canvas including
-        // its margins.  Since those were added in already, we have to factor them out when computing the
-        // box used by background-origin/size/position.
+        // its margins. Since those were added in already, we have to factor them out when computing
+        // the background positioning area.
         if (isRoot()) {
-            rw = toRenderBox(this)->width() - left - right;
-            rh = toRenderBox(this)->height() - top - bottom; 
+            positioningAreaSize = IntSize(toRenderBox(this)->width() - left - right, toRenderBox(this)->height() - top - bottom);
             left += marginLeft();
-            right += marginRight();
             top += marginTop();
-            bottom += marginBottom();
-        }
-        cx = tx;
-        cy = ty;
-        pw = w - left - right;
-        ph = h - top - bottom;
+        } else
+            positioningAreaSize = IntSize(w - left - right, h - top - bottom);
     } else {
-        // Fixed background attachment.
-        IntRect vr = viewRect();
-        cx = vr.x();
-        cy = vr.y();
-        pw = vr.width();
-        ph = vr.height();
+        destRect = viewRect();
+        positioningAreaSize = destRect.size();
     }
 
-    int sx = 0;
-    int sy = 0;
-    int cw;
-    int ch;
+    tileSize = calculateFillTileSize(fillLayer, positioningAreaSize);
 
-    IntSize scaledImageSize;
-    if (isRoot() && !fixedAttachment)
-        scaledImageSize = calculateBackgroundSize(bgLayer, rw, rh);
-    else
-        scaledImageSize = calculateBackgroundSize(bgLayer, pw, ph);
-        
-    int scaledImageWidth = scaledImageSize.width();
-    int scaledImageHeight = scaledImageSize.height();
+    EFillRepeat backgroundRepeat = fillLayer->repeat();
 
-    EFillRepeat backgroundRepeat = bgLayer->repeat();
-    
-    int xPosition;
-    if (isRoot() && !fixedAttachment)
-        xPosition = bgLayer->xPosition().calcMinValue(rw - scaledImageWidth, true);
-    else
-        xPosition = bgLayer->xPosition().calcMinValue(pw - scaledImageWidth, true);
-    if (backgroundRepeat == RepeatFill || backgroundRepeat == RepeatXFill) {
-        cw = pw + left + right;
-        sx = scaledImageWidth ? scaledImageWidth - (xPosition + left) % scaledImageWidth : 0;
-    } else {
-        cx += max(xPosition + left, 0);
-        sx = -min(xPosition + left, 0);
-        cw = scaledImageWidth + min(xPosition + left, 0);
-    }
-    
-    int yPosition;
-    if (isRoot() && !fixedAttachment)
-        yPosition = bgLayer->yPosition().calcMinValue(rh - scaledImageHeight, true);
-    else 
-        yPosition = bgLayer->yPosition().calcMinValue(ph - scaledImageHeight, true);
-    if (backgroundRepeat == RepeatFill || backgroundRepeat == RepeatYFill) {
-        ch = ph + top + bottom;
-        sy = scaledImageHeight ? scaledImageHeight - (yPosition + top) % scaledImageHeight : 0;
-    } else {
-        cy += max(yPosition + top, 0);
-        sy = -min(yPosition + top, 0);
-        ch = scaledImageHeight + min(yPosition + top, 0);
+    int xPosition = fillLayer->xPosition().calcMinValue(positioningAreaSize.width() - tileSize.width(), true);
+    if (backgroundRepeat == RepeatFill || backgroundRepeat == RepeatXFill)
+        phase.setX(tileSize.width() ? tileSize.width() - (xPosition + left) % tileSize.width() : 0);
+    else {
+        destRect.move(max(xPosition + left, 0), 0);
+        phase.setX(-min(xPosition + left, 0));
+        destRect.setWidth(tileSize.width() + min(xPosition + left, 0));
     }
 
-    if (fixedAttachment) {
-        sx += max(tx - cx, 0);
-        sy += max(ty - cy, 0);
+    int yPosition = fillLayer->yPosition().calcMinValue(positioningAreaSize.height() - tileSize.height(), true);
+    if (backgroundRepeat == RepeatFill || backgroundRepeat == RepeatYFill)
+        phase.setY(tileSize.height() ? tileSize.height() - (yPosition + top) % tileSize.height() : 0);
+    else {
+        destRect.move(0, max(yPosition + top, 0));
+        phase.setY(-min(yPosition + top, 0));
+        destRect.setHeight(tileSize.height() + min(yPosition + top, 0));
     }
 
-    destRect = IntRect(cx, cy, cw, ch);
+    if (fixedAttachment)
+        phase.move(max(tx - destRect.x(), 0), max(ty - destRect.y(), 0));
+
     destRect.intersect(IntRect(tx, ty, w, h));
-    phase = IntPoint(sx, sy);
-    tileSize = IntSize(scaledImageWidth, scaledImageHeight);
 }
 
 int RenderBoxModelObject::verticalPosition(bool firstLine) const
