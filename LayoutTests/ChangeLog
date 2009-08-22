@@ -1,5 +1,16 @@
 2009-08-21  Dan Bernstein  <mitz@apple.com>
 
+        Rubber-stamped by Anders Carlsson.
+
+        Tweaked the test to make everything fit in a 800-by-600 view.
+
+        * fast/backgrounds/size/contain-and-cover-expected.checksum:
+        * fast/backgrounds/size/contain-and-cover-expected.png:
+        * fast/backgrounds/size/contain-and-cover-expected.txt:
+        * fast/backgrounds/size/contain-and-cover.html:
+
+2009-08-21  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Beth Dakin.
 
         Rendering tests for
