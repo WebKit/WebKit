@@ -2,6 +2,14 @@
 
         Reviewed by NOBODY (build fix).
 
+        Speculative QuickTime build fix.
+
+        * runtime/JSArray.cpp:
+
+2009-08-21  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by NOBODY (build fix).
+
         Speculative QT build fix.
 
         * runtime/StringPrototype.cpp:
