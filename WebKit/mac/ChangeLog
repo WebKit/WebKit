@@ -1,3 +1,16 @@
+2009-08-21  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/7162480>
+        Sometimes WebKit does not layout correctly when a WebView is embedded in an HICocoaView
+        
+        Add a null check for the current context when reflectScrolledClipView: is called from outside a 
+        draw operation.
+        
+        * WebView/WebDynamicScrollBarsView.mm:
+        (-[WebDynamicScrollBarsView reflectScrolledClipView:]):
+
 2009-08-20  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
