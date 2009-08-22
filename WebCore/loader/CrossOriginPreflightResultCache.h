@@ -72,7 +72,6 @@ namespace WebCore {
         typedef HashMap<std::pair<String, KURL>, CrossOriginPreflightResultCacheItem*> CrossOriginPreflightResultHashMap;
 
         CrossOriginPreflightResultHashMap m_preflightHashMap;
-        Mutex m_mutex;
     };
 
 } // namespace WebCore
