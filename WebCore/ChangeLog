@@ -1,3 +1,26 @@
+2009-08-22  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Make sure self-collapsing blocks that clear floats are still able to collapse their bottom margins with
+        the bottom of their parent blocks.  The old code prevented all collapsing, but all CSS2.1 states is that:
+        "An element that has had clearance applied to it never collapses its top margin with its parent block's bottom margin."
+        
+        The implication is that the bottom margin can still collapse, and the block-inside-inline form of
+        fast/block/margin-collapse/025.html (added as fast/block/margin-collapse/block-inside-inline/025.html) depends
+        on it to get comparable results.
+
+        Added block-inside-inline tests (a whole slew of them) in fast/block/margin-collapse/block-inside-inline/
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::MarginInfo::MarginInfo):
+        (WebCore::RenderBlock::collapseMargins):
+        (WebCore::RenderBlock::clearFloatsIfNeeded):
+        (WebCore::RenderBlock::handleBottomOfBlock):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::MarginInfo::clearMargin):
+        (WebCore::RenderBlock::MarginInfo::canCollapseBottomWithChildren):
+
 2009-08-22  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

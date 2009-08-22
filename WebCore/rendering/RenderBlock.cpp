@@ -115,8 +115,6 @@ RenderBlock::MarginInfo::MarginInfo(RenderBlock* block, int top, int bottom)
 
     m_posMargin = m_canCollapseTopWithChildren ? block->maxTopMargin(true) : 0;
     m_negMargin = m_canCollapseTopWithChildren ? block->maxTopMargin(false) : 0;
-
-    m_selfCollapsingBlockClearedFloat = false;
     
     m_topQuirk = m_bottomQuirk = m_determinedTopQuirk = false;
 }
@@ -1053,8 +1051,6 @@ int RenderBlock::collapseMargins(RenderBox* child, MarginInfo& marginInfo)
 
         if (marginInfo.margin())
             marginInfo.setBottomQuirk(child->isBottomMarginQuirk() || style()->marginBottomCollapse() == MDISCARD);
-
-        marginInfo.setSelfCollapsingBlockClearedFloat(false);
     }
     
     return ypos;
@@ -1070,16 +1066,26 @@ int RenderBlock::clearFloatsIfNeeded(RenderBox* child, MarginInfo& marginInfo, i
         // For self-collapsing blocks that clear, they can still collapse their
         // margins with following siblings.  Reset the current margins to represent
         // the self-collapsing block's margins only.
-        marginInfo.setPosMargin(max(child->maxTopMargin(true), child->maxBottomMargin(true)));
-        marginInfo.setNegMargin(max(child->maxTopMargin(false), child->maxBottomMargin(false)));
+        // CSS2.1 states:
+        // "An element that has had clearance applied to it never collapses its top margin with its parent block's bottom margin.
+        // Therefore if we are at the bottom of the block, let's go ahead and reset margins to only include the
+        // self-collapsing block's bottom margin.
+        bool atBottomOfBlock = true;
+        for (RenderBox* curr = child->nextSiblingBox(); curr && atBottomOfBlock; curr = curr->nextSiblingBox()) {
+            if (!curr->isFloatingOrPositioned())
+                atBottomOfBlock = false;
+        }
+        if (atBottomOfBlock) {
+            marginInfo.setPosMargin(child->maxBottomMargin(true));
+            marginInfo.setNegMargin(child->maxBottomMargin(false));
+        } else {
+            marginInfo.setPosMargin(max(child->maxTopMargin(true), child->maxBottomMargin(true)));
+            marginInfo.setNegMargin(max(child->maxTopMargin(false), child->maxBottomMargin(false)));
+        }
         
-        // Adjust our height such that we are ready to be collapsed with subsequent siblings.
+        // Adjust our height such that we are ready to be collapsed with subsequent siblings (or the bottom
+        // of the parent block).
         setHeight(child->y() - max(0, marginInfo.margin()));
-        
-        // Set a flag that we cleared a float so that we know both to increase the height of the block
-        // to compensate for the clear and to avoid collapsing our margins with the parent block's
-        // bottom margin.
-        marginInfo.setSelfCollapsingBlockClearedFloat(true);
     } else
         // Increase our height by the amount we had to clear.
         setHeight(height() + heightIncrease);
@@ -1183,17 +1189,7 @@ void RenderBlock::setCollapsedBottomMargin(const MarginInfo& marginInfo)
 
 void RenderBlock::handleBottomOfBlock(int top, int bottom, MarginInfo& marginInfo)
 {
-    // If our last flow was a self-collapsing block that cleared a float, then we don't
-    // collapse it with the bottom of the block.
-    if (!marginInfo.selfCollapsingBlockClearedFloat())
-        marginInfo.setAtBottomOfBlock(true);
-    else {
-        // We have to special case the negative margin situation (where the collapsed
-        // margin of the self-collapsing block is negative), since there's no need
-        // to make an adjustment in that case.
-        if (marginInfo.margin() < 0)
-            marginInfo.clearMargin();
-    }
+    marginInfo.setAtBottomOfBlock(true);
 
     // If we can't collapse with children then go ahead and add in the bottom margin.
     if (!marginInfo.canCollapseWithBottom() && !marginInfo.canCollapseWithTop()
