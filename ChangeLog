@@ -1,3 +1,10 @@
+2009-08-22 Javier Jardón <javierjc1982@gmail.com>
+
+        [GTK] Not use deprecated symbols in WebKitWebView example code.
+        https://bugs.webkit.org/show_bug.cgi?id=28651
+
+        * WebKit/gtk/webkit/webkitwebview.cpp
+
 2009-08-18  Xan Lopez  <xlopez@igalia.com>
 
         Rubber-stamped by Holger Freyther.

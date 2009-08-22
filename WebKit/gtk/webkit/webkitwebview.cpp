@@ -96,7 +96,7 @@
  * gtk_container_add (GTK_CONTAINER (main_window), scrolled_window);
  *
  * /<!-- -->* Open a webpage *<!-- -->/
- * webkit_web_view_open (WEBKIT_WEB_VIEW (web_view), "http://www.gnome.org");
+ * webkit_web_view_load_uri (WEBKIT_WEB_VIEW (web_view), "http://www.gnome.org");
  *
  * /<!-- -->* Show the result *<!-- -->/
  * gtk_window_set_default_size (GTK_WINDOW (main_window), 800, 600);
