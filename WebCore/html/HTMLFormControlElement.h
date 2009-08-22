@@ -43,6 +43,9 @@ public:
     HTMLFormElement* form() const { return m_form; }
     virtual ValidityState* validity();
 
+    bool formNoValidate() const;
+    void setFormNoValidate(bool);
+
     virtual bool isTextFormControl() const { return false; }
     virtual bool isEnabledFormControl() const { return !disabled(); }
 
