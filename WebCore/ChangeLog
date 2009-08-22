@@ -1,3 +1,12 @@
+2009-08-22  Chris Marrin  <cmarrin@apple.com>
+
+        Unreviewed, build fix.
+
+        Backing out http://trac.webkit.org/changeset/47669
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        * html/canvas/CanvasRenderingContext2D.h:
+
 2009-08-22  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, build fix.

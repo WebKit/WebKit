@@ -26,7 +26,6 @@
 #ifndef CanvasRenderingContext2D_h
 #define CanvasRenderingContext2D_h
 
-#include "CanvasRenderingContext.h"
 #include "TransformationMatrix.h"
 #include "FloatSize.h"
 #include "Font.h"
@@ -55,9 +54,14 @@ namespace WebCore {
 
     typedef int ExceptionCode;
 
-    class CanvasRenderingContext2D : public CanvasRenderingContext {
+    class CanvasRenderingContext2D : public Noncopyable {
     public:
         CanvasRenderingContext2D(HTMLCanvasElement*);
+
+        void ref(); 
+        void deref(); 
+
+        HTMLCanvasElement* canvas() const { return m_canvas; } 
         virtual ~CanvasRenderingContext2D() { }
         
         virtual bool is2d() { return true; }
@@ -261,6 +265,7 @@ namespace WebCore {
         void checkOrigin(const KURL&);
         void checkOrigin(const String&);
 
+        HTMLCanvasElement* m_canvas;
         Vector<State, 1> m_stateStack;
     };
 
