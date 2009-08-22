@@ -94,22 +94,12 @@ private:
 
 
 CanvasRenderingContext2D::CanvasRenderingContext2D(HTMLCanvasElement* canvas)
-    : m_canvas(canvas)
+    : CanvasRenderingContext(canvas)
     , m_stateStack(1)
 {
     // Make sure that even if the drawingContext() has a different default
     // thickness, it is in sync with the canvas thickness.
     setLineWidth(lineWidth());
-}
-
-void CanvasRenderingContext2D::ref()
-{
-    m_canvas->ref();
-}
-
-void CanvasRenderingContext2D::deref()
-{
-    m_canvas->deref(); 
 }
 
 void CanvasRenderingContext2D::reset()
