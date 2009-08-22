@@ -538,6 +538,16 @@ void HTMLFormElement::setName(const String &value)
     setAttribute(nameAttr, value);
 }
 
+bool HTMLFormElement::novalidate() const
+{
+    return !getAttribute(novalidateAttr).isNull();
+}
+
+void HTMLFormElement::setNovalidate(bool novalidate)
+{
+    setAttribute(novalidateAttr, novalidate ? "" : 0);
+}
+
 void HTMLFormElement::setAcceptCharset(const String &value)
 {
     setAttribute(accept_charsetAttr, value);

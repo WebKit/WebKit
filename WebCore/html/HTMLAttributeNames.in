@@ -78,6 +78,7 @@ expanded
 face
 focused
 for
+formnovalidate
 frame
 frameborder
 headers
@@ -117,6 +118,7 @@ name
 nohref
 noresize
 noshade
+novalidate
 nowrap
 object
 onabort

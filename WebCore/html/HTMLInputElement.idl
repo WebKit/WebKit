@@ -28,6 +28,7 @@ module html {
                  attribute [ConvertNullToNullString] DOMString defaultValue;
                  attribute boolean         defaultChecked;
         readonly attribute HTMLFormElement form;
+                 attribute boolean         formNoValidate;
 #if !defined(LANGUAGE_COM) || !LANGUAGE_COM
         readonly attribute ValidityState   validity;
 #endif
