@@ -1,5 +1,14 @@
 2009-08-21  Darin Adler  <darin@apple.com>
 
+        Fix Qt build.
+
+        * parser/Nodes.cpp:
+        (JSC::ScopeNodeData::ScopeNodeData): Made non-inline again.
+        This is used outside Nodes.cpp so can't be inline unless
+        it is in the header.
+
+2009-08-21  Darin Adler  <darin@apple.com>
+
         Two loose ends from the last commit.
 
         * JavaScriptCore.xcodeproj/project.pbxproj: Made ParserArena.h
