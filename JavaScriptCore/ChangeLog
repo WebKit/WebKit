@@ -1,3 +1,10 @@
+2009-08-21  Mark Rowe  <mrowe@apple.com>
+
+        Fix the non-JIT build.
+
+        * runtime/Executable.cpp:
+        * runtime/Executable.h:
+
 2009-08-21  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by NOBODY (build fix).

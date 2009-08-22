@@ -76,6 +76,7 @@ namespace JSC {
 #endif
     };
 
+#if ENABLE(JIT)
     class NativeExecutable : public ExecutableBase {
     public:
         NativeExecutable(ExecState* exec)
@@ -86,6 +87,7 @@ namespace JSC {
 
         ~NativeExecutable();
     };
+#endif
 
     class VPtrHackExecutable : public ExecutableBase {
     public:
