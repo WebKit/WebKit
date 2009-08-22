@@ -138,7 +138,7 @@ AccessibilityObject* AXObjectCache::getOrCreate(RenderObject* renderer)
         RefPtr<AccessibilityObject> newObj = 0;
         if (renderer->isListBox())
             newObj = AccessibilityListBox::create(renderer);
-        else if (node && (node->hasTagName(ulTag) || node->hasTagName(olTag) || node->hasTagName(dlTag)))
+        else if (node && (nodeIsAriaType(node, "list") || node->hasTagName(ulTag) || node->hasTagName(olTag) || node->hasTagName(dlTag)))
             newObj = AccessibilityList::create(renderer);
         
         // aria tables

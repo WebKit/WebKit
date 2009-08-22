@@ -69,6 +69,13 @@ bool AccessibilityList::isUnorderedList() const
         return false;
     
     Node* node = m_renderer->node();
+
+    // The ARIA spec says the "list" role is supposed to mimic a UL or OL tag.
+    // Since it can't be both, it's probably OK to say that it's an un-ordered list.
+    // On the Mac, there's no distinction to the client.
+    if (ariaRoleAttribute() == ListRole)
+        return true;
+    
     return node && node->hasTagName(ulTag);
 }
 
