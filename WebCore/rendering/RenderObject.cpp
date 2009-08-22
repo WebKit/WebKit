@@ -659,7 +659,7 @@ static bool mustRepaintFillLayers(const RenderObject* renderer, const FillLayer*
     if (layer->size().type == SizeLength) {
         if (layer->size().size.width().isPercent() || layer->size().size.height().isPercent())
             return true;
-    } else if (img->usesImageContainerSize())
+    } else if (layer->size().type == Contain || layer->size().type == Cover || img->usesImageContainerSize())
         return true;
 
     return false;

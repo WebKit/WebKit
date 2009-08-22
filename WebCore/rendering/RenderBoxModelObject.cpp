@@ -498,38 +498,54 @@ IntSize RenderBoxModelObject::calculateBackgroundSize(const FillLayer* bgLayer, 
     StyleImage* bg = bgLayer->image();
     bg->setImageContainerSize(IntSize(scaledWidth, scaledHeight)); // Use the box established by background-origin.
 
-    if (bgLayer->size().type == SizeLength) {
-        int w = scaledWidth;
-        int h = scaledHeight;
-        Length bgWidth = bgLayer->size().size.width();
-        Length bgHeight = bgLayer->size().size.height();
+    EFillSizeType type = bgLayer->size().type;
 
-        if (bgWidth.isFixed())
-            w = bgWidth.value();
-        else if (bgWidth.isPercent())
-            w = bgWidth.calcValue(scaledWidth);
-        
-        if (bgHeight.isFixed())
-            h = bgHeight.value();
-        else if (bgHeight.isPercent())
-            h = bgHeight.calcValue(scaledHeight);
-        
-        // If one of the values is auto we have to use the appropriate
-        // scale to maintain our aspect ratio.
-        if (bgWidth.isAuto() && !bgHeight.isAuto())
-            w = bg->imageSize(this, style()->effectiveZoom()).width() * h / bg->imageSize(this, style()->effectiveZoom()).height();        
-        else if (!bgWidth.isAuto() && bgHeight.isAuto())
-            h = bg->imageSize(this, style()->effectiveZoom()).height() * w / bg->imageSize(this, style()->effectiveZoom()).width();
-        else if (bgWidth.isAuto() && bgHeight.isAuto()) {
-            // If both width and height are auto, we just want to use the image's
-            // intrinsic size.
-            w = bg->imageSize(this, style()->effectiveZoom()).width();
-            h = bg->imageSize(this, style()->effectiveZoom()).height();
+    switch (type) {
+        case SizeLength: {
+            int w = scaledWidth;
+            int h = scaledHeight;
+            Length bgWidth = bgLayer->size().size.width();
+            Length bgHeight = bgLayer->size().size.height();
+
+            if (bgWidth.isFixed())
+                w = bgWidth.value();
+            else if (bgWidth.isPercent())
+                w = bgWidth.calcValue(scaledWidth);
+            
+            if (bgHeight.isFixed())
+                h = bgHeight.value();
+            else if (bgHeight.isPercent())
+                h = bgHeight.calcValue(scaledHeight);
+            
+            // If one of the values is auto we have to use the appropriate
+            // scale to maintain our aspect ratio.
+            if (bgWidth.isAuto() && !bgHeight.isAuto())
+                w = bg->imageSize(this, style()->effectiveZoom()).width() * h / bg->imageSize(this, style()->effectiveZoom()).height();        
+            else if (!bgWidth.isAuto() && bgHeight.isAuto())
+                h = bg->imageSize(this, style()->effectiveZoom()).height() * w / bg->imageSize(this, style()->effectiveZoom()).width();
+            else if (bgWidth.isAuto() && bgHeight.isAuto()) {
+                // If both width and height are auto, we just want to use the image's
+                // intrinsic size.
+                w = bg->imageSize(this, style()->effectiveZoom()).width();
+                h = bg->imageSize(this, style()->effectiveZoom()).height();
+            }
+            
+            return IntSize(max(1, w), max(1, h));
         }
-        
-        return IntSize(max(1, w), max(1, h));
-    } else
-        return bg->imageSize(this, style()->effectiveZoom());
+        case Contain:
+        case Cover: {
+            IntSize imageIntrinsicSize = bg->imageSize(this, 1);
+            float horizontalScaleFactor = static_cast<float>(scaledWidth) / imageIntrinsicSize.width();
+            float verticalScaleFactor = static_cast<float>(scaledHeight) / imageIntrinsicSize.height();
+            float scaleFactor = type == Contain ? min(horizontalScaleFactor, verticalScaleFactor) : max(horizontalScaleFactor, verticalScaleFactor);
+
+            return IntSize(max<int>(1, imageIntrinsicSize.width() * scaleFactor), max<int>(1, imageIntrinsicSize.height() * scaleFactor));
+        }
+        case SizeNone:
+            ASSERT_NOT_REACHED();
+            break;
+    }
+    return bg->imageSize(this, style()->effectiveZoom());
 }
 
 void RenderBoxModelObject::calculateBackgroundImageGeometry(const FillLayer* bgLayer, int tx, int ty, int w, int h, 
