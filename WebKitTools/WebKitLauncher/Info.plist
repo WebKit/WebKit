@@ -441,6 +441,8 @@
 	<false/>
 	<key>SUAllowsAutomaticUpdates</key>
 	<false/>
+	<key>SUPublicDSAKeyFile</key>
+	<string>nightly.webkit.org.public.pem</string>
 	<key>NSPrincipalClass</key>
 	<string>BrowserApplication</string>
 	<key>CFBundleHelpBookFolder</key>

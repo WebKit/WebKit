@@ -43,13 +43,6 @@ static NSString* updatePermissionPromptDescription(id self, SEL _cmd)
     return @"Should WebKit automatically check for updates? You can always check for updates manually from the Safari menu.";
 }
 
-// -[SUBasicUpdateDriver downloadDidFinish:] requires that the download be served over SSL or signed
-// using a public key.  We're not interested in dealing with that hassle just at the moment.
-static void skipSignatureVerificationInDownloadDidFinish(id self, SEL _cmd, id download)
-{
-    objc_msgSend(self, @selector(extractUpdate));
-}
-
 static NSPanel *updateAlertPanel(id updateItem, id host)
 {
     NSString *hostName = objc_msgSend(host, @selector(name));
@@ -138,9 +131,6 @@ void initializeSparkle()
     // Override some Sparkle behaviour
     Method methodToPatch = class_getInstanceMethod(objc_getRequiredClass("SUUpdatePermissionPrompt"), @selector(promptDescription));
     setMethodImplementation(methodToPatch, (IMP)updatePermissionPromptDescription);
-
-    methodToPatch = class_getInstanceMethod(objc_getRequiredClass("SUBasicUpdateDriver"), @selector(downloadDidFinish:));
-    setMethodImplementation(methodToPatch, (IMP)skipSignatureVerificationInDownloadDidFinish);
 
     methodToPatch = class_getInstanceMethod(objc_getRequiredClass("SUUpdateAlert"), @selector(initWithAppcastItem:host:));
     setMethodImplementation(methodToPatch, (IMP)updateAlertInitForAlertPanel);

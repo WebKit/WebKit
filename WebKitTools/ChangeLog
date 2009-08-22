@@ -1,3 +1,15 @@
+2009-08-22  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Anders Carlsson.
+
+        Bring signed updates to the Mac nightly builds.
+
+        * WebKitLauncher/Info.plist:
+        * WebKitLauncher/WebKitLauncher.xcodeproj/project.pbxproj:
+        * WebKitLauncher/WebKitNightlyEnablerSparkle.m:
+        (initializeSparkle):
+        * WebKitLauncher/nightly.webkit.org.public.pem: Added.
+
 2009-08-21  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Rubberstamped by Simon Fraser.
