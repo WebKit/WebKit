@@ -1215,8 +1215,6 @@
             'html/canvas/CanvasPattern.h',
             'html/canvas/CanvasPixelArray.cpp',
             'html/canvas/CanvasPixelArray.h',
-            'html/canvas/CanvasRenderingContext.cpp',
-            'html/canvas/CanvasRenderingContext.h',
             'html/canvas/CanvasRenderingContext2D.cpp',
             'html/canvas/CanvasRenderingContext2D.h',
             'html/canvas/CanvasStyle.cpp',

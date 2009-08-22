@@ -1,5 +1,12 @@
 2009-08-22  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Unreviewed, build fix.
+
+        Backing out http://trac.webkit.org/changeset/47671 in preparation of
+        rolling out http://trac.webkit.org/changeset/47669.
+
+2009-08-22  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Reviewed by Anders Carlsson.
 
         Build fix, add CanvasRenderingContext to build systems.
