@@ -1,5 +1,16 @@
 2009-08-23  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
+        Rubberstamped by Gustavo Noronha.
+
+        Fix regressions introduced by http://trac.webkit.org/changeset/47690.
+
+        Update the setting whenever the property gets set.
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_settings_notify):
+
+2009-08-23  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
         Reviewed by Xan Lopez.
 
         [Gtk] API for disabling local file access to web URLs
