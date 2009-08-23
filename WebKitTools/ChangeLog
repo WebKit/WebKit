@@ -1,3 +1,21 @@
+2009-08-22  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Don't let local files access web URLs
+        https://bugs.webkit.org/show_bug.cgi?id=28480
+
+        A bunch of our LayoutTests rely on our old behavior, so we explicitly
+        grant local files universal access during testing.  Mainly, these tests
+        involve making XMLHttpRequests for data URLs.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetDefaultsToConsistentValues):
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::WebPage::WebPage):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (resetDefaultsToConsistentValues):
+
 2009-08-22  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Anders Carlsson.

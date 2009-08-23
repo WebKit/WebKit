@@ -1,3 +1,14 @@
+2009-08-22  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Don't let local files access web URLs
+        https://bugs.webkit.org/show_bug.cgi?id=28480
+
+        * Misc/WebKitVersionChecks.m:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+
 2009-08-21  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.

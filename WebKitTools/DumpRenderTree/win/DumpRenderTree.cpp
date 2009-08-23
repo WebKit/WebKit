@@ -709,6 +709,7 @@ static void resetDefaultsToConsistentValues(IWebPreferences* preferences)
 
     COMPtr<IWebPreferencesPrivate> prefsPrivate(Query, preferences);
     if (prefsPrivate) {
+        prefsPrivate->setAllowUniversalAccessFromFileURLs(TRUE);
         prefsPrivate->setAuthorAndUserStylesEnabled(TRUE);
         prefsPrivate->setDeveloperExtrasEnabled(FALSE);
         prefsPrivate->setShouldPaintNativeControls(FALSE); // FIXME - need to make DRT pass with Windows native controls <http://bugs.webkit.org/show_bug.cgi?id=25592>

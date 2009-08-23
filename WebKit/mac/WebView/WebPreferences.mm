@@ -294,6 +294,10 @@ static WebCacheModel cacheModelForMainBundle(void)
 // if we ever have more than one WebPreferences object, this would move to init
 + (void)initialize
 {
+    id universalAccessFromFileURLs = [NSNumber numberWithBool:NO];
+    if (!WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITHOUT_UNIVERSAL_ACCESS_FROM_FILE_URLS))
+        universalAccessFromFileURLs = [NSNumber numberWithBool:YES];
+
     NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
         @"Times",                       WebKitStandardFontPreferenceKey,
         @"Courier",                     WebKitFixedFontPreferenceKey,
@@ -315,7 +319,7 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithBool:YES],  WebKitJavaEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitJavaScriptEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitWebSecurityEnabledPreferenceKey,
-        [NSNumber numberWithBool:YES],  WebKitAllowUniversalAccessFromFileURLsPreferenceKey,
+        universalAccessFromFileURLs,    WebKitAllowUniversalAccessFromFileURLsPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitJavaScriptCanOpenWindowsAutomaticallyPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitPluginsEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitDatabasesEnabledPreferenceKey,

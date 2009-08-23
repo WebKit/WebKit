@@ -1,3 +1,13 @@
+2009-08-22  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Don't let local files access web URLs
+        https://bugs.webkit.org/show_bug.cgi?id=28480
+
+        * Api/qwebsettings.cpp:
+        (QWebSettings::QWebSettings):
+
 2009-08-19  Aaron Boodman  <aa@chromium.org>
 
         Speculative build break fix for qt.
