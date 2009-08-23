@@ -3967,7 +3967,6 @@ media/video-play-pause-exception.html
 media/video-played-collapse.html
 media/video-played-reset.html
 media/video-played-ranges-1.html
-media/video-played-ranges-2.html
 media/video-seek-past-end-paused.html
 media/video-seek-past-end-playing.html
 media/video-seekable.html
@@ -5937,6 +5936,9 @@ svg/filters/feMerge.svg
 svg/filters/feOffset.svg
 svg/filters/feTile.svg
 
+# Requires expected results - related changeset: http://trac.webkit.org/changeset/47678
+fast/block/margin-collapse/block-inside-inline
+
 # ------------------
 # Tests with bugs attached : Enable these tests again once these bugs are fixed.
 # ------------------
@@ -5956,6 +5958,9 @@ transitions/change-values-during-transition.html
 # Missing resource load callback ability in DRT
 http/tests/loading/redirect-methods.html
 http/tests/misc/favicon-loads-with-images-disabled.html
+
+# See Bug #28668 - https://bugs.webkit.org/show_bug.cgi?id=28668
+http/tests/appcache/auth.html
 
 # This port doesn't support isolated worlds yet.
 http/tests/security/isolatedWorld/all-window-properties.html

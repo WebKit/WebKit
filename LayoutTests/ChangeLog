@@ -1,3 +1,11 @@
+2009-08-23  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Not reviewed. Skip new tests from
+        http://trac.webkit.org/changeset/47678 and the appcache HTTP
+        authentication tests (https://bugs.webkit.org/show_bug.cgi?id=28668)
+
+        * platform/gtk/Skipped:
+
 2009-08-22  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.
