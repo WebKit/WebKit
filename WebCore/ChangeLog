@@ -1,3 +1,19 @@
+2009-08-22  Martin Robinson  <martin.james.robinson@gmail.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] BitmapImage::getGdkPixbuf does not handle alpha channels properly
+        https://bugs.webkit.org/show_bug.cgi?id=28345
+
+        When doing the conversion between cairo_surface_t* and GdkPixbuf*
+        account for the differences in the respective formats' in-memory
+        image format.
+
+        * platform/graphics/gtk/ImageGtk.cpp:
+        (WebCore::getCairoSurfacePixel):
+        (WebCore::getGdkPixbufPixel):
+        (WebCore::BitmapImage::getGdkPixbuf):
+
 2009-08-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Oliver Hunt.
