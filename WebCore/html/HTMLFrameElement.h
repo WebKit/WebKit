@@ -30,6 +30,14 @@ namespace WebCore {
 
 class HTMLFrameElement : public HTMLFrameElementBase {
 public:
+    static PassRefPtr<HTMLFrameElement> create(const QualifiedName&, Document*);
+
+    bool hasFrameBorder() const { return m_frameBorder; }
+
+    bool noResize() const { return m_noResize; }
+    void setNoResize(bool);
+
+private:
     HTMLFrameElement(const QualifiedName&, Document*);
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
@@ -42,12 +50,6 @@ public:
     
     virtual void parseMappedAttribute(MappedAttribute*);
 
-    bool hasFrameBorder() const { return m_frameBorder; }
-
-    bool noResize() const { return m_noResize; }
-    void setNoResize(bool);
-
-private:
     bool m_frameBorder;
     bool m_frameBorderSet;
 

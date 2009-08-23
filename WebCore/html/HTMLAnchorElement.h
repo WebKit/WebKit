@@ -30,8 +30,8 @@ namespace WebCore {
 
 class HTMLAnchorElement : public HTMLElement {
 public:
-    HTMLAnchorElement(Document*);
-    HTMLAnchorElement(const QualifiedName&, Document*);
+    static PassRefPtr<HTMLAnchorElement> create(Document*);
+    static PassRefPtr<HTMLAnchorElement> create(const QualifiedName&, Document*);
 
     KURL href() const;
     void setHref(const AtomicString&);
@@ -52,6 +52,8 @@ public:
     bool isLiveLink() const;
 
 protected:
+    HTMLAnchorElement(const QualifiedName&, Document*);
+
     virtual void parseMappedAttribute(MappedAttribute*);
 
 private:
@@ -70,7 +72,7 @@ private:
     virtual short tabIndex() const;
     virtual bool draggable() const;
 
-    Element* m_rootEditableElementForSelectionOnMouseDown;
+    RefPtr<Element> m_rootEditableElementForSelectionOnMouseDown;
     bool m_wasShiftKeyDownOnMouseDown;
 };
 

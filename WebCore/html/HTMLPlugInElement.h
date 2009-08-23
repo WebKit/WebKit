@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2004, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -36,16 +36,7 @@ class RenderWidget;
 
 class HTMLPlugInElement : public HTMLFrameOwnerElement {
 public:
-    HTMLPlugInElement(const QualifiedName& tagName, Document*);
     virtual ~HTMLPlugInElement();
-
-    virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
-    virtual void parseMappedAttribute(MappedAttribute*);
-
-    virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
-    virtual bool checkDTD(const Node* newChild);
-
-    virtual void updateWidget() { }
 
     String height() const;
     void setHeight(const String&);
@@ -53,20 +44,36 @@ public:
     String width() const;
     void setWidth(const String&);
 
-    virtual void defaultEventHandler(Event*);
-
-    virtual RenderWidget* renderWidgetForJSBindings() const = 0;
-    virtual void detach();
     PassScriptInstance getInstance() const;
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    virtual NPObject* getNPObject();
+    NPObject* getNPObject();
 #endif
 
 protected:
+    HTMLPlugInElement(const QualifiedName& tagName, Document*);
+
+    virtual void detach();
+
     static void updateWidgetCallback(Node*);
 
+    virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
+    virtual void parseMappedAttribute(MappedAttribute*);
+
+private:
+    virtual void defaultEventHandler(Event*);
+
+    virtual RenderWidget* renderWidgetForJSBindings() const = 0;
+
+    virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
+    virtual bool checkDTD(const Node* newChild);
+
+    virtual void updateWidget() { }
+
+protected:
     AtomicString m_name;
+
+private:
     mutable ScriptInstance m_instance;
 #if ENABLE(NETSCAPE_PLUGIN_API)
     NPObject* m_NPObject;

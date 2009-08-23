@@ -2,27 +2,27 @@ namespace="HTML"
 namespacePrefix="xhtml"
 namespaceURI="http://www.w3.org/1999/xhtml"
 
-a interfaceName=HTMLAnchorElement, createWithNew
-abbr interfaceName=HTMLElement, createWithNew
-acronym interfaceName=HTMLElement, createWithNew
-address interfaceName=HTMLElement, createWithNew
-applet createWithNew
-area createWithNew
+a interfaceName=HTMLAnchorElement
+abbr interfaceName=HTMLElement
+acronym interfaceName=HTMLElement
+address interfaceName=HTMLElement
+applet
+area
 audio wrapperOnlyIfMediaIsAvailable, conditional=VIDEO, createWithNew
-b interfaceName=HTMLElement, createWithNew
+b interfaceName=HTMLElement
 base createWithNew
 basefont interfaceName=HTMLBaseFontElement, createWithNew
-bdo interfaceName=HTMLElement, createWithNew
-big interfaceName=HTMLElement, createWithNew
+bdo interfaceName=HTMLElement
+big interfaceName=HTMLElement
 blockquote createWithNew
 body createWithNew
 br interfaceName=HTMLBRElement, createWithNew
 button constructorNeedsFormElement, createWithNew
 canvas createWithNew
 caption interfaceName=HTMLTableCaptionElement, createWithNew
-center interfaceName=HTMLElement, createWithNew
-cite interfaceName=HTMLElement, createWithNew
-code interfaceName=HTMLElement, createWithNew
+center interfaceName=HTMLElement
+cite interfaceName=HTMLElement
+code interfaceName=HTMLElement
 col interfaceName=HTMLTableColElement, createWithNew
 colgroup interfaceName=HTMLTableColElement, createWithNew
 datagrid interfaceName=HTMLDataGridElement, conditional=DATAGRID, createWithNew
@@ -30,40 +30,40 @@ datalist interfaceName=HTMLDataListElement, conditional=DATALIST, createWithNew
 dcell interfaceName=HTMLDataGridCellElement, conditional=DATAGRID, createWithNew
 dcol interfaceName=HTMLDataGridColElement, conditional=DATAGRID, createWithNew
 drow interfaceName=HTMLDataGridRowElement, conditional=DATAGRID, createWithNew
-dd interfaceName=HTMLElement, createWithNew
+dd interfaceName=HTMLElement
 del interfaceName=HTMLModElement, createWithNew
-dfn interfaceName=HTMLElement, createWithNew
+dfn interfaceName=HTMLElement
 dir interfaceName=HTMLDirectoryElement, createWithNew
 div createWithNew
-dl interfaceName=HTMLDListElement, createWithNew
-dt interfaceName=HTMLElement, createWithNew
-em interfaceName=HTMLElement, createWithNew
-embed createWithNew
+dl interfaceName=HTMLDListElement, createWithNew, createWithNew
+dt interfaceName=HTMLElement
+em interfaceName=HTMLElement
+embed
 fieldset interfaceName=HTMLFieldSetElement, constructorNeedsFormElement, createWithNew
 font createWithNew
 form createWithNew
-frame createWithNew
+frame
 frameset interfaceName=HTMLFrameSetElement, createWithNew
-head createWithNew
 h1 interfaceName=HTMLHeadingElement, createWithNew
 h2 interfaceName=HTMLHeadingElement, createWithNew
 h3 interfaceName=HTMLHeadingElement, createWithNew
 h4 interfaceName=HTMLHeadingElement, createWithNew
 h5 interfaceName=HTMLHeadingElement, createWithNew
 h6 interfaceName=HTMLHeadingElement, createWithNew
+head createWithNew
 hr interfaceName=HTMLHRElement, createWithNew
 html createWithNew
-i interfaceName=HTMLElement, createWithNew
-iframe interfaceName=HTMLIFrameElement, createWithNew
+i interfaceName=HTMLElement
+iframe interfaceName=HTMLIFrameElement
 image mapToTagName=img, createWithNew
 img interfaceName=HTMLImageElement, constructorNeedsFormElement, createWithNew
 input constructorNeedsFormElement, createWithNew
 ins interfaceName=HTMLModElement, createWithNew
 isindex interfaceName=HTMLIsIndexElement, constructorNeedsFormElement, createWithNew
-kbd interfaceName=HTMLElement, createWithNew
+kbd interfaceName=HTMLElement
 keygen JSInterfaceName=HTMLSelectElement, constructorNeedsFormElement, createWithNew
 label createWithNew
-layer interfaceName=HTMLElement, createWithNew
+layer interfaceName=HTMLElement
 legend constructorNeedsFormElement, createWithNew
 li interfaceName=HTMLLIElement, createWithNew
 link constructorNeedsCreatedByParser, createWithNew
@@ -72,40 +72,35 @@ map createWithNew
 marquee createWithNew
 menu createWithNew
 meta createWithNew
-nav interfaceName=HTMLElement, createWithNew
-nobr interfaceName=HTMLElement, createWithNew
-noembed interfaceName=HTMLElement, createWithNew
-noframes interfaceName=HTMLElement, createWithNew
-nolayer interfaceName=HTMLElement, createWithNew
-#if ENABLE_XHTMLMP
-noscript interfaceName=HTMLNoScriptElement, createWithNew
-#else
-noscript interfaceName=HTMLElement, createWithNew
-#endif
-object constructorNeedsCreatedByParser, createWithNew
+nav interfaceName=HTMLElement
+nobr interfaceName=HTMLElement
+noembed interfaceName=HTMLElement
+noframes interfaceName=HTMLElement
+nolayer interfaceName=HTMLElement
+object constructorNeedsCreatedByParser
 ol interfaceName=HTMLOListElement, createWithNew
 optgroup interfaceName=HTMLOptGroupElement, constructorNeedsFormElement, createWithNew
 option constructorNeedsFormElement, createWithNew
 p interfaceName=HTMLParagraphElement, createWithNew
 param createWithNew
-plaintext interfaceName=HTMLElement, createWithNew
+plaintext interfaceName=HTMLElement
 pre createWithNew
 q interfaceName=HTMLQuoteElement, createWithNew
-rp interfaceName=HTMLElement, createWithNew
-rt interfaceName=HTMLElement, createWithNew
-ruby interfaceName=HTMLElement, createWithNew
-s interfaceName=HTMLElement, createWithNew
-samp interfaceName=HTMLElement, createWithNew
+rp interfaceName=HTMLElement
+rt interfaceName=HTMLElement
+ruby interfaceName=HTMLElement
+s interfaceName=HTMLElement
+samp interfaceName=HTMLElement
 script constructorNeedsCreatedByParser, createWithNew
 select constructorNeedsFormElement, createWithNew
-small interfaceName=HTMLElement, createWithNew
+small interfaceName=HTMLElement
 source wrapperOnlyIfMediaIsAvailable, conditional=VIDEO, createWithNew
-span interfaceName=HTMLElement, createWithNew
-strike interfaceName=HTMLElement, createWithNew
-strong interfaceName=HTMLElement, createWithNew
+span interfaceName=HTMLElement
+strike interfaceName=HTMLElement
+strong interfaceName=HTMLElement
 style constructorNeedsCreatedByParser, createWithNew
-sub interfaceName=HTMLElement, createWithNew
-sup interfaceName=HTMLElement, createWithNew
+sub interfaceName=HTMLElement
+sup interfaceName=HTMLElement
 table createWithNew
 tbody interfaceName=HTMLTableSectionElement, createWithNew
 td interfaceName=HTMLTableCellElement, createWithNew
@@ -115,10 +110,16 @@ th interfaceName=HTMLTableCellElement, createWithNew
 thead interfaceName=HTMLTableSectionElement, createWithNew
 title createWithNew
 tr interfaceName=HTMLTableRowElement, createWithNew
-tt interfaceName=HTMLElement, createWithNew
-u interfaceName=HTMLElement, createWithNew
+tt interfaceName=HTMLElement
+u interfaceName=HTMLElement
 ul interfaceName=HTMLUListElement, createWithNew
-var interfaceName=HTMLElement, createWithNew
+var interfaceName=HTMLElement
 video wrapperOnlyIfMediaIsAvailable, conditional=VIDEO, createWithNew
-wbr interfaceName=HTMLElement, createWithNew
+wbr interfaceName=HTMLElement
 xmp interfaceName=HTMLPreElement, createWithNew
+
+#if ENABLE_XHTMLMP
+noscript interfaceName=HTMLNoScriptElement, createWithNew
+#else
+noscript interfaceName=HTMLElement
+#endif

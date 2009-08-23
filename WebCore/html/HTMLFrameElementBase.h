@@ -31,21 +31,8 @@ namespace WebCore {
 
 class HTMLFrameElementBase : public HTMLFrameOwnerElement {
 public:
-    virtual void parseMappedAttribute(MappedAttribute*);
-
-    virtual void insertedIntoDocument();
-    virtual void removedFromDocument();
-
-    virtual void attach();
-    virtual bool canLazyAttach() { return false; }
-
     KURL location() const;
     void setLocation(const String&);
-
-    virtual bool isFocusable() const;
-    virtual void setFocus(bool);
-    
-    virtual bool isURLAttribute(Attribute*) const;
 
     virtual ScrollbarMode scrollingMode() const { return m_scrolling; }
     
@@ -55,12 +42,28 @@ public:
     int width() const;
     int height() const;
 
-    bool viewSourceMode() const { return m_viewSource; }
-
 protected:
     HTMLFrameElementBase(const QualifiedName&, Document*);
 
     bool isURLAllowed() const;
+
+    virtual void parseMappedAttribute(MappedAttribute*);
+
+    virtual void insertedIntoDocument();
+    virtual void removedFromDocument();
+
+    virtual void attach();
+
+private:
+    virtual bool canLazyAttach() { return false; }
+
+    virtual bool isFocusable() const;
+    virtual void setFocus(bool);
+    
+    virtual bool isURLAttribute(Attribute*) const;
+
+    bool viewSourceMode() const { return m_viewSource; }
+
     void setNameAndOpenURL();
     void openURL();
 

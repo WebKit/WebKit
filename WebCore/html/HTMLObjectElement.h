@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2004, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,10 +27,30 @@
 
 namespace WebCore {
 
-class KURL;
-
 class HTMLObjectElement : public HTMLPlugInImageElement {
 public:
+    static PassRefPtr<HTMLObjectElement> create(const QualifiedName&, Document*, bool createdByParser);
+
+    void setNeedWidgetUpdate(bool needWidgetUpdate) { m_needWidgetUpdate = needWidgetUpdate; }
+
+    void renderFallbackContent();
+
+    bool declare() const;
+    void setDeclare(bool);
+
+    int hspace() const;
+    void setHspace(int);
+
+    int vspace() const;
+    void setVspace(int);
+
+    bool isDocNamedItem() const { return m_docNamedItem; }
+
+    const String& classId() const { return m_classId; }
+
+    bool containsJavaApplet() const;
+
+private:
     HTMLObjectElement(const QualifiedName&, Document*, bool createdByParser);
 
     virtual int tagPriority() const { return 5; }
@@ -53,30 +73,11 @@ public:
     virtual const QualifiedName& imageSourceAttributeName() const;
 
     virtual void updateWidget();
-    void setNeedWidgetUpdate(bool needWidgetUpdate) { m_needWidgetUpdate = needWidgetUpdate; }
-
-    void renderFallbackContent();
 
     virtual RenderWidget* renderWidgetForJSBindings() const;
 
-    bool declare() const;
-    void setDeclare(bool);
-
-    int hspace() const;
-    void setHspace(int);
-
-    int vspace() const;
-    void setVspace(int);
-
-    bool isDocNamedItem() const { return m_docNamedItem; }
-
-    const String& classId() const { return m_classId; }
-
-    bool containsJavaApplet() const;
-
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 
-private:
     void updateDocNamedItem();
 
     AtomicString m_id;

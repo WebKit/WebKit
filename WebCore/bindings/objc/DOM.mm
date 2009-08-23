@@ -44,6 +44,7 @@
 #if ENABLE(SVG_DOM_OBJC_BINDINGS)
 #import "DOMSVG.h"
 #import "SVGElementInstance.h"
+#import "SVGNames.h"
 #endif
 
 using namespace JSC;

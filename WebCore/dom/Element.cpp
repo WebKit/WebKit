@@ -57,10 +57,15 @@ namespace WebCore {
 using namespace HTMLNames;
 using namespace XMLNames;
     
-Element::Element(const QualifiedName& tagName, Document* document)
-    : ContainerNode(document, CreateElementZeroRefCount)
+Element::Element(const QualifiedName& tagName, Document* document, ConstructionType type)
+    : ContainerNode(document, type)
     , m_tagName(tagName)
 {
+}
+
+PassRefPtr<Element> Element::create(const QualifiedName& tagName, Document* document)
+{
+    return adoptRef(new Element(tagName, document, CreateElement));
 }
 
 Element::~Element()

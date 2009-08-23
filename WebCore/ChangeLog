@@ -1,3 +1,134 @@
+2009-08-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Make DOM classes start with a reference count of 1, like all other RefCounted
+        
+        Next step: Element, HTMLElement, HTMLAnchorElement, HTMLAppletElement,
+        HTMLAreaElement, HTMLEmbedElement, HTMLFrameElement, HTMLIFrameElement,
+        HTMLObjectElement, HTMLPlugInElement, HTMLPlugInImageElement.
+
+        * DerivedSources.make: Fix error seen every time we build by escaping the $
+        in the build rule, since you have to use $$ for that in make.
+
+        * WebCore.base.exp: Updated.
+
+        * bindings/objc/DOM.mm:
+        Added now-needed include of SVGNames.h.
+
+        * dom/Document.cpp: Added now-needed include of SVGNames.h.
+        (WebCore::Document::createElement): Use create instead of new.
+
+        * dom/Element.cpp:
+        (WebCore::Element::Element): Added ConstructionType argument so the caller
+        can determine whether this starts with a reference count of either 0 or 1.
+        Later we will remove this again once they are all 1.
+        (WebCore::Element::create): Added.
+
+        * dom/Element.h: Added create and made constructor protected.
+
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::StyledElement): Added ConstructionType argument.
+        * dom/StyledElement.h: Made many functions protected or private, including
+        the constructor.
+
+        * dom/make_names.pl: Use create to create the base elements HTMLElement,
+        SVGElement, and WMLElement.
+
+        * editing/CreateLinkCommand.cpp:
+        (WebCore::CreateLinkCommand::doApply): Use create instead of new.
+        * editing/UnlinkCommand.cpp:
+        (WebCore::UnlinkCommand::doApply): Ditto.
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::create): Added.
+        * html/HTMLAnchorElement.h: Made constructor protected and added create.
+        Also made m_rootEditableElementForSelectionOnMouseDown a RefPtr.
+
+        * html/HTMLAppletElement.cpp:
+        (WebCore::HTMLAppletElement::create): Added.
+        * html/HTMLAppletElement.h: Made constructor private and added create.
+
+        * html/HTMLAreaElement.cpp:
+        (WebCore::HTMLAreaElement::create): Added.
+        * html/HTMLAreaElement.h: Made constructor private and added create.
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::create): Added.
+        * html/HTMLElement.h: Made constructor protected and added create.
+        Made other functions protected and private. Also added inline
+        definition of constructor.
+
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::create): Added.
+        * html/HTMLEmbedElement.h: Made constructor private and added create.
+        Made other functions private.
+
+        * html/HTMLFrameElement.cpp:
+        (WebCore::HTMLFrameElement::create): Added.
+        (WebCore::HTMLFrameElement::parseMappedAttribute):
+        * html/HTMLFrameElement.h: Made constructor private and added create.
+        Made other functions private.
+
+        * html/HTMLFrameElementBase.h: Made functions protected and private.
+
+        * html/HTMLFrameOwnerElement.cpp:
+        (WebCore::HTMLFrameOwnerElement::HTMLFrameOwnerElement): Pass
+        CreateElement so reference count starts at 1.
+
+        * html/HTMLFrameOwnerElement.h: Made functions protected and private.
+
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::HTMLIFrameElement::create): Added.
+        * html/HTMLIFrameElement.h: Made constructor private and added create.
+        Made other functions private.
+
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::create): Added.
+        (WebCore::HTMLObjectElement::containsJavaApplet): Changed while loop
+        into a for loop and tweaked formatting.
+
+        * html/HTMLObjectElement.h: Made constructor private and added create.
+        Made other functions private.
+
+        * html/HTMLPlugInElement.h: Made constructor protected.
+        Made other functions protected and private.
+
+        * html/HTMLPlugInImageElement.h: Made constructor and another function
+        protected.
+
+        * html/HTMLTagNames.in: Removed createWithNew from all classes that
+        now have create functions. Moved conditional noscript to a separate
+        paragraph.
+
+        * html/HTMLViewSourceDocument.cpp:
+        (WebCore::HTMLViewSourceDocument::addSpanWithClassName): Use create.
+        (WebCore::HTMLViewSourceDocument::addLink): Ditto.
+        * page/DragController.cpp:
+        (WebCore::documentFragmentFromDragData): Ditto.
+
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::SVGElement): Pass CreateElementZeroRefCount
+        so reference count still starts at 0. Will change this class later.
+        (WebCore::SVGElement::create): Added.
+        * svg/SVGElement.h: Added create, made constructor protected, and
+        made other functions protected and private. Removed unneeded
+        SVGNames.h include.
+
+        * svg/SVGExternalResourcesRequired.h: Added now-needed SVGNames.h
+        include.
+
+        * svg/SVGStopElement.h: Added now-needed SVGNames.h include.
+        Made functions private.
+
+        * wml/WMLElement.cpp:
+        (WebCore::WMLElement::WMLElement): Pass CreateElementZeroRefCount
+        so reference count still starts at 0. Will change this class later.
+        (WebCore::WMLElement::create): Added.
+        * wml/WMLElement.h: Added create and made constructor protected.
+
+        * wml/WMLTagNames.in: Removed createWithNew from WMLElement.
+
 2009-08-22  Adele Peterson  <adele@apple.com>
 
         Reviewed by Anders Carlsson.

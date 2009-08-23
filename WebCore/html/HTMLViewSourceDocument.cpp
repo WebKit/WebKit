@@ -209,7 +209,7 @@ PassRefPtr<Element> HTMLViewSourceDocument::addSpanWithClassName(const String& c
         return m_current;
     }
 
-    RefPtr<HTMLElement> span = new HTMLElement(spanTag, this);
+    RefPtr<HTMLElement> span = HTMLElement::create(spanTag, this);
     RefPtr<NamedMappedAttrMap> attrs = NamedMappedAttrMap::create();
     attrs->addAttribute(MappedAttribute::create(classAttr, className));
     span->setAttributeMap(attrs.release());
@@ -292,7 +292,7 @@ PassRefPtr<Element> HTMLViewSourceDocument::addLink(const String& url, bool isAn
         addLine("webkit-html-tag");
     
     // Now create a link for the attribute value instead of a span.
-    RefPtr<HTMLAnchorElement> anchor = new HTMLAnchorElement(this);
+    RefPtr<HTMLAnchorElement> anchor = HTMLAnchorElement::create(this);
     RefPtr<NamedMappedAttrMap> attrs = NamedMappedAttrMap::create();
     const char* classValue;
     if (isAnchor)

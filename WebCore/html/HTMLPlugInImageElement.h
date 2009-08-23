@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -30,15 +30,16 @@ class HTMLImageLoader;
 
 class HTMLPlugInImageElement : public HTMLPlugInElement {
 public:
-    HTMLPlugInImageElement(const QualifiedName& tagName, Document*);
     virtual ~HTMLPlugInImageElement();
-
-    bool isImageType();
 
     const String& serviceType() const { return m_serviceType; }
     const String& url() const { return m_url; }
 
 protected:
+    HTMLPlugInImageElement(const QualifiedName& tagName, Document*);
+
+    bool isImageType();
+
     OwnPtr<HTMLImageLoader> m_imageLoader;
     String m_serviceType;
     String m_url;

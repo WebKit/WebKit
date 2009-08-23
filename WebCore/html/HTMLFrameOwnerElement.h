@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,36 +27,36 @@ namespace WebCore {
 
 class DOMWindow;
 class Frame;
-class KeyboardEvent;
 
 #if ENABLE(SVG)
 class SVGDocument;
 #endif
 
 class HTMLFrameOwnerElement : public HTMLElement {
-protected:
-    HTMLFrameOwnerElement(const QualifiedName& tagName, Document*);
-
 public:
     virtual ~HTMLFrameOwnerElement();
-
-    virtual void willRemove();
 
     Frame* contentFrame() const { return m_contentFrame; }
     DOMWindow* contentWindow() const;
     Document* contentDocument() const;
 
-    virtual bool isFrameOwnerElement() const { return true; }
-    virtual bool isKeyboardFocusable(KeyboardEvent*) const { return m_contentFrame; }
-    
-    virtual ScrollbarMode scrollingMode() const { return ScrollbarAuto; }
-
 #if ENABLE(SVG)
     SVGDocument* getSVGDocument(ExceptionCode&) const;
 #endif
 
+    virtual ScrollbarMode scrollingMode() const { return ScrollbarAuto; }
+
+protected:
+    HTMLFrameOwnerElement(const QualifiedName& tagName, Document*);
+
 private:
     friend class Frame;
+
+    virtual bool isFrameOwnerElement() const { return true; }
+    virtual bool isKeyboardFocusable(KeyboardEvent*) const { return m_contentFrame; }
+    
+    virtual void willRemove();
+
     Frame* m_contentFrame;
 };
 

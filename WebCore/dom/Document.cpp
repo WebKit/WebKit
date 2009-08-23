@@ -101,6 +101,7 @@
 #include "RenderTextControl.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
+#include "SVGNames.h"
 #include "ScriptController.h"
 #include "ScriptElement.h"
 #include "ScriptEventListener.h"
@@ -795,7 +796,7 @@ PassRefPtr<Element> Document::createElement(const QualifiedName& qName, bool cre
 #endif
     
     if (!e)
-        e = new Element(qName, document());
+        e = Element::create(qName, document());
 
     // <image> uses imgTag so we need a special rule.
 #if ENABLE(WML)

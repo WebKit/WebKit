@@ -41,7 +41,7 @@ class IntSize;
 
 class Element : public ContainerNode {
 public:
-    Element(const QualifiedName&, Document*);
+    static PassRefPtr<Element> create(const QualifiedName&, Document*);
     virtual ~Element();
 
     const AtomicString& getIDAttribute() const;
@@ -208,6 +208,8 @@ public:
     virtual void dispatchFormControlChangeEvent() { }
 
 protected:
+    Element(const QualifiedName&, Document*, ConstructionType);
+
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
     virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);

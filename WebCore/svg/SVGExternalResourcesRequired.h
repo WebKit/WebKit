@@ -25,6 +25,7 @@
 
 #if ENABLE(SVG)
 #include "SVGElement.h"
+#include "SVGNames.h"
 
 namespace WebCore {
 

@@ -51,12 +51,17 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-SVGElement::SVGElement(const QualifiedName& tagName, Document* doc)
-    : StyledElement(tagName, doc)
+SVGElement::SVGElement(const QualifiedName& tagName, Document* document)
+    : StyledElement(tagName, document, CreateElementZeroRefCount)
     , m_shadowParent(0)
     , m_cursorElement(0)
     , m_cursorImageValue(0)
 {
+}
+
+PassRefPtr<SVGElement> SVGElement::create(const QualifiedName& tagName, Document* document)
+{
+    return new SVGElement(tagName, document);
 }
 
 SVGElement::~SVGElement()

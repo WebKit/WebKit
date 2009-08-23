@@ -10,7 +10,7 @@ card createWithNew
 do createWithNew
 fieldset interfaceName=WMLFieldSetElement, createWithNew
 go createWithNew
-head interfaceName=WMLElement, createWithNew
+head interfaceName=WMLElement
 img interfaceName=WMLImageElement, createWithNew
 input createWithNew
 #if 0
@@ -29,7 +29,7 @@ refresh createWithNew
 select createWithNew
 setvar createWithNew
 table createWithNew
-td interfaceName=WMLElement, createWithNew
+td interfaceName=WMLElement
 template createWithNew
 timer createWithNew
-tr interfaceName=WMLElement, createWithNew
+tr interfaceName=WMLElement

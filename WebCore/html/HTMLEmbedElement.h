@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2004, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2006, 2008, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,6 +29,11 @@ namespace WebCore {
 
 class HTMLEmbedElement : public HTMLPlugInImageElement {
 public:
+    static PassRefPtr<HTMLEmbedElement> create(const QualifiedName&, Document*);
+
+    void setNeedWidgetUpdate(bool needWidgetUpdate) { m_needWidgetUpdate = needWidgetUpdate; }
+
+private:
     HTMLEmbedElement(const QualifiedName&, Document*);
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
@@ -49,13 +54,11 @@ public:
     virtual const QualifiedName& imageSourceAttributeName() const;
 
     virtual void updateWidget();
-    void setNeedWidgetUpdate(bool needWidgetUpdate) { m_needWidgetUpdate = needWidgetUpdate; }
 
     virtual RenderWidget* renderWidgetForJSBindings() const;
 
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 
-private:
     bool m_needWidgetUpdate;
 };
 

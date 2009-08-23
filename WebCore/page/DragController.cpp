@@ -107,7 +107,7 @@ static PassRefPtr<DocumentFragment> documentFragmentFromDragData(DragData* dragD
             String title;
             String url = dragData->asURL(&title);
             if (!url.isEmpty()) {
-                RefPtr<HTMLAnchorElement> anchor = new HTMLAnchorElement(document);
+                RefPtr<HTMLAnchorElement> anchor = HTMLAnchorElement::create(document);
                 anchor->setHref(url);
                 ExceptionCode ec;
                 RefPtr<Node> anchorText = document->createTextNode(title);

@@ -56,13 +56,9 @@ using namespace HTMLNames;
 using std::min;
 using std::max;
 
-HTMLElement::HTMLElement(const QualifiedName& tagName, Document *doc)
-    : StyledElement(tagName, doc)
+PassRefPtr<HTMLElement> HTMLElement::create(const QualifiedName& tagName, Document* document)
 {
-}
-
-HTMLElement::~HTMLElement()
-{
+    return adoptRef(new HTMLElement(tagName, document, CreateElement));
 }
 
 String HTMLElement::nodeName() const

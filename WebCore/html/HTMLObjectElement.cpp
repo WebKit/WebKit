@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Stefan Schimanski (1Stein@gmx.de)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  *
  * This library is free software; you can redistribute it and/or
@@ -45,13 +45,18 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLObjectElement::HTMLObjectElement(const QualifiedName& tagName, Document* doc, bool createdByParser) 
-    : HTMLPlugInImageElement(tagName, doc)
+inline HTMLObjectElement::HTMLObjectElement(const QualifiedName& tagName, Document* document, bool createdByParser) 
+    : HTMLPlugInImageElement(tagName, document)
     , m_docNamedItem(true)
     , m_needWidgetUpdate(!createdByParser)
     , m_useFallbackContent(false)
 {
     ASSERT(hasTagName(objectTag));
+}
+
+PassRefPtr<HTMLObjectElement> HTMLObjectElement::create(const QualifiedName& tagName, Document* document, bool createdByParser)
+{
+    return adoptRef(new HTMLObjectElement(tagName, document, createdByParser));
 }
 
 RenderWidget* HTMLObjectElement::renderWidgetForJSBindings() const
@@ -328,18 +333,16 @@ bool HTMLObjectElement::containsJavaApplet() const
     if (MIMETypeRegistry::isJavaAppletMIMEType(getAttribute(typeAttr)))
         return true;
         
-    Node* child = firstChild();
-    while (child) {
-        if (child->isElementNode()) {
-            Element* e = static_cast<Element*>(child);
-            if (e->hasTagName(paramTag) && equalIgnoringCase(e->getAttribute(nameAttr), "type") && MIMETypeRegistry::isJavaAppletMIMEType(e->getAttribute(valueAttr).string()))
-                return true;
-            else if (e->hasTagName(objectTag) && static_cast<HTMLObjectElement*>(e)->containsJavaApplet())
-                return true;
-            else if (e->hasTagName(appletTag))
-                return true;
-        }
-        child = child->nextSibling();
+    for (Element* child = firstElementChild(); child; child = child->nextElementSibling()) {
+        if (child->hasTagName(paramTag)
+                && equalIgnoringCase(child->getAttribute(nameAttr), "type")
+                && MIMETypeRegistry::isJavaAppletMIMEType(child->getAttribute(valueAttr).string()))
+            return true;
+        if (child->hasTagName(objectTag)
+                && static_cast<HTMLObjectElement*>(child)->containsJavaApplet())
+            return true;
+        if (child->hasTagName(appletTag))
+            return true;
     }
     
     return false;

@@ -282,7 +282,7 @@ sub printConstructorInterior
     if ($tags{$tagName}{wrapperOnlyIfMediaIsAvailable}) {
         print F <<END
     if (!MediaPlayer::isAvailable())
-        return new HTMLElement($constructorTagName, document);
+        return HTMLElement::create($constructorTagName, document);
 END
 ;
     }
@@ -756,7 +756,7 @@ if ($parameters{namespace} eq "HTML") {
     print F "        return function(qName, document, createdByParser);\n";
 }
 
-print F "    return new $parameters{namespace}Element(qName, document);\n";
+print F "    return $parameters{namespace}Element::create(qName, document);\n";
 
 if ($parameters{guardFactoryWith}) {
 

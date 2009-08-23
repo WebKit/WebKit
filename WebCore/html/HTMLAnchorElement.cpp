@@ -40,18 +40,20 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLAnchorElement::HTMLAnchorElement(Document* document)
-    : HTMLElement(aTag, document)
-    , m_rootEditableElementForSelectionOnMouseDown(0)
+HTMLAnchorElement::HTMLAnchorElement(const QualifiedName& tagName, Document* document)
+    : HTMLElement(tagName, document, CreateElement)
     , m_wasShiftKeyDownOnMouseDown(false)
 {
 }
 
-HTMLAnchorElement::HTMLAnchorElement(const QualifiedName& tagName, Document* document)
-    : HTMLElement(tagName, document)
-    , m_rootEditableElementForSelectionOnMouseDown(0)
-    , m_wasShiftKeyDownOnMouseDown(false)
+PassRefPtr<HTMLAnchorElement> HTMLAnchorElement::create(Document* document)
 {
+    return adoptRef(new HTMLAnchorElement(aTag, document));
+}
+
+PassRefPtr<HTMLAnchorElement> HTMLAnchorElement::create(const QualifiedName& tagName, Document* document)
+{
+    return adoptRef(new HTMLAnchorElement(tagName, document));
 }
 
 bool HTMLAnchorElement::supportsFocus() const

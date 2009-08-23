@@ -34,8 +34,7 @@ class Path;
 
 class HTMLAreaElement : public HTMLAnchorElement {
 public:
-    HTMLAreaElement(const QualifiedName&, Document*);
-    virtual ~HTMLAreaElement();
+    static PassRefPtr<HTMLAreaElement> create(const QualifiedName&, Document*);
 
     bool isDefault() const { return m_shape == Default; }
 
@@ -49,6 +48,8 @@ public:
     void setNoHref(bool);
 
 private:
+    HTMLAreaElement(const QualifiedName&, Document*);
+
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
     virtual int tagPriority() const { return 0; }
     virtual void parseMappedAttribute(MappedAttribute*);

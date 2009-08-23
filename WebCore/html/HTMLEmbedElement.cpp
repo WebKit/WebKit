@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Stefan Schimanski (1Stein@gmx.de)
- * Copyright (C) 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  *
  * This library is free software; you can redistribute it and/or
@@ -42,11 +42,16 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLEmbedElement::HTMLEmbedElement(const QualifiedName& tagName, Document* doc)
-    : HTMLPlugInImageElement(tagName, doc)
+inline HTMLEmbedElement::HTMLEmbedElement(const QualifiedName& tagName, Document* document)
+    : HTMLPlugInImageElement(tagName, document)
     , m_needWidgetUpdate(false)
 {
     ASSERT(hasTagName(embedTag));
+}
+
+PassRefPtr<HTMLEmbedElement> HTMLEmbedElement::create(const QualifiedName& tagName, Document* document)
+{
+    return adoptRef(new HTMLEmbedElement(tagName, document));
 }
 
 static inline RenderWidget* findWidgetRenderer(const Node* n) 

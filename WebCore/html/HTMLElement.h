@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -35,19 +35,12 @@ enum HTMLTagStatus { TagStatusOptional, TagStatusRequired, TagStatusForbidden };
                        
 class HTMLElement : public StyledElement {
 public:
-    HTMLElement(const QualifiedName& tagName, Document*);
-    virtual ~HTMLElement();
-
-    virtual bool isHTMLElement() const { return true; }
-
-    virtual String nodeName() const;
-
-    virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
-    virtual void parseMappedAttribute(MappedAttribute*);
+    static PassRefPtr<HTMLElement> create(const QualifiedName& tagName, Document*);
 
     PassRefPtr<HTMLCollection> children();
     
     virtual String title() const;
+
     virtual short tabIndex() const;
     void setTabIndex(int);
 
@@ -63,12 +56,11 @@ public:
     void insertAdjacentHTML(const String& where, const String& html, ExceptionCode&);
     void insertAdjacentText(const String& where, const String& text, ExceptionCode&);
 
-    virtual bool isFocusable() const;
     virtual bool isContentEditable() const;
     virtual bool isContentRichlyEditable() const;
-    virtual String contentEditable() const;
-    virtual void setContentEditable(MappedAttribute*);
-    virtual void setContentEditable(const String&);
+
+    String contentEditable() const;
+    void setContentEditable(const String&);
 
     virtual bool draggable() const;
     void setDraggable(bool);
@@ -79,30 +71,52 @@ public:
 
     virtual HTMLTagStatus endTagRequirement() const;
     virtual int tagPriority() const;
-    virtual bool childAllowed(Node* newChild); // Error-checking during parsing that checks the DTD
-
-    // Helper function to check the DTD for a given child node.
-    virtual bool checkDTD(const Node*);
-    static bool inEitherTagList(const Node*);
-    static bool inInlineTagList(const Node*);
-    static bool inBlockTagList(const Node*);
-    static bool isRecognizedTagName(const QualifiedName&);
 
     virtual bool rendererIsNeeded(RenderStyle*);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
     HTMLFormElement* form() const { return virtualForm(); }
-    HTMLFormElement* findFormAncestor() const;
 
     static void addHTMLAlignmentToStyledElement(StyledElement*, MappedAttribute*);
 
 protected:
+    HTMLElement(const QualifiedName& tagName, Document*, ConstructionType = CreateElementZeroRefCount);
+
     void addHTMLAlignment(MappedAttribute*);
 
+    virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
+    virtual void parseMappedAttribute(MappedAttribute*);
+
+    virtual bool isFocusable() const;
+
+    virtual bool childAllowed(Node* newChild); // Error-checking during parsing that checks the DTD
+
+    // Helper function to check the DTD for a given child node.
+    virtual bool checkDTD(const Node*);
+
+    static bool inEitherTagList(const Node*);
+    static bool inInlineTagList(const Node*);
+    static bool inBlockTagList(const Node*);
+    static bool isRecognizedTagName(const QualifiedName&);
+
+    HTMLFormElement* findFormAncestor() const;
+
 private:
+    virtual bool isHTMLElement() const { return true; }
+
+    virtual String nodeName() const;
+
+    void setContentEditable(MappedAttribute*);
+
     virtual HTMLFormElement* virtualForm() const;
+
     Node* insertAdjacent(const String& where, Node* newChild, ExceptionCode&);
 };
+
+inline HTMLElement::HTMLElement(const QualifiedName& tagName, Document* document, ConstructionType type)
+    : StyledElement(tagName, document, type)
+{
+}
 
 } // namespace WebCore
 
