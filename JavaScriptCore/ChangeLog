@@ -1,3 +1,14 @@
+2009-08-22  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        REGRESSION(r47639-r47660): Webkit crashes on launch on PowerPC
+        https://bugs.webkit.org/show_bug.cgi?id=28655
+
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::JSFunction): Initialize properly with a VPtrHackExecutable.
+        * wtf/Platform.h:
+
 2009-08-22  Darin Adler  <darin@apple.com>
 
         Fix storage leak from syntax tree arena allocation patch.
