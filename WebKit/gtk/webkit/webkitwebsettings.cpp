@@ -24,6 +24,7 @@
 #include "config.h"
 #include "webkitwebsettings.h"
 
+#include "webkitenumtypes.h"
 #include "webkitprivate.h"
 #include "webkitversion.h"
 
@@ -93,6 +94,7 @@ struct _WebKitWebSettingsPrivate {
     gchar* user_agent;
     gboolean javascript_can_open_windows_automatically;
     gboolean enable_offline_web_application_cache;
+    WebKitEditingBehavior editing_behavior;
 };
 
 #define WEBKIT_WEB_SETTINGS_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_WEB_SETTINGS, WebKitWebSettingsPrivate))
@@ -130,7 +132,8 @@ enum {
     PROP_ENABLE_XSS_AUDITOR,
     PROP_USER_AGENT,
     PROP_JAVASCRIPT_CAN_OPEN_WINDOWS_AUTOMATICALLY,
-    PROP_ENABLE_OFFLINE_WEB_APPLICATION_CACHE
+    PROP_ENABLE_OFFLINE_WEB_APPLICATION_CACHE,
+    PROP_EDITING_BEHAVIOR
 };
 
 // Create a default user agent string
@@ -597,7 +600,34 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                                          TRUE,
                                                          flags));
 
+    COMPILE_ASSERT(static_cast<int>(WEBKIT_EDITING_BEHAVIOR_MAC) == static_cast<int>(WebCore::EditingMacBehavior), editing_behavior_type_mac_match);
+    COMPILE_ASSERT(static_cast<int>(WEBKIT_EDITING_BEHAVIOR_WINDOWS) == static_cast<int>(WebCore::EditingWindowsBehavior), editing_behavior_type_windows_match);
 
+    /**
+    * WebKitWebSettings:editing-behavior
+    *
+    * This setting controls various editing behaviors that differ
+    * between platforms and that have been combined in two groups,
+    * 'Mac' and 'Windows'. Some examples:
+    * 
+    *  1) Clicking below the last line of an editable area puts the
+    * caret at the end of the last line on Mac, but in the middle of
+    * the last line on Windows.
+    *
+    *  2) Pushing down the arrow key on the last line puts the caret
+    *  at the end of the last line on Mac, but does nothing on
+    *  Windows. A similar case exists on the top line.
+    *
+    * Since 1.1.13
+    */
+    g_object_class_install_property(gobject_class,
+                                    PROP_EDITING_BEHAVIOR,
+                                    g_param_spec_enum("editing-behavior",
+                                                      _("Editing behavior"),
+                                                      _("The behavior mode to use in editing mode"),
+                                                      WEBKIT_TYPE_EDITING_BEHAVIOR,
+                                                      WEBKIT_EDITING_BEHAVIOR_MAC,
+                                                      flags));
 
     g_type_class_add_private(klass, sizeof(WebKitWebSettingsPrivate));
 }
@@ -779,6 +809,9 @@ static void webkit_web_settings_set_property(GObject* object, guint prop_id, con
     case PROP_ENABLE_OFFLINE_WEB_APPLICATION_CACHE:
         priv->enable_offline_web_application_cache = g_value_get_boolean(value);
         break;
+    case PROP_EDITING_BEHAVIOR:
+        priv->editing_behavior = static_cast<WebKitEditingBehavior>(g_value_get_enum(value));
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -884,6 +917,9 @@ static void webkit_web_settings_get_property(GObject* object, guint prop_id, GVa
    case PROP_ENABLE_OFFLINE_WEB_APPLICATION_CACHE:
         g_value_set_boolean(value, priv->enable_offline_web_application_cache);
         break;
+    case PROP_EDITING_BEHAVIOR:
+        g_value_set_enum(value, priv->editing_behavior);
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -946,6 +982,7 @@ WebKitWebSettings* webkit_web_settings_copy(WebKitWebSettings* web_settings)
                  "user-agent", webkit_web_settings_get_user_agent(web_settings),
                  "javascript-can-open-windows-automatically", priv->javascript_can_open_windows_automatically,
                  "enable-offline-web-application-cache", priv->enable_offline_web_application_cache,
+                 "editing-behavior", priv->editing_behavior,
                  NULL));
 
     return copy;

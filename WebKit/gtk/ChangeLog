@@ -1,3 +1,25 @@
+2009-08-22  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Jan Alonzo.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28154
+        clicking below end of text in a textarea moves cursor to wrong position
+
+        Expose the EditingBehavior setting and set it by default to Mac,
+        since that what matches the GTK+ default behavior.
+
+        * webkit/webkitprivate.cpp:
+        (WebKit::core):
+        * webkit/webkitprivate.h:
+        * webkit/webkitwebsettings.cpp:
+        (webkit_web_settings_class_init):
+        (webkit_web_settings_set_property):
+        (webkit_web_settings_get_property):
+        (webkit_web_settings_copy):
+        * webkit/webkitwebsettings.h:
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_update_settings):
+
 2009-08-20  Aaron Boodman  <aa@chromium.org>
 
         Hopefully the last speculative build for gtk.

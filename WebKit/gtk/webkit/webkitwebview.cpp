@@ -2242,6 +2242,8 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
         enablePrivateBrowsing, enableCaretBrowsing, enableHTML5Database, enableHTML5LocalStorage,
         enableXSSAuditor, javascriptCanOpenWindows, enableOfflineWebAppCache;
 
+    WebKitEditingBehavior editingBehavior;
+
     g_object_get(webSettings,
                  "default-encoding", &defaultEncoding,
                  "cursive-font-family", &cursiveFontFamily,
@@ -2265,6 +2267,7 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
                  "enable-xss-auditor", &enableXSSAuditor,
                  "javascript-can-open-windows-automatically", &javascriptCanOpenWindows,
                  "enable-offline-web-application-cache", &enableOfflineWebAppCache,
+                 "editing-behavior", &editingBehavior,
                  NULL);
 
     settings->setDefaultTextEncodingName(defaultEncoding);
@@ -2289,6 +2292,7 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
     settings->setXSSAuditorEnabled(enableXSSAuditor);
     settings->setJavaScriptCanOpenWindowsAutomatically(javascriptCanOpenWindows);
     settings->setOfflineWebApplicationCacheEnabled(enableOfflineWebAppCache);
+    settings->setEditingBehavior(core(editingBehavior));
 
     g_free(defaultEncoding);
     g_free(cursiveFontFamily);

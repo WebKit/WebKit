@@ -98,7 +98,7 @@ WebKitWebNavigationReason kit(WebCore::NavigationType type)
 
 WebCore::NavigationType core(WebKitWebNavigationReason type)
 {
-    return (WebCore::NavigationType)type;
+    return static_cast<WebCore::NavigationType>(type);
 }
 
 WebCore::ResourceRequest core(WebKitNetworkRequest* request)
@@ -109,6 +109,11 @@ WebCore::ResourceRequest core(WebKitNetworkRequest* request)
 
     KURL url = KURL(KURL(), String::fromUTF8(webkit_network_request_get_uri(request)));
     return ResourceRequest(url);
+}
+
+WebCore::EditingBehavior core(WebKitEditingBehavior type)
+{
+    return (WebCore::EditingBehavior)type;
 }
 
 } /** end namespace WebKit */
