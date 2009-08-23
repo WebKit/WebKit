@@ -1,3 +1,12 @@
+2009-08-23  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Update editing-behavior property here too.
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_settings_notify):
+
 2009-08-23  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Rubberstamped by Gustavo Noronha.
