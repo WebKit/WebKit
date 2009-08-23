@@ -439,7 +439,7 @@ InjectedScript.getProperties = function(objectProxy, ignoreHasOwnProperty)
         var isGetter = object["__lookupGetter__"] && object.__lookupGetter__(propertyName);
         if (!property.isGetter) {
             var childObject = object[propertyName];
-            var childObjectProxy = new InjectedScript.createProxyObject(childObject, objectProxy.objectId);
+            var childObjectProxy = new InjectedScript.createProxyObject(childObject, objectProxy.objectId, true);
             childObjectProxy.path = objectProxy.path ? objectProxy.path.slice() : [];
             childObjectProxy.path.push(propertyName);
             childObjectProxy.protoDepth = objectProxy.protoDepth || 0;
@@ -866,7 +866,7 @@ InjectedScript.pushNodeToFrontend = function(objectProxy)
 }
 
 // Called from within InspectorController on the 'inspected page' side.
-InjectedScript.createProxyObject = function(object, objectId)
+InjectedScript.createProxyObject = function(object, objectId, abbreviate)
 {
     var result = {};
     result.objectId = objectId;
@@ -880,7 +880,7 @@ InjectedScript.createProxyObject = function(object, objectId)
         }
     }
     try {
-        result.description = Object.describe(object, true, InjectedScript._window());
+        result.description = Object.describe(object, abbreviate, InjectedScript._window());
     } catch (e) {
         result.exception = e.toString();
     }
