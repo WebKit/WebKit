@@ -388,7 +388,6 @@ static void resetDefaultsToConsistentValues()
 
     WebPreferences *preferences = [WebPreferences standardPreferences];
 
-    [preferences setAllowUniversalAccessFromFileURLs:YES];
     [preferences setStandardFontFamily:@"Times"];
     [preferences setFixedFontFamily:@"Courier"];
     [preferences setSerifFontFamily:@"Times"];
