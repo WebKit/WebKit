@@ -1,3 +1,15 @@
+2009-08-23  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Xan Lopez.
+
+        [Gtk] API for disabling local file access to web URLs
+        https://bugs.webkit.org/show_bug.cgi?id=28663
+
+        Enable this setting for DRT.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (resetWebViewToConsistentStateBeforeTesting):
+
 2009-08-22  Adam Barth  <abarth@webkit.org>
 
         Revert 47684.  We're going to do this later once clients have had a

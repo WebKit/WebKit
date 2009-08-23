@@ -275,6 +275,7 @@ static void resetWebViewToConsistentStateBeforeTesting()
                  "enable-xss-auditor", FALSE,
                  "javascript-can-open-windows-automatically", TRUE,
                  "enable-offline-web-application-cache", TRUE,
+                 "enable-universal-access-from-file-uris", TRUE,
                  NULL);
 
     webkit_web_frame_clear_main_frame_name(mainFrame);
