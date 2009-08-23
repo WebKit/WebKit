@@ -95,6 +95,7 @@ struct _WebKitWebSettingsPrivate {
     gboolean javascript_can_open_windows_automatically;
     gboolean enable_offline_web_application_cache;
     WebKitEditingBehavior editing_behavior;
+    gboolean enable_universal_access_from_file_uris;
 };
 
 #define WEBKIT_WEB_SETTINGS_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_WEB_SETTINGS, WebKitWebSettingsPrivate))
@@ -133,7 +134,8 @@ enum {
     PROP_USER_AGENT,
     PROP_JAVASCRIPT_CAN_OPEN_WINDOWS_AUTOMATICALLY,
     PROP_ENABLE_OFFLINE_WEB_APPLICATION_CACHE,
-    PROP_EDITING_BEHAVIOR
+    PROP_EDITING_BEHAVIOR,
+    PROP_ENABLE_UNIVERSAL_ACCESS_FROM_FILE_URIS
 };
 
 // Create a default user agent string
@@ -629,6 +631,22 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                                       WEBKIT_EDITING_BEHAVIOR_MAC,
                                                       flags));
 
+    /**
+     * WebKitWebSettings:enable-universal-access-from-file-uri
+     *
+     * Whether to allow files loaded through file:// URIs universal access to
+     * all pages.
+     *
+     * Since 1.1.13
+     */
+    g_object_class_install_property(gobject_class,
+                                    PROP_ENABLE_UNIVERSAL_ACCESS_FROM_FILE_URIS,
+                                    g_param_spec_boolean("enable-universal-access-from-file-uris",
+                                                         _("Enable universal access from file URI"),
+                                                         _("Whether to allow universal access from file URIs"),
+                                                         FALSE,
+                                                         flags));
+
     g_type_class_add_private(klass, sizeof(WebKitWebSettingsPrivate));
 }
 
@@ -812,6 +830,9 @@ static void webkit_web_settings_set_property(GObject* object, guint prop_id, con
     case PROP_EDITING_BEHAVIOR:
         priv->editing_behavior = static_cast<WebKitEditingBehavior>(g_value_get_enum(value));
         break;
+    case PROP_ENABLE_UNIVERSAL_ACCESS_FROM_FILE_URIS:
+        priv->enable_universal_access_from_file_uris = g_value_get_boolean(value);
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -920,7 +941,10 @@ static void webkit_web_settings_get_property(GObject* object, guint prop_id, GVa
     case PROP_EDITING_BEHAVIOR:
         g_value_set_enum(value, priv->editing_behavior);
         break;
-    default:
+   case PROP_ENABLE_UNIVERSAL_ACCESS_FROM_FILE_URIS:
+        g_value_set_boolean(value, priv->enable_universal_access_from_file_uris);
+        break;
+   default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
     }
@@ -983,6 +1007,7 @@ WebKitWebSettings* webkit_web_settings_copy(WebKitWebSettings* web_settings)
                  "javascript-can-open-windows-automatically", priv->javascript_can_open_windows_automatically,
                  "enable-offline-web-application-cache", priv->enable_offline_web_application_cache,
                  "editing-behavior", priv->editing_behavior,
+                 "enable-universal-access-from-file-uris", priv->enable_universal_access_from_file_uris,
                  NULL));
 
     return copy;

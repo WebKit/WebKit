@@ -2240,7 +2240,8 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
     gboolean autoLoadImages, autoShrinkImages, printBackgrounds,
         enableScripts, enablePlugins, enableDeveloperExtras, resizableTextAreas,
         enablePrivateBrowsing, enableCaretBrowsing, enableHTML5Database, enableHTML5LocalStorage,
-        enableXSSAuditor, javascriptCanOpenWindows, enableOfflineWebAppCache;
+        enableXSSAuditor, javascriptCanOpenWindows, enableOfflineWebAppCache,
+        enableUniversalAccessFromFileURI;
 
     WebKitEditingBehavior editingBehavior;
 
@@ -2268,6 +2269,7 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
                  "javascript-can-open-windows-automatically", &javascriptCanOpenWindows,
                  "enable-offline-web-application-cache", &enableOfflineWebAppCache,
                  "editing-behavior", &editingBehavior,
+                 "enable-universal-access-from-file-uris", &enableUniversalAccessFromFileURI,
                  NULL);
 
     settings->setDefaultTextEncodingName(defaultEncoding);
@@ -2293,6 +2295,7 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
     settings->setJavaScriptCanOpenWindowsAutomatically(javascriptCanOpenWindows);
     settings->setOfflineWebApplicationCacheEnabled(enableOfflineWebAppCache);
     settings->setEditingBehavior(core(editingBehavior));
+    settings->setAllowUniversalAccessFromFileURLs(enableUniversalAccessFromFileURI);
 
     g_free(defaultEncoding);
     g_free(cursiveFontFamily);
