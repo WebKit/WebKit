@@ -67,6 +67,9 @@ CachedFrame::CachedFrame(Frame* frame)
     m_document->suspendActiveDOMObjects();
     m_cachedFrameScriptData.set(new ScriptCachedFrameData(frame));
     
+    // Custom scrollbar renderers will get reattached when the document comes out of the page cache
+    m_view->detachCustomScrollbars();
+
     m_document->documentWillBecomeInactive(); 
     frame->clearTimers();
     m_document->setInPageCache(true);

@@ -141,6 +141,11 @@ FrameView::~FrameView()
     }
 
     resetScrollbars();
+
+    // Custom scrollbars should already be destroyed at this point
+    ASSERT(!horizontalScrollbar() || !horizontalScrollbar()->isCustomScrollbar());
+    ASSERT(!verticalScrollbar() || !verticalScrollbar()->isCustomScrollbar());
+
     setHasHorizontalScrollbar(false); // Remove native scrollbars now before we lose the connection to the HostWindow.
     setHasVerticalScrollbar(false);
     

@@ -1,3 +1,18 @@
+2009-08-22  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Fix for <rdar://problem/7161656> Crash in RenderObject::destroy when using custom scrollbars
+
+        Custom scrollbars normally get detached when a document gets detached.  In this case, a crash was happening when the document had gone into the page cache 
+        and then was getting destroyed without proper scrollbar teardown.  This change makes custom scrollbars get detached when the document enters the cache.
+
+        I couldn't figure out a way to reliably cause this to happen in DRT, since the reproducible case relies on the cache being purged at a particular time.
+
+        * history/CachedFrame.cpp: (WebCore::CachedFrame::CachedFrame): Detach custom scrollbars when the CachedFrame is created.  
+          They'll get reattached when the document comes out of the page cache.
+        * page/FrameView.cpp: (WebCore::FrameView::~FrameView): Added some asserts to catch this problem earlier in debug builds.
+
 2009-08-22  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.
