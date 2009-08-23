@@ -498,6 +498,8 @@ InjectedScript.evaluate = function(expression)
     var result = {};
     try {
         var value = InjectedScript._window().eval(expression);
+        if (value === null)
+            return { value: null };
         var wrapper = InspectorController.wrapObject(value);
         if (typeof wrapper === "object" && wrapper.exception)
             result.exception = wrapper.exception;

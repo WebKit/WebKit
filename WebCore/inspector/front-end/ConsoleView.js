@@ -384,7 +384,7 @@ WebInspector.ConsoleView.prototype = {
 
     _format: function(output, forceObjectFormat)
     {
-        var isProxy = typeof output === "object";
+        var isProxy = (output != null && typeof output === "object");
 
         if (forceObjectFormat)
             var type = "object";
