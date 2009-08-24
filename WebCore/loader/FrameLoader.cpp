@@ -87,7 +87,11 @@
 #include "SecurityOrigin.h"
 #include "SegmentedString.h"
 #include "Settings.h"
+
+#if ENABLE(SHARED_WORKERS)
 #include "SharedWorkerRepository.h"
+#endif
+
 #include "TextResourceDecoder.h"
 #include "WindowFeatures.h"
 #include "XMLHttpRequest.h"

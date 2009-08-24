@@ -46,7 +46,11 @@
 #include "JSMessageChannelConstructor.h"
 #include "JSMessagePort.h"
 #include "JSOptionConstructor.h"
+
+#if ENABLE(SHARED_WORKERS)
 #include "JSSharedWorkerConstructor.h"
+#endif
+
 #include "JSWebKitCSSMatrixConstructor.h"
 #include "JSWebKitPointConstructor.h"
 #include "JSWorkerConstructor.h"

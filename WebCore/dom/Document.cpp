@@ -109,7 +109,11 @@
 #include "SegmentedString.h"
 #include "SelectionController.h"
 #include "Settings.h"
+
+#if ENABLE(SHARED_WORKERS)
 #include "SharedWorkerRepository.h"
+#endif
+
 #include "StyleSheetList.h"
 #include "TextEvent.h"
 #include "TextIterator.h"

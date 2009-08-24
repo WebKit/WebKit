@@ -1345,6 +1345,7 @@ webcore_sources += \
 	WebCore/platform/ContextMenu.cpp \
 	WebCore/platform/ContextMenu.h \
 	WebCore/platform/ContextMenuItem.h \
+	WebCore/platform/Cookie.h \
 	WebCore/platform/CookieJar.h \
 	WebCore/platform/CrossThreadCopier.cpp \
 	WebCore/platform/CrossThreadCopier.h \
@@ -1708,6 +1709,7 @@ webcore_sources += \
 	WebCore/rendering/RenderObject.h \
 	WebCore/rendering/RenderObjectChildList.cpp \
 	WebCore/rendering/RenderObjectChildList.h \
+	WebCore/rendering/RenderOverflow.h \
 	WebCore/rendering/RenderPart.cpp \
 	WebCore/rendering/RenderPart.h \
 	WebCore/rendering/RenderPartObject.cpp \

@@ -33,13 +33,21 @@
 #include "JSEventListener.h"
 #include "JSMessagePort.h"
 #include "JSNode.h"
+#if ENABLE(SHARED_WORKERS)
+
 #include "JSSharedWorker.h"
 #include "JSSharedWorkerContext.h"
+#endif
+
 #include "JSXMLHttpRequest.h"
 #include "JSXMLHttpRequestUpload.h"
 #include "MessagePort.h"
+
+#if ENABLE(SHARED_WORKERS)
 #include "SharedWorker.h"
 #include "SharedWorkerContext.h"
+#endif
+
 #include "XMLHttpRequest.h"
 #include "XMLHttpRequestUpload.h"
 
