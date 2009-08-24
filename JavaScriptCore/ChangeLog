@@ -1,3 +1,9 @@
+2009-08-24  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Unreviewed. Fix a typo in my distcheck build fix.
+
+        * GNUmakefile.am:
+
 2009-08-23  Gustavo Noronha Silva  <gns@gnome.org>
 
         Unreviewed build fix for make distcheck.
