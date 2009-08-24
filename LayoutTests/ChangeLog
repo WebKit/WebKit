@@ -1,3 +1,17 @@
+2009-08-24  Eric Seidel  <eric@webkit.org>
+
+        No review, just updating results.
+
+        Support placeholder on textarea
+        https://bugs.webkit.org/show_bug.cgi?id=21248
+
+        Update expected test results form windows bot.
+
+        * platform/win/fast/forms/basic-textareas-expected.txt:
+        * platform/win/fast/forms/textarea-placeholder-pseudo-style-expected.txt: Added.
+        * platform/win/fast/forms/textarea-placeholder-set-attribute-expected.txt: Added.
+        * platform/win/fast/forms/textarea-placeholder-set-value-expected.txt: Added.
+
 2009-08-24  Cameron McCormack  <cam@mcc.id.au>
 
         Reviewed by Darin Adler.

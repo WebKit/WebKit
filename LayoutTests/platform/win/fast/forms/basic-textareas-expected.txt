@@ -6,7 +6,7 @@ layer at (0,0) size 785x1438
       RenderPartObject {IFRAME} at (0,0) size 785x748
         layer at (0,0) size 785x748
           RenderView at (0,0) size 785x748
-        layer at (0,0) size 785x748
+        layer at (0,0) size 785x723
           RenderBlock {HTML} at (0,0) size 785x723
             RenderBody {BODY} at (0,5) size 785x718
               RenderBlock {DIV} at (0,0) size 785x18
