@@ -1,3 +1,14 @@
+2009-08-24  Ada Chan  <adachan@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        Add test for https://bugs.webkit.org/show_bug.cgi?id=28659.
+        Cached page should be formatted according to the current window size, not the cached frame's size.
+
+        * loader: Added.
+        * loader/go-back-to-different-window-size-expected.txt: Added.
+        * loader/go-back-to-different-window-size.html: Added.
+
 2009-08-24  Eric Seidel  <eric@webkit.org>
 
         No review, just updating results.
