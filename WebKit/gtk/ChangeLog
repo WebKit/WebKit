@@ -2,6 +2,15 @@
 
         Reviewed by Gustavo Noronha.
 
+        Fix a couple of typos.
+
+        * webkit/webkitwebsettings.cpp:
+        (webkit_web_settings_class_init):
+
+2009-08-23  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
         Update editing-behavior property here too.
 
         * webkit/webkitwebview.cpp:
