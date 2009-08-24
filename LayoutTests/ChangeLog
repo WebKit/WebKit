@@ -1,5 +1,13 @@
 2009-08-24  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
+        Skip 3 new tests, and reenable some of the media tests, now that
+        the bot it fixed to handle the fact that it doesn't have a sound
+        card.
+
+        * platform/gtk/Skipped:
+
+2009-08-24  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
         Unreviewed. Skip again tests that we enabled, since they are
         failing on the bot. The tests do pass, but there is an environment
         configuration problem with GStreamer on the bot (possibly related

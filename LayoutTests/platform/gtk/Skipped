@@ -1779,6 +1779,9 @@ fast/forms/text-control-intrinsic-widths.html
 fast/forms/textarea-arrow-navigation.html
 fast/forms/textarea-input-event.html
 fast/forms/textarea-paste-newline.html
+fast/forms/textarea-placeholder-pseudo-style.html
+fast/forms/textarea-placeholder-set-attribute.html
+fast/forms/textarea-placeholder-set-value.html
 fast/forms/textarea-scrollbar-height.html
 fast/forms/textarea-scrolled-endline-caret.html
 fast/forms/textarea-selection-preservation.html
@@ -5949,43 +5952,7 @@ fast/harness/override-zzz-reset.html
 fast/harness/use-page-cache.html
 loader/go-back-to-different-window-size.html
 
-# Tests that pass, but are not passing on the bot because of some
-# GStreamer problem (apparently audio sink not working).
-http/tests/media/remove-while-loading.html
-media/audio-mpeg-supported.html
-media/media-load-event.html
-media/media-startTime.html
-media/progress-event-total.html
-media/progress-event.html
-media/remove-from-document.html
-media/video-append-source.html
-media/video-autoplay.html
-media/video-buffered.html
-media/video-controls.html
-media/video-currentTime-set.html
+# Media tests that keep failing on the bot
 media/video-currentTime-set2.html
-media/video-currentTime.html
-media/video-dom-autoplay.html
-media/video-dom-src.html
-media/video-error-abort.html
-media/video-load-networkState.html
-media/video-load-readyState.html
-media/video-loop.html
-media/video-muted.html
-media/video-no-autoplay.html
-media/video-pause-empty-events.html
-media/video-play-empty-events.html
 media/video-play-pause-events.html
 media/video-play-pause-exception.html
-media/video-played-ranges-1.html
-media/video-seek-past-end-paused.html
-media/video-seek-past-end-playing.html
-media/video-seekable.html
-media/video-seeking.html
-media/video-size.html
-media/video-source-add-src.html
-media/video-src-change.html
-media/video-src-invalid-remove.html
-media/video-src-remove.html
-media/video-timeupdate-during-playback.html
-media/video-volume.html
