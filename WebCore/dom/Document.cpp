@@ -101,7 +101,6 @@
 #include "RenderTextControl.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
-#include "SVGNames.h"
 #include "ScriptController.h"
 #include "ScriptElement.h"
 #include "ScriptEventListener.h"
@@ -160,6 +159,7 @@
 #if ENABLE(SVG)
 #include "SVGDocumentExtensions.h"
 #include "SVGElementFactory.h"
+#include "SVGNames.h"
 #include "SVGZoomEvent.h"
 #include "SVGStyleElement.h"
 #endif

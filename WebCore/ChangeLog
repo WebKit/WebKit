@@ -1,3 +1,17 @@
+2009-08-23  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Code clean-up and build fix for filters enabled builds. Moved SVGNames.h
+        into #if ENABLE(SVG) for Document.cpp and added SVGNames.h to the other
+        files. They are needed there after r47688.
+
+        * dom/Document.cpp:
+        * svg/SVGComponentTransferFunctionElement.h:
+        * svg/SVGFELightElement.h:
+        * svg/SVGFEMergeNodeElement.h:
+        * svg/SVGFilterPrimitiveStandardAttributes.h:
+
 2009-08-23  Gustavo Noronha Silva  <gns@gnome.org>
 
         Unreviewed, build fix for make distcheck on GTK+.

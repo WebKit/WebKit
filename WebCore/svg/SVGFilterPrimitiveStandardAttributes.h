@@ -25,6 +25,7 @@
 
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "SVGFilterBuilder.h"
+#include "SVGNames.h"
 #include "SVGResourceFilter.h"
 #include "SVGStyledElement.h"
 

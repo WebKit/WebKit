@@ -25,6 +25,7 @@
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "SVGElement.h"
 #include "SVGLightSource.h"
+#include "SVGNames.h"
 
 namespace WebCore {
 
