@@ -1,3 +1,16 @@
+2009-08-24  Cameron McCormack  <cam@mcc.id.au>
+
+        Reviewed by Darin Adler.
+
+        Modifying <text rotate=""> doesn't clear the corresponding SVGAnimatedNumberList
+        https://bugs.webkit.org/show_bug.cgi?id=28673
+
+        * svg/dom/resources/text-rotate-live.js: Added.
+        (getRotate):
+        (getAndSetRotate):
+        * svg/dom/text-rotate-live-expected.txt: Added.
+        * svg/dom/text-rotate-live.html: Added.
+
 2009-08-24  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.

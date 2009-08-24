@@ -41,6 +41,7 @@ SVGNumberList::~SVGNumberList()
 void SVGNumberList::parse(const String& value)
 {
     ExceptionCode ec = 0;
+    clear(ec);
 
     float number = 0.0f;
    
