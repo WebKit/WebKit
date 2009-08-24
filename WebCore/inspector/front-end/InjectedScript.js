@@ -490,6 +490,11 @@ InjectedScript.setPropertyValue = function(objectProxy, propertyName, expression
 
 InjectedScript.evaluate = function(expression)
 {
+    return InjectedScript._evaluateOn(InjectedScript._window().eval, InjectedScript._window(), expression);
+}
+
+InjectedScript._evaluateOn = function(evalFunction, object, expression)
+{
     InjectedScript._ensureCommandLineAPIInstalled();
     // Surround the expression in with statements to inject our command line API so that
     // the window object properties still take more precedent than our API functions.
@@ -497,16 +502,20 @@ InjectedScript.evaluate = function(expression)
 
     var result = {};
     try {
-        var value = InjectedScript._window().eval(expression);
+        var value = evalFunction.call(object, expression);
         if (value === null)
             return { value: null };
+        var value = evalFunction.call(object, expression);
         var wrapper = InspectorController.wrapObject(value);
-        if (typeof wrapper === "object" && wrapper.exception)
-            result.exception = wrapper.exception;
-        else
+        if (typeof wrapper === "object" && wrapper.exception) {
+            result.value = wrapper.exception;
+            result.isException = true;
+        } else {
             result.value = wrapper;
+        }
     } catch (e) {
-        result.exception = e.toString();
+        result.value = e.toString();
+        result.isException = true;
     }
     return result;
 }
@@ -760,6 +769,42 @@ InjectedScript.searchCanceled = function()
     return true;
 }
 
+InjectedScript.openInInspectedWindow = function(url)
+{
+    InjectedScript._window().open(url);
+}
+
+InjectedScript.getCallFrames = function()
+{
+    var callFrame = InspectorController.currentCallFrame();
+    if (!callFrame)
+        return false;
+
+    var result = [];
+    var depth = 0;
+    do {
+        result.push(new InjectedScript.CallFrameProxy(depth++, callFrame));
+        callFrame = callFrame.caller;
+    } while (callFrame);
+    return result;
+}
+
+InjectedScript.evaluateInCallFrame = function(callFrameId, code)
+{
+    var callFrame = InjectedScript._callFrameForId(callFrameId);
+    if (!callFrame)
+        return false;
+    return InjectedScript._evaluateOn(callFrame.evaluate, callFrame, code);
+}
+
+InjectedScript._callFrameForId = function(id)
+{
+    var callFrame = InspectorController.currentCallFrame();
+    while (--id >= 0 && callFrame)
+        callFrame = callFrame.caller;
+    return callFrame;
+}
+
 InjectedScript._ensureCommandLineAPIInstalled = function(inspectedWindow)
 {
     var inspectedWindow = InjectedScript._window();
@@ -850,12 +895,21 @@ InjectedScript._nodeForId = function(nodeId)
 
 InjectedScript._objectForId = function(objectId)
 {
-    if (typeof objectId === "number")
+    // There are three types of object ids used:
+    // - numbers point to DOM Node via the InspectorDOMAgent mapping
+    // - strings point to console objects cached in InspectorController for lazy evaluation upon them
+    // - objects contain complex ids and are currently used for scoped objects
+    if (typeof objectId === "number") {
         return InjectedScript._nodeForId(objectId);
-    else if (typeof objectId === "string")
+    } else if (typeof objectId === "string") {
         return InspectorController.unwrapObject(objectId);
-
-    // TODO: move scope chain objects to proxy-based schema.
+    } else if (typeof objectId === "object") {
+        var callFrame = InjectedScript._callFrameForId(objectId.callFrame);
+        if (objectId.thisObject)
+            return callFrame.thisObject;
+        else
+            return callFrame.scopeChain[objectId.chainIndex];
+    }
     return objectId;
 }
 
@@ -887,4 +941,48 @@ InjectedScript.createProxyObject = function(object, objectId, abbreviate)
         result.exception = e.toString();
     }
     return result;
+}
+
+InjectedScript.CallFrameProxy = function(id, callFrame)
+{
+    this.id = id;
+    this.type = callFrame.type;
+    this.functionName = callFrame.functionName;
+    this.sourceID = callFrame.sourceID;
+    this.line = callFrame.line;
+    this.scopeChain = this._wrapScopeChain(callFrame);
+}
+
+InjectedScript.CallFrameProxy.prototype = {
+    _wrapScopeChain: function(callFrame)
+    {
+        var foundLocalScope = false;
+        var scopeChain = callFrame.scopeChain;
+        var scopeChainProxy = [];
+        for (var i = 0; i < scopeChain.length; ++i) {
+            var scopeObject = scopeChain[i];
+            var scopeObjectProxy = InjectedScript.createProxyObject(scopeObject, { callFrame: this.id, chainIndex: i });
+            if (Object.prototype.toString.call(scopeObject) === "[object JSActivation]") {
+                if (!foundLocalScope)
+                    scopeObjectProxy.thisObject = InjectedScript.createProxyObject(callFrame.thisObject, { callFrame: this.id, thisObject: true });
+                else
+                    scopeObjectProxy.isClosure = true;
+                foundLocalScope = true;
+                scopeObjectProxy.isLocal = true;
+            } else if (foundLocalScope && scopeObject instanceof InjectedScript._window().Element)
+                scopeObjectProxy.isElement = true;
+            else if (foundLocalScope && scopeObject instanceof InjectedScript._window().Document)
+                scopeObjectProxy.isDocument = true;
+            else if (!foundLocalScope && !localScope)
+                scopeObjectProxy.isWithBlock = true;
+            scopeObjectProxy.properties = [];
+            try {
+                for (var propertyName in scopeObject)
+                    scopeObjectProxy.properties.push(propertyName);
+            } catch (e) {
+            }
+            scopeChainProxy.push(scopeObjectProxy);
+        }
+        return scopeChainProxy;
+    }
 }

@@ -316,7 +316,7 @@ WebInspector.DOMAgent = function() {
 }
 
 WebInspector.DOMAgent.prototype = {
-    get inspectedWindow()
+    get domWindow()
     {
         return this._window;
     },
@@ -768,3 +768,25 @@ InspectorController.searchCanceled = function(callback)
         callback(InjectedScript.searchCanceled());
     }, 0);
 }
+
+InspectorController.openInInspectedWindow = function(url, callback)
+{
+    setTimeout(function() {
+        callback(InjectedScript.openInInspectedWindow(url));
+    }, 0);
+}
+
+InspectorController.getCallFrames = function(callback)
+{
+    setTimeout(function() {
+        callback(InjectedScript.getCallFrames());
+    }, 0);
+}
+
+InspectorController.evaluateInCallFrame = function(callFrameId, code, callback)
+{
+    setTimeout(function() {
+        callback(InjectedScript.evaluateInCallFrame(callFrameId, code));
+    }, 0);
+}
+

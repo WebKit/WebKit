@@ -56,8 +56,8 @@ WebInspector.ObjectPropertiesSection.prototype = {
     _update: function(properties)
     {
         if (this.extraProperties)
-            for (var prop in this.extraProperties)
-                properties.push(new WebInspector.ObjectPropertyProxy(prop, this.extraProperties[prop]));
+            for (var i = 0; i < this.extraProperties.length; ++i)
+                properties.push(this.extraProperties[i]);
         properties.sort(this._displaySort);
 
         this.propertiesTreeOutline.removeChildren();

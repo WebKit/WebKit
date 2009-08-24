@@ -26,6 +26,7 @@
 WebInspector.ScopeChainSidebarPane = function()
 {
     WebInspector.SidebarPane.call(this, WebInspector.UIString("Scope Variables"));
+    this._expandedProperties = [];
 }
 
 WebInspector.ScopeChainSidebarPane.prototype = {
@@ -44,48 +45,37 @@ WebInspector.ScopeChainSidebarPane.prototype = {
             return;
         }
 
-        if (!callFrame._expandedProperties) {
-            // FIXME: fix this when https://bugs.webkit.org/show_bug.cgi?id=19410 is fixed.
-            // The callFrame is a JSInspectedObjectWrapper, so we are not allowed to assign
-            // an object created in the Inspector's context to that object. So create an
-            // Object from the inspectedWindow.
-            var inspectedWindow = InspectorController.inspectedWindow();
-            callFrame._expandedProperties = new inspectedWindow.Object;
-        }
-
         var foundLocalScope = false;
         var scopeChain = callFrame.scopeChain;
         for (var i = 0; i < scopeChain.length; ++i) {
-            var scopeObject = scopeChain[i];
+            var scopeObjectProxy = scopeChain[i];
             var title = null;
-            var subtitle = Object.describe(scopeObject, true);
+            var subtitle = scopeObjectProxy.description;
             var emptyPlaceholder = null;
             var localScope = false;
             var extraProperties = null;
 
-            if (Object.prototype.toString.call(scopeObject) === "[object JSActivation]") {
-                if (!foundLocalScope) {
-                    extraProperties = { "this": callFrame.thisObject };
+            if (scopeObjectProxy.isLocal) {
+                if (scopeObjectProxy.thisObject) {
+                    extraProperties = [ new WebInspector.ObjectPropertyProxy("this", scopeObjectProxy.thisObject) ];
                     title = WebInspector.UIString("Local");
                 } else
                     title = WebInspector.UIString("Closure");
                 emptyPlaceholder = WebInspector.UIString("No Variables");
                 subtitle = null;
-                foundLocalScope = true;
-                localScope = true;
             } else if (i === (scopeChain.length - 1))
                 title = WebInspector.UIString("Global");
-            else if (foundLocalScope && scopeObject instanceof InspectorController.inspectedWindow().Element)
+            else if (scopeObjectProxy.isElement)
                 title = WebInspector.UIString("Event Target");
-            else if (foundLocalScope && scopeObject instanceof InspectorController.inspectedWindow().Document)
+            else if (scopeObjectProxy.isDocument)
                 title = WebInspector.UIString("Event Document");
-            else if (!foundLocalScope && !localScope)
+            else if (scopeObjectProxy.isWithBlock)
                 title = WebInspector.UIString("With Block");
 
             if (!title || title === subtitle)
                 subtitle = null;
 
-            var section = new WebInspector.ObjectPropertiesSection(new WebInspector.ObjectProxy(scopeObject), title, subtitle, emptyPlaceholder, true, extraProperties, WebInspector.ScopeVariableTreeElement);
+            var section = new WebInspector.ObjectPropertiesSection(scopeObjectProxy, title, subtitle, emptyPlaceholder, true, extraProperties, WebInspector.ScopeVariableTreeElement);
             section.editInSelectedCallFrameWhenPaused = true;
             section.pane = this;
 
@@ -109,18 +99,18 @@ WebInspector.ScopeVariableTreeElement.prototype = {
     onattach: function()
     {
         WebInspector.ObjectPropertyTreeElement.prototype.onattach.call(this);
-        if (this.hasChildren && this.propertyIdentifier in this.treeOutline.section.pane.callFrame._expandedProperties)
+        if (this.hasChildren && this.propertyIdentifier in this.treeOutline.section.pane._expandedProperties)
             this.expand();
     },
 
     onexpand: function()
     {
-        this.treeOutline.section.pane.callFrame._expandedProperties[this.propertyIdentifier] = true;
+        this.treeOutline.section.pane._expandedProperties[this.propertyIdentifier] = true;
     },
 
     oncollapse: function()
     {
-        delete this.treeOutline.section.pane.callFrame._expandedProperties[this.propertyIdentifier];
+        delete this.treeOutline.section.pane._expandedProperties[this.propertyIdentifier];
     },
 
     get propertyIdentifier()

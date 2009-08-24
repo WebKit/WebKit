@@ -343,13 +343,9 @@ WebInspector.ConsoleView.prototype = {
             expression = "this";
         }
 
-        var self = this;
         function evalCallback(result)
         {
-            if (result.exception)
-                callback(result.exception, true);
-            else
-                callback(result.value, false);
+            callback(result.value, result.isException);
         };
         InspectorController.evaluate(expression, evalCallback);
     },
@@ -581,7 +577,7 @@ WebInspector.ConsoleMessage.prototype = {
             return WebInspector.console._format(obj, true);
         }
 
-        if (Object.type(parameters[0], InspectorController.inspectedWindow()) === "string") {
+        if (typeof parameters[0] === "string") {
             var formatters = {}
             for (var i in String.standardFormatters)
                 formatters[i] = String.standardFormatters[i];
@@ -834,6 +830,14 @@ WebInspector.ConsoleCommand.prototype = {
         return element;
     }
 }
+
+WebInspector.ConsoleTextMessage = function(text, level)
+{
+    level = level || WebInspector.ConsoleMessage.MessageLevel.Log;
+    WebInspector.ConsoleMessage.call(this, WebInspector.ConsoleMessage.MessageSource.JS, WebInspector.ConsoleMessage.MessageType.Log, level, 0, null, null, 1, text);
+}
+
+WebInspector.ConsoleTextMessage.prototype.__proto__ = WebInspector.ConsoleMessage.prototype;
 
 WebInspector.ConsoleCommandResult = function(result, exception, originatingCommand)
 {

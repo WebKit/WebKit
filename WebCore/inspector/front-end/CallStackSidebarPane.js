@@ -39,14 +39,14 @@ WebInspector.CallStackSidebarPane = function()
 }
 
 WebInspector.CallStackSidebarPane.prototype = {
-    update: function(callFrame, sourceIDMap)
+    update: function(callFrames, sourceIDMap)
     {
         this.bodyElement.removeChildren();
 
         this.placards = [];
         delete this._selectedCallFrame;
 
-        if (!callFrame) {
+        if (!callFrames) {
             var infoElement = document.createElement("div");
             infoElement.className = "info";
             infoElement.textContent = WebInspector.UIString("Not Paused");
@@ -58,7 +58,8 @@ WebInspector.CallStackSidebarPane.prototype = {
         var subtitle;
         var scriptOrResource;
 
-        do {
+        for (var i = 0; i < callFrames.length; ++i) {
+            var callFrame = callFrames[i];
             switch (callFrame.type) {
             case "function":
                 title = callFrame.functionName || WebInspector.UIString("(anonymous function)");
@@ -85,9 +86,7 @@ WebInspector.CallStackSidebarPane.prototype = {
 
             this.placards.push(placard);
             this.bodyElement.appendChild(placard.element);
-
-            callFrame = callFrame.caller;
-        } while (callFrame);
+        }
     },
 
     get selectedCallFrame()

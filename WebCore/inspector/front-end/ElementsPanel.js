@@ -175,8 +175,8 @@ WebInspector.ElementsPanel.prototype = {
         delete this.currentQuery;
         this.searchCanceled();
 
-        var inspectedWindow = WebInspector.domAgent.inspectedWindow;
-        if (!inspectedWindow || !inspectedWindow.document || !inspectedWindow.document.firstChild)
+        var domWindow = WebInspector.domAgent.domWindow;
+        if (!domWindow || !domWindow.document || !domWindow.document.firstChild)
             return;
 
         // If the window isn't visible, return early so the DOM tree isn't built
@@ -184,7 +184,7 @@ WebInspector.ElementsPanel.prototype = {
         if (!InspectorController.isWindowVisible())
             return;
 
-        var inspectedRootDocument = inspectedWindow.document;
+        var inspectedRootDocument = domWindow.document;
         inspectedRootDocument.addEventListener("DOMNodeInserted", this._nodeInserted.bind(this));
         inspectedRootDocument.addEventListener("DOMNodeRemoved", this._nodeRemoved.bind(this));
 
@@ -408,8 +408,7 @@ WebInspector.ElementsPanel.prototype = {
         }
 
         WebInspector.showConsole();
-        var result = builder.join("\n");
-        InspectorController.inspectedWindow().console.log(result);
+        WebInspector.console.addMessage(new WebInspector.ConsoleTextMessage(builder.join("\n")));
     },
 
     get rootDOMNode()

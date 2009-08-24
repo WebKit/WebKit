@@ -1,3 +1,52 @@
+2009-08-24  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        WebInspector: Migrate call frames interaction to the InjectedScript-based schema.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28408
+
+        * inspector/front-end/CallStackSidebarPane.js:
+        (WebInspector.CallStackSidebarPane.prototype.update):
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype.doEvalInWindow):
+        (WebInspector.ConsoleTextMessage):
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMAgent.prototype.get domWindow):
+        (InspectorController.openInInspectedWindow):
+        (InspectorController.getCallFrames):
+        (InspectorController.evaluateInCallFrame):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.reset):
+        (WebInspector.ElementsPanel.prototype.generateStylesheet):
+        * inspector/front-end/InjectedScript.js:
+        (InjectedScript.evaluate):
+        (InjectedScript._evaluateOn):
+        (InjectedScript.openInInspectedWindow):
+        (InjectedScript.getCallFrames):
+        (InjectedScript.evaluateInCallFrame):
+        (InjectedScript._callFrameForId):
+        (InjectedScript._objectForId):
+        (InjectedScript.CallFrameProxy):
+        (InjectedScript.CallFrameProxy.prototype._wrapScopeChain):
+        * inspector/front-end/ObjectPropertiesSection.js:
+        (WebInspector.ObjectPropertiesSection.prototype._update):
+        * inspector/front-end/ObjectProxy.js:
+        (WebInspector.ObjectPropertyProxy):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourceSidebarTreeElement.prototype.ondblclick):
+        * inspector/front-end/ScopeChainSidebarPane.js:
+        (WebInspector.ScopeChainSidebarPane):
+        (WebInspector.ScopeChainSidebarPane.prototype.update):
+        (WebInspector.ScopeVariableTreeElement.prototype.onattach):
+        (WebInspector.ScopeVariableTreeElement.prototype.onexpand):
+        (WebInspector.ScopeVariableTreeElement.prototype.oncollapse):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.doEvalInCallFrame):
+        (WebInspector.ScriptsPanel.prototype.variablesInSelectedCallFrame):
+        (WebInspector.ScriptsPanel.prototype.debuggerPaused.callback):
+        (WebInspector.ScriptsPanel.prototype.debuggerPaused):
+
 2009-08-24  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Eric Seidel.

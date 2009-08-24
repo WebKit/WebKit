@@ -371,16 +371,12 @@ WebInspector.ScriptsPanel.prototype = {
 
     doEvalInCallFrame: function(callFrame, code, callback)
     {
-        var panel = this;
-        function delayedEvaluation()
+        function evalCallback(result)
         {
-            try {
-                callback(InspectorController.wrapObject(callFrame.evaluate(code)));
-            } catch (e) {
-                callback(e, true);
-            }
+            if (result)
+                callback(result.value, result.isException);
         }
-        setTimeout(delayedEvaluation, 0);
+        InspectorController.evaluateInCallFrame(callFrame.id, code, evalCallback);
     },
 
     variablesInSelectedCallFrame: function()
@@ -392,9 +388,9 @@ WebInspector.ScriptsPanel.prototype = {
         var result = {};
         var scopeChain = selectedCallFrame.scopeChain;
         for (var i = 0; i < scopeChain.length; ++i) {
-            var scopeObject = scopeChain[i];
-            for (var property in scopeObject)
-                result[property] = true;
+            var scopeObjectProperties = scopeChain[i].properties;
+            for (var j = 0; j < scopeObjectProperties.length; ++j)
+                result[scopeObjectProperties[j]] = true;
         }
         return result;
     },
@@ -407,13 +403,17 @@ WebInspector.ScriptsPanel.prototype = {
 
         this._updateDebuggerButtons();
 
+        var self = this;
         var callStackPane = this.sidebarPanes.callstack;
-        var currentFrame = InspectorController.currentCallFrame();
-        callStackPane.update(currentFrame, this._sourceIDMap);
-        callStackPane.selectedCallFrame = currentFrame;
+        function callback(callFrames)
+        {
+            callStackPane.update(callFrames, self._sourceIDMap);
+            callStackPane.selectedCallFrame = callFrames[0];
 
-        WebInspector.currentPanel = this;
-        window.focus();
+            WebInspector.currentPanel = self;
+            window.focus();
+        }
+        InspectorController.getCallFrames(callback);
     },
 
     debuggerResumed: function()
