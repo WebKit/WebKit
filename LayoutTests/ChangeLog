@@ -1,3 +1,14 @@
+2009-08-24  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Add results for new tests added in r47590 and r47702.
+
+        * platform/qt/fast/forms/textarea-placeholder-pseudo-style-expected.txt: Added.
+        * platform/qt/fast/forms/textarea-placeholder-set-attribute-expected.txt: Added.
+        * platform/qt/fast/forms/textarea-placeholder-set-value-expected.txt: Added.
+        * platform/qt/fast/repaint/inline-block-resize-expected.txt: Added.
+
 2009-08-24  Ariya Hidayat  <ariya.hidayat@nokia.com>
 
         Rubber-stamped by Simon Hausmann.

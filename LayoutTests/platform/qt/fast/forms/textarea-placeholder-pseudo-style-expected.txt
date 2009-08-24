@@ -1,0 +1,35 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,0) size 310x17
+        text run at (0,0) width 310: "This tests that you can set the placeholder text color."
+      RenderBR {BR} at (310,13) size 0x0
+      RenderText {#text} at (160,42) size 4x17
+        text run at (160,42) width 4: " "
+      RenderText {#text} at (324,42) size 4x17
+        text run at (324,42) width 4: " "
+      RenderText {#text} at (488,42) size 4x17
+        text run at (488,42) width 4: " "
+      RenderText {#text} at (0,0) size 0x0
+layer at (10,27) size 156x34
+  RenderTextControl {TEXTAREA} at (2,19) size 156x34
+    RenderBlock {DIV} at (0,0) size 156x17 [color=#640000]
+      RenderText {#text} at (0,0) size 22x17
+        text run at (0,0) width 22: "text"
+layer at (174,27) size 156x34
+  RenderTextControl {TEXTAREA} at (166,19) size 156x34
+    RenderBlock {DIV} at (0,0) size 156x17 [color=#640000]
+      RenderText {#text} at (0,0) size 74x17
+        text run at (0,0) width 74: "disabled text"
+layer at (338,27) size 156x34
+  RenderTextControl {TEXTAREA} at (330,19) size 156x34
+    RenderBlock {DIV} at (0,0) size 156x17 [color=#A9A9A9]
+      RenderText {#text} at (0,0) size 39x17
+        text run at (0,0) width 39: "default"
+layer at (502,27) size 156x34
+  RenderTextControl {TEXTAREA} at (494,19) size 156x34
+    RenderBlock {DIV} at (0,0) size 156x17 [color=#555555]
+      RenderText {#text} at (0,0) size 91x17
+        text run at (0,0) width 91: "default disabled"
