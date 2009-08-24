@@ -1,3 +1,19 @@
+2009-08-24  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        background-size fails to parse if a single length/percentage/auto is followed by a comma
+        https://bugs.webkit.org/show_bug.cgi?id=28674
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseFillSize): Added an allowComma parameter,
+            which is set to false when this method consumes a comma. Moved
+            handling of 'contain' and 'cover' from parseFillProperty into this
+            method.
+        (WebCore::CSSParser::parseFillProperty): Set allowComma to true before
+            processing the next value, and pass allowComma to parseFillSize.
+        * css/CSSParser.h:
+
 2009-08-17  Martin Robinson  <martin.james.robinson@gmail.com>
 
         Reviewed by Gustavo Noronha.

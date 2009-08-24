@@ -1,3 +1,13 @@
+2009-08-24  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        background-size fails to parse if a single length/percentage/auto is followed by a comma
+        https://bugs.webkit.org/show_bug.cgi?id=28674
+
+        * fast/backgrounds/size/parsing-background-size-values-expected.txt:
+        * fast/backgrounds/size/resources/parsing-background-size-values.js:
+
 2009-08-24  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Unreviewed. Add missing files from former commit 47709.

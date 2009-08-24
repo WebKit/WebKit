@@ -25,4 +25,8 @@ shouldBe('test("background-size: 5em ;")', '"5em 5em"');
 shouldBe('test("background-size: 100 100 100;")', 'null');
 shouldBe('test("background-size: coconut;")', 'null');
 
+shouldBe('test("background-size: 100px,;")', 'null');
+shouldBe('test("background-size: 100px, 50%;")', '"100px 100px, 50% 50%"');
+shouldBe('test("background-size: 50% 100px, 2em, 100px 50%;")', '"50% 100px, 2em 2em, 100px 50%"');
+
 var successfullyParsed = true;
