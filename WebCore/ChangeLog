@@ -1,3 +1,15 @@
+2009-08-24  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Fix crash in fast/css/rem-dynamic-scaling.html due to a freed
+        RenderStyle being accessed.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28681
+
+        * dom/Element.cpp:
+        (WebCore::Element::recalcStyle): Make currentStyle a RefPtr.
+
 2009-08-24  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.
