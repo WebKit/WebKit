@@ -1,5 +1,11 @@
 2009-08-24  Darin Adler  <darin@apple.com>
 
+        * runtime/ObjectPrototype.cpp:
+        (JSC::ObjectPrototype::put): Landed revised version I had tested but forgot
+        to land. Leave out the branch, since we don't need one.
+
+2009-08-24  Darin Adler  <darin@apple.com>
+
         Reviewed by Geoff Garen.
 
         Array index miss case creates a string every time
