@@ -102,10 +102,9 @@ webkit_video_sink_init(WebKitVideoSink* sink, WebKitVideoSinkClass* klass)
 static gboolean
 webkit_video_sink_idle_func(gpointer data)
 {
-    WebKitVideoSink* sink = WEBKIT_VIDEO_SINK(data);
+    WebKitVideoSink* sink = reinterpret_cast<WebKitVideoSink*>(data);
     WebKitVideoSinkPrivate* priv = sink->priv;
     GstBuffer* buffer;
-
     if (!priv->async_queue)
         return FALSE;
 
@@ -124,8 +123,8 @@ webkit_video_sink_idle_func(gpointer data)
     cairo_rectangle(cr, 0, 0, priv->width, priv->height);
     cairo_fill(cr);
     cairo_destroy(cr);
-
     gst_buffer_unref(buffer);
+    g_async_queue_unref(priv->async_queue);
 
     g_signal_emit(sink, webkit_video_sink_signals[REPAINT_REQUESTED], 0);
 
@@ -138,6 +137,7 @@ webkit_video_sink_render(GstBaseSink* bsink, GstBuffer* buffer)
     WebKitVideoSink* sink = WEBKIT_VIDEO_SINK(bsink);
     WebKitVideoSinkPrivate* priv = sink->priv;
 
+    g_async_queue_ref(priv->async_queue);
     g_async_queue_push(priv->async_queue, gst_buffer_ref(buffer));
     g_idle_add_full(G_PRIORITY_HIGH_IDLE, webkit_video_sink_idle_func, sink, 0);
 
@@ -264,6 +264,8 @@ webkit_video_sink_stop(GstBaseSink* base_sink)
         gst_buffer_unref(buffer);
 
     g_async_queue_unlock(priv->async_queue);
+
+    g_idle_remove_by_data(base_sink);
 
     return TRUE;
 }

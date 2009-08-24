@@ -3931,77 +3931,32 @@ http/tests/webarchive/test-preload-resources.html
 
 # Tests in media/ directory
 #   Tests failing
-media/audio-constructor-src.html
-media/audio-mpeg-supported.html
-media/broken-video.html
-media/event-attributes.html
-media/media-startTime.html
-media/progress-event-total.html
-media/progress-event.html
-media/remove-from-document.html
-media/video-append-source.html
-media/video-autoplay.html
-media/video-buffered.html
 media/video-can-play-type.html
 media/video-click-dblckick-standalone.html
 media/video-controls-transformed.html
 media/video-controls-zoomed.html
-media/video-controls.html
-media/video-currentTime-set.html
-media/video-currentTime-set2.html
-media/video-currentTime.html
 media/video-document-types.html
-media/video-dom-autoplay.html
-media/video-dom-src.html
-media/video-error-abort.html
-media/video-error-does-not-exist.html
-media/video-load-networkState.html
-media/video-load-readyState.html
-media/video-loop.html
-media/video-muted.html
-media/video-no-autoplay.html
-media/video-pause-empty-events.html
-media/video-play-empty-events.html
-media/video-play-pause-events.html
-media/video-play-pause-exception.html
-media/video-played-collapse.html
 media/video-played-reset.html
-media/video-played-ranges-1.html
-media/video-seek-past-end-paused.html
-media/video-seek-past-end-playing.html
-media/video-seekable.html
-media/video-seeking.html
 media/video-size-intrinsic-scale.html
-media/video-size.html
-media/video-source-add-src.html
-media/video-source-type-params.html
-media/video-source-type.html
-media/video-src-change.html
-media/video-src-invalid-remove.html
-media/video-src-plus-source.html
-media/video-src-remove.html
-media/video-volume.html
-# Failing media tests with changesets for reference:
-# http://trac.webkit.org/changeset/45311
-media/video-canvas-source.html
+media/video-source-error.html
 #   Tests timing out
+media/audio-data-url.html
+media/controls-drag-timebar.html
+media/event-attributes.html
 media/unsupported-rtsp.html
+media/video-played-collapse.html
 #   Tests generating new results
 media/audio-controls-rendering.html
-media/controls-drag-timebar.html
 media/video-aspect-ratio.html
 media/video-controls-rendering.html
 media/video-controls-visible-audio-only.html
 media/video-display-toggle.html
 media/video-empty-source.html
 media/video-layer-crash.html
-media/video-source-error.html
-media/video-timeupdate-during-playback.html
+media/video-no-audio.html
 media/video-transformed.html
 media/video-zoom-controls.html
 media/video-zoom.html
-media/audio-data-url.html
-media/video-no-audio.html
 
 # Tests in plugins/ directory
 #   These tests require ObjC plugin, do not bother trying to get them to work

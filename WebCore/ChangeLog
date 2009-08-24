@@ -1,3 +1,54 @@
+2009-08-24  Zan Dobersek  <zandobersek@gmail.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] Integrate GStreamer video with the graphics backend
+        https://bugs.webkit.org/show_bug.cgi?id=16356
+
+        Improves GStreamer backend implementation of MediaPlayerPrivate class.
+
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::mediaPlayerPrivateErrorCallback): Send proper MediaPlayer
+        error for different GStreamer errors to MediaPlayerPrivate.
+        (WebCore::MediaPlayerPrivate::MediaPlayerPrivate): Move static
+        initialization boolean to a better place.
+        (WebCore::MediaPlayerPrivate::play):
+        (WebCore::MediaPlayerPrivate::pause):
+        (WebCore::MediaPlayerPrivate::duration): Return if error occured, do not
+        consider the source as stream if duration query failed.
+        (WebCore::MediaPlayerPrivate::currentTime): Return if error occured, use
+        an early return.
+        (WebCore::MediaPlayerPrivate::seek): Return if error occured.
+        (WebCore::MediaPlayerPrivate::setEndTime): Remove implementation since this
+        function doesn't seem to be used anywhere in WebCore.
+        (WebCore::MediaPlayerPrivate::paused):
+        (WebCore::MediaPlayerPrivate::seeking):
+        (WebCore::MediaPlayerPrivate::setRate): Seek to current time when rate is set.
+        (WebCore::MediaPlayerPrivate::maxTimeBuffered): Return if error occured.
+        (WebCore::MediaPlayerPrivate::maxTimeSeekable): Ditto.
+        (WebCore::MediaPlayerPrivate::maxTimeLoaded): Ditto.
+        (WebCore::MediaPlayerPrivate::bytesLoaded):
+        (WebCore::MediaPlayerPrivate::totalBytesKnown):
+        (WebCore::MediaPlayerPrivate::totalBytes): Ditto.
+        (WebCore::MediaPlayerPrivate::updateStates): Return if error occured, update
+        after seek ended with a successful change
+        (WebCore::MediaPlayerPrivate::didEnd): Do not pause the playbin when end is reached.
+        (WebCore::MediaPlayerPrivate::loadingFailed): Update network state with the given error.
+        (WebCore::mimeTypeCache): Gather supported mime types from GStreamer.
+        (WebCore::MediaPlayerPrivate::getSupportedTypes):
+        (WebCore::MediaPlayerPrivate::supportsType):
+        (WebCore::MediaPlayerPrivate::hasSingleSecurityOrigin):
+        (WebCore::MediaPlayerPrivate::supportsFullscreen): First step towards fullscreen
+        support.
+        (WebCore::MediaPlayerPrivate::createGSTPlayBin): Use playbin2 instead of playbin,
+        do not set playbin's audio sink.
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.h:
+        * platform/graphics/gtk/VideoSinkGStreamer.cpp:
+        (webkit_video_sink_idle_func): Use C++ casts, decrease reference count of async
+        queue at the end of the idle function.
+        (webkit_video_sink_render): Increase reference count of async queue.
+        (webkit_video_sink_stop): Remove any idle functions with the sink as data.
+
 2009-08-23  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.

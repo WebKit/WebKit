@@ -96,10 +96,14 @@ namespace WebCore {
             void timeChanged();
             void volumeChanged();
             void didEnd();
-            void loadingFailed();
+            void loadingFailed(MediaPlayer::NetworkState);
 
             void repaint();
             void paint(GraphicsContext*, const IntRect&);
+
+            bool hasSingleSecurityOrigin() const;
+
+            bool supportsFullscreen() const;
 
         private:
             MediaPlayerPrivate(MediaPlayer*);
@@ -133,6 +137,10 @@ namespace WebCore {
             IntSize m_size;
             bool m_visible;
             cairo_surface_t* m_surface;
+
+            bool m_paused;
+            bool m_seeking;
+            bool m_errorOccured;
     };
 }
 

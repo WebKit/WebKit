@@ -1,3 +1,14 @@
+2009-08-24  Zan Dobersek  <zandobersek@gmail.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] Integrate GStreamer video with the graphics backend
+        https://bugs.webkit.org/show_bug.cgi?id=16356
+
+        Enable media tests that now pass.
+
+        * platform/gtk/Skipped:
+
 2009-08-24  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
 
         Reviewed by Ariya Hidayat.
