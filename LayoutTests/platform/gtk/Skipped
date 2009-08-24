@@ -5953,6 +5953,6 @@ fast/harness/use-page-cache.html
 loader/go-back-to-different-window-size.html
 
 # Media tests that keep failing on the bot
-media/video-currentTime-set2.html
+media/video-currentTime-set.html
 media/video-play-pause-events.html
 media/video-play-pause-exception.html
