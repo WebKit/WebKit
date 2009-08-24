@@ -1,3 +1,14 @@
+2009-08-24  Renata Hodovan  <hodovan.renata@stud.u-szeged.hu>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Update the outdated metrics for doctype tests. All tests pass.
+
+        * platform/qt/Skipped:
+        * platform/qt/fast/doctypes/001-expected.txt:
+        * platform/qt/fast/doctypes/002-expected.txt:
+        * platform/qt/fast/doctypes/004-expected.txt:
+
 2009-08-24  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
 
         Reviewed by Ariya Hidayat.

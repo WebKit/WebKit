@@ -2782,9 +2782,6 @@ fast/css/ZeroOpacityLayers2.html
 fast/css/ZeroOpacityLayers.html
 fast/css/zoom-font-size.html
 fast/css/zoom-property-parsing.html
-fast/doctypes/001.html
-fast/doctypes/002.html
-fast/doctypes/004.html
 fast/dom/anchor-text.html
 fast/dom/blur-contenteditable.html
 fast/dom/children-nodes.html
