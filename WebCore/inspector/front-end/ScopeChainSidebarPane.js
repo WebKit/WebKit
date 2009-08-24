@@ -52,7 +52,6 @@ WebInspector.ScopeChainSidebarPane.prototype = {
             var title = null;
             var subtitle = scopeObjectProxy.description;
             var emptyPlaceholder = null;
-            var localScope = false;
             var extraProperties = null;
 
             if (scopeObjectProxy.isLocal) {
@@ -80,7 +79,7 @@ WebInspector.ScopeChainSidebarPane.prototype = {
             section.editInSelectedCallFrameWhenPaused = true;
             section.pane = this;
 
-            if (!foundLocalScope || localScope)
+            if (!foundLocalScope || scopeObjectProxy.isLocal)
                 section.expanded = true;
 
             this.sections.push(section);
