@@ -1,3 +1,11 @@
+2009-08-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by NOBODY (build fix)
+
+        Turn off ENABLE_3D_CANVAS in the xconfig files.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2009-08-22  Adam Barth  <abarth@webkit.org>
 
         Revert 47684.  We're going to do this later once clients have had a
