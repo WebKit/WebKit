@@ -167,12 +167,12 @@ layer at (16,97) size 41x13
       text run at (1,0) width 28: "1234"
 layer at (16,124) size 41x13
   RenderBlock {DIV} at (3,3) size 41x13
-    RenderText {#text} at (1,0) size 35x13
-      text run at (1,0) width 35: "12345"
+    RenderText {#text} at (1,0) size 28x13
+      text run at (1,0) width 28: "1234"
 layer at (16,151) size 41x13
   RenderBlock {DIV} at (3,3) size 41x13
-    RenderText {#text} at (1,0) size 35x13
-      text run at (1,0) width 35: "12345"
+    RenderText {#text} at (1,0) size 28x13
+      text run at (1,0) width 28: "1234"
 layer at (16,178) size 41x13
   RenderBlock {DIV} at (3,3) size 41x13
     RenderText {#text} at (1,0) size 28x13
@@ -191,9 +191,9 @@ layer at (16,259) size 41x13
       text run at (1,0) width 28: "12x\x{305}\x{332}4"
 layer at (16,286) size 41x13
   RenderBlock {DIV} at (3,3) size 41x13
-    RenderText {#text} at (1,0) size 35x13
-      text run at (1,0) width 35: "12x\x{305}\x{332}45"
+    RenderText {#text} at (1,0) size 28x13
+      text run at (1,0) width 28: "12x\x{305}\x{332}4"
 layer at (16,313) size 41x13
   RenderBlock {DIV} at (3,3) size 41x13
-    RenderText {#text} at (1,0) size 35x13
-      text run at (1,0) width 35: "12x\x{305}\x{332}45"
+    RenderText {#text} at (1,0) size 28x13
+      text run at (1,0) width 28: "12x\x{305}\x{332}4"

@@ -1,3 +1,69 @@
+2009-08-24  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Add support for the placeholder attribute and DOM property of the textarea element.
+        https://bugs.webkit.org/show_bug.cgi?id=21248
+
+        A DOM node for an INPUT element doesn't have a flag for placeholder
+        visibility anymore.  This patch also fixes a bug that a renderer
+        doesn't reflect a corresponding DOM value change.
+
+        Tests: fast/forms/textarea-placeholder-dom-property.html
+               fast/forms/textarea-placeholder-pseudo-style.html
+               fast/forms/textarea-placeholder-set-attribute.html
+               fast/forms/textarea-placeholder-set-value.html
+
+        * css/html.css: Add the default style for placeholder of textarea.
+        * dom/InputElement.cpp: Cleanup for m_placeholderShouldBeVisible removal
+        (WebCore::InputElement::dispatchFocusEvent):
+        (WebCore::InputElement::dispatchBlurEvent):
+        (WebCore::InputElement::placeholderShouldBeVisible):
+        (WebCore::InputElement::updatePlaceholderVisibility):
+        (WebCore::InputElement::setValueFromRenderer):
+        (WebCore::InputElementData::InputElementData):
+        * dom/InputElement.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::dispatchFocusEvent):
+        (WebCore::HTMLInputElement::dispatchBlurEvent):
+        (WebCore::HTMLInputElement::setValue):
+        (WebCore::HTMLInputElement::placeholderShouldBeVisible):
+        * html/HTMLInputElement.h:
+        (WebCore::HTMLInputElement::updatePlaceholderVisibility):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::parseMappedAttribute):
+        (WebCore::HTMLTextAreaElement::setValue):
+        (WebCore::HTMLTextAreaElement::placeholderShouldBeVisible):
+        (WebCore::HTMLTextAreaElement::updatePlaceholderVisibility):
+        (WebCore::HTMLTextAreaElement::dispatchFocusEvent):
+        (WebCore::HTMLTextAreaElement::dispatchBlurEvent):
+        * html/HTMLTextAreaElement.h:
+        * html/HTMLTextAreaElement.idl:
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::RenderTextControl):
+        (WebCore::RenderTextControl::styleDidChange):
+        (WebCore::RenderTextControl::setInnerTextStyle):
+        (WebCore::RenderTextControl::updatePlaceholderVisibility):
+        * rendering/RenderTextControl.h:
+        * rendering/RenderTextControlMultiLine.cpp:
+        (WebCore::RenderTextControlMultiLine::RenderTextControlMultiLine):
+        (WebCore::RenderTextControlMultiLine::nodeAtPoint):
+        (WebCore::RenderTextControlMultiLine::updateFromElement):
+        (WebCore::RenderTextControlMultiLine::createInnerTextStyle):
+        (WebCore::RenderTextControlMultiLine::textBaseStyle):
+        * rendering/RenderTextControlMultiLine.h:
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::RenderTextControlSingleLine):
+        (WebCore::RenderTextControlSingleLine::textBaseStyle):
+        (WebCore::RenderTextControlSingleLine::updateFromElement):
+        (WebCore::RenderTextControlSingleLine::createInnerTextStyle):
+        * rendering/RenderTextControlSingleLine.h:
+        * wml/WMLInputElement.cpp:
+        (WebCore::WMLInputElement::dispatchFocusEvent):
+        (WebCore::WMLInputElement::dispatchBlurEvent):
+        (WebCore::WMLInputElement::setValue):
+        (WebCore::WMLInputElement::placeholderShouldBeVisible):
+
 2009-08-23  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Mark Rowe.

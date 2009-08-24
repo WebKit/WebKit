@@ -47,6 +47,7 @@ private:
     virtual void updateFromElement();
     virtual void cacheSelection(int start, int end);
 
+    virtual RenderStyle* textBaseStyle() const;
     virtual PassRefPtr<RenderStyle> createInnerTextStyle(const RenderStyle* startStyle) const;
 };
 

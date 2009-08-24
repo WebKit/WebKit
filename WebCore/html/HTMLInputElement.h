@@ -230,7 +230,7 @@ protected:
 
     void updatePlaceholderVisibility()
     {
-        InputElement::updatePlaceholderVisibility(m_data, this, this, true);
+        InputElement::updatePlaceholderVisibility(this, this, true);
     }
 
 private:

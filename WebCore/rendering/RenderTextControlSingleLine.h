@@ -41,7 +41,6 @@ public:
 
     bool placeholderIsVisible() const { return m_placeholderVisible; }
     bool placeholderShouldBeVisible() const;
-    void updatePlaceholderVisibility();
 
     void addSearchResult();
     void stopSearchEventTimer();
@@ -84,6 +83,7 @@ private:
     virtual void cacheSelection(int start, int end);
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
+    virtual RenderStyle* textBaseStyle() const;
     virtual PassRefPtr<RenderStyle> createInnerTextStyle(const RenderStyle* startStyle) const;
     PassRefPtr<RenderStyle> createInnerBlockStyle(const RenderStyle* startStyle) const;
     PassRefPtr<RenderStyle> createResultsButtonStyle(const RenderStyle* startStyle) const;
@@ -121,7 +121,6 @@ private:
 
     InputElement* inputElement() const;
 
-    bool m_placeholderVisible;
     bool m_searchPopupIsVisible;
     bool m_shouldDrawCapsLockIndicator;
 

@@ -69,6 +69,7 @@ static Color disabledTextColor(const Color& textColor, const Color& backgroundCo
 
 RenderTextControl::RenderTextControl(Node* node)
     : RenderBlock(node)
+    , m_placeholderVisible(false)
     , m_edited(false)
     , m_userEdited(false)
 {
@@ -92,14 +93,22 @@ void RenderTextControl::styleDidChange(StyleDifference diff, const RenderStyle* 
         // Reset them now to avoid getting a spurious layout hint.
         textBlockRenderer->style()->setHeight(Length());
         textBlockRenderer->style()->setWidth(Length());
-        textBlockRenderer->setStyle(textBlockStyle);
-        for (Node* n = m_innerText->firstChild(); n; n = n->traverseNextNode(m_innerText.get())) {
-            if (n->renderer())
-                n->renderer()->setStyle(textBlockStyle);
-        }
+        setInnerTextStyle(textBlockStyle);
     }
 
     setReplaced(isInline());
+}
+
+void RenderTextControl::setInnerTextStyle(PassRefPtr<RenderStyle> style)
+{
+    if (m_innerText) {
+        RefPtr<RenderStyle> textStyle = style;
+        m_innerText->renderer()->setStyle(textStyle);
+        for (Node* n = m_innerText->firstChild(); n; n = n->traverseNextNode(m_innerText.get())) {
+            if (n->renderer())
+                n->renderer()->setStyle(textStyle);
+        }
+    }
 }
 
 static inline bool updateUserModifyProperty(Node* node, RenderStyle* style)
@@ -504,6 +513,20 @@ void RenderTextControl::addFocusRingRects(GraphicsContext* graphicsContext, int 
 HTMLElement* RenderTextControl::innerTextElement() const
 {
     return m_innerText.get();
+}
+
+void RenderTextControl::updatePlaceholderVisibility(bool placeholderShouldBeVisible, bool placeholderValueChanged)
+{
+    bool oldPlaceholderVisible = m_placeholderVisible;
+    m_placeholderVisible = placeholderShouldBeVisible;
+    if (oldPlaceholderVisible != m_placeholderVisible || placeholderValueChanged) {
+        // Sets the inner text style to the normal style or :placeholder style.
+        setInnerTextStyle(createInnerTextStyle(textBaseStyle()));
+
+        // updateFromElement() of the subclasses updates the text content
+        // to the element's value(), placeholder(), or the empty string.
+        updateFromElement();
+    }
 }
 
 } // namespace WebCore

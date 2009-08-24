@@ -52,19 +52,19 @@ using namespace HTMLNames;
 const int InputElement::s_maximumLength = 524288;
 const int InputElement::s_defaultSize = 20;
 
-void InputElement::dispatchFocusEvent(InputElementData& data, InputElement* inputElement, Element* element)
+void InputElement::dispatchFocusEvent(InputElement* inputElement, Element* element)
 {
     if (!inputElement->isTextField())
         return;
 
-    updatePlaceholderVisibility(data, inputElement, element);
+    updatePlaceholderVisibility(inputElement, element);
 
     Document* document = element->document();
     if (inputElement->isPasswordField() && document->frame())
         document->setUseSecureKeyboardEntryWhenActive(true);
 }
 
-void InputElement::dispatchBlurEvent(InputElementData& data, InputElement* inputElement, Element* element)
+void InputElement::dispatchBlurEvent(InputElement* inputElement, Element* element)
 {
     if (!inputElement->isTextField())
         return;
@@ -74,7 +74,7 @@ void InputElement::dispatchBlurEvent(InputElementData& data, InputElement* input
     if (!frame)
         return;
 
-    updatePlaceholderVisibility(data, inputElement, element);
+    updatePlaceholderVisibility(inputElement, element);
 
     if (inputElement->isPasswordField())
         document->setUseSecureKeyboardEntryWhenActive(false);
@@ -82,18 +82,19 @@ void InputElement::dispatchBlurEvent(InputElementData& data, InputElement* input
     frame->textFieldDidEndEditing(element);
 }
 
-void InputElement::updatePlaceholderVisibility(InputElementData& data, InputElement* inputElement, Element* element, bool placeholderValueChanged)
+bool InputElement::placeholderShouldBeVisible(const InputElement* inputElement, const Element* element)
+{
+    return inputElement->value().isEmpty()
+        && element->document()->focusedNode() != element
+        && !inputElement->placeholder().isEmpty();
+}
+
+void InputElement::updatePlaceholderVisibility(InputElement* inputElement, Element* element, bool placeholderValueChanged)
 {
     ASSERT(inputElement->isTextField());
-    Document* document = element->document();
-
-    bool oldPlaceholderShouldBeVisible = data.placeholderShouldBeVisible();
-    data.setPlaceholderShouldBeVisible(inputElement->value().isEmpty() 
-                                       && document->focusedNode() != element
-                                       && !inputElement->placeholder().isEmpty());
-
-    if ((oldPlaceholderShouldBeVisible != data.placeholderShouldBeVisible() || placeholderValueChanged) && element->renderer())
-        toRenderTextControlSingleLine(element->renderer())->updatePlaceholderVisibility();
+    bool placeholderVisible = inputElement->placeholderShouldBeVisible();
+    if (element->renderer())
+        toRenderTextControlSingleLine(element->renderer())->updatePlaceholderVisibility(placeholderVisible, placeholderValueChanged);
 }
 
 void InputElement::updateFocusAppearance(InputElementData& data, InputElement* inputElement, Element* element, bool restorePreviousSelection)
@@ -141,7 +142,7 @@ void InputElement::setValueFromRenderer(InputElementData& data, InputElement* in
     ASSERT(value == inputElement->constrainValue(value) || inputElement->constrainValue(value).isEmpty());
 
     if (inputElement->isTextField())
-        updatePlaceholderVisibility(data, inputElement, element);
+        updatePlaceholderVisibility(inputElement, element);
 
     // Workaround for bug where trailing \n is included in the result of textContent.
     // The assert macro above may also be simplified to:  value == constrainValue(value)
@@ -277,8 +278,7 @@ void InputElement::notifyFormStateChanged(Element* element)
 
 // InputElementData
 InputElementData::InputElementData()
-    : m_placeholderShouldBeVisible(false)
-    , m_size(InputElement::s_defaultSize)
+    : m_size(InputElement::s_defaultSize)
     , m_maxLength(InputElement::s_maximumLength)
     , m_cachedSelectionStart(-1)
     , m_cachedSelectionEnd(-1)

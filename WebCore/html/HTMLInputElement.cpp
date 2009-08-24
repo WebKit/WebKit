@@ -253,7 +253,7 @@ bool HTMLInputElement::shouldUseInputMethod() const
 
 void HTMLInputElement::dispatchFocusEvent()
 {
-    InputElement::dispatchFocusEvent(m_data, this, this);
+    InputElement::dispatchFocusEvent(this, this);
 
     if (isTextField())
         m_autofilled = false;
@@ -263,7 +263,7 @@ void HTMLInputElement::dispatchFocusEvent()
 
 void HTMLInputElement::dispatchBlurEvent()
 {
-    InputElement::dispatchBlurEvent(m_data, this, this);
+    InputElement::dispatchBlurEvent(this, this);
     HTMLFormControlElementWithState::dispatchBlurEvent();
 }
 
@@ -1087,7 +1087,7 @@ void HTMLInputElement::setValue(const String& value)
         else {
             m_data.setValue(constrainValue(value));
             if (isTextField()) {
-                InputElement::updatePlaceholderVisibility(m_data, this, this);
+                InputElement::updatePlaceholderVisibility(this, this);
                 if (inDocument())
                     document()->updateStyleIfNeeded();
             }
@@ -1762,7 +1762,7 @@ bool HTMLInputElement::willValidate() const
 
 bool HTMLInputElement::placeholderShouldBeVisible() const
 {
-    return m_data.placeholderShouldBeVisible();
+    return InputElement::placeholderShouldBeVisible(this, this);
 }
 
 } // namespace

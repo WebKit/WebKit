@@ -1,3 +1,25 @@
+2009-08-24  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        - Add tests for the placeholder attribute and DOM property of the textarea element.
+        - Correct the results for input-text-maxlength.html
+        https://bugs.webkit.org/show_bug.cgi?id=21248
+
+        * fast/forms/resources/textarea-placeholder-dom-property.js: Added.
+        * fast/forms/textarea-placeholder-dom-property-expected.txt: Added.
+        * fast/forms/textarea-placeholder-dom-property.html: Added.
+        * fast/forms/textarea-placeholder-pseudo-style.html: Added.
+        * fast/forms/textarea-placeholder-set-attribute.html: Added.
+        * fast/forms/textarea-placeholder-set-value.html: Added.
+        * platform/mac-leopard/fast/forms/input-text-maxlength-expected.txt:
+        * platform/mac/fast/forms/input-text-maxlength-expected.txt:
+        * platform/mac/fast/forms/textarea-placeholder-pseudo-style-expected.txt: Added.
+        * platform/mac/fast/forms/textarea-placeholder-set-attribute-expected.txt: Added.
+        * platform/mac/fast/forms/textarea-placeholder-set-value-expected.txt: Added.
+        * platform/qt/fast/forms/input-text-maxlength-expected.txt:
+        * platform/win/fast/forms/input-text-maxlength-expected.txt:
+
 2009-08-23  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.

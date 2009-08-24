@@ -368,7 +368,7 @@ textarea {
     word-wrap: break-word;
 }
 
-input::-webkit-input-placeholder, isindex::-webkit-input-placeholder {
+input::-webkit-input-placeholder, isindex::-webkit-input-placeholder, textarea::-webkit-input-placeholder {
     color: darkGray;
 }
 

@@ -56,6 +56,8 @@ public:
     VisiblePosition visiblePositionForIndex(int index);
     int indexForVisiblePosition(const VisiblePosition&);
 
+    void updatePlaceholderVisibility(bool, bool);
+
 protected:
     RenderTextControl(Node*);
 
@@ -76,12 +78,15 @@ protected:
     virtual void adjustControlHeightBasedOnLineHeight(int lineHeight) = 0;
     virtual void cacheSelection(int start, int end) = 0;
     virtual PassRefPtr<RenderStyle> createInnerTextStyle(const RenderStyle* startStyle) const = 0;
+    virtual RenderStyle* textBaseStyle() const = 0;
 
     virtual void updateFromElement();
     virtual void calcHeight();
 
     friend class TextIterator;
     HTMLElement* innerTextElement() const;
+
+    bool m_placeholderVisible;
 
 private:
     virtual const char* renderName() const { return "RenderTextControl"; }
@@ -92,6 +97,7 @@ private:
     virtual void removeLeftoverAnonymousBlock(RenderBlock*) { }
     virtual bool canHaveChildren() const { return false; }
     virtual bool avoidsFloats() const { return true; }
+    void setInnerTextStyle(PassRefPtr<RenderStyle>);
     
     virtual void addFocusRingRects(GraphicsContext*, int tx, int ty);
 

@@ -192,6 +192,8 @@ void HTMLTextAreaElement::parseMappedAttribute(MappedAttribute* attr)
     } else if (attr->name() == alignAttr) {
         // Don't map 'align' attribute.  This matches what Firefox, Opera and IE do.
         // See http://bugs.webkit.org/show_bug.cgi?id=7075
+    } else if (attr->name() == placeholderAttr) {
+        updatePlaceholderVisibility(true);
     } else if (attr->name() == onfocusAttr)
         setAttributeEventListener(eventNames().focusEvent, createAttributeEventListener(this, attr));
     else if (attr->name() == onblurAttr)
@@ -309,6 +311,7 @@ void HTMLTextAreaElement::setValue(const String& value)
 
     m_value = normalizedValue;
     setFormControlValueMatchesRenderer(true);
+    updatePlaceholderVisibility(false);
     if (inDocument())
         document()->updateStyleIfNeeded();
     if (renderer())
@@ -406,6 +409,31 @@ VisibleSelection HTMLTextAreaElement::selection() const
 bool HTMLTextAreaElement::shouldUseInputMethod() const
 {
     return true;
+}
+
+bool HTMLTextAreaElement::placeholderShouldBeVisible() const
+{
+    return value().isEmpty()
+        && document()->focusedNode() != this
+        && !getAttribute(placeholderAttr).isEmpty();
+}
+
+void HTMLTextAreaElement::updatePlaceholderVisibility(bool placeholderValueChanged)
+{
+    if (renderer())
+        toRenderTextControl(renderer())->updatePlaceholderVisibility(placeholderShouldBeVisible(), placeholderValueChanged);
+}
+
+void HTMLTextAreaElement::dispatchFocusEvent()
+{
+    updatePlaceholderVisibility(false);
+    HTMLFormControlElementWithState::dispatchFocusEvent();
+}
+
+void HTMLTextAreaElement::dispatchBlurEvent()
+{
+    updatePlaceholderVisibility(false);
+    HTMLFormControlElementWithState::dispatchBlurEvent();
 }
 
 } // namespace
