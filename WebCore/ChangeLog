@@ -1,3 +1,17 @@
+2009-08-24  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/5743105> Long freezing during loading and selecting text
+        of a large table
+        https://bugs.webkit.org/show_bug.cgi?id=14918
+
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::setSelection): Added calls to
+            beginDeferredRepaints() and endDeferredRepaints() around the
+            invalidation of the selection, in order to better coalesce multiple
+            invalid rectangles.
+
 2009-08-24  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

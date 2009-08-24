@@ -458,6 +458,8 @@ void RenderView::setSelection(RenderObject* start, int startPos, RenderObject* e
         return;
     }
 
+    m_frameView->beginDeferredRepaints();
+
     // Have any of the old selected objects changed compared to the new selection?
     for (SelectedObjectMap::iterator i = oldSelectedObjects.begin(); i != oldObjectsEnd; ++i) {
         RenderObject* obj = i->first;
@@ -509,6 +511,8 @@ void RenderView::setSelection(RenderObject* start, int startPos, RenderObject* e
         newInfo->repaint();
         delete newInfo;
     }
+
+    m_frameView->endDeferredRepaints();
 }
 
 void RenderView::clearSelection()
