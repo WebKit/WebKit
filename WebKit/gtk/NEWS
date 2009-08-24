@@ -1,4 +1,24 @@
 =================
+WebKitGTK+ 1.1.13
+=================
+
+What's new in WebKitGTK+ 1.1.13?
+
+  - GNOME Keyring support was removed in favor of the new Password
+    Manager soup feature; to get exactly the same behavior,
+    applications should use SoupPasswordManagerGNOME. This requires
+    libsoup 2.27.91 or newer.
+  - Several accessibility improvements, including support for testing
+    the a11y infrastructure in our layout tests.
+  - You can now enable/disable HTML5 offline application cache using a
+    new setting added to WebKitWebSettings.
+  - Drag support has landed, meaning you can start playing with HTML5
+    drag and drop support; drop support is still missing.
+  - A crash with scripts closing windows has been fixed.
+  - Image cursors support has been added.
+  - The usual stream of small improvements and bug fixes.
+
+=================
 WebKitGTK+ 1.1.12
 =================
 
