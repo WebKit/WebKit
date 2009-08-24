@@ -1,3 +1,13 @@
+2009-08-23  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Fix regression in editing tests by changing expected file to the
+        Mac one, since we now default to Mac in the EditingBehavior
+        setting.
+
+        * platform/gtk/editing/execCommand/toggle-compound-styles-expected.txt:
+
 2009-08-23  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Not reviewed. Skip new tests from
