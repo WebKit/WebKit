@@ -1,3 +1,11 @@
+2009-08-24  Ariya Hidayat  <ariya.hidayat@nokia.com>
+
+        Rubber-stamped by Simon Hausmann.
+
+        [Qt] Skip new test added in r47360
+
+        * platform/qt/Skipped: Skip fast/backgrounds/size/parsing-inherit.html.
+
 2009-08-24  Renata Hodovan  <hodovan.renata@stud.u-szeged.hu>
 
         Reviewed by Ariya Hidayat.

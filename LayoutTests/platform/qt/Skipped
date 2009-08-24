@@ -2262,6 +2262,7 @@ fast/backgrounds/repeat/negative-offset-repeat-transformed.html
 fast/backgrounds/repeat/noRepeatCorrectClip.html
 fast/backgrounds/size/backgroundSize15.html
 fast/backgrounds/size/backgroundSize16.html
+fast/backgrounds/size/parsing-inherit.html
 fast/backgrounds/size/zero.html
 fast/backgrounds/solid-color-context-restore.html
 fast/backgrounds/svg-as-background-1.html
