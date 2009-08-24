@@ -1,3 +1,14 @@
+2009-08-24  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Unreviewed. Add missing files from former commit 47709.
+
+        * platform/qt/fast/backgrounds/svg-as-background-1-expected.txt: Added.
+        * platform/qt/fast/backgrounds/svg-as-background-2-expected.txt: Added.
+        * platform/qt/fast/backgrounds/svg-as-background-3-expected.txt: Added.
+        * platform/qt/fast/backgrounds/svg-as-background-4-expected.txt: Added.
+        * platform/qt/fast/backgrounds/svg-as-background-5-expected.txt: Added.
+        * platform/qt/fast/backgrounds/svg-as-background-6-expected.txt: Added.
+
 2009-08-24  Zan Dobersek  <zandobersek@gmail.com>
 
         Reviewed by Gustavo Noronha.
