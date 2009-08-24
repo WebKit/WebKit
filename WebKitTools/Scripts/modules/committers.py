@@ -62,7 +62,7 @@ committers_unable_to_review = [
     Committer("Ryosuke Niwa", "rniwa@webkit.org"),
     Committer("Shinichiro Hamaji", "hamaji@google.com"),
     Committer("Yong Li", "yong.li@torchmobile.com"),
-    Committer("Zoltan Horvath", "hzoltan@inf.u-szeged.hu"),
+    Committer("Zoltan Horvath", "zoltan@webkit.org"),
 ]
 
 reviewers_list = [
