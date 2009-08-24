@@ -1,3 +1,11 @@
+2009-08-24  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Xan Lopez.
+
+        Bump package and so versions for 1.1.13 release.
+
+        * configure.ac:
+
 2009-08-22 Javier Jardón <javierjc1982@gmail.com>
 
         [GTK] Not use deprecated symbols in WebKitWebView example code.

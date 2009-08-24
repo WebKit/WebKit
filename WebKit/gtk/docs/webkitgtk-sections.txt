@@ -1,6 +1,7 @@
 <SECTION>
 <FILE>webkitwebsettings</FILE>
 <TITLE>WebKitWebSettings</TITLE>
+WebKitEditingBehavior
 WebKitWebSettings
 webkit_web_settings_copy
 webkit_web_settings_new
@@ -199,6 +200,7 @@ webkit_web_navigation_action_get_button
 webkit_web_navigation_action_get_modifier_state
 webkit_web_navigation_action_get_original_uri
 webkit_web_navigation_action_get_reason
+webkit_web_navigation_action_get_target_frame
 webkit_web_navigation_action_get_type
 webkit_web_navigation_action_set_original_uri
 webkit_web_navigation_action_set_reason

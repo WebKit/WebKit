@@ -1,3 +1,13 @@
+2009-08-24  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Xan Lopez.
+
+        Add new symbols, and an index of new symbols for the 1.1.13
+        release.
+
+        * docs/webkitgtk-docs.sgml:
+        * docs/webkitgtk-sections.txt:
+
 2009-08-23  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.
