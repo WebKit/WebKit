@@ -1,3 +1,27 @@
+2009-08-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Array index miss case creates a string every time
+        https://bugs.webkit.org/show_bug.cgi?id=28664
+
+        SunSpider test results I saw:
+
+            0.5% faster overall
+            1% faster on crypto-aes
+            20% faster on crypto-md5
+            13% faster on crypto-sha1
+
+        * runtime/ObjectPrototype.cpp:
+        (JSC::ObjectPrototype::ObjectPrototype): Initialize m_hasNoPropertiesWithUInt32Names
+        to true.
+        (JSC::ObjectPrototype::put): Clearly m_hasNoPropertiesWithUInt32Names if the new
+        property has a name that is the string form of a UInt32.
+        (JSC::ObjectPrototype::getOwnPropertySlot): Don't call JSObject::getOwnPropertySlot
+        if m_hasNoPropertiesWithUInt32Names is true, and it is highly likely to be true.
+
+        * runtime/ObjectPrototype.h: Added declarations for the above.
+
 2009-08-24  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Unreviewed. Fix a typo in my distcheck build fix.
