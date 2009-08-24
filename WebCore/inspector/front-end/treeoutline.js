@@ -249,7 +249,7 @@ TreeOutline.prototype._forgetChildrenRecursive = function(parentElement)
     }
 }
 
-TreeOutline.prototype.findTreeElement = function(representedObject, isAncestor, getParent)
+TreeOutline.prototype.getCachedTreeElement = function(representedObject)
 {
     if (!representedObject)
         return null;
@@ -264,9 +264,17 @@ TreeOutline.prototype.findTreeElement = function(representedObject, isAncestor, 
                     return elements[i];
         }
     }
+    return null;
+}
 
-    if (!isAncestor || !(isAncestor instanceof Function) || !getParent || !(getParent instanceof Function))
+TreeOutline.prototype.findTreeElement = function(representedObject, isAncestor, getParent)
+{
+    if (!representedObject)
         return null;
+
+    var cachedElement = this.getCachedTreeElement(representedObject);
+    if (cachedElement)
+        return cachedElement;
 
     // The representedObject isn't know, so we start at the top of the tree and work down to find the first
     // tree element that represents representedObject or one of its ancestors.
@@ -307,9 +315,7 @@ TreeOutline.prototype.findTreeElement = function(representedObject, isAncestor, 
             item.onpopulate(item);
     }
 
-    // Now that all the ancestors are populated, try to find the representedObject again. This time
-    // without the isAncestor and getParent functions to prevent an infinite recursion if it isn't found.
-    return this.findTreeElement(representedObject);
+    return this.getCachedTreeElement(representedObject);
 }
 
 TreeOutline.prototype.treeElementFromPoint = function(x, y)

@@ -2,6 +2,25 @@
 
         Reviewed by Timothy Hatcher.
 
+        WebInspector: Simplify findTreeElement code, get rid of potential infinite loop.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28680
+
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.updateBreadcrumb):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeOutline.prototype.findTreeElement):
+        * inspector/front-end/treeoutline.js:
+        (TreeOutline.prototype.getCachedTreeElement):
+        (TreeOutline.prototype.findTreeElement):
+        * inspector/front-end/utilities.js:
+        (isAncestorNode):
+        ():
+
+2009-08-24  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
         WebInspector: Do expand local scope when hitting the break
 
         https://bugs.webkit.org/show_bug.cgi?id=28678

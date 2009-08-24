@@ -596,7 +596,7 @@ WebInspector.ElementsPanel.prototype = {
         }
 
         foundRoot = false;
-        for (var current = this.focusedDOMNode; current; current = parentNodeOrFrameElement(current)) {
+        for (var current = this.focusedDOMNode; current; current = current.parentNode) {
             if (current.nodeType === Node.DOCUMENT_NODE)
                 continue;
 

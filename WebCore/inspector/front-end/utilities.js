@@ -317,12 +317,8 @@ Element.prototype.firstChildSkippingWhitespace = firstChildSkippingWhitespace;
 Element.prototype.lastChildSkippingWhitespace = lastChildSkippingWhitespace;
 
 Node.prototype.isWhitespace = isNodeWhitespace;
-Node.prototype.nodeTypeName = nodeTypeName;
 Node.prototype.displayName = nodeDisplayName;
-Node.prototype.contentPreview = nodeContentPreview;
-Node.prototype.isAncestor = isAncestorNode;
 Node.prototype.isDescendant = isDescendantNode;
-Node.prototype.firstCommonAncestor = firstCommonNodeAncestor;
 Node.prototype.nextSiblingSkippingWhitespace = nextSiblingSkippingWhitespace;
 Node.prototype.previousSiblingSkippingWhitespace = previousSiblingSkippingWhitespace;
 Node.prototype.traverseNextNode = traverseNextNode;
@@ -406,29 +402,6 @@ function isNodeWhitespace()
     return this.nodeValue.match(/^[\s\xA0]+$/);
 }
 
-function nodeTypeName()
-{
-    if (!this)
-        return "(unknown)";
-
-    switch (this.nodeType) {
-        case Node.ELEMENT_NODE: return "Element";
-        case Node.ATTRIBUTE_NODE: return "Attribute";
-        case Node.TEXT_NODE: return "Text";
-        case Node.CDATA_SECTION_NODE: return "Character Data";
-        case Node.ENTITY_REFERENCE_NODE: return "Entity Reference";
-        case Node.ENTITY_NODE: return "Entity";
-        case Node.PROCESSING_INSTRUCTION_NODE: return "Processing Instruction";
-        case Node.COMMENT_NODE: return "Comment";
-        case Node.DOCUMENT_NODE: return "Document";
-        case Node.DOCUMENT_TYPE_NODE: return "Document Type";
-        case Node.DOCUMENT_FRAGMENT_NODE: return "Document Fragment";
-        case Node.NOTATION_NODE: return "Notation";
-    }
-
-    return "(unknown)";
-}
-
 function nodeDisplayName()
 {
     if (!this)
@@ -503,75 +476,23 @@ function nodeDisplayName()
     return this.nodeName.toLowerCase().collapseWhitespace();
 }
 
-function nodeContentPreview()
+function isAncestorNode(ancestor, node)
 {
-    if (!this || !this.hasChildNodes || !this.hasChildNodes())
-        return "";
-
-    var limit = 0;
-    var preview = "";
-
-    // always skip whitespace here
-    var currentNode = traverseNextNode.call(this, true, this);
-    while (currentNode) {
-        if (currentNode.nodeType === Node.TEXT_NODE)
-            preview += currentNode.nodeValue.escapeHTML();
-        else
-            preview += nodeDisplayName.call(currentNode).escapeHTML();
-
-        currentNode = traverseNextNode.call(currentNode, true, this);
-
-        if (++limit > 4) {
-            preview += "&#x2026;"; // ellipsis
-            break;
-        }
-    }
-
-    return preview.collapseWhitespace();
-}
-
-function isAncestorNode(ancestor)
-{
-    if (!this || !ancestor)
+    if (!node || !ancestor)
         return false;
 
-    var currentNode = ancestor.parentNode;
+    var currentNode = node.parentNode;
     while (currentNode) {
-        if (this === currentNode)
+        if (ancestor === currentNode)
             return true;
         currentNode = currentNode.parentNode;
     }
-
     return false;
 }
 
 function isDescendantNode(descendant)
 {
-    return isAncestorNode.call(descendant, this);
-}
-
-function firstCommonNodeAncestor(node)
-{
-    if (!this || !node)
-        return;
-
-    var node1 = this.parentNode;
-    var node2 = node.parentNode;
-
-    if ((!node1 || !node2) || node1 !== node2)
-        return null;
-
-    while (node1 && node2) {
-        if (!node1.parentNode || !node2.parentNode)
-            break;
-        if (node1 !== node2)
-            break;
-
-        node1 = node1.parentNode;
-        node2 = node2.parentNode;
-    }
-
-    return node1;
+    return isAncestorNode(descendant, this);
 }
 
 function nextSiblingSkippingWhitespace()
@@ -744,21 +665,8 @@ function getDocumentForNode(node) {
     return node.nodeType == Node.DOCUMENT_NODE ? node : node.ownerDocument;
 }
 
-function parentNodeOrFrameElement(node) {
-    var parent = node.parentNode;
-    if (parent)
-        return parent;
-
-    return getDocumentForNode(node).defaultView.frameElement;
-}
-
-function isAncestorIncludingParentFrames(a, b) {
-    if (a === b)
-        return false;
-    for (var node = b; node; node = getDocumentForNode(node).defaultView.frameElement)
-        if (a === node || isAncestorNode.call(a, node))
-            return true;
-    return false;
+function parentNode(node) {
+    return node.parentNode;
 }
 
 Number.secondsToString = function(seconds, formatterFunction, higherResolution)

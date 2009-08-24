@@ -138,17 +138,12 @@ WebInspector.ElementsTreeOutline.prototype = {
 
     focusedNodeChanged: function(forceUpdate) {},
 
-    findTreeElement: function(node, isAncestor, getParent)
+    findTreeElement: function(node)
     {
-        if (typeof isAncestor === "undefined")
-            isAncestor = isAncestorIncludingParentFrames;
-        if (typeof getParent === "undefined")
-            getParent = parentNodeOrFrameElement;
-
-        var treeElement = TreeOutline.prototype.findTreeElement.call(this, node, isAncestor, getParent);
+        var treeElement = TreeOutline.prototype.findTreeElement.call(this, node, isAncestorNode, parentNode);
         if (!treeElement && node.nodeType === Node.TEXT_NODE) {
             // The text node might have been inlined if it was short, so try to find the parent element.
-            treeElement = TreeOutline.prototype.findTreeElement.call(this, node.parentNode, isAncestor, getParent);
+            treeElement = TreeOutline.prototype.findTreeElement.call(this, node.parentNode, isAncestorNode, parentNode);
         }
 
         return treeElement;
