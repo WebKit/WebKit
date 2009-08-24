@@ -1,3 +1,18 @@
+2009-08-23  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Remaining new files for Canvas3D
+        https://bugs.webkit.org/show_bug.cgi?id=28018
+
+        * bindings/js/JSHTMLCanvasElementCustom.cpp: Added Canvas3D method behind an ifdef
+        * html/canvas/CanvasByteArray.cpp: Added. Efficient array of bytes for passing to GL functions
+        * html/canvas/CanvasByteArray.h: Added.
+        * html/canvas/CanvasByteArray.idl: Added.
+        * html/canvas/CanvasNumberArray.cpp: Added. Efficient array of 32 bit floats for passing to GL functions
+        * html/canvas/CanvasNumberArray.h: Added.
+        * html/canvas/CanvasNumberArray.idl: Added.
+
 2009-08-24  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

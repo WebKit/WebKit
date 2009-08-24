@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,43 +23,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "JSHTMLCanvasElement.h"
+#ifndef CanvasNumberArray_h
+#define CanvasNumberArray_h
 
-#include "HTMLCanvasElement.h"
-#include "JSCanvasRenderingContext2D.h"
-#if ENABLE(3D_CANVAS)
-#include "JSCanvasRenderingContext3D.h"
-#include <wtf/GetPtr.h>
-#endif
-
-using namespace JSC;
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
+#include <wtf/Vector.h>
+#include <limits>
 
 namespace WebCore {
 
-#if ENABLE(3D_CANVAS)
-JSValue JSHTMLCanvasElement::getContext(JSC::ExecState* exec, JSC::ArgList const& args)
-{
-    HTMLCanvasElement* imp = static_cast<HTMLCanvasElement*>(impl());
-    const UString& contextId = args.at(0).toString(exec);
-
-    if (contextId == "2d")
-        return toJS(exec, WTF::getPtr(reinterpret_cast<CanvasRenderingContext2D*>(imp->getContext(contextId))));
-    if (contextId == "webkit-3d")
-        return toJS(exec, WTF::getPtr(reinterpret_cast<CanvasRenderingContext3D*>(imp->getContext(contextId))));
+    class String;
     
-    return jsUndefined();
-}
-#endif
+    class CanvasNumberArray : public RefCounted<CanvasNumberArray> {
+    public:
+        static PassRefPtr<CanvasNumberArray> create(unsigned length);
+        
+        Vector<float>& data() { return m_data; }
+        const Vector<float>& data() const { return m_data; }
 
-void JSHTMLCanvasElement::markChildren(MarkStack& markStack)
-{
-    Base::markChildren(markStack);
+        unsigned length() const { return m_data.size(); }
+        float item(unsigned index) const { return (index >= m_data.size()) ? 0 : m_data[index]; }
 
-    HTMLCanvasElement* canvas = static_cast<HTMLCanvasElement*>(impl());
-    JSGlobalData& globalData = *Heap::heap(this)->globalData();
-
-    markDOMObjectWrapper(markStack, globalData, canvas->renderingContext2D());
-}
-
+    private:
+        CanvasNumberArray(unsigned length);
+        Vector<float> m_data;
+    };
+    
 } // namespace WebCore
+
+#endif // CanvasNumberArray_h
