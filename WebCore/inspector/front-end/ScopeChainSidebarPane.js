@@ -63,6 +63,7 @@ WebInspector.ScopeChainSidebarPane.prototype = {
                     title = WebInspector.UIString("Closure");
                 emptyPlaceholder = WebInspector.UIString("No Variables");
                 subtitle = null;
+                foundLocalScope = true;
             } else if (i === (scopeChain.length - 1))
                 title = WebInspector.UIString("Global");
             else if (scopeObjectProxy.isElement)

@@ -534,7 +534,7 @@ InjectedScript.addInspectedNode = function(nodeId)
     return true;
 }
 
-InjectedScript.performSearch = function(whitespaceTrimmedQuery, searchResultsProperty)
+InjectedScript.performSearch = function(whitespaceTrimmedQuery)
 {
     var tagNameQuery = whitespaceTrimmedQuery;
     var attributeNameQuery = whitespaceTrimmedQuery;
