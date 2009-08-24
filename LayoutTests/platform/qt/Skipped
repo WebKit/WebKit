@@ -2265,12 +2265,6 @@ fast/backgrounds/size/backgroundSize16.html
 fast/backgrounds/size/parsing-inherit.html
 fast/backgrounds/size/zero.html
 fast/backgrounds/solid-color-context-restore.html
-fast/backgrounds/svg-as-background-1.html
-fast/backgrounds/svg-as-background-2.html
-fast/backgrounds/svg-as-background-3.html
-fast/backgrounds/svg-as-background-4.html
-fast/backgrounds/svg-as-background-5.html
-fast/backgrounds/svg-as-background-6.html
 fast/backgrounds/svg-as-mask.html
 fast/block/basic/001.html
 fast/block/basic/002.html

@@ -2,6 +2,21 @@
 
         Reviewed by Ariya Hidayat.
 
+        [Qt] Add results with updated font metrics for passing tests added in
+        r28637 and remove them from Skipped.
+
+        * platform/qt/Skipped:
+        * platform/qt/fast/backgrounds/svg-as-background-1-expected.txt: Added.
+        * platform/qt/fast/backgrounds/svg-as-background-2-expected.txt: Added.
+        * platform/qt/fast/backgrounds/svg-as-background-3-expected.txt: Added.
+        * platform/qt/fast/backgrounds/svg-as-background-4-expected.txt: Added.
+        * platform/qt/fast/backgrounds/svg-as-background-5-expected.txt: Added.
+        * platform/qt/fast/backgrounds/svg-as-background-6-expected.txt: Added.
+
+2009-08-24  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
+
+        Reviewed by Ariya Hidayat.
+
         [Qt] Add results for new tests added in r47590 and r47702.
 
         * platform/qt/fast/forms/textarea-placeholder-pseudo-style-expected.txt: Added.
