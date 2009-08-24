@@ -1,3 +1,18 @@
+2009-08-17  Martin Robinson  <martin.james.robinson@gmail.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] Support for cursors that are images
+        https://bugs.webkit.org/show_bug.cgi?id=28346
+
+        Added support for cursors which are images for CursorGtk. Added
+        a manual test for this.
+
+        * manual-tests/gtk/cursor-image.html: Added.
+        * manual-tests/gtk/resources/redcursor.cur: Added.
+        * platform/gtk/CursorGtk.cpp:
+        (WebCore::Cursor::Cursor):
+
 2009-08-24  Zan Dobersek  <zandobersek@gmail.com>
 
         Reviewed by Gustavo Noronha.
