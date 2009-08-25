@@ -1,3 +1,13 @@
+2009-08-25  Brent Fulgham  <bfulgham@webkit.org>
+
+        Build fix for Windows.
+
+        Revise Debug_Cairo build target to build testapi, jsc, WinLauncher,
+        DumpRenderTree, and TestNetscapeAPI using WinCairo debug build
+        settings so they link against the proper libraries.
+
+        * WebKit.vcproj/WebKit.sln:
+
 2009-08-25  David Levin  <levin@chromium.org>
 
         Reviewed by Adam Roben.

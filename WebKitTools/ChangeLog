@@ -1,3 +1,15 @@
+2009-08-25  Brent Fulgham  <bfulgham@webkit.org>
+
+        Build fix
+
+        Revise Debug_Cairo targets to point inherit from the 
+        debug_wincairo.vsprops property sheet so that they link
+        against the proper libraries in Debug build.
+
+        * DumpRenderTree/win/DumpRenderTree.vcproj:
+        * DumpRenderTree/win/TestNetscapePlugin/TestNetscapePlugin.vcproj:
+        * WinLauncher/WinLauncher.vcproj:
+
 2009-08-25  David Levin  <levin@chromium.org>
 
         Reviewed by Adam Roben.
