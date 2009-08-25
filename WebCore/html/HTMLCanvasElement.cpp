@@ -30,7 +30,9 @@
 #include "CanvasGradient.h"
 #include "CanvasPattern.h"
 #include "CanvasRenderingContext2D.h"
+#if ENABLE(3D_CANVAS)    
 #include "CanvasRenderingContext3D.h"
+#endif
 #include "CanvasStyle.h"
 #include "Chrome.h"
 #include "Document.h"
