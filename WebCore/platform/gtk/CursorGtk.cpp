@@ -67,7 +67,7 @@ Cursor::Cursor(Image* image, const IntPoint& hotSpot)
 {
     GdkPixbuf* pixbuf = image->getGdkPixbuf();
     m_impl = gdk_cursor_new_from_pixbuf(gdk_display_get_default(), pixbuf, hotSpot.x(), hotSpot.y());
-    gdk_pixbuf_unref(pixbuf);
+    g_object_unref(pixbuf);
 }
 
 Cursor::~Cursor()
