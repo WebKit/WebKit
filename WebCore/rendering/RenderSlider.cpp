@@ -281,6 +281,8 @@ PassRefPtr<RenderStyle> RenderSlider::createThumbStyle(const RenderStyle* parent
         style->setAppearance(SliderThumbHorizontalPart);
     else if (parentStyle->appearance() == MediaSliderPart)
         style->setAppearance(MediaSliderThumbPart);
+    else if (parentStyle->appearance() == MediaVolumeSliderPart)
+        style->setAppearance(MediaVolumeSliderThumbPart);
 
     return style.release();
 }
@@ -298,7 +300,7 @@ IntRect RenderSlider::thumbRect()
 
     double fraction = sliderPosition(static_cast<HTMLInputElement*>(node()));
     IntRect contentRect = contentBoxRect();
-    if (style()->appearance() == SliderVerticalPart) {
+    if (style()->appearance() == SliderVerticalPart || style()->appearance() == MediaVolumeSliderPart) {
         thumbRect.setX(contentRect.x() + (contentRect.width() - thumbRect.width()) / 2);
         thumbRect.setY(contentRect.y() + static_cast<int>(nextafter((contentRect.height() - thumbRect.height()) + 1, 0) * (1 - fraction)));
     } else {
@@ -391,7 +393,7 @@ bool RenderSlider::mouseEventIsInThumb(MouseEvent* evt)
         return false;
 
 #if ENABLE(VIDEO)
-    if (style()->appearance() == MediaSliderPart) {
+    if (style()->appearance() == MediaSliderPart || style()->appearance() == MediaVolumeSliderPart) {
         MediaControlInputElement *sliderThumb = static_cast<MediaControlInputElement*>(m_thumb->renderer()->node());
         return sliderThumb->hitTest(evt->absoluteLocation());
     }
@@ -423,7 +425,7 @@ void RenderSlider::setValueForPosition(int position)
     // Calculate the new value based on the position, and send it to the element.
     SliderRange range(element);
     double fraction = static_cast<double>(position) / trackSize();
-    if (style()->appearance() == SliderVerticalPart)
+    if (style()->appearance() == SliderVerticalPart || style()->appearance() == MediaVolumeSliderPart)
         fraction = 1 - fraction;
     double value = range.clampValue(range.valueFromProportion(fraction));
     element->setValueFromRenderer(String::number(value));
@@ -444,7 +446,7 @@ int RenderSlider::positionForOffset(const IntPoint& p)
         return 0;
 
     int position;
-    if (style()->appearance() == SliderVerticalPart)
+    if (style()->appearance() == SliderVerticalPart || style()->appearance() == MediaVolumeSliderPart)
         position = p.y() - m_thumb->renderBox()->height() / 2;
     else
         position = p.x() - m_thumb->renderBox()->width() / 2;
@@ -457,7 +459,7 @@ int RenderSlider::currentPosition()
     ASSERT(m_thumb);
     ASSERT(m_thumb->renderer());
 
-    if (style()->appearance() == SliderVerticalPart)
+    if (style()->appearance() == SliderVerticalPart || style()->appearance() == MediaVolumeSliderPart)
         return toRenderBox(m_thumb->renderer())->y() - contentBoxRect().y();
     return toRenderBox(m_thumb->renderer())->x() - contentBoxRect().x();
 }
@@ -467,7 +469,7 @@ int RenderSlider::trackSize()
     ASSERT(m_thumb);
     ASSERT(m_thumb->renderer());
 
-    if (style()->appearance() == SliderVerticalPart)
+    if (style()->appearance() == SliderVerticalPart || style()->appearance() == MediaVolumeSliderPart)
         return contentHeight() - m_thumb->renderBox()->height();
     return contentWidth() - m_thumb->renderBox()->width();
 }

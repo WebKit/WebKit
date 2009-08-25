@@ -512,6 +512,9 @@ media-rewind-button
 media-return-to-realtime-button
 media-slider
 media-sliderthumb
+media-volume-slider-container
+media-volume-slider
+media-volume-sliderthumb
 media-controls-background
 media-current-time-display
 media-time-remaining-display

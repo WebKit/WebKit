@@ -128,6 +128,18 @@ bool RenderMediaControls::paintMediaControlsPart(MediaControlElementType part, R
         case MediaSliderThumb:
             paintThemePart(SafariTheme::MediaSliderThumbPart, paintInfo.context->platformContext(), r, NSRegularControlSize, determineState(o));
             break;
+        case MediaVolumeSliderContainer:
+            // FIXME: Implement volume slider.
+            ASSERT_NOT_REACHED();
+            break;
+        case MediaVolumeSlider:
+            // FIXME: Implement volume slider.
+            ASSERT_NOT_REACHED();
+            break;
+        case MediaVolumeSliderThumb:
+            // FIXME: Implement volume slider.
+            ASSERT_NOT_REACHED();
+            break;
         case MediaTimelineContainer:
             ASSERT_NOT_REACHED();
             break;

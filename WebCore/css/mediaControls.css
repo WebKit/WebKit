@@ -88,6 +88,14 @@ audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline {
     padding: 0px 2px;
 }
 
+audio::-webkit-media-controls-volume-slider-container, video::-webkit-media-controls-volume-slider-container {
+    display: none;
+}
+
+audio::-webkit-media-controls-volume-slider, video::-webkit-media-controls-volume-slider {
+    display: none;
+}
+
 audio::-webkit-media-controls-seek-back-button, video::-webkit-media-controls-seek-back-button {
     -webkit-appearance: media-seek-back-button;
     display: -webkit-box;

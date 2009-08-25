@@ -75,6 +75,7 @@ AccessibilityOrientation AccessibilitySlider::orientation() const
         
         case SliderThumbVerticalPart: 
         case SliderVerticalPart:
+        case MediaVolumeSliderPart:
             return AccessibilityOrientationVertical;
             
         default:

@@ -183,7 +183,49 @@ bool MediaControlTimelineContainerElement::rendererIsNeeded(RenderStyle* style)
     return !isnan(duration) && !isinf(duration);
 }
 
-    
+// ----------------------------
+
+MediaControlVolumeSliderContainerElement::MediaControlVolumeSliderContainerElement(Document* doc, HTMLMediaElement* element)
+    : MediaControlElement(doc, MEDIA_CONTROLS_VOLUME_SLIDER_CONTAINER, element)
+    , m_isVisible(false)
+    , m_x(0)
+    , m_y(0)
+{
+}
+
+PassRefPtr<RenderStyle> MediaControlVolumeSliderContainerElement::styleForElement()
+{
+    RefPtr<RenderStyle> style = MediaControlElement::styleForElement();
+    style->setPosition(AbsolutePosition);
+    style->setLeft(Length(m_x, Fixed));
+    style->setTop(Length(m_y, Fixed));
+    style->setDisplay(m_isVisible ? BLOCK : NONE);
+    return style;
+}
+
+void MediaControlVolumeSliderContainerElement::setVisible(bool visible)
+{
+    if (visible == m_isVisible)
+        return;
+    m_isVisible = visible;
+}
+
+void MediaControlVolumeSliderContainerElement::setPosition(int x, int y)
+{
+    if (x == m_x && y == m_y)
+        return;
+    m_x = x;
+    m_y = y;
+}
+
+bool MediaControlVolumeSliderContainerElement::hitTest(const IntPoint& absPoint)
+{
+    if (renderer() && renderer()->style()->hasAppearance())
+        return renderer()->theme()->hitTestMediaControlPart(renderer(), absPoint);
+
+    return false;
+}
+
 // ----------------------------
 
 MediaControlStatusDisplayElement::MediaControlStatusDisplayElement(Document* document, HTMLMediaElement* element)
@@ -524,6 +566,33 @@ void MediaControlTimelineElement::update(bool updateDuration)
     }
     setValue(String::number(m_mediaElement->currentTime()));
     MediaControlInputElement::update();
+}
+
+// ----------------------------
+
+MediaControlVolumeSliderElement::MediaControlVolumeSliderElement(Document* document, HTMLMediaElement* element)
+    : MediaControlInputElement(document, MEDIA_CONTROLS_VOLUME_SLIDER, "range", element, MediaVolumeSlider)
+{
+    setAttribute(maxAttr, "1");
+}
+
+void MediaControlVolumeSliderElement::defaultEventHandler(Event* event)
+{
+    // Left button is 0. Rejects mouse events not from left button.
+    if (event->isMouseEvent() && static_cast<MouseEvent*>(event)->button())
+        return;
+
+    MediaControlInputElement::defaultEventHandler(event);
+
+    if (event->type() == eventNames().mouseoverEvent || event->type() == eventNames().mouseoutEvent || event->type() == eventNames().mousemoveEvent)
+        return;
+
+    float volume = narrowPrecisionToFloat(value().toDouble());
+    if (volume != m_mediaElement->volume()) {
+        ExceptionCode ec = 0;
+        m_mediaElement->setVolume(volume, ec);
+        ASSERT(!ec);
+    }
 }
 
 // ----------------------------

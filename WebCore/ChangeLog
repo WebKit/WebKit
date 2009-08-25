@@ -1,3 +1,77 @@
+2009-08-25  Alpha Lam  <hclam@chromium.org>
+
+        Reviewed by David Levin.
+
+        Media controls panel does not have a volume control slider
+        https://bugs.webkit.org/show_bug.cgi?id=28241
+
+        Introduced "-webkit-media-controls-volume-slider",
+        "-webkit-media-controls-volume-slider-container" and the supporting
+        implementation. Also added appearances of "media-volume-slider" and
+        "media-volume-slider-container".
+
+        The implementation of the controls are in WebCore::MediaControlElements.
+        Logic to trigger the display of the volume controls are in WebCore::RenderMedia.
+
+        No new tests since this change doesn't have theme implementation and the
+        volume slider is disabled by default.
+
+        * accessibility/AccessibilitySlider.cpp:
+        (WebCore::AccessibilitySlider::orientation): Marks that volume slider is vertical.
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue): Added corresponding CSS values.
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::extractPseudoType): ditto.
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::): ditto.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector): ditto.
+        * css/CSSValueKeywords.in: ditto.
+        * css/mediaControls.css: Makes the volume slider disabled by default.
+        * platform/ThemeTypes.h: Defines theme parts for volume slider and its container.
+        (WebCore::):
+        * rendering/MediaControlElements.cpp:
+        (WebCore::MediaControlVolumeSliderContainerElement::MediaControlVolumeSliderContainerElement):
+        (WebCore::MediaControlVolumeSliderContainerElement::styleForElement):
+        Adjust the CSS values for "display", "postion", "left" and "top" according to member variables.
+        (WebCore::MediaControlVolumeSliderContainerElement::setVisible): Affects the "display" CSS value.
+        (WebCore::MediaControlVolumeSliderContainerElement::setPosition): Affects the "left" and "top" CSS values.
+        (WebCore::MediaControlVolumeSliderContainerElement::hitTest): Hit testing this element.
+        (WebCore::MediaControlVolumeSliderElement::MediaControlVolumeSliderElement):
+        (WebCore::MediaControlVolumeSliderElement::defaultEventHandler): Modifies the volume using the slider value, allows dragging.
+        * rendering/MediaControlElements.h:
+        (WebCore::): Added definition for MediaControlVolumeSliderElement and MediaControlVolumeSliderContainerElement.
+        (WebCore::MediaControlVolumeSliderContainerElement::isVisible): Inline getter.
+        * rendering/RenderMedia.cpp:
+        (WebCore::RenderMedia::styleDidChange): Updates styles for volume container and volume slider.
+        (WebCore::RenderMedia::createVolumeSliderContainer): Creates volume slider container and attach to panel.
+        (WebCore::RenderMedia::createVolumeSlider): Creates volume slider and attach to volume slider container.
+        (WebCore::RenderMedia::updateControls): Updates volume container and volume slider.
+        (WebCore::RenderMedia::updateVolumeSliderContainer): Sets the visibility and position of volume slider container and its child.
+        (WebCore::RenderMedia::forwardEvent):
+        Hit testing the volume slider container and volume slider to toggle the visibility and forward events to slider.
+        * rendering/RenderMedia.h:
+        Added definition for RenderMedia::updateVolumeSliderContainer().
+        * rendering/RenderMediaControls.cpp:
+        (WebCore::RenderMediaControls::paintMediaControlsPart): Not implemented.
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::createThumbStyle): Makes volume slider vertical.
+        (WebCore::RenderSlider::thumbRect): ditto.
+        (WebCore::RenderSlider::mouseEventIsInThumb): ditto.
+        (WebCore::RenderSlider::setValueForPosition): ditto.
+        (WebCore::RenderSlider::positionForOffset): ditto.
+        (WebCore::RenderSlider::currentPosition): ditto.
+        (WebCore::RenderSlider::trackSize): ditto.
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustStyle): Adjust style for volume slider thumb.
+        (WebCore::RenderTheme::paint): Paints volume control parts using theme.
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::paintMediaVolumeSliderContainer): Naive implementation to be overridden.
+        (WebCore::RenderTheme::paintMediaVolumeSliderTrack): ditto.
+        (WebCore::RenderTheme::paintMediaVolumeSliderThumb): ditto.
+        * rendering/style/RenderStyleConstants.h:
+        (WebCore::): Constants for volume control parts.
+
 2009-08-25  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Ariya Hidayat.

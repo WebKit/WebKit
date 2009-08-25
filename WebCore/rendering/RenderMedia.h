@@ -41,10 +41,12 @@ class MediaControlSeekButtonElement;
 class MediaControlRewindButtonElement;
 class MediaControlReturnToRealtimeButtonElement;
 class MediaControlTimelineElement;
+class MediaControlVolumeSliderElement;
 class MediaControlFullscreenButtonElement;
 class MediaControlTimeDisplayElement;
 class MediaControlStatusDisplayElement;
 class MediaControlTimelineContainerElement;
+class MediaControlVolumeSliderContainerElement;
 class MediaControlElement;
 class MediaPlayer;
 
@@ -99,6 +101,8 @@ private:
     void createStatusDisplay();
     void createTimelineContainer();
     void createTimeline();
+    void createVolumeSliderContainer();
+    void createVolumeSlider();
     void createCurrentTimeDisplay();
     void createTimeRemainingDisplay();
     void createFullscreenButton();
@@ -108,6 +112,8 @@ private:
     void updateControlVisibility();
     void changeOpacity(HTMLElement*, float opacity);
     void opacityAnimationTimerFired(Timer<RenderMedia>*);
+
+    void updateVolumeSliderContainer(bool visible);
 
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
@@ -120,8 +126,10 @@ private:
     RefPtr<MediaControlRewindButtonElement> m_rewindButton;
     RefPtr<MediaControlReturnToRealtimeButtonElement> m_returnToRealtimeButton;
     RefPtr<MediaControlTimelineElement> m_timeline;
+    RefPtr<MediaControlVolumeSliderElement> m_volumeSlider;
     RefPtr<MediaControlFullscreenButtonElement> m_fullscreenButton;
     RefPtr<MediaControlTimelineContainerElement> m_timelineContainer;
+    RefPtr<MediaControlVolumeSliderContainerElement> m_volumeSliderContainer;
     RefPtr<MediaControlTimeDisplayElement> m_currentTimeDisplay;
     RefPtr<MediaControlTimeDisplayElement> m_timeRemainingDisplay;
     RefPtr<MediaControlStatusDisplayElement> m_statusDisplay;
