@@ -1,5 +1,15 @@
 2009-08-24  Alexey Proskuryakov  <ap@apple.com>
 
+        Reviewed by Anders Carlsson.
+
+        <rdar://problem/7161900> REGRESSION: 100 MB membuster leak on windows due to 47391
+        (DNS prefetching support)
+
+        * platform/network/cf/DNSCFNet.cpp: (WebCore::prefetchDNS): Use a run loop from secondary
+        thread on Windows, because there isn't one on main one.
+
+2009-08-24  Alexey Proskuryakov  <ap@apple.com>
+
         Reviewed by Darin Adler.
 
         https://bugs.webkit.org/show_bug.cgi?id=28374

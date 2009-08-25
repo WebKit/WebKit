@@ -30,6 +30,10 @@
 #include "PlatformString.h"
 #include <wtf/RetainPtr.h>
 
+#if PLATFORM(WIN)
+#include "ResourceHandle.h" // for loaderRunLoop()
+#endif
+
 #ifdef BUILDING_ON_TIGER
 // This function is available on Tiger, but not declared in the CFRunLoop.h header on Tiger.
 extern "C" CFRunLoopRef CFRunLoopGetMain();
@@ -51,7 +55,12 @@ void prefetchDNS(const String& hostname)
     CFHostClientContext context = { 0, 0, 0, 0, 0 };
     Boolean result = CFHostSetClient(host.get(), clientCallback, &context);
     ASSERT_UNUSED(result, result);
+#if !PLATFORM(WIN)
     CFHostScheduleWithRunLoop(host.get(), CFRunLoopGetMain(), kCFRunLoopCommonModes);
+#else
+    // On Windows, we run a separate thread with CFRunLoop, which is where clientCallback will be called.
+    CFHostScheduleWithRunLoop(host.get(), ResourceHandle::loaderRunLoop(), kCFRunLoopDefaultMode);
+#endif
     CFHostStartInfoResolution(host.get(), kCFHostAddresses, 0);
     host.releaseRef(); // The host will be released from clientCallback().
 }
