@@ -417,6 +417,11 @@ namespace JSC {
         RegisterID* addConstantValue(JSValue);
         unsigned addRegExp(RegExp*);
 
+        PassRefPtr<FunctionExecutable> makeFunction(FunctionBodyNode* body)
+        {
+            return adoptRef(new FunctionExecutable(body->ident(), body->source(), body->usesArguments(), body->copyParameters(), body->parameterCount(), body->lineNo(), body->lastLine()));
+        }
+
         Vector<Instruction>& instructions() { return m_codeBlock->instructions(); }
         SymbolTable& symbolTable() { return *m_symbolTable; }
 

@@ -30,6 +30,7 @@
 #include "CodeBlock.h"
 #include "JIT.h"
 #include "Parser.h"
+#include "Vector.h"
 
 namespace JSC {
 
@@ -55,58 +56,92 @@ ProgramExecutable::~ProgramExecutable()
 
 FunctionExecutable::~FunctionExecutable()
 {
+    for (int i = 0; i < m_parameterCount; ++i)
+        m_parameters[i].~Identifier();
+    fastFree(m_parameters);
     delete m_codeBlock;
 }
 
-void EvalExecutable::generateBytecode(ScopeChainNode* scopeChainNode)
+JSObject* EvalExecutable::compile(ExecState* exec, ScopeChainNode* scopeChainNode)
 {
+    int errLine;
+    UString errMsg;
+    RefPtr<EvalNode> evalNode = exec->globalData().parser->parse<EvalNode>(&exec->globalData(), exec->lexicalGlobalObject()->debugger(), exec, m_source, &errLine, &errMsg);
+    if (!evalNode)
+        return Error::create(exec, SyntaxError, errMsg, errLine, m_source.provider()->asID(), m_source.provider()->url());
+    recordParse(evalNode->features(), evalNode->lineNo(), evalNode->lastLine());
+
     ScopeChain scopeChain(scopeChainNode);
     JSGlobalObject* globalObject = scopeChain.globalObject();
 
     ASSERT(!m_evalCodeBlock);
     m_evalCodeBlock = new EvalCodeBlock(this, globalObject, source().provider(), scopeChain.localDepth());
-    OwnPtr<BytecodeGenerator> generator(new BytecodeGenerator(evalNode(), globalObject->debugger(), scopeChain, m_evalCodeBlock->symbolTable(), m_evalCodeBlock));
+    OwnPtr<BytecodeGenerator> generator(new BytecodeGenerator(evalNode.get(), globalObject->debugger(), scopeChain, m_evalCodeBlock->symbolTable(), m_evalCodeBlock));
     generator->generate();
     
-    evalNode()->destroyData();
+    evalNode->destroyData();
+    return 0;
 }
 
-void ProgramExecutable::generateBytecode(ScopeChainNode* scopeChainNode)
+JSObject* ProgramExecutable::checkSyntax(ExecState* exec)
 {
+    int errLine;
+    UString errMsg;
+    RefPtr<ProgramNode> programNode = exec->globalData().parser->parse<ProgramNode>(&exec->globalData(), exec->lexicalGlobalObject()->debugger(), exec, m_source, &errLine, &errMsg);
+    if (!programNode)
+        return Error::create(exec, SyntaxError, errMsg, errLine, m_source.provider()->asID(), m_source.provider()->url());
+    return 0;
+}
+
+JSObject* ProgramExecutable::compile(ExecState* exec, ScopeChainNode* scopeChainNode)
+{
+    int errLine;
+    UString errMsg;
+    RefPtr<ProgramNode> programNode = exec->globalData().parser->parse<ProgramNode>(&exec->globalData(), exec->lexicalGlobalObject()->debugger(), exec, m_source, &errLine, &errMsg);
+    if (!programNode)
+        return Error::create(exec, SyntaxError, errMsg, errLine, m_source.provider()->asID(), m_source.provider()->url());
+    recordParse(programNode->features(), programNode->lineNo(), programNode->lastLine());
+
     ScopeChain scopeChain(scopeChainNode);
     JSGlobalObject* globalObject = scopeChain.globalObject();
     
     ASSERT(!m_programCodeBlock);
     m_programCodeBlock = new ProgramCodeBlock(this, GlobalCode, globalObject, source().provider());
-    OwnPtr<BytecodeGenerator> generator(new BytecodeGenerator(programNode(), globalObject->debugger(), scopeChain, &globalObject->symbolTable(), m_programCodeBlock));
+    OwnPtr<BytecodeGenerator> generator(new BytecodeGenerator(programNode.get(), globalObject->debugger(), scopeChain, &globalObject->symbolTable(), m_programCodeBlock));
     generator->generate();
 
-    programNode()->destroyData();
+    programNode->destroyData();
+    return 0;
 }
 
-void FunctionExecutable::generateBytecode(ScopeChainNode* scopeChainNode)
+void FunctionExecutable::compile(ExecState*, ScopeChainNode* scopeChainNode)
 {
-    body()->reparseDataIfNecessary(scopeChainNode);
+    JSGlobalData* globalData = scopeChainNode->globalData;
+    RefPtr<FunctionBodyNode> body = globalData->parser->parse<FunctionBodyNode>(globalData, 0, 0, m_source);
+    if (m_forceUsesArguments)
+        body->setUsesArguments();
+    body->finishParsing(copyParameters(), m_parameterCount, m_name);
+    recordParse(body->features(), body->lineNo(), body->lastLine());
 
     ScopeChain scopeChain(scopeChainNode);
     JSGlobalObject* globalObject = scopeChain.globalObject();
 
     ASSERT(!m_codeBlock);
     m_codeBlock = new FunctionCodeBlock(this, FunctionCode, source().provider(), source().startOffset());
-    OwnPtr<BytecodeGenerator> generator(new BytecodeGenerator(body(), globalObject->debugger(), scopeChain, m_codeBlock->symbolTable(), m_codeBlock));
+    OwnPtr<BytecodeGenerator> generator(new BytecodeGenerator(body.get(), globalObject->debugger(), scopeChain, m_codeBlock->symbolTable(), m_codeBlock));
     generator->generate();
     m_numParameters = m_codeBlock->m_numParameters;
     ASSERT(m_numParameters);
     m_numVariables = m_codeBlock->m_numVars;
 
-    body()->destroyData();
+    body->destroyData();
 }
 
 #if ENABLE(JIT)
 
-void EvalExecutable::generateJITCode(ScopeChainNode* scopeChainNode)
+void EvalExecutable::generateJITCode(ExecState* exec, ScopeChainNode* scopeChainNode)
 {
-    CodeBlock* codeBlock = &bytecode(scopeChainNode);
+    CodeBlock* codeBlock = &bytecode(exec, scopeChainNode);
     m_jitCode = JIT::compile(scopeChainNode->globalData, codeBlock);
 
 #if !ENABLE(OPCODE_SAMPLING)
@@ -115,9 +150,9 @@ void EvalExecutable::generateJITCode(ScopeChainNode* scopeChainNode)
 #endif
 }
 
-void ProgramExecutable::generateJITCode(ScopeChainNode* scopeChainNode)
+void ProgramExecutable::generateJITCode(ExecState* exec, ScopeChainNode* scopeChainNode)
 {
-    CodeBlock* codeBlock = &bytecode(scopeChainNode);
+    CodeBlock* codeBlock = &bytecode(exec, scopeChainNode);
     m_jitCode = JIT::compile(scopeChainNode->globalData, codeBlock);
 
 #if !ENABLE(OPCODE_SAMPLING)
@@ -126,9 +161,9 @@ void ProgramExecutable::generateJITCode(ScopeChainNode* scopeChainNode)
 #endif
 }
 
-void FunctionExecutable::generateJITCode(ScopeChainNode* scopeChainNode)
+void FunctionExecutable::generateJITCode(ExecState* exec, ScopeChainNode* scopeChainNode)
 {
-    CodeBlock* codeBlock = &bytecode(scopeChainNode);
+    CodeBlock* codeBlock = &bytecode(exec, scopeChainNode);
     m_jitCode = JIT::compile(scopeChainNode->globalData, codeBlock);
 
 #if !ENABLE(OPCODE_SAMPLING)
@@ -147,9 +182,10 @@ void FunctionExecutable::markAggregate(MarkStack& markStack)
 
 ExceptionInfo* FunctionExecutable::reparseExceptionInfo(JSGlobalData* globalData, ScopeChainNode* scopeChainNode, CodeBlock* codeBlock)
 {
-    RefPtr<FunctionBodyNode> newFunctionBody = globalData->parser->reparse<FunctionBodyNode>(globalData, body());
-    ASSERT(newFunctionBody);
-    newFunctionBody->finishParsing(body()->copyParameters(), body()->parameterCount(), body()->ident());
+    RefPtr<FunctionBodyNode> newFunctionBody = globalData->parser->parse<FunctionBodyNode>(globalData, 0, 0, m_source);
+    if (m_forceUsesArguments)
+        newFunctionBody->setUsesArguments();
+    newFunctionBody->finishParsing(copyParameters(), m_parameterCount, m_name);
 
     ScopeChain scopeChain(scopeChainNode);
     JSGlobalObject* globalObject = scopeChain.globalObject();
@@ -175,7 +211,7 @@ ExceptionInfo* FunctionExecutable::reparseExceptionInfo(JSGlobalData* globalData
 
 ExceptionInfo* EvalExecutable::reparseExceptionInfo(JSGlobalData* globalData, ScopeChainNode* scopeChainNode, CodeBlock* codeBlock)
 {
-    RefPtr<EvalNode> newEvalBody = globalData->parser->reparse<EvalNode>(globalData, evalNode());
+    RefPtr<EvalNode> newEvalBody = globalData->parser->parse<EvalNode>(globalData, 0, 0, m_source);
 
     ScopeChain scopeChain(scopeChainNode);
     JSGlobalObject* globalObject = scopeChain.globalObject();
@@ -196,19 +232,58 @@ ExceptionInfo* EvalExecutable::reparseExceptionInfo(JSGlobalData* globalData, Sc
     return newCodeBlock->extractExceptionInfo();
 }
 
-void FunctionExecutable::recompile(ExecState* exec)
+void FunctionExecutable::recompile(ExecState*)
 {
-    FunctionBodyNode* oldBody = body();
-    RefPtr<FunctionBodyNode> newBody = exec->globalData().parser->parse<FunctionBodyNode>(exec, 0, m_source);
-    ASSERT(newBody);
-    newBody->finishParsing(oldBody->copyParameters(), oldBody->parameterCount(), oldBody->ident());
-    m_node = newBody;
     delete m_codeBlock;
     m_codeBlock = 0;
     m_numParameters = NUM_PARAMETERS_NOT_COMPILED;
 #if ENABLE(JIT)
     m_jitCode = JITCode();
 #endif
+}
+
+PassRefPtr<FunctionExecutable> FunctionExecutable::fromGlobalCode(const Identifier& functionName, ExecState* exec, Debugger* debugger, const SourceCode& source, int* errLine, UString* errMsg)
+{
+    RefPtr<ProgramNode> program = exec->globalData().parser->parse<ProgramNode>(&exec->globalData(), debugger, exec, source, errLine, errMsg);
+    if (!program)
+        return 0;
+
+    StatementNode* exprStatement = program->singleStatement();
+    ASSERT(exprStatement);
+    ASSERT(exprStatement->isExprStatement());
+    if (!exprStatement || !exprStatement->isExprStatement())
+        return 0;
+
+    ExpressionNode* funcExpr = static_cast<ExprStatementNode*>(exprStatement)->expr();
+    ASSERT(funcExpr);
+    ASSERT(funcExpr->isFuncExprNode());
+    if (!funcExpr || !funcExpr->isFuncExprNode())
+        return 0;
+
+    FunctionBodyNode* body = static_cast<FuncExprNode*>(funcExpr)->body();
+    ASSERT(body);
+    return adoptRef(new FunctionExecutable(functionName, body->source(), body->usesArguments(), body->copyParameters(), body->parameterCount(), body->lineNo(), body->lastLine()));
+}
+
+Identifier* FunctionExecutable::copyParameters()
+{
+    // This code uses the internal vector copier to make copy-constructed copies of the data in the array
+    // (the array contains Identfiers which reference count Ustring::Reps, which must be ref'ed correctly).
+    Identifier* parameters = static_cast<Identifier*>(fastMalloc(m_parameterCount * sizeof(Identifier)));
+    WTF::VectorCopier<false, Identifier>::uninitializedCopy(m_parameters, m_parameters + m_parameterCount, parameters);
+    return parameters;
+}
+
+UString FunctionExecutable::paramString() const
+{
+    UString s("");
+    for (int pos = 0; pos < m_parameterCount; ++pos) {
+        if (!s.isEmpty())
+            s += ", ";
+        s += m_parameters[pos].ustring();
+    }
+
+    return s;
 }
 
 };

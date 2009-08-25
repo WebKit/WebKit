@@ -26,6 +26,7 @@
 #include "Debugger.h"
 #include "Executable.h"
 #include "JSGlobalObject.h"
+#include "Lexer.h"
 #include "Nodes.h"
 #include "ParserArena.h"
 #include "SourceProvider.h"
@@ -45,11 +46,7 @@ namespace JSC {
     class Parser : public Noncopyable {
     public:
         template <class ParsedNode>
-        PassRefPtr<ParsedNode> parse(ExecState*, Debugger*, const SourceCode&, int* errLine = 0, UString* errMsg = 0);
-        template <class ParsedNode>
-        PassRefPtr<ParsedNode> reparse(JSGlobalData*, ParsedNode*);
-        void reparseInPlace(JSGlobalData*, FunctionBodyNode*);
-        PassRefPtr<FunctionBodyNode> parseFunctionFromGlobalCode(ExecState*, Debugger*, const SourceCode&, int* errLine = 0, UString* errMsg = 0);
+        PassRefPtr<ParsedNode> parse(JSGlobalData* globalData, Debugger*, ExecState*, const SourceCode& source, int* errLine = 0, UString* errMsg = 0);
 
         void didFinishParsing(SourceElements*, ParserArenaData<DeclarationStacks::VarStack>*, 
                               ParserArenaData<DeclarationStacks::FunctionStack>*, CodeFeatures features, int lastLine, int numConstants);
@@ -70,100 +67,35 @@ namespace JSC {
     };
 
     template <class ParsedNode>
-    PassRefPtr<ParsedNode> Parser::parse(ExecState* exec, Debugger* debugger, const SourceCode& source, int* errLine, UString* errMsg)
+    PassRefPtr<ParsedNode> Parser::parse(JSGlobalData* globalData, Debugger* debugger, ExecState* debuggerExecState, const SourceCode& source, int* errLine, UString* errMsg)
     {
         m_source = &source;
-        parse(&exec->globalData(), errLine, errMsg);
-        RefPtr<ParsedNode> result;
-        if (m_sourceElements) {
-            result = ParsedNode::create(&exec->globalData(),
-                                         m_sourceElements,
-                                         m_varDeclarations ? &m_varDeclarations->data : 0, 
-                                         m_funcDeclarations ? &m_funcDeclarations->data : 0,
-                                         *m_source,
-                                         m_features,
-                                         m_numConstants);
-            result->setLoc(m_source->firstLine(), m_lastLine);
-        }
+        if (FunctionBodyNode::scopeIsFunction)
+            globalData->lexer->setIsReparsing();
+        parse(globalData, errLine, errMsg);
 
-        m_arena.reset();
-
-        m_source = 0;
-        m_varDeclarations = 0;
-        m_funcDeclarations = 0;
-
-        if (debugger)
-            debugger->sourceParsed(exec, source, *errLine, *errMsg);
-        return result.release();
-    }
-
-    template <class ParsedNode>
-    PassRefPtr<ParsedNode> Parser::reparse(JSGlobalData* globalData, ParsedNode* oldParsedNode)
-    {
-        m_source = &oldParsedNode->source();
-        parse(globalData, 0, 0);
         RefPtr<ParsedNode> result;
         if (m_sourceElements) {
             result = ParsedNode::create(globalData,
-                                        m_sourceElements,
-                                        m_varDeclarations ? &m_varDeclarations->data : 0, 
-                                        m_funcDeclarations ? &m_funcDeclarations->data : 0,
-                                        *m_source,
-                                        oldParsedNode->features(),
-                                        m_numConstants);
+            m_sourceElements,
+            m_varDeclarations ? &m_varDeclarations->data : 0,
+            m_funcDeclarations ? &m_funcDeclarations->data : 0,
+            source,
+            m_features,
+            m_numConstants);
             result->setLoc(m_source->firstLine(), m_lastLine);
         }
 
         m_arena.reset();
 
         m_source = 0;
+        m_sourceElements = 0;
         m_varDeclarations = 0;
         m_funcDeclarations = 0;
 
+        if (debugger && !FunctionBodyNode::scopeIsFunction)
+            debugger->sourceParsed(debuggerExecState, source, *errLine, *errMsg);
         return result.release();
-    }
-
-    inline PassRefPtr<FunctionBodyNode> Parser::parseFunctionFromGlobalCode(ExecState* exec, Debugger* debugger, const SourceCode& source, int* errLine, UString* errMsg)
-    {
-        RefPtr<ProgramNode> program = parse<ProgramNode>(exec, debugger, source, errLine, errMsg);
-        if (!program)
-            return 0;
-
-        StatementNode* exprStatement = program->singleStatement();
-        ASSERT(exprStatement);
-        ASSERT(exprStatement->isExprStatement());
-        if (!exprStatement || !exprStatement->isExprStatement())
-            return 0;
-
-        ExpressionNode* funcExpr = static_cast<ExprStatementNode*>(exprStatement)->expr();
-        ASSERT(funcExpr);
-        ASSERT(funcExpr->isFuncExprNode());
-        if (!funcExpr || !funcExpr->isFuncExprNode())
-            return 0;
-
-        FunctionBodyNode* body = static_cast<FuncExprNode*>(funcExpr)->body();
-        ASSERT(body);
-        return body;
-    }
-
-    inline JSObject* EvalExecutable::parse(ExecState* exec, bool allowDebug)
-    {
-        int errLine;
-        UString errMsg;
-        m_node = exec->globalData().parser->parse<EvalNode>(exec, allowDebug ? exec->dynamicGlobalObject()->debugger() : 0, m_source, &errLine, &errMsg);
-        if (!m_node)
-            return Error::create(exec, SyntaxError, errMsg, errLine, m_source.provider()->asID(), m_source.provider()->url());
-        return 0;
-    }
-
-    inline JSObject* ProgramExecutable::parse(ExecState* exec, bool allowDebug)
-    {
-        int errLine;
-        UString errMsg;
-        m_node = exec->globalData().parser->parse<ProgramNode>(exec, allowDebug ? exec->dynamicGlobalObject()->debugger() : 0, m_source, &errLine, &errMsg);
-        if (!m_node)
-            return Error::create(exec, SyntaxError, errMsg, errLine, m_source.provider()->asID(), m_source.provider()->url());
-        return 0;
     }
 
 } // namespace JSC

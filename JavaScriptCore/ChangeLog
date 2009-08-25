@@ -1,3 +1,94 @@
+2009-08-24  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Adler & Darin Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28691
+        Do not retain ScopeNodes outside of parsing
+        
+        There is now no need for these to exist outside of parsing - their use in the runtime is replaced by Executable types.
+
+        * bytecode/EvalCodeCache.h:
+        (JSC::EvalCodeCache::get):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitNewFunction):
+        (JSC::BytecodeGenerator::emitNewFunctionExpression):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::makeFunction):
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::recompileAllJSFunctions):
+        (JSC::evaluateInGlobalCallFrame):
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::evaluate):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::prepareForRepeatCall):
+        (JSC::Interpreter::privateExecute):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * parser/Nodes.cpp:
+        (JSC::ScopeNodeData::ScopeNodeData):
+        (JSC::ProgramNode::create):
+        (JSC::EvalNode::create):
+        (JSC::FunctionBodyNode::create):
+        * parser/Nodes.h:
+        (JSC::ScopeNode::adoptData):
+        (JSC::FunctionBodyNode::parameterCount):
+        * parser/Parser.cpp:
+        * parser/Parser.h:
+        (JSC::Parser::arena):
+        (JSC::Parser::Parser):
+        (JSC::Parser::parse):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::isNumericCompareFunction):
+        (JSC::arrayProtoFuncSort):
+        * runtime/Completion.cpp:
+        (JSC::checkSyntax):
+        (JSC::evaluate):
+        * runtime/Executable.cpp:
+        (JSC::FunctionExecutable::~FunctionExecutable):
+        (JSC::EvalExecutable::compile):
+        (JSC::ProgramExecutable::checkSyntax):
+        (JSC::ProgramExecutable::compile):
+        (JSC::FunctionExecutable::compile):
+        (JSC::EvalExecutable::generateJITCode):
+        (JSC::ProgramExecutable::generateJITCode):
+        (JSC::FunctionExecutable::generateJITCode):
+        (JSC::FunctionExecutable::reparseExceptionInfo):
+        (JSC::EvalExecutable::reparseExceptionInfo):
+        (JSC::FunctionExecutable::recompile):
+        (JSC::FunctionExecutable::fromGlobalCode):
+        (JSC::FunctionExecutable::copyParameters):
+        (JSC::FunctionExecutable::paramString):
+        * runtime/Executable.h:
+        (JSC::ScriptExecutable::ScriptExecutable):
+        (JSC::ScriptExecutable::sourceID):
+        (JSC::ScriptExecutable::sourceURL):
+        (JSC::ScriptExecutable::lineNo):
+        (JSC::ScriptExecutable::lastLine):
+        (JSC::ScriptExecutable::usesEval):
+        (JSC::ScriptExecutable::usesArguments):
+        (JSC::ScriptExecutable::needsActivation):
+        (JSC::ScriptExecutable::recordParse):
+        (JSC::EvalExecutable::bytecode):
+        (JSC::EvalExecutable::jitCode):
+        (JSC::ProgramExecutable::bytecode):
+        (JSC::ProgramExecutable::reparseExceptionInfo):
+        (JSC::ProgramExecutable::jitCode):
+        (JSC::FunctionExecutable::FunctionExecutable):
+        (JSC::FunctionExecutable::make):
+        (JSC::FunctionExecutable::bytecode):
+        (JSC::FunctionExecutable::isGenerated):
+        (JSC::FunctionExecutable::name):
+        (JSC::FunctionExecutable::parameterCount):
+        (JSC::FunctionExecutable::jitCode):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunction):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::numericCompareFunction):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncEval):
+
 2009-08-24  Darin Adler  <darin@apple.com>
 
         * runtime/ObjectPrototype.cpp:

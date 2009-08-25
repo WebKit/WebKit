@@ -1425,6 +1425,8 @@ namespace JSC {
     public:
         static PassRefPtr<ProgramNode> create(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, const SourceCode&, CodeFeatures, int numConstants);
 
+        static const bool scopeIsFunction = false;
+
     private:
         ProgramNode(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, const SourceCode&, CodeFeatures, int numConstants);
 
@@ -1434,6 +1436,8 @@ namespace JSC {
     class EvalNode : public ScopeNode {
     public:
         static PassRefPtr<EvalNode> create(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, const SourceCode&, CodeFeatures, int numConstants);
+
+        static const bool scopeIsFunction = false;
 
     private:
         EvalNode(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, const SourceCode&, CodeFeatures, int numConstants);
@@ -1450,7 +1454,6 @@ namespace JSC {
 
         const Identifier* parameters() const { return m_parameters; }
         size_t parameterCount() const { return m_parameterCount; }
-        UString paramString() const ;
         Identifier* copyParameters();
 
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
@@ -1460,7 +1463,7 @@ namespace JSC {
         
         const Identifier& ident() { return m_ident; }
 
-        void reparseDataIfNecessary(ScopeChainNode*);
+        static const bool scopeIsFunction = true;
 
     private:
         FunctionBodyNode(JSGlobalData*);

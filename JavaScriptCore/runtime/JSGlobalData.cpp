@@ -236,9 +236,8 @@ const Vector<Instruction>& JSGlobalData::numericCompareFunction(ExecState* exec)
 {
     if (!lazyNumericCompareFunction.size() && !initializingLazyNumericCompareFunction) {
         initializingLazyNumericCompareFunction = true;
-        RefPtr<FunctionBodyNode> functionBody = parser->parseFunctionFromGlobalCode(exec, 0, makeSource(UString("(function (v1, v2) { return v1 - v2; })")), 0, 0);
-        FunctionExecutable function(functionBody->ident(), functionBody.get());
-        lazyNumericCompareFunction = function.bytecode(exec->scopeChain()).instructions();
+        RefPtr<FunctionExecutable> function = FunctionExecutable::fromGlobalCode(Identifier(exec, "numericCompare"), exec, 0, makeSource(UString("(function (v1, v2) { return v1 - v2; })")), 0, 0);
+        lazyNumericCompareFunction = function->bytecode(exec, exec->scopeChain()).instructions();
         initializingLazyNumericCompareFunction = false;
     }
 

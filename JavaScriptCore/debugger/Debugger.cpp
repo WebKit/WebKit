@@ -89,7 +89,6 @@ void Debugger::recompileAllJSFunctions(JSGlobalData* globalData)
             sourceProviders.add(executable->source().provider(), exec);
     }
 
-
     // Call sourceParsed() after reparsing all functions because it will execute
     // JavaScript in the inspector.
     SourceProviderMap::const_iterator end = sourceProviders.end();
@@ -102,7 +101,7 @@ JSValue evaluateInGlobalCallFrame(const UString& script, JSValue& exception, JSG
     CallFrame* globalCallFrame = globalObject->globalExec();
 
     EvalExecutable eval(makeSource(script));
-    JSObject* error = eval.parse(globalCallFrame);
+    JSObject* error = eval.compile(globalCallFrame, globalCallFrame->scopeChain());
     if (error)
         return error;
 

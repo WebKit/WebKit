@@ -87,13 +87,13 @@ JSObject* constructFunction(ExecState* exec, const ArgList& args, const Identifi
     int errLine;
     UString errMsg;
     SourceCode source = makeSource(program, sourceURL, lineNumber);
-    RefPtr<FunctionBodyNode> body = exec->globalData().parser->parseFunctionFromGlobalCode(exec, exec->dynamicGlobalObject()->debugger(), source, &errLine, &errMsg);
-    if (!body)
+    RefPtr<FunctionExecutable> function = FunctionExecutable::fromGlobalCode(functionName, exec, exec->dynamicGlobalObject()->debugger(), source, &errLine, &errMsg);
+    if (!function)
         return throwError(exec, SyntaxError, errMsg, errLine, source.provider()->asID(), source.provider()->url());
 
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
     ScopeChain scopeChain(globalObject, globalObject->globalData(), exec->globalThisValue());
-    return new (exec) JSFunction(exec, adoptRef(new FunctionExecutable(functionName, body.get())), scopeChain.node());
+    return new (exec) JSFunction(exec, function, scopeChain.node());
 }
 
 // ECMA 15.3.2 The Function Constructor

@@ -67,7 +67,7 @@ static JSValue JSC_HOST_CALL arrayProtoFuncLastIndexOf(ExecState*, JSObject*, JS
 
 namespace JSC {
 
-static inline bool isNumericCompareFunction(CallType callType, const CallData& callData)
+static inline bool isNumericCompareFunction(ExecState* exec, CallType callType, const CallData& callData)
 {
     if (callType != CallTypeJS)
         return false;
@@ -75,10 +75,10 @@ static inline bool isNumericCompareFunction(CallType callType, const CallData& c
 #if ENABLE(JIT)
     // If the JIT is enabled then we need to preserve the invariant that every
     // function with a CodeBlock also has JIT code.
-    callData.js.functionExecutable->jitCode(callData.js.scopeChain);
+    callData.js.functionExecutable->jitCode(exec, callData.js.scopeChain);
     CodeBlock& codeBlock = callData.js.functionExecutable->generatedBytecode();
 #else
-    CodeBlock& codeBlock = callData.js.functionExecutable->bytecode(callData.js.scopeChain);
+    CodeBlock& codeBlock = callData.js.functionExecutable->bytecode(exec, callData.js.scopeChain);
 #endif
 
     return codeBlock.isNumericCompareFunction();
@@ -456,7 +456,7 @@ JSValue JSC_HOST_CALL arrayProtoFuncSort(ExecState* exec, JSObject*, JSValue thi
     CallType callType = function.getCallData(callData);
 
     if (thisObj->classInfo() == &JSArray::info) {
-        if (isNumericCompareFunction(callType, callData))
+        if (isNumericCompareFunction(exec, callType, callData))
             asArray(thisObj)->sortNumeric(exec, function, callType, callData);
         else if (callType != CallTypeNone)
             asArray(thisObj)->sort(exec, function, callType, callData);
