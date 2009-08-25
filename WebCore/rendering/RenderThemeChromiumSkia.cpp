@@ -571,14 +571,52 @@ bool RenderThemeChromiumSkia::paintMediaSliderTrack(RenderObject* object, const 
 #endif
 }
 
-void RenderThemeChromiumSkia::adjustSliderThumbSize(RenderObject* object) const {
+bool RenderThemeChromiumSkia::paintMediaVolumeSliderTrack(RenderObject* object, const RenderObject::PaintInfo& paintInfo, const IntRect& rect)
+{
 #if ENABLE(VIDEO)
-    if (object->style()->appearance() == MediaSliderThumbPart) {
-        static Image* mediaSliderThumb = Image::loadPlatformResource("mediaSliderThumb").releaseRef();
+    HTMLMediaElement* mediaElement = mediaElementParent(object->node());
+    if (!mediaElement)
+        return false;
 
-        object->style()->setWidth(Length(mediaSliderThumb->width(), Fixed));
-        object->style()->setHeight(Length(mediaSliderThumb->height(), Fixed));
-    }
+    SkCanvas* canvas = paintInfo.context->platformContext()->canvas();
+    SkPaint paint;
+    paint.setARGB(0xff, 0xff, 0xff, 0xff);
+
+    int x = rect.x() + rect.width() / 2;
+    canvas->drawLine(x, rect.y(), x, rect.y() + rect.height(), paint);
+    return true;
+#else
+    UNUSED_PARAM(object);
+    UNUSED_PARAM(paintInfo);
+    UNUSED_PARAM(rect);
+    return false;
+#endif
+}
+
+static Image* mediaSliderThumbImage()
+{
+    static Image* mediaSliderThumb = Image::loadPlatformResource("mediaSliderThumb").releaseRef();
+    return mediaSliderThumb;
+}
+
+static Image* mediaVolumeSliderThumbImage()
+{
+    static Image* mediaVolumeSliderThumb = Image::loadPlatformResource("mediaVolumeSliderThumb").releaseRef();
+    return mediaVolumeSliderThumb;
+}
+
+void RenderThemeChromiumSkia::adjustSliderThumbSize(RenderObject* object) const
+{
+#if ENABLE(VIDEO)
+    Image* thumbImage = 0;
+    if (object->style()->appearance() == MediaSliderThumbPart)
+        thumbImage = mediaSliderThumbImage();
+    else if (object->style()->appearance() == MediaVolumeSliderThumbPart)
+        thumbImage = mediaVolumeSliderThumbImage();
+
+    ASSERT(thumbImage);
+    object->style()->setWidth(Length(thumbImage->width(), Fixed));
+    object->style()->setHeight(Length(thumbImage->height(), Fixed));
 #else
     UNUSED_PARAM(object);
 #endif
@@ -590,9 +628,22 @@ bool RenderThemeChromiumSkia::paintMediaSliderThumb(RenderObject* object, const 
     if (!object->parent()->isSlider())
         return false;
 
-    static Image* mediaSliderThumb = Image::loadPlatformResource("mediaSliderThumb").releaseRef();
+    return paintMediaButtonInternal(paintInfo.context, rect, mediaSliderThumbImage());
+#else
+    UNUSED_PARAM(object);
+    UNUSED_PARAM(paintInfo);
+    UNUSED_PARAM(rect);
+    return false;
+#endif
+}
 
-    return paintMediaButtonInternal(paintInfo.context, rect, mediaSliderThumb);
+bool RenderThemeChromiumSkia::paintMediaVolumeSliderThumb(RenderObject* object, const RenderObject::PaintInfo& paintInfo, const IntRect& rect)
+{
+#if ENABLE(VIDEO)
+    if (!object->parent()->isSlider())
+        return false;
+
+    return paintMediaButtonInternal(paintInfo.context, rect, mediaVolumeSliderThumbImage());
 #else
     UNUSED_PARAM(object);
     UNUSED_PARAM(paintInfo);
