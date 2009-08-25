@@ -36,6 +36,7 @@
 #include "CanvasGradient.h"
 #include "CanvasPattern.h"
 #include "CanvasPixelArray.h"
+#include "CanvasRenderingContext.h"
 #include "CanvasRenderingContext2D.h"
 #include "CanvasStyle.h"
 #include "CharacterData.h"

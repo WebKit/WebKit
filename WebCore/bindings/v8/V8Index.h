@@ -313,6 +313,7 @@ typedef v8::Persistent<v8::FunctionTemplate> (*FunctionTemplateFactory)();
     V(BARINFO, BarInfo)                                                 \
     V(CANVASGRADIENT, CanvasGradient)                                   \
     V(CANVASPATTERN, CanvasPattern)                                     \
+    V(CANVASRENDERINGCONTEXT, CanvasRenderingContext)                   \
     V(CANVASRENDERINGCONTEXT2D, CanvasRenderingContext2D)               \
     V(CLIENTRECT, ClientRect)                                           \
     V(CLIENTRECTLIST, ClientRectList)                                   \

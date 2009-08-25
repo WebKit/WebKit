@@ -37,6 +37,7 @@
 #include "bindings/V8CanvasGradient.cpp"
 #include "bindings/V8CanvasPattern.cpp"
 #include "bindings/V8CanvasPixelArray.cpp"
+#include "bindings/V8CanvasRenderingContext.cpp"
 #include "bindings/V8CanvasRenderingContext2D.cpp"
 #include "bindings/V8CDATASection.cpp"
 #include "bindings/V8CharacterData.cpp"

@@ -92,8 +92,8 @@ CALLBACK_FUNC_DECL(DocumentGetCSSCanvasContext)
     String name = toWebCoreString(args[1]);
     int width = toInt32(args[2]);
     int height = toInt32(args[3]);
-    CanvasRenderingContext2D* result = imp->getCSSCanvasContext(contextId, name, width, height);
-    return V8DOMWrapper::convertToV8Object(V8ClassIndex::CANVASRENDERINGCONTEXT2D, result);
+    CanvasRenderingContext* result = imp->getCSSCanvasContext(contextId, name, width, height);
+    return V8DOMWrapper::convertToV8Object(V8ClassIndex::CANVASRENDERINGCONTEXT, result);
 }
 
 } // namespace WebCore
