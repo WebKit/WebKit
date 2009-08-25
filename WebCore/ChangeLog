@@ -1,3 +1,13 @@
+2009-08-25  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Missed checking in 2 Canvas3D files
+        https://bugs.webkit.org/show_bug.cgi?id=28018
+
+        * bindings/js/JSCanvasRenderingContextCustom.cpp: Implements toJS to do proper subclass binding
+        * bindings/js/JSCanvasRenderingContext3DCustom.cpp: Argument marshaling for 3D calls
+
 2009-08-25  Mads Ager  <ager@chromium.org>
 
         Reviewed by Adam Barth.
