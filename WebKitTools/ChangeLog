@@ -1,3 +1,30 @@
+2009-08-25  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt/Mac] Use CONFIG+=build_all only when building libraries
+
+        If no configuration is specified when building WebKit we pass the
+        debug_and_release option to QMake which results in Makefiles for
+        both configurations being generated.
+
+        Previously we built both of these configurations by default, for
+        all targets (both the QtWebKit framework/dyldlib and the various
+        executables such as QtLauncher and tests). This makes sense for
+        the libraries, which get the _debug suffix and can be loaded on
+        demand by setting the DYLD_IMAGE_SUFFIX, but for executables we
+        ended up building the same executable twice.
+
+        We now only build one instance of each executable, and since this
+        is a developer build we build the debug-version. Passing either
+        --debug or --release to build-webkit will override this, and
+        even in the default case the release version can still be built
+        by running 'make release' in the the build directory of each
+        target.
+
+        * DumpRenderTree/qt/TestNetscapePlugin/TestNetscapePlugin.pro:
+        * Scripts/webkitdirs.pm:
+
 2009-08-24  Hironori Bono  <hbono@chromium.org>
 
         Reviewed by Adam Barth.

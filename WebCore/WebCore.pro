@@ -3247,10 +3247,10 @@ HEADERS += $$WEBKIT_API_HEADERS
             !build_pass {
                 message("Building QtWebKit as a framework, as that's how Qt was built. You can")
                 message("override this by passing CONFIG+=webkit_no_framework to build-webkit.")
+
+                CONFIG += build_all
             } else {
-                debug_and_release:CONFIG(debug, debug|release) {
-                    TARGET = $$qtLibraryTarget($$TARGET)
-                }
+                debug_and_release:TARGET = $$qtLibraryTarget($$TARGET)
             }
 
             CONFIG += lib_bundle qt_no_framework_direct_includes qt_framework

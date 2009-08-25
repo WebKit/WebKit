@@ -13,9 +13,8 @@ mac {
     QMAKE_PLUGIN_BUNDLE_NAME = $$TARGET
     QMAKE_BUNDLE_LOCATION += "Contents/MacOS"
 
-    debug_and_release:CONFIG(debug, debug|release) {
-        TARGET = $$qtLibraryTarget($$TARGET)
-    }
+    !build_pass:CONFIG += build_all
+    debug_and_release:TARGET = $$qtLibraryTarget($$TARGET)
 }
 
 INCLUDEPATH += ../../../../JavaScriptCore \
