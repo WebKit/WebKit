@@ -1,3 +1,15 @@
+2009-08-25  Yusuke Sato  <yusukes@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Complex text doesn't show up with text stroking
+        https://bugs.webkit.org/show_bug.cgi?id=28707
+
+        Skip the NULL check of m_hdc if Windows GDI is not in use.
+
+        * platform/graphics/chromium/FontChromiumWin.cpp:
+        (WebCore::Font::drawComplexText):
+
 2009-08-25  Alpha Lam  <hclam@chromium.org>
 
         Reviewed by David Levin.
