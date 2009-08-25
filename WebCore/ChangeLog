@@ -1,3 +1,18 @@
+2009-08-25  Mads Ager  <ager@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [V8] Exception from JavaScript propagates to main script
+        https://bugs.webkit.org/show_bug.cgi?id=26433
+
+        Make sure that exceptions thrown both at compile time and at
+        runtime in javascript URLs are isolated from the main script.
+
+        Test: fast/dom/javascript-url-exception-isolation.html
+
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::evaluate):
+
 2009-08-25  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.

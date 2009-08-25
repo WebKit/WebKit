@@ -338,24 +338,25 @@ v8::Local<v8::Value> V8Proxy::evaluate(const ScriptSourceCode& source, Node* nod
 {
     ASSERT(v8::Context::InContext());
 
-    // Compile the script.
-    v8::Local<v8::String> code = v8ExternalString(source.source());
-    ChromiumBridge::traceEventBegin("v8.compile", node, "");
-
-    // NOTE: For compatibility with WebCore, ScriptSourceCode's line starts at
-    // 1, whereas v8 starts at 0.
-    v8::Handle<v8::Script> script = compileScript(code, source.url(), source.startLine() - 1);
-    ChromiumBridge::traceEventEnd("v8.compile", node, "");
-
-    ChromiumBridge::traceEventBegin("v8.run", node, "");
     v8::Local<v8::Value> result;
     {
-        // Isolate exceptions that occur when executing the code. These
-        // exceptions should not interfere with javascript code we might
-        // evaluate from C++ when returning from here.
+        // Isolate exceptions that occur when compiling and executing
+        // the code. These exceptions should not interfere with
+        // javascript code we might evaluate from C++ when returning
+        // from here.
         v8::TryCatch tryCatch;
         tryCatch.SetVerbose(true);
 
+        // Compile the script.
+        v8::Local<v8::String> code = v8ExternalString(source.source());
+        ChromiumBridge::traceEventBegin("v8.compile", node, "");
+
+        // NOTE: For compatibility with WebCore, ScriptSourceCode's line starts at
+        // 1, whereas v8 starts at 0.
+        v8::Handle<v8::Script> script = compileScript(code, source.url(), source.startLine() - 1);
+        ChromiumBridge::traceEventEnd("v8.compile", node, "");
+
+        ChromiumBridge::traceEventBegin("v8.run", node, "");
         // Set inlineCode to true for <a href="javascript:doSomething()">
         // and false for <script>doSomething</script>. We make a rough guess at
         // this based on whether the script source has a URL.
