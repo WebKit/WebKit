@@ -1,3 +1,29 @@
+2009-08-25  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Update outdated font metrics and add expected files for new tests.
+
+        * platform/qt/Skipped:
+        * platform/qt/fast/backgrounds/001-expected.txt:
+        * platform/qt/fast/backgrounds/animated-gif-as-background-expected.txt: Added.
+        * platform/qt/fast/backgrounds/animated-svg-as-background-expected.txt: Added.
+        * platform/qt/fast/backgrounds/animated-svg-as-mask-expected.txt: Added.
+        * platform/qt/fast/backgrounds/background-clip-text-expected.txt: Added.
+        * platform/qt/fast/backgrounds/background-inherit-color-bug-expected.txt:
+        * platform/qt/fast/backgrounds/background-origin-root-element-expected.txt: Added.
+        * platform/qt/fast/backgrounds/background-position-1-expected.txt: Added.
+        * platform/qt/fast/backgrounds/background-position-rounding-expected.txt: Added.
+        * platform/qt/fast/backgrounds/mask-composite-expected.txt: Added.
+        * platform/qt/fast/backgrounds/opacity-on-document-element-expected.txt: Added.
+        * platform/qt/fast/backgrounds/repeat/mask-negative-offset-repeat-expected.txt: Added.
+        * platform/qt/fast/backgrounds/repeat/negative-offset-repeat-expected.txt:
+        * platform/qt/fast/backgrounds/repeat/noRepeatCorrectClip-expected.txt:
+        * platform/qt/fast/backgrounds/size/backgroundSize15-expected.txt:
+        * platform/qt/fast/backgrounds/size/zero-expected.txt: Added.
+        * platform/qt/fast/backgrounds/solid-color-context-restore-expected.txt:
+        * platform/qt/fast/backgrounds/svg-as-mask-expected.txt: Added.
+
 2009-08-24  Hironori Bono  <hbono@chromium.org>
 
         Reviewed by Adam Barth.
