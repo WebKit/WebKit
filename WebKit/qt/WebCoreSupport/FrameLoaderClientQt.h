@@ -211,7 +211,7 @@ namespace WebCore {
         WebCore::PluginView* m_pluginView;
         bool m_hasSentResponseToPlugin;
 
-        bool m_loadSucceeded;
+        ResourceError m_loadError;
     };
 
 }
