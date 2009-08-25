@@ -40,8 +40,6 @@ CanvasObject::CanvasObject(GraphicsContext3D* context)
 
 CanvasObject::~CanvasObject()
 {
-    if (m_context)
-        m_context->removeObject(this);
 }
 
 void CanvasObject::setObject(Platform3DObject object)

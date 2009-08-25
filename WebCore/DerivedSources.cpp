@@ -30,7 +30,11 @@
 #include "JSBarInfo.cpp"
 #include "JSCanvasGradient.cpp"
 #include "JSCanvasPattern.cpp"
+#include "JSCanvasRenderingContext.cpp"
 #include "JSCanvasRenderingContext2D.cpp"
+#if ENABLE(3D_CANVAS)    
+#include "JSCanvasRenderingContext3D.cpp"
+#endif
 #include "JSCDATASection.cpp"
 #include "JSCharacterData.cpp"
 #include "JSClientRect.cpp"

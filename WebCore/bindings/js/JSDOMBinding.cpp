@@ -298,7 +298,7 @@ static inline bool isObservableThroughDOM(JSNode* jsNode)
                 }
             }
             if (static_cast<Element*>(node)->hasTagName(canvasTag)) {
-                if (CanvasRenderingContext2D* context = static_cast<HTMLCanvasElement*>(node)->renderingContext2D()) {
+                if (CanvasRenderingContext* context = static_cast<HTMLCanvasElement*>(node)->renderingContext()) {
                     if (DOMObject* wrapper = getCachedDOMObjectWrapper(*jsNode->globalObject()->globalData(), context)) {
                         if (wrapper->hasCustomProperties())
                             return true;

@@ -1,3 +1,67 @@
+2009-08-25  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Added all new Canvas3D files to the build
+        https://bugs.webkit.org/show_bug.cgi?id=28018
+
+        This also hooks up CanvasRenderingContext as the common base class for
+        CanvasRenderingContext2D and CanvasRenderingContext3D. And it adds a bit
+        of logic throughout to support the new CanvasRenderingContext3D object.
+        But nothing is hooked up yet.
+
+        * DerivedSources.make:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore/GNUmakefile.am:
+        * WebCore/WebCore.gypi:
+        * WebCore/WebCoreSources.bkl:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSCanvasRenderingContext2DCustom.cpp:
+        (WebCore::JSCanvasRenderingContext2D::strokeStyle):
+        (WebCore::JSCanvasRenderingContext2D::setStrokeStyle):
+        (WebCore::JSCanvasRenderingContext2D::fillStyle):
+        (WebCore::JSCanvasRenderingContext2D::setFillStyle):
+        (WebCore::JSCanvasRenderingContext2D::setFillColor):
+        (WebCore::JSCanvasRenderingContext2D::setStrokeColor):
+        (WebCore::JSCanvasRenderingContext2D::strokeRect):
+        (WebCore::JSCanvasRenderingContext2D::drawImage):
+        (WebCore::JSCanvasRenderingContext2D::drawImageFromRect):
+        (WebCore::JSCanvasRenderingContext2D::setShadow):
+        (WebCore::JSCanvasRenderingContext2D::createPattern):
+        (WebCore::JSCanvasRenderingContext2D::putImageData):
+        (WebCore::JSCanvasRenderingContext2D::fillText):
+        (WebCore::JSCanvasRenderingContext2D::strokeText):
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::isObservableThroughDOM):
+        * bindings/js/JSDocumentCustom.cpp:
+        * bindings/js/JSHTMLCanvasElementCustom.cpp:
+        (WebCore::JSHTMLCanvasElement::markChildren):
+        * dom/Document.cpp:
+        (WebCore::Document::getCSSCanvasContext):
+        * dom/Document.h:
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::getContext):
+        (WebCore::HTMLCanvasElement::willDraw):
+        (WebCore::HTMLCanvasElement::reset):
+        (WebCore::HTMLCanvasElement::paint):
+        (WebCore::HTMLCanvasElement::is3D):
+        (WebCore::HTMLCanvasElement::context3D):
+        (WebCore::HTMLCanvasElement::texture3D):
+        * html/HTMLCanvasElement.h:
+        (WebCore::HTMLCanvasElement::renderingContext):
+        * html/canvas/CanvasObject.cpp:
+        (WebCore::CanvasObject::~CanvasObject):
+        * html/canvas/CanvasRenderingContext.idl:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::CanvasRenderingContext2D):
+        (WebCore::CanvasRenderingContext2D::~CanvasRenderingContext2D):
+        * html/canvas/CanvasRenderingContext2D.h:
+        (WebCore::CanvasRenderingContext2D::is2d):
+        * html/canvas/CanvasRenderingContext2D.idl:
+        * html/canvas/CanvasRenderingContext3D.cpp:
+        * html/canvas/CanvasRenderingContext3D.idl:
+
 2009-08-25  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson.

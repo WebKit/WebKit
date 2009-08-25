@@ -30,27 +30,12 @@
 #include "JSCanvasRenderingContext2D.h"
 #if ENABLE(3D_CANVAS)
 #include "JSCanvasRenderingContext3D.h"
-#include <wtf/GetPtr.h>
 #endif
+#include <wtf/GetPtr.h>
 
 using namespace JSC;
 
 namespace WebCore {
-
-#if ENABLE(3D_CANVAS)
-JSValue JSHTMLCanvasElement::getContext(JSC::ExecState* exec, JSC::ArgList const& args)
-{
-    HTMLCanvasElement* imp = static_cast<HTMLCanvasElement*>(impl());
-    const UString& contextId = args.at(0).toString(exec);
-
-    if (contextId == "2d")
-        return toJS(exec, WTF::getPtr(reinterpret_cast<CanvasRenderingContext2D*>(imp->getContext(contextId))));
-    if (contextId == "webkit-3d")
-        return toJS(exec, WTF::getPtr(reinterpret_cast<CanvasRenderingContext3D*>(imp->getContext(contextId))));
-    
-    return jsUndefined();
-}
-#endif
 
 void JSHTMLCanvasElement::markChildren(MarkStack& markStack)
 {
@@ -59,7 +44,7 @@ void JSHTMLCanvasElement::markChildren(MarkStack& markStack)
     HTMLCanvasElement* canvas = static_cast<HTMLCanvasElement*>(impl());
     JSGlobalData& globalData = *Heap::heap(this)->globalData();
 
-    markDOMObjectWrapper(markStack, globalData, canvas->renderingContext2D());
+    markDOMObjectWrapper(markStack, globalData, canvas->renderingContext());
 }
 
 } // namespace WebCore

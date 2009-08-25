@@ -24,6 +24,10 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "HTMLDocument.h"
+#include "JSCanvasRenderingContext2D.h"
+#if ENABLE(3D_CANVAS)
+#include "JSCanvasRenderingContext3D.h"
+#endif
 #include "JSDOMWindowCustom.h"
 #include "JSHTMLDocument.h"
 #include "JSLocation.h"
@@ -34,6 +38,8 @@
 #include "JSSVGDocument.h"
 #include "SVGDocument.h"
 #endif
+
+#include <wtf/GetPtr.h>
 
 using namespace JSC;
 

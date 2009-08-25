@@ -361,6 +361,7 @@ IDL_BINDINGS += \
     dom/WheelEvent.idl \
     html/canvas/CanvasGradient.idl \
     html/canvas/CanvasPattern.idl \
+    html/canvas/CanvasRenderingContext.idl \
     html/canvas/CanvasRenderingContext2D.idl \
     html/DataGridColumn.idl \
     html/DataGridColumnList.idl \
@@ -644,6 +645,7 @@ SOURCES += \
     bindings/js/GCController.cpp \
     bindings/js/JSAttrCustom.cpp \
     bindings/js/JSCDATASectionCustom.cpp \
+    bindings/js/JSCanvasRenderingContextCustom.cpp \
     bindings/js/JSCanvasRenderingContext2DCustom.cpp \
     bindings/js/JSClipboardCustom.cpp \
     bindings/js/JSConsoleCustom.cpp \
@@ -944,6 +946,7 @@ SOURCES += \
     html/canvas/CanvasGradient.cpp \
     html/canvas/CanvasPattern.cpp \
     html/canvas/CanvasPixelArray.cpp \
+    html/canvas/CanvasRenderingContext.cpp \
     html/canvas/CanvasRenderingContext2D.cpp \
     html/canvas/CanvasStyle.cpp \
     html/CollectionCache.cpp \
@@ -1603,6 +1606,7 @@ HEADERS += \
     html/canvas/CanvasGradient.h \
     html/canvas/CanvasPattern.h \
     html/canvas/CanvasPixelArray.h \
+    html/canvas/CanvasRenderingContext.h \
     html/canvas/CanvasRenderingContext2D.h \
     html/canvas/CanvasStyle.h \
     html/CollectionCache.h \

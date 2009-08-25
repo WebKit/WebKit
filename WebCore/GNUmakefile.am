@@ -151,6 +151,7 @@ IDL_BINDINGS += \
 	WebCore/dom/WheelEvent.idl \
 	WebCore/html/canvas/CanvasGradient.idl \
 	WebCore/html/canvas/CanvasPattern.idl \
+	WebCore/html/canvas/CanvasRenderingContext.idl \
 	WebCore/html/canvas/CanvasRenderingContext2D.idl \
 	WebCore/html/DataGridColumn.idl \
 	WebCore/html/DataGridColumnList.idl \
@@ -316,6 +317,7 @@ webcore_sources += \
 	WebCore/bindings/js/JSCSSStyleDeclarationCustom.cpp \
 	WebCore/bindings/js/JSCSSStyleDeclarationCustom.h \
 	WebCore/bindings/js/JSCSSValueCustom.cpp \
+	WebCore/bindings/js/JSCanvasRenderingContextCustom.cpp \
 	WebCore/bindings/js/JSCanvasRenderingContext2DCustom.cpp \
 	WebCore/bindings/js/JSClipboardCustom.cpp \
 	WebCore/bindings/js/JSConsoleCustom.cpp \
@@ -913,6 +915,8 @@ webcore_sources += \
 	WebCore/html/canvas/CanvasPattern.h \
 	WebCore/html/canvas/CanvasPixelArray.cpp \
 	WebCore/html/canvas/CanvasPixelArray.h \
+	WebCore/html/canvas/CanvasRenderingContext.cpp \
+	WebCore/html/canvas/CanvasRenderingContext.h \
 	WebCore/html/canvas/CanvasRenderingContext2D.cpp \
 	WebCore/html/canvas/CanvasRenderingContext2D.h \
 	WebCore/html/canvas/CanvasStyle.cpp \

@@ -783,6 +783,67 @@
 		498391590F1E776900C23782 /* WebKitCSSMatrix.h in Headers */ = {isa = PBXBuildFile; fileRef = 498391560F1E776900C23782 /* WebKitCSSMatrix.h */; };
 		498391630F1E8EE100C23782 /* JSWebKitCSSMatrixConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 498391610F1E8EE100C23782 /* JSWebKitCSSMatrixConstructor.cpp */; };
 		498391640F1E8EE100C23782 /* JSWebKitCSSMatrixConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 498391620F1E8EE100C23782 /* JSWebKitCSSMatrixConstructor.h */; };
+		4983A97010435E9000DB70F9 /* JSCanvasRenderingContextCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4983A96F10435E9000DB70F9 /* JSCanvasRenderingContextCustom.cpp */; };
+		49C7B97E1042D2080009D447 /* JSCanvasNumberArrayCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B97C1042D2080009D447 /* JSCanvasNumberArrayCustom.cpp */; };
+		49C7B97F1042D2080009D447 /* JSCanvasRenderingContext3DCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B97D1042D2080009D447 /* JSCanvasRenderingContext3DCustom.cpp */; };
+		49C7B9931042D2D30009D447 /* JSCanvasBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9801042D2D30009D447 /* JSCanvasBuffer.cpp */; };
+		49C7B9941042D2D30009D447 /* JSCanvasBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9811042D2D30009D447 /* JSCanvasBuffer.h */; };
+		49C7B9951042D2D30009D447 /* JSCanvasByteArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9821042D2D30009D447 /* JSCanvasByteArray.cpp */; };
+		49C7B9961042D2D30009D447 /* JSCanvasByteArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9831042D2D30009D447 /* JSCanvasByteArray.h */; };
+		49C7B9971042D2D30009D447 /* JSCanvasFramebuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9841042D2D30009D447 /* JSCanvasFramebuffer.cpp */; };
+		49C7B9981042D2D30009D447 /* JSCanvasFramebuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9851042D2D30009D447 /* JSCanvasFramebuffer.h */; };
+		49C7B9991042D2D30009D447 /* JSCanvasNumberArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9861042D2D30009D447 /* JSCanvasNumberArray.cpp */; };
+		49C7B99A1042D2D30009D447 /* JSCanvasNumberArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9871042D2D30009D447 /* JSCanvasNumberArray.h */; };
+		49C7B99B1042D2D30009D447 /* JSCanvasProgram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9881042D2D30009D447 /* JSCanvasProgram.cpp */; };
+		49C7B99C1042D2D30009D447 /* JSCanvasProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9891042D2D30009D447 /* JSCanvasProgram.h */; };
+		49C7B99D1042D2D30009D447 /* JSCanvasRenderbuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B98A1042D2D30009D447 /* JSCanvasRenderbuffer.cpp */; };
+		49C7B99E1042D2D30009D447 /* JSCanvasRenderbuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B98B1042D2D30009D447 /* JSCanvasRenderbuffer.h */; };
+		49C7B99F1042D2D30009D447 /* JSCanvasRenderingContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B98C1042D2D30009D447 /* JSCanvasRenderingContext.cpp */; };
+		49C7B9A01042D2D30009D447 /* JSCanvasRenderingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B98D1042D2D30009D447 /* JSCanvasRenderingContext.h */; };
+		49C7B9A11042D2D30009D447 /* JSCanvasRenderingContext3D.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B98E1042D2D30009D447 /* JSCanvasRenderingContext3D.h */; };
+		49C7B9A21042D2D30009D447 /* JSCanvasShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B98F1042D2D30009D447 /* JSCanvasShader.cpp */; };
+		49C7B9A31042D2D30009D447 /* JSCanvasShader.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9901042D2D30009D447 /* JSCanvasShader.h */; };
+		49C7B9A41042D2D30009D447 /* JSCanvasTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9911042D2D30009D447 /* JSCanvasTexture.cpp */; };
+		49C7B9A51042D2D30009D447 /* JSCanvasTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9921042D2D30009D447 /* JSCanvasTexture.h */; };
+		49C7B9C81042D32F0009D447 /* CanvasBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9A81042D32E0009D447 /* CanvasBuffer.cpp */; };
+		49C7B9C91042D32F0009D447 /* CanvasBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9A91042D32E0009D447 /* CanvasBuffer.h */; };
+		49C7B9CA1042D32F0009D447 /* CanvasBuffer.idl in Resources */ = {isa = PBXBuildFile; fileRef = 49C7B9AA1042D32E0009D447 /* CanvasBuffer.idl */; };
+		49C7B9CB1042D32F0009D447 /* CanvasByteArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9AB1042D32E0009D447 /* CanvasByteArray.cpp */; };
+		49C7B9CC1042D32F0009D447 /* CanvasByteArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9AC1042D32E0009D447 /* CanvasByteArray.h */; };
+		49C7B9CD1042D32F0009D447 /* CanvasByteArray.idl in Resources */ = {isa = PBXBuildFile; fileRef = 49C7B9AD1042D32E0009D447 /* CanvasByteArray.idl */; };
+		49C7B9CE1042D32F0009D447 /* CanvasFramebuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9AE1042D32E0009D447 /* CanvasFramebuffer.cpp */; };
+		49C7B9CF1042D32F0009D447 /* CanvasFramebuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9AF1042D32E0009D447 /* CanvasFramebuffer.h */; };
+		49C7B9D01042D32F0009D447 /* CanvasFramebuffer.idl in Resources */ = {isa = PBXBuildFile; fileRef = 49C7B9B01042D32E0009D447 /* CanvasFramebuffer.idl */; };
+		49C7B9D11042D32F0009D447 /* CanvasNumberArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9B11042D32E0009D447 /* CanvasNumberArray.cpp */; };
+		49C7B9D21042D32F0009D447 /* CanvasNumberArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9B21042D32E0009D447 /* CanvasNumberArray.h */; };
+		49C7B9D31042D32F0009D447 /* CanvasNumberArray.idl in Resources */ = {isa = PBXBuildFile; fileRef = 49C7B9B31042D32F0009D447 /* CanvasNumberArray.idl */; };
+		49C7B9D41042D32F0009D447 /* CanvasObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9B41042D32F0009D447 /* CanvasObject.cpp */; };
+		49C7B9D51042D32F0009D447 /* CanvasObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9B51042D32F0009D447 /* CanvasObject.h */; };
+		49C7B9D61042D32F0009D447 /* CanvasProgram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9B61042D32F0009D447 /* CanvasProgram.cpp */; };
+		49C7B9D71042D32F0009D447 /* CanvasProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9B71042D32F0009D447 /* CanvasProgram.h */; };
+		49C7B9D81042D32F0009D447 /* CanvasProgram.idl in Resources */ = {isa = PBXBuildFile; fileRef = 49C7B9B81042D32F0009D447 /* CanvasProgram.idl */; };
+		49C7B9D91042D32F0009D447 /* CanvasRenderbuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9B91042D32F0009D447 /* CanvasRenderbuffer.cpp */; };
+		49C7B9DA1042D32F0009D447 /* CanvasRenderbuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9BA1042D32F0009D447 /* CanvasRenderbuffer.h */; };
+		49C7B9DB1042D32F0009D447 /* CanvasRenderbuffer.idl in Resources */ = {isa = PBXBuildFile; fileRef = 49C7B9BB1042D32F0009D447 /* CanvasRenderbuffer.idl */; };
+		49C7B9DC1042D32F0009D447 /* CanvasRenderingContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9BC1042D32F0009D447 /* CanvasRenderingContext.cpp */; };
+		49C7B9DD1042D32F0009D447 /* CanvasRenderingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9BD1042D32F0009D447 /* CanvasRenderingContext.h */; };
+		49C7B9DE1042D32F0009D447 /* CanvasRenderingContext.idl in Resources */ = {isa = PBXBuildFile; fileRef = 49C7B9BE1042D32F0009D447 /* CanvasRenderingContext.idl */; };
+		49C7B9DF1042D32F0009D447 /* CanvasRenderingContext3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9BF1042D32F0009D447 /* CanvasRenderingContext3D.cpp */; };
+		49C7B9E01042D32F0009D447 /* CanvasRenderingContext3D.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9C01042D32F0009D447 /* CanvasRenderingContext3D.h */; };
+		49C7B9E11042D32F0009D447 /* CanvasRenderingContext3D.idl in Resources */ = {isa = PBXBuildFile; fileRef = 49C7B9C11042D32F0009D447 /* CanvasRenderingContext3D.idl */; };
+		49C7B9E21042D32F0009D447 /* CanvasShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9C21042D32F0009D447 /* CanvasShader.cpp */; };
+		49C7B9E31042D32F0009D447 /* CanvasShader.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9C31042D32F0009D447 /* CanvasShader.h */; };
+		49C7B9E41042D32F0009D447 /* CanvasShader.idl in Resources */ = {isa = PBXBuildFile; fileRef = 49C7B9C41042D32F0009D447 /* CanvasShader.idl */; };
+		49C7B9E51042D32F0009D447 /* CanvasTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9C51042D32F0009D447 /* CanvasTexture.cpp */; };
+		49C7B9E61042D32F0009D447 /* CanvasTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9C61042D32F0009D447 /* CanvasTexture.h */; };
+		49C7B9E71042D32F0009D447 /* CanvasTexture.idl in Resources */ = {isa = PBXBuildFile; fileRef = 49C7B9C71042D32F0009D447 /* CanvasTexture.idl */; };
+		49C7B9FC1042D3650009D447 /* GraphicsContext3D.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9FB1042D3650009D447 /* GraphicsContext3D.h */; };
+		49C7BA001042D38C0009D447 /* Canvas3DLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9FD1042D38C0009D447 /* Canvas3DLayer.h */; };
+		49C7BA011042D38C0009D447 /* Canvas3DLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9FE1042D38C0009D447 /* Canvas3DLayer.mm */; };
+		49C7BA021042D38C0009D447 /* GraphicsContext3DMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9FF1042D38C0009D447 /* GraphicsContext3DMac.cpp */; };
+		49C7BA791042EFAE0009D447 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49C7BA781042EFAE0009D447 /* OpenGL.framework */; };
+		49C7BA8D1042F5B10009D447 /* JSDocumentCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7BA8C1042F5B10009D447 /* JSDocumentCustom.cpp */; };
+		49C7D4FB1042F95F0009D447 /* JSCanvasRenderingContext3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7D4FA1042F95F0009D447 /* JSCanvasRenderingContext3D.cpp */; };
 		49D5DC2B0F423A73008F20FD /* Matrix3DTransformOperation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49D5DC270F423A73008F20FD /* Matrix3DTransformOperation.cpp */; };
 		49D5DC2C0F423A73008F20FD /* Matrix3DTransformOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 49D5DC280F423A73008F20FD /* Matrix3DTransformOperation.h */; };
 		49D5DC2D0F423A73008F20FD /* PerspectiveTransformOperation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49D5DC290F423A73008F20FD /* PerspectiveTransformOperation.cpp */; };
@@ -1955,7 +2016,6 @@
 		85F74E0A0AA8DF8C000DC284 /* DOMCSSUnknownRule.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 85032DD50AA8C9BE007D3B7D /* DOMCSSUnknownRule.h */; };
 		85FF315A0AAFBFCB00374F38 /* DOMKeyboardEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 85FF31580AAFBFCB00374F38 /* DOMKeyboardEvent.h */; };
 		85FF315B0AAFBFCB00374F38 /* DOMKeyboardEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = 85FF31590AAFBFCB00374F38 /* DOMKeyboardEvent.mm */; };
-		929264770B61FC7200B41D34 /* JSDocumentCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 929264760B61FC7200B41D34 /* JSDocumentCustom.cpp */; };
 		9302B0BD0D79F82900C7EE83 /* PageGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9302B0BC0D79F82900C7EE83 /* PageGroup.cpp */; };
 		9302B0BF0D79F82C00C7EE83 /* PageGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 9302B0BE0D79F82C00C7EE83 /* PageGroup.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9305B24D098F1B6B00C28855 /* Timer.h in Headers */ = {isa = PBXBuildFile; fileRef = 9305B24C098F1B6B00C28855 /* Timer.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5835,6 +5895,67 @@
 		498391570F1E776900C23782 /* WebKitCSSMatrix.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebKitCSSMatrix.idl; sourceTree = "<group>"; };
 		498391610F1E8EE100C23782 /* JSWebKitCSSMatrixConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebKitCSSMatrixConstructor.cpp; sourceTree = "<group>"; };
 		498391620F1E8EE100C23782 /* JSWebKitCSSMatrixConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebKitCSSMatrixConstructor.h; sourceTree = "<group>"; };
+		4983A96F10435E9000DB70F9 /* JSCanvasRenderingContextCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasRenderingContextCustom.cpp; sourceTree = "<group>"; };
+		49C7B97C1042D2080009D447 /* JSCanvasNumberArrayCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasNumberArrayCustom.cpp; sourceTree = "<group>"; };
+		49C7B97D1042D2080009D447 /* JSCanvasRenderingContext3DCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasRenderingContext3DCustom.cpp; sourceTree = "<group>"; };
+		49C7B9801042D2D30009D447 /* JSCanvasBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasBuffer.cpp; sourceTree = "<group>"; };
+		49C7B9811042D2D30009D447 /* JSCanvasBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCanvasBuffer.h; sourceTree = "<group>"; };
+		49C7B9821042D2D30009D447 /* JSCanvasByteArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasByteArray.cpp; sourceTree = "<group>"; };
+		49C7B9831042D2D30009D447 /* JSCanvasByteArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCanvasByteArray.h; sourceTree = "<group>"; };
+		49C7B9841042D2D30009D447 /* JSCanvasFramebuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasFramebuffer.cpp; sourceTree = "<group>"; };
+		49C7B9851042D2D30009D447 /* JSCanvasFramebuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCanvasFramebuffer.h; sourceTree = "<group>"; };
+		49C7B9861042D2D30009D447 /* JSCanvasNumberArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasNumberArray.cpp; sourceTree = "<group>"; };
+		49C7B9871042D2D30009D447 /* JSCanvasNumberArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCanvasNumberArray.h; sourceTree = "<group>"; };
+		49C7B9881042D2D30009D447 /* JSCanvasProgram.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasProgram.cpp; sourceTree = "<group>"; };
+		49C7B9891042D2D30009D447 /* JSCanvasProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCanvasProgram.h; sourceTree = "<group>"; };
+		49C7B98A1042D2D30009D447 /* JSCanvasRenderbuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasRenderbuffer.cpp; sourceTree = "<group>"; };
+		49C7B98B1042D2D30009D447 /* JSCanvasRenderbuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCanvasRenderbuffer.h; sourceTree = "<group>"; };
+		49C7B98C1042D2D30009D447 /* JSCanvasRenderingContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasRenderingContext.cpp; sourceTree = "<group>"; };
+		49C7B98D1042D2D30009D447 /* JSCanvasRenderingContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCanvasRenderingContext.h; sourceTree = "<group>"; };
+		49C7B98E1042D2D30009D447 /* JSCanvasRenderingContext3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCanvasRenderingContext3D.h; sourceTree = "<group>"; };
+		49C7B98F1042D2D30009D447 /* JSCanvasShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasShader.cpp; sourceTree = "<group>"; };
+		49C7B9901042D2D30009D447 /* JSCanvasShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCanvasShader.h; sourceTree = "<group>"; };
+		49C7B9911042D2D30009D447 /* JSCanvasTexture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasTexture.cpp; sourceTree = "<group>"; };
+		49C7B9921042D2D30009D447 /* JSCanvasTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCanvasTexture.h; sourceTree = "<group>"; };
+		49C7B9A81042D32E0009D447 /* CanvasBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CanvasBuffer.cpp; path = canvas/CanvasBuffer.cpp; sourceTree = "<group>"; };
+		49C7B9A91042D32E0009D447 /* CanvasBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CanvasBuffer.h; path = canvas/CanvasBuffer.h; sourceTree = "<group>"; };
+		49C7B9AA1042D32E0009D447 /* CanvasBuffer.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CanvasBuffer.idl; path = canvas/CanvasBuffer.idl; sourceTree = "<group>"; };
+		49C7B9AB1042D32E0009D447 /* CanvasByteArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CanvasByteArray.cpp; path = canvas/CanvasByteArray.cpp; sourceTree = "<group>"; };
+		49C7B9AC1042D32E0009D447 /* CanvasByteArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CanvasByteArray.h; path = canvas/CanvasByteArray.h; sourceTree = "<group>"; };
+		49C7B9AD1042D32E0009D447 /* CanvasByteArray.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CanvasByteArray.idl; path = canvas/CanvasByteArray.idl; sourceTree = "<group>"; };
+		49C7B9AE1042D32E0009D447 /* CanvasFramebuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CanvasFramebuffer.cpp; path = canvas/CanvasFramebuffer.cpp; sourceTree = "<group>"; };
+		49C7B9AF1042D32E0009D447 /* CanvasFramebuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CanvasFramebuffer.h; path = canvas/CanvasFramebuffer.h; sourceTree = "<group>"; };
+		49C7B9B01042D32E0009D447 /* CanvasFramebuffer.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CanvasFramebuffer.idl; path = canvas/CanvasFramebuffer.idl; sourceTree = "<group>"; };
+		49C7B9B11042D32E0009D447 /* CanvasNumberArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CanvasNumberArray.cpp; path = canvas/CanvasNumberArray.cpp; sourceTree = "<group>"; };
+		49C7B9B21042D32E0009D447 /* CanvasNumberArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CanvasNumberArray.h; path = canvas/CanvasNumberArray.h; sourceTree = "<group>"; };
+		49C7B9B31042D32F0009D447 /* CanvasNumberArray.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CanvasNumberArray.idl; path = canvas/CanvasNumberArray.idl; sourceTree = "<group>"; };
+		49C7B9B41042D32F0009D447 /* CanvasObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CanvasObject.cpp; path = canvas/CanvasObject.cpp; sourceTree = "<group>"; };
+		49C7B9B51042D32F0009D447 /* CanvasObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CanvasObject.h; path = canvas/CanvasObject.h; sourceTree = "<group>"; };
+		49C7B9B61042D32F0009D447 /* CanvasProgram.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CanvasProgram.cpp; path = canvas/CanvasProgram.cpp; sourceTree = "<group>"; };
+		49C7B9B71042D32F0009D447 /* CanvasProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CanvasProgram.h; path = canvas/CanvasProgram.h; sourceTree = "<group>"; };
+		49C7B9B81042D32F0009D447 /* CanvasProgram.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CanvasProgram.idl; path = canvas/CanvasProgram.idl; sourceTree = "<group>"; };
+		49C7B9B91042D32F0009D447 /* CanvasRenderbuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CanvasRenderbuffer.cpp; path = canvas/CanvasRenderbuffer.cpp; sourceTree = "<group>"; };
+		49C7B9BA1042D32F0009D447 /* CanvasRenderbuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CanvasRenderbuffer.h; path = canvas/CanvasRenderbuffer.h; sourceTree = "<group>"; };
+		49C7B9BB1042D32F0009D447 /* CanvasRenderbuffer.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CanvasRenderbuffer.idl; path = canvas/CanvasRenderbuffer.idl; sourceTree = "<group>"; };
+		49C7B9BC1042D32F0009D447 /* CanvasRenderingContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CanvasRenderingContext.cpp; path = canvas/CanvasRenderingContext.cpp; sourceTree = "<group>"; };
+		49C7B9BD1042D32F0009D447 /* CanvasRenderingContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CanvasRenderingContext.h; path = canvas/CanvasRenderingContext.h; sourceTree = "<group>"; };
+		49C7B9BE1042D32F0009D447 /* CanvasRenderingContext.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CanvasRenderingContext.idl; path = canvas/CanvasRenderingContext.idl; sourceTree = "<group>"; };
+		49C7B9BF1042D32F0009D447 /* CanvasRenderingContext3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CanvasRenderingContext3D.cpp; path = canvas/CanvasRenderingContext3D.cpp; sourceTree = "<group>"; };
+		49C7B9C01042D32F0009D447 /* CanvasRenderingContext3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CanvasRenderingContext3D.h; path = canvas/CanvasRenderingContext3D.h; sourceTree = "<group>"; };
+		49C7B9C11042D32F0009D447 /* CanvasRenderingContext3D.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CanvasRenderingContext3D.idl; path = canvas/CanvasRenderingContext3D.idl; sourceTree = "<group>"; };
+		49C7B9C21042D32F0009D447 /* CanvasShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CanvasShader.cpp; path = canvas/CanvasShader.cpp; sourceTree = "<group>"; };
+		49C7B9C31042D32F0009D447 /* CanvasShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CanvasShader.h; path = canvas/CanvasShader.h; sourceTree = "<group>"; };
+		49C7B9C41042D32F0009D447 /* CanvasShader.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CanvasShader.idl; path = canvas/CanvasShader.idl; sourceTree = "<group>"; };
+		49C7B9C51042D32F0009D447 /* CanvasTexture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CanvasTexture.cpp; path = canvas/CanvasTexture.cpp; sourceTree = "<group>"; };
+		49C7B9C61042D32F0009D447 /* CanvasTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CanvasTexture.h; path = canvas/CanvasTexture.h; sourceTree = "<group>"; };
+		49C7B9C71042D32F0009D447 /* CanvasTexture.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CanvasTexture.idl; path = canvas/CanvasTexture.idl; sourceTree = "<group>"; };
+		49C7B9FB1042D3650009D447 /* GraphicsContext3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsContext3D.h; sourceTree = "<group>"; };
+		49C7B9FD1042D38C0009D447 /* Canvas3DLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Canvas3DLayer.h; sourceTree = "<group>"; };
+		49C7B9FE1042D38C0009D447 /* Canvas3DLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Canvas3DLayer.mm; sourceTree = "<group>"; };
+		49C7B9FF1042D38C0009D447 /* GraphicsContext3DMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsContext3DMac.cpp; sourceTree = "<group>"; };
+		49C7BA781042EFAE0009D447 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
+		49C7BA8C1042F5B10009D447 /* JSDocumentCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDocumentCustom.cpp; sourceTree = "<group>"; };
+		49C7D4FA1042F95F0009D447 /* JSCanvasRenderingContext3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasRenderingContext3D.cpp; sourceTree = "<group>"; };
 		49D5DC270F423A73008F20FD /* Matrix3DTransformOperation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Matrix3DTransformOperation.cpp; path = transforms/Matrix3DTransformOperation.cpp; sourceTree = "<group>"; };
 		49D5DC280F423A73008F20FD /* Matrix3DTransformOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Matrix3DTransformOperation.h; path = transforms/Matrix3DTransformOperation.h; sourceTree = "<group>"; };
 		49D5DC290F423A73008F20FD /* PerspectiveTransformOperation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PerspectiveTransformOperation.cpp; path = transforms/PerspectiveTransformOperation.cpp; sourceTree = "<group>"; };
@@ -6996,7 +7117,6 @@
 		85F56A790A98CE3700ADB60A /* DOMProcessingInstruction.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMProcessingInstruction.mm; sourceTree = "<group>"; };
 		85FF31580AAFBFCB00374F38 /* DOMKeyboardEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMKeyboardEvent.h; sourceTree = "<group>"; };
 		85FF31590AAFBFCB00374F38 /* DOMKeyboardEvent.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMKeyboardEvent.mm; sourceTree = "<group>"; };
-		929264760B61FC7200B41D34 /* JSDocumentCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSDocumentCustom.cpp; sourceTree = "<group>"; };
 		9302B0BC0D79F82900C7EE83 /* PageGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageGroup.cpp; sourceTree = "<group>"; };
 		9302B0BE0D79F82C00C7EE83 /* PageGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageGroup.h; sourceTree = "<group>"; };
 		9305B24C098F1B6B00C28855 /* Timer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Timer.h; sourceTree = "<group>"; };
@@ -9595,6 +9715,7 @@
 				DD763BB20992C2C900740B8E /* libxml2.dylib in Frameworks */,
 				A88AD52F09524B92001DD196 /* QuartzCore.framework in Frameworks */,
 				1A7FA7CC0DDA4B770028F8A5 /* SystemConfiguration.framework in Frameworks */,
+				49C7BA791042EFAE0009D447 /* OpenGL.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9652,6 +9773,7 @@
 		0867D69AFE84028FC02AAC07 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				49C7BA781042EFAE0009D447 /* OpenGL.framework */,
 				F5C2869302846DCD018635CA /* ApplicationServices.framework */,
 				F5C2869402846DCD018635CA /* Carbon.framework */,
 				F5C2869502846DCD018635CA /* Cocoa.framework */,
@@ -10182,20 +10304,52 @@
 		49484FAE102CF01E00187DD3 /* canvas */ = {
 			isa = PBXGroup;
 			children = (
+				49C7B9A81042D32E0009D447 /* CanvasBuffer.cpp */,
+				49C7B9A91042D32E0009D447 /* CanvasBuffer.h */,
+				49C7B9AA1042D32E0009D447 /* CanvasBuffer.idl */,
+				49C7B9AB1042D32E0009D447 /* CanvasByteArray.cpp */,
+				49C7B9AC1042D32E0009D447 /* CanvasByteArray.h */,
+				49C7B9AD1042D32E0009D447 /* CanvasByteArray.idl */,
+				49C7B9AE1042D32E0009D447 /* CanvasFramebuffer.cpp */,
+				49C7B9AF1042D32E0009D447 /* CanvasFramebuffer.h */,
+				49C7B9B01042D32E0009D447 /* CanvasFramebuffer.idl */,
 				49484FB3102CF23C00187DD3 /* CanvasGradient.cpp */,
 				49484FB4102CF23C00187DD3 /* CanvasGradient.h */,
 				49484FB5102CF23C00187DD3 /* CanvasGradient.idl */,
+				49C7B9B11042D32E0009D447 /* CanvasNumberArray.cpp */,
+				49C7B9B21042D32E0009D447 /* CanvasNumberArray.h */,
+				49C7B9B31042D32F0009D447 /* CanvasNumberArray.idl */,
+				49C7B9B41042D32F0009D447 /* CanvasObject.cpp */,
+				49C7B9B51042D32F0009D447 /* CanvasObject.h */,
 				49484FB6102CF23C00187DD3 /* CanvasPattern.cpp */,
 				49484FB7102CF23C00187DD3 /* CanvasPattern.h */,
 				49484FB8102CF23C00187DD3 /* CanvasPattern.idl */,
 				49484FB9102CF23C00187DD3 /* CanvasPixelArray.cpp */,
 				49484FBA102CF23C00187DD3 /* CanvasPixelArray.h */,
 				49484FBB102CF23C00187DD3 /* CanvasPixelArray.idl */,
+				49C7B9B61042D32F0009D447 /* CanvasProgram.cpp */,
+				49C7B9B71042D32F0009D447 /* CanvasProgram.h */,
+				49C7B9B81042D32F0009D447 /* CanvasProgram.idl */,
+				49C7B9B91042D32F0009D447 /* CanvasRenderbuffer.cpp */,
+				49C7B9BA1042D32F0009D447 /* CanvasRenderbuffer.h */,
+				49C7B9BB1042D32F0009D447 /* CanvasRenderbuffer.idl */,
+				49C7B9BC1042D32F0009D447 /* CanvasRenderingContext.cpp */,
+				49C7B9BD1042D32F0009D447 /* CanvasRenderingContext.h */,
+				49C7B9BE1042D32F0009D447 /* CanvasRenderingContext.idl */,
 				49484FBC102CF23C00187DD3 /* CanvasRenderingContext2D.cpp */,
 				49484FBD102CF23C00187DD3 /* CanvasRenderingContext2D.h */,
 				49484FBE102CF23C00187DD3 /* CanvasRenderingContext2D.idl */,
+				49C7B9BF1042D32F0009D447 /* CanvasRenderingContext3D.cpp */,
+				49C7B9C01042D32F0009D447 /* CanvasRenderingContext3D.h */,
+				49C7B9C11042D32F0009D447 /* CanvasRenderingContext3D.idl */,
+				49C7B9C21042D32F0009D447 /* CanvasShader.cpp */,
+				49C7B9C31042D32F0009D447 /* CanvasShader.h */,
+				49C7B9C41042D32F0009D447 /* CanvasShader.idl */,
 				49484FBF102CF23C00187DD3 /* CanvasStyle.cpp */,
 				49484FC0102CF23C00187DD3 /* CanvasStyle.h */,
+				49C7B9C51042D32F0009D447 /* CanvasTexture.cpp */,
+				49C7B9C61042D32F0009D447 /* CanvasTexture.h */,
+				49C7B9C71042D32F0009D447 /* CanvasTexture.idl */,
 			);
 			name = canvas;
 			sourceTree = "<group>";
@@ -12255,12 +12409,32 @@
 		A83B79080CCAFF2B000B0825 /* HTML */ = {
 			isa = PBXGroup;
 			children = (
+				49C7B9801042D2D30009D447 /* JSCanvasBuffer.cpp */,
+				49C7B9811042D2D30009D447 /* JSCanvasBuffer.h */,
+				49C7B9821042D2D30009D447 /* JSCanvasByteArray.cpp */,
+				49C7B9831042D2D30009D447 /* JSCanvasByteArray.h */,
+				49C7B9841042D2D30009D447 /* JSCanvasFramebuffer.cpp */,
+				49C7B9851042D2D30009D447 /* JSCanvasFramebuffer.h */,
 				65DF323309D1DE65000BE325 /* JSCanvasGradient.cpp */,
 				65DF323409D1DE65000BE325 /* JSCanvasGradient.h */,
+				49C7B9861042D2D30009D447 /* JSCanvasNumberArray.cpp */,
+				49C7B9871042D2D30009D447 /* JSCanvasNumberArray.h */,
 				65DF323509D1DE65000BE325 /* JSCanvasPattern.cpp */,
 				65DF323609D1DE65000BE325 /* JSCanvasPattern.h */,
+				49C7B9881042D2D30009D447 /* JSCanvasProgram.cpp */,
+				49C7B9891042D2D30009D447 /* JSCanvasProgram.h */,
+				49C7B98A1042D2D30009D447 /* JSCanvasRenderbuffer.cpp */,
+				49C7B98B1042D2D30009D447 /* JSCanvasRenderbuffer.h */,
+				49C7B98C1042D2D30009D447 /* JSCanvasRenderingContext.cpp */,
+				49C7B98D1042D2D30009D447 /* JSCanvasRenderingContext.h */,
 				65DF323709D1DE65000BE325 /* JSCanvasRenderingContext2D.cpp */,
 				65DF323809D1DE65000BE325 /* JSCanvasRenderingContext2D.h */,
+				49C7D4FA1042F95F0009D447 /* JSCanvasRenderingContext3D.cpp */,
+				49C7B98E1042D2D30009D447 /* JSCanvasRenderingContext3D.h */,
+				49C7B98F1042D2D30009D447 /* JSCanvasShader.cpp */,
+				49C7B9901042D2D30009D447 /* JSCanvasShader.h */,
+				49C7B9911042D2D30009D447 /* JSCanvasTexture.cpp */,
+				49C7B9921042D2D30009D447 /* JSCanvasTexture.h */,
 				BC77D1650FF19F550070887B /* JSDataGridColumn.cpp */,
 				BC77D1660FF19F550070887B /* JSDataGridColumn.h */,
 				BC77D1670FF19F550070887B /* JSDataGridColumnList.cpp */,
@@ -13459,6 +13633,8 @@
 		B27535490B053814002CE64F /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				49C7B9FD1042D38C0009D447 /* Canvas3DLayer.h */,
+				49C7B9FE1042D38C0009D447 /* Canvas3DLayer.mm */,
 				EDE3A4FF0C7A430600956A37 /* ColorMac.h */,
 				B275354A0B053814002CE64F /* ColorMac.mm */,
 				3724CA550E68A7E400DB4384 /* CoreTextController.cpp */,
@@ -13476,6 +13652,7 @@
 				B2AFFC7A0D00A5C10030074D /* FontPlatformDataMac.mm */,
 				B2AFFC7B0D00A5C10030074D /* GlyphPageTreeNodeMac.cpp */,
 				B277B4030B22F37C0004BEC6 /* GraphicsContextMac.mm */,
+				49C7B9FF1042D38C0009D447 /* GraphicsContext3DMac.cpp */,
 				0F580B040F12A2550051D689 /* GraphicsLayerCA.h */,
 				0F580B030F12A2540051D689 /* GraphicsLayerCA.mm */,
 				B275358D0B053A66002CE64F /* IconMac.mm */,
@@ -13546,6 +13723,7 @@
 				B2A015920AF6CD53006BCE0E /* GraphicsContext.cpp */,
 				B2A015930AF6CD53006BCE0E /* GraphicsContext.h */,
 				A88FE3330E5EEE87008D8C0F /* GraphicsContextPrivate.h */,
+				49C7B9FB1042D3650009D447 /* GraphicsContext3D.h */,
 				0F580B090F12A2690051D689 /* GraphicsLayer.cpp */,
 				0F580B0A0F12A2690051D689 /* GraphicsLayer.h */,
 				0F580B0B0F12A2690051D689 /* GraphicsLayerClient.h */,
@@ -13854,7 +14032,6 @@
 			children = (
 				415B7C540FF598E6006770F7 /* JSAbstractWorkerCustom.cpp */,
 				BC2ED6BB0C6BD2F000920BFF /* JSAttrCustom.cpp */,
-				1A9EF4560A1B957D00332B63 /* JSCanvasRenderingContext2DCustom.cpp */,
 				93BA59B10F2AA5FE008E8E99 /* JSCDATASectionCustom.cpp */,
 				BCA83E510D7CE205003421A8 /* JSClipboardCustom.cpp */,
 				C0DFC86F0DB6841A003EAE7C /* JSConsoleCustom.cpp */,
@@ -13863,6 +14040,10 @@
 				9392262E10321084006E7D5D /* JSCSSRuleListCustom.cpp */,
 				BC5825F20C0B89380053F1B5 /* JSCSSStyleDeclarationCustom.cpp */,
 				BC20FB7E0C0E8E6C00D1447F /* JSCSSValueCustom.cpp */,
+				49C7B97C1042D2080009D447 /* JSCanvasNumberArrayCustom.cpp */,
+				4983A96F10435E9000DB70F9 /* JSCanvasRenderingContextCustom.cpp */,
+				1A9EF4560A1B957D00332B63 /* JSCanvasRenderingContext2DCustom.cpp */,
+				49C7B97D1042D2080009D447 /* JSCanvasRenderingContext3DCustom.cpp */,
 				FE80D7A20E9C1ED2000D6F75 /* JSCustomPositionCallback.cpp */,
 				FE80D7A30E9C1ED2000D6F75 /* JSCustomPositionCallback.h */,
 				FE80D7A40E9C1ED2000D6F75 /* JSCustomPositionErrorCallback.cpp */,
@@ -13882,8 +14063,7 @@
 				BC77D1510FF19C730070887B /* JSDataGridColumnListCustom.cpp */,
 				4162A453101145E300DFF3ED /* JSDedicatedWorkerContextCustom.cpp */,
 				33503CBF10179C1A003B47E1 /* JSDesktopNotificationsCustom.cpp */,
-				929264760B61FC7200B41D34 /* JSDocumentCustom.cpp */,
-				929264760B61FC7200B41D34 /* JSDocumentCustom.cpp */,
+				49C7BA8C1042F5B10009D447 /* JSDocumentCustom.cpp */,
 				BC1DEA4E0E268EB60083A73F /* JSDocumentFragmentCustom.cpp */,
 				BC1DEA4E0E268EB60083A73F /* JSDocumentFragmentCustom.cpp */,
 				1AC226160DB69F740089B669 /* JSDOMApplicationCacheCustom.cpp */,
@@ -17330,6 +17510,29 @@
 				BCFA930810333193007B25D1 /* RenderOverflow.h in Headers */,
 				0014628B103CD1DE000B20DB /* OriginAccessEntry.h in Headers */,
 				B51BF6F1102C9E590002C15A /* SQLTransactionClient.h in Headers */,
+				49C7B9941042D2D30009D447 /* JSCanvasBuffer.h in Headers */,
+				49C7B9961042D2D30009D447 /* JSCanvasByteArray.h in Headers */,
+				49C7B9981042D2D30009D447 /* JSCanvasFramebuffer.h in Headers */,
+				49C7B99A1042D2D30009D447 /* JSCanvasNumberArray.h in Headers */,
+				49C7B99C1042D2D30009D447 /* JSCanvasProgram.h in Headers */,
+				49C7B99E1042D2D30009D447 /* JSCanvasRenderbuffer.h in Headers */,
+				49C7B9A01042D2D30009D447 /* JSCanvasRenderingContext.h in Headers */,
+				49C7B9A11042D2D30009D447 /* JSCanvasRenderingContext3D.h in Headers */,
+				49C7B9A31042D2D30009D447 /* JSCanvasShader.h in Headers */,
+				49C7B9A51042D2D30009D447 /* JSCanvasTexture.h in Headers */,
+				49C7B9C91042D32F0009D447 /* CanvasBuffer.h in Headers */,
+				49C7B9CC1042D32F0009D447 /* CanvasByteArray.h in Headers */,
+				49C7B9CF1042D32F0009D447 /* CanvasFramebuffer.h in Headers */,
+				49C7B9D21042D32F0009D447 /* CanvasNumberArray.h in Headers */,
+				49C7B9D51042D32F0009D447 /* CanvasObject.h in Headers */,
+				49C7B9D71042D32F0009D447 /* CanvasProgram.h in Headers */,
+				49C7B9DA1042D32F0009D447 /* CanvasRenderbuffer.h in Headers */,
+				49C7B9DD1042D32F0009D447 /* CanvasRenderingContext.h in Headers */,
+				49C7B9E01042D32F0009D447 /* CanvasRenderingContext3D.h in Headers */,
+				49C7B9E31042D32F0009D447 /* CanvasShader.h in Headers */,
+				49C7B9E61042D32F0009D447 /* CanvasTexture.h in Headers */,
+				49C7B9FC1042D3650009D447 /* GraphicsContext3D.h in Headers */,
+				49C7BA001042D38C0009D447 /* Canvas3DLayer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -17435,6 +17638,16 @@
 				49484FC6102CF23C00187DD3 /* CanvasPattern.idl in Resources */,
 				49484FC9102CF23C00187DD3 /* CanvasPixelArray.idl in Resources */,
 				49484FCC102CF23C00187DD3 /* CanvasRenderingContext2D.idl in Resources */,
+				49C7B9CA1042D32F0009D447 /* CanvasBuffer.idl in Resources */,
+				49C7B9CD1042D32F0009D447 /* CanvasByteArray.idl in Resources */,
+				49C7B9D01042D32F0009D447 /* CanvasFramebuffer.idl in Resources */,
+				49C7B9D31042D32F0009D447 /* CanvasNumberArray.idl in Resources */,
+				49C7B9D81042D32F0009D447 /* CanvasProgram.idl in Resources */,
+				49C7B9DB1042D32F0009D447 /* CanvasRenderbuffer.idl in Resources */,
+				49C7B9DE1042D32F0009D447 /* CanvasRenderingContext.idl in Resources */,
+				49C7B9E11042D32F0009D447 /* CanvasRenderingContext3D.idl in Resources */,
+				49C7B9E41042D32F0009D447 /* CanvasShader.idl in Resources */,
+				49C7B9E71042D32F0009D447 /* CanvasTexture.idl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18349,7 +18562,6 @@
 				4162A454101145E300DFF3ED /* JSDedicatedWorkerContextCustom.cpp in Sources */,
 				33503CC010179C1A003B47E1 /* JSDesktopNotificationsCustom.cpp in Sources */,
 				659DDC8209E198BA001BF3C6 /* JSDocument.cpp in Sources */,
-				929264770B61FC7200B41D34 /* JSDocumentCustom.cpp in Sources */,
 				1A494EDE0A123F4C00FDAFC1 /* JSDocumentFragment.cpp in Sources */,
 				BC1DEA4F0E268EB60083A73F /* JSDocumentFragmentCustom.cpp in Sources */,
 				65DF31F509D1CC60000BE325 /* JSDocumentType.cpp in Sources */,
@@ -19398,6 +19610,33 @@
 				B5C1123B102B6C4600096578 /* SQLTransactionCoordinator.cpp in Sources */,
 				0014628A103CD1DE000B20DB /* OriginAccessEntry.cpp in Sources */,
 				B51BF6F0102C9E590002C15A /* SQLTransactionClient.cpp in Sources */,
+				49C7B97E1042D2080009D447 /* JSCanvasNumberArrayCustom.cpp in Sources */,
+				49C7B97F1042D2080009D447 /* JSCanvasRenderingContext3DCustom.cpp in Sources */,
+				49C7B9931042D2D30009D447 /* JSCanvasBuffer.cpp in Sources */,
+				49C7B9951042D2D30009D447 /* JSCanvasByteArray.cpp in Sources */,
+				49C7B9971042D2D30009D447 /* JSCanvasFramebuffer.cpp in Sources */,
+				49C7B9991042D2D30009D447 /* JSCanvasNumberArray.cpp in Sources */,
+				49C7B99B1042D2D30009D447 /* JSCanvasProgram.cpp in Sources */,
+				49C7B99D1042D2D30009D447 /* JSCanvasRenderbuffer.cpp in Sources */,
+				49C7B99F1042D2D30009D447 /* JSCanvasRenderingContext.cpp in Sources */,
+				49C7B9A21042D2D30009D447 /* JSCanvasShader.cpp in Sources */,
+				49C7B9A41042D2D30009D447 /* JSCanvasTexture.cpp in Sources */,
+				49C7B9C81042D32F0009D447 /* CanvasBuffer.cpp in Sources */,
+				49C7B9CB1042D32F0009D447 /* CanvasByteArray.cpp in Sources */,
+				49C7B9CE1042D32F0009D447 /* CanvasFramebuffer.cpp in Sources */,
+				49C7B9D11042D32F0009D447 /* CanvasNumberArray.cpp in Sources */,
+				49C7B9D41042D32F0009D447 /* CanvasObject.cpp in Sources */,
+				49C7B9D61042D32F0009D447 /* CanvasProgram.cpp in Sources */,
+				49C7B9D91042D32F0009D447 /* CanvasRenderbuffer.cpp in Sources */,
+				49C7B9DC1042D32F0009D447 /* CanvasRenderingContext.cpp in Sources */,
+				49C7B9DF1042D32F0009D447 /* CanvasRenderingContext3D.cpp in Sources */,
+				49C7B9E21042D32F0009D447 /* CanvasShader.cpp in Sources */,
+				49C7B9E51042D32F0009D447 /* CanvasTexture.cpp in Sources */,
+				49C7BA011042D38C0009D447 /* Canvas3DLayer.mm in Sources */,
+				49C7BA021042D38C0009D447 /* GraphicsContext3DMac.cpp in Sources */,
+				49C7BA8D1042F5B10009D447 /* JSDocumentCustom.cpp in Sources */,
+				49C7D4FB1042F95F0009D447 /* JSCanvasRenderingContext3D.cpp in Sources */,
+				4983A97010435E9000DB70F9 /* JSCanvasRenderingContextCustom.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

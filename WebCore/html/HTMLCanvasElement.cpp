@@ -30,6 +30,7 @@
 #include "CanvasGradient.h"
 #include "CanvasPattern.h"
 #include "CanvasRenderingContext2D.h"
+#include "CanvasRenderingContext3D.h"
 #include "CanvasStyle.h"
 #include "Chrome.h"
 #include "Document.h"
@@ -146,17 +147,36 @@ String HTMLCanvasElement::toDataURL(const String& mimeType, ExceptionCode& ec)
 
 CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type)
 {
+    // A Canvas can either be "2D" or "3D" never both. If you request a 2D canvas and the existing
+    // context is already 2D, just return that. If the existing context is 3D, then destroy it
+    // before creating a new 2D context. Vice versa when requesting a 3D canvas. Requesting a
+    // context with any other type string will destroy any existing context.
     if (type == "2d") {
-        if (!m_2DContext)
-            m_2DContext.set(new CanvasRenderingContext2D(this));
-        return m_2DContext.get();
+        if (m_context && !m_context->is2d())
+            m_context.clear();
+        if (!m_context)
+            m_context.set(new CanvasRenderingContext2D(this));
     }
-    return 0;
+#if ENABLE(3D_CANVAS)    
+    else if (type == "webkit-3d") {
+        if (m_context && !m_context->is3d())
+            m_context.clear();
+        if (!m_context) {
+            m_context.set(new CanvasRenderingContext3D(this));
+            setNeedsStyleRecalc();
+        }
+    }
+#endif
+    else if (m_context)
+        m_context.clear();
+    
+    return m_context.get();
 }
 
 void HTMLCanvasElement::willDraw(const FloatRect& rect)
 {
-    m_imageBuffer->clearImage();
+    if (m_imageBuffer)
+        m_imageBuffer->clearImage();
     
     if (RenderBox* ro = renderBox()) {
         FloatRect destRect = ro->contentBoxRect();
@@ -192,8 +212,8 @@ void HTMLCanvasElement::reset()
     bool hadImageBuffer = m_createdImageBuffer;
     m_createdImageBuffer = false;
     m_imageBuffer.clear();
-    if (m_2DContext)
-        m_2DContext->reset();
+    if (m_context && m_context->is2d())
+        static_cast<CanvasRenderingContext2D*>(m_context.get())->reset();
 
     if (RenderObject* renderer = this->renderer()) {
         if (m_rendererIsCanvas) {
@@ -221,6 +241,11 @@ void HTMLCanvasElement::paint(GraphicsContext* context, const IntRect& r)
         if (image)
             context->drawImage(image, r);
     }
+    
+#if ENABLE(3D_CANVAS)    
+    if (m_context && m_context->is3d())
+        static_cast<CanvasRenderingContext3D*>(m_context.get())->reshape(r.width(), r.height());
+#endif
 }
 
 IntRect HTMLCanvasElement::convertLogicalToDevice(const FloatRect& logicalRect) const
@@ -292,5 +317,26 @@ TransformationMatrix HTMLCanvasElement::baseTransform() const
     transform.multiply(m_imageBuffer->baseTransform());
     return transform;
 }
+
+#if ENABLE(3D_CANVAS)    
+bool HTMLCanvasElement::is3D() const
+{
+    return m_context && m_context->is3d();
+}
+
+PlatformGraphicsContext3D HTMLCanvasElement::context3D() const
+{
+    if (m_context && m_context->is3d())
+        return static_cast<CanvasRenderingContext3D*>(m_context.get())->context3D();
+    return 0;
+}
+
+Platform3DObject HTMLCanvasElement::texture3D() const
+{
+    if (m_context && m_context->is3d())
+        return static_cast<CanvasRenderingContext3D*>(m_context.get())->texture3D();
+    return 0;
+}
+#endif
 
 }

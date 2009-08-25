@@ -30,7 +30,7 @@ module html {
         GenerateConstructor,
         InterfaceUUID=98fb48ae-7216-489c-862b-8e1217fc4443,
         ImplementationUUID=ab4f0781-152f-450e-9546-5b3987491a54
-    ] CanvasRenderingContext3D {
+    ] CanvasRenderingContext3D : CanvasRenderingContext {
 
         /* ClearBufferMask */
         const unsigned int GL_DEPTH_BUFFER_BIT               = 0x00000100;
@@ -458,8 +458,6 @@ module html {
 
         const unsigned int GL_INVALID_FRAMEBUFFER_OPERATION  = 0x0506;
 
-        readonly attribute HTMLCanvasElement canvas;
-        
         void         glActiveTexture(in unsigned long texture);
         void         glAttachShader(in CanvasProgram program, in CanvasShader shader);
         void         glBindAttribLocation(in CanvasProgram program, in unsigned long index, in DOMString name);

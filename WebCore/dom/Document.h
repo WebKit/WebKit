@@ -53,7 +53,7 @@ namespace WebCore {
     class CDATASection;
     class CachedCSSStyleSheet;
     class CachedScript;
-    class CanvasRenderingContext2D;
+    class CanvasRenderingContext;
     class CharacterData;
     class CSSStyleDeclaration;
     class CSSStyleSelector;
@@ -759,7 +759,7 @@ public:
     DOMSelection* getSelection() const;
     
     // Extension for manipulating canvas drawing contexts for use in CSS
-    CanvasRenderingContext2D* getCSSCanvasContext(const String& type, const String& name, int width, int height);
+    CanvasRenderingContext* getCSSCanvasContext(const String& type, const String& name, int width, int height);
     HTMLCanvasElement* getCSSCanvasElement(const String& name);
 
     bool isDNSPrefetchEnabled() const { return m_isDNSPrefetchEnabled; }

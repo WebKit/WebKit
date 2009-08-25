@@ -68,9 +68,19 @@ DOM_CLASSES = \
     CSSValueList \
     CSSVariablesRule \
     CSSVariablesDeclaration \
+    CanvasBuffer \
+    CanvasByteArray \
+    CanvasFramebuffer \
     CanvasGradient \
+    CanvasNumberArray \
     CanvasPattern \
+    CanvasProgram \
+    CanvasRenderbuffer \
+    CanvasRenderingContext \
     CanvasRenderingContext2D \
+    CanvasRenderingContext3D \
+    CanvasShader \
+    CanvasTexture \
     CharacterData \
     ClientRect \
     ClientRectList \

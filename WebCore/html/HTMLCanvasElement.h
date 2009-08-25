@@ -30,11 +30,14 @@
 #include "TransformationMatrix.h"
 #include "FloatRect.h"
 #include "HTMLElement.h"
+#if ENABLE(3D_CANVAS)    
+#include "GraphicsContext3D.h"
+#endif
 #include "IntSize.h"
 
 namespace WebCore {
 
-class CanvasRenderingContext2D;
+class CanvasRenderingContext;
 class FloatPoint;
 class FloatRect;
 class FloatSize;
@@ -43,8 +46,6 @@ class HTMLCanvasElement;
 class ImageBuffer;
 class IntPoint;
 class IntSize;
-
-typedef CanvasRenderingContext2D CanvasRenderingContext;
 
 class CanvasObserver {
 public:
@@ -100,7 +101,13 @@ public:
 
     TransformationMatrix baseTransform() const;
 
-    CanvasRenderingContext2D* renderingContext2D() { return m_2DContext.get(); }
+    CanvasRenderingContext* renderingContext() const { return m_context.get(); }
+
+#if ENABLE(3D_CANVAS)    
+    bool is3D() const;
+    PlatformGraphicsContext3D context3D() const;
+    Platform3DObject texture3D() const;
+#endif
 
 private:
 #if ENABLE(DASHBOARD_SUPPORT)
@@ -118,7 +125,7 @@ private:
 
     bool m_rendererIsCanvas;
 
-    OwnPtr<CanvasRenderingContext2D> m_2DContext;
+    OwnPtr<CanvasRenderingContext> m_context;
     IntSize m_size;    
     CanvasObserver* m_observer;
 

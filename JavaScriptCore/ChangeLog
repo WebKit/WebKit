@@ -1,3 +1,12 @@
+2009-08-25  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Export tryFastMalloc for Canvas3D work
+        https://bugs.webkit.org/show_bug.cgi?id=28018
+
+        * JavaScriptCore.exp:
+
 2009-08-25  David Levin  <levin@chromium.org>
 
         Reviewed by Adam Roben.

@@ -278,6 +278,7 @@ __ZN3JSCgtERKNS_7UStringES2_
 __ZN3JSCltERKNS_7UStringES2_
 __ZN3WTF10fastCallocEmm
 __ZN3WTF10fastMallocEm
+__ZN3WTF13tryFastMallocEm
 __ZN3WTF11currentTimeEv
 __ZN3WTF11fastReallocEPvm
 __ZN3WTF12createThreadEPFPvS0_ES0_
