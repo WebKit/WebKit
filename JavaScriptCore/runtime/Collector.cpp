@@ -101,6 +101,7 @@ namespace JSC {
 
 // tunable parameters
 
+const size_t SPARE_EMPTY_BLOCKS = 2;
 const size_t GROWTH_FACTOR = 2;
 const size_t LOW_WATER_FACTOR = 4;
 const size_t ALLOCATIONS_PER_COLLECTION = 4000;
@@ -384,15 +385,16 @@ collect:
 #ifndef NDEBUG
             heap.operationInProgress = NoOperation;
 #endif
-            bool foundGarbage = collect();
-            numLiveObjects = heap.numLiveObjects;
-            usedBlocks = heap.usedBlocks;
-            i = heap.firstBlockWithPossibleSpace;
+            bool collected = collect();
 #ifndef NDEBUG
             heap.operationInProgress = Allocation;
 #endif
-            if (foundGarbage)
+            if (collected) {
+                numLiveObjects = heap.numLiveObjects;
+                usedBlocks = heap.usedBlocks;
+                i = heap.firstBlockWithPossibleSpace;
                 goto scan;
+            }
         }
   
         // didn't find a block, and GC didn't reclaim anything, need to allocate a new block
@@ -1082,44 +1084,31 @@ template <HeapType heapType> size_t Heap::sweep()
         curBlock->freeList = freeList;
         curBlock->marked.clearAll();
         
-        if (!usedCells)
-            ++emptyBlocks;
+        if (usedCells == 0) {
+            emptyBlocks++;
+            if (emptyBlocks > SPARE_EMPTY_BLOCKS) {
+#if !DEBUG_COLLECTOR
+                freeBlock(reinterpret_cast<CollectorBlock*>(curBlock));
+#endif
+                // swap with the last block so we compact as we go
+                heap.blocks[block] = heap.blocks[heap.usedBlocks - 1];
+                heap.usedBlocks--;
+                block--; // Don't move forward a step in this case
+                
+                if (heap.numBlocks > MIN_ARRAY_SIZE && heap.usedBlocks < heap.numBlocks / LOW_WATER_FACTOR) {
+                    heap.numBlocks = heap.numBlocks / GROWTH_FACTOR; 
+                    heap.blocks = static_cast<CollectorBlock**>(fastRealloc(heap.blocks, heap.numBlocks * sizeof(CollectorBlock*)));
+                }
+            }
+        }
     }
     
     if (heap.numLiveObjects != numLiveObjects)
         heap.firstBlockWithPossibleSpace = 0;
-    
+        
     heap.numLiveObjects = numLiveObjects;
     heap.numLiveObjectsAtLastCollect = numLiveObjects;
     heap.extraCost = 0;
-    
-    if (!emptyBlocks)
-        return numLiveObjects;
-
-    size_t neededCells = 1.25f * (numLiveObjects + max(ALLOCATIONS_PER_COLLECTION, numLiveObjects));
-    size_t neededBlocks = (neededCells + HeapConstants<heapType>::cellsPerBlock - 1) / HeapConstants<heapType>::cellsPerBlock;
-    for (size_t block = 0; block < heap.usedBlocks; block++) {
-        if (heap.usedBlocks <= neededBlocks)
-            break;
-
-        Block* curBlock = reinterpret_cast<Block*>(heap.blocks[block]);
-        if (curBlock->usedCells)
-            continue;
-
-#if !DEBUG_COLLECTOR
-        freeBlock(reinterpret_cast<CollectorBlock*>(curBlock));
-#endif
-        // swap with the last block so we compact as we go
-        heap.blocks[block] = heap.blocks[heap.usedBlocks - 1];
-        heap.usedBlocks--;
-        block--; // Don't move forward a step in this case
-
-        if (heap.numBlocks > MIN_ARRAY_SIZE && heap.usedBlocks < heap.numBlocks / LOW_WATER_FACTOR) {
-            heap.numBlocks = heap.numBlocks / GROWTH_FACTOR; 
-            heap.blocks = static_cast<CollectorBlock**>(fastRealloc(heap.blocks, heap.numBlocks * sizeof(CollectorBlock*)));
-        }
-    }
-
     return numLiveObjects;
 }
 
