@@ -1,3 +1,29 @@
+2009-08-24  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Substantially reduced VM thrash in the GC heap.
+        
+        1.08x faster on v8 (1.60x faster on v8-splay).
+        
+        1.40x faster on bench-alloc-nonretained.
+        
+        1.90x faster on bench-alloc-retained.
+        
+        SunSpider says no change.
+        
+        * runtime/Collector.cpp:
+        (JSC::Heap::heapAllocate): Fixed a long-standing bug: update a few local
+        variables unconditionally after calling collect(), since they may be used
+        even if we don't "goto scan". (In the bug I saw, usedBlocks got out of
+        sync with heap.usedBlocks).
+        (JSC::Heap::sweep): Keep enough free heap space to accomodate 
+        the number of objects we'll allocate before the next GC, plus 25%, for
+        good measure.
+        * runtime/Collector.h: Bumped the block size to 256k. This seems to give
+        the best cache performance, and it prevents us from initiating lots of
+        VM traffic to recover very small chunks of memory.
+
 2009-08-24  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Adler & Darin Hunt.
