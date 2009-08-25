@@ -328,7 +328,7 @@
 		<Configuration
 			Name="Debug_CFLite|Win32"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\debug.vsprops;$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;.\JavaScriptCoreCommon.vsprops;.\JavaScriptCoreCFLite.vsprops"
+			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\debug_wincairo.vsprops;$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;.\JavaScriptCoreCommon.vsprops;.\JavaScriptCoreCFLite.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -888,11 +888,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\MarkStack.h"
+				RelativePath="..\..\runtime\MarkStack.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\MarkStack.cpp"
+				RelativePath="..\..\runtime\MarkStack.h"
 				>
 			</File>
 			<File
@@ -1640,15 +1640,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\assembler\LinkBuffer.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\assembler\RepatchBuffer.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\assembler\AssemblerBuffer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\assembler\LinkBuffer.h"
 				>
 			</File>
 			<File
@@ -1661,6 +1657,10 @@
 			</File>
 			<File
 				RelativePath="..\..\assembler\MacroAssemblerX86Common.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\assembler\RepatchBuffer.h"
 				>
 			</File>
 			<File
