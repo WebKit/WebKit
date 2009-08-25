@@ -1,0 +1,28 @@
+<html manifest="resources/different-scheme.manifest">
+<body>
+<p>Test that application cache doesn't block loading resources with different schemes.</p>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+function test()
+{
+    var ifr = document.createElement("iframe");
+    ifr.setAttribute("src", "javascript:parent.success(), 'PASS'");
+    document.body.appendChild(ifr);
+}
+
+function success()
+{
+    document.body.replaceChild(document.createTextNode("SUCCESS"), document.getElementsByTagName("iframe")[0]);
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+applicationCache.oncached = test;
+applicationCache.onnoupdate = test;
+</script>
+<body>
+</html>
