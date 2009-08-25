@@ -1,3 +1,18 @@
+2009-08-25  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        REGRESSION (r47630): fast/repaint/background-generated.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=28704
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::calculateFillTileSize): Handle SizeNone.
+        * rendering/style/FillLayer.cpp:
+        (WebCore::FillLayer::FillLayer): Initialize the size type to SizeNone.
+        * rendering/style/FillLayer.h:
+        (WebCore::FillSize::FillSize): Changed assignment to initialization and
+            removed redundant assignment to size.
+
 2009-08-25  Yusuke Sato  <yusukes@chromium.org>
 
         Reviewed by Darin Fisher.
