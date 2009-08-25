@@ -1,3 +1,17 @@
+2009-08-25  Renata Hodovan  <hodovan.renata@stud.u-szeged.hu>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Update outdated metrics in css1/font_properties. All tests pass.
+
+        * platform/qt/Skipped:
+        * platform/qt/css1/font_properties/font-expected.txt:
+        * platform/qt/css1/font_properties/font_family-expected.txt:
+        * platform/qt/css1/font_properties/font_size-expected.txt:
+        * platform/qt/css1/font_properties/font_style-expected.txt:
+        * platform/qt/css1/font_properties/font_variant-expected.txt:
+        * platform/qt/css1/font_properties/font_weight-expected.txt:
+
 2009-08-25  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
 
         Reviewed by Ariya Hidayat.
