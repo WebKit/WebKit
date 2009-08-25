@@ -392,9 +392,9 @@ void Scrollbar::setFrameRect(const IntRect& rect)
     // Get our window resizer rect and see if we overlap.  Adjust to avoid the overlap
     // if necessary.
     IntRect adjustedRect(rect);
-    if (parent()) {
-        bool overlapsResizer = false;
-        ScrollView* view = parent();
+    bool overlapsResizer = false;
+    ScrollView* view = parent();
+    if (view && !rect.isEmpty() && !view->windowResizerRect().isEmpty()) {
         IntRect resizerRect = view->convertFromContainingWindow(view->windowResizerRect());
         if (rect.intersects(resizerRect)) {
             if (orientation() == HorizontalScrollbar) {
@@ -411,11 +411,11 @@ void Scrollbar::setFrameRect(const IntRect& rect)
                 }
             }
         }
-
-        if (overlapsResizer != m_overlapsResizer) {
-            m_overlapsResizer = overlapsResizer;
+    }
+    if (overlapsResizer != m_overlapsResizer) {
+        m_overlapsResizer = overlapsResizer;
+        if (view)
             view->adjustScrollbarsAvoidingResizerCount(m_overlapsResizer ? 1 : -1);
-        }
     }
 
     Widget::setFrameRect(adjustedRect);

@@ -1,3 +1,13 @@
+2009-08-24  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Simon Fraser.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=28698
+        Avoid unnecessary transformations for the window resizer rect.
+
+        * platform/Scrollbar.cpp:
+        (WebCore::Scrollbar::setFrameRect):
+
 2009-08-24  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Anders Carlsson.
