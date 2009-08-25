@@ -1,3 +1,16 @@
+2009-08-25  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <video> and <audio> controller should be accessible
+        https://bugs.webkit.org/show_bug.cgi?id=28081
+
+        * WebCoreLocalizedStrings.cpp:
+        (WebCore::localizedMediaControlElementString):
+        (WebCore::localizedMediaControlElementHelpText):
+        (WebCore::localizedMediaTimeDescription):
+            New.
+
 2009-08-25  Brent Fulgham  <bfulgham@webkit.org>
 
         Build fix for Windows.

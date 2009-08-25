@@ -82,6 +82,29 @@ MediaControlElement::MediaControlElement(Document* document, PseudoId pseudo, HT
     , m_pseudoStyleId(pseudo)
 {
     setInDocument(true);
+    switch (pseudo) {
+    case MEDIA_CONTROLS_CURRENT_TIME_DISPLAY:
+        m_displayType = MediaCurrentTimeDisplay;
+        break;
+    case MEDIA_CONTROLS_TIME_REMAINING_DISPLAY:
+        m_displayType = MediaTimeRemainingDisplay;
+        break;
+    case MEDIA_CONTROLS_TIMELINE_CONTAINER:
+        m_displayType = MediaTimelineContainer;
+        break;
+    case MEDIA_CONTROLS_STATUS_DISPLAY:
+        m_displayType = MediaStatusDisplay;
+        break;
+    case MEDIA_CONTROLS_PANEL:
+        m_displayType = MediaControlsPanel;
+        break;
+    case MEDIA_CONTROLS_VOLUME_SLIDER_CONTAINER:
+        m_displayType = MediaVolumeSliderContainer;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
 }
 
 void MediaControlElement::attachToParent(Element* parent)
@@ -275,14 +298,46 @@ bool MediaControlStatusDisplayElement::rendererIsNeeded(RenderStyle* style)
 
 // ----------------------------
     
-MediaControlInputElement::MediaControlInputElement(Document* document, PseudoId pseudo, const String& type, HTMLMediaElement* mediaElement, MediaControlElementType displayType)
+MediaControlInputElement::MediaControlInputElement(Document* document, PseudoId pseudo, const String& type, HTMLMediaElement* mediaElement)
     : HTMLInputElement(inputTag, document)
     , m_mediaElement(mediaElement)
     , m_pseudoStyleId(pseudo)
-    , m_displayType(displayType)
 {
     setInputType(type);
     setInDocument(true);
+
+    switch (pseudo) {
+    case MEDIA_CONTROLS_MUTE_BUTTON:
+        m_displayType = MediaMuteButton;
+        break;
+    case MEDIA_CONTROLS_PLAY_BUTTON:
+        m_displayType = MediaPlayButton;
+        break;
+    case MEDIA_CONTROLS_SEEK_FORWARD_BUTTON:
+        m_displayType = MediaSeekForwardButton;
+        break;
+    case MEDIA_CONTROLS_SEEK_BACK_BUTTON:
+        m_displayType = MediaSeekBackButton;
+        break;
+    case MEDIA_CONTROLS_FULLSCREEN_BUTTON:
+        m_displayType = MediaFullscreenButton;
+        break;
+    case MEDIA_CONTROLS_TIMELINE:
+        m_displayType = MediaSlider;
+        break;
+    case MEDIA_CONTROLS_RETURN_TO_REALTIME_BUTTON:
+        m_displayType = MediaReturnToRealtimeButton;
+        break;
+    case MEDIA_CONTROLS_REWIND_BUTTON:
+        m_displayType = MediaRewindButton;
+        break;
+    case MEDIA_CONTROLS_VOLUME_SLIDER:
+        m_displayType = MediaVolumeSlider;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
 }
 
 void MediaControlInputElement::attachToParent(Element* parent)
@@ -364,14 +419,14 @@ void MediaControlInputElement::setDisplayType(MediaControlElementType displayTyp
         return;
 
     m_displayType = displayType;
-    if (RenderObject* o = renderer())
-        o->repaint();
+    if (RenderObject* object = renderer())
+        object->repaint();
 }
 
 // ----------------------------
 
 MediaControlMuteButtonElement::MediaControlMuteButtonElement(Document* document, HTMLMediaElement* element)
-    : MediaControlInputElement(document, MEDIA_CONTROLS_MUTE_BUTTON, "button", element, element->muted() ? MediaUnMuteButton : MediaMuteButton)
+    : MediaControlInputElement(document, MEDIA_CONTROLS_MUTE_BUTTON, "button", element)
 {
 }
 
@@ -402,7 +457,7 @@ bool MediaControlMuteButtonElement::rendererIsNeeded(RenderStyle* style)
 // ----------------------------
 
 MediaControlPlayButtonElement::MediaControlPlayButtonElement(Document* document, HTMLMediaElement* element)
-    : MediaControlInputElement(document, MEDIA_CONTROLS_PLAY_BUTTON, "button", element, element->canPlay() ? MediaPlayButton : MediaPauseButton)
+    : MediaControlInputElement(document, MEDIA_CONTROLS_PLAY_BUTTON, "button", element)
 {
 }
 
@@ -424,7 +479,7 @@ void MediaControlPlayButtonElement::updateDisplayType()
 
 MediaControlSeekButtonElement::MediaControlSeekButtonElement(Document* document, HTMLMediaElement* element, bool forward)
     : MediaControlInputElement(document, forward ? MEDIA_CONTROLS_SEEK_FORWARD_BUTTON : MEDIA_CONTROLS_SEEK_BACK_BUTTON,
-                               "button", element, forward ? MediaSeekForwardButton : MediaSeekBackButton)
+                               "button", element)
     , m_forward(forward)
     , m_seeking(false)
     , m_capturing(false)
@@ -483,7 +538,7 @@ void MediaControlSeekButtonElement::detach()
 // ----------------------------
 
 MediaControlRewindButtonElement::MediaControlRewindButtonElement(Document* document, HTMLMediaElement* element)
-    : MediaControlInputElement(document, MEDIA_CONTROLS_REWIND_BUTTON, "button", element, MediaRewindButton)
+    : MediaControlInputElement(document, MEDIA_CONTROLS_REWIND_BUTTON, "button", element)
 {
 }
 
@@ -505,7 +560,7 @@ bool MediaControlRewindButtonElement::rendererIsNeeded(RenderStyle* style)
 // ----------------------------
 
 MediaControlReturnToRealtimeButtonElement::MediaControlReturnToRealtimeButtonElement(Document* document, HTMLMediaElement* element)
-    : MediaControlInputElement(document, MEDIA_CONTROLS_RETURN_TO_REALTIME_BUTTON, "button", element, MediaReturnToRealtimeButton)
+    : MediaControlInputElement(document, MEDIA_CONTROLS_RETURN_TO_REALTIME_BUTTON, "button", element)
 {
 }
 
@@ -526,8 +581,8 @@ bool MediaControlReturnToRealtimeButtonElement::rendererIsNeeded(RenderStyle* st
 // ----------------------------
 
 MediaControlTimelineElement::MediaControlTimelineElement(Document* document, HTMLMediaElement* element)
-    : MediaControlInputElement(document, MEDIA_CONTROLS_TIMELINE, "range", element, MediaTimelineContainer)
-{ 
+    : MediaControlInputElement(document, MEDIA_CONTROLS_TIMELINE, "range", element)
+{
 }
 
 void MediaControlTimelineElement::defaultEventHandler(Event* event)
@@ -571,7 +626,7 @@ void MediaControlTimelineElement::update(bool updateDuration)
 // ----------------------------
 
 MediaControlVolumeSliderElement::MediaControlVolumeSliderElement(Document* document, HTMLMediaElement* element)
-    : MediaControlInputElement(document, MEDIA_CONTROLS_VOLUME_SLIDER, "range", element, MediaVolumeSlider)
+    : MediaControlInputElement(document, MEDIA_CONTROLS_VOLUME_SLIDER, "range", element)
 {
     setAttribute(maxAttr, "1");
 }
@@ -598,7 +653,7 @@ void MediaControlVolumeSliderElement::defaultEventHandler(Event* event)
 // ----------------------------
 
 MediaControlFullscreenButtonElement::MediaControlFullscreenButtonElement(Document* document, HTMLMediaElement* element)
-    : MediaControlInputElement(document, MEDIA_CONTROLS_FULLSCREEN_BUTTON, "button", element, MediaFullscreenButton)
+    : MediaControlInputElement(document, MEDIA_CONTROLS_FULLSCREEN_BUTTON, "button", element)
 {
 }
 
@@ -620,6 +675,7 @@ bool MediaControlFullscreenButtonElement::rendererIsNeeded(RenderStyle* style)
 
 MediaControlTimeDisplayElement::MediaControlTimeDisplayElement(Document* document, PseudoId pseudo, HTMLMediaElement* element)
     : MediaControlElement(document, pseudo, element)
+    , m_currentValue(0)
     , m_isVisible(true)
 {
 }
@@ -647,6 +703,32 @@ void MediaControlTimeDisplayElement::setVisible(bool visible)
 
     RefPtr<RenderStyle> style = styleForElement();
     renderer()->setStyle(style.get());
+}
+
+String MediaControlTimeDisplayElement::formatTime(float time)
+{
+    if (!isfinite(time))
+        time = 0;
+    int seconds = (int)fabsf(time);
+    int hours = seconds / (60 * 60);
+    int minutes = (seconds / 60) % 60;
+    seconds %= 60;
+    if (hours) {
+        if (hours > 9)
+            return String::format("%s%02d:%02d:%02d", (time < 0 ? "-" : ""), hours, minutes, seconds);
+
+        return String::format("%s%01d:%02d:%02d", (time < 0 ? "-" : ""), hours, minutes, seconds);
+    }
+
+    return String::format("%s%02d:%02d", (time < 0 ? "-" : ""), minutes, seconds);
+}
+
+void MediaControlTimeDisplayElement::setCurrentValue(float time)
+{
+    m_currentValue = time;
+
+    ExceptionCode ec;
+    setInnerText(formatTime(m_currentValue), ec);
 }
 
 

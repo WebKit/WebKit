@@ -61,8 +61,10 @@ namespace WebCore {
         virtual void increment();
         virtual void decrement();
 
-    private:
+    protected:
         AccessibilitySlider(RenderObject*);
+
+    private:
         void changeValue(float /*percentChange*/);
         HTMLInputElement* element() const;
     };

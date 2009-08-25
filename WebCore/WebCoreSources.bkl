@@ -37,6 +37,7 @@ This file contains the list of files needed to build WebCore.
         accessibility/AccessibilityARIAGridCell.cpp
         accessibility/AccessibilityARIAGridRow.cpp
         accessibility/AccessibilityImageMapLink.cpp
+        accessibility/AccessibilityMediaControls.cpp
         accessibility/AccessibilityObject.cpp
         accessibility/AccessibilityList.cpp
         accessibility/AccessibilityListBox.cpp

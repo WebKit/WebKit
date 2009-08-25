@@ -320,22 +320,22 @@ void RenderMedia::updateControls()
         createPanel();
         if (m_panel) {
             createRewindButton();
-            createMuteButton();
             createPlayButton();
             createReturnToRealtimeButton();
             createStatusDisplay();
             createTimelineContainer();
-            createVolumeSliderContainer();
-            createSeekBackButton();
-            createSeekForwardButton();
-            createFullscreenButton();
-            if (m_volumeSliderContainer)
-                createVolumeSlider();
             if (m_timelineContainer) {
                 createCurrentTimeDisplay();
                 createTimeline();
                 createTimeRemainingDisplay();
             }
+            createSeekBackButton();
+            createSeekForwardButton();
+            createFullscreenButton();
+            createMuteButton();
+            createVolumeSliderContainer();
+            if (m_volumeSliderContainer)
+                createVolumeSlider();
             m_panel->attach();
         }
     }
@@ -395,24 +395,6 @@ void RenderMedia::timeUpdateTimerFired(Timer<RenderMedia>*)
     updateTimeDisplay();
 }
     
-String RenderMedia::formatTime(float time)
-{
-    if (!isfinite(time))
-        time = 0;
-    int seconds = (int)fabsf(time); 
-    int hours = seconds / (60 * 60);
-    int minutes = (seconds / 60) % 60;
-    seconds %= 60;
-    if (hours) {
-        if (hours > 9)
-            return String::format("%s%02d:%02d:%02d", (time < 0 ? "-" : ""), hours, minutes, seconds);
-        else
-            return String::format("%s%01d:%02d:%02d", (time < 0 ? "-" : ""), hours, minutes, seconds);
-    }
-    else
-        return String::format("%s%02d:%02d", (time < 0 ? "-" : ""), minutes, seconds);
-}
-
 void RenderMedia::updateTimeDisplay()
 {
     if (!m_currentTimeDisplay || !m_currentTimeDisplay->renderer() || m_currentTimeDisplay->renderer()->style()->display() == NONE || style()->visibility() != VISIBLE)
@@ -420,12 +402,8 @@ void RenderMedia::updateTimeDisplay()
     float now = mediaElement()->currentTime();
     float duration = mediaElement()->duration();
 
-    String timeString = formatTime(now);
-    ExceptionCode ec;
-    m_currentTimeDisplay->setInnerText(timeString, ec);
-    
-    timeString = formatTime(now - duration);
-    m_timeRemainingDisplay->setInnerText(timeString, ec);
+    m_currentTimeDisplay->setCurrentValue(now);
+    m_timeRemainingDisplay->setCurrentValue(now - duration);
 }
 
 void RenderMedia::updateControlVisibility() 

@@ -40,6 +40,8 @@
 		0709FC4C1025DED80059CDBA /* AccessibilitySlider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0709FC4B1025DED80059CDBA /* AccessibilitySlider.cpp */; };
 		0709FC4E1025DEE30059CDBA /* AccessibilitySlider.h in Headers */ = {isa = PBXBuildFile; fileRef = 0709FC4D1025DEE30059CDBA /* AccessibilitySlider.h */; };
 		0735EE6A0F40C5E4004A2604 /* MediaPlayerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 0735EE690F40C5E4004A2604 /* MediaPlayerProxy.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		07B0113D1032241900FBDC33 /* AccessibilityMediaControls.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07B0113C1032241900FBDC33 /* AccessibilityMediaControls.cpp */; };
+		07B0113F1032242200FBDC33 /* AccessibilityMediaControls.h in Headers */ = {isa = PBXBuildFile; fileRef = 07B0113E1032242200FBDC33 /* AccessibilityMediaControls.h */; };
 		080081960ED3B2DD00C53BC0 /* WMLAnchorElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 080081940ED3B2DD00C53BC0 /* WMLAnchorElement.cpp */; };
 		080081970ED3B2DD00C53BC0 /* WMLAnchorElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 080081950ED3B2DD00C53BC0 /* WMLAnchorElement.h */; };
 		0804BF6E0EE09C3B0006C000 /* WMLDoElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0804BF6C0EE09C3B0006C000 /* WMLDoElement.cpp */; };
@@ -5092,6 +5094,8 @@
 		0735EE690F40C5E4004A2604 /* MediaPlayerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPlayerProxy.h; sourceTree = "<group>"; };
 		079F5E4B0F3BEBEA005E0782 /* MediaPlayerPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPlayerPrivate.h; sourceTree = "<group>"; };
 		07AFE5900F1446BD00841617 /* mediaControlsQT.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = mediaControlsQT.css; sourceTree = "<group>"; };
+		07B0113C1032241900FBDC33 /* AccessibilityMediaControls.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityMediaControls.cpp; sourceTree = "<group>"; };
+		07B0113E1032242200FBDC33 /* AccessibilityMediaControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityMediaControls.h; sourceTree = "<group>"; };
 		080081940ED3B2DD00C53BC0 /* WMLAnchorElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLAnchorElement.cpp; sourceTree = "<group>"; };
 		080081950ED3B2DD00C53BC0 /* WMLAnchorElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLAnchorElement.h; sourceTree = "<group>"; };
 		0804BF6C0EE09C3B0006C000 /* WMLDoElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLDoElement.cpp; sourceTree = "<group>"; };
@@ -10157,6 +10161,8 @@
 				29A812250FBB9C1D00510293 /* AccessibilityListBox.h */,
 				29A8121F0FBB9C1D00510293 /* AccessibilityListBoxOption.cpp */,
 				29A812240FBB9C1D00510293 /* AccessibilityListBoxOption.h */,
+				07B0113C1032241900FBDC33 /* AccessibilityMediaControls.cpp */,
+				07B0113E1032242200FBDC33 /* AccessibilityMediaControls.h */,
 				29A8121E0FBB9C1D00510293 /* AccessibilityObject.cpp */,
 				29A812180FBB9C1D00510293 /* AccessibilityObject.h */,
 				29A812080FBB9C1D00510293 /* AccessibilityRenderObject.cpp */,
@@ -15210,6 +15216,7 @@
 				29A8122C0FBB9C1D00510293 /* AccessibilityList.h in Headers */,
 				29A812430FBB9C1D00510293 /* AccessibilityListBox.h in Headers */,
 				29A812420FBB9C1D00510293 /* AccessibilityListBoxOption.h in Headers */,
+				07B0113F1032242200FBDC33 /* AccessibilityMediaControls.h in Headers */,
 				29A812360FBB9C1D00510293 /* AccessibilityObject.h in Headers */,
 				29A812490FBB9CA900510293 /* AccessibilityObjectWrapper.h in Headers */,
 				29A812390FBB9C1D00510293 /* AccessibilityRenderObject.h in Headers */,
@@ -17809,6 +17816,7 @@
 				29A8122F0FBB9C1D00510293 /* AccessibilityList.cpp in Sources */,
 				29A8123E0FBB9C1D00510293 /* AccessibilityListBox.cpp in Sources */,
 				29A8123D0FBB9C1D00510293 /* AccessibilityListBoxOption.cpp in Sources */,
+				07B0113D1032241900FBDC33 /* AccessibilityMediaControls.cpp in Sources */,
 				29A8123C0FBB9C1D00510293 /* AccessibilityObject.cpp in Sources */,
 				29A812480FBB9CA900510293 /* AccessibilityObjectMac.mm in Sources */,
 				29A8124A0FBB9CA900510293 /* AccessibilityObjectWrapper.mm in Sources */,

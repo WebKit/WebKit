@@ -180,6 +180,7 @@ public:
     static bool isWMLElement() { return false; }
 #endif
 
+    virtual bool isMediaControlElement() const { return false; }
     virtual bool isStyledElement() const { return false; }
     virtual bool isFrameOwnerElement() const { return false; }
     virtual bool isAttributeNode() const { return false; }

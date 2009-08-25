@@ -345,6 +345,9 @@ String imageTitle(const String& filename, const IntSize& size)
     return String::fromUTF8(string.get());
 }
 
+
+#if ENABLE(VIDEO)
+
 String mediaElementLoadingStateText()
 {
     return String::fromUTF8(_("Loading..."));
@@ -354,5 +357,114 @@ String mediaElementLiveBroadcastStateText()
 {
     return String::fromUTF8(_("Live Broadcast"));
 }
+
+String localizedMediaControlElementString(const String& name)
+{
+    if (name == "AudioElement")
+        return String::fromUTF8(_("audio element controller"));
+    if (name == "VideoElement")
+        return String::fromUTF8(_("video element controller"));
+    if (name == "MuteButton")
+        return String::fromUTF8(_("mute"));
+    if (name == "UnMuteButton")
+        return String::fromUTF8(_("unmute"));
+    if (name == "PlayButton")
+        return String::fromUTF8(_("play"));
+    if (name == "PauseButton")
+        return String::fromUTF8(_("pause"));
+    if (name == "Slider")
+        return String::fromUTF8(_("movie time"));
+    if (name == "SliderThumb")
+        return String::fromUTF8(_("timeline slider thumb"));
+    if (name == "RewindButton")
+        return String::fromUTF8(_("back 30 seconds"));
+    if (name == "ReturnToRealtimeButton")
+        return String::fromUTF8(_("return to realtime"));
+    if (name == "CurrentTimeDisplay")
+        return String::fromUTF8(_("elapsed time"));
+    if (name == "TimeRemainingDisplay")
+        return String::fromUTF8(_("remaining time"));
+    if (name == "StatusDisplay")
+        return String::fromUTF8(_("status"));
+    if (name == "FullscreenButton")
+        return String::fromUTF8(_("fullscreen"));
+    if (name == "SeekForwardButton")
+        return String::fromUTF8(_("fast forward"));
+    if (name == "SeekBackButton")
+        return String::fromUTF8(_("fast reverse"));
+
+    ASSERT_NOT_REACHED();
+    return String();
+}
+
+String localizedMediaControlElementHelpText(const String& name)
+{
+    if (name == "AudioElement")
+        return String::fromUTF8(_("audio element playback controls and status display"));
+    if (name == "VideoElement")
+        return String::fromUTF8(_("video element playback controls and status display"));
+    if (name == "MuteButton")
+        return String::fromUTF8(_("mute audio tracks"));
+    if (name == "UnMuteButton")
+        return String::fromUTF8(_("unmute audio tracks"));
+    if (name == "PlayButton")
+        return String::fromUTF8(_("begin playback"));
+    if (name == "PauseButton")
+        return String::fromUTF8(_("pause playback"));
+    if (name == "Slider")
+        return String::fromUTF8(_("movie time scrubber"));
+    if (name == "SliderThumb")
+        return String::fromUTF8(_("movie time scrubber thumb"));
+    if (name == "RewindButton")
+        return String::fromUTF8(_("seek movie back 30 seconds"));
+    if (name == "ReturnToRealtimeButton")
+        return String::fromUTF8(_("return streaming movie to real time"));
+    if (name == "CurrentTimeDisplay")
+        return String::fromUTF8(_("current movie time in seconds"));
+    if (name == "TimeRemainingDisplay")
+        return String::fromUTF8(_("number of seconds of movie remaining"));
+    if (name == "StatusDisplay")
+        return String::fromUTF8(_("current movie status"));
+    if (name == "SeekBackButton")
+        return String::fromUTF8(_("seek quickly back"));
+    if (name == "SeekForwardButton")
+        return String::fromUTF8(_("seek quickly forward"));
+    if (name == "FullscreenButton")
+        return String::fromUTF8(_("Play movie in fullscreen mode"));
+
+    ASSERT_NOT_REACHED();
+    return String();
+}
+
+String localizedMediaTimeDescription(float time)
+{
+    if (!isfinite(time))
+        return String::fromUTF8(_("indefinite time"));
+
+    int seconds = (int)fabsf(time);
+    int days = seconds / (60 * 60 * 24);
+    int hours = seconds / (60 * 60);
+    int minutes = (seconds / 60) % 60;
+    seconds %= 60;
+
+    if (days) {
+        GOwnPtr<gchar> string(g_strdup_printf("%d days %d hours %d minutes %d seconds", days, hours, minutes, seconds));
+        return String::fromUTF8(string.get());
+    }
+
+    if (hours) {
+        GOwnPtr<gchar> string(g_strdup_printf("%d hours %d minutes %d seconds", hours, minutes, seconds));
+        return String::fromUTF8(string.get());
+    }
+
+    if (minutes) {
+        GOwnPtr<gchar> string(g_strdup_printf("%d minutes %d seconds", minutes, seconds));
+        return String::fromUTF8(string.get());
+    }
+
+    GOwnPtr<gchar> string(g_strdup_printf("%d seconds", seconds));
+    return String::fromUTF8(string.get());
+}
+#endif  // ENABLE(VIDEO)
 
 }
