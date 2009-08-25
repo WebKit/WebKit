@@ -1096,7 +1096,7 @@ template <HeapType heapType> size_t Heap::sweep()
     if (!emptyBlocks)
         return numLiveObjects;
 
-    size_t neededCells = 1.25 * (numLiveObjects + max(ALLOCATIONS_PER_COLLECTION, numLiveObjects));
+    size_t neededCells = 1.25f * (numLiveObjects + max(ALLOCATIONS_PER_COLLECTION, numLiveObjects));
     size_t neededBlocks = (neededCells + HeapConstants<heapType>::cellsPerBlock - 1) / HeapConstants<heapType>::cellsPerBlock;
     for (size_t block = 0; block < heap.usedBlocks; block++) {
         if (heap.usedBlocks <= neededBlocks)

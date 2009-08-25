@@ -1,5 +1,12 @@
 2009-08-24  Geoffrey Garen  <ggaren@apple.com>
 
+        Build fix: start out with a 32-bit value to avoid a shortening warning.
+
+        * runtime/Collector.cpp:
+        (JSC::Heap::sweep):
+
+2009-08-24  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Oliver Hunt.
 
         Substantially reduced VM thrash in the GC heap.
