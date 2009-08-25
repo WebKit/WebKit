@@ -1,3 +1,16 @@
+2009-08-25  Cameron McCormack  <cam@mcc.id.au>
+
+        Reviewed by Darin Adler.
+
+        make-script-test-wrappers should be executable
+        https://bugs.webkit.org/show_bug.cgi?id=28669
+
+        Make make-script-test-wrappers and update-sources-list.py both be
+        executable.
+
+        * Scripts/update-sources-list.py:
+        * Scripts/make-script-test-wrappers:
+
 2009-08-25  Brent Fulgham  <bfulgham@webkit.org>
 
         Build fix
