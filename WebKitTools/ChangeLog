@@ -1,3 +1,13 @@
+2009-08-25  David Levin  <levin@chromium.org>
+
+        Reviewed by Adam Roben.
+
+        PLATFORM(CFNETWORK) should be USE(CFNETWORK).
+        https://bugs.webkit.org/show_bug.cgi?id=28713
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (main):
+
 2009-08-25  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Ariya Hidayat.

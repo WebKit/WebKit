@@ -759,4 +759,7 @@
 #define WARN_UNUSED_RETURN
 #endif
 
+/* Set up a define for a common error that is intended to cause a build error -- thus the space after Error. */
+#define WTF_PLATFORM_CFNETWORK Error USE_macro_should_be_used_with_CFNETWORK
+
 #endif /* WTF_Platform_h */

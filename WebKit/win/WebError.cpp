@@ -137,7 +137,7 @@ HRESULT STDMETHODCALLTYPE WebError::localizedDescription(
 
     *result = BString(m_error.localizedDescription()).release();
 
-#if PLATFORM(CFNETWORK)
+#if USE(CFNETWORK)
     if (!*result) {
         if (int code = m_error.errorCode())
             *result = BString(wkCFNetworkErrorGetLocalizedDescription(code)).release();
