@@ -1,3 +1,14 @@
+2009-08-25  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by NOBODY (Buildfix).
+
+        * JavaScriptCore.vcproj/jsc/jsc.vcproj: Add Debug_CFLite target
+          that inherits from the debug_wincairo property sheet and therefore
+          links to the proper debug library.
+        * JavaScriptCore.vcproj/testapi/testapi.vcproj: Add Debug_CFLite target
+          that inherits from the debug_wincairo property sheet and therefore
+          links to the proper debug library.
+
 2009-08-25  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.
