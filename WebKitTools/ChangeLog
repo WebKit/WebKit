@@ -1,3 +1,24 @@
+2009-08-24  Hironori Bono  <hbono@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Fix Bug 27827 "[Chromium] Functions Keys don't work in google spreadsheet".
+        <https://bugs.webkit.org/show_bug.cgi?id=27827>.
+
+        Because of the lack of mappings from GDK key-codes to WebKit key-codes,
+        Chromium cannot send valid key-codes to JavaScript when a user types
+        function keys. This change just copies the mappings from 'KeyEventGtk.cpp'.
+
+        To write layout tests for this issue, added mappings from function-key
+        names to platform-specific key-codes to EventSendingController objects
+        so that eventSender.keyDown() can send function-key events without using
+        platform-specific key codes. (Unfortunately, this eventSender.keyDown() change
+        is only for Mac. So this change adds this new test to Skipped tests for other
+        platforms to prevent this change from crashing the build trees.)
+
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (-[EventSendingController keyDown:withModifiers:]):
+
 2009-08-23  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Xan Lopez.

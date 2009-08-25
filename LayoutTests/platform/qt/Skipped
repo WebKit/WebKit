@@ -5033,6 +5033,9 @@ fast/harness/override-zzz-reset.html
 fast/harness/use-page-cache.html
 loader/go-back-to-different-window-size.html
 
+# A test that failed because eventSender cannot send function-key events.
+fast/events/keydown-function-keys.html
+
 # This port doesn't support Geolocation.
 fast/dom/Geolocation
 

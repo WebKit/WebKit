@@ -357,6 +357,31 @@ int windowsKeyCodeForKeyEvent(unsigned keycode)
         // VKEY_NONAME (FC) Reserved for future use
         // VKEY_PA1 (FD) PA1 key
         // VKEY_OEM_CLEAR (FE) Clear key
+    case GDK_F1:
+    case GDK_F2:
+    case GDK_F3:
+    case GDK_F4:
+    case GDK_F5:
+    case GDK_F6:
+    case GDK_F7:
+    case GDK_F8:
+    case GDK_F9:
+    case GDK_F10:
+    case GDK_F11:
+    case GDK_F12:
+    case GDK_F13:
+    case GDK_F14:
+    case GDK_F15:
+    case GDK_F16:
+    case GDK_F17:
+    case GDK_F18:
+    case GDK_F19:
+    case GDK_F20:
+    case GDK_F21:
+    case GDK_F22:
+    case GDK_F23:
+    case GDK_F24:
+        return VKEY_F1 + (keycode - GDK_F1);
     default:
         return 0;
     }

@@ -621,6 +621,9 @@ fast/forms/menulist-style-color.html
 # <rdar://7127902> http/tests/misc/favicon-loads-with-images-disabled.html crashes on Windows debug
 http/tests/misc/favicon-loads-with-images-disabled.html
 
+# A test that failed because eventSender cannot send function-key events.
+fast/events/keydown-function-keys.html
+
 # This port doesn't support Geolocation.
 fast/dom/Geolocation
 
