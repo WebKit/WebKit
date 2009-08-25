@@ -48,7 +48,8 @@ void JSHTMLIFrameElement::setSrc(ExecState* exec, JSValue value)
     String srcValue = valueToStringWithNullCheck(exec, value);
 
     if (protocolIsJavaScript(deprecatedParseURL(srcValue))) {
-        if (!checkNodeSecurity(exec, imp->contentDocument()))
+        Document* contentDocument = imp->contentDocument();
+        if (contentDocument && !checkNodeSecurity(exec, contentDocument))
             return;
     }
 

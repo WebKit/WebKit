@@ -1,3 +1,13 @@
+2009-08-24  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler and Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28688
+        REGRESSION(r24994): Cannot create a frame with a javascript URL
+
+        * http/tests/security/javascriptURL/javascriptURL-in-new-iframe-expected.txt: Added.
+        * http/tests/security/javascriptURL/javascriptURL-in-new-iframe.html: Added.
+
 2009-08-24  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Skip the correct test (media/video-currentTime-set.html, not

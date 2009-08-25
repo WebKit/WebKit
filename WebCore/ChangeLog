@@ -1,3 +1,18 @@
+2009-08-24  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler and Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28688
+        REGRESSION(r24994): Cannot create a frame with a javascript URL
+
+        Test: http/tests/security/javascriptURL/javascriptURL-in-new-iframe.html
+
+        * bindings/js/JSAttrCustom.cpp: (WebCore::JSAttr::setValue):
+        * bindings/js/JSElementCustom.cpp: (WebCore::allowSettingSrcToJavascriptURL):
+        * bindings/js/JSHTMLFrameElementCustom.cpp: (WebCore::allowSettingJavascriptURL):
+        * bindings/js/JSHTMLIFrameElementCustom.cpp: (WebCore::JSHTMLIFrameElement::setSrc):
+        Omit the checks if there is no document in frame yet.
+
 2009-08-24  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Eric Seidel.

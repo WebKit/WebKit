@@ -44,7 +44,8 @@ using namespace HTMLNames;
 static inline bool allowSettingJavascriptURL(ExecState* exec, HTMLFrameElement* imp, const String& value)
 {
     if (protocolIsJavaScript(deprecatedParseURL(value))) {
-        if (!checkNodeSecurity(exec, imp->contentDocument()))
+        Document* contentDocument = imp->contentDocument();
+        if (contentDocument && !checkNodeSecurity(exec, contentDocument))
             return false;
     }
     return true;

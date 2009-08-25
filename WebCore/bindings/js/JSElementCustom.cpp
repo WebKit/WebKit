@@ -66,8 +66,8 @@ void JSElement::markChildren(MarkStack& markStack)
 static inline bool allowSettingSrcToJavascriptURL(ExecState* exec, Element* element, const String& name, const String& value)
 {
     if ((element->hasTagName(iframeTag) || element->hasTagName(frameTag)) && equalIgnoringCase(name, "src") && protocolIsJavaScript(deprecatedParseURL(value))) {
-        HTMLFrameElementBase* frame = static_cast<HTMLFrameElementBase*>(element);
-        if (!checkNodeSecurity(exec, frame->contentDocument()))
+        Document* contentDocument = static_cast<HTMLFrameElementBase*>(element)->contentDocument();
+        if (contentDocument && !checkNodeSecurity(exec, contentDocument))
             return false;
     }
     return true;
