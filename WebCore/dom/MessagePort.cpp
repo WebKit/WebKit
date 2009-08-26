@@ -55,28 +55,41 @@ MessagePort::~MessagePort()
         m_scriptExecutionContext->destroyedMessagePort(this);
 }
 
-void MessagePort::postMessage(const String& message, ExceptionCode& ec)
+// FIXME: remove this when we update the JS bindings (bug #28460).
+void MessagePort::postMessage(const String& message, MessagePort* port, ExceptionCode& ec)
 {
-    postMessage(message, 0, ec);
+    MessagePortArray ports;
+    if (port)
+        ports.append(port);
+    postMessage(message, &ports, ec);
 }
 
-void MessagePort::postMessage(const String& message, MessagePort* dataPort, ExceptionCode& ec)
+void MessagePort::postMessage(const String& message, ExceptionCode& ec)
+{
+    postMessage(message, static_cast<MessagePortArray*>(0), ec);
+}
+
+void MessagePort::postMessage(const String& message, const MessagePortArray* ports, ExceptionCode& ec)
 {
     if (!m_entangledChannel)
         return;
     ASSERT(m_scriptExecutionContext);
 
-    OwnPtr<MessagePortChannel> channel;
-    if (dataPort) {
-        if (dataPort == this || m_entangledChannel->isConnectedTo(dataPort)) {
-            ec = INVALID_STATE_ERR;
-            return;
+    OwnPtr<MessagePortChannelArray> channels;
+    // Make sure we aren't connected to any of the passed-in ports.
+    if (ports) {
+        for (unsigned int i = 0; i < ports->size(); ++i) {
+            MessagePort* dataPort = (*ports)[i].get();
+            if (dataPort == this || m_entangledChannel->isConnectedTo(dataPort)) {
+                ec = INVALID_STATE_ERR;
+                return;
+            }
         }
-        channel = dataPort->disentangle(ec);
+        channels = MessagePort::disentanglePorts(ports, ec);
         if (ec)
             return;
     }
-    m_entangledChannel->postMessageToRemote(MessagePortChannel::EventData::create(message, channel.release()));
+    m_entangledChannel->postMessageToRemote(MessagePortChannel::EventData::create(message, channels.release()));
 }
 
 PassOwnPtr<MessagePortChannel> MessagePort::disentangle(ExceptionCode& ec)
@@ -155,14 +168,8 @@ void MessagePort::dispatchMessages()
 
     OwnPtr<MessagePortChannel::EventData> eventData;
     while (m_entangledChannel && m_entangledChannel->tryGetMessageFromRemote(eventData)) {
-        RefPtr<MessagePort> port;
-        OwnPtr<MessagePortChannel> channel = eventData->channel();
-        if (channel) {
-            // The remote side sent over a MessagePortChannel, so create a MessagePort to wrap it.
-            port = MessagePort::create(*m_scriptExecutionContext);
-            port->entangle(channel.release());
-        }
-        RefPtr<Event> evt = MessageEvent::create(eventData->message(), "", "", 0, port.release());
+        OwnPtr<MessagePortArray> ports = MessagePort::entanglePorts(*m_scriptExecutionContext, eventData->channels());
+        RefPtr<Event> evt = MessageEvent::create(eventData->message(), "", "", 0, ports.release());
 
         if (m_onMessageListener) {
             evt->setTarget(this);
@@ -243,6 +250,48 @@ bool MessagePort::hasPendingActivity()
 MessagePort* MessagePort::locallyEntangledPort()
 {
     return m_entangledChannel ? m_entangledChannel->locallyEntangledPort(m_scriptExecutionContext) : 0;
+}
+
+PassOwnPtr<MessagePortChannelArray> MessagePort::disentanglePorts(const MessagePortArray* ports, ExceptionCode& ec)
+{
+    if (!ports || !ports->size())
+        return 0;
+
+    // HashSet used to efficiently check for duplicates in the passed-in array.
+    HashSet<MessagePort*> portSet;
+
+    // Walk the incoming array - if there are any duplicate ports, or null ports or cloned ports, throw an error (per section 8.3.3 of the HTML5 spec).
+    for (unsigned int i = 0; i < ports->size(); ++i) {
+        MessagePort* port = (*ports)[i].get();
+        if (!port || !port->isEntangled() || portSet.contains(port)) {
+            ec = INVALID_STATE_ERR;
+            return 0;
+        }
+        portSet.add(port);
+    }
+
+    // Passed-in ports passed validity checks, so we can disentangle them.
+    MessagePortChannelArray* portArray = new MessagePortChannelArray(ports->size());
+    for (unsigned int i = 0 ; i < ports->size() ; ++i) {
+        OwnPtr<MessagePortChannel> channel = (*ports)[i]->disentangle(ec);
+        ASSERT(!ec); // Can't generate exception here if passed above checks.
+        (*portArray)[i] = channel.release();
+    }
+    return portArray;
+}
+
+PassOwnPtr<MessagePortArray> MessagePort::entanglePorts(ScriptExecutionContext& context, PassOwnPtr<MessagePortChannelArray> channels)
+{
+    if (!channels || !channels->size())
+        return 0;
+
+    MessagePortArray* portArray = new MessagePortArray(channels->size());
+    for (unsigned int i = 0; i < channels->size(); ++i) {
+        RefPtr<MessagePort> port = MessagePort::create(context);
+        port->entangle((*channels)[i].release());
+        (*portArray)[i] = port.release();
+    }
+    return portArray;
 }
 
 } // namespace WebCore

@@ -1,3 +1,70 @@
+2009-08-25  Drew Wilson  <atwilson@google.com>
+
+        Reviewed by David Levin.
+
+        postMessage() spec now supports sending arrays of ports
+        https://bugs.webkit.org/show_bug.cgi?id=26902
+
+        Added support for sending multiple ports at once via postMessage(). JS bindings will be updated in an upcoming patch.
+
+        No new tests, since the new functionality is not exposed via new JS bindings yet, so the old tests suffice.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Mark MessagePort.h and MessagePortChannel.h as private since they are used by WebKit now.
+        * dom/MessageEvent.cpp:
+        Updated APIs to support passing MessagePortArrays.
+        (WebCore::MessageEvent::MessageEvent):
+        (WebCore::MessageEvent::initMessageEvent):
+        (WebCore::MessageEvent::messagePort):
+        * dom/MessageEvent.h:
+        (WebCore::MessageEvent::create):
+        Now accepts a MessagePortArray parameter instead of a single MessagePort.
+        (WebCore::MessageEvent::ports):
+        * dom/MessagePort.cpp:
+        (WebCore::MessagePort::postMessage):
+        (WebCore::MessagePort::dispatchMessages):
+        (WebCore::MessagePort::disentanglePorts):
+        Added new static function to extract a MessagePortChannelArray from a MessagePortArray.
+        (WebCore::MessagePort::entanglePorts):
+        Added new static function to generate a MessagePortArray (entangled ports) from a MessagePortChannelArray.
+        * dom/MessagePort.h:
+        * dom/MessagePortChannel.cpp:
+        EventData now contains a MessagePortChannelArray field instead of a single MessagePortChannel.
+        (WebCore::MessagePortChannel::EventData::create):
+        (WebCore::MessagePortChannel::EventData::EventData):
+        * dom/MessagePortChannel.h:
+        (WebCore::MessagePortChannel::EventData::channels):
+        * page/DOMWindow.cpp:
+        (WebCore::PostMessageTimer::PostMessageTimer):
+        (WebCore::PostMessageTimer::event):
+        (WebCore::DOMWindow::postMessage):
+        Now accepts a MessagePortArray parameter instead of a single MessagePort.
+        * page/DOMWindow.h:
+        * workers/DedicatedWorkerContext.cpp:
+        (WebCore::DedicatedWorkerContext::postMessage):
+        Now accepts a MessagePortArray parameter instead of a single MessagePort.
+        (WebCore::DedicatedWorkerContext::dispatchMessage):
+        * workers/DedicatedWorkerContext.h:
+        * workers/Worker.cpp:
+        (WebCore::Worker::postMessage):
+        Now accepts a MessagePortArray parameter instead of a single MessagePort.
+        (WebCore::Worker::dispatchMessage):
+        * workers/Worker.h:
+        * workers/WorkerContextProxy.h:
+        * workers/WorkerMessagingProxy.cpp:
+        Updated WorkerObjectProxy and WorkerContextProxy API implementations to support sending multiple MessagePorts.
+        (WebCore::MessageWorkerContextTask::create):
+        (WebCore::MessageWorkerContextTask::MessageWorkerContextTask):
+        (WebCore::MessageWorkerContextTask::performTask):
+        (WebCore::MessageWorkerTask::create):
+        (WebCore::MessageWorkerTask::MessageWorkerTask):
+        (WebCore::MessageWorkerTask::performTask):
+        (WebCore::WorkerMessagingProxy::postMessageToWorkerObject):
+        (WebCore::WorkerMessagingProxy::postMessageToWorkerContext):
+        * workers/WorkerMessagingProxy.h:
+        * workers/WorkerObjectProxy.h:
+        Updated WorkerObjectProxy and WorkerContextProxy APIs to support sending multiple MessagePorts.
+
 2009-08-26  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

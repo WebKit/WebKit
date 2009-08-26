@@ -42,7 +42,6 @@
 namespace WebCore {
 
     class DedicatedWorkerThread;
-    class MessagePortChannel;
     class ScriptExecutionContext;
     class String;
     class Worker;
@@ -55,13 +54,13 @@ namespace WebCore {
         // (Only use these methods in the worker object thread.)
         virtual void startWorkerContext(const KURL& scriptURL, const String& userAgent, const String& sourceCode);
         virtual void terminateWorkerContext();
-        virtual void postMessageToWorkerContext(const String&, PassOwnPtr<MessagePortChannel>);
+        virtual void postMessageToWorkerContext(const String&, PassOwnPtr<MessagePortChannelArray>);
         virtual bool hasPendingActivity() const;
         virtual void workerObjectDestroyed();
 
         // Implementations of WorkerObjectProxy.
         // (Only use these methods in the worker context thread.)
-        virtual void postMessageToWorkerObject(const String&, PassOwnPtr<MessagePortChannel>);
+        virtual void postMessageToWorkerObject(const String&, PassOwnPtr<MessagePortChannelArray>);
         virtual void postExceptionToWorkerObject(const String& errorMessage, int lineNumber, const String& sourceURL);
         virtual void postConsoleMessageToWorkerObject(MessageDestination, MessageSource, MessageType, MessageLevel, const String& message, int lineNumber, const String& sourceURL);
         virtual void confirmMessageFromWorkerObject(bool hasPendingActivity);

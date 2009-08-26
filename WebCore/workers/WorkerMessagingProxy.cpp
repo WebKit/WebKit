@@ -44,15 +44,15 @@ namespace WebCore {
 
 class MessageWorkerContextTask : public ScriptExecutionContext::Task {
 public:
-    static PassRefPtr<MessageWorkerContextTask> create(const String& message, PassOwnPtr<MessagePortChannel> channel)
+    static PassRefPtr<MessageWorkerContextTask> create(const String& message, PassOwnPtr<MessagePortChannelArray> channels)
     {
-        return adoptRef(new MessageWorkerContextTask(message, channel));
+        return adoptRef(new MessageWorkerContextTask(message, channels));
     }
 
 private:
-    MessageWorkerContextTask(const String& message, PassOwnPtr<MessagePortChannel> channel)
+    MessageWorkerContextTask(const String& message, PassOwnPtr<MessagePortChannelArray> channels)
         : m_message(message.copy())
-        , m_channel(channel)
+        , m_channels(channels)
     {
     }
 
@@ -60,31 +60,27 @@ private:
     {
         ASSERT(scriptContext->isWorkerContext());
         DedicatedWorkerContext* context = static_cast<DedicatedWorkerContext*>(scriptContext);
-        RefPtr<MessagePort> port;
-        if (m_channel) {
-            port = MessagePort::create(*scriptContext);
-            port->entangle(m_channel.release());
-        }
-        context->dispatchMessage(m_message, port.release());
+        OwnPtr<MessagePortArray> ports = MessagePort::entanglePorts(*scriptContext, m_channels.release());
+        context->dispatchMessage(m_message, ports.release());
         context->thread()->workerObjectProxy().confirmMessageFromWorkerObject(context->hasPendingActivity());
     }
 
 private:
     String m_message;
-    OwnPtr<MessagePortChannel> m_channel;
+    OwnPtr<MessagePortChannelArray> m_channels;
 };
 
 class MessageWorkerTask : public ScriptExecutionContext::Task {
 public:
-    static PassRefPtr<MessageWorkerTask> create(const String& message, PassOwnPtr<MessagePortChannel> channel, WorkerMessagingProxy* messagingProxy)
+    static PassRefPtr<MessageWorkerTask> create(const String& message, PassOwnPtr<MessagePortChannelArray> channels, WorkerMessagingProxy* messagingProxy)
     {
-        return adoptRef(new MessageWorkerTask(message, channel, messagingProxy));
+        return adoptRef(new MessageWorkerTask(message, channels, messagingProxy));
     }
 
 private:
-    MessageWorkerTask(const String& message, PassOwnPtr<MessagePortChannel> channel, WorkerMessagingProxy* messagingProxy)
+    MessageWorkerTask(const String& message, PassOwnPtr<MessagePortChannelArray> channels, WorkerMessagingProxy* messagingProxy)
         : m_message(message.copy())
-        , m_channel(channel)
+        , m_channels(channels)
         , m_messagingProxy(messagingProxy)
     {
     }
@@ -95,17 +91,13 @@ private:
         if (!workerObject || m_messagingProxy->askedToTerminate())
             return;
 
-        RefPtr<MessagePort> port;
-        if (m_channel) {
-            port = MessagePort::create(*scriptContext);
-            port->entangle(m_channel.release());
-        }
-        workerObject->dispatchMessage(m_message, port.release());
+        OwnPtr<MessagePortArray> ports = MessagePort::entanglePorts(*scriptContext, m_channels.release());
+        workerObject->dispatchMessage(m_message, ports.release());
     }
 
 private:
     String m_message;
-    OwnPtr<MessagePortChannel> m_channel;
+    OwnPtr<MessagePortChannelArray> m_channels;
     WorkerMessagingProxy* m_messagingProxy;
 };
 
@@ -225,21 +217,21 @@ void WorkerMessagingProxy::startWorkerContext(const KURL& scriptURL, const Strin
     thread->start();
 }
 
-void WorkerMessagingProxy::postMessageToWorkerObject(const String& message, PassOwnPtr<MessagePortChannel> channel)
+void WorkerMessagingProxy::postMessageToWorkerObject(const String& message, PassOwnPtr<MessagePortChannelArray> channels)
 {
-    m_scriptExecutionContext->postTask(MessageWorkerTask::create(message, channel, this));
+    m_scriptExecutionContext->postTask(MessageWorkerTask::create(message, channels.release(), this));
 }
 
-void WorkerMessagingProxy::postMessageToWorkerContext(const String& message, PassOwnPtr<MessagePortChannel> channel)
+void WorkerMessagingProxy::postMessageToWorkerContext(const String& message, PassOwnPtr<MessagePortChannelArray> channels)
 {
     if (m_askedToTerminate)
         return;
 
     if (m_workerThread) {
         ++m_unconfirmedMessageCount;
-        m_workerThread->runLoop().postTask(MessageWorkerContextTask::create(message, channel));
+        m_workerThread->runLoop().postTask(MessageWorkerContextTask::create(message, channels.release()));
     } else
-        m_queuedEarlyTasks.append(MessageWorkerContextTask::create(message, channel));
+        m_queuedEarlyTasks.append(MessageWorkerContextTask::create(message, channels.release()));
 }
 
 void WorkerMessagingProxy::postTaskForModeToWorkerContext(PassRefPtr<ScriptExecutionContext::Task> task, const String& mode)

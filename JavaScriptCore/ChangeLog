@@ -1,3 +1,14 @@
+2009-08-25  Drew Wilson  <atwilson@google.com>
+
+        Reviewed by David Levin.
+
+        postMessage() spec now supports sending arrays of ports
+        https://bugs.webkit.org/show_bug.cgi?id=26902
+
+        Added OwnPtr to VectorTraits so we can store OwnPtrs in Vectors.
+
+        * wtf/VectorTraits.h:
+
 2009-08-26  Xan Lopez  <xlopez@igalia.com>
 
         Rubber-stamped by Gustavo Noronha.

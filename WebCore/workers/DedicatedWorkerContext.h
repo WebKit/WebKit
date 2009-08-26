@@ -33,6 +33,7 @@
 
 #if ENABLE(WORKERS)
 
+#include "MessagePort.h"
 #include "WorkerContext.h"
 
 namespace WebCore {
@@ -55,11 +56,13 @@ namespace WebCore {
         // EventTarget
         virtual DedicatedWorkerContext* toDedicatedWorkerContext() { return this; }
         void postMessage(const String&, ExceptionCode&);
+        void postMessage(const String&, const MessagePortArray*, ExceptionCode&);
+        // FIXME: remove this when we update the JS bindings (bug #28460).
         void postMessage(const String&, MessagePort*, ExceptionCode&);
         void setOnmessage(PassRefPtr<EventListener> eventListener) { m_onmessageListener = eventListener; }
         EventListener* onmessage() const { return m_onmessageListener.get(); }
 
-        void dispatchMessage(const String&, PassRefPtr<MessagePort>);
+        void dispatchMessage(const String&, PassOwnPtr<MessagePortArray>);
 
         DedicatedWorkerThread* thread();
     private:

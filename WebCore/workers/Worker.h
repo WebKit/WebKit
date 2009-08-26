@@ -34,6 +34,7 @@
 #include "AtomicStringHash.h"
 #include "EventListener.h"
 #include "EventTarget.h"
+#include "MessagePort.h"
 #include "WorkerScriptLoaderClient.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
@@ -57,11 +58,13 @@ namespace WebCore {
         virtual Worker* toWorker() { return this; }
 
         void postMessage(const String&, ExceptionCode&);
-        void postMessage(const String&, MessagePort*, ExceptionCode&);
+        void postMessage(const String&, const MessagePortArray*, ExceptionCode&);
+        // FIXME: remove this when we update the JS bindings (bug #28460).
+        void postMessage(const String& message, MessagePort*, ExceptionCode&);
 
         void terminate();
 
-        void dispatchMessage(const String&, PassRefPtr<MessagePort>);
+        void dispatchMessage(const String&, PassOwnPtr<MessagePortArray>);
         void dispatchErrorEvent();
 
         virtual bool canSuspend() const;

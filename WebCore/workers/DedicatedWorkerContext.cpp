@@ -46,27 +46,36 @@ DedicatedWorkerContext::DedicatedWorkerContext(const KURL& url, const String& us
 {
 }
 
-void DedicatedWorkerContext::postMessage(const String& message, ExceptionCode& ec)
+// FIXME: remove this when we update the JS bindings (bug #28460).
+void DedicatedWorkerContext::postMessage(const String& message, MessagePort* port, ExceptionCode& ec)
 {
-    postMessage(message, 0, ec);
+    MessagePortArray ports;
+    if (port)
+        ports.append(port);
+    postMessage(message, &ports, ec);
 }
 
-void DedicatedWorkerContext::postMessage(const String& message, MessagePort* port, ExceptionCode& ec)
+void DedicatedWorkerContext::postMessage(const String& message, ExceptionCode& ec)
+{
+    postMessage(message, static_cast<MessagePortArray*>(0), ec);
+}
+
+void DedicatedWorkerContext::postMessage(const String& message, const MessagePortArray* ports, ExceptionCode& ec)
 {
     if (isClosing())
         return;
     // Disentangle the port in preparation for sending it to the remote context.
-    OwnPtr<MessagePortChannel> channel = port ? port->disentangle(ec) : 0;
+    OwnPtr<MessagePortChannelArray> channels = MessagePort::disentanglePorts(ports, ec);
     if (ec)
         return;
-    thread()->workerObjectProxy().postMessageToWorkerObject(message, channel.release());
+    thread()->workerObjectProxy().postMessageToWorkerObject(message, channels.release());
 }
 
-void DedicatedWorkerContext::dispatchMessage(const String& message, PassRefPtr<MessagePort> port)
+void DedicatedWorkerContext::dispatchMessage(const String& message, PassOwnPtr<MessagePortArray> ports)
 {
     // Since close() stops the thread event loop, this should not ever get called while closing.
     ASSERT(!isClosing());
-    RefPtr<Event> evt = MessageEvent::create(message, "", "", 0, port);
+    RefPtr<Event> evt = MessageEvent::create(message, "", "", 0, ports);
 
     if (m_onmessageListener.get()) {
         evt->setTarget(this);
