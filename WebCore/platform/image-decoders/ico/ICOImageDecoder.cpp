@@ -51,12 +51,6 @@ ICOImageDecoder::ICOImageDecoder()
 {
 }
 
-ICOImageDecoder::~ICOImageDecoder()
-{
-    deleteAllValues(m_bmpReaders);
-    deleteAllValues(m_pngDecoders);
-}
-
 void ICOImageDecoder::setData(SharedBuffer* data, bool allDataReceived)
 {
     if (failed())
@@ -208,12 +202,12 @@ bool ICOImageDecoder::decodeAtIndex(size_t index)
             // We need to have already sized m_frameBufferCache before this, and
             // we must not resize it again later (see caution in frameCount()).
             ASSERT(m_frameBufferCache.size() == m_dirEntries.size());
-            m_bmpReaders[index] =
-                new BMPImageReader(this, dirEntry.m_imageOffset, 0, true);
+            m_bmpReaders[index].set(
+                new BMPImageReader(this, dirEntry.m_imageOffset, 0, true));
             m_bmpReaders[index]->setData(m_data.get());
             m_bmpReaders[index]->setBuffer(&m_frameBufferCache[index]);
         } else if (imageType == PNG) {
-            m_pngDecoders[index] = new PNGImageDecoder();
+            m_pngDecoders[index].set(new PNGImageDecoder());
             setDataForPNGDecoderAtIndex(index);
         } else {
             // Not enough data to determine image type yet.
@@ -254,13 +248,10 @@ bool ICOImageDecoder::processDirectory()
         return false;
     }
 
-    // Enlarge member vectors to hold all the entries.  We must initialize the
-    // BMP and PNG decoding vectors to 0 so that all entries can be safely
-    // deleted in our destructor.  If we don't do this, they'll contain garbage
-    // values, and deleting those will corrupt memory.
+    // Enlarge member vectors to hold all the entries.
     m_dirEntries.resize(idCount);
-    m_bmpReaders.fill(0, idCount);
-    m_pngDecoders.fill(0, idCount);
+    m_bmpReaders.resize(idCount);
+    m_pngDecoders.resize(idCount);
     return true;
 }
 

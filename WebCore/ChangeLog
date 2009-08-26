@@ -1,3 +1,16 @@
+2009-08-26  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28751
+        Switch ICO decoder from a Vector of raw pointers to a Vector of
+        OwnPtrs now that that is possible.  Makes code slightly simpler.
+
+        * platform/image-decoders/ico/ICOImageDecoder.cpp:
+        (WebCore::ICOImageDecoder::decodeAtIndex):
+        (WebCore::ICOImageDecoder::processDirectory):
+        * platform/image-decoders/ico/ICOImageDecoder.h:
+
 2009-08-26  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.
