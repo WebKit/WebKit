@@ -1,3 +1,19 @@
+2009-08-25  David Levin  <levin@chromium.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        DocumentThreadableLoader::getShouldUseCredentialStorage should allow for synchronous callbacks from SubresourceLoader::create.
+        https://bugs.webkit.org/show_bug.cgi?id=28728
+
+        Test: This code path is exercised while running xhr layout tests in chromium.
+
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::getShouldUseCredentialStorage): When called
+        back synchronously, the loader is 0, so the assert is changed to allow for that.
+        (WebCore::DocumentThreadableLoader::loadRequest): Synchronous callbacks may be
+        done before SubresourceLoader::create finishes, so ensure that any previous loader
+        -- from a preflight request -- is cleared before calling SubresourceLoader::create.
+
 2009-08-25  Mark Rowe  <mrowe@apple.com>
 
         Stop installing IDL files in to the framework.

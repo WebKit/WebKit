@@ -251,7 +251,7 @@ void DocumentThreadableLoader::didFail(SubresourceLoader* loader, const Resource
 
 bool DocumentThreadableLoader::getShouldUseCredentialStorage(SubresourceLoader* loader, bool& shouldUseCredentialStorage)
 {
-    ASSERT_UNUSED(loader, loader == m_loader);
+    ASSERT_UNUSED(loader, loader == m_loader || !m_loader);
 
     if (!m_options.allowCredentials) {
         shouldUseCredentialStorage = false;
@@ -299,6 +299,9 @@ void DocumentThreadableLoader::loadRequest(const ResourceRequest& request, bool 
         // Don't sniff content or send load callbacks for the preflight request.
         bool sendLoadCallbacks = m_options.sendLoadCallbacks && !m_actualRequest;
         bool sniffContent = m_options.sniffContent && !m_actualRequest;
+
+        // Clear the loader so that any callbacks from SubresourceLoader::create will not have the old loader.
+        m_loader = 0;
         m_loader = SubresourceLoader::create(m_document->frame(), this, request, skipCanLoadCheck, sendLoadCallbacks, sniffContent);
         return;
     }
