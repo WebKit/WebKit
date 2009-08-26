@@ -1,3 +1,19 @@
+2009-08-25  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Setting the volume of a media element has no effect if called too early
+        https://bugs.webkit.org/show_bug.cgi?id=28731
+
+        * manual-tests/audio-volume.html: 
+            Added.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::setVolume):
+        (WebCore::MediaPlayerPrivate::setRate):
+            Don't bail if metadata hasn't been loaded, it is fine to set rate and/or
+            volume as soon as the movie has been created.
+
 2009-08-25  David Levin  <levin@chromium.org>
 
         Reviewed by Maciej Stachowiak.

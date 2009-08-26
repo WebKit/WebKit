@@ -730,16 +730,14 @@ bool MediaPlayerPrivate::hasAudio() const
 
 void MediaPlayerPrivate::setVolume(float volume)
 {
-    if (!metaDataAvailable())
-        return;
-    [m_qtMovie.get() setVolume:volume];  
+    if (m_qtMovie)
+        [m_qtMovie.get() setVolume:volume];  
 }
 
 void MediaPlayerPrivate::setRate(float rate)
 {
-    if (!metaDataAvailable())
-        return;
-    [m_qtMovie.get() setRate:rate];
+    if (m_qtMovie)
+        [m_qtMovie.get() setRate:rate];
 }
 
 void MediaPlayerPrivate::setPreservesPitch(bool preservesPitch)
