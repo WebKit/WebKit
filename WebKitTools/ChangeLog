@@ -1,3 +1,13 @@
+2009-08-17  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Mark Rowe.
+
+        Add canary-style Chromium WebKit build slave to the waterfall.
+        https://bugs.webkit.org/show_bug.cgi?id=28400
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json: Added one Chromium/Windows slave
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg: Added support for Chromium slave commands.
+
 2009-08-25  Cameron McCormack  <cam@mcc.id.au>
 
         Reviewed by Darin Adler.

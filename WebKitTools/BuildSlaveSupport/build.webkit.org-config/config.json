@@ -18,7 +18,9 @@
 
                     { "name": "gtk-linux-slave-1", "platform": "gtk"},
 
-                    { "name": "szeged-linux-1", "platform": "qt"}
+                    { "name": "szeged-linux-1", "platform": "qt"},
+
+                    { "name": "google-slave-1", "platform": "chromium-win" }
                   ],
 
     "builders":   [ { "name": "Tiger Intel Release", "type": "BuildAndTest", "builddir": "tiger-intel-release",
@@ -80,13 +82,19 @@
                       "name": "Qt Linux Release", "type": "BuildAndTest", "builddir": "qt-linux-release",
                       "platform": "qt", "configuration": "release", "architectures": ["i386"],
                       "slavenames": ["szeged-linux-1"]
+                    },
+                    {
+                      "name": "Chromium Win Release", "type": "ChromiumBuild", "builddir": "chromium-win-release",
+                      "platform": "chromium-win", "configuration": "release", "architectures": ["i386"],
+                      "slavenames": ["google-slave-1"]
                     }
                   ],
 
     "schedulers": [ { "type": "AnyBranchScheduler", "name": "trunk", "branches": ["trunk"], "treeStableTimer": 45.0,
                       "builderNames": ["Tiger Intel Release", "Leopard Intel Release (Build)", "Leopard Intel Debug (Build)",
                                        "SnowLeopard Intel Leaks", "Windows Release (Build)", "Windows Debug (Build)",
-                                       "GTK Linux Release", "Qt Linux Release"]
+                                       "GTK Linux Release", "Qt Linux Release",
+                                       "Chromium Win Release"]
                     },
                     { "type": "Triggerable", "name": "leopard-intel-release-tests",
                       "builderNames": ["Leopard Intel Release (Tests)"]
