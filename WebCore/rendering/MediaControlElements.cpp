@@ -628,7 +628,6 @@ void MediaControlTimelineElement::update(bool updateDuration)
 MediaControlVolumeSliderElement::MediaControlVolumeSliderElement(Document* document, HTMLMediaElement* element)
     : MediaControlInputElement(document, MEDIA_CONTROLS_VOLUME_SLIDER, "range", element)
 {
-    setAttribute(maxAttr, "1");
 }
 
 void MediaControlVolumeSliderElement::defaultEventHandler(Event* event)

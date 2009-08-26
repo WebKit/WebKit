@@ -1,3 +1,19 @@
+2009-08-25  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Dan Bernstein
+
+        r47744 causes media/video-controls-with-mutation-event-handler.html to crash
+        https://bugs.webkit.org/show_bug.cgi?id=28732
+
+        * rendering/MediaControlElements.cpp:
+        (WebCore::MediaControlVolumeSliderElement::MediaControlVolumeSliderElement):
+            Don't call setAttribute from the construtor, any registered mutation event 
+            listener will cause a crash.
+
+        * rendering/RenderMedia.cpp:
+        (WebCore::RenderMedia::createVolumeSlider):
+            Set the maxAttr here instead of in the constructor.
+
 2009-08-25  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Brady Eidson.

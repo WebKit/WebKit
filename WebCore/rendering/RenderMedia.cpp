@@ -257,6 +257,7 @@ void RenderMedia::createVolumeSlider()
     ASSERT(!m_volumeSlider);
     m_volumeSlider = new MediaControlVolumeSliderElement(document(), mediaElement());
     m_volumeSlider->setAttribute(precisionAttr, "float");
+    m_volumeSlider->setAttribute(maxAttr, "1");
     m_volumeSlider->attachToParent(m_volumeSliderContainer.get());
 }
 
