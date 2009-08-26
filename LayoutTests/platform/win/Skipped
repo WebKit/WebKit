@@ -469,7 +469,6 @@ http/tests/xmlhttprequest/access-control-basic-whitelist-request-headers.html
 http/tests/xmlhttprequest/redirect-cross-origin-post-sync.html
 http/tests/xmlhttprequest/redirect-cross-origin-sync-double.html
 http/tests/xmlhttprequest/redirect-cross-origin-sync.html
-http/tests/xmlhttprequest/xmlhttprequest-missing-file-exception.html
 media/video-timeupdate-during-playback.html
 plugins/netscape-destroy-plugin-script-objects.html
 plugins/netscape-plugin-setwindow-size-2.html

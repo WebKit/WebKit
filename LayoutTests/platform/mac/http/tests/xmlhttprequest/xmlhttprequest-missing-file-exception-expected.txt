@@ -5,5 +5,5 @@ readyState: 4 (number)
 responseText: Non-empty (string)
 responseXML: null (object)
 status: 404 (number)
-statusText: Not Found (string)
+statusText: OK (string)
 
