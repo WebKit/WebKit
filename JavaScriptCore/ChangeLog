@@ -1,3 +1,11 @@
+2009-08-26  Xan Lopez  <xlopez@igalia.com>
+
+        Rubber-stamped by Gustavo Noronha.
+
+        Remove duplicated files from file list.
+
+        * GNUmakefile.am:
+
 2009-08-26  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY (Build fix).

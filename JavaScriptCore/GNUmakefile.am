@@ -465,8 +465,6 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/ObjectPrototype.h \
 	JavaScriptCore/runtime/Operations.cpp \
 	JavaScriptCore/runtime/Operations.h \
-	JavaScriptCore/runtime/PropertyDescriptor.h \
-	JavaScriptCore/runtime/PropertyDescriptor.cpp \
 	JavaScriptCore/runtime/PropertyMapHashTable.h \
 	JavaScriptCore/runtime/PropertyNameArray.cpp \
 	JavaScriptCore/runtime/PropertyNameArray.h \
