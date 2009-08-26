@@ -1545,7 +1545,7 @@ bool RenderThemeMac::paintMediaMuteButton(RenderObject* o, const RenderObject::P
     if (!mediaNode || (!mediaNode->hasTagName(videoTag) && !mediaNode->hasTagName(audioTag)))
         return false;
 
-    if (MediaControlPlayButtonElement* btn = static_cast<MediaControlPlayButtonElement*>(node)) {
+    if (MediaControlMuteButtonElement* btn = static_cast<MediaControlMuteButtonElement*>(node)) {
         LocalCurrentGraphicsContext localContext(paintInfo.context);
         wkDrawMediaUIPart(btn->displayType(), mediaControllerTheme(), paintInfo.context->platformContext(), r, getMediaUIPartStateFlags(node));
 
