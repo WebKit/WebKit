@@ -1,4 +1,13 @@
-2009-08-17  Dimitri Glazkov  <dglazkov@chromium.org>
+2009-08-26  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed.
+
+        Remove accidentally left in clobber option.
+        https://bugs.webkit.org/show_bug.cgi?id=28400
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg: Removed clobber option.
+
+2009-08-26  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Mark Rowe.
 
