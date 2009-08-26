@@ -1,3 +1,13 @@
+2009-08-26  Vincent Untz <vuntz@gnome.org>
+
+        Reviewed by Xan Lopez.
+
+        GObject checks for NULL (and not 0) in g_object_get, so use that
+        as we were already doing elsewhere to make the compiler happy.
+
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivate::hasAudio):
+
 2009-08-26  Alpha Lam  <hclam@chromium.org>
 
         Reviewed by David Levin.

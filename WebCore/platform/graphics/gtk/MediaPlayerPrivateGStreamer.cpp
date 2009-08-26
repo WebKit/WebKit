@@ -322,7 +322,7 @@ bool MediaPlayerPrivate::hasAudio() const
 {
     gint currentAudio = -1;
     if (m_playBin)
-        g_object_get(G_OBJECT(m_playBin), "current-audio", &currentAudio, 0);
+        g_object_get(G_OBJECT(m_playBin), "current-audio", &currentAudio, NULL);
     return currentAudio > -1;
 }
 
