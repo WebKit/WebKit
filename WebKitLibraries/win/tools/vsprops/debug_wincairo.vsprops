@@ -9,7 +9,7 @@
 		Optimization="0"
 		MinimalRebuild="true"
 		BasicRuntimeChecks="3"
-		RuntimeLibrary="3"
+		RuntimeLibrary="2"
 	/>
 	<Tool
 		Name="VCLinkerTool"
