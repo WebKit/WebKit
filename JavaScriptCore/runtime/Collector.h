@@ -175,7 +175,7 @@ namespace JSC {
 #endif
     template<> struct CellSize<sizeof(uint64_t)> { static const size_t m_value = 64; };
 
-    const size_t BLOCK_SIZE = 16 * 4096; // 64k
+    const size_t BLOCK_SIZE = 64 * 4096; // 256k
 
     // derived constants
     const size_t BLOCK_OFFSET_MASK = BLOCK_SIZE - 1;
