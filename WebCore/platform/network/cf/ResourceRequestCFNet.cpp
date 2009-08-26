@@ -112,7 +112,7 @@ void ResourceRequest::doUpdatePlatformRequest()
 
     addHeadersFromHashMap(cfRequest, httpHeaderFields());
     WebCore::setHTTPBody(cfRequest, httpBody());
-    CFURLRequestSetShouldHandleHTTPCookies(cfRequest, allowHTTPCookies());
+    CFURLRequestSetShouldHandleHTTPCookies(cfRequest, allowCookies());
 
     unsigned fallbackCount = m_responseContentDispositionEncodingFallbackArray.size();
     RetainPtr<CFMutableArrayRef> encodingFallbacks(AdoptCF, CFArrayCreateMutable(kCFAllocatorDefault, fallbackCount, 0));
@@ -146,7 +146,7 @@ void ResourceRequest::doUpdateResourceRequest()
         m_httpMethod = method;
         CFRelease(method);
     }
-    m_allowHTTPCookies = CFURLRequestShouldHandleHTTPCookies(m_cfRequest.get());
+    m_allowCookies = CFURLRequestShouldHandleHTTPCookies(m_cfRequest.get());
 
     if (CFDictionaryRef headers = CFURLRequestCopyAllHTTPHeaderFields(m_cfRequest.get())) {
         CFIndex headerCount = CFDictionaryGetCount(headers);

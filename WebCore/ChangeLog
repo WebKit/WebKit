@@ -1,3 +1,37 @@
+2009-08-26  David Levin  <levin@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        ResourceRequestBase::*[Aa]llowHTTPCookies shouldn't mention http.
+        https://bugs.webkit.org/show_bug.cgi?id=28735
+
+        Renaming the method to imply its wider implications of affecting cookies
+        over any protocol that supports them.
+
+        No change in functionality so no new tests.
+
+        * WebCore.order:
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::DocumentThreadableLoader):
+        (WebCore::DocumentThreadableLoader::makeSimpleCrossOriginAccessRequest):
+        (WebCore::DocumentThreadableLoader::makeCrossOriginAccessRequestWithPreflight):
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::adopt):
+        (WebCore::ResourceRequestBase::copyData):
+        (WebCore::ResourceRequestBase::allowCookies):
+        (WebCore::ResourceRequestBase::setAllowCookies):
+        (WebCore::equalIgnoringHeaderFields):
+        * platform/network/ResourceRequestBase.h:
+        (WebCore::ResourceRequestBase::ResourceRequestBase):
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+        (WebCore::ResourceRequest::doUpdateResourceRequest):
+        * platform/network/mac/ResourceRequestMac.mm:
+        (WebCore::ResourceRequest::doUpdateResourceRequest):
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+        * platform/network/soup/ResourceRequestSoup.cpp:
+        (WebCore::ResourceRequest::updateFromSoupMessage):
+
 2009-08-26  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

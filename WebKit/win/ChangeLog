@@ -1,3 +1,13 @@
+2009-08-26  David Levin  <levin@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        ResourceRequestBase::*[Aa]llowHTTPCookies shouldn't mention http.
+        https://bugs.webkit.org/show_bug.cgi?id=28735
+
+        * WebMutableURLRequest.cpp:
+        (WebMutableURLRequest::setHTTPShouldHandleCookies):
+
 2009-08-25  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Oliver Hunt.

@@ -308,7 +308,7 @@ HRESULT STDMETHODCALLTYPE WebMutableURLRequest::setHTTPMethod(
 HRESULT STDMETHODCALLTYPE WebMutableURLRequest::setHTTPShouldHandleCookies( 
     /* [in] */ BOOL handleCookies)
 {
-    m_request.setAllowHTTPCookies(handleCookies);
+    m_request.setAllowCookies(handleCookies);
     return S_OK;
 }
 

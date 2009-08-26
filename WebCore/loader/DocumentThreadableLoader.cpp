@@ -86,7 +86,7 @@ DocumentThreadableLoader::DocumentThreadableLoader(Document* document, Threadabl
         makeSimpleCrossOriginAccessRequest(request);
     else {
         m_actualRequest.set(new ResourceRequest(request));
-        m_actualRequest->setAllowHTTPCookies(m_options.allowCredentials);
+        m_actualRequest->setAllowCookies(m_options.allowCredentials);
 
         if (CrossOriginPreflightResultCache::shared().canSkipPreflight(document->securityOrigin()->toString(), request.url(), m_options.allowCredentials, request.httpMethod(), request.httpHeaderFields()))
             preflightSuccess();
@@ -108,7 +108,7 @@ void DocumentThreadableLoader::makeSimpleCrossOriginAccessRequest(const Resource
     // Make a copy of the passed request so that we can modify some details.
     ResourceRequest crossOriginRequest(request);
     crossOriginRequest.removeCredentials();
-    crossOriginRequest.setAllowHTTPCookies(m_options.allowCredentials);
+    crossOriginRequest.setAllowCookies(m_options.allowCredentials);
     crossOriginRequest.setHTTPOrigin(m_document->securityOrigin()->toString());
 
     bool skipCanLoadCheck = false;
@@ -120,7 +120,7 @@ void DocumentThreadableLoader::makeCrossOriginAccessRequestWithPreflight(const R
     ResourceRequest preflightRequest(request.url());
     preflightRequest.removeCredentials();
     preflightRequest.setHTTPOrigin(m_document->securityOrigin()->toString());
-    preflightRequest.setAllowHTTPCookies(m_options.allowCredentials);
+    preflightRequest.setAllowCookies(m_options.allowCredentials);
     preflightRequest.setHTTPMethod("OPTIONS");
     preflightRequest.setHTTPHeaderField("Access-Control-Request-Method", request.httpMethod());
 

@@ -68,7 +68,7 @@ void ResourceRequest::updateFromSoupMessage(SoupMessage* soupMessage)
 
     m_httpBody = FormData::create(soupMessage->request_body->data, soupMessage->request_body->length);
 
-    // FIXME: m_allowHTTPCookies and m_firstPartyForCookies should
+    // FIXME: m_allowCookies and m_firstPartyForCookies should
     // probably be handled here and on doUpdatePlatformRequest
     // somehow.
 }

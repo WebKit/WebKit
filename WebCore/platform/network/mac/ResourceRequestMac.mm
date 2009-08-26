@@ -61,7 +61,7 @@ void ResourceRequest::doUpdateResourceRequest()
     
     if (NSString* method = [m_nsRequest.get() HTTPMethod])
         m_httpMethod = method;
-    m_allowHTTPCookies = [m_nsRequest.get() HTTPShouldHandleCookies];
+    m_allowCookies = [m_nsRequest.get() HTTPShouldHandleCookies];
     
     NSDictionary *headers = [m_nsRequest.get() allHTTPHeaderFields];
     NSEnumerator *e = [headers keyEnumerator];
@@ -113,7 +113,7 @@ void ResourceRequest::doUpdatePlatformRequest()
     [nsRequest setMainDocumentURL:firstPartyForCookies()];
     if (!httpMethod().isEmpty())
         [nsRequest setHTTPMethod:httpMethod()];
-    [nsRequest setHTTPShouldHandleCookies:allowHTTPCookies()];
+    [nsRequest setHTTPShouldHandleCookies:allowCookies()];
     
     HTTPHeaderMap::const_iterator end = httpHeaderFields().end();
     for (HTTPHeaderMap::const_iterator it = httpHeaderFields().begin(); it != end; ++it)
