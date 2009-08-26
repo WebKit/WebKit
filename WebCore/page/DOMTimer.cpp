@@ -47,6 +47,9 @@ DOMTimer::DOMTimer(ScriptExecutionContext* context, ScheduledAction* action, int
     , m_action(action)
     , m_nextFireInterval(0)
     , m_repeatInterval(0)
+#if !ASSERT_DISABLED
+    , m_suspended(false)
+#endif
 {
     static int lastUsedTimeoutId = 0;
     ++lastUsedTimeoutId;
@@ -148,7 +151,10 @@ void DOMTimer::stop()
 
 void DOMTimer::suspend()
 {
-    ASSERT(!m_nextFireInterval && !m_repeatInterval);
+#if !ASSERT_DISABLED
+    ASSERT(!m_suspended);
+    m_suspended = true;
+#endif
     m_nextFireInterval = nextFireInterval();
     m_repeatInterval = repeatInterval();
     TimerBase::stop();
@@ -156,9 +162,11 @@ void DOMTimer::suspend()
 
 void DOMTimer::resume()
 {
+#if !ASSERT_DISABLED
+    ASSERT(m_suspended);
+    m_suspended = false;
+#endif
     start(m_nextFireInterval, m_repeatInterval);
-    m_nextFireInterval = 0;
-    m_repeatInterval = 0;
 }
 
 

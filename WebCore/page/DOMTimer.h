@@ -66,6 +66,9 @@ namespace WebCore {
         OwnPtr<ScheduledAction> m_action;
         double m_nextFireInterval;
         double m_repeatInterval;
+#if !ASSERT_DISABLED
+        bool m_suspended;
+#endif
         static double s_minTimerInterval;
     };
 

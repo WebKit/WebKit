@@ -1,3 +1,15 @@
+2009-08-25  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Brady Eidson.
+
+        Timers from cached pages fire instantly rather than the specified timeout delay
+        https://bugs.webkit.org/show_bug.cgi?id=28683
+
+        Added test to verify the fix - it uses page cache and measures the timer callback fire time.
+
+        * fast/dom/Window/timer-resume-on-navigation-back-expected.txt: Added.
+        * fast/dom/Window/timer-resume-on-navigation-back.html: Added.
+
 2009-08-25  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Eric Seidel.
