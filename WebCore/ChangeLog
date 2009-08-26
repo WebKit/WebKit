@@ -1,3 +1,18 @@
+2009-08-26  John Gregg  <johnnyg@google.com>
+
+        Reviewed by David Levin.
+
+        minor style correction and include fix for notifications
+        https://bugs.webkit.org/show_bug.cgi?id=28745
+
+        No change in behavior, so no tests.
+
+        * bindings/js/JSDesktopNotificationsCustom.cpp: add include of Error.h
+        * notifications/Notification.cpp: change enum style to InterCaps
+        (WebCore::Notification::Notification):
+        * notifications/NotificationPresenter.h:
+        (WebCore::NotificationPresenter::):
+
 2009-08-25  Drew Wilson  <atwilson@google.com>
 
         Reviewed by David Levin.

@@ -39,6 +39,7 @@
 #include "JSNotificationCenter.h"
 #include "Notification.h"
 #include "NotificationCenter.h"
+#include <runtime/Error.h>
 
 using namespace JSC;
 

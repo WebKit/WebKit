@@ -46,9 +46,9 @@ namespace WebCore {
 
     public:
         enum Permission { 
-            PERMISSION_ALLOWED,     // User has allowed notifications
-            PERMISSION_NOT_ALLOWED, // User has not yet allowed
-            PERMISSION_DENIED       // User has explictly denied permission
+            PermissionAllowed,     // User has allowed notifications
+            PermissionNotAllowed,  // User has not yet allowed
+            PermissionDenied       // User has explictly denied permission
         };
 
         virtual ~NotificationPresenter() {}

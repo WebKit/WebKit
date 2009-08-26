@@ -1,3 +1,14 @@
+2009-08-26  John Gregg  <johnnyg@google.com>
+
+        Reviewed by David Levin.
+
+        Minor style correction and include fix for notifications
+        https://bugs.webkit.org/show_bug.cgi?id=28745
+
+        * DumpRenderTree/win/DRTDesktopNotificationPresenter.cpp:
+          change to correct EnumStyle
+        (DRTDesktopNotificationPresenter::checkNotificationPermission):
+
 2009-08-26  David Levin  <levin@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
