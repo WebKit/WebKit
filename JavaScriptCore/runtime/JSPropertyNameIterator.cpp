@@ -37,42 +37,6 @@ JSPropertyNameIterator::~JSPropertyNameIterator()
 {
 }
 
-JSValue JSPropertyNameIterator::toPrimitive(ExecState*, PreferredPrimitiveType) const
-{
-    ASSERT_NOT_REACHED();
-    return JSValue();
-}
-
-bool JSPropertyNameIterator::getPrimitiveNumber(ExecState*, double&, JSValue&)
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-bool JSPropertyNameIterator::toBoolean(ExecState*) const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-double JSPropertyNameIterator::toNumber(ExecState*) const
-{
-    ASSERT_NOT_REACHED();
-    return 0;
-}
-
-UString JSPropertyNameIterator::toString(ExecState*) const
-{
-    ASSERT_NOT_REACHED();
-    return "";
-}
-
-JSObject* JSPropertyNameIterator::toObject(ExecState*) const
-{
-    ASSERT_NOT_REACHED();
-    return 0;
-}
-
 void JSPropertyNameIterator::markChildren(MarkStack& markStack)
 {
     JSCell::markChildren(markStack);

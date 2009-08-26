@@ -44,13 +44,6 @@ namespace JSC {
 
         virtual ~JSPropertyNameIterator();
 
-        virtual JSValue toPrimitive(ExecState*, PreferredPrimitiveType) const;
-        virtual bool getPrimitiveNumber(ExecState*, double&, JSValue&);
-        virtual bool toBoolean(ExecState*) const;
-        virtual double toNumber(ExecState*) const;
-        virtual UString toString(ExecState*) const;
-        virtual JSObject* toObject(ExecState*) const;
-
         virtual void markChildren(MarkStack&);
 
         JSValue next(ExecState*);

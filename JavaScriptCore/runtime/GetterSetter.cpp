@@ -38,44 +38,6 @@ void GetterSetter::markChildren(MarkStack& markStack)
         markStack.append(m_setter);
 }
 
-JSValue GetterSetter::toPrimitive(ExecState*, PreferredPrimitiveType) const
-{
-    ASSERT_NOT_REACHED();
-    return jsNull();
-}
-
-bool GetterSetter::getPrimitiveNumber(ExecState*, double& number, JSValue& value)
-{
-    ASSERT_NOT_REACHED();
-    number = 0;
-    value = JSValue();
-    return true;
-}
-
-bool GetterSetter::toBoolean(ExecState*) const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-double GetterSetter::toNumber(ExecState*) const
-{
-    ASSERT_NOT_REACHED();
-    return 0.0;
-}
-
-UString GetterSetter::toString(ExecState*) const
-{
-    ASSERT_NOT_REACHED();
-    return UString::null();
-}
-
-JSObject* GetterSetter::toObject(ExecState* exec) const
-{
-    ASSERT_NOT_REACHED();
-    return jsNull().toObject(exec);
-}
-
 bool GetterSetter::isGetterSetter() const
 {
     return true;

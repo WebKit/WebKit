@@ -197,4 +197,40 @@ bool JSCell::isGetterSetter() const
     return false;
 }
 
+JSValue JSCell::toPrimitive(ExecState*, PreferredPrimitiveType) const
+{
+    ASSERT_NOT_REACHED();
+    return JSValue();
+}
+
+bool JSCell::getPrimitiveNumber(ExecState*, double&, JSValue&)
+{
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+bool JSCell::toBoolean(ExecState*) const
+{
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+double JSCell::toNumber(ExecState*) const
+{
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+UString JSCell::toString(ExecState*) const
+{
+    ASSERT_NOT_REACHED();
+    return UString();
+}
+
+JSObject* JSCell::toObject(ExecState*) const
+{
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
 } // namespace JSC

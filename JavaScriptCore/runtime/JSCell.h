@@ -45,6 +45,7 @@ namespace JSC {
 
     private:
         explicit JSCell(Structure*);
+        JSCell(); // Only used for initializing Collector blocks.
         virtual ~JSCell();
 
     public:
@@ -74,12 +75,12 @@ namespace JSC {
         virtual bool getUInt32(uint32_t&) const;
 
         // Basic conversions.
-        virtual JSValue toPrimitive(ExecState*, PreferredPrimitiveType) const = 0;
-        virtual bool getPrimitiveNumber(ExecState*, double& number, JSValue&) = 0;
-        virtual bool toBoolean(ExecState*) const = 0;
-        virtual double toNumber(ExecState*) const = 0;
-        virtual UString toString(ExecState*) const = 0;
-        virtual JSObject* toObject(ExecState*) const = 0;
+        virtual JSValue toPrimitive(ExecState*, PreferredPrimitiveType) const;
+        virtual bool getPrimitiveNumber(ExecState*, double& number, JSValue&);
+        virtual bool toBoolean(ExecState*) const;
+        virtual double toNumber(ExecState*) const;
+        virtual UString toString(ExecState*) const;
+        virtual JSObject* toObject(ExecState*) const;
 
         // Garbage collection.
         void* operator new(size_t, ExecState*);
@@ -121,6 +122,11 @@ namespace JSC {
 
     inline JSCell::JSCell(Structure* structure)
         : m_structure(structure)
+    {
+    }
+
+    // Only used for initializing Collector blocks.
+    inline JSCell::JSCell()
     {
     }
 
@@ -361,6 +367,19 @@ namespace JSC {
         if (cell->structure()->typeInfo().type() >= CompoundType)
             m_values.append(cell);
     }
+
+    inline Heap* Heap::heap(JSValue v)
+    {
+        if (!v.isCell())
+            return 0;
+        return heap(v.asCell());
+    }
+
+    inline Heap* Heap::heap(JSCell* c)
+    {
+        return cellBlock(c)->heap;
+    }
+
 } // namespace JSC
 
 #endif // JSCell_h

@@ -101,6 +101,7 @@ namespace JSC {
         void unprotect(JSValue);
 
         static Heap* heap(JSValue); // 0 for immediate values
+        static Heap* heap(JSCell*);
 
         size_t globalObjectCount();
         size_t protectedObjectCount();
@@ -132,6 +133,11 @@ namespace JSC {
         friend class JSGlobalData;
         Heap(JSGlobalData*);
         ~Heap();
+
+        template <HeapType heapType> NEVER_INLINE CollectorBlock* allocateBlock();
+        template <HeapType heapType> NEVER_INLINE void freeBlock(size_t);
+        NEVER_INLINE void freeBlock(CollectorBlock*);
+        void freeBlocks(CollectorHeap*);
 
         void recordExtraCost(size_t);
         void markProtectedObjects(MarkStack&);

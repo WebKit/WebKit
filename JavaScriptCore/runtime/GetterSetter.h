@@ -55,13 +55,6 @@ namespace JSC {
     private:
         virtual bool isGetterSetter() const;
 
-        virtual JSValue toPrimitive(ExecState*, PreferredPrimitiveType) const;
-        virtual bool getPrimitiveNumber(ExecState*, double& number, JSValue& value);
-        virtual bool toBoolean(ExecState*) const;
-        virtual double toNumber(ExecState*) const;
-        virtual UString toString(ExecState*) const;
-        virtual JSObject* toObject(ExecState*) const;
-
         JSObject* m_getter;
         JSObject* m_setter;  
     };

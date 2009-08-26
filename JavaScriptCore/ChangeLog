@@ -1,3 +1,46 @@
+2009-08-26  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        A bit of Collector refatoring.
+        
+        SunSpider says no change. v8 says 1.003x faster (1.02x faster on splay).
+
+        * JavaScriptCore.exp:
+
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::toPrimitive):
+        (JSC::JSCell::getPrimitiveNumber):
+        (JSC::JSCell::toBoolean):
+        (JSC::JSCell::toNumber):
+        (JSC::JSCell::toString):
+        (JSC::JSCell::toObject): Removed pure virtual functions from
+        JSCell, so the collector can construct one. This allowed
+        me to remove a bunch of ASSERT_NOT_REACHED throughout the
+        code, too.
+
+        * runtime/JSCell.h:
+        (JSC::JSCell::JSCell): ditto
+        (JSC::Heap::heap): Inlined this function because it's trivial.
+
+        * JavaScriptCore.exp:
+
+        * runtime/Collector.cpp:
+        (JSC::Heap::destroy):
+        (JSC::Heap::allocateBlock):
+        (JSC::Heap::freeBlock):
+        (JSC::Heap::freeBlocks): Renamed freeHeap to freeBlocks, since
+        it doesn't actually free the Heap object.
+        (JSC::Heap::heapAllocate):
+        (JSC::Heap::sweep):
+        * runtime/Collector.h: Refactored block allocation and destruction
+        into helper functions.
+        
+        * runtime/GetterSetter.cpp:
+        * runtime/JSAPIValueWrapper.cpp:
+        * runtime/JSPropertyNameIterator.cpp: Removed dummy implementations
+        of pure virtual functions. (See above.)
+
 === End re-roll-in of r47738:47740 with Windows crash fixed ===
 
 2009-08-26  Geoffrey Garen  <ggaren@apple.com>

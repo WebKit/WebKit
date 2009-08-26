@@ -93,7 +93,6 @@
 
 #endif
 
-#define DEBUG_COLLECTOR 0
 #define COLLECT_ON_EVERY_ALLOCATION 0
 
 using std::max;
@@ -113,8 +112,6 @@ const size_t ALLOCATIONS_PER_COLLECTION = 4000;
 const size_t MAX_NUM_BLOCKS = 256; // Max size of collector heap set to 16 MB
 static RHeap* userChunk = 0;
 #endif
-
-static void freeHeap(CollectorHeap*);
 
 #if ENABLE(JSC_MULTIPLE_THREADS)
 
@@ -204,8 +201,8 @@ void Heap::destroy()
 
     ASSERT(!primaryHeap.numLiveObjects);
 
-    freeHeap(&primaryHeap);
-    freeHeap(&numberHeap);
+    freeBlocks(&primaryHeap);
+    freeBlocks(&numberHeap);
 
 #if ENABLE(JSC_MULTIPLE_THREADS)
     if (m_currentThreadRegistrar) {
@@ -225,7 +222,7 @@ void Heap::destroy()
 }
 
 template <HeapType heapType>
-static NEVER_INLINE CollectorBlock* allocateBlock()
+NEVER_INLINE CollectorBlock* Heap::allocateBlock()
 {
 #if PLATFORM(DARWIN)
     vm_address_t address = 0;
@@ -272,11 +269,45 @@ static NEVER_INLINE CollectorBlock* allocateBlock()
     address += adjust;
     memset(reinterpret_cast<void*>(address), 0, BLOCK_SIZE);
 #endif
-    reinterpret_cast<CollectorBlock*>(address)->type = heapType;
-    return reinterpret_cast<CollectorBlock*>(address);
+
+    CollectorBlock* block = reinterpret_cast<CollectorBlock*>(address);
+    block->freeList = block->cells;
+    block->heap = this;
+    block->type = heapType;
+
+    CollectorHeap& heap = heapType == PrimaryHeap ? primaryHeap : numberHeap;
+    size_t numBlocks = heap.numBlocks;
+    if (heap.usedBlocks == numBlocks) {
+        static const size_t maxNumBlocks = ULONG_MAX / sizeof(CollectorBlock*) / GROWTH_FACTOR;
+        if (numBlocks > maxNumBlocks)
+            CRASH();
+        numBlocks = max(MIN_ARRAY_SIZE, numBlocks * GROWTH_FACTOR);
+        heap.numBlocks = numBlocks;
+        heap.blocks = static_cast<CollectorBlock**>(fastRealloc(heap.blocks, numBlocks * sizeof(CollectorBlock*)));
+    }
+    heap.blocks[heap.usedBlocks++] = block;
+
+    return block;
 }
 
-static void freeBlock(CollectorBlock* block)
+template <HeapType heapType>
+NEVER_INLINE void Heap::freeBlock(size_t block)
+{
+    CollectorHeap& heap = heapType == PrimaryHeap ? primaryHeap : numberHeap;
+
+    freeBlock(heap.blocks[block]);
+
+    // swap with the last block so we compact as we go
+    heap.blocks[block] = heap.blocks[heap.usedBlocks - 1];
+    heap.usedBlocks--;
+
+    if (heap.numBlocks > MIN_ARRAY_SIZE && heap.usedBlocks < heap.numBlocks / LOW_WATER_FACTOR) {
+        heap.numBlocks = heap.numBlocks / GROWTH_FACTOR; 
+        heap.blocks = static_cast<CollectorBlock**>(fastRealloc(heap.blocks, heap.numBlocks * sizeof(CollectorBlock*)));
+    }
+}
+
+NEVER_INLINE void Heap::freeBlock(CollectorBlock* block)
 {
 #if PLATFORM(DARWIN)    
     vm_deallocate(current_task(), reinterpret_cast<vm_address_t>(block), BLOCK_SIZE);
@@ -291,7 +322,7 @@ static void freeBlock(CollectorBlock* block)
 #endif
 }
 
-static void freeHeap(CollectorHeap* heap)
+void Heap::freeBlocks(CollectorHeap* heap)
 {
     for (size_t i = 0; i < heap->usedBlocks; ++i)
         if (heap->blocks[i])
@@ -394,27 +425,13 @@ collect:
             if (foundGarbage)
                 goto scan;
         }
-  
-        // didn't find a block, and GC didn't reclaim anything, need to allocate a new block
-        size_t numBlocks = heap.numBlocks;
-        if (usedBlocks == numBlocks) {
-            static const size_t maxNumBlocks = ULONG_MAX / sizeof(CollectorBlock*) / GROWTH_FACTOR;
-            if (numBlocks > maxNumBlocks)
-                CRASH();
-            numBlocks = max(MIN_ARRAY_SIZE, numBlocks * GROWTH_FACTOR);
-            heap.numBlocks = numBlocks;
-            heap.blocks = static_cast<CollectorBlock**>(fastRealloc(heap.blocks, numBlocks * sizeof(CollectorBlock*)));
-        }
 
+        // didn't find a block, and GC didn't reclaim anything, need to allocate a new block
         targetBlock = reinterpret_cast<Block*>(allocateBlock<heapType>());
-        targetBlock->freeList = targetBlock->cells;
-        targetBlock->heap = this;
+        heap.firstBlockWithPossibleSpace = heap.usedBlocks - 1;
         targetBlockUsedCells = 0;
-        heap.blocks[usedBlocks] = reinterpret_cast<CollectorBlock*>(targetBlock);
-        heap.usedBlocks = usedBlocks + 1;
-        heap.firstBlockWithPossibleSpace = usedBlocks;
     }
-  
+
     // find a free spot in the block and detach it from the free list
     Cell* newCell = targetBlock->freeList;
 
@@ -986,13 +1003,6 @@ void Heap::unprotect(JSValue k)
         m_protectedValuesMutex->unlock();
 }
 
-Heap* Heap::heap(JSValue v)
-{
-    if (!v.isCell())
-        return 0;
-    return Heap::cellBlock(v.asCell())->heap;
-}
-
 void Heap::markProtectedObjects(MarkStack& markStack)
 {
     if (m_protectedValuesMutex)
@@ -1106,18 +1116,8 @@ template <HeapType heapType> size_t Heap::sweep()
         if (curBlock->usedCells)
             continue;
 
-#if !DEBUG_COLLECTOR
-        freeBlock(reinterpret_cast<CollectorBlock*>(curBlock));
-#endif
-        // swap with the last block so we compact as we go
-        heap.blocks[block] = heap.blocks[heap.usedBlocks - 1];
-        heap.usedBlocks--;
+        freeBlock<heapType>(block);
         block--; // Don't move forward a step in this case
-
-        if (heap.numBlocks > MIN_ARRAY_SIZE && heap.usedBlocks < heap.numBlocks / LOW_WATER_FACTOR) {
-            heap.numBlocks = heap.numBlocks / GROWTH_FACTOR; 
-            heap.blocks = static_cast<CollectorBlock**>(fastRealloc(heap.blocks, heap.numBlocks * sizeof(CollectorBlock*)));
-        }
     }
 
     return numLiveObjects;
