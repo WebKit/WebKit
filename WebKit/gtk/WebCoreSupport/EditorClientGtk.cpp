@@ -410,11 +410,6 @@ static const KeyDownEntry keyDownEntries[] = {
     { VK_RETURN, CtrlKey,            "InsertNewline"                               },
     { VK_RETURN, AltKey,             "InsertNewline"                               },
     { VK_RETURN, AltKey | ShiftKey,  "InsertNewline"                               },
-
-    // It's not quite clear whether Undo/Redo should be handled
-    // in the application or in WebKit. We chose WebKit.
-    { 'Z',       CtrlKey,            "Undo"                                        },
-    { 'Z',       CtrlKey | ShiftKey, "Redo"                                        },
 };
 
 static const KeyPressEntry keyPressEntries[] = {

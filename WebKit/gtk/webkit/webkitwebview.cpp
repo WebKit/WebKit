@@ -142,6 +142,8 @@ enum {
     PRINT_REQUESTED,
     PLUGIN_WIDGET,
     CLOSE_WEB_VIEW,
+    UNDO,
+    REDO,
     LAST_SIGNAL
 };
 
@@ -864,6 +866,18 @@ static void webkit_web_view_real_copy_clipboard(WebKitWebView* webView)
 {
     Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
     frame->editor()->command("Copy").execute();
+}
+
+static void webkit_web_view_real_undo(WebKitWebView* webView)
+{
+    Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
+    frame->editor()->command("Undo").execute();
+}
+
+static void webkit_web_view_real_redo(WebKitWebView* webView)
+{
+    Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
+    frame->editor()->command("Redo").execute();
 }
 
 static gboolean webkit_web_view_real_move_cursor (WebKitWebView* webView, GtkMovementStep step, gint count)
@@ -1853,6 +1867,44 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             G_TYPE_NONE, 0);
 
     /**
+     * WebKitWebView::undo
+     * @web_view: the object which received the signal
+     *
+     * The #WebKitWebView::undo signal is a keybinding signal which gets emitted to
+     * undo the last editing command.
+     *
+     * The default binding for this signal is Ctrl-z
+     *
+     * Since: 1.1.14
+     */
+    webkit_web_view_signals[UNDO] = g_signal_new("undo",
+            G_TYPE_FROM_CLASS(webViewClass),
+            (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
+            G_STRUCT_OFFSET(WebKitWebViewClass, undo),
+            NULL, NULL,
+            g_cclosure_marshal_VOID__VOID,
+            G_TYPE_NONE, 0);
+
+    /**
+     * WebKitWebView::redo
+     * @web_view: the object which received the signal
+     *
+     * The #WebKitWebView::redo signal is a keybinding signal which gets emitted to
+     * redo the last editing command.
+     *
+     * The default binding for this signal is Ctrl-Shift-z
+     *
+     * Since: 1.1.14
+     */
+    webkit_web_view_signals[REDO] = g_signal_new("redo",
+            G_TYPE_FROM_CLASS(webViewClass),
+            (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
+            G_STRUCT_OFFSET(WebKitWebViewClass, redo),
+            NULL, NULL,
+            g_cclosure_marshal_VOID__VOID,
+            G_TYPE_NONE, 0);
+
+    /**
      * WebKitWebView::move-cursor:
      * @web_view: the object which received the signal
      * @step: the type of movement, one of #GtkMovementStep
@@ -1917,6 +1969,8 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     webViewClass->cut_clipboard = webkit_web_view_real_cut_clipboard;
     webViewClass->copy_clipboard = webkit_web_view_real_copy_clipboard;
     webViewClass->paste_clipboard = webkit_web_view_real_paste_clipboard;
+    webViewClass->undo = webkit_web_view_real_undo;
+    webViewClass->redo = webkit_web_view_real_redo;
     webViewClass->move_cursor = webkit_web_view_real_move_cursor;
 
     GObjectClass* objectClass = G_OBJECT_CLASS(webViewClass);
@@ -1980,6 +2034,10 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
                                  "copy_clipboard", 0);
     gtk_binding_entry_add_signal(binding_set, GDK_v, GDK_CONTROL_MASK,
                                  "paste_clipboard", 0);
+    gtk_binding_entry_add_signal(binding_set, GDK_z, GDK_CONTROL_MASK,
+                                 "undo", 0);
+    gtk_binding_entry_add_signal(binding_set, GDK_z, static_cast<GdkModifierType>(GDK_CONTROL_MASK | GDK_SHIFT_MASK),
+                                 "redo", 0);
 
     gtk_binding_entry_add_signal(binding_set, GDK_Delete, GDK_SHIFT_MASK,
                                  "cut_clipboard", 0);
@@ -3604,4 +3662,74 @@ void webkit_web_view_set_group_name(WebKitWebView* webView, const gchar* groupNa
         return;
 
     priv->corePage->setGroupName(String::fromUTF8(groupName));
+}
+
+/**
+ * webkit_web_view_can_undo:
+ * @web_view: a #WebKitWebView
+ *
+ * Determines whether or not it is currently possible to undo the last
+ * editing command in the view.
+ *
+ * Return value: %TRUE if a undo can be done, %FALSE if not
+ *
+ * Since: 1.1.14
+ */
+gboolean webkit_web_view_can_undo(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
+
+    Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
+    return frame->editor()->canUndo();
+}
+
+/**
+ * webkit_web_view_undo:
+ * @web_view: a #WebKitWebView
+ *
+ * Undoes the last editing command in the view, if possible.
+ *
+ * Since: 1.1.14
+ */
+void webkit_web_view_undo(WebKitWebView* webView)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+
+    if (webkit_web_view_can_undo(webView))
+        g_signal_emit(webView, webkit_web_view_signals[UNDO], 0);
+}
+
+/**
+ * webkit_web_view_can_redo:
+ * @web_view: a #WebKitWebView
+ *
+ * Determines whether or not it is currently possible to redo the last
+ * editing command in the view.
+ *
+ * Return value: %TRUE if a redo can be done, %FALSE if not
+ *
+ * Since: 1.1.14
+ */
+gboolean webkit_web_view_can_redo(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
+
+    Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
+    return frame->editor()->canRedo();
+}
+
+/**
+ * webkit_web_view_redo:
+ * @web_view: a #WebKitWebView
+ *
+ * Redoes the last editing command in the view, if possible.
+ *
+ * Since: 1.1.14
+ */
+void webkit_web_view_redo(WebKitWebView* webView)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+
+    if (webkit_web_view_can_redo(webView))
+        g_signal_emit(webView, webkit_web_view_signals[REDO], 0);
 }

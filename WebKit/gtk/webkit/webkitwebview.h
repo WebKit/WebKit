@@ -119,13 +119,15 @@ struct _WebKitWebViewClass {
     void                       (* set_scroll_adjustments) (WebKitWebView        *web_view,
                                                            GtkAdjustment        *hadjustment,
                                                            GtkAdjustment        *vadjustment);
+
+    void                       (* undo)                   (WebKitWebView        *web_view);
+    void                       (* redo)                   (WebKitWebView        *web_view);
+
     /* Padding for future expansion */
     void (*_webkit_reserved0) (void);
     void (*_webkit_reserved1) (void);
     void (*_webkit_reserved2) (void);
     void (*_webkit_reserved3) (void);
-    void (*_webkit_reserved4) (void);
-    void (*_webkit_reserved5) (void);
 };
 
 WEBKIT_API GType
@@ -341,6 +343,18 @@ webkit_web_view_get_load_status                 (WebKitWebView        *web_view)
 
 WEBKIT_API gdouble
 webkit_web_view_get_progress                    (WebKitWebView        *web_view);
+
+WEBKIT_API void
+webkit_web_view_undo                            (WebKitWebView        *webView);
+
+WEBKIT_API gboolean
+webkit_web_view_can_undo                        (WebKitWebView        *webView);
+
+WEBKIT_API void
+webkit_web_view_redo                            (WebKitWebView        *webView);
+
+WEBKIT_API gboolean
+webkit_web_view_can_redo                        (WebKitWebView        *webView);
 
 G_END_DECLS
 
