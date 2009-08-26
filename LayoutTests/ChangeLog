@@ -1,3 +1,15 @@
+2009-08-25  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Support for HTMLInputElement::list and HTMLInputElement::selectedOption.
+        https://bugs.webkit.org/show_bug.cgi?id=27756
+
+        * fast/forms/input-list-expected.txt: Added.
+        * fast/forms/input-list.html: Added.
+        * fast/forms/input-selectedoption-expected.txt: Added.
+        * fast/forms/input-selectedoption.html: Added.
+
 2009-08-25  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Oliver Hunt.

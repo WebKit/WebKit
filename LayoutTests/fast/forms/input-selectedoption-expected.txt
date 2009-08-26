@@ -1,0 +1,17 @@
+Test for the selectedOption attribute.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS input.selectedOption is null
+PASS input.selectedOption is null
+PASS input.selectedOption is null
+PASS input.selectedOption is null
+PASS input.selectedOption is document.getElementById("o1")
+PASS input.selectedOption is document.getElementById("o2")
+PASS input.selectedOption is null
+PASS input.selectedOption is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+           

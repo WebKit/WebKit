@@ -1,0 +1,15 @@
+Test for the list attribute.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS input.list is null
+PASS input.list is null
+PASS input.list is null
+PASS input.list is document.getElementById("dl1")
+PASS input.list is null
+PASS datalist.className is "former"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+         

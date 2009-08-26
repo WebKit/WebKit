@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<!-- Empty value and no list attribute -->
+<input type="text" id="i1" value="">
+<!-- Empty list -->
+<input type="text" id="i2" value="foo" list="">
+<!-- Empty datalist -->
+<input type="text" id="i3" value="foo" list="dl1">
+<!-- Empty value and empty option -->
+<input type="text" id="i4" value="" list="dl2">
+<!-- Match cases -->
+<Input type="text" id="i5" value="foo" list="dl3">
+<Input type="text" id="i6" value="bar" list="dl3">
+<!-- Unmatch case -->
+<Input type="text" id="i7" value="foo" list="dl4">
+
+<datalist id="dl1">
+</datalist>
+<datalist id="dl2">
+ <option></option>
+</datalist>
+<datalist id="dl3">
+ <option id="o1">foo</option>
+ <option id="o2">bar</option>
+</datalist>
+<datalist id="dl3">
+ <option>bar</option>
+</datalist>
+
+<script>
+description('Test for the selectedOption attribute.');
+
+var input = document.getElementById('i1');
+shouldBeNull('input.selectedOption');
+
+input = document.getElementById('i2');
+shouldBeNull('input.selectedOption');
+
+input = document.getElementById('i3');
+shouldBeNull('input.selectedOption');
+
+input = document.getElementById('i4');
+shouldBeNull('input.selectedOption');
+
+input = document.getElementById('i5');
+shouldBe('input.selectedOption', 'document.getElementById("o1")');
+input = document.getElementById('i6');
+shouldBe('input.selectedOption', 'document.getElementById("o2")');
+
+document.getElementById('o1').disabled = true;
+input = document.getElementById('i5');
+shouldBeNull('input.selectedOption');
+
+input = document.getElementById('i7');
+shouldBeNull('input.selectedOption');
+
+
+var successfullyParsed = true;
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

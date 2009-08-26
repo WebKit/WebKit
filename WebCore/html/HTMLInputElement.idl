@@ -39,6 +39,12 @@ module html {
                  attribute boolean         checked;
                  attribute boolean         disabled;
                  attribute boolean         autofocus;
+#if defined(ENABLE_DATALIST) && ENABLE_DATALIST
+                 // The type of the list is HTMLElement according to the standard.
+                 // We intentionally use HTMLDataListElement for it because our implementation
+                 // always returns an HTMLDataListElement instance.
+        readonly attribute HTMLDataListElement list;
+#endif
                  attribute long            maxLength;
                  attribute boolean         multiple;
                  attribute [ConvertNullToNullString] DOMString name;
@@ -56,6 +62,9 @@ module html {
                  attribute [ConvertNullToNullString, JSCCustomGetter] DOMString type; // readonly dropped as part of DOM level 2
                  attribute [ConvertNullToNullString] DOMString useMap;
                  attribute [ConvertNullToNullString] DOMString value;
+#if defined(ENABLE_DATALIST) && ENABLE_DATALIST
+        readonly attribute HTMLOptionElement selectedOption;
+#endif
         readonly attribute boolean         willValidate;
         boolean            checkValidity();
         void               setCustomValidity(in [ConvertUndefinedOrNullToNullString] DOMString error);

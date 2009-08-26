@@ -39,9 +39,11 @@
 #include "FocusController.h"
 #include "FormDataList.h"
 #include "Frame.h"
+#include "HTMLDataListElement.h"
 #include "HTMLFormElement.h"
 #include "HTMLImageLoader.h"
 #include "HTMLNames.h"
+#include "HTMLOptionElement.h"
 #include "ScriptEventListener.h"
 #include "KeyboardEvent.h"
 #include "LocalizedStrings.h"
@@ -735,6 +737,11 @@ void HTMLInputElement::parseMappedAttribute(MappedAttribute *attr)
              attr->name() == multipleAttr ||
              attr->name() == precisionAttr)
         setNeedsStyleRecalc();
+#if ENABLE(DATALIST)
+    else if (attr->name() == listAttr)
+        m_hasNonEmptyList = !attr->isEmpty();
+        // FIXME: we need to tell this change to a renderer if the attribute affects the appearance.
+#endif
     else
         HTMLFormControlElementWithState::parseMappedAttribute(attr);
 }
@@ -1764,5 +1771,60 @@ bool HTMLInputElement::placeholderShouldBeVisible() const
 {
     return InputElement::placeholderShouldBeVisible(this, this);
 }
+
+#if ENABLE(DATALIST)
+HTMLDataListElement* HTMLInputElement::list()
+{
+    if (!m_hasNonEmptyList)
+        return 0;
+
+    switch (inputType()) {
+    case TEXT:
+    case SEARCH:
+    case URL:
+    case TELEPHONE:
+    case EMAIL:
+    case NUMBER:
+    case RANGE: {
+        Element* element = document()->getElementById(getAttribute(listAttr));
+        if (element && element->hasTagName(datalistTag))
+            return static_cast<HTMLDataListElement*>(element);
+        break;
+    }
+    case HIDDEN:
+    case PASSWORD:
+    case CHECKBOX:
+    case RADIO:
+    case FILE:
+    case SUBMIT:
+    case IMAGE:
+    case RESET:
+    case BUTTON:
+    case ISINDEX:
+        break;
+    }
+    return 0;
+}
+
+HTMLOptionElement* HTMLInputElement::selectedOption()
+{
+    String currentValue = value();
+    // The empty value never matches to a datalist option because it
+    // doesn't represent a suggestion according to the standard.
+    if (currentValue.isEmpty())
+        return 0;
+
+    HTMLDataListElement* sourceElement = list();
+    if (!sourceElement)
+        return 0;
+    RefPtr<HTMLCollection> options = sourceElement->options();
+    for (unsigned i = 0; options && i < options->length(); ++i) {
+        HTMLOptionElement* option = static_cast<HTMLOptionElement*>(options->item(i));
+        if (!option->disabled() && currentValue == option->value())
+            return option;
+    }
+    return 0;
+}
+#endif  // ENABLE(DATALIST)
 
 } // namespace

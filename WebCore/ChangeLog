@@ -1,3 +1,21 @@
+2009-08-25  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Support for HTMLInputElement::list and HTMLInputElement::selectedOption.
+        https://bugs.webkit.org/show_bug.cgi?id=27756
+
+        Tests: fast/forms/input-list.html
+               fast/forms/input-selectedoption.html
+
+        * html/HTMLAttributeNames.in:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::parseMappedAttribute):
+        (WebCore::HTMLInputElement::list):
+        (WebCore::HTMLInputElement::selectedOption):
+        * html/HTMLInputElement.h:
+        * html/HTMLInputElement.idl:
+
 2009-08-25  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Oliver Hunt.
