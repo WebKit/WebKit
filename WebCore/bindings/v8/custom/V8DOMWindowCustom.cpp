@@ -77,19 +77,11 @@ v8::Handle<v8::Value> V8Custom::WindowSetTimeoutImpl(const v8::Arguments& args, 
     v8::Handle<v8::Value> function = args[0];
 
     int32_t timeout = 0;
-    if (argumentCount >= 2) 
+    if (argumentCount >= 2)
         timeout = args[1]->Int32Value();
 
     int id;
-    if (function->IsString()) {
-        // Don't allow setting timeouts to run empty functions!
-        // (Bug 1009597)
-        WebCore::String functionString = toWebCoreString(function);
-        if (functionString.length() == 0)
-            return v8::Undefined();
-
-        id = DOMTimer::install(scriptContext, new ScheduledAction(functionString), timeout, singleShot);
-    } else if (function->IsFunction()) {
+    if (function->IsFunction()) {
         int paramCount = argumentCount >= 2 ? argumentCount - 2 : 0;
         v8::Local<v8::Value>* params = 0;
         if (paramCount > 0) {
@@ -105,9 +97,23 @@ v8::Handle<v8::Value> V8Custom::WindowSetTimeoutImpl(const v8::Arguments& args, 
         delete[] params;
 
         id = DOMTimer::install(scriptContext, action, timeout, singleShot);
-    } else
-        // FIXME(fqian): what's the right return value if failed.
-        return v8::Undefined();
+    } else {
+        if (!function->IsString()) {
+            function = function->ToString();
+            // Bail out if string conversion failed.
+            if (function.IsEmpty())
+                return v8::Undefined();
+        }
+
+        WebCore::String functionString = toWebCoreString(function);
+
+        // Don't allow setting timeouts to run empty functions!
+        // (Bug 1009597)
+        if (functionString.length() == 0)
+            return v8::Undefined();
+
+        id = DOMTimer::install(scriptContext, new ScheduledAction(functionString), timeout, singleShot);
+    }
 
     return v8::Integer::New(id);
 }
