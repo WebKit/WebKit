@@ -1,5 +1,13 @@
 2009-08-25  Dmitry Titov  <dimich@chromium.org>
 
+        Unreviewed. Skip the new test fast/dom/Window/timer-resume-on-navigation-back.html
+        on gtk and qt - their DRT does not yet implement overridePreference.
+
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+
+2009-08-25  Dmitry Titov  <dimich@chromium.org>
+
         Reviewed by Brady Eidson.
 
         Timers from cached pages fire instantly rather than the specified timeout delay

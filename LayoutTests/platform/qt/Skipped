@@ -5008,6 +5008,7 @@ fast/forms/select-popup-pagekeys.html
 fast/dom/prototype-inheritance-2.html
 
 # Missing DRT ability to override 'standard' preferences.
+fast/dom/Window/timer-resume-on-navigation-back.html
 fast/harness/override-preferences.html
 fast/harness/override-preferences-2.html
 fast/harness/override-zzz-reset.html
