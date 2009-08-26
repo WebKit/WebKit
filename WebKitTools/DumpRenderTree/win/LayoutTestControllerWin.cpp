@@ -271,6 +271,16 @@ void LayoutTestController::setAcceptsEditing(bool acceptsEditing)
     editingDelegate->setAcceptsEditing(acceptsEditing);
 }
 
+void LayoutTestController::setAlwaysAcceptCookies(bool alwaysAcceptCookies)
+{
+    if (alwaysAcceptCookies == m_alwaysAcceptCookies)
+        return;
+
+    if (!::setAlwaysAcceptCookies(alwaysAcceptCookies))
+        return;
+    m_alwaysAcceptCookies = alwaysAcceptCookies;
+}
+
 void LayoutTestController::setAuthorAndUserStylesEnabled(bool flag)
 {
     COMPtr<IWebView> webView;

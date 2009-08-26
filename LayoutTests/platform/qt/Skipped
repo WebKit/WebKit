@@ -5028,3 +5028,6 @@ fast/css/getComputedStyle/computed-style-font-family.html
 
 # Missing DRT ability to track worker thread counts
 fast/workers/worker-lifecycle.html
+
+# Missing DRT ability to set accept cookie policy
+http/tests/xmlhttprequest/cross-origin-cookie-storage.html

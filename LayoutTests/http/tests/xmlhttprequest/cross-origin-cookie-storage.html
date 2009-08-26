@@ -1,0 +1,94 @@
+<button onclick="testSyncCookiesNoCredentials();">Start</button>
+<pre id="console"></pre>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+    layoutTestController.setCanOpenWindows();
+    layoutTestController.setAlwaysAcceptCookies(1);
+}
+
+function log(message)
+{
+    document.getElementById('console').appendChild(document.createTextNode(message + '\n'));
+}
+
+function testSyncCookiesNoCredentials()
+{
+    log("Cross-origin XMLHttpRequest (sync), testing that cookies are not set when not sending credentials.");
+
+    var req = new XMLHttpRequest;
+    req.open("GET", "http://localhost:8000/xmlhttprequest/resources/cross-origin-set-cookies.php", false);
+    req.withCredentials = false;
+    req.send();
+    log("PASS: Finished sync xhr.");
+
+    req = new XMLHttpRequest;
+    req.open("GET", "http://localhost:8000/xmlhttprequest/resources/cross-origin-check-cookies.php?cookie=WK-xhr-cookie-storage", false);
+    req.withCredentials = true;
+    try {
+        req.send();
+        log(!req.responseText.match(/WK\-xhr\-cookie\-storage: MySpecialValue/) ? "PASS: No cookies set." : ("FAIL: " + req.responseText));
+    } catch (ex) {
+        log("FAIL: Got an exception. " + ex);
+    }
+    testAsyncCookiesNoCredentials();
+}
+
+function testAsyncCookiesNoCredentials()
+{
+    log("Cross-origin XMLHttpRequest (async), testing that cookies are not set when not sending credentials.");
+
+    var req = new XMLHttpRequest;
+    req.open("GET", "http://localhost:8000/xmlhttprequest/resources/cross-origin-set-cookies.php", true);
+    req.withCredentials = false;
+    req.send();
+    req.onerror = function() {
+        log("FAIL: Async xhr to set cookies.");
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }
+    req.onload = function() {
+        log("PASS: Finished async xhr.");
+
+        var req2 = new XMLHttpRequest;
+        req2.open("GET", "http://localhost:8000/xmlhttprequest/resources/cross-origin-check-cookies.php?cookie=WK-xhr-cookie-storage", false);
+        req2.withCredentials = true;
+        try {
+            req2.send();
+            log(!req2.responseText.match(/WK\-xhr\-cookie\-storage: MySpecialValue/) ? "PASS: No cookies set." : ("FAIL: " + req2.responseText));
+        } catch (ex) {
+            log("FAIL: Got an exception. " + ex);
+        }
+        testSyncCookiesWithCredentials();
+    }
+}
+
+function testSyncCookiesWithCredentials()
+{
+    log("Cross-origin XMLHttpRequest (sync), testing that cookies are set when sending credentials.");
+
+    var req = new XMLHttpRequest;
+    req.open("GET", "http://localhost:8000/xmlhttprequest/resources/cross-origin-set-cookies.php", false);
+    req.withCredentials = true;
+    req.send();
+    log("PASS: Finished sync xhr.");
+
+    req = new XMLHttpRequest;
+    req.open("GET", "http://localhost:8000/xmlhttprequest/resources/cross-origin-check-cookies.php?cookie=WK-xhr-cookie-storage", false);
+    req.withCredentials = true;
+    try {
+        req.send();
+        log(req.responseText.match(/WK\-xhr\-cookie\-storage: MySpecialValue/) ? "PASS: Cookie set." : "FAIL: no cookie set");
+    } catch (ex) {
+        log("FAIL: Got an exception. " + ex);
+    }
+    log("DONE");
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+if (window.layoutTestController)
+    testSyncCookiesNoCredentials();
+</script>
+

@@ -1,3 +1,42 @@
+2009-08-26  David Levin  <levin@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        XMLHttpRequest.withCredentials=false shouldn't save cookies.
+        https://bugs.webkit.org/show_bug.cgi?id=28743
+
+        Added the support to the layout test controller on OSX and
+        Windows (for CFNETWORK) to allow for changing the accept cookie
+        policy.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController): Added a bool
+        to track the state of accepting cookies.
+        (setAlwaysAcceptCookiesCallback): Standard wrapper method
+        to go from js to a C++ method.
+        (LayoutTestController::staticFunctions): Added the
+        setAlwaysAcceptCookies method to the js layoutTestController.
+        * DumpRenderTree/LayoutTestController.h:
+        (LayoutTestController::alwaysAcceptCookies): Returns the value.
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::setAlwaysAcceptCookies): Stub out method.
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetDefaultsToConsistentValues): Reset the accept cookie to
+        its default.
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::setAlwaysAcceptCookies): Does the work for
+        OSX to change the cookie accept policy.
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (setAlwaysAcceptCookies): Method to handle all the calls necessary
+        to change the accept cookie policy on Windows.
+        (resetDefaultsToConsistentValues): Reset the accept cookie to
+        its default.
+        * DumpRenderTree/win/DumpRenderTreeWin.h:
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::setAlwaysAcceptCookies): Stub out method.
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::setAlwaysAcceptCookies): Stub out method.
+
 2009-08-26  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed.

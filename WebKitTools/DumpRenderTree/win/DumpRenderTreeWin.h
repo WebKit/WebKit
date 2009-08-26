@@ -53,6 +53,7 @@ typedef HashMap<HWND, COMPtr<IWebView> > WindowToWebViewMap;
 WindowToWebViewMap& windowToWebViewMap();
 
 void setPersistentUserStyleSheetLocation(CFStringRef);
+bool setAlwaysAcceptCookies(bool alwaysAcceptCookies);
 
 extern UINT_PTR waitToDumpWatchdog;
 

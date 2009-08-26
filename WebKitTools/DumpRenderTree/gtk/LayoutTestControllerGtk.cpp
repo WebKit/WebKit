@@ -159,6 +159,11 @@ void LayoutTestController::setAcceptsEditing(bool acceptsEditing)
     webkit_web_view_set_editable(webView, acceptsEditing);
 }
 
+void LayoutTestController::setAlwaysAcceptCookies(bool alwaysAcceptCookies)
+{
+    // FIXME: Implement this (and restore the default value before running each test in DumpRenderTree.cpp).
+}
+
 void LayoutTestController::setCustomPolicyDelegate(bool setDelegate, bool permissive)
 {
     // FIXME: implement

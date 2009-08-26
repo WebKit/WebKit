@@ -198,6 +198,16 @@ void LayoutTestController::setAcceptsEditing(bool newAcceptsEditing)
     [(EditingDelegate *)[[mainFrame webView] editingDelegate] setAcceptsEditing:newAcceptsEditing];
 }
 
+void LayoutTestController::setAlwaysAcceptCookies(bool alwaysAcceptCookies)
+{
+    if (alwaysAcceptCookies == m_alwaysAcceptCookies)
+        return;
+
+    m_alwaysAcceptCookies = alwaysAcceptCookies;
+    NSHTTPCookieAcceptPolicy cookieAcceptPolicy = alwaysAcceptCookies ? NSHTTPCookieAcceptPolicyAlways : NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain;
+    [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookieAcceptPolicy:cookieAcceptPolicy];
+}
+
 void LayoutTestController::setAppCacheMaximumSize(unsigned long long size)
 {
     [WebApplicationCache setMaximumSize:size];
