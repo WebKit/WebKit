@@ -103,6 +103,33 @@ bool JSString::getOwnPropertySlot(ExecState* exec, const Identifier& propertyNam
     return true;
 }
 
+bool JSString::getStringPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+{
+    if (propertyName == exec->propertyNames().length) {
+        descriptor.setDescriptor(jsNumber(exec, m_value.size()), DontEnum | DontDelete | ReadOnly);
+        return true;
+    }
+    
+    bool isStrictUInt32;
+    unsigned i = propertyName.toStrictUInt32(&isStrictUInt32);
+    if (isStrictUInt32 && i < static_cast<unsigned>(m_value.size())) {
+        descriptor.setDescriptor(jsSingleCharacterSubstring(exec, m_value, i), DontDelete | ReadOnly);
+        return true;
+    }
+    
+    return false;
+}
+
+bool JSString::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+{
+    if (getStringPropertyDescriptor(exec, propertyName, descriptor))
+        return true;
+    if (propertyName != exec->propertyNames().underscoreProto)
+        return false;
+    descriptor.setDescriptor(exec->lexicalGlobalObject()->stringPrototype(), DontEnum);
+    return true;
+}
+
 bool JSString::getOwnPropertySlot(ExecState* exec, unsigned propertyName, PropertySlot& slot)
 {
     // The semantics here are really getPropertySlot, not getOwnPropertySlot.

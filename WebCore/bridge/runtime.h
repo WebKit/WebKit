@@ -111,6 +111,7 @@ public:
     virtual ~Instance();
 
     virtual bool getOwnPropertySlot(JSObject*, ExecState*, const Identifier&, PropertySlot&) { return false; }
+    virtual bool getOwnPropertyDescriptor(JSObject*, ExecState*, const Identifier&, PropertyDescriptor&) { return false; }
     virtual void put(JSObject*, ExecState*, const Identifier&, JSValue, PutPropertySlot&) { }
 
 protected:

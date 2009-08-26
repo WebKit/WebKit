@@ -138,6 +138,26 @@ bool JSQuarantinedObjectWrapper::getOwnPropertySlot(ExecState* exec, unsigned id
     return result;
 }
 
+bool JSQuarantinedObjectWrapper::getOwnPropertyDescriptor(ExecState* exec, const Identifier& identifier, PropertyDescriptor& descriptor)
+{
+    if (!allowsGetProperty()) {
+        descriptor.setUndefined();
+        return true;
+    }
+
+    PropertyDescriptor unwrappedDescriptor;
+    bool result = m_unwrappedObject->getOwnPropertyDescriptor(unwrappedExecState(), identifier, unwrappedDescriptor);
+
+    if (unwrappedDescriptor.hasAccessors()) {
+        descriptor.setAccessorDescriptor(wrapOutgoingValue(unwrappedExecState(), unwrappedDescriptor.getter()),
+                                         wrapOutgoingValue(unwrappedExecState(), unwrappedDescriptor.setter()),
+                                         unwrappedDescriptor.attributes());
+    } else
+        descriptor.setDescriptor(wrapOutgoingValue(unwrappedExecState(), unwrappedDescriptor.value()), unwrappedDescriptor.attributes());
+    transferExceptionToExecState(exec);
+    return result;
+}
+
 void JSQuarantinedObjectWrapper::put(ExecState* exec, const Identifier& identifier, JSValue value, PutPropertySlot& slot)
 {
     if (!allowsSetProperty())

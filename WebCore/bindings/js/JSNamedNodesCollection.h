@@ -40,6 +40,7 @@ namespace WebCore {
         JSNamedNodesCollection(JSC::ExecState*, JSDOMGlobalObject*, const Vector<RefPtr<Node> >&);
 
         virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);
+        virtual bool getOwnPropertyDescriptor(JSC::ExecState*, const JSC::Identifier&, JSC::PropertyDescriptor&);
 
         virtual const JSC::ClassInfo* classInfo() const { return &s_info; }
         static const JSC::ClassInfo s_info;

@@ -23,37 +23,39 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSONObject_h
-#define JSONObject_h
+#ifndef PropertyDescriptor_h
+#define PropertyDescriptor_h
 
-#include "JSObject.h"
+#include "JSValue.h"
 
 namespace JSC {
-
-    class Stringifier;
-
-    class JSONObject : public JSObject {
+    class PropertyDescriptor {
     public:
-        JSONObject(PassRefPtr<Structure> structure)
-            : JSObject(structure)
+        PropertyDescriptor()
+            : m_attributes(0)
         {
         }
-
-        static PassRefPtr<Structure> createStructure(JSValue prototype)
-        {
-            return Structure::create(prototype, TypeInfo(ObjectType, HasDefaultMark));
-        }
-
-        static void markStringifiers(MarkStack&, Stringifier*);
-
+        bool writable() const;
+        bool enumerable() const;
+        bool configurable() const;
+        bool hasAccessors() const;
+        unsigned attributes() const { return m_attributes; }
+#ifndef NDEBUG
+        bool isValid() const { return m_value || ((m_getter || m_setter) && hasAccessors()); }
+#endif
+        JSValue value() const { ASSERT(m_value); return m_value; }
+        JSValue getter() const;
+        JSValue setter() const;
+        void setUndefined();
+        void setDescriptor(JSValue value, unsigned attributes);
+        void setAccessorDescriptor(JSValue getter, JSValue setter, unsigned attributes);
     private:
-        virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
-        virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
-
-        virtual const ClassInfo* classInfo() const { return &info; }
-        static const ClassInfo info;
+        // May be a getter/setter
+        JSValue m_value;
+        JSValue m_getter;
+        JSValue m_setter;
+        unsigned m_attributes;
     };
+}
 
-} // namespace JSC
-
-#endif // JSONObject_h
+#endif

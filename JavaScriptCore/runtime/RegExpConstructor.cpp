@@ -234,6 +234,11 @@ bool RegExpConstructor::getOwnPropertySlot(ExecState* exec, const Identifier& pr
     return getStaticValueSlot<RegExpConstructor, InternalFunction>(exec, ExecState::regExpConstructorTable(exec), this, propertyName, slot);
 }
 
+bool RegExpConstructor::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+{
+    return getStaticValueDescriptor<RegExpConstructor, InternalFunction>(exec, ExecState::regExpConstructorTable(exec), this, propertyName, descriptor);
+}
+
 JSValue regExpConstructorDollar1(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
     return asRegExpConstructor(slot.slotBase())->getBackref(exec, 1);

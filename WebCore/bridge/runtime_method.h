@@ -53,6 +53,7 @@ public:
 private:
     static JSValue lengthGetter(ExecState*, const Identifier&, const PropertySlot&);
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
+    virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
     virtual CallType getCallData(CallData&);
 
     OwnPtr<Bindings::MethodList> _methodList;

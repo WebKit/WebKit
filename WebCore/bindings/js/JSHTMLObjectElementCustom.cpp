@@ -38,6 +38,11 @@ bool JSHTMLObjectElement::getOwnPropertySlotDelegate(ExecState* exec, const Iden
     return runtimeObjectCustomGetOwnPropertySlot(exec, propertyName, slot, this);
 }
 
+bool JSHTMLObjectElement::getOwnPropertyDescriptorDelegate(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+{
+    return runtimeObjectCustomGetOwnPropertyDescriptor(exec, propertyName, descriptor, this);
+}
+
 bool JSHTMLObjectElement::putDelegate(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
     return runtimeObjectCustomPut(exec, propertyName, value, impl(), slot);

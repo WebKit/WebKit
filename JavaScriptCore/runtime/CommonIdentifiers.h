@@ -37,12 +37,16 @@
     macro(callee) \
     macro(caller) \
     macro(compile) \
+    macro(configurable) \
     macro(constructor) \
+    macro(enumerable) \
     macro(eval) \
     macro(exec) \
     macro(fromCharCode) \
     macro(global) \
+    macro(get) \
     macro(getPrototypeOf) \
+    macro(getOwnPropertyDescriptor) \
     macro(hasOwnProperty) \
     macro(ignoreCase) \
     macro(index) \
@@ -57,6 +61,7 @@
     macro(parse) \
     macro(propertyIsEnumerable) \
     macro(prototype) \
+    macro(set) \
     macro(source) \
     macro(test) \
     macro(toExponential) \
@@ -67,7 +72,9 @@
     macro(toPrecision) \
     macro(toString) \
     macro(UTC) \
+    macro(value) \
     macro(valueOf) \
+    macro(writable) \
     macro(displayName)
 
 namespace JSC {

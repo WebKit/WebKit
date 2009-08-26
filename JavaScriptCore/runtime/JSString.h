@@ -27,6 +27,7 @@
 #include "CommonIdentifiers.h"
 #include "Identifier.h"
 #include "JSNumberCell.h"
+#include "PropertyDescriptor.h"
 #include "PropertySlot.h"
 
 namespace JSC {
@@ -86,6 +87,7 @@ namespace JSC {
 
         bool getStringPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
         bool getStringPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);
+        bool getStringPropertyDescriptor(ExecState*, const Identifier& propertyName, PropertyDescriptor&);
 
         bool canGetIndex(unsigned i) { return i < static_cast<unsigned>(m_value.size()); }
         JSString* getIndex(JSGlobalData*, unsigned);
@@ -113,6 +115,7 @@ namespace JSC {
         // Actually getPropertySlot, not getOwnPropertySlot (see JSCell).
         virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
         virtual bool getOwnPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);
+        virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
 
         UString m_value;
     };

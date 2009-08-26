@@ -72,6 +72,11 @@ bool RegExpObject::getOwnPropertySlot(ExecState* exec, const Identifier& propert
     return getStaticValueSlot<RegExpObject, JSObject>(exec, ExecState::regExpTable(exec), this, propertyName, slot);
 }
 
+bool RegExpObject::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+{
+    return getStaticValueDescriptor<RegExpObject, JSObject>(exec, ExecState::regExpTable(exec), this, propertyName, descriptor);
+}
+
 JSValue regExpObjectGlobal(ExecState*, const Identifier&, const PropertySlot& slot)
 {
     return jsBoolean(asRegExpObject(slot.slotBase())->regExp()->global());

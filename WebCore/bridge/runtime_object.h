@@ -38,6 +38,7 @@ public:
     virtual ~RuntimeObjectImp();
 
     virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
+    virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier& propertyName, PropertyDescriptor&);
     virtual void put(ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
     virtual bool deleteProperty(ExecState* , const Identifier& propertyName);
     virtual JSValue defaultValue(ExecState*, PreferredPrimitiveType) const;

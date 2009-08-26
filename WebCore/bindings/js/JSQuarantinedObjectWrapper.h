@@ -58,6 +58,7 @@ namespace WebCore {
     private:
         virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);
         virtual bool getOwnPropertySlot(JSC::ExecState*, unsigned, JSC::PropertySlot&);
+        virtual bool getOwnPropertyDescriptor(JSC::ExecState*, const JSC::Identifier&, JSC::PropertyDescriptor&);
 
         virtual void put(JSC::ExecState*, const JSC::Identifier&, JSC::JSValue, JSC::PutPropertySlot&);
         virtual void put(JSC::ExecState*, unsigned, JSC::JSValue);

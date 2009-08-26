@@ -93,6 +93,52 @@ bool JSHistory::getOwnPropertySlotDelegate(ExecState* exec, const Identifier& pr
     return true;
 }
 
+bool JSHistory::getOwnPropertyDescriptorDelegate(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+{
+    // When accessing History cross-domain, functions are always the native built-in ones.
+    // See JSDOMWindow::getOwnPropertySlotDelegate for additional details.
+    
+    // Our custom code is only needed to implement the Window cross-domain scheme, so if access is
+    // allowed, return false so the normal lookup will take place.
+    String message;
+    if (allowsAccessFromFrame(exec, impl()->frame(), message))
+        return false;
+    
+    // Check for the few functions that we allow, even when called cross-domain.
+    const HashEntry* entry = JSHistoryPrototype::s_info.propHashTable(exec)->entry(exec, propertyName);
+    if (entry) {
+        PropertySlot slot;
+        // Allow access to back(), forward() and go() from any frame.
+        if (entry->attributes() & Function) {
+            if (entry->function() == jsHistoryPrototypeFunctionBack) {
+                slot.setCustom(this, nonCachingStaticBackFunctionGetter);
+                descriptor.setDescriptor(slot.getValue(exec, propertyName), entry->attributes());
+                return true;
+            } else if (entry->function() == jsHistoryPrototypeFunctionForward) {
+                slot.setCustom(this, nonCachingStaticForwardFunctionGetter);
+                descriptor.setDescriptor(slot.getValue(exec, propertyName), entry->attributes());
+                return true;
+            } else if (entry->function() == jsHistoryPrototypeFunctionGo) {
+                slot.setCustom(this, nonCachingStaticGoFunctionGetter);
+                descriptor.setDescriptor(slot.getValue(exec, propertyName), entry->attributes());
+                return true;
+            }
+        }
+    } else {
+        // Allow access to toString() cross-domain, but always Object.toString.
+        if (propertyName == exec->propertyNames().toString) {
+            PropertySlot slot;
+            slot.setCustom(this, objectToStringFunctionGetter);
+            descriptor.setDescriptor(slot.getValue(exec, propertyName), entry->attributes());
+            return true;
+        }
+    }
+    
+    printErrorMessageForFrame(impl()->frame(), message);
+    descriptor.setUndefined();
+    return true;
+}
+
 bool JSHistory::putDelegate(ExecState* exec, const Identifier&, JSValue, PutPropertySlot&)
 {
     // Only allow putting by frames in the same origin.

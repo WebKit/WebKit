@@ -37,6 +37,7 @@ public:
     
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
     virtual bool getOwnPropertySlot(ExecState *, unsigned, PropertySlot&);
+    virtual bool getOwnPropertyDescriptor(ExecState *, const Identifier&, PropertyDescriptor&);
     virtual void put(ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
     virtual void put(ExecState*, unsigned propertyName, JSValue);
     

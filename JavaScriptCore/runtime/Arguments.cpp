@@ -179,6 +179,31 @@ bool Arguments::getOwnPropertySlot(ExecState* exec, const Identifier& propertyNa
     return JSObject::getOwnPropertySlot(exec, propertyName, slot);
 }
 
+bool Arguments::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+{
+    bool isArrayIndex;
+    unsigned i = propertyName.toArrayIndex(&isArrayIndex);
+    if (isArrayIndex && i < d->numArguments && (!d->deletedArguments || !d->deletedArguments[i])) {
+        if (i < d->numParameters) {
+            descriptor.setDescriptor(d->registers[d->firstParameterIndex + i].jsValue(), DontEnum);
+        } else
+            descriptor.setDescriptor(d->extraArguments[i - d->numParameters].jsValue(), DontEnum);
+        return true;
+    }
+    
+    if (propertyName == exec->propertyNames().length && LIKELY(!d->overrodeLength)) {
+        descriptor.setDescriptor(jsNumber(exec, d->numArguments), DontEnum);
+        return true;
+    }
+    
+    if (propertyName == exec->propertyNames().callee && LIKELY(!d->overrodeCallee)) {
+        descriptor.setDescriptor(d->callee, DontEnum);
+        return true;
+    }
+    
+    return JSObject::getOwnPropertyDescriptor(exec, propertyName, descriptor);
+}
+
 void Arguments::put(ExecState* exec, unsigned i, JSValue value, PutPropertySlot& slot)
 {
     if (i < d->numArguments && (!d->deletedArguments || !d->deletedArguments[i])) {

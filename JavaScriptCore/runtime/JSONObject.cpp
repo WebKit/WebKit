@@ -581,13 +581,12 @@ const ClassInfo JSONObject::info = { "JSON", 0, 0, ExecState::jsonTable };
 
 bool JSONObject::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    const HashEntry* entry = ExecState::jsonTable(exec)->entry(exec, propertyName);
-    if (!entry)
-        return JSObject::getOwnPropertySlot(exec, propertyName, slot);
+    return getStaticFunctionSlot<JSObject>(exec, ExecState::jsonTable(exec), this, propertyName, slot);
+}
 
-    ASSERT(entry->attributes() & Function);
-    setUpStaticFunctionSlot(exec, entry, this, propertyName, slot);
-    return true;
+bool JSONObject::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+{
+    return getStaticFunctionDescriptor<JSObject>(exec, ExecState::jsonTable(exec), this, propertyName, descriptor);
 }
 
 void JSONObject::markStringifiers(MarkStack& markStack, Stringifier* stringifier)

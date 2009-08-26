@@ -81,6 +81,14 @@ bool JSWorkerContext::getOwnPropertySlotDelegate(ExecState* exec, const Identifi
     return false;
 }
 
+bool JSWorkerContext::getOwnPropertyDescriptorDelegate(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+{
+    // Look for overrides before looking at any of our own properties.
+    if (JSGlobalObject::getOwnPropertyDescriptor(exec, propertyName, descriptor))
+        return true;
+    return false;
+}
+
 #if ENABLE(EVENTSOURCE)
 JSValue JSWorkerContext::eventSource(ExecState* exec) const
 {

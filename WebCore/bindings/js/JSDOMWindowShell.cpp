@@ -88,6 +88,11 @@ bool JSDOMWindowShell::getOwnPropertySlot(ExecState* exec, const Identifier& pro
     return m_window->getOwnPropertySlot(exec, propertyName, slot);
 }
 
+bool JSDOMWindowShell::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+{
+    return m_window->getOwnPropertyDescriptor(exec, propertyName, descriptor);
+}
+
 void JSDOMWindowShell::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
     m_window->put(exec, propertyName, value, slot);

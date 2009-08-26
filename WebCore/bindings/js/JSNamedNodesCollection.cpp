@@ -89,4 +89,37 @@ bool JSNamedNodesCollection::getOwnPropertySlot(ExecState* exec, const Identifie
     return DOMObjectWithGlobalPointer::getOwnPropertySlot(exec, propertyName, slot);
 }
 
+bool JSNamedNodesCollection::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+{
+    if (propertyName == exec->propertyNames().length) {
+        descriptor.setDescriptor(jsNumber(exec, m_nodes->size()), ReadOnly | DontDelete | DontEnum);
+        return true;
+    }
+    
+    bool ok;
+    unsigned index = propertyName.toUInt32(&ok);
+    if (ok && index < m_nodes->size()) {
+        PropertySlot slot;
+        slot.setCustomIndex(this, index, indexGetter);
+        descriptor.setDescriptor(slot.getValue(exec, propertyName), ReadOnly | DontDelete);
+        return true;
+    }
+    
+    // For IE compatibility, we need to be able to look up elements in a
+    // document.formName.name result by id as well as be index.
+    
+    AtomicString atomicPropertyName = propertyName;
+    for (unsigned i = 0; i < m_nodes->size(); i++) {
+        Node* node = (*m_nodes)[i].get();
+        if (node->hasAttributes() && node->attributes()->id() == atomicPropertyName) {
+            PropertySlot slot;
+            slot.setCustomIndex(this, i, indexGetter);
+            descriptor.setDescriptor(slot.getValue(exec, propertyName), ReadOnly | DontDelete);
+            return true;
+        }
+    }
+    
+    return DOMObjectWithGlobalPointer::getOwnPropertyDescriptor(exec, propertyName, descriptor);
+}
+
 } // namespace WebCore

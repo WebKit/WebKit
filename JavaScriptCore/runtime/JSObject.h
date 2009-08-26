@@ -48,6 +48,7 @@ namespace JSC {
     
     class HashEntry;
     class InternalFunction;
+    class PropertyDescriptor;
     class PropertyNameArray;
     class Structure;
     struct HashTable;
@@ -95,9 +96,11 @@ namespace JSC {
 
         bool getPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
         bool getPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);
+        bool getPropertyDescriptor(ExecState*, const Identifier& propertyName, PropertyDescriptor&);
 
         virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
         virtual bool getOwnPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);
+        virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
 
         virtual void put(ExecState*, const Identifier& propertyName, JSValue value, PutPropertySlot&);
         virtual void put(ExecState*, unsigned propertyName, JSValue value);

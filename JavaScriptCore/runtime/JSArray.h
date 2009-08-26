@@ -47,6 +47,7 @@ namespace JSC {
 
         virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
         virtual bool getOwnPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);
+        virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
         virtual void put(ExecState*, unsigned propertyName, JSValue); // FIXME: Make protected and add setItem.
 
         static JS_EXPORTDATA const ClassInfo info;

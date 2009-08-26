@@ -177,6 +177,35 @@ bool JSFunction::getOwnPropertySlot(ExecState* exec, const Identifier& propertyN
     return Base::getOwnPropertySlot(exec, propertyName, slot);
 }
 
+    bool JSFunction::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+    {
+        if (isHostFunction())
+            return Base::getOwnPropertyDescriptor(exec, propertyName, descriptor);
+        
+        if (propertyName == exec->propertyNames().prototype) {
+            PropertySlot slot;
+            getOwnPropertySlot(exec, propertyName, slot);
+            return Base::getOwnPropertyDescriptor(exec, propertyName, descriptor);
+        }
+        
+        if (propertyName == exec->propertyNames().arguments) {
+            descriptor.setDescriptor(exec->interpreter()->retrieveArguments(exec, this), ReadOnly | DontEnum | DontDelete);
+            return true;
+        }
+        
+        if (propertyName == exec->propertyNames().length) {
+            descriptor.setDescriptor(jsNumber(exec, jsExecutable()->parameterCount()), ReadOnly | DontEnum | DontDelete);
+            return true;
+        }
+        
+        if (propertyName == exec->propertyNames().caller) {
+            descriptor.setDescriptor(exec->interpreter()->retrieveCaller(exec, this), ReadOnly | DontEnum | DontDelete);
+            return true;
+        }
+        
+        return Base::getOwnPropertyDescriptor(exec, propertyName, descriptor);
+    }
+    
 void JSFunction::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
     if (isHostFunction()) {

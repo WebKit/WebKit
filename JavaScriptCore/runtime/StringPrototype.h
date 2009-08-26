@@ -32,6 +32,7 @@ namespace JSC {
         StringPrototype(ExecState*, PassRefPtr<Structure>);
 
         virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
+        virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
 
         virtual const ClassInfo* classInfo() const { return &info; }
         static const ClassInfo info;

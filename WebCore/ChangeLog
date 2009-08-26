@@ -1,3 +1,66 @@
+2009-08-25  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        [ES5] Implement getOwnPropertyDescriptor
+        https://bugs.webkit.org/show_bug.cgi?id=28724
+
+        Implement the WebCore side of getOwnPropertyDescriptor.  This
+        requires a custom implementation of getOwnPropertyDescriptor
+        for every class with a custom implementation of getOwnPropertySlot.
+
+        The bindings generator has been updated to generate appropriate
+        versions of getOwnPropertyDescriptor for the general case where
+        a custom getOwnPropertyDescriptor is not needed.  ES5 is vague
+        about how getOwnPropertyDescriptor should work in the context of
+        "host" functions with polymorphic [[GetOwnProperty]], so it seems
+        okay that occasionally we "guess" what attributes -- eg. determining
+        whether a property is writable.
+
+        Test: fast/js/getOwnPropertyDescriptor.html
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::getOwnPropertyDescriptor):
+        * bindings/js/JSDOMWindowShell.cpp:
+        (WebCore::JSDOMWindowShell::getOwnPropertyDescriptor):
+        * bindings/js/JSDOMWindowShell.h:
+        * bindings/js/JSHTMLAppletElementCustom.cpp:
+        (WebCore::JSHTMLAppletElement::getOwnPropertyDescriptorDelegate):
+        * bindings/js/JSHTMLEmbedElementCustom.cpp:
+        (WebCore::JSHTMLEmbedElement::getOwnPropertyDescriptorDelegate):
+        * bindings/js/JSHTMLObjectElementCustom.cpp:
+        (WebCore::JSHTMLObjectElement::getOwnPropertyDescriptorDelegate):
+        * bindings/js/JSHistoryCustom.cpp:
+        (WebCore::JSHistory::getOwnPropertyDescriptorDelegate):
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::JSLocation::getOwnPropertyDescriptorDelegate):
+        * bindings/js/JSNamedNodesCollection.cpp:
+        (WebCore::JSNamedNodesCollection::getOwnPropertyDescriptor):
+        * bindings/js/JSNamedNodesCollection.h:
+        * bindings/js/JSPluginElementFunctions.cpp:
+        (WebCore::runtimeObjectCustomGetOwnPropertyDescriptor):
+        * bindings/js/JSPluginElementFunctions.h:
+        * bindings/js/JSQuarantinedObjectWrapper.cpp:
+        (WebCore::JSQuarantinedObjectWrapper::getOwnPropertyDescriptor):
+        * bindings/js/JSQuarantinedObjectWrapper.h:
+        * bindings/js/JSWorkerContextCustom.cpp:
+        (WebCore::JSWorkerContext::getOwnPropertyDescriptorDelegate):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bridge/objc/objc_runtime.h:
+        * bridge/objc/objc_runtime.mm:
+        (JSC::Bindings::ObjcFallbackObjectImp::getOwnPropertyDescriptor):
+        * bridge/runtime.h:
+        (JSC::Bindings::Instance::getOwnPropertyDescriptor):
+        * bridge/runtime_array.cpp:
+        (JSC::RuntimeArray::getOwnPropertyDescriptor):
+        * bridge/runtime_array.h:
+        * bridge/runtime_method.cpp:
+        (JSC::RuntimeMethod::getOwnPropertyDescriptor):
+        * bridge/runtime_method.h:
+        * bridge/runtime_object.cpp:
+        (JSC::RuntimeObjectImp::getOwnPropertyDescriptor):
+        * bridge/runtime_object.h:
+
 2009-08-26  Vincent Untz <vuntz@gnome.org>
 
         Reviewed by Xan Lopez.

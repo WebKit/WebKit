@@ -1,3 +1,105 @@
+2009-08-25  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        [ES5] Implement getOwnPropertyDescriptor
+        https://bugs.webkit.org/show_bug.cgi?id=28724
+
+        Implement the core runtime support for getOwnPropertyDescriptor.
+        This adds a virtual getOwnPropertyDescriptor method to every class
+        that implements getOwnPropertySlot that shadows the behaviour of
+        getOwnPropertySlot.  The alternative would be to make getOwnPropertySlot
+        (or PropertySlots in general) provide property attribute information,
+        but quick testing showed this to be a regression.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::getOwnPropertyDescriptor):
+        * runtime/Arguments.h:
+        * runtime/ArrayPrototype.cpp:
+        (JSC::ArrayPrototype::getOwnPropertyDescriptor):
+        * runtime/ArrayPrototype.h:
+        * runtime/CommonIdentifiers.h:
+        * runtime/DatePrototype.cpp:
+        (JSC::DatePrototype::getOwnPropertyDescriptor):
+        * runtime/DatePrototype.h:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::getOwnPropertyDescriptor):
+        * runtime/JSArray.h:
+        * runtime/JSByteArray.cpp:
+        (JSC::JSByteArray::getOwnPropertyDescriptor):
+        * runtime/JSByteArray.h:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::getOwnPropertyDescriptor):
+        * runtime/JSFunction.h:
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::getOwnPropertyDescriptor):
+        * runtime/JSNotAnObject.cpp:
+        (JSC::JSNotAnObject::getOwnPropertyDescriptor):
+        * runtime/JSNotAnObject.h:
+        * runtime/JSONObject.cpp:
+        (JSC::JSONObject::getOwnPropertySlot):
+        (JSC::JSONObject::getOwnPropertyDescriptor):
+        * runtime/JSONObject.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::getOwnPropertyDescriptor):
+        (JSC::JSObject::getPropertyDescriptor):
+        * runtime/JSObject.h:
+        * runtime/JSString.cpp:
+        (JSC::JSString::getStringPropertyDescriptor):
+        (JSC::JSString::getOwnPropertyDescriptor):
+        * runtime/JSString.h:
+        * runtime/JSVariableObject.cpp:
+        (JSC::JSVariableObject::symbolTableGet):
+        * runtime/JSVariableObject.h:
+        * runtime/Lookup.h:
+        (JSC::getStaticPropertyDescriptor):
+        (JSC::getStaticFunctionDescriptor):
+        (JSC::getStaticValueDescriptor):
+          Add property descriptor equivalents of the lookup
+          table access functions
+
+        * runtime/MathObject.cpp:
+        (JSC::MathObject::getOwnPropertySlot):
+        (JSC::MathObject::getOwnPropertyDescriptor):
+        * runtime/MathObject.h:
+        * runtime/NumberConstructor.cpp:
+        (JSC::NumberConstructor::getOwnPropertyDescriptor):
+        * runtime/NumberConstructor.h:
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ObjectConstructor::ObjectConstructor):
+        (JSC::objectConstructorGetOwnPropertyDescriptor):
+        * runtime/PropertyDescriptor.cpp: Added.
+        (JSC::PropertyDescriptor::writable):
+        (JSC::PropertyDescriptor::enumerable):
+        (JSC::PropertyDescriptor::configurable):
+        (JSC::PropertyDescriptor::hasAccessors):
+        (JSC::PropertyDescriptor::setUndefined):
+        (JSC::PropertyDescriptor::getter):
+        (JSC::PropertyDescriptor::setter):
+        (JSC::PropertyDescriptor::setDescriptor):
+        (JSC::PropertyDescriptor::setAccessorDescriptor):
+        * runtime/PropertyDescriptor.h: Added.
+        (JSC::PropertyDescriptor::PropertyDescriptor):
+        (JSC::PropertyDescriptor::attributes):
+        (JSC::PropertyDescriptor::isValid):
+        (JSC::PropertyDescriptor::value):
+        * runtime/RegExpConstructor.cpp:
+        (JSC::RegExpConstructor::getOwnPropertyDescriptor):
+        * runtime/RegExpConstructor.h:
+        * runtime/RegExpMatchesArray.h:
+        (JSC::RegExpMatchesArray::getOwnPropertyDescriptor):
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::getOwnPropertyDescriptor):
+        * runtime/RegExpObject.h:
+        * runtime/StringObject.cpp:
+        (JSC::StringObject::getOwnPropertyDescriptor):
+        * runtime/StringObject.h:
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::getOwnPropertyDescriptor):
+        * runtime/StringPrototype.h:
+
 2009-08-24  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Darin Adler.

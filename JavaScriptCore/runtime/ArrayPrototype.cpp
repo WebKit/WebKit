@@ -125,6 +125,11 @@ bool ArrayPrototype::getOwnPropertySlot(ExecState* exec, const Identifier& prope
     return getStaticFunctionSlot<JSArray>(exec, ExecState::arrayTable(exec), this, propertyName, slot);
 }
 
+bool ArrayPrototype::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+{
+    return getStaticFunctionDescriptor<JSArray>(exec, ExecState::arrayTable(exec), this, propertyName, descriptor);
+}
+
 // ------------------------------ Array Functions ----------------------------
 
 // Helper function

@@ -241,6 +241,37 @@ bool JSArray::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName
     return JSObject::getOwnPropertySlot(exec, propertyName, slot);
 }
 
+bool JSArray::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+{
+    if (propertyName == exec->propertyNames().length) {
+        descriptor.setDescriptor(jsNumber(exec, length()), DontDelete | DontEnum);
+        return true;
+    }
+    
+    bool isArrayIndex;
+    unsigned i = propertyName.toArrayIndex(&isArrayIndex);
+    if (isArrayIndex) {
+        if (i >= m_storage->m_length)
+            return false;
+        if (i < m_storage->m_vectorLength) {
+            JSValue value = m_storage->m_vector[i];
+            if (value) {
+                descriptor.setDescriptor(value, 0);
+                return true;
+            }
+        } else if (SparseArrayValueMap* map = m_storage->m_sparseValueMap) {
+            if (i >= MIN_SPARSE_ARRAY_INDEX) {
+                SparseArrayValueMap::iterator it = map->find(i);
+                if (it != map->end()) {
+                    descriptor.setDescriptor(it->second, 0);
+                    return true;
+                }
+            }
+        }
+    }
+    return JSObject::getOwnPropertyDescriptor(exec, propertyName, descriptor);
+}
+
 // ECMA 15.4.5.1
 void JSArray::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {

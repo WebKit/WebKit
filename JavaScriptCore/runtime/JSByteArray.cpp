@@ -59,7 +59,18 @@ bool JSByteArray::getOwnPropertySlot(ExecState* exec, const Identifier& property
     }
     return JSObject::getOwnPropertySlot(exec, propertyName, slot);
 }
-    
+
+bool JSByteArray::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+{
+    bool ok;
+    unsigned index = propertyName.toUInt32(&ok, false);
+    if (ok && canAccessIndex(index)) {
+        descriptor.setDescriptor(getIndex(exec, index), DontDelete);
+        return true;
+    }
+    return JSObject::getOwnPropertyDescriptor(exec, propertyName, descriptor);
+}
+
 bool JSByteArray::getOwnPropertySlot(ExecState* exec, unsigned propertyName, PropertySlot& slot)
 {
     if (canAccessIndex(propertyName)) {

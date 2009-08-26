@@ -109,6 +109,7 @@ public:
 
 private:
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
+    virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
     virtual void put(ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
     virtual CallType getCallData(CallData&);
     virtual bool deleteProperty(ExecState*, const Identifier& propertyName);

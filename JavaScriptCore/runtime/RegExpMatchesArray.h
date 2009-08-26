@@ -44,6 +44,13 @@ namespace JSC {
             return JSArray::getOwnPropertySlot(exec, propertyName, slot);
         }
 
+        virtual bool getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+        {
+            if (lazyCreationData())
+                fillArrayInstance(exec);
+            return JSArray::getOwnPropertyDescriptor(exec, propertyName, descriptor);
+        }
+
         virtual void put(ExecState* exec, const Identifier& propertyName, JSValue v, PutPropertySlot& slot)
         {
             if (lazyCreationData())

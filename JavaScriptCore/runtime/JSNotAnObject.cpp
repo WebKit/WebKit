@@ -93,6 +93,12 @@ bool JSNotAnObject::getOwnPropertySlot(ExecState* exec, unsigned, PropertySlot&)
     return false;
 }
 
+bool JSNotAnObject::getOwnPropertyDescriptor(ExecState* exec, const Identifier&, PropertyDescriptor&)
+{
+    ASSERT_UNUSED(exec, exec->hadException() && exec->exception() == m_exception);
+    return false;
+}
+
 void JSNotAnObject::put(ExecState* exec, const Identifier& , JSValue, PutPropertySlot&)
 {
     ASSERT_UNUSED(exec, exec->hadException() && exec->exception() == m_exception);

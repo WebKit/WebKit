@@ -215,6 +215,8 @@
 		A7E2EA6C0FB460CF00601F06 /* LiteralParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7E2EA6A0FB460CF00601F06 /* LiteralParser.cpp */; };
 		A7F9935F0FD7325100A0B2D0 /* JSONObject.h in Headers */ = {isa = PBXBuildFile; fileRef = A7F9935D0FD7325100A0B2D0 /* JSONObject.h */; };
 		A7F993600FD7325100A0B2D0 /* JSONObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7F9935E0FD7325100A0B2D0 /* JSONObject.cpp */; };
+		A7FB60A4103F7DC20017A286 /* PropertyDescriptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7FB60A3103F7DC20017A286 /* PropertyDescriptor.cpp */; };
+		A7FB61001040C38B0017A286 /* PropertyDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = A7FB604B103F5EAB0017A286 /* PropertyDescriptor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC02E90D0E1839DB000F9297 /* ErrorConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = BC02E9050E1839DB000F9297 /* ErrorConstructor.h */; };
 		BC02E90F0E1839DB000F9297 /* ErrorPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = BC02E9070E1839DB000F9297 /* ErrorPrototype.h */; };
 		BC02E9110E1839DB000F9297 /* NativeErrorConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = BC02E9090E1839DB000F9297 /* NativeErrorConstructor.h */; };
@@ -768,6 +770,8 @@
 		A7F9935D0FD7325100A0B2D0 /* JSONObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONObject.h; sourceTree = "<group>"; };
 		A7F9935E0FD7325100A0B2D0 /* JSONObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSONObject.cpp; sourceTree = "<group>"; };
 		A7F9949A0FD746A300A0B2D0 /* JSONObject.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSONObject.lut.h; path = /Users/oliver/builds/Debug/DerivedSources/JavaScriptCore/JSONObject.lut.h; sourceTree = "<absolute>"; };
+		A7FB604B103F5EAB0017A286 /* PropertyDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PropertyDescriptor.h; sourceTree = "<group>"; };
+		A7FB60A3103F7DC20017A286 /* PropertyDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PropertyDescriptor.cpp; sourceTree = "<group>"; };
 		A8E894310CD0602400367179 /* JSCallbackObjectFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCallbackObjectFunctions.h; sourceTree = "<group>"; };
 		A8E894330CD0603F00367179 /* JSGlobalObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGlobalObject.h; sourceTree = "<group>"; };
 		BC02E9040E1839DB000F9297 /* ErrorConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ErrorConstructor.cpp; sourceTree = "<group>"; };
@@ -1338,6 +1342,7 @@
 		7EF6E0BB0EB7A1EC0079AFAF /* runtime */ = {
 			isa = PBXGroup;
 			children = (
+				A7FB604B103F5EAB0017A286 /* PropertyDescriptor.h */,
 				BCF605110E203EF800B9A64D /* ArgList.cpp */,
 				BCF605120E203EF800B9A64D /* ArgList.h */,
 				BC257DE50E1F51C50016B6C9 /* Arguments.cpp */,
@@ -1510,6 +1515,7 @@
 				A779558F101A74D500114E55 /* MarkStack.h */,
 				A7C530E3102A3813005BC741 /* MarkStackPosix.cpp */,
 				A74B3498102A5F8E0032AB98 /* MarkStack.cpp */,
+				A7FB60A3103F7DC20017A286 /* PropertyDescriptor.cpp */,
 			);
 			path = runtime;
 			sourceTree = "<group>";
@@ -1915,6 +1921,7 @@
 				A7D649AA1015224E009B2E1B /* PossiblyNull.h in Headers */,
 				86CAFEE31035DDE60028A609 /* Executable.h in Headers */,
 				142D3939103E4560007DCB52 /* NumericStrings.h in Headers */,
+				A7FB61001040C38B0017A286 /* PropertyDescriptor.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2284,6 +2291,7 @@
 				A7C530E4102A3813005BC741 /* MarkStackPosix.cpp in Sources */,
 				A74B3499102A5F8E0032AB98 /* MarkStack.cpp in Sources */,
 				86CA032E1038E8440028A609 /* Executable.cpp in Sources */,
+				A7FB60A4103F7DC20017A286 /* PropertyDescriptor.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -103,14 +103,12 @@ MathObject::MathObject(ExecState* exec, PassRefPtr<Structure> structure)
 
 bool MathObject::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
 {
-    const HashEntry* entry = ExecState::mathTable(exec)->entry(exec, propertyName);
+    return getStaticFunctionSlot<JSObject>(exec, ExecState::mathTable(exec), this, propertyName, slot);
+}
 
-    if (!entry)
-        return JSObject::getOwnPropertySlot(exec, propertyName, slot);
-
-    ASSERT(entry->attributes() & Function);
-    setUpStaticFunctionSlot(exec, entry, this, propertyName, slot);
-    return true;
+bool MathObject::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+{
+    return getStaticFunctionDescriptor<JSObject>(exec, ExecState::mathTable(exec), this, propertyName, descriptor);
 }
 
 // ------------------------------ Functions --------------------------------

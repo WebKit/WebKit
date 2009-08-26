@@ -30,6 +30,7 @@
 #include "JSGlobalObject.h"
 #include "NativeErrorConstructor.h"
 #include "ObjectPrototype.h"
+#include "PropertyDescriptor.h"
 #include "PropertyNameArray.h"
 #include "Lookup.h"
 #include "Nodes.h"
@@ -504,4 +505,27 @@ JSObject* constructEmptyObject(ExecState* exec)
     return new (exec) JSObject(exec->lexicalGlobalObject()->emptyObjectStructure());
 }
 
+bool JSObject::getOwnPropertyDescriptor(ExecState*, const Identifier& propertyName, PropertyDescriptor& descriptor)
+{
+    unsigned attributes = 0;
+    JSCell* cell = 0;
+    size_t offset = m_structure->get(propertyName, attributes, cell);
+    if (offset == WTF::notFound)
+        return false;
+    descriptor.setDescriptor(getDirectOffset(offset), attributes);
+    return true;
+}
+
+bool JSObject::getPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+{
+    JSObject* object = this;
+    while (true) {
+        if (object->getOwnPropertyDescriptor(exec, propertyName, descriptor))
+            return true;
+        JSValue prototype = object->prototype();
+        if (!prototype.isObject())
+            return false;
+        object = asObject(prototype);
+    }
+}
 } // namespace JSC

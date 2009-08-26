@@ -41,6 +41,7 @@ namespace JSC {
         JSValue exec(ExecState*, const ArgList&);
 
         virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
+        virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
         virtual void put(ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
 
         virtual const ClassInfo* classInfo() const { return &info; }
