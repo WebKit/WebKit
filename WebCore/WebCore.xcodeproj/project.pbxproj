@@ -759,16 +759,12 @@
 		46F9D5DF0B0D60170028EE36 /* progressCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 46F9D5DC0B0D60170028EE36 /* progressCursor.png */; };
 		49484FC1102CF23C00187DD3 /* CanvasGradient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49484FB3102CF23C00187DD3 /* CanvasGradient.cpp */; };
 		49484FC2102CF23C00187DD3 /* CanvasGradient.h in Headers */ = {isa = PBXBuildFile; fileRef = 49484FB4102CF23C00187DD3 /* CanvasGradient.h */; };
-		49484FC3102CF23C00187DD3 /* CanvasGradient.idl in Resources */ = {isa = PBXBuildFile; fileRef = 49484FB5102CF23C00187DD3 /* CanvasGradient.idl */; };
 		49484FC4102CF23C00187DD3 /* CanvasPattern.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49484FB6102CF23C00187DD3 /* CanvasPattern.cpp */; };
 		49484FC5102CF23C00187DD3 /* CanvasPattern.h in Headers */ = {isa = PBXBuildFile; fileRef = 49484FB7102CF23C00187DD3 /* CanvasPattern.h */; };
-		49484FC6102CF23C00187DD3 /* CanvasPattern.idl in Resources */ = {isa = PBXBuildFile; fileRef = 49484FB8102CF23C00187DD3 /* CanvasPattern.idl */; };
 		49484FC7102CF23C00187DD3 /* CanvasPixelArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49484FB9102CF23C00187DD3 /* CanvasPixelArray.cpp */; };
 		49484FC8102CF23C00187DD3 /* CanvasPixelArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 49484FBA102CF23C00187DD3 /* CanvasPixelArray.h */; };
-		49484FC9102CF23C00187DD3 /* CanvasPixelArray.idl in Resources */ = {isa = PBXBuildFile; fileRef = 49484FBB102CF23C00187DD3 /* CanvasPixelArray.idl */; };
 		49484FCA102CF23C00187DD3 /* CanvasRenderingContext2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49484FBC102CF23C00187DD3 /* CanvasRenderingContext2D.cpp */; };
 		49484FCB102CF23C00187DD3 /* CanvasRenderingContext2D.h in Headers */ = {isa = PBXBuildFile; fileRef = 49484FBD102CF23C00187DD3 /* CanvasRenderingContext2D.h */; };
-		49484FCC102CF23C00187DD3 /* CanvasRenderingContext2D.idl in Resources */ = {isa = PBXBuildFile; fileRef = 49484FBE102CF23C00187DD3 /* CanvasRenderingContext2D.idl */; };
 		49484FCD102CF23C00187DD3 /* CanvasStyle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49484FBF102CF23C00187DD3 /* CanvasStyle.cpp */; };
 		49484FCE102CF23C00187DD3 /* CanvasStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = 49484FC0102CF23C00187DD3 /* CanvasStyle.h */; };
 		494BD7950F55C8EE00747828 /* WebKitPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 494BD7930F55C8EE00747828 /* WebKitPoint.h */; };
@@ -809,36 +805,26 @@
 		49C7B9A51042D2D30009D447 /* JSCanvasTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9921042D2D30009D447 /* JSCanvasTexture.h */; };
 		49C7B9C81042D32F0009D447 /* CanvasBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9A81042D32E0009D447 /* CanvasBuffer.cpp */; };
 		49C7B9C91042D32F0009D447 /* CanvasBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9A91042D32E0009D447 /* CanvasBuffer.h */; };
-		49C7B9CA1042D32F0009D447 /* CanvasBuffer.idl in Resources */ = {isa = PBXBuildFile; fileRef = 49C7B9AA1042D32E0009D447 /* CanvasBuffer.idl */; };
 		49C7B9CB1042D32F0009D447 /* CanvasByteArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9AB1042D32E0009D447 /* CanvasByteArray.cpp */; };
 		49C7B9CC1042D32F0009D447 /* CanvasByteArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9AC1042D32E0009D447 /* CanvasByteArray.h */; };
-		49C7B9CD1042D32F0009D447 /* CanvasByteArray.idl in Resources */ = {isa = PBXBuildFile; fileRef = 49C7B9AD1042D32E0009D447 /* CanvasByteArray.idl */; };
 		49C7B9CE1042D32F0009D447 /* CanvasFramebuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9AE1042D32E0009D447 /* CanvasFramebuffer.cpp */; };
 		49C7B9CF1042D32F0009D447 /* CanvasFramebuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9AF1042D32E0009D447 /* CanvasFramebuffer.h */; };
-		49C7B9D01042D32F0009D447 /* CanvasFramebuffer.idl in Resources */ = {isa = PBXBuildFile; fileRef = 49C7B9B01042D32E0009D447 /* CanvasFramebuffer.idl */; };
 		49C7B9D11042D32F0009D447 /* CanvasNumberArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9B11042D32E0009D447 /* CanvasNumberArray.cpp */; };
 		49C7B9D21042D32F0009D447 /* CanvasNumberArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9B21042D32E0009D447 /* CanvasNumberArray.h */; };
-		49C7B9D31042D32F0009D447 /* CanvasNumberArray.idl in Resources */ = {isa = PBXBuildFile; fileRef = 49C7B9B31042D32F0009D447 /* CanvasNumberArray.idl */; };
 		49C7B9D41042D32F0009D447 /* CanvasObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9B41042D32F0009D447 /* CanvasObject.cpp */; };
 		49C7B9D51042D32F0009D447 /* CanvasObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9B51042D32F0009D447 /* CanvasObject.h */; };
 		49C7B9D61042D32F0009D447 /* CanvasProgram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9B61042D32F0009D447 /* CanvasProgram.cpp */; };
 		49C7B9D71042D32F0009D447 /* CanvasProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9B71042D32F0009D447 /* CanvasProgram.h */; };
-		49C7B9D81042D32F0009D447 /* CanvasProgram.idl in Resources */ = {isa = PBXBuildFile; fileRef = 49C7B9B81042D32F0009D447 /* CanvasProgram.idl */; };
 		49C7B9D91042D32F0009D447 /* CanvasRenderbuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9B91042D32F0009D447 /* CanvasRenderbuffer.cpp */; };
 		49C7B9DA1042D32F0009D447 /* CanvasRenderbuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9BA1042D32F0009D447 /* CanvasRenderbuffer.h */; };
-		49C7B9DB1042D32F0009D447 /* CanvasRenderbuffer.idl in Resources */ = {isa = PBXBuildFile; fileRef = 49C7B9BB1042D32F0009D447 /* CanvasRenderbuffer.idl */; };
 		49C7B9DC1042D32F0009D447 /* CanvasRenderingContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9BC1042D32F0009D447 /* CanvasRenderingContext.cpp */; };
 		49C7B9DD1042D32F0009D447 /* CanvasRenderingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9BD1042D32F0009D447 /* CanvasRenderingContext.h */; };
-		49C7B9DE1042D32F0009D447 /* CanvasRenderingContext.idl in Resources */ = {isa = PBXBuildFile; fileRef = 49C7B9BE1042D32F0009D447 /* CanvasRenderingContext.idl */; };
 		49C7B9DF1042D32F0009D447 /* CanvasRenderingContext3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9BF1042D32F0009D447 /* CanvasRenderingContext3D.cpp */; };
 		49C7B9E01042D32F0009D447 /* CanvasRenderingContext3D.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9C01042D32F0009D447 /* CanvasRenderingContext3D.h */; };
-		49C7B9E11042D32F0009D447 /* CanvasRenderingContext3D.idl in Resources */ = {isa = PBXBuildFile; fileRef = 49C7B9C11042D32F0009D447 /* CanvasRenderingContext3D.idl */; };
 		49C7B9E21042D32F0009D447 /* CanvasShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9C21042D32F0009D447 /* CanvasShader.cpp */; };
 		49C7B9E31042D32F0009D447 /* CanvasShader.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9C31042D32F0009D447 /* CanvasShader.h */; };
-		49C7B9E41042D32F0009D447 /* CanvasShader.idl in Resources */ = {isa = PBXBuildFile; fileRef = 49C7B9C41042D32F0009D447 /* CanvasShader.idl */; };
 		49C7B9E51042D32F0009D447 /* CanvasTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9C51042D32F0009D447 /* CanvasTexture.cpp */; };
 		49C7B9E61042D32F0009D447 /* CanvasTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9C61042D32F0009D447 /* CanvasTexture.h */; };
-		49C7B9E71042D32F0009D447 /* CanvasTexture.idl in Resources */ = {isa = PBXBuildFile; fileRef = 49C7B9C71042D32F0009D447 /* CanvasTexture.idl */; };
 		49C7B9FC1042D3650009D447 /* GraphicsContext3D.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9FB1042D3650009D447 /* GraphicsContext3D.h */; };
 		49C7BA001042D38C0009D447 /* Canvas3DLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9FD1042D38C0009D447 /* Canvas3DLayer.h */; };
 		49C7BA011042D38C0009D447 /* Canvas3DLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9FE1042D38C0009D447 /* Canvas3DLayer.mm */; };
@@ -17641,20 +17627,6 @@
 				85136CA80AED665900F90A3D /* westResizeCursor.png in Resources */,
 				1AB1AE7A0C051FDE00139F4F /* zoomInCursor.png in Resources */,
 				1AB1AE7B0C051FDE00139F4F /* zoomOutCursor.png in Resources */,
-				49484FC3102CF23C00187DD3 /* CanvasGradient.idl in Resources */,
-				49484FC6102CF23C00187DD3 /* CanvasPattern.idl in Resources */,
-				49484FC9102CF23C00187DD3 /* CanvasPixelArray.idl in Resources */,
-				49484FCC102CF23C00187DD3 /* CanvasRenderingContext2D.idl in Resources */,
-				49C7B9CA1042D32F0009D447 /* CanvasBuffer.idl in Resources */,
-				49C7B9CD1042D32F0009D447 /* CanvasByteArray.idl in Resources */,
-				49C7B9D01042D32F0009D447 /* CanvasFramebuffer.idl in Resources */,
-				49C7B9D31042D32F0009D447 /* CanvasNumberArray.idl in Resources */,
-				49C7B9D81042D32F0009D447 /* CanvasProgram.idl in Resources */,
-				49C7B9DB1042D32F0009D447 /* CanvasRenderbuffer.idl in Resources */,
-				49C7B9DE1042D32F0009D447 /* CanvasRenderingContext.idl in Resources */,
-				49C7B9E11042D32F0009D447 /* CanvasRenderingContext3D.idl in Resources */,
-				49C7B9E41042D32F0009D447 /* CanvasShader.idl in Resources */,
-				49C7B9E71042D32F0009D447 /* CanvasTexture.idl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
