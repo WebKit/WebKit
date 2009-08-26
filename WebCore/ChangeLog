@@ -1,3 +1,28 @@
+2009-08-26  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        SocketStreamHandle interface for WebSocket API
+        https://bugs.webkit.org/show_bug.cgi?id=28037
+
+        Add build systems only for GNUmakefile.am and WebCore.xcodeproj.now.
+        Other build systems will be updated once the code is functional.
+        Tests will be landed once this code is complete and functional.
+
+        * GNUmakefile.am:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/network/SocketStreamErrorBase.cpp: Added.
+        * platform/network/SocketStreamErrorBase.h: Added.
+        * platform/network/SocketStreamHandleBase.cpp: Added.
+        * platform/network/SocketStreamHandleBase.h: Added.
+        * platform/network/SocketStreamHandleClient.h: Added.
+        * platform/network/cf/SocketStreamError.h: Added.
+        * platform/network/cf/SocketStreamHandle.h: Added.
+        * platform/network/cf/SocketStreamHandleCFNet.cpp: Added.
+        * platform/network/soup/SocketStreamError.h: Added.
+        * platform/network/soup/SocketStreamHandle.h: Added.
+        * platform/network/soup/SocketStreamHandleSoup.cpp: Added.
+
 2009-08-26  Mads Ager  <ager@chromium.org>
 
         Reviewed by Dimitri Glazkov.

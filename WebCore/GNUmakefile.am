@@ -3220,8 +3220,18 @@ webcore_sources += \
 	WebCore/bindings/js/JSWebSocketConstructor.cpp \
 	WebCore/bindings/js/JSWebSocketConstructor.h \
 	WebCore/bindings/js/JSWebSocketCustom.cpp \
+	WebCore/platform/network/SocketStreamErrorBase.cpp \
+	WebCore/platform/network/SocketStreamErrorBase.h \
+	WebCore/platform/network/SocketStreamHandleBase.cpp \
+	WebCore/platform/network/SocketStreamHandleBase.h \
+	WebCore/platform/network/SocketStreamHandleClient.h \
 	WebCore/websockets/WebSocket.cpp \
 	WebCore/websockets/WebSocket.h
+
+webcoregtk_sources += \
+	WebCore/platform/network/soup/SocketStreamError.h \
+	WebCore/platform/network/soup/SocketStreamHandle.h \
+	WebCore/platform/network/soup/SocketStreamHandleSoup.cpp
 
 else
 webcore_cppflags += -DENABLE_WEB_SOCKETS=0
