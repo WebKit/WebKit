@@ -980,6 +980,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\runtime\PropertyDescriptor.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\PropertyDescriptor.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\runtime\PropertyMapHashTable.h"
 				>
 			</File>

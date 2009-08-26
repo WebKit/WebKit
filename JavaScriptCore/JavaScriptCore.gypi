@@ -287,6 +287,8 @@
             'runtime/ObjectPrototype.h',
             'runtime/Operations.cpp',
             'runtime/Operations.h',
+            'runtime/PropertyDescriptor.cpp',
+            'runtime/PropertyDescriptor.h',
             'runtime/PropertyMapHashTable.h',
             'runtime/PropertyNameArray.cpp',
             'runtime/PropertyNameArray.h',

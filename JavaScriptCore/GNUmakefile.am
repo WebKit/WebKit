@@ -194,6 +194,8 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/MarkStack.cpp \
 	JavaScriptCore/runtime/MarkStack.h \
 	JavaScriptCore/runtime/NumericStrings.h \
+	JavaScriptCore/runtime/PropertyDescriptor.h \
+	JavaScriptCore/runtime/PropertyDescriptor.cpp \
 	JavaScriptCore/runtime/SmallStrings.cpp \
 	JavaScriptCore/runtime/SmallStrings.h \
 	JavaScriptCore/runtime/Structure.cpp \
@@ -463,6 +465,8 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/ObjectPrototype.h \
 	JavaScriptCore/runtime/Operations.cpp \
 	JavaScriptCore/runtime/Operations.h \
+	JavaScriptCore/runtime/PropertyDescriptor.h \
+	JavaScriptCore/runtime/PropertyDescriptor.cpp \
 	JavaScriptCore/runtime/PropertyMapHashTable.h \
 	JavaScriptCore/runtime/PropertyNameArray.cpp \
 	JavaScriptCore/runtime/PropertyNameArray.h \

@@ -193,6 +193,7 @@ SOURCES += \
     runtime/Operations.cpp \
     parser/Parser.cpp \
     parser/ParserArena.cpp \
+    runtime/PropertyDescriptor.cpp \
     runtime/PropertyNameArray.cpp \
     runtime/PropertySlot.cpp \
     runtime/PrototypeFunction.cpp \

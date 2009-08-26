@@ -1,3 +1,15 @@
+2009-08-26  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by NOBODY (Build fixes).
+
+        Forgot I added files to JavaScriptCore. 
+
+        * GNUmakefile.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCoreSources.bkl:
+
 2009-08-25  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
