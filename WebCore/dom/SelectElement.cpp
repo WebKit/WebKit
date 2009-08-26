@@ -676,7 +676,7 @@ void SelectElement::listBoxDefaultEventHandler(SelectElementData& data, Element*
             data.setActiveSelectionState(true);
             
             bool multiSelectKeyPressed = false;
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && PLATFORM(DARWIN))
             multiSelectKeyPressed = mouseEvent->metaKey();
 #else
             multiSelectKeyPressed = mouseEvent->ctrlKey();
