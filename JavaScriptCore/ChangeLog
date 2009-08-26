@@ -1,3 +1,46 @@
+2009-08-24  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Darin Adler.
+
+        How many copies of the parameters do you need?
+        https://bugs.webkit.org/show_bug.cgi?id=28701
+
+        The function parameters in JSC get copied a lot - and unnecessarily so.
+
+        Originally this happened due to duplicating FunctionBodyNodes on recompilation,
+        though the problem has been exacerbated by copying the parameters from the
+        original function body onto the executable, then back onto the real body that
+        will be generated (this happens on every function).  And this is all made worse
+        since the data structures in question are a little ugly - C style arrays of C++
+        objects containing ref counts, so they need a full copy-construct (rather than
+        a simple memcpy).
+
+        This can all be greatly simplified by just punting the parameters off into
+        their own ref-counted object, and forgoing all the copying.
+
+        ~no performance change, possible slight progression.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::makeFunction):
+        * parser/Nodes.cpp:
+        (JSC::FunctionParameters::FunctionParameters):
+        (JSC::FunctionBodyNode::FunctionBodyNode):
+        (JSC::FunctionBodyNode::finishParsing):
+        * parser/Nodes.h:
+        (JSC::FunctionBodyNode::parameters):
+        (JSC::FunctionBodyNode::parameterCount):
+        * runtime/Executable.cpp:
+        (JSC::FunctionExecutable::~FunctionExecutable):
+        (JSC::FunctionExecutable::compile):
+        (JSC::FunctionExecutable::reparseExceptionInfo):
+        (JSC::FunctionExecutable::fromGlobalCode):
+        (JSC::FunctionExecutable::paramString):
+        * runtime/Executable.h:
+        (JSC::FunctionExecutable::FunctionExecutable):
+        (JSC::FunctionExecutable::parameterCount):
+
 2009-08-25  Brent Fulgham  <bfulgham@webkit.org>
 
         Reviewed by NOBODY (Buildfix).

@@ -1445,21 +1445,26 @@ namespace JSC {
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
     };
 
+    class FunctionParameters : public Vector<Identifier>, public RefCounted<FunctionParameters> {
+    public:
+        static PassRefPtr<FunctionParameters> create(ParameterNode* firstParameter) { return adoptRef(new FunctionParameters(firstParameter)); }
+
+    private:
+        FunctionParameters(ParameterNode*);
+    };
+
     class FunctionBodyNode : public ScopeNode {
-        friend class JIT;
     public:
         static FunctionBodyNode* create(JSGlobalData*);
         static PassRefPtr<FunctionBodyNode> create(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, const SourceCode&, CodeFeatures, int numConstants);
-        virtual ~FunctionBodyNode();
 
-        const Identifier* parameters() const { return m_parameters; }
-        size_t parameterCount() const { return m_parameterCount; }
-        Identifier* copyParameters();
+        FunctionParameters* parameters() const { return m_parameters.get(); }
+        size_t parameterCount() const { return m_parameters->size(); }
 
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
 
-        void finishParsing(const SourceCode&, ParameterNode*, const Identifier& ident);
-        void finishParsing(Identifier* parameters, size_t parameterCount, const Identifier& ident);
+        void finishParsing(const SourceCode&, ParameterNode*, const Identifier&);
+        void finishParsing(PassRefPtr<FunctionParameters>, const Identifier&);
         
         const Identifier& ident() { return m_ident; }
 
@@ -1470,8 +1475,7 @@ namespace JSC {
         FunctionBodyNode(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, const SourceCode&, CodeFeatures, int numConstants);
 
         Identifier m_ident;
-        Identifier* m_parameters;
-        size_t m_parameterCount;
+        RefPtr<FunctionParameters> m_parameters;
     };
 
     class FuncExprNode : public ExpressionNode {

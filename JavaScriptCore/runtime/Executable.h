@@ -221,17 +221,9 @@ namespace JSC {
     class FunctionExecutable : public ScriptExecutable {
         friend class JIT;
     public:
-        FunctionExecutable(const Identifier& name, const SourceCode& source, bool forceUsesArguments, Identifier* parameters, int parameterCount, int firstLine, int lastLine)
-            : ScriptExecutable(source)
-            , m_forceUsesArguments(forceUsesArguments)
-            , m_parameters(parameters)
-            , m_parameterCount(parameterCount)
-            , m_codeBlock(0)
-            , m_name(name)
-            , m_numVariables(0)
+        static PassRefPtr<FunctionExecutable> create(const Identifier& name, const SourceCode& source, bool forceUsesArguments, FunctionParameters* parameters, int firstLine, int lastLine)
         {
-            m_firstLine = firstLine;
-            m_lastLine = lastLine;
+            return adoptRef(new FunctionExecutable(name, source, forceUsesArguments, parameters, firstLine, lastLine));
         }
 
         ~FunctionExecutable();
@@ -261,7 +253,7 @@ namespace JSC {
         }
 
         const Identifier& name() { return m_name; }
-        size_t parameterCount() const { return m_parameterCount; }
+        size_t parameterCount() const { return m_parameters->size(); }
         size_t variableCount() const { return m_numVariables; }
         UString paramString() const;
 
@@ -271,12 +263,22 @@ namespace JSC {
         static PassRefPtr<FunctionExecutable> fromGlobalCode(const Identifier&, ExecState*, Debugger*, const SourceCode&, int* errLine = 0, UString* errMsg = 0);
 
     private:
+        FunctionExecutable(const Identifier& name, const SourceCode& source, bool forceUsesArguments, FunctionParameters* parameters, int firstLine, int lastLine)
+            : ScriptExecutable(source)
+            , m_forceUsesArguments(forceUsesArguments)
+            , m_parameters(parameters)
+            , m_codeBlock(0)
+            , m_name(name)
+            , m_numVariables(0)
+        {
+            m_firstLine = firstLine;
+            m_lastLine = lastLine;
+        }
+
         void compile(ExecState*, ScopeChainNode*);
-        Identifier* copyParameters();
 
         bool m_forceUsesArguments;
-        Identifier* m_parameters;
-        int m_parameterCount;
+        RefPtr<FunctionParameters> m_parameters;
         CodeBlock* m_codeBlock;
         Identifier m_name;
         size_t m_numVariables;

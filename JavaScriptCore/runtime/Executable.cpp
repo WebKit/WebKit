@@ -56,9 +56,6 @@ ProgramExecutable::~ProgramExecutable()
 
 FunctionExecutable::~FunctionExecutable()
 {
-    for (int i = 0; i < m_parameterCount; ++i)
-        m_parameters[i].~Identifier();
-    fastFree(m_parameters);
     delete m_codeBlock;
 }
 
@@ -120,7 +117,7 @@ void FunctionExecutable::compile(ExecState*, ScopeChainNode* scopeChainNode)
     RefPtr<FunctionBodyNode> body = globalData->parser->parse<FunctionBodyNode>(globalData, 0, 0, m_source);
     if (m_forceUsesArguments)
         body->setUsesArguments();
-    body->finishParsing(copyParameters(), m_parameterCount, m_name);
+    body->finishParsing(m_parameters, m_name);
     recordParse(body->features(), body->lineNo(), body->lastLine());
 
     ScopeChain scopeChain(scopeChainNode);
@@ -185,7 +182,7 @@ ExceptionInfo* FunctionExecutable::reparseExceptionInfo(JSGlobalData* globalData
     RefPtr<FunctionBodyNode> newFunctionBody = globalData->parser->parse<FunctionBodyNode>(globalData, 0, 0, m_source);
     if (m_forceUsesArguments)
         newFunctionBody->setUsesArguments();
-    newFunctionBody->finishParsing(copyParameters(), m_parameterCount, m_name);
+    newFunctionBody->finishParsing(m_parameters, m_name);
 
     ScopeChain scopeChain(scopeChainNode);
     JSGlobalObject* globalObject = scopeChain.globalObject();
@@ -262,25 +259,17 @@ PassRefPtr<FunctionExecutable> FunctionExecutable::fromGlobalCode(const Identifi
 
     FunctionBodyNode* body = static_cast<FuncExprNode*>(funcExpr)->body();
     ASSERT(body);
-    return adoptRef(new FunctionExecutable(functionName, body->source(), body->usesArguments(), body->copyParameters(), body->parameterCount(), body->lineNo(), body->lastLine()));
-}
-
-Identifier* FunctionExecutable::copyParameters()
-{
-    // This code uses the internal vector copier to make copy-constructed copies of the data in the array
-    // (the array contains Identfiers which reference count Ustring::Reps, which must be ref'ed correctly).
-    Identifier* parameters = static_cast<Identifier*>(fastMalloc(m_parameterCount * sizeof(Identifier)));
-    WTF::VectorCopier<false, Identifier>::uninitializedCopy(m_parameters, m_parameters + m_parameterCount, parameters);
-    return parameters;
+    return FunctionExecutable::create(functionName, body->source(), body->usesArguments(), body->parameters(), body->lineNo(), body->lastLine());
 }
 
 UString FunctionExecutable::paramString() const
 {
+    FunctionParameters& parameters = *m_parameters;
     UString s("");
-    for (int pos = 0; pos < m_parameterCount; ++pos) {
+    for (size_t pos = 0; pos < parameters.size(); ++pos) {
         if (!s.isEmpty())
             s += ", ";
-        s += m_parameters[pos].ustring();
+        s += parameters[pos].ustring();
     }
 
     return s;
