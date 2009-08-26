@@ -1,3 +1,16 @@
+2009-08-26  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28718, image inside relpositioned inline doesn't paint.
+        Make sure vertical overflow is still computed across self-painting layers, even though it isn't
+        propagated to parents.
+
+        Added fast/repaint/rel-positioned-inline-with-overflow.html
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::computeVerticalOverflow):
+
 2009-08-26  David Levin  <levin@chromium.org>
 
         Reviewed by Darin Fisher.

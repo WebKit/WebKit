@@ -1,3 +1,14 @@
+2009-08-26  Dave Hyatt  <hyatt@apple.com>
+
+        Add layout test for relpositioned inline regression.
+
+        Reviewed by Dan Bernstein.
+
+        * fast/repaint/rel-positioned-inline-with-overflow.html: Added.
+        * platform/mac/fast/repaint/rel-positioned-inline-with-overflow-expected.checksum: Added.
+        * platform/mac/fast/repaint/rel-positioned-inline-with-overflow-expected.png: Added.
+        * platform/mac/fast/repaint/rel-positioned-inline-with-overflow-expected.txt: Added.
+
 2009-08-26  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.
