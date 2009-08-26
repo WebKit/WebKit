@@ -45,6 +45,7 @@ public:
     virtual void absoluteQuads(Vector<FloatQuad>&);
 
     IntRect linesBoundingBox() const;
+    IntRect linesVisibleOverflowBoundingBox() const;
 
     InlineFlowBox* createAndAppendInlineFlowBox();
 

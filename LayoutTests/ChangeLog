@@ -1,3 +1,15 @@
+2009-08-26  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Test that RenderInline::clippedOverflowRectForRepaint() actually
+        includes overflow.
+
+        * fast/repaint/inline-overflow-expected.checksum: Added.
+        * fast/repaint/inline-overflow-expected.png: Added.
+        * fast/repaint/inline-overflow-expected.txt: Added.
+        * fast/repaint/inline-overflow.html: Added.
+
 2009-08-26  Julie Parent  <jparent@chromium.org>
 
         Reviewed by Maciej Stachowiak.

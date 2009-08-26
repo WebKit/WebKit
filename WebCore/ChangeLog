@@ -1,3 +1,21 @@
+2009-08-26  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Made RenderInline::clippedOverflowRectForRepaint() actually include
+        overflow.
+
+        Test: fast/repaint/inline-overflow.html
+
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::linesVisibleOverflowBoundingBox): Added. Returns
+            the bounding box of all lines’ visible overflow boxes (under the
+            assumption that the first and last lines determine the top and
+            bottom, respectively).
+        (WebCore::RenderInline::clippedOverflowRectForRepaint): Changed to use
+            linesVisibleOverflowBoundingBox() instead of linesBoundingBox().
+        * rendering/RenderInline.h:
+
 2009-08-26  John Gregg  <johnnyg@google.com>
 
         Reviewed by David Levin.
