@@ -1,3 +1,13 @@
+2009-08-26  Julie Parent  <jparent@chromium.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Follow-up to http://trac.webkit.org/changeset/47790.  Add windows
+        specific results that are the same as the results next to the test,
+        since windows falls back on platform/mac.
+
+        * platform/win/http/tests/xmlhttprequest/xmlhttprequest-missing-file-exception-expected.txt: Added.
+
 2009-08-26  David Levin  <levin@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
