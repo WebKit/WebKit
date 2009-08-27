@@ -92,6 +92,7 @@ void ClipboardChromium::clearData(const String& type)
         m_dataObject->url = KURL();
         m_dataObject->urlTitle = "";
     }
+
     if (dataType == ClipboardDataTypeText)
         m_dataObject->plainText = "";
 }
@@ -150,6 +151,7 @@ bool ClipboardChromium::setData(const String& type, const String& data)
         m_dataObject->plainText = data;
         return true;
     }
+    
     return false;
 }
 
@@ -178,8 +180,17 @@ HashSet<String> ClipboardChromium::types() const
 
 PassRefPtr<FileList> ClipboardChromium::files() const
 {
-    notImplemented();
-    return 0;
+    if (policy() != ClipboardReadable)
+        return FileList::create();
+
+    if (!m_dataObject || m_dataObject->filenames.isEmpty())
+        return FileList::create();
+
+    RefPtr<FileList> fileList = FileList::create();
+    for (size_t i = 0; i < m_dataObject->filenames.size(); ++i)
+        fileList->append(File::create(m_dataObject->filenames.at(i)));
+
+    return fileList.release();
 }
 
 void ClipboardChromium::setDragImage(CachedImage* image, Node* node, const IntPoint& loc)
