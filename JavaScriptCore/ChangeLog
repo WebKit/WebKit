@@ -1,3 +1,12 @@
+2009-08-27  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Geoff Garen.
+        
+        Fix Windows-specific crash due to missing memory clearing call.
+        
+        * runtime/Collector.cpp:
+        (JSC::Heap::allocateBlock):
+
 2009-08-27  Brent Fulgham  <bfulgham@webkit.org>
 
         Build fix: JavaScriptCore_debug.def missing some exports.  Apple

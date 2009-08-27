@@ -238,6 +238,7 @@ NEVER_INLINE CollectorBlock* Heap::allocateBlock()
     memset(reinterpret_cast<void*>(address), 0, BLOCK_SIZE);
 #elif PLATFORM(WIN_OS)
     void* address = _aligned_malloc(BLOCK_SIZE, BLOCK_SIZE);
+    memset(address, 0, BLOCK_SIZE);
 #elif HAVE(POSIX_MEMALIGN)
     void* address;
     posix_memalign(&address, BLOCK_SIZE, BLOCK_SIZE);
