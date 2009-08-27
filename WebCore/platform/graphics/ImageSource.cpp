@@ -144,34 +144,22 @@ String ImageSource::filenameExtension() const
 
 bool ImageSource::isSizeAvailable()
 {
-    if (!m_decoder)
-        return false;
-
-    return m_decoder->isSizeAvailable();
+    return m_decoder && m_decoder->isSizeAvailable();
 }
 
 IntSize ImageSource::size() const
 {
-    if (!m_decoder)
-        return IntSize();
-
-    return m_decoder->size();
+    return m_decoder ? m_decoder->size() : IntSize();
 }
 
 IntSize ImageSource::frameSizeAtIndex(size_t index) const
 {
-    if (!m_decoder)
-        return IntSize();
-
-    return m_decoder->frameSizeAtIndex(index);
+    return m_decoder ? frameSizeAtIndex(index) : IntSize();
 }
 
 int ImageSource::repetitionCount()
 {
-    if (!m_decoder)
-        return cAnimationNone;
-
-    return m_decoder->repetitionCount();
+    return m_decoder ? m_decoder->repetitionCount() : cAnimationNone;
 }
 
 size_t ImageSource::frameCount() const
@@ -196,15 +184,6 @@ NativeImagePtr ImageSource::createFrameAtIndex(size_t index)
     // Return the buffer contents as a native image.  For some ports, the data
     // is already in a native container, and this just increments its refcount.
     return buffer->asNewNativeImage();
-}
-
-bool ImageSource::frameIsCompleteAtIndex(size_t index)
-{
-    if (!m_decoder)
-        return false;
-
-    RGBA32Buffer* buffer = m_decoder->frameBufferAtIndex(index);
-    return buffer && buffer->status() == RGBA32Buffer::FrameComplete;
 }
 
 float ImageSource::frameDurationAtIndex(size_t index)
@@ -235,6 +214,15 @@ bool ImageSource::frameHasAlphaAtIndex(size_t index)
     // in this case.
     return frameIsCompleteAtIndex(index) ?
         m_decoder->frameBufferAtIndex(index)->hasAlpha() : true;
+}
+
+bool ImageSource::frameIsCompleteAtIndex(size_t index)
+{
+    if (!m_decoder)
+        return false;
+
+    RGBA32Buffer* buffer = m_decoder->frameBufferAtIndex(index);
+    return buffer && buffer->status() == RGBA32Buffer::FrameComplete;
 }
 
 }

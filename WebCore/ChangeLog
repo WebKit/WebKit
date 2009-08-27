@@ -2,6 +2,21 @@
 
         Reviewed by Eric Seidel.
 
+        https://bugs.webkit.org/show_bug.cgi?id=28751
+        Clean up ImageSource.* in preparation for more fixes on bug 27965.
+
+        * platform/graphics/ImageSource.cpp: Put functions in the same order as in header file.
+        (WebCore::ImageSource::isSizeAvailable): Shorten.
+        (WebCore::ImageSource::size): Shorten.
+        (WebCore::ImageSource::frameSizeAtIndex): Shorten.
+        (WebCore::ImageSource::repetitionCount): Shorten.
+        (WebCore::ImageSource::frameIsCompleteAtIndex):
+        * platform/graphics/ImageSource.h: Shorten #ifdef section a bit by sharing common typedefs.
+
+2009-08-27  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Eric Seidel.
+
         https://bugs.webkit.org/show_bug.cgi?id=28785
         Add ImageDecoder.cpp to various build files so platforms will be able to
         use it.  Move an ENABLE to not cover the whole file, in preparation for
