@@ -2,6 +2,8 @@ Test 'timeupdate' events are posted while playing but not while paused.
 
 RUN(video.play())
 
+EVENT(play)
+EVENT(waiting)
 EVENT(loadstart)
 EVENT(durationchange)
 EVENT(loadedmetadata)

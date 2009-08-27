@@ -1,3 +1,39 @@
+2009-08-26  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        HTMLMediaElement sometimes loses events
+        https://bugs.webkit.org/show_bug.cgi?id=28762
+        <rdar://problem/7172437>
+
+        A media element triggers the resource selection algorithm if 
+        play() is called when the networkState attribute is NETWORK_EMPTY, but
+        it also immediately queues 'play' and either 'waiting' or 'playing' events.
+        One of the steps in preparing to load is to flush pending events, so those 
+        events were lost if the load timer fired quickly enough. Fixed by deleting
+        pending events before scheduling the load timer.
+
+        Test: media/audio-play-event.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::scheduleLoad):
+            Do nothing if the load timer is already scheduled. Call prepareForLoad so queue of 
+            pending events is flushed immediately.
+        (WebCore::HTMLMediaElement::scheduleNextSourceChild):
+            New, start the load timer without flushing pending events.
+        (WebCore::HTMLMediaElement::load):
+            Call prepareForLoad();
+        (WebCore::HTMLMediaElement::prepareForLoad):
+            New, load setup code moved from loadInternal.
+        (WebCore::HTMLMediaElement::loadInternal):
+            Moved some setup code to prepareForLoad so it can be invoked immediately before
+            arming the load timer.
+        (WebCore::HTMLMediaElement::setNetworkState):
+            Call scheduleNextSourceChild instead of scheduleLoad as the later now clears
+            pending events.
+        * html/HTMLMediaElement.h:
+            Declare scheduleNextSourceChild.
+
 2009-08-26  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Eric Seidel.

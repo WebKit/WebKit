@@ -1,0 +1,27 @@
+<html>
+    <head>
+        <title>'play' event</title>
+        <script src=video-test.js></script>
+
+        <script>
+            function start()
+            {
+                mediaElement = new Audio();
+                waitForEvent('error');
+                waitForEvent('loadedmetadata');
+                waitForEvent('canplay');
+                waitForEvent('canplaythrough');
+                waitForEvent('play');
+                waitForEvent('playing', function() { endTest(); });
+                run("mediaElement.src = 'content/silence.mpg'");
+                run("mediaElement.volume = 1");
+                run("mediaElement.play()");
+            }    
+        </script>
+    </head>
+
+    <body onload="start()">
+    <p>Test that a 'play' event listener is triggered when fired by a new audio element.</p>
+    </body>
+</html>
+

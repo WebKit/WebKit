@@ -1,0 +1,12 @@
+Test that a 'play' event listener is triggered when fired by a new audio element.
+
+RUN(mediaElement.src = 'content/silence.mpg')
+RUN(mediaElement.volume = 1)
+RUN(mediaElement.play())
+EVENT(play)
+EVENT(loadedmetadata)
+EVENT(canplay)
+EVENT(canplaythrough)
+EVENT(playing)
+END OF TEST
+

@@ -272,6 +272,15 @@ void HTMLMediaElement::recalcStyle(StyleChange change)
 
 void HTMLMediaElement::scheduleLoad()
 {
+    if (m_loadTimer.isActive())
+        return;
+    prepareForLoad();
+    m_loadTimer.startOneShot(0);
+}
+
+void HTMLMediaElement::scheduleNextSourceChild()
+{
+    // Schedule the timer to try the next <source> element WITHOUT resetting state ala prepareForLoad.
     m_loadTimer.startOneShot(0);
 }
 
@@ -411,17 +420,15 @@ void HTMLMediaElement::load(ExceptionCode& ec)
 {
     if (m_restrictions & RequireUserGestureForLoadRestriction && !processingUserGesture())
         ec = INVALID_STATE_ERR;
-    else
+    else {
+        prepareForLoad();
         loadInternal();
+    }
 }
 
-void HTMLMediaElement::loadInternal()
+void HTMLMediaElement::prepareForLoad()
 {
-    // 1 - If the load() method for this element is already being invoked, then abort these steps.
-    if (m_processingLoad)
-        return;
-    m_processingLoad = true;
-    
+    // Perform the cleanup required for the resource load algorithm to run.
     stopPeriodicTimers();
     m_loadTimer.stop();
     m_sentStalledEvent = false;
@@ -433,6 +440,16 @@ void HTMLMediaElement::loadInternal()
     // 3 - If there are any tasks from the media element's media element event task source in 
     // one of the task queues, then remove those tasks.
     cancelPendingEventsAndCallbacks();
+}
+
+void HTMLMediaElement::loadInternal()
+{
+    // 1 - If the load() method for this element is already being invoked, then abort these steps.
+    if (m_processingLoad)
+        return;
+    m_processingLoad = true;
+    
+    // Steps 2 and 3 were done in prepareForLoad()
     
     // 4 - If the media element's networkState is set to NETWORK_LOADING or NETWORK_IDLE, set
     // the error attribute to a new MediaError object whose code attribute is set to
@@ -689,7 +706,7 @@ void HTMLMediaElement::setNetworkState(MediaPlayer::NetworkState state)
         if (m_readyState < HAVE_METADATA && m_loadState == LoadingFromSourceElement) {
             m_currentSourceNode->scheduleErrorEvent();
             if (havePotentialSourceChild())
-                scheduleLoad();
+                scheduleNextSourceChild();
             return;
         }
 

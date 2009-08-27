@@ -1,3 +1,22 @@
+2009-08-26  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        HTMLMediaElement sometimes loses events
+        https://bugs.webkit.org/show_bug.cgi?id=28762
+        <rdar://problem/7172437>
+
+        * media/audio-play-event.html:
+        * media/audio-play-event-expected.txt:
+             Added.
+
+        * media/video-play-empty-events-expected.txt:
+            Updated results for previously missed events.
+
+        * media/video-src-remove.html:
+        * media/video-timeupdate-during-playback-expected.txt:
+            Restructured to make results less timing dependent.
+
 2009-08-26  Dave Hyatt  <hyatt@apple.com>
 
         Add layout test for relpositioned inline regression.

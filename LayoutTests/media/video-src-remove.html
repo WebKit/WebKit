@@ -2,7 +2,7 @@
 <body>
     <script src=video-test.js></script>
 
-    <video src=content/silence.mpg controls>
+    <video src=content/silence.mpg controls onloadedmetadata="loadedmetadata()" >
         <source src=content/test.mp4>
     </video>
 
@@ -22,6 +22,8 @@
 
         function loadedmetadata()
         {
+            consoleWrite("EVENT(loadedmetadata)");
+
             ++loadCount;
             if (loadCount == 1)
             {
@@ -34,6 +36,7 @@
                 endTest();
             }
             consoleWrite("");
+            setTimeout(someTimeLater, 100) ;
         }
         
         function someTimeLater()
@@ -44,8 +47,6 @@
         }
 
         consoleWrite("");
-        waitForEvent('loadedmetadata', loadedmetadata);
-        setTimeout(someTimeLater, 400) ;
     </script>
 
 </body>
