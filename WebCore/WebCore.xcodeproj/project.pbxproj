@@ -825,7 +825,7 @@
 		49C7B9E31042D32F0009D447 /* CanvasShader.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9C31042D32F0009D447 /* CanvasShader.h */; };
 		49C7B9E51042D32F0009D447 /* CanvasTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9C51042D32F0009D447 /* CanvasTexture.cpp */; };
 		49C7B9E61042D32F0009D447 /* CanvasTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9C61042D32F0009D447 /* CanvasTexture.h */; };
-		49C7B9FC1042D3650009D447 /* GraphicsContext3D.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9FB1042D3650009D447 /* GraphicsContext3D.h */; };
+		49C7B9FC1042D3650009D447 /* GraphicsContext3D.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9FB1042D3650009D447 /* GraphicsContext3D.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		49C7BA001042D38C0009D447 /* Canvas3DLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9FD1042D38C0009D447 /* Canvas3DLayer.h */; };
 		49C7BA011042D38C0009D447 /* Canvas3DLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9FE1042D38C0009D447 /* Canvas3DLayer.mm */; };
 		49C7BA021042D38C0009D447 /* GraphicsContext3DMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9FF1042D38C0009D447 /* GraphicsContext3DMac.cpp */; };
@@ -16284,6 +16284,7 @@
 				B2A015A90AF6CD53006BCE0E /* GraphicsContext.h in Headers */,
 				A80D67080E9E9DEB00E420F0 /* GraphicsContextPlatformPrivateCG.h in Headers */,
 				A88FE3340E5EEE87008D8C0F /* GraphicsContextPrivate.h in Headers */,
+				49C7B9FC1042D3650009D447 /* GraphicsContext3D.h in Headers */,
 				0F580B0D0F12A2690051D689 /* GraphicsLayer.h in Headers */,
 				0F580B060F12A2550051D689 /* GraphicsLayerCA.h in Headers */,
 				0F580B0E0F12A2690051D689 /* GraphicsLayerClient.h in Headers */,
@@ -17570,7 +17571,6 @@
 				49C7B9E01042D32F0009D447 /* CanvasRenderingContext3D.h in Headers */,
 				49C7B9E31042D32F0009D447 /* CanvasShader.h in Headers */,
 				49C7B9E61042D32F0009D447 /* CanvasTexture.h in Headers */,
-				49C7B9FC1042D3650009D447 /* GraphicsContext3D.h in Headers */,
 				49C7BA001042D38C0009D447 /* Canvas3DLayer.h in Headers */,
 				E1284BB110449FFA00EAEB52 /* JSPageTransitionEvent.h in Headers */,
 				E1284BD61044A01E00EAEB52 /* DOMPageTransitionEvent.h in Headers */,

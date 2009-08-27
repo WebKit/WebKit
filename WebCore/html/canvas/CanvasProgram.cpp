@@ -28,23 +28,24 @@
 #if ENABLE(3D_CANVAS)
 
 #include "CanvasProgram.h"
+#include "CanvasRenderingContext3D.h"
 
 namespace WebCore {
     
-PassRefPtr<CanvasProgram> CanvasProgram::create(GraphicsContext3D* ctx)
+PassRefPtr<CanvasProgram> CanvasProgram::create(CanvasRenderingContext3D* ctx)
 {
     return adoptRef(new CanvasProgram(ctx));
 }
 
-CanvasProgram::CanvasProgram(GraphicsContext3D* ctx)
+CanvasProgram::CanvasProgram(CanvasRenderingContext3D* ctx)
     : CanvasObject(ctx)
 {
-    setObject(context()->createProgram());
+    setObject(context()->graphicsContext3D()->createProgram());
 }
 
 void CanvasProgram::_deleteObject(Platform3DObject object)
 {
-    context()->deleteProgram(object);
+    context()->graphicsContext3D()->deleteProgram(object);
 }
 
 }

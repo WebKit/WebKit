@@ -37,10 +37,10 @@ namespace WebCore {
     public:
         virtual ~CanvasProgram() { deleteObject(); }
         
-        static PassRefPtr<CanvasProgram> create(GraphicsContext3D*);
+        static PassRefPtr<CanvasProgram> create(CanvasRenderingContext3D*);
         
     protected:
-        CanvasProgram(GraphicsContext3D*);
+        CanvasProgram(CanvasRenderingContext3D*);
         
         virtual void _deleteObject(Platform3DObject);
     };

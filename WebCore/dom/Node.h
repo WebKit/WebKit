@@ -67,7 +67,10 @@ class StringBuilder;
 
 typedef int ExceptionCode;
 
-enum StyleChangeType { NoStyleChange, InlineStyleChange, FullStyleChange, AnimationStyleChange };
+// SyntheticStyleChange means that we need to go through the entire style change logic even though
+// no style property has actually changed. It is used to restructure the tree when, for instance,
+// RenderLayers are created or destroyed due to animation changes.
+enum StyleChangeType { NoStyleChange, InlineStyleChange, FullStyleChange, SyntheticStyleChange };
 
 const unsigned short DOCUMENT_POSITION_EQUIVALENT = 0x00;
 const unsigned short DOCUMENT_POSITION_DISCONNECTED = 0x01;

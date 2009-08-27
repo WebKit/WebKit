@@ -28,23 +28,24 @@
 #if ENABLE(3D_CANVAS)
 
 #include "CanvasTexture.h"
+#include "CanvasRenderingContext3D.h"
 
 namespace WebCore {
     
-PassRefPtr<CanvasTexture> CanvasTexture::create(GraphicsContext3D* ctx)
+PassRefPtr<CanvasTexture> CanvasTexture::create(CanvasRenderingContext3D* ctx)
 {
     return adoptRef(new CanvasTexture(ctx));
 }
 
-CanvasTexture::CanvasTexture(GraphicsContext3D* ctx)
+CanvasTexture::CanvasTexture(CanvasRenderingContext3D* ctx)
     : CanvasObject(ctx)
 {
-    setObject(context()->createTexture());
+    setObject(context()->graphicsContext3D()->createTexture());
 }
 
 void CanvasTexture::_deleteObject(Platform3DObject object)
 {
-    context()->deleteTexture(object);
+    context()->graphicsContext3D()->deleteTexture(object);
 }
 
 }

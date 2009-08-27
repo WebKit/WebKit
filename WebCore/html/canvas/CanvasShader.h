@@ -37,10 +37,10 @@ namespace WebCore {
     public:
         virtual ~CanvasShader() { deleteObject(); }
         
-        static PassRefPtr<CanvasShader> create(GraphicsContext3D*, GraphicsContext3D::ShaderType);
+        static PassRefPtr<CanvasShader> create(CanvasRenderingContext3D*, GraphicsContext3D::ShaderType);
         
     private:
-        CanvasShader(GraphicsContext3D*, GraphicsContext3D::ShaderType);
+        CanvasShader(CanvasRenderingContext3D*, GraphicsContext3D::ShaderType);
 
         virtual void _deleteObject(Platform3DObject);
     };

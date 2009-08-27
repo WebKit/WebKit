@@ -1,3 +1,17 @@
+2009-08-27  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Modified tests to work when 3D-CANVAS flag is on and added a test for crashing when context is changed
+        https://bugs.webkit.org/show_bug.cgi?id=28018
+
+        * fast/canvas/change-context-expected.txt: Added.
+        * fast/canvas/change-context.html: Added.
+        * fast/dom/Window/window-properties.html:
+        * fast/dom/resources/prototype-inheritance-2.js:
+        (constructorNamesForWindow):
+        * fast/dom/resources/prototype-inheritance.js:
+
 2009-08-27  Drew Wilson  <atwilson@google.com>
 
         Unreviewed.

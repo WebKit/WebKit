@@ -765,7 +765,7 @@ void Node::setNeedsStyleRecalc(StyleChangeType changeType)
     if ((changeType != NoStyleChange) && !attached()) // changed compared to what?
         return;
 
-    if (!(changeType == InlineStyleChange && (m_styleChange == FullStyleChange || m_styleChange == AnimationStyleChange)))
+    if (!(changeType == InlineStyleChange && (m_styleChange == FullStyleChange || m_styleChange == SyntheticStyleChange)))
         m_styleChange = changeType;
 
     if (m_styleChange != NoStyleChange) {

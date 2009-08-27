@@ -28,11 +28,13 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "AnimationController.h"
+#include "CanvasRenderingContext3D.h"
 #include "CSSPropertyNames.h"
 #include "CSSStyleSelector.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
+#include "HTMLCanvasElement.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "RenderBox.h"
@@ -163,6 +165,16 @@ bool RenderLayerBacking::updateGraphicsLayerConfiguration()
             m_hasDirectlyCompositedContent = true;
             m_graphicsLayer->setDrawsContent(false);
         }
+#if ENABLE(3D_CANVAS)    
+        else if (renderer()->isCanvas()) {
+            HTMLCanvasElement* canvas = static_cast<HTMLCanvasElement*>(renderer()->node());
+            if (canvas->is3D()) {
+                CanvasRenderingContext3D* context = static_cast<CanvasRenderingContext3D*>(canvas->renderingContext());
+                if (context->graphicsContext3D()->platformGraphicsContext3D())
+                    m_graphicsLayer->setContentsToGraphicsContext3D(context->graphicsContext3D());
+            }
+        }
+#endif
 
         if (rendererHasBackground())
             m_graphicsLayer->setBackgroundColor(rendererBackgroundColor());
@@ -630,6 +642,14 @@ bool RenderLayerBacking::canUseDirectCompositing() const
 {
     RenderObject* renderObject = renderer();
     
+    // Canvas3D is always direct composited
+#if ENABLE(3D_CANVAS)    
+    if (renderer()->isCanvas()) {
+        HTMLCanvasElement* canvas = static_cast<HTMLCanvasElement*>(renderer()->node());
+        return canvas->is3D();
+    }
+#endif
+
     // Reject anything that isn't an image
     if (!renderObject->isImage() && !renderObject->isVideo())
         return false;
@@ -648,8 +668,19 @@ bool RenderLayerBacking::canUseDirectCompositing() const
     
 void RenderLayerBacking::rendererContentChanged()
 {
-    if (canUseDirectCompositing() && renderer()->isImage())
-        updateImageContents();
+    if (canUseDirectCompositing()) {
+        if (renderer()->isImage())
+            updateImageContents();
+        else {
+#if ENABLE(3D_CANVAS)    
+            if (renderer()->isCanvas()) {
+                HTMLCanvasElement* canvas = static_cast<HTMLCanvasElement*>(renderer()->node());
+                if (canvas->is3D())
+                    m_graphicsLayer->setGraphicsContext3DNeedsDisplay();
+            }
+#endif
+        }
+    }
 }
 
 void RenderLayerBacking::updateImageContents()

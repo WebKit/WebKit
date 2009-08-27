@@ -184,14 +184,14 @@ class WebKitCSSMatrix;
         void texSubImage2D(unsigned target, unsigned level, unsigned xoff, unsigned yoff, unsigned width, unsigned height, HTMLImageElement* image, ExceptionCode&);
         void texSubImage2D(unsigned target, unsigned level, unsigned xoff, unsigned yoff, unsigned width, unsigned height, HTMLCanvasElement* canvas, ExceptionCode&);
 
-        PlatformGraphicsContext3D context3D() const { return m_context.context3D(); }
-        Platform3DObject texture3D() const { return m_context.texture3D(); }
+        GraphicsContext3D* graphicsContext3D() { return &m_context; }
     
         void reshape(int width, int height);
         
+        void removeObject(CanvasObject*);
+        
     private:
         void addObject(CanvasObject*);
-        void removeObject(CanvasObject*);
         void detachAndRemoveAllObjects();
 
         void markContextChanged();

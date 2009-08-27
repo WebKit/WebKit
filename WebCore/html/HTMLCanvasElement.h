@@ -105,8 +105,6 @@ public:
 
 #if ENABLE(3D_CANVAS)    
     bool is3D() const;
-    PlatformGraphicsContext3D context3D() const;
-    Platform3DObject texture3D() const;
 #endif
 
 private:

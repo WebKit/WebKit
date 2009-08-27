@@ -164,6 +164,7 @@ private:
     bool requiresCompositingForAnimation(RenderObject*) const;
     bool requiresCompositingForTransform(RenderObject*) const;
     bool requiresCompositingForVideo(RenderObject*) const;
+    bool requiresCompositingForCanvas(RenderObject*) const;
     bool requiresCompositingWhenDescendantsAreCompositing(RenderObject*) const;
 
 private:

@@ -34,8 +34,8 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsLayer.h"
-#include "HitTestRequest.h"
 #include "HitTestResult.h"
+#include "HTMLCanvasElement.h"
 #include "Page.h"
 #include "RenderLayerBacking.h"
 #include "RenderVideo.h"
@@ -819,11 +819,12 @@ bool RenderLayerCompositor::needsToBeComposited(const RenderLayer* layer) const
 // Use needsToBeComposited() to determine if a RL actually needs a compositing layer.
 // static
 bool RenderLayerCompositor::requiresCompositingLayer(const RenderLayer* layer) const
-{
+{    
     // The root layer always has a compositing layer, but it may not have backing.
     return (inCompositingMode() && layer->isRootLayer()) ||
              requiresCompositingForTransform(layer->renderer()) ||
              requiresCompositingForVideo(layer->renderer()) ||
+             requiresCompositingForCanvas(layer->renderer()) ||
              layer->renderer()->style()->backfaceVisibility() == BackfaceVisibilityHidden ||
              clipsCompositingDescendants(layer) ||
              requiresCompositingForAnimation(layer->renderer());
@@ -891,6 +892,19 @@ bool RenderLayerCompositor::requiresCompositingForVideo(RenderObject* renderer) 
         RenderVideo* video = toRenderVideo(renderer);
         return canAccelerateVideoRendering(video);
     }
+#endif
+    return false;
+}
+
+bool RenderLayerCompositor::requiresCompositingForCanvas(RenderObject* renderer) const
+{
+#if ENABLE(3D_CANVAS)    
+    if (renderer->isCanvas()) {
+        HTMLCanvasElement* canvas = static_cast<HTMLCanvasElement*>(renderer->node());
+        return canvas->is3D();
+    }
+#else
+    UNUSED_PARAM(renderer);
 #endif
     return false;
 }

@@ -415,6 +415,7 @@ module window {
         attribute [CustomGetter] HTMLOptionElementConstructor Option; // Usable with new operator
 
         attribute CanvasRenderingContext2DConstructor CanvasRenderingContext2D;
+        attribute [Conditional=3D_CANVAS] CanvasRenderingContext3DConstructor CanvasRenderingContext3D;
         attribute TextMetricsConstructor TextMetrics;
 
         attribute EventConstructor Event;

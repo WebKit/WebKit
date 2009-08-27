@@ -28,23 +28,24 @@
 #if ENABLE(3D_CANVAS)
 
 #include "CanvasShader.h"
+#include "CanvasRenderingContext3D.h"
 
 namespace WebCore {
     
-PassRefPtr<CanvasShader> CanvasShader::create(GraphicsContext3D* ctx, GraphicsContext3D::ShaderType type)
+PassRefPtr<CanvasShader> CanvasShader::create(CanvasRenderingContext3D* ctx, GraphicsContext3D::ShaderType type)
 {
     return adoptRef(new CanvasShader(ctx, type));
 }
 
-CanvasShader::CanvasShader(GraphicsContext3D* ctx, GraphicsContext3D::ShaderType type)
+CanvasShader::CanvasShader(CanvasRenderingContext3D* ctx, GraphicsContext3D::ShaderType type)
     : CanvasObject(ctx)
 {
-    setObject(context()->createShader(type));
+    setObject(context()->graphicsContext3D()->createShader(type));
 }
 
 void CanvasShader::_deleteObject(Platform3DObject object)
 {
-    context()->deleteShader(object);
+    context()->graphicsContext3D()->deleteShader(object);
 }
 
 }

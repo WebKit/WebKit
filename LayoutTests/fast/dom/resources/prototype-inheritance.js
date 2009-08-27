@@ -12,6 +12,7 @@ var skippedProperties = [
     "objCController", "textInputController", "navigationController",
     "eventSender", "objCPlugin", "objCPluginFunction",
     "appleScriptController", "plainText", "accessibilityController",
+    "CanvasRenderingContext3D", // Ignore this property because it does not exist in all implementations. It will be tested separately
 ];
 
 var skippedPropertiesSet = {};

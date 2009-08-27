@@ -43,6 +43,19 @@ RenderHTMLCanvas::RenderHTMLCanvas(HTMLCanvasElement* element)
     view()->frameView()->setIsVisuallyNonEmpty();
 }
 
+bool RenderHTMLCanvas::requiresLayer() const
+{
+    if (RenderReplaced::requiresLayer())
+        return true;
+    
+#if ENABLE(3D_CANVAS)
+    HTMLCanvasElement* canvas = static_cast<HTMLCanvasElement*>(node());
+    return canvas && canvas->is3D();
+#else
+    return false;
+#endif
+}
+
 void RenderHTMLCanvas::paintReplaced(PaintInfo& paintInfo, int tx, int ty)
 {
     IntRect rect = contentBoxRect();

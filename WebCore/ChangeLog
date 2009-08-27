@@ -1,3 +1,138 @@
+2009-08-27  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Final patch for Canvas 3D support
+        https://bugs.webkit.org/show_bug.cgi?id=28018
+
+        This hooks everything up and provides a working implementation of
+        Canvas 3D. I plumb the creation of the 3D canvas down to GraphicsLayer,
+        passing the opaque context and texture pointers so a Canvas3DLayer can be
+        created (more on that later). It also plumbs changes to the 3D canvas so
+        that Canvas3DLayer can recomposite the results.
+        
+        A 3D Canvas element needs a RenderLayer and compositing layer to render.
+        This is because it renders to an off-screen texture in the GPU and then
+        hands it to a Canvas3DLayer, which is a subclass of CAOpenGLLayer, to
+        render that texture as a 3D quad. This keeps everything in GPU memory to 
+        maximize performance. When a CanvasRenderingContext3D is created it 
+        forces a style recalc which creates the RenderLayer and compositing 
+        layer if needed. 
+        
+        I repurposed an existing flag which was put in place for animation to accomplish 
+        this. This flag is passed to setNeedsStyleRecalc(), and I renamed it from 
+        AnimationStyleChange to SyntheticStyleChange. It essentially says that you need
+        to do a complete style recalc, even though the style itself has not really
+        changed.
+        
+        This patch also fixes a couple of bugs discovered when testing with 3d-canvas
+        turned on. I also added a constructor DOMWindow.idl for CanvasRenderingContext3D.
+        This is needed when making a JS wrapper for the object so the prototype 
+        property can be set.
+
+        Test: fast/canvas/change-context.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSCanvasRenderingContext3DCustom.cpp:
+        (WebCore::JSCanvasRenderingContext3D::glDrawElements):
+        * bindings/js/JSCanvasRenderingContextCustom.cpp:
+        (WebCore::toJS):
+        * dom/Element.cpp:
+        (WebCore::Element::recalcStyle):
+        * dom/Node.cpp:
+        (WebCore::Node::setNeedsStyleRecalc):
+        * dom/Node.h:
+        (WebCore::):
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::getContext):
+        (WebCore::HTMLCanvasElement::is3D):
+        * html/HTMLCanvasElement.h:
+        * html/canvas/CanvasBuffer.cpp:
+        (WebCore::CanvasBuffer::create):
+        (WebCore::CanvasBuffer::CanvasBuffer):
+        (WebCore::CanvasBuffer::_deleteObject):
+        * html/canvas/CanvasBuffer.h:
+        * html/canvas/CanvasFramebuffer.cpp:
+        (WebCore::CanvasFramebuffer::create):
+        (WebCore::CanvasFramebuffer::CanvasFramebuffer):
+        (WebCore::CanvasFramebuffer::_deleteObject):
+        * html/canvas/CanvasFramebuffer.h:
+        * html/canvas/CanvasObject.cpp:
+        (WebCore::CanvasObject::CanvasObject):
+        (WebCore::CanvasObject::~CanvasObject):
+        (WebCore::CanvasObject::deleteObject):
+        * html/canvas/CanvasObject.h:
+        (WebCore::CanvasObject::context):
+        * html/canvas/CanvasProgram.cpp:
+        (WebCore::CanvasProgram::create):
+        (WebCore::CanvasProgram::CanvasProgram):
+        (WebCore::CanvasProgram::_deleteObject):
+        * html/canvas/CanvasProgram.h:
+        * html/canvas/CanvasRenderbuffer.cpp:
+        (WebCore::CanvasRenderbuffer::create):
+        (WebCore::CanvasRenderbuffer::CanvasRenderbuffer):
+        (WebCore::CanvasRenderbuffer::_deleteObject):
+        * html/canvas/CanvasRenderbuffer.h:
+        * html/canvas/CanvasRenderingContext3D.cpp:
+        (WebCore::CanvasRenderingContext3D::createBuffer):
+        (WebCore::CanvasRenderingContext3D::createFramebuffer):
+        (WebCore::CanvasRenderingContext3D::createTexture):
+        (WebCore::CanvasRenderingContext3D::createProgram):
+        (WebCore::CanvasRenderingContext3D::createRenderbuffer):
+        (WebCore::CanvasRenderingContext3D::createShader):
+        * html/canvas/CanvasRenderingContext3D.h:
+        (WebCore::CanvasRenderingContext3D::graphicsContext3D):
+        * html/canvas/CanvasShader.cpp:
+        (WebCore::CanvasShader::create):
+        (WebCore::CanvasShader::CanvasShader):
+        (WebCore::CanvasShader::_deleteObject):
+        * html/canvas/CanvasShader.h:
+        * html/canvas/CanvasTexture.cpp:
+        (WebCore::CanvasTexture::create):
+        (WebCore::CanvasTexture::CanvasTexture):
+        (WebCore::CanvasTexture::_deleteObject):
+        * html/canvas/CanvasTexture.h:
+        * page/DOMWindow.idl:
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::setNeedsStyleRecalc):
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::updateAnimationTimer):
+        (WebCore::AnimationControllerPrivate::updateStyleIfNeededDispatcherFired):
+        (WebCore::AnimationControllerPrivate::pauseAnimationAtTime):
+        (WebCore::AnimationControllerPrivate::pauseTransitionAtTime):
+        (WebCore::AnimationController::cancelAnimations):
+        * platform/graphics/GraphicsContext3D.h:
+        (WebCore::GraphicsContext3D::platformGraphicsContext3D):
+        (WebCore::GraphicsContext3D::platformTexture):
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::setContentsToGraphicsContext3D):
+        (WebCore::GraphicsLayer::setGraphicsContext3DNeedsDisplay):
+        * platform/graphics/mac/GraphicsContext3DMac.cpp:
+        (WebCore::GraphicsContext3D::~GraphicsContext3D):
+        (WebCore::GraphicsContext3D::reshape):
+        * platform/graphics/mac/GraphicsLayerCA.h:
+        (WebCore::GraphicsLayerCA::):
+        * platform/graphics/mac/GraphicsLayerCA.mm:
+        (WebCore::GraphicsLayerCA::GraphicsLayerCA):
+        (WebCore::GraphicsLayerCA::commitLayerChanges):
+        (WebCore::GraphicsLayerCA::updateContentsGraphicsContext3D):
+        (WebCore::GraphicsLayerCA::setContentsToGraphicsContext3D):
+        (WebCore::GraphicsLayerCA::setGraphicsContext3DNeedsDisplay):
+        * rendering/RenderHTMLCanvas.cpp:
+        (WebCore::RenderHTMLCanvas::requiresLayer):
+        * rendering/RenderHTMLCanvas.h:
+        (WebCore::RenderHTMLCanvas::isCanvas):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGraphicsLayerConfiguration):
+        (WebCore::RenderLayerBacking::canUseDirectCompositing):
+        (WebCore::RenderLayerBacking::rendererContentChanged):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::requiresCompositingLayer):
+        (WebCore::RenderLayerCompositor::requiresCompositingForCanvas):
+        * rendering/RenderLayerCompositor.h:
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isCanvas):
+
 2009-08-27  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Eric Seidel.

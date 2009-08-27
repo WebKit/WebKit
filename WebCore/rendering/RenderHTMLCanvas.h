@@ -36,6 +36,9 @@ class RenderHTMLCanvas : public RenderReplaced {
 public:
     RenderHTMLCanvas(HTMLCanvasElement*);
 
+    virtual bool isCanvas() const { return true; }
+    virtual bool requiresLayer() const;
+
     void canvasSizeChanged();
     
 private:

@@ -48,7 +48,6 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, CanvasR
 #endif
     ASSERT(object->is2d());
     return getDOMObjectWrapper<JSCanvasRenderingContext2D>(exec, globalObject, static_cast<CanvasRenderingContext2D*>(object));
-    
 }
 
 } // namespace WebCore

@@ -31,6 +31,9 @@
 
 #import "Animation.h"
 #import "BlockExceptions.h"
+#if ENABLE(3D_CANVAS)
+#import "Canvas3DLayer.h"
+#endif
 #import "CString.h"
 #import "FloatConversion.h"
 #import "FloatRect.h"
@@ -341,6 +344,10 @@ GraphicsLayerCA::GraphicsLayerCA(GraphicsLayerClient* client)
 , m_contentsLayerPurpose(NoContentsLayer)
 , m_contentsLayerHasBackgroundColor(false)
 , m_uncommittedChanges(NoChange)
+#if ENABLE(3D_CANVAS)
+, m_platformGraphicsContext3D(NullPlatformGraphicsContext3D)
+, m_platformTexture(NullPlatform3DObject)
+#endif
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     m_layer.adoptNS([[WebLayer alloc] init]);
@@ -775,7 +782,12 @@ void GraphicsLayerCA::commitLayerChanges()
         
     if (m_uncommittedChanges & ContentsVideoChanged) // Needs to happen before ChildrenChanged
         updateContentsVideo();
-
+    
+#if ENABLE(3D_CANVAS)
+    if (m_uncommittedChanges & ContentsGraphicsContext3DChanged) // Needs to happen before ChildrenChanged
+        updateContentsGraphicsContext3D();
+#endif
+    
     if (m_uncommittedChanges & BackgroundColorChanged)  // Needs to happen before ChildrenChanged, and after updating image or video
         updateLayerBackgroundColor();
 
@@ -1078,6 +1090,18 @@ void GraphicsLayerCA::updateContentsVideo()
     }
 }
 
+#if ENABLE(3D_CANVAS)
+void GraphicsLayerCA::updateContentsGraphicsContext3D()
+{
+    // Canvas3D layer was set as m_contentsLayer, and will get parented in updateSublayerList().
+    if (m_contentsLayer) {
+        setupContentsLayer(m_contentsLayer.get());
+        [m_contentsLayer.get() setNeedsDisplay];
+        updateContentsRect();
+    }
+}
+#endif
+    
 void GraphicsLayerCA::updateContentsRect()
 {
     if (!m_contentsLayer)
@@ -1270,6 +1294,40 @@ void GraphicsLayerCA::pauseAnimationOnLayer(AnimatedPropertyID property, int ind
     [layer addAnimation:pausedAnim forKey:animationName];  // This will replace the running animation.
 }
 
+#if ENABLE(3D_CANVAS)
+void GraphicsLayerCA::setContentsToGraphicsContext3D(const GraphicsContext3D* graphicsContext3D)
+{
+    PlatformGraphicsContext3D context = graphicsContext3D->platformGraphicsContext3D();
+    Platform3DObject texture = graphicsContext3D->platformTexture();
+    
+    if (context == m_platformGraphicsContext3D && texture == m_platformTexture)
+        return;
+        
+    m_platformGraphicsContext3D = context;
+    m_platformTexture = texture;
+    
+    noteLayerPropertyChanged(ChildrenChanged);
+    
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+
+    if (m_platformGraphicsContext3D != NullPlatformGraphicsContext3D && m_platformTexture != NullPlatform3DObject) {
+        // create the inner 3d layer
+        m_contentsLayer.adoptNS([[Canvas3DLayer alloc] initWithContext:static_cast<CGLContextObj>(m_platformGraphicsContext3D) texture:static_cast<GLuint>(m_platformTexture)]);
+#ifndef NDEBUG
+        [m_contentsLayer.get() setName:@"3D Layer"];
+#endif        
+    } else {
+        // remove the inner layer
+        m_contentsLayer = 0;
+    }
+    
+    END_BLOCK_OBJC_EXCEPTIONS
+    
+    noteLayerPropertyChanged(ContentsGraphicsContext3DChanged);
+    m_contentsLayerPurpose = m_contentsLayer ? ContentsLayerForGraphicsLayer3D : NoContentsLayer;
+}
+#endif
+    
 void GraphicsLayerCA::repaintLayerDirtyRects()
 {
     if (!m_dirtyRects.size())
@@ -1788,6 +1846,14 @@ void GraphicsLayerCA::noteLayerPropertyChanged(LayerChangeFlags flags)
     m_uncommittedChanges |= flags;
 }
 
+#if ENABLE(3D_CANVAS)
+void GraphicsLayerCA::setGraphicsContext3DNeedsDisplay()
+{
+    if (m_contentsLayerPurpose == ContentsLayerForGraphicsLayer3D)
+        [m_contentsLayer.get() setNeedsDisplay];
+}
+#endif
+    
 } // namespace WebCore
 
 #endif // USE(ACCELERATED_COMPOSITING)

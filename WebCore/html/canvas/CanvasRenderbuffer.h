@@ -37,10 +37,10 @@ namespace WebCore {
     public:
         virtual ~CanvasRenderbuffer() { deleteObject(); }
         
-        static PassRefPtr<CanvasRenderbuffer> create(GraphicsContext3D*);
+        static PassRefPtr<CanvasRenderbuffer> create(CanvasRenderingContext3D*);
         
     protected:
-        CanvasRenderbuffer(GraphicsContext3D*);
+        CanvasRenderbuffer(CanvasRenderingContext3D*);
         
         virtual void _deleteObject(Platform3DObject);
     };

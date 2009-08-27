@@ -56,6 +56,8 @@ function constructorNamesForWindow(globalObject)
         if (value == null)
             continue;
         var type = classNameForObject(value);
+        if (type == "CanvasRenderingContext3DConstructor")
+            continue; // We ignore CanvasRenderingContext3D and test it elsewhere, since it is not in all builds
         if (!type.match('Constructor$'))
             continue;
         namesSet[type] = 1;

@@ -28,23 +28,24 @@
 #if ENABLE(3D_CANVAS)
 
 #include "CanvasFramebuffer.h"
+#include "CanvasRenderingContext3D.h"
 
 namespace WebCore {
     
-PassRefPtr<CanvasFramebuffer> CanvasFramebuffer::create(GraphicsContext3D* ctx)
+PassRefPtr<CanvasFramebuffer> CanvasFramebuffer::create(CanvasRenderingContext3D* ctx)
 {
     return adoptRef(new CanvasFramebuffer(ctx));
 }
 
-CanvasFramebuffer::CanvasFramebuffer(GraphicsContext3D* ctx)
+CanvasFramebuffer::CanvasFramebuffer(CanvasRenderingContext3D* ctx)
     : CanvasObject(ctx)
 {
-    setObject(context()->createFramebuffer());
+    setObject(context()->graphicsContext3D()->createFramebuffer());
 }
 
 void CanvasFramebuffer::_deleteObject(Platform3DObject object)
 {
-    context()->deleteFramebuffer(object);
+    context()->graphicsContext3D()->deleteFramebuffer(object);
 }
 
 }

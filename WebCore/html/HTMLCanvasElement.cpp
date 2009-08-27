@@ -153,26 +153,31 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type)
     // context is already 2D, just return that. If the existing context is 3D, then destroy it
     // before creating a new 2D context. Vice versa when requesting a 3D canvas. Requesting a
     // context with any other type string will destroy any existing context.
+    
+    // FIXME - The code depends on the context not going away once created, to prevent JS from
+    // seeing a dangling pointer. So for now we will disallow the context from being changed
+    // once it is created.
     if (type == "2d") {
         if (m_context && !m_context->is2d())
-            m_context.clear();
+            return 0;
         if (!m_context)
-            m_context.set(new CanvasRenderingContext2D(this));
+            m_context = new CanvasRenderingContext2D(this);
+        return m_context.get();
     }
 #if ENABLE(3D_CANVAS)    
-    else if (type == "webkit-3d") {
+    if (type == "webkit-3d") {
         if (m_context && !m_context->is3d())
-            m_context.clear();
+            return 0;
         if (!m_context) {
-            m_context.set(new CanvasRenderingContext3D(this));
-            setNeedsStyleRecalc();
+            m_context = new CanvasRenderingContext3D(this);
+            
+            // Need to make sure a RenderLayer and compositing layer get created for the Canvas
+            setNeedsStyleRecalc(SyntheticStyleChange);
         }
+        return m_context.get();
     }
 #endif
-    else if (m_context)
-        m_context.clear();
-    
-    return m_context.get();
+    return 0;
 }
 
 void HTMLCanvasElement::willDraw(const FloatRect& rect)
@@ -324,20 +329,6 @@ TransformationMatrix HTMLCanvasElement::baseTransform() const
 bool HTMLCanvasElement::is3D() const
 {
     return m_context && m_context->is3d();
-}
-
-PlatformGraphicsContext3D HTMLCanvasElement::context3D() const
-{
-    if (m_context && m_context->is3d())
-        return static_cast<CanvasRenderingContext3D*>(m_context.get())->context3D();
-    return 0;
-}
-
-Platform3DObject HTMLCanvasElement::texture3D() const
-{
-    if (m_context && m_context->is3d())
-        return static_cast<CanvasRenderingContext3D*>(m_context.get())->texture3D();
-    return 0;
 }
 #endif
 

@@ -641,35 +641,35 @@ void CanvasRenderingContext3D::glViewport(long x, long y, unsigned long width, u
 // Non-GL functions
 PassRefPtr<CanvasBuffer> CanvasRenderingContext3D::createBuffer()
 {
-    RefPtr<CanvasBuffer> o = CanvasBuffer::create(&m_context);
+    RefPtr<CanvasBuffer> o = CanvasBuffer::create(this);
     addObject(o.get());
     return o;
 }
         
 PassRefPtr<CanvasFramebuffer> CanvasRenderingContext3D::createFramebuffer()
 {
-    RefPtr<CanvasFramebuffer> o = CanvasFramebuffer::create(&m_context);
+    RefPtr<CanvasFramebuffer> o = CanvasFramebuffer::create(this);
     addObject(o.get());
     return o;
 }
 
 PassRefPtr<CanvasTexture> CanvasRenderingContext3D::createTexture()
 {
-    RefPtr<CanvasTexture> o = CanvasTexture::create(&m_context);
+    RefPtr<CanvasTexture> o = CanvasTexture::create(this);
     addObject(o.get());
     return o;
 }
 
 PassRefPtr<CanvasProgram> CanvasRenderingContext3D::createProgram()
 {
-    RefPtr<CanvasProgram> o = CanvasProgram::create(&m_context);
+    RefPtr<CanvasProgram> o = CanvasProgram::create(this);
     addObject(o.get());
     return o;
 }
 
 PassRefPtr<CanvasRenderbuffer> CanvasRenderingContext3D::createRenderbuffer()
 {
-    RefPtr<CanvasRenderbuffer> o = CanvasRenderbuffer::create(&m_context);
+    RefPtr<CanvasRenderbuffer> o = CanvasRenderbuffer::create(this);
     addObject(o.get());
     return o;
 }
@@ -682,7 +682,7 @@ PassRefPtr<CanvasShader> CanvasRenderingContext3D::createShader(unsigned long ty
     if (type == 0x8B30) // GL_FRAGMENT_SHADER
         shaderType = GraphicsContext3D::FRAGMENT_SHADER;
         
-    RefPtr<CanvasShader> o = CanvasShader::create(&m_context, shaderType);
+    RefPtr<CanvasShader> o = CanvasShader::create(this, shaderType);
     addObject(o.get());
     return o;
 }

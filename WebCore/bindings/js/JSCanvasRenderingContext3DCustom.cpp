@@ -274,8 +274,6 @@ JSValue JSCanvasRenderingContext3D::glDrawElements(JSC::ExecState* exec, JSC::Ar
     unsigned mode = args.at(0).toInt32(exec);
     unsigned type = args.at(1).toInt32(exec);
     
-    unsigned int count = 0;
-    
     // If the third param is not an object, it is a number, which is the count.
     // In this case if there is a 4th param, it is the offset. If there is no
     // 4th param, the offset is 0
@@ -284,42 +282,44 @@ JSValue JSCanvasRenderingContext3D::glDrawElements(JSC::ExecState* exec, JSC::Ar
         if (args.size() > 4)
             return throwError(exec, SyntaxError);
             
-        count = args.at(2).toInt32(exec);
+        unsigned int count = args.at(2).toInt32(exec);
         unsigned int offset = (args.size() == 4) ? args.at(3).toInt32(exec) : 0;
         context->glDrawElements(mode, count, type, (void*) offset);
-    } else {
-        if (args.size() != 3)
-            return throwError(exec, SyntaxError);
-            
-        if (type != GL_UNSIGNED_BYTE && type != GL_UNSIGNED_SHORT)
-             return throwError(exec, TypeError);
-             
-        size_t size = count * ((type == GL_UNSIGNED_BYTE) ? sizeof(unsigned char) : sizeof(unsigned short));
-        void* tempIndices;
-        if (!tryFastMalloc(size).getValue(tempIndices))
-            return throwError(exec, GeneralError);
-
-        OwnFastMallocPtr<void> passedIndices(tempIndices);
-        JSObject* array = asObject(args.at(2));
-        count = array->get(exec, Identifier(exec, "length")).toInt32(exec);
-
-        if (type == GL_UNSIGNED_BYTE) {
-            unsigned char* indices = static_cast<unsigned char*>(passedIndices.get());
-            for (unsigned int i = 0; i < count; ++i) {
-                unsigned short value = static_cast<unsigned char>(array->get(exec, i).toUInt32(exec));
-                indices[i] = value;
-            }
-        } else {
-            unsigned short* indices = static_cast<unsigned short*>(passedIndices.get());
-            for (unsigned int i = 0; i < count; ++i) {
-                unsigned short value = static_cast<unsigned short>(array->get(exec, i).toUInt32(exec));
-                indices[i] = value;
-            }
-        }
-            
-        context->glDrawElements(mode, count, type, passedIndices.get());
+        return jsUndefined();
     }
+    
+    // 3rd param is an object. Treat it as an array
+    if (args.size() != 3)
+        return throwError(exec, SyntaxError);
+        
+    if (type != GL_UNSIGNED_BYTE && type != GL_UNSIGNED_SHORT)
+         return throwError(exec, TypeError);
+         
+    JSObject* array = asObject(args.at(2));
+    unsigned int count = array->get(exec, Identifier(exec, "length")).toInt32(exec);
+    size_t size = count * ((type == GL_UNSIGNED_BYTE) ? sizeof(unsigned char) : sizeof(unsigned short));
+    
+    void* tempIndices;
+    if (!tryFastMalloc(size).getValue(tempIndices))
+        return throwError(exec, GeneralError);
 
+    OwnFastMallocPtr<void> passedIndices(tempIndices);
+
+    if (type == GL_UNSIGNED_BYTE) {
+        unsigned char* indices = static_cast<unsigned char*>(passedIndices.get());
+        for (unsigned int i = 0; i < count; ++i) {
+            unsigned short value = static_cast<unsigned char>(array->get(exec, i).toUInt32(exec));
+            indices[i] = value;
+        }
+    } else {
+        unsigned short* indices = static_cast<unsigned short*>(passedIndices.get());
+        for (unsigned int i = 0; i < count; ++i) {
+            unsigned short value = static_cast<unsigned short>(array->get(exec, i).toUInt32(exec));
+            indices[i] = value;
+        }
+    }
+        
+    context->glDrawElements(mode, count, type, passedIndices.get());
     return jsUndefined();
 }
 
