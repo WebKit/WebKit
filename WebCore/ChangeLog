@@ -1,3 +1,14 @@
+2009-08-27  Ariya Hidayat  <ariya.hidayat@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] Build fix, missing functions after r47763.
+
+        * platform/qt/Localizations.cpp:
+        (WebCore::localizedMediaControlElementString):
+        (WebCore::localizedMediaControlElementHelpText):
+        (WebCore::localizedMediaTimeDescription):
+
 2009-08-26  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Adam Barth.
