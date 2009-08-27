@@ -1,3 +1,28 @@
+2009-08-26  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        'this' in JSON.parse reviver is the global object
+        https://bugs.webkit.org/show_bug.cgi?id=28752
+
+        This is a technically simple change, we merely update the code for calling
+        the reviver function to pass the correct this object.  Doing so however
+        exposes the holder to arbitrary mutation by the reviver function so it is
+        necessary for us to now guard all property accesses against the possibility
+        of failure.
+
+        * runtime/JSArray.h:
+          JSON needs to delete a property from the array, so we friend its 
+          Walker class so that we can make a non-virtual call to the arrays
+          delete and getOwnPropertySlot methods.
+        * runtime/JSONObject.cpp:
+        (JSC::Walker::callReviver):
+          We need to pass the correct this object
+        (JSC::Walker::walk):
+          Update calls to callReviver, and update property logic logic
+          to correctly handle the holder being mutated by the reviver
+          function.
+
 2009-08-26  Alice Liu  <alice.liu@apple.com>
 
         Windows build fix: added some exported symbols

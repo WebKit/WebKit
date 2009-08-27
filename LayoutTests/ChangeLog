@@ -1,3 +1,22 @@
+2009-08-26  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        this in JSON.parse reviver is the global object
+        https://bugs.webkit.org/show_bug.cgi?id=28752
+
+        Add tests for JSON.parse with a reviver function that modifies
+        the holder object provided during filtering.
+
+        * fast/js/JSON-parse-reviver-expected.txt: Added.
+        * fast/js/JSON-parse-reviver.html: Added.
+        * fast/js/resources/JSON-parse-reviver.js: Added.
+        (description.Array.isArray):
+        (arrayReviver):
+        (objectReviver):
+        (reviveAddsCycle):
+        (reviveIntroducesNewArrayLikeObject):
+
 2009-08-26  Yaar Schnitman  <yaar@chromium.org>
 
         Reviewed by Adam Barth.

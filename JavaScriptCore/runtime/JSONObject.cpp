@@ -605,11 +605,11 @@ public:
     }
     JSValue walk(JSValue unfiltered);
 private:
-    JSValue callReviver(JSValue property, JSValue unfiltered)
+    JSValue callReviver(JSObject* thisObj, JSValue property, JSValue unfiltered)
     {
         JSValue args[] = { property, unfiltered };
         ArgList argList(args, 2);
-        return call(m_exec, m_function, m_callType, m_callData, jsNull(), argList);
+        return call(m_exec, m_function, m_callType, m_callData, thisObj, argList);
     }
 
     friend class Holder;
@@ -619,7 +619,10 @@ private:
     CallType m_callType;
     CallData m_callData;
 };
-    
+
+// We clamp recursion well beyond anything reasonable, but we also have a timeout check
+// to guard against "infinite" execution by inserting arbitrarily large objects.
+static const unsigned maximumFilterRecursion = 40000;
 enum WalkerState { StateUnknown, ArrayStartState, ArrayStartVisitMember, ArrayEndVisitMember, 
                                  ObjectStartState, ObjectStartVisitMember, ObjectEndVisitMember };
 NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
@@ -633,12 +636,21 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
     WalkerState state = StateUnknown;
     JSValue inValue = unfiltered;
     JSValue outValue = jsNull();
+    
+    TimeoutChecker localTimeoutChecker(m_exec->globalData().timeoutChecker);
+    localTimeoutChecker.reset();
+    unsigned tickCount = localTimeoutChecker.ticksUntilNextCheck();
     while (1) {
         switch (state) {
             arrayStartState:
             case ArrayStartState: {
                 ASSERT(inValue.isObject());
-                ASSERT(isJSArray(&m_exec->globalData(), asObject(inValue)));
+                ASSERT(isJSArray(&m_exec->globalData(), asObject(inValue)) || asObject(inValue)->inherits(&JSArray::info));
+                if (objectStack.size() + arrayStack.size() > maximumFilterRecursion) {
+                    m_exec->setException(createStackOverflowError(m_exec));
+                    return jsUndefined();
+                }
+
                 JSArray* array = asArray(inValue);
                 arrayStack.append(array);
                 indexStack.append(0);
@@ -646,6 +658,14 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
             }
             arrayStartVisitMember:
             case ArrayStartVisitMember: {
+                if (!--tickCount) {
+                    if (localTimeoutChecker.didTimeOut(m_exec)) {
+                        m_exec->setException(createInterruptedExecutionException(&m_exec->globalData()));
+                        return jsUndefined();
+                    }
+                    tickCount = localTimeoutChecker.ticksUntilNextCheck();
+                }
+
                 JSArray* array = arrayStack.last();
                 uint32_t index = indexStack.last();
                 if (index == array->length()) {
@@ -654,7 +674,16 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                     indexStack.removeLast();
                     break;
                 }
-                inValue = array->getIndex(index);
+                if (isJSArray(&m_exec->globalData(), array) && array->canGetIndex(index))
+                    inValue = array->getIndex(index);
+                else {
+                    PropertySlot slot;
+                    if (array->getOwnPropertySlot(m_exec, index, slot))
+                        inValue = slot.getValue(m_exec, index);
+                    else
+                        inValue = jsUndefined();
+                }
+                    
                 if (inValue.isObject()) {
                     stateStack.append(ArrayEndVisitMember);
                     goto stateUnknown;
@@ -664,7 +693,15 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
             }
             case ArrayEndVisitMember: {
                 JSArray* array = arrayStack.last();
-                array->setIndex(indexStack.last(), callReviver(jsString(m_exec, UString::from(indexStack.last())), outValue));
+                JSValue filteredValue = callReviver(array, jsString(m_exec, UString::from(indexStack.last())), outValue);
+                if (filteredValue.isUndefined())
+                    array->deleteProperty(m_exec, indexStack.last());
+                else {
+                    if (isJSArray(&m_exec->globalData(), array) && array->canSetIndex(indexStack.last()))
+                        array->setIndex(indexStack.last(), filteredValue);
+                    else
+                        array->put(m_exec, indexStack.last(), filteredValue);
+                }
                 if (m_exec->hadException())
                     return jsNull();
                 indexStack.last()++;
@@ -673,7 +710,12 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
             objectStartState:
             case ObjectStartState: {
                 ASSERT(inValue.isObject());
-                ASSERT(!isJSArray(&m_exec->globalData(), asObject(inValue)));
+                ASSERT(!isJSArray(&m_exec->globalData(), asObject(inValue)) && !asObject(inValue)->inherits(&JSArray::info));
+                if (objectStack.size() + arrayStack.size() > maximumFilterRecursion) {
+                    m_exec->setException(createStackOverflowError(m_exec));
+                    return jsUndefined();
+                }
+
                 JSObject* object = asObject(inValue);
                 objectStack.append(object);
                 indexStack.append(0);
@@ -683,6 +725,14 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
             }
             objectStartVisitMember:
             case ObjectStartVisitMember: {
+                if (!--tickCount) {
+                    if (localTimeoutChecker.didTimeOut(m_exec)) {
+                        m_exec->setException(createInterruptedExecutionException(&m_exec->globalData()));
+                        return jsUndefined();
+                    }
+                    tickCount = localTimeoutChecker.ticksUntilNextCheck();
+                }
+
                 JSObject* object = objectStack.last();
                 uint32_t index = indexStack.last();
                 PropertyNameArray& properties = propertyStack.last();
@@ -694,9 +744,15 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                     break;
                 }
                 PropertySlot slot;
-                object->getOwnPropertySlot(m_exec, properties[index], slot);
-                inValue = slot.getValue(m_exec, properties[index]);
-                ASSERT(!m_exec->hadException());
+                if (object->getOwnPropertySlot(m_exec, properties[index], slot))
+                    inValue = slot.getValue(m_exec, properties[index]);
+                else
+                    inValue = jsUndefined();
+
+                // The holder may be modified by the reviver function so any lookup may throw
+                if (m_exec->hadException())
+                    return jsNull();
+
                 if (inValue.isObject()) {
                     stateStack.append(ObjectEndVisitMember);
                     goto stateUnknown;
@@ -708,7 +764,11 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                 JSObject* object = objectStack.last();
                 Identifier prop = propertyStack.last()[indexStack.last()];
                 PutPropertySlot slot;
-                object->put(m_exec, prop, callReviver(jsString(m_exec, prop.ustring()), outValue), slot);
+                JSValue filteredValue = callReviver(object, jsString(m_exec, prop.ustring()), outValue);
+                if (filteredValue.isUndefined())
+                    object->deleteProperty(m_exec, prop);
+                else
+                    object->put(m_exec, prop, filteredValue, slot);
                 if (m_exec->hadException())
                     return jsNull();
                 indexStack.last()++;
@@ -720,16 +780,29 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                     outValue = inValue;
                     break;
                 }
-                if (isJSArray(&m_exec->globalData(), asObject(inValue)))
+                JSObject* object = asObject(inValue);
+                if (isJSArray(&m_exec->globalData(), object) || object->inherits(&JSArray::info))
                     goto arrayStartState;
                 goto objectStartState;
         }
         if (stateStack.isEmpty())
             break;
+
         state = stateStack.last();
         stateStack.removeLast();
+
+        if (!--tickCount) {
+            if (localTimeoutChecker.didTimeOut(m_exec)) {
+                m_exec->setException(createInterruptedExecutionException(&m_exec->globalData()));
+                return jsUndefined();
+            }
+            tickCount = localTimeoutChecker.ticksUntilNextCheck();
+        }
     }
-    return callReviver(jsEmptyString(m_exec), outValue);
+    JSObject* finalHolder = constructEmptyObject(m_exec);
+    PutPropertySlot slot;
+    finalHolder->put(m_exec, m_exec->globalData().propertyNames->emptyIdentifier, outValue, slot);
+    return callReviver(finalHolder, jsEmptyString(m_exec), outValue);
 }
 
 // ECMA-262 v5 15.12.2
