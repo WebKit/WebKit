@@ -1,3 +1,16 @@
+2009-08-26  Cameron McCormack  <cam@mcc.id.au>
+
+        Reviewed by David Kilzer.
+
+        Make prepare-ChangeLog notice property changes
+        https://bugs.webkit.org/show_bug.cgi?id=28675
+
+        Make the generated ChangeLog entry include a short description of
+        property changes if there were such changes.  Also make
+        prepare-ChangeLog not bail if the only changes are property changes.
+
+        * Scripts/prepare-ChangeLog:
+
 2009-08-26  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Oliver Hunt.

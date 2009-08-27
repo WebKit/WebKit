@@ -5,6 +5,7 @@
 #  Copyright (C) 2000, 2001 Eazel, Inc.
 #  Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007 Apple Inc.  All rights reserved.
 #  Copyright (C) 2009 Torch Mobile, Inc.
+#  Copyright (C) 2009 Cameron McCormack <cam@mcc.id.au>
 #
 #  prepare-ChangeLog is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public
@@ -73,12 +74,16 @@ sub statusCommand(@);
 sub createPatchCommand($);
 sub diffHeaderFormat();
 sub findOriginalFileFromSvn($);
+sub determinePropertyChanges($$$);
+sub pluralizeAndList($$@);
 sub generateFileList(\@\@\%);
 sub gitConfig($);
+sub isUnmodifiedStatus($);
 sub isModifiedStatus($);
 sub isAddedStatus($);
 sub isConflictStatus($);
-sub statusDescription($$);
+sub statusDescription($$$$);
+sub propertyChangeDescription($);
 sub extractLineRange($);
 sub canonicalizePath($);
 sub testListForChangeLog(@);
@@ -1349,6 +1354,76 @@ sub findOriginalFileFromSvn($)
     return $sourceFile;
 }
 
+sub determinePropertyChanges($$$)
+{
+    my ($file, $isAdd, $original) = @_;
+
+    my %changes;
+    if ($isAdd) {
+        my %addedProperties;
+        my %removedProperties;
+        open PROPLIST, "$SVN proplist '$file' |" or die;
+        while (<PROPLIST>) {
+            $addedProperties{$1} = 1 if /^  (.+?)[\r\n]*$/ && $1 ne 'svn:mergeinfo';
+        }
+        close PROPLIST;
+        if ($original) {
+            open PROPLIST, "$SVN proplist '$original' |" or die;
+            while (<PROPLIST>) {
+                next unless /^  (.+?)[\r\n]*$/;
+                my $property = $1;
+                if (exists $addedProperties{$property}) {
+                    delete $addedProperties{$1};
+                } else {
+                    $removedProperties{$1} = 1;
+                }
+            }
+        }
+        $changes{"A"} = [sort keys %addedProperties] if %addedProperties;
+        $changes{"D"} = [sort keys %removedProperties] if %removedProperties;
+    } else {
+        open DIFF, "$SVN diff '$file' |" or die;
+        while (<DIFF>) {
+            if (/^Property changes on:/) {
+                while (<DIFF>) {
+                    my $operation;
+                    my $property;
+                    if (/^Added: (\S*)/) {
+                        $operation = "A";
+                        $property = $1;
+                    } elsif (/^Modified: (\S*)/) {
+                        $operation = "M";
+                        $property = $1;
+                    } elsif (/^Deleted: (\S*)/) {
+                        $operation = "D";
+                        $property = $1;
+                    } elsif (/^Name: (\S*)/) {
+                        # Older versions of svn just say "Name" instead of the type
+                        # of property change.
+                        $operation = "C";
+                        $property = $1;
+                    }
+                    if ($operation) {
+                        $changes{$operation} = [] unless exists $changes{$operation};
+                        push @{$changes{$operation}}, $property;
+                    }
+                }
+            }
+        }
+        close DIFF;
+    }
+    return \%changes;
+}
+
+sub pluralizeAndList($$@)
+{
+    my ($singular, $plural, @items) = @_;
+
+    return if @items == 0;
+    return "$singular $items[0]" if @items == 1;
+    return "$plural " . join(", ", @items[0 .. $#items - 1]) . " and " . $items[-1];
+}
+
 sub generateFileList(\@\@\%)
 {
     my ($changedFiles, $conflictFiles, $functionLists) = @_;
@@ -1356,32 +1431,40 @@ sub generateFileList(\@\@\%)
     open STAT, "-|", statusCommand(keys %paths) or die "The status failed: $!.\n";
     while (<STAT>) {
         my $status;
+        my $propertyStatus;
+        my $propertyChanges;
         my $original;
         my $file;
 
         if ($isSVN) {
             my $matches;
             if (eval "v$svnVersion" ge v1.6) {
-                $matches = /^([ACDMR]).{6} (.+?)[\r\n]*$/;
+                $matches = /^([ ACDMR])([ CM]).{5} (.+?)[\r\n]*$/;
                 $status = $1;
-                $file = $2;
+                $propertyStatus = $2;
+                $file = $3;
             } else {
-                $matches = /^([ACDMR]).{5} (.+?)[\r\n]*$/;
+                $matches = /^([ ACDMR])([ CM]).{4} (.+?)[\r\n]*$/;
                 $status = $1;
-                $file = $2;
+                $propertyStatus = $2;
+                $file = $3;
             }
             if ($matches) {
                 $file = normalizePath($file);
                 $original = findOriginalFileFromSvn($file) if substr($_, 3, 1) eq "+";
+                my $isAdd = isAddedStatus($status);
+                $propertyChanges = determinePropertyChanges($file, $isAdd, $original) if isModifiedStatus($propertyStatus) || $isAdd;
             } else {
                 print;  # error output from svn stat
             }
         } elsif ($isGit) {
             if (/^([ADM])\t(.+)$/) {
                 $status = $1;
+                $propertyStatus = " ";  # git doesn't have properties
                 $file = normalizePath($2);
             } elsif (/^([CR])[0-9]{1,3}\t([^\t]+)\t([^\t\n]+)$/) { # for example: R90%    newfile    oldfile
                 $status = $1;
+                $propertyStatus = " ";
                 $original = normalizePath($2);
                 $file = normalizePath($3);
             } else {
@@ -1389,11 +1472,11 @@ sub generateFileList(\@\@\%)
             }
         }
 
-        next unless $status;
+        next if !$status || isUnmodifiedStatus($status) && isUnmodifiedStatus($propertyStatus);
 
         $file = makeFilePathRelative($file);
 
-        if (isModifiedStatus($status) || isAddedStatus($status)) {
+        if (isModifiedStatus($status) || isAddedStatus($status) || isModifiedStatus($propertyStatus)) {
             my @components = File::Spec->splitdir($file);
             if ($components[0] eq "LayoutTests") {
                 $didChangeRegressionTests = 1;
@@ -1404,11 +1487,11 @@ sub generateFileList(\@\@\%)
                        && !scalar(grep(/^resources$/i, @components));
             }
             push @{$changedFiles}, $file if $components[$#components] ne "ChangeLog";
-        } elsif (isConflictStatus($status)) {
+        } elsif (isConflictStatus($status) || isConflictStatus($propertyStatus)) {
             push @{$conflictFiles}, $file;
         }
         if (basename($file) ne "ChangeLog") {
-            my $description = statusDescription($status, $original);
+            my $description = statusDescription($status, $propertyStatus, $original, $propertyChanges);
             $functionLists->{$file} = $description if defined $description;
         }
     }
@@ -1427,6 +1510,17 @@ sub gitConfig($)
     }
     chomp $result;
     return $result;
+}
+
+sub isUnmodifiedStatus($)
+{
+    my ($status) = @_;
+
+    my %statusCodes = (
+        " " => 1,
+    );
+
+    return $statusCodes{$status};
 }
 
 sub isModifiedStatus($)
@@ -1470,15 +1564,18 @@ sub isConflictStatus($)
     return $git{$status} if $isGit;
 }
 
-sub statusDescription($$)
+sub statusDescription($$$$)
 {
-    my ($status, $original) = @_;
+    my ($status, $propertyStatus, $original, $propertyChanges) = @_;
+
+    my $propertyDescription = defined $propertyChanges ? propertyChangeDescription($propertyChanges) : "";
 
     my %svn = (
         "A" => defined $original ? " Copied from \%s." : " Added.",
         "D" => " Removed.",
         "M" => "",
         "R" => defined $original ? " Replaced with \%s." : " Replaced.",
+        " " => "",
     );
 
     my %git = %svn;
@@ -1486,9 +1583,34 @@ sub statusDescription($$)
     $git{"C"} = " Copied from \%s.";
     $git{"R"} = " Renamed from \%s.";
 
-    return sprintf($svn{$status}, $original) if $isSVN && exists $svn{$status};
-    return sprintf($git{$status}, $original) if $isGit && exists $git{$status};
-    return undef;
+    my $description;
+    $description = sprintf($svn{$status}, $original) if $isSVN && exists $svn{$status};
+    $description = sprintf($git{$status}, $original) if $isGit && exists $git{$status};
+    return unless defined $description;
+
+    $description .= $propertyDescription;
+    $description =~ s/^ Added\. Added propert/ Added with propert/;
+    return $description;
+}
+
+sub propertyChangeDescription($)
+{
+    my ($propertyChanges) = @_;
+
+    my %operations = (
+        "A" => "Added",
+        "M" => "Modified",
+        "D" => "Removed",
+        "C" => "Changed",
+    );
+
+    my $description = "";
+    while (my ($operation, $properties) = each %$propertyChanges) {
+        my $word = $operations{$operation};
+        my $list = pluralizeAndList("property", "properties", @$properties);
+        $description .= " $word $list.";
+    }
+    return $description;
 }
 
 sub extractLineRange($)
