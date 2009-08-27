@@ -237,12 +237,12 @@
         https://bugs.webkit.org/show_bug.cgi?id=28762
         <rdar://problem/7172437>
 
-        A media element triggers the resource selection algorithm if 
-        play() is called when the networkState attribute is NETWORK_EMPTY, but
-        it also immediately queues 'play' and either 'waiting' or 'playing' events.
-        One of the steps in preparing to load is to flush pending events, so those 
-        events were lost if the load timer fired quickly enough. Fixed by deleting
-        pending events before scheduling the load timer.
+        A media element triggers the resource selection algorithm if 
+        play() is called when the networkState attribute is NETWORK_EMPTY, but
+        it also immediately queues 'play' and either 'waiting' or 'playing' events.
+        One of the steps in preparing to load is to flush pending events, so those 
+        events were lost if the load timer fired quickly enough. Fixed by deleting
+        pending events before scheduling the load timer.
 
         Test: media/audio-play-event.html
 
