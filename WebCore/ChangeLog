@@ -1,3 +1,15 @@
+2009-08-26  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28763, flickering when opacity changes.
+
+        Make opacity changes from < 1 to 1 and from 1 to < 1 cause a relayout to happen.  We need
+        to do this in order for overflow information to be properly recomputed.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::diff):
+
 2009-08-26  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Simon Fraser.
