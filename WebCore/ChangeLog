@@ -1,3 +1,22 @@
+2009-08-26  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Start adding heap profiler to Inspector (hidden behind a flag.)
+
+        https://bugs.webkit.org/show_bug.cgi?id=28429
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel):
+        (WebInspector.ProfilesPanel.prototype.get statusBarItems):
+        (WebInspector.ProfilesPanel.prototype.reset):
+        (WebInspector.ProfilesPanel.prototype.addProfile):
+        (WebInspector.ProfilesPanel.prototype._updateInterface):
+        (WebInspector.ProfilesPanel.prototype._snapshotClicked):
+        * inspector/front-end/inspector.css:
+        * inspector/front-end/inspector.js: added Preferences.heapProfilerPresent flag.
+
 2009-08-27  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

@@ -55,6 +55,16 @@ WebInspector.ProfilesPanel = function()
 
     this.sidebarTree = new TreeOutline(this.sidebarTreeElement);
 
+    this.profilesListTreeElement = new WebInspector.SidebarSectionTreeElement(WebInspector.UIString("CPU PROFILES"), null, true);
+    this.sidebarTree.appendChild(this.profilesListTreeElement);
+    this.profilesListTreeElement.expand();
+
+    this.snapshotsListTreeElement = new WebInspector.SidebarSectionTreeElement(WebInspector.UIString("HEAP SNAPSHOTS"), null, true);
+    if (Preferences.heapProfilerPresent) {
+        this.sidebarTree.appendChild(this.snapshotsListTreeElement);
+        this.snapshotsListTreeElement.expand();
+    }
+
     this.profileViews = document.createElement("div");
     this.profileViews.id = "profile-views";
     this.element.appendChild(this.profileViews);
@@ -66,6 +76,10 @@ WebInspector.ProfilesPanel = function()
     this.recordButton.addEventListener("click", this._recordClicked.bind(this), false);
 
     this.recording = false;
+
+    this.snapshotButton = new WebInspector.StatusBarButton(WebInspector.UIString("Take heap snapshot."), "heap-snapshot-status-bar-item");
+    this.snapshotButton.visible = Preferences.heapProfilerPresent;
+    this.snapshotButton.addEventListener("click", this._snapshotClicked.bind(this), false);
 
     this.profileViewStatusBarItemsContainer = document.createElement("div");
     this.profileViewStatusBarItemsContainer.id = "profile-view-status-bar-items";
@@ -83,7 +97,7 @@ WebInspector.ProfilesPanel.prototype = {
 
     get statusBarItems()
     {
-        return [this.enableToggleButton.element, this.recordButton.element, this.profileViewStatusBarItemsContainer];
+        return [this.enableToggleButton.element, this.recordButton.element, this.snapshotButton.element, this.profileViewStatusBarItemsContainer];
     },
 
     show: function()
@@ -133,7 +147,8 @@ WebInspector.ProfilesPanel.prototype = {
 
         this.sidebarTreeElement.removeStyleClass("some-expandable");
 
-        this.sidebarTree.removeChildren();
+        this.profilesListTreeElement.removeChildren();
+        this.snapshotsListTreeElement.removeChildren();
         this.profileViews.removeChildren();
 
         this.profileViewStatusBarItemsContainer.removeChildren();
@@ -151,7 +166,7 @@ WebInspector.ProfilesPanel.prototype = {
         this._profiles.push(profile);
         this._profilesIdMap[profile.uid] = profile;
 
-        var sidebarParent = this.sidebarTree;
+        var sidebarParent = this.profilesListTreeElement;
         var small = false;
         var alternateTitle;
 
@@ -334,12 +349,15 @@ WebInspector.ProfilesPanel.prototype = {
             this.enableToggleButton.title = WebInspector.UIString("Profiling enabled. Click to disable.");
             this.enableToggleButton.toggled = true;
             this.recordButton.visible = true;
+            if (Preferences.heapProfilerPresent)
+                this.snapshotButton.visible = true;
             this.profileViewStatusBarItemsContainer.removeStyleClass("hidden");
             this.panelEnablerView.visible = false;
         } else {
             this.enableToggleButton.title = WebInspector.UIString("Profiling disabled. Click to enable.");
             this.enableToggleButton.toggled = false;
             this.recordButton.visible = false;
+            this.snapshotButton.visible = false;
             this.profileViewStatusBarItemsContainer.addStyleClass("hidden");
             this.panelEnablerView.visible = true;
         }
@@ -353,6 +371,11 @@ WebInspector.ProfilesPanel.prototype = {
             InspectorController.startProfiling();
         else
             InspectorController.stopProfiling();
+    },
+
+    _snapshotClicked: function()
+    {
+        InspectorController.takeHeapSnapshot();
     },
 
     _enableProfiling: function()

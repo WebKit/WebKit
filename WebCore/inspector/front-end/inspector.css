@@ -3118,6 +3118,11 @@ button.enable-toggle-status-bar-item .glyph {
     background-color: rgb(216, 0, 0) !important;
 }
 
+/* FIXME: should have its own glyph. */
+.heap-snapshot-status-bar-item .glyph {
+    -webkit-mask-image: url(Images/focusButtonGlyph.png);
+}
+
 .node-search-status-bar-item .glyph {
     -webkit-mask-image: url(Images/nodeSearchButtonGlyph.png);
 }

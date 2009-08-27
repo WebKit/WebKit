@@ -39,6 +39,7 @@ var Preferences = {
     showInheritedComputedStyleProperties: false,
     styleRulesExpandedState: {},
     showMissingLocalizedStrings: false,
+    heapProfilerPresent: false,
 }
 
 var WebInspector = {
