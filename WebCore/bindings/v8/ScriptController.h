@@ -46,7 +46,6 @@ namespace WebCore {
     class Frame;
     class HTMLPlugInElement;
     class ScriptSourceCode;
-    class ScriptState;
     class String;
     class Widget;
     class XSSAuditor;
@@ -85,8 +84,6 @@ namespace WebCore {
         // This is a bit of a hack, but provides reasonable compatibility
         // with what JSC does as well.
         ScriptController* windowShell() { return this; }
-
-        ScriptState* state() const { return m_scriptState.get(); }
 
         XSSAuditor* xssAuditor() { return m_XSSAuditor.get(); }
 
@@ -157,7 +154,6 @@ namespace WebCore {
         bool m_processingTimerCallback;
         bool m_paused;
 
-        OwnPtr<ScriptState> m_scriptState;
         OwnPtr<V8Proxy> m_proxy;
         typedef HashMap<Widget*, NPObject*> PluginObjectMap;
 

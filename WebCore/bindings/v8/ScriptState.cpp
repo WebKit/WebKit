@@ -42,7 +42,20 @@ namespace WebCore {
 
 ScriptState::ScriptState(Frame* frame)
     : m_frame(frame)
+    , m_context(v8::Persistent<v8::Context>::New(V8Proxy::mainWorldContext(frame)))
 {
+}
+
+ScriptState::ScriptState(Frame* frame, v8::Handle<v8::Context> context)
+    : m_frame(frame)
+    , m_context(v8::Persistent<v8::Context>::New(context))
+{
+}
+
+ScriptState::~ScriptState()
+{
+    m_context.Dispose();
+    m_context.Clear();
 }
 
 ScriptState* scriptStateFromNode(Node* node)
@@ -55,7 +68,9 @@ ScriptState* scriptStateFromNode(Node* node)
 
 ScriptState* scriptStateFromPage(Page* page)
 {
-    return page->mainFrame()->script()->state();
+    // This should be never reached with V8 bindings.
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
 }

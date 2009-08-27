@@ -32,16 +32,19 @@
 #define ScriptState_h
 
 #include <v8.h>
+#include <wtf/Noncopyable.h>
 
 namespace WebCore {
     class Node;
     class Page;
     class Frame;
 
-    class ScriptState {
+    class ScriptState : public Noncopyable {
     public:
         ScriptState() { }
         ScriptState(Frame* frame);
+        ScriptState(Frame* frame, v8::Handle<v8::Context> context);
+        ~ScriptState();
 
         bool hadException() { return !m_exception.IsEmpty(); }
         void setException(v8::Local<v8::Value> exception)
@@ -51,10 +54,15 @@ namespace WebCore {
         v8::Local<v8::Value> exception() { return m_exception; }
 
         Frame* frame() const { return m_frame; }
+        v8::Local<v8::Context> context() const
+        {
+            return v8::Local<v8::Context>::New(m_context);
+        }
 
     private:
         v8::Local<v8::Value> m_exception;
         Frame* m_frame;
+        v8::Persistent<v8::Context> m_context;
     };
 
     ScriptState* scriptStateFromNode(Node*);

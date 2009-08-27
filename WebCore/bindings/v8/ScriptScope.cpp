@@ -36,14 +36,13 @@
 #include "Document.h"
 #include "Frame.h"
 #include "V8Binding.h"
-#include "V8Proxy.h"
 
 #include <v8.h>
 
 namespace WebCore {
 
 ScriptScope::ScriptScope(ScriptState* scriptState, bool reportExceptions)
-    : m_context(V8Proxy::context(scriptState->frame()))
+    : m_context(scriptState->context())
     , m_scope(m_context)
     , m_scriptState(scriptState)
     , m_reportExceptions(reportExceptions)

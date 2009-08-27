@@ -1,3 +1,31 @@
+2009-08-27  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Dmitry Glazkov.
+
+        ScriptState now keeps explicit Handle of devtools front-end
+        utility context instead of trying to retrieve it from inspected
+        Frame.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28772
+
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::ScriptController):
+        * bindings/v8/ScriptController.h:
+        * bindings/v8/ScriptObjectQuarantine.cpp:
+        (WebCore::getQuarantinedScriptObject):
+        * bindings/v8/ScriptScope.cpp:
+        (WebCore::ScriptScope::ScriptScope):
+        * bindings/v8/ScriptState.cpp:
+        (WebCore::ScriptState::ScriptState):
+        (WebCore::ScriptState::~ScriptState):
+        (WebCore::scriptStateFromPage):
+        * bindings/v8/ScriptState.h:
+        (WebCore::ScriptState::context):
+        * bindings/v8/ScriptValue.h:
+        (WebCore::ScriptValue::~ScriptValue):
+        * inspector/InspectorController.h:
+        (WebCore::InspectorController::frontendScriptState):
+
 2009-08-27  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

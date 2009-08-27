@@ -133,7 +133,7 @@ public:
         m_value.Clear();
     }
 
-    ~ScriptValue() 
+    virtual ~ScriptValue() 
     {
         clear();
     }
