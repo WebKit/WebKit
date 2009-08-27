@@ -1,3 +1,23 @@
+2009-08-27  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28785
+        Add ImageDecoder.cpp to various build files so platforms will be able to
+        use it.  Move an ENABLE to not cover the whole file, in preparation for
+        adding a bunch of code.  Simplify #ifdefs in ImageDecoder.h to be "Skia
+        vs. everyone else", which also gives new platforms a reasonable default
+        behavior.
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCoreSources.bkl:
+        * platform/image-decoders/ImageDecoder.cpp:
+        (WebCore::):
+        * platform/image-decoders/ImageDecoder.h:
+        (WebCore::RGBA32Buffer::getAddr):
+
 2009-08-27  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Dave Kilzer.

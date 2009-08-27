@@ -37,7 +37,6 @@
 
 #if PLATFORM(SKIA)
 #include "NativeImageSkia.h"
-#include "SkBitmap.h"
 #endif
 
 namespace WebCore {
@@ -135,13 +134,10 @@ namespace WebCore {
 
         inline PixelData* getAddr(int x, int y)
         {
-#if PLATFORM(CAIRO) || PLATFORM(WX) || PLATFORM(HAIKU)
-            return m_bytes.data() + (y * width()) + x;
-#elif PLATFORM(SKIA)
+#if PLATFORM(SKIA)
             return m_bitmap.getAddr32(x, y);
 #else
-            ASSERT_NOT_REACHED();
-            return 0;
+            return m_bytes.data() + (y * width()) + x;
 #endif
         }
 
@@ -161,13 +157,13 @@ namespace WebCore {
             }
         }
 
-#if PLATFORM(CAIRO) || PLATFORM(WX) || PLATFORM(HAIKU)
+#if PLATFORM(SKIA)
+        NativeImageSkia m_bitmap;
+#else
         Vector<PixelData> m_bytes;
         IntSize m_size;       // The size of the buffer.  This should be the
                               // same as ImageDecoder::m_size.
         bool m_hasAlpha;      // Whether or not any of the pixels in the buffer have transparency.
-#elif PLATFORM(SKIA)
-        NativeImageSkia m_bitmap;
 #endif
         IntRect m_rect;       // The rect of the original specified frame within the overall buffer.
                               // This will always just be the entire buffer except for GIF frames

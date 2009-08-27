@@ -20,13 +20,15 @@
 
 #include "config.h"
 
-#if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
-
 #include "ImageDecoder.h"
 
+#if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
 #include <algorithm>
+#endif
 
 namespace WebCore {
+
+#if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
 
 namespace {
 
@@ -99,6 +101,6 @@ void ImageDecoder::prepareScaleDataIfNecessary()
     fillScaledValues(m_scaledRows, scale, height);
 }
 
-}
-
 #endif // ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
+
+}
