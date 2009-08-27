@@ -1,3 +1,11 @@
+2009-08-26  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Skip HTML5 input-list tests added in r47767.
+
+        * platform/qt/Skipped:
+
 2009-08-26  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

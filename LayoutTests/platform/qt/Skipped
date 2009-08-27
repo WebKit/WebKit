@@ -180,6 +180,8 @@ fast/events/reveal-link-when-focused.html
 fast/events/standalone-image-drag-to-editable.html
 fast/events/updateLayoutForHitTest.html
 fast/events/xsl-onload.xhtml
+fast/forms/input-list.html
+fast/forms/input-selectedoption.html
 fast/forms/access-key.html
 fast/forms/button-cannot-be-nested.html
 fast/forms/button-spacebar-click.html
