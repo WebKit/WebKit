@@ -1,3 +1,15 @@
+2009-08-27  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Cleanup, old and commented part of source code was removed.
+        Fix some formatting problems.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28712
+
+        * Api/qwebhistory_p.h:
+        (QWebHistoryPrivate::QWebHistoryPrivate):
+
 2009-08-26  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Oliver Hunt.
