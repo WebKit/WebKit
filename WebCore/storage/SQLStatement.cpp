@@ -57,24 +57,24 @@ SQLStatement::SQLStatement(const String& statement, const Vector<SQLValue>& argu
     , m_readOnly(readOnly)
 {
 }
-   
+
 bool SQLStatement::execute(Database* db)
 {
     ASSERT(!m_resultSet);
-        
+
     // If we're re-running this statement after a quota violation, we need to clear that error now
     clearFailureDueToQuota();
 
-    // This transaction might have been marked bad while it was being set up on the main thread, 
+    // This transaction might have been marked bad while it was being set up on the main thread,
     // so if there is still an error, return false.
     if (m_error)
         return false;
-        
+
     if (m_readOnly)
         db->setAuthorizerReadOnly();
-    
+
     SQLiteDatabase* database = &db->m_sqliteDatabase;
-    
+
     SQLiteStatement statement(*database, m_statement);
     int result = statement.prepare();
 
@@ -98,7 +98,7 @@ bool SQLStatement::execute(Database* db)
             setFailureDueToQuota();
             return false;
         }
-        
+
         if (result != SQLResultOk) {
             LOG(StorageAPI, "Failed to bind value index %i to statement for query '%s'", i + 1, m_statement.ascii().data());
             m_error = SQLError::create(1, database->lastErrorMsg());
@@ -165,9 +165,9 @@ void SQLStatement::setVersionMismatchedError()
 bool SQLStatement::performCallback(SQLTransaction* transaction)
 {
     ASSERT(transaction);
-    
+
     bool callbackError = false;
-    
+
     // Call the appropriate statement callback and track if it resulted in an error,
     // because then we need to jump to the transaction error callback.
     if (m_error) {
@@ -195,9 +195,9 @@ void SQLStatement::clearFailureDueToQuota()
         m_error = 0;
 }
 
-bool SQLStatement::lastExecutionFailedDueToQuota() const 
-{ 
-    return m_error && m_error->code() == 4; 
+bool SQLStatement::lastExecutionFailedDueToQuota() const
+{
+    return m_error && m_error->code() == 4;
 }
 
 } // namespace WebCore

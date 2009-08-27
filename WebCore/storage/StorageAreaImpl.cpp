@@ -266,4 +266,3 @@ void StorageAreaImpl::dispatchStorageEvent(const String& key, const String& oldV
 }
 
 #endif // ENABLE(DOM_STORAGE)
-

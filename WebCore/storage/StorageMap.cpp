@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -34,7 +34,7 @@ PassRefPtr<StorageMap> StorageMap::create()
 {
     return adoptRef(new StorageMap);
 }
-    
+
 StorageMap::StorageMap()
     : m_iterator(m_map.end())
     , m_iteratorIndex(UINT_MAX)
@@ -57,19 +57,19 @@ void StorageMap::invalidateIterator()
 void StorageMap::setIteratorToIndex(unsigned index) const
 {
     // FIXME: Once we have bidirectional iterators for HashMap we can be more intelligent about this.
-    // The requested index will be closest to begin(), our current iterator, or end(), and we 
+    // The requested index will be closest to begin(), our current iterator, or end(), and we
     // can take the shortest route.
     // Until that mechanism is available, we'll always increment our iterator from begin() or current.
-    
+
     if (m_iteratorIndex == index)
         return;
-    
+
     if (index < m_iteratorIndex) {
         m_iteratorIndex = 0;
         m_iterator = m_map.begin();
         ASSERT(m_iterator != m_map.end());
     }
-    
+
     while (m_iteratorIndex < index) {
         ++m_iteratorIndex;
         ++m_iterator;
@@ -86,7 +86,7 @@ String StorageMap::key(unsigned index) const
 {
     if (index >= length())
         return String();
-    
+
     setIteratorToIndex(index);
     return m_iterator->first;
 }
@@ -99,7 +99,7 @@ String StorageMap::getItem(const String& key) const
 PassRefPtr<StorageMap> StorageMap::setItem(const String& key, const String& value, String& oldValue)
 {
     ASSERT(!value.isNull());
-    
+
     // Implement copy-on-write semantics here.  We're guaranteed that the only refs of StorageMaps belong to Storage objects
     // so if more than one Storage object refs this map, copy it before mutating it.
     if (refCount() > 1) {
@@ -158,4 +158,3 @@ void StorageMap::importItem(const String& key, const String& value) const
 }
 
 #endif // ENABLE(DOM_STORAGE)
-

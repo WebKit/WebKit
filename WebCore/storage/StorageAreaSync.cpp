@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -76,7 +76,7 @@ void StorageAreaSync::scheduleFinalSync()
     ASSERT(isMainThread());
     // FIXME: We do this to avoid races, but it'd be better to make things safe without blocking.
     blockUntilImportComplete();
-    
+
     if (m_syncTimer.isActive())
         m_syncTimer.stop();
     else {
@@ -127,7 +127,7 @@ void StorageAreaSync::syncTimerFired(Timer<StorageAreaSync>*)
 
     HashMap<String, String>::iterator it = m_changedItems.begin();
     HashMap<String, String>::iterator end = m_changedItems.end();
-    
+
     {
         MutexLocker locker(m_syncLock);
 
@@ -182,14 +182,14 @@ void StorageAreaSync::performImport()
         markImported();
         return;
     }
-    
+
     SQLiteStatement query(m_database, "SELECT key, value FROM ItemTable");
     if (query.prepare() != SQLResultOk) {
         LOG_ERROR("Unable to select items from ItemTable for local storage");
         markImported();
         return;
     }
-    
+
     HashMap<String, String> itemMap;
 
     int result = query.step();
@@ -205,13 +205,13 @@ void StorageAreaSync::performImport()
     }
 
     MutexLocker locker(m_importLock);
-    
+
     HashMap<String, String>::iterator it = itemMap.begin();
     HashMap<String, String>::iterator end = itemMap.end();
-    
+
     for (; it != end; ++it)
         m_storageArea->importItem(it->first, it->second);
-    
+
     // Break the (ref count) cycle.
     m_storageArea = 0;
     m_importComplete = true;
@@ -265,7 +265,7 @@ void StorageAreaSync::sync(bool clearItems, const HashMap<String, String>& items
             LOG_ERROR("Failed to prepare clear statement - cannot write to local storage database");
             return;
         }
-        
+
         int result = clear.step();
         if (result != SQLResultDone) {
             LOG_ERROR("Failed to clear all items in the local storage database - %i", result);
@@ -289,11 +289,11 @@ void StorageAreaSync::sync(bool clearItems, const HashMap<String, String>& items
 
     for (HashMap<String, String>::const_iterator it = items.begin(); it != end; ++it) {
         // Based on the null-ness of the second argument, decide whether this is an insert or a delete.
-        SQLiteStatement& query = it->second.isNull() ? remove : insert;        
+        SQLiteStatement& query = it->second.isNull() ? remove : insert;
 
         query.bindText(1, it->first);
 
-        // If the second argument is non-null, we're doing an insert, so bind it as the value. 
+        // If the second argument is non-null, we're doing an insert, so bind it as the value.
         if (!it->second.isNull())
             query.bindText(2, it->second);
 
@@ -335,4 +335,3 @@ void StorageAreaSync::performSync()
 } // namespace WebCore
 
 #endif // ENABLE(DOM_STORAGE)
-

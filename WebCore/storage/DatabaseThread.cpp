@@ -126,7 +126,7 @@ void* DatabaseThread::databaseThread()
     return 0;
 }
 
-void DatabaseThread::recordDatabaseOpen(Database* database) 
+void DatabaseThread::recordDatabaseOpen(Database* database)
 {
     ASSERT(currentThread() == m_threadID);
     ASSERT(database);
@@ -134,7 +134,7 @@ void DatabaseThread::recordDatabaseOpen(Database* database)
     m_openDatabaseSet.add(database);
 }
 
-void DatabaseThread::recordDatabaseClosed(Database* database) 
+void DatabaseThread::recordDatabaseClosed(Database* database)
 {
     ASSERT(currentThread() == m_threadID);
     ASSERT(database);

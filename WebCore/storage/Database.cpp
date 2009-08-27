@@ -111,14 +111,14 @@ PassRefPtr<Database> Database::openDatabase(Document* document, const String& na
         LOG(StorageAPI, "Database %s for origin %s not allowed to be established", name.ascii().data(), document->securityOrigin()->toString().ascii().data());
         return 0;
     }
-    
+
     RefPtr<Database> database = adoptRef(new Database(document, name, expectedVersion));
 
     if (!database->openAndVerifyVersion(e)) {
        LOG(StorageAPI, "Failed to open and verify version (expected %s) of database %s", expectedVersion.ascii().data(), database->databaseDebugName().ascii().data());
        return 0;
     }
-    
+
     DatabaseTracker::tracker().setDatabaseDetails(document->securityOrigin(), name, displayName, estimatedSize);
 
     document->setHasOpenDatabases();
@@ -294,7 +294,7 @@ bool Database::versionMatchesExpected() const
         MutexLocker locker(guidMutex());
         return m_expectedVersion == guidToVersionMap().get(m_guid);
     }
-    
+
     return true;
 }
 
@@ -336,8 +336,8 @@ void Database::stop()
     // FIXME: The net effect of the following code is to remove all pending transactions and statements, but allow the current statement
     // to run to completion.  In the future we can use the sqlite3_progress_handler or sqlite3_interrupt interfaces to cancel the current
     // statement in response to close(), as well.
-    
-    // This method is meant to be used as an analog to cancelling a loader, and is used when a document is shut down as the result of 
+
+    // This method is meant to be used as an analog to cancelling a loader, and is used when a document is shut down as the result of
     // a page load or closing the page
     m_stopped = true;
 
@@ -357,10 +357,10 @@ unsigned long long Database::maximumSize() const
 {
     // The maximum size for this database is the full quota for this origin, minus the current usage within this origin,
     // except for the current usage of this database
-    
+
     OriginQuotaManager& manager(DatabaseTracker::tracker().originQuotaManager());
     Locker<OriginQuotaManager> locker(manager);
-    
+
     return DatabaseTracker::tracker().quotaForOrigin(m_securityOrigin.get()) - manager.diskUsage(m_securityOrigin.get()) + databaseSize();
 }
 
@@ -510,7 +510,7 @@ bool Database::performOpenAndVerify(ExceptionCode& e)
     return true;
 }
 
-void Database::changeVersion(const String& oldVersion, const String& newVersion, 
+void Database::changeVersion(const String& oldVersion, const String& newVersion,
                              PassRefPtr<SQLTransactionCallback> callback, PassRefPtr<SQLTransactionErrorCallback> errorCallback,
                              PassRefPtr<VoidCallback> successCallback)
 {

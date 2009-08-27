@@ -80,7 +80,7 @@ StorageNamespaceImpl::~StorageNamespaceImpl()
         ASSERT(localStorageNamespaceMap().get(m_path) == this);
         localStorageNamespaceMap().remove(m_path);
     }
-    
+
     if (!m_isShutdown)
         close();
 }
@@ -117,7 +117,7 @@ void StorageNamespaceImpl::close()
 {
     ASSERT(isMainThread());
     ASSERT(!m_isShutdown);
-    
+
     // If we're session storage, we shouldn't need to do any work here.
     if (m_storageType == SessionStorage) {
         ASSERT(!m_syncManager);
@@ -127,7 +127,7 @@ void StorageNamespaceImpl::close()
     StorageAreaMap::iterator end = m_storageAreaMap.end();
     for (StorageAreaMap::iterator it = m_storageAreaMap.begin(); it != end; ++it)
         it->second->close();
-    
+
     if (m_syncManager)
         m_syncManager->close();
 

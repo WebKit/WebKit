@@ -37,7 +37,7 @@ namespace WebCore {
 
 class SQLTransaction;
 class SQLError;
-    
+
 class SQLStatementErrorCallback : public ThreadSafeShared<SQLStatementErrorCallback> {
 public:
     virtual ~SQLStatementErrorCallback() { }

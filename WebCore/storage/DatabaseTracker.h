@@ -70,18 +70,18 @@ public:
     unsigned long long usageForOrigin(SecurityOrigin*);
     unsigned long long quotaForOrigin(SecurityOrigin*);
     void setQuota(SecurityOrigin*, unsigned long long);
-    
+
     void deleteAllDatabases();
     void deleteOrigin(SecurityOrigin*);
     void deleteDatabase(SecurityOrigin*, const String& name);
 
     void setClient(DatabaseTrackerClient*);
-    
+
     // From a secondary thread, must be thread safe with its data
     void scheduleNotifyDatabaseChanged(SecurityOrigin*, const String& name);
-    
+
     OriginQuotaManager& originQuotaManager();
-    
+
     static DatabaseTracker& tracker();
 
     bool hasEntryForOrigin(SecurityOrigin*);
@@ -93,12 +93,12 @@ private:
     void openTrackerDatabase(bool createIfDoesNotExist);
 
     String originPath(SecurityOrigin*) const;
-    
+
     bool hasEntryForDatabase(SecurityOrigin*, const String& databaseIdentifier);
-    
+
     bool addDatabase(SecurityOrigin*, const String& name, const String& path);
     void populateOrigins();
-    
+
     bool deleteDatabaseFile(SecurityOrigin*, const String& name);
 
     SQLiteDatabase m_database;
@@ -117,7 +117,7 @@ private:
     OwnPtr<OriginQuotaManager> m_quotaManager;
 
     String m_databaseDirectoryPath;
-    
+
     DatabaseTrackerClient* m_client;
 
     std::pair<SecurityOrigin*, DatabaseDetails>* m_proposedDatabase;

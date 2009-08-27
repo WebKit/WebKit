@@ -60,7 +60,7 @@ private:
     String m_name;
     String m_displayName;
     unsigned long long m_expectedUsage;
-    unsigned long long m_currentUsage; 
+    unsigned long long m_currentUsage;
 
 };
 
