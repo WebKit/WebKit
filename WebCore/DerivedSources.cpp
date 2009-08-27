@@ -175,6 +175,7 @@
 #include "JSNotificationCenter.cpp"
 #include "JSNotification.cpp"
 #include "JSOverflowEvent.cpp"
+#include "JSPageTransitionEvent.cpp"
 #include "JSPlugin.cpp"
 #include "JSPluginArray.cpp"
 #include "JSProcessingInstruction.cpp"
