@@ -89,6 +89,7 @@ function createTests() {
     result.push(function(jsonObject){
         return jsonObject.parse('[1,]');
     });
+    result[result.length - 1].throws = true;
     result.push(function(jsonObject){
         return jsonObject.parse('[1,2]');
     });

@@ -94,7 +94,8 @@ PASS JSON.stringify(tests[i](nativeJSON)) is JSON.stringify(tests[i](JSON))
 function (jsonObject) {
         return jsonObject.parse('[1,]');
     }
-PASS JSON.stringify(tests[i](nativeJSON)) is JSON.stringify(tests[i](JSON))
+PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
+json2.js did not throw for a test we expect to throw.
 function (jsonObject) {
         return jsonObject.parse('[1,2]');
     }

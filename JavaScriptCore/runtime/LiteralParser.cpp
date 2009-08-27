@@ -295,7 +295,10 @@ JSValue LiteralParser::parse(ParserState initialState)
             }
             doParseArrayStartExpression:
             case DoParseArrayStartExpression: {
+                TokenType lastToken = m_lexer.currentToken().type;
                 if (m_lexer.next() == TokRBracket) {
+                    if (lastToken == TokComma)
+                        return JSValue();
                     m_lexer.next();
                     lastValue = objectStack.last();
                     objectStack.removeLast();

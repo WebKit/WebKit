@@ -1,3 +1,15 @@
+2009-08-27  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        JSON parser accepts trailing comma in array literals
+        https://bugs.webkit.org/show_bug.cgi?id=28779
+
+        Update parser to correctly fail if there's a trailing comma.
+
+        * runtime/LiteralParser.cpp:
+        (JSC::LiteralParser::parse):
+
 2009-08-26  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

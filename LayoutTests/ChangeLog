@@ -1,3 +1,16 @@
+2009-08-27  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        JSON parser accepts trailing comma in array literals
+        https://bugs.webkit.org/show_bug.cgi?id=28779
+
+        Correct the JSON.parse test to expect "[1,]" to throw.
+
+        * fast/js/JSON-parse-expected.txt:
+        * fast/js/resources/JSON-parse.js:
+        (createTests.result):
+
 2009-08-26  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Adele Peterson.
