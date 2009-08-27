@@ -1,3 +1,16 @@
+2009-08-27  Noel Gordon  <noel.gordon@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        clipboard file access tests use "dragentered" instead of "dragenter"
+        https://bugs.webkit.org/show_bug.cgi?id=28761
+        
+        Use dragenter and log these events.  Add a dragleave test to check
+        that drag files are not visible in dragleave events.
+
+        * http/tests/security/clipboard/clipboard-file-access-expected.txt:
+        * http/tests/security/clipboard/resources/clipboard-file-access.js:
+
 2009-08-27  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
