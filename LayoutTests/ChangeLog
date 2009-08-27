@@ -1,3 +1,30 @@
+2009-08-27  Renata Hodovan  <hodovan.renata@stud.u-szeged.hu>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt]Update expecteds (t150*) in css2.1 and remove from Skipped. This affects 20 files.
+
+        * platform/qt/css2.1/t1503-c522-font-family-00-b-expected.txt:
+        * platform/qt/css2.1/t1504-c523-font-style-00-b-expected.txt:
+        * platform/qt/css2.1/t1504-c543-txt-decor-00-d-g-expected.txt:
+        * platform/qt/css2.1/t1505-c524-font-var-00-b-expected.txt:
+        * platform/qt/css2.1/t1506-c525-font-wt-00-b-expected.txt:
+        * platform/qt/css2.1/t1507-c526-font-sz-00-b-expected.txt:
+        * platform/qt/css2.1/t1507-c526-font-sz-01-b-a-expected.txt:
+        * platform/qt/css2.1/t1507-c526-font-sz-02-b-a-expected.txt:
+        * platform/qt/css2.1/t1507-c526-font-sz-03-f-a-expected.txt:
+        * platform/qt/css2.1/t1508-c527-font-00-b-expected.txt:
+        * platform/qt/css2.1/t1508-c527-font-01-b-expected.txt:
+        * platform/qt/css2.1/t1508-c527-font-02-b-expected.txt:
+        * platform/qt/css2.1/t1508-c527-font-03-b-expected.txt:
+        * platform/qt/css2.1/t1508-c527-font-04-b-expected.txt:
+        * platform/qt/css2.1/t1508-c527-font-05-b-expected.txt:
+        * platform/qt/css2.1/t1508-c527-font-06-b-expected.txt:
+        * platform/qt/css2.1/t1508-c527-font-07-b-expected.txt:
+        * platform/qt/css2.1/t1508-c527-font-08-b-expected.txt:
+        * platform/qt/css2.1/t1508-c527-font-09-b-expected.txt:
+        * platform/qt/css2.1/t1508-c527-font-10-c-expected.txt:
+
 2009-08-27  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
 
         Reviewed by Ariya Hidayat.

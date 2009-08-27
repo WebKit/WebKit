@@ -4,10 +4,10 @@ layer at (0,0) size 800x225
   RenderBlock {HTML} at (0,0) size 800x225
     RenderBody {BODY} at (8,18) size 784x189 [color=#000080]
       RenderBlock {P} at (0,0) size 784x189
-        RenderText {#text} at (0,1) size 662x25
+        RenderText {#text} at (0,1) size 662x24
           text run at (0,1) width 662: "This text should be 18px sans-serif. There should be a 9px gap between each line. "
-        RenderInline {SPAN} at (0,0) size 779x187 [color=#C0C0C0]
-          RenderText {#text} at (662,1) size 779x187
+        RenderInline {SPAN} at (0,0) size 779x186 [color=#C0C0C0]
+          RenderText {#text} at (662,1) size 779x186
             text run at (662,1) width 93: "dummy text"
             text run at (0,28) width 456: "dummy text dummy text dummy text dummy text dummy "
             text run at (456,28) width 323: "text dummy text dummy text dummy text"

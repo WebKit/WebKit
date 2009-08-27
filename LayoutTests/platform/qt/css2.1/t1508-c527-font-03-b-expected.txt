@@ -4,20 +4,20 @@ layer at (0,0) size 800x144
   RenderBlock {HTML} at (0,0) size 800x144
     RenderBody {BODY} at (8,12) size 784x120 [color=#000080]
       RenderBlock {P} at (0,0) size 784x120
-        RenderText {#text} at (0,3) size 344x17
-          text run at (0,3) width 344: "This text should be small and cursive, with double line spacing. "
-        RenderInline {SPAN} at (0,0) size 777x113 [color=#C0C0C0]
-          RenderText {#text} at (344,3) size 777x113
-            text run at (344,3) width 368: "dummy text dummy text dummy text dummy text dummy text dummy "
-            text run at (712,3) width 62: "text dummy"
-            text run at (0,27) width 325: "text dummy text dummy text dummy text dummy text dummy "
-            text run at (325,27) width 390: "text dummy text dummy text dummy text dummy text dummy text dummy "
-            text run at (715,27) width 62: "text dummy"
-            text run at (0,51) width 325: "text dummy text dummy text dummy text dummy text dummy "
-            text run at (325,51) width 390: "text dummy text dummy text dummy text dummy text dummy text dummy "
-            text run at (715,51) width 62: "text dummy"
-            text run at (0,75) width 325: "text dummy text dummy text dummy text dummy text dummy "
-            text run at (325,75) width 390: "text dummy text dummy text dummy text dummy text dummy text dummy "
-            text run at (715,75) width 62: "text dummy"
-            text run at (0,99) width 279: "text dummy text dummy text dummy text dummy text"
+        RenderText {#text} at (0,4) size 344x16
+          text run at (0,4) width 344: "This text should be small and cursive, with double line spacing. "
+        RenderInline {SPAN} at (0,0) size 777x112 [color=#C0C0C0]
+          RenderText {#text} at (344,4) size 777x112
+            text run at (344,4) width 368: "dummy text dummy text dummy text dummy text dummy text dummy "
+            text run at (712,4) width 62: "text dummy"
+            text run at (0,28) width 325: "text dummy text dummy text dummy text dummy text dummy "
+            text run at (325,28) width 390: "text dummy text dummy text dummy text dummy text dummy text dummy "
+            text run at (715,28) width 62: "text dummy"
+            text run at (0,52) width 325: "text dummy text dummy text dummy text dummy text dummy "
+            text run at (325,52) width 390: "text dummy text dummy text dummy text dummy text dummy text dummy "
+            text run at (715,52) width 62: "text dummy"
+            text run at (0,76) width 325: "text dummy text dummy text dummy text dummy text dummy "
+            text run at (325,76) width 390: "text dummy text dummy text dummy text dummy text dummy text dummy "
+            text run at (715,76) width 62: "text dummy"
+            text run at (0,100) width 279: "text dummy text dummy text dummy text dummy text"
         RenderText {#text} at (0,0) size 0x0
