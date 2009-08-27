@@ -1,3 +1,13 @@
+2009-08-26  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Don't let local files access web URLs
+        https://bugs.webkit.org/show_bug.cgi?id=28480
+
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings):
+
 2009-08-26  David Levin  <levin@chromium.org>
 
         Reviewed by Darin Fisher.
