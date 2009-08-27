@@ -728,13 +728,8 @@ String decodeURLEscapeSequences(const String& str)
 // cause security holes. We never call this function for components, and
 // just return the ASCII versions instead.
 //
-// However, this static function is called directly in some cases. It appears
-// that this only happens for javascript: URLs, so this is essentially the
-// JavaScript URL decoder. It assumes UTF-8 encoding.
-//
-// IE doesn't unescape %00, forcing you to use \x00 in JS strings, so we do
-// the same. This also eliminates NULL-related problems should a consumer
-// incorrectly call this function for non-JavaScript.
+// This function is also used to decode javascript: URLs and as a general
+// purpose unescaping function.
 //
 // FIXME These should be merged to the KURL.cpp implementation.
 String decodeURLEscapeSequences(const String& str, const TextEncoding& encoding)
@@ -757,15 +752,9 @@ String decodeURLEscapeSequences(const String& str, const TextEncoding& encoding)
     for (int i = 0; i < inputLength; i++) {
         if (input[i] == '%') {
             unsigned char ch;
-            if (url_canon::DecodeEscaped(input, &i, inputLength, &ch)) {
-                if (!ch) {
-                    // Never unescape NULLs.
-                    unescaped.push_back('%');
-                    unescaped.push_back('0');
-                    unescaped.push_back('0');
-                } else
-                    unescaped.push_back(ch);
-            } else {
+            if (url_canon::DecodeEscaped(input, &i, inputLength, &ch))
+                unescaped.push_back(ch);
+            else {
                 // Invalid escape sequence, copy the percent literal.
                 unescaped.push_back('%');
             }

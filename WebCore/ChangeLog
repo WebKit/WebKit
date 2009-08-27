@@ -1,3 +1,15 @@
+2009-08-27  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28767
+
+        Make KURLGoogle.cpp's decodeURLEscapeSequences decode %00 to match
+        KURL.cpp.  This makes the XSSAuditor tests pass when using KURLGoogle.
+
+        * platform/KURLGoogle.cpp:
+        (WebCore::decodeURLEscapeSequences):
+
 2009-08-27  Ariya Hidayat  <ariya.hidayat@nokia.com>
 
         Reviewed by Tor Arne Vestbø.
