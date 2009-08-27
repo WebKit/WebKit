@@ -53,6 +53,7 @@
     <file>StatusBarButton.js</file>
     <file>StoragePanel.js</file>
     <file>StylesSidebarPane.js</file>
+    <file>SummaryBar.js</file>
     <file>TextPrompt.js</file>
     <file>TopDownProfileDataGridTree.js</file>
     <file>treeoutline.js</file>

@@ -31355,6 +31355,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\SummaryBar.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\TextPrompt.js"
 					>
 				</File>

@@ -3493,6 +3493,7 @@
             'inspector/front-end/StatusBarButton.js',
             'inspector/front-end/StoragePanel.js',
             'inspector/front-end/StylesSidebarPane.js',
+            'inspector/front-end/SummaryBar.js',
             'inspector/front-end/TextPrompt.js',
             'inspector/front-end/TopDownProfileDataGridTree.js',
             'inspector/front-end/treeoutline.js',

@@ -1,3 +1,35 @@
+2009-08-27  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Factor out Factor out summary bar from Resources panel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28740
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.reset):
+        (WebInspector.ResourcesPanel.prototype._updateSummaryGraph):
+        (WebInspector.ResourcesPanel.prototype._updateDividersLabelBarPosition):
+        (WebInspector.ResourcesPanel.prototype._changeSortingFunction):
+        * inspector/front-end/SummaryBar.js: Added.
+        (WebInspector.SummaryBar):
+        (WebInspector.SummaryBar.prototype.get calculator):
+        (WebInspector.SummaryBar.prototype.set calculator):
+        (WebInspector.SummaryBar.prototype.reset):
+        (WebInspector.SummaryBar.prototype.update):
+        (WebInspector.SummaryBar.prototype._drawSwatch.drawSwatchSquare):
+        (WebInspector.SummaryBar.prototype._drawSwatch):
+        (WebInspector.SummaryBar.prototype._drawSummaryGraph.var):
+        (WebInspector.SummaryBar.prototype._drawSummaryGraph):
+        (WebInspector.SummaryBar.prototype._drawSummaryGraph.drawPill):
+        (WebInspector.SummaryBar.prototype._fadeOutRect):
+        (WebInspector.SummaryBar.prototype._makeLegendElement):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.css:
+        * inspector/front-end/inspector.html:
+
 2009-08-26  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Timothy Hatcher.

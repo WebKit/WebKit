@@ -2332,36 +2332,36 @@ button.enable-toggle-status-bar-item.toggled-on .glyph {
     -webkit-background-clip: padding;
 }
 
-#resources-graph-legend {
+.summary-graph-legend {
     margin-top: -10px;
     padding-left: 15px;
 }
 
-.resources-graph-legend-item {
+.summary-graph-legend-item {
     display: inline-block;
     font-weight: bold;
     margin-right: 15px;
     vertical-align: top;
 }
 
-.resources-graph-legend-item.total {
+.summary-graph-legend-item.total {
     margin-left: 10px;
 }
 
-.resources-graph-legend-label {
+.summary-graph-legend-label {
     display: inline-block;
     text-align: left;
 }
 
-.resources-graph-legend-header {
+.summary-graph-legend-header {
     font-size: 12px;
 }
 
-.resources-graph-legend-value {
+.summary-graph-legend-value {
     font-size: 10px;
 }
 
-.resources-graph-legend-swatch {
+.summary-graph-legend-swatch {
     vertical-align: top;
     margin-top: 1px;
     margin-right: 3px;
