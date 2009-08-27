@@ -1,5 +1,16 @@
 2009-08-26  Eric Carlson  <eric.carlson@apple.com>
 
+        Reviewed by NOBODY (Build fix).
+
+        Fixup test after r47801: skip the first 'waiting' event because it is fired  
+        when we call play() and there isn't enough media to begin playback immediately,
+        but we are interested in the 'waiting' event fired when the movie runs 
+        out of loaded media.
+
+        * http/tests/media/video-play-stall-seek.html:
+
+2009-08-26  Eric Carlson  <eric.carlson@apple.com>
+
         Reviewed by Simon Fraser.
 
         HTMLMediaElement sometimes loses events

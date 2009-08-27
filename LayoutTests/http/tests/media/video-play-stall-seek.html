@@ -3,7 +3,16 @@
 <script src=../../../media/video-test.js></script>
 <script>
 
-    waitForEvent('waiting', function () {
+    var waitingCount = 0;
+
+    video.addEventListener('waiting', function () {
+
+        // Skip the first 'waiting' event because it is fired when we call play() 
+        // and there isn't enough media to begin playback immediately.
+        if (++waitingCount == 1)
+            return;
+
+        consoleWrite("EVENT(waiting)");
 
         // now that playback has paused to wait for data, seek back and verify that we
         // get a 'canplay' event
