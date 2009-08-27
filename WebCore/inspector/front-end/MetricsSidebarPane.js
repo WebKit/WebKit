@@ -64,7 +64,7 @@ WebInspector.MetricsSidebarPane.prototype = {
                 return;
             self._inlineStyleId = stylePayload.id;
         };
-        InspectorController.getInlineStyle(node, inlineStyleCallback);
+        InspectorController.getInlineStyle(node.id, inlineStyleCallback);
     },
 
     _update: function(node, body, style)
