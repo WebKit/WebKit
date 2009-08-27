@@ -58,6 +58,11 @@ private slots:
     void saveAndRestore_1();  //simple checks saveState and restoreState
     void saveAndRestore_2();  //bad parameters saveState and restoreState
     void saveAndRestore_3();  //try use different version
+    void saveAndRestore_crash_1();
+    void saveAndRestore_crash_2();
+    void saveAndRestore_crash_3();
+    void clear();
+
 
 private:
     QWebPage* page;
@@ -119,6 +124,8 @@ void tst_QWebHistory::back()
         hist->back();
         waitForLoadFinished.exec();
     }
+    //try one more time (too many). crash test
+    hist->back();
 }
 
 /**
@@ -137,6 +144,8 @@ void tst_QWebHistory::forward()
         hist->forward();
         waitForLoadFinished.exec();
     }
+    //try one more time (too many). crash test
+    hist->forward();
 }
 
 /**
@@ -320,6 +329,64 @@ void tst_QWebHistory::saveAndRestore_3()
     QVERIFY(hist->saveState((QWebHistory::HistoryStateVersion)29999).isEmpty());
     QVERIFY(hist->count() == histsize);
     QVERIFY(hist->itemAt(3).isValid());
+}
+
+/** The test shouldn't crash */
+void tst_QWebHistory::saveAndRestore_crash_1()
+{
+    QByteArray tmp = hist->saveState();
+    for (unsigned i = 0; i < 5; i++){
+        hist->restoreState(tmp);
+        hist->saveState();
+    }
+}
+
+/** The test shouldn't crash */
+void tst_QWebHistory::saveAndRestore_crash_2()
+{
+    QByteArray tmp = hist->saveState();
+    QWebPage* page2 = new QWebPage(this);
+    QWebHistory* hist2 = page2->history();
+    for (unsigned i = 0; i < 5; i++){
+        hist2->restoreState(tmp);
+        hist2->saveState();
+    }
+    delete page2;
+}
+
+/** The test shouldn't crash */
+void tst_QWebHistory::saveAndRestore_crash_3()
+{
+    QByteArray tmp = hist->saveState();
+    QWebPage* page2 = new QWebPage(this);
+    QWebHistory* hist1 = hist;
+    QWebHistory* hist2 = page2->history();
+    for (unsigned i = 0; i < 5; i++){
+        hist1->restoreState(tmp);
+        hist2->restoreState(tmp);
+        QVERIFY(hist1->count() == hist2->count());
+        QVERIFY(hist1->count() == histsize);
+        hist2->back();
+        tmp = hist2->saveState();
+        hist2->clear();
+    }
+    delete page2;
+}
+
+/** ::clear */
+void tst_QWebHistory::clear()
+{
+    hist->saveState();
+    QVERIFY(hist->count() > 1);
+    hist->clear();
+    QVERIFY(hist->count() == 1);  //leave current item
+
+    QWebPage* page2 = new QWebPage(this);
+    QWebHistory* hist2 = page2->history();
+    QVERIFY(hist2->count() == 0);
+    hist2->clear();
+    QVERIFY(hist2->count() == 0); //do not change anything
+    delete page2;
 }
 
 QTEST_MAIN(tst_QWebHistory)

@@ -2,6 +2,34 @@
 
         Reviewed by Ariya Hidayat.
 
+        QWebHistory::clear() modifications.
+
+        Clear() method was changed. If QWebHistory is empty (there is no
+        elements even current) clear() do nothing. If there at least one
+        element clear() will delete everything apart of current.
+
+        New autotests in QWebHistory
+
+        New autotests were added to QWebHistory. They should check some crashes
+        in save and restore state process and clear() method and general
+        behavior on where QWebHistory::count() == 0 or QWebHistory::count() == 1
+
+        Bugzilla: https://bugs.webkit.org/show_bug.cgi?id=28711
+
+        * Api/qwebhistory.cpp:
+        (QWebHistory::clear):
+        * tests/qwebhistory/tst_qwebhistory.cpp:
+        (tst_QWebHistory::back):
+        (tst_QWebHistory::forward):
+        (tst_QWebHistory::saveAndRestore_crash_1):
+        (tst_QWebHistory::saveAndRestore_crash_2):
+        (tst_QWebHistory::saveAndRestore_crash_3):
+        (tst_QWebHistory::clear):
+
+2009-08-27  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
         [Qt] Cleanup, old and commented part of source code was removed.
         Fix some formatting problems.
 

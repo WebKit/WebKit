@@ -244,17 +244,25 @@ QWebHistory::~QWebHistory()
 */
 void QWebHistory::clear()
 {
-    RefPtr<WebCore::HistoryItem> current = d->lst->currentItem();
-    int capacity = d->lst->capacity();
-    d->lst->setCapacity(0);
+    //shortcut to private BackForwardList
+    WebCore::BackForwardList* lst = d->lst;
 
-    WebCore::Page* page = d->lst->page();
+    //clear visited links
+    WebCore::Page* page = lst->page();
     if (page && page->groupPtr())
         page->groupPtr()->removeVisitedLinks();
 
-    d->lst->setCapacity(capacity);
-    d->lst->addItem(current.get());
-    d->lst->goToItem(current.get());
+    //if count() == 0 then just return
+    if (!lst->entries().size())
+        return;
+
+    RefPtr<WebCore::HistoryItem> current = lst->currentItem();
+    int capacity = lst->capacity();
+    lst->setCapacity(0);
+
+    lst->setCapacity(capacity);   //revert capacity
+    lst->addItem(current.get());  //insert old current item
+    lst->goToItem(current.get()); //and set it as current again
 }
 
 /*!
