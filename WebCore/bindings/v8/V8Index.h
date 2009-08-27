@@ -369,6 +369,7 @@ typedef v8::Persistent<v8::FunctionTemplate> (*FunctionTemplateFactory)();
     V(NODEITERATOR, NodeIterator)                                       \
     V(NODELIST, NodeList)                                               \
     V(OVERFLOWEVENT, OverflowEvent)                                     \
+    V(PAGETRANSITIONEVENT, PageTransitionEvent)                         \
     V(PLUGIN, Plugin)                                                   \
     V(PLUGINARRAY, PluginArray)                                         \
     V(PROGRESSEVENT, ProgressEvent)                                     \

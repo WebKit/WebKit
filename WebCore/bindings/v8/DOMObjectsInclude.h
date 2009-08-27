@@ -107,6 +107,7 @@
 #include "NodeIterator.h"
 #include "OverflowEvent.h"
 #include "Page.h"
+#include "PageTransitionEvent.h"
 #include "Plugin.h"
 #include "PluginArray.h"
 #include "ProcessingInstruction.h"

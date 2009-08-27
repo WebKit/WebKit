@@ -1,3 +1,12 @@
+2009-08-27  Jeremy Orlow  <jorlow@chromium.org>
+
+        Not reviewed.  Build fix for Chromium.
+
+        * bindings/v8/DOMObjectsInclude.h:
+        * bindings/v8/DerivedSourcesAllInOne.cpp:
+        * bindings/v8/V8Index.cpp:
+        * bindings/v8/V8Index.h:
+
 2009-08-27  Alexey Proskuryakov  <ap@apple.com>
 
         Windows build fix.

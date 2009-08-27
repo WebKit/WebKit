@@ -179,6 +179,7 @@
 #include "bindings/V8Notification.cpp"
 #include "bindings/V8NotificationCenter.cpp"
 #include "bindings/V8OverflowEvent.cpp"
+#include "bindings/V8PageTransitionEvent.cpp"
 #include "bindings/V8Plugin.cpp"
 #include "bindings/V8PluginArray.cpp"
 #include "bindings/V8ProcessingInstruction.cpp"

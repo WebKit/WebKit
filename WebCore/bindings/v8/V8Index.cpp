@@ -182,6 +182,7 @@
 #include "V8Navigator.h"
 #include "V8MimeType.h"
 #include "V8MimeTypeArray.h"
+#include "V8PageTransitionEvent.h"
 #include "V8Plugin.h"
 #include "V8PluginArray.h"
 #include "V8Range.h"
