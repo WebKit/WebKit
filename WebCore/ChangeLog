@@ -1,3 +1,17 @@
+2009-08-27  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Dave Kilzer.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=28784
+        
+        Add an exported method to flush pending repaints.
+
+        * WebCore.base.exp:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layoutIfNeededRecursive):
+        (WebCore::FrameView::flushDeferredRepaints):
+        * page/FrameView.h:
+
 2009-08-27  Noel Gordon  <noel.gordon@gmail.com>
 
         Reviewed by Eric Seidel.

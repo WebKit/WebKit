@@ -174,6 +174,7 @@ public:
     static double currentPaintTimeStamp() { return sCurrentPaintTimeStamp; } // returns 0 if not painting
     
     void layoutIfNeededRecursive();
+    void flushDeferredRepaints();
 
     void setIsVisuallyNonEmpty() { m_isVisuallyNonEmpty = true; }
 

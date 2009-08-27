@@ -1636,10 +1636,15 @@ void FrameView::layoutIfNeededRecursive()
 
     // layoutIfNeededRecursive is called when we need to make sure layout is up-to-date before
     // painting, so we need to flush out any deferred repaints too.
-    if (m_deferredRepaintTimer.isActive()) {
-        m_deferredRepaintTimer.stop();
-        doDeferredRepaints();
-    }
+    flushDeferredRepaints();
+}
+    
+void FrameView::flushDeferredRepaints()
+{
+    if (!m_deferredRepaintTimer.isActive())
+        return;
+    m_deferredRepaintTimer.stop();
+    doDeferredRepaints();
 }
 
 void FrameView::forceLayout(bool allowSubtree)
