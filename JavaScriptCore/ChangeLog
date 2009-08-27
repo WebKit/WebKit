@@ -1,3 +1,23 @@
+2009-08-26  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Olliejver Hunt.
+
+        x86-64 GTK broken due to code offsets changing, pointers sometimes packed into immediates.
+        https://bugs.webkit.org/show_bug.cgi?id=28317
+
+        We rely on a slightly OS X specific behaviour, that x86-64 applications have a 4Gb zero page,
+        so pointers are never representable as a 32-bit integer, and always have to be represented by
+        a separate immediate load instruction, rather than within the immediate field of an arithmetic
+        or memory operation.
+
+        We explicitly check for a couple of cases where a value might be representable in 32-bit, but
+        these probably never kick in on Mac OS, and only kick in to hose GTK.  Deleting these does not
+        show a performance degradation on SunSpider.  Remove.
+
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::storePtr):
+        (JSC::MacroAssemblerX86_64::branchPtr):
+
 2009-08-26  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

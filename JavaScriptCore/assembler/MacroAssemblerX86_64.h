@@ -296,13 +296,8 @@ public:
 
     void storePtr(ImmPtr imm, ImplicitAddress address)
     {
-        intptr_t ptr = imm.asIntptr();
-        if (CAN_SIGN_EXTEND_32_64(ptr))
-            m_assembler.movq_i32m(static_cast<int>(ptr), address.offset, address.base);
-        else {
-            move(imm, scratchRegister);
-            storePtr(scratchRegister, address);
-        }
+        move(imm, scratchRegister);
+        storePtr(scratchRegister, address);
     }
 
     DataLabel32 storePtrWithAddressOffsetPatch(RegisterID src, Address address)
@@ -339,17 +334,8 @@ public:
 
     Jump branchPtr(Condition cond, RegisterID left, ImmPtr right)
     {
-        intptr_t imm = right.asIntptr();
-        if (CAN_SIGN_EXTEND_32_64(imm)) {
-            if (!imm)
-                m_assembler.testq_rr(left, left);
-            else
-                m_assembler.cmpq_ir(imm, left);
-            return Jump(m_assembler.jCC(x86Condition(cond)));
-        } else {
-            move(right, scratchRegister);
-            return branchPtr(cond, left, scratchRegister);
-        }
+        move(right, scratchRegister);
+        return branchPtr(cond, left, scratchRegister);
     }
 
     Jump branchPtr(Condition cond, RegisterID left, Address right)
