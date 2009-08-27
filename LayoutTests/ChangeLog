@@ -1,3 +1,20 @@
+2009-08-26  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Re-baselined and created new isolatedWorld tests to play nice with localStorage & sessionStorage.
+        https://bugs.webkit.org/show_bug.cgi?id=27992
+
+        * http/tests/security/isolatedWorld/all-window-properties.html: Re-baselined.
+        * http/tests/security/isolatedWorld/storage-properties-expected.txt: Added.
+        * http/tests/security/isolatedWorld/storage-properties.html: Added.
+        * http/tests/security/isolatedWorld/storage-prototype-expected.txt: Added.
+        * http/tests/security/isolatedWorld/storage-prototype.html: Added.
+        * platform/qtk/Skipped: Added new tests.
+        * platform/mac/Skipped: Added new tests.
+        * platform/qt/Skipped: Added new tests.
+        * platform/win/Skipped: Added new tests.
+
 2009-08-26  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by NOBODY (Build fix).

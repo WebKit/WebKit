@@ -4,6 +4,7 @@
 <div id="console"></div>
 <script>
 for (p in window) {
+  if (p == 'localStorage' || p == 'sessionStorage') continue;
   var obj = window[p];
   if (obj)
     obj.foo = "FAIL: Visible in isolated world.";

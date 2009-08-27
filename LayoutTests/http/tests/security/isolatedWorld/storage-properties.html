@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="console"></div>
+<script>
+localStorage.clear();
+localStorage.foo = "Visible";
+sessionStorage.clear();
+sessionStorage.foo = "Visible";
+if (window.layoutTestController) {
+  layoutTestController.dumpAsText();
+  layoutTestController.evaluateScriptInIsolatedWorld(
+    "document.getElementById('console').innerHTML = localStorage.foo + ' and ' + sessionStorage.foo");
+}
+</script>
+</body>
+</html>
