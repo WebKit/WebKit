@@ -278,7 +278,7 @@ PassRefPtr<FileList> ClipboardMac::files() const
     if (policy() != ClipboardReadable)
         return FileList::create();
 
-    NSArray *absoluteURLs = absoluteURLsFromPasteboard(m_pasteboard.get());
+    NSArray *absoluteURLs = absoluteURLsFromPasteboardFilenames(m_pasteboard.get());
     NSUInteger count = [absoluteURLs count];
 
     RefPtr<FileList> fileList = FileList::create();
