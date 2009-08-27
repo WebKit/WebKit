@@ -1,3 +1,16 @@
+2009-08-27  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        WebInspector: Console won't close.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28778
+
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype._updateModifiedNodes):
+        * inspector/front-end/utilities.js:
+        (Node.prototype.isAncestor):
+
 2009-08-27  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

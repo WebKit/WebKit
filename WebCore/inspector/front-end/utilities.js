@@ -318,6 +318,10 @@ Element.prototype.lastChildSkippingWhitespace = lastChildSkippingWhitespace;
 
 Node.prototype.isWhitespace = isNodeWhitespace;
 Node.prototype.displayName = nodeDisplayName;
+Node.prototype.isAncestor = function(node)
+{
+    return isAncestorNode(this, node);
+};
 Node.prototype.isDescendant = isDescendantNode;
 Node.prototype.nextSiblingSkippingWhitespace = nextSiblingSkippingWhitespace;
 Node.prototype.previousSiblingSkippingWhitespace = previousSiblingSkippingWhitespace;

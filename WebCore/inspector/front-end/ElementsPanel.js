@@ -475,7 +475,7 @@ WebInspector.ElementsPanel.prototype = {
                 updatedParentTreeElements.push(parentNodeItem);
             }
 
-            if (!updateBreadcrumbs && (this.focusedDOMNode === parent || isAncestorIncludingParentFrames(this.focusedDOMNode, parent)))
+            if (!updateBreadcrumbs && (this.focusedDOMNode === parent || isAncestor(this.focusedDOMNode, parent)))
                 updateBreadcrumbs = true;
         }
 
