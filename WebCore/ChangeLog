@@ -1,3 +1,25 @@
+2009-08-27  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by NOBODY (build fix).
+
+        Adding missing file from previous commit.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28740
+
+        * inspector/front-end/SummaryBar.js: Added.
+        (WebInspector.SummaryBar):
+        (WebInspector.SummaryBar.prototype.get calculator):
+        (WebInspector.SummaryBar.prototype.set calculator):
+        (WebInspector.SummaryBar.prototype.reset):
+        (WebInspector.SummaryBar.prototype.update):
+        (WebInspector.SummaryBar.prototype._drawSwatch.drawSwatchSquare):
+        (WebInspector.SummaryBar.prototype._drawSwatch):
+        (WebInspector.SummaryBar.prototype._drawSummaryGraph.var):
+        (WebInspector.SummaryBar.prototype._drawSummaryGraph):
+        (WebInspector.SummaryBar.prototype._drawSummaryGraph.drawPill):
+        (WebInspector.SummaryBar.prototype._fadeOutRect):
+        (WebInspector.SummaryBar.prototype._makeLegendElement):
+
 2009-08-27  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Timothy Hatcher.
