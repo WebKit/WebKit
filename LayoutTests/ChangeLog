@@ -1,3 +1,49 @@
+2009-08-27  Drew Wilson  <atwilson@google.com>
+
+        Reviewed by David Levin.
+
+        Need to write tests for worker lifecycle mechanisms.
+        https://bugs.webkit.org/show_bug.cgi?id=28714
+
+        * fast/workers/dedicated-worker-lifecycle-expected.txt: Added.
+        * fast/workers/dedicated-worker-lifecycle.html: Added.
+        * fast/workers/resources/create-shared-worker-frame.html: Added.
+        * fast/workers/resources/dedicated-worker-lifecycle.js: Added.
+        Broke out "orphaned worker" lifecycle tests because they only apply to dedicated workers.
+        (runTests.worker.onmessage):
+        (runTests):
+        (orphanedWorkerExited.worker.onmessage):
+        (orphanedWorkerExited):
+        (orphanedTimeoutWorkerExited):
+        * fast/workers/resources/shared-worker-lifecycle.js: Added.
+        Added tests for the various shared worker lifecycle cases (makes sure that refcounts are properly updated when documents close).
+        (runTests):
+        (createWorkerFrame):
+        (closeFrame):
+        (closeFrame1):
+        (closeFrame2):
+        (closeFrame3):
+        (closeFrame4):
+        (complete):
+        * fast/workers/resources/worker-lifecycle.js:
+        Updated test so it can run in a browser (with incorrect output) to aid in debugging.
+        (runTests.worker.onmessage):
+        (runTests):
+        (workerExited):
+        * fast/workers/resources/worker-util.js: Added.
+        Moved some common utilities out of worker-lifecycle.js and into this file so they can be shared with other tests.
+        (log):
+        (gc):
+        (waitUntilWorkerThreadsExit):
+        (waitUntilThreadCountMatches.return):
+        (waitUntilThreadCountMatches):
+        (ensureThreadCountMatches):
+        (done):
+        * fast/workers/shared-worker-frame-lifecycle-expected.txt: Added.
+        * fast/workers/shared-worker-frame-lifecycle.html-disabled: Added.
+        * fast/workers/shared-worker-lifecycle.html-disabled:
+        * fast/workers/worker-lifecycle.html:
+
 2009-08-27  Noel Gordon  <noel.gordon@gmail.com>
 
         Reviewed by Eric Seidel.
