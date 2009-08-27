@@ -138,6 +138,7 @@ IDL_BINDINGS += \
 	WebCore/dom/NodeList.idl \
 	WebCore/dom/Notation.idl \
 	WebCore/dom/OverflowEvent.idl \
+	WebCore/dom/PageTransitionEvent.idl \
 	WebCore/dom/ProcessingInstruction.idl \
 	WebCore/dom/ProgressEvent.idl \
 	WebCore/dom/Range.idl \
@@ -744,6 +745,8 @@ webcore_sources += \
 	WebCore/dom/OptionElement.h \
 	WebCore/dom/OverflowEvent.cpp \
 	WebCore/dom/OverflowEvent.h \
+	WebCore/dom/PageTransitionEvent.cpp \
+	WebCore/dom/PageTransitionEvent.h \
 	WebCore/dom/Position.cpp \
 	WebCore/dom/Position.h \
 	WebCore/dom/PositionIterator.cpp \

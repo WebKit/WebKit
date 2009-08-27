@@ -210,6 +210,7 @@ DOM_CLASSES = \
     Notification \
     NotificationCenter \
     OverflowEvent \
+    PageTransitionEvent \
     Plugin \
     PluginArray \
     PositionError \

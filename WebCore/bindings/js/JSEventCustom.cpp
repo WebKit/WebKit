@@ -38,6 +38,7 @@
 #include "JSMouseEvent.h"
 #include "JSMutationEvent.h"
 #include "JSOverflowEvent.h"
+#include "JSPageTransitionEvent.h"
 #include "JSProgressEvent.h"
 #include "JSTextEvent.h"
 #include "JSUIEvent.h"
@@ -51,6 +52,7 @@
 #include "MouseEvent.h"
 #include "MutationEvent.h"
 #include "OverflowEvent.h"
+#include "PageTransitionEvent.h"
 #include "ProgressEvent.h"
 #include "TextEvent.h"
 #include "UIEvent.h"
@@ -111,6 +113,8 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, Event* event)
         wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, OverflowEvent, event);
     else if (event->isMessageEvent())
         wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, MessageEvent, event);
+    else if (event->isPageTransitionEvent())
+        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, PageTransitionEvent, event);
     else if (event->isProgressEvent()) {
         if (event->isXMLHttpRequestProgressEvent())
             wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, XMLHttpRequestProgressEvent, event);

@@ -552,6 +552,7 @@ public:
     void dispatchWindowEvent(PassRefPtr<Event>);
     void dispatchWindowEvent(const AtomicString& eventType, bool canBubbleArg, bool cancelableArg);
     void dispatchLoadEvent();
+    void dispatchPageTransitionEvent(const AtomicString& eventType, bool persisted);
 
     PassRefPtr<Event> createEvent(const String& eventType, ExceptionCode&);
 

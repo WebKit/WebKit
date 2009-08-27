@@ -124,6 +124,11 @@ bool Event::isOverflowEvent() const
     return false;
 }
 
+bool Event::isPageTransitionEvent() const
+{
+    return false;
+}
+
 bool Event::isProgressEvent() const
 {
     return false;

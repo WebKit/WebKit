@@ -575,8 +575,10 @@ void FrameLoader::stopLoading(bool sendUnload, DatabasePolicy databasePolicy)
                 if (currentFocusedNode)
                     currentFocusedNode->aboutToUnload();
                 m_unloadEventBeingDispatched = true;
-                if (m_frame->domWindow())
+                if (m_frame->domWindow()) {
+                    m_frame->domWindow()->dispatchPageTransitionEvent(EventNames().pagehideEvent, m_frame->document()->inPageCache());
                     m_frame->domWindow()->dispatchUnloadEvent();
+                }
                 m_unloadEventBeingDispatched = false;
                 if (m_frame->document())
                     m_frame->document()->updateStyleIfNeeded();

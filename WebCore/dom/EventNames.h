@@ -77,6 +77,8 @@ namespace WebCore {
     macro(online) \
     macro(open) \
     macro(overflowchanged) \
+    macro(pagehide) \
+    macro(pageshow) \
     macro(paste) \
     macro(readystatechange) \
     macro(reset) \

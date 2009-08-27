@@ -167,6 +167,8 @@ onmouseup
 onmousewheel
 ononline
 onoffline
+onpagehide
+onpageshow
 onpaste
 onpause
 onplay

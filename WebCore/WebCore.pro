@@ -348,6 +348,7 @@ IDL_BINDINGS += \
     dom/NodeList.idl \
     dom/Notation.idl \
     dom/OverflowEvent.idl \
+    dom/PageTransitionEvent.idl \
     dom/ProcessingInstruction.idl \
     dom/ProgressEvent.idl \
     dom/RangeException.idl \
@@ -863,6 +864,7 @@ SOURCES += \
     dom/OptionGroupElement.cpp \
     dom/OptionElement.cpp \
     dom/OverflowEvent.cpp \
+    dom/PageTransitionEvent.cpp \
     dom/Position.cpp \
     dom/PositionIterator.cpp \
     dom/ProcessingInstruction.cpp \
@@ -1529,6 +1531,7 @@ HEADERS += \
     dom/OptionElement.h \
     dom/OptionGroupElement.h \
     dom/OverflowEvent.h \
+    dom/PageTransitionEvent.h \
     dom/Position.h \
     dom/PositionIterator.h \
     dom/ProcessingInstruction.h \

@@ -1,3 +1,26 @@
+2009-08-26  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28758
+        <rdar://problem/6440869> Implement pageshow and pagehide events for b/f cache (28758)
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/dom/prototype-inheritance-expected.txt:
+        * fast/js/global-constructors-expected.txt:
+        Updated results for new event type.
+
+        * fast/events/pageshow-pagehide-expected.txt: Added.
+        * fast/events/pageshow-pagehide-on-back-cached-expected.txt: Added.
+        * fast/events/pageshow-pagehide-on-back-cached.html: Added.
+        * fast/events/pageshow-pagehide-on-back-uncached-expected.txt: Added.
+        * fast/events/pageshow-pagehide-on-back-uncached.html: Added.
+        * fast/events/pageshow-pagehide.html: Added.
+        * fast/events/resources/pageshow-pagehide-subframe-2.html: Added.
+        * fast/events/resources/pageshow-pagehide-subframe.html: Added.
+        * fast/events/resources/pageshow-pagehide-subsubframe-2.html: Added.
+        * fast/events/resources/pageshow-pagehide-subsubframe.html: Added.
+
 2009-08-27  Renata Hodovan  <hodovan.renata@stud.u-szeged.hu>
 
         Reviewed by Ariya Hidayat.

@@ -4491,6 +4491,13 @@
 		E1271A140EEEC80400F61213 /* WorkerNavigator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1271A130EEEC80400F61213 /* WorkerNavigator.cpp */; };
 		E1271A580EEECDE400F61213 /* JSWorkerNavigator.h in Headers */ = {isa = PBXBuildFile; fileRef = E1271A560EEECDE400F61213 /* JSWorkerNavigator.h */; };
 		E1271A590EEECDE400F61213 /* JSWorkerNavigator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1271A570EEECDE400F61213 /* JSWorkerNavigator.cpp */; };
+		E1284ADA10447AEB00EAEB52 /* PageTransitionEvent.idl in Resources */ = {isa = PBXBuildFile; fileRef = E1284AD910447AEB00EAEB52 /* PageTransitionEvent.idl */; };
+		E1284AE110447D4500EAEB52 /* PageTransitionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = E1284AE010447D4500EAEB52 /* PageTransitionEvent.h */; };
+		E1284AEA10447DEE00EAEB52 /* PageTransitionEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1284AE910447DEE00EAEB52 /* PageTransitionEvent.cpp */; };
+		E1284BB110449FFA00EAEB52 /* JSPageTransitionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = E1284BAF10449FFA00EAEB52 /* JSPageTransitionEvent.h */; };
+		E1284BB210449FFA00EAEB52 /* JSPageTransitionEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1284BB010449FFA00EAEB52 /* JSPageTransitionEvent.cpp */; };
+		E1284BD51044A01E00EAEB52 /* DOMPageTransitionEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1284BD31044A01E00EAEB52 /* DOMPageTransitionEvent.mm */; };
+		E1284BD61044A01E00EAEB52 /* DOMPageTransitionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = E1284BD41044A01E00EAEB52 /* DOMPageTransitionEvent.h */; };
 		E12EDB7B0B308A78002704B6 /* EventTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = E12EDB7A0B308A78002704B6 /* EventTarget.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E12EDBEA0B308E0B002704B6 /* EventTarget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E12EDBE90B308E0B002704B6 /* EventTarget.cpp */; };
 		E17A4A1B0D97991D00FC10C6 /* DOMSVGAltGlyphElement.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 65AA6BAC0D974A00000541AE /* DOMSVGAltGlyphElement.h */; };
@@ -9511,6 +9518,13 @@
 		E1271A510EEECD1C00F61213 /* WorkerNavigator.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WorkerNavigator.idl; sourceTree = "<group>"; };
 		E1271A560EEECDE400F61213 /* JSWorkerNavigator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWorkerNavigator.h; sourceTree = "<group>"; };
 		E1271A570EEECDE400F61213 /* JSWorkerNavigator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWorkerNavigator.cpp; sourceTree = "<group>"; };
+		E1284AD910447AEB00EAEB52 /* PageTransitionEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PageTransitionEvent.idl; sourceTree = "<group>"; };
+		E1284AE010447D4500EAEB52 /* PageTransitionEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageTransitionEvent.h; sourceTree = "<group>"; };
+		E1284AE910447DEE00EAEB52 /* PageTransitionEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageTransitionEvent.cpp; sourceTree = "<group>"; };
+		E1284BAF10449FFA00EAEB52 /* JSPageTransitionEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPageTransitionEvent.h; sourceTree = "<group>"; };
+		E1284BB010449FFA00EAEB52 /* JSPageTransitionEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPageTransitionEvent.cpp; sourceTree = "<group>"; };
+		E1284BD31044A01E00EAEB52 /* DOMPageTransitionEvent.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMPageTransitionEvent.mm; sourceTree = "<group>"; };
+		E1284BD41044A01E00EAEB52 /* DOMPageTransitionEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMPageTransitionEvent.h; sourceTree = "<group>"; };
 		E12EDB7A0B308A78002704B6 /* EventTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventTarget.h; sourceTree = "<group>"; };
 		E12EDBE90B308E0B002704B6 /* EventTarget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventTarget.cpp; sourceTree = "<group>"; };
 		E182568D0EF2B02D00933242 /* JSWorkerContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWorkerContext.cpp; sourceTree = "<group>"; };
@@ -11535,6 +11549,8 @@
 				85C7F5BD0AAFB7CC004014DD /* DOMMutationEvent.mm */,
 				85C7F5CE0AAFB8D9004014DD /* DOMOverflowEvent.h */,
 				85C7F5CF0AAFB8D9004014DD /* DOMOverflowEvent.mm */,
+				E1284BD41044A01E00EAEB52 /* DOMPageTransitionEvent.h */,
+				E1284BD31044A01E00EAEB52 /* DOMPageTransitionEvent.mm */,
 				BCC573330D695BBE006EF517 /* DOMProgressEvent.h */,
 				BCC573340D695BBE006EF517 /* DOMProgressEvent.mm */,
 				933A14750B7D1BAF00A53FFD /* DOMTextEvent.h */,
@@ -13039,6 +13055,8 @@
 				65DF31E809D1CC60000BE325 /* JSMutationEvent.h */,
 				1A0D573E0A5C7867007EDD4C /* JSOverflowEvent.cpp */,
 				1A0D573F0A5C7867007EDD4C /* JSOverflowEvent.h */,
+				E1284BB010449FFA00EAEB52 /* JSPageTransitionEvent.cpp */,
+				E1284BAF10449FFA00EAEB52 /* JSPageTransitionEvent.h */,
 				933A14B60B7D1D5200A53FFD /* JSTextEvent.cpp */,
 				933A14B70B7D1D5200A53FFD /* JSTextEvent.h */,
 				A86629CA09DA2B47009633A5 /* JSUIEvent.cpp */,
@@ -15136,6 +15154,9 @@
 				1A0D57340A5C77FE007EDD4C /* OverflowEvent.cpp */,
 				1A0D57350A5C77FE007EDD4C /* OverflowEvent.h */,
 				1A0D57380A5C7812007EDD4C /* OverflowEvent.idl */,
+				E1284AE910447DEE00EAEB52 /* PageTransitionEvent.cpp */,
+				E1284AE010447D4500EAEB52 /* PageTransitionEvent.h */,
+				E1284AD910447AEB00EAEB52 /* PageTransitionEvent.idl */,
 				41BF700D0FE86F61005E8DEC /* PlatformMessagePortChannel.cpp */,
 				41BF700E0FE86F61005E8DEC /* PlatformMessagePortChannel.h */,
 				BE91FC8C06133666005E3790 /* Position.cpp */,
@@ -17527,6 +17548,7 @@
 				BCFA930810333193007B25D1 /* RenderOverflow.h in Headers */,
 				0014628B103CD1DE000B20DB /* OriginAccessEntry.h in Headers */,
 				B51BF6F1102C9E590002C15A /* SQLTransactionClient.h in Headers */,
+				E1284AE110447D4500EAEB52 /* PageTransitionEvent.h in Headers */,
 				49C7B9941042D2D30009D447 /* JSCanvasBuffer.h in Headers */,
 				49C7B9961042D2D30009D447 /* JSCanvasByteArray.h in Headers */,
 				49C7B9981042D2D30009D447 /* JSCanvasFramebuffer.h in Headers */,
@@ -17550,6 +17572,8 @@
 				49C7B9E61042D32F0009D447 /* CanvasTexture.h in Headers */,
 				49C7B9FC1042D3650009D447 /* GraphicsContext3D.h in Headers */,
 				49C7BA001042D38C0009D447 /* Canvas3DLayer.h in Headers */,
+				E1284BB110449FFA00EAEB52 /* JSPageTransitionEvent.h in Headers */,
+				E1284BD61044A01E00EAEB52 /* DOMPageTransitionEvent.h in Headers */,
 				510D4A34103165EE0049EA54 /* SocketStreamErrorBase.h in Headers */,
 				510D4A37103165EE0049EA54 /* SocketStreamHandleBase.h in Headers */,
 				510D4A38103165EE0049EA54 /* SocketStreamHandleClient.h in Headers */,
@@ -17656,6 +17680,7 @@
 				85136CA80AED665900F90A3D /* westResizeCursor.png in Resources */,
 				1AB1AE7A0C051FDE00139F4F /* zoomInCursor.png in Resources */,
 				1AB1AE7B0C051FDE00139F4F /* zoomOutCursor.png in Resources */,
+				E1284ADA10447AEB00EAEB52 /* PageTransitionEvent.idl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -19619,6 +19644,7 @@
 				B5C1123B102B6C4600096578 /* SQLTransactionCoordinator.cpp in Sources */,
 				0014628A103CD1DE000B20DB /* OriginAccessEntry.cpp in Sources */,
 				B51BF6F0102C9E590002C15A /* SQLTransactionClient.cpp in Sources */,
+				E1284AEA10447DEE00EAEB52 /* PageTransitionEvent.cpp in Sources */,
 				49C7B97E1042D2080009D447 /* JSCanvasNumberArrayCustom.cpp in Sources */,
 				49C7B97F1042D2080009D447 /* JSCanvasRenderingContext3DCustom.cpp in Sources */,
 				49C7B9931042D2D30009D447 /* JSCanvasBuffer.cpp in Sources */,
@@ -19646,6 +19672,8 @@
 				49C7BA8D1042F5B10009D447 /* JSDocumentCustom.cpp in Sources */,
 				49C7D4FB1042F95F0009D447 /* JSCanvasRenderingContext3D.cpp in Sources */,
 				4983A97010435E9000DB70F9 /* JSCanvasRenderingContextCustom.cpp in Sources */,
+				E1284BB210449FFA00EAEB52 /* JSPageTransitionEvent.cpp in Sources */,
+				E1284BD51044A01E00EAEB52 /* DOMPageTransitionEvent.mm in Sources */,
 				510D4A33103165EE0049EA54 /* SocketStreamErrorBase.cpp in Sources */,
 				510D4A36103165EE0049EA54 /* SocketStreamHandleBase.cpp in Sources */,
 				51ABAE1F103C1913008C5260 /* SocketStreamHandleCFNet.cpp in Sources */,

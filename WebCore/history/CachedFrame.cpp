@@ -29,6 +29,7 @@
 #include "CachedFramePlatformData.h"
 #include "CString.h"
 #include "DocumentLoader.h"
+#include "EventNames.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"
 #include "FrameView.h"
@@ -110,6 +111,8 @@ void CachedFrame::restore()
     // It is necessary to update any platform script objects after restoring the
     // cached page.
     frame->script()->updatePlatformScriptObjects();
+
+    m_document->dispatchPageTransitionEvent(EventNames().pageshowEvent, true);
 }
 
 void CachedFrame::clear()

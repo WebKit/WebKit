@@ -385,6 +385,7 @@ This file contains the list of files needed to build WebCore.
         DerivedSources/WebCore/JSNodeList.cpp
         DerivedSources/WebCore/JSNotation.cpp
         DerivedSources/WebCore/JSOverflowEvent.cpp
+        DerivedSources/WebCore/JSPageTransitionEvent.cpp
         DerivedSources/WebCore/JSPlugin.cpp
         DerivedSources/WebCore/JSPluginArray.cpp
         DerivedSources/WebCore/JSPositionError.cpp
@@ -488,6 +489,7 @@ This file contains the list of files needed to build WebCore.
         dom/OptionGroupElement.cpp
         dom/OptionElement.cpp
         dom/OverflowEvent.cpp
+        dom/PageTransitionEvent.cpp
         dom/Position.cpp
         dom/PositionIterator.cpp
         dom/ProcessingInstruction.cpp

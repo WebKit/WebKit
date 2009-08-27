@@ -233,6 +233,8 @@ module window {
         attribute EventListener onmousewheel;
         attribute EventListener onoffline;
         attribute EventListener ononline;
+        attribute EventListener onpagehide;
+        attribute EventListener onpageshow;
         attribute EventListener onpause;
         attribute EventListener onplay;
         attribute EventListener onplaying;
@@ -420,6 +422,7 @@ module window {
         attribute MouseEventConstructor MouseEvent;
         attribute MutationEventConstructor MutationEvent;
         attribute OverflowEventConstructor OverflowEvent;
+        attribute PageTransitionEventConstructor PageTransitionEvent;
         attribute ProgressEventConstructor ProgressEvent;
         attribute TextEventConstructor TextEvent;
         attribute UIEventConstructor UIEvent;
