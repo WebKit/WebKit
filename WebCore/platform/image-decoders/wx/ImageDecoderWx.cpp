@@ -86,24 +86,19 @@ bool RGBA32Buffer::setSize(int newWidth, int newHeight)
 
 NativeImagePtr RGBA32Buffer::asNewNativeImage() const
 {
-    const unsigned char* bytes = (const unsigned char*)m_bytes.data();
-    
-    typedef wxPixelData<wxBitmap, wxAlphaPixelFormat> WxPixelData;
-
     wxBitmap* bmp = new wxBitmap(width(), height(), 32);
+    typedef wxPixelData<wxBitmap, wxAlphaPixelFormat> WxPixelData;
     WxPixelData data(*bmp);
-    
-    int rowCounter = 0;
-    long pixelCounter = 0;
-    
-    WxPixelData::Iterator p(data);
-    
-    WxPixelData::Iterator rowStart = p; 
     
     // NB: It appears that the data is in BGRA format instead of RGBA format.
     // This code works properly on both ppc and intel, meaning the issue is
     // likely not an issue of byte order getting mixed up on different archs. 
-    for (long i = 0; i < m_bytes.size() * sizeof(PixelData); i += sizeof(PixelData)) {
+    const unsigned char* bytes = (const unsigned char*)m_bytes.data();
+    int rowCounter = 0;
+    long pixelCounter = 0;
+    WxPixelData::Iterator p(data);
+    WxPixelData::Iterator rowStart = p; 
+    for (size_t i = 0; i < m_bytes.size() * sizeof(PixelData); i += sizeof(PixelData)) {
         p.Red() = bytes[i+2];
         p.Green() = bytes[i+1];
         p.Blue() = bytes[i+0];
@@ -112,12 +107,11 @@ NativeImagePtr RGBA32Buffer::asNewNativeImage() const
         p++;
 
         pixelCounter++;
-        if ( (pixelCounter % width() ) == 0 ) {
+        if ((pixelCounter % width()) == 0) {
             rowCounter++;
             p = rowStart;
             p.MoveTo(data, 0, rowCounter);
         }
-
     }
 #if !wxCHECK_VERSION(2,9,0)
     bmp->UseAlpha();
@@ -125,7 +119,7 @@ NativeImagePtr RGBA32Buffer::asNewNativeImage() const
     ASSERT(bmp->IsOk());
 
 #if USE(WXGC)
-    wxGraphicsBitmap* bitmap =  new wxGraphicsBitmap(wxGraphicsRenderer::GetDefaultRenderer()->CreateBitmap(*bmp));
+    wxGraphicsBitmap* bitmap = new wxGraphicsBitmap(wxGraphicsRenderer::GetDefaultRenderer()->CreateBitmap(*bmp));
     delete bmp;
     return bitmap;
 #else
@@ -161,11 +155,13 @@ RGBA32Buffer& RGBA32Buffer::operator=(const RGBA32Buffer& other)
     return *this;
 }
 
-int RGBA32Buffer::width() const {
+int RGBA32Buffer::width() const
+{
     return m_size.width();
 }
 
-int RGBA32Buffer::height() const {
+int RGBA32Buffer::height() const
+{
     return m_size.height();
 }
 

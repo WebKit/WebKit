@@ -28,7 +28,6 @@
 
 #include <Bitmap.h>
 
-
 namespace WebCore {
 
 RGBA32Buffer::RGBA32Buffer()
@@ -61,6 +60,7 @@ void RGBA32Buffer::copyBitmapData(const RGBA32Buffer& other)
         return;
 
     m_bytes = other.m_bytes;
+    m_size = other.m_size;
     setHasAlpha(other.m_hasAlpha);
 }
 
@@ -79,11 +79,8 @@ bool RGBA32Buffer::setSize(int newWidth, int newHeight)
 
 NativeImagePtr RGBA32Buffer::asNewNativeImage() const
 {
-    const void* bytes = m_bytes.data();
-
     BBitmap* bmp = new BBitmap(BRect(0, 0, width(), height()), B_RGB32);
-    bmp->SetBits(bytes, m_size.width() * m_size.height(), 0, B_RGB32);
-
+    bmp->SetBits(m_bytes.data(), m_size.width() * m_size.height(), 0, B_RGB32);
     return bmp;
 }
 
@@ -107,9 +104,7 @@ RGBA32Buffer& RGBA32Buffer::operator=(const RGBA32Buffer& other)
     if (this == &other)
         return *this;
 
-    m_bytes = other.m_bytes;
-    m_size = other.m_size;
-    setHasAlpha(other.hasAlpha());
+    copyBitmapData(other);
     setRect(other.rect());
     setStatus(other.status());
     setDuration(other.duration());

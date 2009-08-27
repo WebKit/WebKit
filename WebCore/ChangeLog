@@ -3,6 +3,32 @@
         Reviewed by Eric Seidel.
 
         https://bugs.webkit.org/show_bug.cgi?id=28751
+        Clean up ImageDecoder*.cpp a bit.
+
+        * platform/image-decoders/ImageDecoder.cpp: Put functions in the same
+          order as in the header file.  Also, since there's already an anonymous
+          namespace in this file, use it to enclose the local helper functions.
+        (WebCore::):
+        (WebCore::ImageDecoder::upperBoundScaledX):
+        (WebCore::ImageDecoder::lowerBoundScaledX):
+        (WebCore::ImageDecoder::scaledY):
+        * platform/image-decoders/cairo/ImageDecoderCairo.cpp:
+        (WebCore::RGBA32Buffer::width): Style fix.
+        (WebCore::RGBA32Buffer::height): Style fix.
+        * platform/image-decoders/haiku/ImageDecoderHaiku.cpp:
+        (WebCore::RGBA32Buffer::copyBitmapData): Ensure m_size is set correctly.
+        (WebCore::RGBA32Buffer::asNewNativeImage): Remove unneeded temp.
+        (WebCore::RGBA32Buffer::operator=): Simplify.
+        * platform/image-decoders/wx/ImageDecoderWx.cpp:
+        (WebCore::RGBA32Buffer::asNewNativeImage): Try and collect spaced-out temps under loop comment to show they're all related.  Use size_t for iterating over elements of a Vector.
+        (WebCore::RGBA32Buffer::width): Style fix.
+        (WebCore::RGBA32Buffer::height): Style fix.
+
+2009-08-27  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28751
         Clean up ImageSource.* in preparation for more fixes on bug 27965.
 
         * platform/graphics/ImageSource.cpp: Put functions in the same order as in header file.

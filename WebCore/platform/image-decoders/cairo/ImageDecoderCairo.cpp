@@ -113,11 +113,13 @@ RGBA32Buffer& RGBA32Buffer::operator=(const RGBA32Buffer& other)
     return *this;
 }
 
-int RGBA32Buffer::width() const {
+int RGBA32Buffer::width() const
+{
     return m_size.width();
 }
 
-int RGBA32Buffer::height() const {
+int RGBA32Buffer::height() const
+{
     return m_size.height();
 }
 

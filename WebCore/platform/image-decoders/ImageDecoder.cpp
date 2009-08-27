@@ -38,9 +38,21 @@ enum MatchType {
     LowerBound
 };
 
+inline void fillScaledValues(Vector<int>& scaledValues, double scaleRate, int length)
+{
+    double inflateRate = 1. / scaleRate;
+    scaledValues.reserveCapacity(static_cast<int>(length * scaleRate + 0.5));
+    for (int scaledIndex = 0;;) {
+        int index = static_cast<int>(scaledIndex * inflateRate + 0.5);
+        if (index < length) {
+            scaledValues.append(index);
+            ++scaledIndex;
+        } else
+            break;
+    }
 }
 
-template <MatchType type> static int getScaledValue(const Vector<int>& scaledValues, int valueToMatch, int searchStart)
+template <MatchType type> int getScaledValue(const Vector<int>& scaledValues, int valueToMatch, int searchStart)
 {
     const int* dataStart = scaledValues.data();
     const int* dataEnd = dataStart + scaledValues.size();
@@ -56,33 +68,6 @@ template <MatchType type> static int getScaledValue(const Vector<int>& scaledVal
     }
 }
 
-int ImageDecoder::upperBoundScaledX(int origX, int searchStart)
-{
-    return getScaledValue<UpperBound>(m_scaledColumns, origX, searchStart);
-}
-
-int ImageDecoder::lowerBoundScaledX(int origX, int searchStart)
-{
-    return getScaledValue<LowerBound>(m_scaledColumns, origX, searchStart);
-}
-
-int ImageDecoder::scaledY(int origY, int searchStart)
-{
-    return getScaledValue<Exact>(m_scaledRows, origY, searchStart);
-}
-
-static inline void fillScaledValues(Vector<int>& scaledValues, double scaleRate, int length)
-{
-    double inflateRate = 1. / scaleRate;
-    scaledValues.reserveCapacity(static_cast<int>(length * scaleRate + 0.5));
-    for (int scaledIndex = 0;;) {
-        int index = static_cast<int>(scaledIndex * inflateRate + 0.5);
-        if (index < length) {
-            scaledValues.append(index);
-            ++scaledIndex;
-        } else
-            break;
-    }
 }
 
 void ImageDecoder::prepareScaleDataIfNecessary()
@@ -99,6 +84,21 @@ void ImageDecoder::prepareScaleDataIfNecessary()
     double scale = sqrt(m_maxNumPixels / (double)numPixels);
     fillScaledValues(m_scaledColumns, scale, width);
     fillScaledValues(m_scaledRows, scale, height);
+}
+
+int ImageDecoder::upperBoundScaledX(int origX, int searchStart)
+{
+    return getScaledValue<UpperBound>(m_scaledColumns, origX, searchStart);
+}
+
+int ImageDecoder::lowerBoundScaledX(int origX, int searchStart)
+{
+    return getScaledValue<LowerBound>(m_scaledColumns, origX, searchStart);
+}
+
+int ImageDecoder::scaledY(int origY, int searchStart)
+{
+    return getScaledValue<Exact>(m_scaledRows, origY, searchStart);
 }
 
 #endif // ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
