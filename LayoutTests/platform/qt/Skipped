@@ -889,7 +889,6 @@ fast/forms/menulist-width-change.html
 # Tests that fail and probably are real bugs, but that were
 # put into the skipped list for now to have some kind of
 # reference, so we don't introduce regressions.
-css1/box_properties/clear.html
 css2.1/t040306-syntax-01-f.html
 editing/deleting/5144139-2.html
 editing/deleting/5300379.html
@@ -1097,21 +1096,6 @@ fast/loader/stop-provisional-loads.html
 # Skip tests with metrics for now
 animations/animation-drt-api.html
 animations/animation-drt-api-multiple-keyframes.html
-css1/box_properties/clear_float.html
-css1/box_properties/float_elements_in_series.html
-css1/box_properties/float.html
-css1/box_properties/float_margin.html
-css1/box_properties/float_on_text_elements.html
-css1/box_properties/height.html
-css1/box_properties/width.html
-css1/cascade/cascade_order.html
-css1/cascade/important.html
-css1/classification/display.html
-css1/classification/list_style.html
-css1/classification/list_style_image.html
-css1/classification/list_style_position.html
-css1/classification/list_style_type.html
-css1/classification/white_space.html
 css1/color_and_background/background_attachment.html
 css1/color_and_background/background_color.html
 css1/color_and_background/background.html

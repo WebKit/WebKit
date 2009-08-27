@@ -1,131 +1,131 @@
-layer at (0,0) size 800x838
+layer at (0,0) size 800x759
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x838
-  RenderBlock {HTML} at (0,0) size 800x838
-    RenderBody {BODY} at (8,8) size 784x822 [bgcolor=#CCCCCC]
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 354x19
-          text run at (0,0) width 354: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,33) size 784x95
-        RenderText {#text} at (0,0) size 411x95
-          text run at (0,0) width 131: ".one {display: block;}"
-          text run at (131,0) width 0: " "
-          text run at (0,19) width 129: ".two {display: inline;}"
-          text run at (129,19) width 0: " "
-          text run at (0,38) width 411: ".three {display: list-item; list-style-type: square; margin-left: 3em;}"
-          text run at (411,38) width 0: " "
-          text run at (0,57) width 199: ".four {display: none; color: red;}"
-          text run at (199,57) width 0: " "
-          text run at (0,76) width 107: "I {display: block;}"
-          text run at (107,76) width 0: " "
-      RenderBlock {HR} at (0,142) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,158) size 784x19
-        RenderText {#text} at (0,0) size 297x19
-          text run at (0,0) width 297: "This sentence should be a block-level element."
-      RenderBlock (anonymous) at (0,191) size 784x57
-        RenderInline {P} at (0,0) size 460x19
-          RenderText {#text} at (0,0) size 460x19
-            text run at (0,0) width 460: "This sentence should be part of an inline element, as are the next three. "
-        RenderInline {P} at (0,0) size 775x57
-          RenderText {#text} at (460,0) size 775x57
-            text run at (460,0) width 280: "This sentence and the next two are part of a"
-            text run at (0,19) width 146: "second inline element. "
-            text run at (146,19) width 629: "They should therefore appear, along with the sentence above, to be all one paragraph which is four"
-            text run at (0,38) width 104: "sentences long. "
-            text run at (104,38) width 251: "If this is not the case, then the keyword "
-          RenderInline {CODE} at (0,0) size 33x19
-            RenderText {#text} at (355,38) size 33x19
-              text run at (355,38) width 33: "inline"
-          RenderText {#text} at (388,38) size 109x19
-            text run at (388,38) width 109: " is being ignored."
+layer at (0,0) size 800x759
+  RenderBlock {HTML} at (0,0) size 800x759
+    RenderBody {BODY} at (8,8) size 784x743 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 784x17
+        RenderText {#text} at (0,0) size 326x17
+          text run at (0,0) width 326: "The style declarations which apply to the text below are:"
+      RenderBlock {PRE} at (0,30) size 784x85
+        RenderText {#text} at (0,0) size 379x85
+          text run at (0,0) width 121: ".one {display: block;}"
+          text run at (121,0) width 0: " "
+          text run at (0,17) width 119: ".two {display: inline;}"
+          text run at (119,17) width 0: " "
+          text run at (0,34) width 379: ".three {display: list-item; list-style-type: square; margin-left: 3em;}"
+          text run at (379,34) width 0: " "
+          text run at (0,51) width 181: ".four {display: none; color: red;}"
+          text run at (181,51) width 0: " "
+          text run at (0,68) width 100: "I {display: block;}"
+          text run at (100,68) width 0: " "
+      RenderBlock {HR} at (0,128) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,143) size 784x17
+        RenderText {#text} at (0,0) size 273x17
+          text run at (0,0) width 273: "This sentence should be a block-level element."
+      RenderBlock (anonymous) at (0,173) size 784x51
+        RenderInline {P} at (0,0) size 421x17
+          RenderText {#text} at (0,0) size 421x17
+            text run at (0,0) width 421: "This sentence should be part of an inline element, as are the next three. "
+        RenderInline {P} at (0,0) size 771x51
+          RenderText {#text} at (421,0) size 771x51
+            text run at (421,0) width 336: "This sentence and the next two are part of a second inline"
+            text run at (0,17) width 54: "element. "
+            text run at (54,17) width 670: "They should therefore appear, along with the sentence above, to be all one paragraph which is four sentences long. "
+            text run at (724,17) width 47: "If this is"
+            text run at (0,34) width 183: "not the case, then the keyword "
+          RenderInline {CODE} at (0,0) size 30x17
+            RenderText {#text} at (183,34) size 30x17
+              text run at (183,34) width 30: "inline"
+          RenderText {#text} at (213,34) size 99x17
+            text run at (213,34) width 99: " is being ignored."
         RenderText {#text} at (0,0) size 0x0
-      RenderListItem {P} at (42,262) size 742x57
-        RenderListMarker at (-17,0) size 7x19: black square
-        RenderText {#text} at (0,0) size 734x38
-          text run at (0,0) width 734: "This sentence should be treated as a list-item, and therefore be rendered however this user agent displays list items"
-          text run at (0,19) width 16: "(if "
-        RenderInline {CODE} at (0,0) size 83x19
-          RenderText {#text} at (16,19) size 83x19
-            text run at (16,19) width 83: "list-style-type"
-        RenderText {#text} at (99,19) size 741x38
-          text run at (99,19) width 364: " is supported, there will be a square for the item marker). "
-          text run at (463,19) width 278: "A 3em left margin has been applied in order"
-          text run at (0,38) width 332: "to ensure that there is space for the list-item marker."
-      RenderBlock {P} at (0,333) size 784x19
-        RenderText {#text} at (0,0) size 454x19
-          text run at (0,0) width 454: "The next paragraph should be invisible (if it's visible, you'll see red text)."
-      RenderBlock {P} at (0,366) size 784x19
-        RenderText {#text} at (0,0) size 250x19
-          text run at (0,0) width 250: "There should be no text after the colon:"
+      RenderListItem {P} at (39,237) size 745x51
+        RenderListMarker at (-16,0) size 6x17: black square
+        RenderText {#text} at (0,0) size 691x17
+          text run at (0,0) width 691: "This sentence should be treated as a list-item, and therefore be rendered however this user agent displays list items (if "
+        RenderInline {CODE} at (0,0) size 744x34
+          RenderText {#text} at (691,0) size 744x34
+            text run at (691,0) width 53: "list-style-"
+            text run at (0,17) width 25: "type"
+        RenderText {#text} at (25,17) size 740x34
+          text run at (25,17) width 332: " is supported, there will be a square for the item marker). "
+          text run at (357,17) width 383: "A 3em left margin has been applied in order to ensure that there is"
+          text run at (0,34) width 174: "space for the list-item marker."
+      RenderBlock {P} at (0,301) size 784x17
+        RenderText {#text} at (0,0) size 417x17
+          text run at (0,0) width 417: "The next paragraph should be invisible (if it's visible, you'll see red text)."
+      RenderBlock {P} at (0,331) size 784x17
+        RenderText {#text} at (0,0) size 228x17
+          text run at (0,0) width 228: "There should be no text after the colon:"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,399) size 784x58
-        RenderBlock (anonymous) at (0,0) size 784x19
-          RenderText {#text} at (0,0) size 110x19
-            text run at (0,0) width 110: "The italicized text"
-        RenderBlock {I} at (0,19) size 784x20
-          RenderText {#text} at (0,0) size 107x19
-            text run at (0,0) width 107: "in this paragraph"
-        RenderBlock (anonymous) at (0,39) size 784x19
-          RenderText {#text} at (0,0) size 204x19
-            text run at (0,0) width 204: "should be a block-level element."
-      RenderTable {TABLE} at (0,471) size 784x351 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 782x349
-          RenderTableRow {TR} at (0,0) size 782x28
-            RenderTableCell {TD} at (0,0) size 782x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 159x20
-                RenderText {#text} at (4,4) size 159x20
-                  text run at (4,4) width 159: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,28) size 782x321
-            RenderTableCell {TD} at (0,175) size 12x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 4x19
+      RenderBlock {P} at (0,361) size 784x51
+        RenderBlock (anonymous) at (0,0) size 784x17
+          RenderText {#text} at (0,0) size 103x17
+            text run at (0,0) width 103: "The italicized text"
+        RenderBlock {I} at (0,17) size 784x17
+          RenderText {#text} at (0,0) size 96x17
+            text run at (0,0) width 96: "in this paragraph"
+        RenderBlock (anonymous) at (0,34) size 784x17
+          RenderText {#text} at (0,0) size 187x17
+            text run at (0,0) width 187: "should be a block-level element."
+      RenderTable {TABLE} at (0,425) size 784x318 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x316
+          RenderTableRow {TR} at (0,0) size 782x26
+            RenderTableCell {TD} at (0,0) size 782x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 144x17
+                RenderText {#text} at (4,4) size 144x17
+                  text run at (4,4) width 144: "TABLE Testing Section"
+          RenderTableRow {TR} at (0,26) size 782x290
+            RenderTableCell {TD} at (0,158) size 12x25 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x17
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,28) size 770x321 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock {P} at (4,4) size 762x19
-                RenderText {#text} at (0,0) size 297x19
-                  text run at (0,0) width 297: "This sentence should be a block-level element."
-              RenderBlock (anonymous) at (4,37) size 762x57
-                RenderInline {P} at (0,0) size 460x19
-                  RenderText {#text} at (0,0) size 460x19
-                    text run at (0,0) width 460: "This sentence should be part of an inline element, as are the next three. "
-                RenderInline {P} at (0,0) size 746x57
-                  RenderText {#text} at (460,0) size 746x57
-                    text run at (460,0) width 280: "This sentence and the next two are part of a"
-                    text run at (0,19) width 146: "second inline element. "
-                    text run at (146,19) width 600: "They should therefore appear, along with the sentence above, to be all one paragraph which is"
-                    text run at (0,38) width 133: "four sentences long. "
-                    text run at (133,38) width 251: "If this is not the case, then the keyword "
-                  RenderInline {CODE} at (0,0) size 33x19
-                    RenderText {#text} at (384,38) size 33x19
-                      text run at (384,38) width 33: "inline"
-                  RenderText {#text} at (417,38) size 109x19
-                    text run at (417,38) width 109: " is being ignored."
+            RenderTableCell {TD} at (12,26) size 770x290 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 762x17
+                RenderText {#text} at (0,0) size 273x17
+                  text run at (0,0) width 273: "This sentence should be a block-level element."
+              RenderBlock (anonymous) at (4,34) size 762x51
+                RenderInline {P} at (0,0) size 421x17
+                  RenderText {#text} at (0,0) size 421x17
+                    text run at (0,0) width 421: "This sentence should be part of an inline element, as are the next three. "
+                RenderInline {P} at (0,0) size 757x51
+                  RenderText {#text} at (421,0) size 757x51
+                    text run at (421,0) width 336: "This sentence and the next two are part of a second inline"
+                    text run at (0,17) width 54: "element. "
+                    text run at (54,17) width 670: "They should therefore appear, along with the sentence above, to be all one paragraph which is four sentences long. "
+                    text run at (724,17) width 33: "If this"
+                    text run at (0,34) width 197: "is not the case, then the keyword "
+                  RenderInline {CODE} at (0,0) size 30x17
+                    RenderText {#text} at (197,34) size 30x17
+                      text run at (197,34) width 30: "inline"
+                  RenderText {#text} at (227,34) size 99x17
+                    text run at (227,34) width 99: " is being ignored."
                 RenderText {#text} at (0,0) size 0x0
-              RenderListItem {P} at (46,108) size 720x57
-                RenderListMarker at (-17,0) size 7x19: black square
-                RenderText {#text} at (0,0) size 696x38
-                  text run at (0,0) width 696: "This sentence should be treated as a list-item, and therefore be rendered however this user agent displays list"
-                  text run at (0,19) width 54: "items (if "
-                RenderInline {CODE} at (0,0) size 83x19
-                  RenderText {#text} at (54,19) size 83x19
-                    text run at (54,19) width 83: "list-style-type"
-                RenderText {#text} at (137,19) size 676x38
-                  text run at (137,19) width 364: " is supported, there will be a square for the item marker). "
-                  text run at (501,19) width 175: "A 3em left margin has been"
-                  text run at (0,38) width 435: "applied in order to ensure that there is space for the list-item marker."
-              RenderBlock {P} at (4,179) size 762x19
-                RenderText {#text} at (0,0) size 454x19
-                  text run at (0,0) width 454: "The next paragraph should be invisible (if it's visible, you'll see red text)."
-              RenderBlock {P} at (4,212) size 762x19
-                RenderText {#text} at (0,0) size 250x19
-                  text run at (0,0) width 250: "There should be no text after the colon:"
+              RenderListItem {P} at (43,98) size 723x51
+                RenderListMarker at (-16,0) size 6x17: black square
+                RenderText {#text} at (0,0) size 691x17
+                  text run at (0,0) width 691: "This sentence should be treated as a list-item, and therefore be rendered however this user agent displays list items (if "
+                RenderInline {CODE} at (0,0) size 712x34
+                  RenderText {#text} at (691,0) size 712x34
+                    text run at (691,0) width 21: "list-"
+                    text run at (0,17) width 57: "style-type"
+                RenderText {#text} at (57,17) size 699x34
+                  text run at (57,17) width 332: " is supported, there will be a square for the item marker). "
+                  text run at (389,17) width 310: "A 3em left margin has been applied in order to ensure"
+                  text run at (0,34) width 247: "that there is space for the list-item marker."
+              RenderBlock {P} at (4,162) size 762x17
+                RenderText {#text} at (0,0) size 417x17
+                  text run at (0,0) width 417: "The next paragraph should be invisible (if it's visible, you'll see red text)."
+              RenderBlock {P} at (4,192) size 762x17
+                RenderText {#text} at (0,0) size 228x17
+                  text run at (0,0) width 228: "There should be no text after the colon:"
                 RenderText {#text} at (0,0) size 0x0
-              RenderBlock {P} at (4,245) size 762x58
-                RenderBlock (anonymous) at (0,0) size 762x19
-                  RenderText {#text} at (0,0) size 110x19
-                    text run at (0,0) width 110: "The italicized text"
-                RenderBlock {I} at (0,19) size 762x20
-                  RenderText {#text} at (0,0) size 107x19
-                    text run at (0,0) width 107: "in this paragraph"
-                RenderBlock (anonymous) at (0,39) size 762x19
-                  RenderText {#text} at (0,0) size 204x19
-                    text run at (0,0) width 204: "should be a block-level element."
+              RenderBlock {P} at (4,222) size 762x51
+                RenderBlock (anonymous) at (0,0) size 762x17
+                  RenderText {#text} at (0,0) size 103x17
+                    text run at (0,0) width 103: "The italicized text"
+                RenderBlock {I} at (0,17) size 762x17
+                  RenderText {#text} at (0,0) size 96x17
+                    text run at (0,0) width 96: "in this paragraph"
+                RenderBlock (anonymous) at (0,34) size 762x17
+                  RenderText {#text} at (0,0) size 187x17
+                    text run at (0,0) width 187: "should be a block-level element."

@@ -1,3 +1,27 @@
+2009-08-27  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Update outdated font metrics in these css1 tests since we pass them.
+
+        * platform/qt/Skipped:
+        * platform/qt/css1/box_properties/clear-expected.txt:
+        * platform/qt/css1/box_properties/clear_float-expected.txt:
+        * platform/qt/css1/box_properties/float-expected.txt:
+        * platform/qt/css1/box_properties/float_elements_in_series-expected.txt:
+        * platform/qt/css1/box_properties/float_margin-expected.txt:
+        * platform/qt/css1/box_properties/float_on_text_elements-expected.txt:
+        * platform/qt/css1/box_properties/height-expected.txt:
+        * platform/qt/css1/box_properties/width-expected.txt:
+        * platform/qt/css1/cascade/cascade_order-expected.txt:
+        * platform/qt/css1/cascade/important-expected.txt:
+        * platform/qt/css1/classification/display-expected.txt:
+        * platform/qt/css1/classification/list_style-expected.txt:
+        * platform/qt/css1/classification/list_style_image-expected.txt:
+        * platform/qt/css1/classification/list_style_position-expected.txt:
+        * platform/qt/css1/classification/list_style_type-expected.txt:
+        * platform/qt/css1/classification/white_space-expected.txt:
+
 2009-08-26  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
 
         Reviewed by Ariya Hidayat.
