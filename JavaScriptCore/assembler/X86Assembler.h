@@ -38,10 +38,6 @@
 namespace JSC {
 
 inline bool CAN_SIGN_EXTEND_8_32(int32_t value) { return value == (int32_t)(signed char)value; }
-#if PLATFORM(X86_64)
-inline bool CAN_SIGN_EXTEND_32_64(intptr_t value) { return value == (intptr_t)(int32_t)value; }
-inline bool CAN_SIGN_EXTEND_U32_64(intptr_t value) { return value == (intptr_t)(uint32_t)value; }
-#endif
 
 namespace X86Registers {
     typedef enum {
