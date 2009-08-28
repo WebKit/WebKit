@@ -154,7 +154,7 @@ IntSize ImageSource::size() const
 
 IntSize ImageSource::frameSizeAtIndex(size_t index) const
 {
-    return m_decoder ? frameSizeAtIndex(index) : IntSize();
+    return m_decoder ? m_decoder->frameSizeAtIndex(index) : IntSize();
 }
 
 int ImageSource::repetitionCount()
