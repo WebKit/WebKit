@@ -356,6 +356,13 @@ webkit_web_view_redo                            (WebKitWebView        *webView);
 WEBKIT_API gboolean
 webkit_web_view_can_redo                        (WebKitWebView        *webView);
 
+WEBKIT_API void
+webkit_web_view_set_view_source_mode            (WebKitWebView        *web_view,
+                                                 gboolean             view_source_mode);
+
+WEBKIT_API gboolean
+webkit_web_view_get_view_source_mode            (WebKitWebView        *web_view);
+
 G_END_DECLS
 
 #endif

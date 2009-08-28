@@ -1,3 +1,17 @@
+2009-08-28  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Gustavo Noronha and Xan Lopez.
+
+        [Gtk] Add view source mode API
+        https://bugs.webkit.org/show_bug.cgi?id=28805
+
+        Implement setter and getter for "view source" mode.
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_set_view_source_mode):
+        (webkit_web_frame_get_view_source_mode):
+        * webkit/webkitwebview.h:
+
 2009-08-26  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.

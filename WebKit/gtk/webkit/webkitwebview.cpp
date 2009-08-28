@@ -3733,3 +3733,41 @@ void webkit_web_view_redo(WebKitWebView* webView)
     if (webkit_web_view_can_redo(webView))
         g_signal_emit(webView, webkit_web_view_signals[REDO], 0);
 }
+
+
+/**
+ * webkit_web_view_set_view_source_mode:
+ * @web_view: a #WebKitWebView
+ * @view_source_mode: the mode to turn on or off view source mode
+ *
+ * Set whether the view should be in view source mode. Setting this mode to
+ * %TRUE before loading a URI will display the source of the web page in a
+ * nice and readable format.
+ *
+ * Since: 1.1.14
+ */
+void webkit_web_view_set_view_source_mode (WebKitWebView* webView, gboolean mode)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+
+    if (Frame* mainFrame = core(webView)->mainFrame())
+        mainFrame->setInViewSourceMode(mode);
+}
+
+/**
+ * webkit_web_view_get_view_source_mode:
+ * @web_view: a #WebKitWebView
+ *
+ * Return value: %TRUE if @web_view is in view source mode, %FALSE otherwise.
+ *
+ * Since: 1.1.14
+ */
+gboolean webkit_web_view_get_view_source_mode (WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
+
+    if (Frame* mainFrame = core(webView)->mainFrame())
+        return mainFrame->inViewSourceMode();
+
+    return FALSE;
+}
