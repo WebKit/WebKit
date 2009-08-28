@@ -42,7 +42,7 @@ namespace {
 
 namespace WebCore {
 
-  ImageDecoder* ImageDecoder::create(const SharedBuffer& data)
+ImageDecoder* ImageDecoder::create(const SharedBuffer& data)
 {
     // We need at least 4 bytes to figure out what kind of image we're dealing with.
     if (data.size() < 4)
@@ -197,7 +197,7 @@ ImageDecoderQt::ReadContext::IncrementalReadResult
     return IncrementalReadComplete;
 }
 
-ImageDecoderQt::ImageDecoderQt(const QString &imageFormat)
+ImageDecoderQt::ImageDecoderQt(const QString& imageFormat)
     : m_hasAlphaChannel(false)
     , m_imageFormat(imageFormat)
 {

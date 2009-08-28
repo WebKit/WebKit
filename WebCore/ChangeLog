@@ -1,5 +1,14 @@
 2009-08-28  Peter Kasting  <pkasting@google.com>
 
+        Not reviewed (build fix).
+
+        * platform/graphics/qt/ImageDecoderQt.cpp: Accidentally added some spaces.
+        (WebCore::ImageDecoder::create):
+        (WebCore::ImageDecoderQt::ImageDecoderQt):
+        * platform/graphics/qt/ImageDecoderQt.h: Make constructor public so factory function can access it (this seemed better than making ImageDecoder a friend).
+
+2009-08-28  Peter Kasting  <pkasting@google.com>
+
         Reviewed by Eric Seidel.
 
         https://bugs.webkit.org/show_bug.cgi?id=27965
