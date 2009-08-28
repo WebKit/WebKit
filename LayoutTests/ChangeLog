@@ -1,3 +1,16 @@
+2009-08-27  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        JSON Stringifier does not follow ES5 spec for handling of Number, String and Boolean objects
+        https://bugs.webkit.org/show_bug.cgi?id=28797
+
+        Added new tests to cover type conversions
+
+        * fast/js/JSON-stringify-expected.txt:
+        * fast/js/resources/JSON-stringify.js:
+        (createTests):
+
 2009-08-27  Drew Wilson  <atwilson@google.com>
 
         Unreviewed.

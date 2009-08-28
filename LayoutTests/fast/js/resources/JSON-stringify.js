@@ -45,8 +45,17 @@ function createTests() {
         return jsonObject.stringify(new Boolean(true));
     });
     result.push(function(jsonObject){
-        return jsonObject.stringify(new Boolean(false));
+        var value = new Number(1);
+        value.valueOf = function() { return 2; }
+        return jsonObject.stringify(value);
     });
+    result[result.length - 1].expected = '2';
+    result.push(function(jsonObject){
+        var value = new Boolean(true);
+        value.valueOf = function() { return 2; }
+        return jsonObject.stringify(value);
+    });
+    result[result.length - 1].expected = '2';
     result.push(function(jsonObject){
         return jsonObject.stringify(true);
     });
@@ -166,6 +175,21 @@ function createTests() {
     result.push(function(jsonObject){
         return jsonObject.stringify(simpleObject, null, 4);
     });
+    result.push(function(jsonObject){
+        return jsonObject.stringify(simpleObject, null, 10);
+    });
+    result.push(function(jsonObject){
+        return jsonObject.stringify(simpleObject, null, 11);
+    });
+    result[result.length - 1].expected = JSON.stringify(simpleObject, null, 10);
+    result.push(function(jsonObject){
+        return jsonObject.stringify(simpleObject, null, "          ");
+    });
+    result[result.length - 1].expected = JSON.stringify(simpleObject, null, 10);
+    result.push(function(jsonObject){
+        return jsonObject.stringify(simpleObject, null, "           ");
+    });
+    result[result.length - 1].expected = JSON.stringify(simpleObject, null, 10);
     result.push(function(jsonObject){
         return jsonObject.stringify(complexArray, null, "  ");
     });
@@ -371,9 +395,9 @@ for (var i = 0; i < tests.length; i++) {
         if (tests[i].throws)
             shouldThrow('tests[i](nativeJSON)');
         else if (tests[i].expected)
-            shouldBe('tests[i](nativeJSON)',  'tests[i].expected')
+            shouldBe('tests[i](nativeJSON)',  "tests[i].expected");
         else
-            shouldBe('tests[i](nativeJSON)',  'tests[i](JSON)');
+            shouldBe('tests[i](nativeJSON)',  "tests[i](JSON)");
     }catch(e){}
 }
 successfullyParsed = true;

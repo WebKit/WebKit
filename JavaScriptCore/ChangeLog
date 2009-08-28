@@ -1,5 +1,21 @@
 2009-08-27  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by Maciej Stachowiak.
+
+        JSON Stringifier does not follow ES5 spec for handling of Number, String and Boolean objects
+        https://bugs.webkit.org/show_bug.cgi?id=28797
+
+        Fixed unwrapBoxedPrimitive to do the right thing, which necessitated a couple of new exception
+        checks, and corrected the logic in gap to correctly convert Number and String objects.
+
+        * runtime/JSONObject.cpp:
+        (JSC::unwrapBoxedPrimitive):
+        (JSC::gap):
+        (JSC::Stringifier::Stringifier):
+        (JSC::Stringifier::appendStringifiedValue):
+
+2009-08-27  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Adam Roben.
 
         JSON.stringify replacer array does not accept values that are not string primitives.

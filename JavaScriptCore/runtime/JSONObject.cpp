@@ -120,38 +120,47 @@ private:
 
 // ------------------------------ helper functions --------------------------------
 
-static inline JSValue unwrapBoxedPrimitive(JSValue value)
+static inline JSValue unwrapBoxedPrimitive(ExecState* exec, JSValue value)
 {
     if (!value.isObject())
         return value;
-    if (!asObject(value)->inherits(&NumberObject::info) && !asObject(value)->inherits(&StringObject::info) && !asObject(value)->inherits(&BooleanObject::info))
-        return value;
-    return static_cast<JSWrapperObject*>(asObject(value))->internalValue();
+    JSObject* object = asObject(value);
+    if (object->inherits(&NumberObject::info))
+        return jsNumber(exec, object->toNumber(exec));
+    if (object->inherits(&StringObject::info))
+        return jsString(exec, object->toString(exec));
+    if (object->inherits(&BooleanObject::info))
+        return object->toPrimitive(exec);
+    return value;
 }
 
-static inline UString gap(JSValue space)
+static inline UString gap(ExecState* exec, JSValue space)
 {
-    space = unwrapBoxedPrimitive(space);
+    const int maxGapLength = 10;
+    space = unwrapBoxedPrimitive(exec, space);
 
     // If the space value is a number, create a gap string with that number of spaces.
     double spaceCount;
     if (space.getNumber(spaceCount)) {
-        const int maxSpaceCount = 100;
         int count;
-        if (spaceCount > maxSpaceCount)
-            count = maxSpaceCount;
+        if (spaceCount > maxGapLength)
+            count = maxGapLength;
         else if (!(spaceCount > 0))
             count = 0;
         else
             count = static_cast<int>(spaceCount);
-        UChar spaces[maxSpaceCount];
+        UChar spaces[maxGapLength];
         for (int i = 0; i < count; ++i)
             spaces[i] = ' ';
         return UString(spaces, count);
     }
 
     // If the space value is a string, use it as the gap string, otherwise use no gap string.
-    return space.getString();
+    UString spaces = space.getString();
+    if (spaces.size() > maxGapLength) {
+        spaces = spaces.substr(0, maxGapLength);
+    }
+    return spaces;
 }
 
 // ------------------------------ PropertyNameForFunctionCall --------------------------------
@@ -187,7 +196,7 @@ Stringifier::Stringifier(ExecState* exec, JSValue replacer, JSValue space)
     , m_usingArrayReplacer(false)
     , m_arrayReplacerPropertyNames(exec)
     , m_replacerCallType(CallTypeNone)
-    , m_gap(gap(space))
+    , m_gap(gap(exec, space))
 {
     exec->globalData().firstStringifierToMark = this;
 
@@ -203,12 +212,6 @@ Stringifier::Stringifier(ExecState* exec, JSValue replacer, JSValue space)
             if (exec->hadException())
                 break;
 
-            if (name.isObject()) {
-                if (!asObject(name)->inherits(&NumberObject::info) && !asObject(name)->inherits(&StringObject::info))
-                    continue;
-                name = static_cast<JSWrapperObject*>(asObject(name))->internalValue();
-            }
-
             UString propertyName;
             if (name.getString(propertyName)) {
                 m_arrayReplacerPropertyNames.add(Identifier(exec, propertyName));
@@ -221,8 +224,14 @@ Stringifier::Stringifier(ExecState* exec, JSValue replacer, JSValue space)
                 continue;
             }
 
-            if (exec->hadException())
-                return;
+            if (name.isObject()) {
+                if (!asObject(name)->inherits(&NumberObject::info) && !asObject(name)->inherits(&StringObject::info))
+                    continue;
+                propertyName = name.toString(exec);
+                if (exec->hadException())
+                    break;
+                m_arrayReplacerPropertyNames.add(Identifier(exec, propertyName));
+            }
         }
         return;
     }
@@ -369,7 +378,10 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
         return StringifySucceeded;
     }
 
-    value = unwrapBoxedPrimitive(value);
+    value = unwrapBoxedPrimitive(m_exec, value);
+
+    if (m_exec->hadException())
+        return StringifyFailed;
 
     if (value.isBoolean()) {
         builder.append(value.getBoolean() ? "true" : "false");
