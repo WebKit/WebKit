@@ -1,3 +1,15 @@
+2009-08-27  Noel Gordon  <noel.gordon@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        dataTransfer.types() should include type "Files" when files are present in the clipboard.
+        https://bugs.webkit.org/show_bug.cgi?id=28780
+
+        Test dataTransfer.types "Files" access for all ports.
+
+        * http/tests/security/clipboard/clipboard-file-access-expected.txt:
+        * http/tests/security/clipboard/resources/clipboard-file-access.js:
+
 2009-08-27  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Adam Roben.

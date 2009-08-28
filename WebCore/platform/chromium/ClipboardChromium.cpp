@@ -165,6 +165,9 @@ HashSet<String> ClipboardChromium::types() const
     if (!m_dataObject)
         return results;
 
+    if (!m_dataObject->filenames.isEmpty())
+        results.add("Files");
+
     if (m_dataObject->url.isValid()) {
         results.add("URL");
         results.add("text/uri-list");
