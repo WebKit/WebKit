@@ -1,3 +1,8 @@
+2009-08-27  John Sullivan  <sullivan@apple.com>
+
+        * StringsNotToBeLocalized.txt:
+        Brought up to date, other than the problem mentioned in https://bugs.webkit.org/show_bug.cgi?id=28792
+
 2009-08-25  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Oliver Hunt.
