@@ -364,6 +364,7 @@ IDL_BINDINGS += \
     html/canvas/CanvasPattern.idl \
     html/canvas/CanvasRenderingContext.idl \
     html/canvas/CanvasRenderingContext2D.idl \
+    html/canvas/CanvasRenderingContext3D.idl \
     html/DataGridColumn.idl \
     html/DataGridColumnList.idl \
     html/File.idl \

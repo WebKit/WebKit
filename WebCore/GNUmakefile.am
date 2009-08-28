@@ -154,6 +154,7 @@ IDL_BINDINGS += \
 	WebCore/html/canvas/CanvasPattern.idl \
 	WebCore/html/canvas/CanvasRenderingContext.idl \
 	WebCore/html/canvas/CanvasRenderingContext2D.idl \
+	WebCore/html/canvas/CanvasRenderingContext3D.idl \
 	WebCore/html/DataGridColumn.idl \
 	WebCore/html/DataGridColumnList.idl \
 	WebCore/html/File.idl \
