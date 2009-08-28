@@ -1,3 +1,16 @@
+2009-08-28  Julie Parent  <jparent@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        set-dangerous-headers.html shouldn't set allowed header to same value
+        as forbidden headers.  AUTHORIZATION is an allowed header, and the
+        value is being set to "foobar" like the forbidden headers, which causes
+        the test to fail when run using http server that doesn't strip the
+        AUTHORIZATION header.
+        https://bugs.webkit.org/show_bug.cgi?id=28818
+
+        * http/tests/xmlhttprequest/set-dangerous-headers.html:
+
 2009-08-28  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Gustavo Noronha.

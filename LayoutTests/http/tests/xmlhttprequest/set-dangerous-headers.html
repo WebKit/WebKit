@@ -13,7 +13,11 @@
     req.setRequestHeader("ACCEPT-ENCODING", "foobar");
     req.setRequestHeader("ACCESS-CONTROL-REQUEST-HEADERS", "foobar");
     req.setRequestHeader("ACCESS-CONTROL-REQUEST-METHOD", "foobar");
-    req.setRequestHeader("AUTHORIZATION", "foobar");
+    // AUTHORIZATION is no longer forbidden. See
+    // https://bugs.webkit.org/show_bug.cgi?id=24957 for more details. Set to
+    // a value other than the foobar since some http servers (lighttp) do not
+    // strip this out (Apache does).
+    req.setRequestHeader("AUTHORIZATION", "baz");
     req.setRequestHeader("CONNECTION", "foobar");
     req.setRequestHeader("CONTENT-LENGTH", "123456");
     req.setRequestHeader("CONTENT-TRANSFER-ENCODING", "foobar");
