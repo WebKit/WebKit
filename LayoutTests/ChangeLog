@@ -1,3 +1,15 @@
+2009-08-27  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adam Roben.
+
+        JSON.stringify replacer array does not accept values that are not string primitives.
+        https://bugs.webkit.org/show_bug.cgi?id=28788
+
+        Update to test current expected behaviour.
+
+        * fast/js/JSON-stringify-expected.txt:
+        * fast/js/resources/JSON-stringify.js:
+
 2009-08-27  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.

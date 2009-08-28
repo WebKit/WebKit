@@ -150,10 +150,10 @@ function (jsonObject) {
 PASS tests[i](nativeJSON) is tests[i](JSON)
 function (jsonObject) {
         var allString = true;
-        var array = [1,2,3];
-        return jsonObject.stringify({1:'a', 2:'b', 3:'c'}, array);
+        var array = [1, new Number(2), NaN, Infinity, -Infinity, new String("str")];
+        return jsonObject.stringify({"1":"1","2":"2","NaN":"NaN","Infinity":"Infinity","-Infinity":"-Infinity","str":"str"}, array);
     }
-PASS tests[i](nativeJSON) is tests[i](JSON)
+PASS tests[i](nativeJSON) is tests[i].expected
 function (jsonObject) {
         var allString = true;
         var array = ["1","2","3"];

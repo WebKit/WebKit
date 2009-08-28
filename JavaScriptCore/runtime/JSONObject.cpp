@@ -202,12 +202,27 @@ Stringifier::Stringifier(ExecState* exec, JSValue replacer, JSValue space)
             JSValue name = array->get(exec, i);
             if (exec->hadException())
                 break;
+
+            if (name.isObject()) {
+                if (!asObject(name)->inherits(&NumberObject::info) && !asObject(name)->inherits(&StringObject::info))
+                    continue;
+                name = static_cast<JSWrapperObject*>(asObject(name))->internalValue();
+            }
+
             UString propertyName;
-            if (!name.getString(propertyName))
+            if (name.getString(propertyName)) {
+                m_arrayReplacerPropertyNames.add(Identifier(exec, propertyName));
                 continue;
+            }
+
+            double value = 0;
+            if (name.getNumber(value)) {
+                m_arrayReplacerPropertyNames.add(Identifier::from(exec, value));
+                continue;
+            }
+
             if (exec->hadException())
                 return;
-            m_arrayReplacerPropertyNames.add(Identifier(exec, propertyName));
         }
         return;
     }

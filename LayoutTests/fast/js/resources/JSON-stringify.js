@@ -128,9 +128,10 @@ function createTests() {
     });
     result.push(function(jsonObject){
         var allString = true;
-        var array = [1,2,3];
-        return jsonObject.stringify({1:'a', 2:'b', 3:'c'}, array);
+        var array = [1, new Number(2), NaN, Infinity, -Infinity, new String("str")];
+        return jsonObject.stringify({"1":"1","2":"2","NaN":"NaN","Infinity":"Infinity","-Infinity":"-Infinity","str":"str"}, array);
     });
+    result[result.length - 1].expected = '{"1":"1","2":"2","NaN":"NaN","Infinity":"Infinity","-Infinity":"-Infinity","str":"str"}';
     result.push(function(jsonObject){
         var allString = true;
         var array = ["1","2","3"];

@@ -1,3 +1,18 @@
+2009-08-27  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adam Roben.
+
+        JSON.stringify replacer array does not accept values that are not string primitives.
+        https://bugs.webkit.org/show_bug.cgi?id=28788
+
+        Update the JSON stringifier to initialise its replacer array according to the most
+        recent version of the spec.
+
+        * runtime/Identifier.h:
+        (JSC::Identifier::from):
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::Stringifier):
+
 2009-08-27  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Oliver Hunt.
@@ -52,6 +67,21 @@
         (JSC::MacroAssemblerX86Common::move):
         * assembler/X86Assembler.h:
         (JSC::CAN_SIGN_EXTEND_8_32):
+
+2009-08-27  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adam Roben.
+
+        JSON.stringify replacer array does not accept values that are not string primitives.
+        https://bugs.webkit.org/show_bug.cgi?id=28788
+
+        Update the JSON stringifier to initialise its replacer array according to the most
+        recent version of the spec.
+
+        * runtime/Identifier.h:
+        (JSC::Identifier::from):
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::Stringifier):
 
 2009-08-27  Oliver Hunt  <oliver@apple.com>
 

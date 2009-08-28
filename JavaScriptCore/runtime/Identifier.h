@@ -54,6 +54,8 @@ namespace JSC {
         const char* ascii() const { return _ustring.ascii(); }
         
         static Identifier from(ExecState* exec, unsigned y) { return Identifier(exec, UString::from(y)); }
+        static Identifier from(ExecState* exec, int y) { return Identifier(exec, UString::from(y)); }
+        static Identifier from(ExecState* exec, double y) { return Identifier(exec, UString::from(y)); }
         
         bool isNull() const { return _ustring.isNull(); }
         bool isEmpty() const { return _ustring.isEmpty(); }
