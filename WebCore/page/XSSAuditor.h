@@ -99,18 +99,33 @@ namespace WebCore {
         bool canSetBaseElementURL(const String& url) const;
 
     private:
+        class CachingURLCanonicalizer
+        {
+        public:
+            String canonicalizeURL(const String& url, const TextEncoding& encoding, bool decodeEntities);
+
+        private:
+            // The parameters we were called with last.
+            String m_inputURL;
+            TextEncoding m_encoding;
+            bool m_decodeEntities;
+
+            // The cached result.
+            String m_cachedCanonicalizedURL;
+        };
+
         static String canonicalize(const String&);
-        
-        static String decodeURL(const String& url, const TextEncoding& encoding = UTF8Encoding(), bool decodeHTMLentities = true);
-        
-        static String decodeHTMLEntities(const String&, bool leaveUndecodableHTMLEntitiesUntouched = true);
+        static String decodeURL(const String& url, const TextEncoding& encoding, bool decodeEntities);
+        static String decodeHTMLEntities(const String&, bool leaveUndecodableEntitiesUntouched = true);
 
-        bool findInRequest(const String&, bool decodeHTMLentities = true) const;
-
-        bool findInRequest(Frame*, const String&, bool decodeHTMLentities = true) const;
+        bool findInRequest(const String&, bool decodeEntities = true) const;
+        bool findInRequest(Frame*, const String&, bool decodeEntities = true) const;
 
         // The frame to audit.
         Frame* m_frame;
+
+        // A state store to help us avoid canonicalizing the same URL repeated.
+        mutable CachingURLCanonicalizer m_cache;
     };
 
 } // namespace WebCore

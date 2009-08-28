@@ -56,6 +56,18 @@ static bool isNonCanonicalCharacter(UChar c)
     return (c == '\\' || c == '0' || c < ' ' || c == 127);
 }
 
+String XSSAuditor::CachingURLCanonicalizer::canonicalizeURL(const String& url, const TextEncoding& encoding, bool decodeEntities)
+{
+    if (decodeEntities == m_decodeEntities && encoding == m_encoding && url == m_inputURL)
+        return m_cachedCanonicalizedURL;
+
+    m_cachedCanonicalizedURL = canonicalize(decodeURL(url, encoding, decodeEntities));
+    m_inputURL = url;
+    m_encoding = encoding;
+    m_decodeEntities = decodeEntities;
+    return m_cachedCanonicalizedURL;
+}
+
 XSSAuditor::XSSAuditor(Frame* frame)
     : m_frame(frame)
 {
@@ -156,7 +168,7 @@ String XSSAuditor::canonicalize(const String& string)
     return result.removeCharacters(&isNonCanonicalCharacter);
 }
 
-String XSSAuditor::decodeURL(const String& string, const TextEncoding& encoding, bool decodeHTMLentities)
+String XSSAuditor::decodeURL(const String& string, const TextEncoding& encoding, bool decodeEntities)
 {
     String result;
     String url = string;
@@ -166,12 +178,12 @@ String XSSAuditor::decodeURL(const String& string, const TextEncoding& encoding,
     String decodedResult = encoding.decode(result.utf8().data(), result.length());
     if (!decodedResult.isEmpty())
         result = decodedResult;
-    if (decodeHTMLentities)
+    if (decodeEntities)
         result = decodeHTMLEntities(result);
     return result;
 }
 
-String XSSAuditor::decodeHTMLEntities(const String& string, bool leaveUndecodableHTMLEntitiesUntouched)
+String XSSAuditor::decodeHTMLEntities(const String& string, bool leaveUndecodableEntitiesUntouched)
 {
     SegmentedString source(string);
     SegmentedString sourceShadow;
@@ -186,7 +198,7 @@ String XSSAuditor::decodeHTMLEntities(const String& string, bool leaveUndecodabl
             continue;
         }
         
-        if (leaveUndecodableHTMLEntitiesUntouched)
+        if (leaveUndecodableEntitiesUntouched)
             sourceShadow = source;
         bool notEnoughCharacters = false;
         unsigned entity = PreloadScanner::consumeEntity(source, notEnoughCharacters);
@@ -196,11 +208,11 @@ String XSSAuditor::decodeHTMLEntities(const String& string, bool leaveUndecodabl
         if (entity > 0xFFFF) {
             result.append(U16_LEAD(entity));
             result.append(U16_TRAIL(entity));
-        } else if (entity && (!leaveUndecodableHTMLEntitiesUntouched || entity != 0xFFFD)){
+        } else if (entity && (!leaveUndecodableEntitiesUntouched || entity != 0xFFFD)){
             result.append(entity);
         } else {
             result.append('&');
-            if (leaveUndecodableHTMLEntitiesUntouched)
+            if (leaveUndecodableEntitiesUntouched)
                 source = sourceShadow;
         }
     }
@@ -208,31 +220,48 @@ String XSSAuditor::decodeHTMLEntities(const String& string, bool leaveUndecodabl
     return String::adopt(result);
 }
 
-bool XSSAuditor::findInRequest(const String& string, bool decodeHTMLentities) const
+bool XSSAuditor::findInRequest(const String& string, bool decodeEntities) const
 {
     bool result = false;
     Frame* parentFrame = m_frame->tree()->parent();
     if (parentFrame && m_frame->document()->url() == blankURL())
-        result = findInRequest(parentFrame, string, decodeHTMLentities);
+        result = findInRequest(parentFrame, string, decodeEntities);
     if (!result)
-        result = findInRequest(m_frame, string, decodeHTMLentities);
+        result = findInRequest(m_frame, string, decodeEntities);
     return result;
 }
 
-bool XSSAuditor::findInRequest(Frame* frame, const String& string, bool decodeHTMLentities) const
+bool XSSAuditor::findInRequest(Frame* frame, const String& string, bool decodeEntities) const
 {
     ASSERT(frame->document());
-    String pageURL = frame->document()->url().string();
 
     if (!frame->document()->decoder()) {
         // Note, JavaScript URLs do not have a charset.
         return false;
     }
 
-    if (protocolIs(pageURL, "data"))
+    if (string.isEmpty())
         return false;
 
-    if (string.isEmpty())
+    FormData* formDataObj = frame->loader()->documentLoader()->originalRequest().httpBody();
+    String pageURL = frame->document()->url().string();
+
+    if (!formDataObj && string.length() >= 2 * pageURL.length()) {
+        // Q: Why do we bother to do this check at all?
+        // A: Canonicalizing large inline scripts can be expensive.  We want to
+        //    bail out before the call to canonicalize below, which could
+        //    result in an unneeded allocation and memcpy.
+        //
+        // Q: Why do we multiply by two here?
+        // A: We attempt to detect reflected XSS even when the server
+        //    transforms the attacker's input with addSlashes.  The best the
+        //    attacker can do get the server to inflate his/her input by a
+        //    factor of two by sending " characters, which the server
+        //    transforms to \".
+        return false;
+    }
+
+    if (frame->document()->url().protocolIs("data"))
         return false;
 
     String canonicalizedString = canonicalize(string);
@@ -241,12 +270,11 @@ bool XSSAuditor::findInRequest(Frame* frame, const String& string, bool decodeHT
 
     if (string.length() < pageURL.length()) {
         // The string can actually fit inside the pageURL.
-        String decodedPageURL = canonicalize(decodeURL(pageURL, frame->document()->decoder()->encoding(), decodeHTMLentities));
+        String decodedPageURL = m_cache.canonicalizeURL(pageURL, frame->document()->decoder()->encoding(), decodeEntities);
         if (decodedPageURL.find(canonicalizedString, 0, false) != -1)
            return true;  // We've found the smoking gun.
     }
 
-    FormData* formDataObj = frame->loader()->documentLoader()->originalRequest().httpBody();
     if (formDataObj && !formDataObj->isEmpty()) {
         String formData = formDataObj->flattenToString();
         if (string.length() < formData.length()) {
@@ -254,7 +282,7 @@ bool XSSAuditor::findInRequest(Frame* frame, const String& string, bool decodeHT
             // the url-encoded POST data because the length of the url-decoded
             // code is less than or equal to the length of the url-encoded
             // string.
-            String decodedFormData = canonicalize(decodeURL(formData, frame->document()->decoder()->encoding(), decodeHTMLentities));
+            String decodedFormData = m_cache.canonicalizeURL(formData, frame->document()->decoder()->encoding(), decodeEntities);
             if (decodedFormData.find(canonicalizedString, 0, false) != -1)
                 return true;  // We found the string in the POST data.
         }

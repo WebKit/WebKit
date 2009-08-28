@@ -1,3 +1,34 @@
+2009-08-28  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Make XSSAuditor go fast
+        https://bugs.webkit.org/show_bug.cgi?id=28667
+
+        Make the XSSAuditor go faster by implementing two optimizations:
+
+        1) We avoid canonicalizing scripts that are larger than the page's URL.
+           This saves a bunch of time for large inline scripts.
+
+        2) We memoize canonicalizing the page's URL because it's silly to
+           canonicalize repeated for each inline event listener.
+
+        These optimizations have a measurable affect on the intl1 page cycler.
+
+        No behavior change.
+
+        * page/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::MemoizingURLCanonicalizer::canonicalizeURL):
+        (WebCore::XSSAuditor::canEvaluate):
+        (WebCore::XSSAuditor::canEvaluateJavaScriptURL):
+        (WebCore::XSSAuditor::canCreateInlineEventListener):
+        (WebCore::XSSAuditor::canLoadExternalScriptFromSrc):
+        (WebCore::XSSAuditor::canLoadObject):
+        (WebCore::XSSAuditor::canSetBaseElementURL):
+        (WebCore::XSSAuditor::decodeURL):
+        (WebCore::XSSAuditor::findInRequest):
+        * page/XSSAuditor.h:
+
 2009-08-27  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, build fix.
