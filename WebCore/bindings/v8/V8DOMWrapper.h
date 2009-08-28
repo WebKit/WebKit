@@ -184,12 +184,16 @@ namespace WebCore {
         static v8::Handle<v8::Value> convertEventTargetToV8Object(EventTarget*);
 
         // Wrap and unwrap JS event listeners.
-        static v8::Handle<v8::Value> convertEventListenerToV8Object(PassRefPtr<Event> eventListener)
+        static v8::Handle<v8::Value> convertEventListenerToV8Object(PassRefPtr<EventListener> eventListener)
         {
             return convertEventListenerToV8Object(eventListener.get());
         }
 
         static v8::Handle<v8::Value> convertEventListenerToV8Object(EventListener*);
+
+        static PassRefPtr<EventListener> getEventListener(Node* node, v8::Local<v8::Value> value, bool isAttribute, bool findOnly);
+
+        static PassRefPtr<EventListener> getEventListener(SVGElementInstance* element, v8::Local<v8::Value> value, bool isAttribute, bool findOnly);
 
         // DOMImplementation is a singleton and it is handled in a special
         // way. A wrapper is generated per document and stored in an

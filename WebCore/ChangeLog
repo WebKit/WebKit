@@ -1,3 +1,35 @@
+2009-08-28  Vitaly Repeshko  <vitalyr@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [V8] Made bindings use Node::setOnEvent functions for Node descendants
+        instead of Node::setAttributeEventListener.
+
+        Node::setAttributeEventListener is an internal function and
+        doesn't do the forwarding to DOM window that is required for some
+        HTML elements.
+        https://bugs.webkit.org/show_bug.cgi?id=28709
+
+        Tests added in http://trac.webkit.org/changeset/47326 now pass with V8.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        Now generates EventListener accessors for Node descendants instead
+        of using custom callbacks.
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::getEventListener): Moved from V8NodeCustom.cpp.
+        * bindings/v8/V8DOMWrapper.h:
+        (WebCore::V8DOMWrapper::convertEventListenerToV8Object): Fixed a bug in
+        signature.
+        * bindings/v8/V8Utilities.cpp:
+        (WebCore::createHiddenDependency):
+        (WebCore::removeHiddenDependency):
+        Changed signature to accept Handle instead of Local.
+        * bindings/v8/V8Utilities.h:
+        * bindings/v8/custom/V8CustomBinding.h:
+        * bindings/v8/custom/V8NodeCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        Removed custom callbacks for EventListener accessors.
+
 2009-08-28  Ben Murdoch  <benm@google.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=28803

@@ -236,7 +236,6 @@ namespace WebCore {
         DECLARE_PROPERTY_ACCESSOR_GETTER(EventClipboardData);
 
         DECLARE_PROPERTY_ACCESSOR(DOMWindowEventHandler);
-        DECLARE_PROPERTY_ACCESSOR(NodeEventHandler);
 
         DECLARE_CALLBACK(HTMLCanvasElementGetContext);
 

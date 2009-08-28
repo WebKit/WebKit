@@ -31,19 +31,24 @@
 #include "config.h"
 #include "V8DOMWrapper.h"
 
-#include "ChromiumBridge.h"
 #include "CSSMutableStyleDeclaration.h"
+#include "ChromiumBridge.h"
 #include "DOMObjectsInclude.h"
 #include "DocumentLoader.h"
 #include "FrameLoaderClient.h"
+#include "SVGElementInstance.h"
 #include "ScriptController.h"
+#include "V8AbstractEventListener.h"
 #include "V8Binding.h"
 #include "V8Collection.h"
 #include "V8CustomBinding.h"
 #include "V8DOMMap.h"
 #include "V8DOMWindow.h"
+#include "V8EventListenerList.h"
 #include "V8Index.h"
 #include "V8IsolatedWorld.h"
+#include "V8ObjectEventListener.h"
+#include "V8Proxy.h"
 #include "WorkerContextExecutionProxy.h"
 
 #include <algorithm>
@@ -1313,6 +1318,28 @@ v8::Handle<v8::Value> V8DOMWrapper::convertEventListenerToV8Object(EventListener
     V8AbstractEventListener* v8listener = static_cast<V8AbstractEventListener*>(listener);
     return v8listener->getListenerObject();
 }
+
+PassRefPtr<EventListener> V8DOMWrapper::getEventListener(Node* node, v8::Local<v8::Value> value, bool isAttribute, bool findOnly)
+{
+    V8Proxy* proxy = V8Proxy::retrieve(node->scriptExecutionContext());
+    // The document might be created using createDocument, which does
+    // not have a frame, use the active frame.
+    if (!proxy)
+        proxy = V8Proxy::retrieve(V8Proxy::retrieveFrameForEnteredContext());
+
+    if (proxy) {
+        V8EventListenerList* list = proxy->objectListeners();
+        return findOnly ? list->findWrapper(value, isAttribute) : list->findOrCreateWrapper<V8ObjectEventListener>(proxy->frame(), value, isAttribute);
+    }
+
+    return 0;
+}
+
+PassRefPtr<EventListener> V8DOMWrapper::getEventListener(SVGElementInstance* element, v8::Local<v8::Value> value, bool isAttribute, bool findOnly)
+{
+    return getEventListener(element->correspondingElement(), value, isAttribute, findOnly);
+}
+
 
 v8::Handle<v8::Value> V8DOMWrapper::convertDOMImplementationToV8Object(DOMImplementation* impl)
 {

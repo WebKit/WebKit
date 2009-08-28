@@ -345,6 +345,12 @@ sub IsNodeSubType
     return 0;
 }
 
+sub RequiresCustomEventListenerAccessors
+{
+    my $dataNode = shift;
+    return !IsNodeSubType($dataNode) && $dataNode->name ne "SVGElementInstance";
+}
+
 sub HolderToNative
 {
     my $dataNode = shift;
@@ -699,7 +705,11 @@ END
     }
 
     my $nativeType = GetNativeTypeFromSignature($attribute->signature, 0);
-    push(@implContentDecls, "    $nativeType v = " . JSValueToNative($attribute->signature, "value") . ";\n");
+    if ($attribute->signature->type eq "EventListener") {
+        push(@implContentDecls, "    $nativeType v = V8DOMWrapper::getEventListener(imp, value, true, false);\n");
+    } else {
+        push(@implContentDecls, "    $nativeType v = " . JSValueToNative($attribute->signature, "value") . ";\n");
+    }
 
     my $result = "";
     if ($nativeType eq "int" and $attribute->signature->extendedAttributes->{"ConvertFromString"}) {
@@ -731,6 +741,17 @@ END
             $implIncludes{"HTMLNames.h"} = 1;
             my $contentAttributeName = ($reflect || $reflectURL) eq "1" ? $attrName : ($reflect || $reflectURL);
             push(@implContentDecls, "    imp->setAttribute(HTMLNames::${contentAttributeName}Attr, $result");
+        } elsif ($attribute->signature->type eq "EventListener") {
+            $implIncludes{"V8AbstractEventListener.h"} = 1;
+            $implIncludes{"V8CustomBinding.h"} = 1;
+            push(@implContentDecls, "    $nativeType old = imp->$attrName();\n");
+            push(@implContentDecls, "    if (old && static_cast<V8AbstractEventListener*>(old.get())->isObjectListener()) {\n");
+            push(@implContentDecls, "      v8::Local<v8::Object> oldListener = static_cast<V8AbstractEventListener*>(old.get())->getListenerObject();\n");
+            push(@implContentDecls, "      removeHiddenDependency(holder, oldListener, V8Custom::kNodeEventListenerCacheIndex);\n");
+            push(@implContentDecls, "    }\n");
+            push(@implContentDecls, "    imp->set$implSetterFunctionName($result);\n");
+            push(@implContentDecls, "    if ($result)\n");
+            push(@implContentDecls, "      createHiddenDependency(holder, value, V8Custom::kNodeEventListenerCacheIndex");
         } else {
             push(@implContentDecls, "    imp->set$implSetterFunctionName(" . $result);
         }
@@ -893,7 +914,8 @@ END
 
 sub GenerateBatchedAttributeData
 {
-    my $interfaceName = shift;
+    my $dataNode = shift;
+    my $interfaceName = $dataNode->name;
     my $attributes = shift;
 
     foreach my $attribute (@$attributes) {
@@ -956,13 +978,10 @@ sub GenerateBatchedAttributeData
             $propAttr = "v8::ReadOnly";
 
         # EventListeners
-        } elsif ($attribute->signature->type eq "EventListener") {
+        } elsif ($attribute->signature->type eq "EventListener" && RequiresCustomEventListenerAccessors($dataNode)) {
             if ($interfaceName eq "DOMWindow") {
                 $getter = "V8Custom::v8DOMWindowEventHandlerAccessorGetter";
                 $setter = "V8Custom::v8DOMWindowEventHandlerAccessorSetter";
-            } elsif ($interfaceName eq "Element" || $interfaceName eq "Document" || $interfaceName eq "HTMLBodyElement" || $interfaceName eq "SVGElementInstance" || $interfaceName eq "HTMLFrameSetElement") {
-                $getter = "V8Custom::v8NodeEventHandlerAccessorGetter";
-                $setter = "V8Custom::v8NodeEventHandlerAccessorSetter";
             } elsif ($interfaceName eq "DOMApplicationCache") {
                 $getter = "V8Custom::v8DOMApplicationCacheEventHandlerAccessorGetter";
                 $setter = "V8Custom::v8DOMApplicationCacheEventHandlerAccessorSetter";
@@ -1084,13 +1103,13 @@ sub GenerateImplementation
             next;
         }
 
-        # Make EventListeners always custom.
+        # Make EventListeners custom for some types.
         # FIXME: make the perl code capable of generating the
         #   event setters/getters.  For now, WebKit has started removing the
         #   [Custom] attribute, so just automatically insert it to avoid forking
         #   other files.  This should be okay because we can't generate stubs
         #   for any event getter/setters anyway.
-        if ($attrType eq "EventListener") {
+        if ($attrType eq "EventListener" && RequiresCustomEventListenerAccessors($dataNode)) {
             $attribute->signature->extendedAttributes->{"Custom"} = 1;
             $implIncludes{"V8CustomBinding.h"} = 1;
             next;
@@ -1162,7 +1181,7 @@ sub GenerateImplementation
         # Put the attributes that disallow shadowing on the shadow object.
         $attributes = \@normal;
         push(@implContent, "static const BatchedAttribute shadow_attrs[] = {\n");
-        GenerateBatchedAttributeData($interfaceName, \@disallows_shadowing);
+        GenerateBatchedAttributeData($dataNode, \@disallows_shadowing);
         push(@implContent, "};\n");
     }
 
@@ -1170,7 +1189,7 @@ sub GenerateImplementation
     if (@$attributes) {
         $has_attributes = 1;
         push(@implContent, "static const BatchedAttribute ${interfaceName}_attrs[] = {\n");
-        GenerateBatchedAttributeData($interfaceName, $attributes);
+        GenerateBatchedAttributeData($dataNode, $attributes);
         push(@implContent, "};\n");
     }
 
@@ -1612,6 +1631,7 @@ sub IsRefPtrType
     return 1 if $type eq "Element";
     return 1 if $type eq "EntityReference";
     return 1 if $type eq "Event";
+    return 1 if $type eq "EventListener";
     return 1 if $type eq "FileList";
     return 1 if $type eq "HTMLCollection";
     return 1 if $type eq "HTMLDocument";

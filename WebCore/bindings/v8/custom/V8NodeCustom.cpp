@@ -53,62 +53,12 @@ static inline String toEventType(v8::Local<v8::String> value)
     return key.substring(2);
 }
 
-static PassRefPtr<EventListener> getEventListener(Node* node, v8::Local<v8::Value> value, bool isAttribute, bool findOnly)
-{
-    V8Proxy* proxy = V8Proxy::retrieve(node->scriptExecutionContext());
-    // The document might be created using createDocument, which does
-    // not have a frame, use the active frame.
-    if (!proxy)
-        proxy = V8Proxy::retrieve(V8Proxy::retrieveFrameForEnteredContext());
-
-    if (proxy) {
-        V8EventListenerList* list = proxy->objectListeners();
-        return findOnly ? list->findWrapper(value, isAttribute) : list->findOrCreateWrapper<V8ObjectEventListener>(proxy->frame(), value, isAttribute);
-    }
-
-    return 0;
-}
-
-ACCESSOR_SETTER(NodeEventHandler)
-{
-    Node* node = V8DOMWrapper::convertDOMWrapperToNode<Node>(info.Holder());
-    String eventType = toEventType(name);
-
-    // Remove hidden dependency on the old event handler.
-    if (EventListener* listener = node->getAttributeEventListener(eventType)) {
-        if (static_cast<V8AbstractEventListener*>(listener)->isObjectListener()) {
-            v8::Local<v8::Object> v8Listener = static_cast<V8ObjectEventListener*>(listener)->getListenerObject();
-            removeHiddenDependency(info.Holder(), v8Listener, V8Custom::kNodeEventListenerCacheIndex);
-        }
-    }
-
-    // Set handler if the value is a function.
-    if (value->IsFunction()) {
-        RefPtr<EventListener> listener = getEventListener(node, value, true, false);
-        if (listener) {
-            node->setAttributeEventListener(eventType, listener);
-            createHiddenDependency(info.Holder(), value, V8Custom::kNodeEventListenerCacheIndex);
-        }
-    } else {
-        // Otherwise, clear the handler.
-        node->clearAttributeEventListener(eventType);
-    }
-}
-
-ACCESSOR_GETTER(NodeEventHandler)
-{
-    Node* node = V8DOMWrapper::convertDOMWrapperToNode<Node>(info.Holder());
-
-    EventListener* listener = node->getAttributeEventListener(toEventType(name));
-    return V8DOMWrapper::convertEventListenerToV8Object(listener);
-}
-
 CALLBACK_FUNC_DECL(NodeAddEventListener)
 {
     INC_STATS("DOM.Node.addEventListener()");
     Node* node = V8DOMWrapper::convertDOMWrapperToNode<Node>(args.Holder());
 
-    RefPtr<EventListener> listener = getEventListener(node, args[1], false, false);
+    RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(node, args[1], false, false);
     if (listener) {
         String type = toWebCoreString(args[0]);
         bool useCapture = args[2]->BooleanValue();
@@ -126,7 +76,7 @@ CALLBACK_FUNC_DECL(NodeRemoveEventListener)
     // It is possbile that the owner document of the node is detached
     // from the frame.
     // See issue http://b/878909
-    RefPtr<EventListener> listener = getEventListener(node, args[1], false, true);
+    RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(node, args[1], false, true);
     if (listener) {
         String type = toWebCoreString(args[0]);
         bool useCapture = args[2]->BooleanValue();
