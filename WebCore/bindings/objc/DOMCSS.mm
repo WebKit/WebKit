@@ -47,6 +47,7 @@
 #import "DOMStyleSheetInternal.h"
 #import "DOMWebKitCSSKeyframeRule.h"
 #import "DOMWebKitCSSKeyframesRule.h"
+#import "DOMWebKitCSSTransformValue.h"
 
 #if ENABLE(SVG_DOM_OBJC_BINDINGS)
 #import "DOMSVGPaint.h"
@@ -102,6 +103,8 @@ Class kitClass(WebCore::CSSValue* impl)
         case WebCore::CSSValue::CSS_PRIMITIVE_VALUE:
             return [DOMCSSPrimitiveValue class];
         case WebCore::CSSValue::CSS_VALUE_LIST:
+            if (impl->isWebKitCSSTransformValue())
+                return [DOMWebKitCSSTransformValue class];
             return [DOMCSSValueList class];
         case WebCore::CSSValue::CSS_INHERIT:
         case WebCore::CSSValue::CSS_INITIAL:
