@@ -1,3 +1,13 @@
+2009-08-27  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, build fix.
+
+        [V8] Add NULL-check, since the context ain't changeable no more, and
+        thus getContext could return 0.
+
+        * bindings/v8/custom/V8HTMLCanvasElementCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL): Added NULL-check.
+
 2009-08-27  Noel Gordon  <noel.gordon@gmail.com>
 
         Reviewed by Eric Seidel.
