@@ -20,30 +20,9 @@
 # the media/video tests fail if you remove some of them.
 #
 # editing/selection/extend-selection.html
-# fast/dom/null-document-location-assign-crash.html
-# fast/dom/null-document-location-href-put-crash.html
-# fast/dom/null-document-location-put-crash.html
-# fast/dom/null-document-location-replace-crash.html
-# fast/dom/null-document-window-open-crash.html
 # fast/dom/Window/window-screen-properties.html
 # fast/js/navigator-mimeTypes-length.html
-# media/remove-from-document.html
-# media/video-append-source.html
-# media/video-autoplay.html
-# media/video-buffered.html
-# media/video-controls.html
 # media/video-currentTime-set.html
-# media/video-currentTime-set2.html
-# media/video-currentTime.html
-# media/video-dom-autoplay.html
-# media/video-error-abort.html
-# media/video-pause-empty-events.html
-# media/video-play-empty-events.html
-# media/video-seek-past-end-paused.html
-# media/video-seekable.html
-# media/video-size.html
-# media/video-src-remove.html
-# media/video-volume.html
 # transitions/zero-duration-with-non-zero-delay-end.html
 
 # The following test started failing somehow because one of the inputs
@@ -71,7 +50,6 @@ accessibility/aria-readonly.html
 accessibility/button-press-action.html
 accessibility/canvas.html
 accessibility/editable-webarea-context-menu-point.html
-accessibility/iframe-bastardization.html
 accessibility/img-aria-button-alt-tag.html
 accessibility/input-image-alt.html
 accessibility/input-slider.html
@@ -81,7 +59,6 @@ accessibility/onclick-handlers.html
 accessibility/placeholder.html
 accessibility/radio-button-title-label.html
 accessibility/secure-textfield-title-ui.html
-accessibility/table-notbody.html
 accessibility/textarea-insertion-point-line-number.html
 accessibility/textarea-line-for-index.html
 accessibility/textarea-selected-text-range.html
@@ -765,7 +742,6 @@ editing/deleting/smart-editing-disabled.html
 editing/deleting/type-delete-after-quote-2.html
 editing/execCommand/4128080-2.html
 editing/execCommand/5939887.html
-editing/execCommand/convert-style-elements-to-spans.html
 editing/execCommand/copy-without-selection.html
 editing/execCommand/createLink.html
 editing/execCommand/enabling-and-selection-2.html
@@ -829,10 +805,8 @@ editing/selection/skip-non-editable-2.html
 editing/selection/toString-1.html
 editing/selection/toString.html
 editing/text-iterator/basic-iteration.html
-editing/undo/undo-iframe-location-change.html
 #   Tests generating new results
 editing/deleting/4845371.html
-editing/deleting/4866671.html
 editing/deleting/4922367.html
 editing/deleting/5026848-1.html
 editing/deleting/5026848-2.html
@@ -844,7 +818,6 @@ editing/deleting/5115601.html
 editing/deleting/5126166.html
 editing/deleting/5144139-2.html
 editing/deleting/5156801-2.html
-editing/deleting/5156801.html
 editing/deleting/5168598.html
 editing/deleting/5206311-1.html
 editing/deleting/5206311-2.html
@@ -1004,34 +977,21 @@ editing/execCommand/4786404-1.html
 editing/execCommand/4786404-2.html
 editing/execCommand/4916402.html
 editing/execCommand/4916541.html
-editing/execCommand/4916583.html
 editing/execCommand/4920488.html
 editing/execCommand/4920742-1.html
 editing/execCommand/4924441.html
 editing/execCommand/5049671.html
 editing/execCommand/5080333-1.html
 editing/execCommand/5080333-2.html
-editing/execCommand/5119244.html
-editing/execCommand/5120591.html
 editing/execCommand/5136770.html
 editing/execCommand/5138441.html
 editing/execCommand/5142012-1.html
 editing/execCommand/5142012-2.html
-editing/execCommand/5142012-3.html
-editing/execCommand/5144139-1.html
-editing/execCommand/5164796.html
 editing/execCommand/5190926.html
-editing/execCommand/5207369.html
-editing/execCommand/5210032.html
-editing/execCommand/5432254-1.html
-editing/execCommand/5432254-2.html
 editing/execCommand/5481523.html
 editing/execCommand/5482023.html
 editing/execCommand/5569741.html
 editing/execCommand/5573879.html
-editing/execCommand/5700414-1.html
-editing/execCommand/5700414-2.html
-editing/execCommand/boldSelection.html
 editing/execCommand/create-list-from-range-selection.html
 editing/execCommand/create-list-with-hr.html
 editing/execCommand/find-after-replace.html
@@ -1057,8 +1017,6 @@ editing/execCommand/insert-list-empty-div.html
 editing/execCommand/insertHTML.html
 editing/execCommand/insertHorizontalRule.html
 editing/execCommand/insertImage.html
-editing/execCommand/italicizeByCharacter.html
-editing/execCommand/modifyForeColorByCharacter.html
 editing/execCommand/nsresponder-indent.html
 editing/execCommand/nsresponder-outdent.html
 editing/execCommand/outdent-selection.html
@@ -1076,7 +1034,6 @@ editing/execCommand/remove-list-from-range-selection.html
 editing/execCommand/remove-list-item-1.html
 editing/execCommand/remove-list-items.html
 editing/execCommand/selectAll.html
-editing/execCommand/strikethroughSelection.html
 editing/execCommand/switch-list-type.html
 editing/input/emacs-ctrl-o.html
 editing/inserting/12882.html
@@ -1544,13 +1501,8 @@ editing/style/relative-font-size-change-001.html
 editing/style/relative-font-size-change-002.html
 editing/style/relative-font-size-change-003.html
 editing/style/relative-font-size-change-004.html
-editing/style/remove-underline-across-paragraph-in-bold.html
-editing/style/remove-underline-across-paragraph.html
-editing/style/remove-underline-after-paragraph-in-bold.html
-editing/style/remove-underline-after-paragraph.html
 editing/style/remove-underline-from-stylesheet.html
 editing/style/remove-underline-in-bold.html
-editing/style/remove-underline.html
 editing/style/smoosh-styles-001.html
 editing/style/smoosh-styles-003.html
 editing/style/style-3681552-fix-001.html
@@ -1567,7 +1519,6 @@ editing/style/typing-style-001.html
 editing/style/typing-style-002.html
 editing/style/typing-style-003.html
 editing/style/unbold-in-bold.html
-editing/style/underline.html
 editing/undo/4063751.html
 editing/undo/5378473.html
 editing/undo/redo-typing-001.html
@@ -1605,7 +1556,6 @@ fast/canvas/canvas-zoom.html
 fast/canvas/pointInPath.html
 fast/canvas/set-colors.html
 fast/canvas/toDataURL-supportedTypes.html
-fast/css/compare-content-style.html
 fast/css/hover-affects-child.html
 fast/css/invalid-percentage-property.html
 fast/css/text-align.html
@@ -1618,12 +1568,7 @@ fast/dom/client-width-height.html
 fast/dom/cssTarget-crash.html
 fast/dom/frame-loading-via-document-write.html
 fast/dom/getBoundingClientRect.html
-fast/dom/location-new-window-no-crash.html
-fast/dom/null-document-location-assign-crash.html
-fast/dom/null-document-location-href-put-crash.html
-fast/dom/null-document-location-put-crash.html
 fast/dom/null-document-location-replace-crash.html
-fast/dom/null-document-window-open-crash.html
 fast/dom/object-embed-plugin-scripting.html
 fast/dom/object-plugin-hides-properties.html
 fast/dom/tabindex-clamp.html
@@ -1662,7 +1607,6 @@ fast/events/dblclick-addEventListener.html
 fast/events/drag-in-frames.html
 fast/events/drag-outside-window.html
 fast/events/event-view-toString.html
-fast/events/fire-scroll-event.html
 fast/events/frame-click-focus.html
 fast/events/frame-tab-focus.html
 fast/events/input-image-scrolled-x-y.html
@@ -1732,9 +1676,10 @@ fast/forms/focus2.html
 fast/forms/focus-control-to-page.html
 fast/forms/focus-selection-input.html
 fast/forms/focus-selection-textarea.html
-fast/forms/form-and-frame-interaction-retains-values.html
 fast/forms/get-file-upload.html
+fast/forms/input-list.html
 fast/forms/input-radio-checked-tab.html
+fast/forms/input-selectedoption.html
 fast/forms/input-select-on-click.html
 fast/forms/input-type-change-in-onfocus-keyboard.html
 fast/forms/input-type-change-in-onfocus-mouse.html
@@ -1778,9 +1723,7 @@ fast/forms/textarea-paste-newline.html
 fast/forms/textarea-placeholder-pseudo-style.html
 fast/forms/textarea-placeholder-set-attribute.html
 fast/forms/textarea-placeholder-set-value.html
-fast/forms/textarea-scrollbar-height.html
 fast/forms/textarea-scrolled-endline-caret.html
-fast/forms/textarea-selection-preservation.html
 fast/forms/textarea-type-spaces.html
 fast/forms/textfield-inside-anchor.html
 fast/forms/textfield-onchange-deletion.html
@@ -1792,16 +1735,10 @@ fast/frames/frame-deep-nested-resize.html
 fast/frames/frame-unload-crash.html
 fast/frames/hover-timer-crash.html
 fast/frames/iframe-window-focus.html
-fast/frames/location-put-after-removal.html
-fast/history/back-forward-is-asynchronous.html
 fast/history/history_reload.html
 fast/history/window-open.html
 fast/html/tab-order.html
 fast/html/text-field-input-types.html
-fast/js/date-DST-time-cusps.html
-fast/js/date-big-setdate.html
-fast/js/exceptions-thrown-in-callbacks.html
-fast/js/navigator-mimeTypes-length.html
 fast/layers/resize-layer-deletion-crash.html
 fast/loader/main-document-url-for-non-http-loads.html
 fast/loader/onunload-form-submit-crash-2.html
@@ -2514,6 +2451,8 @@ fast/dom/inner-text.html
 fast/dom/isindex-001.html
 fast/dom/isindex-002.html
 fast/dom/jsDevicePixelRatio.html
+fast/dom/null-document-location-assign-crash.html
+fast/dom/null-document-window-open-crash.html
 fast/dom/outerText.html
 fast/dom/replaceChild.html
 fast/dom/row-inner-text.html
@@ -3061,8 +3000,6 @@ fast/multicol/column-rules.html
 fast/multicol/columns-shorthand-parsing.html
 fast/multicol/float-avoidance.html
 fast/multicol/float-multicol.html
-fast/multicol/negativeColumnWidth.html
-fast/multicol/zeroColumnCount.html
 fast/overflow/001.html
 fast/overflow/002.html
 fast/overflow/003.xml
@@ -3204,6 +3141,7 @@ fast/repaint/overflow-outline-repaint.html
 fast/repaint/overflow-scroll-delete.html
 fast/repaint/reflection-redraw.html
 fast/repaint/reflection-repaint-test.html
+fast/repaint/rel-positioned-inline-with-overflow.html
 fast/repaint/renderer-destruction-by-invalidateSelection-crash.html
 fast/repaint/repaint-resized-overflow.html
 fast/repaint/search-field-cancel.html
@@ -5829,6 +5767,7 @@ webarchive/test-td-background.html
 webarchive/test-xml-stylesheet.xml
 
 # Tests that failed because we don't have an eventSender implementation
+editing/pasteboard/files-during-page-drags.html
 editing/selection/extend-selection-after-double-click.html
 fast/events/drag-to-navigate.html
 fast/events/prevent-drag-to-navigate.html
@@ -5875,7 +5814,6 @@ fast/repaint/float-in-new-block-with-layout-delta.html
 fast/repaint/float-new-in-block.html
 fast/text/international/khmer-selection.html
 fast/text/shadow-translucent-fill.html
-fast/text/text-large-negative-letter-spacing-with-opacity.html
 fast/text/text-letter-spacing.html
 media/audio-no-installed-engines.html
 media/controls-after-reload.html
@@ -5957,3 +5895,8 @@ loader/go-back-to-different-window-size.html
 media/video-currentTime-set.html
 media/video-play-pause-events.html
 media/video-play-pause-exception.html
+
+# New events failing; see https://bugs.webkit.org/show_bug.cgi?id=28823
+fast/events/pageshow-pagehide-on-back-cached.html
+fast/events/pageshow-pagehide-on-back-uncached.html
+fast/events/pageshow-pagehide.html

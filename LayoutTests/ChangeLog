@@ -1,3 +1,9 @@
+2009-08-28  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unskip some passing tests, skip new tests that are failing.
+
+        * platform/gtk/Skipped:
+
 2009-08-28  Julie Parent  <jparent@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
