@@ -334,6 +334,9 @@ void PluginView::removeFromUnstartedListIfNecessary()
 
 void PluginView::performRequest(PluginRequest* request)
 {
+    if (!m_isStarted)
+        return;
+
     // don't let a plugin start any loads if it is no longer part of a document that is being 
     // displayed unless the loads are in the same frame as the plugin.
     const String& targetFrameName = request->frameLoadRequest().frameName();

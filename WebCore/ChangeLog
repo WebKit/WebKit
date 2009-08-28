@@ -1,3 +1,21 @@
+2009-08-28  Cédric Luthi <cedric.luthi@gmail.com>
+
+        Reviewed by Tor Arne Vestbø
+
+        [Qt/Mac] Un-blacklist the QuickTime plugin
+
+        https://bugs.webkit.org/show_bug.cgi?id=28768
+
+        Now that the drawing model is properly negotiated, there is no need the
+        blacklist the QuickTime plugin anymore.
+
+        This revealed a bug in PluginView::performRequest: it should not initiate a
+        request if the plugin has been stopped, which is what happens when a plugin
+        only supports the QuickDraw drawing model.
+
+        * plugins/PluginView.cpp:
+        * plugins/mac/PluginPackageMac.cpp:
+
 2009-08-28  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Timothy Hatcher.
