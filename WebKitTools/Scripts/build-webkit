@@ -81,7 +81,7 @@ my @features = (
       define => "ENABLE_FILTERS", default => 0, value => \$filtersSupport },
 
     { option => "geolocation", desc => "Toggle Geolocation support",
-      define => "ENABLE_GEOLOCATION", default => 0, value => \$geolocationSupport },
+      define => "ENABLE_GEOLOCATION", default => isGtk(), value => \$geolocationSupport },
 
     { option => "icon-database", desc => "Toggle Icon database support",
       define => "ENABLE_ICONDATABASE", default => 1, value => \$iconDatabaseSupport },

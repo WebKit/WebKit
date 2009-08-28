@@ -1617,11 +1617,6 @@ fast/dom/client-width-height-quirks.html
 fast/dom/client-width-height.html
 fast/dom/cssTarget-crash.html
 fast/dom/frame-loading-via-document-write.html
-
-# See https://bugs.webkit.org/show_bug.cgi?id=28619
-fast/dom/Geolocation/argument-types.html
-
-fast/dom/Geolocation/enabled.html
 fast/dom/getBoundingClientRect.html
 fast/dom/location-new-window-no-crash.html
 fast/dom/null-document-location-assign-crash.html

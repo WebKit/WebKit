@@ -1,3 +1,15 @@
+2009-08-28  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] Geolocation needs permission API before being enabled by default
+
+        Build the Gtk port with geolocation enabled. This option is only
+        enabled for the buildbot. The autotools option will be enabled by
+        default once the permissions API is implemented.
+
+        * Scripts/build-webkit:
+
 2009-08-26  Cameron McCormack  <cam@mcc.id.au>
 
         Reviewed by David Kilzer.

@@ -1,3 +1,16 @@
+2009-08-28  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] Geolocation needs permission API before being enabled by default
+
+        Unskip the Geolocation tests and rebaseline three DOM tests.
+
+        * platform/gtk/Skipped:
+        * platform/gtk/fast/dom/Window/window-properties-expected.txt: Added.
+        * platform/gtk/fast/dom/navigator-detached-no-crash-expected.txt: Added.
+        * platform/gtk/fast/dom/prototype-inheritance-2-expected.txt: Added.
+
 2009-08-28  Renata Hodovan  <hodovan.renata@stud.u-szeged.hu>
 
         Reviewed by Ariya Hidayat.
