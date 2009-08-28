@@ -1,3 +1,20 @@
+2009-08-27  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Removed GL_ from all constants, and gl prefix from all calls
+        https://bugs.webkit.org/show_bug.cgi?id=28773
+
+        This was done for the external API in CanvasRenderingContext3D and
+        the internal API in GraphicsContext3D.
+
+        * html/canvas/CanvasRenderingContext3D.cpp:
+        * html/canvas/CanvasRenderingContext3D.h:
+        * bindings/js/JSCanvasRenderingContext3DCustom.cpp:
+        * html/canvas/CanvasRenderingContext3D.idl:
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/mac/GraphicsContext3DMac.cpp:
+
 2009-08-27  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Qt and Gtk build fixes. Not reviewed.

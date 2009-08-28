@@ -74,118 +74,118 @@ namespace WebCore {
         
         virtual void makeContextCurrent();
         
-        void glActiveTexture(unsigned long texture);
-        void glAttachShader(CanvasProgram* program, CanvasShader* shader);
-        void glBindAttribLocation(CanvasProgram*, unsigned long index, const String& name);
-        void glBindBuffer(unsigned long target, CanvasBuffer*);
-        void glBindFramebuffer(unsigned long target, CanvasFramebuffer*);
-        void glBindRenderbuffer(unsigned long target, CanvasRenderbuffer*);
-        void glBindTexture(unsigned target, CanvasTexture* texture3D);
-        void glBlendColor(double red, double green, double blue, double alpha);
-        void glBlendEquation(unsigned long mode );
-        void glBlendEquationSeparate(unsigned long modeRGB, unsigned long modeAlpha);
-        void glBlendFunc(unsigned long sfactor, unsigned long dfactor);
-        void glBlendFuncSeparate(unsigned long srcRGB, unsigned long dstRGB, unsigned long srcAlpha, unsigned long dstAlpha);
-        void glBufferData(unsigned long target, CanvasNumberArray*, unsigned long usage);
-        void glBufferSubData(unsigned long target, long offset, CanvasNumberArray*);
-        unsigned long glCheckFramebufferStatus(CanvasFramebuffer*);
-        void glClear(unsigned long mask);
-        void glClearColor(double red, double green, double blue, double alpha);
-        void glClearDepth(double depth);
-        void glClearStencil(long s);
-        void glColorMask(bool red, bool green, bool blue, bool alpha);
-        void glCompileShader(CanvasShader*);
+        void activeTexture(unsigned long texture);
+        void attachShader(CanvasProgram* program, CanvasShader* shader);
+        void bindAttribLocation(CanvasProgram*, unsigned long index, const String& name);
+        void bindBuffer(unsigned long target, CanvasBuffer*);
+        void bindFramebuffer(unsigned long target, CanvasFramebuffer*);
+        void bindRenderbuffer(unsigned long target, CanvasRenderbuffer*);
+        void bindTexture(unsigned target, CanvasTexture* texture3D);
+        void blendColor(double red, double green, double blue, double alpha);
+        void blendEquation(unsigned long mode );
+        void blendEquationSeparate(unsigned long modeRGB, unsigned long modeAlpha);
+        void blendFunc(unsigned long sfactor, unsigned long dfactor);
+        void blendFuncSeparate(unsigned long srcRGB, unsigned long dstRGB, unsigned long srcAlpha, unsigned long dstAlpha);
+        void bufferData(unsigned long target, CanvasNumberArray*, unsigned long usage);
+        void bufferSubData(unsigned long target, long offset, CanvasNumberArray*);
+        unsigned long checkFramebufferStatus(CanvasFramebuffer*);
+        void clear(unsigned long mask);
+        void clearColor(double red, double green, double blue, double alpha);
+        void clearDepth(double depth);
+        void clearStencil(long s);
+        void colorMask(bool red, bool green, bool blue, bool alpha);
+        void compileShader(CanvasShader*);
         
-        //void glCompressedTexImage2D(unsigned long target, long level, unsigned long internalformat, unsigned long width, unsigned long height, long border, unsigned long imageSize, const void* data);
-        //void glCompressedTexSubImage2D(unsigned long target, long level, long xoffset, long yoffset, unsigned long width, unsigned long height, unsigned long format, unsigned long imageSize, const void* data);
+        //void compressedTexImage2D(unsigned long target, long level, unsigned long internalformat, unsigned long width, unsigned long height, long border, unsigned long imageSize, const void* data);
+        //void compressedTexSubImage2D(unsigned long target, long level, long xoffset, long yoffset, unsigned long width, unsigned long height, unsigned long format, unsigned long imageSize, const void* data);
         
-        void glCopyTexImage2D(unsigned long target, long level, unsigned long internalformat, long x, long y, unsigned long width, unsigned long height, long border);
-        void glCopyTexSubImage2D(unsigned long target, long level, long xoffset, long yoffset, long x, long y, unsigned long width, unsigned long height);
-        void glCullFace(unsigned long mode);
-        void glDepthFunc(unsigned long func);
-        void glDepthMask(bool flag);
-        void glDepthRange(double zNear, double zFar);
-        void glDetachShader(CanvasProgram*, CanvasShader*);
-        void glDisable(unsigned long cap);
-        void glDisableVertexAttribArray(unsigned long index);
-        void glDrawArrays(unsigned long mode, long first, unsigned long count);
-        void glDrawElements(unsigned long mode, unsigned long count, unsigned long type, void* array);
-        void glEnable(unsigned long cap);
-        void glEnableVertexAttribArray(unsigned long index);
-        void glFinish();
-        void glFlush();
-        void glFramebufferRenderbuffer(unsigned long target, unsigned long attachment, unsigned long renderbuffertarget, CanvasRenderbuffer*);
-        void glFramebufferTexture2D(unsigned long target, unsigned long attachment, unsigned long textarget, CanvasTexture*, long level);
-        void glFrontFace(unsigned long mode);
-        void glGenerateMipmap(unsigned long target);
+        void copyTexImage2D(unsigned long target, long level, unsigned long internalformat, long x, long y, unsigned long width, unsigned long height, long border);
+        void copyTexSubImage2D(unsigned long target, long level, long xoffset, long yoffset, long x, long y, unsigned long width, unsigned long height);
+        void cullFace(unsigned long mode);
+        void depthFunc(unsigned long func);
+        void depthMask(bool flag);
+        void depthRange(double zNear, double zFar);
+        void detachShader(CanvasProgram*, CanvasShader*);
+        void disable(unsigned long cap);
+        void disableVertexAttribArray(unsigned long index);
+        void drawArrays(unsigned long mode, long first, unsigned long count);
+        void drawElements(unsigned long mode, unsigned long count, unsigned long type, void* array);
+        void enable(unsigned long cap);
+        void enableVertexAttribArray(unsigned long index);
+        void finish();
+        void flush();
+        void framebufferRenderbuffer(unsigned long target, unsigned long attachment, unsigned long renderbuffertarget, CanvasRenderbuffer*);
+        void framebufferTexture2D(unsigned long target, unsigned long attachment, unsigned long textarget, CanvasTexture*, long level);
+        void frontFace(unsigned long mode);
+        void generateMipmap(unsigned long target);
         
-        int  glGetAttribLocation(CanvasProgram*, const String& name);
-        unsigned long glGetError();
-        String glGetString(unsigned long name);
-        void glHint(unsigned long target, unsigned long mode);
-        bool glIsBuffer(CanvasBuffer*);
-        bool glIsEnabled(unsigned long cap);
-        bool glIsFramebuffer(CanvasFramebuffer*);
-        bool glIsProgram(CanvasProgram*);
-        bool glIsRenderbuffer(CanvasRenderbuffer*);
-        bool glIsShader(CanvasShader*);
-        bool glIsTexture(CanvasTexture*);
-        void glLineWidth(double);
-        void glLinkProgram(CanvasProgram*);
-        void glPixelStorei(unsigned long pname, long param);
-        void glPolygonOffset(double factor, double units);
+        int  getAttribLocation(CanvasProgram*, const String& name);
+        unsigned long getError();
+        String getString(unsigned long name);
+        void hint(unsigned long target, unsigned long mode);
+        bool isBuffer(CanvasBuffer*);
+        bool isEnabled(unsigned long cap);
+        bool isFramebuffer(CanvasFramebuffer*);
+        bool isProgram(CanvasProgram*);
+        bool isRenderbuffer(CanvasRenderbuffer*);
+        bool isShader(CanvasShader*);
+        bool isTexture(CanvasTexture*);
+        void lineWidth(double);
+        void linkProgram(CanvasProgram*);
+        void pixelStorei(unsigned long pname, long param);
+        void polygonOffset(double factor, double units);
         
-        //void glReadPixelslong x, long y, unsigned long width, unsigned long height, unsigned long format, unsigned long type, void* pixels);
+        //void readPixelslong x, long y, unsigned long width, unsigned long height, unsigned long format, unsigned long type, void* pixels);
         
-        void glReleaseShaderCompiler();
-        void glRenderbufferStorage(unsigned long target, unsigned long internalformat, unsigned long width, unsigned long height);
-        void glSampleCoverage(double value, bool invert);
-        void glScissor(long x, long y, unsigned long width, unsigned long height);
-        void glShaderSource(CanvasShader*, const String& string);
-        void glStencilFunc(unsigned long func, long ref, unsigned long mask);
-        void glStencilFuncSeparate(unsigned long face, unsigned long func, long ref, unsigned long mask);
-        void glStencilMask(unsigned long mask);
-        void glStencilMaskSeparate(unsigned long face, unsigned long mask);
-        void glStencilOp(unsigned long fail, unsigned long zfail, unsigned long zpass);
-        void glStencilOpSeparate(unsigned long face, unsigned long fail, unsigned long zfail, unsigned long zpass);
-        void glTexParameter(unsigned target, unsigned pname, CanvasNumberArray*);
-        void glTexParameter(unsigned target, unsigned pname, double value);
-        void glUniform(long location, float v0);
-        void glUniform(long location, float v0, float v1);
-        void glUniform(long location, float v0, float v1, float v2);
-        void glUniform(long location, float v0, float v1, float v2, float v3);
-        void glUniform(long location, int v0);
-        void glUniform(long location, int v0, int v1);
-        void glUniform(long location, int v0, int v1, int v2);
-        void glUniform(long location, int v0, int v1, int v2, int v3);
-        void glUniform(long location, CanvasNumberArray*);
-        void glUniformMatrix(long location, long count, bool transpose, CanvasNumberArray*);
-        void glUniformMatrix(long location, bool transpose, const Vector<WebKitCSSMatrix*>&);
-        void glUniformMatrix(long location, bool transpose, const WebKitCSSMatrix*);
-        void glUseProgram(CanvasProgram*);
-        void glValidateProgram(CanvasProgram*);
-        void glVertexAttrib(unsigned long indx, float v0);
-        void glVertexAttrib(unsigned long indx, float v0, float v1);
-        void glVertexAttrib(unsigned long indx, float v0, float v1, float v2);
-        void glVertexAttrib(unsigned long indx, float v0, float v1, float v2, float v3);
-        void glVertexAttrib(unsigned long indx, CanvasNumberArray*);
-        void glVertexAttribPointer(unsigned long indx, long size, unsigned long type, bool normalized, unsigned long stride, CanvasNumberArray*);
-        void glViewport(long x, long y, unsigned long width, unsigned long height);
+        void releaseShaderCompiler();
+        void renderbufferStorage(unsigned long target, unsigned long internalformat, unsigned long width, unsigned long height);
+        void sampleCoverage(double value, bool invert);
+        void scissor(long x, long y, unsigned long width, unsigned long height);
+        void shaderSource(CanvasShader*, const String& string);
+        void stencilFunc(unsigned long func, long ref, unsigned long mask);
+        void stencilFuncSeparate(unsigned long face, unsigned long func, long ref, unsigned long mask);
+        void stencilMask(unsigned long mask);
+        void stencilMaskSeparate(unsigned long face, unsigned long mask);
+        void stencilOp(unsigned long fail, unsigned long zfail, unsigned long zpass);
+        void stencilOpSeparate(unsigned long face, unsigned long fail, unsigned long zfail, unsigned long zpass);
+        void texParameter(unsigned target, unsigned pname, CanvasNumberArray*);
+        void texParameter(unsigned target, unsigned pname, double value);
+        void uniform(long location, float v0);
+        void uniform(long location, float v0, float v1);
+        void uniform(long location, float v0, float v1, float v2);
+        void uniform(long location, float v0, float v1, float v2, float v3);
+        void uniform(long location, int v0);
+        void uniform(long location, int v0, int v1);
+        void uniform(long location, int v0, int v1, int v2);
+        void uniform(long location, int v0, int v1, int v2, int v3);
+        void uniform(long location, CanvasNumberArray*);
+        void uniformMatrix(long location, long count, bool transpose, CanvasNumberArray*);
+        void uniformMatrix(long location, bool transpose, const Vector<WebKitCSSMatrix*>&);
+        void uniformMatrix(long location, bool transpose, const WebKitCSSMatrix*);
+        void useProgram(CanvasProgram*);
+        void validateProgram(CanvasProgram*);
+        void vertexAttrib(unsigned long indx, float v0);
+        void vertexAttrib(unsigned long indx, float v0, float v1);
+        void vertexAttrib(unsigned long indx, float v0, float v1, float v2);
+        void vertexAttrib(unsigned long indx, float v0, float v1, float v2, float v3);
+        void vertexAttrib(unsigned long indx, CanvasNumberArray*);
+        void vertexAttribPointer(unsigned long indx, long size, unsigned long type, bool normalized, unsigned long stride, CanvasNumberArray*);
+        void viewport(long x, long y, unsigned long width, unsigned long height);
         
-        PassRefPtr<CanvasNumberArray> get(unsigned long pname);      // replaces glGetBooleanv
-        PassRefPtr<CanvasNumberArray> getBufferParameter(unsigned long target, unsigned long pname); // replaces glGetBufferParameteriv
-        PassRefPtr<CanvasNumberArray> getFramebufferAttachmentParameter(unsigned long target, unsigned long attachment, unsigned long pname); // replaces glGetFramebufferAttachmentParameteriv
-        PassRefPtr<CanvasNumberArray> getProgram(CanvasProgram*, unsigned long pname); // replaces glGetProgramiv
-        String glGetProgramInfoLog(CanvasProgram*); // replaces glGetProgramInfoLog
-        PassRefPtr<CanvasNumberArray> getRenderbufferParameter(unsigned long target, unsigned long pname); // replaces glGetRenderbufferParameteriv
-        PassRefPtr<CanvasNumberArray> getShader(CanvasShader*, unsigned long pname); // replaces glGetShaderiv
-        String glGetShaderInfoLog(CanvasShader*);
-        String glGetShaderSource(CanvasShader*);
+        PassRefPtr<CanvasNumberArray> get(unsigned long pname);
+        PassRefPtr<CanvasNumberArray> getBufferParameter(unsigned long target, unsigned long pname);
+        PassRefPtr<CanvasNumberArray> getFramebufferAttachmentParameter(unsigned long target, unsigned long attachment, unsigned long pname);
+        PassRefPtr<CanvasNumberArray> getProgram(CanvasProgram*, unsigned long pname);
+        String getProgramInfoLog(CanvasProgram*);
+        PassRefPtr<CanvasNumberArray> getRenderbufferParameter(unsigned long target, unsigned long pname);
+        PassRefPtr<CanvasNumberArray> getShader(CanvasShader*, unsigned long pname);
+        String getShaderInfoLog(CanvasShader*);
+        String getShaderSource(CanvasShader*);
         
-        PassRefPtr<CanvasNumberArray> getTexParameter(unsigned long target, unsigned long pname); // replaces glGetTexParameterfv
-        PassRefPtr<CanvasNumberArray> getUniform(CanvasProgram*, long location, long size); // replaces glGetUniformfv
-        long getUniformLocation(CanvasProgram*, const String& name); // replaces glGetUniformLocation
-        PassRefPtr<CanvasNumberArray> getVertexAttrib(unsigned long index, unsigned long pname); // replaces glGetVertexAttribfv
+        PassRefPtr<CanvasNumberArray> getTexParameter(unsigned long target, unsigned long pname);
+        PassRefPtr<CanvasNumberArray> getUniform(CanvasProgram*, long location, long size);
+        long getUniformLocation(CanvasProgram*, const String& name);
+        PassRefPtr<CanvasNumberArray> getVertexAttrib(unsigned long index, unsigned long pname);
         
         // These next 4 functions return an error code0 if no errors) rather than using an ExceptionCode.
         // Currently they return -1 on any error.

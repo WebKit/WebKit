@@ -69,106 +69,106 @@ void CanvasRenderingContext3D::reshape(int width, int height)
     m_context.reshape(width, height);
 }
 
-void CanvasRenderingContext3D::glActiveTexture(unsigned long texture)
+void CanvasRenderingContext3D::activeTexture(unsigned long texture)
 {
-    m_context.glActiveTexture(texture);
+    m_context.activeTexture(texture);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glAttachShader(CanvasProgram* program, CanvasShader* shader)
+void CanvasRenderingContext3D::attachShader(CanvasProgram* program, CanvasShader* shader)
 {
     if (!program || !shader)
         return;
-    m_context.glAttachShader(program, shader);
+    m_context.attachShader(program, shader);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glBindAttribLocation(CanvasProgram* program, unsigned long index, const String& name)
+void CanvasRenderingContext3D::bindAttribLocation(CanvasProgram* program, unsigned long index, const String& name)
 {
     if (!program)
         return;
-    m_context.glBindAttribLocation(program, index, name);
+    m_context.bindAttribLocation(program, index, name);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glBindBuffer(unsigned long target, CanvasBuffer* buffer)
+void CanvasRenderingContext3D::bindBuffer(unsigned long target, CanvasBuffer* buffer)
 {
-    m_context.glBindBuffer(target, buffer);
-    cleanupAfterGraphicsCall(false);
-}
-
-
-void CanvasRenderingContext3D::glBindFramebuffer(unsigned long target, CanvasFramebuffer* buffer)
-{
-    m_context.glBindFramebuffer(target, buffer);
-    cleanupAfterGraphicsCall(false);
-}
-
-void CanvasRenderingContext3D::glBindRenderbuffer(unsigned long target, CanvasRenderbuffer* renderbuffer)
-{
-    m_context.glBindRenderbuffer(target, renderbuffer);
+    m_context.bindBuffer(target, buffer);
     cleanupAfterGraphicsCall(false);
 }
 
 
-void CanvasRenderingContext3D::glBindTexture(unsigned target, CanvasTexture* texture)
+void CanvasRenderingContext3D::bindFramebuffer(unsigned long target, CanvasFramebuffer* buffer)
 {
-    m_context.glBindTexture(target, texture);
+    m_context.bindFramebuffer(target, buffer);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glBlendColor(double red, double green, double blue, double alpha)
+void CanvasRenderingContext3D::bindRenderbuffer(unsigned long target, CanvasRenderbuffer* renderbuffer)
 {
-    m_context.glBlendColor(red, green, blue, alpha);
-    cleanupAfterGraphicsCall(false);
-}
-
-void CanvasRenderingContext3D::glBlendEquation( unsigned long mode )
-{
-    m_context.glBlendEquation(mode);
-    cleanupAfterGraphicsCall(false);
-}
-
-void CanvasRenderingContext3D::glBlendEquationSeparate(unsigned long modeRGB, unsigned long modeAlpha)
-{
-    m_context.glBlendEquationSeparate(modeRGB, modeAlpha);
+    m_context.bindRenderbuffer(target, renderbuffer);
     cleanupAfterGraphicsCall(false);
 }
 
 
-void CanvasRenderingContext3D::glBlendFunc(unsigned long sfactor, unsigned long dfactor)
+void CanvasRenderingContext3D::bindTexture(unsigned target, CanvasTexture* texture)
 {
-    m_context.glBlendFunc(sfactor, dfactor);
+    m_context.bindTexture(target, texture);
+    cleanupAfterGraphicsCall(false);
+}
+
+void CanvasRenderingContext3D::blendColor(double red, double green, double blue, double alpha)
+{
+    m_context.blendColor(red, green, blue, alpha);
+    cleanupAfterGraphicsCall(false);
+}
+
+void CanvasRenderingContext3D::blendEquation( unsigned long mode )
+{
+    m_context.blendEquation(mode);
+    cleanupAfterGraphicsCall(false);
+}
+
+void CanvasRenderingContext3D::blendEquationSeparate(unsigned long modeRGB, unsigned long modeAlpha)
+{
+    m_context.blendEquationSeparate(modeRGB, modeAlpha);
+    cleanupAfterGraphicsCall(false);
+}
+
+
+void CanvasRenderingContext3D::blendFunc(unsigned long sfactor, unsigned long dfactor)
+{
+    m_context.blendFunc(sfactor, dfactor);
     cleanupAfterGraphicsCall(false);
 }       
 
-void CanvasRenderingContext3D::glBlendFuncSeparate(unsigned long srcRGB, unsigned long dstRGB, unsigned long srcAlpha, unsigned long dstAlpha)
+void CanvasRenderingContext3D::blendFuncSeparate(unsigned long srcRGB, unsigned long dstRGB, unsigned long srcAlpha, unsigned long dstAlpha)
 {
-    m_context.glBlendFuncSeparate(srcRGB, dstRGB, srcAlpha, dstAlpha);
+    m_context.blendFuncSeparate(srcRGB, dstRGB, srcAlpha, dstAlpha);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glBufferData(unsigned long target, CanvasNumberArray* array, unsigned long usage)
+void CanvasRenderingContext3D::bufferData(unsigned long target, CanvasNumberArray* array, unsigned long usage)
 {
-    m_context.glBufferData(target, array, usage);
+    m_context.bufferData(target, array, usage);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glBufferSubData(unsigned long target, long offset, CanvasNumberArray* array)
+void CanvasRenderingContext3D::bufferSubData(unsigned long target, long offset, CanvasNumberArray* array)
 {
     if (!array || !array->data().size())
         return;
         
-    m_context.glBufferSubData(target, offset, array);
+    m_context.bufferSubData(target, offset, array);
     cleanupAfterGraphicsCall(false);
 }
 
-unsigned long CanvasRenderingContext3D::glCheckFramebufferStatus(CanvasFramebuffer* framebuffer)
+unsigned long CanvasRenderingContext3D::checkFramebufferStatus(CanvasFramebuffer* framebuffer)
 {
-    return m_context.glCheckFramebufferStatus(framebuffer);
+    return m_context.checkFramebufferStatus(framebuffer);
 }
 
-void CanvasRenderingContext3D::glClearColor(double r, double g, double b, double a)
+void CanvasRenderingContext3D::clearColor(double r, double g, double b, double a)
 {
     if (isnan(r))
         r = 0;
@@ -178,453 +178,453 @@ void CanvasRenderingContext3D::glClearColor(double r, double g, double b, double
         b = 0;
     if (isnan(a))
         a = 1;
-    m_context.glClearColor(r, g, b, a);
+    m_context.clearColor(r, g, b, a);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glClear(unsigned long mask)
+void CanvasRenderingContext3D::clear(unsigned long mask)
 {
-    m_context.glClear(mask);
+    m_context.clear(mask);
     cleanupAfterGraphicsCall(true);
 }
 
-void CanvasRenderingContext3D::glClearDepth(double depth)
+void CanvasRenderingContext3D::clearDepth(double depth)
 {
-    m_context.glClearDepth(depth);
+    m_context.clearDepth(depth);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glClearStencil(long s)
+void CanvasRenderingContext3D::clearStencil(long s)
 {
-    m_context.glClearStencil(s);
+    m_context.clearStencil(s);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glColorMask(bool red, bool green, bool blue, bool alpha)
+void CanvasRenderingContext3D::colorMask(bool red, bool green, bool blue, bool alpha)
 {
-    m_context.glColorMask(red, green, blue, alpha);
+    m_context.colorMask(red, green, blue, alpha);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glCompileShader(CanvasShader* shader)
+void CanvasRenderingContext3D::compileShader(CanvasShader* shader)
 {
-    m_context.glCompileShader(shader);
+    m_context.compileShader(shader);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glCopyTexImage2D(unsigned long target, long level, unsigned long internalformat, long x, long y, unsigned long width, unsigned long height, long border)
+void CanvasRenderingContext3D::copyTexImage2D(unsigned long target, long level, unsigned long internalformat, long x, long y, unsigned long width, unsigned long height, long border)
 {
-    m_context.glCopyTexImage2D(target, level, internalformat, x, y, width, height, border);
+    m_context.copyTexImage2D(target, level, internalformat, x, y, width, height, border);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glCopyTexSubImage2D(unsigned long target, long level, long xoffset, long yoffset, long x, long y, unsigned long width, unsigned long height)
+void CanvasRenderingContext3D::copyTexSubImage2D(unsigned long target, long level, long xoffset, long yoffset, long x, long y, unsigned long width, unsigned long height)
 {
-    m_context.glCopyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height);
+    m_context.copyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glCullFace(unsigned long mode)
+void CanvasRenderingContext3D::cullFace(unsigned long mode)
 {
-    m_context.glCullFace(mode);
+    m_context.cullFace(mode);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glDepthFunc(unsigned long func)
+void CanvasRenderingContext3D::depthFunc(unsigned long func)
 {
-    m_context.glDepthFunc(func);
+    m_context.depthFunc(func);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glDepthMask(bool flag)
+void CanvasRenderingContext3D::depthMask(bool flag)
 {
-    m_context.glDepthMask(flag);
+    m_context.depthMask(flag);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glDepthRange(double zNear, double zFar)
+void CanvasRenderingContext3D::depthRange(double zNear, double zFar)
 {
-    m_context.glDepthRange(zNear, zFar);
+    m_context.depthRange(zNear, zFar);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glDetachShader(CanvasProgram* program, CanvasShader* shader)
+void CanvasRenderingContext3D::detachShader(CanvasProgram* program, CanvasShader* shader)
 {
     if (!program || !shader)
         return;
 
-    m_context.glDetachShader(program, shader);
+    m_context.detachShader(program, shader);
     cleanupAfterGraphicsCall(false);
 }
 
 
-void CanvasRenderingContext3D::glDisable(unsigned long cap)
+void CanvasRenderingContext3D::disable(unsigned long cap)
 {
-    m_context.glDisable(cap);
+    m_context.disable(cap);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glDisableVertexAttribArray(unsigned long index)
+void CanvasRenderingContext3D::disableVertexAttribArray(unsigned long index)
 {
-    m_context.glDisableVertexAttribArray(index);
+    m_context.disableVertexAttribArray(index);
     cleanupAfterGraphicsCall(false);
 }
 
 
-void CanvasRenderingContext3D::glDrawArrays(unsigned long mode, long first, unsigned long count)
+void CanvasRenderingContext3D::drawArrays(unsigned long mode, long first, unsigned long count)
 {
-    m_context.glDrawArrays(mode, first, count);
+    m_context.drawArrays(mode, first, count);
     cleanupAfterGraphicsCall(true);
 }
 
-void CanvasRenderingContext3D::glDrawElements(unsigned long mode, unsigned long count, unsigned long type, void* array)
+void CanvasRenderingContext3D::drawElements(unsigned long mode, unsigned long count, unsigned long type, void* array)
 {
-    m_context.glDrawElements(mode, count, type, array);
+    m_context.drawElements(mode, count, type, array);
     cleanupAfterGraphicsCall(true);
 }
 
-void CanvasRenderingContext3D::glEnable(unsigned long cap)
+void CanvasRenderingContext3D::enable(unsigned long cap)
 {
-    m_context.glEnable(cap);
+    m_context.enable(cap);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glEnableVertexAttribArray(unsigned long index)
+void CanvasRenderingContext3D::enableVertexAttribArray(unsigned long index)
 {
-    m_context.glEnableVertexAttribArray(index);
+    m_context.enableVertexAttribArray(index);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glFinish()
+void CanvasRenderingContext3D::finish()
 {
-    m_context.glFinish();
+    m_context.finish();
     cleanupAfterGraphicsCall(true);
 }
 
 
-void CanvasRenderingContext3D::glFlush()
+void CanvasRenderingContext3D::flush()
 {
-    m_context.glFlush();
+    m_context.flush();
     cleanupAfterGraphicsCall(true);
 }
 
-void CanvasRenderingContext3D::glFramebufferRenderbuffer(unsigned long target, unsigned long attachment, unsigned long renderbuffertarget, CanvasRenderbuffer* buffer)
+void CanvasRenderingContext3D::framebufferRenderbuffer(unsigned long target, unsigned long attachment, unsigned long renderbuffertarget, CanvasRenderbuffer* buffer)
 {
     if (!buffer)
         return;
         
-    m_context.glFramebufferRenderbuffer(target, attachment, renderbuffertarget, buffer);
+    m_context.framebufferRenderbuffer(target, attachment, renderbuffertarget, buffer);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glFramebufferTexture2D(unsigned long target, unsigned long attachment, unsigned long textarget, CanvasTexture* texture, long level)
+void CanvasRenderingContext3D::framebufferTexture2D(unsigned long target, unsigned long attachment, unsigned long textarget, CanvasTexture* texture, long level)
 {
     if (!texture)
         return;
         
-    m_context.glFramebufferTexture2D(target, attachment, textarget, texture, level);
+    m_context.framebufferTexture2D(target, attachment, textarget, texture, level);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glFrontFace(unsigned long mode)
+void CanvasRenderingContext3D::frontFace(unsigned long mode)
 {
-    m_context.glFrontFace(mode);
+    m_context.frontFace(mode);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glGenerateMipmap(unsigned long target)
+void CanvasRenderingContext3D::generateMipmap(unsigned long target)
 {
-    m_context.glGenerateMipmap(target);
+    m_context.generateMipmap(target);
     cleanupAfterGraphicsCall(false);
 }
 
-int CanvasRenderingContext3D::glGetAttribLocation(CanvasProgram* program, const String& name)
+int CanvasRenderingContext3D::getAttribLocation(CanvasProgram* program, const String& name)
 {
-    return m_context.glGetAttribLocation(program, name);
+    return m_context.getAttribLocation(program, name);
 }
 
-unsigned long CanvasRenderingContext3D::glGetError()
+unsigned long CanvasRenderingContext3D::getError()
 {
-    return m_context.glGetError();
+    return m_context.getError();
 }
 
-String CanvasRenderingContext3D::glGetString(unsigned long name)
+String CanvasRenderingContext3D::getString(unsigned long name)
 {
-    return m_context.glGetString(name);
+    return m_context.getString(name);
 }
 
-void CanvasRenderingContext3D::glHint(unsigned long target, unsigned long mode)
+void CanvasRenderingContext3D::hint(unsigned long target, unsigned long mode)
 {
-    m_context.glHint(target, mode);
+    m_context.hint(target, mode);
     cleanupAfterGraphicsCall(false);
 }
 
-bool CanvasRenderingContext3D::glIsBuffer(CanvasBuffer* buffer)
+bool CanvasRenderingContext3D::isBuffer(CanvasBuffer* buffer)
 {
     if (!buffer)
         return false;
         
-    return m_context.glIsBuffer(buffer);
+    return m_context.isBuffer(buffer);
 }
 
-bool CanvasRenderingContext3D::glIsEnabled(unsigned long cap)
+bool CanvasRenderingContext3D::isEnabled(unsigned long cap)
 {
-    return m_context.glIsEnabled(cap);
+    return m_context.isEnabled(cap);
 }
 
-bool CanvasRenderingContext3D::glIsFramebuffer(CanvasFramebuffer* framebuffer)
+bool CanvasRenderingContext3D::isFramebuffer(CanvasFramebuffer* framebuffer)
 {
-    return m_context.glIsFramebuffer(framebuffer);
+    return m_context.isFramebuffer(framebuffer);
 }
 
-bool CanvasRenderingContext3D::glIsProgram(CanvasProgram* program)
+bool CanvasRenderingContext3D::isProgram(CanvasProgram* program)
 {
-    return m_context.glIsProgram(program);
+    return m_context.isProgram(program);
 }
 
-bool CanvasRenderingContext3D::glIsRenderbuffer(CanvasRenderbuffer* renderbuffer)
+bool CanvasRenderingContext3D::isRenderbuffer(CanvasRenderbuffer* renderbuffer)
 {
-    return m_context.glIsRenderbuffer(renderbuffer);
+    return m_context.isRenderbuffer(renderbuffer);
 }
 
-bool CanvasRenderingContext3D::glIsShader(CanvasShader* shader)
+bool CanvasRenderingContext3D::isShader(CanvasShader* shader)
 {
-    return m_context.glIsShader(shader);
+    return m_context.isShader(shader);
 }
 
-bool CanvasRenderingContext3D::glIsTexture(CanvasTexture* texture)
+bool CanvasRenderingContext3D::isTexture(CanvasTexture* texture)
 {
-    return m_context.glIsTexture(texture);
+    return m_context.isTexture(texture);
 }
 
-void CanvasRenderingContext3D::glLineWidth(double width)
+void CanvasRenderingContext3D::lineWidth(double width)
 {
-    m_context.glLineWidth((float) width);
+    m_context.lineWidth((float) width);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glLinkProgram(CanvasProgram* program)
+void CanvasRenderingContext3D::linkProgram(CanvasProgram* program)
 {
     if (!program)
         return;
         
-    m_context.glLinkProgram(program);
+    m_context.linkProgram(program);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glPixelStorei(unsigned long pname, long param)
+void CanvasRenderingContext3D::pixelStorei(unsigned long pname, long param)
 {
-    m_context.glPixelStorei(pname, param);
+    m_context.pixelStorei(pname, param);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glPolygonOffset(double factor, double units)
+void CanvasRenderingContext3D::polygonOffset(double factor, double units)
 {
-    m_context.glPolygonOffset((float) factor, (float) units);
+    m_context.polygonOffset((float) factor, (float) units);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glReleaseShaderCompiler()
+void CanvasRenderingContext3D::releaseShaderCompiler()
 {
-    m_context.glReleaseShaderCompiler();
+    m_context.releaseShaderCompiler();
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glRenderbufferStorage(unsigned long target, unsigned long internalformat, unsigned long width, unsigned long height)
+void CanvasRenderingContext3D::renderbufferStorage(unsigned long target, unsigned long internalformat, unsigned long width, unsigned long height)
 {
-    m_context.glRenderbufferStorage(target, internalformat, width, height);
+    m_context.renderbufferStorage(target, internalformat, width, height);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glSampleCoverage(double value, bool invert)
+void CanvasRenderingContext3D::sampleCoverage(double value, bool invert)
 {
-    m_context.glSampleCoverage((float) value, invert);
+    m_context.sampleCoverage((float) value, invert);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glScissor(long x, long y, unsigned long width, unsigned long height)
+void CanvasRenderingContext3D::scissor(long x, long y, unsigned long width, unsigned long height)
 {
-    m_context.glScissor(x, y, width, height);
+    m_context.scissor(x, y, width, height);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glShaderSource(CanvasShader* shader, const String& string)
+void CanvasRenderingContext3D::shaderSource(CanvasShader* shader, const String& string)
 {
-    m_context.glShaderSource(shader, string);
+    m_context.shaderSource(shader, string);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glStencilFunc(unsigned long func, long ref, unsigned long mask)
+void CanvasRenderingContext3D::stencilFunc(unsigned long func, long ref, unsigned long mask)
 {
-    m_context.glStencilFunc(func, ref, mask);
+    m_context.stencilFunc(func, ref, mask);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glStencilFuncSeparate(unsigned long face, unsigned long func, long ref, unsigned long mask)
+void CanvasRenderingContext3D::stencilFuncSeparate(unsigned long face, unsigned long func, long ref, unsigned long mask)
 {
-    m_context.glStencilFuncSeparate(face, func, ref, mask);
+    m_context.stencilFuncSeparate(face, func, ref, mask);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glStencilMask(unsigned long mask)
+void CanvasRenderingContext3D::stencilMask(unsigned long mask)
 {
-    m_context.glStencilMask(mask);
+    m_context.stencilMask(mask);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glStencilMaskSeparate(unsigned long face, unsigned long mask)
+void CanvasRenderingContext3D::stencilMaskSeparate(unsigned long face, unsigned long mask)
 {
-    m_context.glStencilMaskSeparate(face, mask);
+    m_context.stencilMaskSeparate(face, mask);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glStencilOp(unsigned long fail, unsigned long zfail, unsigned long zpass)
+void CanvasRenderingContext3D::stencilOp(unsigned long fail, unsigned long zfail, unsigned long zpass)
 {
-    m_context.glStencilOp(fail, zfail, zpass);
+    m_context.stencilOp(fail, zfail, zpass);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glStencilOpSeparate(unsigned long face, unsigned long fail, unsigned long zfail, unsigned long zpass)
+void CanvasRenderingContext3D::stencilOpSeparate(unsigned long face, unsigned long fail, unsigned long zfail, unsigned long zpass)
 {
-    m_context.glStencilOpSeparate(face, fail, zfail, zpass);
+    m_context.stencilOpSeparate(face, fail, zfail, zpass);
     cleanupAfterGraphicsCall(false);
 }
 
 
-void CanvasRenderingContext3D::glTexParameter(unsigned target, unsigned pname, CanvasNumberArray* array)
+void CanvasRenderingContext3D::texParameter(unsigned target, unsigned pname, CanvasNumberArray* array)
 {
-    m_context.glTexParameter(target, pname,array);
+    m_context.texParameter(target, pname,array);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glTexParameter(unsigned target, unsigned pname, double value)
+void CanvasRenderingContext3D::texParameter(unsigned target, unsigned pname, double value)
 {
-    m_context.glTexParameter(target, pname, value);
+    m_context.texParameter(target, pname, value);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glUniform(long location, CanvasNumberArray* array)
+void CanvasRenderingContext3D::uniform(long location, CanvasNumberArray* array)
 {
-    m_context.glUniform(location, array);
+    m_context.uniform(location, array);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glUniform(long location, float v0)
+void CanvasRenderingContext3D::uniform(long location, float v0)
 {
-    m_context.glUniform(location, v0);
+    m_context.uniform(location, v0);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glUniform(long location, float v0, float v1)
+void CanvasRenderingContext3D::uniform(long location, float v0, float v1)
 {
-    m_context.glUniform(location, v0, v1);
+    m_context.uniform(location, v0, v1);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glUniform(long location, float v0, float v1, float v2)
+void CanvasRenderingContext3D::uniform(long location, float v0, float v1, float v2)
 {
-    m_context.glUniform(location, v0, v1, v2);
+    m_context.uniform(location, v0, v1, v2);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glUniform(long location, float v0, float v1, float v2, float v3)
+void CanvasRenderingContext3D::uniform(long location, float v0, float v1, float v2, float v3)
 {
-    m_context.glUniform(location, v0, v1, v2, v3);
+    m_context.uniform(location, v0, v1, v2, v3);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glUniform(long location, int v0)
+void CanvasRenderingContext3D::uniform(long location, int v0)
 {
-    m_context.glUniform(location, v0);
+    m_context.uniform(location, v0);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glUniform(long location, int v0, int v1)
+void CanvasRenderingContext3D::uniform(long location, int v0, int v1)
 {
-    m_context.glUniform(location, v0, v1);
+    m_context.uniform(location, v0, v1);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glUniform(long location, int v0, int v1, int v2)
+void CanvasRenderingContext3D::uniform(long location, int v0, int v1, int v2)
 {
-    m_context.glUniform(location, v0, v1, v2);
+    m_context.uniform(location, v0, v1, v2);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glUniform(long location, int v0, int v1, int v2, int v3)
+void CanvasRenderingContext3D::uniform(long location, int v0, int v1, int v2, int v3)
 {
-    m_context.glUniform(location, v0, v1, v2, v3);
+    m_context.uniform(location, v0, v1, v2, v3);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glUniformMatrix(long location, long count, bool transpose, CanvasNumberArray*array)
+void CanvasRenderingContext3D::uniformMatrix(long location, long count, bool transpose, CanvasNumberArray*array)
 {
-    m_context.glUniformMatrix(location, count, transpose, array);
+    m_context.uniformMatrix(location, count, transpose, array);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glUniformMatrix(long location, bool transpose, const Vector<WebKitCSSMatrix*>& array)
+void CanvasRenderingContext3D::uniformMatrix(long location, bool transpose, const Vector<WebKitCSSMatrix*>& array)
 {
-    m_context.glUniformMatrix(location, transpose, array);
+    m_context.uniformMatrix(location, transpose, array);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glUniformMatrix(long location, bool transpose, const WebKitCSSMatrix* matrix)
+void CanvasRenderingContext3D::uniformMatrix(long location, bool transpose, const WebKitCSSMatrix* matrix)
 {
-    m_context.glUniformMatrix(location, transpose, matrix);
+    m_context.uniformMatrix(location, transpose, matrix);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glUseProgram(CanvasProgram* program)
+void CanvasRenderingContext3D::useProgram(CanvasProgram* program)
 {
-    m_context.glUseProgram(program);
+    m_context.useProgram(program);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glValidateProgram(CanvasProgram* program)
+void CanvasRenderingContext3D::validateProgram(CanvasProgram* program)
 {
-    m_context.glValidateProgram(program);
+    m_context.validateProgram(program);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glVertexAttrib(unsigned long indx, float v0)
+void CanvasRenderingContext3D::vertexAttrib(unsigned long indx, float v0)
 {
-    m_context.glVertexAttrib(indx, v0);
+    m_context.vertexAttrib(indx, v0);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glVertexAttrib(unsigned long indx, float v0, float v1)
+void CanvasRenderingContext3D::vertexAttrib(unsigned long indx, float v0, float v1)
 {
-    m_context.glVertexAttrib(indx, v0, v1);
+    m_context.vertexAttrib(indx, v0, v1);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glVertexAttrib(unsigned long indx, float v0, float v1, float v2)
+void CanvasRenderingContext3D::vertexAttrib(unsigned long indx, float v0, float v1, float v2)
 {
-    m_context.glVertexAttrib(indx, v0, v1, v2);
+    m_context.vertexAttrib(indx, v0, v1, v2);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glVertexAttrib(unsigned long indx, float v0, float v1, float v2, float v3)
+void CanvasRenderingContext3D::vertexAttrib(unsigned long indx, float v0, float v1, float v2, float v3)
 {
-    m_context.glVertexAttrib(indx, v0, v1, v2, v3);
+    m_context.vertexAttrib(indx, v0, v1, v2, v3);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glVertexAttrib(unsigned long indx, CanvasNumberArray* array)
+void CanvasRenderingContext3D::vertexAttrib(unsigned long indx, CanvasNumberArray* array)
 {
-    m_context.glVertexAttrib(indx, array);
+    m_context.vertexAttrib(indx, array);
     cleanupAfterGraphicsCall(false);
 }
 
 
-void CanvasRenderingContext3D::glVertexAttribPointer(unsigned long indx, long size, unsigned long type, bool normalized, unsigned long stride, CanvasNumberArray* array)
+void CanvasRenderingContext3D::vertexAttribPointer(unsigned long indx, long size, unsigned long type, bool normalized, unsigned long stride, CanvasNumberArray* array)
 {
-    m_context.glVertexAttribPointer(indx, size, type, normalized, stride, array);
+    m_context.vertexAttribPointer(indx, size, type, normalized, stride, array);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::glViewport(long x, long y, unsigned long width, unsigned long height)
+void CanvasRenderingContext3D::viewport(long x, long y, unsigned long width, unsigned long height)
 {
     if (isnan(x))
         x = 0;
@@ -634,7 +634,7 @@ void CanvasRenderingContext3D::glViewport(long x, long y, unsigned long width, u
         width = 100;
     if (isnan(height))
         height = 100;
-    m_context.glViewport(x, y, width, height);
+    m_context.viewport(x, y, width, height);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -763,9 +763,9 @@ PassRefPtr<CanvasNumberArray> CanvasRenderingContext3D::getProgram(CanvasProgram
     return array;
 }
 
-String CanvasRenderingContext3D::glGetProgramInfoLog(CanvasProgram* program)
+String CanvasRenderingContext3D::getProgramInfoLog(CanvasProgram* program)
 {
-    String s = m_context.glGetProgramInfoLog(program);
+    String s = m_context.getProgramInfoLog(program);
     cleanupAfterGraphicsCall(false);
     return s;
 }
@@ -784,16 +784,16 @@ PassRefPtr<CanvasNumberArray> CanvasRenderingContext3D::getShader(CanvasShader* 
     return array;
 }
 
-String CanvasRenderingContext3D::glGetShaderInfoLog(CanvasShader* shader)
+String CanvasRenderingContext3D::getShaderInfoLog(CanvasShader* shader)
 {
-    String s = m_context.glGetShaderInfoLog(shader);
+    String s = m_context.getShaderInfoLog(shader);
     cleanupAfterGraphicsCall(false);
     return s;
 }
 
-String CanvasRenderingContext3D::glGetShaderSource(CanvasShader* shader)
+String CanvasRenderingContext3D::getShaderSource(CanvasShader* shader)
 {
-    String s = m_context.glGetShaderSource(shader);
+    String s = m_context.getShaderSource(shader);
     cleanupAfterGraphicsCall(false);
     return s;
 }
