@@ -555,7 +555,39 @@
 
 - (NSString *)AXARIAContentGroupText:(NSString *)ariaType
 {
-    return UI_STRING([ariaType UTF8String], "A description for a specified ARIA grouping role.");    
+    if ([ariaType isEqualToString:@"ARIAApplicationLog"])
+        return UI_STRING("log", "An ARIA accessibility group that acts as a console log.");
+    if ([ariaType isEqualToString:@"ARIAApplicationMarquee"])
+        return UI_STRING("marquee", "An ARIA accessibility group that acts as a marquee.");    
+    if ([ariaType isEqualToString:@"ARIAApplicationStatus"])
+        return UI_STRING("application status", "An ARIA accessibility group that acts as a status update.");    
+    if ([ariaType isEqualToString:@"ARIAApplicationTimer"])
+        return UI_STRING("timer", "An ARIA accessibility group that acts as an updating timer.");    
+    if ([ariaType isEqualToString:@"ARIADocument"])
+        return UI_STRING("document", "An ARIA accessibility group that acts as a document.");    
+    if ([ariaType isEqualToString:@"ARIADocumentArticle"])
+        return UI_STRING("article", "An ARIA accessibility group that acts as an article.");    
+    if ([ariaType isEqualToString:@"ARIADocumentNote"])
+        return UI_STRING("note", "An ARIA accessibility group that acts as a note in a document.");    
+    if ([ariaType isEqualToString:@"ARIADocumentRegion"])
+        return UI_STRING("region", "An ARIA accessibility group that acts as a distinct region in a document.");    
+    if ([ariaType isEqualToString:@"ARIALandmarkApplication"])
+        return UI_STRING("application", "An ARIA accessibility group that acts as an application.");    
+    if ([ariaType isEqualToString:@"ARIALandmarkBanner"])
+        return UI_STRING("banner", "An ARIA accessibility group that acts as a banner.");    
+    if ([ariaType isEqualToString:@"ARIALandmarkComplementary"])
+        return UI_STRING("complementary", "An ARIA accessibility group that acts as a region of complementary information.");    
+    if ([ariaType isEqualToString:@"ARIALandmarkContentInfo"])
+        return UI_STRING("content", "An ARIA accessibility group that contains content.");    
+    if ([ariaType isEqualToString:@"ARIALandmarkMain"])
+        return UI_STRING("main", "An ARIA accessibility group that is the main portion of the website.");    
+    if ([ariaType isEqualToString:@"ARIALandmarkNavigation"])
+        return UI_STRING("navigation", "An ARIA accessibility group that contains the main navigation elements of a website.");    
+    if ([ariaType isEqualToString:@"ARIALandmarkSearch"])
+        return UI_STRING("search", "An ARIA accessibility group that contains a search feature of a website.");    
+    if ([ariaType isEqualToString:@"ARIAUserInterfaceTooltip"])
+        return UI_STRING("tooltip", "An ARIA accessibility group that acts as a tooltip.");    
+    return nil;
 }
 
 - (NSString *)AXButtonActionVerb
