@@ -50,6 +50,9 @@ function orphanedWorkerExited()
         // Orphan our worker (no more references to it) and wait for it to exit.
         worker.onmessage = 0;
         worker = 0;
+        // For some reason, the worker object does not get GC'd unless we allocate a new object here.
+        // The conjecture is that there's a value on the stack that appears to point to the worker which this clobbers.
+        new Date();
         waitUntilWorkerThreadsExit(orphanedTimeoutWorkerExited);
     }
 }

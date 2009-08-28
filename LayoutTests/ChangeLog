@@ -26,6 +26,14 @@
 
 2009-08-27  Drew Wilson  <atwilson@google.com>
 
+        Reviewed by Oliver Hunt.
+
+        Tweak to force worker object to get GC'd.
+
+        * fast/workers/resources/dedicated-worker-lifecycle.js:
+
+2009-08-27  Drew Wilson  <atwilson@google.com>
+
         Unreviewed.
 
         [Qt] Skip HTML5 worker lifecycle test added in r47837 as it depends on unimplemented functionality in DRT.
