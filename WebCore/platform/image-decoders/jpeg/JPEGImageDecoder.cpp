@@ -461,7 +461,7 @@ void JPEGImageDecoder::decode(bool sizeOnly)
     }
 }
 
-static void convertCMYKToRGBA(RGBA32Buffer& dest, int destY, JSAMPROW src, int srcWidth
+static void convertCMYKToRGBA(RGBA32Buffer& dest, int destY, JSAMPROW src, JDIMENSION srcWidth
 #if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
                               , bool scaled, const Vector<int>& scaledColumns
 #endif
@@ -481,7 +481,7 @@ static void convertCMYKToRGBA(RGBA32Buffer& dest, int destY, JSAMPROW src, int s
         return;
     }
 #endif
-    for (unsigned x = 0; x < srcWidth; ++x) {
+    for (JDIMENSION x = 0; x < srcWidth; ++x) {
         unsigned c = *src++;
         unsigned m = *src++;
         unsigned y = *src++;
@@ -509,7 +509,7 @@ static void convertCMYKToRGBA(RGBA32Buffer& dest, int destY, JSAMPROW src, int s
     }
 }
 
-static void convertRGBToRGBA(RGBA32Buffer& dest, int destY, JSAMPROW src, int srcWidth
+static void convertRGBToRGBA(RGBA32Buffer& dest, int destY, JSAMPROW src, JDIMENSION srcWidth
 #if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
                               , bool scaled, const Vector<int>& scaledColumns
 #endif
@@ -525,7 +525,7 @@ static void convertRGBToRGBA(RGBA32Buffer& dest, int destY, JSAMPROW src, int sr
         return;
     }
 #endif
-    for (unsigned x = 0; x < srcWidth; ++x) {
+    for (JDIMENSION x = 0; x < srcWidth; ++x) {
         unsigned r = *src++;
         unsigned g = *src++;
         unsigned b = *src++;
