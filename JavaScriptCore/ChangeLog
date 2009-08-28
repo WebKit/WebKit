@@ -1,3 +1,17 @@
+2009-08-27  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Link the testapi against CFLite when building the WinCairo port.
+
+        * JavaScriptCore.vcproj/testapi/testapi.vcproj: Add new Release_CFLite
+          target.  Update all targets to inherit from either the
+          JavaScriptCF.vsprops (Apple target) or the JavaScriptCFLite.vsprops
+          file (WinCairo target).
+        * JavaScriptCore.vcproj/testapi/testapiCommon.vsprops: Remove
+          input file CoreFoundation.lib. This is provided by either the
+          JavaScriptCF.vsprops or JavaScriptCFLite.vsprops file.
+
 2009-08-27  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Geoff Garen.

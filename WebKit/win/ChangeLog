@@ -1,3 +1,13 @@
+2009-08-27  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Modify Release_Cairo target to build testapi using the
+        Release_CFLite target so that the correct CoreFoundation
+        (in this case, CFLite.dll) is linked.
+
+        * WebKit.vcproj/WebKit.sln:
+
 2009-08-26  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Oliver Hunt.

@@ -258,8 +258,8 @@ Global
 		{1AFD081F-1AC7-4A97-8EFA-6DF97761A3A2}.Debug_Internal|Win32.Build.0 = Debug_Internal|Win32
 		{1AFD081F-1AC7-4A97-8EFA-6DF97761A3A2}.Debug|Win32.ActiveCfg = Debug|Win32
 		{1AFD081F-1AC7-4A97-8EFA-6DF97761A3A2}.Debug|Win32.Build.0 = Debug|Win32
-		{1AFD081F-1AC7-4A97-8EFA-6DF97761A3A2}.Release_Cairo|Win32.ActiveCfg = Release|Win32
-		{1AFD081F-1AC7-4A97-8EFA-6DF97761A3A2}.Release_Cairo|Win32.Build.0 = Release|Win32
+		{1AFD081F-1AC7-4A97-8EFA-6DF97761A3A2}.Release_Cairo|Win32.ActiveCfg = Release_CFLite|Win32
+		{1AFD081F-1AC7-4A97-8EFA-6DF97761A3A2}.Release_Cairo|Win32.Build.0 = Release_CFLite|Win32
 		{1AFD081F-1AC7-4A97-8EFA-6DF97761A3A2}.Release|Win32.ActiveCfg = Release|Win32
 		{1AFD081F-1AC7-4A97-8EFA-6DF97761A3A2}.Release|Win32.Build.0 = Release|Win32
 		{44B9C152-1870-4035-B94D-7B3285AA0C12}.Debug_Cairo|Win32.ActiveCfg = Release|Win32

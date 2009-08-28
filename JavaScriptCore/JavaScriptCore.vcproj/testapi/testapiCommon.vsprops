@@ -12,7 +12,7 @@
 	/>
 	<Tool
 		Name="VCLinkerTool"
-		AdditionalDependencies="JavaScriptCore$(WebKitDLLConfigSuffix).lib WTF$(WebKitConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib icuin$(LibraryConfigSuffix).lib icuuc$(LibraryConfigSuffix).lib"
+		AdditionalDependencies="JavaScriptCore$(WebKitDLLConfigSuffix).lib WTF$(WebKitConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib icuin$(LibraryConfigSuffix).lib icuuc$(LibraryConfigSuffix).lib"
 		SubSystem="1"
 	/>
 	<Tool
