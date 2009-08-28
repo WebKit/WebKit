@@ -1,3 +1,20 @@
+2009-08-27  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Release the storage mutex whenever leaving JavaScript execution.
+        https://bugs.webkit.org/show_bug.cgi?id=28789
+
+        http://dev.w3.org/html5/spec/Overview.html#storage-mutex describes the
+        required behavior.  After we leave JavaScript, we must be sure the storage
+        mutex has been released.  At the end of evaluate(), if localStorage has been
+        instantiated, tell it to release any locks that may be applicable.
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::evaluate):
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::evaluate):
+
 2009-08-27  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Oliver Hunt.

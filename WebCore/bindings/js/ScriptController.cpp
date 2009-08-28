@@ -33,6 +33,7 @@
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
 #include "Settings.h"
+#include "StorageNamespace.h"
 #include "XSSAuditor.h"
 #include "npruntime_impl.h"
 #include "runtime_root.h"
@@ -117,6 +118,12 @@ ScriptValue ScriptController::evaluate(const ScriptSourceCode& sourceCode)
     // Evaluating the JavaScript could cause the frame to be deallocated
     // so we start the keep alive timer here.
     m_frame->keepAlive();
+
+    // Release any localStorage locks we may still have.
+    Page* page = m_frame->page();
+    StorageNamespace* localStorage = page ? page->group().localStorage() : 0;
+    if (localStorage)
+        localStorage->unlock();
 
     if (comp.complType() == Normal || comp.complType() == ReturnValue) {
         m_sourceURL = savedSourceURL;
