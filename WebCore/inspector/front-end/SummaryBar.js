@@ -27,10 +27,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.SummaryBar = function(categoryColors, categoryOrder)
+WebInspector.SummaryBar = function(categories)
 {
-    this.categoryColors = categoryColors;
-    this.categoryOrder = categoryOrder;
+    this.categories = categories;
 
     this.element = document.createElement("div");
     this.element.className = "summary-bar";
@@ -70,19 +69,18 @@ WebInspector.SummaryBar.prototype = {
 
         this.legendElement.removeChildren();
 
-        for (var i = 0; i < this.categoryOrder.length; ++i) {
-            var category = this.categoryOrder[i];
+        for (var category in this.categories) {
             var size = graphInfo.categoryValues[category];
             if (!size)
                 continue;
 
-            var color = this.categoryColors[category];
+            var color = this.categories[category].color;
             var colorString = "rgb(" + color.r + ", " + color.g + ", " + color.b + ")";
 
             var fillSegment = {color: colorString, value: size};
             fillSegments.push(fillSegment);
 
-            var legendLabel = this._makeLegendElement(WebInspector.resourceCategories[category].title, this.calculator.formatValue(size), colorString);
+            var legendLabel = this._makeLegendElement(this.categories[category].title, this.calculator.formatValue(size), colorString);
             this.legendElement.appendChild(legendLabel);
         }
 

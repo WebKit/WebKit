@@ -1,3 +1,18 @@
+2009-08-28  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Remove dependency of SummaryBar on WebInspector.resourceCategories.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28801
+
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel):
+        (WebInspector.ResourcesPanel.prototype.toolbarItemClass.get categories):
+        * inspector/front-end/SummaryBar.js:
+        (WebInspector.SummaryBar):
+        (WebInspector.SummaryBar.prototype.update):
+
 2009-08-28  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed (patching in l18n change that was missing due to

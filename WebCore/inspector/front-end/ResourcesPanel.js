@@ -60,7 +60,7 @@ WebInspector.ResourcesPanel = function()
     this.containerContentElement.id = "resources-container-content";
     this.containerElement.appendChild(this.containerContentElement);
 
-    this.summaryBar = new WebInspector.SummaryBar(this.categoryColors, this.categoryOrder);
+    this.summaryBar = new WebInspector.SummaryBar(this.categories);
     this.summaryBar.element.id = "resources-summary";
     this.containerContentElement.appendChild(this.summaryBar.element);
 
@@ -155,8 +155,8 @@ WebInspector.ResourcesPanel = function()
 
     var allElement = createFilterElement.call(this, "all");
     this.filter(allElement.category);
-    for (var i = 0; i < this.categoryOrder.length; i++)
-        createFilterElement.call(this, this.categoryOrder[i]);
+    for (var category in this.categories)
+        createFilterElement.call(this, category);
 
     this.reset();
 
@@ -166,9 +166,16 @@ WebInspector.ResourcesPanel = function()
 WebInspector.ResourcesPanel.prototype = {
     toolbarItemClass: "resources",
 
-    categoryColors: {documents: {r: 47, g: 102, b: 236}, stylesheets: {r: 157, g: 231, b: 119}, images: {r: 164, g: 60, b: 255}, scripts: {r: 255, g: 121, b: 0}, xhr: {r: 231, g: 231, b: 10}, fonts: {r: 255, g: 82, b: 62}, other: {r: 186, g: 186, b: 186}},
-
-    categoryOrder: ["documents", "stylesheets", "images", "scripts", "xhr", "fonts", "other"],
+    get categories()
+    {
+        if (!this._categories) {
+            this._categories = {documents: {color: {r: 47, g: 102, b: 236}}, stylesheets: {color: {r: 157, g: 231, b: 119}}, images: {color: {r: 164, g: 60, b: 255}}, scripts: {color: {r: 255, g: 121, b: 0}}, xhr: {color: {r: 231, g: 231, b: 10}}, fonts: {color: {r: 255, g: 82, b: 62}}, other: {color: {r: 186, g: 186, b: 186}}};
+            for (var category in this._categories) {
+                this._categories[category].title = WebInspector.resourceCategories[category].title;
+            }
+        }
+        return this._categories; 
+    },
 
     filter: function (category) {
         if (this._filterCategory && this._filterCategory === category)
