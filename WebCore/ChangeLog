@@ -1,3 +1,12 @@
+2009-08-28  Ben Murdoch  <benm@google.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=28803
+        
+        Implements V8CustomVoidCallback reporting any exceptions that were thrown from the callback function.
+
+        * bindings/v8/custom/V8CustomVoidCallback.cpp:
+        (WebCore::invokeCallback): Checks if the callback raised an exception and reports it to WebCore if so.
+
 2009-08-28  Peter Kasting  <pkasting@google.com>
 
         Not reviewed (build fix).
