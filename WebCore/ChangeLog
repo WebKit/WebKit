@@ -1,3 +1,30 @@
+2009-08-27  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28753
+        <rdar://problem/7173448> Excessive number of threads (and a crash)
+
+        Coalesce DNS prefetch requests to reduce strain on CFHost. Currently, the algorithm is as follows:
+        - when resolver is idle, the first few requests are sent immediately (they may or may not
+        hit the wire);
+        - if there are a few requests in flight already, coalesce all requests for one second;
+        - to avoid pathological cases with lots of links to different sites on a page, only ask
+        CFHost about a handful of names (dropping the rest).
+
+        Coalescing reduces the number of requests dramatically, as prefetchDNS is called for each
+        link, and these tend to have identical host name.
+
+        * platform/network/cf/DNSCFNet.cpp:
+        (WebCore::DNSResolveQueue::DNSResolveQueue):
+        (WebCore::DNSResolveQueue::shared):
+        (WebCore::DNSResolveQueue::add):
+        (WebCore::DNSResolveQueue::decrementRequestCount):
+        (WebCore::DNSResolveQueue::fired):
+        (WebCore::clientCallback):
+        (WebCore::DNSResolveQueue::resolve):
+        (WebCore::prefetchDNS):
+
 2009-08-27  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.

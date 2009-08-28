@@ -1,3 +1,14 @@
+2009-08-27  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28753
+        <rdar://problem/7173448> Excessive number of threads (and a crash)
+
+        * wtf/Threading.h: (WTF::atomicIncrement): Changed atomicIncrement to match decrement
+        and return the new value. Also added using directives for these functions, to match
+        te rest of WTF.
+
 2009-08-27  Brent Fulgham  <bfulgham@webkit.org>
 
         Reviewed by Adam Roben.
