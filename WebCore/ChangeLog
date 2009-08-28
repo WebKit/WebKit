@@ -1,3 +1,36 @@
+2009-08-28  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Set DOM agent document to 0 in InspectorController::close to
+        make DOM agent remove DOM listeners from the inspected document.
+
+        Replace windowVisible checks with m_frontend checks to as inspector
+        window lives in a different process in Chromium while frontend proxy
+        is in the inspected page process.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28800
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::inspect):
+        (WebCore::InspectorController::addConsoleMessage):
+        (WebCore::InspectorController::close):
+        (WebCore::InspectorController::pruneResources):
+        (WebCore::InspectorController::didCommitLoad):
+        (WebCore::InspectorController::didLoadResourceFromMemoryCache):
+        (WebCore::InspectorController::identifierForInitialRequest):
+        (WebCore::InspectorController::willSendRequest):
+        (WebCore::InspectorController::didReceiveResponse):
+        (WebCore::InspectorController::didReceiveContentLength):
+        (WebCore::InspectorController::didFinishLoading):
+        (WebCore::InspectorController::didFailLoading):
+        (WebCore::InspectorController::resourceRetrievedByXMLHttpRequest):
+        (WebCore::InspectorController::scriptImported):
+        (WebCore::InspectorController::didOpenDatabase):
+        (WebCore::InspectorController::didUseDOMStorage):
+        (WebCore::InspectorController::addProfile):
+        * inspector/InspectorController.h:
+
 2009-08-28  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Timothy Hatcher.
