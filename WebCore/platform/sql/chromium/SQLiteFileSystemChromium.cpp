@@ -55,10 +55,10 @@ int SQLiteFileSystem::openDatabase(const String& fileName, sqlite3** database)
         return sqlite3_open16(path.charactersWithNullTermination(), database);
     }
 
-    // open databases using Chromium's VFS
+    // open databases using the default VFS
+    // in renderers, it should be Chromium's VFS; in the browser process it should be SQLite's default VFS
     return sqlite3_open_v2(fileName.utf8().data(), database,
-                           SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_FULLMUTEX,
-                           "chromium_vfs");
+                           SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_FULLMUTEX, 0);
 }
 
 String SQLiteFileSystem::getFileNameForNewDatabase(
@@ -99,9 +99,7 @@ bool SQLiteFileSystem::deleteEmptyDatabaseDirectory(const String&)
 
 bool SQLiteFileSystem::deleteDatabaseFile(const String& fileName)
 {
-    // return true if and only if the error code returned by
-    // ChromiumBridge::deleteDatabase() is 0
-    return (!ChromiumBridge::databaseDeleteFile(fileName));
+    return (ChromiumBridge::databaseDeleteFile(fileName) == SQLITE_OK);
 }
 
 long long SQLiteFileSystem::getDatabaseFileSize(const String& fileName)
