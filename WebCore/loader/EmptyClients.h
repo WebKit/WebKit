@@ -123,6 +123,7 @@ public:
     virtual PlatformWidget platformWindow() const { return 0; }
     virtual void contentsSizeChanged(Frame*, const IntSize&) const { }
 
+    virtual void scrollbarsModeDidChange() const { }
     virtual void mouseDidMoveOverElement(const HitTestResult&, unsigned) { }
 
     virtual void setToolTip(const String&, TextDirection) { }

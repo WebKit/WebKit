@@ -523,6 +523,7 @@ TEST_PROGS += Programs/unittests/testhttpbackend \
 	Programs/unittests/testwebframe \
 	Programs/unittests/testwebbackforwardlist \
 	Programs/unittests/testwebhistoryitem \
+	Programs/unittests/testwindow \
 	Programs/unittests/testdownload \
 	Programs/unittests/testatk \
 	Programs/unittests/testwebsettings
@@ -557,6 +558,11 @@ Programs_unittests_testwebhistoryitem_SOURCES = WebKit/gtk/tests/testwebhistoryi
 Programs_unittests_testwebhistoryitem_CFLAGS = $(webkit_tests_cflags)
 Programs_unittests_testwebhistoryitem_LDADD = $(webkit_tests_ldadd)
 Programs_unittests_testwebhistoryitem_LDFLAGS = $(webkit_tests_ldflags)
+
+Programs_unittests_testwindow_SOURCES = WebKit/gtk/tests/testwindow.c
+Programs_unittests_testwindow_CFLAGS = $(webkit_tests_cflags)
+Programs_unittests_testwindow_LDADD = $(webkit_tests_ldadd)
+Programs_unittests_testwindow_LDFLAGS = $(webkit_tests_ldflags)
 
 Programs_unittests_testdownload_SOURCES = WebKit/gtk/tests/testdownload.c
 Programs_unittests_testdownload_CFLAGS = $(webkit_tests_cflags)

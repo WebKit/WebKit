@@ -107,6 +107,7 @@ public:
     virtual PlatformWidget platformWindow() const;
     virtual void contentsSizeChanged(Frame*, const IntSize&) const;
 
+    virtual void scrollbarsModeDidChange() const { }
     virtual void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags);
 
     virtual void setToolTip(const String&, TextDirection);

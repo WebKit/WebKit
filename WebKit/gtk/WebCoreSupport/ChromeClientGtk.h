@@ -92,6 +92,7 @@ namespace WebKit {
         virtual PlatformWidget platformWindow() const;
         virtual void contentsSizeChanged(WebCore::Frame*, const WebCore::IntSize&) const;
 
+        virtual void scrollbarsModeDidChange() const;
         virtual void mouseDidMoveOverElement(const WebCore::HitTestResult&, unsigned modifierFlags);
 
         virtual void setToolTip(const WebCore::String&, WebCore::TextDirection);

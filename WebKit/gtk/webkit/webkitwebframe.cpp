@@ -85,6 +85,7 @@ enum {
     LOAD_DONE,
     TITLE_CHANGED,
     HOVERING_OVER_LINK,
+    SCROLLBARS_POLICY_CHANGED,
     LAST_SIGNAL
 };
 
@@ -94,7 +95,9 @@ enum {
     PROP_NAME,
     PROP_TITLE,
     PROP_URI,
-    PROP_LOAD_STATUS
+    PROP_LOAD_STATUS,
+    PROP_HORIZONTAL_SCROLLBAR_POLICY,
+    PROP_VERTICAL_SCROLLBAR_POLICY
 };
 
 static guint webkit_web_frame_signals[LAST_SIGNAL] = { 0, };
@@ -117,6 +120,12 @@ static void webkit_web_frame_get_property(GObject* object, guint prop_id, GValue
         break;
     case PROP_LOAD_STATUS:
         g_value_set_enum(value, webkit_web_frame_get_load_status(frame));
+        break;
+    case PROP_HORIZONTAL_SCROLLBAR_POLICY:
+        g_value_set_enum(value, webkit_web_frame_get_horizontal_scrollbar_policy(frame));
+        break;
+    case PROP_VERTICAL_SCROLLBAR_POLICY:
+        g_value_set_enum(value, webkit_web_frame_get_vertical_scrollbar_policy(frame));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -214,6 +223,31 @@ static void webkit_web_frame_class_init(WebKitWebFrameClass* frameClass)
             G_TYPE_NONE, 2,
             G_TYPE_STRING, G_TYPE_STRING);
 
+    /**
+     * WebKitWebFrame::scrollbars-policy-changed:
+     * @web_view: the object which received the signal
+     *
+     * Signal emitted when policy for one or both of the scrollbars of
+     * the view has changed. The default handler will apply the new
+     * policy to the container that holds the #WebKitWebFrame if it is
+     * a #GtkScrolledWindow. If you do not want this to be handled
+     * automatically, you need to handle this signal.
+     *
+     * You can obtain the new policies from the
+     * WebKitWebFrame:horizontal-scrollbar-policy and
+     * WebKitWebFrame:vertical-scrollbar-policy properties.
+     *
+     * Since: 1.1.14
+     */
+    webkit_web_frame_signals[SCROLLBARS_POLICY_CHANGED] = g_signal_new("scrollbars-policy-changed",
+            G_TYPE_FROM_CLASS(frameClass),
+            (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
+            0,
+            g_signal_accumulator_true_handled,
+            NULL,
+            webkit_marshal_BOOLEAN__VOID,
+            G_TYPE_BOOLEAN, 0);
+
     /*
      * implementations of virtual methods
      */
@@ -258,6 +292,42 @@ static void webkit_web_frame_class_init(WebKitWebFrameClass* frameClass)
                                                       "Determines the current status of the load",
                                                       WEBKIT_TYPE_LOAD_STATUS,
                                                       WEBKIT_LOAD_FINISHED,
+                                                      WEBKIT_PARAM_READABLE));
+
+    /**
+     * WebKitWebFrame:horizontal-scrollbar-policy:
+     *
+     * Determines the current policy for the horizontal scrollbar of
+     * the frame. For the main frame, make sure to set the same policy
+     * on the scrollable widget containing the #WebKitWebView, unless
+     * you know what you are doing.
+     *
+     * Since: 1.1.14
+     */
+    g_object_class_install_property(objectClass, PROP_HORIZONTAL_SCROLLBAR_POLICY,
+                                    g_param_spec_enum("horizontal-scrollbar-policy",
+                                                      _("Horizontal Scrollbar Policy"),
+                                                      _("Determines the current policy for the horizontal scrollbar of the frame."),
+                                                      GTK_TYPE_POLICY_TYPE,
+                                                      GTK_POLICY_AUTOMATIC,
+                                                      WEBKIT_PARAM_READABLE));
+
+    /**
+     * WebKitWebFrame:vertical-scrollbar-policy:
+     *
+     * Determines the current policy for the vertical scrollbar of
+     * the frame. For the main frame, make sure to set the same policy
+     * on the scrollable widget containing the #WebKitWebView, unless
+     * you know what you are doing.
+     *
+     * Since: 1.1.14
+     */
+    g_object_class_install_property(objectClass, PROP_VERTICAL_SCROLLBAR_POLICY,
+                                    g_param_spec_enum("vertical-scrollbar-policy",
+                                                      _("Vertical Scrollbar Policy"),
+                                                      _("Determines the current policy for the vertical scrollbar of the frame."),
+                                                      GTK_TYPE_POLICY_TYPE,
+                                                      GTK_POLICY_AUTOMATIC,
                                                       WEBKIT_PARAM_READABLE));
 
     g_type_class_add_private(frameClass, sizeof(WebKitWebFramePrivate));
@@ -885,4 +955,44 @@ AtkObject* webkit_web_frame_get_focused_accessible_element(WebKitWebFrame* frame
 #else
     return NULL;
 #endif
+}
+
+GtkPolicyType webkit_web_frame_get_horizontal_scrollbar_policy(WebKitWebFrame* frame)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), GTK_POLICY_AUTOMATIC);
+
+    Frame* coreFrame = core(frame);
+    FrameView* view = coreFrame->view();
+    if (!view)
+        return GTK_POLICY_AUTOMATIC;
+
+    ScrollbarMode hMode = view->horizontalScrollbarMode();
+
+    if (hMode == ScrollbarAlwaysOn)
+        return GTK_POLICY_ALWAYS;
+
+    if (hMode == ScrollbarAlwaysOff)
+        return GTK_POLICY_NEVER;
+
+    return GTK_POLICY_AUTOMATIC;
+}
+
+GtkPolicyType webkit_web_frame_get_vertical_scrollbar_policy(WebKitWebFrame* frame)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), GTK_POLICY_AUTOMATIC);
+
+    Frame* coreFrame = core(frame);
+    FrameView* view = coreFrame->view();
+    if (!view)
+        return GTK_POLICY_AUTOMATIC;
+
+    ScrollbarMode vMode = view->verticalScrollbarMode();
+
+    if (vMode == ScrollbarAlwaysOn)
+        return GTK_POLICY_ALWAYS;
+
+    if (vMode == ScrollbarAlwaysOff)
+        return GTK_POLICY_NEVER;
+
+    return GTK_POLICY_AUTOMATIC;
 }

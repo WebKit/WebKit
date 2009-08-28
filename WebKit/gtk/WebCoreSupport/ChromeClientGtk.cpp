@@ -402,6 +402,28 @@ void ChromeClient::contentsSizeChanged(Frame* frame, const IntSize& size) const
         gtk_widget_queue_resize_no_redraw(widget);
 }
 
+void ChromeClient::scrollbarsModeDidChange() const
+{
+    WebKitWebFrame* webFrame = webkit_web_view_get_main_frame(m_webView);
+
+    g_object_notify(G_OBJECT(webFrame), "horizontal-scrollbar-policy");
+    g_object_notify(G_OBJECT(webFrame), "vertical-scrollbar-policy");
+
+    gboolean isHandled;
+    g_signal_emit_by_name(webFrame, "scrollbars-policy-changed", &isHandled);
+
+    if (isHandled)
+        return;
+
+    GtkWidget* parent = gtk_widget_get_parent(GTK_WIDGET(m_webView));
+    if (!parent || !GTK_IS_SCROLLED_WINDOW(parent))
+        return;
+
+    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(parent),
+                                   webkit_web_frame_get_horizontal_scrollbar_policy(webFrame),
+                                   webkit_web_frame_get_vertical_scrollbar_policy(webFrame));
+}
+
 void ChromeClient::mouseDidMoveOverElement(const HitTestResult& hit, unsigned modifierFlags)
 {
     // If a tooltip must be displayed it will be, afterwards, when

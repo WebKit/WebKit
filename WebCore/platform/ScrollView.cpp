@@ -106,7 +106,6 @@ PassRefPtr<Scrollbar> ScrollView::createScrollbar(ScrollbarOrientation orientati
 {
     return Scrollbar::createNativeScrollbar(this, orientation, RegularScrollbar);
 }
-#endif
 
 void ScrollView::setScrollbarModes(ScrollbarMode horizontalMode, ScrollbarMode verticalMode)
 {
@@ -119,6 +118,7 @@ void ScrollView::setScrollbarModes(ScrollbarMode horizontalMode, ScrollbarMode v
     else
         updateScrollbars(scrollOffset());
 }
+#endif
 
 void ScrollView::scrollbarModes(ScrollbarMode& horizontalMode, ScrollbarMode& verticalMode) const
 {

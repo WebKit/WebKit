@@ -1,3 +1,22 @@
+2009-08-28  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25889
+        [GTK] scrollbar policy for main frame is not implementable
+
+        Override setScrollbarModes to correctly forward scrollbar modes
+        policy changes to client code, via a new platform-specific method,
+        scrollbarsPolicyDidChange.
+
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::scrollbarsPolicyDidChange):
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::createScrollbar):
+        * platform/ScrollView.h:
+        * platform/gtk/ScrollViewGtk.cpp:
+        (WebCore::ScrollView::setScrollbarModes):
+
 2009-08-28  Cédric Luthi <cedric.luthi@gmail.com>
 
         Reviewed by Tor Arne Vestbø

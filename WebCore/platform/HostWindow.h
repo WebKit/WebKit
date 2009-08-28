@@ -54,6 +54,9 @@ public:
     // For scrolling a rect into view recursively.  Useful in the cases where a WebView is embedded inside some containing
     // platform-specific ScrollView.
     virtual void scrollRectIntoView(const IntRect&, const ScrollView*) const = 0;
+
+    // To notify WebKit of scrollbar mode changes.
+    virtual void scrollbarsModeDidChange() const = 0;
 };
 
 } // namespace WebCore

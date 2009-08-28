@@ -1,3 +1,15 @@
+2009-08-28  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25889
+        [GTK] scrollbar policy for main frame is not implementable
+
+        Add empty implementation for new ChromeClient method.
+
+        * WebCoreSupport/ChromeClientQt.h:
+        (WebCore::ChromeClientQt::scrollbarsModeDidChange):
+
 2009-08-27  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
 
         Reviewed by Ariya Hidayat.

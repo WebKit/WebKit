@@ -133,6 +133,7 @@ namespace WebCore {
         virtual void scrollRectIntoView(const IntRect&, const ScrollView*) const = 0; // Currently only Mac has a non empty implementation.
         // End methods used by HostWindow.
 
+        virtual void scrollbarsModeDidChange() const = 0;
         virtual void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags) = 0;
 
         virtual void setToolTip(const String&, TextDirection) = 0;
