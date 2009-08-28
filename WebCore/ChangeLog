@@ -1,3 +1,13 @@
+2009-08-27  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, build fix.
+
+        Removed ASSERT_NOT_REACHED, because indeed this ASSERT is reached in
+        fast/canvas/change-context.html. And it's alright to reach it.
+
+        * bindings/v8/custom/V8HTMLCanvasElementCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL): Removed assertion.
+
 2009-08-27  Jeremy Orlow  <jorlow@chromium.org>
 
         Not reviewed.  Build fix for http://trac.webkit.org/changeset/47840
