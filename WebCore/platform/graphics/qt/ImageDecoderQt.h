@@ -39,7 +39,6 @@ namespace WebCore {
 class ImageDecoderQt : public ImageDecoder
 {
 public:
-    static ImageDecoderQt* create(const SharedBuffer& data);
     ~ImageDecoderQt();
 
     typedef Vector<char> IncomingData;

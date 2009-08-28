@@ -195,6 +195,11 @@ namespace WebCore {
 
         virtual ~ImageDecoder() {}
 
+        // Factory function to create an ImageDecoder.  Ports that subclass
+        // ImageDecoder can provide their own implementation of this to avoid
+        // needing to write a dedicated setData() implementation.
+        static ImageDecoder* create(const SharedBuffer& data);
+
         // The the filename extension usually associated with an undecoded image of this type.
         virtual String filenameExtension() const = 0;
 

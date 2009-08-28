@@ -26,7 +26,60 @@
 #include <algorithm>
 #endif
 
+#include "BMPImageDecoder.h"
+#include "GIFImageDecoder.h"
+#include "ICOImageDecoder.h"
+#include "JPEGImageDecoder.h"
+#include "PNGImageDecoder.h"
+#include "SharedBuffer.h"
+#include "XBMImageDecoder.h"
+
 namespace WebCore {
+
+ImageDecoder* ImageDecoder::create(const SharedBuffer& data)
+{
+    // We need at least 4 bytes to figure out what kind of image we're dealing with.
+    int length = data.size();
+    if (length < 4)
+        return 0;
+
+    const unsigned char* uContents = (const unsigned char*)data.data();
+    const char* contents = data.data();
+
+    // GIFs begin with GIF8(7 or 9).
+    if (strncmp(contents, "GIF8", 4) == 0)
+        return new GIFImageDecoder();
+
+    // Test for PNG.
+    if (uContents[0]==0x89 &&
+        uContents[1]==0x50 &&
+        uContents[2]==0x4E &&
+        uContents[3]==0x47)
+        return new PNGImageDecoder();
+
+    // JPEG
+    if (uContents[0]==0xFF &&
+        uContents[1]==0xD8 &&
+        uContents[2]==0xFF)
+        return new JPEGImageDecoder();
+
+    // BMP
+    if (strncmp(contents, "BM", 2) == 0)
+        return new BMPImageDecoder();
+
+    // ICOs always begin with a 2-byte 0 followed by a 2-byte 1.
+    // CURs begin with 2-byte 0 followed by 2-byte 2.
+    if (!memcmp(contents, "\000\000\001\000", 4) ||
+        !memcmp(contents, "\000\000\002\000", 4))
+        return new ICOImageDecoder();
+
+    // XBMs require 8 bytes of info.
+    if (length >= 8 && strncmp(contents, "#define ", 8) == 0)
+        return new XBMImageDecoder();
+
+    // Give up. We don't know what the heck this is.
+    return 0;
+}
 
 #if !PLATFORM(SKIA)
 

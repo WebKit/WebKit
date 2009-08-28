@@ -59,7 +59,7 @@ void ImageSource::setData(SharedBuffer* data, bool allDataReceived)
     // If insufficient bytes are available to determine the image type, no decoder plugin will be
     // made.
     if (!m_decoder)
-        m_decoder = ImageDecoderQt::create(*data);
+        m_decoder = static_cast<NativeImageSourcePtr>(ImageDecoder::create(*data));
 
     if (!m_decoder)
         return;

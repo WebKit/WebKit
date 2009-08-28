@@ -2,6 +2,25 @@
 
         Reviewed by Eric Seidel.
 
+        https://bugs.webkit.org/show_bug.cgi?id=27965
+        Move ImageDecoder creation function to a factory function on
+        ImageDecoder.  This is arguably where it makes the most sense anyway,
+        and it will (soon) allow ImageSourceQt.cpp to have one less dedicated
+        function.
+
+        * platform/graphics/ImageSource.cpp:
+        * platform/graphics/qt/ImageDecoderQt.cpp:
+        (WebCore::ImageDecoder::create):
+        * platform/graphics/qt/ImageDecoderQt.h:
+        * platform/graphics/qt/ImageSourceQt.cpp:
+        (WebCore::ImageSource::setData):
+        * platform/image-decoders/ImageDecoder.cpp:
+        * platform/image-decoders/ImageDecoder.h:
+
+2009-08-28  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Eric Seidel.
+
         https://bugs.webkit.org/show_bug.cgi?id=28785
         Combine duplicated code from ImageDecoder*.cpp into the main
         ImageDecoder.cpp.
