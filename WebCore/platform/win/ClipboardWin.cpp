@@ -117,56 +117,49 @@ static inline void pathRemoveBadFSCharacters(PWSTR psz, size_t length)
 
 static String filesystemPathFromUrlOrTitle(const String& url, const String& title, TCHAR* extension, bool isLink)
 {
+    static const size_t fsPathMaxLengthExcludingNullTerminator = MAX_PATH - 1;
     bool usedURL = false;
-    WCHAR fsPathBuffer[MAX_PATH + 1];
+    WCHAR fsPathBuffer[MAX_PATH];
     fsPathBuffer[0] = 0;
     int extensionLen = extension ? lstrlen(extension) : 0;
+    int fsPathMaxLengthExcludingExtension = fsPathMaxLengthExcludingNullTerminator - extensionLen;
 
     if (!title.isEmpty()) {
-        size_t len = min<size_t>(title.length(), MAX_PATH - extensionLen);
+        size_t len = min<size_t>(title.length(), fsPathMaxLengthExcludingExtension);
         CopyMemory(fsPathBuffer, title.characters(), len * sizeof(UChar));
         fsPathBuffer[len] = 0;
         pathRemoveBadFSCharacters(fsPathBuffer, len);
     }
 
     if (!lstrlen(fsPathBuffer)) {
-        DWORD len = MAX_PATH;
-        String nullTermURL = url;
+        KURL kurl(url);
         usedURL = true;
-        if (UrlIsFileUrl((LPCWSTR)nullTermURL.charactersWithNullTermination()) 
-            && SUCCEEDED(PathCreateFromUrl((LPCWSTR)nullTermURL.charactersWithNullTermination(), fsPathBuffer, &len, 0))) {
-            // When linking to a file URL we can trivially find the file name
-            PWSTR fn = PathFindFileName(fsPathBuffer);
-            if (fn && fn != fsPathBuffer)
-                lstrcpyn(fsPathBuffer, fn, lstrlen(fn) + 1);
+        // The filename for any content based drag or file url should be the last element of 
+        // the path.  If we can't find it, or we're coming up with the name for a link
+        // we just use the entire url.
+        DWORD len = fsPathMaxLengthExcludingExtension;
+        String lastComponent = kurl.lastPathComponent();
+        if (kurl.isLocalFile() || (!isLink && !lastComponent.isEmpty())) {
+            len = min<DWORD>(fsPathMaxLengthExcludingExtension, lastComponent.length());
+            CopyMemory(fsPathBuffer, lastComponent.characters(), len * sizeof(UChar));
         } else {
-            // The filename for any content based drag should be the last element of 
-            // the path.  If we can't find it, or we're coming up with the name for a link
-            // we just use the entire url.
-            KURL kurl(url);
-            String lastComponent;
-            if (!isLink && !(lastComponent = kurl.lastPathComponent()).isEmpty()) {
-                len = min<DWORD>(MAX_PATH, lastComponent.length());
-                CopyMemory(fsPathBuffer, lastComponent.characters(), len * sizeof(UChar));
-            } else {
-                len = min<DWORD>(MAX_PATH, nullTermURL.length());
-                CopyMemory(fsPathBuffer, nullTermURL.characters(), len * sizeof(UChar));
-            }
-            fsPathBuffer[len] = 0;
-            pathRemoveBadFSCharacters(fsPathBuffer, len);
+            len = min<DWORD>(fsPathMaxLengthExcludingExtension, url.length());
+            CopyMemory(fsPathBuffer, url.characters(), len * sizeof(UChar));
         }
+        fsPathBuffer[len] = 0;
+        pathRemoveBadFSCharacters(fsPathBuffer, len);
     }
 
     if (!extension)
-        return String((UChar*)fsPathBuffer);
+        return String(static_cast<UChar*>(fsPathBuffer));
 
     if (!isLink && usedURL) {
         PathRenameExtension(fsPathBuffer, extension);
-        return String((UChar*)fsPathBuffer);
+        return String(static_cast<UChar*>(fsPathBuffer));
     }
 
-    String result((UChar*)fsPathBuffer);
-    result += String((UChar*)extension);
+    String result(static_cast<UChar*>(fsPathBuffer));
+    result += String(static_cast<UChar*>(extension));
     return result;
 }
 

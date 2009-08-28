@@ -1,3 +1,14 @@
+2009-08-28  Ada Chan  <adachan@apple.com>
+
+        Reviewed by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21442
+        Make sure filesystemPathFromUrlOrTitle() returns a string with length
+        <= MAX_PATH - 1.
+
+        * platform/win/ClipboardWin.cpp:
+        (WebCore::filesystemPathFromUrlOrTitle):
+
 2009-08-28  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Dimitri Glazkov.
