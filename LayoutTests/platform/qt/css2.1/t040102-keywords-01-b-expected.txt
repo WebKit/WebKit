@@ -1,14 +1,14 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x125
-  RenderBlock {HTML} at (0,0) size 800x125
-    RenderBody {BODY} at (8,14) size 784x97
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 295x19
-          text run at (0,0) width 295: "The next two paragraphs should look identical:"
-      RenderBlock {P} at (0,33) size 146x25 [border: (3px solid #000000)]
-        RenderText {#text} at (3,3) size 32x19
-          text run at (3,3) width 32: "Test."
-      RenderBlock {P} at (0,72) size 146x25 [border: (3px solid #000000)]
-        RenderText {#text} at (3,3) size 32x19
-          text run at (3,3) width 32: "Test."
+layer at (0,0) size 800x115
+  RenderBlock {HTML} at (0,0) size 800x115
+    RenderBody {BODY} at (8,13) size 784x89
+      RenderBlock {P} at (0,0) size 784x17
+        RenderText {#text} at (0,0) size 269x17
+          text run at (0,0) width 269: "The next two paragraphs should look identical:"
+      RenderBlock {P} at (0,30) size 136x23 [border: (3px solid #000000)]
+        RenderText {#text} at (3,3) size 30x17
+          text run at (3,3) width 30: "Test."
+      RenderBlock {P} at (0,66) size 136x23 [border: (3px solid #000000)]
+        RenderText {#text} at (3,3) size 30x17
+          text run at (3,3) width 30: "Test."

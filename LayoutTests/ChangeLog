@@ -1,3 +1,50 @@
+2009-08-28  Renata Hodovan  <hodovan.renata@stud.u-szeged.hu>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Adapt expecteds of css2.1/t0401* to new metrics. Remove these files from Skipped. (39 files)
+
+        * platform/qt/Skipped:
+        * platform/qt/css2.1/t040102-keywords-00-b-expected.txt:
+        * platform/qt/css2.1/t040102-keywords-01-b-expected.txt:
+        * platform/qt/css2.1/t040103-case-00-b-expected.txt:
+        * platform/qt/css2.1/t040103-case-01-c-expected.txt:
+        * platform/qt/css2.1/t040103-escapes-00-b-expected.txt:
+        * platform/qt/css2.1/t040103-escapes-01-b-expected.txt:
+        * platform/qt/css2.1/t040103-escapes-02-d-expected.txt:
+        * platform/qt/css2.1/t040103-escapes-03-b-expected.txt:
+        * platform/qt/css2.1/t040103-escapes-04-b-expected.txt:
+        * platform/qt/css2.1/t040103-escapes-05-c-expected.txt:
+        * platform/qt/css2.1/t040103-escapes-06-b-expected.txt:
+        * platform/qt/css2.1/t040103-escapes-07-b-expected.txt:
+        * platform/qt/css2.1/t040103-escapes-08-b-expected.txt:
+        * platform/qt/css2.1/t040103-ident-00-c-expected.txt:
+        * platform/qt/css2.1/t040103-ident-01-c-expected.txt:
+        * platform/qt/css2.1/t040103-ident-02-c-expected.txt:
+        * platform/qt/css2.1/t040103-ident-03-c-expected.txt:
+        * platform/qt/css2.1/t040103-ident-04-c-expected.txt:
+        * platform/qt/css2.1/t040103-ident-05-c-expected.txt:
+        * platform/qt/css2.1/t040103-ident-06-c-expected.txt:
+        * platform/qt/css2.1/t040103-ident-07-c-expected.txt:
+        * platform/qt/css2.1/t040103-ident-08-c-expected.txt:
+        * platform/qt/css2.1/t040103-ident-09-c-expected.txt:
+        * platform/qt/css2.1/t040103-ident-10-c-expected.txt:
+        * platform/qt/css2.1/t040103-ident-11-c-expected.txt:
+        * platform/qt/css2.1/t040103-ident-12-c-expected.txt:
+        * platform/qt/css2.1/t040103-ident-13-c-expected.txt:
+        * platform/qt/css2.1/t040105-atkeyw-00-b-expected.txt:
+        * platform/qt/css2.1/t040105-atkeyw-01-b-expected.txt:
+        * platform/qt/css2.1/t040105-atkeyw-02-b-expected.txt:
+        * platform/qt/css2.1/t040105-atrule-00-b-expected.txt:
+        * platform/qt/css2.1/t040105-atrule-01-b-expected.txt:
+        * platform/qt/css2.1/t040105-atrule-02-b-expected.txt:
+        * platform/qt/css2.1/t040105-atrule-03-b-expected.txt:
+        * platform/qt/css2.1/t040105-atrule-04-b-expected.txt:
+        * platform/qt/css2.1/t040105-import-00-b-expected.txt:
+        * platform/qt/css2.1/t040105-import-01-b-expected.txt:
+        * platform/qt/css2.1/t040109-c17-comments-00-b-expected.txt:
+        * platform/qt/css2.1/t040109-c17-comments-01-b-expected.txt:
+
 2009-08-27  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.
