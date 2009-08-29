@@ -1,3 +1,14 @@
+2009-08-29  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=28829
+        Crash in AccessibilityRenderObject::activeDescendant when trying to set aria-activedescendant to something without a renderer
+
+        Test: accessibility/aria-activedescendant-crash.html
+
+        * accessibility/AccessibilityRenderObject.cpp: (WebCore::AccessibilityRenderObject::activeDescendant): Nil check.
+
 2009-08-28  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Oliver Hunt.
