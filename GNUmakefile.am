@@ -106,7 +106,8 @@ corekit_cppflags += \
 	$(webcoregtk_cppflags) \
 	$(javascriptcore_cppflags)
 
-if TARGET_X11
+# For the Gtk port we want to use XP_UNIX both in X11 and Mac
+if !TARGET_WIN32
 corekit_cppflags += -DXP_UNIX
 endif
 

@@ -1,3 +1,22 @@
+2009-08-28  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Gtk Build broken for OSX Quartz
+        https://bugs.webkit.org/show_bug.cgi?id=28727
+
+        Check for XP_UNIX instead of GTK or X11 to ease building of the Gtk
+        port in Mac and Unix/Linux.
+
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::PluginView):
+        * plugins/PluginView.h:
+        * plugins/gtk/PluginViewGtk.cpp:
+        (WebCore::PluginView::setNPWindowIfNeeded):
+        (WebCore::PluginView::getValueStatic):
+        (WebCore::PluginView::getValue):
+        (WebCore::PluginView::init):
+
 2009-08-28  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Mark Rowe
