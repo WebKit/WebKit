@@ -35,13 +35,15 @@ import re
 import StringIO # for add_patch_to_bug file wrappers
 import subprocess
 import sys
+import time
 
+from datetime import datetime
 from optparse import OptionParser, IndentedHelpFormatter, SUPPRESS_USAGE, make_option
 
 # Import WebKit-specific modules.
 from modules.bugzilla import Bugzilla
 from modules.changelogs import ChangeLog, view_source_url
-from modules.logging import error, log
+from modules.logging import error, log, tee
 from modules.scm import CommitMessage, detect_scm_system, ScriptError
 from modules.buildbot import BuildBot
 
@@ -572,6 +574,102 @@ class CheckTreeStatus(Command):
             print "%s : %s" % (status_string.ljust(4), builder['name'])
 
 
+class LandPatchesFromCommitQueue(Command):
+    def __init__(self):
+        options = [
+            make_option("--no-confirm", action="store_false", dest="confirm", default=True, help="Do not ask the user for confirmation before running the queue.  Dangerous!"),
+        ]
+        Command.__init__(self, 'Run the commit queue.', options=options)
+        self._original_stdout = None
+        self._original_stderr = None
+        self._files_for_output = []
+
+    queue_log_path = 'commit_queue.log'
+    bug_logs_directory = 'commit_queue_logs'
+
+    def _tee_outputs_to_files(self, files):
+        if not self._original_stdout:
+            self._original_stdout = sys.stdout
+            self._original_stderr = sys.stderr
+        if files and len(files):
+            sys.stdout = tee(self._original_stdout, *files)
+            sys.stderr = tee(self._original_stderr, *files)
+        else:
+            sys.stdout = self._original_stdout
+            sys.stderr = self._original_stderr
+
+    @staticmethod
+    def _sleep(log_message):
+        log("%s  Sleeping 5 minutes... %s" % (log_message, datetime.now()))
+        time.sleep(300) # Wait 5 minutes
+
+    @staticmethod
+    def _open_log_file(log_path):
+        (log_directory, log_name) = os.path.split(log_path)
+        if log_directory and not os.path.exists(log_directory):
+            os.makedirs(log_directory)
+        return open(log_path, 'a+')
+
+    def _add_log_to_output_tee(self, path):
+        log_file = self._open_log_file(path)
+        self._files_for_output.append(log_file)
+        self._tee_outputs_to_files(self._files_for_output)
+        return log_file
+
+    def _remove_log_from_output_tee(self, log_file):
+        self._files_for_output.remove(log_file)
+        self._tee_outputs_to_files(self._files_for_output)
+        log_file.close()
+
+    def _run_command(self, args):
+        child_process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+
+        # Use our own custom wait loop because Popen ignores our tee'd stderr/stdout
+        while True:
+            output_line = child_process.stdout.readline()
+            if output_line == '' and child_process.poll() != None:
+                return child_process.poll()
+            sys.stdout.write(output_line)
+
+    def execute(self, options, args, tool):
+        log("CAUTION: commit-queue will discard all local changes in %s" % tool.scm().checkout_root)
+        if options.confirm:
+            response = raw_input("Are you sure?  Type 'yes' to continue: ")
+            if (response != 'yes'):
+                error("User declined.")
+
+        queue_log = self._add_log_to_output_tee(self.queue_log_path)
+        log("Running WebKit Commit Queue. %s" % datetime.now())
+
+        while (True):
+            # Either of these calls could throw URLError which shouldn't stop the queue.
+            # We catch all exceptions just in case.
+            try:
+                bug_ids = tool.bugs.fetch_bug_ids_from_commit_queue()
+                if not len(bug_ids):
+                    self._sleep("Empty queue.")
+                    continue
+                log("%s in commit queue. [%s]" % (pluralize('bug', len(bug_ids)), ", ".join(bug_ids)))
+
+                if not tool.buildbot.core_builders_are_green():
+                    self._sleep("Builders are red.")
+                    continue
+            except Exception, e:
+                self._sleep("Exception while checking queue and bots: %s." % e)
+                continue
+
+            # Try to land patches on the first bug in the queue before looping
+            bug_id = bug_ids[0]
+            bug_log_path = os.path.join(self.bug_logs_directory, "%s.log" % bug_id)
+            bug_log = self._add_log_to_output_tee(bug_log_path)
+            bugzilla_tool_path = __file__ # re-execute this script
+            self._run_command([bugzilla_tool_path, 'land-patches', '--force-clean', '--commit-queue', '--quiet', bug_id])
+            self._remove_log_from_output_tee(bug_log)
+
+        log("Finished WebKit Commit Queue. %s" % datetime.now())
+        self._remove_log_from_output_tee(queue_log)
+
+
 class NonWrappingEpilogIndentedHelpFormatter(IndentedHelpFormatter):
     def __init__(self):
         IndentedHelpFormatter.__init__(self)
@@ -609,6 +707,7 @@ class BugzillaTool:
             { 'name' : 'post-diff', 'object' : PostDiffAsPatchToBug() },
             { 'name' : 'post-commits', 'object' : PostCommitsAsPatchesToBug() },
             { 'name' : 'tree-status', 'object' : CheckTreeStatus() },
+            { 'name' : 'commit-queue', 'object' : LandPatchesFromCommitQueue() },
         ]
 
         self.global_option_parser = HelpPrintingOptionParser(usage=self.usage_line(), formatter=NonWrappingEpilogIndentedHelpFormatter(), epilog=self.commands_usage())

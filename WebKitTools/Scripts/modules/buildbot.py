@@ -86,8 +86,6 @@ class BuildBot:
 
     def builder_statuses(self):
         build_status_url = self.buildbot_server_url + 'one_box_per_builder'
-        log("Fetching %s" % build_status_url)
-
         page = urllib2.urlopen(build_status_url)
         soup = BeautifulSoup(page)
 

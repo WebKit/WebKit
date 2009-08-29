@@ -1,3 +1,17 @@
+2009-08-28  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        commit-queue needs a master process
+        https://bugs.webkit.org/show_bug.cgi?id=28040
+
+        Add a bugzilla-tool commit-queue command
+        Keeps per-bug logs, but doesn't yet upload them anywhere.
+
+        * Scripts/bugzilla-tool: Add LandPatchesFromCommitQueue to handle 'commit-queue'
+        * Scripts/modules/buildbot.py: remove noisy log message
+        * Scripts/modules/logging.py: add a 'tee()' call for splitting outputs in python
+
 2009-08-28  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Gustavo Noronha.
