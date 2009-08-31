@@ -1,3 +1,8 @@
+2009-08-31  Dimitri Glazkov  <dglazkov@chromium.org>
+
+    Reverting http://trac.webkit.org/changeset/47904, because it caused
+    layout test failure.
+
 2009-08-31  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

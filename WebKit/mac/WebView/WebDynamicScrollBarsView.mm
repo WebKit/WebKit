@@ -89,26 +89,15 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
 
 - (void)updateScrollers
 {
-    NSView *documentView = [self documentView];
-
-    // If we came in here with the view already needing a layout, then go ahead and do that
-    // first.  (This will be the common case, e.g., when the page changes due to window resizing for example).
-    // This layout will not re-enter updateScrollers and does not count towards our max layout pass total.
-    if (!suppressLayout && !suppressScrollers && [documentView isKindOfClass:[WebHTMLView class]]) {
-        WebHTMLView* htmlView = (WebHTMLView*)documentView;
-        if ([htmlView _needsLayout]) {
-            inUpdateScrollers = YES;
-            [(id <WebDocumentView>)documentView layout];
-            inUpdateScrollers = NO;
-        }
-    }
-
-    BOOL hasHorizontalScroller = [self hasHorizontalScroller];
     BOOL hasVerticalScroller = [self hasVerticalScroller];
+    BOOL hasHorizontalScroller = [self hasHorizontalScroller];
     
     BOOL newHasHorizontalScroller = hasHorizontalScroller;
     BOOL newHasVerticalScroller = hasVerticalScroller;
     
+    BOOL needsLayout = NO;
+
+    NSView *documentView = [self documentView];
     if (!documentView) {
         newHasHorizontalScroller = NO;
         newHasVerticalScroller = NO;
@@ -133,7 +122,19 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
         return;
     }
 
-    BOOL needsLayout = NO;
+    needsLayout = NO;
+
+    // If we came in here with the view already needing a layout, then go ahead and do that
+    // first.  (This will be the common case, e.g., when the page changes due to window resizing for example).
+    // This layout will not re-enter updateScrollers and does not count towards our max layout pass total.
+    if ([documentView isKindOfClass:[WebHTMLView class]]) {
+        WebHTMLView* htmlView = (WebHTMLView*)documentView;
+        if ([htmlView _needsLayout]) {
+            inUpdateScrollers = YES;
+            [(id <WebDocumentView>)documentView layout];
+            inUpdateScrollers = NO;
+        }
+    }
 
     NSSize documentSize = [documentView frame].size;
     NSSize visibleSize = [self documentVisibleRect].size;

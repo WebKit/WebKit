@@ -329,15 +329,6 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
     if (m_inUpdateScrollbars || prohibitsScrolling() || platformWidget())
         return;
 
-    // If we came in here with the view already needing a layout, then go ahead and do that
-    // first.  (This will be the common case, e.g., when the page changes due to window resizing for example).
-    // This layout will not re-enter updateScrollbars and does not count towards our max layout pass total.
-    if (!m_scrollbarsSuppressed) {
-        m_inUpdateScrollbars = true;
-        visibleContentsResized();
-        m_inUpdateScrollbars = false;
-    }
-
     bool hasHorizontalScrollbar = m_horizontalScrollbar;
     bool hasVerticalScrollbar = m_verticalScrollbar;
     
@@ -358,6 +349,13 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
         if (hasVerticalScrollbar != newHasVerticalScrollbar)
             setHasVerticalScrollbar(newHasVerticalScrollbar);
     } else {
+        // If we came in here with the view already needing a layout, then go ahead and do that
+        // first.  (This will be the common case, e.g., when the page changes due to window resizing for example).
+        // This layout will not re-enter updateScrollers and does not count towards our max layout pass total.
+        m_inUpdateScrollbars = true;
+        visibleContentsResized();
+        m_inUpdateScrollbars = false;
+
         bool sendContentResizedNotification = false;
         
         IntSize docSize = contentsSize();
