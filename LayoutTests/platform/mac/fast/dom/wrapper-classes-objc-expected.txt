@@ -47,6 +47,8 @@ PASS objCWrapperClass(stylesheet.cssRules.item(0).style.getPropertyCSSValue('col
 PASS objCWrapperClass(stylesheet.cssRules.item(0).style.getPropertyCSSValue('clip').getRectValue()) is 'DOMRect'
 PASS objCWrapperClass(stylesheet.cssRules.item(0).style.getPropertyCSSValue('content')) is 'DOMCSSValueList'
 PASS objCWrapperClass(stylesheet.cssRules.item(0).style.getPropertyCSSValue('content').item(0).getCounterValue()) is 'DOMCounter'
+PASS objCWrapperClass(stylesheet.cssRules.item(0).style.getPropertyCSSValue('-webkit-transform')) is 'DOMCSSValueList'
+PASS objCWrapperClass(stylesheet.cssRules.item(0).style.getPropertyCSSValue('-webkit-transform').item(0)) is 'DOMWebKitCSSTransformValue'
 PASS objCWrapperClass(stylesheet.media) is 'DOMMediaList'
 
 XPath

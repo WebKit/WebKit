@@ -1,3 +1,11 @@
+2009-08-31  Simon Fraser  <simon.fraser@apple.com>
+
+        Followup from r47877; add test for the Obj-C wrapper class for WebkitCSSTransformValue
+        https://bugs.webkit.org/show_bug.cgi?id=27727
+
+        * platform/mac/fast/dom/wrapper-classes-objc-expected.txt:
+        * platform/mac/fast/dom/wrapper-classes-objc.html:
+
 2009-08-28  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
