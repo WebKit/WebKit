@@ -1,3 +1,15 @@
+2009-08-31  Adam Roben  <aroben@apple.com>
+
+        Make safariPath() work for Debug builds of Safari on Windows
+
+        <http://webkit.org/b/28849>
+
+        Reviewed by Sam Weinig.
+
+        * Scripts/webkitdirs.pm:
+        (safariPath): If the user is working with a Debug build, add the
+        _debug suffix to Safari.exe.
+
 2009-08-28  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

@@ -468,9 +468,14 @@ sub safariPath
         # Use Safari.app in product directory if present (good for Safari development team).
         if (isAppleMacWebKit() && -d "$configurationProductDir/Safari.app") {
             $safariBundle = "$configurationProductDir/Safari.app";
-        } elsif (isAppleWinWebKit() && -x "$configurationProductDir/bin/Safari.exe") {
-            $safariBundle = "$configurationProductDir/bin/Safari.exe";
-        } else {
+        } elsif (isAppleWinWebKit()) {
+            my $configurationSuffix = (configurationForVisualStudio() =~ /Debug/) ? "_debug" : "";
+            my $path = "$configurationProductDir/Safari$configurationSuffix.exe";
+            if (-x $path) {
+                $safariBundle = $path;
+            }
+        }
+        if (!$safariBundle) {
             return installedSafariPath();
         }
     }
