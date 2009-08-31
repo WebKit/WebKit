@@ -70,7 +70,7 @@ namespace JSC {
     PassRefPtr<ParsedNode> Parser::parse(JSGlobalData* globalData, Debugger* debugger, ExecState* debuggerExecState, const SourceCode& source, int* errLine, UString* errMsg)
     {
         m_source = &source;
-        if (FunctionBodyNode::scopeIsFunction)
+        if (ParsedNode::scopeIsFunction)
             globalData->lexer->setIsReparsing();
         parse(globalData, errLine, errMsg);
 
@@ -93,7 +93,7 @@ namespace JSC {
         m_varDeclarations = 0;
         m_funcDeclarations = 0;
 
-        if (debugger && !FunctionBodyNode::scopeIsFunction)
+        if (debugger && !ParsedNode::scopeIsFunction)
             debugger->sourceParsed(debuggerExecState, source, *errLine, *errMsg);
         return result.release();
     }
