@@ -1,3 +1,19 @@
+2009-08-31  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Beth Dakin.
+
+        Remove WebViewEditingContextMenu.nib and WebViewEditingContextMenuOld.nib.
+        We stopped using these back in r18592 when we switched over to context menus
+        driven by WebCore.
+
+        * English.lproj/WebViewEditingContextMenu.nib/classes.nib: Removed.
+        * English.lproj/WebViewEditingContextMenu.nib/info.nib: Removed.
+        * English.lproj/WebViewEditingContextMenu.nib/objects.nib: Removed.
+        * English.lproj/WebViewEditingContextMenuOld.nib/classes.nib: Removed.
+        * English.lproj/WebViewEditingContextMenuOld.nib/info.nib: Removed.
+        * English.lproj/WebViewEditingContextMenuOld.nib/objects.nib: Removed.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2009-08-28  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by John Sullivan.
