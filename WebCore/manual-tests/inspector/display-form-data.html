@@ -1,0 +1,183 @@
+<p>Tests for <a href="https://bugs.webkit.org/show_bug.cgi?id=22920">Bug 22920: Inspector Request Headers Should Show Data/Variables/Parameters Sent With Request</a>
+
+<p>To test, open the Inspector on this page, go to the Resources panel,
+and select the various resources created by this page in the left column of the
+Resources panel.  Note that for test-4 ...
+test-11, the -sync and -async versions should show the same Form Data,
+Request Payload and/or Query String Parameter values.
+
+<ul>
+
+<li><p><b>test-1</b>:
+<br>no Form Data, Request Payload or Query String Parameters
+
+<li><p><b>test-2</b>:
+<br>Query String Parameters (1): "parm1: abc"
+
+<li><p><b>test-3</b>:
+<br>Query String Parameters (2): "parm1: def" and "parm2: g h i";
+Hovering over either parm should yield a tooltip:
+<i>"Double-Click to toggle between URL encoded and decoded formats"</i>.
+Double-clicking on either parm should toggle between encoded and decoded
+versions of the string.  The decoded form is initially displayed.
+The encoded form of parm2 is "g%20h+i".
+
+<li><p><b>test-4</b>:
+<br>no Form Data, Request Payload or Query String Parameters
+
+<li><p><b>test-5</b>:
+<br>Query String Parameters (1): "parm1: abc"
+
+<li><p><b>test-6</b>:
+<br>Query String Parameters (3): "parm1: def" and "parm2: g h i" and "parm3: jj kk ll"
+
+<li><p><b>test-7</b>:
+<br>Request Payload: 3 lines of text data with a very long 2nd line which should wrap
+
+<li><p><b>test-8</b>:
+<br>Request Payload: 3 lines of text data with a very long 2nd line which should wrap
+
+<li><p><b>test-9</b>:
+<br>Request Payload: 3 lines of text data with a very long 2nd line of binary data which should wrap
+
+<li><p><b>test-10</b>:
+<br>Form Data (1): "parm1: abc"
+
+<li><p><b>test-11</b>:
+<br>Form Data (2): "parm1: def" and "parm2: g h i"
+
+<li><p><b>test-12</b>:
+<br>Query String Parameters (2): "parm1: abc" and "parm2: d e f"
+<br>Form Data (2): "parm1: ghi" and "parm2: j k l"
+
+<li><p><b>test-form</b>:
+<br>For this test, invoke the form at the bottom of the page
+by pressing the submit button.  The Resources panel should have a "test-form"
+resource, with the following data:
+<p>Form Data (2): "field1: value+a;b;c" and "field2:value+d;e;f"
+
+</ul>
+
+<hr>
+<p><b>test-form</b>
+<form id="form" action="http://example.org/test-form" method="post" enctype="application/x-www-form-urlencoded">
+<input type="text" name="field1" value="value a;b;c">
+<input type="text" name="field2" value="value d;e;f">
+<input type="submit">
+</form>
+
+<div style="display:none">
+
+<img src="http://example.org/test-1">
+<img src="http://example.org/test-2?parm1=abc">
+<img src="http://example.org/test-3?parm1=def&amp;parm2=g%20h+i">
+
+</div>
+
+<script>
+
+function getReadyState(num) {
+    switch(num) {
+        case 0: return "uninitialized";
+        case 1: return "loading";
+        case 2: return "loaded";
+        case 3: return "interactive";
+        case 4: return "complete";
+        default: return "unknown: " + num;
+    }
+}
+
+function getProcessXHR(request) {
+    return function() {
+        if (true) return;
+        var rs = getReadyState(request.readyState);
+        console.log("ready state change for " + request.url);
+        console.log("   ready state:   " + rs);
+        console.log("   response text: " + request.responseText);
+        if (request.readyState == 4) {
+            console.log("   status:        " + request.status);
+            console.log("   status text:   " + request.statusText);
+        }
+    }
+}
+
+function sendXHR(url, method, headers, body) {
+    if (!method) method = "GET";
+    if (!headers) headers = [];
+    if (!body) body="";
+
+    // copy headers
+    var headersNew = [];
+    for (var i=0; i<headers.length; i++) {
+        headersNew.push(headers[i]);
+    }
+    headers = headersNew;
+
+    if (body != "") {
+        headers.push(["Content-Length", body.length.toString()]);
+    }
+
+    // sync
+    var req = new XMLHttpRequest();
+
+    req.url = url.replace("^","-sync");
+    req.onreadystatechange = getProcessXHR(req);
+    req.open(method, req.url, false);
+
+    for (var i=0; i<headers.length; i++) {
+        req.setRequestHeader(headers[i][0], headers[i][1]);
+    }
+
+    req.send(body);
+
+    // async
+    var req = new XMLHttpRequest();
+
+    req.url = url.replace("^","-async");
+    req.onreadystatechange = getProcessXHR(req);
+    req.open(method, req.url, true);
+
+    for (var i=0; i<headers.length; i++) {
+        req.setRequestHeader(headers[i][0], headers[i][1]);
+    }
+
+    req.send(body);
+}
+
+var headersPlain = [
+    ["Content-Type", "text/plain"]
+];
+
+var headersForm = [
+    ["Content-Type", "application/x-www-form-urlencoded"]
+];
+
+var headersBinary = [
+    ["Content-Type", "application/octet-stream"]
+];
+
+var longText = "some text with a \n";
+for (var i=0; i<40; i++) {
+    longText += "very-";
+}
+longText += "long\nline in it";
+
+var binaryData = "some text with binary data\n";
+for (var i=0; i<256; i++) {
+    binaryData += String.fromCharCode(i);
+}
+binaryData += "\nin the middle of it";
+
+
+sendXHR("http://example.org/test-4^");
+sendXHR("http://example.org/test-5^?parm1=abc");
+sendXHR("http://example.org/test-6^?parm1=def&parm2=g%20h+i&parm3=jj++kk%20%20ll");
+
+sendXHR("http://example.org/test-7^", "POST", null, longText);
+sendXHR("http://example.org/test-8^", "POST", headersPlain, longText);
+sendXHR("http://example.org/test-9^", "POST", headersBinary, binaryData);
+sendXHR("http://example.org/test-10^", "POST", headersForm, "parm1=abc");
+sendXHR("http://example.org/test-11^", "POST", headersForm, "parm1=def&parm2=g%20h+i");
+sendXHR("http://example.org/test-12^?parm1=abc&parm2=d%20e+f", "POST", headersForm, "parm1=ghi&parm2=j%20k+l");
+
+</script>

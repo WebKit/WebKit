@@ -773,6 +773,10 @@ body.drawer-visible #drawer {
     margin-right: 100px;
 }
 
+.resource-view-headers .outline-disclosure .raw-form-data {
+    white-space:pre-wrap;
+}
+
 .resource-view .resource-view-content {
     position: absolute;
     top: 0;

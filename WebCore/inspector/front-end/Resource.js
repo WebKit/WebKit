@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.Resource = function(requestHeaders, url, domain, path, lastPathComponent, identifier, mainResource, cached)
+WebInspector.Resource = function(requestHeaders, url, domain, path, lastPathComponent, identifier, mainResource, cached, requestMethod, requestFormData)
 {
     this.identifier = identifier;
 
@@ -39,6 +39,8 @@ WebInspector.Resource = function(requestHeaders, url, domain, path, lastPathComp
     this.path = path;
     this.lastPathComponent = lastPathComponent;
     this.cached = cached;
+    this.requestMethod = requestMethod || "";
+    this.requestFormData = requestFormData || "";
 
     this.category = WebInspector.resourceCategories.other;
 }

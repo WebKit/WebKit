@@ -89,6 +89,9 @@ void InspectorResource::updateRequest(const ResourceRequest& request)
 {
     m_requestHeaderFields = request.httpHeaderFields();
     m_requestURL = request.url();
+    m_requestMethod = request.httpMethod();
+    if (request.httpBody() && !request.httpBody()->isEmpty())
+        m_requestFormData = request.httpBody()->flattenToString();
 
     m_changes.set(RequestChange);
 }
@@ -126,6 +129,8 @@ void InspectorResource::createScriptObject(InspectorFrontend* frontend)
         jsonObject.set("lastPathComponent", m_requestURL.lastPathComponent());
         jsonObject.set("isMainResource", m_isMainResource);
         jsonObject.set("cached", m_cached);
+        jsonObject.set("requestMethod", m_requestMethod);
+        jsonObject.set("requestFormData", m_requestFormData);
         if (!frontend->addResource(m_identifier, jsonObject))
             return;
 
@@ -153,6 +158,8 @@ void InspectorResource::updateScriptObject(InspectorFrontend* frontend)
         populateHeadersObject(&requestHeaders, m_requestHeaderFields);
         jsonObject.set("requestHeaders", requestHeaders);
         jsonObject.set("mainResource", m_isMainResource);
+        jsonObject.set("requestMethod", m_requestMethod);
+        jsonObject.set("requestFormData", m_requestFormData);
         jsonObject.set("didRequestChange", true);
     }
 

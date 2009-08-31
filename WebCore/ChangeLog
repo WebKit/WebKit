@@ -1,3 +1,36 @@
+2009-08-31  Patrick Mueller  <Patrick_Mueller@us.ibm.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Inspector Request Headers Should Show Data Sent With Request
+        https://bugs.webkit.org/show_bug.cgi?id=22920
+
+        Manual test added - see below.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/InspectorResource.cpp:
+        (WebCore::InspectorResource::updateRequest):
+        (WebCore::InspectorResource::createScriptObject):
+        (WebCore::InspectorResource::updateScriptObject):
+        * inspector/InspectorResource.h:
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource):
+        * inspector/front-end/ResourceView.js:
+        (WebInspector.ResourceView):
+        (WebInspector.ResourceView.prototype._refreshURL):
+        (WebInspector.ResourceView.prototype._refreshQueryString):
+        (WebInspector.ResourceView.prototype._refreshFormData):
+        (WebInspector.ResourceView.prototype._refreshRequestPayload):
+        (WebInspector.ResourceView.prototype._refreshParms):
+        (WebInspector.ResourceView.prototype._toggleURLdecoding):
+        (WebInspector.ResourceView.prototype._getHeaderValue):
+        (WebInspector.ResourceView.prototype._refreshRequestHeaders):
+        * inspector/front-end/inspector.css:
+        * inspector/front-end/inspector.js:
+        (WebInspector.addResource):
+        (WebInspector.updateResource):
+        * manual-tests/inspector/display-form-data.html: Added.
+
 2009-08-31  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

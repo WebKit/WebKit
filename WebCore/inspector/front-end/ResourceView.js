@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007, 2008 Apple Inc.  All rights reserved.
+ * Copyright (C) IBM Corp. 2009  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -58,6 +59,27 @@ WebInspector.ResourceView = function(resource)
     this.requestHeadersTreeElement.selectable = false;
     this.headersTreeOutline.appendChild(this.requestHeadersTreeElement);
 
+    this._decodeHover = WebInspector.UIString("Double-Click to toggle between URL encoded and decoded formats");
+    this._decodeRequestParameters = true;
+
+    this.queryStringTreeElement = new TreeElement("", null, true);
+    this.queryStringTreeElement.expanded = false;
+    this.queryStringTreeElement.selectable = false;
+    this.queryStringTreeElement.hidden = true;
+    this.headersTreeOutline.appendChild(this.queryStringTreeElement);
+
+    this.formDataTreeElement = new TreeElement("", null, true);
+    this.formDataTreeElement.expanded = false;
+    this.formDataTreeElement.selectable = false;
+    this.formDataTreeElement.hidden = true;
+    this.headersTreeOutline.appendChild(this.formDataTreeElement);
+
+    this.requestPayloadTreeElement = new TreeElement(WebInspector.UIString("Request Payload"), null, true);
+    this.requestPayloadTreeElement.expanded = false;
+    this.requestPayloadTreeElement.selectable = false;
+    this.requestPayloadTreeElement.hidden = true;
+    this.headersTreeOutline.appendChild(this.requestPayloadTreeElement);
+
     this.responseHeadersTreeElement = new TreeElement("", null, true);
     this.responseHeadersTreeElement.expanded = false;
     this.responseHeadersTreeElement.selectable = false;
@@ -104,12 +126,113 @@ WebInspector.ResourceView.prototype = {
 
     _refreshURL: function()
     {
-        this.urlTreeElement.title = this.resource.url.escapeHTML();
+        var url = this.resource.url;
+        this.urlTreeElement.title = this.resource.requestMethod + " " + url.escapeHTML();
+        this._refreshQueryString();
+    },
+
+    _refreshQueryString: function()
+    {
+        var url = this.resource.url;
+        var hasQueryString = url.indexOf("?") >= 0;
+
+        if (!hasQueryString) {
+            this.queryStringTreeElement.hidden = true;
+            return;
+        }
+
+        this.queryStringTreeElement.hidden = false;
+        var parmString = url.split("?", 2)[1];
+        this._refreshParms(WebInspector.UIString("Query String Parameters"), parmString, this.queryStringTreeElement);
+    },
+
+    _refreshFormData: function()
+    {
+        this.formDataTreeElement.hidden = true;
+        this.requestPayloadTreeElement.hidden = true;
+
+        var isFormData = this.resource.requestFormData;
+        if (!isFormData)
+            return;
+
+        var isFormEncoded = false;
+        var requestContentType = this._getHeaderValue(this.resource.requestHeaders, "Content-Type");
+        if (requestContentType == "application/x-www-form-urlencoded")
+            isFormEncoded = true;
+
+        if (isFormEncoded) {
+            this.formDataTreeElement.hidden = false;
+            this._refreshParms(WebInspector.UIString("Form Data"), this.resource.requestFormData, this.formDataTreeElement);
+        } else {
+            this.requestPayloadTreeElement.hidden = false;
+            this._refreshRequestPayload(this.resource.requestFormData);
+        }
+    },
+
+    _refreshRequestPayload: function(formData)
+    {
+        this.requestPayloadTreeElement.removeChildren();
+
+        var title = "<div class=\"header-name\">&nbsp;</div>";
+        title += "<div class=\"raw-form-data header-value\">" + formData.escapeHTML() + "</div>";
+        var parmTreeElement = new TreeElement(title, null, false);
+        this.requestPayloadTreeElement.appendChild(parmTreeElement);
+    },
+
+    _refreshParms: function(title, parmString, parmsTreeElement)
+    {
+        var parms = parmString.split("&");
+        for (var i = 0; i < parms.length; ++i) {
+            var parm = parms[i];
+            parm = parm.split("=", 2);
+            if (parm.length == 1)
+                parm.push("");
+            parms[i] = parm;
+        }
+
+        parmsTreeElement.removeChildren();
+
+        parmsTreeElement.title = title + "<span class=\"header-count\">" + WebInspector.UIString(" (%d)", parms.length) + "</span>";
+
+        for (var i = 0; i < parms.length; ++i) {
+            var key = parms[i][0];
+            var val = parms[i][1];
+
+            if (val.indexOf("%") >= 0)
+                if (this._decodeRequestParameters)
+                    val = decodeURIComponent(val).replace(/\+/g, " ");
+
+            var title = "<div class=\"header-name\">" + key.escapeHTML() + ":</div>";
+            title += "<div class=\"header-value\">" + val.escapeHTML() + "</div>";
+
+            var parmTreeElement = new TreeElement(title, null, false);
+            parmTreeElement.selectable = false;
+            parmTreeElement.tooltip = this._decodeHover;
+            parmTreeElement.ondblclick = this._toggleURLdecoding.bind(this);
+            parmsTreeElement.appendChild(parmTreeElement);
+        }
+    },
+
+    _toggleURLdecoding: function(treeElement, event)
+    {
+        this._decodeRequestParameters = !this._decodeRequestParameters;
+        this._refreshQueryString();
+        this._refreshFormData();
+    },
+
+    _getHeaderValue: function(headers, key)
+    {
+        var lowerKey = key.toLowerCase();
+        for (var testKey in headers) {
+            if (testKey.toLowerCase() === lowerKey)
+                return headers[testKey];
+        }
     },
 
     _refreshRequestHeaders: function()
     {
         this._refreshHeaders(WebInspector.UIString("Request Headers"), this.resource.sortedRequestHeaders, this.requestHeadersTreeElement);
+        this._refreshFormData();
     },
 
     _refreshResponseHeaders: function()

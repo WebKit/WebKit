@@ -894,7 +894,9 @@ WebInspector.addResource = function(identifier, payload)
         payload.lastPathComponent,
         identifier,
         payload.isMainResource,
-        payload.cached);
+        payload.cached,
+        payload.requestMethod,
+        payload.requestFormData);
     this.resources[identifier] = resource;
     this.resourceURLMap[resource.url] = resource;
 
@@ -937,6 +939,8 @@ WebInspector.updateResource = function(identifier, payload)
         resource.lastPathComponent = payload.lastPathComponent;
         resource.requestHeaders = payload.requestHeaders;
         resource.mainResource = payload.mainResource;
+        resource.requestMethod = payload.requestMethod;
+        resource.requestFormData = payload.requestFormData;
     }
 
     if (payload.didResponseChange) {

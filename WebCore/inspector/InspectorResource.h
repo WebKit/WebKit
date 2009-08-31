@@ -156,6 +156,8 @@ namespace WebCore {
         ScriptString m_xmlHttpResponseText;
         Changes m_changes;
         bool m_isMainResource;
+        String m_requestMethod;
+        String m_requestFormData;
     };
 
 } // namespace WebCore
