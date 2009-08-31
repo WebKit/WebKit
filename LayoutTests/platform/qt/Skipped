@@ -889,7 +889,6 @@ fast/forms/menulist-width-change.html
 # Tests that fail and probably are real bugs, but that were
 # put into the skipped list for now to have some kind of
 # reference, so we don't introduce regressions.
-css2.1/t040306-syntax-01-f.html
 editing/deleting/5144139-2.html
 editing/deleting/5300379.html
 editing/deleting/5408255.html
@@ -1134,24 +1133,6 @@ css2.1/t010403-shand-font-00-b.html
 css2.1/t010403-shand-font-01-b.html
 css2.1/t010403-shand-font-02-b.html
 css2.1/t010403-shand-font-03-b.html
-css2.1/t0402-c71-fwd-parsing-00-f.html
-css2.1/t0402-c71-fwd-parsing-01-f.html
-css2.1/t0402-c71-fwd-parsing-02-f.html
-css2.1/t0402-c71-fwd-parsing-03-f.html
-css2.1/t0402-c71-fwd-parsing-04-f.html
-css2.1/t0402-syntax-01-f.html
-css2.1/t0402-syntax-02-f.html
-css2.1/t0402-syntax-03-f.html
-css2.1/t0402-syntax-04-f.html
-css2.1/t0402-syntax-05-f.html
-css2.1/t0402-syntax-06-f.html
-css2.1/t040302-c61-ex-len-00-b-a.html
-css2.1/t040302-c61-phys-len-00-b.html
-css2.1/t040302-c61-rel-len-00-b-ag.html
-css2.1/t040303-c62-percent-00-b-ag.html
-css2.1/t040304-c64-uri-00-a-g.html
-css2.1/t040306-c63-color-00-b-ag.html
-css2.1/t040307-syntax-01-b.html
 css2.1/t050201-c12-grouping-00-b.html
 css2.1/t0505-c16-descendant-00-e.html
 css2.1/t0505-c16-descendant-01-e.html

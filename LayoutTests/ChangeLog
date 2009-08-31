@@ -1,3 +1,33 @@
+2009-08-31  Renata Hodovan  <hodovan.renata@stud.u-szeged.hu>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Update outdated metrics in css2.1/t040*. (19 files)
+        Fix relative path in .css files.
+
+        * css2.1/support/css1test64a.css:
+        * css2.1/support/css1test64b.css:
+        * platform/qt/Skipped:
+        * platform/qt/css2.1/t0402-c71-fwd-parsing-00-f-expected.txt:
+        * platform/qt/css2.1/t0402-c71-fwd-parsing-01-f-expected.txt:
+        * platform/qt/css2.1/t0402-c71-fwd-parsing-02-f-expected.txt:
+        * platform/qt/css2.1/t0402-c71-fwd-parsing-03-f-expected.txt:
+        * platform/qt/css2.1/t0402-c71-fwd-parsing-04-f-expected.txt:
+        * platform/qt/css2.1/t0402-syntax-01-f-expected.txt:
+        * platform/qt/css2.1/t0402-syntax-02-f-expected.txt:
+        * platform/qt/css2.1/t0402-syntax-03-f-expected.txt:
+        * platform/qt/css2.1/t0402-syntax-04-f-expected.txt:
+        * platform/qt/css2.1/t0402-syntax-05-f-expected.txt:
+        * platform/qt/css2.1/t0402-syntax-06-f-expected.txt:
+        * platform/qt/css2.1/t040302-c61-ex-len-00-b-a-expected.txt:
+        * platform/qt/css2.1/t040302-c61-phys-len-00-b-expected.txt:
+        * platform/qt/css2.1/t040302-c61-rel-len-00-b-ag-expected.txt:
+        * platform/qt/css2.1/t040303-c62-percent-00-b-ag-expected.txt:
+        * platform/qt/css2.1/t040304-c64-uri-00-a-g-expected.txt:
+        * platform/qt/css2.1/t040306-c63-color-00-b-ag-expected.txt:
+        * platform/qt/css2.1/t040306-syntax-01-f-expected.txt:
+        * platform/qt/css2.1/t040307-syntax-01-b-expected.txt:
+
 2009-08-29  Adele Peterson  <adele@apple.com>
 
         Reviewed by Dan Bernstein.

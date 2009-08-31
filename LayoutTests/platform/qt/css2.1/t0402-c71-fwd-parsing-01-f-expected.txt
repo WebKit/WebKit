@@ -1,20 +1,20 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x203
-  RenderBlock {HTML} at (0,0) size 800x203
-    RenderBody {BODY} at (8,14) size 784x175 [color=#000080]
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 342x19
-          text run at (0,0) width 342: "The next four blocks should look identical, to the pixel."
-      RenderBlock {P} at (0,33) size 784x25 [border: (3px solid #000080)]
-        RenderText {#text} at (3,3) size 28x19
-          text run at (3,3) width 28: "Test"
-      RenderBlock {P} at (0,72) size 784x25 [border: (3px solid #000080)]
-        RenderText {#text} at (3,3) size 28x19
-          text run at (3,3) width 28: "Test"
-      RenderBlock {P} at (0,111) size 784x25 [border: (3px solid #000080)]
-        RenderText {#text} at (3,3) size 28x19
-          text run at (3,3) width 28: "Test"
-      RenderBlock {P} at (0,150) size 784x25 [border: (3px solid #000080)]
-        RenderText {#text} at (3,3) size 28x19
-          text run at (3,3) width 28: "Test"
+layer at (0,0) size 800x187
+  RenderBlock {HTML} at (0,0) size 800x187
+    RenderBody {BODY} at (8,13) size 784x161 [color=#000080]
+      RenderBlock {P} at (0,0) size 784x17
+        RenderText {#text} at (0,0) size 317x17
+          text run at (0,0) width 317: "The next four blocks should look identical, to the pixel."
+      RenderBlock {P} at (0,30) size 784x23 [border: (3px solid #000080)]
+        RenderText {#text} at (3,3) size 26x17
+          text run at (3,3) width 26: "Test"
+      RenderBlock {P} at (0,66) size 784x23 [border: (3px solid #000080)]
+        RenderText {#text} at (3,3) size 26x17
+          text run at (3,3) width 26: "Test"
+      RenderBlock {P} at (0,102) size 784x23 [border: (3px solid #000080)]
+        RenderText {#text} at (3,3) size 26x17
+          text run at (3,3) width 26: "Test"
+      RenderBlock {P} at (0,138) size 784x23 [border: (3px solid #000080)]
+        RenderText {#text} at (3,3) size 26x17
+          text run at (3,3) width 26: "Test"
