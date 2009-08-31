@@ -1095,14 +1095,6 @@ fast/loader/stop-provisional-loads.html
 # Skip tests with metrics for now
 animations/animation-drt-api.html
 animations/animation-drt-api-multiple-keyframes.html
-css1/color_and_background/background_attachment.html
-css1/color_and_background/background_color.html
-css1/color_and_background/background.html
-css1/color_and_background/background_image.html
-css1/color_and_background/background_position.html
-css1/color_and_background/background_repeat.html
-css1/color_and_background/color.html
-css1/conformance/forward_compatible_parsing.html
 css1/formatting_model/canvas.html
 css1/formatting_model/floating_elements.html
 css1/formatting_model/height_of_lines.html

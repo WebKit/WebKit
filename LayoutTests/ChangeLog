@@ -1,3 +1,19 @@
+2009-08-31  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Update outdated font metrics for these css1 tests.
+
+        * platform/qt/Skipped:
+        * platform/qt/css1/color_and_background/background-expected.txt:
+        * platform/qt/css1/color_and_background/background_attachment-expected.txt:
+        * platform/qt/css1/color_and_background/background_color-expected.txt:
+        * platform/qt/css1/color_and_background/background_image-expected.txt:
+        * platform/qt/css1/color_and_background/background_position-expected.txt:
+        * platform/qt/css1/color_and_background/background_repeat-expected.txt:
+        * platform/qt/css1/color_and_background/color-expected.txt:
+        * platform/qt/css1/conformance/forward_compatible_parsing-expected.txt:
+
 2009-08-31  Renata Hodovan  <hodovan.renata@stud.u-szeged.hu>
 
         Reviewed by Ariya Hidayat.
