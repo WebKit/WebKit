@@ -3271,6 +3271,7 @@ HEADERS += $$WEBKIT_API_HEADERS
         }
 
         QMAKE_LFLAGS_SONAME = "$${QMAKE_LFLAGS_SONAME}$${DESTDIR}$${QMAKE_DIR_SEP}"
+        LIBS += -framework Carbon -framework AppKit
     }
 }
 
