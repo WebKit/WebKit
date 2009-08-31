@@ -1,3 +1,15 @@
+2009-08-31  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Un-blacklist Silverlight on Mac
+
+        Does not seem to crash anymore, probably due to how we now handle
+        drawing and event model handshake better.
+
+        * plugins/mac/PluginPackageMac.cpp:
+        (WebCore::PluginPackage::isPluginBlacklisted):
+
 2009-08-31  Cameron McCormack  <cam@mcc.id.au>
 
         Reviewed by Eric Seidel.
