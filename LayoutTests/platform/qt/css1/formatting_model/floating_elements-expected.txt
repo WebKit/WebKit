@@ -1,722 +1,718 @@
-layer at (0,0) size 800x6417
+layer at (0,0) size 800x5680
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x6417
-  RenderBlock {HTML} at (0,0) size 800x6417
-    RenderBody {BODY} at (8,8) size 784x6401 [bgcolor=#CCCCCC]
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 354x19
-          text run at (0,0) width 354: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,33) size 784x171
-        RenderText {#text} at (0,0) size 382x171
-          text run at (0,0) width 214: "HR.minor {clear: both; width: 5%;}"
-          text run at (214,0) width 0: " "
-          text run at (0,19) width 322: "HR.major {clear: both; width: 75%; margin: 1.5em;}"
-          text run at (322,19) width 0: " "
-          text run at (0,38) width 382: "DIV {border: 5px solid purple; padding: 0; margin: 0.125em;}"
-          text run at (382,38) width 0: " "
-          text run at (0,57) width 334: "P.left, P.right {width: 10em; padding: 1em; margin: 0;"
-          text run at (334,57) width 0: " "
-          text run at (0,76) width 317: "   border: 1px solid lime; background-color: silver;}"
-          text run at (317,76) width 0: " "
-          text run at (0,95) width 346: "IMG.left, IMG.right {margin: 0; border: 3px solid black;}"
-          text run at (346,95) width 0: " "
-          text run at (0,114) width 95: ".left {float: left;}"
-          text run at (95,114) width 0: " "
-          text run at (0,133) width 113: ".right {float: right;}"
-          text run at (113,133) width 0: " "
-          text run at (0,152) width 0: " "
-      RenderBlock {HR} at (0,218) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,234) size 784x38
-        RenderText {#text} at (0,0) size 781x38
-          text run at (0,0) width 689: "On this test page, each test is performed once with floating paragraphs, and then again with floating images. "
-          text run at (689,0) width 92: "Other than the"
-          text run at (0,19) width 736: "substitution of images for pargraphs, the structure of the test is exactly the same, including the direction of the floats."
-      RenderBlock {HR} at (21,293) size 590x2 [border: (1px inset #000000)]
-      RenderBlock {DIV} at (1,316) size 782x86 [border: (5px solid #800080)]
-        RenderBlock (floating) {P} at (5,5) size 170x87 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
-          RenderText {#text} at (15,15) size 127x57
-            text run at (15,15) width 127: "This is a left-floating"
-            text run at (15,34) width 113: "paragraph (first in"
-            text run at (15,53) width 52: "source)."
-        RenderBlock (floating) {P} at (607,5) size 170x87 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
-          RenderText {#text} at (15,15) size 136x57
-            text run at (15,15) width 136: "This is a right-floating"
-            text run at (15,34) width 136: "paragraph (second in"
-            text run at (15,53) width 52: "source)."
-        RenderText {#text} at (175,5) size 421x76
-          text run at (175,5) width 167: "This is text within the DIV. "
-          text run at (342,5) width 230: "The floating elements within this DIV"
-          text run at (175,24) width 418: "should not go beyond the left or right inner edge of this DIV, which"
-          text run at (175,43) width 421: "means that the borders of the floating elements should not overlap"
-          text run at (175,62) width 215: "the top or side borders of the DIV."
-      RenderBlock {HR} at (371,409) size 41x2 [border: (1px inset #000000)]
-      RenderBlock {DIV} at (1,418) size 782x48 [border: (5px solid #800080)]
+layer at (0,0) size 800x5680
+  RenderBlock {HTML} at (0,0) size 800x5680
+    RenderBody {BODY} at (8,8) size 784x5664 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 784x17
+        RenderText {#text} at (0,0) size 326x17
+          text run at (0,0) width 326: "The style declarations which apply to the text below are:"
+      RenderBlock {PRE} at (0,30) size 784x153
+        RenderText {#text} at (0,0) size 346x153
+          text run at (0,0) width 196: "HR.minor {clear: both; width: 5%;}"
+          text run at (196,0) width 0: " "
+          text run at (0,17) width 294: "HR.major {clear: both; width: 75%; margin: 1.5em;}"
+          text run at (294,17) width 0: " "
+          text run at (0,34) width 346: "DIV {border: 5px solid purple; padding: 0; margin: 0.125em;}"
+          text run at (346,34) width 0: " "
+          text run at (0,51) width 307: "P.left, P.right {width: 10em; padding: 1em; margin: 0;"
+          text run at (307,51) width 0: " "
+          text run at (0,68) width 290: "   border: 1px solid lime; background-color: silver;}"
+          text run at (290,68) width 0: " "
+          text run at (0,85) width 318: "IMG.left, IMG.right {margin: 0; border: 3px solid black;}"
+          text run at (318,85) width 0: " "
+          text run at (0,102) width 89: ".left {float: left;}"
+          text run at (89,102) width 0: " "
+          text run at (0,119) width 103: ".right {float: right;}"
+          text run at (103,119) width 0: " "
+          text run at (0,136) width 0: " "
+      RenderBlock {HR} at (0,196) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,211) size 784x34
+        RenderText {#text} at (0,0) size 714x34
+          text run at (0,0) width 631: "On this test page, each test is performed once with floating paragraphs, and then again with floating images. "
+          text run at (631,0) width 83: "Other than the"
+          text run at (0,17) width 681: "substitution of images for pargraphs, the structure of the test is exactly the same, including the direction of the floats."
+      RenderBlock {HR} at (19,264) size 590x2 [border: (1px inset #000000)]
+      RenderBlock {DIV} at (1,285) size 782x61 [border: (5px solid #800080)]
+        RenderBlock (floating) {P} at (5,5) size 158x79 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
+          RenderText {#text} at (14,14) size 118x51
+            text run at (14,14) width 118: "This is a left-floating"
+            text run at (14,31) width 101: "paragraph (first in"
+            text run at (14,48) width 47: "source)."
+        RenderBlock (floating) {P} at (619,5) size 158x79 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
+          RenderText {#text} at (14,14) size 125x51
+            text run at (14,14) width 125: "This is a right-floating"
+            text run at (14,31) width 121: "paragraph (second in"
+            text run at (14,48) width 47: "source)."
+        RenderText {#text} at (163,5) size 454x51
+          text run at (163,5) width 158: "This is text within the DIV. "
+          text run at (321,5) width 295: "The floating elements within this DIV should not go"
+          text run at (163,22) width 454: "beyond the left or right inner edge of this DIV, which means that the borders of"
+          text run at (163,39) width 432: "the floating elements should not overlap the top or side borders of the DIV."
+      RenderBlock {HR} at (371,369) size 41x2 [border: (1px inset #000000)]
+      RenderBlock {DIV} at (1,377) size 782x44 [border: (5px solid #800080)]
         RenderImage {IMG} at (5,5) size 15x36 [border: (3px solid #000000)]
         RenderImage {IMG} at (762,5) size 15x36 [border: (3px solid #000000)]
-        RenderText {#text} at (20,5) size 736x38
-          text run at (20,5) width 167: "This is text within the DIV. "
-          text run at (187,5) width 569: "The floating images within this DIV should not go beyond the left or right inner edge of this"
-          text run at (20,24) width 699: "DIV, which means that the borders of the floating images should not overlap the top or side borders of the DIV."
-      RenderBlock {HR} at (21,487) size 590x2 [border: (1px inset #000000)]
-      RenderBlock {DIV} at (1,510) size 388x257 [border: (5px solid #800080)]
-        RenderBlock (floating) {P} at (5,5) size 170x68 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
-          RenderText {#text} at (15,15) size 120x38
-            text run at (15,15) width 120: "This is the first left-"
-            text run at (15,34) width 120: "floating paragraph."
-        RenderBlock (floating) {P} at (175,5) size 170x87 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
-          RenderText {#text} at (15,15) size 115x57
-            text run at (15,15) width 115: "This is the second"
-            text run at (15,34) width 70: "left-floating"
-            text run at (15,53) width 70: "paragraph."
-        RenderBlock (floating) {P} at (5,92) size 170x68 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
-          RenderText {#text} at (15,15) size 125x38
-            text run at (15,15) width 125: "This is the third left-"
-            text run at (15,34) width 120: "floating paragraph."
-        RenderText {#text} at (345,5) size 377x247
-          text run at (345,5) width 27: "This"
-          text run at (345,24) width 37: "is text"
-          text run at (345,43) width 36: "within"
-          text run at (345,62) width 20: "the"
-          text run at (345,81) width 27: "DIV."
-          text run at (175,100) width 203: "The floating elements within this"
-          text run at (175,119) width 188: "DIV should not go beyond the"
-          text run at (175,138) width 182: "left or right inner edge of this"
-          text run at (175,157) width 166: "DIV, which means that the"
-          text run at (5,176) width 370: "borders of the floating elements should not overlap the top"
-          text run at (5,195) width 242: "or side borders of the DIV in any way. "
-          text run at (247,195) width 101: "In addition, they"
-          text run at (5,214) width 197: "should not overlap each other. "
-          text run at (202,214) width 174: "The first two should be side"
-          text run at (5,233) width 344: "by side, whereas the third should be on the next \"line.\""
-      RenderBlock {HR} at (371,774) size 41x2 [border: (1px inset #000000)]
-      RenderBlock {DIV} at (1,783) size 360x200 [border: (5px solid #800080)]
+        RenderText {#text} at (20,5) size 710x34
+          text run at (20,5) width 158: "This is text within the DIV. "
+          text run at (178,5) width 552: "The floating images within this DIV should not go beyond the left or right inner edge of this DIV,"
+          text run at (20,22) width 611: "which means that the borders of the floating images should not overlap the top or side borders of the DIV."
+      RenderBlock {HR} at (19,440) size 590x2 [border: (1px inset #000000)]
+      RenderBlock {DIV} at (1,461) size 361x214 [border: (5px solid #800080)]
+        RenderBlock (floating) {P} at (5,5) size 158x62 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
+          RenderText {#text} at (14,14) size 113x34
+            text run at (14,14) width 113: "This is the first left-"
+            text run at (14,31) width 107: "floating paragraph."
+        RenderBlock (floating) {P} at (163,5) size 158x62 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
+          RenderText {#text} at (14,14) size 129x34
+            text run at (14,14) width 107: "This is the second"
+            text run at (14,31) width 129: "left-floating paragraph."
+        RenderBlock (floating) {P} at (5,67) size 158x62 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
+          RenderText {#text} at (14,14) size 116x34
+            text run at (14,14) width 116: "This is the third left-"
+            text run at (14,31) width 107: "floating paragraph."
+        RenderText {#text} at (321,5) size 349x204
+          text run at (321,5) width 25: "This"
+          text run at (321,22) width 10: "is"
+          text run at (321,39) width 22: "text"
+          text run at (321,56) width 33: "within"
+          text run at (163,73) width 52: "the DIV. "
+          text run at (215,73) width 125: "The floating elements"
+          text run at (163,90) width 166: "within this DIV should not go"
+          text run at (163,107) width 162: "beyond the left or right inner"
+          text run at (163,124) width 178: "edge of this DIV, which means"
+          text run at (5,141) width 341: "that the borders of the floating elements should not overlap"
+          text run at (5,158) width 267: "the top or side borders of the DIV in any way. "
+          text run at (272,158) width 64: "In addition,"
+          text run at (5,175) width 208: "they should not overlap each other. "
+          text run at (213,175) width 132: "The first two should be"
+          text run at (5,192) width 344: "side by side, whereas the third should be on the next \"line.\""
+      RenderBlock {HR} at (371,681) size 41x2 [border: (1px inset #000000)]
+      RenderBlock {DIV} at (1,689) size 360x180 [border: (5px solid #800080)]
         RenderImage {IMG} at (5,5) size 156x36 [border: (3px solid #000000)]
         RenderImage {IMG} at (161,5) size 156x36 [border: (3px solid #000000)]
         RenderImage {IMG} at (5,41) size 156x36 [border: (3px solid #000000)]
-        RenderText {#text} at (317,5) size 350x190
-          text run at (317,5) width 27: "This"
-          text run at (317,24) width 37: "is text"
-          text run at (161,43) width 95: "within the DIV. "
-          text run at (256,43) width 75: "The floating"
-          text run at (161,62) width 185: "images within this DIV should"
-          text run at (5,81) width 332: "not go beyond the left or right inner edge of this DIV,"
-          text run at (5,100) width 328: "which means that the borders of the floating images"
-          text run at (5,119) width 347: "should not overlap the top or side borders of the DIV in"
-          text run at (5,138) width 60: "any way. "
-          text run at (65,138) width 257: "In addition, they should not overlap each"
-          text run at (5,157) width 41: "other. "
-          text run at (46,157) width 309: "The first two should be side by side, whereas the"
-          text run at (5,176) width 209: "third should be on the next \"line.\""
-      RenderBlock {HR} at (21,1004) size 590x2 [border: (1px inset #000000)]
-      RenderBlock {DIV} at (1,1027) size 276x390 [border: (5px solid #800080)]
-        RenderBlock (floating) {P} at (5,5) size 170x87 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
-          RenderText {#text} at (15,15) size 127x57
-            text run at (15,15) width 127: "This is a left-floating"
-            text run at (15,34) width 113: "paragraph (first in"
-            text run at (15,53) width 52: "source)."
-        RenderBlock (floating) {P} at (101,92) size 170x87 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
-          RenderText {#text} at (15,15) size 136x57
-            text run at (15,15) width 136: "This is a right-floating"
-            text run at (15,34) width 136: "paragraph (second in"
-            text run at (15,53) width 52: "source)."
-        RenderText {#text} at (175,5) size 261x380
-          text run at (175,5) width 68: "This is text"
-          text run at (175,24) width 91: "within the DIV."
-          text run at (175,43) width 75: "The floating"
-          text run at (175,62) width 58: "elements"
-          text run at (175,81) width 89: "within this DIV"
-          text run at (5,100) width 86: "should not go"
-          text run at (5,119) width 94: "beyond the left"
-          text run at (5,138) width 81: "or right inner"
-          text run at (5,157) width 74: "edge of this"
-          text run at (5,176) width 67: "DIV, which"
-          text run at (5,195) width 238: "means that the borders of the floating"
-          text run at (5,214) width 244: "elements should not overlap the top or"
-          text run at (5,233) width 225: "side borders of the DIV in any way. "
-          text run at (230,233) width 12: "In"
-          text run at (5,252) width 241: "addition, they should not overlap each"
-          text run at (5,271) width 250: "other in any way, nor should the floated"
-          text run at (5,290) width 253: "elements be overwritten by the DIV text."
-          text run at (5,309) width 249: "In addition, the floated elements should"
-          text run at (5,328) width 250: "not be side-by-side, but instead the first"
-          text run at (5,347) width 238: "should be floated left, and the second"
-          text run at (5,366) width 211: "floated to the right below the first."
-      RenderBlock {HR} at (371,1424) size 41x2 [border: (1px inset #000000)]
-      RenderBlock {DIV} at (1,1433) size 410x219 [border: (5px solid #800080)]
+        RenderText {#text} at (317,5) size 348x170
+          text run at (317,5) width 25: "This"
+          text run at (317,22) width 36: "is text"
+          text run at (317,39) width 33: "within"
+          text run at (161,56) width 52: "the DIV. "
+          text run at (213,56) width 114: "The floating images"
+          text run at (161,73) width 166: "within this DIV should not go"
+          text run at (5,90) width 344: "beyond the left or right inner edge of this DIV, which means"
+          text run at (5,107) width 330: "that the borders of the floating images should not overlap"
+          text run at (5,124) width 267: "the top or side borders of the DIV in any way. "
+          text run at (272,124) width 64: "In addition,"
+          text run at (5,141) width 208: "they should not overlap each other. "
+          text run at (213,141) width 132: "The first two should be"
+          text run at (5,158) width 344: "side by side, whereas the third should be on the next \"line.\""
+      RenderBlock {HR} at (19,888) size 590x2 [border: (1px inset #000000)]
+      RenderBlock {DIV} at (1,909) size 257x350 [border: (5px solid #800080)]
+        RenderBlock (floating) {P} at (5,5) size 158x79 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
+          RenderText {#text} at (14,14) size 118x51
+            text run at (14,14) width 118: "This is a left-floating"
+            text run at (14,31) width 101: "paragraph (first in"
+            text run at (14,48) width 47: "source)."
+        RenderBlock (floating) {P} at (94,84) size 158x79 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
+          RenderText {#text} at (14,14) size 125x51
+            text run at (14,14) width 125: "This is a right-floating"
+            text run at (14,31) width 121: "paragraph (second in"
+            text run at (14,48) width 47: "source)."
+        RenderText {#text} at (163,5) size 243x340
+          text run at (163,5) width 65: "This is text"
+          text run at (163,22) width 85: "within the DIV."
+          text run at (163,39) width 68: "The floating"
+          text run at (163,56) width 53: "elements"
+          text run at (163,73) width 84: "within this DIV"
+          text run at (5,90) width 78: "should not go"
+          text run at (5,107) width 86: "beyond the left"
+          text run at (5,124) width 72: "or right inner"
+          text run at (5,141) width 68: "edge of this"
+          text run at (5,158) width 63: "DIV, which"
+          text run at (5,175) width 217: "means that the borders of the floating"
+          text run at (5,192) width 222: "elements should not overlap the top or"
+          text run at (5,209) width 208: "side borders of the DIV in any way. "
+          text run at (213,209) width 11: "In"
+          text run at (5,226) width 220: "addition, they should not overlap each"
+          text run at (5,243) width 228: "other in any way, nor should the floated"
+          text run at (5,260) width 234: "elements be overwritten by the DIV text."
+          text run at (5,277) width 228: "In addition, the floated elements should"
+          text run at (5,294) width 230: "not be side-by-side, but instead the first"
+          text run at (5,311) width 218: "should be floated left, and the second"
+          text run at (5,328) width 194: "floated to the right below the first."
+      RenderBlock {HR} at (371,1265) size 41x2 [border: (1px inset #000000)]
+      RenderBlock {DIV} at (1,1273) size 410x197 [border: (5px solid #800080)]
         RenderImage {IMG} at (5,5) size 256x36 [border: (3px solid #000000)]
         RenderImage {IMG} at (149,41) size 256x36 [border: (3px solid #000000)]
-        RenderText {#text} at (261,5) size 398x209
-          text run at (261,5) width 132: "This is text within the"
-          text run at (261,24) width 31: "DIV. "
-          text run at (292,24) width 75: "The floating"
-          text run at (5,43) width 139: "images within this DIV"
-          text run at (5,62) width 137: "should not go beyond"
-          text run at (5,81) width 376: "the left or right inner edge of this DIV, which means that the"
-          text run at (5,100) width 375: "borders of the floating images should not overlap the top or"
-          text run at (5,119) width 225: "side borders of the DIV in any way. "
-          text run at (230,119) width 171: "In addition, they should not"
-          text run at (5,138) width 398: "overlap each other in any way, nor should the floated elements"
-          text run at (5,157) width 195: "be overwritten by the DIV text. "
-          text run at (200,157) width 191: "In addition, the floated images"
-          text run at (5,176) width 362: "should not be side-by-side, but instead the first should be"
-          text run at (5,195) width 387: "floated left, and the second floated to the right below the first."
-      RenderBlock {HR} at (21,1673) size 590x2 [border: (1px inset #000000)]
-      RenderBlock {DIV} at (1,1696) size 782x105 [border: (5px solid #800080)]
-        RenderBlock (floating) {P} at (607,5) size 170x87 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
-          RenderText {#text} at (15,15) size 136x57
-            text run at (15,15) width 136: "This is a right-floating"
-            text run at (15,34) width 113: "paragraph (first in"
-            text run at (15,53) width 52: "source)."
-        RenderBlock (floating) {P} at (5,5) size 170x87 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
-          RenderText {#text} at (15,15) size 136x57
-            text run at (15,15) width 127: "This is a left-floating"
-            text run at (15,34) width 136: "paragraph (second in"
-            text run at (15,53) width 52: "source)."
-        RenderText {#text} at (175,5) size 427x95
-          text run at (175,5) width 167: "This is text within the DIV. "
-          text run at (342,5) width 230: "The floating elements within this DIV"
-          text run at (175,24) width 427: "should not go beyond the top side of this DIV, which means that the"
-          text run at (175,43) width 417: "borders of the floating elements should not overlap the top or side"
-          text run at (175,62) width 195: "borders of the DIV in any way. "
-          text run at (370,62) width 232: "In addition, the top of the left-floating"
-          text run at (175,81) width 391: "box should not be higher than the top of the right-floating box."
-      RenderBlock {HR} at (371,1808) size 41x2 [border: (1px inset #000000)]
-      RenderBlock {DIV} at (1,1817) size 782x67 [border: (5px solid #800080)]
+        RenderText {#text} at (261,5) size 400x187
+          text run at (261,5) width 124: "This is text within the"
+          text run at (261,22) width 30: "DIV. "
+          text run at (291,22) width 114: "The floating images"
+          text run at (261,39) width 126: "within this DIV should"
+          text run at (5,56) width 141: "not go beyond the left or"
+          text run at (5,73) width 129: "right inner edge of this"
+          text run at (5,90) width 394: "DIV, which means that the borders of the floating images should not"
+          text run at (5,107) width 313: "overlap the top or side borders of the DIV in any way. "
+          text run at (318,107) width 64: "In addition,"
+          text run at (5,124) width 399: "they should not overlap each other in any way, nor should the floated"
+          text run at (5,141) width 238: "elements be overwritten by the DIV text. "
+          text run at (243,141) width 129: "In addition, the floated"
+          text run at (5,158) width 378: "images should not be side-by-side, but instead the first should be"
+          text run at (5,175) width 356: "floated left, and the second floated to the right below the first."
+      RenderBlock {HR} at (19,1489) size 590x2 [border: (1px inset #000000)]
+      RenderBlock {DIV} at (1,1510) size 782x95 [border: (5px solid #800080)]
+        RenderBlock (floating) {P} at (619,5) size 158x79 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
+          RenderText {#text} at (14,14) size 125x51
+            text run at (14,14) width 125: "This is a right-floating"
+            text run at (14,31) width 101: "paragraph (first in"
+            text run at (14,48) width 47: "source)."
+        RenderBlock (floating) {P} at (5,5) size 158x79 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
+          RenderText {#text} at (14,14) size 121x51
+            text run at (14,14) width 118: "This is a left-floating"
+            text run at (14,31) width 121: "paragraph (second in"
+            text run at (14,48) width 47: "source)."
+        RenderText {#text} at (163,5) size 454x85
+          text run at (163,5) width 158: "This is text within the DIV. "
+          text run at (321,5) width 295: "The floating elements within this DIV should not go"
+          text run at (163,22) width 442: "beyond the top side of this DIV, which means that the borders of the floating"
+          text run at (163,39) width 434: "elements should not overlap the top or side borders of the DIV in any way. "
+          text run at (597,39) width 11: "In"
+          text run at (163,56) width 454: "addition, the top of the left-floating box should not be higher than the top of the"
+          text run at (163,73) width 100: "right-floating box."
+      RenderBlock {HR} at (371,1611) size 41x2 [border: (1px inset #000000)]
+      RenderBlock {DIV} at (1,1619) size 782x61 [border: (5px solid #800080)]
         RenderImage {IMG} at (5,5) size 15x36 [border: (3px solid #000000)]
         RenderImage {IMG} at (762,5) size 15x36 [border: (3px solid #000000)]
-        RenderText {#text} at (20,5) size 732x57
-          text run at (20,5) width 167: "This is text within the DIV. "
-          text run at (187,5) width 550: "The floating images within this DIV should not go beyond the top side of this DIV, which"
-          text run at (20,24) width 703: "means that the borders of the floating images should not overlap the top or side borders of the DIV in any way. "
-          text run at (723,24) width 12: "In"
-          text run at (5,43) width 643: "addition, the top of the left-floating image should not be higher than the top of the right-floating image."
-      RenderBlock {HR} at (21,1905) size 590x2 [border: (1px inset #000000)]
-      RenderBlock {DIV} at (1,1928) size 782x124 [border: (5px solid #800080)]
-        RenderText {#text} at (175,5) size 172x19
-          text run at (175,5) width 167: "This is text within the DIV. "
-          text run at (342,5) width 5: "*"
-        RenderBlock (floating) {P} at (5,5) size 170x87 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
-          RenderText {#text} at (15,15) size 127x57
-            text run at (15,15) width 127: "This is a left-floating"
-            text run at (15,34) width 113: "paragraph (first in"
-            text run at (15,53) width 52: "source)."
-        RenderText {#text} at (347,5) size 599x38
-          text run at (347,5) width 427: " The floating elements within this DIV should not go any higher than"
-          text run at (175,24) width 402: "the line-box containing the inline content which precedes them. "
-          text run at (577,24) width 5: "*"
-        RenderBlock (floating) {P} at (607,24) size 170x87 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
-          RenderText {#text} at (15,15) size 136x57
-            text run at (15,15) width 136: "This is a right-floating"
-            text run at (15,34) width 136: "paragraph (second in"
-            text run at (15,53) width 52: "source)."
-        RenderText {#text} at (175,43) size 588x76
-          text run at (175,43) width 418: "This means that the top side of each float can be, at most, as high"
-          text run at (175,62) width 401: "as the top edge of the inline element containing the content just"
-          text run at (175,81) width 310: "before the floating elements occur in the source. "
-          text run at (485,81) width 102: "In order to mark"
-          text run at (5,100) width 529: "these points clearly, an asterisk has been inserted just before each floated element."
-      RenderBlock {HR} at (371,2059) size 41x2 [border: (1px inset #000000)]
-      RenderBlock {DIV} at (1,2068) size 782x86 [border: (5px solid #800080)]
-        RenderText {#text} at (20,5) size 172x19
-          text run at (20,5) width 167: "This is text within the DIV. "
-          text run at (187,5) width 5: "*"
+        RenderText {#text} at (20,5) size 736x51
+          text run at (20,5) width 158: "This is text within the DIV. "
+          text run at (178,5) width 578: "The floating images within this DIV should not go beyond the top side of this DIV, which means that"
+          text run at (20,22) width 575: "the borders of the floating images should not overlap the top or side borders of the DIV in any way. "
+          text run at (595,22) width 145: "In addition, the top of the"
+          text run at (20,39) width 452: "left-floating image should not be higher than the top of the right-floating image."
+      RenderBlock {HR} at (19,1699) size 590x2 [border: (1px inset #000000)]
+      RenderBlock {DIV} at (1,1720) size 782x112 [border: (5px solid #800080)]
+        RenderText {#text} at (163,5) size 163x17
+          text run at (163,5) width 158: "This is text within the DIV. "
+          text run at (321,5) width 5: "*"
+        RenderBlock (floating) {P} at (5,5) size 158x79 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
+          RenderText {#text} at (14,14) size 118x51
+            text run at (14,14) width 118: "This is a left-floating"
+            text run at (14,31) width 101: "paragraph (first in"
+            text run at (14,48) width 47: "source)."
+        RenderText {#text} at (326,5) size 605x34
+          text run at (326,5) width 442: " The floating elements within this DIV should not go any higher than the line-"
+          text run at (163,22) width 322: "box containing the inline content which precedes them. "
+          text run at (485,22) width 9: "* "
+        RenderBlock (floating) {P} at (619,22) size 158x79 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
+          RenderText {#text} at (14,14) size 125x51
+            text run at (14,14) width 125: "This is a right-floating"
+            text run at (14,31) width 121: "paragraph (second in"
+            text run at (14,48) width 47: "source)."
+        RenderText {#text} at (494,22) size 605x85
+          text run at (494,22) width 116: "This means that the"
+          text run at (163,39) width 432: "top side of each float can be, at most, as high as the top edge of the inline"
+          text run at (163,56) width 440: "element containing the content just before the floating elements occur in the"
+          text run at (163,73) width 47: "source. "
+          text run at (210,73) width 388: "In order to mark these points clearly, an asterisk has been inserted"
+          text run at (5,90) width 190: "just before each floated element."
+      RenderBlock {HR} at (371,1838) size 41x2 [border: (1px inset #000000)]
+      RenderBlock {DIV} at (1,1846) size 782x78 [border: (5px solid #800080)]
+        RenderText {#text} at (20,5) size 163x17
+          text run at (20,5) width 158: "This is text within the DIV. "
+          text run at (178,5) width 5: "*"
         RenderImage {IMG} at (5,5) size 15x36 [border: (3px solid #000000)]
-        RenderText {#text} at (192,5) size 734x38
-          text run at (192,5) width 562: " The floating images within this DIV should not go any higher than the line-box containing"
-          text run at (20,24) width 255: "the inline content which precedes them. "
-          text run at (275,24) width 9: "* "
-        RenderImage {IMG} at (762,24) size 15x36 [border: (3px solid #000000)]
-        RenderText {#text} at (284,24) size 740x57
-          text run at (284,24) width 461: "This means that the top side of each float can be, at most, as high as the"
-          text run at (5,43) width 660: "top edge of the inline element containing the content just before the floating images occur in the source. "
-          text run at (665,43) width 66: "In order to"
-          text run at (5,62) width 553: "mark these points clearly, an asterisk has been inserted just before each floated image."
-      RenderBlock {HR} at (21,2175) size 590x2 [border: (1px inset #000000)]
-      RenderBlock {DIV} at (1,2198) size 782x238 [border: (5px solid #800080)]
-        RenderText {#text} at (175,5) size 172x19
-          text run at (175,5) width 167: "This is text within the DIV. "
-          text run at (342,5) width 5: "*"
-        RenderBlock (floating) {P} at (5,5) size 170x87 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
-          RenderText {#text} at (15,15) size 127x57
-            text run at (15,15) width 127: "This is a left-floating"
-            text run at (15,34) width 113: "paragraph (first in"
-            text run at (15,53) width 52: "source)."
-        RenderText {#text} at (347,5) size 599x38
-          text run at (347,5) width 427: " The floating elements within this DIV should not go any higher than"
-          text run at (175,24) width 402: "the line-box containing the inline content which precedes them. "
-          text run at (577,24) width 5: "*"
-        RenderBlock (floating) {P} at (607,24) size 170x87 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
-          RenderText {#text} at (15,15) size 136x57
-            text run at (15,15) width 136: "This is a right-floating"
-            text run at (15,34) width 136: "paragraph (second in"
-            text run at (15,53) width 52: "source)."
-        RenderText {#text} at (175,43) size 318x19
-          text run at (175,43) width 318: "This means that the top side of each float can be,*"
-        RenderBlock (floating) {P} at (175,62) size 170x87 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
-          RenderText {#text} at (15,15) size 127x57
-            text run at (15,15) width 127: "This is a left-floating"
-            text run at (15,34) width 118: "paragraph (third in"
-            text run at (15,53) width 52: "source)."
-        RenderText {#text} at (493,43) size 253x76
-          text run at (493,43) width 105: " at most, as high"
-          text run at (345,62) width 231: "as the top edge of the inline element"
-          text run at (345,81) width 235: "containing the content just before the"
-          text run at (345,100) width 241: "floating elements occur in the source. "
-          text run at (586,100) width 5: "*"
-        RenderBlock (floating) {P} at (345,119) size 170x87 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
-          RenderText {#text} at (15,15) size 127x57
-            text run at (15,15) width 127: "This is a left-floating"
-            text run at (15,34) width 127: "paragraph (fourth in"
-            text run at (15,53) width 52: "source)."
-        RenderText {#text} at (591,100) size 765x133
-          text run at (591,100) width 16: " In"
-          text run at (515,119) width 236: "order to mark these points clearly, an"
-          text run at (515,138) width 238: "asterisk has been inserted just before"
-          text run at (515,157) width 141: "each floated element. "
-          text run at (656,157) width 110: "If a line has room"
-          text run at (515,176) width 246: "for a floated element, then the element"
-          text run at (515,195) width 255: "should float so that its top is aligned with"
-          text run at (5,214) width 334: "the top of the line-box in which the asterisk appears. "
-          text run at (339,214) width 396: "Otherwise, its top should align with the top of the next line-box."
-      RenderBlock {HR} at (371,2443) size 41x2 [border: (1px inset #000000)]
-      RenderBlock {DIV} at (1,2452) size 782x124 [border: (5px solid #800080)]
-        RenderText {#text} at (20,5) size 172x19
-          text run at (20,5) width 167: "This is text within the DIV. "
-          text run at (187,5) width 5: "*"
+        RenderText {#text} at (183,5) size 734x34
+          text run at (183,5) width 571: " The floating images within this DIV should not go any higher than the line-box containing the inline"
+          text run at (20,22) width 178: "content which precedes them. "
+          text run at (198,22) width 9: "* "
+        RenderImage {IMG} at (762,22) size 15x36 [border: (3px solid #000000)]
+        RenderText {#text} at (207,22) size 754x51
+          text run at (207,22) width 552: "This means that the top side of each float can be, at most, as high as the top edge of the inline"
+          text run at (20,39) width 480: "element containing the content just before the floating images occur in the source. "
+          text run at (500,39) width 231: "In order to mark these points clearly, an"
+          text run at (5,56) width 336: "asterisk has been inserted just before each floated image."
+      RenderBlock {HR} at (19,1943) size 590x2 [border: (1px inset #000000)]
+      RenderBlock {DIV} at (1,1964) size 782x197 [border: (5px solid #800080)]
+        RenderText {#text} at (163,5) size 163x17
+          text run at (163,5) width 158: "This is text within the DIV. "
+          text run at (321,5) width 5: "*"
+        RenderBlock (floating) {P} at (5,5) size 158x79 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
+          RenderText {#text} at (14,14) size 118x51
+            text run at (14,14) width 118: "This is a left-floating"
+            text run at (14,31) width 101: "paragraph (first in"
+            text run at (14,48) width 47: "source)."
+        RenderText {#text} at (326,5) size 605x34
+          text run at (326,5) width 442: " The floating elements within this DIV should not go any higher than the line-"
+          text run at (163,22) width 322: "box containing the inline content which precedes them. "
+          text run at (485,22) width 9: "* "
+        RenderBlock (floating) {P} at (619,22) size 158x79 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
+          RenderText {#text} at (14,14) size 125x51
+            text run at (14,14) width 125: "This is a right-floating"
+            text run at (14,31) width 121: "paragraph (second in"
+            text run at (14,48) width 47: "source)."
+        RenderText {#text} at (494,22) size 289x34
+          text run at (494,22) width 116: "This means that the"
+          text run at (321,39) width 174: "top side of each float can be,*"
+        RenderBlock (floating) {P} at (163,39) size 158x79 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
+          RenderText {#text} at (14,14) size 118x51
+            text run at (14,14) width 118: "This is a left-floating"
+            text run at (14,31) width 104: "paragraph (third in"
+            text run at (14,48) width 47: "source)."
+        RenderText {#text} at (495,39) size 290x68
+          text run at (495,39) width 116: " at most, as high as"
+          text run at (321,56) width 278: "the top edge of the inline element containing the"
+          text run at (321,73) width 283: "content just before the floating elements occur in"
+          text run at (479,90) width 69: "the source. "
+          text run at (548,90) width 5: "*"
+        RenderBlock (floating) {P} at (321,90) size 158x79 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
+          RenderText {#text} at (14,14) size 118x51
+            text run at (14,14) width 118: "This is a left-floating"
+            text run at (14,31) width 112: "paragraph (fourth in"
+            text run at (14,48) width 47: "source)."
+        RenderText {#text} at (553,90) size 770x102
+          text run at (553,90) width 63: " In order to"
+          text run at (479,107) width 275: "mark these points clearly, an asterisk has been"
+          text run at (479,124) width 244: "inserted just before each floated element. "
+          text run at (723,124) width 43: "If a line"
+          text run at (479,141) width 282: "has room for a floated element, then the element"
+          text run at (479,158) width 296: "should float so that its top is aligned with the top of"
+          text run at (5,175) width 248: "the line-box in which the asterisk appears. "
+          text run at (253,175) width 365: "Otherwise, its top should align with the top of the next line-box."
+      RenderBlock {HR} at (371,2167) size 41x2 [border: (1px inset #000000)]
+      RenderBlock {DIV} at (1,2175) size 782x112 [border: (5px solid #800080)]
+        RenderText {#text} at (20,5) size 163x17
+          text run at (20,5) width 158: "This is text within the DIV. "
+          text run at (178,5) width 5: "*"
         RenderImage {IMG} at (5,5) size 15x36 [border: (3px solid #000000)]
-        RenderText {#text} at (192,5) size 719x38
-          text run at (192,5) width 562: " The floating images within this DIV should not go any higher than the line-box containing"
-          text run at (35,24) width 255: "the inline content which precedes them. "
-          text run at (290,24) width 9: "* "
-        RenderImage {IMG} at (762,24) size 15x36 [border: (3px solid #000000)]
-        RenderText {#text} at (299,24) size 322x19
-          text run at (299,24) width 317: "This means that the top side of each float can be, "
-          text run at (616,24) width 5: "*"
-        RenderImage {IMG} at (20,24) size 15x36 [border: (3px solid #000000)]
-        RenderText {#text} at (621,24) size 695x38
-          text run at (621,24) width 124: " at most, as high as"
-          text run at (50,43) width 684: "the top edge of the inline element containing the content just before the floating images occur in the source. "
-          text run at (734,43) width 5: "*"
-        RenderImage {IMG} at (35,43) size 15x36 [border: (3px solid #000000)]
-        RenderText {#text} at (739,43) size 766x76
-          text run at (739,43) width 16: " In"
-          text run at (50,62) width 611: "order to mark these points clearly, an asterisk has been inserted just before each floated image. "
-          text run at (661,62) width 110: "If a line has room"
-          text run at (5,81) width 755: "for a floated image, then the image should float so that its top is aligned with the top of the line-box in which the asterisk"
-          text run at (5,100) width 60: "appears. "
-          text run at (65,100) width 396: "Otherwise, its top should align with the top of the next line-box."
-      RenderBlock {HR} at (21,2597) size 590x2 [border: (1px inset #000000)]
-      RenderBlock {DIV} at (1,2620) size 430x352 [border: (5px solid #800080)]
-        RenderText {#text} at (175,5) size 50x19
-          text run at (175,5) width 50: "This is *"
-        RenderBlock (floating) {P} at (5,5) size 170x87 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
-          RenderText {#text} at (15,15) size 127x57
-            text run at (15,15) width 127: "This is a left-floating"
-            text run at (15,34) width 113: "paragraph (first in"
-            text run at (15,53) width 52: "source)."
-        RenderText {#text} at (225,5) size 9x19
-          text run at (225,5) width 9: " *"
-        RenderBlock (floating) {P} at (255,5) size 170x87 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
-          RenderText {#text} at (15,15) size 136x57
-            text run at (15,15) width 136: "This is a right-floating"
-            text run at (15,34) width 136: "paragraph (second in"
-            text run at (15,53) width 52: "source)."
-        RenderText {#text} at (175,24) size 416x323
-          text run at (175,24) width 63: "text within"
-          text run at (175,43) width 51: "the DIV."
-          text run at (175,62) width 39: "Under"
-          text run at (175,81) width 64: "CSS1, the"
-          text run at (5,100) width 400: "left floating element should be placed in the upper left corner of"
-          text run at (5,119) width 403: "the DIV, and the purple border of the DIV should abut the green"
-          text run at (5,138) width 195: "border of the floating element. "
-          text run at (200,138) width 218: "Similarly, the right floating element"
-          text run at (5,157) width 388: "should be placed in the upper right corner of the DIV, and the"
-          text run at (5,176) width 382: "purple border of the DIV should abut the green border of the"
-          text run at (5,195) width 416: "floating element. The text of the DIV element should flow between"
-          text run at (5,214) width 410: "and under the two floating elements. The two asterisk characters"
-          text run at (5,233) width 400: "mark the insertion points of the floating elements. It is expected"
-          text run at (5,252) width 407: "that, under future specifications, it may be acceptable for the top"
-          text run at (5,271) width 401: "of floated elements to align with the top of the line-box following"
-          text run at (5,290) width 359: "the insertion point of the floated element to avoid floating"
-          text run at (5,309) width 398: "elements appearing before text which precedes it in the source"
-          text run at (5,328) width 67: "document."
-      RenderBlock {HR} at (371,2979) size 41x2 [border: (1px inset #000000)]
-      RenderBlock {DIV} at (1,2988) size 430x257 [border: (5px solid #800080)]
-        RenderText {#text} at (20,5) size 50x19
-          text run at (20,5) width 50: "This is *"
+        RenderText {#text} at (183,5) size 719x34
+          text run at (183,5) width 571: " The floating images within this DIV should not go any higher than the line-box containing the inline"
+          text run at (35,22) width 178: "content which precedes them. "
+          text run at (213,22) width 9: "* "
+        RenderImage {IMG} at (762,22) size 15x36 [border: (3px solid #000000)]
+        RenderText {#text} at (222,22) size 298x17
+          text run at (222,22) width 293: "This means that the top side of each float can be, "
+          text run at (515,22) width 5: "*"
+        RenderImage {IMG} at (20,22) size 15x36 [border: (3px solid #000000)]
+        RenderText {#text} at (520,22) size 699x34
+          text run at (520,22) width 229: " at most, as high as the top edge of the"
+          text run at (50,39) width 514: "inline element containing the content just before the floating images occur in the source. "
+          text run at (564,39) width 5: "*"
+        RenderImage {IMG} at (35,39) size 15x36 [border: (3px solid #000000)]
+        RenderText {#text} at (569,39) size 768x68
+          text run at (569,39) width 171: " In order to mark these points"
+          text run at (50,56) width 404: "clearly, an asterisk has been inserted just before each floated image. "
+          text run at (454,56) width 307: "If a line has room for a floated image, then the image"
+          text run at (50,73) width 548: "should float so that its top is aligned with the top of the line-box in which the asterisk appears. "
+          text run at (598,73) width 175: "Otherwise, its top should align"
+          text run at (5,90) width 186: "with the top of the next line-box."
+      RenderBlock {HR} at (19,2306) size 590x2 [border: (1px inset #000000)]
+      RenderBlock {DIV} at (1,2327) size 400x299 [border: (5px solid #800080)]
+        RenderText {#text} at (163,5) size 48x17
+          text run at (163,5) width 48: "This is *"
+        RenderBlock (floating) {P} at (5,5) size 158x79 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
+          RenderText {#text} at (14,14) size 118x51
+            text run at (14,14) width 118: "This is a left-floating"
+            text run at (14,31) width 101: "paragraph (first in"
+            text run at (14,48) width 47: "source)."
+        RenderText {#text} at (211,5) size 9x17
+          text run at (211,5) width 9: " *"
+        RenderBlock (floating) {P} at (237,5) size 158x79 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
+          RenderText {#text} at (14,14) size 125x51
+            text run at (14,14) width 125: "This is a right-floating"
+            text run at (14,31) width 121: "paragraph (second in"
+            text run at (14,48) width 47: "source)."
+        RenderText {#text} at (163,22) size 390x272
+          text run at (163,22) width 59: "text within"
+          text run at (163,39) width 48: "the DIV."
+          text run at (163,56) width 34: "Under"
+          text run at (163,73) width 60: "CSS1, the"
+          text run at (5,90) width 387: "left floating element should be placed in the upper left corner of the"
+          text run at (5,107) width 384: "DIV, and the purple border of the DIV should abut the green border"
+          text run at (5,124) width 137: "of the floating element. "
+          text run at (142,124) width 243: "Similarly, the right floating element should"
+          text run at (5,141) width 390: "be placed in the upper right corner of the DIV, and the purple border"
+          text run at (5,158) width 365: "of the DIV should abut the green border of the floating element."
+          text run at (5,175) width 389: "The text of the DIV element should flow between and under the two"
+          text run at (5,192) width 376: "floating elements. The two asterisk characters mark the insertion"
+          text run at (5,209) width 365: "points of the floating elements. It is expected that, under future"
+          text run at (5,226) width 387: "specifications, it may be acceptable for the top of floated elements"
+          text run at (5,243) width 375: "to align with the top of the line-box following the insertion point of"
+          text run at (5,260) width 390: "the floated element to avoid floating elements appearing before text"
+          text run at (5,277) width 245: "which precedes it in the source document."
+      RenderBlock {HR} at (371,2632) size 41x2 [border: (1px inset #000000)]
+      RenderBlock {DIV} at (1,2640) size 400x231 [border: (5px solid #800080)]
+        RenderText {#text} at (20,5) size 48x17
+          text run at (20,5) width 48: "This is *"
         RenderImage {IMG} at (5,5) size 15x36 [border: (3px solid #000000)]
-        RenderText {#text} at (70,5) size 9x19
-          text run at (70,5) width 9: " *"
-        RenderImage {IMG} at (410,5) size 15x36 [border: (3px solid #000000)]
-        RenderText {#text} at (79,5) size 418x247
-          text run at (79,5) width 126: " text within the DIV. "
-          text run at (205,5) width 180: "Under CSS1, the left floating"
-          text run at (20,24) width 370: "image should be placed in the upper left corner of the DIV,"
-          text run at (5,43) width 410: "and the purple border of the DIV should abut the green border of"
-          text run at (5,62) width 121: "the floating image. "
-          text run at (126,62) width 272: "Similarly, the right floating image should be"
-          text run at (5,81) width 412: "placed in the upper right corner of the DIV, and the purple border"
-          text run at (5,100) width 418: "of the DIV should abut the green border of the floating image. The"
-          text run at (5,119) width 397: "text of the DIV element should flow between and under the two"
-          text run at (5,138) width 390: "floating image. The two asterisk characters mark the insertion"
-          text run at (5,157) width 179: "points of the floating image. "
-          text run at (184,157) width 198: "It is expected that, under future"
-          text run at (5,176) width 418: "specifications, it may be acceptable for the top of floated elements"
-          text run at (5,195) width 409: "to align with the top of the line-box following the insertion point of"
-          text run at (5,214) width 401: "the floated element to avoid floating elements appearing before"
-          text run at (5,233) width 294: "text which precedes it in the source document."
-      RenderBlock {HR} at (21,3266) size 590x2 [border: (1px inset #000000)]
-      RenderTable {TABLE} at (0,3289) size 784x3112 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 782x3110
-          RenderTableRow {TR} at (0,0) size 782x28
-            RenderTableCell {TD} at (0,0) size 782x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 159x20
-                RenderText {#text} at (4,4) size 159x20
-                  text run at (4,4) width 159: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,28) size 782x3082
-            RenderTableCell {TD} at (0,1555) size 12x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 4x19
+        RenderText {#text} at (68,5) size 9x17
+          text run at (68,5) width 9: " *"
+        RenderImage {IMG} at (380,5) size 15x36 [border: (3px solid #000000)]
+        RenderText {#text} at (77,5) size 390x221
+          text run at (77,5) width 119: " text within the DIV. "
+          text run at (196,5) width 166: "Under CSS1, the left floating"
+          text run at (20,22) width 338: "image should be placed in the upper left corner of the DIV,"
+          text run at (20,39) width 354: "and the purple border of the DIV should abut the green border"
+          text run at (5,56) width 126: "of the floating image. "
+          text run at (131,56) width 250: "Similarly, the right floating image should be"
+          text run at (5,73) width 387: "placed in the upper right corner of the DIV, and the purple border of"
+          text run at (5,90) width 365: "the DIV should abut the green border of the floating image. The"
+          text run at (5,107) width 363: "text of the DIV element should flow between and under the two"
+          text run at (5,124) width 358: "floating image. The two asterisk characters mark the insertion"
+          text run at (5,141) width 165: "points of the floating image. "
+          text run at (170,141) width 182: "It is expected that, under future"
+          text run at (5,158) width 387: "specifications, it may be acceptable for the top of floated elements"
+          text run at (5,175) width 375: "to align with the top of the line-box following the insertion point of"
+          text run at (5,192) width 390: "the floated element to avoid floating elements appearing before text"
+          text run at (5,209) width 245: "which precedes it in the source document."
+      RenderBlock {HR} at (19,2890) size 590x2 [border: (1px inset #000000)]
+      RenderTable {TABLE} at (0,2911) size 784x2753 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x2751
+          RenderTableRow {TR} at (0,0) size 782x26
+            RenderTableCell {TD} at (0,0) size 782x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 144x17
+                RenderText {#text} at (4,4) size 144x17
+                  text run at (4,4) width 144: "TABLE Testing Section"
+          RenderTableRow {TR} at (0,26) size 782x2725
+            RenderTableCell {TD} at (0,1376) size 12x25 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x17
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,28) size 770x3082 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock {P} at (4,4) size 762x38
-                RenderText {#text} at (0,0) size 760x38
-                  text run at (0,0) width 689: "On this test page, each test is performed once with floating paragraphs, and then again with floating images. "
-                  text run at (689,0) width 68: "Other than"
-                  text run at (0,19) width 760: "the substitution of images for pargraphs, the structure of the test is exactly the same, including the direction of the floats."
-              RenderBlock {HR} at (25,63) size 573x2 [border: (1px inset #000000)]
-              RenderBlock {DIV} at (5,86) size 760x86 [border: (5px solid #800080)]
-                RenderBlock (floating) {P} at (5,5) size 170x87 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
-                  RenderText {#text} at (15,15) size 127x57
-                    text run at (15,15) width 127: "This is a left-floating"
-                    text run at (15,34) width 113: "paragraph (first in"
-                    text run at (15,53) width 52: "source)."
-                RenderBlock (floating) {P} at (585,5) size 170x87 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
-                  RenderText {#text} at (15,15) size 136x57
-                    text run at (15,15) width 136: "This is a right-floating"
-                    text run at (15,34) width 136: "paragraph (second in"
-                    text run at (15,53) width 52: "source)."
-                RenderText {#text} at (175,5) size 410x76
-                  text run at (175,5) width 167: "This is text within the DIV. "
-                  text run at (342,5) width 230: "The floating elements within this DIV"
-                  text run at (175,24) width 378: "should not go beyond the left or right inner edge of this DIV,"
-                  text run at (175,43) width 410: "which means that the borders of the floating elements should not"
-                  text run at (175,62) width 266: "overlap the top or side borders of the DIV."
-              RenderBlock {HR} at (365,179) size 40x2 [border: (1px inset #000000)]
-              RenderBlock {DIV} at (5,188) size 760x67 [border: (5px solid #800080)]
+            RenderTableCell {TD} at (12,26) size 770x2725 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 762x34
+                RenderText {#text} at (0,0) size 714x34
+                  text run at (0,0) width 631: "On this test page, each test is performed once with floating paragraphs, and then again with floating images. "
+                  text run at (631,0) width 83: "Other than the"
+                  text run at (0,17) width 681: "substitution of images for pargraphs, the structure of the test is exactly the same, including the direction of the floats."
+              RenderBlock {HR} at (23,57) size 573x2 [border: (1px inset #000000)]
+              RenderBlock {DIV} at (5,78) size 760x78 [border: (5px solid #800080)]
+                RenderBlock (floating) {P} at (5,5) size 158x79 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
+                  RenderText {#text} at (14,14) size 118x51
+                    text run at (14,14) width 118: "This is a left-floating"
+                    text run at (14,31) width 101: "paragraph (first in"
+                    text run at (14,48) width 47: "source)."
+                RenderBlock (floating) {P} at (597,5) size 158x79 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
+                  RenderText {#text} at (14,14) size 125x51
+                    text run at (14,14) width 125: "This is a right-floating"
+                    text run at (14,31) width 121: "paragraph (second in"
+                    text run at (14,48) width 47: "source)."
+                RenderText {#text} at (163,5) size 432x68
+                  text run at (163,5) width 158: "This is text within the DIV. "
+                  text run at (321,5) width 255: "The floating elements within this DIV should"
+                  text run at (163,22) width 432: "not go beyond the left or right inner edge of this DIV, which means that the"
+                  text run at (163,39) width 427: "borders of the floating elements should not overlap the top or side borders"
+                  text run at (163,56) width 63: "of the DIV."
+              RenderBlock {HR} at (365,162) size 40x2 [border: (1px inset #000000)]
+              RenderBlock {DIV} at (5,170) size 760x44 [border: (5px solid #800080)]
                 RenderImage {IMG} at (5,5) size 15x36 [border: (3px solid #000000)]
                 RenderImage {IMG} at (740,5) size 15x36 [border: (3px solid #000000)]
-                RenderText {#text} at (20,5) size 725x57
-                  text run at (20,5) width 167: "This is text within the DIV. "
-                  text run at (187,5) width 543: "The floating images within this DIV should not go beyond the left or right inner edge of"
-                  text run at (20,24) width 694: "this DIV, which means that the borders of the floating images should not overlap the top or side borders of the"
-                  text run at (5,43) width 27: "DIV."
-              RenderBlock {HR} at (25,276) size 573x2 [border: (1px inset #000000)]
-              RenderBlock {DIV} at (5,299) size 388x257 [border: (5px solid #800080)]
-                RenderBlock (floating) {P} at (5,5) size 170x68 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
-                  RenderText {#text} at (15,15) size 120x38
-                    text run at (15,15) width 120: "This is the first left-"
-                    text run at (15,34) width 120: "floating paragraph."
-                RenderBlock (floating) {P} at (175,5) size 170x87 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
-                  RenderText {#text} at (15,15) size 115x57
-                    text run at (15,15) width 115: "This is the second"
-                    text run at (15,34) width 70: "left-floating"
-                    text run at (15,53) width 70: "paragraph."
-                RenderBlock (floating) {P} at (5,92) size 170x68 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
-                  RenderText {#text} at (15,15) size 125x38
-                    text run at (15,15) width 125: "This is the third left-"
-                    text run at (15,34) width 120: "floating paragraph."
-                RenderText {#text} at (345,5) size 377x247
-                  text run at (345,5) width 27: "This"
-                  text run at (345,24) width 37: "is text"
-                  text run at (345,43) width 36: "within"
-                  text run at (345,62) width 20: "the"
-                  text run at (345,81) width 27: "DIV."
-                  text run at (175,100) width 203: "The floating elements within this"
-                  text run at (175,119) width 188: "DIV should not go beyond the"
-                  text run at (175,138) width 182: "left or right inner edge of this"
-                  text run at (175,157) width 166: "DIV, which means that the"
-                  text run at (5,176) width 370: "borders of the floating elements should not overlap the top"
-                  text run at (5,195) width 242: "or side borders of the DIV in any way. "
-                  text run at (247,195) width 101: "In addition, they"
-                  text run at (5,214) width 197: "should not overlap each other. "
-                  text run at (202,214) width 174: "The first two should be side"
-                  text run at (5,233) width 344: "by side, whereas the third should be on the next \"line.\""
-              RenderBlock {HR} at (365,563) size 40x2 [border: (1px inset #000000)]
-              RenderBlock {DIV} at (5,572) size 360x200 [border: (5px solid #800080)]
+                RenderText {#text} at (20,5) size 710x34
+                  text run at (20,5) width 158: "This is text within the DIV. "
+                  text run at (178,5) width 552: "The floating images within this DIV should not go beyond the left or right inner edge of this DIV,"
+                  text run at (20,22) width 611: "which means that the borders of the floating images should not overlap the top or side borders of the DIV."
+              RenderBlock {HR} at (23,233) size 573x2 [border: (1px inset #000000)]
+              RenderBlock {DIV} at (5,254) size 361x214 [border: (5px solid #800080)]
+                RenderBlock (floating) {P} at (5,5) size 158x62 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
+                  RenderText {#text} at (14,14) size 113x34
+                    text run at (14,14) width 113: "This is the first left-"
+                    text run at (14,31) width 107: "floating paragraph."
+                RenderBlock (floating) {P} at (163,5) size 158x62 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
+                  RenderText {#text} at (14,14) size 129x34
+                    text run at (14,14) width 107: "This is the second"
+                    text run at (14,31) width 129: "left-floating paragraph."
+                RenderBlock (floating) {P} at (5,67) size 158x62 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
+                  RenderText {#text} at (14,14) size 116x34
+                    text run at (14,14) width 116: "This is the third left-"
+                    text run at (14,31) width 107: "floating paragraph."
+                RenderText {#text} at (321,5) size 349x204
+                  text run at (321,5) width 25: "This"
+                  text run at (321,22) width 10: "is"
+                  text run at (321,39) width 22: "text"
+                  text run at (321,56) width 33: "within"
+                  text run at (163,73) width 52: "the DIV. "
+                  text run at (215,73) width 125: "The floating elements"
+                  text run at (163,90) width 166: "within this DIV should not go"
+                  text run at (163,107) width 162: "beyond the left or right inner"
+                  text run at (163,124) width 178: "edge of this DIV, which means"
+                  text run at (5,141) width 341: "that the borders of the floating elements should not overlap"
+                  text run at (5,158) width 267: "the top or side borders of the DIV in any way. "
+                  text run at (272,158) width 64: "In addition,"
+                  text run at (5,175) width 208: "they should not overlap each other. "
+                  text run at (213,175) width 132: "The first two should be"
+                  text run at (5,192) width 344: "side by side, whereas the third should be on the next \"line.\""
+              RenderBlock {HR} at (365,474) size 40x2 [border: (1px inset #000000)]
+              RenderBlock {DIV} at (5,482) size 360x180 [border: (5px solid #800080)]
                 RenderImage {IMG} at (5,5) size 156x36 [border: (3px solid #000000)]
                 RenderImage {IMG} at (161,5) size 156x36 [border: (3px solid #000000)]
                 RenderImage {IMG} at (5,41) size 156x36 [border: (3px solid #000000)]
-                RenderText {#text} at (317,5) size 350x190
-                  text run at (317,5) width 27: "This"
-                  text run at (317,24) width 37: "is text"
-                  text run at (161,43) width 95: "within the DIV. "
-                  text run at (256,43) width 75: "The floating"
-                  text run at (161,62) width 185: "images within this DIV should"
-                  text run at (5,81) width 332: "not go beyond the left or right inner edge of this DIV,"
-                  text run at (5,100) width 328: "which means that the borders of the floating images"
-                  text run at (5,119) width 347: "should not overlap the top or side borders of the DIV in"
-                  text run at (5,138) width 60: "any way. "
-                  text run at (65,138) width 257: "In addition, they should not overlap each"
-                  text run at (5,157) width 41: "other. "
-                  text run at (46,157) width 309: "The first two should be side by side, whereas the"
-                  text run at (5,176) width 209: "third should be on the next \"line.\""
-              RenderBlock {HR} at (25,793) size 573x2 [border: (1px inset #000000)]
-              RenderBlock {DIV} at (5,816) size 276x390 [border: (5px solid #800080)]
-                RenderBlock (floating) {P} at (5,5) size 170x87 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
-                  RenderText {#text} at (15,15) size 127x57
-                    text run at (15,15) width 127: "This is a left-floating"
-                    text run at (15,34) width 113: "paragraph (first in"
-                    text run at (15,53) width 52: "source)."
-                RenderBlock (floating) {P} at (101,92) size 170x87 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
-                  RenderText {#text} at (15,15) size 136x57
-                    text run at (15,15) width 136: "This is a right-floating"
-                    text run at (15,34) width 136: "paragraph (second in"
-                    text run at (15,53) width 52: "source)."
-                RenderText {#text} at (175,5) size 261x380
-                  text run at (175,5) width 68: "This is text"
-                  text run at (175,24) width 91: "within the DIV."
-                  text run at (175,43) width 75: "The floating"
-                  text run at (175,62) width 58: "elements"
-                  text run at (175,81) width 89: "within this DIV"
-                  text run at (5,100) width 86: "should not go"
-                  text run at (5,119) width 94: "beyond the left"
-                  text run at (5,138) width 81: "or right inner"
-                  text run at (5,157) width 74: "edge of this"
-                  text run at (5,176) width 67: "DIV, which"
-                  text run at (5,195) width 238: "means that the borders of the floating"
-                  text run at (5,214) width 244: "elements should not overlap the top or"
-                  text run at (5,233) width 225: "side borders of the DIV in any way. "
-                  text run at (230,233) width 12: "In"
-                  text run at (5,252) width 241: "addition, they should not overlap each"
-                  text run at (5,271) width 250: "other in any way, nor should the floated"
-                  text run at (5,290) width 253: "elements be overwritten by the DIV text."
-                  text run at (5,309) width 249: "In addition, the floated elements should"
-                  text run at (5,328) width 250: "not be side-by-side, but instead the first"
-                  text run at (5,347) width 238: "should be floated left, and the second"
-                  text run at (5,366) width 211: "floated to the right below the first."
-              RenderBlock {HR} at (365,1213) size 40x2 [border: (1px inset #000000)]
-              RenderBlock {DIV} at (5,1222) size 410x219 [border: (5px solid #800080)]
+                RenderText {#text} at (317,5) size 348x170
+                  text run at (317,5) width 25: "This"
+                  text run at (317,22) width 36: "is text"
+                  text run at (317,39) width 33: "within"
+                  text run at (161,56) width 52: "the DIV. "
+                  text run at (213,56) width 114: "The floating images"
+                  text run at (161,73) width 166: "within this DIV should not go"
+                  text run at (5,90) width 344: "beyond the left or right inner edge of this DIV, which means"
+                  text run at (5,107) width 330: "that the borders of the floating images should not overlap"
+                  text run at (5,124) width 267: "the top or side borders of the DIV in any way. "
+                  text run at (272,124) width 64: "In addition,"
+                  text run at (5,141) width 208: "they should not overlap each other. "
+                  text run at (213,141) width 132: "The first two should be"
+                  text run at (5,158) width 344: "side by side, whereas the third should be on the next \"line.\""
+              RenderBlock {HR} at (23,681) size 573x2 [border: (1px inset #000000)]
+              RenderBlock {DIV} at (5,702) size 257x350 [border: (5px solid #800080)]
+                RenderBlock (floating) {P} at (5,5) size 158x79 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
+                  RenderText {#text} at (14,14) size 118x51
+                    text run at (14,14) width 118: "This is a left-floating"
+                    text run at (14,31) width 101: "paragraph (first in"
+                    text run at (14,48) width 47: "source)."
+                RenderBlock (floating) {P} at (94,84) size 158x79 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
+                  RenderText {#text} at (14,14) size 125x51
+                    text run at (14,14) width 125: "This is a right-floating"
+                    text run at (14,31) width 121: "paragraph (second in"
+                    text run at (14,48) width 47: "source)."
+                RenderText {#text} at (163,5) size 243x340
+                  text run at (163,5) width 65: "This is text"
+                  text run at (163,22) width 85: "within the DIV."
+                  text run at (163,39) width 68: "The floating"
+                  text run at (163,56) width 53: "elements"
+                  text run at (163,73) width 84: "within this DIV"
+                  text run at (5,90) width 78: "should not go"
+                  text run at (5,107) width 86: "beyond the left"
+                  text run at (5,124) width 72: "or right inner"
+                  text run at (5,141) width 68: "edge of this"
+                  text run at (5,158) width 63: "DIV, which"
+                  text run at (5,175) width 217: "means that the borders of the floating"
+                  text run at (5,192) width 222: "elements should not overlap the top or"
+                  text run at (5,209) width 208: "side borders of the DIV in any way. "
+                  text run at (213,209) width 11: "In"
+                  text run at (5,226) width 220: "addition, they should not overlap each"
+                  text run at (5,243) width 228: "other in any way, nor should the floated"
+                  text run at (5,260) width 234: "elements be overwritten by the DIV text."
+                  text run at (5,277) width 228: "In addition, the floated elements should"
+                  text run at (5,294) width 230: "not be side-by-side, but instead the first"
+                  text run at (5,311) width 218: "should be floated left, and the second"
+                  text run at (5,328) width 194: "floated to the right below the first."
+              RenderBlock {HR} at (365,1058) size 40x2 [border: (1px inset #000000)]
+              RenderBlock {DIV} at (5,1066) size 410x197 [border: (5px solid #800080)]
                 RenderImage {IMG} at (5,5) size 256x36 [border: (3px solid #000000)]
                 RenderImage {IMG} at (149,41) size 256x36 [border: (3px solid #000000)]
-                RenderText {#text} at (261,5) size 398x209
-                  text run at (261,5) width 132: "This is text within the"
-                  text run at (261,24) width 31: "DIV. "
-                  text run at (292,24) width 75: "The floating"
-                  text run at (5,43) width 139: "images within this DIV"
-                  text run at (5,62) width 137: "should not go beyond"
-                  text run at (5,81) width 376: "the left or right inner edge of this DIV, which means that the"
-                  text run at (5,100) width 375: "borders of the floating images should not overlap the top or"
-                  text run at (5,119) width 225: "side borders of the DIV in any way. "
-                  text run at (230,119) width 171: "In addition, they should not"
-                  text run at (5,138) width 398: "overlap each other in any way, nor should the floated elements"
-                  text run at (5,157) width 195: "be overwritten by the DIV text. "
-                  text run at (200,157) width 191: "In addition, the floated images"
-                  text run at (5,176) width 362: "should not be side-by-side, but instead the first should be"
-                  text run at (5,195) width 387: "floated left, and the second floated to the right below the first."
-              RenderBlock {HR} at (25,1462) size 573x2 [border: (1px inset #000000)]
-              RenderBlock {DIV} at (5,1485) size 760x124 [border: (5px solid #800080)]
-                RenderBlock (floating) {P} at (585,5) size 170x87 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
-                  RenderText {#text} at (15,15) size 136x57
-                    text run at (15,15) width 136: "This is a right-floating"
-                    text run at (15,34) width 113: "paragraph (first in"
-                    text run at (15,53) width 52: "source)."
-                RenderBlock (floating) {P} at (5,5) size 170x87 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
-                  RenderText {#text} at (15,15) size 136x57
-                    text run at (15,15) width 127: "This is a left-floating"
-                    text run at (15,34) width 136: "paragraph (second in"
-                    text run at (15,53) width 52: "source)."
-                RenderText {#text} at (175,5) size 573x114
-                  text run at (175,5) width 167: "This is text within the DIV. "
-                  text run at (342,5) width 230: "The floating elements within this DIV"
-                  text run at (175,24) width 403: "should not go beyond the top side of this DIV, which means that"
-                  text run at (175,43) width 394: "the borders of the floating elements should not overlap the top"
-                  text run at (175,62) width 242: "or side borders of the DIV in any way. "
-                  text run at (417,62) width 158: "In addition, the top of the"
-                  text run at (175,81) width 388: "left-floating box should not be higher than the top of the right-"
-                  text run at (5,100) width 77: "floating box."
-              RenderBlock {HR} at (365,1616) size 40x2 [border: (1px inset #000000)]
-              RenderBlock {DIV} at (5,1625) size 760x67 [border: (5px solid #800080)]
+                RenderText {#text} at (261,5) size 400x187
+                  text run at (261,5) width 124: "This is text within the"
+                  text run at (261,22) width 30: "DIV. "
+                  text run at (291,22) width 114: "The floating images"
+                  text run at (261,39) width 126: "within this DIV should"
+                  text run at (5,56) width 141: "not go beyond the left or"
+                  text run at (5,73) width 129: "right inner edge of this"
+                  text run at (5,90) width 394: "DIV, which means that the borders of the floating images should not"
+                  text run at (5,107) width 313: "overlap the top or side borders of the DIV in any way. "
+                  text run at (318,107) width 64: "In addition,"
+                  text run at (5,124) width 399: "they should not overlap each other in any way, nor should the floated"
+                  text run at (5,141) width 238: "elements be overwritten by the DIV text. "
+                  text run at (243,141) width 129: "In addition, the floated"
+                  text run at (5,158) width 378: "images should not be side-by-side, but instead the first should be"
+                  text run at (5,175) width 356: "floated left, and the second floated to the right below the first."
+              RenderBlock {HR} at (23,1282) size 573x2 [border: (1px inset #000000)]
+              RenderBlock {DIV} at (5,1303) size 760x95 [border: (5px solid #800080)]
+                RenderBlock (floating) {P} at (597,5) size 158x79 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
+                  RenderText {#text} at (14,14) size 125x51
+                    text run at (14,14) width 125: "This is a right-floating"
+                    text run at (14,31) width 101: "paragraph (first in"
+                    text run at (14,48) width 47: "source)."
+                RenderBlock (floating) {P} at (5,5) size 158x79 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
+                  RenderText {#text} at (14,14) size 121x51
+                    text run at (14,14) width 118: "This is a left-floating"
+                    text run at (14,31) width 121: "paragraph (second in"
+                    text run at (14,48) width 47: "source)."
+                RenderText {#text} at (163,5) size 429x85
+                  text run at (163,5) width 158: "This is text within the DIV. "
+                  text run at (321,5) width 255: "The floating elements within this DIV should"
+                  text run at (163,22) width 414: "not go beyond the top side of this DIV, which means that the borders of"
+                  text run at (163,39) width 428: "the floating elements should not overlap the top or side borders of the DIV"
+                  text run at (163,56) width 70: "in any way. "
+                  text run at (233,56) width 359: "In addition, the top of the left-floating box should not be higher"
+                  text run at (163,73) width 210: "than the top of the right-floating box."
+              RenderBlock {HR} at (365,1404) size 40x2 [border: (1px inset #000000)]
+              RenderBlock {DIV} at (5,1412) size 760x61 [border: (5px solid #800080)]
                 RenderImage {IMG} at (5,5) size 15x36 [border: (3px solid #000000)]
                 RenderImage {IMG} at (740,5) size 15x36 [border: (3px solid #000000)]
-                RenderText {#text} at (20,5) size 732x57
-                  text run at (20,5) width 167: "This is text within the DIV. "
-                  text run at (187,5) width 550: "The floating images within this DIV should not go beyond the top side of this DIV, which"
-                  text run at (20,24) width 703: "means that the borders of the floating images should not overlap the top or side borders of the DIV in any way. "
-                  text run at (723,24) width 12: "In"
-                  text run at (5,43) width 643: "addition, the top of the left-floating image should not be higher than the top of the right-floating image."
-              RenderBlock {HR} at (25,1713) size 573x2 [border: (1px inset #000000)]
-              RenderBlock {DIV} at (5,1736) size 760x124 [border: (5px solid #800080)]
-                RenderText {#text} at (175,5) size 172x19
-                  text run at (175,5) width 167: "This is text within the DIV. "
-                  text run at (342,5) width 5: "*"
-                RenderBlock (floating) {P} at (5,5) size 170x87 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
-                  RenderText {#text} at (15,15) size 127x57
-                    text run at (15,15) width 127: "This is a left-floating"
-                    text run at (15,34) width 113: "paragraph (first in"
-                    text run at (15,53) width 52: "source)."
-                RenderText {#text} at (347,5) size 567x38
-                  text run at (347,5) width 395: " The floating elements within this DIV should not go any higher"
-                  text run at (175,24) width 434: "than the line-box containing the inline content which precedes them. "
-                  text run at (609,24) width 9: "* "
-                RenderBlock (floating) {P} at (585,43) size 170x87 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
-                  RenderText {#text} at (15,15) size 136x57
-                    text run at (15,15) width 136: "This is a right-floating"
-                    text run at (15,34) width 136: "paragraph (second in"
-                    text run at (15,53) width 52: "source)."
-                RenderText {#text} at (618,24) size 739x95
-                  text run at (618,24) width 126: "This means that the"
-                  text run at (175,43) width 407: "top side of each float can be, at most, as high as the top edge of"
-                  text run at (175,62) width 401: "the inline element containing the content just before the floating"
-                  text run at (175,81) width 191: "elements occur in the source. "
-                  text run at (366,81) width 183: "In order to mark these points"
-                  text run at (5,100) width 448: "clearly, an asterisk has been inserted just before each floated element."
-              RenderBlock {HR} at (365,1867) size 40x2 [border: (1px inset #000000)]
-              RenderBlock {DIV} at (5,1876) size 760x86 [border: (5px solid #800080)]
-                RenderText {#text} at (20,5) size 172x19
-                  text run at (20,5) width 167: "This is text within the DIV. "
-                  text run at (187,5) width 5: "*"
+                RenderText {#text} at (20,5) size 710x51
+                  text run at (20,5) width 158: "This is text within the DIV. "
+                  text run at (178,5) width 552: "The floating images within this DIV should not go beyond the top side of this DIV, which means"
+                  text run at (20,22) width 601: "that the borders of the floating images should not overlap the top or side borders of the DIV in any way. "
+                  text run at (621,22) width 108: "In addition, the top"
+                  text run at (20,39) width 489: "of the left-floating image should not be higher than the top of the right-floating image."
+              RenderBlock {HR} at (23,1492) size 573x2 [border: (1px inset #000000)]
+              RenderBlock {DIV} at (5,1513) size 760x112 [border: (5px solid #800080)]
+                RenderText {#text} at (163,5) size 163x17
+                  text run at (163,5) width 158: "This is text within the DIV. "
+                  text run at (321,5) width 5: "*"
+                RenderBlock (floating) {P} at (5,5) size 158x79 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
+                  RenderText {#text} at (14,14) size 118x51
+                    text run at (14,14) width 118: "This is a left-floating"
+                    text run at (14,31) width 101: "paragraph (first in"
+                    text run at (14,48) width 47: "source)."
+                RenderText {#text} at (326,5) size 577x34
+                  text run at (326,5) width 414: " The floating elements within this DIV should not go any higher than the"
+                  text run at (163,22) width 346: "line-box containing the inline content which precedes them. "
+                  text run at (509,22) width 9: "* "
+                RenderBlock (floating) {P} at (597,22) size 158x79 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
+                  RenderText {#text} at (14,14) size 125x51
+                    text run at (14,14) width 125: "This is a right-floating"
+                    text run at (14,31) width 121: "paragraph (second in"
+                    text run at (14,48) width 47: "source)."
+                RenderText {#text} at (518,22) size 583x85
+                  text run at (518,22) width 68: "This means"
+                  text run at (163,39) width 424: "that the top side of each float can be, at most, as high as the top edge of"
+                  text run at (163,56) width 424: "the inline element containing the content just before the floating elements"
+                  text run at (163,73) width 119: "occur in the source. "
+                  text run at (282,73) width 306: "In order to mark these points clearly, an asterisk has"
+                  text run at (5,90) width 272: "been inserted just before each floated element."
+              RenderBlock {HR} at (365,1631) size 40x2 [border: (1px inset #000000)]
+              RenderBlock {DIV} at (5,1639) size 760x78 [border: (5px solid #800080)]
+                RenderText {#text} at (20,5) size 163x17
+                  text run at (20,5) width 158: "This is text within the DIV. "
+                  text run at (178,5) width 5: "*"
                 RenderImage {IMG} at (5,5) size 15x36 [border: (3px solid #000000)]
-                RenderText {#text} at (192,5) size 734x38
-                  text run at (192,5) width 562: " The floating images within this DIV should not go any higher than the line-box containing"
-                  text run at (20,24) width 255: "the inline content which precedes them. "
-                  text run at (275,24) width 9: "* "
-                RenderImage {IMG} at (740,24) size 15x36 [border: (3px solid #000000)]
-                RenderText {#text} at (284,24) size 734x57
-                  text run at (284,24) width 437: "This means that the top side of each float can be, at most, as high as"
-                  text run at (5,43) width 684: "the top edge of the inline element containing the content just before the floating images occur in the source. "
-                  text run at (689,43) width 50: "In order"
-                  text run at (5,62) width 569: "to mark these points clearly, an asterisk has been inserted just before each floated image."
-              RenderBlock {HR} at (25,1983) size 573x2 [border: (1px inset #000000)]
-              RenderBlock {DIV} at (5,2006) size 760x219 [border: (5px solid #800080)]
-                RenderText {#text} at (175,5) size 172x19
-                  text run at (175,5) width 167: "This is text within the DIV. "
-                  text run at (342,5) width 5: "*"
-                RenderBlock (floating) {P} at (5,5) size 170x87 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
-                  RenderText {#text} at (15,15) size 127x57
-                    text run at (15,15) width 127: "This is a left-floating"
-                    text run at (15,34) width 113: "paragraph (first in"
-                    text run at (15,53) width 52: "source)."
-                RenderText {#text} at (347,5) size 567x38
-                  text run at (347,5) width 395: " The floating elements within this DIV should not go any higher"
-                  text run at (175,24) width 434: "than the line-box containing the inline content which precedes them. "
-                  text run at (609,24) width 9: "* "
-                RenderBlock (floating) {P} at (585,43) size 170x87 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
-                  RenderText {#text} at (15,15) size 136x57
-                    text run at (15,15) width 136: "This is a right-floating"
-                    text run at (15,34) width 136: "paragraph (second in"
-                    text run at (15,53) width 52: "source)."
-                RenderText {#text} at (618,24) size 399x38
-                  text run at (618,24) width 126: "This means that the"
-                  text run at (345,43) width 188: "top side of each float can be,*"
-                RenderBlock (floating) {P} at (175,43) size 170x87 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
-                  RenderText {#text} at (15,15) size 127x57
-                    text run at (15,15) width 127: "This is a left-floating"
-                    text run at (15,34) width 118: "paragraph (third in"
-                    text run at (15,53) width 52: "source)."
-                RenderText {#text} at (533,43) size 232x95
-                  text run at (533,43) width 16: " at"
-                  text run at (345,62) width 228: "most, as high as the top edge of the"
-                  text run at (345,81) width 232: "inline element containing the content"
-                  text run at (345,100) width 203: "just before the floating elements"
-                  text run at (345,119) width 129: "occur in the source. "
-                  text run at (474,119) width 5: "*"
-                RenderBlock (floating) {P} at (5,138) size 170x87 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
-                  RenderText {#text} at (15,15) size 127x57
-                    text run at (15,15) width 127: "This is a left-floating"
-                    text run at (15,34) width 127: "paragraph (fourth in"
-                    text run at (15,53) width 52: "source)."
-                RenderText {#text} at (479,119) size 579x95
-                  text run at (479,119) width 106: " In order to mark"
-                  text run at (175,138) width 533: "these points clearly, an asterisk has been inserted just before each floated element. "
-                  text run at (708,138) width 46: "If a line"
-                  text run at (175,157) width 569: "has room for a floated element, then the element should float so that its top is aligned with"
-                  text run at (175,176) width 334: "the top of the line-box in which the asterisk appears. "
-                  text run at (509,176) width 243: "Otherwise, its top should align with the"
-                  text run at (175,195) width 149: "top of the next line-box."
-              RenderBlock {HR} at (365,2232) size 40x2 [border: (1px inset #000000)]
-              RenderBlock {DIV} at (5,2241) size 760x124 [border: (5px solid #800080)]
-                RenderText {#text} at (20,5) size 172x19
-                  text run at (20,5) width 167: "This is text within the DIV. "
-                  text run at (187,5) width 5: "*"
+                RenderText {#text} at (183,5) size 734x34
+                  text run at (183,5) width 571: " The floating images within this DIV should not go any higher than the line-box containing the inline"
+                  text run at (20,22) width 178: "content which precedes them. "
+                  text run at (198,22) width 9: "* "
+                RenderImage {IMG} at (740,22) size 15x36 [border: (3px solid #000000)]
+                RenderText {#text} at (207,22) size 720x51
+                  text run at (207,22) width 518: "This means that the top side of each float can be, at most, as high as the top edge of the"
+                  text run at (20,39) width 514: "inline element containing the content just before the floating images occur in the source. "
+                  text run at (534,39) width 167: "In order to mark these points"
+                  text run at (5,56) width 400: "clearly, an asterisk has been inserted just before each floated image."
+              RenderBlock {HR} at (23,1736) size 573x2 [border: (1px inset #000000)]
+              RenderBlock {DIV} at (5,1757) size 760x214 [border: (5px solid #800080)]
+                RenderText {#text} at (163,5) size 163x17
+                  text run at (163,5) width 158: "This is text within the DIV. "
+                  text run at (321,5) width 5: "*"
+                RenderBlock (floating) {P} at (5,5) size 158x79 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
+                  RenderText {#text} at (14,14) size 118x51
+                    text run at (14,14) width 118: "This is a left-floating"
+                    text run at (14,31) width 101: "paragraph (first in"
+                    text run at (14,48) width 47: "source)."
+                RenderText {#text} at (326,5) size 577x34
+                  text run at (326,5) width 414: " The floating elements within this DIV should not go any higher than the"
+                  text run at (163,22) width 346: "line-box containing the inline content which precedes them. "
+                  text run at (509,22) width 9: "* "
+                RenderBlock (floating) {P} at (597,22) size 158x79 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
+                  RenderText {#text} at (14,14) size 125x51
+                    text run at (14,14) width 125: "This is a right-floating"
+                    text run at (14,31) width 121: "paragraph (second in"
+                    text run at (14,48) width 47: "source)."
+                RenderText {#text} at (518,22) size 265x34
+                  text run at (518,22) width 68: "This means"
+                  text run at (321,39) width 222: "that the top side of each float can be,*"
+                RenderBlock (floating) {P} at (163,39) size 158x79 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
+                  RenderText {#text} at (14,14) size 118x51
+                    text run at (14,14) width 118: "This is a left-floating"
+                    text run at (14,31) width 104: "paragraph (third in"
+                    text run at (14,48) width 47: "source)."
+                RenderText {#text} at (543,39) size 274x68
+                  text run at (543,39) width 52: " at most,"
+                  text run at (321,56) width 257: "as high as the top edge of the inline element"
+                  text run at (321,73) width 261: "containing the content just before the floating"
+                  text run at (321,90) width 176: "elements occur in the source. "
+                  text run at (497,90) width 5: "*"
+                RenderBlock (floating) {P} at (321,107) size 158x79 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
+                  RenderText {#text} at (14,14) size 118x51
+                    text run at (14,14) width 118: "This is a left-floating"
+                    text run at (14,31) width 112: "paragraph (fourth in"
+                    text run at (14,48) width 47: "source)."
+                RenderText {#text} at (502,90) size 750x119
+                  text run at (502,90) width 63: " In order to"
+                  text run at (479,107) width 275: "mark these points clearly, an asterisk has been"
+                  text run at (479,124) width 244: "inserted just before each floated element. "
+                  text run at (723,124) width 19: "If a"
+                  text run at (479,141) width 256: "line has room for a floated element, then the"
+                  text run at (479,158) width 260: "element should float so that its top is aligned"
+                  text run at (479,175) width 276: "with the top of the line-box in which the asterisk"
+                  text run at (5,192) width 54: "appears. "
+                  text run at (59,192) width 365: "Otherwise, its top should align with the top of the next line-box."
+              RenderBlock {HR} at (365,1977) size 40x2 [border: (1px inset #000000)]
+              RenderBlock {DIV} at (5,1985) size 760x112 [border: (5px solid #800080)]
+                RenderText {#text} at (20,5) size 163x17
+                  text run at (20,5) width 158: "This is text within the DIV. "
+                  text run at (178,5) width 5: "*"
                 RenderImage {IMG} at (5,5) size 15x36 [border: (3px solid #000000)]
-                RenderText {#text} at (192,5) size 719x38
-                  text run at (192,5) width 562: " The floating images within this DIV should not go any higher than the line-box containing"
-                  text run at (35,24) width 255: "the inline content which precedes them. "
-                  text run at (290,24) width 9: "* "
-                RenderImage {IMG} at (740,24) size 15x36 [border: (3px solid #000000)]
-                RenderText {#text} at (299,24) size 322x19
-                  text run at (299,24) width 317: "This means that the top side of each float can be, "
-                  text run at (616,24) width 5: "*"
-                RenderImage {IMG} at (20,24) size 15x36 [border: (3px solid #000000)]
-                RenderText {#text} at (621,24) size 714x57
-                  text run at (621,24) width 105: " at most, as high"
-                  text run at (35,43) width 699: "as the top edge of the inline element containing the content just before the floating images occur in the source."
-                  text run at (20,62) width 5: "*"
-                RenderImage {IMG} at (5,62) size 15x36 [border: (3px solid #000000)]
-                RenderText {#text} at (25,62) size 730x57
-                  text run at (25,62) width 631: " In order to mark these points clearly, an asterisk has been inserted just before each floated image. "
-                  text run at (656,62) width 73: "If a line has"
-                  text run at (20,81) width 715: "room for a floated image, then the image should float so that its top is aligned with the top of the line-box in which"
-                  text run at (5,100) width 137: "the asterisk appears. "
-                  text run at (142,100) width 396: "Otherwise, its top should align with the top of the next line-box."
-              RenderBlock {HR} at (25,2386) size 573x2 [border: (1px inset #000000)]
-              RenderBlock {DIV} at (5,2409) size 430x352 [border: (5px solid #800080)]
-                RenderText {#text} at (175,5) size 50x19
-                  text run at (175,5) width 50: "This is *"
-                RenderBlock (floating) {P} at (5,5) size 170x87 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
-                  RenderText {#text} at (15,15) size 127x57
-                    text run at (15,15) width 127: "This is a left-floating"
-                    text run at (15,34) width 113: "paragraph (first in"
-                    text run at (15,53) width 52: "source)."
-                RenderText {#text} at (225,5) size 9x19
-                  text run at (225,5) width 9: " *"
-                RenderBlock (floating) {P} at (255,5) size 170x87 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
-                  RenderText {#text} at (15,15) size 136x57
-                    text run at (15,15) width 136: "This is a right-floating"
-                    text run at (15,34) width 136: "paragraph (second in"
-                    text run at (15,53) width 52: "source)."
-                RenderText {#text} at (175,24) size 416x323
-                  text run at (175,24) width 63: "text within"
-                  text run at (175,43) width 51: "the DIV."
-                  text run at (175,62) width 39: "Under"
-                  text run at (175,81) width 64: "CSS1, the"
-                  text run at (5,100) width 400: "left floating element should be placed in the upper left corner of"
-                  text run at (5,119) width 403: "the DIV, and the purple border of the DIV should abut the green"
-                  text run at (5,138) width 195: "border of the floating element. "
-                  text run at (200,138) width 218: "Similarly, the right floating element"
-                  text run at (5,157) width 388: "should be placed in the upper right corner of the DIV, and the"
-                  text run at (5,176) width 382: "purple border of the DIV should abut the green border of the"
-                  text run at (5,195) width 416: "floating element. The text of the DIV element should flow between"
-                  text run at (5,214) width 410: "and under the two floating elements. The two asterisk characters"
-                  text run at (5,233) width 400: "mark the insertion points of the floating elements. It is expected"
-                  text run at (5,252) width 407: "that, under future specifications, it may be acceptable for the top"
-                  text run at (5,271) width 401: "of floated elements to align with the top of the line-box following"
-                  text run at (5,290) width 359: "the insertion point of the floated element to avoid floating"
-                  text run at (5,309) width 398: "elements appearing before text which precedes it in the source"
-                  text run at (5,328) width 67: "document."
-              RenderBlock {HR} at (365,2768) size 40x2 [border: (1px inset #000000)]
-              RenderBlock {DIV} at (5,2777) size 430x257 [border: (5px solid #800080)]
-                RenderText {#text} at (20,5) size 50x19
-                  text run at (20,5) width 50: "This is *"
+                RenderText {#text} at (183,5) size 719x34
+                  text run at (183,5) width 571: " The floating images within this DIV should not go any higher than the line-box containing the inline"
+                  text run at (35,22) width 178: "content which precedes them. "
+                  text run at (213,22) width 9: "* "
+                RenderImage {IMG} at (740,22) size 15x36 [border: (3px solid #000000)]
+                RenderText {#text} at (222,22) size 298x17
+                  text run at (222,22) width 293: "This means that the top side of each float can be, "
+                  text run at (515,22) width 5: "*"
+                RenderImage {IMG} at (20,22) size 15x36 [border: (3px solid #000000)]
+                RenderText {#text} at (520,22) size 677x34
+                  text run at (520,22) width 207: " at most, as high as the top edge of"
+                  text run at (50,39) width 536: "the inline element containing the content just before the floating images occur in the source. "
+                  text run at (586,39) width 5: "*"
+                RenderImage {IMG} at (35,39) size 15x36 [border: (3px solid #000000)]
+                RenderText {#text} at (591,39) size 734x68
+                  text run at (591,39) width 132: " In order to mark these"
+                  text run at (50,56) width 443: "points clearly, an asterisk has been inserted just before each floated image. "
+                  text run at (493,56) width 246: "If a line has room for a floated image, then"
+                  text run at (50,73) width 609: "the image should float so that its top is aligned with the top of the line-box in which the asterisk appears. "
+                  text run at (659,73) width 80: "Otherwise, its"
+                  text run at (5,90) width 281: "top should align with the top of the next line-box."
+              RenderBlock {HR} at (23,2116) size 573x2 [border: (1px inset #000000)]
+              RenderBlock {DIV} at (5,2137) size 400x299 [border: (5px solid #800080)]
+                RenderText {#text} at (163,5) size 48x17
+                  text run at (163,5) width 48: "This is *"
+                RenderBlock (floating) {P} at (5,5) size 158x79 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
+                  RenderText {#text} at (14,14) size 118x51
+                    text run at (14,14) width 118: "This is a left-floating"
+                    text run at (14,31) width 101: "paragraph (first in"
+                    text run at (14,48) width 47: "source)."
+                RenderText {#text} at (211,5) size 9x17
+                  text run at (211,5) width 9: " *"
+                RenderBlock (floating) {P} at (237,5) size 158x79 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
+                  RenderText {#text} at (14,14) size 125x51
+                    text run at (14,14) width 125: "This is a right-floating"
+                    text run at (14,31) width 121: "paragraph (second in"
+                    text run at (14,48) width 47: "source)."
+                RenderText {#text} at (163,22) size 390x272
+                  text run at (163,22) width 59: "text within"
+                  text run at (163,39) width 48: "the DIV."
+                  text run at (163,56) width 34: "Under"
+                  text run at (163,73) width 60: "CSS1, the"
+                  text run at (5,90) width 387: "left floating element should be placed in the upper left corner of the"
+                  text run at (5,107) width 384: "DIV, and the purple border of the DIV should abut the green border"
+                  text run at (5,124) width 137: "of the floating element. "
+                  text run at (142,124) width 243: "Similarly, the right floating element should"
+                  text run at (5,141) width 390: "be placed in the upper right corner of the DIV, and the purple border"
+                  text run at (5,158) width 365: "of the DIV should abut the green border of the floating element."
+                  text run at (5,175) width 389: "The text of the DIV element should flow between and under the two"
+                  text run at (5,192) width 376: "floating elements. The two asterisk characters mark the insertion"
+                  text run at (5,209) width 365: "points of the floating elements. It is expected that, under future"
+                  text run at (5,226) width 387: "specifications, it may be acceptable for the top of floated elements"
+                  text run at (5,243) width 375: "to align with the top of the line-box following the insertion point of"
+                  text run at (5,260) width 390: "the floated element to avoid floating elements appearing before text"
+                  text run at (5,277) width 245: "which precedes it in the source document."
+              RenderBlock {HR} at (365,2442) size 40x2 [border: (1px inset #000000)]
+              RenderBlock {DIV} at (5,2450) size 400x231 [border: (5px solid #800080)]
+                RenderText {#text} at (20,5) size 48x17
+                  text run at (20,5) width 48: "This is *"
                 RenderImage {IMG} at (5,5) size 15x36 [border: (3px solid #000000)]
-                RenderText {#text} at (70,5) size 9x19
-                  text run at (70,5) width 9: " *"
-                RenderImage {IMG} at (410,5) size 15x36 [border: (3px solid #000000)]
-                RenderText {#text} at (79,5) size 418x247
-                  text run at (79,5) width 126: " text within the DIV. "
-                  text run at (205,5) width 180: "Under CSS1, the left floating"
-                  text run at (20,24) width 370: "image should be placed in the upper left corner of the DIV,"
-                  text run at (5,43) width 410: "and the purple border of the DIV should abut the green border of"
-                  text run at (5,62) width 121: "the floating image. "
-                  text run at (126,62) width 272: "Similarly, the right floating image should be"
-                  text run at (5,81) width 412: "placed in the upper right corner of the DIV, and the purple border"
-                  text run at (5,100) width 418: "of the DIV should abut the green border of the floating image. The"
-                  text run at (5,119) width 397: "text of the DIV element should flow between and under the two"
-                  text run at (5,138) width 390: "floating image. The two asterisk characters mark the insertion"
-                  text run at (5,157) width 179: "points of the floating image. "
-                  text run at (184,157) width 198: "It is expected that, under future"
-                  text run at (5,176) width 418: "specifications, it may be acceptable for the top of floated elements"
-                  text run at (5,195) width 409: "to align with the top of the line-box following the insertion point of"
-                  text run at (5,214) width 401: "the floated element to avoid floating elements appearing before"
-                  text run at (5,233) width 294: "text which precedes it in the source document."
-              RenderBlock {HR} at (25,3055) size 573x2 [border: (1px inset #000000)]
+                RenderText {#text} at (68,5) size 9x17
+                  text run at (68,5) width 9: " *"
+                RenderImage {IMG} at (380,5) size 15x36 [border: (3px solid #000000)]
+                RenderText {#text} at (77,5) size 390x221
+                  text run at (77,5) width 119: " text within the DIV. "
+                  text run at (196,5) width 166: "Under CSS1, the left floating"
+                  text run at (20,22) width 338: "image should be placed in the upper left corner of the DIV,"
+                  text run at (20,39) width 354: "and the purple border of the DIV should abut the green border"
+                  text run at (5,56) width 126: "of the floating image. "
+                  text run at (131,56) width 250: "Similarly, the right floating image should be"
+                  text run at (5,73) width 387: "placed in the upper right corner of the DIV, and the purple border of"
+                  text run at (5,90) width 365: "the DIV should abut the green border of the floating image. The"
+                  text run at (5,107) width 363: "text of the DIV element should flow between and under the two"
+                  text run at (5,124) width 358: "floating image. The two asterisk characters mark the insertion"
+                  text run at (5,141) width 165: "points of the floating image. "
+                  text run at (170,141) width 182: "It is expected that, under future"
+                  text run at (5,158) width 387: "specifications, it may be acceptable for the top of floated elements"
+                  text run at (5,175) width 375: "to align with the top of the line-box following the insertion point of"
+                  text run at (5,192) width 390: "the floated element to avoid floating elements appearing before text"
+                  text run at (5,209) width 245: "which precedes it in the source document."
+              RenderBlock {HR} at (23,2700) size 573x2 [border: (1px inset #000000)]

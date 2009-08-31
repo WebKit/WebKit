@@ -2,6 +2,26 @@
 
         Reviewed by Ariya Hidayat.
 
+        [Qt] Update font metrics for these css1 tests.
+
+        * platform/qt/Skipped:
+        * platform/qt/css1/formatting_model/canvas-expected.txt:
+        * platform/qt/css1/formatting_model/floating_elements-expected.txt:
+        * platform/qt/css1/formatting_model/height_of_lines-expected.txt:
+        * platform/qt/css1/formatting_model/horizontal_formatting-expected.txt:
+        * platform/qt/css1/formatting_model/inline_elements-expected.txt:
+        * platform/qt/css1/formatting_model/replaced_elements-expected.txt:
+        * platform/qt/css1/formatting_model/vertical_formatting-expected.txt:
+        * platform/qt/css1/pseudo/anchor-expected.txt:
+        * platform/qt/css1/pseudo/firstletter-expected.txt:
+        * platform/qt/css1/pseudo/firstline-expected.txt:
+        * platform/qt/css1/pseudo/multiple_pseudo_elements-expected.txt:
+        * platform/qt/css1/pseudo/pseudo_elements_in_selectors-expected.txt:
+
+2009-08-31  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
+
+        Reviewed by Ariya Hidayat.
+
         [Qt] Update outdated font metrics for these css1 tests.
 
         * platform/qt/Skipped:
