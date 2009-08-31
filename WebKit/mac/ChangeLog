@@ -1,3 +1,15 @@
+2009-08-31  Mark Mentovai  <mark@chromium.org>
+
+        Reviewed by Dave Hyatt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28614
+
+        Perform a layout prior to checking whether the scrollbar modes are
+        off, on, or automatic.  The modes may change during layout.
+
+        * WebView/WebDynamicScrollBarsView.mm:
+        (-[WebDynamicScrollBarsView updateScrollers]):
+
 2009-08-28  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by John Sullivan.
