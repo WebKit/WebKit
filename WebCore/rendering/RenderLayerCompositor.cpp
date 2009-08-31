@@ -286,6 +286,13 @@ IntRect RenderLayerCompositor::calculateCompositedBounds(const RenderLayer* laye
         return boundingBoxRect;
     }
 
+    if (RenderLayer* reflection = layer->reflectionLayer()) {
+        if (!reflection->isComposited()) {
+            IntRect childUnionBounds = calculateCompositedBounds(reflection, layer);
+            unionBounds.unite(childUnionBounds);
+        }
+    }
+    
     ASSERT(layer->isStackingContext() || (!layer->m_posZOrderList || layer->m_posZOrderList->size() == 0));
 
     if (Vector<RenderLayer*>* negZOrderList = layer->negZOrderList()) {

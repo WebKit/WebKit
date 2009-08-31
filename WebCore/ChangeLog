@@ -1,3 +1,18 @@
+2009-08-31  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Compositing layer size needs to take into account software reflections on children.
+        https://bugs.webkit.org/show_bug.cgi?id=28837
+        
+        When computing the bounds of a composited layer, take software-rendered
+        reflections into account.
+
+        Test: compositing/reflections/reflection-in-composited.html
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::calculateCompositedBounds):
+
 2009-08-31  Mark Mentovai  <mark@chromium.org>
 
         Reviewed by Dave Hyatt.

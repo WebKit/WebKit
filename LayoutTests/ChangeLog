@@ -1,5 +1,19 @@
 2009-08-31  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Compositing layer size needs to take into account software reflections on children.
+        https://bugs.webkit.org/show_bug.cgi?id=28837
+        
+        Test for a composited element with a reflected child that projects outside of it.
+
+        * compositing/reflections/reflection-in-composited.html: Added.
+        * platform/mac/compositing/reflections/reflection-in-composited-expected.checksum: Added.
+        * platform/mac/compositing/reflections/reflection-in-composited-expected.png: Added.
+        * platform/mac/compositing/reflections/reflection-in-composited-expected.txt: Added.
+
+2009-08-31  Simon Fraser  <simon.fraser@apple.com>
+
         Followup from r47877; add test for the Obj-C wrapper class for WebkitCSSTransformValue
         https://bugs.webkit.org/show_bug.cgi?id=27727
 
