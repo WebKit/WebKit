@@ -1,3 +1,19 @@
+2009-08-31  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Eric Seidel.
+
+        Remove ASSERT(frame) in ResourceHandle::start (ResourceHandleCurl.cpp)
+        https://bugs.webkit.org/show_bug.cgi?id=28802
+
+        Remove ASSERT because the frame could be null if the
+        ResourceHandle is not associated with any frame, e.g. if we are
+        downloading a file.
+        If the frame is not null but the page is null this must be an
+        attempted load from an onUnload handler, so let's just block it.
+
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        (WebCore::ResourceHandle::start):
+
 2009-08-31  Maxime Simon  <simon.maxime@gmail.com>
 
         Reviewed by Eric Seidel.
