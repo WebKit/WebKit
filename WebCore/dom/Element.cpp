@@ -682,7 +682,7 @@ void Element::setPrefix(const AtomicString &_prefix, ExceptionCode& ec)
 
 KURL Element::baseURI() const
 {
-    KURL base(ParsedURLString, getAttribute(baseAttr));
+    KURL base(KURL(), getAttribute(baseAttr));
     if (!base.protocol().isEmpty())
         return base;
 
