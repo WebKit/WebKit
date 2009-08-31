@@ -244,7 +244,7 @@ bool SVGImage::dataChanged(bool allDataReceived)
         RefPtr<Frame> frame = Frame::create(m_page.get(), 0, dummyFrameLoaderClient);
         frame->setView(FrameView::create(frame.get()));
         frame->init();
-        ResourceRequest fakeRequest(KURL(""));
+        ResourceRequest fakeRequest(KURL(ParsedURLString, ""));
         FrameLoader* loader = frame->loader();
         loader->load(fakeRequest, false); // Make sure the DocumentLoader is created
         loader->cancelContentPolicyCheck(); // cancel any policy checks

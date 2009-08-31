@@ -826,7 +826,7 @@ void InspectorController::didLoadResourceFromMemoryCache(DocumentLoader* loader,
         return;
 
     ASSERT(m_inspectedPage);
-    bool isMainResource = isMainResourceLoader(loader, KURL(cachedResource->url()));
+    bool isMainResource = isMainResourceLoader(loader, KURL(ParsedURLString, cachedResource->url()));
     ensureResourceTrackingSettingsLoaded();
     if (!isMainResource && !m_resourceTrackingEnabled)
         return;

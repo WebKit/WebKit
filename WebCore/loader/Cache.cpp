@@ -191,7 +191,7 @@ void Cache::revalidateResource(CachedResource* resource, DocLoader* docLoader)
         return;
     }
     const String& url = resource->url();
-    CachedResource* newResource = createResource(resource->type(), KURL(url), resource->encoding());
+    CachedResource* newResource = createResource(resource->type(), KURL(ParsedURLString, url), resource->encoding());
     newResource->setResourceToRevalidate(resource);
     evict(resource);
     m_resources.set(url, newResource);

@@ -46,7 +46,7 @@ namespace WebCore {
         };
 
         ResourceRequest(const String& url) 
-            : ResourceRequestBase(KURL(url), UseProtocolCachePolicy)
+            : ResourceRequestBase(KURL(ParsedURLString, url), UseProtocolCachePolicy)
             , m_requestorID(0)
             , m_requestorProcessID(0)
             , m_appCacheContextID(0)

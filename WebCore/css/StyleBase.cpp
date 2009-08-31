@@ -57,7 +57,7 @@ KURL StyleBase::baseURL() const
     if (!sheet)
         return KURL();
     if (!sheet->href().isNull())
-        return KURL(sheet->href());
+        return KURL(ParsedURLString, sheet->href());
     if (sheet->parent()) 
         return sheet->parent()->baseURL();
     if (!sheet->ownerNode()) 

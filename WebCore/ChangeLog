@@ -1,3 +1,114 @@
+2009-08-31  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28852
+        Rename KURL single argument constructor to avoid confusion
+
+        * platform/KURL.h: The constructor that used to be single argument should now be invoked
+        as KURL(ParsedURLString, myString).
+
+        * WebCore.base.exp:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::createWindow):
+        * bindings/js/ScriptCallFrame.cpp:
+        (WebCore::ScriptCallFrame::ScriptCallFrame):
+        * bindings/v8/NPV8Object.cpp:
+        (_NPN_EvaluateHelper):
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::createWindow):
+        * css/CSSCursorImageValue.cpp:
+        (WebCore::isSVGCursorIdentifier):
+        * css/CSSImageValue.cpp:
+        (WebCore::CSSImageValue::cachedImage):
+        * css/CSSImportRule.cpp:
+        (WebCore::CSSImportRule::insertedIntoParent):
+        * css/StyleBase.cpp:
+        (WebCore::StyleBase::baseURL):
+        * dom/Document.cpp:
+        (WebCore::Document::initSecurityContext):
+        * dom/Element.cpp:
+        (WebCore::Element::baseURI):
+        * editing/markup.cpp:
+        (WebCore::completeURLs):
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::url):
+        (WebCore::HistoryItem::originalURL):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::didLoadResourceFromMemoryCache):
+        * inspector/InspectorResource.cpp:
+        (WebCore::InspectorResource::createCached):
+        * loader/Cache.cpp:
+        (WebCore::Cache::revalidateResource):
+        * loader/DocLoader.cpp:
+        (WebCore::DocLoader::requestResource):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::getSubresources):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::init):
+        (WebCore::FrameLoader::iconURL):
+        (WebCore::FrameLoader::scheduleLocationChange):
+        (WebCore::FrameLoader::redirectionTimerFired):
+        (WebCore::FrameLoader::loadURLIntoChildFrame):
+        (WebCore::FrameLoader::startRedirectionTimer):
+        * loader/appcache/ApplicationCache.cpp:
+        (WebCore::ApplicationCache::resourceForURL):
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::startLoadingEntry):
+        (WebCore::ApplicationCacheGroup::addEntry):
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::cacheGroupForURL):
+        (WebCore::ApplicationCacheStorage::fallbackCacheGroupForURL):
+        (WebCore::ApplicationCacheStorage::loadCache):
+        (WebCore::ApplicationCacheStorage::manifestURLs):
+        * loader/archive/cf/LegacyWebArchive.cpp:
+        (WebCore::LegacyWebArchive::createResource):
+        (WebCore::LegacyWebArchive::create):
+        * loader/loader.cpp:
+        (WebCore::Loader::load):
+        * notifications/NotificationCenter.h:
+        (WebCore::NotificationCenter::createHTMLNotification):
+        * platform/KURL.cpp:
+        (WebCore::KURL::KURL):
+        (WebCore::blankURL):
+        * platform/KURLHash.h:
+        * platform/chromium/ClipboardChromium.cpp:
+        (WebCore::ClipboardChromium::setData):
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::createQTMovie):
+        * platform/network/cf/ResourceErrorCF.cpp:
+        (WebCore::ResourceError::operator CFErrorRef):
+        * platform/network/cf/ResourceRequest.h:
+        (WebCore::ResourceRequest::ResourceRequest):
+        * platform/network/chromium/ResourceRequest.h:
+        (WebCore::ResourceRequest::ResourceRequest):
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::handleLocalReceiveResponse):
+        (WebCore::headerCallback):
+        * platform/network/curl/ResourceRequest.h:
+        (WebCore::ResourceRequest::ResourceRequest):
+        * platform/network/mac/ResourceErrorMac.mm:
+        (WebCore::ResourceError::operator NSError*):
+        * platform/network/mac/ResourceRequest.h:
+        (WebCore::ResourceRequest::ResourceRequest):
+        * platform/network/qt/ResourceRequest.h:
+        (WebCore::ResourceRequest::ResourceRequest):
+        * platform/network/soup/ResourceRequest.h:
+        (WebCore::ResourceRequest::ResourceRequest):
+        * platform/win/ClipboardWin.cpp:
+        (WebCore::filesystemPathFromUrlOrTitle):
+        (WebCore::ClipboardWin::setData):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::dataChanged):
+        * xml/XSLImportRule.cpp:
+        (WebCore::XSLImportRule::loadSheet):
+        * xml/XSLTProcessor.cpp:
+        (WebCore::docLoaderFunc):
+        Adapt to the change everywhere the single argument constructor was used. I did a very
+        cursory check of whether these locations were using this constructor properly, and didn't
+        notice any obvious mistakes. The new explicit name will hopefully suggest checking this
+        better when refactoring any such code.
+
 2009-08-31  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin Adler.

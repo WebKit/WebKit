@@ -41,7 +41,7 @@ namespace WebCore {
     class ResourceRequest : public ResourceRequestBase {
     public:
         ResourceRequest(const String& url) 
-            : ResourceRequestBase(KURL(url), UseProtocolCachePolicy)
+            : ResourceRequestBase(KURL(ParsedURLString, url), UseProtocolCachePolicy)
         {
         }
 

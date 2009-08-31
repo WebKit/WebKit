@@ -37,7 +37,7 @@ namespace WebCore {
     struct ResourceRequest : ResourceRequestBase {
 
         ResourceRequest(const String& url) 
-            : ResourceRequestBase(KURL(url), UseProtocolCachePolicy)
+            : ResourceRequestBase(KURL(ParsedURLString, url), UseProtocolCachePolicy)
         {
         }
 

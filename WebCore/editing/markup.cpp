@@ -645,7 +645,7 @@ static void completeURLs(Node* node, const String& baseURL)
 {
     Vector<AttributeChange> changes;
 
-    KURL parsedBaseURL(baseURL);
+    KURL parsedBaseURL(ParsedURLString, baseURL);
 
     Node* end = node->traverseNextSibling();
     for (Node* n = node; n != end; n = n->traverseNextNode()) {

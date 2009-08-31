@@ -51,7 +51,7 @@ namespace WebCore {
         
         Notification* createHTMLNotification(const String& URI, ExceptionCode& ec)
         {
-            return Notification::create(KURL(URI), context(), ec, presenter());
+            return Notification::create(KURL(ParsedURLString, URI), context(), ec, presenter());
         }
 
         Notification* createNotification(const String& iconURI, const String& title, const String& body, ExceptionCode& ec)

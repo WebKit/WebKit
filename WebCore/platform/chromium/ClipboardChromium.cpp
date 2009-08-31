@@ -143,7 +143,7 @@ bool ClipboardChromium::setData(const String& type, const String& data)
     ClipboardDataType winType = clipboardTypeFromMIMEType(type);
 
     if (winType == ClipboardDataTypeURL) {
-        m_dataObject->url = KURL(data);
+        m_dataObject->url = KURL(ParsedURLString, data);
         return m_dataObject->url.isValid();
     }
 

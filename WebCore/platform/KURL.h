@@ -55,15 +55,18 @@ namespace WebCore {
 class TextEncoding;
 struct KURLHash;
 
+enum ParsedURLStringTag { ParsedURLString };
+
 class KURL {
 public:
     // Generates a URL which contains a null string.
     KURL() { invalidate(); }
 
-    // The argument is an absolute URL string. The string is assumed to be
-    // an already encoded (ASCII-only) valid absolute URL.
-    explicit KURL(const char*);
-    explicit KURL(const String&);
+    // The argument is an absolute URL string. The string is assumed to be output of KURL::string() called on a valid
+    // KURL object, or indiscernible from such.
+    // It is usually best to avoid repeatedly parsing a string, unless memory saving outweigh the possible slow-downs.
+    KURL(ParsedURLStringTag, const char*);
+    KURL(ParsedURLStringTag, const String&);
 
     // Resolves the relative URL with the given base URL. If provided, the
     // TextEncoding is used to encode non-ASCII characers. The base URL can be

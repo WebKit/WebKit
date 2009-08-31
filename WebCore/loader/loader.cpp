@@ -100,7 +100,7 @@ void Loader::load(DocLoader* docLoader, CachedResource* resource, bool increment
     Request* request = new Request(docLoader, resource, incremental, skipCanLoadCheck, sendResourceLoadCallbacks);
 
     RefPtr<Host> host;
-    KURL url(resource->url());
+    KURL url(ParsedURLString, resource->url());
     if (url.protocolInHTTPFamily()) {
         AtomicString hostName = url.host();
         host = m_hosts.get(hostName.impl());

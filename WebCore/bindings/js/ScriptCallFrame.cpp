@@ -40,7 +40,7 @@ namespace WebCore {
 
 ScriptCallFrame::ScriptCallFrame(const UString& functionName, const UString& urlString, int lineNumber, const ArgList& args, unsigned skipArgumentCount)
     : m_functionName(functionName)
-    , m_sourceURL(urlString)
+    , m_sourceURL(ParsedURLString, urlString)
     , m_lineNumber(lineNumber)
 {
     size_t argumentCount = args.size();

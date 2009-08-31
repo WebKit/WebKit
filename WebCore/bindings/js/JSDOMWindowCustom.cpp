@@ -688,7 +688,7 @@ static Frame* createWindow(ExecState* exec, Frame* lexicalFrame, Frame* dynamicF
         newWindow->putDirect(Identifier(exec, "dialogArguments"), dialogArgs);
 
     if (!protocolIsJavaScript(url) || newWindow->allowsAccessFrom(exec)) {
-        KURL completedURL = url.isEmpty() ? KURL("") : completeURL(exec, url);
+        KURL completedURL = url.isEmpty() ? KURL(ParsedURLString, "") : completeURL(exec, url);
         bool userGesture = processingUserGesture(exec);
 
         if (created)

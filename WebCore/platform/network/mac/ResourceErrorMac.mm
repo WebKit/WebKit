@@ -76,7 +76,7 @@ ResourceError::operator NSError*() const
             [userInfo.get() setValue:m_localizedDescription forKey:NSLocalizedDescriptionKey];
 
         if (!m_failingURL.isEmpty()) {
-            NSURL *cocoaURL = KURL(m_failingURL);
+            NSURL *cocoaURL = KURL(ParsedURLString, m_failingURL);
             [userInfo.get() setValue:m_failingURL forKey:@"NSErrorFailingURLStringKey"];
             [userInfo.get() setValue:cocoaURL forKey:@"NSErrorFailingURLKey"];
         }

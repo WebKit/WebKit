@@ -39,7 +39,7 @@ namespace WebCore {
 #if ENABLE(SVG)
 static inline bool isSVGCursorIdentifier(const String& url)
 {
-    KURL kurl(url);
+    KURL kurl(ParsedURLString, url);
     return kurl.hasFragmentIdentifier();
 }
 

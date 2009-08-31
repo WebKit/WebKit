@@ -172,12 +172,12 @@ double HistoryItem::lastVisitedTime() const
 
 KURL HistoryItem::url() const
 {
-    return KURL(m_urlString);
+    return KURL(ParsedURLString, m_urlString);
 }
 
 KURL HistoryItem::originalURL() const
 {
-    return KURL(m_originalURLString);
+    return KURL(ParsedURLString, m_originalURLString);
 }
 
 const String& HistoryItem::referrer() const

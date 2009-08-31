@@ -232,7 +232,7 @@ MediaPlayerPrivate::~MediaPlayerPrivate()
 
 void MediaPlayerPrivate::createQTMovie(const String& url)
 {
-    NSURL *cocoaURL = KURL(url);
+    NSURL *cocoaURL = KURL(ParsedURLString, url);
     NSDictionary *movieAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
                        cocoaURL, QTMovieURLAttribute,
                        [NSNumber numberWithBool:m_player->preservesPitch()], QTMovieRateChangesPreservePitchAttribute,

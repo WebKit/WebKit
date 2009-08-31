@@ -294,7 +294,7 @@ void FrameLoader::init()
     // this somewhat odd set of steps is needed to give the frame an initial empty document
     m_isDisplayingInitialEmptyDocument = false;
     m_creatingInitialEmptyDocument = true;
-    setPolicyDocumentLoader(m_client->createDocumentLoader(ResourceRequest(KURL("")), SubstituteData()).get());
+    setPolicyDocumentLoader(m_client->createDocumentLoader(ResourceRequest(KURL(ParsedURLString, "")), SubstituteData()).get());
     setProvisionalDocumentLoader(m_policyDocumentLoader.get());
     setState(FrameStateProvisional);
     m_provisionalDocumentLoader->setResponse(ResourceResponse(KURL(), "text/html", 0, String(), String()));
@@ -658,7 +658,7 @@ KURL FrameLoader::iconURL()
 
     // If we have an iconURL from a Link element, return that
     if (!m_frame->document()->iconURL().isEmpty())
-        return KURL(m_frame->document()->iconURL());
+        return KURL(ParsedURLString, m_frame->document()->iconURL());
 
     // Don't return a favicon iconURL unless we're http or https
     if (!m_URL.protocolInHTTPFamily())
@@ -1362,7 +1362,7 @@ void FrameLoader::scheduleLocationChange(const String& url, const String& referr
 
     // If the URL we're going to navigate to is the same as the current one, except for the
     // fragment part, we don't need to schedule the location change.
-    KURL parsedURL(url);
+    KURL parsedURL(ParsedURLString, url);
     if (parsedURL.hasFragmentIdentifier() && equalIgnoringFragmentIdentifier(m_URL, parsedURL)) {
         changeLocation(completeURL(url), referrer, lockHistory, lockBackForwardList, wasUserGesture);
         return;
@@ -1469,7 +1469,7 @@ void FrameLoader::redirectionTimerFired(Timer<FrameLoader>*)
     switch (redirection->type) {
         case ScheduledRedirection::redirection:
         case ScheduledRedirection::locationChange:
-            changeLocation(KURL(redirection->url), redirection->referrer,
+            changeLocation(KURL(ParsedURLString, redirection->url), redirection->referrer,
                 redirection->lockHistory, redirection->lockBackForwardList, redirection->wasUserGesture, redirection->wasRefresh);
             return;
         case ScheduledRedirection::historyNavigation:
@@ -1515,7 +1515,7 @@ void FrameLoader::loadURLIntoChildFrame(const KURL& url, const String& referer, 
             // Use the original URL to ensure we get all the side-effects, such as
             // onLoad handlers, of any redirects that happened. An example of where
             // this is needed is Radar 3213556.
-            workingURL = KURL(childItem->originalURLString());
+            workingURL = KURL(ParsedURLString, childItem->originalURLString());
             childLoadType = loadType;
             childFrame->loader()->m_provisionalHistoryItem = childItem;
         }
@@ -2103,7 +2103,7 @@ void FrameLoader::startRedirectionTimer()
     switch (m_scheduledRedirection->type) {
         case ScheduledRedirection::locationChange:
         case ScheduledRedirection::redirection:
-            clientRedirected(KURL(m_scheduledRedirection->url),
+            clientRedirected(KURL(ParsedURLString, m_scheduledRedirection->url),
                 m_scheduledRedirection->delay,
                 currentTime() + m_redirectionTimer.nextFireInterval(),
                 m_scheduledRedirection->lockBackForwardList);

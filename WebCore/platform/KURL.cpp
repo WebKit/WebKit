@@ -302,13 +302,13 @@ void KURL::invalidate()
     m_fragmentEnd = 0;
 }
 
-KURL::KURL(const char* url)
+KURL::KURL(ParsedURLStringTag, const char* url)
 {
     parse(url, 0);
     ASSERT(url == m_string);
 }
 
-KURL::KURL(const String& url)
+KURL::KURL(ParsedURLStringTag, const String& url)
 {
     parse(url);
     ASSERT(url == m_string);
@@ -1641,7 +1641,7 @@ String mimeTypeFromDataURL(const String& url)
 
 const KURL& blankURL()
 {
-    DEFINE_STATIC_LOCAL(KURL, staticBlankURL, ("about:blank"));
+    DEFINE_STATIC_LOCAL(KURL, staticBlankURL, (ParsedURLString, "about:blank"));
     return staticBlankURL;
 }
 

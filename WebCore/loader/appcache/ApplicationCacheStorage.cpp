@@ -216,7 +216,7 @@ ApplicationCacheGroup* ApplicationCacheStorage::cacheGroupForURL(const KURL& url
     
     int result;
     while ((result = statement.step()) == SQLResultRow) {
-        KURL manifestURL = KURL(statement.getColumnText(1));
+        KURL manifestURL = KURL(ParsedURLString, statement.getColumnText(1));
 
         if (m_cachesInMemory.contains(manifestURL))
             continue;
@@ -284,7 +284,7 @@ ApplicationCacheGroup* ApplicationCacheStorage::fallbackCacheGroupForURL(const K
     
     int result;
     while ((result = statement.step()) == SQLResultRow) {
-        KURL manifestURL = KURL(statement.getColumnText(1));
+        KURL manifestURL = KURL(ParsedURLString, statement.getColumnText(1));
 
         if (m_cachesInMemory.contains(manifestURL))
             continue;
@@ -835,7 +835,7 @@ PassRefPtr<ApplicationCache> ApplicationCacheStorage::loadCache(unsigned storage
     
     int result;
     while ((result = cacheStatement.step()) == SQLResultRow) {
-        KURL url(cacheStatement.getColumnText(0));
+        KURL url(ParsedURLString, cacheStatement.getColumnText(0));
         
         unsigned type = static_cast<unsigned>(cacheStatement.getColumnInt64(1));
 
@@ -871,7 +871,7 @@ PassRefPtr<ApplicationCache> ApplicationCacheStorage::loadCache(unsigned storage
     
     Vector<KURL> whitelist;
     while ((result = whitelistStatement.step()) == SQLResultRow) 
-        whitelist.append(whitelistStatement.getColumnText(0));
+        whitelist.append(KURL(ParsedURLString, whitelistStatement.getColumnText(0)));
 
     if (result != SQLResultDone)
         LOG_ERROR("Could not load cache online whitelist, error \"%s\"", m_database.lastErrorMsg());
@@ -901,7 +901,7 @@ PassRefPtr<ApplicationCache> ApplicationCacheStorage::loadCache(unsigned storage
     
     FallbackURLVector fallbackURLs;
     while ((result = fallbackStatement.step()) == SQLResultRow) 
-        fallbackURLs.append(make_pair(fallbackStatement.getColumnText(0), fallbackStatement.getColumnText(1)));
+        fallbackURLs.append(make_pair(KURL(ParsedURLString, fallbackStatement.getColumnText(0)), KURL(ParsedURLString, fallbackStatement.getColumnText(1))));
 
     if (result != SQLResultDone)
         LOG_ERROR("Could not load fallback URLs, error \"%s\"", m_database.lastErrorMsg());
@@ -1016,7 +1016,7 @@ bool ApplicationCacheStorage::manifestURLs(Vector<KURL>* urls)
         return false;
 
     while (selectURLs.step() == SQLResultRow)
-        urls->append(selectURLs.getColumnText(0));
+        urls->append(KURL(ParsedURLString, selectURLs.getColumnText(0)));
 
     return true;
 }
