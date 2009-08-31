@@ -1,3 +1,15 @@
+2009-08-31  Cameron McCormack  <cam@mcc.id.au>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28827
+        SVGSVGElement.unsuspendRedraw() shouldn't throw
+
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::unsuspendRedraw):
+        * svg/SVGSVGElement.h:
+        * svg/SVGSVGElement.idl:
+
 2009-08-31  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Eric Seidel.

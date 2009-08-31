@@ -56,8 +56,7 @@ module svg {
         readonly attribute SVGPoint currentTranslate;
 
         unsigned long suspendRedraw(in unsigned long maxWaitMilliseconds);
-        void unsuspendRedraw(in unsigned long suspendHandleId)
-            setter raises(DOMException);
+        void unsuspendRedraw(in unsigned long suspendHandleId);
         void unsuspendRedrawAll();
         void forceRedraw();
         void pauseAnimations();
