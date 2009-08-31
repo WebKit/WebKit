@@ -331,7 +331,7 @@ const String& KURLGooglePrivate::string() const
 // Creates with NULL-terminated string input representing an absolute URL.
 // WebCore generally calls this only with hardcoded strings, so the input is
 // ASCII. We treat is as UTF-8 just in case.
-KURL::KURL(const char *url)
+KURL::KURL(ParsedURLStringTag, const char *url)
 {
     // FIXME The Mac code checks for beginning with a slash and converting to a
     // file: URL. We will want to add this as well once we can compile on a
@@ -349,7 +349,7 @@ KURL::KURL(const char *url)
 // to a string and then converted back. In this case, the URL is already
 // canonical and in proper escaped form so needs no encoding. We treat it was
 // UTF-8 just in case.
-KURL::KURL(const String& url)
+KURL::KURL(ParsedURLStringTag, const String& url)
 {
     if (!url.isNull())
         m_url.init(KURL(), url, 0);
@@ -925,7 +925,7 @@ unsigned KURL::pathAfterLastSlash() const
 
 const KURL& blankURL()
 {
-    static KURL staticBlankURL("about:blank");
+    static KURL staticBlankURL(ParsedURLString, "about:blank");
     return staticBlankURL;
 }
 

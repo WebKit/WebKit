@@ -42,7 +42,7 @@ namespace WebCore {
 
 ScriptCallFrame::ScriptCallFrame(const String& functionName, const String& urlString, int lineNumber, const v8::Arguments& arguments, unsigned skipArgumentCount)
     : m_functionName(functionName)
-    , m_sourceURL(urlString)
+    , m_sourceURL(ParsedURLString, urlString)
     , m_lineNumber(lineNumber)
 {
     for (int i = 0; i < arguments.Length(); ++i)

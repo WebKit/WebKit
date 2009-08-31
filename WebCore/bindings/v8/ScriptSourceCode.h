@@ -50,7 +50,7 @@ public:
     // Not sure if that matters.
     ScriptSourceCode(CachedScript* cs)
         : m_source(cs->script())
-        , m_url(cs->url())
+        , m_url(ParsedURLString, cs->url())
         , m_startLine(1)
     {
     }

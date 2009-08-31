@@ -1,3 +1,17 @@
+2009-08-31  Ojan Vafai  <ojan@chromium.org>
+
+        Not reviewed (build fix)
+
+        Build fix for Chromium to match r49707.
+
+        * bindings/v8/ScriptCallFrame.cpp:
+        (WebCore::ScriptCallFrame::ScriptCallFrame):
+        * bindings/v8/ScriptSourceCode.h:
+        (WebCore::ScriptSourceCode::ScriptSourceCode):
+        * platform/KURLGoogle.cpp:
+        (WebCore::KURL::KURL):
+        (WebCore::blankURL):
+
 2009-08-31  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.
