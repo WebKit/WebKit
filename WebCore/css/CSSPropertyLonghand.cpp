@@ -77,6 +77,9 @@ static void initShorthandMap(ShorthandMap& shorthandMap)
     static const int backgroundPositionProperties[] = { CSSPropertyBackgroundPositionX, CSSPropertyBackgroundPositionY };
     SET_SHORTHAND_MAP_ENTRY(shorthandMap, CSSPropertyBackgroundPosition, backgroundPositionProperties);
 
+    static const int backgroundRepeatProperties[] = { CSSPropertyBackgroundRepeatX, CSSPropertyBackgroundRepeatY };
+    SET_SHORTHAND_MAP_ENTRY(shorthandMap, CSSPropertyBackgroundRepeat, backgroundRepeatProperties);
+
     static const int borderSpacingProperties[] = { CSSPropertyWebkitBorderHorizontalSpacing, CSSPropertyWebkitBorderVerticalSpacing };
     SET_SHORTHAND_MAP_ENTRY(shorthandMap, CSSPropertyBorderSpacing, borderSpacingProperties);
 
@@ -134,7 +137,8 @@ static void initShorthandMap(ShorthandMap& shorthandMap)
         CSSPropertyBackgroundOrigin,
         CSSPropertyBackgroundPositionX,
         CSSPropertyBackgroundPositionY,
-        CSSPropertyBackgroundRepeat,
+        CSSPropertyBackgroundRepeatX,
+        CSSPropertyBackgroundRepeatY
     };
     SET_SHORTHAND_MAP_ENTRY(shorthandMap, CSSPropertyBackground, backgroundProperties);
 
@@ -163,6 +167,9 @@ static void initShorthandMap(ShorthandMap& shorthandMap)
     static const int maskPositionProperties[] = { CSSPropertyWebkitMaskPositionX, CSSPropertyWebkitMaskPositionY };
     SET_SHORTHAND_MAP_ENTRY(shorthandMap, CSSPropertyWebkitMaskPosition, maskPositionProperties);
 
+    static const int maskRepeatProperties[] = { CSSPropertyWebkitMaskRepeatX, CSSPropertyWebkitMaskRepeatY };
+    SET_SHORTHAND_MAP_ENTRY(shorthandMap, CSSPropertyWebkitMaskRepeat, maskRepeatProperties);
+
     static const int maskProperties[] = {
         CSSPropertyWebkitMaskAttachment,
         CSSPropertyWebkitMaskClip,
@@ -170,7 +177,8 @@ static void initShorthandMap(ShorthandMap& shorthandMap)
         CSSPropertyWebkitMaskOrigin,
         CSSPropertyWebkitMaskPositionX,
         CSSPropertyWebkitMaskPositionY,
-        CSSPropertyWebkitMaskRepeat,
+        CSSPropertyWebkitMaskRepeatX,
+        CSSPropertyWebkitMaskRepeatY
     };
     SET_SHORTHAND_MAP_ENTRY(shorthandMap, CSSPropertyWebkitMask, maskProperties);
 

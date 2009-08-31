@@ -28,6 +28,7 @@
 #include "CSSPropertyNames.h"
 #include "CSSRule.h"
 #include "CSSStyleSheet.h"
+#include "CSSValueKeywords.h"
 #include "CSSValueList.h"
 #include "Document.h"
 #include "ExceptionCode.h"
@@ -110,15 +111,18 @@ String CSSMutableStyleDeclaration::getPropertyValue(int propertyID) const
     switch (propertyID) {
         case CSSPropertyBackgroundPosition: {
             // FIXME: Is this correct? The code in cssparser.cpp is confusing
-            const int properties[2] = { CSSPropertyBackgroundPositionX,
-                                        CSSPropertyBackgroundPositionY };
+            const int properties[2] = { CSSPropertyBackgroundPositionX, CSSPropertyBackgroundPositionY };
+            return getLayeredShorthandValue(properties, 2);
+        }
+        case CSSPropertyBackgroundRepeat: {
+            const int properties[2] = { CSSPropertyBackgroundRepeatX, CSSPropertyBackgroundRepeatY };
             return getLayeredShorthandValue(properties, 2);
         }
         case CSSPropertyBackground: {
-            const int properties[7] = { CSSPropertyBackgroundImage, CSSPropertyBackgroundRepeat, 
+            const int properties[8] = { CSSPropertyBackgroundImage, CSSPropertyBackgroundRepeatX, CSSPropertyBackgroundRepeatY, 
                                         CSSPropertyBackgroundAttachment, CSSPropertyBackgroundPosition, CSSPropertyBackgroundClip,
                                         CSSPropertyBackgroundOrigin, CSSPropertyBackgroundColor };
-            return getLayeredShorthandValue(properties, 7);
+            return getLayeredShorthandValue(properties, 8);
         }
         case CSSPropertyBorder: {
             const int properties[3][4] = {{ CSSPropertyBorderTopWidth,
@@ -206,8 +210,11 @@ String CSSMutableStyleDeclaration::getPropertyValue(int propertyID) const
         }
         case CSSPropertyWebkitMaskPosition: {
             // FIXME: Is this correct? The code in cssparser.cpp is confusing
-            const int properties[2] = { CSSPropertyWebkitMaskPositionX,
-                                        CSSPropertyWebkitMaskPositionY };
+            const int properties[2] = { CSSPropertyWebkitMaskPositionX, CSSPropertyWebkitMaskPositionY };
+            return getLayeredShorthandValue(properties, 2);
+        }
+        case CSSPropertyWebkitMaskRepeat: {
+            const int properties[2] = { CSSPropertyWebkitMaskRepeatX, CSSPropertyWebkitMaskRepeatY };
             return getLayeredShorthandValue(properties, 2);
         }
         case CSSPropertyWebkitMask: {
@@ -286,6 +293,9 @@ String CSSMutableStyleDeclaration::getLayeredShorthandValue(const int* propertie
     // can safely be omitted.
     for (size_t i = 0; i < numLayers; i++) {
         String layerRes;
+        bool useRepeatXShorthand = false;
+        bool useRepeatYShorthand = false;
+        bool useSingleWordShorthand = false;
         for (size_t j = 0; j < number; j++) {
             RefPtr<CSSValue> value;
             if (values[j]) {
@@ -302,11 +312,50 @@ String CSSMutableStyleDeclaration::getLayeredShorthandValue(const int* propertie
                         value = 0;
                 }
             }
+
+            // We need to report background-repeat as it was written in the CSS. If the property is implicit,
+            // then it was written with only one value. Here we figure out which value that was so we can
+            // report back correctly. 
+            if (properties[j] == CSSPropertyBackgroundRepeatX && isPropertyImplicit(properties[j])) {
+                if (j < number - 1 && properties[j + 1] == CSSPropertyBackgroundRepeatY) {
+                    RefPtr<CSSValue> yValue;
+                    RefPtr<CSSValue> nextValue = values[j + 1];
+                    if (nextValue->isValueList())
+                        yValue = static_cast<CSSValueList*>(nextValue.get())->itemWithoutBoundsCheck(i);
+                    else
+                        yValue = nextValue;
+                        
+                    int xId = static_cast<CSSPrimitiveValue*>(value.get())->getIdent();
+                    int yId = static_cast<CSSPrimitiveValue*>(yValue.get())->getIdent();
+                    if (xId != yId) {
+                        if (xId == CSSValueRepeat && yId == CSSValueNoRepeat) {
+                            useRepeatXShorthand = true;
+                            ++j;
+                        } else if (xId == CSSValueNoRepeat && yId == CSSValueRepeat) {
+                            useRepeatYShorthand = true;
+                            continue;
+                        }
+                    } else {
+                        useSingleWordShorthand = true;
+                        ++j;
+                    }
+                }
+            }
             
             if (value && !value->isImplicitInitialValue()) {
                 if (!layerRes.isNull())
                     layerRes += " ";
-                layerRes += value->cssText();
+                if (useRepeatXShorthand) {
+                    useRepeatXShorthand = false;
+                    layerRes += getValueName(CSSValueRepeatX);
+                } else if (useRepeatYShorthand) {
+                    useRepeatYShorthand = false;
+                    layerRes += getValueName(CSSValueRepeatY);
+                } else if (useSingleWordShorthand) {
+                    useSingleWordShorthand = false;
+                    layerRes += value->cssText();
+                } else
+                    layerRes += value->cssText();
             }
         }
         
@@ -583,6 +632,8 @@ String CSSMutableStyleDeclaration::cssText() const
     
     const CSSProperty* positionXProp = 0;
     const CSSProperty* positionYProp = 0;
+    const CSSProperty* repeatXProp = 0;
+    const CSSProperty* repeatYProp = 0;
     
     unsigned size = m_properties.size();
     for (unsigned n = 0; n < size; ++n) {
@@ -591,6 +642,10 @@ String CSSMutableStyleDeclaration::cssText() const
             positionXProp = &prop;
         else if (prop.id() == CSSPropertyBackgroundPositionY)
             positionYProp = &prop;
+        else if (prop.id() == CSSPropertyBackgroundRepeatX)
+            repeatXProp = &prop;
+        else if (prop.id() == CSSPropertyBackgroundRepeatY)
+            repeatYProp = &prop;
         else
             result += prop.cssText();
     }
@@ -612,6 +667,22 @@ String CSSMutableStyleDeclaration::cssText() const
             result += positionXProp->cssText();
         if (positionYProp)
             result += positionYProp->cssText();
+    }
+
+    // FIXME: We need to do the same for background-repeat.
+    if (repeatXProp && repeatYProp && repeatXProp->isImportant() == repeatYProp->isImportant()) {
+        String repeatValue;
+        const int repeatProperties[2] = { CSSPropertyBackgroundRepeatX, CSSPropertyBackgroundRepeatY };
+        if (repeatXProp->value()->isValueList() || repeatYProp->value()->isValueList()) 
+            repeatValue = getLayeredShorthandValue(repeatProperties, 2);
+        else
+            repeatValue = repeatXProp->value()->cssText() + " " + repeatYProp->value()->cssText();
+        result += "background-repeat: " + repeatValue + (repeatXProp->isImportant() ? " !important" : "") + "; ";
+    } else {
+        if (repeatXProp) 
+            result += repeatXProp->cssText();
+        if (repeatYProp)
+            result += repeatYProp->cssText();
     }
 
     return result;

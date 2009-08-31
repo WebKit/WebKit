@@ -1,3 +1,100 @@
+2009-08-31  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=28635 [CSS3 
+        Backgrounds and Borders] Add support for 2-keyword values for 
+        background-repeat
+
+        This patch allows background-repeat to take two values by making 
+        background-repeat just like background-position internally. There 
+        is a little extra legwork for background-repeat because the spec 
+        indicates that its computed value should be equivalent to how it 
+        was specified. I keep track of the specified thing by setting the 
+        implicit flag whenever background-repeat is defined with only one 
+        value (since internally, we now store this as 2 values.)
+        
+        Here we can't access the implicit flag, so for backwards-
+        compatibility's sake, we always return one value when that makes 
+        sense.
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::fillRepeatToCSSValue):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+
+        Here we check for the implicit flag and return one value when it is 
+        set.
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::getPropertyValue):
+        (WebCore::CSSMutableStyleDeclaration::getLayeredShorthandValue):
+        (WebCore::CSSMutableStyleDeclaration::cssText):
+
+        Add support for CSSPropertyBackgroundRepeatX and 
+        CSSPropertyBackgroundRepeatY
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseFillShorthand):
+        (WebCore::CSSParser::parseFillRepeat):
+        (WebCore::CSSParser::parseFillProperty):
+        * css/CSSParser.h:
+
+        Get rid of mappings to RepeatXFill and RepeatYFill since we don't 
+        need those parts of the EFillRepeat enum anymore.
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator EFillRepeat):
+
+        Add CSSPropertyBackgroundRepeatX and CSSPropertyBackgroundRepeatY
+        * css/CSSPropertyLonghand.cpp:
+        (WebCore::initShorthandMap):
+
+        Add background-repeat-x and -y.
+        * css/CSSPropertyNames.in:
+
+        Break repeat into x and y.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        (WebCore::CSSStyleSelector::mapFillRepeatX):
+        (WebCore::CSSStyleSelector::mapFillRepeatY):
+        * css/CSSStyleSelector.h:
+
+        There is no more RepeatXFill. Instead, look for 
+        fillLayer->repeatX() == RepeatFill
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::calculateBackgroundImageGeometry):
+
+        Break m_repeat into m_repeatX and m_repeatY
+        * rendering/style/FillLayer.cpp:
+        (WebCore::FillLayer::FillLayer):
+        (WebCore::FillLayer::operator=):
+        (WebCore::FillLayer::operator==):
+        (WebCore::FillLayer::fillUnsetProperties):
+        (WebCore::FillLayer::cullEmptyLayers):
+        * rendering/style/FillLayer.h:
+        (WebCore::FillLayer::repeatX):
+        (WebCore::FillLayer::repeatY):
+        (WebCore::FillLayer::isRepeatXSet):
+        (WebCore::FillLayer::isRepeatYSet):
+        (WebCore::FillLayer::setRepeatX):
+        (WebCore::FillLayer::setRepeatY):
+        (WebCore::FillLayer::clearRepeatX):
+        (WebCore::FillLayer::clearRepeatY):
+        (WebCore::FillLayer::initialFillRepeatX):
+        (WebCore::FillLayer::initialFillRepeatY):
+
+        Again, break backgroundRepeat into backgroundRepeatX and 
+        backgroundRepeatY
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::backgroundRepeatX):
+        (WebCore::InheritedFlags::backgroundRepeatY):
+        (WebCore::InheritedFlags::maskRepeatX):
+        (WebCore::InheritedFlags::maskRepeatY):
+
+        We don't need RepeatXFill or RepeatYFill. Now that we store two 
+        values, they are represented by Repeat-NoRepeat and NoRepeat-
+        Repeat, respectively.
+        * rendering/style/RenderStyleConstants.h:
+        (WebCore::):
+
 2009-08-31  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

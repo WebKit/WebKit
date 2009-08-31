@@ -223,7 +223,8 @@ public:
         void mapFillComposite(FillLayer*, CSSValue*);
         void mapFillOrigin(FillLayer*, CSSValue*);
         void mapFillImage(FillLayer*, CSSValue*);
-        void mapFillRepeat(FillLayer*, CSSValue*);
+        void mapFillRepeatX(FillLayer*, CSSValue*);
+        void mapFillRepeatY(FillLayer*, CSSValue*);
         void mapFillSize(FillLayer*, CSSValue*);
         void mapFillXPosition(FillLayer*, CSSValue*);
         void mapFillYPosition(FillLayer*, CSSValue*);

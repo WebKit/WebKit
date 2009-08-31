@@ -1,5 +1,9 @@
 <html>
 <head>
+<script>
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+</script>
 <style>
 div { background: purple; margin: 1em; color: white; font: 24px 'Lucida Grande'; }
 </style>
@@ -15,7 +19,7 @@ for (var i = 0; i < decl.length; i++) {
   document.write(decl[i] + ": " + decl.getPropertyValue(decl[i]));
   if (shorthand) {
      document.write(" (original property was " + shorthand
-		   + (decl.isPropertyImplicit(decl[i]) ? " and property was implicitly set.)" : ")"));
+           + (decl.isPropertyImplicit(decl[i]) ? " and property was implicitly set.)" : ")"));
   }
   document.write( "<br>");
 }

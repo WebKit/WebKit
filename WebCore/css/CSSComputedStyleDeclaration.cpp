@@ -619,6 +619,23 @@ static PassRefPtr<CSSValue> renderTextDecorationFlagsToCSSValue(int textDecorati
     return list;
 }
 
+static PassRefPtr<CSSValue> fillRepeatToCSSValue(EFillRepeat xRepeat, EFillRepeat yRepeat)
+{
+    // For backwards compatibility, if both values are equal, just return one of them. And
+    // if the two values are equivalent to repeat-x or repeat-y, just return the shorthand.
+    if (xRepeat == yRepeat)
+        return CSSPrimitiveValue::create(xRepeat);
+    if (xRepeat == CSSValueRepeat && yRepeat == CSSValueNoRepeat)
+        return CSSPrimitiveValue::createIdentifier(CSSValueRepeatX);
+    if (xRepeat == CSSValueNoRepeat && yRepeat == CSSValueRepeat)
+        return CSSPrimitiveValue::createIdentifier(CSSValueRepeatY);
+
+    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+    list->append(CSSPrimitiveValue::create(xRepeat));
+    list->append(CSSPrimitiveValue::create(yRepeat));
+    return list.release();
+}
+
 PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int propertyID, EUpdateLayout updateLayout) const
 {
     Node* node = m_node.get();
@@ -661,7 +678,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return list.release();
         }  
         case CSSPropertyBackgroundRepeat:
-            return CSSPrimitiveValue::create(style->backgroundRepeat());
+            return fillRepeatToCSSValue(style->backgroundRepeatX(), style->backgroundRepeatY());
         case CSSPropertyWebkitBackgroundComposite:
             return CSSPrimitiveValue::create(style->backgroundComposite());
         case CSSPropertyBackgroundAttachment:
@@ -931,7 +948,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return list.release();
         }  
         case CSSPropertyWebkitMaskRepeat:
-            return CSSPrimitiveValue::create(style->maskRepeat());
+            return fillRepeatToCSSValue(style->maskRepeatX(), style->maskRepeatY());
         case CSSPropertyWebkitMaskAttachment:
             return CSSPrimitiveValue::create(style->maskAttachment());
         case CSSPropertyWebkitMaskComposite:

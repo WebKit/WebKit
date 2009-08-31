@@ -18,6 +18,8 @@ background-position
 background-position-x
 background-position-y
 background-repeat
+background-repeat-x
+background-repeat-y
 background-size
 border
 border-bottom
@@ -214,6 +216,8 @@ zoom
 -webkit-mask-position-x
 -webkit-mask-position-y
 -webkit-mask-repeat
+-webkit-mask-repeat-x
+-webkit-mask-repeat-y
 -webkit-mask-size
 -webkit-match-nearest-mail-blockquote-color
 -webkit-nbsp-mode

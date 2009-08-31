@@ -875,6 +875,8 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSSPropertyBackgroundPositionY:
     case CSSPropertyBackgroundSize:
     case CSSPropertyBackgroundRepeat:
+    case CSSPropertyBackgroundRepeatX:
+    case CSSPropertyBackgroundRepeatY:
     case CSSPropertyWebkitMaskAttachment:
     case CSSPropertyWebkitMaskClip:
     case CSSPropertyWebkitMaskComposite:
@@ -884,7 +886,9 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSSPropertyWebkitMaskPositionX:
     case CSSPropertyWebkitMaskPositionY:
     case CSSPropertyWebkitMaskSize:
-    case CSSPropertyWebkitMaskRepeat: {
+    case CSSPropertyWebkitMaskRepeat:
+    case CSSPropertyWebkitMaskRepeatX:
+    case CSSPropertyWebkitMaskRepeatY: {
         RefPtr<CSSValue> val1;
         RefPtr<CSSValue> val2;
         int propId1, propId2;
@@ -894,6 +898,7 @@ bool CSSParser::parseValue(int propId, bool important)
                 addProperty(propId2, val2.release(), important);
             return true;
         }
+        m_implicitShorthand = false;
         return false;
     }
     case CSSPropertyListStyleImage:     // <uri> | none | inherit
@@ -1703,7 +1708,7 @@ void CSSParser::addFillValue(RefPtr<CSSValue>& lval, PassRefPtr<CSSValue> rval)
         lval = rval;
 }
 
-const int cMaxFillProperties = 7;
+const int cMaxFillProperties = 9;
 
 bool CSSParser::parseFillShorthand(int propId, const int* properties, int numProperties, bool important)
 {
@@ -1717,6 +1722,7 @@ bool CSSParser::parseFillShorthand(int propId, const int* properties, int numPro
     RefPtr<CSSValue> values[cMaxFillProperties];
     RefPtr<CSSValue> clipValue;
     RefPtr<CSSValue> positionYValue;
+    RefPtr<CSSValue> repeatYValue;
     int i;
 
     while (m_valueList->current()) {
@@ -1734,6 +1740,8 @@ bool CSSParser::parseFillShorthand(int propId, const int* properties, int numPro
                     addFillValue(values[i], CSSInitialValue::createImplicit());
                     if (properties[i] == CSSPropertyBackgroundPosition || properties[i] == CSSPropertyWebkitMaskPosition)
                         addFillValue(positionYValue, CSSInitialValue::createImplicit());
+                    if (properties[i] == CSSPropertyBackgroundRepeat || properties[i] == CSSPropertyWebkitMaskRepeat)
+                        addFillValue(repeatYValue, CSSInitialValue::createImplicit());
                     if ((properties[i] == CSSPropertyBackgroundOrigin || properties[i] == CSSPropertyWebkitMaskOrigin) && !parsedProperty[i]) {
                         // If background-origin wasn't present, then reset background-clip also.
                         addFillValue(clipValue, CSSInitialValue::createImplicit());
@@ -1756,6 +1764,8 @@ bool CSSParser::parseFillShorthand(int propId, const int* properties, int numPro
                     addFillValue(values[i], val1.release());
                     if (properties[i] == CSSPropertyBackgroundPosition || properties[i] == CSSPropertyWebkitMaskPosition)
                         addFillValue(positionYValue, val2.release());
+                    if (properties[i] == CSSPropertyBackgroundRepeat || properties[i] == CSSPropertyWebkitMaskRepeat)
+                        addFillValue(repeatYValue, val2.release());
                     if (properties[i] == CSSPropertyBackgroundOrigin || properties[i] == CSSPropertyWebkitMaskOrigin) {
                         // Reparse the value as a clip, and see if we succeed.
                         if (parseFillProperty(CSSPropertyBackgroundClip, propId1, propId2, val1, val2))
@@ -1779,6 +1789,8 @@ bool CSSParser::parseFillShorthand(int propId, const int* properties, int numPro
             addFillValue(values[i], CSSInitialValue::createImplicit());
             if (properties[i] == CSSPropertyBackgroundPosition || properties[i] == CSSPropertyWebkitMaskPosition)
                 addFillValue(positionYValue, CSSInitialValue::createImplicit());
+            if (properties[i] == CSSPropertyBackgroundRepeat || properties[i] == CSSPropertyWebkitMaskRepeat)
+                addFillValue(repeatYValue, CSSInitialValue::createImplicit());
             if ((properties[i] == CSSPropertyBackgroundOrigin || properties[i] == CSSPropertyWebkitMaskOrigin) && !parsedProperty[i]) {
                 // If background-origin wasn't present, then reset background-clip also.
                 addFillValue(clipValue, CSSInitialValue::createImplicit());
@@ -1796,6 +1808,14 @@ bool CSSParser::parseFillShorthand(int propId, const int* properties, int numPro
             addProperty(CSSPropertyWebkitMaskPositionX, values[i].release(), important);
             // it's OK to call positionYValue.release() since we only see CSSPropertyWebkitMaskPosition once
             addProperty(CSSPropertyWebkitMaskPositionY, positionYValue.release(), important);
+        } else if (properties[i] == CSSPropertyBackgroundRepeat) {
+            addProperty(CSSPropertyBackgroundRepeatX, values[i].release(), important);
+            // it's OK to call repeatYValue.release() since we only see CSSPropertyBackgroundPosition once
+            addProperty(CSSPropertyBackgroundRepeatY, repeatYValue.release(), important);
+        } else if (properties[i] == CSSPropertyWebkitMaskRepeat) {
+            addProperty(CSSPropertyWebkitMaskRepeatX, values[i].release(), important);
+            // it's OK to call repeatYValue.release() since we only see CSSPropertyBackgroundPosition once
+            addProperty(CSSPropertyWebkitMaskRepeatY, repeatYValue.release(), important);
         } else
             addProperty(properties[i], values[i].release(), important);
             
@@ -2236,6 +2256,51 @@ void CSSParser::parseFillPosition(RefPtr<CSSValue>& value1, RefPtr<CSSValue>& va
         value1.swap(value2);
 }
 
+void CSSParser::parseFillRepeat(RefPtr<CSSValue>& value1, RefPtr<CSSValue>& value2)
+{
+    CSSParserValue* value = m_valueList->current();
+
+    int id = m_valueList->current()->id;
+    if (id == CSSValueRepeatX) {
+        m_implicitShorthand = true;
+        value1 = CSSPrimitiveValue::createIdentifier(CSSValueRepeat);
+        value2 = CSSPrimitiveValue::createIdentifier(CSSValueNoRepeat);
+        m_valueList->next();
+        return;
+    } 
+    if (id == CSSValueRepeatY) {
+        m_implicitShorthand = true;
+        value1 = CSSPrimitiveValue::createIdentifier(CSSValueNoRepeat);
+        value2 = CSSPrimitiveValue::createIdentifier(CSSValueRepeat);
+        m_valueList->next();
+        return;    
+    }
+    if (id == CSSValueRepeat || id == CSSValueNoRepeat || id == CSSValueRound || id == CSSValueSpace)
+        value1 = CSSPrimitiveValue::createIdentifier(id);
+    else {
+        value1 = 0;
+        return;
+    }
+
+    value = m_valueList->next();
+
+    // First check for the comma.  If so, we are finished parsing this value or value pair.
+    if (value && value->unit == CSSParserValue::Operator && value->iValue == ',')
+        value = 0;
+
+    if (value)
+        id = m_valueList->current()->id;
+    
+    if (value && (id == CSSValueRepeat || id == CSSValueNoRepeat || id == CSSValueRound || id == CSSValueSpace)) {
+        value2 = CSSPrimitiveValue::createIdentifier(id);
+        m_valueList->next();
+    } else { 
+        // If only one value was specified, value2 is the same as value1.
+        m_implicitShorthand = true;
+        value2 = CSSPrimitiveValue::createIdentifier(static_cast<CSSPrimitiveValue*>(value1.get())->getIdent());
+    }
+}
+
 PassRefPtr<CSSValue> CSSParser::parseFillSize(bool& allowComma)
 {
     allowComma = true;
@@ -2290,6 +2355,12 @@ bool CSSParser::parseFillProperty(int propId, int& propId1, int& propId2,
     } else if (propId == CSSPropertyWebkitMaskPosition) {
         propId1 = CSSPropertyWebkitMaskPositionX;
         propId2 = CSSPropertyWebkitMaskPositionY;
+    } else if (propId == CSSPropertyBackgroundRepeat) {
+        propId1 = CSSPropertyBackgroundRepeatX;
+        propId2 = CSSPropertyBackgroundRepeatY;
+    } else if (propId == CSSPropertyWebkitMaskRepeat) {
+        propId1 = CSSPropertyWebkitMaskRepeatX;
+        propId2 = CSSPropertyWebkitMaskRepeatY;
     }
 
     while ((val = m_valueList->current())) {
@@ -2377,11 +2448,8 @@ bool CSSParser::parseFillProperty(int propId, int& propId1, int& propId2,
                     break;
                 case CSSPropertyBackgroundRepeat:
                 case CSSPropertyWebkitMaskRepeat:
-                    if (val->id >= CSSValueRepeat && val->id <= CSSValueNoRepeat
-                        || val->id == CSSValueRound || val->id == CSSValueSpace) {
-                        currValue = CSSPrimitiveValue::createIdentifier(val->id);
-                        m_valueList->next();
-                    }
+                    parseFillRepeat(currValue, currValue2);
+                    // parseFillRepeat advances the m_valueList pointer
                     break;
                 case CSSPropertyBackgroundSize:
                 case CSSPropertyWebkitMaskSize: {

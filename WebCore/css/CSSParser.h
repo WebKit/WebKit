@@ -82,6 +82,7 @@ namespace WebCore {
         bool parseFillImage(RefPtr<CSSValue>&);
         PassRefPtr<CSSValue> parseFillPositionXY(bool& xFound, bool& yFound);
         void parseFillPosition(RefPtr<CSSValue>&, RefPtr<CSSValue>&);
+        void parseFillRepeat(RefPtr<CSSValue>&, RefPtr<CSSValue>&);
         PassRefPtr<CSSValue> parseFillSize(bool &allowComma);
         
         bool parseFillProperty(int propId, int& propId1, int& propId2, RefPtr<CSSValue>&, RefPtr<CSSValue>&);
