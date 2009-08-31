@@ -1,3 +1,14 @@
+2009-08-31  Alexey Proskuryakov  <ap@apple.com>
+
+        Gtk build fix.
+
+        This is also a behavior fix, at least on debug builds - a caller of
+        webkit_web_history_item_new_with_data() could pass an URL that could cause an assertion
+        failure in KURL.
+
+        * webkit/webkitwebhistoryitem.cpp: (webkit_web_history_item_new_with_data): Pass a null
+        KURL as base to parse properly.
+
 2009-08-28  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Holger Freyther.
