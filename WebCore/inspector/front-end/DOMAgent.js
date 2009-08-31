@@ -776,13 +776,6 @@ InspectorController.openInInspectedWindow = function(url, callback)
     }, 0);
 }
 
-InspectorController.getCallFrames = function(callback)
-{
-    setTimeout(function() {
-        callback(InjectedScript.getCallFrames());
-    }, 0);
-}
-
 InspectorController.evaluateInCallFrame = function(callFrameId, code, callback)
 {
     setTimeout(function() {

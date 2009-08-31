@@ -395,7 +395,7 @@ WebInspector.ScriptsPanel.prototype = {
         return result;
     },
 
-    debuggerPaused: function()
+    debuggerPaused: function(callFrames)
     {
         this._paused = true;
         this._waitingToPause = false;
@@ -403,17 +403,11 @@ WebInspector.ScriptsPanel.prototype = {
 
         this._updateDebuggerButtons();
 
-        var self = this;
-        var callStackPane = this.sidebarPanes.callstack;
-        function callback(callFrames)
-        {
-            callStackPane.update(callFrames, self._sourceIDMap);
-            callStackPane.selectedCallFrame = callFrames[0];
+        this.sidebarPanes.callstack.update(callFrames, this._sourceIDMap);
+        this.sidebarPanes.callstack.selectedCallFrame = callFrames[0];
 
-            WebInspector.currentPanel = self;
-            window.focus();
-        }
-        InspectorController.getCallFrames(callback);
+        WebInspector.currentPanel = this;
+        window.focus();
     },
 
     debuggerResumed: function()
