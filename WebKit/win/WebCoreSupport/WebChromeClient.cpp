@@ -156,33 +156,20 @@ void WebChromeClient::takeFocus(FocusDirection direction)
 
 Page* WebChromeClient::createWindow(Frame*, const FrameLoadRequest& frameLoadRequest, const WindowFeatures& features)
 {
+    COMPtr<IWebUIDelegate> delegate = uiDelegate();
+    if (!delegate)
+        return 0;
+
+    COMPtr<IWebMutableURLRequest> request(AdoptCOM, WebMutableURLRequest::createInstance(frameLoadRequest.resourceRequest()));
+    COMPtr<IWebView> newWebView;
+
     if (features.dialog) {
-        COMPtr<IWebUIDelegate> delegate = uiDelegate();
-        if (!delegate)
+        if (FAILED(delegate->createModalDialog(m_webView, request.get(), &newWebView)))
             return 0;
-        COMPtr<IWebMutableURLRequest> request(AdoptCOM, WebMutableURLRequest::createInstance(frameLoadRequest.resourceRequest()));
-        COMPtr<IWebView> dialog;
-        if (FAILED(delegate->createModalDialog(m_webView, request.get(), &dialog)))
-            return 0;
-        return core(dialog.get());
-    }
+    } else if (FAILED(delegate->createWebViewWithRequest(m_webView, request.get(), &newWebView)))
+        return 0;
 
-    Page* page = 0;
-    IWebUIDelegate* uiDelegate = 0;
-    IWebMutableURLRequest* request = WebMutableURLRequest::createInstance(frameLoadRequest.resourceRequest());
-
-    if (SUCCEEDED(m_webView->uiDelegate(&uiDelegate))) {
-        IWebView* webView = 0;
-        if (SUCCEEDED(uiDelegate->createWebViewWithRequest(m_webView, request, &webView))) {
-            page = core(webView);
-            webView->Release();
-        }
-    
-        uiDelegate->Release();
-    }
-
-    request->Release();
-    return page;
+    return newWebView ? core(newWebView.get()) : 0;
 }
 
 void WebChromeClient::show()

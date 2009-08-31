@@ -1,3 +1,13 @@
+2009-08-20  Adam Roben  <aroben@apple.com>
+
+        A little clean-up in WebChromeClient::createWindow
+
+        Reviewed by Steve Falkenburg.
+
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::createWindow): Refactored to share more code between
+        the dialog and non-dialog cases.
+
 2009-08-28  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Holger Freyther.
