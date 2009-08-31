@@ -65,6 +65,7 @@ namespace WebCore {
         virtual void postConsoleMessageToWorkerObject(MessageDestination, MessageSource, MessageType, MessageLevel, const String& message, int lineNumber, const String& sourceURL);
         virtual void confirmMessageFromWorkerObject(bool hasPendingActivity);
         virtual void reportPendingActivity(bool hasPendingActivity);
+        virtual void workerContextClosed();
         virtual void workerContextDestroyed();
 
         // Implementation of WorkerLoaderProxy.

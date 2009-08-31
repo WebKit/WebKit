@@ -120,12 +120,13 @@ private:
     virtual void performTask(ScriptExecutionContext* context)
     {
         Worker* workerObject = m_messagingProxy->workerObject();
-        if (!workerObject || m_messagingProxy->askedToTerminate())
+        if (!workerObject)
             return;
 
-        bool errorHandled = false;
-        if (workerObject->onerror())
-            errorHandled = workerObject->dispatchScriptErrorEvent(m_errorMessage, m_sourceURL, m_lineNumber);
+        // We don't bother checking the askedToTerminate() flag here, because exceptions should *always* be reported even if the thread is terminated.
+        // This is intentionally different than the behavior in MessageWorkerTask, because terminated workers no longer deliver messages (section 4.6 of the WebWorker spec), but they do report exceptions.
+
+        bool errorHandled = workerObject->dispatchScriptErrorEvent(m_errorMessage, m_sourceURL, m_lineNumber);
 
         if (!errorHandled)
             context->reportException(m_errorMessage, m_lineNumber, m_sourceURL);
@@ -153,6 +154,27 @@ private:
     virtual void performTask(ScriptExecutionContext*)
     {
         m_messagingProxy->workerContextDestroyedInternal();
+    }
+
+    WorkerMessagingProxy* m_messagingProxy;
+};
+
+class WorkerTerminateTask : public ScriptExecutionContext::Task {
+public:
+    static PassRefPtr<WorkerTerminateTask> create(WorkerMessagingProxy* messagingProxy)
+    {
+        return adoptRef(new WorkerTerminateTask(messagingProxy));
+    }
+
+private:
+    WorkerTerminateTask(WorkerMessagingProxy* messagingProxy)
+        : m_messagingProxy(messagingProxy)
+    {
+    }
+
+    virtual void performTask(ScriptExecutionContext*)
+    {
+        m_messagingProxy->terminateWorkerContext();
     }
 
     WorkerMessagingProxy* m_messagingProxy;
@@ -299,6 +321,12 @@ void WorkerMessagingProxy::workerContextDestroyed()
 {
     m_scriptExecutionContext->postTask(WorkerContextDestroyedTask::create(this));
     // Will execute workerContextDestroyedInternal() on context's thread.
+}
+
+void WorkerMessagingProxy::workerContextClosed()
+{
+    // Executes terminateWorkerContext() on parent context's thread.
+    m_scriptExecutionContext->postTask(WorkerTerminateTask::create(this));
 }
 
 void WorkerMessagingProxy::workerContextDestroyedInternal()

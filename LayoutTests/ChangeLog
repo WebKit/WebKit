@@ -1,3 +1,18 @@
+2009-08-31  Drew Wilson  <atwilson@google.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        fast/workers/worker-lifecycle.html crashes intermittently on snowleopard
+        https://bugs.webkit.org/show_bug.cgi?id=28795
+
+        Removed worker-lifecycle.html from the list of Skipped tests since it no longer crashes.
+        Added test for case where we capture script errors via an event listener added via addEventListener().
+
+        * fast/workers/worker-script-error.html
+        * fast/workers/worker-script-error-expected.txt
+        Added testScriptErrorAddEventListener to test catching script errors via addEventListener().
+        * platform/mac-snowleopard/Skipped:
+
 2009-08-31  Beth Dakin  <bdakin@apple.com>
 
         Rubber-stamped by Mark Rowe.

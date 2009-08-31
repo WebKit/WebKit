@@ -1,3 +1,42 @@
+2009-08-31  Drew Wilson  <atwilson@google.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        fast/workers/worker-lifecycle.html crashes intermittently on snowleopard
+        https://bugs.webkit.org/show_bug.cgi?id=28795
+
+        Changed WorkerContext::close() to no longer stop the worker thread.
+        It is now the parent's responsibility to shut down the worker thread when it is notified that the context is closed.
+
+        * workers/AbstractWorker.cpp:
+        Updated dispatchScriptErrorEvent to pass-through the "handled" value from dispatchEvent(), to allow event handlers added with addEventListener() to mark events as handled.
+        * workers/DefaultSharedWorkerRepository.cpp:
+        (WebCore::SharedWorkerProxy::workerContextClosed):
+        Now shuts down the worker thread when notified that the context is closed.
+        (WebCore::SharedWorkerProxy::close):
+        Now handles being invoked when the context is already in the process of shutting down.
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::close):
+        No longer calls WorkerThread::stop() to avoid race conditions with shutting down the thread while the parent is still interacting with it.
+        * workers/WorkerContext.h:
+        (WebCore::WorkerContext::isClosing):
+        isClosing() is now public so WorkerRunLoop can call it to determine whether to process tasks.
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerExceptionTask::performTask):
+        Error events should still be delivered even if the worker thread is closing.
+        Also fixed problem where error events were not dispatched if error handlers were added via addEventListener().
+        (WebCore::WorkerTerminateTask::create):
+        New task that invokes terminateWorkerContext() on the parent thread when the context is closed.
+        (WebCore::WorkerTerminateTask::WorkerTerminateTask):
+        (WebCore::WorkerTerminateTask::performTask):
+        (WebCore::WorkerMessagingProxy::workerContextClosed):
+        Now fires off a WorkerTerminateTask to shut down the thread when the context is closed.
+        * workers/WorkerMessagingProxy.h:
+        WorkerMessagingProxy now overrides workerContextClosed().
+        * workers/WorkerRunLoop.cpp:
+        (WebCore::WorkerRunLoop::runInMode):
+        Now drops tasks on the floor if the WorkerContext is closing.
+
 2009-08-31  Ojan Vafai  <ojan@chromium.org>
 
         Not reviewed (build fix)

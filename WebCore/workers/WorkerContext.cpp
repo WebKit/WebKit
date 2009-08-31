@@ -119,9 +119,8 @@ void WorkerContext::close()
         return;
 
     m_closing = true;
-    // Notify parent that this context is closed.
+    // Notify parent that this context is closed. Parent is responsible for calling WorkerThread::stop().
     thread()->workerReportingProxy().workerContextClosed();
-    m_thread->stop();
 }
 
 WorkerNavigator* WorkerContext::navigator() const

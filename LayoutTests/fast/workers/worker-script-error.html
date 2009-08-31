@@ -10,6 +10,7 @@ function log(message)
 var testCases = [
     "testInvalidScriptSyntax",
     "testScriptErrorUnhandled",
+    "testScriptErrorAddEventListener",
     "testErrorInHandlingScriptError",
     "testScriptErrorBubbledAndHandledInWorker",
     "testScriptErrorBubbledAndReportedToUser",
@@ -53,6 +54,22 @@ function testScriptErrorUnhandled()
             runNextTest();
             return false;
         }
+    } catch (ex) {
+        log("FAIL: unexpected exception " + ex);
+        runNextTest();
+    }
+}
+
+function testScriptErrorAddEventListener()
+{
+    try {
+        var worker = new Worker("resources/worker-script-error-unhandled.js");
+        worker.addEventListener("error",
+            function(evt) {
+                log("PASS: event listener invoked for a script that has script error '" + evt.message + "' at line " + evt.lineno + ".");
+                runNextTest();
+                evt.preventDefault();
+            }, false);
     } catch (ex) {
         log("FAIL: unexpected exception " + ex);
         runNextTest();

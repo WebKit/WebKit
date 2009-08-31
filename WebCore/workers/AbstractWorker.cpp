@@ -130,7 +130,7 @@ bool AbstractWorker::dispatchScriptErrorEvent(const String& message, const Strin
     }
 
     ExceptionCode ec = 0;
-    dispatchEvent(event.release(), ec);
+    handled = !dispatchEvent(event.release(), ec);
     ASSERT(!ec);
 
     return handled;
