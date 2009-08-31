@@ -118,6 +118,33 @@
 
 2009-08-28  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Fix positioning error when a compositing, absolutely-positioned element has an ancestor with opacity.
+        https://bugs.webkit.org/show_bug.cgi?id=28754
+        
+        For absolutely-positioned layers, convertToLayerCoords() jumps to the positioned
+        ancestor, since the layer x and y are relative to that ancestor. However, this could
+        skip over the ancestorLayer, thus giving the wrong result.
+        
+        Fix by duplicating the enclosingPositionedAncestor() logic in convertToLayerCoords(),
+        and checking for ancestorLayer along the way. If found, compute offset of both to
+        the enclosingPositionedAncestor() and subtract.
+        
+        This also fixes a positioning bug with abs. positioned elements in reflections,
+        so there is a new reflection test with a pixel result.
+
+        Tests: compositing/geometry/abs-position-inside-opacity.html
+               fast/reflections/abs-position-in-reflection.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::isPositionedContainer):
+        (WebCore::RenderLayer::enclosingPositionedAncestor):
+        (WebCore::RenderLayer::enclosingTransformedAncestor):
+        (WebCore::RenderLayer::convertToLayerCoords):
+
+2009-08-28  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Mark Rowe
 
         Wrap WebkitCSSTransformValues in the correct class of DOM wrapper.

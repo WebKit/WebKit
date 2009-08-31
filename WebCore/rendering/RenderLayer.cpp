@@ -638,19 +638,27 @@ RenderLayer* RenderLayer::stackingContext() const
     return layer;
 }
 
+static inline bool isPositionedContainer(RenderLayer* layer)
+{
+    RenderObject* o = layer->renderer();
+    return o->isRenderView() || o->isPositioned() || o->isRelPositioned() || layer->hasTransform();
+}
+
 RenderLayer* RenderLayer::enclosingPositionedAncestor() const
 {
     RenderLayer* curr = parent();
-    for ( ; curr && !curr->renderer()->isRenderView() && !curr->renderer()->isPositioned() && !curr->renderer()->isRelPositioned() && !curr->hasTransform();
-         curr = curr->parent()) { }
+    while (curr && !isPositionedContainer(curr))
+        curr = curr->parent();
+
     return curr;
 }
 
 RenderLayer* RenderLayer::enclosingTransformedAncestor() const
 {
     RenderLayer* curr = parent();
-    for ( ; curr && !curr->renderer()->isRenderView() && !curr->transform(); curr = curr->parent())
-        { }
+    while (curr && !curr->renderer()->isRenderView() && !curr->transform())
+        curr = curr->parent();
+
     return curr;
 }
 
@@ -955,12 +963,44 @@ RenderLayer::convertToLayerCoords(const RenderLayer* ancestorLayer, int& xPos, i
     }
  
     RenderLayer* parentLayer;
-    if (renderer()->style()->position() == AbsolutePosition)
-        parentLayer = enclosingPositionedAncestor();
-    else
+    if (renderer()->style()->position() == AbsolutePosition) {
+        // Do what enclosingPositionedAncestor() does, but check for ancestorLayer along the way
+        parentLayer = parent();
+        bool foundAncestorFirst = false;
+        while (parentLayer) {
+            if (isPositionedContainer(parentLayer))
+                break;
+
+            if (parentLayer == ancestorLayer) {
+                foundAncestorFirst = true;
+                break;
+            }
+
+            parentLayer = parentLayer->parent();
+        }
+
+        if (foundAncestorFirst) {
+            // Found ancestorLayer before the abs. positioned container, so compute offset of both relative
+            // to enclosingPositionedAncestor and subtract.
+            RenderLayer* positionedAncestor = parentLayer->enclosingPositionedAncestor();
+
+            int thisX = 0;
+            int thisY = 0;
+            convertToLayerCoords(positionedAncestor, thisX, thisY);
+            
+            int ancestorX = 0;
+            int ancestorY = 0;
+            ancestorLayer->convertToLayerCoords(positionedAncestor, ancestorX, ancestorY);
+        
+            xPos += (thisX - ancestorX);
+            yPos += (thisY - ancestorY);
+            return;
+        }
+    } else
         parentLayer = parent();
     
-    if (!parentLayer) return;
+    if (!parentLayer)
+        return;
     
     parentLayer->convertToLayerCoords(ancestorLayer, xPos, yPos);
 
