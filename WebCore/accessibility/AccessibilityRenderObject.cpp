@@ -402,6 +402,11 @@ bool AccessibilityRenderObject::isReadOnly() const
         return !frame->isContentEditable();
     }
 
+    if (m_renderer->isTextField())
+        return static_cast<HTMLInputElement*>(m_renderer->node())->readOnly();
+    if (m_renderer->isTextArea())
+        return static_cast<HTMLInputElement*>(m_renderer->node())->readOnly();
+    
     return !m_renderer->node() || !m_renderer->node()->isContentEditable();
 }
 
@@ -2426,10 +2431,10 @@ bool AccessibilityRenderObject::canSetValueAttribute() const
     if (equalIgnoringCase(getAttribute(aria_readonlyAttr).string(), "true"))
         return false;
 
-    if (isWebArea()) 
+    if (isWebArea() || isTextControl()) 
         return !isReadOnly();
 
-    return isTextControl() || isProgressIndicator() || isSlider();
+    return isProgressIndicator() || isSlider();
 }
 
 bool AccessibilityRenderObject::canSetTextRangeAttributes() const

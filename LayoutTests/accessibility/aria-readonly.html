@@ -10,12 +10,14 @@ var successfullyParsed = false;
 <body id="body">
 <input type="text" aria-readonly="true" size=20>
 <input type="text" aria-readonly="false" size=20>
+<input type="text" readonly="readonly" size=20>
+<input type="text" size=20>
 <p id="description"></p>
 <div id="console"></div>
 
 <script>
 
-    description("This tests that the aria-readonly attribute works. The first text field should not be writable.");
+    description("This tests that the aria-readonly attribute works. The first and third text fields should not be writable.");
 
     if (window.accessibilityController) {
 
@@ -26,6 +28,14 @@ var successfullyParsed = false;
           shouldBe("succeeded", "0");
 
           textField = accessibilityController.focusedElement.childAtIndex(0).childAtIndex(1);
+          succeeded = textField.isAttributeSettable("AXValue");
+          shouldBe("succeeded", "1");
+          
+          textField = accessibilityController.focusedElement.childAtIndex(0).childAtIndex(2);
+          succeeded = textField.isAttributeSettable("AXValue");
+          shouldBe("succeeded", "0");
+            
+          textField = accessibilityController.focusedElement.childAtIndex(0).childAtIndex(3);
           succeeded = textField.isAttributeSettable("AXValue");
           shouldBe("succeeded", "1");
     }

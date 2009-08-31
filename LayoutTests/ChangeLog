@@ -1,3 +1,13 @@
+2009-08-31  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Added a case to check for readonly and non-readonly set through the readonly attribute
+        instead of through aria-readonly. This tests our new case in AccessibilityRenderObject::isReadOnly.
+
+        * accessibility/aria-readonly-expected.txt:
+        * accessibility/aria-readonly.html:
+
 2009-08-31  Drew Wilson  <atwilson@google.com>
 
         Reviewed by Alexey Proskuryakov.
