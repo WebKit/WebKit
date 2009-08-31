@@ -469,9 +469,12 @@ sub safariPath
         if (isAppleMacWebKit() && -d "$configurationProductDir/Safari.app") {
             $safariBundle = "$configurationProductDir/Safari.app";
         } elsif (isAppleWinWebKit()) {
-            my $configurationSuffix = (configurationForVisualStudio() =~ /Debug/) ? "_debug" : "";
-            my $path = "$configurationProductDir/Safari$configurationSuffix.exe";
-            if (-x $path) {
+            my $path = "$configurationProductDir/Safari.exe";
+            my $debugPath = "$configurationProductDir/Safari_debug.exe";
+
+            if (configurationForVisualStudio() =~ /Debug/ && -x $debugPath) {
+                $safariBundle = $debugPath;
+            } elsif (-x $path) {
                 $safariBundle = $path;
             }
         }

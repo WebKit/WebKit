@@ -1,5 +1,18 @@
 2009-08-31  Adam Roben  <aroben@apple.com>
 
+        Fall back to a Release version of Safari if a Debug one doesn't exist
+
+        <http://webkit.org/b/28849>
+
+        Reviewed by Sam Weinig.
+
+        * Scripts/webkitdirs.pm:
+        (safariPath): If the user is working with a Debug build, but there's
+        no Debug version of Safari present, fall back to using a Release
+        version of Safari.
+
+2009-08-31  Adam Roben  <aroben@apple.com>
+
         Make safariPath() work for Debug builds of Safari on Windows
 
         <http://webkit.org/b/28849>
