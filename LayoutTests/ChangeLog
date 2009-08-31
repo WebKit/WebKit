@@ -1,3 +1,12 @@
+2009-08-31  Beth Dakin  <bdakin@apple.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        Meant to update these results with my earlier check-in, but I 
+        forgot!
+
+        * platform/mac/fast/inspector/style-expected.txt:
+
 2009-08-31  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.
