@@ -65,3 +65,31 @@ interface IWebUIDelegatePrivate : IUnknown
     HRESULT webViewSetCursor([in] IWebView* sender, [in] OLE_HANDLE cursor);
     HRESULT webViewDidInvalidate([in] IWebView* sender);
 }
+
+cpp_quote("#define WebWindowFeaturesXKey L\"x\"")
+cpp_quote("#define WebWindowFeaturesYKey L\"y\"")
+cpp_quote("#define WebWindowFeaturesWidthKey L\"width\"")
+cpp_quote("#define WebWindowFeaturesHeightKey L\"height\"")
+cpp_quote("#define WebWindowFeaturesMenuBarVisibleKey L\"menuBarVisible\"")
+cpp_quote("#define WebWindowFeaturesStatusBarVisibleKey L\"statusBarVisible\"")
+cpp_quote("#define WebWindowFeaturesToolBarVisibleKey L\"toolBarVisible\"")
+cpp_quote("#define WebWindowFeaturesScrollbarsVisibleKey L\"scrollbarsVisible\"")
+cpp_quote("#define WebWindowFeaturesResizableKey L\"resizable\"")
+cpp_quote("#define WebWindowFeaturesFullscreenKey L\"fullscreen\"")
+cpp_quote("#define WebWindowFeaturesDialogKey L\"dialog\"")
+
+[
+    object,
+    oleautomation,
+    uuid(b7d6a98e-9c4f-43f2-b6a7-0975a0b18421),
+    pointer_default(unique)
+]
+interface IWebUIDelegatePrivate2 : IWebUIDelegatePrivate
+{
+    // This function obsoletes IWebUIDelegate::createWebViewWithRequest and
+    // IWebUIDelegate::createModalDialog. Clients should determine whether to create a modal dialog
+    // based on whether WebWindowFeaturesDialogKey returns a TRUE value from the windowFeatures
+    // IPropertyBag. The keys of the windowFeatures IPropertyBag are the WebWindowFeatures*Key
+    // strings above.
+    HRESULT createWebViewWithRequest([in] IWebView* sender, [in] IWebURLRequest* request, [in] IPropertyBag* windowFeatures, [out, retval] IWebView** newWebView);
+}

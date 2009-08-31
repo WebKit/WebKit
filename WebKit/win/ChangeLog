@@ -1,5 +1,30 @@
 2009-08-20  Adam Roben  <aroben@apple.com>
 
+        Give WebKit clients access to the window features specified in
+        window.open
+
+        Reviewed by Steve Falkenburg.
+
+        * COMVariantSetter.h: Added COMVariantSetters for bool and float.
+
+        * Interfaces/IWebUIDelegatePrivate.idl: Added IWebUIDelegatePrivate2,
+        which contains a new version of createWebViewWithRequest that also
+        passes the window features as an IPropertyBag. This is analagous to
+        the -createWebViewWithRequest:windowFeatures: method added to
+        WebUIDelegate on Mac in r27452. Also added key strings for use with
+        the window features property bag.
+
+        * WebCoreSupport/WebChromeClient.cpp:
+        (createWindowFeaturesPropertyBag): Added this helper function to turn
+        a WebCore::WindowFeatures into an IPropertyBag for passing to WebKit
+        clients.
+        (WebChromeClient::createWindow): If the UI delegate implements
+        IWebUIDelegatePrivate2, call the new createWebViewWithRequest function
+        that takes a window features property bag. If the delegate doesn't
+        implement the new function, fall back to the old functions.
+
+2009-08-20  Adam Roben  <aroben@apple.com>
+
         A little clean-up in WebChromeClient::createWindow
 
         Reviewed by Steve Falkenburg.
