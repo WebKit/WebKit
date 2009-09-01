@@ -1,5 +1,47 @@
 2009-09-01  David Kilzer  <ddkilzer@apple.com>
 
+        <http://webkit.org/b/28877> Implement bugzilla-tool mark-fixed
+
+        Reviewed by David Levin.
+
+        The mark-fixed subcommand is for those times when you don't use
+        bugzilla-tool to commit a patch, but you want to use it to close
+        the bug with a committed-revision message.
+
+        * Scripts/bugzilla-tool:
+        (bug_comment_from_svn_revision): Added.  Extracted from
+        bug_comment_from_commit_text().
+        (bug_comment_from_commit_text): Extracted
+        bug_comment_from_svn_revision() from this method.
+        (MarkBugFixed.__init__): Added.
+        (MarkBugFixed._fetch_commit_log): Added.  Retrieves the commit
+        log from the last commit if no svn revision is specified, else
+        the commit log for the specified svn revision.
+        (MarkBugFixed._determine_bug_id_and_svn_revision): Added.
+        Attempts to determine the bug id and svn revision if one or both
+        were not defined on the command line.
+        (MarkBugFixed.execute): Added.  Adds a comment about the
+        revision that fixed the bug and closes the bug.
+        (BugzillaTool.__init__): Added mark-fixed subcommand.
+        * Scripts/modules/bugzilla.py:
+        (Bugzilla.fetch_title_from_bug): Added.  Returns the title of a
+        bug given a bug id.
+        * Scripts/modules/scm.py:
+        (SCM.strip_r_from_svn_revision): Added.  Utility method to strip
+        the leading 'r' from an svn revision.
+        (SCM.svn_commit_log): Added.  Subclasses must override.
+        (SCM.last_svn_commit_log): Added.  Subclasses must override.
+        (SVN.svn_commit_log): Added.  Returns svn log for a given
+        revision.
+        (SVN.last_svn_commit_log): Added.  Uses svnversion to find the
+        last commit in an svn working directory and then runs svn log.
+        (Git.svn_commit_log): Added.  Returns svn log for a given
+        revision.
+        (Git.last_svn_commit_log): Added.  Runs git-svn-log with a limit
+        of one log message.
+
+2009-09-01  David Kilzer  <ddkilzer@apple.com>
+
         <http://webkit.org/b/28880> svn-apply --force doesn't actually work
 
         Reviewed by Brady Eidson.

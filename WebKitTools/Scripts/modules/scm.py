@@ -144,6 +144,12 @@ class SCM:
             filenames.append(filename)
         return filenames
 
+    def strip_r_from_svn_revision(self, svn_revision):
+        match = re.match("^r(?P<svn_revision>\d+)", svn_revision)
+        if (match):
+            return match.group('svn_revision')
+        return svn_revision
+
     @staticmethod
     def in_working_directory(path):
         raise NotImplementedError, "subclasses must implement"
@@ -179,7 +185,13 @@ class SCM:
 
     def commit_with_message(self, message):
         raise NotImplementedError, "subclasses must implement"
-    
+
+    def svn_commit_log(self, svn_revision):
+        raise NotImplementedError, "subclasses must implement"
+
+    def last_svn_commit_log(self):
+        raise NotImplementedError, "subclasses must implement"
+
     # Subclasses must indicate if they support local commits,
     # but the SCM baseclass will only call local_commits methods when this is true.
     @staticmethod
@@ -281,6 +293,25 @@ class SVN(SCM):
             return "Dry run, no remote commit."
         return self.run_command(['svn', 'commit', '-m', message])
 
+    def svn_commit_log(self, svn_revision):
+        svn_revision = self.strip_r_from_svn_revision(svn_revision)
+        return self.run_command(['svn', 'log', '--non-interactive', '-r', svn_revision]);
+
+    def last_svn_commit_log(self):
+        svn_revision = None
+        output = self.run_command(['svnversion', '-c'])
+
+        if re.match("^\d+", output):
+            svn_revision = output
+        else:
+            match = re.match("^(\d+):(?P<last_svn_revision>\d+)", output)
+            if match:
+                svn_revision = match.group('last_svn_revision')
+
+        if not svn_revision:
+            raise ScriptError('Could not find last revision committed to svn working directory.')
+
+        return self.run_command(['svn', 'log', '--non-interactive', '-r', svn_revision])
 
 # All git-specific logic should go here.
 class Git(SCM):
@@ -349,6 +380,13 @@ class Git(SCM):
     def commit_with_message(self, message):
         self.commit_locally_with_message(message)
         return self.push_local_commits_to_server()
+
+    def svn_commit_log(self, svn_revision):
+        svn_revision = self.strip_r_from_svn_revision(svn_revision)
+        return self.run_command(['git', 'svn', 'log', '-r', svn_revision])
+
+    def last_svn_commit_log(self):
+        return self.run_command(['git', 'svn', 'log', '--limit=1'])
 
     # Git-specific methods:
 

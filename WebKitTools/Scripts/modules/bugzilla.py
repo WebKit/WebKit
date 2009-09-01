@@ -186,6 +186,12 @@ class Bugzilla:
             attachments.append(attachment)
         return attachments
 
+    def fetch_title_from_bug(self, bug_id):
+        bug_url = self.bug_url_for_bug_id(bug_id, xml=True)
+        page = urllib2.urlopen(bug_url)
+        soup = BeautifulSoup(page)
+        return soup.find('short_desc').string
+
     def fetch_patches_from_bug(self, bug_id):
         patches = []
         for attachment in self.fetch_attachments_from_bug(bug_id):
