@@ -60,6 +60,23 @@ namespace WebCore {
 
 namespace {
 
+inline int fastMod(int value, int max)
+{
+    int sign = SkExtractSign(value);
+    
+    value = SkApplySign(value, sign);
+    if (value >= max)
+        value %= max;
+    return SkApplySign(value, sign);
+}
+
+inline float square(float n)
+{
+    return n * n;
+}
+
+}  // namespace
+
 // "Seatbelt" functions ------------------------------------------------------
 //
 // These functions check certain graphics primitives for being "safe".
@@ -194,23 +211,6 @@ void addCornerArc(SkPath* path, const SkRect& rect, const IntSize& size, int sta
     r.set(ir);
     path->arcTo(r, SkIntToScalar(startAngle), SkIntToScalar(90), false);
 }
-
-inline int fastMod(int value, int max)
-{
-    int sign = SkExtractSign(value);
-
-    value = SkApplySign(value, sign);
-    if (value >= max)
-        value %= max;
-    return SkApplySign(value, sign);
-}
-
-inline float square(float n)
-{
-    return n * n;
-}
-
-}  // namespace
 
 // -----------------------------------------------------------------------------
 

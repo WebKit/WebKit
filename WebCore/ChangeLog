@@ -1,3 +1,23 @@
+2009-09-01  Roland Steiner  <rolandsteiner@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Fix bug 28808:  [Skia] Fix flaky layout test svg/dynamic-updates/SVGClipPathElement-dom-clipPathUnits-attr.html [DEBUG]
+        (https://bugs.webkit.org/show_bug.cgi?id=28808)
+
+        The bug fix adds an explicit check for the validity of the path when it is 
+        transformed into local coordinates. 
+        This was the most suitable place I could find that didn't cause an inordinate 
+        amount of refactoring. Also, it seems pertinent and may also catch other cases 
+        that are not limited to clipping paths.
+
+        TEST: existing svg/dynamic-updates/SVGClipPathElement-dom-clipPathUnits-attr.html
+
+        * platform/graphics/skia/GraphicsContextSkia.cpp: make isPathSkiaSafe accessible
+        (WebCore::):
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (PlatformContextSkia::currentPathInLocalCoordinates): check Skia safety of path
+
 2009-09-01  Yusuke Sato  <yusukes@chromium.org>
 
         Reviewed by Eric Seidel.
