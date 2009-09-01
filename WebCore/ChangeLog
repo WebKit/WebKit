@@ -1,3 +1,25 @@
+2009-09-01  Vitaly Repeshko  <vitalyr@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [V8] Inlined fast paths of V8DOMWrapper::convertNodeToV8Object and
+        V8Proxy::createWrapperFromCache.
+        https://bugs.webkit.org/show_bug.cgi?id=28848
+
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::convertDocumentToV8Object): Special
+        function for document wrapping.
+        (WebCore::V8DOMWrapper::convertNewNodeToV8Object): Slow case of
+        wrapping a new node.
+        * bindings/v8/V8DOMWrapper.h:
+        (WebCore::V8DOMWrapper::convertNodeToV8Object): Extracted fast
+        path from V8DOMWrapper.cpp.
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::createWrapperFromCacheSlowCase):
+        * bindings/v8/V8Proxy.h:
+        (WebCore::V8Proxy::createWrapperFromCache): Extracted fast path
+        from V8Proxy.cpp.
+
 2009-09-01  Eric Seidel  <eric@webkit.org>
 
         No review, windows build fix only.  Clearly I should have read the patch closer. :(

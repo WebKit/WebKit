@@ -242,7 +242,12 @@ namespace WebCore {
         // To create JS Wrapper objects, we create a cache of a 'boiler plate'
         // object, and then simply Clone that object each time we need a new one.
         // This is faster than going through the full object creation process.
-        v8::Local<v8::Object> createWrapperFromCache(V8ClassIndex::V8WrapperType);
+        v8::Local<v8::Object> createWrapperFromCache(V8ClassIndex::V8WrapperType type)
+        {
+            int classIndex = V8ClassIndex::ToInt(type);
+            v8::Local<v8::Object> clone(m_wrapperBoilerplates->CloneElementAt(classIndex));
+            return clone.IsEmpty() ? createWrapperFromCacheSlowCase(type) : clone;
+        }
 
         // Returns the window object associated with a context.
         static DOMWindow* retrieveWindow(v8::Handle<v8::Context>);
@@ -405,6 +410,8 @@ namespace WebCore {
                 createUtilityContext();
             return v8::Local<v8::Context>::New(m_utilityContext);
         }
+
+        v8::Local<v8::Object> createWrapperFromCacheSlowCase(V8ClassIndex::V8WrapperType);
 
         static void registerExtensionWithV8(v8::Extension*);
 

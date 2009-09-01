@@ -465,14 +465,10 @@ v8::Local<v8::Value> V8Proxy::newInstance(v8::Handle<v8::Function> constructor, 
     return result;
 }
 
-v8::Local<v8::Object> V8Proxy::createWrapperFromCache(V8ClassIndex::V8WrapperType type)
+v8::Local<v8::Object> V8Proxy::createWrapperFromCacheSlowCase(V8ClassIndex::V8WrapperType type)
 {
-    int classIndex = V8ClassIndex::ToInt(type);
-    v8::Local<v8::Object> clone(m_wrapperBoilerplates->CloneElementAt(classIndex));
-    if (!clone.IsEmpty())
-        return clone;
-
     // Not in cache.
+    int classIndex = V8ClassIndex::ToInt(type);
     initContextIfNeeded();
     v8::Context::Scope scope(m_context);
     v8::Local<v8::Function> function = V8DOMWrapper::getConstructor(type, getHiddenObjectPrototype(m_context));

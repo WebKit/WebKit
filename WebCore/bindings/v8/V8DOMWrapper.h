@@ -31,11 +31,13 @@
 #ifndef V8DOMWrapper_h
 #define V8DOMWrapper_h
 
+#include "Document.h"
 #include "Event.h"
 #include "Node.h"
 #include "NodeFilter.h"
 #include "PlatformString.h" // for WebCore::String
 #include "V8CustomBinding.h"
+#include "V8DOMMap.h"
 #include "V8Index.h"
 #include "V8Utilities.h"
 #include <v8.h>
@@ -134,7 +136,26 @@ namespace WebCore {
             return convertNodeToV8Object(node.get());
         }
 
-        static v8::Handle<v8::Value> convertNodeToV8Object(Node*);
+        static v8::Handle<v8::Value> convertNodeToV8Object(Node* node)
+        {
+            if (!node)
+                return v8::Null();
+
+            Document* document = node->document();
+            if (node == document)
+                return convertDocumentToV8Object(document);
+
+            DOMWrapperMap<Node>& domNodeMap = getDOMNodeMap();
+            v8::Handle<v8::Object> wrapper = domNodeMap.get(node);
+            if (wrapper.IsEmpty())
+                return convertNewNodeToV8Object(node, 0, domNodeMap);
+
+            return wrapper;
+        }
+
+        static v8::Handle<v8::Value> convertDocumentToV8Object(Document*);
+
+        static v8::Handle<v8::Value> convertNewNodeToV8Object(Node*, V8Proxy*, DOMWrapperMap<Node>&);
 
         template <class C>
         static C* convertToNativeObject(V8ClassIndex::V8WrapperType type, v8::Handle<v8::Object> object)

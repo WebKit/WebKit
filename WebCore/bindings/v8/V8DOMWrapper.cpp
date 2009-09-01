@@ -1146,30 +1146,30 @@ static const V8ClassIndex::V8WrapperType mapping[] = {
     V8ClassIndex::NODE,                   // XPATH_NAMESPACE_NODE
 };
 
-// Caller checks node is not null.
-v8::Handle<v8::Value> V8DOMWrapper::convertNodeToV8Object(Node* node)
+v8::Handle<v8::Value> V8DOMWrapper::convertDocumentToV8Object(Document* document)
 {
-    if (!node)
-        return v8::Null();
-
     // Find a proxy for this node.
     //
     // Note that if proxy is found, we might initialize the context which can
     // instantiate a document wrapper.  Therefore, we get the proxy before
     // checking if the node already has a wrapper.
-    V8Proxy* proxy = 0;
-    Document* document = node->document();
-    if (document) {
-        Frame* frame = document->frame();
-        proxy = V8Proxy::retrieve(frame);
-        if (proxy)
-            proxy->initContextIfNeeded();
-    }
+    V8Proxy* proxy = V8Proxy::retrieve(document->frame());
+    if (proxy)
+        proxy->initContextIfNeeded();
 
     DOMWrapperMap<Node>& domNodeMap = getDOMNodeMap();
-    v8::Handle<v8::Object> wrapper = domNodeMap.get(node);
-    if (!wrapper.IsEmpty())
-        return wrapper;
+    v8::Handle<v8::Object> wrapper = domNodeMap.get(document);
+    if (wrapper.IsEmpty())
+        return convertNewNodeToV8Object(document, proxy, domNodeMap);
+
+    return wrapper;
+}
+
+// Caller checks node is not null.
+v8::Handle<v8::Value> V8DOMWrapper::convertNewNodeToV8Object(Node* node, V8Proxy* proxy, DOMWrapperMap<Node>& domNodeMap)
+{
+    if (!proxy && node->document())
+        proxy = V8Proxy::retrieve(node->document()->frame());
 
     bool isDocument = false; // document type node has special handling
     V8ClassIndex::V8WrapperType type;
