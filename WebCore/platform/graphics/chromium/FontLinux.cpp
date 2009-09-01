@@ -45,6 +45,11 @@
 #include "SkTypeface.h"
 #include "SkUtils.h"
 
+#include <unicode/normlzr.h>
+#include <unicode/uchar.h>
+#include <wtf/OwnArrayPtr.h>
+#include <wtf/OwnPtr.h>
+
 namespace WebCore {
 
 bool Font::canReturnFallbackFontsForComplexText()
@@ -136,27 +141,29 @@ class TextRunWalker {
 public:
     TextRunWalker(const TextRun& run, unsigned startingX, const Font* font)
         : m_font(font)
-        , m_run(run)
         , m_startingX(startingX)
         , m_offsetX(m_startingX)
-        , m_iterateBackwards(run.rtl())
+        , m_run(getTextRun(run))
+        , m_iterateBackwards(m_run.rtl())
     {
+        // Do not use |run| inside this constructor. Use |m_run| instead.
+
         memset(&m_item, 0, sizeof(m_item));
         // We cannot know, ahead of time, how many glyphs a given script run
         // will produce. We take a guess that script runs will not produce more
         // than twice as many glyphs as there are code points and fallback if
         // we find that we are wrong.
-        m_maxGlyphs = run.length() * 2;
+        m_maxGlyphs = m_run.length() * 2;
         createGlyphArrays();
 
-        m_item.log_clusters = new unsigned short[run.length()];
+        m_item.log_clusters = new unsigned short[m_run.length()];
 
         m_item.face = 0;
         m_item.font = allocHarfbuzzFont();
 
-        m_item.string = run.characters();
-        m_item.stringLength = run.length();
-        m_item.item.bidiLevel = run.rtl();
+        m_item.string = m_run.characters();
+        m_item.stringLength = m_run.length();
+        m_item.item.bidiLevel = m_run.rtl();
 
         reset();
     }
@@ -283,6 +290,43 @@ public:
     }
 
 private:
+    const TextRun& getTextRun(const TextRun& originalRun)
+    {
+        // Convert the |originalRun| to NFC normalized form if combining diacritical marks
+        // (U+0300..) are used in the run. This conversion is necessary since most OpenType
+        // fonts (e.g., Arial) don't have substitution rules for the diacritical marks in
+        // their GSUB tables.
+        //
+        // Note that we don't use the icu::Normalizer::isNormalized(UNORM_NFC) API here since
+        // the API returns FALSE (= not normalized) for complex runs that don't require NFC
+        // normalization (e.g., Arabic text). Unless the run contains the diacritical marks,
+        // Harfbuzz will do the same thing for us using the GSUB table.
+        for (unsigned i = 0; i < originalRun.length(); ++i) {
+            UBlockCode block = ::ublock_getCode(originalRun[i]);
+            if (block == UBLOCK_COMBINING_DIACRITICAL_MARKS) {
+                return getNormalizedTextRun(originalRun);
+            }
+        }
+        return originalRun;
+    }
+
+    const TextRun& getNormalizedTextRun(const TextRun& originalRun)
+    {
+        UnicodeString normalizedString;
+        UErrorCode error = U_ZERO_ERROR;
+        icu::Normalizer::normalize(icu::UnicodeString(originalRun.characters(), originalRun.length()), UNORM_NFC, 0 /* no options */, normalizedString, error);
+        if (U_FAILURE(error))
+            return originalRun;
+
+        m_normalizedBuffer.set(new UChar[normalizedString.length() + 1]);
+        normalizedString.extract(m_normalizedBuffer.get(), normalizedString.length() + 1, error);
+        ASSERT(U_SUCCESS(error));
+
+        m_normalizedRun.set(new TextRun(originalRun));
+        m_normalizedRun->setText(m_normalizedBuffer.get(), normalizedString.length());
+        return *m_normalizedRun;
+    }
+
     void setupFontForScriptRun()
     {
         const FontData* fontData = m_font->fontDataAt(0);
@@ -379,7 +423,6 @@ private:
     }
 
     const Font* const m_font;
-    const TextRun& m_run;
     HB_ShaperItem m_item;
     uint16_t* m_glyphs16; // A vector of 16-bit glyph ids.
     SkScalar* m_xPositions; // A vector of x positions for each glyph.
@@ -389,6 +432,10 @@ private:
     unsigned m_pixelWidth; // Width (in px) of the current script run.
     unsigned m_numCodePoints; // Code points in current script run.
     unsigned m_maxGlyphs; // Current size of all the Harfbuzz arrays.
+
+    OwnPtr<TextRun> m_normalizedRun;
+    OwnArrayPtr<UChar> m_normalizedBuffer; // A buffer for normalized run.
+    const TextRun& m_run;
     bool m_iterateBackwards;
 };
 

@@ -1,3 +1,21 @@
+2009-09-01  Yusuke Sato  <yusukes@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [Chromium] Combining Diacritical Marks (U+0300..) are not handled correctly.
+        https://bugs.webkit.org/show_bug.cgi?id=28742 
+
+        Normalize (NFC) a TextRun when the run contains combining diacritical marks
+        so that Skia can pick a correct glyph without relying on GSUB table in a font.
+        This change is for Chromium Linux.
+
+        * platform/graphics/chromium/FontLinux.cpp:
+        (WebCore::TextRunWalker::getTextRun): Added.
+        (WebCore::TextRunWalker::getNormalizedTextRun): Added.
+
+        This function is called when the run contains U+0300..U+036F and converts characters in
+        the run to the combined form (NFC) using ICU.
+
 2009-09-01  Vitaly Repeshko  <vitalyr@chromium.org>
 
         Reviewed by Dimitri Glazkov.
