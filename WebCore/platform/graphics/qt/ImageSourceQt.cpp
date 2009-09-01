@@ -29,98 +29,12 @@
 #include "config.h"
 #include "ImageSource.h"
 #include "ImageDecoderQt.h"
-#include "SharedBuffer.h"
-
-#include <QBuffer>
-#include <QImage>
-#include <QImageReader>
 
 namespace WebCore {
 
-ImageSource::ImageSource()
-    : m_decoder(0)
-{
-}
-
-ImageSource::~ImageSource()
-{
-    clear(true);
-}
-
-bool ImageSource::initialized() const
-{
-    return m_decoder;
-}
-
-void ImageSource::setData(SharedBuffer* data, bool allDataReceived)
-{
-    // Make the decoder by sniffing the bytes.
-    // This method will examine the data and instantiate an instance of the appropriate decoder plugin.
-    // If insufficient bytes are available to determine the image type, no decoder plugin will be
-    // made.
-    if (!m_decoder)
-        m_decoder = static_cast<NativeImageSourcePtr>(ImageDecoder::create(*data));
-
-    if (!m_decoder)
-        return;
-
-    m_decoder->setData(data->buffer(), allDataReceived);
-}
-
-String ImageSource::filenameExtension() const
-{
-    if (!m_decoder)
-        return String();
-
-    return m_decoder->filenameExtension();
-}
-
-bool ImageSource::isSizeAvailable()
-{
-    if (!m_decoder)
-        return false;
-
-    return m_decoder->isSizeAvailable();
-}
-
-IntSize ImageSource::size() const
-{
-    if (!m_decoder)
-        return IntSize();
-
-    return m_decoder->size();
-}
-
-IntSize ImageSource::frameSizeAtIndex(size_t index) const
-{
-    if (!m_decoder)
-        return IntSize();
-
-    return m_decoder->frameSizeAtIndex(index);
-}
-
-int ImageSource::repetitionCount()
-{
-    if (!m_decoder)
-        return cAnimationNone;
-
-    return m_decoder->repetitionCount();
-}
-
-size_t ImageSource::frameCount() const
-{
-    if (!m_decoder)
-        return 0;
-
-    return m_decoder->frameCount();
-}
-
 NativeImagePtr ImageSource::createFrameAtIndex(size_t index)
 {
-    if (!m_decoder)
-        return 0;
-
-    return m_decoder->imageAtIndex(index);
+    return m_decoder ? m_decoder->imageAtIndex(index) : 0;
 }
 
 float ImageSource::frameDurationAtIndex(size_t index)
@@ -139,33 +53,13 @@ float ImageSource::frameDurationAtIndex(size_t index)
 
 bool ImageSource::frameHasAlphaAtIndex(size_t index)
 {
-    if (!m_decoder || !m_decoder->supportsAlpha())
-        return false;
-
-    const QPixmap* source = m_decoder->imageAtIndex(index);
-    if (!source)
-        return false;
-
-    return source->hasAlphaChannel();
+    return frameIsCompleteAtIndex(index) && m_decoder->supportsAlpha() &&
+        m_decoder->imageAtIndex(index)->hasAlphaChannel();
 }
 
 bool ImageSource::frameIsCompleteAtIndex(size_t index)
 {
-    return (m_decoder && m_decoder->imageAtIndex(index));
-}
-
-void ImageSource::clear(bool destroyAll, size_t clearBeforeFrame, SharedBuffer* data, bool allDataReceived)
-{
-    if (!destroyAll) {
-        if (m_decoder)
-            m_decoder->clearFrameBufferCache(clearBeforeFrame);
-        return;
-    }
-
-    delete m_decoder;
-    m_decoder = 0;
-    if (data)
-        setData(data, allDataReceived);
+    return m_decoder && m_decoder->imageAtIndex(index);
 }
 
 }

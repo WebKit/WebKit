@@ -1166,6 +1166,7 @@ SOURCES += \
     platform/graphics/GraphicsTypes.cpp \
     platform/graphics/Image.cpp \
     platform/graphics/ImageBuffer.cpp \
+    platform/graphics/ImageSource.cpp \
     platform/graphics/IntRect.cpp \
     platform/graphics/Path.cpp \
     platform/graphics/PathTraversalState.cpp \
@@ -1842,6 +1843,7 @@ HEADERS += \
     platform/graphics/GraphicsContext.h \
     platform/graphics/GraphicsTypes.h \
     platform/graphics/Image.h \
+    platform/graphics/ImageSource.h \
     platform/graphics/IntRect.h \
     platform/graphics/MediaPlayer.h \
     platform/graphics/Path.h \
