@@ -48,6 +48,7 @@ sub fixChangeLogPatch($);
 sub fixMergedChangeLogs($;@);
 sub fixOneMergedChangeLog($);
 sub hasGitUnmergedFiles();
+sub isInGitFilterBranch();
 sub mergeChanges($$$);
 sub parseFixMerged($$;$);
 sub removeChangeLogArguments($);
@@ -77,7 +78,7 @@ my $getOptionsResult = GetOptions(
     'w|warnings!'    => \$printWarnings,
 );
 
-my $relativePath = chdirReturningRelativePath(determineVCSRoot());
+my $relativePath = isInGitFilterBranch() ? '.' : chdirReturningRelativePath(determineVCSRoot());
 
 my @changeLogFiles = removeChangeLogArguments($relativePath);
 
@@ -430,6 +431,11 @@ sub hasGitUnmergedFiles()
 {
     my $output = `$GIT ls-files --unmerged`;
     return $output ne "";
+}
+
+sub isInGitFilterBranch()
+{
+    return exists $ENV{MAPPED_PREVIOUS_COMMIT} && $ENV{MAPPED_PREVIOUS_COMMIT};
 }
 
 sub mergeChanges($$$)

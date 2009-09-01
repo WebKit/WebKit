@@ -1,3 +1,28 @@
+2009-09-01  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/28725> resolve-ChangeLogs: determineVCSRoot() returns incorrect repository root during git filter-branch
+
+        Reviewed by Adam Roben.
+
+        When git-filter-branch has been invoked to rewrite ChangeLog
+        files on series of git commits, it changes directories into
+        .git-rewrite/t before re-running resolve-ChangeLogs.  This
+        causes determineVCSRoot() in VCSUtils.pm to return
+        ".git-rewrite/t", which causes that path to be prepended to all
+        ChangeLog paths, which results in an error like this:
+
+            error: pathspec '.git-rewrite/t/ChangeLog' did not match any file(s) known to git.
+            Died at WebKitTools/Scripts/resolve-ChangeLogs line 376.
+
+        The correct way to fix this is not to try to find the repository
+        root when invoked by git-filter-branch.
+
+        * Scripts/resolve-ChangeLogs: If isInGitFilterBranch() is true,
+        set $relativePath to '.' instead of calling
+        chdirReturningRelativePath(determineVCSRoot()).
+        (isInGitFilterBranch): Added.  Checks for the existence of the
+        MAPPED_PREVIOUS_COMMIT environment variable.
+
 2009-09-01  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.
