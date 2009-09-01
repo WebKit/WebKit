@@ -1,3 +1,16 @@
+2009-09-01  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        Uninitialized variable in XSSAuditor
+        https://bugs.webkit.org/show_bug.cgi?id=28874
+
+        One ought to initialize variables before use even when it doesn't
+        matter.  No behavior change.
+
+        * page/XSSAuditor.h:
+        (WebCore::XSSAuditor::CachingURLCanonicalizer::CachingURLCanonicalizer):
+
 2009-09-01  Peter Kasting  <pkasting@google.com>
 
         Unreviewed (build fix).
