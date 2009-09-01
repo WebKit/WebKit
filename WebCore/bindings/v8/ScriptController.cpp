@@ -276,6 +276,11 @@ void ScriptController::collectGarbage()
     m_proxy->evaluate(ScriptSourceCode("if (window.gc) void(gc());"), 0);
 }
 
+void ScriptController::lowMemoryNotification()
+{
+    v8::V8::LowMemoryNotification();
+}
+
 bool ScriptController::haveInterpreter() const
 {
     return m_proxy->isContextInitialized();

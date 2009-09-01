@@ -89,6 +89,9 @@ namespace WebCore {
 
         void collectGarbage();
 
+        // Notify V8 that the system is running low on memory.
+        void lowMemoryNotification();
+
         // Creates a property of the global object of a frame.
         void bindToWindowObject(Frame*, const String& key, NPObject*);
 

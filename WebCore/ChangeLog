@@ -1,3 +1,19 @@
+2009-09-01  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by David Levin.
+
+        Add a "lowMemoryNotification" method to the V8 ScriptController class.
+        This is needed in order to allow the host application (Android Web browser in this case)
+        to call the v8::V8::LowMemoryNotification() method added to V8 in
+        http://code.google.com/p/v8/source/detail?spec=svn2777&r=2725
+        
+        https://bugs.webkit.org/show_bug.cgi?id=28776
+
+
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::lowMemoryNotification):
+        * bindings/v8/ScriptController.h:
+
 2009-09-01  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Adam Barth.
