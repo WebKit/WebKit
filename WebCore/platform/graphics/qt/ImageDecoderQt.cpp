@@ -78,7 +78,7 @@ public:
             // Load images only if  all data have been received
             LoadComplete };
 
-    ReadContext(const IncomingData & data, LoadMode loadMode, ImageList &target);
+    ReadContext(SharedBuffer* data, LoadMode loadMode, ImageList &target);
 
     enum ReadResult { ReadEOF, ReadFailed, ReadPartial, ReadComplete };
 
@@ -108,9 +108,9 @@ private:
 
 };
 
-ImageDecoderQt::ReadContext::ReadContext(const IncomingData & data, LoadMode loadMode, ImageList &target)
+ImageDecoderQt::ReadContext::ReadContext(SharedBuffer* data, LoadMode loadMode, ImageList &target)
     : m_loadMode(loadMode)
-    , m_data(data.data(), data.size())
+    , m_data(data->data(), data.size())
     , m_buffer(&m_data)
     , m_reader(&m_buffer)
     , m_target(target)
@@ -221,13 +221,13 @@ void ImageDecoderQt::reset()
     m_loopCount = cAnimationNone;
 }
 
-void ImageDecoderQt::setData(const IncomingData &data, bool allDataReceived)
+void ImageDecoderQt::setData(SharedBuffer* data, bool allDataReceived)
 {
     reset();
     ReadContext readContext(data, ReadContext::LoadComplete, m_imageList);
 
     if (debugImageDecoderQt)
-        qDebug() << " setData " << data.size() << " image bytes, complete=" << allDataReceived;
+        qDebug() << " setData " << data->size() << " image bytes, complete=" << allDataReceived;
 
     const  ReadContext::ReadResult readResult =  readContext.read(allDataReceived);
 

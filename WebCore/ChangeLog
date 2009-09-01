@@ -1,3 +1,15 @@
+2009-09-01  Peter Kasting  <pkasting@google.com>
+
+        Unreviewed (build fix).
+
+        Try to fix Qt build, take 2.  The Qt code had what looks like a
+        broken virtual function override.
+
+        * platform/graphics/qt/ImageDecoderQt.cpp:
+        (WebCore::ImageDecoderQt::ReadContext::ReadContext):
+        (WebCore::ImageDecoderQt::setData):
+        * platform/graphics/qt/ImageDecoderQt.h:
+
 2009-09-01  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Sam Weinig.

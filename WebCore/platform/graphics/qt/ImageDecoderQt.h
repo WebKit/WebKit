@@ -42,9 +42,7 @@ public:
     ImageDecoderQt(const QString& imageFormat);
     ~ImageDecoderQt();
 
-    typedef Vector<char> IncomingData;
-
-    virtual void setData(const IncomingData& data, bool allDataReceived);
+    virtual void setData(SharedBuffer* data, bool allDataReceived);
     virtual bool isSizeAvailable();
     virtual size_t frameCount() const;
     virtual int repetitionCount() const;
