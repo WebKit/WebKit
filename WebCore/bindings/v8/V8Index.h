@@ -297,13 +297,21 @@ typedef v8::Persistent<v8::FunctionTemplate> (*FunctionTemplateFactory)();
 #endif  // SVG
 
 
+#if ENABLE(WEB_SOCKETS)
+#define WEBSOCKET_ACTIVE_OBJECT_WRAPPER_TYPES(V)                        \
+    V(WEBSOCKET, WebSocket)
+#else
+#define WEBSOCKET_ACTIVE_OBJECT_WRAPPER_TYPES(V)
+#endif
+
 // ACTIVE_DOM_OBJECT_TYPES are DOM_OBJECT_TYPES that need special treatement
 // during GC.
 #define ACTIVE_DOM_OBJECT_TYPES(V)                                      \
     V(MESSAGEPORT, MessagePort)                                         \
     V(XMLHTTPREQUEST, XMLHttpRequest)                                   \
     WORKER_ACTIVE_OBJECT_WRAPPER_TYPES(V)                               \
-    SHARED_WORKER_ACTIVE_OBJECT_WRAPPER_TYPES(V)
+    SHARED_WORKER_ACTIVE_OBJECT_WRAPPER_TYPES(V)                        \
+    WEBSOCKET_ACTIVE_OBJECT_WRAPPER_TYPES(V)
 
 // NOTE: DOM_OBJECT_TYPES is split into two halves because
 //       Visual Studio's Intellinonsense crashes when macros get

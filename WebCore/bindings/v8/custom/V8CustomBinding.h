@@ -163,6 +163,11 @@ namespace WebCore {
         static const int kDOMApplicationCacheFieldCount = kDefaultWrapperInternalFieldCount + 1;
 #endif
 
+#if ENABLE(WEB_SOCKETS)
+        static const int kWebSocketCacheIndex = kDefaultWrapperInternalFieldCount + 0;
+        static const int kWebSocketInternalFieldCount = kDefaultWrapperInternalFieldCount + 1;
+#endif
+
 #define DECLARE_PROPERTY_ACCESSOR_GETTER(NAME) \
     static v8::Handle<v8::Value> v8##NAME##AccessorGetter( \
         v8::Local<v8::String> name, const v8::AccessorInfo& info)
@@ -537,6 +542,15 @@ namespace WebCore {
 
 #if ENABLE(SHARED_WORKERS)
         DECLARE_CALLBACK(SharedWorkerConstructor);
+#endif
+
+#if ENABLE(WEB_SOCKETS)
+        DECLARE_PROPERTY_ACCESSOR(WebSocketOnopen);
+        DECLARE_PROPERTY_ACCESSOR(WebSocketOnmessage);
+        DECLARE_PROPERTY_ACCESSOR(WebSocketOnclose);
+        DECLARE_CALLBACK(WebSocketConstructor);
+        DECLARE_CALLBACK(WebSocketSend);
+        DECLARE_CALLBACK(WebSocketClose);
 #endif
 
 #undef DECLARE_INDEXED_ACCESS_CHECK

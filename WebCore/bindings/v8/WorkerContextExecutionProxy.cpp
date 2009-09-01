@@ -49,6 +49,9 @@
 #include "V8Proxy.h"
 #include "V8WorkerContextEventListener.h"
 #include "V8WorkerContextObjectEventListener.h"
+#if ENABLE(WEB_SOCKETS)
+#include "WebSocket.h"
+#endif
 #include "Worker.h"
 #include "WorkerContext.h"
 #include "WorkerLocation.h"

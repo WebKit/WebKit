@@ -88,6 +88,9 @@ namespace WebCore {
     class StyleSheetList;
     class V8EventListener;
     class V8ObjectEventListener;
+#if ENABLE(WEB_SOCKETS)
+    class WebSocket;
+#endif
     class WorkerContext;
 
     class V8DOMWrapper {

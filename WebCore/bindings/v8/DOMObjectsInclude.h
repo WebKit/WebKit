@@ -208,6 +208,10 @@
 #include "V8SVGPODTypeWrapper.h"
 #endif // SVG
 
+#if ENABLE(WEB_SOCKETS)
+#include "WebSocket.h"
+#endif
+
 #if ENABLE(WORKERS)
 #include "DedicatedWorkerContext.h"
 #include "Worker.h"

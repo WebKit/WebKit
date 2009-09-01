@@ -1,3 +1,23 @@
+2009-09-01  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        V8 Bindings for WebSocket API.
+        https://bugs.webkit.org/show_bug.cgi?id=28844
+
+        * bindings/v8/DOMObjectsInclude.h:
+        * bindings/v8/DerivedSourcesAllInOne.cpp:
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::getTemplate):
+        (WebCore::V8DOMWrapper::convertToV8Object):
+        (WebCore::V8DOMWrapper::convertEventTargetToV8Object):
+        * bindings/v8/V8DOMWrapper.h:
+        * bindings/v8/V8Index.cpp:
+        * bindings/v8/V8Index.h:
+        * bindings/v8/WorkerContextExecutionProxy.cpp:
+        * bindings/v8/custom/V8CustomBinding.h:
+        * bindings/v8/custom/V8WebSocketCustom.cpp: Added.
+
 2009-09-01  Peter Kasting  <pkasting@google.com>
 
         Unreviewed (build fix).

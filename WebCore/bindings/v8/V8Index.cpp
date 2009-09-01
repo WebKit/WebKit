@@ -378,6 +378,10 @@
 #include "V8TimeRanges.h"
 #endif
 
+#if ENABLE(WEB_SOCKETS)
+#include "V8WebSocket.h"
+#endif
+
 #if ENABLE(WORKERS)
 #include "V8AbstractWorker.h"
 #include "V8DedicatedWorkerContext.h"

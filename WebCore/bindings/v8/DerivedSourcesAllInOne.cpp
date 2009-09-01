@@ -324,6 +324,9 @@
 #include "bindings/V8WebKitCSSTransformValue.cpp"
 #include "bindings/V8WebKitPoint.cpp"
 #include "bindings/V8WebKitTransitionEvent.cpp"
+#if ENABLE(WEB_SOCKETS)
+#include "bindings/V8WebSocket.cpp"
+#endif
 #include "bindings/V8WheelEvent.cpp"
 #include "bindings/V8Worker.cpp"
 #include "bindings/V8WorkerContext.cpp"
