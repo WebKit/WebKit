@@ -1452,6 +1452,9 @@ sub openHTTPDIfNeeded()
     } elsif (isDebianBased()) {
         $httpdPath = "/usr/sbin/apache2";
         $httpdConfig = "$testDirectory/http/conf/apache2-debian-httpd.conf";
+    } elsif (isFedoraBased()) {
+        $httpdPath = "/usr/sbin/httpd";
+        $httpdConfig = "$testDirectory/http/conf/fedora-httpd.conf";
     } else {
         $httpdConfig = "$testDirectory/http/conf/httpd.conf";
         $httpdConfig = "$testDirectory/http/conf/apache2-httpd.conf" if `$httpdPath -v` =~ m|Apache/2|;

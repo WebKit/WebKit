@@ -90,6 +90,7 @@ my $httpdConfig = "$testDirectory/http/conf/httpd.conf";
 $httpdConfig = "$testDirectory/http/conf/cygwin-httpd.conf" if isCygwin();
 $httpdConfig = "$testDirectory/http/conf/apache2-httpd.conf" if `$httpdPath -v` =~ m|Apache/2|;
 $httpdConfig = "$testDirectory/http/conf/apache2-debian-httpd.conf" if isDebianBased();
+$httpdConfig = "$testDirectory/http/conf/fedora-httpd.conf" if isFedoraBased();
 my $documentRoot = "$testDirectory/http/tests";
 my $typesConfig = "$testDirectory/http/conf/mime.types";
 my $sslCertificate = "$testDirectory/http/conf/webkit-httpd.pem";

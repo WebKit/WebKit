@@ -796,6 +796,11 @@ sub isDebianBased()
     return -e "/etc/debian_version";
 }
 
+sub isFedoraBased()
+{
+    return -e "/etc/fedora-release";
+}
+
 sub isChromium()
 {
     determineIsChromium();

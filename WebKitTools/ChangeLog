@@ -1,3 +1,17 @@
+2009-09-01  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Add support for Fedora distros in the http tests
+        https://bugs.webkit.org/show_bug.cgi?id=28263
+
+        Add detection code for Fedora distribution, and use the proper
+        httpd conf file when needed.
+
+        * Scripts/run-webkit-httpd:
+        * Scripts/run-webkit-tests:
+        * Scripts/webkitdirs.pm:
+
 2009-09-01  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Eric Seidel.
