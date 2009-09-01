@@ -29,7 +29,11 @@
 #include "config.h"
 #include "ImageSource.h"
 
+#if PLATFORM(QT)
+#include "ImageDecoderQt.h"
+#else
 #include "ImageDecoder.h"
+#endif
 
 #if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
 #ifndef IMAGE_DECODER_DOWN_SAMPLING_MAX_NUMBER_OF_PIXELS
