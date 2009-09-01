@@ -1680,9 +1680,7 @@ fast/forms/focus-control-to-page.html
 fast/forms/focus-selection-input.html
 fast/forms/focus-selection-textarea.html
 fast/forms/get-file-upload.html
-fast/forms/input-list.html
 fast/forms/input-radio-checked-tab.html
-fast/forms/input-selectedoption.html
 fast/forms/input-select-on-click.html
 fast/forms/input-type-change-in-onfocus-keyboard.html
 fast/forms/input-type-change-in-onfocus-mouse.html
@@ -2649,6 +2647,7 @@ fast/forms/input-paste-undo.html
 fast/forms/input-readonly-autoscroll.html
 fast/forms/input-readonly-dimmed.html
 fast/forms/input-readonly-empty.html
+fast/forms/input-selectedoption.html
 fast/forms/input-spaces.html
 fast/forms/input-table.html
 fast/forms/input-text-click-inside.html
