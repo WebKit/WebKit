@@ -253,11 +253,8 @@ const String& InspectorBackend::platform() const
 
 void InspectorBackend::getCookies(long callId)
 {
-    if (!m_inspectorController)
-        return;
-    if (!m_inspectorController->m_domAgent || !m_inspectorController->m_frontend)
-        return;
-    m_inspectorController->domAgent()->getCookies(callId);
+    if (InspectorDOMAgent* domAgent = inspectorDOMAgent())
+        domAgent->getCookies(callId);
 }
 
 void InspectorBackend::deleteCookie(const String& cookieName)
@@ -388,41 +385,38 @@ void InspectorBackend::stepOutOfFunctionInDebugger()
 
 void InspectorBackend::getChildNodes(long callId, long nodeId)
 {
-    if (m_inspectorController)
-        m_inspectorController->domAgent()->getChildNodes(callId, nodeId);
+    if (InspectorDOMAgent* domAgent = inspectorDOMAgent())
+        domAgent->getChildNodes(callId, nodeId);
 }
 
 void InspectorBackend::setAttribute(long callId, long elementId, const String& name, const String& value)
 {
-    if (m_inspectorController)
-        m_inspectorController->domAgent()->setAttribute(callId, elementId, name, value);
+    if (InspectorDOMAgent* domAgent = inspectorDOMAgent())
+        domAgent->setAttribute(callId, elementId, name, value);
 }
 
 void InspectorBackend::removeAttribute(long callId, long elementId, const String& name)
 {
-    if (m_inspectorController)
-        m_inspectorController->domAgent()->removeAttribute(callId, elementId, name);
+    if (InspectorDOMAgent* domAgent = inspectorDOMAgent())
+        domAgent->removeAttribute(callId, elementId, name);
 }
 
 void InspectorBackend::setTextNodeValue(long callId, long nodeId, const String& value)
 {
-    if (m_inspectorController)
-        m_inspectorController->domAgent()->setTextNodeValue(callId, nodeId, value);
+    if (InspectorDOMAgent* domAgent = inspectorDOMAgent())
+        domAgent->setTextNodeValue(callId, nodeId, value);
 }
 
 void InspectorBackend::highlight(long nodeId)
 {
-    if (m_inspectorController) {
-        Node* node = m_inspectorController->domAgent()->nodeForId(nodeId);
-        if (node)
-            m_inspectorController->highlight(node);
-    }
+    if (Node* node = nodeForId(nodeId))
+        m_inspectorController->highlight(node);
 }
 
 Node* InspectorBackend::nodeForId(long nodeId)
 {
-    if (m_inspectorController)
-        return m_inspectorController->domAgent()->nodeForId(nodeId);
+    if (InspectorDOMAgent* domAgent = inspectorDOMAgent())
+        domAgent->nodeForId(nodeId);
     return 0;
 }
 
@@ -442,42 +436,50 @@ ScriptValue InspectorBackend::unwrapObject(const String& objectId)
 
 long InspectorBackend::pushNodePathToFrontend(Node* node, bool selectInUI)
 {
-    if (!m_inspectorController)
+    InspectorFrontend* frontend = inspectorFrontend();
+    InspectorDOMAgent* domAgent = inspectorDOMAgent();
+    if (!domAgent || !frontend)
         return 0;
-    if (!m_inspectorController->m_domAgent || !m_inspectorController->m_frontend)
-        return 0;
-    long id = m_inspectorController->m_domAgent->pushNodePathToFrontend(node);
+    long id = domAgent->pushNodePathToFrontend(node);
     if (selectInUI)
-        m_inspectorController->m_frontend->updateFocusedNode(id);
+        frontend->updateFocusedNode(id);
     return id;
 }
 
 void InspectorBackend::addNodesToSearchResult(const String& nodeIds)
 {
-    if (m_inspectorController && m_inspectorController->m_frontend)
-        m_inspectorController->m_frontend->addNodesToSearchResult(nodeIds);
+    if (InspectorFrontend* frontend = inspectorFrontend())
+        frontend->addNodesToSearchResult(nodeIds);
 }
 
 #if ENABLE(DATABASE)
 void InspectorBackend::selectDatabase(Database* database)
 {
-    if (!m_inspectorController)
-        return;
-    if (!m_inspectorController->m_frontend)
-        return;
-    m_inspectorController->m_frontend->selectDatabase(database);
+    if (InspectorFrontend* frontend = inspectorFrontend())
+        frontend->selectDatabase(database);
 }
 #endif
 
 #if ENABLE(DOM_STORAGE)
 void InspectorBackend::selectDOMStorage(Storage* storage)
 {
-    if (!m_inspectorController)
-        return;
-    if (!m_inspectorController->m_frontend)
-        return;
-    m_inspectorController->m_frontend->selectDOMStorage(storage);
+    if (InspectorFrontend* frontend = inspectorFrontend())
+        frontend->selectDOMStorage(storage);
 }
 #endif
+
+InspectorDOMAgent* InspectorBackend::inspectorDOMAgent()
+{
+    if (!m_inspectorController)
+        return 0;
+    return m_inspectorController->domAgent();
+}
+
+InspectorFrontend* InspectorBackend::inspectorFrontend()
+{
+    if (!m_inspectorController)
+        return 0;
+    return m_inspectorController->m_frontend.get();
+}
 
 } // namespace WebCore

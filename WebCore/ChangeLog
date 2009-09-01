@@ -1,3 +1,30 @@
+2009-09-01  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Check that InspectorDOMAgent and InspectorFrontend are not null
+        before accessing them in InspectorBackend. They may be null if
+        InspectorController is closed before an asynchronous operation is
+        started.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28800
+
+        * inspector/InspectorBackend.cpp:
+        (WebCore::InspectorBackend::getCookies):
+        (WebCore::InspectorBackend::getChildNodes):
+        (WebCore::InspectorBackend::setAttribute):
+        (WebCore::InspectorBackend::removeAttribute):
+        (WebCore::InspectorBackend::setTextNodeValue):
+        (WebCore::InspectorBackend::highlight):
+        (WebCore::InspectorBackend::nodeForId):
+        (WebCore::InspectorBackend::pushNodePathToFrontend):
+        (WebCore::InspectorBackend::addNodesToSearchResult):
+        (WebCore::InspectorBackend::selectDatabase):
+        (WebCore::InspectorBackend::selectDOMStorage):
+        (WebCore::InspectorBackend::inspectorDOMAgent):
+        (WebCore::InspectorBackend::inspectorFrontend):
+        * inspector/InspectorBackend.h:
+
 2009-09-01  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.
