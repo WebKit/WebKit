@@ -42,7 +42,6 @@ class WebCoreTextMarker;
 
 namespace WebCore {
 
-    class Document;
     class Node;
     class Page;
     class RenderObject;
@@ -58,7 +57,7 @@ namespace WebCore {
 
     class AXObjectCache {
     public:
-        AXObjectCache(const Document*);
+        AXObjectCache();
         ~AXObjectCache();
 
         static AccessibilityObject* focusedUIElementForPage(const Page*);
@@ -83,10 +82,7 @@ namespace WebCore {
         void selectedChildrenChanged(RenderObject*);
         void handleActiveDescendantChanged(RenderObject*);
         void handleAriaRoleChanged(RenderObject*);
-        void handleFocusedUIElementChanged();
-#if PLATFORM(GTK)
-        void handleFocusedUIElementChangedWithRenderers(RenderObject*, RenderObject*);
-#endif
+        void handleFocusedUIElementChanged(RenderObject* oldFocusedRenderer, RenderObject* newFocusedRenderer);
         static void enableAccessibility() { gAccessibilityEnabled = true; }
         static void enableEnhancedUserInterfaceAccessibility() { gAccessibilityEnhancedUserInterfaceEnabled = true; }
         
@@ -116,22 +112,17 @@ namespace WebCore {
         
         AXID getAXID(AccessibilityObject*);
         bool nodeIsAriaType(Node* node, String role);
-
-        const Document* m_document;
     };
 
 #if !HAVE(ACCESSIBILITY)
     inline void AXObjectCache::handleActiveDescendantChanged(RenderObject*) { }
     inline void AXObjectCache::handleAriaRoleChanged(RenderObject*) { }
-    inline void AXObjectCache::handleFocusedUIElementChanged() { }
     inline void AXObjectCache::detachWrapper(AccessibilityObject*) { }
     inline void AXObjectCache::attachWrapper(AccessibilityObject*) { }
     inline void AXObjectCache::selectedChildrenChanged(RenderObject*) { }
     inline void AXObjectCache::postNotification(RenderObject*, const String&, bool postToElement) { }
     inline void AXObjectCache::postPlatformNotification(AccessibilityObject*, const String&) { }
-#if PLATFORM(GTK)
-    inline void AXObjectCache::handleFocusedUIElementChangedWithRenderers(RenderObject*, RenderObject*) { }
-#endif
+    inline void AXObjectCache::handleFocusedUIElementChanged(RenderObject*, RenderObject*) { }
 #endif
 
 }

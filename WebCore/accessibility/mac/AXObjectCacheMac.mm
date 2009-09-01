@@ -59,7 +59,7 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, const Str
     NSAccessibilityPostNotification(obj->wrapper(), message);
 }
 
-void AXObjectCache::handleFocusedUIElementChanged()
+void AXObjectCache::handleFocusedUIElementChanged(RenderObject*, RenderObject*)
 {
     [[WebCoreViewFactory sharedFactory] accessibilityHandleFocusChanged];
 }

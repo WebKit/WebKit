@@ -1469,7 +1469,7 @@ AXObjectCache* Document::axObjectCache() const
         return doc->axObjectCache();
     
     // this is the top-level document, so install a new cache
-    m_axObjectCache = new AXObjectCache(this);
+    m_axObjectCache = new AXObjectCache;
     return m_axObjectCache;
 }
 
@@ -2625,10 +2625,7 @@ bool Document::setFocusedNode(PassRefPtr<Node> newFocusedNode)
         }
     }
 
-#if (PLATFORM(MAC) || PLATFORM(WIN)) && !PLATFORM(CHROMIUM)
-    if (!focusChangeBlocked && m_focusedNode && AXObjectCache::accessibilityEnabled())
-        axObjectCache()->handleFocusedUIElementChanged();
-#elif PLATFORM(GTK)
+#if ((PLATFORM(MAC) || PLATFORM(WIN)) && !PLATFORM(CHROMIUM)) || PLATFORM(GTK)
     if (!focusChangeBlocked && m_focusedNode && AXObjectCache::accessibilityEnabled()) {
         RenderObject* oldFocusedRenderer = 0;
         RenderObject* newFocusedRenderer = 0;
@@ -2638,7 +2635,7 @@ bool Document::setFocusedNode(PassRefPtr<Node> newFocusedNode)
         if (newFocusedNode)
             newFocusedRenderer = newFocusedNode->renderer();
 
-        axObjectCache()->handleFocusedUIElementChangedWithRenderers(oldFocusedRenderer, newFocusedRenderer);
+        axObjectCache()->handleFocusedUIElementChanged(oldFocusedRenderer, newFocusedRenderer);
     }
 #endif
 

@@ -1,3 +1,42 @@
+2009-08-31  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Remove the workaround added in r47316.
+
+        Reviewed by Sam Weinig.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::AXObjectCache):
+
+        * accessibility/AXObjectCache.h:
+        Remove the Document argument to the AXObjectCache constructor and the
+        m_document member variable, and replace the no-parameter
+        handleFocusedUIElementChanged() with the two-parameter GTK function.
+        (WebCore::AXObjectCache::handleFocusedUIElementChanged):
+
+        * accessibility/chromium/AXObjectCacheChromium.cpp:
+        (WebCore::AXObjectCache::handleFocusedUIElementChanged):
+
+        * accessibility/gtk/AXObjectCacheAtk.cpp:
+        (WebCore::AXObjectCache::handleFocusedUIElementChanged):
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (fallbackObject):
+        Don't pass a null Document when constructing the AXObjectCache.
+
+        * accessibility/mac/AXObjectCacheMac.mm:
+        (WebCore::AXObjectCache::handleFocusedUIElementChanged):
+
+        * accessibility/win/AXObjectCacheWin.cpp:
+        (WebCore::AXObjectCache::handleFocusedUIElementChanged):
+        Get the document from the RenderObject; m_document was removed.
+
+        * dom/Document.cpp:
+        (WebCore::Document::axObjectCache):
+        Don't pass the Document when constructing the AXObjectCache.
+        (WebCore::Document::setFocusedNode):
+        Pass the old and new focused RenderObjects when calling
+        handleFocusedUIElementChanged().
+
 2009-09-01  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Timothy Hatcher.

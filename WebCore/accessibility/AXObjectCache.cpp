@@ -64,9 +64,8 @@ using namespace HTMLNames;
 bool AXObjectCache::gAccessibilityEnabled = false;
 bool AXObjectCache::gAccessibilityEnhancedUserInterfaceEnabled = false;
 
-AXObjectCache::AXObjectCache(const Document* document)
+AXObjectCache::AXObjectCache()
     : m_notificationPostTimer(this, &AXObjectCache::notificationPostTimerFired)
-    , m_document(document)
 {
 }
 

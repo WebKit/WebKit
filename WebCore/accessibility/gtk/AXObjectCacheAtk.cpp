@@ -45,12 +45,8 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* coreObject, co
         g_signal_emit_by_name(coreObject->wrapper(), "state-change", "checked", coreObject->isChecked());
     }
 }
-    
-void AXObjectCache::handleFocusedUIElementChanged()
-{
-}
 
-void AXObjectCache::handleFocusedUIElementChangedWithRenderers(RenderObject* oldFocusedRender, RenderObject* newFocusedRender)
+void AXObjectCache::handleFocusedUIElementChanged(RenderObject* oldFocusedRender, RenderObject* newFocusedRender)
 {
     RefPtr<AccessibilityObject> oldObject = getOrCreate(oldFocusedRender);
     if (oldObject) {
