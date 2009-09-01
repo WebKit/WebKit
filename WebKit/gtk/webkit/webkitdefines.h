@@ -71,6 +71,9 @@ typedef struct _WebKitWebViewClass WebKitWebViewClass;
 typedef struct _WebKitDownload WebKitDownload;
 typedef struct _WebKitDownloadClass WebKitDownloadClass;
 
+typedef struct _WebKitWebResource WebKitWebResource;
+typedef struct _WebKitWebResourceClass WebKitWebResourceClass;
+
 G_END_DECLS
 
 #endif

@@ -35,6 +35,7 @@
 #include <webkit/webkitwebhistoryitem.h>
 #include <webkit/webkitwebpolicydecision.h>
 #include <webkit/webkitwebnavigationaction.h>
+#include <webkit/webkitwebresource.h>
 #include <webkit/webkitenumtypes.h>
 
 #endif /* __WEBKIT_H__ */

@@ -1,3 +1,15 @@
+2009-09-01  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Xan Lopez and Gustavo Noronha.
+
+        [Gtk] Implement a WebDataSource for the gtk port
+        https://bugs.webkit.org/show_bug.cgi?id=24758
+
+        Implement WebKitWebResource for the resource-related API for
+        WebKitWebDataSource.
+
+        * GNUmakefile.am:
+
 2009-09-01  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Jan Alonzo.
