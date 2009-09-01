@@ -477,6 +477,7 @@ namespace WebCore {
         DECLARE_CALLBACK(SQLResultSetRowListItem);
 
         DECLARE_INDEXED_PROPERTY_GETTER(ClientRectList);
+        DECLARE_INDEXED_PROPERTY_GETTER(FileList);
   
 #if ENABLE(DATAGRID)
         DECLARE_PROPERTY_ACCESSOR(HTMLDataGridElementDataSource);

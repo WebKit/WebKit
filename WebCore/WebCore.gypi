@@ -637,6 +637,7 @@
             'bindings/v8/custom/V8DocumentCustom.cpp',
             'bindings/v8/custom/V8ElementCustom.cpp',
             'bindings/v8/custom/V8EventCustom.cpp',
+            'bindings/v8/custom/V8FileListCustom.cpp',
             'bindings/v8/custom/V8HTMLAudioElementConstructor.cpp',
             'bindings/v8/custom/V8HTMLCanvasElementCustom.cpp',
             'bindings/v8/custom/V8HTMLCollectionCustom.cpp',
