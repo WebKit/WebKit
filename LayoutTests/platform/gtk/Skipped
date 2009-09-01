@@ -5888,9 +5888,6 @@ editing/selection/find-in-text-control.html
 
 # Missing DRT ability to override 'standard' preferences.
 fast/dom/Window/timer-resume-on-navigation-back.html
-fast/harness/override-preferences.html
-fast/harness/override-preferences-2.html
-fast/harness/override-zzz-reset.html
 fast/harness/use-page-cache.html
 loader/go-back-to-different-window-size.html
 

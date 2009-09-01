@@ -1,3 +1,20 @@
+2009-09-01  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [Gtk] DRT needs implementation of overridePreference
+        https://bugs.webkit.org/show_bug.cgi?id=28830
+
+        Implement overridePreference.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (resetDefaultsToConsistentValues):
+        (setDefaultsToConsistentStateValuesForTesting):
+        (runTest):
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (toWebSettingKey):
+        (LayoutTestController::overridePreference):
+
 2009-09-01  Joseph Pecoraro  <joepeck@webkit.org>
 
         <http://webkit.org/b/28623> svn-[un]apply should change directories to the repository root before [un]applying

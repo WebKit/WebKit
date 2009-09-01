@@ -38,6 +38,8 @@
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JSStringRef.h>
 
+#include <iostream>
+#include <sstream>
 #include <stdio.h>
 #include <glib.h>
 #include <libsoup/soup.h>
@@ -50,6 +52,21 @@ unsigned int webkit_web_frame_number_of_active_animations(WebKitWebFrame* frame)
 void webkit_application_cache_set_maximum_size(unsigned long long size);
 unsigned int webkit_worker_thread_count(void);
 void webkit_white_list_access_from_origin(const gchar* sourceOrigin, const gchar* destinationProtocol, const gchar* destinationHost, bool allowDestinationSubdomains);
+}
+
+static gchar* copyWebSettingKey(gchar* preferenceKey)
+{
+    static GHashTable* keyTable;
+
+    if (!keyTable) {
+        // If you add a pref here, make sure you reset the value in
+        // DumpRenderTree::resetWebViewToConsistentStateBeforeTesting.
+        keyTable = g_hash_table_new(g_str_hash, g_str_equal);
+        g_hash_table_insert(keyTable, g_strdup("WebKitJavaScriptEnabled"), g_strdup("enable-scripts"));
+        g_hash_table_insert(keyTable, g_strdup("WebKitDefaultFontSize"), g_strdup("default-font-size"));
+    }
+
+    return g_strdup(static_cast<gchar*>(g_hash_table_lookup(keyTable, preferenceKey)));
 }
 
 LayoutTestController::~LayoutTestController()
@@ -389,8 +406,45 @@ unsigned LayoutTestController::numberOfActiveAnimations() const
     return webkit_web_frame_number_of_active_animations(mainFrame);
 }
 
-void LayoutTestController::overridePreference(JSStringRef /* key */, JSStringRef /* value */)
+void LayoutTestController::overridePreference(JSStringRef key, JSStringRef value)
 {
-    // FIXME: implement
-}
+    gchar* name = JSStringCopyUTF8CString(key);
+    gchar* strValue = JSStringCopyUTF8CString(value);
 
+    WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
+    ASSERT(view);
+
+    WebKitWebSettings* settings = webkit_web_view_get_settings(view);
+    gchar* webSettingKey = copyWebSettingKey(name);
+
+    if (webSettingKey) {
+        GValue stringValue = { 0, { { 0 } } };
+        g_value_init(&stringValue, G_TYPE_STRING);
+        g_value_set_string(&stringValue, const_cast<gchar*>(strValue));
+
+        WebKitWebSettingsClass* klass = WEBKIT_WEB_SETTINGS_GET_CLASS(settings);
+        GParamSpec* pspec = g_object_class_find_property(G_OBJECT_CLASS(klass), webSettingKey);
+        GValue propValue = { 0, { { 0 } } };
+        g_value_init(&propValue, pspec->value_type);
+
+        if (g_value_type_transformable(G_TYPE_STRING, pspec->value_type)) {
+            g_value_transform(const_cast<GValue*>(&stringValue), &propValue);
+            g_object_set_property(G_OBJECT(settings), webSettingKey, const_cast<GValue*>(&propValue));
+        } else if (G_VALUE_HOLDS_BOOLEAN(&propValue)) {
+            g_object_set(G_OBJECT(settings), webSettingKey,
+                         g_str_equal(g_utf8_strdown(strValue, -1), "true"),
+                         NULL);
+        } else if (G_VALUE_HOLDS_INT(&propValue)) {
+            std::string str(strValue);
+            std::stringstream ss(str);
+            int val = 0;
+            if (!(ss >> val).fail())
+                g_object_set(G_OBJECT(settings), webSettingKey, val, NULL);
+        } else
+            printf("LayoutTestController::overridePreference failed to override preference '%s'.\n", name);
+    }
+
+    g_free(webSettingKey);
+    g_free(name);
+    g_free(strValue);
+}
