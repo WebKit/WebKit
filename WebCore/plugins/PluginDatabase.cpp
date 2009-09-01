@@ -119,11 +119,8 @@ bool PluginDatabase::refresh()
 
         if (!m_client || m_client->shouldLoadPluginAtPath(*it)) {
             RefPtr<PluginPackage> package = PluginPackage::createPackage(*it, lastModified);
-            if (package) {
-                if ((!m_client || m_client->shouldLoadPluginPackage(package)) && add(package))
-                    pluginSetChanged = true;
-                package.release();
-            }
+            if (package && (!m_client || m_client->shouldLoadPluginPackage(package.get())) && add(package.release()))
+                pluginSetChanged = true;
         }
     }
 

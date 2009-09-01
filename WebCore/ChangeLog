@@ -1,3 +1,13 @@
+2009-09-01  Eric Seidel  <eric@webkit.org>
+
+        No review, windows build fix only.  Clearly I should have read the patch closer. :(
+
+        Allow excluding certain plugins from loading
+        https://bugs.webkit.org/show_bug.cgi?id=28677
+
+        * plugins/PluginDatabase.cpp:
+        (WebCore::PluginDatabase::refresh):
+
 2009-09-01  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Timothy Hatcher.
