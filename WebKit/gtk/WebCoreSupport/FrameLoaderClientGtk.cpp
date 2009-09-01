@@ -804,8 +804,6 @@ bool FrameLoaderClient::dispatchDidLoadResourceFromMemoryCache(DocumentLoader*, 
 void FrameLoaderClient::dispatchDidFailProvisionalLoad(const ResourceError& error)
 {
     dispatchDidFailLoad(error);
-
-    loadDone(m_frame, false);
 }
 
 void FrameLoaderClient::dispatchDidFailLoad(const ResourceError& error)
@@ -824,7 +822,6 @@ void FrameLoaderClient::dispatchDidFailLoad(const ResourceError& error)
 
     if (!shouldFallBack(error)) {
         g_error_free(webError);
-        loadDone(m_frame, false);
         return;
     }
 
@@ -852,8 +849,6 @@ void FrameLoaderClient::dispatchDidFailLoad(const ResourceError& error)
         g_object_unref(errorFile);
 
     g_error_free(webError);
-
-    loadDone(m_frame, false);
 }
 
 void FrameLoaderClient::download(ResourceHandle* handle, const ResourceRequest& request, const ResourceRequest&, const ResourceResponse& response)

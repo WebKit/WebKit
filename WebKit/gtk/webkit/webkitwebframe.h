@@ -72,9 +72,8 @@ struct _WebKitWebFrameClass {
  * actual visible content happened; one or more layouts may have
  * happened before that caused nothing to be visible on the screen,
  * because the data available at the time was not significant enough.
- * @WEBKIT_LOAD_FINISHED: This state means either that everything that
- * was required to display the page has been loaded, or that an error
- * has happened.
+ * @WEBKIT_LOAD_FINISHED: This state means that everything that was
+ * required to display the page has been loaded.
  */
 typedef enum {
     WEBKIT_LOAD_PROVISIONAL,

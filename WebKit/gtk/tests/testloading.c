@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Gustavo Noronha Silva
+ * Copyright (C) 2009 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,77 +23,134 @@
 
 #if GLIB_CHECK_VERSION(2, 16, 0) && GTK_CHECK_VERSION(2, 14, 0)
 
-static gboolean has_been_provisional = FALSE;
-static gboolean has_been_committed = FALSE;
-static gboolean has_been_first_visually_non_empty_layout = FALSE;
+typedef struct {
+    WebKitWebView* webView;
+    GMainLoop *loop;
+    gboolean has_been_provisional;
+    gboolean has_been_committed;
+    gboolean has_been_first_visually_non_empty_layout;
+    gboolean has_been_finished;
+    gboolean has_been_error;
+} WebLoadingFixture;
 
-static void load_finished_cb(WebKitWebView* web_view, WebKitWebFrame* web_frame, gpointer data)
+static void web_loading_fixture_setup(WebLoadingFixture* fixture, gconstpointer data)
 {
-    GMainLoop* loop = (GMainLoop*)data;
+    fixture->webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
+    fixture->loop = g_main_loop_new(NULL, TRUE);
+    g_object_ref_sink(fixture->webView);
+    fixture->has_been_provisional = FALSE;
+    fixture->has_been_committed = FALSE;
+    fixture->has_been_first_visually_non_empty_layout = FALSE;
+    fixture->has_been_finished = FALSE;
+    fixture->has_been_error = FALSE;
+}
 
-    g_assert(has_been_provisional);
-    g_assert(has_been_committed);
-    g_assert(has_been_first_visually_non_empty_layout);
+static void web_loading_fixture_teardown(WebLoadingFixture* fixture, gconstpointer data)
+{
+    g_object_unref(fixture->webView);
+    g_main_loop_unref(fixture->loop);
+}
 
-    g_main_loop_quit(loop);
+static void load_finished_cb(WebKitWebView* web_view, WebKitWebFrame* web_frame, WebLoadingFixture* fixture)
+{
+    g_assert(fixture->has_been_provisional);
+    g_assert(fixture->has_been_committed);
+    g_assert(fixture->has_been_first_visually_non_empty_layout);
+
+    g_main_loop_quit(fixture->loop);
 }
 
 
-static void status_changed_cb(GObject* object, GParamSpec* pspec, gpointer data)
+static void status_changed_cb(GObject* object, GParamSpec* pspec, WebLoadingFixture* fixture)
 {
     WebKitLoadStatus status = webkit_web_view_get_load_status(WEBKIT_WEB_VIEW(object));
 
     switch (status) {
     case WEBKIT_LOAD_PROVISIONAL:
-        g_assert(!has_been_provisional);
-        g_assert(!has_been_committed);
-        g_assert(!has_been_first_visually_non_empty_layout);
-        has_been_provisional = TRUE;
+        g_assert(!fixture->has_been_provisional);
+        g_assert(!fixture->has_been_committed);
+        g_assert(!fixture->has_been_first_visually_non_empty_layout);
+        fixture->has_been_provisional = TRUE;
         break;
     case WEBKIT_LOAD_COMMITTED:
-        g_assert(has_been_provisional);
-        g_assert(!has_been_committed);
-        g_assert(!has_been_first_visually_non_empty_layout);
-        has_been_committed = TRUE;
+        g_assert(fixture->has_been_provisional);
+        g_assert(!fixture->has_been_committed);
+        g_assert(!fixture->has_been_first_visually_non_empty_layout);
+        fixture->has_been_committed = TRUE;
         break;
     case WEBKIT_LOAD_FIRST_VISUALLY_NON_EMPTY_LAYOUT:
-        g_assert(has_been_provisional);
-        g_assert(has_been_committed);
-        g_assert(!has_been_first_visually_non_empty_layout);
-        has_been_first_visually_non_empty_layout = TRUE;
+        g_assert(fixture->has_been_provisional);
+        g_assert(fixture->has_been_committed);
+        g_assert(!fixture->has_been_first_visually_non_empty_layout);
+        fixture->has_been_first_visually_non_empty_layout = TRUE;
         break;
     case WEBKIT_LOAD_FINISHED:
-        g_assert(has_been_provisional);
-        g_assert(has_been_committed);
-        g_assert(has_been_first_visually_non_empty_layout);
+        g_assert(fixture->has_been_provisional);
+        g_assert(fixture->has_been_committed);
+        g_assert(fixture->has_been_first_visually_non_empty_layout);
         break;
     default:
         g_assert_not_reached();
     }
 }
 
-static void test_loading_status()
+static void test_loading_status(WebLoadingFixture* fixture, gconstpointer data)
 {
-    WebKitWebView* web_view = WEBKIT_WEB_VIEW(webkit_web_view_new());
-    GMainLoop* loop = g_main_loop_new(NULL, TRUE);
+    g_assert_cmpint(webkit_web_view_get_load_status(fixture->webView), ==, WEBKIT_LOAD_PROVISIONAL);
 
-    g_object_ref_sink(web_view);
-
-    g_assert_cmpint(webkit_web_view_get_load_status(web_view), ==, WEBKIT_LOAD_PROVISIONAL);
-
-    g_object_connect(G_OBJECT(web_view),
-                     "signal::notify::load-status", G_CALLBACK(status_changed_cb), NULL,
-                     "signal::load-finished", G_CALLBACK(load_finished_cb), loop,
+    g_object_connect(G_OBJECT(fixture->webView),
+                     "signal::notify::load-status", G_CALLBACK(status_changed_cb), fixture,
+                     "signal::load-finished", G_CALLBACK(load_finished_cb), fixture,
                      NULL);
 
     /* load_uri will trigger the navigation-policy-decision-requested
      * signal emission;
      */
-    webkit_web_view_load_uri(web_view, "http://gnome.org/");
+    webkit_web_view_load_uri(fixture->webView, "http://gnome.org/");
 
-    g_main_loop_run(loop);
+    g_main_loop_run(fixture->loop);
+}
 
-    g_object_unref(web_view);
+static void load_error_status_changed_cb(GObject* object, GParamSpec* pspec, WebLoadingFixture* fixture)
+{
+    WebKitLoadStatus status = webkit_web_view_get_load_status(WEBKIT_WEB_VIEW(object));
+
+    switch(status) {
+    case WEBKIT_LOAD_PROVISIONAL:
+        g_assert(!fixture->has_been_provisional);
+        g_assert(!fixture->has_been_error);
+        fixture->has_been_provisional = TRUE;
+        break;
+    case WEBKIT_LOAD_FINISHED:
+        g_assert(fixture->has_been_provisional);
+        g_assert(fixture->has_been_error);
+        /* We are checking that only one FINISHED is received in the
+           whole cycle, so assert it's FALSE */
+        g_assert(!fixture->has_been_finished);
+        fixture->has_been_finished = TRUE;
+        break;
+    default:
+        break;
+    }
+}
+
+static gboolean load_error_cb(WebKitWebView* webView, WebKitWebFrame* frame, const char* uri, GError *error, WebLoadingFixture* fixture)
+{
+    g_assert(fixture->has_been_provisional);
+    g_assert(!fixture->has_been_error);
+    fixture->has_been_error = TRUE;
+
+    return FALSE;
+}
+
+static void test_loading_error(WebLoadingFixture* fixture, gconstpointer data)
+{
+    g_test_bug("28842");
+
+    g_signal_connect(fixture->webView, "load-error", G_CALLBACK(load_error_cb), fixture);
+    g_signal_connect(fixture->webView, "notify::load-status", G_CALLBACK(load_error_status_changed_cb), fixture);
+
+    webkit_web_view_load_uri(fixture->webView, "http://snoetuhsetuhseoutoeutc.com/");
 }
 
 int main(int argc, char** argv)
@@ -101,7 +159,16 @@ int main(int argc, char** argv)
     gtk_test_init(&argc, &argv, NULL);
 
     g_test_bug_base("https://bugs.webkit.org/");
-    g_test_add_func("/webkit/loading/status", test_loading_status);
+    g_test_add("/webkit/loading/status",
+               WebLoadingFixture, NULL,
+               web_loading_fixture_setup,
+               test_loading_status,
+               web_loading_fixture_teardown);
+    g_test_add("/webkit/loading/error",
+               WebLoadingFixture, NULL,
+               web_loading_fixture_setup,
+               test_loading_error,
+               web_loading_fixture_teardown);
     return g_test_run();
 }
 
