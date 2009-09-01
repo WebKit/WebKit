@@ -2,6 +2,15 @@
 
         Unreviewed (build fix).
 
+        Missed a "." -> "->" conversion.
+
+        * platform/graphics/qt/ImageDecoderQt.cpp:
+        (WebCore::ImageDecoderQt::ReadContext::ReadContext):
+
+2009-09-01  Peter Kasting  <pkasting@google.com>
+
+        Unreviewed (build fix).
+
         Try to fix Qt build, take 2.  The Qt code had what looks like a
         broken virtual function override.
 
