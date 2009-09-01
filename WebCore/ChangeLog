@@ -1,3 +1,14 @@
+2009-09-01  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        WebInspector: console log message repeat count double.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28856
+
+        * inspector/front-end/InjectedScript.js:
+        (InjectedScript._evaluateOn):
+
 2009-09-01  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Mark Rowe.

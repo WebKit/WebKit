@@ -505,7 +505,6 @@ InjectedScript._evaluateOn = function(evalFunction, object, expression)
         var value = evalFunction.call(object, expression);
         if (value === null)
             return { value: null };
-        var value = evalFunction.call(object, expression);
         var wrapper = InspectorController.wrapObject(value);
         if (typeof wrapper === "object" && wrapper.exception) {
             result.value = wrapper.exception;
