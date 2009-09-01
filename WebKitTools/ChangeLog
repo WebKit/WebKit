@@ -1,3 +1,15 @@
+2009-09-01  Joseph Pecoraro  <joepeck@webkit.org>
+
+        <http://webkit.org/b/28623> svn-[un]apply should change directories to the repository root before [un]applying
+
+        Reviewed by Eric Seidel.
+
+        Jump back and forth between the repository root directory (to apply) and the
+        directory the script was run from (to find the patch).
+
+        * Scripts/svn-apply:
+        * Scripts/svn-unapply:
+
 2009-08-31  Adam Roben  <aroben@apple.com>
 
         Fall back to a Release version of Safari if a Debug one doesn't exist

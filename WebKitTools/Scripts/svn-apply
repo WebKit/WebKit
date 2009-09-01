@@ -121,6 +121,9 @@ my %removeDirectoryIgnoreList = (
     '_svn' => 1,
 );
 
+my $pathScriptWasRunFrom = Cwd::getcwd();
+my $pathForRepositoryRoot = determineVCSRoot();
+
 my %checkedDirectories;
 my %copiedFiles;
 my @patches;
@@ -226,11 +229,13 @@ sub addDirectoriesIfNeeded($)
 sub applyPatch($$;$)
 {
     my ($patch, $fullPath, $options) = @_;
+    chdir $pathForRepositoryRoot;
     $options = [] if (! $options);
     my $command = "patch " . join(" ", "-p0", @{$options});
     open PATCH, "| $command" or die "Failed to patch $fullPath\n";
     print PATCH $patch;
     close PATCH;
+    chdir $pathScriptWasRunFrom;
 
     my $exitCode = $? >> 8;
     if ($exitCode != 0) {

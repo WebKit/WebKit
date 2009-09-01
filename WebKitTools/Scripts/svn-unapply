@@ -65,6 +65,10 @@ use File::Spec;
 use File::Temp qw(tempfile);
 use Getopt::Long;
 
+use FindBin;
+use lib $FindBin::Bin;
+use VCSUtils;
+
 sub checksum($);
 sub fixChangeLogPatch($);
 sub gitdiff2svndiff($);
@@ -79,6 +83,9 @@ if (!GetOptions("help!" => \$showHelp) || $showHelp) {
     print STDERR basename($0) . " [-h|--help] patch1 [patch2 ...]\n";
     exit 1;
 }
+
+my $pathScriptWasRunFrom = Cwd::getcwd();
+my $pathForRepositoryRoot = determineVCSRoot();
 
 my @copiedFiles;
 my %directoriesToCheck;
@@ -133,7 +140,9 @@ for $patch (@copiedFiles) {
     patch($patch);
 }
 
-revertDirectories();
+if (isSVN()) {
+    revertDirectories();
+}
 
 exit 0;
 
@@ -289,6 +298,7 @@ sub patch($)
 
 sub revertDirectories()
 {
+    chdir $pathForRepositoryRoot;
     my %checkedDirectories;
     foreach my $path (reverse sort keys %directoriesToCheck) {
         my @dirs = File::Spec->splitdir($path);
@@ -353,11 +363,13 @@ sub svnStatus($)
 sub unapplyPatch($$;$)
 {
     my ($patch, $fullPath, $options) = @_;
+    chdir $pathForRepositoryRoot;
     $options = [] if (! $options);
     my $command = "patch " . join(" ", "-p0", "-R", @{$options});
     open PATCH, "| $command" or die "Failed to patch $fullPath: $!";
     print PATCH $patch;
     close PATCH;
+    chdir $pathScriptWasRunFrom;
 }
 
 sub unsetChangeLogDate($$)
