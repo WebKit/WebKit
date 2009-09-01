@@ -1,5 +1,15 @@
 2009-09-01  David Kilzer  <ddkilzer@apple.com>
 
+        <http://webkit.org/b/28880> svn-apply --force doesn't actually work
+
+        Reviewed by Brady Eidson.
+
+        * Scripts/svn-apply:
+        (applyPatch): Add "--force" to $options arrayref if $force is
+        set.
+
+2009-09-01  David Kilzer  <ddkilzer@apple.com>
+
         <http://webkit.org/b/28725> resolve-ChangeLogs: determineVCSRoot() returns incorrect repository root during git filter-branch
 
         Reviewed by Adam Roben.

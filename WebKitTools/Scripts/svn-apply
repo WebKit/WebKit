@@ -231,6 +231,7 @@ sub applyPatch($$;$)
     my ($patch, $fullPath, $options) = @_;
     chdir $pathForRepositoryRoot;
     $options = [] if (! $options);
+    push @{$options}, "--force" if $force;
     my $command = "patch " . join(" ", "-p0", @{$options});
     open PATCH, "| $command" or die "Failed to patch $fullPath\n";
     print PATCH $patch;
