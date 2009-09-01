@@ -1,3 +1,24 @@
+2009-09-01  Adam Roben  <aroben@apple.com>
+
+        Post a notification when a WebView is closing
+
+        This is useful for situations where some code wants to react to the
+        WebView closing but isn't in charge of the WebView and can't otherwise
+        be notified. This notification could replace
+        IWebUIDelegatePrivate::webViewClosing if we decide that the
+        notification system isn't too burdensome.
+
+        <http://webkit.org/b/28875>
+
+        Reviewed by John Sullivan.
+
+        * Interfaces/IWebViewPrivate.idl: Added the
+        WebViewWillCloseNotification string constant.
+        * WebKit.vcproj/WebKit.vcproj: Link against comsuppw.lib in all
+        configurations so that we can use _bstr_t.
+        * WebView.cpp:
+        (WebView::close): Post the WebViewWillCloseNotification.
+
 2009-08-31  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

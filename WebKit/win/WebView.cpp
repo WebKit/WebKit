@@ -129,6 +129,7 @@
 #endif
 
 #include <wtf/HashSet.h>
+#include <comutil.h>
 #include <dimm.h>
 #include <oleacc.h>
 #include <ShlObj.h>
@@ -613,6 +614,8 @@ HRESULT STDMETHODCALLTYPE WebView::close()
         return S_OK;
 
     m_didClose = true;
+
+    WebNotificationCenter::defaultCenterInternal()->postNotificationName(_bstr_t(WebViewWillCloseNotification).GetBSTR(), static_cast<IWebView*>(this), 0);
 
     if (m_uiDelegatePrivate)
         m_uiDelegatePrivate->webViewClosing(this);

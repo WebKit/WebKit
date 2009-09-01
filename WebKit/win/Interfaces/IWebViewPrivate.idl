@@ -31,6 +31,9 @@ import "IWebFrameLoadDelegatePrivate.idl";
 import "IWebInspector.idl";
 #endif
 
+// Sent when IWebView::close is called. No userInfo is associated with this notification.
+cpp_quote("#define WebViewWillCloseNotification L\"WebViewWillCloseNotification\"")
+
 interface IEnumTextMatches;
 interface IWebFormDelegate;
 interface IWebFrameLoadDelegatePrivate;
