@@ -80,7 +80,7 @@ CachedFrame::CachedFrame(Frame* frame)
     for (Frame* child = frame->tree()->firstChild(); child; child = child->tree()->nextSibling())
         m_childFrames.append(CachedFrame::create(child));
 
-    LOG(PageCache, "Finished creating CachedFrame with url %s and documentloader %p\n", m_url.string().utf8().data(), m_documentLoader.get());
+    LOG(PageCache, "Finished creating CachedFrame for main frame url '%s' and DocumentLoader %p\n", m_url.string().utf8().data(), m_documentLoader.get());
 }
 
 CachedFrame::~CachedFrame()
@@ -88,8 +88,8 @@ CachedFrame::~CachedFrame()
 #ifndef NDEBUG
     cachedFrameCounter().decrement();
 #endif
-
-    clear();
+    // CachedFrames should always have had destroy() called by their parent CachedPage
+    ASSERT(!m_document);
 }
 
 void CachedFrame::restore()
@@ -120,26 +120,13 @@ void CachedFrame::clear()
     if (!m_document)
         return;
 
-    if (m_cachedFramePlatformData)
-        m_cachedFramePlatformData->clear();
-        
+    // clear() should only be called for Frames representing documents that are no longer in the page cache.
+    // This means the CachedFrame has been:
+    // 1 - Successfully restore()'d by going back/forward.
+    // 2 - destroy()'ed because the PageCache is pruning or the WebView was closed.
+    ASSERT(!m_document->inPageCache());
     ASSERT(m_view);
     ASSERT(m_document->frame() == m_view->frame());
-
-    if (m_document->inPageCache()) {
-        Frame::clearTimers(m_view.get(), m_document.get());
-
-        // FIXME: Why do we need to call removeAllEventListeners here? When the document is in page cache, this method won't work
-        // fully anyway, because the document won't be able to access its DOMWindow object (due to being frameless).
-        m_document->removeAllEventListeners();
-
-        m_document->setInPageCache(false);
-        // FIXME: We don't call willRemove here. Why is that OK?
-        m_document->detach();
-        m_view->clearFrame();
-    }
-
-    ASSERT(!m_document->inPageCache());
 
     m_document = 0;
     m_view = 0;
@@ -147,8 +134,34 @@ void CachedFrame::clear()
     m_url = KURL();
 
     m_cachedFramePlatformData.clear();
-
     m_cachedFrameScriptData.clear();
+}
+
+void CachedFrame::destroy()
+{
+    if (!m_document)
+        return;
+    
+    // Only CachedFrames that are still in the PageCache should be destroyed in this manner
+    ASSERT(m_document->inPageCache());
+    ASSERT(m_view);
+    ASSERT(m_document->frame() == m_view->frame());
+
+    if (m_cachedFramePlatformData)
+        m_cachedFramePlatformData->clear();
+
+    Frame::clearTimers(m_view.get(), m_document.get());
+
+    // FIXME: Why do we need to call removeAllEventListeners here? When the document is in page cache, this method won't work
+    // fully anyway, because the document won't be able to access its DOMWindow object (due to being frameless).
+    m_document->removeAllEventListeners();
+
+    m_document->setInPageCache(false);
+    // FIXME: We don't call willRemove here. Why is that OK?
+    m_document->detach();
+    m_view->clearFrame();
+
+    clear();
 }
 
 void CachedFrame::setCachedFramePlatformData(CachedFramePlatformData* data)

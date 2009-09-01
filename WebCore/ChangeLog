@@ -1,3 +1,44 @@
+2009-09-01  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Page Cache should support pages with frames
+        https://bugs.webkit.org/show_bug.cgi?id=13631
+
+        Things learned in the full task that this patch addresses:
+        - The notions of clearing a CachedFrame and destroying a CachedFrame were two concepts that 
+          needed to be managed separately.
+        - Once we start restoring pages with multiple CachedFrames, we'll have to be calling
+          FrameLoader::open(CachedFrame&) multiple times with different CachedFrames, and this process
+          will be guided by the CachedFrames themselves.
+
+        No new tests. (No change in behavior, current layout tests pass)
+        
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrame::CachedFrame):
+        (WebCore::CachedFrame::~CachedFrame):
+        (WebCore::CachedFrame::clear): Only clear pointers out.
+        (WebCore::CachedFrame::destroy): Perform the destructive cleanup work here - Things that shouldn't
+          occur simply by navigating back to a page with a CachedFrame.
+        * history/CachedFrame.h:
+
+        * history/CachedPage.cpp:
+        (WebCore::CachedPage::~CachedPage):
+        (WebCore::CachedPage::restore): Call clear() after restoring.
+        (WebCore::CachedPage::clear):
+        (WebCore::CachedPage::destroy):
+        * history/CachedPage.h:
+
+        * history/PageCache.cpp:
+        (WebCore::PageCache::releaseAutoreleasedPagesNow): destroy() CachedPages that are being pruned,
+          instead of clearing them.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::commitProvisionalLoad): Let the CachedPage clear() itself after restoring.
+        (WebCore::FrameLoader::open): Don't ::open() the CachedFrame, as the CachedPage does that now.
+        * loader/FrameLoader.h:  Add the friending so CachedPage and CachedFrame can better guide the process.
+          Even though CachedFrame::restore() isn't used for now, it will be soon.
+
 2009-09-01  Andrei Popescu  <andreip@google.com>
 
         Reviewed by David Levin.

@@ -2837,10 +2837,9 @@ void FrameLoader::commitProvisionalLoad(PassRefPtr<CachedPage> prpCachedPage)
     if (m_sentRedirectNotification)
         clientRedirectCancelledOrFinished(false);
     
-    if (cachedPage && cachedPage->document()) {
+    if (cachedPage && cachedPage->document())
         open(*cachedPage);
-        cachedPage->clear();
-    } else {        
+    else {        
         KURL url = pdl->substituteData().responseURL();
         if (url.isEmpty())
             url = pdl->url();
@@ -3069,7 +3068,6 @@ void FrameLoader::open(CachedPage& cachedPage)
         m_frame->setJSDefaultStatusBarText(String());
     }
 
-    open(*cachedPage.cachedMainFrame());
     cachedPage.restore(m_frame->page());
 
     checkCompleted();

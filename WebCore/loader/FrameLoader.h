@@ -30,6 +30,8 @@
 #ifndef FrameLoader_h
 #define FrameLoader_h
 
+#include "CachedFrame.h"
+#include "CachedPage.h"
 #include "CachePolicy.h"
 #include "FrameLoaderTypes.h"
 #include "ResourceRequest.h"
@@ -468,6 +470,8 @@ namespace WebCore {
 
         void closeOldDataSources();
         void open(CachedPage&);
+        friend void CachedPage::restore(Page* page);
+        friend void CachedFrame::restore();
         void open(CachedFrame&);
 
         void updateHistoryAfterClientRedirect();

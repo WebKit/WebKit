@@ -46,6 +46,7 @@ public:
 
     void restore(Page*);
     void clear();
+    void destroy();
 
     Document* document() const { return m_cachedMainFrame->document(); }
     DocumentLoader* documentLoader() const { return m_cachedMainFrame->documentLoader(); }

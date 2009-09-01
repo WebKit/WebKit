@@ -182,7 +182,7 @@ void PageCache::releaseAutoreleasedPagesNow()
 
     CachedPageSet::iterator end = tmp.end();
     for (CachedPageSet::iterator it = tmp.begin(); it != end; ++it)
-        (*it)->clear();
+        (*it)->destroy();
 
     // Now do the prune.
     cache()->setPruneEnabled(true);
