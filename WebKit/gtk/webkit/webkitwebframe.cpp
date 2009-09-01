@@ -230,8 +230,14 @@ static void webkit_web_frame_class_init(WebKitWebFrameClass* frameClass)
      * Signal emitted when policy for one or both of the scrollbars of
      * the view has changed. The default handler will apply the new
      * policy to the container that holds the #WebKitWebFrame if it is
-     * a #GtkScrolledWindow. If you do not want this to be handled
-     * automatically, you need to handle this signal.
+     * a #GtkScrolledWindow and the frame is the main frame. If you do
+     * not want this to be handled automatically, you need to handle
+     * this signal.
+     *
+     * The exception to this rule is that policies to disable the
+     * scrollbars are applied as %GTK_POLICY_AUTOMATIC instead, since
+     * the size request of the widget would force browser windows to
+     * not be resizable.
      *
      * You can obtain the new policies from the
      * WebKitWebFrame:horizontal-scrollbar-policy and

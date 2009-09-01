@@ -419,9 +419,21 @@ void ChromeClient::scrollbarsModeDidChange() const
     if (!parent || !GTK_IS_SCROLLED_WINDOW(parent))
         return;
 
+    GtkPolicyType horizontalPolicy = webkit_web_frame_get_horizontal_scrollbar_policy(webFrame);
+    GtkPolicyType verticalPolicy = webkit_web_frame_get_vertical_scrollbar_policy(webFrame);
+
+    // ScrolledWindow doesn't like to display only part of a widget if
+    // the scrollbars are completely disabled; We have a disparity
+    // here on what the policy requested by the web app is and what we
+    // can represent; the idea is not to show scrollbars, only.
+    if (horizontalPolicy == GTK_POLICY_NEVER)
+        horizontalPolicy = GTK_POLICY_AUTOMATIC;
+
+    if (verticalPolicy == GTK_POLICY_NEVER)
+        verticalPolicy = GTK_POLICY_AUTOMATIC;
+
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(parent),
-                                   webkit_web_frame_get_horizontal_scrollbar_policy(webFrame),
-                                   webkit_web_frame_get_vertical_scrollbar_policy(webFrame));
+                                   horizontalPolicy, verticalPolicy);
 }
 
 void ChromeClient::mouseDidMoveOverElement(const HitTestResult& hit, unsigned modifierFlags)

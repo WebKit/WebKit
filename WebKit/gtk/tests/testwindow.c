@@ -54,7 +54,10 @@ static void test_webkit_window_scrollbar_policy(void)
 
     mainFrame = webkit_web_view_get_main_frame(WEBKIT_WEB_VIEW(webView));
 
-    /* Test we correctly apply policy for not having scrollbars */
+    /* Test we correctly apply policy for not having scrollbars; This
+     * case is special, because we turn the policy from NEVER to
+     * AUTOMATIC, since we cannot easily represent the same thing
+     * using GtkScrolledWindow */
     webkit_web_view_load_html_string(WEBKIT_WEB_VIEW(webView),
                                      "<html><body>WebKit!</body><script>document.getElementsByTagName('body')[0].style.overflow = 'hidden';</script></html>",
                                      "file://");
@@ -64,8 +67,8 @@ static void test_webkit_window_scrollbar_policy(void)
     gtk_scrolled_window_get_policy(GTK_SCROLLED_WINDOW(scrolledWindow),
                                    &horizontalPolicy, &verticalPolicy);
 
-    g_assert(horizontalPolicy == GTK_POLICY_NEVER);
-    g_assert(verticalPolicy == GTK_POLICY_NEVER);
+    g_assert(horizontalPolicy == GTK_POLICY_AUTOMATIC);
+    g_assert(verticalPolicy == GTK_POLICY_AUTOMATIC);
 
     g_assert(horizontalPolicy == webkit_web_frame_get_horizontal_scrollbar_policy(mainFrame));
     g_assert(verticalPolicy == webkit_web_frame_get_vertical_scrollbar_policy(mainFrame));

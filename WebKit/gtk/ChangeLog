@@ -1,3 +1,17 @@
+2009-09-01  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Xan Lopez.
+
+        Avoid causing unexpected issues with window sizing when sites
+        disable scrollbars completely.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::scrollbarsModeDidChange):
+        * tests/testwindow.c:
+        (test_webkit_window_scrollbar_policy):
+        * webkit/webkitwebframe.cpp:
+        (webkit_web_frame_class_init):
+
 2009-09-01  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Xan Lopez and Gustavo Noronha.
