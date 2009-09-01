@@ -25,6 +25,7 @@
 #include "Noncopyable.h"
 #include "NotImplemented.h"
 #include "ResourceHandleClient.h"
+#include "ResourceHandleInternal.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "webkitdownload.h"
@@ -100,6 +101,7 @@ enum {
 G_DEFINE_TYPE(WebKitDownload, webkit_download, G_TYPE_OBJECT);
 
 
+static void webkit_download_set_response(WebKitDownload* download, const ResourceResponse& response);
 static void webkit_download_set_status(WebKitDownload* download, WebKitDownloadStatus status);
 
 static void webkit_download_dispose(GObject* object)
@@ -373,6 +375,25 @@ WebKitDownload* webkit_download_new(WebKitNetworkRequest* request)
     return WEBKIT_DOWNLOAD(g_object_new(WEBKIT_TYPE_DOWNLOAD, "network-request", request, NULL));
 }
 
+// Internal usage only
+WebKitDownload* webkit_download_new_with_handle(WebKitNetworkRequest* request, WebCore::ResourceHandle* handle, const WebCore::ResourceResponse& response)
+{
+    g_return_val_if_fail(request, NULL);
+
+    ResourceHandleInternal* d = handle->getInternal();
+    soup_session_pause_message(webkit_get_default_session(), d->m_msg);
+
+    WebKitDownload* download = WEBKIT_DOWNLOAD(g_object_new(WEBKIT_TYPE_DOWNLOAD, "network-request", request, NULL));
+    WebKitDownloadPrivate* priv = download->priv;
+
+    handle->ref();
+    priv->resourceHandle = handle;
+
+    webkit_download_set_response(download, response);
+
+    return download;
+}
+
 static gboolean webkit_download_open_stream_for_uri(WebKitDownload* download, const gchar* uri, gboolean append=FALSE)
 {
     g_return_val_if_fail(uri, FALSE);
@@ -425,10 +446,14 @@ void webkit_download_start(WebKitDownload* download)
     g_return_if_fail(priv->status == WEBKIT_DOWNLOAD_STATUS_CREATED);
     g_return_if_fail(priv->timer == NULL);
 
-    if (priv->resourceHandle)
-        priv->resourceHandle->setClient(priv->downloadClient);
-    else
+    if (!priv->resourceHandle)
         priv->resourceHandle = ResourceHandle::create(core(priv->networkRequest), priv->downloadClient, 0, false, false, false);
+    else {
+        priv->resourceHandle->setClient(priv->downloadClient);
+
+        ResourceHandleInternal* d = priv->resourceHandle->getInternal();
+        soup_session_unpause_message(webkit_get_default_session(), d->m_msg);
+    }
 
     priv->timer = g_timer_new();
     webkit_download_open_stream_for_uri(download, priv->destinationURI);

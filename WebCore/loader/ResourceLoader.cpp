@@ -94,8 +94,9 @@ void ResourceLoader::releaseResources()
 
     if (m_handle) {
         // Clear out the ResourceHandle's client so that it doesn't try to call
-        // us back after we release it.
-        m_handle->setClient(0);
+        // us back after we release it, unless it has been replaced by someone else.
+        if (m_handle->client() == this)
+            m_handle->setClient(0);
         m_handle = 0;
     }
 

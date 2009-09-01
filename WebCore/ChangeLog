@@ -1,3 +1,17 @@
+2009-08-31  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28466
+        When downloading a file, two GET requests are sent to the HTTP server
+
+        Can't think of a way to test this.
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::releaseResources): only nullify the
+        handle's client when it is the ResourceLoader, to support the case
+        in which a download API uses a different client
+
 2009-08-31  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Darin Adler.

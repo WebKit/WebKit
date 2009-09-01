@@ -175,7 +175,10 @@ extern "C" {
     webkit_web_view_notify_ready (WebKitWebView* web_view);
 
     void
-    webkit_web_view_request_download(WebKitWebView* web_view, WebKitNetworkRequest* request, const WebCore::ResourceResponse& response = WebCore::ResourceResponse());
+    webkit_web_view_request_download(WebKitWebView* web_view, WebKitNetworkRequest* request, const WebCore::ResourceResponse& response = WebCore::ResourceResponse(), WebCore::ResourceHandle* handle = 0);
+
+    WebKitDownload*
+    webkit_download_new_with_handle(WebKitNetworkRequest* request, WebCore::ResourceHandle* handle, const WebCore::ResourceResponse& response);
 
     void
     webkit_download_set_suggested_filename(WebKitDownload* download, const gchar* suggestedFilename);
