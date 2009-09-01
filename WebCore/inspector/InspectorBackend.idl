@@ -76,7 +76,8 @@ module core {
         void enableDebugger(in boolean always);
         void disableDebugger(in boolean always);
 
-        void addBreakpoint(in DOMString sourceID, in unsigned long lineNumber);
+        void addBreakpoint(in DOMString sourceID, in unsigned long lineNumber, in DOMString condition);
+        void updateBreakpoint(in DOMString sourceID, in unsigned long lineNumber, in DOMString condition);
         void removeBreakpoint(in DOMString sourceID, in unsigned long lineNumber);
 
         void pauseInDebugger();

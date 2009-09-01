@@ -23,13 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.Breakpoint = function(url, line, sourceID)
+WebInspector.Breakpoint = function(url, line, sourceID, condition)
 {
     this.url = url;
     this.line = line;
     this.sourceID = sourceID;
     this._enabled = true;
     this._sourceText = "";
+    this._condition = condition || "";
 }
 
 WebInspector.Breakpoint.prototype = {
@@ -71,6 +72,23 @@ WebInspector.Breakpoint.prototype = {
     get id()
     {
         return this.sourceID + ":" + this.line;
+    },
+
+    get condition()
+    {
+        return this._condition;
+    },
+
+    set condition(c)
+    {
+        c = c || "";
+        if (this._condition === c)
+            return;
+
+        this._condition = c;
+        this.dispatchEventToListeners("condition-changed");
+
+        InspectorController.updateBreakpoint(this.sourceID, this.line, c);
     }
 }
 

@@ -283,7 +283,7 @@ WebInspector.ScriptsPanel.prototype = {
                 if (startingLine <= breakpoint.line) {
                     breakpoint.sourceID = sourceID;
                     if (breakpoint.enabled)
-                        InspectorController.addBreakpoint(breakpoint.sourceID, breakpoint.line);
+                        InspectorController.addBreakpoint(breakpoint.sourceID, breakpoint.line, breakpoint.condition);
                 }
             }
         }

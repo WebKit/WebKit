@@ -57,6 +57,16 @@ namespace WebCore {
 
 typedef JavaScriptDebugServer::ListenerSet ListenerSet;
 
+inline const UString& JavaScriptDebugServer::BreakpointInfo::condition() const
+{
+    return m_condition;
+}
+
+void JavaScriptDebugServer::BreakpointInfo::setCondition(const UString& condition)
+{
+    m_condition = condition;
+}
+
 JavaScriptDebugServer& JavaScriptDebugServer::shared()
 {
     DEFINE_STATIC_LOCAL(JavaScriptDebugServer, server, ());
@@ -155,42 +165,86 @@ bool JavaScriptDebugServer::hasListenersInterestedInPage(Page* page)
     return m_pageListenersMap.contains(page);
 }
 
-void JavaScriptDebugServer::addBreakpoint(intptr_t sourceID, unsigned lineNumber)
+void JavaScriptDebugServer::addBreakpoint(intptr_t sourceID, unsigned lineNumber, const UString& condition)
 {
-    HashSet<unsigned>* lines = m_breakpoints.get(sourceID);
-    if (!lines) {
-        lines = new HashSet<unsigned>;
-        m_breakpoints.set(sourceID, lines);
+    LineToBreakpointInfoMap* sourceBreakpoints = m_breakpoints.get(sourceID);
+    if (!sourceBreakpoints) {
+        sourceBreakpoints = new LineToBreakpointInfoMap;
+        m_breakpoints.set(sourceID, sourceBreakpoints);
     }
+    BreakpointInfo* info = sourceBreakpoints->get(lineNumber);
+    if (!info)
+        sourceBreakpoints->set(lineNumber, new BreakpointInfo(condition));
+    else
+        updateBreakpointInfo(info, condition);
+}
 
-    lines->add(lineNumber);
+JavaScriptDebugServer::BreakpointInfo* JavaScriptDebugServer::breakpointInfo(intptr_t sourceID, unsigned lineNumber) const
+{
+    LineToBreakpointInfoMap* sourceBreakpoints = m_breakpoints.get(sourceID);
+    if (!sourceBreakpoints)
+        return 0;
+    return sourceBreakpoints->get(lineNumber);
+}
+
+void JavaScriptDebugServer::updateBreakpoint(intptr_t sourceID, unsigned lineNumber, const UString& condition)
+{
+    BreakpointInfo* info = breakpointInfo(sourceID, lineNumber);
+    if (!info)
+        return;
+    updateBreakpointInfo(info, condition);
+}
+
+void JavaScriptDebugServer::updateBreakpointInfo(BreakpointInfo* info, const UString& condition)
+{
+    info->setCondition(condition);
 }
 
 void JavaScriptDebugServer::removeBreakpoint(intptr_t sourceID, unsigned lineNumber)
 {
-    HashSet<unsigned>* lines = m_breakpoints.get(sourceID);
-    if (!lines)
+    LineToBreakpointInfoMap* sourceBreakpoints = m_breakpoints.get(sourceID);
+    if (!sourceBreakpoints)
         return;
 
-    lines->remove(lineNumber);
-
-    if (!lines->isEmpty())
+    BreakpointInfo* info = sourceBreakpoints->get(lineNumber);
+    if (!info)
         return;
 
-    m_breakpoints.remove(sourceID);
-    delete lines;
+    sourceBreakpoints->remove(lineNumber);
+    delete info;
+
+    if (sourceBreakpoints->isEmpty()) {
+        m_breakpoints.remove(sourceID);
+        delete sourceBreakpoints;
+    }
 }
 
 bool JavaScriptDebugServer::hasBreakpoint(intptr_t sourceID, unsigned lineNumber) const
 {
-    HashSet<unsigned>* lines = m_breakpoints.get(sourceID);
-    if (!lines)
+    BreakpointInfo* info = breakpointInfo(sourceID, lineNumber);
+    if (!info)
         return false;
-    return lines->contains(lineNumber);
+
+    // An empty condition counts as no condition which is equivalent to "true".
+    if (info->condition().isEmpty())
+        return true;
+
+    JSValue exception;
+    JSValue result = m_currentCallFrame->evaluate(info->condition(), exception);
+    if (exception) {
+        // An erroneous condition counts as "false".
+        return false;
+    }
+    return result.toBoolean(m_currentCallFrame->scopeChain()->globalObject()->globalExec());
 }
 
 void JavaScriptDebugServer::clearBreakpoints()
 {
+    BreakpointsMap::iterator end = m_breakpoints.end();
+    for (BreakpointsMap::iterator it = m_breakpoints.begin(); it != end; ++it) {
+        deleteAllValues(*(it->second));
+        it->second->clear();
+    }
     deleteAllValues(m_breakpoints);
     m_breakpoints.clear();
 }

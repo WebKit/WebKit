@@ -62,7 +62,7 @@ WebInspector.BreakpointsSidebarPane.prototype = {
             return;
 
         if (breakpoint.enabled)
-            InspectorController.addBreakpoint(breakpoint.sourceID, breakpoint.line);
+            InspectorController.addBreakpoint(breakpoint.sourceID, breakpoint.line, breakpoint.condition);
     },
 
     _appendBreakpointElement: function(breakpoint)
@@ -150,7 +150,7 @@ WebInspector.BreakpointsSidebarPane.prototype = {
             return;
 
         if (breakpoint.enabled)
-            InspectorController.addBreakpoint(breakpoint.sourceID, breakpoint.line);
+            InspectorController.addBreakpoint(breakpoint.sourceID, breakpoint.line, breakpoint.condition);
         else
             InspectorController.removeBreakpoint(breakpoint.sourceID, breakpoint.line);
     },

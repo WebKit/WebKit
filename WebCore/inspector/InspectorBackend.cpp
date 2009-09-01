@@ -269,7 +269,7 @@ void InspectorBackend::deleteCookie(const String& cookieName)
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 const ProfilesArray& InspectorBackend::profiles() const
-{    
+{
     if (m_inspectorController)
         return m_inspectorController->profiles();
     return m_emptyProfiles;
@@ -330,10 +330,16 @@ JavaScriptCallFrame* InspectorBackend::currentCallFrame() const
     return JavaScriptDebugServer::shared().currentCallFrame();
 }
 
-void InspectorBackend::addBreakpoint(const String& sourceID, unsigned lineNumber)
+void InspectorBackend::addBreakpoint(const String& sourceID, unsigned lineNumber, const String& condition)
 {
     intptr_t sourceIDValue = sourceID.toIntPtr();
-    JavaScriptDebugServer::shared().addBreakpoint(sourceIDValue, lineNumber);
+    JavaScriptDebugServer::shared().addBreakpoint(sourceIDValue, lineNumber, condition);
+}
+
+void InspectorBackend::updateBreakpoint(const String& sourceID, unsigned lineNumber, const String& condition)
+{
+    intptr_t sourceIDValue = sourceID.toIntPtr();
+    JavaScriptDebugServer::shared().updateBreakpoint(sourceIDValue, lineNumber, condition);
 }
 
 void InspectorBackend::removeBreakpoint(const String& sourceID, unsigned lineNumber)
