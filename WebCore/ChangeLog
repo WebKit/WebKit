@@ -2,6 +2,28 @@
 
         Reviewed by Timothy Hatcher.
 
+        WebInspector: Make InjectedScript self-contained (move necessary
+        methods from utilities.js into InjectedScript).
+
+        https://bugs.webkit.org/show_bug.cgi?id=28871
+
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.generateStylesheet):
+        * inspector/front-end/InjectedScript.js:
+        (InjectedScript._ensureCommandLineAPIInstalled.inspectObject):
+        (InjectedScript._ensureCommandLineAPIInstalled):
+        (InjectedScript.pushNodeToFrontend):
+        (InjectedScript.createProxyObject):
+        (Object.type):
+        (Object.hasProperties):
+        (Object.className):
+        (String.prototype.escapeCharacters):
+        * inspector/front-end/utilities.js:
+
+2009-09-01  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
         WebInspector: console log message repeat count double.
 
         https://bugs.webkit.org/show_bug.cgi?id=28856

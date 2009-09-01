@@ -505,6 +505,12 @@ InjectedScript._evaluateOn = function(evalFunction, object, expression)
         var value = evalFunction.call(object, expression);
         if (value === null)
             return { value: null };
+        if (Object.type(value) === "error") {
+            result.value = Object.describe(value);
+            result.isException = true;
+            return result;
+        }
+
         var wrapper = InspectorController.wrapObject(value);
         if (typeof wrapper === "object" && wrapper.exception) {
             result.value = wrapper.exception;
@@ -846,7 +852,7 @@ InjectedScript._ensureCommandLineAPIInstalled = function(inspectedWindow)
             return;
 
         inspectedWindow.console.log(o);
-        if (Object.type(o, inspectedWindow) === "node") {
+        if (Object.type(o) === "node") {
             InspectorController.pushNodePathToFrontend(o, true);
         } else {
             switch (Object.describe(o)) {
@@ -915,7 +921,7 @@ InjectedScript._objectForId = function(objectId)
 InjectedScript.pushNodeToFrontend = function(objectProxy)
 {
     var object = InjectedScript._resolveObject(objectProxy);
-    if (!object || Object.type(object, InjectedScript._window()) !== "node")
+    if (!object || Object.type(object) !== "node")
         return false;
     return InspectorController.pushNodePathToFrontend(object, false);
 }
@@ -925,7 +931,7 @@ InjectedScript.createProxyObject = function(object, objectId, abbreviate)
 {
     var result = {};
     result.objectId = objectId;
-    result.type = Object.type(object, InjectedScript._window());
+    result.type = Object.type(object);
 
     var type = typeof object;
     if (type === "object" || type === "function") {
@@ -935,7 +941,7 @@ InjectedScript.createProxyObject = function(object, objectId, abbreviate)
         }
     }
     try {
-        result.description = Object.describe(object, abbreviate, InjectedScript._window());
+        result.description = Object.describe(object, abbreviate);
     } catch (e) {
         result.exception = e.toString();
     }
@@ -984,4 +990,110 @@ InjectedScript.CallFrameProxy.prototype = {
         }
         return scopeChainProxy;
     }
+}
+
+Object.type = function(obj)
+{
+    if (obj === null)
+        return "null";
+
+    var type = typeof obj;
+    if (type !== "object" && type !== "function")
+        return type;
+
+    var win = InjectedScript._window();
+
+    if (obj instanceof win.Node)
+        return (obj.nodeType === undefined ? type : "node");
+    if (obj instanceof win.String)
+        return "string";
+    if (obj instanceof win.Array)
+        return "array";
+    if (obj instanceof win.Boolean)
+        return "boolean";
+    if (obj instanceof win.Number)
+        return "number";
+    if (obj instanceof win.Date)
+        return "date";
+    if (obj instanceof win.RegExp)
+        return "regexp";
+    if (obj instanceof win.Error)
+        return "error";
+    return type;
+}
+
+Object.hasProperties = function(obj)
+{
+    if (typeof obj === "undefined" || typeof obj === "null")
+        return false;
+    for (var name in obj)
+        return true;
+    return false;
+}
+
+Object.describe = function(obj, abbreviated)
+{
+    var type1 = Object.type(obj);
+    var type2 = Object.className(obj);
+
+    switch (type1) {
+    case "object":
+    case "node":
+        return type2;
+    case "array":
+        return "[" + obj.toString() + "]";
+    case "string":
+        if (obj.length > 100)
+            return "\"" + obj.substring(0, 100) + "\u2026\"";
+        return "\"" + obj + "\"";
+    case "function":
+        var objectText = String(obj);
+        if (!/^function /.test(objectText))
+            objectText = (type2 == "object") ? type1 : type2;
+        else if (abbreviated)
+            objectText = /.*/.exec(obj)[0].replace(/ +$/g, "");
+        return objectText;
+    case "regexp":
+        return String(obj).replace(/([\\\/])/g, "\\$1").replace(/\\(\/[gim]*)$/, "$1").substring(1);
+    default:
+        return String(obj);
+    }
+}
+
+Object.className = function(obj)
+{
+    return Object.prototype.toString.call(obj).replace(/^\[object (.*)\]$/i, "$1")
+}
+
+// Although Function.prototype.bind and String.prototype.escapeCharacters are defined in utilities.js they will soon become
+// unavailable in the InjectedScript context. So we define them here for the local use.
+// TODO: remove this comment once InjectedScript runs in a separate context.
+Function.prototype.bind = function(thisObject)
+{
+    var func = this;
+    var args = Array.prototype.slice.call(arguments, 1);
+    return function() { return func.apply(thisObject, args.concat(Array.prototype.slice.call(arguments, 0))) };
+}
+
+String.prototype.escapeCharacters = function(chars)
+{
+    var foundChar = false;
+    for (var i = 0; i < chars.length; ++i) {
+        if (this.indexOf(chars.charAt(i)) !== -1) {
+            foundChar = true;
+            break;
+        }
+    }
+
+    if (!foundChar)
+        return this;
+
+    var result = "";
+    for (var i = 0; i < this.length; ++i) {
+        if (chars.indexOf(this.charAt(i)) !== -1)
+            result += "\\";
+        result += this.charAt(i);
+    }
+
+    return result;
 }

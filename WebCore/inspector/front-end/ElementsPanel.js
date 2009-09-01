@@ -359,7 +359,7 @@ WebInspector.ElementsPanel.prototype = {
 
                             if (value1 === value2)
                                 merge[property] = [value1];
-                            else if (Object.type(value1) === "array")
+                            else if (value1 instanceof Array)
                                 merge[property].push(value2);
                             else
                                 merge[property] = [value1, value2];
@@ -391,7 +391,7 @@ WebInspector.ElementsPanel.prototype = {
                 for (var i = 0; i < properties.length; ++i) {
                     var property = properties[i];
                     var value = psuedoStyle[property];
-                    if (Object.type(value) !== "array")
+                    if (!(value instanceof Array))
                         builder.push(displayProperty(property, value));
                     else {
                         if (value.length === 1)

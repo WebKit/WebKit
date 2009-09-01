@@ -26,36 +26,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-Object.type = function(obj, win)
-{
-    if (obj === null)
-        return "null";
-
-    var type = typeof obj;
-    if (type !== "object" && type !== "function")
-        return type;
-
-    win = win || window;
-
-    if (obj instanceof win.Node)
-        return (obj.nodeType === undefined ? type : "node");
-    if (obj instanceof win.String)
-        return "string";
-    if (obj instanceof win.Array)
-        return "array";
-    if (obj instanceof win.Boolean)
-        return "boolean";
-    if (obj instanceof win.Number)
-        return "number";
-    if (obj instanceof win.Date)
-        return "date";
-    if (obj instanceof win.RegExp)
-        return "regexp";
-    if (obj instanceof win.Error)
-        return "error";
-    return type;
-}
-
 Object.proxyType = function(objectProxy)
 {
     if (objectProxy === null)
@@ -66,44 +36,6 @@ Object.proxyType = function(objectProxy)
         return type;
 
     return objectProxy.type;
-}
-
-Object.hasProperties = function(obj)
-{
-    if (typeof obj === "undefined" || typeof obj === "null")
-        return false;
-    for (var name in obj)
-        return true;
-    return false;
-}
-
-Object.describe = function(obj, abbreviated, win)
-{
-    var type1 = Object.type(obj, win);
-    var type2 = Object.prototype.toString.call(obj).replace(/^\[object (.*)\]$/i, "$1");
-
-    switch (type1) {
-    case "object":
-    case "node":
-        return type2;
-    case "array":
-        return "[" + obj.toString() + "]";
-    case "string":
-        if (obj.length > 100)
-            return "\"" + obj.substring(0, 100) + "\u2026\"";
-        return "\"" + obj + "\"";
-    case "function":
-        var objectText = String(obj);
-        if (!/^function /.test(objectText))
-            objectText = (type2 == "object") ? type1 : type2;
-        else if (abbreviated)
-            objectText = /.*/.exec(obj)[0].replace(/ +$/g, "");
-        return objectText;
-    case "regexp":
-        return String(obj).replace(/([\\\/])/g, "\\$1").replace(/\\(\/[gim]*)$/, "$1").substring(1);
-    default:
-        return String(obj);
-    }
 }
 
 Object.properties = function(obj)
