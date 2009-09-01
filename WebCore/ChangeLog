@@ -1,3 +1,17 @@
+2009-09-01  Cameron McCormack  <cam@mcc.id.au>
+
+        Reviewed by Eric Seidel.
+
+        SVGSVGElement suspend methods argument/return types incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=28860
+
+        Also fix the style of the argument names.
+
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::suspendRedraw):
+        (WebCore::SVGSVGElement::unsuspendRedraw):
+        * svg/SVGSVGElement.h:
+
 2009-09-01  Roland Steiner  <rolandsteiner@google.com>
 
         Reviewed by Eric Seidel.

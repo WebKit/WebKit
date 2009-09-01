@@ -94,8 +94,8 @@ namespace WebCore {
         float getCurrentTime() const;
         void setCurrentTime(float seconds);
 
-        unsigned long suspendRedraw(unsigned long max_wait_milliseconds);
-        void unsuspendRedraw(unsigned long suspend_handle_id);
+        unsigned suspendRedraw(unsigned maxWaitMilliseconds);
+        void unsuspendRedraw(unsigned suspendHandleId);
         void unsuspendRedrawAll();
         void forceRedraw();
 

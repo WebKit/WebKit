@@ -307,13 +307,13 @@ void SVGSVGElement::svgAttributeChanged(const QualifiedName& attrName)
         renderer()->setNeedsLayout(true);
 }
 
-unsigned long SVGSVGElement::suspendRedraw(unsigned long /* max_wait_milliseconds */)
+unsigned SVGSVGElement::suspendRedraw(unsigned /* maxWaitMilliseconds */)
 {
     // FIXME: Implement me (see bug 11275)
     return 0;
 }
 
-void SVGSVGElement::unsuspendRedraw(unsigned long /* suspend_handle_id */)
+void SVGSVGElement::unsuspendRedraw(unsigned /* suspendHandleId */)
 {
     // FIXME: Implement me (see bug 11275)
 }
