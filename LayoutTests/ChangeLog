@@ -1,3 +1,20 @@
+2009-09-01  Victor Wang  <victorw@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28879
+
+        Fix fast/dom/StyleSheet/ownerNode-lifetime-2.html
+        The problem is WebKit <link> nodes will only have a
+        style sheet created if they have href attribute.
+        The src attribute to non-existant css doesn't work.
+        Change src to href to make this test works in WebKit.
+
+        Also update the expectation result.
+
+        * fast/dom/StyleSheet/ownerNode-lifetime-2-expected.txt:
+        * fast/dom/StyleSheet/ownerNode-lifetime-2.html:
+
 2009-09-01  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.
