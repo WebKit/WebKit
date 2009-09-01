@@ -29,12 +29,18 @@
 
 #include "Frame.h"
 #include "KURL.h"
+#include "PluginDatabaseClient.h"
 #include "PluginPackage.h"
 #include <stdlib.h>
 
 namespace WebCore {
 
 typedef HashMap<String, RefPtr<PluginPackage> > PluginPackageByNameMap;
+
+PluginDatabase::PluginDatabase()
+    : m_client(0)
+{
+}
 
 PluginDatabase* PluginDatabase::installedPlugins(bool populate)
 {
@@ -111,9 +117,14 @@ bool PluginDatabase::refresh()
             remove(oldPackage.get());
         }
 
-        RefPtr<PluginPackage> package = PluginPackage::createPackage(*it, lastModified);
-        if (package && add(package.release()))
-            pluginSetChanged = true;
+        if (!m_client || m_client->shouldLoadPluginAtPath(*it)) {
+            RefPtr<PluginPackage> package = PluginPackage::createPackage(*it, lastModified);
+            if (package) {
+                if ((!m_client || m_client->shouldLoadPluginPackage(package)) && add(package))
+                    pluginSetChanged = true;
+                package.release();
+            }
+        }
     }
 
     // Cache all the paths we found with their timestamps for next time.

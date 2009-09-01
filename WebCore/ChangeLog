@@ -1,3 +1,21 @@
+2009-09-01  Marius Renn  <damarvy@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        Added delegate to PluginDatabase to disable loading certain plugins.
+        This is useful when you want to load from the standard plugin
+        directory, but want to exclude certain plugins. Plugins may be
+        excluded early on by name, so that no plugin code is executed (which
+        may have caused a crash).
+
+        * plugins/PluginDatabase.cpp:
+        (WebCore::PluginDatabase::PluginDatabase):
+        (WebCore::PluginDatabase::refresh):
+        * plugins/PluginDatabase.h:
+        (WebCore::PluginDatabase::setClient):
+        * plugins/PluginDatabaseClient.h: Added.
+        (WebCore::PluginDatabaseClient::~PluginDatabaseClient):
+
 2009-08-31  Brady Eidson  <beidson@apple.com>
 
         Rubberstamped by Sam Weinig
