@@ -71,7 +71,8 @@ namespace WebCore {
         TipMessageLevel,
         LogMessageLevel,
         WarningMessageLevel,
-        ErrorMessageLevel
+        ErrorMessageLevel,
+        DebugMessageLevel
     };
 
     class Console : public RefCounted<Console> {

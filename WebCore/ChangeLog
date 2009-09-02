@@ -1,3 +1,24 @@
+2009-09-01  Patrick Mueller  <Patrick_Mueller@us.ibm.com>
+
+        Reviewed by Timothy Hatcher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28047
+        add utility method to enable logging messages for inspector development
+
+        manual test case added (see below)
+
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleMessage.prototype.toMessageElement):
+        (WebInspector.ConsoleMessage.prototype.toString):
+        * inspector/front-end/inspector.css:
+        * inspector/front-end/inspector.js:
+        (WebInspector.log):
+        * manual-tests/inspector/webinspector-log.html: Added.
+        * page/Console.cpp:
+        (WebCore::printMessageSourceAndLevelPrefix):
+        * page/Console.h:
+        (WebCore::):
+
 2009-09-01  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

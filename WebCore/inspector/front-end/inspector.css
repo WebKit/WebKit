@@ -543,7 +543,7 @@ body.drawer-visible #drawer {
     padding-left: 6px;
 }
 
-.repeated-message.console-error-level::before, .repeated-message.console-warning-level:before {
+.repeated-message.console-error-level::before, .repeated-message.console-warning-level:before, .repeated-message.console-debug-level:before {
     visibility: hidden;
 }
 
@@ -572,6 +572,14 @@ body.drawer-visible #drawer {
 
 .console-error-level .console-message-text {
     color: red;
+}
+
+.console-debug-level .console-message-text {
+    color: blue;
+}
+
+.console-debug-level::before {
+    background-image: url(Images/searchSmallBrightBlue.png);
 }
 
 .console-error-level::before {
@@ -2988,6 +2996,10 @@ body.inactive .sidebar-tree-item.selected {
 
 .children.small .resource-sidebar-tree-item.resources-category-xhr .icon {
     content: url(Images/resourceDocumentIconSmall.png);
+}
+
+.bubble.debug, .console-debug-level .bubble {
+    background-color: rgb(0, 0, 255) !important;
 }
 
 .bubble.warning, .console-warning-level .bubble {

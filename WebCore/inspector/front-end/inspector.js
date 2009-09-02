@@ -1112,6 +1112,20 @@ WebInspector.addMessageToConsole = function(payload)
     this.console.addMessage(consoleMessage);
 }
 
+WebInspector.log = function(message)
+{
+    var msg = new WebInspector.ConsoleMessage(
+        WebInspector.ConsoleMessage.MessageSource.Other,
+        WebInspector.ConsoleMessage.MessageType.Log,
+        WebInspector.ConsoleMessage.MessageLevel.Debug,
+        -1,
+        null,
+        null,
+        1,
+        message);
+    this.console.addMessage(msg);
+}
+
 WebInspector.addProfile = function(profile)
 {
     this.panels.profiles.addProfile(profile);

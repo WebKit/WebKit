@@ -655,6 +655,9 @@ WebInspector.ConsoleMessage.prototype = {
             case WebInspector.ConsoleMessage.MessageLevel.Log:
                 element.addStyleClass("console-log-level");
                 break;
+            case WebInspector.ConsoleMessage.MessageLevel.Debug:
+                element.addStyleClass("console-debug-level");
+                break;
             case WebInspector.ConsoleMessage.MessageLevel.Warning:
                 element.addStyleClass("console-warning-level");
                 break;
@@ -761,6 +764,9 @@ WebInspector.ConsoleMessage.prototype = {
             case WebInspector.ConsoleMessage.MessageLevel.Warning:
                 levelString = "Warning";
                 break;
+            case WebInspector.ConsoleMessage.MessageLevel.Debug:
+                levelString = "Debug";
+                break;
             case WebInspector.ConsoleMessage.MessageLevel.Error:
                 levelString = "Error";
                 break;
@@ -807,7 +813,8 @@ WebInspector.ConsoleMessage.MessageLevel = {
     Tip: 0,
     Log: 1,
     Warning: 2,
-    Error: 3
+    Error: 3,
+    Debug: 4
 }
 
 WebInspector.ConsoleCommand = function(command)

@@ -129,6 +129,9 @@ static void printMessageSourceAndLevelPrefix(MessageSource source, MessageLevel 
     case ErrorMessageLevel:
         levelString = "ERROR";
         break;
+    case DebugMessageLevel:
+        levelString = "DEBUG";
+        break;
     default:
         ASSERT_NOT_REACHED();
         levelString = "UNKNOWN";
