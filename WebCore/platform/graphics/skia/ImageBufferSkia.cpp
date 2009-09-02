@@ -235,7 +235,7 @@ void putImageData(ImageData*& source, const IntRect& sourceRect, const IntPoint&
         uint32_t* destRow = bitmap.getAddr32(destX, destY + y);
         for (int x = 0; x < numColumns; ++x) {
             const unsigned char* srcPixel = &srcRow[x * 4];
-            if (multiplied == Unpremultiplied)
+            if (multiplied == Unmultiplied)
                 destRow[x] = SkPreMultiplyARGB(srcPixel[3], srcPixel[0],
                                                srcPixel[1], srcPixel[2]);
             else

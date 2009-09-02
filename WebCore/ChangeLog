@@ -2,6 +2,15 @@
 
         Unreviewed, build fix.
 
+        [Chromium] Correct a typo to fix bustage, caused by r47991.
+        https://bugs.webkit.org/show_bug.cgi?id=27933
+
+        * platform/graphics/skia/ImageBufferSkia.cpp: Changed "Unpremultipled" to "Unmultiplied".
+
+2009-09-02  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, build fix.
+
         [Chromium] Add a missing include to fix bustage, caused by r47991.
         https://bugs.webkit.org/show_bug.cgi?id=27933
 
