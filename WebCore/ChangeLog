@@ -1,3 +1,11 @@
+2009-09-02  Ben Murdoch  <benm@google.com>
+
+        Unreviewed build fix for Chromium.
+
+        Missed #including V8Proxy.h in WebCore/bindings/v8/V8Binding.cpp.
+
+        * bindings/v8/V8Binding.cpp: add V8Proxy.h as an include
+
 2009-09-02  Kevin Ollivier  <kevino@theolliviers.com>
 
         waf build fix, don't define symbols we now grab from other sources.

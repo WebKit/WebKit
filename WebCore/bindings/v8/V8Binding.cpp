@@ -39,6 +39,7 @@
 #include "StringBuffer.h"
 #include "StringHash.h"
 #include "Threading.h"
+#include "V8Proxy.h"
 
 #include <v8.h>
 
