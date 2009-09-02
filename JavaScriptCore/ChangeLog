@@ -1,3 +1,9 @@
+2009-09-02  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Build fix for building on Windows.
+
+        * wtf/ThreadingPthreads.cpp:
+
 2009-09-02  Norbert Leser  <norbert.leser@nokia.com>
 
         Reviewed by Eric Seidel.

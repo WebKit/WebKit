@@ -39,8 +39,11 @@
 #include "StdLibExtras.h"
 #include "UnusedParam.h"
 #include <errno.h>
+
+#if !COMPILER(MSVC)
 #include <limits.h>
 #include <sys/time.h>
+#endif
 
 #if PLATFORM(ANDROID)
 #include "jni_utility.h"
