@@ -1,9 +1,11 @@
-   
+     
 This tests that the aria-readonly attribute works. The first and third text fields should not be writable.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+PASS succeeded is 0
+PASS succeeded is 1
 PASS succeeded is 0
 PASS succeeded is 1
 PASS succeeded is 0

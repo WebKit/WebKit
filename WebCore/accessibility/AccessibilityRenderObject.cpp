@@ -405,7 +405,7 @@ bool AccessibilityRenderObject::isReadOnly() const
     if (m_renderer->isTextField())
         return static_cast<HTMLInputElement*>(m_renderer->node())->readOnly();
     if (m_renderer->isTextArea())
-        return static_cast<HTMLInputElement*>(m_renderer->node())->readOnly();
+        return static_cast<HTMLTextAreaElement*>(m_renderer->node())->readOnly();
     
     return !m_renderer->node() || !m_renderer->node()->isContentEditable();
 }

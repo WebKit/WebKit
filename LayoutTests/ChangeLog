@@ -1,3 +1,12 @@
+2009-09-01  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Added a new case to aria-readonly.html to account for textareas instead of just input fields.
+
+        * accessibility/aria-readonly-expected.txt:
+        * accessibility/aria-readonly.html:
+
 2009-09-01  Eric Seidel  <eric@webkit.org>
 
         Rubber stamped by Simon Fraser.
