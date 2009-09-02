@@ -436,23 +436,6 @@ void PluginView::forceRedraw()
     notImplemented();
 }
 
-PluginView::~PluginView()
-{
-    stop();
-
-    deleteAllValues(m_requests);
-
-    freeStringArray(m_paramNames, m_paramCount);
-    freeStringArray(m_paramValues, m_paramCount);
-
-    m_parentFrame->script()->cleanupScriptObjectsForPlugin(this);
-
-    if (m_plugin && !(m_plugin->quirks().contains(PluginQuirkDontUnloadPlugin)))
-        m_plugin->unload();
-
-    delete platformPluginWidget();
-}
-
 bool PluginView::platformStart()
 {
     ASSERT(m_isStarted);
@@ -497,6 +480,12 @@ bool PluginView::platformStart()
     }
 
     return true;
+}
+
+void PluginView::platformDestroy()
+{
+    if (platformPluginWidget())
+        delete platformPluginWidget();
 }
 
 } // namespace WebCore

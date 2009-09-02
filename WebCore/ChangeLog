@@ -2,6 +2,25 @@
 
         Reviewed by Eric Seidel.
 
+        Join the various PluginView destructors into one shared implementation
+
+        https://bugs.webkit.org/show_bug.cgi?id=27706
+
+        The Qt port used to delete the platform plugin widget as the last step.
+        Now this is done before cleaning up the script objects and unloading the
+        plugin package, similar to how the Win port does it.
+
+        * plugins/PluginView.cpp:
+        * plugins/PluginViewNone.cpp:
+        * plugins/gtk/PluginViewGtk.cpp:
+        * plugins/mac/PluginViewMac.cpp:
+        * plugins/qt/PluginViewQt.cpp:
+        * plugins/win/PluginViewWin.cpp:
+
+2009-08-31  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Eric Seidel.
+
         Share PluginView::init() between ports
 
         https://bugs.webkit.org/show_bug.cgi?id=27706

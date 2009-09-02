@@ -114,16 +114,16 @@ void PluginView::forceRedraw()
     notImplemented();
 }
 
-PluginView::~PluginView()
-{
-    notImplemented();
-}
-
 bool PluginView::platformStart()
 {
     notImplemented();
 
     return true;
+}
+
+void PluginView::platformDestory()
+{
+    notImplemented();
 }
 
 void PluginView::setParentVisible(bool)

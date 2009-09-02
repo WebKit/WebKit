@@ -431,21 +431,6 @@ void PluginView::forceRedraw()
         gtk_widget_queue_draw(m_parentFrame->view()->hostWindow()->platformWindow());
 }
 
-PluginView::~PluginView()
-{
-    stop();
-
-    deleteAllValues(m_requests);
-
-    freeStringArray(m_paramNames, m_paramCount);
-    freeStringArray(m_paramValues, m_paramCount);
-
-    m_parentFrame->script()->cleanupScriptObjectsForPlugin(this);
-
-    if (m_plugin && !(m_plugin->quirks().contains(PluginQuirkDontUnloadPlugin)))
-        m_plugin->unload();
-}
-
 static gboolean
 plug_removed_cb(GtkSocket *socket, gpointer)
 {
@@ -516,6 +501,10 @@ bool PluginView::platformStart()
         updatePluginWidget(); // was: setNPWindowIfNeeded(), but this doesn't produce 0x0 rects at first go
 
     return true;
+}
+
+void PluginView::platformDestroy()
+{
 }
 
 } // namespace WebCore

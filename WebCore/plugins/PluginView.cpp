@@ -177,6 +177,20 @@ void PluginView::init()
     m_status = PluginStatusLoadedSuccessfully;
 }
 
+bool PluginView::startOrAddToUnstartedList()
+{
+    if (!m_parentFrame->page())
+        return false;
+
+    if (!m_parentFrame->page()->canStartPlugins()) {
+        m_parentFrame->page()->addUnstartedPlugin(this);
+        m_isWaitingToStart = true;
+        return true;
+    }
+
+    return start();
+}
+
 bool PluginView::start()
 {
     if (m_isStarted)
@@ -221,6 +235,38 @@ bool PluginView::start()
         m_status = PluginStatusCanNotLoadPlugin;
 
     return (m_status == PluginStatusLoadedSuccessfully);
+}
+
+PluginView::~PluginView()
+{
+    LOG(Plugins, "PluginView::~PluginView()");
+
+    removeFromUnstartedListIfNecessary();
+
+    stop();
+
+    deleteAllValues(m_requests);
+
+    freeStringArray(m_paramNames, m_paramCount);
+    freeStringArray(m_paramValues, m_paramCount);
+
+    platformDestroy();
+
+    m_parentFrame->script()->cleanupScriptObjectsForPlugin(this);
+
+    if (m_plugin && !(m_plugin->quirks().contains(PluginQuirkDontUnloadPlugin)))
+        m_plugin->unload();
+}
+
+void PluginView::removeFromUnstartedListIfNecessary()
+{
+    if (!m_isWaitingToStart)
+        return;
+
+    if (!m_parentFrame->page())
+        return;
+
+    m_parentFrame->page()->removeUnstartedPlugin(this);
 }
 
 void PluginView::stop()
@@ -334,31 +380,6 @@ static bool getString(ScriptController* proxy, JSValue result, String& string)
 
     string = ustring;
     return true;
-}
-
-bool PluginView::startOrAddToUnstartedList()
-{
-    if (!m_parentFrame->page())
-        return false;
-
-    if (!m_parentFrame->page()->canStartPlugins()) {
-        m_parentFrame->page()->addUnstartedPlugin(this);
-        m_isWaitingToStart = true;
-        return true;
-    }
-
-    return start();
-}
-
-void PluginView::removeFromUnstartedListIfNecessary()
-{
-    if (!m_isWaitingToStart)
-        return;
-
-    if (!m_parentFrame->page())
-        return;
-
-    m_parentFrame->page()->removeUnstartedPlugin(this);
 }
 
 void PluginView::performRequest(PluginRequest* request)
