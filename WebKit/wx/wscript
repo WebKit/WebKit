@@ -40,6 +40,13 @@ include_paths = webkit_dirs + common_includes + ['.', '..',
                 os.path.join(wk_root, 'WebCore', 'platform', 'graphics', 'wx'),
 ]
 
+windows_deps = [
+                'lib/pthreadVC2.dll',
+                'bin/icuuc40.dll', 'bin/icudt40.dll', 'bin/icuin40.dll',
+                'bin/libcurl.dll', 'bin/libeay32.dll', 'bin/ssleay32.dll', 'bin/zlib1.dll',
+                'lib/sqlite3.dll', 'bin/libxml2.dll', 'bin/libxslt.dll', 'bin/iconv.dll',
+                ]
+
 webcore_include_dirs = []
 for dir in webcore_dirs + ['DerivedSources']:
     include_paths.append(os.path.join(wk_root, 'WebCore', dir)) 
@@ -59,8 +66,13 @@ def pre_build(bld):
     The wxWebKit library should be rebuilt if jscore or webcore changes,
     so we make those static libs as dependencies.
     """
-    libjscore = os.path.join(output_dir, 'libjscore.a')
-    libwebcore = os.path.join(output_dir, 'libwebcore.a')
+    
+    ext = '.a'
+    if sys.platform.startswith('win'):
+        ext = '.lib'
+    
+    libjscore = os.path.join(output_dir, 'libjscore%s' % ext)
+    libwebcore = os.path.join(output_dir, 'libwebcore%s' % ext)
     
     assert os.path.exists(libjscore)
     assert os.path.exists(libwebcore)
@@ -76,9 +88,18 @@ def build(bld):
         includes = ' '.join(include_paths + js_include_dirs),
         target = 'wxwebkit',
         defines = ['WXMAKINGDLL_WEBKIT'],
-        uselib = 'WX CURL ICU XSLT XML SQLITE3 WEBCORE JSCORE ' + waf_configname,
+        uselib = 'WX CURL ICU XSLT XML SQLITE3 WEBCORE JSCORE ' + get_config(),
         libpath = [output_dir],
         uselib_local = '',
         install_path = output_dir)
         
     obj.find_sources_in_dirs(webkit_dirs)
+
+    if building_on_win32:
+        for wxlib in bld.env['LIB_WX']:
+            wxlibname = os.path.join(bld.env['LIBPATH_WX'][0], wxlib + '_vc.dll')
+            if os.path.exists(wxlibname):
+                bld.install_files(obj.install_path, [wxlibname])
+        
+        for dep in windows_deps:
+            bld.install_files(obj.install_path, [os.path.join(msvclibs_dir, dep)])

@@ -23,6 +23,7 @@
 #
 # Helper functions for the WebKit build.
 
+import commands
 import glob
 import os
 import sys
@@ -35,8 +36,11 @@ def get_output(command):
     """
     Windows-compatible function for getting output from a command.
     """
-    f = os.popen(command)
-    return f.read().strip()
+    if sys.platform.startswith('win'):
+        f = os.popen(command)
+        return f.read().strip()
+    else:
+        return commands.getoutput(command)
     
 def get_excludes(root, patterns):
     """

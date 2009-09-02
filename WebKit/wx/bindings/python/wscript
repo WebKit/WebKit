@@ -55,9 +55,10 @@ def set_options(opt):
     common_set_options(opt)
 
 def configure(conf):
-    common_configure(conf)
-    conf.check_tool('swig', tooldir='.')
-    conf.check_swig_version('1.3.29')
+    if Options.options.wxpython:
+        common_configure(conf)
+        conf.check_tool('swig', tooldir='.')
+        conf.check_swig_version('1.3.29')
     
 def build(bld):
     if Options.options.wxpython:
@@ -87,7 +88,7 @@ def build(bld):
             swig_flags = ' '.join(wx_swig_args),
             defines = defines,
             target = '_webview',
-            uselib = 'WX CURL ICU XSLT XML SQLITE3 WXWEBKIT ' + waf_configname,
+            uselib = 'WX CURL ICU XSLT XML SQLITE3 WXWEBKIT ' + get_config(),
             
             libpath = [output_dir],
             uselib_local = '',

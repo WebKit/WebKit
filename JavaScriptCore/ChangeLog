@@ -1,5 +1,11 @@
 2009-09-02  Kevin Ollivier  <kevino@theolliviers.com>
 
+        waf build fixes for Windows/MSVC.
+
+        * wscript:
+
+2009-09-02  Kevin Ollivier  <kevino@theolliviers.com>
+
         Build fix for building on Windows.
 
         * wtf/ThreadingPthreads.cpp:

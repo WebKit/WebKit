@@ -117,7 +117,7 @@ def build(bld):
         source = ' '.join(flattenSources(webcore_sources.values())),
         cxxflags = cxxflags,
         target = 'webcore',
-        uselib = 'WX ICU XML XSLT CURL ' + waf_configname,
+        uselib = 'WX ICU XML XSLT CURL ' + get_config(),
         uselib_local = '',
         install_path = output_dir,
         )
@@ -126,6 +126,11 @@ def build(bld):
     if build_port == 'wx':
         excludes = get_excludes(webcore_dir, ['*None.cpp', '*CF.cpp', '*Qt.cpp', '*Win.cpp', '*Wince.cpp', '*Gtk.cpp', '*Mac.cpp', '*Safari.cpp', '*Chromium*.cpp','*SVG*.cpp', '*AllInOne.cpp', 'test*bindings.*'])
         excludes.extend(['UserStyleSheetLoader.cpp', 'RenderMediaControls.cpp'])
+
+
+        # FIXME: undo this once these classes are fully implemented
+        excludes.append('SocketStreamErrorBase.cpp')
+        excludes.append('SocketStreamHandleBase.cpp')
 
         # intermediate sources
         excludes.append('CSSValueKeywords.c')
