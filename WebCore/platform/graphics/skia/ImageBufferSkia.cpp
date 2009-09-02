@@ -161,13 +161,21 @@ PassRefPtr<ImageData> getImageData(const IntRect& rect, const SkBitmap& bitmap,
     for (int y = 0; y < numRows; ++y) {
         uint32_t* srcRow = bitmap.getAddr32(originX, originY + y);
         for (int x = 0; x < numColumns; ++x) {
-            // TODO: Support for premultiplied colors
-            SkColor color = SkPMColorToColor(srcRow[x]);
             unsigned char* destPixel = &destRow[x * 4];
-            destPixel[0] = SkColorGetR(color);
-            destPixel[1] = SkColorGetG(color);
-            destPixel[2] = SkColorGetB(color);
-            destPixel[3] = SkColorGetA(color);
+            if (multiplied == Unmultiplied) {
+                SkColor color = SkPMColorToColor(srcRow[x]);
+                destPixel[0] = SkColorGetR(color);
+                destPixel[1] = SkColorGetG(color);
+                destPixel[2] = SkColorGetB(color);
+                destPixel[3] = SkColorGetA(color);
+            } else {
+                // Input and output are both pre-multiplied, we just need to re-arrange the
+                // bytes from the bitmap format to RGBA.
+                destPixel[0] = SkGetPackedR32(srcRow[x]);
+                destPixel[1] = SkGetPackedG32(srcRow[x]);
+                destPixel[2] = SkGetPackedB32(srcRow[x]);
+                destPixel[3] = SkGetPackedA32(srcRow[x]);
+            }
         }
         destRow += destBytesPerRow;
     }
@@ -225,10 +233,13 @@ void putImageData(ImageData*& source, const IntRect& sourceRect, const IntPoint&
     for (int y = 0; y < numRows; ++y) {
         uint32_t* destRow = bitmap.getAddr32(destX, destY + y);
         for (int x = 0; x < numColumns; ++x) {
-            // TODO: Support for premultiplied colors
             const unsigned char* srcPixel = &srcRow[x * 4];
-            destRow[x] = SkPreMultiplyARGB(srcPixel[3], srcPixel[0],
-                                           srcPixel[1], srcPixel[2]);
+            if (multiplied == Unpremultiplied)
+                destRow[x] = SkPreMultiplyARGB(srcPixel[3], srcPixel[0],
+                                               srcPixel[1], srcPixel[2]);
+            else
+                destRow[x] = SkPackARGB32(srcPixel[3], srcPixel[0],
+                                          srcPixel[1], srcPixel[2]);
         }
         srcRow += srcBytesPerRow;
     }

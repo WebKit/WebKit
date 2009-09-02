@@ -1,3 +1,16 @@
+2009-09-02  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        SVG Filter premultiplied color support for getImageDate/putImageData
+        [https://bugs.webkit.org/show_bug.cgi?id=27933]
+
+        Patch to get premultiplied color support for Skia on getImageDate/putImageData.
+
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::getImageData):
+        (WebCore::putImageData):
+
 2009-09-02  Brady Eidson  <beidson@apple.com>
 
         Forget to rename openInFrameloader() to open(), which was requested in Darin's review of my last patch.
