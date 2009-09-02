@@ -1,3 +1,17 @@
+2009-09-02  Charles Wei  <charles.wei@torchmobile.com.cn>
+
+        Reviewed by Eric Seidel.
+
+        Fix the build failure of WebKit for Linux/Qt when WML is enabled
+
+        No test cases needed since this just fixes the build problem.
+
+        * wml/WMLElement.cpp:
+        (WebCore::WMLElement::create):
+        * wml/WMLTableElement.cpp:
+        (WebCore::WMLTableElement::joinSuperflousColumns):
+        (WebCore::WMLTableElement::padWithEmptyColumns):
+
 2009-09-02 Yong Li <yong.li@torchmobile.com>
 
         Reviewed by Adam Barth.
