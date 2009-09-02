@@ -798,23 +798,15 @@ String TextResourceDecoder::decode(const char* data, size_t len)
         if (!checkForHeadCharset(data, len, movedDataToBuffer))
             return "";
 
-    // FIXME: It seems wrong to change our encoding downstream after
-    // we have already done some decoding. However, it's not possible
-    // to avoid in a sense in two cases below because triggering conditions
-    // for both cases depend on the information that won't be available
-    // until we do partial read. 
-    // The first case had better be removed altogether (see bug 21990)
-    // or at least be made to be invoked only when the encoding detection
-    // is turned on. 
-    // Do the auto-detect 1) using Japanese detector if our default encoding is
-    // one of the Japanese detector or 2) using detectTextEncoding if encoding
-    // detection is turned on.
-    if (m_source != UserChosenEncoding && m_source != AutoDetectedEncoding && m_encoding.isJapanese())
-        detectJapaneseEncoding(data, len);
-    else if (shouldAutoDetect()) {
-        TextEncoding detectedEncoding;
-        if (detectTextEncoding(data, len, m_hintEncoding, &detectedEncoding))
-            setEncoding(detectedEncoding, AutoDetectedEncoding);
+    // FIXME: It is wrong to change the encoding downstream after we have already done some decoding.
+    if (shouldAutoDetect()) {
+        if (m_encoding.isJapanese())
+            detectJapaneseEncoding(data, len); // FIXME: We should use detectTextEncoding() for all languages.
+        else {
+            TextEncoding detectedEncoding;
+            if (detectTextEncoding(data, len, m_hintEncoding, &detectedEncoding))
+                setEncoding(detectedEncoding, AutoDetectedEncoding);
+        }
     }
 
     ASSERT(m_encoding.isValid());

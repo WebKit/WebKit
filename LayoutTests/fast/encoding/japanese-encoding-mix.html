@@ -1,0 +1,10 @@
+<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html dir="LTR" lang="ja">
+<meta http-equiv="Content-Type" content="text/html; charset=EUC-JP">
+<p>Some text here is encoded as EUC-JP, and some as Shift_JIS. Since there is an explicit encoding declaration, auto-detection shouldn't change the encoding.</p><p>Interestingly, IE8's View Source somehow sucessfully decodes both paragraphs below, switching encodings on the fly, but its normal HTML display does not do this. Also, the Shift_JIS text contains some characters in 0x80...0x9d range that are handled as invalid by other browsers, but ICU thinks that these codes are compatible with Latin-1. So, expected output may vary somewhat.
+</p><p>･ﾋ･ﾃ･ﾝ･ﾆ･�･ﾓ</p>
+<p>右カラムコメントアウト ここから</p>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+document.write("Should be EUC-JP: " + (document.charset ? document.charset : document.characterSet));</script>

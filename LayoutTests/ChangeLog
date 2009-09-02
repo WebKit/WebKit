@@ -1,3 +1,19 @@
+2009-09-01  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21990
+        When a rare EUC-JP character is present, explicitly (and correctly) labelled EUC-JP document
+        is mistreated as Shift_JIS
+
+        <rdar://problem/5828506> Safari should not try auto-detecting if charset information exists
+
+        This test isn't supposed to be displayed "properly", as it has a mix of charsets (which usually
+        happens in comments). An explicit charset declaration is what we should use.
+
+        * fast/encoding/japanese-encoding-mix-expected.txt: Added with properties svn:eol-style and svn:mime-type.
+        * fast/encoding/japanese-encoding-mix.html: Added with property svn:mime-type.
+
 2009-09-01  Victor Wang  <victorw@chromium.org>
 
         Reviewed by Darin Adler.

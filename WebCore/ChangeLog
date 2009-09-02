@@ -1,3 +1,40 @@
+2009-09-01  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21990
+        When a rare EUC-JP character is present, explicitly (and correctly) labelled EUC-JP document
+        is mistreated as Shift_JIS
+
+        <rdar://problem/5828506> Safari should not try auto-detecting if charset information exists
+
+        WebKit used to unconditionally auto-detect document encoding if it was one of Japanese ones.
+        This didn't really match any browser, and did cause problems on some sites.
+
+        Our detector is very quick to label an EUC-JP page as Shift_JIS if it notices a byte that
+        cannot be part of EUC-JP source. However, such bytes do appear in Web pages sometimes,
+        especially in comments. Also, some valid EUC-JP sequences are not known to it.
+
+        Some pages that are fixed by this change:
+
+        <rdar://problem/5934750> Encoding in incorrect at http://cocodeparis.blog45.fc2.com/. This
+        page has incorrect encoding in title, so no browser displays it 100% fine. We now match
+        Firefox and IE.
+
+        <rdar://problem/6007713> The web page http://www.sf.us.emb-japan.go.jp/top.htm is garbled
+        in Safari. There is a stray byte in comments that was makes charset detector think it can't
+        be EUC-JP.
+
+        <rdar://problem/6965711> A Japanese web page www.nippontv.studiolegend.tv is garbled in
+        Safari. Many comments on this page are encoded as Shift_JIS - IE magically displays that
+        fine in View Source mode (it doesn't seem to have an ability to switch between EUC-JP and
+        Shift_JIS in normal HTML view though).
+
+        Test: fast/encoding/japanese-encoding-mix.html
+
+        * loader/TextResourceDecoder.cpp: (WebCore::TextResourceDecoder::decode): Only invoke auto-
+        detection if there is no solid charset information yet.
+
 2009-09-01  Jian Li  <jianli@chromium.org>
 
         Reviewed by Dimitri Glazkov.
