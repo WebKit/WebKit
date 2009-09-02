@@ -302,7 +302,6 @@ plugins/jsobjc-dom-wrappers.html
 plugins/jsobjc-simple.html
 plugins/mouse-events.html
 plugins/open-and-close-window-with-plugin.html
-plugins/plugin-javascript-access.html
 plugins/root-object-premature-delete-crash.html
 plugins/throw-on-dealloc.html
 plugins/undefined-property-crash.html

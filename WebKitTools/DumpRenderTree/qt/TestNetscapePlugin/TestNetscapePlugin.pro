@@ -1,5 +1,5 @@
 TEMPLATE = lib
-TARGET = TestNetscapePlugin
+TARGET = TestNetscapePlugIn
 
 VPATH = ../../gtk/TestNetscapePlugin ../../TestNetscapePlugIn.subproj
 include(../../../../WebKit.pri)

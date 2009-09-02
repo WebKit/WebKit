@@ -1,3 +1,11 @@
+2009-09-01  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Rubber-stamped by Simon Hausmann.
+
+        [Qt] Fix layout-test plugins/plugin-javascript-access.html
+
+        * platform/qt/Skipped:
+
 2009-09-02  Renata Hodovan  <hodovan.renata@stud.u-szeged.hu>
 
         Reviewed by Ariya Hidayat.
