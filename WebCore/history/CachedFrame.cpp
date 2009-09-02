@@ -56,6 +56,7 @@ CachedFrame::CachedFrame(Frame* frame)
     , m_view(frame->view())
     , m_mousePressNode(frame->eventHandler()->mousePressNode())
     , m_url(frame->loader()->url())
+    , m_isMainFrame(!frame->tree()->parent())
 {
 #ifndef NDEBUG
     cachedFrameCounter().increment();
@@ -77,10 +78,23 @@ CachedFrame::CachedFrame(Frame* frame)
     
     frame->loader()->client()->savePlatformDataToCachedFrame(this);
 
+    // Create the CachedFrames for all Frames in the FrameTree.
     for (Frame* child = frame->tree()->firstChild(); child; child = child->tree()->nextSibling())
         m_childFrames.append(CachedFrame::create(child));
 
-    LOG(PageCache, "Finished creating CachedFrame for main frame url '%s' and DocumentLoader %p\n", m_url.string().utf8().data(), m_documentLoader.get());
+    // Chop the first-level children of the main frame out of the FrameTree, to be restored later.
+    if (m_isMainFrame) {
+        for (unsigned i = 0; i < m_childFrames.size(); ++i)
+            frame->tree()->removeChild(m_childFrames[i]->view()->frame());
+    }
+
+#ifndef NDEBUG
+    if (m_isMainFrame)
+        LOG(PageCache, "Finished creating CachedFrame for main frame url '%s' and DocumentLoader %p\n", m_url.string().utf8().data(), m_documentLoader.get());
+    else
+        LOG(PageCache, "Finished creating CachedFrame for child frame with url '%s' and DocumentLoader %p\n", m_url.string().utf8().data(), m_documentLoader.get());
+#endif
+
 }
 
 CachedFrame::~CachedFrame()
@@ -112,6 +126,16 @@ void CachedFrame::restore()
     // cached page.
     frame->script()->updatePlatformScriptObjects();
 
+    // Put the first-level children of the main frame back in the FrameTree.
+    if (m_isMainFrame) {
+        for (unsigned i = 0; i < m_childFrames.size(); ++i)
+            frame->tree()->appendChild(m_childFrames[i]->view()->frame());
+    }
+
+    // Open the child CachedFrames in their respective FrameLoaders.
+    for (unsigned i = 0; i < m_childFrames.size(); ++i)
+        m_childFrames[i]->view()->frame()->loader()->open(*m_childFrames[i]);
+
     m_document->dispatchPageTransitionEvent(EventNames().pageshowEvent, true);
 }
 
@@ -127,6 +151,9 @@ void CachedFrame::clear()
     ASSERT(!m_document->inPageCache());
     ASSERT(m_view);
     ASSERT(m_document->frame() == m_view->frame());
+
+    for (int i = m_childFrames.size() - 1; i >= 0; --i)
+        m_childFrames[i]->clear();
 
     m_document = 0;
     m_view = 0;
@@ -146,6 +173,9 @@ void CachedFrame::destroy()
     ASSERT(m_document->inPageCache());
     ASSERT(m_view);
     ASSERT(m_document->frame() == m_view->frame());
+
+    for (int i = m_childFrames.size() - 1; i >= 0; --i)
+        m_childFrames[i]->destroy();
 
     if (m_cachedFramePlatformData)
         m_cachedFramePlatformData->clear();

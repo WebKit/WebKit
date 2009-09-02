@@ -1,5 +1,43 @@
 2009-09-02  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        More partial work towards "Page Cache should support pages with Frames"
+        https://bugs.webkit.org/show_bug.cgi?id=13631
+
+        This patch is primarily about the "CachedFrame tree" and making slightly different decisions
+        based on whether a CachedFrame is the main frame or a subframe.
+
+        - Store whether a CachedFrame represents the main frame or a subframe.
+        - "Chop off the frame tree" for the main frame when creating its CachedFrame, as main frames 
+          are reused and need to start new page loads with an empty frame tree.
+        - Reattach the frame tree to the main frame when restoring it.
+        - open() the cached subframes in their respective loaders when restoring.
+        - Properly clear() and destroy() cached subframes.
+        - When committing to a new page load, and after caching the previous page, only clear the
+          FrameView for the main frame.
+
+        Note that all of above will eventually be necessary as I continue to land this work in pieces,
+        but doesn't actually change any behavior right now because we still refuse to even *try* to
+        cache pages with frames.
+
+        No new tests. No change in behavior, and current tests continue to pass.
+
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrame::CachedFrame):
+        (WebCore::CachedFrame::restore):
+        (WebCore::CachedFrame::clear):
+        (WebCore::CachedFrame::destroy):
+        * history/CachedFrame.h:
+        (WebCore::CachedFrame::isMainFrame):
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::clear):
+        (WebCore::FrameLoader::open):
+        * loader/FrameLoader.h:
+
+2009-09-02  Brady Eidson  <beidson@apple.com>
+
         No review, build fix.
 
         http://trac.webkit.org/changeset/47976 broke the build.  
