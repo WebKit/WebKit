@@ -1,3 +1,12 @@
+2009-09-02  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Build fixes for PluginViewNone.cpp and a wx build fix for PluginView.cpp.
+
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::stop):
+        * plugins/PluginViewNone.cpp:
+        (WebCore::PluginView::platformDestroy):
+
 2009-09-02  Charles Wei  <charles.wei@torchmobile.com.cn>
 
         Reviewed by Eric Seidel.

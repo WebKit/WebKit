@@ -121,7 +121,7 @@ bool PluginView::platformStart()
     return true;
 }
 
-void PluginView::platformDestory()
+void PluginView::platformDestroy()
 {
     notImplemented();
 }
@@ -132,11 +132,6 @@ void PluginView::setParentVisible(bool)
 }
 
 void PluginView::updatePluginWidget()
-{
-    notImplemented();
-}
-
-void PluginView::platformStart()
 {
     notImplemented();
 }
