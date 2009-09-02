@@ -1,9 +1,5 @@
-Some text here is encoded as EUC-JP, and some as Shift_JIS. Since there is an explicit encoding declaration, auto-detection shouldn't change the encoding.
-
-Interestingly, IE8's View Source somehow sucessfully decodes both paragraphs below, switching encodings on the fly, but its normal HTML display does not do this. Also, the Shift_JIS text contains some characters in 0x80...0x9d range that are handled as invalid by other browsers, but ICU thinks that these codes are compatible with Latin-1. So, expected output may vary somewhat.
+Some text here is encoded as EUC-JP, and some (in comment) as Shift_JIS. Since there is an explicit encoding declaration, auto-detection shouldn't change the encoding.
 
 ニッポンテレビ
-
-EJRgAEg 
 
 Should be EUC-JP: EUC-JP

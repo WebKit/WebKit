@@ -1,8 +1,21 @@
+2009-09-02  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        Fix the test to pass on Tiger.
+
+        Tiger's ICU decodes the invalid text differently. Moved it inside the comment - this also
+        matches the original from the Web better.
+
+        * fast/encoding/japanese-encoding-mix-expected.txt:
+        * fast/encoding/japanese-encoding-mix.html:
+
 2009-09-02  Ben Murdoch  <benm@google.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=28737
         
-        Update the execute-sql-args.html to be agnostic to exception message formatting between JSC and V8 and throw an exception when no parameters are passed to the executeSql() function.
+        Update the execute-sql-args.html to be agnostic to exception message formatting between JSC
+        and V8 and throw an exception when no parameters are passed to the executeSql() function.
 
         * storage/execute-sql-args-expected.txt:
         * storage/execute-sql-args.html:
