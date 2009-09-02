@@ -3073,7 +3073,7 @@ void FrameLoader::open(CachedPage& cachedPage)
     checkCompleted();
 }
 
-void FrameLoader::open(CachedFrame& cachedFrame)
+void FrameLoader::open(CachedFrameBase& cachedFrame)
 {
     m_isComplete = false;
     

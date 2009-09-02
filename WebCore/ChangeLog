@@ -1,3 +1,41 @@
+2009-09-02  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        In http://trac.webkit.org/changeset/47943 I added new header dependencies to FrameLoader.h.
+        Removing them is a little trouble, but worth it going forward.
+        The pattern of creating a "CachedFrameBase" as the interface CachedFrame provides to FrameLoader
+        was suggested by Darin Adler.
+
+        No new tests. (No change in behavior)
+
+        Make CachedFrame inherit privately from CachedFrameBase, which becomes the interface FrameLoader uses:
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrameBase::CachedFrameBase):
+        (WebCore::CachedFrameBase::~CachedFrameBase):
+        (WebCore::CachedFrameBase::restore):
+        (WebCore::CachedFrame::CachedFrame):
+        (WebCore::CachedFrame::openInFrameLoader):
+        * history/CachedFrame.h:
+        (WebCore::CachedFrameBase::document):
+        (WebCore::CachedFrameBase::view):
+        (WebCore::CachedFrameBase::domWindow):
+        (WebCore::CachedFrame::create):
+        (WebCore::CachedFrame::documentLoader):
+        (WebCore::CachedFrame::mousePressNode):
+
+        Call the new ::openInFrameLoader() method on the CachedFrame, as CachedFrameBase is now the only
+        thing capable of interacting with FrameLoader::open(CachedFrameBase):
+        * history/CachedPage.cpp:
+        (WebCore::CachedPage::restore):
+        * history/CachedPage.h:
+        (WebCore::CachedPage::documentLoader):
+
+        Make ::open(CachedFrame) public, and change it to ::open(CachedFrameBase):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::open):
+        * loader/FrameLoader.h:
+
 2009-09-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.
