@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008, 2009 Apple Inc.  All rights reserved.
+ * Copyright (C) 2009 Torch Mobile, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +35,10 @@ namespace WebCore {
 struct BigEndianUShort;
 struct EOTPrefix;
 class SharedBuffer;
+
+#if PLATFORM(WINCE)
+typedef unsigned __int8 UInt8;
+#endif
 
 struct EOTHeader {
     EOTHeader();

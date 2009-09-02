@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008, 2009 Apple Inc.  All rights reserved.
+ * Copyright (C) 2009 Torch Mobile, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -339,7 +340,10 @@ bool getEOTHeader(SharedBuffer* fontData, EOTHeader& eotHeader, size_t& overlayD
     return true;
 }
 
-HANDLE renameAndActivateFont(SharedBuffer* fontData, const String& fontName)
+// code shared by renameFont and renameAndActivateFont
+// adds fontName to the font table in fontData, and writes the new font table to rewrittenFontTable
+// returns the size of the name table (which is used by renameAndActivateFont), or 0 on early abort
+static size_t renameFontInternal(SharedBuffer* fontData, const String& fontName, Vector<char> &rewrittenFontData)
 {
     size_t originalDataSize = fontData->size();
     const sfntHeader* sfnt = reinterpret_cast<const sfntHeader*>(fontData->data());
@@ -357,7 +361,7 @@ HANDLE renameAndActivateFont(SharedBuffer* fontData, const String& fontName)
     // Rounded up to a multiple of 4 to simplify the checksum calculation.
     size_t nameTableSize = ((offsetof(nameTable, nameRecords) + nameRecordCount * sizeof(nameRecord) + fontName.length() * sizeof(UChar)) & ~3) + 4;
 
-    Vector<char> rewrittenFontData(fontData->size() + nameTableSize);
+    rewrittenFontData.resize(fontData->size() + nameTableSize);
     char* data = rewrittenFontData.data();
     memcpy(data, fontData->data(), originalDataSize);
 
@@ -394,8 +398,42 @@ HANDLE renameAndActivateFont(SharedBuffer* fontData, const String& fontName)
     for (unsigned i = 0; i * sizeof(BigEndianULong) < nameTableSize; ++i)
         rewrittenSfnt->tables[t].checkSum = rewrittenSfnt->tables[t].checkSum + reinterpret_cast<BigEndianULong*>(name)[i];
 
+    return nameTableSize;
+}
+
+#if PLATFORM(WINCE)
+// AddFontMemResourceEx does not exist on WinCE, so we must handle the font data manually
+// This function just renames the font and overwrites the old font data with the new
+bool renameFont(SharedBuffer* fontData, const String& fontName)
+{
+    // abort if the data is too small to be a font header with a "tables" entry
+    if (fontData->size() < offsetof(sfntHeader, tables))
+        return false;
+
+    // abort if the data is too small to hold all the tables specified in the header
+    const sfntHeader* header = reinterpret_cast<const sfntHeader*>(fontData->data());
+    if (fontData->size() < offsetof(sfntHeader, tables) + header->numTables * sizeof(TableDirectoryEntry))
+        return false;
+
+    Vector<char> rewrittenFontData;
+    if (!renameFontInternal(fontData, fontName, rewrittenFontData))
+        return false;
+
+    fontData->clear();
+    fontData->append(rewrittenFontData.data(), rewrittenFontData.size());
+    return true;
+}
+#else
+// Rename the font and install the new font data into the system
+HANDLE renameAndActivateFont(SharedBuffer* fontData, const String& fontName)
+{
+    Vector<char> rewrittenFontData;
+    size_t nameTableSize = renameFontInternal(fontData, fontName, rewrittenFontData);
+    if (!nameTableSize)
+        return 0;
+
     DWORD numFonts = 0;
-    HANDLE fontHandle = AddFontMemResourceEx(data, originalDataSize + nameTableSize, 0, &numFonts);
+    HANDLE fontHandle = AddFontMemResourceEx(rewrittenFontData.data(), fontData->size() + nameTableSize, 0, &numFonts);
 
     if (fontHandle && numFonts != 1) {
         RemoveFontMemResourceEx(fontHandle);
@@ -404,5 +442,6 @@ HANDLE renameAndActivateFont(SharedBuffer* fontData, const String& fontName)
 
     return fontHandle;
 }
+#endif
 
 }
