@@ -188,8 +188,8 @@ def common_configure(conf):
     if sys.platform.startswith('darwin') and build_port == 'wx':
         import platform
         if platform.release().startswith('10'): # Snow Leopard
-            config = commands.getoutput('%s --selected-config' % get_path_to_wxconfig())
-            if config.find('osx_cocoa') == -1:
+            wxconfig = commands.getoutput('%s --selected-config' % get_path_to_wxconfig())
+            if wxconfig.find('osx_cocoa') == -1:
                 # wx/Carbon only supports 32-bit compilation, so we want gcc-4.0 instead of 4.2 on Snow Leopard
                 conf.env['CC'] = 'gcc-4.0'
                 conf.env['CXX'] = 'g++-4.0'
