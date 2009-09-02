@@ -1,5 +1,14 @@
 2009-09-02  David Kilzer  <ddkilzer@apple.com>
 
+        <http://webkit.org/b/27168> With Subversion 1.6, update-webkit prompts on conflicts
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/update-webkit: Added "--accept postpone" to
+        @svnOptions when running with svn-1.6 or newer.
+
+2009-09-02  David Kilzer  <ddkilzer@apple.com>
+
         Moved svn 1.6 version check into VCSUtils::isSVNVersion16OrNewer()
 
         Reviewed by Eric Seidel.

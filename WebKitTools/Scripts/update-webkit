@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+# Copyright (C) 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -34,6 +34,7 @@ use lib $FindBin::Bin;
 use File::Basename;
 use File::Spec;
 use Getopt::Long;
+use VCSUtils;
 use webkitdirs;
 
 sub runSvnUpdate();
@@ -59,6 +60,9 @@ __END__
 
 my @svnOptions = ();
 push @svnOptions, '-q' if $quiet;
+
+# Don't prompt when using svn-1.6 or newer.
+push @svnOptions, qw(--accept postpone) if isSVNVersion16OrNewer();
 
 chdirWebKit();
 print "Updating OpenSource\n" unless $quiet;
