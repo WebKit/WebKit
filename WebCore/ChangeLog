@@ -1,3 +1,14 @@
+2009-09-02  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed (trivial followup fix). 
+        
+        Web Inspector: Trivial follow up fix to r47944.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28800
+
+        * inspector/InspectorBackend.cpp:
+        (WebCore::InspectorBackend::nodeForId):
+
 2009-09-01  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by John Sullivan.

@@ -416,7 +416,7 @@ void InspectorBackend::highlight(long nodeId)
 Node* InspectorBackend::nodeForId(long nodeId)
 {
     if (InspectorDOMAgent* domAgent = inspectorDOMAgent())
-        domAgent->nodeForId(nodeId);
+        return domAgent->nodeForId(nodeId);
     return 0;
 }
 
