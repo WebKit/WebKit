@@ -25,6 +25,7 @@
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 # Module to share code to work with various version control systems.
+package VCSUtils;
 
 use strict;
 use warnings;
@@ -34,21 +35,35 @@ use File::Basename;
 use File::Spec;
 
 BEGIN {
-   use Exporter   ();
-   our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
-   $VERSION     = 1.00;
-   @ISA         = qw(Exporter);
-   @EXPORT      = qw(&chdirReturningRelativePath &determineSVNRoot &determineVCSRoot &isGit &isGitDirectory &isSVN &isSVNDirectory &makeFilePathRelative);
-   %EXPORT_TAGS = ( );
-   @EXPORT_OK   = ();
+    use Exporter   ();
+    our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
+    $VERSION     = 1.00;
+    @ISA         = qw(Exporter);
+    @EXPORT      = qw(
+        &chdirReturningRelativePath
+        &determineSVNRoot
+        &determineVCSRoot
+        &gitBranch
+        &isGit
+        &isGitBranchBuild
+        &isGitDirectory
+        &isSVN
+        &isSVNDirectory
+        &makeFilePathRelative
+        &pathRelativeToSVNRepositoryRootForPath
+        &svnRevisionForDirectory
+    );
+    %EXPORT_TAGS = ( );
+    @EXPORT_OK   = ();
 }
 
 our @EXPORT_OK;
 
-my $isGit;
-my $isSVN;
 my $gitBranch;
+my $gitRoot;
+my $isGit;
 my $isGitBranchBuild;
+my $isSVN;
 
 sub isGitDirectory($)
 {
@@ -206,8 +221,6 @@ sub pathRelativeToSVNRepositoryRootForPath($)
     return $svnURL;
 }
 
-
-my $gitRoot;
 sub makeFilePathRelative($)
 {
     my ($path) = @_;

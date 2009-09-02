@@ -1,3 +1,15 @@
+2009-09-02  David Kilzer  <ddkilzer@apple.com>
+
+        Clean up VCSUtils.pm
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/VCSUtils.pm: Added proper package statement.  Fixed
+        indentation of BEGIN block.  Listed each exported method on a
+        line by itself.  Added methods to the export list after adding
+        the package statement.  Sorted module variables.  Moved
+        definiton of $gitRoot next to other module variables.
+
 2009-09-01  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Rubber-stamped by Simon Hausmann.
