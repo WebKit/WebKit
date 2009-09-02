@@ -1,3 +1,17 @@
+2009-09-02 Yong Li <yong.li@torchmobile.com>
+
+        Reviewed by Adam Barth.
+
+        WINCE PORT: font-related build fixes and minor bugfixes
+        https://bugs.webkit.org/show_bug.cgi?id=27734
+
+        * platform/graphics/FontCache.h: declare functions added in https://bugs.webkit.org/show_bug.cgi?id=27509
+        * platform/graphics/GlyphPageTreeNode.cpp:
+        (WebCore::GlyphPageTreeNode::initializePage): fix ambiguous overload error in min/max on Windows
+        * platform/graphics/SimpleFontData.cpp:
+        (WebCore::SimpleFontData::SimpleFontData): initialize member vars
+        * platform/graphics/SimpleFontData.h: disable unused members on Wince to save space 
+
 2009-09-02  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Adam Barth.

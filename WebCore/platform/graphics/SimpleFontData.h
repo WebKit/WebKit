@@ -2,6 +2,7 @@
  * This file is part of the internal font implementation.
  *
  * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2008 Torch Mobile, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -33,7 +34,7 @@
 typedef struct OpaqueATSUStyle* ATSUStyle;
 #endif
 
-#if PLATFORM(WIN)
+#if PLATFORM(WIN) && !PLATFORM(WINCE)
 #include <usp10.h>
 #endif
 
@@ -138,9 +139,10 @@ public:
 
 #if PLATFORM(WIN)
     bool isSystemFont() const { return m_isSystemFont; }
+#if !PLATFORM(WINCE)    // disable unused members to save space
     SCRIPT_FONTPROPERTIES* scriptFontProperties() const;
     SCRIPT_CACHE* scriptCache() const { return &m_scriptCache; }
-
+#endif
     static void setShouldApplyMacAscentHack(bool);
     static bool shouldApplyMacAscentHack();
 #endif
@@ -159,7 +161,7 @@ private:
 
     void commonInit();
 
-#if PLATFORM(WIN)
+#if PLATFORM(WIN) && !PLATFORM(WINCE)
     void initGDIFont();
     void platformCommonDestroy();
     float widthForGDIGlyph(Glyph glyph) const;
@@ -224,8 +226,10 @@ private:
 
 #if PLATFORM(WIN)
     bool m_isSystemFont;
+#if !PLATFORM(WINCE)    // disable unused members to save space
     mutable SCRIPT_CACHE m_scriptCache;
     mutable SCRIPT_FONTPROPERTIES* m_scriptFontProperties;
+#endif
 #endif
 };
     

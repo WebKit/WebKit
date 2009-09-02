@@ -202,8 +202,10 @@ void GlyphPageTreeNode::initializePage(const FontData* fontData, unsigned pageNu
                 GlyphPage* pageToFill = m_page.get();
                 for (unsigned i = 0; i < numRanges; i++) {
                     const FontDataRange& range = segmentedFontData->rangeAt(i);
-                    int from = max(0, range.from() - static_cast<int>(start));
-                    int to = 1 + min(range.to() - static_cast<int>(start), static_cast<int>(GlyphPage::size) - 1);
+                    // all this casting is to ensure all the parameters to min and max have the same type,
+                    // to avoid ambiguous template parameter errors on Windows
+                    int from = max(0, static_cast<int>(range.from()) - static_cast<int>(start));
+                    int to = 1 + min(static_cast<int>(range.to()) - static_cast<int>(start), static_cast<int>(GlyphPage::size) - 1);
                     if (from < static_cast<int>(GlyphPage::size) && to > 0) {
                         if (haveGlyphs && !scratchPage) {
                             scratchPage = GlyphPage::create(this);

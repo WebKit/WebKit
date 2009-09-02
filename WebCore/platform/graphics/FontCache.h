@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006, 2008 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2007-2008 Torch Mobile, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,7 +64,15 @@ public:
     // Also implemented by the platform.
     void platformInit();
 
-#if PLATFORM(WIN)
+#if PLATFORM(WINCE)
+#if defined(IMLANG_FONT_LINK) && (IMLANG_FONT_LINK == 2)
+    IMLangFontLink2* getFontLinkInterface();
+#else
+    IMLangFontLink* getFontLinkInterface();
+#endif
+    static void comInitialize();
+    static void comUninitialize();
+#elif PLATFORM(WIN)
     IMLangFontLink2* getFontLinkInterface();
 #endif
 
