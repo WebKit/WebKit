@@ -46,6 +46,7 @@
 
 #include <errno.h>
 #include <stdio.h>
+#include <wtf/Threading.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -76,6 +77,39 @@ static CString certificatePath()
     return CString();
 }
 
+static Mutex* sharedResourceMutex(curl_lock_data data) {
+    DEFINE_STATIC_LOCAL(Mutex, cookieMutex, ());
+    DEFINE_STATIC_LOCAL(Mutex, dnsMutex, ());
+    DEFINE_STATIC_LOCAL(Mutex, shareMutex, ());
+
+    switch (data) {
+        case CURL_LOCK_DATA_COOKIE:
+            return &cookieMutex;
+        case CURL_LOCK_DATA_DNS:
+            return &dnsMutex;
+        case CURL_LOCK_DATA_SHARE:
+            return &shareMutex;
+        default:
+            ASSERT_NOT_REACHED();
+            return NULL;
+    }
+}
+
+// libcurl does not implement its own thread synchronization primitives.
+// these two functions provide mutexes for cookies, and for the global DNS
+// cache.
+static void curl_lock_callback(CURL* handle, curl_lock_data data, curl_lock_access access, void* userPtr)
+{
+    if (Mutex* mutex = sharedResourceMutex(data))
+        mutex->lock();
+}
+
+static void curl_unlock_callback(CURL* handle, curl_lock_data data, void* userPtr)
+{
+    if (Mutex* mutex = sharedResourceMutex(data))
+        mutex->unlock();
+}
+
 ResourceHandleManager::ResourceHandleManager()
     : m_downloadTimer(this, &ResourceHandleManager::downloadTimerCallback)
     , m_cookieJarFileName(0)
@@ -87,6 +121,8 @@ ResourceHandleManager::ResourceHandleManager()
     m_curlShareHandle = curl_share_init();
     curl_share_setopt(m_curlShareHandle, CURLSHOPT_SHARE, CURL_LOCK_DATA_COOKIE);
     curl_share_setopt(m_curlShareHandle, CURLSHOPT_SHARE, CURL_LOCK_DATA_DNS);
+    curl_share_setopt(m_curlShareHandle, CURLSHOPT_LOCKFUNC, curl_lock_callback);
+    curl_share_setopt(m_curlShareHandle, CURLSHOPT_UNLOCKFUNC, curl_unlock_callback);
 }
 
 ResourceHandleManager::~ResourceHandleManager()

@@ -1,3 +1,16 @@
+2009-09-02  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+
+        Protect libcurl shared data with Mutex objects via curl_set_share_opt.
+        https://bugs.webkit.org/show_bug.cgi?id=28920
+
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::sharedResourceMutex):
+        (WebCore::curl_lock_callback):
+        (WebCore::curl_unlock_callback):
+        (WebCore::ResourceHandleManager::ResourceHandleManager):
+
 2009-09-02  Evan Stade  <estade@chromium.org>
 
         Reviewed by Eric Seidel.
