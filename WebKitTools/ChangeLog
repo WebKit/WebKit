@@ -1,5 +1,22 @@
 2009-09-02  David Kilzer  <ddkilzer@apple.com>
 
+        Moved svn 1.6 version check into VCSUtils::isSVNVersion16OrNewer()
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/VCSUtils.pm:
+        (@EXPORT): Added &isSVNVersion16OrNewer.
+        (svnVersion): Added.  Internal method that gets the SVN version
+        and caches it.
+        (isSVNVersion16OrNewer): Added.  Method that does the SVN 1.6
+        version check.
+        * Scripts/prepare-ChangeLog: Switched to use new
+        isSVNVersion16OrNewer() method.
+        * Scripts/resolve-ChangeLogs: Ditto.
+        * Scripts/svn-create-patch: Ditto.
+
+2009-09-02  David Kilzer  <ddkilzer@apple.com>
+
         Clean up VCSUtils.pm
 
         Reviewed by Eric Seidel.

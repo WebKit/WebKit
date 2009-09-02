@@ -49,6 +49,7 @@ BEGIN {
         &isGitDirectory
         &isSVN
         &isSVNDirectory
+        &isSVNVersion16OrNewer
         &makeFilePathRelative
         &pathRelativeToSVNRepositoryRootForPath
         &svnRevisionForDirectory
@@ -64,6 +65,7 @@ my $gitRoot;
 my $isGit;
 my $isGitBranchBuild;
 my $isSVN;
+my $svnVersion;
 
 sub isGitDirectory($)
 {
@@ -119,6 +121,24 @@ sub isSVN()
 
     $isSVN = isSVNDirectory(".");
     return $isSVN;
+}
+
+sub svnVersion()
+{
+    return $svnVersion if defined $svnVersion;
+
+    if (!isSVN()) {
+        $svnVersion = 0;
+    } else {
+        chomp($svnVersion = `svn --version --quiet`);
+    }
+    return $svnVersion;
+}
+
+sub isSVNVersion16OrNewer()
+{
+    my $version = svnVersion();
+    return eval "v$version" ge v1.6;
 }
 
 sub chdirReturningRelativePath($)

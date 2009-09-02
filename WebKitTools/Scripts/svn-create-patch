@@ -77,7 +77,6 @@ sub testfilecmp($$);
 $ENV{'LC_ALL'} = 'C';
 
 my $showHelp;
-my $svnVersion = `svn --version --quiet`;
 my $devNull = File::Spec->devnull();
 
 my $result = GetOptions(
@@ -292,7 +291,7 @@ sub generateFileList($\%)
         $line =~ s/[\r\n]+$//g;
         my $stat;
         my $path;
-        if (eval "v$svnVersion" ge v1.6) { 
+        if (isSVNVersion16OrNewer()) {
             $stat = substr($line, 0, 8);
             $path = substr($line, 8);
         } else {
