@@ -380,7 +380,7 @@ system "ln", "-s", $testDirectory, "/tmp/LayoutTests" unless -x "/tmp/LayoutTest
 
 my %ignoredFiles = ();
 my %ignoredDirectories = map { $_ => 1 } qw(platform);
-my %ignoredLocalDirectories = map { $_ => 1 } qw(.svn _svn resources);
+my %ignoredLocalDirectories = map { $_ => 1 } qw(.svn _svn resources script-tests);
 my %supportedFileExtensions = map { $_ => 1 } qw(html shtml xml xhtml pl php);
 
 # FIXME: We should fix webkitdirs.pm:hasSVG/WMLSupport() to do the correct feature detection for Cygwin.

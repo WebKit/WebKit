@@ -1,3 +1,17 @@
+2009-09-02  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        js tests should move into jstests subdirectory instead of resources/
+        https://bugs.webkit.org/show_bug.cgi?id=25880
+
+        make-script-wrappers supports both resources and script-tests directories.
+        run-webkit-tests ignores files in script-tests.
+        Move script tests of animations to check the new script is working.
+
+        * Scripts/make-script-test-wrappers:
+        * Scripts/run-webkit-tests:
+
 2009-09-02  Szabo Carol  <carol.szabo@nokia.com>
 
         Reviewed by David Levin.

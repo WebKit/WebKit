@@ -62,7 +62,15 @@ my @templates = findTemplateFiles(@ARGV);
 for my $tfile (@templates) {
 
     my $tpath = $tfile;
-    $tpath =~ s:/resources/TEMPLATE.html$::;
+    my $templateDirectory;
+    my $templateRelativePath;
+    if ($tpath =~ s:/(resources)/TEMPLATE.html$:: || $tpath =~ s:/(script-tests)/TEMPLATE.html$::) {
+        $templateDirectory = $1;
+        $templateRelativePath = $1 . "/TEMPLATE.html";
+    } else {
+        print "Inappropriate position of a template: ${tpath}\n";
+        next;
+    }
 
     print "${tpath}\n";
 
@@ -73,15 +81,15 @@ for my $tfile (@templates) {
     my $fileFilter = sub {
         push @files, $File::Find::name if substr($_, -3) eq ".js";
     };
-    find({ preprocess => \&directoryFilter, wanted => $fileFilter }, "resources");
+    find({ preprocess => \&directoryFilter, wanted => $fileFilter }, $templateDirectory);
 
-    open TEMPLATE, "<resources/TEMPLATE.html";
+    open TEMPLATE, "<${templateRelativePath}";
     my $template = do { local $/; <TEMPLATE> };
     close TEMPLATE;
 
     my $templateNegative = $template;
-    if (-e "resources/TEMPLATE-n.html") {
-        open TEMPLATE, "<resources/TEMPLATE-n.html";
+    if (-e "${templateDirectory}/TEMPLATE-n.html") {
+        open TEMPLATE, "<${templateDirectory}/TEMPLATE-n.html";
         $templateNegative = do { local $/; <TEMPLATE> };
         close TEMPLATE;
     }
@@ -133,7 +141,7 @@ for my $tfile (@templates) {
         next if $file =~ m:resources/textarea-input-event\.js$:;
 
         my $html = $file;
-        $html =~ s:resources/(.*)\.js:$1.html:;
+        $html =~ s:${templateDirectory}/(.*)\.js:$1.html:;
         next if -f "$html-disabled";
 
         system("grep -q 'successfullyParsed =' $file");
