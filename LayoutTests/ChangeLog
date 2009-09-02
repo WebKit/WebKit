@@ -1,3 +1,34 @@
+2009-09-02  Renata Hodovan  <hodovan.renata@stud.u-szeged.hu>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Update css2.1/t1202-counter-* and css2.1/t1205* tests after new metrics.
+        Remove these files from Skipped (and fixed Skipped according to Changeset 47815).
+
+        * platform/qt/Skipped:
+        * platform/qt/css2.1/t1202-counter-00-b-expected.txt:
+        * platform/qt/css2.1/t1202-counter-01-b-expected.txt:
+        * platform/qt/css2.1/t1202-counter-02-b-expected.txt:
+        * platform/qt/css2.1/t1202-counter-03-b-expected.txt:
+        * platform/qt/css2.1/t1202-counter-04-b-expected.txt:
+        * platform/qt/css2.1/t1202-counter-05-b-expected.txt:
+        * platform/qt/css2.1/t1202-counter-06-b-expected.txt:
+        * platform/qt/css2.1/t1202-counter-07-b-expected.txt:
+        * platform/qt/css2.1/t1202-counter-08-b-expected.txt:
+        * platform/qt/css2.1/t1202-counter-09-b-expected.txt:
+        * platform/qt/css2.1/t1202-counter-11-b-expected.txt:
+        * platform/qt/css2.1/t1202-counter-12-b-expected.txt:
+        * platform/qt/css2.1/t1202-counter-13-b-expected.txt:
+        * platform/qt/css2.1/t1202-counter-14-b-expected.txt:
+        * platform/qt/css2.1/t1202-counter-15-b-expected.txt:
+        * platform/qt/css2.1/t1202-counter-16-f-expected.txt:
+        * platform/qt/css2.1/t1205-c561-list-displ-00-b-expected.txt:
+        * platform/qt/css2.1/t1205-c563-list-type-00-b-expected.txt:
+        * platform/qt/css2.1/t1205-c563-list-type-01-b-expected.txt:
+        * platform/qt/css2.1/t1205-c564-list-img-00-b-g-expected.txt:
+        * platform/qt/css2.1/t1205-c565-list-pos-00-b-expected.txt:
+        * platform/qt/css2.1/t1205-c566-list-stl-01-c-g-expected.txt:
+
 2009-09-02  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Eric Seidel.
