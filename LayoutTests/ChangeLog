@@ -1,3 +1,16 @@
+2009-09-01  Eric Seidel  <eric@webkit.org>
+
+        Rubber stamped by Simon Fraser.
+
+        REGRESSION: media/video-source-add-src.html (and other media tests?) crashing/timing-out intermittently
+        https://bugs.webkit.org/show_bug.cgi?id=28845
+
+        Disabling this test on all platforms until
+        a media expert can have a chance to look at it.
+        See bug 28845 for further discussion.
+
+        * media/video-source-add-src.html-disabled: Renamed from LayoutTests/media/video-source-add-src.html.
+
 2009-09-01  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.
