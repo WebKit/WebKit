@@ -85,7 +85,7 @@ sub gitBranch()
 {
     unless (defined $gitBranch) {
         chomp($gitBranch = `git symbolic-ref -q HEAD`);
-        $gitBranch = "" if exitStatus($?);
+        $gitBranch = "" if main::exitStatus($?); # FIXME: exitStatus is defined in webkitdirs.pm
         $gitBranch =~ s#^refs/heads/##;
         $gitBranch = "" if $gitBranch eq "master";
     }

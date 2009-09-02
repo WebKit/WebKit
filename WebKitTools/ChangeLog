@@ -1,3 +1,11 @@
+2009-09-02  Zan Dobersek  <zandobersek@gmail.com>
+
+        Reviewed by David Kilzer.
+
+        Calls exitStatus function from the main package where it is also defined.
+
+        * Scripts/VCSUtils.pm:
+
 2009-09-02  Kevin Ollivier  <kevino@theolliviers.com>
 
         waf build fixes for Windows/MSVC and Mac/Snow Leopard.
