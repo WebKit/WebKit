@@ -151,8 +151,8 @@ void InspectorDOMAgent::handleEvent(Event* event, bool)
             m_frontend->childNodeCountUpdated(parentId, innerChildNodeCount(parent));
         } else {
             // Children have been requested -> return value of a new child.
-            long prevId = m_documentNodeToIdMap.get(innerPreviousSibling(node));
-
+            Node* prevSibling = innerPreviousSibling(node);
+            long prevId = prevSibling ? m_documentNodeToIdMap.get(prevSibling) : 0;
             ScriptObject value = buildObjectForNode(node, 0, &m_documentNodeToIdMap);
             m_frontend->childNodeInserted(parentId, prevId, value);
         }

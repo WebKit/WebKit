@@ -28,23 +28,16 @@
 
 WebInspector.Database = function(database, domain, name, version)
 {
-    this.database = database;
+    this._database = database;
     this.domain = domain;
     this.name = name;
     this.version = version;
 }
 
 WebInspector.Database.prototype = {
-    get database()
+    isDatabase: function(db)
     {
-        return this._database;
-    },
-
-    set database(x)
-    {
-        if (this._database === x)
-            return;
-        this._database = x;
+        return this._database === db;
     },
 
     get name()
@@ -88,8 +81,33 @@ WebInspector.Database.prototype = {
         return WebInspector.Resource.prototype.__lookupGetter__("displayDomain").call(this);
     },
 
-    get tableNames()
+    getTableNames: function(callback)
     {
-        return InspectorController.databaseTableNames(this.database).sort();
+        var names = InspectorController.databaseTableNames(this._database);
+        function sortingCallback()
+        {
+            callback(names.sort());
+        }
+        setTimeout(sortingCallback, 0);
+    },
+    
+    executeSql: function(query, onSuccess, onError)
+    {
+        function successCallback(tx, result)
+        {
+            onSuccess(result);
+        }
+
+        function errorCallback(tx, error)
+        {
+            onError(error);
+        }
+
+        var self = this;
+        function queryTransaction(tx)
+        {
+            tx.executeSql(query, null, InspectorController.wrapCallback(successCallback.bind(self)), InspectorController.wrapCallback(errorCallback.bind(self)));
+        }
+        this._database.transaction(InspectorController.wrapCallback(queryTransaction.bind(this)), InspectorController.wrapCallback(errorCallback.bind(this)));
     }
 }

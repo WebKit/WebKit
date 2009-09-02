@@ -176,7 +176,7 @@ WebInspector.StoragePanel.prototype = {
         var database;
         for (var i = 0, len = this._databases.length; i < len; ++i) {
             database = this._databases[i];
-            if ( db === database.database ) {
+            if (database.isDatabase(db)) {
                 this.showDatabase(database);
                 database._databasesTreeElement.select();
                 return;
@@ -229,7 +229,7 @@ WebInspector.StoragePanel.prototype = {
         this.storageViewStatusBarItemsContainer.removeChildren();
         var statusBarItems = view.statusBarItems || [];
         for (var i = 0; i < statusBarItems.length; ++i)
-            this.storageViewStatusBarItemsContainer.appendChild(statusBarItems[i]);
+            this.storageViewStatusBarItemsContainer.appendChild(statusBarItems[i].element);
     },
 
     showDOMStorage: function(domStorage)
@@ -296,18 +296,22 @@ WebInspector.StoragePanel.prototype = {
             return;
 
         var tableNamesHash = {};
-        var tableNames = database.tableNames;
-        var tableNamesLength = tableNames.length;
-        for (var i = 0; i < tableNamesLength; ++i)
-            tableNamesHash[tableNames[i]] = true;
+        var self = this;
+        function tableNamesCallback(tableNames)
+        {
+            var tableNamesLength = tableNames.length;
+            for (var i = 0; i < tableNamesLength; ++i)
+                tableNamesHash[tableNames[i]] = true;
 
-        for (var tableName in database._tableViews) {
-            if (!(tableName in tableNamesHash)) {
-                if (this.visibleView === database._tableViews[tableName])
-                    this.closeVisibleView();
-                delete database._tableViews[tableName];
+            for (var tableName in database._tableViews) {
+                if (!(tableName in tableNamesHash)) {
+                    if (self.visibleView === database._tableViews[tableName])
+                        self.closeVisibleView();
+                    delete database._tableViews[tableName];
+                }
             }
         }
+        database.getTableNames(tableNamesCallback);
     },
 
     dataGridForResult: function(result)
@@ -565,10 +569,14 @@ WebInspector.DatabaseSidebarTreeElement.prototype = {
     {
         this.removeChildren();
 
-        var tableNames = this.database.tableNames;
-        var tableNamesLength = tableNames.length;
-        for (var i = 0; i < tableNamesLength; ++i)
-            this.appendChild(new WebInspector.SidebarDatabaseTableTreeElement(this.database, tableNames[i]));
+        var self = this;
+        function tableNamesCallback(tableNames)
+        {
+            var tableNamesLength = tableNames.length;
+            for (var i = 0; i < tableNamesLength; ++i)
+                self.appendChild(new WebInspector.SidebarDatabaseTableTreeElement(self.database, tableNames[i]));
+        }
+        this.database.getTableNames(tableNamesCallback);
     },
 
     get mainTitle()

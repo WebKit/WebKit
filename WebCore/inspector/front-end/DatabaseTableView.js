@@ -33,9 +33,7 @@ WebInspector.DatabaseTableView = function(database, tableName)
     this.element.addStyleClass("storage-view");
     this.element.addStyleClass("table");
 
-    this.refreshButton = document.createElement("button");
-    this.refreshButton.title = WebInspector.UIString("Refresh");
-    this.refreshButton.className = "refresh-storage-status-bar-item status-bar-item";
+    this.refreshButton = new WebInspector.StatusBarButton(WebInspector.UIString("Refresh"), "refresh-storage-status-bar-item");
     this.refreshButton.addEventListener("click", this._refreshButtonClicked.bind(this), false);
 }
 
@@ -53,15 +51,10 @@ WebInspector.DatabaseTableView.prototype = {
 
     update: function()
     {
-        function queryTransaction(tx)
-        {
-            tx.executeSql("SELECT * FROM " + this.tableName, null, InspectorController.wrapCallback(this._queryFinished.bind(this)), InspectorController.wrapCallback(this._queryError.bind(this)));
-        }
-
-        this.database.database.transaction(InspectorController.wrapCallback(queryTransaction.bind(this)), InspectorController.wrapCallback(this._queryError.bind(this)));
+        this.database.executeSql("SELECT * FROM " + this.tableName, this._queryFinished.bind(this), this._queryError.bind(this));
     },
 
-    _queryFinished: function(tx, result)
+    _queryFinished: function(result)
     {
         this.element.removeChildren();
 
@@ -77,7 +70,7 @@ WebInspector.DatabaseTableView.prototype = {
         this.element.appendChild(dataGrid.element);
     },
 
-    _queryError: function(tx, error)
+    _queryError: function(error)
     {
         this.element.removeChildren();
 

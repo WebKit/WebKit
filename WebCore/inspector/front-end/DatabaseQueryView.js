@@ -81,11 +81,15 @@ WebInspector.DatabaseQueryView.prototype = {
                     return;
             }
         }
+        
+        function tableNamesCallback(tableNames)
+        {
+            accumulateMatches(tableNames.map(function(name) { return name + " " }));
+            accumulateMatches(["SELECT ", "FROM ", "WHERE ", "LIMIT ", "DELETE FROM ", "CREATE ", "DROP ", "TABLE ", "INDEX ", "UPDATE ", "INSERT INTO ", "VALUES ("]);
 
-        accumulateMatches(this.database.tableNames.map(function(name) { return name + " " }));
-        accumulateMatches(["SELECT ", "FROM ", "WHERE ", "LIMIT ", "DELETE FROM ", "CREATE ", "DROP ", "TABLE ", "INDEX ", "UPDATE ", "INSERT INTO ", "VALUES ("]);
-
-        completionsReadyCallback(results);
+            completionsReadyCallback(results);
+        }
+        this.database.getTableNames(tableNamesCallback);
     },
 
     _promptKeyDown: function(event)
@@ -132,17 +136,14 @@ WebInspector.DatabaseQueryView.prototype = {
         this.prompt.historyOffset = 0;
         this.prompt.text = "";
 
-        function queryTransaction(tx)
-        {
-            tx.executeSql(query, null, InspectorController.wrapCallback(this._queryFinished.bind(this, query)), InspectorController.wrapCallback(this._executeSqlError.bind(this, query)));
-        }
-
-        this.database.database.transaction(InspectorController.wrapCallback(queryTransaction.bind(this)), InspectorController.wrapCallback(this._queryError.bind(this, query)));
+        this.database.executeSql(query, this._queryFinished.bind(this, query), this._queryError.bind(this, query));
     },
 
-    _queryFinished: function(query, tx, result)
+    _queryFinished: function(query, result)
     {
         var dataGrid = WebInspector.panels.storage.dataGridForResult(result);
+        if (!dataGrid)
+            return;
         dataGrid.element.addStyleClass("inline");
         this._appendQueryResult(query, dataGrid.element);
 
@@ -160,11 +161,6 @@ WebInspector.DatabaseQueryView.prototype = {
             var message = WebInspector.UIString("An unexpected error %s occurred.", error.code);
 
         this._appendQueryResult(query, message, "error");
-    },
-
-    _executeSqlError: function(query, tx, error)
-    {
-        this._queryError(query, error);
     },
 
     _appendQueryResult: function(query, result, resultClassName)
