@@ -61,6 +61,15 @@ if (isQt()) {
     if (isGtk()) {
         $launcherPath = catdir($launcherPath, "Programs", "GtkLauncher");
     }
+    
+    if (isWx()) {
+        if (isDarwin()) {
+            $launcherPath = catdir($launcherPath, 'wxBrowser.app', 'Contents', 'MacOS', 'wxBrowser');
+        } else {
+            $ENV{LD_LIBRARY_PATH} = $ENV{LD_LIBRARY_PATH} ? "$productDir:$ENV{LD_LIBRARY_PATH}" : $productDir;
+            $launcherPath = catdir($launcherPath, 'wxBrowser');
+        }
+    }
 
     print "Starting webkit launcher.\n";
 }

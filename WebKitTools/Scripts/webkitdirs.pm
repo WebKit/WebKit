@@ -907,7 +907,7 @@ sub relativeScriptsDir()
 sub launcherPath()
 {
     my $relativeScriptsPath = relativeScriptsDir();
-    if (isGtk() || isQt()) {
+    if (isGtk() || isQt() || isWx()) {
         return "$relativeScriptsPath/run-launcher";
     } elsif (isAppleWebKit()) {
         return "$relativeScriptsPath/run-safari";
@@ -920,6 +920,8 @@ sub launcherName()
         return "GtkLauncher";
     } elsif (isQt()) {
         return "QtLauncher";
+    } elsif (isWx()) {
+        return "wxBrowser";
     } elsif (isAppleWebKit()) {
         return "Safari";
     }
@@ -1041,6 +1043,47 @@ sub buildVisualStudioProject
 
     print join(" ", @command), "\n";
     return system @command;
+}
+
+sub downloadWafIfNeeded
+{
+    # get / update waf if needed
+    my $waf = "$sourceDir/WebKitTools/wx/waf";
+    my $wafURL = 'http://wxwebkit.wxcommunity.com/downloads/deps/waf';
+    if (!-f $waf) {
+        my $result = system "curl -o $waf $wafURL";
+        chmod 0755, $waf;
+    }
+}
+
+sub buildWafProject
+{
+    my ($project, $shouldClean, @options) = @_;
+    
+    # set the PYTHONPATH for waf
+    my $pythonPath = $ENV{'PYTHONPATH'};
+    if (!defined($pythonPath)) {
+        $pythonPath = '';
+    }
+    my $sourceDir = sourceDir();
+    my $newPythonPath = "$sourceDir/WebKitTools/wx/build:$pythonPath";
+    if (isCygwin()) {
+        $newPythonPath = `cygpath --mixed --path $newPythonPath`;
+    }
+    $ENV{'PYTHONPATH'} = $newPythonPath;
+    
+    print "Building $project\n";
+
+    my $wafCommand = "$sourceDir/WebKitTools/wx/waf";
+    if (isCygwin()) {
+        $wafCommand = `cygpath --windows "$wafCommand"`;
+        chomp($wafCommand);
+    }
+    if ($shouldClean) {
+        return system $wafCommand, "clean", "distclean";
+    }
+    
+    return system $wafCommand, 'configure', 'build', 'install', @options;
 }
 
 sub retrieveQMakespecVar

@@ -214,18 +214,6 @@ if ($showHelp) {
 checkRequiredSystemConfig();
 setConfiguration();
 
-if (isWx()) {
-    $ENV{"WEBKITOUTPUTDIR"} = productDir();
-
-    my @opts = getWxArgs();
-
-    if ($clean) {
-        push(@opts, "clean");
-    }
-    system "WebKitTools/wx/build-wxwebkit @opts";
-    exit exitStatus($?);
-}
-
 my $productDir = productDir();
 
 # Check that all the project directories are there.
@@ -315,6 +303,12 @@ if (isGtk()) {
 # Force re-link of existing libraries if different than expected
 removeLibraryDependingOnSVG("WebCore", $svgSupport);
 
+if (isWx()) {
+    downloadWafIfNeeded();
+    push @projects, 'WebKitTools/wx/browser';
+    push @projects, 'WebKit/wx/bindings/python';
+}
+
 # Build, and abort if the build fails.
 for my $dir (@projects) {
     chdir $dir or die;
@@ -336,6 +330,16 @@ for my $dir (@projects) {
         if ($dir eq "WebKit") {
             $result = buildVisualStudioProject("win/WebKit.vcproj/WebKit.sln", $clean);
         }
+    } elsif (isWx()) {
+        @options = ();
+        if (defined($makeArgs)) {
+            @options = split(/ /, $makeArgs);
+        }
+        if ($dir eq "WebKit" && isWx()) {
+            chdir 'wx' or die;
+        }
+            
+        $result = buildWafProject($dir, $clean, @options);
     }
 
     if (exitStatus($result)) {
@@ -348,7 +352,7 @@ for my $dir (@projects) {
         }
         exit exitStatus($result);
     }
-    chdir ".." or die;
+    chdirWebKit();
 }
 
 # Don't report the "WebKit is now built" message after a clean operation.
