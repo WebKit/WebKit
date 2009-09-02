@@ -204,8 +204,16 @@ namespace JSC {
             CRASH();
         }
         m_commitEnd = reinterpret_cast<Register*>(reinterpret_cast<char*>(m_buffer) + committedSize);
-    #else
-        #error "Don't know how to reserve virtual memory on this platform."
+    #else 
+        /* 
+         * If neither MMAP nor VIRTUALALLOC are available - use fastMalloc instead.
+         *
+         * Please note that this is the fallback case, which is non-optimal.
+         * If any possible, the platform should provide for a better memory
+         * allocation mechanism that allows for "lazy commit" or dynamic
+         * pre-allocation, similar to mmap or VirtualAlloc, to avoid waste of memory.
+         */
+        m_buffer = static_cast<Register*>(fastMalloc(bufferLength));
     #endif
         m_start = m_buffer + maxGlobals;
         m_end = m_start;

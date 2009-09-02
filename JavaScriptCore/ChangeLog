@@ -1,3 +1,22 @@
+2009-09-02  Norbert Leser  <norbert.leser@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        Use fastMalloc when neither MMAP nor VIRTUALALLOC are enabled
+        
+        RegisterFile constructor currently throws #error when both
+        MMAP and VIRTUALALLOC conditions fail.
+        On any platform that does not provide these features
+        (for instance, Symbian),
+        the fallback should be regular malloc (or fastMalloc).
+        It is functionally equivalent in this case, even though it may
+        have certain drawbacks such as lack of dynamic pre-allocation.
+
+        * interpreter/RegisterFile.cpp:
+        (JSC::RegisterFile::~RegisterFile):
+        * interpreter/RegisterFile.h:
+        (JSC::RegisterFile::RegisterFile):
+
 2009-08-31  Robert Agoston  <Agoston.Robert@stud.u-szeged.hu>
 
         Reviewed by Gavin Barraclough.

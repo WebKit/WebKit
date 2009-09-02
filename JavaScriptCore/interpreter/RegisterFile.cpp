@@ -38,7 +38,7 @@ RegisterFile::~RegisterFile()
 #elif HAVE(VIRTUALALLOC)
     VirtualFree(m_buffer, 0, MEM_RELEASE);
 #else
-    #error "Don't know how to release virtual memory on this platform."
+    fastFree(m_buffer);
 #endif
 }
 
