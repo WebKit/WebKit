@@ -453,29 +453,10 @@ PluginView::~PluginView()
     delete platformPluginWidget();
 }
 
-void PluginView::init()
+bool PluginView::platformStart()
 {
-    if (m_haveInitialized)
-        return;
-    m_haveInitialized = true;
-
-    m_hasPendingGeometryChange = false;
-
-    if (!m_plugin) {
-        ASSERT(m_status == PluginStatusCanNotFindPlugin);
-        return;
-    }
-
-    if (!m_plugin->load()) {
-        m_plugin = 0;
-        m_status = PluginStatusCanNotLoadPlugin;
-        return;
-    }
-
-    if (!start()) {
-        m_status = PluginStatusCanNotLoadPlugin;
-        return;
-    }
+    ASSERT(m_isStarted);
+    ASSERT(m_status == PluginStatusLoadedSuccessfully);
 
     if (m_plugin->pluginFuncs()->getvalue) {
         PluginView::setCurrentPluginView(this);
@@ -490,9 +471,9 @@ void PluginView::init()
         setPlatformWidget(new PluginContainerQt(this, m_parentFrame->view()->hostWindow()->platformWindow()));
     } else {
         notImplemented();
-        m_status = PluginStatusCanNotLoadPlugin;
-        return;
+        return false;
     }
+
     show();
 
     NPSetWindowCallbackStruct *wsi = new NPSetWindowCallbackStruct();
@@ -515,12 +496,7 @@ void PluginView::init()
         setNPWindowIfNeeded();
     }
 
-    m_status = PluginStatusLoadedSuccessfully;
+    return true;
 }
-
-void PluginView::platformStart()
-{
-}
-
 
 } // namespace WebCore

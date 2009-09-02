@@ -1,3 +1,30 @@
+2009-08-31  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        Share PluginView::init() between ports
+
+        https://bugs.webkit.org/show_bug.cgi?id=27706
+
+        The port-spesific bits are moved to platformStart(), which now returns
+        a bool based on the success of the platformStart.
+
+        m_hasPendingGeometryChange is now initialized in the initializer list
+        instead of in PluginViewQt's init()
+
+        PluginViewMac (currently used only by the Qt port) used to manually call
+        stop() in the case where an unsupported drawing or event model was detected.
+        This was wrong, as the m_status and m_isStarted fields should be used to
+        guard against doing operations on a plugin in this intermediate state.
+
+        * plugins/PluginView.cpp:
+        * plugins/PluginView.h:
+        * plugins/PluginViewNone.cpp:
+        * plugins/gtk/PluginViewGtk.cpp:
+        * plugins/mac/PluginViewMac.cpp:
+        * plugins/qt/PluginViewQt.cpp:
+        * plugins/win/PluginViewWin.cpp:
+
 2009-09-02  Ben Murdoch  <benm@google.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=28737

@@ -204,7 +204,7 @@ namespace WebCore {
         bool startOrAddToUnstartedList();
         void removeFromUnstartedListIfNecessary();
         void init();
-        void platformStart();
+        bool platformStart();
         void stop();
         static void setCurrentPluginView(PluginView*);
         NPError load(const FrameLoadRequest&, bool sendNotification, void* notifyData);

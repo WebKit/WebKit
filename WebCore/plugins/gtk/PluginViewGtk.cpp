@@ -452,27 +452,10 @@ plug_removed_cb(GtkSocket *socket, gpointer)
     return TRUE;
 }
 
-void PluginView::init()
+bool PluginView::platformStart()
 {
-    if (m_haveInitialized)
-        return;
-    m_haveInitialized = true;
-
-    if (!m_plugin) {
-        ASSERT(m_status == PluginStatusCanNotFindPlugin);
-        return;
-    }
-
-    if (!m_plugin->load()) {
-        m_plugin = 0;
-        m_status = PluginStatusCanNotLoadPlugin;
-        return;
-    }
-
-    if (!start()) {
-        m_status = PluginStatusCanNotLoadPlugin;
-        return;
-    }
+    ASSERT(m_isStarted);
+    ASSERT(m_status == PluginStatusLoadedSuccessfully);
 
     if (m_plugin->pluginFuncs()->getvalue) {
         PluginView::setCurrentPluginView(this);
@@ -532,11 +515,7 @@ void PluginView::init()
     if (!(m_plugin->quirks().contains(PluginQuirkDeferFirstSetWindowCall)))
         updatePluginWidget(); // was: setNPWindowIfNeeded(), but this doesn't produce 0x0 rects at first go
 
-    m_status = PluginStatusLoadedSuccessfully;
-}
-
-void PluginView::platformStart()
-{
+    return true;
 }
 
 } // namespace WebCore

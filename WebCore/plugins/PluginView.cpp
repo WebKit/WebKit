@@ -149,6 +149,34 @@ void PluginView::handleEvent(Event* event)
         handleKeyboardEvent(static_cast<KeyboardEvent*>(event));
 }
 
+void PluginView::init()
+{
+    if (m_haveInitialized)
+        return;
+
+    m_haveInitialized = true;
+
+    if (!m_plugin) {
+        ASSERT(m_status == PluginStatusCanNotFindPlugin);
+        return;
+    }
+
+    LOG(Plugins, "PluginView::init(): Initializing plug-in '%s'", m_plugin->name().utf8().data());
+
+    if (!m_plugin->load()) {
+        m_plugin = 0;
+        m_status = PluginStatusCanNotLoadPlugin;
+        return;
+    }
+
+    if (!startOrAddToUnstartedList()) {
+        m_status = PluginStatusCanNotLoadPlugin;
+        return;
+    }
+
+    m_status = PluginStatusLoadedSuccessfully;
+}
+
 bool PluginView::start()
 {
     if (m_isStarted)
@@ -189,9 +217,10 @@ bool PluginView::start()
 
     m_status = PluginStatusLoadedSuccessfully;
 
-    platformStart();
+    if (!platformStart())
+        m_status = PluginStatusCanNotLoadPlugin;
 
-    return true;
+    return (m_status == PluginStatusLoadedSuccessfully);
 }
 
 void PluginView::stop()
@@ -748,6 +777,9 @@ PluginView::PluginView(Frame* parentFrame, const IntSize& size, PluginPackage* p
 #if defined(XP_MACOSX)
     , m_drawingModel(NPDrawingModel(-1))
     , m_eventModel(NPEventModel(-1))
+#endif
+#if defined(Q_WS_X11)
+    , m_hasPendingGeometryChange(false)
 #endif
     , m_loadManually(loadManually)
     , m_manualStream(0)

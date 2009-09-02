@@ -975,32 +975,7 @@ PluginView::~PluginView()
         m_plugin->unload();
 }
 
-void PluginView::init()
-{
-    if (m_haveInitialized)
-        return;
-    m_haveInitialized = true;
-
-    if (!m_plugin) {
-        ASSERT(m_status == PluginStatusCanNotFindPlugin);
-        return;
-    }
-
-    if (!m_plugin->load()) {
-        m_plugin = 0;
-        m_status = PluginStatusCanNotLoadPlugin;
-        return;
-    }
-
-    if (!startOrAddToUnstartedList()) {
-        m_status = PluginStatusCanNotLoadPlugin;
-        return;
-    }
-
-    m_status = PluginStatusLoadedSuccessfully;
-}
-
-void PluginView::platformStart()
+bool PluginView::platformStart()
 {
     ASSERT(m_isStarted);
     ASSERT(m_status == PluginStatusLoadedSuccessfully);
@@ -1047,6 +1022,8 @@ void PluginView::platformStart()
 
     if (!m_plugin->quirks().contains(PluginQuirkDeferFirstSetWindowCall))
         setNPWindowRect(frameRect());
+
+    return true;
 }
 
 } // namespace WebCore

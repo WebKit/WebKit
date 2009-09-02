@@ -119,9 +119,11 @@ PluginView::~PluginView()
     notImplemented();
 }
 
-void PluginView::init()
+bool PluginView::platformStart()
 {
     notImplemented();
+
+    return true;
 }
 
 void PluginView::setParentVisible(bool)
