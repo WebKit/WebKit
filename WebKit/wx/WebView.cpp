@@ -50,6 +50,7 @@
 #include "SelectionController.h"
 #include "Settings.h"
 #include "SubstituteData.h"
+#include "Threading.h"
 
 #include "ChromeClientWx.h"
 #include "ContextMenuClientWx.h"
@@ -269,6 +270,8 @@ bool wxWebView::Create(wxWindow* parent, int id, const wxPoint& position,
     
     if (!wxWindow::Create(parent, id, position, size, style, name))
         return false;
+
+    WTF::initializeThreading();
 
 // This is necessary because we are using SharedTimerWin.cpp on Windows,
 // due to a problem with exceptions getting eaten when using the callback

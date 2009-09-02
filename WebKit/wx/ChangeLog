@@ -1,3 +1,13 @@
+2009-09-02  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+
+        wx port: Call WTF::initializeThreading().
+        https://bugs.webkit.org/show_bug.cgi?id=28912
+
+        * WebView.cpp:
+        (wxWebView::Create): call WTF::initializeThreading()
+
 2009-09-02  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. Use the 2 param KURL constructor.
