@@ -39,6 +39,7 @@
 #include "ImageData.h"
 #include "PlatformContextSkia.h"
 #include "PNGImageEncoder.h"
+#include "SkColorPriv.h"
 #include "SkiaUtils.h"
 
 using namespace std;
