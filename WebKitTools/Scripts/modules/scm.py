@@ -419,7 +419,7 @@ class Git(SCM):
             if '...' in commitish:
                 raise ScriptError("'...' is not supported (found in '%s'). Did you mean '..'?" % commitish)
             elif '..' in commitish:
-                commit_ids += self.run_command(['git', 'rev-list', commitish]).splitlines()
+                commit_ids += reversed(self.run_command(['git', 'rev-list', commitish]).splitlines())
             else:
                 # Turn single commits or branch or tag names into commit ids.
                 commit_ids += self.run_command(['git', 'rev-parse', '--revs-only', commitish]).splitlines()

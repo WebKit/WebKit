@@ -1,5 +1,24 @@
 2009-09-01  David Kilzer  <ddkilzer@apple.com>
 
+        <http://webkit.org/b/28601> bugzilla-tool post-commits posts commits backwards
+
+        Reviewed by Adam Barth.
+
+        * Scripts/modules/scm.py:
+        (Git.commit_ids_from_commitish_arguments): Reverse the list of
+        commits returned from git-rev-list since we always want to post
+        the oldest patches first to bugs.webkit.org.
+        * Scripts/modules/scm_unittest.py:
+        (run): Added return statement to return the output now that we
+        want it sometimes.
+        (SVNTestRepository._setup_test_commits): Added a fourth commit
+        so the GitTest.test_commitish_order() test has more commits to
+        work with.
+        (GitTest.test_commitish_order): Added unit test for change to
+        Git.commit_ids_from_commitish_arguments() in scm.py.
+
+2009-09-01  David Kilzer  <ddkilzer@apple.com>
+
         <http://webkit.org/b/28877> Implement bugzilla-tool mark-fixed
 
         Reviewed by David Levin.

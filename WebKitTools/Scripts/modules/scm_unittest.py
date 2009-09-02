@@ -38,7 +38,7 @@ from modules.scm import detect_scm_system, SCM, ScriptError
 # Perhaps through some SCMTest base-class which both SVNTest and GitTest inherit from.
 
 def run(args, cwd=None):
-    SCM.run_command(args, cwd=cwd)
+    return SCM.run_command(args, cwd=cwd)
 
 def run_silent(args, cwd=None):
     process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=cwd)
@@ -71,9 +71,14 @@ class SVNTestRepository:
         run(['svn', 'commit', '--quiet', '--message', 'second commit'])
         
         test_file.write("test3")
-        test_file.close()
+        test_file.flush()
         
         run(['svn', 'commit', '--quiet', '--message', 'third commit'])
+
+        test_file.write("test4")
+        test_file.close()
+        
+        run(['svn', 'commit', '--quiet', '--message', 'fourth commit'])
 
     @classmethod
     def setup(cls, test_object):
@@ -187,6 +192,17 @@ class GitTest(unittest.TestCase):
     
         # ... is an invalid range specifier
         self.assertRaises(ScriptError, scm.commit_ids_from_commitish_arguments, ['trunk...HEAD'])
+
+    def test_commitish_order(self):
+        scm = detect_scm_system(self.git_checkout_path)
+
+        commit_range = 'HEAD~3..HEAD'
+
+        actual_commits = scm.commit_ids_from_commitish_arguments([commit_range])
+        expected_commits = []
+        expected_commits += reversed(run(['git', 'rev-list', commit_range]).splitlines())
+
+        self.assertEqual(actual_commits, expected_commits)
 
 
 if __name__ == '__main__':
