@@ -44,6 +44,11 @@ namespace WebCore {
     
 JSValue JSSQLTransaction::executeSql(ExecState* exec, const ArgList& args)
 {
+    if (args.isEmpty()) {
+        setDOMException(exec, SYNTAX_ERR);
+        return jsUndefined();
+    }
+
     String sqlStatement = args.at(0).toString(exec);
     if (exec->hadException())
         return jsUndefined();

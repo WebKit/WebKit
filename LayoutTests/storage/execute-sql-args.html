@@ -13,7 +13,6 @@ var throwOnGetZeroObject = { length: 1 };
 throwOnGetZeroObject.__defineGetter__("0", function () { throw "Cannot get 0 property of this object."; });
 
 var expectNoException = [
-    '',
     'null',
     'undefined',
     '0',
@@ -34,6 +33,7 @@ var expectNoException = [
 ];
 
 var expectException = [
+    '',
     'throwOnToStringObject',
     '"", throwOnGetLengthObject',
     '"", throwOnGetZeroObject',
@@ -66,7 +66,7 @@ function runTransactionTest(transaction, parameterList, expectException)
     var exception = tryExecuteSql(transaction, parameterList);
     if (expectException) {
         if (exception)
-            writeMessageToLog("PASS. executeSql(" + parameterList + ") threw an exception as expected: " + exception);
+            writeMessageToLog("PASS. executeSql(" + parameterList + ") threw an exception as expected.");
         else
             writeMessageToLog("*FAIL*. executeSql(" + parameterList + ") did not throw an exception");
     } else {

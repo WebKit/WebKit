@@ -1,4 +1,3 @@
-PASS. executeSql() did not throw an exception
 PASS. executeSql(null) did not throw an exception
 PASS. executeSql(undefined) did not throw an exception
 PASS. executeSql(0) did not throw an exception
@@ -16,14 +15,15 @@ PASS. executeSql("", null, { }) did not throw an exception
 PASS. executeSql("", null, null, null) did not throw an exception
 PASS. executeSql("", null, null, undefined) did not throw an exception
 PASS. executeSql("", null, null, { }) did not throw an exception
-PASS. executeSql(throwOnToStringObject) threw an exception as expected: Cannot call toString on this object.
-PASS. executeSql("", throwOnGetLengthObject) threw an exception as expected: Cannot get length of this object.
-PASS. executeSql("", throwOnGetZeroObject) threw an exception as expected: Cannot get 0 property of this object.
-PASS. executeSql("", [ throwOnToStringObject ]) threw an exception as expected: Cannot call toString on this object.
-PASS. executeSql("", 0) threw an exception as expected: Error: TYPE_MISMATCH_ERR: DOM Exception 17
-PASS. executeSql("", "") threw an exception as expected: Error: TYPE_MISMATCH_ERR: DOM Exception 17
-PASS. executeSql("", null, 0) threw an exception as expected: Error: TYPE_MISMATCH_ERR: DOM Exception 17
-PASS. executeSql("", null, "") threw an exception as expected: Error: TYPE_MISMATCH_ERR: DOM Exception 17
-PASS. executeSql("", null, null, 0) threw an exception as expected: Error: TYPE_MISMATCH_ERR: DOM Exception 17
-PASS. executeSql("", null, null, "") threw an exception as expected: Error: TYPE_MISMATCH_ERR: DOM Exception 17
+PASS. executeSql() threw an exception as expected.
+PASS. executeSql(throwOnToStringObject) threw an exception as expected.
+PASS. executeSql("", throwOnGetLengthObject) threw an exception as expected.
+PASS. executeSql("", throwOnGetZeroObject) threw an exception as expected.
+PASS. executeSql("", [ throwOnToStringObject ]) threw an exception as expected.
+PASS. executeSql("", 0) threw an exception as expected.
+PASS. executeSql("", "") threw an exception as expected.
+PASS. executeSql("", null, 0) threw an exception as expected.
+PASS. executeSql("", null, "") threw an exception as expected.
+PASS. executeSql("", null, null, 0) threw an exception as expected.
+PASS. executeSql("", null, null, "") threw an exception as expected.
 

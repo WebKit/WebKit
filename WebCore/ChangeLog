@@ -1,3 +1,16 @@
+2009-09-02  Ben Murdoch  <benm@google.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=28737
+        
+        Update JavaScript bindings in JSC and V8 for SQLTransaction to throw exceptions in the right places.
+
+        * bindings/js/JSSQLTransactionCustom.cpp:
+        (WebCore::JSSQLTransaction::executeSql): Throw an exception if no parameters are passed to executeSql().
+        * bindings/v8/V8Binding.cpp:
+        (WebCore::v8ValueToWebCoreString): Catch an exception if thrown from toString().
+        * bindings/v8/custom/V8SQLTransactionCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL): Allow "arrayish objects" to be passed to executeSql.
+
 2009-09-01  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
