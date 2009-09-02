@@ -143,7 +143,7 @@ wxString wxWebFrame::GetPageSource()
 void wxWebFrame::SetPageSource(const wxString& source, const wxString& baseUrl)
 {
     if (m_impl->frame && m_impl->frame->loader()) {
-        WebCore::KURL url(static_cast<const char*>(baseUrl.mb_str(wxConvUTF8)));
+        WebCore::KURL url(WebCore::KURL(), static_cast<const char*>(baseUrl.mb_str(wxConvUTF8)));
 
         wxCharBuffer charBuffer(source.mb_str(wxConvUTF8));
         const char* contents = charBuffer;
