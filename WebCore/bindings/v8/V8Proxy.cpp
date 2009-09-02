@@ -36,7 +36,10 @@
 #include "DOMObjectsInclude.h"
 #include "DocumentLoader.h"
 #include "FrameLoaderClient.h"
+#include "Page.h"
+#include "PageGroup.h"
 #include "ScriptController.h"
+#include "StorageNamespace.h"
 #include "V8Binding.h"
 #include "V8Collection.h"
 #include "V8ConsoleMessage.h"
@@ -395,14 +398,17 @@ v8::Local<v8::Value> V8Proxy::runScript(v8::Handle<v8::Script> script, bool isIn
     v8::Local<v8::Value> result;
     {
         V8ConsoleMessage::Scope scope;
-        m_recursion++;
 
         // See comment in V8Proxy::callFunction.
         m_frame->keepAlive();
 
+        m_recursion++;
         result = script->Run();
         m_recursion--;
     }
+
+    // Release the storage mutex if applicable.
+    releaseStorageMutex();
 
     if (handleOutOfMemory())
         ASSERT(result.IsEmpty());
@@ -422,9 +428,6 @@ v8::Local<v8::Value> V8Proxy::runScript(v8::Handle<v8::Script> script, bool isIn
 
 v8::Local<v8::Value> V8Proxy::callFunction(v8::Handle<v8::Function> function, v8::Handle<v8::Object> receiver, int argc, v8::Handle<v8::Value> args[])
 {
-    // For now, we don't put any artificial limitations on the depth
-    // of recursion that stems from calling functions. This is in
-    // contrast to the script evaluations.
     v8::Local<v8::Value> result;
     {
         V8ConsoleMessage::Scope scope;
@@ -436,8 +439,13 @@ v8::Local<v8::Value> V8Proxy::callFunction(v8::Handle<v8::Function> function, v8
         // execution finishs before firing the timer.
         m_frame->keepAlive();
 
+        m_recursion++;
         result = function->Call(receiver, argc, args);
+        m_recursion--;
     }
+
+    // Release the storage mutex if applicable.
+    releaseStorageMutex();
 
     if (v8::V8::IsDead())
         handleFatalErrorInV8();
@@ -669,6 +677,20 @@ void V8Proxy::disposeContextHandles()
         m_wrapperBoilerplates.Dispose();
         m_wrapperBoilerplates.Clear();
     }
+}
+
+void V8Proxy::releaseStorageMutex()
+{
+    // If we've just left a top level script context and local storage has been
+    // instantiated, we must ensure that any storage locks have been freed.
+    // Per http://dev.w3.org/html5/spec/Overview.html#storage-mutex
+    if (m_recursion != 0)
+        return;
+    Page* page = m_frame->page();
+    if (!page)
+        return;
+    if (page->group().hasLocalStorage())
+        page->group().localStorage()->unlock();
 }
 
 void V8Proxy::clearForClose()

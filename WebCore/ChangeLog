@@ -1,3 +1,49 @@
+2009-09-02  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Another pass at releasing the storage mutex.
+        https://bugs.webkit.org/show_bug.cgi?id=28904
+
+        Another pass at releasing the storage mutex (when applicable) when we finish
+        executing JavaScript.  http://dev.w3.org/html5/spec/Overview.html#storage-mutex
+        describes the required behavior.
+
+        As it turns out, https://bugs.webkit.org/show_bug.cgi?id=28789 didn't solve
+        the problem correctly.  First of all, I missed that events and timeouts go
+        through a different call path.  Second of all, I didn't consider recursion
+        correctly.  Third of all, my check to see if LocalStorage is alive actually
+        instantiates it if it isn't yet.  Fourth, I forgot DOM_STORAGE guards around
+        it.  So I'm reverting that change completely and doing it more cleanly.
+        Unfortunately, the solution isn't as portable (and thus I've left out the JSC
+        implementation for now).
+
+        NOTE: This change now tracks recursion on function callbacks in V8.  I ran this
+        by Mads Ager and Mike Belshe and they seemed to think adding the checks were
+        fine.  Most callbacks are asynchronous and thus wouldn't be nested.  The few
+        scenareos where you can have nested callbacks probably should have always been
+        protected by a recursion guard.
+
+        Unfortunately, this can't be tested without a hook added to the layout test
+        controllers since the lock is (by design) not supposed to be observable by
+        JavaScript.  https://bugs.webkit.org/show_bug.cgi?id=28906
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::evaluate): revert
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::evaluate): revert
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::runScript):
+            Add releaseStorageMutex call.  A small amount of clean up.
+        (WebCore::V8Proxy::callFunction):
+            Add releaseStorageMutex call.  A small amount of clean up.
+        (WebCore::V8Proxy::releaseStorageMutex):
+            Check to see if localStorage has been instantiated.  If so, tell it to
+            unlock all storage areas.
+        * bindings/v8/V8Proxy.h:
+        * page/PageGroup.h:
+        (WebCore::PageGroup::hasLocalStorage):  Make hasLocalStorage public.
+
 2009-09-02  Yong Li  <yong.li@torchmobile.com>
 
         Reviewed by Adam Barth.
