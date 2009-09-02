@@ -1,3 +1,22 @@
+2009-09-02  Szabo Carol  <carol.szabo@nokia.com>
+
+        Reviewed by David Levin.
+
+        check-webkit-style uses python from /usr/bin instead of the PATH
+        https://bugs.webkit.org/show_bug.cgi?id=28225
+
+        * Scripts/bugzilla-tool:
+        * Scripts/check-webkit-style:
+        * Scripts/run-webkit-unittests:
+        * Scripts/update-sources-list.py:
+          Changed the first line from
+          #!/usr/bin/python
+          to
+          #!/usr/bin/env python
+          which causes python to be invoked from the path location returned
+          by "which python" when any of these scripts are launched.
+          these are currently all the python scripts in WebKitTools/Scripts.
+
 2009-09-01  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/28601> bugzilla-tool post-commits posts commits backwards
