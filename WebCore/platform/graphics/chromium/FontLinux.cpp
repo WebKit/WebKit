@@ -312,7 +312,7 @@ private:
 
     const TextRun& getNormalizedTextRun(const TextRun& originalRun)
     {
-        UnicodeString normalizedString;
+        icu::UnicodeString normalizedString;
         UErrorCode error = U_ZERO_ERROR;
         icu::Normalizer::normalize(icu::UnicodeString(originalRun.characters(), originalRun.length()), UNORM_NFC, 0 /* no options */, normalizedString, error);
         if (U_FAILURE(error))
