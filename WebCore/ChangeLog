@@ -1,5 +1,11 @@
 2009-09-02  Kevin Ollivier  <kevino@theolliviers.com>
 
+        waf build fix, don't define symbols we now grab from other sources.
+
+        * platform/wx/TemporaryLinkStubs.cpp:
+
+2009-09-02  Kevin Ollivier  <kevino@theolliviers.com>
+
         Build fixes for PluginViewNone.cpp and a wx build fix for PluginView.cpp.
 
         * plugins/PluginView.cpp:

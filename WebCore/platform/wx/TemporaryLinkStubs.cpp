@@ -88,11 +88,6 @@ Vector<char> loadResourceIntoArray(const char* resourceName)
     return resource;
 }
 
-int findNextSentenceFromIndex(UChar const*,int,int,bool) { notImplemented(); return 0; }
-void findSentenceBoundary(UChar const*,int,int,int*,int*) { notImplemented(); }
-
-int WebCore::findNextWordFromIndex(UChar const*,int,int,bool) { notImplemented(); return 0; }
-
 DragImageRef Frame::dragImageForSelection() { notImplemented(); return 0; }
 
 void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect, int thickness) { notImplemented(); }
@@ -102,8 +97,6 @@ void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect, int thickness
 /********************************************************/
 static WebCore::Cursor localCursor;
 const WebCore::Cursor& WebCore::moveCursor() { return localCursor; }
-
-void WebCore::findWordBoundary(UChar const* str,int len,int position,int* start, int* end) { notImplemented(); *start=position; *end=position; }
 
 void Widget::setIsSelected(bool) { notImplemented(); }
 
@@ -153,7 +146,5 @@ const char* currentTextBreakLocaleID() { notImplemented(); return "en_us"; }
 String KURL::fileSystemPath() const { notImplemented(); return String(); }
 
 PassRefPtr<SharedBuffer> SharedBuffer::createWithContentsOfFile(const String&) { notImplemented(); return 0; }
-
-void prefetchDNS(const String& hostname) { notImplemented(); }
 
 }
