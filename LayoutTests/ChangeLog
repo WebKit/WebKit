@@ -1,3 +1,19 @@
+2009-09-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Cannot press Enter to escape from bulleted list when <ul> is a child of <li>.
+        https://bugs.webkit.org/show_bug.cgi?id=24866
+
+        This patch adds a test to make sure WebKit break out of an empty list item.
+
+        * editing/execCommand/break-out-of-empty-list-item-expected.txt: Added.
+        * editing/execCommand/break-out-of-empty-list-item.html: Added.
+        * editing/execCommand/resources/break-out-of-empty-list-item.js: Added.
+        (pressKey):
+        (enterAtTarget):
+        (testBreakOutOfEmptyListItem):
+
 2009-09-02  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Brady Eidson.

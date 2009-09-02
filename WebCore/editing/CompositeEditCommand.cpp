@@ -890,31 +890,57 @@ bool CompositeEditCommand::breakOutOfEmptyListItem()
     Node* emptyListItem = enclosingEmptyListItem(endingSelection().visibleStart());
     if (!emptyListItem)
         return false;
-        
+
     RefPtr<CSSMutableStyleDeclaration> style = editingStyleAtPosition(endingSelection().start(), IncludeTypingStyle);
 
     Node* listNode = emptyListItem->parentNode();
-    
-    if (!listNode->isContentEditable())
+    // FIXME: Can't we do something better when the immediate parent wasn't a list node?
+    if (!listNode
+        || (!listNode->hasTagName(ulTag) && !listNode->hasTagName(olTag))
+        || !listNode->isContentEditable())
         return false;
-    
-    RefPtr<Element> newBlock = isListElement(listNode->parentNode()) ? createListItemElement(document()) : createDefaultParagraphElement(document());
-    
+
+    RefPtr<Element> newBlock = 0;
+    if (Node* blockEnclosingList = listNode->parentNode()) {
+        if (blockEnclosingList->hasTagName(liTag)) { // listNode is inside another list item
+            if (visiblePositionAfterNode(blockEnclosingList) == visiblePositionAfterNode(listNode)) {
+                // If listNode appears at the end of the outer list item, then move listNode outside of this list item
+                // e.g. <ul><li>hello <ul><li><br></li></ul> </li></ul> should become <ul><li>hello</li> <ul><li><br></li></ul> </ul> after this section
+                // If listNode does NOT appear at the end, then we should consider it as a regular paragraph.
+                // e.g. <ul><li> <ul><li><br></li></ul> hello</li></ul> should become <ul><li> <div><br></div> hello</li></ul> at the end
+                splitElement(static_cast<Element*>(blockEnclosingList), listNode);
+                removeNodePreservingChildren(listNode->parentNode());
+                newBlock = createListItemElement(document());
+            }
+            // If listNode does NOT appear at the end of the outer list item, then behave as if in a regular paragraph. 
+        } else if (blockEnclosingList->hasTagName(olTag) || blockEnclosingList->hasTagName(ulTag))
+            newBlock = createListItemElement(document());
+    }
+    if (!newBlock)
+        newBlock = createDefaultParagraphElement(document());
+
     if (emptyListItem->renderer()->nextSibling()) {
+        // If emptyListItem follows another list item, split the list node.
         if (emptyListItem->renderer()->previousSibling())
             splitElement(static_cast<Element*>(listNode), emptyListItem);
+
+        // If emptyListItem is followed by other list item, then insert newBlock before the list node.
+        // Because we have splitted the element, emptyListItem is the first element in the list node.
+        // i.e. insert newBlock before ul or ol whose first element is emptyListItem
         insertNodeBefore(newBlock, listNode);
         removeNode(emptyListItem);
     } else {
+        // When emptyListItem does not follow any list item, insert newBlock after the enclosing list node.
+        // Remove the enclosing node if emptyListItem is the only child; otherwise just remove emptyListItem.
         insertNodeAfter(newBlock, listNode);
         removeNode(emptyListItem->renderer()->previousSibling() ? emptyListItem : listNode);
     }
-    
+
     appendBlockPlaceholder(newBlock);
     setEndingSelection(VisibleSelection(Position(newBlock.get(), 0), DOWNSTREAM));
-    
-    computedStyle(endingSelection().start().node())->diff(style.get());
-    if (style->length() > 0)
+
+    prepareEditingStyleToApplyAt(style.get(), endingSelection().start());
+    if (style->length())
         applyStyle(style.get());
     
     return true;

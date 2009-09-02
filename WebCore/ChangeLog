@@ -1,3 +1,22 @@
+2009-09-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Cannot pres Enter to escape from bulleted list when <ul> is a child of <li>.
+        https://bugs.webkit.org/show_bug.cgi?id=24866
+
+        This patch modifies breakOutOfEmptyListItem to break out of a properly nested list
+        (a list to break out of is inside another list item).
+
+        When the empty list item appears at the end of another list item, WebKit breaks out of
+        the outer list item, and adds new item below the outer list item.
+        Otherwise, WebKit breaks out of the the inner list item and inserts new paragraph.
+
+        Test: editing/execCommand/break-out-of-empty-list-item.html
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::breakOutOfEmptyListItem):
+
 2009-09-02  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.
