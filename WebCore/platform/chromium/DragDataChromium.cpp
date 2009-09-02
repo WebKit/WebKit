@@ -34,6 +34,7 @@
 #include "Clipboard.h"
 #include "ClipboardChromium.h"
 #include "DocumentFragment.h"
+#include "FileSystem.h"
 #include "KURL.h"
 #include "markup.h"
 #include "NotImplemented.h"
@@ -56,18 +57,25 @@ PassRefPtr<Clipboard> DragData::createClipboard(ClipboardAccessPolicy policy) co
 
 bool DragData::containsURL() const
 {
-    return m_platformDragData->url.isValid();
+    return !asURL().isEmpty();
 }
 
 String DragData::asURL(String* title) const
 {
-    if (!m_platformDragData->url.isValid())
-        return String();
+    String url;
+    if (m_platformDragData->url.isValid())
+        url = m_platformDragData->url.string();
+    else if (m_platformDragData->filenames.size() == 1) {
+        String fileName = m_platformDragData->filenames[0];
+        // FIXME: Add isDirectory to FileSystem so that we can check if it is not a directory.
+        if (fileExists(fileName))
+            url = fileName;
+    }
  
     // |title| can be NULL
     if (title)
         *title = m_platformDragData->urlTitle;
-    return m_platformDragData->url.string();
+    return url;
 }
 
 bool DragData::containsFiles() const
@@ -112,7 +120,8 @@ bool DragData::containsCompatibleContent() const
     return containsPlainText()
         || containsURL()
         || containsHTML(m_platformDragData)
-        || containsColor();
+        || containsColor()
+        || containsFiles();
 }
 
 PassRefPtr<DocumentFragment> DragData::asFragment(Document* doc) const
