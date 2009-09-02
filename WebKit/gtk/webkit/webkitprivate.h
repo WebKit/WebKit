@@ -32,6 +32,7 @@
 #include <webkit/webkitdownload.h>
 #include <webkit/webkitnetworkrequest.h>
 #include <webkit/webkitwebview.h>
+#include <webkit/webkitwebdatasource.h>
 #include <webkit/webkitwebframe.h>
 #include <webkit/webkitwebpolicydecision.h>
 #include <webkit/webkitwebnavigationaction.h>
@@ -63,6 +64,9 @@
 class DownloadClient;
 
 namespace WebKit {
+
+    class DocumentLoader;
+
     WebKitWebView* getViewFromFrame(WebKitWebFrame*);
 
     WebCore::Frame* core(WebKitWebFrame*);
@@ -283,6 +287,10 @@ extern "C" {
     
     WEBKIT_API void
     webkit_reset_origin_access_white_lists();
+
+    // WebKitWebDataSource private
+    WebKitWebDataSource*
+    webkit_web_data_source_new_with_loader(PassRefPtr<WebKit::DocumentLoader>);
 }
 
 #endif

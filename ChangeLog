@@ -1,3 +1,14 @@
+2009-09-02  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Xan Lopez and Gustavo Noronha.
+
+        [Gtk] Implement a WebDataSource for the gtk port
+        https://bugs.webkit.org/show_bug.cgi?id=24758
+
+        Add WebKitWebDataSource and DocumentLoaderGtk to the build script.
+
+        * GNUmakefile.am:
+
 2009-09-01  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Xan Lopez and Gustavo Noronha.
