@@ -37,6 +37,7 @@
 #include "AXObjectCache.h"
 #include "CString.h"
 #include "DocumentLoader.h"
+#include "DocumentLoaderGtk.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClientGtk.h"
 #include "FrameTree.h"
@@ -140,6 +141,11 @@ void webkit_web_frame_core_frame_gone(WebKitWebFrame* frame)
 {
     ASSERT(WEBKIT_IS_WEB_FRAME(frame));
     frame->priv->coreFrame = 0;
+}
+
+static WebKitWebDataSource* webkit_web_frame_get_data_source_from_core_loader(WebCore::DocumentLoader* loader)
+{
+    return loader ? static_cast<WebKit::DocumentLoader*>(loader)->dataSource() : NULL;
 }
 
 static void webkit_web_frame_finalize(GObject* object)
@@ -676,6 +682,46 @@ JSGlobalContextRef webkit_web_frame_get_global_context(WebKitWebFrame* frame)
         return NULL;
 
     return toGlobalRef(coreFrame->script()->globalObject()->globalExec());
+}
+
+/**
+ * webkit_web_frame_get_data_source:
+ * @frame: a #WebKitWebFrame
+ *
+ * Returns the committed data source.
+ *
+ * Return value: the committed #WebKitWebDataSource.
+ *
+ * Since: 1.1.14
+ */
+WebKitWebDataSource* webkit_web_frame_get_data_source(WebKitWebFrame* frame)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), NULL);
+
+    Frame* coreFrame = core(frame);
+    return webkit_web_frame_get_data_source_from_core_loader(coreFrame->loader()->documentLoader());
+}
+
+/**
+ * webkit_web_frame_get_provisional_data_source:
+ * @frame: a #WebKitWebFrame
+ *
+ * You use the webkit_web_frame_load_request method to initiate a request that
+ * creates a provisional data source. The provisional data source will
+ * transition to a committed data source once any data has been received. Use
+ * webkit_web_frame_get_data_source to get the committed data source.
+ *
+ * Return value: the provisional #WebKitWebDataSource or %NULL if a load
+ * request is not in progress.
+ *
+ * Since: 1.1.14
+ */
+WebKitWebDataSource* webkit_web_frame_get_provisional_data_source(WebKitWebFrame* frame)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), NULL);
+
+    Frame* coreFrame = core(frame);
+    return webkit_web_frame_get_data_source_from_core_loader(coreFrame->loader()->provisionalDocumentLoader());
 }
 
 /**
