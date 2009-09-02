@@ -1,5 +1,16 @@
 2009-09-02  Brady Eidson  <beidson@apple.com>
 
+        Forget to rename openInFrameloader() to open(), which was requested in Darin's review of my last patch.
+
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrameBase::restore):
+        (WebCore::CachedFrame::open):
+        * history/CachedFrame.h:
+        * history/CachedPage.cpp:
+        (WebCore::CachedPage::restore):
+
+2009-09-02  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Darin Adler.
 
         In http://trac.webkit.org/changeset/47943 I added new header dependencies to FrameLoader.h.

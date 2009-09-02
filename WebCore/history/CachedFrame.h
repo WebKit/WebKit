@@ -73,7 +73,7 @@ class CachedFrame : public RefCounted<CachedFrame>, private CachedFrameBase {
 public:
     static PassRefPtr<CachedFrame> create(Frame* frame) { return adoptRef(new CachedFrame(frame)); }
 
-    void openInFrameLoader();
+    void open();
     void clear();
     void destroy();
 
