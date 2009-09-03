@@ -1,3 +1,13 @@
+2009-09-03  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Add strnstr for Linux and Windows in StringExtras.h
+        https://bugs.webkit.org/show_bug.cgi?id=28901
+
+        * wtf/StringExtras.h:
+        (strnstr):
+
 2009-09-03  Zoltan Horvath  <hzoltan@inf.u-szeged.hu>
 
         Reviewed by Darin Adler.
