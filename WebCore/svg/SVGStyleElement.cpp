@@ -2,6 +2,7 @@
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
                   2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
     Copyright (C) 2006 Apple Computer, Inc.
+    Copyright (C) 2009 Cameron McCormack <cam@mcc.id.au>
 
     This file is part of the KDE project
 
@@ -29,14 +30,14 @@
 #include "CSSStyleSheet.h"
 #include "Document.h"
 #include "ExceptionCode.h"
-#include "HTMLNames.h"
 #include "MappedAttribute.h"
+#include "SVGNames.h"
 #include "XMLNames.h"
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
-using namespace HTMLNames;
+using namespace SVGNames;
 
 SVGStyleElement::SVGStyleElement(const QualifiedName& tagName, Document* doc, bool createdByParser)
      : SVGElement(tagName, doc)
@@ -49,9 +50,9 @@ const AtomicString& SVGStyleElement::xmlspace() const
     return getAttribute(XMLNames::spaceAttr);
 }
 
-void SVGStyleElement::setXmlspace(const AtomicString&, ExceptionCode& ec)
+void SVGStyleElement::setXmlspace(const AtomicString& space, ExceptionCode& ec)
 {
-    ec = NO_MODIFICATION_ALLOWED_ERR;
+    setAttribute(XMLNames::spaceAttr, space, ec);
 }
 
 const AtomicString& SVGStyleElement::type() const
@@ -61,9 +62,9 @@ const AtomicString& SVGStyleElement::type() const
     return n.isNull() ? defaultValue : n;
 }
 
-void SVGStyleElement::setType(const AtomicString&, ExceptionCode& ec)
+void SVGStyleElement::setType(const AtomicString& type, ExceptionCode& ec)
 {
-    ec = NO_MODIFICATION_ALLOWED_ERR;
+    setAttribute(typeAttr, type, ec);
 }
 
 const AtomicString& SVGStyleElement::media() const
@@ -73,9 +74,9 @@ const AtomicString& SVGStyleElement::media() const
     return n.isNull() ? defaultValue : n;
 }
 
-void SVGStyleElement::setMedia(const AtomicString&, ExceptionCode& ec)
+void SVGStyleElement::setMedia(const AtomicString& media, ExceptionCode& ec)
 {
-    ec = NO_MODIFICATION_ALLOWED_ERR;
+    setAttribute(mediaAttr, media, ec);
 }
 
 String SVGStyleElement::title() const
@@ -83,9 +84,9 @@ String SVGStyleElement::title() const
     return getAttribute(titleAttr);
 }
 
-void SVGStyleElement::setTitle(const AtomicString&, ExceptionCode& ec)
+void SVGStyleElement::setTitle(const AtomicString& title, ExceptionCode& ec)
 {
-    ec = NO_MODIFICATION_ALLOWED_ERR;
+    setAttribute(titleAttr, title, ec);
 }
 
 void SVGStyleElement::parseMappedAttribute(MappedAttribute* attr)

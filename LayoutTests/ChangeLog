@@ -1,3 +1,14 @@
+2009-09-03  Cameron McCormack  <cam@mcc.id.au>
+
+        Reviewed by Eric Seidel.
+
+        Make SVGStyleElement title/media/type setters do something
+        https://bugs.webkit.org/show_bug.cgi?id=28828
+
+        * svg/dom/resources/style-reflect.js: Added.
+        * svg/dom/style-reflect-expected.txt: Added.
+        * svg/dom/style-reflect.html: Added.
+
 2009-09-03  Ben Murdoch  <benm@google.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=28872

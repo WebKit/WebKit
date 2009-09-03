@@ -1,3 +1,18 @@
+2009-09-03  Cameron McCormack  <cam@mcc.id.au>
+
+        Reviewed by Eric Seidel.
+
+        Make SVGStyleElement title/media/type setters do something
+        https://bugs.webkit.org/show_bug.cgi?id=28828
+
+        Test: svg/dom/style-reflect.html
+
+        * svg/SVGStyleElement.cpp:
+        (WebCore::SVGStyleElement::setXmlspace): Actually change the attribute.
+        (WebCore::SVGStyleElement::setType): Ditto.
+        (WebCore::SVGStyleElement::setMedia): Ditto.
+        (WebCore::SVGStyleElement::setTitle): Ditto.
+
 2009-09-03  Ben Murdoch  <benm@google.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=28872
