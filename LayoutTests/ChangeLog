@@ -1,3 +1,17 @@
+2009-09-03  Steve VanDeBogart  <vandebo@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Check that middle click triggers an onpaste event in Linux.
+        https://bugs.webkit.org/show_bug.cgi?id=28696
+
+        * platform/gtk/editing/pasteboard: Added.
+        * platform/gtk/editing/pasteboard/middle-click-onpaste-expected.txt: Added.
+        * platform/gtk/editing/pasteboard/resources: Added.
+        * platform/gtk/editing/pasteboard/resources/TEMPLATE.html: Added.
+        * platform/gtk/editing/pasteboard/resources/middle-click-onpaste.js: Added.
+        (handlePaste):
+
 2009-09-03  Drew Wilson  <atwilson@google.com>
 
         Reviewed by Dave Levin.

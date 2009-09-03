@@ -1,3 +1,26 @@
+2009-09-03  Steve VanDeBogart  <vandebo@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Handle middle click in Chromium like QT
+        https://bugs.webkit.org/show_bug.cgi?id=28696
+
+        Tested by middle-click-onpaste.html.
+
+        * platform/Pasteboard.h:
+        * platform/chromium/ChromiumBridge.h:
+        * platform/chromium/ClipboardChromium.cpp:
+        (WebCore::ClipboardChromium::getData):
+        * platform/chromium/PasteboardChromium.cpp:
+        (WebCore::Pasteboard::Pasteboard):
+        (WebCore::Pasteboard::isSelectionMode):
+        (WebCore::Pasteboard::setSelectionMode):
+        (WebCore::Pasteboard::canSmartReplace):
+        (WebCore::Pasteboard::plainText):
+        (WebCore::Pasteboard::documentFragment):
+        * platform/chromium/PasteboardPrivate.h:
+        (WebCore::PasteboardPrivate::):
+
 2009-09-03  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.
