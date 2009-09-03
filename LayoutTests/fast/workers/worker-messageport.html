@@ -20,7 +20,7 @@ var channel = new MessageChannel();
 worker.postMessage("noport");
 worker.onmessage = function(evt) {
     log(evt.data);
-    worker.postMessage("port", channel.port1);
+    worker.postMessage("port", [channel.port1]);
     worker.onmessage = function(evt) {
         log(evt.data);
     }
@@ -45,12 +45,14 @@ channel.port2.start();
 function awaitPortFromWorker(evt)
 {
     if (evt.data == "port") {
-        if (!evt.messagePort) {
+        if (!evt.ports) {
             log("FAIL: Did not get port from worker");
+        } else if (evt.ports.length != 1) {
+            log("FAIL: Got the wrong number of ports from worker: " + evt.ports.length);
         } else {
             log("PASS: Got port from worker");
-            evt.messagePort.postMessage("ping");
-            evt.messagePort.onmessage = function(evt) {
+            evt.ports[0].postMessage("ping");
+            evt.ports[0].onmessage = function(evt) {
                 if (evt.data == "pong") {
                     log("PASS: Received final response from worker");
                 } else {
@@ -58,7 +60,7 @@ function awaitPortFromWorker(evt)
                 }
                 startSpamTest();
             }
-            evt.messagePort.start();
+            evt.ports[0].start();
         }
     } else {
         log(evt.data);
@@ -69,7 +71,7 @@ function startSpamTest()
 {
     var channel = new MessageChannel();
     worker.onmessage = function () { gotSpam(channel.port1); }
-    worker.postMessage("spam", channel.port2);
+    worker.postMessage("spam", [channel.port2]);
 }
 
 function gotSpam(port)

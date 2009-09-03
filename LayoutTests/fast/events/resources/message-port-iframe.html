@@ -14,10 +14,10 @@ function onMessage(evt) {
     if (evt.data == "ping")
         port.postMessage("pong");
     else if (evt.data == "newPort")
-        evt.messagePort.postMessage("yo");
+        evt.ports[0].postMessage("yo");
     else if (evt.data == "newConversation")
         if (evt.origin == "")
-            evt.messagePort.postMessage("hey");
+            evt.ports[0].postMessage("hey");
         else
             alert("Incorrect security origin in conversation: '" + evt.origin + "'.");
     else if (/alert.+/.test(evt.data))
@@ -33,7 +33,7 @@ function onMessage(evt) {
 }
 
 window.addEventListener("message", function(evt) {
-    port = evt.messagePort;
+    port = evt.ports[0];
     port.onmessage = onMessage;
     port.start();
 }, false);

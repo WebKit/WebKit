@@ -1,6 +1,6 @@
 onmessage = function(evt) {
     if (evt.data.indexOf("postBack ") == 0) {
-        if (!evt.messagePort) {
+        if (!evt.ports) {
             postMessage("FAILURE: No MessagePort with postBack command");
         }
         var strings = evt.data.split(" ", 2);
@@ -8,7 +8,7 @@ onmessage = function(evt) {
         postMessage("PASS: Received request for " + numItems + " messages");
         for (var i = 0 ; i < numItems ; i++) {
             var msg = "" + i;
-            evt.messagePort.postMessage(msg);
+            evt.ports[0].postMessage(msg);
         }
         postMessage("postBackDone");
     } else {

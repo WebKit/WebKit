@@ -43,6 +43,7 @@
 #include "RangeException.h"
 #include "ScriptController.h"
 #include "XMLHttpRequestException.h"
+#include <runtime/Error.h>
 #include <runtime/JSFunction.h>
 #include <runtime/PrototypeFunction.h>
 #include <wtf/StdLibExtras.h>
@@ -622,6 +623,29 @@ void cacheDOMConstructor(ExecState* exec, const ClassInfo* classInfo, JSObject* 
     JSDOMConstructorMap& constructors = static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->constructors();
     ASSERT(!constructors.contains(classInfo));
     constructors.set(classInfo, constructor);
+}
+
+JSC::JSObject* toJSSequence(ExecState* exec, JSValue value, unsigned& length)
+{
+    JSObject* object = value.getObject();
+    if (!object) {
+        throwError(exec, TypeError);
+        return 0;
+    }
+    JSValue lengthValue = object->get(exec, exec->propertyNames().length);
+    if (exec->hadException())
+        return 0;
+
+    if (lengthValue.isUndefinedOrNull()) {
+        throwError(exec, TypeError);
+        return 0;
+    }
+
+    length = lengthValue.toUInt32(exec);
+    if (exec->hadException())
+        return 0;
+
+    return object;
 }
 
 } // namespace WebCore

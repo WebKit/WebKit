@@ -18,7 +18,7 @@ var mainPort;
 function test()
 {
     var channel = new MessageChannel;
-    window.frames[0].postMessage("msg", channel.port2, "*");
+    window.frames[0].postMessage("msg", [channel.port2], "*");
     mainPort = channel.port1;
     mainPort.postMessage("ping");
     mainPort.onmessage = function(evt) {
@@ -33,7 +33,7 @@ function test()
 function test2()
 {
     var channel = new MessageChannel;
-    mainPort.postMessage("newPort", channel.port2);
+    mainPort.postMessage("newPort", [channel.port2]);
     channel.port1.onmessage = function(evt) {
         if (evt.data == "yo" && evt.origin == "")
             log("Posted port: SUCCESS");

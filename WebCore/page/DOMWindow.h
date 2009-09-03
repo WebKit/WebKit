@@ -208,7 +208,7 @@ namespace WebCore {
 #endif
 
         void postMessage(const String& message, const MessagePortArray*, const String& targetOrigin, DOMWindow* source, ExceptionCode&);
-        // FIXME: remove this when we update the JS bindings (bug #28460).
+        // FIXME: remove this when we update the ObjC bindings (bug #28774).
         void postMessage(const String& message, MessagePort*, const String& targetOrigin, DOMWindow* source, ExceptionCode&);
         void postMessageTimerFired(PostMessageTimer*);
 

@@ -23,12 +23,12 @@ var stopCloning = false;
 cloneChannel.port1.onmessage = cloneChannel.port2.onmessage = resendPort;
 cloneChannel.port1.start();
 cloneChannel.port2.start();
-cloneChannel.port1.postMessage("", channel.port2);
+cloneChannel.port1.postMessage("", [channel.port2]);
 
 // Create worker with other end of port and have it send messages back to us
 // while we clone our end of the port repeatedly.
 var worker = new Worker("resources/worker-cloneport.js");
-worker.postMessage("postBack " + numMessages, channel.port1);
+worker.postMessage("postBack " + numMessages, [channel.port1]);
 
 // Test posting back 50000 messages, make sure ordering is fine
 worker.onmessage = function(evt) {
@@ -44,9 +44,14 @@ worker.onmessage = function(evt) {
 var numClones = 0;
 function resendPort(evt)
 {
+    if (!evt.ports)
+        log("FAIL: evt.ports not set");
+    if (evt.ports.length != 1)
+        log("FAIL: ports.length = " + evt.ports.length);
+
     if (!stopCloning) {
         numClones++;
-        evt.target.postMessage("", evt.messagePort);
+        evt.target.postMessage("", evt.ports);
     } else {
         if (numClones < 1000) {
             // If we didn't clone at least 1000 times, then there's something amiss.
@@ -60,7 +65,7 @@ function resendPort(evt)
         var timer = setTimeout(function() {
             log("FAILURE: Received: " + itemNum + " events - expected: " + numMessages);
         }, 10);
-        evt.messagePort.onmessage = function(event) {
+        evt.ports[0].onmessage = function(event) {
             var done = false;
             if (event.data == itemNum) {
                 itemNum++;
@@ -77,8 +82,8 @@ function resendPort(evt)
                 gc();
                 setTimeout(reportDone, 100);  // Make sure no unexpected events come in.
             }
-       }
-        evt.messagePort.start();
+        }
+        evt.ports[0].start();
     }
 }
 

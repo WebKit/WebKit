@@ -45,6 +45,7 @@
 #include "JSLocation.h"
 #include "JSMessageChannelConstructor.h"
 #include "JSMessagePort.h"
+#include "JSMessagePortCustom.h"
 #include "JSOptionConstructor.h"
 
 #if ENABLE(SHARED_WORKERS)
@@ -859,14 +860,18 @@ JSValue JSDOMWindow::postMessage(ExecState* exec, const ArgList& args)
     if (exec->hadException())
         return jsUndefined();
 
-    MessagePort* messagePort = (args.size() == 2) ? 0 : toMessagePort(args.at(1));
+    MessagePortArray messagePorts;
+    if (args.size() > 2)
+        fillMessagePortArray(exec, args.at(1), messagePorts);
+    if (exec->hadException())
+        return jsUndefined();
 
     String targetOrigin = valueToStringWithUndefinedOrNullCheck(exec, args.at((args.size() == 2) ? 1 : 2));
     if (exec->hadException())
         return jsUndefined();
 
     ExceptionCode ec = 0;
-    window->postMessage(message, messagePort, targetOrigin, source, ec);
+    window->postMessage(message, &messagePorts, targetOrigin, source, ec);
     setDOMException(exec, ec);
 
     return jsUndefined();

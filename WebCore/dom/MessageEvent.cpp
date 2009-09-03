@@ -65,7 +65,7 @@ void MessageEvent::initMessageEvent(const AtomicString& type, bool canBubble, bo
     m_ports = ports;
 }
 
-// FIXME: remove this when we update the JS bindings (bug #28460).
+// FIXME: remove this when we update the ObjC bindings (bug #28774).
 MessagePort* MessageEvent::messagePort()
 {
     if (!m_ports)

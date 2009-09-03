@@ -1,26 +1,26 @@
 onmessage = function(evt) {
     if (evt.data == "port") {
-        if (evt.messagePort) {
+        if (evt.ports) {
             postMessage("PASS: Received message port");
-            evt.messagePort.onmessage = pingBack;
-            evt.messagePort.start();
+            evt.ports[0].onmessage = pingBack;
+            evt.ports[0].start();
         } else {
             postMessage("FAIL: Did not receive expected MessagePort");
         }
     } else if (evt.data == "noport") {
-        if (evt.messagePort) {
+        if (evt.ports) {
             postMessage("FAIL: Received message port");
         } else {
-            postMessage("PASS: evt.messagePort = null as expected");
+            postMessage("PASS: evt.ports = null as expected");
         }
     } else if (evt.data == "spam") {
         for (var i = 0 ; i < 1000 ; i++) {
-            evt.messagePort.postMessage(i);
+            evt.ports[0].postMessage(i);
         }
         postMessage("spamDone");
     } else if (evt.data == "getport") {
         var channel = new MessageChannel();
-        postMessage("port", channel.port1);
+        postMessage("port", [channel.port1]);
         channel.port2.onmessage = pingBack;
         channel.port2.start();
     } else {

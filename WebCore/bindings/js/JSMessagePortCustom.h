@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
- * Copyright (C) 2009 Apple, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -29,31 +28,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef JSMessagePortCustom_h
+#define JSMessagePortCustom_h
 
-#if ENABLE(WORKERS)
-
-#include "JSDedicatedWorkerContext.h"
-
-#include "JSDOMBinding.h"
-#include "JSMessagePortCustom.h"
-
-using namespace JSC;
+#include "MessagePort.h"
+#include <runtime/JSValue.h>
 
 namespace WebCore {
 
-void JSDedicatedWorkerContext::markChildren(MarkStack& markStack)
-{
-    Base::markChildren(markStack);
+    typedef int ExceptionCode;
 
-    markIfNotNull(markStack, impl()->onmessage());
+    class String;
+
+    // Helper function which pulls the values out of a JS sequence and into a MessagePortArray.
+    // Also validates the elements per sections 4.1.13 and 4.1.15 of the WebIDL spec and section 8.3.3 of the HTML5 spec.
+    // May generate an exception via the passed ExecState.
+    void fillMessagePortArray(JSC::ExecState*, JSC::JSValue, MessagePortArray&);
+
+    // Helper function to convert from JS postMessage arguments to WebCore postMessage arguments.
+    template <typename T>
+    inline JSC::JSValue handlePostMessage(JSC::ExecState* exec, const JSC::ArgList& args, T* impl)
+    {
+        String message = args.at(0).toString(exec);
+        MessagePortArray portArray;
+        fillMessagePortArray(exec, args.at(1), portArray);
+        if (exec->hadException())
+            return JSC::jsUndefined();
+
+        ExceptionCode ec = 0;
+        impl->postMessage(message, &portArray, ec);
+        setDOMException(exec, ec);
+        return JSC::jsUndefined();
+    }
+
 }
-
-JSC::JSValue JSDedicatedWorkerContext::postMessage(JSC::ExecState* exec, const JSC::ArgList& args)
-{
-    return handlePostMessage(exec, args, impl());
-}
-
-} // namespace WebCore
-
-#endif // ENABLE(WORKERS)
+#endif // JSMessagePortCustom_h

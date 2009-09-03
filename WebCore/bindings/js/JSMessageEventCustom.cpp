@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
- * Copyright (C) 2009 Apple, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -30,30 +29,51 @@
  */
 
 #include "config.h"
-
-#if ENABLE(WORKERS)
-
-#include "JSDedicatedWorkerContext.h"
+#include "JSMessageEvent.h"
 
 #include "JSDOMBinding.h"
+#include "JSDOMWindow.h"
+#include "JSEventTarget.h"
 #include "JSMessagePortCustom.h"
+#include "MessageEvent.h"
+#include <runtime/JSArray.h>
 
 using namespace JSC;
 
 namespace WebCore {
 
-void JSDedicatedWorkerContext::markChildren(MarkStack& markStack)
+JSValue JSMessageEvent::ports(ExecState* exec) const
 {
-    Base::markChildren(markStack);
+    MessagePortArray* ports = static_cast<MessageEvent*>(impl())->ports();
+    if (!ports || ports->isEmpty())
+        return jsNull();
 
-    markIfNotNull(markStack, impl()->onmessage());
+    MarkedArgumentBuffer list;
+    for (size_t i = 0; i < ports->size(); i++)
+        list.append(toJS(exec, globalObject(), (*ports)[i].get()));
+    return constructArray(exec, list);
 }
 
-JSC::JSValue JSDedicatedWorkerContext::postMessage(JSC::ExecState* exec, const JSC::ArgList& args)
+JSC::JSValue JSMessageEvent::initMessageEvent(JSC::ExecState* exec, const JSC::ArgList& args)
 {
-    return handlePostMessage(exec, args, impl());
+    const UString& typeArg = args.at(0).toString(exec);
+    bool canBubbleArg = args.at(1).toBoolean(exec);
+    bool cancelableArg = args.at(2).toBoolean(exec);
+    const UString& dataArg = args.at(3).toString(exec);
+    const UString& originArg = args.at(4).toString(exec);
+    const UString& lastEventIdArg = args.at(5).toString(exec);
+    DOMWindow* sourceArg = toDOMWindow(args.at(6));
+    OwnPtr<MessagePortArray> messagePorts;
+    if (!args.at(7).isUndefinedOrNull()) {
+        messagePorts = new MessagePortArray();
+        fillMessagePortArray(exec, args.at(7), *messagePorts);
+        if (exec->hadException())
+            return jsUndefined();
+    }
+
+    MessageEvent* event = static_cast<MessageEvent*>(this->impl());
+    event->initMessageEvent(typeArg, canBubbleArg, cancelableArg, dataArg, originArg, lastEventIdArg, sourceArg, messagePorts.release());
+    return jsUndefined();
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(WORKERS)

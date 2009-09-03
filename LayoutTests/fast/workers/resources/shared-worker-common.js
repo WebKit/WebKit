@@ -5,7 +5,7 @@ function generateError()
 }
 
 onconnect = function(event) {
-    event.messagePort.onmessage = function(evt) { handleMessage(evt, event.messagePort); };
+    event.ports[0].onmessage = function(evt) { handleMessage(evt, event.ports[0]); };
 };
 
 function gc()

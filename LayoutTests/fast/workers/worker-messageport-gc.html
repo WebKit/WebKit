@@ -16,7 +16,7 @@ if (window.layoutTestController) {
 // Test that workers stay alive even though they are only reachable via message ports.
 var worker = new Worker("resources/worker-messageport.js");
 var channel = new MessageChannel();
-worker.postMessage("port", channel.port1);
+worker.postMessage("port", [channel.port1]);
 worker = 0;
 
 channel.port2.postMessage("ping");

@@ -396,7 +396,9 @@ webcore_sources += \
 	WebCore/bindings/js/JSMessageChannelConstructor.cpp \
 	WebCore/bindings/js/JSMessageChannelConstructor.h \
 	WebCore/bindings/js/JSMessageChannelCustom.cpp \
+	WebCore/bindings/js/JSMessageEventCustom.cpp \
 	WebCore/bindings/js/JSMessagePortCustom.cpp \
+	WebCore/bindings/js/JSMessagePortCustom.h \
 	WebCore/bindings/js/JSMimeTypeArrayCustom.cpp \
 	WebCore/bindings/js/JSNamedNodeMapCustom.cpp \
 	WebCore/bindings/js/JSNamedNodesCollection.cpp \

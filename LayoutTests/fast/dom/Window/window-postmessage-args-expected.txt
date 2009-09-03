@@ -1,12 +1,16 @@
-Test that the second argument of window.postMessage is ignored if it is not a message port. You should see messages '1' through '6', followed by 'done', received below.
+Test that the second argument of window.postMessage is ignored or triggers an error if it is not a message port. You should see PASS message '1' through '7', followed by 'done', with messages 4-7 received below.
 
-Note that the HTML5 spec implies that an exception should be raised instead, so this test will need updating once that new behavior is implemented.
-
-Received message '1'
-Received message '2'
-Received message '3'
+PASS: Posting message ('1', 1): threw exception TypeError: Type error
+PASS: Posting message ('2', ): threw exception TypeError: Type error
+PASS: Posting message ('3', [object Object]): threw exception TypeError: Type error
+PASS: Posting message ('4', [object DOMWindow]) did not throw an exception
+PASS: Posting message ('5', null) did not throw an exception
+PASS: Posting message ('6', undefined) did not throw an exception
+PASS: Posting message ('7', [object MessagePort],[object MessagePort]) did not throw an exception
+PASS: Posting message ('done', *) did not throw an exception
 Received message '4'
 Received message '5'
 Received message '6'
+Received message '7' with 2 ports.
 Received message 'done'
 

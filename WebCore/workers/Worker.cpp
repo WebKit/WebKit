@@ -69,7 +69,7 @@ Worker::~Worker()
     m_contextProxy->workerObjectDestroyed();
 }
 
-// FIXME: remove this when we update the JS bindings (bug #28460).
+// FIXME: remove this when we update the ObjC bindings (bug #28774).
 void Worker::postMessage(const String& message, MessagePort* port, ExceptionCode& ec)
 {
     MessagePortArray ports;

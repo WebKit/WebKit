@@ -1,3 +1,69 @@
+2009-09-03  Drew Wilson  <atwilson@google.com>
+
+        Reviewed by Sam Weinig.
+
+        Need to update JS bindings and IDL files to support multiple message ports in postMessage()
+        https://bugs.webkit.org/show_bug.cgi?id=28460
+
+        Added new toJSSequence() API which validates that a JSValue meets the WebIDL criteria for a sequence.
+
+        Tests: fast/events/message-port-multi.html
+               fast/workers/worker-context-multi-port.html
+               fast/workers/worker-multi-port.html
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        Added JSMessagePortCustom.h and JSMessageEventCustom.cpp.
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::toJSSequence):
+        Added toJSSequence() API to do validation on sequence-like objects per WebIDL.
+        * bindings/js/JSDOMBinding.h:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::postMessage):
+        Added custom handler for postMessage() that handles being passed MessagePortArrays.
+        * bindings/js/JSDedicatedWorkerContextCustom.cpp:
+        (WebCore::JSDedicatedWorkerContext::postMessage):
+        Added custom handler for postMessage() that handles being passed MessagePortArrays.
+        * bindings/js/JSMessageEventCustom.cpp: Added.
+        (WebCore::JSMessageEvent::ports):
+        Added custom ports() getter that converts from MessagePortArray to JSArray.
+        (WebCore::JSMessageEvent::initMessageEvent):
+        Added support for passing a MessagePortArray.
+        * bindings/js/JSMessagePortCustom.cpp:
+        (WebCore::JSMessagePort::postMessage):
+        Added custom handler for postMessage() that handles being passed MessagePortArray.
+        (WebCore::fillMessagePortArray):
+        New helper routine that validates/converts from a JS sequence o a WebCore::MessagePortArray.
+        * bindings/js/JSMessagePortCustom.h: Added.
+        * bindings/js/JSWorkerCustom.cpp:
+        (WebCore::JSWorker::postMessage):
+        Added custom handler for postMessage() that handles being passed MessagePortArray.
+        * dom/MessageEvent.cpp:
+        * dom/MessageEvent.h:
+        (WebCore::MessageEvent::ports):
+        Changed ports() to return a MessagePortArray* since this value can be null.
+        * dom/MessageEvent.idl:
+        Updated IDL to match HTML5 spec (now accepts MessagePortArrays instead of a solitary MessagePort).
+        * dom/MessagePort.cpp:
+        * dom/MessagePort.h:
+        * dom/MessagePort.idl:
+        Updated IDL to match HTML5 spec (postMessage() now accepts MessagePortArrays instead of a solitary MessagePort).
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+        Updated IDL to match HTML5 spec (postMessage() now accepts MessagePortArrays instead of a solitary MessagePort).
+        * workers/DedicatedWorkerContext.cpp:
+        * workers/DedicatedWorkerContext.h:
+        * workers/DedicatedWorkerContext.idl:
+        Updated IDL to match HTML5 spec (postMessage() now accepts MessagePortArrays instead of a solitary MessagePort).
+        * workers/Worker.cpp:
+        * workers/Worker.h:
+        * workers/Worker.idl:
+        Updated IDL to match HTML5 spec (postMessage() now accepts MessagePortArrays instead of a solitary MessagePort).
+
 2009-09-03  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

@@ -29123,7 +29123,15 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\JSMessageEventCustom.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\JSMessagePortCustom.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSMessagePortCustom.h"
 					>
 				</File>
 				<File

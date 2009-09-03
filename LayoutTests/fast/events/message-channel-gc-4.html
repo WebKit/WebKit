@@ -28,10 +28,10 @@ function test1()
     var channel = new MessageChannel;
     var channel2 = new MessageChannel;
     channel.port1.postMessage("msg1");
-    channel2.port1.postMessage("", channel.port1);
-    channel2.port2.postMessage("", channel.port2);
+    channel2.port1.postMessage("", [channel.port1]);
+    channel2.port2.postMessage("", [channel.port2]);
     channel2.port2.onmessage = channel2.port1.onmessage = function(evt) {
-        evt.messagePort.onmessage = function(event) {
+        evt.ports[0].onmessage = function(event) {
             if (event.data == "msg1") {
                 log("PASS: Received message to cloned port.");
                 this.postMessage("msg2");
@@ -45,7 +45,7 @@ function test1()
                 log("FAIL: Received unknown message: " + event.data);
             }
         }
-        evt.messagePort = 0;
+        evt.ports[0] = 0;
     }
     channel = 0;
     channel2 = 0;

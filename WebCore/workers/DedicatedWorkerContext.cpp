@@ -46,7 +46,7 @@ DedicatedWorkerContext::DedicatedWorkerContext(const KURL& url, const String& us
 {
 }
 
-// FIXME: remove this when we update the JS bindings (bug #28460).
+// FIXME: remove this when we update the ObjC bindings (bug #28774).
 void DedicatedWorkerContext::postMessage(const String& message, MessagePort* port, ExceptionCode& ec)
 {
     MessagePortArray ports;

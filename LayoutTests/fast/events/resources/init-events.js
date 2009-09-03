@@ -63,7 +63,10 @@ shouldBe("testInitEvent('Message', '\"a\", false, false, \"b\", \"c\", \"d\", wi
 shouldBe("testInitEvent('Message', '\"a\", false, false, \"b\", \"c\", null, window, null').lastEventId", "'null'");
 shouldBe("testInitEvent('Message', '\"a\", false, false, \"b\", \"c\", \"d\", window, null').source", "window");
 shouldBe("testInitEvent('Message', '\"a\", false, false, \"b\", \"c\", \"d\", null, null').source", "null");
-// FIXME: Not sure how to make a MessagePort to test messagePort argument.
+var channel = new MessageChannel;
+var channelArray = [channel.port1, channel.port2];
+shouldBe("testInitEvent('Message', '\"a\", false, false, \"b\", \"c\", \"d\", null, channelArray').ports[0]", "channel.port1");
+shouldBe("testInitEvent('Message', '\"a\", false, false, \"b\", \"c\", \"d\", null, channelArray').ports[1]", "channel.port2");
 
 shouldBe("testInitEvent('Mouse', '\"a\", false, false, window, 1001, 1002, 1003, 1004, 1005, false, false, false, false, 1006, null').type", "'a'");
 shouldBe("testInitEvent('Mouse', 'null, false, false, window, 1001, 1002, 1003, 1004, 1005, false, false, false, false, 1006, null').type", "'null'");

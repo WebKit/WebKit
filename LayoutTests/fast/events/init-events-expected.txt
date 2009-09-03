@@ -52,6 +52,8 @@ PASS testInitEvent('Message', '"a", false, false, "b", "c", "d", window, null').
 PASS testInitEvent('Message', '"a", false, false, "b", "c", null, window, null').lastEventId is 'null'
 PASS testInitEvent('Message', '"a", false, false, "b", "c", "d", window, null').source is window
 PASS testInitEvent('Message', '"a", false, false, "b", "c", "d", null, null').source is null
+PASS testInitEvent('Message', '"a", false, false, "b", "c", "d", null, channelArray').ports[0] is channel.port1
+PASS testInitEvent('Message', '"a", false, false, "b", "c", "d", null, channelArray').ports[1] is channel.port2
 PASS testInitEvent('Mouse', '"a", false, false, window, 1001, 1002, 1003, 1004, 1005, false, false, false, false, 1006, null').type is 'a'
 PASS testInitEvent('Mouse', 'null, false, false, window, 1001, 1002, 1003, 1004, 1005, false, false, false, false, 1006, null').type is 'null'
 PASS testInitEvent('Mouse', '"a", false, false, window, 1001, 1002, 1003, 1004, 1005, false, false, false, false, 1006, null').bubbles is false

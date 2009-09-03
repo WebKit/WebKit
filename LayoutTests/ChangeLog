@@ -1,3 +1,73 @@
+2009-09-03  Drew Wilson  <atwilson@google.com>
+
+        Reviewed by Sam Weinig.
+
+        Need to update JS bindings and IDL files to support multiple message ports in postMessage()
+        https://bugs.webkit.org/show_bug.cgi?id=28460
+
+        Updated layout tests to match new postMessage() and MessageEvent APIs.
+
+        Added new layout tests to test sending/receiving multiple ports.
+
+        * fast/dom/Window/window-postmessage-args-expected.txt:
+        * fast/dom/Window/window-postmessage-args.html:
+        Updated to match new postMessage API.
+        * fast/events/init-events-expected.txt:
+        * fast/events/message-channel-gc-4.html:
+        Updated to match new postMessage API.
+        * fast/events/message-port-clone.html:
+        Updated to match new postMessage API.
+        * fast/events/message-port-deleted-document.html:
+        Updated to match new postMessage API.
+        * fast/events/message-port-deleted-frame.html:
+        Updated to match new postMessage API.
+        * fast/events/message-port-inactive-document.html:
+        Updated to match new postMessage API.
+        * fast/events/message-port-multi-expected.txt: Added.
+        * fast/events/message-port-multi.html: Added.
+        Added tests for various cases of sending multiple ports.
+        * fast/events/message-port.html:
+        Updated to match new postMessage API.
+        * fast/events/resources/init-events.js:
+        Added tests for sending ports to initMessageEvent()
+        * fast/events/resources/message-port-iframe.html:
+        * fast/events/resources/message-port-multi.js: Added.
+        Added tests for various cases of sending multiple ports.
+        * fast/workers/resources/shared-worker-common.js:
+        (onconnect):
+        Updated to reflect new MessageEvent API.
+        * fast/workers/resources/shared-worker-script-error.js:
+        (onconnect):
+        Updated to reflect new MessageEvent API.
+        * fast/workers/resources/worker-cloneport.js:
+        (onmessage):
+        Updated to reflect new MessageEvent API.
+        * fast/workers/resources/worker-context-multi-port.js: Added.
+        (worker.onmessage):
+        Added tests for various cases of sending multiple ports.
+        * fast/workers/resources/worker-context-thread-multi-port.js: Added.
+        Added tests for various cases of sending multiple ports.
+        * fast/workers/resources/worker-messageport.js:
+        (onmessage):
+        Updated to reflect new MessageEvent API.
+        * fast/workers/resources/worker-multi-port.js: Added.
+        (worker.onmessage):
+        Added tests for various cases of sending multiple ports.
+        * fast/workers/resources/worker-thread-multi-port.js: Added.
+        (onmessage):
+        Worker-thread side of multiple port layout test.
+        (testPassed):
+        (testFailed):
+        * fast/workers/worker-cloneport.html:
+        * fast/workers/worker-context-multi-port-expected.txt: Added.
+        * fast/workers/worker-context-multi-port.html: Added.
+        Added tests for sending multiple ports from the worker thread.
+        * fast/workers/worker-messageport-expected.txt:
+        * fast/workers/worker-messageport-gc.html:
+        * fast/workers/worker-messageport.html:
+        * fast/workers/worker-multi-port-expected.txt: Added.
+        * fast/workers/worker-multi-port.html: Added.
+
 2009-09-03  Renata Hodovan  <hodovan.renata@stud.u-szeged.hu>
 
         Reviewed by Ariya Hidayat.

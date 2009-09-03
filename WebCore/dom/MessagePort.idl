@@ -34,7 +34,7 @@ module events {
 // We need to have something as an ObjC binding, because MessagePort is used in MessageEvent, which already has one,
 // but we don't want to actually expose the API while it is in flux.
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-        void postMessage(in DOMString message, in [Optional] MessagePort messagePort)
+        [Custom] void postMessage(in DOMString message, in [Optional] Array messagePorts)
             raises(DOMException);
         void start();
         void close();

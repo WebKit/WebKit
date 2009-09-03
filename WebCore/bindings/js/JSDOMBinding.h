@@ -276,6 +276,9 @@ namespace WebCore {
         return toJS(exec, globalObject, ptr.get());
     }
 
+    // Validates that the passed object is a sequence type per section 4.1.13 of the WebIDL spec.
+    JSC::JSObject* toJSSequence(JSC::ExecState*, JSC::JSValue, unsigned&);
+
     bool checkNodeSecurity(JSC::ExecState*, Node*);
 
     // Helpers for Window, History, and Location classes to implement cross-domain policy.
