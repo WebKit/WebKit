@@ -1,0 +1,7 @@
+frame "<!--framePath //<!--frame0-->/<!--frame0-->-->" - has 1 onunload handler(s)
+ALERT: Subframe onload
+ALERT: Subframe onpageshow
+ALERT: Main frame window.onpagehide called
+ALERT: Subframe onpagehide
+ALERT: Subframe onunload
+

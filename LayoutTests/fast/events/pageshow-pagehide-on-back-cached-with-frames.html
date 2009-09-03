@@ -1,0 +1,43 @@
+<html>
+<body>
+Test pageshow/pagehide event behavior when navigating away from a page with frames, putting the page in the page cache, then back to it.
+<pre id="log"></pre>
+<iframe src="resources/pageshow-pagehide-subframe-cachable.html"></iframe>
+</body>
+<script>
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+    layoutTestController.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+}
+
+function log(message)
+{
+    var log = document.getElementById("log");
+    log.innerHTML += message + "\n";
+}
+
+log("***Top level frame being parsed for the initial page load***");
+
+window.onload = function(evt) {
+    log("Main frame window.onload");
+}
+
+window.onpageshow = function(evt) {
+    log("Main frame window.onpageshow" + ", target = " + evt.target + ", persisted = " + evt.persisted);
+    if (evt.persisted) {
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    } else {
+        log("***Navigating top-level frame to a page that will immediately navigate back to this one***");
+        window.location.href = "data:text/html,<script>history.back();</scr" + "ipt>";
+    }
+}
+
+window.onpagehide = function(evt) {
+    log("Main frame window.onpagehide" + ", target = " + evt.target + ", persisted = " + evt.persisted);
+}
+
+</script>
+</html>

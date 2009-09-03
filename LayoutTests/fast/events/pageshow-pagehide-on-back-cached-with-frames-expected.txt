@@ -1,0 +1,16 @@
+Test pageshow/pagehide event behavior when navigating away from a page with frames, putting the page in the page cache, then back to it.
+***Top level frame being parsed for the initial page load***
+Subsubframe window.onload
+Subsubframe window.onpageshow, target = [object HTMLDocument], persisted = false
+Subframe window.onload
+Subframe window.onpageshow, target = [object HTMLDocument], persisted = false
+Main frame window.onload
+Main frame window.onpageshow, target = [object HTMLDocument], persisted = false
+***Navigating top-level frame to a page that will immediately navigate back to this one***
+Main frame window.onpagehide, target = [object HTMLDocument], persisted = true
+Subframe window.onpagehide, target = [object HTMLDocument], persisted = true
+Subsubframe window.onpagehide, target = [object HTMLDocument], persisted = true
+Subsubframe window.onpageshow, target = [object HTMLDocument], persisted = true
+Subframe window.onpageshow, target = [object HTMLDocument], persisted = true
+Main frame window.onpageshow, target = [object HTMLDocument], persisted = true
+

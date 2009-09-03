@@ -1,3 +1,17 @@
+2009-09-03  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Page Cache should support pages with Frames.
+        https://bugs.webkit.org/show_bug.cgi?id=13631
+
+        Tests: fast/events/pageshow-pagehide-on-back-cached-with-frames.html
+               fast/loader/frames-with-unload-handlers-in-page-cache.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::canCachePageContainingThisFrame):
+        (WebCore::FrameLoader::logCanCacheFrameDecision):
+
 2009-09-03  Steve VanDeBogart  <vandebo@chromium.org>
 
         Reviewed by Eric Seidel.

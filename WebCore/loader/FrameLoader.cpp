@@ -1818,7 +1818,6 @@ bool FrameLoader::canCachePageContainingThisFrame()
             
     return m_documentLoader
         && m_documentLoader->mainDocumentError().isNull()
-        && !m_frame->tree()->childCount()
         // FIXME: If we ever change this so that frames with plug-ins will be cached,
         // we need to make sure that we don't cache frames that have outstanding NPObjects
         // (objects created by the plug-in). Since there is no way to pause/resume a Netscape plug-in,
@@ -1967,8 +1966,6 @@ bool FrameLoader::logCanCacheFrameDecision(int indentLevel)
         }
         if (!m_documentLoader->mainDocumentError().isNull())
             { PCLOG("   -Main document has an error"); cannotCache = true; }
-        if (m_frame->tree()->childCount())
-            { PCLOG("   -Frame has child frames"); cannotCache = true; }
         if (m_containsPlugIns)
             { PCLOG("   -Frame contains plugins"); cannotCache = true; }
         if (m_URL.protocolIs("https"))

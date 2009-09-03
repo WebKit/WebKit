@@ -1,3 +1,20 @@
+2009-09-03  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Page Cache should support pages with Frames.
+        https://bugs.webkit.org/show_bug.cgi?id=13631
+
+        * fast/events/pageshow-pagehide-on-back-cached-with-frames-expected.txt: Added.
+        * fast/events/pageshow-pagehide-on-back-cached-with-frames.html: Added.
+        * fast/events/resources/pageshow-pagehide-subframe-cachable.html: Added.
+        * fast/events/resources/pageshow-pagehide-subsubframe-cachable.html: Added.
+        * fast/loader/frames-with-unload-handlers-in-page-cache-expected.txt: Added.
+        * fast/loader/frames-with-unload-handlers-in-page-cache.html: Added.
+        * fast/loader/resources/notify-done.html: Added.
+        * fast/loader/resources/subframe-with-subsubframe-with-unload-handler.html: Added.
+        * fast/loader/resources/subframe-with-unload-handler.html: Added.
+
 2009-09-03  Steve VanDeBogart  <vandebo@chromium.org>
 
         Reviewed by Eric Seidel.
