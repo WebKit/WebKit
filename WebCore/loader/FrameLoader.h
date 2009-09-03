@@ -241,6 +241,7 @@ namespace WebCore {
 
         void checkLoadComplete();
         void detachFromParent();
+        void detachViewsAndDocumentLoader();
 
         void addExtraFieldsToSubresourceRequest(ResourceRequest&);
         void addExtraFieldsToMainResourceRequest(ResourceRequest&);

@@ -97,6 +97,7 @@ namespace WebCore {
         void init();
 
         Page* page() const;
+        void detachFromPage();
         HTMLFrameOwnerElement* ownerElement() const;
 
         void pageDestroyed();

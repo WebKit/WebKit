@@ -980,8 +980,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 {
     // FIXME: this can fail if the dataSource is nil, which happens when the WebView is tearing down from the window closing.
     WebHTMLView *view = (WebHTMLView *)[[[[_private->dataSource _webView] mainFrame] frameView] documentView];
-    ASSERT(view);
-    ASSERT([view isKindOfClass:[WebHTMLView class]]);
+    ASSERT(!view || [view isKindOfClass:[WebHTMLView class]]);
     return view;
 }
 

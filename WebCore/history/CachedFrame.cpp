@@ -89,11 +89,9 @@ void CachedFrameBase::restore()
     // cached page.
     frame->script()->updatePlatformScriptObjects();
 
-    // Put the first-level children of the main frame back in the FrameTree.
-    if (m_isMainFrame) {
-        for (unsigned i = 0; i < m_childFrames.size(); ++i)
-            frame->tree()->appendChild(m_childFrames[i]->view()->frame());
-    }
+    // Reconstruct the FrameTree
+    for (unsigned i = 0; i < m_childFrames.size(); ++i)
+        frame->tree()->appendChild(m_childFrames[i]->view()->frame());
 
     // Open the child CachedFrames in their respective FrameLoaders.
     for (unsigned i = 0; i < m_childFrames.size(); ++i)
@@ -129,11 +127,12 @@ CachedFrame::CachedFrame(Frame* frame)
     for (Frame* child = frame->tree()->firstChild(); child; child = child->tree()->nextSibling())
         m_childFrames.append(CachedFrame::create(child));
 
-    // Chop the first-level children of the main frame out of the FrameTree, to be restored later.
-    if (m_isMainFrame) {
-        for (unsigned i = 0; i < m_childFrames.size(); ++i)
-            frame->tree()->removeChild(m_childFrames[i]->view()->frame());
-    }
+    // Deconstruct the FrameTree, to restore it later.
+    // We do this for two reasons:
+    // 1 - We reuse the main frame, so when it navigates to a new page load it needs to start with a blank FrameTree.
+    // 2 - It's much easier to destroy a CachedFrame while it resides in the PageCache if it is disconnected from its parent.
+    for (unsigned i = 0; i < m_childFrames.size(); ++i)
+        frame->tree()->removeChild(m_childFrames[i]->view()->frame());
 
 #ifndef NDEBUG
     if (m_isMainFrame)
@@ -184,6 +183,11 @@ void CachedFrame::destroy()
     ASSERT(m_view);
     ASSERT(m_document->frame() == m_view->frame());
 
+    if (!m_isMainFrame) {
+        m_view->frame()->detachFromPage();
+        m_view->frame()->loader()->detachViewsAndDocumentLoader();
+    }
+    
     for (int i = m_childFrames.size() - 1; i >= 0; --i)
         m_childFrames[i]->destroy();
 

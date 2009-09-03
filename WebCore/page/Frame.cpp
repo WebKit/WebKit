@@ -1556,6 +1556,11 @@ Page* Frame::page() const
     return m_page;
 }
 
+void Frame::detachFromPage()
+{
+    m_page = 0;
+}
+
 EventHandler* Frame::eventHandler() const
 {
     return &m_eventHandler;
@@ -1575,7 +1580,7 @@ void Frame::pageDestroyed()
     script()->clearScriptObjects();
     script()->updatePlatformScriptObjects();
 
-    m_page = 0;
+    detachFromPage();
 }
 
 void Frame::disconnectOwnerElement()

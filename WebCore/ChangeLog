@@ -1,3 +1,39 @@
+2009-09-02  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        More partial work towards "Page Cache should support pages with Frames"
+        https://bugs.webkit.org/show_bug.cgi?id=13631
+
+        - More CachedFrame destruction work.
+        - Including related Frame and FrameLoader changes and cleanup.
+
+        No new tests. (No change in behavior, current tests pass).
+
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrameBase::restore): Rebuild up the whole FrameTree when restoring.
+        (WebCore::CachedFrame::CachedFrame): Tear down the entire FrameTree when caching.
+        (WebCore::CachedFrame::destroy): For child frames that are being destroyed while in
+          the PageCache, do lightweight cleanup to:
+          A - Prevent referring to a stale Page object.
+          B - Prevent World Leaks of WebKit objects.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::stopAllLoaders): stopAllLoaders() should never be called on Frames that are
+          in the PageCache. ASSERT that fact.
+        (WebCore::FrameLoader::open): Remove a bogus release-build workaround, as the comment right above it
+          explains it is not effective, and it'd be better to see the crash locally instead of downstream.
+        (WebCore::FrameLoader::closeAndRemoveChild): Make sure the owner element has a page pointer before
+          referencing it.
+        (WebCore::FrameLoader::detachFromParent): Use the new detachViewsAndDocumentLoader() call
+        (WebCore::FrameLoader::detachViewsAndDocumentLoader): Does lightweight cleanup of client (WebKit) objects.
+        * loader/FrameLoader.h:
+
+        * page/Frame.cpp:
+        (WebCore::Frame::detachFromPage): Simply clear the Page pointer without doing any other work.
+        (WebCore::Frame::pageDestroyed): Use the new detachFromPage().
+        * page/Frame.h:
+
 2009-09-02  Jungshik Shin  <jshin@chromium.org>
 
         Reviewed by Dimitri Glazkov

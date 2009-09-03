@@ -1,3 +1,14 @@
+2009-09-02  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        More partial work towards "Page Cache should support pages with Frames"
+        https://bugs.webkit.org/show_bug.cgi?id=13631
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _topHTMLView]): Rework the ASSERT in this method to reflect the
+          reality of calling this method for pages currently in the PageCache.
+
 2009-08-31  Dimitri Glazkov  <dglazkov@chromium.org>
 
     Reverting http://trac.webkit.org/changeset/47904, because it caused
