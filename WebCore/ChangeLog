@@ -1,3 +1,58 @@
+2009-09-03  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+
+        [wx] Frames support
+        https://bugs.webkit.org/show_bug.cgi?id=19041
+
+        * page/wx/EventHandlerWx.cpp:
+        (WebCore::EventHandler::passMousePressEventToSubframe):
+        (WebCore::EventHandler::passMouseMoveEventToSubframe):
+        (WebCore::EventHandler::passMouseReleaseEventToSubframe):
+        (WebCore::EventHandler::passWheelEventToWidget):
+        (WebCore::EventHandler::tabsToAllControls):
+        (WebCore::EventHandler::passSubframeEventToSubframe):
+        (WebCore::EventHandler::passMouseDownEventToWidget):
+        * platform/wx/RenderThemeWx.cpp:
+        (WebCore::nativeWindowForRenderObject):
+        (WebCore::RenderThemeWx::paintButton):
+        (WebCore::RenderThemeWx::paintTextField):
+        (WebCore::RenderThemeWx::paintMenuList):
+        (WebCore::RenderThemeWx::paintMenuListButton):
+        * platform/wx/ScrollbarThemeWx.cpp: Added.
+        (WebCore::ScrollbarTheme::nativeTheme):
+        (WebCore::ScrollbarThemeWx::~ScrollbarThemeWx):
+        (WebCore::ScrollbarThemeWx::scrollbarThickness):
+        (WebCore::ScrollbarThemeWx::hasThumb):
+        (WebCore::ScrollbarThemeWx::buttonSize):
+        (WebCore::ScrollbarThemeWx::backButtonRect):
+        (WebCore::ScrollbarThemeWx::forwardButtonRect):
+        (WebCore::ScrollbarThemeWx::trackRect):
+        (WebCore::ScrollbarThemeWx::paintScrollCorner):
+        (WebCore::ScrollbarThemeWx::paint):
+        * platform/wx/ScrollbarThemeWx.h: Added.
+        (WebCore::ScrollbarThemeWx::hasButtons):
+        * platform/wx/TemporaryLinkStubs.cpp:
+        * platform/wx/wxcode/gtk/scrollbar_render.cpp: Added.
+        (wxStyleForPart):
+        (GetButtonWidget):
+        (wxGetGdkWindowForDC):
+        (wxRenderer_DrawScrollbar):
+        * platform/wx/wxcode/mac/carbon/scrollbar_render.cpp: Added.
+        (wxScrollbarPartToHIPressedState):
+        (wxRenderer_DrawScrollbar):
+        * platform/wx/wxcode/scrollbar_render.h: Added.
+        (calcThumbStartAndLength):
+        * platform/wx/wxcode/win/non-kerned-drawing.cpp:
+        (WebCore::drawTextWithSpacing):
+        * platform/wx/wxcode/win/scrollbar_render.cpp: Added.
+        (GraphicsHDC::GraphicsHDC):
+        (GraphicsHDC::~GraphicsHDC):
+        (GraphicsHDC::operator HDC):
+        (getTSStateForPart):
+        (wxRenderer_DrawScrollbar):
+        * webcore-wx.bkl:
+
 2009-09-03  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Simon Hausmann.

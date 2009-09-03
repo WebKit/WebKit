@@ -1,3 +1,43 @@
+2009-09-03  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+
+        [wx] Frames support
+        https://bugs.webkit.org/show_bug.cgi?id=19041
+
+        * WebFrame.cpp:
+        (wxWebFrame::wxWebFrame):
+        (wxWebFrame::~wxWebFrame):
+        (wxWebFrame::GetFrame):
+        * WebFrame.h:
+        * WebFramePrivate.h:
+        * WebKitSupport/ChromeClientWx.cpp:
+        (WebCore::ChromeClientWx::platformWindow):
+        (WebCore::ChromeClientWx::scroll):
+        * WebKitSupport/EditorClientWx.cpp:
+        (WebCore::EditorClientWx::isEditable):
+        (WebCore::EditorClientWx::registerCommandForUndo):
+        (WebCore::EditorClientWx::registerCommandForRedo):
+        (WebCore::EditorClientWx::clearUndoRedoOperations):
+        (WebCore::EditorClientWx::canUndo):
+        (WebCore::EditorClientWx::canRedo):
+        (WebCore::EditorClientWx::undo):
+        (WebCore::EditorClientWx::redo):
+        * WebKitSupport/FrameLoaderClientWx.cpp:
+        (WebCore::FrameLoaderClientWx::FrameLoaderClientWx):
+        (WebCore::FrameLoaderClientWx::setFrame):
+        (WebCore::FrameLoaderClientWx::dispatchWillSubmitForm):
+        (WebCore::FrameLoaderClientWx::frameLoaderDestroyed):
+        (WebCore::FrameLoaderClientWx::committedLoad):
+        (WebCore::FrameLoaderClientWx::dispatchDecidePolicyForMIMEType):
+        (WebCore::FrameLoaderClientWx::dispatchDecidePolicyForNewWindowAction):
+        (WebCore::FrameLoaderClientWx::dispatchDecidePolicyForNavigationAction):
+        (WebCore::FrameLoaderClientWx::createFrame):
+        (WebCore::FrameLoaderClientWx::transitionToCommittedForNewPage):
+        * WebKitSupport/FrameLoaderClientWx.h:
+        * WebView.h:
+        * WebViewPrivate.h:
+
 2009-09-02  Kevin Ollivier  <kevino@theolliviers.com>
 
         waf build fixes for Windows/MSVC.

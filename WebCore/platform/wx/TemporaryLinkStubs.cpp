@@ -113,8 +113,6 @@ void GraphicsContext::setAlpha(float) { notImplemented(); }
 
 void Image::drawPattern(GraphicsContext*, const FloatRect& srcRect, const TransformationMatrix& patternTransform, const FloatPoint& phase, CompositeOperator, const FloatRect& destRect) { notImplemented(); } 
 
-ScrollbarTheme* ScrollbarTheme::nativeTheme() { notImplemented(); static ScrollbarTheme theme; return &theme; }
-
 String FileChooser::basenameForWidth(const Font&, int width) const { notImplemented(); return String(); }
 
 Icon::~Icon() { }
@@ -125,11 +123,6 @@ void Icon::paint(GraphicsContext*, const IntRect&) { notImplemented(); }
 void Editor::showColorPanel() { notImplemented(); }
 void Editor::showFontPanel() { notImplemented(); }
 void Editor::showStylesPanel() { notImplemented(); }
-
-bool EventHandler::tabsToAllControls(KeyboardEvent* event) const { notImplemented(); return false; }
-bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults&, Frame* subframe, HitTestResult*) { notImplemented(); return false; }
-bool EventHandler::passMouseDownEventToWidget(Widget*) { notImplemented(); return false; }
-bool EventHandler::passWheelEventToWidget(PlatformWheelEvent&, Widget*) { notImplemented(); return false; }
 
 void SearchPopupMenu::saveRecentSearches(const AtomicString& name, const Vector<String>& searchItems) { notImplemented(); }
 void SearchPopupMenu::loadRecentSearches(const AtomicString& name, Vector<String>& searchItems) { notImplemented(); }

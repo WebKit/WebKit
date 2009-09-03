@@ -32,6 +32,7 @@
 #include "FrameView.h"
 #include "KeyboardEvent.h"
 #include "MouseEventWithHitTestResults.h"
+#include "NotImplemented.h"
 #include "Page.h"
 #include "PlatformKeyboardEvent.h"
 #include "RenderWidget.h"
@@ -43,17 +44,20 @@ const double EventHandler::TextDragDelay = 0.0;
 
 bool EventHandler::passMousePressEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe)
 {
-    return passSubframeEventToSubframe(mev, subframe);
+    subframe->eventHandler()->handleMousePressEvent(mev.event());
+    return true;
 }
 
 bool EventHandler::passMouseMoveEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe, WebCore::HitTestResult* hittest)
 {
-    return passSubframeEventToSubframe(mev, subframe);
+    subframe->eventHandler()->handleMouseMoveEvent(mev.event(), hittest);
+    return true;
 }
 
 bool EventHandler::passMouseReleaseEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe)
 {
-    return passSubframeEventToSubframe(mev, subframe);
+    subframe->eventHandler()->handleMouseReleaseEvent(mev.event());
+    return true;
 }
 
 bool EventHandler::passWidgetMouseDownEventToWidget(const MouseEventWithHitTestResults& event)
@@ -68,6 +72,32 @@ bool EventHandler::passWidgetMouseDownEventToWidget(const MouseEventWithHitTestR
 bool EventHandler::passWidgetMouseDownEventToWidget(RenderWidget* renderWidget)
 {
     return passMouseDownEventToWidget(renderWidget->widget());
+}
+
+bool EventHandler::passWheelEventToWidget(PlatformWheelEvent& event, Widget* widget)
+{
+    if (!widget || !widget->isFrameView())
+        return false;
+
+    return static_cast<FrameView*>(widget)->frame()->eventHandler()->handleWheelEvent(event);
+}
+
+bool EventHandler::tabsToAllControls(KeyboardEvent* event) const 
+{ 
+    notImplemented(); 
+    return false; 
+}
+
+bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults&, Frame* subframe, HitTestResult*)
+{
+    notImplemented(); 
+    return false; 
+}
+
+bool EventHandler::passMouseDownEventToWidget(Widget*)
+{ 
+    notImplemented();
+    return false; 
 }
 
 void EventHandler::focusDocumentView()

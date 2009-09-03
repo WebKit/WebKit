@@ -29,6 +29,7 @@
 #include "Document.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
+#include "HostWindow.h"
 #include "NotImplemented.h"
 #include "RenderView.h"
 
@@ -137,6 +138,15 @@ PassRefPtr<RenderTheme> RenderTheme::themeForPage(Page* page)
     static RenderTheme* rt = RenderThemeWx::create().releaseRef();
     return rt;
 }
+
+wxWindow* nativeWindowForRenderObject(RenderObject* o)
+{
+    FrameView* frameView = o->view()->frameView();
+    ASSERT(frameView);
+    ASSERT(frameView->hostWindow());
+    return frameView->hostWindow()->platformWindow();
+}
+
 
 bool RenderThemeWx::isControlStyled(const RenderStyle* style, const BorderData& border,
                                      const FillLayer& background, const Color& backgroundColor) const
@@ -251,10 +261,23 @@ void RenderThemeWx::adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* s
 
 bool RenderThemeWx::paintButton(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
 {
-    wxWindow* window = o->view()->frameView()->platformWidget();
+    wxWindow* window = nativeWindowForRenderObject(o);
     wxDC* dc = static_cast<wxDC*>(i.context->platformContext());
     int flags = 0;
     
+    IntRect rect = r; 
+
+#if USE(WXGC)
+    double xtrans = 0;
+    double ytrans = 0;
+    
+    wxGCDC* gcdc = static_cast<wxGCDC*>(dc);
+    wxGraphicsContext* gc = gcdc->GetGraphicsContext();
+    gc->GetTransform().TransformPoint(&xtrans, &ytrans);
+    rect.setX(r.x() + (int)xtrans);
+    rect.setY(r.y() + (int)ytrans);
+#endif
+
     if (!isEnabled(o))
         flags |= wxCONTROL_DISABLED;
 
@@ -266,20 +289,20 @@ bool RenderThemeWx::paintButton(RenderObject* o, const RenderObject::PaintInfo& 
         flags |= wxCONTROL_PRESSED;
     
     if (part == PushButtonPart || part == ButtonPart)
-        wxRendererNative::Get().DrawPushButton(window, *dc, r, flags);
+        wxRendererNative::Get().DrawPushButton(window, *dc, rect, flags);
     else if(part == RadioPart) {
         if (isChecked(o))
             flags |= wxCONTROL_CHECKED;
 #if wxCHECK_VERSION(2,9,0)
-        wxRendererNative::Get().DrawRadioButton(window, *dc, r, flags);
+        wxRendererNative::Get().DrawRadioButton(window, *dc, rect, flags);
 #else
-        wxRenderer_DrawRadioButton(window, *dc, r, flags);
+        wxRenderer_DrawRadioButton(window, *dc, rect, flags);
 #endif
     }
     else if(part == CheckboxPart) {
         if (isChecked(o))
             flags |= wxCONTROL_CHECKED;
-        wxRendererNative::Get().DrawCheckBox(window, *dc, r, flags);
+        wxRendererNative::Get().DrawCheckBox(window, *dc, rect, flags);
     }
     return false;
 }
@@ -291,7 +314,7 @@ void RenderThemeWx::adjustTextFieldStyle(CSSStyleSelector*, RenderStyle* style, 
 
 bool RenderThemeWx::paintTextField(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
 {
-    wxWindow* window = o->view()->frameView()->platformWidget();
+    wxWindow* window = nativeWindowForRenderObject(o);
     wxDC* dc = static_cast<wxDC*>(i.context->platformContext());
 #if wxCHECK_VERSION(2,9,0)
     wxRendererNative::Get().DrawTextCtrl(window, *dc, r, 0);
@@ -313,7 +336,7 @@ void RenderThemeWx::adjustMenuListStyle(CSSStyleSelector*, RenderStyle* style, E
     
 bool RenderThemeWx::paintMenuList(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
 {
-    wxWindow* window = o->view()->frameView()->platformWidget();
+    wxWindow* window = nativeWindowForRenderObject(o);
     wxDC* dc = static_cast<wxDC*>(i.context->platformContext());
     
     int flags = 0;      
@@ -342,7 +365,7 @@ void RenderThemeWx::adjustMenuListButtonStyle(CSSStyleSelector*, RenderStyle*, E
     
 bool RenderThemeWx::paintMenuListButton(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
 {
-    wxWindow* window = o->view()->frameView()->platformWidget();
+    wxWindow* window = nativeWindowForRenderObject(o);
     wxDC* dc = static_cast<wxDC*>(i.context->platformContext());
     
     int flags = 0;      

@@ -30,10 +30,10 @@
 #define WXWEBVIEWPRIVATE_H
 
 #include "config.h"
-#include "HTMLFrameOwnerElement.h"
+#include "EditCommand.h"
+#include "EditCommandWx.h"
 #include "Page.h"
-#include "wtf/RefPtr.h"
-#include "KURL.h"
+#include "wtf/Vector.h"
 
 #include <wx/timer.h>
 
@@ -48,19 +48,9 @@ public:
 
     wxTimer tripleClickTimer;
     wxPoint tripleClickPos;
-};
-
-class WebViewFrameData
-{
-public:
-    WebCore::KURL url;
-    WebCore::String name;
-    WebCore::HTMLFrameOwnerElement* ownerElement;
     
-    WebCore::String referrer;
-    bool allowsScrolling;
-    int marginWidth;
-    int marginHeight;    
+    WTF::Vector<EditCommandWx> undoStack;
+    WTF::Vector<EditCommandWx> redoStack;
 };
 
 #endif

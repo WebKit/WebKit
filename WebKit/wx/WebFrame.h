@@ -146,9 +146,6 @@ public:
     void ResetTextSize();
     void MakeEditable(bool enable);
     bool IsEditable() const { return m_isEditable; }
-
-    wxString GetPageTitle() const { return m_title; }
-    void SetPageTitle(const wxString& title) { m_title = title; }
     
     WebCore::Frame* GetFrame();
 
@@ -160,7 +157,6 @@ private:
     bool m_isInitialized;
     bool m_beingDestroyed;
     WebFramePrivate* m_impl;
-    wxString m_title;
     
 };
 
