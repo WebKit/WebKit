@@ -37,6 +37,8 @@ use lib $FindBin::Bin;
 use webkitdirs;
 use POSIX;
 
+sub formatBuildTime($);
+
 my $originalWorkingDirectory = getcwd();
 chdirWebKit();
 
@@ -44,6 +46,7 @@ my $showHelp = 0;
 my $clean = 0;
 my $minimal = 0;
 my $makeArgs;
+my $startTime = time();
 
 my ($threeDCanvasSupport, $threeDRenderingSupport, $channelMessagingSupport, $databaseSupport, $datagridSupport, $domStorageSupport,
     $eventsourceSupport, $filtersSupport, $geolocationSupport, $iconDatabaseSupport,
@@ -362,11 +365,28 @@ exit if $clean;
 
 my $launcherPath = launcherPath();
 my $launcherName = launcherName();
+my $endTime = time();
+my $buildTime = formatBuildTime($endTime - $startTime);
 
 print "\n";
 print "===========================================================\n";
-print " WebKit is now built. To run $launcherName with this newly-built\n";
-print " code, use the \"$launcherPath\" script.\n";
+print " WebKit is now built ($buildTime). \n";
+print " To run $launcherName with this newly-built code, use the\n";
+print " \"$launcherPath\" script.\n";
 print "===========================================================\n";
 
 exit 0;
+
+sub formatBuildTime($)
+{
+    my ($buildTime) = @_;
+
+    my $buildHours = int($buildTime / 3600);
+    my $buildMins = int(($buildTime - $buildHours * 3600) / 60);
+    my $buildSecs = $buildTime - $buildHours * 3600 - $buildMins * 60;
+
+    if ($buildHours) {
+        return sprintf("%dh:%02dm:%02ds", $buildHours, $buildMins, $buildSecs);
+    }
+    return sprintf("%02dm:%02ds", $buildMins, $buildSecs);
+}
