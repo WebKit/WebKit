@@ -150,6 +150,9 @@ namespace WebCore {
         virtual void saveScrollPositionAndViewStateToItem(HistoryItem*);
         virtual bool canCachePage() const;
         
+        virtual void didDisplayInsecureContent();
+        virtual void didRunInsecureContent(SecurityOrigin*);
+
         virtual void setMainDocumentError(DocumentLoader*, const ResourceError&);
         virtual void committedLoad(DocumentLoader*, const char*, int);
         virtual ResourceError cancelledError(const ResourceRequest&);

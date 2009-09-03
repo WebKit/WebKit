@@ -1,3 +1,16 @@
+2009-09-03  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by eric@webkit.org.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24696
+
+        Stub implementations of mixed content methods of FrameLoaderClient. 
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::didDisplayInsecureContent):
+        (WebFrameLoaderClient::didRunInsecureContent):
+        * WebCoreSupport/WebFrameLoaderClient.h:
+
 2009-09-01  Adam Roben  <aroben@apple.com>
 
         Post a notification when a WebView is closing

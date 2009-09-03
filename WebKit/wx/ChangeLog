@@ -1,3 +1,16 @@
+2009-09-03  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by eric@webkit.org.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24696
+
+        Stub implementations of mixed content methods of FrameLoaderClient. 
+
+        * WebKitSupport/FrameLoaderClientWx.cpp:
+        (WebCore::FrameLoaderClientWx::didDisplayInsecureContent):
+        (WebCore::FrameLoaderClientWx::didRunInsecureContent):
+        * WebKitSupport/FrameLoaderClientWx.h:
+
 2009-09-03  Kevin Watters  <kevinwatters@gmail.com>
 
         Reviewed by Kevin Ollivier.

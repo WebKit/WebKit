@@ -538,6 +538,16 @@ bool FrameLoaderClientWx::shouldGoToHistoryItem(WebCore::HistoryItem*) const
     return true;
 }
 
+void FrameLoaderClientWx::didDisplayInsecureContent()
+{
+    notImplemented();
+}
+
+void FrameLoaderClientWx::didRunInsecureContent(WebCore::SecurityOrigin*)
+{
+    notImplemented();
+}
+
 void FrameLoaderClientWx::saveScrollPositionAndViewStateToItem(WebCore::HistoryItem*)
 {
     notImplemented();

@@ -841,6 +841,16 @@ bool WebFrameLoaderClient::shouldGoToHistoryItem(HistoryItem* item) const
     return [[view _policyDelegateForwarder] webView:view shouldGoToHistoryItem:webItem];
 }
 
+void WebFrameLoaderClient::didDisplayInsecureContent()
+{
+    notImplemented();
+}
+
+void WebFrameLoaderClient::didRunInsecureContent(SecurityOrigin*)
+{
+    notImplemented();
+}
+
 ResourceError WebFrameLoaderClient::cancelledError(const ResourceRequest& request)
 {
     return [NSError _webKitErrorWithDomain:NSURLErrorDomain code:NSURLErrorCancelled URL:request.url()];

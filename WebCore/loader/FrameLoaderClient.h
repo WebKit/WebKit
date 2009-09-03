@@ -66,6 +66,7 @@ namespace WebCore {
     struct ResourceRequest;
     class ResourceResponse;
     class ScriptString;
+    class SecurityOrigin;
     class SharedBuffer;
     class SubstituteData;
     class String;
@@ -163,6 +164,15 @@ namespace WebCore {
         virtual void updateGlobalHistoryRedirectLinks() = 0;
 
         virtual bool shouldGoToHistoryItem(HistoryItem*) const = 0;
+
+        // This frame has displayed inactive content (such as an image) from an
+        // insecure source.  Inactive content cannot spread to other frames.
+        virtual void didDisplayInsecureContent() = 0;
+
+        // The indicated security origin has run active content (such as a
+        // script) from an insecure source.  Note that the insecure content can
+        // spread to other frames in the same origin.
+        virtual void didRunInsecureContent(SecurityOrigin*) = 0;
 
         virtual ResourceError cancelledError(const ResourceRequest&) = 0;
         virtual ResourceError blockedError(const ResourceRequest&) = 0;

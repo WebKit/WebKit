@@ -92,6 +92,9 @@ public:
     virtual void updateGlobalHistoryRedirectLinks();
     virtual bool shouldGoToHistoryItem(WebCore::HistoryItem*) const;
 
+    virtual void didDisplayInsecureContent();
+    virtual void didRunInsecureContent(WebCore::SecurityOrigin*);
+
     virtual PassRefPtr<WebCore::DocumentLoader> createDocumentLoader(const WebCore::ResourceRequest&, const WebCore::SubstituteData&);
     virtual void setTitle(const WebCore::String& title, const WebCore::KURL&);
 

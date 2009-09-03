@@ -1,3 +1,16 @@
+2009-09-03  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by eric@webkit.org.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24696
+
+        Added mixed content methods to FrameLoaderClient.
+
+        * loader/EmptyClients.h:
+        (WebCore::EmptyFrameLoaderClient::didDisplayInsecureContent):
+        (WebCore::EmptyFrameLoaderClient::didRunInsecureContent):
+        * loader/FrameLoaderClient.h:
+
 2009-09-03  Kevin Watters  <kevinwatters@gmail.com>
 
         Reviewed by Kevin Ollivier.

@@ -637,6 +637,16 @@ bool FrameLoaderClientQt::shouldGoToHistoryItem(WebCore::HistoryItem *item) cons
     return true;
 }
 
+void FrameLoaderClientQt::didDisplayInsecureContent()
+{
+    notImplemented();
+}
+
+void FrameLoaderClientQt::didRunInsecureContent(WebCore::SecurityOrigin*)
+{
+    notImplemented();
+}
+
 void FrameLoaderClientQt::saveViewStateToItem(WebCore::HistoryItem* item)
 {
     QWebHistoryItem historyItem(new QWebHistoryItemPrivate(item));
