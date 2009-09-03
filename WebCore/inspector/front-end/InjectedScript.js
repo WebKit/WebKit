@@ -810,6 +810,32 @@ InjectedScript._callFrameForId = function(id)
     return callFrame;
 }
 
+InjectedScript._clearConsoleMessages = function()
+{
+    InspectorController.clearMessages(true);
+}
+
+InjectedScript._inspectObject = function(o)
+{
+    if (arguments.length === 0)
+        return;
+
+    var inspectedWindow = InjectedScript._window();
+    inspectedWindow.console.log(o);
+    if (Object.type(o) === "node") {
+        InspectorController.pushNodePathToFrontend(o, true);
+    } else {
+        switch (Object.describe(o)) {
+            case "Database":
+                InspectorController.selectDatabase(o);
+                break;
+            case "Storage":
+                InspectorController.selectDOMStorage(o);
+                break;
+        }
+    }
+}
+
 InjectedScript._ensureCommandLineAPIInstalled = function(inspectedWindow)
 {
     var inspectedWindow = InjectedScript._window();
@@ -843,28 +869,8 @@ InjectedScript._ensureCommandLineAPIInstalled = function(inspectedWindow)
         get $4() { return _inspectorCommandLineAPI._inspectedNodes[4] } \
     };");
 
-    inspectedWindow._inspectorCommandLineAPI.clear = InspectorController.wrapCallback(InspectorController.clearMessages.bind(InspectorController, true));
-    inspectedWindow._inspectorCommandLineAPI.inspect = InspectorController.wrapCallback(inspectObject.bind(this));
-
-    function inspectObject(o)
-    {
-        if (arguments.length === 0)
-            return;
-
-        inspectedWindow.console.log(o);
-        if (Object.type(o) === "node") {
-            InspectorController.pushNodePathToFrontend(o, true);
-        } else {
-            switch (Object.describe(o)) {
-                case "Database":
-                    InspectorController.selectDatabase(o);
-                    break;
-                case "Storage":
-                    InspectorController.selectDOMStorage(o);
-                    break;
-            }
-        }
-    }
+    inspectedWindow._inspectorCommandLineAPI.clear = InspectorController.wrapCallback(InjectedScript._clearConsoleMessages);
+    inspectedWindow._inspectorCommandLineAPI.inspect = InspectorController.wrapCallback(InjectedScript._inspectObject);
 }
 
 InjectedScript._resolveObject = function(objectProxy)
