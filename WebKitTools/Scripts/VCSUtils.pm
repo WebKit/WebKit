@@ -163,27 +163,37 @@ sub determineSVNRoot()
     my $last = '';
     my $path = '.';
     my $parent = '..';
+    my $repositoryRoot;
     my $repositoryUUID;
     while (1) {
+        my $thisRoot;
         my $thisUUID;
         # Ignore error messages in case we've run past the root of the checkout.
         open INFO, "svn info '$path' 2> $devNull |" or die;
         while (<INFO>) {
+            if (/^Repository Root: (.+)/) {
+                $thisRoot = $1;
+            }
             if (/^Repository UUID: (.+)/) {
                 $thisUUID = $1;
-                { local $/ = undef; <INFO>; }  # Consume the rest of the input.
+            }
+            if ($thisRoot && $thisUUID) {
+                local $/ = undef;
+                <INFO>; # Consume the rest of the input.
             }
         }
         close INFO;
 
         # It's possible (e.g. for developers of some ports) to have a WebKit
         # checkout in a subdirectory of another checkout.  So abort if the
-        # repository UUID suddenly changes.
+        # repository root or the repository UUID suddenly changes.
         last if !$thisUUID;
-        if (!$repositoryUUID) {
-            $repositoryUUID = $thisUUID;
-        }
+        $repositoryUUID = $thisUUID if !$repositoryUUID;
         last if $thisUUID ne $repositoryUUID;
+
+        last if !$thisRoot;
+        $repositoryRoot = $thisRoot if !$repositoryRoot;
+        last if $thisRoot ne $repositoryRoot;
 
         $last = $path;
         $path = File::Spec->catdir($parent, $path);

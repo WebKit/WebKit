@@ -1,3 +1,16 @@
+2009-09-02  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/28881> svn-create-patch should check if the repo path is the same when trying to find the root
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/VCSUtils.pm:
+        (determineSvnRoot): Added back check for repository root that
+        was removed in r46134 when this code lived in svn-create-patch.
+        It's necessary to check both the repository root and the
+        repository UUID in case two different working directories are
+        checked out from the same repository.
+
 2009-09-02  Timothy Hatcher  <timothy@apple.com>
 
         Use new 512x512 icons for nightly builds.
