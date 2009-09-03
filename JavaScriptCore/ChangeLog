@@ -1,3 +1,15 @@
+2009-09-02  Gavin Barraclough  <barraclough@apple.com>
+
+        Should crash if JIT code buffer allocation fails.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28926
+        <rdar://problem/7031922>
+
+        * jit/ExecutableAllocatorPosix.cpp:
+        (JSC::ExecutablePool::systemAlloc):
+        * jit/ExecutableAllocatorWin.cpp:
+        (JSC::ExecutablePool::systemAlloc):
+
 2009-09-02  Kevin Ollivier  <kevino@theolliviers.com>
 
         waf build fixes for Windows/MSVC.
