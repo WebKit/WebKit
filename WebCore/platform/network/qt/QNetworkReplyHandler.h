@@ -73,6 +73,7 @@ private:
     ResourceHandle* m_resourceHandle;
     bool m_redirected;
     bool m_responseSent;
+    bool m_responseDataSent;
     LoadMode m_loadMode;
     QNetworkAccessManager::Operation m_method;
     QNetworkRequest m_request;
