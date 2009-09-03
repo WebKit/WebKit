@@ -1,3 +1,11 @@
+2009-09-03  Ben Murdoch  <benm@google.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=28872
+        Test to verify statement error callbacks behave as expected when they return true or throw an exception.
+
+        * storage/statement-error-callback-expected.txt: Added with properties svn:eol-style.
+        * storage/statement-error-callback.html: Added with properties svn:eol-style.
+
 2009-09-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.

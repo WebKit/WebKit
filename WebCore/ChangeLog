@@ -1,3 +1,14 @@
+2009-09-03  Ben Murdoch  <benm@google.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=28872
+        
+        Fixes a bug where handleEvent() in the V8 Custom SQL Statement Error binding would not return the correct result to WebCore after invoking the callback.
+
+        Test: storage/statement-error-callback.html
+
+        * bindings/v8/custom/V8CustomSQLStatementErrorCallback.cpp:
+        (WebCore::V8CustomSQLStatementErrorCallback::handleEvent): Return true from handleEvent() if the callback raised an exception or the callback itself returned true.
+
 2009-09-03  Maxime Simon  <simon.maxime@gmail.com>
 
         Reviewed by Eric Seidel.
