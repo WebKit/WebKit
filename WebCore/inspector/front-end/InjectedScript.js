@@ -958,7 +958,7 @@ InjectedScript.CallFrameProxy = function(id, callFrame)
 {
     this.id = id;
     this.type = callFrame.type;
-    this.functionName = callFrame.functionName;
+    this.functionName = (this.type === "function" ? callFrame.functionName : "");
     this.sourceID = callFrame.sourceID;
     this.line = callFrame.line;
     this.scopeChain = this._wrapScopeChain(callFrame);
@@ -973,6 +973,7 @@ InjectedScript.CallFrameProxy.prototype = {
         for (var i = 0; i < scopeChain.length; ++i) {
             var scopeObject = scopeChain[i];
             var scopeObjectProxy = InjectedScript.createProxyObject(scopeObject, { callFrame: this.id, chainIndex: i });
+
             if (Object.prototype.toString.call(scopeObject) === "[object JSActivation]") {
                 if (!foundLocalScope)
                     scopeObjectProxy.thisObject = InjectedScript.createProxyObject(callFrame.thisObject, { callFrame: this.id, thisObject: true });
@@ -984,7 +985,7 @@ InjectedScript.CallFrameProxy.prototype = {
                 scopeObjectProxy.isElement = true;
             else if (foundLocalScope && scopeObject instanceof InjectedScript._window().Document)
                 scopeObjectProxy.isDocument = true;
-            else if (!foundLocalScope && !localScope)
+            else if (!foundLocalScope)
                 scopeObjectProxy.isWithBlock = true;
             scopeObjectProxy.properties = [];
             try {
