@@ -1,5 +1,15 @@
 2009-09-03  Drew Wilson  <atwilson@google.com>
 
+        Reviewed by Dave Levin.
+
+        Exception.toString() on Qt seems to print out a different value than other platforms.
+        https://bugs.webkit.org/show_bug.cgi?id=28952
+
+        * platform/qt/Skipped:
+        Disabled new worker tests that rely on the string format of DOM exceptions until bug #28952 is resolved.
+
+2009-09-03  Drew Wilson  <atwilson@google.com>
+
         Reviewed by Sam Weinig.
 
         Need to update JS bindings and IDL files to support multiple message ports in postMessage()
