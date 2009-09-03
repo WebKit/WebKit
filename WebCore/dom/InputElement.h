@@ -73,7 +73,7 @@ protected:
     static void aboutToUnload(InputElement*, Element*);
     static void setValueFromRenderer(InputElementData&, InputElement*, Element*, const String&);
     static String constrainValue(const InputElement*, const String& proposedValue, int maxLength);
-    static void handleBeforeTextInsertedEvent(InputElementData&, InputElement*, Document*, Event*);
+    static void handleBeforeTextInsertedEvent(InputElementData&, InputElement*, Element*, Event*);
     static void parseSizeAttribute(InputElementData&, Element*, MappedAttribute*);
     static void parseMaxLengthAttribute(InputElementData&, InputElement*, Element*, MappedAttribute*);
     static void updateValueIfNeeded(InputElementData&, InputElement*);

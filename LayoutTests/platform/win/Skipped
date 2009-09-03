@@ -650,3 +650,6 @@ http/tests/xmlhttprequest/origin-whitelisting-ip-addresses.html
 http/tests/xmlhttprequest/origin-whitelisting-ip-addresses-with-subdomains.html
 http/tests/xmlhttprequest/origin-whitelisting-subdomains.html
 
+# No TextInputController
+fast/forms/input-maxlength-ime-completed.html
+fast/forms/input-maxlength-ime-preedit.html

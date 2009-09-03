@@ -1,3 +1,21 @@
+2009-09-03  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Fix a regression bug that maxLength doesn't work for IME input.
+        https://bugs.webkit.org/show_bug.cgi?id=25253
+
+        Tests: fast/forms/input-maxlength-ime-completed.html
+               fast/forms/input-maxlength-ime-preedit.html
+
+        * dom/InputElement.cpp:
+        (WebCore::InputElement::handleBeforeTextInsertedEvent):
+        * dom/InputElement.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::defaultEventHandler):
+        * wml/WMLInputElement.cpp:
+        (WebCore::WMLInputElement::defaultEventHandler):
+
 2009-09-03  Cameron McCormack  <cam@mcc.id.au>
 
         Reviewed by Eric Seidel.

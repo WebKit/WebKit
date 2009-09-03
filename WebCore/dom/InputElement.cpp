@@ -218,20 +218,27 @@ static int numGraphemeClusters(StringImpl* s)
     return num;
 }
 
-void InputElement::handleBeforeTextInsertedEvent(InputElementData& data, InputElement* inputElement, Document* document, Event* event)
+void InputElement::handleBeforeTextInsertedEvent(InputElementData& data, InputElement* inputElement, Element* element, Event* event)
 {
     ASSERT(event->isBeforeTextInsertedEvent());
-
     // Make sure that the text to be inserted will not violate the maxLength.
-    int oldLength = numGraphemeClusters(inputElement->value().impl());
-    ASSERT(oldLength <= data.maxLength());
-    int selectionLength = numGraphemeClusters(plainText(document->frame()->selection()->selection().toNormalizedRange().get()).impl());
+
+    // We use RenderTextControlSingleLine::text() instead of InputElement::value()
+    // because they can be mismatched by constrainValue() in
+    // RenderTextControlSingleLine::subtreeHasChanged() in a case of IME input.
+    int oldLength = numGraphemeClusters(toRenderTextControlSingleLine(element->renderer())->text().impl());
+
+    // selection() may be a pre-edit text.
+    int selectionLength = numGraphemeClusters(plainText(element->document()->frame()->selection()->selection().toNormalizedRange().get()).impl());
     ASSERT(oldLength >= selectionLength);
-    int maxNewLength = data.maxLength() - (oldLength - selectionLength);
+
+    // Selected characters will be removed by the next text event.
+    int baseLength = oldLength - selectionLength;
+    int appendableLength = data.maxLength() - baseLength;
 
     // Truncate the inserted text to avoid violating the maxLength and other constraints.
     BeforeTextInsertedEvent* textEvent = static_cast<BeforeTextInsertedEvent*>(event);
-    textEvent->setText(constrainValue(inputElement, textEvent->text(), maxNewLength));
+    textEvent->setText(constrainValue(inputElement, textEvent->text(), appendableLength));
 }
 
 void InputElement::parseSizeAttribute(InputElementData& data, Element* element, MappedAttribute* attribute)

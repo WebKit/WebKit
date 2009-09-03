@@ -1505,7 +1505,7 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
     }
 
     if (evt->isBeforeTextInsertedEvent())
-        InputElement::handleBeforeTextInsertedEvent(m_data, this, document(), evt);
+        InputElement::handleBeforeTextInsertedEvent(m_data, this, this, evt);
 
     if (isTextField() && renderer() && (evt->isMouseEvent() || evt->isDragEvent() || evt->isWheelEvent() || evt->type() == eventNames().blurEvent || evt->type() == eventNames().focusEvent))
         toRenderTextControlSingleLine(renderer())->forwardEvent(evt);
