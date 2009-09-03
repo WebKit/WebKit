@@ -35,6 +35,8 @@
 #include "WorkerContextExecutionProxy.h"
 
 #include "DedicatedWorkerContext.h"
+#include "V8Binding.h"
+#include "V8MessagePortCustom.h"
 #include "V8Proxy.h"
 #include "V8WorkerContextEventListener.h"
 
@@ -77,6 +79,21 @@ ACCESSOR_SETTER(DedicatedWorkerContextOnmessage)
             createHiddenDependency(info.Holder(), value, V8Custom::kDedicatedWorkerContextRequestCacheIndex);
         }
     }
+}
+
+CALLBACK_FUNC_DECL(DedicatedWorkerContextPostMessage)
+{
+    INC_STATS(L"DOM.DedicatedWorkerContext.postMessage");
+    DedicatedWorkerContext* workerContext = V8DOMWrapper::convertToNativeObject<DedicatedWorkerContext>(V8ClassIndex::DEDICATEDWORKERCONTEXT, args.Holder());
+    String message = v8ValueToWebCoreString(args[0]);
+    MessagePortArray portArray;
+    if (args.Length() > 1) {
+        if (!getMessagePortArray(args[1], portArray))
+            return v8::Undefined();
+    }
+    ExceptionCode ec = 0;
+    workerContext->postMessage(message, &portArray, ec);
+    return throwError(ec);
 }
 
 } // namespace WebCore

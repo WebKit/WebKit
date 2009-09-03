@@ -1,5 +1,45 @@
 2009-09-03  Drew Wilson  <atwilson@google.com>
 
+        Reviewed by Dimitri Glazkov.
+
+        Need to update v8 bindings to support passing multiple ports to postMessage()
+        https://bugs.webkit.org/show_bug.cgi?id=28839
+
+        Added support for passing MessagePortArray to v8 bindings.
+
+        New tests that now pass with V8:
+               fast/events/message-port-multi.html
+               fast/workers/worker-context-multi-port.html
+               fast/workers/worker-multi-port.html
+
+        * WebCore.gypi:
+        Added V8MessageEventCustom.cpp and V8MessagePortCustom.h
+        * bindings/v8/custom/V8CustomBinding.h:
+        Added custom postMessage() handlers for various classes.
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::DOMWindowPostMessage):
+        Added custom handler that supports MessagePortArray.
+        * bindings/v8/custom/V8DedicatedWorkerContextCustom.cpp:
+        (WebCore::DedicatedWorkerContextPostMessage):
+        Added custom handler that supports MessagePortArray.
+        * bindings/v8/custom/V8MessageEventCustom.cpp: Added.
+        (WebCore::MessageEventPorts):
+        Added getter for ports attribute.
+        (WebCore::MessageEventInitMessageEvent):
+        Added custom handler that supports MessagePortArray.
+        * bindings/v8/custom/V8MessagePortCustom.cpp:
+        (WebCore::MessagePortPostMessage):
+        Added custom handler that supports MessagePortArray.
+        (WebCore::getMessagePortArray):
+        Added helper function that supports converting from a sequence-like object to a MessagePortArray.
+        * bindings/v8/custom/V8MessagePortCustom.h: Added.
+        Added declaration for getMessagePortArray().
+        * bindings/v8/custom/V8WorkerCustom.cpp:
+        (WebCore::WorkerPostMessage):
+        Added custom handler that supports MessagePortArray.
+
+2009-09-03  Drew Wilson  <atwilson@google.com>
+
         Reviewed by Sam Weinig.
 
         Need to update JS bindings and IDL files to support multiple message ports in postMessage()

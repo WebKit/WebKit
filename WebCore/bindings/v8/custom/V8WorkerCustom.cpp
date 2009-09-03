@@ -38,6 +38,7 @@
 #include "Frame.h"
 #include "V8Binding.h"
 #include "V8CustomBinding.h"
+#include "V8MessagePortCustom.h"
 #include "V8ObjectEventListener.h"
 #include "V8Proxy.h"
 #include "V8Utilities.h"
@@ -147,6 +148,21 @@ ACCESSOR_SETTER(WorkerOnmessage)
             createHiddenDependency(info.Holder(), value, V8Custom::kWorkerRequestCacheIndex);
         }
     }
+}
+
+CALLBACK_FUNC_DECL(WorkerPostMessage)
+{
+    INC_STATS("DOM.Worker.postMessage");
+    Worker* worker = V8DOMWrapper::convertToNativeObject<Worker>(V8ClassIndex::WORKER, args.Holder());
+    String message = toWebCoreString(args[0]);
+    MessagePortArray portArray;
+    if (args.Length() > 1) {
+        if (!getMessagePortArray(args[1], portArray))
+            return v8::Undefined();
+    }
+    ExceptionCode ec = 0;
+    worker->postMessage(message, &portArray, ec);
+    return throwError(ec);
 }
 
 } // namespace WebCore

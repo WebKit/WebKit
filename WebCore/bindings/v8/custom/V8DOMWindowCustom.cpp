@@ -34,6 +34,7 @@
 #include "V8Binding.h"
 #include "V8CustomBinding.h"
 #include "V8CustomEventListener.h"
+#include "V8MessagePortCustom.h"
 #include "V8Proxy.h"
 #include "V8Utilities.h"
 
@@ -295,7 +296,7 @@ CALLBACK_FUNC_DECL(DOMWindowPostMessage)
 
     v8::TryCatch tryCatch;
     String message = toWebCoreString(args[0]);
-    MessagePort* port = 0;
+    MessagePortArray portArray;
     String targetOrigin;
 
     // This function has variable arguments and can either be:
@@ -303,8 +304,8 @@ CALLBACK_FUNC_DECL(DOMWindowPostMessage)
     // or
     //   postMessage(message, targetOrigin);
     if (args.Length() > 2) {
-        if (V8DOMWrapper::isWrapperOfType(args[1], V8ClassIndex::MESSAGEPORT))
-            port = V8DOMWrapper::convertToNativeObject<MessagePort>(V8ClassIndex::MESSAGEPORT, v8::Handle<v8::Object>::Cast(args[1]));
+        if (!getMessagePortArray(args[1], portArray))
+            return v8::Undefined();
         targetOrigin = toWebCoreStringWithNullOrUndefinedCheck(args[2]);
     } else {
         targetOrigin = toWebCoreStringWithNullOrUndefinedCheck(args[1]);
@@ -314,11 +315,8 @@ CALLBACK_FUNC_DECL(DOMWindowPostMessage)
         return v8::Undefined();
 
     ExceptionCode ec = 0;
-    window->postMessage(message, port, targetOrigin, source, ec);
-    if (ec)
-        V8Proxy::setDOMException(ec);
-
-    return v8::Undefined();
+    window->postMessage(message, &portArray, targetOrigin, source, ec);
+    return throwError(ec);
 }
 
 CALLBACK_FUNC_DECL(DOMWindowAtob)
