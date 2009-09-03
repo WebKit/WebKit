@@ -1,3 +1,11 @@
+2009-09-02  Timothy Hatcher  <timothy@apple.com>
+
+        Use new 512x512 icons for nightly builds.
+
+        Rubber-stamped by Mark Rowe.
+
+        * WebKitLauncher/webkit.icns:
+
 2009-09-02  Kevin Ollivier  <kevino@theolliviers.com>
 
         waf build fix. Remove local variable shadowing global.
