@@ -43,7 +43,7 @@
 
 namespace WebCore {
 
-static int isolatedWorldCount = 0;
+int V8IsolatedWorld::isolatedWorldCount = 0;
 
 static void contextWeakReferenceCallback(v8::Persistent<v8::Value> object, void* isolated_world)
 {
@@ -101,17 +101,8 @@ V8IsolatedWorld::~V8IsolatedWorld()
     m_context.Clear();
 }
 
-V8IsolatedWorld* V8IsolatedWorld::getEntered()
+V8IsolatedWorld* V8IsolatedWorld::getEnteredImpl()
 {
-    if (isolatedWorldCount == 0) {
-        // This is a temporary performance optimization.   Essentially,
-        // GetHiddenValue is too slow for this code path.  We need to get the
-        // V8 team to add a real property to v8::Context for isolated worlds.
-        // Until then, we optimize the common case of not having any isolated
-        // worlds at all.
-        return 0;
-    }
-
     if (!v8::Context::InContext())
         return 0;
     v8::HandleScope scope;

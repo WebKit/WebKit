@@ -71,13 +71,25 @@ namespace WebCore {
         // FIXME: Consider edge cases with DOM mutation events that might
         // violate this invariant.
         //
-        static V8IsolatedWorld* getEntered();
+        static V8IsolatedWorld* getEntered()
+        {
+            // This is a temporary performance optimization.   Essentially,
+            // GetHiddenValue is too slow for this code path.  We need to get the
+            // V8 team to add a real property to v8::Context for isolated worlds.
+            // Until then, we optimize the common case of not having any isolated
+            // worlds at all.
+            if (!isolatedWorldCount)
+                return 0;
+            return getEnteredImpl();
+        }
 
         v8::Handle<v8::Context> context() { return m_context; }
 
         DOMDataStore* getDOMDataStore() const { return m_domDataStore.getStore(); }
 
     private:
+        static V8IsolatedWorld* getEnteredImpl();
+
         // The lifetime of an isolated world is managed by the V8 garbage
         // collector.  In particular, the object created by this constructor is
         // freed when |context| is garbage collected.
@@ -91,6 +103,8 @@ namespace WebCore {
         // doesn't have visibility into the wrappers.  This handle simply helps
         // manage their lifetime.
         DOMDataStoreHandle m_domDataStore;
+
+        static int isolatedWorldCount;
     };
 
 } // namespace WebCore
