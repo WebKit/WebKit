@@ -111,6 +111,7 @@ private slots:
     void requestCache();
     void protectBindingsRuntimeObjectsFromCollector();
     void localURLSchemes();
+    void testOptionalJSObjects();
 
 private:
 
@@ -1207,6 +1208,41 @@ void tst_QWebPage::localURLSchemes()
     QTRY_COMPARE(QWebSecurityOrigin::localSchemes().size(), i);
     QWebSecurityOrigin::removeLocalScheme(myscheme);
     QTRY_COMPARE(QWebSecurityOrigin::localSchemes().size(), i);
+}
+
+static inline bool testFlag(QWebPage& webPage, QWebSettings::WebAttribute settingAttribute, const QString& jsObjectName, bool settingValue)
+{
+    webPage.settings()->setAttribute(settingAttribute, settingValue);
+    return webPage.mainFrame()->evaluateJavaScript(QString("(window.%1 != undefined)").arg(jsObjectName)).toBool();
+}
+
+void tst_QWebPage::testOptionalJSObjects()
+{
+    // Once a feature is enabled and the JS object is accessed turning off the setting will not turn off
+    // the visibility of the JS object any more. For this reason this test uses two QWebPage instances.
+    // Part of the test is to make sure that the QWebPage instances do not interfere with each other so turning on
+    // a feature for one instance will not turn it on for another.
+
+    QWebPage webPage1;
+    QWebPage webPage2;
+
+    webPage1.currentFrame()->setHtml(QString("<html><body>test</body></html>"), QUrl());
+    webPage2.currentFrame()->setHtml(QString("<html><body>test</body></html>"), QUrl());
+
+    QCOMPARE(testFlag(webPage1, QWebSettings::OfflineWebApplicationCacheEnabled, "applicationCache", false), false);
+    QCOMPARE(testFlag(webPage2, QWebSettings::OfflineWebApplicationCacheEnabled, "applicationCache", true),  true);
+    QCOMPARE(testFlag(webPage1, QWebSettings::OfflineWebApplicationCacheEnabled, "applicationCache", false), false);
+    QCOMPARE(testFlag(webPage2, QWebSettings::OfflineWebApplicationCacheEnabled, "applicationCache", false), true);
+
+    QCOMPARE(testFlag(webPage1, QWebSettings::LocalStorageEnabled, "localStorage", false), false);
+    QCOMPARE(testFlag(webPage2, QWebSettings::LocalStorageEnabled, "localStorage", true),  true);
+    QCOMPARE(testFlag(webPage1, QWebSettings::LocalStorageEnabled, "localStorage", false), false);
+    QCOMPARE(testFlag(webPage2, QWebSettings::LocalStorageEnabled, "localStorage", false), true);
+
+    QCOMPARE(testFlag(webPage1, QWebSettings::SessionStorageEnabled, "sessionStorage", false), false);
+    QCOMPARE(testFlag(webPage2, QWebSettings::SessionStorageEnabled, "sessionStorage", true),  true);
+    QCOMPARE(testFlag(webPage1, QWebSettings::SessionStorageEnabled, "sessionStorage", false), false);
+    QCOMPARE(testFlag(webPage2, QWebSettings::SessionStorageEnabled, "sessionStorage", false), true);
 }
 
 QTEST_MAIN(tst_QWebPage)

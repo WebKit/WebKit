@@ -67,7 +67,8 @@ public:
 #ifdef QT_DEPRECATED
         LocalStorageDatabaseEnabled = LocalStorageEnabled,
 #endif
-        LocalContentCanAccessRemoteUrls
+        LocalContentCanAccessRemoteUrls,
+        SessionStorageEnabled
     };
     enum WebGraphic {
         MissingImageGraphic,
