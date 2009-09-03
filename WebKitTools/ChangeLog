@@ -1,3 +1,15 @@
+2009-09-02  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Mark Rowe.
+
+        [Qt] Add support for platform-spesific layout-test results
+
+        For the Qt port we use the qt-[mac|linux|win] directories and then fall
+        back to the generic qt directory for both test results and skipped list.
+
+        * Scripts/run-webkit-tests:
+        * Scripts/webkitdirs.pm:
+
 2009-09-02  Laurent Cerveau  <lcerveau@me.com>
 
         Reviewed by David Kilzer.

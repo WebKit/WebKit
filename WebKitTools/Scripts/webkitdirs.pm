@@ -823,6 +823,16 @@ sub isDarwin()
     return ($^O eq "darwin") || 0;
 }
 
+sub isWindows()
+{
+    return isCygwin() || ($^O eq "MSWin32") || 0;
+}
+
+sub isLinux()
+{
+    return ($^O eq "linux") || 0;
+}
+
 sub isAppleWebKit()
 {
     return !(isQt() or isGtk() or isWx() or isChromium());

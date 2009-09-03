@@ -168,7 +168,15 @@ if (isAppleMacWebKit()) {
         $platform = "mac";
     }
 } elsif (isQt()) {
-    $platform = "qt";
+    if (isDarwin()) {
+        $platform = "qt-mac";
+    } elsif (isLinux()) {
+        $platform = "qt-linux";
+    } elsif (isWindows()) {
+        $platform = "qt-win";
+    } else {
+        $platform = "qt";
+    }
 } elsif (isGtk()) {
     $platform = "gtk";
 } elsif (isWx()) {
@@ -1874,6 +1882,9 @@ sub buildPlatformResultHierarchy()
         for (; $i < @macPlatforms; $i++) {
             push @platforms, $macPlatforms[$i];
         }
+    } elsif ($platform =~ /^qt-/) {
+        push @platforms, $platform;
+        push @platforms, "qt";
     } else {
         @platforms = $platform;
     }
