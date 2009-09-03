@@ -1,3 +1,29 @@
+2009-09-03  Renata Hodovan  <hodovan.renata@stud.u-szeged.hu>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Update outdated metrics in css2.1/t1202-counters-* (17 files).
+        Remove these files from Skipped.
+
+        * platform/qt/Skipped:
+        * platform/qt/css2.1/t1202-counters-00-b-expected.txt:
+        * platform/qt/css2.1/t1202-counters-01-b-expected.txt:
+        * platform/qt/css2.1/t1202-counters-02-b-expected.txt:
+        * platform/qt/css2.1/t1202-counters-03-b-expected.txt:
+        * platform/qt/css2.1/t1202-counters-05-b-expected.txt:
+        * platform/qt/css2.1/t1202-counters-06-b-expected.txt:
+        * platform/qt/css2.1/t1202-counters-07-b-expected.txt:
+        * platform/qt/css2.1/t1202-counters-08-b-expected.txt:
+        * platform/qt/css2.1/t1202-counters-09-b-expected.txt:
+        * platform/qt/css2.1/t1202-counters-11-b-expected.txt:
+        * platform/qt/css2.1/t1202-counters-12-b-expected.txt:
+        * platform/qt/css2.1/t1202-counters-13-b-expected.txt:
+        * platform/qt/css2.1/t1202-counters-14-b-expected.txt:
+        * platform/qt/css2.1/t1202-counters-15-b-expected.txt:
+        * platform/qt/css2.1/t1202-counters-16-c-expected.txt:
+        * platform/qt/css2.1/t1202-counters-17-d-expected.txt:
+        * platform/qt/css2.1/t1202-counters-18-f-expected.txt:
+
 2009-09-03  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Ariya Hidayat.
