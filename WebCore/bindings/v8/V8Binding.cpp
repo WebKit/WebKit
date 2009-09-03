@@ -55,7 +55,8 @@ public:
 #ifndef NDEBUG
         m_threadId = WTF::currentThread();
 #endif
-        v8::V8::AdjustAmountOfExternalAllocatedMemory(2 * length());
+        ASSERT(!string.isNull());
+        v8::V8::AdjustAmountOfExternalAllocatedMemory(2 * string.length());
     }
 
     explicit WebCoreStringResource(const AtomicString& string)
@@ -65,7 +66,8 @@ public:
 #ifndef NDEBUG
         m_threadId = WTF::currentThread();
 #endif
-        v8::V8::AdjustAmountOfExternalAllocatedMemory(2 * length());
+        ASSERT(!string.isNull());
+        v8::V8::AdjustAmountOfExternalAllocatedMemory(2 * string.length());
     }
 
     virtual ~WebCoreStringResource()
@@ -73,18 +75,18 @@ public:
 #ifndef NDEBUG
         ASSERT(m_threadId == WTF::currentThread());
 #endif
-        int reducedExternalMemory = -2 * length();
-        if (!m_plainString.impl()->inTable())
+        int reducedExternalMemory = -2 * m_plainString.length();
+        if (m_plainString.impl() != m_atomicString.impl() && !m_atomicString.isNull())
             reducedExternalMemory *= 2;
         v8::V8::AdjustAmountOfExternalAllocatedMemory(reducedExternalMemory);
     }
 
-    const uint16_t* data() const
+    virtual const uint16_t* data() const
     {
-        return reinterpret_cast<const uint16_t*>(m_plainString.characters());
+        return reinterpret_cast<const uint16_t*>(m_plainString.impl()->characters());
     }
 
-    size_t length() const { return m_plainString.length(); }
+    virtual size_t length() const { return m_plainString.impl()->length(); }
 
     String webcoreString() { return m_plainString; }
 
@@ -95,11 +97,16 @@ public:
 #endif
         if (m_atomicString.isNull()) {
             m_atomicString = AtomicString(m_plainString);
-            if (!m_plainString.impl()->inTable())
-                v8::V8::AdjustAmountOfExternalAllocatedMemory(2 * length());
+            ASSERT(!m_atomicString.isNull());
+            if (m_plainString.impl() != m_atomicString.impl())
+                v8::V8::AdjustAmountOfExternalAllocatedMemory(2 * m_atomicString.length());
         }
         return m_atomicString;
     }
+
+    // Returns right string type based on a dummy parameter.
+    String string(String) { return webcoreString(); }
+    AtomicString string(AtomicString) { return atomicString(); }
 
     static WebCoreStringResource* toStringResource(v8::Handle<v8::String> v8String)
     {
@@ -121,12 +128,17 @@ private:
 #endif
 };
 
-String v8StringToWebCoreString(v8::Handle<v8::String> v8String, ExternalMode external,
-        StringType type)
+enum ExternalMode {
+    Externalize,
+    DoNotExternalize
+};
+
+template <typename StringType>
+static StringType v8StringToWebCoreString(v8::Handle<v8::String> v8String, ExternalMode external)
 {
     WebCoreStringResource* stringResource = WebCoreStringResource::toStringResource(v8String);
     if (stringResource)
-        return stringResource->webcoreString();
+        return stringResource->string(StringType());
 
     int length = v8String->Length();
     if (!length) {
@@ -134,42 +146,42 @@ String v8StringToWebCoreString(v8::Handle<v8::String> v8String, ExternalMode ext
         return StringImpl::empty();
     }
 
-    UChar* buffer;
-    String result = String::createUninitialized(length, buffer);
-    v8String->Write(reinterpret_cast<uint16_t*>(buffer), 0, length);
+    StringType result;
+    static const int inlineBufferSize = 16;
+    if (length <= inlineBufferSize) {
+        UChar inlineBuffer[inlineBufferSize];
+        v8String->Write(reinterpret_cast<uint16_t*>(inlineBuffer), 0, length);
+        result = StringType(inlineBuffer, length);
+    } else {
+        UChar* buffer;
+        String tmp = String::createUninitialized(length, buffer);
+        v8String->Write(reinterpret_cast<uint16_t*>(buffer), 0, length);
+        result = StringType(tmp);
+    }
 
-    if (type == AtomicStringType)
-        result = AtomicString(result);
-
-    if (external == Externalize) {
-        WebCoreStringResource* resource = new WebCoreStringResource(result);
-        if (!v8String->MakeExternal(resource)) {
+    if (external == Externalize && v8String->CanMakeExternal()) {
+        stringResource = new WebCoreStringResource(result);
+        if (!v8String->MakeExternal(stringResource)) {
             // In case of a failure delete the external resource as it was not used.
-            delete resource;
+            delete stringResource;
         }
     }
     return result;
 }
 
-AtomicString v8StringToAtomicWebCoreString(v8::Handle<v8::String> v8String)
+String v8StringToWebCoreString(v8::Handle<v8::String> v8String)
 {
-    WebCoreStringResource* stringResource = WebCoreStringResource::toStringResource(v8String);
-    if (!stringResource) {
-        if (!v8String->CanMakeExternal())
-            return v8StringToWebCoreString(v8String, DoNotExternalize, AtomicStringType);
-        // If this string hasn't been externalized, we force it now.
-        v8StringToWebCoreString(v8String, Externalize, AtomicStringType);
-        stringResource = WebCoreStringResource::toStringResource(v8String);
-        ASSERT(stringResource);
-    }
-    return stringResource->atomicString();
+    return v8StringToWebCoreString<String>(v8String, Externalize);
 }
 
-String v8ValueToWebCoreString(v8::Handle<v8::Value> object)
+AtomicString v8StringToAtomicWebCoreString(v8::Handle<v8::String> v8String)
 {
-    if (object->IsString())
-        return v8StringToWebCoreString(v8::Handle<v8::String>::Cast(object), Externalize, PlainStringType);
+    return v8StringToWebCoreString<AtomicString>(v8String, Externalize);
+}
 
+String v8NonStringValueToWebCoreString(v8::Handle<v8::Value> object)
+{
+    ASSERT(!object->IsString());
     if (object->IsInt32()) {
         int value = object->Int32Value();
         // Most numbers used are <= 100. Even if they aren't used there's very little in using the space.
@@ -195,15 +207,13 @@ String v8ValueToWebCoreString(v8::Handle<v8::Value> object)
         throwError(block.Exception());
         return StringImpl::empty();
     }
-    return v8StringToWebCoreString(v8String, DoNotExternalize, PlainStringType);
+    return v8StringToWebCoreString<String>(v8String, DoNotExternalize);
 }
 
-AtomicString v8ValueToAtomicWebCoreString(v8::Handle<v8::Value> v8Value)
+AtomicString v8NonStringValueToAtomicWebCoreString(v8::Handle<v8::Value> object)
 {
-    if (v8Value->IsString())
-        return v8StringToAtomicWebCoreString(v8::Handle<v8::String>::Cast(v8Value));
-    String string = v8ValueToWebCoreString(v8Value);
-    return AtomicString(string);
+    ASSERT(!object->IsString());
+    return AtomicString(v8NonStringValueToWebCoreString(object));
 }
 
 v8::Handle<v8::String> v8String(const String& string)

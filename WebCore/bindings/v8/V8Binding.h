@@ -39,25 +39,27 @@
 
 namespace WebCore {
 
-    enum ExternalMode {
-        Externalize,
-        DoNotExternalize
-    };
-
-    enum StringType {
-        PlainStringType,
-        AtomicStringType
-    };
-
     // Convert v8 types to a WebCore::String. If the V8 string is not already
     // an external string then it is transformed into an external string at this
     // point to avoid repeated conversions.
-    String v8StringToWebCoreString(v8::Handle<v8::String>, ExternalMode mode, StringType type);
-    String v8ValueToWebCoreString(v8::Handle<v8::Value>);
+    String v8StringToWebCoreString(v8::Handle<v8::String>);
+    String v8NonStringValueToWebCoreString(v8::Handle<v8::Value>);
+    inline String v8ValueToWebCoreString(v8::Handle<v8::Value> value)
+    {
+        if (value->IsString())
+            return v8StringToWebCoreString(v8::Handle<v8::String>::Cast(value));
+        return v8NonStringValueToWebCoreString(value);
+    }
 
     // Convert v8 types to a WebCore::AtomicString.
     AtomicString v8StringToAtomicWebCoreString(v8::Handle<v8::String>);
-    AtomicString v8ValueToAtomicWebCoreString(v8::Handle<v8::Value>);
+    AtomicString v8NonStringValueToAtomicWebCoreString(v8::Handle<v8::Value>);
+    inline AtomicString v8ValueToAtomicWebCoreString(v8::Handle<v8::Value> value)
+    {
+        if (value->IsString())
+            return v8StringToAtomicWebCoreString(v8::Handle<v8::String>::Cast(value));
+        return v8NonStringValueToAtomicWebCoreString(value);
+    }
 
     // Convert a string to a V8 string.
     v8::Handle<v8::String> v8String(const String&);
