@@ -843,12 +843,12 @@ bool WebFrameLoaderClient::shouldGoToHistoryItem(HistoryItem* item) const
 
 void WebFrameLoaderClient::didDisplayInsecureContent()
 {
-    notImplemented();
+    // FIXME: Implement me.
 }
 
 void WebFrameLoaderClient::didRunInsecureContent(SecurityOrigin*)
 {
-    notImplemented();
+    // FIXME: Implement me.
 }
 
 ResourceError WebFrameLoaderClient::cancelledError(const ResourceRequest& request)
