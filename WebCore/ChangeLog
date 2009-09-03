@@ -1,3 +1,18 @@
+2009-09-03  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        More partial work towards "Page Cache should support pages with Frames"
+        https://bugs.webkit.org/show_bug.cgi?id=13631
+
+        Fix a bug where subframes weren't asked if they were cacheable.
+
+        No new tests, especially since page caching for frames isn't turned on yet.
+        A layout test will come in my next patch, which enables frames in the page cache.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::canCachePageContainingThisFrame):
+
 2009-09-03  Adam Barth  <abarth@webkit.org>
 
         Reviewed by eric@webkit.org.
