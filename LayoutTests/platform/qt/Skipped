@@ -32,6 +32,13 @@ fast/events/drag-to-navigate.html
 fast/events/prevent-drag-to-navigate.html
 fast/forms/get-file-upload.html
 
+# Missing textInputController.setMarkedText function
+fast/forms/input-maxlength-ime-preedit.html
+fast/forms/input-maxlength-ime-completed.html
+
+# Missing layoutTestController.overridePreference
+fast/events/pageshow-pagehide-on-back-cached.html
+
 # ------- failing worker test
 # Currently fails because on QNetworkReply::ContentNotFound error we
 # still deliver the content instead of reporting it as failure to WebCore

@@ -1,5 +1,13 @@
 2009-09-03  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Disable a few tests that require new controller features
+
+        * platform/qt/Skipped:
+
+2009-09-03  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
         Rubber-stamped by Simon Hausmann.
 
         [Qt/Linux] Add platform-spesific result for plugin-javascript-access
