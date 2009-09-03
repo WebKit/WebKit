@@ -1,40 +1,40 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x207
-  RenderBlock {HTML} at (0,0) size 800x207
-    RenderBody {BODY} at (8,14) size 784x185
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 322x19
-          text run at (0,0) width 322: "There should be no red borders on the table below"
-      RenderTable {TABLE} at (0,33) size 122x152 [border: (2px none #808080)]
-        RenderTableSection {TBODY} at (2,2) size 117x147
-          RenderTableRow {TR} at (0,0) size 117x49
-            RenderTableCell {TD} at (0,11) size 36x26 [border: (3px solid #00FF00)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 29x19
-                text run at (4,4) width 29: "solid"
-            RenderTableCell {TD} at (36,12) size 45x24 [border: (3px solid #00FF00) none (3px solid #00FF00)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 29x19
-                text run at (4,4) width 29: "solid"
-            RenderTableCell {TD} at (81,11) size 36x26 [border: (3px solid #00FF00)] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 29x19
-                text run at (4,4) width 29: "solid"
-          RenderTableRow {TR} at (0,49) size 117x49
-            RenderTableCell {TD} at (0,60) size 36x26 [border: (3px solid #00FF00) none (2px solid #00FF00)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 29x19
-                text run at (4,4) width 29: "solid"
-            RenderTableCell {TD} at (36,63) size 45x21 [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 43x19
-                text run at (1,1) width 43: "hidden"
-            RenderTableCell {TD} at (81,60) size 36x26 [border: (3px solid #00FF00) none] [r=1 c=2 rs=1 cs=1]
-              RenderText {#text} at (1,4) size 29x19
-                text run at (1,4) width 29: "solid"
-          RenderTableRow {TR} at (0,98) size 117x49
-            RenderTableCell {TD} at (0,109) size 36x26 [border: (3px solid #00FF00)] [r=2 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 29x19
-                text run at (4,4) width 29: "solid"
-            RenderTableCell {TD} at (36,111) size 45x23 [border: none (2px solid #00FF00)] [r=2 c=1 rs=1 cs=1]
-              RenderText {#text} at (4,1) size 29x19
-                text run at (4,1) width 29: "solid"
-            RenderTableCell {TD} at (81,109) size 36x26 [border: (3px solid #00FF00)] [r=2 c=2 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 29x19
-                text run at (4,4) width 29: "solid"
+layer at (0,0) size 800x194
+  RenderBlock {HTML} at (0,0) size 800x194
+    RenderBody {BODY} at (8,13) size 784x173
+      RenderBlock {P} at (0,0) size 784x17
+        RenderText {#text} at (0,0) size 289x17
+          text run at (0,0) width 289: "There should be no red borders on the table below"
+      RenderTable {TABLE} at (0,30) size 113x143 [border: (2px none #808080)]
+        RenderTableSection {TBODY} at (2,2) size 108x138
+          RenderTableRow {TR} at (0,0) size 108x46
+            RenderTableCell {TD} at (0,11) size 34x24 [border: (3px solid #00FF00)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 27x17
+                text run at (4,4) width 27: "solid"
+            RenderTableCell {TD} at (34,12) size 40x22 [border: (3px solid #00FF00) none (3px solid #00FF00)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 27x17
+                text run at (4,4) width 27: "solid"
+            RenderTableCell {TD} at (74,11) size 34x24 [border: (3px solid #00FF00)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 27x17
+                text run at (4,4) width 27: "solid"
+          RenderTableRow {TR} at (0,46) size 108x46
+            RenderTableCell {TD} at (0,57) size 34x24 [border: (3px solid #00FF00) none (2px solid #00FF00)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 27x17
+                text run at (4,4) width 27: "solid"
+            RenderTableCell {TD} at (34,59) size 40x19 [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 38x17
+                text run at (1,1) width 38: "hidden"
+            RenderTableCell {TD} at (74,57) size 34x24 [border: (3px solid #00FF00) none] [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,4) size 27x17
+                text run at (1,4) width 27: "solid"
+          RenderTableRow {TR} at (0,92) size 108x46
+            RenderTableCell {TD} at (0,103) size 34x24 [border: (3px solid #00FF00)] [r=2 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 27x17
+                text run at (4,4) width 27: "solid"
+            RenderTableCell {TD} at (34,104) size 40x21 [border: none (2px solid #00FF00)] [r=2 c=1 rs=1 cs=1]
+              RenderText {#text} at (4,1) size 27x17
+                text run at (4,1) width 27: "solid"
+            RenderTableCell {TD} at (74,103) size 34x24 [border: (3px solid #00FF00)] [r=2 c=2 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 27x17
+                text run at (4,4) width 27: "solid"

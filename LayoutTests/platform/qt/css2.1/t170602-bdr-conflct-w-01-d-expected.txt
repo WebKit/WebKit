@@ -1,40 +1,40 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x207
-  RenderBlock {HTML} at (0,0) size 800x207
-    RenderBody {BODY} at (8,14) size 784x185
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 322x19
-          text run at (0,0) width 322: "There should be no red borders on the table below"
-      RenderTable {TABLE} at (0,33) size 155x152 [border: (2px none #808080)]
-        RenderTableSection {TBODY} at (2,2) size 150x147
-          RenderTableRow {TR} at (0,0) size 150x49
-            RenderTableCell {TD} at (0,11) size 50x26 [border: (3px double #00FF00)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 43x19
-                text run at (4,4) width 43: "double"
-            RenderTableCell {TD} at (50,12) size 50x24 [border: (3px double #00FF00) none (3px double #00FF00)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 43x19
-                text run at (4,4) width 43: "double"
-            RenderTableCell {TD} at (100,11) size 50x26 [border: (3px double #00FF00)] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 43x19
-                text run at (4,4) width 43: "double"
-          RenderTableRow {TR} at (0,49) size 150x49
-            RenderTableCell {TD} at (0,60) size 50x26 [border: (3px double #00FF00) none (2px double #00FF00)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 43x19
-                text run at (4,4) width 43: "double"
-            RenderTableCell {TD} at (50,63) size 50x21 [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 43x19
-                text run at (1,1) width 43: "hidden"
-            RenderTableCell {TD} at (100,60) size 50x26 [border: (3px double #00FF00) none] [r=1 c=2 rs=1 cs=1]
-              RenderText {#text} at (1,4) size 43x19
-                text run at (1,4) width 43: "double"
-          RenderTableRow {TR} at (0,98) size 150x49
-            RenderTableCell {TD} at (0,109) size 50x26 [border: (3px double #00FF00)] [r=2 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 43x19
-                text run at (4,4) width 43: "double"
-            RenderTableCell {TD} at (50,111) size 50x23 [border: none (2px double #00FF00)] [r=2 c=1 rs=1 cs=1]
-              RenderText {#text} at (4,1) size 43x19
-                text run at (4,1) width 43: "double"
-            RenderTableCell {TD} at (100,109) size 50x26 [border: (3px double #00FF00)] [r=2 c=2 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 43x19
-                text run at (4,4) width 43: "double"
+layer at (0,0) size 800x194
+  RenderBlock {HTML} at (0,0) size 800x194
+    RenderBody {BODY} at (8,13) size 784x173
+      RenderBlock {P} at (0,0) size 784x17
+        RenderText {#text} at (0,0) size 289x17
+          text run at (0,0) width 289: "There should be no red borders on the table below"
+      RenderTable {TABLE} at (0,30) size 140x143 [border: (2px none #808080)]
+        RenderTableSection {TBODY} at (2,2) size 135x138
+          RenderTableRow {TR} at (0,0) size 135x46
+            RenderTableCell {TD} at (0,11) size 45x24 [border: (3px double #00FF00)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 38x17
+                text run at (4,4) width 38: "double"
+            RenderTableCell {TD} at (45,12) size 45x22 [border: (3px double #00FF00) none (3px double #00FF00)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 38x17
+                text run at (4,4) width 38: "double"
+            RenderTableCell {TD} at (90,11) size 45x24 [border: (3px double #00FF00)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 38x17
+                text run at (4,4) width 38: "double"
+          RenderTableRow {TR} at (0,46) size 135x46
+            RenderTableCell {TD} at (0,57) size 45x24 [border: (3px double #00FF00) none (2px double #00FF00)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 38x17
+                text run at (4,4) width 38: "double"
+            RenderTableCell {TD} at (45,59) size 45x19 [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 38x17
+                text run at (1,1) width 38: "hidden"
+            RenderTableCell {TD} at (90,57) size 45x24 [border: (3px double #00FF00) none] [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,4) size 38x17
+                text run at (1,4) width 38: "double"
+          RenderTableRow {TR} at (0,92) size 135x46
+            RenderTableCell {TD} at (0,103) size 45x24 [border: (3px double #00FF00)] [r=2 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 38x17
+                text run at (4,4) width 38: "double"
+            RenderTableCell {TD} at (45,104) size 45x21 [border: none (2px double #00FF00)] [r=2 c=1 rs=1 cs=1]
+              RenderText {#text} at (4,1) size 38x17
+                text run at (4,1) width 38: "double"
+            RenderTableCell {TD} at (90,103) size 45x24 [border: (3px double #00FF00)] [r=2 c=2 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 38x17
+                text run at (4,4) width 38: "double"

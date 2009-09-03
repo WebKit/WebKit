@@ -1,40 +1,40 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x207
-  RenderBlock {HTML} at (0,0) size 800x207
-    RenderBody {BODY} at (8,14) size 784x185
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 322x19
-          text run at (0,0) width 322: "There should be no red borders on the table below"
-      RenderTable {TABLE} at (0,33) size 130x152
-        RenderTableSection {TBODY} at (0,0) size 130x152
-          RenderTableRow {TR} at (0,0) size 130x49
-            RenderTableCell {TD} at (0,14) size 39x21 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 32x19
-                text run at (1,1) width 32: "none"
-            RenderTableCell {TD} at (39,11) size 52x26 [border: none] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 32x19
-                text run at (1,1) width 32: "none"
-            RenderTableCell {TD} at (91,14) size 39x21 [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 32x19
-                text run at (1,1) width 32: "none"
-          RenderTableRow {TR} at (0,49) size 130x54
-            RenderTableCell {TD} at (0,65) size 39x21 [border: none] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 32x19
-                text run at (1,1) width 32: "none"
-            RenderTableCell {TD} at (39,60) size 52x31 [border: (5px dotted #00FF00)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (6,6) size 40x19
-                text run at (6,6) width 40: "dotted"
-            RenderTableCell {TD} at (91,65) size 39x21 [border: none] [r=1 c=2 rs=1 cs=1]
-              RenderText {#text} at (6,1) size 32x19
-                text run at (6,1) width 32: "none"
-          RenderTableRow {TR} at (0,103) size 130x49
-            RenderTableCell {TD} at (0,117) size 39x21 [r=2 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 32x19
-                text run at (1,1) width 32: "none"
-            RenderTableCell {TD} at (39,114) size 52x26 [border: (5px none #FF0000)] [r=2 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,6) size 32x19
-                text run at (1,6) width 32: "none"
-            RenderTableCell {TD} at (91,117) size 39x21 [r=2 c=2 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 32x19
-                text run at (1,1) width 32: "none"
+layer at (0,0) size 800x194
+  RenderBlock {HTML} at (0,0) size 800x194
+    RenderBody {BODY} at (8,13) size 784x173
+      RenderBlock {P} at (0,0) size 784x17
+        RenderText {#text} at (0,0) size 289x17
+          text run at (0,0) width 289: "There should be no red borders on the table below"
+      RenderTable {TABLE} at (0,30) size 118x143
+        RenderTableSection {TBODY} at (0,0) size 118x143
+          RenderTableRow {TR} at (0,0) size 118x46
+            RenderTableCell {TD} at (0,13) size 35x19 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 28x17
+                text run at (1,1) width 28: "none"
+            RenderTableCell {TD} at (35,11) size 48x24 [border: none] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 28x17
+                text run at (1,1) width 28: "none"
+            RenderTableCell {TD} at (83,13) size 35x19 [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 28x17
+                text run at (1,1) width 28: "none"
+          RenderTableRow {TR} at (0,46) size 118x51
+            RenderTableCell {TD} at (0,62) size 35x19 [border: none] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 28x17
+                text run at (1,1) width 28: "none"
+            RenderTableCell {TD} at (35,57) size 48x29 [border: (5px dotted #00FF00)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (6,6) size 36x17
+                text run at (6,6) width 36: "dotted"
+            RenderTableCell {TD} at (83,62) size 35x19 [border: none] [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (6,1) size 28x17
+                text run at (6,1) width 28: "none"
+          RenderTableRow {TR} at (0,97) size 118x46
+            RenderTableCell {TD} at (0,110) size 35x19 [r=2 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 28x17
+                text run at (1,1) width 28: "none"
+            RenderTableCell {TD} at (35,108) size 48x24 [border: (5px none #FF0000)] [r=2 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,6) size 28x17
+                text run at (1,6) width 28: "none"
+            RenderTableCell {TD} at (83,110) size 35x19 [r=2 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 28x17
+                text run at (1,1) width 28: "none"

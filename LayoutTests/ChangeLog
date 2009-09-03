@@ -2,6 +2,65 @@
 
         Reviewed by Ariya Hidayat.
 
+        [Qt] Update outdated metrics in css2.1/t170602-bdr-conflct-w-* (50 files).
+        Remove these files from Skipped.
+
+        * platform/qt/Skipped:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-00-d-expected.txt:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-01-d-expected.txt:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-02-d-expected.txt:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-03-d-expected.txt:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-04-d-expected.txt:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-05-d-expected.txt:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-06-d-expected.txt:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-07-d-expected.txt:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-08-d-expected.txt:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-09-d-expected.txt:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-10-d-expected.txt:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-11-d-expected.txt:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-12-d-expected.txt:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-13-d-expected.txt:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-14-d-expected.txt:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-15-d-expected.txt:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-16-d-expected.txt:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-17-d-expected.txt:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-18-d-expected.txt:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-19-d-expected.txt:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-20-d-expected.txt:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-21-d-expected.txt:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-22-d-expected.txt:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-23-d-expected.txt:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-24-d-expected.txt:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-25-d-expected.txt:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-26-d-expected.txt:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-27-d-expected.txt:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-28-d-expected.txt:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-29-d-expected.txt:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-30-d-expected.txt:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-31-d-expected.txt:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-32-d-expected.txt:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-33-d-expected.txt:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-34-d-expected.txt:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-35-d-expected.txt:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-36-d-expected.txt:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-37-d-expected.txt:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-38-d-expected.txt:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-39-d-expected.txt:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-40-d-expected.txt:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-41-d-expected.txt:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-42-d-expected.txt:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-43-d-expected.txt:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-44-d-expected.txt:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-45-d-expected.txt:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-46-d-expected.txt:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-47-d-expected.txt:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-48-d-expected.txt:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-49-d-expected.txt:
+
+2009-09-03  Renata Hodovan  <hodovan.renata@stud.u-szeged.hu>
+
+        Reviewed by Ariya Hidayat.
+
         [Qt] Update outdated metrics in css2.1/t1202-counters-* (17 files).
         Remove these files from Skipped.
 
