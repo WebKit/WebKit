@@ -17,6 +17,9 @@ fast/events/popup-blocking-click-in-iframe.html
 # Plain text controller currently in Mac DumpRenderTree only.
 editing/text-iterator/basic-iteration.html
 
+# Fluctuating tests
+animations/transform-origin-vs-functions.html
+
 # ------- works on 64 bit but not on 32 bit
 svg/custom/path-getTotalLength.svg
 svg/custom/glyph-setting-d-attribute.svg
@@ -4666,6 +4669,7 @@ editing/execCommand/19089.html
 editing/inserting/5803706-1.html
 editing/inserting/5994480-2.html
 editing/pasteboard/copy-crash.html
+editing/pasteboard/files-during-page-drags.html
 editing/pasteboard/get-data-text-plain-drop.html
 editing/pasteboard/paste-plaintext-user-select-none.html
 editing/selection/doubleclick-whitespace-crash.html

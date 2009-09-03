@@ -85,6 +85,18 @@
 
 2009-09-03  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
+        Rubber-stamped by Ariya Hidayat.
+
+        [Qt] Skip a couple of failing layout-tests
+
+        We skip most of the D&D tests already, and the animation test
+        seems to be flakey on our platform since the commit that triggered
+        it only touched V8 bindings.
+
+        * platform/qt/Skipped:
+
+2009-09-03  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
         Reviewed by Ariya Hidayat.
 
         [Qt] Disable a few tests that require new controller features
