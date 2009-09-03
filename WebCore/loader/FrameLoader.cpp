@@ -563,12 +563,12 @@ void FrameLoader::submitForm(const char* action, const String& url, PassRefPtr<F
     targetFrame->loader()->scheduleFormSubmission(frameRequest, lockHistory, event, formState);
 }
 
-void FrameLoader::stopLoading(bool sendUnload, DatabasePolicy databasePolicy)
+void FrameLoader::stopLoading(UnloadEventPolicy unloadEventPolicy, DatabasePolicy databasePolicy)
 {
     if (m_frame->document() && m_frame->document()->tokenizer())
         m_frame->document()->tokenizer()->stopParsing();
 
-    if (sendUnload) {
+    if (unloadEventPolicy != UnloadEventPolicyNone) {
         if (m_frame->document()) {
             if (m_didCallImplicitClose && !m_wasUnloadEventEmitted) {
                 Node* currentFocusedNode = m_frame->document()->focusedNode();
@@ -576,7 +576,8 @@ void FrameLoader::stopLoading(bool sendUnload, DatabasePolicy databasePolicy)
                     currentFocusedNode->aboutToUnload();
                 m_unloadEventBeingDispatched = true;
                 if (m_frame->domWindow()) {
-                    m_frame->domWindow()->dispatchPageTransitionEvent(EventNames().pagehideEvent, m_frame->document()->inPageCache());
+                    if (unloadEventPolicy == UnloadEventPolicyUnloadAndPageHide)
+                        m_frame->domWindow()->dispatchPageTransitionEvent(EventNames().pagehideEvent, m_frame->document()->inPageCache());
                     m_frame->domWindow()->dispatchUnloadEvent();
                 }
                 m_unloadEventBeingDispatched = false;
@@ -614,7 +615,7 @@ void FrameLoader::stopLoading(bool sendUnload, DatabasePolicy databasePolicy)
 
     // tell all subframes to stop as well
     for (Frame* child = m_frame->tree()->firstChild(); child; child = child->tree()->nextSibling())
-        child->loader()->stopLoading(sendUnload);
+        child->loader()->stopLoading(unloadEventPolicy);
 
     cancelRedirection();
 }
@@ -636,7 +637,11 @@ void FrameLoader::stop()
 bool FrameLoader::closeURL()
 {
     saveDocumentState();
-    stopLoading(true);
+    
+    // Should only send the pagehide event here if the current document exists and has not been placed in the page cache.    
+    Document* currentDocument = m_frame->document();
+    stopLoading(currentDocument && !currentDocument->inPageCache() ? UnloadEventPolicyUnloadAndPageHide : UnloadEventPolicyUnloadOnly);
+    
     m_frame->editor()->clearUndoRedoOperations();
     return true;
 }
@@ -2081,7 +2086,7 @@ void FrameLoader::scheduleRedirection(ScheduledRedirection* redirection)
     if (redirection->wasDuringLoad) {
         if (m_provisionalDocumentLoader)
             m_provisionalDocumentLoader->stopLoading();
-        stopLoading(true);   
+        stopLoading(UnloadEventPolicyUnloadAndPageHide);   
     }
 
     stopRedirectionTimer();
@@ -4233,10 +4238,24 @@ void FrameLoader::cachePageForHistoryItem(HistoryItem* item)
     if (!canCachePage() || item->isInPageCache())
         return;
 
+    pageHidden();
+    
     if (Page* page = m_frame->page()) {
         RefPtr<CachedPage> cachedPage = CachedPage::create(page);
         pageCache()->add(item, cachedPage.release());
     }
+}
+
+void FrameLoader::pageHidden()
+{
+    m_unloadEventBeingDispatched = true;
+    if (m_frame->domWindow())
+        m_frame->domWindow()->dispatchPageTransitionEvent(EventNames().pagehideEvent, true);
+    m_unloadEventBeingDispatched = false;
+
+    // Send pagehide event for subframes as well
+    for (Frame* child = m_frame->tree()->firstChild(); child; child = child->tree()->nextSibling())
+        child->loader()->pageHidden();
 }
 
 bool FrameLoader::shouldTreatURLAsSameAsCurrent(const KURL& url) const

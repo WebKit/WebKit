@@ -81,6 +81,12 @@ namespace WebCore {
         ObjectContentNetscapePlugin,
         ObjectContentOtherPlugin
     };
+    
+    enum UnloadEventPolicy {
+        UnloadEventPolicyNone,
+        UnloadEventPolicyUnloadOnly,
+        UnloadEventPolicyUnloadAndPageHide
+    };
 }
 
 #endif

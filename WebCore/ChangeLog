@@ -5,6 +5,30 @@
         More partial work towards "Page Cache should support pages with Frames"
         https://bugs.webkit.org/show_bug.cgi?id=13631
 
+        No new tests. (No change in behavior, current tests pass).
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::stopLoading): Adopt the new enum form for FrameLoader::stopLoading().
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::stopLoading): Take an enum to decide whether to dispatch no unload events,
+          only unload, or unload and pagehide.
+        (WebCore::FrameLoader::closeURL):
+        (WebCore::FrameLoader::scheduleRedirection):
+        (WebCore::FrameLoader::cachePageForHistoryItem): Call pageHidden().
+        (WebCore::FrameLoader::pageHidden): Add to dispatch the pagehide event to all frames in the case
+          where a page is added to the PageCache.
+        * loader/FrameLoader.h:
+
+        * loader/FrameLoaderTypes.h: Add an UnloadEventPolicy enum.
+
+2009-09-02  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        More partial work towards "Page Cache should support pages with Frames"
+        https://bugs.webkit.org/show_bug.cgi?id=13631
+
         - More CachedFrame destruction work.
         - Including related Frame and FrameLoader changes and cleanup.
 

@@ -261,7 +261,7 @@ namespace WebCore {
             bool lockHistory, PassRefPtr<Event>, PassRefPtr<FormState>);
 
         void stop();
-        void stopLoading(bool sendUnload, DatabasePolicy = DatabasePolicyStop);
+        void stopLoading(UnloadEventPolicy, DatabasePolicy = DatabasePolicyStop);
         bool closeURL();
 
         void didExplicitOpen();
@@ -422,6 +422,7 @@ namespace WebCore {
         
         bool loadProvisionalItemFromCachedPage();
         void cachePageForHistoryItem(HistoryItem*);
+        void pageHidden();
 
         void receivedFirstData();
 

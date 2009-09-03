@@ -273,7 +273,7 @@ void DocumentLoader::stopLoading(DatabasePolicy databasePolicy)
         Document* doc = m_frame->document();
         
         if (loading || doc->parsing())
-            m_frame->loader()->stopLoading(false, databasePolicy);
+            m_frame->loader()->stopLoading(UnloadEventPolicyNone, databasePolicy);
     }
 
     // Always cancel multipart loaders
