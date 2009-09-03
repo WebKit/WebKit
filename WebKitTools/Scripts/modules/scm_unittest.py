@@ -1,4 +1,5 @@
 # Copyright (C) 2009 Google Inc. All rights reserved.
+# Copyright (C) 2009 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -31,6 +32,7 @@ import stat
 import subprocess
 import tempfile
 import unittest
+import urllib
 from modules.scm import detect_scm_system, SCM, ScriptError
 
 
@@ -82,6 +84,8 @@ class SVNTestRepository:
 
     @classmethod
     def setup(cls, test_object):
+        test_object.original_path = os.path.abspath('.')
+
         # Create an test SVN repository
         test_object.svn_repo_path = tempfile.mkdtemp(suffix="svn_test_repo")
         test_object.svn_repo_url = "file://%s" % test_object.svn_repo_path # Not sure this will work on windows
@@ -101,7 +105,25 @@ class SVNTestRepository:
         run(['rm', '-rf', test_object.svn_checkout_path])
 
 
-class SVNTest(unittest.TestCase):
+class SCMTest(unittest.TestCase):
+    def _create_patch(self, patch_contents):
+        patch_path = os.path.join(self.svn_checkout_path, 'patch.diff')
+        write_into_file_at_path(patch_path, patch_contents)
+        patch = {}
+        patch['reviewer'] = 'Joe Cool'
+        patch['bug_id'] = '12345'
+        patch['url'] = 'file://%s' % urllib.pathname2url(patch_path)
+        return patch
+
+    def _setup_webkittools_scripts_symlink(self, local_scm):
+        webkit_scm = detect_scm_system(self.original_path)
+        webkit_scripts_directory = webkit_scm.scripts_directory()
+        local_scripts_directory = local_scm.scripts_directory()
+        os.mkdir(os.path.dirname(local_scripts_directory))
+        os.symlink(webkit_scripts_directory, local_scripts_directory)
+
+
+class SVNTest(SCMTest):
 
     def setUp(self):
         SVNTestRepository.setup(self)
@@ -109,6 +131,7 @@ class SVNTest(unittest.TestCase):
 
     def tearDown(self):
         SVNTestRepository.tear_down(self)
+        os.chdir(self.original_path)
 
     def test_create_patch_is_full_patch(self):
         test_dir_path = os.path.join(self.svn_checkout_path, 'test_dir')
@@ -137,7 +160,19 @@ class SVNTest(unittest.TestCase):
         self.assertEqual(scm.display_name(), "svn")
         self.assertEqual(scm.supports_local_commits(), False)
 
-class GitTest(unittest.TestCase):
+    def test_apply_svn_patch(self):
+        scm = detect_scm_system(self.svn_checkout_path)
+        patch = self._create_patch(run(['svn', 'diff', '-r4:3']))
+        self._setup_webkittools_scripts_symlink(scm)
+        scm.apply_patch(patch)
+
+    def test_apply_svn_patch_force(self):
+        scm = detect_scm_system(self.svn_checkout_path)
+        patch = self._create_patch(run(['svn', 'diff', '-r2:4']))
+        self._setup_webkittools_scripts_symlink(scm)
+        self.assertRaises(ScriptError, scm.apply_patch, patch, force=True)
+
+class GitTest(SCMTest):
 
     def _setup_git_clone_of_svn_repository(self):
         self.git_checkout_path = tempfile.mkdtemp(suffix="git_test_checkout")
@@ -155,6 +190,7 @@ class GitTest(unittest.TestCase):
     def tearDown(self):
         SVNTestRepository.tear_down(self)
         self._tear_down_git_clone_of_svn_repository()
+        os.chdir(self.original_path)
 
     def test_detection(self):
         scm = detect_scm_system(self.git_checkout_path)
@@ -203,6 +239,18 @@ class GitTest(unittest.TestCase):
         expected_commits += reversed(run(['git', 'rev-list', commit_range]).splitlines())
 
         self.assertEqual(actual_commits, expected_commits)
+
+    def test_apply_git_patch(self):
+        scm = detect_scm_system(self.git_checkout_path)
+        patch = self._create_patch(run(['git', 'diff', 'HEAD..HEAD^']))
+        self._setup_webkittools_scripts_symlink(scm)
+        scm.apply_patch(patch)
+
+    def test_apply_git_patch_force(self):
+        scm = detect_scm_system(self.git_checkout_path)
+        patch = self._create_patch(run(['git', 'diff', 'HEAD~2..HEAD']))
+        self._setup_webkittools_scripts_symlink(scm)
+        self.assertRaises(ScriptError, scm.apply_patch, patch, force=True)
 
 
 if __name__ == '__main__':

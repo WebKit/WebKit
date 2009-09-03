@@ -1,3 +1,48 @@
+2009-09-02  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/28880> svn-apply --force doesn't actually work
+
+        Reviewed by Eric Seidel.
+
+        This fixes "svn-apply --force" and adds unit tests for the
+        scm.apply_patch() method which uses this script.
+
+        * Scripts/svn-apply: Created $globalExitCode variable that
+        defaults to 0.  Exit with a value of $globalExitCode when the
+        script is finished.
+        (applyPatch): Ignore a non-zero $exitCode if $force is true, but
+        set $globalExitCode to $exitCode so that svn-apply exits with a
+        non-zero status if any patches did not apply cleanly.  Also
+        print out the actual patch command if $force was not true.
+
+        * Scripts/modules/scm.py:
+        (scripts_directory): Added.  Extracted from script_path().
+        (script_path): Extracted scripts_directory().
+        * Scripts/modules/scm_unittest.py: Import urllib.
+        (SVNTestRepository.setup): Save the original working directory
+        in test_object since this represents the WebKit repository from
+        where the unit tests are run.
+        (SCMTest): Created new super class to hold utility methods.
+        (SCMTest._create_patch): Creates a patch file on disk and a
+        dictionary for use with scm.svn_apply().
+        (SCMTest._setup_webkittools_scripts_symlink): Sets up a symlink
+        back to WebKitTools/Scripts in the test repository so that
+        scm.apply_patch() is able to find the svn-apply script.
+        (SVNTest): Inherit from SCMTest instead of unittest.TestCase.
+        (SVNTest.tearDown): Make sure to change directories back to the
+        original_path before the next test.
+        (SVNTest.test_apply_svn_patch): New test case for applying an
+        svn patch with scm.apply_patch().
+        (SVNTest.test_apply_svn_patch_force): New test case for applying
+        an svn patch with scm.apply_patch() that conflicts.
+        (GitTest): Inherit from SCMTest instead of unittest.TestCase.
+        (GitTest.tearDown): Make sure to change directories back to the
+        original_path before the next test.
+        (GitTest.test_apply_git_patch): New test case for applying a git
+        patch with scm.apply_patch().
+        (GitTest.test_apply_git_patch_force): New test case for applying
+        a git patch with scm.apply_patch() that conflicts.
+
 2009-09-02  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Mark Rowe.

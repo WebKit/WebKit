@@ -99,8 +99,11 @@ class SCM:
             return exit_code
         return output
 
+    def scripts_directory(self):
+        return os.path.join(self.checkout_root, "WebKitTools", "Scripts")
+
     def script_path(self, script_name):
-        return os.path.join(self.checkout_root, "WebKitTools", "Scripts", script_name)
+        return os.path.join(self.scripts_directory(), script_name)
 
     def ensure_clean_working_directory(self, force):
         if not force and not self.working_directory_is_clean():

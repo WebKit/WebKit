@@ -121,6 +121,8 @@ my %removeDirectoryIgnoreList = (
     '_svn' => 1,
 );
 
+my $globalExitCode = 0;
+
 my $pathScriptWasRunFrom = Cwd::getcwd();
 my $pathForRepositoryRoot = determineVCSRoot();
 
@@ -195,7 +197,7 @@ for $patch (@patches) {
 
 removeDirectoriesIfNeeded();
 
-exit 0;
+exit $globalExitCode;
 
 sub addDirectoriesIfNeeded($)
 {
@@ -239,9 +241,12 @@ sub applyPatch($$;$)
     chdir $pathScriptWasRunFrom;
 
     my $exitCode = $? >> 8;
-    if ($exitCode != 0) {
-        print "patch -p0 \"$fullPath\" returned $exitCode.  Pass --force to ignore patch failures.\n";
-        exit($exitCode);
+    if ($exitCode) {
+        if (!$force) {
+            print "$command \"$fullPath\" returned $exitCode.  Pass --force to ignore patch failures.\n";
+            exit $exitCode;
+        }
+        $globalExitCode = $exitCode;
     }
 }
 
