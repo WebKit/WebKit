@@ -1,3 +1,13 @@
+2009-09-03  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Xan Lopez.
+
+        Remove bogus asserts that break Debug builds at runtime.
+
+        * WebCoreSupport/DocumentLoaderGtk.cpp:
+        (WebKit::DocumentLoader::detachFromFrame):
+        (WebKit::DocumentLoader::decreaseLoadCount):
+
 2009-09-02  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Xan Lopez and Gustavo Noronha.
