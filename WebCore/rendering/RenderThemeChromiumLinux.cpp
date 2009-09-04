@@ -92,6 +92,21 @@ Color RenderThemeChromiumLinux::inactiveListBoxSelectionForegroundColor() const
     return Color(0x32, 0x32, 0x32);
 }
 
+void RenderThemeChromiumLinux::adjustSliderThumbSize(RenderObject* o) const
+{
+    // These sizes match the sizes in Chromium Win.
+    const int sliderThumbAlongAxis = 11;
+    const int sliderThumbAcrossAxis = 21;
+    if (o->style()->appearance() == SliderThumbHorizontalPart) {
+        o->style()->setWidth(Length(sliderThumbAlongAxis, Fixed));
+        o->style()->setHeight(Length(sliderThumbAcrossAxis, Fixed));
+    } else if (o->style()->appearance() == SliderThumbVerticalPart) {
+        o->style()->setWidth(Length(sliderThumbAcrossAxis, Fixed));
+        o->style()->setHeight(Length(sliderThumbAlongAxis, Fixed));
+    } else
+        RenderThemeChromiumSkia::adjustSliderThumbSize(o);
+}
+
 void RenderThemeChromiumLinux::setFocusRingColor(const Color& color)
 {
     m_focusRingColor = color;

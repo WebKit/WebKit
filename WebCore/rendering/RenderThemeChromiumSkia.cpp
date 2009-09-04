@@ -34,6 +34,7 @@
 #include "PlatformContextSkia.h"
 #include "RenderBox.h"
 #include "RenderObject.h"
+#include "RenderSlider.h"
 #include "ScrollbarTheme.h"
 #include "TransformationMatrix.h"
 #include "UserAgentStyleSheets.h"
@@ -68,6 +69,30 @@ static void setSizeIfAuto(RenderStyle* style, const IntSize& size)
         style->setWidth(Length(size.width(), Fixed));
     if (style->height().isAuto())
         style->setHeight(Length(size.height(), Fixed));
+}
+
+static void drawVertLine(SkCanvas* canvas, int x, int y1, int y2, const SkPaint& paint)
+{
+    SkIRect skrect;
+    skrect.set(x, y1, x + 1, y2 + 1);
+    canvas->drawIRect(skrect, paint);
+}
+
+static void drawHorizLine(SkCanvas* canvas, int x1, int x2, int y, const SkPaint& paint)
+{
+    SkIRect skrect;
+    skrect.set(x1, y, x2 + 1, y + 1);
+    canvas->drawIRect(skrect, paint);
+}
+
+static void drawBox(SkCanvas* canvas, const IntRect& rect, const SkPaint& paint)
+{
+    const int right = rect.x() + rect.width() - 1;
+    const int bottom = rect.y() + rect.height() - 1;
+    drawHorizLine(canvas, rect.x(), right, rect.y(), paint);
+    drawVertLine(canvas, right, rect.y(), bottom, paint);
+    drawHorizLine(canvas, rect.x(), right, bottom, paint);
+    drawVertLine(canvas, rect.x(), rect.y(), bottom, paint);
 }
 
 #if ENABLE(VIDEO)
@@ -302,7 +327,7 @@ static void paintButtonLike(RenderTheme* theme, RenderObject* o, const RenderObj
     canvas->drawLine(rect.x() + 1, bottom - 1, right - 1, bottom - 1, paint);
     canvas->drawLine(rect.x(), rect.y() + 1, rect.x(), bottom - 1, paint);
 
-    paint.setARGB(0xff, 0, 0, 0);
+    paint.setColor(SK_ColorBLACK);
     SkPoint p[2];
     const int lightEnd = theme->isPressed(o) ? 1 : 0;
     const int darkEnd = !lightEnd;
@@ -580,7 +605,7 @@ bool RenderThemeChromiumSkia::paintMediaVolumeSliderTrack(RenderObject* object, 
 
     SkCanvas* canvas = paintInfo.context->platformContext()->canvas();
     SkPaint paint;
-    paint.setARGB(0xff, 0xff, 0xff, 0xff);
+    paint.setColor(SK_ColorWHITE);
 
     int x = rect.x() + rect.width() / 2;
     canvas->drawLine(x, rect.y(), x, rect.y() + rect.height(), paint);
@@ -713,7 +738,7 @@ bool RenderThemeChromiumSkia::paintMenuList(RenderObject* o, const RenderObject:
     paintButtonLike(this, o, i, rect);
 
     SkPaint paint;
-    paint.setARGB(0xff, 0, 0, 0);
+    paint.setColor(SK_ColorBLACK);
     paint.setAntiAlias(true);
     paint.setStyle(SkPaint::kFill_Style);
 
@@ -736,6 +761,67 @@ void RenderThemeChromiumSkia::adjustMenuListButtonStyle(CSSStyleSelector* select
 bool RenderThemeChromiumSkia::paintMenuListButton(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& rect)
 {
     return paintMenuList(o, i, rect);
+}
+
+bool RenderThemeChromiumSkia::paintSliderTrack(RenderObject*, const RenderObject::PaintInfo& i, const IntRect& rect)
+{
+    // Just paint a grey box for now (matches the color of a scrollbar background.
+    SkCanvas* const canvas = i.context->platformContext()->canvas();
+    int verticalCenter = rect.y() + rect.height() / 2;
+    int top = std::max(rect.y(), verticalCenter - 2);
+    int bottom = std::min(rect.y() + rect.height(), verticalCenter + 2);
+
+    SkPaint paint;
+    const SkColor grey = SkColorSetARGB(0xff, 0xe3, 0xdd, 0xd8);
+    paint.setColor(grey);
+
+    SkRect skrect;
+    skrect.set(rect.x(), top, rect.x() + rect.width(), bottom);
+    canvas->drawRect(skrect, paint);
+
+    return false;
+}
+
+bool RenderThemeChromiumSkia::paintSliderThumb(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& rect)
+{
+    // Make a thumb similar to the scrollbar thumb.
+    const bool hovered = isHovered(o) || toRenderSlider(o->parent())->inDragMode();
+    const int midx = rect.x() + rect.width() / 2;
+    const int midy = rect.y() + rect.height() / 2;
+    const bool vertical = (o->style()->appearance() == SliderThumbVerticalPart);
+    SkCanvas* const canvas = i.context->platformContext()->canvas();
+
+    const SkColor thumbLightGrey = SkColorSetARGB(0xff, 0xf4, 0xf2, 0xef);
+    const SkColor thumbDarkGrey = SkColorSetARGB(0xff, 0xea, 0xe5, 0xe0);
+    SkPaint paint;
+    paint.setColor(hovered ? SK_ColorWHITE : thumbLightGrey);
+
+    SkIRect skrect;
+    if (vertical)
+        skrect.set(rect.x(), rect.y(), midx + 1, rect.bottom());
+    else
+        skrect.set(rect.x(), rect.y(), rect.right(), midy + 1);
+
+    canvas->drawIRect(skrect, paint);
+
+    paint.setColor(hovered ? thumbLightGrey : thumbDarkGrey);
+
+    if (vertical)
+        skrect.set(midx + 1, rect.y(), rect.right(), rect.bottom());
+    else
+        skrect.set(rect.x(), midy + 1, rect.right(), rect.bottom());
+
+    canvas->drawIRect(skrect, paint);
+
+    const SkColor borderDarkGrey = SkColorSetARGB(0xff, 0x9d, 0x96, 0x8e);
+    paint.setColor(borderDarkGrey);
+    drawBox(canvas, rect, paint);
+
+    if (rect.height() > 10 && rect.width() > 10) {
+        drawHorizLine(canvas, midx - 2, midx + 2, midy, paint);
+        drawHorizLine(canvas, midx - 2, midx + 2, midy - 3, paint);
+        drawHorizLine(canvas, midx - 2, midx + 2, midy + 3, paint);
+    }
 }
 
 int RenderThemeChromiumSkia::popupInternalPaddingLeft(RenderStyle* style) const
