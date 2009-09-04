@@ -1,3 +1,42 @@
+2009-09-04  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler and Steve Falkenburg.
+
+        Fix <rdar://problem/7192902>.
+
+        Add the necessary plumbing for having QTMovieWin use WebCore timers.
+        
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.cpp:
+        (WebCore::TaskTimer::initialize):
+        Create the timer and call QTMovieWin::setTaskTimerFuncs.
+        
+        (WebCore::TaskTimer::setTaskTimerDelay):
+        Start the timer.
+        
+        (WebCore::TaskTimer::stopTaskTimer):
+        Stop the timer.
+        
+        (WebCore::TaskTimer::fired):
+        Call QTMovieWin::taskTimerFired().
+        
+        (WebCore::MediaPlayerPrivate::load):
+        Initialize the Task timer.
+        
+        * platform/graphics/win/QTMovieWin.cpp:
+        (updateTaskTimer):
+        Call the global stopTaskTimer function and setTaskTimerDelay.
+        
+        (QTMovieWin::taskTimerFired):
+        Make this a member function.
+        
+        (QTMovieWin::setTaskTimerFuncs):
+        Set the global function pointers.
+        
+        (QTMovieWin::initializeQuickTime):
+        (DllMain):
+        No need to use the QT shared timer.
+        * platform/graphics/win/QTMovieWin.h:
+
 2009-09-04  Tony Chang  <tony@chromium.org>
 
         Reviewed by David Levin.
