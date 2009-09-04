@@ -1,3 +1,10 @@
+2009-09-04  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix. Switch USE_ defines over to the compiler so that they can be
+        checked by files not including config.h (like WebCorePrefix.h).
+
+        * wtf/Platform.h:
+
 2009-09-03  Yong Li  <yong.li@torchmobile.com>
 
         Reviewed by David Levin.

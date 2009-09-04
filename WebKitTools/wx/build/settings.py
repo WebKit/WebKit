@@ -59,6 +59,24 @@ common_libs = []
 common_libpaths = []
 common_frameworks = []
 
+ports = [
+    'CF',
+    'Chromium',
+    'Gtk', 
+    'Haiku',
+    'Mac', 
+    'None',
+    'Qt',
+    'Safari',
+    'Win', 
+    'Wince',
+    'wx',
+]
+
+port_uses = {
+    'wx': ['CURL','PTHREADS', 'WXGC'],
+}
+
 jscore_dirs = [
     'API',
     'bytecode',
@@ -213,10 +231,13 @@ def common_configure(conf):
         
         msvclibs_dir = os.path.join(wklibs_dir, msvc_version, 'win')
     
+    for use in port_uses[build_port]:
+       conf.env.append_value('CXXDEFINES', ['WTF_USE_%s' % use])
+    
     if build_port == "wx":
         update_wx_deps(wk_root, msvc_version)
     
-        conf.env.append_value('CXXDEFINES', ['BUILDING_WX__=1', 'WTF_USE_WXGC=1'])
+        conf.env.append_value('CXXDEFINES', ['BUILDING_WX__=1'])
 
         if building_on_win32:
             conf.env.append_value('LIBPATH', os.path.join(msvclibs_dir, 'lib'))

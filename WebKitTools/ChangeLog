@@ -1,3 +1,10 @@
+2009-09-04  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix. Switch USE_ defines over to the compiler so that they can be
+        checked by files not including config.h (like WebCorePrefix.h).
+
+        * wx/build/settings.py:
+
 2009-09-04  Adam Barth  <abarth@webkit.org>
 
         Unreviewed build fix.
