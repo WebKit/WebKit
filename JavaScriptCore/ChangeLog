@@ -2,6 +2,13 @@
 
         Windows build fix.
 
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def: Add new export.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore_debug.def: Add new export.
+
+2009-09-04  Steve Falkenburg  <sfalken@apple.com>
+
+        Windows build fix.
+
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def: Remove unneeded export.
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore_debug.def: Remove unneeded export.
 
