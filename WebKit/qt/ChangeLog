@@ -1,3 +1,28 @@
+2009-09-04  Benjamin C Meyer  <benjamin.meyer@torchmobile.com>
+
+        Reviewed by Eric Seidel.
+        
+        Any QtWebKit application crashes on exit if the inspector is
+        used during the session rather then exiting.
+        
+        If a QWebView has a QWebPage that is destroyed the QWebView
+        does not update its pointer and will crash the next time
+        it access the page pointers (such as in its destructor).
+        
+        InspectorClientView should not call deleteLater when the page
+        is destroyed because it does not have a parent and is a top
+        level widget.  close() needs to be called so that QApplication
+        can exit the application if quitOnLastWindowClosed is set
+        and a InspectorClientView is the last window, otherwise
+        the application will never exit.
+        
+        * Api/qwebview.cpp:
+        (QWebViewPrivate::_q_pageDestroyed):
+        (QWebView::setPage):
+        * Api/qwebview.h:
+        * WebCoreSupport/InspectorClientQt.cpp:
+        (WebCore::InspectorClientView::InspectorClientView):
+
 2009-09-03  Adam Barth  <abarth@webkit.org>
 
         Reviewed by eric@webkit.org.

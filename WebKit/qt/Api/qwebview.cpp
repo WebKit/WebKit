@@ -42,6 +42,8 @@ public:
 #endif
     {}
 
+    void _q_pageDestroyed();
+
     QWebView *view;
     QWebPage *page;
 
@@ -69,6 +71,12 @@ public:
     QCursor webCoreCursor;
 #endif
 };
+
+void QWebViewPrivate::_q_pageDestroyed()
+{
+    page = 0;
+    view->setPage(0);
+}
 
 /*!
     \class QWebView
@@ -242,6 +250,8 @@ void QWebView::setPage(QWebPage* page)
 
         connect(d->page, SIGNAL(microFocusChanged()),
                 this, SLOT(updateMicroFocus()));
+        connect(d->page, SIGNAL(destroyed()),
+                this, SLOT(_q_pageDestroyed()));
     }
     setAttribute(Qt::WA_OpaquePaintEvent, d->page);
     update();
@@ -1094,3 +1104,6 @@ void QWebView::changeEvent(QEvent *e)
 
     \sa QWebPage::linkDelegationPolicy()
 */
+
+#include "moc_qwebview.cpp"
+

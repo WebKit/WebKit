@@ -168,6 +168,7 @@ protected:
 private:
     friend class QWebPage;
     QWebViewPrivate* d;
+    Q_PRIVATE_SLOT(d, void _q_pageDestroyed())
 };
 
 #endif // QWEBVIEW_H
