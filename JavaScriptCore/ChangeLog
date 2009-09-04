@@ -1,3 +1,10 @@
+2009-09-04  Steve Falkenburg  <sfalken@apple.com>
+
+        Windows build fix.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def: Remove unneeded export.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore_debug.def: Remove unneeded export.
+
 2009-09-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff Garen.
