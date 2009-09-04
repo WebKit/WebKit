@@ -1,3 +1,17 @@
+2009-09-04  Mark Mentovai  <mark@chromium.org>
+
+        Reviewed by Dave Hyatt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28614
+
+        Account for scrollbar state changes that occur during layout.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::setScrollBarPolicy):
+
+        Eliminate duplicated (and incorrect) scrollbar mode tracking between
+        FrameView and ScrollView.
+
 2009-09-04  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Eric Seidel.

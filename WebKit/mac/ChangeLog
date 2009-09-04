@@ -1,3 +1,23 @@
+2009-09-04  Mark Mentovai  <mark@chromium.org>
+
+        Reviewed by Dave Hyatt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28614
+
+        Account for scrollbar state changes that occur during layout.
+
+        * WebView/WebDynamicScrollBarsView.mm:
+        (-[WebDynamicScrollBarsView updateScrollers]):
+
+        Perform a layout prior to checking whether the scrollbar modes are
+        off, on, or automatic.  The modes may change during layout.
+
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView _install]):
+
+        Eliminate duplicated (and incorrect) scrollbar mode tracking between
+        FrameView and ScrollView.
+
 2009-09-03  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by Adam Roben.
