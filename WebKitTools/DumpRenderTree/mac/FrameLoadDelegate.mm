@@ -48,6 +48,7 @@
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebKit.h>
 #import <WebKit/WebNSURLExtras.h>
+#import <WebKit/WebSecurityOriginPrivate.h>
 #import <wtf/Assertions.h>
 
 @interface NSURLRequest (PrivateThingsWeShouldntReallyUse)
@@ -351,6 +352,18 @@
         NSString *string = [NSString stringWithFormat:@"%@ - didHandleOnloadEventsForFrame", [frame _drt_descriptionSuitableForTestResult]];
         printf ("%s\n", [string UTF8String]);
     }
+}
+
+- (void)webViewDidDisplayInsecureContent:(WebView *)sender
+{
+    if (!done && gLayoutTestController->dumpFrameLoadCallbacks())
+        printf ("didDisplayInsecureContent\n");
+}
+
+- (void)webView:(WebView *)sender didRunInsecureContent:(WebSecurityOrigin *)origin
+{
+    if (!done && gLayoutTestController->dumpFrameLoadCallbacks())
+        printf ("didRunInsecureContent\n");
 }
 
 @end

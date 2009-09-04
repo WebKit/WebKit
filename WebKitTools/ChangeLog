@@ -1,3 +1,21 @@
+2009-09-04  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24696
+
+        Add testing instrumentation for mixed content.
+
+        * DumpRenderTree/mac/FrameLoadDelegate.mm:
+        (-[FrameLoadDelegate webView:]):
+        (-[FrameLoadDelegate webView:didRunInsecureContent:]):
+        * DumpRenderTree/win/FrameLoadDelegate.cpp:
+        (descriptionSuitableForTestResult):
+        (FrameLoadDelegate::QueryInterface):
+        (FrameLoadDelegate::didDisplayInsecureContent):
+        (FrameLoadDelegate::didRunInsecureContent):
+        * DumpRenderTree/win/FrameLoadDelegate.h:
+
 2009-09-03  Kevin Watters  <kevinwatters@gmail.com>
 
         Reviewed by Kevin Ollivier.

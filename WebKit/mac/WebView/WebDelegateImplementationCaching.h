@@ -67,6 +67,8 @@ struct WebFrameLoadDelegateImplementationCache {
     IMP didFirstVisuallyNonEmptyLayoutInFrameFunc;
     IMP didReceiveIconForFrameFunc;
     IMP didFinishDocumentLoadForFrameFunc;
+    IMP didDisplayInsecureContentFunc;
+    IMP didRunInsecureContentFunc;
 };
 
 struct WebScriptDebugDelegateImplementationCache {

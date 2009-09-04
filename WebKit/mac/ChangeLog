@@ -1,3 +1,17 @@
+2009-09-04  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24696
+
+        Plumb mixed content notifications to WebFrameLoadDelegatePrivate.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::didDisplayInsecureContent):
+        (WebFrameLoaderClient::didRunInsecureContent):
+        * WebView/WebDelegateImplementationCaching.h:
+        * WebView/WebFrameLoadDelegatePrivate.h: Added.
+
 2009-09-03  Adam Barth  <abarth@webkit.org>
 
         Unreviewed build fix.
@@ -11,6 +25,20 @@
 2009-09-03  Adam Barth  <abarth@webkit.org>
 
         Reviewed by eric@webkit.org.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24696
+
+        Plumb mixed content notifications to WebFrameLoadDelegatePrivate.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::didDisplayInsecureContent):
+        (WebFrameLoaderClient::didRunInsecureContent):
+        * WebView/WebDelegateImplementationCaching.h:
+        * WebView/WebFrameLoadDelegatePrivate.h: Added.
+
+2009-09-03  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
 
         https://bugs.webkit.org/show_bug.cgi?id=24696
 

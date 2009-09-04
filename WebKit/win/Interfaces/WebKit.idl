@@ -84,6 +84,7 @@ import "ocidl.idl";
 #include "IWebFrame.idl"
 #include "IWebFrameLoadDelegate.idl"
 #include "IWebFrameLoadDelegatePrivate.idl"
+#include "IWebFrameLoadDelegatePrivate2.idl"
 #include "IWebFramePrivate.idl"
 #include "IWebFrameView.idl"
 #include "IWebHTMLRepresentation.idl"

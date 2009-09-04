@@ -531,12 +531,32 @@ bool WebFrameLoaderClient::shouldGoToHistoryItem(HistoryItem*) const
 
 void WebFrameLoaderClient::didDisplayInsecureContent()
 {
-   notImplemented();
+    WebView* webView = m_webFrame->webView();
+    COMPtr<IWebResourceLoadDelegate> resourceLoadDelegate;
+    if (FAILED(webView->resourceLoadDelegate(&resourceLoadDelegate)))
+        return;
+
+    COMPtr<IWebResourceLoadDelegatePrivate2> resourceLoadDelegatePrivate(Query, resourceLoadDelegate);
+    if (!resourceLoadDelegatePrivate)
+        return;
+
+    resourceLoadDelegatePrivate->didDisplayInsecureContent(webView)
 }
 
-void WebFrameLoaderClient::didRunInsecureContent(SecurityOrigin*)
+void WebFrameLoaderClient::didRunInsecureContent(SecurityOrigin* origin)
 {
-   notImplemented();
+    COMPtr<IWebSecurityOrigin> webSecurityOrigin = WebSecurityOrigin::createInstance(origin);
+
+    WebView* webView = m_webFrame->webView();
+    COMPtr<IWebResourceLoadDelegate> resourceLoadDelegate;
+    if (FAILED(webView->resourceLoadDelegate(&resourceLoadDelegate)))
+        return;
+
+    COMPtr<IWebResourceLoadDelegatePrivate2> resourceLoadDelegatePrivate(Query, resourceLoadDelegate);
+    if (!resourceLoadDelegatePrivate)
+        return;
+
+    resourceLoadDelegatePrivate->didRunInsecureContent(webView, webSecurityOrigin.get())
 }
 
 PassRefPtr<DocumentLoader> WebFrameLoaderClient::createDocumentLoader(const ResourceRequest& request, const SubstituteData& substituteData)

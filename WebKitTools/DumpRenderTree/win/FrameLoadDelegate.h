@@ -35,7 +35,7 @@
 class AccessibilityController;
 class GCController;
 
-class FrameLoadDelegate : public IWebFrameLoadDelegate, public IWebFrameLoadDelegatePrivate {
+class FrameLoadDelegate : public IWebFrameLoadDelegate, public IWebFrameLoadDelegatePrivate, public IWebFrameLoadDelegatePrivate2 {
 public:
     FrameLoadDelegate();
     virtual ~FrameLoadDelegate();
@@ -132,6 +132,14 @@ public:
     virtual HRESULT STDMETHODCALLTYPE didFirstVisuallyNonEmptyLayoutInFrame( 
         /* [in] */ IWebView *sender,
         /* [in] */ IWebFrame *frame);
+
+    // IWebFrameLoadDelegatePrivate2
+    virtual HRESULT STDMETHODCALLTYPE didDisplayInsecureContent( 
+        /* [in] */ IWebView *sender);
+
+    virtual HRESULT STDMETHODCALLTYPE didRunInsecureContent( 
+        /* [in] */ IWebView *sender,
+        /* [in] */ IWebSecurityOrigin *origin);
 
 protected:
     void locationChangeDone(IWebError*, IWebFrame*);
