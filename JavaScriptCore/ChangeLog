@@ -1,3 +1,12 @@
+2009-09-03  Yong Li  <yong.li@torchmobile.com>
+
+        Reviewed by David Levin.
+
+        Remove unnecessary dependency on unistd.h
+        https://bugs.webkit.org/show_bug.cgi?id=28962
+
+        * runtime/Completion.cpp:
+
 2009-09-03  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Eric Seidel.

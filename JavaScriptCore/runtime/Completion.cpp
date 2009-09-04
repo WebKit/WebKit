@@ -31,10 +31,6 @@
 #include "Debugger.h"
 #include <stdio.h>
 
-#if !PLATFORM(WIN_OS)
-#include <unistd.h>
-#endif
-
 namespace JSC {
 
 Completion checkSyntax(ExecState* exec, const SourceCode& source)
