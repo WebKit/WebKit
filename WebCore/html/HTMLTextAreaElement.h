@@ -77,6 +77,7 @@ public:
     void setValue(const String&);
     String defaultValue() const;
     void setDefaultValue(const String&);
+    int textLength() const { return value().length(); }
     
     void rendererWillBeDestroyed();
     

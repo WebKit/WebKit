@@ -41,6 +41,7 @@ module html {
                  attribute  long                 rows;
         readonly attribute  DOMString            type;
                  attribute  [ConvertNullToNullString] DOMString            value;
+        readonly attribute  unsigned long        textLength;
         
         void     select();
 

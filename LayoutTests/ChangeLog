@@ -1,3 +1,14 @@
+2009-09-03  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by David Levin.
+
+        Test for HTMLTextAreaElement.textLength
+        https://bugs.webkit.org/show_bug.cgi?id=28929
+
+        * fast/forms/resources/textarea-textlength.js: Added.
+        * fast/forms/textarea-textlength-expected.txt: Added.
+        * fast/forms/textarea-textlength.html: Added.
+
 2009-09-03  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

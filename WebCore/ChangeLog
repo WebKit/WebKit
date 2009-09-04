@@ -1,3 +1,16 @@
+2009-09-03  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by David Levin.
+
+        Add support for HTMLTextAreaElement.textLength
+        https://bugs.webkit.org/show_bug.cgi?id=28929
+
+        Test: fast/forms/textarea-textlength.html
+
+        * html/HTMLTextAreaElement.h:
+        (WebCore::HTMLTextAreaElement::textLength):
+        * html/HTMLTextAreaElement.idl:
+
 2009-09-03  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.
