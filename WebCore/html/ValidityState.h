@@ -41,7 +41,7 @@ namespace WebCore {
         void setCustomErrorMessage(const String& message) { m_customErrorMessage = message; }
 
         bool valueMissing() { return control()->valueMissing(); }
-        bool typeMismatch() { return false; }
+        bool typeMismatch();
         bool patternMismatch() { return control()->patternMismatch(); }
         bool tooLong() { return false; }
         bool rangeUnderflow() { return false; }
@@ -54,6 +54,8 @@ namespace WebCore {
         ValidityState(HTMLFormControlElement*);
         HTMLFormControlElement* m_control;
         String m_customErrorMessage;
+
+        static bool isValidColorString(const String&);
     };
 
 } // namespace WebCore

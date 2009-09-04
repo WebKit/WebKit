@@ -56,7 +56,8 @@ public:
         EMAIL,
         NUMBER,
         TELEPHONE,
-        URL
+        URL,
+        COLOR
     };
     
     enum AutoCompleteSetting {
@@ -97,7 +98,7 @@ public:
 
     bool isTextButton() const { return m_type == SUBMIT || m_type == RESET || m_type == BUTTON; }
     virtual bool isRadioButton() const { return m_type == RADIO; }
-    virtual bool isTextField() const { return m_type == TEXT || m_type == PASSWORD || m_type == SEARCH || m_type == ISINDEX || m_type == EMAIL || m_type == NUMBER || m_type == TELEPHONE || m_type == URL; }
+    virtual bool isTextField() const { return m_type == TEXT || m_type == PASSWORD || m_type == SEARCH || m_type == ISINDEX || m_type == EMAIL || m_type == NUMBER || m_type == TELEPHONE || m_type == URL || m_type == COLOR; }
     virtual bool isSearchField() const { return m_type == SEARCH; }
     virtual bool isInputTypeHidden() const { return m_type == HIDDEN; }
     virtual bool isPasswordField() const { return m_type == PASSWORD; }

@@ -1,0 +1,33 @@
+This test aims to check for typeMismatch flag with type=color input fields
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS "" is a correct valid color.
+PASS "#000000" is a correct valid color.
+PASS "#123456" is a correct valid color.
+PASS "#789abc" is a correct valid color.
+PASS "#defABC" is a correct valid color.
+PASS "#DEF012" is a correct valid color.
+PASS "black" is a correct valid color.
+PASS "blue" is a correct valid color.
+PASS "red" is a correct valid color.
+PASS "purple" is a correct valid color.
+PASS "green" is a correct valid color.
+PASS "cyan" is a correct valid color.
+PASS "yellow" is a correct valid color.
+PASS "white" is a correct valid color.
+PASS "White" is a correct valid color.
+PASS "WHITE" is a correct valid color.
+PASS "000000" is a correct invalid color.
+PASS "#FFF" is a correct invalid color.
+PASS " #ffffff" is a correct invalid color.
+PASS "#ffffff " is a correct invalid color.
+PASS "#00112233" is a correct invalid color.
+PASS "rgb(0,0,0)" is a correct invalid color.
+PASS "xxx-non-existent-color-name" is a correct invalid color.
+PASS "transparent" is a correct invalid color.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

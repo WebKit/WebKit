@@ -1,3 +1,17 @@
+2009-09-04  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Tests for <input type=color> validation.
+        https://bugs.webkit.org/show_bug.cgi?id=28966
+
+        * fast/forms/ValidityState-patternMismatch-unsupported-expected.txt: Added.
+        * fast/forms/ValidityState-patternMismatch-unsupported.html: Added.
+        * fast/forms/ValidityState-typeMismatch-color-expected.txt: Added.
+        * fast/forms/ValidityState-typeMismatch-color.html: Added.
+        * fast/forms/resources/ValidityState-patternMismatch-unsupported.js: Added.
+        * fast/forms/resources/ValidityState-typeMismatch-color.js: Added.
+
 2009-09-04  Yaar Schnitman  <yaar@chromium.org>
 
         Reviewed by Eric Seidel.

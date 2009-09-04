@@ -1,3 +1,38 @@
+2009-09-04  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        - Implement <input type=color> as a text field.
+        - ValidityState::typeMismatch supports for type=color.
+        https://bugs.webkit.org/show_bug.cgi?id=28966
+
+        Tests: fast/forms/ValidityState-patternMismatch-unsupported.html
+               fast/forms/ValidityState-typeMismatch-color.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::valueMissing):
+        (WebCore::HTMLInputElement::patternMismatch):
+        (WebCore::HTMLInputElement::setInputType):
+        (WebCore::HTMLInputElement::formControlType):
+        (WebCore::HTMLInputElement::saveFormControlState):
+        (WebCore::HTMLInputElement::restoreFormControlState):
+        (WebCore::HTMLInputElement::accessKeyAction):
+        (WebCore::HTMLInputElement::rendererIsNeeded):
+        (WebCore::HTMLInputElement::createRenderer):
+        (WebCore::HTMLInputElement::appendFormData):
+        (WebCore::HTMLInputElement::valueWithDefault):
+        (WebCore::HTMLInputElement::storesValueSeparateFromAttribute):
+        (WebCore::HTMLInputElement::defaultEventHandler):
+        (WebCore::HTMLInputElement::isRequiredFormControl):
+        (WebCore::HTMLInputElement::dataList):
+        * html/HTMLInputElement.h:
+        (WebCore::HTMLInputElement::):
+        (WebCore::HTMLInputElement::isTextField):
+        * html/ValidityState.cpp:
+        (WebCore::ValidityState::typeMismatch):
+        (WebCore::ValidityState::isValidColorString):
+        * html/ValidityState.h:
+
 2009-09-04  Mads Ager  <ager@chromium.org>
 
         Reviewed by David Levin.

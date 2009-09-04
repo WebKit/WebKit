@@ -23,12 +23,33 @@
 #include "config.h"
 #include "ValidityState.h"
 
+#include "HTMLInputElement.h"
+#include "HTMLNames.h"
+
 namespace WebCore {
+
+using namespace HTMLNames;
 
 ValidityState::ValidityState(HTMLFormControlElement* parent)
     : m_control(parent)
 {
     ASSERT(parent);
+}
+
+bool ValidityState::typeMismatch()
+{
+    if (!control()->hasTagName(inputTag))
+        return false;
+
+    HTMLInputElement* input = static_cast<HTMLInputElement*>(control());
+    String value = input->value();
+
+    if (value.isEmpty())
+        return false;
+
+    if (input->inputType() != HTMLInputElement::COLOR)
+        return false;
+    return !isValidColorString(value);
 }
 
 bool ValidityState::valid()
@@ -37,6 +58,19 @@ bool ValidityState::valid()
                        tooLong() || patternMismatch() || valueMissing() || customError();
 
     return !someError;
+}
+
+bool ValidityState::isValidColorString(const String& value)
+{
+    if (value.isEmpty())
+        return false;
+    if (value[0] == '#') {
+        // We don't accept #rgb and #aarrggbb formats.
+        if (value.length() != 7)
+            return false;
+    }
+    Color color(value);  // This accepts named colors such as "white".
+    return color.isValid() && !color.hasAlpha();
 }
 
 } // namespace
