@@ -1,3 +1,24 @@
+2009-09-04  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by David Hyatt and Adele Peterson.
+
+        (Based on a patch from Adele).
+        
+        Fix <rdar://problem/7185875>.
+        
+        * page/Frame.cpp:
+        (WebCore::Frame::setView):
+        Detach any custom scroll bars from the old view.
+        
+        * page/FrameView.cpp:
+        (WebCore::FrameView::detachCustomScrollbars):
+        Simplify the check (and make it work when body is null) by just checking that the scroll bar owner is
+        not a RenderPart object.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::destroy):
+        ASSERT that frame() is not null here and also add a null check so that release builds won't crash.
+
 2009-09-04  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by Adam Roben.

@@ -1833,7 +1833,12 @@ void RenderObject::destroy()
         children->destroyLeftoverChildren();
 
     // If this renderer is being autoscrolled, stop the autoscroll timer
-    if (document()->frame()->eventHandler()->autoscrollRenderer() == this)
+    
+    // FIXME: RenderObject::destroy should not get called with a renderar whose document
+    // has a null frame, so we assert this. However, we don't want release builds to crash which is why we
+    // check that the frame is not null.
+    ASSERT(document()->frame());
+    if (document()->frame() && document()->frame()->eventHandler()->autoscrollRenderer() == this)
         document()->frame()->eventHandler()->stopAutoscrollTimer(true);
 
     if (m_hasCounterNodeMap)

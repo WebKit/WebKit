@@ -238,22 +238,12 @@ void FrameView::detachCustomScrollbars()
     if (!m_frame)
         return;
 
-    Document* document = m_frame->document();
-    if (!document)
-        return;
-
-    Element* body = document->body();
-    if (!body)
-        return;
-
-    RenderBox* renderBox = body->renderBox();
-
     Scrollbar* horizontalBar = horizontalScrollbar();
-    if (horizontalBar && horizontalBar->isCustomScrollbar() && toRenderScrollbar(horizontalBar)->owningRenderer() == renderBox)
+    if (horizontalBar && horizontalBar->isCustomScrollbar() && !toRenderScrollbar(horizontalBar)->owningRenderer()->isRenderPart())
         setHasHorizontalScrollbar(false);
 
     Scrollbar* verticalBar = verticalScrollbar();
-    if (verticalBar && verticalBar->isCustomScrollbar() && toRenderScrollbar(verticalBar)->owningRenderer() == renderBox)
+    if (verticalBar && verticalBar->isCustomScrollbar() && !toRenderScrollbar(verticalBar)->owningRenderer()->isRenderPart())
         setHasVerticalScrollbar(false);
 
     if (m_scrollCorner) {
