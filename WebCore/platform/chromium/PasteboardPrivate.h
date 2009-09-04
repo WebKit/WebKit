@@ -41,10 +41,6 @@ namespace WebCore {
             BookmarkFormat,
             WebSmartPasteFormat,
         };
-        enum ClipboardBuffer {
-            StandardBuffer,
-            SelectionBuffer,
-        };
     };
 
 } // namespace WebCore

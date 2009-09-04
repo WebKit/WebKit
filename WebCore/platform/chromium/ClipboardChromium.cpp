@@ -40,7 +40,6 @@
 #include "MIMETypeRegistry.h"
 #include "markup.h"
 #include "NamedNodeMap.h"
-#include "Pasteboard.h"
 #include "PlatformString.h"
 #include "Range.h"
 #include "RenderImage.h"
@@ -118,11 +117,7 @@ String ClipboardChromium::getData(const String& type, bool& success) const
         if (!isForDragging()) {
             // If this isn't for a drag, it's for a cut/paste event handler.
             // In this case, we need to check the clipboard.
-            PasteboardPrivate::ClipboardBuffer buffer = 
-                Pasteboard::generalPasteboard()->isSelectionMode() ?
-                PasteboardPrivate::SelectionBuffer : 
-                PasteboardPrivate::StandardBuffer;
-            text = ChromiumBridge::clipboardReadPlainText(buffer);
+            text = ChromiumBridge::clipboardReadPlainText();
             success = !text.isEmpty();
         } else if (!m_dataObject->plainText.isEmpty()) {
             success = true;

@@ -67,14 +67,11 @@ namespace WebCore {
     class ChromiumBridge {
     public:
         // Clipboard ----------------------------------------------------------
-        static bool clipboardIsFormatAvailable(PasteboardPrivate::ClipboardFormat, PasteboardPrivate::ClipboardBuffer);
+        static bool clipboardIsFormatAvailable(PasteboardPrivate::ClipboardFormat);
 
-        static String clipboardReadPlainText(PasteboardPrivate::ClipboardBuffer);
-        static void clipboardReadHTML(PasteboardPrivate::ClipboardBuffer, String*, KURL*);
+        static String clipboardReadPlainText();
+        static void clipboardReadHTML(String*, KURL*);
 
-        // Only the clipboardRead functions take a buffer argument because 
-        // Chromium currently uses a different technique to write to alternate
-        // clipboard buffers.
         static void clipboardWriteSelection(const String&, const KURL&, const String&, bool);
         static void clipboardWriteURL(const KURL&, const String&);
         static void clipboardWriteImage(const NativeImageSkia*, const KURL&, const String&);
