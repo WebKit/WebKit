@@ -2,6 +2,14 @@
 
         Unreviewed attempt at a build fix.
 
+        Added missing include.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+
+2009-09-04  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed attempt at a build fix.
+
         Fix typo of IWebFrameLoadDelegatePrivate2 and make
         IWebFrameLoadDelegatePrivate inherit from IWebFrameLoadDelegatePrivate
         as requestd by Adam Roben.
