@@ -40,6 +40,7 @@ var Preferences = {
     styleRulesExpandedState: {},
     showMissingLocalizedStrings: false,
     heapProfilerPresent: false,
+    samplingCPUProfiler: false,
 }
 
 var WebInspector = {

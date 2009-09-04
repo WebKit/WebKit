@@ -39,6 +39,11 @@ WebInspector.ProfileView = function(profile)
                     "calls": { title: WebInspector.UIString("Calls"), width: "54px", sortable: true },
                     "function": { title: WebInspector.UIString("Function"), disclosure: true, sortable: true } };
 
+    if (Preferences.samplingCPUProfiler) {
+        delete columns.average;
+        delete columns.calls;
+    }
+
     this.dataGrid = new WebInspector.DataGrid(columns);
     this.dataGrid.addEventListener("sorting changed", this._sortData, this);
     this.dataGrid.element.addEventListener("mousedown", this._mouseDownInDataGrid.bind(this), true);
