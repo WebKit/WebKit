@@ -32,8 +32,9 @@ function test()
         layoutTestController.dumpAsText();
     
     shouldBe("document.body.style.background == 'green'", true);
-    shouldBe("document.getElementById('div1').style.background == 'repeat-x, repeat-y white'", true);
-    shouldBe("document.getElementById('div2').style.background == '50% 50% blue'", true);
+    shouldBe("document.getElementById('div1').style.background == 'repeat-x, white repeat-y'", true);
+    shouldBe("document.getElementById('div2').style.background == 'blue 50% 50%'", true);
+    shouldBe("document.getElementById('div3').style.background == 'rgb(255, 255, 255) none repeat scroll'", true);
 }
 </script>
 </head>
@@ -42,6 +43,7 @@ function test()
 
 <div id="div1" style="background-repeat: repeat-x, repeat-y; background-color:white"></div>
 <div id="div2" style="background: 50% 50% blue"></div>
+<div id="div3" style="background: rgb(255, 255, 255) none repeat scroll"></div>
 
 <p>This page tests whether or not the background shorthand properly omits
 initial values.

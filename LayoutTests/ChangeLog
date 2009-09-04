@@ -1,3 +1,25 @@
+2009-09-04  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Two bugs:
+
+        https://bugs.webkit.org/show_bug.cgi?id=25489
+        CSS property background-position is now serialized in shorthand string as
+        background-position-x background-position-y, as the specification requires
+        (See http://www.w3.org/TR/2008/WD-css3-background-20080910/#the-background-position).
+        
+
+        https://bugs.webkit.org/show_bug.cgi?id=26541
+        CSS background-color is now be serialized before other background properties, 
+        as CSS specification requires (See http://dev.w3.org/csswg/cssom/#css-value).  
+
+        An existing layout test that accepted wrong order and skipped position test 
+        had to be modified.
+
+        * fast/dom/background-shorthand-csstext-expected.txt:
+        * fast/dom/background-shorthand-csstext.html:
+
 2009-09-03  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by David Levin.

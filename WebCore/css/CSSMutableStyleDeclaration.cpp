@@ -119,10 +119,16 @@ String CSSMutableStyleDeclaration::getPropertyValue(int propertyID) const
             return getLayeredShorthandValue(properties, 2);
         }
         case CSSPropertyBackground: {
-            const int properties[8] = { CSSPropertyBackgroundImage, CSSPropertyBackgroundRepeatX, CSSPropertyBackgroundRepeatY, 
-                                        CSSPropertyBackgroundAttachment, CSSPropertyBackgroundPosition, CSSPropertyBackgroundClip,
-                                        CSSPropertyBackgroundOrigin, CSSPropertyBackgroundColor };
-            return getLayeredShorthandValue(properties, 8);
+            const int properties[9] = { CSSPropertyBackgroundColor,
+                                        CSSPropertyBackgroundImage, 
+                                        CSSPropertyBackgroundRepeatX, 
+                                        CSSPropertyBackgroundRepeatY, 
+                                        CSSPropertyBackgroundAttachment, 
+                                        CSSPropertyBackgroundPositionX, 
+                                        CSSPropertyBackgroundPositionY, 
+                                        CSSPropertyBackgroundClip,
+                                        CSSPropertyBackgroundOrigin }; 
+            return getLayeredShorthandValue(properties, 9);
         }
         case CSSPropertyBorder: {
             const int properties[3][4] = {{ CSSPropertyBorderTopWidth,
