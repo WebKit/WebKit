@@ -70,7 +70,7 @@ WebInspector.StylesSidebarPane.prototype = {
             node._setStyles(styles.computedStyle, styles.inlineStyle, styles.styleAttributes, styles.matchedCSSRules);
             self._update(refresh, body, node, editedSection, forceUpdate);
         };
-        InspectorController.getStyles(node.id, !Preferences.showUserAgentStyles, callback);
+        InjectedScriptAccess.getStyles(node.id, !Preferences.showUserAgentStyles, callback);
     },
 
     _update: function(refresh, body, node, editedSection, forceUpdate)
@@ -614,7 +614,7 @@ WebInspector.StylePropertiesSection.prototype = {
             moveToNextIfNeeded.call(self);
         };
 
-        InspectorController.applyStyleRuleText(this.rule.id, newContent, this.pane.node.id, callback);
+        InjectedScriptAccess.applyStyleRuleText(this.rule.id, newContent, this.pane.node.id, callback);
     },
 
     editingSelectorCancelled: function(element, context)
@@ -685,7 +685,7 @@ WebInspector.BlankStylePropertiesSection.prototype = {
             self.pane.addBlankSection();
             self.addNewBlankProperty().startEditing();
         };
-        InspectorController.addStyleSelector(newContent, this.pane.node.id, callback);
+        InjectedScriptAccess.addStyleSelector(newContent, this.pane.node.id, callback);
     },
 
     makeNormal: function(styleRule)
@@ -992,7 +992,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
 
             self.updateAll(true);
         };
-        InspectorController.toggleStyleEnabled(this.style.id, this.name, disabled, callback);
+        InjectedScriptAccess.toggleStyleEnabled(this.style.id, this.name, disabled, callback);
     },
 
     updateState: function()
@@ -1155,7 +1155,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
         } else {
             // Restore the original CSS text before applying user changes. This is needed to prevent
             // new properties from sticking around if the user adds one, then removes it.
-            InspectorController.setStyleText(this.style.id, this.originalCSSText);
+            InjectedScriptAccess.setStyleText(this.style.id, this.originalCSSText);
         }
 
         this.applyStyleText(this.listItemElement.textContent);
@@ -1175,7 +1175,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
         if (this._newProperty)
             this.treeOutline.removeChild(this);
         else if (this.originalCSSText) {
-            InspectorController.setStyleText(this.style.id, this.originalCSSText);
+            InjectedScriptAccess.setStyleText(this.style.id, this.originalCSSText);
 
             if (this.treeOutline.section && this.treeOutline.section.pane)
                 this.treeOutline.section.pane.dispatchEventToListeners("style edited");
@@ -1294,7 +1294,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
             if (!self.rule)
                 WebInspector.panels.elements.treeOutline.update();
         };
-        InspectorController.applyStyleText(this.style.id, styleText.trimWhitespace(), this.name, callback);
+        InjectedScriptAccess.applyStyleText(this.style.id, styleText.trimWhitespace(), this.name, callback);
     }
 }
 

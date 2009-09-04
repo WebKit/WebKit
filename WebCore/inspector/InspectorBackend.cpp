@@ -43,6 +43,7 @@
 #include "InspectorDOMAgent.h"
 #include "InspectorFrontend.h"
 #include "InspectorResource.h"
+#include "ScriptFunctionCall.h"
 
 #if ENABLE(DOM_STORAGE)
 #include "Storage.h"
@@ -382,6 +383,23 @@ void InspectorBackend::stepOutOfFunctionInDebugger()
 }
 
 #endif
+
+void InspectorBackend::dispatchOnInjectedScript(long callId, const String& methodName, const String& arguments)
+{
+    InspectorFrontend* frontend = inspectorFrontend();
+    if (!frontend)
+        return;
+
+    ScriptFunctionCall function(m_inspectorController->m_scriptState, m_inspectorController->m_injectedScriptObj, "dispatch");
+    function.appendArgument(methodName);
+    function.appendArgument(arguments);
+    bool hadException = false;
+    ScriptValue result = function.call(hadException);
+    if (hadException)
+        frontend->didDispatchOnInjectedScript(callId, "", true);
+    else
+        frontend->didDispatchOnInjectedScript(callId, result.toString(m_inspectorController->m_scriptState), false);
+}
 
 void InspectorBackend::getChildNodes(long callId, long nodeId)
 {

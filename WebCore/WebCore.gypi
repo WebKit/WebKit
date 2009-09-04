@@ -3475,6 +3475,7 @@
             'inspector/front-end/FontView.js',
             'inspector/front-end/ImageView.js',
             'inspector/front-end/InjectedScript.js',
+            'inspector/front-end/InjectedScriptAccess.js',
             'inspector/front-end/inspector.js',
             'inspector/front-end/KeyboardShortcut.js',
             'inspector/front-end/MetricsSidebarPane.js',

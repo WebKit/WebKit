@@ -62,7 +62,7 @@ WebInspector.ElementsPanel = function()
             this.panel.nodeSearchButton.removeStyleClass("toggled-on");
         }
         if (this._focusedDOMNode)
-            InspectorController.addInspectedNode(this._focusedDOMNode.id, function() {});
+            InjectedScriptAccess.addInspectedNode(this._focusedDOMNode.id, function() {});
     };
 
     this.contentElement.appendChild(this.treeOutline.element);
@@ -215,7 +215,7 @@ WebInspector.ElementsPanel.prototype = {
 
         this._currentSearchResultIndex = 0;
         this._searchResults = [];
-        InspectorController.searchCanceled(function() {});
+        InjectedScriptAccess.searchCanceled(function() {});
     },
 
     performSearch: function(query)
@@ -230,7 +230,7 @@ WebInspector.ElementsPanel.prototype = {
         this._updatedMatchCountOnce = false;
         this._matchesCountUpdateTimeout = null;
 
-        InspectorController.performSearch(whitespaceTrimmedQuery, function() {});
+        InjectedScriptAccess.performSearch(whitespaceTrimmedQuery, function() {});
     },
 
     _updateMatchesCount: function()

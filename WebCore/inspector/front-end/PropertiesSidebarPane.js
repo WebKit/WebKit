@@ -57,7 +57,7 @@ WebInspector.PropertiesSidebarPane.prototype = {
                 body.appendChild(section.element);
             }
         };
-        InspectorController.getPrototypes(node.id, callback);
+        InjectedScriptAccess.getPrototypes(node.id, callback);
     }
 }
 

@@ -57,14 +57,14 @@ WebInspector.MetricsSidebarPane.prototype = {
             var style = WebInspector.CSSStyleDeclaration.parseStyle(stylePayload);
             self._update(node, body, style);
         };
-        InspectorController.getComputedStyle(node.id, callback);
+        InjectedScriptAccess.getComputedStyle(node.id, callback);
 
         var inlineStyleCallback = function(stylePayload) {
             if (!stylePayload)
                 return;
             self._inlineStyleId = stylePayload.id;
         };
-        InspectorController.getInlineStyle(node.id, inlineStyleCallback);
+        InjectedScriptAccess.getInlineStyle(node.id, inlineStyleCallback);
     },
 
     _update: function(node, body, style)
@@ -208,7 +208,7 @@ WebInspector.MetricsSidebarPane.prototype = {
             self.dispatchEventToListeners("metrics edited");
             self.update();
         };
-        InspectorController.setStyleProperty(this._inlineStyleId, context.styleProperty, userInput, callback);
+        InjectedScriptAccess.setStyleProperty(this._inlineStyleId, context.styleProperty, userInput, callback);
     }
 }
 

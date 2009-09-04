@@ -113,6 +113,7 @@ namespace WebCore {
         void didApplyDomChange(int callId, bool success);
 
         void didGetCookies(int callId, const ScriptArray& cookies, const String& cookiesString);
+        void didDispatchOnInjectedScript(int callId, const String& result, bool isException);
 
         void addNodesToSearchResult(const String& nodeIds);
 

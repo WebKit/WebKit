@@ -101,6 +101,7 @@ module core {
 
         [Custom] Array profiles();
 #endif
+        void dispatchOnInjectedScript(in long callId, in DOMString methodName, in DOMString arguments);
         void getChildNodes(in long callId, in long nodeId);
         void setAttribute(in long callId, in long elementId, in DOMString name, in DOMString value);
         void removeAttribute(in long callId, in long elementId, in DOMString name);

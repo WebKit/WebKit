@@ -347,7 +347,7 @@ WebInspector.ConsoleView.prototype = {
         {
             callback(result.value, result.isException);
         };
-        InspectorController.evaluate(expression, evalCallback);
+        InjectedScriptAccess.evaluate(expression, evalCallback);
     },
 
     _enterKeyPressed: function(event)
@@ -464,7 +464,7 @@ WebInspector.ConsoleView.prototype = {
             }
             elem.appendChild(document.createTextNode("]"));
         }
-        InspectorController.getProperties(arr, false, printResult);
+        InjectedScriptAccess.getProperties(arr, false, printResult);
     },
 
     _formatnode: function(object, elem)
@@ -480,7 +480,7 @@ WebInspector.ConsoleView.prototype = {
                 treeOutline.element.addStyleClass("single-node");
             elem.appendChild(treeOutline.element);
         }
-        InspectorController.pushNodeToFrontend(object, printNode);
+        InjectedScriptAccess.pushNodeToFrontend(object, printNode);
     },
 
     _formatobject: function(obj, elem)

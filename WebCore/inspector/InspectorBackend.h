@@ -129,6 +129,7 @@ public:
     void stepOutOfFunctionInDebugger();
 #endif
 
+    void dispatchOnInjectedScript(long callId, const String& methodName, const String& arguments);
     void getChildNodes(long callId, long nodeId);
     void setAttribute(long callId, long elementId, const String& name, const String& value);
     void removeAttribute(long callId, long elementId, const String& name);

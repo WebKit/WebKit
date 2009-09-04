@@ -41,6 +41,12 @@ InjectedScript.reset = function()
 
 InjectedScript.reset();
 
+InjectedScript.dispatch = function(methodName, args)
+{
+    var result = InjectedScript[methodName].apply(InjectedScript, JSON.parse(args));
+    return JSON.stringify(result);
+}
+
 InjectedScript.getStyles = function(nodeId, authorOnly)
 {
     var node = InjectedScript._nodeForId(nodeId);
