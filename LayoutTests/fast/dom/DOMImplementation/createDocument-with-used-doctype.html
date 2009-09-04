@@ -1,0 +1,32 @@
+<body>
+<iframe src="resources/createDocument-with-used-doctype-frame.html" onload="test()"></iframe>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+function gc()
+{
+    if (window.GCController)
+        return GCController.collect();
+
+    for (var i = 0; i < 10000; i++)
+        var s = new String("");
+}
+
+// Reload multiple times, to make crashing more likely.
+var iterationsLeft = 50;
+function test()
+{
+    if (--iterationsLeft) {
+        frames[0].history.go(0);
+    } else {
+        gc();
+        document.body.textContent = frames[0].document.body.textContent;
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }
+}
+</script>
+</body>

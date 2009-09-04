@@ -223,12 +223,6 @@ DOMImplementation* DOMImplementation::getInterface(const String& /*feature*/)
 PassRefPtr<Document> DOMImplementation::createDocument(const String& namespaceURI,
     const String& qualifiedName, DocumentType* doctype, ExceptionCode& ec)
 {
-    // WRONG_DOCUMENT_ERR: Raised if doctype has already been used with a different document or was
-    // created from a different implementation.
-    bool shouldThrowWrongDocErr = false;
-    if (doctype && doctype->document())
-        shouldThrowWrongDocErr = true;
-
     RefPtr<Document> doc;
 #if ENABLE(SVG)
     if (namespaceURI == SVGNames::svgNamespaceURI)
@@ -245,23 +239,26 @@ PassRefPtr<Document> DOMImplementation::createDocument(const String& namespaceUR
     else
         doc = Document::create(0);
 
-    // now get the interesting parts of the doctype
-    if (doctype)
-        doc->addChild(doctype);
-
+    RefPtr<Node> documentElement;
     if (!qualifiedName.isEmpty()) {
-        RefPtr<Node> documentElement = doc->createElementNS(namespaceURI, qualifiedName, ec);
+        documentElement = doc->createElementNS(namespaceURI, qualifiedName, ec);
         if (ec)
             return 0;
-        doc->addChild(documentElement.release());
     }
 
+    // WRONG_DOCUMENT_ERR: Raised if doctype has already been used with a different document or was
+    // created from a different implementation.
     // Hixie's interpretation of the DOM Core spec suggests we should prefer
-    // other exceptions to WRONG_DOCUMENT_ERR (based on order mentioned in spec)
-    if (shouldThrowWrongDocErr) {
+    // other exceptions to WRONG_DOCUMENT_ERR (based on order mentioned in spec).
+    if (doctype && doctype->document()) {
         ec = WRONG_DOCUMENT_ERR;
         return 0;
     }
+
+    if (doctype)
+        doc->addChild(doctype);
+    if (documentElement)
+        doc->addChild(documentElement.release());
 
     return doc.release();
 }

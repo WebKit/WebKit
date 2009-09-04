@@ -1,3 +1,16 @@
+2009-09-03  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/7180197>, https://bugs.webkit.org/show_bug.cgi?id=28822
+        REGRESSION(r31231): Creating document with current document's DOCTYPE causes crashes
+
+        This bug demonstrates itself with a crash later on, not in the current test.
+
+        * fast/dom/DOMImplementation/createDocument-with-used-doctype-expected.txt: Added.
+        * fast/dom/DOMImplementation/createDocument-with-used-doctype.html: Added.
+        * fast/dom/DOMImplementation/resources/createDocument-with-used-doctype-frame.html: Added.
+
 2009-09-03  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.

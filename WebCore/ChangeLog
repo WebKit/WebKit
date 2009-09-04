@@ -1,3 +1,16 @@
+2009-09-03  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/7180197>, https://bugs.webkit.org/show_bug.cgi?id=28822
+        REGRESSION(r31231): Creating document with current document's DOCTYPE causes crashes
+
+        Test: fast/dom/DOMImplementation/createDocument-with-used-doctype.html
+
+        * dom/DOMImplementation.cpp: (WebCore::DOMImplementation::createDocument): Even though we
+        cannot raise an exception immediately out of fear of breaking Acid3, we shouldn't use a
+        DocumentType node in two documents.
+
 2009-09-03  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.
