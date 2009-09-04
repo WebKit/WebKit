@@ -1440,11 +1440,12 @@ li.editing .swatch, li.editing .enabled-button {
 .swatch {
     display: inline-block;
     vertical-align: baseline;
-    margin-left: 4px;
+    margin-left: 1px;
+    margin-right: 2px;
     margin-bottom: -1px;
     width: 1em;
     height: 1em;
-    border: 1px solid rgb(180, 180, 180);
+    border: 1px solid rgba(128, 128, 128, 0.6);
 }
 
 .pane:not(.expanded) + .pane, .pane:first-of-type {

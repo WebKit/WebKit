@@ -1,3 +1,28 @@
+2009-09-04  Timothy Hatcher  <timothy@apple.com>
+
+        Show color swatches in the Web Inspector before the color text so clicking them will not
+        shift the swatch. Also makes multiple swatches in the single property toggle the color format.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28978
+
+        Reviewed by Darin Adler.
+
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylePropertyTreeElement.prototype.updateTitle): Some refactoring to consolidate
+        the processing we do on the property value. This eliminated the old nickname code, since the new
+        WebInspector.Color class handles this. We could also simplify the color regex since more
+        is handled by the Color class. Also no longer uses innerHTML for the linkify code.
+        (WebInspector.StylePropertyTreeElement.prototype.updateTitle.processValue): Helper function to
+        process a value given a regex and processor functions. 
+        (WebInspector.StylePropertyTreeElement.prototype.updateTitle.linkifyURL): Make an anchor for the
+        URL with "url()" syntax surrounding it.
+        (WebInspector.StylePropertyTreeElement.prototype.updateTitle.processColor): Makes a color, if
+        there was an exception just return a text node.
+        (WebInspector.StylePropertyTreeElement.prototype.updateTitle.processColor.changeColorDisplay.changeTo):
+        Moved from later in the file.
+        (WebInspector.StylePropertyTreeElement.prototype.updateTitle.processColor.changeColorDisplay): Ditto.
+        * inspector/front-end/inspector.css:
+
 2009-09-04  Mark Mentovai  <mark@chromium.org>
 
         Reviewed by Dave Hyatt.

@@ -787,48 +787,13 @@ WebInspector.StylePropertyTreeElement.prototype = {
 
     updateTitle: function()
     {
-        // "Nicknames" for some common values that are easier to read.
-        var valueNicknames = {
-            "rgb(0, 0, 0)": "black",
-            "#000": "black",
-            "#000000": "black",
-            "rgb(255, 255, 255)": "white",
-            "#fff": "white",
-            "#ffffff": "white",
-            "#FFF": "white",
-            "#FFFFFF": "white",
-            "rgba(0, 0, 0, 0)": "transparent",
-            "rgb(255, 0, 0)": "red",
-            "rgb(0, 255, 0)": "lime",
-            "rgb(0, 0, 255)": "blue",
-            "rgb(255, 255, 0)": "yellow",
-            "rgb(255, 0, 255)": "magenta",
-            "rgb(0, 255, 255)": "cyan"
-        };
-
         var priority = this.priority;
         var value = this.value;
-        var htmlValue = value;
 
         if (priority && !priority.length)
             delete priority;
         if (priority)
             priority = "!" + priority;
-
-        if (value) {
-            var urls = value.match(/url\([^)]+\)/);
-            if (urls) {
-                for (var i = 0; i < urls.length; ++i) {
-                    var url = urls[i].substring(4, urls[i].length - 1);
-                    htmlValue = htmlValue.replace(urls[i], "url(" + WebInspector.linkifyURL(url) + ")");
-                }
-            } else {
-                if (value in valueNicknames)
-                    htmlValue = valueNicknames[value];
-                htmlValue = htmlValue.escapeHTML();
-            }
-        } else
-            htmlValue = value = "";
 
         this.updateState();
 
@@ -845,8 +810,120 @@ WebInspector.StylePropertyTreeElement.prototype = {
 
         var valueElement = document.createElement("span");
         valueElement.className = "value";
-        valueElement.innerHTML = htmlValue;
         this.valueElement = valueElement;
+
+        if (value) {
+            function processValue(regex, processor, nextProcessor, valueText)
+            {
+                var container = document.createDocumentFragment();
+
+                var items = valueText.replace(regex, "\0$1\0").split("\0");
+                for (var i = 0; i < items.length; ++i) {
+                    if ((i % 2) === 0) {
+                        if (nextProcessor)
+                            container.appendChild(nextProcessor(items[i]));
+                        else
+                            container.appendChild(document.createTextNode(items[i]));
+                    } else {
+                        var processedNode = processor(items[i]);
+                        if (processedNode)
+                            container.appendChild(processedNode);
+                    }
+                }
+
+                return container;
+            }
+
+            function linkifyURL(url)
+            {
+                var container = document.createDocumentFragment();
+                container.appendChild(document.createTextNode("url("));
+                container.appendChild(WebInspector.linkifyURLAsNode(url, url, null, (url in WebInspector.resourceURLMap)));
+                container.appendChild(document.createTextNode(")"));
+                return container;
+            }
+
+            function processColor(text)
+            {
+                try {
+                    var color = new WebInspector.Color(text);
+                } catch (e) {
+                    return document.createTextNode(text);
+                }
+
+                var swatchElement = document.createElement("span");
+                swatchElement.className = "swatch";
+                swatchElement.style.setProperty("background-color", text);
+
+                swatchElement.addEventListener("click", changeColorDisplay, false);
+                swatchElement.addEventListener("dblclick", function(event) { event.stopPropagation() }, false);
+
+                var colorValueElement = document.createElement("span");
+                colorValueElement.textContent = text;
+
+                var mode = color.mode;
+                function changeColorDisplay(event) {
+                    function changeTo(newMode, content) {
+                        mode = newMode;
+                        colorValueElement.textContent = content;
+                    }
+
+                    switch (mode) {
+                        case "rgb":
+                            changeTo("hsl", color.toHsl());
+                            break;
+
+                        case "shorthex":
+                            changeTo("hex", color.toHex());
+                            break;
+
+                        case "hex":
+                            changeTo("rgb", color.toRgb());
+                            break;
+
+                        case "nickname":
+                            if (color.simple) {
+                                if (color.hasShortHex())
+                                    changeTo("shorthex", color.toShortHex());
+                                else
+                                    changeTo("hex", color.toHex());
+                            } else
+                                changeTo("rgba", color.toRgba());
+                            break;
+
+                        case "hsl":
+                            if (color.nickname)
+                                changeTo("nickname", color.toNickname());
+                            else if (color.hasShortHex())
+                                changeTo("shorthex", color.toShortHex());
+                            else
+                                changeTo("hex", color.toHex());
+                            break;
+
+                        case "rgba":
+                            changeTo("hsla", color.toHsla());
+                            break;
+
+                        case "hsla":
+                            if (color.nickname)
+                                changeTo("nickname", color.toNickname());
+                            else
+                                changeTo("rgba", color.toRgba());
+                            break;
+                    }
+                }
+
+                var container = document.createDocumentFragment();
+                container.appendChild(swatchElement);
+                container.appendChild(colorValueElement);
+                return container;
+            }
+
+            var colorRegex = /((?:rgb|hsl)a?\([^)]+\)|#[0-9a-fA-F]{6}|#[0-9a-fA-F]{3}|\b\w+\b)/g;
+            var colorProcessor = processValue.bind(window, colorRegex, processColor, null);
+
+            valueElement.appendChild(processValue(/url\(([^)]+)\)/g, linkifyURL, colorProcessor, value));
+        }
 
         if (priority) {
             var priorityElement = document.createElement("span");
@@ -870,95 +947,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
 
         this.listItemElement.appendChild(document.createTextNode(";"));
 
-        if (value) {
-            // FIXME: this only covers W3C and CSS 16 valid color names
-            var colors = value.match(/((rgb|hsl)a?\([^)]+\))|(#[0-9a-fA-F]{6})|(#[0-9a-fA-F]{3})|aqua|black|blue|fuchsia|gray|green|lime|maroon|navy|olive|purple|red|silver|teal|white|yellow|transparent/g);
-            var swatch;
-            if (colors) {
-                var colorsLength = colors.length;
-                for (var i = 0; i < colorsLength; ++i) {
-                    var swatchElement = document.createElement("span");
-                    swatchElement.className = "swatch";
-                    swatchElement.style.setProperty("background-color", colors[i]);
-                    this.listItemElement.appendChild(swatchElement);
-                    swatch = swatchElement;
-                }
-            }
-
-            // Rotate through Color Representations by Clicking on the Swatch
-            // Simple: rgb -> hsl -> nickname? -> shorthex? -> hex -> ...
-            // Advanced: rgba -> hsla -> nickname? -> ...            
-            if (colors && colors.length === 1) {
-                try {
-                    var color = new WebInspector.Color(htmlValue);
-                } catch(e) {
-                    var color = null;
-                }
-
-                if (color) {
-                    swatch.addEventListener("click", changeColorDisplay, false);
-                    swatch.addEventListener("dblclick", function(event) {
-                        event.stopPropagation();
-                    }, false);
-
-                    var mode = color.mode;
-                    var valueElement = this.valueElement;
-                    function changeColorDisplay(event) {
-
-                        function changeTo(newMode, content) {
-                            mode = newMode;
-                            valueElement.textContent = content;
-                        }
-
-                        switch (mode) {
-                            case "rgb":
-                                changeTo("hsl", color.toHsl());
-                                break;
-
-                            case "shorthex":
-                                changeTo("hex", color.toHex());
-                                break;
-
-                            case "hex":
-                                changeTo("rgb", color.toRgb());
-                                break;
-
-                            case "nickname":
-                                if (color.simple) {
-                                    if (color.hasShortHex())
-                                        changeTo("shorthex", color.toShortHex());
-                                    else
-                                        changeTo("hex", color.toHex());
-                                } else
-                                    changeTo("rgba", color.toRgba());
-                                break;
-
-                            case "hsl":
-                                if (color.nickname)
-                                    changeTo("nickname", color.toNickname());
-                                else if (color.hasShortHex())
-                                    changeTo("shorthex", color.toShortHex());
-                                else
-                                    changeTo("hex", color.toHex());
-                                break;
-
-                            case "rgba":
-                                changeTo("hsla", color.toHsla());
-                                break;
-
-                            case "hsla":
-                                if (color.nickname)
-                                    changeTo("nickname", color.toNickname());
-                                else
-                                    changeTo("rgba", color.toRgba());
-                                break;
-                        }
-                    }
-                }
-            }
-        }
-
-        this.tooltip = this.name + ": " + (valueNicknames[value] || value) + (priority ? " " + priority : "");
+        this.tooltip = this.name + ": " + valueElement.textContent + (priority ? " " + priority : "");
     },
 
     updateAll: function(updateAllRules)
