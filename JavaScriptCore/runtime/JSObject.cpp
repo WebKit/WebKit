@@ -38,14 +38,22 @@
 #include <math.h>
 #include <wtf/Assertions.h>
 
-
 namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(JSObject);
 
 void JSObject::markChildren(MarkStack& markStack)
 {
+#ifndef NDEBUG
+    bool wasCheckingForDefaultMarkViolation = markStack.m_isCheckingForDefaultMarkViolation;
+    markStack.m_isCheckingForDefaultMarkViolation = false;
+#endif
+
     markChildrenDirect(markStack);
+
+#ifndef NDEBUG
+    markStack.m_isCheckingForDefaultMarkViolation = wasCheckingForDefaultMarkViolation;
+#endif
 }
 
 UString JSObject::className() const

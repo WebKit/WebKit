@@ -747,7 +747,7 @@ void Heap::markConservatively(MarkStack& markStack, void* start, void* end)
             // Mark the primary heap
             for (size_t block = 0; block < usedPrimaryBlocks; block++) {
                 if ((primaryBlocks[block] == blockAddr) & (offset <= lastCellOffset)) {
-                    if (reinterpret_cast<CollectorCell*>(xAsBits)->u.freeCell.zeroIfFree != 0) {
+                    if (reinterpret_cast<CollectorCell*>(xAsBits)->u.freeCell.zeroIfFree) {
                         markStack.append(reinterpret_cast<JSCell*>(xAsBits));
                         markStack.drain();
                     }
@@ -1011,11 +1011,8 @@ void Heap::markProtectedObjects(MarkStack& markStack)
 
     ProtectCountSet::iterator end = m_protectedValues.end();
     for (ProtectCountSet::iterator it = m_protectedValues.begin(); it != end; ++it) {
-        JSCell* val = it->first;
-        if (!val->marked()) {
-            markStack.append(val);
-            markStack.drain();
-        }
+        markStack.append(it->first);
+        markStack.drain();
     }
 
     if (m_protectedValuesMutex)
@@ -1147,10 +1144,10 @@ bool Heap::collect()
     markProtectedObjects(markStack);
     if (m_markListSet && m_markListSet->size())
         MarkedArgumentBuffer::markLists(markStack, *m_markListSet);
-    if (m_globalData->exception && !m_globalData->exception.marked())
+    if (m_globalData->exception)
         markStack.append(m_globalData->exception);
     m_globalData->interpreter->registerFile().markCallFrames(markStack, this);
-    m_globalData->smallStrings.mark();
+    m_globalData->smallStrings.markChildren(markStack);
     if (m_globalData->functionCodeBlockBeingReparsed)
         m_globalData->functionCodeBlockBeingReparsed->markAggregate(markStack);
     if (m_globalData->firstStringifierToMark)
@@ -1254,7 +1251,7 @@ static const char* typeName(JSCell* cell)
     if (cell->isGetterSetter())
         return "gettersetter";
     ASSERT(cell->isObject());
-    const ClassInfo* info = static_cast<JSObject*>(cell)->classInfo();
+    const ClassInfo* info = cell->classInfo();
     return info ? info->className : "Object";
 }
 

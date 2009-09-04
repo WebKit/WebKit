@@ -5,6 +5,103 @@
         DateInstance object collected on ARM JIT (JSValue: WTF_USE_JSVALUE32)
         https://bugs.webkit.org/show_bug.cgi?id=28909
 
+        Part two.
+
+        Make some improvements to garbage collection code:
+
+            1) Create a runtime assertion that catches any classes that
+               override markChildren but have the HasDefaultMark bit set.
+            2) Remove checks of the mark bit outside the MarkStack::append
+               function; they are redundant.
+            3) Improve the efficiency of the asObject and asArray functions
+               when called on JSCell* to avoid a round trip to JSValue.
+            4) Make more callers use the checked asCell and asObject
+               casting functions rather than unchecked casts.
+            5) Removed the JSCell::marked function and other GC-related
+               functions because these operations are no longer things that
+               code other than the core GC code needs to do directly. Fixed
+               callers that were calling them.
+
+        * runtime/Collector.cpp:
+        (JSC::Heap::markConservatively): Removed unneeded call to MarkStack::drain.
+        (JSC::Heap::markProtectedObjects): Removed unneeded check of the mark
+        bit and call to MarkStack::drain.
+        (JSC::Heap::collect): Removed unneeded checks of the mark bit and also
+        changed call to SmallStrings::mark to call markChildren instead to match
+        the rest of the objects.
+        (JSC::typeName): Removed unneeded cast to JSObject*.
+
+        * runtime/JSArray.h:
+        (JSC::asArray): Added an overload for JSCell* and changed the JSValue
+        version to call it. Removed some unneeded casts.
+        (JSC::JSArray::markChildrenDirect): Marked this function inline. It's in
+        a header, and if not marked inline this could lead to linking problems.
+        (JSC::MarkStack::markChildren): Added. This helper function is used by
+        the drain function to avoid repating code. Also added the code here to
+        check fro default mark violations in debug code. If a markChildren
+        function adds something to the mark stack, but the type info claimed
+        hasDefaultMark was true, then we will get an assertion now. Also fixed
+        the assertion about the mark bit to use the Heap function directly
+        because we don't have a JSCell::marked function any more.
+        (JSC::MarkStack::drain): Changed a local variable from "v" to "value",
+        and from "currentCell" to "cell". Changed to call markChildren in two
+        places instead of repeating a chain of if statements twice. Changed
+        code that reads and writes the mark bit to use Heap::isCellMarked and
+        Heap::markCell so we can eliminate the JSCell::marked and
+        JSCell::markCellDirect functions.
+
+        * runtime/JSCell.h: Removed JSCell's markCellDirect and marked member
+        functions. Added a comment explaining that asCell should be deprecated
+        in favor of the JSValue asCell member function.
+        (JSC::MarkStack::append): Added the assertion that catches callers
+        that have set the HasDefaultMark bit incorrectly. Changed
+        code that reads and writes the mark bit to use Heap::isCellMarked and
+        Heap::markCell so we can eliminate the JSCell::marked and
+        JSCell::markCellDirect functions. Moved the overload of
+        MarkStack::append for JSValue here so it can call through to the cell
+        version. The old version had a copy of all the code instead, but that
+        repeated the conversion from JSValue to JSCell* and the check for
+        whether a value is a cell multiple times.
+        (JSC::Structure::markAggregate): Moved this function here to avoid
+        dependencies for Structure.h, since this calls MarkStack::append.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::markChildren): Added code to clear
+        m_isCheckingForDefaultMarkViolation so the marking done by JSObject
+        doesn't trigger the assertion.
+
+        * runtime/JSValue.h: Moved some stray includes that were outside the
+        header guard inside it. Not sure how that happened! Removed the
+        GC-related member functions markChildren, hasChildren, marked, and
+        markDirect.
+
+        * runtime/JSWrapperObject.h: Made markChildren private.
+        (JSC::JSWrapperObject::createStructure): Added. Fixes a bug where the
+        HasDefaultMark bit was set.
+
+        * runtime/MarkStack.h: Added m_isCheckingForDefaultMarkViolation and
+        initialized it to false. Moved the append function body from here to
+        JSCell.h. Added a declaration of a private markChildren function used
+        inside the drain function.
+
+        * runtime/SmallStrings.cpp:
+        (JSC::SmallStrings::markChildren): Changed the name and style of this
+        function to match other functions. This allows us to share the normal
+        mark stack code path.
+
+        * runtime/SmallStrings.h: Changed the name and interface of mark to
+        the more-normal markChildren style.
+
+        * runtime/Structure.h: Moved the body of markAggregate into the
+        JSCell.h to avoid a circular dependency with JSCell.h.
+
+2009-09-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        DateInstance object collected on ARM JIT (JSValue: WTF_USE_JSVALUE32)
+        https://bugs.webkit.org/show_bug.cgi?id=28909
+
         Part one.
 
         Make some improvements to garbage collection code:
@@ -46,11 +143,6 @@
         (JSC::asObject): Added an overload for JSCell* and changed the JSValue
         version to call it.
         (JSC::JSValue::get): Use asObject to avoid a direct static_cast.
-
-        * runtime/JSValue.h: Moved some stray includes that were outside the
-        header guard inside it. Not sure how that happened! Removed the
-        GC-related member functions markChildren, hasChildren, marked, and
-        markDirect.
 
         * runtime/JSWrapperObject.h: Made markChildren private.
         (JSC::JSWrapperObject::createStructure): Added. Fixes a bug where the

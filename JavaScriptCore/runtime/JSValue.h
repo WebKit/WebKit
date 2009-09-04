@@ -20,15 +20,14 @@
  *
  */
 
-#include <stddef.h> // for size_t
-#include <stdint.h>
-
 #ifndef JSValue_h
 #define JSValue_h
 
 #include "CallData.h"
 #include "ConstructData.h"
 #include <math.h>
+#include <stddef.h> // for size_t
+#include <stdint.h>
 #include <wtf/AlwaysInline.h>
 #include <wtf/Assertions.h>
 #include <wtf/HashTraits.h>
@@ -42,7 +41,6 @@ namespace JSC {
     class JSImmediate;
     class JSObject;
     class JSString;
-    class MarkStack;
     class PropertySlot;
     class PutPropertySlot;
     class UString;
@@ -171,12 +169,6 @@ namespace JSC {
         // Floating point conversions (this is a convenience method for webcore;
         // signle precision float is not a representation used in JS or JSC).
         float toFloat(ExecState* exec) const { return static_cast<float>(toNumber(exec)); }
-
-        // Garbage collection.
-        void markChildren(MarkStack&);
-        bool hasChildren() const;
-        bool marked() const;
-        void markDirect();
 
         // Object operations, with the toObject operation included.
         JSValue get(ExecState*, const Identifier& propertyName) const;

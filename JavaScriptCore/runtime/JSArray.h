@@ -121,28 +121,59 @@ namespace JSC {
     JSArray* constructArray(ExecState*, JSValue singleItemValue);
     JSArray* constructArray(ExecState*, const ArgList& values);
 
-    inline JSArray* asArray(JSValue value)
+    inline JSArray* asArray(JSCell* cell)
     {
-        ASSERT(asObject(value)->inherits(&JSArray::info));
-        return static_cast<JSArray*>(asObject(value));
+        ASSERT(cell->inherits(&JSArray::info));
+        return static_cast<JSArray*>(cell);
     }
 
-    inline bool isJSArray(JSGlobalData* globalData, JSValue v) { return v.isCell() && v.asCell()->vptr() == globalData->jsArrayVPtr; }
+    inline JSArray* asArray(JSValue value)
+    {
+        return asArray(value.asCell());
+    }
+
+    inline bool isJSArray(JSGlobalData* globalData, JSValue v)
+    {
+        return v.isCell() && v.asCell()->vptr() == globalData->jsArrayVPtr;
+    }
     inline bool isJSArray(JSGlobalData* globalData, JSCell* cell) { return cell->vptr() == globalData->jsArrayVPtr; }
 
-    void JSArray::markChildrenDirect(MarkStack& markStack) {
+    inline void JSArray::markChildrenDirect(MarkStack& markStack)
+    {
         JSObject::markChildrenDirect(markStack);
         
         ArrayStorage* storage = m_storage;
-        
+
         unsigned usedVectorLength = std::min(storage->m_length, storage->m_vectorLength);
         markStack.appendValues(storage->m_vector, usedVectorLength, MayContainNullValues);
-        
+
         if (SparseArrayValueMap* map = storage->m_sparseValueMap) {
             SparseArrayValueMap::iterator end = map->end();
             for (SparseArrayValueMap::iterator it = map->begin(); it != end; ++it)
                 markStack.append(it->second);
         }
+    }
+
+    inline void MarkStack::markChildren(JSCell* cell)
+    {
+        ASSERT(Heap::isCellMarked(cell));
+        if (cell->structure()->typeInfo().hasDefaultMark()) {
+#ifdef NDEBUG
+            asObject(cell)->markChildrenDirect(*this);
+#else
+            ASSERT(!m_isCheckingForDefaultMarkViolation);
+            m_isCheckingForDefaultMarkViolation = true;
+            cell->markChildren(*this);
+            ASSERT(m_isCheckingForDefaultMarkViolation);
+            m_isCheckingForDefaultMarkViolation = false;
+#endif
+            return;
+        }
+        if (cell->vptr() == m_jsArrayVPtr) {
+            asArray(cell)->markChildrenDirect(*this);
+            return;
+        }
+        cell->markChildren(*this);
     }
 
     inline void MarkStack::drain()
@@ -157,47 +188,34 @@ namespace JSC {
                 ASSERT(current.m_values != end);
             findNextUnmarkedNullValue:
                 ASSERT(current.m_values != end);
-                JSValue v = *current.m_values;
+                JSValue value = *current.m_values;
                 current.m_values++;
-                
-                if (!v || v.marked()) {
+
+                JSCell* cell;
+                if (!value || !value.isCell() || Heap::isCellMarked(cell = value.asCell())) {
                     if (current.m_values == end) {
                         m_markSets.removeLast();
                         continue;
                     }
                     goto findNextUnmarkedNullValue;
                 }
-                
-                JSCell* currentCell = v.asCell();
-                currentCell->markCellDirect();
-                if (currentCell->structure()->typeInfo().type() < CompoundType) {
+
+                Heap::markCell(cell);
+                if (cell->structure()->typeInfo().type() < CompoundType) {
                     if (current.m_values == end) {
                         m_markSets.removeLast();
                         continue;
                     }
                     goto findNextUnmarkedNullValue;
                 }
-                
+
                 if (current.m_values == end)
                     m_markSets.removeLast();
 
-                if (currentCell->structure()->typeInfo().hasDefaultMark())
-                    static_cast<JSObject*>(currentCell)->markChildrenDirect(*this);
-                else if (currentCell->vptr() == m_jsArrayVPtr)
-                    static_cast<JSArray*>(currentCell)->markChildrenDirect(*this);
-                else
-                    currentCell->markChildren(*this);
+                markChildren(cell);
             }
-            while (!m_values.isEmpty()) {
-                JSCell* current = m_values.removeLast();
-                ASSERT(current->marked());
-                if (current->structure()->typeInfo().hasDefaultMark())
-                    static_cast<JSObject*>(current)->markChildrenDirect(*this);
-                else if (current->vptr() == m_jsArrayVPtr)
-                    static_cast<JSArray*>(current)->markChildrenDirect(*this);
-                else
-                    current->markChildren(*this);
-            }
+            while (!m_values.isEmpty())
+                markChildren(m_values.removeLast());
         }
     }
     

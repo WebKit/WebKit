@@ -82,13 +82,13 @@ SmallStrings::~SmallStrings()
 {
 }
 
-void SmallStrings::mark()
+void SmallStrings::markChildren(MarkStack& markStack)
 {
-    if (m_emptyString && !m_emptyString->marked())
-        m_emptyString->markCellDirect();
+    if (m_emptyString)
+        markStack.append(m_emptyString);
     for (unsigned i = 0; i < numCharactersToStore; ++i) {
-        if (m_singleCharacterStrings[i] && !m_singleCharacterStrings[i]->marked())
-            m_singleCharacterStrings[i]->markCellDirect();
+        if (m_singleCharacterStrings[i])
+            markStack.append(m_singleCharacterStrings[i]);
     }
 }
 
