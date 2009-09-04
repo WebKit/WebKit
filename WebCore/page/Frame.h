@@ -373,7 +373,7 @@ namespace WebCore {
         bool m_excludeFromTextSearch;
 
     #if FRAME_LOADS_USER_STYLESHEET
-        UserStyleSheetLoader* m_userStyleSheetLoader;
+        OwnPtr<UserStyleSheetLoader> m_userStyleSheetLoader;
     #endif
 
     };

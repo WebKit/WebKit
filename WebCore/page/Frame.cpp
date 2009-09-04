@@ -138,9 +138,6 @@ Frame::Frame(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient*
     , m_needsReapplyStyles(false)
     , m_isDisconnected(false)
     , m_excludeFromTextSearch(false)
-#if FRAME_LOADS_USER_STYLESHEET
-    , m_userStyleSheetLoader(0)
-#endif
 {
     Frame* parent = parentFromOwnerElement(ownerElement);
     m_zoomFactor = parent ? parent->m_zoomFactor : 1.0f;
@@ -203,10 +200,6 @@ Frame::~Frame()
     }
 
     ASSERT(!m_lifeSupportTimer.isActive());
-
-#if FRAME_LOADS_USER_STYLESHEET
-    delete m_userStyleSheetLoader;
-#endif
 }
 
 void Frame::init()

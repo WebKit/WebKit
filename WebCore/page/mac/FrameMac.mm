@@ -535,8 +535,7 @@ DragImageRef Frame::dragImageForSelection()
 
 void Frame::setUserStyleSheetLocation(const KURL& url)
 {
-    delete m_userStyleSheetLoader;
-    m_userStyleSheetLoader = 0;
+    m_userStyleSheetLoader.clear();
 
     // Data URLs with base64-encoded UTF-8 style sheets are common. We can process them
     // synchronously and avoid using a loader. 
@@ -554,13 +553,12 @@ void Frame::setUserStyleSheetLocation(const KURL& url)
     }
 
     if (m_doc->docLoader())
-        m_userStyleSheetLoader = new UserStyleSheetLoader(m_doc, url.string());
+        m_userStyleSheetLoader.set(new UserStyleSheetLoader(m_doc, url.string()));
 }
 
 void Frame::setUserStyleSheet(const String& styleSheet)
 {
-    delete m_userStyleSheetLoader;
-    m_userStyleSheetLoader = 0;
+    m_userStyleSheetLoader.clear();
     m_doc->setUserStyleSheet(styleSheet);
 }
 

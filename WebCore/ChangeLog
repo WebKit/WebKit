@@ -1,3 +1,17 @@
+2009-09-04  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Make m_userStyleSheetLoader in Frame an OwnPtr.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame):
+        (WebCore::Frame::~Frame):
+        * page/Frame.h:
+        * page/mac/FrameMac.mm:
+        (WebCore::Frame::setUserStyleSheetLocation):
+        (WebCore::Frame::setUserStyleSheet):
+
 2009-09-04  Timothy Hatcher  <timothy@apple.com>
 
         Show color swatches in the Web Inspector before the color text so clicking them will not
