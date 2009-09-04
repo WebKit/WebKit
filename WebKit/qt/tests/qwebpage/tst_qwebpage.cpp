@@ -407,6 +407,10 @@ void tst_QWebPage::database()
     QWebSettings::setOfflineStorageDefaultQuota(1024 * 1024);
     QVERIFY(QWebSettings::offlineStorageDefaultQuota() == 1024 * 1024);
 
+    m_page->settings()->setAttribute(QWebSettings::LocalStorageEnabled, true);
+    m_page->settings()->setAttribute(QWebSettings::SessionStorageEnabled, true);
+    m_page->settings()->setAttribute(QWebSettings::OfflineStorageDatabaseEnabled, true);
+
     QString dbFileName = path + "Databases.db";
 
     if (QFile::exists(dbFileName))
