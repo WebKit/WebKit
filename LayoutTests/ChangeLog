@@ -2,6 +2,14 @@
 
         Rubber-stamped by Simon Hausmann.
 
+        [Qt] Fix brainfart in r48050, tests should have paths
+
+        * platform/qt/Skipped:
+
+2009-09-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Rubber-stamped by Simon Hausmann.
+
         [Qt] Skip tests failing due to missing DRT features
 
         * platform/qt/Skipped:

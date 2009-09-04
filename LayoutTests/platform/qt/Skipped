@@ -41,8 +41,8 @@ fast/forms/input-maxlength-ime-completed.html
 fast/events/pageshow-pagehide-on-back-cached.html
 
 # Missing layoutTestController.overridePreference()
-pageshow-pagehide-on-back-cached-with-frames.html
-frames-with-unload-handlers-in-page-cache.html
+fast/events/pageshow-pagehide-on-back-cached-with-frames.html
+fast/loader/frames-with-unload-handlers-in-page-cache.html
 
 # Missing layoutTestController.waitForPolicyDelegate()
 # https://bugs.webkit.org/show_bug.cgi?id=25037
