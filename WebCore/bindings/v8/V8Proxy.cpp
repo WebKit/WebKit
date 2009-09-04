@@ -780,6 +780,10 @@ void V8Proxy::updateDocument()
     // global object wrapper succeed.
     initContextIfNeeded();
 
+    // Bail out if context initialization failed.
+    if (m_context.IsEmpty())
+        return;
+
     // We have a new document and we need to update the cache.
     updateDocumentWrapperCache();
 

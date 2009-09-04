@@ -1,3 +1,18 @@
+2009-09-04  Mads Ager  <ager@chromium.org>
+
+        Reviewed by David Levin.
+
+        [V8] Crash when updating document cache
+        https://bugs.webkit.org/show_bug.cgi?id=28965
+
+        Initialization of a V8 JavaScript context can fail.  When that
+        happens, do not attempt to update the document wrapper cache.
+
+        This code path is exercised by http/tests/security/javascriptURL/javascriptURL-in-new-iframe.html.
+
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::updateDocument):
+
 2009-09-04  Yaar Schnitman  <yaar@chromium.org>
 
         Reviewed by Eric Seidel.
