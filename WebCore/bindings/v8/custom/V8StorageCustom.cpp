@@ -60,7 +60,7 @@ static v8::Handle<v8::Value> storageGetter(v8::Local<v8::String> v8Name, const v
     Storage* storage = V8DOMWrapper::convertToNativeObject<Storage>(V8ClassIndex::STORAGE, info.Holder());
     String name = toWebCoreString(v8Name);
 
-    if (storage->contains(name))
+    if (storage->contains(name) && name != "length")
         return v8String(storage->getItem(name));
 
     return notHandledByInterceptor();
