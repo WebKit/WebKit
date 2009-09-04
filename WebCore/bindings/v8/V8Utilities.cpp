@@ -33,8 +33,15 @@
 
 #include <v8.h>
 
+#include "Document.h"
+#include "Frame.h"
+#include "ScriptExecutionContext.h"
+#include "ScriptState.h"
 #include "V8CustomBinding.h"
+#include "V8Binding.h"
 #include "V8Proxy.h"
+#include "WorkerContext.h"
+#include "WorkerContextExecutionProxy.h"
 
 #include <wtf/Assertions.h>
 #include "Frame.h"
@@ -99,6 +106,32 @@ void navigateIfAllowed(Frame* frame, const KURL& url, bool lockHistory, bool loc
 
     if (!protocolIsJavaScript(url) || ScriptController::isSafeScript(frame))
         frame->loader()->scheduleLocationChange(url.string(), callingFrame->loader()->outgoingReferrer(), lockHistory, lockBackForwardList, processingUserGesture());
+}
+
+ScriptExecutionContext* getScriptExecutionContext(ScriptState* scriptState)
+{
+#if ENABLE(WORKERS)
+    WorkerContextExecutionProxy* proxy = WorkerContextExecutionProxy::retrieve();
+    if (proxy)
+        return proxy->workerContext()->scriptExecutionContext();
+#endif
+
+    if (scriptState)
+        return scriptState->frame()->document()->scriptExecutionContext();
+    else {
+        Frame* frame = V8Proxy::retrieveFrameForCurrentContext();
+        if (frame)
+            return frame->document()->scriptExecutionContext();
+    }
+
+    return 0;
+}
+
+void reportException(ScriptState* scriptState, v8::TryCatch& exceptionCatcher)
+{
+    v8::Local<v8::Message> message = exceptionCatcher.Message();
+    getScriptExecutionContext(scriptState)->reportException(toWebCoreString(message->Get()), message->GetLineNumber(), toWebCoreString(message->GetScriptResourceName()));
+    exceptionCatcher.Reset();
 }
 
 } // namespace WebCore

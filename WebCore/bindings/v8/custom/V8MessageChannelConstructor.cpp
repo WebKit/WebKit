@@ -36,6 +36,7 @@
 
 #include "Document.h"
 #include "Frame.h"
+#include "V8Utilities.h"
 #include "WorkerContext.h"
 #include "WorkerContextExecutionProxy.h"
 
@@ -52,16 +53,9 @@ CALLBACK_FUNC_DECL(MessageChannelConstructor)
         return throwError("DOM object constructor cannot be called as a function.");
 
     // Get the ScriptExecutionContext (WorkerContext or Document)
-    ScriptExecutionContext* context = 0;
-    WorkerContextExecutionProxy* proxy = WorkerContextExecutionProxy::retrieve();
-    if (proxy)
-        context = proxy->workerContext();
-    else {
-        Frame* frame = V8Proxy::retrieveFrameForCurrentContext();
-        if (!frame)
-            return v8::Undefined();
-        context = frame->document();
-    }
+    ScriptExecutionContext* context = getScriptExecutionContext();
+    if (!context)
+        return v8::Undefined();
 
     // Note: it's OK to let this RefPtr go out of scope because we also call
     // SetDOMWrapper(), which effectively holds a reference to obj.

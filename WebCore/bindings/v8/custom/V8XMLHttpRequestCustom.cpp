@@ -323,22 +323,9 @@ CALLBACK_FUNC_DECL(XMLHttpRequestOpen)
 
     String method = toWebCoreString(args[0]);
     String urlstring = toWebCoreString(args[1]);
-    ScriptExecutionContext* context = 0;
-#if ENABLE(WORKERS)
-    WorkerContextExecutionProxy* workerContextProxy = WorkerContextExecutionProxy::retrieve();
-    if (workerContextProxy) {
-        context = workerContextProxy->workerContext();
-        ASSERT(context);
-    }
-#endif
-
-    if (!context) {
-        V8Proxy* proxy = V8Proxy::retrieve();
-        if (!proxy)
-            return v8::Undefined();
-        context = proxy->frame()->document();
-        ASSERT(context);
-    }
+    ScriptExecutionContext* context = getScriptExecutionContext();
+    if (!context)
+        return v8::Undefined();
 
     KURL url = context->completeURL(urlstring);
 

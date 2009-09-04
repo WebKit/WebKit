@@ -66,16 +66,9 @@ CALLBACK_FUNC_DECL(SharedWorkerConstructor)
         return v8::Undefined();
 
     // Get the script execution context.
-    ScriptExecutionContext* context = 0;
-    WorkerContextExecutionProxy* proxy = WorkerContextExecutionProxy::retrieve();
-    if (proxy)
-        context = proxy->workerContext();
-    else {
-        Frame* frame = V8Proxy::retrieveFrame();
-        if (!frame)
-            return v8::Undefined();
-        context = frame->document();
-    }
+    ScriptExecutionContext* context = getScriptExecutionContext();
+    if (!context)
+        return v8::Undefined();
 
     // Create the worker object.
     // Note: it's OK to let this RefPtr go out of scope because we also call SetDOMWrapper(), which effectively holds a reference to obj.

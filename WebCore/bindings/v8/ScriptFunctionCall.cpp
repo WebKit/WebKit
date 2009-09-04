@@ -31,8 +31,6 @@
 #include "config.h"
 #include "ScriptFunctionCall.h"
 
-#include "Document.h"
-#include "Frame.h"
 #include "ScriptScope.h"
 #include "ScriptState.h"
 #include "ScriptString.h"
@@ -40,18 +38,12 @@
 
 #include "V8Binding.h"
 #include "V8Proxy.h"
+#include "V8Utilities.h"
 
 #include <v8.h>
 #include <wtf/OwnArrayPtr.h>
 
 namespace WebCore {
-
-static void reportException(ScriptState* scriptState, v8::TryCatch &exceptionCatcher)
-{
-    v8::Local<v8::Message> message = exceptionCatcher.Message();
-    scriptState->frame()->document()->reportException(toWebCoreString(message->Get()), message->GetLineNumber(), toWebCoreString(message->GetScriptResourceName()));
-    exceptionCatcher.Reset();
-}
 
 ScriptFunctionCall::ScriptFunctionCall(ScriptState* scriptState, const ScriptObject& thisObject, const String& name)
     : m_scriptState(scriptState)

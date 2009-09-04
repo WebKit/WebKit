@@ -35,6 +35,7 @@
 #include "V8CustomBinding.h"
 #include "V8ObjectEventListener.h"
 #include "V8Proxy.h"
+#include "V8Utilities.h"
 #include "XMLHttpRequest.h"
 #include "WorkerContext.h"
 #include "WorkerContextExecutionProxy.h"
@@ -50,20 +51,9 @@ CALLBACK_FUNC_DECL(XMLHttpRequestConstructor)
 
     // Expect no parameters.
     // Allocate a XMLHttpRequest object as its internal field.
-    ScriptExecutionContext* context = 0;
-#if ENABLE(WORKERS)
-    WorkerContextExecutionProxy* proxy = WorkerContextExecutionProxy::retrieve();
-    if (proxy)
-        context = proxy->workerContext();
-    else {
-#endif
-        Frame* frame = V8Proxy::retrieveFrameForCurrentContext();
-        if (!frame)
-            return throwError("XMLHttpRequest constructor's associated frame is not available", V8Proxy::ReferenceError);
-        context = frame->document();
-#if ENABLE(WORKERS)
-    }
-#endif
+    ScriptExecutionContext* context = getScriptExecutionContext();
+    if (!context)
+        return throwError("XMLHttpRequest constructor's associated context is not available", V8Proxy::ReferenceError);
     RefPtr<XMLHttpRequest> xmlHttpRequest = XMLHttpRequest::create(context);
     V8DOMWrapper::setDOMWrapper(args.Holder(), V8ClassIndex::ToInt(V8ClassIndex::XMLHTTPREQUEST), xmlHttpRequest.get());
 
