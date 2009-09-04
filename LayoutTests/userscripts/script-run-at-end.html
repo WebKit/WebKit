@@ -1,0 +1,14 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.addUserScript("document.getElementById('target').innerHTML = 'PASS'", false);
+}
+</script>
+</head>
+<body>
+<div id="target">FAIL</div>
+</body>
+</html>

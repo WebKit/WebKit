@@ -831,3 +831,8 @@ void LayoutTestController::whiteListAccessFromOrigin(JSStringRef sourceOrigin, J
 {
     printf("LayoutTestController::whiteListAccessFromOrigin not implemented\n");
 }
+
+void LayoutTestController::addUserScript(JSStringRef source, bool runAtStart)
+{
+    printf("LayoutTestController::addUserScript not implemented.\n");
+}

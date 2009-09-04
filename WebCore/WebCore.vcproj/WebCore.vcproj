@@ -17116,6 +17116,14 @@
 				RelativePath="..\page\Settings.h"
 				>
 			</File>
+                        <File
+				RelativePath="..\page\UserScript.h"
+				>
+			</File>
+                        <File
+				RelativePath="..\page\UserScriptTypes.h"
+				>
+			</File>
 			<File
 				RelativePath="..\page\WebKitPoint.h"
 				>

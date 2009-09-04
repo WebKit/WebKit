@@ -1078,6 +1078,7 @@ static void resetWebViewToConsistentStateBeforeTesting()
     [webView _setDashboardBehavior:WebDashboardBehaviorUseBackwardCompatibilityMode to:NO];
     [webView _clearMainFrameName];
     [[webView undoManager] removeAllActions];
+    [WebView _removeAllUserContentFromGroup:[webView groupName]];
 
     resetDefaultsToConsistentValues();
 

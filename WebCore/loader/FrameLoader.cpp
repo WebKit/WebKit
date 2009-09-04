@@ -1213,6 +1213,8 @@ void FrameLoader::finishedParsing()
     if (m_creatingInitialEmptyDocument)
         return;
 
+    m_frame->injectUserScripts(InjectAtDocumentEnd);
+
     // This can be called from the Frame's destructor, in which case we shouldn't protect ourselves
     // because doing so will cause us to re-enter the destructor when protector goes out of scope.
     // Null-checking the FrameView indicates whether or not we're in the destructor.
@@ -5109,6 +5111,7 @@ String FrameLoader::referrer() const
 
 void FrameLoader::dispatchDocumentElementAvailable()
 {
+    m_frame->injectUserScripts(InjectAtDocumentStart);
     m_client->documentElementAvailable();
 }
 

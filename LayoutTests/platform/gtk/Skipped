@@ -5904,3 +5904,6 @@ fast/events/pageshow-pagehide.html
 # No TextInputController
 fast/forms/input-maxlength-ime-completed.html
 fast/forms/input-maxlength-ime-preedit.html
+
+# No User Scripts
+userscripts

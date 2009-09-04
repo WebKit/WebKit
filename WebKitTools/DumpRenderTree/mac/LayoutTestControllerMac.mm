@@ -464,3 +464,10 @@ void LayoutTestController::whiteListAccessFromOrigin(JSStringRef sourceOrigin, J
     NSString *destinationHostNS = (NSString *)hostCF.get();
     [WebView _whiteListAccessFromOrigin:sourceOriginNS destinationProtocol:destinationProtocolNS destinationHost:destinationHostNS allowDestinationSubdomains:allowDestinationSubdomains];
 }
+
+void LayoutTestController::addUserScript(JSStringRef source, bool runAtStart)
+{
+    RetainPtr<CFStringRef> sourceCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, source));
+    NSString *sourceNS = (NSString *)sourceCF.get();
+    [WebView _addUserScriptToGroup:@"org.webkit.DumpRenderTree" source:sourceNS url:nil worldID:1 patterns:nil injectionTime:(runAtStart ? WebInjectAtDocumentStart : WebInjectAtDocumentEnd)];
+}

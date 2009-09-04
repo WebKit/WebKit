@@ -1696,6 +1696,8 @@
             'page/SecurityOriginHash.h',
             'page/Settings.cpp',
             'page/Settings.h',
+            'page/UserScript.h',
+            'page/UserScriptTypes.h',
             'page/WebKitPoint.h',
             'page/WindowFeatures.cpp',
             'page/WindowFeatures.h',

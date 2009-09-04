@@ -30,6 +30,7 @@
 #include <wtf/Noncopyable.h>
 #include "LinkHash.h"
 #include "StringHash.h"
+#include "UserScript.h"
 
 namespace WebCore {
 
@@ -41,6 +42,7 @@ namespace WebCore {
     public:
         PageGroup(const String& name);
         PageGroup(Page*);
+        ~PageGroup();
 
         static PageGroup* pageGroup(const String& groupName);
         static void closeLocalStorage();
@@ -67,6 +69,13 @@ namespace WebCore {
         bool hasLocalStorage() { return m_localStorage; }
 #endif
 
+        void addUserScript(const String& source, const KURL&, const Vector<String>& patterns,
+                           unsigned worldID, UserScriptInjectionTime);
+        const UserScriptMap* userScripts() const { return m_userScripts.get(); }
+
+        void removeUserContentForWorld(unsigned);
+        void removeAllUserContent();
+        
     private:
         void addVisitedLink(LinkHash stringHash);
 
@@ -81,6 +90,8 @@ namespace WebCore {
 #if ENABLE(DOM_STORAGE)
         RefPtr<StorageNamespace> m_localStorage;
 #endif
+
+        OwnPtr<UserScriptMap> m_userScripts;
     };
 
 } // namespace WebCore

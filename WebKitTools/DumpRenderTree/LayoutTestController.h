@@ -185,6 +185,8 @@ public:
 
     void whiteListAccessFromOrigin(JSStringRef sourceOrigin, JSStringRef destinationProtocol, JSStringRef destinationHost, bool allowDestinationSubdomains);
 
+    void addUserScript(JSStringRef source, bool runAtStart);
+
 private:
     bool m_dumpAsText;
     bool m_dumpAsPDF;

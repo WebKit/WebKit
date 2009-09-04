@@ -81,6 +81,7 @@ public:
     }
 
     ScriptValue evaluate(const ScriptSourceCode&);
+    void evaluateInIsolatedWorld(unsigned worldID, const Vector<ScriptSourceCode>&);
 
     void setEventHandlerLineNumber(int lineno) { m_handlerLineNumber = lineno; }
     int eventHandlerLineNumber() { return m_handlerLineNumber; }

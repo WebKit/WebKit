@@ -1,3 +1,21 @@
+2009-09-03  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28890, make simple user script injection work.
+        
+        This patch adds new API for adding and removing user scripts from page groups.  User scripts
+        are bundled together in isolated worlds (you can have multiple scripts together in the same
+        world).
+
+        Added userscripts/ directory for holding new tests (along with a simple test of script injection).
+
+        * WebView/WebView.mm:
+        (+[WebView _addUserScriptToGroup:source:url:worldID:patterns:injectionTime:]):
+        (+[WebView _removeUserContentFromGroup:worldID:]):
+        (+[WebView _removeAllUserContentFromGroup:]):
+        * WebView/WebViewPrivate.h:
+
 2009-09-04  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

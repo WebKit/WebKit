@@ -4831,3 +4831,6 @@ http/tests/xmlhttprequest/cross-origin-cookie-storage.html
 # https://bugs.webkit.org/show_bug.cgi?id=28952
 fast/workers/worker-multi-port.html
 fast/workers/worker-context-multi-port.html
+
+# No User Scripts
+userscripts

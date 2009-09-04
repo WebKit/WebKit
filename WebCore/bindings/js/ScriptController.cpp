@@ -131,6 +131,14 @@ ScriptValue ScriptController::evaluate(const ScriptSourceCode& sourceCode)
     return JSValue();
 }
 
+void ScriptController::evaluateInIsolatedWorld(unsigned /* worldID */, const Vector<ScriptSourceCode>& sourceCode) 
+{
+    // FIXME: Actually support isolated worlds!
+    unsigned size = sourceCode.size();
+    for (unsigned i = 0; i < size; ++i)
+        evaluate(sourceCode[i]);
+}
+
 void ScriptController::clearWindowShell()
 {
     if (!m_windowShell)

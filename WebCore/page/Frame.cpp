@@ -60,6 +60,7 @@
 #include "Navigator.h"
 #include "NodeList.h"
 #include "Page.h"
+#include "PageGroup.h"
 #include "RegularExpression.h"
 #include "RenderPart.h"
 #include "RenderTableCell.h"
@@ -67,6 +68,8 @@
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "ScriptController.h"
+#include "ScriptSourceCode.h"
+#include "ScriptValue.h"
 #include "Settings.h"
 #include "TextIterator.h"
 #include "TextResourceDecoder.h"
@@ -839,6 +842,37 @@ void Frame::reapplyStyles()
     // But we had problems when this code was removed. Details are in
     // <http://bugs.webkit.org/show_bug.cgi?id=8079>.
     m_doc->updateStyleSelector();
+}
+
+void Frame::injectUserScripts(UserScriptInjectionTime injectionTime)
+{
+    ASSERT(m_page);
+    if (!m_page)
+        return;
+    
+    // Walk the hashtable. Inject by world.
+    const UserScriptMap* userScripts = m_page->group().userScripts();
+    if (!userScripts)
+        return;
+    UserScriptMap::const_iterator end = userScripts->end();
+    for (UserScriptMap::const_iterator it = userScripts->begin(); it != end; ++it)
+        injectUserScriptsForWorld(it->first, *it->second, injectionTime);
+}
+
+void Frame::injectUserScriptsForWorld(unsigned worldID, const UserScriptVector& userScripts, UserScriptInjectionTime injectionTime)
+{
+    if (userScripts.isEmpty())
+        return;
+
+    // FIXME: Need to implement pattern checking.
+    Vector<ScriptSourceCode> sourceCode;
+    unsigned count = userScripts.size();
+    for (unsigned i = 0; i < count; ++i) {
+        UserScript* script = userScripts[i].get();
+        if (script->injectionTime() == injectionTime)
+            sourceCode.append(ScriptSourceCode(script->source(), script->url()));
+    }
+    script()->evaluateInIsolatedWorld(worldID, sourceCode);
 }
 
 bool Frame::shouldChangeSelection(const VisibleSelection& newSelection) const

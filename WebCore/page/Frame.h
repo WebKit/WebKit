@@ -41,6 +41,7 @@
 #include "ScrollBehavior.h"
 #include "SelectionController.h"
 #include "TextGranularity.h"
+#include "UserScriptTypes.h"
 
 #if PLATFORM(WIN)
 #include "FrameWin.h"
@@ -129,6 +130,10 @@ namespace WebCore {
         void createView(const IntSize&, const Color&, bool, const IntSize &, bool,
                         ScrollbarMode = ScrollbarAuto, ScrollbarMode = ScrollbarAuto);
 
+        void injectUserScripts(UserScriptInjectionTime);
+
+    private:
+        void injectUserScriptsForWorld(unsigned worldID, const UserScriptVector&, UserScriptInjectionTime);
 
     private:
         Frame(Page*, HTMLFrameOwnerElement*, FrameLoaderClient*);
