@@ -1,3 +1,20 @@
+2009-09-04  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] loadFinished never emitted
+        https://bugs.webkit.org/show_bug.cgi?id=28935
+
+        Do not report errors right away from
+        ResourceHandle::start. Instead return true and schedule an error
+        to be reported in the handle later. Otherwise WebCore gets
+        confused and thinks the resource never finished loading, making it
+        not emit the finished status.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::startHttp):
+        (WebCore::):
+
 2009-09-04  Ben Murdoch  <benm@google.com>
 
         Reviewed by Eric Seidel.
