@@ -1,3 +1,14 @@
+2009-09-04  Albert Bachand  <albertb@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Modify the condition regarding the key modifier for opening combo
+        boxes under GTK from just PLATFORM(GTK) to also look for
+        (PLATFORM(CHROMIUM) && PLATFORM(LINUX)).
+
+        * WebCore/dom/SelectElement.cpp:
+        * WebCore/manual-tests/select-popup-on-spacebar.html:
+
 2009-09-02  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Xan Lopez and Gustavo Noronha.

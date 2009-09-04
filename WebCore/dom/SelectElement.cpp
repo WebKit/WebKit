@@ -48,11 +48,11 @@
 #endif
 
 // Configure platform-specific behavior when focused pop-up receives arrow/space/return keystroke.
-// (PLATFORM(MAC) is always false in Chromium, hence the extra test.)
+// (PLATFORM(MAC) and PLATFORM(GTK) are always false in Chromium, hence the extra tests.)
 #if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && PLATFORM(DARWIN))
 #define ARROW_KEYS_POP_MENU 1
 #define SPACE_OR_RETURN_POP_MENU 0
-#elif PLATFORM(GTK)
+#elif PLATFORM(GTK) || (PLATFORM(CHROMIUM) && PLATFORM(LINUX))
 #define ARROW_KEYS_POP_MENU 0
 #define SPACE_OR_RETURN_POP_MENU 1
 #else
