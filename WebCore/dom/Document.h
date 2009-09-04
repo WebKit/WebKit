@@ -871,7 +871,6 @@ private:
 
     virtual String nodeName() const;
     virtual NodeType nodeType() const;
-    virtual void setCSSStyleSheet(const String& url, const String& charset, const CachedCSSStyleSheet*);
     virtual bool childTypeAllowed(NodeType);
     virtual PassRefPtr<Node> cloneNode(bool deep);
     virtual bool canReplaceChild(Node* newChild, Node* oldChild);
@@ -922,7 +921,6 @@ private:
     RefPtr<DocumentType> m_docType;
     mutable RefPtr<DOMImplementation> m_implementation;
 
-    RefPtr<StyleSheet> m_sheet;
 #if FRAME_LOADS_USER_STYLESHEET
     String m_usersheet;
 #endif

@@ -1,3 +1,12 @@
+2009-09-04  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Remove unused m_sheet variable and setCSSStyleSheet methods.
+
+        * dom/Document.cpp:
+        * dom/Document.h:
+
 2009-09-04  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by David Hyatt and Adele Peterson.
