@@ -1,3 +1,23 @@
+2009-09-04  Adam Roben  <aroben@apple.com>
+
+        Make WebView function without a parent window
+
+        When WebView has no parent window, it becomes a message-only window,
+        which hides it from the screen and prevents it from appearing on the
+        taskbar.
+
+        Fixes <http://webkit.org/b/28971> <rdar://problem/4976998>
+        WebView::initWithFrame fails if there's no host window
+
+        Reviewed by Dave Hyatt.
+
+        * WebView.cpp:
+        (WebView::initWithFrame): m_hostWindow is null, use HWND_MESSAGE as
+        our parent window, which will make us a message-only window.
+        (WebView::setHostWindow): If he new host window is null, use
+        HWND_MESSAGE as our parent window, which will make us a message-only
+        window.
+
 2009-09-04  Adam Barth  <abarth@webkit.org>
 
         Unreviewed attempt at a build fix.

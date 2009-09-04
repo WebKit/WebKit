@@ -2314,13 +2314,8 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
 
     registerWebViewWindowClass();
 
-    if (!::IsWindow(m_hostWindow)) {
-        ASSERT_NOT_REACHED();
-        return E_FAIL;
-    }
-
     m_viewWindow = CreateWindowEx(0, kWebViewWindowClassName, 0, WS_CHILD | WS_CLIPCHILDREN,
-        frame.left, frame.top, frame.right - frame.left, frame.bottom - frame.top, m_hostWindow, 0, gInstance, 0);
+        frame.left, frame.top, frame.right - frame.left, frame.bottom - frame.top, m_hostWindow ? m_hostWindow : HWND_MESSAGE, 0, gInstance, 0);
     ASSERT(::IsWindow(m_viewWindow));
 
     hr = registerDragDrop();
@@ -2985,8 +2980,8 @@ HRESULT STDMETHODCALLTYPE WebView::setHostWindow(
     /* [in] */ OLE_HANDLE oleWindow)
 {
     HWND window = (HWND)(ULONG64)oleWindow;
-    if (m_viewWindow && window)
-        SetParent(m_viewWindow, window);
+    if (m_viewWindow)
+        SetParent(m_viewWindow, window ? window : HWND_MESSAGE);
 
     m_hostWindow = window;
 
