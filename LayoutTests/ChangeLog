@@ -1,3 +1,13 @@
+2009-09-04  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26402
+        Crashes when using a detached DocumentType node
+
+        * fast/dom/DOMImplementation/detached-doctype-expected.txt: Added.
+        * fast/dom/DOMImplementation/detached-doctype.html: Added.
+
 2009-09-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Rubber-stamped by Simon Hausmann.

@@ -1,3 +1,30 @@
+2009-09-04  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26402
+        Crashes when using a detached DocumentType node
+
+        Test: fast/dom/DOMImplementation/detached-doctype.html
+
+        DocumentType nodes are the only one that can have null document(), and they can never have
+        children, so they are a degenerate case for NodeLists.
+
+        * dom/Node.cpp:
+        (WebCore::Node::childNodes): Don't try register node list with document if there's no
+        document. Since there are no changes possible for a DocumentType's node list, this is not
+        necessary.
+        (WebCore::Node::registerDynamicNodeList): Ditto.
+        (WebCore::Node::unregisterDynamicNodeList): Ditto. I couldn't find a scenario where this
+        was invoked for a DocumentType node, but I also couldn't prove that it can't be (the
+        de-registration code path that I saw taken was via Node destructor, and that already has
+        a null check for document).
+
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::JSNode::addEventListener): Bail out if there is no document (just as we already do
+        if there is no window).
+        (WebCore::JSNode::removeEventListener): Ditto.
+
 2009-09-04  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.

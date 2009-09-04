@@ -1,0 +1,3 @@
+Test for bug 26402: Crashes when using a detached DocumentType node.
+
+PASS if no crash.
