@@ -1,3 +1,12 @@
+2009-09-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        * JSValueWrapper.cpp:
+        (JSValueWrapper::JSObjectMark): Removed a check of the mark
+        bit. It's OK to do more work in this case, and there is no
+        longer a public function to access the mark bit.
+
 2009-08-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

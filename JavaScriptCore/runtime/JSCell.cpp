@@ -105,7 +105,7 @@ UString JSCell::getString() const
 
 JSObject* JSCell::getObject()
 {
-    return isObject() ? static_cast<JSObject*>(this) : 0;
+    return isObject() ? asObject(this) : 0;
 }
 
 const JSObject* JSCell::getObject() const

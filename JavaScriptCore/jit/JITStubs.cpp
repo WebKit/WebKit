@@ -2358,8 +2358,6 @@ DEFINE_STUB_FUNCTION(int, op_eq)
     if (src1.isNull())
         return src2.isCell() && asCell(src2)->structure()->typeInfo().masqueradesAsUndefined();
 
-    ASSERT(src1.isCell());
-
     JSCell* cell1 = asCell(src1);
 
     if (cell1->isString()) {
@@ -2375,21 +2373,18 @@ DEFINE_STUB_FUNCTION(int, op_eq)
         if (src2.isFalse())
             return static_cast<JSString*>(cell1)->value().toDouble() == 0.0;
 
-        ASSERT(src2.isCell());
         JSCell* cell2 = asCell(src2);
         if (cell2->isString())
             return static_cast<JSString*>(cell1)->value() == static_cast<JSString*>(cell2)->value();
 
-        ASSERT(cell2->isObject());
-        src2 = static_cast<JSObject*>(cell2)->toPrimitive(stackFrame.callFrame);
+        src2 = asObject(cell2)->toPrimitive(stackFrame.callFrame);
         CHECK_FOR_EXCEPTION();
         goto start;
     }
 
-    ASSERT(cell1->isObject());
     if (src2.isObject())
-        return static_cast<JSObject*>(cell1) == asObject(src2);
-    src1 = static_cast<JSObject*>(cell1)->toPrimitive(stackFrame.callFrame);
+        return asObject(cell1) == asObject(src2);
+    src1 = asObject(cell1)->toPrimitive(stackFrame.callFrame);
     CHECK_FOR_EXCEPTION();
     goto start;
 }

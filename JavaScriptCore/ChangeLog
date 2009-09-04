@@ -1,3 +1,66 @@
+2009-09-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        DateInstance object collected on ARM JIT (JSValue: WTF_USE_JSVALUE32)
+        https://bugs.webkit.org/show_bug.cgi?id=28909
+
+        Part one.
+
+        Make some improvements to garbage collection code:
+
+            1) Fix the two classes that had the default mark bit set but
+               should not.
+            2) Remove checks of the mark bit outside the MarkStack::append
+               function; they are redundant.
+            3) Make more callers use the checked asCell and asObject
+               casting functions rather than unchecked casts.
+            4) Removed some GC-related functions because these operations are
+               no longer things that code other than the core GC code needs
+               to do directly. Fixed callers that were calling them.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::markAggregate): Removed unneeded check of the mark
+        bit before calling MarkStack::append.
+
+        * interpreter/Register.h: Removed unneeded marked and markChildren
+        functions.
+
+        * jit/JITStubs.cpp:
+        (op_eq): Removed unneeded assertions, instead using checked casting
+        functions such as asObject.
+
+        * runtime/ArgList.h: Added now-needed forward declaration of MarkStack.
+
+        * runtime/GetterSetter.cpp:
+        (JSC::GetterSetter::markChildren): Remmoved unneeded check of the mark bit.
+
+        * runtime/GlobalEvalFunction.h:
+        (JSC::GlobalEvalFunction::createStructure): Added. Fixes a bug where the
+        HasDefaultMark bit was set.
+
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::getObject): Use asObject to avoid a direct static_cast.
+
+        * runtime/JSObject.h:
+        (JSC::asObject): Added an overload for JSCell* and changed the JSValue
+        version to call it.
+        (JSC::JSValue::get): Use asObject to avoid a direct static_cast.
+
+        * runtime/JSValue.h: Moved some stray includes that were outside the
+        header guard inside it. Not sure how that happened! Removed the
+        GC-related member functions markChildren, hasChildren, marked, and
+        markDirect.
+
+        * runtime/JSWrapperObject.h: Made markChildren private.
+        (JSC::JSWrapperObject::createStructure): Added. Fixes a bug where the
+        HasDefaultMark bit was set. Later we may want to optimize this for
+        wrapper types that never have cells in their internal values, but there
+        is no measured performance regression in SunSpider or V8 doing this
+        all the time.
+
+        * runtime/MarkStack.cpp: Tweaked formatting.
+
 2009-09-04  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. Switch USE_ defines over to the compiler so that they can be

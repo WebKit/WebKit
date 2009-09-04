@@ -54,9 +54,6 @@ namespace JSC {
         Register(JSValue);
 
         JSValue jsValue() const;
-
-        bool marked() const;
-        void markChildren(MarkStack&);
         
         Register(JSActivation*);
         Register(CallFrame*);
@@ -113,11 +110,6 @@ namespace JSC {
     ALWAYS_INLINE JSValue Register::jsValue() const
     {
         return JSValue::decode(u.value);
-    }
-    
-    ALWAYS_INLINE bool Register::marked() const
-    {
-        return jsValue().marked();
     }
 
     // Interpreter functions

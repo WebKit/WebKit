@@ -32,9 +32,9 @@ void GetterSetter::markChildren(MarkStack& markStack)
 {
     JSCell::markChildren(markStack);
 
-    if (m_getter && !m_getter->marked())
+    if (m_getter)
         markStack.append(m_getter);
-    if (m_setter && !m_setter->marked())
+    if (m_setter)
         markStack.append(m_setter);
 }
 

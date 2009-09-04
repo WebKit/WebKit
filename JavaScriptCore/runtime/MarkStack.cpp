@@ -26,8 +26,7 @@
 #include "config.h"
 #include "MarkStack.h"
 
-namespace JSC
-{
+namespace JSC {
 
 size_t MarkStack::s_pageSize = 0;
 
