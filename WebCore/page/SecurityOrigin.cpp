@@ -73,7 +73,7 @@ static URLSchemesMap& noAccessSchemes()
     return noAccessSchemes;
 }
 
-static bool isDefaultPortForProtocol(unsigned short port, const String& protocol)
+bool SecurityOrigin::isDefaultPortForProtocol(unsigned short port, const String& protocol)
 {
     if (protocol.isEmpty())
         return false;

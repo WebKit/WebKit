@@ -1,3 +1,23 @@
+2009-09-04  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        hostname and host are mixed up when manipulating anchor elements.
+        https://bugs.webkit.org/show_bug.cgi?id=28954
+
+        Swapped the implementation of host and hostname, and made sure not to return
+        the port number if it is default for the given protocol. 
+        FireFox also avoids returning the protocol number if it is default.
+
+        Test: fast/dom/Element/hostname-host.html
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::host):
+        (WebCore::HTMLAnchorElement::hostname):
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::isDefaultPortForProtocol):
+        * page/SecurityOrigin.h:
+
 2009-09-04  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler and Steve Falkenburg.
