@@ -1,5 +1,15 @@
 2009-09-04  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed build fix.
+
+        Update declaration of FrameLoadDelegate to reflect that
+        IWebFrameLoadDelegatePrivate2 inherits from
+        IWebFrameLoadDelegatePrivate.
+
+        * DumpRenderTree/win/FrameLoadDelegate.h:
+
+2009-09-04  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         https://bugs.webkit.org/show_bug.cgi?id=24696

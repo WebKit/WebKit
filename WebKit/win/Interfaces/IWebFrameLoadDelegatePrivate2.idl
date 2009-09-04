@@ -40,7 +40,7 @@ interface IWebSecurityOrigin;
     uuid(4148C9F8-94D9-479A-BCF1-C15E5269CCC1),
     pointer_default(unique)
 ]
-interface IWebFrameLoadDelegatePrivate2 : IUnknown
+interface IWebFrameLoadDelegatePrivate2 : IWebFrameLoadDelegatePrivate
 {
     HRESULT didDisplayInsecureContent([in] IWebView* sender);
 
