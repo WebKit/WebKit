@@ -1,3 +1,16 @@
+2009-09-04  Tony Chang  <tony@chromium.org>
+
+        Reviewed by David Levin.
+
+        Fix Chromium Win compile.  Missing return statement in
+        WebCore::RenderThemeChromiumSkia::paintSliderThumb.
+        https://bugs.webkit.org/show_bug.cgi?id=28974
+
+        No new tests, build fix.
+
+        * rendering/RenderThemeChromiumSkia.cpp:
+        (WebCore::RenderThemeChromiumSkia::paintSliderThumb):
+
 2009-09-04  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, build fix.

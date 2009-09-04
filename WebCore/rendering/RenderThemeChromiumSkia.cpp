@@ -822,6 +822,8 @@ bool RenderThemeChromiumSkia::paintSliderThumb(RenderObject* o, const RenderObje
         drawHorizLine(canvas, midx - 2, midx + 2, midy - 3, paint);
         drawHorizLine(canvas, midx - 2, midx + 2, midy + 3, paint);
     }
+
+    return false;
 }
 
 int RenderThemeChromiumSkia::popupInternalPaddingLeft(RenderStyle* style) const
