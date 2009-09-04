@@ -1,3 +1,9 @@
+2009-09-04  Alexey Proskuryakov  <ap@apple.com>
+
+        Fix expected test output.
+
+        * fast/dom/DOMImplementation/detached-doctype-expected.txt:
+
 2009-09-04  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Darin Adler.
