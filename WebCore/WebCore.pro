@@ -1057,7 +1057,6 @@ SOURCES += \
     loader/archive/ArchiveFactory.cpp \
     loader/archive/ArchiveResource.cpp \
     loader/archive/ArchiveResourceCollection.cpp \
-    loader/UserStyleSheetLoader.cpp \
     loader/Cache.cpp \
     loader/CachedCSSStyleSheet.cpp \
     loader/CachedFont.cpp \
@@ -1772,7 +1771,6 @@ HEADERS += \
     loader/TextDocument.h \
     loader/TextResourceDecoder.h \
     loader/ThreadableLoader.h \
-    loader/UserStyleSheetLoader.h \
     loader/WorkerThreadableLoader.h \
     page/animation/AnimationBase.h \
     page/animation/AnimationController.h \

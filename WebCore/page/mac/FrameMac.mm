@@ -28,7 +28,6 @@
 #import "config.h"
 #import "Frame.h"
 
-#import "Base64.h"
 #import "BlockExceptions.h"
 #import "ColorMac.h"
 #import "Cursor.h"
@@ -53,7 +52,6 @@
 #import "RenderTableCell.h"
 #import "Scrollbar.h"
 #import "SimpleFontData.h"
-#import "UserStyleSheetLoader.h"
 #import "WebCoreViewFactory.h"
 #import "visible_units.h"
 
@@ -531,35 +529,6 @@ DragImageRef Frame::dragImageForSelection()
     if (!selection()->isRange())
         return nil;
     return selectionImage();
-}
-
-void Frame::setUserStyleSheetLocation(const KURL& url)
-{
-    m_userStyleSheetLoader.clear();
-
-    // Data URLs with base64-encoded UTF-8 style sheets are common. We can process them
-    // synchronously and avoid using a loader. 
-    if (url.protocolIs("data") && url.string().startsWith("data:text/css;charset=utf-8;base64,")) {
-        const unsigned prefixLength = 35;
-        Vector<char> encodedData(url.string().length() - prefixLength);
-        for (unsigned i = prefixLength; i < url.string().length(); ++i)
-            encodedData[i - prefixLength] = static_cast<char>(url.string()[i]);
-
-        Vector<char> styleSheetAsUTF8;
-        if (base64Decode(encodedData, styleSheetAsUTF8)) {
-            m_doc->setUserStyleSheet(String::fromUTF8(styleSheetAsUTF8.data()));
-            return;
-        }
-    }
-
-    if (m_doc->docLoader())
-        m_userStyleSheetLoader.set(new UserStyleSheetLoader(m_doc, url.string()));
-}
-
-void Frame::setUserStyleSheet(const String& styleSheet)
-{
-    m_userStyleSheetLoader.clear();
-    m_doc->setUserStyleSheet(styleSheet);
 }
 
 } // namespace WebCore

@@ -954,12 +954,6 @@ void FrameLoader::begin(const KURL& url, bool dispatch, SecurityOrigin* origin)
             document->parseDNSPrefetchControlHeader(dnsPrefetchControl);
     }
 
-#if FRAME_LOADS_USER_STYLESHEET
-    KURL userStyleSheet = settings ? settings->userStyleSheetLocation() : KURL();
-    if (!userStyleSheet.isEmpty())
-        m_frame->setUserStyleSheetLocation(userStyleSheet);
-#endif
-
     restoreDocumentState();
 
     document->implicitOpen();

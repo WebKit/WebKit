@@ -80,10 +80,6 @@ namespace WebCore {
     class VisibleSelection;
     class Widget;
 
-#if FRAME_LOADS_USER_STYLESHEET
-    class UserStyleSheetLoader;
-#endif
-
     template <typename T> class Timer;
 
     class Frame : public RefCounted<Frame> {
@@ -144,11 +140,6 @@ namespace WebCore {
         static Frame* frameForWidget(const Widget*);
 
         Settings* settings() const; // can be NULL
-
-    #if FRAME_LOADS_USER_STYLESHEET
-        void setUserStyleSheetLocation(const KURL&);
-        void setUserStyleSheet(const String& styleSheetData);
-    #endif
 
         void setPrinting(bool printing, float minPageWidth, float maxPageWidth, bool adjustViewSize);
 
@@ -371,11 +362,6 @@ namespace WebCore {
         bool m_needsReapplyStyles;
         bool m_isDisconnected;
         bool m_excludeFromTextSearch;
-
-    #if FRAME_LOADS_USER_STYLESHEET
-        OwnPtr<UserStyleSheetLoader> m_userStyleSheetLoader;
-    #endif
-
     };
 
 } // namespace WebCore

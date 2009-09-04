@@ -1865,26 +1865,12 @@ String Document::userAgent(const KURL& url) const
     return frame() ? frame()->loader()->userAgent(url) : String();
 }
 
-#if FRAME_LOADS_USER_STYLESHEET
-void Document::setUserStyleSheet(const String& sheet)
-{
-    if (m_usersheet != sheet) {
-        m_usersheet = sheet;
-        updateStyleSelector();
-    }
-}
-#endif
-
 String Document::userStyleSheet() const
 {
-#if FRAME_LOADS_USER_STYLESHEET
-    return m_usersheet;
-#else
     Page* page = this->page();
     if (!page)
         return String();
     return page->userStyleSheet();
-#endif
 }
 
 CSSStyleSheet* Document::elementSheet()

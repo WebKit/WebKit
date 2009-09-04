@@ -86,10 +86,6 @@
 #include "runtime_root.h"
 #endif
 
-#if FRAME_LOADS_USER_STYLESHEET
-#include "UserStyleSheetLoader.h"
-#endif
-
 #if ENABLE(SVG)
 #include "SVGDocument.h"
 #include "SVGDocumentExtensions.h"
@@ -824,14 +820,6 @@ void Frame::reapplyStyles()
     // FIXME: This call doesn't really make sense in a function called reapplyStyles.
     // We should probably eventually move it into its own function.
     m_doc->docLoader()->setAutoLoadImages(m_page && m_page->settings()->loadsImagesAutomatically());
-
-#if FRAME_LOADS_USER_STYLESHEET
-    const KURL userStyleSheetLocation = m_page ? m_page->settings()->userStyleSheetLocation() : KURL();
-    if (!userStyleSheetLocation.isEmpty())
-        setUserStyleSheetLocation(userStyleSheetLocation);
-    else
-        setUserStyleSheet(String());
-#endif
 
     // FIXME: It's not entirely clear why the following is needed.
     // The document automatically does this as required when you set the style sheet.

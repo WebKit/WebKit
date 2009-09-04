@@ -1,3 +1,35 @@
+2009-09-04  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28984, remove the remote stylesheet loader on Mac/Qt.
+        Make sure the other code path (now used by everybody) can handle data URLs.
+
+        As per the post on webkit-dev, the ability to work remotely isn't working properly anyway (it doesn't
+        hold up the pending sheet count, so you'd just FOUC on every Web page), and it's extremely unlikely
+        that anybody is relying on this support.
+        
+        Tor Arne agreed it was ok to disable (he enabled it on the Qt side), and only Mac/Qt were using this
+        code.
+
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::userStyleSheet):
+        * dom/Document.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::begin):
+        * loader/UserStyleSheetLoader.cpp: Removed.
+        * loader/UserStyleSheetLoader.h: Removed.
+        * page/Frame.cpp:
+        (WebCore::Frame::reapplyStyles):
+        * page/Frame.h:
+        * page/Page.cpp:
+        (WebCore::Page::userStyleSheetLocationChanged):
+        (WebCore::Page::userStyleSheet):
+        * page/mac/FrameMac.mm:
+        * page/qt/FrameQt.cpp:
+
 2009-09-04  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Timothy Hatcher.

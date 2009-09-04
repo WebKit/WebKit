@@ -21,6 +21,7 @@
 #include "config.h"
 #include "Page.h"
 
+#include "Base64.h"
 #include "CSSStyleSelector.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
@@ -439,26 +440,40 @@ void Page::willMoveOffscreen()
 
 void Page::userStyleSheetLocationChanged()
 {
-#if !FRAME_LOADS_USER_STYLESHEET
-    // FIXME: We should provide a way to load other types of URLs than just
-    // file: (e.g., http:, data:).
-    if (m_settings->userStyleSheetLocation().isLocalFile())
-        m_userStyleSheetPath = m_settings->userStyleSheetLocation().fileSystemPath();
+    // FIXME: Eventually we will move to a model of just being handed the sheet
+    // text instead of loading the URL ourselves.
+    KURL url = m_settings->userStyleSheetLocation();
+    if (url.isLocalFile())
+        m_userStyleSheetPath = url.fileSystemPath();
     else
         m_userStyleSheetPath = String();
 
     m_didLoadUserStyleSheet = false;
     m_userStyleSheet = String();
     m_userStyleSheetModificationTime = 0;
-#endif
+    
+    // Data URLs with base64-encoded UTF-8 style sheets are common. We can process them
+    // synchronously and avoid using a loader. 
+    if (url.protocolIs("data") && url.string().startsWith("data:text/css;charset=utf-8;base64,")) {
+        m_didLoadUserStyleSheet = true;
+        
+        const unsigned prefixLength = 35;
+        Vector<char> encodedData(url.string().length() - prefixLength);
+        for (unsigned i = prefixLength; i < url.string().length(); ++i)
+            encodedData[i - prefixLength] = static_cast<char>(url.string()[i]);
+
+        Vector<char> styleSheetAsUTF8;
+        if (base64Decode(encodedData, styleSheetAsUTF8)) {
+            m_userStyleSheet = String::fromUTF8(styleSheetAsUTF8.data());
+            return;
+        }
+    }
 }
 
 const String& Page::userStyleSheet() const
 {
-    if (m_userStyleSheetPath.isEmpty()) {
-        ASSERT(m_userStyleSheet.isEmpty());
+    if (m_userStyleSheetPath.isEmpty())
         return m_userStyleSheet;
-    }
 
     time_t modTime;
     if (!getFileModificationTime(m_userStyleSheetPath, modTime)) {
