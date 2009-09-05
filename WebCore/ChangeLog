@@ -1,3 +1,14 @@
+2009-09-04  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        <rdar://problem/7201063>
+        
+        Detach any custom scrollbars before detaching the document.
+        
+        * page/Frame.cpp:
+        (WebCore::Frame::setView):
+
 2009-09-04  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Unreviewed, build fix.

@@ -215,6 +215,12 @@ FrameView* Frame::view() const
 
 void Frame::setView(PassRefPtr<FrameView> view)
 {
+    // We the custom scroll bars as early as possible to prevent m_doc->detach()
+    // from messing with the view such that its scroll bars won't be torn down.
+    // FIXME: We should revisit this.
+    if (m_view)
+        m_view->detachCustomScrollbars();
+
     // Detach the document now, so any onUnload handlers get run - if
     // we wait until the view is destroyed, then things won't be
     // hooked up enough for some JavaScript calls to work.
@@ -225,9 +231,6 @@ void Frame::setView(PassRefPtr<FrameView> view)
             m_view->unscheduleRelayout();
     }
     eventHandler()->clear();
-
-    if (m_view)
-        m_view->detachCustomScrollbars();
 
     m_view = view;
 
