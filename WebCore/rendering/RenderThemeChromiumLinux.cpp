@@ -125,4 +125,14 @@ bool RenderThemeChromiumLinux::supportsControlTints() const
     return true;
 }
 
+void RenderThemeChromiumLinux::setCaretBlinkInterval(double interval)
+{
+    m_caretBlinkInterval = interval;
+}
+
+double RenderThemeChromiumLinux::caretBlinkInterval() const
+{
+    return m_caretBlinkInterval;
+}
+
 } // namespace WebCore
