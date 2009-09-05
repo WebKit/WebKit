@@ -1,3 +1,12 @@
+2009-09-05  Jian Li  <jianli@chromium.org>
+
+        Reviewed by NOBODY (Chromium reliability build break).
+
+        Back up partial change in r48072 in order to fix chromium reliability build break.
+
+        * bindings/v8/V8AbstractEventListener.cpp:
+        (WebCore::V8AbstractEventListener::invokeEventHandler):
+
 2009-09-05  Nicolas Weber  <thakis@chromium.org>
 
         Reviewed by Darin Fisher.
