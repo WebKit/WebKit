@@ -1,3 +1,13 @@
+2009-09-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Fix assertion seen when running buildbot.
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::DOMObjectWithGlobalPointer::createStructure): Create the structure without
+        the HasDefaultMark bit since this has a custom mark function.
+
 2009-09-04  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by Adam Roben.
