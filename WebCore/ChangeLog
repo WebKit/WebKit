@@ -1,3 +1,30 @@
+2009-09-04  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by David Levin.
+
+        Prevent UI freeze in case when too many timers are in the timer queue.
+        https://bugs.webkit.org/show_bug.cgi?id=23865
+
+        The fix measures the elapsed time while executing timers. If we have too many
+        timers and it takes significant time to fire, quit the loop and reschedule.
+        This lets the run loop process user input (close the window for example).
+
+        * platform/ThreadTimers.h:
+        * platform/ThreadTimers.cpp:
+        (WebCore::ThreadTimers::sharedTimerFiredInternal):
+        (WebCore::ThreadTimers::fireTimersInNestedEventLoop):
+        Removed functions and members used before to grab a list of all expired timers.
+        Now we fetch one by one, measuring time and quitting the loop if it takes too long.
+        * platform/Timer.cpp:
+        (WebCore::TimerBase::isActive):
+        (WebCore::TimerBase::setNextFireTime):
+        Since timers are now fired one by one, there is no need to keep track of updated timers.
+        * manual-tests/input-starved-by-timers.html: Manual test that attempts to freeze browser by
+        creating of enough timers. It then keeps UI frozen and after 10 seconds starts to drain the timers
+        so the browser un-freezes. This is instead of a regular layout test because we don't have a way
+        to inject an input events via regular run loop in DRT - instead they are directly dispatched by
+        eventSender, which does not reproduce the UI freeze that happens with real input.
+
 2009-09-04  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adele Peterson.
@@ -11,29 +38,29 @@
 
 2009-09-04  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
-        Unreviewed, build fix.
+                Unreviewed, build fix.
 
-        Remove remaining references to UserStyleSheetLoader after r48075.
+                Remove remaining references to UserStyleSheetLoader after r48075.
 
-        * WebCore.gypi:
-        * WebCore.xcodeproj/project.pbxproj:
-        * page/qt/FrameQt.cpp:
-        * page/wince/FrameWince.cpp:
+                * WebCore.gypi:
+                * WebCore.xcodeproj/project.pbxproj:
+                * page/qt/FrameQt.cpp:
+                * page/wince/FrameWince.cpp:
 
 2009-09-04  Michelangelo De Simone  <micdesim@gmail.com>
 
-        Reviewed by David Levin.
+                Reviewed by David Levin.
 
-        https://bugs.webkit.org/show_bug.cgi?id=28988
-        Minor fix: "novalidate" attribute renamed in "noValidate", according to
-        HTML5 specs:
-        http://www.whatwg.org/specs/web-apps/current-work/#dom-fs-novalidate
+                https://bugs.webkit.org/show_bug.cgi?id=28988
+                Minor fix: "novalidate" attribute renamed in "noValidate", according to
+                HTML5 specs:
+                http://www.whatwg.org/specs/web-apps/current-work/#dom-fs-novalidate
 
-        * html/HTMLFormElement.cpp:
-        (WebCore::HTMLFormElement::noValidate):
-        (WebCore::HTMLFormElement::setNoValidate):
-        * html/HTMLFormElement.h:
-        * html/HTMLFormElement.idl:
+                * html/HTMLFormElement.cpp:
+                (WebCore::HTMLFormElement::noValidate):
+                (WebCore::HTMLFormElement::setNoValidate):
+                * html/HTMLFormElement.h:
+                * html/HTMLFormElement.idl:
 
 2009-09-04  Dmitry Titov  <dimich@chromium.org>
 

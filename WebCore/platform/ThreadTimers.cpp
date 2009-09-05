@@ -34,6 +34,11 @@
 
 namespace WebCore {
 
+// Fire timers for this length of time, and then quit to let the run loop process user input events.
+// 100ms is about a perceptable delay in UI, so use a half of that as a threshold.
+// This is to prevent UI freeze when there are too many timers or machine performance is low.
+static const double maxDurationOfFiringTimers = 0.050;
+
 // Timers are created, started and fired on the same thread, and each thread has its own ThreadTimers
 // copy to keep the heap and a set of currently firing timers.
 
@@ -79,43 +84,6 @@ void ThreadTimers::updateSharedTimer()
         m_sharedTimer->setFireTime(m_timerHeap.first()->m_nextFireTime);
 }
 
-
-void ThreadTimers::collectFiringTimers(double fireTime, Vector<TimerBase*>& firingTimers)
-{
-    while (!m_timerHeap.isEmpty() && m_timerHeap.first()->m_nextFireTime <= fireTime) {
-        TimerBase* timer = m_timerHeap.first();
-        firingTimers.append(timer);
-        m_timersReadyToFire.add(timer);
-        timer->m_nextFireTime = 0;
-        timer->heapDeleteMin();
-    }
-}
-
-void ThreadTimers::fireTimers(double fireTime, const Vector<TimerBase*>& firingTimers)
-{
-    size_t size = firingTimers.size();
-    for (size_t i = 0; i != size; ++i) {
-        TimerBase* timer = firingTimers[i];
-
-        // If not in the set, this timer has been deleted or re-scheduled in another timer's fired function.
-        // So either we don't want to fire it at all or we will fire it next time the shared timer goes off.
-        // It might even have been deleted; that's OK because we won't do anything else with the pointer.
-        if (!m_timersReadyToFire.contains(timer))
-            continue;
-
-        // Setting the next fire time has a side effect of removing the timer from the firing timers set.
-        double interval = timer->repeatInterval();
-        timer->setNextFireTime(interval ? fireTime + interval : 0);
-
-        // Once the timer has been fired, it may be deleted, so do nothing else with it after this point.
-        timer->fired();
-
-        // Catch the case where the timer asked timers to fire in a nested event loop.
-        if (!m_firingTimers)
-            break;
-    }
-}
-
 void ThreadTimers::sharedTimerFired()
 {
     // Redirect to non-static method.
@@ -130,17 +98,24 @@ void ThreadTimers::sharedTimerFiredInternal()
     m_firingTimers = true;
 
     double fireTime = currentTime();
-    Vector<TimerBase*> firingTimers;
+    double timeToQuit = fireTime + maxDurationOfFiringTimers;
 
-    // m_timersReadyToFire will initially contain the same set as firingTimers, but
-    // as timers fire some mat become re-scheduled or deleted. They get removed from
-    // m_timersReadyToFire so we can avoid firing them.
-    ASSERT(m_timersReadyToFire.isEmpty());
+    while (!m_timerHeap.isEmpty() && m_timerHeap.first()->m_nextFireTime <= fireTime) {
+        TimerBase* timer = m_timerHeap.first();
+        timer->m_nextFireTime = 0;
+        timer->heapDeleteMin();
 
-    collectFiringTimers(fireTime, firingTimers);
-    fireTimers(fireTime, firingTimers);
+        double interval = timer->repeatInterval();
+        timer->setNextFireTime(interval ? fireTime + interval : 0);
 
-    m_timersReadyToFire.clear();
+        // Once the timer has been fired, it may be deleted, so do nothing else with it after this point.
+        timer->fired();
+
+        // Catch the case where the timer asked timers to fire in a nested event loop, or we are over time limit.
+        if (!m_firingTimers || timeToQuit < currentTime())
+            break;
+    }
+
     m_firingTimers = false;
 
     updateSharedTimer();
@@ -150,7 +125,6 @@ void ThreadTimers::fireTimersInNestedEventLoop()
 {
     // Reset the reentrancy guard so the timers can fire again.
     m_firingTimers = false;
-    m_timersReadyToFire.clear();
     updateSharedTimer();
 }
 
