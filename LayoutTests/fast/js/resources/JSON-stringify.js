@@ -57,6 +57,12 @@ function createTests() {
     });
     result[result.length - 1].expected = '2';
     result.push(function(jsonObject){
+        var value = new String("fail");
+        value.toString = function() { return "converted string"; }
+        return jsonObject.stringify(value);
+    });
+    result[result.length - 1].expected = '"converted string"';
+    result.push(function(jsonObject){
         return jsonObject.stringify(true);
     });
     result.push(function(jsonObject){

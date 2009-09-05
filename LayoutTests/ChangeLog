@@ -1,3 +1,14 @@
+2009-09-04  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        [[ToString]] conversion should use the actual toString function for String objects.
+
+        Add test for toString conversion
+
+        * fast/js/resources/JSON-stringify.js:
+        (createTests.result.push):
+
 2009-09-04  Michelangelo De Simone  <micdesim@gmail.com>
 
         Reviewed by David Levin.

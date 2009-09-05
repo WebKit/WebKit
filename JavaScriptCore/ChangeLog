@@ -1,3 +1,15 @@
+2009-09-04  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        [[ToString]] conversion should use the actual toString function for String objects.
+
+        Remove incorrect specialisations of toString conversions on StringObject.
+
+        * JavaScriptCore.exp:
+        * runtime/StringObject.cpp:
+        * runtime/StringObject.h:
+
 2009-09-04  Steve Falkenburg  <sfalken@apple.com>
 
         Windows build fix.

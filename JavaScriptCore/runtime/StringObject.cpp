@@ -90,19 +90,4 @@ void StringObject::getPropertyNames(ExecState* exec, PropertyNameArray& property
     return JSObject::getPropertyNames(exec, propertyNames);
 }
 
-UString StringObject::toString(ExecState*) const
-{
-    return internalValue()->value();
-}
-
-UString StringObject::toThisString(ExecState*) const
-{
-    return internalValue()->value();
-}
-
-JSString* StringObject::toThisJSString(ExecState*)
-{
-    return internalValue();
-}
-
 } // namespace JSC
