@@ -96,8 +96,8 @@ public:
     String name() const;
     void setName(const String&);
 
-    bool novalidate() const;
-    void setNovalidate(bool);
+    bool noValidate() const;
+    void setNoValidate(bool);
 
     String acceptCharset() const { return m_formDataBuilder.acceptCharset(); }
     void setAcceptCharset(const String&);

@@ -30,7 +30,7 @@ module html {
         readonly attribute HTMLCollection  elements;
         readonly attribute long            length;
                  attribute [ConvertNullToNullString] DOMString       name;
-                 attribute boolean         novalidate;
+                 attribute boolean         noValidate;
                  attribute [ConvertNullToNullString] DOMString       acceptCharset;
                  attribute [ConvertNullToNullString] DOMString       action;
                  attribute [ConvertNullToNullString] DOMString       encoding;  /* Netscape/Firefox legacy attribute. Same as enctype. */

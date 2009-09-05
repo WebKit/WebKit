@@ -538,12 +538,12 @@ void HTMLFormElement::setName(const String &value)
     setAttribute(nameAttr, value);
 }
 
-bool HTMLFormElement::novalidate() const
+bool HTMLFormElement::noValidate() const
 {
     return !getAttribute(novalidateAttr).isNull();
 }
 
-void HTMLFormElement::setNovalidate(bool novalidate)
+void HTMLFormElement::setNoValidate(bool novalidate)
 {
     setAttribute(novalidateAttr, novalidate ? "" : 0);
 }
