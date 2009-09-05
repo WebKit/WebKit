@@ -1,3 +1,11 @@
+2009-09-05  Eric Seidel  <eric@webkit.org>
+
+        No review, results update only.
+
+        Update results after r48043.
+
+        * fast/js/JSON-stringify-expected.txt:
+
 2009-09-04  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
