@@ -50,7 +50,6 @@ public:
     };
     enum WebAttribute {
         AutoLoadImages,
-        DnsPrefetchEnabled,
         JavascriptEnabled,
         JavaEnabled,
         PluginsEnabled,
@@ -68,7 +67,8 @@ public:
         LocalStorageDatabaseEnabled = LocalStorageEnabled,
 #endif
         LocalContentCanAccessRemoteUrls,
-        SessionStorageEnabled
+        SessionStorageEnabled,
+        DnsPrefetchEnabled
     };
     enum WebGraphic {
         MissingImageGraphic,

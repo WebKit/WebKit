@@ -1,3 +1,14 @@
+2009-09-05  Jakub Wieczorek  <faw217@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] r47424 broke binary compatibility
+        https://bugs.webkit.org/show_bug.cgi?id=28996
+
+        Append the new DnsPrefetchEnabled attribute at the end of the enum.
+
+        * Api/qwebsettings.h:
+
 2009-09-04  Mark Mentovai  <mark@chromium.org>
 
         Reviewed by Dave Hyatt.
