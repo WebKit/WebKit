@@ -24,8 +24,6 @@
 #include "config.h"
 #include "Frame.h"
 
-#include "UserStyleSheetLoader.h"
-
 namespace WebCore {
 
 DragImageRef Frame::dragImageForSelection() 

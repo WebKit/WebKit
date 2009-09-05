@@ -1573,8 +1573,6 @@
             'loader/ThreadableLoader.h',
             'loader/ThreadableLoaderClient.h',
             'loader/ThreadableLoaderClientWrapper.h',
-            'loader/UserStyleSheetLoader.cpp',
-            'loader/UserStyleSheetLoader.h',
             'loader/WorkerThreadableLoader.cpp',
             'loader/WorkerThreadableLoader.h',
             'loader/loader.cpp',

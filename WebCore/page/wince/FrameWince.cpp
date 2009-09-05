@@ -50,7 +50,6 @@
 #include "runtime_root.h"
 #include "Settings.h"
 #include "TextResourceDecoder.h"
-#include "UserStyleSheetLoader.h"
 
 #include <windows.h>
 
@@ -164,22 +163,6 @@ DragImageRef Frame::dragImageForSelection()
         return imageFromSelection(this, false);
 
     return 0;
-}
-
-void Frame::setUserStyleSheetLocation(const KURL& url)
-{
-    delete m_userStyleSheetLoader;
-    m_userStyleSheetLoader = 0;
-    if (m_doc && m_doc->docLoader())
-        m_userStyleSheetLoader = new UserStyleSheetLoader(m_doc, url.string());
-}
-
-void Frame::setUserStyleSheet(const String& styleSheet)
-{
-    delete m_userStyleSheetLoader;
-    m_userStyleSheetLoader = 0;
-    if (m_doc)
-        m_doc->setUserStyleSheet(styleSheet);
 }
 
 } // namespace WebCore
