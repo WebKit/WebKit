@@ -170,6 +170,10 @@ char* filenameFromString(const String&);
 String filenameForDisplay(const String&);
 #endif
 
+#if PLATFORM(CHROMIUM)
+String pathGetDisplayFileName(const String&);
+#endif
+
 } // namespace WebCore
 
 #endif // FileSystem_h

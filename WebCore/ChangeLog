@@ -1,3 +1,31 @@
+2009-09-05  Nicolas Weber  <thakis@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28975
+        Fix file upload on chrome/mac. Images that have "Hide Extension" set,
+        such as screenshots by default, can now be uploaded to sites such as
+        imgur.com.
+
+        * platform/FileSystem.h:
+        Add pathGetDisplayFileName().
+        * platform/chromium/FileChooserChromium.cpp:
+        (WebCore::FileChooser::basenameForWidth):
+        Call pathGetDisplayFileName() instead of pathGetFileName().
+        * platform/chromium/FileSystemChromiumLinux.cpp:
+        (WebCore::pathGetDisplayFileName):
+        Implement pathGetDisplayFileName() by delegating to pathGetFileName().
+        * platform/chromium/FileSystemChromiumMac.mm:
+        (WebCore::pathGetFileName):
+        Now returns a real filename instead of a presentational one, which
+        fixes the problem addressed by this change.
+        (WebCore::pathGetDisplayFileName):
+        New function that returns a presentational filename; does what
+        pathGetDisplayFileName() did prior to this patch.
+        * platform/chromium/FileSystemChromiumWin.cpp:
+        (WebCore::pathGetDisplayFileName):
+        Implement pathGetDisplayFileName() by delegating to pathGetFileName().
+
 2009-09-05  Joel Stanley  <joel@jms.id.au>
 
         Reviewed by David Levin.

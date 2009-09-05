@@ -38,6 +38,11 @@ namespace WebCore {
 
 String pathGetFileName(const String& path)
 {
+    return [path lastPathComponent];
+}
+
+String pathGetDisplayFileName(const String& path)
+{
     return [[NSFileManager defaultManager] displayNameAtPath:path];
 }
 

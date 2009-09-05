@@ -42,7 +42,7 @@ String FileChooser::basenameForWidth(const Font& font, int width) const
     if (m_filenames.isEmpty())
         string = fileButtonNoFileSelectedLabel();
     else if (m_filenames.size() == 1)
-        string = pathGetFileName(m_filenames[0]);
+        string = pathGetDisplayFileName(m_filenames[0]);
     else
         return StringTruncator::rightTruncate(multipleFileUploadText(m_filenames.size()), width, font, false);
 
