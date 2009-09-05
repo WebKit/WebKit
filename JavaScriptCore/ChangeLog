@@ -1,5 +1,14 @@
 2009-09-04  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by NOBODY (Build fix).
+
+        Fix windows export files
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore_debug.def:
+
+2009-09-04  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Gavin Barraclough.
 
         [[ToString]] conversion should use the actual toString function for String objects.
