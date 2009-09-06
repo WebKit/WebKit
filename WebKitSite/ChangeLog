@@ -1,3 +1,16 @@
+2009-09-06  Cameron McCormack  <cam@mcc.id.au>
+
+        Reviewed by Eric Seidel.
+
+        Drop <definition-src> support
+        https://bugs.webkit.org/show_bug.cgi?id=28991
+
+        When SVG 1.1 Second Edition is a Recommendation we can remove the
+        entry altogether.
+
+        * projects/svg/status.xml: Update page to state that <definition-src>
+        is not supported.
+
 2009-08-26  Mark Rowe  <mrowe@apple.com>
 
         Upgrade WordPress to the latest version.

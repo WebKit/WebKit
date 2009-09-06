@@ -155,9 +155,6 @@ static void createElementClassMap()
     addElementClass(SVGNames::circleTag, [DOMSVGCircleElement class]);
     addElementClass(SVGNames::clipPathTag, [DOMSVGClipPathElement class]);
     addElementClass(SVGNames::cursorTag, [DOMSVGCursorElement class]);
-#if ENABLE(SVG_FONTS)
-    addElementClass(SVGNames::definition_srcTag, [DOMSVGDefinitionSrcElement class]);
-#endif
     addElementClass(SVGNames::defsTag, [DOMSVGDefsElement class]);
     addElementClass(SVGNames::descTag, [DOMSVGDescElement class]);
     addElementClass(SVGNames::ellipseTag, [DOMSVGEllipseElement class]);

@@ -24,9 +24,6 @@ clipPath createWithNew
 color_profile createWithNew
 #endif
 cursor createWithNew
-#if ENABLE_SVG_FONTS
-definition_src createWithNew
-#endif
 defs createWithNew
 desc createWithNew
 ellipse createWithNew

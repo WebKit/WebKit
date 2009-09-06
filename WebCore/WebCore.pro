@@ -498,7 +498,6 @@ IDL_BINDINGS += \
     svg/SVGColor.idl \
     svg/SVGComponentTransferFunctionElement.idl \
     svg/SVGCursorElement.idl \
-    svg/SVGDefinitionSrcElement.idl \
     svg/SVGDefsElement.idl \
     svg/SVGDescElement.idl \
     svg/SVGDocument.idl \
@@ -2091,7 +2090,6 @@ HEADERS += \
     svg/SVGColor.h \
     svg/SVGComponentTransferFunctionElement.h \
     svg/SVGCursorElement.h \
-    svg/SVGDefinitionSrcElement.h \
     svg/SVGDefsElement.h \
     svg/SVGDescElement.h \
     svg/SVGDocumentExtensions.h \
@@ -2835,7 +2833,6 @@ contains(DEFINES, ENABLE_SVG=1) {
         svg/SVGColor.cpp \
         svg/SVGComponentTransferFunctionElement.cpp \
         svg/SVGCursorElement.cpp \
-        svg/SVGDefinitionSrcElement.cpp \
         svg/SVGDefsElement.cpp \
         svg/SVGDescElement.cpp \
         svg/SVGDocument.cpp \

@@ -242,7 +242,6 @@ all : \
     $(INTERNAL_HEADERS_DIR)/DOMSVGCursorElementInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGDefsElement.h \
     $(INTERNAL_HEADERS_DIR)/DOMSVGDefsElementInternal.h \
-    $(PRIVATE_HEADERS_DIR)/DOMSVGDefinitionSrcElement.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGDescElement.h \
     $(INTERNAL_HEADERS_DIR)/DOMSVGDescElementInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGDocument.h \

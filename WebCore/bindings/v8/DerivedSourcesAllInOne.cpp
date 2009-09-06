@@ -224,7 +224,6 @@
 #include "bindings/V8SVGClipPathElement.cpp"
 #include "bindings/V8SVGColor.cpp"
 #include "bindings/V8SVGCursorElement.cpp"
-#include "bindings/V8SVGDefinitionSrcElement.cpp"
 #include "bindings/V8SVGDefsElement.cpp"
 #include "bindings/V8SVGDescElement.cpp"
 #include "bindings/V8SVGDocument.cpp"

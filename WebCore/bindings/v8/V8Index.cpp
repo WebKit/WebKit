@@ -255,7 +255,6 @@
 #endif
 
 #if ENABLE(SVG_FONTS)
-#include "V8SVGDefinitionSrcElement.h"
 #include "V8SVGFontFaceElement.h"
 #include "V8SVGFontFaceFormatElement.h"
 #include "V8SVGFontFaceNameElement.h"

@@ -1,3 +1,13 @@
+2009-09-06  Cameron McCormack  <cam@mcc.id.au>
+
+        Reviewed by Eric Seidel.
+
+        Drop <definition-src> support
+        https://bugs.webkit.org/show_bug.cgi?id=28991
+
+        * MigrateHeaders.make: Remove reference to ObjC definition-src
+        binding class.
+
 2009-09-04  Mark Mentovai  <mark@chromium.org>
 
         Reviewed by Dave Hyatt.

@@ -1,3 +1,16 @@
+2009-09-06  Cameron McCormack  <cam@mcc.id.au>
+
+        Reviewed by Eric Seidel.
+
+        Drop <definition-src> support
+        https://bugs.webkit.org/show_bug.cgi?id=28991
+
+        Update test not to expect a <definition-src> element to be of type
+        SVGDefinitionSrcElement.
+
+        * svg/dom/font-face-elements-expected.txt:
+        * svg/dom/font-face-elements.html:
+
 2009-09-05  Eric Seidel  <eric@webkit.org>
 
         No review, results update only.

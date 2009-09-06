@@ -2631,7 +2631,6 @@ IDL_BINDINGS += \
 	WebCore/svg/SVGColor.idl \
 	WebCore/svg/SVGComponentTransferFunctionElement.idl \
 	WebCore/svg/SVGCursorElement.idl \
-	WebCore/svg/SVGDefinitionSrcElement.idl \
 	WebCore/svg/SVGDefsElement.idl \
 	WebCore/svg/SVGDescElement.idl \
 	WebCore/svg/SVGDocument.idl \
@@ -2858,8 +2857,6 @@ webcore_sources += \
 	WebCore/svg/SVGComponentTransferFunctionElement.h \
 	WebCore/svg/SVGCursorElement.cpp \
 	WebCore/svg/SVGCursorElement.h \
-	WebCore/svg/SVGDefinitionSrcElement.cpp \
-	WebCore/svg/SVGDefinitionSrcElement.h \
 	WebCore/svg/SVGDefsElement.cpp \
 	WebCore/svg/SVGDefsElement.h \
 	WebCore/svg/SVGDescElement.cpp \

@@ -581,7 +581,10 @@
             <element>
                 <name>definition-src</name>
                 <url>http://www.w3.org/TR/SVG11/fonts.html#DefinitionSrcElement</url>
-                <status>Partial</status>
+                <status>Unimplemented</status>
+                <issues>
+                    <issue>definition-src has been dropped from SVG 1.1 Second Edition</issue>
+                </issues>
             </element>
          </elements>
     </module>

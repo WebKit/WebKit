@@ -1,3 +1,35 @@
+2009-09-06  Cameron McCormack  <cam@mcc.id.au>
+
+        Reviewed by Eric Seidel.
+
+        Drop <definition-src> support
+        https://bugs.webkit.org/show_bug.cgi?id=28991
+
+        http://dev.w3.org/SVG/profiles/1.1F2/publish/changes.html#FontsChapter
+
+        * DerivedSources.cpp: Remove references to definition-src.
+        * DerivedSources.make: Ditto.
+        * GNUmakefile.am: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * bindings/objc/DOM.mm:
+        (WebCore::createElementClassMap): Ditto.
+        * bindings/objc/DOMSVG.h: Ditto.
+        * bindings/v8/DerivedSourcesAllInOne.cpp: Ditto.
+        * bindings/v8/V8DOMWrapper.cpp: Ditto.
+        * bindings/v8/V8Index.cpp: Ditto.
+        * bindings/v8/V8Index.h: Ditto.
+        * svg/SVGAllInOne.cpp: Ditto.
+        * svg/SVGDefinitionSrcElement.cpp: Removed.
+        * svg/SVGDefinitionSrcElement.h: Removed.
+        * svg/SVGDefinitionSrcElement.idl: Removed.
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::SVGFontFaceElement::rebuildFontFace): Don't search for
+        definition-src child.
+        * svg/svgtags.in: Remove definition-src.
+
 2009-09-05  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, build fix.

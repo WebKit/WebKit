@@ -37,7 +37,6 @@
 #include "Document.h"
 #include "Font.h"
 #include "MappedAttribute.h"
-#include "SVGDefinitionSrcElement.h"
 #include "SVGFontElement.h"
 #include "SVGFontFaceSrcElement.h"
 #include "SVGGlyphElement.h"
@@ -277,20 +276,11 @@ void SVGFontFaceElement::rebuildFontFace()
 
     // we currently ignore all but the first src element, alternatively we could concat them
     SVGFontFaceSrcElement* srcElement = 0;
-    SVGDefinitionSrcElement* definitionSrc = 0;
 
-    for (Node* child = firstChild(); child; child = child->nextSibling()) {
-        if (child->hasTagName(font_face_srcTag) && !srcElement)
+    for (Node* child = firstChild(); child && !srcElement; child = child->nextSibling()) {
+        if (child->hasTagName(font_face_srcTag))
             srcElement = static_cast<SVGFontFaceSrcElement*>(child);
-        else if (child->hasTagName(definition_srcTag) && !definitionSrc)
-            definitionSrc = static_cast<SVGDefinitionSrcElement*>(child);
     }
-
-#if 0
-    // @font-face (CSSFontFace) does not yet support definition-src, as soon as it does this code should do the trick!
-    if (definitionSrc)
-        m_styleDeclaration->setProperty(CSSPropertyDefinitionSrc, definitionSrc->getAttribute(XLinkNames::hrefAttr), false);
-#endif
 
     bool describesParentFont = parentNode()->hasTagName(fontTag);
     RefPtr<CSSValueList> list;

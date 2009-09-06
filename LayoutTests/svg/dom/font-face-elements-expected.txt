@@ -8,7 +8,6 @@ PASS font-face-name in http://www.w3.org/2000/svg is JS object SVGFontFaceNameEl
 PASS font-face-format in http://www.w3.org/2000/svg is JS object SVGFontFaceFormatElement
 PASS font-face-src in http://www.w3.org/2000/svg is JS object SVGFontFaceSrcElement
 PASS font-face-uri in http://www.w3.org/2000/svg is JS object SVGFontFaceUriElement
-PASS definition-src in http://www.w3.org/2000/svg is JS object SVGDefinitionSrcElement
 PASS successfullyParsed is true
 
 TEST COMPLETE

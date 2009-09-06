@@ -995,7 +995,6 @@ V8ClassIndex::V8WrapperType V8DOMWrapper::htmlElementType(HTMLElement* element)
 
 #if ENABLE(SVG_FONTS)
 #define FOR_EACH_FONTS_TAG(macro) \
-    macro(definition-src, DEFINITIONSRC) \
     macro(font-face, FONTFACE) \
     macro(font-face-format, FONTFACEFORMAT) \
     macro(font-face-name, FONTFACENAME) \

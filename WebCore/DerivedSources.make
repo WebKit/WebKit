@@ -254,7 +254,6 @@ DOM_CLASSES = \
     SVGColor \
     SVGComponentTransferFunctionElement \
     SVGCursorElement \
-    SVGDefinitionSrcElement \
     SVGDefsElement \
     SVGDescElement \
     SVGDocument \

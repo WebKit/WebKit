@@ -50,7 +50,6 @@
 #import <WebCore/DOMSVGColor.h>
 #import <WebCore/DOMSVGComponentTransferFunctionElement.h>
 #import <WebCore/DOMSVGCursorElement.h>
-#import <WebCore/DOMSVGDefinitionSrcElement.h>
 #import <WebCore/DOMSVGDefsElement.h>
 #import <WebCore/DOMSVGDescElement.h>
 #import <WebCore/DOMSVGDocument.h>
