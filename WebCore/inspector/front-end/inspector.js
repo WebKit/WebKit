@@ -41,6 +41,8 @@ var Preferences = {
     showMissingLocalizedStrings: false,
     heapProfilerPresent: false,
     samplingCPUProfiler: false,
+    showColorNicknames: true,
+    colorFormat: "hex"
 }
 
 var WebInspector = {
@@ -347,6 +349,10 @@ WebInspector.loaded = function()
 {
     var platform = InspectorController.platform();
     document.body.addStyleClass("platform-" + platform);
+
+    var colorFormat = InspectorController.setting("color-format");
+    if (colorFormat)
+        Preferences.colorFormat = colorFormat;
 
     this.drawer = new WebInspector.Drawer();
     this.console = new WebInspector.ConsoleView(this.drawer);

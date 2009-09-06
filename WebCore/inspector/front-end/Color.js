@@ -30,7 +30,7 @@
 WebInspector.Color = function(str)
 {
     this.value = str;
-    this.parse();
+    this._parse();
 }
 
 WebInspector.Color.prototype = {
@@ -70,7 +70,7 @@ WebInspector.Color.prototype = {
             return this._rgb;
 
         if (this.simple)
-            this._rgb = this.hexToRgb(this.hex);
+            this._rgb = this._hexToRGB(this.hex);
         else {
             var rgba = this.rgba;
             this._rgb = [rgba[0], rgba[1], rgba[2]];
@@ -89,7 +89,7 @@ WebInspector.Color.prototype = {
         if ("_hsl" in this)
             return this._hsl;
 
-        this._hsl = this.rgbToHsl(this.rgb);
+        this._hsl = this._rgbToHSL(this.rgb);
         return this._hsl;
     },
 
@@ -137,44 +137,34 @@ WebInspector.Color.prototype = {
         return (shorthex && shorthex.length === 3);
     },
 
-    toRgb: function()
+    toString: function(format)
     {
-        return "rgb(" + this.rgb.join(", ") + ")";
+        if (!format)
+            format = this.format;
+
+        switch (format) {
+            case "rgb":
+                return "rgb(" + this.rgb.join(", ") + ")";
+            case "rgba":
+                return "rgba(" + this.rgba.join(", ") + ")";
+            case "hsl":
+                var hsl = this.hsl;
+                return "hsl(" + hsl[0] + ", " + hsl[1] + "%, " + hsl[2] + "%)";
+            case "hsla":
+                var hsla = this.hsla;
+                return "hsla(" + hsla[0] + ", " + hsla[1] + "%, " + hsla[2] + "%, " + hsla[3] + ")";
+            case "hex":
+                return "#" + this.hex;
+            case "shorthex":
+                return "#" + this.shorthex;
+            case "nickname":
+                return this.nickname;
+        }
+
+        throw "invalid color format";
     },
 
-    toHsl: function()
-    {
-        var hsl = this.hsl;
-        return "hsl(" + hsl[0] + ", " + hsl[1] + "%, " + hsl[2] + "%)";
-    },
-
-    toShortHex: function()
-    {
-        return "#" + this.shorthex;
-    },
-
-    toHex: function()
-    {
-        return "#" + this.hex;
-    },
-
-    toRgba: function()
-    {
-        return "rgba(" + this.rgba.join(", ") + ")";
-    },
-
-    toHsla: function()
-    {
-        var hsla = this.hsla;
-        return "hsla(" + hsla[0] + ", " + hsla[1] + "%, " + hsla[2] + "%, " + hsla[3] + ")";
-    },
-
-    toNickname: function()
-    {
-        return this.nickname;
-    },
-
-    rgbToHex: function(rgb)
+    _rgbToHex: function(rgb)
     {
         var r = parseInt(rgb[0]).toString(16);
         var g = parseInt(rgb[1]).toString(16);
@@ -189,7 +179,7 @@ WebInspector.Color.prototype = {
         return (r + g + b).toUpperCase();
     },
 
-    hexToRgb: function(hex)
+    _hexToRGB: function(hex)
     {
         var r = parseInt(hex.substring(0,2), 16);
         var g = parseInt(hex.substring(2,4), 16);
@@ -198,7 +188,7 @@ WebInspector.Color.prototype = {
         return [r, g, b];
     },
 
-    rgbToHsl: function(rgb)
+    _rgbToHSL: function(rgb)
     {
         var r = parseInt(rgb[0]) / 255;
         var g = parseInt(rgb[1]) / 255;
@@ -235,7 +225,7 @@ WebInspector.Color.prototype = {
         return [h, s, l];
     },
 
-    hslToRgb: function(hsl)
+    _hslToRGB: function(hsl)
     {
         var h = parseFloat(hsl[0]) / 360;
         var s = parseFloat(hsl[1]) / 100;
@@ -252,12 +242,12 @@ WebInspector.Color.prototype = {
         var tg = h;
         var tb = h - (1 / 3);
 
-        var r = Math.round(hueToRgb(p, q, tr) * 255);
-        var g = Math.round(hueToRgb(p, q, tg) * 255);
-        var b = Math.round(hueToRgb(p, q, tb) * 255);
+        var r = Math.round(hueToRGB(p, q, tr) * 255);
+        var g = Math.round(hueToRGB(p, q, tg) * 255);
+        var b = Math.round(hueToRGB(p, q, tb) * 255);
         return [r, g, b];
 
-        function hueToRgb(p, q, h) {
+        function hueToRGB(p, q, h) {
             if (h < 0)
                 h += 1;
             else if (h > 1)
@@ -274,28 +264,28 @@ WebInspector.Color.prototype = {
         }
     },
 
-    rgbaToHsla: function(rgba)
+    _rgbaToHSLA: function(rgba)
     {
         var alpha = rgba[3];
-        var hsl = this.rgbToHsl(rgba)
+        var hsl = this._rgbToHSL(rgba)
         hsl.push(alpha);
         return hsl;
     },
 
-    hslaToRgba: function(hsla)
+    _hslaToRGBA: function(hsla)
     {
         var alpha = hsla[3];
-        var rgb = this.hslToRgb(hsla);
+        var rgb = this._hslToRGB(hsla);
         rgb.push(alpha);
         return rgb;
     },
 
-    parse: function()
+    _parse: function()
     {
         // Special Values - Advanced but Must Be Parsed First - transparent
         var value = this.value.toLowerCase().replace(/%|\s+/g, "");
         if (value in WebInspector.Color.AdvancedNickNames) {
-            this.mode = "nickname";
+            this.format = "nickname";
             var set = WebInspector.Color.AdvancedNickNames[value];
             this.simple = false;
             this.rgba = set[0];
@@ -314,30 +304,30 @@ WebInspector.Color.prototype = {
             if (match[1]) { // hex
                 var hex = match[1].toUpperCase();
                 if (hex.length === 3) {
-                    this.mode = "shorthex";
+                    this.format = "shorthex";
                     this.hex = hex.charAt(0) + hex.charAt(0) + hex.charAt(1) + hex.charAt(1) + hex.charAt(2) + hex.charAt(2);
                 } else {
-                    this.mode = "hex";
+                    this.format = "hex";
                     this.hex = hex;
                 }
             } else if (match[2]) { // rgb
-                this.mode = "rgb";
+                this.format = "rgb";
                 var rgb = match[2].split(/\s*,\s*/);
                 this.rgb = rgb;
-                this.hex = this.rgbToHex(rgb);
+                this.hex = this._rgbToHex(rgb);
             } else if (match[3]) { // nickname
                 var nickname = match[3].toLowerCase();
                 if (nickname in WebInspector.Color.Nicknames) {
-                    this.mode = "nickname";
+                    this.format = "nickname";
                     this.hex = WebInspector.Color.Nicknames[nickname];
                 } else // unknown name
-                    throw("unknown color name");
+                    throw "unknown color name";
             } else if (match[4]) { // hsl
-                this.mode = "hsl";
+                this.format = "hsl";
                 var hsl = match[4].replace(/%g/, "").split(/\s*,\s*/);
                 this.hsl = hsl;
-                this.rgb = this.hslToRgb(hsl);
-                this.hex = this.rgbToHex(this.rgb);
+                this.rgb = this._hslToRGB(hsl);
+                this.hex = this._rgbToHex(this.rgb);
             }
 
             // Fill in the values if this is a known hex color
@@ -358,14 +348,14 @@ WebInspector.Color.prototype = {
         if (match) {
             this.simple = false;
             if (match[1]) { // rgba
-                this.mode = "rgba";
+                this.format = "rgba";
                 this.rgba = match[1].split(/\s*,\s*/);
-                this.hsla = this.rgbaToHsla(this.rgba);
+                this.hsla = this._rgbaToHSLA(this.rgba);
                 this.alpha = this.rgba[3];
             } else if (match[2]) { // hsla
-                this.mode = "hsla";
+                this.format = "hsla";
                 this.hsla = match[2].replace(/%/g, "").split(/\s*,\s*/);
-                this.rgba = this.hslaToRgba(this.hsla);
+                this.rgba = this._hslaToRGBA(this.hsla);
                 this.alpha = this.hsla[3];
             }
 
@@ -373,7 +363,7 @@ WebInspector.Color.prototype = {
         }
 
         // Could not parse as a valid color
-        throw("could not parse color");
+        throw "could not parse color";
     }
 }
 

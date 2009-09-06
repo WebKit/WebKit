@@ -1,3 +1,27 @@
+2009-09-06  Timothy Hatcher  <timothy@apple.com>
+
+        Adds a persistent setting for color format in the Web Inspector.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28889
+
+        Reviewed by Dan Bernstein.
+
+        * English.lproj/localizedStrings.js: New strings.
+        * inspector/front-end/Color.js: Minor style fixes.
+        (WebInspector.Color.prototype.toString): Added. Replaces the individual
+        "toFoo" functions. Takes a optional arguments for the color format to return.
+        * inspector/front-end/Images/paneSettingsButtons.png: Added.
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.prototype._changeColorFormat): Update the sections to show
+        the new color format.
+        (WebInspector.StylePropertyTreeElement.prototype.updateTitle.processColor.changeColorDisplay):
+        Use the new toString function on Color.
+        (WebInspector.StylePropertyTreeElement.prototype.updateTitle.processColor): Use the persistent setting
+        to format colors by default. Add a tooltip for the color swatch.
+        * inspector/front-end/inspector.css: New styles for the settings menu.
+        * inspector/front-end/inspector.js:
+        (WebInspector.loaded): Initilize the colorFormat preference.
+
 2009-09-06  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Eric Seidel.

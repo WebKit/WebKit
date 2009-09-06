@@ -30,6 +30,34 @@
 WebInspector.StylesSidebarPane = function()
 {
     WebInspector.SidebarPane.call(this, WebInspector.UIString("Styles"));
+
+    this.settingsSelectElement = document.createElement("select");
+
+    var option = document.createElement("option");
+    option.value = "hex";
+    if (Preferences.colorFormat === "hex")
+        option.selected = true;
+    option.label = WebInspector.UIString("Hex Colors");
+    this.settingsSelectElement.appendChild(option);
+
+    option = document.createElement("option");
+    option.value = "rgb";
+    if (Preferences.colorFormat === "rgb")
+        option.selected = true;
+    option.label = WebInspector.UIString("RGB Colors");
+    this.settingsSelectElement.appendChild(option);
+
+    option = document.createElement("option");
+    option.value = "hsl";
+    if (Preferences.colorFormat === "hsl")
+        option.selected = true;
+    option.label = WebInspector.UIString("HSL Colors");
+    this.settingsSelectElement.appendChild(option);
+
+    this.settingsSelectElement.addEventListener("click", function(event) { event.stopPropagation() }, false);
+    this.settingsSelectElement.addEventListener("change", this._changeColorFormat.bind(this), false);
+
+    this.titleElement.appendChild(this.settingsSelectElement);
 }
 
 WebInspector.StylesSidebarPane.prototype = {
@@ -272,6 +300,17 @@ WebInspector.StylesSidebarPane.prototype = {
 
             this.addBlankSection();
         }
+    },
+
+    _changeColorFormat: function(event)
+    {
+        var selectedOption = this.settingsSelectElement[this.settingsSelectElement.selectedIndex];
+        Preferences.colorFormat = selectedOption.value;
+
+        InspectorController.setSetting("color-format", Preferences.colorFormat);
+
+        for (var i = 0; i < this.sections.length; ++i)
+            this.sections[i].update(true);
     },
 
     addBlankSection: function()
@@ -609,7 +648,7 @@ WebInspector.StylePropertiesSection.prototype = {
             self.styleRule = { section: self, style: newRule.style, selectorText: newRule.selectorText, parentStyleSheet: newRule.parentStyleSheet, rule: newRule };
             var oldIdentifier = this.identifier;
             self.identifier = newRule.selectorText + ":" + self.subtitleElement.textContent;
-            self.pane.update(null, true);
+            self.pane.update();
             WebInspector.panels.elements.renameSelector(oldIdentifier, this.identifier, oldContent, newContent);
             moveToNextIfNeeded.call(self);
         };
@@ -852,65 +891,77 @@ WebInspector.StylePropertyTreeElement.prototype = {
                 }
 
                 var swatchElement = document.createElement("span");
+                swatchElement.title = WebInspector.UIString("Click to change color format");
                 swatchElement.className = "swatch";
                 swatchElement.style.setProperty("background-color", text);
 
                 swatchElement.addEventListener("click", changeColorDisplay, false);
                 swatchElement.addEventListener("dblclick", function(event) { event.stopPropagation() }, false);
 
+                var format;
+                if (Preferences.showColorNicknames && color.nickname)
+                    format = "nickname";
+                else if (Preferences.colorFormat === "rgb")
+                    format = (color.simple ? "rgb" : "rgba");
+                else if (Preferences.colorFormat === "hsl")
+                    format = (color.simple ? "hsl" : "hsla");
+                else if (color.simple)
+                    format = (color.hasShortHex() ? "shorthex" : "hex");
+                else
+                    format = "rgba";
+
                 var colorValueElement = document.createElement("span");
-                colorValueElement.textContent = text;
+                colorValueElement.textContent = color.toString(format);
 
-                var mode = color.mode;
-                function changeColorDisplay(event) {
-                    function changeTo(newMode, content) {
-                        mode = newMode;
-                        colorValueElement.textContent = content;
-                    }
-
-                    switch (mode) {
+                function changeColorDisplay(event)
+                {
+                    switch (format) {
                         case "rgb":
-                            changeTo("hsl", color.toHsl());
+                            format = "hsl";
                             break;
 
                         case "shorthex":
-                            changeTo("hex", color.toHex());
+                            format = "hex";
                             break;
 
                         case "hex":
-                            changeTo("rgb", color.toRgb());
+                            format = "rgb";
                             break;
 
                         case "nickname":
                             if (color.simple) {
                                 if (color.hasShortHex())
-                                    changeTo("shorthex", color.toShortHex());
+                                    format = "shorthex";
                                 else
-                                    changeTo("hex", color.toHex());
-                            } else
-                                changeTo("rgba", color.toRgba());
+                                    format = "hex";
+                                break;
+                            }
+
+                            format = "rgba";
                             break;
 
                         case "hsl":
                             if (color.nickname)
-                                changeTo("nickname", color.toNickname());
+                                format = "nickname";
                             else if (color.hasShortHex())
-                                changeTo("shorthex", color.toShortHex());
+                                format = "shorthex";
                             else
-                                changeTo("hex", color.toHex());
+                                format = "hex";
                             break;
 
                         case "rgba":
-                            changeTo("hsla", color.toHsla());
+                            format = "hsla";
                             break;
 
                         case "hsla":
                             if (color.nickname)
-                                changeTo("nickname", color.toNickname());
+                                format = "nickname";
                             else
-                                changeTo("rgba", color.toRgba());
+                                format = "rgba";
                             break;
                     }
+
+                    colorValueElement.textContent = color.toString(format);
                 }
 
                 var container = document.createDocumentFragment();
