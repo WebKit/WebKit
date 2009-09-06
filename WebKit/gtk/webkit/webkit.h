@@ -37,6 +37,8 @@
 #include <webkit/webkitwebpolicydecision.h>
 #include <webkit/webkitwebnavigationaction.h>
 #include <webkit/webkitwebresource.h>
+#include <webkit/webkitwebdatabase.h>
+#include <webkit/webkitsecurityorigin.h>
 #include <webkit/webkitenumtypes.h>
 
 #endif /* __WEBKIT_H__ */

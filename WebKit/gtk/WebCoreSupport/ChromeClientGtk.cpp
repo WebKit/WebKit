@@ -496,13 +496,17 @@ void ChromeClient::print(Frame* frame)
 }
 
 #if ENABLE(DATABASE)
-void ChromeClient::exceededDatabaseQuota(Frame* frame, const String&)
+void ChromeClient::exceededDatabaseQuota(Frame* frame, const String& databaseName)
 {
-    // Set to 5M for testing
-    // FIXME: Make this configurable
-    notImplemented();
-    const unsigned long long defaultQuota = 5 * 1024 * 1024;
+    guint64 defaultQuota = webkit_get_default_web_database_quota();
     DatabaseTracker::tracker().setQuota(frame->document()->securityOrigin(), defaultQuota);
+
+    WebKitWebFrame* webFrame = kit(frame);
+    WebKitWebView* webView = getViewFromFrame(webFrame);
+
+    WebKitSecurityOrigin* origin = webkit_web_frame_get_security_origin(webFrame);
+    WebKitWebDatabase* webDatabase = webkit_security_origin_get_web_database(origin, databaseName.utf8().data());
+    g_signal_emit_by_name(webView, "database-quota-exceeded", webFrame, webDatabase);
 }
 #endif
 

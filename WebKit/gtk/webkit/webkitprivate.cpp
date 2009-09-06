@@ -162,9 +162,10 @@ void webkit_init()
     WebCore::pageCache()->setCapacity(3);
 
 #if ENABLE(DATABASE)
-    // FIXME: It should be possible for client applications to override this default location
     gchar* databaseDirectory = g_build_filename(g_get_user_data_dir(), "webkit", "databases", NULL);
-    WebCore::DatabaseTracker::tracker().setDatabaseDirectoryPath(databaseDirectory);
+    webkit_set_web_database_directory_path(databaseDirectory);
+
+    // FIXME: It should be possible for client applications to override the default appcache location
     WebCore::cacheStorage().setCacheDirectory(databaseDirectory);
     g_free(databaseDirectory);
 #endif

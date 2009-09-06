@@ -41,6 +41,7 @@
 #include <webkit/webkitwebwindowfeatures.h>
 #include <webkit/webkitwebbackforwardlist.h>
 #include <webkit/webkitnetworkrequest.h>
+#include <webkit/webkitsecurityorigin.h>
 
 #include "ArchiveResource.h"
 #include "BackForwardList.h"
@@ -56,6 +57,7 @@
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "WindowFeatures.h"
+#include "SecurityOrigin.h"
 
 #include <atk/atk.h>
 #include <glib.h>
@@ -86,6 +88,9 @@ namespace WebKit {
     WebCore::ResourceRequest core(WebKitNetworkRequest* request);
 
     WebCore::EditingBehavior core(WebKitEditingBehavior type);
+
+    WebKitSecurityOrigin* kit(WebCore::SecurityOrigin*);
+    WebCore::SecurityOrigin* core(WebKitSecurityOrigin*);
 }
 
 typedef struct {
@@ -144,6 +149,17 @@ extern "C" {
         gchar* title;
         gchar* uri;
         WebKitLoadStatus loadStatus;
+        WebKitSecurityOrigin* origin;
+    };
+
+#define WEBKIT_SECURITY_ORIGIN_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_SECURITY_ORIGIN, WebKitSecurityOriginPrivate))
+    struct _WebKitSecurityOriginPrivate {
+        RefPtr<WebCore::SecurityOrigin> coreOrigin;
+        gchar* protocol;
+        gchar* host;
+        GHashTable* webDatabases;
+
+        gboolean disposed;
     };
 
     PassRefPtr<WebCore::Frame>
@@ -291,6 +307,9 @@ extern "C" {
     // WebKitWebDataSource private
     WebKitWebDataSource*
     webkit_web_data_source_new_with_loader(PassRefPtr<WebKit::DocumentLoader>);
+
+    WEBKIT_API WebKitWebDatabase *
+    webkit_security_origin_get_web_database(WebKitSecurityOrigin* securityOrigin, const char* databaseName);
 }
 
 #endif

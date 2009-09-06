@@ -331,6 +331,8 @@ webkitgtk_h_api += \
 	$(srcdir)/WebKit/gtk/webkit/webkitwebsettings.h \
 	$(srcdir)/WebKit/gtk/webkit/webkitwebwindowfeatures.h \
 	$(srcdir)/WebKit/gtk/webkit/webkitwebview.h \
+	$(srcdir)/WebKit/gtk/webkit/webkitwebdatabase.h \
+	$(srcdir)/WebKit/gtk/webkit/webkitsecurityorigin.h \
 	$(top_builddir)/WebKit/gtk/webkit/webkitversion.h
 
 webkitgtk_built_sources += \
@@ -372,6 +374,8 @@ webkitgtk_sources += \
 	WebKit/gtk/webkit/webkitwebnavigationaction.cpp \
 	WebKit/gtk/webkit/webkitwebpolicydecision.cpp \
 	WebKit/gtk/webkit/webkitwebresource.cpp \
+	WebKit/gtk/webkit/webkitwebdatabase.cpp \
+	WebKit/gtk/webkit/webkitsecurityorigin.cpp \
 	WebKit/gtk/webkit/webkitwebsettings.cpp \
 	WebKit/gtk/webkit/webkitwebview.cpp \
 	WebKit/gtk/webkit/webkitwebwindowfeatures.cpp \

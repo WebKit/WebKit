@@ -368,12 +368,13 @@ void LayoutTestController::clearPersistentUserStyleSheet()
 
 void LayoutTestController::clearAllDatabases()
 {
-    // FIXME: implement
+    webkit_remove_all_web_databases();
 }
  
 void LayoutTestController::setDatabaseQuota(unsigned long long quota)
-{    
-    // FIXME: implement
+{
+    WebKitSecurityOrigin* origin = webkit_web_frame_get_security_origin(mainFrame);
+    webkit_security_origin_set_web_database_quota(origin, quota);
 }
 
 void LayoutTestController::setAppCacheMaximumSize(unsigned long long size)

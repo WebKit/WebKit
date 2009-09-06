@@ -159,10 +159,13 @@ WEBKIT_API GtkPolicyType
 webkit_web_frame_get_vertical_scrollbar_policy   (WebKitWebFrame        *frame);
 
 WEBKIT_API WebKitWebDataSource *
-webkit_web_frame_get_data_source    (WebKitWebFrame       *frame);
+webkit_web_frame_get_data_source             (WebKitWebFrame       *frame);
 
 WEBKIT_API WebKitWebDataSource *
-webkit_web_frame_get_provisional_data_source (WebKitWebFrame *frame);
+webkit_web_frame_get_provisional_data_source (WebKitWebFrame       *frame);
+
+WEBKIT_API WebKitSecurityOrigin*
+webkit_web_frame_get_security_origin         (WebKitWebFrame       *frame);
 
 G_END_DECLS
 

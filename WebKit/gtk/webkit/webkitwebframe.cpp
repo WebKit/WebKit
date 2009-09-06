@@ -377,6 +377,8 @@ WebKitWebFrame* webkit_web_frame_new(WebKitWebView* webView)
     priv->coreFrame = Frame::create(viewPriv->corePage, 0, client).get();
     priv->coreFrame->init();
 
+    priv->origin = NULL;
+
     return frame;
 }
 
@@ -1047,4 +1049,30 @@ GtkPolicyType webkit_web_frame_get_vertical_scrollbar_policy(WebKitWebFrame* fra
         return GTK_POLICY_NEVER;
 
     return GTK_POLICY_AUTOMATIC;
+}
+
+/**
+ * webkit_web_frame_get_security_origin:
+ * @frame: a #WebKitWebFrame
+ *
+ * Returns the @frame's security origin.
+ *
+ * Return value: the security origin of @frame
+ *
+ * Since: 1.1.14
+ */
+WebKitSecurityOrigin* webkit_web_frame_get_security_origin(WebKitWebFrame* frame)
+{
+    WebKitWebFramePrivate* priv = frame->priv;
+    if (!priv->coreFrame || !priv->coreFrame->document() || !priv->coreFrame->document()->securityOrigin())
+        return NULL;
+
+    if (priv->origin && priv->origin->priv->coreOrigin.get() == priv->coreFrame->document()->securityOrigin())
+        return priv->origin;
+
+    if (priv->origin)
+        g_object_unref(priv->origin);
+
+    priv->origin = kit(priv->coreFrame->document()->securityOrigin());
+    return priv->origin;
 }

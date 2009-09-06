@@ -3939,12 +3939,6 @@ security/autocomplete-cleared-on-back.html
 security/block-test-no-port.html
 security/block-test.html
 
-# Tests in storage/ directory
-#   Tests failing
-storage/quota-tracking.html
-storage/domstorage/localstorage/window-open.html
-storage/domstorage/sessionstorage/window-open.html
-
 # Tests in svg/ directory
 #   Tests failing
 svg/custom/embedded-svg-disallowed-in-dashboard.xml
@@ -5839,9 +5833,6 @@ fast/block/margin-collapse/block-inside-inline
 # ------------------
 # Tests with bugs attached : Enable these tests again once these bugs are fixed.
 # ------------------
-
-# REGRESSION: See Bug #27144 - https://bugs.webkit.org/show_bug.cgi?id=27144
-storage/database-lock-after-reload.html
 
 # See Bug #27637 - https://bugs.webkit.org/show_bug.cgi?id=27637
 fast/history/saves-state-after-fragment-nav.html

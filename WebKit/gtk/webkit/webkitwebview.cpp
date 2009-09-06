@@ -144,6 +144,7 @@ enum {
     CLOSE_WEB_VIEW,
     UNDO,
     REDO,
+    DATABASE_QUOTA_EXCEEDED,
     LAST_SIGNAL
 };
 
@@ -1951,6 +1952,28 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             webkit_marshal_OBJECT__STRING_STRING_POINTER,
             GTK_TYPE_WIDGET, 3,
             G_TYPE_STRING, G_TYPE_STRING, G_TYPE_HASH_TABLE);
+
+    /**
+     * WebKitWebView::database-quota-exceeded
+     * @web_view: the object which received the signal
+     * @frame: the relevant frame
+     * @database: the #WebKitWebDatabase which exceeded the quota of its #WebKitSecurityOrigin
+     *
+     * The #WebKitWebView::database-exceeded-quota signal will be emitted when
+     * a Web Database exceeds the quota of its security origin. This signal
+     * may be used to increase the size of the quota before the originating
+     * operation fails.
+     *
+     * Since: 1.1.14
+     */
+    webkit_web_view_signals[DATABASE_QUOTA_EXCEEDED] = g_signal_new("database-quota-exceeded",
+            G_TYPE_FROM_CLASS(webViewClass),
+            (GSignalFlags) (G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
+            0,
+            NULL, NULL,
+            webkit_marshal_VOID__OBJECT_OBJECT,
+            G_TYPE_NONE, 2,
+            G_TYPE_OBJECT, G_TYPE_OBJECT);
 
     /*
      * implementations of virtual methods

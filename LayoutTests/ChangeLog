@@ -1,3 +1,14 @@
+2009-09-06  Martin Robinson  <martin.james.robinson@gmail.com>
+
+        Reviewed by Gustavo Noronha, Jan Alonzo and Xan Lopez.
+
+        [Gtk] Expose a database API
+        https://bugs.webkit.org/show_bug.cgi?id=27899
+
+        Expose an HTML5 database API for GTK+.
+
+        * platform/gtk/Skipped:
+
 2009-09-06  Cameron McCormack  <cam@mcc.id.au>
 
         Reviewed by Eric Seidel.
