@@ -70,8 +70,8 @@ static void test_webkit_window_scrollbar_policy(void)
     g_assert(horizontalPolicy == GTK_POLICY_AUTOMATIC);
     g_assert(verticalPolicy == GTK_POLICY_AUTOMATIC);
 
-    g_assert(horizontalPolicy == webkit_web_frame_get_horizontal_scrollbar_policy(mainFrame));
-    g_assert(verticalPolicy == webkit_web_frame_get_vertical_scrollbar_policy(mainFrame));
+    g_assert(GTK_POLICY_NEVER == webkit_web_frame_get_horizontal_scrollbar_policy(mainFrame));
+    g_assert(GTK_POLICY_NEVER == webkit_web_frame_get_vertical_scrollbar_policy(mainFrame));
 
     /* Test we correctly apply policy for always having scrollbars */
     webkit_web_view_load_html_string(WEBKIT_WEB_VIEW(webView),

@@ -1,3 +1,12 @@
+2009-09-06  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Update the unitests to latest changes wrt scrollbar policy.
+
+        * tests/testwindow.c:
+        (test_webkit_window_scrollbar_policy):
+
 2009-09-06  Martin Robinson  <martin.james.robinson@gmail.com>
 
         Reviewed by Gustavo Noronha, Jan Alonzo and Xan Lopez.
