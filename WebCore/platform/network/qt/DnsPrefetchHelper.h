@@ -20,9 +20,6 @@
 #define DNSPREFETCHHELPER_H
 
 #include <QObject>
-
-#if QT_VERSION >= 0x040600
-
 #include <QCache>
 #include <QHostInfo>
 #include <QSet>
@@ -74,7 +71,5 @@ namespace WebCore {
 
 
 }
-
-#endif
 
 #endif // DNSPREFETCHHELPER_H

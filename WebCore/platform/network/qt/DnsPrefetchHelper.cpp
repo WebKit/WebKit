@@ -21,8 +21,6 @@
 
 #include "CString.h"
 
-#if QT_VERSION >= 0x040600
-
 namespace WebCore {
 // this is called on mouse over a href and on page loading
 void prefetchDNS(const String& hostname)
@@ -34,17 +32,3 @@ void prefetchDNS(const String& hostname)
 }
 
 }
-
-#elif QT_VERSION >= 0x040400
-#include "NotImplemented.h"
-namespace WebCore {
-
-void prefetchDNS(const String& hostname)
-{
-    notImplemented();
-}
-
-}
-
-
-#endif
