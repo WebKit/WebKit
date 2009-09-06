@@ -51,9 +51,6 @@ namespace WebCore {
 
         virtual void adjustSliderThumbSize(RenderObject*) const;
 
-        void setCaretBlinkInterval(double interval);
-        virtual double caretBlinkInterval() const;
-
         void setFocusRingColor(const Color&);
         virtual Color platformFocusRingColor() const;
 
@@ -63,8 +60,6 @@ namespace WebCore {
 
         // A general method asking if any control tinting is supported at all.
         virtual bool supportsControlTints() const;
-
-        double m_caretBlinkInterval;
 
         Color m_focusRingColor;
         bool m_useDefaultFocusRingColor;

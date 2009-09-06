@@ -1,3 +1,14 @@
+2009-09-05  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, build fix.
+
+        [Chromium] Roll out http://trac.webkit.org/changeset/48094, because the
+        logic of retrieving default caret blink interval was incorrect (non-existent)
+        and caused layout test flakiness.
+
+        * rendering/RenderThemeChromiumLinux.cpp:
+        * rendering/RenderThemeChromiumLinux.h:
+
 2009-09-05  Jian Li  <jianli@chromium.org>
 
         Reviewed by NOBODY (Chromium reliability build break).
