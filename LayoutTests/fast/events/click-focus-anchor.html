@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+
+<p>This test ensures that we can click to focus an a element with a tab index.
+Click on the element below.
+
+<p><a tabindex=0 onfocus="pass()" id=t>Focusable</a>
+
+<p>Result
+
+<pre>FAIL</pre>
+
+<script>
+
+function pass()
+{
+    var el = document.querySelector('pre');
+    el.textContent = 'PASS';
+}
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.overridePreference("WebKitTabToLinks", false);
+}
+
+window.onload = function()
+{
+    if (!window.layoutTestController)
+        return;
+
+    var aElement = document.getElementById('t');
+    eventSender.mouseMoveTo(aElement.offsetLeft + 2, aElement.offsetTop + 2);
+    eventSender.mouseDown();    
+};
+
+</script>
+</body>
+</html>

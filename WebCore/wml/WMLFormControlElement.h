@@ -38,6 +38,7 @@ public:
     virtual bool formControlValueMatchesRenderer() const { return m_valueMatchesRenderer; }
     virtual void setFormControlValueMatchesRenderer(bool b = true) { m_valueMatchesRenderer = b; }
 
+    virtual bool supportsFocus() const;
     virtual bool isFocusable() const;
 
     virtual void attach();

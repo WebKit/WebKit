@@ -212,9 +212,9 @@ void HTMLFrameElementBase::setLocation(const String& str)
         openURL();
 }
 
-bool HTMLFrameElementBase::isFocusable() const
+bool HTMLFrameElementBase::supportsFocus() const
 {
-    return renderer();
+    return true;
 }
 
 void HTMLFrameElementBase::setFocus(bool received)

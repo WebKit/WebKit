@@ -42,9 +42,9 @@ HTMLLegendElement::~HTMLLegendElement()
 {
 }
 
-bool HTMLLegendElement::isFocusable() const
+bool HTMLLegendElement::supportsFocus() const
 {
-    return HTMLElement::isFocusable();
+    return HTMLElement::supportsFocus();
 }
 
 const AtomicString& HTMLLegendElement::formControlType() const

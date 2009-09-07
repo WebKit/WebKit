@@ -36,7 +36,6 @@ public:
     WMLAElement(const QualifiedName& tagName, Document*);
 
     virtual bool supportsFocus() const;
-    virtual bool isFocusable() const;
     virtual bool isMouseFocusable() const;
     virtual bool isKeyboardFocusable(KeyboardEvent*) const;
 

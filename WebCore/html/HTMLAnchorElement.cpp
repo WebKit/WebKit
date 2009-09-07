@@ -60,33 +60,26 @@ bool HTMLAnchorElement::supportsFocus() const
 {
     if (isContentEditable())
         return HTMLElement::supportsFocus();
-    return isFocusable() || (isLink() && document() && !document()->haveStylesheetsLoaded());
-}
-
-bool HTMLAnchorElement::isFocusable() const
-{
-    if (isContentEditable())
-        return HTMLElement::isFocusable();
-
-    // FIXME: Even if we are not visible, we might have a child that is visible.
-    // Dave wants to fix that some day with a "has visible content" flag or the like.
-    if (!(isLink() && renderer() && renderer()->style()->visibility() == VISIBLE))
-        return false;
-
-    return true;
+    // If not a link we should still be able to focus the element if it has tabIndex.
+    return isLink() || HTMLElement::supportsFocus();
 }
 
 bool HTMLAnchorElement::isMouseFocusable() const
 {
-#if PLATFORM(GTK)
-    return HTMLElement::isMouseFocusable();
-#else
-    return false;
+    // Anchor elements should be mouse focusable, https://bugs.webkit.org/show_bug.cgi?id=26856
+#if !PLATFORM(GTK)
+    if (isLink())
+        return false;
 #endif
+    // Allow tab index etc to control focus.
+    return HTMLElement::isMouseFocusable();
 }
 
 bool HTMLAnchorElement::isKeyboardFocusable(KeyboardEvent* event) const
 {
+    if (!isLink())
+        return HTMLElement::isKeyboardFocusable(event);
+
     if (!isFocusable())
         return false;
     

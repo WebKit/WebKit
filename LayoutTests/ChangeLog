@@ -1,3 +1,26 @@
+2009-09-06  Erik Arvidsson  <arv@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Tests for https://bugs.webkit.org/show_bug.cgi?id=27099
+        Make hidden elements not focusable. This is important becaue we should
+        not allow tabbing to a hidden element.
+        
+        The patch also makes a element without href behave like generic elements
+        when it comes to focus. Added tests that asserts that this works as
+        expected.
+
+        * fast/events/click-focus-anchor-expected.txt: Added.
+        * fast/events/click-focus-anchor.html: Added.
+        * fast/events/resources/tabindex-focus-blur-all.js:
+        (test):
+        (testProgrammaticFocus):
+        * fast/events/tab-focus-anchor-expected.txt: Added.
+        * fast/events/tab-focus-anchor.html: Added.
+        * fast/events/tab-focus-hidden-expected.txt: Added.
+        * fast/events/tab-focus-hidden.html: Added.
+        * fast/events/tabindex-focus-blur-all-expected.txt:
+
 2009-09-06  Martin Robinson  <martin.james.robinson@gmail.com>
 
         Reviewed by Gustavo Noronha, Jan Alonzo and Xan Lopez.

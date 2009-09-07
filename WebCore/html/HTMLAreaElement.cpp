@@ -162,9 +162,10 @@ void HTMLAreaElement::setNoHref(bool noHref)
     setAttribute(nohrefAttr, noHref ? "" : 0);
 }
 
-bool HTMLAreaElement::isFocusable() const
+bool HTMLAreaElement::supportsFocus() const
 {
-    return HTMLElement::isFocusable();
+    // Skip HTMLAnchorElements isLink() check.
+    return HTMLElement::supportsFocus();
 }
 
 String HTMLAreaElement::target() const

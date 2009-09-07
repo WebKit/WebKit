@@ -66,9 +66,15 @@ void HTMLOptionElement::detach()
     HTMLFormControlElement::detach();
 }
 
+bool HTMLOptionElement::supportsFocus() const
+{
+    return HTMLElement::supportsFocus();
+}
+
 bool HTMLOptionElement::isFocusable() const
 {
-    return HTMLElement::isFocusable();
+    // Option elements do not have a renderer so we check the renderStyle instead.
+    return supportsFocus() && renderStyle() && renderStyle()->display() != NONE;
 }
 
 const AtomicString& HTMLOptionElement::formControlType() const

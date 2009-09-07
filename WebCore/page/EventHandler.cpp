@@ -1679,12 +1679,15 @@ bool EventHandler::dispatchMouseEvent(const AtomicString& eventType, Node* targe
         swallowEvent = m_nodeUnderMouse->dispatchMouseEvent(mouseEvent, eventType, clickCount);
     
     if (!swallowEvent && eventType == eventNames().mousedownEvent) {
+        // The layout needs to be up to date to determine if an element is focusable.
+        m_frame->document()->updateLayoutIgnorePendingStylesheets();
+
         // Blur current focus node when a link/button is clicked; this
         // is expected by some sites that rely on onChange handlers running
         // from form fields before the button click is processed.
         Node* node = m_nodeUnderMouse.get();
         RenderObject* renderer = node ? node->renderer() : 0;
-                
+
         // Walk up the render tree to search for a node to focus.
         // Walking up the DOM tree wouldn't work for shadow trees, like those behind the engine-based text fields.
         while (renderer) {

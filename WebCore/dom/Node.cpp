@@ -829,10 +829,28 @@ bool Node::rareDataFocused() const
     ASSERT(hasRareData());
     return rareData()->isFocused();
 }
+
+bool Node::supportsFocus() const
+{
+    return hasRareData() && rareData()->tabIndexSetExplicitly();
+}
     
 bool Node::isFocusable() const
 {
-    return hasRareData() && rareData()->tabIndexSetExplicitly();
+    if (!inDocument() || !supportsFocus())
+        return false;
+    
+    if (renderer())
+        ASSERT(!renderer()->needsLayout());
+    else
+        ASSERT(!needsStyleRecalc());
+    
+    // FIXME: Even if we are not visible, we might have a child that is visible.
+    // Hyatt wants to fix that some day with a "has visible content" flag or the like.
+    if (!renderer() || renderer()->style()->visibility() != VISIBLE)
+        return false;
+
+    return true;
 }
 
 bool Node::isKeyboardFocusable(KeyboardEvent*) const

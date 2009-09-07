@@ -56,6 +56,8 @@ public:
     void insertAdjacentHTML(const String& where, const String& html, ExceptionCode&);
     void insertAdjacentText(const String& where, const String& text, ExceptionCode&);
 
+    virtual bool supportsFocus() const;
+    
     virtual bool isContentEditable() const;
     virtual bool isContentRichlyEditable() const;
 
@@ -86,8 +88,6 @@ protected:
 
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
     virtual void parseMappedAttribute(MappedAttribute*);
-
-    virtual bool isFocusable() const;
 
     virtual bool childAllowed(Node* newChild); // Error-checking during parsing that checks the DTD
 

@@ -18,7 +18,7 @@ var tagNamesAlwaysFocused = ["A",
                              "SELECT",
                              "TEXTAREA"];
 
-var tagNamesTransferFocused = ["LABEL"]; // lables always transfer focus to the labeled element
+var tagNamesTransferFocused = ["LABEL"]; // labels always transfer focus to the labeled element
 
 function printToConsole(str)
 {
@@ -49,7 +49,7 @@ function test()
     var homeBase = window.frames[1].document.getElementsByClassName('homebase');
     homeBase[0].focus();
 
-    var resultSummary = focusCount+" focus / "+blurCount+" blur events disatched, and should be 335 / 335 ";
+    var resultSummary = focusCount+" focus / "+blurCount+" blur events dispatched, and should be 335 / 335 ";
     resultSummary += (focusCount==blurCount) ? "<span style='color:green'>PASSED</span><br>" : "<span style='color:red'>FAILED</span><br>";
     resultSummary += "Total of "+failedTestCount+" focus test(s) failed.";
     if (failedTestCount)
@@ -103,8 +103,10 @@ function testProgrammaticFocus(elem)
     else if (tagNamesAlwaysFocused.find(elem.tagName)) // special case form elements and other controls that are always focusable
         elemThatShouldFocus = elem;
     
-    if (elem.tagName == "INPUT" && elem.type == "hidden") // obviously since <input type=hidden> isn't rendered, it can't be focused
+    // Hidden elements should not be focusable. https://bugs.webkit.org/show_bug.cgi?id=27099
+    if (document.defaultView.getComputedStyle(elem).display == "none")
         elemThatShouldFocus = null;
+
     if (tagNamesTransferFocused.find(elem.tagName)) {
         elemThatShouldFocus = null;
         OKtoFocusOtherElement = true;

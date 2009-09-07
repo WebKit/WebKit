@@ -33,7 +33,7 @@ public:
     HTMLLegendElement(const QualifiedName&, Document*, HTMLFormElement* = 0);
     virtual ~HTMLLegendElement();
 
-    virtual bool isFocusable() const;
+    virtual bool supportsFocus() const;
     virtual const AtomicString& formControlType() const;
     virtual void accessKeyAction(bool sendToAnyElement);
 

@@ -1,0 +1,7 @@
+This test ensures that we can click to focus an a element with a tab index. Click on the element below.
+
+Focusable
+
+Result
+
+PASS

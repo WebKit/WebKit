@@ -1221,13 +1221,23 @@ void Element::focus(bool restorePreviousSelection)
     if (doc->focusedNode() == this)
         return;
 
-    doc->updateLayoutIgnorePendingStylesheets();
-    
     if (!supportsFocus())
         return;
-    
+
+    // If the stylesheets have already been loaded we can reliably check isFocusable.
+    // If not, we continue and set the focused node on the focus controller below so
+    // that it can be updated soon after attach. 
+    if (doc->haveStylesheetsLoaded()) {
+        doc->updateLayoutIgnorePendingStylesheets();
+        if (!isFocusable())
+            return;
+    }
+
     if (Page* page = doc->page())
         page->focusController()->setFocusedNode(this, doc->frame());
+
+    // Setting the focused node above might have invalidated the layout due to scripts.
+    doc->updateLayoutIgnorePendingStylesheets();
 
     if (!isFocusable()) {
         ensureRareData()->setNeedsFocusAppearanceUpdateSoonAfterAttach(true);

@@ -62,7 +62,6 @@ private:
     virtual bool supportsFocus() const;
     virtual bool isMouseFocusable() const;
     virtual bool isKeyboardFocusable(KeyboardEvent*) const;
-    virtual bool isFocusable() const;
     virtual void defaultEventHandler(Event*);
     virtual void setActive(bool active = true, bool pause = false);
     virtual void accessKeyAction(bool fullAction);

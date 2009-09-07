@@ -37,6 +37,7 @@ public:
 
     virtual bool checkDTD(const Node*);
     virtual const AtomicString& formControlType() const;
+    virtual bool supportsFocus() const;
     virtual bool isFocusable() const;
     virtual void parseMappedAttribute(MappedAttribute*);
     virtual bool rendererIsNeeded(RenderStyle*) { return false; }

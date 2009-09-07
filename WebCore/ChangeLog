@@ -1,3 +1,75 @@
+2009-09-06  Erik Arvidsson  <arv@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Make hidden elements not focusable.
+
+        Clean up supportsFocus and isFocusable.
+        supportsFocus now strictly means that the node can be focused by default.
+        This is true for links, form controls and content editable elements for example.
+        isFocusable means that the user can actually focus it.
+        All (2) calls to supportsFocus have been updated to take this into account.
+        
+        Make a elements without href work correctly as well.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27099
+
+        Tests: fast/events/click-focus-anchor.html
+               fast/events/tab-focus-anchor.html
+               fast/events/tab-focus-hidden.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::focus):
+        * dom/Node.cpp:
+        (WebCore::Node::supportsFocus):
+        (WebCore::Node::isFocusable):
+        * dom/Node.h:
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::supportsFocus):
+        (WebCore::HTMLAnchorElement::isMouseFocusable):
+        (WebCore::HTMLAnchorElement::isKeyboardFocusable):
+        * html/HTMLAnchorElement.h:
+        * html/HTMLAreaElement.cpp:
+        (WebCore::HTMLAreaElement::supportsFocus):
+        * html/HTMLAreaElement.h:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::supportsFocus):
+        * html/HTMLElement.h:
+        * html/HTMLFieldSetElement.cpp:
+        (WebCore::HTMLFieldSetElement::supportsFocus):
+        * html/HTMLFieldSetElement.h:
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::supportsFocus):
+        (WebCore::HTMLFormControlElement::isFocusable):
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::supportsFocus):
+        * html/HTMLFrameElementBase.h:
+        * html/HTMLLegendElement.cpp:
+        (WebCore::HTMLLegendElement::supportsFocus):
+        * html/HTMLLegendElement.h:
+        * html/HTMLOptGroupElement.cpp:
+        (WebCore::HTMLOptGroupElement::supportsFocus):
+        (WebCore::HTMLOptGroupElement::isFocusable):
+        * html/HTMLOptGroupElement.h:
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::supportsFocus):
+        (WebCore::HTMLOptionElement::isFocusable):
+        * html/HTMLOptionElement.h:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::dispatchMouseEvent):
+        * page/FocusController.cpp:
+        (WebCore::FocusController::advanceFocus):
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::supportsFocus):
+        (WebCore::SVGAElement::isFocusable):
+        * wml/WMLAElement.cpp:
+        (WebCore::WMLAElement::supportsFocus):
+        * wml/WMLAElement.h:
+        * wml/WMLFormControlElement.cpp:
+        (WebCore::WMLFormControlElement::supportsFocus):
+        (WebCore::WMLFormControlElement::isFocusable):
+        * wml/WMLFormControlElement.h:
+
 2009-09-06  Joel Stanley  <joel@jms.id.au>
 
         Reviewed by Dimitri Glazkov.
