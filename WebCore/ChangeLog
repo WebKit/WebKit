@@ -1,3 +1,11 @@
+2009-09-07  Xan Lopez  <xlopez@igalia.com>
+
+        Unreviewed build fix.
+
+        Add new file to sources list.
+
+        * GNUmakefile.am:
+
 2009-09-07  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fixes for wx SVN trunk. 
