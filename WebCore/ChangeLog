@@ -1,5 +1,14 @@
 2009-09-07  Drew Wilson  <atwilson@google.com>
 
+        Unreviewed build fix.
+
+        Temporarily removed depenency between JSEventTarget.cpp and WebSocket.h in an attempt to fix a windows build break.
+
+        * bindings/js/JSEventTarget.cpp:
+        (WebCore::toEventTarget):
+
+2009-09-07  Drew Wilson  <atwilson@google.com>
+
         Reviewed by David Levin.
 
         Enable SHARED_WORKERS by default.

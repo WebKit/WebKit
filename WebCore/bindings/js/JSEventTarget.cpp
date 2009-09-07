@@ -80,7 +80,9 @@
 
 #if ENABLE(WEB_SOCKETS)
 #include "JSWebSocket.h"
-#include "WebSocket.h"
+// FIXME(ukai@chromium.org): Disabled this include to fix Windows build. Re-enable this include once the Windows build files are fixed.
+//#include "WebSocket.h"
+class WebSocket;
 #endif
 
 using namespace JSC;
@@ -194,7 +196,8 @@ EventTarget* toEventTarget(JSC::JSValue value)
 #endif
 
 #if ENABLE(WEB_SOCKETS)
-    CONVERT_TO_EVENT_TARGET(WebSocket)
+// FIXME(ukai@chromium.org): Uncomment this when it compiles under Windows.
+//    CONVERT_TO_EVENT_TARGET(WebSocket)
 #endif
 
     return 0;
