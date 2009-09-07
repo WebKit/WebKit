@@ -1,0 +1,4 @@
+Test to ensure the the window.applicationCache attribute is defined but non-functional with the feature disabled.
+
+SUCCESS
+

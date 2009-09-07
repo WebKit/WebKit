@@ -42,8 +42,10 @@ namespace WebCore {
 DOMApplicationCache::DOMApplicationCache(Frame* frame)
     : m_frame(frame)
 {
-    ASSERT(applicationCacheHost());
-    applicationCacheHost()->setDOMApplicationCache(this);
+    ASSERT(!m_frame || applicationCacheHost());
+    ApplicationCacheHost* cacheHost = applicationCacheHost();
+    if (cacheHost)
+        cacheHost->setDOMApplicationCache(this);
 }
 
 void DOMApplicationCache::disconnectFrame()
@@ -76,22 +78,16 @@ void DOMApplicationCache::update(ExceptionCode& ec)
         ec = INVALID_STATE_ERR;
 }
 
-bool DOMApplicationCache::swapCache()
-{
-    ApplicationCacheHost* cacheHost = applicationCacheHost();
-    if (!cacheHost)
-        return false;
-    return cacheHost->swapCache();
-}
-    
 void DOMApplicationCache::swapCache(ExceptionCode& ec)
 {
-    if (!swapCache())
+    ApplicationCacheHost* cacheHost = applicationCacheHost();
+    if (!cacheHost || !cacheHost->swapCache())
         ec = INVALID_STATE_ERR;
 }
 
 ScriptExecutionContext* DOMApplicationCache::scriptExecutionContext() const
 {
+    ASSERT(m_frame);
     return m_frame->document();
 }
 
@@ -208,7 +204,6 @@ ApplicationCacheHost::EventID DOMApplicationCache::toEventID(const AtomicString&
     ASSERT_NOT_REACHED();
     return ApplicationCacheHost::ERROR_EVENT;
 }
-
 
 } // namespace WebCore
 

@@ -528,7 +528,7 @@ Console* DOMWindow::console() const
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
 DOMApplicationCache* DOMWindow::applicationCache() const
 {
-    if (!m_applicationCache && m_frame && m_frame->settings() && m_frame->settings()->offlineWebApplicationCacheEnabled())
+    if (!m_applicationCache)
         m_applicationCache = DOMApplicationCache::create(m_frame);
     return m_applicationCache.get();
 }

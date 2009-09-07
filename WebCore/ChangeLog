@@ -1,3 +1,23 @@
+2009-09-07  Michael Nordman  <michaeln@google.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28359
+        Cleanup: Undo some accidental changes around DOMApplicationCache.
+        - Restore support for constructing a DOMApplicationCache object with a null frame ptr.
+        - Return a non-null object for window.applicationCache when the feature is disabled.
+        - Simplify the swapCache method.
+
+        Test: http/tests/appcache/disabled.html
+
+        * loader/appcache/DOMApplicationCache.cpp:
+        (WebCore::DOMApplicationCache::DOMApplicationCache):
+        (WebCore::DOMApplicationCache::swapCache):
+        (WebCore::DOMApplicationCache::scriptExecutionContext):
+        * loader/appcache/DOMApplicationCache.h:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::applicationCache):
+
 2009-09-06  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Darin Adler.

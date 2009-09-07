@@ -1,0 +1,51 @@
+<html>
+<body>
+<p>Test to ensure the the window.applicationCache attribute is defined but non-functional with the feature disabled.</p>
+<div id=result></div>
+<script>
+    if (window.layoutTestController) {
+        layoutTestController.overridePreference("WebKitOfflineWebApplicationCacheEnabled", false);
+        layoutTestController.dumpAsText();
+    }
+
+    function log(message)
+    {
+        document.getElementById("result").innerHTML += message + "<br>";
+    }
+
+    function isDefined() {
+        if (window.applicationCache)
+            return true;
+        else
+            return false;
+    }
+
+    function statusIsUncached() {
+        return applicationCache.status == 0;
+    }
+
+    function swapThrows() {
+        try {
+            applicationCache.swapCache();
+            return false;
+        } catch(e) {
+            return true;
+        }
+    }
+
+    function updateThrows() {
+        try {
+            applicationCache.swapCache();
+            return false;
+        } catch(e) {
+            return true;
+        }
+    }
+
+    if (isDefined() && statusIsUncached() && swapThrows() && updateThrows())
+        log("SUCCESS");
+    else
+        log("FAILURE");
+</script>
+</body>
+</html>
