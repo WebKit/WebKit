@@ -1,3 +1,9 @@
+2009-09-06  Ada Chan  <adachan@apple.com>
+
+        Remove an extra </File> in WebCore.vcproj.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
 2009-09-06  Timothy Hatcher  <timothy@apple.com>
 
         Adds a persistent setting for color format in the Web Inspector.
