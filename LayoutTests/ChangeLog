@@ -1,5 +1,36 @@
 2009-09-07  Drew Wilson  <atwilson@google.com>
 
+        Reviewed by David Levin.
+
+        Enable shared worker tests.
+        https://bugs.webkit.org/show_bug.cgi?id=28977
+
+        Just moved tests from shared-worker-xxxx.html-disabled to shared-worker-xxxx.html. No other changes.
+
+        * fast/workers/shared-worker-constructor.html: Renamed from LayoutTests/fast/workers/shared-worker-constructor.html-disabled.
+        * fast/workers/shared-worker-context-gc.html: Renamed from LayoutTests/fast/workers/shared-worker-context-gc.html-disabled.
+        * fast/workers/shared-worker-event-listener.html: Renamed from LayoutTests/fast/workers/shared-worker-event-listener.html-disabled.
+        * fast/workers/shared-worker-exception.html: Renamed from LayoutTests/fast/workers/shared-worker-exception.html-disabled.
+        * fast/workers/shared-worker-frame-lifecycle.html: Renamed from LayoutTests/fast/workers/shared-worker-frame-lifecycle.html-disabled.
+        * fast/workers/shared-worker-gc.html: Renamed from LayoutTests/fast/workers/shared-worker-gc.html-disabled.
+        * fast/workers/shared-worker-lifecycle.html: Renamed from LayoutTests/fast/workers/shared-worker-lifecycle.html-disabled.
+        * fast/workers/shared-worker-load-error.html: Renamed from LayoutTests/fast/workers/shared-worker-load-error.html-disabled.
+        * fast/workers/shared-worker-location.html: Renamed from LayoutTests/fast/workers/shared-worker-location.html-disabled.
+        * fast/workers/shared-worker-navigator.html: Renamed from LayoutTests/fast/workers/shared-worker-navigator.html-disabled.
+        * fast/workers/shared-worker-replace-global-constructor.html: Renamed from LayoutTests/fast/workers/shared-worker-replace-global-constructor.html-disabled.
+        * fast/workers/shared-worker-replace-self.html: Renamed from LayoutTests/fast/workers/shared-worker-replace-self.html-disabled.
+        * fast/workers/shared-worker-script-error.html: Renamed from LayoutTests/fast/workers/shared-worker-script-error.html-disabled.
+        * fast/workers/shared-worker-shared.html: Renamed from LayoutTests/fast/workers/shared-worker-shared.html-disabled.
+        * fast/workers/shared-worker-simple.html: Renamed from LayoutTests/fast/workers/shared-worker-simple.html-disabled.
+        * http/tests/workers/shared-worker-importScripts.html: Renamed from LayoutTests/http/tests/workers/shared-worker-importScripts.html-disabled.
+        * http/tests/workers/shared-worker-redirect.html: Renamed from LayoutTests/http/tests/workers/shared-worker-redirect.html-disabled.
+        * http/tests/xmlhttprequest/workers/shared-worker-close.html: Renamed from LayoutTests/http/tests/xmlhttprequest/workers/shared-worker-close.html-disabled.
+        * http/tests/xmlhttprequest/workers/shared-worker-methods-async.html: Renamed from LayoutTests/http/tests/xmlhttprequest/workers/shared-worker-methods-async.html-disabled.
+        * http/tests/xmlhttprequest/workers/shared-worker-methods.html: Renamed from LayoutTests/http/tests/xmlhttprequest/workers/shared-worker-methods.html-disabled.
+        * http/tests/xmlhttprequest/workers/shared-worker-xhr-file-not-found.html: Renamed from LayoutTests/http/tests/xmlhttprequest/workers/shared-worker-xhr-file-not-found.html-disabled.
+
+2009-09-07  Drew Wilson  <atwilson@google.com>
+
         Unreviewed build fix.
 
         Reverting r48121 to fix Windows build errors.
