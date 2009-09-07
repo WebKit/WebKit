@@ -3058,6 +3058,7 @@ fast/parser/style-script-head-test.html
 fast/parser/tabs-in-scripts.html
 fast/parser/title-error-test.html
 fast/parser/xhtml-alternate-entities.xml
+fast/reflections/abs-position-in-reflection.html
 fast/reflections/inline-crash.html
 fast/reflections/reflection-direction.html
 fast/reflections/reflection-masks-opacity.html
@@ -5771,6 +5772,9 @@ fast/events/prevent-drag-to-navigate.html
 fast/events/keydown-function-keys.html
 fast/forms/search-delete-while-cancel-button-clicked.html
 fast/forms/slider-delete-while-dragging-thumb.html
+fast/events/click-focus-anchor.html
+fast/events/tab-focus-anchor.html
+fast/events/tab-focus-hidden.html
 http/tests/local/drag-over-remote-content.html
 http/tests/security/drag-over-remote-content-iframe.html
 http/tests/security/clipboard/clipboard-file-access.html
@@ -5908,3 +5912,4 @@ fast/forms/form-data-encoding-normalization-overrun.html
 fast/forms/missing-action.html
 fast/forms/submit-nil-value-field-assert.html
 fast/forms/form-post-urlencoded.html
+http/tests/navigation/back-send-referrer.html

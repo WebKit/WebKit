@@ -1,5 +1,12 @@
 2009-09-07  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
+        Skipping one more test affected by the libsoup issue, a new test,
+        and tests that require eventSender.
+
+        * platform/gtk/Skipped:
+
+2009-09-07  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
         Unreviewed. Skipping tests that are failing because of a libsoup
         problem. Bug reported.
 
