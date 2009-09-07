@@ -1,3 +1,44 @@
+2009-09-07  Jakub Wieczorek  <faw217@gmail.com>
+
+        Reviewed by Simon Hausmann.
+
+        Remove the private classes from QWebPluginDatabase.
+        https://bugs.webkit.org/show_bug.cgi?id=27651
+
+        Instead, hold the PluginDatabase and PluginPackage objects as class
+        members and take care of refcounting on our own instead of using RefPtr.
+
+        This way we not only made the code cleaner but also got rid of
+        redundant allocations when constructing null QWebPluginInfo objects.
+
+        The private classes have been forward-declared and the d-pointers left
+        to be on the safe side.
+
+        * Api/qwebplugindatabase.cpp:
+        (QWebPluginInfo::QWebPluginInfo):
+        (QWebPluginInfo::~QWebPluginInfo):
+        (QWebPluginInfo::name):
+        (QWebPluginInfo::description):
+        (QWebPluginInfo::mimeTypes):
+        (QWebPluginInfo::path):
+        (QWebPluginInfo::isNull):
+        (QWebPluginInfo::setEnabled):
+        (QWebPluginInfo::isEnabled):
+        (QWebPluginInfo::operator==):
+        (QWebPluginInfo::operator!=):
+        (QWebPluginInfo::operator=):
+        (QWebPluginDatabase::QWebPluginDatabase):
+        (QWebPluginDatabase::~QWebPluginDatabase):
+        (QWebPluginDatabase::plugins):
+        (QWebPluginDatabase::searchPaths):
+        (QWebPluginDatabase::setSearchPaths):
+        (QWebPluginDatabase::addSearchPath):
+        (QWebPluginDatabase::refresh):
+        (QWebPluginDatabase::pluginForMimeType):
+        (QWebPluginDatabase::setPreferredPluginForMimeType):
+        * Api/qwebplugindatabase.h:
+        * Api/qwebplugindatabase_p.h: Removed.
+
 2009-09-05  Jakub Wieczorek  <faw217@gmail.com>
 
         Reviewed by Eric Seidel.
