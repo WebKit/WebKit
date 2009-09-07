@@ -37,9 +37,9 @@
 #include <QUrl>
 #include <QEvent>
 
-#include <Phonon/AudioOutput>
-#include <Phonon/MediaObject>
-#include <Phonon/VideoWidget>
+#include <audiooutput.h>
+#include <mediaobject.h>
+#include <videowidget.h>
 
 using namespace Phonon;
 
