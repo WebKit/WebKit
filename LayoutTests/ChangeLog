@@ -1,3 +1,11 @@
+2009-09-07 Andras Becsi <becsi.andras@stud.u-szeged.hu>
+
+        Reviewed by Tor Arne Vestbø
+
+        [Qt] Disable a few tests that require missing controller features
+
+        * platform/qt/Skipped:
+
 2009-09-07  Michael Nordman  <michaeln@google.com>
 
         Reviewed by Alexey Proskuryakov.
