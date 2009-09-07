@@ -1,3 +1,15 @@
+2009-09-06  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        hostname and host are mixed up when manipulating anchor elements.
+        https://bugs.webkit.org/show_bug.cgi?id=28954
+
+        handle the case of port 0.
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::host):
+
 2009-09-06  Erik Arvidsson  <arv@chromium.org>
 
         Reviewed by Eric Seidel.

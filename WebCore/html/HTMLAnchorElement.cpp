@@ -346,7 +346,7 @@ String HTMLAnchorElement::hash() const
 String HTMLAnchorElement::host() const
 {
     const KURL& url = href();
-    if (url.port() == 0)
+    if (url.hostEnd() == url.pathStart())
         return url.host();
     if (SecurityOrigin::isDefaultPortForProtocol(url.port(), url.protocol()))
         return url.host();
