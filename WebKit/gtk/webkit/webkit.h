@@ -25,6 +25,7 @@
 #include <webkit/webkitdefines.h>
 #include <webkit/webkitdownload.h>
 #include <webkit/webkitnetworkrequest.h>
+#include <webkit/webkitnetworkresponse.h>
 #include <webkit/webkitsoupauthdialog.h>
 #include <webkit/webkitwebdatasource.h>
 #include <webkit/webkitwebframe.h>

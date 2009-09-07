@@ -44,6 +44,9 @@ G_BEGIN_DECLS
 typedef struct _WebKitNetworkRequest WebKitNetworkRequest;
 typedef struct _WebKitNetworkRequestClass WebKitNetworkRequestClass;
 
+typedef struct _WebKitNetworkResponse WebKitNetworkResponse;
+typedef struct _WebKitNetworkResponseClass WebKitNetworkResponseClass;
+
 typedef struct _WebKitWebBackForwardList WebKitWebBackForwardList;
 typedef struct _WebKitWebBackForwardListClass WebKitWebBackForwardListClass;
 

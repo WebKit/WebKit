@@ -28,16 +28,6 @@
 
 #include <glib/gi18n-lib.h>
 
-namespace WTF {
-
-template <> void freeOwnedGPtr<SoupMessage>(SoupMessage* soupMessage)
-{
-    if (soupMessage)
-        g_object_unref(soupMessage);
-}
-
-}
-
 /**
  * SECTION:webkitnetworkrequest
  * @short_description: The target of a navigation request

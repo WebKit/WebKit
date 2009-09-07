@@ -25,11 +25,13 @@
  */
 
 #include "config.h"
+#include "webkitwebview.h"
 
 #include "webkitdownload.h"
-#include "webkitwebview.h"
 #include "webkitenumtypes.h"
 #include "webkitmarshal.h"
+#include "webkitnetworkrequest.h"
+#include "webkitnetworkresponse.h"
 #include "webkitprivate.h"
 #include "webkitwebinspector.h"
 #include "webkitwebbackforwardlist.h"
@@ -145,6 +147,7 @@ enum {
     UNDO,
     REDO,
     DATABASE_QUOTA_EXCEEDED,
+    RESOURCE_REQUEST_STARTING,
     LAST_SIGNAL
 };
 
@@ -1974,6 +1977,47 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             webkit_marshal_VOID__OBJECT_OBJECT,
             G_TYPE_NONE, 2,
             G_TYPE_OBJECT, G_TYPE_OBJECT);
+
+    /**
+     * WebKitWebView::resource-request-starting:
+     * @web_view: the object which received the signal
+     * @web_frame: the #WebKitWebFrame whose load dispatched this request
+     * @web_resource: an empty #WebKitWebResource object
+     * @request: the #WebKitNetworkRequest that will be dispatched
+     * @response: the #WebKitNetworkResponse representing the redirect
+     * response, if any
+     *
+     * Emitted when a request is about to be sent. You can modify the
+     * request while handling this signal. You can set the URI in the
+     * #WebKitNetworkRequest object itself, and add/remove/replace
+     * headers using the #SoupMessage object it carries, if it is
+     * present. See webkit_network_request_get_message(). Setting the
+     * request URI to "about:blank" will effectively cause the request
+     * to load nothing, and can be used to disable the loading of
+     * specific resources.
+     *
+     * Notice that information about an eventual redirect is available
+     * in @response's #SoupMessage, not in the #SoupMessage carried by
+     * the @request. If @response is %NULL, then this is not a
+     * redirected request.
+     *
+     * The #WebKitWebResource object will be the same throughout all
+     * the lifetime of the resource, but the contents may change from
+     * inbetween signal emissions.
+     *
+     * Since: 1.1.14
+     */
+    webkit_web_view_signals[RESOURCE_REQUEST_STARTING] = g_signal_new("resource-request-starting",
+            G_TYPE_FROM_CLASS(webViewClass),
+            (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
+            0,
+            NULL, NULL,
+            webkit_marshal_VOID__OBJECT_OBJECT_OBJECT_OBJECT,
+            G_TYPE_NONE, 4,
+            WEBKIT_TYPE_WEB_FRAME,
+            WEBKIT_TYPE_WEB_RESOURCE,
+            WEBKIT_TYPE_NETWORK_REQUEST,
+            WEBKIT_TYPE_NETWORK_RESPONSE);
 
     /*
      * implementations of virtual methods

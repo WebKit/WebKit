@@ -87,6 +87,49 @@ static void test_webkit_web_resource_get_frame_name(WebResourceFixture* fixture,
     g_free(frame_name);
 }
 
+static void resource_request_starting_cb(WebKitWebView* web_view, WebKitWebFrame* web_frame, WebKitWebResource* web_resource, WebKitNetworkRequest* request, WebKitNetworkResponse* response, gpointer data)
+{
+    gboolean* been_there = data;
+    *been_there = TRUE;
+
+    g_assert_cmpstr(webkit_web_resource_get_uri(web_resource), ==, "http://gnome.org/");
+
+    /* Cancel the request. */
+    webkit_network_request_set_uri(request, "about:blank");
+}
+
+static void load_finished_cb(WebKitWebView* web_view, WebKitWebFrame* web_frame, gpointer data)
+{
+    gboolean* been_there = data;
+    *been_there = TRUE;
+
+    g_assert_cmpstr(webkit_web_view_get_uri(web_view), ==, "about:blank");
+}
+
+static void test_web_resource_loading()
+{
+    WebKitWebView* web_view = WEBKIT_WEB_VIEW(webkit_web_view_new());
+    gboolean been_to_resource_request_starting = FALSE;
+    gboolean been_to_load_finished = FALSE;
+
+    g_object_ref_sink(web_view);
+
+    g_signal_connect(web_view, "resource-request-starting",
+                     G_CALLBACK(resource_request_starting_cb),
+                     &been_to_resource_request_starting);
+
+    g_signal_connect(web_view, "load-finished",
+                     G_CALLBACK(load_finished_cb),
+                     &been_to_load_finished);
+
+    webkit_web_view_load_uri(web_view, "http://gnome.org/");
+
+    g_assert_cmpint(been_to_resource_request_starting, ==, TRUE);
+    g_assert_cmpint(been_to_load_finished, ==, TRUE);
+
+    g_object_unref(web_view);
+}
+
 int main(int argc, char** argv)
 {
     g_thread_init(NULL);
@@ -108,6 +151,9 @@ int main(int argc, char** argv)
     g_test_add("/webkit/webresource/get_data",
                WebResourceFixture, 0, web_resource_fixture_setup,
                test_webkit_web_resource_get_data, web_resource_fixture_teardown);
+
+    g_test_add_func("/webkit/webresource/loading", test_web_resource_loading);
+
     return g_test_run ();
 }
 

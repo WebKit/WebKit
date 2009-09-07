@@ -27,6 +27,8 @@
 #include "KURL.h"
 #include "PlatformString.h"
 #include "SharedBuffer.h"
+#include "webkitenumtypes.h"
+#include "webkitmarshal.h"
 #include "wtf/Assertions.h"
 
 #include <glib.h>
@@ -56,6 +58,28 @@ enum {
 G_DEFINE_TYPE(WebKitWebResource, webkit_web_resource, G_TYPE_OBJECT);
 
 static void webkit_web_resource_get_property(GObject* object, guint prop_id, GValue* value, GParamSpec* pspec);
+static void webkit_web_resource_set_property(GObject* object, guint prop_id, const GValue* value, GParamSpec* pspec);
+
+static void webkit_web_resource_cleanup(WebKitWebResource* webResource)
+{
+    WebKitWebResourcePrivate* priv = webResource->priv;
+
+    g_free(priv->uri);
+    priv->uri = NULL;
+
+    g_free(priv->mimeType);
+    priv->mimeType = NULL;
+
+    g_free(priv->textEncoding);
+    priv->textEncoding = NULL;
+
+    g_free(priv->frameName);
+    priv->frameName = NULL;
+
+    if (priv->data)
+        g_string_free(priv->data, TRUE);
+    priv->data = NULL;
+}
 
 static void webkit_web_resource_dispose(GObject* object)
 {
@@ -73,15 +97,8 @@ static void webkit_web_resource_dispose(GObject* object)
 static void webkit_web_resource_finalize(GObject* object)
 {
     WebKitWebResource* webResource = WEBKIT_WEB_RESOURCE(object);
-    WebKitWebResourcePrivate* priv = webResource->priv;
 
-    g_free(priv->uri);
-    g_free(priv->mimeType);
-    g_free(priv->textEncoding);
-    g_free(priv->frameName);
-
-    if (priv->data)
-        g_string_free(priv->data, TRUE);
+    webkit_web_resource_cleanup(webResource);
 
     G_OBJECT_CLASS(webkit_web_resource_parent_class)->finalize(object);
 }
@@ -93,6 +110,7 @@ static void webkit_web_resource_class_init(WebKitWebResourceClass* klass)
     gobject_class->dispose = webkit_web_resource_dispose;
     gobject_class->finalize = webkit_web_resource_finalize;
     gobject_class->get_property = webkit_web_resource_get_property;
+    gobject_class->set_property = webkit_web_resource_set_property;
 
     /**
      * WebKitWebResource:uri:
@@ -108,7 +126,7 @@ static void webkit_web_resource_class_init(WebKitWebResourceClass* klass)
                                     _("URI"),
                                     _("The uri of the resource"),
                                     NULL,
-                                    WEBKIT_PARAM_READABLE));
+                                    (GParamFlags)(WEBKIT_PARAM_READWRITE|G_PARAM_CONSTRUCT_ONLY)));
     /**
      * WebKitWebResource:mime-type:
      *
@@ -175,6 +193,21 @@ static void webkit_web_resource_get_property(GObject* object, guint prop_id, GVa
         break;
     case PROP_FRAME_NAME:
         g_value_set_string(value, webkit_web_resource_get_frame_name(webResource));
+        break;
+    default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+        break;
+    }
+}
+
+static void webkit_web_resource_set_property(GObject* object, guint prop_id, const GValue* value, GParamSpec* pspec)
+{
+    WebKitWebResource* webResource = WEBKIT_WEB_RESOURCE(object);
+
+    switch (prop_id) {
+    case PROP_URI:
+        g_free(webResource->priv->uri);
+        webResource->priv->uri = g_value_dup_string(value);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -270,11 +303,17 @@ G_CONST_RETURN gchar* webkit_web_resource_get_uri(WebKitWebResource* webResource
     g_return_val_if_fail(WEBKIT_IS_WEB_RESOURCE(webResource), NULL);
 
     WebKitWebResourcePrivate* priv = webResource->priv;
+
+
+    // We may have an URI without having a resource assigned to us (e.g., if the
+    // FrameLoaderClient only had a ResourceRequest when we got created
+    if (priv->uri)
+        return priv->uri;
+
     if (!priv->resource)
         return NULL;
 
-    if (!priv->uri)
-        priv->uri = g_strdup(priv->resource->url().string().utf8().data());
+    priv->uri = g_strdup(priv->resource->url().string().utf8().data());
 
     return priv->uri;
 }
@@ -344,3 +383,4 @@ G_CONST_RETURN gchar* webkit_web_resource_get_frame_name(WebKitWebResource* webR
 
     return priv->frameName;
 }
+

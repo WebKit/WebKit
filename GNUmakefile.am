@@ -319,6 +319,7 @@ webkitgtk_h_api += \
 	$(srcdir)/WebKit/gtk/webkit/webkitdownload.h \
 	$(srcdir)/WebKit/gtk/webkit/webkiterror.h \
 	$(srcdir)/WebKit/gtk/webkit/webkitnetworkrequest.h \
+	$(srcdir)/WebKit/gtk/webkit/webkitnetworkresponse.h \
 	$(srcdir)/WebKit/gtk/webkit/webkitsoupauthdialog.h \
 	$(srcdir)/WebKit/gtk/webkit/webkitwebbackforwardlist.h \
 	$(srcdir)/WebKit/gtk/webkit/webkitwebdatasource.h \
@@ -362,6 +363,7 @@ webkitgtk_sources += \
 	WebKit/gtk/webkit/webkitdownload.cpp \
 	WebKit/gtk/webkit/webkiterror.cpp \
 	WebKit/gtk/webkit/webkitnetworkrequest.cpp \
+	WebKit/gtk/webkit/webkitnetworkresponse.cpp \
 	WebKit/gtk/webkit/webkitprivate.cpp \
 	WebKit/gtk/webkit/webkitprivate.h \
 	WebKit/gtk/webkit/webkitsoupauthdialog.c \
@@ -531,6 +533,7 @@ webkit_tests_ldflags = \
 TEST_PROGS += Programs/unittests/testhttpbackend \
 	Programs/unittests/testloading \
 	Programs/unittests/testnetworkrequest \
+	Programs/unittests/testnetworkresponse \
 	Programs/unittests/testwebframe \
 	Programs/unittests/testwebbackforwardlist \
 	Programs/unittests/testwebhistoryitem \
@@ -556,6 +559,11 @@ Programs_unittests_testnetworkrequest_SOURCES = WebKit/gtk/tests/testnetworkrequ
 Programs_unittests_testnetworkrequest_CFLAGS = $(webkit_tests_cflags)
 Programs_unittests_testnetworkrequest_LDADD = $(webkit_tests_ldadd)
 Programs_unittests_testnetworkrequest_LDFLAGS = $(webkit_tests_ldflags)
+
+Programs_unittests_testnetworkresponse_SOURCES = WebKit/gtk/tests/testnetworkresponse.c
+Programs_unittests_testnetworkresponse_CFLAGS = $(webkit_tests_cflags)
+Programs_unittests_testnetworkresponse_LDADD = $(webkit_tests_ldadd)
+Programs_unittests_testnetworkresponse_LDFLAGS = $(webkit_tests_ldflags)
 
 Programs_unittests_testwebframe_SOURCES = WebKit/gtk/tests/testwebframe.c
 Programs_unittests_testwebframe_CFLAGS = $(webkit_tests_cflags)

@@ -23,6 +23,7 @@
 #include "config.h"
 #include "FrameLoaderClientGtk.h"
 
+#include "ArchiveResource.h"
 #include "Color.h"
 #include "DocumentLoader.h"
 #include "DocumentLoaderGtk.h"
@@ -54,6 +55,7 @@
 #include "ScriptController.h"
 #include "webkiterror.h"
 #include "webkitnetworkrequest.h"
+#include "webkitnetworkresponse.h"
 #include "webkitprivate.h"
 #include "webkitwebframe.h"
 #include "webkitwebnavigationaction.h"
@@ -183,11 +185,32 @@ void FrameLoaderClient::dispatchDidCancelAuthenticationChallenge(WebCore::Docume
 
 void FrameLoaderClient::dispatchWillSendRequest(WebCore::DocumentLoader* loader, unsigned long identifier, ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
+    GOwnPtr<WebKitNetworkResponse> networkResponse(0);
+
+    // We are adding one more resource to the load, or maybe we are
+    // just redirecting a load.
     if (redirectResponse.isNull())
         static_cast<WebKit::DocumentLoader*>(loader)->increaseLoadCount(identifier);
+    else
+        networkResponse.set(webkit_network_response_new_with_core_response(redirectResponse));
+
+    WebKitWebView* webView = getViewFromFrame(m_frame);
+    GOwnPtr<WebKitWebResource> webResource(WEBKIT_WEB_RESOURCE(g_object_new(WEBKIT_TYPE_WEB_RESOURCE, "uri", request.url().string().utf8().data(), 0)));
+    GOwnPtr<WebKitNetworkRequest> networkRequest(webkit_network_request_new_with_core_request(request));
+
+    g_signal_emit_by_name(webView, "resource-request-starting", m_frame, webResource.get(), networkRequest.get(), networkResponse.get());
+
+    // Feed any changes back into the ResourceRequest object.
+    SoupMessage* message = webkit_network_request_get_message(networkRequest.get());
+    if (!message) {
+        request.setURL(KURL(KURL(), String::fromUTF8(webkit_network_request_get_uri(networkRequest.get()))));
+        return;
+    }
+
+    request.updateFromSoupMessage(message);
 }
 
-void FrameLoaderClient::assignIdentifierToInitialRequest(unsigned long identifier, WebCore::DocumentLoader*, const ResourceRequest&)
+void FrameLoaderClient::assignIdentifierToInitialRequest(unsigned long, WebCore::DocumentLoader*, const ResourceRequest&)
 {
     notImplemented();
 }
@@ -800,13 +823,21 @@ void FrameLoaderClient::dispatchDidReceiveContentLength(WebCore::DocumentLoader*
 void FrameLoaderClient::dispatchDidFinishLoading(WebCore::DocumentLoader* loader, unsigned long identifier)
 {
     static_cast<WebKit::DocumentLoader*>(loader)->decreaseLoadCount(identifier);
+
+    // FIXME: This function should notify the application that the resource
+    // finished loading, maybe using a load-status property in the
+    // WebKitWebResource object, similar to what we do for WebKitWebFrame'
+    // signal.
+    notImplemented();
 }
 
 void FrameLoaderClient::dispatchDidFailLoading(WebCore::DocumentLoader* loader, unsigned long identifier, const ResourceError& error)
 {
-    // FIXME: when does this occur and what should happen?
-
     static_cast<WebKit::DocumentLoader*>(loader)->decreaseLoadCount(identifier);
+
+    // FIXME: This function should notify the application that the resource failed
+    // loading, maybe a 'load-error' signal in the WebKitWebResource object.
+    notImplemented();
 }
 
 void FrameLoaderClient::dispatchDidLoadResourceByXMLHttpRequest(unsigned long, const ScriptString&)
