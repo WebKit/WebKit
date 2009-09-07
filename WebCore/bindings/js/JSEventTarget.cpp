@@ -78,11 +78,6 @@
 #include "Notification.h"
 #endif
 
-#if ENABLE(WEB_SOCKETS)
-#include "JSWebSocket.h"
-#include "WebSocket.h"
-#endif
-
 using namespace JSC;
 
 namespace WebCore {
@@ -144,11 +139,6 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, EventTarget* targ
         return toJS(exec, notification);
 #endif
 
-#if ENABLE(WEB_SOCKETS)
-    if (WebSocket* webSocket = target->toWebSocket())
-        return toJS(exec, webSocket);
-#endif
-
     ASSERT_NOT_REACHED();
     return jsNull();
 }
@@ -191,10 +181,6 @@ EventTarget* toEventTarget(JSC::JSValue value)
 
 #if ENABLE(NOTIFICATIONS)
     CONVERT_TO_EVENT_TARGET(Notification)
-#endif
-
-#if ENABLE(WEB_SOCKETS)
-    CONVERT_TO_EVENT_TARGET(WebSocket)
 #endif
 
     return 0;

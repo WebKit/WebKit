@@ -1,5 +1,53 @@
 2009-09-07  Drew Wilson  <atwilson@google.com>
 
+        Unreviewed build fix.
+
+        Reverting r48121 to fix Windows build errors.
+
+        * DerivedSources.cpp:
+        * GNUmakefile.am:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        * bindings/js/JSEventTarget.cpp:
+        (WebCore::toJS):
+        (WebCore::toEventTarget):
+        * dom/EventTarget.cpp:
+        * dom/EventTarget.h:
+        * page/DOMWindow.idl:
+        * websockets/WebSocket.cpp:
+        (WebCore::WebSocket::connect):
+        (WebCore::WebSocket::send):
+        (WebCore::WebSocket::close):
+        (WebCore::WebSocket::bufferedAmount):
+        (WebCore::WebSocket::addEventListener):
+        (WebCore::WebSocket::removeEventListener):
+        (WebCore::WebSocket::dispatchEvent):
+        (WebCore::WebSocket::didConnect):
+        (WebCore::WebSocket::didReceiveMessage):
+        (WebCore::WebSocket::didClose):
+        (WebCore::WebSocket::dispatchOpenEvent):
+        (WebCore::WebSocket::dispatchMessageEvent):
+        (WebCore::WebSocket::dispatchCloseEvent):
+        * websockets/WebSocket.h:
+        (WebCore::WebSocket::create):
+        (WebCore::WebSocket::):
+        (WebCore::WebSocket::setOnopen):
+        (WebCore::WebSocket::onopen):
+        (WebCore::WebSocket::setOnmessage):
+        (WebCore::WebSocket::onmessage):
+        (WebCore::WebSocket::setOnclose):
+        (WebCore::WebSocket::onclose):
+        (WebCore::WebSocket::toWebSocket):
+        (WebCore::WebSocket::refEventTarget):
+        (WebCore::WebSocket::derefEventTarget):
+        * websockets/WebSocketChannel.cpp: Removed.
+        * websockets/WebSocketChannel.h: Removed.
+        * websockets/WebSocketChannelClient.h: Removed.
+        * websockets/WebSocketHandshake.cpp: Removed.
+        * websockets/WebSocketHandshake.h: Removed.
+
+2009-09-07  Drew Wilson  <atwilson@google.com>
+
         Unreviewed speculative build fix.
 
         Reverted previous build fix as it didn't fix the problem.

@@ -341,7 +341,6 @@
 #include "JSWebKitCSSMatrix.cpp"
 #include "JSWebKitPoint.cpp"
 #include "JSWebKitTransitionEvent.cpp"
-#include "JSWebSocket.cpp"
 #include "JSWheelEvent.cpp"
 #include "JSWorker.cpp"
 #include "JSWorkerContext.cpp"

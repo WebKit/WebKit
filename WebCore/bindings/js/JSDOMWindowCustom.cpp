@@ -54,9 +54,6 @@
 
 #include "JSWebKitCSSMatrixConstructor.h"
 #include "JSWebKitPointConstructor.h"
-#if ENABLE(WEB_SOCKETS)
-#include "JSWebSocketConstructor.h"
-#endif
 #include "JSWorkerConstructor.h"
 #include "JSXMLHttpRequestConstructor.h"
 #include "JSXSLTProcessorConstructor.h"
@@ -646,13 +643,6 @@ JSValue JSDOMWindow::worker(ExecState* exec) const
 JSValue JSDOMWindow::sharedWorker(ExecState* exec) const
 {
     return getDOMConstructor<JSSharedWorkerConstructor>(exec, this);
-}
-#endif
-
-#if ENABLE(WEB_SOCKETS)
-JSValue JSDOMWindow::webSocket(ExecState* exec) const
-{
-    return getDOMConstructor<JSWebSocketConstructor>(exec, this);
 }
 #endif
 

@@ -1,5 +1,11 @@
 2009-09-07  Drew Wilson  <atwilson@google.com>
 
+        Reverting r48121 to fix Windows build errors.
+
+        * JavaScriptCore.exp:
+
+2009-09-07  Drew Wilson  <atwilson@google.com>
+
         Reviewed by David Levin.
 
         Enable SHARED_WORKERS by default

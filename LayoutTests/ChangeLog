@@ -1,5 +1,16 @@
 2009-09-07  Drew Wilson  <atwilson@google.com>
 
+        Unreviewed build fix.
+
+        Reverting r48121 to fix Windows build errors.
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/dom/prototype-inheritance-2-expected.txt:
+        * fast/dom/prototype-inheritance-expected.txt:
+        * fast/js/global-constructors-expected.txt:
+
+2009-09-07  Drew Wilson  <atwilson@google.com>
+
         Reviewed by David Levin.
 
         Enable SHARED_WORKERS by default
@@ -63,7 +74,7 @@
 
 2009-09-07 Andras Becsi <becsi.andras@stud.u-szeged.hu>
 
-        Reviewed by Tor Arne Vestbø
+        Reviewed by Tor Arne VestbÃ¸
 
         [Qt] Disable a few tests that require missing controller features
 
@@ -221,7 +232,7 @@
         * fast/dom/DOMImplementation/detached-doctype-expected.txt: Added.
         * fast/dom/DOMImplementation/detached-doctype.html: Added.
 
-2009-09-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+2009-09-04  Tor Arne VestbÃ¸  <tor.arne.vestbo@nokia.com>
 
         Rubber-stamped by Simon Hausmann.
 
@@ -229,7 +240,7 @@
 
         * platform/qt/Skipped:
 
-2009-09-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+2009-09-04  Tor Arne VestbÃ¸  <tor.arne.vestbo@nokia.com>
 
         Rubber-stamped by Simon Hausmann.
 
@@ -493,7 +504,7 @@
         * platform/qt/css2.1/t1202-counters-17-d-expected.txt:
         * platform/qt/css2.1/t1202-counters-18-f-expected.txt:
 
-2009-09-03  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+2009-09-03  Tor Arne VestbÃ¸  <tor.arne.vestbo@nokia.com>
 
         Rubber-stamped by Ariya Hidayat.
 
@@ -505,7 +516,7 @@
 
         * platform/qt/Skipped:
 
-2009-09-03  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+2009-09-03  Tor Arne VestbÃ¸  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Ariya Hidayat.
 
@@ -513,7 +524,7 @@
 
         * platform/qt/Skipped:
 
-2009-09-03  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+2009-09-03  Tor Arne VestbÃ¸  <tor.arne.vestbo@nokia.com>
 
         Rubber-stamped by Simon Hausmann.
 
@@ -619,7 +630,7 @@
         * storage/execute-sql-args-expected.txt:
         * storage/execute-sql-args.html:
 
-2009-09-01  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+2009-09-01  Tor Arne VestbÃ¸  <tor.arne.vestbo@nokia.com>
 
         Rubber-stamped by Simon Hausmann.
 
@@ -3595,7 +3606,7 @@
 
 2009-08-14  Ariya Hidayat  <ariya.hidayat@nokia.com>
 
-        Rubber-stamped by Tor Arne Vestbø.
+        Rubber-stamped by Tor Arne VestbÃ¸.
 
         [Qt] Add test result after r47255.
 
@@ -3604,7 +3615,7 @@
 
 2009-08-14  Ariya Hidayat  <ariya.hidayat@nokia.com>
 
-        Reviewed by Tor Arne Vestbø.
+        Reviewed by Tor Arne VestbÃ¸.
 
         [Qt] Update test result after r47255.
         Also while I am at it, add pixel test result.
@@ -5409,7 +5420,7 @@
 
 2009-08-04  Ariya Hidayat  <ariya.hidayat@nokia.com>
 
-        Reviewed by Tor Arne Vestbø.
+        Reviewed by Tor Arne VestbÃ¸.
 
         [Qt] Add pixel tests result.
 
@@ -6984,7 +6995,7 @@
 
 2009-07-23  Simon Hausmann  <simon.hausmann@nokia.com>
 
-        Reviewed by Tor Arne Vestbø.
+        Reviewed by Tor Arne VestbÃ¸.
 
         Rebaseline the Qt results for computed-style.html and
         computed-style-without-rendered.html after r46240, similar to r46252.
@@ -7216,7 +7227,7 @@
 
 2009-07-21  Simon Hausmann  <simon.hausmann@nokia.com>
 
-        Reviewed by Tor Arne Vestbø.
+        Reviewed by Tor Arne VestbÃ¸.
 
         Skip fast/loader/non-html-load-event.html for the Qt DRT as it requires
         support for loading PDF documents.
@@ -7859,7 +7870,7 @@
         * fast/js/resources/instanceof-operator-dummy-worker.js: Added.
         * fast/js/resources/instanceof-operator.js: Added.
 
-2009-07-15  Kai Brning  <kai@granus.net>
+2009-07-15  Kai BrÂning  <kai@granus.net>
 
         Reviewed by Dave Hyatt.
 
@@ -8951,7 +8962,7 @@
         * storage/database-lock-after-reload.html: Added.
         * storage/resources/database-lock-after-reload-2.html: Added.
 
-2009-07-08  Tor Arne VestbÃ¸  <tor.arne.vestbo@nokia.com>
+2009-07-08  Tor Arne VestbÃÂ¸  <tor.arne.vestbo@nokia.com>
 
         Rubber-stamped by Simon Hausmann.
 
