@@ -6,7 +6,7 @@ if (self.postMessage)
 function handleConnect(event)
 {
     // For shared workers, create a faux postMessage() API to send messages back to the parent page.
-    self.postMessage = function(message) { event.messagePort.postMessage(message); }
+    self.postMessage = function(message) { event.ports[0].postMessage(message); }
     runTests();
 }
 

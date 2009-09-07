@@ -4,8 +4,8 @@ if (self.postMessage) {
         init();
  } else {
     self.onconnect = function(event) {
-        self.postMessage = function(message) { event.messagePort.postMessage(message); };
-        event.messagePort.onmessage = function (evt) {
+        self.postMessage = function(message) { event.ports[0].postMessage(message); };
+        event.ports[0].onmessage = function (evt) {
             if (self.onmessage)
                 self.onmessage(evt);
         };

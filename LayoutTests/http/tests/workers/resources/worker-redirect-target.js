@@ -2,5 +2,5 @@
 if (self.postMessage)
     postMessage("Foo");
 else
-    self.onconnect = function(event) { event.messagePort.postMessage("Foo"); }
+    self.onconnect = function(event) { event.ports[0].postMessage("Foo"); }
 

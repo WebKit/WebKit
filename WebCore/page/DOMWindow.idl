@@ -74,7 +74,7 @@ module window {
                                 in DOMString name,
                                 in [Optional] DOMString options);
 
-        [Custom] DOMObject showModalDialog(in DOMString url, 
+        [Custom] DOMObject showModalDialog(in DOMString url,
                                            in [Optional] DOMObject dialogArgs,
                                            in [Optional] DOMString featureArgs);
 

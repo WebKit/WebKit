@@ -1,3 +1,38 @@
+2009-09-07  Drew Wilson  <atwilson@google.com>
+
+        Reviewed by David Levin.
+
+        Enable SHARED_WORKERS by default
+        https://bugs.webkit.org/show_bug.cgi?id=28959
+
+        Update test expectations to reflect the availability of the SharedWorker constructor.
+        Fixup bitrot in disabled tests - now reflects new MessagePort API.
+
+        * fast/dom/Window/window-properties-expected.txt:
+        Updated expectations now that window.SharedWorkers is defined.
+        * fast/dom/prototype-inheritance-2-expected.txt:
+        Updated expectations now that window.SharedWorkers is defined.
+        * fast/dom/prototype-inheritance-expected.txt:
+        Updated expectations now that window.SharedWorkers is defined.
+        * fast/workers/shared-worker-script-error-expected.txt
+        Updated expectations to reflect current (correct) behavior (unhandled exceptions are logged to console).
+        * fast/workers/shared-worker-script-error.html
+        Pauses before exiting the test to allow pending console errors to get emitted (makes test less flaky).
+        * fast/workers/resources/shared-worker-script-error.js
+        (onerror):
+        Now properly handles the exception (onerror function has to return false to swallow the exception).
+        * fast/js/global-constructors-expected.txt:
+        Updated expectations now that window.SharedWorkers is defined.
+        * http/tests/workers/resources/worker-importScripts.js:
+        Clean up bitrot in tests - MessageEvent.messagePort => MessageEvent.ports.
+        (handleConnect.self.postMessage):
+        (handleConnect):
+        * http/tests/workers/resources/worker-redirect-target.js:
+        Clean up bitrot in tests - MessageEvent.messagePort => MessageEvent.ports.
+        (self.onconnect):
+        * http/tests/xmlhttprequest/workers/resources/worker-pre.js:
+        Clean up bitrot in tests - MessageEvent.messagePort => MessageEvent.ports.
+
 2009-09-07  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Skipping one more test affected by the libsoup issue, a new test,

@@ -147,6 +147,7 @@ PASS SVGTextContentElement.toString() is '[object SVGTextContentElementConstruct
 PASS SVGTextPathElement.toString() is '[object SVGTextPathElementConstructor]'
 PASS SVGTransform.toString() is '[object SVGTransformConstructor]'
 PASS SVGUnitTypes.toString() is '[object SVGUnitTypesConstructor]'
+PASS SharedWorker.toString() is '[object SharedWorkerConstructor]'
 PASS Storage.toString() is '[object StorageConstructor]'
 PASS StorageEvent.toString() is '[object StorageEventConstructor]'
 PASS StyleSheet.toString() is '[object StyleSheetConstructor]'

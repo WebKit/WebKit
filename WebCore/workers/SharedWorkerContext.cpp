@@ -57,7 +57,9 @@ void SharedWorkerContext::dispatchConnect(PassRefPtr<MessagePort> port)
     // Since close() stops the thread event loop, this should not ever get called while closing.
     ASSERT(!isClosing());
     // The connect event uses the MessageEvent interface, but has the name "connect".
-    RefPtr<Event> event = MessageEvent::create("", "", "", 0, port);
+    OwnPtr<MessagePortArray> portArray(new MessagePortArray());
+    portArray->append(port);
+    RefPtr<Event> event = MessageEvent::create("", "", "", 0, portArray.release());
     event->initEvent(eventNames().connectEvent, false, false);
 
     if (m_onconnectListener.get()) {

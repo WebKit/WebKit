@@ -1,3 +1,12 @@
+2009-09-07  Drew Wilson  <atwilson@google.com>
+
+        Reviewed by David Levin.
+
+        Enable SHARED_WORKERS by default
+        https://bugs.webkit.org/show_bug.cgi?id=28959
+
+        * Scripts/build-webkit:
+
 2009-09-07  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fixes for wx SVN trunk.

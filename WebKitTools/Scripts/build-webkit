@@ -102,7 +102,7 @@ my @features = (
       define => "ENABLE_RUBY", default => 1, value => \$rubySupport },
 
     { option => "shared-workers", desc => "Toggle SharedWorkers support",
-      define => "ENABLE_SHARED_WORKERS", default => 0, value => \$sharedWorkersSupport },
+      define => "ENABLE_SHARED_WORKERS", default => (isAppleWebKit() || isGtk()), value => \$sharedWorkersSupport },
 
     { option => "svg", desc => "Toggle SVG support",
       define => "ENABLE_SVG", default => 1, value => \$svgSupport },

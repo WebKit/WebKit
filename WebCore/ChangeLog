@@ -1,3 +1,45 @@
+2009-09-07  Drew Wilson  <atwilson@google.com>
+
+        Reviewed by David Levin.
+
+        Enable SHARED_WORKERS by default.
+        https://bugs.webkit.org/show_bug.cgi?id=28959
+
+        Tests (enabled in a separate patch):
+               fast/workers/shared-worker-constructor.html
+               fast/workers/shared-worker-context-gc.html
+               fast/workers/shared-worker-event-listener.html
+               fast/workers/shared-worker-exception.html
+               fast/workers/shared-worker-frame-lifecycle.html
+               fast/workers/shared-worker-gc.html
+               fast/workers/shared-worker-lifecycle.html
+               fast/workers/shared-worker-load-error.html
+               fast/workers/shared-worker-location.html
+               fast/workers/shared-worker-navigator.html
+               fast/workers/shared-worker-replace-global-constructor.html
+               fast/workers/shared-worker-replace-self.html
+               fast/workers/shared-worker-shared.html
+               fast/workers/shared-worker-simple.html
+               http/tests/workers/shared-worker-importScripts.html
+               http/tests/workers/shared-worker-redirect.html
+               http/tests/xmlhttprequest/workers/shared-worker-close.html
+               http/tests/xmlhttprequest/workers/shared-worker-methods-async.html
+               http/tests/xmlhttprequest/workers/shared-worker-methods.html
+               http/tests/xmlhttprequest/workers/shared-worker-xhr-file-not-found.html
+
+        * config.h: Removed some whitespace/touched the file to force a full rebuild on the build-bots.
+        * Configurations/FeatureDefines.xcconfig:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCoreCommon.vsprops:
+        * WebCore.vcproj/build-generated-files.sh:
+        * dom/DOMWindow.idl: Removed unnecessary whitespace to force a rebuild on the build-bots to pickup the flag change.
+        * workers/DefaultSharedWorkerRepository.cpp:
+        (WebCore::SharedWorkerScriptLoader::load):
+        Clean up bitrot in SharedWorker code - DenyCrossOriginRedirect is now DenyCrossOriginRequests.
+        * workers/SharedWorkerContext.cpp:
+        (WebCore::SharedWorkerContext::dispatchConnect):
+        Clean up bitrot - updated SharedWorker code to reflect new MessageEvent API.
+
 2009-09-07  Xan Lopez  <xlopez@igalia.com>
 
         Unreviewed build fix.

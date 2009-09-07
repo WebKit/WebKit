@@ -299,6 +299,8 @@ PASS inner.SVGTransform.isInner is true
 PASS inner.SVGTransform.constructor.isInner is true
 PASS inner.SVGUnitTypes.isInner is true
 PASS inner.SVGUnitTypes.constructor.isInner is true
+PASS inner.SharedWorker.isInner is true
+PASS inner.SharedWorker.constructor.isInner is true
 PASS inner.Storage.isInner is true
 PASS inner.Storage.constructor.isInner is true
 PASS inner.StorageEvent.isInner is true

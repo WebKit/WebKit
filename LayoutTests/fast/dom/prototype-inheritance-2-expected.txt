@@ -357,6 +357,7 @@ Never found SVGTextContentElement
 Never found SVGTextPathElement
 Never found SVGTransform
 Never found SVGUnitTypes
+Never found SharedWorker
 Never found StyleSheet
 Never found TextMetrics
 Never found WebKitCSSMatrix

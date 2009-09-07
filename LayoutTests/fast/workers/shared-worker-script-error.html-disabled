@@ -25,8 +25,11 @@ function runNextTest()
         }
     } else {
         log("DONE");
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        // Wait briefly to make sure that any pending console messages get written out so they don't spill over into subsequent tests and cause failures.
+        setTimeout(function() {
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
+        }, 10);
     }
 }
 
