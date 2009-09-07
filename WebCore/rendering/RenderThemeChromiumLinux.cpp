@@ -46,6 +46,7 @@ PassRefPtr<RenderTheme> RenderTheme::themeForPage(Page* page)
 RenderThemeChromiumLinux::RenderThemeChromiumLinux()
     : m_useDefaultFocusRingColor(true)
 {
+    m_caretBlinkInterval = RenderTheme::caretBlinkInterval();
 }
 
 RenderThemeChromiumLinux::~RenderThemeChromiumLinux()
@@ -123,6 +124,16 @@ Color RenderThemeChromiumLinux::platformFocusRingColor() const
 bool RenderThemeChromiumLinux::supportsControlTints() const
 {
     return true;
+}
+
+void RenderThemeChromiumLinux::setCaretBlinkInterval(double interval)
+{
+    m_caretBlinkInterval = interval;
+}
+
+double RenderThemeChromiumLinux::caretBlinkIntervalInternal() const
+{
+    return m_caretBlinkInterval;
 }
 
 } // namespace WebCore

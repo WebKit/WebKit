@@ -1,3 +1,20 @@
+2009-09-06  Joel Stanley  <joel@jms.id.au>
+
+        Reviewed by Dimitri Glazkov.
+
+        Expose functions to set the caret blink interval for Linux Chromium.
+        Default value is set to that of RenderTheme::caretBlankInterval().
+        Uses caretBlinkIntervalInternal to avoid overriding
+        RenderThemeChromiumSkia::caretBlankInterval to preserve the disabling
+        of blinking caret required for layout tests.
+        https://bugs.webkit.org/show_bug.cgi?id=28931
+
+        * rendering/RenderThemeChromiumLinux.cpp:
+        (WebCore::RenderThemeChromiumLinux::RenderThemeChromiumLinux):
+        (WebCore::RenderThemeChromiumLinux::setCaretBlinkInterval):
+        (WebCore::RenderThemeChromiumLinux::caretBlinkIntervalInternal):
+        * rendering/RenderThemeChromiumLinux.h:
+
 2009-09-06  Ada Chan  <adachan@apple.com>
 
         Remove an extra </File> in WebCore.vcproj.
