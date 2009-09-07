@@ -1,5 +1,36 @@
 2009-09-07  Michael Nordman  <michaeln@google.com>
 
+        Reviewed by Darin Fisher.
+
+        Various minor chromium appcache modifications.
+        https://bugs.webkit.org/show_bug.cgi?id=28960
+
+        No new tests.
+
+        * bindings/v8/custom/V8DOMApplicationCacheCustom.cpp:
+          Fix a null pointer exception.
+        (WebCore::ACCESSOR_GETTER):
+        * platform/network/chromium/ResourceRequest.h:
+          Switch from appCache 'context' to 'host' terminology.
+          Note: leaving the old deprecated accessors in place until the matching
+          change in chrome is landed to use the new accessors.
+        (WebCore::ResourceRequest::ResourceRequest):
+        (WebCore::ResourceRequest::appCacheHostID):
+        (WebCore::ResourceRequest::setAppCacheHostID):
+        (WebCore::ResourceRequest::appCacheContextID):
+        (WebCore::ResourceRequest::setAppCacheContextID):
+        * platform/network/chromium/ResourceResponse.h:
+          Add an appCacheManifestURL getter/setter.
+          Drop the 'get' prefix from the appCacheID getter.
+          Note: leaving the old deprecated 'get' prefixed accessor in place until the matching
+          change in chrome is landed to use the new accessor.
+        (WebCore::ResourceResponse::appCacheID):
+        (WebCore::ResourceResponse::appCacheManifestURL):
+        (WebCore::ResourceResponse::setAppCacheManifestURL):
+        (WebCore::ResourceResponse::getAppCacheID):
+
+2009-09-07  Michael Nordman  <michaeln@google.com>
+
         Reviewed by Alexey Proskuryakov.
 
         https://bugs.webkit.org/show_bug.cgi?id=28359

@@ -49,7 +49,7 @@ namespace WebCore {
             : ResourceRequestBase(KURL(ParsedURLString, url), UseProtocolCachePolicy)
             , m_requestorID(0)
             , m_requestorProcessID(0)
-            , m_appCacheContextID(0)
+            , m_appCacheHostID(0)
             , m_targetType(TargetIsSubResource)
         {
         }
@@ -58,7 +58,7 @@ namespace WebCore {
             : ResourceRequestBase(url, UseProtocolCachePolicy)
             , m_requestorID(0)
             , m_requestorProcessID(0)
-            , m_appCacheContextID(0)
+            , m_appCacheHostID(0)
             , m_targetType(TargetIsSubResource)
             , m_securityInfo(securityInfo)
         {
@@ -68,7 +68,7 @@ namespace WebCore {
             : ResourceRequestBase(url, UseProtocolCachePolicy)
             , m_requestorID(0)
             , m_requestorProcessID(0)
-            , m_appCacheContextID(0)
+            , m_appCacheHostID(0)
             , m_targetType(TargetIsSubResource)
         {
         }
@@ -77,7 +77,7 @@ namespace WebCore {
             : ResourceRequestBase(url, policy)
             , m_requestorID(0)
             , m_requestorProcessID(0)
-            , m_appCacheContextID(0)
+            , m_appCacheHostID(0)
             , m_targetType(TargetIsSubResource)
         {
             setHTTPReferrer(referrer);
@@ -87,7 +87,7 @@ namespace WebCore {
             : ResourceRequestBase(KURL(), UseProtocolCachePolicy)
             , m_requestorID(0)
             , m_requestorProcessID(0)
-            , m_appCacheContextID(0)
+            , m_appCacheHostID(0)
             , m_targetType(TargetIsSubResource)
         {
         }
@@ -107,9 +107,9 @@ namespace WebCore {
         int requestorProcessID() const { return m_requestorProcessID; }
         void setRequestorProcessID(int requestorProcessID) { m_requestorProcessID = requestorProcessID; }
 
-        // Allows the request to be matched up with its app cache context.
-        int appCacheContextID() const { return m_appCacheContextID; }
-        void setAppCacheContextID(int id) { m_appCacheContextID = id; }
+        // Allows the request to be matched up with its app cache host.
+        int appCacheHostID() const { return m_appCacheHostID; }
+        void setAppCacheHostID(int id) { m_appCacheHostID = id; }
 
         // Opaque buffer that describes the security state (including SSL
         // connection state) for the resource that should be reported when the
@@ -120,6 +120,10 @@ namespace WebCore {
         CString securityInfo() const { return m_securityInfo; }
         void setSecurityInfo(const CString& value) { m_securityInfo = value; }
 
+        // DEPRECATED - use appCacheHostID() and setAppCacheHostID(id)
+        int appCacheContextID() const { return appCacheHostID(); }
+        void setAppCacheContextID(int id) { setAppCacheHostID(id); }
+
     private:
         friend class ResourceRequestBase;
 
@@ -128,7 +132,7 @@ namespace WebCore {
 
         int m_requestorID;
         int m_requestorProcessID;
-        int m_appCacheContextID;
+        int m_appCacheHostID;
         TargetType m_targetType;
         CString m_securityInfo;
     };
