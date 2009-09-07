@@ -1,3 +1,11 @@
+2009-09-07  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Unreviewed, build fix.
+
+        [Qt] Fix build after SHARED_WORKERS are enabled by default (r48131)
+
+        * WebCore.pro:
+
 2009-09-07  Drew Wilson  <atwilson@google.com>
 
         Unreviewed build fix.

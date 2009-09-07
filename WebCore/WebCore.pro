@@ -2608,7 +2608,7 @@ contains(DEFINES, ENABLE_WORKERS=1) {
         workers/WorkerScriptLoader.cpp
 }
 
-contains(DEFINES, SHARED_WORKERS=1) {
+contains(DEFINES, ENABLE_SHARED_WORKERS=1) {
     FEATURE_DEFINES_JAVASCRIPT += ENABLE_SHARED_WORKERS=1
 
     SOURCES += \
