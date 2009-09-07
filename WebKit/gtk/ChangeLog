@@ -1,5 +1,15 @@
 2009-09-07  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
+        Rubber-stamped by Xan Lopez.
+
+        Use g_return_if_fail to check for the SoupURI creation, instead of
+        printing a custom warning.
+
+        * webkit/webkitnetworkrequest.cpp:
+        (webkit_network_request_set_uri):
+
+2009-09-07  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
         Reviewed by Xan Lopez.
 
         https://bugs.webkit.org/show_bug.cgi?id=26854
