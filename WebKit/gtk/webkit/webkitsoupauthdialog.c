@@ -19,6 +19,8 @@
 
 #include "config.h"
 
+#define LIBSOUP_I_HAVE_READ_BUG_594377_AND_KNOW_SOUP_PASSWORD_MANAGER_MIGHT_GO_AWAY
+
 #include <glib/gi18n-lib.h>
 #include <gtk/gtk.h>
 #include <libsoup/soup.h>
@@ -98,6 +100,7 @@ static void free_authData(WebKitAuthData* authData)
     g_slice_free(WebKitAuthData, authData);
 }
 
+#ifdef SOUP_TYPE_PASSWORD_MANAGER
 static void save_password_callback(SoupMessage* msg, WebKitAuthData* authData)
 {
     /* Anything but 401 and 5xx means the password was accepted */
@@ -106,6 +109,7 @@ static void save_password_callback(SoupMessage* msg, WebKitAuthData* authData)
 
     free_authData(authData);
 }
+#endif
 
 static void response_callback(GtkDialog* dialog, gint response_id, WebKitAuthData* authData)
 {
@@ -117,11 +121,13 @@ static void response_callback(GtkDialog* dialog, gint response_id, WebKitAuthDat
 
         soup_auth_authenticate(authData->auth, authData->username, authData->password);
 
+#ifdef SOUP_TYPE_PASSWORD_MANAGER
         if (authData->checkButton &&
             gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(authData->checkButton))) {
             g_signal_connect(authData->msg, "got-headers", G_CALLBACK(save_password_callback), authData);
             freeAuthData = FALSE;
         }
+#endif
     }
 
     soup_session_unpause_message(authData->session, authData->msg);
@@ -160,7 +166,11 @@ table_add_entry(GtkWidget*  table,
 
 static gboolean session_can_save_passwords(SoupSession* session)
 {
+#ifdef SOUP_TYPE_PASSWORD_MANAGER
     return soup_session_get_feature(session, SOUP_TYPE_PASSWORD_MANAGER) != NULL;
+#else
+    return FALSE;
+#endif
 }
 
 static void show_auth_dialog(WebKitAuthData* authData, const char* login, const char* password)
@@ -279,7 +289,9 @@ static void session_authenticate(SoupSession* session, SoupMessage* msg, SoupAut
     SoupURI* uri;
     WebKitAuthData* authData;
     SoupSessionFeature* manager = (SoupSessionFeature*)user_data;
+#ifdef SOUP_TYPE_PASSWORD_MANAGER
     GSList* users;
+#endif
     const char *login, *password;
 
     soup_session_pause_message(session, msg);
@@ -295,12 +307,14 @@ static void session_authenticate(SoupSession* session, SoupMessage* msg, SoupAut
 
     login = password = NULL;
 
+#ifdef SOUP_TYPE_PASSWORD_MANAGER
     users = soup_auth_get_saved_users(auth);
     if (users) {
         login = users->data;
         password = soup_auth_get_saved_password(auth, login);
         g_slist_free(users);
     }
+#endif
 
     show_auth_dialog(authData, login, password);
 }

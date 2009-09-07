@@ -1,3 +1,16 @@
+2009-09-07  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Make the auth dialog usable when libsoup does not have a
+        SoupPasswordManager, since it might go away in the next
+        development cycle.
+
+        * webkit/webkitsoupauthdialog.c:
+        (response_callback):
+        (session_can_save_passwords):
+        (session_authenticate):
+
 2009-09-06  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.
