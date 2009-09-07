@@ -114,28 +114,27 @@ QString QWebPluginInfo::description() const
 */
 QList<QWebPluginInfo::MimeType> QWebPluginInfo::mimeTypes() const
 {
-    if (!m_package)
-        return QList<MimeType>();
+    if (m_package && m_mimeTypes.isEmpty()) {
+        const MIMEToDescriptionsMap& mimeToDescriptions = m_package->mimeToDescriptions();
+        MIMEToDescriptionsMap::const_iterator end = mimeToDescriptions.end();
 
-    QList<MimeType> mimeTypes;
-    const MIMEToDescriptionsMap& mimeToDescriptions = m_package->mimeToDescriptions();
-    MIMEToDescriptionsMap::const_iterator end = mimeToDescriptions.end();
-    for (MIMEToDescriptionsMap::const_iterator it = mimeToDescriptions.begin(); it != end; ++it) {
-        MimeType mimeType;
-        mimeType.name = it->first;
-        mimeType.description = it->second;
+        for (MIMEToDescriptionsMap::const_iterator it = mimeToDescriptions.begin(); it != end; ++it) {
+            MimeType mimeType;
+            mimeType.name = it->first;
+            mimeType.description = it->second;
 
-        QStringList fileExtensions;
-        Vector<String> extensions = m_package->mimeToExtensions().get(mimeType.name);
+            QStringList fileExtensions;
+            Vector<String> extensions = m_package->mimeToExtensions().get(mimeType.name);
 
-        for (unsigned i = 0; i < extensions.size(); ++i)
-            fileExtensions.append(extensions[i]);
+            for (unsigned i = 0; i < extensions.size(); ++i)
+                fileExtensions.append(extensions[i]);
 
-        mimeType.fileExtensions = fileExtensions;
-        mimeTypes.append(mimeType);
+            mimeType.fileExtensions = fileExtensions;
+            m_mimeTypes.append(mimeType);
+        }
     }
 
-    return mimeTypes;
+    return m_mimeTypes;
 }
 
 /*!
@@ -220,6 +219,7 @@ QWebPluginInfo &QWebPluginInfo::operator=(const QWebPluginInfo& other)
     m_package = other.m_package;
     if (m_package)
         m_package->ref();
+    m_mimeTypes = other.m_mimeTypes;
 
     return *this;
 }

@@ -40,6 +40,8 @@ private slots:
     void operatorequal_data();
     void operatorequal();
     void preferredPlugin();
+    void operatorassign_data();
+    void operatorassign();
 };
 
 typedef QWebPluginInfo::MimeType MimeType;
@@ -394,6 +396,40 @@ void tst_QWebPluginDatabase::preferredPlugin()
         QVERIFY(!plugin2.supportsMimeType(mimeType1));
         QCOMPARE(database->pluginForMimeType(mimeType2), plugin2);
     }
+}
+
+void tst_QWebPluginDatabase::operatorassign_data()
+{
+    QTest::addColumn<QWebPluginInfo>("first");
+    QTest::addColumn<QWebPluginInfo>("second");
+
+    QWebPluginDatabase* database = QWebSettings::pluginDatabase();
+    QTest::newRow("null") << QWebPluginInfo() << QWebPluginInfo();
+
+    QList<QWebPluginInfo> plugins = database->plugins();
+    for (int i = 0; i < (plugins.count() - 1); ++i) {
+        QWebPluginInfo first = plugins.at(i);
+        QWebPluginInfo second = plugins.at(i + 1);
+
+        QTest::newRow(QString("%1=%2").arg(first.name(), second.name()).toUtf8().constData()) << first << second;
+    }
+}
+
+void tst_QWebPluginDatabase::operatorassign()
+{
+    QFETCH(QWebPluginInfo, first);
+    QFETCH(QWebPluginInfo, second);
+
+    QWebPluginInfo info;
+    QCOMPARE(info.mimeTypes(), QList<MimeType>());
+    QCOMPARE(info = first, first);
+    QCOMPARE(info, first);
+    QCOMPARE(info.mimeTypes(), first.mimeTypes());
+    QCOMPARE(info = second, second);
+    QCOMPARE(info, second);
+    QCOMPARE(info.mimeTypes(), second.mimeTypes());
+    QCOMPARE(info = QWebPluginInfo(), QWebPluginInfo());
+    QCOMPARE(info.mimeTypes(), QList<MimeType>());
 }
 
 QTEST_MAIN(tst_QWebPluginDatabase)

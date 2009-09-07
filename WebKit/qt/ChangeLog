@@ -2,6 +2,24 @@
 
         Reviewed by Simon Hausmann.
 
+        Speed up the QWebPluginInfo::mimeTypes() function.
+        https://bugs.webkit.org/show_bug.cgi?id=27651
+
+        Instead of constructing a list of MIME types every time it is called,
+        do this only once.
+
+        * Api/qwebplugindatabase.cpp:
+        (QWebPluginInfo::mimeTypes):
+        (QWebPluginInfo::operator=):
+        * Api/qwebplugindatabase.h:
+        * tests/qwebplugindatabase/tst_qwebplugindatabase.cpp:
+        (tst_QWebPluginDatabase::operatorassign_data):
+        (tst_QWebPluginDatabase::operatorassign):
+
+2009-09-07  Jakub Wieczorek  <faw217@gmail.com>
+
+        Reviewed by Simon Hausmann.
+
         Remove the private classes from QWebPluginDatabase.
         https://bugs.webkit.org/show_bug.cgi?id=27651
 
