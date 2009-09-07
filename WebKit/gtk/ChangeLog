@@ -1,5 +1,11 @@
 2009-09-07  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
+        What's new for 1.1.14.
+
+        * NEWS:
+
+2009-09-07  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
         Rubber-stamped by Xan Lopez.
 
         Use g_return_if_fail to check for the SoupURI creation, instead of

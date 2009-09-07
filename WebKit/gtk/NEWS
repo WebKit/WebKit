@@ -1,4 +1,31 @@
 =================
+WebKitGTK+ 1.1.14
+=================
+
+What's new in WebKitGTK+ 1.1.14?
+
+  - New API has been added to WebKitWebFrame to allow applying
+    scrollbars policy as requested by web applications to the main
+    frame; if the parent of the WebKitWebView widget is a
+    GtkScrolledWindow, policy is applied by the default handler.
+  - A new API has been added to help dealing with the various
+    resources that are downloaded to compose the final rendering; you
+    can now obtain the source code for a page that is loaded, for
+    instance.
+  - A new property has been added to WebKitWebView to allow setting it
+    to "View Source" mode.
+  - HTML5 database has gained API to manage the individual databases,
+    including usage and quota.
+  - A new signal `resource-request-starting' has been added to the
+    WebKitWebView to allow modification of outgoing requests for every
+    resource.
+  - Connection limit has been increased to 60 total connections, 6
+    per-host, matching other browsers more closely; this seems to have
+    improved loading time of some sites.
+  - Undo/redo support has been added to editable texts.
+  - The usual stream of small improvements and bug fixes.
+
+=================
 WebKitGTK+ 1.1.13
 =================
 
