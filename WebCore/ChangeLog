@@ -1,3 +1,20 @@
+2009-09-07  Mads Ager  <ager@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [V8] Cleanup document/frame null-checking in V8DOMWindowCustom.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=29009
+
+        Be consistent in document and frame null checks.
+
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::V8Custom::WindowSetTimeoutImpl):
+        (WebCore::ACCESSOR_GETTER):
+        (WebCore::ACCESSOR_SETTER):
+        (WebCore::CALLBACK_FUNC_DECL):
+        (WebCore::NAMED_PROPERTY_GETTER):
+        (WebCore::V8Custom::ClearTimeoutImpl):
+
 2009-09-07  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.
