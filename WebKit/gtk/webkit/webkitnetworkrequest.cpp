@@ -68,17 +68,25 @@ enum {
     PROP_MESSAGE,
 };
 
+static void webkit_network_request_dispose(GObject* object)
+{
+    WebKitNetworkRequest* request = WEBKIT_NETWORK_REQUEST(object);
+    WebKitNetworkRequestPrivate* priv = request->priv;
+
+    if (priv->message) {
+        g_object_unref(priv->message);
+        priv->message = NULL;
+    }
+
+    G_OBJECT_CLASS(webkit_network_request_parent_class)->dispose(object);
+}
+
 static void webkit_network_request_finalize(GObject* object)
 {
     WebKitNetworkRequest* request = WEBKIT_NETWORK_REQUEST(object);
     WebKitNetworkRequestPrivate* priv = request->priv;
 
     g_free(priv->uri);
-
-    if (priv->message) {
-        g_object_unref(priv->message);
-        priv->message = NULL;
-    }
 
     G_OBJECT_CLASS(webkit_network_request_parent_class)->finalize(object);
 }
@@ -120,6 +128,7 @@ static void webkit_network_request_class_init(WebKitNetworkRequestClass* request
 {
     GObjectClass* objectClass = G_OBJECT_CLASS(requestClass);
 
+    objectClass->dispose = webkit_network_request_dispose;
     objectClass->finalize = webkit_network_request_finalize;
     objectClass->get_property = webkit_network_request_get_property;
     objectClass->set_property = webkit_network_request_set_property;
