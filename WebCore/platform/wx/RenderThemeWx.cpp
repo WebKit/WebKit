@@ -293,7 +293,9 @@ bool RenderThemeWx::paintButton(RenderObject* o, const RenderObject::PaintInfo& 
     else if(part == RadioPart) {
         if (isChecked(o))
             flags |= wxCONTROL_CHECKED;
-#if wxCHECK_VERSION(2,9,0)
+#if wxCHECK_VERSION(2,9,1)
+        wxRendererNative::Get().DrawRadioBitmap(window, *dc, r, flags);
+#elif wxCHECK_VERSION(2,9,0)
         wxRendererNative::Get().DrawRadioButton(window, *dc, rect, flags);
 #else
         wxRenderer_DrawRadioButton(window, *dc, rect, flags);

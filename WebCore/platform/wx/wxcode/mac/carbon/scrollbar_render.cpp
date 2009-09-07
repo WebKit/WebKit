@@ -30,6 +30,7 @@
 
 #include <wx/defs.h>
 #include <wx/dc.h>
+#include <wx/dcgraph.h>
 #include <wx/renderer.h>
 
 #include <Carbon/Carbon.h>
@@ -70,7 +71,8 @@ void wxRenderer_DrawScrollbar(wxWindow* WXUNUSED(window), wxDC& dc,
     HIRect hiRect = CGRectMake( x, y, w, h );
 
     CGContextRef cgContext;
-    cgContext = (CGContextRef) dc.GetGraphicsContext()->GetNativeContext();
+    wxGCDC gcdc = static_cast<wxGCDC>(dc);
+    cgContext = (CGContextRef) gcdc.GetGraphicsContext()->GetNativeContext();
 
     {
         HIThemeTrackDrawInfo trackInfo;

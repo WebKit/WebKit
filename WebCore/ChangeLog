@@ -1,3 +1,15 @@
+2009-09-07  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fixes for wx SVN trunk. 
+
+        * config.h:
+        * platform/wx/RenderThemeWx.cpp:
+        (WebCore::RenderThemeWx::paintButton):
+        * platform/wx/wxcode/mac/carbon/non-kerned-drawing.cpp:
+        (WebCore::drawTextWithSpacing):
+        * platform/wx/wxcode/mac/carbon/scrollbar_render.cpp:
+        (wxRenderer_DrawScrollbar):
+
 2009-09-07  Chris Hills <chaz@chaz6.com>
 
         Reviewed by Tor Arne Vestbø.

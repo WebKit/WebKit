@@ -207,10 +207,9 @@ def common_configure(conf):
         import platform
         if platform.release().startswith('10'): # Snow Leopard
             wxconfig = commands.getoutput('%s --selected-config' % get_path_to_wxconfig())
-            if wxconfig.find('osx_cocoa') == -1:
-                # wx/Carbon only supports 32-bit compilation, so we want gcc-4.0 instead of 4.2 on Snow Leopard
-                conf.env['CC'] = 'gcc-4.0'
-                conf.env['CXX'] = 'g++-4.0'
+            # wx currently only supports 32-bit compilation, so we want gcc-4.0 instead of 4.2 on Snow Leopard
+            conf.env['CC'] = 'gcc-4.0'
+            conf.env['CXX'] = 'g++-4.0'
     conf.check_tool('compiler_cxx')
     conf.check_tool('compiler_cc')
     conf.check_tool('python')
@@ -230,6 +229,7 @@ def common_configure(conf):
             msvc_version = 'msvc2005'
         
         msvclibs_dir = os.path.join(wklibs_dir, msvc_version, 'win')
+        conf.env.append_value('CXXFLAGS', ['/wd4291','/wd4344','/wd4396','/wd4800'])
     
     for use in port_uses[build_port]:
        conf.env.append_value('CXXDEFINES', ['WTF_USE_%s' % use])
