@@ -41,13 +41,14 @@ template <> void freeOwnedGPtr<SoupMessage>(SoupMessage* soupMessage)
 /**
  * SECTION:webkitnetworkrequest
  * @short_description: The target of a navigation request
- * @see_also: #WebKitWebView::navigation-requested
+ * @see_also: #WebKitWebView::navigation-policy-decision-requested
  *
  * This class represents the network related aspects of a navigation
- * request. Currently this is only the uri of the target. In the future
- * the state of the web form might be added.
- * Currently this object is only used along with the
- * #WebKitWebView::navigation-requested signal.
+ * request. It is used whenever WebKit wants to provide information
+ * about a request that will be sent, or has been sent. Inside it you
+ * can find the URI of the request, and, for valid URIs, a
+ * #SoupMessage object, which provides access to further information
+ * such as headers.
  *
  */
 
