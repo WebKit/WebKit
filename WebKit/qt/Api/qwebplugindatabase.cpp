@@ -145,13 +145,9 @@ QList<QWebPluginInfo::MimeType> QWebPluginInfo::mimeTypes() const
 */
 bool QWebPluginInfo::supportsMimeType(const QString& mimeType) const
 {
-    QList<MimeType> types = mimeTypes();
-    foreach (const MimeType& type, types) {
-        if (type.name == mimeType)
-            return true;
-    }
-
-    return false;
+    if (!m_package)
+        return false;
+    return m_package->mimeToDescriptions().contains(mimeType);
 }
 
 /*!

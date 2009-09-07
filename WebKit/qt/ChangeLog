@@ -2,6 +2,19 @@
 
         Reviewed by Simon Hausmann.
 
+        Speed up the QWebPluginInfo::supportsMimeType() function.
+        https://bugs.webkit.org/show_bug.cgi?id=27651
+
+        Instead of going through the MIME types list constructed with
+        mimeTypes() function, look up the internal mimeToDescriptions map.
+
+        * Api/qwebplugindatabase.cpp:
+        (QWebPluginInfo::supportsMimeType):
+
+2009-09-07  Jakub Wieczorek  <faw217@gmail.com>
+
+        Reviewed by Simon Hausmann.
+
         Speed up the QWebPluginInfo::mimeTypes() function.
         https://bugs.webkit.org/show_bug.cgi?id=27651
 
