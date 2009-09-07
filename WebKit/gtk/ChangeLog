@@ -1,5 +1,11 @@
 2009-09-07  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
+        Link new objects documents in the main document.
+
+        * docs/webkitgtk-docs.sgml:
+
+2009-09-07  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
         Documentation control files updated for 1.1.14.
 
         * docs/webkitgtk-docs.sgml:
