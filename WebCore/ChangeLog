@@ -1,3 +1,10 @@
+2009-09-07  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix for 2.8 compilation.
+
+        * platform/wx/wxcode/mac/carbon/scrollbar_render.cpp:
+        (wxRenderer_DrawScrollbar):
+
 2009-09-07  Drew Wilson  <atwilson@google.com>
 
         Unreviewed build fix.

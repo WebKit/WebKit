@@ -71,8 +71,12 @@ void wxRenderer_DrawScrollbar(wxWindow* WXUNUSED(window), wxDC& dc,
     HIRect hiRect = CGRectMake( x, y, w, h );
 
     CGContextRef cgContext;
-    wxGCDC gcdc = static_cast<wxGCDC>(dc);
-    cgContext = (CGContextRef) gcdc.GetGraphicsContext()->GetNativeContext();
+#if wxCHECK_VERSION(2,9,0)
+    wxGraphicsContext* gc = static_cast<wxGCDC>(dc).GetGraphicsContext();
+#else
+    wxGraphicsContext* gc = dc.GetGraphicsContext();
+#endif
+    cgContext = (CGContextRef) gc->GetNativeContext();
 
     {
         HIThemeTrackDrawInfo trackInfo;
