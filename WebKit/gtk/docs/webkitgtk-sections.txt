@@ -86,12 +86,17 @@ WebKitWebHistoryItemClass
 WebKitLoadStatus
 WebKitWebFrame
 webkit_web_frame_find_frame
+webkit_web_frame_get_data_source
 webkit_web_frame_get_global_context
+webkit_web_frame_get_horizontal_scrollbar_policy
 webkit_web_frame_get_load_status
 webkit_web_frame_get_name
 webkit_web_frame_get_parent
+webkit_web_frame_get_provisional_data_source
+webkit_web_frame_get_security_origin
 webkit_web_frame_get_title
 webkit_web_frame_get_uri
+webkit_web_frame_get_vertical_scrollbar_policy
 webkit_web_frame_get_web_view
 webkit_web_frame_load_alternate_string
 webkit_web_frame_load_request
@@ -152,6 +157,84 @@ WebKitDownloadClass
 WebKitDownloadError
 WebKitDownloadPrivate
 WebKitDownloadStatus
+</SECTION>
+
+<SECTION>
+<FILE>webkitsecurityorigin</FILE>
+<TITLE>WebKitSecurityOrigin</TITLE>
+WebKitSecurityOrigin
+webkit_security_origin_get_all_web_databases
+webkit_security_origin_get_host
+webkit_security_origin_get_port
+webkit_security_origin_get_protocol
+webkit_security_origin_get_type
+webkit_security_origin_get_web_database_quota
+webkit_security_origin_get_web_database_usage
+webkit_security_origin_set_web_database_quota
+<SUBSECTION Standard>
+WEBKIT_SECURITY_ORIGIN
+WEBKIT_SECURITY_ORIGIN_CLASS
+WEBKIT_SECURITY_ORIGIN_GET_CLASS
+WEBKIT_IS_SECURITY_ORIGIN
+WEBKIT_IS_SECURITY_ORIGIN_CLASS
+WEBKIT_TYPE_SECURITY_ORIGIN
+<SUBSECTION Private>
+WebKitSecurityOrigin
+WebKitSecurityOriginClass
+WebKitSecurityOriginPrivate
+</SECTION>
+
+<SECTION>
+<FILE>webkitwebdatasource</FILE>
+<TITLE>WebKitWebDataSource</TITLE>
+WebKitWebDataSource
+webkit_web_data_source_get_data
+webkit_web_data_source_get_encoding
+webkit_web_data_source_get_initial_request
+webkit_web_data_source_get_main_resource
+webkit_web_data_source_get_request
+webkit_web_data_source_get_unreachable_uri
+webkit_web_data_source_get_web_frame
+webkit_web_data_source_is_loading
+webkit_web_data_source_new
+<SUBSECTION Standard>
+WEBKIT_IS_WEB_DATA_SOURCE
+WEBKIT_IS_WEB_DATA_SOURCE_CLASS
+WEBKIT_TYPE_WEB_DATA_SOURCE
+WEBKIT_WEB_DATA_SOURCE
+WEBKIT_WEB_DATA_SOURCE_CLASS
+WEBKIT_WEB_DATA_SOURCE_GET_CLASS
+<SUBSECTION Private>
+WebKitWebDataSource
+WebKitWebDataSourceClass
+WebKitWebDataSourcePrivate
+webkit_web_data_source_new_with_request
+webkit_web_data_source_get_type
+</SECTION>
+
+<SECTION>
+<FILE>webkitwebdatabase</FILE>
+<TITLE>WebKitWebDatabase</TITLE>
+WebKitWebDatabase
+webkit_web_database_get_display_name
+webkit_web_database_get_expected_size
+webkit_web_database_get_filename
+webkit_web_database_get_name
+webkit_web_database_get_security_origin
+webkit_web_database_get_size
+webkit_web_database_remove
+<SUBSECTION Standard>
+WEBKIT_IS_WEB_DATABASE
+WEBKIT_IS_WEB_DATABASE_CLASS
+WEBKIT_TYPE_WEB_DATABASE
+WEBKIT_WEB_DATABASE
+WEBKIT_WEB_DATABASE_CLASS
+WEBKIT_WEB_DATABASE_GET_CLASS
+<SUBSECTION Private>
+WebKitWebDatabase
+WebKitWebDatabaseClass
+WebKitWebDatabasePrivate
+webkit_web_database_get_type
 </SECTION>
 
 <SECTION>
@@ -263,6 +346,28 @@ WebKitNetworkRequestClass
 </SECTION>
 
 <SECTION>
+<FILE>webkitnetworkresponse</FILE>
+<TITLE>WebKitNetworkResponse</TITLE>
+WebKitNetworkResponse
+webkit_network_response_get_uri
+webkit_network_response_get_message
+webkit_network_response_set_uri
+<SUBSECTION Standard>
+WEBKIT_NETWORK_RESPONSE
+WEBKIT_IS_NETWORK_RESPONSE
+WEBKIT_TYPE_NETWORK_RESPONSE
+WEBKIT_NETWORK_RESPONSE_CLASS
+WEBKIT_IS_NETWORK_RESPONSE_CLASS
+WEBKIT_NETWORK_RESPONSE_GET_CLASS
+<SUBSECTION Private>
+webkit_network_response_get_type
+webkit_network_response_new
+WebKitNetworkResponsePrivate
+WebKitNetworkResponse
+WebKitNetworkResponseClass
+</SECTION>
+
+<SECTION>
 <FILE>webkitwebview</FILE>
 WebKitNavigationResponse
 WebKitWebViewTargetInfo
@@ -274,7 +379,9 @@ webkit_web_view_can_go_back
 webkit_web_view_can_go_back_or_forward
 webkit_web_view_can_go_forward
 webkit_web_view_can_paste_clipboard
+webkit_web_view_can_redo
 webkit_web_view_can_show_mime_type
+webkit_web_view_can_undo
 webkit_web_view_copy_clipboard
 webkit_web_view_cut_clipboard
 webkit_web_view_delete_selection
@@ -295,6 +402,7 @@ webkit_web_view_get_settings
 webkit_web_view_get_title
 webkit_web_view_get_transparent
 webkit_web_view_get_uri
+webkit_web_view_get_view_source_mode
 webkit_web_view_get_zoom_level
 webkit_web_view_go_back
 webkit_web_view_go_back_or_forward
@@ -310,6 +418,7 @@ webkit_web_view_move_cursor
 webkit_web_view_new
 webkit_web_view_open
 webkit_web_view_paste_clipboard
+webkit_web_view_redo
 webkit_web_view_reload
 webkit_web_view_reload_bypass_cache
 webkit_web_view_search_text
@@ -321,9 +430,11 @@ webkit_web_view_set_highlight_text_matches
 webkit_web_view_set_maintains_back_forward_list
 webkit_web_view_set_settings
 webkit_web_view_set_transparent
+webkit_web_view_set_view_source_mode
 webkit_web_view_set_zoom_level
 webkit_web_view_stop_loading
 webkit_web_view_target_info_get_type
+webkit_web_view_undo
 webkit_web_view_unmark_text_matches
 webkit_web_view_zoom_in
 webkit_web_view_zoom_out
@@ -368,6 +479,37 @@ WebKitWebWindowFeaturesPrivate
 <FILE>webkit</FILE>
 webkit_init
 webkit_get_default_session
+webkit_get_default_web_database_quota
+webkit_get_web_database_directory_path
+webkit_remove_all_web_databases
+webkit_set_default_web_database_quota
+webkit_set_web_database_directory_path
+</SECTION>
+
+<SECTION>
+<FILE>webkitwebresource</FILE>
+<TITLE>WebKitWebResource</TITLE>
+WebKitWebResource
+webkit_web_resource_get_data
+webkit_web_resource_get_encoding
+webkit_web_resource_get_frame_name
+webkit_web_resource_get_mime_type
+webkit_web_resource_get_type
+webkit_web_resource_get_uri
+webkit_web_resource_new
+<SUBSECTION Standard>
+WEBKIT_WEB_RESOURCE
+WEBKIT_IS_WEB_RESOURCE
+WEBKIT_TYPE_WEB_RESOURCE
+WEBKIT_WEB_RESOURCE_CLASS
+WEBKIT_IS_WEB_RESOURCE_CLASS
+WEBKIT_WEB_RESOURCE_GET_CLASS
+<SUBSECTION Private>
+webkit_web_resource_get_type
+webkit_web_resource_new
+WebKitWebResourcePrivate
+WebKitWebResource
+WebKitWebResourceClass
 </SECTION>
 
 <SECTION>

@@ -1,5 +1,12 @@
 2009-09-07  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
+        Documentation control files updated for 1.1.14.
+
+        * docs/webkitgtk-docs.sgml:
+        * docs/webkitgtk-sections.txt:
+
+2009-09-07  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
         What's new for 1.1.14.
 
         * NEWS:
