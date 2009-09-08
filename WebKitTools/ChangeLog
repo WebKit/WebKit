@@ -1,3 +1,18 @@
+2009-09-07  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Refactor --strict switch to --ignore-metrics and correct the
+        implementation to make the feature usable on all platforms.
+        https://bugs.webkit.org/show_bug.cgi?id=28907
+
+        run-webkit-tests --ignore-metrics strips the font related metrics from
+        the actual and expected data before comparing them.
+        In this way the render trees can be checked for obvious differences but
+        a successful test implies by no means that the layout is actually correct.
+
+        * Scripts/run-webkit-tests:
+
 2009-09-07  Steve Block  <steveblock@google.com>
 
         Reviewed by Adam Barth.

@@ -5,6 +5,7 @@
 # Copyright (C) 2007 Matt Lilek (pewtermoose@gmail.com)
 # Copyright (C) 2007 Eric Seidel <eric@webkit.org>
 # Copyright (C) 2009 Google Inc. All rights reserved.
+# Copyright (C) 2009 Andras Becsi (becsi.andras@stud.u-szeged.hu), University of Szeged
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -105,6 +106,7 @@ sub parseLeaksandPrintUniqueLeaks();
 sub readFromDumpToolWithTimer(**);
 sub setFileHandleNonBlocking(*$);
 sub writeToFile($$);
+sub stripMetrics($$);
 
 # Argument handling
 my $addPlatformExceptions = 0;
@@ -131,7 +133,7 @@ my $tolerance = 0;
 my $treatSkipped = "default";
 my $verbose = 0;
 my $useValgrind = 0;
-my $strictTesting = 0;
+my $ignoreMetrics = 0;
 my $generateNewResults = isAppleMacWebKit() ? 1 : 0;
 my $stripEditingCallbacks = isCygwin();
 my $runSample = 1;
@@ -195,7 +197,6 @@ my $launchSafariDefault = $launchSafari ? "launch" : "do not launch";
 my $httpDefault = $testHTTP ? "run" : "do not run";
 my $sampleDefault = $runSample ? "run" : "do not run";
 
-# FIXME: "--strict" should be renamed to qt-mac-comparison, or something along those lines.
 my $usage = <<EOF;
 Usage: $programName [options] [testdir|testpath ...]
   --add-platform-exceptions       Put new results for non-platform-specific failing tests into the platform-specific results directory
@@ -227,7 +228,7 @@ Usage: $programName [options] [testdir|testpath ...]
                                      ignore:  The Skipped file is ignored
                                      only:    Only those tests/directories listed in the Skipped file will be run
   --slowest                       Report the 10 slowest tests
-  --strict                        Do a comparison with the output on Mac (Qt only)
+  --ignore-metrics                Ignore metrics in tests
   --[no-]strip-editing-callbacks  Remove editing callbacks from expected results
   -t|--threaded                   Run a concurrent JavaScript thead with each test
   --timeout t                     Sets the number of seconds before a test times out (default: $timeoutSeconds)
@@ -264,7 +265,7 @@ my $getOptionsResult = GetOptions(
     'verbose|v' => \$verbose,
     'valgrind' => \$useValgrind,
     'sample-on-timeout!' => \$runSample,
-    'strict' => \$strictTesting,
+    'ignore-metrics!' => \$ignoreMetrics,
     'strip-editing-callbacks!' => \$stripEditingCallbacks,
     'random' => \$randomizeTests,
     'reverse' => \$reverseTests,
@@ -710,15 +711,9 @@ for my $test (@tests) {
         }
         close EXPECTED;
     }
-    my $expectedMac;
-    if (!isAppleMacWebKit() && $strictTesting && !$isText) {
-      if (!$resetResults && open EXPECTED, "<", "$testDirectory/platform/mac/$expectedFileName") {
-        $expectedMac = "";
-        while (<EXPECTED>) {
-          $expectedMac .= $_;
-        }
-        close EXPECTED;
-      }
+
+    if ($ignoreMetrics && !$isText) {
+        ($actual, $expected) = stripMetrics($actual, $expected);
     }
 
     if ($shouldCheckLeaks && $testsPerDumpTool == 1) {
@@ -802,57 +797,6 @@ for my $test (@tests) {
         if ($actualHash ne "" && ($resetResults || !-f "$expectedPixelDir/$base-$expectedTag.checksum")) {
             writeToFile("$expectedPixelDir/$base-$expectedTag.checksum", $actualHash);
         }
-    }
-
-    if (!isAppleMacWebKit() && $strictTesting && !$isText) {
-      if (defined $expectedMac) {
-        my $simplified_actual;
-        $simplified_actual = $actual;
-        $simplified_actual =~ s/at \(-?[0-9]+,-?[0-9]+\) *//g;
-        $simplified_actual =~ s/size -?[0-9]+x-?[0-9]+ *//g;
-        $simplified_actual =~ s/text run width -?[0-9]+: //g;
-        $simplified_actual =~ s/text run width -?[0-9]+ [a-zA-Z ]+: //g;
-        $simplified_actual =~ s/RenderButton {BUTTON} .*/RenderButton {BUTTON}/g;
-        $simplified_actual =~ s/RenderImage {INPUT} .*/RenderImage {INPUT}/g;
-        $simplified_actual =~ s/RenderBlock {INPUT} .*/RenderBlock {INPUT}/g;
-        $simplified_actual =~ s/RenderTextControl {INPUT} .*/RenderTextControl {INPUT}/g;
-        $simplified_actual =~ s/\([0-9]+px/px/g;
-        $simplified_actual =~ s/ *" *\n +" */ /g;
-        $simplified_actual =~ s/" +$/"/g;
-
-        $simplified_actual =~ s/- /-/g;
-        $simplified_actual =~ s/\n( *)"\s+/\n$1"/g;
-        $simplified_actual =~ s/\s+"\n/"\n/g;
-        
-        $expectedMac =~ s/at \(-?[0-9]+,-?[0-9]+\) *//g;
-        $expectedMac =~ s/size -?[0-9]+x-?[0-9]+ *//g;
-        $expectedMac =~ s/text run width -?[0-9]+: //g;
-        $expectedMac =~ s/text run width -?[0-9]+ [a-zA-Z ]+: //g;
-        $expectedMac =~ s/RenderButton {BUTTON} .*/RenderButton {BUTTON}/g;
-        $expectedMac =~ s/RenderImage {INPUT} .*/RenderImage {INPUT}/g;
-        $expectedMac =~ s/RenderBlock {INPUT} .*/RenderBlock {INPUT}/g;
-        $expectedMac =~ s/RenderTextControl {INPUT} .*/RenderTextControl {INPUT}/g;
-        $expectedMac =~ s/\([0-9]+px/px/g;
-        $expectedMac =~ s/ *" *\n +" */ /g;
-        $expectedMac =~ s/" +$/"/g;
-
-        $expectedMac =~ s/- /-/g;
-        $expectedMac =~ s/\n( *)"\s+/\n$1"/g;
-        $expectedMac =~ s/\s+"\n/"\n/g;
-        
-        if ($simplified_actual ne $expectedMac) {
-          writeToFile("/tmp/actual.txt", $simplified_actual);
-          writeToFile("/tmp/expected.txt", $expectedMac);
-          system "diff -u \"/tmp/expected.txt\" \"/tmp/actual.txt\" > \"/tmp/simplified.diff\"";
-
-          $diffResult = "failed";
-          if ($verbose) {
-            print "\n";
-            system "cat /tmp/simplified.diff";
-            print "failed!!!!!";
-          }
-        }
-      }
     }
 
     if (dumpToolDidCrash()) {
@@ -1098,6 +1042,10 @@ print HTML "<head>\n";
 print HTML "<title>Layout Test Results</title>\n";
 print HTML "</head>\n";
 print HTML "<body>\n";
+
+if ($ignoreMetrics) {
+    print HTML "<h4>Tested with metrics ignored.</h4>";
+}
 
 print HTML htmlForResultsSection(@{$tests{mismatch}}, "Tests where results did not match expected results", \&linksForMismatchTest);
 print HTML htmlForResultsSection(@{$tests{timedout}}, "Tests that timed out", \&linksForErrorTest);
@@ -2082,4 +2030,31 @@ sub sampleDumpTool()
 
     my $outputFile = "$outputDirectory/HangReport.txt";
     system "/usr/bin/sample", $dumpToolPID, qw(10 10 -file), $outputFile;
+}
+
+sub stripMetrics($$)
+{
+    my ($actual, $expected) = @_;
+
+    foreach my $result ($actual, $expected) {
+        $result =~ s/at \(-?[0-9]+,-?[0-9]+\) *//g;
+        $result =~ s/size -?[0-9]+x-?[0-9]+ *//g;
+        $result =~ s/text run width -?[0-9]+: //g;
+        $result =~ s/text run width -?[0-9]+ [a-zA-Z ]+: //g;
+        $result =~ s/RenderButton {BUTTON} .*/RenderButton {BUTTON}/g;
+        $result =~ s/RenderImage {INPUT} .*/RenderImage {INPUT}/g;
+        $result =~ s/RenderBlock {INPUT} .*/RenderBlock {INPUT}/g;
+        $result =~ s/RenderTextControl {INPUT} .*/RenderTextControl {INPUT}/g;
+        $result =~ s/\([0-9]+px/px/g;
+        $result =~ s/ *" *\n +" */ /g;
+        $result =~ s/" +$/"/g;
+
+        $result =~ s/- /-/g;
+        $result =~ s/\n( *)"\s+/\n$1"/g;
+        $result =~ s/\s+"\n/"\n/g;
+        $result =~ s/scrollWidth [0-9]+/scrollWidth/g;
+        $result =~ s/scrollHeight [0-9]+/scrollHeight/g;
+    }
+
+    return ($actual, $expected);
 }
