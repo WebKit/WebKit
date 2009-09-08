@@ -60,7 +60,7 @@ committers_unable_to_review = [
     Committer("Peter Kasting", "pkasting@google.com"),
     Committer("Pierre d'Herbemont", "pdherbemont@free.fr"),
     Committer("Ryosuke Niwa", "rniwa@webkit.org"),
-    Committer("Shinichiro Hamaji", "hamaji@google.com"),
+    Committer("Shinichiro Hamaji", "hamaji@chromium.org"),
     Committer("Yong Li", "yong.li@torchmobile.com"),
     Committer("Zoltan Horvath", "zoltan@webkit.org"),
 ]
