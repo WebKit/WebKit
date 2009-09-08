@@ -280,7 +280,7 @@ struct ByteTerm {
     }
 };
 
-class ByteDisjunction {
+class ByteDisjunction : public FastAllocBase {
 public:
     ByteDisjunction(unsigned numSubpatterns, unsigned frameSize)
         : m_numSubpatterns(numSubpatterns)
@@ -293,7 +293,7 @@ public:
     unsigned m_frameSize;
 };
 
-struct BytecodePattern {
+struct BytecodePattern : FastAllocBase {
     BytecodePattern(ByteDisjunction* body, Vector<ByteDisjunction*> allParenthesesInfo, RegexPattern& pattern)
         : m_body(body)
         , m_ignoreCase(pattern.m_ignoreCase)

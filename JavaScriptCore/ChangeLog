@@ -1,3 +1,21 @@
+2009-09-07  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Allow custom memory allocation control in Yarr's RegexInterpreter
+        https://bugs.webkit.org/show_bug.cgi?id=29025
+
+        Inherits RegexInterpreter classes from FastAllocBase (bug #20422), which has
+        been instantiated by 'new':
+
+        class ByteDisjunction
+        -> instantiated in JavaScriptCore/yarr/RegexInterpreter.cpp:1462
+
+        struct BytecodePattern
+        -> instantiated in JavaScriptCore/yarr/RegexInterpreter.cpp:1279
+
+        * yarr/RegexInterpreter.h:
+
 2009-09-07  Drew Wilson  <atwilson@google.com>
 
         Reverting r48121 to fix Windows build errors.
