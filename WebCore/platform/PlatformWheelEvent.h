@@ -35,6 +35,7 @@ typedef struct _GdkEventScroll GdkEventScroll;
 #if PLATFORM(QT)
 QT_BEGIN_NAMESPACE
 class QWheelEvent;
+class QGraphicsSceneWheelEvent;
 QT_END_NAMESPACE
 #endif
 
@@ -102,6 +103,8 @@ namespace WebCore {
 
 #if PLATFORM(QT)
         PlatformWheelEvent(QWheelEvent*);
+        PlatformWheelEvent(QGraphicsSceneWheelEvent*);
+        void applyDelta(int delta, Qt::Orientation);
 #endif
 
 #if PLATFORM(WIN)

@@ -25,6 +25,7 @@
 #include <qnetworkproxy.h>
 #include <qpointer.h>
 #include <qevent.h>
+#include <qgraphicssceneevent.h>
 
 #include "qwebpage.h"
 #include "qwebhistory.h"
@@ -73,30 +74,41 @@ public:
     void timerEvent(QTimerEvent*);
 
     void mouseMoveEvent(QMouseEvent*);
+    void mouseMoveEvent(QGraphicsSceneMouseEvent*);
     void mousePressEvent(QMouseEvent*);
+    void mousePressEvent(QGraphicsSceneMouseEvent*);
     void mouseDoubleClickEvent(QMouseEvent*);
+    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent*);
     void mouseTripleClickEvent(QMouseEvent*);
+    void mouseTripleClickEvent(QGraphicsSceneMouseEvent*);
     void mouseReleaseEvent(QMouseEvent*);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent*);
 #ifndef QT_NO_CONTEXTMENU
     void contextMenuEvent(QContextMenuEvent*);
 #endif
 #ifndef QT_NO_WHEELEVENT
     void wheelEvent(QWheelEvent*);
+    void wheelEvent(QGraphicsSceneWheelEvent*);
 #endif
     void keyPressEvent(QKeyEvent*);
     void keyReleaseEvent(QKeyEvent*);
     void focusInEvent(QFocusEvent*);
     void focusOutEvent(QFocusEvent*);
 
-    void dragEnterEvent(QDragEnterEvent *);
-    void dragLeaveEvent(QDragLeaveEvent *);
-    void dragMoveEvent(QDragMoveEvent *);
-    void dropEvent(QDropEvent *);
+    void dragEnterEvent(QDragEnterEvent*);
+    void dragEnterEvent(QGraphicsSceneDragDropEvent*);
+    void dragLeaveEvent(QDragLeaveEvent*);
+    void dragLeaveEvent(QGraphicsSceneDragDropEvent*);
+    void dragMoveEvent(QDragMoveEvent*);
+    void dragMoveEvent(QGraphicsSceneDragDropEvent*);
+    void dropEvent(QDropEvent*);
+    void dropEvent(QGraphicsSceneDragDropEvent*);
 
     void inputMethodEvent(QInputMethodEvent*);
 
     void shortcutOverrideEvent(QKeyEvent*);
-    void leaveEvent(QEvent *);
+    void leaveEvent(QEvent*);
+    void handleClipboard(QEvent*, Qt::MouseButton);
     bool handleScrolling(QKeyEvent*, WebCore::Frame*);
 
 #ifndef QT_NO_SHORTCUT

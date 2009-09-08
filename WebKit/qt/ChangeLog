@@ -33,6 +33,27 @@
 
         Reviewed by Simon Hausmann.
 
+        Add support for handling QGraphicsScene events.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::mouseMoveEvent):
+        (QWebPagePrivate::mousePressEvent):
+        (QWebPagePrivate::mouseDoubleClickEvent):
+        (QWebPagePrivate::mouseTripleClickEvent):
+        (QWebPagePrivate::handleClipboard):
+        (QWebPagePrivate::mouseReleaseEvent):
+        (QWebPagePrivate::wheelEvent):
+        (QWebPagePrivate::dragEnterEvent):
+        (QWebPagePrivate::dragLeaveEvent):
+        (QWebPagePrivate::dragMoveEvent):
+        (QWebPagePrivate::dropEvent):
+        (QWebPage::event):
+        * Api/qwebpage_p.h:
+
+2009-09-08  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
         [Qt] Make cursor set cleaner in QtWebKit Api: eliminate SetCursorEvent hack.
         https://bugs.webkit.org/show_bug.cgi?id=28865
 

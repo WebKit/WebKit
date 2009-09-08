@@ -31,8 +31,45 @@
 #include <wtf/CurrentTime.h>
 
 #include <QMouseEvent>
+#include <QGraphicsSceneMouseEvent>
 
 namespace WebCore {
+
+PlatformMouseEvent::PlatformMouseEvent(QGraphicsSceneMouseEvent* event, int clickCount)
+{
+    m_timestamp = WTF::currentTime();
+
+    switch (event->type()) {
+    case QEvent::GraphicsSceneMouseDoubleClick:
+    case QEvent::GraphicsSceneMousePress:
+        m_eventType = MouseEventPressed;
+        break;
+    case QEvent::GraphicsSceneMouseRelease:
+        m_eventType = MouseEventReleased;
+        break;
+    case QEvent::GraphicsSceneMouseMove:
+    default:
+        m_eventType = MouseEventMoved;
+    }
+
+    m_position = IntPoint(event->pos().toPoint());
+    m_globalPosition = IntPoint(event->screenPos());
+
+    if (event->button() == Qt::LeftButton || (event->buttons() & Qt::LeftButton))
+        m_button = LeftButton;
+    else if (event->button() == Qt::RightButton || (event->buttons() & Qt::RightButton))
+        m_button = RightButton;
+    else if (event->button() == Qt::MidButton || (event->buttons() & Qt::MidButton))
+        m_button = MiddleButton;
+    else
+        m_button = NoButton;
+
+    m_clickCount = clickCount;
+    m_shiftKey =  (event->modifiers() & Qt::ShiftModifier) != 0;
+    m_ctrlKey = (event->modifiers() & Qt::ControlModifier) != 0;
+    m_altKey =  (event->modifiers() & Qt::AltModifier) != 0;
+    m_metaKey = (event->modifiers() & Qt::MetaModifier) != 0;
+}
 
 PlatformMouseEvent::PlatformMouseEvent(QInputEvent* event, int clickCount)
 {

@@ -1,3 +1,17 @@
+2009-09-08  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        Add QGraphicsScene events support to the Qt platform events.
+
+        * platform/PlatformMouseEvent.h:
+        * platform/PlatformWheelEvent.h:
+        * platform/qt/PlatformMouseEventQt.cpp:
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+        * platform/qt/WheelEventQt.cpp:
+        (WebCore::PlatformWheelEvent::applyDelta):
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+
 2009-09-08  Michael Nordman  <michaeln@google.com>
 
         Reviewed by Eric Seidel.
