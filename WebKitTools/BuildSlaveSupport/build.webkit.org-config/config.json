@@ -48,7 +48,7 @@
                       "platform": "mac-leopard", "configuration": "debug", "architectures": ["i386"],
                       "slavenames": ["apple-xserve-3", "test-slave"]
                     },
-                    { "name": "SnowLeopard Intel Release", "type": "BuildAndTestLeaks", "builddir": "snowleopard-intel-release",
+                    { "name": "SnowLeopard Intel Release", "type": "BuildAndTest", "builddir": "snowleopard-intel-release",
                       "platform": "mac-snowleopard", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["apple-macpro-2", "test-slave"]
                     },
