@@ -1,3 +1,11 @@
+2009-09-08  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
+
+        Reviewed by Gustavo Noronha.
+
+        [Gtk] Buildfix for build error introduced in r48150.
+
+        * GNUmakefile.am: Modified. Added missing IDL files.
+
 2009-09-08  Csaba Osztrogonac  <oszi@inf.u-szeged.hu>
 
         Reviewed by Tor Arne Vestbø.
