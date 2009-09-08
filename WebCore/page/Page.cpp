@@ -464,10 +464,8 @@ void Page::userStyleSheetLocationChanged()
             encodedData[i - prefixLength] = static_cast<char>(url.string()[i]);
 
         Vector<char> styleSheetAsUTF8;
-        if (base64Decode(encodedData, styleSheetAsUTF8)) {
+        if (base64Decode(encodedData, styleSheetAsUTF8))
             m_userStyleSheet = String::fromUTF8(styleSheetAsUTF8.data());
-            return;
-        }
     }
     
     for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext()) {

@@ -1,3 +1,13 @@
+2009-09-08  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Make sure not to do an early return when a data URL stylesheet successfully loads.  We need to still
+        clear the old cached sheet out of all existing Frames.  Fixes the data URL stylesheet layout test failure.
+
+        * page/Page.cpp:
+        (WebCore::Page::userStyleSheetLocationChanged):
+
 2009-09-08  Sam Weinig  <sam@webkit.org>
 
         Fix windows build.
