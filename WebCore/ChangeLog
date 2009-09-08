@@ -1,3 +1,12 @@
+2009-09-08  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Unreviewed buildfix.
+
+        Fix Qt build after 48167, by adding the new cpp/h files
+        added to WebCore.gypi to WebCore.pro as well.
+
+        * WebCore.pro:
+
 2009-09-08  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.
