@@ -191,7 +191,9 @@ module core {
         readonly attribute [ConvertNullStringTo=Undefined] DOMString readyState;
 
         Element            elementFromPoint(in long x, in long y);
+#if !defined(LANGUAGE_COM) || !LANGUAGE_COM
         Range              caretRangeFromPoint(in long x, in long y);
+#endif
 
         // Mozilla extensions
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
