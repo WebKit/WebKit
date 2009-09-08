@@ -572,7 +572,7 @@ bool RenderThemeQt::paintMenuList(RenderObject* o, const RenderObject::PaintInfo
     QStyleOptionComboBox opt;
     if (p.widget)
         opt.initFrom(p.widget);
-    ControlPart appearance = applyTheme(opt, o);
+    applyTheme(opt, o);
 
     const QPoint topLeft = r.topLeft();
     p.painter->translate(topLeft);

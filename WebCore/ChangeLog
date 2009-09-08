@@ -1,5 +1,21 @@
 2009-09-08  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
+        Reviewed by Simon Hausmann.
+
+        [Qt] Fix unused variable warnings
+        https://bugs.webkit.org/show_bug.cgi?id=29018
+
+        No functional change, no tests.
+
+        * history/qt/HistoryItemQt.cpp:
+        (WebCore::HistoryItem::restoreState):
+        * platform/graphics/qt/ImageBufferQt.cpp:
+        (WebCore::putImageData):
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::paintMenuList):
+
+2009-09-08  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
         Reviewed by Ariya Hidayat.
 
         [Qt] Use the declaration order in initializer lists

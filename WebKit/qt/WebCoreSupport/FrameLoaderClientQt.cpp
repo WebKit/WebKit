@@ -956,7 +956,6 @@ void FrameLoaderClientQt::startDownload(const WebCore::ResourceRequest& request)
     if (!m_webFrame)
         return;
 
-    QWebPage *page = m_webFrame->page();
     emit m_webFrame->page()->downloadRequested(request.toNetworkRequest());
 #endif
 }
@@ -985,9 +984,6 @@ PassRefPtr<Frame> FrameLoaderClientQt::createFrame(const KURL& url, const String
     emit m_webFrame->page()->frameCreated(webFrame);
 
     // ### set override encoding if we have one
-
-    FrameLoadType loadType = m_frame->loader()->loadType();
-    FrameLoadType childLoadType = FrameLoadTypeRedirectWithLockedBackForwardList;
 
     frameData.frame->loader()->loadURLIntoChildFrame(frameData.url, frameData.referrer, frameData.frame.get());
 

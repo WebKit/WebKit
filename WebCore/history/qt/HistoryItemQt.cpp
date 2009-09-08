@@ -45,7 +45,7 @@ bool WebCore::HistoryItem::restoreState(QDataStream& in, int /*version*/)
     WebCore::IntPoint scrollPoint;
     WTF::Vector<int> weeklyVisitCounts;
     WTF::Vector<int> dailyVisitCounts;
-    bool loadFormdata;
+    // bool loadFormdata;
     // WebCore::String formContentType;
     // WTF::Vector<char> formData;
 

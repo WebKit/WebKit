@@ -766,7 +766,6 @@ void QWebPagePrivate::keyPressEvent(QKeyEvent *ev)
 {
     bool handled = false;
     WebCore::Frame* frame = page->focusController()->focusedOrMainFrame();
-    WebCore::Editor* editor = frame->editor();
     // we forward the key event to WebCore first to handle potential DOM
     // defined event handlers and later on end up in EditorClientQt::handleKeyboardEvent
     // to trigger editor commands via triggerAction().
@@ -778,7 +777,6 @@ void QWebPagePrivate::keyPressEvent(QKeyEvent *ev)
         if (view)
             defaultFont = view->font();
         QFontMetrics fm(defaultFont);
-        int fontHeight = fm.height();
         if (!handleScrolling(ev, frame)) {
             switch (ev->key()) {
             case Qt::Key_Back:
