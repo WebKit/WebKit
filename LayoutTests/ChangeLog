@@ -1,3 +1,19 @@
+2009-09-08  Steve Block  <steveblock@google.com>
+
+        Reviewed by Adam Barth.
+
+        Adds a LayoutTestController method to set the permission state for Geolocation.
+        This is required to use the mock Geolocation service for testing.
+        https://bugs.webkit.org/show_bug.cgi?id=29027
+
+        * fast/dom/Geolocation/resources/permission-denied.js: Added. Tests that the error callback is invoked with a permission error code when Geolocation permission is denied and the Geolocation service provides a good position fix.
+        * fast/dom/Geolocation/permission-denied-expected.txt: Added.  Expected result for above test.
+        * fast/dom/Geolocation/permission-denied.html: Added. Wrapper for above test.
+        * fast/dom/Geolocation/resources/success.js: Added. Tests that the success callback is invoked when the Geolocation service provides a good position fix.
+        * fast/dom/Geolocation/success-expected.txt: Added. Expected result for above test.
+        * fast/dom/Geolocation/success.html: Added. Wrapper for above test.
+        * platform/gtk/Skipped:
+
 2009-09-08 Andras Becsi <becsi.andras@stud.u-szeged.hu>
 
         Reviewed by Tor Arne Vestbø.

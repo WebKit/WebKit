@@ -189,6 +189,10 @@ public:
 
     void addUserScript(JSStringRef source, bool runAtStart);
 
+    void setGeolocationPermission(bool allow);
+    bool isGeolocationPermissionSet() const { return m_isGeolocationPermissionSet; }
+    bool geolocationPermission() const { return m_geolocationPermission; }
+
 private:
     bool m_dumpAsText;
     bool m_dumpAsPDF;
@@ -217,8 +221,9 @@ private:
     bool m_willSendRequestReturnsNullOnRedirect;
     bool m_windowIsKey;
     bool m_alwaysAcceptCookies;
-
     bool m_globalFlag;
+    bool m_isGeolocationPermissionSet;
+    bool m_geolocationPermission;
 
     std::string m_testPathOrURL;
     std::string m_expectedPixelHash;    // empty string if no hash

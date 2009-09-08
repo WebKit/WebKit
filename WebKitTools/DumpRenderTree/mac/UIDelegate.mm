@@ -34,6 +34,7 @@
 #import "EventSendingController.h"
 #import "LayoutTestController.h"
 #import <WebKit/WebFramePrivate.h>
+#import <WebKit/WebGeolocationPrivate.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebSecurityOriginPrivate.h>
 #import <WebKit/WebView.h>
@@ -148,6 +149,12 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
 {
     if (gLayoutTestController->dumpStatusCallbacks())
         printf("UI DELEGATE STATUS CALLBACK: setStatusText:%s\n", [text UTF8String]);
+}
+
+- (void)webView:(WebView *)sender frame:(WebFrame *)frame requestGeolocationPermission:(WebGeolocation *)geolocation securityOrigin:(WebSecurityOrigin *)origin
+{
+    if (gLayoutTestController->isGeolocationPermissionSet())
+        [geolocation setIsAllowed:gLayoutTestController->geolocationPermission()];
 }
 
 - (void)dealloc

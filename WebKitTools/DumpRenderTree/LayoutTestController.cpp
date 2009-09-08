@@ -67,6 +67,8 @@ LayoutTestController::LayoutTestController(const std::string& testPathOrURL, con
     , m_windowIsKey(true)
     , m_alwaysAcceptCookies(false)
     , m_globalFlag(false)
+    , m_isGeolocationPermissionSet(false)
+    , m_geolocationPermission(false)
     , m_testPathOrURL(testPathOrURL)
     , m_expectedPixelHash(expectedPixelHash)
 {
@@ -628,7 +630,6 @@ static JSValueRef setDatabaseQuotaCallback(JSContextRef context, JSObjectRef fun
         controller->setDatabaseQuota(static_cast<unsigned long long>(quota));
         
     return JSValueMakeUndefined(context);
-
 }
 
 static JSValueRef setMockGeolocationPositionCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -655,6 +656,18 @@ static JSValueRef setMockGeolocationErrorCallback(JSContextRef context, JSObject
 
     LayoutTestController* controller = reinterpret_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
     controller->setMockGeolocationError(code, message.get());
+
+    return JSValueMakeUndefined(context);
+}
+
+static JSValueRef setGeolocationPermissionCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    // Has mac implementation
+    if (argumentCount < 1)
+        return JSValueMakeUndefined(context);
+
+    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    controller->setGeolocationPermission(JSValueToBoolean(context, arguments[0]));
 
     return JSValueMakeUndefined(context);
 }
@@ -1086,6 +1099,7 @@ JSStaticFunction* LayoutTestController::staticFunctions()
         { "setDatabaseQuota", setDatabaseQuotaCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete }, 
         { "setMockGeolocationPosition", setMockGeolocationPositionCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setMockGeolocationError", setMockGeolocationErrorCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "setGeolocationPermission", setGeolocationPermissionCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setIconDatabaseEnabled", setIconDatabaseEnabledCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setJavaScriptProfilingEnabled", setJavaScriptProfilingEnabledCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setMainFrameIsFirstResponder", setMainFrameIsFirstResponderCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
@@ -1162,4 +1176,10 @@ void LayoutTestController::waitToDumpWatchdogTimerFired()
     fprintf(stderr, "%s", message);
     fprintf(stdout, "%s", message);
     notifyDone();
+}
+
+void LayoutTestController::setGeolocationPermission(bool allow)
+{
+    m_isGeolocationPermissionSet = true;
+    m_geolocationPermission = allow;
 }

@@ -1,3 +1,22 @@
+2009-09-08  Steve Block  <steveblock@google.com>
+
+        Reviewed by Adam Barth.
+
+        Adds a LayoutTestController method to set the permission state for Geolocation.
+        This is required to use the mock Geolocation service for testing.
+        https://bugs.webkit.org/show_bug.cgi?id=29027
+
+        * DumpRenderTree/LayoutTestController.cpp: Modified.
+        (setDatabaseQuotaCallback): Modified. Style fix.
+        (setGeolocationPermissionCallback): Added. Sets the Geolocation permission state.
+        (LayoutTestController::staticFunctions): Modified. Registers the above function on the LayoutTestController.
+        * DumpRenderTree/LayoutTestController.h: Modified.
+        (LayoutTestController::setGeolocationPermission): Added. Sets the Geolocation permission state.
+        (LayoutTestController::isGeolocationPermissionSet): Added. Returns whether the Geolocation permission has been set.
+        (LayoutTestController::geolocationPermission): Added. Returns the Geolocation permission state.
+        * DumpRenderTree/mac/UIDelegate.mm: Modified.
+        (-[UIDelegate webView:frame:requestGeolocationPermission:securityOrigin:]): Added. Implement chrome method to respond to request for Geolocation permission state. Response is made using above methods to access permission state.
+
 2009-09-08  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Simon Hausmann.

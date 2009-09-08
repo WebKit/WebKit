@@ -1570,6 +1570,8 @@ fast/dom/client-width-height.html
 fast/dom/cssTarget-crash.html
 fast/dom/frame-loading-via-document-write.html
 fast/dom/Geolocation/error.html
+fast/dom/Geolocation/permission-denied.html
+fast/dom/Geolocation/success.html
 fast/dom/getBoundingClientRect.html
 fast/dom/null-document-location-put-crash.html
 fast/dom/null-document-location-replace-crash.html
