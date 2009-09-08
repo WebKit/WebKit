@@ -1,3 +1,13 @@
+2009-09-08  Cameron McCormack  <cam@mcc.id.au>
+
+        Reviewed by Darin Adler.
+
+        prepare-ChangeLog too chatty on file additions
+        https://bugs.webkit.org/show_bug.cgi?id=29019
+
+        * Scripts/prepare-ChangeLog: Omit description of added properties
+        on newly added files.
+
 2009-09-08  Steve Block  <steveblock@google.com>
 
         Reviewed by Adam Barth.

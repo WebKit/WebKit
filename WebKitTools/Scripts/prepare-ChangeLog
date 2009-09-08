@@ -1586,8 +1586,7 @@ sub statusDescription($$$$)
     $description = sprintf($git{$status}, $original) if $isGit && exists $git{$status};
     return unless defined $description;
 
-    $description .= $propertyDescription;
-    $description =~ s/^ Added\. Added propert/ Added with propert/;
+    $description .= $propertyDescription unless isAddedStatus($status);
     return $description;
 }
 
