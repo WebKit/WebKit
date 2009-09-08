@@ -1,5 +1,13 @@
 2009-09-07  Drew Wilson  <atwilson@google.com>
 
+        Unreviewed test fixup.
+
+        Added shared worker lifecycle tests to Skipped test list due to missing DRT functionality on Qt platform.
+
+        * platform/qt/Skipped:
+
+2009-09-07  Drew Wilson  <atwilson@google.com>
+
         Reviewed by David Levin.
 
         Enable shared worker tests.
