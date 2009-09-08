@@ -508,7 +508,14 @@ DOMWindow* V8Proxy::retrieveWindow(v8::Handle<v8::Context> context)
 
 Frame* V8Proxy::retrieveFrame(v8::Handle<v8::Context> context)
 {
-    return retrieveWindow(context)->frame();
+    DOMWindow* window = retrieveWindow(context);
+    Frame* frame = window->frame();
+    if (frame && frame->domWindow() == window)
+        return frame;
+    // We return 0 here because |context| is detached from the Frame.  If we
+    // did return |frame| we could get in trouble because the frame could be
+    // navigated to another security origin.
+    return 0;
 }
 
 Frame* V8Proxy::retrieveFrameForEnteredContext()
