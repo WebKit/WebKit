@@ -325,8 +325,11 @@ using WTF::ThreadCondition;
 using WTF::ThreadIdentifier;
 using WTF::ThreadSafeShared;
 
+#if USE(LOCKFREE_THREADSAFESHARED)
 using WTF::atomicDecrement;
 using WTF::atomicIncrement;
+#endif
+
 using WTF::createThread;
 using WTF::currentThread;
 using WTF::isMainThread;
