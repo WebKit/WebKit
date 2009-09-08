@@ -72,6 +72,24 @@ function stringify(v)
     else return "" + v;
 }
 
+function evalAndLog(_a)
+{
+  if (typeof _a != "string")
+    debug("WARN: tryAndLog() expects a string argument");
+  var exception;
+  var _av;
+  try {
+     _av = eval(_a);
+  } catch (e) {
+     exception = e;
+  }
+
+  if (exception)
+    testFailed(_a + " threw exception " + exception);
+  else
+    debug(_a);
+}
+
 function shouldBe(_a, _b)
 {
   if (typeof _a != "string" || typeof _b != "string")

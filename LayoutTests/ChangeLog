@@ -1,3 +1,28 @@
+2009-09-07  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Clean up localStorage.clear() layout test.
+        https://bugs.webkit.org/show_bug.cgi?id=28939
+
+        This is the first step of https://bugs.webkit.org/show_bug.cgi?id=27897 which
+        is a pretty major cleanup of all the dom storage layout tests.  I'm just
+        changing this one to begin with to get buy-in on the approach.
+
+        This also adds a new method to the fast/js/js-test-pre.js that runs a command
+        and prints it to the screen.  This should really help with making the output of
+        the tests readable without looking at the source code.
+
+        * fast/js/resources/js-test-pre.js:
+        (tryAndLog): Runs a command and logs it to the screen.
+        * storage/domstorage/localstorage/clear-expected.txt:
+        * storage/domstorage/localstorage/clear.html:
+        * storage/domstorage/resources: Added.
+        * storage/domstorage/resources/clear.js: Added.
+            The meat of the test is now in this file.
+        * storage/domstorage/sessionstorage/clear-expected.txt:
+        * storage/domstorage/sessionstorage/clear.html:
+
 2009-09-07  Drew Wilson  <atwilson@google.com>
 
         Rubber-stamped by Sam Weinig.
