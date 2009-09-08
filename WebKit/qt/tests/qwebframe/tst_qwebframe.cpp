@@ -578,6 +578,9 @@ private slots:
     void urlChange();
     void domCycles();
     void requestedUrl();
+    void javaScriptWindowObjectCleared_data();
+    void javaScriptWindowObjectCleared();
+    void javaScriptWindowObjectClearedOnEvaluate();
     void setHtml();
     void setHtmlWithResource();
     void ipv6HostEncoding();
@@ -2276,6 +2279,40 @@ void tst_QWebFrame::requestedUrl()
     QCOMPARE(spy2.count(), 1);
     QCOMPARE(frame->requestedUrl(), QUrl("qrc:/fake-ssl-error.html"));
     QCOMPARE(frame->url(), QUrl("qrc:/fake-ssl-error.html"));
+}
+
+void tst_QWebFrame::javaScriptWindowObjectCleared_data()
+{
+    QTest::addColumn<QString>("html");
+    QTest::addColumn<int>("signalCount");
+    QTest::newRow("with <script>") << "<html><body><script></script><p>hello world</p></body></html>" << 1;
+    QTest::newRow("without <script>") << "<html><body><p>hello world</p></body></html>" << 0;
+}
+
+void tst_QWebFrame::javaScriptWindowObjectCleared()
+{
+    QWebPage page;
+    QWebFrame* frame = page.mainFrame();
+    QSignalSpy spy(frame, SIGNAL(javaScriptWindowObjectCleared()));
+    QFETCH(QString, html);
+    frame->setHtml(html);
+
+    QFETCH(int, signalCount);
+    QCOMPARE(spy.count(), signalCount);
+}
+
+void tst_QWebFrame::javaScriptWindowObjectClearedOnEvaluate()
+{
+    QWebPage page;
+    QWebFrame* frame = page.mainFrame();
+    QSignalSpy spy(frame, SIGNAL(javaScriptWindowObjectCleared()));
+    frame->setHtml("<html></html>");
+    QCOMPARE(spy.count(), 0);
+    frame->evaluateJavaScript("var a = 'a';");
+    QCOMPARE(spy.count(), 1);
+    // no new clear for a new script:
+    frame->evaluateJavaScript("var a = 1;");
+    QCOMPARE(spy.count(), 1);
 }
 
 void tst_QWebFrame::setHtml()
