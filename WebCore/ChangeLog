@@ -1,3 +1,11 @@
+2009-09-08  Csaba Osztrogonac  <oszi@inf.u-szeged.hu>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] Buildfix. Build error caused by r48150.
+
+        * WebCore.pro: missing IDL files added
+
 2009-09-07  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Oliver Hunt.
