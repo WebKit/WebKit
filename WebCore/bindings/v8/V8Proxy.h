@@ -49,7 +49,6 @@
 #include <wtf/PassRefPtr.h> // so generated bindings don't have to
 #include <wtf/Vector.h>
 
-#include <iterator>
 #include <list>
 
 #ifdef ENABLE_DOM_STATS_COUNTERS
