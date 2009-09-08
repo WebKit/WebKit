@@ -302,13 +302,10 @@ bool InspectorController::windowVisible()
 
 void InspectorController::setWindowVisible(bool visible, bool attached)
 {
-    if (visible == m_windowVisible)
+    if (visible == m_windowVisible || !m_frontend)
         return;
 
     m_windowVisible = visible;
-
-    if (!m_frontend)
-        return;
 
     if (m_windowVisible) {
         setAttachedWindow(attached);

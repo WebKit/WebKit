@@ -1,3 +1,12 @@
+2009-09-08  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Make m_windowVisible more consistent with the actual visibility of the inspector.
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::setWindowVisible):
+
 2009-09-07  Adam Barth  <abarth@webkit.org>
 
         Unreviewed speculative build fix for Snow Leopard.
