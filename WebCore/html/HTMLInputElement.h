@@ -231,6 +231,11 @@ public:
     virtual bool willValidate() const;
 
     virtual bool placeholderShouldBeVisible() const;
+
+    // Converts the specified string to a floating number.
+    // If the conversion fails, the return value is false. Take care that leading or trailing unnecessary characters make failures.  This returns false for an empty string input.
+    // The double* parameter may be 0.
+    static bool formStringToDouble(const String&, double*);
     
 protected:
     virtual void willMoveToNewOwnerDocument();

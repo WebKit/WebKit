@@ -1,3 +1,14 @@
+2009-09-08  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Tests for ValidityState::typeMismatch() for <input type=number>.
+        https://bugs.webkit.org/show_bug.cgi?id=28934
+
+        * fast/forms/ValidityState-typeMismatch-number-expected.txt: Added.
+        * fast/forms/ValidityState-typeMismatch-number.html: Added.
+        * fast/forms/resources/ValidityState-typeMismatch-number.js: Added.
+
 2009-09-08  Steve Block  <steveblock@google.com>
 
         Reviewed by Adam Barth.

@@ -1,3 +1,19 @@
+2009-09-08  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Implement ValidityState::typeMismatch() for <input type=number>.
+        https://bugs.webkit.org/show_bug.cgi?id=28934
+
+        Test: fast/forms/ValidityState-typeMismatch-number.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::formStringToDouble):
+        * html/HTMLInputElement.h:
+        * html/ValidityState.cpp:
+        (WebCore::ValidityState::typeMismatch):
+        * html/ValidityState.h:
+
 2009-09-08  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
 
         Reviewed by Gustavo Noronha.

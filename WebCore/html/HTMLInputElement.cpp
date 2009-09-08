@@ -59,6 +59,7 @@
 #include "RenderTextControlSingleLine.h"
 #include "RenderTheme.h"
 #include "TextEvent.h"
+#include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
 
 using namespace std;
@@ -1790,6 +1791,29 @@ bool HTMLInputElement::willValidate() const
 bool HTMLInputElement::placeholderShouldBeVisible() const
 {
     return InputElement::placeholderShouldBeVisible(this, this);
+}
+
+bool HTMLInputElement::formStringToDouble(const String& src, double* out)
+{
+    // See HTML5 2.4.4.3 `Real numbers.'
+
+    if (src.isEmpty())
+        return false;
+    // String::toDouble() accepts leading + \t \n \v \f \r and SPACE, which are invalid in HTML5.
+    // So, check the first character.
+    if (src[0] != '-' && (src[0] < '0' || src[0] > '9'))
+        return false;
+
+    bool valid = false;
+    double value = src.toDouble(&valid);
+    if (!valid)
+        return false;
+    // NaN and Infinity are not valid numbers according to the standard.
+    if (isnan(value) || isinf(value))
+        return false;
+    if (out)
+        *out = value;
+    return true;
 }
 
 #if ENABLE(DATALIST)
