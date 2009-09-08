@@ -1,3 +1,11 @@
+2009-09-08  Kelly Norton  <knorton@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Add missing extension to the file entry in WebCore.vcproj.
+
+        * WebCore.vcproj/WebCore.vcproj: Added "cpp".
+
 2009-09-08  Jian Li  <jianli@chromium.org>
 
         Reviewed by David Levin.
