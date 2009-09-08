@@ -1,3 +1,9 @@
+2009-09-08  Xan Lopez  <xlopez@igalia.com>
+
+        Unreviewed attempt to fix the GTK+ build.
+
+        * GNUmakefile.am:
+
 2009-09-04  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by Eric Seidel.
