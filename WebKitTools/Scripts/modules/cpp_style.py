@@ -3144,6 +3144,7 @@ def use_webkit_styles():
     #        modify the implementation and enable them.
     global _DEFAULT_FILTERS
     _DEFAULT_FILTERS = [
+        '-whitespace/end_of_line',
         '-whitespace/comments',
         '-whitespace/blank_line',
         '-runtime/explicit',  # explicit
