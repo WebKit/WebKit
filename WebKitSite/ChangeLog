@@ -1,3 +1,11 @@
+2009-09-08  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adele Peterson.
+
+        Update Security Group Members list.
+
+        * security/security-group-members.html:
+
 2009-09-06  Cameron McCormack  <cam@mcc.id.au>
 
         Reviewed by Eric Seidel.
