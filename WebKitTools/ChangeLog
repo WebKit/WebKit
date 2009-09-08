@@ -1,3 +1,11 @@
+2009-09-08  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Unreviewed.
+
+        Add myself to list of committers.
+
+        * Scripts/modules/committers.py:
+
 2009-09-08  Cameron McCormack  <cam@mcc.id.au>
 
         Reviewed by Darin Adler.
