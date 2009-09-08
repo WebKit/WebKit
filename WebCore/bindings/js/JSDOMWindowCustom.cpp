@@ -52,6 +52,16 @@
 #include "JSSharedWorkerConstructor.h"
 #endif
 
+#if ENABLE(3D_CANVAS)
+#include "JSCanvasArrayBufferConstructor.h"
+#include "JSCanvasByteArrayConstructor.h"
+#include "JSCanvasUnsignedByteArrayConstructor.h"
+#include "JSCanvasIntArrayConstructor.h"
+#include "JSCanvasUnsignedIntArrayConstructor.h"
+#include "JSCanvasShortArrayConstructor.h"
+#include "JSCanvasUnsignedShortArrayConstructor.h"
+#include "JSCanvasFloatArrayConstructor.h"
+#endif
 #include "JSWebKitCSSMatrixConstructor.h"
 #include "JSWebKitPointConstructor.h"
 #include "JSWorkerConstructor.h"
@@ -612,6 +622,48 @@ JSValue JSDOMWindow::webKitCSSMatrix(ExecState* exec) const
 {
     return getDOMConstructor<JSWebKitCSSMatrixConstructor>(exec, this);
 }
+ 
+#if ENABLE(3D_CANVAS)
+JSValue JSDOMWindow::canvasArrayBuffer(ExecState* exec) const
+{
+    return getDOMConstructor<JSCanvasArrayBufferConstructor>(exec, this);
+}
+ 
+JSValue JSDOMWindow::canvasByteArray(ExecState* exec) const
+{
+    return getDOMConstructor<JSCanvasByteArrayConstructor>(exec, this);
+}
+ 
+JSValue JSDOMWindow::canvasUnsignedByteArray(ExecState* exec) const
+{
+    return getDOMConstructor<JSCanvasUnsignedByteArrayConstructor>(exec, this);
+}
+ 
+JSValue JSDOMWindow::canvasIntArray(ExecState* exec) const
+{
+    return getDOMConstructor<JSCanvasIntArrayConstructor>(exec, this);
+}
+ 
+JSValue JSDOMWindow::canvasUnsignedIntArray(ExecState* exec) const
+{
+    return getDOMConstructor<JSCanvasUnsignedIntArrayConstructor>(exec, this);
+}
+ 
+JSValue JSDOMWindow::canvasShortArray(ExecState* exec) const
+{
+    return getDOMConstructor<JSCanvasShortArrayConstructor>(exec, this);
+}
+ 
+JSValue JSDOMWindow::canvasUnsignedShortArray(ExecState* exec) const
+{
+    return getDOMConstructor<JSCanvasUnsignedShortArrayConstructor>(exec, this);
+}
+ 
+JSValue JSDOMWindow::canvasFloatArray(ExecState* exec) const
+{
+    return getDOMConstructor<JSCanvasFloatArrayConstructor>(exec, this);
+}
+#endif
  
 JSValue JSDOMWindow::xmlHttpRequest(ExecState* exec) const
 {

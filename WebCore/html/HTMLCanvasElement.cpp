@@ -165,7 +165,8 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type)
         return m_context.get();
     }
 #if ENABLE(3D_CANVAS)    
-    if (type == "webkit-3d") {
+    if ((type == "webkit-3d") ||
+        (type == "GL")) {
         if (m_context && !m_context->is3d())
             return 0;
         if (!m_context) {
@@ -243,15 +244,25 @@ void HTMLCanvasElement::paint(GraphicsContext* context, const IntRect& r)
     if (context->paintingDisabled())
         return;
     
+#if ENABLE(3D_CANVAS)
+    CanvasRenderingContext3D* context3D = NULL;
+    if (m_context && m_context->is3d()) {
+        context3D = static_cast<CanvasRenderingContext3D*>(m_context.get());
+        context3D->beginPaint();
+    }
+#endif
+
     if (m_imageBuffer) {
         Image* image = m_imageBuffer->image();
         if (image)
             context->drawImage(image, r);
     }
-    
-#if ENABLE(3D_CANVAS)    
-    if (m_context && m_context->is3d())
-        static_cast<CanvasRenderingContext3D*>(m_context.get())->reshape(r.width(), r.height());
+
+#if ENABLE(3D_CANVAS)
+    if (context3D != NULL) {
+        context3D->reshape(r.width(), r.height());
+        context3D->endPaint();
+    }
 #endif
 }
 

@@ -23,14 +23,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module html {
-    interface [
-        Conditional=3D_CANVAS,
-        HasCustomIndexGetter,
-        HasCustomIndexSetter,
-        GenerateNativeConverter,
-        GenerateCustomConstructor,
-        CustomToJS
-    ] CanvasByteArray : CanvasArray {
+#ifndef JSCanvasShortArrayConstructor_h
+#define JSCanvasShortArrayConstructor_h
+
+#include "JSDOMBinding.h"
+#include "JSDocument.h"
+
+namespace WebCore {
+
+    class JSCanvasShortArrayConstructor : public DOMConstructorObject {
+    public:
+        JSCanvasShortArrayConstructor(JSC::ExecState*, JSDOMGlobalObject*);
+        static const JSC::ClassInfo s_info;
+
+    private:
+        virtual JSC::ConstructType getConstructData(JSC::ConstructData&);
+        virtual const JSC::ClassInfo* classInfo() const { return &s_info; }
     };
+
 }
+
+#endif // JSCanvasShortArrayConstructor_h

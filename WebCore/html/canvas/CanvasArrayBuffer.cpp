@@ -23,14 +23,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module html {
-    interface [
-        Conditional=3D_CANVAS,
-        HasCustomIndexGetter,
-        HasCustomIndexSetter,
-        GenerateNativeConverter,
-        GenerateCustomConstructor,
-        CustomToJS
-    ] CanvasByteArray : CanvasArray {
-    };
+#include "config.h"
+
+#if ENABLE(3D_CANVAS)
+
+#include "CanvasArrayBuffer.h"
+
+namespace WebCore {
+    
+    PassRefPtr<CanvasArrayBuffer> CanvasArrayBuffer::create(unsigned sizeInBytes)
+    {
+        return adoptRef(new CanvasArrayBuffer(sizeInBytes));
+    }
+    
+    CanvasArrayBuffer::CanvasArrayBuffer(unsigned sizeInBytes) {
+        m_sizeInBytes = sizeInBytes;
+        m_data = WTF::fastZeroedMalloc(sizeInBytes);
+    }
+    
+    void* CanvasArrayBuffer::data() {
+        return m_data;
+    }
+
+    unsigned CanvasArrayBuffer::byteLength() const {
+        return m_sizeInBytes;
+    }
+
+    CanvasArrayBuffer::~CanvasArrayBuffer() {
+        WTF::fastFree(m_data);
+    }
 }
+
+#endif // ENABLE(3D_CANVAS)

@@ -23,14 +23,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module html {
-    interface [
-        Conditional=3D_CANVAS,
-        HasCustomIndexGetter,
-        HasCustomIndexSetter,
-        GenerateNativeConverter,
-        GenerateCustomConstructor,
-        CustomToJS
-    ] CanvasByteArray : CanvasArray {
-    };
+#include "config.h"
+
+#if ENABLE(3D_CANVAS)
+
+#include "JSCanvasFloatArray.h"
+
+#include "CanvasFloatArray.h"
+
+using namespace JSC;
+
+namespace WebCore {
+
+JSValue JSCanvasFloatArray::getByIndex(JSC::ExecState* exec, unsigned int index)
+{
+    float value;
+    impl()->get(index, value);
+    JSC::JSValue result = jsNumber(exec, value);
+    return result;
 }
+
+void JSCanvasFloatArray::indexSetter(JSC::ExecState* exec, unsigned index, JSC::JSValue value)
+{
+    impl()->set(index, static_cast<float>(value.toInt32(exec)));
+}
+
+JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, CanvasFloatArray* object)
+{
+    return getDOMObjectWrapper<JSCanvasFloatArray>(exec, globalObject, object);
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(3D_CANVAS)

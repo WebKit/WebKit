@@ -27,28 +27,41 @@
 
 #if ENABLE(3D_CANVAS)
 
-#include "CanvasTexture.h"
-#include "CanvasRenderingContext3D.h"
+#include "JSCanvasIntArrayConstructor.h"
+
+#include "Document.h"
+#include "CanvasIntArray.h"
+#include "JSCanvasArrayBuffer.h"
+#include "JSCanvasArrayBufferConstructor.h"
+#include "JSCanvasIntArray.h"
+#include <runtime/Error.h>
 
 namespace WebCore {
-    
-PassRefPtr<CanvasTexture> CanvasTexture::create(CanvasRenderingContext3D* ctx)
+
+using namespace JSC;
+
+const ClassInfo JSCanvasIntArrayConstructor::s_info = { "CanvasIntArrayConstructor", &JSCanvasArray::s_info, 0, 0 };
+
+JSCanvasIntArrayConstructor::JSCanvasIntArrayConstructor(ExecState* exec, JSDOMGlobalObject* globalObject)
+    : DOMConstructorObject(JSCanvasIntArrayConstructor::createStructure(globalObject->objectPrototype()), globalObject)
 {
-    return adoptRef(new CanvasTexture(ctx));
+    putDirect(exec->propertyNames().prototype, JSCanvasIntArrayPrototype::self(exec, globalObject), None);
+    putDirect(exec->propertyNames().length, jsNumber(exec, 2), ReadOnly|DontDelete|DontEnum);
 }
 
-CanvasTexture::CanvasTexture(CanvasRenderingContext3D* ctx)
-    : CanvasObject(ctx)
-    , cubeMapRWrapModeInitialized(false)
+static JSObject* constructCanvasIntArray(ExecState* exec, JSObject* constructor, const ArgList& args)
 {
-    setObject(context()->graphicsContext3D()->createTexture());
+    JSCanvasIntArrayConstructor* jsConstructor = static_cast<JSCanvasIntArrayConstructor*>(constructor);
+    RefPtr<CanvasIntArray> array = static_cast<CanvasIntArray*>(construct<CanvasIntArray, int>(exec, args).get());
+    return asObject(toJS(exec, jsConstructor->globalObject(), array.get()));
 }
 
-void CanvasTexture::_deleteObject(Platform3DObject object)
+JSC::ConstructType JSCanvasIntArrayConstructor::getConstructData(JSC::ConstructData& constructData)
 {
-    context()->graphicsContext3D()->deleteTexture(object);
+    constructData.native.function = constructCanvasIntArray;
+    return ConstructTypeHost;
 }
 
-}
+} // namespace WebCore
 
 #endif // ENABLE(3D_CANVAS)

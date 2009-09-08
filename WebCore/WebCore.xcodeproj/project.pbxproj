@@ -368,7 +368,6 @@
 		1A8F6BC50DB55CDC001DB794 /* ManifestParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A8F6BBA0DB55CDC001DB794 /* ManifestParser.cpp */; };
 		1A8F6BC60DB55CDC001DB794 /* ManifestParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8F6BBB0DB55CDC001DB794 /* ManifestParser.h */; };
 		1A98956B0AA78F80005EF5EF /* KURLCFNet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A98956A0AA78F80005EF5EF /* KURLCFNet.cpp */; };
-		1A9EF4570A1B957D00332B63 /* JSCanvasRenderingContext2DCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9EF4560A1B957D00332B63 /* JSCanvasRenderingContext2DCustom.cpp */; };
 		1AB1AE7A0C051FDE00139F4F /* zoomInCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AB1AE780C051FDE00139F4F /* zoomInCursor.png */; };
 		1AB1AE7B0C051FDE00139F4F /* zoomOutCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AB1AE790C051FDE00139F4F /* zoomOutCursor.png */; };
 		1AB7FC680A8B92EC00D9D37B /* XPathEvaluator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB7FC470A8B92EC00D9D37B /* XPathEvaluator.cpp */; };
@@ -783,24 +782,16 @@
 		498391590F1E776900C23782 /* WebKitCSSMatrix.h in Headers */ = {isa = PBXBuildFile; fileRef = 498391560F1E776900C23782 /* WebKitCSSMatrix.h */; };
 		498391630F1E8EE100C23782 /* JSWebKitCSSMatrixConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 498391610F1E8EE100C23782 /* JSWebKitCSSMatrixConstructor.cpp */; };
 		498391640F1E8EE100C23782 /* JSWebKitCSSMatrixConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 498391620F1E8EE100C23782 /* JSWebKitCSSMatrixConstructor.h */; };
-		4983A97010435E9000DB70F9 /* JSCanvasRenderingContextCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4983A96F10435E9000DB70F9 /* JSCanvasRenderingContextCustom.cpp */; };
-		49C7B97E1042D2080009D447 /* JSCanvasNumberArrayCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B97C1042D2080009D447 /* JSCanvasNumberArrayCustom.cpp */; };
-		49C7B97F1042D2080009D447 /* JSCanvasRenderingContext3DCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B97D1042D2080009D447 /* JSCanvasRenderingContext3DCustom.cpp */; };
 		49C7B9931042D2D30009D447 /* JSCanvasBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9801042D2D30009D447 /* JSCanvasBuffer.cpp */; };
 		49C7B9941042D2D30009D447 /* JSCanvasBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9811042D2D30009D447 /* JSCanvasBuffer.h */; };
 		49C7B9951042D2D30009D447 /* JSCanvasByteArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9821042D2D30009D447 /* JSCanvasByteArray.cpp */; };
 		49C7B9961042D2D30009D447 /* JSCanvasByteArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9831042D2D30009D447 /* JSCanvasByteArray.h */; };
 		49C7B9971042D2D30009D447 /* JSCanvasFramebuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9841042D2D30009D447 /* JSCanvasFramebuffer.cpp */; };
 		49C7B9981042D2D30009D447 /* JSCanvasFramebuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9851042D2D30009D447 /* JSCanvasFramebuffer.h */; };
-		49C7B9991042D2D30009D447 /* JSCanvasNumberArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9861042D2D30009D447 /* JSCanvasNumberArray.cpp */; };
-		49C7B99A1042D2D30009D447 /* JSCanvasNumberArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9871042D2D30009D447 /* JSCanvasNumberArray.h */; };
 		49C7B99B1042D2D30009D447 /* JSCanvasProgram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9881042D2D30009D447 /* JSCanvasProgram.cpp */; };
 		49C7B99C1042D2D30009D447 /* JSCanvasProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9891042D2D30009D447 /* JSCanvasProgram.h */; };
 		49C7B99D1042D2D30009D447 /* JSCanvasRenderbuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B98A1042D2D30009D447 /* JSCanvasRenderbuffer.cpp */; };
 		49C7B99E1042D2D30009D447 /* JSCanvasRenderbuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B98B1042D2D30009D447 /* JSCanvasRenderbuffer.h */; };
-		49C7B99F1042D2D30009D447 /* JSCanvasRenderingContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B98C1042D2D30009D447 /* JSCanvasRenderingContext.cpp */; };
-		49C7B9A01042D2D30009D447 /* JSCanvasRenderingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B98D1042D2D30009D447 /* JSCanvasRenderingContext.h */; };
-		49C7B9A11042D2D30009D447 /* JSCanvasRenderingContext3D.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B98E1042D2D30009D447 /* JSCanvasRenderingContext3D.h */; };
 		49C7B9A21042D2D30009D447 /* JSCanvasShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B98F1042D2D30009D447 /* JSCanvasShader.cpp */; };
 		49C7B9A31042D2D30009D447 /* JSCanvasShader.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9901042D2D30009D447 /* JSCanvasShader.h */; };
 		49C7B9A41042D2D30009D447 /* JSCanvasTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9911042D2D30009D447 /* JSCanvasTexture.cpp */; };
@@ -811,8 +802,6 @@
 		49C7B9CC1042D32F0009D447 /* CanvasByteArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9AC1042D32E0009D447 /* CanvasByteArray.h */; };
 		49C7B9CE1042D32F0009D447 /* CanvasFramebuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9AE1042D32E0009D447 /* CanvasFramebuffer.cpp */; };
 		49C7B9CF1042D32F0009D447 /* CanvasFramebuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9AF1042D32E0009D447 /* CanvasFramebuffer.h */; };
-		49C7B9D11042D32F0009D447 /* CanvasNumberArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9B11042D32E0009D447 /* CanvasNumberArray.cpp */; };
-		49C7B9D21042D32F0009D447 /* CanvasNumberArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9B21042D32E0009D447 /* CanvasNumberArray.h */; };
 		49C7B9D41042D32F0009D447 /* CanvasObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9B41042D32F0009D447 /* CanvasObject.cpp */; };
 		49C7B9D51042D32F0009D447 /* CanvasObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9B51042D32F0009D447 /* CanvasObject.h */; };
 		49C7B9D61042D32F0009D447 /* CanvasProgram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9B61042D32F0009D447 /* CanvasProgram.cpp */; };
@@ -833,7 +822,6 @@
 		49C7BA021042D38C0009D447 /* GraphicsContext3DMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9FF1042D38C0009D447 /* GraphicsContext3DMac.cpp */; };
 		49C7BA791042EFAE0009D447 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49C7BA781042EFAE0009D447 /* OpenGL.framework */; };
 		49C7BA8D1042F5B10009D447 /* JSDocumentCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7BA8C1042F5B10009D447 /* JSDocumentCustom.cpp */; };
-		49C7D4FB1042F95F0009D447 /* JSCanvasRenderingContext3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7D4FA1042F95F0009D447 /* JSCanvasRenderingContext3D.cpp */; };
 		49D5DC2B0F423A73008F20FD /* Matrix3DTransformOperation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49D5DC270F423A73008F20FD /* Matrix3DTransformOperation.cpp */; };
 		49D5DC2C0F423A73008F20FD /* Matrix3DTransformOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 49D5DC280F423A73008F20FD /* Matrix3DTransformOperation.h */; };
 		49D5DC2D0F423A73008F20FD /* PerspectiveTransformOperation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49D5DC290F423A73008F20FD /* PerspectiveTransformOperation.cpp */; };
@@ -859,6 +847,78 @@
 		49E912AC0EFAC906009D0CAF /* AnimationList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49E912A70EFAC906009D0CAF /* AnimationList.cpp */; };
 		49E912AD0EFAC906009D0CAF /* AnimationList.h in Headers */ = {isa = PBXBuildFile; fileRef = 49E912A80EFAC906009D0CAF /* AnimationList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		49E912AE0EFAC906009D0CAF /* TimingFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 49E912A90EFAC906009D0CAF /* TimingFunction.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		49EECDDF10503C2400099FAB /* CanvasArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECDC710503C2300099FAB /* CanvasArray.cpp */; };
+		49EECDE010503C2400099FAB /* CanvasArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECDC810503C2300099FAB /* CanvasArray.h */; };
+		49EECDE110503C2400099FAB /* CanvasArray.idl in Resources */ = {isa = PBXBuildFile; fileRef = 49EECDC910503C2300099FAB /* CanvasArray.idl */; };
+		49EECDE210503C2400099FAB /* CanvasArrayBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECDCA10503C2300099FAB /* CanvasArrayBuffer.cpp */; };
+		49EECDE310503C2400099FAB /* CanvasArrayBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECDCB10503C2300099FAB /* CanvasArrayBuffer.h */; };
+		49EECDE410503C2400099FAB /* CanvasArrayBuffer.idl in Resources */ = {isa = PBXBuildFile; fileRef = 49EECDCC10503C2300099FAB /* CanvasArrayBuffer.idl */; };
+		49EECDE510503C2400099FAB /* CanvasFloatArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECDCD10503C2300099FAB /* CanvasFloatArray.cpp */; };
+		49EECDE610503C2400099FAB /* CanvasFloatArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECDCE10503C2300099FAB /* CanvasFloatArray.h */; };
+		49EECDE710503C2400099FAB /* CanvasFloatArray.idl in Resources */ = {isa = PBXBuildFile; fileRef = 49EECDCF10503C2300099FAB /* CanvasFloatArray.idl */; };
+		49EECDE810503C2400099FAB /* CanvasIntArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECDD010503C2300099FAB /* CanvasIntArray.cpp */; };
+		49EECDE910503C2400099FAB /* CanvasIntArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECDD110503C2300099FAB /* CanvasIntArray.h */; };
+		49EECDEA10503C2400099FAB /* CanvasIntArray.idl in Resources */ = {isa = PBXBuildFile; fileRef = 49EECDD210503C2300099FAB /* CanvasIntArray.idl */; };
+		49EECDEB10503C2400099FAB /* CanvasShortArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECDD310503C2300099FAB /* CanvasShortArray.cpp */; };
+		49EECDEC10503C2400099FAB /* CanvasShortArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECDD410503C2300099FAB /* CanvasShortArray.h */; };
+		49EECDED10503C2400099FAB /* CanvasShortArray.idl in Resources */ = {isa = PBXBuildFile; fileRef = 49EECDD510503C2300099FAB /* CanvasShortArray.idl */; };
+		49EECDEE10503C2400099FAB /* CanvasUnsignedByteArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECDD610503C2300099FAB /* CanvasUnsignedByteArray.cpp */; };
+		49EECDEF10503C2400099FAB /* CanvasUnsignedByteArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECDD710503C2300099FAB /* CanvasUnsignedByteArray.h */; };
+		49EECDF010503C2400099FAB /* CanvasUnsignedByteArray.idl in Resources */ = {isa = PBXBuildFile; fileRef = 49EECDD810503C2300099FAB /* CanvasUnsignedByteArray.idl */; };
+		49EECDF110503C2400099FAB /* CanvasUnsignedIntArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECDD910503C2300099FAB /* CanvasUnsignedIntArray.cpp */; };
+		49EECDF210503C2400099FAB /* CanvasUnsignedIntArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECDDA10503C2300099FAB /* CanvasUnsignedIntArray.h */; };
+		49EECDF310503C2400099FAB /* CanvasUnsignedIntArray.idl in Resources */ = {isa = PBXBuildFile; fileRef = 49EECDDB10503C2300099FAB /* CanvasUnsignedIntArray.idl */; };
+		49EECDF410503C2400099FAB /* CanvasUnsignedShortArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECDDC10503C2300099FAB /* CanvasUnsignedShortArray.cpp */; };
+		49EECDF510503C2400099FAB /* CanvasUnsignedShortArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECDDD10503C2400099FAB /* CanvasUnsignedShortArray.h */; };
+		49EECDF610503C2400099FAB /* CanvasUnsignedShortArray.idl in Resources */ = {isa = PBXBuildFile; fileRef = 49EECDDE10503C2400099FAB /* CanvasUnsignedShortArray.idl */; };
+		49EECF00105070C400099FAB /* JSCanvasArrayBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECEF2105070C400099FAB /* JSCanvasArrayBuffer.cpp */; };
+		49EECF01105070C400099FAB /* JSCanvasArrayBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECEF3105070C400099FAB /* JSCanvasArrayBuffer.h */; };
+		49EECF02105070C400099FAB /* JSCanvasFloatArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECEF4105070C400099FAB /* JSCanvasFloatArray.cpp */; };
+		49EECF03105070C400099FAB /* JSCanvasFloatArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECEF5105070C400099FAB /* JSCanvasFloatArray.h */; };
+		49EECF04105070C400099FAB /* JSCanvasIntArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECEF6105070C400099FAB /* JSCanvasIntArray.cpp */; };
+		49EECF05105070C400099FAB /* JSCanvasIntArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECEF7105070C400099FAB /* JSCanvasIntArray.h */; };
+		49EECF06105070C400099FAB /* JSCanvasShortArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECEF8105070C400099FAB /* JSCanvasShortArray.cpp */; };
+		49EECF07105070C400099FAB /* JSCanvasShortArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECEF9105070C400099FAB /* JSCanvasShortArray.h */; };
+		49EECF08105070C400099FAB /* JSCanvasUnsignedByteArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECEFA105070C400099FAB /* JSCanvasUnsignedByteArray.cpp */; };
+		49EECF09105070C400099FAB /* JSCanvasUnsignedByteArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECEFB105070C400099FAB /* JSCanvasUnsignedByteArray.h */; };
+		49EECF0A105070C400099FAB /* JSCanvasUnsignedIntArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECEFC105070C400099FAB /* JSCanvasUnsignedIntArray.cpp */; };
+		49EECF0B105070C400099FAB /* JSCanvasUnsignedIntArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECEFD105070C400099FAB /* JSCanvasUnsignedIntArray.h */; };
+		49EECF0C105070C400099FAB /* JSCanvasUnsignedShortArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECEFE105070C400099FAB /* JSCanvasUnsignedShortArray.cpp */; };
+		49EECF0D105070C400099FAB /* JSCanvasUnsignedShortArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECEFF105070C400099FAB /* JSCanvasUnsignedShortArray.h */; };
+		49EECF1B105072F300099FAB /* JSCanvasArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECF19105072F300099FAB /* JSCanvasArray.cpp */; };
+		49EECF1C105072F300099FAB /* JSCanvasArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECF1A105072F300099FAB /* JSCanvasArray.h */; };
+		49EECF7810508D9C00099FAB /* JSCanvasByteArrayCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECF7110508D9C00099FAB /* JSCanvasByteArrayCustom.cpp */; };
+		49EECF7910508D9C00099FAB /* JSCanvasFloatArrayCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECF7210508D9C00099FAB /* JSCanvasFloatArrayCustom.cpp */; };
+		49EECF7A10508D9C00099FAB /* JSCanvasIntArrayCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECF7310508D9C00099FAB /* JSCanvasIntArrayCustom.cpp */; };
+		49EECF7B10508D9C00099FAB /* JSCanvasShortArrayCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECF7410508D9C00099FAB /* JSCanvasShortArrayCustom.cpp */; };
+		49EECF7C10508D9C00099FAB /* JSCanvasUnsignedByteArrayCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECF7510508D9C00099FAB /* JSCanvasUnsignedByteArrayCustom.cpp */; };
+		49EECF7D10508D9C00099FAB /* JSCanvasUnsignedIntArrayCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECF7610508D9C00099FAB /* JSCanvasUnsignedIntArrayCustom.cpp */; };
+		49EECF7E10508D9C00099FAB /* JSCanvasUnsignedShortArrayCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECF7710508D9C00099FAB /* JSCanvasUnsignedShortArrayCustom.cpp */; };
+		49EECFAB1050938200099FAB /* JSCanvasArrayBufferConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECF991050938200099FAB /* JSCanvasArrayBufferConstructor.cpp */; };
+		49EECFAC1050938200099FAB /* JSCanvasArrayBufferConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECF9A1050938200099FAB /* JSCanvasArrayBufferConstructor.h */; };
+		49EECFAD1050938200099FAB /* JSCanvasByteArrayConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECF9B1050938200099FAB /* JSCanvasByteArrayConstructor.cpp */; };
+		49EECFAE1050938200099FAB /* JSCanvasByteArrayConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECF9C1050938200099FAB /* JSCanvasByteArrayConstructor.h */; };
+		49EECFAF1050938200099FAB /* JSCanvasFloatArrayConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECF9D1050938200099FAB /* JSCanvasFloatArrayConstructor.cpp */; };
+		49EECFB01050938200099FAB /* JSCanvasFloatArrayConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECF9E1050938200099FAB /* JSCanvasFloatArrayConstructor.h */; };
+		49EECFB11050938200099FAB /* JSCanvasIntArrayConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECF9F1050938200099FAB /* JSCanvasIntArrayConstructor.cpp */; };
+		49EECFB21050938200099FAB /* JSCanvasIntArrayConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECFA01050938200099FAB /* JSCanvasIntArrayConstructor.h */; };
+		49EECFB51050938200099FAB /* JSCanvasShortArrayConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECFA31050938200099FAB /* JSCanvasShortArrayConstructor.cpp */; };
+		49EECFB61050938200099FAB /* JSCanvasShortArrayConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECFA41050938200099FAB /* JSCanvasShortArrayConstructor.h */; };
+		49EECFB71050938200099FAB /* JSCanvasUnsignedByteArrayConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECFA51050938200099FAB /* JSCanvasUnsignedByteArrayConstructor.cpp */; };
+		49EECFB81050938200099FAB /* JSCanvasUnsignedByteArrayConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECFA61050938200099FAB /* JSCanvasUnsignedByteArrayConstructor.h */; };
+		49EECFB91050938200099FAB /* JSCanvasUnsignedIntArrayConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECFA71050938200099FAB /* JSCanvasUnsignedIntArrayConstructor.cpp */; };
+		49EECFBA1050938200099FAB /* JSCanvasUnsignedIntArrayConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECFA81050938200099FAB /* JSCanvasUnsignedIntArrayConstructor.h */; };
+		49EECFBB1050938200099FAB /* JSCanvasUnsignedShortArrayConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECFA91050938200099FAB /* JSCanvasUnsignedShortArrayConstructor.cpp */; };
+		49EECFBC1050938200099FAB /* JSCanvasUnsignedShortArrayConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECFAA1050938200099FAB /* JSCanvasUnsignedShortArrayConstructor.h */; };
+		49EED1421051969400099FAB /* JSCanvasRenderingContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EED13C1051969400099FAB /* JSCanvasRenderingContext.cpp */; };
+		49EED1431051969400099FAB /* JSCanvasRenderingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EED13D1051969400099FAB /* JSCanvasRenderingContext.h */; };
+		49EED1441051969400099FAB /* JSCanvasRenderingContext2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EED13E1051969400099FAB /* JSCanvasRenderingContext2D.cpp */; };
+		49EED1451051969400099FAB /* JSCanvasRenderingContext2D.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EED13F1051969400099FAB /* JSCanvasRenderingContext2D.h */; };
+		49EED1461051969400099FAB /* JSCanvasRenderingContext3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EED1401051969400099FAB /* JSCanvasRenderingContext3D.cpp */; };
+		49EED1471051969400099FAB /* JSCanvasRenderingContext3D.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EED1411051969400099FAB /* JSCanvasRenderingContext3D.h */; };
+		49EED14E1051971A00099FAB /* JSCanvasRenderingContext2DCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EED14B1051971900099FAB /* JSCanvasRenderingContext2DCustom.cpp */; };
+		49EED14F1051971A00099FAB /* JSCanvasRenderingContext3DCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EED14C1051971A00099FAB /* JSCanvasRenderingContext3DCustom.cpp */; };
+		49EED1501051971A00099FAB /* JSCanvasRenderingContextCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EED14D1051971A00099FAB /* JSCanvasRenderingContextCustom.cpp */; };
 		4A8C96EB0BE69032004EEFF0 /* SelectionControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4A8C96EA0BE69032004EEFF0 /* SelectionControllerMac.mm */; };
 		4B2708C70AF19EE40065127F /* Pasteboard.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B2708C50AF19EE40065127F /* Pasteboard.h */; };
 		4B2709830AF2E5E00065127F /* PasteboardMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4B2709810AF2E5E00065127F /* PasteboardMac.mm */; };
@@ -1119,8 +1179,6 @@
 		65DF323A09D1DE65000BE325 /* JSCanvasGradient.h in Headers */ = {isa = PBXBuildFile; fileRef = 65DF323409D1DE65000BE325 /* JSCanvasGradient.h */; };
 		65DF323B09D1DE65000BE325 /* JSCanvasPattern.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65DF323509D1DE65000BE325 /* JSCanvasPattern.cpp */; };
 		65DF323C09D1DE65000BE325 /* JSCanvasPattern.h in Headers */ = {isa = PBXBuildFile; fileRef = 65DF323609D1DE65000BE325 /* JSCanvasPattern.h */; };
-		65DF323D09D1DE65000BE325 /* JSCanvasRenderingContext2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65DF323709D1DE65000BE325 /* JSCanvasRenderingContext2D.cpp */; };
-		65DF323E09D1DE65000BE325 /* JSCanvasRenderingContext2D.h in Headers */ = {isa = PBXBuildFile; fileRef = 65DF323809D1DE65000BE325 /* JSCanvasRenderingContext2D.h */; };
 		65DF326109D1E199000BE325 /* UserAgentStyleSheetsData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 656581AF09D14EE6000E61D7 /* UserAgentStyleSheetsData.cpp */; };
 		65FEA86909833ADE00BED4AB /* Page.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65FEA86809833ADE00BED4AB /* Page.cpp */; };
 		72626E020EF022FE00A07E20 /* FontFastPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72626E010EF022FE00A07E20 /* FontFastPath.cpp */; };
@@ -5435,7 +5493,6 @@
 		1A8F6BBA0DB55CDC001DB794 /* ManifestParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ManifestParser.cpp; sourceTree = "<group>"; };
 		1A8F6BBB0DB55CDC001DB794 /* ManifestParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManifestParser.h; sourceTree = "<group>"; };
 		1A98956A0AA78F80005EF5EF /* KURLCFNet.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = KURLCFNet.cpp; sourceTree = "<group>"; };
-		1A9EF4560A1B957D00332B63 /* JSCanvasRenderingContext2DCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasRenderingContext2DCustom.cpp; sourceTree = "<group>"; };
 		1AB1AE780C051FDE00139F4F /* zoomInCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = zoomInCursor.png; sourceTree = "<group>"; };
 		1AB1AE790C051FDE00139F4F /* zoomOutCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = zoomOutCursor.png; sourceTree = "<group>"; };
 		1AB7FC470A8B92EC00D9D37B /* XPathEvaluator.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XPathEvaluator.cpp; sourceTree = "<group>"; };
@@ -5897,24 +5954,16 @@
 		498391570F1E776900C23782 /* WebKitCSSMatrix.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebKitCSSMatrix.idl; sourceTree = "<group>"; };
 		498391610F1E8EE100C23782 /* JSWebKitCSSMatrixConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebKitCSSMatrixConstructor.cpp; sourceTree = "<group>"; };
 		498391620F1E8EE100C23782 /* JSWebKitCSSMatrixConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebKitCSSMatrixConstructor.h; sourceTree = "<group>"; };
-		4983A96F10435E9000DB70F9 /* JSCanvasRenderingContextCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasRenderingContextCustom.cpp; sourceTree = "<group>"; };
-		49C7B97C1042D2080009D447 /* JSCanvasNumberArrayCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasNumberArrayCustom.cpp; sourceTree = "<group>"; };
-		49C7B97D1042D2080009D447 /* JSCanvasRenderingContext3DCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasRenderingContext3DCustom.cpp; sourceTree = "<group>"; };
 		49C7B9801042D2D30009D447 /* JSCanvasBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasBuffer.cpp; sourceTree = "<group>"; };
 		49C7B9811042D2D30009D447 /* JSCanvasBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCanvasBuffer.h; sourceTree = "<group>"; };
 		49C7B9821042D2D30009D447 /* JSCanvasByteArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasByteArray.cpp; sourceTree = "<group>"; };
 		49C7B9831042D2D30009D447 /* JSCanvasByteArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCanvasByteArray.h; sourceTree = "<group>"; };
 		49C7B9841042D2D30009D447 /* JSCanvasFramebuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasFramebuffer.cpp; sourceTree = "<group>"; };
 		49C7B9851042D2D30009D447 /* JSCanvasFramebuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCanvasFramebuffer.h; sourceTree = "<group>"; };
-		49C7B9861042D2D30009D447 /* JSCanvasNumberArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasNumberArray.cpp; sourceTree = "<group>"; };
-		49C7B9871042D2D30009D447 /* JSCanvasNumberArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCanvasNumberArray.h; sourceTree = "<group>"; };
 		49C7B9881042D2D30009D447 /* JSCanvasProgram.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasProgram.cpp; sourceTree = "<group>"; };
 		49C7B9891042D2D30009D447 /* JSCanvasProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCanvasProgram.h; sourceTree = "<group>"; };
 		49C7B98A1042D2D30009D447 /* JSCanvasRenderbuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasRenderbuffer.cpp; sourceTree = "<group>"; };
 		49C7B98B1042D2D30009D447 /* JSCanvasRenderbuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCanvasRenderbuffer.h; sourceTree = "<group>"; };
-		49C7B98C1042D2D30009D447 /* JSCanvasRenderingContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasRenderingContext.cpp; sourceTree = "<group>"; };
-		49C7B98D1042D2D30009D447 /* JSCanvasRenderingContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCanvasRenderingContext.h; sourceTree = "<group>"; };
-		49C7B98E1042D2D30009D447 /* JSCanvasRenderingContext3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCanvasRenderingContext3D.h; sourceTree = "<group>"; };
 		49C7B98F1042D2D30009D447 /* JSCanvasShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasShader.cpp; sourceTree = "<group>"; };
 		49C7B9901042D2D30009D447 /* JSCanvasShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCanvasShader.h; sourceTree = "<group>"; };
 		49C7B9911042D2D30009D447 /* JSCanvasTexture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasTexture.cpp; sourceTree = "<group>"; };
@@ -5928,9 +5977,6 @@
 		49C7B9AE1042D32E0009D447 /* CanvasFramebuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CanvasFramebuffer.cpp; path = canvas/CanvasFramebuffer.cpp; sourceTree = "<group>"; };
 		49C7B9AF1042D32E0009D447 /* CanvasFramebuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CanvasFramebuffer.h; path = canvas/CanvasFramebuffer.h; sourceTree = "<group>"; };
 		49C7B9B01042D32E0009D447 /* CanvasFramebuffer.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CanvasFramebuffer.idl; path = canvas/CanvasFramebuffer.idl; sourceTree = "<group>"; };
-		49C7B9B11042D32E0009D447 /* CanvasNumberArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CanvasNumberArray.cpp; path = canvas/CanvasNumberArray.cpp; sourceTree = "<group>"; };
-		49C7B9B21042D32E0009D447 /* CanvasNumberArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CanvasNumberArray.h; path = canvas/CanvasNumberArray.h; sourceTree = "<group>"; };
-		49C7B9B31042D32F0009D447 /* CanvasNumberArray.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CanvasNumberArray.idl; path = canvas/CanvasNumberArray.idl; sourceTree = "<group>"; };
 		49C7B9B41042D32F0009D447 /* CanvasObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CanvasObject.cpp; path = canvas/CanvasObject.cpp; sourceTree = "<group>"; };
 		49C7B9B51042D32F0009D447 /* CanvasObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CanvasObject.h; path = canvas/CanvasObject.h; sourceTree = "<group>"; };
 		49C7B9B61042D32F0009D447 /* CanvasProgram.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CanvasProgram.cpp; path = canvas/CanvasProgram.cpp; sourceTree = "<group>"; };
@@ -5957,7 +6003,6 @@
 		49C7B9FF1042D38C0009D447 /* GraphicsContext3DMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsContext3DMac.cpp; sourceTree = "<group>"; };
 		49C7BA781042EFAE0009D447 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
 		49C7BA8C1042F5B10009D447 /* JSDocumentCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDocumentCustom.cpp; sourceTree = "<group>"; };
-		49C7D4FA1042F95F0009D447 /* JSCanvasRenderingContext3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasRenderingContext3D.cpp; sourceTree = "<group>"; };
 		49D5DC270F423A73008F20FD /* Matrix3DTransformOperation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Matrix3DTransformOperation.cpp; path = transforms/Matrix3DTransformOperation.cpp; sourceTree = "<group>"; };
 		49D5DC280F423A73008F20FD /* Matrix3DTransformOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Matrix3DTransformOperation.h; path = transforms/Matrix3DTransformOperation.h; sourceTree = "<group>"; };
 		49D5DC290F423A73008F20FD /* PerspectiveTransformOperation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PerspectiveTransformOperation.cpp; path = transforms/PerspectiveTransformOperation.cpp; sourceTree = "<group>"; };
@@ -5983,6 +6028,78 @@
 		49E912A70EFAC906009D0CAF /* AnimationList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AnimationList.cpp; path = animation/AnimationList.cpp; sourceTree = "<group>"; };
 		49E912A80EFAC906009D0CAF /* AnimationList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AnimationList.h; path = animation/AnimationList.h; sourceTree = "<group>"; };
 		49E912A90EFAC906009D0CAF /* TimingFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TimingFunction.h; path = animation/TimingFunction.h; sourceTree = "<group>"; };
+		49EECDC710503C2300099FAB /* CanvasArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CanvasArray.cpp; path = canvas/CanvasArray.cpp; sourceTree = "<group>"; };
+		49EECDC810503C2300099FAB /* CanvasArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CanvasArray.h; path = canvas/CanvasArray.h; sourceTree = "<group>"; };
+		49EECDC910503C2300099FAB /* CanvasArray.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CanvasArray.idl; path = canvas/CanvasArray.idl; sourceTree = "<group>"; };
+		49EECDCA10503C2300099FAB /* CanvasArrayBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CanvasArrayBuffer.cpp; path = canvas/CanvasArrayBuffer.cpp; sourceTree = "<group>"; };
+		49EECDCB10503C2300099FAB /* CanvasArrayBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CanvasArrayBuffer.h; path = canvas/CanvasArrayBuffer.h; sourceTree = "<group>"; };
+		49EECDCC10503C2300099FAB /* CanvasArrayBuffer.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CanvasArrayBuffer.idl; path = canvas/CanvasArrayBuffer.idl; sourceTree = "<group>"; };
+		49EECDCD10503C2300099FAB /* CanvasFloatArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CanvasFloatArray.cpp; path = canvas/CanvasFloatArray.cpp; sourceTree = "<group>"; };
+		49EECDCE10503C2300099FAB /* CanvasFloatArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CanvasFloatArray.h; path = canvas/CanvasFloatArray.h; sourceTree = "<group>"; };
+		49EECDCF10503C2300099FAB /* CanvasFloatArray.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CanvasFloatArray.idl; path = canvas/CanvasFloatArray.idl; sourceTree = "<group>"; };
+		49EECDD010503C2300099FAB /* CanvasIntArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CanvasIntArray.cpp; path = canvas/CanvasIntArray.cpp; sourceTree = "<group>"; };
+		49EECDD110503C2300099FAB /* CanvasIntArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CanvasIntArray.h; path = canvas/CanvasIntArray.h; sourceTree = "<group>"; };
+		49EECDD210503C2300099FAB /* CanvasIntArray.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CanvasIntArray.idl; path = canvas/CanvasIntArray.idl; sourceTree = "<group>"; };
+		49EECDD310503C2300099FAB /* CanvasShortArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CanvasShortArray.cpp; path = canvas/CanvasShortArray.cpp; sourceTree = "<group>"; };
+		49EECDD410503C2300099FAB /* CanvasShortArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CanvasShortArray.h; path = canvas/CanvasShortArray.h; sourceTree = "<group>"; };
+		49EECDD510503C2300099FAB /* CanvasShortArray.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CanvasShortArray.idl; path = canvas/CanvasShortArray.idl; sourceTree = "<group>"; };
+		49EECDD610503C2300099FAB /* CanvasUnsignedByteArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CanvasUnsignedByteArray.cpp; path = canvas/CanvasUnsignedByteArray.cpp; sourceTree = "<group>"; };
+		49EECDD710503C2300099FAB /* CanvasUnsignedByteArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CanvasUnsignedByteArray.h; path = canvas/CanvasUnsignedByteArray.h; sourceTree = "<group>"; };
+		49EECDD810503C2300099FAB /* CanvasUnsignedByteArray.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CanvasUnsignedByteArray.idl; path = canvas/CanvasUnsignedByteArray.idl; sourceTree = "<group>"; };
+		49EECDD910503C2300099FAB /* CanvasUnsignedIntArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CanvasUnsignedIntArray.cpp; path = canvas/CanvasUnsignedIntArray.cpp; sourceTree = "<group>"; };
+		49EECDDA10503C2300099FAB /* CanvasUnsignedIntArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CanvasUnsignedIntArray.h; path = canvas/CanvasUnsignedIntArray.h; sourceTree = "<group>"; };
+		49EECDDB10503C2300099FAB /* CanvasUnsignedIntArray.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CanvasUnsignedIntArray.idl; path = canvas/CanvasUnsignedIntArray.idl; sourceTree = "<group>"; };
+		49EECDDC10503C2300099FAB /* CanvasUnsignedShortArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CanvasUnsignedShortArray.cpp; path = canvas/CanvasUnsignedShortArray.cpp; sourceTree = "<group>"; };
+		49EECDDD10503C2400099FAB /* CanvasUnsignedShortArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CanvasUnsignedShortArray.h; path = canvas/CanvasUnsignedShortArray.h; sourceTree = "<group>"; };
+		49EECDDE10503C2400099FAB /* CanvasUnsignedShortArray.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CanvasUnsignedShortArray.idl; path = canvas/CanvasUnsignedShortArray.idl; sourceTree = "<group>"; };
+		49EECEF2105070C400099FAB /* JSCanvasArrayBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasArrayBuffer.cpp; sourceTree = "<group>"; };
+		49EECEF3105070C400099FAB /* JSCanvasArrayBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCanvasArrayBuffer.h; sourceTree = "<group>"; };
+		49EECEF4105070C400099FAB /* JSCanvasFloatArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasFloatArray.cpp; sourceTree = "<group>"; };
+		49EECEF5105070C400099FAB /* JSCanvasFloatArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCanvasFloatArray.h; sourceTree = "<group>"; };
+		49EECEF6105070C400099FAB /* JSCanvasIntArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasIntArray.cpp; sourceTree = "<group>"; };
+		49EECEF7105070C400099FAB /* JSCanvasIntArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCanvasIntArray.h; sourceTree = "<group>"; };
+		49EECEF8105070C400099FAB /* JSCanvasShortArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasShortArray.cpp; sourceTree = "<group>"; };
+		49EECEF9105070C400099FAB /* JSCanvasShortArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCanvasShortArray.h; sourceTree = "<group>"; };
+		49EECEFA105070C400099FAB /* JSCanvasUnsignedByteArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasUnsignedByteArray.cpp; sourceTree = "<group>"; };
+		49EECEFB105070C400099FAB /* JSCanvasUnsignedByteArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCanvasUnsignedByteArray.h; sourceTree = "<group>"; };
+		49EECEFC105070C400099FAB /* JSCanvasUnsignedIntArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasUnsignedIntArray.cpp; sourceTree = "<group>"; };
+		49EECEFD105070C400099FAB /* JSCanvasUnsignedIntArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCanvasUnsignedIntArray.h; sourceTree = "<group>"; };
+		49EECEFE105070C400099FAB /* JSCanvasUnsignedShortArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasUnsignedShortArray.cpp; sourceTree = "<group>"; };
+		49EECEFF105070C400099FAB /* JSCanvasUnsignedShortArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCanvasUnsignedShortArray.h; sourceTree = "<group>"; };
+		49EECF19105072F300099FAB /* JSCanvasArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasArray.cpp; sourceTree = "<group>"; };
+		49EECF1A105072F300099FAB /* JSCanvasArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCanvasArray.h; sourceTree = "<group>"; };
+		49EECF7110508D9C00099FAB /* JSCanvasByteArrayCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasByteArrayCustom.cpp; sourceTree = "<group>"; };
+		49EECF7210508D9C00099FAB /* JSCanvasFloatArrayCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasFloatArrayCustom.cpp; sourceTree = "<group>"; };
+		49EECF7310508D9C00099FAB /* JSCanvasIntArrayCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasIntArrayCustom.cpp; sourceTree = "<group>"; };
+		49EECF7410508D9C00099FAB /* JSCanvasShortArrayCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasShortArrayCustom.cpp; sourceTree = "<group>"; };
+		49EECF7510508D9C00099FAB /* JSCanvasUnsignedByteArrayCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasUnsignedByteArrayCustom.cpp; sourceTree = "<group>"; };
+		49EECF7610508D9C00099FAB /* JSCanvasUnsignedIntArrayCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasUnsignedIntArrayCustom.cpp; sourceTree = "<group>"; };
+		49EECF7710508D9C00099FAB /* JSCanvasUnsignedShortArrayCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasUnsignedShortArrayCustom.cpp; sourceTree = "<group>"; };
+		49EECF991050938200099FAB /* JSCanvasArrayBufferConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasArrayBufferConstructor.cpp; sourceTree = "<group>"; };
+		49EECF9A1050938200099FAB /* JSCanvasArrayBufferConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCanvasArrayBufferConstructor.h; sourceTree = "<group>"; };
+		49EECF9B1050938200099FAB /* JSCanvasByteArrayConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasByteArrayConstructor.cpp; sourceTree = "<group>"; };
+		49EECF9C1050938200099FAB /* JSCanvasByteArrayConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCanvasByteArrayConstructor.h; sourceTree = "<group>"; };
+		49EECF9D1050938200099FAB /* JSCanvasFloatArrayConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasFloatArrayConstructor.cpp; sourceTree = "<group>"; };
+		49EECF9E1050938200099FAB /* JSCanvasFloatArrayConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCanvasFloatArrayConstructor.h; sourceTree = "<group>"; };
+		49EECF9F1050938200099FAB /* JSCanvasIntArrayConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasIntArrayConstructor.cpp; sourceTree = "<group>"; };
+		49EECFA01050938200099FAB /* JSCanvasIntArrayConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCanvasIntArrayConstructor.h; sourceTree = "<group>"; };
+		49EECFA31050938200099FAB /* JSCanvasShortArrayConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasShortArrayConstructor.cpp; sourceTree = "<group>"; };
+		49EECFA41050938200099FAB /* JSCanvasShortArrayConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCanvasShortArrayConstructor.h; sourceTree = "<group>"; };
+		49EECFA51050938200099FAB /* JSCanvasUnsignedByteArrayConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasUnsignedByteArrayConstructor.cpp; sourceTree = "<group>"; };
+		49EECFA61050938200099FAB /* JSCanvasUnsignedByteArrayConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCanvasUnsignedByteArrayConstructor.h; sourceTree = "<group>"; };
+		49EECFA71050938200099FAB /* JSCanvasUnsignedIntArrayConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasUnsignedIntArrayConstructor.cpp; sourceTree = "<group>"; };
+		49EECFA81050938200099FAB /* JSCanvasUnsignedIntArrayConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCanvasUnsignedIntArrayConstructor.h; sourceTree = "<group>"; };
+		49EECFA91050938200099FAB /* JSCanvasUnsignedShortArrayConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasUnsignedShortArrayConstructor.cpp; sourceTree = "<group>"; };
+		49EECFAA1050938200099FAB /* JSCanvasUnsignedShortArrayConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCanvasUnsignedShortArrayConstructor.h; sourceTree = "<group>"; };
+		49EED13C1051969400099FAB /* JSCanvasRenderingContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasRenderingContext.cpp; sourceTree = "<group>"; };
+		49EED13D1051969400099FAB /* JSCanvasRenderingContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCanvasRenderingContext.h; sourceTree = "<group>"; };
+		49EED13E1051969400099FAB /* JSCanvasRenderingContext2D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasRenderingContext2D.cpp; sourceTree = "<group>"; };
+		49EED13F1051969400099FAB /* JSCanvasRenderingContext2D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCanvasRenderingContext2D.h; sourceTree = "<group>"; };
+		49EED1401051969400099FAB /* JSCanvasRenderingContext3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasRenderingContext3D.cpp; sourceTree = "<group>"; };
+		49EED1411051969400099FAB /* JSCanvasRenderingContext3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCanvasRenderingContext3D.h; sourceTree = "<group>"; };
+		49EED14B1051971900099FAB /* JSCanvasRenderingContext2DCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasRenderingContext2DCustom.cpp; sourceTree = "<group>"; };
+		49EED14C1051971A00099FAB /* JSCanvasRenderingContext3DCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasRenderingContext3DCustom.cpp; sourceTree = "<group>"; };
+		49EED14D1051971A00099FAB /* JSCanvasRenderingContextCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasRenderingContextCustom.cpp; sourceTree = "<group>"; };
 		4A8C96EA0BE69032004EEFF0 /* SelectionControllerMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = SelectionControllerMac.mm; path = mac/SelectionControllerMac.mm; sourceTree = "<group>"; };
 		4B2708C50AF19EE40065127F /* Pasteboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pasteboard.h; sourceTree = "<group>"; };
 		4B2709810AF2E5E00065127F /* PasteboardMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PasteboardMac.mm; sourceTree = "<group>"; };
@@ -6282,8 +6399,6 @@
 		65DF323409D1DE65000BE325 /* JSCanvasGradient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSCanvasGradient.h; sourceTree = "<group>"; };
 		65DF323509D1DE65000BE325 /* JSCanvasPattern.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasPattern.cpp; sourceTree = "<group>"; };
 		65DF323609D1DE65000BE325 /* JSCanvasPattern.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSCanvasPattern.h; sourceTree = "<group>"; };
-		65DF323709D1DE65000BE325 /* JSCanvasRenderingContext2D.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasRenderingContext2D.cpp; sourceTree = "<group>"; };
-		65DF323809D1DE65000BE325 /* JSCanvasRenderingContext2D.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSCanvasRenderingContext2D.h; sourceTree = "<group>"; };
 		65F80697054D9F86008BF776 /* BlockExceptions.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BlockExceptions.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65FEA86809833ADE00BED4AB /* Page.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Page.cpp; sourceTree = "<group>"; };
 		72626E010EF022FE00A07E20 /* FontFastPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontFastPath.cpp; sourceTree = "<group>"; };
@@ -10317,21 +10432,30 @@
 		49484FAE102CF01E00187DD3 /* canvas */ = {
 			isa = PBXGroup;
 			children = (
+				49EECDC710503C2300099FAB /* CanvasArray.cpp */,
+				49EECDC810503C2300099FAB /* CanvasArray.h */,
+				49EECDC910503C2300099FAB /* CanvasArray.idl */,
+				49EECDCA10503C2300099FAB /* CanvasArrayBuffer.cpp */,
+				49EECDCB10503C2300099FAB /* CanvasArrayBuffer.h */,
+				49EECDCC10503C2300099FAB /* CanvasArrayBuffer.idl */,
 				49C7B9A81042D32E0009D447 /* CanvasBuffer.cpp */,
 				49C7B9A91042D32E0009D447 /* CanvasBuffer.h */,
 				49C7B9AA1042D32E0009D447 /* CanvasBuffer.idl */,
 				49C7B9AB1042D32E0009D447 /* CanvasByteArray.cpp */,
 				49C7B9AC1042D32E0009D447 /* CanvasByteArray.h */,
 				49C7B9AD1042D32E0009D447 /* CanvasByteArray.idl */,
+				49EECDCD10503C2300099FAB /* CanvasFloatArray.cpp */,
+				49EECDCE10503C2300099FAB /* CanvasFloatArray.h */,
+				49EECDCF10503C2300099FAB /* CanvasFloatArray.idl */,
 				49C7B9AE1042D32E0009D447 /* CanvasFramebuffer.cpp */,
 				49C7B9AF1042D32E0009D447 /* CanvasFramebuffer.h */,
 				49C7B9B01042D32E0009D447 /* CanvasFramebuffer.idl */,
 				49484FB3102CF23C00187DD3 /* CanvasGradient.cpp */,
 				49484FB4102CF23C00187DD3 /* CanvasGradient.h */,
 				49484FB5102CF23C00187DD3 /* CanvasGradient.idl */,
-				49C7B9B11042D32E0009D447 /* CanvasNumberArray.cpp */,
-				49C7B9B21042D32E0009D447 /* CanvasNumberArray.h */,
-				49C7B9B31042D32F0009D447 /* CanvasNumberArray.idl */,
+				49EECDD010503C2300099FAB /* CanvasIntArray.cpp */,
+				49EECDD110503C2300099FAB /* CanvasIntArray.h */,
+				49EECDD210503C2300099FAB /* CanvasIntArray.idl */,
 				49C7B9B41042D32F0009D447 /* CanvasObject.cpp */,
 				49C7B9B51042D32F0009D447 /* CanvasObject.h */,
 				49484FB6102CF23C00187DD3 /* CanvasPattern.cpp */,
@@ -10358,11 +10482,23 @@
 				49C7B9C21042D32F0009D447 /* CanvasShader.cpp */,
 				49C7B9C31042D32F0009D447 /* CanvasShader.h */,
 				49C7B9C41042D32F0009D447 /* CanvasShader.idl */,
+				49EECDD310503C2300099FAB /* CanvasShortArray.cpp */,
+				49EECDD410503C2300099FAB /* CanvasShortArray.h */,
+				49EECDD510503C2300099FAB /* CanvasShortArray.idl */,
 				49484FBF102CF23C00187DD3 /* CanvasStyle.cpp */,
 				49484FC0102CF23C00187DD3 /* CanvasStyle.h */,
 				49C7B9C51042D32F0009D447 /* CanvasTexture.cpp */,
 				49C7B9C61042D32F0009D447 /* CanvasTexture.h */,
 				49C7B9C71042D32F0009D447 /* CanvasTexture.idl */,
+				49EECDD610503C2300099FAB /* CanvasUnsignedByteArray.cpp */,
+				49EECDD710503C2300099FAB /* CanvasUnsignedByteArray.h */,
+				49EECDD810503C2300099FAB /* CanvasUnsignedByteArray.idl */,
+				49EECDD910503C2300099FAB /* CanvasUnsignedIntArray.cpp */,
+				49EECDDA10503C2300099FAB /* CanvasUnsignedIntArray.h */,
+				49EECDDB10503C2300099FAB /* CanvasUnsignedIntArray.idl */,
+				49EECDDC10503C2300099FAB /* CanvasUnsignedShortArray.cpp */,
+				49EECDDD10503C2400099FAB /* CanvasUnsignedShortArray.h */,
+				49EECDDE10503C2400099FAB /* CanvasUnsignedShortArray.idl */,
 			);
 			name = canvas;
 			sourceTree = "<group>";
@@ -12437,32 +12573,46 @@
 		A83B79080CCAFF2B000B0825 /* HTML */ = {
 			isa = PBXGroup;
 			children = (
+				49EECF19105072F300099FAB /* JSCanvasArray.cpp */,
+				49EECF1A105072F300099FAB /* JSCanvasArray.h */,
+				49EECEF2105070C400099FAB /* JSCanvasArrayBuffer.cpp */,
+				49EECEF3105070C400099FAB /* JSCanvasArrayBuffer.h */,
 				49C7B9801042D2D30009D447 /* JSCanvasBuffer.cpp */,
 				49C7B9811042D2D30009D447 /* JSCanvasBuffer.h */,
 				49C7B9821042D2D30009D447 /* JSCanvasByteArray.cpp */,
 				49C7B9831042D2D30009D447 /* JSCanvasByteArray.h */,
+				49EECEF4105070C400099FAB /* JSCanvasFloatArray.cpp */,
+				49EECEF5105070C400099FAB /* JSCanvasFloatArray.h */,
 				49C7B9841042D2D30009D447 /* JSCanvasFramebuffer.cpp */,
 				49C7B9851042D2D30009D447 /* JSCanvasFramebuffer.h */,
 				65DF323309D1DE65000BE325 /* JSCanvasGradient.cpp */,
 				65DF323409D1DE65000BE325 /* JSCanvasGradient.h */,
-				49C7B9861042D2D30009D447 /* JSCanvasNumberArray.cpp */,
-				49C7B9871042D2D30009D447 /* JSCanvasNumberArray.h */,
+				49EECEF6105070C400099FAB /* JSCanvasIntArray.cpp */,
+				49EECEF7105070C400099FAB /* JSCanvasIntArray.h */,
 				65DF323509D1DE65000BE325 /* JSCanvasPattern.cpp */,
 				65DF323609D1DE65000BE325 /* JSCanvasPattern.h */,
 				49C7B9881042D2D30009D447 /* JSCanvasProgram.cpp */,
 				49C7B9891042D2D30009D447 /* JSCanvasProgram.h */,
 				49C7B98A1042D2D30009D447 /* JSCanvasRenderbuffer.cpp */,
 				49C7B98B1042D2D30009D447 /* JSCanvasRenderbuffer.h */,
-				49C7B98C1042D2D30009D447 /* JSCanvasRenderingContext.cpp */,
-				49C7B98D1042D2D30009D447 /* JSCanvasRenderingContext.h */,
-				65DF323709D1DE65000BE325 /* JSCanvasRenderingContext2D.cpp */,
-				65DF323809D1DE65000BE325 /* JSCanvasRenderingContext2D.h */,
-				49C7D4FA1042F95F0009D447 /* JSCanvasRenderingContext3D.cpp */,
-				49C7B98E1042D2D30009D447 /* JSCanvasRenderingContext3D.h */,
+				49EED13C1051969400099FAB /* JSCanvasRenderingContext.cpp */,
+				49EED13D1051969400099FAB /* JSCanvasRenderingContext.h */,
+				49EED13E1051969400099FAB /* JSCanvasRenderingContext2D.cpp */,
+				49EED13F1051969400099FAB /* JSCanvasRenderingContext2D.h */,
+				49EED1401051969400099FAB /* JSCanvasRenderingContext3D.cpp */,
+				49EED1411051969400099FAB /* JSCanvasRenderingContext3D.h */,
 				49C7B98F1042D2D30009D447 /* JSCanvasShader.cpp */,
 				49C7B9901042D2D30009D447 /* JSCanvasShader.h */,
+				49EECEF8105070C400099FAB /* JSCanvasShortArray.cpp */,
+				49EECEF9105070C400099FAB /* JSCanvasShortArray.h */,
 				49C7B9911042D2D30009D447 /* JSCanvasTexture.cpp */,
 				49C7B9921042D2D30009D447 /* JSCanvasTexture.h */,
+				49EECEFA105070C400099FAB /* JSCanvasUnsignedByteArray.cpp */,
+				49EECEFB105070C400099FAB /* JSCanvasUnsignedByteArray.h */,
+				49EECEFC105070C400099FAB /* JSCanvasUnsignedIntArray.cpp */,
+				49EECEFD105070C400099FAB /* JSCanvasUnsignedIntArray.h */,
+				49EECEFE105070C400099FAB /* JSCanvasUnsignedShortArray.cpp */,
+				49EECEFF105070C400099FAB /* JSCanvasUnsignedShortArray.h */,
 				BC77D1650FF19F550070887B /* JSDataGridColumn.cpp */,
 				BC77D1660FF19F550070887B /* JSDataGridColumn.h */,
 				BC77D1670FF19F550070887B /* JSDataGridColumnList.cpp */,
@@ -13915,6 +14065,22 @@
 				1432E8460C51493800B1500F /* GCController.h */,
 				E4EEFFC60D34550C00469A58 /* JSAudioConstructor.cpp */,
 				E4EEFFC70D34550C00469A58 /* JSAudioConstructor.h */,
+				49EECF991050938200099FAB /* JSCanvasArrayBufferConstructor.cpp */,
+				49EECF9A1050938200099FAB /* JSCanvasArrayBufferConstructor.h */,
+				49EECF9B1050938200099FAB /* JSCanvasByteArrayConstructor.cpp */,
+				49EECF9C1050938200099FAB /* JSCanvasByteArrayConstructor.h */,
+				49EECF9D1050938200099FAB /* JSCanvasFloatArrayConstructor.cpp */,
+				49EECF9E1050938200099FAB /* JSCanvasFloatArrayConstructor.h */,
+				49EECF9F1050938200099FAB /* JSCanvasIntArrayConstructor.cpp */,
+				49EECFA01050938200099FAB /* JSCanvasIntArrayConstructor.h */,
+				49EECFA31050938200099FAB /* JSCanvasShortArrayConstructor.cpp */,
+				49EECFA41050938200099FAB /* JSCanvasShortArrayConstructor.h */,
+				49EECFA51050938200099FAB /* JSCanvasUnsignedByteArrayConstructor.cpp */,
+				49EECFA61050938200099FAB /* JSCanvasUnsignedByteArrayConstructor.h */,
+				49EECFA71050938200099FAB /* JSCanvasUnsignedIntArrayConstructor.cpp */,
+				49EECFA81050938200099FAB /* JSCanvasUnsignedIntArrayConstructor.h */,
+				49EECFA91050938200099FAB /* JSCanvasUnsignedShortArrayConstructor.cpp */,
+				49EECFAA1050938200099FAB /* JSCanvasUnsignedShortArrayConstructor.h */,
 				E10B93C20B73C291003ED890 /* JSCustomXPathNSResolver.cpp */,
 				E10B937B0B73C00A003ED890 /* JSCustomXPathNSResolver.h */,
 				BCBCAE3A0FF19399000762AE /* JSDataGridDataSource.cpp */,
@@ -14068,10 +14234,16 @@
 				9392262E10321084006E7D5D /* JSCSSRuleListCustom.cpp */,
 				BC5825F20C0B89380053F1B5 /* JSCSSStyleDeclarationCustom.cpp */,
 				BC20FB7E0C0E8E6C00D1447F /* JSCSSValueCustom.cpp */,
-				49C7B97C1042D2080009D447 /* JSCanvasNumberArrayCustom.cpp */,
-				4983A96F10435E9000DB70F9 /* JSCanvasRenderingContextCustom.cpp */,
-				1A9EF4560A1B957D00332B63 /* JSCanvasRenderingContext2DCustom.cpp */,
-				49C7B97D1042D2080009D447 /* JSCanvasRenderingContext3DCustom.cpp */,
+				49EECF7110508D9C00099FAB /* JSCanvasByteArrayCustom.cpp */,
+				49EECF7210508D9C00099FAB /* JSCanvasFloatArrayCustom.cpp */,
+				49EECF7310508D9C00099FAB /* JSCanvasIntArrayCustom.cpp */,
+				49EED14B1051971900099FAB /* JSCanvasRenderingContext2DCustom.cpp */,
+				49EED14C1051971A00099FAB /* JSCanvasRenderingContext3DCustom.cpp */,
+				49EED14D1051971A00099FAB /* JSCanvasRenderingContextCustom.cpp */,
+				49EECF7410508D9C00099FAB /* JSCanvasShortArrayCustom.cpp */,
+				49EECF7510508D9C00099FAB /* JSCanvasUnsignedByteArrayCustom.cpp */,
+				49EECF7610508D9C00099FAB /* JSCanvasUnsignedIntArrayCustom.cpp */,
+				49EECF7710508D9C00099FAB /* JSCanvasUnsignedShortArrayCustom.cpp */,
 				FE80D7A20E9C1ED2000D6F75 /* JSCustomPositionCallback.cpp */,
 				FE80D7A30E9C1ED2000D6F75 /* JSCustomPositionCallback.h */,
 				FE80D7A40E9C1ED2000D6F75 /* JSCustomPositionErrorCallback.cpp */,
@@ -16436,7 +16608,6 @@
 				BC124F000C26447A009E2349 /* JSBarInfo.h in Headers */,
 				65DF323A09D1DE65000BE325 /* JSCanvasGradient.h in Headers */,
 				65DF323C09D1DE65000BE325 /* JSCanvasPattern.h in Headers */,
-				65DF323E09D1DE65000BE325 /* JSCanvasRenderingContext2D.h in Headers */,
 				93F9B7A10BA6032600854064 /* JSCDATASection.h in Headers */,
 				65DF31F409D1CC60000BE325 /* JSCharacterData.h in Headers */,
 				BCC065880F3CE2A700CD2D87 /* JSClientRect.h in Headers */,
@@ -17544,17 +17715,13 @@
 				49C7B9941042D2D30009D447 /* JSCanvasBuffer.h in Headers */,
 				49C7B9961042D2D30009D447 /* JSCanvasByteArray.h in Headers */,
 				49C7B9981042D2D30009D447 /* JSCanvasFramebuffer.h in Headers */,
-				49C7B99A1042D2D30009D447 /* JSCanvasNumberArray.h in Headers */,
 				49C7B99C1042D2D30009D447 /* JSCanvasProgram.h in Headers */,
 				49C7B99E1042D2D30009D447 /* JSCanvasRenderbuffer.h in Headers */,
-				49C7B9A01042D2D30009D447 /* JSCanvasRenderingContext.h in Headers */,
-				49C7B9A11042D2D30009D447 /* JSCanvasRenderingContext3D.h in Headers */,
 				49C7B9A31042D2D30009D447 /* JSCanvasShader.h in Headers */,
 				49C7B9A51042D2D30009D447 /* JSCanvasTexture.h in Headers */,
 				49C7B9C91042D32F0009D447 /* CanvasBuffer.h in Headers */,
 				49C7B9CC1042D32F0009D447 /* CanvasByteArray.h in Headers */,
 				49C7B9CF1042D32F0009D447 /* CanvasFramebuffer.h in Headers */,
-				49C7B9D21042D32F0009D447 /* CanvasNumberArray.h in Headers */,
 				49C7B9D51042D32F0009D447 /* CanvasObject.h in Headers */,
 				49C7B9D71042D32F0009D447 /* CanvasProgram.h in Headers */,
 				49C7B9DA1042D32F0009D447 /* CanvasRenderbuffer.h in Headers */,
@@ -17572,6 +17739,33 @@
 				510D4A38103165EE0049EA54 /* SocketStreamHandleClient.h in Headers */,
 				51ABAE1B103C18FF008C5260 /* SocketStreamError.h in Headers */,
 				51ABAE1E103C1913008C5260 /* SocketStreamHandle.h in Headers */,
+				49EECDE010503C2400099FAB /* CanvasArray.h in Headers */,
+				49EECDE310503C2400099FAB /* CanvasArrayBuffer.h in Headers */,
+				49EECDE610503C2400099FAB /* CanvasFloatArray.h in Headers */,
+				49EECDE910503C2400099FAB /* CanvasIntArray.h in Headers */,
+				49EECDEC10503C2400099FAB /* CanvasShortArray.h in Headers */,
+				49EECDEF10503C2400099FAB /* CanvasUnsignedByteArray.h in Headers */,
+				49EECDF210503C2400099FAB /* CanvasUnsignedIntArray.h in Headers */,
+				49EECDF510503C2400099FAB /* CanvasUnsignedShortArray.h in Headers */,
+				49EECF01105070C400099FAB /* JSCanvasArrayBuffer.h in Headers */,
+				49EECF03105070C400099FAB /* JSCanvasFloatArray.h in Headers */,
+				49EECF05105070C400099FAB /* JSCanvasIntArray.h in Headers */,
+				49EECF07105070C400099FAB /* JSCanvasShortArray.h in Headers */,
+				49EECF09105070C400099FAB /* JSCanvasUnsignedByteArray.h in Headers */,
+				49EECF0B105070C400099FAB /* JSCanvasUnsignedIntArray.h in Headers */,
+				49EECF0D105070C400099FAB /* JSCanvasUnsignedShortArray.h in Headers */,
+				49EECF1C105072F300099FAB /* JSCanvasArray.h in Headers */,
+				49EECFAC1050938200099FAB /* JSCanvasArrayBufferConstructor.h in Headers */,
+				49EECFAE1050938200099FAB /* JSCanvasByteArrayConstructor.h in Headers */,
+				49EECFB01050938200099FAB /* JSCanvasFloatArrayConstructor.h in Headers */,
+				49EECFB21050938200099FAB /* JSCanvasIntArrayConstructor.h in Headers */,
+				49EECFB61050938200099FAB /* JSCanvasShortArrayConstructor.h in Headers */,
+				49EECFB81050938200099FAB /* JSCanvasUnsignedByteArrayConstructor.h in Headers */,
+				49EECFBA1050938200099FAB /* JSCanvasUnsignedIntArrayConstructor.h in Headers */,
+				49EECFBC1050938200099FAB /* JSCanvasUnsignedShortArrayConstructor.h in Headers */,
+				49EED1431051969400099FAB /* JSCanvasRenderingContext.h in Headers */,
+				49EED1451051969400099FAB /* JSCanvasRenderingContext2D.h in Headers */,
+				49EED1471051969400099FAB /* JSCanvasRenderingContext3D.h in Headers */,
 				59C77F2B10545B3B00506104 /* GeolocationServiceMock.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -17675,6 +17869,14 @@
 				1AB1AE7A0C051FDE00139F4F /* zoomInCursor.png in Resources */,
 				1AB1AE7B0C051FDE00139F4F /* zoomOutCursor.png in Resources */,
 				E1284ADA10447AEB00EAEB52 /* PageTransitionEvent.idl in Resources */,
+				49EECDE110503C2400099FAB /* CanvasArray.idl in Resources */,
+				49EECDE410503C2400099FAB /* CanvasArrayBuffer.idl in Resources */,
+				49EECDE710503C2400099FAB /* CanvasFloatArray.idl in Resources */,
+				49EECDEA10503C2400099FAB /* CanvasIntArray.idl in Resources */,
+				49EECDED10503C2400099FAB /* CanvasShortArray.idl in Resources */,
+				49EECDF010503C2400099FAB /* CanvasUnsignedByteArray.idl in Resources */,
+				49EECDF310503C2400099FAB /* CanvasUnsignedIntArray.idl in Resources */,
+				49EECDF610503C2400099FAB /* CanvasUnsignedShortArray.idl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18538,8 +18740,6 @@
 				BC124EFF0C26447A009E2349 /* JSBarInfo.cpp in Sources */,
 				65DF323909D1DE65000BE325 /* JSCanvasGradient.cpp in Sources */,
 				65DF323B09D1DE65000BE325 /* JSCanvasPattern.cpp in Sources */,
-				65DF323D09D1DE65000BE325 /* JSCanvasRenderingContext2D.cpp in Sources */,
-				1A9EF4570A1B957D00332B63 /* JSCanvasRenderingContext2DCustom.cpp in Sources */,
 				93F9B7A00BA6032600854064 /* JSCDATASection.cpp in Sources */,
 				93BA59B20F2AA5FE008E8E99 /* JSCDATASectionCustom.cpp in Sources */,
 				65DF31F309D1CC60000BE325 /* JSCharacterData.cpp in Sources */,
@@ -19636,21 +19836,16 @@
 				0014628A103CD1DE000B20DB /* OriginAccessEntry.cpp in Sources */,
 				B51BF6F0102C9E590002C15A /* SQLTransactionClient.cpp in Sources */,
 				E1284AEA10447DEE00EAEB52 /* PageTransitionEvent.cpp in Sources */,
-				49C7B97E1042D2080009D447 /* JSCanvasNumberArrayCustom.cpp in Sources */,
-				49C7B97F1042D2080009D447 /* JSCanvasRenderingContext3DCustom.cpp in Sources */,
 				49C7B9931042D2D30009D447 /* JSCanvasBuffer.cpp in Sources */,
 				49C7B9951042D2D30009D447 /* JSCanvasByteArray.cpp in Sources */,
 				49C7B9971042D2D30009D447 /* JSCanvasFramebuffer.cpp in Sources */,
-				49C7B9991042D2D30009D447 /* JSCanvasNumberArray.cpp in Sources */,
 				49C7B99B1042D2D30009D447 /* JSCanvasProgram.cpp in Sources */,
 				49C7B99D1042D2D30009D447 /* JSCanvasRenderbuffer.cpp in Sources */,
-				49C7B99F1042D2D30009D447 /* JSCanvasRenderingContext.cpp in Sources */,
 				49C7B9A21042D2D30009D447 /* JSCanvasShader.cpp in Sources */,
 				49C7B9A41042D2D30009D447 /* JSCanvasTexture.cpp in Sources */,
 				49C7B9C81042D32F0009D447 /* CanvasBuffer.cpp in Sources */,
 				49C7B9CB1042D32F0009D447 /* CanvasByteArray.cpp in Sources */,
 				49C7B9CE1042D32F0009D447 /* CanvasFramebuffer.cpp in Sources */,
-				49C7B9D11042D32F0009D447 /* CanvasNumberArray.cpp in Sources */,
 				49C7B9D41042D32F0009D447 /* CanvasObject.cpp in Sources */,
 				49C7B9D61042D32F0009D447 /* CanvasProgram.cpp in Sources */,
 				49C7B9D91042D32F0009D447 /* CanvasRenderbuffer.cpp in Sources */,
@@ -19661,13 +19856,48 @@
 				49C7BA011042D38C0009D447 /* Canvas3DLayer.mm in Sources */,
 				49C7BA021042D38C0009D447 /* GraphicsContext3DMac.cpp in Sources */,
 				49C7BA8D1042F5B10009D447 /* JSDocumentCustom.cpp in Sources */,
-				49C7D4FB1042F95F0009D447 /* JSCanvasRenderingContext3D.cpp in Sources */,
-				4983A97010435E9000DB70F9 /* JSCanvasRenderingContextCustom.cpp in Sources */,
 				E1284BB210449FFA00EAEB52 /* JSPageTransitionEvent.cpp in Sources */,
 				E1284BD51044A01E00EAEB52 /* DOMPageTransitionEvent.mm in Sources */,
 				510D4A33103165EE0049EA54 /* SocketStreamErrorBase.cpp in Sources */,
 				510D4A36103165EE0049EA54 /* SocketStreamHandleBase.cpp in Sources */,
 				51ABAE1F103C1913008C5260 /* SocketStreamHandleCFNet.cpp in Sources */,
+				49EECDDF10503C2400099FAB /* CanvasArray.cpp in Sources */,
+				49EECDE210503C2400099FAB /* CanvasArrayBuffer.cpp in Sources */,
+				49EECDE510503C2400099FAB /* CanvasFloatArray.cpp in Sources */,
+				49EECDE810503C2400099FAB /* CanvasIntArray.cpp in Sources */,
+				49EECDEB10503C2400099FAB /* CanvasShortArray.cpp in Sources */,
+				49EECDEE10503C2400099FAB /* CanvasUnsignedByteArray.cpp in Sources */,
+				49EECDF110503C2400099FAB /* CanvasUnsignedIntArray.cpp in Sources */,
+				49EECDF410503C2400099FAB /* CanvasUnsignedShortArray.cpp in Sources */,
+				49EECF00105070C400099FAB /* JSCanvasArrayBuffer.cpp in Sources */,
+				49EECF02105070C400099FAB /* JSCanvasFloatArray.cpp in Sources */,
+				49EECF04105070C400099FAB /* JSCanvasIntArray.cpp in Sources */,
+				49EECF06105070C400099FAB /* JSCanvasShortArray.cpp in Sources */,
+				49EECF08105070C400099FAB /* JSCanvasUnsignedByteArray.cpp in Sources */,
+				49EECF0A105070C400099FAB /* JSCanvasUnsignedIntArray.cpp in Sources */,
+				49EECF0C105070C400099FAB /* JSCanvasUnsignedShortArray.cpp in Sources */,
+				49EECF1B105072F300099FAB /* JSCanvasArray.cpp in Sources */,
+				49EECF7810508D9C00099FAB /* JSCanvasByteArrayCustom.cpp in Sources */,
+				49EECF7910508D9C00099FAB /* JSCanvasFloatArrayCustom.cpp in Sources */,
+				49EECF7A10508D9C00099FAB /* JSCanvasIntArrayCustom.cpp in Sources */,
+				49EECF7B10508D9C00099FAB /* JSCanvasShortArrayCustom.cpp in Sources */,
+				49EECF7C10508D9C00099FAB /* JSCanvasUnsignedByteArrayCustom.cpp in Sources */,
+				49EECF7D10508D9C00099FAB /* JSCanvasUnsignedIntArrayCustom.cpp in Sources */,
+				49EECF7E10508D9C00099FAB /* JSCanvasUnsignedShortArrayCustom.cpp in Sources */,
+				49EECFAB1050938200099FAB /* JSCanvasArrayBufferConstructor.cpp in Sources */,
+				49EECFAD1050938200099FAB /* JSCanvasByteArrayConstructor.cpp in Sources */,
+				49EECFAF1050938200099FAB /* JSCanvasFloatArrayConstructor.cpp in Sources */,
+				49EECFB11050938200099FAB /* JSCanvasIntArrayConstructor.cpp in Sources */,
+				49EECFB51050938200099FAB /* JSCanvasShortArrayConstructor.cpp in Sources */,
+				49EECFB71050938200099FAB /* JSCanvasUnsignedByteArrayConstructor.cpp in Sources */,
+				49EECFB91050938200099FAB /* JSCanvasUnsignedIntArrayConstructor.cpp in Sources */,
+				49EECFBB1050938200099FAB /* JSCanvasUnsignedShortArrayConstructor.cpp in Sources */,
+				49EED1421051969400099FAB /* JSCanvasRenderingContext.cpp in Sources */,
+				49EED1441051969400099FAB /* JSCanvasRenderingContext2D.cpp in Sources */,
+				49EED1461051969400099FAB /* JSCanvasRenderingContext3D.cpp in Sources */,
+				49EED14E1051971A00099FAB /* JSCanvasRenderingContext2DCustom.cpp in Sources */,
+				49EED14F1051971A00099FAB /* JSCanvasRenderingContext3DCustom.cpp in Sources */,
+				49EED1501051971A00099FAB /* JSCanvasRenderingContextCustom.cpp in Sources */,
 				59C77F2A10545B3B00506104 /* GeolocationServiceMock.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

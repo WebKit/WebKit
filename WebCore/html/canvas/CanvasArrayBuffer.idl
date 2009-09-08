@@ -24,13 +24,7 @@
  */
 
 module html {
-    interface [
-        Conditional=3D_CANVAS,
-        HasCustomIndexGetter,
-        HasCustomIndexSetter,
-        GenerateNativeConverter,
-        GenerateCustomConstructor,
-        CustomToJS
-    ] CanvasByteArray : CanvasArray {
+    interface [Conditional=3D_CANVAS] CanvasArrayBuffer {
+        readonly attribute int byteLength;
     };
 }

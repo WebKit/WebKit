@@ -458,6 +458,8 @@ module html {
 
         const unsigned int INVALID_FRAMEBUFFER_OPERATION  = 0x0506;
 
+        long sizeInBytes(in unsigned long type) raises(DOMException);
+
         void         activeTexture(in unsigned long texture);
         void         attachShader(in CanvasProgram program, in CanvasShader shader);
         void         bindAttribLocation(in CanvasProgram program, in unsigned long index, in DOMString name);
@@ -470,9 +472,15 @@ module html {
         void         blendEquationSeparate(in unsigned long modeRGB, in unsigned long modeAlpha);
         void         blendFunc(in unsigned long sfactor, in unsigned long dfactor);
         void         blendFuncSeparate(in unsigned long srcRGB, in unsigned long dstRGB, in unsigned long srcAlpha, in unsigned long dstAlpha);
-        [Custom] void bufferData(in unsigned long target, in CanvasByteArray data, in unsigned long usage);
-        [Custom] void bufferSubData(in unsigned long target, in long offset, in CanvasByteArray data);
-        unsigned long checkFramebufferStatus(in CanvasFramebuffer framebuffer);
+        // Supported forms:
+        //   void bufferData (in GLenum target, in GLsizei size, in GLenum usage);
+        //   void bufferData (in GLenum target, in CanvasArray data, in GLenum usage);
+        [Custom] void bufferData();
+        // Supported forms:
+        //   void bufferSubData (in GLenum target, in GLsizeiptr offset, in CanvasArray data);
+        [Custom] void bufferSubData();
+
+        unsigned long checkFramebufferStatus(in unsigned long target);
         void         clear(in unsigned long mask);
         void         clearColor(in double red, in double green, in double blue, in double alpha);
         void         clearDepth(in double depth);
@@ -485,15 +493,33 @@ module html {
         
         void         copyTexImage2D(in unsigned long target, in long level, in unsigned long internalformat, in long x, in long y, in unsigned long width, in unsigned long height, in long border);
         void         copyTexSubImage2D(in unsigned long target, in long level, in long xoffset, in long yoffset, in long x, in long y, in unsigned long width, in unsigned long height);
+
+        CanvasBuffer createBuffer();
+        CanvasFramebuffer createFramebuffer();
+        CanvasProgram createProgram();
+        CanvasRenderbuffer createRenderbuffer();
+        CanvasShader createShader(in unsigned long type);
+        CanvasTexture createTexture();
+
         void         cullFace(in unsigned long mode);
+
+        void         deleteBuffer(in CanvasBuffer buffer);
+        void         deleteFramebuffer(in CanvasFramebuffer framebuffer);
+        void         deleteProgram(in CanvasProgram program);
+        void         deleteRenderbuffer(in CanvasRenderbuffer renderbuffer);
+        void         deleteShader(in CanvasShader shader);
+        void         deleteTexture(in CanvasTexture texture);
+
         void         depthFunc(in unsigned long func);
         void         depthMask(in boolean flag);
+        // FIXME: this differs from the current WebGL spec (depthRangef)
         void         depthRange(in double zNear, in double zFar);
         void         detachShader(in CanvasProgram program, in CanvasShader shader);
         void         disable(in unsigned long cap);
         void         disableVertexAttribArray(in unsigned long index);
         void         drawArrays(in unsigned long mode, in long first, in unsigned long count);
-        [Custom] void drawElements(in unsigned long mode, in unsigned long type, CanvasByteArray);
+        void         drawElements (in unsigned long mode, in long count, in unsigned long type, in unsigned long offset);
+
         void         enable(in unsigned long cap);
         void         enableVertexAttribArray(in unsigned long index);
         void         finish();
@@ -503,12 +529,61 @@ module html {
         void         frontFace(in unsigned long mode);
         void         generateMipmap(in unsigned long target);
         
-        //void         getAttachedShaders(in CanvasProgram program, in unsigned long maxcount, in unsigned long* count, in unsigned long* shaders);
-        
+        // FIXME: these need to be added per the WebGL spec
+        // CanvasActiveInfo getActiveAttrib(GLuint program, GLuint index);
+        // CanvasActiveInfo getActiveUniform(GLuint program, GLuint index);
+        // CanvasShaderArray glGetAttachedShaders(GLuint program);
+
         int          getAttribLocation(in CanvasProgram program, in DOMString name);
+
+        boolean getBoolean(in unsigned long pname);
+        CanvasUnsignedByteArray getBooleanv(in unsigned long pname);
+        long getBufferParameteri(in unsigned long target, in unsigned long pname);
+        CanvasIntArray getBufferParameteriv(in unsigned long target, in unsigned long pname);
+
         unsigned long getError();
+
+        float getFloat(in unsigned long pname);
+        CanvasFloatArray getFloatv(in unsigned long pname);
+        long getFramebufferAttachmentParameteri(in unsigned long target, in unsigned long attachment, in unsigned long pname);
+        CanvasIntArray getFramebufferAttachmentParameteriv(in unsigned long target, in unsigned long attachment, in unsigned long pname);
+        long getInteger(in unsigned long pname);
+        CanvasIntArray getIntegerv(in unsigned long pname);
+        long getProgrami(in CanvasProgram program, in unsigned long pname);
+        CanvasIntArray getProgramiv(in CanvasProgram program, in unsigned long pname);
+        DOMString getProgramInfoLog(in CanvasProgram program);
+        long getRenderbufferParameteri(in unsigned long target, in unsigned long pname);
+        CanvasIntArray getRenderbufferParameteriv(in unsigned long target, in unsigned long pname);
+        long getShaderi(in CanvasShader shader, in unsigned long pname);
+        CanvasIntArray getShaderiv(in CanvasShader shader, in unsigned long pname);
+
+        DOMString    getShaderInfoLog(in CanvasShader shader);
+
+        // TBD
+        // void glGetShaderPrecisionFormat (GLenum shadertype, GLenum precisiontype, GLint* range, GLint* precision);
+
         DOMString    getShaderSource(in CanvasShader shader);
         DOMString    getString(in unsigned long name);
+
+        float getTexParameterf(in unsigned long target, in unsigned long pname);
+        CanvasFloatArray getTexParameterfv(in unsigned long target, in unsigned long pname);
+        long getTexParameteri(in unsigned long target, in unsigned long pname);
+        CanvasIntArray getTexParameteriv(in unsigned long target, in unsigned long pname);
+
+        float getUniformf(in CanvasProgram program, in long location);
+        CanvasFloatArray getUniformfv(in CanvasProgram program, in long location);
+        long getUniformi(in CanvasProgram program, in long location);
+        CanvasIntArray getUniformiv(in CanvasProgram program, in long location);
+        
+        long getUniformLocation(in CanvasProgram program, in DOMString name);
+
+        float getVertexAttribf(in unsigned long index, in unsigned long pname);
+        CanvasFloatArray getVertexAttribfv(in unsigned long index, in unsigned long pname);
+        long getVertexAttribi(in unsigned long index, in unsigned long pname);
+        CanvasIntArray getVertexAttribiv(in unsigned long index, in unsigned long pname);
+
+        long getVertexAttribOffset(in unsigned long index, in unsigned long pname);
+
         void         hint(in unsigned long target, in unsigned long mode);
         boolean      isBuffer(in CanvasBuffer buffer);
         boolean      isEnabled(in unsigned long cap);
@@ -522,6 +597,7 @@ module html {
         void         pixelStorei(in unsigned long pname, in long param);
         void         polygonOffset(in double factor, in double units);
         
+        // FIXME
         //void         readPixels(in long x, in long y, in unsigned long width, in unsigned long height, in unsigned long format, in unsigned long type, void* pixels);
         
         void         releaseShaderCompiler();
@@ -535,61 +611,77 @@ module html {
         void         stencilMaskSeparate(in unsigned long face, in unsigned long mask);
         void         stencilOp(in unsigned long fail, in unsigned long zfail, in unsigned long zpass);
         void         stencilOpSeparate(in unsigned long face, in unsigned long fail, in unsigned long zfail, in unsigned long zpass);
-        [Custom] void texParameter(in unsigned long target, in unsigned long pname, in CanvasNumberArray params);
-        [Custom] void uniformi(in long location, in CanvasNumberArray params);
-        [Custom] void uniformf(in long location, in CanvasNumberArray params);
-        [Custom] void uniformMatrix(in long location, in long count, in boolean transpose, in CanvasNumberArray params);
+
+        void         texParameterf(in unsigned long target, in unsigned long pname, in float param);
+        void         texParameteri(in unsigned long target, in unsigned long pname, in long param);
+
+        // Supported forms:
+        //   void texImage2D(in GLenum target, in GLint level, in GLenum internalformat, in GLsizei width, in GLsizei height, 
+        //                   in GLint border, in GLenum format, in GLenum type, in CanvasArray pixels);
+        //   void texImage2D(in GLenum target, in GLint level, in GLenum internalformat, in GLsizei width, in GLsizei height, 
+        //                   in GLint border, in GLenum format, in GLenum type, in ImageData pixels);
+        //   void texImage2D(in GLenum target, in GLint level, in HTMLImageElement image,
+        //                   [Optional] in GLboolean flipY, [Optional] in premultiplyAlpha);
+        //   void texImage2D(in GLenum target, in GLint level, in HTMLCanvasElement canvas,
+        //                   [Optional] in GLboolean flipY, [Optional] in premultiplyAlpha);
+        //   void texImage2D(in GLenum target, in GLint level, in HTMLVideoElement video,
+        //                   [Optional] in GLboolean flipY, [Optional] in premultiplyAlpha);
+        [Custom] void texImage2D();
+
+        // Supported forms:
+        //   void texSubImage2D(in GLenum target, in GLint level, in GLint xoffset, in GLint yoffset, 
+        //                      in GLsizei width, in GLsizei height, 
+        //                      in GLenum format, in GLenum type, in CanvasArray pixels);
+        //   void texSubImage2D(in GLenum target, in GLint level, in GLint xoffset, in GLint yoffset, 
+        //                      in GLsizei width, in GLsizei height, 
+        //                      in GLenum format, in GLenum type, in ImageData pixels);
+        //   void texSubImage2D(in GLenum target, in GLint level, in GLint xoffset, in GLint yoffset, 
+        //                      in GLsizei width, in GLsizei height, in HTMLImageElement image,
+        //                      [Optional] GLboolean flipY, [Optional] in premultiplyAlpha);
+        //   void texSubImage2D(in GLenum target, in GLint level, in GLint xoffset, in GLint yoffset, 
+        //                      in GLsizei width, in GLsizei height, in HTMLCanvasElement canvas,
+        //                      [Optional] GLboolean flipY, [Optional] in premultiplyAlpha);
+        //   void texSubImage2D(in GLenum target, in GLint level, in GLint xoffset, in GLint yoffset, 
+        //                      in GLsizei width, in GLsizei height, in HTMLVideoElement video,
+        //                      [Optional] GLboolean flipY, [Optional] in premultiplyAlpha);
+        [Custom] void texSubImage2D();
+
+        void uniform1f(in long location, in float x);
+        void uniform1fv(in long location, in CanvasFloatArray v);
+        void uniform1i(in long location, in long x);
+        void uniform1iv(in long location, in CanvasIntArray v);
+        void uniform2f(in long location, in float x, in float y);
+        void uniform2fv(in long location, in CanvasFloatArray v);
+        void uniform2i(in long location, in long x, in long y);
+        void uniform2iv(in long location, in CanvasIntArray v);
+        void uniform3f(in long location, in float x, in float y, in float z);
+        void uniform3fv(in long location, in CanvasFloatArray v);
+        void uniform3i(in long location, in long x, in long y, in long z);
+        void uniform3iv(in long location, in CanvasIntArray v);
+        void uniform4f(in long location, in float x, in float y, in float z, in float w);
+        void uniform4fv(in long location, in CanvasFloatArray v);
+        void uniform4i(in long location, in long x, in long y, in long z, in long w);
+        void uniform4iv(in long location, in CanvasIntArray v);
+
+        void uniformMatrix2fv(in long location, in boolean transpose, in CanvasFloatArray array);
+        void uniformMatrix3fv(in long location, in boolean transpose, in CanvasFloatArray array);
+        void uniformMatrix4fv(in long location, in boolean transpose, in CanvasFloatArray array);
+
         void         useProgram(in CanvasProgram program);
         void         validateProgram(in CanvasProgram program);
-        [Custom] void vertexAttrib(in unsigned long indx, in CanvasNumberArray);
-        [Custom] void vertexAttribPointer(in unsigned long indx, in long size, in unsigned long type, in boolean normalized, in unsigned long stride, in CanvasByteArray array);
+
+        void         vertexAttrib1f(in unsigned long indx, in float x);
+        void         vertexAttrib1fv(in unsigned long indx, in CanvasFloatArray values);
+        void         vertexAttrib2f(in unsigned long indx, in float x, in float y);
+        void         vertexAttrib2fv(in unsigned long indx, in CanvasFloatArray values);
+        void         vertexAttrib3f(in unsigned long indx, in float x, in float y, in float z);
+        void         vertexAttrib3fv(in unsigned long indx, in CanvasFloatArray values);
+        void         vertexAttrib4f(in unsigned long indx, in float x, in float y, in float z, in float w);
+        void         vertexAttrib4fv(in unsigned long indx, in CanvasFloatArray values);
+        void         vertexAttribPointer(in unsigned long indx, in long size, in unsigned long type, in boolean normalized, 
+                                         in long stride, in unsigned long offset);
+
         void         viewport(in long x, in long y, in unsigned long width, in unsigned long height);
-
-        // Non-GL functions
-        CanvasBuffer createBuffer();
-        CanvasFramebuffer createFramebuffer();
-        CanvasProgram createProgram();
-        CanvasRenderbuffer createRenderbuffer();
-        CanvasShader createShader(in unsigned long type);
-        CanvasTexture createTexture();
-
-        void deleteBuffer(in CanvasBuffer buffer);
-        void deleteFramebuffer(in CanvasFramebuffer framebuffer);
-        void deleteProgram(in CanvasProgram program);
-        void deleteRenderbuffer(in CanvasRenderbuffer renderbuffer);
-        void deleteShader(in CanvasShader shader);
-        void deleteTexture(in CanvasTexture texture);
-        
-        CanvasNumberArray get(in unsigned long pname);
-        CanvasNumberArray getBufferParameter(in unsigned long target, in unsigned long pname);
-        CanvasNumberArray getFramebufferAttachmentParameter(in unsigned long target, in unsigned long attachment, in unsigned long pname);
-        CanvasNumberArray getProgram(in CanvasProgram program, in unsigned long pname);
-        DOMString getProgramInfoLog(in CanvasProgram program);
-        CanvasNumberArray getRenderbufferParameter(in unsigned long target, in unsigned long pname);
-        CanvasNumberArray getShader(in CanvasShader shader, in unsigned long pname);
-        DOMString getShaderInfoLog(in CanvasShader shader);
-
-        CanvasNumberArray getTexParameter(in unsigned long target, in unsigned long pname);
-        
-        // FIXME: I don't like the idea of passing a size to this function. We should be able to figure it out.
-        // But the only way to do that is to search through all active uniforms and determine the type.
-        CanvasNumberArray getUniform(in CanvasProgram program, in long location, in long size);
-        
-        long getUniformLocation(in CanvasProgram program, in DOMString name); // replaces glGetUniformLocation
-        CanvasNumberArray getVertexAttrib(in unsigned long index, in unsigned long pname);
-        
-        [Custom] void texImage2D(in unsigned long target, in unsigned long level, in HTMLImageElement image);
-        [Custom] void texSubImage2D(in unsigned long target, in unsigned long level, in unsigned long xoff, in unsigned long yoff, in unsigned long width, in unsigned long height, in HTMLImageElement image);
-
-        // FIXME: This is tricky. We obviously can't return a pointer. But sometimes this function returns an offset.
-        // Also, do we want to use this to give a reference to a CanvasNumberArray? If so, would this merely be a copy
-        // or the actual mutable array?
-        //void         getVertexAttribPointerv(in unsigned long index, in unsigned long pname, void** pointer);
-
-        // FIXME: These will have to be done by returning a data type which has the returned attributes
-        //void getActiveAttrib(in CanvasProgram program, in unsigned long index, out long size, out unsigned long type, out DOMString name);
-        //void getActiveUniform(in CanvasProgram program, in unsigned long index, out long size, out unsigned long type, out DOMString name);
-        //void getShaderPrecisionFormat(in unsigned long shadertype, in unsigned long precisiontype, out long rangeMin, out long rangeMax, out long precision);
     };
 }
 

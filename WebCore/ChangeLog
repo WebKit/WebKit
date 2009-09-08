@@ -1,3 +1,259 @@
+2009-09-07  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Update Canvas 3D implementation to match spec
+        https://bugs.webkit.org/show_bug.cgi?id=29010
+
+        This adds several new CanvasXXXArray classes each of which has a custom constructor
+        and custom getters and setters. Also changed CanvasRenderingContext3D and GraphicsContext3D
+        to match the new and changed API.
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSCanvasArrayBufferConstructor.cpp: Added with properties svn:eol-style and svn:mime-type.
+        * bindings/js/JSCanvasArrayBufferConstructor.h: Added with properties svn:eol-style and svn:mime-type.
+        * bindings/js/JSCanvasArrayCustom.cpp: Added with properties svn:eol-style and svn:mime-type.
+        * bindings/js/JSCanvasByteArrayConstructor.cpp: Added with properties svn:eol-style and svn:mime-type.
+        * bindings/js/JSCanvasByteArrayConstructor.h: Added with properties svn:eol-style and svn:mime-type.
+        * bindings/js/JSCanvasByteArrayCustom.cpp: Added with properties svn:eol-style and svn:mime-type.
+        * bindings/js/JSCanvasFloatArrayConstructor.cpp: Added with properties svn:eol-style and svn:mime-type.
+        * bindings/js/JSCanvasFloatArrayConstructor.h: Added with properties svn:eol-style and svn:mime-type.
+        * bindings/js/JSCanvasFloatArrayCustom.cpp: Added with properties svn:eol-style and svn:mime-type.
+        * bindings/js/JSCanvasIntArrayConstructor.cpp: Added with properties svn:eol-style and svn:mime-type.
+        * bindings/js/JSCanvasIntArrayConstructor.h: Added with properties svn:eol-style and svn:mime-type.
+        * bindings/js/JSCanvasIntArrayCustom.cpp: Added with properties svn:eol-style and svn:mime-type.
+        * bindings/js/JSCanvasRenderingContext3DCustom.cpp:
+        (WebCore::JSCanvasRenderingContext3D::bufferData):
+        (WebCore::JSCanvasRenderingContext3D::bufferSubData):
+        (WebCore::JSCanvasRenderingContext3D::texImage2D):
+        (WebCore::JSCanvasRenderingContext3D::texSubImage2D):
+        * bindings/js/JSCanvasShortArrayConstructor.cpp: Added with properties svn:eol-style and svn:mime-type.
+        * bindings/js/JSCanvasShortArrayConstructor.h: Added with properties svn:eol-style and svn:mime-type.
+        * bindings/js/JSCanvasShortArrayCustom.cpp: Added with properties svn:eol-style and svn:mime-type.
+        * bindings/js/JSCanvasUnsignedByteArrayConstructor.cpp: Added with properties svn:eol-style and svn:mime-type.
+        * bindings/js/JSCanvasUnsignedByteArrayConstructor.h: Added with properties svn:eol-style and svn:mime-type.
+        * bindings/js/JSCanvasUnsignedByteArrayCustom.cpp: Added with properties svn:eol-style and svn:mime-type.
+        * bindings/js/JSCanvasUnsignedIntArrayConstructor.cpp: Added with properties svn:eol-style and svn:mime-type.
+        * bindings/js/JSCanvasUnsignedIntArrayConstructor.h: Added with properties svn:eol-style and svn:mime-type.
+        * bindings/js/JSCanvasUnsignedIntArrayCustom.cpp: Added with properties svn:eol-style and svn:mime-type.
+        * bindings/js/JSCanvasUnsignedShortArrayConstructor.cpp: Added with properties svn:eol-style and svn:mime-type.
+        * bindings/js/JSCanvasUnsignedShortArrayConstructor.h: Added with properties svn:eol-style and svn:mime-type.
+        * bindings/js/JSCanvasUnsignedShortArrayCustom.cpp: Added with properties svn:eol-style and svn:mime-type.
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::canvasArrayBuffer):
+        (WebCore::JSDOMWindow::canvasByteArray):
+        (WebCore::JSDOMWindow::canvasUnsignedByteArray):
+        (WebCore::JSDOMWindow::canvasIntArray):
+        (WebCore::JSDOMWindow::canvasUnsignedIntArray):
+        (WebCore::JSDOMWindow::canvasShortArray):
+        (WebCore::JSDOMWindow::canvasUnsignedShortArray):
+        (WebCore::JSDOMWindow::canvasFloatArray):
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::getContext):
+        (WebCore::HTMLCanvasElement::paint):
+        * html/canvas/CanvasArray.cpp: Added with properties svn:eol-style and svn:mime-type.
+        * html/canvas/CanvasArray.h: Added with properties svn:eol-style and svn:mime-type.
+        * html/canvas/CanvasArray.idl: Added.
+        * html/canvas/CanvasArrayBuffer.cpp: Added with properties svn:eol-style and svn:mime-type.
+        * html/canvas/CanvasArrayBuffer.h: Added with properties svn:eol-style and svn:mime-type.
+        * html/canvas/CanvasArrayBuffer.idl: Added.
+        * html/canvas/CanvasByteArray.cpp:
+        * html/canvas/CanvasByteArray.h:
+        * html/canvas/CanvasByteArray.idl:
+        * html/canvas/CanvasFloatArray.cpp: Added with properties svn:eol-style and svn:mime-type.
+        * html/canvas/CanvasFloatArray.h: Added with properties svn:eol-style and svn:mime-type.
+        * html/canvas/CanvasFloatArray.idl: Added.
+        * html/canvas/CanvasIntArray.cpp: Added with properties svn:eol-style and svn:mime-type.
+        * html/canvas/CanvasIntArray.h: Added with properties svn:eol-style and svn:mime-type.
+        * html/canvas/CanvasIntArray.idl: Added.
+        * html/canvas/CanvasRenderingContext3D.cpp:
+        (WebCore::CanvasRenderingContext3D::CanvasRenderingContext3D):
+        (WebCore::CanvasRenderingContext3D::markContextChanged):
+        (WebCore::CanvasRenderingContext3D::beginPaint):
+        (WebCore::CanvasRenderingContext3D::endPaint):
+        (WebCore::CanvasRenderingContext3D::reshape):
+        (WebCore::CanvasRenderingContext3D::sizeInBytes):
+        (WebCore::CanvasRenderingContext3D::bindTexture):
+        (WebCore::CanvasRenderingContext3D::bufferData):
+        (WebCore::CanvasRenderingContext3D::bufferSubData):
+        (WebCore::CanvasRenderingContext3D::checkFramebufferStatus):
+        (WebCore::CanvasRenderingContext3D::clear):
+        (WebCore::CanvasRenderingContext3D::createBuffer):
+        (WebCore::CanvasRenderingContext3D::createFramebuffer):
+        (WebCore::CanvasRenderingContext3D::createTexture):
+        (WebCore::CanvasRenderingContext3D::createProgram):
+        (WebCore::CanvasRenderingContext3D::createRenderbuffer):
+        (WebCore::CanvasRenderingContext3D::createShader):
+        (WebCore::CanvasRenderingContext3D::deleteBuffer):
+        (WebCore::CanvasRenderingContext3D::deleteFramebuffer):
+        (WebCore::CanvasRenderingContext3D::deleteProgram):
+        (WebCore::CanvasRenderingContext3D::deleteRenderbuffer):
+        (WebCore::CanvasRenderingContext3D::deleteShader):
+        (WebCore::CanvasRenderingContext3D::deleteTexture):
+        (WebCore::CanvasRenderingContext3D::drawArrays):
+        (WebCore::CanvasRenderingContext3D::drawElements):
+        (WebCore::CanvasRenderingContext3D::getBoolean):
+        (WebCore::CanvasRenderingContext3D::getBooleanv):
+        (WebCore::CanvasRenderingContext3D::getBufferParameteri):
+        (WebCore::CanvasRenderingContext3D::getBufferParameteriv):
+        (WebCore::CanvasRenderingContext3D::getFloat):
+        (WebCore::CanvasRenderingContext3D::getFloatv):
+        (WebCore::CanvasRenderingContext3D::getFramebufferAttachmentParameteri):
+        (WebCore::CanvasRenderingContext3D::getFramebufferAttachmentParameteriv):
+        (WebCore::CanvasRenderingContext3D::getInteger):
+        (WebCore::CanvasRenderingContext3D::getIntegerv):
+        (WebCore::CanvasRenderingContext3D::getProgrami):
+        (WebCore::CanvasRenderingContext3D::getProgramiv):
+        (WebCore::CanvasRenderingContext3D::getProgramInfoLog):
+        (WebCore::CanvasRenderingContext3D::getRenderbufferParameteri):
+        (WebCore::CanvasRenderingContext3D::getRenderbufferParameteriv):
+        (WebCore::CanvasRenderingContext3D::getShaderi):
+        (WebCore::CanvasRenderingContext3D::getShaderiv):
+        (WebCore::CanvasRenderingContext3D::getShaderInfoLog):
+        (WebCore::CanvasRenderingContext3D::getShaderSource):
+        (WebCore::CanvasRenderingContext3D::getTexParameterf):
+        (WebCore::CanvasRenderingContext3D::getTexParameterfv):
+        (WebCore::CanvasRenderingContext3D::getTexParameteri):
+        (WebCore::CanvasRenderingContext3D::getTexParameteriv):
+        (WebCore::CanvasRenderingContext3D::getUniformf):
+        (WebCore::CanvasRenderingContext3D::getUniformfv):
+        (WebCore::CanvasRenderingContext3D::getUniformi):
+        (WebCore::CanvasRenderingContext3D::getUniformiv):
+        (WebCore::CanvasRenderingContext3D::getUniformLocation):
+        (WebCore::CanvasRenderingContext3D::getVertexAttribf):
+        (WebCore::CanvasRenderingContext3D::getVertexAttribfv):
+        (WebCore::CanvasRenderingContext3D::getVertexAttribi):
+        (WebCore::CanvasRenderingContext3D::getVertexAttribiv):
+        (WebCore::CanvasRenderingContext3D::getVertexAttribOffset):
+        (WebCore::CanvasRenderingContext3D::texImage2D):
+        (WebCore::CanvasRenderingContext3D::texParameterf):
+        (WebCore::CanvasRenderingContext3D::texParameteri):
+        (WebCore::CanvasRenderingContext3D::texSubImage2D):
+        (WebCore::CanvasRenderingContext3D::uniform1f):
+        (WebCore::CanvasRenderingContext3D::uniform1fv):
+        (WebCore::CanvasRenderingContext3D::uniform1i):
+        (WebCore::CanvasRenderingContext3D::uniform1iv):
+        (WebCore::CanvasRenderingContext3D::uniform2f):
+        (WebCore::CanvasRenderingContext3D::uniform2fv):
+        (WebCore::CanvasRenderingContext3D::uniform2i):
+        (WebCore::CanvasRenderingContext3D::uniform2iv):
+        (WebCore::CanvasRenderingContext3D::uniform3f):
+        (WebCore::CanvasRenderingContext3D::uniform3fv):
+        (WebCore::CanvasRenderingContext3D::uniform3i):
+        (WebCore::CanvasRenderingContext3D::uniform3iv):
+        (WebCore::CanvasRenderingContext3D::uniform4f):
+        (WebCore::CanvasRenderingContext3D::uniform4fv):
+        (WebCore::CanvasRenderingContext3D::uniform4i):
+        (WebCore::CanvasRenderingContext3D::uniform4iv):
+        (WebCore::CanvasRenderingContext3D::uniformMatrix2fv):
+        (WebCore::CanvasRenderingContext3D::uniformMatrix3fv):
+        (WebCore::CanvasRenderingContext3D::uniformMatrix4fv):
+        (WebCore::CanvasRenderingContext3D::useProgram):
+        (WebCore::CanvasRenderingContext3D::validateProgram):
+        (WebCore::CanvasRenderingContext3D::vertexAttrib1f):
+        (WebCore::CanvasRenderingContext3D::vertexAttrib1fv):
+        (WebCore::CanvasRenderingContext3D::vertexAttrib2f):
+        (WebCore::CanvasRenderingContext3D::vertexAttrib2fv):
+        (WebCore::CanvasRenderingContext3D::vertexAttrib3f):
+        (WebCore::CanvasRenderingContext3D::vertexAttrib3fv):
+        (WebCore::CanvasRenderingContext3D::vertexAttrib4f):
+        (WebCore::CanvasRenderingContext3D::vertexAttrib4fv):
+        (WebCore::CanvasRenderingContext3D::vertexAttribPointer):
+        (WebCore::CanvasRenderingContext3D::viewport):
+        * html/canvas/CanvasRenderingContext3D.h:
+        * html/canvas/CanvasRenderingContext3D.idl:
+        * html/canvas/CanvasShortArray.cpp: Added with properties svn:eol-style and svn:mime-type.
+        * html/canvas/CanvasShortArray.h: Added with properties svn:eol-style and svn:mime-type.
+        * html/canvas/CanvasShortArray.idl: Added.
+        * html/canvas/CanvasTexture.cpp:
+        (WebCore::CanvasTexture::CanvasTexture):
+        * html/canvas/CanvasTexture.h:
+        (WebCore::CanvasTexture::isCubeMapRWrapModeInitialized):
+        (WebCore::CanvasTexture::setCubeMapRWrapModeInitialized):
+        * html/canvas/CanvasUnsignedByteArray.cpp: Added with properties svn:eol-style and svn:mime-type.
+        * html/canvas/CanvasUnsignedByteArray.h: Added with properties svn:eol-style and svn:mime-type.
+         * html/canvas/CanvasUnsignedByteArray.idl: Added.
+        * html/canvas/CanvasUnsignedIntArray.cpp: Added with properties svn:eol-style and svn:mime-type.
+        * html/canvas/CanvasUnsignedIntArray.h: Added with properties svn:eol-style and svn:mime-type.
+        * html/canvas/CanvasUnsignedIntArray.idl: Added.
+        * html/canvas/CanvasUnsignedShortArray.cpp: Added with properties svn:eol-style and svn:mime-type.
+        * html/canvas/CanvasUnsignedShortArray.h: Added with properties svn:eol-style and svn:mime-type.
+        * html/canvas/CanvasUnsignedShortArray.idl: Added.
+        * page/DOMWindow.idl:
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/mac/GraphicsContext3DMac.cpp:
+        (WebCore::GraphicsContext3D::beginPaint):
+        (WebCore::GraphicsContext3D::endPaint):
+        (WebCore::GraphicsContext3D::bindTexture):
+        (WebCore::GraphicsContext3D::bufferData):
+        (WebCore::GraphicsContext3D::bufferSubData):
+        (WebCore::GraphicsContext3D::checkFramebufferStatus):
+        (WebCore::GraphicsContext3D::drawArrays):
+        (WebCore::GraphicsContext3D::drawElements):
+        (WebCore::GraphicsContext3D::texParameterf):
+        (WebCore::GraphicsContext3D::texParameteri):
+        (WebCore::GraphicsContext3D::uniform1f):
+        (WebCore::GraphicsContext3D::uniform1fv):
+        (WebCore::GraphicsContext3D::uniform2f):
+        (WebCore::GraphicsContext3D::uniform2fv):
+        (WebCore::GraphicsContext3D::uniform3f):
+        (WebCore::GraphicsContext3D::uniform3fv):
+        (WebCore::GraphicsContext3D::uniform4f):
+        (WebCore::GraphicsContext3D::uniform4fv):
+        (WebCore::GraphicsContext3D::uniform1i):
+        (WebCore::GraphicsContext3D::uniform1iv):
+        (WebCore::GraphicsContext3D::uniform2i):
+        (WebCore::GraphicsContext3D::uniform2iv):
+        (WebCore::GraphicsContext3D::uniform3i):
+        (WebCore::GraphicsContext3D::uniform3iv):
+        (WebCore::GraphicsContext3D::uniform4i):
+        (WebCore::GraphicsContext3D::uniform4iv):
+        (WebCore::GraphicsContext3D::uniformMatrix2fv):
+        (WebCore::GraphicsContext3D::uniformMatrix3fv):
+        (WebCore::GraphicsContext3D::uniformMatrix4fv):
+        (WebCore::GraphicsContext3D::vertexAttrib1f):
+        (WebCore::GraphicsContext3D::vertexAttrib1fv):
+        (WebCore::GraphicsContext3D::vertexAttrib2f):
+        (WebCore::GraphicsContext3D::vertexAttrib2fv):
+        (WebCore::GraphicsContext3D::vertexAttrib3f):
+        (WebCore::GraphicsContext3D::vertexAttrib3fv):
+        (WebCore::GraphicsContext3D::vertexAttrib4f):
+        (WebCore::GraphicsContext3D::vertexAttrib4fv):
+        (WebCore::GraphicsContext3D::vertexAttribPointer):
+        (WebCore::GraphicsContext3D::getBoolean):
+        (WebCore::GraphicsContext3D::getBooleanv):
+        (WebCore::GraphicsContext3D::getFloat):
+        (WebCore::GraphicsContext3D::getFloatv):
+        (WebCore::GraphicsContext3D::getInteger):
+        (WebCore::GraphicsContext3D::getIntegerv):
+        (WebCore::GraphicsContext3D::getBufferParameteri):
+        (WebCore::GraphicsContext3D::getBufferParameteriv):
+        (WebCore::GraphicsContext3D::getFramebufferAttachmentParameteri):
+        (WebCore::GraphicsContext3D::getFramebufferAttachmentParameteriv):
+        (WebCore::GraphicsContext3D::getProgrami):
+        (WebCore::GraphicsContext3D::getProgramiv):
+        (WebCore::GraphicsContext3D::getRenderbufferParameteri):
+        (WebCore::GraphicsContext3D::getRenderbufferParameteriv):
+        (WebCore::GraphicsContext3D::getShaderi):
+        (WebCore::GraphicsContext3D::getShaderiv):
+        (WebCore::GraphicsContext3D::getTexParameterf):
+        (WebCore::GraphicsContext3D::getTexParameterfv):
+        (WebCore::GraphicsContext3D::getTexParameteri):
+        (WebCore::GraphicsContext3D::getTexParameteriv):
+        (WebCore::GraphicsContext3D::getUniformf):
+        (WebCore::GraphicsContext3D::getUniformfv):
+        (WebCore::GraphicsContext3D::getUniformi):
+        (WebCore::GraphicsContext3D::getUniformiv):
+        (WebCore::GraphicsContext3D::getVertexAttribf):
+        (WebCore::GraphicsContext3D::getVertexAttribfv):
+        (WebCore::GraphicsContext3D::getVertexAttribi):
+        (WebCore::GraphicsContext3D::getVertexAttribiv):
+        (WebCore::GraphicsContext3D::getVertexAttribOffset):
+        (WebCore::GraphicsContext3D::texImage2D):
+        (WebCore::GraphicsContext3D::texSubImage2D):
+        (WebCore::GraphicsContext3D::sizeInBytes):
+
 2009-09-08  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Timothy Hatcher.

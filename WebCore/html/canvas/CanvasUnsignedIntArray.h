@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CanvasByteArray_h
-#define CanvasByteArray_h
+#ifndef CanvasUnsignedIntArray_h
+#define CanvasUnsignedIntArray_h
 
 #include "CanvasArray.h"
 #include <wtf/MathExtras.h>
@@ -33,13 +33,11 @@
 
 namespace WebCore {
     
-    class CanvasArrayBuffer;
-
-    class CanvasByteArray : public CanvasArray {
+    class CanvasUnsignedIntArray : public CanvasArray {
     public:
-        static PassRefPtr<CanvasByteArray> create(unsigned length);
-        static PassRefPtr<CanvasByteArray> create(signed char* array, unsigned length);
-        static PassRefPtr<CanvasByteArray> create(PassRefPtr<CanvasArrayBuffer> buffer, int offset, unsigned length);
+        static PassRefPtr<CanvasUnsignedIntArray> create(unsigned length);
+        static PassRefPtr<CanvasUnsignedIntArray> create(unsigned int* array, unsigned length);
+        static PassRefPtr<CanvasUnsignedIntArray> create(PassRefPtr<CanvasArrayBuffer> buffer, int offset, unsigned length);
 
         virtual unsigned length() const;
         virtual unsigned sizeInBytes() const;
@@ -50,30 +48,28 @@ namespace WebCore {
                 return;
             if (isnan(value)) // Clamp NaN to 0
                 value = 0;
-            if (value < std::numeric_limits<signed char>::min())
-                value = std::numeric_limits<signed char>::min();
-            else if (value > std::numeric_limits<signed char>::max())
-                value = std::numeric_limits<signed char>::max();
-            signed char* storage = static_cast<signed char*>(m_baseAddress);
-            storage[index] = static_cast<signed char>(value);
+            if (value < std::numeric_limits<unsigned int>::min())
+                value = std::numeric_limits<unsigned int>::min();
+            else if (value > std::numeric_limits<unsigned int>::max())
+                value = std::numeric_limits<unsigned int>::max();
+            unsigned int* storage = static_cast<unsigned int*>(m_baseAddress);
+            storage[index] = static_cast<unsigned int>(value);
         }
         
-        bool get(unsigned index, signed char& result) const
+        bool get(unsigned index, unsigned int& result) const
         {
             if (index >= m_size)
                 return false;
-            signed char* storage = static_cast<signed char*>(m_baseAddress);
+            unsigned int* storage = static_cast<unsigned int*>(m_baseAddress);
             result = storage[index];
             return true;
         }
 
     private:
-        CanvasByteArray(PassRefPtr<CanvasArrayBuffer> buffer,
-                        int offset,
-                        unsigned length);
+        CanvasUnsignedIntArray(PassRefPtr<CanvasArrayBuffer> buffer, int offset, unsigned length);
         unsigned m_size;
     };
     
 } // namespace WebCore
 
-#endif // CanvasByteArray_h
+#endif // CanvasUnsignedIntArray_h

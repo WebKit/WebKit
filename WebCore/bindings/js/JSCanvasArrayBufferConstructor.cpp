@@ -27,28 +27,44 @@
 
 #if ENABLE(3D_CANVAS)
 
-#include "CanvasTexture.h"
-#include "CanvasRenderingContext3D.h"
+#include "JSCanvasArrayBufferConstructor.h"
+
+#include "Document.h"
+#include "CanvasArrayBuffer.h"
+#include "JSCanvasArrayBuffer.h"
 
 namespace WebCore {
-    
-PassRefPtr<CanvasTexture> CanvasTexture::create(CanvasRenderingContext3D* ctx)
+
+using namespace JSC;
+
+const ClassInfo JSCanvasArrayBufferConstructor::s_info = { "CanvasArrayBufferConstructor", 0, 0, 0 };
+
+JSCanvasArrayBufferConstructor::JSCanvasArrayBufferConstructor(ExecState* exec, JSDOMGlobalObject* globalObject)
+    : DOMConstructorObject(JSCanvasArrayBufferConstructor::createStructure(globalObject->objectPrototype()), globalObject)
 {
-    return adoptRef(new CanvasTexture(ctx));
+    putDirect(exec->propertyNames().prototype, JSCanvasArrayBufferPrototype::self(exec, globalObject), None);
+    putDirect(exec->propertyNames().length, jsNumber(exec, 2), ReadOnly|DontDelete|DontEnum);
 }
 
-CanvasTexture::CanvasTexture(CanvasRenderingContext3D* ctx)
-    : CanvasObject(ctx)
-    , cubeMapRWrapModeInitialized(false)
+static JSObject* constructCanvasArrayBuffer(ExecState* exec, JSObject* constructor, const ArgList& args)
 {
-    setObject(context()->graphicsContext3D()->createTexture());
+    JSCanvasArrayBufferConstructor* jsConstructor = static_cast<JSCanvasArrayBufferConstructor*>(constructor);
+
+    unsigned int size = 0;
+    if (args.size() == 1) {
+        size = (unsigned int)args.at(0).toInt32(exec);
+        if (isnan(size))
+            size = 0;
+    }
+    return asObject(toJS(exec, jsConstructor->globalObject(), CanvasArrayBuffer::create(size)));
 }
 
-void CanvasTexture::_deleteObject(Platform3DObject object)
+JSC::ConstructType JSCanvasArrayBufferConstructor::getConstructData(JSC::ConstructData& constructData)
 {
-    context()->graphicsContext3D()->deleteTexture(object);
+    constructData.native.function = constructCanvasArrayBuffer;
+    return ConstructTypeHost;
 }
 
-}
+} // namespace WebCore
 
 #endif // ENABLE(3D_CANVAS)

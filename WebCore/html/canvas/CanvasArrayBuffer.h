@@ -23,14 +23,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module html {
-    interface [
-        Conditional=3D_CANVAS,
-        HasCustomIndexGetter,
-        HasCustomIndexSetter,
-        GenerateNativeConverter,
-        GenerateCustomConstructor,
-        CustomToJS
-    ] CanvasByteArray : CanvasArray {
+#ifndef CanvasArrayBuffer_h
+#define CanvasArrayBuffer_h
+
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
+
+namespace WebCore {
+    
+    class CanvasArrayBuffer : public RefCounted<CanvasArrayBuffer> {
+    public:
+        static PassRefPtr<CanvasArrayBuffer> create(unsigned sizeInBytes);
+
+        void* data();
+        unsigned byteLength() const;
+
+        ~CanvasArrayBuffer();
+
+    private:
+        CanvasArrayBuffer(unsigned sizeInBytes);
+        unsigned m_sizeInBytes;
+        void* m_data;
     };
-}
+    
+} // namespace WebCore
+
+#endif // CanvasArrayBuffer_h

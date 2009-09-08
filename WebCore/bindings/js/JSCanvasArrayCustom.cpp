@@ -23,14 +23,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module html {
-    interface [
-        Conditional=3D_CANVAS,
-        HasCustomIndexGetter,
-        HasCustomIndexSetter,
-        GenerateNativeConverter,
-        GenerateCustomConstructor,
-        CustomToJS
-    ] CanvasByteArray : CanvasArray {
-    };
+#include "config.h"
+
+#if ENABLE(3D_CANVAS)
+
+#include "config.h"
+#include "JSCanvasArray.h"
+
+#include "CanvasArray.h"
+
+using namespace JSC;
+
+namespace WebCore {
+
+JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, CanvasArray* object)
+{
+    if (!object)
+        return jsUndefined();
+        
+    
+
+#if ENABLE(3D_CANVAS)
+    if (object->is3d())
+        return getDOMObjectWrapper<JSCanvasRenderingContext3D>(exec, globalObject, static_cast<CanvasRenderingContext3D*>(object));
+#endif
+    ASSERT(object->is2d());
+    return getDOMObjectWrapper<JSCanvasRenderingContext2D>(exec, globalObject, static_cast<CanvasRenderingContext2D*>(object));
 }
+
+} // namespace WebCore
+
+#endif // ENABLE(3D_CANVAS)

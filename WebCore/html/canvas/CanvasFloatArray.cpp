@@ -27,50 +27,53 @@
 
 #if ENABLE(3D_CANVAS)
 
-#include "CanvasArrayBuffer.h"
-#include "CanvasByteArray.h"
+#include "CanvasFloatArray.h"
 
 namespace WebCore {
     
-PassRefPtr<CanvasByteArray> CanvasByteArray::create(unsigned length)
-{
-    RefPtr<CanvasArrayBuffer> buffer = CanvasArrayBuffer::create(length * sizeof(signed char));
-    return create(buffer, 0, length);
-}
-
-PassRefPtr<CanvasByteArray> CanvasByteArray::create(signed char* array, unsigned length)
-{
-    RefPtr<CanvasByteArray> a = CanvasByteArray::create(length);
-    for (unsigned i = 0; i < length; ++i)
-        a->set(i, array[i]);
-    return a;
-}
-
-PassRefPtr<CanvasByteArray> CanvasByteArray::create(PassRefPtr<CanvasArrayBuffer> buffer, int offset, unsigned length)
-{
-    // Check to make sure we are talking about a valid region of
-    // the given CanvasArrayBuffer's storage.
-    if ((offset + (length * sizeof(signed char))) > buffer->byteLength()) {
-        return NULL;
+    PassRefPtr<CanvasFloatArray> CanvasFloatArray::create(unsigned length)
+    {
+        RefPtr<CanvasArrayBuffer> buffer = CanvasArrayBuffer::create(length * sizeof(float));
+        return create(buffer, 0, length);
     }
 
-    return adoptRef(new CanvasByteArray(buffer, offset, length));
-}
+    PassRefPtr<CanvasFloatArray> CanvasFloatArray::create(float* array, unsigned length)
+    {
+        RefPtr<CanvasFloatArray> a = CanvasFloatArray::create(length);
+        for (unsigned i = 0; i < length; ++i)
+            a->set(i, array[i]);
+        return a;
+    }
 
-CanvasByteArray::CanvasByteArray(PassRefPtr<CanvasArrayBuffer> buffer, int offset, unsigned length)
-    : CanvasArray(buffer, offset)
-    , m_size(length)
-{
-}
+    PassRefPtr<CanvasFloatArray> CanvasFloatArray::create(PassRefPtr<CanvasArrayBuffer> buffer, int offset, unsigned length)
+    {
+        // Make sure the offset results in valid alignment.
+        if ((offset % sizeof(float)) != 0) {
+            return NULL;
+        }
 
-unsigned CanvasByteArray::length() const {
-    return m_size;
-}
+        // Check to make sure we are talking about a valid region of
+        // the given CanvasArrayBuffer's storage.
+        if ((offset + (length * sizeof(float))) > buffer->byteLength()) {
+            return NULL;
+        }
+
+        return adoptRef(new CanvasFloatArray(buffer, offset, length));
+    }
     
-unsigned CanvasByteArray::sizeInBytes() const {
-    return length() * sizeof(signed char);
-}
-
+    CanvasFloatArray::CanvasFloatArray(PassRefPtr<CanvasArrayBuffer> buffer, int offset, unsigned length)
+        : CanvasArray(buffer, offset)
+        , m_size(length)
+    {
+    }
+    
+    unsigned CanvasFloatArray::length() const {
+        return m_size;
+    }
+        
+    unsigned CanvasFloatArray::sizeInBytes() const {
+        return length() * sizeof(float);
+    }
 }
 
 #endif // ENABLE(3D_CANVAS)

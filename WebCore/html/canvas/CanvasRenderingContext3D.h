@@ -28,7 +28,9 @@
 
 #include "CanvasRenderingContext.h"
 #include "ExceptionCode.h"
-#include "CanvasNumberArray.h"
+#include "CanvasFloatArray.h"
+#include "CanvasIntArray.h"
+#include "CanvasUnsignedByteArray.h"
 #include "GraphicsContext3D.h"
 #include "PlatformString.h"
 
@@ -42,6 +44,8 @@ class CanvasRenderbuffer;
 class CanvasShader;
 class CanvasTexture;
 class HTMLImageElement;
+class HTMLVideoElement;
+class ImageData;
 class WebKitCSSMatrix;
 
     class CanvasRenderingContext3D : public CanvasRenderingContext {
@@ -51,21 +55,28 @@ class WebKitCSSMatrix;
 
         virtual bool is3d() const { return true; }
 
+        // Helper to return the size in bytes of OpenGL data types
+        // like GL_FLOAT, GL_INT, etc.
+        int sizeInBytes(int type, ExceptionCode& ec);
+
         void activeTexture(unsigned long texture);
         void attachShader(CanvasProgram*, CanvasShader*);
         void bindAttribLocation(CanvasProgram*, unsigned long index, const String& name);
         void bindBuffer(unsigned long target, CanvasBuffer*);
         void bindFramebuffer(unsigned long target, CanvasFramebuffer*);
         void bindRenderbuffer(unsigned long target, CanvasRenderbuffer*);
-        void bindTexture(unsigned target, CanvasTexture*);
+        void bindTexture(unsigned long target, CanvasTexture*);
         void blendColor(double red, double green, double blue, double alpha);
-        void blendEquation( unsigned long mode );
+        void blendEquation(unsigned long mode);
         void blendEquationSeparate(unsigned long modeRGB, unsigned long modeAlpha);
         void blendFunc(unsigned long sfactor, unsigned long dfactor);
         void blendFuncSeparate(unsigned long srcRGB, unsigned long dstRGB, unsigned long srcAlpha, unsigned long dstAlpha);
-        void bufferData(unsigned long target, CanvasNumberArray*, unsigned long usage);
-        void bufferSubData(unsigned long target, long offset, CanvasNumberArray*);
-        unsigned long checkFramebufferStatus(CanvasFramebuffer*);
+
+        void bufferData(unsigned long target, int size, unsigned long usage);
+        void bufferData(unsigned long target, CanvasArray* data, unsigned long usage);
+        void bufferSubData(unsigned long target, long offset, CanvasArray* data);
+
+        unsigned long checkFramebufferStatus(unsigned long target);
         void clear(unsigned long mask);
         void clearColor(double red, double green, double blue, double alpha);
         void clearDepth(double);
@@ -78,15 +89,32 @@ class WebKitCSSMatrix;
         
         void copyTexImage2D(unsigned long target, long level, unsigned long internalformat, long x, long y, unsigned long width, unsigned long height, long border);
         void copyTexSubImage2D(unsigned long target, long level, long xoffset, long yoffset, long x, long y, unsigned long width, unsigned long height);
+
+        PassRefPtr<CanvasBuffer> createBuffer();
+        PassRefPtr<CanvasFramebuffer> createFramebuffer();
+        PassRefPtr<CanvasProgram> createProgram();
+        PassRefPtr<CanvasRenderbuffer> createRenderbuffer();
+        PassRefPtr<CanvasShader> createShader(unsigned long type);
+        PassRefPtr<CanvasTexture> createTexture();
+
         void cullFace(unsigned long mode);
+
+        void deleteBuffer(CanvasBuffer*);
+        void deleteFramebuffer(CanvasFramebuffer*);
+        void deleteProgram(CanvasProgram*);
+        void deleteRenderbuffer(CanvasRenderbuffer*);
+        void deleteShader(CanvasShader*);
+        void deleteTexture(CanvasTexture*);
+        
         void depthFunc(unsigned long);
         void depthMask(bool);
         void depthRange(double zNear, double zFar);
         void detachShader(CanvasProgram*, CanvasShader*);
         void disable(unsigned long cap);
         void disableVertexAttribArray(unsigned long index);
-        void drawArrays(unsigned long mode, long first, unsigned long count);
-        void drawElements(unsigned long mode, unsigned long count, unsigned long type, void* array);
+        void drawArrays(unsigned long mode, long first, long count);
+        void drawElements(unsigned long mode, unsigned long count, unsigned long type, long offset);
+
         void enable(unsigned long cap);
         void enableVertexAttribArray(unsigned long index);
         void finish();
@@ -97,8 +125,55 @@ class WebKitCSSMatrix;
         void generateMipmap(unsigned long target);
         
         int  getAttribLocation(CanvasProgram*, const String& name);
+
+        bool getBoolean(unsigned long pname);
+        PassRefPtr<CanvasUnsignedByteArray> getBooleanv(unsigned long pname);
+        int getBufferParameteri(unsigned long target, unsigned long pname);
+        PassRefPtr<CanvasIntArray> getBufferParameteriv(unsigned long target, unsigned long pname);
+
         unsigned long getError();
+
+        float getFloat(unsigned long pname);
+        PassRefPtr<CanvasFloatArray> getFloatv(unsigned long pname);
+        int getFramebufferAttachmentParameteri(unsigned long target, unsigned long attachment, unsigned long pname);
+        PassRefPtr<CanvasIntArray> getFramebufferAttachmentParameteriv(unsigned long target, unsigned long attachment, unsigned long pname);
+        int getInteger(unsigned long pname);
+        PassRefPtr<CanvasIntArray> getIntegerv(unsigned long pname);
+        int getProgrami(CanvasProgram*, unsigned long pname);
+        PassRefPtr<CanvasIntArray> getProgramiv(CanvasProgram*, unsigned long pname);
+        String getProgramInfoLog(CanvasProgram*);
+        int getRenderbufferParameteri(unsigned long target, unsigned long pname);
+        PassRefPtr<CanvasIntArray> getRenderbufferParameteriv(unsigned long target, unsigned long pname);
+        int getShaderi(CanvasShader*, unsigned long pname);
+        PassRefPtr<CanvasIntArray> getShaderiv(CanvasShader*, unsigned long pname);
+
+        String getShaderInfoLog(CanvasShader*);
+
+        // TBD
+        // void glGetShaderPrecisionFormat (GLenum shadertype, GLenum precisiontype, GLint* range, GLint* precision);
+
+        String getShaderSource(CanvasShader*);
         String getString(unsigned long name);
+
+        float getTexParameterf(unsigned long target, unsigned long pname);
+        PassRefPtr<CanvasFloatArray> getTexParameterfv(unsigned long target, unsigned long pname);
+        int getTexParameteri(unsigned long target, unsigned long pname);
+        PassRefPtr<CanvasIntArray> getTexParameteriv(unsigned long target, unsigned long pname);
+
+        float getUniformf(CanvasProgram* program, long location);
+        PassRefPtr<CanvasFloatArray> getUniformfv(CanvasProgram* program, long location);
+        long getUniformi(CanvasProgram* program, long location);
+        PassRefPtr<CanvasIntArray> getUniformiv(CanvasProgram* program, long location);
+
+        long getUniformLocation(CanvasProgram*, const String& name);
+
+        float getVertexAttribf(unsigned long index, unsigned long pname);
+        PassRefPtr<CanvasFloatArray> getVertexAttribfv(unsigned long index, unsigned long pname);
+        long getVertexAttribi(unsigned long index, unsigned long pname);
+        PassRefPtr<CanvasIntArray> getVertexAttribiv(unsigned long index, unsigned long pname);
+
+        long getVertexAttribOffset(unsigned long index, unsigned long pname);
+
         void hint(unsigned long target, unsigned long mode);
         bool isBuffer(CanvasBuffer*);
         bool isEnabled(unsigned long cap);
@@ -112,7 +187,8 @@ class WebKitCSSMatrix;
         void pixelStorei(unsigned long pname, long param);
         void polygonOffset(double factor, double units);
         
-        //void glReadPixels(long x, long y, unsigned long width, unsigned long height, unsigned long format, unsigned long type, void* pixels);
+        // TBD
+        //void readPixels(long x, long y, unsigned long width, unsigned long height, unsigned long format, unsigned long type, void* pixels);
         
         void releaseShaderCompiler();
         void renderbufferStorage(unsigned long target, unsigned long internalformat, unsigned long width, unsigned long height);
@@ -125,72 +201,87 @@ class WebKitCSSMatrix;
         void stencilMaskSeparate(unsigned long face, unsigned long mask);
         void stencilOp(unsigned long fail, unsigned long zfail, unsigned long zpass);
         void stencilOpSeparate(unsigned long face, unsigned long fail, unsigned long zfail, unsigned long zpass);
-        void texParameter(unsigned target, unsigned pname, CanvasNumberArray*);
-        void texParameter(unsigned target, unsigned pname, double value);
-        void uniform(long location, float v0);
-        void uniform(long location, float v0, float v1);
-        void uniform(long location, float v0, float v1, float v2);
-        void uniform(long location, float v0, float v1, float v2, float v3);
-        void uniform(long location, int v0);
-        void uniform(long location, int v0, int v1);
-        void uniform(long location, int v0, int v1, int v2);
-        void uniform(long location, int v0, int v1, int v2, int v3);
-        void uniform(long location, CanvasNumberArray*);
-        void uniformMatrix(long location, long count, bool transpose, CanvasNumberArray*);
-        void uniformMatrix(long location, bool transpose, const Vector<WebKitCSSMatrix*>&);
-        void uniformMatrix(long location, bool transpose, const WebKitCSSMatrix*);
+
+        void texImage2D(unsigned target, unsigned level, unsigned internalformat,
+                        unsigned width, unsigned height, unsigned border,
+                        unsigned format, unsigned type, CanvasArray* pixels, ExceptionCode&);
+        void texImage2D(unsigned target, unsigned level, unsigned internalformat,
+                        unsigned width, unsigned height, unsigned border,
+                        unsigned format, unsigned type, ImageData* pixels, ExceptionCode&);
+        void texImage2D(unsigned target, unsigned level, HTMLImageElement* image,
+                        bool flipY, bool premultiplyAlpha, ExceptionCode&);
+        void texImage2D(unsigned target, unsigned level, HTMLCanvasElement* canvas,
+                        bool flipY, bool premultiplyAlpha, ExceptionCode&);
+        void texImage2D(unsigned target, unsigned level, HTMLVideoElement* video,
+                        bool flipY, bool premultiplyAlpha, ExceptionCode&);
+
+        void texParameterf(unsigned target, unsigned pname, float param);
+        void texParameteri(unsigned target, unsigned pname, int param);
+
+        void texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset,
+                           unsigned width, unsigned height,
+                           unsigned format, unsigned type, CanvasArray* pixels, ExceptionCode&);
+        void texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset,
+                           unsigned width, unsigned height,
+                           unsigned format, unsigned type, ImageData* pixels, ExceptionCode&);
+        void texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset,
+                           unsigned width, unsigned height, HTMLImageElement* image,
+                           bool flipY, bool premultiplyAlpha, ExceptionCode&);
+        void texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset,
+                           unsigned width, unsigned height, HTMLCanvasElement* canvas,
+                           bool flipY, bool premultiplyAlpha, ExceptionCode&);
+        void texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset,
+                           unsigned width, unsigned height, HTMLVideoElement* video,
+                           bool flipY, bool premultiplyAlpha, ExceptionCode&);
+
+        void uniform1f(long location, float x);
+        void uniform1fv(long location, CanvasFloatArray* v);
+        void uniform1i(long location, int x);
+        void uniform1iv(long location, CanvasIntArray* v);
+        void uniform2f(long location, float x, float y);
+        void uniform2fv(long location, CanvasFloatArray* v);
+        void uniform2i(long location, int x, int y);
+        void uniform2iv(long location, CanvasIntArray* v);
+        void uniform3f(long location, float x, float y, float z);
+        void uniform3fv(long location, CanvasFloatArray* v);
+        void uniform3i(long location, int x, int y, int z);
+        void uniform3iv(long location, CanvasIntArray* v);
+        void uniform4f(long location, float x, float y, float z, float w);
+        void uniform4fv(long location, CanvasFloatArray* v);
+        void uniform4i(long location, int x, int y, int z, int w);
+        void uniform4iv(long location, CanvasIntArray* v);
+        void uniformMatrix2fv(long location, bool transpose, CanvasFloatArray* value);
+        void uniformMatrix3fv(long location, bool transpose, CanvasFloatArray* value);
+        void uniformMatrix4fv(long location, bool transpose, CanvasFloatArray* value);
+
         void useProgram(CanvasProgram*);
         void validateProgram(CanvasProgram*);
-        void vertexAttrib(unsigned long indx, float v0);
-        void vertexAttrib(unsigned long indx, float v0, float v1);
-        void vertexAttrib(unsigned long indx, float v0, float v1, float v2);
-        void vertexAttrib(unsigned long indx, float v0, float v1, float v2, float v3);
-        void vertexAttrib(unsigned long indx, CanvasNumberArray*);
-        void vertexAttribPointer(unsigned long indx, long size, unsigned long type, bool normalized, unsigned long stride, CanvasNumberArray*);
+
+        void vertexAttrib1f(unsigned long indx, float x);
+        void vertexAttrib1fv(unsigned long indx, CanvasFloatArray* values);
+        void vertexAttrib2f(unsigned long indx, float x, float y);
+        void vertexAttrib2fv(unsigned long indx, CanvasFloatArray* values);
+        void vertexAttrib3f(unsigned long indx, float x, float y, float z);
+        void vertexAttrib3fv(unsigned long indx, CanvasFloatArray* values);
+        void vertexAttrib4f(unsigned long indx, float x, float y, float z, float w);
+        void vertexAttrib4fv(unsigned long indx, CanvasFloatArray* values);
+        void vertexAttribPointer(unsigned long indx, long size, unsigned long type, bool normalized,
+                                 unsigned long stride, unsigned long offset);
+
         void viewport(long x, long y, unsigned long width, unsigned long height);
-
-        // Non-GL functions
-        PassRefPtr<CanvasBuffer> createBuffer();
-        PassRefPtr<CanvasFramebuffer> createFramebuffer();
-        PassRefPtr<CanvasProgram> createProgram();                     // replaces glCreateProgram
-        PassRefPtr<CanvasRenderbuffer> createRenderbuffer();
-        PassRefPtr<CanvasShader> createShader(unsigned long type);  // replaces glCreateShader
-        PassRefPtr<CanvasTexture> createTexture();
-
-        void deleteBuffer(CanvasBuffer*);                // replaces glDeleteBuffers
-        void deleteFramebuffer(CanvasFramebuffer*);      // replaces glDeleteFramebuffers
-        void deleteProgram(CanvasProgram*);              // replaces glDeleteProgram
-        void deleteRenderbuffer(CanvasRenderbuffer*);    // replaces glDeleteRenderbuffers
-        void deleteShader(CanvasShader*);                // replaces glDeleteShader
-        void deleteTexture(CanvasTexture*);              // replaces glDeleteTextures
-        
-        PassRefPtr<CanvasNumberArray> get(unsigned long pname);      // replaces glGetBooleanv
-        PassRefPtr<CanvasNumberArray> getBufferParameter(unsigned long target, unsigned long pname); // replaces glGetBufferParameteriv
-        PassRefPtr<CanvasNumberArray> getFramebufferAttachmentParameter(unsigned long target, unsigned long attachment, unsigned long pname); // replaces glGetFramebufferAttachmentParameteriv
-        PassRefPtr<CanvasNumberArray> getProgram(CanvasProgram*, unsigned long pname); // replaces glGetProgramiv
-        String getProgramInfoLog(CanvasProgram*); // replaces glGetProgramInfoLog
-        PassRefPtr<CanvasNumberArray> getRenderbufferParameter(unsigned long target, unsigned long pname); // replaces glGetRenderbufferParameteriv
-        PassRefPtr<CanvasNumberArray> getShader(CanvasShader*, unsigned long pname); // replaces glGetShaderiv
-        String getShaderInfoLog(CanvasShader*);
-        String getShaderSource(CanvasShader*);
-
-        PassRefPtr<CanvasNumberArray> getTexParameter(unsigned long target, unsigned long pname); // replaces glGetTexParameterfv
-        PassRefPtr<CanvasNumberArray> getUniform(CanvasProgram*, long location, long size); // replaces glGetUniformfv
-        long getUniformLocation(CanvasProgram*, const String& name); // replaces glGetUniformLocation
-        PassRefPtr<CanvasNumberArray> getVertexAttrib(unsigned long index, unsigned long pname); // replaces glGetVertexAttribfv
-        
-        void texImage2D(unsigned target, unsigned level, HTMLImageElement* image, ExceptionCode&);
-        void texImage2D(unsigned target, unsigned level, HTMLCanvasElement* canvas, ExceptionCode&);
-        void texSubImage2D(unsigned target, unsigned level, unsigned xoff, unsigned yoff, unsigned width, unsigned height, HTMLImageElement* image, ExceptionCode&);
-        void texSubImage2D(unsigned target, unsigned level, unsigned xoff, unsigned yoff, unsigned width, unsigned height, HTMLCanvasElement* canvas, ExceptionCode&);
 
         GraphicsContext3D* graphicsContext3D() { return &m_context; }
     
         void reshape(int width, int height);
+
+        // Helpers for notification about paint events.
+        void beginPaint();
+        void endPaint();
         
         void removeObject(CanvasObject*);
         
     private:
+        friend class CanvasObject;
         void addObject(CanvasObject*);
         void detachAndRemoveAllObjects();
 
@@ -204,6 +295,9 @@ class WebKitCSSMatrix;
         
         GraphicsContext3D m_context;
         bool m_needsUpdate;
+        bool m_markedCanvasDirty;
+        // FIXME: I think this is broken -- it does not increment any
+        // reference counts, so may refer to destroyed objects.
         HashSet<CanvasObject*> m_canvasObjects;
     };
 

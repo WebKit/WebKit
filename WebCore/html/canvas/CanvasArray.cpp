@@ -23,14 +23,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module html {
-    interface [
-        Conditional=3D_CANVAS,
-        HasCustomIndexGetter,
-        HasCustomIndexSetter,
-        GenerateNativeConverter,
-        GenerateCustomConstructor,
-        CustomToJS
-    ] CanvasByteArray : CanvasArray {
-    };
+#include "config.h"
+
+#if ENABLE(3D_CANVAS)
+
+#include "CanvasArray.h"
+#include "CanvasArrayBuffer.h"
+
+namespace WebCore {
+    CanvasArray::CanvasArray(PassRefPtr<CanvasArrayBuffer> buffer,
+                             unsigned offset)
+        : m_offset(offset)
+        , m_buffer(buffer)
+    {
+        m_baseAddress = static_cast<char*>(m_buffer->data()) + m_offset;
+    }
+
+    CanvasArray::~CanvasArray()
+    {
+    }
+
+    unsigned CanvasArray::alignedSizeInBytes() const {
+        // Assume we only need to round up to 4-byte boundaries for alignment.
+        return ((sizeInBytes() + 3) / 4) * 4;
+    }
 }
+
+#endif // ENABLE(3D_CANVAS)

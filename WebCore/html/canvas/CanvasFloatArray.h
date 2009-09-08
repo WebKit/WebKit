@@ -23,39 +23,55 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CanvasTexture_h
-#define CanvasTexture_h
+#ifndef CanvasFloatArray_h
+#define CanvasFloatArray_h
 
-#include "CanvasObject.h"
-
+#include "CanvasArray.h"
+#include <wtf/MathExtras.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
     
-    class CanvasTexture : public CanvasObject {
+    class CanvasFloatArray : public CanvasArray {
     public:
-        virtual ~CanvasTexture() { deleteObject(); }
+        static PassRefPtr<CanvasFloatArray> create(unsigned length);
+        static PassRefPtr<CanvasFloatArray> create(float* array, unsigned length);
+        static PassRefPtr<CanvasFloatArray> create(PassRefPtr<CanvasArrayBuffer> buffer, int offset, unsigned length);
+
+        virtual unsigned length() const;
+        CanvasArray* item(unsigned index);
         
-        static PassRefPtr<CanvasTexture> create(CanvasRenderingContext3D*);
-    
-        bool isCubeMapRWrapModeInitialized() {
-            return cubeMapRWrapModeInitialized;
+        virtual unsigned sizeInBytes() const;
+
+        void set(unsigned index, double value)
+        {
+            if (index >= m_size)
+                return;
+            if (isnan(value)) // Clamp NaN to 0
+                value = 0;
+            float* storage = static_cast<float*>(m_baseAddress);
+            storage[index] = static_cast<float>(value);
         }
-
-        void setCubeMapRWrapModeInitialized(bool initialized) {
-            cubeMapRWrapModeInitialized = initialized;
+        
+        bool get(unsigned index, float& result) const
+        {
+            if (index >= m_size)
+                return false;
+            float* storage = static_cast<float*>(m_baseAddress);
+            result = storage[index];
+            if (isnan(result)) {
+                // Clamp NaN to 0
+                result = 0;
+            }
+            return true;
         }
-
-    protected:
-        CanvasTexture(CanvasRenderingContext3D*);
-
-        virtual void _deleteObject(Platform3DObject);
 
     private:
-        bool cubeMapRWrapModeInitialized;
+        CanvasFloatArray(PassRefPtr<CanvasArrayBuffer> buffer, int offset, unsigned length);
+        unsigned m_size;
     };
     
 } // namespace WebCore
 
-#endif // CanvasTexture_h
+#endif // CanvasFloatArray_h

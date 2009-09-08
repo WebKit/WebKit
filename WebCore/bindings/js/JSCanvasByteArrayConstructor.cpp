@@ -27,28 +27,41 @@
 
 #if ENABLE(3D_CANVAS)
 
-#include "CanvasTexture.h"
-#include "CanvasRenderingContext3D.h"
+#include "JSCanvasByteArrayConstructor.h"
+
+#include "Document.h"
+#include "CanvasByteArray.h"
+#include "JSCanvasArrayBuffer.h"
+#include "JSCanvasArrayBufferConstructor.h"
+#include "JSCanvasByteArray.h"
+#include <runtime/Error.h>
 
 namespace WebCore {
-    
-PassRefPtr<CanvasTexture> CanvasTexture::create(CanvasRenderingContext3D* ctx)
+
+using namespace JSC;
+
+const ClassInfo JSCanvasByteArrayConstructor::s_info = { "CanvasByteArrayConstructor", &JSCanvasArray::s_info, 0, 0 };
+
+JSCanvasByteArrayConstructor::JSCanvasByteArrayConstructor(ExecState* exec, JSDOMGlobalObject* globalObject)
+    : DOMConstructorObject(JSCanvasByteArrayConstructor::createStructure(globalObject->objectPrototype()), globalObject)
 {
-    return adoptRef(new CanvasTexture(ctx));
+    putDirect(exec->propertyNames().prototype, JSCanvasByteArrayPrototype::self(exec, globalObject), None);
+    putDirect(exec->propertyNames().length, jsNumber(exec, 2), ReadOnly|DontDelete|DontEnum);
 }
 
-CanvasTexture::CanvasTexture(CanvasRenderingContext3D* ctx)
-    : CanvasObject(ctx)
-    , cubeMapRWrapModeInitialized(false)
+static JSObject* constructCanvasByteArray(ExecState* exec, JSObject* constructor, const ArgList& args)
 {
-    setObject(context()->graphicsContext3D()->createTexture());
+    JSCanvasByteArrayConstructor* jsConstructor = static_cast<JSCanvasByteArrayConstructor*>(constructor);
+    RefPtr<CanvasByteArray> array = static_cast<CanvasByteArray*>(construct<CanvasByteArray, signed char>(exec, args).get());
+    return asObject(toJS(exec, jsConstructor->globalObject(), array.get()));
 }
 
-void CanvasTexture::_deleteObject(Platform3DObject object)
+JSC::ConstructType JSCanvasByteArrayConstructor::getConstructData(JSC::ConstructData& constructData)
 {
-    context()->graphicsContext3D()->deleteTexture(object);
+    constructData.native.function = constructCanvasByteArray;
+    return ConstructTypeHost;
 }
 
-}
+} // namespace WebCore
 
 #endif // ENABLE(3D_CANVAS)

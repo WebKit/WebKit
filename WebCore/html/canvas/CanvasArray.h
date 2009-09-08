@@ -23,14 +23,45 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module html {
-    interface [
-        Conditional=3D_CANVAS,
-        HasCustomIndexGetter,
-        HasCustomIndexSetter,
-        GenerateNativeConverter,
-        GenerateCustomConstructor,
-        CustomToJS
-    ] CanvasByteArray : CanvasArray {
+#ifndef CanvasArray_h
+#define CanvasArray_h
+
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
+#include "CanvasArrayBuffer.h"
+
+namespace WebCore {
+    class CanvasArray : public RefCounted<CanvasArray> {
+    public:
+        PassRefPtr<CanvasArrayBuffer> buffer() {
+            return m_buffer;
+        }
+
+        void* baseAddress() {
+            return m_baseAddress;
+        }
+
+        unsigned offset() const {
+            return m_offset;
+        }
+
+        virtual unsigned length() const = 0;
+        virtual unsigned sizeInBytes() const = 0;
+        virtual unsigned alignedSizeInBytes() const;
+        virtual ~CanvasArray();
+
+    protected:
+        CanvasArray(PassRefPtr<CanvasArrayBuffer> buffer, unsigned offset);
+
+        // This is the address of the CanvasArrayBuffer's storage, plus the offset.
+        void* m_baseAddress;
+        unsigned m_offset;
+        
+    private:
+        RefPtr<CanvasArrayBuffer> m_buffer;
     };
-}
+    
+} // namespace WebCore
+
+#endif // CanvasArray_h
