@@ -95,7 +95,7 @@ public:
     bool canSmartReplace();
     PassRefPtr<DocumentFragment> documentFragment(Frame*, PassRefPtr<Range>, bool allowPlainText, bool& chosePlainText);
     String plainText(Frame* = 0);
-#if PLATFORM(QT)
+#if PLATFORM(QT) || PLATFORM(CHROMIUM)
     bool isSelectionMode() const;
     void setSelectionMode(bool selectionMode);
 #endif
@@ -118,7 +118,7 @@ private:
     HWND m_owner;
 #endif
 
-#if PLATFORM(QT)
+#if PLATFORM(QT) || PLATFORM(CHROMIUM)
     bool m_selectionMode;
 #endif
 
