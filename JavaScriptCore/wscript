@@ -62,12 +62,11 @@ def set_options(opt):
     common_set_options(opt)
 
 def configure(conf):
-    common_configure(conf)    
+    common_configure(conf)
+    generate_jscore_derived_sources()
     
 def build(bld):
     import Options
-
-    generate_jscore_derived_sources()
 
     full_dirs = get_dirs_for_features(jscore_dir, features=[build_port], dirs=jscore_dirs)
 

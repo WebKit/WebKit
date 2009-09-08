@@ -76,11 +76,10 @@ def set_options(opt):
 
 def configure(conf):
     common_configure(conf)
+    generate_webcore_derived_sources()
 
 def build(bld):
     import Options
-
-    generate_webcore_derived_sources()
 
     wk_includes = ['.', '..', 'DerivedSources',
                 wk_root, 

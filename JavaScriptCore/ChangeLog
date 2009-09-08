@@ -1,3 +1,10 @@
+2009-09-08  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix, generate derived sources earlier in order to make sure
+        they're found by the build system when generating the list of sources to build.
+
+        * wscript:
+
 2009-09-08  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Simon Hausmann.
