@@ -1,3 +1,13 @@
+2009-09-08  Brian Weinstein  <bweinstein@apple.com>
+
+        Rubber-stamped by Adam Roben.
+
+        Updated results for media/audio-controls-rendering.html, and added 3 failing
+        tests to the Skipped list to investigate further <http://webkit.org/b/29047>.
+
+        * platform/win/Skipped:
+        * platform/win/media/audio-controls-rendering-expected.txt:
+
 2009-09-08  Jian Li  <jianli@chromium.org>
 
         Reviewed by David Levin.
