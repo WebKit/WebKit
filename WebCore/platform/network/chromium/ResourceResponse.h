@@ -72,9 +72,6 @@ namespace WebCore {
             m_appCacheManifestURL = url;
         }
 
-        // DEPRECATED - use appCacheID()
-        long long getAppCacheID() { return appCacheID(); }
-
     private:
         friend class ResourceResponseBase;
 

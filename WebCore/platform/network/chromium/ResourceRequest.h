@@ -120,10 +120,6 @@ namespace WebCore {
         CString securityInfo() const { return m_securityInfo; }
         void setSecurityInfo(const CString& value) { m_securityInfo = value; }
 
-        // DEPRECATED - use appCacheHostID() and setAppCacheHostID(id)
-        int appCacheContextID() const { return appCacheHostID(); }
-        void setAppCacheContextID(int id) { setAppCacheHostID(id); }
-
     private:
         friend class ResourceRequestBase;
 

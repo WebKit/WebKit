@@ -1,3 +1,15 @@
+2009-09-08  Michael Nordman  <michaeln@google.com>
+
+        Reviewed by Eric Seidel.
+
+        [Chromium] Cleanup: remove a few deprecated methods.
+        https://bugs.webkit.org/show_bug.cgi?id=28960
+
+        No new tests, just syntactic sugar.
+
+        * platform/network/chromium/ResourceRequest.h:
+        * platform/network/chromium/ResourceResponse.h:
+
 2009-09-08  Yongjun Zhang  <yongjun.zhang@nokia.com>
 
         Reviewed by Ariya Hidayat.
