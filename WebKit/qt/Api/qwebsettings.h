@@ -132,6 +132,8 @@ public:
 
     static void clearMemoryCaches();
 
+    static void enablePersistentStorage(const QString& path = QString());
+
     inline QWebSettingsPrivate* handle() const { return d; }
 
 private:

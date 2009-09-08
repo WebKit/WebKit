@@ -443,7 +443,7 @@ int main(int argc, char **argv)
 
     QWebSettings::globalSettings()->setAttribute(QWebSettings::PluginsEnabled, true);
     QWebSettings::globalSettings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, true);
-    QWebSettings::globalSettings()->setAttribute(QWebSettings::LocalStorageEnabled, true);
+    QWebSettings::enablePersistentStorage();
 
     const QStringList args = app.arguments();
 

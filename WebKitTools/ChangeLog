@@ -1,3 +1,17 @@
+2009-09-08  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] QtWebKit single API to enable persistency
+        https://bugs.webkit.org/show_bug.cgi?id=28682
+
+        Use the new enablePersistentStorage API instead 
+        of enabling all persistent features one-by-one.
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::WebPage::WebPage):
+        (WebCore::DumpRenderTree::DumpRenderTree):
+
 2009-09-07  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
 
         Reviewed by Tor Arne Vestbø.

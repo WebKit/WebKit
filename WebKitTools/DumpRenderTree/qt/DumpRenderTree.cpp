@@ -109,7 +109,6 @@ WebPage::WebPage(QWidget *parent, DumpRenderTree *drt)
     settings()->setAttribute(QWebSettings::JavascriptCanAccessClipboard, true);
     settings()->setAttribute(QWebSettings::LinksIncludedInFocusChain, false);
     settings()->setAttribute(QWebSettings::PluginsEnabled, true);
-    settings()->setAttribute(QWebSettings::LocalStorageEnabled, true);
     settings()->setAttribute(QWebSettings::LocalContentCanAccessRemoteUrls, true);
 
     connect(this, SIGNAL(geometryChangeRequested(const QRect &)),
@@ -152,6 +151,7 @@ DumpRenderTree::DumpRenderTree()
     , m_notifier(0)
 {
     qt_drt_overwritePluginDirectories();
+    QWebSettings::enablePersistentStorage();
 
     m_controller = new LayoutTestController(this);
     connect(m_controller, SIGNAL(done()), this, SLOT(dump()));

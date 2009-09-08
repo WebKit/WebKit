@@ -76,7 +76,6 @@
 #include <QBasicTimer>
 #include <QBitArray>
 #include <QDebug>
-#include <QDesktopServices>
 #include <QDragEnterEvent>
 #include <QDragLeaveEvent>
 #include <QDragMoveEvent>
@@ -265,37 +264,6 @@ static inline Qt::DropAction dragOpToDropAction(unsigned actions)
     return result;
 }
 
-static QString defaultCachePath()
-{
-    // Determine the default cache location
-    QString cachePath;
-    
-#if QT_VERSION >= 0x040500
-    cachePath = QDesktopServices::storageLocation(QDesktopServices::CacheLocation);
-#else
-    cachePath = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
-#endif
-                                
-    if (cachePath.isEmpty())
-        cachePath = QDir::homePath() + QLatin1String("/.") + QCoreApplication::applicationName();
-        
-   return cachePath;
-}
-
-static void initializeApplicationCachePathIfNecessary()
-{
-
-    static bool initialized = false;
-    
-    if (initialized)
-        return;
-
-    // Set HTML5 Application Cache default location
-    QWebSettings::setOfflineWebApplicationCachePath(defaultCachePath());
-    
-    initialized = true;
-}                                                
-
 QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     : q(qq)
     , view(0)
@@ -304,7 +272,6 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     WebCore::InitializeLoggingChannelsIfNecessary();
     JSC::initializeThreading();
     WebCore::FrameLoader::setLocalLoadPolicy(WebCore::FrameLoader::AllowLocalLoadsForLocalAndSubstituteData);
-    initializeApplicationCachePathIfNecessary();
 
     chromeClient = new ChromeClientQt(q);
     contextMenuClient = new ContextMenuClientQt();
@@ -316,9 +283,6 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     page->settings()->setDefaultTextEncodingName("iso-8859-1");
 
     settings = new QWebSettings(page->settings());
-    
-    // Set HTML5 localStorage default location
-    settings->setLocalStoragePath(WebCore::pathByAppendingComponent(defaultCachePath(), "LocalStorage"));
 
 #ifndef QT_NO_UNDOSTACK
     undoStack = 0;
