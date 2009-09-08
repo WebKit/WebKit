@@ -1,3 +1,11 @@
+2009-09-08  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
+
+        Reviewed by Gustavo Noronha.
+
+        [Gtk] Another attempt of a buildfix.
+
+        * GNUmakefile.am: Modified. Remove some extra IDL files added in r48153.
+
 2009-09-08  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Simon Hausmann.
