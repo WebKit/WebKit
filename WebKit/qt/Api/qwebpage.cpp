@@ -601,7 +601,7 @@ void QWebPagePrivate::mousePressEvent(QGraphicsSceneMouseEvent* ev)
         return;
 
     if (tripleClickTimer.isActive()
-            && (ev->pos() - tripleClick).manhattanLength()
+            && (ev->pos().toPoint() - tripleClick).manhattanLength()
                 < QApplication::startDragDistance()) {
         mouseTripleClickEvent(ev);
         return;

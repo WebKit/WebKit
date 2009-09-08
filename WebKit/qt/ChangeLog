@@ -1,3 +1,12 @@
+2009-09-08  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Unreviewed build fix.
+
+        Potential build fix for Qt 4.5
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::mousePressEvent):
+
 2009-09-08  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Simon Hausmann.
