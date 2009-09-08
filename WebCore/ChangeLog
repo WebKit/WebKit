@@ -1,3 +1,17 @@
+2009-09-08  Yongjun Zhang  <yongjun.zhang@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28981
+
+        [Qt] make npapi.h compile in winscw compiler.
+
+        Add XP_SYMBIAN macro to identify Symbian OS; this macro should be used for Symbian
+        specific changes in npapi.h.
+        Undefine XP_WIN when building for Symbian to avoid including Windows specific code.
+
+        * bridge/npapi.h:
+
 2009-09-08  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoff Garen.

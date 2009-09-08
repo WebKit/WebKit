@@ -71,6 +71,13 @@
 #    endif /* XP_PC */
 #endif /* __MWERKS__ */
 
+#ifdef __SYMBIAN32__
+#   ifndef XP_SYMBIAN
+#       define XP_SYMBIAN 1
+#       undef XP_WIN
+#   endif
+#endif  /* __SYMBIAN32__ */
+
 #if defined(__APPLE_CC__) && !defined(__MACOS_CLASSIC__) && !defined(XP_UNIX)
 #   define XP_MACOSX
 #endif
