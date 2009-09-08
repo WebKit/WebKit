@@ -104,7 +104,7 @@ static String utiTypeFromCocoaType(NSString *type)
     return String();
 }
 
-static void addHTMLClipboardTypesForCocoaType(HashSet<String>& resultTypes, NSString *cocoaType)
+static void addHTMLClipboardTypesForCocoaType(HashSet<String>& resultTypes, NSString *cocoaType, NSPasteboard *pasteboard)
 {
     // UTI may not do these right, so make sure we get the right, predictable result
     if ([cocoaType isEqualToString:NSStringPboardType])
@@ -112,10 +112,16 @@ static void addHTMLClipboardTypesForCocoaType(HashSet<String>& resultTypes, NSSt
     else if ([cocoaType isEqualToString:NSURLPboardType])
         resultTypes.add("text/uri-list");
     else if ([cocoaType isEqualToString:NSFilenamesPboardType]) {
-        // It is unknown if NSFilenamesPboardType always implies NSURLPboardType in Cocoa,
-        // but NSFilenamesPboardType should imply both 'text/uri-list' and 'Files'
-        resultTypes.add("text/uri-list");
-        resultTypes.add("Files");
+        // If file list is empty, add nothing.
+        // Note that there is a chance that the file list count could have changed since we grabbed the types array.
+        // However, this is not really an issue for us doing a sanity check here.
+        NSArray *fileList = [pasteboard propertyListForType:NSFilenamesPboardType];
+        if ([fileList count]) {
+            // It is unknown if NSFilenamesPboardType always implies NSURLPboardType in Cocoa,
+            // but NSFilenamesPboardType should imply both 'text/uri-list' and 'Files'
+            resultTypes.add("text/uri-list");
+            resultTypes.add("Files");
+        }
     } else if (String utiType = utiTypeFromCocoaType(cocoaType))
         resultTypes.add(utiType);
     else {
@@ -276,7 +282,7 @@ HashSet<String> ClipboardMac::types() const
         if ([pbType isEqualToString:@"NeXT plain ascii pasteboard type"])
             continue;   // skip this ancient type that gets auto-supplied by some system conversion
 
-        addHTMLClipboardTypesForCocoaType(result, pbType);
+        addHTMLClipboardTypesForCocoaType(result, pbType, m_pasteboard.get());
     }
 
     return result;

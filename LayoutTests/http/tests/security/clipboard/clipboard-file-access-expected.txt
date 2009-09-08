@@ -5,13 +5,13 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 Dragging no files should return an empty file list (arbitrary implementation detail):
 On dragenter:
-PASS event.dataTransfer.types contains Files.
+PASS event.dataTransfer.types does not contain Files.
 PASS event.dataTransfer.files.length is 0
 On dragover:
-PASS event.dataTransfer.types contains Files.
+PASS event.dataTransfer.types does not contain Files.
 PASS event.dataTransfer.files.length is 0
 On drop:
-PASS event.dataTransfer.types contains Files.
+PASS event.dataTransfer.types does not contain Files.
 PASS event.dataTransfer.files.length is 0
 Drag drop a single (non-existant) file onto an element:
 On dragenter:
