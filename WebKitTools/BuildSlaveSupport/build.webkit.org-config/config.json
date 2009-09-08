@@ -10,6 +10,7 @@
                     { "name": "apple-pixel-1", "platform": "mac-leopard" },
 
                     { "name": "apple-macpro-1", "platform": "mac-snowleopard" },
+                    { "name": "apple-macpro-2", "platform": "mac-snowleopard" },
 
                     { "name": "apple-windows-1", "platform": "win"},
                     { "name": "apple-windows-2", "platform": "win"},
@@ -46,6 +47,10 @@
                     { "name": "Leopard Intel Debug (Tests)", "type": "Test", "builddir": "leopard-intel-debug-tests",
                       "platform": "mac-leopard", "configuration": "debug", "architectures": ["i386"],
                       "slavenames": ["apple-xserve-3", "test-slave"]
+                    },
+                    { "name": "SnowLeopard Intel Release", "type": "BuildAndTestLeaks", "builddir": "snowleopard-intel-release",
+                      "platform": "mac-snowleopard", "configuration": "release", "architectures": ["x86_64"],
+                      "slavenames": ["apple-macpro-2", "test-slave"]
                     },
                     { "name": "SnowLeopard Intel Leaks", "type": "BuildAndTestLeaks", "builddir": "snowleopard-intel-leaks",
                       "platform": "mac-snowleopard", "configuration": "debug", "architectures": ["x86_64"],
@@ -92,7 +97,8 @@
 
     "schedulers": [ { "type": "AnyBranchScheduler", "name": "trunk", "branches": ["trunk"], "treeStableTimer": 45.0,
                       "builderNames": ["Tiger Intel Release", "Leopard Intel Release (Build)", "Leopard Intel Debug (Build)",
-                                       "SnowLeopard Intel Leaks", "Windows Release (Build)", "Windows Debug (Build)",
+                                       "SnowLeopard Intel Release", "SnowLeopard Intel Leaks",
+                                       "Windows Release (Build)", "Windows Debug (Build)",
                                        "GTK Linux Release", "Qt Linux Release",
                                        "Chromium Win Release"]
                     },
