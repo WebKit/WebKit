@@ -112,6 +112,10 @@ namespace WebCore {
         void didGetChildNodes(int callId);
         void didApplyDomChange(int callId, bool success);
 
+        void timelineWasEnabled();
+        void timelineWasDisabled();
+        void addItemToTimeline(const ScriptObject& itemObj);
+
         void didGetCookies(int callId, const ScriptArray& cookies, const String& cookiesString);
         void didDispatchOnInjectedScript(int callId, const String& result, bool isException);
 

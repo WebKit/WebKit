@@ -33,6 +33,7 @@
 #include "CollectionType.h"
 #include "Color.h"
 #include "DocumentMarker.h"
+#include "Page.h"
 #include "ScriptExecutionContext.h"
 #include "Timer.h"
 #include <wtf/HashCountedSet.h>
@@ -74,12 +75,12 @@ namespace WebCore {
     class HTMLHeadElement;
     class HTMLInputElement;
     class HTMLMapElement;
+    class InspectorTimelineAgent;
     class IntPoint;
     class JSNode;
     class MouseEventWithHitTestResults;
     class NodeFilter;
     class NodeIterator;
-    class Page;
     class PlatformMouseEvent;
     class ProcessingInstruction;
     class Range;
@@ -374,6 +375,7 @@ public:
     Frame* frame() const { return m_frame; } // can be NULL
     Page* page() const; // can be NULL
     Settings* settings() const; // can be NULL
+    InspectorTimelineAgent* inspectorTimelineAgent() const; // can be NULL
 
     PassRefPtr<Range> createRange();
 
@@ -1106,6 +1108,10 @@ inline bool Document::hasElementWithId(AtomicStringImpl* id) const
 inline bool Node::isDocumentNode() const
 {
     return this == m_document;
+}
+
+inline InspectorTimelineAgent* Document::inspectorTimelineAgent() const {
+    return page() ? page()->inspectorTimelineAgent() : 0;
 }
 
 } // namespace WebCore

@@ -1,3 +1,93 @@
+2009-09-08  Kelly Norton  <knorton@google.com>
+
+        Reviewed by Eric Seidel.
+
+        WebInspector: Adds a timeline agent to InspectorController that collects
+        high-level timing data about event dispatch, layout, painting and HTML
+        parsing and makes it available to Inspector.
+        https://bugs.webkit.org/show_bug.cgi?id=25503
+
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyle):
+        * dom/Document.h:
+        (WebCore::Document::inspectorTimelineAgent):
+        * dom/Node.cpp:
+        (WebCore::Node::dispatchGenericEvent):
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::write):
+        * inspector/DOMDispatchTimelineItem.cpp: Added.
+        (WebCore::DOMDispatchTimelineItem::DOMDispatchTimelineItem):
+        (WebCore::DOMDispatchTimelineItem::convertToScriptObject):
+        * inspector/DOMDispatchTimelineItem.h: Added.
+        (WebCore::DOMDispatchTimelineItem::~DOMDispatchTimelineItem):
+        * inspector/InspectorBackend.cpp:
+        (WebCore::InspectorBackend::enableTimeline):
+        (WebCore::InspectorBackend::disableTimeline):
+        (WebCore::InspectorBackend::timelineEnabled):
+        * inspector/InspectorBackend.h:
+        * inspector/InspectorBackend.idl:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::setFrontendProxyObject):
+        (WebCore::InspectorController::close):
+        (WebCore::InspectorController::resetScriptObjects):
+        (WebCore::InspectorController::enableTimeline):
+        (WebCore::InspectorController::disableTimeline):
+        (WebCore::InspectorController::timelineEnabled):
+        * inspector/InspectorController.h:
+        (WebCore::InspectorController::timelineAgent):
+        * inspector/InspectorFrontend.cpp:
+        (WebCore::InspectorFrontend::timelineWasEnabled):
+        (WebCore::InspectorFrontend::timelineWasDisabled):
+        (WebCore::InspectorFrontend::addItemToTimeline):
+        * inspector/InspectorFrontend.h:
+        * inspector/InspectorTimelineAgent.cpp: Added.
+        (WebCore::InspectorTimelineAgent::InspectorTimelineAgent):
+        (WebCore::InspectorTimelineAgent::~InspectorTimelineAgent):
+        (WebCore::InspectorTimelineAgent::willDispatchDOMEvent):
+        (WebCore::InspectorTimelineAgent::didDispatchDOMEvent):
+        (WebCore::InspectorTimelineAgent::willLayout):
+        (WebCore::InspectorTimelineAgent::didLayout):
+        (WebCore::InspectorTimelineAgent::willRecalculateStyle):
+        (WebCore::InspectorTimelineAgent::didRecalculateStyle):
+        (WebCore::InspectorTimelineAgent::willPaint):
+        (WebCore::InspectorTimelineAgent::didPaint):
+        (WebCore::InspectorTimelineAgent::willWriteHTML):
+        (WebCore::InspectorTimelineAgent::didWriteHTML):
+        (WebCore::InspectorTimelineAgent::reset):
+        (WebCore::InspectorTimelineAgent::didCompleteCurrentRecord):
+        (WebCore::InspectorTimelineAgent::currentTimeInMilliseconds):
+        (WebCore::InspectorTimelineAgent::sessionTimeInMilliseconds):
+        * inspector/InspectorTimelineAgent.h: Added.
+        * inspector/TimelineItem.cpp: Added.
+        (WebCore::TimelineItem::TimelineItem):
+        (WebCore::TimelineItem::addToTimeline):
+        (WebCore::TimelineItem::convertToScriptObject):
+        (WebCore::TimelineItem::convertChildrenToScriptArray):
+        (WebCore::TimelineItem::addChildItem):
+        * inspector/TimelineItem.h: Added.
+        (WebCore::):
+        (WebCore::TimelineItem::~TimelineItem):
+        (WebCore::TimelineItem::previous):
+        (WebCore::TimelineItem::releasePrevious):
+        (WebCore::TimelineItem::setEndTime):
+        (WebCore::TimelineItem::type):
+        * inspector/front-end/TimelineAgent.js: Added.
+        (WebInspector.TimelineAgent):
+        (WebInspector.addItemToTimeline):
+        (WebInspector.timelineWasEnabled):
+        (WebInspector.timelineWasDisabled):
+        * inspector/front-end/inspector.html:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::paintContents):
+        * page/FrameView.h:
+        (WebCore::FrameView::inspectorTimelineAgent):
+        * page/Page.cpp:
+        (WebCore::Page::inspectorTimelineAgent):
+        * page/Page.h:
+
 2009-09-08  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Simon Hausmann.

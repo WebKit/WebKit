@@ -63,6 +63,7 @@ class InspectorBackend;
 class InspectorClient;
 class InspectorDOMAgent;
 class InspectorFrontend;
+class InspectorTimelineAgent;
 class JavaScriptCallFrame;
 class KURL;
 class Node;
@@ -221,6 +222,11 @@ public:
     bool resourceTrackingEnabled() const { return m_resourceTrackingEnabled; }
     void ensureResourceTrackingSettingsLoaded();
 
+    void enableTimeline(bool always = false);
+    void disableTimeline(bool always = false);
+    bool timelineEnabled() const;
+    InspectorTimelineAgent* timelineAgent() { return m_timelineAgent.get(); }
+
 #if ENABLE(DATABASE)
     void didOpenDatabase(Database*, const String& domain, const String& name, const String& version);
 #endif
@@ -317,6 +323,7 @@ private:
     InspectorClient* m_client;
     OwnPtr<InspectorFrontend> m_frontend;
     RefPtr<InspectorDOMAgent> m_domAgent;
+    OwnPtr<InspectorTimelineAgent> m_timelineAgent;
     ScriptObject m_injectedScriptObj;
     Page* m_page;
     RefPtr<Node> m_nodeToFocus;

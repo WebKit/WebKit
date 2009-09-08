@@ -80,6 +80,7 @@
 #include "HitTestResult.h"
 #include "ImageLoader.h"
 #include "InspectorController.h"
+#include "InspectorTimelineAgent.h"
 #include "KeyboardEvent.h"
 #include "Logging.h"
 #include "MappedAttribute.h"
@@ -1157,6 +1158,10 @@ void Document::recalcStyle(StyleChange change)
     if (m_inStyleRecalc)
         return; // Guard against re-entrancy. -dwh
 
+    InspectorTimelineAgent* timelineAgent = inspectorTimelineAgent();
+    if (timelineAgent)
+        timelineAgent->willRecalculateStyle();
+
     m_inStyleRecalc = true;
     suspendPostAttachCallbacks();
     if (view())
@@ -1229,6 +1234,9 @@ bail_out:
         m_closeAfterStyleRecalc = false;
         implicitClose();
     }
+
+    if (timelineAgent)
+        timelineAgent->didRecalculateStyle();
 }
 
 void Document::updateStyleIfNeeded()

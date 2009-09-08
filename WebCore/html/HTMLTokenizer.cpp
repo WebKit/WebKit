@@ -42,6 +42,7 @@
 #include "HTMLParser.h"
 #include "HTMLScriptElement.h"
 #include "HTMLViewSourceDocument.h"
+#include "InspectorTimelineAgent.h"
 #include "MappedAttribute.h"
 #include "Page.h"
 #include "PreloadScanner.h"
@@ -1657,10 +1658,14 @@ void HTMLTokenizer::write(const SegmentedString& str, bool appendData)
     if (!m_doc->ownerElement())
         printf("Beginning write at time %d\n", m_doc->elapsedTime());
 #endif
-    
+
     int processedCount = 0;
     double startTime = currentTime();
 
+    InspectorTimelineAgent* timelineAgent = m_doc->inspectorTimelineAgent();
+    if (timelineAgent)
+        timelineAgent->willWriteHTML();
+  
     Frame* frame = m_doc->frame();
 
     State state = m_state;
@@ -1781,7 +1786,10 @@ void HTMLTokenizer::write(const SegmentedString& str, bool appendData)
     if (!m_doc->ownerElement())
         printf("Ending write at time %d\n", m_doc->elapsedTime());
 #endif
-    
+
+    if (timelineAgent)
+        timelineAgent->didWriteHTML();
+
     m_inWrite = wasInWrite;
 
     m_state = state;

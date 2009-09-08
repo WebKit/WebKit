@@ -54,6 +54,7 @@
 #include "InspectorDatabaseResource.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorDOMStorageResource.h"
+#include "InspectorTimelineAgent.h"
 #include "InspectorResource.h"
 #include "JavaScriptProfile.h"
 #include "Page.h"
@@ -106,6 +107,7 @@ static const char* const debuggerEnabledSettingName = "debuggerEnabled";
 static const char* const profilerEnabledSettingName = "profilerEnabled";
 static const char* const inspectorAttachedHeightName = "inspectorAttachedHeight";
 static const char* const lastActivePanelSettingName = "lastActivePanel";
+static const char* const timelineEnabledSettingName = "timelineEnabled";
 
 static const unsigned defaultAttachedHeight = 300;
 static const float minimumAttachedHeight = 250.0f;
@@ -544,6 +546,10 @@ void InspectorController::setFrontendProxyObject(ScriptState* scriptState, Scrip
     m_injectedScriptObj = injectedScriptObj;
     m_frontend.set(new InspectorFrontend(this, scriptState, webInspectorObj));
     m_domAgent = new InspectorDOMAgent(m_frontend.get());
+
+    Setting timelineEnabled = setting(timelineEnabledSettingName);
+    if (timelineEnabled.type() == Setting::BooleanType && timelineEnabled.booleanValue())
+        m_timelineAgent = new InspectorTimelineAgent(m_frontend.get());
 }
 
 void InspectorController::show()
@@ -603,6 +609,7 @@ void InspectorController::close()
     if (m_domAgent)
         m_domAgent->setDocument(0);
     m_domAgent = 0;
+    m_timelineAgent = 0;
     m_scriptState = 0;
 }
 
@@ -677,6 +684,9 @@ void InspectorController::resetScriptObjects()
     for (DOMStorageResourcesSet::iterator it = m_domStorageResources.begin(); it != domStorageEnd; ++it)
         (*it)->unbind();
 #endif
+
+    if (m_timelineAgent)
+        m_timelineAgent->reset();
 
     m_frontend->reset();
 }
@@ -1021,6 +1031,46 @@ void InspectorController::ensureResourceTrackingSettingsLoaded()
     Setting resourceTracking = setting(resourceTrackingEnabledSettingName);
     if (resourceTracking.type() == Setting::BooleanType && resourceTracking.booleanValue())
         m_resourceTrackingEnabled = true;
+}
+
+void InspectorController::enableTimeline(bool always)
+{
+    if (!enabled())
+        return;
+
+    if (always)
+        setSetting(timelineEnabledSettingName, Setting(true));
+
+    if (m_timelineAgent.get())
+        return;
+
+    m_timelineAgent = new InspectorTimelineAgent(m_frontend.get());
+    if (m_frontend)
+        m_frontend->timelineWasEnabled();
+}
+
+void InspectorController::disableTimeline(bool always)
+{
+    if (!enabled())
+        return;
+
+    if (always)
+        setSetting(timelineEnabledSettingName, Setting(false));
+
+    if (!m_timelineAgent.get())
+        return;
+
+    m_timelineAgent.set(0);
+    if (m_frontend)
+        m_frontend->timelineWasDisabled();
+}
+
+bool InspectorController::timelineEnabled() const
+{
+    if (!enabled())
+        return false;
+
+    return m_timelineAgent.get();
 }
 
 #if ENABLE(DATABASE)

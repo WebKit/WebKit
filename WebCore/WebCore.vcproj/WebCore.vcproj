@@ -31124,6 +31124,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\inspector\DOMDispatchTimelineItem.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\DOMDispatchTimelineItem.h"
+				>
+			</File>
+			<File
 				RelativePath="..\inspector\InspectorBackend.cpp"
 				>
 			</File>
@@ -31184,6 +31192,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\inspector\InspectorTimelineAgent."
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\InspectorTimelineAgent.h"
+				>
+			</File>
+			<File
 				RelativePath="..\inspector\JavaScriptCallFrame.cpp"
 				>
 			</File>
@@ -31217,6 +31233,14 @@
 			</File>
 			<File
 				RelativePath="..\inspector\JavaScriptProfileNode.h"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\TimelineItem.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\TimelineItem.h"
 				>
 			</File>
 			<Filter
@@ -31424,6 +31448,10 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\TextPrompt.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\TimelineAgent.js"
 					>
 				</File>
 				<File

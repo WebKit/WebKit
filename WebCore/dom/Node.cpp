@@ -50,6 +50,7 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "HTMLNames.h"
+#include "InspectorTimelineAgent.h"
 #include "KeyboardEvent.h"
 #include "Logging.h"
 #include "MouseEvent.h"
@@ -2548,6 +2549,10 @@ bool Node::dispatchGenericEvent(PassRefPtr<Event> prpEvent)
     ASSERT(event->target());
     ASSERT(!event->type().isNull()); // JavaScript code can create an event with an empty name, but not null.
 
+    InspectorTimelineAgent* timelineAgent = document()->inspectorTimelineAgent();
+    if (timelineAgent)
+        timelineAgent->willDispatchDOMEvent(*event);
+
     // Make a vector of ancestors to send the event to.
     // If the node is not in a document just send the event to it.
     // Be sure to ref all of nodes since event handlers could result in the last reference going away.
@@ -2659,6 +2664,9 @@ doneDispatching:
     }
 
 doneWithDefault:
+    if (timelineAgent)
+        timelineAgent->didDispatchDOMEvent();
+
     Document::updateStyleForAllDocuments();
 
     return !event->defaultPrevented();

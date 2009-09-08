@@ -43,8 +43,8 @@
 #include "HTMLFrameElement.h"
 #include "HTMLFrameSetElement.h"
 #include "HTMLNames.h"
+#include "InspectorTimelineAgent.h"
 #include "OverflowEvent.h"
-#include "Page.h"
 #include "RenderPart.h"
 #include "RenderPartObject.h"
 #include "RenderScrollbar.h"
@@ -492,6 +492,10 @@ void FrameView::layout(bool allowSubtree)
     if (isPainting())
         return;
 
+    InspectorTimelineAgent* timelineAgent = inspectorTimelineAgent();
+    if (timelineAgent)
+        timelineAgent->willLayout();
+
     if (!allowSubtree && m_layoutRoot) {
         m_layoutRoot->markContainingBlocksForLayout(false);
         m_layoutRoot = 0;
@@ -675,6 +679,9 @@ void FrameView::layout(bool allowSubtree)
         resumeScheduledEvents();
         ASSERT(m_enqueueEvents);
     }
+
+    if (timelineAgent)
+        timelineAgent->didLayout();
 
     m_nestedLayoutCount--;
 }
@@ -1498,7 +1505,11 @@ void FrameView::paintContents(GraphicsContext* p, const IntRect& rect)
 {
     if (!frame())
         return;
-    
+
+    InspectorTimelineAgent* timelineAgent = inspectorTimelineAgent();
+    if (timelineAgent)
+        timelineAgent->willPaint();
+
     Document* document = frame()->document();
 
 #ifndef NDEBUG
@@ -1562,6 +1573,9 @@ void FrameView::paintContents(GraphicsContext* p, const IntRect& rect)
 
     if (isTopLevelPainter)
         sCurrentPaintTimeStamp = 0;
+
+    if (timelineAgent)
+        timelineAgent->didPaint();
 }
 
 void FrameView::setPaintRestriction(PaintRestriction pr)

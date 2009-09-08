@@ -252,6 +252,25 @@ const String& InspectorBackend::platform() const
     return platform;
 }
 
+void InspectorBackend::enableTimeline(bool always)
+{
+    if (m_inspectorController)
+        m_inspectorController->enableTimeline(always);
+}
+
+void InspectorBackend::disableTimeline(bool always)
+{
+    if (m_inspectorController)
+        m_inspectorController->disableTimeline(always);
+}
+
+bool InspectorBackend::timelineEnabled() const
+{
+    if (m_inspectorController)
+        return m_inspectorController->timelineEnabled();
+    return false;
+}
+
 void InspectorBackend::getCookies(long callId)
 {
     if (InspectorDOMAgent* domAgent = inspectorDOMAgent())
