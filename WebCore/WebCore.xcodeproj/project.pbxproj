@@ -1182,8 +1182,6 @@
 		65DF326109D1E199000BE325 /* UserAgentStyleSheetsData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 656581AF09D14EE6000E61D7 /* UserAgentStyleSheetsData.cpp */; };
 		65FEA86909833ADE00BED4AB /* Page.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65FEA86809833ADE00BED4AB /* Page.cpp */; };
 		72626E020EF022FE00A07E20 /* FontFastPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72626E010EF022FE00A07E20 /* FontFastPath.cpp */; };
-		7284ADDD0E6FEB31002EEFBD /* UserStyleSheetLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7284ADDB0E6FEB31002EEFBD /* UserStyleSheetLoader.cpp */; };
-		7284ADDE0E6FEB31002EEFBD /* UserStyleSheetLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 7284ADDC0E6FEB31002EEFBD /* UserStyleSheetLoader.h */; };
 		75092BFE104B80F9003DD168 /* DOMDispatchTimelineItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75092BFC104B80F9003DD168 /* DOMDispatchTimelineItem.cpp */; };
 		75092BFF104B80F9003DD168 /* DOMDispatchTimelineItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 75092BFD104B80F9003DD168 /* DOMDispatchTimelineItem.h */; };
 		754133A8102E00E800075D00 /* InspectorTimelineAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 754133A7102E00E800075D00 /* InspectorTimelineAgent.h */; };
@@ -6410,8 +6408,6 @@
 		65F80697054D9F86008BF776 /* BlockExceptions.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BlockExceptions.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65FEA86809833ADE00BED4AB /* Page.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Page.cpp; sourceTree = "<group>"; };
 		72626E010EF022FE00A07E20 /* FontFastPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontFastPath.cpp; sourceTree = "<group>"; };
-		7284ADDB0E6FEB31002EEFBD /* UserStyleSheetLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserStyleSheetLoader.cpp; sourceTree = "<group>"; };
-		7284ADDC0E6FEB31002EEFBD /* UserStyleSheetLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserStyleSheetLoader.h; sourceTree = "<group>"; };
 		75092BFC104B80F9003DD168 /* DOMDispatchTimelineItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMDispatchTimelineItem.cpp; sourceTree = "<group>"; };
 		75092BFD104B80F9003DD168 /* DOMDispatchTimelineItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMDispatchTimelineItem.h; sourceTree = "<group>"; };
 		754133A7102E00E800075D00 /* InspectorTimelineAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorTimelineAgent.h; sourceTree = "<group>"; };

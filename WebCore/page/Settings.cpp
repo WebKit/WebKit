@@ -273,7 +273,6 @@ void Settings::setUserStyleSheetLocation(const KURL& userStyleSheetLocation)
     m_userStyleSheetLocation = userStyleSheetLocation;
 
     m_page->userStyleSheetLocationChanged();
-    setNeedsReapplyStylesInAllFrames(m_page);
 }
 
 void Settings::setShouldPrintBackgrounds(bool shouldPrintBackgrounds)

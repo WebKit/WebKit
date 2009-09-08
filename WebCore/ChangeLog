@@ -1,3 +1,26 @@
+2009-09-04  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28987, make the Document cache the page's user stylesheet in
+        parsed form.  Allows the sheet to survive across destruction/re-creation of the CSSStyleSelector.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::CSSStyleSelector):
+        * css/CSSStyleSelector.h:
+        * dom/Document.cpp:
+        (WebCore::Document::attach):
+        (WebCore::Document::pageUserSheet):
+        (WebCore::Document::clearPageUserSheet):
+        (WebCore::Document::recalcStyleSelector):
+        * dom/Document.h:
+        * loader/PlaceholderDocument.cpp:
+        (WebCore::PlaceholderDocument::attach):
+        * page/Page.cpp:
+        (WebCore::Page::userStyleSheetLocationChanged):
+        * page/Settings.cpp:
+        (WebCore::Settings::setUserStyleSheetLocation):
+
 2009-09-08  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Unreviewed buildfix.

@@ -80,7 +80,8 @@ public:
     // This class selects a RenderStyle for a given element based on a collection of stylesheets.
     class CSSStyleSelector : public Noncopyable {
     public:
-        CSSStyleSelector(Document*, const String& userStyleSheet, StyleSheetList*, CSSStyleSheet*, bool strictParsing, bool matchAuthorAndUserStyles);
+        CSSStyleSelector(Document*, CSSStyleSheet* userStyleSheet, StyleSheetList* authorSheets, CSSStyleSheet* mappedElementSheet,
+                         bool strictParsing, bool matchAuthorAndUserStyles);
         ~CSSStyleSelector();
 
         void initElementAndPseudoState(Element*);
@@ -175,7 +176,6 @@ public:
         
         CSSRuleSet* m_authorStyle;
         CSSRuleSet* m_userStyle;
-        RefPtr<CSSStyleSheet> m_userSheet;
 
         bool m_hasUAAppearance;
         BorderData m_borderData;

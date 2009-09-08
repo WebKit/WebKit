@@ -408,7 +408,7 @@ static const MediaQueryEvaluator& printEval()
     return staticPrintEval;
 }
 
-CSSStyleSelector::CSSStyleSelector(Document* doc, const String& userStyleSheet, StyleSheetList* styleSheets, CSSStyleSheet* mappedElementSheet, bool strictParsing, bool matchAuthorAndUserStyles)
+CSSStyleSelector::CSSStyleSelector(Document* doc, CSSStyleSheet* userSheet, StyleSheetList* styleSheets, CSSStyleSheet* mappedElementSheet, bool strictParsing, bool matchAuthorAndUserStyles)
     : m_backgroundData(BackgroundFillLayer)
     , m_checker(doc, strictParsing)
     , m_fontSelector(CSSFontSelector::create(doc))
@@ -449,12 +449,9 @@ CSSStyleSelector::CSSStyleSelector(Document* doc, const String& userStyleSheet, 
     }
 
     // FIXME: This sucks! The user sheet is reparsed every time!
-    if (!userStyleSheet.isEmpty()) {
-        m_userSheet = CSSStyleSheet::create(doc);
-        m_userSheet->parseString(userStyleSheet, strictParsing);
-
+    if (userSheet) {
         m_userStyle = new CSSRuleSet();
-        m_userStyle->addRulesFromSheet(m_userSheet.get(), *m_medium, this);
+        m_userStyle->addRulesFromSheet(userSheet, *m_medium, this);
     }
 
     // add stylesheets from document
