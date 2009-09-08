@@ -1,5 +1,16 @@
 2009-09-07  Drew Wilson  <atwilson@google.com>
 
+        Rubber-stamped by Sam Weinig.
+
+        Rebaseline tests for GTK platform, and skipping shared worker XHR tests (worker XHR tests are already skipped).
+        Tracked as https://bugs.webkit.org/show_bug.cgi?id=29020.
+
+        * platform/gtk/Skipped:
+        * platform/gtk/fast/dom/Window/window-properties-expected.txt:
+        * platform/gtk/fast/dom/prototype-inheritance-2-expected.txt:
+
+2009-09-07  Drew Wilson  <atwilson@google.com>
+
         Unreviewed test fixup.
 
         Added shared worker lifecycle tests to Skipped test list due to missing DRT functionality on Qt platform.

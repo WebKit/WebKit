@@ -5913,3 +5913,7 @@ fast/forms/missing-action.html
 fast/forms/submit-nil-value-field-assert.html
 fast/forms/form-post-urlencoded.html
 http/tests/navigation/back-send-referrer.html
+
+# XHR sends sometimes yield null bytes sent instead of 0.
+http/tests/xmlhttprequest/workers/shared-worker-methods.html
+http/tests/xmlhttprequest/workers/shared-worker-methods-async.html
