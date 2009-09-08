@@ -17068,11 +17068,11 @@
 				RelativePath="..\page\Settings.h"
 				>
 			</File>
-                        <File
+      <File
 				RelativePath="..\page\UserScript.h"
 				>
 			</File>
-                        <File
+      <File
 				RelativePath="..\page\UserScriptTypes.h"
 				>
 			</File>
@@ -21759,6 +21759,18 @@
 					>
 				</File>
 			</Filter>
+ 			<Filter
+ 				Name="mock"
+ 				>
+ 				<File
+ 					RelativePath="..\platform\mock\GeolocationServiceMock.cpp"
+ 					>
+ 				</File>
+ 				<File
+ 					RelativePath="..\platform\mock\GeolocationServiceMock.h"
+ 					>
+ 				</File>
+ 			</Filter>
 		</Filter>
 		<Filter
 			Name="css"

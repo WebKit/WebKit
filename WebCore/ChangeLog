@@ -1,3 +1,64 @@
+2009-09-07  Steve Block  <steveblock@google.com>
+
+        Reviewed by Adam Barth.
+
+        Adds a mock Geolocation service. This will be used to provide predictable behavior of the
+        Geolocation API for use in LayoutTests. Later changes will integrate the the mock
+        Geolocation service with DumpRenderTree.
+        https://bugs.webkit.org/show_bug.cgi?id=28264
+
+        The mock Geolocation service returns a fixed position or error. This position or error can be
+        set through static methods on the GeolocationService class. The position or error is shared
+        between all instances of the mock Geolocation service.
+
+        Implementation details.
+        The GeolocationService object maintains a pointer to a factory function which it uses to create
+        Geolocation service instances. Each platform implementing Geolocation sets this pointer
+        to the factory function for their platform's implementation. When the mock Geolocation service
+        is activated, the factory function pointer is reset to the factory function for the mock service.
+
+        Test: fast/dom/Geolocation/error.html
+
+        * WebCore.base.exp: Modified. Exports GeolocationServiceMock methods.
+        * GNUMakefile.am: Modified. Added GeolocationServiceMock files.
+        * WebCore.gypi: Modified. Added GeolocationServiceMock files.
+        * WebCore.pro: Modified. Added GeolocationServiceMock files.
+        * WebCore.vcproj/WebCore.vcproj: Modified. Added GeolocationServiceMock files.
+        * WebCore.vcproj/WebCoreCommon.vsprops: Modified. Added mock directory to includes.
+        * WebCore.xcodeproj/project.pbxproj: Modified. Added GeolocationServiceMock files and exports some headers.
+        * WebCoreSources.bkl: Modified. Added GeolocationServiceMock files.
+        * page/ChromeClient.h: Modified. Fixed comment.
+        * page/Geolocation.cpp: Modified.
+        (WebCore::Geolocation::setIsAllowed): Modified. Fixed error string.
+        * platform/GeolocationService.cpp: Modified.
+        (WebCore::createGeolocationServiceNull): Added. Returns null in place of a Geolocation service. Used to avoid link errors on platforms where Geolocation is not implemented.
+        (WebCore::GeolocationService::create): Added. Uses the factory function pointer to create a Geolocation service implementation.
+        (WebCore::GeolocationService::useMock): Added. Configures the GeolocationServie to use the mock implementation.
+        * platform/GeolocationService.h: Modified.
+        * platform/mock: Added.
+        * platform/mock/GeolocationServiceMock.cpp: Added.
+        (WebCore::GeolocationServiceMock::create): Added. Creates a GeolocationServiceMock object.
+        (WebCore::GeolocationServiceMock::GeolocationServiceMock): Added. Constructor.
+        (WebCore::GeolocationServiceMock::~GeolocationServiceMock): Added. Destructor.
+        (WebCore::GeolocationServiceMock::setPosition): Added. Sets the position that will be returned by the object.
+        (WebCore::GeolocationServiceMock::setError): Added. Sets the error that will be returned by the object.
+        (WebCore::GeolocationServiceMock::startUpdating): Added. GeolocationService implementation. Starts the service.
+        (WebCore::GeolocationServiceMock::stopUpdating): Added. GeolocationService implementation. Stops the service.
+        (WebCore::GeolocationServiceMock::timerFired): Added. Used to provide an asynchronous callback when the service is started.
+        (WebCore::GeolocationServiceMock::makeGeolocationCallbackFromAllInstances): Added. Used to call back when the position or error is updated.
+        (WebCore::GeolocationServiceMock::makeGeolocationCallback): Added. Used to call back when the service starts.
+        (WebCore::GeolocationServiceMock::initStatics): Added. Initializes statics members with constructors.
+        (WebCore::GeolocationServiceMock::cleanUpStatics): Added. Cleans up static members with constructors.
+        * platform/mock/GeolocationServiceMock.h: Added.
+        (WebCore::GeolocationServiceMock::lastPosition): Added. Returns the fixed position.
+        (WebCore::GeolocationServiceMock::lastError): Added. Returns the fixed error.
+        * platform/gtk/GeolocationServiceGtk.cpp: Modified.
+        (WebCore::GeolocationServiceGtk::create): Added. Creates an instance of GeolocationServiceGtk.
+        * platform/gtk/GeolocationServiceGtk.h: Modified.
+        * platform/mac/GeolocationServiceMac.h: Modified.
+        * platform/mac/GeolocationServiceMac.mm: Modified.
+        (WebCore::GeolocationServiceMac::create): Added. Creates an instance of GeolocationServiceMac.
+
 2009-09-07  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Dimitri Glazkov.

@@ -31,7 +31,7 @@
 namespace WebCore {
     class GeolocationServiceGtk : public GeolocationService {
     public:
-        GeolocationServiceGtk(GeolocationServiceClient*);
+        static GeolocationService* create(GeolocationServiceClient*);
         ~GeolocationServiceGtk();
 
         virtual bool startUpdating(PositionOptions*);
@@ -44,6 +44,8 @@ namespace WebCore {
         PositionError* lastError() const;
 
     private:
+        GeolocationServiceGtk(GeolocationServiceClient*);
+
         void updateLocationInformation();
         void setError(PositionError::ErrorCode, const char* message);
         void updatePosition();

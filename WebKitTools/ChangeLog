@@ -1,3 +1,21 @@
+2009-09-07  Steve Block  <steveblock@google.com>
+
+        Reviewed by Adam Barth.
+
+        Adds a mock Geolocation service. This will be used to provide predictable behavior of the
+        Geolocation API for use in LayoutTests. Later changes will integrate the the mock
+        Geolocation service with DumpRenderTree.
+        https://bugs.webkit.org/show_bug.cgi?id=28264
+
+        * DumpRenderTree/LayoutTestController.cpp: Modified.
+        (setMockGeolocationPositionCallback): Added. Configures the mock Geolocation service.
+        (setMockGeolocationErrorCallback): Added. Configures the mock Geolocation service.
+        (LayoutTestController::staticFunctions): Added. Registers the above functions on the LayoutTestController.
+        * DumpRenderTree/LayoutTestController.h: Modified.
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm: Modified.
+        (LayoutTestController::setMockGeolocationPosition): Added. Configures the mock Geolocation service.
+        (LayoutTestController::setMockGeolocationError): Added. Configures the mock Geolocation service.
+
 2009-09-07  Drew Wilson  <atwilson@google.com>
 
         Reviewed by David Levin.

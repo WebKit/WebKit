@@ -52,6 +52,7 @@
 #import <WebKit/WebHistory.h>
 #import <WebKit/WebHistoryPrivate.h>
 #import <WebKit/WebInspector.h>
+#import <WebKit/WebGeolocationMockPrivate.h>
 #import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebPreferencesPrivate.h>
@@ -232,6 +233,18 @@ void LayoutTestController::setDatabaseQuota(unsigned long long quota)
     WebSecurityOrigin *origin = [[WebSecurityOrigin alloc] initWithURL:[NSURL URLWithString:@"file:///"]];
     [origin setQuota:quota];
     [origin release];
+}
+
+void LayoutTestController::setMockGeolocationPosition(double latitude, double longitude, double accuracy)
+{
+    [WebGeolocationMock setPosition:latitude:longitude:accuracy];
+}
+
+void LayoutTestController::setMockGeolocationError(int code, JSStringRef message)
+{
+    RetainPtr<CFStringRef> messageCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, message));
+    NSString *messageNS = (NSString *)messageCF.get();
+    [WebGeolocationMock setError:code:messageNS];
 }
 
 void LayoutTestController::setIconDatabaseEnabled(bool iconDatabaseEnabled)

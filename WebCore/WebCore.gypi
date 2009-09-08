@@ -2607,6 +2607,8 @@
             'platform/Logging.h',
             'platform/MIMETypeRegistry.cpp',
             'platform/MIMETypeRegistry.h',
+            'platform/mock/GeolocationServiceMock.cpp',
+            'platform/mock/GeolocationServiceMock.h',
             'platform/NotImplemented.h',
             'platform/Pasteboard.h',
             'platform/PlatformKeyboardEvent.h',

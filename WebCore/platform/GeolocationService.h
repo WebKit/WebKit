@@ -59,11 +59,16 @@ public:
     void positionChanged();
     void errorOccurred();
 
+    static void useMock();
+
 protected:
     GeolocationService(GeolocationServiceClient*);
 
 private:
     GeolocationServiceClient* m_geolocationServiceClient;
+
+    typedef GeolocationService* (FactoryFunction)(GeolocationServiceClient*);
+    static FactoryFunction* s_factoryFunction;
 };
 
 } // namespace WebCore

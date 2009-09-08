@@ -37,10 +37,12 @@ namespace WTF {
 
 namespace WebCore {
 
-GeolocationService* GeolocationService::create(GeolocationServiceClient* client)
+GeolocationService* GeolocationServiceGtk::create(GeolocationServiceClient* client)
 {
     return new GeolocationServiceGtk(client);
 }
+
+GeolocationService::FactoryFunction* GeolocationService::s_factoryFunction = &GeolocationServiceGtk::create;
 
 GeolocationServiceGtk::GeolocationServiceGtk(GeolocationServiceClient* client)
     : GeolocationService(client)

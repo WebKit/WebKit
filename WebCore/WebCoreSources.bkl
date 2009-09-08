@@ -817,6 +817,7 @@ This file contains the list of files needed to build WebCore.
         platform/LinkHash.cpp
         platform/Logging.cpp
         platform/MIMETypeRegistry.cpp
+        platform/mock/GeolocationServiceMock.cpp
         platform/text/RegularExpression.cpp
         platform/Scrollbar.cpp
         platform/ScrollbarThemeComposite.cpp

@@ -1,3 +1,18 @@
+2009-09-07  Steve Block  <steveblock@google.com>
+
+        Reviewed by Adam Barth.
+
+        Adds a mock Geolocation service. This will be used to provide predictable behavior of the
+        Geolocation API for use in LayoutTests. Later changes will integrate the the mock
+        Geolocation service with DumpRenderTree.
+        https://bugs.webkit.org/show_bug.cgi?id=28264
+
+        * WebCoreSupport/WebGeolocationMockPrivate.h: Added.
+        * WebCoreSupport/WebGeolocationMock.mm: Added.
+        (+[WebGeolocationMock setError:code:]): Added. Used by DumpRender tree to configure the mock Geolocation service.
+        (+[WebGeolocationMock setPosition:latitude:longitude:accuracy:]): Added. Used by DumpRender tree to configure the mock Geolocation service.
+        * WebKit.exp: Modified. Exports WebGeolocationMock.
+
 2009-09-07  Drew Wilson  <atwilson@google.com>
 
         Reviewed by David Levin.
