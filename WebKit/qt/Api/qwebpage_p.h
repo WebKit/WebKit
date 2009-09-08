@@ -45,18 +45,6 @@ namespace WebCore {
     class Node;
     class Page;
     class Frame;
-
-#ifndef QT_NO_CURSOR
-    class SetCursorEvent : public QEvent {
-    public:
-        static const int EventType = 724;
-        SetCursorEvent(const QCursor&);
-
-        QCursor cursor() const;
-    private:
-        QCursor m_cursor;
-    };
-#endif
 }
 
 QT_BEGIN_NAMESPACE

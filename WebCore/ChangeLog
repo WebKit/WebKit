@@ -1,3 +1,22 @@
+2009-09-08  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Make cursor set cleaner in QtWebKit Api: eliminate SetCursorEvent hack.
+        https://bugs.webkit.org/show_bug.cgi?id=28865
+
+        Save the QCursor as a property in WidgetQt::setCursor
+        and actually change the cursor in QWebView::event() by making use
+        of the QEvent::DynamicPropertyChange event type.
+        When unsetCursor() is called on the QWidget we can fallback to
+        the cursor set by WebCore.
+
+        Patch by Kenneth Rohde Christiansen <kenneth@webkit.org> and
+                 Antonio Gomes <antonio.gomes@openbossa.org> on 2009-09-07
+
+        * platform/qt/WidgetQt.cpp:
+        (WebCore::Widget::setCursor):
+
 2009-09-08  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
 
         Reviewed by Gustavo Noronha.
