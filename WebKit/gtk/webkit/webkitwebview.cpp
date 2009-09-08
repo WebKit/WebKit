@@ -1250,7 +1250,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * the new #WebKitWebView. The widget to which the widget is added will
      * handle that.
      *
-     * Since 1.0.3
+     * Since: 1.0.3
      */
     webkit_web_view_signals[CREATE_WEB_VIEW] = g_signal_new("create-web-view",
             G_TYPE_FROM_CLASS(webViewClass),
@@ -1279,7 +1279,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * time of the window, so you may want to connect to the ::notify
      * signal of the #WebKitWebWindowFeatures object to handle those.
      *
-     * Since 1.0.3
+     * Since: 1.0.3
      */
     webkit_web_view_signals[WEB_VIEW_READY] = g_signal_new("web-view-ready",
             G_TYPE_FROM_CLASS(webViewClass),
@@ -1301,7 +1301,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * signal handler does not do anything. It is the owner's responsibility
      * to hide or delete the web view, if necessary.
      *
-     * Since 1.1.11
+     * Since: 1.1.11
      */
     webkit_web_view_signals[CLOSE_WEB_VIEW] = g_signal_new("close-web-view",
             G_TYPE_FROM_CLASS(webViewClass),

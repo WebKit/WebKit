@@ -117,7 +117,7 @@ static void webkit_web_resource_class_init(WebKitWebResourceClass* klass)
      *
      * The URI of the web resource
      *
-     * Since 1.1.14
+     * Since: 1.1.14
      */
     g_object_class_install_property(gobject_class,
                                     PROP_URI,
@@ -132,7 +132,7 @@ static void webkit_web_resource_class_init(WebKitWebResourceClass* klass)
      *
      * The MIME type of the web resource.
      *
-     * Since 1.1.14
+     * Since: 1.1.14
      */
     g_object_class_install_property(gobject_class,
                                     PROP_MIME_TYPE,
@@ -147,7 +147,7 @@ static void webkit_web_resource_class_init(WebKitWebResourceClass* klass)
      *
      * The encoding name to which the web resource was encoded in.
      *
-     * Since 1.1.14
+     * Since: 1.1.14
      */
     g_object_class_install_property(gobject_class,
                                     PROP_ENCODING,
@@ -163,7 +163,7 @@ static void webkit_web_resource_class_init(WebKitWebResourceClass* klass)
      *
      * The frame name for the web resource.
      *
-     * Since 1.1.14
+     * Since: 1.1.14
      */
     g_object_class_install_property(gobject_class,
                                     PROP_FRAME_NAME,
@@ -324,7 +324,7 @@ G_CONST_RETURN gchar* webkit_web_resource_get_uri(WebKitWebResource* webResource
  *
  * Return value: the MIME type of the resource
  *
- * Since 1.1.14
+ * Since: 1.1.14
  */
 G_CONST_RETURN gchar* webkit_web_resource_get_mime_type(WebKitWebResource* webResource)
 {

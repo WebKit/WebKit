@@ -1,3 +1,18 @@
+2009-09-08  Priit Laes  <plaes@plaes.org>
+
+        Reviewed by Gustavo Noronha.
+
+        Fix up erroneus 'Since: @version@' tags in documentation.
+
+        * webkit/webkitwebdatasource.cpp:
+        * webkit/webkitwebresource.cpp:
+        (webkit_web_resource_class_init):
+        * webkit/webkitwebsettings.cpp:
+        (webkit_web_settings_class_init):
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_class_init):
+        * webkit/webkitwebwindowfeatures.cpp:
+
 2009-09-07  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Link new objects documents in the main document.

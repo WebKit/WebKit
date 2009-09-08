@@ -396,7 +396,7 @@ WebKitWebResource* webkit_web_data_source_get_main_resource(WebKitWebDataSource*
  *
  * Return value: the unreachable URL of @data_source or %NULL if there is no unreachable URL.
  *
- * Since 1.1.14
+ * Since: 1.1.14
  */
 G_CONST_RETURN gchar* webkit_web_data_source_get_unreachable_uri(WebKitWebDataSource* webDataSource)
 {
