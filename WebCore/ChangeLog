@@ -1,3 +1,10 @@
+2009-09-07  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed speculative build fix for Snow Leopard.
+
+        * platform/GeolocationService.cpp:
+        (WebCore::createGeolocationServiceNull):
+
 2009-09-07  Steve Block  <steveblock@google.com>
 
         Reviewed by Adam Barth.
