@@ -79,15 +79,14 @@ public:
     WebCore::Scrollbar* horizontalScrollBar() const;
     WebCore::Scrollbar* verticalScrollBar() const;
 
-    Qt::ScrollBarPolicy horizontalScrollBarPolicy;
-    Qt::ScrollBarPolicy verticalScrollBarPolicy;
-
     static WebCore::Frame* core(QWebFrame*);
     static QWebFrame* kit(WebCore::Frame*);
 
     void renderPrivate(QPainter *painter, const QRegion &clip);
 
     QWebFrame *q;
+    Qt::ScrollBarPolicy horizontalScrollBarPolicy;
+    Qt::ScrollBarPolicy verticalScrollBarPolicy;
     WebCore::FrameLoaderClientQt *frameLoaderClient;
     WebCore::Frame *frame;
     QWebPage *page;

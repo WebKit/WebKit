@@ -58,8 +58,8 @@ class FontPlatformDataCacheKey {
 public:
     FontPlatformDataCacheKey(const FontDescription& description)
         : m_familyName()
-        , m_bold(false)
         , m_size(description.computedPixelSize())
+        , m_bold(false)
         , m_italic(description.italic())
         , m_smallCaps(description.smallCaps())
         , m_hash(0)

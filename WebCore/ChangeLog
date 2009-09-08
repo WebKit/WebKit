@@ -1,3 +1,17 @@
+2009-09-08  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Use the declaration order in initializer lists
+        https://bugs.webkit.org/show_bug.cgi?id=29017
+
+        No functional change, no new tests.
+
+        * platform/graphics/qt/FontCacheQt.cpp:
+        (WebCore::FontPlatformDataCacheKey::FontPlatformDataCacheKey):
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyHandler::QNetworkReplyHandler):
+
 2009-09-08  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Eric Seidel.
