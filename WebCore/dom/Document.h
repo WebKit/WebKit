@@ -228,6 +228,8 @@ public:
     bool containsMultipleElementsWithId(const AtomicString& elementId) { return m_duplicateIds.contains(elementId.impl()); }
 
     Element* elementFromPoint(int x, int y) const;
+    PassRefPtr<Range> caretRangeFromPoint(int x, int y);
+
     String readyState() const;
 
     String defaultCharset() const;

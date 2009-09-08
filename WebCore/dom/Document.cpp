@@ -110,11 +110,6 @@
 #include "SegmentedString.h"
 #include "SelectionController.h"
 #include "Settings.h"
-
-#if ENABLE(SHARED_WORKERS)
-#include "SharedWorkerRepository.h"
-#endif
-
 #include "StyleSheetList.h"
 #include "TextEvent.h"
 #include "TextIterator.h"
@@ -128,6 +123,7 @@
 #include "XMLHttpRequest.h"
 #include "XMLNames.h"
 #include "XMLTokenizer.h"
+#include "htmlediting.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/MainThread.h>
@@ -137,6 +133,10 @@
 #if ENABLE(DATABASE)
 #include "Database.h"
 #include "DatabaseThread.h"
+#endif
+
+#if ENABLE(SHARED_WORKERS)
+#include "SharedWorkerRepository.h"
 #endif
 
 #if ENABLE(DOM_STORAGE)
@@ -941,6 +941,49 @@ Element* Document::elementFromPoint(int x, int y) const
     if (n)
         n = n->shadowAncestorNode();
     return static_cast<Element*>(n);
+}
+
+PassRefPtr<Range> Document::caretRangeFromPoint(int x, int y)
+{
+    if (!renderer())
+        return 0;
+    Frame* frame = this->frame();
+    if (!frame)
+        return 0;
+
+    float zoomFactor = frame->pageZoomFactor();
+    IntPoint point = roundedIntPoint(FloatPoint(x * zoomFactor, y * zoomFactor));
+
+    FrameView* frameView = frame->view();
+    if (!frameView)
+        return 0;
+    if (!frameView->boundsRect().contains(point))
+        return 0;
+
+    HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active);
+    HitTestResult result(point);
+    renderView()->layer()->hitTest(request, result);
+
+    Node* node = result.innerNode();
+    if (!node)
+        return 0;
+
+    Node* shadowAncestorNode = node->shadowAncestorNode();
+    if (shadowAncestorNode != node) {
+        unsigned offset = shadowAncestorNode->nodeIndex();
+        Node* container = shadowAncestorNode->parentNode();
+        return Range::create(this, container, offset, container, offset);
+    }
+
+    RenderObject* renderer = node->renderer();
+    if (!renderer)
+        return 0;
+    VisiblePosition visiblePosition = renderer->positionForPoint(result.localPoint());
+    if (visiblePosition.isNull())
+        return 0;
+
+    Position rangeCompliantPosition = rangeCompliantEquivalent(visiblePosition);
+    return Range::create(this, rangeCompliantPosition, rangeCompliantPosition);
 }
 
 void Document::addElementById(const AtomicString& elementId, Element* element)

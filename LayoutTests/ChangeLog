@@ -1,3 +1,17 @@
+2009-09-08  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Test for https://bugs.webkit.org/show_bug.cgi?id=27046
+        Implement CSSOM DocumentView.caretRangeFromPoint
+
+        * fast/dom/Document/CaretRangeFromPoint: Added.
+        * fast/dom/Document/CaretRangeFromPoint/basic-expected.txt: Added.
+        * fast/dom/Document/CaretRangeFromPoint/basic.html: Added.
+        * fast/dom/Document/CaretRangeFromPoint/replace-element-expected.txt: Added.
+        * fast/dom/Document/CaretRangeFromPoint/replace-element.html: Added.
+        * fast/dom/Window/window-properties-expected.txt:
+
 2009-09-08  Brian Weinstein  <bweinstein@apple.com>
 
         Rubber-stamped by Adam Roben.
