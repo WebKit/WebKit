@@ -1,3 +1,18 @@
+2009-09-08  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        should not pass URI fragments to libsoup
+        https://bugs.webkit.org/show_bug.cgi?id=28687
+
+        Strip the fragment from the URI before passing it to soup, since
+        it forwards it to servers in some cases (like when using a proxy)
+        which confuses them and makes them return 403/404.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::startHttp):
+        (WebCore::):
+
 2009-09-08  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Simon Hausmann.
