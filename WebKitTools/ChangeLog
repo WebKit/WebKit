@@ -1,3 +1,12 @@
+2009-09-08  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Mark Rowe.
+
+        Reduce dglazkov's boboiness by properly concatenating revision value.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg: Used substitution
+            rather than "+".
+
 2009-09-08  Kevin Ollivier  <kevino@theolliviers.com>
 
         wxWebKit Python extension build fix - get swig.py if it doesn't exist.
