@@ -1,3 +1,15 @@
+2009-09-09  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by David Levin.
+        
+        Chromium uses its own config.h file that was forked from webkit's config.h.
+        By merging in Chromium's defines, Chromium would again be able to use webkit's
+        config.h.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28882 
+
+        * config.h: Added chromium-specific defines. 
+
 2009-09-09  Jens Alfke  <snej@chromium.org>
 
         Reviewed by Eric Seidel.
