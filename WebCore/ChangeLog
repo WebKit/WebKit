@@ -1,3 +1,16 @@
+2009-09-08  Jens Alfke  <snej@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        In Mac Chromium, clicking below the last line of an editable area (textarea or
+        contenteditable) should put the caret at the end of the last line, as in Mac Safari.
+
+        Tests: LayoutTests/editing/selection/click-in-margins-inside-editable-div.html
+               LayoutTests/editing/selection/click-in-padding-with-multiple-line-boxes.html
+
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings): Change #if PLATFORM_MAC to be Mac-Chrome-inclusive.
+
 2009-09-08  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by Mark Rowe.
