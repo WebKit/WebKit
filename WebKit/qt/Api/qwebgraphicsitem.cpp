@@ -166,7 +166,7 @@ void QWebGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* 
 */
 bool QWebGraphicsItem::sceneEvent(QEvent* event)
 {
-    // Swallow reimplementation in order to allows fixing event-related bugs in patch releases
+    // Re-implemented in order to allows fixing event-related bugs in patch releases.
     return QGraphicsWidget::sceneEvent(event);
 }
 
@@ -174,7 +174,7 @@ bool QWebGraphicsItem::sceneEvent(QEvent* event)
 */
 bool QWebGraphicsItem::event(QEvent* event)
 {
-    // Swallow reimplementation in order to allows fixing event-related bugs in patch releases
+    // Re-implemented in order to allows fixing event-related bugs in patch releases.
     return QObject::event(event);
 }
 

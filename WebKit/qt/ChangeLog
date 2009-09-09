@@ -1,5 +1,15 @@
 2009-09-09  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
+        Unreviewed.
+
+        Fix comment at Tor Arne Vestbø's request.
+
+        * Api/qwebgraphicsitem.cpp:
+        (QWebGraphicsItem::sceneEvent):
+        (QWebGraphicsItem::event):
+
+2009-09-09  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
         Reviewed by Tor Arne Vestbø.
 
         Implement some virtual event methods so that we can fix
