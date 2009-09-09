@@ -1,3 +1,15 @@
+2009-09-09  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/29061> Fix obvious copy-paste error in AccessibilityUIElement::clickPointY()
+
+        Reviewed by Mark Rowe.
+
+        No change to layout test results.
+
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::clickPointY): Changed to return y value
+        instead of x value.
+
 2009-09-08  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Mark Rowe.

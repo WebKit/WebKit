@@ -368,7 +368,7 @@ double AccessibilityUIElement::clickPointX()
 double AccessibilityUIElement::clickPointY()
 {
     NSValue* positionValue = [m_element accessibilityAttributeValue:@"AXClickPoint"];
-    return static_cast<double>([positionValue pointValue].x);            
+    return static_cast<double>([positionValue pointValue].y);
 }
 
 double AccessibilityUIElement::intValue()
