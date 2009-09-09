@@ -1,3 +1,9 @@
+2009-09-08  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wxWebKit Python extension build fix - get swig.py if it doesn't exist.
+
+        * wx/build/build_utils.py:
+
 2009-09-08  Mark Rowe  <mrowe@apple.com>
 
         Fix an incorrect variable name in UpdateChromiumSource.
