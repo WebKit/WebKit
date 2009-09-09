@@ -234,7 +234,7 @@ void InsertParagraphSeparatorCommand::doApply()
     if (isStartOfParagraph(visiblePos)) {
         RefPtr<Element> br = createBreakElement(document());
         insertNodeAt(br.get(), insertionPosition);
-        insertionPosition = positionAfterNode(br.get());
+        insertionPosition = positionInParentAfterNode(br.get());
     }
     
     // Move downstream. Typing style code will take care of carrying along the 

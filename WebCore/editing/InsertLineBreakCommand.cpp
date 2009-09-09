@@ -125,12 +125,12 @@ void InsertLineBreakCommand::doApply()
         if (!isStartOfParagraph(VisiblePosition(Position(nodeToInsert.get(), 0))))
             insertNodeBefore(nodeToInsert->cloneNode(false).get(), nodeToInsert.get());
         
-        setEndingSelection(VisibleSelection(positionAfterNode(nodeToInsert.get()), DOWNSTREAM));
+        setEndingSelection(VisibleSelection(positionInParentAfterNode(nodeToInsert.get()), DOWNSTREAM));
     // If we're inserting after all of the rendered text in a text node, or into a non-text node,
     // a simple insertion is sufficient.
     } else if (pos.deprecatedEditingOffset() >= caretMaxOffset(pos.node()) || !pos.node()->isTextNode()) {
         insertNodeAt(nodeToInsert.get(), pos);
-        setEndingSelection(VisibleSelection(positionAfterNode(nodeToInsert.get()), DOWNSTREAM));
+        setEndingSelection(VisibleSelection(positionInParentAfterNode(nodeToInsert.get()), DOWNSTREAM));
     } else {
         // Split a text node
         ASSERT(pos.node()->isTextNode());
@@ -144,7 +144,7 @@ void InsertLineBreakCommand::doApply()
         // Handle whitespace that occurs after the split
         updateLayout();
         if (!endingPosition.isRenderedCharacter()) {
-            Position positionBeforeTextNode(positionBeforeNode(textNode));
+            Position positionBeforeTextNode(positionInParentBeforeNode(textNode));
             // Clear out all whitespace and insert one non-breaking space
             deleteInsignificantTextDownstream(endingPosition);
             ASSERT(!textNode->renderer() || textNode->renderer()->style()->collapseWhiteSpace());

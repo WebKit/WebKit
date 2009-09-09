@@ -2,6 +2,57 @@
 
         Reviewed by Adam Barth.
 
+        Rename positionBeforeNode to positionInParentBeforeNode
+        and positionAfterNode to positionInParentAfterNode
+        in preparation for adding a positionBeforeNode
+        which returns a neighbor-anchored position.
+        https://bugs.webkit.org/show_bug.cgi?id=25494
+
+        No functional changes, thus no tests.
+
+        * dom/PositionConstructors.h:
+        (WebCore::positionInParentBeforeNode):
+        (WebCore::positionInParentAfterNode):
+        * dom/PositionIterator.cpp:
+        (WebCore::PositionIterator::operator Position):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyInlineStyle):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::positionOutsideTabSpan):
+        (WebCore::CompositeEditCommand::breakOutOfEmptyMailBlockquotedParagraph):
+        (WebCore::CompositeEditCommand::positionAvoidingSpecialElementBoundary):
+        * editing/CreateLinkCommand.cpp:
+        (WebCore::CreateLinkCommand::doApply):
+        * editing/DeleteButtonController.cpp:
+        (WebCore::DeleteButtonController::deleteTarget):
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::initializeStartEnd):
+        (WebCore::updatePositionForNodeRemoval):
+        * editing/InsertLineBreakCommand.cpp:
+        (WebCore::InsertLineBreakCommand::doApply):
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::doApply):
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply):
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::input):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::positionAtStartOfInsertedContent):
+        (WebCore::ReplaceSelectionCommand::doApply):
+        * editing/VisibleSelection.cpp:
+        (WebCore::VisibleSelection::adjustSelectionToAvoidCrossingEditingBoundaries):
+        * editing/htmlediting.cpp:
+        (WebCore::firstEditablePositionAfterPositionInRoot):
+        (WebCore::lastEditablePositionBeforePositionInRoot):
+        (WebCore::rangeCompliantEquivalent):
+        (WebCore::positionBeforeContainingSpecialElement):
+        (WebCore::positionAfterContainingSpecialElement):
+        (WebCore::positionBeforeTabSpan):
+
+2009-04-30  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
         Re-organize position creation functions in preparation for adding more
         https://bugs.webkit.org/show_bug.cgi?id=25494
 

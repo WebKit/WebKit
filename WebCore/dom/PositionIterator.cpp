@@ -38,7 +38,7 @@ PositionIterator::operator Position() const
 {
     if (m_nodeAfterPositionInAnchor) {
         ASSERT(m_nodeAfterPositionInAnchor->parentNode() == m_anchorNode);
-        return positionBeforeNode(m_nodeAfterPositionInAnchor);
+        return positionInParentBeforeNode(m_nodeAfterPositionInAnchor);
     }
     if (m_anchorNode->hasChildNodes())
         return lastDeepEditingPositionForNode(m_anchorNode);

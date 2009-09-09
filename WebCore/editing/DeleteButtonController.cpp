@@ -350,7 +350,7 @@ void DeleteButtonController::deleteTarget()
     // Because the deletion UI only appears when the selection is entirely
     // within the target, we unconditionally update the selection to be
     // a caret where the target had been.
-    Position pos = positionBeforeNode(element.get());
+    Position pos = positionInParentBeforeNode(element.get());
     applyCommand(RemoveNodeCommand::create(element.release()));
     m_frame->selection()->setSelection(VisiblePosition(pos));
 }

@@ -137,16 +137,15 @@ void DeleteSelectionCommand::initializeStartEnd(Position& start, Position& end)
             
         if (VisiblePosition(start) != m_selectionToDelete.visibleStart() || VisiblePosition(end) != m_selectionToDelete.visibleEnd())
             break;
-        
-        // If we're going to expand to include the startSpecialContainer, it must be fully selected.
 
-        if (startSpecialContainer && !endSpecialContainer && comparePositions(positionAfterNode(startSpecialContainer), end) > -1)
+        // If we're going to expand to include the startSpecialContainer, it must be fully selected.
+        if (startSpecialContainer && !endSpecialContainer && comparePositions(positionInParentAfterNode(startSpecialContainer), end) > -1)
             break;
 
         // If we're going to expand to include the endSpecialContainer, it must be fully selected.
-        if (endSpecialContainer && !startSpecialContainer && comparePositions(start, positionBeforeNode(endSpecialContainer)) > -1)
+        if (endSpecialContainer && !startSpecialContainer && comparePositions(start, positionInParentBeforeNode(endSpecialContainer)) > -1)
             break;
-        
+
         if (startSpecialContainer && startSpecialContainer->isDescendantOf(endSpecialContainer))
             // Don't adjust the end yet, it is the end of a special element that contains the start
             // special element (which may or may not be fully selected).
@@ -317,7 +316,7 @@ static void updatePositionForNodeRemoval(Node* node, Position& position)
     if (node->parent() == position.node() && node->nodeIndex() < (unsigned)position.deprecatedEditingOffset())
         position = Position(position.node(), position.deprecatedEditingOffset() - 1);
     if (position.node() == node || position.node()->isDescendantOf(node))
-        position = positionBeforeNode(node);
+        position = positionInParentBeforeNode(node);
 }
 
 void DeleteSelectionCommand::removeNode(PassRefPtr<Node> node)

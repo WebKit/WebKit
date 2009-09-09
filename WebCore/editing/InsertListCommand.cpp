@@ -251,7 +251,7 @@ void InsertListCommand::doApply()
             // Also avoid the containing list item.
             Node* listChild = enclosingListChild(insertionPos.node());
             if (listChild && listChild->hasTagName(liTag))
-                insertionPos = positionBeforeNode(listChild);
+                insertionPos = positionInParentBeforeNode(listChild);
 
             insertNodeAt(listElement, insertionPos);
 

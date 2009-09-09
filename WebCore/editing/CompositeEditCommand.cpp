@@ -343,13 +343,13 @@ Position CompositeEditCommand::positionOutsideTabSpan(const Position& pos)
     Node* tabSpan = tabSpanNode(pos.node());
     
     if (pos.deprecatedEditingOffset() <= caretMinOffset(pos.node()))
-        return positionBeforeNode(tabSpan);
+        return positionInParentBeforeNode(tabSpan);
         
     if (pos.deprecatedEditingOffset() >= caretMaxOffset(pos.node()))
-        return positionAfterNode(tabSpan);
+        return positionInParentAfterNode(tabSpan);
 
     splitTextNodeContainingElement(static_cast<Text *>(pos.node()), pos.deprecatedEditingOffset());
-    return positionBeforeNode(tabSpan);
+    return positionInParentBeforeNode(tabSpan);
 }
 
 void CompositeEditCommand::insertNodeAtTabSpanPosition(PassRefPtr<Node> node, const Position& pos)
@@ -986,7 +986,7 @@ bool CompositeEditCommand::breakOutOfEmptyMailBlockquotedParagraph()
     ASSERT(caretPos.node()->hasTagName(brTag) || caretPos.node()->isTextNode() && caretPos.node()->renderer()->style()->preserveNewline());
     
     if (caretPos.node()->hasTagName(brTag)) {
-        Position beforeBR(positionBeforeNode(caretPos.node()));
+        Position beforeBR(positionInParentBeforeNode(caretPos.node()));
         removeNode(caretPos.node());
         prune(beforeBR.node());
     } else {
@@ -1039,7 +1039,7 @@ Position CompositeEditCommand::positionAvoidingSpecialElementBoundary(const Posi
             if (lineBreakExistsAtVisiblePosition(visiblePos) && downstream.node()->isDescendantOf(enclosingAnchor))
                 return original;
             
-            result = positionAfterNode(enclosingAnchor);
+            result = positionInParentAfterNode(enclosingAnchor);
         }
         // If visually just before an anchor, insert *outside* the anchor unless it's the first
         // VisiblePosition in a paragraph, to match NSTextView.
@@ -1053,7 +1053,7 @@ Position CompositeEditCommand::positionAvoidingSpecialElementBoundary(const Posi
             if (!enclosingAnchor)
                 return original;
 
-            result = positionBeforeNode(enclosingAnchor);
+            result = positionInParentBeforeNode(enclosingAnchor);
         }
     }
         
