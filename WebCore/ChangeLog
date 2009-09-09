@@ -1,3 +1,15 @@
+2009-09-09  Rohini Ananth <rohini.ananth@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        NPAPI Plugin NPP_AsFile not working on Qt Webkit
+        https://bugs.webkit.org/show_bug.cgi?id=29068
+
+        * platform/qt/FileSystemQt.cpp:
+        (WebCore::openTemporaryFile)
+        Autoremove property of QTemporaryFile has been set to false. Hence closeFile() just closes and does not delete the file.
+        This solves the deletion of created temp file in PluginStream::destroyStream() before passing to plugin in NPP_AsFile.
+
 2009-09-08  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY (Build fix).
