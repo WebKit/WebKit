@@ -298,4 +298,10 @@ const Cursor& grabbingCursor()
     return pointerCursor();
 }
 
+const Cursor& moveCursor()
+{
+    static Cursor c = new wxCursor(wxCURSOR_SIZING);
+    return c;
+}
+
 }

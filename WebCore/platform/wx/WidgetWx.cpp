@@ -28,6 +28,7 @@
 #include "Cursor.h"
 #include "GraphicsContext.h"
 #include "IntRect.h"
+#include "NotImplemented.h"
 
 #include <wx/defs.h>
 #include <wx/scrolwin.h>
@@ -94,6 +95,11 @@ void Widget::paint(GraphicsContext*,const IntRect& r)
     invalidateRect(r);
     if (PlatformWidget widget = platformWidget())
         widget->Update();
+}
+
+void Widget::setIsSelected(bool)
+{
+    notImplemented();
 }
 
 }

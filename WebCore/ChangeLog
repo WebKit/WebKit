@@ -1,3 +1,61 @@
+2009-09-08  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+
+        [wx port] Move functions in TemporaryLinkStubs.cpp out to files where
+        they belong.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29088
+
+        * editing/wx/EditorWx.cpp:
+        (WebCore::Editor::showColorPanel):
+        (WebCore::Editor::showFontPanel):
+        (WebCore::Editor::showStylesPanel):
+        * platform/graphics/wx/GraphicsContextWx.cpp:
+        (WebCore::GraphicsContext::setPlatformShadow):
+        (WebCore::GraphicsContext::clearPlatformShadow):
+        (WebCore::GraphicsContext::beginTransparencyLayer):
+        (WebCore::GraphicsContext::endTransparencyLayer):
+        (WebCore::GraphicsContext::clearRect):
+        (WebCore::GraphicsContext::strokeRect):
+        (WebCore::GraphicsContext::setLineCap):
+        (WebCore::GraphicsContext::setLineJoin):
+        (WebCore::GraphicsContext::setMiterLimit):
+        (WebCore::GraphicsContext::setAlpha):
+        (WebCore::GraphicsContext::addInnerRoundedRectClip):
+        * platform/graphics/wx/IconWx.cpp: Added.
+        (WebCore::Icon::~Icon):
+        (WebCore::Icon::createIconForFile):
+        (WebCore::Icon::createIconForFiles):
+        (WebCore::Icon::paint):
+        * platform/graphics/wx/ImageWx.cpp:
+        (WebCore::Image::loadPlatformResource):
+        (WebCore::Image::drawPattern):
+        * platform/wx/CursorWx.cpp:
+        (WebCore::moveCursor):
+        * platform/wx/FileChooserWx.cpp: Added.
+        (WebCore::FileChooser::basenameForWidth):
+        * platform/wx/KURLWx.cpp: Added.
+        (WebCore::KURL::fileSystemPath):
+        * platform/wx/SSLKeyGeneratorWx.cpp: Added.
+        (WebCore::getSupportedKeySizes):
+        (WebCore::signedPublicKeyAndChallengeString):
+        * platform/wx/SearchPopupMenuWx.cpp: Added.
+        (WebCore::SearchPopupMenu::SearchPopupMenu):
+        (WebCore::SearchPopupMenu::saveRecentSearches):
+        (WebCore::SearchPopupMenu::loadRecentSearches):
+        (WebCore::SearchPopupMenu::enabled):
+        * platform/wx/SharedBufferWx.cpp: Added.
+        (WebCore::SharedBuffer::createWithContentsOfFile):
+        * platform/wx/SystemTimeWx.cpp: Added.
+        (WebCore::userIdleTime):
+        * platform/wx/TemporaryLinkStubs.cpp: Removed.
+        * platform/wx/TextBreakIteratorInternalICUWx.cpp: Added.
+        (WebCore::currentSearchLocaleID):
+        (WebCore::currentTextBreakLocaleID):
+        * platform/wx/WidgetWx.cpp:
+        (WebCore::Widget::setIsSelected):
+
 2009-09-09  Steve Block  <steveblock@google.com>
 
         Reviewed by Adam Barth.

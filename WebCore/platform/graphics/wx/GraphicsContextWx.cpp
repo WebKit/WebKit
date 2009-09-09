@@ -506,4 +506,59 @@ void GraphicsContext::fillRect(const FloatRect& rect)
         return;
 }
 
+void GraphicsContext::setPlatformShadow(IntSize const&,int,Color const&) 
+{ 
+    notImplemented(); 
+}
+
+void GraphicsContext::clearPlatformShadow() 
+{ 
+    notImplemented(); 
+}
+
+void GraphicsContext::beginTransparencyLayer(float) 
+{ 
+    notImplemented(); 
+}
+
+void GraphicsContext::endTransparencyLayer() 
+{ 
+    notImplemented(); 
+}
+
+void GraphicsContext::clearRect(const FloatRect&) 
+{ 
+    notImplemented(); 
+}
+
+void GraphicsContext::strokeRect(const FloatRect&, float)
+{ 
+    notImplemented(); 
+}
+
+void GraphicsContext::setLineCap(LineCap) 
+{
+    notImplemented(); 
+}
+
+void GraphicsContext::setLineJoin(LineJoin)
+{
+    notImplemented();
+}
+
+void GraphicsContext::setMiterLimit(float)
+{
+    notImplemented();
+}
+
+void GraphicsContext::setAlpha(float)
+{
+    notImplemented();
+}
+
+void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect, int thickness)
+{
+    notImplemented();
+}
+
 }
