@@ -287,7 +287,7 @@ sub GenerateGetOwnPropertySlotBody
 
     my $manualLookupGetterGeneration = sub {
         my $requiresManualLookup = $dataNode->extendedAttributes->{"HasIndexGetter"} || $dataNode->extendedAttributes->{"HasNameGetter"};
-        if ($requiresManualLookup and $numAttributes > 0) {
+        if ($requiresManualLookup) {
             push(@getOwnPropertySlotImpl, "    const ${namespaceMaybe}HashEntry* entry = ${className}Table.entry(exec, propertyName);\n");
             push(@getOwnPropertySlotImpl, "    if (entry) {\n");
             push(@getOwnPropertySlotImpl, "        slot.setCustom(this, entry->propertyGetter());\n");
@@ -364,7 +364,7 @@ sub GenerateGetOwnPropertyDescriptorBody
     
     my $manualLookupGetterGeneration = sub {
         my $requiresManualLookup = $dataNode->extendedAttributes->{"HasIndexGetter"} || $dataNode->extendedAttributes->{"HasNameGetter"};
-        if ($requiresManualLookup and $numAttributes > 0) {
+        if ($requiresManualLookup) {
             push(@getOwnPropertyDescriptorImpl, "    const ${namespaceMaybe}HashEntry* entry = ${className}Table.entry(exec, propertyName);\n");
             push(@getOwnPropertyDescriptorImpl, "    if (entry) {\n");
             push(@getOwnPropertyDescriptorImpl, "        PropertySlot slot;\n");

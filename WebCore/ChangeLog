@@ -1,5 +1,13 @@
 2009-09-08  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by NOBODY (Build fix).
+
+        Remove a few incorrect changes I left in.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+
+2009-09-08  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Sam Weinig.
 
         Support numeric index getters in bindings
