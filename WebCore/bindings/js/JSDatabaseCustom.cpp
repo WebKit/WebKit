@@ -88,7 +88,7 @@ JSValue JSDatabase::changeVersion(ExecState* exec, const ArgList& args)
     return jsUndefined();
 }
 
-JSValue JSDatabase::transaction(ExecState* exec, const ArgList& args)
+static JSValue createTransaction(ExecState* exec, const ArgList& args, Database* database, bool readOnly)
 {
     JSObject* object;
     
@@ -122,9 +122,18 @@ JSValue JSDatabase::transaction(ExecState* exec, const ArgList& args)
         }
     }
     
-    m_impl->transaction(callback.release(), errorCallback.release(), successCallback.release());
-
+    database->transaction(callback.release(), errorCallback.release(), successCallback.release(), readOnly);
     return jsUndefined();
+}
+
+JSValue JSDatabase::transaction(ExecState* exec, const ArgList& args)
+{
+    return createTransaction(exec, args, m_impl.get(), false);
+}
+    
+JSValue JSDatabase::readTransaction(ExecState* exec, const ArgList& args)
+{
+    return createTransaction(exec, args, m_impl.get(), true);
 }
     
 }

@@ -37,6 +37,7 @@
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
+#include <wtf/UnusedParam.h>
 
 namespace WebCore {
 
@@ -47,8 +48,10 @@ static String getDatabaseIdentifier(SQLTransaction* transaction)
     return database->stringIdentifier();
 }
 
-void SQLTransactionCoordinator::acquireLock(SQLTransaction* transaction)
+void SQLTransactionCoordinator::acquireLock(SQLTransaction* transaction, bool readOnly)
 {
+    UNUSED_PARAM(readOnly);
+
     String dbIdentifier = getDatabaseIdentifier(transaction);
 
     TransactionsHashMap::iterator it = m_pendingTransactions.find(dbIdentifier);

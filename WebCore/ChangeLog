@@ -1,3 +1,65 @@
+2009-09-09  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        1. Adding support/bindings for read-only transactions.
+        2. Disallowing the SQLITE_*_VIEW and REINDEX operations in the
+        private browsing mode.
+        3. Adding an authorizer test.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28918
+
+        Test: storage/test-authorizer.html
+
+        * bindings/js/JSDatabaseCustom.cpp:
+        (WebCore::createTransaction): Parses all arguments and executes a
+        transaction.
+        (WebCore::JSDatabase::transaction): Refactored to use
+        createTransaction().
+        (WebCore::JSDatabase::readTransaction): Added to execute read-only
+        transactions using createTransaction().
+        * bindings/v8/custom/V8CustomBinding.h: Added the binding for
+        Database::readTransaction().
+        * bindings/v8/custom/V8DatabaseCustom.cpp:
+        (WebCore::createTransaction): Parses all arguments and executes a
+        transaction.
+        (WebCore::transaction): Refactored to use createTransaction().
+        (WebCore::readTransaction): Added to execute read-only
+        transactions using createTransaction().
+        * storage/Database.cpp:
+        (WebCore::Database::transaction): Added support for read-only
+        transactions.
+        * storage/Database.h: Added support for read-only transactions.
+        * storage/Database.idl: Added support for read-only transactions.
+        * storage/DatabaseAuthorizer.cpp:
+        (WebCore::DatabaseAuthorizer::createTempTable): Make it obvious
+        that the statement will be denied in private browsing mode and
+        read-only transactions.
+        (WebCore::DatabaseAuthorizer::dropTempTable): Same.
+        (WebCore::DatabaseAuthorizer::createTempIndex): Same.
+        (WebCore::DatabaseAuthorizer::dropTempIndex): Same.
+        (WebCore::DatabaseAuthorizer::createTempTrigger): Same.
+        (WebCore::DatabaseAuthorizer::dropTempTrigger): Same.
+        (WebCore::DatabaseAuthorizer::createView): Deny in private
+        browsing mode and read-only transactions.
+        (WebCore::DatabaseAuthorizer::createTempView): Same.
+        (WebCore::DatabaseAuthorizer::dropView): Same.
+        (WebCore::DatabaseAuthorizer::dropTempView): Same.
+        (WebCore::DatabaseAuthorizer::allowReindex): Same.
+        * storage/DatabaseAuthorizer.h:
+        * storage/SQLTransaction.cpp: Added support for read-only
+        transactions.
+        (WebCore::SQLTransaction::create):
+        (WebCore::SQLTransaction::SQLTransaction):
+        (WebCore::SQLTransaction::executeSQL):
+        (WebCore::SQLTransaction::acquireLock):
+        * storage/SQLTransaction.h:
+        * storage/SQLTransactionCoordinator.cpp:
+        (WebCore::SQLTransactionCoordinator::acquireLock): Added a new
+        parameter in preparation for a change that will allow multiple
+        read-only transactions on the same DB to run concurrently.
+        * storage/SQLTransactionCoordinator.h:
+
 2009-09-09  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by Adam Roben.

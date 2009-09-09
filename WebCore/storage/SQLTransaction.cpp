@@ -60,13 +60,13 @@ static const int DefaultQuotaSizeIncrease = 1048576;
 namespace WebCore {
 
 PassRefPtr<SQLTransaction> SQLTransaction::create(Database* db, PassRefPtr<SQLTransactionCallback> callback, PassRefPtr<SQLTransactionErrorCallback> errorCallback,
-                                           PassRefPtr<VoidCallback> successCallback, PassRefPtr<SQLTransactionWrapper> wrapper)
+                                                  PassRefPtr<VoidCallback> successCallback, PassRefPtr<SQLTransactionWrapper> wrapper, bool readOnly)
 {
-    return adoptRef(new SQLTransaction(db, callback, errorCallback, successCallback, wrapper));
+    return adoptRef(new SQLTransaction(db, callback, errorCallback, successCallback, wrapper, readOnly));
 }
 
 SQLTransaction::SQLTransaction(Database* db, PassRefPtr<SQLTransactionCallback> callback, PassRefPtr<SQLTransactionErrorCallback> errorCallback, PassRefPtr<VoidCallback> successCallback,
-                               PassRefPtr<SQLTransactionWrapper> wrapper)
+                               PassRefPtr<SQLTransactionWrapper> wrapper, bool readOnly)
     : m_nextStep(&SQLTransaction::acquireLock)
     , m_executeSqlAllowed(false)
     , m_database(db)
@@ -77,6 +77,7 @@ SQLTransaction::SQLTransaction(Database* db, PassRefPtr<SQLTransactionCallback> 
     , m_shouldRetryCurrentStatement(false)
     , m_modifiedDatabase(false)
     , m_lockAcquired(false)
+    , m_readOnly(readOnly)
 {
     ASSERT(m_database);
 }
@@ -92,10 +93,12 @@ void SQLTransaction::executeSQL(const String& sqlStatement, const Vector<SQLValu
         return;
     }
 
-    bool readOnlyMode = false;
-    Page* page = m_database->document()->page();
-    if (!page || page->settings()->privateBrowsingEnabled())
-        readOnlyMode = true;
+    bool readOnlyMode = m_readOnly;
+    if (!readOnlyMode) {
+        Page* page = m_database->document()->page();
+        if (!page || page->settings()->privateBrowsingEnabled())
+            readOnlyMode = true;
+    }
 
     RefPtr<SQLStatement> statement = SQLStatement::create(sqlStatement, arguments, callback, callbackError, readOnlyMode);
 
@@ -204,7 +207,7 @@ void SQLTransaction::performPendingCallback()
 
 void SQLTransaction::acquireLock()
 {
-    m_database->transactionCoordinator()->acquireLock(this);
+    m_database->transactionCoordinator()->acquireLock(this, m_readOnly);
 }
 
 void SQLTransaction::lockAcquired()

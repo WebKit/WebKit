@@ -48,10 +48,8 @@ CALLBACK_FUNC_DECL(DatabaseChangeVersion)
     return v8::Undefined();
 }
 
-CALLBACK_FUNC_DECL(DatabaseTransaction)
+static v8::Handle<v8::Value> createTransaction(const v8::Arguments& args, bool readOnly)
 {
-    INC_STATS("DOM.Database.transaction()");
-
     if (!args.Length())
         return throwError("Transaction callback is required.", V8Proxy::SyntaxError);
 
@@ -82,12 +80,22 @@ CALLBACK_FUNC_DECL(DatabaseTransaction)
         successCallback = V8CustomVoidCallback::create(args[2], frame);
     }
 
-    database->transaction(callback.release(), errorCallback.release(), successCallback.release());
-
+    database->transaction(callback.release(), errorCallback.release(), successCallback.release(), readOnly);
     return v8::Undefined();
+}
+
+CALLBACK_FUNC_DECL(DatabaseTransaction)
+{
+    INC_STATS("DOM.Database.transaction()");
+    return createTransaction(args, false);
+}
+
+CALLBACK_FUNC_DECL(DatabaseReadTransaction)
+{
+    INC_STATS("DOM.Database.readTransaction()");
+    return createTransaction(args, true);
 }
 
 } // namespace WebCore
 
 #endif
-

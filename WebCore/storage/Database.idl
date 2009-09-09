@@ -34,6 +34,7 @@ module storage {
         readonly attribute DOMString version;
         [Custom] void changeVersion(in DOMString oldVersion, in DOMString newVersion, in SQLTransactionCallback callback, in SQLTransactionErrorCallback errorCallback, in VoidCallback successCallback);
         [Custom] void transaction(in SQLTransactionCallback callback, in SQLTransactionErrorCallback errorCallback, in VoidCallback successCallback);
+        [Custom] void readTransaction(in SQLTransactionCallback callback, in SQLTransactionErrorCallback errorCallback, in VoidCallback successCallback);
     };
 
 }

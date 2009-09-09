@@ -66,7 +66,8 @@ public:
 
 class SQLTransaction : public ThreadSafeShared<SQLTransaction> {
 public:
-    static PassRefPtr<SQLTransaction> create(Database*, PassRefPtr<SQLTransactionCallback>, PassRefPtr<SQLTransactionErrorCallback>, PassRefPtr<VoidCallback>, PassRefPtr<SQLTransactionWrapper>);
+    static PassRefPtr<SQLTransaction> create(Database*, PassRefPtr<SQLTransactionCallback>, PassRefPtr<SQLTransactionErrorCallback>,
+                                             PassRefPtr<VoidCallback>, PassRefPtr<SQLTransactionWrapper>, bool readOnly = false);
 
     ~SQLTransaction();
 
@@ -80,7 +81,8 @@ public:
     Database* database() { return m_database.get(); }
 
 private:
-    SQLTransaction(Database*, PassRefPtr<SQLTransactionCallback>, PassRefPtr<SQLTransactionErrorCallback>, PassRefPtr<VoidCallback>, PassRefPtr<SQLTransactionWrapper>);
+    SQLTransaction(Database*, PassRefPtr<SQLTransactionCallback>, PassRefPtr<SQLTransactionErrorCallback>,
+                   PassRefPtr<VoidCallback>, PassRefPtr<SQLTransactionWrapper>, bool readOnly);
 
     typedef void (SQLTransaction::*TransactionStepMethod)();
     TransactionStepMethod m_nextStep;
@@ -123,6 +125,7 @@ private:
     bool m_shouldRetryCurrentStatement;
     bool m_modifiedDatabase;
     bool m_lockAcquired;
+    bool m_readOnly;
 
     Mutex m_statementMutex;
     Deque<RefPtr<SQLStatement> > m_statementQueue;

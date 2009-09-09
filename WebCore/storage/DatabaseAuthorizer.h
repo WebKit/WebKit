@@ -59,10 +59,10 @@ public:
     int dropTrigger(const String& triggerName, const String& tableName);
     int dropTempTrigger(const String& triggerName, const String& tableName);
 
-    int createView(const String& /*viewName*/) { return SQLAuthAllow; }
-    int createTempView(const String& /*viewName*/) { return SQLAuthAllow; }
-    int dropView(const String& /*viewName*/) { return SQLAuthAllow; }
-    int dropTempView(const String& /*viewName*/) { return SQLAuthAllow; }
+    int createView(const String& viewName);
+    int createTempView(const String& viewName);
+    int dropView(const String& viewName);
+    int dropTempView(const String& viewName);
 
     int createVTable(const String& tableName, const String& moduleName);
     int dropVTable(const String& tableName, const String& moduleName);
@@ -75,7 +75,7 @@ public:
     int allowSelect() { return SQLAuthAllow; }
     int allowRead(const String& tableName, const String& columnName);
 
-    int allowReindex(const String& /*indexName*/) { return SQLAuthAllow; }
+    int allowReindex(const String& indexName);
     int allowAnalyze(const String& tableName);
     int allowFunction(const String& functionName);
     int allowPragma(const String& pragmaName, const String& firstArgument);

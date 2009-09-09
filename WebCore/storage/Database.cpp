@@ -521,9 +521,9 @@ void Database::changeVersion(const String& oldVersion, const String& newVersion,
 }
 
 void Database::transaction(PassRefPtr<SQLTransactionCallback> callback, PassRefPtr<SQLTransactionErrorCallback> errorCallback,
-                           PassRefPtr<VoidCallback> successCallback)
+                           PassRefPtr<VoidCallback> successCallback, bool readOnly)
 {
-    m_transactionQueue.append(SQLTransaction::create(this, callback, errorCallback, successCallback, 0));
+    m_transactionQueue.append(SQLTransaction::create(this, callback, errorCallback, successCallback, 0, readOnly));
     MutexLocker locker(m_transactionInProgressMutex);
     if (!m_transactionInProgress)
         scheduleTransaction();

@@ -43,7 +43,7 @@ namespace WebCore {
 
     class SQLTransactionCoordinator {
     public:
-        void acquireLock(SQLTransaction*);
+        void acquireLock(SQLTransaction*, bool readOnly);
         void releaseLock(SQLTransaction*);
         void shutdown();
     private:
