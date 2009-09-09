@@ -13,7 +13,9 @@ worker.postMessage("ping");
 worker.onmessage = function(event)
 {
     debug(event.data);
-    done();
+
+    // Give the console message a chance to be written out before ending the test (timers are processed after the task queue is empty).
+    setTimeout(done, 0);
 };
 
 function done()

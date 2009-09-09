@@ -1,3 +1,14 @@
+2009-09-08  Drew Wilson  <atwilson@google.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        shared-worker-exception.html needs to pause to let console messages get written out
+        https://bugs.webkit.org/show_bug.cgi?id=29043
+
+        * fast/workers/resources/shared-worker-exception.js:
+        (worker.onmessage):
+        Now invokes layoutTestController.notifyDone() via a timer so any pending ReportException tasks get a chance to fire.
+
 2009-09-08  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Timothy Hatcher.
