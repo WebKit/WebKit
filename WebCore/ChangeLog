@@ -1,3 +1,20 @@
+2009-09-09  Steve Block  <steveblock@google.com>
+
+        Reviewed by Darin Adler.
+
+        When Geolocation permission is denied, stops watches as well as one-shots.
+        https://bugs.webkit.org/show_bug.cgi?id=28305.
+
+        Tests: fast/dom/Geolocation/watch.html
+               fast/dom/Geolocation/permission-denied-stops-watches.html
+
+        * page/Geolocation.cpp: Modified.
+        (WebCore::Geolocation::setIsAllowed): Modified. Marks the permission error as fatal.
+        (WebCore::Geolocation::handleError): Modified. If the error is fatal, stops watchers as well as one-shots.
+        * page/PositionError.h: Modified.
+        (WebCore::PositionError::setIsFatal): Added. Marks an error as fatal.
+        (WebCore::PositionError::isFatal): Added. Determines whether an error is fatal.
+
 2009-09-09  Roland Steiner  <rolandsteiner@google.com>
 
         Reviewed by Eric Seidel.

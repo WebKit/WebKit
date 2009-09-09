@@ -1,0 +1,27 @@
+Tests that watchPosition correctly reports position updates and errors from the Geolocation service.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS position.coords.latitude is mockLatitude
+PASS position.coords.longitude is mockLongitude
+PASS position.coords.accuracy is mockAccuracy
+
+PASS position.coords.latitude is mockLatitude
+PASS position.coords.longitude is mockLongitude
+PASS position.coords.accuracy is mockAccuracy
+
+PASS error.code is mockCode
+PASS error.message is mockMessage
+PASS error.UNKNOWN_ERROR is 0
+PASS error.PERMISSION_DENIED is 1
+PASS error.POSITION_UNAVAILABLE is 2
+PASS error.TIMEOUT is 3
+
+PASS position.coords.latitude is mockLatitude
+PASS position.coords.longitude is mockLongitude
+PASS position.coords.accuracy is mockAccuracy
+
+
+TEST COMPLETE
+

@@ -1,3 +1,17 @@
+2009-09-09  Steve Block  <steveblock@google.com>
+
+        Reviewed by Darin Adler.
+
+        When Geolocation permission is denied, stops watches as well as one-shots.
+        https://bugs.webkit.org/show_bug.cgi?id=28305.
+
+        * fast/dom/Geolocation/resources/watch.js: Added. Tests that a watch correctly reports updates from the Geolocation service.
+        * fast/dom/Geolocation/watch.html: Added. Wrapper for above test.
+        * fast/dom/Geolocation/watch-expected.txt: Added. Expected result for above test.
+        * fast/dom/Geolocation/resources/permission-denied-stops-watches.js: Added. Tests that when Geolocation permission is denied, watches are stopped, as well as one-shots.
+        * fast/dom/Geolocation/permission-denied-stops-watches.html: Added. Wrapper for above test.
+        * fast/dom/Geolocation/permission-denied-stops-watches-expected.txt: Added. Expected result for above test.
+
 2009-09-08  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.
