@@ -32,7 +32,7 @@
 #include "PropertyMapHashTable.h"
 #include "StructureChain.h"
 #include "StructureTransitionTable.h"
-#include "TypeInfo.h"
+#include "JSTypeInfo.h"
 #include "UString.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>

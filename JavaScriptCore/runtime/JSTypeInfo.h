@@ -24,8 +24,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef TypeInfo_h
-#define TypeInfo_h
+#ifndef JSTypeInfo_h
+#define JSTypeInfo_h
+
+// This file would be called TypeInfo.h, but that conflicts with <typeinfo.h>
+// in the STL on systems without case-sensitive file systems. 
 
 #include "JSType.h"
 
@@ -70,4 +73,4 @@ namespace JSC {
 
 }
 
-#endif // TypeInfo_h
+#endif // JSTypeInfo_h
