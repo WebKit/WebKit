@@ -10,11 +10,13 @@
         -webkit-transform: rotate(10deg);
       }
     </style>
+    <script src="media-file.js"></script>
     <script src="video-paint-test.js"></script>
 </head>
 <body onload="init()">
     <p>Zoomed video with controls.</p>
-    <video src="content/test.mp4" width="160" height="120" controls></video>
-    <video class="rotated" src="content/test.mp4" width="160" height="120" controls></video>
+    <video width="160" height="120" controls></video>
+    <video class="rotated" width="160" height="120" controls></video>
+    <script>setSrcByTagName('video', findMediaFile('video', 'content/test'))</script>
 </body>
 </html>

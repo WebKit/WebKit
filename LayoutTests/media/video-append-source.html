@@ -1,16 +1,18 @@
 <video controls></video>
+<script src=media-file.js></script>
 <script src=video-test.js></script>
 
 <script>
     testExpected("video.currentSrc", "");
+    var mediaFile = findMediaFile("video", "content/test");
     var source = document.createElement("source");
-    source.setAttribute("src", "content/test.mp4");
+    source.setAttribute("src", mediaFile);
     video.appendChild(source);
 
     testExpected("video.currentSrc", "");
 
     waitForEvent("load", function () {
-        testExpected("relativeURL(video.currentSrc) ", "content/test.mp4");
+        testExpected("relativeURL(video.currentSrc) ", mediaFile);
         endTest();
     });
 

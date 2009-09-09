@@ -1,3 +1,27 @@
+2009-09-09  Alpha Lam  <hclam@chromium.org>
+
+        Reviewed by Eric Carlson.
+
+        Media layout tests should have a way to provide test files in different formats
+        https://bugs.webkit.org/show_bug.cgi?id=28327
+
+        Added media-file.js which has a findMediaFile(type, name) method
+        to find a proper media file to load according to supported codecs.
+
+        Also changed 10 layout tests to use above method to locate the test file.
+
+        * media/controls-strict.html: Use findMediaFile(type, name).
+        * media/controls-styling.html: ditto.
+        * media/media-file.js: Added. Provide findMediaFile(type, name).
+        * media/video-append-source.html: Use findMediaFile(type, name).
+        * media/video-aspect-ratio.html: ditto.
+        * media/video-autoplay.html: ditto.
+        * media/video-buffered.html: ditto.
+        * media/video-controls-rendering.html: ditto.
+        * media/video-layer-crash.html: ditto.
+        * media/video-transformed.html: Use findMediaFile(type, name).
+        * media/video-zoom-controls.html: ditto.
+
 2009-09-09  Jens Alfke  <snej@chromium.org>
 
         Reviewed by Eric Seidel.

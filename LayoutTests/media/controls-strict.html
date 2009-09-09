@@ -1,10 +1,11 @@
 <!DOCTYPE HTML>
 <html>
     <head>
+        <script src="media-file.js"></script>
         <script src="video-paint-test.js"></script>
     </head>
-    <body onload="init()">
+    <body onload="setSrcByTagName('video', findMediaFile('video', 'content/test')); init()">
         <p>Drawing the controls in strict mode.</p>
-        <video controls src="content/test.mp4"></video>
+        <video controls></video>
     </body>
 </html>

@@ -1,13 +1,15 @@
+<script src="media-file.js"></script>
 <script src="video-paint-test.js"></script>
 <body onload="init()">
 <p>Test controls placement. </p>
 <div>
-    <video controls src="content/test.mp4"></video>
+    <video controls></video>
 </div>
 <div>
-    <video controls src="content/test.mp4" style="width: 320px;"></video>
+    <video controls style="width: 320px;"></video>
 </div>
 <div>
-    <video controls src="content/test.mp4" style="position: absolute; width: 320px;"></video>
+    <video controls style="position: absolute; width: 320px;"></video>
 </div>
+<script>setSrcByTagName('video', findMediaFile('video', 'content/test'))</script>
 </body>
