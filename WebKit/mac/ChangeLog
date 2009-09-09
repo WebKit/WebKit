@@ -1,3 +1,15 @@
+2009-09-09  Jens Alfke  <snej@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Initialize DataTransfer's effectAllowed and dropEffect properties correctly
+        according to HTML5 spec (sec. 7.9.2-7.9.3).
+        https://bugs.webkit.org/show_bug.cgi?id=26700
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _dragSourceMovedTo:]):
+            Pass current drag operation (if known) to EventHandler::dragSourceMovedTo().
+
 2009-09-09  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by Adam Roben.

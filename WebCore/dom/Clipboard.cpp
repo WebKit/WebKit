@@ -40,6 +40,10 @@ Clipboard::Clipboard(ClipboardAccessPolicy policy, bool isForDragging)
     , m_forDragging(isForDragging)
     , m_dragImage(0)
 {
+    if (isForDragging) {
+        // per HTML5 spec, sec. 7.9.2
+        m_effectAllowed = "uninitialized";
+    }
 }
     
 void Clipboard::setAccessPolicy(ClipboardAccessPolicy policy)
@@ -98,7 +102,7 @@ static String IEOpFromDragOp(DragOperation op)
 
 bool Clipboard::sourceOperation(DragOperation& op) const
 {
-    if (m_effectAllowed.isNull())
+    if (m_effectAllowed.isNull() || m_effectAllowed == "uninitialized")
         return false;
     op = dragOpFromIEOp(m_effectAllowed);
     return true;

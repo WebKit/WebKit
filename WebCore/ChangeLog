@@ -1,3 +1,56 @@
+2009-09-09  Jens Alfke  <snej@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Initialize DataTransfer's effectAllowed and dropEffect properties correctly
+        according to HTML5 spec (sec. 7.9.2-7.9.3).
+        https://bugs.webkit.org/show_bug.cgi?id=26700
+        - At the start of a drag operation, the value of effectAllowed should be
+          the string "uninitialized".
+        - At end of dragstart handler, if effectAllowed hasn't been set yet, it
+          should be set to "copy".
+        - on dragenter and dragover event, dropEffect should be initialized to a
+          default value based on the value of effectAllowed.
+        - at end of dragenter and dragover the dropEffect should be set to "none"
+          if the value set by the handler doesn't match the effectAllowed.
+        - on dragleave event, dropEffect should be "none".
+        - on drop event, dropEffect should be the previously negotiated value.
+
+        Test: fast/events/drag-dropeffect.html
+
+        * WebCore.base.exp:
+            Added a parameter to EventHandler::dragSourceMovedTo.
+        * dom/Clipboard.cpp:
+        (WebCore::Clipboard::Clipboard):
+            Initialize m_effectAllowed to "uninitialized".
+        (WebCore::Clipboard::sourceOperation):
+            Treat "uninitialized" as meaning no value has been set.
+        * page/DragController.cpp:
+        (WebCore::DragController::DragController):
+            Initialize new member m_destinationDragOperation.
+        (WebCore::DragController::dragExited):
+            Set m_destinationDragOperation to none on dragExit.
+        (WebCore::DragController::performDrag):
+            Set m_destinationDragOperation to current dropEffect.
+        (WebCore::DragController::dragEnteredOrUpdated):
+            Make sure to clear the operation if drag source doesn't allow it.
+        (WebCore::DragController::tryDHTMLDrag):
+            Set a default value for the dst drag op before sending dragEnter/Over.
+        (WebCore::DragController::startDrag):
+            Clear m_destinationDragOperation at start of drag.
+        * page/DragController.h:
+        (WebCore::DragController::destinationDragOperation):
+            Added new member m_destinationDragOperation, and its public getter.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::updateDragAndDrop):
+            dropEffect should be 'none' during dropleave handler, per spec.
+        (WebCore::EventHandler::dragSourceMovedTo):
+            Added DragOperation parameter, so the handler sees the current dropEffect.
+        (WebCore::EventHandler::handleDrag):
+            Assume DragOperationEvery for non-DHTML drags.
+        * page/EventHandler.h:
+            Added DragOperation parameter to dragSourceMovedTo().
+
 2009-09-09  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Dimitri Glazkov.

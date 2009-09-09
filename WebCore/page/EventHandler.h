@@ -146,7 +146,7 @@ public:
 
     bool eventMayStartDrag(const PlatformMouseEvent&) const;
     
-    void dragSourceMovedTo(const PlatformMouseEvent&);
+    void dragSourceMovedTo(const PlatformMouseEvent&, DragOperation = DragOperationNone);
     void dragSourceEndedAt(const PlatformMouseEvent&, DragOperation);
 
     void focusDocumentView();
