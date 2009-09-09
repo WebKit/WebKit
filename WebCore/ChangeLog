@@ -1,3 +1,28 @@
+2009-07-30  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Re-organize position creation functions in preparation for adding more
+        https://bugs.webkit.org/show_bug.cgi?id=25494
+
+        Make position functions inline to avoid ref-churn.
+        Remove startPosition/endPosition as they were only used in one place.
+
+        No functional changes, thus no tests.
+
+        * dom/Position.cpp:
+        * dom/Position.h:
+        (WebCore::positionBeforeNode):
+        (WebCore::positionAfterNode):
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::moveTo):
+        * editing/TypingCommand.cpp:
+        * editing/htmlediting.cpp:
+        * editing/htmlediting.h:
+        (WebCore::firstDeepEditingPositionForNode):
+        (WebCore::lastDeepEditingPositionForNode):
+        * rendering/RenderObject.cpp:
+
 2009-09-09  Kevin Watters  <kevinwatters@gmail.com>
 
         Reviewed by Kevin Ollivier.

@@ -578,20 +578,6 @@ Node* isLastPositionBeforeTable(const VisiblePosition& visiblePosition)
     return 0;
 }
 
-Position positionBeforeNode(const Node* node)
-{
-    ASSERT(node);
-    // FIXME: Should ASSERT(node->parentNode()) but doing so results in editing/deleting/delete-ligature-001.html crashing
-    return Position(node->parentNode(), node->nodeIndex());
-}
-
-Position positionAfterNode(const Node* node)
-{
-    ASSERT(node);
-    // FIXME: Should ASSERT(node->parentNode()) but doing so results in editing/deleting/delete-ligature-001.html crashing
-    return Position(node->parentNode(), node->nodeIndex() + 1);
-}
-
 // Returns the visible position at the beginning of a node
 VisiblePosition visiblePositionBeforeNode(Node* node)
 {

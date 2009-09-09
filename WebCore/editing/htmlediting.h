@@ -29,6 +29,7 @@
 #include <wtf/Forward.h>
 #include "HTMLNames.h"
 #include "ExceptionCode.h"
+#include "Position.h"
 
 namespace WebCore {
 
@@ -70,8 +71,27 @@ const String& nonBreakingSpaceString();
 
 //------------------------------------------------------------------------------------------
 
-Position positionBeforeNode(const Node*);
-Position positionAfterNode(const Node*);
+
+// Position creation functions are inline to prevent ref-churn.
+// Other Position creation functions are in Position.h
+// but these depend on lastOffsetForEditing which is defined in htmlediting.h.
+
+// NOTE: first/lastDeepEditingPositionForNode return legacy editing positions (like [img, 0])
+// for elements which editing ignores.  The rest of the editing code will treat [img, 0]
+// as "the last position before the img".
+// New code should use the creation functions in Position.h instead.
+inline Position firstDeepEditingPositionForNode(Node* anchorNode)
+{
+    ASSERT(anchorNode);
+    return Position(anchorNode, 0);
+}
+
+inline Position lastDeepEditingPositionForNode(Node* anchorNode)
+{
+    ASSERT(anchorNode);
+    return Position(anchorNode, lastOffsetForEditing(anchorNode));
+}
+
 VisiblePosition visiblePositionBeforeNode(Node*);
 VisiblePosition visiblePositionAfterNode(Node*);
 PassRefPtr<Range> createRange(PassRefPtr<Document>, const VisiblePosition& start, const VisiblePosition& end, ExceptionCode&);

@@ -90,7 +90,8 @@ void SelectionController::moveTo(const Position &pos, EAffinity affinity, bool u
 
 void SelectionController::moveTo(const Range *r, EAffinity affinity, bool userTriggered)
 {
-    setSelection(VisibleSelection(startPosition(r), endPosition(r), affinity), true, true, userTriggered);
+    VisibleSelection selection = r ? VisibleSelection(r->startPosition(), r->endPosition(), affinity) : VisibleSelection(Position(), Position(), affinity);
+    setSelection(selection, true, true, userTriggered);
 }
 
 void SelectionController::moveTo(const Position &base, const Position &extent, EAffinity affinity, bool userTriggered)
