@@ -1,3 +1,21 @@
+2009-09-09  Carol Szabo  <carol.szabo@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] CSS Style -webkit-box-shadow is not rendered correctly on
+        Qt platform
+        https://bugs.webkit.org/show_bug.cgi?id=23291
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::drawRect):
+        (WebCore::GraphicsContext::strokeArc):
+        (WebCore::GraphicsContext::drawConvexPolygon):
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::fillRoundedRect):
+         Added the ability to draw shadows for all these curves.
+
 2009-09-09  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Simon Hausmann.
