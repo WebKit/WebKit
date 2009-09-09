@@ -1,3 +1,14 @@
+2009-09-09  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        Implement flushing the instruction cache for Symbian
+        https://bugs.webkit.org/show_bug.cgi?id=29075
+
+        * jit/ExecutableAllocator.h:
+        (JSC::ExecutableAllocator::cacheFlush): Call IMB_Range to flush
+        the instruction cache on Symbian
+
 2009-09-09  Kent Hansen  <khansen@trolltech.com>
 
         Reviewed by Darin Adler.

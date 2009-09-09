@@ -38,6 +38,10 @@
 #include <sys/mman.h>
 #endif
 
+#if PLATFORM(SYMBIAN)
+#include <e32std.h>
+#endif
+
 #define JIT_ALLOCATOR_PAGE_SIZE (ExecutableAllocator::pageSize)
 #define JIT_ALLOCATOR_LARGE_ALLOC_SIZE (ExecutableAllocator::pageSize * 4)
 
@@ -181,6 +185,11 @@ public:
     {
         sys_dcache_flush(code, size);
         sys_icache_invalidate(code, size);
+    }
+#elif PLATFORM(SYMBIAN)
+    static void cacheFlush(void* code, size_t size)
+    {
+        User::IMB_Range(code, reinterpret_cast<char*>(code) + size);
     }
 #elif PLATFORM(ARM)
     static void cacheFlush(void* code, size_t size)
