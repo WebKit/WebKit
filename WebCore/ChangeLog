@@ -1,3 +1,43 @@
+2009-09-09  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29102, add support for user stylesheet injection.  This is similar
+        to user script injection but allows for user stylesheets to be added.  The stylesheets are applied immediately
+        to all Frames in the PageGroup.
+
+        Added userscripts/simple-stylesheet.html test case.
+
+        * WebCore.base.exp:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::CSSStyleSelector):
+        * css/CSSStyleSelector.h:
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::attach):
+        (WebCore::Document::pageGroupUserSheets):
+        (WebCore::Document::clearPageGroupUserSheets):
+        (WebCore::Document::recalcStyleSelector):
+        * dom/Document.h:
+        * loader/PlaceholderDocument.cpp:
+        (WebCore::PlaceholderDocument::attach):
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::addUserStyleSheet):
+        (WebCore::PageGroup::removeUserContentForWorld):
+        (WebCore::PageGroup::removeAllUserContent):
+        * page/PageGroup.h:
+        (WebCore::PageGroup::userStyleSheets):
+        * page/UserStyleSheet.h: Added.
+        (WebCore::UserStyleSheet::UserStyleSheet):
+        (WebCore::UserStyleSheet::source):
+        (WebCore::UserStyleSheet::url):
+        (WebCore::UserStyleSheet::patterns):
+        (WebCore::UserStyleSheet::worldID):
+        * page/UserStyleSheetTypes.h: Added.
+
 2009-09-09  Carol Szabo  <carol.szabo@nokia.com>
 
         Reviewed by Ariya Hidayat.

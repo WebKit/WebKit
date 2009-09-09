@@ -1701,6 +1701,8 @@
             'page/Settings.h',
             'page/UserScript.h',
             'page/UserScriptTypes.h',
+            'page/UserStyleSheet.h',
+            'page/UserStyleSheetTypes.h',
             'page/WebKitPoint.h',
             'page/WindowFeatures.cpp',
             'page/WindowFeatures.h',

@@ -466,3 +466,8 @@ void LayoutTestController::addUserScript(JSStringRef source, bool runAtStart)
 {
     printf("LayoutTestController::addUserScript not implemented.\n");
 }
+
+void LayoutTestController::addUserStyleSheet(JSStringRef source)
+{
+    printf("LayoutTestController::addUserStyleSheet not implemented.\n");
+}

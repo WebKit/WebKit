@@ -31,6 +31,7 @@
 #include "LinkHash.h"
 #include "StringHash.h"
 #include "UserScript.h"
+#include "UserStyleSheet.h"
 
 namespace WebCore {
 
@@ -72,7 +73,10 @@ namespace WebCore {
         void addUserScript(const String& source, const KURL&, const Vector<String>& patterns,
                            unsigned worldID, UserScriptInjectionTime);
         const UserScriptMap* userScripts() const { return m_userScripts.get(); }
-
+        
+        void addUserStyleSheet(const String& source, const KURL&, const Vector<String>& patterns, unsigned worldID);
+        const UserStyleSheetMap* userStyleSheets() const { return m_userStyleSheets.get(); }
+        
         void removeUserContentForWorld(unsigned);
         void removeAllUserContent();
         
@@ -92,6 +96,7 @@ namespace WebCore {
 #endif
 
         OwnPtr<UserScriptMap> m_userScripts;
+        OwnPtr<UserStyleSheetMap> m_userStyleSheets;
     };
 
 } // namespace WebCore

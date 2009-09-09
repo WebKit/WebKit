@@ -80,7 +80,8 @@ public:
     // This class selects a RenderStyle for a given element based on a collection of stylesheets.
     class CSSStyleSelector : public Noncopyable {
     public:
-        CSSStyleSelector(Document*, CSSStyleSheet* userStyleSheet, StyleSheetList* authorSheets, CSSStyleSheet* mappedElementSheet,
+        CSSStyleSelector(Document*, StyleSheetList* authorSheets, CSSStyleSheet* mappedElementSheet,
+                         CSSStyleSheet* pageUserSheet, const Vector<RefPtr<CSSStyleSheet> >* pageGroupUserSheets,
                          bool strictParsing, bool matchAuthorAndUserStyles);
         ~CSSStyleSelector();
 

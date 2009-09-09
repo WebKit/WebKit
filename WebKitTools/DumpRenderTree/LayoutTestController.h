@@ -188,6 +188,7 @@ public:
     void whiteListAccessFromOrigin(JSStringRef sourceOrigin, JSStringRef destinationProtocol, JSStringRef destinationHost, bool allowDestinationSubdomains);
 
     void addUserScript(JSStringRef source, bool runAtStart);
+    void addUserStyleSheet(JSStringRef source);
 
     void setGeolocationPermission(bool allow);
     bool isGeolocationPermissionSet() const { return m_isGeolocationPermissionSet; }

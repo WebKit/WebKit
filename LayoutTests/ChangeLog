@@ -1,3 +1,18 @@
+2009-09-09  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29102, add support for user stylesheet injection.  This is similar
+        to user script injection but allows for user stylesheets to be added.  The stylesheets are applied immediately
+        to all Frames in the PageGroup.
+
+        Added userscripts/simple-stylesheet.html test case.
+
+        * platform/mac/userscripts/simple-stylesheet-expected.checksum: Added.
+        * platform/mac/userscripts/simple-stylesheet-expected.png: Added.
+        * platform/mac/userscripts/simple-stylesheet-expected.txt: Added.
+        * userscripts/simple-stylesheet.html: Added.
+
 2009-09-09  Carol Szabo  <carol.szabo@nokia.com>
 
         Reviewed by Ariya Hidayat.

@@ -1,3 +1,17 @@
+2009-09-09  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29102, add support for user stylesheet injection.  This is similar
+        to user script injection but allows for user stylesheets to be added.  The stylesheets are applied immediately
+        to all Frames in the PageGroup.
+
+        Added userscripts/simple-stylesheet.html test case.
+
+        * WebView/WebView.mm:
+        (+[WebView _addUserStyleSheetToGroup:source:url:worldID:patterns:]):
+        * WebView/WebViewPrivate.h:
+
 2009-09-07  Steve Block  <steveblock@google.com>
 
         Reviewed by Adam Barth.

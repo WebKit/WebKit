@@ -17068,12 +17068,20 @@
 				RelativePath="..\page\Settings.h"
 				>
 			</File>
-      <File
+                        <File
 				RelativePath="..\page\UserScript.h"
 				>
 			</File>
-      <File
+                        <File
 				RelativePath="..\page\UserScriptTypes.h"
+				>
+			</File>
+                        <File
+				RelativePath="..\page\UserStyleSheet.h"
+				>
+			</File>
+                        <File
+				RelativePath="..\page\UserStyleSheetTypes.h"
 				>
 			</File>
 			<File
