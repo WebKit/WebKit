@@ -1,5 +1,11 @@
 2009-09-08  Mark Rowe  <mrowe@apple.com>
 
+        Fix an incorrect variable name in UpdateChromiumSource.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+
+2009-09-08  Mark Rowe  <mrowe@apple.com>
+
         Don't check for leaks on the release SnowLeopard builder.
 
         * BuildSlaveSupport/build.webkit.org-config/config.json:
