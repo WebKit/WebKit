@@ -1,3 +1,13 @@
+2009-09-09  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by David Levin.
+
+        commit-queue hangs if a builder has never built
+        https://bugs.webkit.org/show_bug.cgi?id=29091
+
+        * Scripts/modules/buildbot.py:
+        * Scripts/modules/buildbot_unittest.py:
+
 2009-09-09  Zan Dobersek  <zandobersek@gmail.com>
 
         Reviewed by Gustavo Noronha.

@@ -41,6 +41,10 @@ class BuildBotTest(unittest.TestCase):
       <td align="center" class="LastBuild box success"><a href="builders/Windows%20Debug%20%28Tests%29/builds/3693">47380</a><br />build<br />successful</td>
       <td align="center" class="Activity building">building<br />ETA in<br />~ 14 mins<br />at 13:40</td>
     <tr>
+    <td class="box"><a href="builders/SnowLeopard%20Intel%20Release">SnowLeopard Intel Release</a></td>
+      <td class="LastBuild box" >no build</td>
+      <td align="center" class="Activity building">building<br />< 1 min</td>
+    <tr>
     <td class="box"><a href="builders/Qt%20Linux%20Release">Qt Linux Release</a></td>
       <td align="center" class="LastBuild box failure"><a href="builders/Qt%20Linux%20Release/builds/654">47383</a><br />failed<br />compile-webkit</td>
       <td align="center" class="Activity idle">idle</td>
@@ -53,6 +57,11 @@ class BuildBotTest(unittest.TestCase):
             'is_green': True,
             'name': u'Windows Debug (Tests)',
             'built_revision': 47380
+        },
+        {
+            'builder_url': u'http://build.webkit.org/builders/SnowLeopard%20Intel%20Release',
+            'is_green': False,
+            'name': u'SnowLeopard Intel Release',
         },
         {
             'builder_url': u'http://build.webkit.org/builders/Qt%20Linux%20Release',

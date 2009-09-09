@@ -59,6 +59,11 @@ class BuildBot:
         builder['builder_url'] = self.buildbot_server_url + name_link['href']
 
         status_link = status_cells[1].find('a')
+        if not status_link:
+            # We failed to find a link in the first cell, just give up.
+            # This can happen if a builder is just-added, the first cell will just be "no build"
+            builder['is_green'] = False # Other parts of the code depend on is_green being present.
+            return builder
         revision_string = status_link.string # Will be either a revision number or a build number
         # If revision_string has non-digits assume it's not a revision number.
         builder['built_revision'] = int(revision_string) if not re.match('\D', revision_string) else None
