@@ -45,6 +45,7 @@
 #include "qwebframe_p.h"
 #include "qwebsecurityorigin.h"
 #include "qwebsecurityorigin_p.h"
+#include "qwebview.h"
 
 #include <qtooltip.h>
 #include <qtextdocument.h>
@@ -307,8 +308,8 @@ void ChromeClientQt::repaint(const IntRect& windowRect, bool contentChanged, boo
 {
     // No double buffer, so only update the QWidget if content changed.
     if (contentChanged) {
-        QWidget* view = m_webPage->view();
-        if (view) {
+        // Only do implicit paints for QWebView's
+        if (QWebView* view = qobject_cast<QWebView*>(m_webPage->view())) {
             QRect rect(windowRect);
             rect = rect.intersected(QRect(QPoint(0, 0), m_webPage->viewportSize()));
             if (!rect.isEmpty())
@@ -323,8 +324,8 @@ void ChromeClientQt::repaint(const IntRect& windowRect, bool contentChanged, boo
 
 void ChromeClientQt::scroll(const IntSize& delta, const IntRect& scrollViewRect, const IntRect&)
 {
-    QWidget* view = m_webPage->view();
-    if (view)
+    // Only do implicit paints for QWebView's
+    if (QWebView* view = qobject_cast<QWebView*>(m_webPage->view()))
         view->scroll(delta.width(), delta.height(), scrollViewRect);
     emit m_webPage->scrollRequested(delta.width(), delta.height(), scrollViewRect);
 }

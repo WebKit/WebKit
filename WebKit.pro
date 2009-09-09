@@ -5,6 +5,7 @@ SUBDIRS += \
         WebCore \
         JavaScriptCore/jsc.pro \
         WebKit/qt/QtLauncher \
+        WebKit/qt/QGVLauncher \
         WebKit/qt/tests
 
 !win32:!symbian {

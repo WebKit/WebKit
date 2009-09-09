@@ -1,3 +1,13 @@
+2009-09-09  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        Add the qwebgraphicsitem.cpp to the build system.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28862
+
+        * WebCore.pro:
+
 2009-09-08  Kevin Watters  <kevinwatters@gmail.com>
 
         Reviewed by Kevin Ollivier.

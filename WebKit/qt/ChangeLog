@@ -1,3 +1,24 @@
+2009-09-09  Kenneth Rohde Christiansen  <kenneth@webkit.org>, Antonio Gomes  <antonio.gomes@openbossa.org>
+
+        Reviewed by Simon Hausmann.
+
+        Add a new QGraphicsWidget based version of the "QWebView"
+        under the name "QWebGraphicsItem".
+
+        https://bugs.webkit.org/show_bug.cgi?id=28862
+
+        Includes an alternative Qt launcher using the QGraphicsView.
+
+        * Api/headers.pri:
+        * Api/qwebgraphicsitem.cpp: Added.
+        * Api/qwebgraphicsitem.h: Added.
+        * Api/qwebpage.h:
+        * QGVLauncher/QGVLauncher.pro: Copied from WebKit/qt/QtLauncher/QtLauncher.pro.
+        * QGVLauncher/main.cpp: Added.
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::repaint):
+        (WebCore::ChromeClientQt::scroll):
+
 2009-09-08  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Unreviewed build fix.
