@@ -1,3 +1,16 @@
+2009-09-08  Pat Bradley  <vincent.bradley@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] locale date displays incorrect date format in symbian.
+        https://bugs.webkit.org/show_bug.cgi?id=29032
+
+        strftime() in Symbian does not support #
+        Layout tests cannot be run on Symbian yet, so they are not updated.
+
+        * runtime/DatePrototype.cpp:
+        (JSC::formatLocaleDate):
+
 2009-09-09  Rohini Ananth <rohini.ananth@nokia.com>
 
         Reviewed by Simon Hausmann.
