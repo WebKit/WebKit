@@ -1,5 +1,22 @@
 2009-09-09  Steve Block  <steveblock@google.com>
 
+        Reviewed by Adam Barth.
+
+        Geolocation incorrectly calls error callback in case of exception in success callback.
+        https://bugs.webkit.org/show_bug.cgi?id=27255
+
+        Test: fast/dom/Geolocation/callback-exception.html
+
+        * bindings/js/JSCustomPositionCallback.cpp: Modified.
+        (WebCore::JSCustomPositionCallback::handleEvent): Modified. Removed raisedException out param.
+        * bindings/js/JSCustomPositionCallback.h: Modified. Removed raisedException out param from handleEvent method and made handleEvent private.
+        * bindings/js/JSCustomPositionErrorCallback.h: Modified. Made handleEvent private.
+        * page/Geolocation.cpp: Modified.
+        (WebCore::Geolocation::sendPosition): Modified. No longer call error callback in case of exception in success callback.
+        * page/PositionCallback.h: Modified. Removed raisedException out param from handleEvent method.
+
+2009-09-09  Steve Block  <steveblock@google.com>
+
         Reviewed by Darin Adler.
 
         When Geolocation permission is denied, stops watches as well as one-shots.

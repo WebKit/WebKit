@@ -1,5 +1,17 @@
 2009-09-09  Steve Block  <steveblock@google.com>
 
+        Reviewed by Adam Barth.
+
+        Geolocation incorrectly calls error callback in case of exception in success callback.
+        https://bugs.webkit.org/show_bug.cgi?id=27255
+
+        * fast/dom/Geolocation/resources/callback-exception.js: Added. Tests that when an exception is thrown from the success callback, the error callback is not invoked.
+        * fast/dom/Geolocation/callback-exception.html: Added. Wrapper for above test.
+        * fast/dom/Geolocation/callback-exception-expected.txt: Added. Expected result for above test.
+        * platform/gtk/Skipped: Modified. Adds the above tests to the skipped list.
+
+2009-09-09  Steve Block  <steveblock@google.com>
+
         Reviewed by Darin Adler.
 
         When Geolocation permission is denied, stops watches as well as one-shots.

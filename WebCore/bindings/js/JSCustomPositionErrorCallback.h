@@ -44,10 +44,9 @@ class JSCustomPositionErrorCallback : public PositionErrorCallback {
 public:
     static PassRefPtr<JSCustomPositionErrorCallback> create(JSC::JSObject* callback, Frame* frame) { return adoptRef(new JSCustomPositionErrorCallback(callback, frame)); }
     
-    virtual void handleEvent(PositionError*);
-
 private:
     JSCustomPositionErrorCallback(JSC::JSObject* callback, Frame*);
+    virtual void handleEvent(PositionError*);
 
     JSC::ProtectedPtr<JSC::JSObject> m_callback;
     RefPtr<Frame> m_frame;
