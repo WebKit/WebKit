@@ -189,7 +189,7 @@ public:
 #elif PLATFORM(SYMBIAN)
     static void cacheFlush(void* code, size_t size)
     {
-        User::IMB_Range(code, reinterpret_cast<char*>(code) + size);
+        User::IMB_Range(code, static_cast<char*>(code) + size);
     }
 #elif PLATFORM(ARM)
     static void cacheFlush(void* code, size_t size)
