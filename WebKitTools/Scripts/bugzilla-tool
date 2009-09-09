@@ -351,8 +351,8 @@ class LandPatchesFromBugs(Command):
             if options.close_bug:
                 tool.bugs.close_bug_as_fixed(bug_id, "All reviewed patches have been landed.  Closing bug.")
         except ScriptError, e:
-            tool.bugs.reject_patch_from_commit_queue(patch['id'], e)
-            # We should add a comment to the bug, and r- the patch on failure
+            # Mark the patch as commit-queue- and comment in the bug.
+            tool.bugs.reject_patch_from_commit_queue(patch['id'], "This patch will require manual commit. %s" % e)
             error(e)
 
     @staticmethod
@@ -362,7 +362,7 @@ class LandPatchesFromBugs(Command):
         for bug_id in args:
             patches = []
             if options.commit_queue:
-                patches = tool.bugs.fetch_commit_queue_patches_from_bug(bug_id)
+                patches = tool.bugs.fetch_commit_queue_patches_from_bug(bug_id, reject_invalid_patches=True)
             else:
                 patches = tool.bugs.fetch_reviewed_patches_from_bug(bug_id)
 
@@ -701,11 +701,14 @@ class LandPatchesFromCommitQueue(Command):
             # Either of these calls could throw URLError which shouldn't stop the queue.
             # We catch all exceptions just in case.
             try:
-                bug_ids = tool.bugs.fetch_bug_ids_from_commit_queue()
-                if not len(bug_ids):
+                # Fetch patches instead of just bug ids to that we validate reviewer/committer flags on every patch.
+                patches = tool.bugs.fetch_patches_from_commit_queue(reject_invalid_patches=True)
+                if not len(patches):
                     self._sleep("Empty queue.")
                     continue
-                log("%s in commit queue. [%s]" % (pluralize('bug', len(bug_ids)), ", ".join(bug_ids)))
+                patch_ids = map(lambda patch: patch['id'], patches)
+                first_bug_id = patches[0]['bug_id']
+                log("%s in commit queue [%s]" % (pluralize('patch', len(patches)), ", ".join(patch_ids)))
 
                 if not tool.buildbot.core_builders_are_green():
                     self._sleep("Builders are red.")
@@ -715,11 +718,10 @@ class LandPatchesFromCommitQueue(Command):
                 continue
 
             # Try to land patches on the first bug in the queue before looping
-            bug_id = bug_ids[0]
-            bug_log_path = os.path.join(self.bug_logs_directory, "%s.log" % bug_id)
+            bug_log_path = os.path.join(self.bug_logs_directory, "%s.log" % first_bug_id)
             bug_log = self._add_log_to_output_tee(bug_log_path)
             bugzilla_tool_path = __file__ # re-execute this script
-            self._run_command([bugzilla_tool_path, 'land-patches', '--force-clean', '--commit-queue', '--quiet', bug_id])
+            self._run_command([bugzilla_tool_path, 'land-patches', '--force-clean', '--commit-queue', '--quiet', first_bug_id])
             self._remove_log_from_output_tee(bug_log)
 
         log("Finished WebKit Commit Queue. %s" % datetime.now())

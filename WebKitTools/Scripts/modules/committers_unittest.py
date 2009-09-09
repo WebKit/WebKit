@@ -42,11 +42,11 @@ class CommittersTest(unittest.TestCase):
         self.assertEqual(committer_list.committer_by_bugzilla_email('two@test.com'), reviewer)
 
         # Test that a known committer is not returned during reviewer lookup
-        self.assertRaises(Exception, committer_list.reviewer_by_bugzilla_email, 'one@test.com')
+        self.assertEqual(committer_list.reviewer_by_bugzilla_email('one@test.com'), None)
 
         # Test that unknown email address fail both committer and reviewer lookup
-        self.assertRaises(Exception, committer_list.committer_by_bugzilla_email, 'bar@bar.com')
-        self.assertRaises(Exception, committer_list.reviewer_by_bugzilla_email, 'bar@bar.com')
+        self.assertEqual(committer_list.committer_by_bugzilla_email('bar@bar.com'), None)
+        self.assertEqual(committer_list.reviewer_by_bugzilla_email('bar@bar.com'), None)
 
 if __name__ == '__main__':
     unittest.main()

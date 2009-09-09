@@ -149,6 +149,11 @@ class Bugzilla:
             action_param = "&action=%s" % action
         return "%sattachment.cgi?id=%s%s" % (self.bug_server_url, attachment_id, action_param)
 
+    def _parse_attachment_flag(self, element, flag_name, attachment, result_key):
+        flag = element.find('flag', attrs={'name' : flag_name})
+        if flag and flag['status'] == '+':
+            attachment[result_key] = flag['setter']
+
     def _parse_attachment_element(self, element, bug_id):
         attachment = {}
         attachment['bug_id'] = bug_id
@@ -158,19 +163,8 @@ class Bugzilla:
         attachment['url'] = self.attachment_url_for_id(attachment['id'])
         attachment['name'] = unicode(element.find('desc').string)
         attachment['type'] = str(element.find('type').string)
-
-        review_flag = element.find('flag', attrs={"name" : "review"})
-        if review_flag and review_flag['status'] == '+':
-            reviewer_email = review_flag['setter']
-            reviewer = self.committers.reviewer_by_bugzilla_email(reviewer_email)
-            attachment['reviewer'] = reviewer.full_name
-
-        commit_queue_flag = element.find('flag', attrs={"name" : "commit-queue"})
-        if commit_queue_flag and commit_queue_flag['status'] == '+':
-            committer_email = commit_queue_flag['setter']
-            committer = self.committers.committer_by_bugzilla_email(committer_email)
-            attachment['commit-queue'] = committer.full_name
-
+        self._parse_attachment_flag(element, 'review', attachment, 'reviewer_email')
+        self._parse_attachment_flag(element, 'commit-queue', attachment, 'committer_email')
         return attachment
 
     def fetch_attachments_from_bug(self, bug_id):
@@ -199,17 +193,45 @@ class Bugzilla:
                 patches.append(attachment)
         return patches
 
-    def fetch_reviewed_patches_from_bug(self, bug_id):
+    # _view_source_link belongs in some sort of webkit_config.py module.
+    def _view_source_link(self, local_path):
+        return "http://trac.webkit.org/browser/trunk/%s" % local_path
+
+    def _validate_setter_email(self, patch, result_key, lookup_function, rejection_function, reject_invalid_patches):
+        setter_email = patch.get(result_key + '_email')
+        if not setter_email:
+            return None
+
+        committer = lookup_function(setter_email)
+        if committer:
+            patch[result_key] = committer.full_name
+            return patch[result_key]
+
+        if reject_invalid_patches:
+            committer_list = "WebKitTools/Scripts/modules/committers.py"
+            failure_message = "%s does not have %s permissions according to %s." % (setter_email, result_key, self._view_source_link(committer_list))
+            rejection_function(patch['id'], failure_message)
+        else:
+            log("Warning, attachment %s on bug %s has invalid %s (%s)", (patch['id'], patch['bug_id'], result_key, setter_email))
+        return None
+
+    def _validate_reviewer(self, patch, reject_invalid_patches):
+        return self._validate_setter_email(patch, 'reviewer', self.committers.committer_by_bugzilla_email, self.reject_patch_from_review_queue, reject_invalid_patches)
+
+    def _validate_committer(self, patch, reject_invalid_patches):
+        return self._validate_setter_email(patch, 'committer', self.committers.reviewer_by_bugzilla_email, self.reject_patch_from_commit_queue, reject_invalid_patches)
+
+    def fetch_reviewed_patches_from_bug(self, bug_id, reject_invalid_patches=False):
         reviewed_patches = []
         for attachment in self.fetch_attachments_from_bug(bug_id):
-            if 'reviewer' in attachment and not attachment['is_obsolete']:
+            if self._validate_reviewer(attachment, reject_invalid_patches) and not attachment['is_obsolete']:
                 reviewed_patches.append(attachment)
         return reviewed_patches
 
-    def fetch_commit_queue_patches_from_bug(self, bug_id):
+    def fetch_commit_queue_patches_from_bug(self, bug_id, reject_invalid_patches=False):
         commit_queue_patches = []
-        for attachment in self.fetch_reviewed_patches_from_bug(bug_id):
-            if 'commit-queue' in attachment and not attachment['is_obsolete']:
+        for attachment in self.fetch_reviewed_patches_from_bug(bug_id, reject_invalid_patches):
+            if self._validate_committer(attachment, reject_invalid_patches) and not attachment['is_obsolete']:
                 commit_queue_patches.append(attachment)
         return commit_queue_patches
 
@@ -227,10 +249,10 @@ class Bugzilla:
 
         return bug_ids
 
-    def fetch_patches_from_commit_queue(self):
+    def fetch_patches_from_commit_queue(self, reject_invalid_patches=False):
         patches_to_land = []
         for bug_id in self.fetch_bug_ids_from_commit_queue():
-            patches = self.fetch_commit_queue_patches_from_bug(bug_id)
+            patches = self.fetch_commit_queue_patches_from_bug(bug_id, reject_invalid_patches)
             patches_to_land += patches
         return patches_to_land
 
@@ -359,10 +381,9 @@ class Bugzilla:
         self.browser.submit()
 
     # FIXME: We need a way to test this on a live bugzilla instance.
-    def reject_patch_from_commit_queue(self, attachment_id, additional_comment_text=None):
+    def _set_flag_on_attachment(self, attachment_id, flag_name, flag_value, comment_text, additional_comment_text):
         self.authenticate()
 
-        comment_text = "Rejecting patch %s from commit-queue.  This patch will require manual commit." % attachment_id
         if additional_comment_text:
             comment_text += "\n\n%s" % additional_comment_text
         log(comment_text)
@@ -373,8 +394,16 @@ class Bugzilla:
         self.browser.open(self.attachment_url_for_id(attachment_id, 'edit'))
         self.browser.select_form(nr=1)
         self.browser.set_value(comment_text, name='comment', nr=0)
-        self._find_select_element_for_flag('commit-queue').value = ("-",)
+        self._find_select_element_for_flag(flag_name).value = (flag_value,)
         self.browser.submit()
+
+    def reject_patch_from_commit_queue(self, attachment_id, additional_comment_text=None):
+        comment_text = "Rejecting patch %s from commit-queue." % attachment_id
+        self._set_flag_on_attachment(attachment_id, 'commit-queue', '-', comment_text, additional_comment_text)
+
+    def reject_patch_from_review_queue(self, attachment_id, additional_comment_text=None):
+        comment_text = "Rejecting patch %s from review queue." % attachment_id
+        self._set_flag_on_attachment(attachment_id, 'review', '-', comment_text, additional_comment_text)
 
     def obsolete_attachment(self, attachment_id, comment_text = None):
         self.authenticate()

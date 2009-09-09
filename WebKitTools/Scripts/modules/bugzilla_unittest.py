@@ -68,20 +68,20 @@ class BugzillaTest(unittest.TestCase):
         'url' : "https://bugs.webkit.org/attachment.cgi?id=33721",
         'name' : "Fixed whitespace issue",
         'type' : "text/plain",
-        'reviewer' : 'Test One',
-        'commit-queue' : 'Test Two'
+        'reviewer_email' : 'one@test.com',
+        'committer_email' : 'two@test.com'
     }
 
     def test_attachment_parsing(self):
-        reviewer = Reviewer('Test One', 'one@test.com')
-        committer = Committer('Test Two', 'two@test.com')
-        committer_list = CommitterList(committers=[committer], reviewers=[reviewer])
-        bugzilla = Bugzilla(committers=committer_list)
+        bugzilla = Bugzilla()
 
         soup = BeautifulSoup(self._example_attachment)
         attachment_element = soup.find("attachment")
         attachment = bugzilla._parse_attachment_element(attachment_element, self._expected_example_attachment_parsing['bug_id'])
         self.assertTrue(attachment)
+
+        # Make sure we aren't parsing more or less than we expect
+        self.assertEquals(attachment.keys(), self._expected_example_attachment_parsing.keys())
 
         for key, expected_value in self._expected_example_attachment_parsing.items():
             self.assertEquals(attachment[key], expected_value, ("Failure for key: %s: Actual='%s' Expected='%s'" % (key, attachment[key], expected_value)))

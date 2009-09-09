@@ -125,13 +125,10 @@ class CommitterList:
         return self._committers_by_email
 
     def committer_by_bugzilla_email(self, bugzilla_email):
-        committer = self._email_to_committer_map().get(bugzilla_email)
-        if not committer:
-            raise Exception("Unknown committer: %s" % bugzilla_email)
-        return committer
+        return self._email_to_committer_map().get(bugzilla_email)
 
     def reviewer_by_bugzilla_email(self, bugzilla_email):
         committer = self.committer_by_bugzilla_email(bugzilla_email)
-        if not committer.can_review:
-            raise Exception("Committer %s does not have review rights." % committer)
+        if committer and not committer.can_review:
+            return None
         return committer
