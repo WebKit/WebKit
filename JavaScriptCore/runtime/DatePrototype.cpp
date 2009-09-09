@@ -463,10 +463,10 @@ JSValue JSC_HOST_CALL dateProtoFuncToISOString(ExecState* exec, JSObject*, JSVal
     
     GregorianDateTime t;
     thisDateObj->msToGregorianDateTime(milli, utc, t);
-    // Maximum amount of space we need in buffer: 6 (max. digits in year) + 2 * 5 (2 characters each for month, day, hour, minute, second)
-    // 6 for formatting and one for null termination = 23.  We add one extra character to allow us to force null termination.
-    char buffer[24];
-    snprintf(buffer, sizeof(buffer) - 1, "%04d-%02d-%02dT%02d:%02d:%02dZ", 1900 + t.year, t.month + 1, t.monthDay, t.hour, t.minute, t.second);
+    // Maximum amount of space we need in buffer: 6 (max. digits in year) + 2 * 5 (2 characters each for month, day, hour, minute, second) + 4 (. + 3 digits for milliseconds)
+    // 6 for formatting and one for null termination = 27.  We add one extra character to allow us to force null termination.
+    char buffer[28];
+    snprintf(buffer, sizeof(buffer) - 1, "%04d-%02d-%02dT%02d:%02d:%02d.%03dZ", 1900 + t.year, t.month + 1, t.monthDay, t.hour, t.minute, t.second, static_cast<int>(fmod(milli, 1000)));
     buffer[sizeof(buffer) - 1] = 0;
     return jsNontrivialString(exec, buffer);
 }

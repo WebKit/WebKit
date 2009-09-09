@@ -1,3 +1,15 @@
+2009-09-08  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        JSON.stringify(Date) loses the milliseconds information
+        https://bugs.webkit.org/show_bug.cgi?id=29063
+
+        Make sure we include milliseconds in the output of toISOString.
+
+        * runtime/DatePrototype.cpp:
+        (JSC::dateProtoFuncToISOString):
+
 2009-09-08  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix, generate derived sources earlier in order to make sure

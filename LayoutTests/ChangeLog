@@ -1,3 +1,15 @@
+2009-09-08  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        JSON.stringify(Date) loses the milliseconds information
+        https://bugs.webkit.org/show_bug.cgi?id=29063
+
+        Update test results for Date.toISOString.
+
+        * fast/js/date-toisostring-expected.txt:
+        * fast/js/resources/date-toisostring.js:
+
 2009-09-08  Drew Wilson  <atwilson@google.com>
 
         Reviewed by Maciej Stachowiak.
