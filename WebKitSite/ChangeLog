@@ -1,3 +1,12 @@
+2009-09-09  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Mark Rowe.
+
+        Add instructions to bug reporting guidlines on how and when
+        to apply port-specific keywords.
+
+        * quality/bugwriting.html:
+
 2009-09-08  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adele Peterson.
