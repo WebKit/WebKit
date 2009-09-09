@@ -1379,6 +1379,7 @@ void ApplyStyleCommand::pushDownTextDecorationStyleAtBoundaries(const Position &
     pushDownTextDecorationStyleAroundNode(end.node(), true);
 }
 
+// FIXME: Why does this exist?  Callers should either use lastOffsetForEditing or lastOffsetInNode
 static int maxRangeOffset(Node *n)
 {
     if (n->offsetInCharacters())

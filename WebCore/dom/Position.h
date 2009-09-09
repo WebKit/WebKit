@@ -208,6 +208,35 @@ inline Position positionInParentAfterNode(const Node* node)
     return Position(node->parentNode(), node->nodeIndex() + 1, Position::PositionIsOffsetInAnchor);
 }
 
+// positionBeforeNode and positionAfterNode return neighbor-anchored positions, construction is O(1)
+inline Position positionBeforeNode(Node* anchorNode)
+{
+    ASSERT(anchorNode);
+    return Position(anchorNode, Position::PositionIsBeforeAnchor);
+}
+
+inline Position positionAfterNode(Node* anchorNode)
+{
+    ASSERT(anchorNode);
+    return Position(anchorNode, Position::PositionIsAfterAnchor);
+}
+
+inline int lastOffsetInNode(Node* node)
+{
+    return node->offsetInCharacters() ? node->maxCharacterOffset() : node->childNodeCount();
+}
+
+// firstPositionInNode and lastPositionInNode return parent-anchored positions, lastPositionInNode construction is O(n) due to childNodeCount()
+inline Position firstPositionInNode(Node* anchorNode)
+{
+    return Position(anchorNode, 0, Position::PositionIsOffsetInAnchor);
+}
+
+inline Position lastPositionInNode(Node* anchorNode)
+{
+    return Position(anchorNode, lastOffsetInNode(anchorNode), Position::PositionIsOffsetInAnchor);
+}
+
 } // namespace WebCore
 
 #ifndef NDEBUG

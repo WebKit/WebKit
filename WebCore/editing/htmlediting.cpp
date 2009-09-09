@@ -384,10 +384,10 @@ int lastOffsetForEditing(const Node* node)
         return 0;
     if (node->offsetInCharacters())
         return node->maxCharacterOffset();
-        
+
     if (node->hasChildNodes())
         return node->childNodeCount();
-    
+
     // NOTE: This should preempt the childNodeCount for, e.g., select nodes
     if (editingIgnoresContent(node))
         return 1;

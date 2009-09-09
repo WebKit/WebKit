@@ -2,6 +2,34 @@
 
         Reviewed by Adam Barth.
 
+        Add more position constructors
+        positionBeforeNode, positionAfterNode
+        firstPositionInNode, lastPositionInNode
+        https://bugs.webkit.org/show_bug.cgi?id=25494
+
+        I also added a lastOffsetInNode and deployed it to a couple places.
+
+        There are no callers to these new constructors yet, but those
+        will be coming in future patches.
+
+        * dom/Position.cpp:
+        (WebCore::Position::computeOffsetInContainerNode):
+        * dom/Position.h:
+        (WebCore::positionBeforeNode):
+        (WebCore::positionAfterNode):
+        (WebCore::lastOffsetInNode):
+        (WebCore::firstPositionInNode):
+        (WebCore::lastPositionInNode):
+        * editing/ApplyStyleCommand.cpp:
+        * editing/TextIterator.cpp:
+        (WebCore::SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator):
+        * editing/htmlediting.cpp:
+        (WebCore::lastOffsetForEditing):
+
+2009-04-30  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
         Rename positionBeforeNode to positionInParentBeforeNode
         and positionAfterNode to positionInParentAfterNode
         in preparation for adding a positionBeforeNode
