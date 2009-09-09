@@ -1,3 +1,38 @@
+2009-09-09  Roland Steiner  <rolandsteiner@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Bug 28964 -  [Chromium] ChromiumDataObject should have getter/setter interface
+
+        Added getter/setter methods and trivial inline implementations for each.
+        (Note that they are not yet actually used.)
+        Once the Chromium code is changed to use them instead of directly accessing the
+        member variables, the member variables should be made private and cleaned up.
+
+        No new tests (no functional behavior changed).
+
+        * platform/chromium/ChromiumDataObject.h:
+        (WebCore::ChromiumDataObject::mainURL):
+        (WebCore::ChromiumDataObject::setMainURL):
+        (WebCore::ChromiumDataObject::mainURLTitle):
+        (WebCore::ChromiumDataObject::setMainURLTitle):
+        (WebCore::ChromiumDataObject::textPlain):
+        (WebCore::ChromiumDataObject::setTextPlain):
+        (WebCore::ChromiumDataObject::textHTML):
+        (WebCore::ChromiumDataObject::setTextHTML):
+        (WebCore::ChromiumDataObject::htmlBaseURL):
+        (WebCore::ChromiumDataObject::setHTMLBaseURL):
+        (WebCore::ChromiumDataObject::content):
+        (WebCore::ChromiumDataObject::releaseContent):
+        (WebCore::ChromiumDataObject::setContent):
+        (WebCore::ChromiumDataObject::contentFileExtension):
+        (WebCore::ChromiumDataObject::setContentFileExtension):
+        (WebCore::ChromiumDataObject::contentFileName):
+        (WebCore::ChromiumDataObject::setContentFileName):
+        (WebCore::ChromiumDataObject::fileNames):
+        (WebCore::ChromiumDataObject::setFileNames):
+        (WebCore::ChromiumDataObject::takeFileNames):
+
 2009-09-08  Pat Bradley  <vincent.bradley@nokia.com>
 
         Reviewed by Ariya Hidayat.

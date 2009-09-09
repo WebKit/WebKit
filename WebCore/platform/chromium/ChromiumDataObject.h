@@ -55,7 +55,38 @@ namespace WebCore {
 
         void clear();
         bool hasData() const;
+        
+        KURL mainURL() const { return url; }
+        void setMainURL(const KURL& newURL) { url = newURL; }
 
+        String mainURLTitle() const { return urlTitle; }
+        void setMainURLTitle(const String& newURLTitle) { urlTitle = newURLTitle; }
+
+        String textPlain() const { return plainText; }
+        void setTextPlain(const String& newText) { plainText = newText; }
+
+        String textHTML() const { return textHtml; }
+        void setTextHTML(const String& newText) { textHtml = newText; }
+
+        KURL htmlBaseURL() const { return htmlBaseUrl; }
+        void setHTMLBaseURL(const KURL& newURL) { htmlBaseUrl = newURL; }
+
+        SharedBuffer* content() const { return fileContent.get(); }
+        PassRefPtr<SharedBuffer> releaseContent() { return fileContent.release(); }
+        void setContent(PassRefPtr<SharedBuffer> newContent) { fileContent = newContent; }
+
+        String contentFileExtension() const { return fileExtension; }
+        void setContentFileExtension(const String& newFileExtension) { fileExtension = newFileExtension; }
+
+        String contentFileName() const { return fileContentFilename; }
+        void setContentFileName(const String& newFilename) { fileContentFilename = newFilename; }
+
+        const Vector<String>& fileNames() const { return filenames; }
+        void setFileNames(const Vector<String>& newFilenames) { filenames = newFilenames; }
+        void takeFileNames(Vector<String>& newFilenames) { filenames.swap(newFilenames); }
+
+        // Interim state: All members will become private, do NOT access them directly! 
+        // Rather use the above accessor methods (or devise new ones if necessary).
         KURL url;
         String urlTitle;
 
