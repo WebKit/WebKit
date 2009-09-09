@@ -1,3 +1,13 @@
+2009-09-09  Erik Arvidsson  <arv@chromium.org>
+
+        Reviewed by David Levin.
+
+        Fix preference name in layout test.
+        https://bugs.webkit.org/show_bug.cgi?id=29038
+
+        * fast/events/click-focus-anchor.html:
+        * fast/events/tab-focus-anchor.html:
+
 2009-09-09  Steve Block  <steveblock@google.com>
 
         Reviewed by Adam Barth.
