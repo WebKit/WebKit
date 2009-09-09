@@ -1,3 +1,15 @@
+2009-09-09  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+        
+        [wx] Add wxSize conversions for IntSize.
+        https://bugs.webkit.org/show_bug.cgi?id=29104
+
+        * platform/graphics/IntSize.h:
+        * platform/graphics/wx/IntSizeWx.cpp: Added.
+        (WebCore::IntSize::IntSize):
+        (WebCore::IntSize::operator wxSize):
+
 2009-09-09  Yaar Schnitman  <yaar@chromium.org>
 
         Reviewed by David Levin.
@@ -193,7 +205,7 @@
 
         * WebCore.pro:
 
-2009-09-08  Kevin Watters  <kevinwatters@gmail.com>
+2009-09-09  Kevin Watters  <kevinwatters@gmail.com>
 
         Reviewed by Kevin Ollivier.
 

@@ -51,6 +51,10 @@ QT_END_NAMESPACE
 class BSize;
 #endif
 
+#if PLATFORM(WX)
+class wxSize;
+#endif
+
 namespace WebCore {
 
 class IntSize {
@@ -120,6 +124,10 @@ public:
     operator BSize() const;
 #endif
 
+#if PLATFORM(WX)
+    IntSize(const wxSize&);
+    operator wxSize() const;
+#endif
 
 private:
     int m_width, m_height;
