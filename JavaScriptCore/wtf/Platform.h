@@ -234,9 +234,6 @@
 #elif !defined(__ARM_EABI__) && !defined(__EABI__) && !defined(__VFP_FP__)
 #define WTF_PLATFORM_MIDDLE_ENDIAN 1
 #endif
-#if !defined(__ARM_EABI__) && !defined(__EABI__)
-#define WTF_PLATFORM_FORCE_PACK 1
-#endif
 #define ARM_ARCH_VERSION 3
 #if defined(__ARM_ARCH_4__) || defined(__ARM_ARCH_4T__)
 #undef ARM_ARCH_VERSION

@@ -1,5 +1,14 @@
 2009-09-09  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
+        Reviewed by Darin Adler.
+
+        Remove WTF_PLATFORM_FORCE_PACK as it is no longer used
+        https://bugs.webkit.org/show_bug.cgi?id=29066
+
+        * wtf/Platform.h:
+
+2009-09-09  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
         Reviewed by Ariya Hidayat.
 
         Implement flushing the instruction cache for Symbian
