@@ -1,3 +1,15 @@
+2009-09-09  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Implement some virtual event methods so that we can fix
+        event-related bugs in Qt patch releases.
+
+        * Api/qwebgraphicsitem.cpp:
+        (QWebGraphicsItem::sceneEvent):
+        (QWebGraphicsItem::event):
+        * Api/qwebgraphicsitem.h:
+
 2009-09-09  Kenneth Rohde Christiansen  <kenneth@webkit.org>, Antonio Gomes  <antonio.gomes@openbossa.org>
 
         Reviewed by Simon Hausmann.

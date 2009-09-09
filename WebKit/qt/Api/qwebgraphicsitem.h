@@ -85,6 +85,7 @@ public:
     virtual void setGeometry(const QRectF& rect);
     virtual void updateGeometry();
     virtual void paint(QPainter*, const QStyleOptionGraphicsItem* options, QWidget* widget = 0);
+    virtual bool event(QEvent*);
 
 public Q_SLOTS:
     void stop();
@@ -128,6 +129,8 @@ protected:
     virtual void focusOutEvent(QFocusEvent*);
     virtual void inputMethodEvent(QInputMethodEvent*);
     virtual bool focusNextPrevChild(bool next);
+
+    virtual bool sceneEvent(QEvent*);
 
 private:
     Q_PRIVATE_SLOT(d, void _q_doScroll(int dx, int dy, const QRect&))

@@ -162,6 +162,22 @@ void QWebGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* 
     d->page->mainFrame()->render(painter, option->exposedRect.toRect());
 }
 
+/*! \reimp
+*/
+bool QWebGraphicsItem::sceneEvent(QEvent* event)
+{
+    // Swallow reimplementation in order to allows fixing event-related bugs in patch releases
+    return QGraphicsWidget::sceneEvent(event);
+}
+
+/*! \reimp
+*/
+bool QWebGraphicsItem::event(QEvent* event)
+{
+    // Swallow reimplementation in order to allows fixing event-related bugs in patch releases
+    return QObject::event(event);
+}
+
 /*!
     Makes \a page the new web page of the web graphicsitem.
 
