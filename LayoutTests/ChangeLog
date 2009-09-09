@@ -1,3 +1,15 @@
+2009-09-09  Zan Dobersek  <zandobersek@gmail.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] DumpRenderTree needs eventSender object and implementation
+        https://bugs.webkit.org/show_bug.cgi?id=25990
+
+        Enable plenty of tests that now pass thanks to (only) partial
+        EventSender implementation.
+
+        * platform/gtk/Skipped:
+
 2009-09-09  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Dimitri Glazkov.

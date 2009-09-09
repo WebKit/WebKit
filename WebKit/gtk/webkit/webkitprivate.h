@@ -317,6 +317,9 @@ extern "C" {
 
     WEBKIT_API WebKitWebDatabase *
     webkit_security_origin_get_web_database(WebKitSecurityOrigin* securityOrigin, const char* databaseName);
+
+    WEBKIT_API void
+    webkit_web_frame_layout(WebKitWebFrame* frame);
 }
 
 namespace WTF {

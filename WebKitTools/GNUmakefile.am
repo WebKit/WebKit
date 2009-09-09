@@ -60,6 +60,8 @@ Programs_DumpRenderTree_SOURCES = \
 	WebKitTools/DumpRenderTree/gtk/AccessibilityUIElementGtk.cpp \
 	WebKitTools/DumpRenderTree/gtk/DumpRenderTree.cpp \
 	WebKitTools/DumpRenderTree/gtk/DumpRenderTreeGtk.h \
+	WebKitTools/DumpRenderTree/gtk/EventSender.h \
+	WebKitTools/DumpRenderTree/gtk/EventSender.cpp \
 	WebKitTools/DumpRenderTree/gtk/GCControllerGtk.cpp \
 	WebKitTools/DumpRenderTree/gtk/LayoutTestControllerGtk.cpp \
 	WebKitTools/DumpRenderTree/gtk/WorkQueueItemGtk.cpp

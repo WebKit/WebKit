@@ -32,6 +32,7 @@
 #include "DumpRenderTree.h"
 
 #include "AccessibilityController.h"
+#include "EventSender.h"
 #include "GCController.h"
 #include "LayoutTestController.h"
 #include "WorkQueue.h"
@@ -426,7 +427,8 @@ static void runTest(const string& testPathOrURL)
     if (prevTestBFItem)
         g_object_ref(prevTestBFItem);
 
-
+    // Focus the web view before loading the test to avoid focusing problems
+    gtk_widget_grab_focus(GTK_WIDGET(webView));
     webkit_web_view_open(webView, url);
 
     g_free(url);
@@ -500,6 +502,10 @@ static void webViewWindowObjectCleared(WebKitWebView* view, WebKitWebFrame* fram
     axController->makeWindowObject(context, windowObject, &exception);
     ASSERT(!exception);
 
+    JSStringRef eventSenderStr = JSStringCreateWithUTF8CString("eventSender");
+    JSValueRef eventSender = makeEventSender(context);
+    JSObjectSetProperty(context, windowObject, eventSenderStr, eventSender, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete, 0);
+    JSStringRelease(eventSenderStr);
 }
 
 static gboolean webViewConsoleMessage(WebKitWebView* view, const gchar* message, unsigned int line, const gchar* sourceId, gpointer data)
