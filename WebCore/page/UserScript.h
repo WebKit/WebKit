@@ -60,6 +60,6 @@ private:
     UserScriptInjectionTime m_injectionTime;
 };
 
-} // namsepace WebCore
+} // namespace WebCore
  
 #endif // UserScript_h

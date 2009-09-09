@@ -36,6 +36,6 @@ class UserStyleSheet;
 typedef Vector<OwnPtr<UserStyleSheet> > UserStyleSheetVector;
 typedef HashMap<unsigned, UserStyleSheetVector*> UserStyleSheetMap;
 
-} // namsepace WebCore
+} // namespace WebCore
  
 #endif // UserStyleSheetTypes_h

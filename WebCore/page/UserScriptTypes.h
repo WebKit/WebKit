@@ -38,6 +38,6 @@ class UserScript;
 typedef Vector<OwnPtr<UserScript> > UserScriptVector;
 typedef HashMap<unsigned, UserScriptVector*> UserScriptMap;
 
-} // namsepace WebCore
+} // namespace WebCore
  
 #endif // UserScriptTypes_h
