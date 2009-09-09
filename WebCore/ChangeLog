@@ -1,3 +1,51 @@
+2009-09-08  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Support numeric index getters in bindings
+        https://bugs.webkit.org/show_bug.cgi?id=29067
+
+        Add HasNumericIndexGetter to indicate a non-custom getter that
+        returns a number.  The numeric index getter also uses PropertySlot's
+        setValue rather than setCustomIndex to avoid an additional indirect
+        call.
+
+        * bindings/js/JSCanvasByteArrayCustom.cpp:
+        * bindings/js/JSCanvasFloatArrayCustom.cpp:
+        * bindings/js/JSCanvasIntArrayCustom.cpp:
+        * bindings/js/JSCanvasShortArrayCustom.cpp:
+        * bindings/js/JSCanvasUnsignedByteArrayCustom.cpp:
+        * bindings/js/JSCanvasUnsignedIntArrayCustom.cpp:
+        * bindings/js/JSCanvasUnsignedShortArrayCustom.cpp:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * html/canvas/CanvasByteArray.h:
+        (WebCore::CanvasByteArray::item):
+        * html/canvas/CanvasByteArray.idl:
+        * html/canvas/CanvasFloatArray.h:
+        (WebCore::CanvasFloatArray::get):
+        (WebCore::CanvasFloatArray::item):
+        * html/canvas/CanvasFloatArray.idl:
+        * html/canvas/CanvasIntArray.h:
+        (WebCore::CanvasIntArray::get):
+        (WebCore::CanvasIntArray::item):
+        * html/canvas/CanvasIntArray.idl:
+        * html/canvas/CanvasPixelArray.idl:
+        * html/canvas/CanvasShortArray.h:
+        (WebCore::CanvasShortArray::get):
+        (WebCore::CanvasShortArray::item):
+        * html/canvas/CanvasShortArray.idl:
+        * html/canvas/CanvasUnsignedByteArray.h:
+        (WebCore::CanvasUnsignedByteArray::get):
+        (WebCore::CanvasUnsignedByteArray::item):
+        * html/canvas/CanvasUnsignedByteArray.idl:
+        * html/canvas/CanvasUnsignedIntArray.h:
+        (WebCore::CanvasUnsignedIntArray::get):
+        (WebCore::CanvasUnsignedIntArray::item):
+        * html/canvas/CanvasUnsignedIntArray.idl:
+        * html/canvas/CanvasUnsignedShortArray.h:
+        (WebCore::CanvasUnsignedShortArray::item):
+        * html/canvas/CanvasUnsignedShortArray.idl:
+
 2009-09-08  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix for 2.8.

@@ -35,14 +35,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValue JSCanvasShortArray::getByIndex(JSC::ExecState* exec, unsigned int index)
-{
-    signed short value;
-    impl()->get(index, value);
-    JSC::JSValue result = jsNumber(exec, value);
-    return result;
-}
-
 void JSCanvasShortArray::indexSetter(JSC::ExecState* exec, unsigned index, JSC::JSValue value)
 {
     impl()->set(index, static_cast<signed short>(value.toInt32(exec)));

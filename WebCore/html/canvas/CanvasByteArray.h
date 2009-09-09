@@ -67,6 +67,12 @@ namespace WebCore {
             return true;
         }
 
+        signed char item(unsigned index) const
+        {
+            ASSERT(index < m_size);
+            signed char* storage = static_cast<signed char*>(m_baseAddress);
+            return storage[index];
+        }
     private:
         CanvasByteArray(PassRefPtr<CanvasArrayBuffer> buffer,
                         int offset,

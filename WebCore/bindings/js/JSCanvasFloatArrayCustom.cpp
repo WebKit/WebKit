@@ -35,14 +35,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValue JSCanvasFloatArray::getByIndex(JSC::ExecState* exec, unsigned int index)
-{
-    float value;
-    impl()->get(index, value);
-    JSC::JSValue result = jsNumber(exec, value);
-    return result;
-}
-
 void JSCanvasFloatArray::indexSetter(JSC::ExecState* exec, unsigned index, JSC::JSValue value)
 {
     impl()->set(index, static_cast<float>(value.toInt32(exec)));

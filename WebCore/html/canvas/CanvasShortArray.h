@@ -60,9 +60,15 @@ namespace WebCore {
         {
             if (index >= m_size)
                 return false;
-            short* storage = static_cast<short*>(m_baseAddress);
-            result = storage[index];
+            result = item(index);
             return true;
+        }
+        
+        short item(unsigned index) const
+        {
+            ASSERT(index < m_size);
+            short* storage = static_cast<short*>(m_baseAddress);
+            return storage[index];
         }
 
     private:

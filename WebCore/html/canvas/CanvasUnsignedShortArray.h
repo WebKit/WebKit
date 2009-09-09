@@ -64,6 +64,13 @@ namespace WebCore {
             result = storage[index];
             return true;
         }
+        
+        unsigned short item(unsigned index) const
+        {
+            ASSERT(index < m_size);
+            unsigned short* storage = static_cast<unsigned short*>(m_baseAddress);
+            return storage[index];
+        }
 
     private:
         CanvasUnsignedShortArray(PassRefPtr<CanvasArrayBuffer> buffer,int offset,unsigned length);

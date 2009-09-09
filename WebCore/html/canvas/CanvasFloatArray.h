@@ -40,7 +40,6 @@ namespace WebCore {
         static PassRefPtr<CanvasFloatArray> create(PassRefPtr<CanvasArrayBuffer> buffer, int offset, unsigned length);
 
         virtual unsigned length() const;
-        CanvasArray* item(unsigned index);
         
         virtual unsigned sizeInBytes() const;
 
@@ -58,15 +57,21 @@ namespace WebCore {
         {
             if (index >= m_size)
                 return false;
+            result = item(index);
+            return true;
+        }
+        
+        float item(unsigned index) const
+        {
+            ASSERT(index < m_size);
             float* storage = static_cast<float*>(m_baseAddress);
-            result = storage[index];
+            float result = storage[index];
             if (isnan(result)) {
                 // Clamp NaN to 0
                 result = 0;
             }
-            return true;
+            return result;
         }
-
     private:
         CanvasFloatArray(PassRefPtr<CanvasArrayBuffer> buffer, int offset, unsigned length);
         unsigned m_size;
