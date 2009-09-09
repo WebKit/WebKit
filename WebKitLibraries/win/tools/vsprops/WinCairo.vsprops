@@ -10,6 +10,6 @@
 	/>
 	<Tool
 		Name="VCLinkerTool"
-		AdditionalDependencies="cairo.lib jpeg.lib libpng.lib"
+		AdditionalDependencies="cairo.lib libjpeg.lib zlib.lib libpng.lib"
 	/>
 </VisualStudioPropertySheet>
