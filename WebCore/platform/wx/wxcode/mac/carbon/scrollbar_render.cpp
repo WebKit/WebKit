@@ -72,12 +72,12 @@ void wxRenderer_DrawScrollbar(wxWindow* WXUNUSED(window), wxDC& dc,
 
     CGContextRef cgContext = NULL;
     wxGraphicsContext* gc = NULL;
-#if wxCHECK_VERSION(2,9,1)
+#if wxCHECK_VERSION(2,9,0)
     wxGCDCImpl *impl = dynamic_cast<wxGCDCImpl*> (dc.GetImpl());
     if (impl)
         gc = impl->GetGraphicsContext();
 #else
-    wxGraphicsContext* gc = dc.GetGraphicsContext();
+    gc = dc.GetGraphicsContext();
 #endif
     if (gc)
         cgContext = (CGContextRef) gc->GetNativeContext();
