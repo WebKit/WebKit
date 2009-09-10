@@ -1,3 +1,14 @@
+2009-09-10  Ben Laurie  <benl@google.com>
+
+        Reviewed by Adam Barth.
+
+        <https://bugs.webkit.org/show_bug.cgi?id=26836>
+
+        If dtoa was given a small buffer and the number was either infinite or
+        NaN, then the buffer would be overflowed.
+
+        * wtf/dtoa.cpp:
+
 2009-09-09  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Darin Adler.

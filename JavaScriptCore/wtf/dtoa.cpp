@@ -1904,14 +1904,16 @@ void dtoa(char* result, double dd, int ndigits, int* decpt, int* sign, char** rv
     } else
         *sign = 0;
 
-    if ((word0(&u) & Exp_mask) == Exp_mask)
-    {
+    if ((word0(&u) & Exp_mask) == Exp_mask) {
         /* Infinity or NaN */
         *decpt = 9999;
-        if (!word1(&u) && !(word0(&u) & 0xfffff))
-            strcpy(result, "Infinity");
-        else 
-            strcpy(result, "NaN");
+        if (!word1(&u) && !(word0(&u) & 0xfffff)) {
+            strncpy(result, "Infinity", ndigits);
+            result[ndigits] = '\0';
+        } else {
+            strncpy(result, "NaN", ndigits);
+            result[ndigits] = '\0';
+        }
         return;
     }
     if (!dval(&u)) {
