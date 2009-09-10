@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
 
 # Copyright (C) 2005, 2006, 2007 Apple Inc.  All rights reserved.
+# Copyright (C) 2009 Cameron McCormack <cam@mcc.id.au>
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -74,6 +75,7 @@ sub fixChangeLogPatch($);
 sub gitdiff2svndiff($);
 sub patch($);
 sub revertDirectories();
+sub removeEOL($);
 sub svnStatus($);
 sub unapplyPatch($$;$);
 sub unsetChangeLogDate($$);
@@ -328,6 +330,14 @@ sub revertDirectories()
     }
 }
 
+sub removeEOL($)
+{
+    my ($line) = @_;
+
+    $line =~ s/[\r\n]+$//g;
+    return $line;
+}
+
 sub svnStatus($)
 {
     my ($fullPath) = @_;
@@ -341,10 +351,10 @@ sub svnStatus($)
         my $normalizedFullPath = File::Spec->catdir(File::Spec->splitdir($fullPath));
         while (<SVN>) {
             # Input may use a different EOL sequence than $/, so avoid chomp.
-            $_ =~ s/[\r\n]+$//g;
+            $_ = removeEOL($_);
             my $normalizedStatPath = File::Spec->catdir(File::Spec->splitdir(substr($_, 7)));
             if ($normalizedFullPath eq $normalizedStatPath) {
-                $svnStatus = $_;
+                $svnStatus = "$_\n";
                 last;
             }
         }
@@ -354,7 +364,7 @@ sub svnStatus($)
     }
     else {
         # Files will have only one status returned.
-        $svnStatus = <SVN>;
+        $svnStatus = removeEOL(<SVN>) . "\n";
     }
     close SVN;
     return $svnStatus;

@@ -2,6 +2,18 @@
 
         Reviewed by Eric Seidel.
 
+        svn-unapply doesn't revert directories correctly
+        https://bugs.webkit.org/show_bug.cgi?id=29065
+
+        * Scripts/svn-unapply: Make svnStatus consistently return status
+        lines including a newline.
+        * Scripts/svn-apply: Keep svnStatus in sync with the one in
+        svn-unapply, in lieu of moving it to a common file.
+
+2009-09-09  Cameron McCormack  <cam@mcc.id.au>
+
+        Reviewed by Eric Seidel.
+
         svn-apply doesn't handle changes to files copied to new directories properly
         https://bugs.webkit.org/show_bug.cgi?id=29059
 
