@@ -1,3 +1,21 @@
+2009-09-09  Cameron McCormack  <cam@mcc.id.au>
+
+        Reviewed by Eric Seidel.
+
+        Make SVGStyleElement inherit from SVGLangSpace
+        https://bugs.webkit.org/show_bug.cgi?id=29058
+
+        Required by SVG 1.1 Second Edition:
+        http://dev.w3.org/SVG/profiles/1.1F2/publish/styling.html#InterfaceSVGStyleElement
+
+        * svg/dom/SVGStyleElement: Added.
+        * svg/dom/SVGStyleElement/resources: Added.
+        * svg/dom/SVGStyleElement/resources/TEMPLATE.html: Copied from
+        LayoutTests/svg/dom/resources/TEMPLATE.html with some "../"s added.
+        * svg/dom/SVGStyleElement/resources/style-langspace.js: Added.
+        * svg/dom/SVGStyleElement/style-langspace-expected.txt: Added.
+        * svg/dom/SVGStyleElement/style-langspace.html: Added.
+
 2009-09-09  Alpha Lam  <hclam@chromium.org>
 
         Reviewed by Eric Carlson.

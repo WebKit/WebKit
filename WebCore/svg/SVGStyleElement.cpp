@@ -32,7 +32,6 @@
 #include "ExceptionCode.h"
 #include "MappedAttribute.h"
 #include "SVGNames.h"
-#include "XMLNames.h"
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
@@ -41,18 +40,9 @@ using namespace SVGNames;
 
 SVGStyleElement::SVGStyleElement(const QualifiedName& tagName, Document* doc, bool createdByParser)
      : SVGElement(tagName, doc)
+     , SVGLangSpace()
      , m_createdByParser(createdByParser)
 {
-}
-
-const AtomicString& SVGStyleElement::xmlspace() const
-{
-    return getAttribute(XMLNames::spaceAttr);
-}
-
-void SVGStyleElement::setXmlspace(const AtomicString& space, ExceptionCode& ec)
-{
-    setAttribute(XMLNames::spaceAttr, space, ec);
 }
 
 const AtomicString& SVGStyleElement::type() const
@@ -93,8 +83,11 @@ void SVGStyleElement::parseMappedAttribute(MappedAttribute* attr)
 {
     if (attr->name() == titleAttr && m_sheet)
         m_sheet->setTitle(attr->value());
-    else
+    else {
+        if (SVGLangSpace::parseMappedAttribute(attr))
+            return;
         SVGElement::parseMappedAttribute(attr);
+    }
 }
 
 void SVGStyleElement::finishParsingChildren()
