@@ -50,6 +50,7 @@
 #import "RenderSlider.h"
 #import "RenderView.h"
 #import "SharedBuffer.h"
+#import "TimeRanges.h"
 #import "WebCoreSystemInterface.h"
 #import <wtf/RetainPtr.h>
 

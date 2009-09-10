@@ -1,3 +1,12 @@
+2009-09-10  Albert J. Wong  <ajwong@chromium.org>
+
+        No review, build fix only.
+
+        Adding in a missed include from the last patch that is breaking the
+        chromium build.
+
+        * rendering/RenderThemeChromiumMac.mm: include TimeRanges.h
+
 2009-09-10  Alpha Lam  <hclam@chromium.org>
 
         Reviewed by Eric Carlson.
