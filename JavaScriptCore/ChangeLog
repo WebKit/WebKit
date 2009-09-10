@@ -1,3 +1,13 @@
+2009-09-10  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        ARM compiler does not understand GCC visibility attribute
+        https://bugs.webkit.org/show_bug.cgi?id=29079
+
+        * API/JSBase.h: Make the test more specific to hit only
+        the GCC compiler
+
 2009-09-10  Adam Barth  <abarth@webkit.org>
 
         Unreviewed revert of the previous change.  It broke the tests.
