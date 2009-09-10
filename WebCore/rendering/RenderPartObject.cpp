@@ -95,7 +95,7 @@ static ClassIdToTypeMap* createClassIdToTypeMap()
     return map;
 }
 
-static String serviceTypeForClassId(const String& classId, const PluginData* pluginData)
+static String serviceTypeForClassId(const String& classId)
 {
     // Return early if classId is empty (since we won't do anything below).
     // Furthermore, if classId is null, calling get() below will crash.
@@ -222,7 +222,7 @@ void RenderPartObject::updateWidget(bool onlyCreateNonNetscapePlugins)
 
         // If we still don't have a type, try to map from a specific CLASSID to a type.
         if (serviceType.isEmpty())
-            serviceType = serviceTypeForClassId(o->classId(), pluginData);
+            serviceType = serviceTypeForClassId(o->classId());
 
         if (!isURLAllowed(document(), url))
             return;
