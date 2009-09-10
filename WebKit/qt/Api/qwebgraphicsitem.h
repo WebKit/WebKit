@@ -21,8 +21,8 @@
 #define QWebGraphicsItem_h
 
 #include "qwebkitglobal.h"
-#include <Qt/qevent.h>
 #include <QtCore/qurl.h>
+#include <QtGui/qevent.h>
 #include <QtGui/qgraphicswidget.h>
 #include <QtGui/qicon.h>
 #include <QtGui/qpainter.h>

@@ -23,11 +23,11 @@
 #include "qwebframe.h"
 #include "qwebpage.h"
 #include "qwebpage_p.h"
-#include <Qt/qstyleoption.h>
 #include <QtGui/QGraphicsScene>
 #include <QtGui/QGraphicsView>
 #include <QtGui/qapplication.h>
 #include <QtGui/qgraphicssceneevent.h>
+#include <QtGui/qstyleoption.h>
 
 class QWebGraphicsItemPrivate {
 public:
