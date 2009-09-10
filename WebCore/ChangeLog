@@ -1,3 +1,14 @@
+2009-09-09  Chris Fleizach  <cfleizach@apple.com>
+
+        AX notifications should be an ENUM type instead of strings
+        https://bugs.webkit.org/show_bug.cgi?id=28963
+
+        Build fix for Qt.
+
+        * accessibility/AXObjectCache.h:
+        (WebCore::AXObjectCache::postNotification):
+        (WebCore::AXObjectCache::postPlatformNotification):
+
 2009-09-08  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

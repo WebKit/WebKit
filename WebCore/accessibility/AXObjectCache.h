@@ -133,8 +133,8 @@ namespace WebCore {
     inline void AXObjectCache::detachWrapper(AccessibilityObject*) { }
     inline void AXObjectCache::attachWrapper(AccessibilityObject*) { }
     inline void AXObjectCache::selectedChildrenChanged(RenderObject*) { }
-    inline void AXObjectCache::postNotification(RenderObject*, const String&, bool postToElement) { }
-    inline void AXObjectCache::postPlatformNotification(AccessibilityObject*, const String&) { }
+    inline void AXObjectCache::postNotification(RenderObject*, AXNotification, bool postToElement) { }
+    inline void AXObjectCache::postPlatformNotification(AccessibilityObject*, AXNotification) { }
     inline void AXObjectCache::handleFocusedUIElementChanged(RenderObject*, RenderObject*) { }
 #endif
 
