@@ -394,7 +394,7 @@ QString QWebElement::attribute(const QString &name, const QString &defaultValue)
     Returns the attribute with the given \a name in \a namespaceUri. If the
     attribute does not exist, \a defaultValue is returned.
 
-    \sa setAtributeNS(), setAttribute(), attribute()
+    \sa setAttributeNS(), setAttribute(), attribute()
 */
 QString QWebElement::attributeNS(const QString &namespaceUri, const QString &name, const QString &defaultValue) const
 {
@@ -977,7 +977,7 @@ QStringList QWebElement::scriptableProperties() const
 
 /*!
     Returns the value of the style with the given \a name. If a style with
-    \name does not exist, an empty string is returned.
+    \a name does not exist, an empty string is returned.
 
     If \a rule is IgnoreCascadingStyles, the value defined inside the element
     (inline in CSS terminology) is returned.
@@ -1100,7 +1100,7 @@ void QWebElement::setStyleProperty(const QString &name, const QString &value, St
 
 /*!
     Returns the computed value for style with the given \a name. If a style
-    with \name does not exist, an empty string is returned.
+    with \a name does not exist, an empty string is returned.
 */
 QString QWebElement::computedStyleProperty(const QString &name) const
 {

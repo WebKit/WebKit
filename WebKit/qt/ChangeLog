@@ -1,5 +1,16 @@
 2009-09-10  Simon Hausmann  <hausmann@webkit.org>
 
+        Rubber-stamped by Ariya Hidayat.
+
+        Fix a bunch of qdoc warnings: Invalid references, non-standard
+        wording, etc.
+
+        * Api/qwebelement.cpp:
+        * Api/qwebgraphicsitem.cpp:
+        * Api/qwebsecurityorigin.cpp:
+
+2009-09-10  Simon Hausmann  <hausmann@webkit.org>
+
         Reviewed by Ariya Hidayat.
 
         Fix context menu event delivery with QWebGraphicsItem.

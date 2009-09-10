@@ -91,7 +91,8 @@ void QWebGraphicsItemPrivate::_q_setStatusBarMessage(const QString& s)
 }
 
 /*!
-    \brief QWebGrahicsItem allows web content to be added to a canvas.
+    \class QWebGraphicsItem
+    \brief The QWebGraphicsItem class allows web content to be added to a GraphicsView.
     \inherits QGraphicsWidget.
     \since 4.6
 
@@ -103,7 +104,7 @@ void QWebGraphicsItemPrivate::_q_setStatusBarMessage(const QString& s)
 */
 
 /*!
-    Constructs an empty QWebGraphicsItem with parent \a parent/
+    Constructs an empty QWebGraphicsItem with parent \a parent.
 
     \sa load()
 */

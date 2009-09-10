@@ -221,7 +221,7 @@ void QWebSecurityOrigin::removeLocalScheme(const QString& scheme)
 /*!
     \since 4.6
     Returns a list of all the schemes that were set by the application as local schemes,
-    \sa addLocalScheme(), removedLocalScheme().
+    \sa addLocalScheme(), removeLocalScheme().
 */
 QStringList QWebSecurityOrigin::localSchemes()
 {
