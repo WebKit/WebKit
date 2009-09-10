@@ -71,7 +71,7 @@ namespace WebCore {
         MediaPlayer::NetworkState networkState() const { return m_networkState; }
         MediaPlayer::ReadyState readyState() const { return m_readyState; }
 
-        float maxTimeBuffered() const;
+        PassRefPtr<TimeRanges> buffered() const;
         float maxTimeSeekable() const;
         unsigned bytesLoaded() const;
         bool totalBytesKnown() const;

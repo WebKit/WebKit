@@ -35,6 +35,7 @@
 #include "FrameView.h"
 #include "Frame.h"
 #include "Document.h"
+#include "TimeRanges.h"
 
 #if PLATFORM(MAC)
 #include "MediaPlayerPrivateQTKit.h"
@@ -91,7 +92,7 @@ public:
     virtual MediaPlayer::ReadyState readyState() const { return MediaPlayer::HaveNothing; }
 
     virtual float maxTimeSeekable() const { return 0; }
-    virtual float maxTimeBuffered() const { return 0; }
+    virtual PassRefPtr<TimeRanges> buffered() const { return TimeRanges::create(); }
 
     virtual int dataRate() const { return 0; }
 
@@ -390,9 +391,9 @@ void MediaPlayer::setEndTime(float time)
     m_private->setEndTime(time);
 }
 
-float MediaPlayer::maxTimeBuffered()
+PassRefPtr<TimeRanges> MediaPlayer::buffered()
 {
-    return m_private->maxTimeBuffered();
+    return m_private->buffered();
 }
 
 float MediaPlayer::maxTimeSeekable()

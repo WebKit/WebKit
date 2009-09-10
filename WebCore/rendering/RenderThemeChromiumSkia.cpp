@@ -36,6 +36,7 @@
 #include "RenderObject.h"
 #include "RenderSlider.h"
 #include "ScrollbarTheme.h"
+#include "TimeRanges.h"
 #include "TransformationMatrix.h"
 #include "UserAgentStyleSheets.h"
 

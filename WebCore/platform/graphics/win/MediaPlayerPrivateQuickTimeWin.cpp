@@ -33,6 +33,7 @@
 #include "QTMovieWin.h"
 #include "ScrollView.h"
 #include "StringHash.h"
+#include "TimeRanges.h"
 #include "Timer.h"
 #include <wtf/HashSet.h>
 #include <wtf/MathExtras.h>
@@ -323,10 +324,14 @@ int MediaPlayerPrivate::dataRate() const
     return 0;
 }
 
-float MediaPlayerPrivate::maxTimeBuffered() const
+PassRefPtr<TimeRanges> MediaPlayerPrivate::buffered() const;
 {
+    RefPtr<TimeRanges> timeRanges = TimeRanges::create();
+    float loaded = maxTimeLoaded();
     // rtsp streams are not buffered
-    return m_isStreaming ? 0 : maxTimeLoaded();
+    if (!m_isStreaming && loaded > 0)
+        timeRanges->add(0, loaded);
+    return timeRanges.release();
 }
 
 float MediaPlayerPrivate::maxTimeSeekable() const
@@ -630,4 +635,3 @@ bool MediaPlayerPrivate::hasSingleSecurityOrigin() const
 }
 
 #endif
-

@@ -1931,14 +1931,13 @@ bool RenderThemeChromiumMac::paintMediaSliderTrack(RenderObject* o, const Render
     if (!mediaElement)
         return false;
 
-    float timeLoaded = 0;
-    float currentTime = 0;
-    float duration = 0;
-    if (MediaPlayer* player = mediaElement->player()) {
-        duration = player->duration();
-        timeLoaded = player->maxTimeBuffered();
-        currentTime = player->currentTime();
-    }
+    RefPtr<TimeRanges> timeRanges = mediaElement->buffered();
+    ExceptionCode ignoredException;
+    float timeLoaded = timeRanges->length() ? timeRanges->end(0, ignoredException) : 0;
+    float currentTime = mediaElement->currentTime();
+    float duration = mediaElement->duration();
+    if (isnan(duration))
+        duration = 0;
 
     bool shouldDrawEndCaps = !toRenderMedia(mediaElement->renderer())->shouldShowTimeDisplayControls();
     wkDrawMediaSliderTrack(MediaControllerThemeClassic, paintInfo.context->platformContext(), r, timeLoaded, currentTime, duration, shouldDrawEndCaps ? MediaUIPartDrawEndCapsFlag : 0);

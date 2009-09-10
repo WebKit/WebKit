@@ -39,6 +39,7 @@
 #import "KURL.h"
 #import "MIMETypeRegistry.h"
 #import "SoftLinking.h"
+#import "TimeRanges.h"
 #import "WebCoreSystemInterface.h"
 #import <QTKit/QTKit.h>
 #import <objc/objc-runtime.h>
@@ -765,10 +766,13 @@ int MediaPlayerPrivate::dataRate() const
     return wkQTMovieDataRate(m_qtMovie.get()); 
 }
 
-
-float MediaPlayerPrivate::maxTimeBuffered() const
+PassRefPtr<TimeRanges> MediaPlayerPrivate::buffered() const
 {
-    return maxTimeLoaded();
+    RefPtr<TimeRanges> timeRanges = TimeRanges::create();
+    float loaded = maxTimeLoaded();
+    if (loaded > 0)
+        timeRanges->add(0, loaded);
+    return timeRanges.release();
 }
 
 float MediaPlayerPrivate::maxTimeSeekable() const

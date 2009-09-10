@@ -1,3 +1,58 @@
+2009-09-10  Alpha Lam  <hclam@chromium.org>
+
+        Reviewed by Eric Carlson.
+
+        HTMLMediaElement buffered attribute should report a list of time ranges
+        https://bugs.webkit.org/show_bug.cgi?id=29041
+
+        Changed MediaPlayerPrivateInterface and MediaPlayer's definition to
+        report a list of buffered time ranges as WebCore::TimeRanges. This
+        change also got rid of the maxTimeBuffered() method.
+
+        No new tests since this is a API change.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::percentLoaded):
+        Use MediaPlaier::buffered() instead of maxTimeBuffered().
+        (WebCore::HTMLMediaElement::buffered):
+        ditto.
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::NullMediaPlayerPrivate::buffered):
+        Use MediaPlayerPrivateInterface::buffered() instead of maxTimeBuffered().
+        (WebCore::MediaPlayer::buffered):
+        ditto.
+        * platform/graphics/MediaPlayer.h:
+        Removed maxTimeBuffered() and defines PassRefPtr<TimeRanges> buffered().
+        * platform/graphics/MediaPlayerPrivate.h:
+        ditto.
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp:
+        Implements PassRefPtr<TimeRanges> buffered();
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.h:
+        Removed maxTimeBuffered() and defines PassRefPtr<TimeRanges> buffered().
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        Removed maxTimeBuffered() and defines PassRefPtr<TimeRanges> buffered().
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::buffered):
+        Implementation of buffered().
+        * platform/graphics/qt/MediaPlayerPrivatePhonon.cpp:
+        Implements PassRefPtr<TimeRanegs> buffered().
+        * platform/graphics/qt/MediaPlayerPrivatePhonon.h:
+        Removed maxTimeBuffered() and defines PassRefPtr<TimeRanges> buffered().
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.cpp:
+        Implements PassRefPtr<TimeRanges> buffered().
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.h:
+        Removed maxTimeBuffered() and defines PassRefPtr<TimeRanges> buffered().
+        * platform/graphics/wince/MediaPlayerPrivateWince.h:
+        ditto.
+        * rendering/RenderThemeChromiumMac.mm:
+        (WebCore::RenderThemeChromiumMac::paintMediaSliderTrack):
+        Use buffered() instead of maxTimeBuffered().
+        * rendering/RenderThemeChromiumSkia.cpp:
+        ditto.
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintMediaSliderTrack):
+        ditto.
+
 2009-09-10  Cameron McCormack  <cam@mcc.id.au>
 
         Reviewed by Eric Seidel.

@@ -38,6 +38,7 @@
 #import "RenderSlider.h"
 #import "RenderView.h"
 #import "SharedBuffer.h"
+#import "TimeRanges.h"
 #import "WebCoreSystemInterface.h"
 #import "UserAgentStyleSheets.h"
 #import <Carbon/Carbon.h>
@@ -1600,14 +1601,13 @@ bool RenderThemeMac::paintMediaSliderTrack(RenderObject* o, const RenderObject::
     if (!mediaElement)
         return false;
 
-    float timeLoaded = 0;
-    float currentTime = 0;
-    float duration = 0;
-    if (MediaPlayer* player = mediaElement->player()) {
-        duration = player->duration();
-        timeLoaded = player->maxTimeBuffered();
-        currentTime = player->currentTime();
-    }
+    RefPtr<TimeRanges> timeRanges = mediaElement->buffered();
+    ExceptionCode ignoredException;
+    float timeLoaded = timeRanges->length() ? timeRanges->end(0, ignoredException) : 0;
+    float currentTime = mediaElement->currentTime();
+    float duration = mediaElement->duration();
+    if (isnan(duration))
+        duration = 0;
  
     paintInfo.context->save();
     FloatRect unzoomedRect = getUnzoomedRectAndAdjustCurrentContext(o, paintInfo, r);

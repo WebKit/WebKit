@@ -1287,7 +1287,19 @@ float HTMLMediaElement::percentLoaded() const
     if (!m_player)
         return 0;
     float duration = m_player->duration();
-    return duration ? m_player->maxTimeBuffered() / duration : 0;
+
+    if (!duration || isinf(duration))
+        return 0;
+
+    float buffered = 0;
+    RefPtr<TimeRanges> timeRanges = m_player->buffered();
+    for (unsigned i = 0; i < timeRanges->length(); ++i) {
+        ExceptionCode ignoredException;
+        float start = timeRanges->start(i, ignoredException);
+        float end = timeRanges->end(i, ignoredException);
+        buffered += end - start;
+    }
+    return buffered / duration;
 }
 
 bool HTMLMediaElement::havePotentialSourceChild()
@@ -1466,10 +1478,9 @@ GraphicsLayer* HTMLMediaElement::mediaPlayerGraphicsLayer(MediaPlayer*)
 
 PassRefPtr<TimeRanges> HTMLMediaElement::buffered() const
 {
-    // FIXME real ranges support
-    if (!m_player || !m_player->maxTimeBuffered())
+    if (!m_player)
         return TimeRanges::create();
-    return TimeRanges::create(0, m_player->maxTimeBuffered());
+    return m_player->buffered();
 }
 
 PassRefPtr<TimeRanges> HTMLMediaElement::played() const

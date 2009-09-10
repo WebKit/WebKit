@@ -48,6 +48,7 @@ class IntSize;
 class MediaPlayer;
 class MediaPlayerPrivateInterface;
 class String;
+class TimeRanges;
 
 #if USE(ACCELERATED_COMPOSITING)
 class GraphicsLayer;
@@ -146,7 +147,7 @@ public:
     bool preservesPitch() const;    
     void setPreservesPitch(bool);
     
-    float maxTimeBuffered();
+    PassRefPtr<TimeRanges> buffered();
     float maxTimeSeekable();
 
     unsigned bytesLoaded();

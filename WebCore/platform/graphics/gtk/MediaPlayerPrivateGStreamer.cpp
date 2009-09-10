@@ -377,11 +377,13 @@ MediaPlayer::ReadyState MediaPlayerPrivate::readyState() const
     return m_readyState;
 }
 
-float MediaPlayerPrivate::maxTimeBuffered() const
+PassRefPtr<TimeRanges> MediaPlayerPrivate::buffered() const;
 {
-    if (m_errorOccured)
-        return 0.0;
-    return m_isStreaming ? 0 : maxTimeLoaded();
+    RefPtr<TimeRanges> timeRanges = TimeRanges::create();
+    float loaded = maxTimeLoaded();
+    if (!m_errorOccured && !m_isStreaming && loaded > 0)
+        timeRanges->add(0, loaded);
+    return timeRanges.release();
 }
 
 float MediaPlayerPrivate::maxTimeSeekable() const
@@ -730,4 +732,3 @@ void MediaPlayerPrivate::createGSTPlayBin(String url)
 }
 
 #endif
-
