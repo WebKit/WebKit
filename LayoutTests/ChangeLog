@@ -1,3 +1,14 @@
+2009-09-10  Xiaomei Ji  <xji@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Implement Range.expand().
+        https://bugs.webkit.org/show_bug.cgi?id=27632
+
+        * fast/dom/Range/range-expand-expected.txt: Added.
+        * fast/dom/Range/range-expand.html: Added.
+        * fast/dom/Window/window-properties-expected.txt:
+
 2009-09-10  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

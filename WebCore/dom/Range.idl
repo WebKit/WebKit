@@ -112,6 +112,9 @@ module ranges {
                                in long offset)
             raises(RangeException, DOMException);
 
+        void expand(in DOMString unit)
+            raises(RangeException, DOMException);
+
 #if !defined(LANGUAGE_JAVASCRIPT) || !LANGUAGE_JAVASCRIPT
         readonly attribute DOMString text;
 #endif
