@@ -32,24 +32,16 @@
 #define V8Proxy_h
 
 #include "ChromiumBridge.h"
-#include "Node.h"
-#include "NodeFilter.h"
-#include "PlatformString.h" // for WebCore::String
 #include "ScriptSourceCode.h" // for WebCore::ScriptSourceCode
 #include "SecurityOrigin.h" // for WebCore::SecurityOrigin
-#include "V8CustomBinding.h"
-#include "V8DOMMap.h"
 #include "V8DOMWrapper.h"
 #include "V8EventListenerList.h"
 #include "V8GCController.h"
 #include "V8Index.h"
-#include "V8Utilities.h"
+#include <list>
 #include <v8.h>
-#include <wtf/Assertions.h>
 #include <wtf/PassRefPtr.h> // so generated bindings don't have to
 #include <wtf/Vector.h>
-
-#include <list>
 
 #ifdef ENABLE_DOM_STATS_COUNTERS
 #define INC_STATS(name) ChromiumBridge::incrementStatsCounter(name)
@@ -59,51 +51,12 @@
 
 namespace WebCore {
 
-    class CSSRule;
-    class CSSRuleList;
-    class CSSStyleDeclaration;
-    class CSSValue;
-    class CSSValueList;
-    class ClientRectList;
-    class DOMImplementation;
     class DOMWindow;
-    class Document;
-    class Element;
-    class Event;
-    class EventListener;
-    class EventTarget;
     class Frame;
-    class HTMLCollection;
-    class HTMLDocument;
-    class HTMLElement;
-    class HTMLOptionsCollection;
-    class MediaList;
-    class MimeType;
-    class MimeTypeArray;
-    class NamedNodeMap;
-    class Navigator;
     class Node;
-    class NodeFilter;
-    class NodeList;
-#if ENABLE(NOTIFICATIONS)
-    class Notification;
-    class NotificationCenter;
-#endif
-    class Plugin;
-    class PluginArray;
     class SVGElement;
-#if ENABLE(SVG)
-    class SVGElementInstance;
-#endif
-    class Screen;
     class ScriptExecutionContext;
-#if ENABLE(DOM_STORAGE)
-    class Storage;
-    class StorageEvent;
-#endif
     class String;
-    class StyleSheet;
-    class StyleSheetList;
     class V8EventListener;
     class V8ObjectEventListener;
 
