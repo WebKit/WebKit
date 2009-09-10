@@ -1,3 +1,17 @@
+2009-09-10  Jian Li  <jianli@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [V8] Make XMLHttpRequest.send handle File object.
+        https://bugs.webkit.org/show_bug.cgi?id=28924
+
+        Add a new layout test.
+
+        * http/tests/local/resources/file-for-drag-to-send.txt: Added.
+        * http/tests/local/resources/send-dragged-file.js: Added.
+        * http/tests/local/send-dragged-file-expected.txt: Added.
+        * http/tests/local/send-dragged-file.html: Added.
+
 2009-09-09  Steve Block  <steveblock@google.com>
 
         Reviewed by Darin Adler.
