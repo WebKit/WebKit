@@ -331,10 +331,38 @@ static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JS
         gdkKeySym = GDK_End;
     else if (JSStringIsEqualToUTF8CString(character, "delete"))
         gdkKeySym = GDK_Delete;
+    else if (JSStringIsEqualToUTF8CString(character, "F1"))
+        gdkKeySym = GDK_F1;
+    else if (JSStringIsEqualToUTF8CString(character, "F2"))
+        gdkKeySym = GDK_F2;
+    else if (JSStringIsEqualToUTF8CString(character, "F3"))
+        gdkKeySym = GDK_F3;
+    else if (JSStringIsEqualToUTF8CString(character, "F4"))
+        gdkKeySym = GDK_F4;
+    else if (JSStringIsEqualToUTF8CString(character, "F5"))
+        gdkKeySym = GDK_F5;
+    else if (JSStringIsEqualToUTF8CString(character, "F6"))
+        gdkKeySym = GDK_F6;
+    else if (JSStringIsEqualToUTF8CString(character, "F7"))
+        gdkKeySym = GDK_F7;
+    else if (JSStringIsEqualToUTF8CString(character, "F8"))
+        gdkKeySym = GDK_F8;
+    else if (JSStringIsEqualToUTF8CString(character, "F9"))
+        gdkKeySym = GDK_F9;
+    else if (JSStringIsEqualToUTF8CString(character, "F10"))
+        gdkKeySym = GDK_F10;
+    else if (JSStringIsEqualToUTF8CString(character, "F11"))
+        gdkKeySym = GDK_F11;
+    else if (JSStringIsEqualToUTF8CString(character, "F12"))
+        gdkKeySym = GDK_F12;
     else {
         int charCode = JSStringGetCharactersPtr(character)[0];
-        if (charCode == '\n')
+        if (charCode == '\n' || charCode == '\r')
             gdkKeySym = GDK_Return;
+        else if (charCode == '\t')
+            gdkKeySym = GDK_Tab;
+        else if (charCode == '\x8')
+            gdkKeySym = GDK_BackSpace;
         else {
             gdkKeySym = gdk_unicode_to_keyval(charCode);
             if (WTF::isASCIIUpper(charCode))

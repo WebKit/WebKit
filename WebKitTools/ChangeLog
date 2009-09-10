@@ -1,3 +1,13 @@
+2009-09-10  Martin Robinson  <martin.james.robinson@gmail.com>
+
+        [GTK] EventSender does not properly convert some keyDown strings
+        https://bugs.webkit.org/show_bug.cgi?id=29119
+
+        Add more keyDown string to character code conversions for GTK+ EventSender.
+
+        * DumpRenderTree/gtk/EventSender.cpp:
+        (keyDownCallback):
+
 2009-09-09  Steve Block  <steveblock@google.com>
 
         Reviewed by Maciej Stachowiak.
