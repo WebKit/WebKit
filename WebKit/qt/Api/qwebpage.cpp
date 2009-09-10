@@ -758,11 +758,11 @@ void QWebPagePrivate::mouseReleaseEvent(QMouseEvent *ev)
 }
 
 #ifndef QT_NO_CONTEXTMENU
-void QWebPagePrivate::contextMenuEvent(QContextMenuEvent *ev)
+void QWebPagePrivate::contextMenuEvent(const QPoint& globalPos)
 {
     QMenu *menu = q->createStandardContextMenu();
     if (menu) {
-        menu->exec(ev->globalPos());
+        menu->exec(globalPos);
         delete menu;
     }
 }
@@ -2216,7 +2216,10 @@ bool QWebPage::event(QEvent *ev)
         break;
 #ifndef QT_NO_CONTEXTMENU
     case QEvent::ContextMenu:
-        d->contextMenuEvent(static_cast<QContextMenuEvent*>(ev));
+        d->contextMenuEvent(static_cast<QContextMenuEvent*>(ev)->globalPos());
+        break;
+    case QEvent::GraphicsSceneContextMenu:
+        d->contextMenuEvent(static_cast<QGraphicsSceneContextMenuEvent*>(ev)->screenPos());
         break;
 #endif
 #ifndef QT_NO_WHEELEVENT

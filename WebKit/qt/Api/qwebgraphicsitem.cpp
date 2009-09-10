@@ -716,7 +716,7 @@ void QWebGraphicsItem::dropEvent(QGraphicsSceneDragDropEvent* ev)
 #ifndef QT_NO_CONTEXTMENU
 /*! \reimp
 */
-void QWebGraphicsItem::contextMenuEvent(QContextMenuEvent* ev)
+void QWebGraphicsItem::contextMenuEvent(QGraphicsSceneContextMenuEvent* ev)
 {
     if (d->page) {
         const bool accepted = ev->isAccepted();

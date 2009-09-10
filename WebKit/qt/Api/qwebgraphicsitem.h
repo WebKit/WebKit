@@ -119,7 +119,7 @@ protected:
     virtual void keyPressEvent(QKeyEvent*);
     virtual void keyReleaseEvent(QKeyEvent*);
 #ifndef QT_NO_CONTEXTMENU
-    virtual void contextMenuEvent(QContextMenuEvent*);
+    virtual void contextMenuEvent(QGraphicsSceneContextMenuEvent*);
 #endif
     virtual void dragEnterEvent(QGraphicsSceneDragDropEvent*);
     virtual void dragLeaveEvent(QGraphicsSceneDragDropEvent*);

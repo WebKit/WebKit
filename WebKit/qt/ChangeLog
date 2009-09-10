@@ -1,3 +1,21 @@
+2009-09-10  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Ariya Hidayat.
+
+        Fix context menu event delivery with QWebGraphicsItem.
+
+        Re-implement the correct context menu virtual function using
+        a QGraphicsSceneContextMenuEvent and forward & handle it in
+        QWebPage.
+
+        * Api/qwebgraphicsitem.cpp:
+        (QWebGraphicsItem::contextMenuEvent):
+        * Api/qwebgraphicsitem.h:
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::contextMenuEvent):
+        (QWebPage::event):
+        * Api/qwebpage_p.h:
+
 2009-09-10  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Unreviewed.

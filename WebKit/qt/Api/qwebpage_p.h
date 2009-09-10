@@ -84,7 +84,7 @@ public:
     void mouseReleaseEvent(QMouseEvent*);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent*);
 #ifndef QT_NO_CONTEXTMENU
-    void contextMenuEvent(QContextMenuEvent*);
+    void contextMenuEvent(const QPoint& globalPos);
 #endif
 #ifndef QT_NO_WHEELEVENT
     void wheelEvent(QWheelEvent*);
