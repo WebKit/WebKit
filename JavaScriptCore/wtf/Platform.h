@@ -722,10 +722,6 @@
 #define ENABLE_PAN_SCROLLING 1
 #endif
 
-#if !defined(ENABLE_ACTIVEX_TYPE_CONVERSION_WMPLAYER)
-#define ENABLE_ACTIVEX_TYPE_CONVERSION_WMPLAYER 1
-#endif
-
 /* Use the QtXmlStreamReader implementation for XMLTokenizer */
 #if PLATFORM(QT)
 #if !ENABLE(XSLT)

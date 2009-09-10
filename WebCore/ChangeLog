@@ -1,3 +1,15 @@
+2009-09-08  John Abd-El-Malek  <jam@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Remove unneeded define for ActiveX.
+        https://bugs.webkit.org/show_bug.cgi?id=29054
+
+        * rendering/RenderPartObject.cpp:
+        (WebCore::createClassIdToTypeMap):
+        (WebCore::serviceTypeForClassId):
+        (WebCore::RenderPartObject::updateWidget):
+
 2009-09-10  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Sam Weinig.

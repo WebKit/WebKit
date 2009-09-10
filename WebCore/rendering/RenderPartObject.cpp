@@ -90,22 +90,9 @@ static ClassIdToTypeMap* createClassIdToTypeMap()
     map->add("clsid:CFCDAA03-8BE4-11CF-B84B-0020AFBBCCFA", "audio/x-pn-realaudio-plugin");
     map->add("clsid:02BF25D5-8C17-4B23-BC80-D3488ABDDC6B", "video/quicktime");
     map->add("clsid:166B1BCA-3F9C-11CF-8075-444553540000", "application/x-director");
-#if ENABLE(ACTIVEX_TYPE_CONVERSION_WMPLAYER)
     map->add("clsid:6BF52A52-394A-11D3-B153-00C04F79FAA6", "application/x-mplayer2");
     map->add("clsid:22D6F312-B0F6-11D0-94AB-0080C74C7E95", "application/x-mplayer2");
-#endif
     return map;
-}
-
-static const String& activeXType()
-{
-    DEFINE_STATIC_LOCAL(String, activeXType, ("application/x-oleobject"));
-    return activeXType;
-}
-
-static inline bool havePlugin(const PluginData* pluginData, const String& type)
-{
-    return pluginData && !type.isEmpty() && pluginData->supportsMimeType(type);
 }
 
 static String serviceTypeForClassId(const String& classId, const PluginData* pluginData)
@@ -116,30 +103,7 @@ static String serviceTypeForClassId(const String& classId, const PluginData* plu
         return String();
 
     static ClassIdToTypeMap* map = createClassIdToTypeMap();
-    String type = map->get(classId);
-
-    // If we do have a plug-in that supports generic ActiveX content and don't have a plug-in
-    // for the MIME type we came up with, ignore the MIME type we came up with and just use
-    // the ActiveX type.
-    if (havePlugin(pluginData, activeXType()) && !havePlugin(pluginData, type))
-        return activeXType();
-
-    return type;
-}
-
-static inline bool shouldUseEmbedDescendant(HTMLObjectElement* objectElement, const PluginData* pluginData)
-{
-#if PLATFORM(MAC)
-    UNUSED_PARAM(objectElement);
-    UNUSED_PARAM(pluginData);
-    // On Mac, we always want to use the embed descendant.
-    return true;
-#else
-    // If we have both an <object> and <embed>, we always want to use the <embed> except when we have
-    // an ActiveX plug-in and plan to use it.
-    return !(havePlugin(pluginData, activeXType())
-        && serviceTypeForClassId(objectElement->classId(), pluginData) == activeXType());
-#endif
+    return map->get(classId);
 }
 
 static void mapDataParamToSrc(Vector<String>* paramNames, Vector<String>* paramValues)
@@ -178,16 +142,14 @@ void RenderPartObject::updateWidget(bool onlyCreateNonNetscapePlugins)
         // Check for a child EMBED tag.
         HTMLEmbedElement* embed = 0;
         const PluginData* pluginData = frame->page()->pluginData();
-        if (shouldUseEmbedDescendant(o, pluginData)) {
-            for (Node* child = o->firstChild(); child; ) {
-                if (child->hasTagName(embedTag)) {
-                    embed = static_cast<HTMLEmbedElement*>(child);
-                    break;
-                } else if (child->hasTagName(objectTag))
-                    child = child->nextSibling();         // Don't descend into nested OBJECT tags
-                else
-                    child = child->traverseNextNode(o);   // Otherwise descend (EMBEDs may be inside COMMENT tags)
-            }
+        for (Node* child = o->firstChild(); child; ) {
+            if (child->hasTagName(embedTag)) {
+                embed = static_cast<HTMLEmbedElement*>(child);
+                break;
+            } else if (child->hasTagName(objectTag))
+                child = child->nextSibling();         // Don't descend into nested OBJECT tags
+            else
+                child = child->traverseNextNode(o);   // Otherwise descend (EMBEDs may be inside COMMENT tags)
         }
 
         // Use the attributes from the EMBED tag instead of the OBJECT tag including WIDTH and HEIGHT.
