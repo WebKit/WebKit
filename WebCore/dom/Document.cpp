@@ -1758,7 +1758,7 @@ void Document::implicitClose()
         // exists in the cache (we ignore the return value because we don't need it here). This is 
         // only safe to call when a layout is not in progress, so it can not be used in postNotification.    
         axObjectCache()->getOrCreate(renderObject);
-        axObjectCache()->postNotification(renderObject, "AXLoadComplete", true);
+        axObjectCache()->postNotification(renderObject, AXObjectCache::AXLoadComplete, true);
     }
 #endif
 

@@ -2174,7 +2174,7 @@ void AccessibilityRenderObject::handleActiveDescendantChanged()
     AccessibilityRenderObject* activedescendant = static_cast<AccessibilityRenderObject*>(activeDescendant());
     
     if (activedescendant && shouldFocusActiveDescendant())
-        doc->axObjectCache()->postNotification(activedescendant->renderer(), "AXFocusedUIElementChanged", true);
+        doc->axObjectCache()->postNotification(activedescendant->renderer(), AXObjectCache::AXFocusedUIElementChanged, true);
 }
 
 

@@ -76,8 +76,6 @@ namespace WebCore {
 
         void detachWrapper(AccessibilityObject*);
         void attachWrapper(AccessibilityObject*);
-        void postNotification(RenderObject*, const String&, bool postToElement);
-        void postPlatformNotification(AccessibilityObject*, const String&);
         void childrenChanged(RenderObject*);
         void selectedChildrenChanged(RenderObject*);
         void handleActiveDescendantChanged(RenderObject*);
@@ -98,6 +96,21 @@ namespace WebCore {
         static void textMarkerDataForVisiblePosition(TextMarkerData&, const VisiblePosition&);
         static VisiblePosition visiblePositionForTextMarkerData(TextMarkerData&);
 
+        enum AXNotification {
+            AXCheckedStateChanged,
+            AXFocusedUIElementChanged,
+            AXLayoutComplete,
+            AXLoadComplete,
+            AXSelectedChildrenChanged,
+            AXSelectedTextChanged,
+            AXValueChanged
+        };
+        
+        void postNotification(RenderObject*, AXNotification, bool postToElement);
+
+    protected:
+        void postPlatformNotification(AccessibilityObject*, AXNotification);
+
     private:
         HashMap<AXID, RefPtr<AccessibilityObject> > m_objects;
         HashMap<RenderObject*, AXID> m_renderObjectMapping;
@@ -107,7 +120,7 @@ namespace WebCore {
         HashSet<AXID> m_idsInUse;
         
         Timer<AXObjectCache> m_notificationPostTimer;
-        Vector<pair<RefPtr<AccessibilityObject>, const String> > m_notificationsToPost;
+        Vector<pair<RefPtr<AccessibilityObject>, AXNotification> > m_notificationsToPost;
         void notificationPostTimerFired(Timer<AXObjectCache>*);
         
         AXID getAXID(AccessibilityObject*);

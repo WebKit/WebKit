@@ -51,12 +51,38 @@ void AXObjectCache::attachWrapper(AccessibilityObject* obj)
     obj->setWrapper([[AccessibilityObjectWrapper alloc] initWithAccessibilityObject:obj]);
 }
 
-void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, const String& message)
+void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotification notification)
 {
     if (!obj)
         return;
     
-    NSAccessibilityPostNotification(obj->wrapper(), message);
+    // Some notifications are unique to Safari and do not have NSAccessibility equivalents.
+    String macNotification;
+    switch (notification) {
+        case AXCheckedStateChanged:
+            macNotification = "AXCheckedStateChanged";
+            break;
+        case AXFocusedUIElementChanged:
+            macNotification = NSAccessibilityFocusedUIElementChangedNotification;
+            break;
+        case AXLayoutComplete:
+            macNotification = "AXLayoutComplete";
+            break;
+        case AXLoadComplete:
+            macNotification = "AXLoadComplete";
+            break;
+        case AXSelectedChildrenChanged:
+            macNotification = NSAccessibilitySelectedChildrenChangedNotification;
+            break;
+        case AXSelectedTextChanged:
+            macNotification = NSAccessibilitySelectedTextChangedNotification;
+            break;
+        case AXValueChanged:
+            macNotification = NSAccessibilityValueChangedNotification;
+            break;
+    }
+    
+    NSAccessibilityPostNotification(obj->wrapper(), macNotification);
 }
 
 void AXObjectCache::handleFocusedUIElementChanged(RenderObject*, RenderObject*)

@@ -339,7 +339,7 @@ void AXObjectCache::notificationPostTimerFired(Timer<AXObjectCache>*)
 }
     
 #if HAVE(ACCESSIBILITY)
-void AXObjectCache::postNotification(RenderObject* renderer, const String& message, bool postToElement)
+void AXObjectCache::postNotification(RenderObject* renderer, AXNotification notification, bool postToElement)
 {
     // Notifications for text input objects are sent to that object.
     // All others are sent to the top WebArea.
@@ -367,14 +367,14 @@ void AXObjectCache::postNotification(RenderObject* renderer, const String& messa
     if (!obj)
         return;
 
-    m_notificationsToPost.append(make_pair(obj, message));
+    m_notificationsToPost.append(make_pair(obj, notification));
     if (!m_notificationPostTimer.isActive())
         m_notificationPostTimer.startOneShot(0);
 }
 
 void AXObjectCache::selectedChildrenChanged(RenderObject* renderer)
 {
-    postNotification(renderer, "AXSelectedChildrenChanged", true);
+    postNotification(renderer, AXSelectedChildrenChanged, true);
 }
 #endif
 

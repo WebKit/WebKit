@@ -51,7 +51,7 @@ void AXObjectCache::attachWrapper(AccessibilityObject*)
     // software requests them via get_accChild.
 }
 
-void AXObjectCache::postPlatformNotification(AccessibilityObject*, const String&)
+void AXObjectCache::postPlatformNotification(AccessibilityObject*, AXNotification)
 {
 }
 

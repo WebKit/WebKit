@@ -37,9 +37,9 @@ void AXObjectCache::attachWrapper(AccessibilityObject* obj)
     g_object_unref(atkObj);
 }
 
-void AXObjectCache::postPlatformNotification(AccessibilityObject* coreObject, const String& message)
+void AXObjectCache::postPlatformNotification(AccessibilityObject* coreObject, AXNotification notification)
 {
-    if (message == "AXCheckedStateChanged") {
+    if (notification == AXCheckedStateChanged) {
         if (!coreObject->isCheckboxOrRadio())
             return;
         g_signal_emit_by_name(coreObject->wrapper(), "state-change", "checked", coreObject->isChecked());

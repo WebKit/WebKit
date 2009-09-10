@@ -602,16 +602,17 @@ void Element::attributeChanged(Attribute* attr, bool)
 
 void Element::updateAfterAttributeChanged(Attribute* attr)
 {
-    if (!document()->axObjectCache()->accessibilityEnabled())
+    AXObjectCache* axObjectCache = document()->axObjectCache();
+    if (!axObjectCache->accessibilityEnabled())
         return;
 
     const QualifiedName& attrName = attr->name();
     if (attrName == aria_activedescendantAttr) {
         // any change to aria-activedescendant attribute triggers accessibility focus change, but document focus remains intact
-        document()->axObjectCache()->handleActiveDescendantChanged(renderer());
+        axObjectCache->handleActiveDescendantChanged(renderer());
     } else if (attrName == roleAttr) {
         // the role attribute can change at any time, and the AccessibilityObject must pick up these changes
-        document()->axObjectCache()->handleAriaRoleChanged(renderer());
+        axObjectCache->handleAriaRoleChanged(renderer());
     }
 }
     
