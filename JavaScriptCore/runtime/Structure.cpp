@@ -130,13 +130,10 @@ Structure::Structure(JSValue prototype, const TypeInfo& typeInfo)
     , m_isDictionary(false)
     , m_isPinnedPropertyTable(false)
     , m_hasGetterSetterProperties(false)
-    , m_usingSingleTransitionSlot(true)
     , m_attributesInPrevious(0)
 {
     ASSERT(m_prototype);
     ASSERT(m_prototype.isObject() || m_prototype.isNull());
-
-    m_transitions.singleTransition = 0;
 
 #ifndef NDEBUG
 #if ENABLE(JSC_MULTIPLE_THREADS)
@@ -155,20 +152,11 @@ Structure::Structure(JSValue prototype, const TypeInfo& typeInfo)
 
 Structure::~Structure()
 {
-    if (m_previous) {
-        if (m_previous->m_usingSingleTransitionSlot) {
-            m_previous->m_transitions.singleTransition = 0;
-        } else {
-            ASSERT(m_previous->m_transitions.table->contains(make_pair(m_nameInPrevious.get(), m_attributesInPrevious), m_specificValueInPrevious));
-            m_previous->m_transitions.table->remove(make_pair(m_nameInPrevious.get(), m_attributesInPrevious), m_specificValueInPrevious);
-        }
-    }
+    if (m_previous)
+        m_previous->table.remove(make_pair(m_nameInPrevious.get(), m_attributesInPrevious), m_specificValueInPrevious);
 
     if (m_cachedPropertyNameArrayData)
         m_cachedPropertyNameArrayData->setCachedStructure(0);
-
-    if (!m_usingSingleTransitionSlot)
-        delete m_transitions.table;
 
     if (m_propertyTable) {
         unsigned entryCount = m_propertyTable->keyCount + m_propertyTable->deletedSentinelCount;
@@ -381,22 +369,10 @@ PassRefPtr<Structure> Structure::addPropertyTransitionToExistingStructure(Struct
     ASSERT(!structure->m_isDictionary);
     ASSERT(structure->typeInfo().type() == ObjectType);
 
-    if (structure->m_usingSingleTransitionSlot) {
-        Structure* existingTransition = structure->m_transitions.singleTransition;
-        if (existingTransition && existingTransition->m_nameInPrevious.get() == propertyName.ustring().rep()
-            && existingTransition->m_attributesInPrevious == attributes
-            && (existingTransition->m_specificValueInPrevious == specificValue || existingTransition->m_specificValueInPrevious == 0)) {
-
-            ASSERT(structure->m_transitions.singleTransition->m_offset != noOffset);
-            offset = structure->m_transitions.singleTransition->m_offset;
-            return existingTransition;
-        }
-    } else {
-        if (Structure* existingTransition = structure->m_transitions.table->get(make_pair(propertyName.ustring().rep(), attributes), specificValue)) {
-            ASSERT(existingTransition->m_offset != noOffset);
-            offset = existingTransition->m_offset;
-            return existingTransition;
-        }
+    if (Structure* existingTransition = structure->table.get(make_pair(propertyName.ustring().rep(), attributes), specificValue)) {
+        ASSERT(existingTransition->m_offset != noOffset);
+        offset = existingTransition->m_offset;
+        return existingTransition;
     }
 
     return 0;
@@ -447,19 +423,7 @@ PassRefPtr<Structure> Structure::addPropertyTransition(Structure* structure, con
 
     transition->m_offset = offset;
 
-    if (structure->m_usingSingleTransitionSlot) {
-        if (!structure->m_transitions.singleTransition) {
-            structure->m_transitions.singleTransition = transition.get();
-            return transition.release();
-        }
-
-        Structure* existingTransition = structure->m_transitions.singleTransition;
-        structure->m_usingSingleTransitionSlot = false;
-        StructureTransitionTable* transitionTable = new StructureTransitionTable;
-        structure->m_transitions.table = transitionTable;
-        transitionTable->add(make_pair(existingTransition->m_nameInPrevious.get(), existingTransition->m_attributesInPrevious), existingTransition, existingTransition->m_specificValueInPrevious);
-    }
-    structure->m_transitions.table->add(make_pair(propertyName.ustring().rep(), attributes), transition.get(), specificValue);
+    structure->table.add(make_pair(propertyName.ustring().rep(), attributes), transition.get(), specificValue);
     return transition.release();
 }
 
@@ -558,8 +522,6 @@ PassRefPtr<Structure> Structure::fromDictionaryTransition(Structure* structure)
 
 size_t Structure::addPropertyWithoutTransition(const Identifier& propertyName, unsigned attributes, JSCell* specificValue)
 {
-    ASSERT(!m_transitions.singleTransition);
-
     materializePropertyMapIfNecessary();
 
     m_isPinnedPropertyTable = true;
@@ -572,7 +534,6 @@ size_t Structure::addPropertyWithoutTransition(const Identifier& propertyName, u
 
 size_t Structure::removePropertyWithoutTransition(const Identifier& propertyName)
 {
-    ASSERT(!m_transitions.singleTransition);
     ASSERT(m_isDictionary);
 
     materializePropertyMapIfNecessary();
@@ -829,12 +790,7 @@ size_t Structure::put(const Identifier& propertyName, unsigned attributes, JSCel
 
 bool Structure::hasTransition(UString::Rep* rep, unsigned attributes)
 {
-    if (m_usingSingleTransitionSlot) {
-        return m_transitions.singleTransition
-            && m_transitions.singleTransition->m_nameInPrevious == rep
-            && m_transitions.singleTransition->m_attributesInPrevious == attributes;
-    }
-    return m_transitions.table->hasTransition(make_pair(rep, attributes));
+    return table.hasTransition(make_pair(rep, attributes));
 }
 
 size_t Structure::remove(const Identifier& propertyName)

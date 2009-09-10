@@ -52,6 +52,7 @@ namespace JSC {
     class Structure : public RefCounted<Structure> {
     public:
         friend class JIT;
+        friend class StructureTransitionTable;
         static PassRefPtr<Structure> create(JSValue prototype, const TypeInfo& typeInfo)
         {
             return adoptRef(new Structure(prototype, typeInfo));
@@ -174,10 +175,7 @@ namespace JSC {
         RefPtr<UString::Rep> m_nameInPrevious;
         JSCell* m_specificValueInPrevious;
 
-        union {
-            Structure* singleTransition;
-            StructureTransitionTable* table;
-        } m_transitions;
+        StructureTransitionTable table;
 
         RefPtr<PropertyNameArrayData> m_cachedPropertyNameArrayData;
 
@@ -189,7 +187,6 @@ namespace JSC {
         bool m_isDictionary : 1;
         bool m_isPinnedPropertyTable : 1;
         bool m_hasGetterSetterProperties : 1;
-        bool m_usingSingleTransitionSlot : 1;
         unsigned m_attributesInPrevious : 7;
     };
 
@@ -240,8 +237,14 @@ namespace JSC {
     
     bool StructureTransitionTable::contains(const StructureTransitionTableHash::Key& key, JSCell* specificValue)
     {
-        TransitionTable::iterator find = m_table.find(key);
-        if (find == m_table.end())
+        if (usingSingleTransitionSlot()) {
+            Structure* existingTransition = singleTransition();
+            return existingTransition && existingTransition->m_nameInPrevious.get() == key.first
+                   && existingTransition->m_attributesInPrevious == key.second
+                   && (existingTransition->m_specificValueInPrevious == specificValue || existingTransition->m_specificValueInPrevious == 0);
+        }
+        TransitionTable::iterator find = table()->find(key);
+        if (find == table()->end())
             return false;
 
         return find->second.first || find->second.second->transitionedFor(specificValue);
@@ -249,10 +252,39 @@ namespace JSC {
 
     Structure* StructureTransitionTable::get(const StructureTransitionTableHash::Key& key, JSCell* specificValue) const
     {
-        Transition transition = m_table.get(key);
+        if (usingSingleTransitionSlot()) {
+            Structure* existingTransition = singleTransition();
+            if (existingTransition && existingTransition->m_nameInPrevious.get() == key.first
+                && existingTransition->m_attributesInPrevious == key.second
+                && (existingTransition->m_specificValueInPrevious == specificValue || existingTransition->m_specificValueInPrevious == 0))
+                return existingTransition;
+            return 0;
+        }
+
+        Transition transition = table()->get(key);
         if (transition.second && transition.second->transitionedFor(specificValue))
             return transition.second;
         return transition.first;
+    }
+
+    bool StructureTransitionTable::hasTransition(const StructureTransitionTableHash::Key& key) const
+    {
+        if (usingSingleTransitionSlot()) {
+            Structure* transition = singleTransition();
+            return transition && transition->m_nameInPrevious == key.first
+            && transition->m_attributesInPrevious == key.second;
+        }
+        return table()->contains(key);
+    }
+    
+    void StructureTransitionTable::reifySingleTransition()
+    {
+        ASSERT(usingSingleTransitionSlot());
+        Structure* existingTransition = singleTransition();
+        ASSERT(existingTransition);
+        TransitionTable* transitionTable = new TransitionTable;
+        setTransitionTable(transitionTable);
+        add(make_pair(existingTransition->m_nameInPrevious.get(), existingTransition->m_attributesInPrevious), existingTransition, existingTransition->m_specificValueInPrevious);
     }
 } // namespace JSC
 

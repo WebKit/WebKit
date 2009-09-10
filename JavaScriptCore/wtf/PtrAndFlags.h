@@ -34,11 +34,8 @@
 #include <wtf/Assertions.h>
 
 namespace WTF {
-    template<class T, typename FlagEnum> class PtrAndFlags {
+    template<class T, typename FlagEnum> class PtrAndFlagsBase {
     public:
-        PtrAndFlags() : m_ptrAndFlags(0) {}
-        PtrAndFlags(T* ptr) : m_ptrAndFlags(0) { set(ptr); }
-
         bool isFlagSet(FlagEnum flagNumber) const { ASSERT(flagNumber < 2); return m_ptrAndFlags & (1 << flagNumber); }
         void setFlag(FlagEnum flagNumber) { ASSERT(flagNumber < 2); m_ptrAndFlags |= (1 << flagNumber);}
         void clearFlag(FlagEnum flagNumber) { ASSERT(flagNumber < 2); m_ptrAndFlags &= ~(1 << flagNumber);}
@@ -55,14 +52,28 @@ namespace WTF {
         bool operator!() const { return !get(); }
         T* operator->() const { return reinterpret_cast<T*>(m_ptrAndFlags & ~3); }
 
-    private:
+    protected:
         intptr_t m_ptrAndFlags;
 #ifndef NDEBUG
         void* m_leaksPtr; // Only used to allow tools like leaks on OSX to detect that the memory is referenced.
 #endif
     };
+
+    template<class T, typename FlagEnum> class PtrAndFlags : public PtrAndFlagsBase<T, FlagEnum> {
+    public:
+        PtrAndFlags()
+        {
+            PtrAndFlagsBase<T, FlagEnum>::m_ptrAndFlags = 0;
+        }
+        PtrAndFlags(T* ptr)
+        {
+            PtrAndFlagsBase<T, FlagEnum>::m_ptrAndFlags = 0;
+            set(ptr);
+        }
+    };
 } // namespace WTF
 
+using WTF::PtrAndFlagsBase;
 using WTF::PtrAndFlags;
 
 #endif // PtrAndFlags_h
