@@ -1,3 +1,11 @@
+2009-09-10  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Sam Weinig.
+
+        Don't copy IDL files in to the built framework.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2009-09-10  Xiaomei Ji  <xji@chromium.org>
 
         Reviewed by Eric Seidel.

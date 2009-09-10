@@ -849,28 +849,20 @@
 		49E912AE0EFAC906009D0CAF /* TimingFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 49E912A90EFAC906009D0CAF /* TimingFunction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		49EECDDF10503C2400099FAB /* CanvasArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECDC710503C2300099FAB /* CanvasArray.cpp */; };
 		49EECDE010503C2400099FAB /* CanvasArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECDC810503C2300099FAB /* CanvasArray.h */; };
-		49EECDE110503C2400099FAB /* CanvasArray.idl in Resources */ = {isa = PBXBuildFile; fileRef = 49EECDC910503C2300099FAB /* CanvasArray.idl */; };
 		49EECDE210503C2400099FAB /* CanvasArrayBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECDCA10503C2300099FAB /* CanvasArrayBuffer.cpp */; };
 		49EECDE310503C2400099FAB /* CanvasArrayBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECDCB10503C2300099FAB /* CanvasArrayBuffer.h */; };
-		49EECDE410503C2400099FAB /* CanvasArrayBuffer.idl in Resources */ = {isa = PBXBuildFile; fileRef = 49EECDCC10503C2300099FAB /* CanvasArrayBuffer.idl */; };
 		49EECDE510503C2400099FAB /* CanvasFloatArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECDCD10503C2300099FAB /* CanvasFloatArray.cpp */; };
 		49EECDE610503C2400099FAB /* CanvasFloatArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECDCE10503C2300099FAB /* CanvasFloatArray.h */; };
-		49EECDE710503C2400099FAB /* CanvasFloatArray.idl in Resources */ = {isa = PBXBuildFile; fileRef = 49EECDCF10503C2300099FAB /* CanvasFloatArray.idl */; };
 		49EECDE810503C2400099FAB /* CanvasIntArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECDD010503C2300099FAB /* CanvasIntArray.cpp */; };
 		49EECDE910503C2400099FAB /* CanvasIntArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECDD110503C2300099FAB /* CanvasIntArray.h */; };
-		49EECDEA10503C2400099FAB /* CanvasIntArray.idl in Resources */ = {isa = PBXBuildFile; fileRef = 49EECDD210503C2300099FAB /* CanvasIntArray.idl */; };
 		49EECDEB10503C2400099FAB /* CanvasShortArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECDD310503C2300099FAB /* CanvasShortArray.cpp */; };
 		49EECDEC10503C2400099FAB /* CanvasShortArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECDD410503C2300099FAB /* CanvasShortArray.h */; };
-		49EECDED10503C2400099FAB /* CanvasShortArray.idl in Resources */ = {isa = PBXBuildFile; fileRef = 49EECDD510503C2300099FAB /* CanvasShortArray.idl */; };
 		49EECDEE10503C2400099FAB /* CanvasUnsignedByteArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECDD610503C2300099FAB /* CanvasUnsignedByteArray.cpp */; };
 		49EECDEF10503C2400099FAB /* CanvasUnsignedByteArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECDD710503C2300099FAB /* CanvasUnsignedByteArray.h */; };
-		49EECDF010503C2400099FAB /* CanvasUnsignedByteArray.idl in Resources */ = {isa = PBXBuildFile; fileRef = 49EECDD810503C2300099FAB /* CanvasUnsignedByteArray.idl */; };
 		49EECDF110503C2400099FAB /* CanvasUnsignedIntArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECDD910503C2300099FAB /* CanvasUnsignedIntArray.cpp */; };
 		49EECDF210503C2400099FAB /* CanvasUnsignedIntArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECDDA10503C2300099FAB /* CanvasUnsignedIntArray.h */; };
-		49EECDF310503C2400099FAB /* CanvasUnsignedIntArray.idl in Resources */ = {isa = PBXBuildFile; fileRef = 49EECDDB10503C2300099FAB /* CanvasUnsignedIntArray.idl */; };
 		49EECDF410503C2400099FAB /* CanvasUnsignedShortArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECDDC10503C2300099FAB /* CanvasUnsignedShortArray.cpp */; };
 		49EECDF510503C2400099FAB /* CanvasUnsignedShortArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECDDD10503C2400099FAB /* CanvasUnsignedShortArray.h */; };
-		49EECDF610503C2400099FAB /* CanvasUnsignedShortArray.idl in Resources */ = {isa = PBXBuildFile; fileRef = 49EECDDE10503C2400099FAB /* CanvasUnsignedShortArray.idl */; };
 		49EECF00105070C400099FAB /* JSCanvasArrayBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECEF2105070C400099FAB /* JSCanvasArrayBuffer.cpp */; };
 		49EECF01105070C400099FAB /* JSCanvasArrayBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECEF3105070C400099FAB /* JSCanvasArrayBuffer.h */; };
 		49EECF02105070C400099FAB /* JSCanvasFloatArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECEF4105070C400099FAB /* JSCanvasFloatArray.cpp */; };
@@ -4558,7 +4550,6 @@
 		E1271A140EEEC80400F61213 /* WorkerNavigator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1271A130EEEC80400F61213 /* WorkerNavigator.cpp */; };
 		E1271A580EEECDE400F61213 /* JSWorkerNavigator.h in Headers */ = {isa = PBXBuildFile; fileRef = E1271A560EEECDE400F61213 /* JSWorkerNavigator.h */; };
 		E1271A590EEECDE400F61213 /* JSWorkerNavigator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1271A570EEECDE400F61213 /* JSWorkerNavigator.cpp */; };
-		E1284ADA10447AEB00EAEB52 /* PageTransitionEvent.idl in Resources */ = {isa = PBXBuildFile; fileRef = E1284AD910447AEB00EAEB52 /* PageTransitionEvent.idl */; };
 		E1284AE110447D4500EAEB52 /* PageTransitionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = E1284AE010447D4500EAEB52 /* PageTransitionEvent.h */; };
 		E1284AEA10447DEE00EAEB52 /* PageTransitionEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1284AE910447DEE00EAEB52 /* PageTransitionEvent.cpp */; };
 		E1284BB110449FFA00EAEB52 /* JSPageTransitionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = E1284BAF10449FFA00EAEB52 /* JSPageTransitionEvent.h */; };
@@ -17909,15 +17900,6 @@
 				85136CA80AED665900F90A3D /* westResizeCursor.png in Resources */,
 				1AB1AE7A0C051FDE00139F4F /* zoomInCursor.png in Resources */,
 				1AB1AE7B0C051FDE00139F4F /* zoomOutCursor.png in Resources */,
-				E1284ADA10447AEB00EAEB52 /* PageTransitionEvent.idl in Resources */,
-				49EECDE110503C2400099FAB /* CanvasArray.idl in Resources */,
-				49EECDE410503C2400099FAB /* CanvasArrayBuffer.idl in Resources */,
-				49EECDE710503C2400099FAB /* CanvasFloatArray.idl in Resources */,
-				49EECDEA10503C2400099FAB /* CanvasIntArray.idl in Resources */,
-				49EECDED10503C2400099FAB /* CanvasShortArray.idl in Resources */,
-				49EECDF010503C2400099FAB /* CanvasUnsignedByteArray.idl in Resources */,
-				49EECDF310503C2400099FAB /* CanvasUnsignedIntArray.idl in Resources */,
-				49EECDF610503C2400099FAB /* CanvasUnsignedShortArray.idl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
