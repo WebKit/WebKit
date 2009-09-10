@@ -1,3 +1,21 @@
+2009-09-10  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Use fastNew and fastDelete instead of operator new and delete for CSSSelector class. 
+        https://bugs.webkit.org/show_bug.cgi?id=25930
+
+        Change using of operator new to fastNew and operator delete to
+        fastDeleteSkippingDestructor for CSSSelector class to avoid mismatched function call.
+
+        This change fixes valgrind's 'mismatched free' notification.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::~CSSParser):
+        (WebCore::CSSParser::createFloatingSelector):
+        * css/CSSSelectorList.cpp:
+        (WebCore::CSSSelectorList::adoptSelectorVector):
+
 2009-09-10  Steve Block  <steveblock@google.com>
 
         Reviewed by Darin Adler.

@@ -301,6 +301,16 @@ namespace WTF {
         fastFree(p);
     }
 
+    template <typename T>
+    inline void fastDeleteSkippingDestructor(T* p)
+    {
+        if (!p)
+            return;
+
+        fastMallocMatchValidateFree(p, Internal::AllocTypeFastNew);
+        fastFree(p);
+    }
+
     namespace Internal {
         // This is a support template for fastDeleteArray.
         // This handles the case wherein T has a trivial dtor.
@@ -397,7 +407,7 @@ namespace WTF {
 
 } // namespace WTF
 
-// Using WTF::FastAllocBase to avoid using FastAllocBase's explicit qualification by WTF::.
 using WTF::FastAllocBase;
+using WTF::fastDeleteSkippingDestructor;
 
 #endif // FastAllocBase_h

@@ -1,3 +1,19 @@
+2009-09-10  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Implement fastDeleteSkippingDestructor for FastAllocBase and fastDeleteAllValues for HashSet
+        https://bugs.webkit.org/show_bug.cgi?id=25930
+
+        FastAllocBase has been extended with fastDeleteSkippingDestructor function which
+        releases memory without destructor call. fastDeleteAllValues has been implemented 
+        similar as deleteAllValues but it uses fastDelete function to release memory.
+
+        * wtf/FastAllocBase.h:
+        (WTF::fastDeleteSkippingDestructor):
+        * wtf/HashSet.h:
+        (WTF::fastDeleteAllValues):
+
 2009-09-10  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Darin Adler.

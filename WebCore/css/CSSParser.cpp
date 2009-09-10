@@ -168,7 +168,7 @@ CSSParser::~CSSParser()
     }
     delete m_floatingMediaQueryExp;
     delete m_floatingMediaQuery;
-    deleteAllValues(m_floatingSelectors);
+    fastDeleteAllValues(m_floatingSelectors);
     deleteAllValues(m_floatingValueLists);
     deleteAllValues(m_floatingFunctions);
     deleteAllValues(m_reusableSelectorVector);
@@ -4774,7 +4774,7 @@ UChar* CSSParser::text(int *length)
 
 CSSSelector* CSSParser::createFloatingSelector()
 {
-    CSSSelector* selector = new CSSSelector;
+    CSSSelector* selector = fastNew<CSSSelector>();
     m_floatingSelectors.add(selector);
     return selector;
 }
