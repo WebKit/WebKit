@@ -1,3 +1,23 @@
+2009-09-10  Adam Roben  <aroben@apple.com>
+
+        Make the play/pause button in <video> controls indicate the button's
+        action, not the movie state
+
+        This matches the Mac behavior, iTunes, and many other media players.
+
+        No test possible.
+
+        Fixes <http://webkit.org/b/29126> Play/pause button in <video>
+        controls shows the wrong image
+
+        Reviewed by Eric Carlson.
+
+        * rendering/RenderMediaControls.cpp:
+        (WebCore::RenderMediaControls::paintMediaControlsPart): Reversed when
+        we show the play vs. pause artwork, so that the button reflects what
+        will happen when you click it, rather than the current state of the
+        movie.
+
 2009-09-09  Steve Block  <steveblock@google.com>
 
         Reviewed by Maciej Stachowiak.
