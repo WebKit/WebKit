@@ -1,3 +1,12 @@
+2009-09-09  David Kilzer  <ddkilzer@apple.com>
+
+        Update data/params parameters
+
+        * data/params: Updated 'attachment_base' parameter for secure
+        attachments.  Updated 'mybugstemplate' parameter to search for
+        bugs in UNCONFIRMED, ASSIGNED and REOPENED status in addition to
+        NEW status.
+
 2009-08-11  David Kilzer  <ddkilzer@apple.com>
 
         Updated data/params parameter
