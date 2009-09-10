@@ -135,6 +135,7 @@ webcore_dirs = [
     'rendering', 
     'rendering/style', 
     'storage', 
+    'websockets', 
     'xml'
 ]
 
@@ -330,7 +331,3 @@ def common_configure(conf):
             conf.check_cfg(package='gtk+-2.0', args='--cflags --libs', uselib_store='WX')
             conf.check_cfg(package='sqlite3', args='--cflags --libs', uselib_store='SQLITE3')
             conf.check_cfg(path='icu-config', args='--cflags --ldflags', package='', uselib_store='ICU')
-
-
-
-

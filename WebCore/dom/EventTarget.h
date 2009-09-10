@@ -51,6 +51,7 @@ namespace WebCore {
     class ScriptExecutionContext;
     class SharedWorker;
     class SharedWorkerContext;
+    class WebSocket;
     class Worker;
     class XMLHttpRequest;
     class XMLHttpRequestUpload;
@@ -75,10 +76,12 @@ namespace WebCore {
         virtual Worker* toWorker();
         virtual DedicatedWorkerContext* toDedicatedWorkerContext();
 #endif
-
 #if ENABLE(SHARED_WORKERS)
         virtual SharedWorker* toSharedWorker();
         virtual SharedWorkerContext* toSharedWorkerContext();
+#endif
+#if ENABLE(WEB_SOCKETS)
+        virtual WebSocket* toWebSocket();
 #endif
 
 #if ENABLE(NOTIFICATIONS)

@@ -1,3 +1,12 @@
+2009-09-10  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add WebCore/websockets directory in wx build system.
+        https://bugs.webkit.org/show_bug.cgi?id=28038
+
+        * wx/build/settings.py:
+
 2009-09-10  Martin Robinson  <martin.james.robinson@gmail.com>
 
         [GTK] EventSender does not properly convert some keyDown strings

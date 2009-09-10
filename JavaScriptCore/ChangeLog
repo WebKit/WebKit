@@ -1,3 +1,14 @@
+2009-09-10  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Export WTF::tryFastMalloc used in WebSocketChannel.
+        https://bugs.webkit.org/show_bug.cgi?id=28038
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore_debug.def:
+
 2009-09-10  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY (Build fix).

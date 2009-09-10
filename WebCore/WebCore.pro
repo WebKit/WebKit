@@ -168,6 +168,10 @@ contains(DEFINES, ENABLE_SINGLE_THREADED=1) {
     }
 }
 
+# Web Socket support.
+# FIXME: Enable once platform code is landed.
+# !contains(DEFINES, ENABLE_WEB_SOCKETS=.): DEFINES += ENABLE_WEB_SOCKETS=1
+
 DEFINES += WTF_USE_JAVASCRIPTCORE_BINDINGS=1 WTF_CHANGES=1
 
 # Used to compute defaults for the build-webkit script
@@ -224,6 +228,7 @@ INCLUDEPATH = \
     $$PWD/svg/animation \
     $$PWD/svg/graphics \
     $$PWD/svg/graphics/filters \
+    $$PWD/websockets \
     $$PWD/wml \
     $$PWD/workers \
     $$PWD/xml \
@@ -615,6 +620,7 @@ IDL_BINDINGS += \
     svg/SVGUnitTypes.idl \
     svg/SVGUseElement.idl \
     svg/SVGViewElement.idl \
+    websockets/WebSocket.idl \
     workers/AbstractWorker.idl \
     workers/DedicatedWorkerContext.idl \
     workers/SharedWorker.idl \

@@ -83,6 +83,13 @@ SVGElementInstance* EventTarget::toSVGElementInstance()
 }
 #endif
 
+#if ENABLE(WEB_SOCKETS)
+WebSocket* EventTarget::toWebSocket()
+{
+    return 0;
+}
+#endif
+
 MessagePort* EventTarget::toMessagePort()
 {
     return 0;

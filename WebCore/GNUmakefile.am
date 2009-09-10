@@ -3251,7 +3251,12 @@ webcore_sources += \
 	WebCore/platform/network/SocketStreamHandleBase.h \
 	WebCore/platform/network/SocketStreamHandleClient.h \
 	WebCore/websockets/WebSocket.cpp \
-	WebCore/websockets/WebSocket.h
+	WebCore/websockets/WebSocket.h \
+	WebCore/websockets/WebSocketChannel.cpp \
+	WebCore/websockets/WebSocketChannel.h \
+	WebCore/websockets/WebSocketChannelClient.h \
+	WebCore/websockets/WebSocketHandshake.cpp \
+	WebCore/websockets/WebSocketHandshake.h
 
 webcoregtk_sources += \
 	WebCore/platform/network/soup/SocketStreamError.h \

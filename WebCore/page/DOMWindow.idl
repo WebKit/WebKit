@@ -496,6 +496,10 @@ module window {
         attribute [JSCCustomGetter] SharedWorkerConstructor SharedWorker; // Usable with the new operator
 #endif
 
+#if defined(ENABLE_WEB_SOCKETS) && ENABLE_WEB_SOCKETS
+        attribute [JSCCustomGetter] WebSocketConstructor WebSocket; // Usable with the new operator
+#endif
+
         attribute PluginConstructor Plugin;
         attribute PluginArrayConstructor PluginArray;
 
