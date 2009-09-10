@@ -1,3 +1,13 @@
+2009-09-09  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Call the right base class function QGraphicsWidget::event() instead
+        of skipping it and using QObject::event() instead.
+
+        * Api/qwebgraphicsitem.cpp:
+        (QWebGraphicsItem::event):
+
 2009-09-09  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Unreviewed.

@@ -175,7 +175,7 @@ bool QWebGraphicsItem::sceneEvent(QEvent* event)
 bool QWebGraphicsItem::event(QEvent* event)
 {
     // Re-implemented in order to allows fixing event-related bugs in patch releases.
-    return QObject::event(event);
+    return QGraphicsWidget::event(event);
 }
 
 /*!
