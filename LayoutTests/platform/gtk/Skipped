@@ -1561,6 +1561,7 @@ fast/dom/Geolocation/callback-exception.html
 fast/dom/Geolocation/error.html
 fast/dom/Geolocation/permission-denied.html
 fast/dom/Geolocation/permission-denied-stops-watches.html
+fast/dom/Geolocation/position-string.html
 fast/dom/Geolocation/success.html
 fast/dom/Geolocation/timeout-zero.html
 fast/dom/Geolocation/timeout.html

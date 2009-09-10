@@ -1,5 +1,17 @@
 2009-09-09  Steve Block  <steveblock@google.com>
 
+        Reviewed by Maciej Stachowiak.
+
+        Geolocation Coordinates::toString() prints bogus values for unspecified properties.
+        https://bugs.webkit.org/show_bug.cgi?id=29080
+
+        * fast/dom/Geolocation/resources/position-string.js: Added. Tests output of position.toString().
+        * fast/dom/Geolocation/position-string.html: Added. Wrapper for above test.
+        * fast/dom/Geolocation/position-string-expected.txt: Added. Expected result for above test.
+        * platform/gtk/Skipped: Modified. Skips above test.
+
+2009-09-09  Steve Block  <steveblock@google.com>
+
         Reviewed by Adam Barth.
 
         Correctly applies the Geolocation timeout property.

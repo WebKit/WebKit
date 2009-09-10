@@ -42,8 +42,6 @@ public:
     DOMTimeStamp timestamp() const { return m_timestamp; }
     Coordinates* coords() const { return m_coordinates.get(); }
     
-    String toString() const;
-
 private:
     Geoposition(PassRefPtr<Coordinates> coordinates, DOMTimeStamp timestamp)
         : m_coordinates(coordinates)

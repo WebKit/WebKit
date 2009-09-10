@@ -1113,7 +1113,6 @@ SOURCES += \
     page/Chrome.cpp \
     page/Console.cpp \
     page/ContextMenuController.cpp \
-    page/Coordinates.cpp \
     page/DOMSelection.cpp \
     page/DOMTimer.cpp \
     page/DOMWindow.cpp \
@@ -1127,7 +1126,6 @@ SOURCES += \
     page/FrameTree.cpp \
     page/FrameView.cpp \
     page/Geolocation.cpp \
-    page/Geoposition.cpp \
     page/History.cpp \
     page/Location.cpp \
     page/MouseEventWithHitTestResults.cpp \

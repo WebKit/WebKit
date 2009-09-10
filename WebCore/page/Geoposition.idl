@@ -28,9 +28,5 @@ module core {
     interface Geoposition {
         readonly attribute Coordinates coords;
         readonly attribute DOMTimeStamp timestamp;
-
-#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-        [DontEnum] DOMString toString();
-#endif
     };
 }

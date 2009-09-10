@@ -4681,7 +4681,6 @@
 		F916C48D0DB510F80076CD83 /* JSXMLHttpRequestProgressEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F916C48B0DB510F80076CD83 /* JSXMLHttpRequestProgressEvent.cpp */; };
 		F916C48E0DB510F80076CD83 /* JSXMLHttpRequestProgressEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = F916C48C0DB510F80076CD83 /* JSXMLHttpRequestProgressEvent.h */; };
 		F9F0ED7A0DB50CA200D16DB9 /* XMLHttpRequestProgressEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = F9F0ED770DB50CA200D16DB9 /* XMLHttpRequestProgressEvent.h */; };
-		FE6FD4870F676E5700092873 /* Coordinates.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE6FD4840F676E5700092873 /* Coordinates.cpp */; };
 		FE6FD4880F676E5700092873 /* Coordinates.h in Headers */ = {isa = PBXBuildFile; fileRef = FE6FD4850F676E5700092873 /* Coordinates.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE6FD48D0F676E9300092873 /* JSCoordinates.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE6FD48B0F676E9300092873 /* JSCoordinates.cpp */; };
 		FE6FD48E0F676E9300092873 /* JSCoordinates.h in Headers */ = {isa = PBXBuildFile; fileRef = FE6FD48C0F676E9300092873 /* JSCoordinates.h */; };
@@ -4693,7 +4692,6 @@
 		FE80D7AB0E9C1ED2000D6F75 /* JSGeolocationCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE80D7A60E9C1ED2000D6F75 /* JSGeolocationCustom.cpp */; };
 		FE80D7C50E9C1F25000D6F75 /* Geolocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE80D7B70E9C1F25000D6F75 /* Geolocation.cpp */; };
 		FE80D7C60E9C1F25000D6F75 /* Geolocation.h in Headers */ = {isa = PBXBuildFile; fileRef = FE80D7B80E9C1F25000D6F75 /* Geolocation.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		FE80D7C80E9C1F25000D6F75 /* Geoposition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE80D7BA0E9C1F25000D6F75 /* Geoposition.cpp */; };
 		FE80D7C90E9C1F25000D6F75 /* Geoposition.h in Headers */ = {isa = PBXBuildFile; fileRef = FE80D7BB0E9C1F25000D6F75 /* Geoposition.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE80D7CB0E9C1F25000D6F75 /* PositionCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = FE80D7BD0E9C1F25000D6F75 /* PositionCallback.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE80D7CD0E9C1F25000D6F75 /* PositionError.h in Headers */ = {isa = PBXBuildFile; fileRef = FE80D7BF0E9C1F25000D6F75 /* PositionError.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9811,7 +9809,6 @@
 		F9F0ED770DB50CA200D16DB9 /* XMLHttpRequestProgressEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XMLHttpRequestProgressEvent.h; sourceTree = "<group>"; };
 		F9F0ED780DB50CA200D16DB9 /* XMLHttpRequestProgressEvent.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = XMLHttpRequestProgressEvent.idl; sourceTree = "<group>"; };
 		FE49EF970DC51462004266E1 /* DashboardSupportCSSPropertyNames.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DashboardSupportCSSPropertyNames.in; sourceTree = "<group>"; };
-		FE6FD4840F676E5700092873 /* Coordinates.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Coordinates.cpp; sourceTree = "<group>"; };
 		FE6FD4850F676E5700092873 /* Coordinates.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Coordinates.h; sourceTree = "<group>"; };
 		FE6FD4860F676E5700092873 /* Coordinates.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Coordinates.idl; sourceTree = "<group>"; };
 		FE6FD48B0F676E9300092873 /* JSCoordinates.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCoordinates.cpp; sourceTree = "<group>"; };
@@ -9825,7 +9822,6 @@
 		FE80D7B70E9C1F25000D6F75 /* Geolocation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Geolocation.cpp; sourceTree = "<group>"; };
 		FE80D7B80E9C1F25000D6F75 /* Geolocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Geolocation.h; sourceTree = "<group>"; };
 		FE80D7B90E9C1F25000D6F75 /* Geolocation.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Geolocation.idl; sourceTree = "<group>"; };
-		FE80D7BA0E9C1F25000D6F75 /* Geoposition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Geoposition.cpp; sourceTree = "<group>"; };
 		FE80D7BB0E9C1F25000D6F75 /* Geoposition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Geoposition.h; sourceTree = "<group>"; };
 		FE80D7BC0E9C1F25000D6F75 /* Geoposition.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Geoposition.idl; sourceTree = "<group>"; };
 		FE80D7BD0E9C1F25000D6F75 /* PositionCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PositionCallback.h; sourceTree = "<group>"; };
@@ -10980,7 +10976,6 @@
 				065AD4F20B0C2EDA005A2B1D /* ContextMenuClient.h */,
 				065AD4F30B0C2EDA005A2B1D /* ContextMenuController.cpp */,
 				065AD4F40B0C2EDA005A2B1D /* ContextMenuController.h */,
-				FE6FD4840F676E5700092873 /* Coordinates.cpp */,
 				FE6FD4850F676E5700092873 /* Coordinates.h */,
 				FE6FD4860F676E5700092873 /* Coordinates.idl */,
 				BC5A86810C33676000EEA649 /* DOMSelection.cpp */,
@@ -11014,7 +11009,6 @@
 				FE80D7B70E9C1F25000D6F75 /* Geolocation.cpp */,
 				FE80D7B80E9C1F25000D6F75 /* Geolocation.h */,
 				FE80D7B90E9C1F25000D6F75 /* Geolocation.idl */,
-				FE80D7BA0E9C1F25000D6F75 /* Geoposition.cpp */,
 				FE80D7BB0E9C1F25000D6F75 /* Geoposition.h */,
 				FE80D7BC0E9C1F25000D6F75 /* Geoposition.idl */,
 				BC94D1500C275C8B006BC617 /* History.cpp */,
@@ -18164,7 +18158,6 @@
 				06027CB30B1CC03D00884B2D /* ContextMenuItemMac.mm in Sources */,
 				93B6A0EA0B0BCA8400F5027A /* ContextMenuMac.mm in Sources */,
 				9352087709BD453400F2038D /* CookieJar.mm in Sources */,
-				FE6FD4870F676E5700092873 /* Coordinates.cpp in Sources */,
 				3724CA580E68A7E400DB4384 /* CoreTextController.cpp in Sources */,
 				BC5EB9500E82056B00B25965 /* CounterDirectives.cpp in Sources */,
 				9392F1500AD1862300691BD4 /* CounterNode.cpp in Sources */,
@@ -18601,7 +18594,6 @@
 				FE80D7C50E9C1F25000D6F75 /* Geolocation.cpp in Sources */,
 				FEAB90120EA51B9C006348C3 /* GeolocationService.cpp in Sources */,
 				BCE494AC0F4F5E9E0084E319 /* GeolocationServiceMac.mm in Sources */,
-				FE80D7C80E9C1F25000D6F75 /* Geoposition.cpp in Sources */,
 				B2C3DA6D0D006CD600EF6F26 /* GlyphPageTreeNode.cpp in Sources */,
 				B2AFFC830D00A5C10030074D /* GlyphPageTreeNodeMac.cpp in Sources */,
 				B2C3DA6F0D006CD600EF6F26 /* GlyphWidthMap.cpp in Sources */,

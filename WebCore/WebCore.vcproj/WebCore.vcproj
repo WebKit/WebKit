@@ -16809,10 +16809,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\page\Coordinates.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\page\Coordinates.h"
 				>
 			</File>
@@ -16930,10 +16926,6 @@
 			</File>
 			<File
 				RelativePath="..\page\Geolocation.h"
-				>
-			</File>
-			<File
-				RelativePath="..\page\Geoposition.cpp"
 				>
 			</File>
 			<File

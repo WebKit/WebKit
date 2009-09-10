@@ -1,5 +1,27 @@
 2009-09-09  Steve Block  <steveblock@google.com>
 
+        Reviewed by Maciej Stachowiak.
+
+        Geolocation Coordinates::toString() prints bogus values for unspecified properties.
+        https://bugs.webkit.org/show_bug.cgi?id=29080
+
+        Test: fast/dom/Geolocation/position-string.html
+
+        * GNUmakefile.am: Modified. Removes Geoposition.cpp and Coordinates.cpp.
+        * WebCore.gypi: Modified. Removes Geoposition.cpp and Coordinates.cpp.
+        * WebCore.pro: Modified. Removes Geoposition.cpp and Coordinates.cpp.
+        * WebCore.vcproj/WebCore.vcproj: Modified. Removes Geoposition.cpp and Coordinates.cpp.
+        * WebCore.xcodeproj/project.pbxproj: Modified. Removes Geoposition.cpp and Coordinates.cpp.
+        * WebCoreSources.bkl: Modified. Removes Geoposition.cpp and Coordinates.cpp.
+        * page/Coordinates.cpp: Removed.
+        * page/Coordinates.h: Modified. Removes toString method.
+        * page/Coordinates.idl: Modified. Removes toString method.
+        * page/Geoposition.cpp: Removed.
+        * page/Geoposition.h: Modified. Removes toString method.
+        * page/Geoposition.idl: Modified. Removes toString method.
+
+2009-09-09  Steve Block  <steveblock@google.com>
+
         Reviewed by Adam Barth.
 
         Correctly applies the Geolocation timeout property.

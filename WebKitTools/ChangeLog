@@ -1,3 +1,12 @@
+2009-09-09  Steve Block  <steveblock@google.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Geolocation Coordinates::toString() prints bogus values for unspecified properties.
+        https://bugs.webkit.org/show_bug.cgi?id=29080
+
+        * Scripts/make-script-test-wrappers: Modified. Adds asynchronous Geolocation tests to exclusion list.
+
 2009-09-09  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Eric Carlson.

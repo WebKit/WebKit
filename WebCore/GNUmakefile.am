@@ -1288,7 +1288,6 @@ webcore_sources += \
 	WebCore/page/ContextMenuController.cpp \
 	WebCore/page/ContextMenuController.h \
 	WebCore/page/Coordinates.h \
-	WebCore/page/Coordinates.cpp \
 	WebCore/page/DOMSelection.cpp \
 	WebCore/page/DOMSelection.h \
 	WebCore/page/DOMTimer.cpp \
@@ -1316,7 +1315,6 @@ webcore_sources += \
 	WebCore/page/FrameView.h \
 	WebCore/page/Geolocation.cpp \
 	WebCore/page/Geolocation.h \
-	WebCore/page/Geoposition.cpp \
 	WebCore/page/Geoposition.h \
 	WebCore/page/History.cpp \
 	WebCore/page/History.h \
