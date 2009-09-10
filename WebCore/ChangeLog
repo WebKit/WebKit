@@ -1,3 +1,14 @@
+2009-09-10  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Xan Lopez and Dan Winship.
+
+        Give all requests to libsoup, to let it queue, and schedule them
+        itself, instead of throttling the number of requests in WebCore.
+
+        * platform/network/ResourceRequestBase.cpp:
+        * platform/network/soup/ResourceRequestSoup.cpp:
+        (WebCore::initializeMaximumHTTPConnectionCountPerHost):
+
 2009-09-10  Jian Li  <jianli@chromium.org>
 
         Reviewed by Eric Seidel.
