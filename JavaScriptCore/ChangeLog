@@ -1,3 +1,10 @@
+2009-09-10  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed revert of the previous change.  It broke the tests.
+
+        * wtf/dtoa.cpp:
+        (WTF::dtoa):
+
 2009-09-10  Ben Laurie  <benl@google.com>
 
         Reviewed by Adam Barth.
