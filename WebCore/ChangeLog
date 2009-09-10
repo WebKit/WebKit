@@ -1,5 +1,14 @@
 2009-09-10  Albert J. Wong  <ajwong@chromium.org>
 
+        No review, windows build fix only.
+        
+        Spurious semicolon causing parse error in chromium build on windows.
+
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.cpp:
+        (WebCore::MediaPlayerPrivate::buffered):
+
+2009-09-10  Albert J. Wong  <ajwong@chromium.org>
+
         No review, build fix only.
 
         Adding in a missed include from the last patch that is breaking the
