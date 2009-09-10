@@ -1,3 +1,18 @@
+2009-09-08  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Missing checkout for getSVGDocument()
+        https://bugs.webkit.org/show_bug.cgi?id=29064
+
+        Add tests that getSVGDocument() has the proper checks.
+
+        * http/tests/security/resources/flag.php: Added.
+        * http/tests/security/xss-DENIED-getSVGDocument-iframe-expected.txt: Added.
+        * http/tests/security/xss-DENIED-getSVGDocument-iframe.html: Added.
+        * http/tests/security/xss-DENIED-getSVGDocument-object-expected.txt: Added.
+        * http/tests/security/xss-DENIED-getSVGDocument-object.html: Added.
+
 2009-09-09  Cameron McCormack  <cam@mcc.id.au>
 
         Reviewed by Eric Seidel.

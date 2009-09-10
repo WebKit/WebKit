@@ -862,6 +862,11 @@ END
         push(@implContentDecls, "    ScriptCallStack callStack(args, $numParameters);\n");
         $implIncludes{"ScriptCallStack.h"} = 1;
     }
+    if ($function->signature->extendedAttributes->{"SVGCheckSecurityDocument"}) {
+        push(@implContentDecls,
+"    if (!V8Proxy::checkNodeSecurity(imp->getSVGDocument(ec)))\n" .
+"      return v8::Undefined();\n");
+    }
 
     my $paramIndex = 0;
     foreach my $parameter (@{$function->parameters}) {

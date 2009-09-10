@@ -1,3 +1,17 @@
+2009-09-08  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Missing checkout for getSVGDocument()
+        https://bugs.webkit.org/show_bug.cgi?id=29064
+
+        The V8 code generator didn't understand SVGCheckSecurityDocument.
+
+        Tests: http/tests/security/xss-DENIED-getSVGDocument-iframe.html
+               http/tests/security/xss-DENIED-getSVGDocument-object.html
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+
 2009-09-09  Cameron McCormack  <cam@mcc.id.au>
 
         Reviewed by Eric Seidel.
