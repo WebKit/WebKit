@@ -44,14 +44,19 @@ CONFIG -= warn_on
 #QMAKE_CXXFLAGS += -Wall -Wno-undef -Wno-unused-parameter
 
 # Enable GNU compiler extensions to the ARM compiler for all Qt ports using RVCT
-*-armcc {
-    QMAKE_CFLAGS += --gnu
-    QMAKE_CXXFLAGS += --gnu --no_parse_templates
+symbian|*-armcc {
+    RVCT_COMMON_CFLAGS = --gnu --diag_suppress 68,111,177,368,830,1293
+    RVCT_COMMON_CXXFLAGS = $$RVCT_COMMON_CFLAGS --no_parse_templates
+    DEFINES *= QT_NO_UITOOLS
 } 
 
+*-armcc {
+    QMAKE_CFLAGS += $$RVCT_COMMON_CFLAGS
+    QMAKE_CXXFLAGS += $$RVCT_COMMON_CXXFLAGS
+}
+
 symbian {
-    QMAKE_CXXFLAGS.ARMCC += --gnu --no_parse_templates
-    DEFINES *= QT_NO_UITOOLS
+    QMAKE_CXXFLAGS.ARMCC += $$RVCT_COMMON_CXXFLAGS
 }
 
 contains(DEFINES, QT_NO_UITOOLS): CONFIG -= uitools

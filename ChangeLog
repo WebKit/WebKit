@@ -1,3 +1,21 @@
+2009-09-10  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        Disable some ARM compiler warnings
+        https://bugs.webkit.org/show_bug.cgi?id=29083
+
+        The following ARM compiler warnings are disabled
+
+        - #68-D: integer conversion resulted in a change of sign
+        - #111-D: statement is unreachable
+        - #177-D: variable XXX was declared but never referenced
+        - #368-D: class XXX defines no constructor to initialize the following: YYY
+        - #830-D: function XXX "XXX::operator new" has no corresponding operator delete
+        - #1293-D: assignment in condition
+
+        * WebKit.pri:
+
 2009-09-09  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Simon Hausmann.
