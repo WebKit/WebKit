@@ -1,3 +1,40 @@
+2009-09-09  Steve Block  <steveblock@google.com>
+
+        Reviewed by Adam Barth.
+
+        Correctly applies the Geolocation timeout property.
+        https://bugs.webkit.org/show_bug.cgi?id=27256
+
+        If a timeout is specified, the timer is started as soon as the location acquistion process starts.
+        If a position fix is not obtained within the timeout interval, the position request is cancelled
+        and the error callback (if specified) is invoked. If a position fix is obtained within the timeout
+        interval, the timer is stopped. Permissions are then requested from the user if required. See
+        http://www.w3.org/TR/geolocation-API/#position-options.
+
+        Note that this logic means that the time required to obtain permissions from the user is not
+        included in the timeout interval.
+
+        Tests: fast/dom/Geolocation/timeout.html
+               fast/dom/Geolocation/timeout-zero.html
+
+        * page/Geolocation.cpp: Modified.
+        (WebCore::Geolocation::GeoNotifier::GeoNotifier): Modified. Takes Geolocation object as parameter.
+        (WebCore::Geolocation::GeoNotifier::hasZeroTimeout): Added. Determines whether this request has a zero timeout.
+        (WebCore::Geolocation::GeoNotifier::startTimerIfNeeded): Renamed from startTimer. Starts the timer if a timeout was specified.
+        (WebCore::Geolocation::GeoNotifier::timerFired): Modified. Calls the error callback if specified, and reports the timeout to the Geolocation object.
+        (WebCore::Geolocation::getCurrentPosition): Modified. Calls maybeStartTimer when starting the location acquisition process.
+        (WebCore::Geolocation::watchPosition): Modified. Calls maybeStartTimer when starting the location acquisition process.
+        (WebCore::Geolocation::requestTimedOut): Added. Cancels a request when it times out.
+        (WebCore::Geolocation::setIsAllowed): Modified. No longer starts timers.
+        (WebCore::Geolocation::sendPosition): Modified. No longer stops timers.
+        (WebCore::Geolocation::stopTimer): Added. Stops the timers for a vector of notifiers.
+        (WebCore::Geolocation::stopTimersForOneShots): Added. Stops the timers for all one-shots.
+        (WebCore::Geolocation::stopTimersForWatchers): Added. Stops the timers for all watchers.
+        (WebCore::Geolocation::stopTimers): Added. Stops the timers for all requests.
+        (WebCore::Geolocation::geolocationServicePositionChanged): Modfified. Stops the timers for all requests.
+        * page/Geolocation.h: Modified.
+        (WebCore::Geolocation::GeoNotifier::create): Modified. Takes Geolocation object as parameter.
+
 2009-09-09  Chris Fleizach  <cfleizach@apple.com>
 
         AX notifications should be an ENUM type instead of strings

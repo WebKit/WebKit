@@ -73,18 +73,20 @@ private:
 
     class GeoNotifier : public RefCounted<GeoNotifier> {
     public:
-        static PassRefPtr<GeoNotifier> create(PassRefPtr<PositionCallback> positionCallback, PassRefPtr<PositionErrorCallback> positionErrorCallback, PassRefPtr<PositionOptions> options) { return adoptRef(new GeoNotifier(positionCallback, positionErrorCallback, options)); }
+        static PassRefPtr<GeoNotifier> create(Geolocation* geolocation, PassRefPtr<PositionCallback> positionCallback, PassRefPtr<PositionErrorCallback> positionErrorCallback, PassRefPtr<PositionOptions> options) { return adoptRef(new GeoNotifier(geolocation, positionCallback, positionErrorCallback, options)); }
         
-        void startTimer();
+        bool hasZeroTimeout() const;
+        void startTimerIfNeeded();
         void timerFired(Timer<GeoNotifier>*);
         
+        Geolocation* m_geolocation;
         RefPtr<PositionCallback> m_successCallback;
         RefPtr<PositionErrorCallback> m_errorCallback;
         RefPtr<PositionOptions> m_options;
         Timer<GeoNotifier> m_timer;
 
     private:
-        GeoNotifier(PassRefPtr<PositionCallback>, PassRefPtr<PositionErrorCallback>, PassRefPtr<PositionOptions>);
+        GeoNotifier(Geolocation*, PassRefPtr<PositionCallback>, PassRefPtr<PositionErrorCallback>, PassRefPtr<PositionOptions>);
     };
 
     bool hasListeners() const { return !m_oneShots.isEmpty() || !m_watchers.isEmpty(); }
@@ -97,10 +99,10 @@ private:
     void sendPositionToOneShots(Geoposition*);
     void sendPositionToWatchers(Geoposition*);
     
-    static void startTimer(Vector<RefPtr<GeoNotifier> >&);
-    void startTimersForOneShots();
-    void startTimersForWatchers();
-    void startTimers();
+    static void stopTimer(Vector<RefPtr<GeoNotifier> >&);
+    void stopTimersForOneShots();
+    void stopTimersForWatchers();
+    void stopTimers();
     
     void makeSuccessCallbacks();
     void handleError(PositionError*);
@@ -110,6 +112,8 @@ private:
     // GeolocationServiceClient
     virtual void geolocationServicePositionChanged(GeolocationService*);
     virtual void geolocationServiceErrorOccurred(GeolocationService*);
+
+    void requestTimedOut(GeoNotifier*);
 
     typedef HashSet<RefPtr<GeoNotifier> > GeoNotifierSet;
     typedef HashMap<int, RefPtr<GeoNotifier> > GeoNotifierMap;

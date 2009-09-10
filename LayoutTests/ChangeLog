@@ -1,3 +1,18 @@
+2009-09-09  Steve Block  <steveblock@google.com>
+
+        Reviewed by Adam Barth.
+
+        Correctly applies the Geolocation timeout property.
+        https://bugs.webkit.org/show_bug.cgi?id=27256
+
+        * fast/dom/Geolocation/resources/timeout.js: Added. Tests that when a non-zero timeout is used, the success callback is invoked as expected.
+        * fast/dom/Geolocation/timeout.html: Added. Wrapper for above test.
+        * fast/dom/Geolocation/timeout-expected.txt: Added. Expected result for above test.
+        * fast/dom/Geolocation/resources/timeout-zero.js: Added. Tests that when a zero timeout is used, the error callback is invoked with code TIMEOUT.
+        * fast/dom/Geolocation/timeout-zero.html: Added. Wrapper for above test.
+        * fast/dom/Geolocation/timeout-zero-expected.txt: Added. Expected result for above test.
+        * platform/gtk/Skipped: Modified. Skips the above tests.
+
 2009-09-08  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

@@ -35,8 +35,9 @@
 
 namespace WebCore {
 
-Geolocation::GeoNotifier::GeoNotifier(PassRefPtr<PositionCallback> successCallback, PassRefPtr<PositionErrorCallback> errorCallback, PassRefPtr<PositionOptions> options)
-    : m_successCallback(successCallback)
+Geolocation::GeoNotifier::GeoNotifier(Geolocation* geolocation, PassRefPtr<PositionCallback> successCallback, PassRefPtr<PositionErrorCallback> errorCallback, PassRefPtr<PositionOptions> options)
+    : m_geolocation(geolocation)
+    , m_successCallback(successCallback)
     , m_errorCallback(errorCallback)
     , m_options(options)
     , m_timer(this, &Geolocation::GeoNotifier::timerFired)
@@ -47,20 +48,26 @@ Geolocation::GeoNotifier::GeoNotifier(PassRefPtr<PositionCallback> successCallba
     ASSERT(m_options);
 }
 
-void Geolocation::GeoNotifier::startTimer()
+bool Geolocation::GeoNotifier::hasZeroTimeout() const
 {
-    if (m_errorCallback && m_options->hasTimeout())
+    return m_options->hasTimeout() && m_options->timeout() == 0;
+}
+
+void Geolocation::GeoNotifier::startTimerIfNeeded()
+{
+    if (m_options->hasTimeout())
         m_timer.startOneShot(m_options->timeout() / 1000.0);
 }
 
 void Geolocation::GeoNotifier::timerFired(Timer<GeoNotifier>*)
 {
-    ASSERT(m_errorCallback);
-    
     m_timer.stop();
 
-    RefPtr<PositionError> error = PositionError::create(PositionError::TIMEOUT, "Timed out");
-    m_errorCallback->handleEvent(error.get());
+    if (m_errorCallback) {
+        RefPtr<PositionError> error = PositionError::create(PositionError::TIMEOUT, "Timeout expired");
+        m_errorCallback->handleEvent(error.get());
+    }
+    m_geolocation->requestTimedOut(this);
 }
 
 Geolocation::Geolocation(Frame* frame)
@@ -85,9 +92,11 @@ void Geolocation::disconnectFrame()
 
 void Geolocation::getCurrentPosition(PassRefPtr<PositionCallback> successCallback, PassRefPtr<PositionErrorCallback> errorCallback, PassRefPtr<PositionOptions> options)
 {
-    RefPtr<GeoNotifier> notifier = GeoNotifier::create(successCallback, errorCallback, options);
+    RefPtr<GeoNotifier> notifier = GeoNotifier::create(this, successCallback, errorCallback, options);
 
-    if (!m_service->startUpdating(notifier->m_options.get())) {
+    if (notifier->hasZeroTimeout() || m_service->startUpdating(notifier->m_options.get()))
+        notifier->startTimerIfNeeded();
+    else {
         if (notifier->m_errorCallback) {
             RefPtr<PositionError> error = PositionError::create(PositionError::PERMISSION_DENIED, "Unable to Start");
             notifier->m_errorCallback->handleEvent(error.get());
@@ -100,9 +109,11 @@ void Geolocation::getCurrentPosition(PassRefPtr<PositionCallback> successCallbac
 
 int Geolocation::watchPosition(PassRefPtr<PositionCallback> successCallback, PassRefPtr<PositionErrorCallback> errorCallback, PassRefPtr<PositionOptions> options)
 {
-    RefPtr<GeoNotifier> notifier = GeoNotifier::create(successCallback, errorCallback, options);
+    RefPtr<GeoNotifier> notifier = GeoNotifier::create(this, successCallback, errorCallback, options);
 
-    if (!m_service->startUpdating(notifier->m_options.get())) {
+    if (notifier->hasZeroTimeout() || m_service->startUpdating(notifier->m_options.get()))
+        notifier->startTimerIfNeeded();
+    else {
         if (notifier->m_errorCallback) {
             RefPtr<PositionError> error = PositionError::create(PositionError::PERMISSION_DENIED, "Unable to Start");
             notifier->m_errorCallback->handleEvent(error.get());
@@ -115,6 +126,15 @@ int Geolocation::watchPosition(PassRefPtr<PositionCallback> successCallback, Pas
     m_watchers.set(++sIdentifier, notifier);
 
     return sIdentifier;
+}
+
+void Geolocation::requestTimedOut(GeoNotifier* notifier)
+{
+    // If this is a one-shot request, stop it.
+    m_oneShots.remove(notifier);
+
+    if (!hasListeners())
+        m_service->stopUpdating();
 }
 
 void Geolocation::clearWatch(int watchId)
@@ -141,10 +161,9 @@ void Geolocation::setIsAllowed(bool allowed)
 {
     m_allowGeolocation = allowed ? Yes : No;
     
-    if (isAllowed()) {
-        startTimers();
+    if (isAllowed())
         makeSuccessCallbacks();
-    } else {
+    else {
         RefPtr<PositionError> error = PositionError::create(PositionError::PERMISSION_DENIED, "User disallowed Geolocation");
         error->setIsFatal(true);
         handleError(error.get());
@@ -185,7 +204,6 @@ void Geolocation::sendPosition(Vector<RefPtr<GeoNotifier> >& notifiers, Geoposit
         RefPtr<GeoNotifier> notifier = *it;
         ASSERT(notifier->m_successCallback);
         
-        notifier->m_timer.stop();
         notifier->m_successCallback->handleEvent(position);
     }
 }
@@ -206,35 +224,35 @@ void Geolocation::sendPositionToWatchers(Geoposition* position)
     sendPosition(copy, position);
 }
 
-void Geolocation::startTimer(Vector<RefPtr<GeoNotifier> >& notifiers)
+void Geolocation::stopTimer(Vector<RefPtr<GeoNotifier> >& notifiers)
 {
     Vector<RefPtr<GeoNotifier> >::const_iterator end = notifiers.end();
     for (Vector<RefPtr<GeoNotifier> >::const_iterator it = notifiers.begin(); it != end; ++it) {
         RefPtr<GeoNotifier> notifier = *it;
-        notifier->startTimer();
+        notifier->m_timer.stop();
     }
 }
 
-void Geolocation::startTimersForOneShots()
+void Geolocation::stopTimersForOneShots()
 {
     Vector<RefPtr<GeoNotifier> > copy;
     copyToVector(m_oneShots, copy);
     
-    startTimer(copy);
+    stopTimer(copy);
 }
 
-void Geolocation::startTimersForWatchers()
+void Geolocation::stopTimersForWatchers()
 {
     Vector<RefPtr<GeoNotifier> > copy;
     copyValuesToVector(m_watchers, copy);
     
-    startTimer(copy);
+    stopTimer(copy);
 }
 
-void Geolocation::startTimers()
+void Geolocation::stopTimers()
 {
-    startTimersForOneShots();
-    startTimersForWatchers();
+    stopTimersForOneShots();
+    stopTimersForWatchers();
 }
 
 void Geolocation::handleError(PositionError* error)
@@ -274,6 +292,9 @@ void Geolocation::geolocationServicePositionChanged(GeolocationService* service)
 {
     ASSERT_UNUSED(service, service == m_service);
     ASSERT(m_service->lastPosition());
+
+    // Stop all currently running timers.
+    stopTimers();
     
     if (!isAllowed()) {
         // requestPermission() will ask the chrome for permission. This may be
