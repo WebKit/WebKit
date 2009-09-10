@@ -72,7 +72,7 @@ namespace JSC {
     public:
         StructureTransitionTable() {
             m_transitions.m_singleTransition.set(0);
-            m_transitions.m_singleTransition.setFlag(0);
+            m_transitions.m_singleTransition.setFlag(usingSingleSlot);
         }
 
         ~StructureTransitionTable() {
@@ -129,7 +129,7 @@ namespace JSC {
             ASSERT(usingSingleTransitionSlot());
             return m_transitions.m_singleTransition.get();
         }
-        bool usingSingleTransitionSlot() const { return m_transitions.m_singleTransition.isFlagSet(0); }
+        bool usingSingleTransitionSlot() const { return m_transitions.m_singleTransition.isFlagSet(usingSingleSlot); }
         void setSingleTransition(Structure* structure)
         { 
             ASSERT(usingSingleTransitionSlot());
@@ -148,10 +148,13 @@ namespace JSC {
         }
         inline void reifySingleTransition();
 
+        enum UsingSingleSlot {
+            usingSingleSlot
+        };
         // Last bit indicates whether we are using the single transition optimisation
         union {
             TransitionTable* m_table;
-            PtrAndFlagsBase<Structure, bool> m_singleTransition;
+            PtrAndFlagsBase<Structure, UsingSingleSlot> m_singleTransition;
         } m_transitions;
     };
 

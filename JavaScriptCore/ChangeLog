@@ -1,5 +1,17 @@
 2009-09-10  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by NOBODY (Build fix).
+
+        Make StructureTransitionTable use an enum for the PtrAndFlags member
+        used for the single transition slot optimisation.
+
+        * runtime/StructureTransitionTable.h:
+        (JSC::StructureTransitionTable::StructureTransitionTable):
+        (JSC::StructureTransitionTable::usingSingleTransitionSlot):
+        (JSC::StructureTransitionTable::):
+
+2009-09-10  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Geoff Garen.
 
         Refactor StructureTransitionTable and Structure to unify handling of the single slot optimization
