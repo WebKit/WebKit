@@ -1,2 +1,2 @@
-329 focus / 329 blur events dispatched, and should be 335 / 335 PASSED
+329 focus / 329 blur events dispatched, and should be 329 / 329 PASSED
 Total of 0 focus test(s) failed. PASSED

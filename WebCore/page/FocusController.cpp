@@ -55,6 +55,18 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+static inline void dispatchEventsOnWindowAndFocusedNode(Document* document, bool focused)
+{
+    // If we have a focused node we should dispatch blur on it before we blur the window.
+    // If we have a focused node we should dispatch focus on it after we focus the window.
+    // https://bugs.webkit.org/show_bug.cgi?id=27105
+    if (!focused && document->focusedNode())
+        document->focusedNode()->dispatchBlurEvent();
+    document->dispatchWindowEvent(focused ? eventNames().focusEvent : eventNames().blurEvent, false, false);
+    if (focused && document->focusedNode())
+        document->focusedNode()->dispatchFocusEvent();
+}
+
 FocusController::FocusController(Page* page)
     : m_page(page)
     , m_isActive(false)
@@ -100,7 +112,7 @@ void FocusController::setFocused(bool focused)
     
     if (m_focusedFrame && m_focusedFrame->view()) {
         m_focusedFrame->selection()->setFocused(focused);
-        m_focusedFrame->document()->dispatchWindowEvent(focused ? eventNames().focusEvent : eventNames().blurEvent, false, false);
+        dispatchEventsOnWindowAndFocusedNode(m_focusedFrame->document(), focused);
     }
 }
 
@@ -343,7 +355,7 @@ void FocusController::setActive(bool active)
     focusedOrMainFrame()->selection()->pageActivationChanged();
     
     if (m_focusedFrame && isFocused())
-        m_focusedFrame->document()->dispatchWindowEvent(active ? eventNames().focusEvent : eventNames().blurEvent, false, false);
+        dispatchEventsOnWindowAndFocusedNode(m_focusedFrame->document(), active);
 }
 
 } // namespace WebCore
