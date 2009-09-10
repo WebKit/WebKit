@@ -4,6 +4,7 @@
 # Copyright (C) 2005 Nikolas Zimmermann <wildfox@kde.org>
 # Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
 # Copyright (C) 2007 Apple Inc. All rights reserved.
+# Copyright (C) 2009 Cameron McCormack <cam@mcc.id.au>
 # 
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -29,6 +30,7 @@ my $useOutputDir = "";
 my $useDirectories = "";
 my $useLayerOnTop = 0;
 my $preprocessor;
+my $writeDependencies = 0;
 
 my $codeGenerator = 0;
 
@@ -72,6 +74,7 @@ sub new
     $useOutputDir = shift;
     $useLayerOnTop = shift;
     $preprocessor = shift;
+    $writeDependencies = shift;
 
     bless($reference, $object);
     return $reference;
@@ -95,7 +98,7 @@ sub ProcessDocument
 
     # Dynamically load external code generation perl module
     require $ifaceName . ".pm";
-    $codeGenerator = $ifaceName->new($object, $useOutputDir, $useLayerOnTop, $preprocessor);
+    $codeGenerator = $ifaceName->new($object, $useOutputDir, $useLayerOnTop, $preprocessor, $writeDependencies);
     unless (defined($codeGenerator)) {
         my $classes = $useDocument->classes;
         foreach my $class (@$classes) {
@@ -153,11 +156,14 @@ sub FindParentsRecursively
 
 sub AddMethodsConstantsAndAttributesFromParentClasses
 {
-    # For the passed interface, recursively parse all parent
-    # IDLs in order to find out all inherited properties/methods.
+    # For the interface passed in, recursively parse all parent IDLs in order to
+    # find out all inherited properties/methods and add them in to $dataNode.
+    # An array reference can be passed in as $result to capture the names of
+    # all of the parent interface names visited.
 
     my $object = shift;
     my $dataNode = shift;
+    my $result = shift;
 
     my @parents = @{$dataNode->parents};
     my $parentsMax = @{$dataNode->parents};
@@ -174,6 +180,8 @@ sub AddMethodsConstantsAndAttributesFromParentClasses
         }
 
         my $interface = $object->StripModule($_);
+
+        push(@$result, $_) if defined($result);
 
         # Step #1: Find the IDL file associated with 'interface'
         $endCondition = 0;
@@ -192,7 +200,7 @@ sub AddMethodsConstantsAndAttributesFromParentClasses
 
             foreach my $class (@{$document->classes}) {
                 # Step #3: Enter recursive parent search
-                AddMethodsConstantsAndAttributesFromParentClasses($object, $class);
+                AddMethodsConstantsAndAttributesFromParentClasses($object, $class, $result);
 
                 # Step #4: Collect constants & functions & attributes of this parent-class
                 my $constantsMax = @{$class->constants};

@@ -4,6 +4,7 @@
 # Copyright (C) 2006, 2007 Samuel Weinig <sam@webkit.org>
 # Copyright (C) 2006 Alexey Proskuryakov <ap@webkit.org>
 # Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+# Copyright (C) 2009 Cameron McCormack <cam@mcc.id.au>
 # 
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -26,6 +27,7 @@ use File::stat;
 
 my $module = "";
 my $outputDir = "";
+my $writeDependencies = 0;
 
 my @headerContentHeader = ();
 my @headerContent = ();
@@ -34,6 +36,7 @@ my %headerIncludes = ();
 my @implContentHeader = ();
 my @implContent = ();
 my %implIncludes = ();
+my @depsContent = ();
 
 # Default .h template
 my $headerTemplate = << "EOF";
@@ -66,6 +69,9 @@ sub new
 
     $codeGenerator = shift;
     $outputDir = shift;
+    shift; # $useLayerOnTop
+    shift; # $preprocessor
+    $writeDependencies = shift;
 
     bless($reference, $object);
     return $reference;
@@ -100,9 +106,16 @@ sub GenerateInterface
     # Open files for writing
     my $headerFileName = "$outputDir/JS$name.h";
     my $implFileName = "$outputDir/JS$name.cpp";
+    my $depsFileName = "$outputDir/JS$name.dep";
+
+    # Remove old dependency file.
+    unlink($depsFileName);
 
     open($IMPL, ">$implFileName") || die "Couldn't open file $implFileName";
     open($HEADER, ">$headerFileName") || die "Couldn't open file $headerFileName";
+    if (@depsContent) {
+        open($DEPS, ">$depsFileName") || die "Couldn't open file $depsFileName";
+    }
 }
 
 # Params: 'idlDocument' struct
@@ -449,11 +462,12 @@ sub GenerateHeader
     my $interfaceName = $dataNode->name;
     my $className = "JS$interfaceName";
     my $implClassName = $interfaceName;
+    my @ancestorInterfaceNames = ();
 
     # We only support multiple parents with SVG (for now).
     if (@{$dataNode->parents} > 1) {
         die "A class can't have more than one parent" unless $interfaceName =~ /SVG/;
-        $codeGenerator->AddMethodsConstantsAndAttributesFromParentClasses($dataNode);
+        $codeGenerator->AddMethodsConstantsAndAttributesFromParentClasses($dataNode, \@ancestorInterfaceNames);
     }
 
     my $hasLegacyParent = $dataNode->extendedAttributes->{"LegacyParent"};
@@ -826,6 +840,12 @@ sub GenerateHeader
     push(@headerContent, "\n} // namespace WebCore\n\n");
     push(@headerContent, "#endif // ${conditionalString}\n\n") if $conditional;
     push(@headerContent, "#endif\n");
+
+    # - Generate dependencies.
+    if ($writeDependencies && @ancestorInterfaceNames) {
+        push(@depsContent, "$className.h : ", join(" ", map { "$_.idl" } @ancestorInterfaceNames), "\n");
+        push(@depsContent, map { "$_.idl :\n" } @ancestorInterfaceNames); 
+    }
 }
 
 sub GenerateImplementation
@@ -2163,6 +2183,15 @@ sub WriteData
         @headerContentHeader = ();
         @headerContent = ();
         %headerIncludes = ();
+    }
+
+    if (defined($DEPS)) {
+        # Write dependency file.
+        print $DEPS @depsContent;
+        close($DEPS);
+        undef($DEPS);
+
+        @depsContent = ();
     }
 }
 

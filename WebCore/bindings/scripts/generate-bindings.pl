@@ -42,12 +42,14 @@ my $outputDirectory;
 my $generator;
 my $defines;
 my $preprocessor;
+my $writeDependencies;
 
 GetOptions('include=s@' => \@idlDirectories,
            'outputDir=s' => \$outputDirectory,
            'generator=s' => \$generator,
            'defines=s' => \$defines,
-           'preprocessor=s' => \$preprocessor);
+           'preprocessor=s' => \$preprocessor,
+           'write-dependencies' => \$writeDependencies);
 
 my $idlFile = $ARGV[0];
 
@@ -65,5 +67,5 @@ my $parser = IDLParser->new(1);
 my $document = $parser->Parse($idlFile, $defines, $preprocessor);
 
 # Generate desired output for given IDL file.
-my $codeGen = CodeGenerator->new(\@idlDirectories, $generator, $outputDirectory, 0, $preprocessor);
+my $codeGen = CodeGenerator->new(\@idlDirectories, $generator, $outputDirectory, 0, $preprocessor, $writeDependencies);
 $codeGen->ProcessDocument($document, $defines);

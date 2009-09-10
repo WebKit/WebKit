@@ -4,6 +4,7 @@
 # Copyright (C) 2006, 2007 Samuel Weinig <sam@webkit.org>
 # Copyright (C) 2006 Alexey Proskuryakov <ap@webkit.org>
 # Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+# Copyright (C) 2009 Cameron McCormack <cam@mcc.id.au>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -28,6 +29,7 @@ use File::stat;
 # Global Variables
 my $module = "";
 my $outputDir = "";
+my $writeDependencies = 0;
 my %publicInterfaces = ();
 my $newPublicClass = 0;
 my $interfaceAvailabilityVersion = "";
@@ -49,6 +51,7 @@ my @internalHeaderContent = ();
 my @implContentHeader = ();
 my @implContent = ();
 my %implIncludes = ();
+my @depsContent = ();
 
 # Hashes
 my %protocolTypeHash = ("XPathNSResolver" => 1, "EventListener" => 1, "EventTarget" => 1, "NodeFilter" => 1,
@@ -194,6 +197,9 @@ sub new
 
     $codeGenerator = shift;
     $outputDir = shift;
+    shift; # $useLayerOnTop
+    shift; # $preprocessor
+    $writeDependencies = shift;
 
     bless($reference, $object);
     return $reference;
@@ -976,8 +982,10 @@ sub GenerateImplementation
     my $object = shift;
     my $dataNode = shift;
 
+    my @ancestorInterfaceNames = ();
+
     if (@{$dataNode->parents} > 1) {
-        $codeGenerator->AddMethodsConstantsAndAttributesFromParentClasses($dataNode);
+        $codeGenerator->AddMethodsConstantsAndAttributesFromParentClasses($dataNode, \@ancestorInterfaceNames);
     }
 
     my $interfaceName = $dataNode->name;
@@ -1543,6 +1551,12 @@ sub GenerateImplementation
 
     # - End the ifdef conditional if necessary
     push(@implContent, "\n#endif // ${conditionalString}\n") if $conditional;
+
+    # - Generate dependencies.
+    if ($writeDependencies && @ancestorInterfaceNames) {
+        push(@depsContent, "$className.h : ", join(" ", map { "$_.idl" } @ancestorInterfaceNames), "\n");
+        push(@depsContent, map { "$_.idl :\n" } @ancestorInterfaceNames); 
+    }
 }
 
 # Internal helper
@@ -1556,12 +1570,14 @@ sub WriteData
     my $privateHeaderFileName = "$outputDir/" . $name . "Private.h";
     my $implFileName = "$outputDir/" . $name . ".mm";
     my $internalHeaderFileName = "$outputDir/" . $name . "Internal.h";
+    my $depsFileName = "$outputDir/" . $name . ".dep";
 
     # Remove old files.
     unlink($headerFileName);
     unlink($privateHeaderFileName);
     unlink($implFileName);
     unlink($internalHeaderFileName);
+    unlink($depsFileName);
 
     # Write public header.
     open(HEADER, ">$headerFileName") or die "Couldn't open file $headerFileName";
@@ -1623,6 +1639,14 @@ sub WriteData
        close(INTERNAL_HEADER);
 
        @internalHeaderContent = ();
+    }
+
+    # Write dependency file.
+    if (@depsContent) {
+        open(DEPS, ">$depsFileName") or die "Couldn't open file $depsFileName";
+        print DEPS @depsContent;
+        close(DEPS);
+        @depsContent = ();
     }
 }
 

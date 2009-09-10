@@ -1,3 +1,27 @@
+2009-09-10  Cameron McCormack  <cam@mcc.id.au>
+
+        Reviewed by Eric Seidel.
+
+        Make bindings generators more aware of IDL dependencies
+        https://bugs.webkit.org/show_bug.cgi?id=29114
+
+        Make the JS and ObjC bindings generators able to output dependency
+        rules for DerivedSources.make to consume.  These rules make a given
+        generated binding class file header, JSWhatever.h, depend on Whatever's
+        ancestor interfaces.
+
+        * DerivedSources.make: Pass --write-dependencies to generate-bindings.pl
+        when generating JS and ObjC bindings.  Include dependency fies that are
+        generated due to that.
+        * bindings/scripts/CodeGenerator.pm: Make
+        AddMethodsConstantsAndAttributesFromParentClasses accumulate a list of
+        the ancestor interfaces that were visited.
+        * bindings/scripts/CodeGeneratorJS.pm: Optionally write out a dependency
+        file.
+        * bindings/scripts/CodeGeneratorObjC.pm: Ditto.
+        * bindings/scripts/generate-bindings.pl: Add a --write-dependencies
+        option.
+
 2009-09-10  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Xan Lopez and Dan Winship.
