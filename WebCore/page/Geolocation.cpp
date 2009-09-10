@@ -181,22 +181,6 @@ void Geolocation::sendError(Vector<RefPtr<GeoNotifier> >& notifiers, PositionErr
      }
 }
 
-void Geolocation::sendErrorToOneShots(PositionError* error)
-{
-    Vector<RefPtr<GeoNotifier> > copy;
-    copyToVector(m_oneShots, copy);
-
-    sendError(copy, error);
-}
-
-void Geolocation::sendErrorToWatchers(PositionError* error)
-{
-    Vector<RefPtr<GeoNotifier> > copy;
-    copyValuesToVector(m_watchers, copy);
-
-    sendError(copy, error);
-}
-
 void Geolocation::sendPosition(Vector<RefPtr<GeoNotifier> >& notifiers, Geoposition* position)
 {
     Vector<RefPtr<GeoNotifier> >::const_iterator end = notifiers.end();
@@ -206,22 +190,6 @@ void Geolocation::sendPosition(Vector<RefPtr<GeoNotifier> >& notifiers, Geoposit
         
         notifier->m_successCallback->handleEvent(position);
     }
-}
-
-void Geolocation::sendPositionToOneShots(Geoposition* position)
-{
-    Vector<RefPtr<GeoNotifier> > copy;
-    copyToVector(m_oneShots, copy);
-    
-    sendPosition(copy, position);
-}
-
-void Geolocation::sendPositionToWatchers(Geoposition* position)
-{
-    Vector<RefPtr<GeoNotifier> > copy;
-    copyValuesToVector(m_watchers, copy);
-    
-    sendPosition(copy, position);
 }
 
 void Geolocation::stopTimer(Vector<RefPtr<GeoNotifier> >& notifiers)
@@ -259,12 +227,21 @@ void Geolocation::handleError(PositionError* error)
 {
     ASSERT(error);
     
-    sendErrorToOneShots(error);    
-    sendErrorToWatchers(error);
+    Vector<RefPtr<GeoNotifier> > oneShotsCopy;
+    copyToVector(m_oneShots, oneShotsCopy);
 
+    Vector<RefPtr<GeoNotifier> > watchersCopy;
+    copyValuesToVector(m_watchers, watchersCopy);
+
+    // Clear the lists before we make the callbacks, to avoid clearing notifiers
+    // added by calls to Geolocation methods from the callbacks, and to prevent
+    // further callbacks to these notifiers.
     m_oneShots.clear();
     if (error->isFatal())
         m_watchers.clear();
+
+    sendError(oneShotsCopy, error);
+    sendError(watchersCopy, error);
 
     if (!hasListeners())
         m_service->stopUpdating();
@@ -313,10 +290,19 @@ void Geolocation::makeSuccessCallbacks()
     ASSERT(m_service->lastPosition());
     ASSERT(isAllowed());
     
-    sendPositionToOneShots(m_service->lastPosition());
-    sendPositionToWatchers(m_service->lastPosition());
-        
+    Vector<RefPtr<GeoNotifier> > oneShotsCopy;
+    copyToVector(m_oneShots, oneShotsCopy);
+    
+    Vector<RefPtr<GeoNotifier> > watchersCopy;
+    copyValuesToVector(m_watchers, watchersCopy);
+    
+    // Clear the lists before we make the callbacks, to avoid clearing notifiers
+    // added by calls to Geolocation methods from the callbacks, and to prevent
+    // further callbacks to these notifiers.
     m_oneShots.clear();
+
+    sendPosition(oneShotsCopy, m_service->lastPosition());
+    sendPosition(watchersCopy, m_service->lastPosition());
 
     if (!hasListeners())
         m_service->stopUpdating();

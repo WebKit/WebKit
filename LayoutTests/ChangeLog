@@ -1,3 +1,18 @@
+2009-09-09  Steve Block  <steveblock@google.com>
+
+        Reviewed by Darin Adler.
+
+        Geolocation does not correctly handle reentrant calls from callbacks.
+        https://bugs.webkit.org/show_bug.cgi?id=29040
+
+        * fast/dom/Geolocation/resources/reentrant-error.js: Added. Tests that reentrant calls from the error callback are OK.
+        * fast/dom/Geolocation/reentrant-error.html: Added. Wrapper for above test.
+        * fast/dom/Geolocation/reentrant-error-expected.txt: Added. Expected result for above test.
+        * fast/dom/Geolocation/resources/reentrant-success.js: Added. Tests that reentrant calls from the success callback are OK.
+        * fast/dom/Geolocation/reentrant-success.html: Added. Wrapper for above test.
+        * fast/dom/Geolocation/reentrant-success-expected.txt: Added. Expected result for above test.
+        * platform/gtk/Skipped: Modified. Skips above tests.
+
 2009-09-10  Erik Arvidsson  <arv@chromium.org>
 
         Reviewed by Eric Seidel.

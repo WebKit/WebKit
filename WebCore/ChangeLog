@@ -1,3 +1,18 @@
+2009-09-10  Steve Block  <steveblock@google.com>
+
+        Reviewed by Darin Adler.
+
+        Geolocation does not correctly handle reentrant calls from callbacks.
+        https://bugs.webkit.org/show_bug.cgi?id=29040
+
+        Tests: fast/dom/Geolocation/reentrant-error.html
+               fast/dom/Geolocation/reentrant-success.html
+
+        * page/Geolocation.cpp: Modified.
+        (WebCore::Geolocation::handleError): Modified. Call sendError directly, clearing notifier lists before making callback.
+        (WebCore::Geolocation::makeSuccessCallbacks): Modified. Call sendPosition directly, clearing notifier lists before making callback.
+        * page/Geolocation.h: Modified. Deleted sendErrorToXX and sendPositionToXXX methods.
+
 2009-09-10  Erik Arvidsson  <arv@chromium.org>
 
         Reviewed by Eric Seidel.
