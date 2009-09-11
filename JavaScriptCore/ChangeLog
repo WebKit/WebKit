@@ -1,3 +1,13 @@
+2009-09-11  Prasanth Ullattil  <prasanth.ullattil@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Fix compile error on Windows7(64Bit) with latest SDK.
+
+        Added the missing include file.
+
+        * runtime/UString.cpp:
+
 2009-09-11  Joerg Bornemann  <joerg.bornemann@trolltech.com>
 
         Reviewed by Simon Hausmann.

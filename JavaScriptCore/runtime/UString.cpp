@@ -42,6 +42,7 @@
 #include <wtf/StringExtras.h>
 #include <wtf/Vector.h>
 #include <wtf/unicode/UTF8.h>
+#include <wtf/StringExtras.h>
 
 #if HAVE(STRING_H)
 #include <string.h>
