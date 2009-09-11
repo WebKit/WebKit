@@ -236,14 +236,14 @@ class WebKitLandingScripts:
         error("Builders at %s are red, please do not commit.  Pass --ignore-builders to bypass this check." % (buildbot.buildbot_host))
 
     @classmethod
-    def run_webkit_tests(cls, launch_safari, quiet=False):
+    def run_webkit_tests(cls, launch_safari, fail_fast=False, quiet=False):
         args = [cls.webkit_script_path("run-webkit-tests")]
         if not launch_safari:
             args.append("--no-launch-safari")
         if quiet:
             args.append("--quiet")
-        # When landing patches we almost always want to fail as fast as possible.
-        args.append("--exit-after-n-failures=1")
+        if fail_fast:
+            args.append("--exit-after-n-failures=1")
         cls.run_and_throw_if_fail(args)
 
     @staticmethod
@@ -258,7 +258,8 @@ class WebKitLandingScripts:
         if options.build:
             cls.build_webkit(quiet=options.quiet)
             if options.test:
-                cls.run_webkit_tests(launch_safari=not options.commit_queue, quiet=options.quiet)
+                # When running the commit-queue we don't want to launch Safari and we want to exit after the first failure.
+                cls.run_webkit_tests(launch_safari=not options.commit_queue, fail_fast=options.commit_queue, quiet=options.quiet)
         commit_message = commit_message_for_this_commit(scm)
         commit_log = scm.commit_with_message(commit_message.message())
         return bug_comment_from_commit_text(scm, commit_log)
