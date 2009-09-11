@@ -375,11 +375,13 @@ void UniscribeHelper::draw(GraphicsContext* graphicsContext,
             // Pass 0 in when there is no justification.
             const int* justify = shaping.m_justify.size() == 0 ? 0 : &shaping.m_justify[fromGlyph];
 
-            if (firstRun) {
-                oldFont = SelectObject(dc, shaping.m_hfont);
-                firstRun = false;
-            } else
-                SelectObject(dc, shaping.m_hfont);
+            if (useWindowsDrawing) {
+                if (firstRun) {
+                    oldFont = SelectObject(dc, shaping.m_hfont);
+                    firstRun = false;
+                } else
+                    SelectObject(dc, shaping.m_hfont);
+            }
 
             // Fonts with different ascents can be used to render different
             // runs.  'Across-runs' y-coordinate correction needs to be

@@ -1,3 +1,18 @@
+2009-09-11  Yusuke Sato  <yusukes@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Complex text doesn't show up with text stroking
+        https://bugs.webkit.org/show_bug.cgi?id=28707
+
+        Added extra NULL checks for HDC. This is the second fix for issue 28707,
+        and the fix is similar to http://trac.webkit.org/changeset/45482.
+
+        * platform/graphics/chromium/FontChromiumWin.cpp:
+        (WebCore::Font::drawComplexText):
+        * platform/graphics/chromium/UniscribeHelper.cpp:
+        (WebCore::UniscribeHelper::draw):
+
 2009-09-11  Cameron McCormack  <cam@mcc.id.au>
 
         Reviewed by Eric Seidel.
