@@ -279,7 +279,7 @@
 #endif
 
 /* PLATFORM(SPARC64) */
-#if defined(__sparc64__)
+#if defined(__sparc__) && defined(__arch64__) || defined (__sparcv9)
 #define WTF_PLATFORM_SPARC64 1
 #define WTF_PLATFORM_BIG_ENDIAN 1
 #endif

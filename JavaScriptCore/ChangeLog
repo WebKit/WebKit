@@ -1,3 +1,22 @@
+2009-09-11  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Compiling JavaScriptCore on sparc 64 with gcc fails.
+
+        ThreadSafeShared uses the atomic __gnu_cxx::__exchange_and_add with an int,
+        however on sparc 64 the _Atomic_word argument is typedefed to long (8 bytes).
+
+        The patch disables WTF_USE_LOCKFREE_THREADSAFESHARED in ThreadSafeShared to use
+        a mutex instead when compiling for sparc 64 with gcc.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29175
+
+        * wtf/Platform.h:
+        __sparc64__ is not defined on all OS.
+        Uses instead: __sparc__ && __arch64__ || __sparcv9
+        * wtf/Threading.h:
+
 2009-09-11  Prasanth Ullattil  <prasanth.ullattil@nokia.com>
 
         Reviewed by Simon Hausmann.

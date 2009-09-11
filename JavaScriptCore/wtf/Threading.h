@@ -228,7 +228,7 @@ inline int atomicDecrement(int volatile* addend) { return InterlockedDecrement(r
 inline int atomicIncrement(int volatile* addend) { return OSAtomicIncrement32Barrier(const_cast<int*>(addend)); }
 inline int atomicDecrement(int volatile* addend) { return OSAtomicDecrement32Barrier(const_cast<int*>(addend)); }
 
-#elif COMPILER(GCC)
+#elif COMPILER(GCC) && !PLATFORM(SPARC64) // sizeof(_Atomic_word) != sizeof(int) on sparc64 gcc
 #define WTF_USE_LOCKFREE_THREADSAFESHARED 1
 
 inline int atomicIncrement(int volatile* addend) { return __gnu_cxx::__exchange_and_add(addend, 1) + 1; }
