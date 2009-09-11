@@ -1,3 +1,12 @@
+2009-09-11  Brian Weinstein  <bweinstein@apple.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        Add the http/tests/security/mixedContent to the Skipped list while
+        test failures are being investigated.
+
+        * platform/win/Skipped:
+
 2009-09-11  Eric Seidel  <eric@webkit.org>
 
         No review, rolling out r48229.

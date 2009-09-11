@@ -659,3 +659,6 @@ media/audio-delete-while-step-button-clicked.html
 media/video-controls-transformed.html
 media/video-controls-zoomed.html
 
+# Mixed content tests failing on Windows <http://webkit.org/b/29213>
+http/tests/security/mixedContent
+
