@@ -61,9 +61,6 @@ namespace WebCore {
         return v8NonStringValueToAtomicWebCoreString(value);
     }
 
-    // Convert a string to a V8 string.
-    v8::Handle<v8::String> v8String(const String&);
-
     inline String toString(const String& string)
     {
         return string;
@@ -73,6 +70,12 @@ namespace WebCore {
     // WebCore string. The reference counting mechanism is used to keep the
     // underlying buffer alive while the string is still live in the V8 engine.
     v8::Local<v8::String> v8ExternalString(const String&);
+
+    // Convert a string to a V8 string.
+    inline v8::Handle<v8::String> v8String(const String& string)
+    {
+        return v8ExternalString(string);
+    }
 
     // Enables caching v8 wrappers created for WebCore::StringImpl.  Currently this cache requires
     // all the calls (both to convert WebCore::String to v8::String and to GC the handle)
