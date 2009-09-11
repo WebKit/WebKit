@@ -1,5 +1,14 @@
 2009-09-11  Eric Seidel  <eric@webkit.org>
 
+        Fix obvious typo in previous commit, no review.
+
+        bugzilla-tool should automate rollouts
+        https://bugs.webkit.org/show_bug.cgi?id=26715
+
+        * Scripts/bugzilla-tool: add back missing "scm" argument.
+
+2009-09-11  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Adam Barth.
 
         bugzilla-tool should automate rollouts

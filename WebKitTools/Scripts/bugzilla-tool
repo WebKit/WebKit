@@ -68,7 +68,7 @@ def parse_bug_id(message):
         return match.group('bug_id')
     return None
 
-def commit_message_for_this_commit():
+def commit_message_for_this_commit(scm):
     changelog_paths = scm.modified_changelogs()
     if not len(changelog_paths):
         raise ScriptError("Found no modified ChangeLogs, cannot create a commit message.\n"
