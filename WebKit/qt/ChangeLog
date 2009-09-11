@@ -1,3 +1,12 @@
+2009-09-11  Martin Smith  <msmith@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
+        Adjust the name of the contentspage for the documentation
+        to the new name used in Qt 4.6.
+
+        * docs/qtwebkit.qdoc:
+
 2009-09-11  Ariya Hidayat  <ariya.hidayat@nokia.com>
 
         Reviewed by Simon Hausmann.
