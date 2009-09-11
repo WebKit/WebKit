@@ -52,6 +52,8 @@ use constant WS_ERROR_CODE => {
     object_name_not_specified   => 50,
     param_required              => 50,
     object_does_not_exist       => 51,
+    # Error 52 exists only in later releases.
+    param_invalid               => 53,
     # Bug errors usually occupy the 100-200 range.
     improper_bug_id_field_value => 100,
     bug_id_does_not_exist       => 101,

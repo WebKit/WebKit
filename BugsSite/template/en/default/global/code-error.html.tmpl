@@ -313,6 +313,11 @@
     You cannot set the resolution of [% terms.abug %] to MOVED without
     moving the [% terms.bug %].
 
+  [% ELSIF error == "param_invalid" %]
+    [% title = "Invalid Parameter" %]
+    <code>[% param FILTER html %]</code> is not a valid parameter
+    for the [% function FILTER html %] function.
+
   [% ELSIF error == "param_must_be_numeric" %]
     [% title = "Invalid Parameter" %]
     Invalid parameter passed to [% function FILTER html %].

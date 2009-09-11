@@ -157,6 +157,7 @@ sub match {
 
     my (@terms, @values);
     foreach my $field (keys %$criteria) {
+        $class->_check_field($field, 'match');
         my $value = $criteria->{$field};
         if (ref $value eq 'ARRAY') {
             # IN () is invalid SQL, and if we have an empty list
@@ -300,6 +301,17 @@ sub create {
     return $object;
 }
 
+# Used to validate that a field name is in fact a valid column in the
+# current table before inserting it into SQL.
+sub _check_field {
+    my ($invocant, $field, $function) = @_;
+    my $class = ref($invocant) || $invocant;
+    if (!Bugzilla->dbh->bz_column_info($class->DB_TABLE, $field)) {
+        ThrowCodeError('param_invalid', { param    => $field,
+                                          function => "${class}::$function" });
+    }
+}
+
 sub check_required_create_fields {
     my ($class, $params) = @_;
 
@@ -342,6 +354,7 @@ sub insert_create_data {
 
     my (@field_names, @values);
     while (my ($field, $value) = each %$field_values) {
+        $class->_check_field($field, 'create');
         push(@field_names, $field);
         push(@values, $value);
     }
