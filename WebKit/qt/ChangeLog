@@ -1,3 +1,16 @@
+2009-09-11  Ariya Hidayat  <ariya.hidayat@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Changed URLs from qtsoftware.com to qt.nokia.com, as part of a general
+        renaming.
+
+        * Api/qwebpluginfactory.cpp:
+        * docs/webkitsnippets/simple/main.cpp:
+        (main):
+        * docs/webkitsnippets/webpage/main.cpp:
+        (main):
+
 2009-09-11  Volker Hilsheimer  <volker.hilsheimer@nokia.com>
 
         Reviewed by Simon Hausmann.
@@ -3684,7 +3697,7 @@
 
         Reviewed by Simon Hausmann.
 
-        http://www.qtsoftware.com/developer/task-tracker/index_html?id=238391&method=entry
+        http://qt.nokia.com/developer/task-tracker/index_html?id=238391&method=entry
 
         [Qt] If QPainter fails to start on a QPrinter instance, do not
         continue printing.
@@ -3877,7 +3890,7 @@
 
         Rubber-stamped by Simon Hausmann.
 
-        http://www.qtsoftware.com/developer/task-tracker/index_html?id=219344&method=entry
+        http://qt.nokia.com/developer/task-tracker/index_html?id=219344&method=entry
 
         [Qt] API documentation for QWebPage::WebAction enum.
 
@@ -3932,7 +3945,7 @@
 
         Reviewed by Simon Hausmann.
 
-        http://www.qtsoftware.com/developer/task-tracker/index_html?id=241144&method=entry
+        http://qt.nokia.com/developer/task-tracker/index_html?id=241144&method=entry
 
         [Qt] Create actions for text selection and editing for QWebPage.
         Also properly disable and enable them when contentEditable is toggled.

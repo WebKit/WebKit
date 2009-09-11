@@ -47996,7 +47996,7 @@
 
         Rubber-stamped by Simon Hausmann.
 
-        http://www.qtsoftware.com/developer/task-tracker/index_html?id=238662&method=entry
+        http://qt.nokia.com/developer/task-tracker/index_html?id=238662&method=entry
 
         [Qt] Map function keys F1 to F24.
 
@@ -52735,7 +52735,7 @@
 
         Reviewed by Simon Hausmann.
 
-        http://www.qtsoftware.com/developer/task-tracker/index_html?id=211228&method=entry
+        http://qt.nokia.com/developer/task-tracker/index_html?id=211228&method=entry
 
         [Qt] Show focus rect when a button gets the focus for the first time.
         This is important at least for Windows style.

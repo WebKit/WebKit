@@ -1,3 +1,12 @@
+2009-09-11  Ariya Hidayat  <ariya.hidayat@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Changed URLs from qtsoftware.com to qt.nokia.com, as part of a general
+        renaming.
+
+        * ChangeLog-2009-06-16:
+
 2009-09-11  Thiago Macieira  <thiago.macieira@nokia.com>
 
         Reviewed by Simon Hausmann.
