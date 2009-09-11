@@ -33,6 +33,7 @@
 
 #include "EventListener.h"
 #include "OwnHandle.h"
+#include "V8Proxy.h"
 #include <v8.h>
 
 namespace WebCore {
@@ -89,7 +90,7 @@ namespace WebCore {
         // deleted. See fast/dom/replaceChild.html
         // FIXME: this could hold m_frame live until the event listener is deleted.
         Frame* m_frame;
-        OwnHandle<v8::Context> m_context;
+        RefPtr<SharedPersistent<v8::Context> > m_context;
 
         // Position in the HTML source for HTML event listeners.
         int m_lineNumber;

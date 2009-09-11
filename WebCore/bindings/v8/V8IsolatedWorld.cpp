@@ -87,18 +87,17 @@ void V8IsolatedWorld::evaluate(const Vector<ScriptSourceCode>& sources, V8Proxy*
 }
 
 V8IsolatedWorld::V8IsolatedWorld(v8::Handle<v8::Context> context)
-    : m_context(v8::Persistent<v8::Context>::New(context))
+    : m_context(SharedPersistent<v8::Context>::create(v8::Persistent<v8::Context>::New(context)))
 {
     ++isolatedWorldCount;
-    m_context.MakeWeak(this, &contextWeakReferenceCallback);
-    m_context->Global()->SetHiddenValue(V8HiddenPropertyName::isolatedWorld(), v8::External::Wrap(this));
+    m_context->get().MakeWeak(this, &contextWeakReferenceCallback);
+    context->Global()->SetHiddenValue(V8HiddenPropertyName::isolatedWorld(), v8::External::Wrap(this));
 }
 
 V8IsolatedWorld::~V8IsolatedWorld()
 {
     --isolatedWorldCount;
-    m_context.Dispose();
-    m_context.Clear();
+    m_context->disposeHandle();
 }
 
 V8IsolatedWorld* V8IsolatedWorld::getEnteredImpl()

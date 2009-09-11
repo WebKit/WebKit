@@ -52,8 +52,7 @@ V8AbstractEventListener::V8AbstractEventListener(Frame* frame, bool isAttribute)
     // We might be called directly from the parser.
     v8::HandleScope handleScope;
 
-    m_context.set(V8Proxy::context(m_frame));
-    m_context.makeWeak();
+    m_context = V8Proxy::shared_context(m_frame);
 
     // Get the position in the source if any.
     if (m_isAttribute && m_frame->document()->tokenizer()) {
@@ -119,7 +118,12 @@ void V8AbstractEventListener::handleEvent(Event* event, bool isWindowEvent)
 
     v8::HandleScope handleScope;
 
-    v8::Handle<v8::Context> v8Context = m_context.get();
+    if (!m_context)
+        return;
+
+    // Create a new local handle since the persistent handle stored in
+    // m_context may be disposed before we're done.
+    v8::Handle<v8::Context> v8Context = v8::Local<v8::Context>::New(m_context->get());
     if (v8Context.IsEmpty())
         return;
 

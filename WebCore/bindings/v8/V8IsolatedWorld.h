@@ -35,6 +35,7 @@
 
 #include "V8DOMMap.h"
 #include "V8Index.h"
+#include "V8Proxy.h"
 #include "V8Utilities.h"
 #include "ScriptSourceCode.h"  // for WebCore::ScriptSourceCode
 
@@ -83,7 +84,8 @@ namespace WebCore {
             return getEnteredImpl();
         }
 
-        v8::Handle<v8::Context> context() { return m_context; }
+        v8::Handle<v8::Context> context() { return m_context->get(); }
+        PassRefPtr<SharedPersistent<v8::Context> > shared_context() { return m_context; }
 
         DOMDataStore* getDOMDataStore() const { return m_domDataStore.getStore(); }
 
@@ -97,7 +99,7 @@ namespace WebCore {
 
         // The v8::Context for the isolated world.  This object is keep on the
         // heap as long as |m_context| has not been garbage collected.
-        v8::Persistent<v8::Context> m_context;
+        RefPtr<SharedPersistent<v8::Context> > m_context;
 
         // The backing store for the isolated world's DOM wrappers.  This class
         // doesn't have visibility into the wrappers.  This handle simply helps

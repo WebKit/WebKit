@@ -106,7 +106,7 @@ void ScheduledAction::execute(V8Proxy* proxy)
     ASSERT(proxy);
 
     v8::HandleScope handleScope;
-    v8::Local<v8::Context> v8Context = proxy->context();
+    v8::Handle<v8::Context> v8Context = proxy->context();
     if (v8Context.IsEmpty())
         return; // JS may not be enabled.
 
