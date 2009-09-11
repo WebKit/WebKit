@@ -325,8 +325,9 @@ QWebSettings* QWebSettings::globalSettings()
     \value JavascriptCanAccessClipboard Specifies whether JavaScript programs
         can read or write to the clipboard.
     \value DeveloperExtrasEnabled Enables extra tools for Web developers.
-        Currently this enables the "Inspect" element in the context menu,
-    which shows the WebKit WebInspector for web site debugging.
+        Currently this enables the "Inspect" element in the context menu as
+        well as the use of QWebInspector which controls the WebKit WebInspector
+        for web site debugging.
     \value LinksIncludedInFocusChain Specifies whether hyperlinks should be
         included in the keyboard focus chain.
     \value ZoomTextOnly Specifies whether the zoom factor on a frame applies to

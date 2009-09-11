@@ -1662,6 +1662,23 @@ void QWebElement::replace(const QString &markup)
 }
 
 /*!
+    \internal
+    Walk \a node's parents until a valid QWebElement is found.
+    For example, a WebCore::Text node is not a valid Html QWebElement, but its
+    enclosing p tag is.
+*/
+QWebElement QWebElement::enclosingElement(WebCore::Node* node)
+{
+    QWebElement element(node);
+
+    while (element.isNull() && node) {
+        node = node->parentNode();
+        element = QWebElement(node);
+    }
+    return element;
+}
+
+/*!
     \fn inline bool QWebElement::operator==(const QWebElement& o) const;
 
     Returns true if this element points to the same underlying DOM object as
