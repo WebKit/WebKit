@@ -1,3 +1,15 @@
+2009-09-11  Yongjun Zhang  <yongjun.zhang@nokia.com>
+
+        Reviewed by Simon Hausmann.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=29136
+        [Qt] emit microFocusChanged() signal when no QWidget-based view is present.
+
+        emit microFocusChange() signal regardless of view.
+
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::setInputMethodState):
+
 2009-09-11  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Simon Hausmann.

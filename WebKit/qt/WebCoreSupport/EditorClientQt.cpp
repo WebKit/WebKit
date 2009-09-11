@@ -595,10 +595,10 @@ bool EditorClientQt::isEditing() const
 void EditorClientQt::setInputMethodState(bool active)
 {
     QWidget *view = m_page->view();
-    if (view) {
+    if (view)
         view->setAttribute(Qt::WA_InputMethodEnabled, active);
-        emit m_page->microFocusChanged();
-    }
+
+    emit m_page->microFocusChanged();
 }
 
 }
