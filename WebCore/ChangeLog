@@ -1,3 +1,16 @@
+2009-09-11  Evan Stade  <estade@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Revert r47992: Expose functions to change the focus ring color for
+        Linux Chromium.
+
+        As Darin Fisher has pointed out, there is a better way to do this.
+
+        * rendering/RenderThemeChromiumLinux.cpp:
+        (WebCore::RenderThemeChromiumLinux::RenderThemeChromiumLinux):
+        * rendering/RenderThemeChromiumLinux.h:
+
 2009-09-11  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Geoff Garen.
