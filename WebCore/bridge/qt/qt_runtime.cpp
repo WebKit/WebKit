@@ -1163,7 +1163,7 @@ static int findMethodIndex(ExecState* exec,
         }
 
         // If the native method requires more arguments than what was passed from JavaScript
-        if (jsArgs.size() < (types.count() - 1)) {
+        if (jsArgs.size() + 1 < static_cast<unsigned>(types.count())) {
             qMatchDebug() << "Match:too few args for" << method.signature();
             tooFewArgs.append(index);
             continue;
@@ -1186,7 +1186,7 @@ static int findMethodIndex(ExecState* exec,
 
         bool converted = true;
         int matchDistance = 0;
-        for (int i = 0; converted && i < types.count() - 1; ++i) {
+        for (unsigned i = 0; converted && i + 1 < static_cast<unsigned>(types.count()); ++i) {
             JSValue arg = i < jsArgs.size() ? jsArgs.at(i) : jsUndefined();
 
             int argdistance = -1;
@@ -1203,7 +1203,7 @@ static int findMethodIndex(ExecState* exec,
         qMatchDebug() << "Match: " << method.signature() << (converted ? "converted":"failed to convert") << "distance " << matchDistance;
 
         if (converted) {
-            if ((jsArgs.size() == types.count() - 1)
+            if ((jsArgs.size() + 1 == static_cast<unsigned>(types.count()))
                 && (matchDistance == 0)) {
                 // perfect match, use this one
                 chosenIndex = index;

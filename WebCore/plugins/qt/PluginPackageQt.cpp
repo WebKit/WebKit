@@ -63,7 +63,7 @@ bool PluginPackage::fetchInfo()
     String s = gm();
     Vector<String> types;
     s.split(UChar(';'), false, types);
-    for (int i = 0; i < types.size(); ++i) {
+    for (unsigned i = 0; i < types.size(); ++i) {
         Vector<String> mime;
         types[i].split(UChar(':'), true, mime);
         if (mime.size() > 0) {

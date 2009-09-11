@@ -289,7 +289,7 @@ bool ImageDecoderQt::supportsAlpha() const
 
 int ImageDecoderQt::duration(size_t index) const
 {
-    if (index >= m_imageList.size())
+    if (index >= static_cast<size_t>(m_imageList.size()))
         return 0;
     return  m_imageList[index].m_duration;
 }
@@ -312,7 +312,7 @@ QPixmap* ImageDecoderQt::imageAtIndex(size_t index) const
     if (debugImageDecoderQt)
         qDebug() << "ImageDecoderQt::imageAtIndex(" << index << ')';
 
-    if (index >= m_imageList.size())
+    if (index >= static_cast<size_t>(m_imageList.size()))
         return 0;
 
     if (!m_pixmapCache.contains(index)) {

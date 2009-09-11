@@ -219,7 +219,7 @@ QList<QWebElement> QWebElement::findAll(const QString &selectorQuery) const
     if (!nodes)
         return elements;
 
-    for (int i = 0; i < nodes->length(); ++i) {
+    for (unsigned i = 0; i < nodes->length(); ++i) {
         WebCore::Node* n = nodes->item(i);
         elements.append(QWebElement(static_cast<Element*>(n)));
     }

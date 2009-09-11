@@ -1,3 +1,26 @@
+2009-09-10  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] Fix comparison between signed and unsigned integer warnings
+        https://bugs.webkit.org/show_bug.cgi?id=29162
+
+        No functional change.
+
+        * Api/qwebelement.cpp:
+        (QWebElement::findAll):
+        * Api/qwebhistory.cpp:
+        (QWebHistory::items):
+        (QWebHistory::backItems):
+        (QWebHistory::forwardItems):
+        (QWebHistory::saveState):
+        * Api/qwebplugindatabase.cpp:
+        (QWebPluginDatabase::setSearchPaths):
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::runOpenPanel):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::createPlugin):
+
 2009-09-10  Simon Hausmann  <hausmann@webkit.org>
 
         Rubber-stamped by Ariya Hidayat.

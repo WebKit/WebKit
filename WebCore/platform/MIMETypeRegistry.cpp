@@ -92,7 +92,7 @@ static void initializeSupportedImageMIMETypes()
 
 #elif PLATFORM(QT)
     QList<QByteArray> formats = QImageReader::supportedImageFormats();
-    for (size_t i = 0; i < formats.size(); ++i) {
+    for (size_t i = 0; i < static_cast<size_t>(formats.size()); ++i) {
 #if ENABLE(SVG)
         /*
          * Qt has support for SVG, but we want to use KSVG2
@@ -149,7 +149,7 @@ static void initializeSupportedImageMIMETypesForEncoding()
 #endif
 #elif PLATFORM(QT)
     QList<QByteArray> formats = QImageWriter::supportedImageFormats();
-    for (size_t i = 0; i < formats.size(); ++i) {
+    for (int i = 0; i < formats.size(); ++i) {
         String mimeType = MIMETypeRegistry::getMIMETypeForExtension(formats.at(i).constData());
         supportedImageMIMETypesForEncoding->add(mimeType);
     }

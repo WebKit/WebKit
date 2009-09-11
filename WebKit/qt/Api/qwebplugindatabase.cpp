@@ -319,7 +319,7 @@ void QWebPluginDatabase::setSearchPaths(const QStringList& paths)
 {
     Vector<String> directories;
 
-    for (unsigned int i = 0; i < paths.count(); ++i)
+    for (int i = 0; i < paths.count(); ++i)
         directories.append(paths.at(i));
 
     m_database->setPluginDirectories(directories);

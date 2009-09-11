@@ -851,7 +851,7 @@ void GraphicsContext::drawFocusRing(const Color& color)
     QPainterPath newPath = stroker.createStroke(path);
     p->strokePath(newPath, nPen);
 #else
-    for (int i = 0; i < rectCount; ++i)
+    for (unsigned i = 0; i < rectCount; ++i)
         p->drawRect(QRectF(rects[i]));
 #endif
     p->setPen(oldPen);

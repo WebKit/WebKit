@@ -275,7 +275,7 @@ QList<QWebHistoryItem> QWebHistory::items() const
     const WebCore::HistoryItemVector &items = d->lst->entries();
 
     QList<QWebHistoryItem> ret;
-    for (int i = 0; i < items.size(); ++i) {
+    for (unsigned i = 0; i < items.size(); ++i) {
         QWebHistoryItemPrivate *priv = new QWebHistoryItemPrivate(items[i].get());
         ret.append(QWebHistoryItem(priv));
     }
@@ -294,7 +294,7 @@ QList<QWebHistoryItem> QWebHistory::backItems(int maxItems) const
     d->lst->backListWithLimit(maxItems, items);
 
     QList<QWebHistoryItem> ret;
-    for (int i = 0; i < items.size(); ++i) {
+    for (unsigned i = 0; i < items.size(); ++i) {
         QWebHistoryItemPrivate *priv = new QWebHistoryItemPrivate(items[i].get());
         ret.append(QWebHistoryItem(priv));
     }
@@ -313,7 +313,7 @@ QList<QWebHistoryItem> QWebHistory::forwardItems(int maxItems) const
     d->lst->forwardListWithLimit(maxItems, items);
 
     QList<QWebHistoryItem> ret;
-    for (int i = 0; i < items.size(); ++i) {
+    for (unsigned i = 0; i < items.size(); ++i) {
         QWebHistoryItemPrivate *priv = new QWebHistoryItemPrivate(items[i].get());
         ret.append(QWebHistoryItem(priv));
     }
@@ -537,7 +537,7 @@ QByteArray QWebHistory::saveState(HistoryStateVersion version) const
         stream << count() << currentItemIndex();
 
         const WebCore::HistoryItemVector &items = d->lst->entries();
-        for (int i = 0; i < items.size(); i++)
+        for (unsigned i = 0; i < items.size(); i++)
             items[i].get()->saveState(stream, version);
 
         if (stream.status() != QDataStream::Ok)

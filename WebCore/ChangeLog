@@ -1,3 +1,25 @@
+2009-09-10  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] Fix comparison between signed and unsigned integer warnings
+        https://bugs.webkit.org/show_bug.cgi?id=29162
+
+        No functional change.
+
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::findMethodIndex):
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::initializeSupportedImageMIMETypes):
+        (WebCore::initializeSupportedImageMIMETypesForEncoding):
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::drawFocusRing):
+        * platform/graphics/qt/ImageDecoderQt.cpp:
+        (WebCore::ImageDecoderQt::duration):
+        (WebCore::ImageDecoderQt::imageAtIndex):
+        * plugins/qt/PluginPackageQt.cpp:
+        (WebCore::PluginPackage::fetchInfo):
+
 2009-09-10  Martin Robinson  <martin.james.robinson@gmail.com>
 
         Reviewed by Gustavo Noronha.

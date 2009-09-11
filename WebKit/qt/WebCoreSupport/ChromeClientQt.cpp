@@ -420,7 +420,7 @@ void ChromeClientQt::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> prpFileC
         option.parentFrame = QWebFramePrivate::kit(frame);
 
         if (!fileChooser->filenames().isEmpty())
-            for (int i = 0; i < fileChooser->filenames().size(); ++i)
+            for (unsigned i = 0; i < fileChooser->filenames().size(); ++i)
                 option.suggestedFileNames += fileChooser->filenames()[i];
 
         QWebPage::ChooseMultipleFilesExtensionReturn output;
