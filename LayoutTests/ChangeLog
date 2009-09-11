@@ -1,3 +1,11 @@
+2009-09-11  Eric Seidel  <eric@webkit.org>
+
+        No review, rolling out r48229.
+        http://trac.webkit.org/changeset/48229
+
+        * fast/events/drag-dropeffect-expected.txt: Removed.
+        * fast/events/drag-dropeffect.html: Removed.
+
 2009-09-11  Michelangelo De Simone  <micdesim@gmail.com>
 
         Reviewed by Antti Koivisto.

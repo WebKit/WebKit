@@ -59,7 +59,6 @@
 #import <WebCore/DOMImplementation.h>
 #import <WebCore/DocLoader.h>
 #import <WebCore/DocumentFragment.h>
-#import <WebCore/DragController.h>
 #import <WebCore/EventHandler.h>
 #import <WebCore/EventNames.h>
 #import <WebCore/Frame.h>
@@ -933,13 +932,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     // FIXME: These are fake modifier keys here, but they should be real ones instead.
     PlatformMouseEvent event(IntPoint(windowLoc), globalPoint(windowLoc, [view->platformWidget() window]),
         LeftButton, MouseEventMoved, 0, false, false, false, false, currentTime());
-    
-    // Get the current destination drag operation, if this is an intra-page drag:
-    DragOperation operation = DragOperationNone;
-    if (Page* page = _private->coreFrame->page())
-        operation = page->dragController()->destinationDragOperation();
-
-    _private->coreFrame->eventHandler()->dragSourceMovedTo(event, operation);
+    _private->coreFrame->eventHandler()->dragSourceMovedTo(event);
 }
 
 - (void)_dragSourceEndedAt:(NSPoint)windowLoc operation:(NSDragOperation)operation

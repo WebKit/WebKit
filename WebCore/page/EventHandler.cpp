@@ -1506,14 +1506,8 @@ bool EventHandler::updateDragAndDrop(const PlatformMouseEvent& event, Clipboard*
                             ? static_cast<HTMLFrameElementBase*>(m_dragTarget.get())->contentFrame() : 0;
             if (frame)
                 accept = frame->eventHandler()->updateDragAndDrop(event, clipboard);
-            else {
-                // Temporarily set dropEffect to 'none' while calling dropleave handler (as per HTML5 spec)
-                DragOperation saveOp = DragOperationNone;
-                clipboard->destinationOperation(saveOp);
-                clipboard->setDestinationOperation(DragOperationNone);
+            else
                 dispatchDragEvent(eventNames().dragleaveEvent, m_dragTarget.get(), event, clipboard);
-                clipboard->setDestinationOperation(saveOp);
-            }
         }
     } else {
         if (newTarget) {
@@ -2137,13 +2131,11 @@ bool EventHandler::shouldDragAutoNode(Node* node, const IntPoint& point) const
     return page && page->dragController()->mayStartDragAtEventLocation(m_frame, point);
 }
     
-void EventHandler::dragSourceMovedTo(const PlatformMouseEvent& event, DragOperation operation)
+void EventHandler::dragSourceMovedTo(const PlatformMouseEvent& event)
 {
-    if (dragState().m_dragSrc && dragState().m_dragSrcMayBeDHTML) {
-        dragState().m_dragClipboard->setDestinationOperation(operation);
+    if (dragState().m_dragSrc && dragState().m_dragSrcMayBeDHTML)
         // for now we don't care if event handler cancels default behavior, since there is none
         dispatchDragSrcEvent(eventNames().dragEvent, event);
-    }
 }
     
 void EventHandler::dragSourceEndedAt(const PlatformMouseEvent& event, DragOperation operation)
@@ -2237,7 +2229,7 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event)
     // Once we're past the hysteresis point, we don't want to treat this gesture as a click
     invalidateClick();
     
-    DragOperation srcOp = DragOperationEvery;      
+    DragOperation srcOp = DragOperationNone;      
     
     freeClipboard();    // would only happen if we missed a dragEnd.  Do it anyway, just
                         // to make sure it gets numbified
@@ -2260,7 +2252,6 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event)
             }
         } 
         
-        dragState().m_dragClipboard->setDestinationOperation(DragOperationNone); // HTML5 spec
         m_mouseDownMayStartDrag = dispatchDragSrcEvent(eventNames().dragstartEvent, m_mouseDown)
             && !m_frame->selection()->isInPasswordField();
         

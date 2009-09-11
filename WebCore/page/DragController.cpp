@@ -83,7 +83,6 @@ DragController::DragController(Page* page, DragClient* client)
     , m_didInitiateDrag(false)
     , m_isHandlingDrag(false)
     , m_sourceDragOperation(DragOperationNone)
-    , m_destinationDragOperation(DragOperationNone)
 {
 }
 
@@ -159,7 +158,6 @@ void DragController::dragExited(DragData* dragData)
         ClipboardAccessPolicy policy = (!m_documentUnderMouse || m_documentUnderMouse->securityOrigin()->isLocal()) ? ClipboardReadable : ClipboardTypesReadable;
         RefPtr<Clipboard> clipboard = dragData->createClipboard(policy);
         clipboard->setSourceOperation(dragData->draggingSourceOperationMask());
-        clipboard->setDestinationOperation(DragOperationNone);  // HTML5 spec, sec. 7.9.3
         mainFrame->eventHandler()->cancelDragAndDrop(createMouseEvent(dragData), clipboard.get());
         clipboard->setAccessPolicy(ClipboardNumb);    // invalidate clipboard here for security
     }
@@ -183,7 +181,6 @@ bool DragController::performDrag(DragData* dragData)
             // Sending an event can result in the destruction of the view and part.
             RefPtr<Clipboard> clipboard = dragData->createClipboard(ClipboardReadable);
             clipboard->setSourceOperation(dragData->draggingSourceOperationMask());
-            clipboard->setDestinationOperation(m_destinationDragOperation);  // HTML5 spec, sec. 7.9.3
             mainFrame->eventHandler()->performDragAndDrop(createMouseEvent(dragData), clipboard.get());
             clipboard->setAccessPolicy(ClipboardNumb);    // invalidate clipboard here for security
         }
@@ -232,12 +229,7 @@ DragOperation DragController::dragEnteredOrUpdated(DragData* dragData)
     DragOperation operation = DragOperationNone;
     bool handledByDocument = tryDocumentDrag(dragData, m_dragDestinationAction, operation);
     if (!handledByDocument && (m_dragDestinationAction & DragDestinationActionLoad))
-        operation = operationForLoad(dragData);
-    
-    // Restrict the operation to what the drag source allows:
-    if ((operation & dragData->draggingSourceOperationMask()) != operation)
-        operation = DragOperationNone;
-    m_destinationDragOperation = operation;
+        return operationForLoad(dragData);
     return operation;
 }
 
@@ -499,8 +491,6 @@ bool DragController::tryDHTMLDrag(DragData* dragData, DragOperation& operation)
     RefPtr<Clipboard> clipboard = dragData->createClipboard(policy);
     DragOperation srcOpMask = dragData->draggingSourceOperationMask();
     clipboard->setSourceOperation(srcOpMask);
-    m_destinationDragOperation = defaultOperationForDrag(srcOpMask);    // HTML5 spec, sec. 7.9.3
-    clipboard->setDestinationOperation(m_destinationDragOperation);
 
     PlatformMouseEvent event = createMouseEvent(dragData);
     if (!mainFrame->eventHandler()->updateDragAndDrop(event, clipboard.get())) {
@@ -633,7 +623,6 @@ bool DragController::startDrag(Frame* src, Clipboard* clipboard, DragOperation s
 
     m_draggingImageURL = KURL();
     m_sourceDragOperation = srcOp;
-    m_destinationDragOperation = DragOperationNone;
 
     DragImageRef dragImage = 0;
     IntPoint dragLoc(0, 0);

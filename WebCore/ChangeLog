@@ -1,3 +1,26 @@
+2009-09-11  Eric Seidel  <eric@webkit.org>
+
+        No review, rolling out r48229.
+        http://trac.webkit.org/changeset/48229
+
+        * WebCore.base.exp:
+        * dom/Clipboard.cpp:
+        (WebCore::Clipboard::Clipboard):
+        (WebCore::Clipboard::sourceOperation):
+        * page/DragController.cpp:
+        (WebCore::DragController::DragController):
+        (WebCore::DragController::dragExited):
+        (WebCore::DragController::performDrag):
+        (WebCore::DragController::dragEnteredOrUpdated):
+        (WebCore::DragController::tryDHTMLDrag):
+        (WebCore::DragController::startDrag):
+        * page/DragController.h:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::updateDragAndDrop):
+        (WebCore::EventHandler::dragSourceMovedTo):
+        (WebCore::EventHandler::handleDrag):
+        * page/EventHandler.h:
+
 2009-09-11  Michelangelo De Simone  <micdesim@gmail.com>
 
         Fix the build.
