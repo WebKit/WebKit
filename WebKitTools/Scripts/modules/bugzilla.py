@@ -454,3 +454,17 @@ class Bugzilla:
         self.browser['bug_status'] = ['RESOLVED']
         self.browser['resolution'] = ['FIXED']
         self.browser.submit()
+
+    def reopen_bug(self, bug_id, comment_text):
+        self.authenticate()
+
+        log("Re-opening bug %s" % bug_id)
+        log(comment_text) # Bugzilla requires a comment when re-opening a bug, so we know it will never be None.
+        if self.dryrun:
+            return
+
+        self.browser.open(self.bug_url_for_bug_id(bug_id))
+        self.browser.select_form(name="changeform")
+        self.browser['bug_status'] = ['REOPENED']
+        self.browser['comment'] = comment_text
+        self.browser.submit()

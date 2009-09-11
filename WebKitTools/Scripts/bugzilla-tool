@@ -59,14 +59,6 @@ def pluralize(noun, count):
         noun = plural(noun)
     return "%d %s" % (count, noun)
 
-def modified_changelogs(scm):
-    changelog_paths = []
-    paths = scm.changed_files()
-    for path in paths:
-        if os.path.basename(path) == "ChangeLog":
-            changelog_paths.append(path)
-    return changelog_paths
-
 def parse_bug_id(message):
     match = re.search("http\://webkit\.org/b/(?P<bug_id>\d+)", message)
     if match:
@@ -76,8 +68,8 @@ def parse_bug_id(message):
         return match.group('bug_id')
     return None
 
-def commit_message_for_this_commit(scm):
-    changelog_paths = modified_changelogs(scm)
+def commit_message_for_this_commit():
+    changelog_paths = scm.modified_changelogs()
     if not len(changelog_paths):
         raise ScriptError("Found no modified ChangeLogs, cannot create a commit message.\n"
                           "All changes require a ChangeLog.  See:\n"
@@ -186,8 +178,7 @@ def bug_comment_from_svn_revision(svn_revision):
     return "Committed r%s: <%s>" % (svn_revision, view_source_url(svn_revision))
 
 def bug_comment_from_commit_text(scm, commit_text):
-    match = re.search(scm.commit_success_regexp(), commit_text, re.MULTILINE)
-    svn_revision = match.group('svn_revision')
+    svn_revision = scm.svn_revision_from_commit_text(commit_text)
     return bug_comment_from_svn_revision(svn_revision)
 
 
@@ -302,8 +293,7 @@ class LandAndUpdateBug(Command):
             log("Failed to guess reviewer from bug %s and --reviewer= not provided.  Not updating ChangeLogs with reviewer." % bug_id)
             return
 
-        changelogs = modified_changelogs(tool.scm())
-        for changelog_path in changelogs:
+        for changelog_path in tool.scm().modified_changelogs():
             ChangeLog(changelog_path).set_reviewer(reviewer)
 
     def execute(self, options, args, tool):
@@ -542,6 +532,63 @@ class PostCommitsAsPatchesToBug(Command):
             tool.bugs.add_patch_to_bug(bug_id, diff_file, description, comment_text, mark_for_review=options.review)
 
 
+class RolloutCommit(Command):
+    def __init__(self):
+        options = WebKitLandingScripts.land_options()
+        options += WebKitLandingScripts.cleaning_options()
+        options.append(make_option("--complete-rollout", action="store_true", dest="complete_rollout", help="Experimental support for complete unsupervised rollouts, including re-opening the bug.  Not recommended."))
+        Command.__init__(self, 'Reverts the given revision and commits the revert and re-opens the original bug.', 'REVISION [BUGID]', options=options)
+
+    @staticmethod
+    def _create_changelogs_for_revert(scm, revision):
+        # First, discard the ChangeLog changes from the rollout.
+        changelog_paths = scm.modified_changelogs()
+        scm.revert_files(changelog_paths)
+
+        # Second, make new ChangeLog entries for this rollout.
+        # This could move to prepare-ChangeLog by adding a --revert= option.
+        WebKitLandingScripts.run_webkit_script("prepare-ChangeLog")
+        for changelog_path in changelog_paths:
+            ChangeLog(changelog_path).update_for_revert(revision)
+
+    @staticmethod
+    def _parse_bug_id_from_revision_diff(tool, revision):
+        original_diff = tool.scm().diff_for_revision(revision)
+        return parse_bug_id(original_diff)
+
+    @staticmethod
+    def _reopen_bug_after_rollout(tool, bug_id, comment_text):
+        if bug_id:
+            tool.bugs.reopen_bug(bug_id, comment_text)
+        else:
+            log(comment_text)
+            log("No bugs were updated or re-opened to reflect this rollout.")
+
+    def execute(self, options, args, tool):
+        if not args:
+            error("REVISION is required, see --help.")
+        revision = args[0]
+        bug_id = self._parse_bug_id_from_revision_diff(tool, revision)
+        if options.complete_rollout:
+            if bug_id:
+                log("Will re-open bug %s after rollout." % bug_id)
+            else:
+                log("Failed to parse bug number from diff.  No bugs will be updated/reopened after the rollout.")
+
+        WebKitLandingScripts.setup_for_landing(tool.scm(), options)
+        tool.scm().update_webkit()
+        tool.scm().apply_reverse_diff(revision)
+        self._create_changelogs_for_revert(tool.scm(), revision)
+
+        # FIXME: Fully automated rollout is not 100% idiot-proof yet, so for now just log with instructions on how to complete the rollout.
+        # Once we trust rollout we will remove this option.
+        if not options.complete_rollout:
+            log("\nNOTE: Rollout support is experimental.\nPlease verify the rollout diff and use 'bugzilla-tool land-diff %s' to commit the rollout." % bug_id)
+        else:
+            comment_text = WebKitLandingScripts.build_and_commit(tool.scm(), options)
+            self._reopen_bug_after_rollout(tool, bug_id, comment_text)
+
+
 class CreateBug(Command):
     def __init__(self):
         options = [
@@ -767,6 +814,7 @@ class BugzillaTool:
             { 'name' : 'post-commits', 'object' : PostCommitsAsPatchesToBug() },
             { 'name' : 'tree-status', 'object' : CheckTreeStatus() },
             { 'name' : 'commit-queue', 'object' : LandPatchesFromCommitQueue() },
+            { 'name' : 'rollout', 'object' : RolloutCommit() },
         ]
 
         self.global_option_parser = HelpPrintingOptionParser(usage=self.usage_line(), formatter=NonWrappingEpilogIndentedHelpFormatter(), epilog=self.commands_usage())

@@ -28,6 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
+import re
 import stat
 import subprocess
 import tempfile
@@ -54,6 +55,12 @@ def write_into_file_at_path(file_path, contents):
     file.write(contents)
     file.close()
 
+def read_from_path(file_path):
+    file = open(file_path, 'r')
+    contents = file.read()
+    file.close()
+    return contents
+
 # Exists to share svn repository creation code between the git and svn tests
 class SVNTestRepository:
     @staticmethod
@@ -72,15 +79,18 @@ class SVNTestRepository:
         
         run(['svn', 'commit', '--quiet', '--message', 'second commit'])
         
-        test_file.write("test3")
+        test_file.write("test3\n")
         test_file.flush()
         
         run(['svn', 'commit', '--quiet', '--message', 'third commit'])
 
-        test_file.write("test4")
+        test_file.write("test4\n")
         test_file.close()
-        
+
         run(['svn', 'commit', '--quiet', '--message', 'fourth commit'])
+
+        # svn does not seem to update after commit as I would expect.
+        run(['svn', 'update'])
 
     @classmethod
     def setup(cls, test_object):
@@ -122,12 +132,31 @@ class SCMTest(unittest.TestCase):
         os.mkdir(os.path.dirname(local_scripts_directory))
         os.symlink(webkit_scripts_directory, local_scripts_directory)
 
+    # Tests which both GitTest and SVNTest should run.
+    # FIXME: There must be a simpler way to add these w/o adding a wrapper method to both subclasses
+    def _shared_test_commit_with_message(self):
+        write_into_file_at_path('test_file', 'more test content')
+        commit_text = self.scm.commit_with_message('another test commit')
+        self.assertEqual(self.scm.svn_revision_from_commit_text(commit_text), '5')
+
+        self.scm.dryrun = True
+        write_into_file_at_path('test_file', 'still more test content')
+        commit_text = self.scm.commit_with_message('yet another test commit')
+        self.assertEqual(self.scm.svn_revision_from_commit_text(commit_text), '0')
+
+    def _shared_test_reverse_diff(self):
+        self._setup_webkittools_scripts_symlink(self.scm) # Git's apply_reverse_diff uses resolve-ChangeLogs
+        # Only test the simple case, as any other will end up with conflict markers.
+        self.scm.apply_reverse_diff('4')
+        self.assertEqual(read_from_path('test_file'), "test1test2test3\n")
+
 
 class SVNTest(SCMTest):
 
     def setUp(self):
         SVNTestRepository.setup(self)
         os.chdir(self.svn_checkout_path)
+        self.scm = detect_scm_system(self.svn_checkout_path)
 
     def tearDown(self):
         SVNTestRepository.tear_down(self)
@@ -172,6 +201,18 @@ class SVNTest(SCMTest):
         self._setup_webkittools_scripts_symlink(scm)
         self.assertRaises(ScriptError, scm.apply_patch, patch, force=True)
 
+    def test_commit_logs(self):
+        # Commits have dates and usernames in them, so we can't just direct compare.
+        self.assertTrue(re.search('fourth commit', self.scm.last_svn_commit_log()))
+        self.assertTrue(re.search('second commit', self.scm.svn_commit_log(2)))
+
+    def test_commit_text_parsing(self):
+        self._shared_test_commit_with_message()
+
+    def test_reverse_diff(self):
+        self._shared_test_reverse_diff()
+
+
 class GitTest(SCMTest):
 
     def _setup_git_clone_of_svn_repository(self):
@@ -186,6 +227,7 @@ class GitTest(SCMTest):
         SVNTestRepository.setup(self)
         self._setup_git_clone_of_svn_repository()
         os.chdir(self.git_checkout_path)
+        self.scm = detect_scm_system(self.git_checkout_path)
 
     def tearDown(self):
         SVNTestRepository.tear_down(self)
@@ -252,6 +294,11 @@ class GitTest(SCMTest):
         self._setup_webkittools_scripts_symlink(scm)
         self.assertRaises(ScriptError, scm.apply_patch, patch, force=True)
 
+    def test_commit_text_parsing(self):
+        self._shared_test_commit_with_message()
+
+    def test_reverse_diff(self):
+        self._shared_test_reverse_diff()
 
 if __name__ == '__main__':
     unittest.main()

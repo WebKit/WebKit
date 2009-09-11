@@ -153,6 +153,19 @@ class SCM:
             return match.group('svn_revision')
         return svn_revision
 
+    def svn_revision_from_commit_text(self, commit_text):
+        match = re.search(self.commit_success_regexp(), commit_text, re.MULTILINE)
+        return match.group('svn_revision')
+
+    # ChangeLog-specific code doesn't really belong in scm.py, but this function is very useful.
+    def modified_changelogs(self):
+        changelog_paths = []
+        paths = self.changed_files()
+        for path in paths:
+            if os.path.basename(path) == "ChangeLog":
+                changelog_paths.append(path)
+        return changelog_paths
+
     @staticmethod
     def in_working_directory(path):
         raise NotImplementedError, "subclasses must implement"
@@ -184,6 +197,15 @@ class SCM:
         raise NotImplementedError, "subclasses must implement"
 
     def create_patch(self):
+        raise NotImplementedError, "subclasses must implement"
+
+    def diff_for_revision(self, revision):
+        raise NotImplementedError, "subclasses must implement"
+
+    def apply_reverse_diff(self, revision):
+        raise NotImplementedError, "subclasses must implement"
+
+    def revert_files(self, file_paths):
         raise NotImplementedError, "subclasses must implement"
 
     def commit_with_message(self, message):
@@ -226,16 +248,20 @@ class SVN(SCM):
     def in_working_directory(path):
         return os.path.isdir(os.path.join(path, '.svn'))
     
-    @staticmethod
-    def find_uuid(path):
-        if not SVN.in_working_directory(path):
+    @classmethod
+    def find_uuid(cls, path):
+        if not cls.in_working_directory(path):
             return None
-        info = SVN.run_command(['svn', 'info', path])
-        match = re.search("^Repository UUID: (?P<uuid>.+)$", info, re.MULTILINE)
+        return cls.value_from_svn_info(path, 'Repository UUID')
+
+    @classmethod
+    def value_from_svn_info(cls, path, field_name):
+        info_output = cls.run_command(['svn', 'info', path])
+        match = re.search("^%s: (?P<value>.+)$" % field_name, info_output, re.MULTILINE)
         if not match:
-            raise ScriptError('svn info did not contain a UUID.')
-        return match.group('uuid')
-    
+            raise ScriptError('svn info did not contain a %s.' % field_name)
+        return match.group('value')
+
     @staticmethod
     def find_checkout_root(path):
         uuid = SVN.find_uuid(path)
@@ -251,7 +277,7 @@ class SVN(SCM):
             (path, last_component) = os.path.split(path)
             if last_path == path:
                 return None
-    
+
     @staticmethod
     def commit_success_regexp():
         return "^Committed revision (?P<svn_revision>\d+)\.$"
@@ -291,30 +317,33 @@ class SVN(SCM):
     def create_patch(self):
         return self.run_command(self.script_path("svn-create-patch"), cwd=self.checkout_root)
 
+    def diff_for_revision(self, revision):
+        self.run_command(['svn', 'diff', '-c', revision])
+
+    def _repository_url(self):
+        return self.value_from_svn_info(self.checkout_root, 'URL')
+
+    def apply_reverse_diff(self, revision):
+        # '-c -revision' applies the inverse diff of 'revision'
+        self.run_command(['svn', 'merge', '--non-interactive', '-c', '-%s' % revision, self._repository_url()])
+
+    def revert_files(self, file_paths):
+        self.run_command(['svn', 'revert'] + file_paths)
+
     def commit_with_message(self, message):
         if self.dryrun:
-            return "Dry run, no remote commit."
+            # Return a string which looks like a commit so that things which parse this output will succeed.
+            return "Dry run, no commit.\nCommitted revision 0."
         return self.run_command(['svn', 'commit', '-m', message])
 
     def svn_commit_log(self, svn_revision):
-        svn_revision = self.strip_r_from_svn_revision(svn_revision)
-        return self.run_command(['svn', 'log', '--non-interactive', '-r', svn_revision]);
+        svn_revision = self.strip_r_from_svn_revision(str(svn_revision))
+        return self.run_command(['svn', 'log', '--non-interactive', '--revision', svn_revision]);
 
     def last_svn_commit_log(self):
-        svn_revision = None
-        output = self.run_command(['svnversion', '-c'])
-
-        if re.match("^\d+", output):
-            svn_revision = output
-        else:
-            match = re.match("^(\d+):(?P<last_svn_revision>\d+)", output)
-            if match:
-                svn_revision = match.group('last_svn_revision')
-
-        if not svn_revision:
-            raise ScriptError('Could not find last revision committed to svn working directory.')
-
-        return self.run_command(['svn', 'log', '--non-interactive', '-r', svn_revision])
+        # BASE is the checkout revision, HEAD is the remote repository revision
+        # http://svnbook.red-bean.com/en/1.0/ch03s03.html
+        return self.svn_commit_log('BASE')
 
 # All git-specific logic should go here.
 class Git(SCM):
@@ -380,6 +409,33 @@ class Git(SCM):
     def create_patch(self):
         return self.run_command(['git', 'diff', 'HEAD'])
 
+    @classmethod
+    def git_commit_from_svn_revision(cls, revision):
+        # git svn find-rev always exits 0, even when the revision is not found.
+        return cls.run_command(['git', 'svn', 'find-rev', 'r%s' % revision])
+
+    def diff_for_revision(self, revision):
+        git_commit = self.git_commit_from_svn_revision(revision)
+        return self.create_patch_from_local_commit(git_commit)
+
+    def apply_reverse_diff(self, revision):
+        # Assume the revision is an svn revision.
+        git_commit = self.git_commit_from_svn_revision(revision)
+        if not git_commit:
+            raise ScriptError('Failed to find git commit for revision %s, git svn log output: "%s"' % (revision, git_commit))
+
+        # I think this will always fail due to ChangeLogs.
+        # FIXME: We need to detec specific failure conditions and handle them.
+        self.run_command(['git', 'revert', '--no-commit', git_commit], raise_on_failure=False)
+
+        # Fix any ChangeLogs if necessary.
+        changelog_paths = self.modified_changelogs()
+        if len(changelog_paths):
+            self.run_command([self.script_path('resolve-ChangeLogs')] + changelog_paths)
+
+    def revert_files(self, file_paths):
+        self.run_command(['git', 'checkout', 'HEAD'] + file_paths)
+
     def commit_with_message(self, message):
         self.commit_locally_with_message(message)
         return self.push_local_commits_to_server()
@@ -404,7 +460,8 @@ class Git(SCM):
         
     def push_local_commits_to_server(self):
         if self.dryrun:
-            return "Dry run, no remote commit."
+            # Return a string which looks like a commit so that things which parse this output will succeed.
+            return "Dry run, no remote commit.\nCommitted r0"
         return self.run_command(['git', 'svn', 'dcommit'])
 
     # This function supports the following argument formats:

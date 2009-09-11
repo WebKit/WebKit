@@ -1,3 +1,37 @@
+2009-09-11  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        bugzilla-tool should automate rollouts
+        https://bugs.webkit.org/show_bug.cgi?id=26715
+
+        bugzilla-tool rollout will do the rollout locally and leave the diff for you to verify and commit.
+        The --complete-rollout option will automatically land and update the bug.
+        Eventually --complete-rollout will be default, but that will require more testing.
+
+        This first pass is good enough for others to try and file bugs about.
+
+        * Scripts/bugzilla-tool:
+         - Move modified_changelogs into scm.py.
+         - Move svn_revision_from_commit_text logic into scm.py.
+         - Add RolloutCommit command.
+        * Scripts/modules/bugzilla.py:
+         - Add reopen_bug command used by RolloutCommit.
+        * Scripts/modules/scm.py:
+         - Add functions to support RolloutCommit.
+         - Abstract find_uuid into value_from_svn_info so it can be re-used for _repository_url (needed by svn merge).
+         - Add a str() call so that svn_commit_log can take a numeric argument.
+         - Remove a bunch of very slow code from last_svn_commit_log and used the built-in 'BASE' alias instead.
+         - Made dry_run commits return something that svn_revision_from_commit_text can parse.
+        * Scripts/modules/scm_unittest.py:
+         - Add read_from_path for easy file reading.
+         - Put test4 on a new line to make reverts work w/o conflict.
+         - Add an "svn update" call so that the checkout revision matches the server revision.
+         - Add tests for svn_revision_from_commit_text.
+         - Add a simple test for apply_reverse_diff.
+         - Add a new self.scm member and use it in the new tests (eventually other tests can use it too).
+         - Add test for svn_commit_log to make sure my 'BASE' change above worked as expected.
+
 2009-09-11  Adam Roben  <aroben@apple.com>
 
         Get user script/stylesheet tests running on Windows
