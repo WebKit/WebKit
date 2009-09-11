@@ -56,6 +56,9 @@
 #if COMPILER(MSVC7)
 #define DEFINE_GLOBAL(type, name) \
     const type name;
+#elif COMPILER(WINSCW)
+#define DEFINE_GLOBAL(type, name, arg...) \
+    const type name;
 #else
 #define DEFINE_GLOBAL(type, name, ...) \
     const type name;
@@ -66,6 +69,9 @@
 // Use an array of pointers instead of an array of char in case there is some alignment issue.
 #if COMPILER(MSVC7)
 #define DEFINE_GLOBAL(type, name) \
+    void * name[(sizeof(type) + sizeof(void *) - 1) / sizeof(void *)];
+#elif COMPILER(WINSCW)
+#define DEFINE_GLOBAL(type, name, arg...) \
     void * name[(sizeof(type) + sizeof(void *) - 1) / sizeof(void *)];
 #else
 #define DEFINE_GLOBAL(type, name, ...) \
