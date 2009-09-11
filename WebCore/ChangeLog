@@ -1,3 +1,11 @@
+2009-09-10  Mark Rowe  <mrowe@apple.com>
+
+        Fix the Windows build.
+
+        Restore platform/mock to the header search path after it was removed in r48270.
+
+        * WebCore.vcproj/WebCoreCommon.vsprops:
+
 2009-09-08  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Move the option to create a new style rule under the Styles' gear menu.
