@@ -1456,17 +1456,19 @@ WebInspector.startEditing = function(element, committedCallback, cancelledCallba
     }
 
     function editingCancelled() {
-        this.innerText = oldText;
+        this.textContent = oldText;
 
         cleanUpAfterEditing.call(this);
 
-        cancelledCallback(this, context);
+        if (cancelledCallback)
+            cancelledCallback(this, context);
     }
 
     function editingCommitted() {
         cleanUpAfterEditing.call(this);
 
-        committedCallback(this, this.textContent, oldText, context, moveDirection);
+        if (committedCallback)
+            committedCallback(this, this.textContent, oldText, context, moveDirection);
     }
 
     element.handleKeyEvent = function(event) {

@@ -1,3 +1,40 @@
+2009-09-08  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Move the option to create a new style rule under the Styles' gear menu.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29039
+
+        Reviewed by Sam Weinig.
+
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane): Add "New Style Rule" option to the gear menu.
+        (WebInspector.StylesSidebarPane.prototype._update): Check instanceof BlankStylePropertiesSection instead.
+        (WebInspector.StylesSidebarPane.prototype._changeSetting): Added. Keeps the color format setting selected
+        while calling the correct action.
+        (WebInspector.StylesSidebarPane.prototype._createNewRule): Creates a new section and edits the selector.
+        (WebInspector.StylesSidebarPane.prototype.addBlankSection): Insert the section in a cleaner way.
+        (WebInspector.StylesSidebarPane.prototype.removeSection): Added. Removes the passed in section.
+        (WebInspector.StylesSidebarPane.prototype.appropriateSelectorForNode): Return an empty string if there is no node.
+        (WebInspector.StylePropertiesSection.prototype.expand): Removed the check for _blank.
+        (WebInspector.StylePropertiesSection.prototype.startEditingSelector): No need for the context, the original selector
+        is remembered by the editing code.
+        (WebInspector.StylePropertiesSection.prototype.editingSelectorCancelled): Do nothing. The original text is already
+        restored by the editing code.
+        (WebInspector.BlankStylePropertiesSection): Call the StylePropertiesSection constructor with appropriate data.
+        Remove event listener code.
+        (WebInspector.BlankStylePropertiesSection.prototype.expand): Added. Does nothing to prevent expanding.
+        (WebInspector.BlankStylePropertiesSection.prototype.editingSelectorCommitted.callback): Correctly construct the
+        WebInspector.CSSStyleDeclaration. Call editingSelectorCancelled instead of editingCancelled.
+        (WebInspector.BlankStylePropertiesSection.prototype.editingSelectorCommitted): Renamed from editingCommitted to
+        override the base class.
+        (WebInspector.BlankStylePropertiesSection.prototype.editingSelectorCancelled): Remove the section.
+        (WebInspector.BlankStylePropertiesSection.prototype.makeNormal): Removed event listener code. Removed the delete lines
+        since they were doing nothing (deleting nonexistent properties that exist only on the prototype.) Change prototypes at
+        the end to correctly swtich to a real StylePropertiesSection.
+        * inspector/front-end/inspector.js:
+        (WebInspector.startEditing.editingCancelled): Ceck for null/undefined callbacks.
+        (WebInspector.startEditing.editingCommitted): Ditto.
+
 2009-09-10  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Eric Seidel.

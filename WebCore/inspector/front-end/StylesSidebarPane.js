@@ -35,6 +35,7 @@ WebInspector.StylesSidebarPane = function()
 
     var option = document.createElement("option");
     option.value = "hex";
+    option.action = this._changeColorFormat.bind(this);
     if (Preferences.colorFormat === "hex")
         option.selected = true;
     option.label = WebInspector.UIString("Hex Colors");
@@ -42,6 +43,7 @@ WebInspector.StylesSidebarPane = function()
 
     option = document.createElement("option");
     option.value = "rgb";
+    option.action = this._changeColorFormat.bind(this);
     if (Preferences.colorFormat === "rgb")
         option.selected = true;
     option.label = WebInspector.UIString("RGB Colors");
@@ -49,13 +51,21 @@ WebInspector.StylesSidebarPane = function()
 
     option = document.createElement("option");
     option.value = "hsl";
+    option.action = this._changeColorFormat.bind(this);
     if (Preferences.colorFormat === "hsl")
         option.selected = true;
     option.label = WebInspector.UIString("HSL Colors");
     this.settingsSelectElement.appendChild(option);
 
+    this.settingsSelectElement.appendChild(document.createElement("hr"));
+
+    option = document.createElement("option");
+    option.action = this._createNewRule.bind(this);
+    option.label = WebInspector.UIString("New Style Rule");
+    this.settingsSelectElement.appendChild(option);
+
     this.settingsSelectElement.addEventListener("click", function(event) { event.stopPropagation() }, false);
-    this.settingsSelectElement.addEventListener("change", this._changeColorFormat.bind(this), false);
+    this.settingsSelectElement.addEventListener("change", this._changeSetting.bind(this), false);
 
     this.titleElement.appendChild(this.settingsSelectElement);
 }
@@ -92,12 +102,14 @@ WebInspector.StylesSidebarPane.prototype = {
             return;
 
         var self = this;
-        var callback = function(styles) {
+        function callback(styles)
+        {
             if (!styles)
                 return;
             node._setStyles(styles.computedStyle, styles.inlineStyle, styles.styleAttributes, styles.matchedCSSRules);
             self._update(refresh, body, node, editedSection, forceUpdate);
-        };
+        }
+
         InjectedScriptAccess.getStyles(node.id, !Preferences.showUserAgentStyles, callback);
     },
 
@@ -113,7 +125,7 @@ WebInspector.StylesSidebarPane.prototype = {
         if (refresh) {
             for (var i = 0; i < this.sections.length; ++i) {
                 var section = this.sections[i];
-                if (section._blank)
+                if (section instanceof WebInspector.BlankStylePropertiesSection)
                     continue;
                 if (section.computedStyle)
                     section.styleRule.style = node.ownerDocument.defaultView.getComputedStyle(node);
@@ -297,9 +309,25 @@ WebInspector.StylesSidebarPane.prototype = {
                 body.appendChild(section.element);
                 this.sections.push(section);
             }
-
-            this.addBlankSection();
         }
+    },
+
+    _changeSetting: function(event)
+    {
+        var options = this.settingsSelectElement.options;
+        var selectedOption = options[this.settingsSelectElement.selectedIndex];
+        selectedOption.action(event);
+
+        // Select the correct color format setting again, since it needs to be selected.
+        var selectedIndex = 0;
+        for (var i = 0; i < options.length; ++i) {
+            if (options[i].value === Preferences.colorFormat) {
+                selectedIndex = i;
+                break;
+            }
+        }
+
+        this.settingsSelectElement.selectedIndex = selectedIndex;
     },
 
     _changeColorFormat: function(event)
@@ -313,24 +341,39 @@ WebInspector.StylesSidebarPane.prototype = {
             this.sections[i].update(true);
     },
 
+    _createNewRule: function(event)
+    {
+        this.addBlankSection().startEditingSelector();
+    },
+
     addBlankSection: function()
     {
-        var blankSection = new WebInspector.BlankStylePropertiesSection();
+        var blankSection = new WebInspector.BlankStylePropertiesSection(this.appropriateSelectorForNode());
         blankSection.pane = this;
 
-        this.bodyElement.insertBefore(blankSection.element, this.bodyElement.firstChild.nextSibling.nextSibling); // 0 is computed, 1 is element.style
-        var computed = this.sections.shift();
-        var elementStyle = this.sections.shift();
-        this.sections.unshift(blankSection);
-        this.sections.unshift(elementStyle);
-        this.sections.unshift(computed);
+        var elementStyleSection = this.sections[1];        
+        this.bodyElement.insertBefore(blankSection.element, elementStyleSection.element.nextSibling);
+
+        this.sections.splice(2, 0, blankSection);
+
+        return blankSection;
+    },
+
+    removeSection: function(section)
+    {
+        var index = this.sections.indexOf(section);
+        if (index === -1)
+            return;
+        this.sections.splice(index, 1);
+        if (section.element.parentNode)
+            section.element.parentNode.removeChild(section.element);
     },
 
     appropriateSelectorForNode: function()
     {
         var node = this.node;
         if (!node)
-            return;
+            return "";
 
         var id = node.getAttribute("id");
         if (id)
@@ -353,6 +396,7 @@ WebInspector.StylesSidebarPane.prototype.__proto__ = WebInspector.SidebarPane.pr
 WebInspector.StylePropertiesSection = function(styleRule, subtitle, computedStyle, usedProperties, editable)
 {
     WebInspector.PropertiesSection.call(this, styleRule.selectorText);
+
     this.titleElement.addEventListener("click", function(e) { e.stopPropagation(); }, false);
     this.titleElement.addEventListener("dblclick", this._dblclickSelector.bind(this), false);
     this.element.addEventListener("dblclick", this._dblclickEmptySpace.bind(this), false);
@@ -436,9 +480,6 @@ WebInspector.StylePropertiesSection.prototype = {
 
     expand: function(dontRememberState)
     {
-        if (this._blank)
-            return;
-
         WebInspector.PropertiesSection.prototype.expand.call(this);
         if (dontRememberState)
             return;
@@ -601,8 +642,7 @@ WebInspector.StylePropertiesSection.prototype = {
         if (WebInspector.isBeingEdited(element))
             return;
 
-        var context = this.styleRule.selectorText;
-        WebInspector.startEditing(this.titleElement, this.editingSelectorCommitted.bind(this), this.editingSelectorCancelled.bind(this), context);
+        WebInspector.startEditing(this.titleElement, this.editingSelectorCommitted.bind(this), this.editingSelectorCancelled.bind(this), null);
         window.getSelection().setBaseAndExtent(element, 0, element, 1);
     },
 
@@ -625,10 +665,10 @@ WebInspector.StylePropertiesSection.prototype = {
             return moveToNextIfNeeded.call(this);
 
         var self = this;
-        var callback = function(result) {
+        function callback(result)
+        {
             if (!result) {
                 // Invalid Syntax for a Selector
-                self.editingSelectorCancelled(element, context);
                 moveToNextIfNeeded.call(self);
                 return;
             }
@@ -646,72 +686,59 @@ WebInspector.StylePropertiesSection.prototype = {
             var newRule = WebInspector.CSSStyleDeclaration.parseRule(newRulePayload);
             self.rule = newRule;
             self.styleRule = { section: self, style: newRule.style, selectorText: newRule.selectorText, parentStyleSheet: newRule.parentStyleSheet, rule: newRule };
+
             var oldIdentifier = this.identifier;
             self.identifier = newRule.selectorText + ":" + self.subtitleElement.textContent;
+
             self.pane.update();
+
             WebInspector.panels.elements.renameSelector(oldIdentifier, this.identifier, oldContent, newContent);
+
             moveToNextIfNeeded.call(self);
-        };
+        }
 
         InjectedScriptAccess.applyStyleRuleText(this.rule.id, newContent, this.pane.node.id, callback);
     },
 
-    editingSelectorCancelled: function(element, context)
+    editingSelectorCancelled: function()
     {
-        element.textContent = context;
+        // Do nothing, this is overridden by BlankStylePropertiesSection.
     }
 }
 
 WebInspector.StylePropertiesSection.prototype.__proto__ = WebInspector.PropertiesSection.prototype;
 
-WebInspector.BlankStylePropertiesSection = function()
+WebInspector.BlankStylePropertiesSection = function(defaultSelectorText)
 {
-    WebInspector.PropertiesSection.call(this, WebInspector.UIString("Double-Click to Add"), null);
+    WebInspector.StylePropertiesSection.call(this, {selectorText: defaultSelectorText, rule: {isViaInspector: true}}, "", false, {}, false);
 
-    this._blank = true;
-    this._dblclickListener = this._dblclick.bind(this);
     this.element.addStyleClass("blank-section");
-    this.titleElement.addStyleClass("blank-title");
-    this.titleElement.addEventListener("click", function(e) { e.stopPropagation(); }, false);
-    this.titleElement.addEventListener("dblclick", this._dblclickListener, false);
 }
 
 WebInspector.BlankStylePropertiesSection.prototype = {
-    _dblclick: function(event)
+    expand: function()
     {
-        this.startEditing();
+        // Do nothing, blank sections are not expandable.
     },
 
-    startEditing: function()
-    {
-        var element = this.titleElement;
-        if (WebInspector.isBeingEdited(element))
-            return;
-
-        this.titleElement.textContent = this.pane.appropriateSelectorForNode();
-        this.titleElement.removeStyleClass("blank-title");
-        WebInspector.startEditing(this.titleElement, this.editingCommitted.bind(this), this.editingCancelled.bind(this), "");
-        window.getSelection().setBaseAndExtent(element, 0, element, 1);
-    },
-
-    editingCancelled: function()
-    {
-        this.titleElement.textContent = WebInspector.UIString("Double-Click to Add");
-        this.titleElement.addStyleClass("blank-title");
-    },
-
-    editingCommitted: function(element, newContent, oldContent, context)
+    editingSelectorCommitted: function(element, newContent, oldContent, context)
     {
         var self = this;
-        var callback = function(result) {
+        function callback(result)
+        {
             if (!result) {
                 // Invalid Syntax for a Selector
-                self.editingCancelled();
+                self.editingSelectorCancelled();
                 return;
             }
-            var styleRule = result[0];
+
+            var rule = result[0];
             var doesSelectorAffectSelectedNode = result[1];
-            self.makeNormal(WebInspector.CSSStyleDeclaration.parseRule(styleRule));
+
+            var styleRule = WebInspector.CSSStyleDeclaration.parseRule(rule);
+            styleRule.rule = rule;
+
+            self.makeNormal(styleRule);
 
             if (!doesSelectorAffectSelectedNode) {
                 self.noAffect = true;
@@ -721,31 +748,28 @@ WebInspector.BlankStylePropertiesSection.prototype = {
             self.subtitleElement.textContent = WebInspector.UIString("via inspector");
             self.expand();
 
-            self.pane.addBlankSection();
             self.addNewBlankProperty().startEditing();
-        };
+        }
+
         InjectedScriptAccess.addStyleSelector(newContent, this.pane.node.id, callback);
+    },
+
+    editingSelectorCancelled: function()
+    {
+        this.pane.removeSection(this);
     },
 
     makeNormal: function(styleRule)
     {
-        this.titleElement.removeEventListener("dblclick", this._dblclickListener, false);
-        this.titleElement.addEventListener("dblclick", this._dblclickSelector.bind(this), false);
-        this.element.addEventListener("dblclick", this._dblclickEmptySpace.bind(this), false);
         this.element.removeStyleClass("blank-section");
-        delete this._blank;
-        delete this._dblclick;
-        delete this.startEditing;
-        delete this.editingCancelled;
-        delete this.editingCommitted;
-        delete this._dblclickListener;
-        delete this.makeNormal;
+
         this.styleRule = styleRule;
         this.rule = styleRule.rule;
         this.computedStyle = false;
         this.editable = true;
-        this.identifier = styleRule.selectorText + ":inspector";
-        // leftovers are: this.noAffect if applicable
+        this.identifier = styleRule.selectorText + ":via inspector";
+
+        this.__proto__ = WebInspector.StylePropertiesSection.prototype;
     }
 }
 
@@ -1016,7 +1040,8 @@ WebInspector.StylePropertyTreeElement.prototype = {
         var disabled = !event.target.checked;
 
         var self = this;
-        var callback = function(newPayload) {
+        function callback(newPayload)
+        {
             if (!newPayload)
                 return;
 
@@ -1031,7 +1056,8 @@ WebInspector.StylePropertyTreeElement.prototype = {
                 self.treeOutline.section.pane.dispatchEventToListeners("style property toggled");
 
             self.updateAll(true);
-        };
+        }
+
         InjectedScriptAccess.toggleStyleEnabled(this.style.id, this.name, disabled, callback);
     },
 
@@ -1250,7 +1276,8 @@ WebInspector.StylePropertyTreeElement.prototype = {
             moveToNextCallback(this._newProperty, false, this.treeOutline.section, false);
 
         // The Callback to start editing the next property
-        function moveToNextCallback(alreadyNew, valueChanged, section) {
+        function moveToNextCallback(alreadyNew, valueChanged, section)
+        {
             if (!moveDirection)
                 return;
 
@@ -1303,7 +1330,8 @@ WebInspector.StylePropertyTreeElement.prototype = {
         }
 
         var self = this;
-        var callback = function(result) {
+        function callback(result)
+        {
             if (!result) {
                 // The user typed something, but it didn't parse. Just abort and restore
                 // the original title for this property.  If this was a new attribute and
@@ -1333,7 +1361,8 @@ WebInspector.StylePropertyTreeElement.prototype = {
 
             if (!self.rule)
                 WebInspector.panels.elements.treeOutline.update();
-        };
+        }
+
         InjectedScriptAccess.applyStyleText(this.style.id, styleText.trimWhitespace(), this.name, callback);
     }
 }
