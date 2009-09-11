@@ -1,3 +1,24 @@
+2009-09-11  Adam Roben  <aroben@apple.com>
+
+        Get user script/stylesheet tests running on Windows
+
+        Fixes <http://webkit.org/b/29181> User script/stylesheet tests are
+        skipped on Windows
+
+        Reviewed by John Sullivan.
+
+        * Interfaces/IWebViewPrivate.idl: Added addUserScriptToGroup,
+        addUserStyleSheetToGroup, removeUserContentFromGroup,
+        removeAllUserContentFromGropu to match the Mac SPI.
+
+        * WebView.cpp:
+        (WebView::addUserScriptToGroup):
+        (WebView::addUserStyleSheetToGroup):
+        (WebView::removeUserContentFromGroup):
+        (WebView::removeAllUserContentFromGroup):
+        * WebView.h:
+        Added. Implementation was based on similar methods in WebView.mm.
+
 2009-09-11  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Fix crash on launch on Windows.

@@ -41,6 +41,11 @@ interface IWebInspector;
 interface IWebURLRequest;
 interface IWebView;
 
+typedef enum {
+    WebInjectAtDocumentStart = 0,
+    WebInjectAtDocumentEnd,
+} WebUserScriptInjectionTime;
+
 [
     object,
     oleautomation,
@@ -173,4 +178,10 @@ interface IWebViewPrivate : IUnknown
         + (BSTR)MIMETypeForPath:(NSString *)path;
     */
     HRESULT MIMETypeForExtension([in] BSTR extension, [out, retval] BSTR* mimeType);
+
+    // For the following functions, 0 < worldID < UINT_MAX.
+    HRESULT addUserScriptToGroup([in] BSTR groupName, [in] unsigned worldID, [in] BSTR source, [in] BSTR url, [in] unsigned patternsCount, [in, size_is(patternsCount)] BSTR* patterns, [in] WebUserScriptInjectionTime injectionTime);
+    HRESULT addUserStyleSheetToGroup([in] BSTR groupName, [in] unsigned worldID, [in] BSTR source, [in] BSTR url, [in] unsigned patternsCount, [in, size_is(patternsCount)] BSTR* patterns);
+    HRESULT removeUserContentFromGroup([in] BSTR groupName, [in] unsigned worldID);
+    HRESULT removeAllUserContentFromGroup([in] BSTR groupName);
 }

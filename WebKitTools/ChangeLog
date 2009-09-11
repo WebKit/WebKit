@@ -1,3 +1,24 @@
+2009-09-11  Adam Roben  <aroben@apple.com>
+
+        Get user script/stylesheet tests running on Windows
+
+        Fixes <http://webkit.org/b/29181> User script/stylesheet tests are
+        skipped on Windows
+
+        Reviewed by John Sullivan.
+
+        * DumpRenderTree/win/DumpRenderTree.vcproj: Link all configurations
+        against comsuppw.lib so we can use _bstr_t.
+
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp: Fixed #include
+        order, added #include of comutil.h for _bstr_t.
+
+        (bstrT): Helper function to convert a JSStringRef to a _bstr_t.
+        (LayoutTestController::addUserScript):
+        (LayoutTestController::addUserStyleSheet):
+        Implemented. Implementations were based on those in
+        LayoutTestControllerMac.mm.
+
 2009-09-10  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/29147> run-webkit-tests:  make -h show help 

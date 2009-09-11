@@ -34,21 +34,22 @@
 #include "PolicyDelegate.h"
 #include "WorkQueue.h"
 #include "WorkQueueItem.h"
-#include <WebCore/COMPtr.h>
-#include <wtf/Platform.h>
-#include <wtf/RetainPtr.h>
-#include <wtf/Vector.h>
+#include <CoreFoundation/CoreFoundation.h>
 #include <JavaScriptCore/Assertions.h>
-#include <JavaScriptCore/JavaScriptCore.h>
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JSStringRefBSTR.h>
+#include <JavaScriptCore/JavaScriptCore.h>
+#include <WebCore/COMPtr.h>
 #include <WebKit/WebKit.h>
 #include <WebKit/WebKitCOMAPI.h>
-#include <string>
-#include <CoreFoundation/CoreFoundation.h>
+#include <comutil.h>
 #include <shlwapi.h>
 #include <shlguid.h>
 #include <shobjidl.h>
+#include <string>
+#include <wtf/Platform.h>
+#include <wtf/RetainPtr.h>
+#include <wtf/Vector.h>
 
 using std::string;
 using std::wstring;
@@ -844,13 +845,27 @@ void LayoutTestController::whiteListAccessFromOrigin(JSStringRef sourceOrigin, J
     printf("LayoutTestController::whiteListAccessFromOrigin not implemented\n");
 }
 
+static _bstr_t bstrT(JSStringRef jsString)
+{
+    // The false parameter tells the _bstr_t constructor to adopt the BSTR we pass it.
+    return _bstr_t(JSStringCopyBSTR(jsString), false);
+}
+
 void LayoutTestController::addUserScript(JSStringRef source, bool runAtStart)
 {
-    printf("LayoutTestController::addUserScript not implemented.\n");
+    COMPtr<IWebViewPrivate> webView;
+    if (FAILED(WebKitCreateInstance(__uuidof(WebView), 0, __uuidof(webView), reinterpret_cast<void**>(&webView))))
+        return;
+
+    webView->addUserScriptToGroup(_bstr_t(L"org.webkit.DumpRenderTree").GetBSTR(), 1, bstrT(source).GetBSTR(), 0, 0, 0, runAtStart ? WebInjectAtDocumentStart : WebInjectAtDocumentEnd);
 }
 
 
 void LayoutTestController::addUserStyleSheet(JSStringRef source)
 {
-    printf("LayoutTestController::addUserStyleSheet not implemented.\n");
+    COMPtr<IWebViewPrivate> webView;
+    if (FAILED(WebKitCreateInstance(__uuidof(WebView), 0, __uuidof(webView), reinterpret_cast<void**>(&webView))))
+        return;
+
+    webView->addUserStyleSheetToGroup(_bstr_t(L"org.webkit.DumpRenderTree").GetBSTR(), 1, bstrT(source).GetBSTR(), 0, 0, 0);
 }

@@ -654,9 +654,6 @@ http/tests/xmlhttprequest/origin-whitelisting-subdomains.html
 fast/forms/input-maxlength-ime-completed.html
 fast/forms/input-maxlength-ime-preedit.html
 
-# No User Scripts
-userscripts
-
 # Failing media tests on windows <http://webkit.org/b/29047>
 media/audio-delete-while-step-button-clicked.html
 media/video-controls-transformed.html

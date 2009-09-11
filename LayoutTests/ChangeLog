@@ -1,3 +1,14 @@
+2009-09-11  Adam Roben  <aroben@apple.com>
+
+        Get user script/stylesheet tests running on Windows
+
+        Fixes <http://webkit.org/b/29181> User script/stylesheet tests are
+        skipped on Windows
+
+        Reviewed by John Sullivan.
+
+        * platform/win/Skipped: Removed the userscripts directory.
+
 2009-09-10  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Sam Weinig.

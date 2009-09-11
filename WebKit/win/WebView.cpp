@@ -88,6 +88,7 @@
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageCache.h>
+#include <WebCore/PageGroup.h>
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/PlatformMouseEvent.h>
 #include <WebCore/PlatformWheelEvent.h>
@@ -147,9 +148,8 @@ SOFT_LINK_OPTIONAL(Uxtheme, EndPanningFeedback, BOOL, WINAPI, (HWND, BOOL));
 SOFT_LINK_OPTIONAL(Uxtheme, UpdatePanningFeedback, BOOL, WINAPI, (HWND, LONG, LONG, BOOL));
 
 using namespace WebCore;
+using namespace std;
 using JSC::JSLock;
-using std::min;
-using std::max;
 
 static HMODULE accessibilityLib;
 static HashSet<WebView*> pendingDeleteBackingStoreSet;
@@ -5363,6 +5363,79 @@ HRESULT WebView::setJavaScriptURLsAreAllowed(BOOL areAllowed)
 HRESULT WebView::setCanStartPlugins(BOOL canStartPlugins)
 {
     m_page->setCanStartPlugins(canStartPlugins);
+    return S_OK;
+}
+
+HRESULT WebView::addUserScriptToGroup(BSTR groupName, unsigned worldID, BSTR source, BSTR url, unsigned patternsCount, BSTR* patterns, WebUserScriptInjectionTime injectionTime)
+{
+    String group(groupName, SysStringLen(groupName));
+    if (group.isEmpty() || !worldID || worldID == numeric_limits<unsigned>::max())
+        return E_INVALIDARG;
+
+    PageGroup* pageGroup = PageGroup::pageGroup(group);
+    ASSERT(pageGroup);
+    if (!pageGroup)
+        return E_FAIL;
+
+    // Convert the patterns into a Vector.
+    Vector<String> patternsVector;
+    for (unsigned i = 0; i < patternsCount; ++i)
+        patternsVector.append(String(patterns[i], SysStringLen(patterns[i])));
+
+    pageGroup->addUserScript(String(source, SysStringLen(source)), KURL(KURL(), String(url, SysStringLen(url))), patternsVector, worldID,
+                             injectionTime == WebInjectAtDocumentStart ? InjectAtDocumentStart : InjectAtDocumentEnd);
+
+    return S_OK;
+}
+
+HRESULT WebView::addUserStyleSheetToGroup(BSTR groupName, unsigned worldID, BSTR source, BSTR url, unsigned patternsCount, BSTR* patterns)
+{
+    String group(groupName, SysStringLen(groupName));
+    if (group.isEmpty() || !worldID || worldID == numeric_limits<unsigned>::max())
+        return E_INVALIDARG;
+
+    PageGroup* pageGroup = PageGroup::pageGroup(group);
+    ASSERT(pageGroup);
+    if (!pageGroup)
+        return E_FAIL;
+
+    // Convert the patterns into a Vector.
+    Vector<String> patternsVector;
+    for (unsigned i = 0; i < patternsCount; ++i)
+        patternsVector.append(String(patterns[i], SysStringLen(patterns[i])));
+
+    pageGroup->addUserStyleSheet(String(source, SysStringLen(source)), KURL(KURL(), String(url, SysStringLen(url))), patternsVector, worldID);
+
+    return S_OK;
+}
+
+HRESULT WebView::removeUserContentFromGroup(BSTR groupName, unsigned worldID)
+{
+    String group(groupName, SysStringLen(groupName));
+    if (group.isEmpty() || !worldID || worldID == numeric_limits<unsigned>::max())
+        return E_INVALIDARG;
+
+    PageGroup* pageGroup = PageGroup::pageGroup(group);
+    ASSERT(pageGroup);
+    if (!pageGroup)
+        return E_FAIL;
+
+    pageGroup->removeUserContentForWorld(worldID);
+    return S_OK;
+}
+
+HRESULT WebView::removeAllUserContentFromGroup(BSTR groupName)
+{
+    String group(groupName, SysStringLen(groupName));
+    if (group.isEmpty())
+        return E_INVALIDARG;
+
+    PageGroup* pageGroup = PageGroup::pageGroup(group);
+    ASSERT(pageGroup);
+    if (!pageGroup)
+        return E_FAIL;
+
+    pageGroup->removeAllUserContent();
     return S_OK;
 }
 
