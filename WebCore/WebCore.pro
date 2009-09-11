@@ -2404,6 +2404,7 @@ SOURCES += \
         SOURCES += \
             platform/text/cf/StringCF.cpp \
             platform/text/cf/StringImplCF.cpp
+        LIBS_PRIVATE += -framework Carbon -framework AppKit
     }
 
     win32-* {
