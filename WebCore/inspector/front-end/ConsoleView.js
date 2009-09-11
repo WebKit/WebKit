@@ -57,10 +57,76 @@ WebInspector.ConsoleView = function(drawer)
 
     var anchoredStatusBar = document.getElementById("anchored-status-bar-items");
     anchoredStatusBar.appendChild(this.toggleConsoleButton);
+    
+    // Will hold the list of filter elements
+    this.filterBarElement = document.getElementById("console-filter");
+    
+    function createFilterElement(category) {
+        var categoryElement = document.createElement("li");
+        categoryElement.category = category;
+     
+        categoryElement.addStyleClass(categoryElement.category);
+            
+        var label = category.toString();
+        categoryElement.appendChild(document.createTextNode(label));
+     
+        categoryElement.addEventListener("click", this._updateFilter.bind(this), false);
+     
+        this.filterBarElement.appendChild(categoryElement);
+        return categoryElement;
+    }
+    
+    this.allElement = createFilterElement.call(this, "All");
+    this.errorElement = createFilterElement.call(this, "Errors");
+    this.warningElement = createFilterElement.call(this, "Warnings");
+    this.logElement = createFilterElement.call(this, "Logs");
 
+    this.filter(this.allElement);
 }
 
 WebInspector.ConsoleView.prototype = {
+    
+    _updateFilter: function(e)
+    {
+        this.filter(e.target);
+    },
+    
+    filter: function(target)
+    {
+        if (target.category == "All") {
+            if (target.hasStyleClass("selected")) {
+                // We can't unselect all, so we break early here
+                return;
+            }
+            
+            this.errorElement.removeStyleClass("selected");
+            this.warningElement.removeStyleClass("selected");
+            this.logElement.removeStyleClass("selected");
+            
+            document.getElementById("console-messages").removeStyleClass("filter-errors");
+            document.getElementById("console-messages").removeStyleClass("filter-warnings");
+            document.getElementById("console-messages").removeStyleClass("filter-logs");
+        } else {
+            // Something other than all is being selected, so we want to unselect all
+            if (this.allElement.hasStyleClass("selected")) {
+                this.allElement.removeStyleClass("selected");
+                document.getElementById("console-messages").removeStyleClass("filter-all");
+            }
+        }
+        
+        if (target.hasStyleClass("selected")) {
+            target.removeStyleClass("selected");
+            var newClass = "filter-" + target.category.toLowerCase();
+            var filterElement = document.getElementById("console-messages");
+            filterElement.removeStyleClass(newClass);
+        } else {
+            target.addStyleClass("selected");
+            var newClass = "filter-" + target.category.toLowerCase();
+            var filterElement = document.getElementById("console-messages");
+            filterElement.addStyleClass(newClass);
+        }
+    },
+    
     _toggleConsoleButtonClicked: function()
     {
         this.drawer.visibleView = this;
@@ -70,6 +136,7 @@ WebInspector.ConsoleView.prototype = {
     {
         mainElement.appendChild(this.element);
         statusBarElement.appendChild(this.clearButton);
+        statusBarElement.appendChild(this.filterBarElement);
     },
 
     show: function()

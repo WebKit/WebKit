@@ -1,3 +1,23 @@
+2009-09-11  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Timothy Hatcher.
+
+        The inspector should have scope bars.
+        https://bugs.webkit.org/show_bug.cgi?id=14353
+        
+        Add scope bars to the console, so the user can choose which category
+        of messages they want to see (All, Errors, Warnings, Logs), and they
+        can choose from one or more of {Errors, Warnings, Logs}.
+
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.createFilterElement):
+        (WebInspector.ConsoleView):
+        (WebInspector.ConsoleView.prototype._updateFilter):
+        (WebInspector.ConsoleView.prototype.filter):
+        (WebInspector.ConsoleView.prototype.attach):
+        * inspector/front-end/inspector.css:
+        * inspector/front-end/inspector.html:
+
 2009-09-11  Yusuke Sato  <yusukes@chromium.org>
 
         Reviewed by Darin Fisher.
