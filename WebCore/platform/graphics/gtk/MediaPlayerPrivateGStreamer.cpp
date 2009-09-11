@@ -35,6 +35,7 @@
 #include "ScrollView.h"
 #include "VideoSinkGStreamer.h"
 #include "Widget.h"
+#include "TimeRanges.h"
 
 #include <gst/base/gstbasesrc.h>
 #include <gst/gst.h>
@@ -377,7 +378,7 @@ MediaPlayer::ReadyState MediaPlayerPrivate::readyState() const
     return m_readyState;
 }
 
-PassRefPtr<TimeRanges> MediaPlayerPrivate::buffered() const;
+PassRefPtr<TimeRanges> MediaPlayerPrivate::buffered() const
 {
     RefPtr<TimeRanges> timeRanges = TimeRanges::create();
     float loaded = maxTimeLoaded();

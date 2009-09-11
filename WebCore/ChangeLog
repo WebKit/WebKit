@@ -1,3 +1,12 @@
+2009-09-10  Martin Robinson  <martin.james.robinson@gmail.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Build fix for GTK+ after r48267.
+
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivate::buffered):
+
 2009-09-08  John Abd-El-Malek  <jam@chromium.org>
 
         Reviewed by Dimitri Glazkov.
