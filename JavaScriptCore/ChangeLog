@@ -1,3 +1,12 @@
+2009-09-11  Joerg Bornemann  <joerg.bornemann@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
+        Qt/Windows CE compile fix, include the executable allocator and
+        markstack implementation in the windows build.
+
+        * JavaScriptCore.pri:
+
 2009-09-08  John Abd-El-Malek  <jam@chromium.org>
 
         Reviewed by Dimitri Glazkov.

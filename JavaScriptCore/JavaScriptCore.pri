@@ -122,7 +122,7 @@ SOURCES += \
     yarr/RegexJIT.cpp \
     interpreter/RegisterFile.cpp
 
-win32-* {
+win32-*:wince* {
     SOURCES += jit/ExecutableAllocatorWin.cpp \
                runtime/MarkStackWin.cpp
 } else {
