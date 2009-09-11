@@ -1,5 +1,12 @@
 2009-09-11  Michelangelo De Simone  <micdesim@gmail.com>
 
+        Fix the build.
+
+        * html/ValidityState.cpp:
+        (WebCore::ValidityState::typeMismatch):
+
+2009-09-11  Michelangelo De Simone  <micdesim@gmail.com>
+
         Reviewed by Antti Koivisto.
 
         https://bugs.webkit.org/show_bug.cgi?id=27456

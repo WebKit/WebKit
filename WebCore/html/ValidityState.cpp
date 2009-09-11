@@ -58,9 +58,6 @@ bool ValidityState::typeMismatch()
     default:
         return false;
     }
-
-    ASSERT_NOT_REACHED();
-    return false;
 }
 
 bool ValidityState::valid()
