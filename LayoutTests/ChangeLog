@@ -1,3 +1,16 @@
+2009-09-11  Cameron McCormack  <cam@mcc.id.au>
+
+        Reviewed by Eric Seidel.
+
+        Make ElementTimeControl methods return void and not throw.
+        https://bugs.webkit.org/show_bug.cgi?id=28831
+
+        SVG 1.1 erratum:
+        http://www.w3.org/2003/01/REC-SVG11-20030114-errata#elementtimecontrol-interface
+
+        * svg/dom/smil-methods-expected.txt: Added.
+        * svg/dom/smil-methods.svg: Added.
+
 2009-09-11  Adam Roben  <aroben@apple.com>
 
         Get user script/stylesheet tests running on Windows

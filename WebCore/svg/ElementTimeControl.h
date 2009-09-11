@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2009 Cameron McCormack <cam@mcc.id.au>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,10 +36,10 @@ namespace WebCore {
     class ElementTimeControl {
     public:
         virtual ~ElementTimeControl() {}
-        virtual bool beginElement(ExceptionCode&) = 0;
-        virtual bool beginElementAt(float offset, ExceptionCode&) = 0;
-        virtual bool endElement(ExceptionCode&) = 0;
-        virtual bool endElementAt(float offset, ExceptionCode&) = 0;
+        virtual void beginElement() = 0;
+        virtual void beginElementAt(float offset) = 0;
+        virtual void endElement() = 0;
+        virtual void endElementAt(float offset) = 0;
     };
         
 }

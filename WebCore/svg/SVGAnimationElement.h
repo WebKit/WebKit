@@ -3,6 +3,7 @@
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
     Copyright (C) 2007 Eric Seidel <eric@webkit.org>
     Copyright (C) 2008 Apple Inc. All rights reserved.
+    Copyright (C) 2008 Cameron McCormack <cam@mcc.id.au>
 
     This file is part of the KDE project
 
@@ -57,10 +58,10 @@ namespace WebCore {
         float getSimpleDuration(ExceptionCode&) const;
         
         // ElementTimeControl
-        virtual bool beginElement(ExceptionCode&);
-        virtual bool beginElementAt(float offset, ExceptionCode&);
-        virtual bool endElement(ExceptionCode&);
-        virtual bool endElementAt(float offset, ExceptionCode&);
+        virtual void beginElement();
+        virtual void beginElementAt(float offset);
+        virtual void endElement();
+        virtual void endElementAt(float offset);
         
         static bool attributeIsCSS(const String& attributeName);
 
