@@ -5,6 +5,7 @@
 # Copyright (C) 2006 Alexey Proskuryakov <ap@webkit.org>
 # Copyright (C) 2006 Apple Computer, Inc.
 # Copyright (C) 2007, 2008, 2009 Google Inc.
+# Copyright (C) 2009 Cameron McCormack <cam@mcc.id.au>
 #
 # This file is part of the KDE project
 #
@@ -88,26 +89,6 @@ sub finish
 sub leftShift($$) {
     my ($value, $distance) = @_;
     return (($value << $distance) & 0xFFFFFFFF);
-}
-
-# Uppercase the first letter, while respecting WebKit style guidelines.
-# E.g., xmlEncoding becomes XMLEncoding, but xmlllang becomes Xmllang.
-sub WK_ucfirst
-{
-    my $param = shift;
-    my $ret = ucfirst($param);
-    $ret =~ s/Xml/XML/ if $ret =~ /^Xml[^a-z]/;
-    return $ret;
-}
-
-# Lowercase the first letter while respecting WebKit style guidelines.
-# URL becomes url, but SetURL becomes setURL.
-sub WK_lcfirst
-{
-    my $param = shift;
-    my $ret = lcfirst($param);
-    $ret =~ s/uRL/url/;
-    return $ret;
 }
 
 # Workaround for V8 bindings difference where RGBColor is not a POD type.
@@ -549,7 +530,7 @@ END
         $attrName = $attribute->signature->extendedAttributes->{"v8referenceattr"};
     }
 
-    my $getterFunc = WK_lcfirst($attrName);
+    my $getterFunc = $codeGenerator->WK_lcfirst($attrName);
     $getterFunc .= "Animated" if $codeGenerator->IsSVGAnimatedType($attribute->signature->type);
 
     my $returnType = GetTypeFromSignature($attribute->signature);
@@ -588,7 +569,7 @@ END
         my $getter = $getterString;
         $getter =~ s/imp->//;
         $getter =~ s/\(\)//;
-        my $setter = "set" . WK_ucfirst($getter);
+        my $setter = "set" . $codeGenerator->WK_ucfirst($getter);
 
         my $implClassIsAnimatedType = $codeGenerator->IsSVGAnimatedType($implClassName);
         if (not $implClassIsAnimatedType and $codeGenerator->IsPodTypeWithWriteableProperties($attrType) and not defined $attribute->signature->extendedAttributes->{"Immutable"}) {
@@ -734,7 +715,7 @@ END
     if ($implClassName eq "double") {
         push(@implContentDecls, "    *imp = $result;\n");
     } else {
-        my $implSetterFunctionName = WK_ucfirst($attrName);
+        my $implSetterFunctionName = $codeGenerator->WK_ucfirst($attrName);
         my $reflect = $attribute->signature->extendedAttributes->{"Reflect"};
         my $reflectURL = $attribute->signature->extendedAttributes->{"ReflectURL"};
         if ($reflect || $reflectURL) {
@@ -800,7 +781,7 @@ sub GenerateNewFunctionTemplate
         my $customFunc = $function->signature->extendedAttributes->{"Custom"} ||
                          $function->signature->extendedAttributes->{"V8Custom"};
         if ($customFunc eq 1) {
-            $customFunc = $interfaceName . WK_ucfirst($name);
+            $customFunc = $interfaceName . $codeGenerator->WK_ucfirst($name);
         }
         return "v8::FunctionTemplate::New(V8Custom::v8${customFunc}Callback, v8::Handle<v8::Value>(), $signature)";
     } else {
@@ -953,7 +934,7 @@ sub GenerateBatchedAttributeData
             "";
         if ($customAccessor eq 1) {
             # use the naming convension, interface + (capitalize) attr name
-            $customAccessor = $interfaceName . WK_ucfirst($attrName);
+            $customAccessor = $interfaceName . $codeGenerator->WK_ucfirst($attrName);
         }
 
         my $getter;
