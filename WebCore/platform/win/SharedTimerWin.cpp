@@ -27,6 +27,7 @@
 #include "SharedTimer.h"
 
 #include "Page.h"
+#include "Settings.h"
 #include "Widget.h"
 #include <wtf/Assertions.h>
 #include <wtf/CurrentTime.h>
@@ -160,35 +161,38 @@ void setSharedTimerFireTime(double fireTime)
             intervalInMS = (unsigned)interval;
     }
 
-    if (interval < highResolutionThresholdMsec) {
-        if (!highResTimerActive) {
-            highResTimerActive = true;
-            timeBeginPeriod(timerResolution);
-        }
-        SetTimer(timerWindowHandle, endHighResTimerID, stopHighResTimerInMsec, 0);
-    }
-
     initializeOffScreenTimerWindow();
     bool timerSet = false;
-    DWORD queueStatus = LOWORD(GetQueueStatus(QS_PAINT | QS_MOUSEBUTTON | QS_KEY | QS_RAWINPUT));
 
-    // Win32 has a tri-level queue with application messages > user input > WM_PAINT/WM_TIMER.
+    if (Settings::shouldUseHighResolutionTimers()) {
+        if (interval < highResolutionThresholdMsec) {
+            if (!highResTimerActive) {
+                highResTimerActive = true;
+                timeBeginPeriod(timerResolution);
+            }
+            SetTimer(timerWindowHandle, endHighResTimerID, stopHighResTimerInMsec, 0);
+        }
 
-    // If the queue doesn't contains input events, we use a higher priorty timer event posting mechanism.
-    if (!(queueStatus & (QS_MOUSEBUTTON | QS_KEY | QS_RAWINPUT))) {
-        if (intervalInMS < USER_TIMER_MINIMUM && !processingCustomTimerMessage && !(queueStatus & QS_PAINT)) {
-            // Call PostMessage immediately if the timer is already expired, unless a paint is pending.
-            // (we prioritize paints over timers)
-            if (InterlockedIncrement(&pendingTimers) == 1)
-                PostMessage(timerWindowHandle, timerFiredMessage, 0, 0);
-            timerSet = true;
-        } else {
-            // Otherwise, delay the PostMessage via a CreateTimerQueueTimer
-            if (!timerQueue)
-                timerQueue = CreateTimerQueue();
-            if (timer)
-                DeleteTimerQueueTimer(timerQueue, timer, 0);
-            timerSet = CreateTimerQueueTimer(&timer, timerQueue, queueTimerProc, 0, intervalInMS, 0, WT_EXECUTEINTIMERTHREAD | WT_EXECUTEONLYONCE);
+        DWORD queueStatus = LOWORD(GetQueueStatus(QS_PAINT | QS_MOUSEBUTTON | QS_KEY | QS_RAWINPUT));
+
+        // Win32 has a tri-level queue with application messages > user input > WM_PAINT/WM_TIMER.
+
+        // If the queue doesn't contains input events, we use a higher priorty timer event posting mechanism.
+        if (!(queueStatus & (QS_MOUSEBUTTON | QS_KEY | QS_RAWINPUT))) {
+            if (intervalInMS < USER_TIMER_MINIMUM && !processingCustomTimerMessage && !(queueStatus & QS_PAINT)) {
+                // Call PostMessage immediately if the timer is already expired, unless a paint is pending.
+                // (we prioritize paints over timers)
+                if (InterlockedIncrement(&pendingTimers) == 1)
+                    PostMessage(timerWindowHandle, timerFiredMessage, 0, 0);
+                timerSet = true;
+            } else {
+                // Otherwise, delay the PostMessage via a CreateTimerQueueTimer
+                if (!timerQueue)
+                    timerQueue = CreateTimerQueue();
+                if (timer)
+                    DeleteTimerQueueTimer(timerQueue, timer, 0);
+                timerSet = CreateTimerQueueTimer(&timer, timerQueue, queueTimerProc, 0, intervalInMS, 0, WT_EXECUTEINTIMERTHREAD | WT_EXECUTEONLYONCE);
+            }
         }
     }
 

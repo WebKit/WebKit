@@ -48,6 +48,10 @@ static void setNeedsReapplyStylesInAllFrames(Page* page)
 bool Settings::gShouldPaintNativeControls = true;
 #endif
 
+#if PLATFORM(WIN)
+bool Settings::gShouldUseHighResolutionTimers = true;
+#endif
+
 Settings::Settings(Page* page)
     : m_page(page)
     , m_editableLinkBehavior(EditableLinkDefaultBehavior)
@@ -492,5 +496,12 @@ void Settings::setAcceleratedCompositingEnabled(bool enabled)
     m_acceleratedCompositingEnabled = enabled;
     setNeedsReapplyStylesInAllFrames(m_page);
 }
+
+#if PLATFORM(WIN)
+void Settings::setShouldUseHighResolutionTimers(bool shouldUseHighResolutionTimers)
+{
+    gShouldUseHighResolutionTimers = shouldUseHighResolutionTimers;
+}
+#endif
 
 } // namespace WebCore

@@ -253,6 +253,11 @@ namespace WebCore {
         void setAcceleratedCompositingEnabled(bool);
         bool acceleratedCompositingEnabled() const { return m_acceleratedCompositingEnabled; }
 
+#if PLATFORM(WIN)
+        static void setShouldUseHighResolutionTimers(bool);
+        static bool shouldUseHighResolutionTimers() { return gShouldUseHighResolutionTimers; }
+#endif
+
     private:
         Page* m_page;
         
@@ -320,6 +325,9 @@ namespace WebCore {
 
 #if USE(SAFARI_THEME)
         static bool gShouldPaintNativeControls;
+#endif
+#if PLATFORM(WIN)
+        static bool gShouldUseHighResolutionTimers;
 #endif
     };
 

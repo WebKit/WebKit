@@ -1,3 +1,17 @@
+2009-09-11  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Allow WebKit clients to opt out of high resolution timers on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=29192
+
+        * page/Settings.cpp:
+        (WebCore::Settings::setShouldUseHighResolutionTimers): Added.
+        * page/Settings.h: Added getter/setter for shouldUseHighResolutionTimers.
+        (WebCore::Settings::shouldUseHighResolutionTimers): Added.
+        * platform/win/SharedTimerWin.cpp:
+        (WebCore::setSharedTimerFireTime): Don't run high resolution timer code if it is disabled.
+
 2009-09-11  Christian Plesner Hansen  <christian.plesner.hansen@gmail.com>
 
         Reviewed by Adam Barth.

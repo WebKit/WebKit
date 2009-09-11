@@ -362,6 +362,12 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setXSSAuditorEnabled(
     /* [in] */ BOOL enabled);
 
+    virtual HRESULT STDMETHODCALLTYPE setShouldUseHighResolutionTimers(
+    /* [in] */ BOOL useHighResolutionTimers);
+
+    virtual HRESULT STDMETHODCALLTYPE shouldUseHighResolutionTimers(
+    /* [retval][out] */ BOOL* useHighResolutionTimers);
+
     virtual HRESULT STDMETHODCALLTYPE setPreferenceForTest(
     /* [in] */ BSTR key,
     /* [in] */ BSTR value);

@@ -1,3 +1,20 @@
+2009-09-11  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Allow WebKit clients to opt out of high resolution timers on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=29192
+
+        * Interfaces/IWebPreferencesPrivate.idl: Added getter/setter.
+        Put this just after last 4.0.3 method for future merging.
+        * Interfaces/WebKit.idl: Touched to force a rebuild.
+        * WebPreferenceKeysPrivate.h: Added prefs key for high res timers.
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings): Initialize high res timers to enabled.
+        (WebPreferences::setShouldUseHighResolutionTimers): Added.
+        (WebPreferences::shouldUseHighResolutionTimers): Added.
+        * WebPreferences.h: Added getter/setter.
+
 2009-09-11  Adam Roben  <aroben@apple.com>
 
         Get user script/stylesheet tests running on Windows

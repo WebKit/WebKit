@@ -79,6 +79,9 @@ interface IWebPreferencesPrivate : IUnknown
     HRESULT isXSSAuditorEnabled([out, retval] BOOL *enabled);
     HRESULT setXSSAuditorEnabled([in] BOOL enabled);
 
+    HRESULT setShouldUseHighResolutionTimers([in] BOOL useHighResolutionTimers);
+    HRESULT shouldUseHighResolutionTimers([out, retval] BOOL* useHighResolutionTimers);
+
     // Used to set preference specified by a test via LayoutTestController.overridePreference(..).
     // Used by DumpRenderTree.
     HRESULT setPreferenceForTest([in] BSTR key, [in] BSTR value);

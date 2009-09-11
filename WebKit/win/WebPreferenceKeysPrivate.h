@@ -124,3 +124,5 @@
 #define WebKitZoomsTextOnlyPreferenceKey "WebKitZoomsTextOnly"
 
 #define WebKitXSSAuditorEnabledPreferenceKey "WebKitXSSAuditorEnabled"
+
+#define WebKitUseHighResolutionTimersPreferenceKey "WebKitUseHighResolutionTimers"
