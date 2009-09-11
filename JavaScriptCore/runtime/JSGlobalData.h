@@ -150,6 +150,11 @@ namespace JSC {
         Stringifier* firstStringifierToMark;
 
         MarkStack markStack;
+
+#ifndef NDEBUG
+        bool mainThreadOnly;
+#endif
+
     private:
         JSGlobalData(bool isShared, const VPtrSet&);
         static JSGlobalData*& sharedInstanceInternal();

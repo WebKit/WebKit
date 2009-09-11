@@ -1,3 +1,13 @@
+2009-09-11  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Geoff Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29207
+        Add checks for using WebCore JS context on secondary threads
+
+        * bindings/js/JSDOMWindowBase.cpp: (WebCore::JSDOMWindowBase::commonJSGlobalData):
+        Set the new debug-only mainThreadOnly flag.
+
 2009-09-11  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Timothy Hatcher.

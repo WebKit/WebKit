@@ -1,3 +1,17 @@
+2009-09-11  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Geoff Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29207
+        Add checks for using WebCore JS context on secondary threads
+
+        * runtime/JSGlobalData.cpp: (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSGlobalData.h:
+        Added a new mainThreadOnly flag that WebCore would set.
+
+        * runtime/Collector.cpp: (JSC::Heap::registerThread): JSC API methods always call this,
+        so this is a good place to check that the API isn't used form a wrong thread.
+
 2009-09-11  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Simon Hausmann.
