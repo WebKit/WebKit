@@ -24,6 +24,7 @@
     <file>FontView.js</file>
     <file>ImageView.js</file>
     <file>InjectedScript.js</file>
+    <file>InjectedScriptAccess.js</file>
     <file>inspector.js</file>
     <file>KeyboardShortcut.js</file>
     <file>MetricsSidebarPane.js</file>
@@ -55,6 +56,7 @@
     <file>StylesSidebarPane.js</file>
     <file>SummaryBar.js</file>
     <file>TextPrompt.js</file>
+    <file>TimelineAgent.js</file>
     <file>TopDownProfileDataGridTree.js</file>
     <file>treeoutline.js</file>
     <file>utilities.js</file>
@@ -104,6 +106,7 @@
     <file>Images/paneBottomGrow.png</file>
     <file>Images/paneBottomGrowActive.png</file>
     <file>Images/paneGrowHandleLine.png</file>
+    <file>Images/paneSettingsButtons.png</file>
     <file>Images/pauseOnExceptionButtonGlyph.png</file>
     <file>Images/percentButtonGlyph.png</file>
     <file>Images/profileGroupIcon.png</file>

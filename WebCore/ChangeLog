@@ -1,5 +1,14 @@
 2009-09-11  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        Unreviewed fix for the Web Inspector with the Qt build.
+
+        Re-generate the Qt resource file by running
+        WebKitTools/Scripts/generate-qt-inspector-resource
+
+        * inspector/front-end/WebKit.qrc:
+
+2009-09-11  Simon Hausmann  <simon.hausmann@nokia.com>
+
         Fix the Qt build, remove stray semicolon from function definition.
 
         * platform/graphics/qt/MediaPlayerPrivatePhonon.cpp:
