@@ -318,14 +318,17 @@ class SVN(SCM):
         return self.run_command(self.script_path("svn-create-patch"), cwd=self.checkout_root)
 
     def diff_for_revision(self, revision):
-        self.run_command(['svn', 'diff', '-c', revision])
+        return self.run_command(['svn', 'diff', '-c', str(revision)])
 
     def _repository_url(self):
         return self.value_from_svn_info(self.checkout_root, 'URL')
 
     def apply_reverse_diff(self, revision):
         # '-c -revision' applies the inverse diff of 'revision'
-        self.run_command(['svn', 'merge', '--non-interactive', '-c', '-%s' % revision, self._repository_url()])
+        svn_merge_args = ['svn', 'merge', '--non-interactive', '-c', '-%s' % revision, self._repository_url()]
+        log("WARNING: svn merge has been known to take more than 10 minutes to complete.  It is recommended you use git for rollouts.")
+        log("Running '%s'" % " ".join(svn_merge_args))
+        self.run_command(svn_merge_args)
 
     def revert_files(self, file_paths):
         self.run_command(['svn', 'revert'] + file_paths)

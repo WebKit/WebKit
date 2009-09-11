@@ -1,3 +1,13 @@
+2009-09-11  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by David Levin.
+
+        bugzilla-tool rollout threw exception under svn
+        https://bugs.webkit.org/show_bug.cgi?id=29211
+
+        * Scripts/modules/scm.py: add missing return, and convert number arguments to strings.
+        * Scripts/modules/scm_unittest.py: add testing for this fix.
+
 2009-09-11  Brian Weinstein  <bweinstein@apple.com>
 
         Add myself to the committers list.

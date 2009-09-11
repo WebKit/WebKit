@@ -150,6 +150,14 @@ class SCMTest(unittest.TestCase):
         self.scm.apply_reverse_diff('4')
         self.assertEqual(read_from_path('test_file'), "test1test2test3\n")
 
+    def _shared_test_diff_for_revision(self):
+        # Patch formats are slightly different between svn and git, so just regexp for things we know should be there.
+        r3_patch = self.scm.diff_for_revision(3)
+        self.assertTrue(re.search('test3', r3_patch))
+        self.assertFalse(re.search('test4', r3_patch))
+        self.assertTrue(re.search('test2', r3_patch))
+        self.assertTrue(re.search('test2', self.scm.diff_for_revision(2)))
+
 
 class SVNTest(SCMTest):
 
@@ -211,6 +219,9 @@ class SVNTest(SCMTest):
 
     def test_reverse_diff(self):
         self._shared_test_reverse_diff()
+
+    def test_diff_for_revision(self):
+        self._shared_test_diff_for_revision()
 
 
 class GitTest(SCMTest):
@@ -299,6 +310,9 @@ class GitTest(SCMTest):
 
     def test_reverse_diff(self):
         self._shared_test_reverse_diff()
+
+    def test_diff_for_revision(self):
+        self._shared_test_diff_for_revision()
 
 if __name__ == '__main__':
     unittest.main()
