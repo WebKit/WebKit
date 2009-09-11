@@ -25,6 +25,7 @@
 
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
+#include "KURL.h"
 
 namespace WebCore {
 
@@ -52,9 +53,14 @@ bool ValidityState::typeMismatch()
         return !isValidColorString(value);
     case HTMLInputElement::NUMBER:
         return !HTMLInputElement::formStringToDouble(value, 0);
+    case HTMLInputElement::URL:
+        return !KURL(KURL(), value).isValid();
     default:
         return false;
     }
+
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 bool ValidityState::valid()

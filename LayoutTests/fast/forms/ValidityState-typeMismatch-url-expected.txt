@@ -1,0 +1,34 @@
+Input type=url validation test
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS http://www.google.com is a correct valid url.
+PASS http://localhost is a correct valid url.
+PASS http://127.0.0.1 is a correct valid url.
+PASS http://a is a correct valid url.
+PASS http://www.google.com/search?rls=en&q=WebKit&ie=UTF-8&oe=UTF-8 is a correct valid url.
+PASS ftp://ftp.myhost.com is a correct valid url.
+PASS ssh://ssh.myhost.com is a correct valid url.
+PASS somescheme://ssh.myhost.com is a correct valid url.
+PASS http://a/\/''*<>/ is a correct valid url.
+PASS http://a/dfs/kds@sds is a correct valid url.
+PASS http://a.a:1/search?a&b is a correct valid url.
+PASS www.google.com is a correct invalid url.
+PASS 127.0.0.1 is a correct invalid url.
+PASS .com is a correct invalid url.
+PASS http://www.g**gle.com is a correct invalid url.
+PASS http://www.google.com:aaaa is a correct invalid url.
+PASS http:// www.google.com is a correct invalid url.
+PASS http://www .google.com is a correct invalid url.
+PASS http://www.&#10;google.&#13;com is a correct invalid url.
+PASS :// is a correct invalid url.
+PASS /http://www.google.com is a correct invalid url.
+PASS ----ftp://a is a correct invalid url.
+PASS scheme//a is a correct invalid url.
+PASS http://host+ is a correct invalid url.
+PASS http://myurl! is a correct invalid url.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
