@@ -2,6 +2,17 @@
 
         Reviewed by Darin Adler.
 
+        https://bugs.webkit.org/show_bug.cgi?id=29132
+        Symbian winscw compiler fails compiling WebCore/text/RegularExpression.cpp.
+
+        Add RegularExpression class qualifier before Private.
+
+        * platform/text/RegularExpression.cpp:
+
+2009-09-11  Yongjun Zhang  <yongjun.zhang@nokia.com>
+
+        Reviewed by Darin Adler.
+
         https://bugs.webkit.org/show_bug.cgi?id=29131
         Use a different variadic macro format for Symbian compiler.
         
