@@ -229,6 +229,8 @@ QWebSettings* QWebSettings::globalSettings()
     \brief The QWebSettings class provides an object to store the settings used
     by QWebPage and QWebFrame.
 
+    \inmodule QtWebKit
+
     Each QWebPage object has its own QWebSettings object, which configures the
     settings for that page. If a setting is not configured, then it is looked
     up in the global settings object, which can be accessed using

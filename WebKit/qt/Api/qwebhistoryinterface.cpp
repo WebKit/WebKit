@@ -81,6 +81,8 @@ QWebHistoryInterface* QWebHistoryInterface::defaultInterface()
   \since 4.4
   \brief The QWebHistoryInterface class provides an interface to implement link history.
 
+  \inmodule QtWebKit
+
   The QWebHistoryInterface is an interface that can be used to
   implement link history. It contains two pure virtual methods that
   are called by the WebKit engine.  addHistoryEntry() is used to add

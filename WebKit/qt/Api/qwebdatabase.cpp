@@ -33,6 +33,8 @@ using namespace WebCore;
     \since 4.5
     \brief The QWebDatabase class provides access to HTML 5 databases created with JavaScript.
 
+    \inmodule QtWebKit
+
     The upcoming HTML 5 standard includes support for SQL databases that web sites can create and
     access on a local computer through JavaScript. QWebDatabase is the C++ interface to these
     databases.

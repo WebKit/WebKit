@@ -26,6 +26,8 @@
     \brief The QWebPluginFactory class creates plugins to be embedded into web
     pages.
 
+    \inmodule QtWebKit
+
     QWebPluginFactory is a factory for creating plugins for QWebPage. A plugin
     factory can be installed on a QWebPage using QWebPage::setPluginFactory().
 
@@ -47,6 +49,8 @@
     \class QWebPluginFactory::Plugin
     \since 4.4
     \brief the QWebPluginFactory::Plugin structure describes the properties of a plugin a QWebPluginFactory can create.
+
+    \inmodule QtWebKit
 */
 
 /*!
@@ -68,6 +72,8 @@
     \class QWebPluginFactory::MimeType
     \since 4.4
     \brief The QWebPluginFactory::MimeType structure describes a mime type supported by a plugin.
+
+    \inmodule QtWebKit
 */
 
 bool QWebPluginFactory::MimeType::operator==(const MimeType& other) const
@@ -180,6 +186,8 @@ void QWebPluginFactory::refreshPlugins()
     \since 4.4
     \brief The ExtensionOption class provides an extended input argument to QWebPluginFactory's extension support.
 
+    \inmodule QtWebKit
+
     \sa QWebPluginFactory::extension()
 */
 
@@ -187,6 +195,8 @@ void QWebPluginFactory::refreshPlugins()
     \class QWebPluginFactory::ExtensionReturn
     \since 4.4
     \brief The ExtensionOption class provides an extended output argument to QWebPluginFactory's extension support.
+
+    \inmodule QtWebKit
 
     \sa QWebPluginFactory::extension()
 */

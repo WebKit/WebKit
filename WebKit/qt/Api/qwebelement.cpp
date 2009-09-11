@@ -56,7 +56,7 @@ public:
     \since 4.6
     \brief The QWebElement class provides convenient access to DOM elements in
     a QWebFrame.
-
+    \inmodule QtWebKit
 
     A QWebElement object allows easy access to the document model, represented
     by a tree-like structure of DOM elements. The root of the tree is called

@@ -1419,6 +1419,8 @@ InspectorController* QWebPagePrivate::inspectorController()
     \since 4.4
     \brief The QWebPage class provides an object to view and edit web documents.
 
+    \inmodule QtWebKit
+
     QWebPage holds a main frame responsible for web content, settings, the history
     of navigated links and actions. This class can be used, together with QWebFrame,
     to provide functionality like QWebView in a widget-less environment.
@@ -2538,6 +2540,8 @@ void QWebPage::updatePositionDependentActions(const QPoint &pos)
     \since 4.4
     \brief The ExtensionOption class provides an extended input argument to QWebPage's extension support.
 
+    \inmodule QtWebKit
+
     \sa QWebPage::extension()
 */
 
@@ -2546,6 +2550,8 @@ void QWebPage::updatePositionDependentActions(const QPoint &pos)
     \since 4.5
     \brief The ChooseMultipleFilesExtensionOption class describes the option
     for the multiple files selection extension.
+
+    \inmodule QtWebKit
 
     The ChooseMultipleFilesExtensionOption class holds the frame originating the request
     and the suggested filenames which might be provided.
@@ -2558,6 +2564,8 @@ void QWebPage::updatePositionDependentActions(const QPoint &pos)
     \since 4.5
     \brief The ChooseMultipleFilesExtensionReturn describes the return value
     for the multiple files selection extension.
+
+    \inmodule QtWebKit
 
     The ChooseMultipleFilesExtensionReturn class holds the filenames selected by the user
     when the extension is invoked.

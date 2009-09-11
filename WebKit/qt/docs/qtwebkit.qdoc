@@ -4,14 +4,66 @@
     \contentspage Qt's Modules
     \previouspage QtSvg
     \nextpage QtXml
-    \ingroup architecture
     \ingroup modules
-    \brief An introduction to the QtWebKit module.
+    \brief The QtWebKit module provides a web browser engine as well as
+    classes to render and interact with web content.
+
+    To include the definitions of the module's classes, use the
+    following directive:
+
+    \snippet webkitsnippets/qtwebkit_build_snippet.qdoc 1
+
+    To link against the module, add this line to your \l qmake \c
+    .pro file:
+
+    \snippet webkitsnippets/qtwebkit_build_snippet.qdoc 0
+
+    \section1 License Information
+
+    This is a snapshot of the Qt port of WebKit. The exact version information
+    can be found in the \c{src/3rdparty/webkit/VERSION} file supplied with Qt.
+
+    Qt Commercial Edition licensees that wish to distribute applications that
+    use the QtWebKit module need to be aware of their obligations under the
+    GNU Lesser General Public License (LGPL). 
+
+    Developers using the Open Source Edition can choose to redistribute
+    the module under the appropriate version of the GNU LGPL; version 2.1
+    for applications and libraries licensed under the GNU GPL version 2,
+    or version 3 for applications and libraries licensed under the GNU
+    GPL version 2.
+
+    \legalese
+    WebKit is licensed under the GNU Library General Public License.
+    Individual contributor names and copyright dates can be found
+    inline in the code.
+
+    This library is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Library General Public
+    License as published by the Free Software Foundation; either
+    version 2 of the License, or (at your option) any later version.
+
+    This library is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    Library General Public License for more details.
+
+    You should have received a copy of the GNU Library General Public License
+    along with this library; see the file COPYING.LIB.  If not, write to
+    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+    Boston, MA 02110-1301, USA.
+    \endlegalese
+*/
+
+/*!
+    \page webintegration.html
+    \title Integrating Web Content with QtWebKit
+    \since 4.4
+
+    \ingroup frameworks-technologies
 
     \keyword Browser
     \keyword Web Browser
-
-    \since 4.4
 
     QtWebKit provides a Web browser engine that makes it easy to embed content
     from the World Wide Web into your Qt application. At the same time Web
@@ -54,20 +106,6 @@
     Topics:
 
     \tableofcontents
-
-    \section1 Configuring the Build Process
-
-    Applications using QtWebKit's classes need to be configured to be built
-    against the QtWebKit module. The following declaration in a \c qmake
-    project file ensures that an application is compiled and linked
-    appropriately:
-
-    \snippet webkitsnippets/qtwebkit_build_snippet.qdoc 0
-
-    To include the definitions of the module's classes, use the following
-    directive:
-
-    \snippet webkitsnippets/qtwebkit_build_snippet.qdoc 1
 
     \section1 Architecture
 
@@ -158,40 +196,4 @@
     \o The system \c{/Library/Internet Plug-Ins} directory
     \endlist
     \endtable
-
-    \section1 License Information
-
-    This is a snapshot of the Qt port of WebKit. The exact version information
-    can be found in the \c{src/3rdparty/webkit/VERSION} file supplied with Qt.
-
-    Qt Commercial Edition licensees that wish to distribute applications that
-    use the QtWebKit module need to be aware of their obligations under the
-    GNU Lesser General Public License (LGPL). 
-
-    Developers using the Open Source Edition can choose to redistribute
-    the module under the appropriate version of the GNU LGPL; version 2.1
-    for applications and libraries licensed under the GNU GPL version 2,
-    or version 3 for applications and libraries licensed under the GNU
-    GPL version 2.
-
-    \legalese
-    WebKit is licensed under the GNU Library General Public License.
-    Individual contributor names and copyright dates can be found
-    inline in the code.
-
-    This library is free software; you can redistribute it and/or
-    modify it under the terms of the GNU Library General Public
-    License as published by the Free Software Foundation; either
-    version 2 of the License, or (at your option) any later version.
-
-    This library is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-    Library General Public License for more details.
-
-    You should have received a copy of the GNU Library General Public License
-    along with this library; see the file COPYING.LIB.  If not, write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA 02110-1301, USA.
-    \endlegalese
 */

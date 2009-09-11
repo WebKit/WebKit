@@ -35,6 +35,8 @@ using namespace WebCore;
     \since 4.5
     \brief The QWebSecurityOrigin class defines a security boundary for web sites.
 
+    \inmodule QtWebKit
+
     QWebSecurityOrigin provides access to the security domains defined by web sites.
     An origin consists of a host name, a scheme, and a port number. Web sites
     with the same security origin can access each other's resources for client-side
