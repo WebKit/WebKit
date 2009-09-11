@@ -39,6 +39,7 @@ use VCSUtils;
 use webkitdirs;
 
 sub normalizeLineEndings($$);
+sub removeLongestCommonPrefixEndingInDoubleNewline(\%);
 
 sub usage
 {
@@ -216,6 +217,8 @@ for my $changeLog (@changeLogs) {
     $changeLogContents{$label} = $contents;
 }
 
+my $commonPrefix = removeLongestCommonPrefixEndingInDoubleNewline(%changeLogContents);
+
 my $first = 1;
 open NEWLOG, ">$log.edit" or die;
 if (isGit() && scalar keys %changeLogSort == 0) {
@@ -233,6 +236,7 @@ if (isGit() && scalar keys %changeLogSort == 0) {
         close CHANGELOG_ENTRIES;
     }
 } else {
+    print NEWLOG normalizeLineEndings($commonPrefix, $endl);
     for my $sortKey (sort keys %changeLogSort) {
         my $label = $changeLogSort{$sortKey};
         if (keys %changeLogSort > 1) {
@@ -272,4 +276,33 @@ sub normalizeLineEndings($$)
     my ($string, $endl) = @_;
     $string =~ s/\r?\n/$endl/g;
     return $string;
+}
+
+sub removeLongestCommonPrefixEndingInDoubleNewline(\%)
+{
+    my ($hashOfStrings) = @_;
+
+    my @strings = values %{$hashOfStrings};
+    return "" unless @strings > 1;
+
+    my $prefix = shift @strings;
+    my $prefixLength = length $prefix;
+    foreach my $string (@strings) {
+        while ($prefixLength) {
+            last if substr($string, 0, $prefixLength) eq $prefix;
+            --$prefixLength;
+            $prefix = substr($prefix, 0, -1);
+        }
+        last unless $prefixLength;
+    }
+
+    return "" unless $prefixLength;
+
+    my $lastDoubleNewline = rindex($prefix, "\n\n");
+    return "" unless $lastDoubleNewline > 0;
+
+    foreach my $key (keys %{$hashOfStrings}) {
+        $hashOfStrings->{$key} = substr($hashOfStrings->{$key}, $lastDoubleNewline);
+    }
+    return substr($prefix, 0, $lastDoubleNewline + 2);
 }

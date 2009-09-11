@@ -1,3 +1,19 @@
+2009-09-11  Adam Roben  <aroben@apple.com>
+
+        Make commit-log-editor move common prefixes to the top of the log
+
+        Fies <http://webkit.org/b/29190> commit-log-editor should move common
+        prefixes to the top of the commit log
+
+        Reviewed by Darin Adler.
+
+        * Scripts/commit-log-editor: Find and remove the longest common prefix
+        ending in a double newline from each ChangeLog entry, then put that
+        common prefix at the top of the commit log.
+        (removeLongestCommonPrefixEndingInDoubleNewline): Added. Finds,
+        removes, and returns the longest common prefix ending in a double
+        newline from a hash of strings
+
 2009-09-11  Eric Seidel  <eric@webkit.org>
 
         Fix obvious typo in previous commit, no review.
