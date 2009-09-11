@@ -139,15 +139,18 @@
 
     \section1 Netscape Plugin Support
 
+    \note Netscape plugin support is only available on desktop platforms.
+
     Since WebKit supports the Netscape Plugin API, Qt applications can display
-    Web pages that embed common plugins, as long as the user has the appropriate
+    Web pages that embed common plugins on platforms for which those plugins
+    are available. To enable plugin support, the user must have the appropriate
     binary files for those plugins installed and the \l{QWebSettings::PluginsEnabled}
-    attribute is enabled for the application.
+    attribute must be enabled for the application.
 
     The following locations are searched for plugins:
 
     \table
-    \header \o Linux/Unix  \o Windows
+    \header \o Linux/Unix (X11)  \o Windows
     \row \o{1,3}
     \list
     \o \c{.mozilla/plugins} in the user's home directory

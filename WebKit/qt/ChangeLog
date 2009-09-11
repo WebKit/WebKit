@@ -1,3 +1,11 @@
+2009-09-11  David Boddie  <dboddie@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
+        Doc: Note that Netscape plugins are only available on desktop platforms.
+
+        * docs/qtwebkit.qdoc:
+
 2009-09-11  Martin Smith  <msmith@trolltech.com>
 
         Reviewed by Simon Hausmann.
