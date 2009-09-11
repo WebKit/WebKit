@@ -83,12 +83,61 @@ JSValue JSCanvasRenderingContext3D::bufferSubData(JSC::ExecState* exec, JSC::Arg
 // void texImage2DHTML(in unsigned long target, in unsigned long level, in HTMLImageElement image);
 JSValue JSCanvasRenderingContext3D::texImage2D(ExecState* exec, const ArgList& args)
 { 
-    if (args.size() < 3 || args.size() > 5)
+    if (args.size() < 3)
         return throwError(exec, SyntaxError);
 
+    ExceptionCode ec = 0;
     CanvasRenderingContext3D* context = static_cast<CanvasRenderingContext3D*>(impl());    
     unsigned target = args.at(0).toInt32(exec);
+    if (exec->hadException())    
+        return jsUndefined();
+        
     unsigned level = args.at(1).toInt32(exec);
+    if (exec->hadException())    
+        return jsUndefined();
+    
+    if (args.size() > 5) {
+        // This must be the bare array case.
+        if (args.size() != 9)
+            return throwError(exec, SyntaxError);
+            
+        unsigned internalformat = args.at(2).toInt32(exec);
+        if (exec->hadException())    
+            return jsUndefined();
+
+        unsigned width = args.at(3).toInt32(exec);
+        if (exec->hadException())    
+            return jsUndefined();
+
+        unsigned height = args.at(4).toInt32(exec);
+        if (exec->hadException())    
+            return jsUndefined();
+
+        unsigned border = args.at(5).toInt32(exec);
+        if (exec->hadException())    
+            return jsUndefined();
+
+        unsigned format = args.at(6).toInt32(exec);
+        if (exec->hadException())    
+            return jsUndefined();
+
+        unsigned type = args.at(7).toInt32(exec);
+        if (exec->hadException())    
+            return jsUndefined();
+
+        CanvasArray* array = toCanvasArray(args.at(8));
+        if (exec->hadException())    
+            return jsUndefined();
+            
+        if (!array)
+            return throwError(exec, TypeError);
+        
+        // FIXME: Need to check to make sure CanvasArray is a CanvasByteArray or CanvasShortArray,
+        // depending on the passed type parameter.
+        
+        context->texImage2D(target, level, internalformat, width, height, border, format, type, array, ec);
+        return jsUndefined();
+    }
     
     // The image parameter can be a <img> or <canvas> element.
     JSValue value = args.at(2);
@@ -99,7 +148,6 @@ JSValue JSCanvasRenderingContext3D::texImage2D(ExecState* exec, const ArgList& a
     bool flipY = (args.size() > 3) ? args.at(3).toBoolean(exec) : false;
     bool premultiplyAlpha = (args.size() > 4) ? args.at(3).toBoolean(exec) : false;
     
-    ExceptionCode ec = 0;
     if (o->inherits(&JSHTMLImageElement::s_info)) {
         HTMLImageElement* imgElt = static_cast<HTMLImageElement*>(static_cast<JSHTMLElement*>(o)->impl());
         context->texImage2D(target, level, imgElt, flipY, premultiplyAlpha, ec);
