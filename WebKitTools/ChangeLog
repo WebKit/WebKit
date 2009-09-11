@@ -1,3 +1,11 @@
+2009-09-10  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/29147> run-webkit-tests:  make -h show help 
+
+        Reviewed by Mark Rowe.
+
+        * Scripts/run-webkit-tests: Updated to make -h switch show help.
+
 2009-09-10  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

@@ -204,7 +204,7 @@ Usage: $programName [options] [testdir|testpath ...]
   -c|--configuration config       Set DumpRenderTree build configuration
   -g|--guard-malloc               Enable malloc guard
   --exit-after-n-failures N       Exit after the first N failures instead of running all tests
-  --help                          Show this help message
+  -h|--help                       Show this help message
   --[no-]http                     Run (or do not run) http tests (default: $httpDefault)
   -i|--ignore-tests               Comma-separated list of directories or tests to ignore
   --[no-]launch-safari            Launch (or do not launch) Safari to display test results (default: $launchSafariDefault)
@@ -244,7 +244,7 @@ my $getOptionsResult = GetOptions(
     'complex-text' => \$complexText,
     'exit-after-n-failures=i' => \$exitAfterNFailures,
     'guard-malloc|g' => \$guardMalloc,
-    'help' => \$showHelp,
+    'help|h' => \$showHelp,
     'http!' => \$testHTTP,
     'ignore-tests|i=s' => \$ignoreTests,
     'launch-safari!' => \$launchSafari,
