@@ -1,3 +1,12 @@
+2009-09-11  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Fix crash on launch on Windows.
+
+        Rubber-stamped by Mark Rowe.
+
+        * WebKit.vcproj/WebKit.vcproj:
+        Define ENABLE_WEB_SOCKETS for all configurations.
+
 2009-09-07  Drew Wilson  <atwilson@google.com>
 
         Reviewed by David Levin.
