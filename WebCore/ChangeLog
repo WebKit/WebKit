@@ -1,3 +1,10 @@
+2009-09-11  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Fix the Qt build, remove stray semicolon from function definition.
+
+        * platform/graphics/qt/MediaPlayerPrivatePhonon.cpp:
+        (WebCore::MediaPlayerPrivate::buffered):
+
 2009-09-10  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Sam Weinig.
