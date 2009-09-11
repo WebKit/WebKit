@@ -1,3 +1,58 @@
+2009-09-10  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        Detect mixed content
+        https://bugs.webkit.org/show_bug.cgi?id=29003
+
+        Add some tests for mixed content.  All but one of these tests pass
+        currently.  The one that fails is pretty tricky, but I wanted to get it
+        into the tree with a FIXME so we won't forget it.  I'll file a followup
+        bug about fixing it.
+
+        * http/tests/security/mixedContent/about-blank-iframe-in-main-frame-expected.txt: Added.
+        * http/tests/security/mixedContent/about-blank-iframe-in-main-frame.html: Added.
+        * http/tests/security/mixedContent/data-url-iframe-in-main-frame-expected.txt: Added.
+        * http/tests/security/mixedContent/data-url-iframe-in-main-frame.html: Added.
+        * http/tests/security/mixedContent/data-url-script-in-iframe-expected.txt: Added.
+        * http/tests/security/mixedContent/data-url-script-in-iframe.html: Added.
+        * http/tests/security/mixedContent/insecure-css-in-iframe-expected.txt: Added.
+        * http/tests/security/mixedContent/insecure-css-in-iframe.html: Added.
+        * http/tests/security/mixedContent/insecure-css-in-main-frame-expected.txt: Added.
+        * http/tests/security/mixedContent/insecure-css-in-main-frame.html: Added.
+        * http/tests/security/mixedContent/insecure-iframe-in-iframe-expected.txt: Added.
+        * http/tests/security/mixedContent/insecure-iframe-in-iframe.html: Added.
+        * http/tests/security/mixedContent/insecure-iframe-in-main-frame-expected.txt: Added.
+        * http/tests/security/mixedContent/insecure-iframe-in-main-frame.html: Added.
+        * http/tests/security/mixedContent/insecure-image-in-iframe-expected.txt: Added.
+        * http/tests/security/mixedContent/insecure-image-in-iframe.html: Added.
+        * http/tests/security/mixedContent/insecure-image-in-main-frame-expected.txt: Added.
+        * http/tests/security/mixedContent/insecure-image-in-main-frame.html: Added.
+        * http/tests/security/mixedContent/insecure-script-in-iframe-expected.txt: Added.
+        * http/tests/security/mixedContent/insecure-script-in-iframe.html: Added.
+        * http/tests/security/mixedContent/redirect-http-to-https-iframe-in-main-frame-expected.txt: Added.
+        * http/tests/security/mixedContent/redirect-http-to-https-iframe-in-main-frame.html: Added.
+        * http/tests/security/mixedContent/redirect-http-to-https-script-in-iframe-expected.txt: Added.
+        * http/tests/security/mixedContent/redirect-http-to-https-script-in-iframe.html: Added.
+        * http/tests/security/mixedContent/redirect-https-to-http-iframe-in-main-frame-expected.txt: Added.
+        * http/tests/security/mixedContent/redirect-https-to-http-iframe-in-main-frame.html: Added.
+        * http/tests/security/mixedContent/redirect-https-to-http-script-in-iframe-expected.txt: Added.
+        * http/tests/security/mixedContent/redirect-https-to-http-script-in-iframe.html: Added.
+        * http/tests/security/mixedContent/resources/boring.html: Added.
+        * http/tests/security/mixedContent/resources/frame-with-about-blank-frame.html: Added.
+        * http/tests/security/mixedContent/resources/frame-with-data-url-frame.html: Added.
+        * http/tests/security/mixedContent/resources/frame-with-data-url-script.html: Added.
+        * http/tests/security/mixedContent/resources/frame-with-insecure-css.html: Added.
+        * http/tests/security/mixedContent/resources/frame-with-insecure-frame.html: Added.
+        * http/tests/security/mixedContent/resources/frame-with-insecure-image.html: Added.
+        * http/tests/security/mixedContent/resources/frame-with-insecure-script.html: Added.
+        * http/tests/security/mixedContent/resources/frame-with-redirect-http-to-https-frame.html: Added.
+        * http/tests/security/mixedContent/resources/frame-with-redirect-http-to-https-script.html: Added.
+        * http/tests/security/mixedContent/resources/frame-with-redirect-https-to-http-frame.html: Added.
+        * http/tests/security/mixedContent/resources/frame-with-redirect-https-to-http-script.html: Added.
+        * http/tests/security/mixedContent/resources/script.js: Added.
+        * http/tests/security/mixedContent/resources/style.css: Added.
+
 2009-09-10  Xiaomei Ji  <xji@chromium.org>
 
         Reviewed by Eric Seidel.

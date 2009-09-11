@@ -1721,6 +1721,33 @@ String FrameLoader::outgoingOrigin() const
     return m_frame->document()->securityOrigin()->toString();
 }
 
+bool FrameLoader::isMixedContent(SecurityOrigin* context, const KURL& url)
+{
+    if (context->protocol() != "https")
+        return false;  // We only care about HTTPS security origins.
+
+    if (url.protocolIs("https") || url.protocolIs("about") || url.protocolIs("data"))
+        return false;  // Loading these protocols is secure.
+
+    return true;
+}
+
+void FrameLoader::checkIfDisplayInsecureContent(SecurityOrigin* context, const KURL& url)
+{
+    if (!isMixedContent(context, url))
+        return;
+
+    m_client->didDisplayInsecureContent();
+}
+
+void FrameLoader::checkIfRunInsecureContent(SecurityOrigin* context, const KURL& url)
+{
+    if (!isMixedContent(context, url))
+        return;
+
+    m_client->didRunInsecureContent(context);
+}
+
 Frame* FrameLoader::opener()
 {
     return m_opener;

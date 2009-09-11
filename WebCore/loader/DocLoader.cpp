@@ -192,6 +192,41 @@ bool DocLoader::canRequest(CachedResource::Type type, const KURL& url)
         ASSERT_NOT_REACHED();
         break;
     }
+
+    // Given that the load is allowed by the same-origin policy, we should
+    // check whether the load passes the mixed-content policy.
+    //
+    // Note: Currently, we always allow mixed content, but we generate a
+    //       callback to the FrameLoaderClient in case the embedder wants to
+    //       update any security indicators.
+    // 
+    switch (type) {
+    case CachedResource::Script:
+#if ENABLE(XSLT)
+    case CachedResource::XSLStyleSheet:
+#endif
+#if ENABLE(XBL)
+    case CachedResource::XBL:
+#endif
+        // These resource can inject script into the current document.
+        if (Frame* f = frame())
+            f->loader()->checkIfRunInsecureContent(m_doc->securityOrigin(), url);
+        break;
+    case CachedResource::ImageResource:
+    case CachedResource::CSSStyleSheet:
+    case CachedResource::FontResource: {
+        // These resources can corrupt only the frame's pixels.
+        if (Frame* f = frame()) {
+            Frame* top = f->tree()->top();
+            top->loader()->checkIfDisplayInsecureContent(top->document()->securityOrigin(), url);
+        }
+        break;
+    }
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+    // FIXME: Consider letting the embedder block mixed content loads.
     return true;
 }
 
@@ -217,7 +252,7 @@ CachedResource* DocLoader::requestResource(CachedResource::Type type, const Stri
     if (resource) {
         // Check final URL of resource to catch redirects.
         // See <https://bugs.webkit.org/show_bug.cgi?id=21963>.
-        if (!canRequest(type, KURL(ParsedURLString, resource->url())))
+        if (fullURL != resource->url() && !canRequest(type, KURL(ParsedURLString, resource->url())))
             return 0;
 
         m_documentResources.set(resource->url(), resource);

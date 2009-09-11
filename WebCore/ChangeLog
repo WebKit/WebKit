@@ -1,3 +1,41 @@
+2009-09-10  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        Detect mixed content
+        https://bugs.webkit.org/show_bug.cgi?id=29003
+
+        Detect some basic kinds of mixed content (HTTP content loaded into an
+        HTTPS context).  This new detection logic isn't perfect, but it's a
+        place to start.
+
+        Tests: http/tests/security/mixedContent/about-blank-iframe-in-main-frame.html
+               http/tests/security/mixedContent/data-url-iframe-in-main-frame.html
+               http/tests/security/mixedContent/data-url-script-in-iframe.html
+               http/tests/security/mixedContent/insecure-css-in-iframe.html
+               http/tests/security/mixedContent/insecure-css-in-main-frame.html
+               http/tests/security/mixedContent/insecure-iframe-in-iframe.html
+               http/tests/security/mixedContent/insecure-iframe-in-main-frame.html
+               http/tests/security/mixedContent/insecure-image-in-iframe.html
+               http/tests/security/mixedContent/insecure-image-in-main-frame.html
+               http/tests/security/mixedContent/insecure-script-in-iframe.html
+               http/tests/security/mixedContent/redirect-http-to-https-iframe-in-main-frame.html
+               http/tests/security/mixedContent/redirect-http-to-https-script-in-iframe.html
+               http/tests/security/mixedContent/redirect-https-to-http-iframe-in-main-frame.html
+               http/tests/security/mixedContent/redirect-https-to-http-script-in-iframe.html
+
+        * loader/DocLoader.cpp:
+        (WebCore::DocLoader::canRequest):
+        (WebCore::DocLoader::requestResource):
+        (WebCore::DocLoader::checkCacheObjectStatus):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::isMixedContent):
+        (WebCore::FrameLoader::checkIfDisplayInsecureContent):
+        (WebCore::FrameLoader::checkIfRunInsecureContent):
+        * loader/FrameLoader.h:
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::willSendRequest):
+
 2009-09-10  Mark Rowe  <mrowe@apple.com>
 
         Fix the Windows build.

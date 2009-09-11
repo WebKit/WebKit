@@ -1,0 +1,8 @@
+<script>
+function frameLoaded() {
+  if (window.opener)
+    window.opener.postMessage('done', '*');
+}
+</script>
+<iframe onload="frameLoaded()"
+        src="https://127.0.0.1:8443/security/resources/redir.php?url=http://127.0.0.1:8080/security/mixedContent/resources/boring.html"></iframe>

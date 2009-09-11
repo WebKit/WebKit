@@ -1,0 +1,8 @@
+main frame - didStartProvisionalLoadForFrame
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
+main frame - didCommitLoadForFrame
+didDisplayInsecureContent
+main frame - didFinishDocumentLoadForFrame
+This test opens a window that loads an insecure style sheet. We should trigger a mixed content callback because the main frame in the window is HTTPS but is displaying insecure content.
