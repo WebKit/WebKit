@@ -1,3 +1,12 @@
+2009-09-11  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Add ENABLE(WEB_SOCKETS) guards.
+        https://bugs.webkit.org/show_bug.cgi?id=29174
+
+        * bindings/v8/custom/V8WebSocketCustom.cpp:
+
 2009-09-11  Eric Seidel  <eric@webkit.org>
 
         No review, rolling out r48229.
