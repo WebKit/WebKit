@@ -2338,6 +2338,10 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
         Settings::setShouldPaintNativeControls(shouldPaintNativeControls);
 #endif
 
+    BOOL useHighResolutionTimer;
+    if (SUCCEEDED(m_preferences->shouldUseHighResolutionTimers(&useHighResolutionTimer)))
+        Settings::setShouldUseHighResolutionTimers(useHighResolutionTimer);
+
     m_page = new Page(new WebChromeClient(this), new WebContextMenuClient(this), new WebEditorClient(this), new WebDragClient(this), new WebInspectorClient(this));
 
     BSTR localStoragePath;
@@ -4388,6 +4392,11 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     settings->setShouldPaintNativeControls(!!enabled);
 #endif
+
+    hr = prefsPrivate->shouldUseHighResolutionTimers(&enabled);
+    if (FAILED(hr))
+        return hr;
+    settings->setShouldUseHighResolutionTimers(enabled);
 
     if (!m_closeWindowTimer.isActive())
         m_mainFrame->invalidate(); // FIXME

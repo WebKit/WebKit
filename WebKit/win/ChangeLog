@@ -1,5 +1,16 @@
 2009-09-11  Steve Falkenburg  <sfalken@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Properly propagate preference from WebPreferences to WebCore::Settings.
+        https://bugs.webkit.org/show_bug.cgi?id=29192
+
+        * WebView.cpp:
+        (WebView::initWithFrame): Apply setting when creating a new WebView.
+        (WebView::notifyPreferencesChanged): Apply setting when preferences change.
+
+2009-09-11  Steve Falkenburg  <sfalken@apple.com>
+
         Reviewed by Darin Adler.
 
         Allow WebKit clients to opt out of high resolution timers on Windows.
