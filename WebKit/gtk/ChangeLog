@@ -1,3 +1,17 @@
+2009-09-11  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Jan Alonzo.
+
+        [GTK] Use gtk_style_set_background instead of gdk_window_set_background
+        https://bugs.webkit.org/show_bug.cgi?id=29173
+
+        Use gtk_style_set_background instead of gdk_window_set_background,
+        as suggested by the documentation. Also, use GTK_STATE_NORMAL
+        directly, since that's the default state of a GtkWidget.
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_realize):
+
 2009-09-09  Zan Dobersek  <zandobersek@gmail.com>
 
         Reviewed by Gustavo Noronha.
