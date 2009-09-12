@@ -844,7 +844,9 @@ bool Node::isFocusable() const
     if (renderer())
         ASSERT(!renderer()->needsLayout());
     else
-        ASSERT(!needsStyleRecalc());
+        // If the node is in a display:none tree it might say it needs style recalc but
+        // the whole document is atually up to date.
+        ASSERT(!document()->childNeedsStyleRecalc());
     
     // FIXME: Even if we are not visible, we might have a child that is visible.
     // Hyatt wants to fix that some day with a "has visible content" flag or the like.

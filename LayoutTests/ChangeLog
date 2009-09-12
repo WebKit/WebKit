@@ -1,3 +1,13 @@
+2009-09-11  Erik Arvidsson  <arv@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Fixes an assert in Node::isFocusable which was causing crashes in certain cases.
+        https://bugs.webkit.org/show_bug.cgi?id=29210
+
+        * fast/events/resources/tab-is-focusable-assert.js:
+        * fast/events/tab-is-focusable-assert-expected.txt: Added.
+
 2009-09-11  Brian Weinstein  <bweinstein@apple.com>
 
         Rubber-stamped by Mark Rowe.
