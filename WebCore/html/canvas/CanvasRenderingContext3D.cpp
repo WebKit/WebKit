@@ -981,7 +981,17 @@ void CanvasRenderingContext3D::uniform1fv(long location, CanvasFloatArray* v)
     if (!v)
         return;
         
-    m_context.uniform1fv(location, v);
+    m_context.uniform1fv(location, v->data(), v->length());
+    cleanupAfterGraphicsCall(false);
+}
+
+void CanvasRenderingContext3D::uniform1fv(long location, float* v, int size)
+{
+    // FIXME: we need to throw if no array passed in
+    if (!v)
+        return;
+        
+    m_context.uniform1fv(location, v, size);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -997,7 +1007,17 @@ void CanvasRenderingContext3D::uniform1iv(long location, CanvasIntArray* v)
     if (!v)
         return;
         
-    m_context.uniform1iv(location, v);
+    m_context.uniform1iv(location, v->data(), v->length());
+    cleanupAfterGraphicsCall(false);
+}
+
+void CanvasRenderingContext3D::uniform1iv(long location, int* v, int size)
+{
+    // FIXME: we need to throw if no array passed in
+    if (!v)
+        return;
+        
+    m_context.uniform1iv(location, v, size);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -1013,7 +1033,19 @@ void CanvasRenderingContext3D::uniform2fv(long location, CanvasFloatArray* v)
     if (!v)
         return;
         
-    m_context.uniform2fv(location, v);
+    // FIXME: length needs to be a multiple of 2
+    m_context.uniform2fv(location, v->data(), v->length() / 2);
+    cleanupAfterGraphicsCall(false);
+}
+
+void CanvasRenderingContext3D::uniform2fv(long location, float* v, int size)
+{
+    // FIXME: we need to throw if no array passed in
+    if (!v)
+        return;
+        
+    // FIXME: length needs to be a multiple of 2
+    m_context.uniform2fv(location, v, size / 2);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -1029,7 +1061,19 @@ void CanvasRenderingContext3D::uniform2iv(long location, CanvasIntArray* v)
     if (!v)
         return;
         
-    m_context.uniform2iv(location, v);
+    // FIXME: length needs to be a multiple of 2
+    m_context.uniform2iv(location, v->data(), v->length() / 2);
+    cleanupAfterGraphicsCall(false);
+}
+
+void CanvasRenderingContext3D::uniform2iv(long location, int* v, int size)
+{
+    // FIXME: we need to throw if no array passed in
+    if (!v)
+        return;
+        
+    // FIXME: length needs to be a multiple of 2
+    m_context.uniform2iv(location, v, size / 2);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -1045,7 +1089,19 @@ void CanvasRenderingContext3D::uniform3fv(long location, CanvasFloatArray* v)
     if (!v)
         return;
         
-    m_context.uniform3fv(location, v);
+    // FIXME: length needs to be a multiple of 3
+    m_context.uniform3fv(location, v->data(), v->length() / 3);
+    cleanupAfterGraphicsCall(false);
+}
+
+void CanvasRenderingContext3D::uniform3fv(long location, float* v, int size)
+{
+    // FIXME: we need to throw if no array passed in
+    if (!v)
+        return;
+        
+    // FIXME: length needs to be a multiple of 3
+    m_context.uniform3fv(location, v, size / 3);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -1061,7 +1117,19 @@ void CanvasRenderingContext3D::uniform3iv(long location, CanvasIntArray* v)
     if (!v)
         return;
         
-    m_context.uniform3iv(location, v);
+    // FIXME: length needs to be a multiple of 3
+    m_context.uniform3iv(location, v->data(), v->length() / 3);
+    cleanupAfterGraphicsCall(false);
+}
+
+void CanvasRenderingContext3D::uniform3iv(long location, int* v, int size)
+{
+    // FIXME: we need to throw if no array passed in
+    if (!v)
+        return;
+        
+    // FIXME: length needs to be a multiple of 3
+    m_context.uniform3iv(location, v, size / 3);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -1077,7 +1145,19 @@ void CanvasRenderingContext3D::uniform4fv(long location, CanvasFloatArray* v)
     if (!v)
         return;
         
-    m_context.uniform4fv(location, v);
+    // FIXME: length needs to be a multiple of 4
+    m_context.uniform4fv(location, v->data(), v->length() / 4);
+    cleanupAfterGraphicsCall(false);
+}
+
+void CanvasRenderingContext3D::uniform4fv(long location, float* v, int size)
+{
+    // FIXME: we need to throw if no array passed in
+    if (!v)
+        return;
+        
+    // FIXME: length needs to be a multiple of 4
+    m_context.uniform4fv(location, v, size / 4);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -1093,37 +1173,85 @@ void CanvasRenderingContext3D::uniform4iv(long location, CanvasIntArray* v)
     if (!v)
         return;
         
-    m_context.uniform4iv(location, v);
+    // FIXME: length needs to be a multiple of 4
+    m_context.uniform4iv(location, v->data(), v->length() / 4);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::uniformMatrix2fv(long location, bool transpose, CanvasFloatArray* value)
+void CanvasRenderingContext3D::uniform4iv(long location, int* v, int size)
 {
     // FIXME: we need to throw if no array passed in
-    if (!value)
+    if (!v)
         return;
         
-    m_context.uniformMatrix2fv(location, transpose, value);
+    // FIXME: length needs to be a multiple of 4
+    m_context.uniform4iv(location, v, size / 4);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::uniformMatrix3fv(long location, bool transpose, CanvasFloatArray* value)
+void CanvasRenderingContext3D::uniformMatrix2fv(long location, bool transpose, CanvasFloatArray* v)
 {
     // FIXME: we need to throw if no array passed in
-    if (!value)
+    if (!v)
         return;
         
-    m_context.uniformMatrix3fv(location, transpose, value);
+    // FIXME: length needs to be a multiple of 4
+    m_context.uniformMatrix2fv(location, transpose, v->data(), v->length() / 4);
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::uniformMatrix4fv(long location, bool transpose, CanvasFloatArray* value)
+void CanvasRenderingContext3D::uniformMatrix2fv(long location, bool transpose, float* v, int size)
 {
     // FIXME: we need to throw if no array passed in
-    if (!value)
+    if (!v)
         return;
         
-    m_context.uniformMatrix4fv(location, transpose, value);
+    // FIXME: length needs to be a multiple of 4
+    m_context.uniformMatrix2fv(location, transpose, v, size / 4);
+    cleanupAfterGraphicsCall(false);
+}
+
+void CanvasRenderingContext3D::uniformMatrix3fv(long location, bool transpose, CanvasFloatArray* v)
+{
+    // FIXME: we need to throw if no array passed in
+    if (!v)
+        return;
+        
+    // FIXME: length needs to be a multiple of 9
+    m_context.uniformMatrix3fv(location, transpose, v->data(), v->length() / 9);
+    cleanupAfterGraphicsCall(false);
+}
+
+void CanvasRenderingContext3D::uniformMatrix3fv(long location, bool transpose, float* v, int size)
+{
+    // FIXME: we need to throw if no array passed in
+    if (!v)
+        return;
+        
+    // FIXME: length needs to be a multiple of 9
+    m_context.uniformMatrix3fv(location, transpose, v, size / 9);
+    cleanupAfterGraphicsCall(false);
+}
+
+void CanvasRenderingContext3D::uniformMatrix4fv(long location, bool transpose, CanvasFloatArray* v)
+{
+    // FIXME: we need to throw if no array passed in
+    if (!v)
+        return;
+        
+    // FIXME: length needs to be a multiple of 16
+    m_context.uniformMatrix4fv(location, transpose, v->data(), v->length() / 16);
+    cleanupAfterGraphicsCall(false);
+}
+
+void CanvasRenderingContext3D::uniformMatrix4fv(long location, bool transpose, float* v, int size)
+{
+    // FIXME: we need to throw if no array passed in
+    if (!v)
+        return;
+        
+    // FIXME: length needs to be a multiple of 16
+    m_context.uniformMatrix4fv(location, transpose, v, size / 16);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -1145,9 +1273,19 @@ void CanvasRenderingContext3D::vertexAttrib1f(unsigned long indx, float v0)
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::vertexAttrib1fv(unsigned long indx, CanvasFloatArray* values)
+void CanvasRenderingContext3D::vertexAttrib1fv(unsigned long indx, CanvasFloatArray* v)
 {
-    m_context.vertexAttrib1fv(indx, values);
+    // FIXME: Need to make sure array is big enough for attribute being set
+    m_context.vertexAttrib1fv(indx, v->data());
+    cleanupAfterGraphicsCall(false);
+}
+
+void CanvasRenderingContext3D::vertexAttrib1fv(unsigned long indx, float* v, int size)
+{
+    // FIXME: Need to make sure array is big enough for attribute being set
+    UNUSED_PARAM(size);
+    
+    m_context.vertexAttrib1fv(indx, v);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -1157,9 +1295,19 @@ void CanvasRenderingContext3D::vertexAttrib2f(unsigned long indx, float v0, floa
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::vertexAttrib2fv(unsigned long indx, CanvasFloatArray* values)
+void CanvasRenderingContext3D::vertexAttrib2fv(unsigned long indx, CanvasFloatArray* v)
 {
-    m_context.vertexAttrib2fv(indx, values);
+    // FIXME: Need to make sure array is big enough for attribute being set
+    m_context.vertexAttrib2fv(indx, v->data());
+    cleanupAfterGraphicsCall(false);
+}
+
+void CanvasRenderingContext3D::vertexAttrib2fv(unsigned long indx, float* v, int size)
+{
+    // FIXME: Need to make sure array is big enough for attribute being set
+    UNUSED_PARAM(size);
+    
+    m_context.vertexAttrib2fv(indx, v);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -1169,9 +1317,19 @@ void CanvasRenderingContext3D::vertexAttrib3f(unsigned long indx, float v0, floa
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::vertexAttrib3fv(unsigned long indx, CanvasFloatArray* values)
+void CanvasRenderingContext3D::vertexAttrib3fv(unsigned long indx, CanvasFloatArray* v)
 {
-    m_context.vertexAttrib3fv(indx, values);
+    // FIXME: Need to make sure array is big enough for attribute being set
+    m_context.vertexAttrib3fv(indx, v->data());
+    cleanupAfterGraphicsCall(false);
+}
+
+void CanvasRenderingContext3D::vertexAttrib3fv(unsigned long indx, float* v, int size)
+{
+    // FIXME: Need to make sure array is big enough for attribute being set
+    UNUSED_PARAM(size);
+    
+    m_context.vertexAttrib3fv(indx, v);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -1181,9 +1339,19 @@ void CanvasRenderingContext3D::vertexAttrib4f(unsigned long indx, float v0, floa
     cleanupAfterGraphicsCall(false);
 }
 
-void CanvasRenderingContext3D::vertexAttrib4fv(unsigned long indx, CanvasFloatArray* values)
+void CanvasRenderingContext3D::vertexAttrib4fv(unsigned long indx, CanvasFloatArray* v)
 {
-    m_context.vertexAttrib4fv(indx, values);
+    // FIXME: Need to make sure array is big enough for attribute being set
+    m_context.vertexAttrib4fv(indx, v->data());
+    cleanupAfterGraphicsCall(false);
+}
+
+void CanvasRenderingContext3D::vertexAttrib4fv(unsigned long indx, float* v, int size)
+{
+    // FIXME: Need to make sure array is big enough for attribute being set
+    UNUSED_PARAM(size);
+    
+    m_context.vertexAttrib4fv(indx, v);
     cleanupAfterGraphicsCall(false);
 }
 

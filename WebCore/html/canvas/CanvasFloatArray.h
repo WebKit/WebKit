@@ -39,6 +39,8 @@ namespace WebCore {
         static PassRefPtr<CanvasFloatArray> create(float* array, unsigned length);
         static PassRefPtr<CanvasFloatArray> create(PassRefPtr<CanvasArrayBuffer> buffer, int offset, unsigned length);
 
+        float* data() { return static_cast<float*>(baseAddress()); }
+
         virtual unsigned length() const;
         
         virtual unsigned sizeInBytes() const;

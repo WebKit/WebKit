@@ -647,37 +647,37 @@ module html {
         [Custom] void texSubImage2D();
 
         void uniform1f(in long location, in float x);
-        void uniform1fv(in long location, in CanvasFloatArray v);
+        [Custom] void uniform1fv(in long location, in CanvasFloatArray v);
         void uniform1i(in long location, in long x);
-        void uniform1iv(in long location, in CanvasIntArray v);
+        [Custom] void uniform1iv(in long location, in CanvasIntArray v);
         void uniform2f(in long location, in float x, in float y);
-        void uniform2fv(in long location, in CanvasFloatArray v);
+        [Custom] void uniform2fv(in long location, in CanvasFloatArray v);
         void uniform2i(in long location, in long x, in long y);
-        void uniform2iv(in long location, in CanvasIntArray v);
+        [Custom] void uniform2iv(in long location, in CanvasIntArray v);
         void uniform3f(in long location, in float x, in float y, in float z);
-        void uniform3fv(in long location, in CanvasFloatArray v);
+        [Custom] void uniform3fv(in long location, in CanvasFloatArray v);
         void uniform3i(in long location, in long x, in long y, in long z);
-        void uniform3iv(in long location, in CanvasIntArray v);
+        [Custom] void uniform3iv(in long location, in CanvasIntArray v);
         void uniform4f(in long location, in float x, in float y, in float z, in float w);
-        void uniform4fv(in long location, in CanvasFloatArray v);
+        [Custom] void uniform4fv(in long location, in CanvasFloatArray v);
         void uniform4i(in long location, in long x, in long y, in long z, in long w);
-        void uniform4iv(in long location, in CanvasIntArray v);
+        [Custom] void uniform4iv(in long location, in CanvasIntArray v);
 
-        void uniformMatrix2fv(in long location, in boolean transpose, in CanvasFloatArray array);
-        void uniformMatrix3fv(in long location, in boolean transpose, in CanvasFloatArray array);
-        void uniformMatrix4fv(in long location, in boolean transpose, in CanvasFloatArray array);
+        [Custom] void uniformMatrix2fv(in long location, in boolean transpose, in CanvasFloatArray array);
+        [Custom] void uniformMatrix3fv(in long location, in boolean transpose, in CanvasFloatArray array);
+        [Custom] void uniformMatrix4fv(in long location, in boolean transpose, in CanvasFloatArray array);
 
         void         useProgram(in CanvasProgram program);
         void         validateProgram(in CanvasProgram program);
 
         void         vertexAttrib1f(in unsigned long indx, in float x);
-        void         vertexAttrib1fv(in unsigned long indx, in CanvasFloatArray values);
+        [Custom] void         vertexAttrib1fv(in unsigned long indx, in CanvasFloatArray values);
         void         vertexAttrib2f(in unsigned long indx, in float x, in float y);
-        void         vertexAttrib2fv(in unsigned long indx, in CanvasFloatArray values);
+        [Custom] void         vertexAttrib2fv(in unsigned long indx, in CanvasFloatArray values);
         void         vertexAttrib3f(in unsigned long indx, in float x, in float y, in float z);
-        void         vertexAttrib3fv(in unsigned long indx, in CanvasFloatArray values);
+        [Custom] void         vertexAttrib3fv(in unsigned long indx, in CanvasFloatArray values);
         void         vertexAttrib4f(in unsigned long indx, in float x, in float y, in float z, in float w);
-        void         vertexAttrib4fv(in unsigned long indx, in CanvasFloatArray values);
+        [Custom] void         vertexAttrib4fv(in unsigned long indx, in CanvasFloatArray values);
         void         vertexAttribPointer(in unsigned long indx, in long size, in unsigned long type, in boolean normalized, 
                                          in long stride, in unsigned long offset);
 

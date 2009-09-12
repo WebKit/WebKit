@@ -648,10 +648,10 @@ void GraphicsContext3D::uniform1f(long location, float v0)
     ::glUniform1f(location, v0);
 }
 
-void GraphicsContext3D::uniform1fv(long location, CanvasFloatArray* array)
+void GraphicsContext3D::uniform1fv(long location, float* array, int size)
 {
     ensureContext(m_contextObj);
-    ::glUniform1fv(location, array->length(), static_cast<GLfloat*>(array->baseAddress()));
+    ::glUniform1fv(location, size, array);
 }
 
 void GraphicsContext3D::uniform2f(long location, float v0, float v1)
@@ -660,11 +660,11 @@ void GraphicsContext3D::uniform2f(long location, float v0, float v1)
     ::glUniform2f(location, v0, v1);
 }
 
-void GraphicsContext3D::uniform2fv(long location, CanvasFloatArray* array)
+void GraphicsContext3D::uniform2fv(long location, float* array, int size)
 {
     // FIXME: length needs to be a multiple of 2
     ensureContext(m_contextObj);
-    ::glUniform2fv(location, array->length() / 2, static_cast<GLfloat*>(array->baseAddress()));
+    ::glUniform2fv(location, size, array);
 }
 
 void GraphicsContext3D::uniform3f(long location, float v0, float v1, float v2)
@@ -673,11 +673,11 @@ void GraphicsContext3D::uniform3f(long location, float v0, float v1, float v2)
     ::glUniform3f(location, v0, v1, v2);
 }
 
-void GraphicsContext3D::uniform3fv(long location, CanvasFloatArray* array)
+void GraphicsContext3D::uniform3fv(long location, float* array, int size)
 {
     // FIXME: length needs to be a multiple of 3
     ensureContext(m_contextObj);
-    ::glUniform3fv(location, array->length() / 3, static_cast<GLfloat*>(array->baseAddress()));
+    ::glUniform3fv(location, size, array);
 }
 
 void GraphicsContext3D::uniform4f(long location, float v0, float v1, float v2, float v3)
@@ -686,11 +686,11 @@ void GraphicsContext3D::uniform4f(long location, float v0, float v1, float v2, f
     ::glUniform4f(location, v0, v1, v2, v3);
 }
 
-void GraphicsContext3D::uniform4fv(long location, CanvasFloatArray* array)
+void GraphicsContext3D::uniform4fv(long location, float* array, int size)
 {
     // FIXME: length needs to be a multiple of 4
     ensureContext(m_contextObj);
-    ::glUniform4fv(location, array->length() / 4, static_cast<GLfloat*>(array->baseAddress()));
+    ::glUniform4fv(location, size, array);
 }
 
 void GraphicsContext3D::uniform1i(long location, int v0)
@@ -699,10 +699,10 @@ void GraphicsContext3D::uniform1i(long location, int v0)
     ::glUniform1i(location, v0);
 }
 
-void GraphicsContext3D::uniform1iv(long location, CanvasIntArray* array)
+void GraphicsContext3D::uniform1iv(long location, int* array, int size)
 {
     ensureContext(m_contextObj);
-    ::glUniform1iv(location, array->length(), static_cast<GLint*>(array->baseAddress()));
+    ::glUniform1iv(location, size, array);
 }
 
 void GraphicsContext3D::uniform2i(long location, int v0, int v1)
@@ -711,11 +711,11 @@ void GraphicsContext3D::uniform2i(long location, int v0, int v1)
     ::glUniform2i(location, v0, v1);
 }
 
-void GraphicsContext3D::uniform2iv(long location, CanvasIntArray* array)
+void GraphicsContext3D::uniform2iv(long location, int* array, int size)
 {
     // FIXME: length needs to be a multiple of 2
     ensureContext(m_contextObj);
-    ::glUniform2iv(location, array->length() / 2, static_cast<GLint*>(array->baseAddress()));
+    ::glUniform2iv(location, size, array);
 }
 
 void GraphicsContext3D::uniform3i(long location, int v0, int v1, int v2)
@@ -724,11 +724,11 @@ void GraphicsContext3D::uniform3i(long location, int v0, int v1, int v2)
     ::glUniform3i(location, v0, v1, v2);
 }
 
-void GraphicsContext3D::uniform3iv(long location, CanvasIntArray* array)
+void GraphicsContext3D::uniform3iv(long location, int* array, int size)
 {
     // FIXME: length needs to be a multiple of 3
     ensureContext(m_contextObj);
-    ::glUniform3iv(location, array->length() / 3, static_cast<GLint*>(array->baseAddress()));
+    ::glUniform3iv(location, size, array);
 }
 
 void GraphicsContext3D::uniform4i(long location, int v0, int v1, int v2, int v3)
@@ -737,32 +737,32 @@ void GraphicsContext3D::uniform4i(long location, int v0, int v1, int v2, int v3)
     ::glUniform4i(location, v0, v1, v2, v3);
 }
 
-void GraphicsContext3D::uniform4iv(long location, CanvasIntArray* array)
+void GraphicsContext3D::uniform4iv(long location, int* array, int size)
 {
     // FIXME: length needs to be a multiple of 4
     ensureContext(m_contextObj);
-    ::glUniform4iv(location, array->length() / 4, static_cast<GLint*>(array->baseAddress()));
+    ::glUniform4iv(location, size, array);
 }
 
-void GraphicsContext3D::uniformMatrix2fv(long location, bool transpose, CanvasFloatArray* array)
+void GraphicsContext3D::uniformMatrix2fv(long location, bool transpose, float* array, int size)
 {
     // FIXME: length needs to be a multiple of 4
     ensureContext(m_contextObj);
-    ::glUniformMatrix2fv(location, array->length() / 4, transpose, static_cast<GLfloat*>(array->baseAddress()));
+    ::glUniformMatrix2fv(location, size, transpose, array);
 }
 
-void GraphicsContext3D::uniformMatrix3fv(long location, bool transpose, CanvasFloatArray* array)
+void GraphicsContext3D::uniformMatrix3fv(long location, bool transpose, float* array, int size)
 {
     // FIXME: length needs to be a multiple of 9
     ensureContext(m_contextObj);
-    ::glUniformMatrix3fv(location, array->length() / 9, transpose, static_cast<GLfloat*>(array->baseAddress()));
+    ::glUniformMatrix3fv(location, size, transpose, array);
 }
 
-void GraphicsContext3D::uniformMatrix4fv(long location, bool transpose, CanvasFloatArray* array)
+void GraphicsContext3D::uniformMatrix4fv(long location, bool transpose, float* array, int size)
 {
     // FIXME: length needs to be a multiple of 16
     ensureContext(m_contextObj);
-    ::glUniformMatrix4fv(location, array->length() / 16, transpose, static_cast<GLfloat*>(array->baseAddress()));
+    ::glUniformMatrix4fv(location, size, transpose, array);
 }
 
 void GraphicsContext3D::useProgram(CanvasProgram* program)
@@ -789,10 +789,10 @@ void GraphicsContext3D::vertexAttrib1f(unsigned long indx, float v0)
     ::glVertexAttrib1f(indx, v0);
 }
 
-void GraphicsContext3D::vertexAttrib1fv(unsigned long indx, CanvasFloatArray* array)
+void GraphicsContext3D::vertexAttrib1fv(unsigned long indx, float* array)
 {
     ensureContext(m_contextObj);
-    ::glVertexAttrib1fv(indx, static_cast<GLfloat*>(array->baseAddress()));
+    ::glVertexAttrib1fv(indx, array);
 }
 
 void GraphicsContext3D::vertexAttrib2f(unsigned long indx, float v0, float v1)
@@ -801,10 +801,10 @@ void GraphicsContext3D::vertexAttrib2f(unsigned long indx, float v0, float v1)
     ::glVertexAttrib2f(indx, v0, v1);
 }
 
-void GraphicsContext3D::vertexAttrib2fv(unsigned long indx, CanvasFloatArray* array)
+void GraphicsContext3D::vertexAttrib2fv(unsigned long indx, float* array)
 {
     ensureContext(m_contextObj);
-    ::glVertexAttrib2fv(indx, static_cast<GLfloat*>(array->baseAddress()));
+    ::glVertexAttrib2fv(indx, array);
 }
 
 void GraphicsContext3D::vertexAttrib3f(unsigned long indx, float v0, float v1, float v2)
@@ -813,10 +813,10 @@ void GraphicsContext3D::vertexAttrib3f(unsigned long indx, float v0, float v1, f
     ::glVertexAttrib3f(indx, v0, v1, v2);
 }
 
-void GraphicsContext3D::vertexAttrib3fv(unsigned long indx, CanvasFloatArray* array)
+void GraphicsContext3D::vertexAttrib3fv(unsigned long indx, float* array)
 {
     ensureContext(m_contextObj);
-    ::glVertexAttrib3fv(indx, static_cast<GLfloat*>(array->baseAddress()));
+    ::glVertexAttrib3fv(indx, array);
 }
 
 void GraphicsContext3D::vertexAttrib4f(unsigned long indx, float v0, float v1, float v2, float v3)
@@ -825,10 +825,10 @@ void GraphicsContext3D::vertexAttrib4f(unsigned long indx, float v0, float v1, f
     ::glVertexAttrib4f(indx, v0, v1, v2, v3);
 }
 
-void GraphicsContext3D::vertexAttrib4fv(unsigned long indx, CanvasFloatArray* array)
+void GraphicsContext3D::vertexAttrib4fv(unsigned long indx, float* array)
 {
     ensureContext(m_contextObj);
-    ::glVertexAttrib4fv(indx, static_cast<GLfloat*>(array->baseAddress()));
+    ::glVertexAttrib4fv(indx, array);
 }
 
 void GraphicsContext3D::vertexAttribPointer(unsigned long indx, int size, int type, bool normalized, unsigned long stride, unsigned long offset)

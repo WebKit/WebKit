@@ -41,6 +41,8 @@ namespace WebCore {
         static PassRefPtr<CanvasByteArray> create(signed char* array, unsigned length);
         static PassRefPtr<CanvasByteArray> create(PassRefPtr<CanvasArrayBuffer> buffer, int offset, unsigned length);
 
+        char* data() { return static_cast<char*>(baseAddress()); }
+
         virtual unsigned length() const;
         virtual unsigned sizeInBytes() const;
 

@@ -236,35 +236,50 @@ class WebKitCSSMatrix;
 
         void uniform1f(long location, float x);
         void uniform1fv(long location, CanvasFloatArray* v);
+        void uniform1fv(long location, float* v, int size);
         void uniform1i(long location, int x);
         void uniform1iv(long location, CanvasIntArray* v);
+        void uniform1iv(long location, int* v, int size);
         void uniform2f(long location, float x, float y);
         void uniform2fv(long location, CanvasFloatArray* v);
+        void uniform2fv(long location, float* v, int size);
         void uniform2i(long location, int x, int y);
         void uniform2iv(long location, CanvasIntArray* v);
+        void uniform2iv(long location, int* v, int size);
         void uniform3f(long location, float x, float y, float z);
         void uniform3fv(long location, CanvasFloatArray* v);
+        void uniform3fv(long location, float* v, int size);
         void uniform3i(long location, int x, int y, int z);
         void uniform3iv(long location, CanvasIntArray* v);
+        void uniform3iv(long location, int* v, int size);
         void uniform4f(long location, float x, float y, float z, float w);
         void uniform4fv(long location, CanvasFloatArray* v);
+        void uniform4fv(long location, float* v, int size);
         void uniform4i(long location, int x, int y, int z, int w);
         void uniform4iv(long location, CanvasIntArray* v);
+        void uniform4iv(long location, int* v, int size);
         void uniformMatrix2fv(long location, bool transpose, CanvasFloatArray* value);
+        void uniformMatrix2fv(long location, bool transpose, float* value, int size);
         void uniformMatrix3fv(long location, bool transpose, CanvasFloatArray* value);
+        void uniformMatrix3fv(long location, bool transpose, float* value, int size);
         void uniformMatrix4fv(long location, bool transpose, CanvasFloatArray* value);
+        void uniformMatrix4fv(long location, bool transpose, float* value, int size);
 
         void useProgram(CanvasProgram*);
         void validateProgram(CanvasProgram*);
 
         void vertexAttrib1f(unsigned long indx, float x);
         void vertexAttrib1fv(unsigned long indx, CanvasFloatArray* values);
+        void vertexAttrib1fv(unsigned long indx, float* values, int size);
         void vertexAttrib2f(unsigned long indx, float x, float y);
         void vertexAttrib2fv(unsigned long indx, CanvasFloatArray* values);
+        void vertexAttrib2fv(unsigned long indx, float* values, int size);
         void vertexAttrib3f(unsigned long indx, float x, float y, float z);
         void vertexAttrib3fv(unsigned long indx, CanvasFloatArray* values);
+        void vertexAttrib3fv(unsigned long indx, float* values, int size);
         void vertexAttrib4f(unsigned long indx, float x, float y, float z, float w);
         void vertexAttrib4fv(unsigned long indx, CanvasFloatArray* values);
+        void vertexAttrib4fv(unsigned long indx, float* values, int size);
         void vertexAttribPointer(unsigned long indx, long size, unsigned long type, bool normalized,
                                  unsigned long stride, unsigned long offset);
 

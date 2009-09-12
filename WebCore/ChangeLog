@@ -1,3 +1,85 @@
+2009-09-11  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Added variants to uniform* and vertexAttrib* calls which take sequence<> in place of CanvasArray
+        https://bugs.webkit.org/show_bug.cgi?id=29139
+        
+        I also added a data() call to each of the CanvasArray subclasses to give back a types pointer
+        to the baseAddress().
+
+        * Configurations/FeatureDefines.xcconfig:
+        * bindings/js/JSCanvasRenderingContext3DCustom.cpp:
+        (WebCore::toArray):
+        (WebCore::):
+        (WebCore::dataFunctionf):
+        (WebCore::dataFunctioni):
+        (WebCore::dataFunctionMatrix):
+        (WebCore::JSCanvasRenderingContext3D::uniform1fv):
+        (WebCore::JSCanvasRenderingContext3D::uniform1iv):
+        (WebCore::JSCanvasRenderingContext3D::uniform2fv):
+        (WebCore::JSCanvasRenderingContext3D::uniform2iv):
+        (WebCore::JSCanvasRenderingContext3D::uniform3fv):
+        (WebCore::JSCanvasRenderingContext3D::uniform3iv):
+        (WebCore::JSCanvasRenderingContext3D::uniform4fv):
+        (WebCore::JSCanvasRenderingContext3D::uniform4iv):
+        (WebCore::JSCanvasRenderingContext3D::uniformMatrix2fv):
+        (WebCore::JSCanvasRenderingContext3D::uniformMatrix3fv):
+        (WebCore::JSCanvasRenderingContext3D::uniformMatrix4fv):
+        (WebCore::JSCanvasRenderingContext3D::vertexAttrib1fv):
+        (WebCore::JSCanvasRenderingContext3D::vertexAttrib2fv):
+        (WebCore::JSCanvasRenderingContext3D::vertexAttrib3fv):
+        (WebCore::JSCanvasRenderingContext3D::vertexAttrib4fv):
+        * html/canvas/CanvasByteArray.h:
+        (WebCore::CanvasByteArray::data):
+        * html/canvas/CanvasFloatArray.h:
+        (WebCore::CanvasFloatArray::data):
+        * html/canvas/CanvasIntArray.h:
+        (WebCore::CanvasIntArray::data):
+        * html/canvas/CanvasRenderingContext3D.cpp:
+        (WebCore::CanvasRenderingContext3D::uniform1fv):
+        (WebCore::CanvasRenderingContext3D::uniform1iv):
+        (WebCore::CanvasRenderingContext3D::uniform2fv):
+        (WebCore::CanvasRenderingContext3D::uniform2iv):
+        (WebCore::CanvasRenderingContext3D::uniform3fv):
+        (WebCore::CanvasRenderingContext3D::uniform3iv):
+        (WebCore::CanvasRenderingContext3D::uniform4fv):
+        (WebCore::CanvasRenderingContext3D::uniform4iv):
+        (WebCore::CanvasRenderingContext3D::uniformMatrix2fv):
+        (WebCore::CanvasRenderingContext3D::uniformMatrix3fv):
+        (WebCore::CanvasRenderingContext3D::uniformMatrix4fv):
+        (WebCore::CanvasRenderingContext3D::vertexAttrib1fv):
+        (WebCore::CanvasRenderingContext3D::vertexAttrib2fv):
+        (WebCore::CanvasRenderingContext3D::vertexAttrib3fv):
+        (WebCore::CanvasRenderingContext3D::vertexAttrib4fv):
+        * html/canvas/CanvasRenderingContext3D.h:
+        * html/canvas/CanvasRenderingContext3D.idl:
+        * html/canvas/CanvasShortArray.h:
+        (WebCore::CanvasShortArray::data):
+        * html/canvas/CanvasUnsignedByteArray.h:
+        (WebCore::CanvasUnsignedByteArray::data):
+        * html/canvas/CanvasUnsignedIntArray.h:
+        (WebCore::CanvasUnsignedIntArray::data):
+        * html/canvas/CanvasUnsignedShortArray.h:
+        (WebCore::CanvasUnsignedShortArray::data):
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/mac/GraphicsContext3DMac.cpp:
+        (WebCore::GraphicsContext3D::uniform1fv):
+        (WebCore::GraphicsContext3D::uniform2fv):
+        (WebCore::GraphicsContext3D::uniform3fv):
+        (WebCore::GraphicsContext3D::uniform4fv):
+        (WebCore::GraphicsContext3D::uniform1iv):
+        (WebCore::GraphicsContext3D::uniform2iv):
+        (WebCore::GraphicsContext3D::uniform3iv):
+        (WebCore::GraphicsContext3D::uniform4iv):
+        (WebCore::GraphicsContext3D::uniformMatrix2fv):
+        (WebCore::GraphicsContext3D::uniformMatrix3fv):
+        (WebCore::GraphicsContext3D::uniformMatrix4fv):
+        (WebCore::GraphicsContext3D::vertexAttrib1fv):
+        (WebCore::GraphicsContext3D::vertexAttrib2fv):
+        (WebCore::GraphicsContext3D::vertexAttrib3fv):
+        (WebCore::GraphicsContext3D::vertexAttrib4fv):
+
 2009-09-11  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Eric Seidel.
