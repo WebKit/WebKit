@@ -205,6 +205,9 @@ def common_configure(conf):
     Configuration used by all targets, called from the target's configure() step.
     """
     
+    conf.env['MSVC_VERSIONS'] = ['msvc 9.0', 'msvc 8.0']
+    conf.env['MSVC_TARGETS'] = ['x86']
+    
     if sys.platform.startswith('darwin') and build_port == 'wx':
         import platform
         if platform.release().startswith('10'): # Snow Leopard
@@ -317,17 +320,17 @@ def common_configure(conf):
             conf.env.append_value('CPPPATH', os.path.join(wklibs_dir, 'unix', 'include'))
             conf.env.append_value('CXXFLAGS', ['-fPIC', '-DPIC'])
             
-            conf.check_cfg(path=get_path_to_wxconfig(), args='--cxxflags --libs', package='', uselib_store='WX')
+            conf.check_cfg(path=get_path_to_wxconfig(), args='--cxxflags --libs', package='', uselib_store='WX', mandatory=True)
             
-        conf.check_cfg(path='xslt-config', args='--cflags --libs', package='', uselib_store='XSLT')
-        conf.check_cfg(path='xml2-config', args='--cflags --libs', package='', uselib_store='XML')
-        conf.check_cfg(path='curl-config', args='--cflags --libs', package='', uselib_store='CURL')
+        conf.check_cfg(msg='Checking for libxslt', path='xslt-config', args='--cflags --libs', package='', uselib_store='XSLT', mandatory=True)
+        conf.check_cfg(path='xml2-config', args='--cflags --libs', package='', uselib_store='XML', mandatory=True)
+        conf.check_cfg(path='curl-config', args='--cflags --libs', package='', uselib_store='CURL', mandatory=True)
         if sys.platform.startswith('darwin'):
             conf.env.append_value('LIB', ['WebCoreSQLite3'])
         
         if not sys.platform.startswith('darwin'):
-            conf.check_cfg(package='cairo', args='--cflags --libs', uselib_store='WX')
-            conf.check_cfg(package='pango', args='--cflags --libs', uselib_store='WX')
-            conf.check_cfg(package='gtk+-2.0', args='--cflags --libs', uselib_store='WX')
-            conf.check_cfg(package='sqlite3', args='--cflags --libs', uselib_store='SQLITE3')
-            conf.check_cfg(path='icu-config', args='--cflags --ldflags', package='', uselib_store='ICU')
+            conf.check_cfg(package='cairo', args='--cflags --libs', uselib_store='WX', mandatory=True)
+            conf.check_cfg(package='pango', args='--cflags --libs', uselib_store='WX', mandatory=True)
+            conf.check_cfg(package='gtk+-2.0', args='--cflags --libs', uselib_store='WX', mandatory=True)
+            conf.check_cfg(package='sqlite3', args='--cflags --libs', uselib_store='SQLITE3', mandatory=True)
+            conf.check_cfg(path='icu-config', args='--cflags --ldflags', package='', uselib_store='ICU', mandatory=True)

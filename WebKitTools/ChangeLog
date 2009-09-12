@@ -1,3 +1,10 @@
+2009-09-11  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix. Mark dependencies as mandatory and declare which MSVC versions and
+        architectures are supported for building wxWebKit.
+
+        * wx/build/settings.py:
+
 2009-09-11  Eric Seidel  <eric@webkit.org>
 
         Reviewed by David Levin.
