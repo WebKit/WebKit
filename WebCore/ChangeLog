@@ -1,3 +1,23 @@
+2009-09-11  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Added some manual tests to show WebGL in action
+        https://bugs.webkit.org/show_bug.cgi?id=29215
+
+        * manual-tests/webgl: Added.
+        * manual-tests/webgl/Earth.html: Added.
+        * manual-tests/webgl/ManyPlanetsDeep.html: Added.
+        * manual-tests/webgl/SpinningBox.html: Added.
+        * manual-tests/webgl/TeapotPerPixel.html: Added.
+        * manual-tests/webgl/TeapotPerVertex.html: Added.
+        * manual-tests/webgl/resources: Added.
+        * manual-tests/webgl/resources/CanvasMatrix.js: Added.
+        * manual-tests/webgl/resources/earthmap1k.jpg: Added.
+        * manual-tests/webgl/resources/mars500x250.png: Added.
+        * manual-tests/webgl/resources/teapot.obj: Added.
+        * manual-tests/webgl/resources/utils3d.js: Added.
+ 
 2009-09-10  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

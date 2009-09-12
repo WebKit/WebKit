@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Canvas3d example</title>
+    <script src="resources/CanvasMatrix.js"> </script>
+    <script src="resources/utils3d.js"> </script>
+    
+    <script id="vshader" type="x-shader/x-vertex">
+        uniform mat4 u_modelViewMatrix;
+        uniform mat4 u_modelViewProjMatrix;
+        uniform mat4 u_normalMatrix;
+        uniform vec3 lightDir;
+
+        attribute vec3 vNormal;
+        attribute vec4 vTexCoord;
+        attribute vec4 vPosition;
+        
+        varying float v_Dot;
+        varying vec2 v_texCoord;
+        
+        void main()
+        {
+            gl_Position = u_modelViewProjMatrix * vPosition;
+            v_texCoord = vTexCoord.st;
+            vec4 transNormal = u_normalMatrix * vec4(vNormal,1);
+            v_Dot = max(dot(transNormal.xyz, lightDir), 0.0);
+        }
+    </script>
+
+    <script id="fshader" type="x-shader/x-fragment">
+        uniform sampler2D sampler2d;
+
+        varying float v_Dot;
+        varying vec2 v_texCoord;
+        
+        void main()
+        {
+            vec4 color = texture2D(sampler2d,v_texCoord);
+            color += vec4(0.1,0.1,0.1,1);
+            gl_FragColor = vec4(color.xyz * v_Dot, color.a);
+        }
+    </script>
+
+    <script>
+        function init()
+        {
+            var gl = initWebGL("example", "vshader", "fshader", 
+                                [ "vNormal", "vTexCoord", "vPosition"],
+                                [ 0, 0, 0, 1 ], 10000);
+
+            gl.uniform3f(gl.getUniformLocation(gl.program, "lightDir"), 0, 0, 1);
+            gl.uniform1i(gl.getUniformLocation(gl.program, "sampler2d"), 0);
+
+            gl.enable(gl.TEXTURE_2D);
+
+            gl.sphere = makeSphere(gl, 1, 30, 30);
+            
+            // get the images
+            earthTexture = loadImageTexture(gl, "resources/earthmap1k.jpg");
+            marsTexture = loadImageTexture(gl, "resources/mars500x250.png");
+
+            return gl;
+        }
+        
+        width = -1;
+        height = -1;
+        
+        function reshape(ctx)
+        {
+            var canvas = document.getElementById('example');
+            if (canvas.clientWidth == width && canvas.clientHeight == height)
+                return;
+
+            width = canvas.clientWidth;
+            height = canvas.clientHeight;
+            
+            ctx.viewport(0, 0, width, height);
+
+            ctx.perspectiveMatrix = new CanvasMatrix4();
+            ctx.perspectiveMatrix.lookat(0,0,6, 0, 0, 0, 0, 1, 0);
+            ctx.perspectiveMatrix.perspective(30, width/height, 1, 10000);
+        }
+        
+        function drawOne(ctx, angle, x, y, z, scale, texture)
+        {
+            // setup VBOs
+            ctx.enableVertexAttribArray(0);
+            ctx.enableVertexAttribArray(1);
+            ctx.enableVertexAttribArray(2);
+
+            ctx.bindBuffer(ctx.ARRAY_BUFFER, ctx.sphere.vertexObject);
+            ctx.vertexAttribPointer(2, 3, ctx.FLOAT, false, 0, 0);
+            
+            ctx.bindBuffer(ctx.ARRAY_BUFFER, ctx.sphere.normalObject);
+            ctx.vertexAttribPointer(0, 3, ctx.FLOAT, false, 0, 0);
+            
+            ctx.bindBuffer(ctx.ARRAY_BUFFER, ctx.sphere.texCoordObject);
+            ctx.vertexAttribPointer(1, 2, ctx.FLOAT, false, 0, 0);
+
+            ctx.bindBuffer(ctx.ELEMENT_ARRAY_BUFFER, ctx.sphere.indexObject);
+
+            // generate the model-view matrix
+            var mvMatrix = new CanvasMatrix4();
+            mvMatrix.scale(scale, scale, scale);
+            mvMatrix.rotate(angle, 0,1,0);
+            mvMatrix.rotate(30, 1,0,0);
+            mvMatrix.translate(x,y,z);
+            ctx.uniformMatrix4fv(ctx.getUniformLocation(ctx.program, "u_modelViewMatrix"), false, mvMatrix.getAsCanvasFloatArray());
+
+            // construct the normal matrix from the model-view matrix
+            var normalMatrix = new CanvasMatrix4(mvMatrix);
+            normalMatrix.invert();
+            normalMatrix.transpose();
+            ctx.uniformMatrix4fv(ctx.getUniformLocation(ctx.program, "u_normalMatrix"), false, normalMatrix.getAsCanvasFloatArray());
+            
+            // construct the model-view * projection matrix
+            var mvpMatrix = new CanvasMatrix4(mvMatrix);
+            mvpMatrix.multRight(ctx.perspectiveMatrix);
+            ctx.uniformMatrix4fv(ctx.getUniformLocation(ctx.program, "u_modelViewProjMatrix"), false, mvpMatrix.getAsCanvasFloatArray());
+
+            ctx.bindTexture(ctx.TEXTURE_2D, texture);
+            ctx.drawElements(ctx.TRIANGLES, ctx.sphere.numIndices, ctx.UNSIGNED_SHORT, 0);
+        }
+        
+        function drawPicture(ctx)
+        {
+            reshape(ctx);
+            ctx.clear(ctx.COLOR_BUFFER_BIT | ctx.DEPTH_BUFFER_BIT);
+            
+            drawOne(ctx, currentAngle, -1, 0, 0, 1, earthTexture);
+            drawOne(ctx, -currentAngle, 1, 0, 0, 0.6, marsTexture);
+            ctx.flush();
+            
+            framerate.snapshot();
+            
+            currentAngle += incAngle;
+            if (currentAngle > 360)
+                currentAngle -= 360;
+        }
+        
+        function start()
+        {
+            var ctx = init();
+            currentAngle = 0;
+            incAngle = 0.2;
+            var f = function() { drawPicture(ctx) };
+            setInterval(f, 10);
+            framerate = new Framerate("framerate");
+        }
+    </script>
+    <style type="text/css">
+        canvas {
+            border: 2px solid black;
+            width:90%;
+            height:90%;
+        }
+    </style>
+  </head>
+  <body onload="start()">
+    <canvas id="example">
+    There is supposed to be an example drawing here, but it's not important.
+    </canvas>
+    <div id="framerate"></div>
+    <div id="console"></div>
+  </body>
+</html>
