@@ -21,7 +21,7 @@
     {
       var ev = document.createEvent("MouseEvent");
       ev.initMouseEvent(eventType, true, true, window, 1, 1, 1, clientX, clientY, false, false, false, false, 0, document);
-      var target = document.elementFromPoint(ev.pageX, ev.pageY);
+      var target = document.elementFromPoint(ev.clientX, ev.clientY);
       target.dispatchEvent(ev);
     }
     

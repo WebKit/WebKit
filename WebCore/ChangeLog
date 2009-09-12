@@ -1,5 +1,18 @@
 2009-09-12  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Anders Carlsson.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=29219
+        Document.elementFromPoint() should take page scroll into consideration
+
+        Test: fast/dom/elementFromPoint-relative-to-viewport.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::elementFromPoint):
+        (WebCore::Document::caretRangeFromPoint):
+
+2009-09-12  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Maciej Stachowiak.
 
         Fix for https://bugs.webkit.org/show_bug.cgi?id=29217

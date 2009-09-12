@@ -1,0 +1,13 @@
+This test document.elementFromPoint is evaluated in with respect to the viewport, not the document.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS unscrolledBox is '0'
+PASS scrolledDownBox is '15'
+PASS scrolledRightBox is '3'
+PASS scrolledDownAndRightBox is '18'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,81 @@
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+<style>
+    #test {
+        width: 100px;
+        outline: 1px solid black;
+    }
+    .testItem {
+        z-index: 100;
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        outline: 1px solid red;
+    }
+    #pusher {
+        width: 1000px;
+        height: 1000px;
+        outline: 1px solid black;
+    }
+</style>
+<p id="description"></p>
+<div id="console"></div>
+<div id="testArea">
+    <br>
+    <div id="test"></div>
+    <div id="pusher">This box is here to create scrollbars.</div>
+</div>
+<script>
+    window.onclick = function(e)
+    {
+        alert(e.clientX + " " + e.clientY + " " + document.elementFromPoint(e.clientX, e.clientY).textContent);
+    }
+
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    var element = document.getElementById('test');
+    for (var i = 0; i < 25; ++i) {
+        var item = document.createElement("div");
+        item.className = "testItem";
+        item.textContent = String(i);
+        element.appendChild(item);
+    }
+
+    description('This test document.elementFromPoint is evaluated in with respect to the viewport, not the document.');
+
+    var unScrolledBoundingBox = element.getBoundingClientRect();
+    var testX = unScrolledBoundingBox.left + 10;
+    var testY = unScrolledBoundingBox.top + 10;
+
+    // Get initial box.
+    var unscrolledBox = document.elementFromPoint(testX, testY).textContent;
+
+    // Test scrolling down
+    window.scrollTo(0, 50);
+    var scrolledDownBox = document.elementFromPoint(testX, testY).textContent;
+
+    // Test scrolling right
+    window.scrollTo(50, 0);
+    var scrolledRightBox = document.elementFromPoint(testX, testY).textContent;
+
+    // Test scrolling down and right
+    window.scrollTo(50, 50);
+    var scrolledDownAndRightBox = document.elementFromPoint(testX, testY).textContent;
+
+    // Reset
+    window.scrollTo(0, 0);
+    
+    shouldBe("unscrolledBox", "'0'");
+    shouldBe("scrolledDownBox", "'15'");
+    shouldBe("scrolledRightBox", "'3'");
+    shouldBe("scrolledDownAndRightBox", "'18'");
+    
+    if (window.layoutTestController) {
+        var area = document.getElementById('testArea');
+        area.parentNode.removeChild(area);
+    }
+
+    successfullyParsed = true;
+</script>
+<script src="../js/resources/js-test-post.js"></script>

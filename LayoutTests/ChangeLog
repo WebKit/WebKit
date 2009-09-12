@@ -1,5 +1,18 @@
 2009-09-12  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Anders Carlsson.
+
+        Test for https://bugs.webkit.org/show_bug.cgi?id=29219
+        Document.elementFromPoint() should take page scroll into consideration
+
+        * fast/dom/elementFromPoint-relative-to-viewport-expected.txt: Added.
+        * fast/dom/elementFromPoint-relative-to-viewport.html: Added.
+        * fast/events/offsetX-offsetY.html: Change to use clientX/Y instead of pageX/Y.
+        * fast/forms/slider-transformed.html: Ditto.
+        * fast/forms/slider-zoomed.html: Ditto.
+
+2009-09-12  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Maciej Stachowiak.
 
         Test for https://bugs.webkit.org/show_bug.cgi?id=29217

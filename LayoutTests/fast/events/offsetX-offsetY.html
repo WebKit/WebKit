@@ -52,7 +52,7 @@
       ev.expectedElement = expectedElementID;
       ev.expectedOffsetX = expectedOffsetX;
       ev.expectedOffsetY = expectedOffsetY;
-      var target = document.elementFromPoint(ev.pageX, ev.pageY);
+      var target = document.elementFromPoint(ev.clientX, ev.clientY);
       target.dispatchEvent(ev);
     }
 
