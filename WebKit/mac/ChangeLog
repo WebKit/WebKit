@@ -1,3 +1,15 @@
+2009-09-11  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Jon Honeycutt.
+
+        Fix <rdar://problem/7145242> Crashes inside WTF::HashTable below NetscapePluginInstanceProxy::disconnectStream
+
+        * Plugins/Hosted/HostedNetscapePluginStream.mm:
+        (WebKit::HostedNetscapePluginStream::cancelLoad): Canceling the load can result in calling through to disconnectStream.
+        If the plug-in instance holds the last reference to the plug-in stream this will result in the stream being deallocated.
+        This leads to HostedNetscapePluginStream::cancelLoad's call to disconnectStream being passed a deallocated stream object.
+        Since the stream was already disconnected by the call to cancel there's no need to call disconnectStream a second time.
+
 2009-09-11  Eric Seidel  <eric@webkit.org>
 
         No review, rolling out r48229.

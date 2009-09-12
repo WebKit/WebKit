@@ -242,11 +242,13 @@ void HostedNetscapePluginStream::cancelLoad(NSError *error)
             documentLoader->cancelMainResourceLoad(error);
         return;
     }
-    
-    if (!m_loader->isDone())
+
+    if (!m_loader->isDone()) {
+        // Cancelling the load will disconnect the stream so there's no need to do it explicitly.
         m_loader->cancel(error);
-    m_instance->disconnectStream(this);
-}        
+    } else
+        m_instance->disconnectStream(this);
+}
 
 NSError *HostedNetscapePluginStream::pluginCancelledConnectionError() const
 {
