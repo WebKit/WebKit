@@ -1,3 +1,15 @@
+2009-09-10  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        aria definition role spelled wrong "defintion"
+        https://bugs.webkit.org/show_bug.cgi?id=28840
+
+        Test: accessibility/aria-slider-value-change.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::RoleEntry::):
+
 2009-09-11  Erik Arvidsson  <arv@chromium.org>
 
         Reviewed by Eric Seidel.

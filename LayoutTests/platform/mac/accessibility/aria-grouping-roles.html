@@ -24,6 +24,7 @@ var successfullyParsed = false;
 <div role="search">search role</div>
 <div role="status">status role</div>
 <div role="tooltip">tooltip role</div>
+<div role="definition">definition role</div>
 
 <p id="description"></p>
 <div id="console"></div>
@@ -47,6 +48,11 @@ var successfullyParsed = false;
               shouldBe("obj.childAtIndex(k).role", "'AXRole: AXGroup'");
               shouldBe("obj.childAtIndex(k).subrole", '"AXSubrole: ' + subroles[k] + '"');
           }
+
+          // Definition role is a plain AXGroup with a AXDescription
+          shouldBe("obj.childAtIndex(k).role", "'AXRole: AXGroup'");
+          shouldBe("obj.childAtIndex(k).description", "'AXDescription: definition'");
+
     }
 
     successfullyParsed = true;

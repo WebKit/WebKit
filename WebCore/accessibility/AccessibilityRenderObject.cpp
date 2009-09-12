@@ -2208,7 +2208,7 @@ static const ARIARoleMap& createARIARoleMap()
         { "grid", TableRole },
         { "gridcell", CellRole },
         { "columnheader", ColumnHeaderRole },
-        { "defintion", DefinitionListDefinitionRole },
+        { "definition", DefinitionListDefinitionRole },
         { "document", DocumentRole },
         { "rowheader", RowHeaderRole },
         { "group", GroupRole },
