@@ -953,13 +953,13 @@ PassRefPtr<Range> Document::caretRangeFromPoint(int x, int y)
     Frame* frame = this->frame();
     if (!frame)
         return 0;
-
-    float zoomFactor = frame->pageZoomFactor();
-    IntPoint point = roundedIntPoint(FloatPoint(x * zoomFactor, y * zoomFactor));
-
     FrameView* frameView = frame->view();
     if (!frameView)
         return 0;
+
+    float zoomFactor = frame->pageZoomFactor();
+    IntPoint point = roundedIntPoint(FloatPoint(x * zoomFactor, y * zoomFactor)) + view()->scrollOffset();
+
     if (!frameView->boundsRect().contains(point))
         return 0;
 

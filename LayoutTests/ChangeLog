@@ -1,3 +1,13 @@
+2009-09-12  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Test for https://bugs.webkit.org/show_bug.cgi?id=29217
+        Document.caretRangeFromPoint should take the scroll offset into account before hit testing
+
+        * fast/dom/Document/CaretRangeFromPoint/hittest-relative-to-viewport-expected.txt: Added.
+        * fast/dom/Document/CaretRangeFromPoint/hittest-relative-to-viewport.html: Added.
+
 2009-09-11  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Sam Weinig.

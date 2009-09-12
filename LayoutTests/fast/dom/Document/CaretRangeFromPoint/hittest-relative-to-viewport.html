@@ -1,0 +1,87 @@
+<html>
+<head>
+    <style>
+        #test {
+            width: 100px;
+            font-family: "Ahem";
+        }
+        #pusher {
+            width: 1000px;
+            height: 1000px;
+            outline: 1px solid black;
+        }
+    </style>
+    <script>
+        if (window.layoutTestController)
+            layoutTestController.dumpAsText();
+
+        var _log = "";
+        function log(msg)
+        {
+            _log += msg + "\n";
+        }
+
+        function swapInLog()
+        {
+            var element = document.getElementById('test');
+            var parent = element.parentNode;
+            if (window.layoutTestController)
+                parent.removeChild(element);
+            var console = document.createElement("pre");
+            console.textContent = _log;
+            parent.appendChild(console);
+        }
+
+        var element;
+
+        function test(pos, __expectedContainer, __expectedOffset)
+        {
+            var expectedContainer = eval(__expectedContainer);
+            var expectedOffset = eval(__expectedOffset);
+
+            var range = document.caretRangeFromPoint(pos.x, pos.y);
+
+            if (range.startContainer == expectedContainer) {
+                log("PASS: range.startContainer == " + __expectedContainer + ".");
+            } else {
+                log("FAIL: range.startContainer == " + range.startContainer + ".");
+            }
+
+            if (range.startOffset == expectedOffset) {
+                log("PASS: range.startOffset == " + __expectedOffset + ".");
+            } else {
+                log("FAIL: range.startOffset == " + range.startOffset + ".");
+            }
+        }
+
+        window.onload = function()
+        {
+            element = document.getElementById('test');
+            text = element.firstChild;
+
+            var positionToTest = { x: 15, y: 15 };
+
+            log("Testing with no scroll");
+            test(positionToTest, "element.firstChild", "0");
+
+            log("Test scrolling down");
+            window.scrollTo(0, 25);
+            test(positionToTest, "element.firstChild", "12");
+
+            log("Test scrolling right");
+            window.scrollTo(25, 0);
+            test(positionToTest, "element.firstChild", "2");
+
+            log("Test scrolling down and right");
+            window.scrollTo(25, 25);
+            test(positionToTest, "element.firstChild", "14");
+
+            swapInLog();
+        }
+    </script>
+</head>
+<body>
+<div id="test">xxxxx xxxxx xxxxx xxxxx</div>
+<div id="pusher">This box is here to create scrollbars.</div>
+</body>
+</html>

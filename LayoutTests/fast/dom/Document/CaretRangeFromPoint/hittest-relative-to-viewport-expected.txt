@@ -1,0 +1,14 @@
+This box is here to create scrollbars.
+Testing with no scroll
+PASS: range.startContainer == element.firstChild.
+PASS: range.startOffset == 0.
+Test scrolling down
+PASS: range.startContainer == element.firstChild.
+PASS: range.startOffset == 12.
+Test scrolling right
+PASS: range.startContainer == element.firstChild.
+PASS: range.startOffset == 2.
+Test scrolling down and right
+PASS: range.startContainer == element.firstChild.
+PASS: range.startOffset == 14.
+
