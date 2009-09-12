@@ -43,4 +43,16 @@ forIn3({ __proto__: { __proto__: { y3 : 2 } } });
 forIn3({ __proto__: { __proto__: { y3 : 2 } } });
 shouldBe("forIn3({ __proto__: { __proto__: { y3 : 2 } } })", "['x', 'y3']");
 
+function forIn4(o) {
+    var result = [];
+    for (var p in o)
+        result.push(p);
+    return result;
+}
+var objectWithArrayAsProto = {};
+objectWithArrayAsProto.__proto__ = [];
+shouldBe("forIn4(objectWithArrayAsProto)", "[]");
+objectWithArrayAsProto.__proto__[0]=1;
+shouldBe("forIn4(objectWithArrayAsProto)", "['0']");
+
 var successfullyParsed = true;

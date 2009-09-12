@@ -1,3 +1,46 @@
+2009-09-11  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        getPropertyNames caching is invalid when the prototype chain contains objects with custom getPropertyNames
+        https://bugs.webkit.org/show_bug.cgi?id=29214
+
+        Add a flag to TypeInfo to indicate whether a type overrides getPropertyNames.
+        This flag is used to make sure that caching of the property name data is safe.
+
+        * API/JSCallbackConstructor.h:
+        (JSC::JSCallbackConstructor::createStructure):
+        * debugger/DebuggerActivation.h:
+        (JSC::DebuggerActivation::createStructure):
+        * runtime/BooleanObject.h:
+        (JSC::BooleanObject::createStructure):
+        * runtime/DatePrototype.h:
+        (JSC::DatePrototype::createStructure):
+        * runtime/FunctionPrototype.h:
+        (JSC::FunctionPrototype::createStructure):
+        * runtime/JSONObject.h:
+        (JSC::JSONObject::createStructure):
+        * runtime/JSObject.h:
+        (JSC::JSObject::createStructure):
+        * runtime/JSTypeInfo.h:
+        (JSC::TypeInfo::hasDefaultGetPropertyNames):
+        * runtime/JSVariableObject.h:
+        (JSC::JSVariableObject::createStructure):
+        * runtime/JSWrapperObject.h:
+        (JSC::JSWrapperObject::createStructure):
+        * runtime/MathObject.h:
+        (JSC::MathObject::createStructure):
+        * runtime/NumberConstructor.h:
+        (JSC::NumberConstructor::createStructure):
+        * runtime/NumberObject.h:
+        (JSC::NumberObject::createStructure):
+        * runtime/RegExpConstructor.h:
+        (JSC::RegExpConstructor::createStructure):
+        * runtime/RegExpObject.h:
+        (JSC::RegExpObject::createStructure):
+        * runtime/StructureChain.cpp:
+        (JSC::StructureChain::isCacheable):
+
 2009-09-11  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Geoff Garen.

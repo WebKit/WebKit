@@ -51,7 +51,9 @@ bool StructureChain::isCacheable() const
     uint32_t i = 0;
     
     while (m_vector[i]) {
-        if (m_vector[i++]->isDictionary())
+        if (m_vector[i]->isDictionary())
+            return false;
+        if (!m_vector[i++]->typeInfo().hasDefaultGetPropertyNames())
             return false;
     }
     return true;

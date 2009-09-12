@@ -1,3 +1,16 @@
+2009-09-11  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        getPropertyNames caching is invalid when the prototype chain contains objects with custom getPropertyNames
+        https://bugs.webkit.org/show_bug.cgi?id=29214
+
+        Add test case for for-in caching.
+
+        * fast/js/for-in-cached-expected.txt:
+        * fast/js/resources/for-in-cached.js:
+        (forIn4):
+
 2009-09-10  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
