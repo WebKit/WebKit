@@ -141,7 +141,8 @@ my $root;
 my $reverseTests = 0;
 my $randomizeTests = 0;
 my $mergeDepth;
-my $timeoutSeconds = 15;
+# DumpRenderTree has an internal timeout of 15 seconds, so this must be > 15.
+my $timeoutSeconds = 20;
 my $useRemoteLinksToTests = 0;
 my @leaksFilenames;
 

@@ -1,3 +1,13 @@
+2009-09-12  Drew Wilson  <atwilson@google.com>
+
+        Reviewed by Mark Rowe.
+
+        run-webkit-tests has a timeout value that is too low
+        https://bugs.webkit.org/show_bug.cgi?id=29223
+
+        * Scripts/run-webkit-tests:
+        Changed timeout value to 20 seconds to avoid timing out too early.
+
 2009-09-11  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. Mark dependencies as mandatory and declare which MSVC versions and
