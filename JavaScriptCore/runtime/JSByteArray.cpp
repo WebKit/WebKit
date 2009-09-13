@@ -96,12 +96,12 @@ void JSByteArray::put(ExecState* exec, unsigned propertyName, JSValue value)
     setIndex(exec, propertyName, value);
 }
 
-void JSByteArray::getPropertyNames(ExecState* exec, PropertyNameArray& propertyNames)
+void JSByteArray::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propertyNames)
 {
     unsigned length = m_storage->length();
     for (unsigned i = 0; i < length; ++i)
         propertyNames.add(Identifier::from(exec, i));
-    JSObject::getPropertyNames(exec, propertyNames);
+    JSObject::getOwnPropertyNames(exec, propertyNames);
 }
 
 }

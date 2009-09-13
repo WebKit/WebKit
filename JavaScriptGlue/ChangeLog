@@ -1,3 +1,16 @@
+2009-09-12  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        [ES5] Implement Object.keys
+        https://bugs.webkit.org/show_bug.cgi?id=29170
+
+        Switch over to getOwnPropertyNames instead of getPropertyNames.
+
+        * UserObjectImp.cpp:
+        (UserObjectImp::getOwnPropertyNames):
+        * UserObjectImp.h:
+
 2009-09-02  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff Garen.

@@ -1,3 +1,37 @@
+2009-09-12  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        [ES5] Implement Object.keys
+        https://bugs.webkit.org/show_bug.cgi?id=29170
+
+        Switch from getPropertyNames to getOwnPropertyNames, and provide custom
+        getPropertyNames to DOMWindow, DOMWindowShell and QuarantinedObjectWrapper
+        in order to ensure correct semantics are maintained.
+
+        Test: fast/js/Object-keys.html
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::getOwnPropertyNames):
+        * bindings/js/JSDOMWindowShell.cpp:
+        (WebCore::JSDOMWindowShell::getOwnPropertyNames):
+        * bindings/js/JSDOMWindowShell.h:
+        * bindings/js/JSHistoryCustom.cpp:
+        (WebCore::JSHistory::getOwnPropertyNames):
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::JSLocation::getOwnPropertyNames):
+        * bindings/js/JSQuarantinedObjectWrapper.cpp:
+        (WebCore::JSQuarantinedObjectWrapper::getPropertyNames):
+        (WebCore::JSQuarantinedObjectWrapper::getOwnPropertyNames):
+        * bindings/js/JSQuarantinedObjectWrapper.h:
+        * bindings/js/JSStorageCustom.cpp:
+        (WebCore::JSStorage::getOwnPropertyNames):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bridge/runtime_object.cpp:
+        (JSC::RuntimeObjectImp::getPropertyNames):
+        (JSC::RuntimeObjectImp::getOwnPropertyNames):
+        * bridge/runtime_object.h:
+
 2009-09-12  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

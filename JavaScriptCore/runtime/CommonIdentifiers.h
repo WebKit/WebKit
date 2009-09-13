@@ -53,6 +53,7 @@
     macro(input) \
     macro(isArray) \
     macro(isPrototypeOf) \
+    macro(keys) \
     macro(length) \
     macro(message) \
     macro(multiline) \

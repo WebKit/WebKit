@@ -44,7 +44,7 @@ public:
 
     virtual CallType getCallData(CallData&);
 
-    virtual void getPropertyNames(ExecState*, PropertyNameArray&);
+    virtual void getOwnPropertyNames(ExecState*, PropertyNameArray&);
 
     virtual JSValue callAsFunction(ExecState *exec, JSObject *thisObj, const ArgList &args);
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);

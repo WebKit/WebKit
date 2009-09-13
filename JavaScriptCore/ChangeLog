@@ -1,3 +1,52 @@
+2009-09-12  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        [ES5] Implement Object.keys
+        https://bugs.webkit.org/show_bug.cgi?id=29170
+
+        This patch basically requires two separate steps, the first is to split getPropertyNames
+        into two functions -- getOwnPropertyNames and getPropertyNames, basically making them behave
+        in the same way as getOwnPropertySlot and getPropertySlot.  In essence getOwnPropertyNames
+        produces the list of properties on an object excluding its prototype chain and getPropertyNames
+        just iterates the the object and its prototype chain calling getOwnPropertyNames at each level.
+
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::getOwnPropertyNames):
+        * JavaScriptCore.exp:
+        * debugger/DebuggerActivation.cpp:
+        (JSC::DebuggerActivation::getOwnPropertyNames):
+        * debugger/DebuggerActivation.h:
+        * runtime/CommonIdentifiers.h:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::getOwnPropertyNames):
+        * runtime/JSArray.h:
+        * runtime/JSByteArray.cpp:
+        (JSC::JSByteArray::getOwnPropertyNames):
+        * runtime/JSByteArray.h:
+        * runtime/JSNotAnObject.cpp:
+        (JSC::JSNotAnObject::getOwnPropertyNames):
+        * runtime/JSNotAnObject.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::getOwnPropertyNames):
+        * runtime/JSObject.h:
+        * runtime/JSVariableObject.cpp:
+        (JSC::JSVariableObject::getOwnPropertyNames):
+        * runtime/JSVariableObject.h:
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ObjectConstructor::ObjectConstructor):
+        (JSC::objectConstructorKeys):
+        * runtime/RegExpMatchesArray.h:
+        (JSC::RegExpMatchesArray::getOwnPropertyNames):
+        * runtime/StringObject.cpp:
+        (JSC::StringObject::getOwnPropertyNames):
+        * runtime/StringObject.h:
+        * runtime/Structure.cpp:
+        (JSC::Structure::getOwnEnumerablePropertyNames):
+        (JSC::Structure::getEnumerablePropertyNames):
+        * runtime/Structure.h:
+
 2009-09-11  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Sam Weinig.

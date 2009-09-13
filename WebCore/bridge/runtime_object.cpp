@@ -295,10 +295,15 @@ void RuntimeObjectImp::getPropertyNames(ExecState* exec, PropertyNameArray& prop
         throwInvalidAccessError(exec);
         return;
     }
-    
+
     instance->begin();
     instance->getPropertyNames(exec, propertyNames);
     instance->end();
+}
+
+void RuntimeObjectImp::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propertyNames)
+{
+    getOwnPropertyNames(exec, propertyNames);
 }
 
 JSObject* RuntimeObjectImp::throwInvalidAccessError(ExecState* exec)

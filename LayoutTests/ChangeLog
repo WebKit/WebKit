@@ -1,3 +1,18 @@
+2009-09-12  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        [ES5] Implement Object.keys
+        https://bugs.webkit.org/show_bug.cgi?id=29170
+
+        Add tests for Object.keys(o), both standard usage and cross origin.
+
+        * fast/js/Object-keys-expected.txt: Added.
+        * fast/js/Object-keys.html: Added.
+        * fast/js/resources/Object-keys.js: Added.
+        * http/tests/security/cross-frame-access-enumeration-expected.txt:
+        * http/tests/security/cross-frame-access-enumeration.html:
+
 2009-09-12  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

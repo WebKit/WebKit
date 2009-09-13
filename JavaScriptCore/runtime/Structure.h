@@ -114,6 +114,7 @@ namespace JSC {
         }
 
         void getEnumerablePropertyNames(ExecState*, PropertyNameArray&, JSObject*);
+        void getOwnEnumerablePropertyNames(ExecState*, PropertyNameArray&, JSObject*);
 
         bool hasGetterSetterProperties() const { return m_hasGetterSetterProperties; }
         void setHasGetterSetterProperties(bool hasGetterSetterProperties) { m_hasGetterSetterProperties = hasGetterSetterProperties; }

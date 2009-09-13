@@ -1,0 +1,20 @@
+Test to ensure correct behaviour of Object.keys
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Object.keys({}) is []
+PASS Object.keys({a:null}) is ['a']
+PASS Object.keys({a:null, b:null}) is ['a', 'b']
+PASS Object.keys({b:null, a:null}) is ['b', 'a']
+PASS Object.keys([]) is []
+PASS Object.keys([null]) is ['0']
+PASS Object.keys([null,null]) is ['0','1']
+PASS Object.keys([null,null,,,,null]) is ['0','1','5']
+PASS Object.keys({__proto__:{a:null}}) is []
+PASS Object.keys({__proto__:[1,2,3]}) is []
+PASS x=[];x.__proto__=[1,2,3];Object.keys(x) is []
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -82,7 +82,7 @@ namespace JSC {
         virtual void put(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSValue, JSC::PutPropertySlot&);
         virtual void put(JSC::ExecState*, unsigned propertyName, JSC::JSValue);
 
-        virtual void getPropertyNames(JSC::ExecState*, JSC::PropertyNameArray&);
+        virtual void getOwnPropertyNames(JSC::ExecState*, JSC::PropertyNameArray&);
 
         virtual const ClassInfo* classInfo() const { return m_classInfo; }
         static const ClassInfo s_defaultInfo;

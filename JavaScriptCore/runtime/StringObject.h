@@ -39,7 +39,7 @@ namespace JSC {
 
         virtual void put(ExecState* exec, const Identifier& propertyName, JSValue, PutPropertySlot&);
         virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
-        virtual void getPropertyNames(ExecState*, PropertyNameArray&);
+        virtual void getOwnPropertyNames(ExecState*, PropertyNameArray&);
 
         virtual const ClassInfo* classInfo() const { return &info; }
         static const JS_EXPORTDATA ClassInfo info;

@@ -94,7 +94,7 @@ JSValue UserObjectImp::callAsFunction(ExecState *exec, JSObject *thisObj, const 
 }
 
 
-void UserObjectImp::getPropertyNames(ExecState *exec, PropertyNameArray& propertyNames)
+void UserObjectImp::getOwnPropertyNames(ExecState *exec, PropertyNameArray& propertyNames)
 {
     JSUserObject* ptr = GetJSUserObject();
     if (ptr) {
@@ -109,7 +109,7 @@ void UserObjectImp::getPropertyNames(ExecState *exec, PropertyNameArray& propert
             CFRelease(cfPropertyNames);
         }
     }
-    JSObject::getPropertyNames(exec, propertyNames);
+    JSObject::getOwnPropertyNames(exec, propertyNames);
 }
 
 JSValue UserObjectImp::userObjectGetter(ExecState*, const Identifier& propertyName, const PropertySlot& slot)

@@ -427,6 +427,11 @@ void JSObject::getPropertyNames(ExecState* exec, PropertyNameArray& propertyName
     m_structure->getEnumerablePropertyNames(exec, propertyNames, this);
 }
 
+void JSObject::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propertyNames)
+{
+    m_structure->getOwnEnumerablePropertyNames(exec, propertyNames, this);
+}
+
 bool JSObject::toBoolean(ExecState*) const
 {
     return true;
