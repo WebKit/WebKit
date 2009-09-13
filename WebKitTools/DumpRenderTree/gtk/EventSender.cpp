@@ -96,15 +96,16 @@ static JSValueRef contextClickCallback(JSContextRef context, JSObjectRef functio
 {
     webkit_web_frame_layout(mainFrame);
 
+    WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
+    if (!view)
+        return JSValueMakeUndefined(context);
+
     GdkEvent event;
     memset(&event, 0, sizeof(event));
     event.button.button = 3;
     event.button.x = lastMousePositionX;
     event.button.y = lastMousePositionY;
-
-    WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
-    if (!view)
-        return JSValueMakeUndefined(context);
+    event.button.window = gtk_widget_get_window(GTK_WIDGET(view));
 
     gboolean return_val;
     down = true;
@@ -129,6 +130,10 @@ static void updateClickCount(int /* button */)
 
 static JSValueRef mouseDownCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
+    WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
+    if (!view)
+        return JSValueMakeUndefined(context);
+
     down = true;
 
     GdkEvent event;
@@ -137,15 +142,12 @@ static JSValueRef mouseDownCallback(JSContextRef context, JSObjectRef function, 
     event.button.button = 1;
     event.button.x = lastMousePositionX;
     event.button.y = lastMousePositionY;
+    event.button.window = gtk_widget_get_window(GTK_WIDGET(view));
 
     updateClickCount(1);
 
     if (!msgQueue[endOfQueue].delay) {
         webkit_web_frame_layout(mainFrame);
-
-        WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
-        if (!view)
-            return JSValueMakeUndefined(context);
 
         gboolean return_val;
         g_signal_emit_by_name(view, "button_press_event", &event, &return_val);
@@ -164,6 +166,11 @@ static JSValueRef mouseDownCallback(JSContextRef context, JSObjectRef function, 
 
 static JSValueRef mouseUpCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
+
+    WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
+    if (!view)
+        return JSValueMakeUndefined(context);
+
     down = false;
 
     GdkEvent event;
@@ -172,6 +179,7 @@ static JSValueRef mouseUpCallback(JSContextRef context, JSObjectRef function, JS
     event.button.button = 1;
     event.button.x = lastMousePositionX;
     event.button.y = lastMousePositionY;
+    event.button.window = gtk_widget_get_window(GTK_WIDGET(view));
 
     if ((dragMode && !replayingSavedEvents) || msgQueue[endOfQueue].delay) {
         msgQueue[endOfQueue].event = event;
@@ -179,10 +187,6 @@ static JSValueRef mouseUpCallback(JSContextRef context, JSObjectRef function, JS
         replaySavedEvents();
     } else {
         webkit_web_frame_layout(mainFrame);
-
-        WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
-        if (!view)
-            return JSValueMakeUndefined(context);
 
         gboolean return_val;
         g_signal_emit_by_name(view, "button_release_event", &event, &return_val);
@@ -196,6 +200,10 @@ static JSValueRef mouseUpCallback(JSContextRef context, JSObjectRef function, JS
 
 static JSValueRef mouseMoveToCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
+    WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
+    if (!view)
+        return JSValueMakeUndefined(context);
+
     if (argumentCount < 2)
         return JSValueMakeUndefined(context);
 
@@ -209,16 +217,13 @@ static JSValueRef mouseMoveToCallback(JSContextRef context, JSObjectRef function
     event.motion.x = lastMousePositionX;
     event.motion.y = lastMousePositionY;
     event.motion.time = GDK_CURRENT_TIME;
+    event.motion.window = gtk_widget_get_window(GTK_WIDGET(view));
 
     if (dragMode && down && !replayingSavedEvents) {
         msgQueue[endOfQueue].event = event;
         msgQueue[endOfQueue++].isDragEvent = true;
     } else {
         webkit_web_frame_layout(mainFrame);
-
-        WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
-        if (!view)
-            return JSValueMakeUndefined(context);
 
         gboolean return_val;
         g_signal_emit_by_name(view, "motion_notify_event", &event, &return_val);
@@ -381,6 +386,7 @@ static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JS
     memset(&event, 0, sizeof(event));
     event.key.keyval = gdkKeySym;
     event.key.state = state;
+    event.key.window = gtk_widget_get_window(GTK_WIDGET(view));
 
     gboolean return_val;
     event.key.type = GDK_KEY_PRESS;

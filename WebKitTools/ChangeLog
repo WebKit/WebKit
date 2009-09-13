@@ -1,3 +1,19 @@
+2009-09-13  Martin Robinson  <martin.james.robinson@gmail.com>
+
+        Reviewed by Xan Lopez and Jan Alonzo.
+
+        [GTK] EventSender does not set 'window' property on synthesized GDK events
+        https://bugs.webkit.org/show_bug.cgi?id=29169
+
+        Set the window property on synthesized GDK events in the GTK+ EventSender.
+
+        * DumpRenderTree/gtk/EventSender.cpp:
+        (contextClickCallback):
+        (mouseDownCallback):
+        (mouseUpCallback):
+        (mouseMoveToCallback):
+        (keyDownCallback):
+
 2009-09-12  Drew Wilson  <atwilson@google.com>
 
         Reviewed by Mark Rowe.
