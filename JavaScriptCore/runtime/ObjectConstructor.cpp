@@ -27,6 +27,7 @@
 #include "ObjectPrototype.h"
 #include "PropertyDescriptor.h"
 #include "PrototypeFunction.h"
+#include "PrototypeNameArray.h"
 
 namespace JSC {
 

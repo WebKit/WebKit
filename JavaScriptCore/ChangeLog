@@ -1,5 +1,13 @@
 2009-09-12  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by NOBODY (Build fix).
+
+        Fix non-allinonefile builds
+
+        * runtime/ObjectConstructor.cpp:
+
+2009-09-12  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Maciej Stachowiak.
 
         [ES5] Implement Object.keys
