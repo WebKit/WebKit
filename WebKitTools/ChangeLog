@@ -1,3 +1,17 @@
+2009-09-13  Xan Lopez  <xlopez@igalia.com>
+
+        Build fix for GTK+ < 2.14.
+
+        Do not use gtk_widget_get_window, access the window directly
+        through the struct.
+
+        * DumpRenderTree/gtk/EventSender.cpp:
+        (contextClickCallback):
+        (mouseDownCallback):
+        (mouseUpCallback):
+        (mouseMoveToCallback):
+        (keyDownCallback):
+
 2009-09-13  Martin Robinson  <martin.james.robinson@gmail.com>
 
         Reviewed by Xan Lopez and Jan Alonzo.
