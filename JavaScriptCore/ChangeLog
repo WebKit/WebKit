@@ -2,6 +2,14 @@
 
         Reviewed by NOBODY (Build fix).
 
+        Correct fix for non-allinonefile builds
+
+        * runtime/ObjectConstructor.cpp:
+
+2009-09-12  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by NOBODY (Build fix).
+
         Fix non-allinonefile builds
 
         * runtime/ObjectConstructor.cpp:

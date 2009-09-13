@@ -23,11 +23,12 @@
 
 #include "Error.h"
 #include "JSFunction.h"
+#include "JSArray.h"
 #include "JSGlobalObject.h"
 #include "ObjectPrototype.h"
 #include "PropertyDescriptor.h"
+#include "PropertyNameArray.h"
 #include "PrototypeFunction.h"
-#include "PrototypeNameArray.h"
 
 namespace JSC {
 
