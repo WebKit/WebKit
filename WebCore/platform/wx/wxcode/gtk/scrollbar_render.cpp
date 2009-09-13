@@ -29,12 +29,18 @@
 
 #include <wx/defs.h>
 #include <wx/dc.h>
+#include <wx/dcgraph.h>
 #include <wx/renderer.h>
 #include <wx/settings.h>
 #include <wx/window.h>
 
 #include <gtk/gtk.h>
-#include "wx/gtk/win_gtk.h"
+
+#if wxCHECK_VERSION(2, 9, 0)
+    #include <wx/gtk/dc.h>
+#else
+    #include "wx/gtk/win_gtk.h"
+#endif
 
 int wxStyleForPart(wxScrollbarPart part, wxScrollbarPart focusPart, wxScrollbarPart hoverPart, int flags)
 {
@@ -69,6 +75,16 @@ GtkWidget* GetButtonWidget()
 
 GdkWindow* wxGetGdkWindowForDC(wxWindow* win, wxDC& dc)
 {
+#if wxCHECK_VERSION(2, 9, 0)
+    if ( dc.IsKindOf( CLASSINFO(wxGCDC) ) )
+        gdk_window = win->GTKGetDrawingWindow();
+    else
+    {
+        wxGTKDCImpl *impl = wxDynamicCast(dc.GetImpl(), wxGTKDCImpl);
+        if ( impl )
+            gdk_window = impl->GetGDKWindow();
+    }
+#else // wx < 2.9
     // The way to get a GdkWindow* from a wxWindow is to use 
     // GTK_PIZZA(win->m_wxwindow)->bin_window, but this approach
     // won't work when drawing to a wxMemoryDC as it has its own
@@ -86,6 +102,7 @@ GdkWindow* wxGetGdkWindowForDC(wxWindow* win, wxDC& dc)
        gdk_window = dc.GetGDKWindow();
     wxASSERT_MSG( gdk_window,
                   wxT("cannot use wxRendererNative on wxDC of this type") );
+#endif // wx 2.9/2.8
     
     return gdk_window;
 }

@@ -35,6 +35,7 @@
 #include "ScrollView.h"
 
 #include <wx/defs.h>
+#include <wx/dcgraph.h>
 #include <wx/settings.h>
 
 const int cMacButtonOverlap = 4;

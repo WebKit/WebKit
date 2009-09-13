@@ -1,3 +1,11 @@
+2009-09-12  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fixes for wx 2.9.
+
+        * platform/wx/ScrollbarThemeWx.cpp:
+        * platform/wx/wxcode/gtk/scrollbar_render.cpp:
+        (wxGetGdkWindowForDC):
+
 2009-09-12  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.
