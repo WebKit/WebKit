@@ -1,3 +1,25 @@
+2009-09-14  Jakub Wieczorek  <faw217@gmail.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] QWebGraphicsItem should check for null QWebPage.
+        https://bugs.webkit.org/show_bug.cgi?id=29185
+
+        Don't crash in QWebGraphicsItem when the page is still null, by
+        either checking if it's the case or constructing the default one.
+
+        * Api/qwebgraphicsitem.cpp:
+        (QWebGraphicsItem::icon):
+        (QWebGraphicsItem::setZoomFactor):
+        (QWebGraphicsItem::zoomFactor):
+        (QWebGraphicsItem::setGeometry):
+        (QWebGraphicsItem::load):
+        (QWebGraphicsItem::setHtml):
+        (QWebGraphicsItem::toHtml):
+        (QWebGraphicsItem::setContent):
+        (QWebGraphicsItem::history):
+        (QWebGraphicsItem::settings):
+
 2009-09-11  David Boddie  <dboddie@trolltech.com>
 
         Reviewed by Simon Hausmann.

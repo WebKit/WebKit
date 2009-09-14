@@ -87,7 +87,7 @@ void QWebGraphicsItemPrivate::_q_doUpdate(const QRect & dirtyRect)
 void QWebGraphicsItemPrivate::_q_setStatusBarMessage(const QString& s)
 {
     statusBarMessage = s;
-    q->emit statusChanged();
+    emit q->statusChanged();
 }
 
 /*!
@@ -160,7 +160,7 @@ QWebPage* QWebGraphicsItem::page() const
 */
 void QWebGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget*)
 {
-    d->page->mainFrame()->render(painter, option->exposedRect.toRect());
+    page()->mainFrame()->render(painter, option->exposedRect.toRect());
 }
 
 /*! \reimp
@@ -242,10 +242,7 @@ void QWebGraphicsItem::setPage(QWebPage* page)
 
 void QWebGraphicsItem::setUrl(const QUrl &url)
 {
-    if (!d->page || d->page->mainFrame()->url() == url)
-        return;
-
-    d->page->mainFrame()->setUrl(url);
+    page()->mainFrame()->setUrl(url);
 }
 
 QUrl QWebGraphicsItem::url() const
@@ -282,7 +279,10 @@ QString QWebGraphicsItem::title() const
 */
 QIcon QWebGraphicsItem::icon() const
 {
-    return d->page->mainFrame()->icon();
+    if (d->page)
+        return d->page->mainFrame()->icon();
+
+    return QIcon();
 }
 
 /*!
@@ -293,17 +293,16 @@ QIcon QWebGraphicsItem::icon() const
 
 void QWebGraphicsItem::setZoomFactor(qreal factor)
 {
-    if (factor == d->page->mainFrame()->zoomFactor())
+    if (factor == page()->mainFrame()->zoomFactor())
         return;
 
-    d->page->mainFrame()->setZoomFactor(factor);
-
+    page()->mainFrame()->setZoomFactor(factor);
     emit zoomFactorChanged();
 }
 
 qreal QWebGraphicsItem::zoomFactor() const
 {
-    return d->page->mainFrame()->zoomFactor();
+    return page()->mainFrame()->zoomFactor();
 }
 
 /*! \reimp
@@ -311,6 +310,10 @@ qreal QWebGraphicsItem::zoomFactor() const
 void QWebGraphicsItem::updateGeometry()
 {
     QGraphicsWidget::updateGeometry();
+
+    if (!d->page)
+        return;
+
     QSize size = geometry().size().toSize();
     d->page->setViewportSize(size);
 }
@@ -320,6 +323,10 @@ void QWebGraphicsItem::updateGeometry()
 void QWebGraphicsItem::setGeometry(const QRectF& rect)
 {
     QGraphicsWidget::setGeometry(rect);
+
+    if (!d->page)
+        return;
+
     // NOTE: call geometry() as setGeometry ensures that
     // the geometry is within legal bounds (minimumSize, maximumSize)
     QSize size = geometry().size().toSize();
@@ -404,7 +411,7 @@ qreal QWebGraphicsItem::progress() const
 */
 void QWebGraphicsItem::load(const QUrl& url)
 {
-    d->page->mainFrame()->load(url);
+    page()->mainFrame()->load(url);
 }
 
 /*!
@@ -423,7 +430,7 @@ void QWebGraphicsItem::load(const QNetworkRequest& request,
                     QNetworkAccessManager::Operation operation,
                     const QByteArray& body)
 {
-    d->page->mainFrame()->load(request, operation, body);
+    page()->mainFrame()->load(request, operation, body);
 }
 
 /*!
@@ -444,12 +451,12 @@ void QWebGraphicsItem::load(const QNetworkRequest& request,
 */
 void QWebGraphicsItem::setHtml(const QString& html, const QUrl& baseUrl)
 {
-    d->page->mainFrame()->setHtml(html, baseUrl);
+    page()->mainFrame()->setHtml(html, baseUrl);
 }
 
 QString QWebGraphicsItem::toHtml() const
 {
-    return d->page->mainFrame()->toHtml();
+    return page()->mainFrame()->toHtml();
 }
 
 /*!
@@ -465,7 +472,7 @@ QString QWebGraphicsItem::toHtml() const
 */
 void QWebGraphicsItem::setContent(const QByteArray& data, const QString& mimeType, const QUrl& baseUrl)
 {
-    d->page->mainFrame()->setContent(data, mimeType, baseUrl);
+    page()->mainFrame()->setContent(data, mimeType, baseUrl);
 }
 
 /*!
@@ -477,7 +484,7 @@ void QWebGraphicsItem::setContent(const QByteArray& data, const QString& mimeTyp
 */
 QWebHistory* QWebGraphicsItem::history() const
 {
-    return d->page->history();
+    return page()->history();
 }
 
 /*!
@@ -510,7 +517,7 @@ void QWebGraphicsItem::setInteractive(bool allowed)
 */
 QWebSettings* QWebGraphicsItem::settings() const
 {
-    return d->page->settings();
+    return page()->settings();
 }
 
 /*! \reimp
