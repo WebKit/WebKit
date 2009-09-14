@@ -1,3 +1,18 @@
+2009-09-14  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by David Hyatt.
+
+        - Fix <rdar://problem/7182275>.
+
+        Make sure that the newly created scrollbar's style is up to date.
+        
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenu::~PopupMenu):
+        Call setParent so that the scrollbar's parts are torn down correctly.
+        
+        (WebCore::PopupMenu::show):
+        Call styleChanged.
+
 2009-09-11  Jon Honeycutt  <jhoneycutt@apple.com>
 
         <rdar://problem/7197644> WebKit should broadcast an MSAA event when

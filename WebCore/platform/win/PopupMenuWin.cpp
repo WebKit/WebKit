@@ -92,6 +92,8 @@ PopupMenu::~PopupMenu()
         ::DeleteDC(m_DC);
     if (m_popup)
         ::DestroyWindow(m_popup);
+    if (m_scrollbar)
+        m_scrollbar->setParent(0);
 }
 
 LPCTSTR PopupMenu::popupClassName()
@@ -131,6 +133,7 @@ void PopupMenu::show(const IntRect& r, FrameView* v, int index)
         if (visibleItems() < client()->listSize()) {
             // We need a scroll bar
             m_scrollbar = client()->createScrollbar(this, VerticalScrollbar, SmallScrollbar);
+            m_scrollbar->styleChanged();
         }
 
     ::SetWindowPos(m_popup, HWND_TOP, m_windowRect.x(), m_windowRect.y(), m_windowRect.width(), m_windowRect.height(), 0);
