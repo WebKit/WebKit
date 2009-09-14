@@ -5724,3 +5724,6 @@ http/tests/navigation/back-send-referrer.html
 # XHR sends sometimes yield null bytes sent instead of 0.
 http/tests/xmlhttprequest/workers/shared-worker-methods.html
 http/tests/xmlhttprequest/workers/shared-worker-methods-async.html
+
+# No authentication challenge handling
+http/tests/loading/basic-credentials-sent-automatically.html

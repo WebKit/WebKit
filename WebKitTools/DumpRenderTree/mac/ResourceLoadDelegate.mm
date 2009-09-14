@@ -153,6 +153,20 @@
 
 - (void)webView:(WebView *)wv resource:(id)identifier didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge fromDataSource:(WebDataSource *)dataSource
 {
+    if (!gLayoutTestController->handlesAuthenticationChallenges())
+        return;
+    
+    const char* user = gLayoutTestController->authenticationUsername().c_str();
+    NSString *nsUser = [NSString stringWithFormat:@"%s", user ? user : ""];
+
+    const char* password = gLayoutTestController->authenticationPassword().c_str();
+    NSString *nsPassword = [NSString stringWithFormat:@"%s", password ? password : ""];
+
+    NSString *string = [NSString stringWithFormat:@"%@ - didReceiveAuthenticationChallenge - Responding with %@:%@", identifier, nsUser, nsPassword];
+    printf("%s\n", [string UTF8String]);
+    
+    [[challenge sender] useCredential:[NSURLCredential credentialWithUser:nsUser password:nsPassword persistence:NSURLCredentialPersistenceForSession]
+                              forAuthenticationChallenge:challenge];
 }
 
 - (void)webView:(WebView *)wv resource:(id)identifier didCancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge fromDataSource:(WebDataSource *)dataSource

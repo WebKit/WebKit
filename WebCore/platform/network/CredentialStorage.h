@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2009 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -10,10 +10,10 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
@@ -23,26 +23,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef AuthenticationCF_h
-#define AuthenticationCF_h
-
-typedef struct _CFURLAuthChallenge* CFURLAuthChallengeRef;
-typedef struct _CFURLCredential* CFURLCredentialRef;
-typedef struct _CFURLProtectionSpace* CFURLProtectionSpaceRef;
+#ifndef SessionCredentialStorage_h
+#define SessionCredentialStorage_h
 
 namespace WebCore {
 
-class AuthenticationChallenge;
 class Credential;
+class KURL;
 class ProtectionSpace;
 
-CFURLAuthChallengeRef createCF(const AuthenticationChallenge&);
-CFURLCredentialRef createCF(const Credential&);
-CFURLProtectionSpaceRef createCF(const ProtectionSpace&);
+class CredentialStorage {
+public:
+    static void set(const Credential&, const ProtectionSpace&, const KURL&);
+    static Credential get(const ProtectionSpace&);
+    static Credential getDefaultAuthenticationCredential(const KURL&);
+};
 
-Credential core(CFURLCredentialRef);
-ProtectionSpace core(CFURLProtectionSpaceRef);
+} // namespace WebCore
 
-}
-
-#endif
+#endif // SessionCredentialStorage_h

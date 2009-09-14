@@ -1,3 +1,26 @@
+2009-09-14  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Safari 4 cannot be used to update firmware on Linksys routers.
+        <rdar://problem/7174050> and https://bugs.webkit.org/show_bug.cgi?id=29160
+
+        * http/tests/loading/basic-auth-resend-wrong-credentials-expected.txt: Added.
+        * http/tests/loading/basic-auth-resend-wrong-credentials.html: Added.
+        * http/tests/loading/basic-credentials-sent-automatically-expected.txt: Added.
+        * http/tests/loading/basic-credentials-sent-automatically.html: Added.
+        * http/tests/loading/resources/basic-auth-testing.php: Added.
+        * http/tests/loading/resources/othersubresources: Added.
+        * http/tests/loading/resources/othersubresources/protected-resource.php: Added.
+        * http/tests/loading/resources/protected-resource.php: Added.
+        * http/tests/loading/resources/subresources: Added.
+        * http/tests/loading/resources/subresources/protected-resource.php: Added.
+        * http/tests/loading/resources/test2: Added.
+        * http/tests/loading/resources/test2/basic-auth-testing.php: Added.
+        * http/tests/loading/resources/test2/protected-resource.php: Added.
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+
 2009-09-14  Zan Dobersek  <zandobersek@gmail.com>
 
         Reviewed by Gustavo Noronha.

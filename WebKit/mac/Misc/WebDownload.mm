@@ -31,6 +31,9 @@
 #import <Foundation/NSURLAuthenticationChallenge.h>
 #import <Foundation/NSURLDownload.h>
 #import <WebCore/AuthenticationMac.h>
+#import <WebCore/Credential.h>
+#import <WebCore/CredentialStorage.h>
+#import <WebCore/ProtectionSpace.h>
 #import <WebKit/WebPanelAuthenticationHandler.h>
 #import <wtf/Assertions.h>
 
@@ -111,7 +114,7 @@ using namespace WebCore;
 {
     // Try previously stored credential first.
     if (![challenge previousFailureCount]) {
-        NSURLCredential *credential = WebCoreCredentialStorage::get([challenge protectionSpace]);
+        NSURLCredential *credential = mac(CredentialStorage::get(core([challenge protectionSpace])));
         if (credential) {
             [[challenge sender] useCredential:credential forAuthenticationChallenge:challenge];
             return;

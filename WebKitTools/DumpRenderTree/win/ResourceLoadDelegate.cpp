@@ -31,9 +31,12 @@
 
 #include "DumpRenderTree.h"
 #include "LayoutTestController.h"
+#include <comutil.h>
+#include <WebKit/WebKitCOMAPI.h>
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 #include <sstream>
+
 
 using std::wstring;
 using std::wiostream;
@@ -248,6 +251,33 @@ HRESULT STDMETHODCALLTYPE ResourceLoadDelegate::willSendRequest(
 
     request->AddRef();
     *newRequest = request;
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE ResourceLoadDelegate::didReceiveAuthenticationChallenge( 
+    /* [in] */ IWebView *webView,
+    /* [in] */ unsigned long identifier,
+    /* [in] */ IWebURLAuthenticationChallenge *challenge,
+    /* [in] */ IWebDataSource *dataSource)
+{
+    if (!gLayoutTestController->handlesAuthenticationChallenges())
+        return;
+    
+    const char* user = gLayoutTestController->authenticationUsername().c_str();
+    const char* password = gLayoutTestController->authenticationPassword().c_str();
+
+    printf("%s - didReceiveAuthenticationChallenge - Responding with %s:%s\n", descriptionSuitableForTestResult(identifier).c_str(), user, password);
+    
+    COMPtr<IWebURLAuthenticationChallengeSender> sender;
+    if (!challenge || FAILED(challenge->QueryInterface(&sender)))
+        return E_FAIL;
+        
+    COMPtr<IWebURLCredential> credential;
+    if (FAILED(WebKitCreateInstance(CLSID_WebURLCredential, 0, IID_IWebURLCredential, (void**)&credential)))
+        return E_FAIL;
+    credential->initWithUser(_bstr_t(user), _bstr_t(password), WebURLCredentialPersistenceForSession);
+
+    sender->useCredential(credential.get(), challenge);
     return S_OK;
 }
 

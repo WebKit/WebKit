@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2006, 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,9 +27,18 @@
 #include "config.h"
 #include "CString.h"
 
+#include "Base64.h"
+
 using std::min;
 
 namespace WebCore {
+
+PassRefPtr<CStringBuffer> CStringBuffer::base64Encode()
+{
+    Vector<char> encoded;
+    WebCore::base64Encode(m_vector, encoded);
+    return CStringBuffer::create(encoded);
+}
 
 CString::CString(const char* str)
 {
@@ -88,6 +97,11 @@ void CString::copyBufferIfNeeded()
     RefPtr<CStringBuffer> m_temp = m_buffer;
     m_buffer = CStringBuffer::create(len);
     memcpy(m_buffer->mutableData(), m_temp->data(), len);
+}
+
+CString CString::base64Encode()
+{
+    return CString(m_buffer->base64Encode().get());
 }
 
 bool operator==(const CString& a, const CString& b)

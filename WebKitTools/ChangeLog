@@ -1,3 +1,33 @@
+2009-09-14  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Safari 4 cannot be used to update firmware on Linksys routers.
+        <rdar://problem/7174050> and https://bugs.webkit.org/show_bug.cgi?id=29160
+
+        Add the ability for DRT to handle authentication challenges.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (setAuthenticationPasswordCallback):
+        (setAuthenticationUsernameCallback):
+        (setHandlesAuthenticationChallengesCallback):
+        (LayoutTestController::staticFunctions):
+
+        * DumpRenderTree/LayoutTestController.h:
+        (LayoutTestController::handlesAuthenticationChallenges):
+        (LayoutTestController::setHandlesAuthenticationChallenges):
+        (LayoutTestController::authenticationUsername):
+        (LayoutTestController::setAuthenticationUsername):
+        (LayoutTestController::authenticationPassword):
+        (LayoutTestController::setAuthenticationPassword):
+
+        * DumpRenderTree/mac/ResourceLoadDelegate.mm:
+        (-[ResourceLoadDelegate webView:resource:didReceiveAuthenticationChallenge:fromDataSource:]):
+
+        * DumpRenderTree/win/ResourceLoadDelegate.cpp:
+        (ResourceLoadDelegate::didReceiveAuthenticationChallenge):
+        * DumpRenderTree/win/ResourceLoadDelegate.h:
+
 2009-09-12  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Dan Bernstein.

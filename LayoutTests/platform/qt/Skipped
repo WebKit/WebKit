@@ -4838,3 +4838,6 @@ fast/workers/worker-context-multi-port.html
 
 # No User Scripts
 userscripts
+
+# No authentication challenge handling
+http/tests/loading/basic-credentials-sent-automatically.html

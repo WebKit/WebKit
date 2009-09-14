@@ -1,3 +1,94 @@
+2009-09-14  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Safari 4 cannot be used to update firmware on Linksys routers.
+        <rdar://problem/7174050> and https://bugs.webkit.org/show_bug.cgi?id=29160
+
+        In http://trac.webkit.org/changeset/42483, we disabled CFNetwork's session credential storage and 
+        implemented our own in WebCore.
+
+        One feature we lost is that CFNetwork would automatically send previously authenticated credentials
+        with new connections when the paths match, as allowed by RFC 2617 for HTTP Basic and Digest Authentication.  
+
+        Even though it's optional for User Agents to do this, (some?) Linksys routers rely on this behavior for
+        HTTP Basic Authentication.  So now WebCore's CredentialStorage will track URL paths for Basic credentials.
+
+        We're not making this enhancement for Digest at this time, since we don't know of anything that broke
+        due to the change in Digest behavior.
+
+        Test: http/tests/loading/basic-credentials-sent-automatically.html
+              http/tests/loading/basic-auth-resend-wrong-credentials.html
+
+        * WebCore.base.exp:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * platform/network/Credential.cpp:
+        (WebCore::Credential::isEmpty):
+        * platform/network/Credential.h:
+
+        Add a slightly more full featured CredentialStore that will track URL paths a credential belongs to:
+        * platform/network/CredentialStorage.cpp: Added.
+        (WebCore::protectionSpaceToCredentialMap):
+        (WebCore::originToDefaultCredentialMap):
+        (WebCore::originStringFromURL):
+        (WebCore::CredentialStorage::set):
+        (WebCore::CredentialStorage::get):
+        (WebCore::CredentialStorage::getDefaultAuthenticationCredential):
+        * platform/network/CredentialStorage.h: Added.
+
+        Allow ProtectionSpace to be a hash key:
+        * platform/network/ProtectionSpace.cpp:
+        (WebCore::ProtectionSpace::ProtectionSpace):
+        * platform/network/ProtectionSpace.h:
+        (WebCore::ProtectionSpace::ProtectionSpace):
+        (WebCore::ProtectionSpace::isHashTableDeletedValue):
+        * platform/network/ProtectionSpaceHash.h: Added.
+        (WebCore::ProtectionSpaceHash::hash):
+        (WebCore::ProtectionSpaceHash::equal):
+
+        Allow ResourceHandles to remember the initial credential they used:
+        * platform/network/ResourceHandleInternal.h:
+
+        Allow mutable ResourceRequests to update their platform object if HTTP header fields change:
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::addHTTPHeaderField):
+
+        Remove WebCoreCredentialStorage:
+        * platform/network/cf/AuthenticationCF.cpp:
+        * platform/network/cf/AuthenticationCF.h:
+        * platform/network/mac/AuthenticationMac.h:
+        * platform/network/mac/AuthenticationMac.mm:
+
+        Change ResourceHandleCFNet to try to use stored credentials on new connections, if appropriate:
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge): Only try the ProtectionSpace key'ed
+          Credential if it does not match the initially used Credential.
+        (WebCore::ResourceHandle::receivedCredential):
+        (WebCore::WebCoreSynchronousLoader::didReceiveChallenge): Only try the ProtectionSpace key'ed
+          Credential if it does not match the initially used Credential.
+        (WebCore::WebCoreSynchronousLoader::load):
+
+        Change ResourceHandleMac to try to use stored credentials on new connections, if appropriate:
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge): Only try the ProtectionSpace key'ed
+          Credential if it does not match the initially used Credential.
+        (WebCore::ResourceHandle::receivedCredential):
+        (-[WebCoreSynchronousLoader connection:didReceiveAuthenticationChallenge:]): Only try the 
+          ProtectionSpace key'ed Credential if it does not match the initially used Credential.
+        (+[WebCoreSynchronousLoader loadRequest:allowStoredCredentials:returningResponse:error:]):
+
+        Add base64-ability to CString:
+        * platform/text/CString.cpp:
+        (WebCore::CStringBuffer::base64Encode):
+        (WebCore::CString::base64Encode):
+        * platform/text/CString.h:
+        (WebCore::CStringBuffer::create):
+        (WebCore::CStringBuffer::CStringBuffer):
+
 2009-09-12  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Dan Bernstein.

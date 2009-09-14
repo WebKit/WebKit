@@ -274,6 +274,9 @@ void ResourceRequestBase::addHTTPHeaderField(const AtomicString& name, const Str
     pair<HTTPHeaderMap::iterator, bool> result = m_httpHeaderFields.add(name, value); 
     if (!result.second)
         result.first->second += "," + value;
+
+    if (url().protocolInHTTPFamily())
+        m_platformRequestUpdated = false;
 }
 
 void ResourceRequestBase::addHTTPHeaderFields(const HTTPHeaderMap& headerFields)
