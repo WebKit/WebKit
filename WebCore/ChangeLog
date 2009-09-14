@@ -1,3 +1,27 @@
+2009-09-14  Cameron McCormack  <cam@mcc.id.au>
+
+        Reviewed by Eric Seidel.
+
+        CodeGenerator.pm needs some cleaning up
+        https://bugs.webkit.org/show_bug.cgi?id=29238
+
+        * bindings/scripts/CodeGenerator.pm:
+        (FindParentsRecursively): Removed; its functionality is now handled in
+        AddMethodsConstantsAndAttributesFromParentClasses.
+        (ForAllParents): New function that visits an interface's ancestors and
+        invokes a callback for each one.
+        (AddMethodsConstantsAndAttributesFromParentClasses): Simplified by using
+        ForAllParents.
+        (GetMethodsAndAttributesFromParentClasses): Ditto.
+        (IDLFileForInterface): Factored out previous calls to ScanDirectory into
+        this new function, which returns the filename containing a given IDL
+        interface definition.
+        (ParseInterface): Simplified by using IDLFileForInterface.
+        (ScanDirectory): Removed in lieu of IDLFileForInterface.
+        * bindings/scripts/CodeGeneratorV8.pm: Drop call to
+        FindParentsRecursively and get the list of parents from the
+        AddMethodsConstantsAndAttributesFromParentClasses call instead.
+
 2009-09-14  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Tor Arne Vestbø.

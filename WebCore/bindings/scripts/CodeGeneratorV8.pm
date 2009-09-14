@@ -247,7 +247,7 @@ sub GenerateHeader
 
     # Copy contents of parent classes except the first parent or if it is
     # EventTarget.
-    $codeGenerator->AddMethodsConstantsAndAttributesFromParentClasses($dataNode);
+    $codeGenerator->AddMethodsConstantsAndAttributesFromParentClasses($dataNode, \@allParents, 1);
 
     my $hasLegacyParent = $dataNode->extendedAttributes->{"LegacyParent"};
     my $conditionalString = GenerateConditionalString($dataNode);
@@ -1048,8 +1048,6 @@ sub GenerateImplementation
 
     my $hasLegacyParent = $dataNode->extendedAttributes->{"LegacyParent"};
     my $conditionalString = GenerateConditionalString($dataNode);
-
-    @allParents = $codeGenerator->FindParentsRecursively($dataNode);
 
     # - Add default header template
     @implContentHeader = split("\r", $headerTemplate);

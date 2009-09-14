@@ -24,6 +24,8 @@
 
 package CodeGenerator;
 
+use File::Find;
+
 my $useDocument = "";
 my $useGenerator = "";
 my $useOutputDir = "";
@@ -31,6 +33,7 @@ my $useDirectories = "";
 my $useLayerOnTop = 0;
 my $preprocessor;
 my $writeDependencies = 0;
+my $defines = "";
 
 my $codeGenerator = 0;
 
@@ -56,12 +59,8 @@ my %svgAnimatedTypeHash = ("SVGAnimatedAngle" => 1, "SVGAnimatedBoolean" => 1,
                            "SVGAnimatedRect" => 1, "SVGAnimatedString" => 1,
                            "SVGAnimatedTransformList" => 1);
 
-# Helpers for 'ScanDirectory'
-my $endCondition = 0;
-my $foundFilename = "";
-my @foundFilenames = ();
-my $ignoreParent = 1;
-my $defines = "";
+# Cache of IDL file pathnames.
+my $idlFiles;
 
 # Default constructor
 sub new
@@ -119,105 +118,83 @@ sub ProcessDocument
     $codeGenerator->finish();
 }
 
-# Necessary for V8 bindings to determine whether an interface is descendant from Node.
-# Node descendants are treated differently by DOMMap and this allows inferring the
-# type statically. See more at the original change: http://codereview.chromium.org/3195.
-# FIXME: Figure out a way to eliminate this JS bindings dichotomy.
-sub FindParentsRecursively
+sub ForAllParents
 {
     my $object = shift;
     my $dataNode = shift;
-    my @parents = ($dataNode->name);
-    foreach (@{$dataNode->parents}) {
-        my $interface = $object->StripModule($_);
+    my $beforeRecursion = shift;
+    my $afterRecursion = shift;
+    my $parentsOnly = shift;
 
-        $endCondition = 0;
-        $foundFilename = "";
-        foreach (@{$useDirectories}) {
-            $object->ScanDirectory("$interface.idl", $_, $_, 0) if ($foundFilename eq "");
-        }
+    my $recurse;
+    $recurse = sub {
+        my $interface = shift;
 
-        if ($foundFilename ne "") {
-            print "  |  |>  Parsing parent IDL \"$foundFilename\" for interface \"$interface\"\n" if $verbose;
+        for (@{$interface->parents}) {
+            my $interfaceName = $object->StripModule($_);
+            my $parentInterface = $object->ParseInterface($interfaceName, $parentsOnly);
 
-           # Step #2: Parse the found IDL file (in quiet mode).
-            my $parser = IDLParser->new(1);
-            my $document = $parser->Parse($foundFilename, $defines, $preprocessor, 1);
-
-            foreach my $class (@{$document->classes}) {
-                @parents = (@parents, FindParentsRecursively($object, $class));
+            if ($beforeRecursion) {
+                &$beforeRecursion($parentInterface) eq 'prune' and next;
             }
-        } else {
-            die("Could NOT find specified parent interface \"$interface\"!\n")
+            &$recurse($parentInterface);
+            &$afterRecursion($parentInterface) if $afterRecursion;
         }
-    }
-    return @parents;
+    };
+
+    &$recurse($dataNode);
 }
 
 sub AddMethodsConstantsAndAttributesFromParentClasses
 {
-    # For the interface passed in, recursively parse all parent IDLs in order to
-    # find out all inherited properties/methods and add them in to $dataNode.
-    # An array reference can be passed in as $result to capture the names of
-    # all of the parent interface names visited.
+    # Add to $dataNode all of its inherited interface members, except for those
+    # inherited through $dataNode's first listed parent.  If an array reference
+    # is passed in as $parents, the names of all ancestor interfaces visited
+    # will be appended to the array.  If $collectDirectParents is true, then
+    # even the names of $dataNode's first listed parent and its ancestors will
+    # be appended to $parents.
 
     my $object = shift;
     my $dataNode = shift;
-    my $result = shift;
+    my $parents = shift;
+    my $collectDirectParents = shift;
 
-    my @parents = @{$dataNode->parents};
-    my $parentsMax = @{$dataNode->parents};
+    my $first = 1;
 
-    my $constantsRef = $dataNode->constants;
-    my $functionsRef = $dataNode->functions;
-    my $attributesRef = $dataNode->attributes;
+    $object->ForAllParents($dataNode, sub {
+        my $interface = shift;
 
-    foreach (@{$dataNode->parents}) {
-        if ($ignoreParent) {
+        if ($first) {
             # Ignore first parent class, already handled by the generation itself.
-            $ignoreParent = 0;
-            next;
-        }
+            $first = 0;
 
-        my $interface = $object->StripModule($_);
-
-        push(@$result, $_) if defined($result);
-
-        # Step #1: Find the IDL file associated with 'interface'
-        $endCondition = 0;
-        $foundFilename = "";
-
-        foreach (@{$useDirectories}) {
-            $object->ScanDirectory("$interface.idl", $_, $_, 0) if ($foundFilename eq "");
-        }
-
-        if ($foundFilename ne "") {
-            print "  |  |>  Parsing parent IDL \"$foundFilename\" for interface \"$interface\"\n" if $verbose;
-
-            # Step #2: Parse the found IDL file (in quiet mode).
-            my $parser = IDLParser->new(1);
-            my $document = $parser->Parse($foundFilename, $defines, $preprocessor);
-
-            foreach my $class (@{$document->classes}) {
-                # Step #3: Enter recursive parent search
-                AddMethodsConstantsAndAttributesFromParentClasses($object, $class, $result);
-
-                # Step #4: Collect constants & functions & attributes of this parent-class
-                my $constantsMax = @{$class->constants};
-                my $functionsMax = @{$class->functions};
-                my $attributesMax = @{$class->attributes};
-
-                print "  |  |>  -> Inheriting $constantsMax constants, $functionsMax functions, $attributesMax attributes...\n  |  |>\n" if $verbose;
-
-                # Step #5: Concatenate data
-                push(@$constantsRef, $_) foreach (@{$class->constants});
-                push(@$functionsRef, $_) foreach (@{$class->functions});
-                push(@$attributesRef, $_) foreach (@{$class->attributes});
+            if ($collectDirectParents) {
+                # Just collect the names of the direct ancestor interfaces,
+                # if necessary.
+                push(@$parents, $interface->name);
+                $object->ForAllParents($interface, sub {
+                    my $interface = shift;
+                    push(@$parents, $interface->name);
+                }, undef, 1);
             }
-        } else {
-            die("Could NOT find specified parent interface \"$interface\"!\n");
+
+            # Prune the recursion here.
+            return 'prune';
         }
-    }
+
+        # Collect the name of this additional parent.
+        push(@$parents, $interface->name) if $parents;
+
+        print "  |  |>  -> Inheriting "
+            . @{$interface->constants} . " constants, "
+            . @{$interface->functions} . " functions, "
+            . @{$interface->attributes} . " attributes...\n  |  |>\n" if $verbose;
+
+        # Add this parent's members to $dataNode.
+        push(@{$dataNode->constants}, @{$interface->constants});
+        push(@{$dataNode->functions}, @{$interface->functions});
+        push(@{$dataNode->attributes}, @{$interface->attributes});
+    });
 }
 
 sub GetMethodsAndAttributesFromParentClasses
@@ -228,76 +205,67 @@ sub GetMethodsAndAttributesFromParentClasses
     my $object = shift;
     my $dataNode = shift;
 
-    my @parents = @{$dataNode->parents};
-
-    return if @{$dataNode->parents} == 0;
-
     my @parentList = ();
 
-    foreach (@{$dataNode->parents}) {
-        my $interface = $object->StripModule($_);
+    $object->ForAllParents($dataNode, undef, sub {
+        my $interface = shift;
 
-        # Step #1: Find the IDL file associated with 'interface'
-        $endCondition = 0;
-        $foundFilename = "";
+        my $hash = {
+            "name" => $interface->name,
+            "functions" => $interface->functions,
+            "attributes" => $interface->attributes
+        };
 
-        foreach (@{$useDirectories}) {
-            $object->ScanDirectory("${interface}.idl", $_, $_, 0) if $foundFilename eq "";
-        }
-
-        die("Could NOT find specified parent interface \"$interface\"!\n") if $foundFilename eq "";
-
-        print "  |  |>  Parsing parent IDL \"$foundFilename\" for interface \"$interface\"\n" if $verbose;
-
-        # Step #2: Parse the found IDL file (in quiet mode).
-        my $parser = IDLParser->new(1);
-        my $document = $parser->Parse($foundFilename, $defines);
-
-        foreach my $class (@{$document->classes}) {
-            # Step #3: Enter recursive parent search
-            push(@parentList, GetMethodsAndAttributesFromParentClasses($object, $class));
-
-            # Step #4: Collect constants & functions & attributes of this parent-class
-
-            # print "  |  |>  -> Inheriting $functionsMax functions amd $attributesMax attributes...\n  |  |>\n" if $verbose;
-            my $hash = {
-                "name" => $class->name,
-                "functions" => $class->functions,
-                "attributes" => $class->attributes
-            };
-
-            # Step #5: Concatenate data
-            unshift(@parentList, $hash);
-        }
-    }
+        unshift(@parentList, $hash);
+    });
 
     return @parentList;
 }
 
+sub IDLFileForInterface
+{
+    my $object = shift;
+    my $interfaceName = shift;
+
+    unless ($idlFiles) {
+        my $sourceRoot = $ENV{SOURCE_ROOT};
+        my @directories = map { $_ = "$sourceRoot/$_" if $sourceRoot && -d "$sourceRoot/$_"; $_ } @$useDirectories;
+
+        $idlFiles = { };
+
+        my $wanted = sub {
+            $idlFiles->{$1} = $File::Find::name if /^([A-Z].*)\.idl$/;
+            $File::Find::prune = 1 if /^\../;
+        };
+        find($wanted, @directories);
+    }
+
+    return $idlFiles->{$interfaceName};
+}
+
 sub ParseInterface
 {
-    my ($object, $interfaceName) = @_;
+    my $object = shift;
+    my $interfaceName = shift;
+    my $parentsOnly = shift;
+
+    return undef if $interfaceName eq 'Object';
 
     # Step #1: Find the IDL file associated with 'interface'
-    $endCondition = 0;
-    $foundFilename = "";
+    my $filename = $object->IDLFileForInterface($interfaceName)
+        or die("Could NOT find IDL file for interface \"$interfaceName\"!\n");
 
-    foreach (@{$useDirectories}) {
-        $object->ScanDirectory("${interfaceName}.idl", $_, $_, 0) if $foundFilename eq "";
-    }
-    die "Could NOT find specified parent interface \"$interfaceName\"!\n" if $foundFilename eq "";
-
-    print "  |  |>  Parsing parent IDL \"$foundFilename\" for interface \"$interfaceName\"\n" if $verbose;
+    print "  |  |>  Parsing parent IDL \"$filename\" for interface \"$interfaceName\"\n" if $verbose;
 
     # Step #2: Parse the found IDL file (in quiet mode).
     my $parser = IDLParser->new(1);
-    my $document = $parser->Parse($foundFilename, $defines);
+    my $document = $parser->Parse($filename, $defines, $preprocessor, $parentsOnly);
 
     foreach my $interface (@{$document->classes}) {
         return $interface if $interface->name eq $interfaceName;
     }
 
-    die "Interface definition not found";
+    die("Could NOT find interface definition for $interface in $filename");
 }
 
 # Helpers for all CodeGenerator***.pm modules
@@ -354,56 +322,6 @@ sub IsSVGAnimatedType
 
     return 1 if $svgAnimatedTypeHash{$type};
     return 0; 
-}
-
-# Internal Helper
-sub ScanDirectory
-{
-    my $object = shift;
-
-    my $interface = shift;
-    my $directory = shift;
-    my $useDirectory = shift;
-    my $reportAllFiles = shift;
-
-    return if ($endCondition eq 1) and ($reportAllFiles eq 0);
-
-    my $sourceRoot = $ENV{SOURCE_ROOT};
-    my $thisDir = $sourceRoot ? "$sourceRoot/$directory" : $directory;
-
-    if (!opendir(DIR, $thisDir)) {
-        opendir(DIR, $directory) or die "[ERROR] Can't open directory $thisDir or $directory: \"$!\"\n";
-        $thisDir = $directory;
-    }
-
-    my @names = readdir(DIR) or die "[ERROR] Cant't read directory $thisDir \"$!\"\n";
-    closedir(DIR);
-
-    foreach my $name (@names) {
-        # Skip if we already found the right file or
-        # if we encounter 'exotic' stuff (ie. '.', '..', '.svn')
-        next if ($endCondition eq 1) or ($name =~ /^\./);
-
-        # Recurisvely enter directory
-        if (-d "$thisDir/$name") {
-            $object->ScanDirectory($interface, "$directory/$name", $useDirectory, $reportAllFiles);
-            next;
-        }
-
-        # Check wheter we found the desired file
-        my $condition = ($name eq $interface);
-        $condition = 1 if ($interface eq "allidls") and ($name =~ /\.idl$/);
-
-        if ($condition) {
-            $foundFilename = "$thisDir/$name";
-
-            if ($reportAllFiles eq 0) {
-                $endCondition = 1;
-            } else {
-                push(@foundFilenames, $foundFilename);
-            }
-        }
-    }
 }
 
 # Uppercase the first letter while respecting WebKit style guidelines. 
