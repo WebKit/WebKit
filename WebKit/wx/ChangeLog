@@ -1,3 +1,18 @@
+2009-09-09  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+
+        Allow the user to query Frame::shouldClose via wx API.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=29199
+
+        * WebFrame.cpp:
+        (wxWebFrame::ShouldClose):
+        * WebFrame.h:
+        * WebView.cpp:
+        (wxWebView::ShouldClose):
+        * WebView.h:
+
 2009-09-13  Kevin Watters  <kevinwatters@gmail.com>
 
         Reviewed by Kevin Ollivier.

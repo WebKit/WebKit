@@ -159,6 +159,8 @@ public:
     wxWebFrame* GetMainFrame() { return m_mainFrame; }
 
     wxWebViewDOMElementInfo HitTest(const wxPoint& pos) const;
+    
+    bool ShouldClose() const;
 
 protected:
 
