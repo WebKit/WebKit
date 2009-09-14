@@ -1,3 +1,24 @@
+2009-09-12  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Fix <rdar://problem/7090444> Crashes in-[WebBaseNetscapePluginView stop] handling NSWindowWillCloseNotification.
+
+        It's not valid to call -addWindowObservers when the view is not in a window, but this can happen when -start
+        initializes a plug-in and the plug-in removes itself from the document during initialization.  -viewDidMoveToWindow
+        calls -start and then calls -addWindowObservers without ensuring that the view is still in a window.
+
+        If -[WebBaseNetscapePluginView addWindowObservers] is incorrectly called when the view is not in a window, it will
+        observe NSWindowWillCloseNotification on all windows.  This unexpected observer registration is not balanced by an
+        unregistration so the notification can be delivered after the view is deallocated, causing the crash seen in
+        <rdar://problem/7090444>.
+
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView start]): Only call -updateAndSetWindow if we still have a current window.
+        (-[WebBaseNetscapePluginView viewDidMoveToWindow]): Remove unnecessary calls to -restartTimers and -addWindowObservers
+        from -[WebBaseNetscapePluginView viewDidMoveToWindow].  They are already called from within -start with the extra benefit
+        of ensuring that the view is still in a window when they are called.
+
 2009-09-11  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Jon Honeycutt.
