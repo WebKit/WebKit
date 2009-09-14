@@ -2,6 +2,21 @@
 
         Reviewed by Dan Bernstein.
 
+        Fix <rdar://problem/6954546> Crashes in WebCore::RenderPart::setWidget below FrameLoader::loadPlugin.
+
+        The calls to FrameLoader::requestObject within RenderPartObject::updateWidget can result in a plug-in
+        being initialized.  This can run cause arbitrary JavaScript to run and may result in the RenderPartObject
+        being detached from the render tree and destroyed, causing a crash like <rdar://problem/6954546>.
+
+        No test is possible until <rdar://problem/7090444> is fixed.
+
+        * rendering/RenderPartObject.cpp:
+        (WebCore::RenderPartObject::updateWidget): Ensure that we stay alive for the duration of plug-in initialization.
+
+2009-09-12  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Dan Bernstein.
+
         Add RenderWidgetProtector to simplify protecting a RenderWidget from destruction for the
         duration of a function.  Deploy it within RenderWidget.
 

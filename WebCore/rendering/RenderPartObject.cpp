@@ -34,6 +34,7 @@
 #include "MIMETypeRegistry.h"
 #include "Page.h"
 #include "RenderView.h"
+#include "RenderWidgetProtector.h"
 #include "Text.h"
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
@@ -130,6 +131,12 @@ void RenderPartObject::updateWidget(bool onlyCreateNonNetscapePlugins)
     Vector<String> paramNames;
     Vector<String> paramValues;
     Frame* frame = frameView()->frame();
+
+    // The calls to FrameLoader::requestObject within this function can result in a plug-in being initialized.
+    // This can run cause arbitrary JavaScript to run and may result in this RenderObject being detached from
+    // the render tree and destroyed, causing a crash like <rdar://problem/6954546>.  By extending our lifetime
+    // artifically to ensure that we remain alive for the duration of plug-in initialization.
+    RenderWidgetProtector protector(this);
 
     if (node()->hasTagName(objectTag)) {
         HTMLObjectElement* o = static_cast<HTMLObjectElement*>(node());
