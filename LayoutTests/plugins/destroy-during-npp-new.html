@@ -1,0 +1,42 @@
+<html>
+<head>
+    <script type="text/javascript">
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.setCanOpenWindows();
+        layoutTestController.waitUntilDone();
+    }
+
+    var newWindow = window.open("data:text/html,Hello world!")
+
+    function tryCloseWindow(w) {
+        if (!w)
+            return;
+
+        w.close();
+
+        function doneIfClosed() {
+            if (w.closed) {
+                if (window.layoutTestController)
+                    layoutTestController.notifyDone();
+                return;
+            }
+            setTimeout(doneIfClosed, 1);
+        };
+        doneIfClosed();
+    }
+
+    window.onload = function() {
+        tryCloseWindow(newWindow);
+
+        var testPlugin = document.getElementById('testPlugin');
+        if (!testPlugin || !testPlugin.parentNode)
+            document.documentElement.appendChild(document.createTextNode("SUCCESS"));
+    }
+    </script>
+</head>
+<body>
+    <p>This tests a plug-in that removes itself from the document during NPP_New.  It passes if it does not crash during removal (<a href="rdar://problem/6954546">&lt;rdar://problem/6954546&gt;</a>) or when a window is next closed (<a href="rdar://problem/7090444">&lt;rdar://problem/7090444&gt;</a>).</p>
+    <embed id="testPlugin" type="application/x-webkit-test-netscape" width="200" height="200" cleardocumentduringnew></embed>
+</body>
+</html>

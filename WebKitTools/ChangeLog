@@ -1,3 +1,15 @@
+2009-09-12  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Test for <rdar://problem/6954546> and <rdar://problem/7090444>.
+
+        Add a flag on the test plug-in that asks it to clear the document during the call to NPP_New.
+        This is the trigger for both <rdar://problem/6954546> and <rdar://problem/7090444>.
+
+        * DumpRenderTree/TestNetscapePlugIn.subproj/main.cpp:
+        (NPP_New):
+
 2009-09-14  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix for non-wxPython builds and a fix for errors when updating swig.py.

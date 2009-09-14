@@ -64,6 +64,8 @@ void NP_Shutdown(void)
 {
 }
 
+static void executeScript(const PluginObject* obj, const char* script);
+
 NPError NPP_New(NPMIMEType pluginType, NPP instance, uint16 mode, int16 argc, char *argn[], char *argv[], NPSavedData *saved)
 {
     bool forceCarbon = false;
@@ -101,7 +103,8 @@ NPError NPP_New(NPMIMEType pluginType, NPP instance, uint16 mode, int16 argc, ch
             for (int i = 0; i < argc; i++)
                 if (strcasecmp(argn[i], "src") == 0)
                     pluginLog(instance, "src: %s", argv[i]);
-        }
+        } else if (strcasecmp(argn[i], "cleardocumentduringnew") == 0)
+            executeScript(obj, "document.body.innerHTML = ''");
     }
         
 #ifndef NP_NO_CARBON
