@@ -1,3 +1,18 @@
+2009-09-11  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        DRT/test part of
+        <rdar://problem/7197644> WebKit should broadcast an MSAA event when
+        jumping to a named anchor
+
+        https://bugs.webkit.org/show_bug.cgi?id=28899
+
+        Reviewed by Adam Roben.
+
+        * platform/win/accessibility/scroll-to-anchor-expected.txt: Added.
+        * platform/win/accessibility/scroll-to-anchor.html:
+        Added. Turns on scrolling start event logging, then jumps to an
+        anchor at the bottom of the page.
+
 2009-09-14  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Alexey Proskuryakov.

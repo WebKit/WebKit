@@ -45,6 +45,7 @@ public:
     AccessibilityUIElement focusedElement();
 
     void setLogFocusEvents(bool);
+    void setLogScrollingStartEvents(bool);
 
     void resetToConsistentState();
 
@@ -53,6 +54,7 @@ private:
 
 #if PLATFORM(WIN)
     HWINEVENTHOOK m_focusEventHook;
+    HWINEVENTHOOK m_scrollingStartEventHook;
 #endif
 };
 

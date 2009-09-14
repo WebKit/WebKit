@@ -38,6 +38,7 @@ using namespace std;
 
 AccessibilityController::AccessibilityController()
     : m_focusEventHook(0)
+    , m_scrollingStartEventHook(0)
 {
 }
 
@@ -88,10 +89,8 @@ AccessibilityUIElement AccessibilityController::rootElement()
     return rootAccessible;
 }
 
-static void CALLBACK logFocusEventProc(HWINEVENTHOOK hWinEventHook, DWORD event, HWND hwnd, LONG idObject, LONG idChild, DWORD, DWORD)
+static void CALLBACK logEventProc(HWINEVENTHOOK hWinEventHook, DWORD event, HWND hwnd, LONG idObject, LONG idChild, DWORD, DWORD)
 {
-    ASSERT_ARG(event, event == EVENT_OBJECT_FOCUS);
-
     // Get the accessible object for this event.
     COMPtr<IAccessible> parentObject;
 
@@ -108,7 +107,19 @@ static void CALLBACK logFocusEventProc(HWINEVENTHOOK hWinEventHook, DWORD event,
     wstring name(nameBSTR, ::SysStringLen(nameBSTR));
     SysFreeString(nameBSTR);
 
-    printf("Received focus event for object '%S'.\n", name.c_str());
+    switch (event) {
+        case EVENT_OBJECT_FOCUS:
+            printf("Received focus event for object '%S'.\n", name.c_str());
+            break;
+
+        case EVENT_SYSTEM_SCROLLINGSTART:
+            printf("Received scrolling start event for object '%S'.\n", name.c_str());
+            break;
+
+        default:
+            printf("Received unknown event for object '%S'.\n", name.c_str());
+            break;
+    }
 }
 
 void AccessibilityController::setLogFocusEvents(bool logFocusEvents)
@@ -126,7 +137,27 @@ void AccessibilityController::setLogFocusEvents(bool logFocusEvents)
     // the root accessible object.
     rootElement();
 
-    m_focusEventHook = SetWinEventHook(EVENT_OBJECT_FOCUS, EVENT_OBJECT_FOCUS, GetModuleHandle(0), logFocusEventProc, GetCurrentProcessId(), 0, WINEVENT_INCONTEXT);
+    m_focusEventHook = SetWinEventHook(EVENT_OBJECT_FOCUS, EVENT_OBJECT_FOCUS, GetModuleHandle(0), logEventProc, GetCurrentProcessId(), 0, WINEVENT_INCONTEXT);
 
     ASSERT(m_focusEventHook);
+}
+
+void AccessibilityController::setLogScrollingStartEvents(bool logScrollingStartEvents)
+{
+    if (!!m_scrollingStartEventHook == logScrollingStartEvents)
+        return;
+
+    if (!logScrollingStartEvents) {
+        UnhookWinEvent(m_scrollingStartEventHook);
+        m_scrollingStartEventHook = 0;
+        return;
+    }
+
+    // Ensure that accessibility is initialized for the WebView by querying for
+    // the root accessible object.
+    rootElement();
+
+    m_scrollingStartEventHook = SetWinEventHook(EVENT_SYSTEM_SCROLLINGSTART, EVENT_SYSTEM_SCROLLINGSTART, GetModuleHandle(0), logEventProc, GetCurrentProcessId(), 0, WINEVENT_INCONTEXT);
+
+    ASSERT(m_scrollingStartEventHook);
 }

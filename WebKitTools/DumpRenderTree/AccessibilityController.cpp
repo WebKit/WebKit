@@ -59,10 +59,18 @@ static JSValueRef logFocusEventsCallback(JSContextRef ctx, JSObjectRef, JSObject
     return JSValueMakeUndefined(ctx);
 }
 
+static JSValueRef logScrollingStartEventsCallback(JSContextRef ctx, JSObjectRef, JSObjectRef thisObject, size_t, const JSValueRef[], JSValueRef*)
+{
+    AccessibilityController* controller = static_cast<AccessibilityController*>(JSObjectGetPrivate(thisObject));
+    controller->setLogScrollingStartEvents(true);
+    return JSValueMakeUndefined(ctx);
+}
+
 JSClassRef AccessibilityController::getJSClass()
 {
     static JSStaticFunction staticFunctions[] = {
         { "logFocusEvents", logFocusEventsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "logScrollingStartEvents", logScrollingStartEventsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { 0, 0, 0 }
     };
 
@@ -84,4 +92,5 @@ JSClassRef AccessibilityController::getJSClass()
 void AccessibilityController::resetToConsistentState()
 {
     setLogFocusEvents(false);
+    setLogScrollingStartEvents(false);
 }

@@ -1,3 +1,47 @@
+2009-09-11  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        DRT/test part of
+        <rdar://problem/7197644> WebKit should broadcast an MSAA event when
+        jumping to a named anchor
+
+        https://bugs.webkit.org/show_bug.cgi?id=28899
+
+        Reviewed by Adam Roben.
+
+        * DumpRenderTree/AccessibilityController.cpp:
+        (logScrollingStartEventsCallback):
+        Turn on logging of scrolling start events.
+        (AccessibilityController::getJSClass):
+        Add a "logScrollingStartEvents" to the AccessibilityController's JS
+        class definition.
+        (AccessibilityController::resetToConsistentState):
+        Turn off logging of scrolling start events.
+
+        * DumpRenderTree/AccessibilityController.h:
+        Declare setLogScrollingStartEvents(). Add a member for the scrolling
+        start event hook.
+
+        * DumpRenderTree/mac/AccessibilityControllerMac.cpp:
+        (AccessibilityController::setLogScrollingStartEvents):
+        Stubbed.
+
+        * DumpRenderTree/win/AccessibilityControllerWin.cpp:
+        (AccessibilityController::AccessibilityController):
+        Initialize the handle to 0.
+        (logEventProc):
+        Renamed from logFocusEventProc; now logs scrolling start events, too.
+        Removed the assertion that the event is a focus event. Added a switch
+        to print a message for focus, scrolling start, and other, unknown
+        events.
+        (AccessibilityController::setLogFocusEvents):
+        Changed to use logEventProc.
+        (AccessibilityController::setLogScrollingStartEvents):
+        If turning logging off, unhook the scrolling start event hook, and clear
+        the member holding the handle. If turning on, query for the root
+        accessible, so that accessibility is enabled for the WebView, and call
+        SetWinEventHook to setup an event hook using logEventProc as the
+        callback function.
+
 2009-09-14  Brady Eidson  <beidson@apple.com>
 
         Windows build fix.
