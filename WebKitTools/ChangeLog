@@ -1,3 +1,11 @@
+2009-09-14  Csaba Osztrogonac  <oszi@inf.u-szeged.hu>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] Build fix for windows build.
+
+        * Scripts/bisect-builds: Add missing paranthesis for tmpdir function.
+
 2009-09-13  Kevin Ollivier  <kevino@theolliviers.com>
 
         Fix typo accidently landed in last commit.

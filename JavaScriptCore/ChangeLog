@@ -1,3 +1,12 @@
+2009-09-14  Csaba Osztrogonac  <oszi@inf.u-szeged.hu>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] Build fix for windows build.
+
+        * JavaScriptCore.pri: Correct a logic error.
+        * pcre/dftables: Add missing paranthesis for tmpdir function.
+
 2009-09-12  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY (Build fix).
