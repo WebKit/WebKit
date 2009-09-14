@@ -47,7 +47,7 @@ public:
 
     bool popupIsVisible() const { return m_searchPopupIsVisible; }
     void showPopup();
-    virtual void hidePopup(); // PopupMenuClient method
+    void hidePopup();
 
     void forwardEvent(Event*);
 
@@ -109,6 +109,7 @@ private:
     virtual int clientPaddingRight() const;
     virtual int listSize() const;
     virtual int selectedIndex() const;
+    virtual void popupDidHide();
     virtual bool itemIsSeparator(unsigned listIndex) const;
     virtual bool itemIsLabel(unsigned listIndex) const;
     virtual bool itemIsSelected(unsigned listIndex) const;

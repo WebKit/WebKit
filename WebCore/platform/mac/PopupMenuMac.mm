@@ -105,7 +105,7 @@ void PopupMenu::show(const IntRect& r, FrameView* v, int index)
     int numItems = [m_popup.get() numberOfItems];
     if (numItems <= 0) {
         if (client())
-            client()->hidePopup();
+            client()->popupDidHide();
         return;
     }
     ASSERT(numItems > index);
@@ -162,7 +162,7 @@ void PopupMenu::show(const IntRect& r, FrameView* v, int index)
 
     if (client()) {
         int newIndex = [m_popup.get() indexOfSelectedItem];
-        client()->hidePopup();
+        client()->popupDidHide();
 
         // Adjust newIndex for hidden first item.
         if (!client()->shouldPopOver())

@@ -49,7 +49,7 @@ public:
     virtual int clientPaddingRight() const = 0;
     virtual int listSize() const = 0;
     virtual int selectedIndex() const = 0;
-    virtual void hidePopup() = 0;
+    virtual void popupDidHide() = 0;
     virtual bool itemIsSeparator(unsigned listIndex) const = 0;
     virtual bool itemIsLabel(unsigned listIndex) const = 0;
     virtual bool itemIsSelected(unsigned listIndex) const = 0;

@@ -292,7 +292,6 @@ void RenderMenuList::hidePopup()
 {
     if (m_popup)
         m_popup->hide();
-    m_popupIsVisible = false;
 }
 
 void RenderMenuList::valueChanged(unsigned listIndex, bool fireOnChange)
@@ -426,6 +425,11 @@ int RenderMenuList::selectedIndex() const
 {
     SelectElement* select = toSelectElement(static_cast<Element*>(node()));
     return select->optionToListIndex(select->selectedIndex());
+}
+
+void RenderMenuList::popupDidHide()
+{
+    m_popupIsVisible = false;
 }
 
 bool RenderMenuList::itemIsSeparator(unsigned listIndex) const

@@ -88,7 +88,7 @@ void PopupMenu::OnMenuItemSelected(wxCommandEvent& event)
 {
     if (client()) {
         client()->valueChanged(event.GetId() - s_menuStartId);
-        client()->hidePopup();
+        client()->popupDidHide();
     }
     // TODO: Do we need to call Disconnect here? Do we have a ref to the native window still?
 }

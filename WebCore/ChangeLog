@@ -1,5 +1,52 @@
 2009-09-14  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29138
+        Simplify popup menu handling.
+
+        * platform/PopupMenuClient.h:
+        Rename hidePopup to popupDidHide.
+        
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupListBox::handleKeyEvent):        
+        (WebCore::PopupListBox::abandon):
+        (WebCore::PopupListBox::acceptIndex):
+        Call popupDidHide instead of hidePopup.
+        
+        * platform/gtk/PopupMenuGtk.cpp:
+        (WebCore::PopupMenu::menuUnmapped):
+        Ditto.
+        
+        * platform/mac/PopupMenuMac.mm:
+        (WebCore::PopupMenu::show):
+        Ditto.
+        
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenu::hide):
+        Call popupDidHide.
+        
+        (WebCore::PopupWndProc):
+        Call PopupMenu::hide.
+        
+        * platform/wx/PopupMenuWx.cpp:
+        (WebCore::PopupMenu::OnMenuItemSelected):
+        Call popupDidHide.
+        
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::hidePopup):
+        (WebCore::RenderMenuList::popupDidHide):
+        * rendering/RenderMenuList.h:
+        Set the "popup is visible" flag in popupDidHide.
+        
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::hidePopup):
+        (WebCore::RenderTextControlSingleLine::popupDidHide):
+        * rendering/RenderTextControlSingleLine.h:
+        Ditto.
+
+2009-09-14  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by David Hyatt.
 
         - Fix <rdar://problem/7182275>.
