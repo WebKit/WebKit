@@ -1,3 +1,12 @@
+2009-09-14  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        GTK build fix.
+
+        Unreviewed.
+
+        * DumpRenderTree/gtk/AccessibilityControllerGtk.cpp:
+        (AccessibilityController::setLogScrollingStartEvents):
+
 2009-09-11  Jon Honeycutt  <jhoneycutt@apple.com>
 
         DRT/test part of
