@@ -52,6 +52,7 @@ accessibility/aria-readonly.html
 accessibility/button-press-action.html
 accessibility/canvas.html
 accessibility/editable-webarea-context-menu-point.html
+accessibility/ignore-spacer-elements.html
 accessibility/img-aria-button-alt-tag.html
 accessibility/input-image-alt.html
 accessibility/input-slider.html
@@ -757,6 +758,7 @@ editing/execCommand/unlink.html
 editing/inserting/5994480-2.html
 editing/inserting/insert-thai-characters-001.html
 editing/inserting/space-after-removeformat.html
+editing/inserting/typing-tab-designmode.html
 editing/pasteboard/19644-1.html
 editing/pasteboard/19644-2.html
 editing/pasteboard/4744008.html
@@ -1574,6 +1576,7 @@ fast/dom/null-document-location-replace-crash.html
 fast/dom/object-embed-plugin-scripting.html
 fast/dom/object-plugin-hides-properties.html
 fast/dom/tabindex-clamp.html
+fast/dom/Document/CaretRangeFromPoint/hittest-relative-to-viewport.html
 fast/dom/HTMLDocument/hasFocus.html
 fast/dom/SelectorAPI/resig-SelectorsAPI-test.xhtml
 fast/dom/Window/new-window-opener.html
@@ -1593,6 +1596,7 @@ fast/events/attempt-scroll-with-no-scrollbars.html
 fast/events/autoscroll-in-textfield.html
 fast/events/autoscroll-nonscrollable-iframe-in-scrollable-div.html
 fast/events/autoscroll-with-non-scrollable-parent.html
+fast/events/blur-focus-window-should-blur-focus-element.html
 fast/events/click-count.html
 fast/events/content-changed-during-drop.html
 fast/events/context-onmousedown-event.html
@@ -1606,6 +1610,7 @@ fast/events/key-events-in-input-text.html
 fast/events/keydown-keypress-focus-change.html
 fast/events/keydown-keypress-preventDefault.html
 fast/events/keypress-focus-change.html
+fast/events/keypress-insert-tab.html
 fast/events/mouse-click-events.html
 fast/events/mouseclick-target-and-positioning.html
 fast/events/mouseup-from-button2.html
@@ -1619,6 +1624,7 @@ fast/events/onunload-clears-onbeforeunload.html
 fast/events/onunload-not-on-body.html
 fast/events/onunload.html
 fast/events/option-tab.html
+fast/events/pageshow-pagehide-on-back-cached-with-frames.html
 fast/events/pointer-events-2.html
 fast/events/popup-blocking-click-in-iframe.html
 fast/events/right-click-focus.html
@@ -1669,6 +1675,7 @@ fast/history/history_reload.html
 fast/history/window-open.html
 fast/html/tab-order.html
 fast/html/text-field-input-types.html
+fast/loader/frames-with-unload-handlers-in-page-cache.html
 fast/loader/main-document-url-for-non-http-loads.html
 fast/loader/onunload-form-submit-crash-2.html
 fast/loader/onunload-form-submit-crash.html
@@ -3622,6 +3629,7 @@ http/tests/loading/onload-vs-immediate-refresh.pl
 http/tests/loading/preload-img-test.html
 http/tests/loading/slow-parsing-subframe.html
 http/tests/loading/text-content-type-with-binary-extension.html
+http/tests/local/send-dragged-file.html
 http/tests/media/video-play-stall-seek.html
 http/tests/media/video-play-stall.html
 http/tests/media/video-seekable-stall.html
@@ -3665,6 +3673,20 @@ http/tests/security/local-image-from-remote.html
 http/tests/security/local-video-poster-from-remote.html
 http/tests/security/local-video-source-from-remote.html
 http/tests/security/local-video-src-from-remote.html
+http/tests/security/mixedContent/about-blank-iframe-in-main-frame.html
+http/tests/security/mixedContent/data-url-iframe-in-main-frame.html
+http/tests/security/mixedContent/data-url-script-in-iframe.html
+http/tests/security/mixedContent/insecure-css-in-iframe.html
+http/tests/security/mixedContent/insecure-css-in-main-frame.html
+http/tests/security/mixedContent/insecure-iframe-in-iframe.html
+http/tests/security/mixedContent/insecure-iframe-in-main-frame.html
+http/tests/security/mixedContent/insecure-image-in-iframe.html
+http/tests/security/mixedContent/insecure-image-in-main-frame.html
+http/tests/security/mixedContent/insecure-script-in-iframe.html
+http/tests/security/mixedContent/redirect-http-to-https-iframe-in-main-frame.html
+http/tests/security/mixedContent/redirect-http-to-https-script-in-iframe.html
+http/tests/security/mixedContent/redirect-https-to-http-iframe-in-main-frame.html
+http/tests/security/mixedContent/redirect-https-to-http-script-in-iframe.html
 http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body.html
 http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-allow.html
 http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-deny.html
@@ -3789,6 +3811,9 @@ http/tests/webarchive/test-preload-resources.html
 
 # Tests in media/ directory
 #   Tests failing
+media/video-append-source.html
+media/video-autoplay.html
+media/video-buffered.html
 media/video-can-play-type.html
 media/video-click-dblckick-standalone.html
 media/video-controls-transformed.html

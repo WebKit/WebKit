@@ -1,3 +1,14 @@
+2009-09-14  Zan Dobersek  <zandobersek@gmail.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Add some tests that fail to the skipped list and rebaseline two tests
+        to pass them.
+
+        * platform/gtk/Skipped: Populate with more failing tests.
+        * platform/gtk/fast/dom/Window/window-properties-expected.txt: Rebaseline.
+        * platform/gtk/fast/dom/prototype-inheritance-2-expected.txt: Ditto.
+
 2009-09-12  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Dan Bernstein.

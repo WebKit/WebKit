@@ -365,6 +365,7 @@ Never found TextMetrics
 Never found WebKitCSSMatrix
 Never found WebKitCSSTransformValue
 Never found WebKitPoint
+Never found WebSocket
 Never found Worker
 Never found XMLHttpRequest
 Never found XMLHttpRequestUpload
