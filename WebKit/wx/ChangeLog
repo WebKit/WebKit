@@ -1,3 +1,15 @@
+2009-09-13  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+
+        Add support for console MessageLevel at wx API level.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=29197
+
+        * WebKitSupport/ChromeClientWx.cpp:
+        (WebCore::ChromeClientWx::addMessageToConsole):
+        * WebView.h:
+
 2009-09-03  Adam Barth  <abarth@webkit.org>
 
         Reviewed by eric@webkit.org.

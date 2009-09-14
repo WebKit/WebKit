@@ -212,6 +212,7 @@ void ChromeClientWx::addMessageToConsole(MessageSource source,
         wkEvent.SetMessage(message);
         wkEvent.SetLineNumber(lineNumber);
         wkEvent.SetSourceID(sourceID);
+        wkEvent.SetLevel(static_cast<wxWebViewConsoleMessageLevel>(level));
         m_webView->GetEventHandler()->ProcessEvent(wkEvent);
     }
 }
