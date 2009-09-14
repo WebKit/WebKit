@@ -1,5 +1,16 @@
 2009-09-14  Brady Eidson  <beidson@apple.com>
 
+        Windows build fix.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (setAuthenticationPasswordCallback):
+        (setAuthenticationUsernameCallback):
+        
+        * DumpRenderTree/win/ResourceLoadDelegate.cpp:
+        (ResourceLoadDelegate::didReceiveAuthenticationChallenge):
+
+2009-09-14  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Alexey Proskuryakov.
 
         Safari 4 cannot be used to update firmware on Linksys routers.

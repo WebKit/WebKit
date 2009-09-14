@@ -261,7 +261,7 @@ HRESULT STDMETHODCALLTYPE ResourceLoadDelegate::didReceiveAuthenticationChalleng
     /* [in] */ IWebDataSource *dataSource)
 {
     if (!gLayoutTestController->handlesAuthenticationChallenges())
-        return;
+        return E_FAIL;
     
     const char* user = gLayoutTestController->authenticationUsername().c_str();
     const char* password = gLayoutTestController->authenticationPassword().c_str();
