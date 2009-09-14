@@ -63,6 +63,9 @@ WebInspector.StoragePanel = function(database)
     this.sidebarTree.appendChild(this.cookieListTreeElement);
     this.cookieListTreeElement.expand();
 
+    this.cookieTreeElement = new WebInspector.CookieSidebarTreeElement();
+    this.cookieListTreeElement.appendChild(this.cookieTreeElement);
+
     this.storageViews = document.createElement("div");
     this.storageViews.id = "storage-views";
     this.element.appendChild(this.storageViews);
@@ -91,12 +94,6 @@ WebInspector.StoragePanel.prototype = {
         WebInspector.Panel.prototype.show.call(this);
         this._updateSidebarWidth();
         this._registerStorageEventListener();
-        this.populateInterface();
-    },
-
-    populateInterface: function()
-    {
-        this.addCookies();
     },
 
     reset: function()
@@ -126,16 +123,17 @@ WebInspector.StoragePanel.prototype = {
 
         this._domStorage = [];
 
-        delete this.cookieTreeElement;
         delete this._cookieView;
 
         this.databasesListTreeElement.removeChildren();
         this.localStorageListTreeElement.removeChildren();
         this.sessionStorageListTreeElement.removeChildren();
-        this.cookieListTreeElement.removeChildren();
         this.storageViews.removeChildren();        
 
         this.storageViewStatusBarItemsContainer.removeChildren();
+        
+        if (this.sidebarTree.selectedTreeElement)
+            this.sidebarTree.selectedTreeElement.deselect();
     },
 
     handleKeyEvent: function(event)
@@ -161,14 +159,6 @@ WebInspector.StoragePanel.prototype = {
             this.localStorageListTreeElement.appendChild(domStorageTreeElement);
         else
             this.sessionStorageListTreeElement.appendChild(domStorageTreeElement);
-    },
-
-    addCookies: function()
-    {
-        if (!this.cookieTreeElement) {
-            this.cookieTreeElement = new WebInspector.CookieSidebarTreeElement();
-            this.cookieListTreeElement.appendChild(this.cookieTreeElement);
-        }
     },
 
     selectDatabase: function(db)

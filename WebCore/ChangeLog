@@ -1,3 +1,19 @@
+2009-09-14  Anthony Ricaud  <rik@webkit.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Cookies are not inspectable after reloading a page
+        https://bugs.webkit.org/show_bug.cgi?id=29222
+
+        Create the cookieTreeElement on initialization instead of when the view is shown.
+        Reset the selected element of the sidebar on reset.
+
+        * inspector/front-end/StoragePanel.js:
+        (WebInspector.StoragePanel):
+        (WebInspector.StoragePanel.prototype.show):
+        (WebInspector.StoragePanel.prototype.reset):
+
+
 2009-09-14  Brady Eidson  <beidson@apple.com>
 
         Windows build fix.
