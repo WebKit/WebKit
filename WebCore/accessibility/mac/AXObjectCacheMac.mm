@@ -80,6 +80,8 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotific
         case AXValueChanged:
             macNotification = NSAccessibilityValueChangedNotification;
             break;
+        default:
+            return;
     }
     
     NSAccessibilityPostNotification(obj->wrapper(), macNotification);
@@ -88,6 +90,10 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotific
 void AXObjectCache::handleFocusedUIElementChanged(RenderObject*, RenderObject*)
 {
     [[WebCoreViewFactory sharedFactory] accessibilityHandleFocusChanged];
+}
+
+void AXObjectCache::handleScrolledToAnchor(const Node*)
+{
 }
 
 }

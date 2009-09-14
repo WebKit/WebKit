@@ -90,6 +90,35 @@ AccessibilityObject* AccessibilityObject::parentObjectUnignored() const
     return parent;
 }
 
+AccessibilityObject* AccessibilityObject::firstAccessibleObjectFromNode(const Node* node)
+{
+    ASSERT(AXObjectCache::accessibilityEnabled());
+
+    if (!node)
+        return 0;
+
+    Document* document = node->document();
+    if (!document)
+        return 0;
+
+    AXObjectCache* cache = document->axObjectCache();
+
+    AccessibilityObject* accessibleObject = cache->getOrCreate(node->renderer());
+    while (accessibleObject && accessibleObject->accessibilityIsIgnored()) {
+        node = node->traverseNextNode();
+
+        while (node && !node->renderer())
+            node = node->traverseNextSibling();
+
+        if (!node)
+            return 0;
+
+        accessibleObject = cache->getOrCreate(node->renderer());
+    }
+
+    return accessibleObject;
+}
+
 bool AccessibilityObject::isARIAInput(AccessibilityRole ariaRole)
 {
     return ariaRole == RadioButtonRole || ariaRole == CheckBoxRole || ariaRole == TextFieldRole;

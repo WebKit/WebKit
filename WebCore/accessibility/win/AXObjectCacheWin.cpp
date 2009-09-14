@@ -51,8 +51,49 @@ void AXObjectCache::attachWrapper(AccessibilityObject*)
     // software requests them via get_accChild.
 }
 
-void AXObjectCache::postPlatformNotification(AccessibilityObject*, AXNotification)
+void AXObjectCache::handleScrolledToAnchor(const Node* anchorNode)
 {
+    // The anchor node may not be accessible. Post the notification for the
+    // first accessible object.
+    postPlatformNotification(AccessibilityObject::firstAccessibleObjectFromNode(anchorNode), AXScrolledToAnchor);
+}
+
+void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotification notification)
+{
+    if (!obj)
+        return;
+
+    Document* document = obj->document();
+    if (!document)
+        return;
+
+    Page* page = document->page();
+    if (!page || !page->chrome()->platformWindow())
+        return;
+
+    DWORD msaaEvent;
+    switch (notification) {
+        case AXFocusedUIElementChanged:
+            msaaEvent = EVENT_OBJECT_FOCUS;
+            break;
+
+        case AXScrolledToAnchor:
+            msaaEvent = EVENT_SYSTEM_SCROLLINGSTART;
+            break;
+
+        default:
+            return;
+    }
+
+    // Windows will end up calling get_accChild() on the root accessible
+    // object for the WebView, passing the child ID that we specify below. We
+    // negate the AXID so we know that the caller is passing the ID of an
+    // element, not the index of a child element.
+
+    ASSERT(obj->axObjectID() >= 1);
+    ASSERT(obj->axObjectID() <= numeric_limits<LONG>::max());
+
+    NotifyWinEvent(msaaEvent, page->chrome()->platformWindow(), OBJID_CLIENT, -static_cast<LONG>(obj->axObjectID()));
 }
 
 AXID AXObjectCache::platformGenerateAXID() const
@@ -88,13 +129,8 @@ void AXObjectCache::handleFocusedUIElementChanged(RenderObject*, RenderObject* n
         return;
 
     ASSERT(!focusedObject->accessibilityIsIgnored());
-    ASSERT(focusedObject->axObjectID() >= 1 && focusedObject->axObjectID() <= numeric_limits<LONG>::max());
 
-    // Windows will end up calling get_accChild() on the root accessible
-    // object for the WebView, passing the child ID that we specify below. We
-    // negate the AXID so we know that the caller is passing the ID of an
-    // element, not the index of a child element.
-    NotifyWinEvent(EVENT_OBJECT_FOCUS, page->chrome()->platformWindow(), OBJID_CLIENT, -static_cast<LONG>(focusedObject->axObjectID()));
+    postPlatformNotification(focusedObject, AXFocusedUIElementChanged);
 }
 
 } // namespace WebCore

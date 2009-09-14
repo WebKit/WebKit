@@ -81,6 +81,8 @@ namespace WebCore {
         void handleActiveDescendantChanged(RenderObject*);
         void handleAriaRoleChanged(RenderObject*);
         void handleFocusedUIElementChanged(RenderObject* oldFocusedRenderer, RenderObject* newFocusedRenderer);
+        void handleScrolledToAnchor(const Node* anchorNode);
+
         static void enableAccessibility() { gAccessibilityEnabled = true; }
         static void enableEnhancedUserInterfaceAccessibility() { gAccessibilityEnhancedUserInterfaceEnabled = true; }
         
@@ -103,7 +105,8 @@ namespace WebCore {
             AXLoadComplete,
             AXSelectedChildrenChanged,
             AXSelectedTextChanged,
-            AXValueChanged
+            AXValueChanged,
+            AXScrolledToAnchor,
         };
         
         void postNotification(RenderObject*, AXNotification, bool postToElement);
@@ -136,6 +139,7 @@ namespace WebCore {
     inline void AXObjectCache::postNotification(RenderObject*, AXNotification, bool postToElement) { }
     inline void AXObjectCache::postPlatformNotification(AccessibilityObject*, AXNotification) { }
     inline void AXObjectCache::handleFocusedUIElementChanged(RenderObject*, RenderObject*) { }
+    inline void AXObjectCache::handleScrolledToAnchor(const Node*) { }
 #endif
 
 }
