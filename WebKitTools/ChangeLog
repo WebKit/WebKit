@@ -1,3 +1,14 @@
+2009-09-14  Brady Eidson  <beidson@apple.com>
+
+        Not reviewed, maybe should've been:
+
+        Cleaning up more Windows-specific fallout from the fix for:
+        <rdar://problem/7174050> and https://bugs.webkit.org/show_bug.cgi?id=29160
+
+        * DumpRenderTree/win/ResourceLoadDelegate.cpp:
+        (ResourceLoadDelegate::didReceiveAuthenticationChallenge):  Correct printf() formatter, 
+          and call the correct method to get the Sender.
+
 2009-09-14  Jon Honeycutt  <jhoneycutt@apple.com>
 
         GTK build fix.

@@ -266,10 +266,10 @@ HRESULT STDMETHODCALLTYPE ResourceLoadDelegate::didReceiveAuthenticationChalleng
     const char* user = gLayoutTestController->authenticationUsername().c_str();
     const char* password = gLayoutTestController->authenticationPassword().c_str();
 
-    printf("%s - didReceiveAuthenticationChallenge - Responding with %s:%s\n", descriptionSuitableForTestResult(identifier).c_str(), user, password);
+    printf("%S - didReceiveAuthenticationChallenge - Responding with %s:%s\n", descriptionSuitableForTestResult(identifier).c_str(), user, password);
     
     COMPtr<IWebURLAuthenticationChallengeSender> sender;
-    if (!challenge || FAILED(challenge->QueryInterface(&sender)))
+    if (!challenge || FAILED(challenge->sender(&sender)))
         return E_FAIL;
         
     COMPtr<IWebURLCredential> credential;

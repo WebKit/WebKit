@@ -1,3 +1,14 @@
+2009-09-14  Brady Eidson  <beidson@apple.com>
+
+        Not reviewed, maybe should've been:
+
+        Cleaning up more Windows-specific fallout from the fix for:
+        <rdar://problem/7174050> and https://bugs.webkit.org/show_bug.cgi?id=29160
+
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::WebCoreSynchronousLoader::load): Don't allow empty CFStrings as the stored credentials,
+          as related checks all look at nullity when they really mean to be looking for emptiness. 
+
 2009-09-14  Anders Carlsson  <andersca@apple.com>
 
         Speculative Qt build fix.
