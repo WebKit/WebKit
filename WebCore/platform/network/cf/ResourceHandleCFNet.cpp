@@ -460,7 +460,7 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
         
         KURL urlToStore;
         if (challenge.failureResponse().httpStatusCode() == 401)
-            urlToStore = d->m_request.url()
+            urlToStore = d->m_request.url();
         CredentialStorage::set(core(credential.get()), challenge.protectionSpace(), urlToStore);
         
         CFURLConnectionUseCredential(d->m_connection.get(), credential.get(), challenge.cfURLAuthChallengeRef());
@@ -503,7 +503,7 @@ void ResourceHandle::receivedCredential(const AuthenticationChallenge& challenge
         
         KURL urlToStore;
         if (challenge.failureResponse().httpStatusCode() == 401)
-            urlToStore = d->m_request.url()        
+            urlToStore = d->m_request.url();      
         CredentialStorage::set(webCredential, challenge.protectionSpace(), urlToStore);
 
         CFURLConnectionUseCredential(d->m_connection.get(), cfCredential.get(), challenge.cfURLAuthChallengeRef());
@@ -689,11 +689,11 @@ void WebCoreSynchronousLoader::didReceiveChallenge(CFURLConnectionRef conn, CFUR
         Credential credential(loader->m_user.get(), loader->m_pass.get(), CredentialPersistenceNone);
         RetainPtr<CFURLCredentialRef> cfCredential(AdoptCF, createCF(credential));
         
-        CFURLResponseRef urlResponse = CFURLAuthChallengeGetFailureResponse(challenge);
+        CFURLResponseRef urlResponse = (CFURLResponseRef)CFURLAuthChallengeGetFailureResponse(challenge);
         CFHTTPMessageRef httpResponse = urlResponse ? CFURLResponseGetHTTPResponse(urlResponse) : 0;
         KURL urlToStore;
         if (httpResponse && CFHTTPMessageGetResponseStatusCode(httpResponse) == 401)
-            urlToStore = loader->m_url;
+            urlToStore = loader->m_url.get();
             
         CredentialStorage::set(credential, core(CFURLAuthChallengeGetProtectionSpace(challenge)), urlToStore);
         
@@ -748,11 +748,11 @@ RetainPtr<CFDataRef> WebCoreSynchronousLoader::load(const ResourceRequest& reque
         // try and reuse the credential preemptively, as allowed by RFC 2617.
         ResourceRequest requestWithInitialCredential(request);
         if (loader.m_allowStoredCredentials && url.protocolInHTTPFamily())
-            m_initialCredential = CredentialStorage::getDefaultAuthenticationCredential(url);
+            loader.m_initialCredential = CredentialStorage::getDefaultAuthenticationCredential(url);
 
-        if (!m_initialCredential.isEmpty()) {
+        if (!loader.m_initialCredential.isEmpty()) {
             // Apply basic auth header
-            String unencoded = m_initialCredential.user() + ":" + m_initialCredential.password();
+            String unencoded = loader.m_initialCredential.user() + ":" + loader.m_initialCredential.password();
             CString encoded = unencoded.utf8().base64Encode();
             String authHeader = String::format("Basic %s", encoded.data());
             requestWithInitialCredential.addHTTPHeaderField("Authorization", authHeader);

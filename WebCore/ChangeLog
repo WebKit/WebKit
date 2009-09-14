@@ -1,5 +1,15 @@
 2009-09-14  Brady Eidson  <beidson@apple.com>
 
+        Windows build fix.
+
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge):
+        (WebCore::ResourceHandle::receivedCredential):
+        (WebCore::WebCoreSynchronousLoader::didReceiveChallenge):
+        (WebCore::WebCoreSynchronousLoader::load):
+
+2009-09-14  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Alexey Proskuryakov.
 
         Safari 4 cannot be used to update firmware on Linksys routers.
