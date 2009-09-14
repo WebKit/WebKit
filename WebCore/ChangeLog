@@ -1,3 +1,10 @@
+2009-09-14  Anders Carlsson  <andersca@apple.com>
+
+        Speculative Qt build fix.
+        
+        * platform/qt/QWebPopup.cpp:
+        (WebCore::QWebPopup::hidePopup):
+
 2009-09-14  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Darin Fisher.

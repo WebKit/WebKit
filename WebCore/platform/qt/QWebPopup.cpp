@@ -71,7 +71,7 @@ void QWebPopup::hidePopup()
         return;
 
     m_popupVisible = false;
-    m_client->hidePopup();
+    m_client->popupDidHide();
 }
 
 void QWebPopup::activeChanged(int index)
