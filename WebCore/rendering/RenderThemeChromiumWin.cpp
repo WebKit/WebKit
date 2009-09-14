@@ -475,14 +475,36 @@ unsigned RenderThemeChromiumWin::determineSliderThumbState(RenderObject* o)
 unsigned RenderThemeChromiumWin::determineClassicState(RenderObject* o)
 {
     unsigned result = 0;
-    if (!isEnabled(o))
-        result = DFCS_INACTIVE;
-    else if (isPressed(o)) // Active supersedes hover
-        result = DFCS_PUSHED;
-    else if (isHovered(o))
-        result = DFCS_HOT;
-    if (isChecked(o))
-        result |= DFCS_CHECKED;
+
+    ControlPart part = o->style()->appearance();
+
+    // Sliders are always in the normal state.
+    if (part == SliderHorizontalPart || part == SliderVerticalPart)
+        return result;
+
+    // So are readonly text fields.
+    if (isReadOnlyControl(o) && (part == TextFieldPart || part == TextAreaPart || part == SearchFieldPart))
+        return result;   
+
+    if (part == SliderThumbHorizontalPart || part == SliderThumbVerticalPart) {
+        if (!isEnabled(o->parent()))
+            result = DFCS_INACTIVE;
+        else if (toRenderSlider(o->parent())->inDragMode()) // Active supersedes hover
+            result = DFCS_PUSHED;
+        else if (isHovered(o))
+            result = DFCS_HOT;
+    } else {
+        if (!isEnabled(o))
+            result = DFCS_INACTIVE;
+        else if (isPressed(o)) // Active supersedes hover
+            result = DFCS_PUSHED;
+        else if (supportsFocus(part) && isFocused(o)) // So does focused
+            result = 0;
+        else if (isHovered(o))
+            result = DFCS_HOT;
+        if (isChecked(o))
+            result |= DFCS_CHECKED;
+    }
     return result;
 }
 
@@ -524,6 +546,7 @@ ThemeData RenderThemeChromiumWin::getThemeData(RenderObject* o)
         break;
     case ListboxPart:
     case MenulistPart:
+    case MenulistButtonPart:
     case SearchFieldPart:
     case TextFieldPart:
     case TextAreaPart:

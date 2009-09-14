@@ -1,3 +1,19 @@
+2009-09-14  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Fix RenderThemeChromiumWin::determineClassicState so that classic_state
+        matches the state values (and you get a single classic_state value
+        for a given {part,state} value. This change will be tested by a 
+        chromium patch that will land after this.
+
+        This will be tested by code landing downstream on Chromium.org; the
+        code does not execute on webkit.org.
+
+        * rendering/RenderThemeChromiumWin.cpp:
+        (WebCore::RenderThemeChromiumWin::determineClassicState):
+        (WebCore::RenderThemeChromiumWin::getThemeData):
+
 2009-09-14  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.
