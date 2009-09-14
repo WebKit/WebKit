@@ -1,3 +1,23 @@
+2009-09-14  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Jon Honeycutt.
+
+        More PopupMenu cleanup.
+        
+        * platform/PopupMenu.h:
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenu::show):
+        Call registerClass.
+        
+        (WebCore::PopupMenu::registerClass):
+        Make this a private static member function so it can refer to PopupMenuWndProc.
+        
+        (WebCore::PopupMenu::PopupMenuWndProc):
+        Try to get the PopupMenu and call its wndProc member function.
+        
+        (WebCore::PopupMenu::wndProc):
+        Make this a member function.
+
 2009-09-14  Brady Eidson  <beidson@apple.com>
 
         Not reviewed, maybe should've been:
