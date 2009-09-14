@@ -1,3 +1,19 @@
+2009-09-12  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Add RenderWidgetProtector to simplify protecting a RenderWidget from destruction for the
+        duration of a function.  Deploy it within RenderWidget.
+
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::setWidgetGeometry):
+        (WebCore::RenderWidget::updateWidgetPosition): Use a RefPtr rather than explicitly
+        ref'ing and deref'ing the node.
+        * rendering/RenderWidget.h:
+        * rendering/RenderWidgetProtector.h:
+        (WebCore::RenderWidgetProtector::RenderWidgetProtector):
+        (WebCore::RenderWidgetProtector::~RenderWidgetProtector):
+
 2009-09-14  Cameron McCormack  <cam@mcc.id.au>
 
         Reviewed by Eric Seidel.

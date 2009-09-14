@@ -28,6 +28,7 @@
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
 #include "RenderView.h"
+#include "RenderWidgetProtector.h"
 
 using namespace std;
 
@@ -106,10 +107,9 @@ RenderWidget::~RenderWidget()
 void RenderWidget::setWidgetGeometry(const IntRect& frame)
 {
     if (node() && m_widget->frameRect() != frame) {
-        RenderArena* arena = ref();
-        RefPtr<Node> protectedElement(node());
+        RenderWidgetProtector protector(this);
+        RefPtr<Node> protectedNode(node());
         m_widget->setFrameRect(frame);
-        deref(arena);
     }
 }
 
@@ -252,11 +252,9 @@ void RenderWidget::updateWidgetPosition()
     IntRect oldBounds(m_widget->frameRect());
     bool boundsChanged = newBounds != oldBounds;
     if (boundsChanged) {
-        RenderArena* arena = ref();
-        node()->ref();
+        RenderWidgetProtector protector(this);
+        RefPtr<Node> protectedNode(node());
         m_widget->setFrameRect(newBounds);
-        node()->deref();
-        deref(arena);
     }
     
     // if the frame bounds got changed, or if view needs layout (possibly indicating

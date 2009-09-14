@@ -61,6 +61,7 @@ private:
 
     void setWidgetGeometry(const IntRect&);
 
+    friend class RenderWidgetProtector;
     RenderArena* ref() { ++m_refCount; return renderArena(); }
     void deref(RenderArena*);
 
