@@ -589,13 +589,15 @@ void wxWebView::OnMouseEvents(wxMouseEvent& event)
     WebCore::PlatformMouseEvent wkEvent(event, globalPoint, clickCount);
 
     if (type == wxEVT_LEFT_DOWN || type == wxEVT_MIDDLE_DOWN || type == wxEVT_RIGHT_DOWN || 
-                type == wxEVT_LEFT_DCLICK || type == wxEVT_MIDDLE_DCLICK || type == wxEVT_RIGHT_DCLICK)
+                type == wxEVT_LEFT_DCLICK || type == wxEVT_MIDDLE_DCLICK || type == wxEVT_RIGHT_DCLICK) {
         frame->eventHandler()->handleMousePressEvent(wkEvent);
-    
-    else if (type == wxEVT_LEFT_UP || type == wxEVT_MIDDLE_UP || type == wxEVT_RIGHT_UP)
+        if (!HasCapture())
+            CaptureMouse();
+    } else if (type == wxEVT_LEFT_UP || type == wxEVT_MIDDLE_UP || type == wxEVT_RIGHT_UP) {
         frame->eventHandler()->handleMouseReleaseEvent(wkEvent);
-
-    else if (type == wxEVT_MOTION)
+        while (HasCapture())
+            ReleaseMouse();
+    } else if (type == wxEVT_MOTION || type == wxEVT_ENTER_WINDOW || type == wxEVT_LEAVE_WINDOW)
         frame->eventHandler()->mouseMoved(wkEvent);
 }
 
