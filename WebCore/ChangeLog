@@ -1,3 +1,22 @@
+2009-09-13  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+
+        [wx] Implement filesystem functions.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29196
+
+        * platform/wx/FileSystemWx.cpp:
+        (WebCore::fileExists):
+        (WebCore::deleteFile):
+        (WebCore::deleteEmptyDirectory):
+        (WebCore::getFileSize):
+        (WebCore::getFileModificationTime):
+        (WebCore::makeAllDirectories):
+        (WebCore::pathByAppendingComponent):
+        (WebCore::homeDirectoryPath):
+        (WebCore::directoryName):
+
 2009-09-12  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fixes for wx 2.9.

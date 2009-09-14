@@ -40,50 +40,50 @@ namespace WebCore {
 
 bool fileExists(const String& path)
 {
-    notImplemented();
-    return true;
+    return wxFileName::FileExists(path);
 }
 
 bool deleteFile(const String& path)
 {
-    notImplemented();
-    return false;
+    return wxRemoveFile(path);
 }
 
 bool deleteEmptyDirectory(const String& path)
 {
-    notImplemented();
-    return false;
+    return wxFileName::Rmdir(path);
 }
 
 bool getFileSize(const String& path, long long& resultSize)
 {
-    notImplemented();
+    wxULongLong size = wxFileName::GetSize(path);
+    if (wxInvalidSize != size) {
+        // TODO: why is FileSystem::getFileSize signed?
+        resultSize = (long long)size.GetValue();
+        return true;
+    }
+
     return false;
 }
 
-bool getFileModificationTime(const String&, time_t&)
+bool getFileModificationTime(const String& path, time_t& t)
 {
-    notImplemented();
-    return false;
+    t = wxFileName(path).GetModificationTime().GetTicks();
+    return true;
 }
 
 bool makeAllDirectories(const String& path)
 {
-    notImplemented();
-    return false;
+    return wxFileName::Mkdir(path, 0777, wxPATH_MKDIR_FULL);
 }
 
 String pathByAppendingComponent(const String& path, const String& component)
 {
-    notImplemented();
-    return String();
+    return wxFileName(path, component).GetFullPath();
 }
 
 String homeDirectoryPath()
 {
-    notImplemented();
-    return String();
+    return wxFileName::GetHomeDir();
 }
 
 String pathGetFileName(const String& path)
@@ -93,8 +93,7 @@ String pathGetFileName(const String& path)
 
 String directoryName(const String& path)
 {
-    notImplemented();
-    return String();
+    return wxFileName(path).GetPath();
 }
 
 CString openTemporaryFile(const char* prefix, PlatformFileHandle& handle)
