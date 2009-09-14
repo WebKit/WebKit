@@ -128,7 +128,7 @@ String DragData::asURL(String* title) const
     if (urls.isEmpty())
         return String();
 
-    return urls.first().toString();
+    return encodeWithURLEscapeSequences(urls.first().toString());
 }
 
 PassRefPtr<DocumentFragment> DragData::asFragment(Document* doc) const

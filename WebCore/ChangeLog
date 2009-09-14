@@ -1,3 +1,16 @@
+2009-09-14  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] Assert hit when dropping a file in QtLauncher
+        https://bugs.webkit.org/show_bug.cgi?id=29242
+
+        Qt's implementation of DropData::asURL does not return a URL encoded string
+        as expected.
+
+        * platform/qt/DragDataQt.cpp:
+        (WebCore::DragData::asURL):
+
 2009-09-13  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix, file was missed during TLS.cpp removal.
