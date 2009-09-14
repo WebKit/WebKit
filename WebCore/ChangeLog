@@ -1,3 +1,10 @@
+2009-09-13  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix, file was missed during TLS.cpp removal.
+
+        * page/wx/FrameWx.cpp: Added.
+        (WebCore::Frame::dragImageForSelection):
+
 2009-09-13  Anthony Ricaud  <rik@webkit.org>
 
         Reviewed by Oliver Hunt.
