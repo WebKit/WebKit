@@ -208,7 +208,7 @@ def common_configure(conf):
     conf.env['MSVC_VERSIONS'] = ['msvc 9.0', 'msvc 8.0']
     conf.env['MSVC_TARGETS'] = ['x86']
     
-    if sys.platform.startswith('cygwin')
+    if sys.platform.startswith('cygwin'):
         print "ERROR: You must use the Win32 Python from python.org, not Cygwin Python, when building on Windows."
         sys.exit(1)
     

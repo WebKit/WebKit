@@ -1,5 +1,11 @@
 2009-09-13  Kevin Ollivier  <kevino@theolliviers.com>
 
+        Fix typo accidently landed in last commit.
+
+        * wx/build/settings.py:
+
+2009-09-13  Kevin Ollivier  <kevino@theolliviers.com>
+
         wx build fix, error out if using the wrong Python.
 
         * wx/build/settings.py:
