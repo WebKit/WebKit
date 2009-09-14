@@ -65,6 +65,34 @@ namespace WebCore {
 extern WXDLLIMPEXP_WEBKIT const wxChar* wxWebViewNameStr;
 #endif
 
+class WXDLLIMPEXP_WEBKIT wxWebViewCachePolicy
+{
+public:
+    wxWebViewCachePolicy(unsigned minDead = 0, unsigned maxDead = defaultCacheCapacity, unsigned totalCapacity = defaultCacheCapacity)
+        : m_minDeadCapacity(minDead)
+        , m_maxDeadCapacity(maxDead)
+        , m_capacity(totalCapacity)
+    {}
+
+    ~wxWebViewCachePolicy() {}
+
+    unsigned GetCapacity() const { return m_capacity; }
+    void SetCapacity(int capacity) { m_capacity = capacity; }
+
+    unsigned GetMinDeadCapacity() const { return m_minDeadCapacity; }
+    void SetMinDeadCapacity(unsigned minDeadCapacity) { m_minDeadCapacity = minDeadCapacity; }
+
+    unsigned GetMaxDeadCapacity() const { return m_maxDeadCapacity; }
+    void SetMaxDeadCapacity(unsigned maxDeadCapacity) { m_maxDeadCapacity = maxDeadCapacity; }
+
+protected:
+    static const int defaultCacheCapacity = 8192 * 1024; // mirrors Cache.cpp
+    unsigned m_capacity;
+    unsigned m_minDeadCapacity;
+    unsigned m_maxDeadCapacity;
+};
+
+
 // copied from WebKit/mac/Misc/WebKitErrors[Private].h
 enum {
     WebKitErrorCannotShowMIMEType =                             100,
@@ -161,6 +189,9 @@ public:
     wxWebViewDOMElementInfo HitTest(const wxPoint& pos) const;
     
     bool ShouldClose() const;
+      
+    static void SetCachePolicy(const wxWebViewCachePolicy& cachePolicy);
+    static wxWebViewCachePolicy GetCachePolicy();
 
 protected:
 
