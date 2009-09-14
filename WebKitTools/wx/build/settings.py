@@ -221,8 +221,9 @@ def common_configure(conf):
             conf.env['CXX'] = 'g++-4.0'
     conf.check_tool('compiler_cxx')
     conf.check_tool('compiler_cc')
-    conf.check_tool('python')
-    conf.check_python_headers()
+    if Options.options.wxpython:
+        conf.check_tool('python')
+        conf.check_python_headers()
     
     if sys.platform.startswith('darwin'):
         conf.check_tool('osx')
@@ -251,7 +252,7 @@ def common_configure(conf):
         if building_on_win32:
             conf.env.append_value('LIBPATH', os.path.join(msvclibs_dir, 'lib'))
             # wx settings
-            wxdefines, wxincludes, wxlibs, wxlibpaths = get_wxmsw_settings(wx_root, shared=True, unicode=True, wxPython=True)
+            wxdefines, wxincludes, wxlibs, wxlibpaths = get_wxmsw_settings(wx_root, shared=True, unicode=True, wxPython=Options.options.wxpython)
             conf.env['CXXDEFINES_WX'] = wxdefines
             conf.env['CPPPATH_WX'] = wxincludes
             conf.env['LIB_WX'] = wxlibs
