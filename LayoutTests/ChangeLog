@@ -1,3 +1,13 @@
+2009-09-15  Charles Wei  <charles.wei@torchmobile.com.cn>
+
+        Reviewed by George Staikos.
+
+        Add a new test case for SVG Path parsing with a default command and starts with dot '.'
+        https://bugs.webkit.org/show_bug.cgi?id=29123
+
+        * svg/dom/path-parser-expected.txt:
+        * svg/dom/resources/path-parser.js:
+
 2009-09-14  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler.

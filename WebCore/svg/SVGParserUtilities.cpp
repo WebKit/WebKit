@@ -509,8 +509,8 @@ bool SVGPathParser::parseSVG(const String& s, bool process)
             return true;
 
         // Check for remaining coordinates in the current command.
-        if ((*ptr == '+' || *ptr == '-' || (*ptr >= '0' && *ptr <= '9')) &&
-            (command != 'z' && command != 'Z')) {
+        if ((*ptr == '+' || *ptr == '-' || *ptr == '.' || (*ptr >= '0' && *ptr <= '9'))
+            && (command != 'z' && command != 'Z')) {
             if (command == 'M')
                 command = 'L';
             else if (command == 'm')

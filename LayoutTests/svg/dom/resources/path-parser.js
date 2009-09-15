@@ -107,5 +107,6 @@ shouldBe("parsePath('M1,2x')", "''");
 shouldBe("parsePath('')", "''");
 shouldBe("parsePath('x')", "''");
 shouldBe("parsePath('L1,2')", "''");
+shouldBe("parsePath('M.1 .2 L.3 .4 .5 .6')", "'M0.1,0.2 L0.3,0.4 L0.5,0.6'");
 
 successfullyParsed = true;

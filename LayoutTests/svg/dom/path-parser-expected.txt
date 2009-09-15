@@ -57,6 +57,7 @@ PASS parsePath('M1,2x') is ''
 PASS parsePath('') is ''
 PASS parsePath('x') is ''
 PASS parsePath('L1,2') is ''
+PASS parsePath('M.1 .2 L.3 .4 .5 .6') is 'M0.1,0.2 L0.3,0.4 L0.5,0.6'
 PASS successfullyParsed is true
 
 TEST COMPLETE
