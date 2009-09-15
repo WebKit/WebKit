@@ -1,0 +1,32 @@
+<!DOCTYPE>
+<html>
+<head>
+  <title>Change popup to list inside mouse event handler.</title>
+  <script type="text/javascript" charset="utf-8">
+    if (window.layoutTestController)
+      layoutTestController.dumpAsText();
+
+    function sendClick()
+    {
+      var select = document.getElementById("select");
+      var rect = select.getBoundingClientRect();
+
+      var evt = document.createEvent("MouseEvents");
+      evt.initMouseEvent("mousedown", true, true, window,
+        0, 0, 0, rect.top + 4, rect.left + 4, false, false, false, false, 0, null);
+
+      select.dispatchEvent(evt);
+    }
+    
+    window.addEventListener('load', sendClick, false);
+  </script>
+</head>
+<body>
+  <p>This test should not crash.</p>
+  <select id="select" onFocus="this.size = 10">
+    <option value="0">One</option>
+    <option value="1">Two</option>
+    <option value="2">Three</option>
+  </select>
+</body>
+</html>

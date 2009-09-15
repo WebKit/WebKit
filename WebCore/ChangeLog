@@ -1,3 +1,17 @@
+2009-09-14  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/7047282> Safari crashes at WebCore::RenderMenuList::adjustInnerStyle() + 436
+        
+        Avoid a crash when a mouse event handler on a <select> changes the select from a popup
+        to a list (by setting the 'size' property) inside the event handler.
+
+        Test: fast/forms/select-change-popup-to-listbox-in-event-handler.html
+
+        * dom/SelectElement.cpp:
+        (WebCore::SelectElement::menuListDefaultEventHandler):
+
 2009-09-14  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Jon Honeycutt.

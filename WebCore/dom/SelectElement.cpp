@@ -644,14 +644,16 @@ void SelectElement::menuListDefaultEventHandler(SelectElementData& data, Element
 
     if (event->type() == eventNames().mousedownEvent && event->isMouseEvent() && static_cast<MouseEvent*>(event)->button() == LeftButton) {
         element->focus();
-        if (RenderMenuList* menuList = toRenderMenuList(element->renderer())) {
-            if (menuList->popupIsVisible())
-                menuList->hidePopup();
-            else {
-                // Save the selection so it can be compared to the new selection when we call onChange during setSelectedIndex,
-                // which gets called from RenderMenuList::valueChanged, which gets called after the user makes a selection from the menu.
-                saveLastSelection(data, element);
-                menuList->showPopup();
+        if (element->renderer()->isMenuList()) {
+            if (RenderMenuList* menuList = toRenderMenuList(element->renderer())) {
+                if (menuList->popupIsVisible())
+                    menuList->hidePopup();
+                else {
+                    // Save the selection so it can be compared to the new selection when we call onChange during setSelectedIndex,
+                    // which gets called from RenderMenuList::valueChanged, which gets called after the user makes a selection from the menu.
+                    saveLastSelection(data, element);
+                    menuList->showPopup();
+                }
             }
         }
         event->setDefaultHandled();
