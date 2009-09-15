@@ -375,14 +375,14 @@ WebKitWebResource* webkit_web_data_source_get_main_resource(WebKitWebDataSource*
 
     WebKitWebDataSourcePrivate* priv = webDataSource->priv;
 
-    RefPtr<ArchiveResource> coreResource = priv->loader->mainResource();
-
-    ASSERT(coreResource);
-
     if (priv->mainresource)
-        g_object_unref(priv->mainresource);
+        return priv->mainresource;
 
-    priv->mainresource = webkit_web_resource_new_with_core_resource(coreResource.release());
+    WebKitWebFrame* webFrame = webkit_web_data_source_get_web_frame(webDataSource);
+    WebKitWebView* webView = getViewFromFrame(webFrame);
+
+    priv->mainresource = WEBKIT_WEB_RESOURCE(g_object_ref(webkit_web_view_get_main_resource(webView)));
+
     return priv->mainresource;
 }
 
@@ -411,4 +411,26 @@ G_CONST_RETURN gchar* webkit_web_data_source_get_unreachable_uri(WebKitWebDataSo
     g_free(priv->unreachableURL);
     priv->unreachableURL = g_strdup(unreachableURL.string().utf8().data());
     return priv->unreachableURL;
+}
+
+/**
+ * webkit_web_data_source_get_subresources
+ * @data_source: a #WebKitWebDataSource
+ *
+ * Gives you a #GList of #WebKitWebResource objects that compose the
+ * #WebView to which this #WebKitWebDataSource is attached.
+ *
+ * Return value: a #GList of #WebKitResource objects; the objects are
+ * owned by WebKit, but the GList must be freed.
+ *
+ * Since: 1.1.15
+ */
+GList* webkit_web_data_source_get_subresources(WebKitWebDataSource* webDataSource)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_DATA_SOURCE(webDataSource), NULL);
+
+    WebKitWebFrame* webFrame = webkit_web_data_source_get_web_frame(webDataSource);
+    WebKitWebView* webView = getViewFromFrame(webFrame);
+
+    return webkit_web_view_get_subresources(webView);
 }

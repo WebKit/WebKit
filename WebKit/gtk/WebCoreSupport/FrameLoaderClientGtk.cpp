@@ -2,7 +2,7 @@
  *  Copyright (C) 2007, 2008 Alp Toker <alp@atoker.com>
  *  Copyright (C) 2007, 2008, 2009 Holger Hans Peter Freyther
  *  Copyright (C) 2007 Christian Dywan <christian@twotoasts.de>
- *  Copyright (C) 2008 Collabora Ltd.  All rights reserved.
+ *  Copyright (C) 2008, 2009 Collabora Ltd.  All rights reserved.
  *  Copyright (C) 2009 Gustavo Noronha Silva <gns@gnome.org>
  *
  *  This library is free software; you can redistribute it and/or
@@ -183,6 +183,13 @@ void FrameLoaderClient::dispatchDidCancelAuthenticationChallenge(WebCore::Docume
     notImplemented();
 }
 
+// We convert this to string because it's easier to use strings as
+// keys in a GHashTable.
+static char* toString(unsigned long identifier)
+{
+    return g_strdup_printf("%ld", identifier);
+}
+
 void FrameLoaderClient::dispatchWillSendRequest(WebCore::DocumentLoader* loader, unsigned long identifier, ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
     GOwnPtr<WebKitNetworkResponse> networkResponse(0);
@@ -195,10 +202,18 @@ void FrameLoaderClient::dispatchWillSendRequest(WebCore::DocumentLoader* loader,
         networkResponse.set(webkit_network_response_new_with_core_response(redirectResponse));
 
     WebKitWebView* webView = getViewFromFrame(m_frame);
-    GOwnPtr<WebKitWebResource> webResource(WEBKIT_WEB_RESOURCE(g_object_new(WEBKIT_TYPE_WEB_RESOURCE, "uri", request.url().string().utf8().data(), 0)));
+    GOwnPtr<gchar> identifierString(toString(identifier));
+    WebKitWebResource* webResource = webkit_web_view_get_resource(webView, identifierString.get());
     GOwnPtr<WebKitNetworkRequest> networkRequest(webkit_network_request_new_with_core_request(request));
 
-    g_signal_emit_by_name(webView, "resource-request-starting", m_frame, webResource.get(), networkRequest.get(), networkResponse.get());
+    if (!redirectResponse.isNull()) {
+        // This is a redirect, so we need to update the WebResource's knowledge
+        // of the URI.
+        g_free(webResource->priv->uri);
+        webResource->priv->uri = g_strdup(request.url().string().utf8().data());
+    }
+    
+    g_signal_emit_by_name(webView, "resource-request-starting", m_frame, webResource, networkRequest.get(), networkResponse.get());
 
     // Feed any changes back into the ResourceRequest object.
     SoupMessage* message = webkit_network_request_get_message(networkRequest.get());
@@ -210,9 +225,10 @@ void FrameLoaderClient::dispatchWillSendRequest(WebCore::DocumentLoader* loader,
     request.updateFromSoupMessage(message);
 }
 
-void FrameLoaderClient::assignIdentifierToInitialRequest(unsigned long, WebCore::DocumentLoader*, const ResourceRequest&)
+void FrameLoaderClient::assignIdentifierToInitialRequest(unsigned long identifier, WebCore::DocumentLoader*, const ResourceRequest& request)
 {
-    notImplemented();
+    webkit_web_view_add_resource(getViewFromFrame(m_frame), toString(identifier),
+                                 WEBKIT_WEB_RESOURCE(g_object_new(WEBKIT_TYPE_WEB_RESOURCE, "uri", request.url().string().utf8().data(), 0)));
 }
 
 void FrameLoaderClient::postProgressStartedNotification()
@@ -799,7 +815,10 @@ void FrameLoaderClient::finishedLoading(WebCore::DocumentLoader* documentLoader)
 
 void FrameLoaderClient::provisionalLoadStarted()
 {
-    notImplemented();
+    WebKitWebView* webView = getViewFromFrame(m_frame);
+
+    if (m_frame == webkit_web_view_get_main_frame(webView))
+        webkit_web_view_clear_resources(webView);
 }
 
 void FrameLoaderClient::didFinishLoad() {
@@ -823,6 +842,23 @@ void FrameLoaderClient::dispatchDidReceiveContentLength(WebCore::DocumentLoader*
 void FrameLoaderClient::dispatchDidFinishLoading(WebCore::DocumentLoader* loader, unsigned long identifier)
 {
     static_cast<WebKit::DocumentLoader*>(loader)->decreaseLoadCount(identifier);
+
+    WebKitWebView* webView = getViewFromFrame(m_frame);
+    GOwnPtr<gchar> identifierString(toString(identifier));
+    WebKitWebResource* webResource = webkit_web_view_get_resource(webView, identifierString.get());
+
+    const char* uri = webkit_web_resource_get_uri(webResource);
+    RefPtr<ArchiveResource> coreResource(loader->subresource(KURL(KURL(), uri)));
+
+    // If coreResource is NULL here, the resource failed to load,
+    // unless it's the main resource.
+    if (!coreResource && webResource != webkit_web_view_get_main_resource(webView))
+        return;
+
+    if (!coreResource)
+        coreResource = loader->mainResource().releaseRef();
+
+    webkit_web_resource_init_with_core_resource(webResource, coreResource.get());
 
     // FIXME: This function should notify the application that the resource
     // finished loading, maybe using a load-status property in the

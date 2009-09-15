@@ -1,3 +1,13 @@
+2009-09-14  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Xan Lopez and Jan Alonzo.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29134
+        [GTK] Add API to access sub resources
+
+        Implement getting subresources, and improve testing of
+        main, and sub resources loading.
+
 2009-09-11  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Jan Alonzo.

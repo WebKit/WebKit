@@ -88,6 +88,9 @@ webkit_web_data_source_get_main_resource      (WebKitWebDataSource  *data_source
 WEBKIT_API G_CONST_RETURN gchar *
 webkit_web_data_source_get_unreachable_uri    (WebKitWebDataSource  *data_source);
 
+WEBKIT_API GList*
+webkit_web_data_source_get_subresources       (WebKitWebDataSource  *data_source);
+
 G_END_DECLS
 
 #endif /* WEBKIT_WEB_DATA_SOURCE_H */

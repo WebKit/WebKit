@@ -6,7 +6,7 @@
  *  Copyright (C) 2008 Jan Alonzo <jmalonzo@unpluggable.com>
  *  Copyright (C) 2008 Gustavo Noronha Silva <gns@gnome.org>
  *  Copyright (C) 2008 Nuanti Ltd.
- *  Copyright (C) 2008 Collabora Ltd.
+ *  Copyright (C) 2008, 2009 Collabora Ltd.
  *  Copyright (C) 2009 Igalia S.L.
  *
  *  This library is free software; you can redistribute it and/or
@@ -994,6 +994,16 @@ static void webkit_web_view_dispose(GObject* object)
         priv->paste_target_list = NULL;
     }
 
+    if (priv->mainResource) {
+        g_object_unref(priv->mainResource);
+        priv->mainResource = NULL;
+    }
+
+    if (priv->subResources) {
+        g_hash_table_unref(priv->subResources);
+        priv->subResources = NULL;
+    }
+
     G_OBJECT_CLASS(webkit_web_view_parent_class)->dispose(object);
 }
 
@@ -1002,6 +1012,7 @@ static void webkit_web_view_finalize(GObject* object)
     WebKitWebView* webView = WEBKIT_WEB_VIEW(object);
     WebKitWebViewPrivate* priv = webView->priv;
 
+    g_free(priv->mainResourceIdentifier);
     g_free(priv->encoding);
     g_free(priv->customEncoding);
 
@@ -2560,6 +2571,8 @@ static void webkit_web_view_init(WebKitWebView* webView)
     g_signal_connect(priv->webSettings, "notify", G_CALLBACK(webkit_web_view_settings_notify), webView);
 
     priv->webWindowFeatures = webkit_web_window_features_new();
+
+    priv->subResources = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_object_unref);
 }
 
 GtkWidget* webkit_web_view_new(void)
@@ -3841,4 +3854,62 @@ gboolean webkit_web_view_get_view_source_mode (WebKitWebView* webView)
         return mainFrame->inViewSourceMode();
 
     return FALSE;
+}
+
+// Internal subresource management
+void webkit_web_view_add_resource(WebKitWebView* webView, char* identifier, WebKitWebResource* webResource)
+{
+    WebKitWebViewPrivate* priv = webView->priv;
+
+    if (!priv->mainResource) {
+        priv->mainResource = webResource;
+        priv->mainResourceIdentifier = g_strdup(identifier);
+        return;
+    }
+
+    g_hash_table_insert(priv->subResources, identifier, webResource);
+}
+
+WebKitWebResource* webkit_web_view_get_resource(WebKitWebView* webView, char* identifier)
+{
+    WebKitWebViewPrivate* priv = webView->priv;
+    gpointer webResource = NULL;
+
+    gboolean resourceFound = g_hash_table_lookup_extended(priv->subResources, identifier, NULL, &webResource);
+
+    // The only resource we do not store in this hash table is the main!
+    g_return_val_if_fail(resourceFound || g_str_equal(identifier, priv->mainResourceIdentifier), NULL);
+
+    if (!webResource)
+        return webkit_web_view_get_main_resource(webView);
+
+    return WEBKIT_WEB_RESOURCE(webResource);
+}
+
+WebKitWebResource* webkit_web_view_get_main_resource(WebKitWebView* webView)
+{
+    return webView->priv->mainResource;
+}
+
+void webkit_web_view_clear_resources(WebKitWebView* webView)
+{
+    WebKitWebViewPrivate* priv = webView->priv;
+
+    g_free(priv->mainResourceIdentifier);
+    priv->mainResourceIdentifier = NULL;
+
+    if (priv->mainResource) {
+        g_object_unref(priv->mainResource);
+        priv->mainResource = NULL;
+    }
+
+    if (priv->subResources)
+        g_hash_table_remove_all(priv->subResources);
+}
+
+GList* webkit_web_view_get_subresources(WebKitWebView* webView)
+{
+    WebKitWebViewPrivate* priv = webView->priv;
+    GList* subResources = g_hash_table_get_values(priv->subResources);
+    return g_list_remove(subResources, priv->mainResource);
 }

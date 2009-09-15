@@ -19,15 +19,66 @@
 
 #include <glib.h>
 #include <gtk/gtk.h>
+#include <libsoup/soup.h>
 #include <string.h>
 #include <webkit/webkit.h>
 
 #if GLIB_CHECK_VERSION(2, 16, 0) && GTK_CHECK_VERSION(2, 14, 0)
 
+#define INDEX_HTML "<html></html>"
+#define MAIN_HTML "<html><head><script language=\"javascript\" src=\"/javascript.js\"></script></head><body><h1>hah</h1></html>"
+#define JAVASCRIPT "function blah () { var a = 1; }"
+
+GMainLoop* loop;
+SoupSession *session;
+char *base_uri;
+WebKitWebResource* main_resource;
+WebKitWebResource* sub_resource;
+
 typedef struct {
     WebKitWebResource* webResource;
     WebKitWebView* webView;
 } WebResourceFixture;
+
+/* For real request testing */
+static void
+server_callback (SoupServer *server, SoupMessage *msg,
+                 const char *path, GHashTable *query,
+                 SoupClientContext *context, gpointer data)
+{
+    if (msg->method != SOUP_METHOD_GET) {
+        soup_message_set_status (msg, SOUP_STATUS_NOT_IMPLEMENTED);
+        return;
+    }
+
+    soup_message_set_status (msg, SOUP_STATUS_OK);
+
+    /* Redirect */
+    if (g_str_equal (path, "/")) {
+        soup_message_set_status (msg, SOUP_STATUS_MOVED_PERMANENTLY);
+
+        soup_message_headers_append (msg->response_headers,
+                                     "Location", "/index.html");
+    } else if (g_str_equal (path, "/index.html")) {
+        soup_message_body_append (msg->response_body,
+                                  SOUP_MEMORY_COPY,
+                                  INDEX_HTML,
+                                  strlen (INDEX_HTML));
+    } else if (g_str_equal (path, "/main.html")) {
+        soup_message_body_append (msg->response_body,
+                                  SOUP_MEMORY_COPY,
+                                  MAIN_HTML,
+                                  strlen (MAIN_HTML));
+    } else if (g_str_equal (path, "/javascript.js")) {
+        soup_message_body_append (msg->response_body,
+                                  SOUP_MEMORY_COPY,
+                                  JAVASCRIPT,
+                                  strlen (JAVASCRIPT));
+    }
+
+
+    soup_message_body_complete (msg->response_body);
+}
 
 static void web_resource_fixture_setup(WebResourceFixture* fixture, gconstpointer data)
 {
@@ -89,13 +140,27 @@ static void test_webkit_web_resource_get_frame_name(WebResourceFixture* fixture,
 
 static void resource_request_starting_cb(WebKitWebView* web_view, WebKitWebFrame* web_frame, WebKitWebResource* web_resource, WebKitNetworkRequest* request, WebKitNetworkResponse* response, gpointer data)
 {
-    gboolean* been_there = data;
-    *been_there = TRUE;
+    gint* been_there = data;
+    *been_there = *been_there + 1;
 
-    g_assert_cmpstr(webkit_web_resource_get_uri(web_resource), ==, "http://gnome.org/");
+    if (*been_there == 1) {
+        g_assert(!main_resource);
+        main_resource = g_object_ref(web_resource);
 
-    /* Cancel the request. */
-    webkit_network_request_set_uri(request, "about:blank");
+        g_assert_cmpstr(webkit_web_resource_get_uri(web_resource), ==, base_uri);
+
+        /* This should be a redirect, so the response must be NULL */
+        g_assert(!response);
+    } else if (*been_there == 2) {
+        char* uri = g_strdup_printf("%sindex.html", base_uri);
+
+        g_assert_cmpstr(webkit_web_resource_get_uri(web_resource), ==, uri);
+
+        /* Cancel the request. */
+        webkit_network_request_set_uri(request, "about:blank");
+
+        g_free(uri);
+    }
 }
 
 static void load_finished_cb(WebKitWebView* web_view, WebKitWebFrame* web_frame, gpointer data)
@@ -104,13 +169,19 @@ static void load_finished_cb(WebKitWebView* web_view, WebKitWebFrame* web_frame,
     *been_there = TRUE;
 
     g_assert_cmpstr(webkit_web_view_get_uri(web_view), ==, "about:blank");
+
+    g_main_loop_quit(loop);
 }
 
 static void test_web_resource_loading()
 {
     WebKitWebView* web_view = WEBKIT_WEB_VIEW(webkit_web_view_new());
-    gboolean been_to_resource_request_starting = FALSE;
+    gint been_to_resource_request_starting = 0;
     gboolean been_to_load_finished = FALSE;
+    WebKitWebFrame* web_frame;
+    WebKitWebDataSource* data_source;
+
+    loop = g_main_loop_new(NULL, TRUE);
 
     g_object_ref_sink(web_view);
 
@@ -122,18 +193,111 @@ static void test_web_resource_loading()
                      G_CALLBACK(load_finished_cb),
                      &been_to_load_finished);
 
-    webkit_web_view_load_uri(web_view, "http://gnome.org/");
+    webkit_web_view_load_uri(web_view, base_uri);
 
-    g_assert_cmpint(been_to_resource_request_starting, ==, TRUE);
+    /* We won't get finished immediately, because of the redirect */
+    g_main_loop_run(loop);
+    
+    web_frame = webkit_web_view_get_main_frame(web_view);
+    data_source = webkit_web_frame_get_data_source(web_frame);
+
+    g_assert(main_resource);
+    g_assert(webkit_web_data_source_get_main_resource(data_source) == main_resource);
+    g_object_unref(main_resource);
+    
+    g_assert_cmpint(been_to_resource_request_starting, ==, 2);
     g_assert_cmpint(been_to_load_finished, ==, TRUE);
 
     g_object_unref(web_view);
+    g_main_loop_unref(loop);
+}
+
+static void resource_request_starting_sub_cb(WebKitWebView* web_view, WebKitWebFrame* web_frame, WebKitWebResource* web_resource, WebKitNetworkRequest* request, WebKitNetworkResponse* response, gpointer data)
+{
+    if (!main_resource)
+        main_resource = g_object_ref(web_resource);
+    else
+        sub_resource = g_object_ref(web_resource);
+}
+
+static void load_finished_sub_cb(WebKitWebView* web_view, WebKitWebFrame* web_frame, gpointer data)
+{
+    g_main_loop_quit(loop);
+}
+
+static gboolean idle_quit_loop_cb(gpointer data)
+{
+    g_main_loop_quit(loop);
+    return FALSE;
+}
+
+static void test_web_resource_sub_resource_loading()
+{
+    WebKitWebView* web_view = WEBKIT_WEB_VIEW(webkit_web_view_new());
+    WebKitWebFrame* web_frame;
+    WebKitWebDataSource* data_source;
+    GList* sub_resources;
+    char* uri = g_strdup_printf("%smain.html", base_uri);
+
+    main_resource = NULL;
+    
+    loop = g_main_loop_new(NULL, TRUE);
+
+    g_object_ref_sink(web_view);
+
+    g_signal_connect(web_view, "resource-request-starting",
+                     G_CALLBACK(resource_request_starting_sub_cb),
+                     NULL);
+
+    g_signal_connect(web_view, "load-finished",
+                     G_CALLBACK(load_finished_sub_cb),
+                     NULL);
+
+    webkit_web_view_load_uri(web_view, uri);
+
+    g_main_loop_run(loop);
+
+    /* The main resource should be loaded; now let's wait for the sub-resource to load */
+    g_idle_add(idle_quit_loop_cb, NULL);
+    g_main_loop_run(loop);
+    
+    g_assert(main_resource && sub_resource);
+    g_assert(main_resource != sub_resource);
+
+    web_frame = webkit_web_view_get_main_frame(web_view);
+    data_source = webkit_web_frame_get_data_source(web_frame);
+
+    g_assert(webkit_web_data_source_get_main_resource(data_source) == main_resource);
+    g_object_unref(main_resource);
+
+    sub_resources = webkit_web_data_source_get_subresources(data_source);
+    g_assert(sub_resources);
+    g_assert(!sub_resources->next);
+
+    g_assert(WEBKIT_WEB_RESOURCE(sub_resources->data) == sub_resource);
+    
+    g_object_unref(web_view);
+    g_main_loop_unref(loop);
 }
 
 int main(int argc, char** argv)
 {
+    SoupServer* server;
+    SoupURI* soup_uri;
+
     g_thread_init(NULL);
     gtk_test_init(&argc, &argv, NULL);
+
+    server = soup_server_new(SOUP_SERVER_PORT, 0, NULL);
+    soup_server_run_async(server);
+
+    soup_server_add_handler(server, NULL, server_callback, NULL, NULL);
+
+    soup_uri = soup_uri_new ("http://127.0.0.1/");                             
+    soup_uri_set_port(soup_uri, soup_server_get_port(server));
+
+    base_uri = soup_uri_to_string(soup_uri, FALSE);
+    soup_uri_free(soup_uri);
 
     g_test_bug_base("https://bugs.webkit.org/");
     g_test_add("/webkit/webresource/get_url",
@@ -153,6 +317,7 @@ int main(int argc, char** argv)
                test_webkit_web_resource_get_data, web_resource_fixture_teardown);
 
     g_test_add_func("/webkit/webresource/loading", test_web_resource_loading);
+    g_test_add_func("/webkit/webresource/sub_resource_loading", test_web_resource_sub_resource_loading);
 
     return g_test_run ();
 }

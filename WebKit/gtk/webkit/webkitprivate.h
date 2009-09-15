@@ -140,6 +140,12 @@ extern "C" {
 
         gboolean disposing;
         gboolean usePrimaryForPaste;
+
+        // These are hosted here because the DataSource object is
+        // created too late in the frame loading process.
+        WebKitWebResource* mainResource;
+        char* mainResourceIdentifier;
+        GHashTable* subResources;
     };
 
     #define WEBKIT_WEB_FRAME_GET_PRIVATE(obj)    (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_WEB_FRAME, WebKitWebFramePrivate))
@@ -200,6 +206,9 @@ extern "C" {
     WebKitWebResource*
     webkit_web_resource_new_with_core_resource(PassRefPtr<WebCore::ArchiveResource>);
 
+    void
+    webkit_web_resource_init_with_core_resource(WebKitWebResource*, PassRefPtr<WebCore::ArchiveResource>);
+
     // end WebKitWebResource private
 
     void
@@ -219,6 +228,21 @@ extern "C" {
 
     void
     webkit_web_view_request_download(WebKitWebView* web_view, WebKitNetworkRequest* request, const WebCore::ResourceResponse& response = WebCore::ResourceResponse(), WebCore::ResourceHandle* handle = 0);
+
+    void
+    webkit_web_view_add_resource(WebKitWebView*, char*, WebKitWebResource*);
+
+    WebKitWebResource*
+    webkit_web_view_get_resource(WebKitWebView*, char*);
+
+    WebKitWebResource*
+    webkit_web_view_get_main_resource(WebKitWebView*);
+
+    void
+    webkit_web_view_clear_resources(WebKitWebView*);
+
+    GList*
+    webkit_web_view_get_subresources(WebKitWebView*);
 
     WebKitDownload*
     webkit_download_new_with_handle(WebKitNetworkRequest* request, WebCore::ResourceHandle* handle, const WebCore::ResourceResponse& response);
