@@ -1,3 +1,19 @@
+2009-09-15  Jungshik Shin  <jshin@chromium.org>
+
+        Reviewed by Eric Seidel
+
+        http://bugs.webkit.org/show_bug.cgi?id=26660
+
+        Chromium Windows: When rotated, the baseline for a span of complex
+        script is completely misaligned with that of the adjacent 
+        simple script text. It's fixed by not applying the baseline offset for
+        the Skia code path.
+
+        Test: transforms/2d/hindi-rotated.html
+
+        * platform/graphics/chromium/UniscribeHelper.cpp:
+        (WebCore::UniscribeHelper::draw):
+
 2009-09-15  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.
