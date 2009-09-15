@@ -3490,6 +3490,7 @@
             'inspector/front-end/Panel.js',
             'inspector/front-end/PanelEnablerView.js',
             'inspector/front-end/Placard.js',
+            'inspector/front-end/Popup.js',
             'inspector/front-end/ProfileDataGridTree.js',
             'inspector/front-end/ProfilesPanel.js',
             'inspector/front-end/ProfileView.js',

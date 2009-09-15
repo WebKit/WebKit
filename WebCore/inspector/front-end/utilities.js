@@ -180,6 +180,12 @@ Element.prototype.hasStyleClass = function(className)
     return regex.test(this.className);
 }
 
+Element.prototype.positionAt = function(x, y)
+{
+    this.style.left = x + "px";
+    this.style.top = y + "px";
+}
+
 Node.prototype.enclosingNodeOrSelfWithNodeNameInArray = function(nameArray)
 {
     for (var node = this; node && node !== this.ownerDocument; node = node.parentNode)
@@ -244,6 +250,24 @@ Element.prototype.__defineGetter__("totalOffsetTop", function()
         total += element.offsetTop;
     return total;
 });
+
+Element.prototype.offsetRelativeToWindow = function(targetWindow)
+{
+    var elementOffset = {x: 0, y: 0};
+    var curElement = this;
+    var curWindow = this.ownerDocument.defaultView;
+    while (curWindow && curElement) {
+        elementOffset.x += curElement.totalOffsetLeft;
+        elementOffset.y += curElement.totalOffsetTop;
+        if (curWindow === targetWindow)
+            break;
+
+        curElement = curWindow.frameElement;
+        curWindow = curWindow.parent;
+    }
+
+    return elementOffset;
+}
 
 Element.prototype.firstChildSkippingWhitespace = firstChildSkippingWhitespace;
 Element.prototype.lastChildSkippingWhitespace = lastChildSkippingWhitespace;

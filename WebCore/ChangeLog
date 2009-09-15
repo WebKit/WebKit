@@ -1,3 +1,61 @@
+2009-09-15  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Implement conditional breakpoints in the Web Inspector frontend.
+        https://bugs.webkit.org/show_bug.cgi?id=28908
+
+        * English.lproj/localizedStrings.js:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/Breakpoint.js:
+        (WebInspector.Breakpoint.prototype.set condition):
+        * inspector/front-end/Popup.js: Added.
+        (WebInspector.Popup):
+        (WebInspector.Popup.prototype.show):
+        (WebInspector.Popup.prototype.hide):
+        (WebInspector.Popup.prototype.get visible):
+        (WebInspector.Popup.prototype.set element):
+        (WebInspector.Popup.prototype.get element):
+        (WebInspector.Popup.prototype.positionElement):
+        (WebInspector.Popup.prototype.set anchor):
+        (WebInspector.Popup.prototype.get anchor):
+        (WebInspector.Popup.prototype.set autoHide):
+        (WebInspector.Popup.prototype._checkNotVisible):
+        (WebInspector.Popup.prototype._keyEventHandler):
+        (WebInspector.Popup.prototype._mouseDownEventHandler):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype.revealLine):
+        (WebInspector.SourceFrame.prototype._loaded):
+        (WebInspector.SourceFrame.prototype._documentContextMenu):
+        (WebInspector.SourceFrame.prototype._documentMouseDown):
+        (WebInspector.SourceFrame.prototype._editBreakpointCondition.committed):
+        (WebInspector.SourceFrame.prototype._editBreakpointCondition.dismissed):
+        (WebInspector.SourceFrame.prototype._editBreakpointCondition):
+        (WebInspector.SourceFrame.prototype._showBreakpointConditionPopup):
+        (WebInspector.SourceFrame.prototype._createPopupElement):
+        (WebInspector.SourceFrame.prototype._addBreakpointToSource):
+        (WebInspector.SourceFrame.prototype._removeBreakpointFromSource):
+        (WebInspector.SourceFrame.prototype._drawBreakpointImagesIfNeeded.drawBreakpoint):
+        (WebInspector.SourceFrame.prototype._drawBreakpointImagesIfNeeded):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+        (WebInspector.set currentFocusElement):
+        (WebInspector.set currentPanel):
+        (WebInspector.loaded):
+        (WebInspector.contextMenu):
+        (WebInspector.elementDragStart):
+        (WebInspector.updateResource):
+        (WebInspector.drawLoadingPieChart):
+        (WebInspector.linkifyURLAsNode):
+        (WebInspector.startEditing.getContent):
+        (WebInspector.startEditing.editingCancelled):
+        (WebInspector.startEditing.editingCommitted):
+        * inspector/front-end/utilities.js:
+        (Element.prototype.positionAt):
+        (Element.prototype.offsetRelativeToWindow):
+
 2009-09-14  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler.

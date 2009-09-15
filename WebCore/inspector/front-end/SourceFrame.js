@@ -115,7 +115,7 @@ WebInspector.SourceFrame.prototype = {
             this._lineNumberToReveal = lineNumber;
             return;
         }
-    
+
         var row = this.sourceRow(lineNumber);
         if (row)
             row.scrollIntoViewIfNeeded(true);
@@ -199,6 +199,7 @@ WebInspector.SourceFrame.prototype = {
     _loaded: function()
     {
         WebInspector.addMainEventListeners(this.element.contentDocument);
+        this.element.contentDocument.addEventListener("contextmenu", this._documentContextMenu.bind(this), true);
         this.element.contentDocument.addEventListener("mousedown", this._documentMouseDown.bind(this), true);
         this.element.contentDocument.addEventListener("keydown", this._documentKeyDown.bind(this), true);
         this.element.contentDocument.addEventListener("keyup", WebInspector.documentKeyUp.bind(WebInspector), true);
@@ -222,11 +223,18 @@ WebInspector.SourceFrame.prototype = {
         // Add these style rules here since they are specific to the Inspector. They also behave oddly and not
         // all properties apply if added to view-source.css (becuase it is a user agent sheet.)
         var styleText = ".webkit-line-number { background-repeat: no-repeat; background-position: right 1px; }\n";
+        styleText += ".webkit-execution-line .webkit-line-number { color: transparent; background-image: -webkit-canvas(program-counter); }\n";
+
         styleText += ".webkit-breakpoint .webkit-line-number { color: white; background-image: -webkit-canvas(breakpoint); }\n";
         styleText += ".webkit-breakpoint-disabled .webkit-line-number { color: white; background-image: -webkit-canvas(breakpoint-disabled); }\n";
-        styleText += ".webkit-execution-line .webkit-line-number { color: transparent; background-image: -webkit-canvas(program-counter); }\n";
         styleText += ".webkit-breakpoint.webkit-execution-line .webkit-line-number { color: transparent; background-image: -webkit-canvas(breakpoint-program-counter); }\n";
         styleText += ".webkit-breakpoint-disabled.webkit-execution-line .webkit-line-number { color: transparent; background-image: -webkit-canvas(breakpoint-disabled-program-counter); }\n";
+
+        styleText += ".webkit-breakpoint.webkit-breakpoint-conditional .webkit-line-number { color: white; background-image: -webkit-canvas(breakpoint-conditional); }\n";
+        styleText += ".webkit-breakpoint-disabled.webkit-breakpoint-conditional .webkit-line-number { color: white; background-image: -webkit-canvas(breakpoint-disabled-conditional); }\n";
+        styleText += ".webkit-breakpoint.webkit-breakpoint-conditional.webkit-execution-line .webkit-line-number { color: transparent; background-image: -webkit-canvas(breakpoint-conditional-program-counter); }\n";
+        styleText += ".webkit-breakpoint-disabled.webkit-breakpoint-conditional.webkit-execution-line .webkit-line-number { color: transparent; background-image: -webkit-canvas(breakpoint-disabled-conditional-program-counter); }\n";
+
         styleText += ".webkit-execution-line .webkit-line-content { background-color: rgb(171, 191, 254); outline: 1px solid rgb(64, 115, 244); }\n";
         styleText += ".webkit-height-sized-to-fit { overflow-y: hidden }\n";
         styleText += ".webkit-line-content { background-color: white; }\n";
@@ -237,6 +245,15 @@ WebInspector.SourceFrame.prototype = {
         styleText += ".webkit-javascript-number { color: rgb(28, 0, 207); }\n";
         styleText += ".webkit-javascript-string, .webkit-javascript-regexp { color: rgb(196, 26, 22); }\n";
 
+        // TODO: Move these styles into inspector.css once https://bugs.webkit.org/show_bug.cgi?id=28913 is fixed and popup moved into the top frame.
+        styleText += ".popup-content { position: absolute; z-index: 10000; padding: 4px; background-color: rgb(203, 226, 255); -webkit-border-radius: 7px; border: 2px solid rgb(169, 172, 203); }";
+        styleText += ".popup-glasspane { position: absolute; top: 0; left: 0; height: 100%; width: 100%; opacity: 0; z-index: 9900; }";
+        styleText += ".popup-message { background-color: transparent; font-family: Lucida Grande, sans-serif; font-weight: normal; font-size: 11px; text-align: left; text-shadow: none; color: rgb(85, 85, 85); cursor: default; margin: 0 0 2px 0; }";
+        styleText += ".popup-content.breakpoint-condition { width: 90%; }";
+        styleText += ".popup-content input#bp-condition { font-family: monospace; margin: 0; border: 1px inset rgb(190, 190, 190) !important; width: 100%; box-shadow: none !important; outline: none !important; -webkit-user-modify: read-write; }";
+        // This class is already in inspector.css
+        styleText += ".hidden { display: none !important; }";
+        
         styleElement.textContent = styleText;
 
         this._needsProgramCounterImage = true;
@@ -244,8 +261,12 @@ WebInspector.SourceFrame.prototype = {
 
         this.element.contentWindow.Element.prototype.addStyleClass = Element.prototype.addStyleClass;
         this.element.contentWindow.Element.prototype.removeStyleClass = Element.prototype.removeStyleClass;
+        this.element.contentWindow.Element.prototype.positionAt = Element.prototype.positionAt;
         this.element.contentWindow.Element.prototype.removeMatchingStyleClasses = Element.prototype.removeMatchingStyleClasses;
         this.element.contentWindow.Element.prototype.hasStyleClass = Element.prototype.hasStyleClass;
+        this.element.contentWindow.Element.prototype.pageOffsetRelativeToWindow = Element.prototype.pageOffsetRelativeToWindow;
+        this.element.contentWindow.Element.prototype.__defineGetter__("totalOffsetLeft", Element.prototype.__lookupGetter__("totalOffsetLeft"));
+        this.element.contentWindow.Element.prototype.__defineGetter__("totalOffsetTop", Element.prototype.__lookupGetter__("totalOffsetTop"));
         this.element.contentWindow.Node.prototype.enclosingNodeOrSelfWithNodeName = Node.prototype.enclosingNodeOrSelfWithNodeName;
         this.element.contentWindow.Node.prototype.enclosingNodeOrSelfWithNodeNameInArray = Node.prototype.enclosingNodeOrSelfWithNodeNameInArray;
 
@@ -257,20 +278,20 @@ WebInspector.SourceFrame.prototype = {
 
         if (this.autoSizesToFitContentHeight)
             this.sizeToFitContentHeight();
-            
+
         if (this._lineNumberToReveal) {
             this.revealLine(this._lineNumberToReveal);
             delete this._lineNumberToReveal;
         }
-    
+
         if (this._lineNumberToHighlight) {
             this.highlightLine(this._lineNumberToHighlight);
             delete this._lineNumberToHighlight;
         }
-        
+
         this.dispatchEventToListeners("content loaded");
     },
-    
+
     _isContentLoaded: function() {
         var doc = this.element.contentDocument;
         return doc && doc.getElementsByTagName("table")[0];
@@ -283,18 +304,100 @@ WebInspector.SourceFrame.prototype = {
         this.sizeToFitContentHeight();
     },
 
+    _documentContextMenu: function(event)
+    {
+        if (!event.target.hasStyleClass("webkit-line-number"))
+            return;
+        var sourceRow = event.target.enclosingNodeOrSelfWithNodeName("tr");
+        if (!sourceRow._breakpointObject && this.addBreakpointDelegate)
+            this.addBreakpointDelegate(this.lineNumberForSourceRow(sourceRow));
+        
+        var breakpoint = sourceRow._breakpointObject;
+        if (!breakpoint)
+            return;
+        
+        this._editBreakpointCondition(event.target, sourceRow, breakpoint);
+        event.preventDefault();
+    },
+
     _documentMouseDown: function(event)
     {
         if (!event.target.hasStyleClass("webkit-line-number"))
             return;
-
+        if (event.button != 0 || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey)
+            return;
         var sourceRow = event.target.enclosingNodeOrSelfWithNodeName("tr");
         if (sourceRow._breakpointObject && sourceRow._breakpointObject.enabled)
             sourceRow._breakpointObject.enabled = false;
-        else if (sourceRow._breakpointObject) 
+        else if (sourceRow._breakpointObject)
             WebInspector.panels.scripts.removeBreakpoint(sourceRow._breakpointObject);
         else if (this.addBreakpointDelegate)
             this.addBreakpointDelegate(this.lineNumberForSourceRow(sourceRow));
+    },
+
+    _editBreakpointCondition: function(eventTarget, sourceRow, breakpoint)
+    {
+        // TODO: Migrate the popup to the top-level document and remove the blur listener from conditionElement once https://bugs.webkit.org/show_bug.cgi?id=28913 is fixed.
+        var popupDocument = this.element.contentDocument;
+        this._showBreakpointConditionPopup(eventTarget, breakpoint.line, popupDocument);
+        
+        function committed(element, newText)
+        {
+            breakpoint.condition = newText;
+            if (breakpoint.condition)
+                sourceRow.addStyleClass("webkit-breakpoint-conditional");
+            else
+                sourceRow.removeStyleClass("webkit-breakpoint-conditional");
+            dismissed.call(this);
+        }
+
+        function dismissed()
+        {
+            this._popup.hide();
+            delete this._conditionEditorElement;
+        }
+
+        var dismissedHandler = dismissed.bind(this);
+        this._conditionEditorElement.addEventListener("blur", dismissedHandler, false);
+        
+        WebInspector.startEditing(this._conditionEditorElement, committed.bind(this), dismissedHandler);
+        this._conditionEditorElement.value = breakpoint.condition;
+        this._conditionEditorElement.select();
+    },
+
+    _showBreakpointConditionPopup: function(clickedElement, lineNumber, popupDocument)
+    {
+        var popupContentElement = this._createPopupElement(lineNumber, popupDocument);
+        var lineElement = clickedElement.enclosingNodeOrSelfWithNodeName("td").nextSibling;
+        if (this._popup) {
+            this._popup.hide();
+            this._popup.element = popupContentElement;
+        } else {
+            this._popup = new WebInspector.Popup(popupContentElement);
+            this._popup.autoHide = true;
+        }
+        this._popup.anchor = lineElement;
+        this._popup.show();
+    },
+
+    _createPopupElement: function(lineNumber, popupDocument)
+    {
+        var popupContentElement = popupDocument.createElement("div");
+        popupContentElement.className = "popup-content breakpoint-condition";
+
+        var labelElement = document.createElement("label");
+        labelElement.className = "popup-message";
+        labelElement.htmlFor = "bp-condition";
+        labelElement.appendChild(document.createTextNode(WebInspector.UIString("The breakpoint on line %d will stop only if this expression is true:", lineNumber)));
+        popupContentElement.appendChild(labelElement);
+
+        var editorElement = document.createElement("input");
+        editorElement.id = "bp-condition";
+        editorElement.type = "text"
+        popupContentElement.appendChild(editorElement);
+        this._conditionEditorElement = editorElement;
+
+        return popupContentElement;
     },
 
     _documentKeyDown: function(event)
@@ -382,6 +485,8 @@ WebInspector.SourceFrame.prototype = {
         sourceRow.addStyleClass("webkit-breakpoint");
         if (!breakpoint.enabled)
             sourceRow.addStyleClass("webkit-breakpoint-disabled");
+        if (breakpoint.condition)
+            sourceRow.addStyleClass("webkit-breakpoint-conditional");
     },
 
     _removeBreakpointFromSource: function(breakpoint)
@@ -394,8 +499,9 @@ WebInspector.SourceFrame.prototype = {
 
         sourceRow.removeStyleClass("webkit-breakpoint");
         sourceRow.removeStyleClass("webkit-breakpoint-disabled");
+        sourceRow.removeStyleClass("webkit-breakpoint-conditional");
     },
-    
+
     _incrementMessageRepeatCount: function(msg, repeatDelta)
     {
         if (!msg._resourceMessageLineElement)
@@ -520,12 +626,12 @@ WebInspector.SourceFrame.prototype = {
         delete this._needsProgramCounterImage;
     },
 
-    _drawBreakpointImagesIfNeeded: function()
+    _drawBreakpointImagesIfNeeded: function(conditional)
     {
         if (!this._needsBreakpointImages || !this.element.contentDocument)
             return;
 
-        function drawBreakpoint(ctx, disabled)
+        function drawBreakpoint(ctx, disabled, conditional)
         {
             ctx.beginPath();
             ctx.moveTo(0, 2);
@@ -536,8 +642,8 @@ WebInspector.SourceFrame.prototype = {
             ctx.lineTo(2, 11);
             ctx.lineTo(0, 9);
             ctx.closePath();
-            ctx.fillStyle = "rgb(1, 142, 217)";
-            ctx.strokeStyle = "rgb(0, 103, 205)";
+            ctx.fillStyle = conditional ? "rgb(217, 142, 1)" : "rgb(1, 142, 217)";
+            ctx.strokeStyle = conditional ? "rgb(205, 103, 0)" : "rgb(0, 103, 205)";
             ctx.lineWidth = 3;
             ctx.fill();
             ctx.save();
@@ -554,6 +660,9 @@ WebInspector.SourceFrame.prototype = {
             ctx.fillRect(0, 0, 26, 11);
             ctx.restore();
         }
+
+
+        // Unconditional breakpoints.
 
         var ctx = this.element.contentDocument.getCSSCanvasContext("2d", "breakpoint", 26, 11);
         ctx.clearRect(0, 0, 26, 11);
@@ -572,6 +681,29 @@ WebInspector.SourceFrame.prototype = {
         var ctx = this.element.contentDocument.getCSSCanvasContext("2d", "breakpoint-disabled-program-counter", 26, 11);
         ctx.clearRect(0, 0, 26, 11);
         drawBreakpoint(ctx, true);
+        ctx.clearRect(20, 0, 6, 11);
+        this._drawProgramCounterInContext(ctx, true);
+
+
+        // Conditional breakpoints.
+
+        var ctx = this.element.contentDocument.getCSSCanvasContext("2d", "breakpoint-conditional", 26, 11);
+        ctx.clearRect(0, 0, 26, 11);
+        drawBreakpoint(ctx, false, true);
+
+        var ctx = this.element.contentDocument.getCSSCanvasContext("2d", "breakpoint-conditional-program-counter", 26, 11);
+        ctx.clearRect(0, 0, 26, 11);
+        drawBreakpoint(ctx, false, true);
+        ctx.clearRect(20, 0, 6, 11);
+        this._drawProgramCounterInContext(ctx, true);
+
+        var ctx = this.element.contentDocument.getCSSCanvasContext("2d", "breakpoint-disabled-conditional", 26, 11);
+        ctx.clearRect(0, 0, 26, 11);
+        drawBreakpoint(ctx, true, true);
+
+        var ctx = this.element.contentDocument.getCSSCanvasContext("2d", "breakpoint-disabled-conditional-program-counter", 26, 11);
+        ctx.clearRect(0, 0, 26, 11);
+        drawBreakpoint(ctx, true, true);
         ctx.clearRect(20, 0, 6, 11);
         this._drawProgramCounterInContext(ctx, true);
 
@@ -771,3 +903,4 @@ WebInspector.SourceFrame.prototype = {
 }
 
 WebInspector.SourceFrame.prototype.__proto__ = WebInspector.Object.prototype;
+

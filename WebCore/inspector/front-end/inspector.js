@@ -8,13 +8,13 @@
  * are met:
  *
  * 1.  Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer. 
+ *     notice, this list of conditions and the following disclaimer.
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution. 
+ *     documentation and/or other materials provided with the distribution.
  * 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
  *     its contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission. 
+ *     from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -73,7 +73,7 @@ var WebInspector = {
             // there isn't already a caret selection inside.
             var selection = window.getSelection();
             if (selection.isCollapsed && !this._currentFocusElement.isInsertionCaretInside()) {
-                var selectionRange = document.createRange();
+                var selectionRange = this._currentFocusElement.ownerDocument.createRange();
                 selectionRange.setStart(this._currentFocusElement, 0);
                 selectionRange.setEnd(this._currentFocusElement, 0);
 
@@ -122,13 +122,13 @@ var WebInspector = {
                 }
             }
         }
-        
+
         for (var panelName in WebInspector.panels) {
             if (WebInspector.panels[panelName] == x)
                 InspectorController.storeLastActivePanel(panelName);
         }
     },
-  
+
     _createPanels: function()
     {
         var hiddenPanels = (InspectorController.hiddenPanels() || "").split(',');
@@ -409,6 +409,7 @@ WebInspector.loaded = function()
     document.addEventListener("keyup", this.documentKeyUp.bind(this), true);
     document.addEventListener("beforecopy", this.documentCanCopy.bind(this), true);
     document.addEventListener("copy", this.documentCopy.bind(this), true);
+    document.addEventListener("contextmenu", this.contextMenu.bind(this), true);
 
     var mainPanelsElement = document.getElementById("main-panels");
     mainPanelsElement.handleKeyEvent = this.mainKeyDown.bind(this);
@@ -663,6 +664,12 @@ WebInspector.documentCopy = function(event)
         WebInspector[this.currentFocusElement.id + "Copy"](event);
 }
 
+WebInspector.contextMenu = function(event)
+{
+    if (event.handled || event.target.hasStyleClass("popup-glasspane"))
+        event.preventDefault();
+}
+
 WebInspector.mainKeyDown = function(event)
 {
     if (this.currentPanel && this.currentPanel.handleKeyEvent)
@@ -827,7 +834,7 @@ WebInspector.toolbarDrag = function(event)
     event.preventDefault();
 }
 
-WebInspector.elementDragStart = function(element, dividerDrag, elementDragEnd, event, cursor) 
+WebInspector.elementDragStart = function(element, dividerDrag, elementDragEnd, event, cursor)
 {
     if (this._elementDraggingEventListener || this._elementEndDraggingEventListener)
         this.elementDragEnd(event);
@@ -962,7 +969,7 @@ WebInspector.updateResource = function(identifier, payload)
     if (payload.didTypeChange) {
         resource.type = payload.type;
     }
-    
+
     if (payload.didLengthChange) {
         resource.contentLength = payload.contentLength;
     }
@@ -1152,7 +1159,7 @@ WebInspector.drawLoadingPieChart = function(canvas, percent) {
     var r = 7;
 
     g.beginPath();
-    g.arc(cx, cy, r, 0, Math.PI * 2, false); 
+    g.arc(cx, cy, r, 0, Math.PI * 2, false);
     g.closePath();
 
     g.lineWidth = 1;
@@ -1166,7 +1173,7 @@ WebInspector.drawLoadingPieChart = function(canvas, percent) {
 
     g.beginPath();
     g.moveTo(cx, cy);
-    g.arc(cx, cy, r, startangle, endangle, false); 
+    g.arc(cx, cy, r, startangle, endangle, false);
     g.closePath();
 
     g.fillStyle = darkColor;
@@ -1283,7 +1290,7 @@ WebInspector.linkifyURLAsNode = function(url, linkText, classes, isExternal)
     a.title = url;
     a.target = "_blank";
     a.textContent = linkText;
-    
+
     return a;
 }
 
@@ -1426,7 +1433,7 @@ WebInspector.startEditing = function(element, committedCallback, cancelledCallba
         return;
     element.__editing = true;
 
-    var oldText = element.textContent;
+    var oldText = getContent(element);
     var oldHandleKeyEvent = element.handleKeyEvent;
     var moveDirection = "";
 
@@ -1438,6 +1445,13 @@ WebInspector.startEditing = function(element, committedCallback, cancelledCallba
 
     function blurEventListener() {
         editingCommitted.call(element);
+    }
+
+    function getContent(element) {
+        if (element.tagName === "INPUT" && element.type === "text")
+            return element.value;
+        else
+            return element.textContent;
     }
 
     function cleanUpAfterEditing() {
@@ -1456,7 +1470,10 @@ WebInspector.startEditing = function(element, committedCallback, cancelledCallba
     }
 
     function editingCancelled() {
-        this.textContent = oldText;
+        if (this.tagName === "INPUT" && this.type === "text")
+            this.value = oldText;
+        else
+            this.textContent = oldText;
 
         cleanUpAfterEditing.call(this);
 
@@ -1468,7 +1485,7 @@ WebInspector.startEditing = function(element, committedCallback, cancelledCallba
         cleanUpAfterEditing.call(this);
 
         if (committedCallback)
-            committedCallback(this, this.textContent, oldText, context, moveDirection);
+            committedCallback(this, getContent(this), oldText, context, moveDirection);
     }
 
     element.handleKeyEvent = function(event) {

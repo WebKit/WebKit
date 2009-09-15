@@ -34,6 +34,7 @@
     <file>Panel.js</file>
     <file>PanelEnablerView.js</file>
     <file>Placard.js</file>
+    <file>Popup.js</file>
     <file>ProfileDataGridTree.js</file>
     <file>ProfilesPanel.js</file>
     <file>ProfileView.js</file>
