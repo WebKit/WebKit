@@ -1,3 +1,14 @@
+2009-09-15  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Pass the PopupMenu pointer to CreateWindowEx and then get it from the LPCREATESTRUCT in
+        the WM_CREATE handler. This way we don't have to first create an zero size window and then size it.
+        
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenu::show):
+        (WebCore::PopupMenu::PopupMenuWndProc):
+
 2009-09-15  Drew Wilson  <atwilson@google.com>
 
         Reviewed by Darin Adler.

@@ -99,42 +99,33 @@ LPCTSTR PopupMenu::popupClassName()
     return kPopupWindowClassName;
 }
 
-void PopupMenu::show(const IntRect& r, FrameView* v, int index)
+void PopupMenu::show(const IntRect& r, FrameView* view, int index)
 {
-    calculatePositionAndSize(r, v);
+    calculatePositionAndSize(r, view);
     if (clientRect().isEmpty())
         return;
+
+    HWND hostWindow = view->hostWindow()->platformWindow();
+
+    if (!m_scrollbar && visibleItems() < client()->listSize()) {
+        // We need a scroll bar
+        m_scrollbar = client()->createScrollbar(this, VerticalScrollbar, SmallScrollbar);
+        m_scrollbar->styleChanged();
+    }
 
     if (!m_popup) {
         registerClass();
 
         DWORD exStyle = WS_EX_LTRREADING;
 
-        // Even though we already know our size and location at this point, we pass (0,0,0,0) as our size/location here.
-        // We need to wait until after the call to ::SetWindowLongPtr to set our size so that in our WM_SIZE handler we can get access to the PopupMenu object
         m_popup = ::CreateWindowEx(exStyle, kPopupWindowClassName, _T("PopupMenu"),
             WS_POPUP | WS_BORDER,
-            0, 0, 0, 0,
-            v->hostWindow()->platformWindow(), 0, 0, 0);
+            m_windowRect.x(), m_windowRect.y(), m_windowRect.width(), m_windowRect.height(),
+            hostWindow, 0, Page::instanceHandle(), this);
 
         if (!m_popup)
             return;
-
-#if PLATFORM(WINCE)
-        ::SetWindowLong(m_popup, 0, (LONG)this);
-#else
-        ::SetWindowLongPtr(m_popup, 0, (LONG_PTR)this);
-#endif
     }
-
-    if (!m_scrollbar)
-        if (visibleItems() < client()->listSize()) {
-            // We need a scroll bar
-            m_scrollbar = client()->createScrollbar(this, VerticalScrollbar, SmallScrollbar);
-            m_scrollbar->styleChanged();
-        }
-
-    ::SetWindowPos(m_popup, HWND_TOP, m_windowRect.x(), m_windowRect.y(), m_windowRect.width(), m_windowRect.height(), 0);
 
     // Determine whether we should animate our popups
     // Note: Must use 'BOOL' and 'FALSE' instead of 'bool' and 'false' to avoid stack corruption with SystemParametersInfo
@@ -144,12 +135,12 @@ void PopupMenu::show(const IntRect& r, FrameView* v, int index)
 
     if (shouldAnimate) {
         RECT viewRect = {0};
-        ::GetWindowRect(v->hostWindow()->platformWindow(), &viewRect);
+        ::GetWindowRect(hostWindow, &viewRect);
 
         if (!::IsRectEmpty(&viewRect)) {
             // Popups should slide into view away from the <select> box
             // NOTE: This may have to change for Vista
-            DWORD slideDirection = (m_windowRect.y() < viewRect.top + v->contentsToWindow(r.location()).y()) ? AW_VER_NEGATIVE : AW_VER_POSITIVE;
+            DWORD slideDirection = (m_windowRect.y() < viewRect.top + view->contentsToWindow(r.location()).y()) ? AW_VER_NEGATIVE : AW_VER_POSITIVE;
 
             ::AnimateWindow(m_popup, defaultAnimationDuration, AW_SLIDE | slideDirection | AW_ACTIVATE);
         }
@@ -643,12 +634,23 @@ LRESULT CALLBACK PopupMenu::PopupMenuWndProc(HWND hWnd, UINT message, WPARAM wPa
 #else
     LONG_PTR longPtr = GetWindowLongPtr(hWnd, 0);
 #endif
-    PopupMenu* popup = reinterpret_cast<PopupMenu*>(longPtr);
+    
+    if (PopupMenu* popup = reinterpret_cast<PopupMenu*>(longPtr))
+        return popup->wndProc(hWnd, message, wParam, lParam);
+    
+    if (message == WM_CREATE) {
+        LPCREATESTRUCT createStruct = reinterpret_cast<LPCREATESTRUCT>(lParam);
 
-    if (!popup)
-        return ::DefWindowProc(hWnd, message, wParam, lParam);
+        // Associate the PopupMenu with the window.
+#if PLATFORM(WINCE)
+        ::SetWindowLong(hWnd, 0, (LONG)createStruct->lpCreateParams);
+#else
+        ::SetWindowLongPtr(hWnd, 0, (LONG_PTR)createStruct->lpCreateParams);
+#endif
+        return 0;
+    }
 
-    return popup->wndProc(hWnd, message, wParam, lParam);
+    return ::DefWindowProc(hWnd, message, wParam, lParam);
 }
 
 const int smoothScrollAnimationDuration = 5000;
