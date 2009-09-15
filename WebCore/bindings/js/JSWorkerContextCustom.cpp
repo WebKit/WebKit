@@ -126,19 +126,21 @@ JSValue JSWorkerContext::importScripts(ExecState* exec, const ArgList& args)
 
 JSValue JSWorkerContext::addEventListener(ExecState* exec, const ArgList& args)
 {
-    RefPtr<JSEventListener> listener = findOrCreateJSEventListener(args.at(1));
-    if (!listener)
+    JSValue listener = args.at(1);
+    if (!listener.isObject())
         return jsUndefined();
-    impl()->addEventListener(args.at(0).toString(exec), listener.release(), args.at(2).toBoolean(exec));
+
+    impl()->addEventListener(args.at(0).toString(exec), JSEventListener::create(asObject(listener), this, false), args.at(2).toBoolean(exec));
     return jsUndefined();
 }
 
 JSValue JSWorkerContext::removeEventListener(ExecState* exec, const ArgList& args)
 {
-    JSEventListener* listener = findJSEventListener(args.at(1));
-    if (!listener)
+    JSValue listener = args.at(1);
+    if (!listener.isObject())
         return jsUndefined();
-    impl()->removeEventListener(args.at(0).toString(exec), listener, args.at(2).toBoolean(exec));
+
+    impl()->removeEventListener(args.at(0).toString(exec), JSEventListener::create(asObject(listener), this, false).get(), args.at(2).toBoolean(exec));
     return jsUndefined();
 }
 

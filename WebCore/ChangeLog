@@ -1,3 +1,114 @@
+2009-09-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Removed the jsEventListeners set from JSDOMGlobalObject, to simplify
+        creation and destruction of JSDOMGlobalObject and event listeners.
+        
+        Added an abstract operator==() to EventListener, to replace the
+        jsEventListeners set's role in determining if two event listeners are
+        equal from the DOM's perspective.
+        
+        Added a type field to EventListener, and casting operations, to support
+        operator==() and other abstract operations.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSAbstractWorkerCustom.cpp:
+        (WebCore::JSAbstractWorker::addEventListener):
+        (WebCore::JSAbstractWorker::removeEventListener):
+        * bindings/js/JSDOMApplicationCacheCustom.cpp:
+        (WebCore::JSDOMApplicationCache::addEventListener):
+        (WebCore::JSDOMApplicationCache::removeEventListener):
+        * bindings/js/JSDOMGlobalObject.cpp:
+        * bindings/js/JSDOMGlobalObject.h:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::addEventListener):
+        (WebCore::JSDOMWindow::removeEventListener):
+        * bindings/js/JSDesktopNotificationsCustom.cpp:
+        (WebCore::JSNotification::addEventListener):
+        (WebCore::):
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::JSEventListener):
+        (WebCore::JSEventListener::~JSEventListener):
+        (WebCore::JSEventListener::markJSFunction):
+        (WebCore::JSEventListener::handleEvent):
+        (WebCore::JSEventListener::reportError):
+        (WebCore::JSEventListener::operator==):
+        * bindings/js/JSEventListener.h:
+        (WebCore::JSEventListener::cast):
+        * bindings/js/JSEventSourceCustom.cpp:
+        (WebCore::JSEventSource::addEventListener):
+        (WebCore::JSEventSource::removeEventListener):
+        * bindings/js/JSMessagePortCustom.cpp:
+        (WebCore::JSMessagePort::addEventListener):
+        (WebCore::JSMessagePort::removeEventListener):
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::JSNode::addEventListener):
+        (WebCore::JSNode::removeEventListener):
+        * bindings/js/JSSVGElementInstanceCustom.cpp:
+        (WebCore::JSSVGElementInstance::addEventListener):
+        (WebCore::JSSVGElementInstance::removeEventListener):
+        * bindings/js/JSWorkerContextCustom.cpp:
+        (WebCore::JSWorkerContext::addEventListener):
+        (WebCore::JSWorkerContext::removeEventListener):
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::addEventListener):
+        (WebCore::JSXMLHttpRequest::removeEventListener):
+        * bindings/js/JSXMLHttpRequestUploadCustom.cpp:
+        (WebCore::JSXMLHttpRequestUpload::addEventListener):
+        (WebCore::JSXMLHttpRequestUpload::removeEventListener):
+        * bindings/objc/ObjCEventListener.h:
+        (WebCore::ObjCEventListener::cast):
+        * bindings/objc/ObjCEventListener.mm:
+        (WebCore::ObjCEventListener::ObjCEventListener):
+        (WebCore::ObjCEventListener::operator==):
+        * dom/EventListener.h:
+        (WebCore::EventListener::):
+        (WebCore::EventListener::type):
+        (WebCore::EventListener::EventListener):
+        * dom/MessagePort.cpp:
+        (WebCore::MessagePort::addEventListener):
+        (WebCore::MessagePort::removeEventListener):
+        * dom/Node.cpp:
+        (WebCore::Node::removeEventListener):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::InspectorDOMAgent):
+        (WebCore::InspectorDOMAgent::mainFrameDocument):
+        (WebCore::InspectorDOMAgent::operator==):
+        * inspector/InspectorDOMAgent.h:
+        (WebCore::InspectorDOMAgent::cast):
+        * loader/ImageDocument.cpp:
+        (WebCore::ImageEventListener::cast):
+        (WebCore::ImageEventListener::ImageEventListener):
+        (WebCore::ImageEventListener::operator==):
+        * loader/appcache/DOMApplicationCache.cpp:
+        (WebCore::DOMApplicationCache::addEventListener):
+        (WebCore::DOMApplicationCache::removeEventListener):
+        * notifications/Notification.cpp:
+        (WebCore::Notification::removeEventListener):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::removeEventListener):
+        * page/EventSource.cpp:
+        (WebCore::EventSource::addEventListener):
+        (WebCore::EventSource::removeEventListener):
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::ConditionEventListener::cast):
+        (WebCore::ConditionEventListener::ConditionEventListener):
+        (WebCore::ConditionEventListener::operator==):
+        (WebCore::ConditionEventListener::handleEvent):
+        * workers/AbstractWorker.cpp:
+        (WebCore::AbstractWorker::addEventListener):
+        (WebCore::AbstractWorker::removeEventListener):
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::addEventListener):
+        (WebCore::WorkerContext::removeEventListener):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::addEventListener):
+        (WebCore::XMLHttpRequest::removeEventListener):
+        * xml/XMLHttpRequestUpload.cpp:
+        (WebCore::XMLHttpRequestUpload::addEventListener):
+        (WebCore::XMLHttpRequestUpload::removeEventListener):
+
 2009-09-15  Alex Milowski  <alex@milowski.com>
 
         Reviewed by Tor Arne Vestbø.

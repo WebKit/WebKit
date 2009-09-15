@@ -195,7 +195,7 @@ void Notification::removeEventListener(const AtomicString& eventType, EventListe
     size_t size = m_eventListeners.size();
     for (size_t i = 0; i < size; ++i) {
         RegisteredEventListener& r = *m_eventListeners[i];
-        if (r.eventType() == eventType && r.listener() == listener && r.useCapture() == useCapture) {
+        if (r.eventType() == eventType && r.useCapture() == useCapture && *r.listener() == *listener) {
             r.setRemoved(true);
             m_eventListeners.remove(i);
             return; 

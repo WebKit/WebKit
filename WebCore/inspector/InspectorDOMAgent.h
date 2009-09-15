@@ -55,8 +55,17 @@ namespace WebCore {
 
     class InspectorDOMAgent : public EventListener {
     public:
+        static const InspectorDOMAgent* cast(const EventListener* listener)
+        {
+            return listener->type() == InspectorDOMAgentType
+                ? static_cast<const InspectorDOMAgent*>(listener)
+                : 0;
+        }
+
         InspectorDOMAgent(InspectorFrontend* frontend);
         ~InspectorDOMAgent();
+
+        virtual bool operator==(const EventListener& other);
 
         // Methods called from the frontend.
         void getChildNodes(long callId, long nodeId);
@@ -101,7 +110,7 @@ namespace WebCore {
         Node* innerParentNode(Node* node);
         bool isWhitespace(Node* node);
 
-        Document* mainFrameDocument();
+        Document* mainFrameDocument() const;
         void discardBindings();
 
         InspectorFrontend* m_frontend;
@@ -113,7 +122,6 @@ namespace WebCore {
         HashSet<long> m_childrenRequested;
         long m_lastNodeId;
         ListHashSet<RefPtr<Document> > m_documents;
-        RefPtr<EventListener> m_eventListener;
     };
 
 

@@ -54,10 +54,24 @@ using namespace HTMLNames;
 class ImageEventListener : public EventListener {
 public:
     static PassRefPtr<ImageEventListener> create(ImageDocument* document) { return adoptRef(new ImageEventListener(document)); }
-    virtual void handleEvent(Event*, bool isWindowEvent);
+    static const ImageEventListener* cast(const EventListener* listener)
+    {
+        return listener->type() == ImageEventListenerType
+            ? static_cast<const ImageEventListener*>(listener)
+            : 0;
+    }
+
+    virtual bool operator==(const EventListener& other);
 
 private:
-    ImageEventListener(ImageDocument* document) : m_doc(document) { }
+    ImageEventListener(ImageDocument* document)
+        : EventListener(ImageEventListenerType)
+        , m_doc(document)
+    {
+    }
+
+    virtual void handleEvent(Event*, bool isWindowEvent);
+
     ImageDocument* m_doc;
 };
     
@@ -352,6 +366,13 @@ void ImageEventListener::handleEvent(Event* event, bool)
         MouseEvent* mouseEvent = static_cast<MouseEvent*>(event);
         m_doc->imageClicked(mouseEvent->x(), mouseEvent->y());
     }
+}
+
+bool ImageEventListener::operator==(const EventListener& listener)
+{
+    if (const ImageEventListener* imageEventListener = ImageEventListener::cast(&listener))
+        return m_doc == imageEventListener->m_doc;
+    return false;
 }
 
 // --------

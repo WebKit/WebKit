@@ -1279,7 +1279,7 @@ void DOMWindow::removeEventListener(const AtomicString& eventType, EventListener
     size_t size = m_eventListeners.size();
     for (size_t i = 0; i < size; ++i) {
         RegisteredEventListener& r = *m_eventListeners[i];
-        if (r.eventType() == eventType && r.listener() == listener && r.useCapture() == useCapture) {
+        if (r.eventType() == eventType && r.useCapture() == useCapture && *r.listener() == *listener) {
             if (eventType == eventNames().unloadEvent)
                 removePendingEventListener(pendingUnloadEventListenerMap(), this, &r);
             else if (eventType == eventNames().beforeunloadEvent && allowsPendingBeforeUnloadListeners(this))

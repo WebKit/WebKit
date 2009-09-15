@@ -56,7 +56,8 @@ PassRefPtr<ObjCEventListener> ObjCEventListener::wrap(id <DOMEventListener> list
 }
 
 ObjCEventListener::ObjCEventListener(id <DOMEventListener> listener)
-    : m_listener([listener retain])
+    : EventListener(ObjCEventListenerType)
+    , m_listener([listener retain])
 {
     ListenerMap* map = listenerMap;
     if (!map) {
@@ -75,6 +76,13 @@ ObjCEventListener::~ObjCEventListener()
 void ObjCEventListener::handleEvent(Event* event, bool)
 {
     [m_listener handleEvent:kit(event)];
+}
+
+bool ObjCEventListener::operator==(const EventListener& listener)
+{
+    if (const ObjCEventListener* objCEventListener = ObjCEventListener::cast(&listener))
+        return m_listener == objCEventListener->m_listener;
+    return false;
 }
 
 } // namespace WebCore
