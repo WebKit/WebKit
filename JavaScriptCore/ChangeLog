@@ -1,3 +1,16 @@
+2009-09-15 Csaba Osztrogonac <oszi@inf.u-szeged.hu>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] Build fix for windows.
+
+        After http://trac.webkit.org/changeset/47795 the MinGW build broke,
+        because MinGW has __mingw_aligned_malloc instead of _aligned_malloc.
+
+        * runtime/Collector.cpp:
+        (JSC::Heap::allocateBlock): MinGW case added.
+        (JSC::Heap::freeBlock): MinGW case added.
+
 2009-09-15  Csaba Osztrogonac  <oszi@inf.u-szeged.hu>
 
         Reviewed by Tor Arne Vestbø.

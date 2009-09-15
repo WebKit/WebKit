@@ -237,7 +237,11 @@ NEVER_INLINE CollectorBlock* Heap::allocateBlock()
 
     memset(reinterpret_cast<void*>(address), 0, BLOCK_SIZE);
 #elif PLATFORM(WIN_OS)
+#if COMPILER(MINGW)
+    void* address = __mingw_aligned_malloc(BLOCK_SIZE, BLOCK_SIZE);
+#else
     void* address = _aligned_malloc(BLOCK_SIZE, BLOCK_SIZE);
+#endif
     memset(address, 0, BLOCK_SIZE);
 #elif HAVE(POSIX_MEMALIGN)
     void* address;
@@ -315,7 +319,11 @@ NEVER_INLINE void Heap::freeBlock(CollectorBlock* block)
 #elif PLATFORM(SYMBIAN)
     userChunk->Free(reinterpret_cast<TAny*>(block));
 #elif PLATFORM(WIN_OS)
+#if COMPILER(MINGW)
+    __mingw_aligned_free(block);
+#else
     _aligned_free(block);
+#endif
 #elif HAVE(POSIX_MEMALIGN)
     free(block);
 #else
