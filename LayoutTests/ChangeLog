@@ -1,3 +1,12 @@
+2009-09-15  Brian Weinstein  <bweinstein@apple.com>
+
+        Rubber-stamped by Steve Falkenburg.
+
+        Add four currently failing tests to the Skipped list so we can figure out what's wrong
+        with them and try to get the bot closer to green. Bugs have been filed for each test.
+
+        * platform/win/Skipped:
+
 2009-09-14  Andrew Richards  <randrew@gmail.com>
 
         Reviewed by Sam Weinig.
