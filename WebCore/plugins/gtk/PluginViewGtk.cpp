@@ -342,55 +342,57 @@ NPError PluginView::getValue(NPNVariable variable, void* value)
             return NPERR_GENERIC_ERROR;
 #endif
 
-    case NPNVWindowNPObject: {
-        if (m_isJavaScriptPaused)
-            return NPERR_GENERIC_ERROR;
+#if ENABLE(NETSCAPE_PLUGIN_API)
+        case NPNVWindowNPObject: {
+            if (m_isJavaScriptPaused)
+                return NPERR_GENERIC_ERROR;
 
-        NPObject* windowScriptObject = m_parentFrame->script()->windowScriptNPObject();
+            NPObject* windowScriptObject = m_parentFrame->script()->windowScriptNPObject();
 
-        // Return value is expected to be retained, as described here: <http://www.mozilla.org/projects/plugin/npruntime.html>
-        if (windowScriptObject)
-            _NPN_RetainObject(windowScriptObject);
+            // Return value is expected to be retained, as described here: <http://www.mozilla.org/projects/plugin/npruntime.html>
+            if (windowScriptObject)
+                _NPN_RetainObject(windowScriptObject);
 
-        void** v = (void**)value;
-        *v = windowScriptObject;
-        
-        return NPERR_NO_ERROR;
-    }
+            void** v = (void**)value;
+            *v = windowScriptObject;
+            
+            return NPERR_NO_ERROR;
+        }
 
-    case NPNVPluginElementNPObject: {
-        if (m_isJavaScriptPaused)
-            return NPERR_GENERIC_ERROR;
+        case NPNVPluginElementNPObject: {
+            if (m_isJavaScriptPaused)
+                return NPERR_GENERIC_ERROR;
 
-        NPObject* pluginScriptObject = 0;
+            NPObject* pluginScriptObject = 0;
 
-        if (m_element->hasTagName(appletTag) || m_element->hasTagName(embedTag) || m_element->hasTagName(objectTag))
-            pluginScriptObject = static_cast<HTMLPlugInElement*>(m_element)->getNPObject();
+            if (m_element->hasTagName(appletTag) || m_element->hasTagName(embedTag) || m_element->hasTagName(objectTag))
+                pluginScriptObject = static_cast<HTMLPlugInElement*>(m_element)->getNPObject();
 
-        // Return value is expected to be retained, as described here: <http://www.mozilla.org/projects/plugin/npruntime.html>
-        if (pluginScriptObject)
-            _NPN_RetainObject(pluginScriptObject);
+            // Return value is expected to be retained, as described here: <http://www.mozilla.org/projects/plugin/npruntime.html>
+            if (pluginScriptObject)
+                _NPN_RetainObject(pluginScriptObject);
 
-        void** v = (void**)value;
-        *v = pluginScriptObject;
+            void** v = (void**)value;
+            *v = pluginScriptObject;
 
-        return NPERR_NO_ERROR;
-    }
+            return NPERR_NO_ERROR;
+        }
+#endif
 
-    case NPNVnetscapeWindow: {
+        case NPNVnetscapeWindow: {
 #if defined(XP_UNIX)
-        void* w = reinterpret_cast<void*>(value);
-        *((XID *)w) = GDK_WINDOW_XWINDOW(m_parentFrame->view()->hostWindow()->platformWindow()->window);
+            void* w = reinterpret_cast<void*>(value);
+            *((XID *)w) = GDK_WINDOW_XWINDOW(m_parentFrame->view()->hostWindow()->platformWindow()->window);
 #endif
-#if defined(GDK_WINDOWING_WIN32)
-        HGDIOBJ* w = reinterpret_cast<HGDIOBJ*>(value);
-        *w = GDK_WINDOW_HWND(m_parentFrame->view()->hostWindow()->platformWindow()->window);
+#ifdef GDK_WINDOWING_WIN32
+            HGDIOBJ* w = reinterpret_cast<HGDIOBJ*>(value);
+            *w = GDK_WINDOW_HWND(m_parentFrame->view()->hostWindow()->platformWindow()->window);
 #endif
-        return NPERR_NO_ERROR;
-     }
+            return NPERR_NO_ERROR;
+        }
 
-    default:
-        return getValueStatic(variable, value);
+        default:
+            return getValueStatic(variable, value);
     }
 }
 

@@ -29,15 +29,13 @@
 #include "config.h"
 #include "PluginPackage.h"
 
+#include <stdio.h>
+
 #include "CString.h"
-#include <GOwnPtr.h>
 #include "MIMETypeRegistry.h"
 #include "NotImplemented.h"
 #include "npruntime_impl.h"
 #include "PluginDebug.h"
-
-#include <stdio.h>
-#include <gio/gio.h>
 
 namespace WebCore {
 
@@ -107,16 +105,7 @@ bool PluginPackage::load()
         return true;
     }
 
-    GOwnPtr<gchar> finalPath(g_strdup(m_path.utf8().data()));
-    while (g_file_test(finalPath.get(), G_FILE_TEST_IS_SYMLINK)) {
-        GOwnPtr<GFile> file(g_file_new_for_path(finalPath.get()));
-        GOwnPtr<gchar> linkPath(g_file_read_link(finalPath.get(), NULL));
-
-        GOwnPtr<GFile> resolvedFile(g_file_resolve_relative_path(file.get(), linkPath.get()));
-        finalPath.set(g_file_get_path(resolvedFile.get()));
-    }
-
-    m_module = g_module_open(finalPath.get(), G_MODULE_BIND_LOCAL);
+    m_module = g_module_open((m_path.utf8()).data(), G_MODULE_BIND_LOCAL);
 
     if (!m_module) {
         LOG(Plugins,"Module Load Failed :%s, Error:%s\n", (m_path.utf8()).data(), g_module_error());
