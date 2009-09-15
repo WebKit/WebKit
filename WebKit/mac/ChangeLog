@@ -1,3 +1,16 @@
+2009-09-15  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        <rdar://problem/7224378> REGRESSION(r48360): Dragging a tab with a plug-in out of a window, the plug-in gets slow and confused
+
+        In r48360, the fix for <rdar://problem/7090444>, I neglected to consider the case where the plug-in had already been started and
+        -start would do an early-return rather than calling -restartTimers and -addWindowObservers itself.
+
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView viewDidMoveToWindow]): Reinstate the call to -restartTimers and -addWindowObservers, but guard them
+        with a check that the view is still in the window.
+
 2009-09-14  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Alexey Proskuryakov.
