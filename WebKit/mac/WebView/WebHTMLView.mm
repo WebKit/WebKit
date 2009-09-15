@@ -5462,13 +5462,13 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     if (!_private->layerHostingView)
         return;
     
-    const CGFloat maxHeight = 4096;
+    const CGFloat maxHeight = 2048;
     NSRect layerViewFrame = [self bounds];
 
     if (layerViewFrame.size.height > maxHeight) {
         CGFloat documentHeight = layerViewFrame.size.height;
             
-        // Clamp the size of the view to <= 4096px to avoid the bug.
+        // Clamp the size of the view to <= maxHeight to avoid the bug.
         layerViewFrame.size.height = maxHeight;
         NSRect visibleRect = [[self enclosingScrollView] documentVisibleRect];
         

@@ -1,3 +1,16 @@
+2009-09-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fixed position elements flash when CSS transforms are applied on page > 2048px tall
+        https://bugs.webkit.org/show_bug.cgi?id=27272
+        
+        Update the previous workaround for misplaced compositing layers, which used a 4096px
+        threshold, to 2048px since that's the GPU max texture size on some older hardware.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _updateLayerHostingViewPosition]):
+
 2009-09-15  Alex Milowski  <alex@milowski.com>
 
         Reviewed by Tor Arne Vestbø.
