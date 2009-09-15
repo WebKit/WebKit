@@ -1,3 +1,16 @@
+2009-09-14  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Page cache should support pages with unload handlers as an experiment.
+        <rdar://problem/7196485> and https://bugs.webkit.org/show_bug.cgi?id=29021
+
+        Disable fast/loader/frames-with-unload-handlers-in-page-cache.html as it doesn't
+        make sense in the context of this experiment.
+
+        * platform/mac/Skipped: 
+        * platform/win/Skipped:
+
 2009-09-14  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Oliver Hunt.
