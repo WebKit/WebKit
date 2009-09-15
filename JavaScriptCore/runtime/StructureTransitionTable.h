@@ -31,6 +31,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashTraits.h>
 #include <wtf/PtrAndFlags.h>
+#include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace JSC {
@@ -68,7 +69,36 @@ namespace JSC {
 
     class StructureTransitionTable {
         typedef std::pair<Structure*, Structure*> Transition;
-        typedef HashMap<StructureTransitionTableHash::Key, Transition, StructureTransitionTableHash, StructureTransitionTableHashTraits> TransitionTable;
+        struct TransitionTable : public HashMap<StructureTransitionTableHash::Key, Transition, StructureTransitionTableHash, StructureTransitionTableHashTraits> {
+            typedef HashMap<unsigned, Structure*> AnonymousSlotMap;
+
+            void addSlotTransition(unsigned count, Structure* structure)
+            {
+                ASSERT(!getSlotTransition(count));
+                if (!m_anonymousSlotTable)
+                    m_anonymousSlotTable.set(new AnonymousSlotMap);
+                m_anonymousSlotTable->add(count, structure);
+            }
+
+            void removeSlotTransition(unsigned count)
+            {
+                ASSERT(getSlotTransition(count));
+                m_anonymousSlotTable->remove(count);
+            }
+
+            Structure* getSlotTransition(unsigned count)
+            {
+                if (!m_anonymousSlotTable)
+                    return 0;
+
+                AnonymousSlotMap::iterator find = m_anonymousSlotTable->find(count);
+                if (find == m_anonymousSlotTable->end())
+                    return 0;
+                return find->second;
+            }
+        private:
+            OwnPtr<AnonymousSlotMap> m_anonymousSlotTable;
+        };
     public:
         StructureTransitionTable() {
             m_transitions.m_singleTransition.set(0);
@@ -122,6 +152,27 @@ namespace JSC {
                 ASSERT(!table()->contains(key));
                 table()->add(key, Transition(0, structure));
             }
+        }
+
+        Structure* getAnonymousSlotTransition(unsigned count)
+        {
+            if (usingSingleTransitionSlot())
+                return 0;
+            return table()->getSlotTransition(count);
+        }
+
+        void addAnonymousSlotTransition(unsigned count, Structure* structure)
+        {
+            if (usingSingleTransitionSlot())
+                reifySingleTransition();
+            ASSERT(!table()->getSlotTransition(count));
+            table()->addSlotTransition(count, structure);
+        }
+        
+        void removeAnonymousSlotTransition(unsigned count)
+        {
+            ASSERT(!usingSingleTransitionSlot());
+            table()->removeSlotTransition(count);
         }
     private:
         TransitionTable* table() const { ASSERT(!usingSingleTransitionSlot()); return m_transitions.m_table; }

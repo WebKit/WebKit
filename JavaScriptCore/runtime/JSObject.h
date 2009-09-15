@@ -209,6 +209,17 @@ namespace JSC {
             return Structure::create(prototype, TypeInfo(ObjectType, HasStandardGetOwnPropertySlot | HasDefaultMark | HasDefaultGetPropertyNames));
         }
 
+    protected:
+        void addAnonymousSlots(unsigned count);
+        void putAnonymousValue(unsigned index, JSValue value)
+        {
+            *locationForOffset(index) = value;
+        }
+        JSValue getAnonymousValue(unsigned index)
+        {
+            return *locationForOffset(index);
+        }
+
     private:
         // Nobody should ever ask any of these questions on something already known to be a JSObject.
         using JSCell::isAPIValueWrapper;
@@ -511,6 +522,17 @@ inline void JSObject::putDirectInternal(JSGlobalData& globalData, const Identifi
 {
     PutPropertySlot slot;
     putDirectInternal(propertyName, value, attributes, false, slot, getJSFunction(globalData, value));
+}
+
+inline void JSObject::addAnonymousSlots(unsigned count)
+{
+    size_t currentCapacity = m_structure->propertyStorageCapacity();
+    RefPtr<Structure> structure = Structure::addAnonymousSlotsTransition(m_structure, count);
+
+    if (currentCapacity != structure->propertyStorageCapacity())
+        allocatePropertyStorage(currentCapacity, structure->propertyStorageCapacity());
+
+    setStructure(structure.release());
 }
 
 inline void JSObject::putDirect(const Identifier& propertyName, JSValue value, unsigned attributes, bool checkReadOnly, PutPropertySlot& slot)

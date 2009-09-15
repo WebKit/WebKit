@@ -1,3 +1,47 @@
+2009-09-10  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Allow anonymous storage inside JSObject
+        https://bugs.webkit.org/show_bug.cgi?id=29168
+
+        Add the concept of anonymous slots to Structures so that it is
+        possible to store references to values that need marking in the
+        standard JSObject storage buffer.  This allows us to reduce the
+        malloc overhead of some objects (by allowing them to store JS
+        values in the inline storage of the object) and reduce the 
+        dependence of custom mark functions (if all an objects children
+        are in the standard object property storage there's no need to
+        mark them manually).
+
+        * JavaScriptCore.exp:
+        * runtime/JSObject.h:
+        (JSC::JSObject::putAnonymousValue):
+        (JSC::JSObject::getAnonymousValue):
+        (JSC::JSObject::addAnonymousSlots):
+        * runtime/JSWrapperObject.h:
+        (JSC::JSWrapperObject::createStructure):
+        (JSC::JSWrapperObject::JSWrapperObject):
+        (JSC::JSWrapperObject::setInternalValue):
+        * runtime/PropertyMapHashTable.h:
+        * runtime/Structure.cpp:
+        (JSC::Structure::~Structure):
+        (JSC::Structure::materializePropertyMap):
+        (JSC::Structure::addAnonymousSlotsTransition):
+        (JSC::Structure::copyPropertyTable):
+        (JSC::Structure::put):
+        (JSC::Structure::rehashPropertyMapHashTable):
+        * runtime/Structure.h:
+        (JSC::Structure::propertyStorageSize):
+        (JSC::StructureTransitionTable::reifySingleTransition):
+        * runtime/StructureTransitionTable.h:
+        (JSC::StructureTransitionTable::TransitionTable::addSlotTransition):
+        (JSC::StructureTransitionTable::TransitionTable::removeSlotTransition):
+        (JSC::StructureTransitionTable::TransitionTable::getSlotTransition):
+        (JSC::StructureTransitionTable::getAnonymousSlotTransition):
+        (JSC::StructureTransitionTable::addAnonymousSlotTransition):
+        (JSC::StructureTransitionTable::removeAnonymousSlotTransition):
+
 2009-09-15  Alex Milowski  <alex@milowski.com>
 
         Reviewed by Tor Arne Vestbø.
