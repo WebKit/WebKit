@@ -1,5 +1,12 @@
 2009-09-14  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix the change in r48376 to do a null-check to fix a crashing test.
+
+        * dom/SelectElement.cpp:
+        (WebCore::SelectElement::menuListDefaultEventHandler):
+
+2009-09-14  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Dan Bernstein.
 
         <rdar://problem/7047282> Safari crashes at WebCore::RenderMenuList::adjustInnerStyle() + 436

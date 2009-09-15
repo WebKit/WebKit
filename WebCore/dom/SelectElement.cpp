@@ -644,7 +644,7 @@ void SelectElement::menuListDefaultEventHandler(SelectElementData& data, Element
 
     if (event->type() == eventNames().mousedownEvent && event->isMouseEvent() && static_cast<MouseEvent*>(event)->button() == LeftButton) {
         element->focus();
-        if (element->renderer()->isMenuList()) {
+        if (element->renderer() && element->renderer()->isMenuList()) {
             if (RenderMenuList* menuList = toRenderMenuList(element->renderer())) {
                 if (menuList->popupIsVisible())
                     menuList->hidePopup();
