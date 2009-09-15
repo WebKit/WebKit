@@ -1,87 +1,93 @@
-<html>
-<head>
-    <style>
-        #test {
-            width: 100px;
-            font-family: "Ahem";
-        }
-        #pusher {
-            width: 1000px;
-            height: 1000px;
-            outline: 1px solid black;
-        }
-    </style>
-    <script>
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
+<link rel="stylesheet" href="../../../js/resources/js-test-style.css">
+<script src="../../../js/resources/js-test-pre.js"></script>
+<style> 
+    .test {
+        width: 100px;
+        font-family: "Ahem";
+    }
+    .pusher {
+        width: 4000px;
+        height: 1000px;
+        outline: 1px solid black;
+    }
+</style>
 
-        var _log = "";
-        function log(msg)
-        {
-            _log += msg + "\n";
-        }
+<div id="testArea">
+    <div id="test-top" class="test">xxxxx xxxxx xxxxx xxxxx</div>
+    <div class="pusher">This box is here to create scrollbars.</div>
+    <div id="test-bottom" class="test" style="margin-left: 900px;">xxxxx xxxxx xxxxx xxxxx</div>
+    <div class="pusher">This box is here to create additional space for the hit tests which must initially be in the scroll area.</div>
+</div>
 
-        function swapInLog()
-        {
-            var element = document.getElementById('test');
-            var parent = element.parentNode;
-            if (window.layoutTestController)
-                parent.removeChild(element);
-            var console = document.createElement("pre");
-            console.textContent = _log;
-            parent.appendChild(console);
-        }
+<p id="description"></p>
+<div id="console"></div>
 
-        var element;
+<script>
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
 
-        function test(pos, __expectedContainer, __expectedOffset)
-        {
-            var expectedContainer = eval(__expectedContainer);
-            var expectedOffset = eval(__expectedOffset);
+    description('This checks for proper behavior of caretRangeFromPoint before and after scrolling.');        
 
-            var range = document.caretRangeFromPoint(pos.x, pos.y);
+    var elementTop = document.getElementById('test-top'),
+        elementBottom = document.getElementById('test-bottom');
 
-            if (range.startContainer == expectedContainer) {
-                log("PASS: range.startContainer == " + __expectedContainer + ".");
-            } else {
-                log("FAIL: range.startContainer == " + range.startContainer + ".");
+    function testsWithBaseline(baselinePos, expectedContainer) {
+        function test(expectedOffset, scrollByX, scrollByY) {
+            var hitPosition = { x: 15, y: 15 },
+                range,
+                doesContainerPass = function() { return range.startContainer === expectedContainer },
+                doesOffsetPass = function() { return range.startOffset === expectedOffset };
+
+            // Scroll relative to target.
+            scrollRelativeToBaseline(scrollByX, scrollByY);
+
+            range = document.caretRangeFromPoint(hitPosition.x, hitPosition.y);
+
+            // shouldn't return null range on any of these tests
+            if (range === null) {
+                testFailed("null range was returned from document.caretRangeFromPoint(" + hitPosition.x + ", " + hitPosition.y + ") at window scroll position " + window.scrollX + "x" + window.scrollY);
+                return;
             }
 
-            if (range.startOffset == expectedOffset) {
-                log("PASS: range.startOffset == " + __expectedOffset + ".");
-            } else {
-                log("FAIL: range.startOffset == " + range.startOffset + ".");
+            // do an actual check
+            function check(thunk, message) {
+                if (thunk())
+                    testPassed(message);
+                else
+                    testFailed(message);
             }
+            check(doesContainerPass, "Range.startContainer check (got " + range.startContainer + ", expected " + expectedContainer + ")");
+            check(doesOffsetPass, "Range.startOffset check (got " + range.startOffset + ", expected " + expectedOffset + ")");
         }
 
-        window.onload = function()
-        {
-            element = document.getElementById('test');
-            text = element.firstChild;
-
-            var positionToTest = { x: 15, y: 15 };
-
-            log("Testing with no scroll");
-            test(positionToTest, "element.firstChild", "0");
-
-            log("Test scrolling down");
-            window.scrollTo(0, 25);
-            test(positionToTest, "element.firstChild", "12");
-
-            log("Test scrolling right");
-            window.scrollTo(25, 0);
-            test(positionToTest, "element.firstChild", "2");
-
-            log("Test scrolling down and right");
-            window.scrollTo(25, 25);
-            test(positionToTest, "element.firstChild", "14");
-
-            swapInLog();
+        function scrollRelativeToBaseline(x, y) {
+            window.scrollTo(baselinePos.x + x, baselinePos.y + y);
         }
-    </script>
-</head>
-<body>
-<div id="test">xxxxx xxxxx xxxxx xxxxx</div>
-<div id="pusher">This box is here to create scrollbars.</div>
-</body>
-</html>
+
+        test(0, 0, 0);
+        test(12, 0, 25);
+        test(2, 25, 0);
+        test(14, 25, 25);
+        debug(" ");
+    }
+
+    var rectTop = elementTop.getBoundingClientRect(),
+        rectBottom = elementBottom.getBoundingClientRect(),
+        // Subtract some distance so we aren't in the very top left of the target.
+        topBaseline = { x: rectTop.left - 8, y: rectTop.top - 8 },
+        bottomBaseline = { x: rectBottom.left - 8, y: rectBottom.top - 8 };
+
+     // Testing inside initial containing block (top left)
+    testsWithBaseline(topBaseline, elementTop.firstChild);
+
+    // Testing outside initial containing block (mid-page)
+    testsWithBaseline(bottomBaseline, elementBottom.firstChild);
+
+    if (window.layoutTestController) {
+        var area = document.getElementById('testArea');
+        area.parentNode.removeChild(area);
+    }
+
+    successfullyParsed = true;
+</script>
+<script src="../../../js/resources/js-test-post.js"></script>

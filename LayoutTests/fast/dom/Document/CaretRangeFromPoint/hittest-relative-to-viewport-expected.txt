@@ -1,14 +1,27 @@
-This box is here to create scrollbars.
-Testing with no scroll
-PASS: range.startContainer == element.firstChild.
-PASS: range.startOffset == 0.
-Test scrolling down
-PASS: range.startContainer == element.firstChild.
-PASS: range.startOffset == 12.
-Test scrolling right
-PASS: range.startContainer == element.firstChild.
-PASS: range.startOffset == 2.
-Test scrolling down and right
-PASS: range.startContainer == element.firstChild.
-PASS: range.startOffset == 14.
+This checks for proper behavior of caretRangeFromPoint before and after scrolling.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Range.startContainer check (got [object Text], expected [object Text])
+PASS Range.startOffset check (got 0, expected 0)
+PASS Range.startContainer check (got [object Text], expected [object Text])
+PASS Range.startOffset check (got 12, expected 12)
+PASS Range.startContainer check (got [object Text], expected [object Text])
+PASS Range.startOffset check (got 2, expected 2)
+PASS Range.startContainer check (got [object Text], expected [object Text])
+PASS Range.startOffset check (got 14, expected 14)
+ 
+PASS Range.startContainer check (got [object Text], expected [object Text])
+PASS Range.startOffset check (got 0, expected 0)
+PASS Range.startContainer check (got [object Text], expected [object Text])
+PASS Range.startOffset check (got 12, expected 12)
+PASS Range.startContainer check (got [object Text], expected [object Text])
+PASS Range.startOffset check (got 2, expected 2)
+PASS Range.startContainer check (got [object Text], expected [object Text])
+PASS Range.startOffset check (got 14, expected 14)
+ 
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

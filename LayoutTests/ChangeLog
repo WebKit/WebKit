@@ -1,3 +1,17 @@
+2009-09-14  Andrew Richards  <randrew@gmail.com>
+
+        Reviewed by Sam Weinig.
+
+        Document.elementFromPoint() and Document.caretRangeFromPoint() returning null at points visible only after scrolling.
+        https://bugs.webkit.org/show_bug.cgi?id=29245
+
+        Extend tests to include hits in areas that are not in the initial containing block of the page.
+
+        * fast/dom/Document/CaretRangeFromPoint/hittest-relative-to-viewport-expected.txt:
+        * fast/dom/Document/CaretRangeFromPoint/hittest-relative-to-viewport.html:
+        * fast/dom/elementFromPoint-relative-to-viewport-expected.txt:
+        * fast/dom/elementFromPoint-relative-to-viewport.html:
+
 2009-09-15  Jungshik Shin  <jshin@chromium.org>
 
         Reviewed by Eric Seidel

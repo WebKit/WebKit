@@ -1,3 +1,16 @@
+2009-09-14  Andrew Richards  <randrew@gmail.com>
+
+        Reviewed by Sam Weinig.
+
+        Document.elementFromPoint() and Document.caretRangeFromPoint() erroneously returning null at points visible only after scrolling.
+        https://bugs.webkit.org/show_bug.cgi?id=29245
+
+        Use visibleContentRect() instead of boundsRect() when checking hit point bounds on viewport.
+
+        * dom/Document.cpp:
+        (WebCore::Document::elementFromPoint):
+        (WebCore::Document::caretRangeFromPoint):
+
 2009-09-15  Jungshik Shin  <jshin@chromium.org>
 
         Reviewed by Eric Seidel
