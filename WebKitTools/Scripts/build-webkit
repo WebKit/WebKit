@@ -50,7 +50,7 @@ my $startTime = time();
 
 my ($threeDCanvasSupport, $threeDRenderingSupport, $channelMessagingSupport, $databaseSupport, $datagridSupport, $domStorageSupport,
     $eventsourceSupport, $filtersSupport, $geolocationSupport, $iconDatabaseSupport,
-    $javaScriptDebuggerSupport, $offlineWebApplicationSupport, $rubySupport, $sharedWorkersSupport, 
+    $javaScriptDebuggerSupport, $mathmlSupport, $offlineWebApplicationSupport, $rubySupport, $sharedWorkersSupport, 
     $svgSupport, $svgAnimationSupport, $svgAsImageSupport, $svgDOMObjCBindingsSupport, $svgFontsSupport,
     $svgForeignObjectSupport, $svgUseSupport, $videoSupport, $webSocketsSupport, $wmlSupport, $wcssSupport, $xhtmlmpSupport, $workersSupport,
     $xpathSupport, $xsltSupport, $coverageSupport, $notificationsSupport);
@@ -91,6 +91,9 @@ my @features = (
 
     { option => "javascript-debugger", desc => "Toggle JavaScript Debugger/Profiler support",
       define => "ENABLE_JAVASCRIPT_DEBUGGER", default => 1, value => \$javaScriptDebuggerSupport },
+
+    { option => "mathml", desc => "Toggle MathML support",
+      define => "ENABLE_MATHML", default => 0, value => \$mathmlSupport },
 
     { option => "notifications", desc => "Toggle Desktop Notifications Support",
       define => "ENABLE_NOTIFICATIONS", default => 0, value => \$notificationsSupport },

@@ -1,3 +1,11 @@
+2009-09-15  Alex Milowski  <alex@milowski.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Added the ENABLE_MATHML to the feaure defines
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2009-09-15  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Anders Carlsson.
