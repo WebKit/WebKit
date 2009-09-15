@@ -1,3 +1,14 @@
+2009-09-14  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Add a sample webgl test
+        https://bugs.webkit.org/show_bug.cgi?id=29254
+
+        * fast/canvas/webgl: Added.
+        * fast/canvas/webgl/gl-get-calls-expected.txt: Added.
+        * fast/canvas/webgl/gl-get-calls.html: Added.
+
 2009-09-14  Brady Eidson  <beidson@apple.com>
 
         Rubberstamped by Alexey Proskuryakov.

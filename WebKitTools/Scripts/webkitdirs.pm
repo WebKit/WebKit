@@ -626,6 +626,26 @@ sub checkWebCore3DRenderingSupport
     return $has3DRendering;
 }
 
+sub has3DCanvasSupport
+{
+    return 0 if isQt();
+
+    my $path = shift;
+    return libraryContainsSymbol($path, "CanvasShader");
+}
+
+sub checkWebCore3DCanvasSupport
+{
+    my $required = shift;
+    my $framework = "WebCore";
+    my $path = builtDylibPathForName($framework);
+    my $has3DCanvas = has3DCanvasSupport($path);
+    if ($required && !$has3DCanvas) {
+        die "$framework at \"$path\" does not include 3D Canvas Support, please run build-webkit --3d-canvas\n";
+    }
+    return $has3DCanvas;
+}
+
 sub hasWMLSupport
 {
     my $path = shift;

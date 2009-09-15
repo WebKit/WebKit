@@ -423,6 +423,10 @@ if (!checkWebCore3DRenderingSupport(0)) {
     $ignoredDirectories{'transforms/3d'} = 1;
 }
 
+if (!checkWebCore3DCanvasSupport(0)) {
+    $ignoredDirectories{'fast/canvas/webgl'} = 1;
+}
+
 if (checkWebCoreWMLSupport(0)) { 
     $supportedFileExtensions{'wml'} = 1;
 } else {
