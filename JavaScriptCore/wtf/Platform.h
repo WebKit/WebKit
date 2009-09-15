@@ -600,6 +600,10 @@
 #define WTF_USE_JSVALUE64 1
 #elif PLATFORM(ARM) || PLATFORM(PPC64)
 #define WTF_USE_JSVALUE32 1
+#elif PLATFORM(WIN_OS) && COMPILER(MINGW)
+/* Using JSVALUE32_64 causes padding/alignement issues for JITStubArg
+on MinGW. See https://bugs.webkit.org/show_bug.cgi?id=29268 */
+#define WTF_USE_JSVALUE32 1
 #else
 #define WTF_USE_JSVALUE32_64 1
 #endif

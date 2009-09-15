@@ -1,3 +1,13 @@
+2009-09-15  Csaba Osztrogonac  <oszi@inf.u-szeged.hu>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] Build fix for Windows/MinGW
+
+        https://bugs.webkit.org/show_bug.cgi?id=29268
+
+        * wtf/Platform.h: JSVALUE32_64 temporarily disabled on PLATFORM(WIN_OS) with COMPILER(MINGW)
+
 2009-09-14  Gabor Loki  <loki@inf.u-szeged.hu>
 
         Reviewed by Gavin Barraclough.
