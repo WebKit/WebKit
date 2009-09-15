@@ -104,6 +104,7 @@ SOURCES += \
     bytecode/StructureStubInfo.cpp \
     bytecode/JumpTable.cpp \
     assembler/ARMAssembler.cpp \
+    assembler/MacroAssemblerARM.cpp \
     jit/JIT.cpp \
     jit/JITCall.cpp \
     jit/JITArithmetic.cpp \

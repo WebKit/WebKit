@@ -1,3 +1,16 @@
+2009-09-14  Gabor Loki  <loki@inf.u-szeged.hu>
+
+        Reviewed by Gavin Barraclough.
+
+        Detect VFP at runtime in generic ARM port on Linux platform.
+        https://bugs.webkit.org/show_bug.cgi?id=29076
+
+        * JavaScriptCore.pri:
+        * assembler/MacroAssemblerARM.cpp: Added.
+        (JSC::isVFPPresent):
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::supportsFloatingPoint):
+
 2009-09-14  Csaba Osztrogonac  <oszi@inf.u-szeged.hu>
 
         Reviewed by Tor Arne Vestbø.
