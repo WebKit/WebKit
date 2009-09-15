@@ -1,3 +1,11 @@
+2009-09-14  Brady Eidson  <beidson@apple.com>
+
+        Rubberstamped by Alexey Proskuryakov.
+
+        <rdar://problem/7223068> - Tiger NSURLConnection sometimes doesn't send a credential you told it to.
+
+        * platform/mac-tiger/Skipped:
+
 2009-09-14  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

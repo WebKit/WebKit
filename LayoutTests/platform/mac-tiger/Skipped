@@ -54,3 +54,8 @@ http/tests/cookies/double-quoted-value-with-semi-colon.html
 
 # Tiger does not support connectionShouldUseCredentialStorage: delegate call.
 http/tests/xmlhttprequest/cross-origin-no-authorization.html
+
+# <rdar://problem/7223068> Tiger NSULRConnection sometimes doesn't send credentials we told it to send
+http/tests/loading/basic-auth-resend-wrong-credentials.html
+
+
