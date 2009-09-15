@@ -6,5 +6,6 @@ Simple exchange: SUCCESS
 Posted port: SUCCESS
 Event Listener: SUCCESS
 Closed port: SUCCESS
+MessageEvent.cancelable defaults to false: PASS
 DONE
 

@@ -38,7 +38,7 @@ MessageEvent::MessageEvent()
 }
 
 MessageEvent::MessageEvent(const String& data, const String& origin, const String& lastEventId, PassRefPtr<DOMWindow> source, PassOwnPtr<MessagePortArray> ports)
-    : Event(eventNames().messageEvent, false, true)
+    : Event(eventNames().messageEvent, false, false)
     , m_data(data)
     , m_origin(origin)
     , m_lastEventId(lastEventId)

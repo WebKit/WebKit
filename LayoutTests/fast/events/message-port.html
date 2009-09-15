@@ -82,7 +82,21 @@ function test5()
     // Create a channel and put some messages in it which will go undelivered and should not leak
     var channel = new MessageChannel;
     channel.port1.postMessage("abcde");
-    // Now wait a short period of time to ensure no messages come in from previous tests.
+    test6();
+}
+
+function test6()
+{
+    var channel = new MessageChannel;
+    channel.port1.postMessage("howdy");
+    channel.port2.onmessage = function(event) {
+        log("MessageEvent.cancelable defaults to " + event.cancelable + ": " + (event.cancelable ? "FAIL" : "PASS"));
+        done();
+    }
+}
+
+function done() {
+    // Wait a short period of time to ensure no messages come in from previous tests.
     setTimeout(function() {
         log("DONE");
         if (window.layoutTestController)

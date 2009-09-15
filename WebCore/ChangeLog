@@ -1,3 +1,14 @@
+2009-09-15  Drew Wilson  <atwilson@google.com>
+
+        Reviewed by Darin Adler.
+
+        MessageEvent should not be cancelable by default
+        https://bugs.webkit.org/show_bug.cgi?id=27846
+
+        * dom/MessageEvent.cpp:
+        (WebCore::MessageEvent::MessageEvent):
+        Changed constructor to set cancelable=false by default, per the HTML5 spec.
+
 2009-09-15  Charles Wei  <charles.wei@torchmobile.com.cn>
 
         Reviewed by George Staikos.
