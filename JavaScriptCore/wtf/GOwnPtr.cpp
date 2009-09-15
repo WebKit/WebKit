@@ -62,4 +62,10 @@ template <> void freeOwnedGPtr<GHashTable>(GHashTable* ptr)
         g_hash_table_unref(ptr);
 }
 
+template <> void freeOwnedGPtr<GFile>(GFile* file)
+{
+    if (file)
+        g_object_unref(file);
+}
+
 } // namespace WTF

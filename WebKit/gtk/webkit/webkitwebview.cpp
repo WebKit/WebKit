@@ -2422,6 +2422,8 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
     settings->setEditingBehavior(core(editingBehavior));
     settings->setAllowUniversalAccessFromFileURLs(enableUniversalAccessFromFileURI);
 
+    settings->setJavaEnabled(true);
+
     g_free(defaultEncoding);
     g_free(cursiveFontFamily);
     g_free(defaultFontFamily);
