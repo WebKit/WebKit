@@ -116,6 +116,7 @@ my $guardMalloc = '';
 my $httpdPort = 8000;
 my $httpdSSLPort = 8443;
 my $ignoreTests = '';
+my $iterations = 1;
 my $launchSafari = 1;
 my $platform;
 my $pixelTests = '';
@@ -208,6 +209,7 @@ Usage: $programName [options] [testdir|testpath ...]
   -h|--help                       Show this help message
   --[no-]http                     Run (or do not run) http tests (default: $httpDefault)
   -i|--ignore-tests               Comma-separated list of directories or tests to ignore
+  --iterations n                  Number of times to run the tests
   --[no-]launch-safari            Launch (or do not launch) Safari to display test results (default: $launchSafariDefault)
   -l|--leaks                      Enable leaks checking
   --[no-]new-test-results         Generate results for new tests
@@ -248,6 +250,7 @@ my $getOptionsResult = GetOptions(
     'help|h' => \$showHelp,
     'http!' => \$testHTTP,
     'ignore-tests|i=s' => \$ignoreTests,
+    'iterations=i' => \$iterations,
     'launch-safari!' => \$launchSafari,
     'leaks|l' => \$shouldCheckLeaks,
     'pixel-tests|p' => \$pixelTests,
@@ -569,7 +572,7 @@ my $isHttpdOpen = 0;
 sub catch_pipe { $dumpToolCrashed = 1; }
 $SIG{"PIPE"} = "catch_pipe";
 
-print "Testing ", scalar @tests, " test cases.\n";
+print "Testing ", scalar @tests, " test cases", ($iterations > 1) ? " $iterations times.\n" : ".\n";
 my $overallStartTime = time;
 
 my %expectedResultPaths;
@@ -579,6 +582,12 @@ my %expectedResultPaths;
 
 # Shuffle the array
 @tests = shuffle(@tests) if $randomizeTests;
+
+# Add iterations
+my @originalTests = @tests;
+for (my $i = 1; $i < $iterations; $i++) {
+    push(@tests, @originalTests);
+}
 
 for my $test (@tests) {
     next if $test eq 'results.html';
