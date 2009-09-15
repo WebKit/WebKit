@@ -1,3 +1,9 @@
+2009-09-15  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix. Allow waf build to support Python < 2.6.
+
+        * wx/build/waf_extensions.py:
+
 2009-09-14  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Oliver Hunt.
