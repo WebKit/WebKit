@@ -213,6 +213,9 @@ extern NSString *NSTextInputReplacementRangeAttributeName;
 - (void)_setDrawsOwnDescendants:(BOOL)drawsOwnDescendants;
 - (void)_propagateDirtyRectsToOpaqueAncestors;
 - (void)_windowChangedKeyState;
+#if USE(ACCELERATED_COMPOSITING) && defined(BUILDING_ON_LEOPARD)
+- (void)_updateLayerGeometryFromView;
+#endif
 @end
 
 @interface NSApplication (WebNSApplicationDetails)
@@ -5479,6 +5482,8 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
         // Compensate for the moved view by adjusting the sublayer transform on the view's layer (using flipped coords).
         CGFloat bottomOffset = documentHeight - layerViewFrame.size.height - topOffset;
         [[_private->layerHostingView layer] setSublayerTransform:CATransform3DMakeTranslation(0, -bottomOffset, 0)];
+    } else {
+        [_private->layerHostingView _updateLayerGeometryFromView];  // Workaround for <rdar://problem/7071636>
     }
         
     [_private->layerHostingView setFrame:layerViewFrame];

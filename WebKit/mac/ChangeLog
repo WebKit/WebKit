@@ -1,3 +1,16 @@
+2009-09-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Work around a bug in AppKit on Leopard which causes compositing layers to jitter, and
+        become misplaced when the WebHTMLView is resized or scrolled sometimes.
+        <rdar://problem/7071636>
+        
+        We call an internal AppKit method to make sure the layer geometry is updated correctly.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _updateLayerHostingViewPosition]):
+
 2009-09-15  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
