@@ -1,5 +1,13 @@
 2009-09-16  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
+        Unreviewed. Rebaseline for those who support dumping of frame
+        loader delegates, add specific expected result to GTK+
+
+        * http/tests/loading/redirect-with-no-location-crash-expected.txt:
+        * platform/gtk/http/tests/loading/redirect-with-no-location-crash-expected.txt: Copied from LayoutTests/http/tests/loading/redirect-with-no-location-crash-expected.txt.
+
+2009-09-16  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
         Reviewed by Xan Lopez.
 
         [GTK] Crash when visiting http://flipper.googlelabs.com/
