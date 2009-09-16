@@ -172,6 +172,7 @@ private:
     int m_wheelDelta;
     int m_focusedIndex;
     bool m_scrollbarCapturingMouse;
+    bool m_showPopup;
 #elif PLATFORM(GTK)
     IntPoint m_menuPosition;
     GtkMenu* m_popup;

@@ -1,3 +1,24 @@
+2009-09-16  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        <rdar://problem/7155710>
+        HTML selects on windows cause containing window to become inactive when opened
+        
+        Redo the way we handle events when a popup menu is shown, based on
+        http://blogs.msdn.com/oldnewthing/archive/2004/08/20/217684.aspx
+        
+        Since a non-active window can't capture the mouse, we use the owning window 
+        (the WebView) as the capture window. We then run a recursive message pump that 
+        forwards all mouse and keyboard events to the popup menu.
+        
+        * platform/PopupMenu.h:
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenu::PopupMenu):
+        (WebCore::PopupMenu::show):
+        (WebCore::PopupMenu::hide):
+        (WebCore::PopupMenu::wndProc):
+
 2009-09-16  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Ada Chan.
