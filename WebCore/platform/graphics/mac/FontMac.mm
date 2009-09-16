@@ -50,10 +50,33 @@ bool Font::canReturnFallbackFontsForComplexText()
 void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, const GlyphBuffer& glyphBuffer, int from, int numGlyphs, const FloatPoint& point) const
 {
     CGContextRef cgContext = context->platformContext();
+    bool newShouldUseFontSmoothing = shouldUseSmoothing();
+
+    switch(fontDescription().fontSmoothing()) {
+    case Antialiased: {
+        context->setShouldAntialias(true);
+        newShouldUseFontSmoothing = false;
+        break;
+    }
+    case SubpixelAntialiased: {
+        context->setShouldAntialias(true);
+        newShouldUseFontSmoothing = true;
+        break;
+    }
+    case NoSmoothing: {
+        context->setShouldAntialias(false);
+        newShouldUseFontSmoothing = false;
+        break;
+    }
+    case AutoSmoothing: {
+        // For the AutoSmooth case, don't do anything! Keep the default settings.
+        break; 
+    }
+    default: 
+        ASSERT_NOT_REACHED();
+    }
 
     bool originalShouldUseFontSmoothing = wkCGContextGetShouldSmoothFonts(cgContext);
-    bool newShouldUseFontSmoothing = shouldUseSmoothing();
-    
     if (originalShouldUseFontSmoothing != newShouldUseFontSmoothing)
         CGContextSetShouldSmoothFonts(cgContext, newShouldUseFontSmoothing);
     

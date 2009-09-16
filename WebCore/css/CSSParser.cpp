@@ -1523,6 +1523,12 @@ bool CSSParser::parseValue(int propId, bool important)
             valid_primitive = true;
         break;
 
+    case CSSPropertyWebkitFontSmoothing:
+        if (id == CSSValueAuto || id == CSSValueNone 
+            || id == CSSValueAntialiased || id == CSSValueSubpixelAntialiased)
+            valid_primitive = true;
+        break;
+
 #if ENABLE(DASHBOARD_SUPPORT)
     case CSSPropertyWebkitDashboardRegion:                 // <dashboard-region> | <dashboard-region> 
         if (value->unit == CSSParserValue::Function || id == CSSValueNone)

@@ -434,6 +434,7 @@ public:
     const Font& font() const { return inherited->font; }
     const FontDescription& fontDescription() const { return inherited->font.fontDescription(); }
     int fontSize() const { return inherited->font.pixelSize(); }
+    FontSmoothing fontSmoothing() const { return inherited->font.fontDescription().fontSmoothing(); }
 
     const Color& color() const { return inherited->color; }
     Length textIndent() const { return inherited->indent; }

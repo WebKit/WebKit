@@ -623,3 +623,11 @@ fill
 stroke
 #all
 #none
+
+#
+# -webkit-font-smoothing
+#
+# auto
+# none
+antialiased
+subpixel-antialiased

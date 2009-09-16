@@ -321,6 +321,10 @@ enum EBackfaceVisibility {
     BackfaceVisibilityVisible, BackfaceVisibilityHidden
 };
 
+enum FontSmoothing {
+    AutoSmoothing, NoSmoothing, Antialiased, SubpixelAntialiased
+};
+
 } // namespace WebCore
 
 #endif // RenderStyleConstants_h

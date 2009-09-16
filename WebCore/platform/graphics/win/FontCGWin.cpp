@@ -297,6 +297,30 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext, const SimpleFontData* fo
     CGContextRef cgContext = graphicsContext->platformContext();
     bool shouldUseFontSmoothing = WebCoreShouldUseFontSmoothing();
 
+    switch(fontDescription().fontSmoothing()) {
+    case Antialiased: {
+        graphicsContext->setShouldAntialias(true);
+        shouldUseFontSmoothing = false;
+        break;
+    }
+    case SubpixelAntialiased: {
+        graphicsContext->setShouldAntialias(true);
+        shouldUseFontSmoothing = true;
+        break;
+    }
+    case NoSmoothing: {
+        graphicsContext->setShouldAntialias(false);
+        shouldUseFontSmoothing = false;
+        break;
+    }
+    case AutoSmoothing: {
+        // For the AutoSmooth case, don't do anything! Keep the default settings.
+        break; 
+    }
+    default: 
+        ASSERT_NOT_REACHED();
+    }
+
     if (font->platformData().useGDI()) {
         if (!shouldUseFontSmoothing || (graphicsContext->textDrawingMode() & cTextStroke)) {
             drawGDIGlyphs(graphicsContext, font, glyphBuffer, from, numGlyphs, point);

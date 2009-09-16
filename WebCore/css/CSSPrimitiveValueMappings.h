@@ -1798,6 +1798,45 @@ template<> inline CSSPrimitiveValue::operator EPointerEvents() const
     }
 }
 
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(FontSmoothing smoothing)
+    : m_type(CSS_IDENT)
+{
+    switch (smoothing) {
+    case AutoSmoothing:
+        m_value.ident = CSSValueAuto;
+        return;
+    case NoSmoothing:
+        m_value.ident = CSSValueNone;
+        return;
+    case Antialiased:
+        m_value.ident = CSSValueAntialiased;
+        return;
+    case SubpixelAntialiased:
+        m_value.ident = CSSValueSubpixelAntialiased;
+        return;
+    }
+    
+    ASSERT_NOT_REACHED();
+    m_value.ident = CSSValueAuto;
+}
+
+template<> inline CSSPrimitiveValue::operator FontSmoothing() const
+{
+    switch (m_value.ident) {
+    case CSSValueAuto:
+        return AutoSmoothing;
+    case CSSValueNone:
+        return NoSmoothing;
+    case CSSValueAntialiased:
+        return Antialiased;
+    case CSSValueSubpixelAntialiased:
+        return SubpixelAntialiased;
+    }
+    
+    ASSERT_NOT_REACHED();
+    return AutoSmoothing;
+}
+
 #if ENABLE(SVG)
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(LineCap e)

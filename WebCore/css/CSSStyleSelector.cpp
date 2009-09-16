@@ -3495,6 +3495,38 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     }
 
+    case CSSPropertyWebkitFontSmoothing: {
+        FontDescription fontDescription = m_style->fontDescription();
+        if (isInherit) 
+            fontDescription.setFontSmoothing(m_parentStyle->fontSmoothing());
+        else if (isInitial)
+            fontDescription.setFontSmoothing(AutoSmoothing);
+        else {
+            if (!primitiveValue)
+                return;
+            int id = primitiveValue->getIdent();
+            FontSmoothing smoothing;
+            switch (id) {
+                case CSSValueAuto:
+                    smoothing = AutoSmoothing;
+                    break;
+                case CSSValueNone:
+                    smoothing = NoSmoothing;
+                    break;
+                case CSSValueAntialiased:
+                    smoothing = Antialiased;
+                    break;
+                case CSSValueSubpixelAntialiased:
+                    smoothing = SubpixelAntialiased;
+                    break;
+            }
+            fontDescription.setFontSmoothing(smoothing);
+        }
+        if (m_style->setFontDescription(fontDescription))
+            m_fontDirty = true;
+        return;
+    }
+
     case CSSPropertyLetterSpacing:
     case CSSPropertyWordSpacing:
     {

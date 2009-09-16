@@ -256,6 +256,8 @@ rect: style.getPropertyValue(-webkit-column-width) : auto
 rect: style.getPropertyCSSValue(-webkit-column-width) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-dashboard-region) : null
 rect: style.getPropertyCSSValue(-webkit-dashboard-region) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-font-smoothing) : auto
+rect: style.getPropertyCSSValue(-webkit-font-smoothing) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-highlight) : none
 rect: style.getPropertyCSSValue(-webkit-highlight) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-line-break) : normal
@@ -662,6 +664,8 @@ g: style.getPropertyValue(-webkit-column-width) : auto
 g: style.getPropertyCSSValue(-webkit-column-width) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-dashboard-region) : null
 g: style.getPropertyCSSValue(-webkit-dashboard-region) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-font-smoothing) : auto
+g: style.getPropertyCSSValue(-webkit-font-smoothing) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-highlight) : none
 g: style.getPropertyCSSValue(-webkit-highlight) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-line-break) : normal

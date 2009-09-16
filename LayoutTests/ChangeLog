@@ -1,3 +1,26 @@
+2009-09-16  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Tests for <rdar://problem/7083741> Implement a CSS extension to 
+        adjust sub-pixel anti-aliasing for text
+
+        New tests:
+        * fast/css/font-smoothing.html: Added.
+        * fast/css/parsing-webkit-font-smoothing-expected.txt: Added.
+        * fast/css/parsing-webkit-font-smoothing.html: Added.
+        * fast/css/resources/parsing-webkit-font-smoothing.js: Added.
+        (test):
+        * platform/mac/fast/css/font-smoothing-expected.checksum: Added.
+        * platform/mac/fast/css/font-smoothing-expected.png: Added.
+        * platform/mac/fast/css/font-smoothing-expected.txt: Added.
+
+        These tests have updated results now that -webkit-font-smoothing is 
+        reported with computed style.
+        * platform/mac/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/mac/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * svg/css/getComputedStyle-basic-expected.txt:
+
 2009-09-16  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Timothy Hatcher.

@@ -1,3 +1,67 @@
+2009-09-16  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for <rdar://problem/7083741> Implement a CSS extension to 
+        adjust sub-pixel anti-aliasing for text
+        -and corresponding-
+        https://bugs.webkit.org/show_bug.cgi?id=29291
+
+        Added tests:
+        * fast/css/font-smoothing.html: Added.
+        * fast/css/parsing-webkit-font-smoothing.html: Added.
+
+        This patch adds a new CSS property called -webkit-font-smoothing 
+        that accepts the following as valid input: auto | none | 
+        antialiased | subpixel-antialiased
+
+        Return appropriate computed style for -webkit-font-smoothing
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+
+        Add a case for CSSPropertyWebkitFontSmoothing, and accept valid 
+        input.
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+
+        Add mappings for FontSmoothing to the right CSS values.
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator FontSmoothing):
+
+        Add -webkit-font-smoothing
+        * css/CSSPropertyNames.in:
+
+        Set fontSmoothing on the FontDescription.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+
+        Add antialiased and subpixel-antialiased as possible new CSS 
+        values.
+        * css/CSSValueKeywords.in:
+        Store the font smoothing CSS value in the FontDescription.
+        * platform/graphics/FontDescription.h:
+        (WebCore::FontDescription::FontDescription):
+        (WebCore::FontDescription::fontSmoothing):
+        (WebCore::FontDescription::setFontSmoothing):
+        (WebCore::FontDescription::operator==):
+
+        Call setShouldAntialias() and setShouldUseSmoothing() appropriately 
+        based on the CSS fontSmoothing() value.
+        * platform/graphics/mac/FontMac.mm:
+        (WebCore::Font::drawGlyphs):
+        * platform/graphics/win/FontCGWin.cpp:
+        (WebCore::Font::drawGlyphs):
+
+        New function fontSmoothing()
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::fontSmoothing):
+
+        New enum FontSmoothing.
+        * rendering/style/RenderStyleConstants.h:
+        (WebCore::):
+
 2009-09-16  Albert J. Wong  <ajwong@chromium.org>
 
         Reviewed by David Levin.

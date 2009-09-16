@@ -129,6 +129,7 @@ zoom: 1;
 -webkit-column-rule-width: 0px;
 -webkit-column-width: auto;
 -webkit-dashboard-region: null;
+-webkit-font-smoothing: auto;
 -webkit-highlight: none;
 -webkit-line-break: normal;
 -webkit-line-clamp: none;

@@ -183,6 +183,7 @@ static const int computedProperties[] = {
 #if ENABLE(DASHBOARD_SUPPORT)
     CSSPropertyWebkitDashboardRegion,
 #endif
+    CSSPropertyWebkitFontSmoothing,
     CSSPropertyWebkitHighlight,
     CSSPropertyWebkitLineBreak,
     CSSPropertyWebkitLineClamp,
@@ -1120,6 +1121,8 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return CSSPrimitiveValue::create(style->matchNearestMailBlockquoteColor());
         case CSSPropertyResize:
             return CSSPrimitiveValue::create(style->resize());
+        case CSSPropertyWebkitFontSmoothing:
+            return CSSPrimitiveValue::create(style->fontSmoothing());
         case CSSPropertyZIndex:
             if (style->hasAutoZIndex())
                 return CSSPrimitiveValue::createIdentifier(CSSValueAuto);

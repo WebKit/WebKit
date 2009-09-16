@@ -192,6 +192,7 @@ zoom
 -webkit-column-width
 -webkit-columns
 -webkit-font-size-delta
+-webkit-font-smoothing
 -webkit-highlight
 -webkit-line-break
 -webkit-line-clamp
