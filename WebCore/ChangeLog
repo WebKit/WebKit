@@ -1,3 +1,19 @@
+2009-09-16  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Always reset m_implicitShorthand to false after parsing
+        background-repeat style property otherwise properties
+        following after it may be erroneously marked as implicit.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28972
+        https://bugs.webkit.org/show_bug.cgi?id=28973
+
+        Test: fast/backgrounds/repeat/margin-shorthand.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+
 2009-09-16  Carol Szabo  <carol.szabo@nokia.com>
 
         Reviewed by Alexey Proskuryakov.

@@ -1,0 +1,10 @@
+Tests that shorthand property value is correct even if background-repeat property is declared before it in the style declaration. It tests regression described in this bug.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS iconMarginValue() is "0px"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
