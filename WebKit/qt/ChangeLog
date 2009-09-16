@@ -1,3 +1,14 @@
+2009-09-16  Zoltan Herczeg  <zherczeg@inf.u-szeged.hu>
+
+        Rubber-stamped by Simon Hausmann.
+
+        [Qt] Typo fix. Pass the window object to the Format
+        menu. In this way Qt can free its internal graphical
+        objects during exit.
+
+        * QtLauncher/main.cpp:
+        (MainWindow::setupUI):
+
 2009-09-16  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Tor Arne Vestbø.

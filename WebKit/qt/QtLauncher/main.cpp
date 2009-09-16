@@ -293,7 +293,7 @@ private:
         viewMenu->addSeparator();
         viewMenu->addAction("Dump HTML", this, SLOT(dumpHtml()));
 
-        QMenu *formatMenu = new QMenu("F&ormat");
+        QMenu *formatMenu = new QMenu("F&ormat", this);
         formatMenuAction = menuBar()->addMenu(formatMenu);
         formatMenuAction->setVisible(false);
         formatMenu->addAction(view->pageAction(QWebPage::ToggleBold));
