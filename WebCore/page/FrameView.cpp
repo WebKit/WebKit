@@ -827,9 +827,9 @@ void FrameView::repaintContentRectangle(const IntRect& r, bool immediate)
             m_repaintRects.append(unionedRect);
         }
         if (m_repaintCount < cRepaintRectUnionThreshold)
-            m_repaintRects.append(r);
+            m_repaintRects.append(visibleContent);
         else
-            m_repaintRects[0].unite(r);
+            m_repaintRects[0].unite(visibleContent);
         m_repaintCount++;
     
         if (!m_deferringRepaints && !m_deferredRepaintTimer.isActive())

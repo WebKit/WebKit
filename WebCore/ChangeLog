@@ -1,3 +1,20 @@
+2009-09-16  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Clean up invalidation for repainting.  Hoist the dirty rect intersection test in ScrollViewMac up
+        into ScrollView so that all platforms do it.
+        
+        Patch deferred repaints in FrameView::repaintContentRectangle to only add the visible portion of
+        the rectangle for repainting.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::repaintContentRectangle):
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::repaintContentRectangle):
+        * platform/mac/ScrollViewMac.mm:
+        (WebCore::ScrollView::platformRepaintContentRectangle):
+
 2009-09-16  Greg Bolsinga  <bolsinga@apple.com>
 
         Add ENABLE(DRAG_SUPPORT)

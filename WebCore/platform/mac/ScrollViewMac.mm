@@ -163,26 +163,12 @@ bool ScrollView::platformScroll(ScrollDirection, ScrollGranularity)
 void ScrollView::platformRepaintContentRectangle(const IntRect& rect, bool now)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-
     NSView *view = documentView();
-    NSRect visibleRect = visibleContentRect();
-
-    // FIXME: I don't think this intersection is necessary any more now that
-    // selection doesn't call this method directly (but has to go through FrameView's
-    // repaintContentRectangle, which does the intersection test also).  Leaving it in
-    // for now until I'm sure.
-    // Checking for rect visibility is an important optimization for the case of
-    // Select All of a large document. AppKit does not do this check, and so ends
-    // up building a large complicated NSRegion if we don't perform the check.
-    NSRect dirtyRect = NSIntersectionRect(rect, visibleRect);
-    if (!NSIsEmptyRect(dirtyRect)) {
-        [view setNeedsDisplayInRect:dirtyRect];
-        if (now) {
-            [[view window] displayIfNeeded];
-            [[view window] flushWindowIfNeeded];
-        }
+    [view setNeedsDisplayInRect:rect];
+    if (now) {
+        [[view window] displayIfNeeded];
+        [[view window] flushWindowIfNeeded];
     }
-
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 

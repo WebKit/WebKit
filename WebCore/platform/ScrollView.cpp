@@ -707,16 +707,18 @@ void ScrollView::frameRectsChanged()
 
 void ScrollView::repaintContentRectangle(const IntRect& rect, bool now)
 {
-    if (rect.isEmpty())
+    IntRect visibleContent = visibleContentRect();
+    visibleContent.intersect(rect);
+    if (visibleContent.isEmpty())
         return;
 
     if (platformWidget()) {
-        platformRepaintContentRectangle(rect, now);
+        platformRepaintContentRectangle(visibleContent, now);
         return;
     }
 
     if (hostWindow())
-        hostWindow()->repaint(contentsToWindow(rect), true, now);
+        hostWindow()->repaint(contentsToWindow(visibleContent), true, now);
 }
 
 IntRect ScrollView::scrollCornerRect() const
