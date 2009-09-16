@@ -96,8 +96,8 @@ def build(bld):
         
     # we'll get an error if exceptions are on because of an unwind error when using __try
     if building_on_win32:
-        flags = obj.env.CPPFLAGS
+        flags = obj.env.CXXFLAGS
         flags.remove('/EHsc')
-        obj.env.CPPFLAGS = flags
+        obj.env.CXXFLAGS = flags
 
     bld.install_files(os.path.join(output_dir, 'JavaScriptCore'), 'API/*.h')

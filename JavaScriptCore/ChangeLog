@@ -1,3 +1,9 @@
+2009-09-16  Kevin Ollivier  <kevino@theolliviers.com>
+
+        waf build fix after flag was moved to correct place.
+
+        * wscript:
+
 2009-09-16  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Simon Hausmann.
