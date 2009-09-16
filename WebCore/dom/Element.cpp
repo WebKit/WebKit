@@ -613,6 +613,9 @@ void Element::updateAfterAttributeChanged(Attribute* attr)
     } else if (attrName == roleAttr) {
         // the role attribute can change at any time, and the AccessibilityObject must pick up these changes
         axObjectCache->handleAriaRoleChanged(renderer());
+    } else if (attrName == aria_valuenowAttr) {
+        // If the valuenow attribute changes, AX clients need to be notified.
+        axObjectCache->postNotification(renderer(), AXObjectCache::AXValueChanged, true);
     }
 }
     

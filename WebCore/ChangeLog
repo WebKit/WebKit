@@ -1,3 +1,28 @@
+2009-09-15  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        WAI-ARIA: add support for ranges, including the progressbar, slider, and spinbutton roles
+        https://bugs.webkit.org/show_bug.cgi?id=28841
+
+        Allow certain ARIA roles to change value with AXIncrement and AXDecrement. 
+        Consolidate increment/decrement/changeValue methods. 
+
+        Test: accessibility/aria-slider-value-change.html
+
+        * accessibility/AccessibilityObject.cpp:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::increment):
+        (WebCore::AccessibilityRenderObject::decrement):
+        (WebCore::AccessibilityRenderObject::changeValueByPercent):
+        (WebCore::AccessibilityRenderObject::setValue):
+        (WebCore::AccessibilityRenderObject::canSetFocusAttribute):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/AccessibilitySlider.cpp:
+        * accessibility/AccessibilitySlider.h:
+        * dom/Element.cpp:
+        (WebCore::Element::updateAfterAttributeChanged):
+
 2009-09-15  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.

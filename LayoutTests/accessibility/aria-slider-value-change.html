@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div tabindex=0 id="slider" role="slider" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">slider</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that its possible to increment and decrement an aria slider and have the value updated correctly.");
+
+    if (window.accessibilityController) {
+
+          var slider = document.getElementById("slider");
+          slider.focus();
+
+          slider = accessibilityController.focusedElement;
+          shouldBe("slider.intValue", "50");
+
+          slider.increment();
+          shouldBe("slider.intValue > 50", "true");
+
+          slider.decrement();
+          slider.decrement();
+          shouldBe("slider.intValue < 50", "true");
+
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
