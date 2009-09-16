@@ -1,3 +1,10 @@
+2009-09-16  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Blind try at fixing new test failure on Windows.
+
+        * DumpRenderTree/win/FrameLoadDelegate.cpp:
+        (FrameLoadDelegate::didReceiveTitle):
+
 2009-09-15  Alex Milowski  <alex@milowski.com>
 
         Reviewed by Tor Arne Vestbø.
