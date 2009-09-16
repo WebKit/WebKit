@@ -1,5 +1,6 @@
 main frame - didStartProvisionalLoadForFrame
 main frame - didCommitLoadForFrame
+main frame - didReceiveTitle: Test for https://bugs.webkit.org/show_bug.cgi?id=29293
 frame "<!--framePath //<!--frame0-->-->" - didStartProvisionalLoadForFrame
 main frame - didFinishDocumentLoadForFrame
 frame "<!--framePath //<!--frame0-->-->" - didCommitLoadForFrame
@@ -8,3 +9,4 @@ frame "<!--framePath //<!--frame0-->-->" - didHandleOnloadEventsForFrame
 main frame - didHandleOnloadEventsForFrame
 frame "<!--framePath //<!--frame0-->-->" - didFinishLoadForFrame
 main frame - didFinishLoadForFrame
+

@@ -1,5 +1,12 @@
 2009-09-16  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
+        One more try at rebaselining the tests for those who dump frame
+        loader delegates.
+
+        * http/tests/loading/redirect-with-no-location-crash-expected.txt:
+
+2009-09-16  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
         Unreviewed. Rebaseline for those who support dumping of frame
         loader delegates, add specific expected result to GTK+
 
