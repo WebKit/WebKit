@@ -1,3 +1,10 @@
+2009-09-16  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix, improve debug support and 2.9 support on MSW.
+
+        * wx/build/settings.py:
+        * wx/build/wxpresets.py:
+
 2009-09-16  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Blind try at fixing new test failure on Windows.

@@ -24,6 +24,15 @@
 # Library for functions to determine wx settings based on configuration
 
 import os
+import re
+
+def get_wx_version(wx_root):
+    versionText = open(os.path.join(wx_root, "include", "wx", "version.h"), "r").read()
+    
+    majorVersion = re.search("#define\swxMAJOR_VERSION\s+(\d+)", versionText).group(1)
+    minorVersion = re.search("#define\swxMINOR_VERSION\s+(\d+)", versionText).group(1)
+    
+    return (majorVersion, minorVersion)
 
 def get_wxmsw_settings(wx_root, shared = False, unicode = False, debug = False, wxPython=False):
     if not os.path.exists(wx_root):
@@ -39,6 +48,8 @@ def get_wxmsw_settings(wx_root, shared = False, unicode = False, debug = False, 
     libdir = os.path.join(wx_root, 'lib')
     ext = ''
     postfix = 'vc'
+    
+    version_str_nodot = ''.join(get_wx_version(wx_root))
     
     if shared:
         defines.append('WXUSINGDLL')
@@ -65,9 +76,9 @@ def get_wxmsw_settings(wx_root, shared = False, unicode = False, debug = False, 
     def get_wxlib_name(name):
         prefix = 'wxmsw'
         if name == 'base':
-            return 'wxbase28%s' % (ext)
+            return 'wxbase%s%s' % (version_str_nodot, ext)
         
-        return "wxmsw28%s_%s" % (ext, name)
+        return "wxmsw%s%s_%s" % (version_str_nodot, ext, name)
     
     libs.extend(['wxzlib' + depext, 'wxjpeg' + depext, 'wxpng' + depext, 'wxexpat' + depext])
     libs.extend([get_wxlib_name('base'), get_wxlib_name('core')])

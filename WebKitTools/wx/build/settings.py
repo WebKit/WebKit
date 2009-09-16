@@ -252,7 +252,9 @@ def common_configure(conf):
         if building_on_win32:
             conf.env.append_value('LIBPATH', os.path.join(msvclibs_dir, 'lib'))
             # wx settings
-            wxdefines, wxincludes, wxlibs, wxlibpaths = get_wxmsw_settings(wx_root, shared=True, unicode=True, wxPython=Options.options.wxpython)
+            global config
+            is_debug = (config == 'Debug')
+            wxdefines, wxincludes, wxlibs, wxlibpaths = get_wxmsw_settings(wx_root, shared=True, unicode=True, debug=is_debug, wxPython=Options.options.wxpython)
             conf.env['CXXDEFINES_WX'] = wxdefines
             conf.env['CPPPATH_WX'] = wxincludes
             conf.env['LIB_WX'] = wxlibs
