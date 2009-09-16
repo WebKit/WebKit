@@ -26,6 +26,7 @@
 #include "config.h"
 #include "DragController.h"
 
+#if ENABLE(DRAG_SUPPORT)
 #include "CSSStyleDeclaration.h"
 #include "Clipboard.h"
 #include "ClipboardAccessPolicy.h"
@@ -785,3 +786,5 @@ void DragController::placeDragCaret(const IntPoint& windowPoint)
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(DRAG_SUPPORT)

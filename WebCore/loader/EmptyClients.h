@@ -436,6 +436,7 @@ public:
 #endif
 };
 
+#if ENABLE(DRAG_SUPPORT)
 class EmptyDragClient : public DragClient {
 public:
     virtual ~EmptyDragClient() {}
@@ -447,6 +448,7 @@ public:
     virtual DragImageRef createDragImageForLink(KURL&, const String&, Frame*) { return 0; }
     virtual void dragControllerDestroyed() { }
 };
+#endif // ENABLE(DRAG_SUPPORT)
 
 class EmptyInspectorClient : public InspectorClient {
 public:

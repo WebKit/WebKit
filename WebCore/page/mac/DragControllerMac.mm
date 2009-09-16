@@ -26,6 +26,7 @@
 #import "config.h"
 #import "DragController.h"
 
+#if ENABLE(DRAG_SUPPORT)
 #import "DragData.h"
 #import "Frame.h"
 #import "FrameView.h"
@@ -75,4 +76,6 @@ void DragController::cleanupAfterSystemDrag()
     dragEnded();
 }
 
-}
+} // namespace WebCore
+
+#endif // ENABLE(DRAG_SUPPORT)

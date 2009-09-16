@@ -125,7 +125,9 @@ namespace WebCore {
 
         Chrome* chrome() const { return m_chrome.get(); }
         SelectionController* dragCaretController() const { return m_dragCaretController.get(); }
+#if ENABLE(DRAG_SUPPORT)
         DragController* dragController() const { return m_dragController.get(); }
+#endif
         FocusController* focusController() const { return m_focusController.get(); }
         ContextMenuController* contextMenuController() const { return m_contextMenuController.get(); }
         InspectorController* inspectorController() const { return m_inspectorController.get(); }
@@ -217,7 +219,9 @@ namespace WebCore {
 
         OwnPtr<Chrome> m_chrome;
         OwnPtr<SelectionController> m_dragCaretController;
+#if ENABLE(DRAG_SUPPORT)
         OwnPtr<DragController> m_dragController;
+#endif
         OwnPtr<FocusController> m_focusController;
         OwnPtr<ContextMenuController> m_contextMenuController;
         OwnPtr<InspectorController> m_inspectorController;

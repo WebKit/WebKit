@@ -368,12 +368,14 @@ void ClipboardMac::writeURL(const KURL& url, const String& title, Frame* frame)
     Pasteboard::writeURL(m_pasteboard.get(), nil, url, title, frame);
 }
     
+#if ENABLE(DRAG_SUPPORT)
 void ClipboardMac::declareAndWriteDragImage(Element* element, const KURL& url, const String& title, Frame* frame)
 {
     ASSERT(frame);
     if (Page* page = frame->page())
         page->dragController()->client()->declareAndWriteDragImage(m_pasteboard.get(), kit(element), url, title, frame);
 }
+#endif // ENABLE(DRAG_SUPPORT)
     
 DragImageRef ClipboardMac::createDragImage(IntPoint& loc) const
 {

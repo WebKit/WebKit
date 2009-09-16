@@ -1,3 +1,44 @@
+2009-09-16  Greg Bolsinga  <bolsinga@apple.com>
+
+        Add ENABLE(DRAG_SUPPORT)
+        https://bugs.webkit.org/show_bug.cgi?id=29233
+
+        Reviewed by David Kilzer.
+
+        No new tests. (No change in default behavior.)
+
+        * DerivedSources.make: Use new WebCore.DragSupport.exp file if ENABLE_DRAG_SUPPORT.
+        * WebCore.base.exp: Move Drag Support only exports to WebCore.DragSupport.exp.
+        * WebCore.xcodeproj/project.pbxproj: Add WebCore.DragSupport.exp.
+        * dom/Clipboard.h: Use ENABLE(DRAG_SUPPORT) where applicable.
+        * loader/EmptyClients.h: Ditto.
+        * page/DragController.cpp: Wrap entire file in ENABLE(DRAG_SUPPORT).
+        * page/EventHandler.cpp: Use ENABLE(DRAG_SUPPORT) where applicable.
+        (WebCore::EventHandler::EventHandler):
+        (WebCore::EventHandler::clear):
+        (WebCore::EventHandler::handleMousePressEvent):
+        (WebCore::EventHandler::handleMouseReleaseEvent):
+        (WebCore::EventHandler::handleMouseMoveEvent):
+        * page/EventHandler.h: Ditto.
+        * page/Page.cpp: Ditto.
+        (WebCore::Page::Page):
+        * page/Page.h: Ditto.
+        * page/mac/DragControllerMac.mm: Wrap entire file in ENABLE(DRAG_SUPPORT).
+        * page/mac/EventHandlerMac.mm: Use ENABLE(DRAG_SUPPORT) where applicable.
+        (WebCore::EventHandler::passSubframeEventToSubframe):
+        * platform/DragData.cpp: Wrap entire file in ENABLE(DRAG_SUPPORT).
+        * platform/DragImage.cpp: Wrap entire file in ENABLE(DRAG_SUPPORT).
+        * platform/mac/ClipboardMac.h: Use ENABLE(DRAG_SUPPORT) where applicable.
+        * platform/mac/ClipboardMac.mm: Ditto.
+        * platform/mac/DragDataMac.mm: Wrap entire file in ENABLE(DRAG_SUPPORT).
+        * platform/mac/DragImageMac.mm: Wrap entire file in ENABLE(DRAG_SUPPORT).
+        * rendering/RenderLayer.cpp: Use ENABLE(DRAG_SUPPORT) where applicable.
+        (WebCore::RenderLayer::autoscroll):
+        * rendering/RenderObject.cpp: Ditto.
+        * rendering/RenderObject.h: Ditto.
+        * svg/graphics/SVGImage.cpp: Ditto.
+        (WebCore::SVGImage::dataChanged):
+
 2009-09-16  Kevin Ollivier  <kevino@theolliviers.com>
 
         wxMSW build fix after adding support for high resolution times in Win.

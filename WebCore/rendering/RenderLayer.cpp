@@ -1344,7 +1344,9 @@ void RenderLayer::autoscroll()
     if (!frameView)
         return;
 
+#if ENABLE(DRAG_SUPPORT)
     frame->eventHandler()->updateSelectionForMouseDrag();
+#endif
 
     IntPoint currentDocumentPosition = frameView->windowToContents(frame->eventHandler()->currentMousePosition());
     scrollRectToVisible(IntRect(currentDocumentPosition, IntSize(1, 1)), false, ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignToEdgeIfNeeded);

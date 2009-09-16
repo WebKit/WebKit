@@ -26,6 +26,7 @@
 #import "config.h"
 #import "DragImage.h"
 
+#if ENABLE(DRAG_SUPPORT)
 #import "CachedImage.h"
 #import "Image.h"
 #import "KURL.h"
@@ -98,4 +99,6 @@ RetainPtr<NSImage> createDragImageIconForCachedImage(CachedImage* image)
     return [[NSWorkspace sharedWorkspace] iconForFileType:extension];
 }
     
-}
+} // namespace WebCore
+
+#endif // ENABLE(DRAG_SUPPORT)

@@ -25,6 +25,8 @@
 
 #include "config.h"
 #include "DragImage.h"
+
+#if ENABLE(DRAG_SUPPORT)
 #include "DragController.h"
 
 #include "Frame.h"
@@ -71,4 +73,6 @@ DragImageRef createDragImageForSelection(Frame* frame)
     return image;
 }
 
-}
+} // namespace WebCore
+
+#endif // ENABLE(DRAG_SUPPORT)

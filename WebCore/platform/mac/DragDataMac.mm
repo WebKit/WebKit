@@ -26,6 +26,7 @@
 #import "config.h"
 #import "DragData.h"
 
+#if ENABLE(DRAG_SUPPORT)
 #import "ClipboardMac.h"
 #import "ClipboardAccessPolicy.h"
 #import "Document.h"
@@ -127,5 +128,6 @@ PassRefPtr<DocumentFragment> DragData::asFragment(Document*) const
     return core(m_pasteboardHelper->fragmentFromPasteboard([m_platformDragData draggingPasteboard]));
 }
     
-}
+} // namespace WebCore
 
+#endif // ENABLE(DRAG_SUPPORT)
