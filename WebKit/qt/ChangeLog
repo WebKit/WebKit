@@ -1,3 +1,12 @@
+2009-09-16  Benjamin C Meyer  <benjamin.meyer@torchmobile.com>
+
+        Reviewed by Eric Seidel.
+
+        Detect and add Windows7 properly to the user agent.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::userAgentForUrl):
+
 2009-09-16  Andras Becsi  <andrewbecsi@yahoo.co.uk>
 
         Rubberstamped by Kenneth Christiansen.
