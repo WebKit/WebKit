@@ -92,4 +92,6 @@ interface IWebUIDelegatePrivate2 : IWebUIDelegatePrivate
     // IPropertyBag. The keys of the windowFeatures IPropertyBag are the WebWindowFeatures*Key
     // strings above.
     HRESULT createWebViewWithRequest([in] IWebView* sender, [in] IWebURLRequest* request, [in] IPropertyBag* windowFeatures, [out, retval] IWebView** newWebView);
+
+    HRESULT drawBackground([in] IWebView* sender, [in] OLE_HANDLE hdc, [in] const RECT* dirtyRect);
 }

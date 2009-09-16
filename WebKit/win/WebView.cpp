@@ -949,6 +949,12 @@ void WebView::paintIntoBackingStore(FrameView* frameView, HDC bitmapDC, const In
 {
     LOCAL_GDI_COUNTER(0, __FUNCTION__);
 
+#if !ASSERT_DISABLED
+    RECT clientRect;
+    GetClientRect(m_viewWindow, &clientRect);
+    ASSERT(IntRect(clientRect).contains(dirtyRect));
+#endif
+
     RECT rect = dirtyRect;
 
 #if FLASH_BACKING_STORE_REDRAW
@@ -968,6 +974,11 @@ void WebView::paintIntoBackingStore(FrameView* frameView, HDC bitmapDC, const In
         gc.clearRect(dirtyRect);
     else
         FillRect(bitmapDC, &rect, (HBRUSH)GetStockObject(WHITE_BRUSH));
+
+    COMPtr<IWebUIDelegatePrivate2> uiPrivate(Query, m_uiDelegate);
+    if (uiPrivate)
+        uiPrivate->drawBackground(this, reinterpret_cast<OLE_HANDLE>(bitmapDC), &rect);
+
     if (frameView && frameView->frame() && frameView->frame()->contentRenderer()) {
         gc.clip(dirtyRect);
         frameView->paint(&gc, dirtyRect);

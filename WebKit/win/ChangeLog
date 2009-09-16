@@ -1,5 +1,22 @@
 2009-09-16  Adam Roben  <aroben@apple.com>
 
+        Add a UI delegate callback to let the delegate draw a WebView's
+        background
+
+        Fixes <http://webkit.org/b/29315>.
+
+        Reviewed by Dave Hyatt.
+
+        * Interfaces/IWebUIDelegatePrivate.idl: Added
+        IWebUIDelegatePrivate2::drawBackground.
+
+        * WebView.cpp:
+        (WebView::paintIntoBackingStore): After clearing or filling with
+        white, let the delegate draw whatever background it wants. Also added
+        an assertion that the dirty rect is within our bounds.
+
+2009-09-16  Adam Roben  <aroben@apple.com>
+
         Prevent WebView from painting over sibling windows
 
         Fixes <http://webkit.org/b/29300> <rdar://problem/7227960> WebView can
