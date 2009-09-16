@@ -1,3 +1,16 @@
+2009-09-16  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Ada Chan.
+
+        Speculative fix for
+        <rdar://problem/6937089> Crashes at RenderWidget::destroy()
+
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::destroy): Avoid calling renderArena() if node()
+        is null. Add two assertions that can help determine how this crash
+        happens (in particular, whether node() becomes null during destroy() or
+        it is null before destroy() is called).
+
 2009-09-16  Beth Dakin  <bdakin@apple.com>
 
         Speculative build fix.

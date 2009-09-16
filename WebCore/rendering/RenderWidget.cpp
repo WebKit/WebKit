@@ -61,6 +61,15 @@ void RenderWidget::destroy()
     // So the code below includes copied and pasted contents of
     // both RenderBox::destroy() and RenderObject::destroy().
     // Fix originally made for <rdar://problem/4228818>.
+
+    // <rdar://problem/6937089> suggests that node() can be null by the time we call renderArena()
+    // in the end of this function. One way this might happen is if this function was invoked twice
+    // in a row, so bail out and turn a crash into an assertion failure in debug builds and a leak
+    // in release builds.
+    ASSERT(node());
+    if (!node())
+        return;
+
     animation()->cancelAnimations(this);
 
     if (RenderView* v = view())
@@ -90,6 +99,14 @@ void RenderWidget::destroy()
         setHasLayer(false);
         destroyLayer();
     }
+
+    // <rdar://problem/6937089> suggests that node() can be null here. One way this might happen is
+    // if this function was re-entered (and therefore the null check at the beginning did not fail),
+    // so bail out and turn a crash into an assertion failure in debug builds and a leak in release
+    // builds.
+    ASSERT(node());
+    if (!node())
+        return;
 
     // Grab the arena from node()->document()->renderArena() before clearing the node pointer.
     // Clear the node before deref-ing, as this may be deleted when deref is called.
