@@ -1,3 +1,15 @@
+2009-09-16  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        Add a "Flip effect" to our GraphicsView based launcher.
+
+        * QGVLauncher/main.cpp:
+        (MainView::resizeEvent):
+        (MainView::flip):
+        (MainWindow::flip):
+        (MainWindow::buildUI):
+
 2009-09-16  Zoltan Herczeg  <zherczeg@inf.u-szeged.hu>
 
         Rubber-stamped by Simon Hausmann.
