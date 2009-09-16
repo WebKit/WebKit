@@ -1,3 +1,16 @@
+2009-09-16  Adam Roben  <aroben@apple.com>
+
+        Prevent WebView from painting over sibling windows
+
+        Fixes <http://webkit.org/b/29300> <rdar://problem/7227960> WebView can
+        paint over sibling windows
+
+        Reviewed by Darin Adler.
+
+        * WebView.cpp:
+        (WebView::initWithFrame): Create the WebView's HWND with the
+        WS_CLIPSIBLINGS style.
+
 2009-09-14  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Alexey Proskuryakov.

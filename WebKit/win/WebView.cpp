@@ -2314,7 +2314,7 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
 
     registerWebViewWindowClass();
 
-    m_viewWindow = CreateWindowEx(0, kWebViewWindowClassName, 0, WS_CHILD | WS_CLIPCHILDREN,
+    m_viewWindow = CreateWindowEx(0, kWebViewWindowClassName, 0, WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
         frame.left, frame.top, frame.right - frame.left, frame.bottom - frame.top, m_hostWindow ? m_hostWindow : HWND_MESSAGE, 0, gInstance, 0);
     ASSERT(::IsWindow(m_viewWindow));
 
