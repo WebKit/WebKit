@@ -3519,6 +3519,9 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                 case CSSValueSubpixelAntialiased:
                     smoothing = SubpixelAntialiased;
                     break;
+                default:
+                    ASSERT_NOT_REACHED();
+                    smoothing = AutoSmoothing;
             }
             fontDescription.setFontSmoothing(smoothing);
         }

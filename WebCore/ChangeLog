@@ -1,5 +1,12 @@
 2009-09-16  Beth Dakin  <bdakin@apple.com>
 
+        Speculative build fix.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+
+2009-09-16  Beth Dakin  <bdakin@apple.com>
+
         Reviewed by Darin Adler.
 
         Fix for <rdar://problem/7083741> Implement a CSS extension to 
