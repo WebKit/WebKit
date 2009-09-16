@@ -1,5 +1,11 @@
 2009-09-16  Kevin Ollivier  <kevino@theolliviers.com>
 
+        wx build fix to support monolithic builds on Windows.
+
+        * wx/build/wxpresets.py:
+
+2009-09-16  Kevin Ollivier  <kevino@theolliviers.com>
+
         wx build fix, improve debug support and 2.9 support on MSW.
 
         * wx/build/settings.py:
