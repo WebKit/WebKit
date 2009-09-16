@@ -1,0 +1,10 @@
+Test page for bug 15356 and bug 29121
+
+Assertion: Invoking getResponseHeader method when readyState >= 2 (HEADERS_RECEIVED) should return a header value if the header exists.
+
+PASSED 0
+PASSED 1
+PASSED 2: getResponseHeader(Content-Type) returned a value.
+PASSED 3
+PASSED 4
+

@@ -1,3 +1,24 @@
+2009-09-16  Carol Szabo  <carol.szabo@nokia.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Incorrect behavior of XMLHttpRequest::getAllResponseHeaders and XMLHttpRequest::getResponseHeader in the
+        HEADERS_RECEIVED readyState.
+        https://bugs.webkit.org/show_bug.cgi?id=29121
+
+        * http/tests/xmlhttprequest/getAllResponseHeaders-expected.txt: Copied from LayoutTests/http/tests/xmlhttprequest/xmlhttprequest-InvalidStateException-getAllRequestHeaders-expected.txt.
+        * http/tests/xmlhttprequest/getAllResponseHeaders.html: Copied from LayoutTests/http/tests/xmlhttprequest/xmlhttprequest-InvalidStateException-getAllRequestHeaders.html.
+        * http/tests/xmlhttprequest/getResponseHeader-expected.txt: Copied from LayoutTests/http/tests/xmlhttprequest/xmlhttprequest-InvalidStateException-getRequestHeader-expected.txt.
+        * http/tests/xmlhttprequest/getResponseHeader.html: Copied from LayoutTests/http/tests/xmlhttprequest/xmlhttprequest-InvalidStateException-getRequestHeader.html.
+        * http/tests/xmlhttprequest/xmlhttprequest-InvalidStateException-getAllRequestHeaders-expected.txt: Removed.
+        * http/tests/xmlhttprequest/xmlhttprequest-InvalidStateException-getAllRequestHeaders.html: Removed.
+        * http/tests/xmlhttprequest/xmlhttprequest-InvalidStateException-getRequestHeader-expected.txt: Removed.
+        * http/tests/xmlhttprequest/xmlhttprequest-InvalidStateException-getRequestHeader.html: Removed.
+        Modified xmlhttprequest-InvalidStateException-getAllRequestHeaders and xmlhttprequest-InvalidStateException-getRequestHeader to match the current spec and code behavior.
+        Extended the first test to cover other aspects of the getAllResponseHeaders method and planning the same extension for the second test.
+        The extension for the second test is to be submitted with the patch for bug 29140.
+        Renamed the 2 tests to a shorter more accurate name, given their new intended scope.
+
 2009-09-16  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         One more try at rebaselining the tests for those who dump frame

@@ -1,3 +1,20 @@
+2009-09-16  Carol Szabo  <carol.szabo@nokia.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Incorrect behavior of XMLHttpRequest::getAllResponseHeaders and
+        XMLHttpRequest::getResponseHeader in the
+        HEADERS_RECEIVED readyState.
+        https://bugs.webkit.org/show_bug.cgi?id=29121
+
+        Tests: http/tests/xmlhttprequest/getAllResponseHeaders.html
+               http/tests/xmlhttprequest/getResponseHeader.html
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::getAllResponseHeaders):
+        (WebCore::XMLHttpRequest::getResponseHeader):
+        Changed the minimum valid state from LOADING to HEADERS_RECEIVED.
+
 2009-09-16  Vitaly Repeshko  <vitalyr@chromium.org>
 
         Reviewed by Dimitri Glazkov.

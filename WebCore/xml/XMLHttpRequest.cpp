@@ -719,7 +719,7 @@ String XMLHttpRequest::getRequestHeader(const AtomicString& name) const
 
 String XMLHttpRequest::getAllResponseHeaders(ExceptionCode& ec) const
 {
-    if (m_state < LOADING) {
+    if (m_state < HEADERS_RECEIVED) {
         ec = INVALID_STATE_ERR;
         return "";
     }
@@ -753,7 +753,7 @@ String XMLHttpRequest::getAllResponseHeaders(ExceptionCode& ec) const
 
 String XMLHttpRequest::getResponseHeader(const AtomicString& name, ExceptionCode& ec) const
 {
-    if (m_state < LOADING) {
+    if (m_state < HEADERS_RECEIVED) {
         ec = INVALID_STATE_ERR;
         return "";
     }

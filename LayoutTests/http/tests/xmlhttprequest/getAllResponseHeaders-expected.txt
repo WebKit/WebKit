@@ -1,0 +1,10 @@
+Test page for bug 15356 and bug 29121
+
+Assertion: Invoking getAllResponseHeaders method when readyState >= 2 (HEADERS_RECEIVED) should return a conforming list of headers.
+
+PASSED 0
+PASSED 1
+PASSED 2: getAllResponseHeaders returned what looks like a conforming headerlist.
+PASSED 3
+PASSED 4
+

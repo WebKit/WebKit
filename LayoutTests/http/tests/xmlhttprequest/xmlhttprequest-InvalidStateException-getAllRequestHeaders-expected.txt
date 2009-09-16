@@ -1,8 +1,0 @@
-Test page for the bug 15356 : getResponseHeader and getAllResponseHeaders do not throw exceptions
-
-PASSED (INVALID_STATE_ERR: DOM Exception 11 ) 0
-PASSED (INVALID_STATE_ERR: DOM Exception 11 ) 1
-PASSED (INVALID_STATE_ERR: DOM Exception 11 ) 2
-PASSED 3
-PASSED 4
-

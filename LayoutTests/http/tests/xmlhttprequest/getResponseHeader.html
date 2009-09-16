@@ -1,0 +1,110 @@
+<html>
+<head>
+    <title>Check exception thrown by getReponseHeader </title>
+<script type="text/javascript">
+
+function log (msg) {
+    var paragraph = document.createElement("li");
+    paragraph.innerHTML=msg.replace(/\n/gm,"<br>");
+    document.getElementById("console").appendChild(paragraph);
+}
+
+var xhr;
+
+if (window.XMLHttpRequest) {
+    xhr = new XMLHttpRequest();
+} else {
+    try {
+        xhr = new ActiveXObject("Msxml2.XMLHTTP");
+    } catch (ex) {
+        xhr = new ActiveXObject("Microsoft.XMLHTTP");
+    }
+}
+
+var savedHeader = null;
+var headerName="Content-Type";
+xhr.onreadystatechange = function() {
+    var rState = this.readyState;
+    // We expect an INVALID_STATE_ERR exception for readyState < 2
+    // and no exception for readyState >= 2
+    try {
+        var header = this.getResponseHeader(headerName);
+        if (rState != this.readyState)
+            log("UNCERTAIN " + rState + ": readyState changed while getting the header.");
+        if (rState < 2) {
+            log("FAILED " + rState + ": " + headerName + "=" + header);
+        } else if (header)
+            if (savedHeader)
+                if (savedHeader != header) {
+                    log("FAILED " + rState +
+": Content-Type changed after it was first returned. Previous " + headerName
++ "=" + savedHeader + "; New " + headerName + "=" + header + ".");
+                savedHeader = header;
+                } 
+                else //savedHeader == header here; no need to reprint header
+                    log("PASSED " + rState);
+            else {//first header value retrieved
+                if (window.layoutTestController)
+//do not print the header's value for automated tests to avoid false failures.
+                    log("PASSED " + rState +
+": getResponseHeader(" + headerName + ") returned a value.");
+                else
+                    log("PASSED " + rState +
+": getResponseHeader(" + headerName + ") returned: " + header + ".");
+                savedHeader = header;
+            }
+        else //header is null
+            log("FAILED " + rState + ": null " + headerName + " returned.");
+    } catch (e) {
+        if (rState < 2)
+            log("PASSED " + rState);
+        else
+            log("FAILED " + rState + ": EXCEPTION THROWN: " + e.message + ".");
+    }
+    if ((rState == 4) && (window.layoutTestController))
+            layoutTestController.notifyDone();
+}
+
+if (window.layoutTestController) {
+    layoutTestController.waitUntilDone();
+    layoutTestController.dumpAsText();
+}
+
+function test() {
+    // Test for readyState = 0
+    try {
+        var header = xhr.getResponseHeader(headerName);
+        log("FAILED " + xhr.readyState + ": " + headerName + "=" + header + ".");
+    } catch (e) {
+        log("PASSED " + xhr.readyState);
+    }
+    try {
+        xhr.open("GET","resources/1251.html", true);
+        xhr.send(null);
+    } catch(e) {
+        log("FAILED open/send: EXCEPTION THROWN: " + e.message +".");
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }
+}
+</script>
+</head>
+<body onload="test()">
+
+<p>Test page for <a href="http://bugs.webkit.org/show_bug.cgi?id=15356">bug
+15356</a>
+and <a href="http://bugs.webkit.org/show_bug.cgi?id=29121">bug 29121</a></p>
+<p>Assertion: Invoking getResponseHeader method when readyState >= 2
+(HEADERS_RECEIVED) should return a header value if the header exists.</p>
+<script>
+    if (!window.layoutTestController)
+        document.write("<p>If the test passes one should see \
+below the ruler the text \"passed\" in all capital letters, 5 times, \
+followed each time by a space and the readyState number.</p>\n\
+<p>ReadyStatenumbers should be in ascending order 0 to 4.</p>\n\
+<p>The value of the " + headerName + " header should also be printed.</p>");
+</script>
+ <hr>
+ <p><ol id=console></ol></p>
+</body>
+</html>
