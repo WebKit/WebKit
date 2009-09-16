@@ -692,6 +692,9 @@ void MediaPlayerPrivate::getSupportedTypes(HashSet<String>& types)
 
 MediaPlayer::SupportsType MediaPlayerPrivate::supportsType(const String& type, const String& codecs)
 {
+    if (type.isNull() || type.isEmpty())
+        return MediaPlayer::IsNotSupported;
+
     if (mimeTypeCache().contains(type))
         return !codecs.isEmpty() ? MediaPlayer::MayBeSupported : MediaPlayer::IsSupported;
     return MediaPlayer::IsNotSupported;
