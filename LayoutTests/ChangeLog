@@ -1,5 +1,18 @@
 2009-09-15  Chris Fleizach  <cfleizach@apple.com>
 
+        Layout test fix. 
+        This test should only be for Mac, since the other platforms don't support the necessary features.
+
+        WAI-ARIA: add support for ranges, including the progressbar, slider, and spinbutton roles
+        https://bugs.webkit.org/show_bug.cgi?id=28841
+
+        * accessibility/aria-slider-value-change-expected.txt: Removed.
+        * accessibility/aria-slider-value-change.html: Removed.
+        * platform/mac/accessibility/aria-slider-value-change-expected.txt: Copied from LayoutTests/accessibility/aria-slider-value-change-expected.txt.
+        * platform/mac/accessibility/aria-slider-value-change.html: Copied from LayoutTests/accessibility/aria-slider-value-change.html.
+
+2009-09-15  Chris Fleizach  <cfleizach@apple.com>
+
         Reviewed by Beth Dakin.
 
         WAI-ARIA: add support for ranges, including the progressbar, slider, and spinbutton roles
