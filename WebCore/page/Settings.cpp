@@ -48,7 +48,7 @@ static void setNeedsReapplyStylesInAllFrames(Page* page)
 bool Settings::gShouldPaintNativeControls = true;
 #endif
 
-#if PLATFORM(WIN)
+#if PLATFORM(WIN) || (PLATFORM(WIN_OS) && PLATFORM(WX))
 bool Settings::gShouldUseHighResolutionTimers = true;
 #endif
 
@@ -497,7 +497,7 @@ void Settings::setAcceleratedCompositingEnabled(bool enabled)
     setNeedsReapplyStylesInAllFrames(m_page);
 }
 
-#if PLATFORM(WIN)
+#if PLATFORM(WIN) || (PLATFORM(WIN_OS) && PLATFORM(WX))
 void Settings::setShouldUseHighResolutionTimers(bool shouldUseHighResolutionTimers)
 {
     gShouldUseHighResolutionTimers = shouldUseHighResolutionTimers;

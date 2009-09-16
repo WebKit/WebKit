@@ -1,3 +1,10 @@
+2009-09-16  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wxMSW build fix after adding support for high resolution times in Win.
+
+        * page/Settings.cpp:
+        * page/Settings.h:
+
 2009-09-16  Vitaly Repeshko  <vitalyr@chromium.org>
 
         Reviewed by Dimitri Glazkov.
