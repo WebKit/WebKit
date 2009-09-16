@@ -1,3 +1,24 @@
+2009-09-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Removed the notion of "disconnected nodes with event listeners" because
+        it was vestigial. The reference cycle it tried to solve was solved another
+        way in https://bugs.webkit.org/show_bug.cgi?id=21260.
+
+        * dom/Document.cpp:
+        (WebCore::Document::removeAllEventListeners):
+        * dom/Document.h:
+        * dom/Node.cpp:
+        (WebCore::Node::~Node):
+        (WebCore::Node::insertedIntoDocument):
+        (WebCore::Node::removedFromDocument):
+        (WebCore::Node::willMoveToNewOwnerDocument):
+        (WebCore::Node::didMoveToNewOwnerDocument):
+        (WebCore::Node::addEventListener):
+        (WebCore::Node::removeEventListener):
+        (WebCore::Node::clearAttributeEventListener):
+
 2009-09-15  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.

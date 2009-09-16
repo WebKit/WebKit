@@ -1458,27 +1458,8 @@ void Document::removeAllEventListeners()
 {
     if (DOMWindow* domWindow = this->domWindow())
         domWindow->removeAllEventListeners();
-    removeAllDisconnectedNodeEventListeners();
     for (Node* node = this; node; node = node->traverseNextNode())
         node->removeAllEventListeners();
-}
-
-void Document::registerDisconnectedNodeWithEventListeners(Node* node)
-{
-    m_disconnectedNodesWithEventListeners.add(node);
-}
-
-void Document::unregisterDisconnectedNodeWithEventListeners(Node* node)
-{
-    m_disconnectedNodesWithEventListeners.remove(node);
-}
-
-void Document::removeAllDisconnectedNodeEventListeners()
-{
-    HashSet<Node*>::iterator end = m_disconnectedNodesWithEventListeners.end();
-    for (HashSet<Node*>::iterator i = m_disconnectedNodesWithEventListeners.begin(); i != end; ++i)
-        (*i)->removeAllEventListeners();
-    m_disconnectedNodesWithEventListeners.clear();
 }
 
 RenderView* Document::renderView() const

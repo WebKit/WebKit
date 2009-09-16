@@ -812,9 +812,6 @@ public:
 
     void removeAllEventListeners();
 
-    void registerDisconnectedNodeWithEventListeners(Node*);
-    void unregisterDisconnectedNodeWithEventListeners(Node*);
-    
     CheckedRadioButtons& checkedRadioButtons() { return m_checkedRadioButtons; }
     
 #if ENABLE(SVG)
@@ -884,7 +881,6 @@ private:
     void executeScriptSoonTimerFired(Timer<Document>*);
 
     void updateTitle();
-    void removeAllDisconnectedNodeEventListeners();
     void updateFocusAppearanceTimerFired(Timer<Document>*);
     void updateBaseURL();
 
@@ -1025,8 +1021,6 @@ private:
     
     typedef HashMap<AtomicStringImpl*, HTMLMapElement*> ImageMapsByName;
     ImageMapsByName m_imageMapsByName;
-
-    HashSet<Node*> m_disconnectedNodesWithEventListeners;
 
     int m_docID; // A unique document identifier used for things like document-specific mapped attributes.
 
