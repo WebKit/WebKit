@@ -1,3 +1,13 @@
+2009-09-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Added a test for a potential crash when adding an event listener to a
+        doctype node.
+
+        * fast/dom/doctype-event-listener-crash-expected.txt: Added.
+        * fast/dom/doctype-event-listener-crash.html: Added.
+
 2009-09-16  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin Adler.

@@ -1,3 +1,17 @@
+2009-09-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig and Anders Carlsson.
+
+        Removed some vestigial and potentially crashy code that makes consolidating
+        event listeners hard.
+
+        * dom/Node.cpp:
+        (WebCore::Node::addEventListener): No need to limit when event listeners
+        can be added. Other EventTargets don't do this.
+        
+        Also, check for null when accessing document(). Technically, the JS bindings
+        do this check for us, but let's not rely on that.
+
 2009-09-16  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.
