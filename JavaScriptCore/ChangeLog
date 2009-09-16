@@ -1,3 +1,14 @@
+2009-09-16  Benjamin C Meyer  <benjamin.meyer@torchmobile.com>
+
+        Reviewed by Eric Seidel.
+
+        The webkit stdint and stdbool headers exists because
+        the compiler MSVC doesn't include them.  The check
+        should not check for PLATFORM(WIN_OS) but for MSVC.
+
+        * os-win32/stdbool.h:
+        * os-win32/stdint.h:
+
 2009-09-16  Greg Bolsinga  <bolsinga@apple.com>
 
         Add ENABLE(DRAG_SUPPORT)
