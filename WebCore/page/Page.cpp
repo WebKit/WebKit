@@ -104,7 +104,9 @@ Page::Page(ChromeClient* chromeClient, ContextMenuClient* contextMenuClient, Edi
     , m_dragController(new DragController(this, dragClient))
 #endif
     , m_focusController(new FocusController(this))
+#if ENABLE(CONTEXT_MENUS)
     , m_contextMenuController(new ContextMenuController(this, contextMenuClient))
+#endif
     , m_inspectorController(new InspectorController(this, inspectorClient))
     , m_settings(new Settings(this))
     , m_progress(new ProgressTracker)
@@ -128,6 +130,9 @@ Page::Page(ChromeClient* chromeClient, ContextMenuClient* contextMenuClient, Edi
     , m_customHTMLTokenizerChunkSize(-1)
     , m_canStartPlugins(true)
 {
+#if !ENABLE(CONTEXT_MENUS)
+    UNUSED_PARAM(contextMenuClient);
+#endif
 #if !ENABLE(DRAG_SUPPORT)
     UNUSED_PARAM(dragClient);
 #endif

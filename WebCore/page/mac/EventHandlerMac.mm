@@ -716,6 +716,7 @@ PlatformMouseEvent EventHandler::currentPlatformMouseEvent() const
     return PlatformMouseEvent(currentNSEvent(), windowView);
 }
 
+#if ENABLE(CONTEXT_MENUS)
 bool EventHandler::sendContextMenuEvent(NSEvent *event)
 {
     Page* page = m_frame->page();
@@ -723,6 +724,7 @@ bool EventHandler::sendContextMenuEvent(NSEvent *event)
         return false;
     return sendContextMenuEvent(PlatformMouseEvent(event, page->chrome()->platformWindow()));
 }
+#endif // ENABLE(CONTEXT_MENUS)
 
 #if ENABLE(DRAG_SUPPORT)
 bool EventHandler::eventMayStartDrag(NSEvent *event)

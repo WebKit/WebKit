@@ -39,6 +39,7 @@
 - (NSString *)fileButtonNoFileSelectedLabel;
 - (NSString *)copyImageUnknownFileLabel;
 
+#if ENABLE(CONTEXT_MENUS)
 // Context menu item titles
 - (NSString *)contextMenuItemTagOpenLinkInNewWindow;
 - (NSString *)contextMenuItemTagDownloadLinkToDisk;
@@ -97,6 +98,7 @@
 - (NSString *)contextMenuItemTagCapitalize;
 - (NSString *)contextMenuItemTagChangeBack:(NSString *)replacedString;
 - (NSString *)contextMenuItemTagInspectElement;
+#endif // ENABLE(CONTEXT_MENUS)
 
 - (NSString *)searchMenuNoRecentSearchesText;
 - (NSString *)searchMenuRecentSearchesText;

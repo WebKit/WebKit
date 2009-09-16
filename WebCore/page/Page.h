@@ -129,7 +129,9 @@ namespace WebCore {
         DragController* dragController() const { return m_dragController.get(); }
 #endif
         FocusController* focusController() const { return m_focusController.get(); }
+#if ENABLE(CONTEXT_MENUS)
         ContextMenuController* contextMenuController() const { return m_contextMenuController.get(); }
+#endif
         InspectorController* inspectorController() const { return m_inspectorController.get(); }
         Settings* settings() const { return m_settings.get(); }
         ProgressTracker* progress() const { return m_progress.get(); }
@@ -223,7 +225,9 @@ namespace WebCore {
         OwnPtr<DragController> m_dragController;
 #endif
         OwnPtr<FocusController> m_focusController;
+#if ENABLE(CONTEXT_MENUS)
         OwnPtr<ContextMenuController> m_contextMenuController;
+#endif
         OwnPtr<InspectorController> m_inspectorController;
         OwnPtr<Settings> m_settings;
         OwnPtr<ProgressTracker> m_progress;

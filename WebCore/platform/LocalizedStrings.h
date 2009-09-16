@@ -38,6 +38,7 @@ namespace WebCore {
     String fileButtonChooseFileLabel();
     String fileButtonNoFileSelectedLabel();
     String copyImageUnknownFileLabel();
+#if ENABLE(CONTEXT_MENUS)
     String contextMenuItemTagOpenLinkInNewWindow();
     String contextMenuItemTagDownloadLinkToDisk();
     String contextMenuItemTagCopyLinkToClipboard();
@@ -103,6 +104,7 @@ namespace WebCore {
     String contextMenuItemTagChangeBack(const String& replacedString);
 #endif
     String contextMenuItemTagInspectElement();
+#endif // ENABLE(CONTEXT_MENUS)
 
     String searchMenuNoRecentSearchesText();
     String searchMenuRecentSearchesText();

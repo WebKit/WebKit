@@ -9845,6 +9845,7 @@
 		FEA4133F105D67AE0007236F /* WebCore.DragSupport.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; path = WebCore.DragSupport.exp; sourceTree = "<group>"; };
 		FEAB90100EA51B9C006348C3 /* GeolocationService.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GeolocationService.cpp; sourceTree = "<group>"; };
 		FEAB90110EA51B9C006348C3 /* GeolocationService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeolocationService.h; sourceTree = "<group>"; };
+		FEFD102C105C41470002855E /* WebCore.ContextMenus.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; path = WebCore.ContextMenus.exp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -10441,6 +10442,7 @@
 			isa = PBXGroup;
 			children = (
 				F58EF58E02DFDFB7018635CA /* WebCore.base.exp */,
+				FEFD102C105C41470002855E /* WebCore.ContextMenus.exp */,
 				4491959D0FBE17D700D9F824 /* WebCore.DashboardSupport.exp */,
 				FEA4133F105D67AE0007236F /* WebCore.DragSupport.exp */,
 				4491959C0FBE17D700D9F824 /* WebCore.JNI.exp */,

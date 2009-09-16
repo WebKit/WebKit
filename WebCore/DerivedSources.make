@@ -464,6 +464,12 @@ ENABLE_DASHBOARD_SUPPORT = 0
 
 endif
 
+ifeq ($(shell gcc -E -P -dM -F $(BUILT_PRODUCTS_DIR) $(FRAMEWORK_FLAGS) WebCore/ForwardingHeaders/wtf/Platform.h | grep ENABLE_CONTEXT_MENUS | cut -d' ' -f3), 1)
+    ENABLE_CONTEXT_MENUS = 1
+else
+    ENABLE_CONTEXT_MENUS = 0
+endif
+
 ifeq ($(shell gcc -E -P -dM -F $(BUILT_PRODUCTS_DIR) $(FRAMEWORK_FLAGS) WebCore/ForwardingHeaders/wtf/Platform.h | grep ENABLE_DRAG_SUPPORT | cut -d' ' -f3), 1)
     ENABLE_DRAG_SUPPORT = 1
 else
@@ -762,6 +768,10 @@ endif
 # See also "Generate 64-bit Export File" build phase script in WebCore.xcodeproj/project.pbxproj
 ifeq ($(shell gcc -E -P -dM -F $(BUILT_PRODUCTS_DIR) $(FRAMEWORK_FLAGS) WebCore/ForwardingHeaders/wtf/Platform.h | grep ENABLE_NETSCAPE_PLUGIN_API | cut -d' ' -f3), 1)
     WEBCORE_EXPORT_DEPENDENCIES := $(WEBCORE_EXPORT_DEPENDENCIES) WebCore.NPAPI.exp
+endif
+
+ifeq ($(ENABLE_CONTEXT_MENUS), 1)
+    WEBCORE_EXPORT_DEPENDENCIES := $(WEBCORE_EXPORT_DEPENDENCIES) WebCore.ContextMenus.exp
 endif
 
 ifeq ($(ENABLE_DASHBOARD_SUPPORT), 1)

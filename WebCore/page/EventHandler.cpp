@@ -1837,6 +1837,7 @@ bool EventHandler::handleWheelEvent(PlatformWheelEvent& e)
     return e.isAccepted();
 }
 
+#if ENABLE(CONTEXT_MENUS)
 bool EventHandler::sendContextMenuEvent(const PlatformMouseEvent& event)
 {
     Document* doc = m_frame->document();
@@ -1867,6 +1868,7 @@ bool EventHandler::sendContextMenuEvent(const PlatformMouseEvent& event)
     
     return swallowEvent;
 }
+#endif // ENABLE(CONTEXT_MENUS)
 
 void EventHandler::scheduleHoverStateUpdate()
 {

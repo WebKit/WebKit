@@ -26,6 +26,8 @@
 #include "config.h"
 #include "ContextMenu.h"
 
+#if ENABLE(CONTEXT_MENUS)
+
 #include "ContextMenuController.h"
 
 @interface WebCoreMenuTarget : NSObject {
@@ -151,4 +153,6 @@ NSMutableArray* ContextMenu::releasePlatformDescription()
     return m_platformDescription.releaseRef();
 }
 
-}
+} // namespace WebCore
+
+#endif // ENABLE(CONTEXT_MENUS)

@@ -89,6 +89,7 @@ String copyImageUnknownFileLabel()
     return String();
 }
 
+#if ENABLE(CONTEXT_MENUS)
 String contextMenuItemTagOpenLinkInNewWindow()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
@@ -544,6 +545,7 @@ String contextMenuItemTagInspectElement()
     END_BLOCK_OBJC_EXCEPTIONS;
     return String();
 }
+#endif // ENABLE(CONTEXT_MENUS)
 
 String searchMenuNoRecentSearchesText()
 {

@@ -26,6 +26,8 @@
 #include "config.h"
 #include "ContextMenuItem.h"
 
+#if ENABLE(CONTEXT_MENUS)
+
 #include "ContextMenu.h"
 
 namespace WebCore {
@@ -152,4 +154,6 @@ bool ContextMenuItem::enabled() const
     return [m_platformDescription.get() isEnabled];
 }
 
-}
+} // namespace WebCore
+
+#endif // ENABLE(CONTEXT_MENUS)
