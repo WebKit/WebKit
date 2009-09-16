@@ -1,3 +1,13 @@
+2009-09-16  Vitaly Repeshko  <vitalyr@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [V8] Fix style violation in V8AbstractEventListener.
+        https://bugs.webkit.org/show_bug.cgi?id=29303
+
+        * bindings/v8/V8AbstractEventListener.h:
+        (WebCore::V8AbstractEventListener::operator==):
+
 2009-09-16  Patrick Mueller  <Patrick_Mueller@us.ibm.com>
 
         Reviewed by Timothy Hatcher.
