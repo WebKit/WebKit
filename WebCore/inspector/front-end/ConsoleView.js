@@ -298,7 +298,7 @@ WebInspector.ConsoleView.prototype = {
             reportCompletions(result, isException);
         }
 
-        this._evalInInspectedWindow(
+        this.evalInInspectedWindow(
             "(function() {" +
                 "var props = {};" +
                 "for (var prop in (" + expressionString + ")) props[prop] = true;" +
@@ -394,7 +394,7 @@ WebInspector.ConsoleView.prototype = {
         this.prompt.handleKeyEvent(event);
     },
 
-    _evalInInspectedWindow: function(expression, callback)
+    evalInInspectedWindow: function(expression, callback)
     {
         if (WebInspector.panels.scripts && WebInspector.panels.scripts.paused) {
             WebInspector.panels.scripts.evaluateInSelectedCallFrame(expression, false, callback);
@@ -442,7 +442,7 @@ WebInspector.ConsoleView.prototype = {
             self.prompt.text = "";
             self.addMessage(new WebInspector.ConsoleCommandResult(result, exception, commandMessage));
         }
-        this._evalInInspectedWindow(str, printResult);
+        this.evalInInspectedWindow(str, printResult);
     },
 
     _format: function(output, forceObjectFormat)

@@ -1206,6 +1206,10 @@ body.inactive .placard.selected {
     margin-bottom: 1px;
 }
 
+.watch-expressions-buttons-container {
+    text-align: center;
+}
+
 .section .header {
     padding: 2px 8px 4px 18px;
     border-top: 1px solid rgb(145, 160, 192);
@@ -1372,8 +1376,17 @@ body.inactive .placard.selected {
     text-overflow: clip;
 }
 
-li.editing .swatch, li.editing .enabled-button {
+li.editing .swatch, li.editing .enabled-button,  li.editing-sub-part .delete-button {
     display: none !important;
+}
+
+.watch-expressions > li.editing-sub-part .name {
+    display: block; 
+    width: 100%;
+}
+
+.watch-expressions > li.editing-sub-part .value, .watch-expressions > li.editing-sub-part .separator  {
+    display: none;
 }
 
 .section .properties li.editing-sub-part {
@@ -1407,6 +1420,17 @@ li.editing .swatch, li.editing .enabled-button {
     vertical-align: top;
     position: relative;
     z-index: 1;
+}
+
+/* FIXME: need a better icon (comment in bug 27514) */
+.section .properties .delete-button {
+    width: 10px;
+    height: 10px;
+    background-image: url(Images/errorIcon.png);
+    background-position: 0 0;
+    background-color: transparent;
+    background-repeat: no-repeat;
+    border: 0 none transparent;
 }
 
 .section:hover .properties .enabled-button {

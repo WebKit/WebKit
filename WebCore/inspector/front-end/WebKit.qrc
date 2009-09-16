@@ -62,6 +62,7 @@
     <file>treeoutline.js</file>
     <file>utilities.js</file>
     <file>View.js</file>
+    <file>WatchExpressionsSidebarPane.js</file>
     <file>inspector.css</file>
     <file>Images/back.png</file>
     <file>Images/checker.png</file>

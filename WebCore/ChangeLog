@@ -1,3 +1,53 @@
+2009-09-16  Patrick Mueller  <Patrick_Mueller@us.ibm.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Add Watch Expression support to inspector
+        https://bugs.webkit.org/show_bug.cgi?id=27514
+
+        Manual test added.
+
+        * English.lproj/localizedStrings.js:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype.completions):
+        (WebInspector.ConsoleView.prototype.evalInInspectedWindow):
+        (WebInspector.ConsoleView.prototype._enterKeyPressed):
+        * inspector/front-end/ObjectPropertiesSection.js:
+        (WebInspector.ObjectPropertiesSection.prototype.update.callback):
+        (WebInspector.ObjectPropertiesSection.prototype.update):
+        (WebInspector.ObjectPropertiesSection.prototype.updateProperties):
+        (WebInspector.ObjectPropertiesSection.CompareProperties):
+        (WebInspector.ObjectPropertyTreeElement.prototype.onpopulate.callback):
+        (WebInspector.ObjectPropertyTreeElement.prototype.onpopulate):
+        (WebInspector.ObjectPropertyTreeElement.prototype.update):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel):
+        (WebInspector.ScriptsPanel.prototype.reset):
+        (WebInspector.ScriptsPanel.prototype._callFrameSelected):
+        * inspector/front-end/WatchExpressionsSidebarPane.js: Added.
+        (WebInspector.WatchExpressionsSidebarPane):
+        (WebInspector.WatchExpressionsSidebarPane.prototype.refreshExpressions):
+        (WebInspector.WatchExpressionsSection):
+        (WebInspector.WatchExpressionsSection.prototype.update):
+        (WebInspector.WatchExpressionsSection.prototype.addExpression):
+        (WebInspector.WatchExpressionsSection.prototype.updateExpression):
+        (WebInspector.WatchExpressionsSection.prototype.findAddedTreeElement):
+        (WebInspector.WatchExpressionsSection.prototype.loadSavedExpressions):
+        (WebInspector.WatchExpressionsSection.prototype.saveExpressions):
+        (WebInspector.WatchExpressionsSection.CompareProperties):
+        (WebInspector.WatchExpressionTreeElement):
+        (WebInspector.WatchExpressionTreeElement.prototype.update):
+        (WebInspector.WatchExpressionTreeElement.prototype._deleteButtonClicked):
+        (WebInspector.WatchExpressionTreeElement.prototype.startEditing):
+        (WebInspector.WatchExpressionTreeElement.prototype.editingCancelled):
+        (WebInspector.WatchExpressionTreeElement.prototype.applyExpression):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.css:
+        * inspector/front-end/inspector.html:
+        * manual-tests/inspector/debugger-watch-expressions.html: Added.
+
 2009-09-16  Greg Bolsinga  <bolsinga@apple.com>
 
         Add ENABLE(INSPECTOR)

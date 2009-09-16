@@ -126,6 +126,7 @@ WebInspector.ScriptsPanel = function()
     this.topStatusBar.appendChild(this.sidebarResizeWidgetElement);
 
     this.sidebarPanes = {};
+    this.sidebarPanes.watchExpressions = new WebInspector.WatchExpressionsSidebarPane();
     this.sidebarPanes.callstack = new WebInspector.CallStackSidebarPane();
     this.sidebarPanes.scopechain = new WebInspector.ScopeChainSidebarPane();
     this.sidebarPanes.breakpoints = new WebInspector.BreakpointsSidebarPane();
@@ -471,6 +472,8 @@ WebInspector.ScriptsPanel.prototype = {
         }
 
         this._sourceIDMap = {};
+        
+        this.sidebarPanes.watchExpressions.refreshExpressions();
     },
 
     get visibleView()
@@ -704,6 +707,7 @@ WebInspector.ScriptsPanel.prototype = {
             return;
 
         this.sidebarPanes.scopechain.update(currentFrame);
+        this.sidebarPanes.watchExpressions.refreshExpressions();
 
         var scriptOrResource = this._sourceIDMap[currentFrame.sourceID];
         this._showScriptOrResource(scriptOrResource, currentFrame.line);

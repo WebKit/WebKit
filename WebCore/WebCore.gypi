@@ -3518,6 +3518,7 @@
             'inspector/front-end/treeoutline.js',
             'inspector/front-end/utilities.js',
             'inspector/front-end/View.js',
+            'inspector/front-end/WatchExpressionsSidebarPane.js',
             'inspector/front-end/inspector.css',
         ],
         'webinspector_image_files': [
