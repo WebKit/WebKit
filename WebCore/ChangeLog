@@ -2,6 +2,22 @@
 
         Reviewed by Timothy Hatcher.
 
+        Remove style property if empty string is entered.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29163
+
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeOutline.prototype._onmouseout): fixed null pointer exception
+        * inspector/front-end/InjectedScript.js:
+        (InjectedScript.applyStyleText): if styletext to apply is empty it will return an array to confirm the property removal
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylePropertyTreeElement.prototype.):
+        (WebInspector.StylePropertyTreeElement.prototype):
+
+2009-09-16  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
         Always reset m_implicitShorthand to false after parsing
         background-repeat style property otherwise properties
         following after it may be erroneously marked as implicit.

@@ -1316,17 +1316,14 @@ WebInspector.StylePropertyTreeElement.prototype = {
         var section = this.treeOutline.section;
         var elementsPanel = WebInspector.panels.elements;
         var styleTextLength = styleText.trimWhitespace().length;
-        if (!styleTextLength) {
-            if (updateInterface) {
+        if (!styleTextLength && updateInterface) {
+            if (this._newProperty) {
                 // The user deleted everything, so remove the tree element and update.
-                if (!this._newProperty)
-                    delete section._afterUpdate;
-                if (section && section.pane)
-                    section.pane.update();
                 this.parent.removeChild(this);
-                elementsPanel.removeStyleChange(section.identifier, this.style, this.name);
+                return;
+            } else {
+                delete section._afterUpdate;
             }
-            return;
         }
 
         var self = this;
@@ -1349,10 +1346,16 @@ WebInspector.StylePropertyTreeElement.prototype = {
             var changedProperties = result[1];
             elementsPanel.removeStyleChange(section.identifier, self.style, self.name);
 
-            self.style = WebInspector.CSSStyleDeclaration.parseStyle(newPayload);
-            for (var i = 0; i < changedProperties.length; ++i)
-                elementsPanel.addStyleChange(section.identifier, self.style, changedProperties[i]);
-            self._styleRule.style = self.style;
+            if (!styleTextLength) {
+                // Do remove ourselves from UI when the property removal is confirmed.
+                self.parent.removeChild(self);
+            } else {
+                self.style = WebInspector.CSSStyleDeclaration.parseStyle(newPayload);
+                for (var i = 0; i < changedProperties.length; ++i)
+                    elementsPanel.addStyleChange(section.identifier, self.style, changedProperties[i]);
+                self._styleRule.style = self.style;
+            }
+
             if (section && section.pane)
                 section.pane.dispatchEventToListeners("style edited");
 

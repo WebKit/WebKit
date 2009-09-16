@@ -112,6 +112,10 @@ InjectedScript.applyStyleText = function(styleId, styleText, propertyName)
             style.removeProperty(propertyName);
     }
 
+    // Notify caller that the property was successfully deleted.
+    if (!styleTextLength)
+        return [null, [propertyName]];
+
     if (!tempStyle.length)
         return false;
 

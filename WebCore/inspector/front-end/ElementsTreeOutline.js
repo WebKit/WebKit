@@ -225,7 +225,7 @@ WebInspector.ElementsTreeOutline.prototype = {
     _onmouseout: function(event)
     {
         var nodeUnderMouse = document.elementFromPoint(event.pageX, event.pageY);
-        if (nodeUnderMouse.isDescendant(this.element))
+        if (nodeUnderMouse && nodeUnderMouse.isDescendant(this.element))
             return;
 
         if (this._previousHoveredElement) {
