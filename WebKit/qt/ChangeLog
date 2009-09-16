@@ -1,5 +1,12 @@
 2009-09-16  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
+        Unreviewed potential Qt < 4.6 build fix.
+
+        * QGVLauncher/main.cpp:
+        (MainView::flip):
+
+2009-09-16  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
         Reviewed by Simon Hausmann.
 
         Add a "Flip effect" to our GraphicsView based launcher.

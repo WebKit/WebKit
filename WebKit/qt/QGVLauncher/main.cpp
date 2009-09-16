@@ -92,11 +92,13 @@ public:
 public slots:
     void flip()
     {
+#if QT_VERSION_CHECK(4, 6, 0)
         QSizeF center = m_mainWidget->boundingRect().size() / 2;
         QPointF centerPoint = QPointF(center.width(), center.height());
         m_mainWidget->setTransformOriginPoint(centerPoint);
 
         m_mainWidget->setRotation(m_mainWidget->rotation() ? 0 : 180);
+#endif
     }
 
 private:
