@@ -41,7 +41,8 @@
 namespace WebCore {
 
 V8AbstractEventListener::V8AbstractEventListener(Frame* frame, bool isAttribute)
-    : m_isAttribute(isAttribute)
+    : EventListener(JSEventListenerType)
+    , m_isAttribute(isAttribute)
     , m_frame(frame)
     , m_lineNumber(0)
     , m_columnNumber(0)
