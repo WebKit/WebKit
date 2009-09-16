@@ -1,3 +1,12 @@
+2009-09-16  Jure Repinc  <jlp@holodeck1.com>
+
+        Reviewed by Simon Hausmann.
+
+        Fixed a typo found during translation.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::interruptForPolicyChangeError):
+
 2009-09-14  Jakub Wieczorek  <faw217@gmail.com>
 
         Reviewed by Simon Hausmann.
