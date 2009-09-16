@@ -31,6 +31,8 @@
 #include "config.h"
 #include "InspectorResource.h"
 
+#if ENABLE(INSPECTOR)
+
 #include "CachedResource.h"
 #include "DocLoader.h"
 #include "DocumentLoader.h"
@@ -330,3 +332,5 @@ void InspectorResource::addLength(int lengthReceived)
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(INSPECTOR)

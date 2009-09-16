@@ -566,7 +566,9 @@ Storage* DOMWindow::sessionStorage() const
         return 0;
 
     RefPtr<StorageArea> storageArea = page->sessionStorage()->storageArea(document->securityOrigin());
+#if ENABLE(INSPECTOR)
     page->inspectorController()->didUseDOMStorage(storageArea.get(), false, m_frame);
+#endif
 
     m_sessionStorage = Storage::create(m_frame, storageArea.release());
     return m_sessionStorage.get();
@@ -591,7 +593,9 @@ Storage* DOMWindow::localStorage() const
     StorageNamespace* localStorage = page->group().localStorage();
     RefPtr<StorageArea> storageArea = localStorage ? localStorage->storageArea(document->securityOrigin()) : 0; 
     if (storageArea) {
+#if ENABLE(INSPECTOR)
         page->inspectorController()->didUseDOMStorage(storageArea.get(), true, m_frame);
+#endif
         m_localStorage = Storage::create(m_frame, storageArea.release());
     }
 

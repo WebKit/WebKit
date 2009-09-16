@@ -123,8 +123,10 @@ PassRefPtr<Database> Database::openDatabase(Document* document, const String& na
 
     document->setHasOpenDatabases();
 
+#if ENABLE(INSPECTOR)
     if (Page* page = document->frame()->page())
         page->inspectorController()->didOpenDatabase(database.get(), document->securityOrigin()->host(), name, expectedVersion);
+#endif
 
     return database;
 }

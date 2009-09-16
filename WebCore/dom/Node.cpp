@@ -2528,9 +2528,11 @@ bool Node::dispatchGenericEvent(PassRefPtr<Event> prpEvent)
     ASSERT(event->target());
     ASSERT(!event->type().isNull()); // JavaScript code can create an event with an empty name, but not null.
 
+#if ENABLE(INSPECTOR)
     InspectorTimelineAgent* timelineAgent = document()->inspectorTimelineAgent();
     if (timelineAgent)
         timelineAgent->willDispatchDOMEvent(*event);
+#endif
 
     // Make a vector of ancestors to send the event to.
     // If the node is not in a document just send the event to it.
@@ -2643,8 +2645,10 @@ doneDispatching:
     }
 
 doneWithDefault:
+#if ENABLE(INSPECTOR)
     if (timelineAgent)
         timelineAgent->didDispatchDOMEvent();
+#endif
 
     Document::updateStyleForAllDocuments();
 

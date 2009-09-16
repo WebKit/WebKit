@@ -63,7 +63,9 @@ namespace WebCore {
     class ScriptGlobalObject {
     public:
         static bool set(ScriptState*, const char* name, const ScriptObject&);
+#if ENABLE(INSPECTOR)
         static bool set(ScriptState*, const char* name, InspectorBackend*);
+#endif
         static bool get(ScriptState*, const char* name, ScriptObject&);
         static bool remove(ScriptState*, const char* name);
     private:

@@ -44,7 +44,9 @@ namespace WebCore {
     class String;
 
     enum MessageDestination {
+#if ENABLE(INSPECTOR)
         InspectorControllerDestination,
+#endif
         ConsoleDestination,
     };
 

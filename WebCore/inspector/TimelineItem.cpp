@@ -31,6 +31,8 @@
 #include "config.h"
 #include "TimelineItem.h"
 
+#if ENABLE(INSPECTOR)
+
 #include "InspectorFrontend.h"
 #include "ScriptArray.h"
 #include "ScriptObject.h"
@@ -76,3 +78,4 @@ void TimelineItem::addChildItem(PassOwnPtr<TimelineItem> timelineItem)
 
 } // namespace WebCore
 
+#endif // ENABLE(INSPECTOR)

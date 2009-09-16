@@ -377,7 +377,9 @@ public:
     Frame* frame() const { return m_frame; } // can be NULL
     Page* page() const; // can be NULL
     Settings* settings() const; // can be NULL
+#if ENABLE(INSPECTOR)
     InspectorTimelineAgent* inspectorTimelineAgent() const; // can be NULL
+#endif
 
     PassRefPtr<Range> createRange();
 
@@ -1114,9 +1116,11 @@ inline bool Node::isDocumentNode() const
     return this == m_document;
 }
 
+#if ENABLE(INSPECTOR)
 inline InspectorTimelineAgent* Document::inspectorTimelineAgent() const {
     return page() ? page()->inspectorTimelineAgent() : 0;
 }
+#endif
 
 } // namespace WebCore
 

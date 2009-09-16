@@ -29,7 +29,8 @@
  */
 
 #include "config.h"
-#if ENABLE(DOM_STORAGE)
+
+#if ENABLE(DOM_STORAGE) && ENABLE(INSPECTOR)
 
 #include "InspectorDOMStorageResource.h"
 
@@ -80,4 +81,5 @@ void InspectorDOMStorageResource::unbind()
 
 } // namespace WebCore
 
-#endif
+#endif // ENABLE(DOM_STORAGE) && ENABLE(INSPECTOR)
+

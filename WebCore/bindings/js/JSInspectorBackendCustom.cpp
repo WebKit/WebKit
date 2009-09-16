@@ -33,6 +33,8 @@
 #include "config.h"
 #include "JSInspectorBackend.h"
 
+#if ENABLE(INSPECTOR)
+
 #include "Console.h"
 #if ENABLE(DATABASE)
 #include "Database.h"
@@ -364,3 +366,5 @@ JSValue JSInspectorBackend::selectDOMStorage(ExecState*, const ArgList& args)
 #endif
 
 } // namespace WebCore
+
+#endif // ENABLE(INSPECTOR)

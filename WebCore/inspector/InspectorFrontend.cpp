@@ -30,6 +30,8 @@
 #include "config.h"
 #include "InspectorFrontend.h"
 
+#if ENABLE(INSPECTOR)
+
 #include "ConsoleMessage.h"
 #include "Frame.h"
 #include "InspectorController.h"
@@ -430,3 +432,5 @@ void InspectorFrontend::callSimpleFunction(const String& functionName)
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(INSPECTOR)

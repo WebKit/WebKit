@@ -124,6 +124,7 @@ bool ScriptGlobalObject::set(ScriptState* scriptState, const char* name, const S
     return handleException(scriptState);
 }
 
+#if ENABLE(INSPECTOR)
 bool ScriptGlobalObject::set(ScriptState* scriptState, const char* name, InspectorBackend* value)
 {
     JSLock lock(SilenceAssertionsOnly);
@@ -131,6 +132,7 @@ bool ScriptGlobalObject::set(ScriptState* scriptState, const char* name, Inspect
     globalObject->putDirect(Identifier(scriptState, name), toJS(scriptState, globalObject, value));
     return handleException(scriptState);
 }
+#endif // ENABLE(INSPECTOR)
 
 bool ScriptGlobalObject::get(ScriptState* scriptState, const char* name, ScriptObject& value)
 {

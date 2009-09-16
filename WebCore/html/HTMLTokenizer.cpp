@@ -1662,9 +1662,11 @@ void HTMLTokenizer::write(const SegmentedString& str, bool appendData)
     int processedCount = 0;
     double startTime = currentTime();
 
+#if ENABLE(INSPECTOR)
     InspectorTimelineAgent* timelineAgent = m_doc->inspectorTimelineAgent();
     if (timelineAgent)
         timelineAgent->willWriteHTML();
+#endif
   
     Frame* frame = m_doc->frame();
 
@@ -1787,8 +1789,10 @@ void HTMLTokenizer::write(const SegmentedString& str, bool appendData)
         printf("Ending write at time %d\n", m_doc->elapsedTime());
 #endif
 
+#if ENABLE(INSPECTOR)
     if (timelineAgent)
         timelineAgent->didWriteHTML();
+#endif
 
     m_inWrite = wasInWrite;
 

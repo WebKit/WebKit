@@ -316,8 +316,10 @@ void Chrome::mouseDidMoveOverElement(const HitTestResult& result, unsigned modif
     }
     m_client->mouseDidMoveOverElement(result, modifierFlags);
 
+#if ENABLE(INSPECTOR)
     if (InspectorController* inspector = m_page->inspectorController())
         inspector->mouseDidMoveOverElement(result, modifierFlags);
+#endif
 }
 
 void Chrome::setToolTip(const HitTestResult& result)

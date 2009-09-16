@@ -113,7 +113,7 @@ ExecState* JSDOMWindowBase::globalExec()
 
 bool JSDOMWindowBase::supportsProfiling() const
 {
-#if !ENABLE(JAVASCRIPT_DEBUGGER)
+#if !ENABLE(JAVASCRIPT_DEBUGGER) || !ENABLE(INSPECTOR)
     return false;
 #else
     Frame* frame = impl()->frame();

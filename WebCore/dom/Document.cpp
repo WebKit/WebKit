@@ -1214,9 +1214,11 @@ void Document::recalcStyle(StyleChange change)
     if (m_inStyleRecalc)
         return; // Guard against re-entrancy. -dwh
 
+#if ENABLE(INSPECTOR)
     InspectorTimelineAgent* timelineAgent = inspectorTimelineAgent();
     if (timelineAgent)
         timelineAgent->willRecalculateStyle();
+#endif
 
     m_inStyleRecalc = true;
     suspendPostAttachCallbacks();
@@ -1291,8 +1293,10 @@ bail_out:
         implicitClose();
     }
 
+#if ENABLE(INSPECTOR)
     if (timelineAgent)
         timelineAgent->didRecalculateStyle();
+#endif
 }
 
 void Document::updateStyleIfNeeded()
@@ -4474,10 +4478,12 @@ void Document::reportException(const String& errorMessage, int lineNumber, const
 void Document::addMessage(MessageDestination destination, MessageSource source, MessageType type, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceURL)
 {
     switch (destination) {
+#if ENABLE(INSPECTOR)
     case InspectorControllerDestination:
         if (page())
             page()->inspectorController()->addMessageToConsole(source, type, level, message, lineNumber, sourceURL);
         return;
+#endif
     case ConsoleDestination:
         if (DOMWindow* window = domWindow())
             window->console()->addMessage(source, type, level, message, lineNumber, sourceURL);
@@ -4488,8 +4494,10 @@ void Document::addMessage(MessageDestination destination, MessageSource source, 
 
 void Document::resourceRetrievedByXMLHttpRequest(unsigned long identifier, const ScriptString& sourceString)
 {
+#if ENABLE(INSPECTOR)
     if (page())
         page()->inspectorController()->resourceRetrievedByXMLHttpRequest(identifier, sourceString);
+#endif
     Frame* frame = this->frame();
     if (frame) {
         FrameLoader* frameLoader = frame->loader();
@@ -4499,8 +4507,13 @@ void Document::resourceRetrievedByXMLHttpRequest(unsigned long identifier, const
 
 void Document::scriptImported(unsigned long identifier, const String& sourceString)
 {
+#if ENABLE(INSPECTOR)
     if (page())
         page()->inspectorController()->scriptImported(identifier, sourceString);
+#else
+    UNUSED_PARAM(identifier);
+    UNUSED_PARAM(sourceString);
+#endif
 }
 
 class ScriptExecutionContextTaskTimer : public TimerBase {

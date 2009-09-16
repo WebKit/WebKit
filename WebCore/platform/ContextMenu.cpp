@@ -516,6 +516,7 @@ void ContextMenu::populate()
     }
 }
 
+#if ENABLE(INSPECTOR)
 void ContextMenu::addInspectElementItem()
 {
     Node* node = m_hitTestResult.innerNonSharedNode();
@@ -537,6 +538,7 @@ void ContextMenu::addInspectElementItem()
     appendItem(*separatorItem());
     appendItem(InspectElementItem);
 }
+#endif // ENABLE(INSPECTOR)
 
 void ContextMenu::checkOrEnableIfNeeded(ContextMenuItem& item) const
 {
@@ -774,7 +776,9 @@ void ContextMenu::checkOrEnableIfNeeded(ContextMenuItem& item) const
         case ContextMenuItemTagTextDirectionMenu:
         case ContextMenuItemTagPDFSinglePageScrolling:
         case ContextMenuItemTagPDFFacingPagesScrolling:
+#if ENABLE(INSPECTOR)
         case ContextMenuItemTagInspectElement:
+#endif
         case ContextMenuItemBaseApplicationTag:
             break;
     }

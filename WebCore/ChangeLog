@@ -1,5 +1,102 @@
 2009-09-16  Greg Bolsinga  <bolsinga@apple.com>
 
+        Add ENABLE(INSPECTOR)
+        https://bugs.webkit.org/show_bug.cgi?id=29260
+
+        Reviewed by David Kilzer.
+
+        No new tests. (No change in default behavior.)
+
+        * DerivedSources.make: Use new WebCore.Inspector.exp file if ENABLE_DRAG_SUPPORT.
+        * WebCore.base.exp: Move Inspector only exports to WebCore.Inspector.exp.
+        * WebCore.xcodeproj/project.pbxproj: Add WebCore.Inspector.exp.
+        * bindings/js/JSDOMWindowBase.cpp: Use ENABLE(INSPECTOR) where applicable.
+        (WebCore::JSDOMWindowBase::supportsProfiling):
+        * bindings/js/JSInspectedObjectWrapper.cpp: Wrap entire file in ENABLE(INSPECTOR).
+        * bindings/js/JSInspectorBackendCustom.cpp: Ditto.
+        * bindings/js/JSInspectorCallbackWrapper.cpp: Ditto.
+        * bindings/js/ScriptObject.cpp: Use ENABLE(INSPECTOR) where applicable.
+        * bindings/js/ScriptObject.h: Ditto.
+        * bindings/js/ScriptObjectQuarantine.cpp: Wrap entire file in ENABLE(INSPECTOR).
+        * dom/Document.cpp: Use ENABLE(INSPECTOR) where applicable.
+        (WebCore::Document::recalcStyle):
+        (WebCore::Document::addMessage):
+        (WebCore::Document::resourceRetrievedByXMLHttpRequest):
+        (WebCore::Document::scriptImported):
+        * dom/Document.h: Ditto.
+        * dom/Node.cpp: Ditto.
+        (WebCore::Node::dispatchGenericEvent):
+        * dom/ScriptExecutionContext.h: Ditto.
+        (WebCore::):
+        * html/HTMLDocument.cpp: Ditto.
+        (WebCore::HTMLDocument::createTokenizer):
+        * html/HTMLTokenizer.cpp: Ditto.
+        (WebCore::HTMLTokenizer::write):
+        * inspector/ConsoleMessage.cpp: Ditto.
+        (WebCore::ConsoleMessage::ConsoleMessage):
+        (WebCore::ConsoleMessage::isEqual):
+        * inspector/ConsoleMessage.h: Ditto.
+        * inspector/DOMDispatchTimelineItem.cpp: Wrap entire file in ENABLE(INSPECTOR).
+        * inspector/InspectorBackend.cpp: Ditto.
+        * inspector/InspectorController.cpp: Ditto.
+        * inspector/InspectorDOMAgent.cpp: Ditto.
+        * inspector/InspectorDOMStorageResource.cpp: Ditto.
+        * inspector/InspectorDatabaseResource.cpp: Ditto.
+        * inspector/InspectorFrontend.cpp: Ditto.
+        * inspector/InspectorResource.cpp: Ditto.
+        * inspector/InspectorTimelineAgent.cpp: Ditto.
+        * inspector/TimelineItem.cpp: Ditto.
+        * loader/FrameLoader.cpp: Use ENABLE(INSPECTOR) where applicable.
+        (WebCore::FrameLoader::detachFromParent):
+        (WebCore::FrameLoader::continueLoadAfterNavigationPolicy):
+        (WebCore::FrameLoader::loadedResourceFromMemoryCache):
+        (WebCore::FrameLoader::dispatchWindowObjectAvailable):
+        (WebCore::FrameLoader::dispatchDidCommitLoad):
+        (WebCore::FrameLoader::dispatchAssignIdentifierToInitialRequest):
+        (WebCore::FrameLoader::dispatchWillSendRequest):
+        (WebCore::FrameLoader::dispatchDidReceiveResponse):
+        (WebCore::FrameLoader::dispatchDidReceiveContentLength):
+        (WebCore::FrameLoader::dispatchDidFinishLoading):
+        * page/Chrome.cpp: Ditto.
+        (WebCore::Chrome::mouseDidMoveOverElement):
+        * page/Console.cpp: Ditto.
+        (WebCore::Console::addMessage):
+        (WebCore::Console::count):
+        (WebCore::Console::profile):
+        (WebCore::Console::profileEnd):
+        (WebCore::Console::time):
+        (WebCore::Console::timeEnd):
+        (WebCore::Console::group):
+        (WebCore::Console::groupEnd):
+        * page/ContextMenuController.cpp: Ditto.
+        (WebCore::ContextMenuController::handleContextMenuEvent):
+        (WebCore::ContextMenuController::contextMenuItemSelected):
+        * page/DOMWindow.cpp: Ditto.
+        (WebCore::DOMWindow::sessionStorage):
+        (WebCore::DOMWindow::localStorage):
+        * page/EventHandler.cpp: Ditto.
+        (WebCore::EventHandler::handleMousePressEvent):
+        * page/FrameView.cpp: Ditto.
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::paintContents):
+        * page/FrameView.h: Ditto.
+        * page/Page.cpp: Ditto.
+        (WebCore::Page::Page):
+        (WebCore::Page::~Page):
+        * page/Page.h: Ditto.
+        * platform/ContextMenu.cpp: Ditto.
+        (WebCore::ContextMenu::checkOrEnableIfNeeded):
+        * platform/ContextMenuItem.h: Ditto.
+        (WebCore::):
+        * storage/Database.cpp: Ditto.
+        (WebCore::Database::openDatabase):
+        * workers/WorkerContext.cpp: Ditto.
+        (WebCore::WorkerContext::importScripts):
+        * xml/XMLHttpRequest.cpp: Ditto.
+        (WebCore::XMLHttpRequest::didFinishLoading):
+
+2009-09-16  Greg Bolsinga  <bolsinga@apple.com>
+
         Add ENABLE(CONTEXT_MENUS)
         https://bugs.webkit.org/show_bug.cgi?id=29225
 

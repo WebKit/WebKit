@@ -47,7 +47,9 @@ namespace WebCore {
         ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& m, unsigned li, const String& u, unsigned g);        
         ConsoleMessage(MessageSource, MessageType, MessageLevel, ScriptCallStack*, unsigned g, bool storeTrace = false);
 
+#if ENABLE(INSPECTOR)
         void addToConsole(InspectorFrontend* frontend);
+#endif
         void incrementCount() { ++m_repeatCount; };
         bool isEqual(ScriptState*, ConsoleMessage* msg) const;
 
@@ -59,7 +61,9 @@ namespace WebCore {
         MessageType m_type;
         MessageLevel m_level;
         String m_message;
+#if ENABLE(INSPECTOR)
         Vector<ScriptValue> m_wrappedArguments;
+#endif
         Vector<ScriptString> m_frames;
         unsigned m_line;
         String m_url;

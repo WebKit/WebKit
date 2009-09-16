@@ -26,6 +26,8 @@
 #include "config.h"
 #include "JSInspectedObjectWrapper.h"
 
+#if ENABLE(INSPECTOR)
+
 #include "JSInspectorCallbackWrapper.h"
 #include <runtime/JSGlobalObject.h>
 #include <wtf/StdLibExtras.h>
@@ -125,3 +127,5 @@ JSValue JSInspectedObjectWrapper::prepareIncomingValue(ExecState*, JSValue value
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(INSPECTOR)
