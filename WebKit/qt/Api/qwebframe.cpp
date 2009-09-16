@@ -1024,7 +1024,8 @@ qreal QWebFrame::zoomFactor() const
 */
 bool QWebFrame::hasFocus() const
 {
-    return QWebFramePrivate::kit(d->frame->page()->focusController()->focusedFrame()) == this;
+    WebCore::Frame* ff = d->frame->page()->focusController()->focusedFrame();
+    return ff && QWebFramePrivate::kit(ff) == this;
 }
 
 /*!

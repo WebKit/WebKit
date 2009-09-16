@@ -1,3 +1,14 @@
+2009-09-16  Warwick Allison  <warwick.allison@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Fix a crash in QWebFrame::hasFocus() with a simple null pointer check
+        when the focused frame is null. We do the same check in other places
+        where we call kit().
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::hasFocus):
+
 2009-09-16  Jure Repinc  <jlp@holodeck1.com>
 
         Reviewed by Simon Hausmann.
