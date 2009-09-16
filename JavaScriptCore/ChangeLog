@@ -1,3 +1,28 @@
+2009-09-16  Zoltan Herczeg  <zherczeg@inf.u-szeged.hu>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Fix wtf/ThreadSpecific.h under Qt to free thread local objects.
+        https://bugs.webkit.org/show_bug.cgi?id=29295
+
+        This is an important fix when JavaScript workers are in use, since
+        unfreed ThreadGlobalDatas leak a big amount of memory (50-100k each).
+        QThreadStorage calls the destructor of a given object, which is the
+        ThreadSpecific::Data. Unlike pthread, Qt is object oriented, and does
+        not support the calling of a static utility function when the thread
+        is about to close. In this patch we call the ThreadSpecific::destroy()
+        utility function from the destructor of ThreadSpecific::Data. Moreover,
+        since Qt resets all thread local values to 0 before the calling of the
+        appropriate destructors, we set back the pointer to its original value.
+        This is necessary because the get() method of the ThreadSpecific
+        object may be called during the exuction of the destructor.
+
+        * wtf/ThreadSpecific.h:
+        (WTF::ThreadSpecific::Data::~Data):
+        (WTF::::~ThreadSpecific):
+        (WTF::::set):
+        (WTF::::destroy):
+
 2009-09-10  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoff Garen.
