@@ -532,6 +532,7 @@ public:
     Jump branchTruncateDoubleToInt32(FPRegisterID, RegisterID)
     {
         ASSERT_NOT_REACHED();
+        return jump();
     }
 
 
@@ -1038,7 +1039,7 @@ protected:
         return addressTempRegister;
     }
 
-    DataLabel32 moveFixedWidthEncoding(Imm32 imm, RegisterID dst)
+    void moveFixedWidthEncoding(Imm32 imm, RegisterID dst)
     {
         uint32_t value = imm.m_value;
         m_assembler.movT3(dst, ARMThumbImmediate::makeUInt16(value & 0xffff));

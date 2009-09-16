@@ -1,3 +1,15 @@
+2009-09-16  Gabor Loki  <loki@inf.u-szeged.hu>
+
+        Reviewed by Darin Adler.
+
+        Fix GCC warnings on ARM_THUMB2 platform
+
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMThumbImmediate::countLeadingZerosPartial):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::branchTruncateDoubleToInt32):
+        (JSC::MacroAssemblerARMv7::moveFixedWidthEncoding):
+
 2009-09-16  Greg Bolsinga  <bolsinga@apple.com>
 
         Add ENABLE(INSPECTOR)
