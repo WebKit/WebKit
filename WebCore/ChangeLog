@@ -1,3 +1,21 @@
+2009-09-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Elements appear behind <video> when they should be in front sometimes
+        https://bugs.webkit.org/show_bug.cgi?id=29314
+        
+        r45598 added logic that tests for overlap with <video> to determine when to throw
+        a layer into compositing mode. That logic was incorrect in some cases, and this patch
+        fixes it. When testing overlap, the layer needs to be composited iff some previous layer
+        is composited (which adds a rect to the overlay map), and there is overlap.
+
+        Test: compositing/geometry/video-opacity-overlay.html
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::CompositingState::CompositingState):
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+
 2009-09-17  Avi Drissman  <avi@google.com>
 
         Reviewed by Darin Fisher.

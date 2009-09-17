@@ -431,11 +431,11 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* layer, O
 
     bool haveComputedBounds = false;
     IntRect absBounds;
-    if (overlapMap && mustOverlapCompositedLayers) {
+    if (overlapMap && !overlapMap->isEmpty()) {
         // If we're testing for overlap, we only need to composite if we overlap something that is already composited.
         absBounds = layer->renderer()->localToAbsoluteQuad(FloatRect(layer->localBoundingBox())).enclosingBoundingBox();
         haveComputedBounds = true;
-        mustOverlapCompositedLayers &= overlapsCompositedLayers(*overlapMap, absBounds);
+        mustOverlapCompositedLayers = overlapsCompositedLayers(*overlapMap, absBounds);
     }
     
     layer->setMustOverlapCompositedLayers(mustOverlapCompositedLayers);
