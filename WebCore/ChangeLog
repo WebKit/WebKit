@@ -2,6 +2,15 @@
 
         Reviewed by Anders Carlsson.
 
+        Add some groups to the xcode project to make the bindings/js/ group
+        a little nicer.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+2009-09-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
         Fix for https://bugs.webkit.org/show_bug.cgi?id=29320
         JS callback objects should store the global object
 
