@@ -1,5 +1,14 @@
 2009-09-16  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed.  Added new isolated world test to the skipped list.
+
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
+2009-09-16  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Dimitri Glazkov.
 
         [V8] Teach ScheduledAction::execute about isolated worlds

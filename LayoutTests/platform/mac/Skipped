@@ -81,6 +81,8 @@ http/tests/security/isolatedWorld/image-properties.html
 http/tests/security/isolatedWorld/image-prototype.html
 http/tests/security/isolatedWorld/location-properties.html
 http/tests/security/isolatedWorld/location-prototype.html
+http/tests/security/isolatedWorld/window-setTimeout-function.html
+http/tests/security/isolatedWorld/window-setTimeout-string.html
 http/tests/security/isolatedWorld/storage-properties.html
 http/tests/security/isolatedWorld/storage-prototype.html
 http/tests/security/isolatedWorld/number-prototype.html
