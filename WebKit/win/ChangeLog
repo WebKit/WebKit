@@ -1,3 +1,15 @@
+2009-09-17  Ada Chan  <adachan@apple.com>
+
+        Post WebViewDidChangeSelectionNotification when the text selection changes.
+
+        Fixes <http://webkit.org/b/29321>
+
+        Reviewed by Adam Roben.
+
+        * Interfaces/IWebView.idl:
+        * WebCoreSupport/WebEditorClient.cpp:
+        (WebEditorClient::respondToChangedSelection):
+
 2009-09-17  Adam Roben  <aroben@apple.com>
 
         Fix a crash when a WebView's HWND is destroyed before IWebView::close

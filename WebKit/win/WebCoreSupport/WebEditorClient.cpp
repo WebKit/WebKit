@@ -29,6 +29,8 @@
 
 #include "WebKit.h"
 #include "WebLocalizableStrings.h"
+#include "WebNotification.h"
+#include "WebNotificationCenter.h"
 #include "WebView.h"
 #include "DOMCoreClasses.h"
 #pragma warning(push, 0)
@@ -209,6 +211,10 @@ void WebEditorClient::respondToChangedContents()
 void WebEditorClient::respondToChangedSelection()
 {
     m_webView->selectionChanged();
+
+    static BSTR webViewDidChangeSelectionNotificationName = SysAllocString(WebViewDidChangeSelectionNotification);
+    IWebNotificationCenter* notifyCenter = WebNotificationCenter::defaultCenterInternal();
+    notifyCenter->postNotificationName(webViewDidChangeSelectionNotificationName, static_cast<IWebView*>(m_webView), 0);
 }
 
 void WebEditorClient::didEndEditing()

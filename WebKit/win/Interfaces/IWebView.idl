@@ -29,6 +29,7 @@ cpp_quote("enum WebViewCmd { Cut = 100, Copy, Paste, ForwardDelete, SelectAll, U
 cpp_quote("#define WebViewProgressStartedNotification TEXT(\"WebProgressStartedNotification\")")
 cpp_quote("#define WebViewProgressEstimateChangedNotification TEXT(\"WebProgressEstimateChangedNotification\")")
 cpp_quote("#define WebViewProgressFinishedNotification TEXT(\"WebProgressFinishedNotification\")")
+cpp_quote("#define WebViewDidChangeSelectionNotification TEXT(\"WebViewDidChangeSelectionNotification\")")
 
 #ifndef DO_NO_IMPORTS
 import "oaidl.idl";
