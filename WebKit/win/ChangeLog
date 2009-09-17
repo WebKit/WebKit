@@ -1,3 +1,30 @@
+2009-09-17  Adam Roben  <aroben@apple.com>
+
+        Fix a crash when a WebView's HWND is destroyed before IWebView::close
+        is called
+
+        WebView's HWND was being sent a WM_TIMER message after the WebView was
+        destroyed. This normally isn't possible (we call DestroyWindow inside
+        WebView's destructor to ensure the HWND doesn't outlive the WebView),
+        but r48060 changed WebView to call SetParent(m_viewWindow,
+        HWND_MESSAGE) while handling WM_DESTROY, and apparently this puts the
+        HWND into some weird half-destroyed state where it can still receive
+        WM_TIMER messages.
+
+        Fixes <http://webkit.org/b/29337> <rdar://problem/7209897> REGRESSION
+        (r48060): unrepro but frequent crash in WebViewWndProc
+
+        Reviewed by Steve Falkenburg.
+
+        * WebView.cpp:
+        (WebViewWndProc): When handling WM_DESTROY, call setIsBeingDestroyed()
+        before calling close(). This allows setHostWindow to detect that we're
+        handling WM_DESTROY. No other code in close() cared whether
+        isBeingDestroyed() was true or not.
+        (WebView::setHostWindow): If our host window is being set to 0 and
+        we're being destroyed, don't become a message-only window. Doing this
+        while handling WM_DESTROY seems to lead to crashes.
+
 2009-09-16  Adam Roben  <aroben@apple.com>
 
         Add a UI delegate callback to let the delegate draw a WebView's

@@ -1878,8 +1878,8 @@ static LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, L
             webView->paint((HDC)wParam, lParam);
             break;
         case WM_DESTROY:
-            webView->close();
             webView->setIsBeingDestroyed();
+            webView->close();
             webView->revokeDragDrop();
             break;
         case WM_GESTURENOTIFY:
@@ -2995,8 +2995,17 @@ HRESULT STDMETHODCALLTYPE WebView::setHostWindow(
     /* [in] */ OLE_HANDLE oleWindow)
 {
     HWND window = (HWND)(ULONG64)oleWindow;
-    if (m_viewWindow)
-        SetParent(m_viewWindow, window ? window : HWND_MESSAGE);
+    if (m_viewWindow) {
+        if (window)
+            SetParent(m_viewWindow, window);
+        else if (!isBeingDestroyed()) {
+            // Turn the WebView into a message-only window so it will no longer be a child of the
+            // old host window and will be hidden from screen. We only do this when
+            // isBeingDestroyed() is false because doing this while handling WM_DESTROY can leave
+            // m_viewWindow in a weird state (see <http://webkit.org/b/29337>).
+            SetParent(m_viewWindow, HWND_MESSAGE);
+        }
+    }
 
     m_hostWindow = window;
 
