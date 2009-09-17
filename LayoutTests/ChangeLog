@@ -2,6 +2,14 @@
 
         Rubber-stamped by Adam Roben.
 
+        Add a newline to the end of the expected file, should fix results.
+
+        * platform/win/transforms/2d/hindi-rotated-expected.txt:
+
+2009-09-17  Brian Weinstein  <bweinstein@apple.com>
+
+        Rubber-stamped by Adam Roben.
+
         Updated Windows results on three failing tests, adding font-smoothing to computed-style,
         and udpated the hindi-rotated-expected to what it has been getting on the bots.
 
