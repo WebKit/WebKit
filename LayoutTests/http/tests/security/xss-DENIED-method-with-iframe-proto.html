@@ -1,0 +1,60 @@
+<html>
+<head>
+<script src="resources/cross-frame-access.js"></script>
+</head>
+<body>
+<iframe src="http://localhost:8000/" style=""></iframe>
+<pre id="console"></pre>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+log("Tests that making other frame window a prototype doesn't expose that window methods");
+
+targetWindow = frames[0];
+
+wasInvoked = false;
+
+function callback(global) {
+  global.wasInvoked = true;
+}
+
+function check() {
+  shouldBeFalse('this.wasInvoked');
+  if (window.layoutTestController)
+      layoutTestController.notifyDone();
+}
+
+window.onload = function() {
+  originalSetTimeout = setTimeout;
+
+  __proto__ = targetWindow;
+
+  var needsCheck = false;
+  try {
+    targetWindow.setTimeout(callback, 0, this);
+    needsCheck = true;
+  } catch (e) { }
+
+  try {
+    setTimeout.call(targetWindow, callback, 0, this);
+    needsCheck = true;
+  } catch(e) { }
+
+  try {
+    originalSetTimeout.call(targetWindow, callback, 0, this);
+    needsCheck = true;
+  } catch(e) { }
+
+  if (needsCheck) {
+    originalSetTimeout(check, 10);
+  } else {
+    if (window.layoutTestController)
+      layoutTestController.notifyDone();
+  }
+}
+</script>
+</body>
+</html>
