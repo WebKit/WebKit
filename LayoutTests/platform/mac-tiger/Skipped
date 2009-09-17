@@ -58,4 +58,6 @@ http/tests/xmlhttprequest/cross-origin-no-authorization.html
 # <rdar://problem/7223068> Tiger NSULRConnection sometimes doesn't send credentials we told it to send
 http/tests/loading/basic-auth-resend-wrong-credentials.html
 
+# See <rdar://problem/5081884> and https://bugs.webkit.org/show_bug.cgi?id=29329
+http/tests/loading/redirect-with-no-location-crash.html
 

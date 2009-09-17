@@ -1,3 +1,15 @@
+2009-09-17  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Rubber-stamped by Brady Eidson.
+
+        Tiger fails test http/tests/loading/redirect-with-no-location-crash.html added in r48413
+        https://bugs.webkit.org/show_bug.cgi?id=29329
+
+        Skip test that fails on Tiger because of a bug in its version of
+        CFNetwork.
+
+        * platform/mac-tiger/Skipped:
+
 2009-09-17  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Simon Fraser.
