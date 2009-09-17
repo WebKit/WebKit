@@ -1,5 +1,14 @@
 2009-09-17  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Mark Rowe.
+
+        Remove additional references to JSVoidCallback which no longer exists.
+
+        * DerivedSources.cpp:
+        * WebCore.vcproj/WebCore.vcproj:
+
+2009-09-17  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Brady Eidson.
 
         Remove commented out onhashchange attribute now that it is implemented.
