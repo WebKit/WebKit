@@ -1,3 +1,11 @@
+2009-09-17  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Brady Eidson.
+
+        Remove commented out onhashchange attribute now that it is implemented.
+
+        * page/DOMWindow.idl:
+
 2009-09-17  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Oliver Hunt.
