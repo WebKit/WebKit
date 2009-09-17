@@ -1,3 +1,18 @@
+2009-09-16  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [V8] Teach ScheduledAction::execute about isolated worlds
+        https://bugs.webkit.org/show_bug.cgi?id=27703
+
+        Add test coverage for the interaction between setTimeout and isolated
+        worlds.
+
+        * http/tests/security/isolatedWorld/window-setTimeout-function-expected.txt: Added.
+        * http/tests/security/isolatedWorld/window-setTimeout-function.html: Added.
+        * http/tests/security/isolatedWorld/window-setTimeout-string-expected.txt: Added.
+        * http/tests/security/isolatedWorld/window-setTimeout-string.html: Added.
+
 2009-09-15  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Eric Seidel.

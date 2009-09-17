@@ -1,3 +1,49 @@
+2009-09-16  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [V8] Teach ScheduledAction::execute about isolated worlds
+        https://bugs.webkit.org/show_bug.cgi?id=27703
+
+        We now save a handle to the original context.  We use that handle to
+        call the timeout in the right context / world.
+
+        Tests: http/tests/security/isolatedWorld/window-setTimeout-function.html
+               http/tests/security/isolatedWorld/window-setTimeout-string.html
+
+        * bindings/v8/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::ScheduledAction):
+        (WebCore::ScheduledAction::execute):
+        * bindings/v8/ScheduledAction.h:
+        (WebCore::ScheduledAction::ScheduledAction):
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::V8Custom::WindowSetTimeoutImpl):
+        * bindings/v8/custom/V8WorkerContextCustom.cpp:
+        (WebCore::SetTimeoutOrInterval):
+
+2009-09-16  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [V8] Teach ScheduledAction::execute about isolated worlds
+        https://bugs.webkit.org/show_bug.cgi?id=27703
+
+        We now save a handle to the original context.  We use that handle to
+        call the timeout in the right context / world.
+
+        Tests: http/tests/security/isolatedWorld/window-setTimeout-function.html
+               http/tests/security/isolatedWorld/window-setTimeout-string.html
+
+        * bindings/v8/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::ScheduledAction):
+        (WebCore::ScheduledAction::execute):
+        * bindings/v8/ScheduledAction.h:
+        (WebCore::ScheduledAction::ScheduledAction):
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::V8Custom::WindowSetTimeoutImpl):
+        * bindings/v8/custom/V8WorkerContextCustom.cpp:
+        (WebCore::SetTimeoutOrInterval):
+
 2009-09-16  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

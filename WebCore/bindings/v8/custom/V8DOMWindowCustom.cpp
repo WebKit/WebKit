@@ -93,7 +93,7 @@ v8::Handle<v8::Value> V8Custom::WindowSetTimeoutImpl(const v8::Arguments& args, 
         }
 
         // params is passed to action, and released in action's destructor
-        ScheduledAction* action = new ScheduledAction(v8::Handle<v8::Function>::Cast(function), paramCount, params);
+        ScheduledAction* action = new ScheduledAction(V8Proxy::context(imp->frame()), v8::Handle<v8::Function>::Cast(function), paramCount, params);
 
         delete[] params;
 
@@ -113,7 +113,7 @@ v8::Handle<v8::Value> V8Custom::WindowSetTimeoutImpl(const v8::Arguments& args, 
         if (functionString.length() == 0)
             return v8::Undefined();
 
-        id = DOMTimer::install(scriptContext, new ScheduledAction(functionString), timeout, singleShot);
+        id = DOMTimer::install(scriptContext, new ScheduledAction(V8Proxy::context(imp->frame()), functionString), timeout, singleShot);
     }
 
     return v8::Integer::New(id);
