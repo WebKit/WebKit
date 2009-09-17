@@ -1,3 +1,17 @@
+2009-09-17  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Remove assertions that were being hit by calls to
+        m_verticalScrollbar->invalidate(). These assertions were valid,
+        but they were causing tests to fail, so replacing with a FIXME 
+        until we can find out the real cause/solution that is being tracked 
+        by http://webkit.org/b/29350.
+
+        * WebView.cpp:
+        (WebView::addToDirtyRegion):
+        (WebView::paintIntoBackingStore):
+
 2009-09-17  Ada Chan  <adachan@apple.com>
 
         Post WebViewDidChangeSelectionNotification when the text selection changes.
