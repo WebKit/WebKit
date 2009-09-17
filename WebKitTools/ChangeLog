@@ -1,3 +1,9 @@
+2009-09-16  Mark Rowe  <mrowe@apple.com>
+
+        Split the SnowLeopard build across a few machines.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2009-09-16  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix to support monolithic builds on Windows.

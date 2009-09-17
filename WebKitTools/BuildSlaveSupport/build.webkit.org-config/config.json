@@ -7,6 +7,10 @@
                     { "name": "apple-xserve-2", "platform": "mac-leopard" },
                     { "name": "apple-xserve-3", "platform": "mac-leopard" },
 
+                    { "name": "apple-xserve-4", "platform": "mac-snowleopard" },
+                    { "name": "apple-xserve-5", "platform": "mac-snowleopard" },
+                    { "name": "apple-xserve-6", "platform": "mac-snowleopard" },
+
                     { "name": "apple-pixel-1", "platform": "mac-leopard" },
 
                     { "name": "apple-macpro-1", "platform": "mac-snowleopard" },
@@ -48,9 +52,14 @@
                       "platform": "mac-leopard", "configuration": "debug", "architectures": ["i386"],
                       "slavenames": ["apple-xserve-3", "test-slave"]
                     },
-                    { "name": "SnowLeopard Intel Release", "type": "BuildAndTest", "builddir": "snowleopard-intel-release",
+                    { "name": "SnowLeopard Intel Release (Build)", "type": "Build", "builddir": "snowleopard-intel-release",
                       "platform": "mac-snowleopard", "configuration": "release", "architectures": ["x86_64"],
-                      "slavenames": ["apple-macpro-2", "test-slave"]
+                      "triggers": ["snowleopard-intel-release-tests"],
+                      "slavenames": ["apple-xserve-4", "test-slave"]
+                    },
+                    { "name": "SnowLeopard Intel Release (Tests)", "type": "Test", "builddir": "snowleopard-intel-release-tests",
+                      "platform": "mac-snowleopard", "configuration": "release", "architectures": ["x86_64"],
+                      "slavenames": ["apple-xserve-5", "apple-xserve-6", "test-slave"]
                     },
                     { "name": "SnowLeopard Intel Leaks", "type": "BuildAndTestLeaks", "builddir": "snowleopard-intel-leaks",
                       "platform": "mac-snowleopard", "configuration": "debug", "architectures": ["x86_64"],
@@ -97,7 +106,7 @@
 
     "schedulers": [ { "type": "AnyBranchScheduler", "name": "trunk", "branches": ["trunk"], "treeStableTimer": 45.0,
                       "builderNames": ["Tiger Intel Release", "Leopard Intel Release (Build)", "Leopard Intel Debug (Build)",
-                                       "SnowLeopard Intel Release", "SnowLeopard Intel Leaks",
+                                       "SnowLeopard Intel Release (Build)", "SnowLeopard Intel Leaks",
                                        "Windows Release (Build)", "Windows Debug (Build)",
                                        "GTK Linux Release", "Qt Linux Release",
                                        "Chromium Win Release"]
@@ -107,6 +116,9 @@
                     },
                     { "type": "Triggerable", "name": "leopard-intel-debug-tests",
                       "builderNames": ["Leopard Intel Debug (Tests)"]
+                    },
+                    { "type": "Triggerable", "name": "snowleopard-intel-release-tests",
+                      "builderNames": ["SnowLeopard Intel Release (Tests)"]
                     },
                     { "type": "Triggerable", "name": "win-release-tests",
                       "builderNames": ["Windows Release (Tests)"]
