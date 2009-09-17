@@ -89,7 +89,7 @@ namespace JSC {
             
         private:
             TokenType lex(LiteralParserToken&);
-            template <ParserMode parserMode> TokenType lexString(LiteralParserToken&);
+            template <ParserMode mode> TokenType lexString(LiteralParserToken&);
             TokenType lexNumber(LiteralParserToken&);
             LiteralParserToken m_currentToken;
             UString m_string;

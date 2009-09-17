@@ -1,3 +1,15 @@
+2009-09-17  Janne Koskinen  <janne.p.koskinen@digia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Symbian/WINSCW build fix.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29186
+
+        WINSCW Template specialisation name in declaration must the be the same as in implementation.
+
+        * runtime/LiteralParser.h:
+
 2009-09-15  Norbert Leser  <norbert.leser@nokia.com>
 
         Reviewed by Darin Adler.
