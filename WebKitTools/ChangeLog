@@ -1,3 +1,9 @@
+2009-09-17  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix, add missing dependency.
+
+        * wx/browser/wscript:
+
 2009-09-16  Mark Rowe  <mrowe@apple.com>
 
         Split the SnowLeopard build across a few machines.

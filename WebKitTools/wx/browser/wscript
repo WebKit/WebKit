@@ -45,7 +45,7 @@ def build(bld):
         includes = ' '.join(include_paths),
         source = 'browser.cpp',
         target = 'wxBrowser',
-        uselib = 'WX CURL ICU XSLT XML WXWEBKIT ' + get_config(),
+        uselib = 'WX CURL ICU SQLITE3 XSLT XML WXWEBKIT ' + get_config(),
         libpath = [output_dir],
         uselib_local = '',
         install_path = output_dir)
