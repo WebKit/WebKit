@@ -440,7 +440,10 @@ void QWebSettings::resetFontSize(FontSize type)
 /*!
     Specifies the location of a user stylesheet to load with every web page.
 
-    The \a location can be a URL or a path on the local filesystem.
+    The \a location must be either a path on the local filesystem, or a data URL
+    with UTF-8 and Base64 encoded data, such as:
+
+    "data:text/css;charset=utf-8;base64,cCB7IGJhY2tncm91bmQtY29sb3I6IHJlZCB9Ow==;"
 
     \sa userStyleSheetUrl()
 */

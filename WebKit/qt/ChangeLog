@@ -1,3 +1,23 @@
+2009-09-17  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Update QWebSettings::setUserStyleSheetUrl() docs and test
+
+        https://bugs.webkit.org/show_bug.cgi?id=29081
+
+        The documentation now specifies that the URL has to be a local file
+        or a a data-URL (with utf-8 and base64-encoded data), as these are the
+        only two schemes that the current code path accepts.
+
+        The auto-test has been updated to reflect this limitation.
+
+        At a later point we should concider adding API for the new way of
+        doing both user defined stylesheets and scripts.
+
+        * Api/qwebsettings.cpp:
+        * tests/qwebpage/tst_qwebpage.cpp:
+
 2009-09-17  Janne Koskinen  <janne.p.koskinen@digia.com>
 
         Reviewed by Simon Hausmann.
