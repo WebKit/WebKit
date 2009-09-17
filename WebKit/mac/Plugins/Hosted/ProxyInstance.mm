@@ -136,6 +136,9 @@ JSC::Bindings::Class *ProxyInstance::getClass() const
 
 JSValue ProxyInstance::invoke(JSC::ExecState* exec, InvokeType type, uint64_t identifier, const JSC::ArgList& args)
 {
+    if (!m_instanceProxy)
+        return jsUndefined();
+    
     RetainPtr<NSData*> arguments(m_instanceProxy->marshalValues(exec, args));
 
     uint32_t requestID = m_instanceProxy->nextRequestID();
@@ -162,6 +165,9 @@ JSValue ProxyInstance::invokeMethod(ExecState* exec, const MethodList& methodLis
 
 bool ProxyInstance::supportsInvokeDefaultMethod() const
 {
+    if (!m_instanceProxy)
+        return false;
+    
     uint32_t requestID = m_instanceProxy->nextRequestID();
     
     if (_WKPHNPObjectHasInvokeDefaultMethod(m_instanceProxy->hostProxy()->port(),
@@ -183,6 +189,9 @@ JSValue ProxyInstance::invokeDefaultMethod(ExecState* exec, const ArgList& args)
 
 bool ProxyInstance::supportsConstruct() const
 {
+    if (!m_instanceProxy)
+        return false;
+    
     uint32_t requestID = m_instanceProxy->nextRequestID();
     
     if (_WKPHNPObjectHasConstructMethod(m_instanceProxy->hostProxy()->port(),
@@ -236,6 +245,9 @@ JSValue ProxyInstance::valueOf(ExecState* exec) const
 
 void ProxyInstance::getPropertyNames(ExecState* exec, PropertyNameArray& nameArray)
 {
+    if (!m_instanceProxy)
+        return;
+    
     uint32_t requestID = m_instanceProxy->nextRequestID();
     
     if (_WKPHNPObjectEnumerate(m_instanceProxy->hostProxy()->port(), m_instanceProxy->pluginID(), requestID, m_objectID) != KERN_SUCCESS)
@@ -266,6 +278,9 @@ void ProxyInstance::getPropertyNames(ExecState* exec, PropertyNameArray& nameArr
 
 MethodList ProxyInstance::methodsNamed(const Identifier& identifier)
 {
+    if (!m_instanceProxy)
+        return MethodList();
+    
     // If we already have an entry in the map, use it.
     MethodMap::iterator existingMapEntry = m_methods.find(identifier.ustring().rep());
     if (existingMapEntry != m_methods.end()) {
@@ -303,6 +318,9 @@ MethodList ProxyInstance::methodsNamed(const Identifier& identifier)
 
 Field* ProxyInstance::fieldNamed(const Identifier& identifier)
 {
+    if (!m_instanceProxy)
+        return 0;
+    
     // If we already have an entry in the map, use it.
     FieldMap::iterator existingMapEntry = m_fields.find(identifier.ustring().rep());
     if (existingMapEntry != m_fields.end())
@@ -332,6 +350,9 @@ Field* ProxyInstance::fieldNamed(const Identifier& identifier)
 
 JSC::JSValue ProxyInstance::fieldValue(ExecState* exec, const Field* field) const
 {
+    if (!m_instanceProxy)
+        return jsUndefined();
+    
     uint64_t serverIdentifier = static_cast<const ProxyField*>(field)->serverIdentifier();
     uint32_t requestID = m_instanceProxy->nextRequestID();
     
@@ -349,6 +370,9 @@ JSC::JSValue ProxyInstance::fieldValue(ExecState* exec, const Field* field) cons
     
 void ProxyInstance::setFieldValue(ExecState* exec, const Field* field, JSValue value) const
 {
+    if (m_instanceProxy)
+        return;
+    
     uint64_t serverIdentifier = static_cast<const ProxyField*>(field)->serverIdentifier();
     uint32_t requestID = m_instanceProxy->nextRequestID();
     
@@ -368,6 +392,8 @@ void ProxyInstance::setFieldValue(ExecState* exec, const Field* field, JSValue v
 
 void ProxyInstance::invalidate()
 {
+    ASSERT(m_instanceProxy);
+    
     if (NetscapePluginHostProxy* hostProxy = m_instanceProxy->hostProxy())
         _WKPHNPObjectRelease(hostProxy->port(),
                              m_instanceProxy->pluginID(), m_objectID);

@@ -1,3 +1,23 @@
+2009-09-17  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/7007541> 
+        CrashTracer: 4800+ crashes in Safari at com.apple.WebKit • WTF::HashTableIterator...
+
+        Add null checks for m_instanceProxy (It will be null when a plug-in has crashed).
+        
+        * Plugins/Hosted/ProxyInstance.mm:
+        (WebKit::ProxyInstance::invoke):
+        (WebKit::ProxyInstance::supportsInvokeDefaultMethod):
+        (WebKit::ProxyInstance::supportsConstruct):
+        (WebKit::ProxyInstance::getPropertyNames):
+        (WebKit::ProxyInstance::methodsNamed):
+        (WebKit::ProxyInstance::fieldNamed):
+        (WebKit::ProxyInstance::fieldValue):
+        (WebKit::ProxyInstance::setFieldValue):
+        (WebKit::ProxyInstance::invalidate):
+
 2009-09-16  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

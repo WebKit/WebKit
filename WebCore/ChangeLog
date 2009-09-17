@@ -1,3 +1,30 @@
+2009-09-17  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/7007541> 
+        CrashTracer: 4800+ crashes in Safari at com.apple.WebKit • WTF::HashTableIterator...
+        
+        Make RuntimeObjectImp more robust against m_instance being a null (which can happen if an OOP plug-in
+        crashes while we're calling into it).
+        
+        * bridge/runtime_object.cpp:
+        (JSC::RuntimeObjectImp::RuntimeObjectImp):
+        (JSC::RuntimeObjectImp::~RuntimeObjectImp):
+        (JSC::RuntimeObjectImp::invalidate):
+        (JSC::RuntimeObjectImp::fallbackObjectGetter):
+        (JSC::RuntimeObjectImp::fieldGetter):
+        (JSC::RuntimeObjectImp::methodGetter):
+        (JSC::RuntimeObjectImp::getOwnPropertySlot):
+        (JSC::RuntimeObjectImp::getOwnPropertyDescriptor):
+        (JSC::RuntimeObjectImp::put):
+        (JSC::RuntimeObjectImp::defaultValue):
+        (JSC::RuntimeObjectImp::getCallData):
+        (JSC::RuntimeObjectImp::getConstructData):
+        (JSC::RuntimeObjectImp::getPropertyNames):
+        * bridge/runtime_object.h:
+        (JSC::RuntimeObjectImp::getInternalInstance):
+
 2009-09-17  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Timothy Hatcher.
