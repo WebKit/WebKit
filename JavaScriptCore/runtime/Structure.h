@@ -190,7 +190,14 @@ namespace JSC {
         bool m_isDictionary : 1;
         bool m_isPinnedPropertyTable : 1;
         bool m_hasGetterSetterProperties : 1;
+#if COMPILER(WINSCW)
+        // Workaround for Symbian WINSCW compiler that cannot resolve unsigned type of the declared 
+        // bitfield, when used as argument in make_pair() function calls in structure.ccp.
+        // This bitfield optimization is insignificant for the Symbian emulator target.
+        unsigned m_attributesInPrevious;
+#else
         unsigned m_attributesInPrevious : 7;
+#endif
         unsigned m_anonymousSlotsInPrevious : 6;
     };
 

@@ -1,3 +1,22 @@
+2009-09-15  Norbert Leser  <norbert.leser@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27060
+
+        Symbian compiler for emulator target (WINSCW) fails with
+        "illegal operand" for m_attributesInPrevious in structure.ccp
+        (when calling make_pair functions).
+        This error is apparently due to the compiler not properly
+        resolving the unsigned type of the declared bitfield.
+
+        Initial patch explicitly casted m_attributesInPrevious
+        to unsigned, but since bitfield optimization is not critical for
+        the emulator target, this conditional change in header file
+        appears to be least intrusive.
+
+        * runtime/Structure.h:
+
 2009-09-16  Gabor Loki  <loki@inf.u-szeged.hu>
 
         Reviewed by Darin Adler.
