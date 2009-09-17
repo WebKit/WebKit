@@ -1,3 +1,24 @@
+2009-09-17  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        AX: labels of checkboxes should, when hit-tested, return the checkbox
+        https://bugs.webkit.org/show_bug.cgi?id=29335
+
+        When an accessibility hit test is done and it hits the label of a control element,
+        the control element should be returned instead of nothing, since the label
+        itself is usually ignored.
+
+        Test: accessibility/label-for-control-hittest.html
+
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::correspondingControlForLabelElement):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::accessibilityIsIgnored):
+        (WebCore::AccessibilityRenderObject::doAccessibilityHitTest):
+        (WebCore::AccessibilityRenderObject::correspondingControlForLabelElement):
+        * accessibility/AccessibilityRenderObject.h:
+
 2009-09-17  Avi Drissman  <avi@chromium.org>
 
         Reviewed by Dimitri Glazkov, build fix.

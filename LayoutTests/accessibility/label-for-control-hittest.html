@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<input type="checkbox" id="item"><label for="item">
+This is a lot of repeated text that when a hit test is performed, will 
+return the corresponding checkbox control, because this text is only a label.
+This is a lot of repeated text that when a hit test is performed, will 
+return the corresponding checkbox control, because this text is only a label.
+This is a lot of repeated text that when a hit test is performed, will 
+return the corresponding checkbox control, because this text is only a label.
+This is a lot of repeated text that when a hit test is performed, will 
+return the corresponding checkbox control, because this text is only a label.
+This is a lot of repeated text that when a hit test is performed, will 
+return the corresponding checkbox control, because this text is only a label.
+</label>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that a hit test on a label of a control will return the control (instead of nothing).");
+
+    if (window.accessibilityController) {
+
+          var body = document.getElementById("body");
+          body.focus();
+
+          var control = accessibilityController.focusedElement.elementAtPoint(30, 100);
+
+          shouldBe("control.role", "'AXRole: AXCheckBox'");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

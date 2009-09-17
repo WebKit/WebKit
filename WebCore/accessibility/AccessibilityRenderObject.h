@@ -133,6 +133,8 @@ public:
     virtual void linkedUIElements(AccessibilityChildrenVector&) const;
     virtual bool exposesTitleUIElement() const;
     virtual AccessibilityObject* titleUIElement() const;
+    virtual AccessibilityObject* correspondingControlForLabelElement() const;
+
     virtual AccessibilityRole ariaRoleAttribute() const;
     virtual bool isPresentationalChildOfAriaRole() const;
     virtual bool ariaRoleHasPresentationalChildren() const;

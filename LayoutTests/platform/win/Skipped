@@ -370,6 +370,7 @@ accessibility/img-aria-button-alt-tag.html
 accessibility/input-image-alt.html
 accessibility/input-slider.html
 accessibility/internal-link-anchors2.html
+accessibility/label-for-control-hittest.html
 accessibility/language-attribute.html
 accessibility/legend.html
 accessibility/lists.html
