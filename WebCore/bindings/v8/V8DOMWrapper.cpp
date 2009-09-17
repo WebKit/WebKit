@@ -1343,7 +1343,11 @@ v8::Handle<v8::Value> V8DOMWrapper::convertEventListenerToV8Object(EventListener
 
 PassRefPtr<EventListener> V8DOMWrapper::getEventListener(Node* node, v8::Local<v8::Value> value, bool isAttribute, bool findOnly)
 {
-    V8Proxy* proxy = V8Proxy::retrieve(node->scriptExecutionContext());
+    ScriptExecutionContext* context = node->scriptExecutionContext();
+    if (!context)
+        return 0;
+
+    V8Proxy* proxy = V8Proxy::retrieve(context);
     // The document might be created using createDocument, which does
     // not have a frame, use the active frame.
     if (!proxy)

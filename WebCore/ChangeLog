@@ -1,3 +1,17 @@
+2009-09-17  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [V8] Accessing properties/methods of an object, created with document.implementation.createDocumentType
+        creates nodes that have no document (ScriptExecutionContext), which in turn produces NULL-ref crashes.
+        https://bugs.webkit.org/show_bug.cgi?id=26402
+
+        Test: fast/dom/DOMImplementation/detached-doctype.html
+              fast/dom/doctype-event-listener-crash.html
+
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::getEventListener): Added an extra NULL-check.
+
 2009-09-17  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.
