@@ -1,3 +1,11 @@
+2009-09-17  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        Improve documentation for Page Cache.
+
+        * Api/qwebsettings.cpp:
+
 2009-09-17  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Simon Hausmann.

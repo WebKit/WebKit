@@ -638,7 +638,15 @@ void QWebSettings::clearMemoryCaches()
 }
 
 /*!
-    Sets the maximum number of pages to hold in the memory cache to \a pages.
+    Sets the maximum number of pages to hold in the memory page cache to \a pages.
+
+    The Page Cache allows for a nicer user experience when navigating forth or back
+    to pages in the forward/back history, by pausing and resuming up to \a pages
+    per page group.
+
+    For more information about the feature, please refer to:
+
+    http://webkit.org/blog/427/webkit-page-cache-i-the-basics/
 */
 void QWebSettings::setMaximumPagesInCache(int pages)
 {
