@@ -183,6 +183,13 @@ bool isEditablePosition(const Position& p)
     return node->isContentEditable();
 }
 
+bool isAtUnsplittableElement(const Position& pos)
+{
+    Node* node = pos.node();
+    return (node == editableRootForPosition(pos) || node == enclosingNodeOfType(pos, &isTableCell));
+}
+    
+    
 bool isRichlyEditablePosition(const Position& p)
 {
     Node* node = p.node();

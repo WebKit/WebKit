@@ -1,3 +1,24 @@
+2009-09-16  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        Reorganizing helper functions in htmlediting.h to group them by type of object they return/operate upon.
+        https://bugs.webkit.org/show_bug.cgi?id=29319
+
+        * editing/IndentOutdentCommand.cpp:
+        Removed implementation of isAtUnsplittableElement.
+
+        * editing/IndentOutdentCommand.h:
+        Removed member function isAtUnsplittableElement, because it was not class specific and belonged logically among the helper functions.
+
+        * editing/htmlediting.cpp:
+        (WebCore::isAtUnsplittableElement): added. The code was taken from IndentOutdentCommand.
+
+        * editing/htmlediting.h:
+        Reordered functions to group them by type of object returned or operate upon.
+        Added comments.
+        Added isAtUnsplittableElement declaration.
+
 2009-09-16  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig and Anders Carlsson.
