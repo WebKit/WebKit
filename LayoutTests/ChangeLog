@@ -2,6 +2,16 @@
 
         Reviewed by Simon Hausmann.
 
+        [Qt] Add expected file for passing font-smoothing test and update computed style tests since font smoothing is auto by default.
+
+        * platform/qt/fast/css/font-smoothing-expected.txt: Added.
+        * platform/qt/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/qt/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+
+2009-09-17  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
+
+        Reviewed by Simon Hausmann.
+
         [Qt] Skip failing tests for now to prepare default font size reconciliation.
 
         * platform/qt/Skipped:
