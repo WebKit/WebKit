@@ -1,3 +1,16 @@
+2009-09-17  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Wrap PageTransitionEvents properly for V8's use.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29340
+
+        Fixes Chromium's failures for LayoutTests/fast/events/pageshow-pagehide.html.
+
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::convertEventToV8Object): Wrap PageTransitionEvents properly.
+
 2009-09-17  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt.
