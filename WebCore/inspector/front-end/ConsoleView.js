@@ -61,6 +61,14 @@ WebInspector.ConsoleView = function(drawer)
     // Will hold the list of filter elements
     this.filterBarElement = document.getElementById("console-filter");
     
+    function createDividerElement() {
+        var dividerElement = document.createElement("div");
+        
+        dividerElement.addStyleClass("divider");
+        
+        this.filterBarElement.appendChild(dividerElement);
+    }
+    
     function createFilterElement(category) {
         var categoryElement = document.createElement("li");
         categoryElement.category = category;
@@ -77,6 +85,9 @@ WebInspector.ConsoleView = function(drawer)
     }
     
     this.allElement = createFilterElement.call(this, "All");
+    
+    createDividerElement.call(this);
+    
     this.errorElement = createFilterElement.call(this, "Errors");
     this.warningElement = createFilterElement.call(this, "Warnings");
     this.logElement = createFilterElement.call(this, "Logs");

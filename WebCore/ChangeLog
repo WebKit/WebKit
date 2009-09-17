@@ -1,3 +1,17 @@
+2009-09-17  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Timothy Hatcher.
+
+        The Console scope bar should have a divider between All and the other possible
+        values (Errors, Warnings, Logs). It will look something like:
+        
+        All | Errors Warnings Logs.
+
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.createDividerElement):
+        (WebInspector.ConsoleView):
+        * inspector/front-end/inspector.css:
+
 2009-09-17  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.

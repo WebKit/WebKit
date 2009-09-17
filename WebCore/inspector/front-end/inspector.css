@@ -2327,6 +2327,15 @@ button.enable-toggle-status-bar-item.toggled-on .glyph {
     text-shadow: rgba(255, 255, 255, 0.5) 1px 1px 0;
 }
 
+#console-filter div.divider {
+    margin-left: 5px;
+    margin-right: 5px;
+    /* Only want a border-left here because border on both sides
+    made the divider too thick */
+    border-left: 1px solid gray;
+    display: inline;
+}
+
 #resources-filter li.selected, #resources-filter li:hover, #resources-filter li:active,
 #console-filter li.selected, #console-filter li:hover, #console-filter li:active {
     color: white;
