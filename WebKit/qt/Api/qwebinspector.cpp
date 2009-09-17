@@ -35,7 +35,7 @@
     \since 4.6
     \brief The QWebInspector class allows the placement and control of a
     QWebPage's inspector.
-    An inspector allows you to see a page current hierarchy and loading
+    The inspector allows you to see a page current hierarchy and loading
     statistics.
 
     The QWebPage to be inspected is determined with the setPage() method.

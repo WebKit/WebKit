@@ -1,3 +1,11 @@
+2009-09-17  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Small cosmetic documentation fixlet in the QWebInspector.
+
+        * Api/qwebinspector.cpp:
+
 2009-09-16  Benjamin C Meyer  <benjamin.meyer@torchmobile.com>
 
         Reviewed by Eric Seidel.
