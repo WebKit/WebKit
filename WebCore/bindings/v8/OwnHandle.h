@@ -45,15 +45,13 @@ namespace WebCore {
         v8::Handle<T> get() const { return m_handle; }
         void set(v8::Handle<T> handle) { clear(); m_handle = v8::Persistent<T>::New(handle); }
 
-        // FIXME: What if we release a weak handle?  Won't the callback do the wrong thing?
-        v8::Persistent<T> release() { v8::Persistent<T> result = m_handle; m_handle.Clear(); return result; }
-        void adopt(v8::Persistent<T> handle) { clear(); m_handle = handle; }
-
         // Note: This is clear in the OwnPtr sense, not the v8::Handle sense.
         void clear()
         {
             if (m_handle.IsEmpty())
                 return;
+            if (m_handle.IsWeak())
+                m_handle.ClearWeak();
             m_handle.Dispose();
             m_handle.Clear();
         }

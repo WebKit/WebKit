@@ -1,3 +1,17 @@
+2009-09-17  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [V8] OwnHandle might get a weak callback after destruction
+        https://bugs.webkit.org/show_bug.cgi?id=29172
+
+        Be sure to clear out weak reference so we don't get a weak callback
+        after we've destructed ourselves.  Also, removed some tricky methods
+        that had no clients.
+
+        * bindings/v8/OwnHandle.h:
+        (WebCore::OwnHandle::clear):
+
 2009-09-17  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, build fix.
