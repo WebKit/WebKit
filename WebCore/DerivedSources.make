@@ -390,7 +390,6 @@ DOM_CLASSES = \
     TreeWalker \
     UIEvent \
     ValidityState \
-    VoidCallback \
     WebKitAnimationEvent \
     WebKitCSSKeyframeRule \
     WebKitCSSKeyframesRule \

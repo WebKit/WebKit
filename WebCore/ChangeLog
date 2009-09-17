@@ -1,3 +1,66 @@
+2009-09-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=29320
+        JS callback objects should store the global object
+
+        This just changes the callback objects to store the global object instead
+        of the frame. A follow up patch will change them to store the 'current' 
+        global object instead of the lexical or dynamic.
+
+        * DerivedSources.make: Remove unused VoidCallback.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * bindings/js/JSCustomPositionCallback.cpp:
+        (WebCore::JSCustomPositionCallback::JSCustomPositionCallback):
+        (WebCore::JSCustomPositionCallback::handleEvent):
+        * bindings/js/JSCustomPositionCallback.h:
+        (WebCore::JSCustomPositionCallback::create):
+        * bindings/js/JSCustomPositionErrorCallback.cpp:
+        (WebCore::JSCustomPositionErrorCallback::JSCustomPositionErrorCallback):
+        (WebCore::JSCustomPositionErrorCallback::handleEvent):
+        * bindings/js/JSCustomPositionErrorCallback.h:
+        (WebCore::JSCustomPositionErrorCallback::create):
+        * bindings/js/JSCustomSQLStatementCallback.cpp:
+        (WebCore::JSCustomSQLStatementCallback::JSCustomSQLStatementCallback):
+        (WebCore::JSCustomSQLStatementCallback::handleEvent):
+        * bindings/js/JSCustomSQLStatementCallback.h:
+        (WebCore::JSCustomSQLStatementCallback::create):
+        * bindings/js/JSCustomSQLStatementErrorCallback.cpp:
+        (WebCore::JSCustomSQLStatementErrorCallback::JSCustomSQLStatementErrorCallback):
+        (WebCore::JSCustomSQLStatementErrorCallback::handleEvent):
+        * bindings/js/JSCustomSQLStatementErrorCallback.h:
+        (WebCore::JSCustomSQLStatementErrorCallback::create):
+        * bindings/js/JSCustomSQLTransactionCallback.cpp:
+        (WebCore::JSCustomSQLTransactionCallback::Data::Data):
+        (WebCore::JSCustomSQLTransactionCallback::Data::globalObject):
+        (WebCore::JSCustomSQLTransactionCallback::JSCustomSQLTransactionCallback):
+        (WebCore::JSCustomSQLTransactionCallback::handleEvent):
+        * bindings/js/JSCustomSQLTransactionCallback.h:
+        (WebCore::JSCustomSQLTransactionCallback::create):
+        * bindings/js/JSCustomSQLTransactionErrorCallback.cpp:
+        (WebCore::JSCustomSQLTransactionErrorCallback::JSCustomSQLTransactionErrorCallback):
+        (WebCore::JSCustomSQLTransactionErrorCallback::handleEvent):
+        * bindings/js/JSCustomSQLTransactionErrorCallback.h:
+        (WebCore::JSCustomSQLTransactionErrorCallback::create):
+        * bindings/js/JSCustomVoidCallback.cpp:
+        (WebCore::JSCustomVoidCallback::JSCustomVoidCallback):
+        (WebCore::JSCustomVoidCallback::handleEvent):
+        * bindings/js/JSCustomVoidCallback.h:
+        (WebCore::JSCustomVoidCallback::create):
+        * bindings/js/JSDatabaseCustom.cpp:
+        (WebCore::JSDatabase::changeVersion):
+        (WebCore::createTransaction):
+        (WebCore::JSDatabase::transaction):
+        (WebCore::JSDatabase::readTransaction):
+        * bindings/js/JSGeolocationCustom.cpp:
+        (WebCore::createPositionCallback):
+        (WebCore::createPositionErrorCallback):
+        (WebCore::JSGeolocation::getCurrentPosition):
+        (WebCore::JSGeolocation::watchPosition):
+        * bindings/js/JSSQLTransactionCustom.cpp:
+        (WebCore::JSSQLTransaction::executeSql):
+
 2009-09-15  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Eric Seidel.

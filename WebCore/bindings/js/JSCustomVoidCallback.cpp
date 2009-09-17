@@ -38,22 +38,18 @@ namespace WebCore {
     
 using namespace JSC;
     
-JSCustomVoidCallback::JSCustomVoidCallback(JSObject* callback, Frame* frame)
+JSCustomVoidCallback::JSCustomVoidCallback(JSObject* callback, JSDOMGlobalObject* globalObject)
     : m_callback(callback)
-    , m_frame(frame)
+    , m_globalObject(globalObject)
 {
 }
     
 void JSCustomVoidCallback::handleEvent()
 {
     ASSERT(m_callback);
-    ASSERT(m_frame);
-       
-    if (!m_frame->script()->isEnabled())
-        return;
-        
-    JSGlobalObject* globalObject = m_frame->script()->globalObject();
-    ExecState* exec = globalObject->globalExec();
+    ASSERT(m_globalObject);
+
+    ExecState* exec = m_globalObject->globalExec();
         
     JSC::JSLock lock(SilenceAssertionsOnly);
         
@@ -73,27 +69,14 @@ void JSCustomVoidCallback::handleEvent()
         
     MarkedArgumentBuffer args;
     
-    globalObject->globalData()->timeoutChecker.start();
+    m_globalObject->globalData()->timeoutChecker.start();
     call(exec, function, callType, callData, m_callback, args);
-    globalObject->globalData()->timeoutChecker.stop();
-        
+    m_globalObject->globalData()->timeoutChecker.stop();
+
     if (exec->hadException())
         reportCurrentException(exec);
         
     Document::updateStyleForAllDocuments();
 }
- 
-PassRefPtr<VoidCallback> toVoidCallback(ExecState* exec, JSValue value)
-{
-    JSObject* object = value.getObject();
-    if (!object)
-        return 0;
-    
-    Frame* frame = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
-    if (!frame)
-        return 0;
-    
-    return JSCustomVoidCallback::create(object, frame);
-}
 
-}
+} // namespace WebCore

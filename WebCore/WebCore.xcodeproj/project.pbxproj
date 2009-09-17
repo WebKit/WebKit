@@ -4265,8 +4265,6 @@
 		BC80C9880CD294EE00A0B7B3 /* CSSTimingFunctionValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC80C9860CD294EE00A0B7B3 /* CSSTimingFunctionValue.h */; };
 		BC8243290D0CE8A200460C8F /* JSSQLError.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8243250D0CE8A200460C8F /* JSSQLError.h */; };
 		BC82432A0D0CE8A200460C8F /* JSSQLTransaction.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8243260D0CE8A200460C8F /* JSSQLTransaction.h */; };
-		BC82432B0D0CE8A200460C8F /* JSVoidCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC8243270D0CE8A200460C8F /* JSVoidCallback.cpp */; };
-		BC82432C0D0CE8A200460C8F /* JSVoidCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8243280D0CE8A200460C8F /* JSVoidCallback.h */; };
 		BC8243E80D0CFD7500460C8F /* WindowFeatures.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC8243E60D0CFD7500460C8F /* WindowFeatures.cpp */; };
 		BC8243E90D0CFD7500460C8F /* WindowFeatures.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8243E70D0CFD7500460C8F /* WindowFeatures.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC8B853E0E7C7F1100AB6984 /* ScrollbarThemeMac.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8B853C0E7C7F1100AB6984 /* ScrollbarThemeMac.h */; };
@@ -9337,8 +9335,6 @@
 		BC80C9860CD294EE00A0B7B3 /* CSSTimingFunctionValue.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSTimingFunctionValue.h; sourceTree = "<group>"; };
 		BC8243250D0CE8A200460C8F /* JSSQLError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSQLError.h; sourceTree = "<group>"; };
 		BC8243260D0CE8A200460C8F /* JSSQLTransaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSQLTransaction.h; sourceTree = "<group>"; };
-		BC8243270D0CE8A200460C8F /* JSVoidCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSVoidCallback.cpp; sourceTree = "<group>"; };
-		BC8243280D0CE8A200460C8F /* JSVoidCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSVoidCallback.h; sourceTree = "<group>"; };
 		BC8243E60D0CFD7500460C8F /* WindowFeatures.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WindowFeatures.cpp; sourceTree = "<group>"; };
 		BC8243E70D0CFD7500460C8F /* WindowFeatures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WindowFeatures.h; sourceTree = "<group>"; };
 		BC8B853C0E7C7F1100AB6984 /* ScrollbarThemeMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollbarThemeMac.h; sourceTree = "<group>"; };
@@ -12808,8 +12804,6 @@
 				E44614130CD6826900FADA75 /* JSTimeRanges.h */,
 				15C77092100D3CA8005BA267 /* JSValidityState.cpp */,
 				15C77091100D3CA8005BA267 /* JSValidityState.h */,
-				BC8243270D0CE8A200460C8F /* JSVoidCallback.cpp */,
-				BC8243280D0CE8A200460C8F /* JSVoidCallback.h */,
 			);
 			name = HTML;
 			sourceTree = "<group>";
@@ -16977,7 +16971,6 @@
 				1A750D5D0A90DEE1000FF215 /* JSTreeWalker.h in Headers */,
 				A86629CF09DA2B47009633A5 /* JSUIEvent.h in Headers */,
 				15C77093100D3CA8005BA267 /* JSValidityState.h in Headers */,
-				BC82432C0D0CE8A200460C8F /* JSVoidCallback.h in Headers */,
 				31C0FF3E0E4CEFAC007D6FE5 /* JSWebKitAnimationEvent.h in Headers */,
 				316FE0720E6CCBEE00BF6088 /* JSWebKitCSSKeyframeRule.h in Headers */,
 				316FE0740E6CCBEE00BF6088 /* JSWebKitCSSKeyframesRule.h in Headers */,
@@ -19172,7 +19165,6 @@
 				516BB7940CE91E6800512F79 /* JSTreeWalkerCustom.cpp in Sources */,
 				A86629D009DA2B48009633A5 /* JSUIEvent.cpp in Sources */,
 				15C77094100D3CA8005BA267 /* JSValidityState.cpp in Sources */,
-				BC82432B0D0CE8A200460C8F /* JSVoidCallback.cpp in Sources */,
 				31C0FF3D0E4CEFAC007D6FE5 /* JSWebKitAnimationEvent.cpp in Sources */,
 				316FE0710E6CCBEE00BF6088 /* JSWebKitCSSKeyframeRule.cpp in Sources */,
 				316FE0730E6CCBEE00BF6088 /* JSWebKitCSSKeyframesRule.cpp in Sources */,

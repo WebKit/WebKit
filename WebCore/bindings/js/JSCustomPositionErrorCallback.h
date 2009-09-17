@@ -27,29 +27,27 @@
 #define JSCustomPositionErrorCallback_h
 
 #include "PositionErrorCallback.h"
-#include <runtime/JSObject.h>
+#include "JSDOMGlobalObject.h"
 #include <runtime/Protect.h>
 #include <wtf/Forward.h>
 
-namespace JSC {
-    class JSObject;
-}
-
 namespace WebCore {
     
-class Frame;
 class PositionError;
 
 class JSCustomPositionErrorCallback : public PositionErrorCallback {
 public:
-    static PassRefPtr<JSCustomPositionErrorCallback> create(JSC::JSObject* callback, Frame* frame) { return adoptRef(new JSCustomPositionErrorCallback(callback, frame)); }
+    static PassRefPtr<JSCustomPositionErrorCallback> create(JSC::JSObject* callback, JSDOMGlobalObject* globalObject)
+    {
+        return adoptRef(new JSCustomPositionErrorCallback(callback, globalObject));
+    }
     
 private:
-    JSCustomPositionErrorCallback(JSC::JSObject* callback, Frame*);
+    JSCustomPositionErrorCallback(JSC::JSObject* callback, JSDOMGlobalObject* globalObject);
     virtual void handleEvent(PositionError*);
 
     JSC::ProtectedPtr<JSC::JSObject> m_callback;
-    RefPtr<Frame> m_frame;
+    JSC::ProtectedPtr<JSDOMGlobalObject> m_globalObject;
 };
     
 } // namespace WebCore

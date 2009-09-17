@@ -31,32 +31,29 @@
 
 #if ENABLE(DATABASE)
 
+#include "JSDOMGlobalObject.h"
 #include "SQLStatementErrorCallback.h"
-
-#include <runtime/JSObject.h>
 #include <runtime/Protect.h>
 #include <wtf/Forward.h>
 
-namespace JSC {
-    class JSObject;
-}
-
 namespace WebCore {
     
-class Frame;
 class SQLError;
     
 class JSCustomSQLStatementErrorCallback : public SQLStatementErrorCallback {
 public:
-    static PassRefPtr<JSCustomSQLStatementErrorCallback> create(JSC::JSObject* callback, Frame* frame) { return adoptRef(new JSCustomSQLStatementErrorCallback(callback, frame)); }
+    static PassRefPtr<JSCustomSQLStatementErrorCallback> create(JSC::JSObject* callback, JSDOMGlobalObject* globalObject)
+    {
+        return adoptRef(new JSCustomSQLStatementErrorCallback(callback, globalObject));
+    }
         
     virtual bool handleEvent(SQLTransaction*, SQLError*);
 
 private:
-    JSCustomSQLStatementErrorCallback(JSC::JSObject* callback, Frame*);
+    JSCustomSQLStatementErrorCallback(JSC::JSObject* callback, JSDOMGlobalObject*);
 
     JSC::ProtectedPtr<JSC::JSObject> m_callback;
-    RefPtr<Frame> m_frame;
+    JSC::ProtectedPtr<JSDOMGlobalObject> m_globalObject;
 };
     
 }

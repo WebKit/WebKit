@@ -35,23 +35,18 @@ namespace WebCore {
     
 using namespace JSC;
 
-JSCustomPositionErrorCallback::JSCustomPositionErrorCallback(JSObject* callback, Frame* frame)
+JSCustomPositionErrorCallback::JSCustomPositionErrorCallback(JSObject* callback, JSDOMGlobalObject* globalObject)
     : m_callback(callback)
-    , m_frame(frame)
+    , m_globalObject(globalObject)
 {
 }
 
 void JSCustomPositionErrorCallback::handleEvent(PositionError* positionError)
 {
     ASSERT(m_callback);
-    ASSERT(m_frame);
-    
-    if (!m_frame->script()->isEnabled())
-        return;
+    ASSERT(m_globalObject);
 
-    // FIXME: This is likely the wrong globalObject (for prototype chains at least)
-    JSGlobalObject* globalObject = m_frame->script()->globalObject();
-    ExecState* exec = globalObject->globalExec();
+    ExecState* exec = m_globalObject->globalExec();
     
     JSC::JSLock lock(SilenceAssertionsOnly);
     
@@ -72,13 +67,13 @@ void JSCustomPositionErrorCallback::handleEvent(PositionError* positionError)
     MarkedArgumentBuffer args;
     args.append(toJS(exec, deprecatedGlobalObjectForPrototype(exec), positionError));
     
-    globalObject->globalData()->timeoutChecker.start();
+    m_globalObject->globalData()->timeoutChecker.start();
     call(exec, function, callType, callData, m_callback, args);
-    globalObject->globalData()->timeoutChecker.stop();
+    m_globalObject->globalData()->timeoutChecker.stop();
     
     if (exec->hadException())
         reportCurrentException(exec);
-    
+
     Document::updateStyleForAllDocuments();
 }
     

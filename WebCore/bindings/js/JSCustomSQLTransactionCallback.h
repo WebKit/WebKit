@@ -32,7 +32,6 @@
 #if ENABLE(DATABASE)
 
 #include "SQLTransactionCallback.h"
-
 #include <wtf/PassRefPtr.h>
 
 namespace JSC {
@@ -42,17 +41,21 @@ namespace JSC {
 namespace WebCore {
 
 class Frame;
+class JSDOMGlobalObject;
 
 class JSCustomSQLTransactionCallback : public SQLTransactionCallback {
 public:
-    static PassRefPtr<JSCustomSQLTransactionCallback> create(JSC::JSObject* callback, Frame* frame) { return adoptRef(new JSCustomSQLTransactionCallback(callback, frame)); }
+    static PassRefPtr<JSCustomSQLTransactionCallback> create(JSC::JSObject* callback, JSDOMGlobalObject* globalObject)
+    {
+        return adoptRef(new JSCustomSQLTransactionCallback(callback, globalObject));
+    }
 
     virtual ~JSCustomSQLTransactionCallback();
     
     virtual void handleEvent(SQLTransaction*, bool& raisedException);
 
 private:
-    JSCustomSQLTransactionCallback(JSC::JSObject* callback, Frame*);
+    JSCustomSQLTransactionCallback(JSC::JSObject* callback, JSDOMGlobalObject*);
 
     static void deleteData(void*);
 

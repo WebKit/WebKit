@@ -41,23 +41,18 @@ namespace WebCore {
     
 using namespace JSC;
     
-JSCustomSQLStatementErrorCallback::JSCustomSQLStatementErrorCallback(JSObject* callback, Frame* frame)
+JSCustomSQLStatementErrorCallback::JSCustomSQLStatementErrorCallback(JSObject* callback, JSDOMGlobalObject* globalObject)
     : m_callback(callback)
-    , m_frame(frame)
+    , m_globalObject(globalObject)
 {
 }
     
 bool JSCustomSQLStatementErrorCallback::handleEvent(SQLTransaction* transaction, SQLError* error)
 {
     ASSERT(m_callback);
-    ASSERT(m_frame);
+    ASSERT(m_globalObject);
         
-    if (!m_frame->script()->isEnabled())
-        return true;
-
-    // FIXME: This is likely the wrong globalObject (for prototype chains at least)
-    JSGlobalObject* globalObject = m_frame->script()->globalObject();
-    ExecState* exec = globalObject->globalExec();
+    ExecState* exec = m_globalObject->globalExec();
         
     JSC::JSLock lock(SilenceAssertionsOnly);
         
@@ -82,13 +77,13 @@ bool JSCustomSQLStatementErrorCallback::handleEvent(SQLTransaction* transaction,
     args.append(toJS(exec, deprecatedGlobalObjectForPrototype(exec), error));
         
     JSValue result;
-    globalObject->globalData()->timeoutChecker.start();
+    m_globalObject->globalData()->timeoutChecker.start();
     if (handleEventCallType != CallTypeNone)
         result = call(exec, handleEventFunction, handleEventCallType, handleEventCallData, m_callback, args);
     else
         result = call(exec, m_callback, callbackCallType, callbackCallData, m_callback, args);
-    globalObject->globalData()->timeoutChecker.stop();
-        
+    m_globalObject->globalData()->timeoutChecker.stop();
+
     if (exec->hadException()) {
         reportCurrentException(exec);
             
