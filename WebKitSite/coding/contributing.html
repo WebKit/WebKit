@@ -6,15 +6,16 @@
 <p>Contributing code to the WebKit project is a straightforward process.
 Once you have the code <a href="/building/checkout.html">checked out</a>, <a href="/building/build.html">built</a>, and made your changes, you'll need to do a few things in order to get it landed in the tree:</p>
 <ol>
-    <li>Make sure your changes meet the <a href="/coding/coding-style.html">code style guidelines</a>.</li>
+    <li>Make sure your changes meet the <a href="/coding/coding-style.html">code style guidelines</a>. <tt>check-webkit-style</tt> may be of help.</li>
     <li>Run the layout tests using the <tt>run-webkit-tests</tt> script and make sure they all pass.
         See the <a href="/quality/testwriting.html">testing page</a> for more information, as well as what you need to do if you've modified JavaScriptCore.</li>
     <li>Add any new files and layout tests to Subversion using the <tt>svn add</tt> command.</li>
     <li>Prepare a change log entry. You may have to add entries to multiple ChangeLogs. The <tt>prepare-ChangeLog</tt> script will create stub entries for you.  See the <a href="#changelogs">paragraph about ChangeLogs</a> below.</li>
     <li>Create the patch using the <tt>svn-create-patch</tt> script.</li>
-    <li>Upload the patch for review. In Bugzilla, be sure to set the <tt>review:?</tt> flag.</li>
+    <li>Upload the patch for review. In Bugzilla, be sure to mark your file as a patch and set the <tt>review:?</tt> flag.</li>
     <li>Make any changes recommended by the reviewer.</li>
-    <li>Once reviewed, get your patch landed in the tree and watch for any regressions it may have caused (hopefully none)!</li>
+    <li>Once reviewed, ask someone to land your patch or mark it for <a href="#commitqueue">automated commit</a>.
+    <li>Please watch for any regressions it may have caused (hopefully none)!</li>
 </ol>
 
 
@@ -56,15 +57,17 @@ sure no changes are left out of your patch. It is not necessary to break a patch
 <h3>Patch review</h3>
 <p>Once you have a patch file, it must be reviewed by one of the approved WebKit reviewers. To request a review, attach the patch
 to the bug report, and mark the patch with the flag <tt>review:?</tt>. The reviewer will typically either approve the patch
-(by responding with an <tt>r=me</tt> in the bug report or in e-mail and marking the patch <tt>review:+</tt>) or request revisions
+(by responding with an <tt>r=me</tt> in the bug report and marking the patch <tt>review:+</tt>) or request revisions
 to the patch (and mark the patch <tt>review:-</tt>). In rare cases a patch may be permanently rejected, meaning that the reviewer
 believes the feature should never be committed to the tree. The review process can consist of multiple iterations between you and
 the reviewer as revisions are made to your patch.</p>
 
-<h3>Landing in the tree</h3>
-<p>Once a patch is approved, someone with commit access will land your patch. Your responsibility for the patch does not end with
-the patch landing in the tree. There may be regressions from your change or additional feedback from reviewers after the patch has landed.  You can watch the tree at <a href="http://build.webkit.org">build.webkit.org</a> to make sure your patch builds and passes tests on all platforms.
+<h3><a name="landing">Landing in the tree</a></h3>
+<p>Once a patch is approved, you should ask <a href="https://lists.webkit.org/mailman/roster.cgi/webkit-committers">someone with commit access</a> to land your patch. Alternatively you can request that your patch be committed by our <a href="#commitqueue">commit bot</a>. In either case, your responsibility for the patch does not end with the patch landing in the tree. There may be regressions from your change or additional feedback from reviewers after the patch has landed. You can watch the tree at <a href="http://build.webkit.org">build.webkit.org</a> to make sure your patch builds and passes tests on all platforms.
 It is your responsibility to be available should regressions arise and to respond to additional feedback that happens after a check-in.</p>
+
+<h3><a name="commitqueue">Optional: Use of the WebKit Commit Bot</a></h3>
+<p>WebKit provides an automated system (commit-queue) for landing patches for any who would like to use it.  To use the commit-queue, set the <tt>commit-queue:?</tt> flag on your patch.  A committer will set <tt>commit-queue:+</tt> and an automated process will download, build, run the layout tests, and submit your patch on your behalf.  If the <a href="http://build.webkit.org/">WebKit buildbots</a> are passing, your patch should be landed within 15 minutes after <tt>commit-queue:+</tt> is set. See the <a href="https://trac.webkit.org/wiki/CommitQueue">commit-queue documentation</a> for more information.</p>
 
 <h2>WebKit Scripts</h2>
 <p><tt>WebKitTools/Scripts</tt> contains a number of scripts to help make life easier when submitting a patch. All scripts mentioned

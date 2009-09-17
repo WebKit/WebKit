@@ -1,3 +1,23 @@
+2009-09-17  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Update contributing.html to mention recently added tools.
+        https://bugs.webkit.org/show_bug.cgi?id=29318
+
+        Update our contributing instructions to mention
+        the new tools (check-webkit-style and commit-queue)
+        recently added to make contributions easier.
+
+        * coding/contributing.html:
+         - Mention check-webkit-style as an optional helper tool.
+         - Mention checking the 'patch' checkbox.
+         - Mention the commit-queue as an optional helper tool.
+         - Remove "or in email" since patch reviews are all done via bugzilla.
+         - Encourage contributers to be responsible for getting their patch landed.  Provide a list of committers.
+         - Mention commit-queue as an optional help in getting your patch landed.
+         - Give an overview of the commit-queue process and link to the Commit Queue docs.
+
 2009-09-09  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Mark Rowe.
