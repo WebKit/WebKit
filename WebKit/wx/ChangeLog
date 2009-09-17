@@ -1,3 +1,10 @@
+2009-09-16  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wxPython bindings build fixes after recent changes.
+
+        * WebView.h:
+        * bindings/python/wscript:
+
 2009-09-13  Kevin Watters  <kevinwatters@gmail.com>
 
         Reviewed by Kevin Ollivier.

@@ -81,6 +81,9 @@ def build(bld):
             Logs.warn("Cannot find location of wxPython .i files, wxPython extension will not be built.")
             return
     
+        for inc_path in include_paths:
+            wx_swig_args.append('-I' + inc_path)
+
         obj = bld.new_task_gen(
             features = 'cxx cshlib pyext',
             includes = ' '.join(include_paths),
