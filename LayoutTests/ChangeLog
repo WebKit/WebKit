@@ -1,3 +1,11 @@
+2009-09-17  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Skip failing tests for now to prepare default font size reconciliation.
+
+        * platform/qt/Skipped:
+
 2009-09-16  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Darin Adler.

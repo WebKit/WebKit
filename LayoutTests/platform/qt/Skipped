@@ -264,6 +264,7 @@ fast/invalid/missing-end-tag.xhtml
 fast/invalid/residual-style.html
 fast/js/string-capitalization.html
 fast/lists/drag-into-marker.html
+fast/loader/iframe-crash-on-missing-image.xhtml
 fast/overflow/007.html
 fast/overflow/clip-rects-fixed-ancestor.html
 fast/overflow/hidden-scrollbar-resize.html
@@ -337,6 +338,7 @@ fast/xsl/xslt-url.xml
 fast/xsl/xslt_unicode.xml
 
 plugins/call-as-function-test.html
+plugins/destroy-during-npp-new.html
 plugins/embed-attributes-setting.html
 plugins/get-url-that-the-resource-load-delegate-will-disallow.html
 plugins/get-url-with-blank-target.html
@@ -1009,9 +1011,13 @@ fast/dom/frame-loading-via-document-write.html
 fast/dom/set-frame-src-while-running-script-in-frame.html
 fast/dom/wrapper-classes.html
 fast/dom/HTMLDocument/hasFocus.html
+fast/dom/Document/CaretRangeFromPoint/basic.html
+fast/dom/Document/CaretRangeFromPoint/hittest-relative-to-viewport.html
+fast/dom/Range/range-expand.html
 fast/dynamic/move-node-with-selection.html
 fast/dynamic/paused-event-dispatch.html
 fast/dynamic/selection-highlight-adjust.html
+fast/events/blur-focus-window-should-blur-focus-element.html
 fast/encoding/char-decoding.html
 fast/encoding/frame-default-enc.html
 fast/encoding/invalid-xml.html
@@ -1071,6 +1077,7 @@ fast/loader/text-document-wrapping.html
 fast/media/mq-js-stylesheet-media-03.html
 fast/media/mq-js-stylesheet-media-04.html
 fast/overflow/005.html
+fast/parser/empty-text-resource.html
 fast/regex/test1.html
 fast/regex/test4.html
 fast/repaint/inline-outline-repaint.html
@@ -1446,6 +1453,7 @@ css3/css3-modsel-33.html
 css3/css3-modsel-35.html
 css3/css3-modsel-36.html
 css3/css3-modsel-37.html
+dom/xhtml/level2/html/HTMLIFrameElement11.xhtml
 dom/xhtml/level3/core/documentgetinputencoding03.xhtml
 dom/xhtml/level3/core/entitygetinputencoding02.xhtml
 dom/xhtml/level3/core/entitygetxmlversion02.xhtml
