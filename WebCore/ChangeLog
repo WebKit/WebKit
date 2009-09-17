@@ -1,3 +1,13 @@
+2009-09-17  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, build fix.
+
+        [V8] Partial roll out of http://trac.webkit.org/changeset/48455 to
+        fix crashes that started happening in V8Proxy::getEnteredContext().
+
+        * bindings/v8/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::execute):
+
 2009-09-17  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.
