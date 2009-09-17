@@ -1,3 +1,22 @@
+2009-09-16  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29306
+        
+        Fixes an issue where an attack that contains accented characters can
+        bypass the XSSAuditor.
+        
+        XSSAuditor::decodeURL used the wrong length for the input string. 
+        When the input string was decoded, the decoded result was truncated.
+        Hence, XSSAuditor was comparing the source code of the script to the 
+        truncated input parameters.
+
+        Test: http/tests/security/xssAuditor/img-onerror-accented-char.html
+
+        * page/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::decodeURL):
+
 2009-09-16  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.

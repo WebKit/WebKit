@@ -175,7 +175,8 @@ String XSSAuditor::decodeURL(const String& string, const TextEncoding& encoding,
 
     url.replace('+', ' ');
     result = decodeURLEscapeSequences(url);
-    String decodedResult = encoding.decode(result.utf8().data(), result.length());
+    CString utf8Url = result.utf8();
+    String decodedResult = encoding.decode(utf8Url.data(), utf8Url.length());
     if (!decodedResult.isEmpty())
         result = decodedResult;
     if (decodeEntities)

@@ -1,3 +1,14 @@
+2009-09-16  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29306
+        
+        Tests that scripts with accented characters do not bypass the XSSAuditor.
+
+        * http/tests/security/xssAuditor/img-onerror-accented-char-expected.txt: Added.
+        * http/tests/security/xssAuditor/img-onerror-accented-char.html: Added.
+
 2009-09-16  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.  Added new isolated world test to the skipped list.
