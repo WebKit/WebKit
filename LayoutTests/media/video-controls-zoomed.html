@@ -6,6 +6,7 @@
       margin: 50px;
     }
   </style>
+  <script src=media-file.js></script>
   <script type="text/javascript" charset="utf-8">
     function runTest()
     {
@@ -33,7 +34,7 @@
         waitForEvent('load', function() {
             runTest();
         } );
-        video.src = 'content/test.mp4';
+        video.src = findMediaFile("video", "content/test");
     </script>
 </body>
 </html>

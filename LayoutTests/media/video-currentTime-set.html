@@ -5,6 +5,7 @@
     
     <p>Test that setting currentTime changes the time, and that 'ended' event is fired in a reasonable amount of time</p>
     
+    <script src=media-file.js></script>
     <script src=video-test.js></script>
     <script>
     waitForEvent('load',  
@@ -20,7 +21,7 @@
         var timeout = 800;
         setTimeout(function () { logResult("No 'ended' event in " + timeout/1000  + "seconds", false); }, timeout);
     });
-    video.src = "content/test.mp4";
+    video.src = findMediaFile("video", "content/test");
     </script>
 
 </body>

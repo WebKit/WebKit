@@ -1,15 +1,15 @@
 var audioCodecs = [
+    ["audio/wav", "wav"],
     ["audio/aac", "m4a"],
     ["audio/mpeg", "mp3"],
-    ["audio/wav", "wav"],
-    ["audio/ogg", "ogg"]
+    ["audio/ogg", "oga"]
 ];
 
 var videoCodecs = [
     ["video/mp4", "mp4"],
     ["video/mpeg", "mpg"],
     ["video/quicktime", "mov"],
-    ["video/ogg", "ogg"]
+    ["video/ogg", "ogv"]
 ];
 
 function findMediaFile(tagName, name) {
@@ -19,12 +19,9 @@ function findMediaFile(tagName, name) {
     else
         codecs = videoCodecs;
 
-    var element;
-    try {
-        element = document.getElementsByTagName(tagName)[0];
-    } catch (ex) {
+    var element = document.getElementsByTagName(tagName)[0];
+    if (!element)
         element = document.createElement(tagName);
-    }
 
     for (var i = 0; i < codecs.length; ++i) {
         if (element.canPlayType(codecs[i][0]))
@@ -45,5 +42,5 @@ function setSrcByTagName(tagName, src) {
 function setSrcById(id, src) {
     var element = document.getElementById(id);
     if (element)
-        id.src = src;
+        element.src = src;
 }

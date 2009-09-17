@@ -1,5 +1,6 @@
 <html>
     <head>
+        <script src=media-file.js></script>
         <script>
             function toggleDisplay()
             {
@@ -14,6 +15,7 @@
             {
                 if (window.layoutTestController)
                     layoutTestController.waitUntilDone();
+                setSrcById('vid', findMediaFile('video', 'content/test'));
                 document.getElementById('vid').addEventListener("canplaythrough", test2);
             }
             function test2()
@@ -28,6 +30,6 @@
     </head>
     <body onload="test()">
         This tests that toggling the display property won't make the controls disappear.<br>
-        <video id="vid" controls src="content/test.mp4"></video>
+        <video id="vid" controls></video>
     </body>
 </html>

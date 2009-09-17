@@ -1,6 +1,12 @@
 <html>
     <head>
+        <script src=media-file.js></script>
         <script>
+        if (window.layoutTestController) {
+            layoutTestController.dumpAsText();
+            layoutTestController.waitUntilDone();
+        }
+
         var video;
         function log(msg)
         {
@@ -9,10 +15,6 @@
         
         function test()
         {
-            if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
-                layoutTestController.waitUntilDone();
-            }
             video = document.getElementById('fr').contentDocument.getElementsByTagName('video')[0];
             video.addEventListener('canplaythrough', test2);
         }
@@ -38,8 +40,13 @@
         }
         </script>
     </head>
-    <body onload="test()">
-    <iframe src="content/test.mp4" id="fr"></iframe>
+    <body>
+    <iframe id="fr"></iframe>
+    <script>
+        var frame = document.getElementById("fr");
+        frame.src = findMediaFile("video", "content/test");
+        frame.addEventListener("load", test);
+    </script>
     <p>This tests that clicking on a standalone video will pause and double-clicking will play.</p>
     <pre id="console"></pre>
     </body>

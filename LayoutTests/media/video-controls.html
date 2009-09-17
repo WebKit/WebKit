@@ -1,5 +1,6 @@
 <video controls></video>
 <p>Test 'controls' attribute<p>
+<script src=media-file.js></script>
 <script src=video-test.js></script>
 <script>
     testExpected("video.controls", null, '!=');
@@ -20,5 +21,5 @@
         testExpected("video.controls", null, '!=');
         endTest();
     } );
-    video.src = 'content/test.mp4';
+    video.src = findMediaFile("video", "content/test");
 </script>

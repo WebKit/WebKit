@@ -1,4 +1,5 @@
 <video controls></video>
+<script src=media-file.js></script>
 <script src=video-test.js></script>
 <script>
     waitForEvent('load',  
@@ -10,5 +11,5 @@
         testExpected("video.currentTime.toFixed(1)", 3.1);
         endTest();
     });
-    video.src = "content/test.mp4";
+    video.src = findMediaFile("video", "content/test");
 </script>

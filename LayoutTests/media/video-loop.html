@@ -2,6 +2,7 @@
 
     <video controls autoplay ></video>
 
+    <script src=media-file.js></script>
     <script src=video-test.js></script>
 
     <script>
@@ -55,7 +56,8 @@
     
         consoleWrite("");
         run("video.loop = true");
-        run("video.src = 'content/test.mp4'");
+        var mediaFile = findMediaFile("video", "content/test");
+        run("video.src = '" + mediaFile + "'");
         consoleWrite("");
     </script>
 

@@ -1,11 +1,12 @@
 <video controls></video>
 <p>Test 'muted' attribute<p>
+<script src=media-file.js></script>
 <script src=video-test.js></script>
 <script>
     testExpected("video.muted", false);
     run("video.muted = true");
     testExpected("video.muted", true);
-    video.src = "content/test.mp4";
+    video.src = findMediaFile("video", "content/test");
     run("video.load()");
     waitForEvent("load", function () {
         testExpected("video.muted", true);

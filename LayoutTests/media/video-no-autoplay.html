@@ -1,5 +1,6 @@
 <video controls></video>
 <p>Test that play event does not fire when "src" set with no autoplay attribute.</p>
+<script src=media-file.js></script>
 <script src=video-test.js></script>
 <script>
     testExpected("video.paused", true);
@@ -16,5 +17,5 @@
     }
     waitForEvent('load', function () { setTimeout(testPaused, 500);} );
 
-    video.src = "content/test.mp4";
+    video.src = findMediaFile("video", "content/test");
 </script>

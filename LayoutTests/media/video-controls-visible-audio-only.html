@@ -4,7 +4,12 @@
             #no-video-media { background-color: yellow; width: 320px; height: 100px;} 
             #mouse-parking:hover { padding:8; background-color: blue; }
         </style>
+        <script src=media-file.js></script>
         <script>
+            if (window.layoutTestController) {
+                layoutTestController.dumpAsText();
+                layoutTestController.waitUntilDone();
+            }
 
             var video;
 
@@ -47,8 +52,6 @@
             }
 
             if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
-                layoutTestController.waitUntilDone();
                 setTimeout(function() { 
                     document.body.appendChild(document.createTextNode('FAIL')); 
                     if (window.layoutTestController)
@@ -65,7 +68,10 @@
 
         <p><span id="mouse-parking">mouse parks here, am I blue?</span></p>
 
-        <video id="no-video-media" controls loop src="content/test.wav" onload="start()"></video>
+        <video id="no-video-media" controls loop onload="start()"></video>
         <br><br><div id="console"></div>
+        <script>
+            setSrcById("no-video-media", findMediaFile("audio", "content/test"));
+        </script>
     </body>
 </html>

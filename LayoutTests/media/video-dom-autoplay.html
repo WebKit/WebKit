@@ -1,4 +1,5 @@
 <video controls></video>
+<script src=media-file.js></script>
 <script src=video-test.js></script>
 <script>
     testExpected("video.autoplay", false);
@@ -10,5 +11,5 @@
         endTest();
     } );
 
-    video.src = "content/test.mp4";
+    video.src = findMediaFile("video", "content/test");
 </script>

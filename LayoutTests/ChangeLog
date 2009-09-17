@@ -1,3 +1,36 @@
+2009-09-17  Alpha Lam  <hclam@chromium.org>
+
+        Reviewed by Eric Carlson.
+
+        Media layout tests should have a way to provide test files in different formats
+        https://bugs.webkit.org/show_bug.cgi?id=28327
+
+        Updating 19 media layout tests to use media files based on supported codecs.
+
+        * media/media-file.js: Prefer .wav over other formats as this is used the most in tests for mac port.
+        Most of audio tests use media/content/test.wav as test file for mac, so this change would make sure
+        findMediaFile() will return test.wav but not test.mp3 or other formats.
+        (setSrcById): Fixing bug in code.
+        * media/video-canvas-source.html: Use findMediaFile() to locate a media file based on supported types.
+        * media/video-click-dblckick-standalone.html: ditto.
+        * media/video-controls-transformed.html: ditto.
+        * media/video-controls-visible-audio-only.html: ditto.
+        * media/video-controls-zoomed.html: ditto.
+        * media/video-controls.html: ditto.
+        * media/video-currentTime-set.html: ditto.
+        * media/video-currentTime-set2.html: ditto.
+        * media/video-currentTime.html: ditto.
+        * media/video-display-none-crash.html: ditto.
+        * media/video-display-toggle.html: ditto.
+        * media/video-dom-autoplay.html: ditto.
+        * media/video-dom-src.html: ditto.
+        * media/video-error-abort.html: ditto.
+        * media/video-load-networkState.html: ditto.
+        * media/video-load-readyState.html: ditto.
+        * media/video-loop.html: ditto.
+        * media/video-muted.html: ditto.
+        * media/video-no-autoplay.html: ditto.
+
 2009-09-17  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt.

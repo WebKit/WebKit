@@ -8,6 +8,7 @@
     events and end up with networkState >= NETWORK_LOADING.
      </p>
     
+    <script src=media-file.js></script>
     <script src=video-test.js></script>
     <script>
         function testNetworkState(expected, endit, op)
@@ -31,7 +32,8 @@
             consoleWrite("");
 
             // now set a valid url
-            run("video.src = 'content/test.mp4'");
+            var mediaFile = findMediaFile("video", "content/test");
+            run("video.src = '" + mediaFile + "'");
         }
         
         // first set the src to a bogus url, it should attempt a load
