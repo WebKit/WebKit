@@ -1,3 +1,25 @@
+2009-09-17  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Wrap primitive values (as objects) in InspectorController::wrap.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28983
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::wrapObject): objects of any type will be wrapped into proxies,
+         only object proxies will have objectId.
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype.completions): there is InjectedScript.getCompletionsi
+         that accepts an expression and returns possible completions. This way we don't need to wrap
+         and unwrap the completions result into a proxy object.
+        * inspector/front-end/InjectedScript.js:
+        (InjectedScript.getCompletions):
+        (InjectedScript.evaluate):
+        (InjectedScript._evaluateOn):
+        (InjectedScript.createProxyObject):
+        * inspector/front-end/InjectedScriptAccess.js:
+
 2009-09-17  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Dimitri Glazkov.

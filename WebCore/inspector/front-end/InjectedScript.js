@@ -498,21 +498,29 @@ InjectedScript.setPropertyValue = function(objectProxy, propertyName, expression
     }
 }
 
-InjectedScript.evaluate = function(expression)
+
+InjectedScript.getCompletions = function(expression, includeInspectorCommandLineAPI)
 {
-    return InjectedScript._evaluateOn(InjectedScript._window().eval, InjectedScript._window(), expression);
+    var props = {};
+    try {
+        var expressionResult = InjectedScript._evaluateOn(InjectedScript._window().eval, InjectedScript._window(), expression);
+        for (var prop in expressionResult)
+            props[prop] = true;
+        if (includeInspectorCommandLineAPI)
+            for (var prop in InjectedScript._window()._inspectorCommandLineAPI)
+                if (prop.charAt(0) !== '_')
+                    props[prop] = true;
+    } catch(e) {
+    }
+    return props;
 }
 
-InjectedScript._evaluateOn = function(evalFunction, object, expression)
-{
-    InjectedScript._ensureCommandLineAPIInstalled();
-    // Surround the expression in with statements to inject our command line API so that
-    // the window object properties still take more precedent than our API functions.
-    expression = "with (window._inspectorCommandLineAPI) { with (window) { " + expression + " } }";
 
+InjectedScript.evaluate = function(expression)
+{
     var result = {};
     try {
-        var value = evalFunction.call(object, expression);
+        var value = InjectedScript._evaluateOn(InjectedScript._window().eval, InjectedScript._window(), expression);
         if (value === null)
             return { value: null };
         if (Object.type(value) === "error") {
@@ -533,6 +541,15 @@ InjectedScript._evaluateOn = function(evalFunction, object, expression)
         result.isException = true;
     }
     return result;
+}
+
+InjectedScript._evaluateOn = function(evalFunction, object, expression)
+{
+    InjectedScript._ensureCommandLineAPIInstalled();
+    // Surround the expression in with statements to inject our command line API so that
+    // the window object properties still take more precedent than our API functions.
+    expression = "with (window._inspectorCommandLineAPI) { with (window) { " + expression + " } }";
+    return evalFunction.call(object, expression);
 }
 
 InjectedScript.addInspectedNode = function(nodeId)
@@ -950,7 +967,7 @@ InjectedScript.createProxyObject = function(object, objectId, abbreviate)
     result.type = Object.type(object);
 
     var type = typeof object;
-    if (type === "object" || type === "function") {
+    if ((type === "object" && object !== null) || type === "function") {
         for (var subPropertyName in object) {
             result.hasChildren = true;
             break;

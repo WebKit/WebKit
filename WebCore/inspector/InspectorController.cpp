@@ -1531,18 +1531,17 @@ InspectorController::SpecialPanels InspectorController::specialPanelForJSName(co
 
 ScriptValue InspectorController::wrapObject(const ScriptValue& quarantinedObject)
 {
+    ScriptFunctionCall function(m_scriptState, m_injectedScriptObj, "createProxyObject");
+    function.appendArgument(quarantinedObject);
     if (quarantinedObject.isObject()) {
         long id = m_lastBoundObjectId++;
         String objectId = String::format("object#%ld", id);
         m_idToConsoleObject.set(objectId, quarantinedObject);
 
-        ScriptFunctionCall function(m_scriptState, m_injectedScriptObj, "createProxyObject");
-        function.appendArgument(quarantinedObject);
         function.appendArgument(objectId);
-        ScriptValue wrapper = function.call();
-        return wrapper;
     }
-    return quarantinedObject;
+    ScriptValue wrapper = function.call();
+    return wrapper;
 }
 
 ScriptValue InspectorController::unwrapObject(const String& objectId)

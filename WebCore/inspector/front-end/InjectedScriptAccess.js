@@ -63,6 +63,7 @@ InjectedScriptAccess._installHandler("setStyleProperty");
 InjectedScriptAccess._installHandler("getPrototypes");
 InjectedScriptAccess._installHandler("getProperties");
 InjectedScriptAccess._installHandler("setPropertyValue");
+InjectedScriptAccess._installHandler("getCompletions");
 InjectedScriptAccess._installHandler("evaluate");
 InjectedScriptAccess._installHandler("addInspectedNode");
 InjectedScriptAccess._installHandler("pushNodeToFrontend");

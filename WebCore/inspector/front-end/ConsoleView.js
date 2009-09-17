@@ -291,24 +291,8 @@ WebInspector.ConsoleView.prototype = {
             }
         }
 
-        function parsingCallback(result, isException)
-        {
-            if (!isException)
-                result = JSON.parse(result);
-            reportCompletions(result, isException);
-        }
-
-        this.evalInInspectedWindow(
-            "(function() {" +
-                "var props = {};" +
-                "for (var prop in (" + expressionString + ")) props[prop] = true;" +
-                ((!dotNotation && !bracketNotation) ?
-                "for (var prop in window._inspectorCommandLineAPI)" +
-                    "if (prop.charAt(0) !== '_') props[prop] = true;"
-                : "") +
-                "return JSON.stringify(props);" +
-            "})()",
-            parsingCallback);
+        var includeInspectorCommandLineAPI = (!dotNotation && !bracketNotation);
+        InjectedScriptAccess.getCompletions(expressionString, includeInspectorCommandLineAPI, reportCompletions);
     },
 
     _reportCompletions: function(bestMatchOnly, completionsReadyCallback, dotNotation, bracketNotation, prefix, result, isException) {
