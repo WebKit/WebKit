@@ -165,39 +165,6 @@
         * rendering/style/RenderStyleConstants.h:
         (WebCore::):
 
-2009-09-16  Albert J. Wong  <ajwong@chromium.org>
-
-        Reviewed by David Levin.
-
-        Reimplement default media UI for Mac Chromium to match the style
-        of the Windows and Linux versions.  Also breaks the dependency
-        on the internal wk* functions that were previously used to
-        render the media controller widgets.
-        https://bugs.webkit.org/show_bug.cgi?id=29161
-
-        No media layout tests are currently enabled in Mac Chromium, so
-        nothing needs rebaselineing, etc.
-
-        * css/mediaControlsChromium.css:
-        * rendering/RenderThemeChromiumMac.h:
-        * rendering/RenderThemeChromiumMac.mm:
-        (WebCore::mediaElementParent):
-        (WebCore::RenderThemeChromiumMac::extraMediaControlsStyleSheet):
-        (WebCore::mediaSliderThumbImage):
-        (WebCore::mediaVolumeSliderThumbImage):
-        (WebCore::RenderThemeChromiumMac::paintSliderTrack):
-        (WebCore::RenderThemeChromiumMac::adjustSliderThumbSize):
-        (WebCore::RenderThemeChromiumMac::paintMediaButtonInternal):
-        (WebCore::RenderThemeChromiumMac::paintMediaPlayButton):
-        (WebCore::RenderThemeChromiumMac::paintMediaMuteButton):
-        (WebCore::RenderThemeChromiumMac::paintMediaSliderTrack):
-        (WebCore::RenderThemeChromiumMac::paintMediaVolumeSliderTrack):
-        (WebCore::RenderThemeChromiumMac::paintMediaSliderThumb):
-        (WebCore::RenderThemeChromiumMac::paintMediaVolumeSliderThumb):
-        (WebCore::RenderThemeChromiumMac::paintMediaControlsBackground):
-        * rendering/RenderThemeChromiumSkia.cpp:
-        (WebCore::RenderThemeChromiumSkia::adjustSliderThumbSize):
-
 2009-09-16  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Timothy Hatcher.

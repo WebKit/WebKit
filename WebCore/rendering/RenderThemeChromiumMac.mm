@@ -39,7 +39,6 @@
 #import "Element.h"
 #import "FoundationExtras.h"
 #import "FrameView.h"
-#import "Gradient.h"
 #import "GraphicsContext.h"
 #import "HTMLInputElement.h"
 #import "HTMLMediaElement.h"
@@ -52,7 +51,6 @@
 #import "RenderView.h"
 #import "SharedBuffer.h"
 #import "TimeRanges.h"
-#import "UserAgentStyleSheets.h"
 #import "WebCoreSystemInterface.h"
 #import <wtf/RetainPtr.h>
 
@@ -113,20 +111,6 @@ enum {
     LeftPadding
 };
 
-#if ENABLE(VIDEO)
-// Attempt to retrieve a HTMLMediaElement from a Node. Returns 0 if one cannot be found.
-static HTMLMediaElement* mediaElementParent(Node* node)
-{
-    if (!node)
-        return 0;
-    Node* mediaNode = node->shadowAncestorNode();
-    if (!mediaNode || (!mediaNode->hasTagName(HTMLNames::videoTag) && !mediaNode->hasTagName(HTMLNames::audioTag)))
-        return 0;
-
-    return static_cast<HTMLMediaElement*>(mediaNode);
-}
-#endif
-
 // In our Mac port, we don't define PLATFORM(MAC) and thus don't pick up the
 // |operator NSRect()| on WebCore::IntRect and FloatRect. This substitues for
 // that missing conversion operator.
@@ -149,13 +133,6 @@ PassRefPtr<RenderTheme> RenderThemeChromiumMac::create()
 {
     return adoptRef(new RenderThemeChromiumMac);
 }
-
-#if ENABLE(VIDEO)
-String RenderThemeChromiumMac::extraMediaControlsStyleSheet()
-{
-    return String(mediaControlsChromiumUserAgentStyleSheet, sizeof(mediaControlsChromiumUserAgentStyleSheet));
-}
-#endif
 
 PassRefPtr<RenderTheme> RenderTheme::themeForPage(Page* page)
 {
@@ -1478,18 +1455,9 @@ int RenderThemeChromiumMac::minimumMenuListSize(RenderStyle* style) const
     return sizeForSystemFont(style, menuListSizes()).width();
 }
 
-static Image* mediaSliderThumbImage()
-{
-    static Image* mediaSliderThumb = Image::loadPlatformResource("mediaSliderThumb").releaseRef();
-    return mediaSliderThumb;
-}
-  
-static Image* mediaVolumeSliderThumbImage()
-{
-    static Image* mediaVolumeSliderThumb = Image::loadPlatformResource("mediaVolumeSliderThumb").releaseRef();
-    return mediaVolumeSliderThumb;
-}
-  
+static const int trackWidth = 5;
+static const int trackRadius = 2;
+
 void RenderThemeChromiumMac::adjustSliderTrackStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
 {
     style->setBoxShadow(0);
@@ -1497,9 +1465,6 @@ void RenderThemeChromiumMac::adjustSliderTrackStyle(CSSStyleSelector* selector, 
 
 bool RenderThemeChromiumMac::paintSliderTrack(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
-    static const int trackWidth = 5;
-    static const int trackRadius = 2;
-  
     IntRect bounds = r;
     float zoomLevel = o->style()->effectiveZoom();
     float zoomedTrackWidth = trackWidth * zoomLevel;
@@ -1607,6 +1572,8 @@ bool RenderThemeChromiumMac::paintSliderThumb(RenderObject* o, const RenderObjec
 
 const int sliderThumbWidth = 15;
 const int sliderThumbHeight = 15;
+const int mediaSliderThumbWidth = 13;
+const int mediaSliderThumbHeight = 14;
 
 void RenderThemeChromiumMac::adjustSliderThumbSize(RenderObject* o) const
 {
@@ -1614,20 +1581,10 @@ void RenderThemeChromiumMac::adjustSliderThumbSize(RenderObject* o) const
     if (o->style()->appearance() == SliderThumbHorizontalPart || o->style()->appearance() == SliderThumbVerticalPart) {
         o->style()->setWidth(Length(static_cast<int>(sliderThumbWidth * zoomLevel), Fixed));
         o->style()->setHeight(Length(static_cast<int>(sliderThumbHeight * zoomLevel), Fixed));
+    } else if (o->style()->appearance() == MediaSliderThumbPart) {
+        o->style()->setWidth(Length(mediaSliderThumbWidth, Fixed));
+        o->style()->setHeight(Length(mediaSliderThumbHeight, Fixed));
     }
-
-#if ENABLE(VIDEO)
-    Image* thumbImage = 0;
-    if (o->style()->appearance() == MediaSliderThumbPart)
-        thumbImage = mediaSliderThumbImage();
-    else if (o->style()->appearance() == MediaVolumeSliderThumbPart)
-        thumbImage = mediaVolumeSliderThumbImage();
-  
-    if (thumbImage) {
-        o->style()->setWidth(Length(thumbImage->width(), Fixed));
-        o->style()->setHeight(Length(thumbImage->height(), Fixed));
-    }
-#endif
 }
 
 bool RenderThemeChromiumMac::paintSearchField(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
@@ -1869,210 +1826,138 @@ bool RenderThemeChromiumMac::paintSearchFieldResultsButton(RenderObject* o, cons
     return false;
 }
 
-bool RenderThemeChromiumMac::paintMediaButtonInternal(GraphicsContext* context, const IntRect& rect, Image* image)
-{
-    // Create a destination rectangle for the image that is centered in the drawing rectangle, rounded left, and down.
-    IntRect imageRect = image->rect();
-    imageRect.setY(rect.y() + (rect.height() - image->height() + 1) / 2);
-    imageRect.setX(rect.x() + (rect.width() - image->width() + 1) / 2);
-
-    context->drawImage(image, imageRect);
-    return true;
-}
-
-bool RenderThemeChromiumMac::paintMediaPlayButton(RenderObject* object, const RenderObject::PaintInfo& paintInfo, const IntRect& rect)
-{
 #if ENABLE(VIDEO)
-    HTMLMediaElement* mediaElement = mediaElementParent(object->node());
-    if (!mediaElement)
-        return false;
+// FIXME: This enum is lifted from RenderThemeMac.mm  We need to decide which theme to use for the default controls, or decide to avoid wkDrawMediaUIPart and render our own.
+typedef enum {
+    MediaControllerThemeClassic   = 1,
+    MediaControllerThemeQT        = 2
+} MediaControllerThemeStyle;
 
-    static Image* mediaPlay = Image::loadPlatformResource("mediaPlay").releaseRef();
-    static Image* mediaPause = Image::loadPlatformResource("mediaPause").releaseRef();
-    static Image* mediaPlayDisabled = Image::loadPlatformResource("mediaPlayDisabled").releaseRef();
-
-    if (mediaElement->networkState() == HTMLMediaElement::NETWORK_NO_SOURCE)
-        return paintMediaButtonInternal(paintInfo.context, rect, mediaPlayDisabled);
-
-    return paintMediaButtonInternal(paintInfo.context, rect, mediaElement->paused() ? mediaPlay : mediaPause);
-#else
-    UNUSED_PARAM(object);
-    UNUSED_PARAM(paintInfo);
-    UNUSED_PARAM(rect);
-    return false;
+enum WKMediaControllerThemeState {
+    MediaUIPartDisabledFlag = 1 << 0,
+    MediaUIPartPressedFlag = 1 << 1,
+    MediaUIPartDrawEndCapsFlag = 1 << 3,
+};
 #endif
-}
 
-bool RenderThemeChromiumMac::paintMediaMuteButton(RenderObject* object, const RenderObject::PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeChromiumMac::paintMediaFullscreenButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
 #if ENABLE(VIDEO)
-    HTMLMediaElement* mediaElement = mediaElementParent(object->node());
-    if (!mediaElement)
+    Node* node = o->node();
+    if (!node)
         return false;
 
-    static Image* soundFull = Image::loadPlatformResource("mediaSoundFull").releaseRef();
-    static Image* soundNone = Image::loadPlatformResource("mediaSoundNone").releaseRef();
-    static Image* soundDisabled = Image::loadPlatformResource("mediaSoundDisabled").releaseRef();
-
-    if (mediaElement->networkState() == HTMLMediaElement::NETWORK_NO_SOURCE || !mediaElement->hasAudio())
-        return paintMediaButtonInternal(paintInfo.context, rect, soundDisabled);
-
-    return paintMediaButtonInternal(paintInfo.context, rect, mediaElement->muted() ? soundNone : soundFull);
-#else
-    UNUSED_PARAM(object);
-    UNUSED_PARAM(paintInfo);
-    UNUSED_PARAM(rect);
-    return false;
+    LocalCurrentGraphicsContext localContext(paintInfo.context);
+    wkDrawMediaUIPart(MediaFullscreenButton, MediaControllerThemeClassic,  paintInfo.context->platformContext(), r, 
+        node->active() ? MediaUIPartPressedFlag : 0);
 #endif
+    return false;
 }
 
-bool RenderThemeChromiumMac::paintMediaSliderTrack(RenderObject* object, const RenderObject::PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeChromiumMac::paintMediaMuteButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
 #if ENABLE(VIDEO)
-    HTMLMediaElement* mediaElement = mediaElementParent(object->node());
-    if (!mediaElement)
+    Node* node = o->node();
+    Node* mediaNode = node ? node->shadowAncestorNode() : 0;
+    if (!mediaNode || (!mediaNode->hasTagName(videoTag) && !mediaNode->hasTagName(audioTag)))
         return false;
 
-    RenderStyle* style = object->style();    
-    GraphicsContext* context = paintInfo.context;
-    context->save();
+    HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(mediaNode);
+    if (!mediaElement)
+        return false;
     
-    context->setShouldAntialias(true);
-
-    IntSize topLeftRadius = style->borderTopLeftRadius();
-    IntSize topRightRadius = style->borderTopRightRadius();
-    IntSize bottomLeftRadius = style->borderBottomLeftRadius();
-    IntSize bottomRightRadius = style->borderBottomRightRadius();
-    float borderWidth = style->borderLeftWidth();
-
-    // Draw the border of the time bar.
-    context->setStrokeColor(style->borderLeftColor());
-    context->setStrokeThickness(borderWidth);
-    context->setFillColor(style->backgroundColor());
-    context->addPath(Path::createRoundedRectangle(rect, topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius));
-    context->drawPath();
-    
-    // Draw the buffered ranges.
-    // FIXME: Draw multiple ranges if there are multiple buffered ranges.
-    FloatRect bufferedRect = rect;
-    bufferedRect.inflate(-1.0 - borderWidth);
-    bufferedRect.setWidth(bufferedRect.width() * mediaElement->percentLoaded());
-    bufferedRect = context->roundToDevicePixels(bufferedRect);
-   
-    // Don't bother drawing an empty area.
-    if (bufferedRect.width() > 0 && bufferedRect.height() > 0) {
-        FloatPoint sliderTopLeft = bufferedRect.location();
-        FloatPoint sliderTopRight = sliderTopLeft;
-        p1.move(0.0f, bufferedRect.height());
-        
-        RefPtr<Gradient> gradient = Gradient::create(sliderTopLeft, sliderTopRight);
-        Color startColor = object->style()->color();
-        gradient->addColorStop(0.0, startColor);
-        gradient->addColorStop(1.0, Color(startColor.red() / 2, startColor.green() / 2, startColor.blue() / 2, startColor.alpha()));
- 
-        context->setFillGradient(gradient);
-        context->addPath(Path::createRoundedRectangle(bufferedRect, topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius));
-        context->fillPath();
-    }
-    
-    context->restore();    
-    return true;
-#else
-    UNUSED_PARAM(object);
-    UNUSED_PARAM(paintInfo);
-    UNUSED_PARAM(rect);
-    return false;
+    LocalCurrentGraphicsContext localContext(paintInfo.context);
+    wkDrawMediaUIPart(mediaElement->muted() ? MediaUnMuteButton : MediaMuteButton, MediaControllerThemeClassic, paintInfo.context->platformContext(), r,
+        node->active() ? MediaUIPartPressedFlag : 0);
 #endif
+    return false;
 }
 
-bool RenderThemeChromiumMac::paintMediaVolumeSliderTrack(RenderObject* object, const RenderObject::PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeChromiumMac::paintMediaPlayButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
 #if ENABLE(VIDEO)
-    HTMLMediaElement* mediaElement = mediaElementParent(object->node());
+    Node* node = o->node();
+    Node* mediaNode = node ? node->shadowAncestorNode() : 0;
+    if (!mediaNode || (!mediaNode->hasTagName(videoTag) && !mediaNode->hasTagName(audioTag)))
+        return false;
+
+    HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(mediaNode);
     if (!mediaElement)
         return false;
 
-    GraphicsContext* context = paintInfo.context;
-    Color originalColor = context->strokeColor();
-    if (originalColor != Color::white)
-        context->setStrokeColor(Color::white);
-
-    int x = rect.x() + rect.width() / 2;
-    context->drawLine(IntPoint(x, rect.y()),  IntPoint(x, rect.y() + rect.height()));
-    
-    if (originalColor != Color::white)
-        context->setStrokeColor(originalColor);
-    return true;
-#else
-    UNUSED_PARAM(object);
-    UNUSED_PARAM(paintInfo);
-    UNUSED_PARAM(rect);
-    return false;
+    LocalCurrentGraphicsContext localContext(paintInfo.context);
+    wkDrawMediaUIPart(mediaElement->canPlay() ? MediaPlayButton : MediaPauseButton, MediaControllerThemeClassic, paintInfo.context->platformContext(), r,
+        node->active() ? MediaUIPartPressedFlag : 0);
 #endif
+    return false;
 }
 
-bool RenderThemeChromiumMac::paintMediaSliderThumb(RenderObject* object, const RenderObject::PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeChromiumMac::paintMediaSeekBackButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
 #if ENABLE(VIDEO)
-    if (!object->parent()->isSlider())
+    Node* node = o->node();
+    if (!node)
         return false;
 
-    return paintMediaButtonInternal(paintInfo.context, rect, mediaSliderThumbImage());
-#else
-    UNUSED_PARAM(object);
-    UNUSED_PARAM(paintInfo);
-    UNUSED_PARAM(rect);
-    return false;
+    LocalCurrentGraphicsContext localContext(paintInfo.context);
+    wkDrawMediaUIPart(MediaSeekBackButton, MediaControllerThemeClassic, paintInfo.context->platformContext(), r,
+        node->active() ? MediaUIPartPressedFlag : 0);
 #endif
+    return false;
 }
 
-bool RenderThemeChromiumMac::paintMediaVolumeSliderThumb(RenderObject* object, const RenderObject::PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeChromiumMac::paintMediaSeekForwardButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
 #if ENABLE(VIDEO)
-    if (!object->parent()->isSlider())
+    Node* node = o->node();
+    if (!node)
         return false;
 
-    return paintMediaButtonInternal(paintInfo.context, rect, mediaVolumeSliderThumbImage());
-#else
-    UNUSED_PARAM(object);
-    UNUSED_PARAM(paintInfo);
-    UNUSED_PARAM(rect);
-    return false;
+    LocalCurrentGraphicsContext localContext(paintInfo.context);
+    wkDrawMediaUIPart(MediaSeekForwardButton, MediaControllerThemeClassic, paintInfo.context->platformContext(), r,
+        node->active() ? MediaUIPartPressedFlag : 0);
 #endif
+    return false;
 }
 
-bool RenderThemeChromiumMac::paintMediaControlsBackground(RenderObject* object, const RenderObject::PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeChromiumMac::paintMediaSliderTrack(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
 #if ENABLE(VIDEO)
-    HTMLMediaElement* mediaElement = mediaElementParent(object->node());
+    Node* node = o->node();
+    Node* mediaNode = node ? node->shadowAncestorNode() : 0;
+    if (!mediaNode || (!mediaNode->hasTagName(videoTag) && !mediaNode->hasTagName(audioTag)))
+        return false;
+
+    HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(mediaNode);
     if (!mediaElement)
         return false;
 
-    if (!rect.isEmpty())
-    {
-        GraphicsContext* context = paintInfo.context;
-        Color originalColor = context->strokeColor();
- 
-        // Draws the left border, it is always 1px wide.
-        context->setStrokeColor(object->style()->borderLeftColor());
-        context->drawLine(IntPoint(rect.x() + 1, rect.y()),
-                          IntPoint(rect.x() + 1, rect.y() + rect.height()));
-                         
+    RefPtr<TimeRanges> timeRanges = mediaElement->buffered();
+    ExceptionCode ignoredException;
+    float timeLoaded = timeRanges->length() ? timeRanges->end(0, ignoredException) : 0;
+    float currentTime = mediaElement->currentTime();
+    float duration = mediaElement->duration();
+    if (isnan(duration))
+        duration = 0;
 
-        // Draws the right border, it is always 1px wide.
-        context->setStrokeColor(object->style()->borderRightColor());
-        context->drawLine(IntPoint(rect.x() + rect.width() - 1, rect.y()),
-                          IntPoint(rect.x() + rect.width() - 1, rect.y() + rect.height()));
-        
-        context->setStrokeColor(originalColor);
-    }
-    return true;
-#else
-    UNUSED_PARAM(object);
-    UNUSED_PARAM(paintInfo);
-    UNUSED_PARAM(rect);
-    return false;
+    bool shouldDrawEndCaps = !toRenderMedia(mediaElement->renderer())->shouldShowTimeDisplayControls();
+    wkDrawMediaSliderTrack(MediaControllerThemeClassic, paintInfo.context->platformContext(), r, timeLoaded, currentTime, duration, shouldDrawEndCaps ? MediaUIPartDrawEndCapsFlag : 0);
 #endif
+    return false;
+}
+
+bool RenderThemeChromiumMac::paintMediaSliderThumb(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+{
+#if ENABLE(VIDEO)
+    Node* node = o->node();
+    if (!node)
+        return false;
+
+    LocalCurrentGraphicsContext localContext(paintInfo.context);
+    wkDrawMediaUIPart(MediaSliderThumb, MediaControllerThemeClassic, paintInfo.context->platformContext(), r,
+        node->active() ? MediaUIPartPressedFlag : 0);
+#endif
+    return false;
 }
 
 // FIXME: This used to be in the upstream version until it was converted to the new theme API in r37731.

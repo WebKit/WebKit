@@ -640,10 +640,9 @@ void RenderThemeChromiumSkia::adjustSliderThumbSize(RenderObject* object) const
     else if (object->style()->appearance() == MediaVolumeSliderThumbPart)
         thumbImage = mediaVolumeSliderThumbImage();
 
-    if (thumbImage) {
-        object->style()->setWidth(Length(thumbImage->width(), Fixed));
-        object->style()->setHeight(Length(thumbImage->height(), Fixed));
-    }
+    ASSERT(thumbImage);
+    object->style()->setWidth(Length(thumbImage->width(), Fixed));
+    object->style()->setHeight(Length(thumbImage->height(), Fixed));
 #else
     UNUSED_PARAM(object);
 #endif
