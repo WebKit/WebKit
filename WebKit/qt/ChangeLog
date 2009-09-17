@@ -1,3 +1,20 @@
+2009-09-17  Janne Koskinen  <janne.p.koskinen@digia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Symbian build fix.
+
+        Moved the #ifdefs around _q_cleanupLeakMessages() into the function
+        definition.
+
+        QMake is not being able to distinguish between release and debug builds
+        in Symbian build. This is a Symbian toolchain issue.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::_q_cleanupLeakMessages):
+        * Api/qwebpage.h:
+        * Api/qwebpage_p.h:
+
 2009-09-17  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Simon Hausmann.
