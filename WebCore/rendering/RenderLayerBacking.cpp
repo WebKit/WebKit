@@ -1059,7 +1059,8 @@ bool RenderLayerBacking::startTransition(double beginTime, int property, const R
             KeyframeValueList opacityVector(AnimatedPropertyOpacity);
             opacityVector.insert(new FloatAnimationValue(0, compositingOpacity(fromStyle->opacity())));
             opacityVector.insert(new FloatAnimationValue(1, compositingOpacity(toStyle->opacity())));
-            if (m_graphicsLayer->addAnimation(opacityVector, toRenderBox(renderer())->borderBoxRect().size(), opacityAnim, String(), beginTime))
+            // The boxSize param is only used for transform animations (which can only run on RenderBoxes), so we pass an empty size here.
+            if (m_graphicsLayer->addAnimation(opacityVector, IntSize(), opacityAnim, String(), beginTime))
                 didAnimate = true;
         }
     }

@@ -1,3 +1,18 @@
+2009-09-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Hardware-accelerated opacity transition on inline asserts
+        https://bugs.webkit.org/show_bug.cgi?id=29342
+        
+        Remove an erroneous toRenderBox() that could be called on a RenderInline; we can just
+        pass an empty size, because the box size is only required for transform animations.
+
+        Test: compositing/transitions/opacity-on-inline.html
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::startTransition):
+
 2009-09-17  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
