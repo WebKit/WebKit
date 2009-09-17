@@ -1,3 +1,15 @@
+2009-09-16  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Explore allowing pages with unload handlers into the Page Cache
+        https://bugs.webkit.org/show_bug.cgi?id=29021
+
+        No new tests. (All previous tests continue to pass)
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::stopLoading): If the document is in the page cache, don't fire the unload event.
+
 2009-09-16  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Dimitri Glazkov.
