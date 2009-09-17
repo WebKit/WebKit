@@ -1,3 +1,14 @@
+2009-09-17  Brian Weinstein  <bweinstein@apple.com>
+
+        Rubber-stamped by Adam Roben.
+
+        Updated Windows results on three failing tests, adding font-smoothing to computed-style,
+        and udpated the hindi-rotated-expected to what it has been getting on the bots.
+
+        * platform/win/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/win/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/win/transforms/2d/hindi-rotated-expected.txt:
+
 2009-09-16  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
