@@ -1,43 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
 
-function test()
-{ 
-    var res = "";
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-    }
+<input type="text" id="sp" style="-khtml-appearance:textfield" maxlength=5 value="123456"></input>
+
+<script>
+description('This test changes the value of the text field by simulating typing, and then gets the value.');
+
+var input = document.getElementById('sp');
+
+if (input.value != "12345") {
+    testPassed('Maxlength shouldn\'t work for default value.\n');
+} else {
+    testFailed('Maxlength unexpectedly works for default value.\n');
+}
     
-    if (document.getElementById('sp').value == "12345") {
-        res+= "Test 1 Passed.  Maxlength works for default value.\n";
-    } else {
-        res+= "Test 1 Failed.  Maxlength does not work for default value.\n";
-    }
+input.value = "123";
+input.setSelectionRange(0, 3);
+input.focus();
+document.execCommand("InsertText", false, 'abcd');
+document.execCommand("InsertText", false, 'efghi');
     
-    document.getElementById('sp').value = "123";
-    
-    document.getElementById('sp').setSelectionRange(0, 3);
-    document.getElementById('sp').focus();
-    document.execCommand("InsertText", false, 'abcd');
-    document.execCommand("InsertText", false, 'efghi');
-    
-    if (document.getElementById('sp').value == "abcde") {
-        res+= "Test 2 Passed.  Maxlength works for inserted text.\n";
-    } else {
-        res+= "Test 2 Failed.  Maxlength does not work for inserted text.\n";
-    }
-    
-    document.getElementById('result').innerHTML = res;
+if (input.value == "abcde") {
+    testPassed('Maxlength works for inserted text.\n');
+} else {
+    testFailed('Maxlength does not work for inserted text.\n');
 }
 
+var successfullyParsed = true;
 </script>
-</head>
-<body onload="test()">
-This test changes the value of the text field by simulating typing, and then gets the value.
-<br><br>
-<input type="text" id="sp" style="-khtml-appearance:textfield" maxlength=5 value="123456"></input>
-<div id="result">
-</div>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

@@ -309,7 +309,7 @@ void WMLInputElement::cacheSelection(int start, int end)
 
 String WMLInputElement::constrainValue(const String& proposedValue) const
 {
-    return InputElement::constrainValue(this, proposedValue, m_data.maxLength());
+    return InputElement::sanitizeUserInputValue(this, proposedValue, m_data.maxLength());
 }
 
 void WMLInputElement::documentDidBecomeActive()

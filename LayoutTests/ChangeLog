@@ -1,3 +1,31 @@
+2009-09-15  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        <input maxlength=> should restrict only values specified by users.
+        https://bugs.webkit.org/show_bug.cgi?id=21271
+
+        * fast/forms/input-appearance-maxlength-expected.txt:
+        * fast/forms/input-appearance-maxlength.html:
+        * fast/forms/input-maxlength-expected.txt:
+        * fast/forms/input-maxlength.html:
+        * fast/forms/input-text-maxlength-expected.txt: Added.
+        * fast/forms/input-text-maxlength.html:
+        * fast/forms/input-text-paste-maxlength-expected.txt: Added.
+        * fast/forms/input-text-paste-maxlength.html:
+        * platform/mac-leopard/fast/forms/input-text-maxlength-expected.checksum: Removed.
+        * platform/mac-leopard/fast/forms/input-text-maxlength-expected.png: Removed.
+        * platform/mac-leopard/fast/forms/input-text-maxlength-expected.txt: Removed.
+        * platform/mac-leopard/fast/forms/input-text-paste-maxlength-expected.checksum: Removed.
+        * platform/mac-leopard/fast/forms/input-text-paste-maxlength-expected.png: Removed.
+        * platform/mac-leopard/fast/forms/input-text-paste-maxlength-expected.txt: Removed.
+        * platform/mac/fast/forms/input-text-maxlength-expected.txt: Removed.
+        * platform/mac/fast/forms/input-text-paste-maxlength-expected.txt: Removed.
+        * platform/qt/fast/forms/input-text-maxlength-expected.txt: Removed.
+        * platform/qt/fast/forms/input-text-paste-maxlength-expected.txt: Removed.
+        * platform/win/fast/forms/input-text-maxlength-expected.txt: Removed.
+        * platform/win/fast/forms/input-text-paste-maxlength-expected.txt: Removed.
+
 2009-09-16  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.

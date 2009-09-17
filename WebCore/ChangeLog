@@ -1,3 +1,30 @@
+2009-09-15  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        <input maxlength=> should restrict only values specified by users.
+        https://bugs.webkit.org/show_bug.cgi?id=21271
+
+        * dom/InputElement.cpp:
+        (WebCore::InputElement::setValueFromRenderer):
+        (WebCore::InputElement::sanitizeValue):
+        (WebCore::InputElement::sanitizeUserInputValue): Rename from constrainValue().
+        (WebCore::InputElement::handleBeforeTextInsertedEvent):
+        (WebCore::InputElement::updateValueIfNeeded):
+        * dom/InputElement.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setInputType):
+        (WebCore::HTMLInputElement::value):
+        (WebCore::HTMLInputElement::setValue):
+        (WebCore::HTMLInputElement::sanitizeValue):
+        * html/HTMLInputElement.h:
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::subtreeHasChanged):
+        * wml/WMLInputElement.cpp:
+        (WebCore::WMLInputElement::constrainValue):
+        * wml/WMLInputElement.h:
+        (WebCore::WMLInputElement::sanitizeValue):
+
 2009-09-16  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Eric Seidel.

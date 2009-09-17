@@ -1,21 +1,22 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
 <p>This page tests that the <tt>maxlength</tt> attribute of the <tt>&lt;input&gt;</tt> element works correctly. <a href="http://bugs.webkit.org/show_bug.cgi?id=14388">http://bugs.webkit.org/show_bug.cgi?id=14388</a></p>
+<div id="console"></div>
+
 <input id="input">
-<pre id="log"></pre>
+
 <script>
-    function log(msg)
-    {
-        document.getElementById("log").appendChild(document.createTextNode(msg + "\n"));
-    }
-
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
-
+    var implicitMaxLength = 524288;
     var testString = "";
     var input = document.getElementById("input");
 
     function attempt(length, expected)
     {
-        log("Attempting to insert " + length + " characters with maxLength = " + input.getAttribute("maxlength") + ".");
+        debug("Attempting to insert " + length + " characters with maxLength = " + input.getAttribute("maxlength") + ".");
 
         if (testString.length > length)
             testString = "";
@@ -24,14 +25,11 @@
             testString += i % 10;
 
         input.value = testString;
-
         if (input.value.length == expected)
-            log("PASS");
+            testPassed("");
         else
-            log("FAIL: Expected " + expected + " characters to be inserted, but " + input.value.length + " characters were actually inserted.");
+            testFailed("Expected " + domExpected + " characters to be inserted, but " + input.value.length + " characters were actually inserted.");
     }
-
-    var implicitMaxLength = 524288;
 
     var stringLengthsToTest = [0, 5, 100, 101, 200, 524287, 524288, 524289, 530000];
     var maxLengthsToTest = ["-1", "100", "524288", "600000"];
@@ -41,10 +39,13 @@
         for (var j = 0; j < maxLengthsToTest.length; ++j) {
             var maxLength = maxLengthsToTest[j];
             input.setAttribute("maxlength", maxLength);
-            if (maxLength < 0 || maxLength > implicitMaxLength)
-                maxLength = implicitMaxLength;
-            var expected = Math.min(stringLength, maxLength);
+            var expected = Math.min(stringLength, implicitMaxLength);
             attempt(stringLength, expected);
         }
     }
+
+    var successfullyParsed = true;
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

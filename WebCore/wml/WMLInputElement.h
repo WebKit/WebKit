@@ -79,7 +79,7 @@ public:
     virtual void defaultEventHandler(Event*);
     virtual void cacheSelection(int start, int end);
 
-    virtual String constrainValue(const String& proposedValue) const;
+    virtual String sanitizeValue(const String& proposedValue) const { return constrainValue(proposedValue); }
 
     virtual void documentDidBecomeActive();
     virtual bool placeholderShouldBeVisible() const;
@@ -96,6 +96,7 @@ private:
 
     String validateInputMask(const String&);
     unsigned cursorPositionToMaskIndex(unsigned);
+    String constrainValue(const String&) const;
 
     InputElementData m_data;
     bool m_isPasswordField;

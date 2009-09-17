@@ -222,7 +222,7 @@ public:
 
     VisibleSelection selection() const;
 
-    virtual String constrainValue(const String& proposedValue) const;
+    virtual String sanitizeValue(const String&) const;
 
     virtual void documentDidBecomeActive();
 

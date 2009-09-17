@@ -1,76 +1,100 @@
-<style>
-table { font: 11px 'Lucida Grande' }
-.result { color: GrayText; padding-left: 4px; padding-right: 8px }
-.result:before { content: "expected: " }
-</style>
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
 
-<table>
-
-<tr><td><input type="text" id="f" size="5" maxlength="4"></td>
-<td class="result">123</td>
-<td class="description">set value attribute that violates maxlength (with pasted value)</td></tr>
-
-<tr><td><input type="text" id="e" size="5" maxlength="4"></td>
-<td class="result">1234</td>
-<td class="description">set value property that violates maxlength (with pasted value)</td></tr>
-
-<tr><td><input type="text" id="d" size="5"></td>
-<td class="result">1234</td>
-<td class="description">set maxlength attribute that is smaller than pasted value</td></tr>
-
-<tr><td><input type="text" id="c" size="5"></td>
-<td class="result">1234</td>
-<td class="description">set maxLength property that is smaller than pasted value</td></tr>
-
-<tr><td><input type="text" id="j" size="5" maxlength="4"></td>
-<td class="result">123</td>
-<td class="description">set value attribute that violates maxlength (with pasted value)</td></tr>
-
-<tr><td><input type="text" id="i" size="5" maxlength="4"></td>
-<td class="result">12x&#x305;&#x332;4</td>
-<td class="description">set value property that violates maxlength (with pasted value)</td></tr>
-
-<tr><td><input type="text" id="h" size="5"></td>
-<td class="result">12x&#x305;&#x332;4</td>
-<td class="description">set maxlength attribute that is smaller than pasted value</td></tr>
-
-<tr><td><input type="text" id="g" size="5"></td>
-<td class="result">12x&#x305;&#x332;4</td>
-<td class="description">set maxLength property that is smaller than pasted value</td></tr>
-
-<tr><td><input type="text" id="k" size="5" maxlength="4"></td>
-<td class="result">12x&#x305;&#x332;4</td>
-<td class="description">pasting too much text</td></tr>
-
-</table>
+<input type="text" id="f" size="5" maxlength="4">
+<input type="text" id="e" size="5" maxlength="4">
+<input type="text" id="d" size="5">
+<input type="text" id="c" size="5">
+<input type="text" id="j" size="5" maxlength="4">
+<input type="text" id="i" size="5" maxlength="4">
+<input type="text" id="h" size="5">
+<input type="text" id="g" size="5">
+<input type="text" id="k" size="5" maxlength="4">
 
 <script>
+function domValueOf(id) {
+    return document.getElementById(id).value;
+}
+function visibleValueOf(id) {
+    var el = document.getElementById(id);
+    el.focus();
+    document.execCommand('SelectAll');
+    return document.getSelection().toString();
+}
+
 var fancyX = "x" + String.fromCharCode(0x305) + String.fromCharCode(0x332);
-document.getElementById("c").focus();
-document.execCommand("InsertHTML", false, "12345");
-document.getElementById("c").maxLength = 4;
-document.getElementById("d").focus();
-document.execCommand("InsertHTML", false, "12345");
-document.getElementById("d").setAttribute('maxlength', 4);
-document.getElementById("e").focus();
-document.execCommand("InsertHTML", false, "123");
-document.getElementById("e").value = '12345';
+
+debug("set value attribute that violates maxlength (with pasted value)");
 document.getElementById("f").focus();
 document.execCommand("InsertHTML", false, "123");
 document.getElementById("f").setAttribute('value', '12345');
-document.getElementById("g").focus();
-document.execCommand("InsertHTML", false, "12x&#x305;&#x332;45");
-document.getElementById("g").maxLength = 4;
-document.getElementById("h").focus();
-document.execCommand("InsertHTML", false, "12x&#x305;&#x332;45");
-document.getElementById("h").setAttribute('maxlength', 4);
-document.getElementById("i").focus();
+shouldBe("domValueOf('f')", "'123'");  // setAttribute() doesn't change the value because the value is dirty.
+shouldBe("visibleValueOf('f')", "'123'");
+
+debug("set value property that violates maxlength (with pasted value)");
+document.getElementById("e").focus();
 document.execCommand("InsertHTML", false, "123");
-document.getElementById("i").value = '12' + fancyX + '45';
+document.getElementById("e").value = '12345';
+shouldBe("domValueOf('e')", "'12345'");  // Unlike setAttribute(), .value property changes the value.
+shouldBe("visibleValueOf('e')", "'12345'");
+
+debug("set maxlength attribute that is smaller than pasted value");
+document.getElementById("d").focus();
+document.execCommand("InsertHTML", false, "12345");
+document.getElementById("d").setAttribute('maxlength', 4);
+shouldBe("domValueOf('d')", "'12345'");
+shouldBe("visibleValueOf('d')", "'12345'");
+
+debug("set maxLength property that is smaller than pasted value");
+document.getElementById("c").focus();
+document.execCommand("InsertHTML", false, "12345");
+document.getElementById("c").maxLength = 4;
+shouldBe("domValueOf('c')", "'12345'");
+shouldBe("visibleValueOf('c')", "'12345'");
+
+debug("set value attribute that violates maxlength (with pasted value)");
 document.getElementById("j").focus();
 document.execCommand("InsertHTML", false, "123");
 document.getElementById("j").setAttribute('value', '12' + fancyX + '45');
+shouldBe("domValueOf('j')", "'123'");
+shouldBe("visibleValueOf('j')", "'123'");
+
+debug("set value property that violates maxlength (with pasted value)");
+document.getElementById("i").focus();
+document.execCommand("InsertHTML", false, "123");
+document.getElementById("i").value = '12' + fancyX + '45';
+shouldBe("domValueOf('i')", "'12' + fancyX + '45'");
+shouldBe("visibleValueOf('i')", "'12' + fancyX + '45'");
+
+debug("set maxlength attribute that is smaller than pasted value");
+document.getElementById("h").focus();
+document.execCommand("InsertHTML", false, "12x&#x305;&#x332;45");
+document.getElementById("h").setAttribute('maxlength', 4);
+shouldBe("domValueOf('h')", "'12' + fancyX + '45'");
+shouldBe("visibleValueOf('h')", "'12' + fancyX + '45'");
+
+debug("set maxLength property that is smaller than pasted value");
+document.getElementById("g").focus();
+document.execCommand("InsertHTML", false, "12x&#x305;&#x332;45");
+document.getElementById("g").maxLength = 4;
+shouldBe("domValueOf('g')", "'12' + fancyX + '45'");
+shouldBe("visibleValueOf('g')", "'12' + fancyX + '45'");
+
+debug("pasting too much text");
 document.getElementById("k").focus();
 document.execCommand("InsertHTML", false, "12x&#x305;&#x332;45");
-document.getElementById("k").blur();
+shouldBe("domValueOf('k')", "'12' + fancyX + '4'");
+shouldBe("visibleValueOf('k')", "'12' + fancyX + '4'");
+
+var successfullyParsed = true;
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

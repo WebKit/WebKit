@@ -1,76 +1,78 @@
 This page tests that the maxlength attribute of the <input> element works correctly. http://bugs.webkit.org/show_bug.cgi?id=14388
 
-
 Attempting to insert 0 characters with maxLength = -1.
-PASS
+PASS 
 Attempting to insert 0 characters with maxLength = 100.
-PASS
+PASS 
 Attempting to insert 0 characters with maxLength = 524288.
-PASS
+PASS 
 Attempting to insert 0 characters with maxLength = 600000.
-PASS
+PASS 
 Attempting to insert 5 characters with maxLength = -1.
-PASS
+PASS 
 Attempting to insert 5 characters with maxLength = 100.
-PASS
+PASS 
 Attempting to insert 5 characters with maxLength = 524288.
-PASS
+PASS 
 Attempting to insert 5 characters with maxLength = 600000.
-PASS
+PASS 
 Attempting to insert 100 characters with maxLength = -1.
-PASS
+PASS 
 Attempting to insert 100 characters with maxLength = 100.
-PASS
+PASS 
 Attempting to insert 100 characters with maxLength = 524288.
-PASS
+PASS 
 Attempting to insert 100 characters with maxLength = 600000.
-PASS
+PASS 
 Attempting to insert 101 characters with maxLength = -1.
-PASS
+PASS 
 Attempting to insert 101 characters with maxLength = 100.
-PASS
+PASS 
 Attempting to insert 101 characters with maxLength = 524288.
-PASS
+PASS 
 Attempting to insert 101 characters with maxLength = 600000.
-PASS
+PASS 
 Attempting to insert 200 characters with maxLength = -1.
-PASS
+PASS 
 Attempting to insert 200 characters with maxLength = 100.
-PASS
+PASS 
 Attempting to insert 200 characters with maxLength = 524288.
-PASS
+PASS 
 Attempting to insert 200 characters with maxLength = 600000.
-PASS
+PASS 
 Attempting to insert 524287 characters with maxLength = -1.
-PASS
+PASS 
 Attempting to insert 524287 characters with maxLength = 100.
-PASS
+PASS 
 Attempting to insert 524287 characters with maxLength = 524288.
-PASS
+PASS 
 Attempting to insert 524287 characters with maxLength = 600000.
-PASS
+PASS 
 Attempting to insert 524288 characters with maxLength = -1.
-PASS
+PASS 
 Attempting to insert 524288 characters with maxLength = 100.
-PASS
+PASS 
 Attempting to insert 524288 characters with maxLength = 524288.
-PASS
+PASS 
 Attempting to insert 524288 characters with maxLength = 600000.
-PASS
+PASS 
 Attempting to insert 524289 characters with maxLength = -1.
-PASS
+PASS 
 Attempting to insert 524289 characters with maxLength = 100.
-PASS
+PASS 
 Attempting to insert 524289 characters with maxLength = 524288.
-PASS
+PASS 
 Attempting to insert 524289 characters with maxLength = 600000.
-PASS
+PASS 
 Attempting to insert 530000 characters with maxLength = -1.
-PASS
+PASS 
 Attempting to insert 530000 characters with maxLength = 100.
-PASS
+PASS 
 Attempting to insert 530000 characters with maxLength = 524288.
-PASS
+PASS 
 Attempting to insert 530000 characters with maxLength = 600000.
-PASS
+PASS 
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

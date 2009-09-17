@@ -1,4 +1,11 @@
-This test changes the value of the text field by simulating typing, and then gets the value. 
+This test changes the value of the text field by simulating typing, and then gets the value.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-Test 1 Passed. Maxlength works for default value. Test 2 Passed. Maxlength works for inserted text.
+PASS Maxlength shouldn't work for default value. 
+PASS Maxlength works for inserted text. 
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

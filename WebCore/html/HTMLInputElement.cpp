@@ -354,7 +354,7 @@ void HTMLInputElement::setInputType(const String& t)
                 m_data.setValue(String());
             }
             if (!didStoreValue && willStoreValue)
-                m_data.setValue(constrainValue(getAttribute(valueAttr)));
+                m_data.setValue(sanitizeValue(getAttribute(valueAttr)));
             else
                 InputElement::updateValueIfNeeded(m_data, this);
 
@@ -1053,7 +1053,7 @@ String HTMLInputElement::value() const
 
     String value = m_data.value();
     if (value.isNull()) {
-        value = constrainValue(getAttribute(valueAttr));
+        value = sanitizeValue(getAttribute(valueAttr));
 
         // If no attribute exists, then just use "on" or "" based off the checked() state of the control.
         if (value.isNull() && (inputType() == CHECKBOX || inputType() == RADIO))
@@ -1109,7 +1109,7 @@ void HTMLInputElement::setValue(const String& value)
         if (inputType() == FILE)
             m_fileList->clear();
         else {
-            m_data.setValue(constrainValue(value));
+            m_data.setValue(sanitizeValue(value));
             if (isTextField()) {
                 InputElement::updatePlaceholderVisibility(this, this);
                 if (inDocument())
@@ -1120,7 +1120,7 @@ void HTMLInputElement::setValue(const String& value)
             renderer()->updateFromElement();
         setNeedsStyleRecalc();
     } else
-        setAttribute(valueAttr, constrainValue(value));
+        setAttribute(valueAttr, sanitizeValue(value));
     
     if (isTextField()) {
         unsigned max = m_data.value().length();
@@ -1668,9 +1668,11 @@ FileList* HTMLInputElement::files()
     return m_fileList.get();
 }
 
-String HTMLInputElement::constrainValue(const String& proposedValue) const
+String HTMLInputElement::sanitizeValue(const String& proposedValue) const
 {
-    return InputElement::constrainValue(this, proposedValue, m_data.maxLength());
+    if (isTextField())
+        return InputElement::sanitizeValue(this, proposedValue);
+    return proposedValue;
 }
 
 bool HTMLInputElement::needsActivationCallback()

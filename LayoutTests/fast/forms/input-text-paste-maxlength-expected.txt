@@ -1,0 +1,31 @@
+set value attribute that violates maxlength (with pasted value)
+PASS domValueOf('f') is '123'
+PASS visibleValueOf('f') is '123'
+set value property that violates maxlength (with pasted value)
+PASS domValueOf('e') is '12345'
+PASS visibleValueOf('e') is '12345'
+set maxlength attribute that is smaller than pasted value
+PASS domValueOf('d') is '12345'
+PASS visibleValueOf('d') is '12345'
+set maxLength property that is smaller than pasted value
+PASS domValueOf('c') is '12345'
+PASS visibleValueOf('c') is '12345'
+set value attribute that violates maxlength (with pasted value)
+PASS domValueOf('j') is '123'
+PASS visibleValueOf('j') is '123'
+set value property that violates maxlength (with pasted value)
+PASS domValueOf('i') is '12' + fancyX + '45'
+PASS visibleValueOf('i') is '12' + fancyX + '45'
+set maxlength attribute that is smaller than pasted value
+PASS domValueOf('h') is '12' + fancyX + '45'
+PASS visibleValueOf('h') is '12' + fancyX + '45'
+set maxLength property that is smaller than pasted value
+PASS domValueOf('g') is '12' + fancyX + '45'
+PASS visibleValueOf('g') is '12' + fancyX + '45'
+pasting too much text
+PASS domValueOf('k') is '12' + fancyX + '4'
+PASS visibleValueOf('k') is '12' + fancyX + '4'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+        

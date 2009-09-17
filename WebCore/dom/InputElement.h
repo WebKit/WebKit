@@ -54,7 +54,7 @@ public:
     virtual String placeholder() const = 0;
     virtual void setPlaceholder(const String&) = 0;
 
-    virtual String constrainValue(const String&) const = 0;
+    virtual String sanitizeValue(const String&) const = 0;
     virtual void setValueFromRenderer(const String&) = 0;
 
     virtual void cacheSelection(int start, int end) = 0;
@@ -72,7 +72,12 @@ protected:
     static void updateSelectionRange(InputElement*, Element*, int start, int end);
     static void aboutToUnload(InputElement*, Element*);
     static void setValueFromRenderer(InputElementData&, InputElement*, Element*, const String&);
-    static String constrainValue(const InputElement*, const String& proposedValue, int maxLength);
+    // Replaces CRs and LFs, shrinks the value for s_maximumLength.
+    // This should be applied to values from the HTML value attribute and the DOM value property.
+    static String sanitizeValue(const InputElement*, const String&);
+    // Replaces CRs and LFs, shrinks the value for the specified maximum length.
+    // This should be applied to values specified by users.
+    static String sanitizeUserInputValue(const InputElement*, const String&, int);
     static void handleBeforeTextInsertedEvent(InputElementData&, InputElement*, Element*, Event*);
     static void parseSizeAttribute(InputElementData&, Element*, MappedAttribute*);
     static void parseMaxLengthAttribute(InputElementData&, InputElement*, Element*, MappedAttribute*);
