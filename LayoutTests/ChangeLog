@@ -1,3 +1,17 @@
+2009-09-17  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        REGRESSION: media/video-size-intrinsic-scale.html (and other media tests?) crashing/timing-out intermittently
+        https://bugs.webkit.org/show_bug.cgi?id=28845
+
+        Skip media/video-size-intrinsic-scale.html in hopes of stopping the crashers.
+        I ran the media tests with --iterations 30 w/o seeing a crash.
+        I also re-enabled media/video-source-add-src.html now that we know it is not at fault.
+
+        * media/video-source-add-src.html: Renamed from LayoutTests/media/video-source-add-src.html-disabled.
+        * platform/mac-leopard/Skipped:
+
 2009-09-17  Anton Muhin  <antonm@chromium.org>
 
         Reviewed by Adam Barth.

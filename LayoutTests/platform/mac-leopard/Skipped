@@ -14,3 +14,7 @@ platform/mac/accessibility/table-multi-bodies.html
 # Tests of font features not supported by ATSUI
 platform/mac/fast/text/myanmar-shaping.html
 platform/mac/fast/text/thai-combining-mark-positioning.html
+
+# Intermittent crashes/hangs caused by <rdar://problem/7228836>
+# https://bugs.webkit.org/show_bug.cgi?id=28845
+media/video-size-intrinsic-scale.html
