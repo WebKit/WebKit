@@ -67,6 +67,9 @@ using std::min;
 // - In platformFocusRingColor(), the use of ChromiumBridge to determine if
 //   we're in layout test mode.
 // - updateActiveState() and its use to update the cells' visual appearance.
+// - Altering paintMediaSliderTrack() and extraMediaControlsStyleSheet() to not
+//   use variables not defined. (The entire way we're drawing media controls is
+//   TBD.)
 //
 // For all other differences, if it was introduced in this file, then the
 // maintainer forgot to include it in the list; otherwise it is an update that
@@ -1681,7 +1684,6 @@ bool RenderThemeChromiumMac::paintMediaSliderTrack(RenderObject* o, const Render
     float duration = 0;
     if (MediaPlayer* player = mediaElement->player()) {
         duration = player->duration();
-        timeLoaded = player->maxTimeBuffered();
         currentTime = player->currentTime();
     }
  

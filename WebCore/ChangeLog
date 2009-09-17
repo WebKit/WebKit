@@ -1,3 +1,15 @@
+2009-09-17  Avi Drissman  <avi@chromium.org>
+
+        Reviewed by Dimitri Glazkov, build fix.
+
+        Change to make RenderThemeChromiumMac compile inside of non PLATFORM(MAC).
+        https://bugs.webkit.org/show_bug.cgi?id=29243
+
+        Covered by existing tests.
+
+        * rendering/RenderThemeChromiumMac.mm:
+        (WebCore::RenderThemeChromiumMac::paintMediaSliderTrack):
+
 2009-09-17  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Seidel.
