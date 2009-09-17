@@ -1,3 +1,39 @@
+2009-09-17  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        FontDescription.h includes RenderStyleConstants.h, which violates layering
+        https://bugs.webkit.org/show_bug.cgi?id=29327
+
+        * GNUmakefile.am: Added FontSmoothingMode.h.
+        * WebCore.gypi: Added FontSmoothingMode.h.
+        * WebCore.vcproj/WebCore.vcproj: Added FontSmoothingMode.h.
+        * WebCore.xcodeproj/project.pbxproj: Added FontSmoothingMode.h and made
+            it a private header.
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue): Get the
+            font smoothing mode via the font description.
+        * css/CSSPrimitiveValueMappings.h: Include FontSmoothingMode.h
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue): Updated for the rename
+            of FontSmoothing to FontSmoothingMode.
+        (WebCore::CSSPrimitiveValue::operator FontSmoothingMode): Ditto.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty): Get the font smoothing mode
+            via the font description.
+        * platform/graphics/FontDescription.h: Do not include
+            RenderStyleConstants.h.
+        (WebCore::FontDescription::fontSmoothing): Updated for the rename of
+            FontSmoothing to FontSmoothingMode.
+        (WebCore::FontDescription::setFontSmoothing): Ditto.
+        * platform/graphics/FontSmoothingMode.h: Added.
+        (WebCore::FontSmoothingMode): Moved the FontSmoothing enum from
+            RenderStyleConstants here and renamed it to this.
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::fontSmoothing): Removed this getter, since
+            this can be accessed via the font description.
+        * rendering/style/RenderStyleConstants.h: Moved the FontSmoothing enum
+            from here to FontSmoothingMode.h.
+
 2009-09-17  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx 2.9 build fix.

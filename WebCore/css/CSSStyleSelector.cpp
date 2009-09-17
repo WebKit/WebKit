@@ -3498,14 +3498,14 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitFontSmoothing: {
         FontDescription fontDescription = m_style->fontDescription();
         if (isInherit) 
-            fontDescription.setFontSmoothing(m_parentStyle->fontSmoothing());
+            fontDescription.setFontSmoothing(m_parentStyle->fontDescription().fontSmoothing());
         else if (isInitial)
             fontDescription.setFontSmoothing(AutoSmoothing);
         else {
             if (!primitiveValue)
                 return;
             int id = primitiveValue->getIdent();
-            FontSmoothing smoothing;
+            FontSmoothingMode smoothing;
             switch (id) {
                 case CSSValueAuto:
                     smoothing = AutoSmoothing;

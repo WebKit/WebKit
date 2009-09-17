@@ -18537,6 +18537,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\graphics\FontSmoothingMode.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\graphics\FontTraitsMask.h"
 					>
 				</File>

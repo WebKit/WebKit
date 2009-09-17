@@ -1486,6 +1486,7 @@ webcore_sources += \
 	WebCore/platform/graphics/FontFastPath.cpp \
 	WebCore/platform/graphics/FontRenderingMode.h \
 	WebCore/platform/graphics/FontSelector.h \
+	WebCore/platform/graphics/FontSmoothingMode.h \
 	WebCore/platform/graphics/FontTraitsMask.h \
 	WebCore/platform/graphics/GeneratedImage.cpp \
 	WebCore/platform/graphics/GeneratedImage.h \

@@ -655,6 +655,7 @@
 		371F51A20D262FA000ECE0D5 /* CSSSegmentedFontFace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 371F51A00D262FA000ECE0D5 /* CSSSegmentedFontFace.cpp */; };
 		371F53E90D2704F900ECE0D5 /* CSSUnicodeRangeValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 371F53E70D2704F900ECE0D5 /* CSSUnicodeRangeValue.h */; };
 		371F53EA0D2704F900ECE0D5 /* CSSUnicodeRangeValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 371F53E80D2704F900ECE0D5 /* CSSUnicodeRangeValue.cpp */; };
+		37202199106213C600F25C4B /* FontSmoothingMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 37202198106213C600F25C4B /* FontSmoothingMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3724CA570E68A7E400DB4384 /* CoreTextController.h in Headers */ = {isa = PBXBuildFile; fileRef = 3724CA540E68A7E400DB4384 /* CoreTextController.h */; };
 		3724CA580E68A7E400DB4384 /* CoreTextController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3724CA550E68A7E400DB4384 /* CoreTextController.cpp */; };
 		3724CA590E68A7E400DB4384 /* FontMacATSUI.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3724CA560E68A7E400DB4384 /* FontMacATSUI.mm */; };
@@ -5808,6 +5809,7 @@
 		371F51A00D262FA000ECE0D5 /* CSSSegmentedFontFace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSSegmentedFontFace.cpp; sourceTree = "<group>"; };
 		371F53E70D2704F900ECE0D5 /* CSSUnicodeRangeValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSUnicodeRangeValue.h; sourceTree = "<group>"; };
 		371F53E80D2704F900ECE0D5 /* CSSUnicodeRangeValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSUnicodeRangeValue.cpp; sourceTree = "<group>"; };
+		37202198106213C600F25C4B /* FontSmoothingMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontSmoothingMode.h; sourceTree = "<group>"; };
 		3724CA540E68A7E400DB4384 /* CoreTextController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreTextController.h; sourceTree = "<group>"; };
 		3724CA550E68A7E400DB4384 /* CoreTextController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CoreTextController.cpp; sourceTree = "<group>"; };
 		3724CA560E68A7E400DB4384 /* FontMacATSUI.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FontMacATSUI.mm; sourceTree = "<group>"; };
@@ -13917,6 +13919,7 @@
 				72626E010EF022FE00A07E20 /* FontFastPath.cpp */,
 				37ACCE410DA2980F0089E602 /* FontRenderingMode.h */,
 				B2C3DA5A0D006CD600EF6F26 /* FontSelector.h */,
+				37202198106213C600F25C4B /* FontSmoothingMode.h */,
 				3784C34A0E11AA34007D8D48 /* FontTraitsMask.h */,
 				BCE04C930DAFF902007A0F41 /* GeneratedImage.cpp */,
 				BC23F0DA0DAFF4A4009FDC91 /* GeneratedImage.h */,
@@ -17823,6 +17826,7 @@
 				510D4A4F103177A20049EA54 /* WebSocketChannel.h in Headers */,
 				510D4A50103177A20049EA54 /* WebSocketChannelClient.h in Headers */,
 				51ABAE451043AB4A008C5260 /* WebSocketHandshake.h in Headers */,
+				37202199106213C600F25C4B /* FontSmoothingMode.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

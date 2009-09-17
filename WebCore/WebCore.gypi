@@ -2066,6 +2066,7 @@
             'platform/graphics/FontFastPath.cpp',
             'platform/graphics/FontRenderingMode.h',
             'platform/graphics/FontSelector.h',
+            'platform/graphics/FontSmoothingMode.h',
             'platform/graphics/FontTraitsMask.h',
             'platform/graphics/GeneratedImage.cpp',
             'platform/graphics/GeneratedImage.h',

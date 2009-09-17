@@ -1122,7 +1122,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyResize:
             return CSSPrimitiveValue::create(style->resize());
         case CSSPropertyWebkitFontSmoothing:
-            return CSSPrimitiveValue::create(style->fontSmoothing());
+            return CSSPrimitiveValue::create(style->fontDescription().fontSmoothing());
         case CSSPropertyZIndex:
             if (style->hasAutoZIndex())
                 return CSSPrimitiveValue::createIdentifier(CSSValueAuto);
