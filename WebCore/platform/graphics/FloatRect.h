@@ -33,7 +33,7 @@
 typedef struct CGRect CGRect;
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && PLATFORM(DARWIN))
 #ifdef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
 typedef struct CGRect NSRect;
 #else
@@ -127,7 +127,8 @@ public:
     operator CGRect() const;
 #endif
 
-#if PLATFORM(MAC) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)
+#if (PLATFORM(MAC) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)) \
+        || (PLATFORM(CHROMIUM) && PLATFORM(DARWIN))
     FloatRect(const NSRect&);
     operator NSRect() const;
 #endif

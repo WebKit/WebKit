@@ -1771,6 +1771,8 @@
             'platform/chromium/SuddenTerminationChromium.cpp',
             'platform/chromium/SystemTimeChromium.cpp',
             'platform/chromium/TemporaryLinkStubs.cpp',
+            'platform/chromium/ThemeChromiumMac.h',
+            'platform/chromium/ThemeChromiumMac.mm',
             'platform/chromium/WidgetChromium.cpp',
             'platform/chromium/WindowsVersion.cpp',
             'platform/chromium/WindowsVersion.h',

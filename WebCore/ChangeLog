@@ -1,3 +1,124 @@
+2009-09-17  Avi Drissman  <avi@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Update the Chromium Mac theming files (RenderTheme and Theme) to be
+        up-to-date.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=29243
+        http://crbug.com/19604
+
+        Covered by existing tests.
+
+        * WebCore.gypi:
+        * platform/chromium/ThemeChromiumMac.h: Added.
+        (WebCore::ThemeChromiumMac::ThemeChromiumMac):
+        (WebCore::ThemeChromiumMac::~ThemeChromiumMac):
+        (WebCore::ThemeChromiumMac::controlRequiresPreWhiteSpace):
+        * platform/chromium/ThemeChromiumMac.mm: Added.
+        (WebCore::):
+        (WebCore::platformTheme):
+        (WebCore::controlSizeForFont):
+        (WebCore::sizeFromFont):
+        (WebCore::setControlSize):
+        (WebCore::updateStates):
+        (WebCore::inflateRect):
+        (WebCore::checkboxSizes):
+        (WebCore::checkboxMargins):
+        (WebCore::checkboxSize):
+        (WebCore::checkbox):
+        (WebCore::paintCheckbox):
+        (WebCore::radioSizes):
+        (WebCore::radioMargins):
+        (WebCore::radioSize):
+        (WebCore::radio):
+        (WebCore::paintRadio):
+        (WebCore::buttonSizes):
+        (WebCore::buttonMargins):
+        (WebCore::button):
+        (WebCore::paintButton):
+        (WebCore::ThemeChromiumMac::baselinePositionAdjustment):
+        (WebCore::ThemeChromiumMac::controlFont):
+        (WebCore::ThemeChromiumMac::controlSize):
+        (WebCore::ThemeChromiumMac::minimumControlSize):
+        (WebCore::ThemeChromiumMac::controlBorder):
+        (WebCore::ThemeChromiumMac::controlPadding):
+        (WebCore::ThemeChromiumMac::inflateControlPaintRect):
+        (WebCore::ThemeChromiumMac::paint):
+        * platform/graphics/FloatPoint.h:
+        * platform/graphics/FloatRect.h:
+        * platform/graphics/FloatSize.h:
+        * platform/graphics/IntRect.h:
+        * rendering/RenderThemeChromiumMac.h:
+        (WebCore::RenderThemeChromiumMac::supportsControlTints):
+        (WebCore::RenderThemeChromiumMac::scrollbarControlSizeForPart):
+        (WebCore::RenderThemeChromiumMac::supportsSelectionForegroundColors):
+        * rendering/RenderThemeChromiumMac.mm:
+        (-[WebCoreRenderThemeNotificationObserver systemColorsDidChange:]):
+        (-[RTCMFlippedView isFlipped]):
+        (-[RTCMFlippedView currentEditor]):
+        (WebCore::):
+        (WebCore::FlippedView):
+        (WebCore::RenderTheme::themeForPage):
+        (WebCore::RenderThemeChromiumMac::platformActiveListBoxSelectionForegroundColor):
+        (WebCore::RenderThemeChromiumMac::platformInactiveListBoxSelectionForegroundColor):
+        (WebCore::RenderThemeChromiumMac::platformInactiveListBoxSelectionBackgroundColor):
+        (WebCore::RenderThemeChromiumMac::systemFont):
+        (WebCore::convertNSColorToColor):
+        (WebCore::menuBackgroundColor):
+        (WebCore::RenderThemeChromiumMac::systemColor):
+        (WebCore::RenderThemeChromiumMac::isControlStyled):
+        (WebCore::RenderThemeChromiumMac::adjustRepaintRect):
+        (WebCore::RenderThemeChromiumMac::inflateRect):
+        (WebCore::RenderThemeChromiumMac::convertToPaintingRect):
+        (WebCore::RenderThemeChromiumMac::setFontFromControlSize):
+        (WebCore::RenderThemeChromiumMac::paintTextField):
+        (WebCore::RenderThemeChromiumMac::paintCapsLockIndicator):
+        (WebCore::RenderThemeChromiumMac::paintTextArea):
+        (WebCore::RenderThemeChromiumMac::paintMenuList):
+        (WebCore::TopGradientInterpolate):
+        (WebCore::BottomGradientInterpolate):
+        (WebCore::MainGradientInterpolate):
+        (WebCore::TrackGradientInterpolate):
+        (WebCore::RenderThemeChromiumMac::paintMenuListButtonGradients):
+        (WebCore::RenderThemeChromiumMac::paintMenuListButton):
+        (WebCore::RenderThemeChromiumMac::popupInternalPaddingLeft):
+        (WebCore::RenderThemeChromiumMac::popupInternalPaddingRight):
+        (WebCore::RenderThemeChromiumMac::popupInternalPaddingTop):
+        (WebCore::RenderThemeChromiumMac::popupInternalPaddingBottom):
+        (WebCore::RenderThemeChromiumMac::adjustMenuListButtonStyle):
+        (WebCore::RenderThemeChromiumMac::adjustSliderTrackStyle):
+        (WebCore::RenderThemeChromiumMac::adjustSliderThumbStyle):
+        (WebCore::RenderThemeChromiumMac::paintSliderThumb):
+        (WebCore::RenderThemeChromiumMac::paintSearchField):
+        (WebCore::RenderThemeChromiumMac::setSearchCellState):
+        (WebCore::RenderThemeChromiumMac::adjustSearchFieldStyle):
+        (WebCore::RenderThemeChromiumMac::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeChromiumMac::adjustSearchFieldCancelButtonStyle):
+        (WebCore::RenderThemeChromiumMac::adjustSearchFieldDecorationStyle):
+        (WebCore::RenderThemeChromiumMac::paintSearchFieldDecoration):
+        (WebCore::RenderThemeChromiumMac::adjustSearchFieldResultsDecorationStyle):
+        (WebCore::RenderThemeChromiumMac::paintSearchFieldResultsDecoration):
+        (WebCore::RenderThemeChromiumMac::adjustSearchFieldResultsButtonStyle):
+        (WebCore::RenderThemeChromiumMac::paintSearchFieldResultsButton):
+        (WebCore::mediaControllerTheme):
+        (WebCore::RenderThemeChromiumMac::adjustSliderThumbSize):
+        (WebCore::getMediaUIPartStateFlags):
+        (WebCore::getUnzoomedRectAndAdjustCurrentContext):
+        (WebCore::RenderThemeChromiumMac::paintMediaFullscreenButton):
+        (WebCore::RenderThemeChromiumMac::paintMediaMuteButton):
+        (WebCore::RenderThemeChromiumMac::paintMediaPlayButton):
+        (WebCore::RenderThemeChromiumMac::paintMediaSeekBackButton):
+        (WebCore::RenderThemeChromiumMac::paintMediaSeekForwardButton):
+        (WebCore::RenderThemeChromiumMac::paintMediaSliderTrack):
+        (WebCore::RenderThemeChromiumMac::paintMediaSliderThumb):
+        (WebCore::RenderThemeChromiumMac::paintMediaRewindButton):
+        (WebCore::RenderThemeChromiumMac::paintMediaReturnToRealtimeButton):
+        (WebCore::RenderThemeChromiumMac::paintMediaControlsBackground):
+        (WebCore::RenderThemeChromiumMac::paintMediaCurrentTime):
+        (WebCore::RenderThemeChromiumMac::paintMediaTimeRemaining):
+        (WebCore::RenderThemeChromiumMac::extraMediaControlsStyleSheet):
+
 2009-09-16  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Darin Adler.

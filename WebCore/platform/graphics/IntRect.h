@@ -33,7 +33,7 @@
 typedef struct CGRect CGRect;
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && PLATFORM(DARWIN))
 #ifdef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
 typedef struct CGRect NSRect;
 #else
@@ -161,7 +161,8 @@ public:
     operator SkIRect() const;
 #endif
 
-#if PLATFORM(MAC) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)
+#if (PLATFORM(MAC) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)) \
+        || (PLATFORM(CHROMIUM) && PLATFORM(DARWIN))
     operator NSRect() const;
 #endif
 
@@ -198,7 +199,8 @@ inline bool operator!=(const IntRect& a, const IntRect& b)
 IntRect enclosingIntRect(const CGRect&);
 #endif
 
-#if PLATFORM(MAC) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)
+#if (PLATFORM(MAC) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)) \
+        || (PLATFORM(CHROMIUM) && PLATFORM(DARWIN))
 IntRect enclosingIntRect(const NSRect&);
 #endif
 

@@ -36,7 +36,7 @@
 typedef struct CGPoint CGPoint;
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && PLATFORM(DARWIN))
 #ifdef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
 typedef struct CGPoint NSPoint;
 #else
@@ -84,7 +84,8 @@ public:
     operator CGPoint() const;
 #endif
 
-#if PLATFORM(MAC) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)
+#if (PLATFORM(MAC) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)) \
+        || (PLATFORM(CHROMIUM) && PLATFORM(DARWIN))
     FloatPoint(const NSPoint&);
     operator NSPoint() const;
 #endif
