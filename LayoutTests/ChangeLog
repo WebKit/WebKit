@@ -1,5 +1,11 @@
 2009-09-18  Dan Bernstein  <mitz@apple.com>
 
+        Updated test result for <rdar://problem/7050773>
+
+        * platform/mac/accessibility/document-attributes-expected.txt:
+
+2009-09-18  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Darin Adler.
 
         Test for <rdar://problem/7050773> REGRESSION (r40098) Crash at
