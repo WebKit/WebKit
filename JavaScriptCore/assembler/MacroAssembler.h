@@ -30,11 +30,11 @@
 
 #if ENABLE(ASSEMBLER)
 
-#if PLATFORM_ARM_ARCH(7)
+#if PLATFORM(ARM_THUMB2)
 #include "MacroAssemblerARMv7.h"
 namespace JSC { typedef MacroAssemblerARMv7 MacroAssemblerBase; };
 
-#elif PLATFORM(ARM)
+#elif PLATFORM(ARM_TRADITIONAL)
 #include "MacroAssemblerARM.h"
 namespace JSC { typedef MacroAssemblerARM MacroAssemblerBase; };
 

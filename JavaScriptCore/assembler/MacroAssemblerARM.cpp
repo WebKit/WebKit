@@ -26,7 +26,7 @@
 
 #include "config.h"
 
-#if ENABLE(ASSEMBLER) && PLATFORM(ARM) && !PLATFORM_ARM_ARCH(7)
+#if ENABLE(ASSEMBLER) && PLATFORM(ARM_TRADITIONAL)
 
 #include "MacroAssemblerARM.h"
 
@@ -64,4 +64,4 @@ const bool MacroAssemblerARM::s_isVFPPresent = isVFPPresent();
 
 }
 
-#endif // ENABLE(ASSEMBLER) && PLATFORM(ARM) && !PLATFORM_ARM_ARCH(7)
+#endif // ENABLE(ASSEMBLER) && PLATFORM(ARM_TRADITIONAL)

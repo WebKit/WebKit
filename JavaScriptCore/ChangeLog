@@ -1,3 +1,40 @@
+2009-09-18  Gabor Loki  <loki@inf.u-szeged.hu>
+
+        Reviewed by Gavin Barraclough.
+
+        Defines two pseudo-platforms for ARM and Thumb-2 instruction set.
+        https://bugs.webkit.org/show_bug.cgi?id=29122
+
+        Introduces WTF_PLATFORM_ARM_TRADITIONAL and WTF_PLATFORM_ARM_THUMB2
+        macros on ARM platforms. The PLATFORM(ARM_THUMB2) should be used
+        when Thumb-2 instruction set is the required target. The
+        PLATFORM(ARM_TRADITIONAL) is for generic ARM instruction set. In
+        case where the code is common the PLATFORM(ARM) have to be used.
+
+        * assembler/ARMAssembler.cpp:
+        * assembler/ARMAssembler.h:
+        * assembler/ARMv7Assembler.h:
+        * assembler/MacroAssembler.h:
+        * assembler/MacroAssemblerARM.cpp:
+        * assembler/MacroAssemblerARM.h:
+        * assembler/MacroAssemblerCodeRef.h:
+        (JSC::MacroAssemblerCodePtr::MacroAssemblerCodePtr):
+        * jit/ExecutableAllocator.h:
+        * jit/JIT.h:
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::beginUninterruptedSequence):
+        (JSC::JIT::preserveReturnAddressAfterCall):
+        (JSC::JIT::restoreReturnAddressBeforeReturn):
+        (JSC::JIT::restoreArgumentReference):
+        (JSC::JIT::restoreArgumentReferenceForTrampoline):
+        * jit/JITOpcodes.cpp:
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::JITThunks):
+        * jit/JITStubs.h:
+        * wtf/Platform.h:
+        * yarr/RegexJIT.cpp:
+        (JSC::Yarr::RegexGenerator::generateEnter):
+
 2009-09-18  Joerg Bornemann  <joerg.bornemann@nokia.com>
 
         Reviewed by Simon Hausmann.

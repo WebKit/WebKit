@@ -1681,7 +1681,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     // so pull them off now
     addPtr(Imm32(NativeCallFrameSize - sizeof(NativeFunctionCalleeSignature)), stackPointerRegister);
 
-#elif PLATFORM(ARM) && !PLATFORM_ARM_ARCH(7)
+#elif PLATFORM(ARM_TRADITIONAL)
     emitGetFromCallFrameHeader32(RegisterFile::ArgumentCount, regT0);
 
     // Allocate stack space for our arglist

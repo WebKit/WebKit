@@ -37,7 +37,7 @@
 
 // ASSERT_VALID_CODE_POINTER checks that ptr is a non-null pointer, and that it is a valid
 // instruction address on the platform (for example, check any alignment requirements).
-#if PLATFORM_ARM_ARCH(7)
+#if PLATFORM(ARM_THUMB2)
 // ARM/thumb instructions must be 16-bit aligned, but all code pointers to be loaded
 // into the processor are decorated with the bottom bit set, indicating that this is
 // thumb code (as oposed to 32-bit traditional ARM).  The first test checks for both
@@ -124,7 +124,7 @@ public:
     }
 
     explicit MacroAssemblerCodePtr(void* value)
-#if PLATFORM_ARM_ARCH(7)
+#if PLATFORM(ARM_THUMB2)
         // Decorate the pointer as a thumb code pointer.
         : m_value(reinterpret_cast<char*>(value) + 1)
 #else
@@ -141,7 +141,7 @@ public:
     }
 
     void* executableAddress() const { return m_value; }
-#if PLATFORM_ARM_ARCH(7)
+#if PLATFORM(ARM_THUMB2)
     // To use this pointer as a data address remove the decoration.
     void* dataLocation() const { ASSERT_VALID_CODE_POINTER(m_value); return reinterpret_cast<char*>(m_value) - 1; }
 #else

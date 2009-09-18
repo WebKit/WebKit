@@ -180,7 +180,7 @@ public:
     static void cacheFlush(void*, size_t)
     {
     }
-#elif PLATFORM_ARM_ARCH(7) && PLATFORM(IPHONE)
+#elif PLATFORM(ARM_THUMB2) && PLATFORM(IPHONE)
     static void cacheFlush(void* code, size_t size)
     {
         sys_dcache_flush(code, size);
@@ -191,7 +191,7 @@ public:
     {
         User::IMB_Range(code, static_cast<char*>(code) + size);
     }
-#elif PLATFORM(ARM)
+#elif PLATFORM(ARM_TRADITIONAL)
     static void cacheFlush(void* code, size_t size)
     {
     #if COMPILER(GCC) && (GCC_VERSION >= 30406)

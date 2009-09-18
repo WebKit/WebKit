@@ -110,7 +110,7 @@ ALWAYS_INLINE JIT::Call JIT::emitNakedCall(CodePtr function)
 
 ALWAYS_INLINE void JIT::beginUninterruptedSequence(int insnSpace, int constSpace)
 {
-#if PLATFORM(ARM) && !PLATFORM_ARM_ARCH(7)
+#if PLATFORM(ARM_TRADITIONAL)
 #ifndef NDEBUG
     // Ensure the label after the sequence can also fit
     insnSpace += sizeof(ARMWord);
@@ -139,24 +139,7 @@ ALWAYS_INLINE void JIT::endUninterruptedSequence(int insnSpace, int constSpace)
 
 #endif
 
-#if PLATFORM(X86) || PLATFORM(X86_64) || (PLATFORM(ARM) && !PLATFORM_ARM_ARCH(7))
-
-ALWAYS_INLINE void JIT::preserveReturnAddressAfterCall(RegisterID reg)
-{
-    pop(reg);
-}
-
-ALWAYS_INLINE void JIT::restoreReturnAddressBeforeReturn(RegisterID reg)
-{
-    push(reg);
-}
-
-ALWAYS_INLINE void JIT::restoreReturnAddressBeforeReturn(Address address)
-{
-    push(address);
-}
-
-#elif PLATFORM_ARM_ARCH(7)
+#if PLATFORM(ARM_THUMB2)
 
 ALWAYS_INLINE void JIT::preserveReturnAddressAfterCall(RegisterID reg)
 {
@@ -173,6 +156,23 @@ ALWAYS_INLINE void JIT::restoreReturnAddressBeforeReturn(Address address)
     loadPtr(address, linkRegister);
 }
 
+#else // PLATFORM(X86) || PLATFORM(X86_64) || PLATFORM(ARM_TRADITIONAL)
+
+ALWAYS_INLINE void JIT::preserveReturnAddressAfterCall(RegisterID reg)
+{
+    pop(reg);
+}
+
+ALWAYS_INLINE void JIT::restoreReturnAddressBeforeReturn(RegisterID reg)
+{
+    push(reg);
+}
+
+ALWAYS_INLINE void JIT::restoreReturnAddressBeforeReturn(Address address)
+{
+    push(address);
+}
+
 #endif
 
 #if USE(JIT_STUB_ARGUMENT_VA_LIST)
@@ -186,7 +186,7 @@ ALWAYS_INLINE void JIT::restoreArgumentReference()
 {
     move(stackPointerRegister, firstArgumentRegister);
     poke(callFrameRegister, OBJECT_OFFSETOF(struct JITStackFrame, callFrame) / sizeof (void*));
-#if PLATFORM(ARM) && !PLATFORM_ARM_ARCH(7)
+#if PLATFORM(ARM_TRADITIONAL)
     move(ctiReturnRegister, ARMRegisters::lr);
 #endif
 }
@@ -195,7 +195,7 @@ ALWAYS_INLINE void JIT::restoreArgumentReferenceForTrampoline()
 #if PLATFORM(X86)
     // Within a trampoline the return address will be on the stack at this point.
     addPtr(Imm32(sizeof(void*)), stackPointerRegister, firstArgumentRegister);
-#elif PLATFORM_ARM_ARCH(7)
+#elif PLATFORM(ARM_THUMB2)
     move(stackPointerRegister, firstArgumentRegister);
 #endif
     // In the trampoline on x86-64, the first argument register is not overwritten.

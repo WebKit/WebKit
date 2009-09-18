@@ -29,7 +29,7 @@
 
 #include <wtf/Platform.h>
 
-#if ENABLE(ASSEMBLER) && PLATFORM(ARM)
+#if ENABLE(ASSEMBLER) && PLATFORM(ARM_TRADITIONAL)
 
 #include "AssemblerBufferWithConstantPool.h"
 #include <wtf/Assertions.h>
@@ -764,6 +764,6 @@ namespace JSC {
 
 } // namespace JSC
 
-#endif // ENABLE(ASSEMBLER) && PLATFORM(ARM)
+#endif // ENABLE(ASSEMBLER) && PLATFORM(ARM_TRADITIONAL)
 
 #endif // ARMAssembler_h

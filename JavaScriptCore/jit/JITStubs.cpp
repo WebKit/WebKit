@@ -193,7 +193,7 @@ SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
     "ret" "\n"
 );
 
-#elif COMPILER(GCC) && PLATFORM_ARM_ARCH(7)
+#elif COMPILER(GCC) && PLATFORM(ARM_THUMB2)
 
 #if USE(JIT_STUB_ARGUMENT_VA_LIST)
 #error "JIT_STUB_ARGUMENT_VA_LIST not supported on ARMv7."
@@ -452,7 +452,7 @@ SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
     "ret" "\n"
 );
 
-#elif COMPILER(GCC) && PLATFORM_ARM_ARCH(7)
+#elif COMPILER(GCC) && PLATFORM(ARM_THUMB2)
 
 #if USE(JIT_STUB_ARGUMENT_VA_LIST)
 #error "JIT_STUB_ARGUMENT_VA_LIST not supported on ARMv7."
@@ -516,7 +516,7 @@ SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
     "bx lr" "\n"
 );
 
-#elif COMPILER(GCC) && PLATFORM(ARM)
+#elif COMPILER(GCC) && PLATFORM(ARM_TRADITIONAL)
 
 asm volatile (
 ".globl " SYMBOL_STRING(ctiTrampoline) "\n"
@@ -636,7 +636,7 @@ JITThunks::JITThunks(JSGlobalData* globalData)
 {
     JIT::compileCTIMachineTrampolines(globalData, &m_executablePool, &m_ctiStringLengthTrampoline, &m_ctiVirtualCallLink, &m_ctiVirtualCall, &m_ctiNativeCallThunk);
 
-#if PLATFORM_ARM_ARCH(7)
+#if PLATFORM(ARM_THUMB2)
     // Unfortunate the arm compiler does not like the use of offsetof on JITStackFrame (since it contains non POD types),
     // and the OBJECT_OFFSETOF macro does not appear constantish enough for it to be happy with its use in COMPILE_ASSERT
     // macros.
@@ -876,7 +876,7 @@ static NEVER_INLINE void throwStackOverflowError(CallFrame* callFrame, JSGlobalD
         } \
     } while (0)
 
-#if PLATFORM_ARM_ARCH(7)
+#if PLATFORM(ARM_THUMB2)
 
 #define DEFINE_STUB_FUNCTION(rtype, op) \
     extern "C" { \

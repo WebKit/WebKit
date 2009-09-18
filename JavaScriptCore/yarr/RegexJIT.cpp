@@ -1309,7 +1309,7 @@ class RegexGenerator : private MacroAssembler {
         loadPtr(Address(X86Registers::ebp, 2 * sizeof(void*)), output);
     #endif
 #elif PLATFORM(ARM)
-#if !PLATFORM_ARM_ARCH(7)
+#if PLATFORM(ARM_TRADITIONAL)
         push(ARMRegisters::lr);
 #endif
         push(ARMRegisters::r4);
