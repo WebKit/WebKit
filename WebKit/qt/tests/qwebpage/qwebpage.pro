@@ -6,4 +6,4 @@ RESOURCES  += tst_qwebpage.qrc
 QT += testlib network
 QMAKE_RPATHDIR = $$OUTPUT_DIR/lib $$QMAKE_RPATHDIR
 
-symbian:TARGET.UID3 = 0x200267C7
+symbian:TARGET.UID3 = 0xA000E53E

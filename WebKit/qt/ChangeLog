@@ -1,3 +1,24 @@
+2009-09-18  Norbert Leser  <norbert.leser@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        Corrected the Symbian specific UID3 values to be assigned
+        from the "unprotected" pool that permits self-signing of
+        those test and demo executables. (Added new UID3 values
+        where they were missing for new components.)
+
+        * QGVLauncher/QGVLauncher.pro:
+        * QtLauncher/QtLauncher.pro:
+        * tests/benchmarks/loading/tst_loading.pro:
+        * tests/benchmarks/painting/tst_painting.pro:
+        * tests/qwebelement/qwebelement.pro:
+        * tests/qwebframe/qwebframe.pro:
+        * tests/qwebhistory/qwebhistory.pro:
+        * tests/qwebhistoryinterface/qwebhistoryinterface.pro:
+        * tests/qwebpage/qwebpage.pro:
+        * tests/qwebplugindatabase/qwebplugindatabase.pro:
+        * tests/qwebview/qwebview.pro:
+
 2009-09-17  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Simon Hausmann.
