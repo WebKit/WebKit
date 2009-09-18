@@ -94,6 +94,10 @@ body.attached #toolbar {
     padding-left: 0;
 }
 
+body.attached.platform-qt #toolbar {
+    cursor: auto;
+}
+
 body.attached.inactive #toolbar {
     border-top: 1px solid rgb(64%, 64%, 64%);
 }
@@ -226,6 +230,10 @@ body.attached #search-results-matches {
 }
 
 body.detached .toolbar-item.close {
+    display: none;
+}
+
+body.attached.platform-qt .toolbar-item.close {
     display: none;
 }
 
@@ -370,6 +378,10 @@ select.status-bar-item:active {
 
 body.detached #dock-status-bar-item .glyph {
     -webkit-mask-image: url(Images/dockButtonGlyph.png);
+}
+
+body.platform-qt #dock-status-bar-item {
+    display: none
 }
 
 #console-status-bar-item .glyph {

@@ -784,7 +784,7 @@ WebInspector.toggleAttach = function()
 
 WebInspector.toolbarDragStart = function(event)
 {
-    if (!WebInspector.attached && InspectorController.platform() !== "mac-leopard")
+    if ((!WebInspector.attached && InspectorController.platform() !== "mac-leopard") || InspectorController.platform() == "qt")
         return;
 
     var target = event.target;

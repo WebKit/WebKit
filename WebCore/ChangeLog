@@ -1,3 +1,18 @@
+2009-09-18  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Web inspector UI adjustments specific to the Qt platform:
+        - Hide the close button
+        - Hide the dock button
+        - Disable the draggable toolbar
+
+        https://bugs.webkit.org/show_bug.cgi?id=29384
+
+        * inspector/front-end/inspector.css:
+        * inspector/front-end/inspector.js:
+        (WebInspector.toolbarDragStart):
+
 2009-09-18  Joerg Bornemann  <joerg.bornemann@nokia.com>
 
         Reviewed by Simon Hausmann.
