@@ -119,12 +119,11 @@ public:
 protected:
     virtual void virtualBegin() { }
     virtual void virtualEnd() { }
+    virtual RuntimeObjectImp* newRuntimeObject(ExecState*);
 
     RefPtr<RootObject> _rootObject;
 
 private:
-    virtual RuntimeObjectImp* newRuntimeObject(ExecState*);
-
     RuntimeObjectImp* m_runtimeObject;
 };
 

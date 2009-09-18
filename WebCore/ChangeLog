@@ -1,3 +1,13 @@
+2009-09-18  Csaba Osztrogonac  <oszi@inf.u-szeged.hu>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] Buildfix caused by http://trac.webkit.org/changeset/48513
+        https://bugs.webkit.org/show_bug.cgi?id=29351
+
+        * bridge/qt/qt_instance.h: createRuntimeObject method renamed to newRuntimeObject.
+        * bridge/runtime.h: Visibility of newRuntimeObject method modified to protected.
+
 2009-09-18  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Timothy Hatcher.
