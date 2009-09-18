@@ -175,8 +175,8 @@ namespace JSC {
         virtual void put(ExecState*, const Identifier&, JSValue, PutPropertySlot&);
         virtual void putWithAttributes(ExecState*, const Identifier& propertyName, JSValue value, unsigned attributes);
 
-        virtual void defineGetter(ExecState*, const Identifier& propertyName, JSObject* getterFunc);
-        virtual void defineSetter(ExecState*, const Identifier& propertyName, JSObject* setterFunc);
+        virtual void defineGetter(ExecState*, const Identifier& propertyName, JSObject* getterFunc, unsigned attributes);
+        virtual void defineSetter(ExecState*, const Identifier& propertyName, JSObject* setterFunc, unsigned attributes);
 
         // Linked list of all global objects that use the same JSGlobalData.
         JSGlobalObject*& head() { return d()->globalData->head; }

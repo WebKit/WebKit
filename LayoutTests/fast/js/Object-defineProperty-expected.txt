@@ -1,0 +1,63 @@
+Test to ensure correct behaviour of Object.defineProperty
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS JSON.stringify(Object.getOwnPropertyDescriptor(Object.defineProperty({}, 'foo', {value:1}), 'foo')) is JSON.stringify({value: 1, writable: false, enumerable: false, configurable: false})
+PASS JSON.stringify(Object.getOwnPropertyDescriptor(Object.defineProperty({}, 'foo', {}), 'foo')) is JSON.stringify({writable: false, enumerable: false, configurable: false})
+PASS JSON.stringify(Object.getOwnPropertyDescriptor(Object.defineProperty({}, 'foo', {get:undefined}), 'foo')) is JSON.stringify({writable: true, enumerable: false, configurable: false})
+PASS JSON.stringify(Object.getOwnPropertyDescriptor(Object.defineProperty({}, 'foo', {value:1, writable: false}), 'foo')) is JSON.stringify({value: 1, writable: false, enumerable: false, configurable: false})
+PASS JSON.stringify(Object.getOwnPropertyDescriptor(Object.defineProperty({}, 'foo', {value:1, writable: true}), 'foo')) is JSON.stringify({value: 1, writable: true, enumerable: false, configurable: false})
+PASS JSON.stringify(Object.getOwnPropertyDescriptor(Object.defineProperty({}, 'foo', {value:1, enumerable: false}), 'foo')) is JSON.stringify({value: 1, writable: false, enumerable: false, configurable: false})
+PASS JSON.stringify(Object.getOwnPropertyDescriptor(Object.defineProperty({}, 'foo', {value:1, enumerable: true}), 'foo')) is JSON.stringify({value: 1, writable: false, enumerable: true, configurable: false})
+PASS JSON.stringify(Object.getOwnPropertyDescriptor(Object.defineProperty({}, 'foo', {value:1, configurable: false}), 'foo')) is JSON.stringify({value: 1, writable: false, enumerable: false, configurable: false})
+PASS JSON.stringify(Object.getOwnPropertyDescriptor(Object.defineProperty({}, 'foo', {value:1, configurable: true}), 'foo')) is JSON.stringify({value: 1, writable: false, enumerable: false, configurable: true})
+PASS JSON.stringify(Object.getOwnPropertyDescriptor(Object.defineProperty([1,2,3], 'foo', {value:1, configurable: true}), 'foo')) is JSON.stringify({value: 1, writable: false, enumerable: false, configurable: true})
+PASS Object.getOwnPropertyDescriptor(Object.defineProperty([1,2,3], '1', {value:'foo', configurable: true}), '1').value is 'foo'
+PASS a=[1,2,3], Object.defineProperty(a, '1', {value:'foo', configurable: true}), a[1] is 'foo'
+PASS Object.getOwnPropertyDescriptor(Object.defineProperty([1,2,3], '1', {get:getter, configurable: true}), '1').get is getter
+PASS Object.defineProperty([1,2,3], '1', {get:getter, configurable: true})[1] threw exception called getter.
+PASS Object.defineProperty() threw exception TypeError: Properties can only be defined on Objects..
+PASS Object.defineProperty(null) threw exception TypeError: Properties can only be defined on Objects..
+PASS Object.defineProperty('foo') threw exception TypeError: Properties can only be defined on Objects..
+PASS Object.defineProperty({}) threw exception TypeError: Property description must be an object..
+PASS Object.defineProperty({}, 'foo') threw exception TypeError: Property description must be an object..
+PASS Object.defineProperty({}, 'foo', {get:undefined, value:true}).foo is true
+PASS Object.defineProperty(createUnconfigurableProperty({}, 'foo'), 'foo', {configurable: true}) threw exception TypeError: Attempting to configurable attribute of unconfigurable property..
+PASS Object.defineProperty(createUnconfigurableProperty({}, 'foo'), 'foo', {writable: true}) threw exception TypeError: Attempting to change writable attribute of unconfigurable property..
+PASS Object.defineProperty(createUnconfigurableProperty({}, 'foo'), 'foo', {enumerable: true}) threw exception TypeError: Attempting to change enumerable attribute of unconfigurable property..
+PASS Object.defineProperty(createUnconfigurableProperty({}, 'foo', false, true), 'foo', {enumerable: false}), 'foo' threw exception TypeError: Attempting to change enumerable attribute of unconfigurable property..
+PASS JSON.stringify(Object.getOwnPropertyDescriptor(Object.defineProperty(createUnconfigurableProperty({}, 'foo', true), 'foo', {writable: false}), 'foo')) is JSON.stringify({value: 1, writable: true, enumerable: false, configurable: false})
+PASS Object.defineProperty({}, 'foo', {value:1, get: function(){}}) threw exception TypeError: Invalid property.  'value' present on property with getter or setter..
+PASS Object.defineProperty({}, 'foo', {value:1, set: function(){}}) threw exception TypeError: Invalid property.  'value' present on property with getter or setter..
+PASS Object.defineProperty({}, 'foo', {writable:true, get: function(){}}) threw exception TypeError: Invalid property.  'writable' present on property with getter or setter..
+PASS Object.defineProperty({}, 'foo', {writable:true, set: function(){}}) threw exception TypeError: Invalid property.  'writable' present on property with getter or setter..
+PASS Object.defineProperty({}, 'foo', {get: null}) threw exception TypeError: Getter must be a function..
+PASS Object.defineProperty({}, 'foo', {set: null}) threw exception TypeError: Setter must be a function..
+PASS Object.defineProperty({}, 'foo', {set: setter}).foo='test' threw exception called setter.
+PASS Object.defineProperty(Object.defineProperty({}, 'foo', {set: setter}), 'foo', {set: setter1}) threw exception TypeError: Attempting to change the setter of an unconfigurable property..
+PASS Object.defineProperty(Object.defineProperty({}, 'foo', {set: setter}), 'foo', {get: getter1}) threw exception TypeError: Attempting to change the getter of an unconfigurable property..
+PASS Object.defineProperty(Object.defineProperty({}, 'foo', {set: setter}), 'foo', {value: 1}) threw exception TypeError: Attempting to change access mechanism for an unconfigurable property..
+PASS Object.defineProperty(Object.defineProperty({}, 'foo', {set: setter, configurable: true}), 'foo', {set: setter1}).foo='test' threw exception called setter1.
+PASS Object.defineProperty(Object.defineProperty({}, 'foo', {set: setter, configurable: true}), 'foo', {get: getter1}).foo threw exception called getter1.
+PASS Object.defineProperty(Object.defineProperty({}, 'foo', {set: setter, configurable: true}), 'foo', {value: true}).foo is true
+PASS 'foo' in Object.defineProperty(Object.defineProperty({}, 'foo', {set: setter, configurable: true}), 'foo', {writable: true}) is true
+PASS Object.defineProperty(Object.defineProperty({}, 'foo', {set: setter, configurable: true}), 'foo', {writable: true}).foo is undefined.
+PASS Object.defineProperty({}, 'foo', {get: getter}).foo threw exception called getter.
+PASS Object.defineProperty(Object.defineProperty({}, 'foo', {get: getter}), 'foo', {get: getter1}) threw exception TypeError: Attempting to change the getter of an unconfigurable property..
+PASS Object.defineProperty(Object.defineProperty({}, 'foo', {get: getter}), 'foo', {set: setter1}) threw exception TypeError: Attempting to change the setter of an unconfigurable property..
+PASS Object.defineProperty(Object.defineProperty({}, 'foo', {get: getter, configurable: true}), 'foo', {get: getter1}).foo threw exception called getter1.
+PASS Object.defineProperty(Object.defineProperty({}, 'foo', {get: getter, configurable: true}), 'foo', {set: setter1}).foo='test' threw exception called setter1.
+PASS Object.defineProperty(Object.defineProperty({}, 'foo', {get: getter, configurable: true}), 'foo', {value: true}).foo is true
+PASS Object.defineProperty(Object.defineProperty({}, 'foo', {get: getter, configurable: true}), 'foo', {writable: true}).foo is undefined.
+PASS 'foo' in Object.defineProperty(Object.defineProperty({}, 'foo', {get: getter, configurable: true}), 'foo', {writable: true}) is true
+PASS Object.defineProperty(Object.defineProperty({}, 'foo', {value: 1}), 'foo', {set: setter1}) threw exception TypeError: Attempting to change access mechanism for an unconfigurable property..
+PASS Object.defineProperty(Object.defineProperty({}, 'foo', {value: 1, configurable: true}), 'foo', {set: setter1}).foo='test' threw exception called setter1.
+PASS Object.defineProperty(Object.defineProperty({}, 'foo', {value: 1}), 'foo', {get: getter1}) threw exception TypeError: Attempting to change access mechanism for an unconfigurable property..
+PASS Object.defineProperty(Object.defineProperty({}, 'foo', {value: 1}), 'foo', {set: setter1}) threw exception TypeError: Attempting to change access mechanism for an unconfigurable property..
+PASS Object.defineProperty(Object.defineProperty({}, 'foo', {value: 1, configurable: true}), 'foo', {get: getter1}).foo threw exception called getter1.
+PASS Object.defineProperty(Object.defineProperty({}, 'foo', {value: 1, configurable: true}), 'foo', {set: setter1}).foo='test' threw exception called setter1.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

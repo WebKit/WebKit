@@ -1,3 +1,80 @@
+2009-09-18  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Implement ES5 Object.defineProperty function
+        https://bugs.webkit.org/show_bug.cgi?id=29503
+
+        Implement Object.defineProperty.  This requires adding the API to
+        ObjectConstructor, along with a helper function that implements the
+        ES5 internal [[ToPropertyDescriptor]] function.  It then adds
+        JSObject::defineOwnProperty that implements the appropriate ES5 semantics.
+        Currently defineOwnProperty uses a delete followed by a put to redefine
+        attributes of a property, clearly this is less efficient than it could be
+        but we can improve this if it needs to be possible in future.
+
+        * JavaScriptCore.exp:
+        * debugger/DebuggerActivation.cpp:
+        (JSC::DebuggerActivation::defineGetter):
+        (JSC::DebuggerActivation::defineSetter):
+        * debugger/DebuggerActivation.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JITStubs.cpp:
+          Update defineGetter/Setter calls
+        * runtime/CommonIdentifiers.h:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::getOwnPropertySlot):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::defineGetter):
+        (JSC::JSGlobalObject::defineSetter):
+        * runtime/JSGlobalObject.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::defineGetter):
+        (JSC::JSObject::defineSetter):
+        (JSC::putDescriptor):
+        (JSC::JSObject::defineOwnProperty):
+        * runtime/JSObject.h:
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ObjectConstructor::ObjectConstructor):
+        (JSC::objectConstructorGetOwnPropertyDescriptor):
+        (JSC::toPropertyDescriptor):
+        (JSC::objectConstructorDefineProperty):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncDefineGetter):
+        (JSC::objectProtoFuncDefineSetter):
+        * runtime/PropertyDescriptor.cpp:
+        (JSC::PropertyDescriptor::writable):
+        (JSC::PropertyDescriptor::enumerable):
+        (JSC::PropertyDescriptor::configurable):
+        (JSC::PropertyDescriptor::isDataDescriptor):
+        (JSC::PropertyDescriptor::isGenericDescriptor):
+        (JSC::PropertyDescriptor::isAccessorDescriptor):
+        (JSC::PropertyDescriptor::getter):
+        (JSC::PropertyDescriptor::setter):
+        (JSC::PropertyDescriptor::setDescriptor):
+        (JSC::PropertyDescriptor::setAccessorDescriptor):
+        (JSC::PropertyDescriptor::setWritable):
+        (JSC::PropertyDescriptor::setEnumerable):
+        (JSC::PropertyDescriptor::setConfigurable):
+        (JSC::PropertyDescriptor::setSetter):
+        (JSC::PropertyDescriptor::setGetter):
+        (JSC::PropertyDescriptor::equalTo):
+        (JSC::PropertyDescriptor::attributesEqual):
+        (JSC::PropertyDescriptor::attributesWithOverride):
+        * runtime/PropertyDescriptor.h:
+        (JSC::PropertyDescriptor::PropertyDescriptor):
+        (JSC::PropertyDescriptor::value):
+        (JSC::PropertyDescriptor::setValue):
+        (JSC::PropertyDescriptor::isEmpty):
+        (JSC::PropertyDescriptor::writablePresent):
+        (JSC::PropertyDescriptor::enumerablePresent):
+        (JSC::PropertyDescriptor::configurablePresent):
+        (JSC::PropertyDescriptor::setterPresent):
+        (JSC::PropertyDescriptor::getterPresent):
+        (JSC::PropertyDescriptor::operator==):
+        (JSC::PropertyDescriptor::):
+
 2009-09-18  Gabor Loki  <loki@inf.u-szeged.hu>
 
         Reviewed by Gavin Barraclough.

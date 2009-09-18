@@ -1,3 +1,19 @@
+2009-09-18  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Implement ES5 Object.defineProperty function
+        https://bugs.webkit.org/show_bug.cgi?id=29503
+
+        Add testcases for Object.defineProperty.
+
+        * fast/js/Object-defineProperty-expected.txt: Added.
+        * fast/js/Object-defineProperty.html: Added.
+        * fast/js/resources/Object-defineProperty.js: Added.
+        * http/tests/security/resources/xss-DENIED-defineProperty-attacker.html: Added.
+        * http/tests/security/xss-DENIED-defineProperty-expected.txt: Added.
+        * http/tests/security/xss-DENIED-defineProperty.html: Added.
+
 2009-09-18  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Alexey Proskuryakov.

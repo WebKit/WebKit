@@ -3731,7 +3731,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         JSObject* baseObj = asObject(callFrame->r(base).jsValue());
         Identifier& ident = callFrame->codeBlock()->identifier(property);
         ASSERT(callFrame->r(function).jsValue().isObject());
-        baseObj->defineSetter(callFrame, ident, asObject(callFrame->r(function).jsValue()));
+        baseObj->defineSetter(callFrame, ident, asObject(callFrame->r(function).jsValue()), 0);
 
         ++vPC;
         NEXT_INSTRUCTION();

@@ -627,6 +627,10 @@ sub GenerateHeader
 
     # Custom getPropertyNames function exists on DOMWindow
     push(@headerContent, "    virtual void getPropertyNames(JSC::ExecState*, JSC::PropertyNameArray&);\n") if $interfaceName eq "DOMWindow";
+
+    # Custom defineProperty function exists on DOMWindow
+    push(@headerContent, "    virtual bool defineOwnProperty(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertyDescriptor&, bool shouldThrow);\n") if $interfaceName eq "DOMWindow";
+
     # Custom getOwnPropertyNames function
     push(@headerContent, "    virtual void getOwnPropertyNames(JSC::ExecState*, JSC::PropertyNameArray&);\n") if ($dataNode->extendedAttributes->{"CustomGetPropertyNames"} || $dataNode->extendedAttributes->{"HasIndexGetter"} || $dataNode->extendedAttributes->{"HasCustomIndexGetter"} || $dataNode->extendedAttributes->{"HasNumericIndexGetter"});    
 
@@ -634,10 +638,10 @@ sub GenerateHeader
     push(@headerContent, "    virtual bool getPropertyAttributes(JSC::ExecState*, const JSC::Identifier&, unsigned& attributes) const;\n") if $dataNode->extendedAttributes->{"CustomGetPropertyAttributes"};
 
     # Custom defineGetter function
-    push(@headerContent, "    virtual void defineGetter(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSObject* getterFunction);\n") if $dataNode->extendedAttributes->{"CustomDefineGetter"};
+    push(@headerContent, "    virtual void defineGetter(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSObject* getterFunction, unsigned attributes);\n") if $dataNode->extendedAttributes->{"CustomDefineGetter"};
 
     # Custom defineSetter function
-    push(@headerContent, "    virtual void defineSetter(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSObject* setterFunction);\n") if $dataNode->extendedAttributes->{"CustomDefineSetter"};
+    push(@headerContent, "    virtual void defineSetter(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSObject* setterFunction, unsigned attributes);\n") if $dataNode->extendedAttributes->{"CustomDefineSetter"};
 
     # Custom lookupGetter function
     push(@headerContent, "    virtual JSC::JSValue lookupGetter(JSC::ExecState*, const JSC::Identifier& propertyName);\n") if $dataNode->extendedAttributes->{"CustomLookupGetter"};
@@ -800,7 +804,7 @@ sub GenerateHeader
     }
 
     # Custom defineGetter function
-    push(@headerContent, "    virtual void defineGetter(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSObject* getterFunction);\n") if $dataNode->extendedAttributes->{"CustomPrototypeDefineGetter"};
+    push(@headerContent, "    virtual void defineGetter(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSObject* getterFunction, unsigned attributes);\n") if $dataNode->extendedAttributes->{"CustomPrototypeDefineGetter"};
 
     push(@headerContent, "    ${className}Prototype(PassRefPtr<JSC::Structure> structure) : JSC::JSObject(structure) { }\n");
 

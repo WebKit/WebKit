@@ -30,29 +30,40 @@
 
 #include "GetterSetter.h"
 #include "JSObject.h"
+#include "Operations.h"
 
 namespace JSC {
+unsigned PropertyDescriptor::defaultAttributes = (DontDelete << 1) - 1;
+
 bool PropertyDescriptor::writable() const
 {
-    ASSERT(!hasAccessors());
+    ASSERT(!isAccessorDescriptor());
     return !(m_attributes & ReadOnly);
 }
 
 bool PropertyDescriptor::enumerable() const
 {
-    ASSERT(isValid());
     return !(m_attributes & DontEnum);
 }
 
 bool PropertyDescriptor::configurable() const
 {
-    ASSERT(isValid());
     return !(m_attributes & DontDelete);
 }
 
-bool PropertyDescriptor::hasAccessors() const
+bool PropertyDescriptor::isDataDescriptor() const
 {
-    return !!(m_attributes & (Getter | Setter));
+    return m_value || (m_seenAttributes & WritablePresent);
+}
+
+bool PropertyDescriptor::isGenericDescriptor() const
+{
+    return !isAccessorDescriptor() && !isDataDescriptor();
+}
+
+bool PropertyDescriptor::isAccessorDescriptor() const
+{
+    return m_getter || m_setter;
 }
 
 void PropertyDescriptor::setUndefined()
@@ -63,32 +74,31 @@ void PropertyDescriptor::setUndefined()
 
 JSValue PropertyDescriptor::getter() const
 {
-    ASSERT(hasAccessors());
-    if (!m_getter)
-        return jsUndefined();
+    ASSERT(isAccessorDescriptor());
     return m_getter;
 }
 
 JSValue PropertyDescriptor::setter() const
 {
-    ASSERT(hasAccessors());
-    if (!m_setter)
-        return jsUndefined();
+    ASSERT(isAccessorDescriptor());
     return m_setter;
 }
 
 void PropertyDescriptor::setDescriptor(JSValue value, unsigned attributes)
 {
     ASSERT(value);
+    m_attributes = attributes;
     if (attributes & (Getter | Setter)) {
         GetterSetter* accessor = asGetterSetter(value);
         m_getter = accessor->getter();
         m_setter = accessor->setter();
         ASSERT(m_getter || m_setter);
+        m_seenAttributes = EnumerablePresent | ConfigurablePresent;
+        m_attributes &= ~ReadOnly;
     } else {
         m_value = value;
+        m_seenAttributes = EnumerablePresent | ConfigurablePresent | WritablePresent;
     }
-    m_attributes = attributes;
 }
 
 void PropertyDescriptor::setAccessorDescriptor(JSValue getter, JSValue setter, unsigned attributes)
@@ -98,6 +108,88 @@ void PropertyDescriptor::setAccessorDescriptor(JSValue getter, JSValue setter, u
     m_attributes = attributes;
     m_getter = getter;
     m_setter = setter;
+    m_attributes &= ~ReadOnly;
+    m_seenAttributes = EnumerablePresent | ConfigurablePresent;
+}
+
+void PropertyDescriptor::setWritable(bool writable)
+{
+    if (writable)
+        m_attributes &= ~ReadOnly;
+    else
+        m_attributes |= ReadOnly;
+    m_seenAttributes |= WritablePresent;
+}
+
+void PropertyDescriptor::setEnumerable(bool enumerable)
+{
+    if (enumerable)
+        m_attributes &= ~DontEnum;
+    else
+        m_attributes |= DontEnum;
+    m_seenAttributes |= EnumerablePresent;
+}
+
+void PropertyDescriptor::setConfigurable(bool configurable)
+{
+    if (configurable)
+        m_attributes &= ~DontDelete;
+    else
+        m_attributes |= DontDelete;
+    m_seenAttributes |= ConfigurablePresent;
+}
+
+void PropertyDescriptor::setSetter(JSValue setter)
+{
+    m_setter = setter;
+    m_attributes |= Setter;
+    m_attributes &= ~ReadOnly;
+}
+
+void PropertyDescriptor::setGetter(JSValue getter)
+{
+    m_getter = getter;
+    m_attributes |= Getter;
+    m_attributes &= ~ReadOnly;
+}
+
+bool PropertyDescriptor::equalTo(const PropertyDescriptor& other) const
+{
+    if (!other.m_value == m_value ||
+        !other.m_getter == m_getter ||
+        !other.m_setter == m_setter)
+        return false;
+    return (!m_value || JSValue::strictEqual(other.m_value, m_value)) && 
+           (!m_getter || JSValue::strictEqual(other.m_getter, m_getter)) && 
+           (!m_setter || JSValue::strictEqual(other.m_setter, m_setter)) &&
+           attributesEqual(other);
+}
+
+bool PropertyDescriptor::attributesEqual(const PropertyDescriptor& other) const
+{
+    unsigned mismatch = other.m_attributes ^ m_attributes;
+    unsigned sharedSeen = other.m_seenAttributes & m_seenAttributes;
+    if (sharedSeen & WritablePresent && mismatch & ReadOnly)
+        return false;
+    if (sharedSeen & ConfigurablePresent && mismatch & DontDelete)
+        return false;
+    if (sharedSeen & EnumerablePresent && mismatch & DontEnum)
+        return false;
+    return true;
+}
+
+unsigned PropertyDescriptor::attributesWithOverride(const PropertyDescriptor& other) const
+{
+    unsigned mismatch = other.m_attributes ^ m_attributes;
+    unsigned sharedSeen = other.m_seenAttributes & m_seenAttributes;
+    unsigned newAttributes = m_attributes & defaultAttributes;
+    if (sharedSeen & WritablePresent && mismatch & ReadOnly)
+        newAttributes ^= ReadOnly;
+    if (sharedSeen & ConfigurablePresent && mismatch & DontDelete)
+        newAttributes ^= DontDelete;
+    if (sharedSeen & EnumerablePresent && mismatch & DontEnum)
+        newAttributes ^= DontEnum;
+    return newAttributes;
 }
 
 }

@@ -148,7 +148,7 @@ bool JSQuarantinedObjectWrapper::getOwnPropertyDescriptor(ExecState* exec, const
     PropertyDescriptor unwrappedDescriptor;
     bool result = m_unwrappedObject->getOwnPropertyDescriptor(unwrappedExecState(), identifier, unwrappedDescriptor);
 
-    if (unwrappedDescriptor.hasAccessors()) {
+    if (unwrappedDescriptor.isAccessorDescriptor()) {
         descriptor.setAccessorDescriptor(wrapOutgoingValue(unwrappedExecState(), unwrappedDescriptor.getter()),
                                          wrapOutgoingValue(unwrappedExecState(), unwrappedDescriptor.setter()),
                                          unwrappedDescriptor.attributes());
@@ -176,6 +176,33 @@ void JSQuarantinedObjectWrapper::put(ExecState* exec, unsigned identifier, JSVal
     m_unwrappedObject->put(unwrappedExecState(), identifier, prepareIncomingValue(exec, value));
 
     transferExceptionToExecState(exec);
+}
+
+bool JSQuarantinedObjectWrapper::defineOwnProperty(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor, bool shouldThrow)
+{
+    if (!allowsSetProperty())
+        return false;
+
+    PropertyDescriptor wrappedDescriptor;
+    if (descriptor.isDataDescriptor()) {
+        wrappedDescriptor.setValue(prepareIncomingValue(exec, descriptor.value()));
+        if (wrappedDescriptor.writablePresent())
+            wrappedDescriptor.setWritable(descriptor.writable());
+    } else if (descriptor.isAccessorDescriptor()) {
+        if (descriptor.getter())
+            wrappedDescriptor.setGetter(prepareIncomingValue(exec, descriptor.getter()));
+        if (descriptor.setter())
+            wrappedDescriptor.setSetter(prepareIncomingValue(exec, descriptor.setter()));
+    }
+    if (wrappedDescriptor.enumerablePresent())
+        wrappedDescriptor.setEnumerable(descriptor.enumerable());
+    if (wrappedDescriptor.configurablePresent())
+        wrappedDescriptor.setConfigurable(descriptor.configurable());
+    
+    bool result = m_unwrappedObject->defineOwnProperty(unwrappedExecState(), propertyName, wrappedDescriptor, shouldThrow);
+    
+    transferExceptionToExecState(exec);
+    return result;
 }
 
 bool JSQuarantinedObjectWrapper::deleteProperty(ExecState* exec, const Identifier& identifier)

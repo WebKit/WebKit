@@ -1,0 +1,56 @@
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://127.0.0.1:8000/security/xss-DENIED-defineProperty.html from frame with URL http://localhost:8000/security/resources/xss-DENIED-defineProperty-attacker.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://127.0.0.1:8000/security/xss-DENIED-defineProperty.html from frame with URL http://localhost:8000/security/resources/xss-DENIED-defineProperty-attacker.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://127.0.0.1:8000/security/xss-DENIED-defineProperty.html from frame with URL http://localhost:8000/security/resources/xss-DENIED-defineProperty-attacker.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://127.0.0.1:8000/security/xss-DENIED-defineProperty.html from frame with URL http://localhost:8000/security/resources/xss-DENIED-defineProperty-attacker.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://127.0.0.1:8000/security/xss-DENIED-defineProperty.html from frame with URL http://localhost:8000/security/resources/xss-DENIED-defineProperty-attacker.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://127.0.0.1:8000/security/xss-DENIED-defineProperty.html from frame with URL http://localhost:8000/security/resources/xss-DENIED-defineProperty-attacker.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://127.0.0.1:8000/security/xss-DENIED-defineProperty.html from frame with URL http://localhost:8000/security/resources/xss-DENIED-defineProperty-attacker.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://127.0.0.1:8000/security/xss-DENIED-defineProperty.html from frame with URL http://localhost:8000/security/resources/xss-DENIED-defineProperty-attacker.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://127.0.0.1:8000/security/xss-DENIED-defineProperty.html from frame with URL http://localhost:8000/security/resources/xss-DENIED-defineProperty-attacker.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://127.0.0.1:8000/security/xss-DENIED-defineProperty.html from frame with URL http://localhost:8000/security/resources/xss-DENIED-defineProperty-attacker.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://127.0.0.1:8000/security/xss-DENIED-defineProperty.html from frame with URL http://localhost:8000/security/resources/xss-DENIED-defineProperty-attacker.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://127.0.0.1:8000/security/xss-DENIED-defineProperty.html from frame with URL http://localhost:8000/security/resources/xss-DENIED-defineProperty-attacker.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://127.0.0.1:8000/security/xss-DENIED-defineProperty.html from frame with URL http://localhost:8000/security/resources/xss-DENIED-defineProperty-attacker.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://127.0.0.1:8000/security/xss-DENIED-defineProperty.html from frame with URL http://localhost:8000/security/resources/xss-DENIED-defineProperty-attacker.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://127.0.0.1:8000/security/xss-DENIED-defineProperty.html from frame with URL http://localhost:8000/security/resources/xss-DENIED-defineProperty-attacker.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://127.0.0.1:8000/security/xss-DENIED-defineProperty.html from frame with URL http://localhost:8000/security/resources/xss-DENIED-defineProperty-attacker.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://127.0.0.1:8000/security/xss-DENIED-defineProperty.html from frame with URL http://localhost:8000/security/resources/xss-DENIED-defineProperty-attacker.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://127.0.0.1:8000/security/xss-DENIED-defineProperty.html from frame with URL http://localhost:8000/security/resources/xss-DENIED-defineProperty-attacker.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://127.0.0.1:8000/security/xss-DENIED-defineProperty.html from frame with URL http://localhost:8000/security/resources/xss-DENIED-defineProperty-attacker.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://127.0.0.1:8000/security/xss-DENIED-defineProperty.html from frame with URL http://localhost:8000/security/resources/xss-DENIED-defineProperty-attacker.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://127.0.0.1:8000/security/xss-DENIED-defineProperty.html from frame with URL http://localhost:8000/security/resources/xss-DENIED-defineProperty-attacker.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://127.0.0.1:8000/security/xss-DENIED-defineProperty.html from frame with URL http://localhost:8000/security/resources/xss-DENIED-defineProperty-attacker.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://127.0.0.1:8000/security/xss-DENIED-defineProperty.html from frame with URL http://localhost:8000/security/resources/xss-DENIED-defineProperty-attacker.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://127.0.0.1:8000/security/xss-DENIED-defineProperty.html from frame with URL http://localhost:8000/security/resources/xss-DENIED-defineProperty-attacker.html. Domains, protocols and ports must match.
+
+
+PASS: cross-site assignment of Object constructor not allowed
+PASS: cross-site assignment of new property not allowed
+PASS: cross-site assignment of location.hash not allowed
+PASS: cross-site assignment of location.search not allowed
+PASS: cross-site assignment of location.newProperty not allowed
+PASS: cross-site assignment of location.reload not allowed
+

@@ -182,11 +182,11 @@ void JSLocation::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propert
     Base::getOwnPropertyNames(exec, propertyNames);
 }
 
-void JSLocation::defineGetter(ExecState* exec, const Identifier& propertyName, JSObject* getterFunction)
+void JSLocation::defineGetter(ExecState* exec, const Identifier& propertyName, JSObject* getterFunction, unsigned attributes)
 {
     if (propertyName == exec->propertyNames().toString || propertyName == exec->propertyNames().valueOf)
         return;
-    Base::defineGetter(exec, propertyName, getterFunction);
+    Base::defineGetter(exec, propertyName, getterFunction, attributes);
 }
 
 static void navigateIfAllowed(ExecState* exec, Frame* frame, const KURL& url, bool lockHistory, bool lockBackForwardList)
@@ -362,11 +362,11 @@ bool JSLocationPrototype::putDelegate(ExecState* exec, const Identifier& propert
     return (propertyName == exec->propertyNames().toString || propertyName == exec->propertyNames().valueOf);
 }
 
-void JSLocationPrototype::defineGetter(ExecState* exec, const Identifier& propertyName, JSObject* getterFunction)
+void JSLocationPrototype::defineGetter(ExecState* exec, const Identifier& propertyName, JSObject* getterFunction, unsigned attributes)
 {
     if (propertyName == exec->propertyNames().toString || propertyName == exec->propertyNames().valueOf)
         return;
-    Base::defineGetter(exec, propertyName, getterFunction);
+    Base::defineGetter(exec, propertyName, getterFunction, attributes);
 }
 
 } // namespace WebCore

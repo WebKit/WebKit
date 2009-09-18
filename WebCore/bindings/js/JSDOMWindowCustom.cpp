@@ -488,7 +488,7 @@ bool JSDOMWindow::getPropertyAttributes(ExecState* exec, const Identifier& prope
     return Base::getPropertyAttributes(exec, propertyName, attributes);
 }
 
-void JSDOMWindow::defineGetter(ExecState* exec, const Identifier& propertyName, JSObject* getterFunction)
+void JSDOMWindow::defineGetter(ExecState* exec, const Identifier& propertyName, JSObject* getterFunction, unsigned attributes)
 {
     // Only allow defining getters by frames in the same origin.
     if (!allowsAccessFrom(exec))
@@ -498,15 +498,23 @@ void JSDOMWindow::defineGetter(ExecState* exec, const Identifier& propertyName, 
     if (propertyName == "location")
         return;
 
-    Base::defineGetter(exec, propertyName, getterFunction);
+    Base::defineGetter(exec, propertyName, getterFunction, attributes);
 }
 
-void JSDOMWindow::defineSetter(ExecState* exec, const Identifier& propertyName, JSObject* setterFunction)
+void JSDOMWindow::defineSetter(ExecState* exec, const Identifier& propertyName, JSObject* setterFunction, unsigned attributes)
 {
     // Only allow defining setters by frames in the same origin.
     if (!allowsAccessFrom(exec))
         return;
-    Base::defineSetter(exec, propertyName, setterFunction);
+    Base::defineSetter(exec, propertyName, setterFunction, attributes);
+}
+
+bool JSDOMWindow::defineOwnProperty(JSC::ExecState* exec, const JSC::Identifier& propertyName, JSC::PropertyDescriptor& descriptor, bool shouldThrow)
+{
+    // Only allow defining properties in this way by frames in the same origin, as it allows setters to be introduced.
+    if (!allowsAccessFrom(exec))
+        return false;
+    return Base::defineOwnProperty(exec, propertyName, descriptor, shouldThrow);
 }
 
 JSValue JSDOMWindow::lookupGetter(ExecState* exec, const Identifier& propertyName)

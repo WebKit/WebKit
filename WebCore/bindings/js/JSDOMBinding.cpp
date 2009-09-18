@@ -648,4 +648,10 @@ JSC::JSObject* toJSSequence(ExecState* exec, JSValue value, unsigned& length)
     return object;
 }
 
+bool DOMObject::defineOwnProperty(ExecState* exec, const Identifier&, PropertyDescriptor&, bool)
+{
+    throwError(exec, TypeError, "defineProperty is not supported on DOM Objects");
+    return false;
+}
+
 } // namespace WebCore

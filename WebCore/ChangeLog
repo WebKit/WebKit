@@ -1,3 +1,44 @@
+2009-09-18  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Implement ES5 Object.defineProperty function
+        https://bugs.webkit.org/show_bug.cgi?id=29503
+
+        Override defineOwnProperty on JSDOMWindowShell to forward appropriately,
+        and then override defineOwnProperty on JSDOMWindow to disallow cross origin
+        defineOwnProperty usage.  We also override defineOwnProperty on QuarantinedObjectWrapper
+        to ensure correct wrapping semantics of quarantined objects.
+
+        One major caveat in this patch is that it currently disallows the use
+        of Object.defineProperty on DOMObjects other than the window due to
+        the significant work involved in correctly propagating attributes and
+        ensuring correct semantics on dom objects.
+
+        Tests: fast/js/Object-defineProperty.html
+               http/tests/security/xss-DENIED-defineProperty.html
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::DOMObject::defineOwnProperty):
+        * bindings/js/JSDOMBinding.h:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::defineGetter):
+        (WebCore::JSDOMWindow::defineSetter):
+        (WebCore::JSDOMWindow::defineOwnProperty):
+        * bindings/js/JSDOMWindowShell.cpp:
+        (WebCore::JSDOMWindowShell::defineOwnProperty):
+        (WebCore::JSDOMWindowShell::defineGetter):
+        (WebCore::JSDOMWindowShell::defineSetter):
+        * bindings/js/JSDOMWindowShell.h:
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::JSLocation::defineGetter):
+        (WebCore::JSLocationPrototype::defineGetter):
+        * bindings/js/JSQuarantinedObjectWrapper.cpp:
+        (WebCore::JSQuarantinedObjectWrapper::getOwnPropertyDescriptor):
+        (WebCore::JSQuarantinedObjectWrapper::defineOwnProperty):
+        * bindings/js/JSQuarantinedObjectWrapper.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+
 2009-09-18  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

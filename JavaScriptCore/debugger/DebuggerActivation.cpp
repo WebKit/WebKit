@@ -81,14 +81,14 @@ bool DebuggerActivation::getPropertyAttributes(JSC::ExecState* exec, const Ident
     return m_activation->getPropertyAttributes(exec, propertyName, attributes);
 }
 
-void DebuggerActivation::defineGetter(ExecState* exec, const Identifier& propertyName, JSObject* getterFunction)
+void DebuggerActivation::defineGetter(ExecState* exec, const Identifier& propertyName, JSObject* getterFunction, unsigned attributes)
 {
-    m_activation->defineGetter(exec, propertyName, getterFunction);
+    m_activation->defineGetter(exec, propertyName, getterFunction, attributes);
 }
 
-void DebuggerActivation::defineSetter(ExecState* exec, const Identifier& propertyName, JSObject* setterFunction)
+void DebuggerActivation::defineSetter(ExecState* exec, const Identifier& propertyName, JSObject* setterFunction, unsigned attributes)
 {
-    m_activation->defineSetter(exec, propertyName, setterFunction);
+    m_activation->defineSetter(exec, propertyName, setterFunction, attributes);
 }
 
 JSValue DebuggerActivation::lookupGetter(ExecState* exec, const Identifier& propertyName)

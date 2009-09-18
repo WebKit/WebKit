@@ -186,10 +186,11 @@ namespace JSC {
 
         void fillGetterPropertySlot(PropertySlot&, JSValue* location);
 
-        virtual void defineGetter(ExecState*, const Identifier& propertyName, JSObject* getterFunction);
-        virtual void defineSetter(ExecState*, const Identifier& propertyName, JSObject* setterFunction);
+        virtual void defineGetter(ExecState*, const Identifier& propertyName, JSObject* getterFunction, unsigned attributes = 0);
+        virtual void defineSetter(ExecState*, const Identifier& propertyName, JSObject* setterFunction, unsigned attributes = 0);
         virtual JSValue lookupGetter(ExecState*, const Identifier& propertyName);
         virtual JSValue lookupSetter(ExecState*, const Identifier& propertyName);
+        virtual bool defineOwnProperty(ExecState*, const Identifier& propertyName, PropertyDescriptor&, bool shouldThrow);
 
         virtual bool isGlobalObject() const { return false; }
         virtual bool isVariableObject() const { return false; }

@@ -74,8 +74,9 @@ namespace WebCore {
         virtual void getPropertyNames(JSC::ExecState*, JSC::PropertyNameArray&);
         virtual void getOwnPropertyNames(JSC::ExecState*, JSC::PropertyNameArray&);
         virtual bool getPropertyAttributes(JSC::ExecState*, const JSC::Identifier& propertyName, unsigned& attributes) const;
-        virtual void defineGetter(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSObject* getterFunction);
-        virtual void defineSetter(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSObject* setterFunction);
+        virtual void defineGetter(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSObject* getterFunction, unsigned attributes);
+        virtual void defineSetter(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSObject* setterFunction, unsigned attributes);
+        virtual bool defineOwnProperty(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertyDescriptor&, bool shouldThrow);
         virtual JSC::JSValue lookupGetter(JSC::ExecState*, const JSC::Identifier& propertyName);
         virtual JSC::JSValue lookupSetter(JSC::ExecState*, const JSC::Identifier& propertyName);
         virtual JSC::JSObject* unwrappedObject();

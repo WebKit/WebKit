@@ -223,7 +223,7 @@ bool JSArray::getOwnPropertySlot(ExecState* exec, unsigned i, PropertySlot& slot
         }
     }
 
-    return false;
+    return JSObject::getOwnPropertySlot(exec, Identifier::from(exec, i), slot);
 }
 
 bool JSArray::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
