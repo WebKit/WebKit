@@ -1,3 +1,9 @@
+2009-09-18  Anders Carlsson  <andersca@apple.com>
+
+        Add failing tests to the skipped list.
+        
+        * platform/mac-snowleopard/Skipped:
+
 2009-09-18  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt.

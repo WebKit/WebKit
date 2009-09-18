@@ -5,6 +5,9 @@ plugins/netscape-throw-exception.html
 plugins/netscape-destroy-plugin-script-objects.html
 plugins/open-and-close-window-with-plugin.html
 
+plugins/mouse-events.html
+plugins/return-error-from-new-stream-doesnt-invoke-destroy-stream.html
+
 # Radar bugs needed for these
 fast/canvas/set-colors.html
 svg/W3C-SVG-1.1/coords-viewattr-01-b.svg
@@ -40,3 +43,4 @@ media/controls-drag-timebar.html
 
 #<rdar://problem/7144583> - Intermittent failure
 svg/css/glyph-orientation-rounding-test.xhtml
+
