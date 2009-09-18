@@ -1,3 +1,15 @@
+2009-09-18  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Simon Hausmann.
+
+        Update Qt build system for Web Socket.
+        https://bugs.webkit.org/show_bug.cgi?id=29270
+
+        * WebCore.pro:
+        * platform/network/qt/SocketStreamError.h: Added.
+        * platform/network/qt/SocketStreamHandle.h: Added.
+        * platform/network/qt/SocketStreamHandleSoup.cpp: Added.
+
 2009-09-18  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Darin Adler.
