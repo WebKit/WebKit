@@ -4,6 +4,7 @@ $expectedPassword = isset($_GET['password']) ? $_GET['password'] : 'password';
 $realm = isset($_GET['realm']) ? $_GET['realm'] : $_SERVER['REQUEST_URI'];
 
 header("Cache-Control: no-store");
+header("Connection: close");
 if (!isset($_SERVER['PHP_AUTH_USER']) || $_SERVER['PHP_AUTH_USER'] != $expectedUsername ||  
     !isset($_SERVER['PHP_AUTH_PW']) || $_SERVER['PHP_AUTH_PW'] != $expectedPassword) {
     header("WWW-Authenticate: Basic realm=\"" . $realm . "\"");

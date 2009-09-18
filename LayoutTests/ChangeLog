@@ -1,3 +1,23 @@
+2009-09-18  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Speculative fix for:
+        https://bugs.webkit.org/show_bug.cgi?id=29322
+        and
+        https://bugs.webkit.org/show_bug.cgi?id=29505
+
+        Adding a "Connection: close" header might make the tests work more reliably, 
+        and doesn't seem to make anything worse: They all continue to pass on my machine!
+
+        * http/tests/loading/resources/basic-auth-testing.php:
+        * http/tests/loading/resources/othersubresources/protected-resource.php:
+        * http/tests/loading/resources/protected-resource.php:
+        * http/tests/loading/resources/subresources/protected-resource.php:
+        * http/tests/xmlhttprequest/resources/cross-origin-authorization.php:
+        * http/tests/xmlhttprequest/resources/cross-origin-check-cookies.php:
+        * http/tests/xmlhttprequest/resources/cross-origin-no-authorization.php:
+
 2009-09-18  Alpha Lam  <hclam@chromium.org>
 
         Reviewed by Eric Carlson.
