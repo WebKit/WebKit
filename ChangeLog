@@ -1,4 +1,15 @@
-2009-09-14  Xan Lopez  <xlopez@igalia.com>
+2009-09-18  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha and Jan Alonzo.
+
+        [GTK] context menu overriding API is very limited
+        https://bugs.webkit.org/show_bug.cgi?id=27546
+
+        Add new tests to the build.
+
+        * GNUmakefile.am:
+
+2009-09-18  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha and Jan Alonzo.
 

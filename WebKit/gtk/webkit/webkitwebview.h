@@ -363,6 +363,9 @@ webkit_web_view_set_view_source_mode            (WebKitWebView        *web_view,
 WEBKIT_API gboolean
 webkit_web_view_get_view_source_mode            (WebKitWebView        *web_view);
 
+WEBKIT_API WebKitHitTestResult*
+webkit_web_view_get_hit_test_result             (WebKitWebView        *webView,
+                                                 GdkEventButton       *event);
 G_END_DECLS
 
 #endif

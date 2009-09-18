@@ -5,6 +5,24 @@
         [GTK] context menu overriding API is very limited
         https://bugs.webkit.org/show_bug.cgi?id=27546
 
+        Add webkit_web_view_get_hit_test_result, a function to get a hit
+        test result from a GdkEventButton. Useful to let applications
+        decide between several actions on button press depending on what
+        is being pressed.
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_stop_loading):
+        (documentPointForWindowPoint):
+        (webkit_web_view_get_hit_test_result):
+        * webkit/webkitwebview.h:
+
+2009-09-18  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha and Jan Alonzo.
+
+        [GTK] context menu overriding API is very limited
+        https://bugs.webkit.org/show_bug.cgi?id=27546
+
         Add WebKitHitTestResult, a wrapper over HitTestResult. It contains
         context information about a point in the web page.
 

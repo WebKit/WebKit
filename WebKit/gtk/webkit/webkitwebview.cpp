@@ -62,11 +62,13 @@
 #include "InspectorClientGtk.h"
 #include "FrameLoader.h"
 #include "FrameView.h"
+#include "MouseEventWithHitTestResults.h"
 #include "PasteboardHelper.h"
 #include "PlatformKeyboardEvent.h"
 #include "PlatformWheelEvent.h"
 #include "ProgressTracker.h"
 #include "ResourceHandle.h"
+#include "RenderView.h"
 #include "ScriptValue.h"
 #include "Scrollbar.h"
 #include <wtf/GOwnPtr.h>
@@ -3026,7 +3028,7 @@ void webkit_web_view_stop_loading(WebKitWebView* webView)
     Frame* frame = core(webView)->mainFrame();
 
     if (FrameLoader* loader = frame->loader())
-        loader->stopAllLoaders();
+        loader->stopForUserCancel();
 }
 
 /**
@@ -3910,4 +3912,40 @@ GList* webkit_web_view_get_subresources(WebKitWebView* webView)
     WebKitWebViewPrivate* priv = webView->priv;
     GList* subResources = g_hash_table_get_values(priv->subResources);
     return g_list_remove(subResources, priv->mainResource);
+}
+
+/* From EventHandler.cpp */
+static IntPoint documentPointForWindowPoint(Frame* frame, const IntPoint& windowPoint)
+{
+    FrameView* view = frame->view();
+    // FIXME: Is it really OK to use the wrong coordinates here when view is 0?
+    // Historically the code would just crash; this is clearly no worse than that.
+    return view ? view->windowToContents(windowPoint) : windowPoint;
+}
+
+/**
+ * webkit_web_view_get_hit_test_result:
+ * @webView: a #WebKitWebView
+ * @event: a #GdkEventButton
+ * 
+ * Does a 'hit test' in the coordinates specified by @event to figure
+ * out context information about that position in the @webView.
+ * 
+ * Returns: a newly created #WebKitHitTestResult with the context of the
+ * specified position.
+ *
+ * Since: 1.1.15
+ **/
+WebKitHitTestResult* webkit_web_view_get_hit_test_result(WebKitWebView* webView, GdkEventButton* event)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), NULL);
+    g_return_val_if_fail(event, NULL);
+
+    PlatformMouseEvent mouseEvent = PlatformMouseEvent(event);
+    Frame* frame = core(webView)->mainFrame();
+    HitTestRequest request(HitTestRequest::Active);
+    IntPoint documentPoint = documentPointForWindowPoint(frame, mouseEvent.pos());
+    MouseEventWithHitTestResults mev = frame->document()->prepareMouseEvent(request, documentPoint, mouseEvent);
+
+    return kit(mev.hitTestResult());
 }
