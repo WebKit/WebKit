@@ -2,6 +2,18 @@
 
         Reviewed by Gavin Barraclough.
 
+        Build fix to enable ARM_THUMB2 on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=
+
+        * jit/ExecutableAllocator.h:
+        (JSC::ExecutableAllocator::cacheFlush):
+        * jit/JITStubs.cpp:
+        * wtf/Platform.h:
+
+2009-09-18  Gabor Loki  <loki@inf.u-szeged.hu>
+
+        Reviewed by Gavin Barraclough.
+
         Defines two pseudo-platforms for ARM and Thumb-2 instruction set.
         https://bugs.webkit.org/show_bug.cgi?id=29122
 
