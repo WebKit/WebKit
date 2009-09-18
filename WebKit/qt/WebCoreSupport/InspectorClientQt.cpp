@@ -37,6 +37,7 @@
 #include "qwebpage_p.h"
 #include "qwebview.h"
 
+#include <QtCore/QSettings>
 #include <QtCore/QCoreApplication>
 
 #include "InspectorController.h"
@@ -45,6 +46,12 @@
 #include "PlatformString.h"
 
 namespace WebCore {
+
+static const QLatin1String settingStoragePrefix("Qt/QtWebKit/QWebInspector/");
+static const QLatin1String settingStorageTypeSuffix(".type");
+
+static InspectorController::Setting variantToSetting(const QVariant& qvariant);
+static QVariant settingToVariant(const InspectorController::Setting& icSetting);
 
 class InspectorClientWebPage : public QWebPage {
     Q_OBJECT
@@ -65,7 +72,6 @@ public:
         return page;
     }
 };
-
 
 InspectorClientQt::InspectorClientQt(QWebPage* page)
     : m_inspectedWebPage(page)
@@ -169,17 +175,101 @@ void InspectorClientQt::updateWindowTitle()
 
 void InspectorClientQt::populateSetting(const String& key, InspectorController::Setting& setting)
 {
-    notImplemented();
+    QSettings qsettings;
+    if (qsettings.status() == QSettings::AccessError) {
+        // QCoreApplication::setOrganizationName and QCoreApplication::setApplicationName haven't been called
+        qWarning("QWebInspector: QSettings couldn't read configuration setting [%s].",
+                 qPrintable(static_cast<QString>(key)));
+        return;
+    }
+
+    QString settingKey(settingStoragePrefix + key);
+    QString storedValueType = qsettings.value(settingKey + settingStorageTypeSuffix).toString();
+    QVariant storedValue = qsettings.value(settingKey);
+    storedValue.convert(QVariant::nameToType(storedValueType.toAscii().data()));
+    setting = variantToSetting(storedValue);
 }
 
 void InspectorClientQt::storeSetting(const String& key, const InspectorController::Setting& setting)
 {
-    notImplemented();
+    QSettings qsettings;
+    if (qsettings.status() == QSettings::AccessError) {
+        qWarning("QWebInspector: QSettings couldn't persist configuration setting [%s].",
+                 qPrintable(static_cast<QString>(key)));
+        return;
+    }
+
+    QVariant valueToStore = settingToVariant(setting);
+    QString settingKey(settingStoragePrefix + key);
+    qsettings.setValue(settingKey, valueToStore);
+    qsettings.setValue(settingKey + settingStorageTypeSuffix, QVariant::typeToName(valueToStore.type()));
 }
 
 void InspectorClientQt::removeSetting(const String& key)
 {
     notImplemented();
+}
+
+static InspectorController::Setting variantToSetting(const QVariant& qvariant)
+{
+    InspectorController::Setting retVal;
+
+    switch (qvariant.type()) {
+    case QVariant::Bool:
+        retVal.set(qvariant.toBool());
+        break;
+    case QVariant::Double:
+        retVal.set(qvariant.toDouble());
+        break;
+    case QVariant::Int:
+        retVal.set((long)qvariant.toInt());
+        break;
+    case QVariant::String:
+        retVal.set(qvariant.toString());
+        break;
+    case QVariant::StringList: {
+        QStringList qsList = qvariant.toStringList();
+        int listCount = qsList.count();
+        Vector<String> vector(listCount);
+        for (int i = 0; i < listCount; ++i)
+            vector[i] = qsList[i];
+        retVal.set(vector);
+        break;
+    }
+    }
+
+    return retVal;
+}
+
+static QVariant settingToVariant(const InspectorController::Setting& icSetting)
+{
+    QVariant retVal;
+
+    switch (icSetting.type()) {
+    case InspectorController::Setting::StringType:
+        retVal.setValue(static_cast<QString>(icSetting.string()));
+        break;
+    case InspectorController::Setting::StringVectorType: {
+        const Vector<String>& vector = icSetting.stringVector();
+        Vector<String>::const_iterator iter;
+        QStringList qsList;
+        for (iter = vector.begin(); iter != vector.end(); ++iter)
+            qsList << *iter;
+        retVal.setValue(qsList);
+        break;
+    }
+    case InspectorController::Setting::DoubleType:
+        retVal.setValue(icSetting.doubleValue());
+        break;
+    case InspectorController::Setting::IntegerType:
+        retVal.setValue((int)icSetting.integerValue());
+        break;
+    case InspectorController::Setting::BooleanType:
+        retVal.setValue(icSetting.booleanValue());
+        break;
+    }
+
+    return retVal;
 }
 
 }

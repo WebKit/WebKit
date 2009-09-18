@@ -453,6 +453,10 @@ int main(int argc, char **argv)
     QWebSettings::globalSettings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, true);
     QWebSettings::enablePersistentStorage();
 
+    // To allow QWebInspector's configuration persistence
+    QCoreApplication::setOrganizationName("Nokia");
+    QCoreApplication::setApplicationName("QtLauncher");
+
     const QStringList args = app.arguments();
 
     if (args.contains(QLatin1String("-r"))) {

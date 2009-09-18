@@ -1,3 +1,19 @@
+2009-09-18  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Add persistence support for configuration options in the
+        inspector.
+
+        * Api/qwebinspector.cpp:
+        * QtLauncher/main.cpp:
+        (main):
+        * WebCoreSupport/InspectorClientQt.cpp:
+        (WebCore::InspectorClientQt::populateSetting):
+        (WebCore::InspectorClientQt::storeSetting):
+        (WebCore::variantToSetting):
+        (WebCore::settingToVariant):
+
 2009-09-18  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Ariya Hidayat.
