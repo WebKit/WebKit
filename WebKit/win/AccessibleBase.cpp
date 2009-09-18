@@ -105,7 +105,7 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::get_accParent(IDispatch** parent)
     if (!m_object || !m_object->topDocumentFrameView())
         return E_FAIL;
 
-    return WebView::AccessibleObjectFromWindow(m_object->topDocumentFrameView()->hostWindow()->platformWindow(),
+    return WebView::AccessibleObjectFromWindow(m_object->topDocumentFrameView()->hostWindow()->platformPageClient(),
         OBJID_WINDOW, __uuidof(IAccessible), reinterpret_cast<void**>(parent));
 }
 

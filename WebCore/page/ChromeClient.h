@@ -128,7 +128,7 @@ namespace WebCore {
         virtual void scroll(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect) = 0;
         virtual IntPoint screenToWindow(const IntPoint&) const = 0;
         virtual IntRect windowToScreen(const IntRect&) const = 0;
-        virtual PlatformWidget platformWindow() const = 0;
+        virtual PlatformPageClient platformPageClient() const = 0;
         virtual void contentsSizeChanged(Frame*, const IntSize&) const = 0;
         virtual void scrollRectIntoView(const IntRect&, const ScrollView*) const = 0; // Currently only Mac has a non empty implementation.
         // End methods used by HostWindow.

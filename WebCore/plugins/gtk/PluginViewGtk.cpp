@@ -382,11 +382,11 @@ NPError PluginView::getValue(NPNVariable variable, void* value)
         case NPNVnetscapeWindow: {
 #if defined(XP_UNIX)
             void* w = reinterpret_cast<void*>(value);
-            *((XID *)w) = GDK_WINDOW_XWINDOW(m_parentFrame->view()->hostWindow()->platformWindow()->window);
+            *((XID *)w) = GDK_WINDOW_XWINDOW(m_parentFrame->view()->hostWindow()->platformPageClient()->window);
 #endif
 #ifdef GDK_WINDOWING_WIN32
             HGDIOBJ* w = reinterpret_cast<HGDIOBJ*>(value);
-            *w = GDK_WINDOW_HWND(m_parentFrame->view()->hostWindow()->platformWindow()->window);
+            *w = GDK_WINDOW_HWND(m_parentFrame->view()->hostWindow()->platformPageClient()->window);
 #endif
             return NPERR_NO_ERROR;
         }
@@ -428,7 +428,7 @@ void PluginView::forceRedraw()
     if (m_isWindowed)
         gtk_widget_queue_draw(platformPluginWidget());
     else
-        gtk_widget_queue_draw(m_parentFrame->view()->hostWindow()->platformWindow());
+        gtk_widget_queue_draw(m_parentFrame->view()->hostWindow()->platformPageClient());
 }
 
 static gboolean
@@ -454,13 +454,13 @@ bool PluginView::platformStart()
 #if defined(XP_UNIX)
     if (m_needsXEmbed) {
         setPlatformWidget(gtk_socket_new());
-        gtk_container_add(GTK_CONTAINER(m_parentFrame->view()->hostWindow()->platformWindow()), platformPluginWidget());
+        gtk_container_add(GTK_CONTAINER(m_parentFrame->view()->hostWindow()->platformPageClient()), platformPluginWidget());
         g_signal_connect(platformPluginWidget(), "plug_removed", G_CALLBACK(plug_removed_cb), NULL);
     } else if (m_isWindowed)
-        setPlatformWidget(gtk_xtbin_new(m_parentFrame->view()->hostWindow()->platformWindow()->window, 0));
+        setPlatformWidget(gtk_xtbin_new(m_parentFrame->view()->hostWindow()->platformPageClient()->window, 0));
 #else
     setPlatformWidget(gtk_socket_new());
-    gtk_container_add(GTK_CONTAINER(m_parentFrame->view()->hostWindow()->platformWindow()), platformPluginWidget());
+    gtk_container_add(GTK_CONTAINER(m_parentFrame->view()->hostWindow()->platformPageClient()), platformPluginWidget());
 #endif
     show();
 

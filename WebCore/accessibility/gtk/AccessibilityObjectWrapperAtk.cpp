@@ -556,7 +556,7 @@ static PangoLayout* getPangoLayoutForAtk(AtkText* textObject)
     HostWindow* hostWindow = coreObject->document()->view()->hostWindow();
     if (!hostWindow)
         return 0;
-    PlatformWidget webView = hostWindow->platformWindow();
+    PlatformPageClient webView = hostWindow->platformPageClient();
     if (!webView)
         return 0;
 

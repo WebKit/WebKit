@@ -339,7 +339,7 @@ IntPoint ChromeClientWx::screenToWindow(const IntPoint& point) const
     return point;
 }
 
-PlatformWidget ChromeClientWx::platformWindow() const
+PlatformPageClient ChromeClientWx::platformPageClient() const
 {
     return m_webView;
 }

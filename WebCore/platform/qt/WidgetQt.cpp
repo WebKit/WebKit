@@ -81,7 +81,7 @@ void Widget::setFocus()
 void Widget::setCursor(const Cursor& cursor)
 {
 #ifndef QT_NO_CURSOR
-    QWidget* widget = root()->hostWindow()->platformWindow();
+    QWidget* widget = root()->hostWindow()->platformPageClient();
 
     if (!widget)
         return;

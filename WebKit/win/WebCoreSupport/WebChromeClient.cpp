@@ -486,7 +486,7 @@ IntPoint WebChromeClient::screenToWindow(const IntPoint& point) const
     return result;
 }
 
-PlatformWidget WebChromeClient::platformWindow() const
+PlatformPageClient WebChromeClient::platformPageClient() const
 {
     HWND viewWindow;
     if (FAILED(m_webView->viewWindow(reinterpret_cast<OLE_HANDLE*>(&viewWindow))))

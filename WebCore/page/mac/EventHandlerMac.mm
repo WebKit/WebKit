@@ -112,7 +112,7 @@ bool EventHandler::wheelEvent(NSEvent *event)
 
     m_useLatchedWheelEventNode = wkIsLatchingWheelEvent(event);
     
-    PlatformWheelEvent wheelEvent(event, page->chrome()->platformWindow());
+    PlatformWheelEvent wheelEvent(event, page->chrome()->platformPageClient());
     handleWheelEvent(wheelEvent);
 
     return wheelEvent.isAccepted();
@@ -712,7 +712,7 @@ PlatformMouseEvent EventHandler::currentPlatformMouseEvent() const
 {
     NSView *windowView = nil;
     if (Page* page = m_frame->page())
-        windowView = page->chrome()->platformWindow();
+        windowView = page->chrome()->platformPageClient();
     return PlatformMouseEvent(currentNSEvent(), windowView);
 }
 
@@ -722,7 +722,7 @@ bool EventHandler::sendContextMenuEvent(NSEvent *event)
     Page* page = m_frame->page();
     if (!page)
         return false;
-    return sendContextMenuEvent(PlatformMouseEvent(event, page->chrome()->platformWindow()));
+    return sendContextMenuEvent(PlatformMouseEvent(event, page->chrome()->platformPageClient()));
 }
 #endif // ENABLE(CONTEXT_MENUS)
 
@@ -732,7 +732,7 @@ bool EventHandler::eventMayStartDrag(NSEvent *event)
     Page* page = m_frame->page();
     if (!page)
         return false;
-    return eventMayStartDrag(PlatformMouseEvent(event, page->chrome()->platformWindow()));
+    return eventMayStartDrag(PlatformMouseEvent(event, page->chrome()->platformPageClient()));
 }
 #endif // ENABLE(DRAG_SUPPORT)
 

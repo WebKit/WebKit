@@ -171,7 +171,7 @@ bool PluginView::platformStart()
         return false;
     }
 
-    setPlatformPluginWidget(m_parentFrame->view()->hostWindow()->platformWindow());
+    setPlatformPluginWidget(m_parentFrame->view()->hostWindow()->platformPageClient());
 
     show();
 

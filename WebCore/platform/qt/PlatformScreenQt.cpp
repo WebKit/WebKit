@@ -44,34 +44,34 @@ namespace WebCore {
 int screenDepth(Widget* w)
 {
     QDesktopWidget* d = QApplication::desktop();
-    QWidget *view = w ? w->root()->hostWindow()->platformWindow() : 0;
+    QWidget *view = w ? w->root()->hostWindow()->platformPageClient() : 0;
     int screenNumber = view ? d->screenNumber(view) : 0;
     return d->screen(screenNumber)->depth();
 }
 
 int screenDepthPerComponent(Widget* w)
 {
-    QWidget *view = w ? w->root()->hostWindow()->platformWindow() : 0;
+    QWidget *view = w ? w->root()->hostWindow()->platformPageClient() : 0;
     return view ? view->depth() : QApplication::desktop()->screen(0)->depth();
 }
 
 bool screenIsMonochrome(Widget* w)
 {
     QDesktopWidget* d = QApplication::desktop();
-    QWidget *view = w ? w->root()->hostWindow()->platformWindow(): 0;
+    QWidget *view = w ? w->root()->hostWindow()->platformPageClient(): 0;
     int screenNumber = view ? d->screenNumber(view) : 0;
     return d->screen(screenNumber)->numColors() < 2;
 }
 
 FloatRect screenRect(Widget* w)
 {
-    QRect r = QApplication::desktop()->screenGeometry(w ? w->root()->hostWindow()->platformWindow(): 0);
+    QRect r = QApplication::desktop()->screenGeometry(w ? w->root()->hostWindow()->platformPageClient(): 0);
     return FloatRect(r.x(), r.y(), r.width(), r.height());
 }
 
 FloatRect screenAvailableRect(Widget* w)
 {
-    QRect r = QApplication::desktop()->availableGeometry(w ? w->root()->hostWindow()->platformWindow(): 0);
+    QRect r = QApplication::desktop()->availableGeometry(w ? w->root()->hostWindow()->platformPageClient(): 0);
     return FloatRect(r.x(), r.y(), r.width(), r.height());
 }
 

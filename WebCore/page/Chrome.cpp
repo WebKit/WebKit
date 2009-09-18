@@ -87,9 +87,9 @@ IntRect Chrome::windowToScreen(const IntRect& rect) const
     return m_client->windowToScreen(rect);
 }
 
-PlatformWidget Chrome::platformWindow() const
+PlatformPageClient Chrome::platformPageClient() const
 {
-    return m_client->platformWindow();
+    return m_client->platformPageClient();
 }
 
 void Chrome::contentsSizeChanged(Frame* frame, const IntSize& size) const

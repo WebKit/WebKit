@@ -462,7 +462,7 @@ IntRect WebChromeClient::windowToScreen(const IntRect& r) const
     return enclosingIntRect(tempRect);
 }
 
-PlatformWidget WebChromeClient::platformWindow() const
+PlatformPageClient WebChromeClient::platformPageClient() const
 {
     if ([m_webView _usesDocumentViews])
         return 0;

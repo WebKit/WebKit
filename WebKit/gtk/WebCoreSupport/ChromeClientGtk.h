@@ -89,7 +89,7 @@ namespace WebKit {
         virtual void scroll(const WebCore::IntSize& scrollDelta, const WebCore::IntRect& rectToScroll, const WebCore::IntRect& clipRect);
         virtual WebCore::IntPoint screenToWindow(const WebCore::IntPoint&) const;
         virtual WebCore::IntRect windowToScreen(const WebCore::IntRect&) const;
-        virtual PlatformWidget platformWindow() const;
+        virtual PlatformPageClient platformPageClient() const;
         virtual void contentsSizeChanged(WebCore::Frame*, const WebCore::IntSize&) const;
 
         virtual void scrollbarsModeDidChange() const;

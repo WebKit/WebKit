@@ -1,3 +1,18 @@
+2009-09-17  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        Make PlatformWindow return something else than PlatformWidget
+        https://bugs.webkit.org/show_bug.cgi?id=29085
+
+        Reflect the rename of platformWindow and it's return type.
+
+        * AccessibleBase.cpp:
+        (AccessibleBase::get_accParent):
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::platformPageClient):
+        * WebCoreSupport/WebChromeClient.h:
+
 2009-09-17  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben.

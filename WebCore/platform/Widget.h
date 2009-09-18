@@ -74,6 +74,8 @@ typedef BView* PlatformWidget;
 #include "PlatformWidget.h"
 #endif
 
+typedef PlatformWidget PlatformPageClient;
+
 #include "IntPoint.h"
 #include "IntRect.h"
 #include "IntSize.h"

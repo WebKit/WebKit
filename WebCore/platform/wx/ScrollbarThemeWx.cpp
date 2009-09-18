@@ -171,7 +171,7 @@ bool ScrollbarThemeWx::paint(Scrollbar* scrollbar, GraphicsContext* context, con
     if (!root)
         return false;
     
-    wxWindow* webview = root->hostWindow()->platformWindow(); 
+    wxWindow* webview = root->hostWindow()->platformPageClient(); 
     
     wxRenderer_DrawScrollbar(webview, *dc, scrollbar->frameRect(), orientation, scrollbar->currentPos(), static_cast<wxScrollbarPart>(scrollbar->pressedPart()),    
                      static_cast<wxScrollbarPart>(scrollbar->hoveredPart()), scrollbar->maximum(), scrollbar->pageStep(), flags);

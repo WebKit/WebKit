@@ -107,7 +107,7 @@ void ScrollView::setGtkAdjustments(GtkAdjustment* hadj, GtkAdjustment* vadj)
 void ScrollView::platformAddChild(Widget* child)
 {
     if (!GTK_IS_SOCKET(child->platformWidget()))
-        gtk_container_add(GTK_CONTAINER(hostWindow()->platformWindow()), child->platformWidget());
+        gtk_container_add(GTK_CONTAINER(hostWindow()->platformPageClient()), child->platformWidget());
 }
 
 void ScrollView::platformRemoveChild(Widget* child)
@@ -117,7 +117,7 @@ void ScrollView::platformRemoveChild(Widget* child)
     // HostWindow can be NULL here. If that's the case
     // let's grab the child's parent instead.
     if (hostWindow())
-        parent = GTK_WIDGET(hostWindow()->platformWindow());
+        parent = GTK_WIDGET(hostWindow()->platformPageClient());
     else
         parent = GTK_WIDGET(child->platformWidget()->parent);
 
@@ -133,7 +133,7 @@ IntRect ScrollView::visibleContentRect(bool includeScrollbars) const
                                max(0, height() - (horizontalScrollbar() && !includeScrollbars ? horizontalScrollbar()->height() : 0))));
 
     // Main frame.
-    GtkWidget* measuredWidget = hostWindow()->platformWindow();
+    GtkWidget* measuredWidget = hostWindow()->platformPageClient();
     GtkWidget* parent = gtk_widget_get_parent(measuredWidget);
 
     // We may not be in a widget that displays scrollbars, but we may

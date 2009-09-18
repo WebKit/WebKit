@@ -49,7 +49,7 @@ static GdkVisual* getVisual(Widget* widget)
     if (!widget)
         return 0;
 
-    GtkWidget* container = GTK_WIDGET(widget->root()->hostWindow()->platformWindow());
+    GtkWidget* container = GTK_WIDGET(widget->root()->hostWindow()->platformPageClient());
 
     if (!container)
         return 0;
@@ -93,7 +93,7 @@ FloatRect screenRect(Widget* widget)
     if (!widget)
         return FloatRect();
 
-    GtkWidget* container = gtk_widget_get_toplevel(GTK_WIDGET(widget->root()->hostWindow()->platformWindow()));
+    GtkWidget* container = gtk_widget_get_toplevel(GTK_WIDGET(widget->root()->hostWindow()->platformPageClient()));
     if (!GTK_WIDGET_TOPLEVEL(container))
         return FloatRect();
 
@@ -114,7 +114,7 @@ FloatRect screenAvailableRect(Widget* widget)
         return FloatRect();
 
 #if PLATFORM(X11)
-    GtkWidget* container = GTK_WIDGET(widget->root()->hostWindow()->platformWindow());
+    GtkWidget* container = GTK_WIDGET(widget->root()->hostWindow()->platformPageClient());
     if (!container)
         return FloatRect();
 

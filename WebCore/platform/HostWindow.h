@@ -48,8 +48,8 @@ public:
     virtual IntPoint screenToWindow(const IntPoint&) const = 0;
     virtual IntRect windowToScreen(const IntRect&) const = 0;
 
-    // Method for retrieving the native window.
-    virtual PlatformWidget platformWindow() const = 0;
+    // Method for retrieving the native client of the page.
+    virtual PlatformPageClient platformPageClient() const = 0;
     
     // For scrolling a rect into view recursively.  Useful in the cases where a WebView is embedded inside some containing
     // platform-specific ScrollView.

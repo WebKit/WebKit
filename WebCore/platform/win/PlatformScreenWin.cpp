@@ -39,7 +39,7 @@ namespace WebCore {
 // Returns info for the default monitor if widget is NULL
 static MONITORINFOEX monitorInfoForWidget(Widget* widget)
 {
-    HWND window = widget ? widget->root()->hostWindow()->platformWindow() : 0;
+    HWND window = widget ? widget->root()->hostWindow()->platformPageClient() : 0;
     HMONITOR monitor = MonitorFromWindow(window, MONITOR_DEFAULTTOPRIMARY);
 
     MONITORINFOEX monitorInfo;

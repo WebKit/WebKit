@@ -1,3 +1,81 @@
+2009-09-17  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        Make PlatformWindow return something else than PlatformWidget
+        https://bugs.webkit.org/show_bug.cgi?id=29085
+
+        Make platformWindow return a PlatformPageClient
+        (for now typedef'ed to PlatformWidget)
+
+        Also, change the name of platformWindow to platformPageClient()
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (getPangoLayoutForAtk):
+        * accessibility/win/AXObjectCacheWin.cpp:
+        (WebCore::AXObjectCache::postPlatformNotification):
+        (WebCore::AXObjectCache::handleFocusedUIElementChanged):
+        * loader/EmptyClients.h:
+        (WebCore::EmptyChromeClient::platformPageClient):
+        * page/Chrome.cpp:
+        (WebCore::Chrome::platformPageClient):
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::wheelEvent):
+        (WebCore::EventHandler::currentPlatformMouseEvent):
+        (WebCore::EventHandler::sendContextMenuEvent):
+        (WebCore::EventHandler::eventMayStartDrag):
+        * platform/HostWindow.h:
+        * platform/Widget.h:
+        * platform/gtk/PlatformScreenGtk.cpp:
+        (WebCore::getVisual):
+        (WebCore::screenRect):
+        (WebCore::screenAvailableRect):
+        * platform/gtk/PopupMenuGtk.cpp:
+        (WebCore::PopupMenu::show):
+        * platform/gtk/ScrollViewGtk.cpp:
+        (WebCore::ScrollView::platformAddChild):
+        (WebCore::ScrollView::platformRemoveChild):
+        (WebCore::ScrollView::visibleContentRect):
+        * platform/gtk/WidgetGtk.cpp:
+        (WebCore::Widget::setFocus):
+        (WebCore::Widget::setCursor):
+        * platform/qt/PlatformScreenQt.cpp:
+        (WebCore::screenDepth):
+        (WebCore::screenDepthPerComponent):
+        (WebCore::screenIsMonochrome):
+        (WebCore::screenRect):
+        (WebCore::screenAvailableRect):
+        * platform/qt/PopupMenuQt.cpp:
+        (WebCore::PopupMenu::show):
+        * platform/qt/WidgetQt.cpp:
+        (WebCore::Widget::setCursor):
+        * platform/win/PlatformScreenWin.cpp:
+        (WebCore::monitorInfoForWidget):
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenu::show):
+        (WebCore::PopupMenu::calculatePositionAndSize):
+        (WebCore::PopupMenu::wndProc):
+        * platform/wx/RenderThemeWx.cpp:
+        (WebCore::nativeWindowForRenderObject):
+        * platform/wx/ScrollbarThemeWx.cpp:
+        (WebCore::ScrollbarThemeWx::paint):
+        * plugins/gtk/PluginViewGtk.cpp:
+        (WebCore::PluginView::getValue):
+        (WebCore::PluginView::forceRedraw):
+        (WebCore::PluginView::platformStart):
+        * plugins/mac/PluginViewMac.cpp:
+        (WebCore::PluginView::platformStart):
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::handleKeyboardEvent):
+        (WebCore::PluginView::getValue):
+        (WebCore::PluginView::platformStart):
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::getValue):
+        (WebCore::PluginView::forceRedraw):
+        (WebCore::PluginView::platformStart):
+
 2009-09-18  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Simon Hausmann.

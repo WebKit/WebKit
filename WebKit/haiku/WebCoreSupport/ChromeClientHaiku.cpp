@@ -271,7 +271,7 @@ IntRect ChromeClientHaiku::windowToScreen(const IntRect&) const
     return IntRect();
 }
 
-PlatformWidget ChromeClientHaiku::platformWindow() const
+PlatformPageClient ChromeClientHaiku::platformPageClient() const
 {
     notImplemented();
     return PlatformWidget();

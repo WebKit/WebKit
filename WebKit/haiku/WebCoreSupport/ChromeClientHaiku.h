@@ -104,7 +104,7 @@ namespace WebCore {
         void scroll(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect);
         IntPoint screenToWindow(const IntPoint&) const;
         IntRect windowToScreen(const IntRect&) const;
-        PlatformWidget platformWindow() const;
+        PlatformPageClient platformPageClient() const;
         void contentsSizeChanged(Frame*, const IntSize&) const;
         void scrollRectIntoView(const IntRect&, const ScrollView*) const;
 
