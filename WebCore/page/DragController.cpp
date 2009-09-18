@@ -288,8 +288,7 @@ bool DragController::tryDocumentDrag(DragData* dragData, DragDestinationAction a
             return true;
         }
 
-        IntPoint dragPos = dragData->clientPosition();
-        IntPoint point = frameView->windowToContents(dragPos);
+        IntPoint point = frameView->convertFromContainingWindow(dragData->clientPosition());
         Element* element = m_documentUnderMouse->elementFromPoint(point.x(), point.y());
         ASSERT(element);
         if (!asFileInput(element)) {
@@ -340,7 +339,7 @@ bool DragController::concludeEditDrag(DragData* dragData)
     if (!m_documentUnderMouse)
         return false;
 
-    IntPoint point = m_documentUnderMouse->view()->windowToContents(dragData->clientPosition());
+    IntPoint point = m_documentUnderMouse->view()->convertFromContainingWindow(dragData->clientPosition());
     Element* element =  m_documentUnderMouse->elementFromPoint(point.x(), point.y());
     ASSERT(element);
     Frame* innerFrame = element->ownerDocument()->frame();

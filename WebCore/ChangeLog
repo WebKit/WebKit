@@ -1,3 +1,16 @@
+2009-09-17  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adele Peterson.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=29276
+        REGRESSION(r48334): WebKit crashes on file select by drag
+
+        Document.elementFromPoint now takes point in client space, not page space.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::tryDocumentDrag):
+        (WebCore::DragController::concludeEditDrag):
+
 2009-09-17  Albert J. Wong  <ajwong@chromium.org>
 
         Reviewed by David Levin.
