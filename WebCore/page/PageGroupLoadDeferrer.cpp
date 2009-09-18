@@ -41,10 +41,10 @@ PageGroupLoadDeferrer::PageGroupLoadDeferrer(Page* page, bool deferSelf)
             if (!otherPage->defersLoading())
                 m_deferredFrames.append(otherPage->mainFrame());
 
-#if !PLATFORM(MAC)
+            // This code is not logically part of load deferring, but we do not want JS code executed beneath modal
+            // windows or sheets, which is exactly when PageGroupLoadDeferrer is used.
             for (Frame* frame = otherPage->mainFrame(); frame; frame = frame->tree()->traverseNext())
                 frame->document()->suspendActiveDOMObjects();
-#endif
         }
     }
 
@@ -60,10 +60,8 @@ PageGroupLoadDeferrer::~PageGroupLoadDeferrer()
         if (Page* page = m_deferredFrames[i]->page()) {
             page->setDefersLoading(false);
 
-#if !PLATFORM(MAC)
             for (Frame* frame = page->mainFrame(); frame; frame = frame->tree()->traverseNext())
                 frame->document()->resumeActiveDOMObjects();
-#endif
         }
     }
 }
