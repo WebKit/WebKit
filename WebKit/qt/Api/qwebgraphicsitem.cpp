@@ -93,7 +93,6 @@ void QWebGraphicsItemPrivate::_q_setStatusBarMessage(const QString& s)
 /*!
     \class QWebGraphicsItem
     \brief The QWebGraphicsItem class allows web content to be added to a GraphicsView.
-    \inherits QGraphicsWidget.
     \since 4.6
 
     A WebGraphicsItem renders web content based on a URL or set data.
@@ -350,7 +349,7 @@ QString QWebGraphicsItem::status() const
 /*!
     Convenience slot that stops loading the document.
 
-    \sa reload(), pageAction(), loadFinished()
+    \sa reload(), loadFinished()
 */
 void QWebGraphicsItem::stop()
 {
@@ -362,7 +361,7 @@ void QWebGraphicsItem::stop()
     Convenience slot that loads the previous document in the list of documents
     built by navigating links. Does nothing if there is no previous document.
 
-    \sa forward(), pageAction()
+    \sa forward()
 */
 void QWebGraphicsItem::back()
 {
@@ -374,7 +373,7 @@ void QWebGraphicsItem::back()
     Convenience slot that loads the next document in the list of documents
     built by navigating links. Does nothing if there is no next document.
 
-    \sa back(), pageAction()
+    \sa back()
 */
 void QWebGraphicsItem::forward()
 {
@@ -385,7 +384,7 @@ void QWebGraphicsItem::forward()
 /*!
     Reloads the current document.
 
-    \sa stop(), pageAction(), loadStarted()
+    \sa stop(), loadStarted()
 */
 void QWebGraphicsItem::reload()
 {

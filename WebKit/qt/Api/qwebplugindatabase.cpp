@@ -195,16 +195,26 @@ bool QWebPluginInfo::isEnabled() const
     return m_package->isEnabled();
 }
 
+/*!
+    Returns true if this plugin info is the same as the \a other plugin info.
+*/
 bool QWebPluginInfo::operator==(const QWebPluginInfo& other) const
 {
     return m_package == other.m_package;
 }
 
+/*!
+    Returns true if this plugin info is different from the \a other plugin info.
+*/
 bool QWebPluginInfo::operator!=(const QWebPluginInfo& other) const
 {
     return m_package != other.m_package;
 }
 
+/*!
+    Assigns the \a other plugin info to this plugin info, and returns a reference
+    to this plugin info.
+*/
 QWebPluginInfo &QWebPluginInfo::operator=(const QWebPluginInfo& other)
 {
     if (this == &other)

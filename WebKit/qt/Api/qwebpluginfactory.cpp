@@ -76,12 +76,21 @@
     \inmodule QtWebKit
 */
 
+/*!
+    Returns true if this mimetype is the same as the \a other mime type.
+*/
 bool QWebPluginFactory::MimeType::operator==(const MimeType& other) const
 {
     return name == other.name
            && description == other.description
            && fileExtensions == other.fileExtensions;
 }
+
+/*!
+    \fn bool QWebPluginFactory::MimeType::operator!=(const MimeType& other) const
+
+    Returns true if this mimetype is different from the \a other mime type.
+*/
 
 /*!
     \variable QWebPluginFactory::MimeType::name
