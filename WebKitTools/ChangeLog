@@ -1,3 +1,21 @@
+2009-08-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Some small steps toward improving run-webkit-tests. My goal is to
+        refactor much more of the script into functions. Later we can add
+        parallel test running to the tool. But better structure may help
+        even if someone decides to translate this into another scripting
+        language instead.
+
+        * Scripts/run-webkit-tests: Break more pieces of the script into
+        seprate functions. Added readSkippedFiles, findTestsToRun, and
+        printResults functions. Removed custom code to skip results.html
+        and instead just put it into the ignoredFiles hash. Fixed some
+        indentation. Sorted function declarations, global variables,
+        and options at the top of the file alphabetically so they're not
+        in a semi-random order.
+
 2009-09-17  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix, add missing dependency.
