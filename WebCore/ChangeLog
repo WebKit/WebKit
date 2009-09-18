@@ -1,5 +1,12 @@
 2009-09-18  Anders Carlsson  <andersca@apple.com>
 
+        Try fixing the build again.
+        
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenu::wndProc):
+
+2009-09-18  Anders Carlsson  <andersca@apple.com>
+
         Fix windows build.
         
         * platform/win/PopupMenuWin.cpp:

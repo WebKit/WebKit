@@ -902,7 +902,7 @@ LRESULT PopupMenu::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
                 // repost the message to the web view.
 
                 // Translate the coordinate.
-                translatePoint(lParam, m_popup, client()->hostWindow()->platformWindow());
+                translatePoint(lParam, m_popup, client()->hostWindow()->platformPageClient());
 
                 ::PostMessage(m_popup, WM_HOST_WINDOW_MOUSEMOVE, wParam, lParam);
                 break;
