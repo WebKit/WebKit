@@ -318,6 +318,7 @@ webkitgtk_h_api += \
 	$(srcdir)/WebKit/gtk/webkit/webkitdefines.h \
 	$(srcdir)/WebKit/gtk/webkit/webkitdownload.h \
 	$(srcdir)/WebKit/gtk/webkit/webkiterror.h \
+	$(srcdir)/WebKit/gtk/webkit/webkithittestresult.h \
 	$(srcdir)/WebKit/gtk/webkit/webkitnetworkrequest.h \
 	$(srcdir)/WebKit/gtk/webkit/webkitnetworkresponse.h \
 	$(srcdir)/WebKit/gtk/webkit/webkitsoupauthdialog.h \
@@ -362,6 +363,7 @@ webkitgtk_sources += \
 	WebKit/gtk/webkit/webkitapplicationcache.cpp \
 	WebKit/gtk/webkit/webkitdownload.cpp \
 	WebKit/gtk/webkit/webkiterror.cpp \
+	WebKit/gtk/webkit/webkithittestresult.cpp \
 	WebKit/gtk/webkit/webkitnetworkrequest.cpp \
 	WebKit/gtk/webkit/webkitnetworkresponse.cpp \
 	WebKit/gtk/webkit/webkitprivate.cpp \

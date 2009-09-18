@@ -1,3 +1,26 @@
+2009-09-18  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha and Jan Alonzo.
+
+        [GTK] context menu overriding API is very limited
+        https://bugs.webkit.org/show_bug.cgi?id=27546
+
+        Add WebKitHitTestResult, a wrapper over HitTestResult. It contains
+        context information about a point in the web page.
+
+        * webkit/webkit.h:
+        * webkit/webkitdefines.h:
+        * webkit/webkithittestresult.cpp: Added.
+        (webkit_hit_test_result_finalize):
+        (webkit_hit_test_result_get_property):
+        (webkit_hit_test_result_set_property):
+        (webkit_hit_test_result_class_init):
+        (webkit_hit_test_result_init):
+        * webkit/webkithittestresult.h: Added.
+        * webkit/webkitprivate.cpp:
+        (WebKit::kit):
+        * webkit/webkitprivate.h:
+
 2009-09-14  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Xan Lopez and Jan Alonzo.

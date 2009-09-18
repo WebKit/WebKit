@@ -30,6 +30,7 @@
 
 #include <webkit/webkitdefines.h>
 #include <webkit/webkitdownload.h>
+#include <webkit/webkithittestresult.h>
 #include <webkit/webkitnetworkrequest.h>
 #include <webkit/webkitwebview.h>
 #include <webkit/webkitwebdatasource.h>
@@ -94,6 +95,8 @@ namespace WebKit {
 
     WebKitSecurityOrigin* kit(WebCore::SecurityOrigin*);
     WebCore::SecurityOrigin* core(WebKitSecurityOrigin*);
+
+    WebKitHitTestResult* kit(const WebCore::HitTestResult&);
 }
 
 typedef struct {

@@ -86,6 +86,9 @@ typedef struct _WebKitWebDatabaseClass WebKitWebDatabaseClass;
 typedef struct _WebKitSecurityOrigin WebKitSecurityOrigin;
 typedef struct _WebKitSecurityOriginClass WebKitSecurityOriginClass;
 
+typedef struct _WebKitHitTestResult WebKitHitTestResult;
+typedef struct _WebKitHitTestResultClass WebKitHitTestResultClass;
+
 G_END_DECLS
 
 #endif

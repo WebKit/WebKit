@@ -27,6 +27,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClientGtk.h"
+#include "HitTestResult.h"
 #include <libintl.h>
 #include "Logging.h"
 #include "PageCache.h"
@@ -114,6 +115,42 @@ WebCore::ResourceRequest core(WebKitNetworkRequest* request)
 WebCore::EditingBehavior core(WebKitEditingBehavior type)
 {
     return (WebCore::EditingBehavior)type;
+}
+
+WebKitHitTestResult* kit(const WebCore::HitTestResult& result)
+{
+    guint context = WEBKIT_HIT_TEST_RESULT_CONTEXT_DOCUMENT;
+    GOwnPtr<char> linkURI(0);
+    GOwnPtr<char> imageURI(0);
+    GOwnPtr<char> mediaURI(0);
+
+    if (!result.absoluteLinkURL().isEmpty()) {
+        context |= WEBKIT_HIT_TEST_RESULT_CONTEXT_LINK;
+        linkURI.set(g_strdup(result.absoluteLinkURL().string().utf8().data()));
+    }
+
+    if (!result.absoluteImageURL().isEmpty()) {
+        context |= WEBKIT_HIT_TEST_RESULT_CONTEXT_IMAGE;
+        imageURI.set(g_strdup(result.absoluteImageURL().string().utf8().data()));
+    }
+
+    if (!result.absoluteMediaURL().isEmpty()) {
+        context |= WEBKIT_HIT_TEST_RESULT_CONTEXT_MEDIA;
+        mediaURI.set(g_strdup(result.absoluteMediaURL().string().utf8().data()));
+    }
+
+    if (result.isSelected())
+        context |= WEBKIT_HIT_TEST_RESULT_CONTEXT_SELECTION;
+
+    if (result.isContentEditable())
+        context |= WEBKIT_HIT_TEST_RESULT_CONTEXT_EDITABLE;
+
+    return WEBKIT_HIT_TEST_RESULT(g_object_new(WEBKIT_TYPE_HIT_TEST_RESULT,
+                                           "link-uri", linkURI.get(),
+                                           "image-uri", imageURI.get(),
+                                           "media-uri", mediaURI.get(),
+                                           "context", context,
+                                           NULL));
 }
 
 } /** end namespace WebKit */
