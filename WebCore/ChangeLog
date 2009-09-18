@@ -55,7 +55,7 @@
 
         * bridge/runtime_object.h: Made invalidate non-virtual.
 
-2009-09-17  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+2009-09-18  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Simon Hausmann.
 
