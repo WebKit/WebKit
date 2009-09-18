@@ -50,6 +50,8 @@ win32-* {
     }
 }
 
+wince*: SOURCES += $$QT_SOURCE_TREE/src/3rdparty/ce-compat/ce_time.cpp
+
 include(pcre/pcre.pri)
 
 LUT_FILES += \

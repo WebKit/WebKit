@@ -1,3 +1,14 @@
+2009-09-18  Joerg Bornemann  <joerg.bornemann@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Fix the Qt/Windows CE build.
+
+        * JavaScriptCore.pri: Build the ce_time.cpp functions from
+        within Qt externally.
+        * wtf/DateMath.cpp: Removed unnecessary Qt #ifdef, for the
+        Qt build these functions are no external, too.
+
 2009-09-17  Janne Koskinen  <janne.p.koskinen@digia.com>
 
         Reviewed by Simon Hausmann.
