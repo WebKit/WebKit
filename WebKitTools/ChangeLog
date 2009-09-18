@@ -1,3 +1,13 @@
+2009-09-18  Alex Milowski  <alex@milowski.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Added checkWebCoreMathMLSupport and hasMathMLSupport to support 
+        checking for whether MathML tests should be run
+
+        * Scripts/run-webkit-tests:
+        * Scripts/webkitdirs.pm:
+
 2009-08-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Mark Rowe.

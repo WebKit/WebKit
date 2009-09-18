@@ -394,6 +394,10 @@ my %ignoredDirectories = map { $_ => 1 } qw(platform);
 my %ignoredLocalDirectories = map { $_ => 1 } qw(.svn _svn resources script-tests);
 my %supportedFileExtensions = map { $_ => 1 } qw(html shtml xml xhtml pl php);
 
+if (!checkWebCoreMathMLSupport(0)) { 
+    $ignoredDirectories{'mathml'} = 1;
+}
+
 # FIXME: We should fix webkitdirs.pm:hasSVG/WMLSupport() to do the correct feature detection for Cygwin.
 if (checkWebCoreSVGSupport(0)) { 
     $supportedFileExtensions{'svg'} = 1;
