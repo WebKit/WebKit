@@ -1,3 +1,50 @@
+2009-09-18  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix <rdar://problem/7050773> REGRESSION (r40098) Crash at
+        WebCore::RenderBlock::layoutBlock()
+        https://bugs.webkit.org/show_bug.cgi?id=29498
+
+        Test: accessibility/nested-layout-crash.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::updateBackingStore): Changed to
+            call Document::updateLayoutIgnorePendingStylesheets() instead of
+            calling RenderObject::layoutIfNeeded(). The latter requires that
+            there be no pending style recalc, which allows methods that call
+            Document::updateLayout() to be called during layout without risking
+            re-entry into layout.
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper accessibilityActionNames]): Null-check
+            m_object after calling updateBackingStore(), since style recalc may
+            destroy the renderer, which destroys the accessibility object and
+            detaches it from the wrapper.
+        (-[AccessibilityObjectWrapper accessibilityAttributeNames]): Ditto.
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:]): Ditto.
+        (-[AccessibilityObjectWrapper accessibilityFocusedUIElement]): Ditto.
+        (-[AccessibilityObjectWrapper accessibilityHitTest:]): Ditto.
+        (-[AccessibilityObjectWrapper accessibilityIsAttributeSettable:]):
+            Ditto.
+        (-[AccessibilityObjectWrapper accessibilityIsIgnored]): Ditto.
+        (-[AccessibilityObjectWrapper accessibilityParameterizedAttributeNames]):
+             Ditto.
+        (-[AccessibilityObjectWrapper accessibilityPerformPressAction]): Ditto.
+        (-[AccessibilityObjectWrapper accessibilityPerformIncrementAction]):
+            Ditto.
+        (-[AccessibilityObjectWrapper accessibilityPerformDecrementAction]):
+            Ditto.
+        (-[AccessibilityObjectWrapper accessibilityPerformAction:]): Ditto.
+        (-[AccessibilityObjectWrapper accessibilitySetValue:forAttribute:]):
+            Ditto.
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+            Ditto.
+        (-[AccessibilityObjectWrapper accessibilityIndexOfChild:]): Ditto.
+        (-[AccessibilityObjectWrapper accessibilityArrayAttributeCount:]):
+            Ditto.
+        (-[AccessibilityObjectWrapper accessibilityArrayAttributeValues:index:maxCount:]):
+            Ditto.
+
 2009-09-18  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Simon Hausmann.
