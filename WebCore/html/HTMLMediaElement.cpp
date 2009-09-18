@@ -896,6 +896,13 @@ void HTMLMediaElement::returnToRealtime()
     setCurrentTime(maxTimeSeekable(), e);
 }  
 
+void HTMLMediaElement::addPlayedRange(float start, float end)
+{
+    if (!m_playedTimeRanges)
+        m_playedTimeRanges = TimeRanges::create();
+    m_playedTimeRanges->add(start, end);
+}  
+
 bool HTMLMediaElement::supportsSave() const
 {
     return m_player ? m_player->supportsSave() : false;
@@ -931,7 +938,7 @@ void HTMLMediaElement::seek(float time, ExceptionCode& ec)
     // 5
     if (m_playing) {
         if (m_lastSeekTime < now)
-            m_playedTimeRanges->add(m_lastSeekTime, now);
+            addPlayedRange(m_lastSeekTime, now);
     }
     m_lastSeekTime = time;
 
@@ -1483,17 +1490,17 @@ PassRefPtr<TimeRanges> HTMLMediaElement::buffered() const
     return m_player->buffered();
 }
 
-PassRefPtr<TimeRanges> HTMLMediaElement::played() const
+PassRefPtr<TimeRanges> HTMLMediaElement::played()
 {
-    if (!m_playedTimeRanges) {
-        // We are not yet loaded
-        return TimeRanges::create();
-    }
     if (m_playing) {
         float time = currentTime();
-        if (m_lastSeekTime < time)
-            m_playedTimeRanges->add(m_lastSeekTime, time);
+        if (time > m_lastSeekTime)
+            addPlayedRange(m_lastSeekTime, time);
     }
+
+    if (!m_playedTimeRanges)
+        m_playedTimeRanges = TimeRanges::create();
+
     return m_playedTimeRanges->copy();
 }
 
@@ -1589,8 +1596,8 @@ void HTMLMediaElement::updatePlayState()
         m_playbackProgressTimer.stop();
         m_playing = false;
         float time = currentTime();
-        if (m_lastSeekTime < time)
-            m_playedTimeRanges->add(m_lastSeekTime, time);
+        if (time > m_lastSeekTime)
+            addPlayedRange(m_lastSeekTime, time);
     }
     
     if (renderer())

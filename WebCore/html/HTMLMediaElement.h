@@ -120,7 +120,7 @@ public:
     void setPlaybackRate(float);
     bool webkitPreservesPitch() const;
     void setWebkitPreservesPitch(bool);
-    PassRefPtr<TimeRanges> played() const;
+    PassRefPtr<TimeRanges> played();
     PassRefPtr<TimeRanges> seekable() const;
     bool ended() const;
     bool autoplay() const;    
@@ -193,6 +193,7 @@ private:
     void seek(float time, ExceptionCode&);
     void finishSeek();
     void checkIfSeekNeeded();
+    void addPlayedRange(float start, float end);
     
     void scheduleTimeupdateEvent(bool periodicEvent);
     void scheduleProgressEvent(const AtomicString& eventName);

@@ -1,3 +1,19 @@
+2009-09-18  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        NULL check HTMLMediaElement::m_playedTimeRanges.
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=29494
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::addPlayedRange): New. Create m_playedTimeRanges if
+        necessary, add range specified.
+        (WebCore::HTMLMediaElement::seek): Use addPlayedRange. 
+        (WebCore::HTMLMediaElement::played): Use addPlayedRange. Change time comparison 
+        to be more readable.
+        (WebCore::HTMLMediaElement::updatePlayState): Ditto.
+        * html/HTMLMediaElement.h:
+
 2009-09-18  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adele Peterson.
