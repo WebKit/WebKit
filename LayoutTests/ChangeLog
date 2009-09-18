@@ -2,6 +2,20 @@
 
         Reviewed by Dave Hyatt.
 
+        Compositing layers are incorrectly positioned after scrolling with position:fixed
+        https://bugs.webkit.org/show_bug.cgi?id=29262
+        
+        Add testcase for scrolling a page with position:fixed composited content.
+
+        * compositing/geometry/fixed-position.html: Added.
+        * platform/mac/compositing/geometry/fixed-position-expected.checksum: Added.
+        * platform/mac/compositing/geometry/fixed-position-expected.png: Added.
+        * platform/mac/compositing/geometry/fixed-position-expected.txt: Added.
+
+2009-09-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt.
+
         Transformed elements inside position:fixed container are clipped incorrectly
         https://bugs.webkit.org/show_bug.cgi?id=29346
         

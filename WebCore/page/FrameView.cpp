@@ -803,6 +803,22 @@ void FrameView::setScrollPosition(const IntPoint& scrollPoint)
     m_inProgrammaticScroll = wasInProgrammaticScroll;
 }
 
+void FrameView::scrollPositionChanged()
+{
+    frame()->eventHandler()->sendScrollEvent();
+
+#if USE(ACCELERATED_COMPOSITING)
+    // We need to update layer positions after scrolling to account for position:fixed layers.
+    Document* document = m_frame->document();
+    if (!document)
+        return;
+
+    RenderLayer* layer = document->renderer() ? document->renderer()->enclosingLayer() : 0;
+    if (layer)
+        layer->updateLayerPositions(RenderLayer::UpdateCompositingLayers);
+#endif
+}
+
 HostWindow* FrameView::hostWindow() const
 {
     Page* page = frame() ? frame()->page() : 0;

@@ -1,3 +1,18 @@
+2009-09-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Compositing layers are incorrectly positioned after scrolling with position:fixed
+        https://bugs.webkit.org/show_bug.cgi?id=29262
+        
+        When scrolling a page with compositing layers inside a position:fixed element,
+        we need to update the compositing layer positions when the scroll position changes.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _frameOrBoundsChanged]):
+        Call the new FrameView::scrollPositionChanged() method rather than sending the
+        scroll event directly.
+
 2009-09-17  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Simon Hausmann.

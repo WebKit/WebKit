@@ -2,6 +2,26 @@
 
         Reviewed by Dave Hyatt.
 
+        Compositing layers are incorrectly positioned after scrolling with position:fixed
+        https://bugs.webkit.org/show_bug.cgi?id=29262
+        
+        When scrolling a page with compositing layers inside a position:fixed element,
+        we need to update the compositing layer positions when the scroll position changes.
+
+        Test: compositing/geometry/fixed-position.html
+
+        * WebCore.base.exp:
+        Export FrameView::scrollPositionChanged()
+        
+        * page/FrameView.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollPositionChanged):
+        New method that sends the scroll event, and updates compositing layers positions if necessary.
+
+2009-09-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt.
+
         Transformed elements inside position:fixed container are clipped incorrectly
         https://bugs.webkit.org/show_bug.cgi?id=29346
         
