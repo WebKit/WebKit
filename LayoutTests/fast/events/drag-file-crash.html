@@ -1,0 +1,32 @@
+<style>
+    #scroller {
+        height: 1000px;
+    }
+</style>
+<script>
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    function moveMouseToCenterOfElement(element)
+    {
+        var centerX = element.offsetLeft + element.offsetWidth / 2;
+        var centerY = element.offsetTop + element.offsetHeight / 2;
+        eventSender.mouseMoveTo(centerX, centerY);
+    }
+
+    function run()
+    {
+        window.scrollBy(0, 1000);
+        if (window.eventSender) {
+            eventSender.beginDragWithFiles(["resources/abe.png"]);
+            var fileInput = document.getElementById('file');
+            moveMouseToCenterOfElement(fileInput);
+            eventSender.mouseUp();
+        }
+    }
+</script>
+<body onload="run()">
+<div id="scroller"></div>
+<input type="file" id="file">
+This is a test for https://bugs.webkit.org/show_bug.cgi?id=29276. It passes if it does not crash. If not run from DRT, drag a file onto the file input.
+</body>

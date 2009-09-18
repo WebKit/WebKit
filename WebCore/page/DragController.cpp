@@ -47,6 +47,7 @@
 #include "HTMLAnchorElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
+#include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "Image.h"
 #include "MoveSelectionCommand.h"
@@ -54,6 +55,7 @@
 #include "Page.h"
 #include "RenderFileUploadControl.h"
 #include "RenderImage.h"
+#include "RenderView.h"
 #include "ReplaceSelectionCommand.h"
 #include "ResourceRequest.h"
 #include "SelectionController.h"
@@ -254,6 +256,25 @@ static HTMLInputElement* asFileInput(Node* node)
     return 0;
 }
 
+static Element* elementUnderMouse(Document* documentUnderMouse, const IntPoint& p)
+{
+    float zoomFactor = documentUnderMouse->frame()->pageZoomFactor();
+    IntPoint point = roundedIntPoint(FloatPoint(p.x() * zoomFactor, p.y() * zoomFactor));
+
+    HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active);
+    HitTestResult result(point);
+    documentUnderMouse->renderView()->layer()->hitTest(request, result);
+
+    Node* n = result.innerNode();
+    while (n && !n->isElementNode())
+        n = n->parentNode();
+    if (n)
+        n = n->shadowAncestorNode();
+
+    ASSERT(n);
+    return static_cast<Element*>(n);
+}
+
 bool DragController::tryDocumentDrag(DragData* dragData, DragDestinationAction actionMask, DragOperation& operation)
 {
     ASSERT(dragData);
@@ -288,9 +309,8 @@ bool DragController::tryDocumentDrag(DragData* dragData, DragDestinationAction a
             return true;
         }
 
-        IntPoint point = frameView->convertFromContainingWindow(dragData->clientPosition());
-        Element* element = m_documentUnderMouse->elementFromPoint(point.x(), point.y());
-        ASSERT(element);
+        IntPoint point = frameView->windowToContents(dragData->clientPosition());
+        Element* element = elementUnderMouse(m_documentUnderMouse, point);
         if (!asFileInput(element)) {
             VisibleSelection dragCaret = m_documentUnderMouse->frame()->visiblePositionForPoint(point);
             m_page->dragCaretController()->setSelection(dragCaret);
@@ -339,9 +359,8 @@ bool DragController::concludeEditDrag(DragData* dragData)
     if (!m_documentUnderMouse)
         return false;
 
-    IntPoint point = m_documentUnderMouse->view()->convertFromContainingWindow(dragData->clientPosition());
-    Element* element =  m_documentUnderMouse->elementFromPoint(point.x(), point.y());
-    ASSERT(element);
+    IntPoint point = m_documentUnderMouse->view()->windowToContents(dragData->clientPosition());
+    Element* element = elementUnderMouse(m_documentUnderMouse, point);
     Frame* innerFrame = element->ownerDocument()->frame();
     ASSERT(innerFrame);
 

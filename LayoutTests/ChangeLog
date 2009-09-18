@@ -1,3 +1,13 @@
+2009-09-18  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adele Peterson.
+
+        Test for https://bugs.webkit.org/show_bug.cgi?id=29276
+        REGRESSION(r48334): WebKit crashes on file select by drag
+
+        * fast/events/drag-file-crash-expected.txt: Added.
+        * fast/events/drag-file-crash.html: Added.
+
 2009-09-18  Steve Block  <steveblock@google.com>
 
         Reviewed by Dimitri Glazkov.

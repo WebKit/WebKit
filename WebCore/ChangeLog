@@ -1,3 +1,20 @@
+2009-09-18  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adele Peterson.
+
+        Follow up fix for https://bugs.webkit.org/show_bug.cgi?id=29276
+        REGRESSION(r48334): WebKit crashes on file select by drag
+
+        Don't use Document.elementFromPoint since it returns null if the point
+        is outside the viewport.  Instead, just hit test ourselves.
+
+        Test: fast/events/drag-file-crash.html
+
+        * page/DragController.cpp:
+        (WebCore::elementUnderMouse):
+        (WebCore::DragController::tryDocumentDrag):
+        (WebCore::DragController::concludeEditDrag):
+
 2009-09-18  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.
