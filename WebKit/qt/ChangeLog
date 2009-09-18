@@ -1,3 +1,14 @@
+2009-09-18  Warwick Allison  <warwick.allison@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Added a test that console output works.
+
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (ConsolePage::ConsolePage):
+        (ConsolePage::javaScriptConsoleMessage):
+        (tst_QWebPage::consoleOutput):
+
 2009-09-17  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Simon Hausmann.
