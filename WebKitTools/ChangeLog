@@ -2,6 +2,9 @@
 
         Reviewed by Mark Rowe.
 
+        Break more of run-webkit-tests into separate functions
+        https://bugs.webkit.org/show_bug.cgi?id=29497
+
         Some small steps toward improving run-webkit-tests. My goal is to
         refactor much more of the script into functions. Later we can add
         parallel test running to the tool. But better structure may help
