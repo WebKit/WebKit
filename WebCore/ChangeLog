@@ -1,3 +1,16 @@
+2009-09-18  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin 'BearClaw' Barraclough.
+
+        Convert another callback type object to store the global object
+        instead of the frame.
+
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        (WebCore::JSCustomXPathNSResolver::create):
+        (WebCore::JSCustomXPathNSResolver::JSCustomXPathNSResolver):
+        (WebCore::JSCustomXPathNSResolver::lookupNamespaceURI):
+        * bindings/js/JSCustomXPathNSResolver.h:
+
 2009-09-18  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
