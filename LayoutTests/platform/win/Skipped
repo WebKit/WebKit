@@ -680,3 +680,6 @@ http/tests/local/send-dragged-file.html
 
 # <https://bugs.webkit.org/show_bug.cgi?id=29289>
 plugins/destroy-during-npp-new.html
+
+# <https://bugs.webkit.org/show_bug.cgi?id=29353>
+http/tests/xmlhttprequest/xmlhttprequest-missing-file-exception.html

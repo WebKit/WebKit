@@ -1,3 +1,15 @@
+2009-09-17  Brian Weinstein  <bweinstein@apple.com>
+
+        Rubber-stamped by Steve Falkenburg.
+
+        Add failing test on both Windows Debug and Release to the
+        Windows Skipped List.
+        
+        http/tests/xmlhttprequest/xmlhttprequest-missing-file-exception.html is
+        being tracked by <https://bugs.webkit.org/show_bug.cgi?id=29353>.
+
+        * platform/win/Skipped:
+
 2009-09-17  Alpha Lam  <hclam@chromium.org>
 
         Reviewed by Eric Carlson.
