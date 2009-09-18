@@ -1,3 +1,10 @@
+2009-09-18  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Gtk] Unreviewed build fix.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::platformPageClient):
+
 2009-09-17  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Simon Hausmann.
