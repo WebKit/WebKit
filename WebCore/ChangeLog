@@ -1,3 +1,21 @@
+2009-09-18  Joerg Bornemann  <joerg.bornemann@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        QtWebKit Windows CE compile fixes
+
+        Exclude certain pure-WINCE specific code paths from the Qt build.
+
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/FontCache.h:
+        * platform/graphics/MediaPlayer.cpp:
+        * platform/text/TextEncodingRegistry.cpp:
+        (WebCore::buildBaseTextCodecMaps):
+        (WebCore::extendTextCodecMaps):
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::stop): Guard this code block with NETSCAPE_PLUGIN_API as
+        the corresponding PluginViewWndProc has the same guard in the header file.
+
 2009-09-18  Steve Block  <steveblock@google.com>
 
         Reviewed by Dimitri Glazkov.

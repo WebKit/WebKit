@@ -166,7 +166,7 @@ protected:
 #endif
     virtual void draw(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator);
 
-#if PLATFORM(WX) || PLATFORM(WINCE)
+#if PLATFORM(WX) || (PLATFORM(WINCE) && !PLATFORM(QT))
     virtual void drawPattern(GraphicsContext*, const FloatRect& srcRect, const TransformationMatrix& patternTransform,
                              const FloatPoint& phase, CompositeOperator, const FloatRect& destRect);
 #endif

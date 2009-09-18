@@ -64,7 +64,7 @@ public:
     // Also implemented by the platform.
     void platformInit();
 
-#if PLATFORM(WINCE)
+#if PLATFORM(WINCE) && !PLATFORM(QT)
 #if defined(IMLANG_FONT_LINK) && (IMLANG_FONT_LINK == 2)
     IMLangFontLink2* getFontLinkInterface();
 #else
