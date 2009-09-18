@@ -1,3 +1,60 @@
+2009-09-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Each wrapped Objective-C object should use a single RuntimeObjectImp
+        https://bugs.webkit.org/show_bug.cgi?id=29351
+        rdar://problem/7142294
+
+        * WebCore.base.exp: Added a newly-needed exported symbol.
+
+        * bindings/objc/DOMInternal.h: Eliminated unused
+        createWrapperCacheWithIntegerKeys; it has not been needed since the
+        RGBColor wrappers were reworked.
+        * bindings/objc/DOMInternal.mm: Ditto.
+
+        * bridge/objc/objc_instance.h: Made the create function non-inline.
+        * bridge/objc/objc_instance.mm:
+        (createInstanceWrapperCache): Added. Creates an appropriate map table.
+        (ObjcInstance::create): Moved here from header. Uses NSMapGet and
+        NSMapInsert to cache the instance in a map table.
+        (ObjcInstance::~ObjcInstance): Added a call to NSMapRemove to remove
+        the instance from the map table.
+
+        * bridge/qt/qt_instance.cpp:
+        (JSC::Bindings::QtInstance::~QtInstance): Remove unneeded code to remove
+        the instance from cachedObjects, which no longer exists.
+        (JSC::Bindings::QtInstance::newRuntimeObject): Renamed to overload new
+        bottleneck. Caching is now handled by the base class.
+
+        * bridge/runtime.cpp:
+        (JSC::Bindings::Instance::Instance): Initialize m_runtimeObject to 0.
+        (JSC::Bindings::Instance::~Instance): Assert m_runtimeObject is 0.
+        (JSC::Bindings::Instance::createRuntimeObject): Use m_runtimeObject
+        if it's already set. Set m_runtimeObject and call addRuntimeObject
+        if it's not.
+        (JSC::Bindings::Instance::newRuntimeObject): Added. Virtual function,
+        used only by createRuntimeObject.
+        (JSC::Bindings::Instance::willDestroyRuntimeObject): Added.
+        Calls removeRuntimeObject and then clears m_runtimeObject.
+        (JSC::Bindings::Instance::willInvalidateRuntimeObject): Added.
+        Clears m_runtimeObject.
+
+        * bridge/runtime.h: Made createRuntimeObject non-virtual. Added
+        willDestroyRuntimeObject, willInvalidateRuntimeObject,
+        newRuntimeObject, and m_runtimeObject.
+
+        * bridge/runtime_object.cpp:
+        (JSC::RuntimeObjectImp::RuntimeObjectImp): Removed addRuntimeObject
+        call, now handled by caller.
+        (JSC::RuntimeObjectImp::~RuntimeObjectImp): Replaced removeRuntimeObject
+        call with willDestroyRuntimeObject call; the latter nows calls
+        removeRuntimeObject.
+        (JSC::RuntimeObjectImp::invalidate): Added willInvalidateRuntimeObject
+        call.
+
+        * bridge/runtime_object.h: Made invalidate non-virtual.
+
 2009-09-17  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Simon Hausmann.

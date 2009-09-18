@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,16 +37,12 @@ class ObjcClass;
 
 class ObjcInstance : public Instance {
 public:
-    static PassRefPtr<ObjcInstance> create(ObjectStructPtr instance, PassRefPtr<RootObject> rootObject)
-    {
-        return adoptRef(new ObjcInstance(instance, rootObject));
-    }
-
+    static PassRefPtr<ObjcInstance> create(ObjectStructPtr, PassRefPtr<RootObject>);
+    virtual ~ObjcInstance();
+    
     static void setGlobalException(NSString*, JSGlobalObject* exceptionEnvironment = 0); // A null exceptionEnvironment means the exception should propogate to any execution environment.
 
-    ~ObjcInstance();
-    
-    virtual Class *getClass() const;
+    virtual Class* getClass() const;
         
     virtual JSValue valueOf(ExecState*) const;
     virtual JSValue defaultValue(ExecState*, PreferredPrimitiveType) const;
@@ -71,7 +67,7 @@ protected:
 private:
     static void moveGlobalExceptionToExecState(ExecState*);
 
-    ObjcInstance(ObjectStructPtr instance, PassRefPtr<RootObject>);
+    ObjcInstance(ObjectStructPtr, PassRefPtr<RootObject>);
     
     RetainPtr<ObjectStructPtr> _instance;
     mutable ObjcClass *_class;

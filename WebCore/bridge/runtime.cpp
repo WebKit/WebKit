@@ -48,12 +48,14 @@ Array::~Array()
 
 Instance::Instance(PassRefPtr<RootObject> rootObject)
     : _rootObject(rootObject)
+    , m_runtimeObject(0)
 {
     ASSERT(_rootObject);
 }
 
 Instance::~Instance()
 {
+    ASSERT(!m_runtimeObject);
 }
 
 static KJSDidExecuteFunctionPtr s_didExecuteFunction;
@@ -80,9 +82,35 @@ void Instance::end()
 
 RuntimeObjectImp* Instance::createRuntimeObject(ExecState* exec)
 {
+    ASSERT(_rootObject);
+    ASSERT(_rootObject->isValid());
+    if (m_runtimeObject)
+        return m_runtimeObject;
     JSLock lock(SilenceAssertionsOnly);
-    
+    m_runtimeObject = newRuntimeObject(exec);
+    _rootObject->addRuntimeObject(m_runtimeObject);
+    return m_runtimeObject;
+}
+
+RuntimeObjectImp* Instance::newRuntimeObject(ExecState* exec)
+{
+    JSLock lock(SilenceAssertionsOnly);
     return new (exec) RuntimeObjectImp(exec, this);
+}
+
+void Instance::willDestroyRuntimeObject()
+{
+    ASSERT(_rootObject);
+    ASSERT(_rootObject->isValid());
+    ASSERT(m_runtimeObject);
+    _rootObject->removeRuntimeObject(m_runtimeObject);
+    m_runtimeObject = 0;
+}
+
+void Instance::willInvalidateRuntimeObject()
+{
+    ASSERT(m_runtimeObject);
+    m_runtimeObject = 0;
 }
 
 RootObject* Instance::rootObject() const 

@@ -61,7 +61,6 @@ namespace WebCore {
 
 // Create an NSMapTable mapping from pointers to ObjC objects held with zeroing weak references.
 NSMapTable* createWrapperCache();
-NSMapTable* createWrapperCacheWithIntegerKeys(); // Same, but from integers to ObjC objects.
 
 id createDOMWrapper(JSC::JSObject*, PassRefPtr<JSC::Bindings::RootObject> origin, PassRefPtr<JSC::Bindings::RootObject> current);
 

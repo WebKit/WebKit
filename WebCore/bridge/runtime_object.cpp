@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,6 @@
 
 #include "JSDOMBinding.h"
 #include "runtime_method.h"
-#include "runtime_root.h"
 #include <runtime/Error.h>
 #include <runtime/ObjectPrototype.h>
 
@@ -46,25 +45,25 @@ RuntimeObjectImp::RuntimeObjectImp(ExecState* exec, PassRefPtr<Instance> instanc
     : JSObject(deprecatedGetDOMStructure<RuntimeObjectImp>(exec))
     , m_instance(instance)
 {
-    m_instance->rootObject()->addRuntimeObject(this);
 }
 
 RuntimeObjectImp::RuntimeObjectImp(ExecState*, PassRefPtr<Structure> structure, PassRefPtr<Instance> instance)
     : JSObject(structure)
     , m_instance(instance)
 {
-    m_instance->rootObject()->addRuntimeObject(this);
 }
 
 RuntimeObjectImp::~RuntimeObjectImp()
 {
     if (m_instance)
-        m_instance->rootObject()->removeRuntimeObject(this);
+        m_instance->willDestroyRuntimeObject();
 }
 
 void RuntimeObjectImp::invalidate()
 {
     ASSERT(m_instance);
+    if (m_instance)
+        m_instance->willInvalidateRuntimeObject();
     m_instance = 0;
 }
 
