@@ -1,5 +1,13 @@
 2009-09-18  Xan Lopez  <xlopez@igalia.com>
 
+        Reviewed by Jan Alonzo.
+
+        Document webkit_web_view_stop_loading.
+
+        * webkit/webkitwebview.cpp:
+
+2009-09-18  Xan Lopez  <xlopez@igalia.com>
+
         Reviewed by Gustavo Noronha and Jan Alonzo.
 
         [GTK] context menu overriding API is very limited

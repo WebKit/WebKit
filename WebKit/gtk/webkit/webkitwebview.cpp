@@ -3021,6 +3021,12 @@ void webkit_web_view_load_request(WebKitWebView* webView, WebKitNetworkRequest* 
     webkit_web_frame_load_request(frame, request);
 }
 
+/**
+ * webkit_web_view_stop_loading:
+ * @webView: a #WebKitWebView
+ * 
+ * Stops any ongoing load in the @webView.
+ **/
 void webkit_web_view_stop_loading(WebKitWebView* webView)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
