@@ -1,3 +1,9 @@
+2009-09-18  Anders Carlsson  <andersca@apple.com>
+
+        Fix windows build.
+        
+        * platform/win/PopupMenuWin.cpp:
+
 2009-09-18  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Gavin 'BearClaw' Barraclough.

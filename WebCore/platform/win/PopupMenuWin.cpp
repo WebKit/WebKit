@@ -40,6 +40,7 @@
 #include "SimpleFontData.h"
 #include <tchar.h>
 #include <windows.h>
+#include <windowsx.h>
 #if PLATFORM(WINCE)
 #include <ResDefCE.h>
 #define MAKEPOINTS(l) (*((POINTS FAR *)&(l)))
