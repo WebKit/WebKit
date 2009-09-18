@@ -1,3 +1,18 @@
+2009-09-18  Xan Lopez  <xlopez@igalia.com>
+
+        Build fix.
+
+        Add missing file to the repository.
+
+        * tests/testhittestresult.c: Added.
+        (test_info_new):
+        (test_info_destroy):
+        (hit_test_result_fixture_setup):
+        (hit_test_result_fixture_teardown):
+        (load_status_cb):
+        (test_webkit_hit_test_result):
+        (main):
+
 2009-09-18  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [Gtk] Unreviewed build fix.
