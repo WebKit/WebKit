@@ -43,6 +43,8 @@ test('navigator.geolocation.getCurrentPosition(emptyFunction)', false);
 test('navigator.geolocation.getCurrentPosition(Math.abs)', false);
 test('navigator.geolocation.getCurrentPosition(true)', true);
 test('navigator.geolocation.getCurrentPosition(42)', true);
+test('navigator.geolocation.getCurrentPosition(Infinity)', true);
+test('navigator.geolocation.getCurrentPosition(-Infinity)', true);
 test('navigator.geolocation.getCurrentPosition("string")', true);
 
 test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined)', false);
@@ -53,6 +55,8 @@ test('navigator.geolocation.getCurrentPosition(emptyFunction, emptyFunction)', f
 test('navigator.geolocation.getCurrentPosition(emptyFunction, Math.abs)', false);
 test('navigator.geolocation.getCurrentPosition(emptyFunction, true)', true);
 test('navigator.geolocation.getCurrentPosition(emptyFunction, 42)', true);
+test('navigator.geolocation.getCurrentPosition(emptyFunction, Infinity)', true);
+test('navigator.geolocation.getCurrentPosition(emptyFunction, -Infinity)', true);
 test('navigator.geolocation.getCurrentPosition(emptyFunction, "string")', true);
 
 test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, undefined)', false);
@@ -62,6 +66,8 @@ test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, objectT
 test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, emptyFunction)', false);
 test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, true)', false);
 test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, 42)', false);
+test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, Infinity)', false);
+test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, -Infinity)', false);
 test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, "string")', false);
 
 test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {dummyProperty:undefined})', false);
@@ -71,6 +77,8 @@ test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {dummyP
 test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {dummyProperty:emptyFunction})', false);
 test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {dummyProperty:true})', false);
 test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {dummyProperty:42})', false);
+test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {dummyProperty:Infinity})', false);
+test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {dummyProperty:-Infinity})', false);
 test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {dummyProperty:"string"})', false);
 
 test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {enableHighAccuracy:undefined})', false);
@@ -80,6 +88,8 @@ test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {enable
 test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {enableHighAccuracy:emptyFunction})', false);
 test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {enableHighAccuracy:true})', false);
 test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {enableHighAccuracy:42})', false);
+test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {enableHighAccuracy:Infinity})', false);
+test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {enableHighAccuracy:-Infinity})', false);
 test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {enableHighAccuracy:"string"})', false);
 
 test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {maximumAge:undefined})', false);
@@ -89,6 +99,8 @@ test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {maximu
 test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {maximumAge:emptyFunction})', false);
 test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {maximumAge:true})', false);
 test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {maximumAge:42})', false);
+test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {maximumAge:Infinity})', false);
+test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {maximumAge:-Infinity})', false);
 test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {maximumAge:"string"})', false);
 
 test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {timeout:undefined})', false);
@@ -98,6 +110,8 @@ test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {timeou
 test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {timeout:emptyFunction})', false);
 test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {timeout:true})', false);
 test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {timeout:42})', false);
+test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {timeout:Infinity})', false);
+test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {timeout:-Infinity})', false);
 test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {timeout:"string"})', false);
 
 var successfullyParsed = true;

@@ -1,3 +1,13 @@
+2009-09-18  Steve Block  <steveblock@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Geolocation does not correctly handle Infinity for PositionOptions properties.
+        https://bugs.webkit.org/show_bug.cgi?id=29099
+
+        * fast/dom/Geolocation/resources/argument-types.js: Modified. Test passing positive and negative Infinity to Geolocation methods.
+        * fast/dom/Geolocation/argument-types-expected.txt: Modified. Expected result for above test.
+
 2009-09-17  Brian Weinstein  <bweinstein@apple.com>
 
         Rubber-stamped by Steve Falkenburg.

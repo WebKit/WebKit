@@ -1,3 +1,19 @@
+2009-09-18  Steve Block  <steveblock@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Geolocation does not correctly handle Infinity for PositionOptions properties.
+        https://bugs.webkit.org/show_bug.cgi?id=29099
+
+        * bindings/js/JSGeolocationCustom.cpp: Modified.
+        (WebCore::createPositionOptions): Modified. If timeout or maximumAge is positive infinity, applies these values as a special case.
+        * page/PositionOptions.h: Modified.
+        (WebCore::PositionOptions::hasMaximumAge): Added. Determines whether the object has a maximum age.
+        (WebCore::PositionOptions::maximumAge): Modified. Asserts that the object has a maximum age.
+        (WebCore::PositionOptions::clearMaximumAge): Added. Clears the maximum age.
+        (WebCore::PositionOptions::setMaximumAge): Modified. Registers that the maximum age has been set.
+        (WebCore::PositionOptions::PositionOptions): Modified. Registers that the maximum age has been set.
+
 2009-09-17  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adele Peterson.

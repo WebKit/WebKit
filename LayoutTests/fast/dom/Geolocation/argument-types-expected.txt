@@ -12,6 +12,8 @@ PASS navigator.geolocation.getCurrentPosition(emptyFunction) did not throw excep
 PASS navigator.geolocation.getCurrentPosition(Math.abs) did not throw exception.
 PASS navigator.geolocation.getCurrentPosition(true) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
 PASS navigator.geolocation.getCurrentPosition(42) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS navigator.geolocation.getCurrentPosition(Infinity) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS navigator.geolocation.getCurrentPosition(-Infinity) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
 PASS navigator.geolocation.getCurrentPosition("string") threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
 PASS navigator.geolocation.getCurrentPosition(emptyFunction, undefined) did not throw exception.
 PASS navigator.geolocation.getCurrentPosition(emptyFunction, null) did not throw exception.
@@ -21,6 +23,8 @@ PASS navigator.geolocation.getCurrentPosition(emptyFunction, emptyFunction) did 
 PASS navigator.geolocation.getCurrentPosition(emptyFunction, Math.abs) did not throw exception.
 PASS navigator.geolocation.getCurrentPosition(emptyFunction, true) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
 PASS navigator.geolocation.getCurrentPosition(emptyFunction, 42) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS navigator.geolocation.getCurrentPosition(emptyFunction, Infinity) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS navigator.geolocation.getCurrentPosition(emptyFunction, -Infinity) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
 PASS navigator.geolocation.getCurrentPosition(emptyFunction, "string") threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
 PASS navigator.geolocation.getCurrentPosition(emptyFunction, undefined, undefined) did not throw exception.
 PASS navigator.geolocation.getCurrentPosition(emptyFunction, undefined, null) did not throw exception.
@@ -29,6 +33,8 @@ PASS navigator.geolocation.getCurrentPosition(emptyFunction, undefined, objectTh
 PASS navigator.geolocation.getCurrentPosition(emptyFunction, undefined, emptyFunction) did not throw exception.
 PASS navigator.geolocation.getCurrentPosition(emptyFunction, undefined, true) did not throw exception.
 PASS navigator.geolocation.getCurrentPosition(emptyFunction, undefined, 42) did not throw exception.
+PASS navigator.geolocation.getCurrentPosition(emptyFunction, undefined, Infinity) did not throw exception.
+PASS navigator.geolocation.getCurrentPosition(emptyFunction, undefined, -Infinity) did not throw exception.
 PASS navigator.geolocation.getCurrentPosition(emptyFunction, undefined, "string") did not throw exception.
 PASS navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {dummyProperty:undefined}) did not throw exception.
 PASS navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {dummyProperty:null}) did not throw exception.
@@ -37,6 +43,8 @@ PASS navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {dummyPr
 PASS navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {dummyProperty:emptyFunction}) did not throw exception.
 PASS navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {dummyProperty:true}) did not throw exception.
 PASS navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {dummyProperty:42}) did not throw exception.
+PASS navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {dummyProperty:Infinity}) did not throw exception.
+PASS navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {dummyProperty:-Infinity}) did not throw exception.
 PASS navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {dummyProperty:"string"}) did not throw exception.
 PASS navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {enableHighAccuracy:undefined}) did not throw exception.
 PASS navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {enableHighAccuracy:null}) did not throw exception.
@@ -45,6 +53,8 @@ PASS navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {enableH
 PASS navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {enableHighAccuracy:emptyFunction}) did not throw exception.
 PASS navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {enableHighAccuracy:true}) did not throw exception.
 PASS navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {enableHighAccuracy:42}) did not throw exception.
+PASS navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {enableHighAccuracy:Infinity}) did not throw exception.
+PASS navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {enableHighAccuracy:-Infinity}) did not throw exception.
 PASS navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {enableHighAccuracy:"string"}) did not throw exception.
 PASS navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {maximumAge:undefined}) did not throw exception.
 PASS navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {maximumAge:null}) did not throw exception.
@@ -53,6 +63,8 @@ PASS navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {maximum
 PASS navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {maximumAge:emptyFunction}) did not throw exception.
 PASS navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {maximumAge:true}) did not throw exception.
 PASS navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {maximumAge:42}) did not throw exception.
+PASS navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {maximumAge:Infinity}) did not throw exception.
+PASS navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {maximumAge:-Infinity}) did not throw exception.
 PASS navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {maximumAge:"string"}) did not throw exception.
 PASS navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {timeout:undefined}) did not throw exception.
 PASS navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {timeout:null}) did not throw exception.
@@ -61,6 +73,8 @@ PASS navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {timeout
 PASS navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {timeout:emptyFunction}) did not throw exception.
 PASS navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {timeout:true}) did not throw exception.
 PASS navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {timeout:42}) did not throw exception.
+PASS navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {timeout:Infinity}) did not throw exception.
+PASS navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {timeout:-Infinity}) did not throw exception.
 PASS navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {timeout:"string"}) did not throw exception.
 PASS successfullyParsed is true
 

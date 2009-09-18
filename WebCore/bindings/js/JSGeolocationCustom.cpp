@@ -100,20 +100,34 @@ static PassRefPtr<PositionOptions> createPositionOptions(ExecState* exec, JSValu
     if (exec->hadException())
         return 0;
     if (!timeoutValue.isUndefined()) {
-        // Wrap to int32 and force non-negative to match behavior of window.setTimeout.
-        options->setTimeout(max(0, timeoutValue.toInt32(exec)));
+        double timeoutNumber = timeoutValue.toNumber(exec);
         if (exec->hadException())
             return 0;
+        // If the value is positive infinity, there's nothing to do.
+        if (!(isinf(timeoutNumber) && (timeoutNumber > 0))) {
+            // Wrap to int32 and force non-negative to match behavior of window.setTimeout.
+            options->setTimeout(max(0, timeoutValue.toInt32(exec)));
+            if (exec->hadException())
+                return 0;
+        }
     }
 
     JSValue maximumAgeValue = object->get(exec, Identifier(exec, "maximumAge"));
     if (exec->hadException())
         return 0;
     if (!maximumAgeValue.isUndefined()) {
-        // Wrap to int32 and force non-negative to match behavior of window.setTimeout.
-        options->setMaximumAge(max(0, maximumAgeValue.toInt32(exec)));
+        double maximumAgeNumber = maximumAgeValue.toNumber(exec);
         if (exec->hadException())
             return 0;
+        if (isinf(maximumAgeNumber) && (maximumAgeNumber > 0)) {
+            // If the value is positive infinity, clear maximumAge.
+            options->clearMaximumAge();
+        } else {
+            // Wrap to int32 and force non-negative to match behavior of window.setTimeout.
+            options->setMaximumAge(max(0, maximumAgeValue.toInt32(exec)));
+            if (exec->hadException())
+                return 0;
+        }
     }
 
     return options.release();

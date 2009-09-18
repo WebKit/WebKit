@@ -49,10 +49,17 @@ public:
         m_hasTimeout = true;
         m_timeout = timeout;
     }
-    int maximumAge() const { return m_maximumAge; }
+    bool hasMaximumAge() const { return m_hasMaximumAge; }
+    int maximumAge() const
+    {
+        ASSERT(hasMaximumAge());
+        return m_maximumAge;
+    }
+    void clearMaximumAge() { m_hasMaximumAge = false; }
     void setMaximumAge(int age)
     {
         ASSERT(age >= 0);
+        m_hasMaximumAge = true;
         m_maximumAge = age;
     }
     
@@ -60,13 +67,14 @@ private:
     PositionOptions()
         : m_highAccuracy(false)
         , m_hasTimeout(false)
-        , m_maximumAge(0)
     {
+        setMaximumAge(0);
     }
     
     bool m_highAccuracy;
     bool m_hasTimeout;
     int m_timeout;
+    bool m_hasMaximumAge;
     int m_maximumAge;
 };
     
