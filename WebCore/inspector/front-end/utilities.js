@@ -814,12 +814,16 @@ String.tokenizeFormatString = function(format)
 String.standardFormatters = {
     d: function(substitution)
     {
+        if (typeof substitution == "object" && Object.proxyType(substitution) === "number")
+            substitution = substitution.description;
         substitution = parseInt(substitution);
         return !isNaN(substitution) ? substitution : 0;
     },
 
     f: function(substitution, token)
     {
+        if (typeof substitution == "object" && Object.proxyType(substitution) === "number")
+            substitution = substitution.description;
         substitution = parseFloat(substitution);
         if (substitution && token.precision > -1)
             substitution = substitution.toFixed(token.precision);
@@ -828,6 +832,8 @@ String.standardFormatters = {
 
     s: function(substitution)
     {
+        if (typeof substitution == "object" && Object.proxyType(substitution) !== "null")
+            substitution = substitution.description;
         return substitution;
     },
 };

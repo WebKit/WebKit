@@ -639,7 +639,7 @@ WebInspector.ConsoleMessage.prototype = {
             return WebInspector.console._format(obj, true);
         }
 
-        if (typeof parameters[0] === "string") {
+        if (Object.proxyType(parameters[0]) === "string") {
             var formatters = {}
             for (var i in String.standardFormatters)
                 formatters[i] = String.standardFormatters[i];
@@ -660,7 +660,7 @@ WebInspector.ConsoleMessage.prototype = {
                 return a;
             }
 
-            var result = String.format(parameters[0], parameters.slice(1), formatters, formattedResult, append);
+            var result = String.format(parameters[0].description, parameters.slice(1), formatters, formattedResult, append);
             formattedResult = result.formattedResult;
             parameters = result.unusedSubstitutions;
             if (parameters.length)

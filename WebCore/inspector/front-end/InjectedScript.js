@@ -421,7 +421,7 @@ InjectedScript.getPrototypes = function(nodeId)
 
     var result = [];
     for (var prototype = node; prototype; prototype = prototype.__proto__) {
-        var title = Object.describe(prototype);
+        var title = Object.describe(prototype, true);
         if (title.match(/Prototype$/)) {
             title = title.replace(/Prototype$/, "");
         }
@@ -999,11 +999,11 @@ InjectedScript.CallFrameProxy.prototype = {
         var scopeChainProxy = [];
         for (var i = 0; i < scopeChain.length; ++i) {
             var scopeObject = scopeChain[i];
-            var scopeObjectProxy = InjectedScript.createProxyObject(scopeObject, { callFrame: this.id, chainIndex: i });
+            var scopeObjectProxy = InjectedScript.createProxyObject(scopeObject, { callFrame: this.id, chainIndex: i }, true);
 
             if (Object.prototype.toString.call(scopeObject) === "[object JSActivation]") {
                 if (!foundLocalScope)
-                    scopeObjectProxy.thisObject = InjectedScript.createProxyObject(callFrame.thisObject, { callFrame: this.id, thisObject: true });
+                    scopeObjectProxy.thisObject = InjectedScript.createProxyObject(callFrame.thisObject, { callFrame: this.id, thisObject: true }, true);
                 else
                     scopeObjectProxy.isClosure = true;
                 foundLocalScope = true;
@@ -1077,6 +1077,8 @@ Object.describe = function(obj, abbreviated)
     case "array":
         return "[" + obj.toString() + "]";
     case "string":
+        if (!abbreviated)
+            return obj;
         if (obj.length > 100)
             return "\"" + obj.substring(0, 100) + "\u2026\"";
         return "\"" + obj + "\"";
@@ -1089,6 +1091,10 @@ Object.describe = function(obj, abbreviated)
         return objectText;
     case "regexp":
         return String(obj).replace(/([\\\/])/g, "\\$1").replace(/\\(\/[gim]*)$/, "$1").substring(1);
+    case "boolean":
+    case "number":
+    case "null":
+        return obj;
     default:
         return String(obj);
     }

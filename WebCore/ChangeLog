@@ -1,3 +1,19 @@
+2009-09-18  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Fix parameter substitutions in console.log().
+
+        https://bugs.webkit.org/show_bug.cgi?id=29366
+
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleMessage.prototype._format):
+        * inspector/front-end/InjectedScript.js:
+        (InjectedScript.getPrototypes):
+        (InjectedScript.CallFrameProxy.prototype._wrapScopeChain):
+        * inspector/front-end/utilities.js:
+        ():
+
 2009-09-18  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoffrey Garen and Brady Eidson.
