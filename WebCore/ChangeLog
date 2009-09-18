@@ -1,3 +1,14 @@
+2009-09-18  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen and Brady Eidson.
+
+        Temporarily remove an assertion that was getting hit when going
+        back to a page in the page cache while a banner in Safari was visible.
+        We should re-enable this once that is fixed. See <rdar://problem/7218118>
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scheduleRelayout):
+
 2009-09-18  Anders Carlsson  <andersca@apple.com>
 
         Try fixing the build again.
