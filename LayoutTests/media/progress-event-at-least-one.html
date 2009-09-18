@@ -1,5 +1,6 @@
 <html>
     <head>
+        <script src=media-file.js></script>
         <script src=video-test.js></script>
 
         <script>
@@ -44,7 +45,8 @@
                 waitForEvent('loadedmetadata');
                 waitForEvent('loadeddata');
 
-                run("mediaElement.src = 'content/test.wav'");
+                var mediaFile = findMediaFile("audio", "content/test");
+                run("mediaElement.src = '" + mediaFile + "'");
                 run("mediaElement.load()");
 
                 consoleWrite("");

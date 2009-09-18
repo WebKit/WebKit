@@ -1,3 +1,41 @@
+2009-09-18  Alpha Lam  <hclam@chromium.org>
+
+        Reviewed by Eric Carlson.
+
+        Media layout tests should have a way to provide test files in different formats
+        https://bugs.webkit.org/show_bug.cgi?id=28327
+
+        Updating 25 media layout tests to use media files based on supported codecs.
+
+        * media/progress-event-at-least-one.html: Use findMediaFile() to locate a supported media file.
+        * media/video-pause-empty-events.html: ditto.
+        * media/video-play-empty-events.html: ditto.
+        * media/video-play-pause-events.html: ditto.
+        * media/video-played-collapse.html: ditto.
+        * media/video-played-ranges-1.html: ditto.
+        * media/video-played-reset.html: ditto.
+        * media/video-played.js: ditto.
+        (videoPlayedMain):
+        * media/video-seek-past-end-paused.html: ditto.
+        * media/video-seek-past-end-playing.html: ditto.
+        * media/video-seekable.html: ditto.
+        * media/video-seeking.html: ditto.
+        * media/video-size.html: ditto.
+        * media/video-source-error.html: ditto.
+        * media/video-source-type-params.html: ditto.
+        * media/video-source-type.html: ditto.
+        * media/video-source.html: ditto.
+        * media/video-src-change.html: ditto.
+        * media/video-src-invalid-remove.html: ditto.
+        * media/video-src-remove.html: ditto. Use counting.mp4 instead of silence.mpg.
+        * media/video-src-remove-expected.txt: Updated results.
+        * media/video-src-set.html: ditto.
+        * media/video-src-source.html: ditto.
+        * media/video-src.html: ditto.
+        * media/video-timeupdate-during-playback.html: ditto.
+        * media/video-volume.html: ditto.
+        * media/video-zoom.html: ditto.
+
 2009-09-18  Anders Carlsson  <andersca@apple.com>
 
         Add failing tests to the skipped list.

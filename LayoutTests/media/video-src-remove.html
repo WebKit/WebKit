@@ -1,10 +1,13 @@
 <html>
 <body>
+    <script src=media-file.js></script>
     <script src=video-test.js></script>
-
-    <video src=content/silence.mpg controls onloadedmetadata="loadedmetadata()" >
-        <source src=content/test.mp4>
-    </video>
+    <div id=panel></div>
+    <script>
+        var panel = document.getElementById("panel");
+        var mediaFile = findMediaFile("video", "content/test");
+        panel.innerHTML = "<video src=" + mediaFile + " controls onloadedmetadata='loadedmetadata()'><source src=content/counting.mp4></video>";
+    </script>
 
     <p>Test that removing valid 'src' attribute DOES NOT trigger load of &lt;source&gt; elements</p>
 
@@ -15,7 +18,7 @@
         
         function testSrc()
         {
-            testExpected("relativeURL(video.currentSrc)", "content/silence.mpg");
+            testExpected("relativeURL(video.currentSrc)", mediaFile);
             testExpected("isNaN(video.duration)", false);
             consoleWrite("");
         }

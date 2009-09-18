@@ -1,8 +1,9 @@
 <video controls></video>
 <p>Test that pause() from EMPTY network state triggers load()</p>
+<script src=media-file.js></script>
 <script src=video-test.js></script>
 <script>
-    video.src = "content/test.mp4";
+    video.src = findMediaFile("video", "content/test");
     testExpected("video.networkState", HTMLMediaElement.NETWORK_EMPTY);
 
     waitForEvent("loadstart");

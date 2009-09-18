@@ -1,13 +1,15 @@
 <html>
 <body>
     
-    <video src=content/test.mp4 controls></video>
+    <video controls></video>
 
     <p>
     Test 'timeupdate' events are posted while playing but not while paused.
     </p
+    <script src=media-file.js></script>
     <script src=video-test.js></script>
     <script>
+        setSrcByTagName("video", findMediaFile("video", "content/test"));
     
         var timeupdateEventCount = 0;
         var countWhilePlaying = 0;

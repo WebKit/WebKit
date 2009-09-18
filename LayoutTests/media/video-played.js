@@ -142,7 +142,7 @@ function videoPlayedMain()
 {
     findMediaElement();
     
-    video.src = 'content/test.mp4';
+    video.src = findMediaFile("video", "content/test");
     
     waitForEvent("error");
     waitForEvent("loadstart");

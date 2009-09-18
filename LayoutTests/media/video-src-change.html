@@ -8,22 +8,24 @@
     2. Test that changing src attribute triggers load after a load fails.<br>
     3. Test that changing src does not trigger load once a file is loaded.
     </p
+    <script src=media-file.js></script>
     <script src=video-test.js></script>
     <script>
-    
+        var mediaFile = findMediaFile("video", "content/test");
+
         function errorEvent()
         {
             testExpected("relativeURL(video.currentSrc)", "bogus");
             testExpected("video.networkState", HTMLMediaElement.NETWORK_NO_SOURCE);
             testExpected("video.error.code", MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED);
             consoleWrite("");
-            run("video.setAttribute('src', 'content/test.mp4')");
+            run("video.setAttribute('src', '" + mediaFile + "')");
             consoleWrite("");
         }
     
         function loadedmetadata()
         {
-            testExpected("relativeURL(video.currentSrc)", "content/test.mp4");
+            testExpected("relativeURL(video.currentSrc)", mediaFile);
             testExpected("isNaN(video.duration)", false);
             consoleWrite("");
             run("video.setAttribute('src', 'content/silence.mpg')");

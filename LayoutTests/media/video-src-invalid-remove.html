@@ -1,10 +1,14 @@
 <html>
 <body>
+    <script src=media-file.js></script>
     <script src=video-test.js></script>
 
-    <video src=bogus.mov controls>
-        <source src=content/test.mp4>
-    </video>
+    <div id=panel></div>
+    <script>
+        var panel = document.getElementById("panel");
+        var mediaFile = findMediaFile("video", "content/test");
+        panel.innerHTML = "<video src=bogus.mov controls><source src=" + mediaFile + "></video>";
+    </script>
 
     <p>Test that removing invalid 'src' attribute triggers load of &lt;source&gt; elements</p>
 
@@ -19,7 +23,7 @@
             if (loadCount == 1)
                 testExpected("relativeURL(video.currentSrc)", "bogus.mov");
             else if (loadCount == 2)
-                testExpected("relativeURL(video.currentSrc)", "content/test.mp4");
+                testExpected("relativeURL(video.currentSrc)", mediaFile);
             else
                 failTest("'loadCount' fired " + loadCount + "times" );
             consoleWrite("");
@@ -27,7 +31,7 @@
 
         function loadedmetadata()
         {
-            testExpected("relativeURL(video.currentSrc)", "content/test.mp4");
+            testExpected("relativeURL(video.currentSrc)", mediaFile);
             testExpected("isNaN(video.duration)", false);
             consoleWrite("");
         }

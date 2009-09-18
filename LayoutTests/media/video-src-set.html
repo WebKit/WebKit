@@ -1,13 +1,15 @@
 <video controls></video>
 <div>Test that setting src attribute triggers load</div>
+<script src=media-file.js></script>
 <script src=video-test.js></script>
 <script>
-    video.setAttribute('src', 'content/test.mp4')
+    var mediaFile = findMediaFile("video", "content/test");
+    video.setAttribute('src', mediaFile);
 
     waitForEvent('loadstart', function () {
-        testExpected("relativeURL(video.currentSrc)", "content/test.mp4");
+        testExpected("relativeURL(video.currentSrc)", mediaFile);
         endTest();
     } );
 
-    video.setAttribute('src', 'content/test.mp4')
+    video.setAttribute('src', mediaFile);
 </script>

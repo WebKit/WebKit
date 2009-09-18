@@ -1,15 +1,17 @@
 <body>
+<script src=media-file.js></script>
 <script src=video-test.js></script>
 <video controls>
     <source src=content/error.mpeg type=video/blahblah>
     <source src=content/test.mp4 type=video/mpeg>
+    <source src=content/test.ogv type=video/ogg>
     <source src=content/error2.mpeg type=video/mpeg>
 </video>
 <script>
     video = mediaElement = document.getElementsByTagName('video')[0];
 
     waitForEvent("loadstart", function () {
-        testExpected("relativeURL(video.currentSrc) ", "content/test.mp4");
+        testExpected("relativeURL(video.currentSrc) ", findMediaFile("video", "content/test"));
         endTest();
     });
 </script>

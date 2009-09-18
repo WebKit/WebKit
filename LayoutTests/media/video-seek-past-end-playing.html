@@ -1,5 +1,6 @@
 <video loop controls></video>
 <p>Test that seeking video with 'loop' past it's end rewinds to the beginning and continues playback.</p>
+<script src=media-file.js></script>
 <script src=video-test.js></script>
 <script>
 
@@ -29,6 +30,7 @@
         endTest();
     }
 
-    run("video.src = 'content/test.mp4'");
+    var mediaFile = findMediaFile("video", "content/test");
+    run("video.src = '" + mediaFile + "'");
     consoleWrite("");
 </script>

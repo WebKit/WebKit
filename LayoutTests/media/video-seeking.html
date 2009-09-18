@@ -3,6 +3,7 @@
  goes back to false when seeking completes, and that a 'seeked' event
  is fired for each seek
  </p>
+<script src=media-file.js></script>
 <script src=video-test.js></script>
 <script>
 
@@ -47,5 +48,5 @@
     waitForEvent('seeked', seeked );
     waitForEvent('load', loaded);
 
-    video.src = "content/test.mp4";
+    video.src = findMediaFile("video", "content/test");
 </script>

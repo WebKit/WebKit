@@ -1,11 +1,11 @@
 
 EVENT(loadedmetadata)
-EXPECTED (relativeURL(video.currentSrc) == 'content/silence.mpg') OK
+EXPECTED (relativeURL(video.currentSrc) == 'content/test.mp4') OK
 EXPECTED (isNaN(video.duration) == 'false') OK
 
 RUN(video.removeAttribute('src'))
 
-EXPECTED (relativeURL(video.currentSrc) == 'content/silence.mpg') OK
+EXPECTED (relativeURL(video.currentSrc) == 'content/test.mp4') OK
 EXPECTED (isNaN(video.duration) == 'false') OK
 
 END OF TEST

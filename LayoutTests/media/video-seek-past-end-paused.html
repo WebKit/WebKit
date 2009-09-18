@@ -1,6 +1,7 @@
 
 <video controls></video>
 <p>Test that seeking paused video past it's duration time sets currentTime to duration and leaves video paused.</p>
+<script src=media-file.js></script>
 <script src=video-test.js></script>
 <script>
 
@@ -35,7 +36,8 @@
         endTest();
     }
 
-    run("video.src = 'content/test.mp4'");
+    var mediaFile = findMediaFile("video", "content/test");
+    run("video.src = '" + mediaFile + "'");
     run("video.load()");
     consoleWrite("");
 </script>

@@ -2,6 +2,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <title>&lt;video&gt; and &lt;source&gt; error test</title>
+        <script src=media-file.js></script>
         <script src=video-test.js></script>
 
         <script>
@@ -11,7 +12,7 @@
             function loadeddata()
             {
                 consoleWrite("");
-                testExpected("relativeURL(video.currentSrc)", "content/test.mp4");
+                testExpected("relativeURL(video.currentSrc)", findMediaFile("video", "content/test"));
                 testExpected("video.error", null);
                 consoleWrite("");
                 endTest();
@@ -62,7 +63,8 @@
             <source id=unsupported-media-query src=content/test.mp4 media=print>
             <source id=missing-file src=content/error2.mpeg type=video/mpeg>
             <source id=format-error src="content/unsupported_track.mov">
-            <source id=supported-format src=content/test.mp4 type="video/mpeg; codecs=&quot;avc1.4D400C&quot;">
+            <source id=supported-format-mp4 src=content/test.mp4 type="video/mpeg; codecs=&quot;avc1.4D400C&quot;">
+            <source id=supported-format-ogv src=content/test.ogv type="video/ogg">
         </video>
         
         <p>1. Test that errors fired while evaluating/loading &lt;source&gt; elements are fired at the

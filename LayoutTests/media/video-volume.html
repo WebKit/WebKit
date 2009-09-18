@@ -1,5 +1,6 @@
 <video controls></video>
 <p>Test 'volume' attribute<p>
+<script src=media-file.js></script>
 <script src=video-test.js></script>
 <script>
     testExpected("video.volume", 1.0);
@@ -9,7 +10,7 @@
     testExpected("video.volume", 0);
     testException("video.volume = 1.5", "DOMException.INDEX_SIZE_ERR");
     testException("video.volume = -0.5", "DOMException.INDEX_SIZE_ERR");
-    video.src = "content/test.mp4";
+    video.src = findMediaFile("video", "content/test");
     run("video.load()");
     waitForEvent("load", function () {
         testExpected("video.volume", 0);
