@@ -2127,9 +2127,7 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
         // Make sure the parent's clip rects have been calculated.
         IntRect clipRect = paintDirtyRect;
         if (parent()) {
-            ClipRects parentRects;
-            parentClipRects(rootLayer, parentRects, paintFlags & PaintLayerTemporaryClipRects);
-            clipRect = parentRects.overflowClipRect();
+            clipRect = backgroundClipRect(rootLayer, paintFlags & PaintLayerTemporaryClipRects);
             clipRect.intersect(paintDirtyRect);
         }
         
@@ -2434,9 +2432,7 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
     if (transform() && !appliedTransform) {
         // Make sure the parent's clip rects have been calculated.
         if (parent()) {
-            ClipRects parentRects;
-            parentClipRects(rootLayer, parentRects, useTemporaryClipRects);
-            IntRect clipRect = parentRects.overflowClipRect();
+            IntRect clipRect = backgroundClipRect(rootLayer, useTemporaryClipRects);
             // Go ahead and test the enclosing clip now.
             if (!clipRect.contains(hitTestPoint))
                 return 0;
@@ -2734,10 +2730,10 @@ void RenderLayer::parentClipRects(const RenderLayer* rootLayer, ClipRects& clipR
     clipRects = *parent()->clipRects();
 }
 
-void RenderLayer::calculateRects(const RenderLayer* rootLayer, const IntRect& paintDirtyRect, IntRect& layerBounds,
-                                 IntRect& backgroundRect, IntRect& foregroundRect, IntRect& outlineRect, bool temporaryClipRects) const
+IntRect RenderLayer::backgroundClipRect(const RenderLayer* rootLayer, bool temporaryClipRects) const
 {
-    if (rootLayer != this && parent()) {
+    IntRect backgroundRect;
+    if (parent()) {
         ClipRects parentRects;
         parentClipRects(rootLayer, parentRects, temporaryClipRects);
         backgroundRect = renderer()->style()->position() == FixedPosition ? parentRects.fixedClipRect() :
@@ -2747,7 +2743,15 @@ void RenderLayer::calculateRects(const RenderLayer* rootLayer, const IntRect& pa
         ASSERT(view);
         if (view && parentRects.fixed() && rootLayer->renderer() == view)
             backgroundRect.move(view->frameView()->scrollX(), view->frameView()->scrollY());
+    }
+    return backgroundRect;
+}
 
+void RenderLayer::calculateRects(const RenderLayer* rootLayer, const IntRect& paintDirtyRect, IntRect& layerBounds,
+                                 IntRect& backgroundRect, IntRect& foregroundRect, IntRect& outlineRect, bool temporaryClipRects) const
+{
+    if (rootLayer != this && parent()) {
+        backgroundRect = backgroundClipRect(rootLayer, temporaryClipRects);
         backgroundRect.intersect(paintDirtyRect);
     } else
         backgroundRect = paintDirtyRect;

@@ -1,3 +1,30 @@
+2009-09-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Transformed elements inside position:fixed container are clipped incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=29346
+        
+        Fix clipping and hit testing on transformed elements inside a position:fixed element.
+        Previously, the code used the overflowClipRect of the parent clip rects, but
+        this is not correct for fixed postion elements. Instead, share code that is
+        already present in calculateRects() to get the correct rect.
+
+        Test: fast/overflow/position-fixed-transform-clipping.html
+
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayer):
+        (WebCore::RenderLayer::hitTestLayer):
+        Call the new backgroundClipRect() to get the correct clipRect.
+        
+        (WebCore::RenderLayer::backgroundClipRect):
+        New method, factored out of calculateRects(), that computes the clip rect,
+        doing the right thing for fixed position elements.
+        
+        (WebCore::RenderLayer::calculateRects):
+        Call the new backgroundClipRect() method.
+        
 2009-09-18  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

@@ -1,3 +1,17 @@
+2009-09-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Transformed elements inside position:fixed container are clipped incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=29346
+        
+        Testcase for clipping a transformed element inside a position:fixed parent.
+
+        * fast/overflow/position-fixed-transform-clipping.html: Added.
+        * platform/mac/fast/overflow/position-fixed-transform-clipping-expected.checksum: Added.
+        * platform/mac/fast/overflow/position-fixed-transform-clipping-expected.png: Added.
+        * platform/mac/fast/overflow/position-fixed-transform-clipping-expected.txt: Added.
+
 2009-09-18  Dan Bernstein  <mitz@apple.com>
 
         Updated test result for <rdar://problem/7050773>

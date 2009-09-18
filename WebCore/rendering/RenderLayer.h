@@ -516,6 +516,7 @@ private:
     void setPaintingInsideReflection(bool b) { m_paintingInsideReflection = b; }
     
     void parentClipRects(const RenderLayer* rootLayer, ClipRects&, bool temporaryClipRects = false) const;
+    IntRect backgroundClipRect(const RenderLayer* rootLayer, bool temporaryClipRects) const;
 
     RenderLayer* enclosingTransformedAncestor() const;
 
