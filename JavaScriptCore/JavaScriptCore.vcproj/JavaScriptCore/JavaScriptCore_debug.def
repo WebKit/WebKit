@@ -184,7 +184,7 @@ EXPORTS
     ?lookupSetter@JSObject@JSC@@UAE?AVJSValue@2@PAVExecState@2@ABVIdentifier@2@@Z
     ?markChildren@JSGlobalObject@JSC@@UAEXAAVMarkStack@2@@Z
     ?markChildren@JSObject@JSC@@UAEXAAVMarkStack@2@@Z
-    ?markChildren@JSWrapperObject@JSC@@EAEXAAVMarkStack@2@@Z    
+    ?markChildren@JSWrapperObject@JSC@@EAEXAAVMarkStack@2@@Z
     ?materializePropertyMap@Structure@JSC@@AAEXXZ
     ?name@InternalFunction@JSC@@QAEABVUString@2@PAVJSGlobalData@2@@Z
     ?nonInlineNaN@JSC@@YANXZ
@@ -225,9 +225,11 @@ EXPORTS
     ?setDumpsGeneratedCode@BytecodeGenerator@JSC@@SAX_N@Z
     ?setEnumerable@PropertyDescriptor@JSC@@QAEX_N@Z
     ?setGCProtectNeedsLocking@Heap@JSC@@QAEXXZ
+    ?setGetter@PropertyDescriptor@JSC@@QAEXVJSValue@2@@Z
     ?setLoc@StatementNode@JSC@@QAEXHH@Z
     ?setMainThreadCallbacksPaused@WTF@@YAX_N@Z
     ?setOrderLowerFirst@Collator@WTF@@QAEX_N@Z
+    ?setSetter@PropertyDescriptor@JSC@@QAEXVJSValue@2@@Z
     ?setUndefined@PropertyDescriptor@JSC@@QAEXXZ
     ?setUpStaticFunctionSlot@JSC@@YAXPAVExecState@1@PBVHashEntry@1@PAVJSObject@1@ABVIdentifier@1@AAVPropertySlot@1@@Z
     ?setWritable@PropertyDescriptor@JSC@@QAEX_N@Z
