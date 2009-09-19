@@ -5,6 +5,142 @@
         js tests should move into jstests subdirectory instead of resources/
         https://bugs.webkit.org/show_bug.cgi?id=25880
 
+        Migration for fast/* directories except fast js directory.
+
+        * fast/events/blur-focus-window-should-blur-focus-element.html:
+        * fast/events/create-document-crash-on-attach-event.html:
+        * fast/events/event-function-toString.html:
+        * fast/events/event-instanceof.html:
+        * fast/events/event-listener-sharing.html:
+        * fast/events/init-events.html:
+        * fast/events/mouse-click-events.html:
+        * fast/events/resources/TEMPLATE.html: Removed.
+        * fast/events/resources/blur-focus-window-should-blur-focus-element.js: Removed.
+        * fast/events/resources/create-document-crash-on-attach-event.js: Removed.
+        * fast/events/resources/event-function-toString.js: Removed.
+        * fast/events/resources/event-instanceof.js: Removed.
+        * fast/events/resources/event-listener-sharing.js: Removed.
+        * fast/events/resources/init-events.js: Removed.
+        * fast/events/resources/mouse-click-events.js: Removed.
+        * fast/events/resources/tab-is-focusable-assert.js: Removed.
+        * fast/events/script-tests: Added.
+        * fast/events/script-tests/TEMPLATE.html: Copied from LayoutTests/fast/events/resources/TEMPLATE.html.
+        * fast/events/script-tests/blur-focus-window-should-blur-focus-element.js: Copied from LayoutTests/fast/events/resources/blur-focus-window-should-blur-focus-element.js.
+        * fast/events/script-tests/create-document-crash-on-attach-event.js: Copied from LayoutTests/fast/events/resources/create-document-crash-on-attach-event.js.
+        * fast/events/script-tests/event-function-toString.js: Copied from LayoutTests/fast/events/resources/event-function-toString.js.
+        * fast/events/script-tests/event-instanceof.js: Copied from LayoutTests/fast/events/resources/event-instanceof.js.
+        * fast/events/script-tests/event-listener-sharing.js: Copied from LayoutTests/fast/events/resources/event-listener-sharing.js.
+        * fast/events/script-tests/init-events.js: Copied from LayoutTests/fast/events/resources/init-events.js.
+        * fast/events/script-tests/mouse-click-events.js: Copied from LayoutTests/fast/events/resources/mouse-click-events.js.
+        * fast/events/script-tests/tab-is-focusable-assert.js: Copied from LayoutTests/fast/events/resources/tab-is-focusable-assert.js.
+        * fast/events/tab-is-focusable-assert.html:
+        * fast/forms/ValidityState-patternMismatch-unsupported.html:
+        * fast/forms/ValidityState-typeMismatch-color.html:
+        * fast/forms/ValidityState-typeMismatch-number.html:
+        * fast/forms/ValidityState-typeMismatch-url.html:
+        * fast/forms/formnovalidate-attribute.html:
+        * fast/forms/input-maxlength-ime-completed.html:
+        * fast/forms/input-maxlength-ime-preedit.html:
+        * fast/forms/novalidate-attribute.html:
+        * fast/forms/placeholder-dom-property.html:
+        * fast/forms/resources/TEMPLATE.html: Removed.
+        * fast/forms/resources/ValidityState-patternMismatch-unsupported.js: Removed.
+        * fast/forms/resources/ValidityState-typeMismatch-color.js: Removed.
+        * fast/forms/resources/ValidityState-typeMismatch-number.js: Removed.
+        * fast/forms/resources/ValidityState-typeMismatch-url.js: Removed.
+        * fast/forms/resources/formnovalidate-attribute.js: Removed.
+        * fast/forms/resources/input-maxlength-ime-completed.js: Removed.
+        * fast/forms/resources/input-maxlength-ime-preedit.js: Removed.
+        * fast/forms/resources/novalidate-attribute.js: Removed.
+        * fast/forms/resources/placeholder-dom-property.js: Removed.
+        * fast/forms/resources/shadow-tree-exposure.js: Removed.
+        * fast/forms/resources/text-control-intrinsic-widths.js: Removed.
+        * fast/forms/resources/textarea-metrics.js: Removed.
+        * fast/forms/resources/textarea-placeholder-dom-property.js: Removed.
+        * fast/forms/resources/textarea-textlength.js: Removed.
+        * fast/forms/script-tests: Added.
+        * fast/forms/script-tests/TEMPLATE.html: Copied from LayoutTests/fast/forms/resources/TEMPLATE.html.
+        * fast/forms/script-tests/ValidityState-patternMismatch-unsupported.js: Copied from LayoutTests/fast/forms/resources/ValidityState-patternMismatch-unsupported.js.
+        * fast/forms/script-tests/ValidityState-typeMismatch-color.js: Copied from LayoutTests/fast/forms/resources/ValidityState-typeMismatch-color.js.
+        * fast/forms/script-tests/ValidityState-typeMismatch-number.js: Copied from LayoutTests/fast/forms/resources/ValidityState-typeMismatch-number.js.
+        * fast/forms/script-tests/ValidityState-typeMismatch-url.js: Copied from LayoutTests/fast/forms/resources/ValidityState-typeMismatch-url.js.
+        * fast/forms/script-tests/formnovalidate-attribute.js: Copied from LayoutTests/fast/forms/resources/formnovalidate-attribute.js.
+        * fast/forms/script-tests/input-maxlength-ime-completed.js: Copied from LayoutTests/fast/forms/resources/input-maxlength-ime-completed.js.
+        * fast/forms/script-tests/input-maxlength-ime-preedit.js: Copied from LayoutTests/fast/forms/resources/input-maxlength-ime-preedit.js.
+        * fast/forms/script-tests/novalidate-attribute.js: Copied from LayoutTests/fast/forms/resources/novalidate-attribute.js.
+        * fast/forms/script-tests/placeholder-dom-property.js: Copied from LayoutTests/fast/forms/resources/placeholder-dom-property.js.
+        * fast/forms/script-tests/shadow-tree-exposure.js: Copied from LayoutTests/fast/forms/resources/shadow-tree-exposure.js.
+        * fast/forms/script-tests/text-control-intrinsic-widths.js: Copied from LayoutTests/fast/forms/resources/text-control-intrinsic-widths.js.
+        * fast/forms/script-tests/textarea-metrics.js: Copied from LayoutTests/fast/forms/resources/textarea-metrics.js.
+        * fast/forms/script-tests/textarea-placeholder-dom-property.js: Copied from LayoutTests/fast/forms/resources/textarea-placeholder-dom-property.js.
+        * fast/forms/script-tests/textarea-textlength.js: Copied from LayoutTests/fast/forms/resources/textarea-textlength.js.
+        * fast/forms/shadow-tree-exposure.html:
+        * fast/forms/text-control-intrinsic-widths.html:
+        * fast/forms/textarea-metrics.html:
+        * fast/forms/textarea-placeholder-dom-property.html:
+        * fast/forms/textarea-textlength.html:
+        * fast/images/border.html:
+        * fast/images/resources/TEMPLATE.html: Removed.
+        * fast/images/resources/border.js: Removed.
+        * fast/images/script-tests: Added.
+        * fast/images/script-tests/TEMPLATE.html: Copied from LayoutTests/fast/images/resources/TEMPLATE.html.
+        * fast/images/script-tests/border.js: Copied from LayoutTests/fast/images/resources/border.js.
+        * fast/parser/block-nesting-cap.html:
+        * fast/parser/pre-first-line-break.html:
+        * fast/parser/resources/TEMPLATE.html: Removed.
+        * fast/parser/resources/block-nesting-cap.js: Removed.
+        * fast/parser/resources/pre-first-line-break.js: Removed.
+        * fast/parser/script-tests: Added.
+        * fast/parser/script-tests/TEMPLATE.html: Copied from LayoutTests/fast/parser/resources/TEMPLATE.html.
+        * fast/parser/script-tests/block-nesting-cap.js: Copied from LayoutTests/fast/parser/resources/block-nesting-cap.js.
+        * fast/parser/script-tests/pre-first-line-break.js: Copied from LayoutTests/fast/parser/resources/pre-first-line-break.js.
+        * fast/regex/alternative-length-miscalculation.html:
+        * fast/regex/cross-frame-callable.html:
+        * fast/regex/early-acid3-86.html:
+        * fast/regex/malformed-escapes.html:
+        * fast/regex/non-capturing-backtracking.html:
+        * fast/regex/non-pattern-characters.html:
+        * fast/regex/quantified-assertions.html:
+        * fast/regex/resources/TEMPLATE.html: Removed.
+        * fast/regex/resources/alternative-length-miscalculation.js: Removed.
+        * fast/regex/resources/cross-frame-callable.js: Removed.
+        * fast/regex/resources/early-acid3-86.js: Removed.
+        * fast/regex/resources/malformed-escapes.js: Removed.
+        * fast/regex/resources/non-capturing-backtracking.js: Removed.
+        * fast/regex/resources/non-pattern-characters.js: Removed.
+        * fast/regex/resources/quantified-assertions.js: Removed.
+        * fast/regex/resources/slow.js: Removed.
+        * fast/regex/script-tests: Added.
+        * fast/regex/script-tests/TEMPLATE.html: Copied from LayoutTests/fast/regex/resources/TEMPLATE.html.
+        * fast/regex/script-tests/alternative-length-miscalculation.js: Copied from LayoutTests/fast/regex/resources/alternative-length-miscalculation.js.
+        * fast/regex/script-tests/cross-frame-callable.js: Copied from LayoutTests/fast/regex/resources/cross-frame-callable.js.
+        * fast/regex/script-tests/early-acid3-86.js: Copied from LayoutTests/fast/regex/resources/early-acid3-86.js.
+        * fast/regex/script-tests/malformed-escapes.js: Copied from LayoutTests/fast/regex/resources/malformed-escapes.js.
+        * fast/regex/script-tests/non-capturing-backtracking.js: Copied from LayoutTests/fast/regex/resources/non-capturing-backtracking.js.
+        * fast/regex/script-tests/non-pattern-characters.js: Copied from LayoutTests/fast/regex/resources/non-pattern-characters.js.
+        * fast/regex/script-tests/quantified-assertions.js: Copied from LayoutTests/fast/regex/resources/quantified-assertions.js.
+        * fast/regex/script-tests/slow.js: Copied from LayoutTests/fast/regex/resources/slow.js.
+        * fast/regex/slow.html:
+        * fast/table/border-changes.html:
+        * fast/table/resources/TEMPLATE.html: Removed.
+        * fast/table/resources/border-changes.js: Removed.
+        * fast/table/script-tests: Added.
+        * fast/table/script-tests/TEMPLATE.html: Copied from LayoutTests/fast/table/resources/TEMPLATE.html.
+        * fast/table/script-tests/border-changes.js: Copied from LayoutTests/fast/table/resources/border-changes.js.
+        * fast/text/find-backwards.html:
+        * fast/text/resources/TEMPLATE.html: Removed.
+        * fast/text/resources/find-backwards.js: Removed.
+        * fast/text/script-tests: Added.
+        * fast/text/script-tests/TEMPLATE.html: Copied from LayoutTests/fast/text/resources/TEMPLATE.html.
+        * fast/text/script-tests/find-backwards.js: Copied from LayoutTests/fast/text/resources/find-backwards.js.
+
+2009-09-19  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Rubber-stamped by Eric Seidel.
+
+        js tests should move into jstests subdirectory instead of resources/
+        https://bugs.webkit.org/show_bug.cgi?id=25880
+
         Migration for fast/dom directories.
 
         * fast/dom/CSSStyleDeclaration/css-properties-case-sensitive.html:
