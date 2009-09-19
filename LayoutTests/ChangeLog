@@ -1,3 +1,24 @@
+2009-09-19  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Canvas drawn with data URL image raises SECURITY_ERR when toDataUrl() called.
+        https://bugs.webkit.org/show_bug.cgi?id=29305
+
+        Test that drawing a data URL image onto a canvas behaves as expected.
+        Note the tricky case involving a data URL SVG image with an embedded
+        remote image.
+        
+        Also, test that document.domain state doesn't affect canvas taint
+        state.
+
+        * http/tests/security/canvas-remote-read-data-url-image-expected.txt: Added.
+        * http/tests/security/canvas-remote-read-data-url-image.html: Added.
+        * http/tests/security/canvas-remote-read-data-url-svg-image-expected.txt: Added.
+        * http/tests/security/canvas-remote-read-data-url-svg-image.html: Added.
+        * http/tests/security/canvas-remote-read-remote-image-document-domain-expected.txt: Added.
+        * http/tests/security/canvas-remote-read-remote-image-document-domain.html: Added.
+
 2009-09-19  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Rubber-stamped by Eric Seidel.

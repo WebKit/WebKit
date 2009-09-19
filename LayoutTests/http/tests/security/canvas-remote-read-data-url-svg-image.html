@@ -1,0 +1,40 @@
+<html>
+<head>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+function log(msg)
+{
+    document.getElementById('console').appendChild(document.createTextNode(msg + "\n"));
+}
+
+function draw()
+{
+    var canvas = document.getElementById("canvas");
+    var ctx = canvas.getContext("2d");
+    ctx.drawImage(document.getElementById("img"), 0, 0);
+
+    try {
+        var data = ctx.getImageData(20, 20, 290, 75);
+        log("FAIL: getImageData succeeded. Canvas not tainted.");
+    } catch (e) {
+        log("PASS: getImageData failed. Canvas tainted.");
+    }
+}
+</script>
+</head>
+<body>
+    <p>This tests that drawing a remote SVG image onto a canvas from a data URL
+    taints the canvas</p>
+    <pre id="console"></pre>
+    <canvas id="canvas" width="330" height="115"></canvas>
+    <img id="img" onload="draw()" src='data:image/svg+xml,
+<svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="100" height="100">
+    <image xlink:href="http://localhost:8000/security/resources/abe.png"
+           width="100" height="100"/>
+</svg>'>
+</body>
+</html>

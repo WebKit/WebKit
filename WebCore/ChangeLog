@@ -1,3 +1,29 @@
+2009-09-19  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Canvas drawn with data URL image raises SECURITY_ERR when toDataUrl() called.
+        https://bugs.webkit.org/show_bug.cgi?id=29305
+
+        We need to special-case data URLs when tainting a canvas because we
+        treat data URLs has having no security origin, unlike other
+        browsers.  The reason we do this is to help sites avoid XSS via data
+        URLs, but that consideration doesn't apply to canvas taint.
+
+        Also, we were previously incorrectly taking document.domain state
+        into account when tainting canvas.
+
+        Tests: http/tests/security/canvas-remote-read-data-url-image.html
+               http/tests/security/canvas-remote-read-data-url-svg-image.html
+               http/tests/security/canvas-remote-read-remote-image-document-domain.html
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::checkOrigin):
+        (WebCore::CanvasRenderingContext2D::createPattern):
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::taintsCanvas):
+        * page/SecurityOrigin.h:
+
 2009-09-18  Simon Fraser  <simon.fraser@apple.com>
 
         Fix stylistic issue raised in code review for previous commit.

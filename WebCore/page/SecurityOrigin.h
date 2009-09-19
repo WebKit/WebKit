@@ -76,6 +76,11 @@ namespace WebCore {
         // XMLHttpRequests.
         bool canRequest(const KURL&) const;
 
+        // Returns true if drawing an image from this URL taints a canvas from
+        // this security origin.  For example, call this function before
+        // drawing an image onto an HTML canvas element with the drawImage API.
+        bool taintsCanvas(const KURL&) const;
+
         // Returns true if this SecurityOrigin can load local resources, such
         // as images, iframes, and style sheets, and can link to local URLs.
         // For example, call this function before creating an iframe to a
