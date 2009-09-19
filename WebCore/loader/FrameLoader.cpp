@@ -2900,7 +2900,7 @@ void FrameLoader::commitProvisionalLoad(PassRefPtr<CachedPage> prpCachedPage)
         m_frame->document()->documentDidBecomeActive();
         
         // Force a layout to update view size and thereby update scrollbars.
-        m_client->forceLayout();
+        m_frame->view()->forceLayout();
 
         const ResponseVector& responses = m_documentLoader->responses();
         size_t count = responses.size();

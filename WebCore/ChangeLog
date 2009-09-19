@@ -1,3 +1,18 @@
+2009-09-18  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29512
+        Don't recalculate style when restoring from the page cache
+
+        FrameLoaderClient::forceLayout() also forces style recalc. Instead call FrameView::forceLayout() 
+        directly to update the scrollbars while keeping the existing style.
+        
+        Makes back/forward really fast on complex pages (in cases where page cache works).
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::commitProvisionalLoad):
+
 2009-09-18  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoff Garen.
