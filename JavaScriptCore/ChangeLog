@@ -1,3 +1,21 @@
+2009-09-19  Joerg Bornemann  <joerg.bornemann@nokia.com>
+
+        Reviewed by George Staikos.
+
+        QtWebKit Windows CE compile fix
+
+        https://bugs.webkit.org/show_bug.cgi?id=29379
+
+        There is no _aligned_alloc or _aligned_free on Windows CE.
+        We just use the Windows code that was there before and use VirtualAlloc.
+        But that also means that the BLOCK_SIZE must be 64K as this function
+        allocates on 64K boundaries.
+
+        * runtime/Collector.cpp:
+        (JSC::Heap::allocateBlock):
+        (JSC::Heap::freeBlock):
+        * runtime/Collector.h:
+
 2009-09-19  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY (Build fix).
