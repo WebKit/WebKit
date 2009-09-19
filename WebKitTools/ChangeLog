@@ -1,3 +1,11 @@
+2009-09-18  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fixes. Fix the config name under git and allow users to specify
+        their own waf install for experimenting with new versions.
+
+        * Scripts/webkitdirs.pm:
+        * wx/build/settings.py:
+
 2009-09-18  Alex Milowski  <alex@milowski.com>
 
         Reviewed by Maciej Stachowiak.

@@ -1124,6 +1124,9 @@ sub buildWafProject
     print "Building $project\n";
 
     my $wafCommand = "$sourceDir/WebKitTools/wx/waf";
+    if ($ENV{'WXWEBKIT_WAF'}) {
+        $wafCommand = $ENV{'WXWEBKIT_WAF'};
+    }
     if (isCygwin()) {
         $wafCommand = `cygpath --windows "$wafCommand"`;
         chomp($wafCommand);

@@ -145,15 +145,17 @@ config = 'Debug'
 if os.path.exists(config_file):
     config = open(config_file).read()
 
+config_dir = config
+
 try:
     branches = commands.getoutput("git branch --no-color")
     match = re.search('^\* (.*)', branches, re.MULTILINE)
     if match:
-        config += ".%s" % match.group(1)
+        config_dir += ".%s" % match.group(1)
 except:
     pass
 
-output_dir = os.path.join(wk_root, 'WebKitBuild', config)
+output_dir = os.path.join(wk_root, 'WebKitBuild', config_dir)
 
 build_port = "wx"
 building_on_win32 = sys.platform.startswith('win')
