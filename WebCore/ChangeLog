@@ -1,3 +1,63 @@
+2009-09-19  Alex Milowski  <alex@milowski.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Adds CSS styling and basic DOM element support for MathML
+
+        * DerivedSources.make:
+          Added user stylesheet and tag factory generation
+
+        * WebCore.xcodeproj/project.pbxproj:
+          Added new DOM element code
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseAttr):
+          Added check for document since stylesheet can be added before there is a document
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::styleForElement):
+          Added check to add MathML user agent stylesheet
+
+        * css/mathml.css: Added.
+          MathML user agent stylesheet
+
+        * dom/Document.cpp:
+        (WebCore::Document::createElement):
+          Added support for creation of MathML DOM objects
+
+        * dom/Node.h:
+        (WebCore::Node::isMathMLElement):
+          Added check method for whether the node is a MathML node
+
+        * mathml: Added.
+        * mathml/MathMLElement.cpp: Added.
+        (WebCore::MathMLElement::MathMLElement):
+        (WebCore::MathMLElement::create):
+        (WebCore::MathMLElement::createRenderer):
+        * mathml/MathMLElement.h: Added.
+        (WebCore::MathMLElement::isMathMLElement):
+          MathML DOM base class
+
+
+        * mathml/MathMLInlineContainerElement.cpp: Added.
+        (WebCore::MathMLInlineContainerElement::MathMLInlineContainerElement):
+        (WebCore::MathMLInlineContainerElement::create):
+        (WebCore::MathMLInlineContainerElement::createRenderer):
+        * mathml/MathMLInlineContainerElement.h: Added.
+          Base class for non-text containers
+
+        * mathml/MathMLMathElement.cpp: Added.
+        (WebCore::MathMLMathElement::MathMLMathElement):
+        (WebCore::MathMLMathElement::create):
+        * mathml/MathMLMathElement.h: Added.
+          Root Math element
+
+        * mathml/mathtags.in: Added.
+          Element list mappings
+
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame):
+          Added MathML name initialization
 2009-09-19  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Oliver Hunt.

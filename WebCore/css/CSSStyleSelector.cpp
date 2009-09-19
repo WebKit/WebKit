@@ -1139,6 +1139,17 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
     }
 #endif
 
+#if ENABLE(MATHML)
+    static bool loadedMathMLUserAgentSheet;
+    if (e->isMathMLElement() && !loadedMathMLUserAgentSheet) {
+        // MathML rules.
+        loadedMathMLUserAgentSheet = true;
+        CSSStyleSheet* mathMLSheet = parseUASheet(mathmlUserAgentStyleSheet, sizeof(mathmlUserAgentStyleSheet));
+        defaultStyle->addRulesFromSheet(mathMLSheet, screenEval());
+        defaultPrintStyle->addRulesFromSheet(mathMLSheet, printEval());
+    }
+#endif
+
 #if ENABLE(WML)
     static bool loadedWMLUserAgentSheet;
     if (e->isWMLElement() && !loadedWMLUserAgentSheet) {

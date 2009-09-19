@@ -1,0 +1,21 @@
+namespace="MathML"
+namespaceURI="http://www.w3.org/1998/Math/MathML"
+guardFactoryWith="ENABLE(MATHML)"
+exportStrings
+
+math
+mfrac interfaceName=MathMLInlineContainerElement
+mfenced interfaceName=MathMLInlineContainerElement
+msubsup interfaceName=MathMLInlineContainerElement
+mrow interfaceName=MathMLInlineContainerElement
+mover interfaceName=MathMLInlineContainerElement
+munder interfaceName=MathMLInlineContainerElement
+munderover interfaceName=MathMLInlineContainerElement
+msqrt interfaceName=MathMLInlineContainerElement
+mroot interfaceName=MathMLInlineContainerElement
+mi interfaceName=MathMLElement, createWithNew
+mn interfaceName=MathMLElement, createWithNew
+mo interfaceName=MathMLElement, createWithNew
+msub interfaceName=MathMLElement, createWithNew
+msup interfaceName=MathMLElement, createWithNew
+

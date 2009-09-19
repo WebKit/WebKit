@@ -174,6 +174,12 @@
 #include "WMLNames.h"
 #endif
 
+#if ENABLE(MATHML)
+#include "MathMLElement.h"
+#include "MathMLElementFactory.h"
+#include "MathMLNames.h"
+#endif
+
 #if ENABLE(XHTMLMP)
 #include "HTMLNoScriptElement.h"
 #endif
@@ -802,6 +808,10 @@ PassRefPtr<Element> Document::createElement(const QualifiedName& qName, bool cre
         e = WMLElementFactory::createWMLElement(qName, this, createdByParser);
     else if (isWMLDocument())
         e = WMLElementFactory::createWMLElement(QualifiedName(nullAtom, qName.localName(), WMLNames::wmlNamespaceURI), this, createdByParser);
+#endif
+#if ENABLE(MATHML)
+    else if (qName.namespaceURI() == MathMLNames::mathmlNamespaceURI)
+        e = MathMLElementFactory::createMathMLElement(qName, this, createdByParser);
 #endif
     
     if (!e)

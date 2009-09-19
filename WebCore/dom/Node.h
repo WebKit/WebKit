@@ -183,6 +183,13 @@ public:
     static bool isWMLElement() { return false; }
 #endif
 
+#if ENABLE(MATHML)
+    virtual bool isMathMLElement() const { return false; }
+#else
+    static bool isMathMLElement() { return false; }
+#endif
+
+
     virtual bool isMediaControlElement() const { return false; }
     virtual bool isStyledElement() const { return false; }
     virtual bool isFrameOwnerElement() const { return false; }

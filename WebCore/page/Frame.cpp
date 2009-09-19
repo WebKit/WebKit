@@ -97,6 +97,10 @@
 #include "WMLNames.h"
 #endif
 
+#if ENABLE(MATHML)
+#include "MathMLNames.h"
+#endif
+
 using namespace std;
 
 namespace WebCore {
@@ -150,6 +154,10 @@ Frame::Frame(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient*
 
 #if ENABLE(WML)
     WMLNames::init();
+#endif
+
+#if ENABLE(MATHML)
+    MathMLNames::init();
 #endif
 
     XMLNames::init();

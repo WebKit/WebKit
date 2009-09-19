@@ -1,3 +1,20 @@
+2009-09-19  Alex Milowski  <alex@milowski.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Basic tests for msub, msup, and mtable/mtr/mtd
+
+        * mathml: Added.
+        * mathml/presentation: Added.
+        * mathml/presentation/sub.xhtml: Added.
+        * mathml/presentation/sup.xhtml: Added.
+        * mathml/presentation/tables.xhtml: Added.
+        * platform/mac/mathml: Added.
+        * platform/mac/mathml/presentation: Added.
+        * platform/mac/mathml/presentation/sub-expected.txt: Added.
+        * platform/mac/mathml/presentation/sup-expected.txt: Added.
+        * platform/mac/mathml/presentation/tables-expected.txt: Added.
+
 2009-09-19  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Oliver Hunt.

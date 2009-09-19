@@ -441,6 +441,8 @@ all : \
     UserAgentStyleSheets.h \
     XLinkNames.cpp \
     XMLNames.cpp \
+    MathMLElementFactory.cpp \
+    MathMLNames.cpp \
     XPathGrammar.cpp \
     tokenizer.cpp \
 #
@@ -580,6 +582,10 @@ endif
 
 ifeq ($(findstring ENABLE_WML,$(FEATURE_DEFINES)), ENABLE_WML)
     USER_AGENT_STYLE_SHEETS := $(USER_AGENT_STYLE_SHEETS) $(WebCore)/css/wml.css
+endif
+
+ifeq ($(findstring ENABLE_MATHML,$(FEATURE_DEFINES)), ENABLE_MATHML)
+    USER_AGENT_STYLE_SHEETS := $(USER_AGENT_STYLE_SHEETS) $(WebCore)/css/mathml.css
 endif
 
 ifeq ($(findstring ENABLE_VIDEO,$(FEATURE_DEFINES)), ENABLE_VIDEO)
@@ -722,6 +728,26 @@ WMLNames.cpp :
 	echo > $@
 
 endif
+
+# --------
+ 
+# MathML tag and attribute names, and element factory
+
+ifeq ($(findstring ENABLE_MATHML,$(FEATURE_DEFINES)), ENABLE_MATHML)
+
+MathMLElementFactory.cpp MathMLNames.cpp : dom/make_names.pl mathml/mathtags.in
+	perl -I $(WebCore)/bindings/scripts $< --tags $(WebCore)/mathml/mathtags.in --factory --wrapperFactory
+
+else
+
+MathMLElementFactory.cpp :
+	echo > $@
+
+MathMLNames.cpp :
+	echo > $@
+
+endif
+
 
 
 # --------

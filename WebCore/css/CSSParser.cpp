@@ -2150,7 +2150,7 @@ PassRefPtr<CSSValue> CSSParser::parseAttr(CSSParserValueList* args)
     if (attrName[0] == '-')
         return 0;
 
-    if (document()->isHTMLDocument())
+    if (document() && document()->isHTMLDocument())
         attrName = attrName.lower();
     
     return CSSPrimitiveValue::create(attrName, CSSPrimitiveValue::CSS_ATTR);
