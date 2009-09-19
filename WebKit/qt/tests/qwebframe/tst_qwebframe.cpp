@@ -34,6 +34,7 @@
 #include <QNetworkRequest>
 #include <QNetworkReply>
 #include <qsslerror.h>
+#include "../util.h"
 
 //TESTED_CLASS=
 //TESTED_FILES=
@@ -2446,23 +2447,17 @@ void tst_QWebFrame::popupFocus()
     view.resize(400, 100);
     view.show();
     view.setFocus();
-    QTest::qWait(200);
-    QVERIFY2(view.hasFocus(),
-             "The WebView should be created");
+    QTRY_VERIFY(view.hasFocus());
 
     // open the popup by clicking. check if focus is on the popup
     QTest::mouseClick(&view, Qt::LeftButton, 0, QPoint(25, 25));
     QObject* webpopup = firstChildByClassName(&view, "WebCore::QWebPopup");
     QComboBox* combo = qobject_cast<QComboBox*>(webpopup);
-    QTest::qWait(500);
-    QVERIFY2(!view.hasFocus() && combo->view()->hasFocus(),
-             "Focus sould be on the Popup");
+    QTRY_VERIFY(!view.hasFocus() && combo->view()->hasFocus()); // Focus should be on the popup
 
     // hide the popup and check if focus is on the page
     combo->hidePopup();
-    QTest::qWait(500);
-    QVERIFY2(view.hasFocus() && !combo->view()->hasFocus(),
-             "Focus sould be back on the WebView");
+    QTRY_VERIFY(view.hasFocus() && !combo->view()->hasFocus()); // Focus should be back on the WebView
 
     // triple the flashing time, should at least blink twice already
     int delay = qApp->cursorFlashTime() * 3;
@@ -2630,16 +2625,16 @@ void tst_QWebFrame::hasSetFocus()
     QCOMPARE(loadSpy.size(), 2);
 
     m_page->mainFrame()->setFocus();
-    QVERIFY(m_page->mainFrame()->hasFocus());
+    QTRY_VERIFY(m_page->mainFrame()->hasFocus());
 
     for (int i = 0; i < children.size(); ++i) {
         children.at(i)->setFocus();
-        QVERIFY(children.at(i)->hasFocus());
+        QTRY_VERIFY(children.at(i)->hasFocus());
         QVERIFY(!m_page->mainFrame()->hasFocus());
     }
 
     m_page->mainFrame()->setFocus();
-    QVERIFY(m_page->mainFrame()->hasFocus());
+    QTRY_VERIFY(m_page->mainFrame()->hasFocus());
 }
 
 void tst_QWebFrame::render()

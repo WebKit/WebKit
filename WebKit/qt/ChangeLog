@@ -1,3 +1,14 @@
+2009-09-19  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29345
+        The tests of QWebFrame did not use QTRY_VERIFY for
+        tests involving the event loop.
+
+        * tests/qwebframe/tst_qwebframe.cpp:
+        * tests/util.h: Added. Copy of tests/shared/util.h of Qt
+
 2009-09-19  Jakub Wieczorek  <faw217@gmail.com>
 
         Reviewed by Simon Hausmann.
