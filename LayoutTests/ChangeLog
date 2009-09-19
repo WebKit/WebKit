@@ -1,3 +1,46 @@
+2009-09-19  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Rubber-stamped by Eric Seidel.
+
+        js tests should move into jstests subdirectory instead of resources/
+        https://bugs.webkit.org/show_bug.cgi?id=25880
+
+        Attempt to split the huge patch as I failed to commit it...
+
+        * editing/execCommand/break-out-of-empty-list-item.html:
+        * editing/execCommand/convert-style-elements-to-spans.html:
+        * editing/execCommand/empty-span-removal.html:
+        * editing/execCommand/enabling-and-selection-2.html:
+        * editing/execCommand/enabling-and-selection.html:
+        * editing/execCommand/inline-style-after-indentoutdent.html:
+        * editing/execCommand/resources/TEMPLATE.html: Removed.
+        * editing/execCommand/resources/break-out-of-empty-list-item.js: Removed.
+        * editing/execCommand/resources/convert-style-elements-to-spans.js: Removed.
+        * editing/execCommand/resources/empty-span-removal.js: Removed.
+        * editing/execCommand/resources/enabling-and-selection-2.js: Removed.
+        * editing/execCommand/resources/enabling-and-selection.js: Removed.
+        * editing/execCommand/resources/inline-style-after-indentoutdent.js: Removed.
+        * editing/execCommand/resources/toggle-compound-styles.js: Removed.
+        * editing/execCommand/resources/toggle-style-2.js: Removed.
+        * editing/execCommand/resources/toggle-styles.js: Removed.
+        * editing/execCommand/resources/toggle-text-decorations.js: Removed.
+        * editing/execCommand/script-tests: Added.
+        * editing/execCommand/script-tests/TEMPLATE.html: Copied from LayoutTests/editing/execCommand/resources/TEMPLATE.html.
+        * editing/execCommand/script-tests/break-out-of-empty-list-item.js: Copied from LayoutTests/editing/execCommand/resources/break-out-of-empty-list-item.js.
+        * editing/execCommand/script-tests/convert-style-elements-to-spans.js: Copied from LayoutTests/editing/execCommand/resources/convert-style-elements-to-spans.js.
+        * editing/execCommand/script-tests/empty-span-removal.js: Copied from LayoutTests/editing/execCommand/resources/empty-span-removal.js.
+        * editing/execCommand/script-tests/enabling-and-selection-2.js: Copied from LayoutTests/editing/execCommand/resources/enabling-and-selection-2.js.
+        * editing/execCommand/script-tests/enabling-and-selection.js: Copied from LayoutTests/editing/execCommand/resources/enabling-and-selection.js.
+        * editing/execCommand/script-tests/inline-style-after-indentoutdent.js: Copied from LayoutTests/editing/execCommand/resources/inline-style-after-indentoutdent.js.
+        * editing/execCommand/script-tests/toggle-compound-styles.js: Copied from LayoutTests/editing/execCommand/resources/toggle-compound-styles.js.
+        * editing/execCommand/script-tests/toggle-style-2.js: Copied from LayoutTests/editing/execCommand/resources/toggle-style-2.js.
+        * editing/execCommand/script-tests/toggle-styles.js: Copied from LayoutTests/editing/execCommand/resources/toggle-styles.js.
+        * editing/execCommand/script-tests/toggle-text-decorations.js: Copied from LayoutTests/editing/execCommand/resources/toggle-text-decorations.js.
+        * editing/execCommand/toggle-compound-styles.html:
+        * editing/execCommand/toggle-style-2.html:
+        * editing/execCommand/toggle-styles.html:
+        * editing/execCommand/toggle-text-decorations.html:
+
 2009-09-18  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
