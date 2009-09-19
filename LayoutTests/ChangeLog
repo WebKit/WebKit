@@ -5,6 +5,442 @@
         js tests should move into jstests subdirectory instead of resources/
         https://bugs.webkit.org/show_bug.cgi?id=25880
 
+        Migration for svg directory.
+
+        * svg/custom/SVGException.html:
+        * svg/custom/getSubStringLength.html:
+        * svg/custom/immutable-properties.html:
+        * svg/custom/resources/SVGException.js: Removed.
+        * svg/custom/resources/TEMPLATE.html: Removed.
+        * svg/custom/resources/getSubStringLength.js: Removed.
+        * svg/custom/resources/immutable-properties.js: Removed.
+        * svg/custom/resources/selectSubString.js: Removed.
+        * svg/custom/resources/svg-fonts-in-text-controls.js: Removed.
+        * svg/custom/resources/svg-modify-currentTranslate.js: Removed.
+        * svg/custom/resources/svg-xml-dom-sync.js: Removed.
+        * svg/custom/resources/tearoffs-with-tearoffs.js: Removed.
+        * svg/custom/script-tests: Added.
+        * svg/custom/script-tests/SVGException.js: Copied from LayoutTests/svg/custom/resources/SVGException.js.
+        * svg/custom/script-tests/TEMPLATE.html: Copied from LayoutTests/svg/custom/resources/TEMPLATE.html.
+        * svg/custom/script-tests/getSubStringLength.js: Copied from LayoutTests/svg/custom/resources/getSubStringLength.js.
+        * svg/custom/script-tests/immutable-properties.js: Copied from LayoutTests/svg/custom/resources/immutable-properties.js.
+        * svg/custom/script-tests/selectSubString.js: Copied from LayoutTests/svg/custom/resources/selectSubString.js.
+        * svg/custom/script-tests/svg-fonts-in-text-controls.js: Copied from LayoutTests/svg/custom/resources/svg-fonts-in-text-controls.js.
+        * svg/custom/script-tests/svg-modify-currentTranslate.js: Copied from LayoutTests/svg/custom/resources/svg-modify-currentTranslate.js.
+        * svg/custom/script-tests/svg-xml-dom-sync.js: Copied from LayoutTests/svg/custom/resources/svg-xml-dom-sync.js.
+        * svg/custom/script-tests/tearoffs-with-tearoffs.js: Copied from LayoutTests/svg/custom/resources/tearoffs-with-tearoffs.js.
+        * svg/custom/selectSubString.html:
+        * svg/custom/svg-fonts-in-text-controls.html:
+        * svg/custom/svg-modify-currentTranslate.html:
+        * svg/custom/svg-xml-dom-sync.html:
+        * svg/custom/tearoffs-with-tearoffs.html:
+        * svg/dom/SVGStyleElement/resources/TEMPLATE.html: Removed.
+        * svg/dom/SVGStyleElement/resources/style-langspace.js: Removed.
+        * svg/dom/SVGStyleElement/script-tests: Added.
+        * svg/dom/SVGStyleElement/script-tests/TEMPLATE.html: Copied from LayoutTests/svg/dom/SVGStyleElement/resources/TEMPLATE.html.
+        * svg/dom/SVGStyleElement/script-tests/style-langspace.js: Copied from LayoutTests/svg/dom/SVGStyleElement/resources/style-langspace.js.
+        * svg/dom/SVGStyleElement/style-langspace.html:
+        * svg/dom/path-parser.html:
+        * svg/dom/path-segments.html:
+        * svg/dom/resources/TEMPLATE.html: Removed.
+        * svg/dom/resources/path-parser.js: Removed.
+        * svg/dom/resources/path-segments.js: Removed.
+        * svg/dom/resources/style-reflect.js: Removed.
+        * svg/dom/resources/text-rotate-live.js: Removed.
+        * svg/dom/script-tests: Added.
+        * svg/dom/script-tests/TEMPLATE.html: Copied from LayoutTests/svg/dom/resources/TEMPLATE.html.
+        * svg/dom/script-tests/path-parser.js: Copied from LayoutTests/svg/dom/resources/path-parser.js.
+        * svg/dom/script-tests/path-segments.js: Copied from LayoutTests/svg/dom/resources/path-segments.js.
+        * svg/dom/script-tests/style-reflect.js: Copied from LayoutTests/svg/dom/resources/style-reflect.js.
+        * svg/dom/script-tests/text-rotate-live.js: Copied from LayoutTests/svg/dom/resources/text-rotate-live.js.
+        * svg/dom/style-reflect.html:
+        * svg/dom/text-rotate-live.html:
+        * svg/dynamic-updates/SVGAElement-dom-href-attr.html:
+        * svg/dynamic-updates/SVGAElement-dom-target-attr.html:
+        * svg/dynamic-updates/SVGAElement-svgdom-href-prop.html:
+        * svg/dynamic-updates/SVGAElement-svgdom-target-prop.html:
+        * svg/dynamic-updates/SVGCircleElement-dom-cx-attr.html:
+        * svg/dynamic-updates/SVGCircleElement-dom-cy-attr.html:
+        * svg/dynamic-updates/SVGCircleElement-dom-r-attr.html:
+        * svg/dynamic-updates/SVGCircleElement-svgdom-cx-prop.html:
+        * svg/dynamic-updates/SVGCircleElement-svgdom-cy-prop.html:
+        * svg/dynamic-updates/SVGCircleElement-svgdom-r-prop.html:
+        * svg/dynamic-updates/SVGClipPathElement-dom-clipPathUnits-attr.html:
+        * svg/dynamic-updates/SVGClipPathElement-svgdom-clipPathUnits-prop.html:
+        * svg/dynamic-updates/SVGCursorElement-dom-x-attr.html:
+        * svg/dynamic-updates/SVGCursorElement-dom-y-attr.html:
+        * svg/dynamic-updates/SVGCursorElement-svgdom-x-prop.html:
+        * svg/dynamic-updates/SVGCursorElement-svgdom-y-prop.html:
+        * svg/dynamic-updates/SVGEllipseElement-dom-cx-attr.html:
+        * svg/dynamic-updates/SVGEllipseElement-dom-cy-attr.html:
+        * svg/dynamic-updates/SVGEllipseElement-dom-rx-attr.html:
+        * svg/dynamic-updates/SVGEllipseElement-dom-ry-attr.html:
+        * svg/dynamic-updates/SVGEllipseElement-svgdom-cx-prop.html:
+        * svg/dynamic-updates/SVGEllipseElement-svgdom-cy-prop.html:
+        * svg/dynamic-updates/SVGEllipseElement-svgdom-rx-prop.html:
+        * svg/dynamic-updates/SVGEllipseElement-svgdom-ry-prop.html:
+        * svg/dynamic-updates/SVGForeignObjectElement-dom-height-attr.html:
+        * svg/dynamic-updates/SVGForeignObjectElement-dom-width-attr.html:
+        * svg/dynamic-updates/SVGForeignObjectElement-dom-x-attr.html:
+        * svg/dynamic-updates/SVGForeignObjectElement-dom-y-attr.html:
+        * svg/dynamic-updates/SVGForeignObjectElement-svgdom-height-prop.html:
+        * svg/dynamic-updates/SVGForeignObjectElement-svgdom-width-prop.html:
+        * svg/dynamic-updates/SVGForeignObjectElement-svgdom-x-prop.html:
+        * svg/dynamic-updates/SVGForeignObjectElement-svgdom-y-prop.html:
+        * svg/dynamic-updates/SVGImageElement-dom-height-attr.html:
+        * svg/dynamic-updates/SVGImageElement-dom-preserveAspectRatio-attr.html:
+        * svg/dynamic-updates/SVGImageElement-dom-width-attr.html:
+        * svg/dynamic-updates/SVGImageElement-dom-x-attr.html:
+        * svg/dynamic-updates/SVGImageElement-dom-y-attr.html:
+        * svg/dynamic-updates/SVGImageElement-svgdom-height-prop.html:
+        * svg/dynamic-updates/SVGImageElement-svgdom-preserveAspectRatio-prop.html:
+        * svg/dynamic-updates/SVGImageElement-svgdom-width-prop.html:
+        * svg/dynamic-updates/SVGImageElement-svgdom-x-prop.html:
+        * svg/dynamic-updates/SVGImageElement-svgdom-y-prop.html:
+        * svg/dynamic-updates/SVGLineElement-dom-x1-attr.html:
+        * svg/dynamic-updates/SVGLineElement-dom-x2-attr.html:
+        * svg/dynamic-updates/SVGLineElement-dom-y1-attr.html:
+        * svg/dynamic-updates/SVGLineElement-dom-y2-attr.html:
+        * svg/dynamic-updates/SVGLineElement-svgdom-x1-prop.html:
+        * svg/dynamic-updates/SVGLineElement-svgdom-x2-prop.html:
+        * svg/dynamic-updates/SVGLineElement-svgdom-y1-prop.html:
+        * svg/dynamic-updates/SVGLineElement-svgdom-y2-prop.html:
+        * svg/dynamic-updates/SVGLinearGradientElement-dom-gradientTransform-attr.html:
+        * svg/dynamic-updates/SVGLinearGradientElement-dom-gradientUnits-attr.html:
+        * svg/dynamic-updates/SVGLinearGradientElement-dom-x1-attr.html:
+        * svg/dynamic-updates/SVGLinearGradientElement-dom-x2-attr.html:
+        * svg/dynamic-updates/SVGLinearGradientElement-dom-y1-attr.html:
+        * svg/dynamic-updates/SVGLinearGradientElement-dom-y2-attr.html:
+        * svg/dynamic-updates/SVGLinearGradientElement-svgdom-gradientTransform-prop.html:
+        * svg/dynamic-updates/SVGLinearGradientElement-svgdom-gradientUnits-prop.html:
+        * svg/dynamic-updates/SVGLinearGradientElement-svgdom-x1-prop.html:
+        * svg/dynamic-updates/SVGLinearGradientElement-svgdom-x2-prop.html:
+        * svg/dynamic-updates/SVGLinearGradientElement-svgdom-y1-prop.html:
+        * svg/dynamic-updates/SVGLinearGradientElement-svgdom-y2-prop.html:
+        * svg/dynamic-updates/SVGMarkerElement-dom-markerHeight-attr.html:
+        * svg/dynamic-updates/SVGMarkerElement-dom-markerUnits-attr.html:
+        * svg/dynamic-updates/SVGMarkerElement-dom-markerWidth-attr.html:
+        * svg/dynamic-updates/SVGMarkerElement-dom-orient-attr.html:
+        * svg/dynamic-updates/SVGMarkerElement-dom-refX-attr.html:
+        * svg/dynamic-updates/SVGMarkerElement-dom-refY-attr.html:
+        * svg/dynamic-updates/SVGMarkerElement-svgdom-markerHeight-prop.html:
+        * svg/dynamic-updates/SVGMarkerElement-svgdom-markerUnits-prop.html:
+        * svg/dynamic-updates/SVGMarkerElement-svgdom-markerWidth-prop.html:
+        * svg/dynamic-updates/SVGMarkerElement-svgdom-orientAngle-prop.html:
+        * svg/dynamic-updates/SVGMarkerElement-svgdom-orientType-prop.html:
+        * svg/dynamic-updates/SVGMarkerElement-svgdom-refX-prop.html:
+        * svg/dynamic-updates/SVGMarkerElement-svgdom-refY-prop.html:
+        * svg/dynamic-updates/SVGMarkerElement-svgdom-setOrientToAngle-call.html:
+        * svg/dynamic-updates/SVGMarkerElement-svgdom-setOrientToAuto-call.html:
+        * svg/dynamic-updates/SVGMaskElement-dom-height-attr.html:
+        * svg/dynamic-updates/SVGMaskElement-dom-maskContentUnits-attr.html:
+        * svg/dynamic-updates/SVGMaskElement-dom-maskUnits-attr.html:
+        * svg/dynamic-updates/SVGMaskElement-dom-width-attr.html:
+        * svg/dynamic-updates/SVGMaskElement-dom-x-attr.html:
+        * svg/dynamic-updates/SVGMaskElement-dom-y-attr.html:
+        * svg/dynamic-updates/SVGMaskElement-svgdom-height-prop.html:
+        * svg/dynamic-updates/SVGMaskElement-svgdom-maskContentUnits-prop.html:
+        * svg/dynamic-updates/SVGMaskElement-svgdom-maskUnits-prop.html:
+        * svg/dynamic-updates/SVGMaskElement-svgdom-width-prop.html:
+        * svg/dynamic-updates/SVGMaskElement-svgdom-x-prop.html:
+        * svg/dynamic-updates/SVGMaskElement-svgdom-y-prop.html:
+        * svg/dynamic-updates/SVGPatternElement-dom-height-attr.html:
+        * svg/dynamic-updates/SVGPatternElement-dom-patternContentUnits-attr.html:
+        * svg/dynamic-updates/SVGPatternElement-dom-patternTransform-attr.html:
+        * svg/dynamic-updates/SVGPatternElement-dom-patternUnits-attr.html:
+        * svg/dynamic-updates/SVGPatternElement-dom-width-attr.html:
+        * svg/dynamic-updates/SVGPatternElement-dom-x-attr.html:
+        * svg/dynamic-updates/SVGPatternElement-dom-y-attr.html:
+        * svg/dynamic-updates/SVGPatternElement-svgdom-height-prop.html:
+        * svg/dynamic-updates/SVGPatternElement-svgdom-patternContentUnits-prop.html:
+        * svg/dynamic-updates/SVGPatternElement-svgdom-patternTransform-prop.html:
+        * svg/dynamic-updates/SVGPatternElement-svgdom-patternUnits-prop.html:
+        * svg/dynamic-updates/SVGPatternElement-svgdom-width-prop.html:
+        * svg/dynamic-updates/SVGPatternElement-svgdom-x-prop.html:
+        * svg/dynamic-updates/SVGPatternElement-svgdom-y-prop.html:
+        * svg/dynamic-updates/SVGRadialGradientElement-dom-cx-attr.html:
+        * svg/dynamic-updates/SVGRadialGradientElement-dom-cy-attr.html:
+        * svg/dynamic-updates/SVGRadialGradientElement-dom-fx-attr.html:
+        * svg/dynamic-updates/SVGRadialGradientElement-dom-fy-attr.html:
+        * svg/dynamic-updates/SVGRadialGradientElement-dom-gradientTransform-attr.html:
+        * svg/dynamic-updates/SVGRadialGradientElement-dom-gradientUnits-attr.html:
+        * svg/dynamic-updates/SVGRadialGradientElement-dom-r-attr.html:
+        * svg/dynamic-updates/SVGRadialGradientElement-svgdom-cx-prop.html:
+        * svg/dynamic-updates/SVGRadialGradientElement-svgdom-cy-prop.html:
+        * svg/dynamic-updates/SVGRadialGradientElement-svgdom-fx-prop.html:
+        * svg/dynamic-updates/SVGRadialGradientElement-svgdom-fy-prop.html:
+        * svg/dynamic-updates/SVGRadialGradientElement-svgdom-gradientTransform-prop.html:
+        * svg/dynamic-updates/SVGRadialGradientElement-svgdom-gradientUnits-prop.html:
+        * svg/dynamic-updates/SVGRadialGradientElement-svgdom-r-prop.html:
+        * svg/dynamic-updates/SVGRectElement-dom-height-attr.html:
+        * svg/dynamic-updates/SVGRectElement-dom-width-attr.html:
+        * svg/dynamic-updates/SVGRectElement-dom-x-attr.html:
+        * svg/dynamic-updates/SVGRectElement-dom-y-attr.html:
+        * svg/dynamic-updates/SVGRectElement-svgdom-height-prop.html:
+        * svg/dynamic-updates/SVGRectElement-svgdom-width-prop.html:
+        * svg/dynamic-updates/SVGRectElement-svgdom-x-prop.html:
+        * svg/dynamic-updates/SVGRectElement-svgdom-y-prop.html:
+        * svg/dynamic-updates/resources/SVGAElement-dom-href-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGAElement-dom-target-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGAElement-svgdom-href-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGAElement-svgdom-target-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGCircleElement-dom-cx-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGCircleElement-dom-cy-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGCircleElement-dom-r-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGCircleElement-svgdom-cx-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGCircleElement-svgdom-cy-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGCircleElement-svgdom-r-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGClipPathElement-dom-clipPathUnits-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGClipPathElement-svgdom-clipPathUnits-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGCursorElement-dom-x-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGCursorElement-dom-y-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGCursorElement-svgdom-x-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGCursorElement-svgdom-y-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGEllipseElement-dom-cx-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGEllipseElement-dom-cy-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGEllipseElement-dom-rx-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGEllipseElement-dom-ry-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGEllipseElement-svgdom-cx-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGEllipseElement-svgdom-cy-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGEllipseElement-svgdom-rx-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGEllipseElement-svgdom-ry-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGForeignObjectElement-dom-height-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGForeignObjectElement-dom-width-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGForeignObjectElement-dom-x-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGForeignObjectElement-dom-y-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGForeignObjectElement-svgdom-height-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGForeignObjectElement-svgdom-width-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGForeignObjectElement-svgdom-x-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGForeignObjectElement-svgdom-y-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGImageElement-dom-height-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGImageElement-dom-preserveAspectRatio-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGImageElement-dom-width-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGImageElement-dom-x-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGImageElement-dom-y-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGImageElement-svgdom-height-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGImageElement-svgdom-preserveAspectRatio-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGImageElement-svgdom-width-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGImageElement-svgdom-x-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGImageElement-svgdom-y-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGLineElement-dom-x1-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGLineElement-dom-x2-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGLineElement-dom-y1-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGLineElement-dom-y2-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGLineElement-svgdom-x1-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGLineElement-svgdom-x2-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGLineElement-svgdom-y1-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGLineElement-svgdom-y2-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGLinearGradientElement-dom-gradientTransform-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGLinearGradientElement-dom-gradientUnits-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGLinearGradientElement-dom-x1-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGLinearGradientElement-dom-x2-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGLinearGradientElement-dom-y1-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGLinearGradientElement-dom-y2-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGLinearGradientElement-svgdom-gradientTransform-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGLinearGradientElement-svgdom-gradientUnits-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGLinearGradientElement-svgdom-x1-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGLinearGradientElement-svgdom-x2-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGLinearGradientElement-svgdom-y1-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGLinearGradientElement-svgdom-y2-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGMarkerElement-dom-markerHeight-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGMarkerElement-dom-markerUnits-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGMarkerElement-dom-markerWidth-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGMarkerElement-dom-orient-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGMarkerElement-dom-refX-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGMarkerElement-dom-refY-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGMarkerElement-svgdom-markerHeight-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGMarkerElement-svgdom-markerUnits-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGMarkerElement-svgdom-markerWidth-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGMarkerElement-svgdom-orientAngle-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGMarkerElement-svgdom-orientType-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGMarkerElement-svgdom-refX-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGMarkerElement-svgdom-refY-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGMarkerElement-svgdom-setOrientToAngle-call.js: Removed.
+        * svg/dynamic-updates/resources/SVGMarkerElement-svgdom-setOrientToAuto-call.js: Removed.
+        * svg/dynamic-updates/resources/SVGMaskElement-dom-height-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGMaskElement-dom-maskContentUnits-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGMaskElement-dom-maskUnits-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGMaskElement-dom-width-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGMaskElement-dom-x-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGMaskElement-dom-y-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGMaskElement-svgdom-height-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGMaskElement-svgdom-maskContentUnits-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGMaskElement-svgdom-maskUnits-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGMaskElement-svgdom-width-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGMaskElement-svgdom-x-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGMaskElement-svgdom-y-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGPatternElement-dom-height-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGPatternElement-dom-patternContentUnits-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGPatternElement-dom-patternTransform-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGPatternElement-dom-patternUnits-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGPatternElement-dom-width-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGPatternElement-dom-x-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGPatternElement-dom-y-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGPatternElement-svgdom-height-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGPatternElement-svgdom-patternContentUnits-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGPatternElement-svgdom-patternTransform-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGPatternElement-svgdom-patternUnits-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGPatternElement-svgdom-width-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGPatternElement-svgdom-x-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGPatternElement-svgdom-y-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGRadialGradientElement-dom-cx-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGRadialGradientElement-dom-cy-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGRadialGradientElement-dom-fx-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGRadialGradientElement-dom-fy-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGRadialGradientElement-dom-gradientTransform-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGRadialGradientElement-dom-gradientUnits-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGRadialGradientElement-dom-r-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGRadialGradientElement-svgdom-cx-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGRadialGradientElement-svgdom-cy-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGRadialGradientElement-svgdom-fx-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGRadialGradientElement-svgdom-fy-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGRadialGradientElement-svgdom-gradientTransform-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGRadialGradientElement-svgdom-gradientUnits-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGRadialGradientElement-svgdom-r-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGRectElement-dom-height-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGRectElement-dom-width-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGRectElement-dom-x-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGRectElement-dom-y-attr.js: Removed.
+        * svg/dynamic-updates/resources/SVGRectElement-svgdom-height-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGRectElement-svgdom-width-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGRectElement-svgdom-x-prop.js: Removed.
+        * svg/dynamic-updates/resources/SVGRectElement-svgdom-y-prop.js: Removed.
+        * svg/dynamic-updates/resources/TEMPLATE.html: Removed.
+        * svg/dynamic-updates/script-tests: Added.
+        * svg/dynamic-updates/script-tests/SVGAElement-dom-href-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGAElement-dom-href-attr.js.
+        * svg/dynamic-updates/script-tests/SVGAElement-dom-target-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGAElement-dom-target-attr.js.
+        * svg/dynamic-updates/script-tests/SVGAElement-svgdom-href-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGAElement-svgdom-href-prop.js.
+        * svg/dynamic-updates/script-tests/SVGAElement-svgdom-target-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGAElement-svgdom-target-prop.js.
+        * svg/dynamic-updates/script-tests/SVGCircleElement-dom-cx-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGCircleElement-dom-cx-attr.js.
+        * svg/dynamic-updates/script-tests/SVGCircleElement-dom-cy-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGCircleElement-dom-cy-attr.js.
+        * svg/dynamic-updates/script-tests/SVGCircleElement-dom-r-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGCircleElement-dom-r-attr.js.
+        * svg/dynamic-updates/script-tests/SVGCircleElement-svgdom-cx-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGCircleElement-svgdom-cx-prop.js.
+        * svg/dynamic-updates/script-tests/SVGCircleElement-svgdom-cy-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGCircleElement-svgdom-cy-prop.js.
+        * svg/dynamic-updates/script-tests/SVGCircleElement-svgdom-r-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGCircleElement-svgdom-r-prop.js.
+        * svg/dynamic-updates/script-tests/SVGClipPathElement-dom-clipPathUnits-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGClipPathElement-dom-clipPathUnits-attr.js.
+        * svg/dynamic-updates/script-tests/SVGClipPathElement-svgdom-clipPathUnits-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGClipPathElement-svgdom-clipPathUnits-prop.js.
+        * svg/dynamic-updates/script-tests/SVGCursorElement-dom-x-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGCursorElement-dom-x-attr.js.
+        * svg/dynamic-updates/script-tests/SVGCursorElement-dom-y-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGCursorElement-dom-y-attr.js.
+        * svg/dynamic-updates/script-tests/SVGCursorElement-svgdom-x-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGCursorElement-svgdom-x-prop.js.
+        * svg/dynamic-updates/script-tests/SVGCursorElement-svgdom-y-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGCursorElement-svgdom-y-prop.js.
+        * svg/dynamic-updates/script-tests/SVGEllipseElement-dom-cx-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGEllipseElement-dom-cx-attr.js.
+        * svg/dynamic-updates/script-tests/SVGEllipseElement-dom-cy-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGEllipseElement-dom-cy-attr.js.
+        * svg/dynamic-updates/script-tests/SVGEllipseElement-dom-rx-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGEllipseElement-dom-rx-attr.js.
+        * svg/dynamic-updates/script-tests/SVGEllipseElement-dom-ry-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGEllipseElement-dom-ry-attr.js.
+        * svg/dynamic-updates/script-tests/SVGEllipseElement-svgdom-cx-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGEllipseElement-svgdom-cx-prop.js.
+        * svg/dynamic-updates/script-tests/SVGEllipseElement-svgdom-cy-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGEllipseElement-svgdom-cy-prop.js.
+        * svg/dynamic-updates/script-tests/SVGEllipseElement-svgdom-rx-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGEllipseElement-svgdom-rx-prop.js.
+        * svg/dynamic-updates/script-tests/SVGEllipseElement-svgdom-ry-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGEllipseElement-svgdom-ry-prop.js.
+        * svg/dynamic-updates/script-tests/SVGForeignObjectElement-dom-height-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGForeignObjectElement-dom-height-attr.js.
+        * svg/dynamic-updates/script-tests/SVGForeignObjectElement-dom-width-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGForeignObjectElement-dom-width-attr.js.
+        * svg/dynamic-updates/script-tests/SVGForeignObjectElement-dom-x-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGForeignObjectElement-dom-x-attr.js.
+        * svg/dynamic-updates/script-tests/SVGForeignObjectElement-dom-y-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGForeignObjectElement-dom-y-attr.js.
+        * svg/dynamic-updates/script-tests/SVGForeignObjectElement-svgdom-height-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGForeignObjectElement-svgdom-height-prop.js.
+        * svg/dynamic-updates/script-tests/SVGForeignObjectElement-svgdom-width-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGForeignObjectElement-svgdom-width-prop.js.
+        * svg/dynamic-updates/script-tests/SVGForeignObjectElement-svgdom-x-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGForeignObjectElement-svgdom-x-prop.js.
+        * svg/dynamic-updates/script-tests/SVGForeignObjectElement-svgdom-y-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGForeignObjectElement-svgdom-y-prop.js.
+        * svg/dynamic-updates/script-tests/SVGImageElement-dom-height-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGImageElement-dom-height-attr.js.
+        * svg/dynamic-updates/script-tests/SVGImageElement-dom-preserveAspectRatio-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGImageElement-dom-preserveAspectRatio-attr.js.
+        * svg/dynamic-updates/script-tests/SVGImageElement-dom-width-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGImageElement-dom-width-attr.js.
+        * svg/dynamic-updates/script-tests/SVGImageElement-dom-x-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGImageElement-dom-x-attr.js.
+        * svg/dynamic-updates/script-tests/SVGImageElement-dom-y-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGImageElement-dom-y-attr.js.
+        * svg/dynamic-updates/script-tests/SVGImageElement-svgdom-height-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGImageElement-svgdom-height-prop.js.
+        * svg/dynamic-updates/script-tests/SVGImageElement-svgdom-preserveAspectRatio-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGImageElement-svgdom-preserveAspectRatio-prop.js.
+        * svg/dynamic-updates/script-tests/SVGImageElement-svgdom-width-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGImageElement-svgdom-width-prop.js.
+        * svg/dynamic-updates/script-tests/SVGImageElement-svgdom-x-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGImageElement-svgdom-x-prop.js.
+        * svg/dynamic-updates/script-tests/SVGImageElement-svgdom-y-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGImageElement-svgdom-y-prop.js.
+        * svg/dynamic-updates/script-tests/SVGLineElement-dom-x1-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGLineElement-dom-x1-attr.js.
+        * svg/dynamic-updates/script-tests/SVGLineElement-dom-x2-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGLineElement-dom-x2-attr.js.
+        * svg/dynamic-updates/script-tests/SVGLineElement-dom-y1-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGLineElement-dom-y1-attr.js.
+        * svg/dynamic-updates/script-tests/SVGLineElement-dom-y2-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGLineElement-dom-y2-attr.js.
+        * svg/dynamic-updates/script-tests/SVGLineElement-svgdom-x1-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGLineElement-svgdom-x1-prop.js.
+        * svg/dynamic-updates/script-tests/SVGLineElement-svgdom-x2-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGLineElement-svgdom-x2-prop.js.
+        * svg/dynamic-updates/script-tests/SVGLineElement-svgdom-y1-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGLineElement-svgdom-y1-prop.js.
+        * svg/dynamic-updates/script-tests/SVGLineElement-svgdom-y2-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGLineElement-svgdom-y2-prop.js.
+        * svg/dynamic-updates/script-tests/SVGLinearGradientElement-dom-gradientTransform-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGLinearGradientElement-dom-gradientTransform-attr.js.
+        * svg/dynamic-updates/script-tests/SVGLinearGradientElement-dom-gradientUnits-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGLinearGradientElement-dom-gradientUnits-attr.js.
+        * svg/dynamic-updates/script-tests/SVGLinearGradientElement-dom-x1-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGLinearGradientElement-dom-x1-attr.js.
+        * svg/dynamic-updates/script-tests/SVGLinearGradientElement-dom-x2-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGLinearGradientElement-dom-x2-attr.js.
+        * svg/dynamic-updates/script-tests/SVGLinearGradientElement-dom-y1-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGLinearGradientElement-dom-y1-attr.js.
+        * svg/dynamic-updates/script-tests/SVGLinearGradientElement-dom-y2-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGLinearGradientElement-dom-y2-attr.js.
+        * svg/dynamic-updates/script-tests/SVGLinearGradientElement-svgdom-gradientTransform-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGLinearGradientElement-svgdom-gradientTransform-prop.js.
+        * svg/dynamic-updates/script-tests/SVGLinearGradientElement-svgdom-gradientUnits-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGLinearGradientElement-svgdom-gradientUnits-prop.js.
+        * svg/dynamic-updates/script-tests/SVGLinearGradientElement-svgdom-x1-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGLinearGradientElement-svgdom-x1-prop.js.
+        * svg/dynamic-updates/script-tests/SVGLinearGradientElement-svgdom-x2-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGLinearGradientElement-svgdom-x2-prop.js.
+        * svg/dynamic-updates/script-tests/SVGLinearGradientElement-svgdom-y1-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGLinearGradientElement-svgdom-y1-prop.js.
+        * svg/dynamic-updates/script-tests/SVGLinearGradientElement-svgdom-y2-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGLinearGradientElement-svgdom-y2-prop.js.
+        * svg/dynamic-updates/script-tests/SVGMarkerElement-dom-markerHeight-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGMarkerElement-dom-markerHeight-attr.js.
+        * svg/dynamic-updates/script-tests/SVGMarkerElement-dom-markerUnits-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGMarkerElement-dom-markerUnits-attr.js.
+        * svg/dynamic-updates/script-tests/SVGMarkerElement-dom-markerWidth-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGMarkerElement-dom-markerWidth-attr.js.
+        * svg/dynamic-updates/script-tests/SVGMarkerElement-dom-orient-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGMarkerElement-dom-orient-attr.js.
+        * svg/dynamic-updates/script-tests/SVGMarkerElement-dom-refX-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGMarkerElement-dom-refX-attr.js.
+        * svg/dynamic-updates/script-tests/SVGMarkerElement-dom-refY-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGMarkerElement-dom-refY-attr.js.
+        * svg/dynamic-updates/script-tests/SVGMarkerElement-svgdom-markerHeight-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGMarkerElement-svgdom-markerHeight-prop.js.
+        * svg/dynamic-updates/script-tests/SVGMarkerElement-svgdom-markerUnits-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGMarkerElement-svgdom-markerUnits-prop.js.
+        * svg/dynamic-updates/script-tests/SVGMarkerElement-svgdom-markerWidth-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGMarkerElement-svgdom-markerWidth-prop.js.
+        * svg/dynamic-updates/script-tests/SVGMarkerElement-svgdom-orientAngle-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGMarkerElement-svgdom-orientAngle-prop.js.
+        * svg/dynamic-updates/script-tests/SVGMarkerElement-svgdom-orientType-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGMarkerElement-svgdom-orientType-prop.js.
+        * svg/dynamic-updates/script-tests/SVGMarkerElement-svgdom-refX-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGMarkerElement-svgdom-refX-prop.js.
+        * svg/dynamic-updates/script-tests/SVGMarkerElement-svgdom-refY-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGMarkerElement-svgdom-refY-prop.js.
+        * svg/dynamic-updates/script-tests/SVGMarkerElement-svgdom-setOrientToAngle-call.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGMarkerElement-svgdom-setOrientToAngle-call.js.
+        * svg/dynamic-updates/script-tests/SVGMarkerElement-svgdom-setOrientToAuto-call.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGMarkerElement-svgdom-setOrientToAuto-call.js.
+        * svg/dynamic-updates/script-tests/SVGMaskElement-dom-height-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGMaskElement-dom-height-attr.js.
+        * svg/dynamic-updates/script-tests/SVGMaskElement-dom-maskContentUnits-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGMaskElement-dom-maskContentUnits-attr.js.
+        * svg/dynamic-updates/script-tests/SVGMaskElement-dom-maskUnits-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGMaskElement-dom-maskUnits-attr.js.
+        * svg/dynamic-updates/script-tests/SVGMaskElement-dom-width-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGMaskElement-dom-width-attr.js.
+        * svg/dynamic-updates/script-tests/SVGMaskElement-dom-x-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGMaskElement-dom-x-attr.js.
+        * svg/dynamic-updates/script-tests/SVGMaskElement-dom-y-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGMaskElement-dom-y-attr.js.
+        * svg/dynamic-updates/script-tests/SVGMaskElement-svgdom-height-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGMaskElement-svgdom-height-prop.js.
+        * svg/dynamic-updates/script-tests/SVGMaskElement-svgdom-maskContentUnits-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGMaskElement-svgdom-maskContentUnits-prop.js.
+        * svg/dynamic-updates/script-tests/SVGMaskElement-svgdom-maskUnits-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGMaskElement-svgdom-maskUnits-prop.js.
+        * svg/dynamic-updates/script-tests/SVGMaskElement-svgdom-width-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGMaskElement-svgdom-width-prop.js.
+        * svg/dynamic-updates/script-tests/SVGMaskElement-svgdom-x-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGMaskElement-svgdom-x-prop.js.
+        * svg/dynamic-updates/script-tests/SVGMaskElement-svgdom-y-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGMaskElement-svgdom-y-prop.js.
+        * svg/dynamic-updates/script-tests/SVGPatternElement-dom-height-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGPatternElement-dom-height-attr.js.
+        * svg/dynamic-updates/script-tests/SVGPatternElement-dom-patternContentUnits-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGPatternElement-dom-patternContentUnits-attr.js.
+        * svg/dynamic-updates/script-tests/SVGPatternElement-dom-patternTransform-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGPatternElement-dom-patternTransform-attr.js.
+        * svg/dynamic-updates/script-tests/SVGPatternElement-dom-patternUnits-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGPatternElement-dom-patternUnits-attr.js.
+        * svg/dynamic-updates/script-tests/SVGPatternElement-dom-width-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGPatternElement-dom-width-attr.js.
+        * svg/dynamic-updates/script-tests/SVGPatternElement-dom-x-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGPatternElement-dom-x-attr.js.
+        * svg/dynamic-updates/script-tests/SVGPatternElement-dom-y-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGPatternElement-dom-y-attr.js.
+        * svg/dynamic-updates/script-tests/SVGPatternElement-svgdom-height-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGPatternElement-svgdom-height-prop.js.
+        * svg/dynamic-updates/script-tests/SVGPatternElement-svgdom-patternContentUnits-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGPatternElement-svgdom-patternContentUnits-prop.js.
+        * svg/dynamic-updates/script-tests/SVGPatternElement-svgdom-patternTransform-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGPatternElement-svgdom-patternTransform-prop.js.
+        * svg/dynamic-updates/script-tests/SVGPatternElement-svgdom-patternUnits-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGPatternElement-svgdom-patternUnits-prop.js.
+        * svg/dynamic-updates/script-tests/SVGPatternElement-svgdom-width-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGPatternElement-svgdom-width-prop.js.
+        * svg/dynamic-updates/script-tests/SVGPatternElement-svgdom-x-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGPatternElement-svgdom-x-prop.js.
+        * svg/dynamic-updates/script-tests/SVGPatternElement-svgdom-y-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGPatternElement-svgdom-y-prop.js.
+        * svg/dynamic-updates/script-tests/SVGRadialGradientElement-dom-cx-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGRadialGradientElement-dom-cx-attr.js.
+        * svg/dynamic-updates/script-tests/SVGRadialGradientElement-dom-cy-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGRadialGradientElement-dom-cy-attr.js.
+        * svg/dynamic-updates/script-tests/SVGRadialGradientElement-dom-fx-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGRadialGradientElement-dom-fx-attr.js.
+        * svg/dynamic-updates/script-tests/SVGRadialGradientElement-dom-fy-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGRadialGradientElement-dom-fy-attr.js.
+        * svg/dynamic-updates/script-tests/SVGRadialGradientElement-dom-gradientTransform-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGRadialGradientElement-dom-gradientTransform-attr.js.
+        * svg/dynamic-updates/script-tests/SVGRadialGradientElement-dom-gradientUnits-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGRadialGradientElement-dom-gradientUnits-attr.js.
+        * svg/dynamic-updates/script-tests/SVGRadialGradientElement-dom-r-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGRadialGradientElement-dom-r-attr.js.
+        * svg/dynamic-updates/script-tests/SVGRadialGradientElement-svgdom-cx-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGRadialGradientElement-svgdom-cx-prop.js.
+        * svg/dynamic-updates/script-tests/SVGRadialGradientElement-svgdom-cy-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGRadialGradientElement-svgdom-cy-prop.js.
+        * svg/dynamic-updates/script-tests/SVGRadialGradientElement-svgdom-fx-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGRadialGradientElement-svgdom-fx-prop.js.
+        * svg/dynamic-updates/script-tests/SVGRadialGradientElement-svgdom-fy-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGRadialGradientElement-svgdom-fy-prop.js.
+        * svg/dynamic-updates/script-tests/SVGRadialGradientElement-svgdom-gradientTransform-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGRadialGradientElement-svgdom-gradientTransform-prop.js.
+        * svg/dynamic-updates/script-tests/SVGRadialGradientElement-svgdom-gradientUnits-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGRadialGradientElement-svgdom-gradientUnits-prop.js.
+        * svg/dynamic-updates/script-tests/SVGRadialGradientElement-svgdom-r-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGRadialGradientElement-svgdom-r-prop.js.
+        * svg/dynamic-updates/script-tests/SVGRectElement-dom-height-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGRectElement-dom-height-attr.js.
+        * svg/dynamic-updates/script-tests/SVGRectElement-dom-width-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGRectElement-dom-width-attr.js.
+        * svg/dynamic-updates/script-tests/SVGRectElement-dom-x-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGRectElement-dom-x-attr.js.
+        * svg/dynamic-updates/script-tests/SVGRectElement-dom-y-attr.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGRectElement-dom-y-attr.js.
+        * svg/dynamic-updates/script-tests/SVGRectElement-svgdom-height-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGRectElement-svgdom-height-prop.js.
+        * svg/dynamic-updates/script-tests/SVGRectElement-svgdom-width-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGRectElement-svgdom-width-prop.js.
+        * svg/dynamic-updates/script-tests/SVGRectElement-svgdom-x-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGRectElement-svgdom-x-prop.js.
+        * svg/dynamic-updates/script-tests/SVGRectElement-svgdom-y-prop.js: Copied from LayoutTests/svg/dynamic-updates/resources/SVGRectElement-svgdom-y-prop.js.
+        * svg/dynamic-updates/script-tests/TEMPLATE.html: Copied from LayoutTests/svg/dynamic-updates/resources/TEMPLATE.html.
+
+2009-09-19  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Rubber-stamped by Eric Seidel.
+
+        js tests should move into jstests subdirectory instead of resources/
+        https://bugs.webkit.org/show_bug.cgi?id=25880
+
         Migration for http, platform, plugins, traversal, and wml directories.
 
         * http/tests/cookies/double-quoted-value-with-semi-colon.html:
