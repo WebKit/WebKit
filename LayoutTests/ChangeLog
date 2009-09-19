@@ -1,3 +1,18 @@
+2009-09-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Incorrect animation with scale(0) transform (singular matrix)
+        https://bugs.webkit.org/show_bug.cgi?id=29465
+        
+        Testcase for an accelerated transform animation that starts with a scale(0),
+        which gives a singular matrix.
+
+        * compositing/transitions/singular-scale-transition.html: Added.
+        * platform/mac/compositing/transitions/singular-scale-transition-expected.checksum: Added.
+        * platform/mac/compositing/transitions/singular-scale-transition-expected.png: Added.
+        * platform/mac/compositing/transitions/singular-scale-transition-expected.txt: Added.
+
 2009-09-19  Alex Milowski  <alex@milowski.com>
 
         Reviewed by Maciej Stachowiak.

@@ -160,13 +160,23 @@ static NSValue* getTransformFunctionValue(const TransformOperation* transformOp,
         case TransformOperation::TRANSLATE_Z:
             return [NSNumber numberWithDouble:transformOp ? static_cast<const TranslateTransformOperation*>(transformOp)->z(size) : 0];
         case TransformOperation::SCALE:
+        case TransformOperation::SCALE_3D:
+            return [NSArray arrayWithObjects:
+                        [NSNumber numberWithDouble:transformOp ? static_cast<const ScaleTransformOperation*>(transformOp)->x() : 0],
+                        [NSNumber numberWithDouble:transformOp ? static_cast<const ScaleTransformOperation*>(transformOp)->y() : 0],
+                        [NSNumber numberWithDouble:transformOp ? static_cast<const ScaleTransformOperation*>(transformOp)->z() : 0],
+                        nil];
         case TransformOperation::TRANSLATE:
+        case TransformOperation::TRANSLATE_3D:
+            return [NSArray arrayWithObjects:
+                        [NSNumber numberWithDouble:transformOp ? static_cast<const TranslateTransformOperation*>(transformOp)->x(size) : 0],
+                        [NSNumber numberWithDouble:transformOp ? static_cast<const TranslateTransformOperation*>(transformOp)->y(size) : 0],
+                        [NSNumber numberWithDouble:transformOp ? static_cast<const TranslateTransformOperation*>(transformOp)->z(size) : 0],
+                        nil];
         case TransformOperation::SKEW_X:
         case TransformOperation::SKEW_Y:
         case TransformOperation::SKEW:
         case TransformOperation::MATRIX:
-        case TransformOperation::SCALE_3D:
-        case TransformOperation::TRANSLATE_3D:
         case TransformOperation::ROTATE_3D:
         case TransformOperation::MATRIX_3D:
         case TransformOperation::PERSPECTIVE:
@@ -207,6 +217,12 @@ static NSString* getValueFunctionNameForTransformOperation(TransformOperation::O
             return @"translateY"; // kCAValueFunctionTranslateY;
         case TransformOperation::TRANSLATE_Z:
             return @"translateZ"; // kCAValueFunctionTranslateZ;
+        case TransformOperation::SCALE:
+        case TransformOperation::SCALE_3D:
+            return @"scale"; // kCAValueFunctionScale;
+        case TransformOperation::TRANSLATE:
+        case TransformOperation::TRANSLATE_3D:
+            return @"translate"; // kCAValueFunctionTranslate;
         default:
             return nil;
     }

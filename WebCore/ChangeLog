@@ -1,3 +1,20 @@
+2009-09-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Incorrect animation with scale(0) transform (singular matrix)
+        https://bugs.webkit.org/show_bug.cgi?id=29465
+        
+        Make accelerated scale() and translate() animations go through the component animation
+        path (rather than just matrix animation) to avoid problems with singular scale matrices,
+        and be slightly more efficient.
+
+        Test: compositing/transitions/singular-scale-transition.html
+
+        * platform/graphics/mac/GraphicsLayerCA.mm:
+        (WebCore::getTransformFunctionValue):
+        (WebCore::getValueFunctionNameForTransformOperation):
+
 2009-09-19  Alex Milowski  <alex@milowski.com>
 
         Reviewed by Maciej Stachowiak.
