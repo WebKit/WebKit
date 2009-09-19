@@ -18,13 +18,13 @@ shouldBeEqualToString("select1.options.test.value", "Value");
 
 debug("Confirm that both options named 'test' are accessible from the select element");
 shouldBe("select2.test.length", "2");
-shouldBeEqualToString("select2.test.toString()", "[object Collection]");
+shouldBeEqualToString("select2.test.toString()", "[object NodeList]");
 shouldBeEqualToString("select2.test[0].value", "Value1");
 shouldBeEqualToString("select2.test[1].value", "Value2");
 
 debug("Confirm that both options named 'test' are accessible from the options collection");
 shouldBe("select2.options.test.length", "2");
-shouldBeEqualToString("select2.options.test.toString()", "[object Collection]");
+shouldBeEqualToString("select2.options.test.toString()", "[object NodeList]");
 shouldBeEqualToString("select2.options.test[0].value", "Value1");
 shouldBeEqualToString("select2.options.test[1].value", "Value2");
 

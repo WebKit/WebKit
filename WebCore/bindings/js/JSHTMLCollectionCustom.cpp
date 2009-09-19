@@ -23,12 +23,13 @@
 #include "AtomicString.h"
 #include "HTMLCollection.h"
 #include "HTMLOptionsCollection.h"
+#include "JSDOMBinding.h"
 #include "JSHTMLAllCollection.h"
 #include "JSHTMLOptionsCollection.h"
-#include "JSNamedNodesCollection.h"
 #include "JSNode.h"
+#include "JSNodeList.h"
 #include "Node.h"
-#include "JSDOMBinding.h"
+#include "StaticNodeList.h"
 #include <wtf/Vector.h>
 
 using namespace JSC;
@@ -42,11 +43,12 @@ static JSValue getNamedItems(ExecState* exec, JSHTMLCollection* collection, cons
 
     if (namedItems.isEmpty())
         return jsUndefined();
-
     if (namedItems.size() == 1)
         return toJS(exec, collection->globalObject(), namedItems[0].get());
 
-    return new (exec) JSNamedNodesCollection(exec, collection->globalObject(), namedItems);
+    // FIMXE: HTML5 specifies that this should be a live NodeList and only be available for
+    // an  HTMLOptionsCollection.
+    return toJS(exec, collection->globalObject(), StaticNodeList::adopt(namedItems).get());
 }
 
 // HTMLCollections are strange objects, they support both get and call,

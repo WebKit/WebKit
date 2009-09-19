@@ -29211,14 +29211,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\bindings\js\JSNamedNodesCollection.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\bindings\js\JSNamedNodesCollection.h"
-					>
-				</File>
-				<File
 					RelativePath="..\bindings\js\JSNavigatorCustom.cpp"
 					>
 				</File>

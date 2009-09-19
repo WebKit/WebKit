@@ -1,3 +1,20 @@
+2009-09-19  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=29519
+        Remove JSNameNodeCollection and just use StaticNodeList
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * bindings/js/JSHTMLCollectionCustom.cpp:
+        (WebCore::getNamedItems):
+        * bindings/js/JSHTMLFormElementCustom.cpp:
+        (WebCore::JSHTMLFormElement::nameGetter):
+        * bindings/js/JSNamedNodesCollection.cpp: Removed.
+        * bindings/js/JSNamedNodesCollection.h: Removed.
+
 2009-09-19  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Adam Barth.

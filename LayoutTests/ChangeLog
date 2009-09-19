@@ -1,3 +1,14 @@
+2009-09-19  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Update tests for https://bugs.webkit.org/show_bug.cgi?id=29519
+        Remove JSNameNodeCollection and just use StaticNodeList
+
+        * fast/dom/HTMLSelectElement/named-options-expected.txt:
+        * fast/dom/HTMLSelectElement/script-tests/named-options.js:
+        * fast/dom/prototype-inheritance-2-expected.txt:
+
 2009-09-19  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Sam Weinig.

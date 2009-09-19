@@ -4377,8 +4377,6 @@
 		BCD9C2630C17AA67005C90A2 /* JSNamedNodeMapCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD9C25F0C17AA67005C90A2 /* JSNamedNodeMapCustom.cpp */; };
 		BCD9C2640C17AA67005C90A2 /* JSNodeCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD9C2600C17AA67005C90A2 /* JSNodeCustom.cpp */; };
 		BCD9C2650C17AA67005C90A2 /* JSNodeListCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD9C2610C17AA67005C90A2 /* JSNodeListCustom.cpp */; };
-		BCD9C2720C17AA81005C90A2 /* JSNamedNodesCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD9C26C0C17AA81005C90A2 /* JSNamedNodesCollection.cpp */; };
-		BCD9C2730C17AA81005C90A2 /* JSNamedNodesCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD9C26D0C17AA81005C90A2 /* JSNamedNodesCollection.h */; };
 		BCD9C2C00C17B69E005C90A2 /* JSNamedNodeMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD9C2BC0C17B69E005C90A2 /* JSNamedNodeMap.cpp */; };
 		BCD9C2C10C17B69E005C90A2 /* JSNamedNodeMap.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD9C2BD0C17B69E005C90A2 /* JSNamedNodeMap.h */; };
 		BCD9C2C20C17B69E005C90A2 /* JSNodeList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD9C2BE0C17B69E005C90A2 /* JSNodeList.cpp */; };
@@ -9462,8 +9460,6 @@
 		BCD9C25F0C17AA67005C90A2 /* JSNamedNodeMapCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSNamedNodeMapCustom.cpp; sourceTree = "<group>"; };
 		BCD9C2600C17AA67005C90A2 /* JSNodeCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSNodeCustom.cpp; sourceTree = "<group>"; };
 		BCD9C2610C17AA67005C90A2 /* JSNodeListCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSNodeListCustom.cpp; sourceTree = "<group>"; };
-		BCD9C26C0C17AA81005C90A2 /* JSNamedNodesCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSNamedNodesCollection.cpp; sourceTree = "<group>"; };
-		BCD9C26D0C17AA81005C90A2 /* JSNamedNodesCollection.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSNamedNodesCollection.h; sourceTree = "<group>"; };
 		BCD9C2BC0C17B69E005C90A2 /* JSNamedNodeMap.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSNamedNodeMap.cpp; sourceTree = "<group>"; };
 		BCD9C2BD0C17B69E005C90A2 /* JSNamedNodeMap.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSNamedNodeMap.h; sourceTree = "<group>"; };
 		BCD9C2BE0C17B69E005C90A2 /* JSNodeList.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSNodeList.cpp; sourceTree = "<group>"; };
@@ -14135,8 +14131,6 @@
 				C09158850DB4209200E55AF4 /* JSInspectedObjectWrapper.h */,
 				C09158860DB4209200E55AF4 /* JSInspectorCallbackWrapper.cpp */,
 				C09158870DB4209200E55AF4 /* JSInspectorCallbackWrapper.h */,
-				BCD9C26C0C17AA81005C90A2 /* JSNamedNodesCollection.cpp */,
-				BCD9C26D0C17AA81005C90A2 /* JSNamedNodesCollection.h */,
 				93B70D4F09EB0C7C009D8468 /* JSPluginElementFunctions.cpp */,
 				93B70D5009EB0C7C009D8468 /* JSPluginElementFunctions.h */,
 				C09158880DB4209200E55AF4 /* JSQuarantinedObjectWrapper.cpp */,
@@ -16849,7 +16843,6 @@
 				A86629D109DA2B48009633A5 /* JSMouseEvent.h in Headers */,
 				65DF31FC09D1CC60000BE325 /* JSMutationEvent.h in Headers */,
 				BCD9C2C10C17B69E005C90A2 /* JSNamedNodeMap.h in Headers */,
-				BCD9C2730C17AA81005C90A2 /* JSNamedNodesCollection.h in Headers */,
 				A9D247F80D757E3400FDF959 /* JSNavigator.h in Headers */,
 				14115B7309F84CD600CA4FC1 /* JSNodeFilter.h in Headers */,
 				BCB773620C17853D00132BA4 /* JSNodeFilterCondition.h in Headers */,
@@ -19021,7 +19014,6 @@
 				65DF31FB09D1CC60000BE325 /* JSMutationEvent.cpp in Sources */,
 				BCD9C2C00C17B69E005C90A2 /* JSNamedNodeMap.cpp in Sources */,
 				BCD9C2630C17AA67005C90A2 /* JSNamedNodeMapCustom.cpp in Sources */,
-				BCD9C2720C17AA81005C90A2 /* JSNamedNodesCollection.cpp in Sources */,
 				A9D247F70D757E3400FDF959 /* JSNavigator.cpp in Sources */,
 				A9C6E6490D7465D8006442E9 /* JSNavigatorCustom.cpp in Sources */,
 				14DC0D3709FED073007B0235 /* JSNode.cpp in Sources */,
