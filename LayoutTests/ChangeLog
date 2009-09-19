@@ -5,6 +5,147 @@
         js tests should move into jstests subdirectory instead of resources/
         https://bugs.webkit.org/show_bug.cgi?id=25880
 
+        Migration for http, platform, plugins, traversal, and wml directories.
+
+        * http/tests/cookies/double-quoted-value-with-semi-colon.html:
+        * http/tests/cookies/multiple-cookies.html:
+        * http/tests/cookies/resources/TEMPLATE.html: Removed.
+        * http/tests/cookies/resources/double-quoted-value-with-semi-colon.js: Removed.
+        * http/tests/cookies/resources/multiple-cookies.js: Removed.
+        * http/tests/cookies/resources/simple-cookies-expired.js: Removed.
+        * http/tests/cookies/resources/simple-cookies-max-age.js: Removed.
+        * http/tests/cookies/script-tests: Added.
+        * http/tests/cookies/script-tests/TEMPLATE.html: Copied from LayoutTests/http/tests/cookies/resources/TEMPLATE.html.
+        * http/tests/cookies/script-tests/double-quoted-value-with-semi-colon.js: Copied from LayoutTests/http/tests/cookies/resources/double-quoted-value-with-semi-colon.js.
+        * http/tests/cookies/script-tests/multiple-cookies.js: Copied from LayoutTests/http/tests/cookies/resources/multiple-cookies.js.
+        * http/tests/cookies/script-tests/simple-cookies-expired.js: Copied from LayoutTests/http/tests/cookies/resources/simple-cookies-expired.js.
+        * http/tests/cookies/script-tests/simple-cookies-max-age.js: Copied from LayoutTests/http/tests/cookies/resources/simple-cookies-max-age.js.
+        * http/tests/cookies/simple-cookies-expired.html:
+        * http/tests/cookies/simple-cookies-max-age.html:
+        * http/tests/security/clipboard/clipboard-file-access.html:
+        * http/tests/security/clipboard/resources/TEMPLATE.html: Removed.
+        * http/tests/security/clipboard/resources/clipboard-file-access.js: Removed.
+        * http/tests/security/clipboard/script-tests: Added.
+        * http/tests/security/clipboard/script-tests/TEMPLATE.html: Copied from LayoutTests/http/tests/security/clipboard/resources/TEMPLATE.html.
+        * http/tests/security/clipboard/script-tests/clipboard-file-access.js: Copied from LayoutTests/http/tests/security/clipboard/resources/clipboard-file-access.js.
+        * http/tests/wml/access-target-domain-deny.html:
+        * http/tests/wml/access-target-path-deny.html:
+        * http/tests/wml/access-target.html:
+        * http/tests/wml/go-task-get-method-accept-charset.html:
+        * http/tests/wml/go-task-get-method.html:
+        * http/tests/wml/go-task-post-method-accept-charset.html:
+        * http/tests/wml/go-task-post-method.html:
+        * http/tests/wml/post-data-to-server.html:
+        * http/tests/wml/resources/TEMPLATE.html: Removed.
+        * http/tests/wml/resources/access-target-domain-deny.js: Removed.
+        * http/tests/wml/resources/access-target-path-deny.js: Removed.
+        * http/tests/wml/resources/access-target.js: Removed.
+        * http/tests/wml/resources/go-task-get-method-accept-charset.js: Removed.
+        * http/tests/wml/resources/go-task-get-method.js: Removed.
+        * http/tests/wml/resources/go-task-post-method-accept-charset.js: Removed.
+        * http/tests/wml/resources/go-task-post-method.js: Removed.
+        * http/tests/wml/resources/post-data-to-server.js: Removed.
+        * http/tests/wml/script-tests: Added.
+        * http/tests/wml/script-tests/TEMPLATE.html: Copied from LayoutTests/http/tests/wml/resources/TEMPLATE.html.
+        * http/tests/wml/script-tests/access-target-domain-deny.js: Copied from LayoutTests/http/tests/wml/resources/access-target-domain-deny.js.
+        * http/tests/wml/script-tests/access-target-path-deny.js: Copied from LayoutTests/http/tests/wml/resources/access-target-path-deny.js.
+        * http/tests/wml/script-tests/access-target.js: Copied from LayoutTests/http/tests/wml/resources/access-target.js.
+        * http/tests/wml/script-tests/go-task-get-method-accept-charset.js: Copied from LayoutTests/http/tests/wml/resources/go-task-get-method-accept-charset.js.
+        * http/tests/wml/script-tests/go-task-get-method.js: Copied from LayoutTests/http/tests/wml/resources/go-task-get-method.js.
+        * http/tests/wml/script-tests/go-task-post-method-accept-charset.js: Copied from LayoutTests/http/tests/wml/resources/go-task-post-method-accept-charset.js.
+        * http/tests/wml/script-tests/go-task-post-method.js: Copied from LayoutTests/http/tests/wml/resources/go-task-post-method.js.
+        * http/tests/wml/script-tests/post-data-to-server.js: Copied from LayoutTests/http/tests/wml/resources/post-data-to-server.js.
+        * platform/gtk/editing/pasteboard/resources/TEMPLATE.html: Removed.
+        * platform/gtk/editing/pasteboard/resources/middle-click-onpaste.js: Removed.
+        * platform/gtk/editing/pasteboard/script-tests: Added.
+        * platform/gtk/editing/pasteboard/script-tests/TEMPLATE.html: Copied from LayoutTests/platform/gtk/editing/pasteboard/resources/TEMPLATE.html.
+        * platform/gtk/editing/pasteboard/script-tests/middle-click-onpaste.js: Copied from LayoutTests/platform/gtk/editing/pasteboard/resources/middle-click-onpaste.js.
+        * platform/win/fast/events/context-click-events.html:
+        * platform/win/fast/events/resources/TEMPLATE.html: Removed.
+        * platform/win/fast/events/resources/context-click-events.js: Removed.
+        * platform/win/fast/events/script-tests: Added.
+        * platform/win/fast/events/script-tests/TEMPLATE.html: Copied from LayoutTests/platform/win/fast/events/resources/TEMPLATE.html.
+        * platform/win/fast/events/script-tests/context-click-events.js: Copied from LayoutTests/platform/win/fast/events/resources/context-click-events.js.
+        * plugins/netscape-identifier-conversion.html:
+        * plugins/resources/TEMPLATE.html: Removed.
+        * plugins/resources/netscape-identifier-conversion.js: Removed.
+        * plugins/script-tests: Added.
+        * plugins/script-tests/TEMPLATE.html: Copied from LayoutTests/plugins/resources/TEMPLATE.html.
+        * plugins/script-tests/netscape-identifier-conversion.js: Copied from LayoutTests/plugins/resources/netscape-identifier-conversion.js.
+        * traversal/acid3-test-2.html:
+        * traversal/exception-forwarding.html:
+        * traversal/resources/TEMPLATE.html: Removed.
+        * traversal/resources/acid3-test-2.js: Removed.
+        * traversal/resources/exception-forwarding.js: Removed.
+        * traversal/script-tests: Added.
+        * traversal/script-tests/TEMPLATE.html: Copied from LayoutTests/traversal/resources/TEMPLATE.html.
+        * traversal/script-tests/acid3-test-2.js: Copied from LayoutTests/traversal/resources/acid3-test-2.js.
+        * traversal/script-tests/exception-forwarding.js: Copied from LayoutTests/traversal/resources/exception-forwarding.js.
+        * wml/access-target-deny.html:
+        * wml/access-target.html:
+        * wml/enter-card-with-events.html:
+        * wml/enter-first-card-with-events.html:
+        * wml/go-task-get-method-external-deck-with-href.html:
+        * wml/go-task-get-method-external-deck.html:
+        * wml/go-task-get-method-same-deck.html:
+        * wml/input-format.html:
+        * wml/newcontext-same-deck.html:
+        * wml/onenterforward-event.html:
+        * wml/onenterforward-inline-event.html:
+        * wml/ontimer-event.html:
+        * wml/ontimer-inline-event.html:
+        * wml/option-element-onpick-recursion.html:
+        * wml/option-element-onpick.html:
+        * wml/resources/TEMPLATE.html: Removed.
+        * wml/resources/access-target-deny.js: Removed.
+        * wml/resources/access-target.js: Removed.
+        * wml/resources/enter-card-with-events.js: Removed.
+        * wml/resources/enter-first-card-with-events.js: Removed.
+        * wml/resources/go-task-get-method-external-deck-with-href.js: Removed.
+        * wml/resources/go-task-get-method-external-deck.js: Removed.
+        * wml/resources/go-task-get-method-same-deck.js: Removed.
+        * wml/resources/input-format.js: Removed.
+        * wml/resources/newcontext-same-deck.js: Removed.
+        * wml/resources/onenterforward-event.js: Removed.
+        * wml/resources/onenterforward-inline-event.js: Removed.
+        * wml/resources/ontimer-event.js: Removed.
+        * wml/resources/ontimer-inline-event.js: Removed.
+        * wml/resources/option-element-onpick-recursion.js: Removed.
+        * wml/resources/option-element-onpick.js: Removed.
+        * wml/resources/select-element-variables.js: Removed.
+        * wml/resources/variable-reference-invalid-character.js: Removed.
+        * wml/resources/variable-reference-valid.js: Removed.
+        * wml/script-tests: Added.
+        * wml/script-tests/TEMPLATE.html: Copied from LayoutTests/wml/resources/TEMPLATE.html.
+        * wml/script-tests/access-target-deny.js: Copied from LayoutTests/wml/resources/access-target-deny.js.
+        * wml/script-tests/access-target.js: Copied from LayoutTests/wml/resources/access-target.js.
+        * wml/script-tests/enter-card-with-events.js: Copied from LayoutTests/wml/resources/enter-card-with-events.js.
+        * wml/script-tests/enter-first-card-with-events.js: Copied from LayoutTests/wml/resources/enter-first-card-with-events.js.
+        * wml/script-tests/go-task-get-method-external-deck-with-href.js: Copied from LayoutTests/wml/resources/go-task-get-method-external-deck-with-href.js.
+        * wml/script-tests/go-task-get-method-external-deck.js: Copied from LayoutTests/wml/resources/go-task-get-method-external-deck.js.
+        * wml/script-tests/go-task-get-method-same-deck.js: Copied from LayoutTests/wml/resources/go-task-get-method-same-deck.js.
+        * wml/script-tests/input-format.js: Copied from LayoutTests/wml/resources/input-format.js.
+        * wml/script-tests/newcontext-same-deck.js: Copied from LayoutTests/wml/resources/newcontext-same-deck.js.
+        * wml/script-tests/onenterforward-event.js: Copied from LayoutTests/wml/resources/onenterforward-event.js.
+        * wml/script-tests/onenterforward-inline-event.js: Copied from LayoutTests/wml/resources/onenterforward-inline-event.js.
+        * wml/script-tests/ontimer-event.js: Copied from LayoutTests/wml/resources/ontimer-event.js.
+        * wml/script-tests/ontimer-inline-event.js: Copied from LayoutTests/wml/resources/ontimer-inline-event.js.
+        * wml/script-tests/option-element-onpick-recursion.js: Copied from LayoutTests/wml/resources/option-element-onpick-recursion.js.
+        * wml/script-tests/option-element-onpick.js: Copied from LayoutTests/wml/resources/option-element-onpick.js.
+        * wml/script-tests/select-element-variables.js: Copied from LayoutTests/wml/resources/select-element-variables.js.
+        * wml/script-tests/variable-reference-invalid-character.js: Copied from LayoutTests/wml/resources/variable-reference-invalid-character.js.
+        * wml/script-tests/variable-reference-valid.js: Copied from LayoutTests/wml/resources/variable-reference-valid.js.
+        * wml/select-element-variables.html:
+        * wml/variable-reference-invalid-character.html:
+        * wml/variable-reference-valid.html:
+
+2009-09-19  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Rubber-stamped by Eric Seidel.
+
+        js tests should move into jstests subdirectory instead of resources/
+        https://bugs.webkit.org/show_bug.cgi?id=25880
+
         Migration for fast/* directories except fast js directory.
 
         * fast/events/blur-focus-window-should-blur-focus-element.html:
