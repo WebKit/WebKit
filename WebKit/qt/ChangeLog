@@ -1,3 +1,16 @@
+2009-09-19  Jakub Wieczorek  <faw217@gmail.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Add an autotest stub for QWebGraphicsItem.
+
+        It just calls all the functions and makes sure they don't crash.
+
+        * tests/qwebgraphicsitem/qwebgraphicsitem.pro: Added.
+        * tests/qwebgraphicsitem/tst_qwebgraphicsitem.cpp: Added.
+        (tst_QWebGraphicsItem::qwebgraphicsitem):
+        * tests/tests.pro:
+
 2009-09-18  Norbert Leser  <norbert.leser@nokia.com>
 
         Reviewed by Eric Seidel.
