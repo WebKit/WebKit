@@ -1,3 +1,38 @@
+2009-09-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Element is misplaced during opacity transition with certain configuration of transform-origin and clipping
+        https://bugs.webkit.org/show_bug.cgi?id=29495
+        
+        If an element has zero size, but has a transform origin with absolute values,
+        then the transform origin would not be applied because it is implemented via
+        anchorPoint, which is expressed as a fraction of the layer size.
+        
+        Work around this by artificially inflating the size of the backing store when we need to.
+
+        Test: compositing/geometry/transfrom-origin-on-zero-size-layer.html
+
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::RenderLayerBacking):
+        Init m_artificiallyInflatedBounds to false.
+        
+        (WebCore::hasNonZeroTransformOrigin):
+        Utility function that describes whether the transform-origin contains non-percentage
+        x or y offsets.
+        
+        (WebCore::RenderLayerBacking::updateCompositedBounds):
+        New wrapper method around setCompositedBounds() that applies the size inflation
+        when necessary, setting the m_artificiallyInflatedBounds as appropriate.
+        
+        (WebCore::RenderLayerBacking::updateAfterLayout): Call updateCompositedBounds().
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry): Ditto
+        
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::rebuildCompositingLayerTree): Ditto
+        (WebCore::RenderLayerCompositor::updateCompositingDescendantGeometry): Ditto
+
 2009-09-18  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Maciej Stachowiak.

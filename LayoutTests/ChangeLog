@@ -1,3 +1,17 @@
+2009-09-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Element is misplaced during opacity transition with certain configuration of transform-origin and clipping
+        https://bugs.webkit.org/show_bug.cgi?id=29495
+        
+        Testcase that has a transform-origin on a layer with zero size.
+
+        * compositing/geometry/transfrom-origin-on-zero-size-layer.html: Added.
+        * platform/mac/compositing/geometry/transfrom-origin-on-zero-size-layer-expected.checksum: Added.
+        * platform/mac/compositing/geometry/transfrom-origin-on-zero-size-layer-expected.png: Added.
+        * platform/mac/compositing/geometry/transfrom-origin-on-zero-size-layer-expected.txt: Added.
+
 2009-09-18  Drew Wilson  <atwilson@google.com>
 
         Reviewed by Eric Seidel.
