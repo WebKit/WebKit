@@ -1,5 +1,14 @@
 2009-09-19  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by NOBODY (Build fix).
+
+        Windows build fix part2
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore_debug.def:
+
+2009-09-19  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by NOBODY (Buildfix).
 
         Windows build fix part 1.

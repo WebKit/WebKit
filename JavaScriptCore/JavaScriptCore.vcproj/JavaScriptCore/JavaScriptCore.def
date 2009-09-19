@@ -60,6 +60,7 @@ EXPORTS
     ?collect@Heap@JSC@@QAE_NXZ
     ?computeHash@Rep@UString@JSC@@SAIPBDH@Z
     ?computeHash@Rep@UString@JSC@@SAIPB_WH@Z
+    ?configurable@PropertyDescriptor@JSC@@QBE_NXZ
     ?construct@JSC@@YAPAVJSObject@1@PAVExecState@1@VJSValue@1@W4ConstructType@1@ABTConstructData@1@ABVArgList@1@@Z
     ?constructArray@JSC@@YAPAVJSArray@1@PAVExecState@1@ABVArgList@1@@Z
     ?constructEmptyArray@JSC@@YAPAVJSArray@1@PAVExecState@1@@Z
@@ -80,7 +81,13 @@ EXPORTS
     ?currentThread@WTF@@YAIXZ
     ?currentTime@WTF@@YANXZ
     ?decrement@RefCountedLeakCounter@WTF@@QAEXXZ
+    ?defaultAttributes@PropertyDescriptor@JSC@@0IA
     ?defaultValue@JSObject@JSC@@UBE?AVJSValue@2@PAVExecState@2@W4PreferredPrimitiveType@2@@Z
+    ?defineGetter@JSGlobalObject@JSC@@UAEXPAVExecState@2@ABVIdentifier@2@PAVJSObject@2@I@Z
+    ?defineGetter@JSObject@JSC@@UAEXPAVExecState@2@ABVIdentifier@2@PAV12@I@Z
+    ?defineOwnProperty@JSObject@JSC@@UAE_NPAVExecState@2@ABVIdentifier@2@AAVPropertyDescriptor@2@_N@Z
+    ?defineSetter@JSGlobalObject@JSC@@UAEXPAVExecState@2@ABVIdentifier@2@PAVJSObject@2@I@Z
+    ?defineSetter@JSObject@JSC@@UAEXPAVExecState@2@ABVIdentifier@2@PAV12@I@Z
     ?deleteOwnedPtr@WTF@@YAXPAUHBITMAP__@@@Z
     ?deleteOwnedPtr@WTF@@YAXPAUHRGN__@@@Z
     ?deleteProperty@JSCell@JSC@@UAE_NPAVExecState@2@ABVIdentifier@2@@Z
@@ -96,6 +103,7 @@ EXPORTS
     ?destroy@Rep@UString@JSC@@QAEXXZ
     ?detach@Debugger@JSC@@UAEXPAVJSGlobalObject@2@@Z
     ?detachThread@WTF@@YAXI@Z
+    ?enumerable@PropertyDescriptor@JSC@@QBE_NXZ
     ?equal@Identifier@JSC@@SA_NPBURep@UString@2@PBD@Z
     ?equal@JSC@@YA_NPBURep@UString@1@0@Z
     ?evaluate@DebuggerCallFrame@JSC@@QBE?AVJSValue@2@ABVUString@2@AAV32@@Z
@@ -155,6 +163,8 @@ EXPORTS
     ?initializeThreading@JSC@@YAXXZ
     ?initializeThreading@WTF@@YAXXZ
     ?is8Bit@UString@JSC@@QBE_NXZ
+    ?isAccessorDescriptor@PropertyDescriptor@JSC@@QBE_NXZ
+    ?isDataDescriptor@PropertyDescriptor@JSC@@QBE_NXZ
     ?isBusy@Heap@JSC@@QAE_NXZ
     ?isDynamicScope@JSGlobalObject@JSC@@UBE_NXZ
     ?isGetterSetter@JSCell@JSC@@UBE_NXZ
@@ -210,14 +220,19 @@ EXPORTS
     ?retrieveCaller@Interpreter@JSC@@QBE?AVJSValue@2@PAVExecState@2@PAVInternalFunction@2@@Z
     ?retrieveLastCaller@Interpreter@JSC@@QBEXPAVExecState@2@AAH1AAVUString@2@AAVJSValue@2@@Z
     ?setAccessorDescriptor@PropertyDescriptor@JSC@@QAEXVJSValue@2@0I@Z
+    ?setConfigurable@PropertyDescriptor@JSC@@QAEX_N@Z
     ?setDescriptor@PropertyDescriptor@JSC@@QAEXVJSValue@2@I@Z
     ?setDumpsGeneratedCode@BytecodeGenerator@JSC@@SAX_N@Z
+    ?setEnumerable@PropertyDescriptor@JSC@@QAEX_N@Z
     ?setGCProtectNeedsLocking@Heap@JSC@@QAEXXZ
+    ?setGetter@PropertyDescriptor@JSC@@QAEXVJSValue@2@@Z
     ?setLoc@StatementNode@JSC@@QAEXHH@Z
     ?setMainThreadCallbacksPaused@WTF@@YAX_N@Z
     ?setOrderLowerFirst@Collator@WTF@@QAEX_N@Z
+    ?setSetter@PropertyDescriptor@JSC@@QAEXVJSValue@2@@Z
     ?setUndefined@PropertyDescriptor@JSC@@QAEXXZ
     ?setUpStaticFunctionSlot@JSC@@YAXPAVExecState@1@PBVHashEntry@1@PAVJSObject@1@ABVIdentifier@1@AAVPropertySlot@1@@Z
+    ?setWritable@PropertyDescriptor@JSC@@QAEX_N@Z
     ?setter@PropertyDescriptor@JSC@@QBE?AVJSValue@2@XZ
     ?sharedBuffer@Rep@UString@JSC@@QAEPAV?$CrossThreadRefCounted@V?$OwnFastMallocPtr@_W@WTF@@@WTF@@XZ
     ?signal@ThreadCondition@WTF@@QAEXXZ
@@ -276,6 +291,7 @@ EXPORTS
     ?unwrappedObject@JSObject@JSC@@UAEPAV12@XZ
     ?wait@ThreadCondition@WTF@@QAEXAAVMutex@2@@Z
     ?waitForThreadCompletion@WTF@@YAHIPAPAX@Z
+    ?writable@PropertyDescriptor@JSC@@QBE_NXZ
     WTFLog
     WTFLogVerbose
     WTFReportArgumentAssertionFailure
