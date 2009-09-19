@@ -1,3 +1,16 @@
+2009-09-19  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Implement ES5 Object.defineProperties function
+        https://bugs.webkit.org/show_bug.cgi?id=29522
+
+        Add tests for Object.defineProperties API.
+
+        * fast/js/Object-defineProperties-expected.txt: Added.
+        * fast/js/Object-defineProperties.html: Added.
+        * fast/js/resources/Object-defineProperties.js: Added.
+
 2009-09-19  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Adam Barth.

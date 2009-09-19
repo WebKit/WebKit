@@ -38,6 +38,7 @@ static JSValue JSC_HOST_CALL objectConstructorGetPrototypeOf(ExecState*, JSObjec
 static JSValue JSC_HOST_CALL objectConstructorGetOwnPropertyDescriptor(ExecState*, JSObject*, JSValue, const ArgList&);
 static JSValue JSC_HOST_CALL objectConstructorKeys(ExecState*, JSObject*, JSValue, const ArgList&);
 static JSValue JSC_HOST_CALL objectConstructorDefineProperty(ExecState*, JSObject*, JSValue, const ArgList&);
+static JSValue JSC_HOST_CALL objectConstructorDefineProperties(ExecState*, JSObject*, JSValue, const ArgList&);
 
 ObjectConstructor::ObjectConstructor(ExecState* exec, PassRefPtr<Structure> structure, ObjectPrototype* objectPrototype, Structure* prototypeFunctionStructure)
 : InternalFunction(&exec->globalData(), structure, Identifier(exec, "Object"))
@@ -51,7 +52,8 @@ ObjectConstructor::ObjectConstructor(ExecState* exec, PassRefPtr<Structure> stru
     putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, prototypeFunctionStructure, 1, exec->propertyNames().getPrototypeOf, objectConstructorGetPrototypeOf), DontEnum);
     putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, prototypeFunctionStructure, 2, exec->propertyNames().getOwnPropertyDescriptor, objectConstructorGetOwnPropertyDescriptor), DontEnum);
     putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, prototypeFunctionStructure, 1, exec->propertyNames().keys, objectConstructorKeys), DontEnum);
-        putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, prototypeFunctionStructure, 3, exec->propertyNames().defineProperty, objectConstructorDefineProperty), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, prototypeFunctionStructure, 3, exec->propertyNames().defineProperty, objectConstructorDefineProperty), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, prototypeFunctionStructure, 2, exec->propertyNames().defineProperties, objectConstructorDefineProperties), DontEnum);
 }
 
 // ECMA 15.2.2
@@ -235,6 +237,49 @@ JSValue JSC_HOST_CALL objectConstructorDefineProperty(ExecState* exec, JSObject*
     ASSERT(!exec->hadException());
     O->defineOwnProperty(exec, Identifier(exec, propertyName), descriptor, true);
     return O;
+}
+
+static JSValue defineProperties(ExecState* exec, JSObject* object, JSObject* properties)
+{
+    PropertyNameArray propertyNames(exec);
+    asObject(properties)->getOwnPropertyNames(exec, propertyNames);
+    size_t numProperties = propertyNames.size();
+    Vector<PropertyDescriptor> descriptors;
+    MarkedArgumentBuffer markBuffer;
+    for (size_t i = 0; i < numProperties; i++) {
+        PropertySlot slot;
+        JSValue prop = properties->get(exec, propertyNames[i]);
+        if (exec->hadException())
+            return jsNull();
+        PropertyDescriptor descriptor;
+        if (!toPropertyDescriptor(exec, prop, descriptor))
+            return jsNull();
+        descriptors.append(descriptor);
+        // Ensure we mark all the values that we're accumulating
+        if (descriptor.isDataDescriptor() && descriptor.value())
+            markBuffer.append(descriptor.value());
+        if (descriptor.isAccessorDescriptor()) {
+            if (descriptor.getter())
+                markBuffer.append(descriptor.getter());
+            if (descriptor.setter())
+                markBuffer.append(descriptor.setter());
+        }
+    }
+    for (size_t i = 0; i < numProperties; i++) {
+        object->defineOwnProperty(exec, propertyNames[i], descriptors[i], true);
+        if (exec->hadException())
+            return jsNull();
+    }
+    return object;
+}
+
+JSValue JSC_HOST_CALL objectConstructorDefineProperties(ExecState* exec, JSObject*, JSValue, const ArgList& args)
+{
+    if (!args.at(0).isObject())
+        return throwError(exec, TypeError, "Properties can only be defined on Objects.");
+    if (!args.at(1).isObject())
+        return throwError(exec, TypeError, "Property descriptor list must be an Object.");
+    return defineProperties(exec, asObject(args.at(0)), asObject(args.at(1)));
 }
 
 } // namespace JSC

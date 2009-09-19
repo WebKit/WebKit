@@ -40,6 +40,7 @@
     macro(configurable) \
     macro(constructor) \
     macro(defineProperty) \
+    macro(defineProperties) \
     macro(enumerable) \
     macro(eval) \
     macro(exec) \

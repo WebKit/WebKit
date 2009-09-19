@@ -1,0 +1,19 @@
+Test to ensure correct behaviour of Object.defineProperties
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Object.defineProperties() threw exception TypeError: Properties can only be defined on Objects..
+PASS Object.defineProperties('a string') threw exception TypeError: Properties can only be defined on Objects..
+PASS Object.defineProperties({}, 'a string') threw exception TypeError: Property descriptor list must be an Object..
+PASS JSON.stringify(Object.defineProperties({},{property:{value:'foo', enumerable:true}, property2:{value:'foo', enumerable:true}})) is '{"property":"foo","property2":"foo"}'
+PASS JSON.stringify(Object.defineProperties({},{property:{value:'foo'}, property2:{value:'foo', enumerable:true}})) is '{"property2":"foo"}'
+PASS JSON.stringify(Object.defineProperties({property:'foo'},{property:{value:'foo', enumerable:true}, property2:{value:'foo', enumerable:true}})) is '{"property":"foo","property2":"foo"}'
+PASS JSON.stringify(Object.defineProperties({property:'foo'},{property:{value:'foo', enumerable:false}, property2:{value:'foo', enumerable:true}})) is '{"property2":"foo"}'
+PASS JSON.stringify(Object.defineProperties({property:'foo'},{property:{value:'foo'}, property2:{value:'foo', enumerable:true}})) is '{"property":"foo","property2":"foo"}'
+PASS Object.defineProperties(emptyObject, {foo:{value: true}, bar:{get:function(){}, writable:true}}) threw exception TypeError: Invalid property.  'writable' present on property with getter or setter..
+PASS 'foo' in emptyObject is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

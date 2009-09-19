@@ -24,6 +24,22 @@
 
 2009-09-19  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Implement ES5 Object.defineProperties function
+        https://bugs.webkit.org/show_bug.cgi?id=29522
+
+        Implement Object.defineProperties.  Fairly simple patch, simply makes use of
+        existing functionality used for defineProperty.
+
+        * runtime/CommonIdentifiers.h:
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ObjectConstructor::ObjectConstructor):
+        (JSC::defineProperties):
+        (JSC::objectConstructorDefineProperties):
+
+2009-09-19  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by NOBODY (Build fix).
 
         Windows build fix part2
