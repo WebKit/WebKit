@@ -1,5 +1,12 @@
 2009-09-18  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix stylistic issue raised in code review for previous commit.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::hasNonZeroTransformOrigin):
+
+2009-09-18  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Element is misplaced during opacity transition with certain configuration of transform-origin and clipping
