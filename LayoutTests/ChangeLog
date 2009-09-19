@@ -1,3 +1,15 @@
+2009-09-18  Drew Wilson  <atwilson@google.com>
+
+        Reviewed by Eric Seidel.
+
+        REGRESSION: fast/workers/worker-cloneport.html failing intermttently on leopard bot
+        https://bugs.webkit.org/show_bug.cgi?id=29341
+
+        * fast/workers/worker-cloneport-expected.txt:
+        Updated to reflect new output (lower clone count threshold).
+        * fast/workers/worker-cloneport.html:
+        Updated test to have a more lenient performance requirement and timeout, to address flakiness on Leopard and Chromium.
+
 2009-09-18  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoff Garen.

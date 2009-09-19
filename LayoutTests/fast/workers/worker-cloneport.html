@@ -53,18 +53,19 @@ function resendPort(evt)
         numClones++;
         evt.target.postMessage("", evt.ports);
     } else {
-        if (numClones < 1000) {
-            // If we didn't clone at least 1000 times, then there's something amiss.
+        if (numClones < 50) {
+            // If we didn't clone at least 50 times, then there's something amiss.
             log("FAIL: postBack complete, but only cloned " + numClones + " times.");
         } else {
-            log("PASS: postBack complete, cloned > 1000 times.");
+            log("PASS: postBack complete, cloned > 50 times.");
         }
         // Make sure the messages arrived in order.
         var itemNum = 0;
-        // Queue up a task to execute once the messages have been processed. The timeout value doesn't matter, since timers won't fire until the message queue is cleared.
+        // Queue up a task to execute once the messages have been processed. The timeout value is set fairly large to account for Chromium's different message delivery architecture.
+        // This only fires in the case of a test failure, so it does not slow down test running.
         var timer = setTimeout(function() {
             log("FAILURE: Received: " + itemNum + " events - expected: " + numMessages);
-        }, 10);
+        }, 1000);
         evt.ports[0].onmessage = function(event) {
             var done = false;
             if (event.data == itemNum) {

@@ -1,7 +1,7 @@
 Test MessagePort messaging/entangle/detangle across threads. Should print "SUCCESS" when done.
 
 PASS: Received request for 50000 messages
-PASS: postBack complete, cloned > 1000 times.
+PASS: postBack complete, cloned > 50 times.
 SUCCESS - received 50000 messages.
 DONE
 
