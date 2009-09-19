@@ -81,10 +81,6 @@ EXPORTS
     ?currentTime@WTF@@YANXZ
     ?decrement@RefCountedLeakCounter@WTF@@QAEXXZ
     ?defaultValue@JSObject@JSC@@UBE?AVJSValue@2@PAVExecState@2@W4PreferredPrimitiveType@2@@Z
-    ?defineGetter@JSGlobalObject@JSC@@UAEXPAVExecState@2@ABVIdentifier@2@PAVJSObject@2@@Z
-    ?defineGetter@JSObject@JSC@@UAEXPAVExecState@2@ABVIdentifier@2@PAV12@@Z
-    ?defineSetter@JSGlobalObject@JSC@@UAEXPAVExecState@2@ABVIdentifier@2@PAVJSObject@2@@Z
-    ?defineSetter@JSObject@JSC@@UAEXPAVExecState@2@ABVIdentifier@2@PAV12@@Z
     ?deleteOwnedPtr@WTF@@YAXPAUHBITMAP__@@@Z
     ?deleteOwnedPtr@WTF@@YAXPAUHRGN__@@@Z
     ?deleteProperty@JSCell@JSC@@UAE_NPAVExecState@2@ABVIdentifier@2@@Z
@@ -148,7 +144,6 @@ EXPORTS
     ?getter@PropertyDescriptor@JSC@@QBE?AVJSValue@2@XZ
     ?globalExec@JSGlobalObject@JSC@@UAEPAVExecState@2@XZ
     ?globalObjectCount@Heap@JSC@@QAEIXZ
-    ?hasAccessors@PropertyDescriptor@JSC@@QBE_NXZ
     ?hasInstance@JSObject@JSC@@UAE_NPAVExecState@2@VJSValue@2@1@Z
     ?hasProperty@JSObject@JSC@@QBE_NPAVExecState@2@ABVIdentifier@2@@Z
     ?hasProperty@JSObject@JSC@@QBE_NPAVExecState@2@I@Z
