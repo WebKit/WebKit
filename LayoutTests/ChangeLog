@@ -5,6 +5,76 @@
         js tests should move into jstests subdirectory instead of resources/
         https://bugs.webkit.org/show_bug.cgi?id=25880
 
+        Migration for fast/canvas and fast/css directories.
+
+        * fast/canvas/canvas-copyPixels.html:
+        * fast/canvas/canvas-gradient-addStop-error.html:
+        * fast/canvas/canvas-gradient-without-path.html:
+        * fast/canvas/canvas-modify-emptyPath.html:
+        * fast/canvas/canvas-set-properties-with-non-invertible-ctm.html:
+        * fast/canvas/canvas-setTransform.html:
+        * fast/canvas/canvas-strokeRect.html:
+        * fast/canvas/canvas-transparency-and-composite.html:
+        * fast/canvas/gradient-addColorStop-with-invalid-color.html:
+        * fast/canvas/gradient-with-clip.html:
+        * fast/canvas/linearGradient-infinite-values.html:
+        * fast/canvas/pattern-with-transform.html:
+        * fast/canvas/radialGradient-infinite-values.html:
+        * fast/canvas/resources/TEMPLATE.html: Removed.
+        * fast/canvas/resources/canvas-copyPixels.js: Removed.
+        * fast/canvas/resources/canvas-gradient-addStop-error.js: Removed.
+        * fast/canvas/resources/canvas-gradient-without-path.js: Removed.
+        * fast/canvas/resources/canvas-modify-emptyPath.js: Removed.
+        * fast/canvas/resources/canvas-set-properties-with-non-invertible-ctm.js: Removed.
+        * fast/canvas/resources/canvas-setTransform.js: Removed.
+        * fast/canvas/resources/canvas-strokeRect.js: Removed.
+        * fast/canvas/resources/canvas-transparency-and-composite.js: Removed.
+        * fast/canvas/resources/gradient-addColorStop-with-invalid-color.js: Removed.
+        * fast/canvas/resources/gradient-with-clip.js: Removed.
+        * fast/canvas/resources/linearGradient-infinite-values.js: Removed.
+        * fast/canvas/resources/pattern-with-transform.js: Removed.
+        * fast/canvas/resources/radialGradient-infinite-values.js: Removed.
+        * fast/canvas/resources/set-colors.js: Removed.
+        * fast/canvas/resources/translate-text.js: Removed.
+        * fast/canvas/script-tests: Added.
+        * fast/canvas/script-tests/TEMPLATE.html: Copied from LayoutTests/fast/canvas/resources/TEMPLATE.html.
+        * fast/canvas/script-tests/canvas-copyPixels.js: Copied from LayoutTests/fast/canvas/resources/canvas-copyPixels.js.
+        * fast/canvas/script-tests/canvas-gradient-addStop-error.js: Copied from LayoutTests/fast/canvas/resources/canvas-gradient-addStop-error.js.
+        * fast/canvas/script-tests/canvas-gradient-without-path.js: Copied from LayoutTests/fast/canvas/resources/canvas-gradient-without-path.js.
+        * fast/canvas/script-tests/canvas-modify-emptyPath.js: Copied from LayoutTests/fast/canvas/resources/canvas-modify-emptyPath.js.
+        * fast/canvas/script-tests/canvas-set-properties-with-non-invertible-ctm.js: Copied from LayoutTests/fast/canvas/resources/canvas-set-properties-with-non-invertible-ctm.js.
+        * fast/canvas/script-tests/canvas-setTransform.js: Copied from LayoutTests/fast/canvas/resources/canvas-setTransform.js.
+        * fast/canvas/script-tests/canvas-strokeRect.js: Copied from LayoutTests/fast/canvas/resources/canvas-strokeRect.js.
+        * fast/canvas/script-tests/canvas-transparency-and-composite.js: Copied from LayoutTests/fast/canvas/resources/canvas-transparency-and-composite.js.
+        * fast/canvas/script-tests/gradient-addColorStop-with-invalid-color.js: Copied from LayoutTests/fast/canvas/resources/gradient-addColorStop-with-invalid-color.js.
+        * fast/canvas/script-tests/gradient-with-clip.js: Copied from LayoutTests/fast/canvas/resources/gradient-with-clip.js.
+        * fast/canvas/script-tests/linearGradient-infinite-values.js: Copied from LayoutTests/fast/canvas/resources/linearGradient-infinite-values.js.
+        * fast/canvas/script-tests/pattern-with-transform.js: Copied from LayoutTests/fast/canvas/resources/pattern-with-transform.js.
+        * fast/canvas/script-tests/radialGradient-infinite-values.js: Copied from LayoutTests/fast/canvas/resources/radialGradient-infinite-values.js.
+        * fast/canvas/script-tests/set-colors.js: Copied from LayoutTests/fast/canvas/resources/set-colors.js.
+        * fast/canvas/script-tests/translate-text.js: Copied from LayoutTests/fast/canvas/resources/translate-text.js.
+        * fast/canvas/set-colors.html:
+        * fast/canvas/translate-text.html:
+        * fast/css/getComputedStyle/computed-style-font-family-monospace.html:
+        * fast/css/getComputedStyle/font-family-fallback-reset.html:
+        * fast/css/getComputedStyle/getComputedStyle-text-decoration.html:
+        * fast/css/getComputedStyle/resources/TEMPLATE.html: Removed.
+        * fast/css/getComputedStyle/resources/computed-style-font-family-monospace.js: Removed.
+        * fast/css/getComputedStyle/resources/font-family-fallback-reset.js: Removed.
+        * fast/css/getComputedStyle/resources/getComputedStyle-text-decoration.js: Removed.
+        * fast/css/getComputedStyle/script-tests: Added.
+        * fast/css/getComputedStyle/script-tests/TEMPLATE.html: Copied from LayoutTests/fast/css/getComputedStyle/resources/TEMPLATE.html.
+        * fast/css/getComputedStyle/script-tests/computed-style-font-family-monospace.js: Copied from LayoutTests/fast/css/getComputedStyle/resources/computed-style-font-family-monospace.js.
+        * fast/css/getComputedStyle/script-tests/font-family-fallback-reset.js: Copied from LayoutTests/fast/css/getComputedStyle/resources/font-family-fallback-reset.js.
+        * fast/css/getComputedStyle/script-tests/getComputedStyle-text-decoration.js: Copied from LayoutTests/fast/css/getComputedStyle/resources/getComputedStyle-text-decoration.js.
+
+2009-09-19  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Rubber-stamped by Eric Seidel.
+
+        js tests should move into jstests subdirectory instead of resources/
+        https://bugs.webkit.org/show_bug.cgi?id=25880
+
         Migration for editing directory.
 
         * editing/inserting/font-size-clears-from-typing-style.html:
