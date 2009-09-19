@@ -5,6 +5,238 @@
         js tests should move into jstests subdirectory instead of resources/
         https://bugs.webkit.org/show_bug.cgi?id=25880
 
+        Migration for fast/dom directories.
+
+        * fast/dom/CSSStyleDeclaration/css-properties-case-sensitive.html:
+        * fast/dom/CSSStyleDeclaration/resources/TEMPLATE.html: Removed.
+        * fast/dom/CSSStyleDeclaration/resources/css-properties-case-sensitive.js: Removed.
+        * fast/dom/CSSStyleDeclaration/resources/transition-property-names.js: Removed.
+        * fast/dom/CSSStyleDeclaration/script-tests: Added.
+        * fast/dom/CSSStyleDeclaration/script-tests/TEMPLATE.html: Copied from LayoutTests/fast/dom/CSSStyleDeclaration/resources/TEMPLATE.html.
+        * fast/dom/CSSStyleDeclaration/script-tests/css-properties-case-sensitive.js: Copied from LayoutTests/fast/dom/CSSStyleDeclaration/resources/css-properties-case-sensitive.js.
+        * fast/dom/CSSStyleDeclaration/script-tests/transition-property-names.js: Copied from LayoutTests/fast/dom/CSSStyleDeclaration/resources/transition-property-names.js.
+        * fast/dom/CSSStyleDeclaration/transition-property-names.html:
+        * fast/dom/DOMImplementation/createDocument-namespace-err.html:
+        * fast/dom/DOMImplementation/createDocumentType-err.html:
+        * fast/dom/DOMImplementation/resources/TEMPLATE.html: Removed.
+        * fast/dom/DOMImplementation/resources/createDocument-namespace-err.js: Removed.
+        * fast/dom/DOMImplementation/resources/createDocumentType-err.js: Removed.
+        * fast/dom/DOMImplementation/script-tests: Added.
+        * fast/dom/DOMImplementation/script-tests/TEMPLATE.html: Copied from LayoutTests/fast/dom/DOMImplementation/resources/TEMPLATE.html.
+        * fast/dom/DOMImplementation/script-tests/createDocument-namespace-err.js: Copied from LayoutTests/fast/dom/DOMImplementation/resources/createDocument-namespace-err.js.
+        * fast/dom/DOMImplementation/script-tests/createDocumentType-err.js: Copied from LayoutTests/fast/dom/DOMImplementation/resources/createDocumentType-err.js.
+        * fast/dom/Document/createAttributeNS-namespace-err.html:
+        * fast/dom/Document/createElementNS-namespace-err.html:
+        * fast/dom/Document/document-write-doctype.html:
+        * fast/dom/Document/replaceChild-null-oldChild.html:
+        * fast/dom/Document/resources/TEMPLATE.html: Removed.
+        * fast/dom/Document/resources/createAttributeNS-namespace-err.js: Removed.
+        * fast/dom/Document/resources/createElementNS-namespace-err.js: Removed.
+        * fast/dom/Document/resources/document-write-doctype.js: Removed.
+        * fast/dom/Document/resources/replaceChild-null-oldChild.js: Removed.
+        * fast/dom/Document/script-tests: Added.
+        * fast/dom/Document/script-tests/TEMPLATE.html: Copied from LayoutTests/fast/dom/Document/resources/TEMPLATE.html.
+        * fast/dom/Document/script-tests/createAttributeNS-namespace-err.js: Copied from LayoutTests/fast/dom/Document/resources/createAttributeNS-namespace-err.js.
+        * fast/dom/Document/script-tests/createElementNS-namespace-err.js: Copied from LayoutTests/fast/dom/Document/resources/createElementNS-namespace-err.js.
+        * fast/dom/Document/script-tests/document-write-doctype.js: Copied from LayoutTests/fast/dom/Document/resources/document-write-doctype.js.
+        * fast/dom/Document/script-tests/replaceChild-null-oldChild.js: Copied from LayoutTests/fast/dom/Document/resources/replaceChild-null-oldChild.js.
+        * fast/dom/Element/attr-param-typechecking.html:
+        * fast/dom/Element/contains-method.html:
+        * fast/dom/Element/dimension-properties-unrendered.html:
+        * fast/dom/Element/element-traversal.html:
+        * fast/dom/Element/getAttribute-check-case-sensitivity.html:
+        * fast/dom/Element/resources/TEMPLATE.html: Removed.
+        * fast/dom/Element/resources/attr-param-typechecking.js: Removed.
+        * fast/dom/Element/resources/contains-method.js: Removed.
+        * fast/dom/Element/resources/dimension-properties-unrendered.js: Removed.
+        * fast/dom/Element/resources/element-traversal.js: Removed.
+        * fast/dom/Element/resources/getAttribute-check-case-sensitivity.js: Removed.
+        * fast/dom/Element/script-tests: Added.
+        * fast/dom/Element/script-tests/TEMPLATE.html: Copied from LayoutTests/fast/dom/Element/resources/TEMPLATE.html.
+        * fast/dom/Element/script-tests/attr-param-typechecking.js: Copied from LayoutTests/fast/dom/Element/resources/attr-param-typechecking.js.
+        * fast/dom/Element/script-tests/contains-method.js: Copied from LayoutTests/fast/dom/Element/resources/contains-method.js.
+        * fast/dom/Element/script-tests/dimension-properties-unrendered.js: Copied from LayoutTests/fast/dom/Element/resources/dimension-properties-unrendered.js.
+        * fast/dom/Element/script-tests/element-traversal.js: Copied from LayoutTests/fast/dom/Element/resources/element-traversal.js.
+        * fast/dom/Element/script-tests/getAttribute-check-case-sensitivity.js: Copied from LayoutTests/fast/dom/Element/resources/getAttribute-check-case-sensitivity.js.
+        * fast/dom/EntityReference/readonly-exceptions.html:
+        * fast/dom/EntityReference/resources/TEMPLATE.html: Removed.
+        * fast/dom/EntityReference/resources/readonly-exceptions.js: Removed.
+        * fast/dom/EntityReference/script-tests: Added.
+        * fast/dom/EntityReference/script-tests/TEMPLATE.html: Copied from LayoutTests/fast/dom/EntityReference/resources/TEMPLATE.html.
+        * fast/dom/EntityReference/script-tests/readonly-exceptions.js: Copied from LayoutTests/fast/dom/EntityReference/resources/readonly-exceptions.js.
+        * fast/dom/HTMLFontElement/resources/TEMPLATE.html: Removed.
+        * fast/dom/HTMLFontElement/resources/size-attribute.js: Removed.
+        * fast/dom/HTMLFontElement/script-tests: Added.
+        * fast/dom/HTMLFontElement/script-tests/TEMPLATE.html: Copied from LayoutTests/fast/dom/HTMLFontElement/resources/TEMPLATE.html.
+        * fast/dom/HTMLFontElement/script-tests/size-attribute.js: Copied from LayoutTests/fast/dom/HTMLFontElement/resources/size-attribute.js.
+        * fast/dom/HTMLFontElement/size-attribute.html:
+        * fast/dom/HTMLFormElement/elements-not-in-document.html:
+        * fast/dom/HTMLFormElement/resources/TEMPLATE.html: Removed.
+        * fast/dom/HTMLFormElement/resources/elements-not-in-document.js: Removed.
+        * fast/dom/HTMLFormElement/script-tests: Added.
+        * fast/dom/HTMLFormElement/script-tests/TEMPLATE.html: Copied from LayoutTests/fast/dom/HTMLFormElement/resources/TEMPLATE.html.
+        * fast/dom/HTMLFormElement/script-tests/elements-not-in-document.js: Copied from LayoutTests/fast/dom/HTMLFormElement/resources/elements-not-in-document.js.
+        * fast/dom/HTMLInputElement/checked-pseudo-selector.html:
+        * fast/dom/HTMLInputElement/resources/TEMPLATE.html: Removed.
+        * fast/dom/HTMLInputElement/resources/checked-pseudo-selector.js: Removed.
+        * fast/dom/HTMLInputElement/resources/size-attribute.js: Removed.
+        * fast/dom/HTMLInputElement/script-tests: Added.
+        * fast/dom/HTMLInputElement/script-tests/TEMPLATE.html: Copied from LayoutTests/fast/dom/HTMLInputElement/resources/TEMPLATE.html.
+        * fast/dom/HTMLInputElement/script-tests/checked-pseudo-selector.js: Copied from LayoutTests/fast/dom/HTMLInputElement/resources/checked-pseudo-selector.js.
+        * fast/dom/HTMLInputElement/script-tests/size-attribute.js: Copied from LayoutTests/fast/dom/HTMLInputElement/resources/size-attribute.js.
+        * fast/dom/HTMLInputElement/size-attribute.html:
+        * fast/dom/HTMLSelectElement/named-options.html:
+        * fast/dom/HTMLSelectElement/resources/TEMPLATE.html: Removed.
+        * fast/dom/HTMLSelectElement/resources/named-options.js: Removed.
+        * fast/dom/HTMLSelectElement/script-tests: Added.
+        * fast/dom/HTMLSelectElement/script-tests/TEMPLATE.html: Copied from LayoutTests/fast/dom/HTMLSelectElement/resources/TEMPLATE.html.
+        * fast/dom/HTMLSelectElement/script-tests/named-options.js: Copied from LayoutTests/fast/dom/HTMLSelectElement/resources/named-options.js.
+        * fast/dom/HTMLTableElement/cellpadding-attribute.html:
+        * fast/dom/HTMLTableElement/early-acid3-65-excerpt.html:
+        * fast/dom/HTMLTableElement/early-acid3-66-excerpt.html:
+        * fast/dom/HTMLTableElement/resources/TEMPLATE.html: Removed.
+        * fast/dom/HTMLTableElement/resources/cellpadding-attribute.js: Removed.
+        * fast/dom/HTMLTableElement/resources/early-acid3-65-excerpt.js: Removed.
+        * fast/dom/HTMLTableElement/resources/early-acid3-66-excerpt.js: Removed.
+        * fast/dom/HTMLTableElement/resources/rows.js: Removed.
+        * fast/dom/HTMLTableElement/resources/tBodies.js: Removed.
+        * fast/dom/HTMLTableElement/rows.html:
+        * fast/dom/HTMLTableElement/script-tests: Added.
+        * fast/dom/HTMLTableElement/script-tests/TEMPLATE.html: Copied from LayoutTests/fast/dom/HTMLTableElement/resources/TEMPLATE.html.
+        * fast/dom/HTMLTableElement/script-tests/cellpadding-attribute.js: Copied from LayoutTests/fast/dom/HTMLTableElement/resources/cellpadding-attribute.js.
+        * fast/dom/HTMLTableElement/script-tests/early-acid3-65-excerpt.js: Copied from LayoutTests/fast/dom/HTMLTableElement/resources/early-acid3-65-excerpt.js.
+        * fast/dom/HTMLTableElement/script-tests/early-acid3-66-excerpt.js: Copied from LayoutTests/fast/dom/HTMLTableElement/resources/early-acid3-66-excerpt.js.
+        * fast/dom/HTMLTableElement/script-tests/rows.js: Copied from LayoutTests/fast/dom/HTMLTableElement/resources/rows.js.
+        * fast/dom/HTMLTableElement/script-tests/tBodies.js: Copied from LayoutTests/fast/dom/HTMLTableElement/resources/tBodies.js.
+        * fast/dom/HTMLTableElement/tBodies.html:
+        * fast/dom/HTMLTableRowElement/cells.html:
+        * fast/dom/HTMLTableRowElement/resources/TEMPLATE.html: Removed.
+        * fast/dom/HTMLTableRowElement/resources/cells.js: Removed.
+        * fast/dom/HTMLTableRowElement/script-tests: Added.
+        * fast/dom/HTMLTableRowElement/script-tests/TEMPLATE.html: Copied from LayoutTests/fast/dom/HTMLTableRowElement/resources/TEMPLATE.html.
+        * fast/dom/HTMLTableRowElement/script-tests/cells.js: Copied from LayoutTests/fast/dom/HTMLTableRowElement/resources/cells.js.
+        * fast/dom/HTMLTableSectionElement/resources/TEMPLATE.html: Removed.
+        * fast/dom/HTMLTableSectionElement/resources/rows.js: Removed.
+        * fast/dom/HTMLTableSectionElement/rows.html:
+        * fast/dom/HTMLTableSectionElement/script-tests: Added.
+        * fast/dom/HTMLTableSectionElement/script-tests/TEMPLATE.html: Copied from LayoutTests/fast/dom/HTMLTableSectionElement/resources/TEMPLATE.html.
+        * fast/dom/HTMLTableSectionElement/script-tests/rows.js: Copied from LayoutTests/fast/dom/HTMLTableSectionElement/resources/rows.js.
+        * fast/dom/Node/DOMNodeRemovedEvent.html:
+        * fast/dom/Node/initial-values.html:
+        * fast/dom/Node/resources/DOMNodeRemovedEvent.js: Removed.
+        * fast/dom/Node/resources/TEMPLATE.html: Removed.
+        * fast/dom/Node/resources/initial-values.js: Removed.
+        * fast/dom/Node/script-tests: Added.
+        * fast/dom/Node/script-tests/DOMNodeRemovedEvent.js: Copied from LayoutTests/fast/dom/Node/resources/DOMNodeRemovedEvent.js.
+        * fast/dom/Node/script-tests/TEMPLATE.html: Copied from LayoutTests/fast/dom/Node/resources/TEMPLATE.html.
+        * fast/dom/Node/script-tests/initial-values.js: Copied from LayoutTests/fast/dom/Node/resources/initial-values.js.
+        * fast/dom/Range/mutation.html:
+        * fast/dom/Range/range-clone-empty.html:
+        * fast/dom/Range/range-exceptions.html:
+        * fast/dom/Range/range-insertNode-separate-endContainer.html:
+        * fast/dom/Range/range-insertNode-splittext.html:
+        * fast/dom/Range/range-modifycontents.html:
+        * fast/dom/Range/resources/TEMPLATE.html: Removed.
+        * fast/dom/Range/resources/mutation.js: Removed.
+        * fast/dom/Range/resources/range-clone-empty.js: Removed.
+        * fast/dom/Range/resources/range-exceptions.js: Removed.
+        * fast/dom/Range/resources/range-insertNode-separate-endContainer.js: Removed.
+        * fast/dom/Range/resources/range-insertNode-splittext.js: Removed.
+        * fast/dom/Range/resources/range-modifycontents.js: Removed.
+        * fast/dom/Range/script-tests: Added.
+        * fast/dom/Range/script-tests/TEMPLATE.html: Copied from LayoutTests/fast/dom/Range/resources/TEMPLATE.html.
+        * fast/dom/Range/script-tests/mutation.js: Copied from LayoutTests/fast/dom/Range/resources/mutation.js.
+        * fast/dom/Range/script-tests/range-clone-empty.js: Copied from LayoutTests/fast/dom/Range/resources/range-clone-empty.js.
+        * fast/dom/Range/script-tests/range-exceptions.js: Copied from LayoutTests/fast/dom/Range/resources/range-exceptions.js.
+        * fast/dom/Range/script-tests/range-insertNode-separate-endContainer.js: Copied from LayoutTests/fast/dom/Range/resources/range-insertNode-separate-endContainer.js.
+        * fast/dom/Range/script-tests/range-insertNode-splittext.js: Copied from LayoutTests/fast/dom/Range/resources/range-insertNode-splittext.js.
+        * fast/dom/Range/script-tests/range-modifycontents.js: Copied from LayoutTests/fast/dom/Range/resources/range-modifycontents.js.
+        * fast/dom/Selection/getRangeAt.html:
+        * fast/dom/Selection/resources/TEMPLATE.html: Removed.
+        * fast/dom/Selection/resources/getRangeAt.js: Removed.
+        * fast/dom/Selection/script-tests: Added.
+        * fast/dom/Selection/script-tests/TEMPLATE.html: Copied from LayoutTests/fast/dom/Selection/resources/TEMPLATE.html.
+        * fast/dom/Selection/script-tests/getRangeAt.js: Copied from LayoutTests/fast/dom/Selection/resources/getRangeAt.js.
+        * fast/dom/SelectorAPI/detached-element.html:
+        * fast/dom/SelectorAPI/elementRoot.html:
+        * fast/dom/SelectorAPI/id-fastpath.html:
+        * fast/dom/SelectorAPI/resources/TEMPLATE.html: Removed.
+        * fast/dom/SelectorAPI/resources/detached-element.js: Removed.
+        * fast/dom/SelectorAPI/resources/elementRoot.js: Removed.
+        * fast/dom/SelectorAPI/resources/id-fastpath.js: Removed.
+        * fast/dom/SelectorAPI/resources/undefined-null-stringify.js: Removed.
+        * fast/dom/SelectorAPI/resources/viewless-document.js: Removed.
+        * fast/dom/SelectorAPI/script-tests: Added.
+        * fast/dom/SelectorAPI/script-tests/TEMPLATE.html: Copied from LayoutTests/fast/dom/SelectorAPI/resources/TEMPLATE.html.
+        * fast/dom/SelectorAPI/script-tests/detached-element.js: Copied from LayoutTests/fast/dom/SelectorAPI/resources/detached-element.js.
+        * fast/dom/SelectorAPI/script-tests/elementRoot.js: Copied from LayoutTests/fast/dom/SelectorAPI/resources/elementRoot.js.
+        * fast/dom/SelectorAPI/script-tests/id-fastpath.js: Copied from LayoutTests/fast/dom/SelectorAPI/resources/id-fastpath.js.
+        * fast/dom/SelectorAPI/script-tests/undefined-null-stringify.js: Copied from LayoutTests/fast/dom/SelectorAPI/resources/undefined-null-stringify.js.
+        * fast/dom/SelectorAPI/script-tests/viewless-document.js: Copied from LayoutTests/fast/dom/SelectorAPI/resources/viewless-document.js.
+        * fast/dom/SelectorAPI/undefined-null-stringify.html:
+        * fast/dom/SelectorAPI/viewless-document.html:
+        * fast/dom/Text/replaceWholeText.html:
+        * fast/dom/Text/resources/TEMPLATE.html: Removed.
+        * fast/dom/Text/resources/replaceWholeText.js: Removed.
+        * fast/dom/Text/script-tests: Added.
+        * fast/dom/Text/script-tests/TEMPLATE.html: Copied from LayoutTests/fast/dom/Text/resources/TEMPLATE.html.
+        * fast/dom/Text/script-tests/replaceWholeText.js: Copied from LayoutTests/fast/dom/Text/resources/replaceWholeText.js.
+        * fast/dom/Window/HTMLBodyElement-window-eventListener-attributes.html:
+        * fast/dom/Window/HTMLFrameSetElement-window-eventListener-attributes.html:
+        * fast/dom/Window/dispatchEvent.html:
+        * fast/dom/Window/resources/HTMLBodyElement-window-eventListener-attributes.js: Removed.
+        * fast/dom/Window/resources/HTMLFrameSetElement-window-eventListener-attributes.js: Removed.
+        * fast/dom/Window/resources/TEMPLATE.html: Removed.
+        * fast/dom/Window/resources/dispatchEvent.js: Removed.
+        * fast/dom/Window/resources/window-custom-prototype.js: Removed.
+        * fast/dom/Window/script-tests: Added.
+        * fast/dom/Window/script-tests/HTMLBodyElement-window-eventListener-attributes.js: Copied from LayoutTests/fast/dom/Window/resources/HTMLBodyElement-window-eventListener-attributes.js.
+        * fast/dom/Window/script-tests/HTMLFrameSetElement-window-eventListener-attributes.js: Copied from LayoutTests/fast/dom/Window/resources/HTMLFrameSetElement-window-eventListener-attributes.js.
+        * fast/dom/Window/script-tests/TEMPLATE.html: Copied from LayoutTests/fast/dom/Window/resources/TEMPLATE.html.
+        * fast/dom/Window/script-tests/dispatchEvent.js: Copied from LayoutTests/fast/dom/Window/resources/dispatchEvent.js.
+        * fast/dom/Window/script-tests/window-custom-prototype.js: Copied from LayoutTests/fast/dom/Window/resources/window-custom-prototype.js.
+        * fast/dom/Window/window-custom-prototype.html:
+        * fast/dom/constructed-objects-prototypes.html:
+        * fast/dom/constructors-cached.html:
+        * fast/dom/css-RGBValue.html:
+        * fast/dom/domListEnumeration.html:
+        * fast/dom/event-attribute-availability.html:
+        * fast/dom/javascript-url-exception-isolation.html:
+        * fast/dom/location-new-window-no-crash.html:
+        * fast/dom/non-numeric-values-numeric-parameters.html:
+        * fast/dom/prototype-inheritance-2.html:
+        * fast/dom/prototype-inheritance.html:
+        * fast/dom/resources/TEMPLATE.html: Removed.
+        * fast/dom/resources/constructed-objects-prototypes.js: Removed.
+        * fast/dom/resources/constructors-cached.js: Removed.
+        * fast/dom/resources/css-RGBValue.js: Removed.
+        * fast/dom/resources/domListEnumeration.js: Removed.
+        * fast/dom/resources/event-attribute-availability.js: Removed.
+        * fast/dom/resources/javascript-url-exception-isolation.js: Removed.
+        * fast/dom/resources/location-new-window-no-crash.js: Removed.
+        * fast/dom/resources/non-numeric-values-numeric-parameters.js: Removed.
+        * fast/dom/resources/prototype-inheritance-2.js: Removed.
+        * fast/dom/resources/prototype-inheritance.js: Removed.
+        * fast/dom/script-tests: Added.
+        * fast/dom/script-tests/TEMPLATE.html: Copied from LayoutTests/fast/dom/resources/TEMPLATE.html.
+        * fast/dom/script-tests/constructed-objects-prototypes.js: Copied from LayoutTests/fast/dom/resources/constructed-objects-prototypes.js.
+        * fast/dom/script-tests/constructors-cached.js: Copied from LayoutTests/fast/dom/resources/constructors-cached.js.
+        * fast/dom/script-tests/css-RGBValue.js: Copied from LayoutTests/fast/dom/resources/css-RGBValue.js.
+        * fast/dom/script-tests/domListEnumeration.js: Copied from LayoutTests/fast/dom/resources/domListEnumeration.js.
+        * fast/dom/script-tests/event-attribute-availability.js: Copied from LayoutTests/fast/dom/resources/event-attribute-availability.js.
+        * fast/dom/script-tests/javascript-url-exception-isolation.js: Copied from LayoutTests/fast/dom/resources/javascript-url-exception-isolation.js.
+        * fast/dom/script-tests/location-new-window-no-crash.js: Copied from LayoutTests/fast/dom/resources/location-new-window-no-crash.js.
+        * fast/dom/script-tests/non-numeric-values-numeric-parameters.js: Copied from LayoutTests/fast/dom/resources/non-numeric-values-numeric-parameters.js.
+        * fast/dom/script-tests/prototype-inheritance-2.js: Copied from LayoutTests/fast/dom/resources/prototype-inheritance-2.js.
+        * fast/dom/script-tests/prototype-inheritance.js: Copied from LayoutTests/fast/dom/resources/prototype-inheritance.js.
+
+2009-09-19  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Rubber-stamped by Eric Seidel.
+
+        js tests should move into jstests subdirectory instead of resources/
+        https://bugs.webkit.org/show_bug.cgi?id=25880
+
         Migration for fast/canvas and fast/css directories.
 
         * fast/canvas/canvas-copyPixels.html:
