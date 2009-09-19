@@ -1,3 +1,25 @@
+2009-09-19  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29511
+        
+        Fixes an issue where script code that contains non-ASCII characters may bypass the 
+        XSSAuditor.
+        
+        Before performing a comparison between the script source code and input parameters, we
+        remove all non-ASCII characters, including non-printable ASCII characters from the
+        script source code and input parameters.
+
+        Tests: http/tests/security/xssAuditor/img-onerror-non-ASCII-char.html
+               http/tests/security/xssAuditor/img-onerror-non-ASCII-char-default-encoding.html
+               http/tests/security/xssAuditor/img-onerror-non-ASCII-char2-default-encoding.html
+               http/tests/security/xssAuditor/img-onerror-non-ASCII-char2.html
+
+        * page/XSSAuditor.cpp:
+        (WebCore::isNonCanonicalCharacter): Modified to remove all non-ASCII characters,
+        including non-printable ASCII characters.
+
 2009-09-19  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

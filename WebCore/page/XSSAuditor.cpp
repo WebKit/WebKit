@@ -48,12 +48,14 @@ namespace WebCore {
 
 static bool isNonCanonicalCharacter(UChar c)
 {
+    // We remove all non-ASCII characters, including non-printable ASCII characters.
+    //
     // Note, we don't remove backslashes like PHP stripslashes(), which among other things converts "\\0" to the \0 character.
     // Instead, we remove backslashes and zeros (since the string "\\0" =(remove backslashes)=> "0"). However, this has the 
     // adverse effect that we remove any legitimate zeros from a string.
     //
     // For instance: new String("http://localhost:8000") => new String("http://localhost:8").
-    return (c == '\\' || c == '0' || c < ' ' || c == 127);
+    return (c == '\\' || c == '0' || c < ' ' || c >= 127);
 }
 
 String XSSAuditor::CachingURLCanonicalizer::canonicalizeURL(const String& url, const TextEncoding& encoding, bool decodeEntities)

@@ -1,3 +1,20 @@
+2009-09-19  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29511
+        
+        Tests that scripts that contain non-ASCII characters do not bypass the XSSAuditor.
+
+        * http/tests/security/xssAuditor/img-onerror-non-ASCII-char-expected.txt: Added.
+        * http/tests/security/xssAuditor/img-onerror-non-ASCII-char.html: Added.
+        * http/tests/security/xssAuditor/img-onerror-non-ASCII-char-default-encoding-expected: Added.
+        * http/tests/security/xssAuditor/img-onerror-non-ASCII-char-default-encoding.html: Added.
+        * http/tests/security/xssAuditor/img-onerror-non-ASCII-char2-default-encoding-expected.txt: Added.
+        * http/tests/security/xssAuditor/img-onerror-non-ASCII-char2-default-encoding.html: Added.
+        * http/tests/security/xssAuditor/img-onerror-non-ASCII-char2-expected.txt: Added.
+        * http/tests/security/xssAuditor/img-onerror-non-ASCII-char2.html: Added.
+
 2009-09-19  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
