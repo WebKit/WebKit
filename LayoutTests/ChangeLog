@@ -5,6 +5,58 @@
         js tests should move into jstests subdirectory instead of resources/
         https://bugs.webkit.org/show_bug.cgi?id=25880
 
+        Migration for editing directory.
+
+        * editing/inserting/font-size-clears-from-typing-style.html:
+        * editing/inserting/resources/TEMPLATE.html: Removed.
+        * editing/inserting/resources/font-size-clears-from-typing-style.js: Removed.
+        * editing/inserting/script-tests: Added.
+        * editing/inserting/script-tests/TEMPLATE.html: Copied from LayoutTests/editing/inserting/resources/TEMPLATE.html.
+        * editing/inserting/script-tests/font-size-clears-from-typing-style.js: Copied from LayoutTests/editing/inserting/resources/font-size-clears-from-typing-style.js.
+        * editing/pasteboard/file-input-files-access.html:
+        * editing/pasteboard/files-during-page-drags.html:
+        * editing/pasteboard/get-data-text-plain-paste.html:
+        * editing/pasteboard/resources/TEMPLATE.html: Removed.
+        * editing/pasteboard/resources/file-input-files-access.js: Removed.
+        * editing/pasteboard/resources/files-during-page-drags.js: Removed.
+        * editing/pasteboard/resources/get-data-text-plain-paste.js: Removed.
+        * editing/pasteboard/script-tests: Added.
+        * editing/pasteboard/script-tests/TEMPLATE.html: Copied from LayoutTests/editing/pasteboard/resources/TEMPLATE.html.
+        * editing/pasteboard/script-tests/file-input-files-access.js: Copied from LayoutTests/editing/pasteboard/resources/file-input-files-access.js.
+        * editing/pasteboard/script-tests/files-during-page-drags.js: Copied from LayoutTests/editing/pasteboard/resources/files-during-page-drags.js.
+        * editing/pasteboard/script-tests/get-data-text-plain-paste.js: Copied from LayoutTests/editing/pasteboard/resources/get-data-text-plain-paste.js.
+        * editing/selection/click-in-margins-inside-editable-div.html:
+        * editing/selection/click-in-padding-with-multiple-line-boxes.html:
+        * editing/selection/click-outside-editable-div.html:
+        * editing/selection/resources/TEMPLATE.html: Removed.
+        * editing/selection/resources/click-in-margins-inside-editable-div.js: Removed.
+        * editing/selection/resources/click-in-padding-with-multiple-line-boxes.js: Removed.
+        * editing/selection/resources/click-outside-editable-div.js: Removed.
+        * editing/selection/script-tests: Added.
+        * editing/selection/script-tests/TEMPLATE.html: Copied from LayoutTests/editing/selection/resources/TEMPLATE.html.
+        * editing/selection/script-tests/click-in-margins-inside-editable-div.js: Copied from LayoutTests/editing/selection/resources/click-in-margins-inside-editable-div.js.
+        * editing/selection/script-tests/click-in-padding-with-multiple-line-boxes.js: Copied from LayoutTests/editing/selection/resources/click-in-padding-with-multiple-line-boxes.js.
+        * editing/selection/script-tests/click-outside-editable-div.js: Copied from LayoutTests/editing/selection/resources/click-outside-editable-div.js.
+        * editing/style/resources/TEMPLATE.html: Removed.
+        * editing/style/resources/text-decoration-state.js: Removed.
+        * editing/style/script-tests: Added.
+        * editing/style/script-tests/TEMPLATE.html: Copied from LayoutTests/editing/style/resources/TEMPLATE.html.
+        * editing/style/script-tests/text-decoration-state.js: Copied from LayoutTests/editing/style/resources/text-decoration-state.js.
+        * editing/style/text-decoration-state.html:
+        * editing/text-iterator/basic-iteration.html:
+        * editing/text-iterator/resources/TEMPLATE.html: Removed.
+        * editing/text-iterator/resources/basic-iteration.js: Removed.
+        * editing/text-iterator/script-tests: Added.
+        * editing/text-iterator/script-tests/TEMPLATE.html: Copied from LayoutTests/editing/text-iterator/resources/TEMPLATE.html.
+        * editing/text-iterator/script-tests/basic-iteration.js: Copied from LayoutTests/editing/text-iterator/resources/basic-iteration.js.
+
+2009-09-19  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Rubber-stamped by Eric Seidel.
+
+        js tests should move into jstests subdirectory instead of resources/
+        https://bugs.webkit.org/show_bug.cgi?id=25880
+
         Attempt to split the huge patch as I failed to commit it...
 
         * editing/execCommand/break-out-of-empty-list-item.html:
