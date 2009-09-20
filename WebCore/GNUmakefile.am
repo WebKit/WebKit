@@ -411,8 +411,6 @@ webcore_sources += \
 	WebCore/bindings/js/JSMessagePortCustom.h \
 	WebCore/bindings/js/JSMimeTypeArrayCustom.cpp \
 	WebCore/bindings/js/JSNamedNodeMapCustom.cpp \
-	WebCore/bindings/js/JSNamedNodesCollection.cpp \
-	WebCore/bindings/js/JSNamedNodesCollection.h \
 	WebCore/bindings/js/JSNavigatorCustom.cpp \
 	WebCore/bindings/js/JSNodeCustom.cpp \
 	WebCore/bindings/js/JSNodeFilterCondition.cpp \

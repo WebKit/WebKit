@@ -1,3 +1,10 @@
+2009-09-19  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Unreviewed build fix for GTK+ and a blind one for Qt after r48566.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+
 2009-09-19  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver Hunt.
