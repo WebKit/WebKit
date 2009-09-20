@@ -29,10 +29,11 @@
 #include <glib/gi18n-lib.h>
 
 /**
- * SECTION:webkitwebhittestresult
- * @short_description: The target of a mouse or keyboard event
+ * SECTION:webkithittestresult
+ * @short_description: The target of a mouse event
  *
- * #WebKitHitTestResult 
+ * This class holds context information about the coordinates
+ * specified by a GDK event.
  */
 
 G_DEFINE_TYPE(WebKitHitTestResult, webkit_hit_test_result, G_TYPE_OBJECT)
