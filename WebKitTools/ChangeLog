@@ -1,3 +1,18 @@
+2009-09-20  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/29521> run-webkit-tests: use require instead eval to load DumpRenderTreeSupport module
+
+        Reviewed by Mark Rowe.
+
+        The require statement is like the use statement, except that it
+        is run during script execution instead of during the 'BEGIN'
+        phase.  This makes it possible to change @INC before the require
+        statement is run.  See 'require' and 'use' in the perlfunc(1)
+        manpage and 'BEGIN' in perlmod(1) manpage.
+
+        * Scripts/run-webkit-tests: Replace eval statement with require
+        statement.
+
 2009-09-18  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fixes. Fix the config name under git and allow users to specify

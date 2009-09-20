@@ -356,7 +356,7 @@ checkFrameworks() unless isCygwin();
 
 if (isAppleMacWebKit()) {
     push @INC, $productDir;
-    eval 'use DumpRenderTreeSupport;';
+    require DumpRenderTreeSupport;
 }
 
 my $layoutTestsName = "LayoutTests";
