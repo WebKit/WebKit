@@ -1,3 +1,16 @@
+2009-09-19  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Implement ES5 Object.create function
+        https://bugs.webkit.org/show_bug.cgi?id=29524
+
+        Add tests for Object.create API
+
+        * fast/js/Object-create-expected.txt: Added.
+        * fast/js/Object-create.html: Added.
+        * fast/js/resources/Object-create.js: Added.
+
 2009-09-19  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver Hunt.

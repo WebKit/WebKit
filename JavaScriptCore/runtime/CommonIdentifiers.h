@@ -39,6 +39,7 @@
     macro(compile) \
     macro(configurable) \
     macro(constructor) \
+    macro(create) \
     macro(defineProperty) \
     macro(defineProperties) \
     macro(enumerable) \

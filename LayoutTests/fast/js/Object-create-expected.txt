@@ -1,0 +1,19 @@
+Test to ensure correct behaviour of Object.defineProperties
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Object.create() threw exception TypeError: Object prototype may only be an Object or null..
+PASS Object.create('a string') threw exception TypeError: Object prototype may only be an Object or null..
+PASS Object.create({}, 'a string') threw exception TypeError: Property descriptor list must be an Object..
+PASS Object.create(null, 'a string') threw exception TypeError: Property descriptor list must be an Object..
+PASS JSON.stringify(Object.create(null,{property:{value:'foo', enumerable:true}, property2:{value:'foo', enumerable:true}})) is '{"property":"foo","property2":"foo"}'
+PASS JSON.stringify(Object.create({},{property:{value:'foo', enumerable:true}, property2:{value:'foo', enumerable:true}})) is '{"property":"foo","property2":"foo"}'
+PASS JSON.stringify(Object.create({},{property:{value:'foo'}, property2:{value:'foo', enumerable:true}})) is '{"property2":"foo"}'
+PASS JSON.stringify(Object.create(null,{property:{value:'foo'}, property2:{value:'foo', enumerable:true}})) is '{"property2":"foo"}'
+PASS Object.getPrototypeOf(Object.create(Array.prototype)) is Array.prototype
+PASS Object.getPrototypeOf(Object.create(null)) is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

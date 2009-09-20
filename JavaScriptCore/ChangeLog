@@ -1,3 +1,18 @@
+2009-09-19  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Implement ES5 Object.create function
+        https://bugs.webkit.org/show_bug.cgi?id=29524
+
+        Implement Object.create.  Very simple patch, effectively Object.defineProperties
+        only creating the target object itself.
+
+        * runtime/CommonIdentifiers.h:
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ObjectConstructor::ObjectConstructor):
+        (JSC::objectConstructorCreate):
+
 2009-09-19  Dan Bernstein  <mitz@apple.com>
 
         Fix clean debug builds.
