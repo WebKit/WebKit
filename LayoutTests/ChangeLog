@@ -1,3 +1,22 @@
+2009-09-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Incorrect clipping with accelerated compositing content, and position:fixed
+        https://bugs.webkit.org/show_bug.cgi?id=29347
+
+        New test with a position:fixed element that clips a composited child,
+        and a new pixel result.
+        
+        * platform/mac/compositing/overflow/ancestor-overflow-expected.checksum:
+        * platform/mac/compositing/overflow/ancestor-overflow-expected.png:
+        Updating the pixel result to account for a progression in this test.
+        
+        * compositing/overflow/fixed-position-ancestor-clip.html: Added.
+        * platform/mac/compositing/overflow/fixed-position-ancestor-clip-expected.checksum: Added.
+        * platform/mac/compositing/overflow/fixed-position-ancestor-clip-expected.png: Added.
+        * platform/mac/compositing/overflow/fixed-position-ancestor-clip-expected.txt: Added.
+
 2009-09-21  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Brady Eidson.

@@ -867,10 +867,8 @@ bool RenderLayerCompositor::clippedByAncestor(RenderLayer* layer) const
     if (!computeClipRoot || computeClipRoot == layer)
         return false;
 
-    ClipRects parentRects;
-    layer->parentClipRects(computeClipRoot, parentRects, true);
-
-    return parentRects.overflowClipRect() != ClipRects::infiniteRect();
+    IntRect backgroundRect = layer->backgroundClipRect(computeClipRoot, true);
+    return backgroundRect != ClipRects::infiniteRect();
 }
 
 // Return true if the given layer is a stacking context and has compositing child

@@ -257,10 +257,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
         // Call calculateRects to get the backgroundRect which is what is used to clip the contents of this
         // layer. Note that we call it with temporaryClipRects = true because normally when computing clip rects
         // for a compositing layer, rootLayer is the layer itself.
-        ClipRects parentRects;
-        m_owningLayer->parentClipRects(compAncestor, parentRects, true);
-        IntRect parentClipRect = parentRects.overflowClipRect();
-        
+        IntRect parentClipRect = m_owningLayer->backgroundClipRect(compAncestor, true);
         m_ancestorClippingLayer->setPosition(FloatPoint() + (parentClipRect.location() - graphicsLayerParentLocation));
         m_ancestorClippingLayer->setSize(parentClipRect.size());
 

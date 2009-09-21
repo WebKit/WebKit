@@ -1,3 +1,21 @@
+2009-09-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Incorrect clipping with accelerated compositing content, and position:fixed
+        https://bugs.webkit.org/show_bug.cgi?id=29347
+        
+        Fix the compositing clipping logic to behave correctly when position:fixed
+        elements clip, by using the new backgroundClipRect() method to determine
+        when we need to clip, and to compute the clipping layer position.
+
+        Test: compositing/overflow/fixed-position-ancestor-clip.html
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::clippedByAncestor):
+
 2009-09-21  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Adam Barth.
