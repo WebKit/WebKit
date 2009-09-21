@@ -679,7 +679,7 @@ NEVER_INLINE void JITThunks::tryCachePutByID(CallFrame* callFrame, CodeBlock* co
     JSCell* baseCell = asCell(baseValue);
     Structure* structure = baseCell->structure();
 
-    if (structure->isUncacheableDictionary()) {
+    if (structure->isDictionary()) {
         ctiPatchCallByReturnAddress(codeBlock, returnAddress, FunctionPtr(cti_op_put_by_id_generic));
         return;
     }
@@ -743,7 +743,7 @@ NEVER_INLINE void JITThunks::tryCacheGetByID(CallFrame* callFrame, CodeBlock* co
     JSCell* baseCell = asCell(baseValue);
     Structure* structure = baseCell->structure();
 
-    if (structure->isUncacheableDictionary()) {
+    if (structure->isDictionary()) {
         ctiPatchCallByReturnAddress(codeBlock, returnAddress, FunctionPtr(cti_op_get_by_id_generic));
         return;
     }
@@ -1154,7 +1154,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_method_check)
     JSObject* slotBaseObject;
     if (baseValue.isCell()
         && slot.isCacheable()
-        && !(structure = asCell(baseValue)->structure())->isUncacheableDictionary()
+        && !(structure = asCell(baseValue)->structure())->isDictionary()
         && (slotBaseObject = asObject(slot.slotBase()))->getPropertySpecificValue(callFrame, ident, specific)
         && specific
         ) {
@@ -1228,7 +1228,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_self_fail)
 
     if (baseValue.isCell()
         && slot.isCacheable()
-        && !asCell(baseValue)->structure()->isUncacheableDictionary()
+        && !asCell(baseValue)->structure()->isDictionary()
         && slot.slotBase() == baseValue) {
 
         CodeBlock* codeBlock = callFrame->codeBlock();
@@ -1299,7 +1299,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_proto_list)
 
     CHECK_FOR_EXCEPTION();
 
-    if (!baseValue.isCell() || !slot.isCacheable() || asCell(baseValue)->structure()->isUncacheableDictionary()) {
+    if (!baseValue.isCell() || !slot.isCacheable() || asCell(baseValue)->structure()->isDictionary()) {
         ctiPatchCallByReturnAddress(callFrame->codeBlock(), STUB_RETURN_ADDRESS, FunctionPtr(cti_op_get_by_id_proto_fail));
         return JSValue::encode(result);
     }
@@ -2188,7 +2188,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_resolve_global)
     PropertySlot slot(globalObject);
     if (globalObject->getPropertySlot(callFrame, ident, slot)) {
         JSValue result = slot.getValue(callFrame, ident);
-        if (slot.isCacheable() && !globalObject->structure()->isUncacheableDictionary() && slot.slotBase() == globalObject) {
+        if (slot.isCacheable() && !globalObject->structure()->isDictionary() && slot.slotBase() == globalObject) {
             GlobalResolveInfo& globalResolveInfo = callFrame->codeBlock()->globalResolveInfo(globalResolveInfoIndex);
             if (globalResolveInfo.structure)
                 globalResolveInfo.structure->deref();
