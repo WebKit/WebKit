@@ -1,3 +1,13 @@
+2009-09-21  Csaba Osztrogonac  <oszi@inf.u-szeged.hu>
+
+        Reviewed by Maciej Stachowiak.
+
+        [Qt] Make sunspider script work on Windows platform.
+        https://bugs.webkit.org/show_bug.cgi?id=29544
+
+        * sunspider:
+        Using platform specific null device instead of /dev/null.
+
 2009-06-19  Adam Treat  <adam.treat@torchmobile.com>
 
         Reviewed by Oliver Hunt.
