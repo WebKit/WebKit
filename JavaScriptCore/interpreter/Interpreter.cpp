@@ -988,6 +988,10 @@ NEVER_INLINE void Interpreter::tryCachePutByID(CallFrame* callFrame, CodeBlock* 
 
     // Structure transition, cache transition info
     if (slot.type() == PutPropertySlot::NewProperty) {
+        if (structure->isDictionary()) {
+            vPC[0] = getOpcode(op_put_by_id_generic);
+            return;
+        }
         vPC[0] = getOpcode(op_put_by_id_transition);
         vPC[4] = structure->previousID();
         vPC[5] = structure;

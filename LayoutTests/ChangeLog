@@ -1,3 +1,17 @@
+2009-09-21  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        REGRESSION (r48582): Crash in StructureStubInfo::initPutByIdTransition when reloading trac.webkit.org
+        https://bugs.webkit.org/show_bug.cgi?id=29599
+
+        Add test case for preventing property addition transition caching on dictionaries.
+
+        * fast/js/resources/transition-cache-dictionary-crash.js: Added.
+        (f):
+        * fast/js/transition-cache-dictionary-crash-expected.txt: Added.
+        * fast/js/transition-cache-dictionary-crash.html: Added.
+
 2009-09-20  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Maciej Stachowiak.

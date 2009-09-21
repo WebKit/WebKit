@@ -695,7 +695,7 @@ NEVER_INLINE void JITThunks::tryCachePutByID(CallFrame* callFrame, CodeBlock* co
     // Structure transition, cache transition info
     if (slot.type() == PutPropertySlot::NewProperty) {
         StructureChain* prototypeChain = structure->prototypeChain(callFrame);
-        if (!prototypeChain->isCacheable()) {
+        if (!prototypeChain->isCacheable() || structure->isDictionary()) {
             ctiPatchCallByReturnAddress(codeBlock, returnAddress, FunctionPtr(cti_op_put_by_id_generic));
             return;
         }
