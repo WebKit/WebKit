@@ -1,3 +1,19 @@
+2009-09-21  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        <rdar://problem/7135588> HTMLMediaElement should ask WebPolicyLoadDelegate before loading resource
+
+        Implement WebFrameLoaderClient::shouldLoadMediaElementURL and have it call the new private policy
+        delegate method.
+        
+        * Interfaces/IWebPolicyDelegatePrivate.idl: Added.
+        * Interfaces/WebKit.idl:
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::shouldLoadMediaElementURL):
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebKit.vcproj/Interfaces.vcproj:
+
 2009-09-17  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Simon Hausmann.

@@ -112,6 +112,7 @@ public:
     virtual bool shouldUsePluginDocument(const WebCore::String& mimeType) const;
 
     virtual void dispatchDidFailToStartPlugin(const WebCore::PluginView*) const;
+    virtual bool shouldLoadMediaElementURL(const WebCore::KURL&) const;
 
 protected:
     WebFrameLoaderClient(WebFrame*);

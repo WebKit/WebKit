@@ -103,6 +103,7 @@ import "ocidl.idl";
 #include "IWebNotificationCenter.idl"
 #include "IWebNotificationObserver.idl"
 #include "IWebPolicyDelegate.idl"
+#include "IWebPolicyDelegatePrivate.idl"
 #include "IWebPreferences.idl"
 #include "IWebPreferencesPrivate.idl"
 #include "IWebResource.idl"
