@@ -1,3 +1,13 @@
+2009-09-21  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29609
+        Build fix for windows when using Qt 4.5.0.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::userAgentForUrl):
+
 2009-09-19  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Simon Hausmann.
