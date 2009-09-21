@@ -36,42 +36,54 @@
 #include "FrameView.h"
 #include "HostWindow.h"
 #include "Widget.h"
+#include "QWebPageClient.h"
 #include <QApplication>
 #include <QDesktopWidget>
 
 namespace WebCore {
 
+static int screenNumber(Widget* w)
+{
+    if (!w)
+        return 0;
+
+    QWebPageClient* client = w->root()->hostWindow()->platformPageClient();
+    return client ? client->screenNumber() : 0;
+}
+
 int screenDepth(Widget* w)
 {
-    QDesktopWidget* d = QApplication::desktop();
-    QWidget *view = w ? w->root()->hostWindow()->platformPageClient() : 0;
-    int screenNumber = view ? d->screenNumber(view) : 0;
-    return d->screen(screenNumber)->depth();
+    return QApplication::desktop()->screen(screenNumber(w))->depth();
 }
 
 int screenDepthPerComponent(Widget* w)
 {
-    QWidget *view = w ? w->root()->hostWindow()->platformPageClient() : 0;
-    return view ? view->depth() : QApplication::desktop()->screen(0)->depth();
+    if (w) {
+        QWebPageClient* client = w->root()->hostWindow()->platformPageClient();
+
+        if (client) {
+            QWidget* view = QWidget::find(client->winId());
+            if (view)
+                return view->depth();
+        }
+    }
+    return QApplication::desktop()->screen(0)->depth();
 }
 
 bool screenIsMonochrome(Widget* w)
 {
-    QDesktopWidget* d = QApplication::desktop();
-    QWidget *view = w ? w->root()->hostWindow()->platformPageClient(): 0;
-    int screenNumber = view ? d->screenNumber(view) : 0;
-    return d->screen(screenNumber)->numColors() < 2;
+    return QApplication::desktop()->screen(screenNumber(w))->numColors() < 2;
 }
 
 FloatRect screenRect(Widget* w)
 {
-    QRect r = QApplication::desktop()->screenGeometry(w ? w->root()->hostWindow()->platformPageClient(): 0);
+    QRect r = QApplication::desktop()->screenGeometry(screenNumber(w));
     return FloatRect(r.x(), r.y(), r.width(), r.height());
 }
 
 FloatRect screenAvailableRect(Widget* w)
 {
-    QRect r = QApplication::desktop()->availableGeometry(w ? w->root()->hostWindow()->platformPageClient(): 0);
+    QRect r = QApplication::desktop()->availableGeometry(screenNumber(w));
     return FloatRect(r.x(), r.y(), r.width(), r.height());
 }
 

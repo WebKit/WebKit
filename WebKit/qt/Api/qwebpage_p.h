@@ -56,6 +56,7 @@ class QBitArray;
 QT_END_NAMESPACE
 
 class QWebInspector;
+class QWebPageClient;
 
 class QWebPagePrivate {
 public:
@@ -129,10 +130,11 @@ public:
     QPointer<QWebFrame> mainFrame;
 
     QWebPage *q;
+    QWebPageClient* client;
 #ifndef QT_NO_UNDOSTACK
     QUndoStack *undoStack;
 #endif
-    QWidget *view;
+    QWidget* view;
 
     bool insideOpenCall;
     quint64 m_totalBytes;

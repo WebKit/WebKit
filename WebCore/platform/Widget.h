@@ -74,7 +74,12 @@ typedef BView* PlatformWidget;
 #include "PlatformWidget.h"
 #endif
 
+#if PLATFORM(QT)
+class QWebPageClient;
+typedef QWebPageClient* PlatformPageClient;
+#else
 typedef PlatformWidget PlatformPageClient;
+#endif
 
 #include "IntPoint.h"
 #include "IntRect.h"

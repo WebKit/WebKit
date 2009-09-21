@@ -256,6 +256,7 @@ static inline Qt::DropAction dragOpToDropAction(unsigned actions)
 
 QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     : q(qq)
+    , client(0)
     , view(0)
     , inspectorFrontend(0)
     , inspector(0)

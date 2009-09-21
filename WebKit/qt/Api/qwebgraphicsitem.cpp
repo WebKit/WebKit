@@ -23,13 +23,15 @@
 #include "qwebframe.h"
 #include "qwebpage.h"
 #include "qwebpage_p.h"
+#include "QWebPageClient.h"
 #include <QtGui/QGraphicsScene>
 #include <QtGui/QGraphicsView>
 #include <QtGui/qapplication.h>
 #include <QtGui/qgraphicssceneevent.h>
 #include <QtGui/qstyleoption.h>
+#include <QX11Info>
 
-class QWebGraphicsItemPrivate {
+class QWebGraphicsItemPrivate : public QWebPageClient {
 public:
     QWebGraphicsItemPrivate(QWebGraphicsItem* parent)
         : q(parent)
@@ -38,10 +40,17 @@ public:
         , progress(1.0)
     {}
 
-    void _q_doScroll(int dx, int dy, const QRect&);
+    virtual void scroll(int dx, int dy, const QRect&);
+    virtual void update(const QRect& dirtyRect);
+
+    virtual QCursor cursor() const;
+    virtual void updateCursor(const QCursor& cursor);
+
+    virtual int screenNumber() const;
+    virtual WId winId() const;
+
     void _q_doLoadProgress(int progress);
     void _q_doLoadFinished(bool success);
-    void _q_doUpdate(const QRect& dirtyRect);
     void _q_setStatusBarMessage(const QString& message);
 
     QWebGraphicsItem* q;
@@ -74,14 +83,44 @@ void QWebGraphicsItemPrivate::_q_doLoadFinished(bool success)
         emit q->loadFailed();
 }
 
-void QWebGraphicsItemPrivate::_q_doScroll(int dx, int dy, const QRect& rectToScroll)
+void QWebGraphicsItemPrivate::scroll(int dx, int dy, const QRect& rectToScroll)
 {
     q->scroll(qreal(dx), qreal(dy), QRectF(rectToScroll));
 }
 
-void QWebGraphicsItemPrivate::_q_doUpdate(const QRect & dirtyRect)
+void QWebGraphicsItemPrivate::update(const QRect & dirtyRect)
 {
     q->update(QRectF(dirtyRect));
+}
+
+QCursor QWebGraphicsItemPrivate::cursor() const
+{
+    return q->cursor();
+}
+
+void QWebGraphicsItemPrivate::updateCursor(const QCursor& cursor)
+{
+    q->setCursor(cursor);
+}
+
+int QWebGraphicsItemPrivate::screenNumber() const
+{
+    const QList<QGraphicsView*> views = q->scene()->views();
+
+    if (!views.isEmpty())
+        return views.at(0)->x11Info().screen();
+
+    return 0;
+}
+
+WId QWebGraphicsItemPrivate::winId() const
+{
+    const QList<QGraphicsView*> views = q->scene()->views();
+
+    if (!views.isEmpty())
+        return views.at(0)->winId();
+
+    return 0;
 }
 
 void QWebGraphicsItemPrivate::_q_setStatusBarMessage(const QString& s)
@@ -175,6 +214,24 @@ bool QWebGraphicsItem::sceneEvent(QEvent* event)
 bool QWebGraphicsItem::event(QEvent* event)
 {
     // Re-implemented in order to allows fixing event-related bugs in patch releases.
+
+    if (d->page) {
+#ifndef QT_NO_CURSOR
+#if QT_VERSION >= 0x040400
+        } else if (event->type() == QEvent::CursorChange) {
+            // An unsetCursor will set the cursor to Qt::ArrowCursor.
+            // Thus this cursor change might be a QWidget::unsetCursor()
+            // If this is not the case and it came from WebCore, the
+            // QWebPageClient already has set its cursor internally
+            // to Qt::ArrowCursor, so updating the cursor is always
+            // right, as it falls back to the last cursor set by
+            // WebCore.
+            // FIXME: Add a QEvent::CursorUnset or similar to Qt.
+            if (cursor().shape() == Qt::ArrowCursor)
+                d->resetCursor();
+#endif
+#endif
+    }
     return QGraphicsWidget::event(event);
 }
 
@@ -193,6 +250,7 @@ void QWebGraphicsItem::setPage(QWebPage* page)
         return;
 
     if (d->page) {
+        d->page->d->client = 0; // unset the page client
         if (d->page->parent() == this)
             delete d->page;
         else
@@ -202,6 +260,7 @@ void QWebGraphicsItem::setPage(QWebPage* page)
     d->page = page;
     if (!d->page)
         return;
+    d->page->d->client = d; // set the page client
 
     QSize size = geometry().size().toSize();
     page->setViewportSize(size);
@@ -220,10 +279,6 @@ void QWebGraphicsItem::setPage(QWebPage* page)
             this, SLOT(_q_doLoadProgress(int)));
     connect(d->page, SIGNAL(loadFinished(bool)),
             this, SLOT(_q_doLoadFinished(bool)));
-    connect(d->page, SIGNAL(repaintRequested(QRect)),
-            this, SLOT(_q_doUpdate(const QRect&)));
-    connect(d->page, SIGNAL(scrollRequested(int, int, const QRect&)),
-            this, SLOT(_q_doScroll(int, int, const QRect&)));
     connect(d->page, SIGNAL(statusBarMessage(const QString&)),
             this, SLOT(_q_setStatusBarMessage(const QString&)));
 }

@@ -1,3 +1,32 @@
+2009-09-21  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        Implement new QWebPageClient class and let our classes
+        QWebViewPrivate and QWebGraphicsItemPrivate inherit from it.
+
+        For Qt, platformPageClient() will now return a class derived from
+        the QWebPageClient, so the patch adapts our Qt hooks to go though
+        this class and not depend on the QWebView.
+
+        * WebCore.pro:
+        * platform/Widget.h:
+        * platform/qt/PlatformScreenQt.cpp:
+        (WebCore::screenDepth):
+        (WebCore::screenDepthPerComponent):
+        (WebCore::screenIsMonochrome):
+        (WebCore::screenRect):
+        (WebCore::screenAvailableRect):
+        * platform/qt/PopupMenuQt.cpp:
+        (WebCore::PopupMenu::show):
+        * platform/qt/QWebPageClient.h: Added.
+        * platform/qt/WidgetQt.cpp:
+        (WebCore::Widget::setCursor):
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::handleKeyboardEvent):
+        (WebCore::PluginView::getValue):
+        (WebCore::PluginView::platformStart):
+
 2009-09-21  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

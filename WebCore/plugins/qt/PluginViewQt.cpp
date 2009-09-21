@@ -56,6 +56,7 @@
 #include "npruntime_impl.h"
 #include "runtime.h"
 #include "runtime_root.h"
+#include "QWebPageClient.h"
 #include <QKeyEvent>
 #include <QWidget>
 #include <QX11Info>
@@ -212,7 +213,9 @@ void PluginView::handleKeyboardEvent(KeyboardEvent* event)
     XEvent npEvent; // On UNIX NPEvent is a typedef for XEvent.
 
     npEvent.type = (event->type() == "keydown") ? 2 : 3; // ints as Qt unsets KeyPress and KeyRelease
-    setSharedXEventFields(npEvent, m_parentFrame->view()->hostWindow()->platformPageClient());
+    QWebPageClient* client = m_parentFrame->view()->hostWindow()->platformPageClient();
+    QWidget* window = QWidget::find(client->winId());
+    setSharedXEventFields(npEvent, window);
     setXKeyEventSpecificFields(npEvent, event);
 
     if (!dispatchNPEvent(npEvent))
@@ -350,8 +353,11 @@ NPError PluginView::getValue(NPNVariable variable, void* value)
     case NPNVxDisplay:
         if (platformPluginWidget())
             *(void **)value = platformPluginWidget()->x11Info().display();
-        else
-            *(void **)value = m_parentFrame->view()->hostWindow()->platformPageClient()->x11Info().display();
+        else {
+            QWebPageClient* client = m_parentFrame->view()->hostWindow()->platformPageClient();
+            QWidget* window = QWidget::find(client->winId());
+            *(void **)value = window->x11Info().display();
+        }
         return NPERR_NO_ERROR;
 
     case NPNVxtAppContext:
@@ -451,7 +457,8 @@ bool PluginView::platformStart()
     }
 
     if (m_needsXEmbed) {
-        setPlatformWidget(new PluginContainerQt(this, m_parentFrame->view()->hostWindow()->platformPageClient()));
+        QWebPageClient* client = m_parentFrame->view()->hostWindow()->platformPageClient();
+        setPlatformWidget(new PluginContainerQt(this, QWidget::find(client->winId())));
     } else {
         notImplemented();
         return false;

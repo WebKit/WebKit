@@ -1,3 +1,38 @@
+2009-09-21  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        For Qt, platformPageClient() will now return a class derived from
+        the QWebPageClient, so the patch adapts our Qt hooks to go though
+        this class and not depend on the QWebView.
+
+        * Api/qwebgraphicsitem.cpp:
+        (QWebGraphicsItemPrivate::scroll):
+        (QWebGraphicsItemPrivate::update):
+        (QWebGraphicsItemPrivate::cursor):
+        (QWebGraphicsItemPrivate::updateCursor):
+        (QWebGraphicsItemPrivate::screenNumber):
+        (QWebGraphicsItemPrivate::winId):
+        (QWebGraphicsItem::event):
+        (QWebGraphicsItem::setPage):
+        * Api/qwebgraphicsitem.h:
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+        * Api/qwebpage_p.h:
+        * Api/qwebview.cpp:
+        (QWebViewPrivate::scroll):
+        (QWebViewPrivate::update):
+        (QWebViewPrivate::cursor):
+        (QWebViewPrivate::updateCursor):
+        (QWebViewPrivate::screenNumber):
+        (QWebViewPrivate::winId):
+        (QWebView::setPage):
+        (QWebView::event):
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::repaint):
+        (WebCore::ChromeClientQt::scroll):
+        (WebCore::ChromeClientQt::platformPageClient):
+
 2009-09-21  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Simon Hausmann.

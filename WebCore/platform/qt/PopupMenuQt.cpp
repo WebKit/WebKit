@@ -30,6 +30,7 @@
 #include "FrameView.h"
 #include "HostWindow.h"
 #include "PopupMenuClient.h"
+#include "QWebPageClient.h"
 #include "QWebPopup.h"
 
 #include <QAction>
@@ -85,13 +86,13 @@ void PopupMenu::populate(const IntRect& r)
 
 void PopupMenu::show(const IntRect& r, FrameView* v, int index)
 {
-    QWidget* window = v->hostWindow()->platformPageClient();
+    QWebPageClient* client = v->hostWindow()->platformPageClient();
     populate(r);
     QRect rect = r;
     rect.moveTopLeft(v->contentsToWindow(r.topLeft()));
     rect.setHeight(m_popup->sizeHint().height());
 
-    m_popup->setParent(window);
+    m_popup->setParent(QWidget::find(client->winId()));
     m_popup->setGeometry(rect);
     m_popup->setCurrentIndex(index);
     m_popup->exec();

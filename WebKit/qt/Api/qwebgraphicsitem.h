@@ -133,10 +133,8 @@ protected:
     virtual bool sceneEvent(QEvent*);
 
 private:
-    Q_PRIVATE_SLOT(d, void _q_doScroll(int dx, int dy, const QRect&))
     Q_PRIVATE_SLOT(d, void _q_doLoadProgress(int progress))
     Q_PRIVATE_SLOT(d, void _q_doLoadFinished(bool success))
-    Q_PRIVATE_SLOT(d, void _q_doUpdate(const QRect& dirtyRect))
     Q_PRIVATE_SLOT(d, void _q_setStatusBarMessage(const QString& message))
 
     QWebGraphicsItemPrivate* const d;

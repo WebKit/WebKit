@@ -20,6 +20,8 @@
 
 #include "config.h"
 #include "qwebview.h"
+
+#include "QWebPageClient.h"
 #include "qwebframe.h"
 #include "qwebpage_p.h"
 
@@ -29,14 +31,26 @@
 #include "qprinter.h"
 #include "qdir.h"
 #include "qfile.h"
+#include <QX11Info>
 
-class QWebViewPrivate {
+class QWebViewPrivate : public QWebPageClient {
 public:
     QWebViewPrivate(QWebView *view)
         : view(view)
         , page(0)
         , renderHints(QPainter::TextAntialiasing)
-    {}
+    {
+        Q_ASSERT(view);
+    }
+
+    virtual void scroll(int dx, int dy, const QRect&);
+    virtual void update(const QRect& dirtyRect);
+
+    virtual QCursor cursor() const;
+    virtual void updateCursor(const QCursor& cursor);
+
+    virtual int screenNumber() const;
+    virtual WId winId() const;
 
     void _q_pageDestroyed();
 
@@ -45,6 +59,42 @@ public:
 
     QPainter::RenderHints renderHints;
 };
+
+void QWebViewPrivate::scroll(int dx, int dy, const QRect& rectToScroll)
+{
+    view->scroll(qreal(dx), qreal(dy), rectToScroll);
+}
+
+void QWebViewPrivate::update(const QRect & dirtyRect)
+{
+    view->update(dirtyRect);
+}
+
+QCursor QWebViewPrivate::cursor() const
+{
+    return view->cursor();
+}
+
+void QWebViewPrivate::updateCursor(const QCursor& cursor)
+{
+    view->setCursor(cursor);
+}
+
+int QWebViewPrivate::screenNumber() const
+{
+    if (view)
+        return view->x11Info().screen();
+
+    return 0;
+}
+
+WId QWebViewPrivate::winId() const
+{
+    if (view)
+        return view->winId();
+
+    return 0;
+}
 
 void QWebViewPrivate::_q_pageDestroyed()
 {
@@ -195,6 +245,7 @@ void QWebView::setPage(QWebPage* page)
     if (d->page == page)
         return;
     if (d->page) {
+        d->page->d->client = 0; // unset the page client
         if (d->page->parent() == this)
             delete d->page;
         else
@@ -203,6 +254,7 @@ void QWebView::setPage(QWebPage* page)
     d->page = page;
     if (d->page) {
         d->page->setView(this);
+        d->page->d->client = d; // set the page client
         d->page->setPalette(palette());
         // #### connect signals
         QWebFrame *mainFrame = d->page->mainFrame();
@@ -682,24 +734,16 @@ bool QWebView::event(QEvent *e)
 #ifndef QT_NO_CURSOR
 #if QT_VERSION >= 0x040400
         } else if (e->type() == QEvent::CursorChange) {
-            // might be a QWidget::unsetCursor()
-            if (cursor().shape() == Qt::ArrowCursor) {
-                QVariant prop = property("WebCoreCursor");
-                if (prop.isValid()) {
-                    QCursor webCoreCursor = qvariant_cast<QCursor>(prop);
-                    if (webCoreCursor.shape() != Qt::ArrowCursor)
-                        setCursor(webCoreCursor);
-                }
-            }
-        } else if (e->type() == QEvent::DynamicPropertyChange) {
-            const QByteArray& propName = static_cast<QDynamicPropertyChangeEvent *>(e)->propertyName();
-            if (!qstrcmp(propName, "WebCoreCursor")) {
-                QVariant prop = property("WebCoreCursor");
-                if (prop.isValid()) {
-                    QCursor webCoreCursor = qvariant_cast<QCursor>(prop);
-                    setCursor(webCoreCursor);
-                }
-            }
+            // An unsetCursor will set the cursor to Qt::ArrowCursor.
+            // Thus this cursor change might be a QWidget::unsetCursor()
+            // If this is not the case and it came from WebCore, the
+            // QWebPageClient already has set its cursor internally
+            // to Qt::ArrowCursor, so updating the cursor is always
+            // right, as it falls back to the last cursor set by
+            // WebCore.
+            // FIXME: Add a QEvent::CursorUnset or similar to Qt.
+            if (cursor().shape() == Qt::ArrowCursor)
+                d->resetCursor();
 #endif
 #endif
         } else if (e->type() == QEvent::Leave)

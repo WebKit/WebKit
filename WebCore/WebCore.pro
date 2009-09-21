@@ -1901,6 +1901,7 @@ HEADERS += \
     platform/network/ResourceRequestBase.h \
     platform/network/ResourceResponseBase.h \
     platform/qt/ClipboardQt.h \
+    platform/qt/QWebPageClient.h \
     platform/qt/QWebPopup.h \
     platform/qt/RenderThemeQt.h \
     platform/qt/ScrollbarThemeQt.h \
