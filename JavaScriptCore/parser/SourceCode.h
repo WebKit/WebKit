@@ -37,7 +37,8 @@ namespace JSC {
     class SourceCode {
     public:
         SourceCode()
-            : m_startChar(0)
+            : m_provider(0)
+            , m_startChar(0)
             , m_endChar(0)
             , m_firstLine(0)
         {

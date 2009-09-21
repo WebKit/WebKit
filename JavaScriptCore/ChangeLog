@@ -1,3 +1,17 @@
+2009-09-21  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        [Fix] SourceCode's uninitialized member
+        
+        Potential source of crashes and bugs was fixed. Default constructor
+        didn't initialized m_provider member.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29364
+
+        * parser/SourceCode.h:
+        (JSC::SourceCode::SourceCode):
+
 2009-09-21  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoff Garen.
