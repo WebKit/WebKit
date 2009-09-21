@@ -1,4 +1,24 @@
 =================
+WebKitGTK+ 1.1.15
+=================
+
+What's new in WebKitGTK+ 1.1.15?
+
+  - New API to get the subresources from a WebKitWebDataSource. This
+    provides a way of accessing all the resources that compose the
+    view to which the data source is attached.
+  - A new function, webkit_web_view_get_hit_test_result, which allows
+    to do a 'hit test' on the coordinates specified by a mouse
+    event. A hit test provides context information about that point in
+    the document, like whether it's an image, a link, an input box,
+    etc.
+  - Our DumpRenderTree implementation now supports eventSender, which
+    allows us to run many more LayoutTests and make WebKitGTK+ more
+    stable and feature-complete.
+  - JSNES runs 6x faster: http://trac.webkit.org/changeset/48573
+  - The usual small improvements and bugfixes.
+
+=================
 WebKitGTK+ 1.1.14
 =================
 

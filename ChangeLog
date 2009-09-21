@@ -1,3 +1,11 @@
+2009-09-21  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Bump version for 1.1.15 release.
+
+        * configure.ac:
+
 2009-09-18  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha and Jan Alonzo.
