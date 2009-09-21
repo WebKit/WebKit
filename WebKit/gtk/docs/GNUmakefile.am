@@ -80,10 +80,12 @@ INCLUDES= \
 	-I$(top_builddir)/DerivedSources \
 	$(GLOBALDEPS_CFLAGS) \
 	$(CAIRO_CFLAGS) \
+	$(GLIB_CFLAGS) \
 	$(GTK_CFLAGS) \
 	$(LIBSOUP_CFLAGS)
 GTKDOC_LIBS= \
 	$(top_builddir)/libwebkit-1.0.la \
+	$(GLIB_LIBS) \
 	$(GTK_LIBS) \
 	$(LIBSOUP_LIBS)
 
