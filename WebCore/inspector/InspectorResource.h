@@ -87,12 +87,20 @@ namespace WebCore {
         void setXMLHttpResponseText(const ScriptString& data);
 
         String sourceString() const;
+        PassRefPtr<SharedBuffer> resourceData(String* textEncodingName) const;
+
         bool isSameLoader(DocumentLoader* loader) const { return loader == m_loader; }
         void markMainResource() { m_isMainResource = true; }
         long long identifier() const { return m_identifier; }
         String requestURL() const { return m_requestURL.string(); }
         Frame* frame() const { return m_frame.get(); }
         const String& mimeType() const { return m_mimeType; }
+        const HTTPHeaderMap& requestHeaderFields() const { return m_requestHeaderFields; }
+        const HTTPHeaderMap& responseHeaderFields() const { return m_responseHeaderFields; }
+        int responseStatusCode() const { return m_responseStatusCode; }
+        String requestMethod() const { return m_requestMethod; }
+        String requestFormData() const { return m_requestFormData; }
+
         void startTiming();
         void markResponseReceivedTime();
         void endTiming();

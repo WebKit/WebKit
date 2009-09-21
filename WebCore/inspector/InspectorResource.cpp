@@ -264,32 +264,8 @@ String InspectorResource::sourceString() const
     if (!m_xmlHttpResponseText.isNull())
         return String(m_xmlHttpResponseText);
 
-    RefPtr<SharedBuffer> buffer;
     String textEncodingName;
-
-    if (m_requestURL == m_loader->requestURL()) {
-        buffer = m_loader->mainResourceData();
-        textEncodingName = m_frame->document()->inputEncoding();
-    } else {
-        CachedResource* cachedResource = m_frame->document()->docLoader()->cachedResource(requestURL());
-        if (!cachedResource)
-            return String();
-
-        if (cachedResource->isPurgeable()) {
-            // If the resource is purgeable then make it unpurgeable to get
-            // get its data. This might fail, in which case we return an
-            // empty String.
-            // FIXME: should we do something else in the case of a purged
-            // resource that informs the user why there is no data in the
-            // inspector?
-            if (!cachedResource->makePurgeable(false))
-                return String();
-        }
-
-        buffer = cachedResource->data();
-        textEncodingName = cachedResource->encoding();
-    }
-
+    RefPtr<SharedBuffer> buffer = resourceData(&textEncodingName);
     if (!buffer)
         return String();
 
@@ -297,6 +273,31 @@ String InspectorResource::sourceString() const
     if (!encoding.isValid())
         encoding = WindowsLatin1Encoding();
     return encoding.decode(buffer->data(), buffer->size());
+}
+
+PassRefPtr<SharedBuffer> InspectorResource::resourceData(String* textEncodingName) const {
+    if (m_requestURL == m_loader->requestURL()) {
+        *textEncodingName = m_frame->document()->inputEncoding();
+        return m_loader->mainResourceData();
+    }
+
+    CachedResource* cachedResource = m_frame->document()->docLoader()->cachedResource(requestURL());
+    if (!cachedResource)
+        return 0;
+
+    if (cachedResource->isPurgeable()) {
+        // If the resource is purgeable then make it unpurgeable to get
+        // get its data. This might fail, in which case we return an
+        // empty String.
+        // FIXME: should we do something else in the case of a purged
+        // resource that informs the user why there is no data in the
+        // inspector?
+        if (!cachedResource->makePurgeable(false))
+            return 0;
+    }
+
+    *textEncodingName = cachedResource->encoding();
+    return cachedResource->data();
 }
 
 void InspectorResource::startTiming()
