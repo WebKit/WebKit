@@ -34,6 +34,7 @@
 #import "WebNSObjectExtras.h"
 #import "WebPDFDocumentExtras.h"
 #import "WebPDFView.h"
+#import "WebTypesInternal.h"
 #import <JavaScriptCore/Assertions.h>
 #import <JavaScriptCore/JSContextRef.h>
 #import <JavaScriptCore/JSStringRef.h>

@@ -25,6 +25,7 @@
 
 #import "WebPDFDocumentExtras.h"
 
+#import "WebTypesInternal.h"
 #import <JavaScriptCore/RetainPtr.h>
 #import <PDFKit/PDFDocument.h>
 #import <objc/objc-runtime.h>

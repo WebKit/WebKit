@@ -1,5 +1,12 @@
 2009-09-21  Dan Bernstein  <mitz@apple.com>
 
+        Attempt to fix the Tiger build
+
+        * WebView/WebPDFDocumentExtras.mm:
+        * WebView/WebPDFRepresentation.mm:
+
+2009-09-21  Dan Bernstein  <mitz@apple.com>
+
         Attempt to fix the Leopard and Tiger builds
 
         * WebView/WebPDFDocumentExtras.mm:
