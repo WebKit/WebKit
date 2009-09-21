@@ -1,3 +1,12 @@
+2009-09-21  Greg Bolsinga  <bolsinga@apple.com>
+
+        Reviewed by Simon Fraser & Sam Weinig.
+
+        Add ENABLE(ORIENTATION_EVENTS)
+        https://bugs.webkit.org/show_bug.cgi?id=29508
+
+        * wtf/Platform.h: Also sort PLATFORM(IPHONE) #defines.
+
 2009-09-21  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
 
         Reviewed by Eric Seidel.

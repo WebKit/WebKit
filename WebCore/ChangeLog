@@ -1,3 +1,51 @@
+2009-09-21  Greg Bolsinga  <bolsinga@apple.com>
+
+        Reviewed by Simon Fraser & Sam Weinig.
+
+        Add ENABLE(ORIENTATION_EVENTS)
+        https://bugs.webkit.org/show_bug.cgi?id=29508
+        
+        See documentation here:
+        http://developer.apple.com/safari/library/documentation/AppleApplications/Reference/SafariWebContent/HandlingEvents/HandlingEvents.html#//apple_ref/doc/uid/TP40006511-SW16
+
+        * DerivedSources.make: Use new WebCore.OrientationEvents.exp file if ENABLE_ORIENTATION_EVENTS.
+        Add ENABLE_ORIENTATION_EVENTS to the new ADDITIONAL_IDL_DEFINES variable that is passed to the IDL
+        code generator. This is because ENABLE_ORIENTATION_EVENTS is not in FEATURE_DEFINES.
+        * WebCore.OrientationEvents.exp: Added.
+        * WebCore.xcodeproj/project.pbxproj: Add WebCore.OrientationEvents.exp.
+        * dom/EventNames.h: Add onorientationchange.
+        * html/HTMLAttributeNames.in: Ditto.
+        * html/HTMLBodyElement.cpp: Handle onorientationchange properly.
+        (WebCore::HTMLBodyElement::parseMappedAttribute):
+        (WebCore::HTMLBodyElement::onorientationchange):
+        (WebCore::HTMLBodyElement::setOnorientationchange):
+        * html/HTMLBodyElement.h: Ditto.
+        * html/HTMLBodyElement.idl: Ditto.
+        * html/HTMLFrameSetElement.cpp: Ditto.
+        (WebCore::HTMLFrameSetElement::parseMappedAttribute):
+        (WebCore::HTMLFrameSetElement::onorientationchange):
+        (WebCore::HTMLFrameSetElement::setOnorientationchange):
+        * html/HTMLFrameSetElement.h: Ditto.
+        * html/HTMLFrameSetElement.idl: Ditto.
+        * page/DOMWindow.cpp: Ditto.
+        (WebCore::DOMWindow::orientation): Calls up the to the Frame for the orientation value.
+        (WebCore::DOMWindow::onorientationchange):
+        (WebCore::DOMWindow::setOnorientationchange):
+        * page/DOMWindow.h: Handle onorientationchange properly.
+        * page/DOMWindow.idl: Ditto.
+        * page/Frame.cpp: Ditto.
+        (WebCore::Frame::Frame):
+        (WebCore::Frame::sendOrientationChangeEvent):
+        * page/Frame.h: Ditto.
+        (WebCore::Frame::orientation):
+
+2009-09-18  Anders Carlsson  <andersca@apple.com>
+
+        Try fixing the build again.
+        
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenu::wndProc):
+
 2009-09-21  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

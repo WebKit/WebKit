@@ -9826,6 +9826,7 @@
 		FABE72F31059C1EB00D999DD /* mathtags.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = mathtags.in; sourceTree = "<group>"; };
 		FABE72FB1059C21100D999DD /* MathMLElementFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MathMLElementFactory.cpp; sourceTree = "<group>"; };
 		FABE72FC1059C21100D999DD /* MathMLNames.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MathMLNames.cpp; sourceTree = "<group>"; };
+		FE136AE710643BE50078CF6D /* WebCore.OrientationEvents.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; path = WebCore.OrientationEvents.exp; sourceTree = "<group>"; };
 		FE49BD301061719100D0E1AE /* WebCore.Inspector.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; path = WebCore.Inspector.exp; sourceTree = "<group>"; };
 		FE49EF970DC51462004266E1 /* DashboardSupportCSSPropertyNames.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DashboardSupportCSSPropertyNames.in; sourceTree = "<group>"; };
 		FE6FD4850F676E5700092873 /* Coordinates.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Coordinates.h; sourceTree = "<group>"; };
@@ -10462,6 +10463,7 @@
 				4491959C0FBE17D700D9F824 /* WebCore.JNI.exp */,
 				4491959B0FBE17D700D9F824 /* WebCore.LP64.exp */,
 				4491959A0FBE17D700D9F824 /* WebCore.NPAPI.exp */,
+				FE136AE710643BE50078CF6D /* WebCore.OrientationEvents.exp */,
 				449195990FBE17D700D9F824 /* WebCore.SVG.Animation.exp */,
 				449195980FBE17D700D9F824 /* WebCore.SVG.exp */,
 				449195970FBE17D700D9F824 /* WebCore.SVG.Filters.exp */,

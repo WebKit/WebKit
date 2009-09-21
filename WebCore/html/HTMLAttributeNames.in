@@ -167,6 +167,7 @@ onmouseup
 onmousewheel
 ononline
 onoffline
+onorientationchange
 onpagehide
 onpageshow
 onpaste

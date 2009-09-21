@@ -449,6 +449,8 @@ all : \
 
 # --------
 
+ADDITIONAL_IDL_DEFINES :=
+
 ifeq ($(OS),MACOS)
 
 FRAMEWORK_FLAGS = $(shell echo $(FRAMEWORK_SEARCH_PATHS) | perl -e 'print "-F " . join(" -F ", split(" ", <>));')
@@ -481,6 +483,13 @@ ifeq ($(shell gcc -E -P -dM -F $(BUILT_PRODUCTS_DIR) $(FRAMEWORK_FLAGS) WebCore/
     ENABLE_INSPECTOR = 1
 else
     ENABLE_INSPECTOR = 0
+endif
+
+ifeq ($(shell gcc -isysroot $(SDKROOT) -E -P -dM -F $(BUILT_PRODUCTS_DIR) $(FRAMEWORK_FLAGS) WebCore/ForwardingHeaders/wtf/Platform.h | grep ENABLE_ORIENTATION_EVENTS | cut -d' ' -f3), 1)
+    ENABLE_ORIENTATION_EVENTS = 1
+    ADDITIONAL_IDL_DEFINES := $(ADDITIONAL_IDL_DEFINES) ENABLE_ORIENTATION_EVENTS
+else
+    ENABLE_ORIENTATION_EVENTS = 0
 endif
 
 # CSS property names and value keywords
@@ -765,7 +774,7 @@ GENERATE_BINDINGS_SCRIPTS = \
 #
 
 JS%.h : %.idl $(GENERATE_BINDINGS_SCRIPTS) bindings/scripts/CodeGeneratorJS.pm
-	$(GENERATE_BINDINGS) --defines "$(FEATURE_DEFINES) LANGUAGE_JAVASCRIPT" --generator JS $<
+	$(GENERATE_BINDINGS) --defines "$(FEATURE_DEFINES) $(ADDITIONAL_IDL_DEFINES) LANGUAGE_JAVASCRIPT" --generator JS $<
 
 -include $(JS_DOM_HEADERS:.h=.dep)
 
@@ -817,6 +826,10 @@ ifeq ($(ENABLE_INSPECTOR), 1)
     WEBCORE_EXPORT_DEPENDENCIES := $(WEBCORE_EXPORT_DEPENDENCIES) WebCore.Inspector.exp
 endif
 
+ifeq ($(ENABLE_ORIENTATION_EVENTS), 1)
+    WEBCORE_EXPORT_DEPENDENCIES := $(WEBCORE_EXPORT_DEPENDENCIES) WebCore.OrientationEvents.exp
+endif
+
 ifeq ($(findstring 10.4,$(MACOSX_DEPLOYMENT_TARGET)), 10.4)
     WEBCORE_EXPORT_DEPENDENCIES := $(WEBCORE_EXPORT_DEPENDENCIES) WebCore.Tiger.exp
 endif
@@ -833,7 +846,7 @@ WebCore.exp : WebCore.base.exp $(WEBCORE_EXPORT_DEPENDENCIES)
 # Objective-C bindings
 
 DOM%.h : %.idl $(GENERATE_BINDINGS_SCRIPTS) bindings/scripts/CodeGeneratorObjC.pm bindings/objc/PublicDOMInterfaces.h
-	$(GENERATE_BINDINGS) --defines "$(FEATURE_DEFINES) LANGUAGE_OBJECTIVE_C" --generator ObjC $<
+	$(GENERATE_BINDINGS) --defines "$(FEATURE_DEFINES) $(ADDITIONAL_IDL_DEFINES) LANGUAGE_OBJECTIVE_C" --generator ObjC $<
 
 -include $(OBJC_DOM_HEADERS:.h=.dep)
 

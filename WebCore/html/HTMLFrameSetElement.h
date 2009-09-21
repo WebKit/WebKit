@@ -87,6 +87,10 @@ public:
     void setOnoffline(PassRefPtr<EventListener>);
     EventListener* ononline() const;
     void setOnonline(PassRefPtr<EventListener>);
+#if ENABLE(ORIENTATION_EVENTS)
+    EventListener* onorientationchange() const;
+    void setOnorientationchange(PassRefPtr<EventListener>);
+#endif
     EventListener* onresize() const;
     void setOnresize(PassRefPtr<EventListener>);
     EventListener* onstorage() const;

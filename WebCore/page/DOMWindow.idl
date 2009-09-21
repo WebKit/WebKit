@@ -170,6 +170,13 @@ module window {
         readonly attribute NotificationCenter webkitNotifications;
 #endif
 
+#if defined(ENABLE_ORIENTATION_EVENTS) && ENABLE_ORIENTATION_EVENTS
+        // This is the interface orientation in degrees. Some examples are:
+        //  0 is straight up; -90 is when the device is rotated 90 clockwise;
+        //  90 is when rotated counter clockwise.
+        readonly attribute long orientation;
+#endif
+
                  attribute [Replaceable] Console console;
 
         // cross-document messaging
@@ -278,6 +285,9 @@ module window {
         attribute EventListener onwebkitanimationiteration;
         attribute EventListener onwebkitanimationstart;
         attribute EventListener onwebkittransitionend;
+#if defined(ENABLE_ORIENTATION_EVENTS) && ENABLE_ORIENTATION_EVENTS
+        attribute EventListener onorientationchange;
+#endif
 
         // EventTarget interface
         [Custom] void addEventListener(in DOMString type,

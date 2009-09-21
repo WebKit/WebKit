@@ -135,6 +135,10 @@ void HTMLFrameSetElement::parseMappedAttribute(MappedAttribute *attr)
         document()->setWindowAttributeEventListener(eventNames().blurEvent, createAttributeEventListener(document()->frame(), attr));
     else if (attr->name() == onfocusAttr)
         document()->setWindowAttributeEventListener(eventNames().focusEvent, createAttributeEventListener(document()->frame(), attr));
+#if ENABLE(ORIENTATION_EVENTS)
+    else if (attr->name() == onorientationchangeAttr)
+        document()->setWindowAttributeEventListener(eventNames().orientationchangeEvent, createAttributeEventListener(document()->frame(), attr));
+#endif
     else if (attr->name() == onhashchangeAttr)
         document()->setWindowAttributeEventListener(eventNames().hashchangeEvent, createAttributeEventListener(document()->frame(), attr));
     else if (attr->name() == onresizeAttr)
@@ -320,6 +324,18 @@ void HTMLFrameSetElement::setOnonline(PassRefPtr<EventListener> eventListener)
     document()->setWindowAttributeEventListener(eventNames().onlineEvent, eventListener);
 }
 
+#if ENABLE(ORIENTATION_EVENTS)
+EventListener* HTMLFrameSetElement::onorientationchange() const
+{
+    return document()->getWindowAttributeEventListener(eventNames().orientationchangeEvent);
+}
+
+void HTMLFrameSetElement::setOnorientationchange(PassRefPtr<EventListener> eventListener)
+{
+    document()->setWindowAttributeEventListener(eventNames().orientationchangeEvent, eventListener);
+}
+#endif
+    
 EventListener* HTMLFrameSetElement::onresize() const
 {
     return document()->getWindowAttributeEventListener(eventNames().resizeEvent);

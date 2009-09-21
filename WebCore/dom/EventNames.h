@@ -136,6 +136,8 @@ namespace WebCore {
     \
     macro(webkitTransitionEnd) \
     \
+    macro(orientationchange) \
+    \
 // end of DOM_EVENT_NAMES_FOR_EACH
 
     class EventNames {
