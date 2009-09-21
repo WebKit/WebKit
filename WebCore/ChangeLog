@@ -1,3 +1,26 @@
+2009-09-20  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Crash when clicking link in unload handler
+        https://bugs.webkit.org/show_bug.cgi?id=29525
+
+        Test that the first navigation always wins when the page tries to start
+        a new navigation in an unload handler.
+
+        Tests: fast/loader/unload-form-about-blank.html
+               fast/loader/unload-form-post-about-blank.html
+               fast/loader/unload-form-post.html
+               fast/loader/unload-form.html
+               fast/loader/unload-hyperlink.html
+               fast/loader/unload-javascript-url.html
+               fast/loader/unload-reload.html
+               fast/loader/unload-window-location.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadURL):
+        (WebCore::FrameLoader::loadWithDocumentLoader):
+
 2009-09-18  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Xan Lopez.

@@ -1,3 +1,32 @@
+2009-09-20  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Crash when clicking link in unload handler
+        https://bugs.webkit.org/show_bug.cgi?id=29525
+
+        Test that the first navigation always wins when the page tries to start
+        a new navigation in an unload handler.
+
+        * fast/loader/resources/fail-and-notify-done.html: Added.
+        * fast/loader/resources/pass-and-notify-done.html: Added.
+        * fast/loader/unload-form-about-blank-expected.txt: Added.
+        * fast/loader/unload-form-about-blank.html: Added.
+        * fast/loader/unload-form-expected.txt: Added.
+        * fast/loader/unload-form-post-about-blank-expected.txt: Added.
+        * fast/loader/unload-form-post-about-blank.html: Added.
+        * fast/loader/unload-form-post-expected.txt: Added.
+        * fast/loader/unload-form-post.html: Added.
+        * fast/loader/unload-form.html: Added.
+        * fast/loader/unload-hyperlink-expected.txt: Added.
+        * fast/loader/unload-hyperlink.html: Added.
+        * fast/loader/unload-javascript-url-expected.txt: Added.
+        * fast/loader/unload-javascript-url.html: Added.
+        * fast/loader/unload-reload-expected.txt: Added.
+        * fast/loader/unload-reload.html: Added.
+        * fast/loader/unload-window-location-expected.txt: Added.
+        * fast/loader/unload-window-location.html: Added.
+
 2009-09-19  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.
