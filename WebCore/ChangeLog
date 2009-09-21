@@ -1,3 +1,18 @@
+2009-09-21  Brent Fulgham  <bfulgham@webkit.org>
+
+        Unreviewed build fix for Windows (Cairo) target.
+
+        Add stubs for SocketStream classes added in @r47788, which
+        broke the WinCairo build.
+
+        No new tests. (Build failure).
+
+        * WebCore.vcproj/WebCore.vcproj:  Add references to new files
+          to Cairo build, exclude from standard Apple build.
+        * platform/network/curl/SocketStreamError.h: Added.
+        * platform/network/curl/SocketStreamHandle.h: Added.
+        * platform/network/curl/SocketStreamHandleCurl.cpp: Added.
+
 2009-09-21  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
