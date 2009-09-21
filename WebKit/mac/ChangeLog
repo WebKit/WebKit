@@ -1,5 +1,11 @@
 2009-09-21  Dan Bernstein  <mitz@apple.com>
 
+        Attempt to fix the Leopard and Tiger builds
+
+        * WebView/WebPDFDocumentExtras.mm:
+
+2009-09-21  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Anders Carlsson.
 
         <rdar://problem/4137135> iFrame with PDF not being handled correctly on

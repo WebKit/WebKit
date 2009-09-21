@@ -26,8 +26,14 @@
 #import "WebPDFDocumentExtras.h"
 
 #import <JavaScriptCore/RetainPtr.h>
-#import <PDFKit/PDFKit.h>
+#import <PDFKit/PDFDocument.h>
 #import <objc/objc-runtime.h>
+
+#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
+@interface PDFDocument (Internal)
+- (CGPDFDocumentRef)documentRef;
+@end
+#endif
 
 static void appendValuesInPDFNameSubtreeToArray(CGPDFDictionaryRef subtree, NSMutableArray *values)
 {
