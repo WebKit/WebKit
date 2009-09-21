@@ -1,3 +1,9 @@
+2009-09-21  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Unreviewed make dist build fix. Missing files.
+
+        * GNUmakefile.am:
+
 2009-09-20  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Maciej Stachowiak.

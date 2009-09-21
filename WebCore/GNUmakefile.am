@@ -1347,6 +1347,8 @@ webcore_sources += \
 	WebCore/page/Settings.h \
 	WebCore/page/UserScript.h \
 	WebCore/page/UserScriptTypes.h \
+	WebCore/page/UserStyleSheet.h \
+	WebCore/page/UserStyleSheetTypes.h \
 	WebCore/page/WebKitPoint.h \
 	WebCore/page/WindowFeatures.cpp \
 	WebCore/page/WindowFeatures.h \
@@ -1787,6 +1789,7 @@ webcore_sources += \
 	WebCore/rendering/RenderView.h \
 	WebCore/rendering/RenderWidget.cpp \
 	WebCore/rendering/RenderWidget.h \
+	WebCore/rendering/RenderWidgetProtector.h \
 	WebCore/rendering/RenderWordBreak.cpp \
 	WebCore/rendering/RenderWordBreak.h \
 	WebCore/rendering/RootInlineBox.cpp \

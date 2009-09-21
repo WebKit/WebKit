@@ -205,7 +205,7 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/StructureTransitionTable.h \
 	JavaScriptCore/runtime/TimeoutChecker.cpp \
 	JavaScriptCore/runtime/TimeoutChecker.h \
-	JavaScriptCore/runtime/TypeInfo.h \
+	JavaScriptCore/runtime/JSTypeInfo.h \
 	JavaScriptCore/wrec/CharacterClass.h \
 	JavaScriptCore/wrec/CharacterClassConstructor.h \
 	JavaScriptCore/wrec/Escapes.h \

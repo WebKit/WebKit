@@ -1,3 +1,9 @@
+2009-09-21  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Unreviewed make dist build fix. Missing files.
+
+        * GNUmakefile.am:
+
 2009-09-19  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam 'Cabin Boy' Weinig.
