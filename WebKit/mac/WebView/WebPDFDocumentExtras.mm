@@ -121,7 +121,7 @@ static NSArray *web_PDFDocumentAllScripts(id self, SEL _cmd)
         if (!bytes)
             continue;
 
-        NSStringEncoding encoding = (length > 1 && bytes[0] == 0xFE && bytes[1] == 0xFF) ? NSUTF16StringEncoding : NSUTF8StringEncoding;
+        NSStringEncoding encoding = (length > 1 && bytes[0] == 0xFE && bytes[1] == 0xFF) ? NSUnicodeStringEncoding : NSUTF8StringEncoding;
         NSString *script = [[NSString alloc] initWithBytes:bytes length:length encoding:encoding];
         [scripts addObject:script];
         [script release];
@@ -135,7 +135,7 @@ void addWebPDFDocumentExtras(Class pdfDocumentClass)
 #ifndef BUILDING_ON_TIGER
     class_addMethod(pdfDocumentClass, @selector(_web_allScripts), (IMP)web_PDFDocumentAllScripts, "@@:");
 #else
-    struct objc_method_list methodList = { 0, 1, { @selector(_web_allScripts), (IMP)web_PDFDocumentAllScripts, "@@:" } };
+    struct objc_method_list methodList = { 0, 1, { @selector(_web_allScripts), "@@:", (IMP)web_PDFDocumentAllScripts } };
     class_addMethods(pdfDocumentClass, &methodList);
 #endif
 }
