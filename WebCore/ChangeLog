@@ -1,3 +1,12 @@
+2009-09-21  Csaba Osztrogonac  <oszi@inf.u-szeged.hu>
+
+        Rubber-stamped by Simon Hausmann.
+
+        [Qt] Windows build fix.
+        https://bugs.webkit.org/show_bug.cgi?id=29535
+
+        * platform/network/qt/DnsPrefetchHelper.cpp: Missing #include "config.h"  added.
+
 2009-09-21  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Unreviewed make dist build fix. Missing files.
