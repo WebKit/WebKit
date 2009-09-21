@@ -1003,7 +1003,12 @@ sub GenerateBatchedAttributeData
         # Replaceable
         if ($attrExt->{"Replaceable"} && !$hasCustomSetter) {
             $setter = "0";
-            $propAttr .= "|v8::ReadOnly";
+            # Handle the special case of window.top being marked as Replaceable.
+            # FIXME: Investigate whether we could treat window.top as replaceable 
+            # and allow shadowing without it being a security hole.
+            if (!($interfaceName eq "DOMWindow" and $attrName eq "top")) { 
+                $propAttr .= "|v8::ReadOnly";
+            }
         }
 
         # Read only attributes
