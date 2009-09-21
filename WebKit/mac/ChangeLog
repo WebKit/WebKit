@@ -3,6 +3,13 @@
         Attempt to fix the Tiger build
 
         * WebView/WebPDFDocumentExtras.mm:
+        (addWebPDFDocumentExtras):
+
+2009-09-21  Dan Bernstein  <mitz@apple.com>
+
+        Attempt to fix the Tiger build
+
+        * WebView/WebPDFDocumentExtras.mm:
         (web_PDFDocumentAllScripts):
         (addWebPDFDocumentExtras):
 
