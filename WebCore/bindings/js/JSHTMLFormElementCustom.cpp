@@ -57,7 +57,7 @@ JSValue JSHTMLFormElement::nameGetter(ExecState* exec, const Identifier& propert
     if (namedItems.size() == 1)
         return toJS(exec, namedItems[0].get());
 
-    // FIMXE: HTML5 specifies that this should be a live NodeList subclass called a RadioNodeList.
+    // FIXME: HTML5 specifies that this should be a RadioNodeList.
     return toJS(exec, jsForm->globalObject(), StaticNodeList::adopt(namedItems).get());
 }
 

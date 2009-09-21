@@ -1,3 +1,14 @@
+2009-09-21  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey "Sean/Shawn/Shaun" Garen.
+
+        Clarify two FIXMEs.
+
+        * bindings/js/JSHTMLCollectionCustom.cpp:
+        (WebCore::getNamedItems):
+        * bindings/js/JSHTMLFormElementCustom.cpp:
+        (WebCore::JSHTMLFormElement::nameGetter):
+
 2009-09-21  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Dimitri Glazkov.
