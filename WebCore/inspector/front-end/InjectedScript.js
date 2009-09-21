@@ -524,20 +524,20 @@ InjectedScript.evaluate = function(expression)
         if (value === null)
             return { value: null };
         if (Object.type(value) === "error") {
-            result.value = Object.describe(value);
+            result.value = InspectorController.wrapObject(value);
             result.isException = true;
             return result;
         }
 
         var wrapper = InspectorController.wrapObject(value);
-        if (typeof wrapper === "object" && wrapper.exception) {
-            result.value = wrapper.exception;
+        if (wrapper.errorText) {
+            result.value = InspectorController.wrapObject(wrapper.errorText);
             result.isException = true;
         } else {
             result.value = wrapper;
         }
     } catch (e) {
-        result.value = e.toString();
+        result.value = InspectorController.wrapObject(e.toString());
         result.isException = true;
     }
     return result;
@@ -976,7 +976,7 @@ InjectedScript.createProxyObject = function(object, objectId, abbreviate)
     try {
         result.description = Object.describe(object, abbreviate);
     } catch (e) {
-        result.exception = e.toString();
+        result.errorText = e.toString();
     }
     return result;
 }

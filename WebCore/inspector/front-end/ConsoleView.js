@@ -911,7 +911,7 @@ WebInspector.ConsoleTextMessage.prototype.__proto__ = WebInspector.ConsoleMessag
 WebInspector.ConsoleCommandResult = function(result, exception, originatingCommand)
 {
     var level = (exception ? WebInspector.ConsoleMessage.MessageLevel.Error : WebInspector.ConsoleMessage.MessageLevel.Log);
-    var message = (exception ? String(result) : result);
+    var message = result;
     var line = (exception ? result.line : -1);
     var url = (exception ? result.sourceURL : null);
 

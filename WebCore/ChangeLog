@@ -2,6 +2,20 @@
 
         Reviewed by Timothy Hatcher.
 
+        Web Inspector: Exception formatting is broken in console.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29608
+
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleCommandResult):
+        * inspector/front-end/InjectedScript.js:
+        (InjectedScript.evaluate):
+        (InjectedScript.createProxyObject):
+
+2009-09-21  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
         Web Inspector: Console object formatting is broken.
 
         https://bugs.webkit.org/show_bug.cgi?id=29607
