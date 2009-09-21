@@ -51,6 +51,7 @@ bool StructureChain::isCacheable() const
     uint32_t i = 0;
     
     while (m_vector[i]) {
+        // Both classes of dictionary structure may change arbitrarily so we can't cache them
         if (m_vector[i]->isDictionary())
             return false;
         if (!m_vector[i++]->typeInfo().hasDefaultGetPropertyNames())

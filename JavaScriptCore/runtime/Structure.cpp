@@ -127,7 +127,7 @@ Structure::Structure(JSValue prototype, const TypeInfo& typeInfo)
     , m_propertyTable(0)
     , m_propertyStorageCapacity(JSObject::inlineStorageCapacity)
     , m_offset(noOffset)
-    , m_isDictionary(false)
+    , m_dictionaryKind(NoneDictionaryKind)
     , m_isPinnedPropertyTable(false)
     , m_hasGetterSetterProperties(false)
     , m_attributesInPrevious(0)
@@ -290,7 +290,7 @@ void Structure::getOwnEnumerablePropertyNames(ExecState* exec, PropertyNameArray
 
 void Structure::getEnumerablePropertyNames(ExecState* exec, PropertyNameArray& propertyNames, JSObject* baseObject)
 {
-    bool shouldCache = propertyNames.shouldCache() && !(propertyNames.size() || m_isDictionary);
+    bool shouldCache = propertyNames.shouldCache() && !(propertyNames.size() || isDictionary());
 
     if (shouldCache && m_cachedPropertyNameArrayData) {
         if (m_cachedPropertyNameArrayData->cachedPrototypeChain() == prototypeChain(exec)) {
@@ -349,7 +349,7 @@ void Structure::despecifyDictionaryFunction(const Identifier& propertyName)
 
     materializePropertyMapIfNecessary();
 
-    ASSERT(m_isDictionary);
+    ASSERT(isDictionary());
     ASSERT(m_propertyTable);
 
     unsigned i = rep->computedHash();
@@ -391,7 +391,7 @@ void Structure::despecifyDictionaryFunction(const Identifier& propertyName)
 
 PassRefPtr<Structure> Structure::addPropertyTransitionToExistingStructure(Structure* structure, const Identifier& propertyName, unsigned attributes, JSCell* specificValue, size_t& offset)
 {
-    ASSERT(!structure->m_isDictionary);
+    ASSERT(!structure->isDictionary());
     ASSERT(structure->typeInfo().type() == ObjectType);
 
     if (Structure* existingTransition = structure->table.get(make_pair(propertyName.ustring().rep(), attributes), specificValue)) {
@@ -405,12 +405,12 @@ PassRefPtr<Structure> Structure::addPropertyTransitionToExistingStructure(Struct
 
 PassRefPtr<Structure> Structure::addPropertyTransition(Structure* structure, const Identifier& propertyName, unsigned attributes, JSCell* specificValue, size_t& offset)
 {
-    ASSERT(!structure->m_isDictionary);
+    ASSERT(!structure->isDictionary());
     ASSERT(structure->typeInfo().type() == ObjectType);
     ASSERT(!Structure::addPropertyTransitionToExistingStructure(structure, propertyName, attributes, specificValue, offset));
 
     if (structure->transitionCount() > s_maxTransitionLength) {
-        RefPtr<Structure> transition = toDictionaryTransition(structure);
+        RefPtr<Structure> transition = toCacheableDictionaryTransition(structure);
         ASSERT(structure != transition);
         offset = transition->put(propertyName, attributes, specificValue);
         if (transition->propertyStorageSize() > transition->propertyStorageCapacity())
@@ -454,9 +454,9 @@ PassRefPtr<Structure> Structure::addPropertyTransition(Structure* structure, con
 
 PassRefPtr<Structure> Structure::removePropertyTransition(Structure* structure, const Identifier& propertyName, size_t& offset)
 {
-    ASSERT(!structure->m_isDictionary);
+    ASSERT(!structure->isUncacheableDictionary());
 
-    RefPtr<Structure> transition = toDictionaryTransition(structure);
+    RefPtr<Structure> transition = toUncacheableDictionaryTransition(structure);
 
     offset = transition->remove(propertyName);
 
@@ -554,25 +554,35 @@ PassRefPtr<Structure> Structure::getterSetterTransition(Structure* structure)
     return transition.release();
 }
 
-PassRefPtr<Structure> Structure::toDictionaryTransition(Structure* structure)
+PassRefPtr<Structure> Structure::toDictionaryTransition(Structure* structure, DictionaryKind kind)
 {
-    ASSERT(!structure->m_isDictionary);
-
+    ASSERT(!structure->isDictionary());
+    
     RefPtr<Structure> transition = create(structure->m_prototype, structure->typeInfo());
-    transition->m_isDictionary = true;
+    transition->m_dictionaryKind = kind;
     transition->m_propertyStorageCapacity = structure->m_propertyStorageCapacity;
     transition->m_hasGetterSetterProperties = structure->m_hasGetterSetterProperties;
-
+    
     structure->materializePropertyMapIfNecessary();
     transition->m_propertyTable = structure->copyPropertyTable();
     transition->m_isPinnedPropertyTable = true;
-
+    
     return transition.release();
+}
+
+PassRefPtr<Structure> Structure::toCacheableDictionaryTransition(Structure* structure)
+{
+    return toDictionaryTransition(structure, CachedDictionaryKind);
+}
+
+PassRefPtr<Structure> Structure::toUncacheableDictionaryTransition(Structure* structure)
+{
+    return toDictionaryTransition(structure, UncachedDictionaryKind);
 }
 
 PassRefPtr<Structure> Structure::fromDictionaryTransition(Structure* structure)
 {
-    ASSERT(structure->m_isDictionary);
+    ASSERT(structure->isDictionary());
 
     // Since dictionary Structures are not shared, and no opcodes specialize
     // for them, we don't need to allocate a new Structure when transitioning
@@ -581,7 +591,7 @@ PassRefPtr<Structure> Structure::fromDictionaryTransition(Structure* structure)
     // FIMXE: We can make this more efficient by canonicalizing the Structure (draining the
     // deleted offsets vector) before transitioning from dictionary. 
     if (!structure->m_propertyTable || !structure->m_propertyTable->deletedOffsets || structure->m_propertyTable->deletedOffsets->isEmpty())
-        structure->m_isDictionary = false;
+        structure->m_dictionaryKind = NoneDictionaryKind;
 
     return structure;
 }
@@ -600,7 +610,7 @@ size_t Structure::addPropertyWithoutTransition(const Identifier& propertyName, u
 
 size_t Structure::removePropertyWithoutTransition(const Identifier& propertyName)
 {
-    ASSERT(m_isDictionary);
+    ASSERT(isUncacheableDictionary());
 
     materializePropertyMapIfNecessary();
 

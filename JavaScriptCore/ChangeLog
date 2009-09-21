@@ -1,3 +1,61 @@
+2009-09-20  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        SNES is too slow
+        https://bugs.webkit.org/show_bug.cgi?id=29534
+
+        The problem was that the emulator used multiple classes with
+        more properties than our dictionary cutoff allowed, this resulted
+        in more or less all critical logic inside the emulator requiring
+        uncached property access.
+
+        Rather than simply bumping the dictionary cutoff, this patch
+        recognises that there are two ways to create a "dictionary"
+        structure.  Either by adding a large number of properties, or
+        by removing a property.  In the case of adding properties we
+        know all the existing properties will maintain their existing
+        offsets, so we could cache access to those properties, if we
+        know they won't be removed.
+
+        To make this possible, this patch adds the logic required to
+        distinguish a dictionary created by addition from one created
+        by removal.  With this logic in place we can now cache access
+        to objects with large numbers of properties.
+
+        SNES performance improved by more than 6x.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::resolveGlobal):
+        (JSC::Interpreter::tryCachePutByID):
+        (JSC::Interpreter::tryCacheGetByID):
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::tryCachePutByID):
+        (JSC::JITThunks::tryCacheGetByID):
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/BatchedTransitionOptimizer.h:
+        (JSC::BatchedTransitionOptimizer::BatchedTransitionOptimizer):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::removeDirect):
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+        (JSC::Structure::getEnumerablePropertyNames):
+        (JSC::Structure::despecifyDictionaryFunction):
+        (JSC::Structure::addPropertyTransitionToExistingStructure):
+        (JSC::Structure::addPropertyTransition):
+        (JSC::Structure::removePropertyTransition):
+        (JSC::Structure::toDictionaryTransition):
+        (JSC::Structure::toCacheableDictionaryTransition):
+        (JSC::Structure::toUncacheableDictionaryTransition):
+        (JSC::Structure::fromDictionaryTransition):
+        (JSC::Structure::removePropertyWithoutTransition):
+        * runtime/Structure.h:
+        (JSC::Structure::isDictionary):
+        (JSC::Structure::isUncacheableDictionary):
+        (JSC::Structure::):
+        * runtime/StructureChain.cpp:
+        (JSC::StructureChain::isCacheable):
+
 2009-09-19  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.
