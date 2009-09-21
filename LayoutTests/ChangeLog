@@ -1,3 +1,13 @@
+2009-09-21  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        HTMLMediaElement: media file should not reload when page comes out of page cache
+        https://bugs.webkit.org/show_bug.cgi?id=29604
+
+        * media/restore-from-page-cache-expected.txt: Added.
+        * media/restore-from-page-cache.html: Added.
+
 2009-09-21  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoff Garen.

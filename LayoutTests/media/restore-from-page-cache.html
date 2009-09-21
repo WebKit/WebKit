@@ -1,0 +1,60 @@
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+        <script>
+            var mediaFile = findMediaFile("video", "content/test");
+            var loadCount = 0;
+
+            if (window.layoutTestController) {
+                layoutTestController.dumpAsText();
+                layoutTestController.waitUntilDone();
+                layoutTestController.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+            }
+
+            function pageshow(evt) 
+            {
+                if (!evt.persisted) {
+                    // this is the first time the page has been loaded, setup the video element
+                    setup();
+                } else {
+                    consoleWrite("*** Page returned from cache");
+
+                    testExpected("loadCount", 1);
+                    
+                    // schedule the test to end shortly, but wait long enough for the element to fire loading events
+                    //  if that is going to happen
+                    setTimeout(function() { if (window.layoutTestController) layoutTestController.notifyDone(); }, 200);
+                }
+            }
+                
+            function load() 
+            {
+                testExpected("loadCount", 0);
+                if (!loadCount) {
+                    consoleWrite("*** Page going into cache");
+                    setTimeout('window.location = "data:text/html,<script>history.back()<" + "/script>"', 0);
+                }
+                ++loadCount;
+            }
+
+            function setup()
+            {
+                video = mediaElement = document.getElementsByTagName('video')[0];
+
+                waitForEvent('loadstart');
+                waitForEvent('load', load );
+                
+                video.src = mediaFile;
+            }
+
+            window.onpageshow = pageshow;
+        </script>
+    </head>
+    <body>
+
+        <video controls > </video>
+        <p>Make sure we don't reload a &lt;video&gt; element when navigating back to an uncached page.</p>
+    </body>
+</html>
+

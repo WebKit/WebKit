@@ -1,0 +1,9 @@
+Make sure we don't reload a <video> element when navigating back to an uncached page.
+
+EVENT(loadstart)
+EVENT(load)
+EXPECTED (loadCount == '0') OK
+*** Page going into cache
+*** Page returned from cache
+EXPECTED (loadCount == '1') OK
+

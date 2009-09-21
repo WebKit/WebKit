@@ -1,3 +1,17 @@
+2009-09-21  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        HTMLMediaElement: media file should not reload when page comes out of page cache
+        https://bugs.webkit.org/show_bug.cgi?id=29604
+
+        Test: media/restore-from-page-cache.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::userCancelledLoad): Do nothing unless the element
+        is still loading. Only fire an 'emptied' event if the readyState is HAVE_NOTHING,
+        otherwise set the network state to NETWORK_IDLE.
+
 2009-09-21  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoffrey "Sean/Shawn/Shaun" Garen.
