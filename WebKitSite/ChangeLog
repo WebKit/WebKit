@@ -1,3 +1,12 @@
+2009-09-21  Brady Eidson  <beidson@apple.com>
+
+        Rubberstamped by Sam Weinig.
+
+        Add some example files for an upcoming blog post.
+
+        * blog-files/load-unload-example.html: Added.
+        * blog-files/pageshow-pagehide-example.html: Added.
+
 2009-09-17  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Darin Adler.
