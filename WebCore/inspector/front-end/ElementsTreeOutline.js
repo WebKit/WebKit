@@ -31,7 +31,6 @@
 WebInspector.ElementsTreeOutline = function() {
     this.element = document.createElement("ol");
     this.element.addEventListener("mousedown", this._onmousedown.bind(this), false);
-    this.element.addEventListener("dblclick", this._ondblclick.bind(this), false);
     this.element.addEventListener("mousemove", this._onmousemove.bind(this), false);
     this.element.addEventListener("mouseout", this._onmouseout.bind(this), false);
 
@@ -184,16 +183,6 @@ WebInspector.ElementsTreeOutline.prototype = {
             element = this.treeElementFromPoint(x, y + 2);
 
         return element;
-    },
-
-    _ondblclick: function(event)
-    {
-        var element = this._treeElementFromEvent(event);
-
-        if (!element || !element.ondblclick)
-            return;
-
-        element.ondblclick(element, event);
     },
 
     _onmousedown: function(event)

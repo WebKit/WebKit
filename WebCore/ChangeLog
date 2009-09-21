@@ -1,3 +1,16 @@
+2009-09-21  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: JS error drilling down childless node.
+        No need to dispatch double click twice - it is already handled
+        in TreeElement.treeElementDoubleClicked.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22144
+
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeOutline):
+
 2009-09-21  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Simon Hausmann.
