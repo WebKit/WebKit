@@ -471,7 +471,7 @@ JSObject* JSObject::unwrappedObject()
 void JSObject::removeDirect(const Identifier& propertyName)
 {
     size_t offset;
-    if (m_structure->isDictionary()) {
+    if (m_structure->isUncacheableDictionary()) {
         offset = m_structure->removePropertyWithoutTransition(propertyName);
         if (offset != WTF::notFound)
             putDirectOffset(offset, jsUndefined());

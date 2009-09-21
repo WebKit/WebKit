@@ -1,3 +1,40 @@
+2009-09-21  Oliver Hunt  <oliver@apple.com>
+
+        RS=Maciej Stachowiak.
+
+        Re-land SNES fix with corrected assertion.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::resolveGlobal):
+        (JSC::Interpreter::tryCachePutByID):
+        (JSC::Interpreter::tryCacheGetByID):
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::tryCachePutByID):
+        (JSC::JITThunks::tryCacheGetByID):
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/BatchedTransitionOptimizer.h:
+        (JSC::BatchedTransitionOptimizer::BatchedTransitionOptimizer):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::removeDirect):
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+        (JSC::Structure::getEnumerablePropertyNames):
+        (JSC::Structure::despecifyDictionaryFunction):
+        (JSC::Structure::addPropertyTransitionToExistingStructure):
+        (JSC::Structure::addPropertyTransition):
+        (JSC::Structure::removePropertyTransition):
+        (JSC::Structure::toDictionaryTransition):
+        (JSC::Structure::toCacheableDictionaryTransition):
+        (JSC::Structure::toUncacheableDictionaryTransition):
+        (JSC::Structure::fromDictionaryTransition):
+        (JSC::Structure::removePropertyWithoutTransition):
+        * runtime/Structure.h:
+        (JSC::Structure::isDictionary):
+        (JSC::Structure::isUncacheableDictionary):
+        (JSC::Structure::):
+        * runtime/StructureChain.cpp:
+        (JSC::StructureChain::isCacheable):
+
 2009-09-21  Adam Roben  <aroben@apple.com>
 
         Revert r48573, as it caused many assertion failures
