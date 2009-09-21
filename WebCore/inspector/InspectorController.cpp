@@ -643,6 +643,10 @@ void InspectorController::populateScriptObjects()
     if (!m_frontend)
         return;
 
+    // Initialize dom agent and reset injected script state first.
+    if (m_domAgent->setDocument(m_inspectedPage->mainFrame()->document()))
+        resetInjectedScript();
+
     ResourcesMap::iterator resourcesEnd = m_resources.end();
     for (ResourcesMap::iterator it = m_resources.begin(); it != resourcesEnd; ++it)
         it->second->createScriptObject(m_frontend.get());
@@ -662,8 +666,6 @@ void InspectorController::populateScriptObjects()
         (*it)->bind(m_frontend.get());
 #endif
 
-    if (m_domAgent->setDocument(m_inspectedPage->mainFrame()->document()))
-        resetInjectedScript();
     m_frontend->populateInterface();
 }
 
