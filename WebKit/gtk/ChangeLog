@@ -1,5 +1,12 @@
 2009-09-21  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
+        Update documentation control files to 1.1.15.
+
+        * docs/webkitgtk-docs.sgml:
+        * docs/webkitgtk-sections.txt:
+
+2009-09-21  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
         Unreviewed docs build fix. Current CFLAGS and LIBS variables no
         longer bring gthread in.
 

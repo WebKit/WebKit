@@ -185,6 +185,26 @@ WebKitSecurityOriginPrivate
 </SECTION>
 
 <SECTION>
+<FILE>webkithittestresult</FILE>
+<TITLE>WebKitHitTestResult</TITLE>
+WebKitHitTestResult
+WebKitHitTestResultContext
+<SUBSECTION Standard>
+WEBKIT_HIT_TEST_RESULT
+WEBKIT_HIT_TEST_RESULT_CLASS
+WEBKIT_HIT_TEST_RESULT_GET_CLASS
+WEBKIT_IS_HIT_TEST_RESULT
+WEBKIT_IS_HIT_TEST_RESULT_CLASS
+WEBKIT_TYPE_HIT_TEST_RESULT
+<SUBSECTION Private>
+WebKitHitTestResult
+WebKitHitTestResultClass
+WebKitHitTestResultContext
+WebKitHitTestResultPrivate
+webkit_hit_test_result_get_type
+</SECTION>
+
+<SECTION>
 <FILE>webkitwebdatasource</FILE>
 <TITLE>WebKitWebDataSource</TITLE>
 WebKitWebDataSource
@@ -193,6 +213,7 @@ webkit_web_data_source_get_encoding
 webkit_web_data_source_get_initial_request
 webkit_web_data_source_get_main_resource
 webkit_web_data_source_get_request
+webkit_web_data_source_get_subresources
 webkit_web_data_source_get_unreachable_uri
 webkit_web_data_source_get_web_frame
 webkit_web_data_source_is_loading
@@ -393,6 +414,7 @@ webkit_web_view_get_editable
 webkit_web_view_get_encoding
 webkit_web_view_get_focused_frame
 webkit_web_view_get_full_content_zoom
+webkit_web_view_get_hit_test_result
 webkit_web_view_get_inspector
 webkit_web_view_get_load_status
 webkit_web_view_get_main_frame
