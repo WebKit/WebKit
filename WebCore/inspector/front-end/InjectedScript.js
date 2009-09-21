@@ -499,11 +499,20 @@ InjectedScript.setPropertyValue = function(objectProxy, propertyName, expression
 }
 
 
-InjectedScript.getCompletions = function(expression, includeInspectorCommandLineAPI)
+InjectedScript.getCompletions = function(expression, includeInspectorCommandLineAPI, callFrameId)
 {
     var props = {};
     try {
-        var expressionResult = InjectedScript._evaluateOn(InjectedScript._window().eval, InjectedScript._window(), expression);
+        var expressionResult;
+        // Evaluate on call frame if call frame id is available.
+        if (typeof callFrameId === "number") {
+            var callFrame = InjectedScript._callFrameForId(callFrameId);
+            if (!callFrame)
+                return props;
+            expressionResult = InjectedScript._evaluateOn(callFrame.evaluate, callFrame, expression);
+        } else {
+            expressionResult = InjectedScript._evaluateOn(InjectedScript._window().eval, InjectedScript._window(), expression);
+        }
         for (var prop in expressionResult)
             props[prop] = true;
         if (includeInspectorCommandLineAPI)

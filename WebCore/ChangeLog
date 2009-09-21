@@ -1,3 +1,19 @@
+2009-09-21  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: completions are always evaluated against
+        window (discarding call frames).
+
+        https://bugs.webkit.org/show_bug.cgi?id=29616
+
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype.completions):
+        * inspector/front-end/InjectedScript.js:
+        (InjectedScript.getCompletions):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.selectedCallFrameId):
+
 2009-09-21  Brent Fulgham  <bfulgham@webkit.org>
 
         Unreviewed build fix for Windows (Cairo) target.

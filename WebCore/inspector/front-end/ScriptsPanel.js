@@ -351,6 +351,14 @@ WebInspector.ScriptsPanel.prototype = {
             sourceFrame.removeBreakpoint(breakpoint);
     },
 
+    selectedCallFrameId: function()
+    {
+        var selectedCallFrame = this.sidebarPanes.callstack.selectedCallFrame;
+        if (!selectedCallFrame)
+            return null;
+        return selectedCallFrame.id;
+    },
+
     evaluateInSelectedCallFrame: function(code, updateInterface, callback)
     {
         var selectedCallFrame = this.sidebarPanes.callstack.selectedCallFrame;

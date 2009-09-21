@@ -303,7 +303,9 @@ WebInspector.ConsoleView.prototype = {
         }
 
         var includeInspectorCommandLineAPI = (!dotNotation && !bracketNotation);
-        InjectedScriptAccess.getCompletions(expressionString, includeInspectorCommandLineAPI, reportCompletions);
+        if (WebInspector.panels.scripts && WebInspector.panels.scripts.paused)
+            var callFrameId = WebInspector.panels.scripts.selectedCallFrameId();
+        InjectedScriptAccess.getCompletions(expressionString, includeInspectorCommandLineAPI, callFrameId, reportCompletions);
     },
 
     _reportCompletions: function(bestMatchOnly, completionsReadyCallback, dotNotation, bracketNotation, prefix, result, isException) {
