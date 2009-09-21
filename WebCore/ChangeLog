@@ -2,6 +2,19 @@
 
         Reviewed by Timothy Hatcher.
 
+        Web Inspector: Console object formatting is broken.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29607
+
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleMessage.prototype._format):
+        * inspector/front-end/ObjectProxy.js:
+        (WebInspector.ObjectProxy.wrapPrimitiveValue):
+
+2009-09-21  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
         Web Inspector: Crash When Logging an Element Before Opening Inspector
 
         https://bugs.webkit.org/show_bug.cgi?id=29514

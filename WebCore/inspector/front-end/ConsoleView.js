@@ -606,7 +606,7 @@ WebInspector.ConsoleMessage.prototype = {
                 this.formattedMessage = span;
                 break;
             case WebInspector.ConsoleMessage.MessageType.Object:
-                this.formattedMessage = this._format(["%O", args[0]]);
+                this.formattedMessage = this._format([WebInspector.ObjectProxy.wrapPrimitiveValue("%O"), args[0]]);
                 break;
             default:
                 this.formattedMessage = this._format(args);
@@ -668,8 +668,8 @@ WebInspector.ConsoleMessage.prototype = {
         }
 
         for (var i = 0; i < parameters.length; ++i) {
-            if (typeof parameters[i] === "string")
-                formattedResult.appendChild(WebInspector.linkifyStringAsFragment(parameters[i]));
+            if (Object.proxyType(parameters[i]) === "string")
+                formattedResult.appendChild(WebInspector.linkifyStringAsFragment(parameters[i].description));
             else
                 formattedResult.appendChild(formatForConsole(parameters[i]));
 

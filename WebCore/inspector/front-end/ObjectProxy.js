@@ -37,6 +37,14 @@ WebInspector.ObjectProxy = function(objectId, path, protoDepth, description, has
     this.hasChildren = hasChildren;
 }
 
+WebInspector.ObjectProxy.wrapPrimitiveValue = function(value)
+{
+    var proxy = new WebInspector.ObjectProxy();
+    proxy.type = typeof value;
+    proxy.description = value;
+    return proxy;
+}
+
 WebInspector.ObjectPropertyProxy = function(name, value)
 {
     this.name = name;
