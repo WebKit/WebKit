@@ -1,3 +1,15 @@
+2009-09-21  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        <rdar://problem/4137135> iFrame with PDF not being handled correctly on
+        usps.com
+        https://bugs.webkit.org/show_bug.cgi?id=4151
+
+        * WebKit.xcodeproj/project.pbxproj: Added WebPDFDocumentExtras.{h,mm}
+        and WebJSPDFDoc.{h,mm} and changed WebPDFRepresentation to
+        Objective-C++.
+
 2009-09-07  Steve Block  <steveblock@google.com>
 
         Reviewed by Adam Barth.

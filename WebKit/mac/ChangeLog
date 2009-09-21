@@ -1,3 +1,41 @@
+2009-09-21  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        <rdar://problem/4137135> iFrame with PDF not being handled correctly on
+        usps.com
+        https://bugs.webkit.org/show_bug.cgi?id=4151
+
+        * WebView/WebJSPDFDoc.h: Added.
+        * WebView/WebJSPDFDoc.mm: Added.
+        (jsPDFDocInitialize): Retains the WebDataSource.
+        (jsPDFDocFinalize): Releases the WebDataSource.
+        (jsPDFDocPrint): Call the WebUIDelegate method -webView:printFrameView:
+        with the PDF document's view.
+        (makeJSPDFDoc): Makes and returns a JavaScript Doc instance that wraps
+        the WebDataSource.
+        * WebView/WebPDFDocumentExtras.h: Added.
+        * WebView/WebPDFDocumentExtras.mm: Added.
+        (appendValuesInPDFNameSubtreeToArray): Traverses a subtree of a PDF name
+        tree and adds all values in the subtree to an array.
+        (allValuesInPDFNameTree): Returns an array with all of the values in a
+        PDF name tree.
+        (web_PDFDocumentAllScripts): This is the implementation of -[PDFDocument
+        _web_allScripts]. It gets all values in the document-level "JavaScript"
+        name tree, which are action dictionaries, and returns an array of the
+        actions' scripts.
+        (addWebPDFDocumentExtras): Adds the -_web_allScripts method to
+        PDFDocument.
+        * WebView/WebPDFRepresentation.h:
+        * WebView/WebPDFRepresentation.m: Removed.
+        * WebView/WebPDFRepresentation.mm: Copied from WebKit/mac/WebView/WebPDFRepresentation.m.
+        (+[WebPDFRepresentation initialize]): Added. Calls
+        addWebPDFDocumentExtras().
+        (-[WebPDFRepresentation finishedLoadingWithDataSource:]): Get the
+        scripts from the PDF document, create a JavaScript Doc object for the
+        document, and a JavaScript execution context, then execute every script
+        in the context, with the Doc object as "this".
+
 2009-09-17  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt.

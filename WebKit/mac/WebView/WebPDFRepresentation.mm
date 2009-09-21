@@ -26,15 +26,18 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebDataSourcePrivate.h>
-#import <WebKit/WebFrame.h>
-#import <WebKit/WebFrameView.h>
-#import <WebKit/WebNSObjectExtras.h>
-#import <WebKit/WebPDFRepresentation.h>
-#import <WebKit/WebPDFView.h>
-#import <wtf/Assertions.h>
+#import "WebPDFRepresentation.h"
 
-#import <PDFKit/PDFDocument.h>
+#import "WebDataSourcePrivate.h"
+#import "WebFrame.h"
+#import "WebJSPDFDoc.h"
+#import "WebNSObjectExtras.h"
+#import "WebPDFDocumentExtras.h"
+#import "WebPDFView.h"
+#import <JavaScriptCore/Assertions.h>
+#import <JavaScriptCore/JSContextRef.h>
+#import <JavaScriptCore/JSStringRef.h>
+#import <JavaScriptCore/JSStringRefCF.h>
 
 @implementation WebPDFRepresentation
 
@@ -64,6 +67,16 @@
         }
     }
     return PDFDocumentClass;
+}
+
++ (void)initialize
+{
+    if (self != [WebPDFRepresentation class])
+        return;
+
+    Class pdfDocumentClass = [self PDFDocumentClass];
+    if (pdfDocumentClass)
+        addWebPDFDocumentExtras(pdfDocumentClass);
 }
 
 - (void)setDataSource:(WebDataSource *)dataSource;
@@ -121,9 +134,26 @@
     WebPDFView *view = (WebPDFView *)[[[dataSource webFrame] frameView] documentView];
     PDFDocument *doc = [[[[self class] PDFDocumentClass] alloc] initWithData:data];
     [view setPDFDocument:doc];
-    [doc release];
-}
 
+    NSArray *scripts = [doc _web_allScripts];
+    [doc release];
+    doc = nil;
+
+    NSUInteger scriptCount = [scripts count];
+    if (!scriptCount)
+        return;
+
+    JSGlobalContextRef ctx = JSGlobalContextCreate(0);
+    JSObjectRef jsPDFDoc = makeJSPDFDoc(ctx, dataSource);
+
+    for (NSUInteger i = 0; i < scriptCount; ++i) {
+        JSStringRef script = JSStringCreateWithCFString((CFStringRef)[scripts objectAtIndex:i]);
+        JSEvaluateScript(ctx, script, jsPDFDoc, 0, 0, 0);
+        JSStringRelease(script);
+    }
+
+    JSGlobalContextRelease(ctx);
+}
 
 - (BOOL)canProvideDocumentSource
 {
