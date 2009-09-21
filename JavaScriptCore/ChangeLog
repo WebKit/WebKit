@@ -1,3 +1,17 @@
+2009-09-19  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam 'Cabin Boy' Weinig.
+
+        Fix stack alignment with ARM THUMB2 JIT.
+        https://bugs.webkit.org/show_bug.cgi?id=29526
+        
+        Stack is currently being decremented by 0x3c, bump this to 0x40 to make this a
+        multiple of 16 bytes.
+
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::JITThunks):
+        * jit/JITStubs.h:
+
 2009-09-20  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.
