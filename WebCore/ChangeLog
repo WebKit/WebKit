@@ -1,3 +1,25 @@
+2009-09-21  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Drop down selects fail to close when a value is selected
+        https://bugs.webkit.org/show_bug.cgi?id=29582
+
+        Implement PopupListBox::hidePopup, which was previously
+        declared but unimplemented.  Removes the declaration of
+        showPopup since that method is not implemented.
+
+        PopupListBox::hidePopup takes care of hiding the popup,
+        by invoking hidePopup on its parent PopupContainer, and
+        then informs the PopupMenuClient that popupDidHide.
+        This mimics the old behavior prior to r48370.
+
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupListBox::handleKeyEvent):
+        (WebCore::PopupListBox::abandon):
+        (WebCore::PopupListBox::acceptIndex):
+        (WebCore::PopupListBox::hidePopup):
+
 2009-09-21  Csaba Osztrogonac  <oszi@inf.u-szeged.hu>
 
         Rubber-stamped by Simon Hausmann.

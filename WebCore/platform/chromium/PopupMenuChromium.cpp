@@ -104,10 +104,7 @@ public:
 
     // PopupListBox methods
 
-    // Shows the popup
-    void showPopup();
-
-    // Hides the popup.  Do not call this directly: use client->hidePopup().
+    // Hides the popup.
     void hidePopup();
 
     // Updates our internal list to match the client.
@@ -635,7 +632,7 @@ bool PopupListBox::handleKeyEvent(const PlatformKeyboardEvent& event)
         return true;
     case VKEY_RETURN:
         if (m_selectedIndex == -1)  {
-            m_popupClient->popupDidHide();
+            hidePopup();
             // Don't eat the enter if nothing is selected.
             return false;
         }
@@ -871,7 +868,7 @@ void PopupListBox::abandon()
 
     m_selectedIndex = m_originalIndex;
 
-    m_popupClient->popupDidHide();
+    hidePopup();
 
     if (m_acceptedIndexOnAbandon >= 0) {
         m_popupClient->valueChanged(m_acceptedIndexOnAbandon);
@@ -904,7 +901,7 @@ void PopupListBox::acceptIndex(int index)
     if (index < 0) {
         if (m_popupClient) {
             // Enter pressed with no selection, just close the popup.
-            m_popupClient->popupDidHide();
+            hidePopup();
         }
         return;
     }
@@ -913,7 +910,7 @@ void PopupListBox::acceptIndex(int index)
         RefPtr<PopupListBox> keepAlive(this);
 
         // Hide ourselves first since valueChanged may have numerous side-effects.
-        m_popupClient->popupDidHide();
+        hidePopup();
 
         // Tell the <select> PopupMenuClient what index was selected.
         m_popupClient->valueChanged(index);
@@ -1057,6 +1054,13 @@ void PopupListBox::adjustSelectedIndex(int delta)
     // selection into view.
     selectIndex(targetIndex);
     scrollToRevealSelection();
+}
+
+void PopupListBox::hidePopup()
+{
+    if (parent())
+        static_cast<PopupContainer*>(parent())->hidePopup();
+    m_popupClient->popupDidHide();
 }
 
 void PopupListBox::updateFromElement()
