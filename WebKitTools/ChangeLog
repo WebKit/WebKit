@@ -1,3 +1,12 @@
+2009-09-21  Csaba Osztrogonac  <oszi@inf.u-szeged.hu>
+
+        Reviewed by Maciej Stachowiak.
+
+        --parse-only parameter wasn't passed to SunSpider/sunspider script.
+        https://bugs.webkit.org/show_bug.cgi?id=29611
+
+        * Scripts/run-sunspider: Missing parameter passing added.
+
 2009-09-20  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/29521> run-webkit-tests: use require instead eval to load DumpRenderTreeSupport module

@@ -43,6 +43,7 @@ my $runShark20 = 0;
 my $runSharkCache = 0;
 my $ubench = 0;
 my $v8 = 0;
+my $parseonly = 0;
 my $setBaseline = 0;
 my $showHelp = 0;
 my $testsPattern;
@@ -60,6 +61,7 @@ Usage: $programName [options] [options to pass to build system]
   --shark-cache     Like --shark, but performs a L2 cache-miss sample instead of time sample
   --ubench          Use microbenchmark suite instead of regular tests (to check for core execution regressions)
   --v8              Use the V8 benchmark suite.
+  --parse-only      Use the parse-only benchmark suite
 EOF
 
 GetOptions('root=s' => sub { my ($x, $value) = @_; $root = $value; setConfigurationProductDir(Cwd::abs_path($root)); },
@@ -70,6 +72,7 @@ GetOptions('root=s' => sub { my ($x, $value) = @_; $root = $value; setConfigurat
            'shark-cache' => \$runSharkCache,
            'ubench' => \$ubench,
            'v8' => \$v8,
+           'parse-only' => \$parseonly,
            'tests=s' => \$testsPattern,
            'help' => \$showHelp);
 
@@ -127,6 +130,7 @@ push @args, "--shark20" if $runShark20;
 push @args, "--shark-cache" if $runSharkCache;
 push @args, "--ubench" if $ubench;
 push @args, "--v8" if $v8;
+push @args, "--parse-only" if $parseonly;
 push @args, "--tests", $testsPattern if $testsPattern;
 
 exec "./sunspider", @args;
