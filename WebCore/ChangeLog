@@ -1,3 +1,11 @@
+2009-09-22  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        No review, rolling out r48639.
+        http://trac.webkit.org/changeset/48639
+
+        * bindings/v8/V8GCController.cpp:
+        (WebCore::ObjectGrouperVisitor::visitDOMWrapper):
+
 2009-09-22  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Dimitri Glazkov.
