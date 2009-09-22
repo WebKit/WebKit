@@ -59,7 +59,7 @@
  * \return \p true if the requested signal was received
  *         \p false on timeout
  */
-static bool waitForSignal(QObject* obj, const char* signal, int timeout = 0)
+static bool waitForSignal(QObject* obj, const char* signal, int timeout = 10000)
 {
     QEventLoop loop;
     QObject::connect(obj, signal, &loop, SLOT(quit()));

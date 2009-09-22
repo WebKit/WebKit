@@ -1,3 +1,14 @@
+2009-09-22  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Add default timeout while waiting for signals in QWebPage auto
+        tests.
+        https://bugs.webkit.org/show_bug.cgi?id=29637
+
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (waitForSignal):
+
 2009-09-22  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reivewed by Simon Hausmann.
