@@ -1,3 +1,14 @@
+2009-09-21  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        add a layout test for mishandling of an invalid sequence in multibyte
+        encodings
+        https://bugs.webkit.org/show_bug.cgi?id=27395
+
+        * fast/encoding/invalid-multi-byte-over-consumption-expected.txt: Added.
+        * fast/encoding/invalid-multi-byte-over-consumption.html: Added.
+
 2009-09-21  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Sam Weinig.
