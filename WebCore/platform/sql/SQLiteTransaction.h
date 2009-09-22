@@ -35,7 +35,7 @@ class SQLiteDatabase;
 class SQLiteTransaction : public Noncopyable
 {
 public:
-    SQLiteTransaction(SQLiteDatabase& db);
+    SQLiteTransaction(SQLiteDatabase& db, bool readOnly = false);
     ~SQLiteTransaction();
     
     void begin();
@@ -47,10 +47,9 @@ public:
 private:
     SQLiteDatabase& m_db;
     bool m_inProgress;
-
+    bool m_readOnly;
 };
 
 } // namespace WebCore
 
 #endif // SQLiteTransation_H
-

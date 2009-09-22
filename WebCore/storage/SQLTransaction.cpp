@@ -236,7 +236,7 @@ void SQLTransaction::openTransactionAndPreflight()
     m_database->m_sqliteDatabase.setMaximumSize(m_database->maximumSize());
 
     ASSERT(!m_sqliteTransaction);
-    m_sqliteTransaction.set(new SQLiteTransaction(m_database->m_sqliteDatabase));
+    m_sqliteTransaction.set(new SQLiteTransaction(m_database->m_sqliteDatabase, m_readOnly));
 
     m_database->m_databaseAuthorizer->disable();
     m_sqliteTransaction->begin();

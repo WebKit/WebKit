@@ -1,3 +1,34 @@
+2009-09-21  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Make all write transaction start with a BEGIN IMMEDIATE command
+        instead of BEGIN.
+
+        We cannot test this change in a layout test, because in order to
+        test it we need to spawn two database threads and execute
+        transaction steps on these two threads in a very specific order,
+        which seems impossible to do when they share the same main thread
+        (as they would in a layout test). The SQLite docs and the case
+        described in the bug though should be enough proof that we do have
+        a problem here and that this patch will fix it.
+
+        Relevant SQLite documentation:
+        http://www.sqlite.org/lang_transaction.html
+        http://www.sqlite.org/lockingv3.html#locking
+
+        https://bugs.webkit.org/show_bug.cgi?id=29218
+
+        * platform/sql/SQLiteTransaction.cpp:
+        (WebCore::SQLiteTransaction::SQLiteTransaction): Added a readOnly
+        parameter.
+        (WebCore::SQLiteTransaction::begin): Changed to BEGIN IMMEDIATE
+        for write transactions.
+        * platform/sql/SQLiteTransaction.h:
+        * storage/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::openTransactionAndPreflight): Passing
+        the read-only flag to the SQLiteTransaction instance.
+
 2009-09-21  Brady Eidson  <beidson@apple.com>
 
         Rubberstamped by Mark Rowe.
