@@ -1,0 +1,22 @@
+<script>
+
+function loaded() {
+    if (window.layoutTestController) {
+        var element = document.getElementById("fragmentlink");
+        eventSender.mouseMoveTo(element.offsetLeft + (element.offsetWidth / 2), element.offsetTop + (element.offsetHeight / 2));
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+    }
+}
+
+function hashChanged()
+{
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+</script>
+<body onhashchange="hashChanged();" onload="loaded();">
+<a id="fragmentlink" href="#testfragment">Click this link, and there should be a back-list entry for the page without the fragment ID.</a>
+</body>
+<html>

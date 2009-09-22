@@ -1,3 +1,16 @@
+2009-09-22  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Back list isn't properly updated for fragment changes after a redirect.
+        <rdar://problem/6142803> and https://bugs.webkit.org/show_bug.cgi?id=20355
+
+        * fast/loader/fragment-after-redirect-gets-back-entry-expected.txt: Added.
+        * fast/loader/fragment-after-redirect-gets-back-entry.html: Added.
+        * fast/loader/resources/click-fragment-link.html: Added.
+
+        * http/tests/navigation/relativeanchor-frames-expected.txt: Updated results (a progression!)
+
 2009-09-22  Victor Wang  <victorw@chromium.org>
 
         Reviewed by Dimitri Glazkov.
