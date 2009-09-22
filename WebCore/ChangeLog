@@ -1,3 +1,20 @@
+2009-09-22  Patrick Mueller  <Patrick_Mueller@us.ibm.com>
+
+        Reviewed by Timothy Hatcher.
+
+        WebInspector.log() function not protected if console not yet created
+        https://bugs.webkit.org/show_bug.cgi?id=29336
+        
+        No new tests.  Only affects Web Inspector developers adding logging
+        to their code during development.
+
+        * inspector/front-end/inspector.js:
+        (WebInspector.log.isLogAvailable):
+        (WebInspector.log.flushQueue):
+        (WebInspector.log.flushQueueIfAvailable):
+        (WebInspector.log.logMessage):
+        (WebInspector.log):
+
 2009-09-22  Yaar Schnitman  <yaar@chromium.org>
 
         Reviewed by David Levin.
