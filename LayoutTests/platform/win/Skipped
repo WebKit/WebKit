@@ -180,6 +180,7 @@ fast/events/drag-to-navigate.html
 fast/events/prevent-drag-to-navigate.html
 fast/forms/get-file-upload.html
 http/tests/security/clipboard/clipboard-file-access.html
+fast/events/drag-file-crash.html
 
 # Need to add functionality to DumpRenderTree to test IDN <rdar://problem/5301954>
 fast/encoding/idn-security.html

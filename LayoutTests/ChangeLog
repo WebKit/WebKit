@@ -1,3 +1,12 @@
+2009-09-21  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add fast/events/drag-file-crash.html to Windows Skipped List because
+        DRT doesn't support eventSender.beginDragWithFiles on Windows yet.
+
+        * platform/win/Skipped:
+
 2009-09-15  John Abd-El-Malek  <jam@chromium.org>
 
         Reviewed by Darin Fisher.
