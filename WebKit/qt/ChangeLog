@@ -1,3 +1,17 @@
+2009-09-22  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reivewed by Simon Hausmann.
+
+        Fix the Qt/Mac build after r48604 (Implement new QWebPageClient class)
+
+        There's no QWidget::x11Info() on Mac, and setPlatformPluginWidget()
+        takes a QWidget*, not a QWebPageClient*
+
+        * Api/qwebgraphicsitem.cpp:
+        (QWebGraphicsItemPrivate::screenNumber):
+        * Api/qwebview.cpp:
+        (QWebViewPrivate::screenNumber):
+
 2009-09-21  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Simon Hausmann.

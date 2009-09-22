@@ -82,8 +82,10 @@ void QWebViewPrivate::updateCursor(const QCursor& cursor)
 
 int QWebViewPrivate::screenNumber() const
 {
+#if defined(Q_WS_X11)
     if (view)
         return view->x11Info().screen();
+#endif
 
     return 0;
 }

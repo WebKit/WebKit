@@ -105,10 +105,12 @@ void QWebGraphicsItemPrivate::updateCursor(const QCursor& cursor)
 
 int QWebGraphicsItemPrivate::screenNumber() const
 {
+#if defined(Q_WS_X11)
     const QList<QGraphicsView*> views = q->scene()->views();
 
     if (!views.isEmpty())
         return views.at(0)->x11Info().screen();
+#endif
 
     return 0;
 }

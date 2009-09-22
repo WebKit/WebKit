@@ -75,6 +75,7 @@ using JSC::UString;
 #if PLATFORM(QT)
 #include <QWidget>
 #include <QKeyEvent>
+#include "QWebPageClient.h"
 QT_BEGIN_NAMESPACE
 #if QT_VERSION < 0x040500
 extern Q_GUI_EXPORT WindowPtr qt_mac_window_for(const QWidget* w);
@@ -171,7 +172,13 @@ bool PluginView::platformStart()
         return false;
     }
 
-    setPlatformPluginWidget(m_parentFrame->view()->hostWindow()->platformPageClient());
+#if PLATFORM(QT)
+    if (QWebPageClient* client = m_parentFrame->view()->hostWindow()->platformPageClient()) {
+        if (QWidget* window = QWidget::find(client->winId())) {
+            setPlatformPluginWidget(window);
+        }
+    }
+#endif
 
     show();
 

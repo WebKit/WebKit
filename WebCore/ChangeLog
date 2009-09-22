@@ -1,3 +1,15 @@
+2009-09-22  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reivewed by Simon Hausmann.
+
+        Fix the Qt/Mac build after r48604 (Implement new QWebPageClient class)
+
+        There's no QWidget::x11Info() on Mac, and setPlatformPluginWidget()
+        takes a QWidget*, not a QWebPageClient*
+
+        * plugins/mac/PluginViewMac.cpp:
+        (WebCore::PluginView::platformStart):
+
 2009-09-21  Adam Barth  <abarth@webkit.org>
 
         Attempted fix for the V8 build.
