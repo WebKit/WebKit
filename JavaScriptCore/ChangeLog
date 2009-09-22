@@ -1,3 +1,14 @@
+2009-09-22  Kent Hansen  <khansen@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
+        Disable variadic macros on MSVC7.
+
+        This was originally added in r26589 but not extended
+        when LOG_DISABLED/ASSERT_DISABLED was introduced.
+
+        * wtf/Assertions.h:
+
 2009-09-22  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Unreviewed build fix for Windows CE < 5
