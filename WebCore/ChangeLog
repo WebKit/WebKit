@@ -1,3 +1,22 @@
+2009-09-21  Jian Li  <jianli@chromium.org>
+
+        Reviewed by David Levin.
+
+        [V8] Run-time exception in onmessage handler is not forwarded to the
+        worker object.
+        https://bugs.webkit.org/show_bug.cgi?id=28980
+
+        The previous fix was partially reverted due to a reliability build break
+        in chromium. The break happens when an exception is thrown without
+        setting a message. We need to check for this scenario and handle it.
+
+        Tested by worker-close.html.
+
+        * bindings/v8/V8AbstractEventListener.cpp:
+        (WebCore::V8AbstractEventListener::invokeEventHandler):
+        * bindings/v8/V8Utilities.cpp:
+        (WebCore::reportException):
+
 2009-09-21  Greg Bolsinga  <bolsinga@apple.com>
 
         Reviewed by Simon Fraser & Sam Weinig.

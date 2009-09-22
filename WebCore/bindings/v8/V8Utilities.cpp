@@ -129,8 +129,21 @@ ScriptExecutionContext* getScriptExecutionContext(ScriptState* scriptState)
 
 void reportException(ScriptState* scriptState, v8::TryCatch& exceptionCatcher)
 {
+    String errorMessage;
+    int lineNumber = 0;
+    String sourceURL;
+
+    // There can be a situation that an exception is thrown without setting a message.
     v8::Local<v8::Message> message = exceptionCatcher.Message();
-    getScriptExecutionContext(scriptState)->reportException(toWebCoreString(message->Get()), message->GetLineNumber(), toWebCoreString(message->GetScriptResourceName()));
+    if (message.IsEmpty())
+        errorMessage = toWebCoreString(exceptionCatcher.Exception()->ToString());
+    else {
+        errorMessage = toWebCoreString(message->Get());
+        lineNumber = message->GetLineNumber();
+        sourceURL = toWebCoreString(message->GetScriptResourceName());
+    }
+
+    getScriptExecutionContext(scriptState)->reportException(errorMessage, lineNumber, sourceURL);
     exceptionCatcher.Reset();
 }
 
