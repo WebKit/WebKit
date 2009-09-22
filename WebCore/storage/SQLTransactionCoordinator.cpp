@@ -36,8 +36,8 @@
 #include "SQLTransaction.h"
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
-#include <wtf/UnusedParam.h>
 
 namespace WebCore {
 
@@ -48,58 +48,67 @@ static String getDatabaseIdentifier(SQLTransaction* transaction)
     return database->stringIdentifier();
 }
 
-void SQLTransactionCoordinator::acquireLock(SQLTransaction* transaction, bool readOnly)
+void SQLTransactionCoordinator::processPendingTransactions(CoordinationInfo& info)
 {
-    UNUSED_PARAM(readOnly);
+    if (info.activeWriteTransaction || info.pendingTransactions.isEmpty())
+        return;
 
+    RefPtr<SQLTransaction> firstPendingTransaction = info.pendingTransactions.first();
+    if (firstPendingTransaction->isReadOnly()) {
+        do {
+            firstPendingTransaction = info.pendingTransactions.first();
+            info.pendingTransactions.removeFirst();
+            info.activeReadTransactions.add(firstPendingTransaction);
+            firstPendingTransaction->lockAcquired();
+        } while (!info.pendingTransactions.isEmpty() && info.pendingTransactions.first()->isReadOnly());
+    } else if (info.activeReadTransactions.isEmpty()) {
+        info.pendingTransactions.removeFirst();
+        info.activeWriteTransaction = firstPendingTransaction;
+        firstPendingTransaction->lockAcquired();
+    }
+}
+
+void SQLTransactionCoordinator::acquireLock(SQLTransaction* transaction)
+{
     String dbIdentifier = getDatabaseIdentifier(transaction);
 
-    TransactionsHashMap::iterator it = m_pendingTransactions.find(dbIdentifier);
-    if (it == m_pendingTransactions.end()) {
+    CoordinationInfoMap::iterator coordinationInfoIterator = m_coordinationInfoMap.find(dbIdentifier);
+    if (coordinationInfoIterator == m_coordinationInfoMap.end()) {
         // No pending transactions for this DB
-        TransactionsQueue pendingTransactions;
-        pendingTransactions.append(transaction);
-        m_pendingTransactions.add(dbIdentifier, pendingTransactions);
-
-        // Start the transaction
-        transaction->lockAcquired();
-    } else {
-        // Another transaction is running on this DB; put this one in the queue
-        TransactionsQueue& pendingTransactions = it->second;
-        pendingTransactions.append(transaction);
+        coordinationInfoIterator = m_coordinationInfoMap.add(dbIdentifier, CoordinationInfo()).first;
     }
+
+    CoordinationInfo& info = coordinationInfoIterator->second;
+    info.pendingTransactions.append(transaction);
+    processPendingTransactions(info);
 }
 
 void SQLTransactionCoordinator::releaseLock(SQLTransaction* transaction)
 {
-    if (m_pendingTransactions.isEmpty())
+    if (m_coordinationInfoMap.isEmpty())
         return;
 
     String dbIdentifier = getDatabaseIdentifier(transaction);
 
-    TransactionsHashMap::iterator it = m_pendingTransactions.find(dbIdentifier);
-    ASSERT(it != m_pendingTransactions.end());
-    TransactionsQueue& pendingTransactions = it->second;
-    ASSERT(!pendingTransactions.isEmpty());
+    CoordinationInfoMap::iterator coordinationInfoIterator = m_coordinationInfoMap.find(dbIdentifier);
+    ASSERT(coordinationInfoIterator != m_coordinationInfoMap.end());
+    CoordinationInfo& info = coordinationInfoIterator->second;
 
-    // 'transaction' should always be the first transaction in this queue
-    ASSERT(pendingTransactions.first().get() == transaction);
-
-    // Remove 'transaction' from the queue of pending transactions
-    pendingTransactions.removeFirst();
-    if (pendingTransactions.isEmpty()) {
-        // No more pending transactions; delete dbIdentifier's queue
-        m_pendingTransactions.remove(it);
+    if (transaction->isReadOnly()) {
+        ASSERT(info.activeReadTransactions.contains(transaction));
+        info.activeReadTransactions.remove(transaction);
     } else {
-        // We have more pending transactions; start the next one
-        pendingTransactions.first()->lockAcquired();
+        ASSERT(info.activeWriteTransaction == transaction);
+        info.activeWriteTransaction = 0;
     }
+
+    processPendingTransactions(info);
 }
 
 void SQLTransactionCoordinator::shutdown()
 {
     // Clean up all pending transactions for all databases
-    m_pendingTransactions.clear();
+    m_coordinationInfoMap.clear();
 }
 
 }

@@ -1,3 +1,29 @@
+2009-09-22  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Changing the transaction coordinator to (re-)allow multiple read
+        transactions on the same database to run concurrently (without
+        risking a deadlock this time).
+
+        https://bugs.webkit.org/show_bug.cgi?id=29115
+
+        Tests: storage/read-and-write-transactions-dont-run-together.html
+               storage/read-transactions-running-concurrently.html
+
+        * storage/SQLTransaction.h:
+        (WebCore::SQLTransaction::isReadOnly): Returns the type of the
+        transaction.
+        * storage/SQLTransactionCoordinator.cpp:
+        (WebCore::SQLTransactionCoordinator::acquireLock): Changed to
+        allow multiple read transactions on the same DB to run
+        concurrently.
+        (WebCore::SQLTransactionCoordinator::releaseLock): Changed to
+        allow multiple read transactions on the same DB to run
+        concurrently.
+        (WebCore::SQLTransactionCoordinator::shutdown): Renamed the map.
+        * storage/SQLTransactionCoordinator.h:
+
 2009-09-22  Peter Kasting  <pkasting@google.com>
 
         Reviewed by David Levin.

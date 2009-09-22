@@ -207,7 +207,7 @@ void SQLTransaction::performPendingCallback()
 
 void SQLTransaction::acquireLock()
 {
-    m_database->transactionCoordinator()->acquireLock(this, m_readOnly);
+    m_database->transactionCoordinator()->acquireLock(this);
 }
 
 void SQLTransaction::lockAcquired()

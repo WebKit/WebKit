@@ -1,3 +1,23 @@
+2009-09-22  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        1. Adding two tests for the transaction coordinator.
+        2. Fixing an incorrect <head> tag in some tests.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29115
+
+        * storage/multiple-transactions-on-different-handles.html: Fixed a
+        <head> tag (should've been </head>).
+        * storage/open-database-while-transaction-in-progress.html: Fixed
+        a <head> tag (should've been </head>).
+        * storage/read-and-write-transactions-dont-run-together-expected.txt: Added.
+        * storage/read-and-write-transactions-dont-run-together.html: Added.
+        * storage/read-transactions-running-concurrently-expected.txt: Added.
+        * storage/read-transactions-running-concurrently.html: Added.
+        * storage/test-authorizer.html: Fixed a <head> tag (should've been
+        </head>).
+
 2009-09-22  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Rubber-stamped by Eric Seidel.

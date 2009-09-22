@@ -35,6 +35,7 @@
 #include "StringHash.h"
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -43,13 +44,21 @@ namespace WebCore {
 
     class SQLTransactionCoordinator {
     public:
-        void acquireLock(SQLTransaction*, bool readOnly);
+        void acquireLock(SQLTransaction*);
         void releaseLock(SQLTransaction*);
         void shutdown();
     private:
         typedef Deque<RefPtr<SQLTransaction> > TransactionsQueue;
-        typedef HashMap<String, TransactionsQueue> TransactionsHashMap;
-        TransactionsHashMap m_pendingTransactions;
+        struct CoordinationInfo {
+            TransactionsQueue pendingTransactions;
+            HashSet<RefPtr<SQLTransaction> > activeReadTransactions;
+            RefPtr<SQLTransaction> activeWriteTransaction;
+        };
+        // Maps database names to information about pending transactions
+        typedef HashMap<String, CoordinationInfo> CoordinationInfoMap;
+        CoordinationInfoMap m_coordinationInfoMap;
+
+        void processPendingTransactions(CoordinationInfo& info);
     };
 }
 
