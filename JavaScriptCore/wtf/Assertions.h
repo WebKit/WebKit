@@ -144,7 +144,7 @@ void WTFLogVerbose(const char* file, int line, const char* function, WTFLogChann
 #if ASSERT_DISABLED
 
 #define ASSERT(assertion) ((void)0)
-#if COMPILER(MSVC7)
+#if COMPILER(MSVC7) || COMPILER(WINSCW)
 #define ASSERT_WITH_MESSAGE(assertion) ((void)0)
 #else
 #define ASSERT_WITH_MESSAGE(assertion, ...) ((void)0)
@@ -160,7 +160,7 @@ void WTFLogVerbose(const char* file, int line, const char* function, WTFLogChann
         CRASH(); \
     } \
 while (0)
-#if COMPILER(MSVC7)
+#if COMPILER(MSVC7) || COMPILER(WINSCW)
 #define ASSERT_WITH_MESSAGE(assertion) ((void)0)
 #else
 #define ASSERT_WITH_MESSAGE(assertion, ...) do \
@@ -203,7 +203,7 @@ while (0)
 
 /* FATAL */
 
-#if FATAL_DISABLED && !COMPILER(MSVC7)
+#if FATAL_DISABLED && !COMPILER(MSVC7) && !COMPILER(WINSCW)
 #define FATAL(...) ((void)0)
 #elif COMPILER(MSVC7)
 #define FATAL() ((void)0)
@@ -216,9 +216,9 @@ while (0)
 
 /* LOG_ERROR */
 
-#if ERROR_DISABLED && !COMPILER(MSVC7)
+#if ERROR_DISABLED && !COMPILER(MSVC7) && !COMPILER(WINSCW)
 #define LOG_ERROR(...) ((void)0)
-#elif COMPILER(MSVC7)
+#elif COMPILER(MSVC7) || COMPILER(WINSCW)
 #define LOG_ERROR() ((void)0)
 #else
 #define LOG_ERROR(...) WTFReportError(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, __VA_ARGS__)
@@ -226,9 +226,9 @@ while (0)
 
 /* LOG */
 
-#if LOG_DISABLED && !COMPILER(MSVC7)
+#if LOG_DISABLED && !COMPILER(MSVC7) && !COMPILER(WINSCW)
 #define LOG(channel, ...) ((void)0)
-#elif COMPILER(MSVC7)
+#elif COMPILER(MSVC7) || COMPILER(WINSCW)
 #define LOG() ((void)0)
 #else
 #define LOG(channel, ...) WTFLog(&JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, channel), __VA_ARGS__)
@@ -238,9 +238,9 @@ while (0)
 
 /* LOG_VERBOSE */
 
-#if LOG_DISABLED && !COMPILER(MSVC7)
+#if LOG_DISABLED && !COMPILER(MSVC7) && !COMPILER(WINSCW)
 #define LOG_VERBOSE(channel, ...) ((void)0)
-#elif COMPILER(MSVC7)
+#elif COMPILER(MSVC7) || COMPILER(WINSCW)
 #define LOG_VERBOSE(channel) ((void)0)
 #else
 #define LOG_VERBOSE(channel, ...) WTFLogVerbose(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, &JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, channel), __VA_ARGS__)

@@ -1,3 +1,14 @@
+2009-09-22  Thiago Macieira  <thiago.macieira@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Fix compilation with WINSCW: no varargs macros
+
+        Disable variadic arguments for WINSCW just like we do
+        for MSVC7.
+
+        * wtf/Assertions.h:
+
 2009-09-22  Kent Hansen  <khansen@trolltech.com>
 
         Reviewed by Simon Hausmann.
