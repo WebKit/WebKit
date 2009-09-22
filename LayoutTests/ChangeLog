@@ -1,3 +1,861 @@
+2009-09-22  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Rubber-stamped by Eric Seidel.
+
+        js tests should move into jstests subdirectory instead of resources/
+        https://bugs.webkit.org/show_bug.cgi?id=25880
+
+        Migration for js directory.
+
+        * fast/js/Array-isArray.html:
+        * fast/js/JSON-parse-reviver.html:
+        * fast/js/JSON-stringify-replacer.html:
+        * fast/js/Object-create.html:
+        * fast/js/Object-defineProperties.html:
+        * fast/js/Object-defineProperty.html:
+        * fast/js/Object-keys.html:
+        * fast/js/activation-proto.html:
+        * fast/js/arguments-bad-index.html:
+        * fast/js/arguments.html:
+        * fast/js/array-enumerators-functions.html:
+        * fast/js/array-every.html:
+        * fast/js/array-filter.html:
+        * fast/js/array-float-delete.html:
+        * fast/js/array-functions-non-arrays.html:
+        * fast/js/array-holes.html:
+        * fast/js/array-index-immediate-types.html:
+        * fast/js/array-indexing.html:
+        * fast/js/array-iterate-backwards.html:
+        * fast/js/array-join-bug-11524.html:
+        * fast/js/array-lastIndexOf.html:
+        * fast/js/array-reduce.html:
+        * fast/js/array-reduceRight.html:
+        * fast/js/array-reset-large-index.html:
+        * fast/js/array-sort-reentrance.html:
+        * fast/js/array-splice.html:
+        * fast/js/array-tostring-and-join.html:
+        * fast/js/array-tostring-ignore-separator.html:
+        * fast/js/assign.html:
+        * fast/js/avl-crash.html:
+        * fast/js/cached-eval-gc.html:
+        * fast/js/caller-property.html:
+        * fast/js/char-at.html:
+        * fast/js/closure-inside-extra-arg-call.html:
+        * fast/js/code-serialize-paren.html:
+        * fast/js/codegen-loops-logical-nodes.html:
+        * fast/js/codegen-peephole-locals.html:
+        * fast/js/codegen-temporaries.html:
+        * fast/js/comparefn-sort-stability.html:
+        * fast/js/const-without-initializer.html:
+        * fast/js/constant-count.html:
+        * fast/js/constant-folding.html:
+        * fast/js/constructor-attributes.html:
+        * fast/js/constructor.html:
+        * fast/js/continue-break-multiple-labels.html:
+        * fast/js/convert-nan-to-bool.html:
+        * fast/js/cyclic-proto.html:
+        * fast/js/cyclic-prototypes.html:
+        * fast/js/cyclic-ref-toString.html:
+        * fast/js/date-DST-pre-1970.html:
+        * fast/js/date-DST-time-cusps.html:
+        * fast/js/date-big-constructor.html:
+        * fast/js/date-big-setdate.html:
+        * fast/js/date-big-setmonth.html:
+        * fast/js/date-constructor.html:
+        * fast/js/date-negative-setmonth.html:
+        * fast/js/date-parse-comments-test.html:
+        * fast/js/date-parse-test.html:
+        * fast/js/date-preserve-milliseconds.html:
+        * fast/js/date-proto-generic-invocation.html:
+        * fast/js/date-set-to-nan.html:
+        * fast/js/date-toisostring.html:
+        * fast/js/debugger.html:
+        * fast/js/declaration-in-block.html:
+        * fast/js/delete-getters-setters.html:
+        * fast/js/delete-syntax.html:
+        * fast/js/delete-then-put.html:
+        * fast/js/dictionary-no-cache.html:
+        * fast/js/do-while-semicolon.html:
+        * fast/js/dot-node-base-exception.html:
+        * fast/js/duplicate-param-crash.html:
+        * fast/js/duplicate-param-gc-crash.html:
+        * fast/js/equality.html:
+        * fast/js/eval-cache-crash.html:
+        * fast/js/eval-throw-return.html:
+        * fast/js/eval-var-decl.html:
+        * fast/js/exception-expression-offset.html:
+        * fast/js/exception-for-nonobject.html:
+        * fast/js/exception-linenums.html:
+        * fast/js/exception-try-finally-scope-error.html:
+        * fast/js/exception-with-handler-inside-eval-with-dynamic-scope.html:
+        * fast/js/excessive-comma-usage.html:
+        * fast/js/finally-codegen-failure.html:
+        * fast/js/for-in-avoid-duplicates.html:
+        * fast/js/for-in-cached.html:
+        * fast/js/for-in-exeception.html:
+        * fast/js/for-in-to-text.html:
+        * fast/js/for-in-var-scope.html:
+        * fast/js/function-apply-aliased.html:
+        * fast/js/function-apply.html:
+        * fast/js/function-call-aliased.html:
+        * fast/js/function-call-register-allocation.html:
+        * fast/js/function-constructor-newline-after-brace.html:
+        * fast/js/function-constructor-single-line-comment.html:
+        * fast/js/function-declaration-statement.html:
+        * fast/js/function-declaration.html:
+        * fast/js/function-declarations-in-switch-statement.html:
+        * fast/js/function-dot-arguments.html:
+        * fast/js/function-name.html:
+        * fast/js/function-names.html:
+        * fast/js/function-toString-object-literals.html:
+        * fast/js/function-toString-parentheses.html:
+        * fast/js/function-toString-semicolon-insertion.html:
+        * fast/js/getter-setter-gc.html:
+        * fast/js/global-constructors.html:
+        * fast/js/global-function-resolve.html:
+        * fast/js/gmail-re-re.html:
+        * fast/js/has-own-property.html:
+        * fast/js/ignored-result-null-comparison-crash.html:
+        * fast/js/ignored-result-ref-crash.html:
+        * fast/js/implicit-call-with-global-reentry.html:
+        * fast/js/instance-of-immediates.html:
+        * fast/js/instanceof-operator.html:
+        * fast/js/integer-extremes.html:
+        * fast/js/isPrototypeOf.html:
+        * fast/js/kde/Array.html:
+        * fast/js/kde/Boolean.html:
+        * fast/js/kde/Date-setYear.html:
+        * fast/js/kde/Error.html:
+        * fast/js/kde/GlobalObject.html:
+        * fast/js/kde/Number.html:
+        * fast/js/kde/Object.html:
+        * fast/js/kde/Prototype.html:
+        * fast/js/kde/RegExp.html:
+        * fast/js/kde/StringObject.html:
+        * fast/js/kde/arguments-scope.html:
+        * fast/js/kde/assignments.html:
+        * fast/js/kde/cast.html:
+        * fast/js/kde/comment-1.html:
+        * fast/js/kde/comment-2.html:
+        * fast/js/kde/completion.html:
+        * fast/js/kde/conditional.html:
+        * fast/js/kde/constructor_length.html:
+        * fast/js/kde/crash-1.html:
+        * fast/js/kde/crash-2.html:
+        * fast/js/kde/delete.html:
+        * fast/js/kde/empty.html:
+        * fast/js/kde/encode_decode_uri.html:
+        * fast/js/kde/eval.html:
+        * fast/js/kde/evil-n.html:
+        * fast/js/kde/exception_propagation.html:
+        * fast/js/kde/exceptions.html:
+        * fast/js/kde/func-decl.html:
+        * fast/js/kde/function.html:
+        * fast/js/kde/function_arguments.html:
+        * fast/js/kde/function_constructor.html:
+        * fast/js/kde/function_length.html:
+        * fast/js/kde/garbage-n.html:
+        * fast/js/kde/inbuilt_function_proto.html:
+        * fast/js/kde/inbuilt_function_tostring.html:
+        * fast/js/kde/iteration.html:
+        * fast/js/kde/j-comment-3.html:
+        * fast/js/kde/j-comment-4.html:
+        * fast/js/kde/literals.html:
+        * fast/js/kde/lval-exceptions.html:
+        * fast/js/kde/math.html:
+        * fast/js/kde/md5-1.html:
+        * fast/js/kde/md5-2.html:
+        * fast/js/kde/object_prototype.html:
+        * fast/js/kde/object_prototype_tostring.html:
+        * fast/js/kde/operators.html:
+        * fast/js/kde/parse.html:
+        * fast/js/kde/prototype_length.html:
+        * fast/js/kde/prototype_proto.html:
+        * fast/js/kde/resources/Array.js: Removed.
+        * fast/js/kde/resources/Boolean.js: Removed.
+        * fast/js/kde/resources/Date-setYear.js: Removed.
+        * fast/js/kde/resources/Error.js: Removed.
+        * fast/js/kde/resources/GlobalObject.js: Removed.
+        * fast/js/kde/resources/Number.js: Removed.
+        * fast/js/kde/resources/Object.js: Removed.
+        * fast/js/kde/resources/Prototype.js: Removed.
+        * fast/js/kde/resources/RegExp.js: Removed.
+        * fast/js/kde/resources/StringObject.js: Removed.
+        * fast/js/kde/resources/TEMPLATE-n.html: Removed.
+        * fast/js/kde/resources/TEMPLATE.html: Removed.
+        * fast/js/kde/resources/arguments-scope.js: Removed.
+        * fast/js/kde/resources/assignments.js: Removed.
+        * fast/js/kde/resources/cast.js: Removed.
+        * fast/js/kde/resources/comment-1.js: Removed.
+        * fast/js/kde/resources/comment-2.js: Removed.
+        * fast/js/kde/resources/completion.js: Removed.
+        * fast/js/kde/resources/conditional.js: Removed.
+        * fast/js/kde/resources/constructor_length.js: Removed.
+        * fast/js/kde/resources/crash-1.js: Removed.
+        * fast/js/kde/resources/crash-2.js: Removed.
+        * fast/js/kde/resources/delete.js: Removed.
+        * fast/js/kde/resources/empty.js: Removed.
+        * fast/js/kde/resources/encode_decode_uri.js: Removed.
+        * fast/js/kde/resources/eval.js: Removed.
+        * fast/js/kde/resources/evil-n.js: Removed.
+        * fast/js/kde/resources/exception_propagation.js: Removed.
+        * fast/js/kde/resources/exceptions.js: Removed.
+        * fast/js/kde/resources/func-decl.js: Removed.
+        * fast/js/kde/resources/function.js: Removed.
+        * fast/js/kde/resources/function_arguments.js: Removed.
+        * fast/js/kde/resources/function_constructor.js: Removed.
+        * fast/js/kde/resources/function_length.js: Removed.
+        * fast/js/kde/resources/garbage-n.js: Removed.
+        * fast/js/kde/resources/inbuilt_function_proto.js: Removed.
+        * fast/js/kde/resources/inbuilt_function_tostring.js: Removed.
+        * fast/js/kde/resources/iteration.js: Removed.
+        * fast/js/kde/resources/j-comment-3.js: Removed.
+        * fast/js/kde/resources/j-comment-4.js: Removed.
+        * fast/js/kde/resources/literals.js: Removed.
+        * fast/js/kde/resources/lval-exceptions.js: Removed.
+        * fast/js/kde/resources/math.js: Removed.
+        * fast/js/kde/resources/md5-1.js: Removed.
+        * fast/js/kde/resources/md5-2.js: Removed.
+        * fast/js/kde/resources/object_prototype.js: Removed.
+        * fast/js/kde/resources/object_prototype_tostring.js: Removed.
+        * fast/js/kde/resources/operators.js: Removed.
+        * fast/js/kde/resources/parse.js: Removed.
+        * fast/js/kde/resources/prototype_length.js: Removed.
+        * fast/js/kde/resources/prototype_proto.js: Removed.
+        * fast/js/kde/resources/scope.js: Removed.
+        * fast/js/kde/resources/statements.js: Removed.
+        * fast/js/kde/resources/string-1-n.js: Removed.
+        * fast/js/kde/resources/string-2-n.js: Removed.
+        * fast/js/kde/resources/var_decl_init.js: Removed.
+        * fast/js/kde/scope.html:
+        * fast/js/kde/script-tests: Added.
+        * fast/js/kde/script-tests/Array.js: Copied from LayoutTests/fast/js/kde/resources/Array.js.
+        * fast/js/kde/script-tests/Boolean.js: Copied from LayoutTests/fast/js/kde/resources/Boolean.js.
+        * fast/js/kde/script-tests/Date-setYear.js: Copied from LayoutTests/fast/js/kde/resources/Date-setYear.js.
+        * fast/js/kde/script-tests/Error.js: Copied from LayoutTests/fast/js/kde/resources/Error.js.
+        * fast/js/kde/script-tests/GlobalObject.js: Copied from LayoutTests/fast/js/kde/resources/GlobalObject.js.
+        * fast/js/kde/script-tests/Number.js: Copied from LayoutTests/fast/js/kde/resources/Number.js.
+        * fast/js/kde/script-tests/Object.js: Copied from LayoutTests/fast/js/kde/resources/Object.js.
+        * fast/js/kde/script-tests/Prototype.js: Copied from LayoutTests/fast/js/kde/resources/Prototype.js.
+        * fast/js/kde/script-tests/RegExp.js: Copied from LayoutTests/fast/js/kde/resources/RegExp.js.
+        * fast/js/kde/script-tests/StringObject.js: Copied from LayoutTests/fast/js/kde/resources/StringObject.js.
+        * fast/js/kde/script-tests/TEMPLATE-n.html: Copied from LayoutTests/fast/js/kde/resources/TEMPLATE-n.html.
+        * fast/js/kde/script-tests/TEMPLATE.html: Copied from LayoutTests/fast/js/kde/resources/TEMPLATE.html.
+        * fast/js/kde/script-tests/arguments-scope.js: Copied from LayoutTests/fast/js/kde/resources/arguments-scope.js.
+        * fast/js/kde/script-tests/assignments.js: Copied from LayoutTests/fast/js/kde/resources/assignments.js.
+        * fast/js/kde/script-tests/cast.js: Copied from LayoutTests/fast/js/kde/resources/cast.js.
+        * fast/js/kde/script-tests/comment-1.js: Copied from LayoutTests/fast/js/kde/resources/comment-1.js.
+        * fast/js/kde/script-tests/comment-2.js: Copied from LayoutTests/fast/js/kde/resources/comment-2.js.
+        * fast/js/kde/script-tests/completion.js: Copied from LayoutTests/fast/js/kde/resources/completion.js.
+        * fast/js/kde/script-tests/conditional.js: Copied from LayoutTests/fast/js/kde/resources/conditional.js.
+        * fast/js/kde/script-tests/constructor_length.js: Copied from LayoutTests/fast/js/kde/resources/constructor_length.js.
+        * fast/js/kde/script-tests/crash-1.js: Copied from LayoutTests/fast/js/kde/resources/crash-1.js.
+        * fast/js/kde/script-tests/crash-2.js: Copied from LayoutTests/fast/js/kde/resources/crash-2.js.
+        * fast/js/kde/script-tests/delete.js: Copied from LayoutTests/fast/js/kde/resources/delete.js.
+        * fast/js/kde/script-tests/empty.js: Copied from LayoutTests/fast/js/kde/resources/empty.js.
+        * fast/js/kde/script-tests/encode_decode_uri.js: Copied from LayoutTests/fast/js/kde/resources/encode_decode_uri.js.
+        * fast/js/kde/script-tests/eval.js: Copied from LayoutTests/fast/js/kde/resources/eval.js.
+        * fast/js/kde/script-tests/evil-n.js: Copied from LayoutTests/fast/js/kde/resources/evil-n.js.
+        * fast/js/kde/script-tests/exception_propagation.js: Copied from LayoutTests/fast/js/kde/resources/exception_propagation.js.
+        * fast/js/kde/script-tests/exceptions.js: Copied from LayoutTests/fast/js/kde/resources/exceptions.js.
+        * fast/js/kde/script-tests/func-decl.js: Copied from LayoutTests/fast/js/kde/resources/func-decl.js.
+        * fast/js/kde/script-tests/function.js: Copied from LayoutTests/fast/js/kde/resources/function.js.
+        * fast/js/kde/script-tests/function_arguments.js: Copied from LayoutTests/fast/js/kde/resources/function_arguments.js.
+        * fast/js/kde/script-tests/function_constructor.js: Copied from LayoutTests/fast/js/kde/resources/function_constructor.js.
+        * fast/js/kde/script-tests/function_length.js: Copied from LayoutTests/fast/js/kde/resources/function_length.js.
+        * fast/js/kde/script-tests/garbage-n.js: Copied from LayoutTests/fast/js/kde/resources/garbage-n.js.
+        * fast/js/kde/script-tests/inbuilt_function_proto.js: Copied from LayoutTests/fast/js/kde/resources/inbuilt_function_proto.js.
+        * fast/js/kde/script-tests/inbuilt_function_tostring.js: Copied from LayoutTests/fast/js/kde/resources/inbuilt_function_tostring.js.
+        * fast/js/kde/script-tests/iteration.js: Copied from LayoutTests/fast/js/kde/resources/iteration.js.
+        * fast/js/kde/script-tests/j-comment-3.js: Copied from LayoutTests/fast/js/kde/resources/j-comment-3.js.
+        * fast/js/kde/script-tests/j-comment-4.js: Copied from LayoutTests/fast/js/kde/resources/j-comment-4.js.
+        * fast/js/kde/script-tests/literals.js: Copied from LayoutTests/fast/js/kde/resources/literals.js.
+        * fast/js/kde/script-tests/lval-exceptions.js: Copied from LayoutTests/fast/js/kde/resources/lval-exceptions.js.
+        * fast/js/kde/script-tests/math.js: Copied from LayoutTests/fast/js/kde/resources/math.js.
+        * fast/js/kde/script-tests/md5-1.js: Copied from LayoutTests/fast/js/kde/resources/md5-1.js.
+        * fast/js/kde/script-tests/md5-2.js: Copied from LayoutTests/fast/js/kde/resources/md5-2.js.
+        * fast/js/kde/script-tests/object_prototype.js: Copied from LayoutTests/fast/js/kde/resources/object_prototype.js.
+        * fast/js/kde/script-tests/object_prototype_tostring.js: Copied from LayoutTests/fast/js/kde/resources/object_prototype_tostring.js.
+        * fast/js/kde/script-tests/operators.js: Copied from LayoutTests/fast/js/kde/resources/operators.js.
+        * fast/js/kde/script-tests/parse.js: Copied from LayoutTests/fast/js/kde/resources/parse.js.
+        * fast/js/kde/script-tests/prototype_length.js: Copied from LayoutTests/fast/js/kde/resources/prototype_length.js.
+        * fast/js/kde/script-tests/prototype_proto.js: Copied from LayoutTests/fast/js/kde/resources/prototype_proto.js.
+        * fast/js/kde/script-tests/scope.js: Copied from LayoutTests/fast/js/kde/resources/scope.js.
+        * fast/js/kde/script-tests/statements.js: Copied from LayoutTests/fast/js/kde/resources/statements.js.
+        * fast/js/kde/script-tests/string-1-n.js: Copied from LayoutTests/fast/js/kde/resources/string-1-n.js.
+        * fast/js/kde/script-tests/string-2-n.js: Copied from LayoutTests/fast/js/kde/resources/string-2-n.js.
+        * fast/js/kde/script-tests/var_decl_init.js: Copied from LayoutTests/fast/js/kde/resources/var_decl_init.js.
+        * fast/js/kde/statements.html:
+        * fast/js/kde/string-1-n.html:
+        * fast/js/kde/string-2-n.html:
+        * fast/js/kde/var_decl_init.html:
+        * fast/js/large-expressions.html:
+        * fast/js/lastModified.html:
+        * fast/js/logical-or-jless.html:
+        * fast/js/math-transforms.html:
+        * fast/js/math.html:
+        * fast/js/method-check.html:
+        * fast/js/mod-crash.html:
+        * fast/js/modify-non-references.html:
+        * fast/js/named-function-expression.html:
+        * fast/js/navigator-mimeTypes-length.html:
+        * fast/js/nested-object-gc.html:
+        * fast/js/non-object-proto.html:
+        * fast/js/null-char-in-string.html:
+        * fast/js/number-cell-reuse.html:
+        * fast/js/number-parsing-crash.html:
+        * fast/js/number-toExponential.html:
+        * fast/js/number-toString.html:
+        * fast/js/number-tofixed.html:
+        * fast/js/number-toprecision.html:
+        * fast/js/numeric-conversion.html:
+        * fast/js/object-extra-comma.html:
+        * fast/js/object-prototype-constructor.html:
+        * fast/js/object-prototype-toLocaleString.html:
+        * fast/js/order-of-operations.html:
+        * fast/js/parse-backslash-before-newline.html:
+        * fast/js/postfix-syntax.html:
+        * fast/js/prefix-syntax.html:
+        * fast/js/pretty-print.html:
+        * fast/js/primitive-method-this.html:
+        * fast/js/primitive-property-access-edge-cases.html:
+        * fast/js/property-getters-and-setters.html:
+        * fast/js/propertyIsEnumerable.html:
+        * fast/js/prototypes.html:
+        * fast/js/read-modify-eval.html:
+        * fast/js/recursion-limit-equal.html:
+        * fast/js/reentrant-call-unwind.html:
+        * fast/js/regexp-backreferences.html:
+        * fast/js/regexp-char-insensitive.html:
+        * fast/js/regexp-character-match-out-of-order.html:
+        * fast/js/regexp-compile-crash.html:
+        * fast/js/regexp-compile.html:
+        * fast/js/regexp-divequal.html:
+        * fast/js/regexp-extended-characters-crash.html:
+        * fast/js/regexp-extended-characters-match.html:
+        * fast/js/regexp-extended-characters-more.html:
+        * fast/js/regexp-find-first-asserted.html:
+        * fast/js/regexp-lastindex.html:
+        * fast/js/regexp-many-brackets.html:
+        * fast/js/regexp-negative-special-characters.html:
+        * fast/js/regexp-no-extensions.html:
+        * fast/js/regexp-non-bmp.html:
+        * fast/js/regexp-non-capturing-groups.html:
+        * fast/js/regexp-non-character.html:
+        * fast/js/regexp-overflow-too-big.html:
+        * fast/js/regexp-overflow.html:
+        * fast/js/regexp-range-bound-ffff.html:
+        * fast/js/regexp-range-out-of-order.html:
+        * fast/js/regexp-ranges-and-escaped-hyphens.html:
+        * fast/js/regexp-stack-overflow.html:
+        * fast/js/regexp-unicode-handling.html:
+        * fast/js/regexp-unicode-overflow.html:
+        * fast/js/registerCachingAcrossBranchTargets.html:
+        * fast/js/rehash-assign.html:
+        * fast/js/removing-Cf-characters.html:
+        * fast/js/reparsing-semicolon-insertion.html:
+        * fast/js/repeat-cached-vm-reentry.html:
+        * fast/js/reserved-words.html:
+        * fast/js/resize-array-assign.html:
+        * fast/js/resources/Array-isArray.js: Removed.
+        * fast/js/resources/JSON-parse-reviver.js: Removed.
+        * fast/js/resources/JSON-stringify-replacer.js: Removed.
+        * fast/js/resources/Object-create.js: Removed.
+        * fast/js/resources/Object-defineProperties.js: Removed.
+        * fast/js/resources/Object-defineProperty.js: Removed.
+        * fast/js/resources/Object-keys.js: Removed.
+        * fast/js/resources/TEMPLATE.html: Removed.
+        * fast/js/resources/activation-proto.js: Removed.
+        * fast/js/resources/arguments-bad-index.js: Removed.
+        * fast/js/resources/arguments.js: Removed.
+        * fast/js/resources/array-enumerators-functions.js: Removed.
+        * fast/js/resources/array-every.js: Removed.
+        * fast/js/resources/array-filter.js: Removed.
+        * fast/js/resources/array-float-delete.js: Removed.
+        * fast/js/resources/array-functions-non-arrays.js: Removed.
+        * fast/js/resources/array-holes.js: Removed.
+        * fast/js/resources/array-index-immediate-types.js: Removed.
+        * fast/js/resources/array-indexing.js: Removed.
+        * fast/js/resources/array-iterate-backwards.js: Removed.
+        * fast/js/resources/array-join-bug-11524.js: Removed.
+        * fast/js/resources/array-lastIndexOf.js: Removed.
+        * fast/js/resources/array-reduce.js: Removed.
+        * fast/js/resources/array-reduceRight.js: Removed.
+        * fast/js/resources/array-reset-large-index.js: Removed.
+        * fast/js/resources/array-sort-reentrance.js: Removed.
+        * fast/js/resources/array-splice.js: Removed.
+        * fast/js/resources/array-tostring-and-join.js: Removed.
+        * fast/js/resources/array-tostring-ignore-separator.js: Removed.
+        * fast/js/resources/assign.js: Removed.
+        * fast/js/resources/avl-crash.js: Removed.
+        * fast/js/resources/cached-eval-gc.js: Removed.
+        * fast/js/resources/caller-property.js: Removed.
+        * fast/js/resources/char-at.js: Removed.
+        * fast/js/resources/closure-inside-extra-arg-call.js: Removed.
+        * fast/js/resources/code-serialize-paren.js: Removed.
+        * fast/js/resources/codegen-loops-logical-nodes.js: Removed.
+        * fast/js/resources/codegen-peephole-locals.js: Removed.
+        * fast/js/resources/codegen-temporaries.js: Removed.
+        * fast/js/resources/comparefn-sort-stability.js: Removed.
+        * fast/js/resources/const-without-initializer.js: Removed.
+        * fast/js/resources/constant-count.js: Removed.
+        * fast/js/resources/constant-folding.js: Removed.
+        * fast/js/resources/constructor-attributes.js: Removed.
+        * fast/js/resources/constructor.js: Removed.
+        * fast/js/resources/continue-break-multiple-labels.js: Removed.
+        * fast/js/resources/convert-nan-to-bool.js: Removed.
+        * fast/js/resources/cyclic-proto.js: Removed.
+        * fast/js/resources/cyclic-prototypes.js: Removed.
+        * fast/js/resources/cyclic-ref-toString.js: Removed.
+        * fast/js/resources/date-DST-pre-1970.js: Removed.
+        * fast/js/resources/date-DST-time-cusps.js: Removed.
+        * fast/js/resources/date-big-constructor.js: Removed.
+        * fast/js/resources/date-big-setdate.js: Removed.
+        * fast/js/resources/date-big-setmonth.js: Removed.
+        * fast/js/resources/date-constructor.js: Removed.
+        * fast/js/resources/date-negative-setmonth.js: Removed.
+        * fast/js/resources/date-parse-comments-test.js: Removed.
+        * fast/js/resources/date-parse-test.js: Removed.
+        * fast/js/resources/date-preserve-milliseconds.js: Removed.
+        * fast/js/resources/date-proto-generic-invocation.js: Removed.
+        * fast/js/resources/date-set-to-nan.js: Removed.
+        * fast/js/resources/date-toisostring.js: Removed.
+        * fast/js/resources/debugger.js: Removed.
+        * fast/js/resources/declaration-in-block.js: Removed.
+        * fast/js/resources/delete-getters-setters.js: Removed.
+        * fast/js/resources/delete-syntax.js: Removed.
+        * fast/js/resources/delete-then-put.js: Removed.
+        * fast/js/resources/dictionary-no-cache.js: Removed.
+        * fast/js/resources/do-while-semicolon.js: Removed.
+        * fast/js/resources/dot-node-base-exception.js: Removed.
+        * fast/js/resources/duplicate-param-crash.js: Removed.
+        * fast/js/resources/duplicate-param-gc-crash.js: Removed.
+        * fast/js/resources/equality.js: Removed.
+        * fast/js/resources/eval-cache-crash.js: Removed.
+        * fast/js/resources/eval-throw-return.js: Removed.
+        * fast/js/resources/eval-var-decl.js: Removed.
+        * fast/js/resources/exception-expression-offset.js: Removed.
+        * fast/js/resources/exception-for-nonobject.js: Removed.
+        * fast/js/resources/exception-linenums.js: Removed.
+        * fast/js/resources/exception-try-finally-scope-error.js: Removed.
+        * fast/js/resources/exception-with-handler-inside-eval-with-dynamic-scope.js: Removed.
+        * fast/js/resources/excessive-comma-usage.js: Removed.
+        * fast/js/resources/finally-codegen-failure.js: Removed.
+        * fast/js/resources/for-in-avoid-duplicates.js: Removed.
+        * fast/js/resources/for-in-cached.js: Removed.
+        * fast/js/resources/for-in-exeception.js: Removed.
+        * fast/js/resources/for-in-to-text.js: Removed.
+        * fast/js/resources/for-in-var-scope.js: Removed.
+        * fast/js/resources/function-apply-aliased.js: Removed.
+        * fast/js/resources/function-apply.js: Removed.
+        * fast/js/resources/function-call-aliased.js: Removed.
+        * fast/js/resources/function-call-register-allocation.js: Removed.
+        * fast/js/resources/function-constructor-newline-after-brace.js: Removed.
+        * fast/js/resources/function-constructor-single-line-comment.js: Removed.
+        * fast/js/resources/function-declaration-statement.js: Removed.
+        * fast/js/resources/function-declaration.js: Removed.
+        * fast/js/resources/function-declarations-in-switch-statement.js: Removed.
+        * fast/js/resources/function-dot-arguments.js: Removed.
+        * fast/js/resources/function-name.js: Removed.
+        * fast/js/resources/function-names.js: Removed.
+        * fast/js/resources/function-toString-object-literals.js: Removed.
+        * fast/js/resources/function-toString-parentheses.js: Removed.
+        * fast/js/resources/function-toString-semicolon-insertion.js: Removed.
+        * fast/js/resources/getter-setter-gc.js: Removed.
+        * fast/js/resources/global-constructors.js: Removed.
+        * fast/js/resources/global-function-resolve.js: Removed.
+        * fast/js/resources/gmail-re-re.js: Removed.
+        * fast/js/resources/has-own-property.js: Removed.
+        * fast/js/resources/ignored-result-null-comparison-crash.js: Removed.
+        * fast/js/resources/ignored-result-ref-crash.js: Removed.
+        * fast/js/resources/implicit-call-with-global-reentry.js: Removed.
+        * fast/js/resources/instance-of-immediates.js: Removed.
+        * fast/js/resources/instanceof-operator.js: Removed.
+        * fast/js/resources/integer-extremes.js: Removed.
+        * fast/js/resources/isPrototypeOf.js: Removed.
+        * fast/js/resources/large-expressions.js: Removed.
+        * fast/js/resources/lastModified.js: Removed.
+        * fast/js/resources/logical-or-jless.js: Removed.
+        * fast/js/resources/math-transforms.js: Removed.
+        * fast/js/resources/math.js: Removed.
+        * fast/js/resources/method-check.js: Removed.
+        * fast/js/resources/mod-crash.js: Removed.
+        * fast/js/resources/modify-non-references.js: Removed.
+        * fast/js/resources/named-function-expression.js: Removed.
+        * fast/js/resources/navigator-mimeTypes-length.js: Removed.
+        * fast/js/resources/nested-object-gc.js: Removed.
+        * fast/js/resources/non-object-proto.js: Removed.
+        * fast/js/resources/null-char-in-string.js: Removed.
+        * fast/js/resources/number-cell-reuse.js: Removed.
+        * fast/js/resources/number-parsing-crash.js: Removed.
+        * fast/js/resources/number-toExponential.js: Removed.
+        * fast/js/resources/number-toString.js: Removed.
+        * fast/js/resources/number-tofixed.js: Removed.
+        * fast/js/resources/number-toprecision.js: Removed.
+        * fast/js/resources/numeric-conversion.js: Removed.
+        * fast/js/resources/object-extra-comma.js: Removed.
+        * fast/js/resources/object-prototype-constructor.js: Removed.
+        * fast/js/resources/object-prototype-toLocaleString.js: Removed.
+        * fast/js/resources/order-of-operations.js: Removed.
+        * fast/js/resources/parse-backslash-before-newline.js: Removed.
+        * fast/js/resources/postfix-syntax.js: Removed.
+        * fast/js/resources/prefix-syntax.js: Removed.
+        * fast/js/resources/pretty-print.js: Removed.
+        * fast/js/resources/primitive-method-this.js: Removed.
+        * fast/js/resources/primitive-property-access-edge-cases.js: Removed.
+        * fast/js/resources/property-getters-and-setters.js: Removed.
+        * fast/js/resources/propertyIsEnumerable.js: Removed.
+        * fast/js/resources/prototypes.js: Removed.
+        * fast/js/resources/read-modify-eval.js: Removed.
+        * fast/js/resources/recursion-limit-equal.js: Removed.
+        * fast/js/resources/reentrant-call-unwind.js: Removed.
+        * fast/js/resources/regexp-backreferences.js: Removed.
+        * fast/js/resources/regexp-char-insensitive.js: Removed.
+        * fast/js/resources/regexp-character-match-out-of-order.js: Removed.
+        * fast/js/resources/regexp-compile-crash.js: Removed.
+        * fast/js/resources/regexp-compile.js: Removed.
+        * fast/js/resources/regexp-divequal.js: Removed.
+        * fast/js/resources/regexp-extended-characters-crash.js: Removed.
+        * fast/js/resources/regexp-extended-characters-match.js: Removed.
+        * fast/js/resources/regexp-extended-characters-more.js: Removed.
+        * fast/js/resources/regexp-find-first-asserted.js: Removed.
+        * fast/js/resources/regexp-lastindex.js: Removed.
+        * fast/js/resources/regexp-many-brackets.js: Removed.
+        * fast/js/resources/regexp-negative-special-characters.js: Removed.
+        * fast/js/resources/regexp-no-extensions.js: Removed.
+        * fast/js/resources/regexp-non-bmp.js: Removed.
+        * fast/js/resources/regexp-non-capturing-groups.js: Removed.
+        * fast/js/resources/regexp-non-character.js: Removed.
+        * fast/js/resources/regexp-overflow-too-big.js: Removed.
+        * fast/js/resources/regexp-overflow.js: Removed.
+        * fast/js/resources/regexp-range-bound-ffff.js: Removed.
+        * fast/js/resources/regexp-range-out-of-order.js: Removed.
+        * fast/js/resources/regexp-ranges-and-escaped-hyphens.js: Removed.
+        * fast/js/resources/regexp-stack-overflow.js: Removed.
+        * fast/js/resources/regexp-unicode-handling.js: Removed.
+        * fast/js/resources/regexp-unicode-overflow.js: Removed.
+        * fast/js/resources/registerCachingAcrossBranchTargets.js: Removed.
+        * fast/js/resources/rehash-assign.js: Removed.
+        * fast/js/resources/removing-Cf-characters.js: Removed.
+        * fast/js/resources/reparsing-semicolon-insertion.js: Removed.
+        * fast/js/resources/repeat-cached-vm-reentry.js: Removed.
+        * fast/js/resources/reserved-words.js: Removed.
+        * fast/js/resources/resize-array-assign.js: Removed.
+        * fast/js/resources/select-options-add.js: Removed.
+        * fast/js/resources/slash-lineterminator-parse.js: Removed.
+        * fast/js/resources/sort-large-array.js: Removed.
+        * fast/js/resources/sort-no-jit-code-crash.js: Removed.
+        * fast/js/resources/sort-non-numbers.js: Removed.
+        * fast/js/resources/sort-randomly.js: Removed.
+        * fast/js/resources/sort-stability.js: Removed.
+        * fast/js/resources/sparse-array.js: Removed.
+        * fast/js/resources/stack-unwinding.js: Removed.
+        * fast/js/resources/statement-list-register-crash.js: Removed.
+        * fast/js/resources/static-scope-object.js: Removed.
+        * fast/js/resources/string-capitalization.js: Removed.
+        * fast/js/resources/string-from-char-code.js: Removed.
+        * fast/js/resources/string-index-overflow.js: Removed.
+        * fast/js/resources/string-property-iteration.js: Removed.
+        * fast/js/resources/string-replace-2.js: Removed.
+        * fast/js/resources/string-replace-3.js: Removed.
+        * fast/js/resources/string-slice-abnormal-values.js: Removed.
+        * fast/js/resources/string-sort.js: Removed.
+        * fast/js/resources/string-split-ignore-case.js: Removed.
+        * fast/js/resources/string-substr.js: Removed.
+        * fast/js/resources/string_replace.js: Removed.
+        * fast/js/resources/switch-behaviour.js: Removed.
+        * fast/js/resources/this-non-object-proto.js: Removed.
+        * fast/js/resources/toString-elision-trailing-comma.js: Removed.
+        * fast/js/resources/toString-exception.js: Removed.
+        * fast/js/resources/toString-for-var-decl.js: Removed.
+        * fast/js/resources/toString-number-dot-expr.js: Removed.
+        * fast/js/resources/toString-overrides.js: Removed.
+        * fast/js/resources/toString-prefix-postfix-preserve-parens.js: Removed.
+        * fast/js/resources/toString-stack-overflow.js: Removed.
+        * fast/js/resources/tostring-exception-in-property-access.js: Removed.
+        * fast/js/resources/transition-cache-dictionary-crash.js: Removed.
+        * fast/js/resources/typeof-codegen-crash.js: Removed.
+        * fast/js/resources/typeof-constant-string.js: Removed.
+        * fast/js/resources/typeof-syntax.js: Removed.
+        * fast/js/resources/unexpected-constant-crash.js: Removed.
+        * fast/js/resources/unmatching-argument-count.js: Removed.
+        * fast/js/resources/var-shadows-arg-crash.js: Removed.
+        * fast/js/resources/var-shadows-arg-gc-crash.js: Removed.
+        * fast/js/resources/vardecl-blocks-init.js: Removed.
+        * fast/js/resources/vardecl-preserve-arguments.js: Removed.
+        * fast/js/resources/with-scope-gc.js: Removed.
+        * fast/js/script-tests: Added.
+        * fast/js/script-tests/Array-isArray.js: Copied from LayoutTests/fast/js/resources/Array-isArray.js.
+        * fast/js/script-tests/JSON-parse-reviver.js: Copied from LayoutTests/fast/js/resources/JSON-parse-reviver.js.
+        * fast/js/script-tests/JSON-stringify-replacer.js: Copied from LayoutTests/fast/js/resources/JSON-stringify-replacer.js.
+        * fast/js/script-tests/Object-create.js: Copied from LayoutTests/fast/js/resources/Object-create.js.
+        * fast/js/script-tests/Object-defineProperties.js: Copied from LayoutTests/fast/js/resources/Object-defineProperties.js.
+        * fast/js/script-tests/Object-defineProperty.js: Copied from LayoutTests/fast/js/resources/Object-defineProperty.js.
+        * fast/js/script-tests/Object-keys.js: Copied from LayoutTests/fast/js/resources/Object-keys.js.
+        * fast/js/script-tests/TEMPLATE.html: Copied from LayoutTests/fast/js/resources/TEMPLATE.html.
+        * fast/js/script-tests/activation-proto.js: Copied from LayoutTests/fast/js/resources/activation-proto.js.
+        * fast/js/script-tests/arguments-bad-index.js: Copied from LayoutTests/fast/js/resources/arguments-bad-index.js.
+        * fast/js/script-tests/arguments.js: Copied from LayoutTests/fast/js/resources/arguments.js.
+        * fast/js/script-tests/array-enumerators-functions.js: Copied from LayoutTests/fast/js/resources/array-enumerators-functions.js.
+        * fast/js/script-tests/array-every.js: Copied from LayoutTests/fast/js/resources/array-every.js.
+        * fast/js/script-tests/array-filter.js: Copied from LayoutTests/fast/js/resources/array-filter.js.
+        * fast/js/script-tests/array-float-delete.js: Copied from LayoutTests/fast/js/resources/array-float-delete.js.
+        * fast/js/script-tests/array-functions-non-arrays.js: Copied from LayoutTests/fast/js/resources/array-functions-non-arrays.js.
+        * fast/js/script-tests/array-holes.js: Copied from LayoutTests/fast/js/resources/array-holes.js.
+        * fast/js/script-tests/array-index-immediate-types.js: Copied from LayoutTests/fast/js/resources/array-index-immediate-types.js.
+        * fast/js/script-tests/array-indexing.js: Copied from LayoutTests/fast/js/resources/array-indexing.js.
+        * fast/js/script-tests/array-iterate-backwards.js: Copied from LayoutTests/fast/js/resources/array-iterate-backwards.js.
+        * fast/js/script-tests/array-join-bug-11524.js: Copied from LayoutTests/fast/js/resources/array-join-bug-11524.js.
+        * fast/js/script-tests/array-lastIndexOf.js: Copied from LayoutTests/fast/js/resources/array-lastIndexOf.js.
+        * fast/js/script-tests/array-reduce.js: Copied from LayoutTests/fast/js/resources/array-reduce.js.
+        * fast/js/script-tests/array-reduceRight.js: Copied from LayoutTests/fast/js/resources/array-reduceRight.js.
+        * fast/js/script-tests/array-reset-large-index.js: Copied from LayoutTests/fast/js/resources/array-reset-large-index.js.
+        * fast/js/script-tests/array-sort-reentrance.js: Copied from LayoutTests/fast/js/resources/array-sort-reentrance.js.
+        * fast/js/script-tests/array-splice.js: Copied from LayoutTests/fast/js/resources/array-splice.js.
+        * fast/js/script-tests/array-tostring-and-join.js: Copied from LayoutTests/fast/js/resources/array-tostring-and-join.js.
+        * fast/js/script-tests/array-tostring-ignore-separator.js: Copied from LayoutTests/fast/js/resources/array-tostring-ignore-separator.js.
+        * fast/js/script-tests/assign.js: Copied from LayoutTests/fast/js/resources/assign.js.
+        * fast/js/script-tests/avl-crash.js: Copied from LayoutTests/fast/js/resources/avl-crash.js.
+        * fast/js/script-tests/cached-eval-gc.js: Copied from LayoutTests/fast/js/resources/cached-eval-gc.js.
+        * fast/js/script-tests/caller-property.js: Copied from LayoutTests/fast/js/resources/caller-property.js.
+        * fast/js/script-tests/char-at.js: Copied from LayoutTests/fast/js/resources/char-at.js.
+        * fast/js/script-tests/closure-inside-extra-arg-call.js: Copied from LayoutTests/fast/js/resources/closure-inside-extra-arg-call.js.
+        * fast/js/script-tests/code-serialize-paren.js: Copied from LayoutTests/fast/js/resources/code-serialize-paren.js.
+        * fast/js/script-tests/codegen-loops-logical-nodes.js: Copied from LayoutTests/fast/js/resources/codegen-loops-logical-nodes.js.
+        * fast/js/script-tests/codegen-peephole-locals.js: Copied from LayoutTests/fast/js/resources/codegen-peephole-locals.js.
+        * fast/js/script-tests/codegen-temporaries.js: Copied from LayoutTests/fast/js/resources/codegen-temporaries.js.
+        * fast/js/script-tests/comparefn-sort-stability.js: Copied from LayoutTests/fast/js/resources/comparefn-sort-stability.js.
+        * fast/js/script-tests/const-without-initializer.js: Copied from LayoutTests/fast/js/resources/const-without-initializer.js.
+        * fast/js/script-tests/constant-count.js: Copied from LayoutTests/fast/js/resources/constant-count.js.
+        * fast/js/script-tests/constant-folding.js: Copied from LayoutTests/fast/js/resources/constant-folding.js.
+        * fast/js/script-tests/constructor-attributes.js: Copied from LayoutTests/fast/js/resources/constructor-attributes.js.
+        * fast/js/script-tests/constructor.js: Copied from LayoutTests/fast/js/resources/constructor.js.
+        * fast/js/script-tests/continue-break-multiple-labels.js: Copied from LayoutTests/fast/js/resources/continue-break-multiple-labels.js.
+        * fast/js/script-tests/convert-nan-to-bool.js: Copied from LayoutTests/fast/js/resources/convert-nan-to-bool.js.
+        * fast/js/script-tests/cyclic-proto.js: Copied from LayoutTests/fast/js/resources/cyclic-proto.js.
+        * fast/js/script-tests/cyclic-prototypes.js: Copied from LayoutTests/fast/js/resources/cyclic-prototypes.js.
+        * fast/js/script-tests/cyclic-ref-toString.js: Copied from LayoutTests/fast/js/resources/cyclic-ref-toString.js.
+        * fast/js/script-tests/date-DST-pre-1970.js: Copied from LayoutTests/fast/js/resources/date-DST-pre-1970.js.
+        * fast/js/script-tests/date-DST-time-cusps.js: Copied from LayoutTests/fast/js/resources/date-DST-time-cusps.js.
+        * fast/js/script-tests/date-big-constructor.js: Copied from LayoutTests/fast/js/resources/date-big-constructor.js.
+        * fast/js/script-tests/date-big-setdate.js: Copied from LayoutTests/fast/js/resources/date-big-setdate.js.
+        * fast/js/script-tests/date-big-setmonth.js: Copied from LayoutTests/fast/js/resources/date-big-setmonth.js.
+        * fast/js/script-tests/date-constructor.js: Copied from LayoutTests/fast/js/resources/date-constructor.js.
+        * fast/js/script-tests/date-negative-setmonth.js: Copied from LayoutTests/fast/js/resources/date-negative-setmonth.js.
+        * fast/js/script-tests/date-parse-comments-test.js: Copied from LayoutTests/fast/js/resources/date-parse-comments-test.js.
+        * fast/js/script-tests/date-parse-test.js: Copied from LayoutTests/fast/js/resources/date-parse-test.js.
+        * fast/js/script-tests/date-preserve-milliseconds.js: Copied from LayoutTests/fast/js/resources/date-preserve-milliseconds.js.
+        * fast/js/script-tests/date-proto-generic-invocation.js: Copied from LayoutTests/fast/js/resources/date-proto-generic-invocation.js.
+        * fast/js/script-tests/date-set-to-nan.js: Copied from LayoutTests/fast/js/resources/date-set-to-nan.js.
+        * fast/js/script-tests/date-toisostring.js: Copied from LayoutTests/fast/js/resources/date-toisostring.js.
+        * fast/js/script-tests/debugger.js: Copied from LayoutTests/fast/js/resources/debugger.js.
+        * fast/js/script-tests/declaration-in-block.js: Copied from LayoutTests/fast/js/resources/declaration-in-block.js.
+        * fast/js/script-tests/delete-getters-setters.js: Copied from LayoutTests/fast/js/resources/delete-getters-setters.js.
+        * fast/js/script-tests/delete-syntax.js: Copied from LayoutTests/fast/js/resources/delete-syntax.js.
+        * fast/js/script-tests/delete-then-put.js: Copied from LayoutTests/fast/js/resources/delete-then-put.js.
+        * fast/js/script-tests/dictionary-no-cache.js: Copied from LayoutTests/fast/js/resources/dictionary-no-cache.js.
+        * fast/js/script-tests/do-while-semicolon.js: Copied from LayoutTests/fast/js/resources/do-while-semicolon.js.
+        * fast/js/script-tests/dot-node-base-exception.js: Copied from LayoutTests/fast/js/resources/dot-node-base-exception.js.
+        * fast/js/script-tests/duplicate-param-crash.js: Copied from LayoutTests/fast/js/resources/duplicate-param-crash.js.
+        * fast/js/script-tests/duplicate-param-gc-crash.js: Copied from LayoutTests/fast/js/resources/duplicate-param-gc-crash.js.
+        * fast/js/script-tests/equality.js: Copied from LayoutTests/fast/js/resources/equality.js.
+        * fast/js/script-tests/eval-cache-crash.js: Copied from LayoutTests/fast/js/resources/eval-cache-crash.js.
+        * fast/js/script-tests/eval-throw-return.js: Copied from LayoutTests/fast/js/resources/eval-throw-return.js.
+        * fast/js/script-tests/eval-var-decl.js: Copied from LayoutTests/fast/js/resources/eval-var-decl.js.
+        * fast/js/script-tests/exception-expression-offset.js: Copied from LayoutTests/fast/js/resources/exception-expression-offset.js.
+        * fast/js/script-tests/exception-for-nonobject.js: Copied from LayoutTests/fast/js/resources/exception-for-nonobject.js.
+        * fast/js/script-tests/exception-linenums.js: Copied from LayoutTests/fast/js/resources/exception-linenums.js.
+        * fast/js/script-tests/exception-try-finally-scope-error.js: Copied from LayoutTests/fast/js/resources/exception-try-finally-scope-error.js.
+        * fast/js/script-tests/exception-with-handler-inside-eval-with-dynamic-scope.js: Copied from LayoutTests/fast/js/resources/exception-with-handler-inside-eval-with-dynamic-scope.js.
+        * fast/js/script-tests/excessive-comma-usage.js: Copied from LayoutTests/fast/js/resources/excessive-comma-usage.js.
+        * fast/js/script-tests/finally-codegen-failure.js: Copied from LayoutTests/fast/js/resources/finally-codegen-failure.js.
+        * fast/js/script-tests/for-in-avoid-duplicates.js: Copied from LayoutTests/fast/js/resources/for-in-avoid-duplicates.js.
+        * fast/js/script-tests/for-in-cached.js: Copied from LayoutTests/fast/js/resources/for-in-cached.js.
+        * fast/js/script-tests/for-in-exeception.js: Copied from LayoutTests/fast/js/resources/for-in-exeception.js.
+        * fast/js/script-tests/for-in-to-text.js: Copied from LayoutTests/fast/js/resources/for-in-to-text.js.
+        * fast/js/script-tests/for-in-var-scope.js: Copied from LayoutTests/fast/js/resources/for-in-var-scope.js.
+        * fast/js/script-tests/function-apply-aliased.js: Copied from LayoutTests/fast/js/resources/function-apply-aliased.js.
+        * fast/js/script-tests/function-apply.js: Copied from LayoutTests/fast/js/resources/function-apply.js.
+        * fast/js/script-tests/function-call-aliased.js: Copied from LayoutTests/fast/js/resources/function-call-aliased.js.
+        * fast/js/script-tests/function-call-register-allocation.js: Copied from LayoutTests/fast/js/resources/function-call-register-allocation.js.
+        * fast/js/script-tests/function-constructor-newline-after-brace.js: Copied from LayoutTests/fast/js/resources/function-constructor-newline-after-brace.js.
+        * fast/js/script-tests/function-constructor-single-line-comment.js: Copied from LayoutTests/fast/js/resources/function-constructor-single-line-comment.js.
+        * fast/js/script-tests/function-declaration-statement.js: Copied from LayoutTests/fast/js/resources/function-declaration-statement.js.
+        * fast/js/script-tests/function-declaration.js: Copied from LayoutTests/fast/js/resources/function-declaration.js.
+        * fast/js/script-tests/function-declarations-in-switch-statement.js: Copied from LayoutTests/fast/js/resources/function-declarations-in-switch-statement.js.
+        * fast/js/script-tests/function-dot-arguments.js: Copied from LayoutTests/fast/js/resources/function-dot-arguments.js.
+        * fast/js/script-tests/function-name.js: Copied from LayoutTests/fast/js/resources/function-name.js.
+        * fast/js/script-tests/function-names.js: Copied from LayoutTests/fast/js/resources/function-names.js.
+        * fast/js/script-tests/function-toString-object-literals.js: Copied from LayoutTests/fast/js/resources/function-toString-object-literals.js.
+        * fast/js/script-tests/function-toString-parentheses.js: Copied from LayoutTests/fast/js/resources/function-toString-parentheses.js.
+        * fast/js/script-tests/function-toString-semicolon-insertion.js: Copied from LayoutTests/fast/js/resources/function-toString-semicolon-insertion.js.
+        * fast/js/script-tests/getter-setter-gc.js: Copied from LayoutTests/fast/js/resources/getter-setter-gc.js.
+        * fast/js/script-tests/global-constructors.js: Copied from LayoutTests/fast/js/resources/global-constructors.js.
+        * fast/js/script-tests/global-function-resolve.js: Copied from LayoutTests/fast/js/resources/global-function-resolve.js.
+        * fast/js/script-tests/gmail-re-re.js: Copied from LayoutTests/fast/js/resources/gmail-re-re.js.
+        * fast/js/script-tests/has-own-property.js: Copied from LayoutTests/fast/js/resources/has-own-property.js.
+        * fast/js/script-tests/ignored-result-null-comparison-crash.js: Copied from LayoutTests/fast/js/resources/ignored-result-null-comparison-crash.js.
+        * fast/js/script-tests/ignored-result-ref-crash.js: Copied from LayoutTests/fast/js/resources/ignored-result-ref-crash.js.
+        * fast/js/script-tests/implicit-call-with-global-reentry.js: Copied from LayoutTests/fast/js/resources/implicit-call-with-global-reentry.js.
+        * fast/js/script-tests/instance-of-immediates.js: Copied from LayoutTests/fast/js/resources/instance-of-immediates.js.
+        * fast/js/script-tests/instanceof-operator.js: Copied from LayoutTests/fast/js/resources/instanceof-operator.js.
+        * fast/js/script-tests/integer-extremes.js: Copied from LayoutTests/fast/js/resources/integer-extremes.js.
+        * fast/js/script-tests/isPrototypeOf.js: Copied from LayoutTests/fast/js/resources/isPrototypeOf.js.
+        * fast/js/script-tests/large-expressions.js: Copied from LayoutTests/fast/js/resources/large-expressions.js.
+        * fast/js/script-tests/lastModified.js: Copied from LayoutTests/fast/js/resources/lastModified.js.
+        * fast/js/script-tests/logical-or-jless.js: Copied from LayoutTests/fast/js/resources/logical-or-jless.js.
+        * fast/js/script-tests/math-transforms.js: Copied from LayoutTests/fast/js/resources/math-transforms.js.
+        * fast/js/script-tests/math.js: Copied from LayoutTests/fast/js/resources/math.js.
+        * fast/js/script-tests/method-check.js: Copied from LayoutTests/fast/js/resources/method-check.js.
+        * fast/js/script-tests/mod-crash.js: Copied from LayoutTests/fast/js/resources/mod-crash.js.
+        * fast/js/script-tests/modify-non-references.js: Copied from LayoutTests/fast/js/resources/modify-non-references.js.
+        * fast/js/script-tests/named-function-expression.js: Copied from LayoutTests/fast/js/resources/named-function-expression.js.
+        * fast/js/script-tests/navigator-mimeTypes-length.js: Copied from LayoutTests/fast/js/resources/navigator-mimeTypes-length.js.
+        * fast/js/script-tests/nested-object-gc.js: Copied from LayoutTests/fast/js/resources/nested-object-gc.js.
+        * fast/js/script-tests/non-object-proto.js: Copied from LayoutTests/fast/js/resources/non-object-proto.js.
+        * fast/js/script-tests/null-char-in-string.js: Copied from LayoutTests/fast/js/resources/null-char-in-string.js.
+        * fast/js/script-tests/number-cell-reuse.js: Copied from LayoutTests/fast/js/resources/number-cell-reuse.js.
+        * fast/js/script-tests/number-parsing-crash.js: Copied from LayoutTests/fast/js/resources/number-parsing-crash.js.
+        * fast/js/script-tests/number-toExponential.js: Copied from LayoutTests/fast/js/resources/number-toExponential.js.
+        * fast/js/script-tests/number-toString.js: Copied from LayoutTests/fast/js/resources/number-toString.js.
+        * fast/js/script-tests/number-tofixed.js: Copied from LayoutTests/fast/js/resources/number-tofixed.js.
+        * fast/js/script-tests/number-toprecision.js: Copied from LayoutTests/fast/js/resources/number-toprecision.js.
+        * fast/js/script-tests/numeric-conversion.js: Copied from LayoutTests/fast/js/resources/numeric-conversion.js.
+        * fast/js/script-tests/object-extra-comma.js: Copied from LayoutTests/fast/js/resources/object-extra-comma.js.
+        * fast/js/script-tests/object-prototype-constructor.js: Copied from LayoutTests/fast/js/resources/object-prototype-constructor.js.
+        * fast/js/script-tests/object-prototype-toLocaleString.js: Copied from LayoutTests/fast/js/resources/object-prototype-toLocaleString.js.
+        * fast/js/script-tests/order-of-operations.js: Copied from LayoutTests/fast/js/resources/order-of-operations.js.
+        * fast/js/script-tests/parse-backslash-before-newline.js: Copied from LayoutTests/fast/js/resources/parse-backslash-before-newline.js.
+        * fast/js/script-tests/postfix-syntax.js: Copied from LayoutTests/fast/js/resources/postfix-syntax.js.
+        * fast/js/script-tests/prefix-syntax.js: Copied from LayoutTests/fast/js/resources/prefix-syntax.js.
+        * fast/js/script-tests/pretty-print.js: Copied from LayoutTests/fast/js/resources/pretty-print.js.
+        * fast/js/script-tests/primitive-method-this.js: Copied from LayoutTests/fast/js/resources/primitive-method-this.js.
+        * fast/js/script-tests/primitive-property-access-edge-cases.js: Copied from LayoutTests/fast/js/resources/primitive-property-access-edge-cases.js.
+        * fast/js/script-tests/property-getters-and-setters.js: Copied from LayoutTests/fast/js/resources/property-getters-and-setters.js.
+        * fast/js/script-tests/propertyIsEnumerable.js: Copied from LayoutTests/fast/js/resources/propertyIsEnumerable.js.
+        * fast/js/script-tests/prototypes.js: Copied from LayoutTests/fast/js/resources/prototypes.js.
+        * fast/js/script-tests/read-modify-eval.js: Copied from LayoutTests/fast/js/resources/read-modify-eval.js.
+        * fast/js/script-tests/recursion-limit-equal.js: Copied from LayoutTests/fast/js/resources/recursion-limit-equal.js.
+        * fast/js/script-tests/reentrant-call-unwind.js: Copied from LayoutTests/fast/js/resources/reentrant-call-unwind.js.
+        * fast/js/script-tests/regexp-backreferences.js: Copied from LayoutTests/fast/js/resources/regexp-backreferences.js.
+        * fast/js/script-tests/regexp-char-insensitive.js: Copied from LayoutTests/fast/js/resources/regexp-char-insensitive.js.
+        * fast/js/script-tests/regexp-character-match-out-of-order.js: Copied from LayoutTests/fast/js/resources/regexp-character-match-out-of-order.js.
+        * fast/js/script-tests/regexp-compile-crash.js: Copied from LayoutTests/fast/js/resources/regexp-compile-crash.js.
+        * fast/js/script-tests/regexp-compile.js: Copied from LayoutTests/fast/js/resources/regexp-compile.js.
+        * fast/js/script-tests/regexp-divequal.js: Copied from LayoutTests/fast/js/resources/regexp-divequal.js.
+        * fast/js/script-tests/regexp-extended-characters-crash.js: Copied from LayoutTests/fast/js/resources/regexp-extended-characters-crash.js.
+        * fast/js/script-tests/regexp-extended-characters-match.js: Copied from LayoutTests/fast/js/resources/regexp-extended-characters-match.js.
+        * fast/js/script-tests/regexp-extended-characters-more.js: Copied from LayoutTests/fast/js/resources/regexp-extended-characters-more.js.
+        * fast/js/script-tests/regexp-find-first-asserted.js: Copied from LayoutTests/fast/js/resources/regexp-find-first-asserted.js.
+        * fast/js/script-tests/regexp-lastindex.js: Copied from LayoutTests/fast/js/resources/regexp-lastindex.js.
+        * fast/js/script-tests/regexp-many-brackets.js: Copied from LayoutTests/fast/js/resources/regexp-many-brackets.js.
+        * fast/js/script-tests/regexp-negative-special-characters.js: Copied from LayoutTests/fast/js/resources/regexp-negative-special-characters.js.
+        * fast/js/script-tests/regexp-no-extensions.js: Copied from LayoutTests/fast/js/resources/regexp-no-extensions.js.
+        * fast/js/script-tests/regexp-non-bmp.js: Copied from LayoutTests/fast/js/resources/regexp-non-bmp.js.
+        * fast/js/script-tests/regexp-non-capturing-groups.js: Copied from LayoutTests/fast/js/resources/regexp-non-capturing-groups.js.
+        * fast/js/script-tests/regexp-non-character.js: Copied from LayoutTests/fast/js/resources/regexp-non-character.js.
+        * fast/js/script-tests/regexp-overflow-too-big.js: Copied from LayoutTests/fast/js/resources/regexp-overflow-too-big.js.
+        * fast/js/script-tests/regexp-overflow.js: Copied from LayoutTests/fast/js/resources/regexp-overflow.js.
+        * fast/js/script-tests/regexp-range-bound-ffff.js: Copied from LayoutTests/fast/js/resources/regexp-range-bound-ffff.js.
+        * fast/js/script-tests/regexp-range-out-of-order.js: Copied from LayoutTests/fast/js/resources/regexp-range-out-of-order.js.
+        * fast/js/script-tests/regexp-ranges-and-escaped-hyphens.js: Copied from LayoutTests/fast/js/resources/regexp-ranges-and-escaped-hyphens.js.
+        * fast/js/script-tests/regexp-stack-overflow.js: Copied from LayoutTests/fast/js/resources/regexp-stack-overflow.js.
+        * fast/js/script-tests/regexp-unicode-handling.js: Copied from LayoutTests/fast/js/resources/regexp-unicode-handling.js.
+        * fast/js/script-tests/regexp-unicode-overflow.js: Copied from LayoutTests/fast/js/resources/regexp-unicode-overflow.js.
+        * fast/js/script-tests/registerCachingAcrossBranchTargets.js: Copied from LayoutTests/fast/js/resources/registerCachingAcrossBranchTargets.js.
+        * fast/js/script-tests/rehash-assign.js: Copied from LayoutTests/fast/js/resources/rehash-assign.js.
+        * fast/js/script-tests/removing-Cf-characters.js: Copied from LayoutTests/fast/js/resources/removing-Cf-characters.js.
+        * fast/js/script-tests/reparsing-semicolon-insertion.js: Copied from LayoutTests/fast/js/resources/reparsing-semicolon-insertion.js.
+        * fast/js/script-tests/repeat-cached-vm-reentry.js: Copied from LayoutTests/fast/js/resources/repeat-cached-vm-reentry.js.
+        * fast/js/script-tests/reserved-words.js: Copied from LayoutTests/fast/js/resources/reserved-words.js.
+        * fast/js/script-tests/resize-array-assign.js: Copied from LayoutTests/fast/js/resources/resize-array-assign.js.
+        * fast/js/script-tests/select-options-add.js: Copied from LayoutTests/fast/js/resources/select-options-add.js.
+        * fast/js/script-tests/slash-lineterminator-parse.js: Copied from LayoutTests/fast/js/resources/slash-lineterminator-parse.js.
+        * fast/js/script-tests/sort-large-array.js: Copied from LayoutTests/fast/js/resources/sort-large-array.js.
+        * fast/js/script-tests/sort-no-jit-code-crash.js: Copied from LayoutTests/fast/js/resources/sort-no-jit-code-crash.js.
+        * fast/js/script-tests/sort-non-numbers.js: Copied from LayoutTests/fast/js/resources/sort-non-numbers.js.
+        * fast/js/script-tests/sort-randomly.js: Copied from LayoutTests/fast/js/resources/sort-randomly.js.
+        * fast/js/script-tests/sort-stability.js: Copied from LayoutTests/fast/js/resources/sort-stability.js.
+        * fast/js/script-tests/sparse-array.js: Copied from LayoutTests/fast/js/resources/sparse-array.js.
+        * fast/js/script-tests/stack-unwinding.js: Copied from LayoutTests/fast/js/resources/stack-unwinding.js.
+        * fast/js/script-tests/statement-list-register-crash.js: Copied from LayoutTests/fast/js/resources/statement-list-register-crash.js.
+        * fast/js/script-tests/static-scope-object.js: Copied from LayoutTests/fast/js/resources/static-scope-object.js.
+        * fast/js/script-tests/string-capitalization.js: Copied from LayoutTests/fast/js/resources/string-capitalization.js.
+        * fast/js/script-tests/string-from-char-code.js: Copied from LayoutTests/fast/js/resources/string-from-char-code.js.
+        * fast/js/script-tests/string-index-overflow.js: Copied from LayoutTests/fast/js/resources/string-index-overflow.js.
+        * fast/js/script-tests/string-property-iteration.js: Copied from LayoutTests/fast/js/resources/string-property-iteration.js.
+        * fast/js/script-tests/string-replace-2.js: Copied from LayoutTests/fast/js/resources/string-replace-2.js.
+        * fast/js/script-tests/string-replace-3.js: Copied from LayoutTests/fast/js/resources/string-replace-3.js.
+        * fast/js/script-tests/string-slice-abnormal-values.js: Copied from LayoutTests/fast/js/resources/string-slice-abnormal-values.js.
+        * fast/js/script-tests/string-sort.js: Copied from LayoutTests/fast/js/resources/string-sort.js.
+        * fast/js/script-tests/string-split-ignore-case.js: Copied from LayoutTests/fast/js/resources/string-split-ignore-case.js.
+        * fast/js/script-tests/string-substr.js: Copied from LayoutTests/fast/js/resources/string-substr.js.
+        * fast/js/script-tests/string_replace.js: Copied from LayoutTests/fast/js/resources/string_replace.js.
+        * fast/js/script-tests/switch-behaviour.js: Copied from LayoutTests/fast/js/resources/switch-behaviour.js.
+        * fast/js/script-tests/this-non-object-proto.js: Copied from LayoutTests/fast/js/resources/this-non-object-proto.js.
+        * fast/js/script-tests/toString-elision-trailing-comma.js: Copied from LayoutTests/fast/js/resources/toString-elision-trailing-comma.js.
+        * fast/js/script-tests/toString-exception.js: Copied from LayoutTests/fast/js/resources/toString-exception.js.
+        * fast/js/script-tests/toString-for-var-decl.js: Copied from LayoutTests/fast/js/resources/toString-for-var-decl.js.
+        * fast/js/script-tests/toString-number-dot-expr.js: Copied from LayoutTests/fast/js/resources/toString-number-dot-expr.js.
+        * fast/js/script-tests/toString-overrides.js: Copied from LayoutTests/fast/js/resources/toString-overrides.js.
+        * fast/js/script-tests/toString-prefix-postfix-preserve-parens.js: Copied from LayoutTests/fast/js/resources/toString-prefix-postfix-preserve-parens.js.
+        * fast/js/script-tests/toString-stack-overflow.js: Copied from LayoutTests/fast/js/resources/toString-stack-overflow.js.
+        * fast/js/script-tests/tostring-exception-in-property-access.js: Copied from LayoutTests/fast/js/resources/tostring-exception-in-property-access.js.
+        * fast/js/script-tests/transition-cache-dictionary-crash.js: Copied from LayoutTests/fast/js/resources/transition-cache-dictionary-crash.js.
+        * fast/js/script-tests/typeof-codegen-crash.js: Copied from LayoutTests/fast/js/resources/typeof-codegen-crash.js.
+        * fast/js/script-tests/typeof-constant-string.js: Copied from LayoutTests/fast/js/resources/typeof-constant-string.js.
+        * fast/js/script-tests/typeof-syntax.js: Copied from LayoutTests/fast/js/resources/typeof-syntax.js.
+        * fast/js/script-tests/unexpected-constant-crash.js: Copied from LayoutTests/fast/js/resources/unexpected-constant-crash.js.
+        * fast/js/script-tests/unmatching-argument-count.js: Copied from LayoutTests/fast/js/resources/unmatching-argument-count.js.
+        * fast/js/script-tests/var-shadows-arg-crash.js: Copied from LayoutTests/fast/js/resources/var-shadows-arg-crash.js.
+        * fast/js/script-tests/var-shadows-arg-gc-crash.js: Copied from LayoutTests/fast/js/resources/var-shadows-arg-gc-crash.js.
+        * fast/js/script-tests/vardecl-blocks-init.js: Copied from LayoutTests/fast/js/resources/vardecl-blocks-init.js.
+        * fast/js/script-tests/vardecl-preserve-arguments.js: Copied from LayoutTests/fast/js/resources/vardecl-preserve-arguments.js.
+        * fast/js/script-tests/with-scope-gc.js: Copied from LayoutTests/fast/js/resources/with-scope-gc.js.
+        * fast/js/select-options-add.html:
+        * fast/js/slash-lineterminator-parse.html:
+        * fast/js/sort-large-array.html:
+        * fast/js/sort-no-jit-code-crash.html:
+        * fast/js/sort-non-numbers.html:
+        * fast/js/sort-randomly.html:
+        * fast/js/sort-stability.html:
+        * fast/js/sparse-array.html:
+        * fast/js/stack-unwinding.html:
+        * fast/js/statement-list-register-crash.html:
+        * fast/js/static-scope-object.html:
+        * fast/js/string-capitalization.html:
+        * fast/js/string-from-char-code.html:
+        * fast/js/string-index-overflow.html:
+        * fast/js/string-property-iteration.html:
+        * fast/js/string-replace-2.html:
+        * fast/js/string-replace-3.html:
+        * fast/js/string-slice-abnormal-values.html:
+        * fast/js/string-sort.html:
+        * fast/js/string-split-ignore-case.html:
+        * fast/js/string-substr.html:
+        * fast/js/string_replace.html:
+        * fast/js/switch-behaviour.html:
+        * fast/js/this-non-object-proto.html:
+        * fast/js/toString-elision-trailing-comma.html:
+        * fast/js/toString-exception.html:
+        * fast/js/toString-for-var-decl.html:
+        * fast/js/toString-number-dot-expr.html:
+        * fast/js/toString-overrides.html:
+        * fast/js/toString-prefix-postfix-preserve-parens.html:
+        * fast/js/toString-stack-overflow.html:
+        * fast/js/tostring-exception-in-property-access.html:
+        * fast/js/transition-cache-dictionary-crash.html:
+        * fast/js/typeof-codegen-crash.html:
+        * fast/js/typeof-constant-string.html:
+        * fast/js/typeof-syntax.html:
+        * fast/js/unexpected-constant-crash.html:
+        * fast/js/unmatching-argument-count.html:
+        * fast/js/var-shadows-arg-crash.html:
+        * fast/js/var-shadows-arg-gc-crash.html:
+        * fast/js/vardecl-blocks-init.html:
+        * fast/js/vardecl-preserve-arguments.html:
+        * fast/js/with-scope-gc.html:
+
 2009-09-22  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Dave Hyatt.
