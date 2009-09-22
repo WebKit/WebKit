@@ -428,6 +428,14 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
 
     setNPWindowIfNeeded();
 
+    CGContextRef cgContext = m_npCgContext.context;
+    if (!cgContext)
+        return;
+
+    CGContextSaveGState(cgContext);
+    IntPoint offset = frameRect().location();
+    CGContextTranslateCTM(cgContext, offset.x(), offset.y());
+
     EventRecord event;
     event.what = updateEvt;
     event.message = (long unsigned int)m_npCgContext.window;
@@ -436,15 +444,10 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
     event.where.v = 0;
     event.modifiers = GetCurrentKeyModifiers();
 
-    CGContextRef cg = m_npCgContext.context;
-    CGContextSaveGState(cg);
-    IntPoint offset = frameRect().location();
-    CGContextTranslateCTM(cg, offset.x(), offset.y());
-
     if (!dispatchNPEvent(event))
         LOG(Events, "PluginView::paint(): Paint event not accepted");
 
-    CGContextRestoreGState(cg);
+    CGContextRestoreGState(cgContext);
 }
 
 void PluginView::invalidateRect(const IntRect& rect)

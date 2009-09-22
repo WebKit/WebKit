@@ -1,5 +1,13 @@
 2009-09-22  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
+        Reviewed by Simon Hausmann.
+
+        NPAPI/Mac: Don't paint plugins if we don't have a CGContextRef
+
+        * plugins/mac/PluginViewMac.cpp:
+
+2009-09-22  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
         Reivewed by Simon Hausmann.
 
         Fix the Qt/Mac build after r48604 (Implement new QWebPageClient class)
