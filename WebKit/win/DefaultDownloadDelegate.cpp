@@ -203,6 +203,7 @@ HRESULT STDMETHODCALLTYPE DefaultDownloadDelegate::willSendRequest(IWebDownload*
     download = 0;
     redirectResponse = 0;
     *finalRequest = request;
+    (*finalRequest)->AddRef();
     return S_OK;
 }
 

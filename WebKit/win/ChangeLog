@@ -1,3 +1,16 @@
+2009-09-22  Adam Roben  <aroben@apple.com>
+
+        Manage refcounts correctly in DefaultDownloadDelegate::willSendRequest
+
+        Fixes <http://webkit.org/b/29650> Crash in
+        WebDownload::willSendRequest when using DefaultDownloadDelegate
+
+        Reviewed by Brady Eidson.
+
+        * DefaultDownloadDelegate.cpp:
+        (DefaultDownloadDelegate::willSendRequest): Call AddRef() on the
+        object we're returning via the finalRequest out-parameter.
+
 2009-09-21  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.
