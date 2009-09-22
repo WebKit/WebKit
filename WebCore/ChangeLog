@@ -1,5 +1,12 @@
 2009-09-21  Adam Barth  <abarth@webkit.org>
 
+        Attempted fix for the V8 build.
+
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::V8Custom::WindowSetTimeoutImpl):
+
+2009-09-21  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Sam Weinig.
 
         Don't re-enter JavaScript after performing access checks
