@@ -91,6 +91,4 @@ interface IWebFramePrivate : IUnknown
     HRESULT numberOfActiveAnimations([out, retval] UINT* number);
 
     HRESULT isDisplayingStandaloneImage([out, retval] BOOL* result);
-
-    HRESULT reloadFromOrigin();
 }

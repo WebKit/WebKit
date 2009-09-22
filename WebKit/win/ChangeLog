@@ -1,5 +1,13 @@
 2009-09-22  Sam Weinig  <sam@webkit.org>
 
+        Rubber-stamped by Adam Roben.
+
+        Remove accidentally left in declaration of reloadFromOrigin in IWebFramePrivate.idl
+
+        * Interfaces/IWebFramePrivate.idl:
+
+2009-09-22  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Steve Falkenburg.
 
         Fix for <rdar://problem/6451745>
