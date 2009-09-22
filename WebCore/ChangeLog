@@ -1,3 +1,12 @@
+2009-09-22  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.
+
+        Fix bogus build fix I did last night.
+
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::V8Custom::WindowSetTimeoutImpl):
+
 2009-09-22  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Simon Hausmann.

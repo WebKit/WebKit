@@ -69,8 +69,17 @@ v8::Handle<v8::Value> V8Custom::WindowSetTimeoutImpl(const v8::Arguments& args, 
 
     WebCore::String functionString;
     if (!function->IsFunction()) {
-        functionString = function->IsString() ? 
-            toWebCoreString(function) : toWebCoreString(function->ToString());
+        if (function->IsString())
+            functionString = toWebCoreString(function);
+        else {
+            v8::Handle<v8::Value> v8String = function->ToString();
+
+            // Bail out if string conversion failed. 
+            if (v8String.IsEmpty()) 
+                return v8::Undefined(); 
+
+            functionString = toWebCoreString(v8String);
+        }
 
         // Don't allow setting timeouts to run empty functions!
         // (Bug 1009597)
