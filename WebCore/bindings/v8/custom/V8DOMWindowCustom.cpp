@@ -68,7 +68,7 @@ v8::Handle<v8::Value> V8Custom::WindowSetTimeoutImpl(const v8::Arguments& args, 
     v8::Handle<v8::Value> function = args[0];
 
     WebCore::String functionString;
-    if (!function->IsFunction())
+    if (!function->IsFunction()) {
         functionString = function->IsString() ? 
             toWebCoreString(function) : toWebCoreString(function->ToString());
 
