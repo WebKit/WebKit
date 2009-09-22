@@ -1,3 +1,16 @@
+2009-09-22  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Jan Alonzo.
+
+        [GTK] WebKitHitTestResult is completely broken in gmail
+        https://bugs.webkit.org/show_bug.cgi?id=29527
+
+        We need to use the main or focused frame when doing the coordinate
+        transformation instead of always using the main frame.
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_get_hit_test_result):
+
 2009-09-21  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Update documentation control files to 1.1.15.
