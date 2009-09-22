@@ -1,3 +1,15 @@
+2009-09-22  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by David Kilzer.
+
+        svn-apply can't handle single-line binary file additions
+        https://bugs.webkit.org/show_bug.cgi?id=29100
+
+        Fixed the regexp and added a unit test.
+
+        * Scripts/modules/scm_unittest.py:
+        * Scripts/svn-apply:
+
 2009-09-11  Eric Seidel  <eric@webkit.org>
 
         Reviewed by David Kilzer.

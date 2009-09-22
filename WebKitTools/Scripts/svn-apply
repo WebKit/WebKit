@@ -333,7 +333,10 @@ sub gitdiff2svndiff($)
 sub handleBinaryChange($$)
 {
     my ($fullPath, $contents) = @_;
-    if ($contents =~ m#((\n[A-Za-z0-9+/]{76})+\n[A-Za-z0-9+/=]{4,76}\n)#) {
+    # [A-Za-z0-9+/] is the class of allowed base64 characters.
+    # One or more lines, at most 76 characters in length.
+    # The last line is allowed to have up to two '=' characters at the end (to signify padding).
+    if ($contents =~ m#((\n[A-Za-z0-9+/]{76})*\n[A-Za-z0-9+/]{2,74}?[A-Za-z0-9+/=]{2}\n)#) {
         # Addition or Modification
         open FILE, ">", $fullPath or die;
         print FILE decode_base64($1);

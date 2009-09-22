@@ -27,6 +27,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import base64
 import os
 import re
 import stat
@@ -196,6 +197,27 @@ class SVNTest(SCMTest):
         scm = detect_scm_system(self.svn_checkout_path)
         self.assertEqual(scm.display_name(), "svn")
         self.assertEqual(scm.supports_local_commits(), False)
+
+    def test_apply_small_binary_patch(self):
+        patch_contents = """Index: test_file.swf
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+
+Property changes on: test_file.swf
+___________________________________________________________________
+Name: svn:mime-type
+   + application/octet-stream
+
+
+Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==
+"""
+        expected_contents = base64.b64decode("Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==")
+        self._setup_webkittools_scripts_symlink(self.scm)
+        patch_file = self._create_patch(patch_contents)
+        self.scm.apply_patch(patch_file)
+        actual_contents = read_from_path("test_file.swf")
+        self.assertEqual(actual_contents, expected_contents)
 
     def test_apply_svn_patch(self):
         scm = detect_scm_system(self.svn_checkout_path)
