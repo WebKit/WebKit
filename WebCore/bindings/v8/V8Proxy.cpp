@@ -33,6 +33,7 @@
 
 #include "ChromiumBridge.h"
 #include "CSSMutableStyleDeclaration.h"
+#include "DateExtension.h"
 #include "DOMObjectsInclude.h"
 #include "DocumentLoader.h"
 #include "FrameLoaderClient.h"
@@ -64,7 +65,7 @@ namespace WebCore {
 v8::Persistent<v8::Context> V8Proxy::m_utilityContext;
 
 // Static list of registered extensions
-V8ExtensionList V8Proxy::m_extensions;
+V8Extensions V8Proxy::m_extensions;
 
 const char* V8Proxy::kContextDebugDataType = "type";
 const char* V8Proxy::kContextDebugDataValue = "value";
@@ -904,20 +905,24 @@ v8::Persistent<v8::Context> V8Proxy::createNewContext(v8::Handle<v8::Object> glo
     // Install a security handler with V8.
     globalTemplate->SetAccessCheckCallbacks(V8Custom::v8DOMWindowNamedSecurityCheck, V8Custom::v8DOMWindowIndexedSecurityCheck, v8::Integer::New(V8ClassIndex::DOMWINDOW));
 
+    // Used to avoid sleep calls in unload handlers.
+    if (!registeredExtensionWithV8(DateExtension::get()))
+        registerExtension(DateExtension::get(), String());
+
     // Dynamically tell v8 about our extensions now.
     OwnArrayPtr<const char*> extensionNames(new const char*[m_extensions.size()]);
     int index = 0;
-    for (V8ExtensionList::iterator it = m_extensions.begin(); it != m_extensions.end(); ++it) {
-        if (it->group && it->group != extensionGroup)
+    for (size_t i = 0; i < m_extensions.size(); ++i) {
+        if (m_extensions[i].group && m_extensions[i].group != extensionGroup)
             continue;
 
         // Note: we check the loader URL here instead of the document URL
         // because we might be currently loading an URL into a blank page.
         // See http://code.google.com/p/chromium/issues/detail?id=10924
-        if (it->scheme.length() > 0 && (it->scheme != m_frame->loader()->activeDocumentLoader()->url().protocol() || it->scheme != m_frame->page()->mainFrame()->loader()->activeDocumentLoader()->url().protocol()))
+        if (m_extensions[i].scheme.length() > 0 && (m_extensions[i].scheme != m_frame->loader()->activeDocumentLoader()->url().protocol() || m_extensions[i].scheme != m_frame->page()->mainFrame()->loader()->activeDocumentLoader()->url().protocol()))
             continue;
 
-        extensionNames[index++] = it->extension->name();
+        extensionNames[index++] = m_extensions[i].extension->name();
     }
     v8::ExtensionConfiguration extensions(index, extensionNames.get());
     result = v8::Context::New(&extensions, globalTemplate, global);
@@ -1253,28 +1258,35 @@ String V8Proxy::sourceName()
     return toWebCoreString(v8::Debug::Call(frameSourceName));
 }
 
-void V8Proxy::registerExtensionWithV8(v8::Extension* extension) {
+void V8Proxy::registerExtensionWithV8(v8::Extension* extension)
+{
     // If the extension exists in our list, it was already registered with V8.
-    for (V8ExtensionList::iterator it = m_extensions.begin(); it != m_extensions.end(); ++it) {
-        if (it->extension == extension)
-            return;
+    if (!registeredExtensionWithV8(extension))
+        v8::RegisterExtension(extension);
+}
+
+bool V8Proxy::registeredExtensionWithV8(v8::Extension* extension)
+{
+    for (size_t i = 0; i < m_extensions.size(); ++i) {
+        if (m_extensions[i].extension == extension)
+            return true;
     }
 
-    v8::RegisterExtension(extension);
+    return false;
 }
 
 void V8Proxy::registerExtension(v8::Extension* extension, const String& schemeRestriction)
 {
     registerExtensionWithV8(extension);
     V8ExtensionInfo info = {schemeRestriction, 0, extension};
-    m_extensions.push_back(info);
+    m_extensions.append(info);
 }
 
 void V8Proxy::registerExtension(v8::Extension* extension, int extensionGroup)
 {
     registerExtensionWithV8(extension);
     V8ExtensionInfo info = {String(), extensionGroup, extension};
-    m_extensions.push_back(info);
+    m_extensions.append(info);
 }
 
 bool V8Proxy::setContextDebugId(int debugId)

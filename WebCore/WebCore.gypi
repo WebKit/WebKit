@@ -690,6 +690,8 @@
             'bindings/v8/custom/V8XMLSerializerConstructor.cpp',
             'bindings/v8/custom/V8XPathEvaluatorConstructor.cpp',
             'bindings/v8/custom/V8XSLTProcessorCustom.cpp',
+            'bindings/v8/DateExtension.cpp',
+            'bindings/v8/DateExtension.h',
             'bindings/v8/DOMData.cpp',
             'bindings/v8/DOMData.h',
             'bindings/v8/DOMDataStore.cpp',

@@ -39,7 +39,6 @@
 #include "V8EventListenerList.h"
 #include "V8GCController.h"
 #include "V8Index.h"
-#include <list>
 #include <v8.h>
 #include <wtf/PassRefPtr.h> // so generated bindings don't have to
 #include <wtf/Vector.h>
@@ -105,7 +104,7 @@ namespace WebCore {
         int group;
         v8::Extension* extension;
     };
-    typedef std::list<V8ExtensionInfo> V8ExtensionList;
+    typedef WTF::Vector<V8ExtensionInfo> V8Extensions;
 
     class V8Proxy {
     public:
@@ -381,6 +380,7 @@ namespace WebCore {
         v8::Local<v8::Object> createWrapperFromCacheSlowCase(V8ClassIndex::V8WrapperType);
 
         static void registerExtensionWithV8(v8::Extension*);
+        static bool registeredExtensionWithV8(v8::Extension*);
 
         Frame* m_frame;
 
@@ -421,8 +421,8 @@ namespace WebCore {
         // excessive recursion in the binding layer.
         int m_recursion;
 
-        // List of extensions registered with the context.
-        static V8ExtensionList m_extensions;
+        // All of the extensions registered with the context.
+        static V8Extensions m_extensions;
     };
 
     template <int tag, typename T>

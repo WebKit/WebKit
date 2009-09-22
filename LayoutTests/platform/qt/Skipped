@@ -4851,3 +4851,6 @@ userscripts
 
 # No authentication challenge handling
 http/tests/loading/basic-credentials-sent-automatically.html
+
+# This port doesn't support detecting slow unload handlers.
+fast/dom/Window/slow_unload_handler.html

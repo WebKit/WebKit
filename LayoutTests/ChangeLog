@@ -1,3 +1,18 @@
+2009-09-15  John Abd-El-Malek  <jam@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Prevent sleeps in unload handlers.
+        https://bugs.webkit.org/show_bug.cgi?id=29193
+
+        * fast/dom/Window/resources/slow_unload_handler1.html: Added.
+        * fast/dom/Window/slow_unload_handler-expected.txt: Added.
+        * fast/dom/Window/slow_unload_handler.html: Added.
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2009-09-21  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

@@ -1,0 +1,18 @@
+<html>
+<script>
+function pause(milliseconds) {
+    var now = new Date();
+    var exitTime = now.getTime() + milliseconds;
+    while (true) {
+        now = new Date();
+        if (now.getTime() > exitTime)
+            break;
+    }
+    parent.document.getElementById("results").appendChild(document.createTextNode("FAIL"));
+    if (layoutTestController)
+        layoutTestController.notifyDone();
+}
+</script>
+<body onunload="pause(10000);">
+</body>
+</html>
