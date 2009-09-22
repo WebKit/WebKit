@@ -1,3 +1,15 @@
+2009-09-22  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        link errors due to wrong UNICODE_LIBS on Ubuntu Jaunty
+        https://bugs.webkit.org/show_bug.cgi?id=29638
+
+        Call icu-cconfig with ldflags-libsonly to prevent having a -L
+        statement that could override libs installed in another prefix.
+
+        * autotools/webkit.m4:
+
 2009-09-21  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.

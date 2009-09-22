@@ -160,7 +160,7 @@ if test "$with_unicode_backend" = "icu" -o "$with_unicode_backend" = "glib"; the
 		# necessarily want, like debugging and optimization flags
 		# See man (1) icu-config for more info.
 		UNICODE_CFLAGS=`$icu_config --cppflags`
-		UNICODE_LIBS=`$icu_config --ldflags`
+		UNICODE_LIBS=`$icu_config --ldflags-libsonly`
 	fi
 fi
 
