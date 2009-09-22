@@ -125,6 +125,7 @@ my $pixelTests = '';
 my $platform;
 my $quiet = '';
 my $randomizeTests = 0;
+my $repeatEach = 1;
 my $report10Slowest = 0;
 my $resetResults = 0;
 my $reverseTests = 0;
@@ -210,7 +211,7 @@ Usage: $programName [options] [testdir|testpath ...]
   -h|--help                       Show this help message
   --[no-]http                     Run (or do not run) http tests (default: $httpDefault)
   -i|--ignore-tests               Comma-separated list of directories or tests to ignore
-  --iterations n                  Number of times to run the tests
+  --iterations n                  Number of times to run the set of tests (e.g. ABCABCABC)
   --[no-]launch-safari            Launch (or do not launch) Safari to display test results (default: $launchSafariDefault)
   -l|--leaks                      Enable leaks checking
   --[no-]new-test-results         Generate results for new tests
@@ -223,6 +224,7 @@ Usage: $programName [options] [testdir|testpath ...]
   --reset-results                 Reset ALL results (including pixel tests if --pixel-tests is set)
   -o|--results-directory          Output results directory (default: $testResultsDirectory)
   --random                        Run the tests in a random order
+  --repeat-each n                 Number of times to run each test (e.g. AAABBBCCC)
   --reverse                       Run the tests in reverse alphabetical order
   --root                          Path to root tools build
   --[no-]sample-on-timeout        Run sample on timeout (default: $sampleDefault) (Mac OS X only)
@@ -264,6 +266,7 @@ my $getOptionsResult = GetOptions(
     'port=i' => \$httpdPort,
     'quiet|q' => \$quiet,
     'random' => \$randomizeTests,
+    'repeat-each=i' => \$repeatEach,
     'reset-results' => \$resetResults,
     'results-directory|o=s' => \$testResultsDirectory,
     'reverse' => \$reverseTests,
@@ -486,13 +489,26 @@ my $isHttpdOpen = 0;
 sub catch_pipe { $dumpToolCrashed = 1; }
 $SIG{"PIPE"} = "catch_pipe";
 
-print "Testing ", scalar @tests, " test cases", ($iterations > 1) ? " $iterations times.\n" : ".\n";
+print "Testing ", scalar @tests, " test cases";
+print "$iterations times" if ($iterations > 1);
+print ", repeating each test $repeatEach times" if ($repeatEach > 1);
+print ".\n";
+
 my $overallStartTime = time;
 
 my %expectedResultPaths;
 
-# Add iterations
 my @originalTests = @tests;
+# Add individual test repetitions
+if ($repeatEach > 1) {
+    @tests = ();
+    foreach my $test (@originalTests) {
+        for (my $i = 0; $i < $repeatEach; $i++) {
+            push(@tests, $test);
+        }
+    }
+}
+# Add test set repetitions
 for (my $i = 1; $i < $iterations; $i++) {
     push(@tests, @originalTests);
 }
