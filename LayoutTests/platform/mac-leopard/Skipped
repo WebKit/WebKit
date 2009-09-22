@@ -17,4 +17,5 @@ platform/mac/fast/text/thai-combining-mark-positioning.html
 
 # Intermittent crashes/hangs caused by <rdar://problem/7228836>
 # https://bugs.webkit.org/show_bug.cgi?id=28845
+media/controls-after-reload.html
 media/video-size-intrinsic-scale.html

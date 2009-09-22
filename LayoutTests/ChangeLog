@@ -1,3 +1,15 @@
+2009-09-22  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        media/controls-after-reload.html crashes occasionally
+        https://bugs.webkit.org/show_bug.cgi?id=29037
+
+        Skip media/controls-after-reload.html for the same CVDisplayLink
+        issue as seen with media/video-size-intrinsic-scale.html.
+
+        * platform/mac-leopard/Skipped:
+
 2009-09-22  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Dimitri Glazkov.
