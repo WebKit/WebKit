@@ -82,8 +82,9 @@ load_status_cb(WebKitWebView* webView,
         WebKitHitTestResult* result;
         guint context;
         GdkEventButton event;
-        event.x = GTK_WIDGET(webView)->allocation.width / 2;
-        event.y = GTK_WIDGET(webView)->allocation.height / 2;
+        /* Close enough to 0,0 */
+        event.x = 5;
+        event.y = 5;
 
         result = webkit_web_view_get_hit_test_result(webView, &event);
         g_assert(result);
@@ -98,7 +99,7 @@ static void
 test_webkit_hit_test_result(HitTestResultFixture* fixture, gconstpointer data)
 {
     TestInfo* info = (TestInfo*)data;
-    GtkAllocation allocation = { 0, 0, 2, 2 };
+    GtkAllocation allocation = { 0, 0, 50, 50 };
 
     webkit_web_view_load_string(fixture->webView,
                                 info->data,
@@ -121,24 +122,20 @@ int main(int argc, char** argv)
                test_info_new("<html><body><h1>WebKitGTK+!</h1></body></html>",
                              WEBKIT_HIT_TEST_RESULT_CONTEXT_DOCUMENT),
                hit_test_result_fixture_setup, test_webkit_hit_test_result, hit_test_result_fixture_teardown);
-
-/* We should really test this, but it's complicated to know where to
-   ask for the coordinates in general without either DOM bindings or
-   using JSC APIs */
-#if 0
+    /* We hardcode all elements to be at 0,0 so that we know where to
+     * generate the button events */
     g_test_add("/webkit/hittestresult/image", HitTestResultFixture,
-               test_info_new("<html><body><img src='0xdeadbeef' width=50 height=50></img></body></html>",
+               test_info_new("<html><body><img style='position:absolute; left:0; top:0'src='0xdeadbeef' width=50 height=50></img></body></html>",
                              WEBKIT_HIT_TEST_RESULT_CONTEXT_IMAGE),
                hit_test_result_fixture_setup, test_webkit_hit_test_result, hit_test_result_fixture_teardown);
     g_test_add("/webkit/hittestresult/editable", HitTestResultFixture,
-               test_info_new("<html><body><input type='submit'></input>></body></html>",
+               test_info_new("<html><body><input style='position:absolute; left:0; top:0' size='35'></input>></body></html>",
                              WEBKIT_HIT_TEST_RESULT_CONTEXT_EDITABLE),
                hit_test_result_fixture_setup, test_webkit_hit_test_result, hit_test_result_fixture_teardown);
     g_test_add("/webkit/hittestresult/link", HitTestResultFixture,
-               test_info_new("<html><body><a href='http://www.example.com'>HELLO WORLD</a></body></html>",
+               test_info_new("<html><body><a style='position:absolute; left:0; top:0' href='http://www.example.com'>HELLO WORLD</a></body></html>",
                              WEBKIT_HIT_TEST_RESULT_CONTEXT_LINK),
                hit_test_result_fixture_setup, test_webkit_hit_test_result, hit_test_result_fixture_teardown);
-#endif
                
     return g_test_run ();
 }

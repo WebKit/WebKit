@@ -2,6 +2,18 @@
 
         Reviewed by Jan Alonzo.
 
+        Hardcode element positions at 0,0 so that we know where to
+        generate events to test WebKitHitTestResult.
+
+        * tests/testhittestresult.c:
+        (load_status_cb):
+        (test_webkit_hit_test_result):
+        (main):
+
+2009-09-22  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Jan Alonzo.
+
         [GTK] WebKitHitTestResult is completely broken in gmail
         https://bugs.webkit.org/show_bug.cgi?id=29527
 
