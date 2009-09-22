@@ -1,3 +1,19 @@
+2009-09-22  Christian Plesner Hansen  <christian.plesner.hansen@gmail.com>
+
+        Reviewed by Adam Barth.
+
+        [v8] Don't keep clean wrappers artificially alive        
+        We currently keep all DOM node wrappers alive, even when there are
+        no more references to them from JS, in case they have properties
+        that we need to keep around if new JS references are created.
+        This changes the policy to only keep wrappers artificially alive
+        if they have changed since they were created. Empty wrappers are
+        discarded and recreated as needed.
+        https://bugs.webkit.org/show_bug.cgi?id=29330
+
+        * bindings/v8/V8GCController.cpp:
+        (WebCore::ObjectGrouperVisitor::visitDOMWrapper):
+
 2009-09-22  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
