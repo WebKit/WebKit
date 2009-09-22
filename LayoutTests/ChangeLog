@@ -1,3 +1,17 @@
+2009-09-22  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        fast/backgrounds/repeat tests are different from their TEMPLATE
+        https://bugs.webkit.org/show_bug.cgi?id=29659
+
+        * fast/backgrounds/repeat/parsing-background-repeat.html:
+        * fast/backgrounds/repeat/resources/TEMPLATE.html: Removed.
+        * fast/backgrounds/repeat/resources/parsing-background-repeat.js: Removed.
+        * fast/backgrounds/repeat/script-tests: Added.
+        * fast/backgrounds/repeat/script-tests/TEMPLATE.html: Copied from LayoutTests/fast/backgrounds/repeat/resources/TEMPLATE.html.
+        * fast/backgrounds/repeat/script-tests/parsing-background-repeat.js: Copied from LayoutTests/fast/backgrounds/repeat/resources/parsing-background-repeat.js.
+
 2009-09-22  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Simon Fraser.
