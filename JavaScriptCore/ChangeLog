@@ -1,3 +1,12 @@
+2009-09-22  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Unreviewed build fix for Windows CE < 5
+
+        Define WINCEBASIC to disable the IsDebuggerPresent() code in
+        wtf/Assertions.cpp.
+
+        * JavaScriptCore.pri:
+
 2009-09-22  Joerg Bornemann  <joerg.bornemann@nokia.com>
 
         Reviewed by Simon Hausmann.

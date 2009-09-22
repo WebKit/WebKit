@@ -50,7 +50,10 @@ win32-* {
     }
 }
 
-wince*: SOURCES += $$QT_SOURCE_TREE/src/3rdparty/ce-compat/ce_time.cpp
+wince* {
+    SOURCES += $$QT_SOURCE_TREE/src/3rdparty/ce-compat/ce_time.cpp
+    DEFINES += WINCEBASIC
+}
 
 include(pcre/pcre.pri)
 
