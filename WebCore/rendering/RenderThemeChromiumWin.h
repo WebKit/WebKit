@@ -59,6 +59,7 @@ namespace WebCore {
 
         // System fonts.
         virtual void systemFont(int propId, FontDescription&) const;
+        virtual Color systemColor(int cssValueId) const;
 
         virtual void adjustSliderThumbSize(RenderObject*) const;
 

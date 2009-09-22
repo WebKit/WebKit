@@ -1,3 +1,15 @@
+2009-09-22  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by David Levin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29652
+        Support true system colors for CSS system colors in Chromium/Win.
+
+        * rendering/RenderThemeChromiumWin.cpp:
+        (WebCore::cssValueIdToSysColorIndex):
+        (WebCore::RenderThemeChromiumWin::systemColor):
+        * rendering/RenderThemeChromiumWin.h:
+
 2009-09-22  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Dave Hyatt.

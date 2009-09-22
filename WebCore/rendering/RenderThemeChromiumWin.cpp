@@ -311,6 +311,52 @@ void RenderThemeChromiumWin::systemFont(int propId, FontDescription& fontDescrip
     fontDescription = *cachedDesc;
 }
 
+// Map a CSSValue* system color to an index understood by GetSysColor().
+static int cssValueIdToSysColorIndex(int cssValueId)
+{
+    switch (cssValueId) {
+    case CSSValueActiveborder: return COLOR_ACTIVEBORDER;
+    case CSSValueActivecaption: return COLOR_ACTIVECAPTION;
+    case CSSValueAppworkspace: return COLOR_APPWORKSPACE;
+    case CSSValueBackground: return COLOR_BACKGROUND;
+    case CSSValueButtonface: return COLOR_BTNFACE;
+    case CSSValueButtonhighlight: return COLOR_BTNHIGHLIGHT;
+    case CSSValueButtonshadow: return COLOR_BTNSHADOW;
+    case CSSValueButtontext: return COLOR_BTNTEXT;
+    case CSSValueCaptiontext: return COLOR_CAPTIONTEXT;
+    case CSSValueGraytext: return COLOR_GRAYTEXT;
+    case CSSValueHighlight: return COLOR_HIGHLIGHT;
+    case CSSValueHighlighttext: return COLOR_HIGHLIGHTTEXT;
+    case CSSValueInactiveborder: return COLOR_INACTIVEBORDER;
+    case CSSValueInactivecaption: return COLOR_INACTIVECAPTION;
+    case CSSValueInactivecaptiontext: return COLOR_INACTIVECAPTIONTEXT;
+    case CSSValueInfobackground: return COLOR_INFOBK;
+    case CSSValueInfotext: return COLOR_INFOTEXT;
+    case CSSValueMenu: return COLOR_MENU;
+    case CSSValueMenutext: return COLOR_MENUTEXT;
+    case CSSValueScrollbar: return COLOR_SCROLLBAR;
+    case CSSValueThreeddarkshadow: return COLOR_3DDKSHADOW;
+    case CSSValueThreedface: return COLOR_3DFACE;
+    case CSSValueThreedhighlight: return COLOR_3DHIGHLIGHT;
+    case CSSValueThreedlightshadow: return COLOR_3DLIGHT;
+    case CSSValueThreedshadow: return COLOR_3DSHADOW;
+    case CSSValueWindow: return COLOR_WINDOW;
+    case CSSValueWindowframe: return COLOR_WINDOWFRAME;
+    case CSSValueWindowtext: return COLOR_WINDOWTEXT;
+    default: return -1; // Unsupported CSSValue
+    }
+}
+
+Color RenderThemeChromiumWin::systemColor(int cssValueId) const
+{
+    int sysColorIndex = cssValueIdToSysColorIndex(cssValueId);
+    if (ChromiumBridge::layoutTestMode() || (sysColorIndex == -1))
+        return RenderTheme::systemColor(cssValueId);
+
+    COLORREF color = GetSysColor(sysColorIndex);
+    return Color(GetRValue(color), GetGValue(color), GetBValue(color));
+}
+
 void RenderThemeChromiumWin::adjustSliderThumbSize(RenderObject* o) const
 {
     // These sizes match what WinXP draws for various menus.
