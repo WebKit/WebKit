@@ -1,3 +1,14 @@
+2009-09-22  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/7240911> REGRESSION (r48586): Crash occurs when loading
+        a PDF
+
+        * WebView/WebPDFDocumentExtras.mm:
+        (addWebPDFDocumentExtras): Made methodList static, because
+        class_addMethods() doesn't copy it.
+
 2009-09-21  Dan Bernstein  <mitz@apple.com>
 
         Attempt to fix the Tiger build

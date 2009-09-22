@@ -135,7 +135,7 @@ void addWebPDFDocumentExtras(Class pdfDocumentClass)
 #ifndef BUILDING_ON_TIGER
     class_addMethod(pdfDocumentClass, @selector(_web_allScripts), (IMP)web_PDFDocumentAllScripts, "@@:");
 #else
-    struct objc_method_list methodList = { 0, 1, { @selector(_web_allScripts), (char*)"@@:", (IMP)web_PDFDocumentAllScripts } };
+    static struct objc_method_list methodList = { 0, 1, { @selector(_web_allScripts), (char*)"@@:", (IMP)web_PDFDocumentAllScripts } };
     class_addMethods(pdfDocumentClass, &methodList);
 #endif
 }
