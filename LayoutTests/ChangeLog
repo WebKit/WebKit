@@ -1,3 +1,42 @@
+2009-09-22  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Tests for <rdar://problem/6925121> SAP: Wrong width calculation in 
+        table with fixed layout
+        -and corresponding-
+        https://bugs.webkit.org/show_bug.cgi?id=29501
+
+        * fast/table/fixed-table-with-percent-inside-percent-table.html: Added.
+        * fast/table/fixed-table-with-percent-width-inside-auto-table.html: Added.
+        * fast/table/fixed-table-with-percent-width-inside-div.html: Added.
+        * fast/table/fixed-table-with-percent-width-inside-extra-large-div.html: Added.
+        * fast/table/fixed-table-with-percent-width-inside-fixed-width-table.html: Added.
+        * fast/table/fixed-table-with-small-percent-width.html: Added.
+        * platform/mac/fast/table/fixed-table-with-percent-inside-percent-table-expected.checksum: Added.
+        * platform/mac/fast/table/fixed-table-with-percent-inside-percent-table-expected.png: Added.
+        * platform/mac/fast/table/fixed-table-with-percent-inside-percent-table-expected.txt: Added.
+        * platform/mac/fast/table/fixed-table-with-percent-width-inside-auto-table-expected.checksum: Added.
+        * platform/mac/fast/table/fixed-table-with-percent-width-inside-auto-table-expected.png: Added.
+        * platform/mac/fast/table/fixed-table-with-percent-width-inside-auto-table-expected.txt: Added.
+        * platform/mac/fast/table/fixed-table-with-percent-width-inside-div-expected.checksum: Added.
+        * platform/mac/fast/table/fixed-table-with-percent-width-inside-div-expected.png: Added.
+        * platform/mac/fast/table/fixed-table-with-percent-width-inside-div-expected.txt: Added.
+        * platform/mac/fast/table/fixed-table-with-percent-width-inside-extra-large-div-expected.checksum: Added.
+        * platform/mac/fast/table/fixed-table-with-percent-width-inside-extra-large-div-expected.png: Added.
+        * platform/mac/fast/table/fixed-table-with-percent-width-inside-extra-large-div-expected.txt: Added.
+        * platform/mac/fast/table/fixed-table-with-percent-width-inside-fixed-width-table-expected.checksum: Added.
+        * platform/mac/fast/table/fixed-table-with-percent-width-inside-fixed-width-table-expected.png: Added.
+        * platform/mac/fast/table/fixed-table-with-percent-width-inside-fixed-width-table-expected.txt: Added.
+        * platform/mac/fast/table/fixed-table-with-small-percent-width-expected.checksum: Added.
+        * platform/mac/fast/table/fixed-table-with-small-percent-width-expected.png: Added.
+        * platform/mac/fast/table/fixed-table-with-small-percent-width-expected.txt: Added.
+
+        New and improved results for this test.
+        * platform/mac/tables/mozilla/bugs/bug34176-expected.checksum:
+        * platform/mac/tables/mozilla/bugs/bug34176-expected.png:
+        * platform/mac/tables/mozilla/bugs/bug34176-expected.txt:
+
 2009-09-22  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler.

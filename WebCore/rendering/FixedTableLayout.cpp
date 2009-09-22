@@ -188,6 +188,11 @@ int FixedTableLayout::calcWidthArray(int)
     return usedWidth;
 }
 
+// Use a very large value (in effect infinite). But not too large!
+// numeric_limits<int>::max() will too easily overflow widths.
+// Keep this in synch with BLOCK_MAX_WIDTH in RenderBlock.cpp
+#define TABLE_MAX_WIDTH 15000
+
 void FixedTableLayout::calcPrefWidths(int& minWidth, int& maxWidth)
 {
     // FIXME: This entire calculation is incorrect for both minwidth and maxwidth.
@@ -206,6 +211,24 @@ void FixedTableLayout::calcPrefWidths(int& minWidth, int& maxWidth)
 
     minWidth = max(mw, tableWidth);
     maxWidth = minWidth;
+
+    // This quirk is very similar to one that exists in RenderBlock::calcBlockPrefWidths().
+    // Here's the example for this one:
+    /*
+        <table style="width:100%; background-color:red"><tr><td>
+            <table style="background-color:blue"><tr><td>
+                <table style="width:100%; background-color:green; table-layout:fixed"><tr><td>
+                    Content
+                </td></tr></table>
+            </td></tr></table>
+        </td></tr></table>
+    */ 
+    // In this example, the two inner tables should be as large as the outer table. 
+    // We can achieve this effect by making the maxwidth of fixed tables with percentage
+    // widths be infinite.
+    if (m_table->style()->htmlHacks() && m_table->style()->width().isPercent() 
+        && maxWidth < TABLE_MAX_WIDTH)
+        maxWidth = TABLE_MAX_WIDTH;
 }
 
 void FixedTableLayout::layout()

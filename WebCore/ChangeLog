@@ -1,3 +1,25 @@
+2009-09-22  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Fix for <rdar://problem/6925121> SAP: Wrong width calculation in 
+        table with fixed layout
+        -and corresponding-
+        https://bugs.webkit.org/show_bug.cgi?id=29501
+
+        New Tests:
+        * fast/table/fixed-table-with-percent-inside-percent-table.html: Added.
+        * fast/table/fixed-table-with-percent-width-inside-auto-table.html: Added.
+        * fast/table/fixed-table-with-percent-width-inside-div.html: Added.
+        * fast/table/fixed-table-with-percent-width-inside-extra-large-div.html: Added.
+        * fast/table/fixed-table-with-percent-width-inside-fixed-width-table.html: Added.
+        * fast/table/fixed-table-with-small-percent-width.html: Added.
+
+        This new quirk is very similar to an existing one that was 
+        implemented in revision 4316.
+        * rendering/FixedTableLayout.cpp:
+        (WebCore::FixedTableLayout::calcPrefWidths):
+
 2009-09-22  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Timothy Hatcher.
