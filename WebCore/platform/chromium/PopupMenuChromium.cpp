@@ -374,8 +374,7 @@ void PopupContainer::showExternal(const IntRect& rect, FrameView* v, int index)
 
 void PopupContainer::hidePopup()
 {
-    if (client())
-        client()->popupClosed(this);
+    listBox()->hidePopup();
 }
 
 void PopupContainer::layout()
@@ -1058,8 +1057,13 @@ void PopupListBox::adjustSelectedIndex(int delta)
 
 void PopupListBox::hidePopup()
 {
-    if (parent())
-        static_cast<PopupContainer*>(parent())->hidePopup();
+    if (!parent())
+        return;
+
+    PopupContainer* container = static_cast<PopupContainer*>(parent());
+    if (container->client())
+        container->client()->popupClosed(container);
+
     m_popupClient->popupDidHide();
 }
 

@@ -145,7 +145,7 @@ namespace WebCore {
         // popups on other platforms.
         void show(const IntRect&, FrameView*, int index);
 
-        // Hide the popup.  Do not call this directly: use client->hidePopup().
+        // Hide the popup.
         void hidePopup();
 
         // Compute size of widget and children.
