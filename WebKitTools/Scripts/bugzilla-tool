@@ -459,11 +459,17 @@ class ObsoleteAttachmentsOnBug(Command):
 class PostDiffAsPatchToBug(Command):
     def __init__(self):
         options = [
-            make_option("--no-obsolete", action="store_false", dest="obsolete_patches", default=True, help="Do not obsolete old patches before posting this one."),
-            make_option("--no-review", action="store_false", dest="review", default=True, help="Do not mark the patch for review."),
             make_option("-m", "--description", action="store", type="string", dest="description", help="Description string for the attachment (default: 'patch')"),
         ]
-        Command.__init__(self, 'Attaches the current working directory diff to a bug as a patch file.', 'BUGID', options=options)
+        options += self.posting_options()
+        Command.__init__(self, 'Attaches the current working directory diff to a bug as a patch file.', '[BUGID]', options=options)
+
+    @staticmethod
+    def posting_options():
+        return [
+            make_option("--no-obsolete", action="store_false", dest="obsolete_patches", default=True, help="Do not obsolete old patches before posting this one."),
+            make_option("--no-review", action="store_false", dest="review", default=True, help="Do not mark the patch for review."),
+        ]
 
     @staticmethod
     def obsolete_patches_on_bug(bug_id, bugs):
@@ -474,7 +480,10 @@ class PostDiffAsPatchToBug(Command):
                 bugs.obsolete_attachment(patch['id'])
 
     def execute(self, options, args, tool):
-        bug_id = args[0]
+        # Perfer a bug id passed as an argument over a bug url in the diff (i.e. ChangeLogs).
+        bug_id = (args and args[0]) or parse_bug_id(tool.scm().create_patch())
+        if not bug_id:
+            error("No bug id passed and no bug url found in diff, can't post.")
 
         if options.obsolete_patches:
             self.obsolete_patches_on_bug(bug_id, tool.bugs)
@@ -490,46 +499,49 @@ class PostCommitsAsPatchesToBug(Command):
     def __init__(self):
         options = [
             make_option("-b", "--bug-id", action="store", type="string", dest="bug_id", help="Specify bug id if no URL is provided in the commit log."),
-            make_option("--no-comment", action="store_false", dest="comment", default=True, help="Do not use commit log message as a comment for the patch."),
-            make_option("--no-obsolete", action="store_false", dest="obsolete_patches", default=True, help="Do not obsolete old patches before posting new ones."),
-            make_option("--no-review", action="store_false", dest="review", default=True, help="Do not mark the patch for review."),
-            make_option("-m", "--description", action="store", type="string", dest="description", help="Description string for the attachment (default: 'patch')"),
+            make_option("--add-log-as-comment", action="store_true", dest="add_log_as_comment", default=False, help="Add commit log message as a comment when uploading the patch."),
+            make_option("-m", "--description", action="store", type="string", dest="description", help="Description string for the attachment (default: description from commit message)"),
         ]
+        options += PostDiffAsPatchToBug.posting_options()
         Command.__init__(self, 'Attaches a range of local commits to bugs as patch files.', 'COMMITISH', options=options, requires_local_commits=True)
+
+    def _comment_text_for_commit(self, options, commit_message, tool, commit_id):
+        comment_text = None
+        if (options.add_log_as_comment):
+            comment_text = commit_message.body(lstrip=True)
+            comment_text += "---\n"
+            comment_text += tool.scm().files_changed_summary_for_commit(commit_id)
+        return comment_text
+
+    def _diff_file_for_commit(self, tool, commit_id):
+        diff = tool.scm().create_patch_from_local_commit(commit_id)
+        return StringIO.StringIO(diff) # add_patch_to_bug expects a file-like object
 
     def execute(self, options, args, tool):
         if not args:
             error("%s argument is required" % self.argument_names)
 
         commit_ids = tool.scm().commit_ids_from_commitish_arguments(args)
-        if len(commit_ids) > 10:
-            error("Are you sure you want to attach %s patches?" % (pluralize('patch', len(commit_ids))))
-            # Could add a --patches-limit option.
+        if len(commit_ids) > 10: # We could lower this limit, 10 is too many for one bug as-is.
+            error("bugzilla-tool does not support attaching %s at once.  Are you sure you passed the right commit range?" % (pluralize('patch', len(commit_ids))))
 
         have_obsoleted_patches = set()
         for commit_id in commit_ids:
-            # FIXME: commit_message is the wrong place to look for the bug_id
-            # the ChangeLogs should have the bug id, but the local commit message might not.
             commit_message = tool.scm().commit_message_for_local_commit(commit_id)
 
-            bug_id = options.bug_id or parse_bug_id(commit_message.message())
+            # Prefer --bug-id=, then a bug url in the commit message, then a bug url in the entire commit diff (i.e. ChangeLogs).
+            bug_id = options.bug_id or parse_bug_id(commit_message.message()) or parse_bug_id(tool.scm().create_patch_from_local_commit(commit_id))
             if not bug_id:
-                log("Skipping %s: No bug id found in commit log or specified with --bug-id." % commit_id)
+                log("Skipping %s: No bug id found in commit or specified with --bug-id." % commit_id)
                 continue
 
             if options.obsolete_patches and bug_id not in have_obsoleted_patches:
                 PostDiffAsPatchToBug.obsolete_patches_on_bug(bug_id, tool.bugs)
                 have_obsoleted_patches.add(bug_id)
 
+            diff_file = self._diff_file_for_commit(tool, commit_id)
             description = options.description or commit_message.description(lstrip=True, strip_url=True)
-            comment_text = None
-            if (options.comment):
-                comment_text = commit_message.body(lstrip=True)
-                comment_text += "---\n"
-                comment_text += tool.scm().files_changed_summary_for_commit(commit_id)
-
-            diff = tool.scm().create_patch_from_local_commit(commit_id)
-            diff_file = StringIO.StringIO(diff) # add_patch_to_bug expects a file-like object
+            comment_text = self._comment_text_for_commit(options, commit_message, tool, commit_id)
             tool.bugs.add_patch_to_bug(bug_id, diff_file, description, comment_text, mark_for_review=options.review)
 
 

@@ -1,3 +1,19 @@
+2009-09-11  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by David Kilzer.
+
+        post-diff and post-commits should be able to find bug urls in ChangeLogs.
+        https://bugs.webkit.org/show_bug.cgi?id=29206
+
+        * Scripts/bugzilla-tool:
+         - Share common options by adding a PostDiffAsPatchToBug.posting_options() method.
+         - Rename --no-comment to --add-log-as-comment and reverse behavior.
+           Comments tend to just be noise.  I'll eventually remove this argument if no one uses it.
+         - Split out code into helper functions to try and make execute() more legible.
+         - Make post-diff find the bug url in the ChangeLogs if not passed as an argument.
+         - Fallback to bug urls in commit diffs, instead of just in commit messages,
+           meaning post-commits will now find bug urls in ChangeLogs.
+
 2009-09-21  Csaba Osztrogonac  <oszi@inf.u-szeged.hu>
 
         Reviewed by Maciej Stachowiak.
