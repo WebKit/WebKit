@@ -1,3 +1,11 @@
+2009-09-22  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
+
+        Reviewed by Tor Arne Vestbø. 
+
+        [Qt] Skip fast/events/drag-file-crash because DRT doesn't support eventSender.beginDragWithFiles yet.
+
+        * platform/qt/Skipped:
+
 2009-09-21  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Alexey Proskuryakov.
