@@ -1,3 +1,9 @@
+2009-09-21  Brady Eidson  <beidson@apple.com>
+
+        Rubberstamped by Mark Rowe.
+
+        * DerivedSources.make: Fix the Xcode build on SnowLeopard.
+
 2009-09-15  John Abd-El-Malek  <jam@chromium.org>
 
         Reviewed by Darin Fisher.
