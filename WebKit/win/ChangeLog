@@ -1,3 +1,20 @@
+2009-09-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Steve Falkenburg.
+
+        Fix for <rdar://problem/6451745>
+        Windows WebKit needs to implement reloadFromOrigin()
+
+        * Interfaces/IWebFrame.idl:
+        * Interfaces/IWebFramePrivate.idl:
+        * Interfaces/IWebView.idl:
+        * WebFrame.cpp:
+        (WebFrame::reloadFromOrigin):
+        * WebFrame.h:
+        * WebView.cpp:
+        (WebView::reloadFromOrigin):
+        * WebView.h:
+
 2009-09-22  Adam Roben  <aroben@apple.com>
 
         Manage refcounts correctly in DefaultDownloadDelegate::willSendRequest

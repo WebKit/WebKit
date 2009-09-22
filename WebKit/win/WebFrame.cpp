@@ -304,6 +304,16 @@ HRESULT STDMETHODCALLTYPE WebFrame::setExcludeFromTextSearch(
     return E_FAIL;
 }
 
+HRESULT WebFrame::reloadFromOrigin()
+{
+    Frame* coreFrame = core(this);
+    if (!coreFrame)
+        return E_FAIL;
+
+    coreFrame->loader()->reload(true);
+    return S_OK;
+}
+
 HRESULT STDMETHODCALLTYPE WebFrame::paintDocumentRectToContext(
     /* [in] */ RECT rect,
     /* [in] */ OLE_HANDLE deviceContext)

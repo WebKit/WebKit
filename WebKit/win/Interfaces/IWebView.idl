@@ -873,6 +873,11 @@ interface IWebIBActions : IUnknown
         - (IBAction)resetPageZoom:(id)sender;
     */
     HRESULT resetPageZoom([in] IUnknown* sender);
+
+    /*
+        - (IBAction)reloadFromOrigin:(id)sender;
+    */
+    HRESULT reloadFromOrigin([in] IUnknown* sender);
 }
 
 /*

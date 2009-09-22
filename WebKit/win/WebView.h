@@ -353,6 +353,9 @@ public:
     virtual HRESULT STDMETHODCALLTYPE toggleGrammarChecking( 
         /* [in] */ IUnknown *sender);
 
+    virtual HRESULT STDMETHODCALLTYPE reloadFromOrigin( 
+        /* [in] */ IUnknown *sender);
+
     // IWebViewCSS
 
     virtual HRESULT STDMETHODCALLTYPE computedStyleForElement( 
