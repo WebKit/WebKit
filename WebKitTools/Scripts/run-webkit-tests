@@ -490,7 +490,7 @@ sub catch_pipe { $dumpToolCrashed = 1; }
 $SIG{"PIPE"} = "catch_pipe";
 
 print "Testing ", scalar @tests, " test cases";
-print "$iterations times" if ($iterations > 1);
+print " $iterations times" if ($iterations > 1);
 print ", repeating each test $repeatEach times" if ($repeatEach > 1);
 print ".\n";
 

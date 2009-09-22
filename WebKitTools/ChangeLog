@@ -1,5 +1,13 @@
 2009-09-22  Eric Seidel  <eric@webkit.org>
 
+        No review, only fixing typo (missing space character).
+
+        Fix typo from https://bugs.webkit.org/show_bug.cgi?id=29220
+
+        * Scripts/run-webkit-tests:
+
+2009-09-22  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Darin Adler.
 
         run-webkit-tests needs a --repeat-each=N option (AAABBBCCC instead of ABCABCABC)
