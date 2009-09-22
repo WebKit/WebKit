@@ -83,8 +83,13 @@ void InspectorFrontend::addMessageToConsole(const ScriptObject& messageObj, cons
     } else if (!wrappedArguments.isEmpty()) {
         for (unsigned i = 0; i < wrappedArguments.size(); ++i)
             function->appendArgument(m_inspectorController->wrapObject(wrappedArguments[i]));
-    } else
-        function->appendArgument(message);
+    } else {
+        // FIXME: avoid manual wrapping here.
+        ScriptObject textWrapper = ScriptObject::createNew(m_scriptState);
+        textWrapper.set("type", "string");
+        textWrapper.set("description", message);
+        function->appendArgument(textWrapper);
+    }
     function->call();
 }
 
