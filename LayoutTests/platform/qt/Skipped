@@ -19,6 +19,7 @@ editing/text-iterator/basic-iteration.html
 
 # Fluctuating tests
 animations/transform-origin-vs-functions.html
+animations/change-one-anim.html
 
 # ------- works on 64 bit but not on 32 bit
 svg/custom/path-getTotalLength.svg

@@ -1,5 +1,13 @@
 2009-09-22  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
 
+        Rubber-stamped by Tor Arne Vestbø.
+
+        [Qt] Skip fluctuating animations/change-one-anim.html test.
+
+        * platform/qt/Skipped:
+
+2009-09-22  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
+
         Reviewed by Tor Arne Vestbø. 
 
         [Qt] Skip fast/events/drag-file-crash because DRT doesn't support eventSender.beginDragWithFiles yet.
