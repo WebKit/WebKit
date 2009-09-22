@@ -128,11 +128,11 @@ ACCESSOR_SETTER(LocationHref)
     if (!frame)
         return;
 
-    if (!shouldAllowNavigation(frame))
-        return;
-
     KURL url = completeURL(toWebCoreString(value));
     if (url.isNull())
+        return;
+
+    if (!shouldAllowNavigation(frame))
         return;
 
     navigateIfAllowed(frame, url, false, false);
@@ -288,11 +288,11 @@ CALLBACK_FUNC_DECL(LocationReplace)
     if (!frame)
         return v8::Undefined();
 
-    if (!shouldAllowNavigation(frame))
-        return v8::Undefined();
-
     KURL url = completeURL(toWebCoreString(args[0]));
     if (url.isNull())
+        return v8::Undefined();
+
+    if (!shouldAllowNavigation(frame))
         return v8::Undefined();
 
     navigateIfAllowed(frame, url, true, true);
@@ -309,11 +309,11 @@ CALLBACK_FUNC_DECL(LocationAssign)
     if (!frame)
         return v8::Undefined();
 
-    if (!shouldAllowNavigation(frame))
-        return v8::Undefined();
-
     KURL url = completeURL(toWebCoreString(args[0]));
     if (url.isNull())
+        return v8::Undefined();
+
+    if (!shouldAllowNavigation(frame))
         return v8::Undefined();
 
     navigateIfAllowed(frame, url, false, false);
