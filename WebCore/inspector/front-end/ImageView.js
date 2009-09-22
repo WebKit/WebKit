@@ -37,6 +37,7 @@ WebInspector.ImageView = function(resource)
     this.contentElement.appendChild(container);
 
     this.imagePreviewElement = document.createElement("img");
+    this.imagePreviewElement.addStyleClass("resource-image-view");
     this.imagePreviewElement.setAttribute("src", this.resource.url);
 
     container.appendChild(this.imagePreviewElement);

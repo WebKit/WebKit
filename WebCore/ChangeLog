@@ -1,3 +1,29 @@
+2009-09-22  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Timothy Hatcher.
+
+        List HTTP status code with response headers in resources tab of Web Inspector.
+        http://webkit.org/b/19945
+
+        This patch adds a new top level list in the resources tab, HTTP Information, that 
+        for now, contains the Request Method (GET, POST, etc.) and the Status Code (200, 404, etc.).
+        Additionally, it adds a colored dot next to the requested URL to show the status 
+        (green for success, orange for redirect, red for error).
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/ImageView.js:
+        (WebInspector.ImageView):
+        * inspector/front-end/Images/errorRedDot.png: Added.
+        * inspector/front-end/Images/successGreenDot.png: Added.
+        * inspector/front-end/Images/warningOrangeDot.png: Added.
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource.StatusTextForCode):
+        * inspector/front-end/ResourceView.js:
+        (WebInspector.ResourceView):
+        (WebInspector.ResourceView.prototype._refreshURL):
+        (WebInspector.ResourceView.prototype._refreshHTTPInformation):
+        * inspector/front-end/inspector.css:
+
 2009-09-22  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler.

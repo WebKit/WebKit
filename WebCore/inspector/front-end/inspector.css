@@ -854,13 +854,21 @@ body.drawer-visible #drawer {
     -webkit-user-select: text;
 }
 
-.resource-view.image img {
+.resource-view.image img.resource-image-view {
     max-width: 100%;
     max-height: 1000px;
     background-image: url(Images/checker.png);
     -webkit-box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.5);
     -webkit-user-select: text;
     -webkit-user-drag: auto;
+}
+
+.resource-url {
+    vertical-align: middle;
+}
+
+.resource-status-image {
+    vertical-align: middle;
 }
 
 .resource-view.image .title {
