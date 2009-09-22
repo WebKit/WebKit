@@ -1,3 +1,14 @@
+2009-09-22  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by David Levin.
+
+        Create chromium directory and ported chromium.org's features.gypi for 
+        the webkit chromium port.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29617
+
+        * chromium/features.gypi: Added.
+
 2009-09-21  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson.

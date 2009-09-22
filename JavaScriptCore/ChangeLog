@@ -1,3 +1,13 @@
+2009-09-22  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by David Levin.
+
+        Ported chromium.org's javascriptcore.gyp for the webkit chromium port.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29617
+
+        * JavaScriptCore.gyp/JavaScriptCore.gyp: Added.
+
 2009-09-22  Thiago Macieira  <thiago.macieira@nokia.com>
 
         Reviewed by Simon Hausmann.

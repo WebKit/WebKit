@@ -1,3 +1,13 @@
+2009-09-22  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by David Levin.
+
+        Ported chromium.org's webcore.gyp for the webkit chromium port.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29617
+
+        * WebCore.gyp/WebCore.gyp: Added.
+
 2009-09-22  Christian Plesner Hansen  <christian.plesner.hansen@gmail.com>
 
         Reviewed by Adam Barth.
