@@ -1,3 +1,14 @@
+2009-09-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Test for XMLHttpRequest.abort() should destroy the response text.
+        https://bugs.webkit.org/show_bug.cgi?id=29658
+        <rdar://problem/5301430>
+
+        * http/tests/xmlhttprequest/abort-should-destroy-responseText-expected.txt: Added.
+        * http/tests/xmlhttprequest/abort-should-destroy-responseText.html: Added.
+
 2009-09-22  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Eric Seidel.

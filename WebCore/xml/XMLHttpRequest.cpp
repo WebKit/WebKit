@@ -556,6 +556,10 @@ void XMLHttpRequest::abort()
 
     internalAbort();
 
+    m_responseText = "";
+    m_createdDocument = false;
+    m_responseXML = 0;
+
     // Clear headers as required by the spec
     m_requestHeaders.clear();
 
