@@ -1,3 +1,18 @@
+2009-09-22  Victor Wang  <victorw@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28914
+
+        Add layout test to test iframe shim can be used
+        to overlay html above a windowed plugin. It checks
+        premutations of iframe shims in relationship to 
+        plugin.
+
+        * plugins/iframe-shims-expected.txt: Added with property svn:eol-style.
+        * plugins/iframe-shims.html: Added with property svn:eol-style.
+        * plugins/resources/simple_blank.swf: Added with property svn:mime-type.
+
 2009-09-22  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
 
         Rubber-stamped by Tor Arne Vestbø.
