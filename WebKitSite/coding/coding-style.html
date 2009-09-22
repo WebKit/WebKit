@@ -704,7 +704,60 @@ Don't bother to organize them in a logical order.
 #include "QualifiedName.h"
 #include "Attribute.h"
 </pre>
+</ol>
 
+<h3>"using namespace" Statements</h3>
+
+<ol>
+
+<li>Any "using namespace" statements for a nested namespace whose parent namespace 
+is also defined in a file must be declared within that namespace definition.
+
+<h4 class="right">Right:</h4>
+<pre class="code">
+// HTMLBaseElement.cpp
+
+namespace WebCore {
+
+using namespace HTMLNames;
+
+} // namespace WebCore
+</pre>
+
+<h4 class="wrong">Wrong:</h4>
+<pre class="code">
+// HTMLBaseElement.cpp
+
+using namespace WebCore::HTMLNames;
+
+namespace WebCore {
+
+} // namespace WebCore
+</pre>
+
+<li>Any other "using namespace" statements must be declared before the first namespace 
+definition in the file.
+<h4 class="right">Right:</h4>
+<pre class="code">
+// HTMLSelectElement.cpp
+
+using namespace std;
+
+namespace WebCore {
+
+} // namespace WebCore
+</pre>
+
+<h4 class="wrong">Wrong:</h4>
+<pre class="code">
+// HTMLSelectElement.cpp
+
+namespace WebCore {
+
+using namespace std;
+
+} // namespace WebCore
+</pre>
 </ol>
 
 <?php

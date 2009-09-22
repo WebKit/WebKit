@@ -1,5 +1,14 @@
 2009-09-21  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by Darin Adler.
+
+        Add coding style guidelines for 'using namespace.'
+        https://bugs.webkit.org/show_bug.cgi?id=29499
+
+        * coding/coding-style.html:
+
+2009-09-21  Brady Eidson  <beidson@apple.com>
+
         Rubberstamped by Sam Weinig.
 
         Add some example files for an upcoming blog post.
