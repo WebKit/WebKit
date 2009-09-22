@@ -1,3 +1,18 @@
+2009-09-22  Joerg Bornemann  <joerg.bornemann@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Fix major memory leak in JavaScriptCore RegisterFile on Windows CE
+
+        https://bugs.webkit.org/show_bug.cgi?id=29367
+
+        On Widows CE we must decommit all committed pages before we release
+        them. See VirtualFree documentation.
+        Desktop Windows behaves much smoother in this situation.
+
+        * interpreter/RegisterFile.cpp:
+        (JSC::RegisterFile::~RegisterFile):
+
 2009-09-21  Greg Bolsinga  <bolsinga@apple.com>
 
         Reviewed by Simon Fraser & Sam Weinig.
