@@ -272,8 +272,9 @@ FrameLoader::FrameLoader(Frame* frame, FrameLoaderClient* client)
     , m_encodingWasChosenByUser(false)
     , m_containsPlugIns(false)
     , m_redirectionTimer(this, &FrameLoader::redirectionTimerFired)
-    , m_checkCompletedTimer(this, &FrameLoader::checkCompletedTimerFired)
-    , m_checkLoadCompleteTimer(this, &FrameLoader::checkLoadCompleteTimerFired)
+    , m_checkTimer(this, &FrameLoader::checkTimerFired)
+    , m_shouldCallCheckCompleted(false)
+    , m_shouldCallCheckLoadComplete(false)
     , m_opener(0)
     , m_openedByDOM(false)
     , m_creatingInitialEmptyDocument(false)
@@ -323,6 +324,11 @@ void FrameLoader::setDefersLoading(bool defers)
         m_provisionalDocumentLoader->setDefersLoading(defers);
     if (m_policyDocumentLoader)
         m_policyDocumentLoader->setDefersLoading(defers);
+
+    if (!defers) {
+        startRedirectionTimer();
+        startCheckCompleteTimer();
+    }
 }
 
 Frame* FrameLoader::createWindow(FrameLoader* frameLoaderForFrameLookup, const FrameLoadRequest& request, const WindowFeatures& features, bool& created)
@@ -849,8 +855,9 @@ void FrameLoader::clear(bool clearWindowProperties, bool clearScriptObjects, boo
     m_redirectionTimer.stop();
     m_scheduledRedirection.clear();
 
-    m_checkCompletedTimer.stop();
-    m_checkLoadCompleteTimer.stop();
+    m_checkTimer.stop();
+    m_shouldCallCheckCompleted = false;
+    m_shouldCallCheckLoadComplete = false;
 
     m_receivedData = false;
     m_isDisplayingInitialEmptyDocument = false;
@@ -1252,8 +1259,19 @@ bool FrameLoader::allChildrenAreComplete() const
     return true;
 }
 
+bool FrameLoader::allAncestorsAreComplete() const
+{
+    for (Frame* ancestor = m_frame; ancestor; ancestor = ancestor->tree()->parent()) {
+        if (!ancestor->loader()->m_isComplete)
+            return false;
+    }
+    return true;
+}
+
 void FrameLoader::checkCompleted()
 {
+    m_shouldCallCheckCompleted = false;
+
     if (m_frame->view())
         m_frame->view()->checkStopDelayingDeferredRepaints();
 
@@ -1279,38 +1297,44 @@ void FrameLoader::checkCompleted()
     RefPtr<Frame> protect(m_frame);
     checkCallImplicitClose(); // if we didn't do it before
 
-    // Do not start a redirection timer for subframes here.
-    // That is deferred until the parent is completed.
-    if (m_scheduledRedirection && !m_frame->tree()->parent())
-        startRedirectionTimer();
+    startRedirectionTimer();
 
     completed();
     if (m_frame->page())
         checkLoadComplete();
 }
 
-void FrameLoader::checkCompletedTimerFired(Timer<FrameLoader>*)
+void FrameLoader::checkTimerFired(Timer<FrameLoader>*)
 {
-    checkCompleted();
+    if (Page* page = m_frame->page()) {
+        if (page->defersLoading())
+            return;
+    }
+    if (m_shouldCallCheckCompleted)
+        checkCompleted();
+    if (m_shouldCallCheckLoadComplete)
+        checkLoadComplete();
+}
+
+void FrameLoader::startCheckCompleteTimer()
+{
+    if (!(m_shouldCallCheckCompleted || m_shouldCallCheckLoadComplete))
+        return;
+    if (m_checkTimer.isActive())
+        return;
+    m_checkTimer.startOneShot(0);
 }
 
 void FrameLoader::scheduleCheckCompleted()
 {
-    if (!m_checkCompletedTimer.isActive())
-        m_checkCompletedTimer.startOneShot(0);
-}
-
-void FrameLoader::checkLoadCompleteTimerFired(Timer<FrameLoader>*)
-{
-    if (!m_frame->page())
-        return;
-    checkLoadComplete();
+    m_shouldCallCheckCompleted = true;
+    startCheckCompleteTimer();
 }
 
 void FrameLoader::scheduleCheckLoadComplete()
 {
-    if (!m_checkLoadCompleteTimer.isActive())
-        m_checkLoadCompleteTimer.startOneShot(0);
+    m_shouldCallCheckLoadComplete = true;
+    startCheckCompleteTimer();
 }
 
 void FrameLoader::checkCallImplicitClose()
@@ -1439,12 +1463,6 @@ void FrameLoader::scheduleHistoryNavigation(int steps)
     if (!m_frame->page())
         return;
 
-    // navigation will always be allowed in the 0 steps case, which is OK because that's supposed to force a reload.
-    if (!canGoBackOrForward(steps)) {
-        cancelRedirection();
-        return;
-    }
-
     scheduleRedirection(new ScheduledRedirection(steps));
 }
 
@@ -1482,6 +1500,9 @@ void FrameLoader::redirectionTimerFired(Timer<FrameLoader>*)
 {
     ASSERT(m_frame->page());
 
+    if (m_frame->page()->defersLoading())
+        return;
+
     OwnPtr<ScheduledRedirection> redirection(m_scheduledRedirection.release());
 
     switch (redirection->type) {
@@ -1498,7 +1519,8 @@ void FrameLoader::redirectionTimerFired(Timer<FrameLoader>*)
             }
             // go(i!=0) from a frame navigates into the history of the frame only,
             // in both IE and NS (but not in Mozilla). We can't easily do that.
-            goBackOrForward(redirection->historySteps);
+            if (canGoBackOrForward(redirection->historySteps))
+                goBackOrForward(redirection->historySteps);
             return;
         case ScheduledRedirection::formSubmission:
             // The submitForm function will find a target frame before using the redirection timer.
@@ -1720,12 +1742,6 @@ bool FrameLoader::loadPlugin(RenderPart* renderer, const KURL& url, const String
     }
 
     return widget != 0;
-}
-
-void FrameLoader::parentCompleted()
-{
-    if (m_scheduledRedirection && !m_redirectionTimer.isActive())
-        startRedirectionTimer();
 }
 
 String FrameLoader::outgoingReferrer() const
@@ -2139,16 +2155,22 @@ void FrameLoader::scheduleRedirection(PassOwnPtr<ScheduledRedirection> redirecti
     m_scheduledRedirection = redirection;
     if (!m_isComplete && m_scheduledRedirection->type != ScheduledRedirection::redirection)
         completed();
-    if (m_isComplete || m_scheduledRedirection->type != ScheduledRedirection::redirection)
-        startRedirectionTimer();
+    startRedirectionTimer();
 }
 
 void FrameLoader::startRedirectionTimer()
 {
-    ASSERT(m_frame->page());
-    ASSERT(m_scheduledRedirection);
+    if (!m_scheduledRedirection)
+        return;
 
-    m_redirectionTimer.stop();
+    ASSERT(m_frame->page());
+
+    if (m_redirectionTimer.isActive())
+        return;
+
+    if (m_scheduledRedirection->type == ScheduledRedirection::redirection && !allAncestorsAreComplete())
+        return;
+
     m_redirectionTimer.startOneShot(m_scheduledRedirection->delay);
 
     switch (m_scheduledRedirection->type) {
@@ -2187,7 +2209,7 @@ void FrameLoader::completed()
 {
     RefPtr<Frame> protect(m_frame);
     for (Frame* child = m_frame->tree()->firstChild(); child; child = child->tree()->nextSibling())
-        child->loader()->parentCompleted();
+        child->loader()->startRedirectionTimer();
     if (Frame* parent = m_frame->tree()->parent())
         parent->loader()->checkCompleted();
     if (m_frame->view())
@@ -3559,6 +3581,8 @@ void FrameLoader::checkLoadComplete()
 {
     ASSERT(m_client->hasWebView());
     
+    m_shouldCallCheckLoadComplete = false;
+
     // FIXME: Always traversing the entire frame tree is a bit inefficient, but 
     // is currently needed in order to null out the previous history item for all frames.
     if (Page* page = m_frame->page())

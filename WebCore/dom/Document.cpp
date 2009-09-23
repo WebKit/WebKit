@@ -2173,7 +2173,7 @@ void Document::processHttpEquiv(const String& equiv, const String& content)
         FrameLoader* frameLoader = frame->loader();
         if (frameLoader->shouldInterruptLoadForXFrameOptions(content, url())) {
             frameLoader->stopAllLoaders();
-            frameLoader->scheduleHTTPRedirection(0, blankURL());
+            frameLoader->scheduleLocationChange(blankURL(), String());
         }
     }
 }

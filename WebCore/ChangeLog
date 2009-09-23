@@ -1,3 +1,80 @@
+2009-09-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Crash when website does a history.back() followed by an alert()
+        https://bugs.webkit.org/show_bug.cgi?id=29686
+        rdar://problem/6984996
+
+        When loading is deferred, we need to defer timer-based loads
+        too, not just networking-driven loads. Otherwise we can get
+        syncronouse navigation while running a script, which leads to
+        crashes and other badness.
+
+        This patch includes a manual test; an automated test may be
+        possible some time in the future.
+
+        * dom/Document.cpp:
+        (WebCore::Document::processHttpEquiv): Use scheduleLocationChange
+        instead of scheduleHTTPRedirection to implement the navigation
+        needed for x-frame-options.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::FrameLoader): Updated for data members with
+        new names and new data members.
+        (WebCore::FrameLoader::setDefersLoading): When turning deferral
+        off, call startRedirectionTimer and startCheckCompleteTimer, since
+        either of them might have been fired and ignored while defersLoading
+        was true.
+        (WebCore::FrameLoader::clear): Updated for replacement of the
+        m_checkCompletedTimer and m_checkLoadCompleteTimer timers.
+        (WebCore::FrameLoader::allAncestorsAreComplete): Added.
+        (WebCore::FrameLoader::checkCompleted): Added code to set
+        m_shouldCallCheckCompleted to false. Changed code that calls
+        startRedirectionTimer to call it unconditionally, since that
+        function now knows when to do work and doesn't expect callers
+        to handle that any more.
+        (WebCore::FrameLoader::checkTimerFired): Added. Replaces the old
+        timer fired callbacks. Calls checkCompleted and checkLoadComplete
+        as appropriate, but not when defersLoading is true.
+        (WebCore::FrameLoader::startCheckCompleteTimer): Added. Replaces
+        the two different calls to start timers before. Only starts the
+        timers if they are needed.
+        (WebCore::FrameLoader::scheduleCheckCompleted): Changed to call
+        startCheckCompleteTimer after setting boolean.
+        (WebCore::FrameLoader::scheduleCheckLoadComplete): Ditto.
+        (WebCore::FrameLoader::scheduleHistoryNavigation): Removed
+        canGoBackOrForward check. The logic works more naturally when
+        we don't do anything until the timer fires.
+        (WebCore::FrameLoader::redirectionTimerFired): Do nothing if
+        defersLoading is true. Also moved canGoBackOrForward check here.
+        (WebCore::FrameLoader::scheduleRedirection): Changed code that
+        calls startRedirectionTimer to do so unconditionally. That
+        function now handles the rules about when to start the timer
+        rather than expecting the caller to do so.
+        (WebCore::FrameLoader::startRedirectionTimer): Added code to
+        handle the case where there is no redirection scheduled,
+        where the timer is already active, or where this is a classic
+        redirection and there is an ancestor that has not yet completed
+        loading.
+        (WebCore::FrameLoader::completed): Call startRedirectionTimer
+        here directly instead of calling a cover named parentCompleted.
+        Hooray! One less function in the giant FrameLoader class!
+        (WebCore::FrameLoader::checkLoadComplete): Added code to set
+        m_shouldCallCheckLoadComplete to false.
+
+        * loader/FrameLoader.h: Replaced the two functions
+        checkCompletedTimerFired and checkLoadCompleteTimerFired with
+        one function, checkTimerFired. Removed the parentCompleted
+        function. Added the startCheckCompleteTimer and
+        allAncestorsAreComplete functions. Replaced the
+        m_checkCompletedTimer and m_checkLoadCompleteTimer data
+        members with m_checkTimer, m_shouldCallCheckCompleted, and
+        m_shouldCallCheckLoadComplete.
+
+        * manual-tests/go-back-after-alert.html: Added.
+        * manual-tests/resources/alert-and-go-back.html: Added.
+
 2009-09-23  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/29660> Move "Generate 64-bit Export File" build phase script into DerivedSources.make
