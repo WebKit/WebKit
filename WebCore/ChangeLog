@@ -1,3 +1,13 @@
+2009-09-23  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29694
+        [Chromium] Eliminate dependency on gfx::Rect from ImageSkia.
+
+        * platform/graphics/skia/ImageSkia.cpp:
+        (WebCore::drawResampledBitmap):
+
 2009-09-22  Timothy Hatcher  <timothy@apple.com>
 
         Prevent scrolling multiple elements during latched wheel events.
