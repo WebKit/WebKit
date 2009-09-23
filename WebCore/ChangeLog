@@ -1,3 +1,45 @@
+2009-09-23  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] media tests failing after their rework
+        https://bugs.webkit.org/show_bug.cgi?id=29532
+
+        Correctly advertise the mime types used by the common formats used
+        in the tests.
+
+        Tests that regressed, and will pass again:
+
+           media/video-canvas-source.html
+           media/video-controls.html
+           media/video-currentTime-set2.html
+           media/video-dom-autoplay.html
+           media/video-dom-src.html
+           media/video-error-abort.html
+           media/video-load-networkState.html
+           media/video-load-readyState.html
+           media/video-muted.html
+           media/video-no-autoplay.html
+           media/video-pause-empty-events.html
+           media/video-play-empty-events.html
+           media/video-seekable.html
+           media/video-seeking.html
+           media/video-size.html
+           media/video-source-type-params.html
+           media/video-source-type.html
+           media/video-source.html
+           media/video-src-change.html
+           media/video-src-invalid-remove.html
+           media/video-src-remove.html
+           media/video-src-set.html
+           media/video-src-source.html
+           media/video-src.html
+           media/video-timeupdate-during-playback.html
+           media/video-volume.html
+
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::mimeTypeCache):
+
 2009-09-22  Charles Wei  <charles.wei@torchmobile.com.cn>
 
         Reviewed by Eric Seidel.

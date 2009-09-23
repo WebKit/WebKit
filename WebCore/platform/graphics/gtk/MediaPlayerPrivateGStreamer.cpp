@@ -2,6 +2,7 @@
  * Copyright (C) 2007, 2009 Apple Inc.  All rights reserved.
  * Copyright (C) 2007 Collabora Ltd.  All rights reserved.
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
+ * Copyright (C) 2009 Gustavo Noronha Silva <gns@gnome.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -690,6 +691,37 @@ static HashSet<String> mimeTypeCache()
                     (g_str_equal(mimetype[0], "application") &&
                         !ignoredApplicationSubtypes.contains(String(mimetype[1])))) {
                 cache.add(String(capability[0]));
+
+                // These formats are supported by GStreamer, but not correctly advertised
+                if (g_str_equal(capability[0], "video/x-h264") ||
+                    g_str_equal(capability[0], "audio/x-m4a")) {
+                    cache.add(String("video/mp4"));
+                    cache.add(String("audio/aac"));
+                }
+
+                if (g_str_equal(capability[0], "video/x-theora"))
+                    cache.add(String("video/ogg"));
+
+                if (g_str_equal(capability[0], "audio/x-wav"))
+                    cache.add(String("audio/wav"));
+
+                if (g_str_equal(capability[0], "audio/mpeg")) {
+                    // This is what we are handling: mpegversion=(int)1, layer=(int)[ 1, 3 ]
+                    gchar** versionAndLayer = g_strsplit(capability[1], ",", 2);
+
+                    if (g_str_has_suffix (versionAndLayer[0], "(int)1")) {
+                        for (int i = 0; versionAndLayer[1][i] != '\0'; i++) {
+                            if (versionAndLayer[1][i] == '1')
+                                cache.add(String("audio/mp1"));
+                            else if (versionAndLayer[1][i] == '2')
+                                cache.add(String("audio/mp2"));
+                            else if (versionAndLayer[1][i] == '3')
+                                cache.add(String("audio/mp3"));
+                        }
+                    }
+
+                    g_strfreev(versionAndLayer);
+                }
             }
 
             g_strfreev(capability);
