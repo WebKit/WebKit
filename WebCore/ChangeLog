@@ -1,3 +1,31 @@
+2009-09-23  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29523
+        
+        Fixes an issue where a JavaScript URL that was URL-encoded twice can bypass the
+        XSSAuditor.
+        
+        The method FrameLoader::executeIfJavaScriptURL decodes the URL escape 
+        sequences in a JavaScript URL before it is eventually passed to the XSSAuditor.
+        Because the XSSAuditor also decodes the URL escape sequences as part of its
+        canonicalization, the double decoding of a JavaScript URL would
+        not match the canonicalization of the input parameters.
+
+        Tests: http/tests/security/xssAuditor/iframe-javascript-url-url-encoded.html
+               http/tests/security/xssAuditor/javascript-link-url-encoded.html
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::evaluate): Moved call to 
+        XSSAuditor::canEvaluateJavaScriptURL into FrameLoader::executeIfJavaScriptURL.
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::evaluate): Ditto.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::executeIfJavaScriptURL): Modified to call 
+        XSSAuditor::canEvaluateJavaScriptURL on the JavaScript URL before it is
+        decoded.
+
 2009-09-22  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by John Sullivan.

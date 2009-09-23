@@ -746,8 +746,10 @@ bool FrameLoader::executeIfJavaScriptURL(const KURL& url, bool userGesture, bool
 
     const int javascriptSchemeLength = sizeof("javascript:") - 1;
 
-    String script = decodeURLEscapeSequences(url.string().substring(javascriptSchemeLength));
-    ScriptValue result = executeScript(script, userGesture);
+    String script = url.string().substring(javascriptSchemeLength);
+    ScriptValue result;
+    if (m_frame->script()->xssAuditor()->canEvaluateJavaScriptURL(script))
+        result = executeScript(decodeURLEscapeSequences(script), userGesture);
 
     String scriptResult;
     if (!result.getString(scriptResult))

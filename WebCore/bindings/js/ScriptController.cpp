@@ -85,12 +85,7 @@ ScriptValue ScriptController::evaluate(const ScriptSourceCode& sourceCode)
     const SourceCode& jsSourceCode = sourceCode.jsSourceCode();
     String sourceURL = jsSourceCode.provider()->url();
     
-    if (sourceURL.isNull() && !m_XSSAuditor->canEvaluateJavaScriptURL(sourceCode.source())) {
-        // This JavaScript URL is not safe to be evaluated.
-        return JSValue();
-    }
-    
-    if (!sourceURL.isNull() && !m_XSSAuditor->canEvaluate(sourceCode.source())) {
+    if (!m_XSSAuditor->canEvaluate(sourceCode.source())) {
         // This script is not safe to be evaluated.
         return JSValue();
     }

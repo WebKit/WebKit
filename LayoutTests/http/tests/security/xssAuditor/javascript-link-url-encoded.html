@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+    layoutTestController.setXSSAuditorEnabled(true);
+}
+</script>
+</head>
+<body>
+<iframe src='http://localhost:8000/security/xssAuditor/resources/echo-intertag-click-and-notify.pl?elmid=anchorLink&q=%3Ca+id%3DanchorLink+href%3Djavascript%3A%271%2525251%27%3Balert%28/%26XSS/%29%3Etest%3C/a%3E'>
+</iframe>
+</body>
+</html>
