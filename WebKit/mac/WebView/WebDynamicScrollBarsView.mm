@@ -328,17 +328,41 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
     BOOL isContinuous;
     WKGetWheelEventDeltas(event, &deltaX, &deltaY, &isContinuous);
 
+    BOOL isLatchingEvent = WKIsLatchingWheelEvent(event);
+
     if (fabsf(deltaY) > fabsf(deltaX)) {
         if (![self allowsVerticalScrolling]) {
             [[self nextResponder] scrollWheel:event];
             return;
         }
-    } else if (![self allowsHorizontalScrolling]) {
-        [[self nextResponder] scrollWheel:event];
-        return;
+
+        if (isLatchingEvent && !verticallyPinnedByPreviousWheelEvent) {
+            double verticalPosition = [[self verticalScroller] doubleValue];
+            if ((deltaY >= 0.0 && verticalPosition == 0.0) || (deltaY <= 0.0 && verticalPosition == 1.0))
+                return;
+        }
+    } else {
+        if (![self allowsHorizontalScrolling]) {
+            [[self nextResponder] scrollWheel:event];
+            return;
+        }
+
+        if (isLatchingEvent && !horizontallyPinnedByPreviousWheelEvent) {
+            double horizontalPosition = [[self horizontalScroller] doubleValue];
+            if ((deltaX >= 0.0 && horizontalPosition == 0.0) || (deltaX <= 0.0 && horizontalPosition == 1.0))
+                return;
+        }
     }
 
     [super scrollWheel:event];
+
+    if (!isLatchingEvent) {
+        double verticalPosition = [[self verticalScroller] doubleValue];
+        double horizontalPosition = [[self horizontalScroller] doubleValue];
+
+        verticallyPinnedByPreviousWheelEvent = (verticalPosition == 0.0 || verticalPosition == 1.0);
+        horizontallyPinnedByPreviousWheelEvent = (horizontalPosition == 0.0 || horizontalPosition == 1.0);
+    }
 }
 
 - (BOOL)accessibilityIsIgnored 

@@ -1,3 +1,18 @@
+2009-09-22  Timothy Hatcher  <timothy@apple.com>
+
+        Prevent scrolling multiple elements during latched wheel events.
+
+        Reviewed by Anders Carlsson.
+
+        * page/EventHandler.cpp:
+        (WebCore::scrollAndAcceptEvent):
+        (WebCore::EventHandler::clear):
+        (WebCore::EventHandler::handleWheelEvent):
+        * page/EventHandler.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::scroll):
+        * rendering/RenderBox.h:
+
 2009-09-23  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Adam Barth.

@@ -101,7 +101,7 @@ const double autoscrollInterval = 0.05;
 
 static Frame* subframeForHitTestResult(const MouseEventWithHitTestResults&);
 
-static inline void scrollAndAcceptEvent(float delta, ScrollDirection positiveDirection, ScrollDirection negativeDirection, PlatformWheelEvent& e, Node* node)
+static inline void scrollAndAcceptEvent(float delta, ScrollDirection positiveDirection, ScrollDirection negativeDirection, PlatformWheelEvent& e, Node* node, Node** stopNode)
 {
     if (!delta)
         return;
@@ -110,12 +110,13 @@ static inline void scrollAndAcceptEvent(float delta, ScrollDirection positiveDir
     RenderBox* enclosingBox = node->renderer()->enclosingBox();
 
     if (e.granularity() == ScrollByPageWheelEvent) {
-        if (enclosingBox->scroll(delta < 0 ? negativeDirection : positiveDirection, ScrollByPage, 1))
+        if (enclosingBox->scroll(delta < 0 ? negativeDirection : positiveDirection, ScrollByPage, 1, stopNode))
             e.accept();
         return;
-    } 
+    }
+
     float pixelsToScroll = delta > 0 ? delta : -delta;
-    if (enclosingBox->scroll(delta < 0 ? negativeDirection : positiveDirection, ScrollByPixel, pixelsToScroll))
+    if (enclosingBox->scroll(delta < 0 ? negativeDirection : positiveDirection, ScrollByPixel, pixelsToScroll, stopNode))
         e.accept();
 }
 
@@ -205,6 +206,7 @@ void EventHandler::clear()
     m_capturesDragging = false;
     m_capturingMouseEventsNode = 0;
     m_latchedWheelEventNode = 0;
+    m_previousWheelScrolledNode = 0;
 }
 
 void EventHandler::selectClosestWordFromMouseEvent(const MouseEventWithHitTestResults& result)
@@ -1774,7 +1776,7 @@ bool EventHandler::handleWheelEvent(PlatformWheelEvent& e)
     Node* node;
     bool isOverWidget;
     bool didSetLatchedNode = false;
-    
+
     if (m_useLatchedWheelEventNode) {
         if (!m_latchedWheelEventNode) {
             HitTestRequest request(HitTestRequest::ReadOnly);
@@ -1784,20 +1786,22 @@ bool EventHandler::handleWheelEvent(PlatformWheelEvent& e)
             m_widgetIsLatched = result.isOverWidget();
             didSetLatchedNode = true;
         }
-        
+
         node = m_latchedWheelEventNode.get();
         isOverWidget = m_widgetIsLatched;
     } else {
         if (m_latchedWheelEventNode)
             m_latchedWheelEventNode = 0;
-        
+        if (m_previousWheelScrolledNode)
+            m_previousWheelScrolledNode = 0;
+
         HitTestRequest request(HitTestRequest::ReadOnly);
         HitTestResult result(vPoint);
         doc->renderView()->layer()->hitTest(request, result);
         node = result.innerNode();
         isOverWidget = result.isOverWidget();
     }
-    
+
     if (node) {
         // Figure out which view to send the event to.
         RenderObject* target = node->renderer();
@@ -1814,17 +1818,20 @@ bool EventHandler::handleWheelEvent(PlatformWheelEvent& e)
         node->dispatchWheelEvent(e);
         if (e.isAccepted())
             return true;
-        
+
         // If we don't have a renderer, send the wheel event to the first node we find with a renderer.
         // This is needed for <option> and <optgroup> elements so that <select>s get a wheel scroll.
         while (node && !node->renderer())
             node = node->parent();
-        
+
         if (node && node->renderer()) {
             // Just break up into two scrolls if we need to.  Diagonal movement on 
             // a MacBook pro is an example of a 2-dimensional mouse wheel event (where both deltaX and deltaY can be set).
-            scrollAndAcceptEvent(e.deltaX(), ScrollLeft, ScrollRight, e, node);
-            scrollAndAcceptEvent(e.deltaY(), ScrollUp, ScrollDown, e, node);
+            Node* stopNode = m_previousWheelScrolledNode.get();
+            scrollAndAcceptEvent(e.deltaX(), ScrollLeft, ScrollRight, e, node, &stopNode);
+            scrollAndAcceptEvent(e.deltaY(), ScrollUp, ScrollDown, e, node, &stopNode);
+            if (!m_useLatchedWheelEventNode)
+                m_previousWheelScrolledNode = stopNode;
         }
     }
 

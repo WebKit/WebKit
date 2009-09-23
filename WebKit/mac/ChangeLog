@@ -1,3 +1,13 @@
+2009-09-22  Timothy Hatcher  <timothy@apple.com>
+
+        Prevent scrolling multiple frames during latched wheel events.
+
+        Reviewed by Anders Carlsson.
+
+        * WebView/WebDynamicScrollBarsView.h:
+        * WebView/WebDynamicScrollBarsView.mm:
+        (-[WebDynamicScrollBarsView scrollWheel:]):
+
 2009-09-22  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.
