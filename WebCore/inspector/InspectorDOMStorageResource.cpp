@@ -35,6 +35,7 @@
 #include "InspectorDOMStorageResource.h"
 
 #include "Document.h"
+#include "DOMWindow.h"
 #include "EventNames.h"
 #include "Frame.h"
 #include "InspectorFrontend.h"

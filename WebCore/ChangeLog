@@ -1,3 +1,12 @@
+2009-09-22  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, build fix.
+
+        [Chromium] Add missing include.
+        https://bugs.webkit.org/show_bug.cgi?id=29536
+
+        * inspector/InspectorDOMStorageResource.cpp: Added DOMWindow.h include.
+
 2009-09-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.
