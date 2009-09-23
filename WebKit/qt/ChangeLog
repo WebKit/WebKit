@@ -1,3 +1,14 @@
+2009-09-23  Norbert Leser  <norbert.leser@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Need to guard QX11Info include with Q_WS_X11.
+        That class may not be available (in QT 4.5 for Symbian, for instance).
+        Completes fixes in r48627 and r48604.
+
+        * Api/qwebgraphicsitem.cpp:
+        * Api/qwebview.cpp:
+
 2009-09-22  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Simon Hausmann.

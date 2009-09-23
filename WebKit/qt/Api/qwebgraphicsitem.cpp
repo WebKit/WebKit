@@ -29,7 +29,9 @@
 #include <QtGui/qapplication.h>
 #include <QtGui/qgraphicssceneevent.h>
 #include <QtGui/qstyleoption.h>
+#if defined(Q_WS_X11)
 #include <QX11Info>
+#endif
 
 class QWebGraphicsItemPrivate : public QWebPageClient {
 public:

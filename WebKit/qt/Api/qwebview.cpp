@@ -31,7 +31,9 @@
 #include "qprinter.h"
 #include "qdir.h"
 #include "qfile.h"
+#if defined(Q_WS_X11)
 #include <QX11Info>
+#endif
 
 class QWebViewPrivate : public QWebPageClient {
 public:
