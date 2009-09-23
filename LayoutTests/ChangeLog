@@ -1,3 +1,20 @@
+2009-09-23  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by John Sullivan.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29657
+        Columns don't break properly in positioned elements with a fixed height.  Make sure that
+        a block is still considered to have columns even when the column count is 1 if the column
+        width is non-auto.
+    
+        Added fast/multicol/positioned-with-constrained-height.html
+
+        * fast/multicol/positioned-with-constrained-height.html: Added.
+        * platform/mac/fast/multicol/float-multicol-expected.txt:
+        * platform/mac/fast/multicol/positioned-with-constrained-height-expected.checksum: Added.
+        * platform/mac/fast/multicol/positioned-with-constrained-height-expected.png: Added.
+        * platform/mac/fast/multicol/positioned-with-constrained-height-expected.txt: Added.
+
 2009-09-23  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Unreviewed. Skipping new tests, and

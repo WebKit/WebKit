@@ -3559,7 +3559,7 @@ void RenderBlock::calcColumnWidth()
 
 void RenderBlock::setDesiredColumnCountAndWidth(int count, int width)
 {
-    if (count == 1) {
+    if (count == 1 && style()->hasAutoColumnWidth()) {
         if (hasColumns()) {
             delete gColumnInfoMap->take(this);
             setHasColumns(false);
