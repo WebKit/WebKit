@@ -788,7 +788,7 @@ OBJC_DOM_HEADERS=$(filter-out DOMDOMWindow.h DOMMimeType.h DOMPlugin.h,$(DOM_CLA
 
 all : $(OBJC_DOM_HEADERS)
 
-all : CharsetData.cpp WebCore.exp
+all : CharsetData.cpp WebCore.exp WebCore.LP64.exp
 
 # --------
 
@@ -805,9 +805,12 @@ ifeq ($(shell gcc -E -P -dM -F $(BUILT_PRODUCTS_DIR) $(FRAMEWORK_FLAGS) WebCore/
     WEBCORE_EXPORT_DEPENDENCIES := $(WEBCORE_EXPORT_DEPENDENCIES) WebCore.JNI.exp
 endif
 
-# See also "Generate 64-bit Export File" build phase script in WebCore.xcodeproj/project.pbxproj
 ifeq ($(shell gcc -E -P -dM -F $(BUILT_PRODUCTS_DIR) $(FRAMEWORK_FLAGS) WebCore/ForwardingHeaders/wtf/Platform.h | grep ENABLE_NETSCAPE_PLUGIN_API | cut -d' ' -f3), 1)
     WEBCORE_EXPORT_DEPENDENCIES := $(WEBCORE_EXPORT_DEPENDENCIES) WebCore.NPAPI.exp
+endif
+
+ifeq ($(shell gcc -E -P -dM -F $(BUILT_PRODUCTS_DIR) $(FRAMEWORK_FLAGS) WebCore/ForwardingHeaders/wtf/Platform.h | grep WTF_USE_PLUGIN_HOST_PROCESS | cut -d' ' -f3), 1)
+    WEBCORE_EXPORT_DEPENDENCIES := $(WEBCORE_EXPORT_DEPENDENCIES) WebCore.PluginHostProcess.exp
 endif
 
 ifeq ($(ENABLE_CONTEXT_MENUS), 1)
@@ -840,6 +843,10 @@ endif
 
 WebCore.exp : WebCore.base.exp $(WEBCORE_EXPORT_DEPENDENCIES)
 	cat $^ > $@
+
+# Switch NSRect, NSSize and NSPoint with their CG counterparts for 64-bit.
+WebCore.LP64.exp : WebCore.exp
+	cat $^ | sed -e s/7_NSRect/6CGRect/ -e s/7_NSSize/6CGSize/ -e s/8_NSPoint/7CGPoint/ > $@
 
 # --------
 

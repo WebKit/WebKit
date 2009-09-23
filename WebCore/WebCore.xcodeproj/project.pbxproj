@@ -5920,7 +5920,7 @@
 		449195980FBE17D700D9F824 /* WebCore.SVG.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; path = WebCore.SVG.exp; sourceTree = "<group>"; };
 		449195990FBE17D700D9F824 /* WebCore.SVG.Animation.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; path = WebCore.SVG.Animation.exp; sourceTree = "<group>"; };
 		4491959A0FBE17D700D9F824 /* WebCore.NPAPI.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; path = WebCore.NPAPI.exp; sourceTree = "<group>"; };
-		4491959B0FBE17D700D9F824 /* WebCore.LP64.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; path = WebCore.LP64.exp; sourceTree = "<group>"; };
+		4491959B0FBE17D700D9F824 /* WebCore.PluginHostProcess.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; path = WebCore.PluginHostProcess.exp; sourceTree = "<group>"; };
 		4491959C0FBE17D700D9F824 /* WebCore.JNI.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; path = WebCore.JNI.exp; sourceTree = "<group>"; };
 		4491959D0FBE17D700D9F824 /* WebCore.DashboardSupport.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; path = WebCore.DashboardSupport.exp; sourceTree = "<group>"; };
 		449B19F30FA72ECE0015CA4A /* HTMLParserQuirks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLParserQuirks.h; sourceTree = "<group>"; };
@@ -10461,7 +10461,7 @@
 				FEA4133F105D67AE0007236F /* WebCore.DragSupport.exp */,
 				FE49BD301061719100D0E1AE /* WebCore.Inspector.exp */,
 				4491959C0FBE17D700D9F824 /* WebCore.JNI.exp */,
-				4491959B0FBE17D700D9F824 /* WebCore.LP64.exp */,
+				4491959B0FBE17D700D9F824 /* WebCore.PluginHostProcess.exp */,
 				4491959A0FBE17D700D9F824 /* WebCore.NPAPI.exp */,
 				FE136AE710643BE50078CF6D /* WebCore.OrientationEvents.exp */,
 				449195990FBE17D700D9F824 /* WebCore.SVG.Animation.exp */,
@@ -17877,7 +17877,6 @@
 				1C81BA330E97357C00266E07 /* Copy Inspector Resources */,
 				1C5F9D760E09A1B400E91D0A /* Streamline Inspector Source */,
 				93F19A0C08245E59001E9ABC /* Sources */,
-				1CB71D4A0B02658D0061EA45 /* Generate 64-bit Export File */,
 				93F19B1208245E59001E9ABC /* Frameworks */,
 				939D050109D9FF6B00984996 /* Check For Global Initializers */,
 				933457E60EBFDF6B00B80894 /* Check For Exit Time Destructors */,
@@ -17999,23 +17998,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# Copy all the Inspector front-end resources.\nditto \"${SRCROOT}/inspector/front-end\" \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/inspector\"\n\n# Remove the WebKit.qrc file since it is not used on the Mac (this file is for Qt)\nrm -f \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/inspector/WebKit.qrc\"\n";
-		};
-		1CB71D4A0B02658D0061EA45 /* Generate 64-bit Export File */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/WebCore.exp",
-				"$(SRCROOT)/WebCore.LP64.exp",
-			);
-			name = "Generate 64-bit Export File";
-			outputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/WebCore.LP64.exp",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Corrections for 64-bit\n# 1) Switch NSRect, NSSize and NSPoint with their CG counterparts\n# 2) Append any 64-bit only symbols from WebCore.LP64.exp\ncat \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore/WebCore.exp\" | sed -e s/7_NSRect/6CGRect/ -e s/7_NSSize/6CGSize/ -e s/8_NSPoint/7CGPoint/ > \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore/WebCore.LP64.exp\"\ncat \"${SRCROOT}/WebCore.LP64.exp\" >> \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore/WebCore.LP64.exp\"\n";
 		};
 		1CC93C640DAE929600E4BC3A /* Copy Forwarding and ICU Headers */ = {
 			isa = PBXShellScriptBuildPhase;

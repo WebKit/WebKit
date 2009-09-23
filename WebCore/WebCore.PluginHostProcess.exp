@@ -1,4 +1,4 @@
-# This file gets appended to WebCore.exp, only for 64-bit architectures.
+# This file gets appended to WebCore.exp when USE(PLUGIN_HOST_PROCESS) is 1.
 
 __ZN3JSC16RuntimeObjectImp6s_infoE
 __ZN3JSC8Bindings10RootObjectD1Ev

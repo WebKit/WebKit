@@ -1,3 +1,24 @@
+2009-09-23  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/29660> Move "Generate 64-bit Export File" build phase script into DerivedSources.make
+
+        Reviewed by Mark Rowe.
+
+        The "Generate 64-bit Export File" build phase script generated
+        the WebCore.LP64.exp export file used to link 64-bit WebCore.
+        Instead of having a separate build phase script, move its
+        generation into DerivedSources.make where WebCore.exp is
+        generated.
+
+        * DerivedSources.make: Added a rule to make WebCore.LP64.exp.
+        Added code to append WebCore.PluginHostProcess.exp to
+        $(WEBCORE_EXPORT_DEPENDENCIES) when WTF_USE_PLUGIN_HOST_PROCESS
+        is set to 1.
+        * WebCore.PluginHostProcess.exp: Renamed from WebCore/WebCore.LP64.exp.
+        * WebCore.xcodeproj/project.pbxproj: Removed the "Generate
+        64-bit Export File" build phase script. Renamed WebCore.LP64.exp
+        to WebCore.PluginHostProcess.exp.
+
 2009-09-23  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Dimitri Glazkov.
