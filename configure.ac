@@ -600,8 +600,6 @@ AC_SUBST([G_IR_GENERATE])
 AC_SUBST([GIRDIR])
 AC_SUBST([GIRTYPELIBDIR])
 
-AM_CONDITIONAL([ENABLE_INTROSPECTION],[test "$enable_introspection" = "yes"])
-
 # determine the font backend
 AC_MSG_CHECKING([the font backend to use])
 AC_ARG_WITH(font_backend,
@@ -758,6 +756,10 @@ AM_CONDITIONAL([SVG_FLAGS],[test "$svg_flags" = "yes"])
 AM_CONDITIONAL([HTML_FLAGS],[test "$html_flags" = "yes"])
 AM_CONDITIONAL([ENABLE_WEB_SOCKETS],[test "$enable_web_sockets" = "yes"])
 
+# Gtk conditionals
+AM_CONDITIONAL([ENABLE_INTROSPECTION],[test "$enable_introspection" = "yes"])
+
+
 AC_CONFIG_FILES([
 GNUmakefile
 WebKit/gtk/webkit-1.0.pc:WebKit/gtk/webkit.pc.in
@@ -806,10 +808,10 @@ Features:
  Web Workers support                                      : $enable_workers
  XPATH support                                            : $enable_xpath
  XSLT support                                             : $enable_xslt
- Introspection support                                    : $enable_introspection
 GTK+ configuration:
  GDK target                                               : $with_target
  Hildon UI extensions                                     : $with_hildon
+ Introspection support                                    : $enable_introspection
 "
 if test "$with_unicode_backend" = "glib"; then
    echo "     >> WARNING: the glib-based unicode backend is slow and incomplete <<"

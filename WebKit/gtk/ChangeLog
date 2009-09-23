@@ -1,3 +1,14 @@
+2009-09-23  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Xan Lopez.
+
+        Minor reorganization to the patch landed in
+        http://trac.webkit.org/changeset/48670. Also move JSCore-1.0.gir
+        in the gtk directory as that's only useful to the Gtk port at the
+        moment.
+
+        * JSCore-1.0.gir: Renamed from JSCore-1.0.gir.
+
 2009-09-22  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Jan Alonzo.

@@ -45,6 +45,7 @@ bin_PROGRAMS :=
 noinst_PROGRAMS :=
 noinst_HEADERS :=
 lib_LIBRARIES :=
+EXTRA_DIST :=
 IDL_BINDINGS :=
 TEST_PROGS :=
 POFILES :=
@@ -405,6 +406,44 @@ webkitgtk_cleanfiles += \
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = WebKit/gtk/webkit-1.0.pc
 
+# Files that will be cleaned
+MAINTAINERCLEANFILES := $(stamp_files) $(BUILT_SOURCES) doltcompile doltlibtool
+DISTCLEANFILES := $(stamp_files) $(BUILT_SOURCES) doltcompile doltlibtool
+CLEANFILES := $(stamp_files) $(BUILT_SOURCES)
+
+if ENABLE_INTROSPECTION
+JSCORE_GIRSOURCES = $(srcdir)/WebKit/gtk/JSCore-1.0.gir # JSCore-1.0.gir is handwritten
+WEBKIT_GIRSOURCES = WebKit-1.0.gir
+
+$(WEBKIT_GIRSOURCES): $(JSCORE_GIRSOURCES) $(G_IR_SCANNER)
+	$(AM_V_GEN)$(G_IR_SCANNER) -v --namespace WebKit --nsversion=1.0 \
+	    --add-include-path=$(srcdir) --add-include-path=. \
+	     --include=GObject-2.0 \
+	     --include=Gtk-2.0 \
+	     --include=JSCore-1.0 \
+	     --include=Soup-2.4 \
+	     --library=webkit-1.0 \
+	     --libtool="$(LIBTOOL)" \
+	     --pkg gobject-2.0 \
+	     --pkg gtk+-2.0 \
+	     --pkg webkit-1.0 \
+	     --output $@ \
+	     $(webkitgtk_h_api)
+
+girdir = $(GIRDIR)
+gir_DATA = $(WEBKIT_GIRSOURCES) $(JSCORE_GIRSOURCES)
+
+typelibsdir = $(GIRTYPELIBDIR)
+typelibs_DATA = $(JSCORE_GIRSOURCES:.gir=.typelib) $(WEBKIT_GIRSOURCES:.gir=.typelib)
+
+%.typelib: %.gir $(G_IR_COMPILER)
+	$(AM_V_GEN)$(G_IR_COMPILER) $< -o $@
+
+EXTRA_DIST += $(JSCORE_GIRSOURCES)
+CLEANFILES += $(WEBKIT_GIRSOURCES) $(typelibs_DATA)
+
+endif
+
 stamp_files := \
 	stamp-webkitmarshal.cpp \
 	stamp-webkitmarshal.h \
@@ -474,7 +513,7 @@ DerivedSources/webkitenumtypes.cpp: $(webkitgtk_h_api) GNUmakefile
 	&& rm -f xgen-gtc
 
 # Files that will be distributed
-EXTRA_DIST = \
+EXTRA_DIST += \
 	$(srcdir)/gtk-doc.make \
 	WebKit/LICENSE \
 	$(javascriptcore_dist) \
@@ -497,43 +536,6 @@ dist_resources_DATA = \
 	$(shell ls $(srcdir)/WebKit/gtk/resources/*.html)
 
 # END WEBKIT GTK+
-
-# Files that will be cleaned
-MAINTAINERCLEANFILES := $(stamp_files) $(BUILT_SOURCES) doltcompile doltlibtool
-DISTCLEANFILES := $(stamp_files) $(BUILT_SOURCES) doltcompile doltlibtool
-CLEANFILES := $(stamp_files) $(BUILT_SOURCES)
-
-if ENABLE_INTROSPECTION
-JSCORE_GIRSOURCES = JSCore-1.0.gir # JSCore-1.0.gir is handwritten
-WEBKIT_GIRSOURCES = WebKit-1.0.gir
-
-$(WEBKIT_GIRSOURCES): $(JSCORE_GIRSOURCES) $(G_IR_SCANNER)
-	$(AM_V_GEN)$(G_IR_SCANNER) -v --namespace WebKit --nsversion=1.0 \
-	    --add-include-path=$(srcdir) --add-include-path=. \
-	     --include=GObject-2.0 \
-	     --include=Gtk-2.0 \
-	     --include=JSCore-1.0 \
-	     --include=Soup-2.4 \
-	     --library=webkit-1.0 \
-	     --libtool="$(LIBTOOL)" \
-	     --pkg gobject-2.0 \
-	     --pkg gtk+-2.0 \
-	     --pkg webkit-1.0 \
-	     --output $@ \
-	     $(webkitgtk_h_api)
-
-girdir = $(GIRDIR)
-gir_DATA = $(WEBKIT_GIRSOURCES) $(JSCORE_GIRSOURCES)
-
-typelibsdir = $(GIRTYPELIBDIR)
-typelibs_DATA = $(JSCORE_GIRSOURCES:.gir=.typelib) $(WEBKIT_GIRSOURCES:.gir=.typelib)
-
-%.typelib: %.gir $(G_IR_COMPILER)
-	$(AM_V_GEN)$(G_IR_COMPILER) $< -o $@
-
-EXTRA_DIST += $(JSCORE_GIRSOURCES)
-CLEANFILES += $(WEBKIT_GIRSOURCES) $(typelibs_DATA)
-endif
 
 # Include module makefiles
 include JavaScriptCore/GNUmakefile.am
