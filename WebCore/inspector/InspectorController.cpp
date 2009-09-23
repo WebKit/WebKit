@@ -39,6 +39,7 @@
 #include "CookieJar.h"
 #include "Document.h"
 #include "DocumentLoader.h"
+#include "DOMWindow.h"
 #include "Element.h"
 #include "FloatConversion.h"
 #include "FloatQuad.h"
