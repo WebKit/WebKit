@@ -1,3 +1,12 @@
+2009-09-23  David Kilzer  <ddkilzer@apple.com>
+
+        Move definition of USE(PLUGIN_HOST_PROCESS) from WebKitPrefix.h to Platform.h
+
+        Reviewed by Mark Rowe.
+
+        * wtf/Platform.h: Define WTF_USE_PLUGIN_HOST_PROCESS to 1 when
+        building on 64-bit SnowLeopard.  Define to 0 elsewhere.
+
 2009-09-22  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoff Garen.
