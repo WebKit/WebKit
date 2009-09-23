@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<repository version="1.0"
+            xmlns="http://www.gtk.org/introspection/core/1.0"
+            xmlns:c="http://www.gtk.org/introspection/c/1.0">
+  <namespace name="JSCore" version="1.0" shared-library="webkit-1.0">
+    <alias name="GlobalContextRef"
+           target="none"
+           c:type="JSGlobalContextRef"/>
+    <alias name="ObjectRef" target="none" c:type="JSObjectRef"/>
+    <function name="EvaluateScript" c:identifier="JSEvaluateScript">
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+      </parameters>
+    </function>
+  </namespace>
+</repository>

@@ -568,6 +568,40 @@ if test "$enable_jit" = "yes"; then
 fi
 AC_MSG_RESULT([$enable_jit])
 
+# GObject Introspection
+AC_MSG_CHECKING([whether to enable GObject introspection support])
+AC_ARG_ENABLE([introspection],
+  [AS_HELP_STRING([--enable-introspection],[Enable GObject introspection (default: disabled)])],
+  [],[enable_introspection=no])
+AC_MSG_RESULT([$enable_introspection])
+
+G_IR_SCANNER=
+G_IR_COMPILER=
+G_IR_GENERATE=
+GIRDIR=
+GIRTYPELIBDIR=
+
+if test "$enable_introspection" = "yes"; then
+  GOBJECT_INTROSPECTION_REQUIRED=0.6.2
+  PKG_CHECK_MODULES([INTROSPECTION],[gobject-introspection-1.0 >= $GOBJECT_INTROSPECTION_REQUIRED])
+  
+  G_IR_SCANNER="$($PKG_CONFIG --variable=g_ir_scanner gobject-introspection-1.0)"
+  G_IR_COMPILER="$($PKG_CONFIG --variable=g_ir_compiler gobject-introspection-1.0)"
+  G_IR_GENERATE="$($PKG_CONFIG --variable=g_ir_generate gobject-introspection-1.0)"
+  GIRDIR="$($PKG_CONFIG --variable=girdir gobject-introspection-1.0)"
+  GIRTYPELIBDIR="$($PKG_CONFIG --variable=typelibdir gobject-introspection-1.0)"
+
+  AC_DEFINE([ENABLE_INTROSPECTION],[1],[Define to enable GObject introspection support])
+fi
+
+AC_SUBST([G_IR_SCANNER])
+AC_SUBST([G_IR_COMPILER])
+AC_SUBST([G_IR_GENERATE])
+AC_SUBST([GIRDIR])
+AC_SUBST([GIRTYPELIBDIR])
+
+AM_CONDITIONAL([ENABLE_INTROSPECTION],[test "$enable_introspection" = "yes"])
+
 # determine the font backend
 AC_MSG_CHECKING([the font backend to use])
 AC_ARG_WITH(font_backend,
@@ -772,6 +806,7 @@ Features:
  Web Workers support                                      : $enable_workers
  XPATH support                                            : $enable_xpath
  XSLT support                                             : $enable_xslt
+ Introspection support                                    : $enable_introspection
 GTK+ configuration:
  GDK target                                               : $with_target
  Hildon UI extensions                                     : $with_hildon
