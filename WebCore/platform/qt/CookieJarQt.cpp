@@ -48,6 +48,8 @@ namespace WebCore {
 #if QT_VERSION >= 0x040400
 static QNetworkCookieJar *cookieJar(const Document *document)
 {
+    if (!document)
+        return 0;
     Frame *frame = document->frame();
     if (!frame)
         return 0;
