@@ -1,3 +1,13 @@
+2009-09-22  Charles Wei  <charles.wei@torchmobile.com.cn>
+
+        Reviewed by Eric Seidel.
+
+        Fix the crash problem with absolte positioned children in foreignobject
+        htts://bugs.webkit.org/show_bug.cgi?id=26342
+
+        * svg/custom/foreignobject-crash-with-absolute-positioned-children-expected.txt: Added.
+        * svg/custom/foreignobject-crash-with-absolute-positioned-children.svg: Added.
+
 2009-09-22  Alpha Lam  <hclam@chromium.org>
 
         Reviewed by Eric Carlson.

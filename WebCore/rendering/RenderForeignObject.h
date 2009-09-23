@@ -49,6 +49,7 @@ public:
 
     virtual bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction);
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
+    virtual bool isSVGForeignObject() const { return true; }
 
  private:
     TransformationMatrix translationForAttributes() const;

@@ -625,6 +625,11 @@ RenderBlock* RenderObject::containingBlock() const
             // inline directly.
             if (o->style()->position() == RelativePosition && o->isInline() && !o->isReplaced())
                 return o->containingBlock();
+#if ENABLE(SVG)
+            if (o->isSVGForeignObject()) //foreignObject is the containing block for contents inside it
+                break;
+#endif
+
             o = o->parent();
         }
     } else {

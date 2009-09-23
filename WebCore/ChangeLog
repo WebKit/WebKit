@@ -1,3 +1,19 @@
+2009-09-22  Charles Wei  <charles.wei@torchmobile.com.cn>
+
+        Reviewed by Eric Seidel.
+
+        Fix the crash problem with absolte positioned children in foreignobject
+        htts://bugs.webkit.org/show_bug.cgi?id=26342
+
+        Test: svg/custom/foreignobject-crash-with-absolute-positioned-children.svg
+
+        * rendering/RenderForeignObject.h:
+        (WebCore::RenderForeignObject::isSVGForeignObject):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::containingBlock):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isSVGForeignObject):
+
 2009-09-22  Drew Wilson  <atwilson@google.com>
 
         Reviewed by David Levin.
