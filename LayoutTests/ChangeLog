@@ -1,3 +1,9 @@
+2009-09-23  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Unreviewed. Updated to match the changes done in r48566.
+
+        * platform/gtk/fast/dom/prototype-inheritance-2-expected.txt:
+
 2009-09-23  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
 
         Reviewed by Tor Arne Vestbø.

@@ -3,13 +3,13 @@ Make sure prototypes are set up using the window a property came from, instead o
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-FAIL Array from inner.console.profiles
-PASS Attr from inner.document.activeElement.attributes.0
-PASS AttrConstructor from inner.document.activeElement.attributes.0.constructor
-PASS AttrPrototype from inner.document.activeElement.attributes.0.__proto__
-PASS BarInfo from inner.menubar
-PASS BarInfoPrototype from inner.menubar.__proto__
-FAIL Boolean from inner.offscreenBuffering
+FAIL Array from inner.document.forms.testForm.0.ownerDocument.defaultView.console.profiles
+PASS Attr from inner.document.forms.testForm.0.attributes.0
+PASS AttrConstructor from inner.document.forms.testForm.0.attributes.0.constructor
+PASS AttrPrototype from inner.document.forms.testForm.0.attributes.0.__proto__
+PASS BarInfo from inner.document.forms.testForm.0.ownerDocument.defaultView.menubar
+PASS BarInfoPrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.menubar.__proto__
+FAIL Boolean from inner.document.forms.testForm.0.noValidate
 PASS CSSCharsetRule from inner.document.getElementById("dummyStyle").sheet.cssRules.0
 PASS CSSCharsetRuleConstructor from inner.document.getElementById("dummyStyle").sheet.cssRules.0.constructor
 PASS CSSCharsetRulePrototype from inner.document.getElementById("dummyStyle").sheet.cssRules.0.__proto__
@@ -26,18 +26,18 @@ PASS CSSPrimitiveValue from inner.getComputedStyle(inner.document.body).getPrope
 PASS CSSPrimitiveValueConstructor from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(background-clip).constructor
 PASS CSSPrimitiveValuePrototype from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(background-clip).__proto__
 PASS CSSRuleList from inner.document.getElementById("dummyStyle").sheet.cssRules
-PASS CSSRuleListConstructor from inner.document.styleSheets.0.rules.constructor
-PASS CSSRuleListPrototype from inner.document.styleSheets.0.cssRules.__proto__
+PASS CSSRuleListConstructor from inner.document.forms.testForm.0.ownerDocument.styleSheets.0.rules.constructor
+PASS CSSRuleListPrototype from inner.document.forms.testForm.0.ownerDocument.styleSheets.0.cssRules.__proto__
 PASS CSSRulePrototype from inner.document.getElementById("dummyStyle").sheet.cssRules.0.__proto__.__proto__
 PASS CSSStyleDeclaration from inner.document.getElementById("styledSpan").style
-PASS CSSStyleDeclarationConstructor from inner.document.activeElement.style.constructor
-PASS CSSStyleDeclarationPrototype from inner.document.scripts.0.style.__proto__
+PASS CSSStyleDeclarationConstructor from inner.document.forms.testForm.0.style.constructor
+PASS CSSStyleDeclarationPrototype from inner.document.forms.testForm.0.0.style.__proto__
 PASS CSSStyleRule from inner.document.getElementById("dummyStyle").sheet.cssRules.4
 PASS CSSStyleRuleConstructor from inner.document.getElementById("dummyStyle").sheet.cssRules.4.constructor
 PASS CSSStyleRulePrototype from inner.document.getElementById("dummyStyle").sheet.cssRules.4.__proto__
-PASS CSSStyleSheet from inner.document.styleSheets.0
-PASS CSSStyleSheetConstructor from inner.document.styleSheets.0.constructor
-PASS CSSStyleSheetPrototype from inner.document.styleSheets.0.__proto__
+PASS CSSStyleSheet from inner.document.forms.testForm.0.ownerDocument.styleSheets.0
+PASS CSSStyleSheetConstructor from inner.document.forms.testForm.0.ownerDocument.styleSheets.0.constructor
+PASS CSSStyleSheetPrototype from inner.document.forms.testForm.0.ownerDocument.styleSheets.0.__proto__
 PASS CSSValue from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(-webkit-animation-timing-function).0
 PASS CSSValueConstructor from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(-webkit-animation-timing-function).0.constructor
 PASS CSSValueList from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(-webkit-transition-timing-function)
@@ -50,232 +50,127 @@ PASS CanvasRenderingContext2D from inner.document.getElementsByTagName("canvas")
 PASS CanvasRenderingContext2DConstructor from inner.document.getElementsByTagName("canvas")[0].getContext("2d").constructor
 PASS CanvasRenderingContext2DPrototype from inner.document.getElementsByTagName("canvas")[0].getContext("2d").__proto__
 PASS CanvasRenderingContextPrototype from inner.document.getElementsByTagName("canvas")[0].getContext("2d").__proto__.__proto__
-PASS CharacterDataPrototype from inner.document.activeElement.childNodes.61.__proto__.__proto__
+PASS CharacterDataPrototype from inner.document.forms.testForm.0.attributes.0.lastChild.__proto__.__proto__
 PASS ClientRect from inner.document.body.getBoundingClientRect()
 PASS ClientRectConstructor from inner.document.body.getBoundingClientRect().constructor
 PASS ClientRectList from inner.document.body.getClientRects()
 PASS ClientRectListConstructor from inner.document.body.getClientRects().constructor
 PASS ClientRectListPrototype from inner.document.body.getClientRects().__proto__
 PASS ClientRectPrototype from inner.document.body.getBoundingClientRect().__proto__
-PASS Collection from inner.document.forms.testForm
-PASS Comment from inner.document.activeElement.lastElementChild.previousElementSibling.previousSibling
-PASS CommentConstructor from inner.document.activeElement.childNodes.61.constructor
-PASS CommentPrototype from inner.document.activeElement.childNodes.61.__proto__
-PASS Console from inner.console
-PASS ConsolePrototype from inner.console.__proto__
+PASS Comment from inner.document.forms.testForm.0.parentNode.lastElementChild.previousElementSibling.previousSibling
+PASS CommentConstructor from inner.document.forms.testForm.0.parentNode.lastElementChild.previousElementSibling.previousSibling.constructor
+PASS CommentPrototype from inner.document.forms.testForm.0.parentNode.lastElementChild.previousElementSibling.previousSibling.__proto__
+PASS Console from inner.document.forms.testForm.0.ownerDocument.defaultView.console
+PASS ConsolePrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.console.__proto__
 PASS Counter from inner.document.getElementById("styledSpan").style.getPropertyCSSValue("content")[0].getCounterValue()
 PASS CounterConstructor from inner.document.getElementById("styledSpan").style.getPropertyCSSValue("content")[0].getCounterValue().constructor
 PASS CounterPrototype from inner.document.getElementById("styledSpan").style.getPropertyCSSValue("content")[0].getCounterValue().__proto__
-PASS DOMApplicationCache from inner.applicationCache
-PASS DOMApplicationCachePrototype from inner.applicationCache.__proto__
-PASS DOMImplementation from inner.document.implementation
-PASS DOMImplementationConstructor from inner.document.implementation.constructor
-PASS DOMImplementationPrototype from inner.document.implementation.__proto__
+PASS DOMApplicationCache from inner.document.forms.testForm.0.ownerDocument.defaultView.applicationCache
+PASS DOMApplicationCachePrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.applicationCache.__proto__
+PASS DOMImplementation from inner.document.forms.testForm.0.ownerDocument.implementation
+PASS DOMImplementationConstructor from inner.document.forms.testForm.0.ownerDocument.implementation.constructor
+PASS DOMImplementationPrototype from inner.document.forms.testForm.0.ownerDocument.implementation.__proto__
 PASS DOMWindow from inner
-PASS DOMWindowPrototype from inner.__proto__
-PASS DataGridColumnList from inner.document.activeElement.childNodes.14.columns
-PASS DataGridColumnListConstructor from inner.document.activeElement.childNodes.14.columns.constructor
-PASS DataGridColumnListPrototype from inner.document.activeElement.childNodes.14.columns.__proto__
-PASS DocumentPrototype from inner.document.__proto__.__proto__
-PASS ElementPrototype from inner.document.activeElement.lastElementChild.__proto__.__proto__
-PASS EventSourceContructor from inner.EventSource
+PASS DOMWindowPrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.__proto__
+PASS DocumentPrototype from inner.document.forms.testForm.0.ownerDocument.__proto__.__proto__
+PASS ElementPrototype from inner.document.forms.testForm.0.__proto__.__proto__.__proto__
+PASS EventSourceContructor from inner.document.forms.testForm.0.ownerDocument.defaultView.EventSource
 FAIL Function from inner.document.location.pathname.constructor
-PASS Geolocation from inner.clientInformation.geolocation
-PASS GeolocationPrototype from inner.clientInformation.geolocation.__proto__
-PASS HTMLAnchorElement from inner.document.activeElement.firstElementChild
-PASS HTMLAnchorElementConstructor from inner.document.activeElement.firstElementChild.constructor
-PASS HTMLAnchorElementPrototype from inner.document.activeElement.firstElementChild.__proto__
-PASS HTMLAppletElement from inner.document.applets.0
-PASS HTMLAppletElementConstructor from inner.document.applets.0.constructor
-PASS HTMLAppletElementPrototype from inner.document.applets.0.__proto__
-PASS HTMLAreaElement from inner.document.activeElement.childNodes.2
-PASS HTMLAreaElementConstructor from inner.document.activeElement.childNodes.2.constructor
-PASS HTMLAreaElementPrototype from inner.document.activeElement.childNodes.2.__proto__
-PASS HTMLAudioElement from inner.document.activeElement.childNodes.3
-PASS HTMLAudioElementConstructor from inner.document.activeElement.childNodes.3.constructor
-PASS HTMLAudioElementPrototype from inner.document.activeElement.childNodes.3.__proto__
-PASS HTMLBRElement from inner.document.activeElement.childNodes.4
-PASS HTMLBRElementConstructor from inner.document.activeElement.childNodes.4.constructor
-PASS HTMLBRElementPrototype from inner.document.activeElement.childNodes.4.__proto__
-PASS HTMLBaseElement from inner.document.activeElement.childNodes.6
-PASS HTMLBaseElementConstructor from inner.document.activeElement.childNodes.6.constructor
-PASS HTMLBaseElementPrototype from inner.document.activeElement.childNodes.6.__proto__
-PASS HTMLBaseFontElement from inner.document.activeElement.childNodes.7
-PASS HTMLBaseFontElementConstructor from inner.document.activeElement.childNodes.7.constructor
-PASS HTMLBaseFontElementPrototype from inner.document.activeElement.childNodes.7.__proto__
-PASS HTMLBodyElement from inner.document.activeElement
-PASS HTMLBodyElementConstructor from inner.document.activeElement.constructor
-PASS HTMLBodyElementPrototype from inner.document.activeElement.__proto__
-PASS HTMLButtonElement from inner.document.activeElement.childNodes.9
-PASS HTMLButtonElementConstructor from inner.document.activeElement.childNodes.9.constructor
-PASS HTMLButtonElementPrototype from inner.document.activeElement.childNodes.9.__proto__
-PASS HTMLCanvasElement from inner.document.activeElement.childNodes.10
-PASS HTMLCanvasElementConstructor from inner.document.activeElement.childNodes.10.constructor
-PASS HTMLCanvasElementPrototype from inner.document.activeElement.childNodes.10.__proto__
+PASS Geolocation from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.geolocation
+PASS GeolocationPrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.geolocation.__proto__
+PASS HTMLAnchorElement from inner.document.forms.testForm.0.parentNode.firstElementChild
+PASS HTMLAnchorElementConstructor from inner.document.forms.testForm.0.parentNode.firstElementChild.constructor
+PASS HTMLAnchorElementPrototype from inner.document.forms.testForm.0.parentNode.firstElementChild.__proto__
+PASS HTMLAppletElement from inner.document.forms.testForm.0.parentNode.firstElementChild.nextElementSibling
+PASS HTMLAppletElementConstructor from inner.document.forms.testForm.0.parentNode.firstElementChild.nextElementSibling.constructor
+PASS HTMLAppletElementPrototype from inner.document.forms.testForm.0.parentNode.firstElementChild.nextElementSibling.__proto__
+PASS HTMLAreaElement from inner.document.forms.testForm.0.parentNode.firstElementChild.nextElementSibling.nextElementSibling
+PASS HTMLAreaElementConstructor from inner.document.forms.testForm.0.parentNode.firstElementChild.nextElementSibling.nextElementSibling.constructor
+PASS HTMLAreaElementPrototype from inner.document.forms.testForm.0.parentNode.firstElementChild.nextElementSibling.nextElementSibling.__proto__
+PASS HTMLAudioElement from inner.document.forms.testForm.0.parentNode.firstElementChild.nextElementSibling.nextElementSibling.nextElementSibling
+PASS HTMLAudioElementConstructor from inner.document.forms.testForm.0.parentNode.firstElementChild.nextElementSibling.nextElementSibling.nextElementSibling.constructor
+PASS HTMLAudioElementPrototype from inner.document.forms.testForm.0.parentNode.firstElementChild.nextElementSibling.nextElementSibling.nextElementSibling.__proto__
+PASS HTMLBRElement from inner.document.forms.testForm.0.parentNode.firstElementChild.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling
+PASS HTMLBRElementConstructor from inner.document.forms.testForm.0.parentNode.firstElementChild.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.constructor
+PASS HTMLBRElementPrototype from inner.document.forms.testForm.0.parentNode.firstElementChild.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.__proto__
+PASS HTMLBodyElement from inner.document.forms.testForm.0.parentNode
+PASS HTMLBodyElementConstructor from inner.document.forms.testForm.0.parentNode.constructor
+PASS HTMLBodyElementPrototype from inner.document.forms.testForm.0.parentNode.__proto__
+PASS HTMLButtonElement from inner.document.getElementsByTagName("canvas")[0].getContext("2d").canvas.previousElementSibling
+PASS HTMLButtonElementConstructor from inner.document.getElementsByTagName("canvas")[0].getContext("2d").canvas.previousElementSibling.constructor
+PASS HTMLButtonElementPrototype from inner.document.getElementsByTagName("canvas")[0].getContext("2d").canvas.previousElementSibling.__proto__
+PASS HTMLCanvasElement from inner.document.getElementsByTagName("canvas")[0].getContext("2d").canvas
+PASS HTMLCanvasElementConstructor from inner.document.getElementsByTagName("canvas")[0].getContext("2d").canvas.constructor
+PASS HTMLCanvasElementPrototype from inner.document.getElementsByTagName("canvas")[0].getContext("2d").canvas.__proto__
 FAIL HTMLCollection from inner.document.testForm
-PASS HTMLCollectionPrototype from inner.document.activeElement.childNodes.47.options.__proto__
-PASS HTMLDListElement from inner.document.activeElement.childNodes.11
-PASS HTMLDListElementConstructor from inner.document.activeElement.childNodes.11.constructor
-PASS HTMLDListElementPrototype from inner.document.activeElement.childNodes.11.__proto__
-PASS HTMLDataGridElement from inner.document.activeElement.childNodes.14
-PASS HTMLDataGridElementConstructor from inner.document.activeElement.childNodes.14.constructor
-PASS HTMLDataGridElementPrototype from inner.document.activeElement.childNodes.14.__proto__
-PASS HTMLDivElement from inner.document.plugins.0.previousElementSibling
-PASS HTMLDivElementConstructor from inner.document.plugins.0.previousElementSibling.constructor
-PASS HTMLDivElementPrototype from inner.document.plugins.0.previousElementSibling.__proto__
-PASS HTMLDocument from inner.document
-PASS HTMLDocumentConstructor from inner.document.constructor
-PASS HTMLDocumentPrototype from inner.document.__proto__
-PASS HTMLElement from inner.document.activeElement.lastElementChild
-PASS HTMLElementConstructor from inner.document.activeElement.lastElementChild.constructor
-PASS HTMLElementPrototype from inner.document.activeElement.lastElementChild.__proto__
-PASS HTMLEmbedElement from inner.document.plugins.0
-PASS HTMLEmbedElementConstructor from inner.document.plugins.0.constructor
-PASS HTMLEmbedElementPrototype from inner.document.plugins.0.__proto__
-PASS HTMLFieldSetElement from inner.document.plugins.0.nextElementSibling
-PASS HTMLFieldSetElementConstructor from inner.document.plugins.0.nextElementSibling.constructor
-PASS HTMLFieldSetElementPrototype from inner.document.plugins.0.nextElementSibling.__proto__
-PASS HTMLFontElement from inner.document.activeElement.childNodes.19
-PASS HTMLFontElementConstructor from inner.document.activeElement.childNodes.19.constructor
-PASS HTMLFontElementPrototype from inner.document.activeElement.childNodes.19.__proto__
-PASS HTMLFormElement from inner.document.activeElement.childNodes.59
-PASS HTMLFormElementConstructor from inner.document.forms.0.constructor
-PASS HTMLFormElementPrototype from inner.document.forms.0.__proto__
-PASS HTMLFrameSetElement from inner.document.activeElement.childNodes.21
-PASS HTMLFrameSetElementConstructor from inner.document.activeElement.childNodes.21.constructor
-PASS HTMLFrameSetElementPrototype from inner.document.activeElement.childNodes.21.__proto__
-PASS HTMLHRElement from inner.document.activeElement.childNodes.22
-PASS HTMLHRElementConstructor from inner.document.activeElement.childNodes.22.constructor
-PASS HTMLHRElementPrototype from inner.document.activeElement.childNodes.22.__proto__
-PASS HTMLHeadElement from inner.document.activeElement.previousElementSibling
-PASS HTMLHeadElementConstructor from inner.document.activeElement.previousElementSibling.constructor
-PASS HTMLHeadElementPrototype from inner.document.activeElement.previousElementSibling.__proto__
-PASS HTMLHtmlElement from inner.document.documentElement
-PASS HTMLHtmlElementConstructor from inner.document.documentElement.constructor
-PASS HTMLHtmlElementPrototype from inner.document.documentElement.__proto__
-PASS HTMLIFrameElement from inner.document.activeElement.childNodes.24
-PASS HTMLIFrameElementConstructor from inner.document.activeElement.childNodes.24.constructor
-PASS HTMLIFrameElementPrototype from inner.document.activeElement.childNodes.24.__proto__
-PASS HTMLImageElement from inner.document.images.0
-PASS HTMLImageElementConstructor from inner.document.images.0.constructor
-PASS HTMLImageElementPrototype from inner.document.images.0.__proto__
+PASS HTMLDListElement from inner.document.getElementsByTagName("canvas")[0].getContext("2d").canvas.nextElementSibling
+PASS HTMLDListElementConstructor from inner.document.getElementsByTagName("canvas")[0].getContext("2d").canvas.nextElementSibling.constructor
+PASS HTMLDListElementPrototype from inner.document.getElementsByTagName("canvas")[0].getContext("2d").canvas.nextElementSibling.__proto__
+PASS HTMLDocument from inner.document.forms.testForm.0.ownerDocument
+PASS HTMLDocumentConstructor from inner.document.forms.testForm.0.ownerDocument.constructor
+PASS HTMLDocumentPrototype from inner.document.forms.testForm.0.ownerDocument.__proto__
+PASS HTMLElement from inner.document.forms.testForm.0.parentNode.lastElementChild
+PASS HTMLElementConstructor from inner.document.forms.testForm.0.parentNode.lastElementChild.constructor
+PASS HTMLElementPrototype from inner.document.forms.testForm.0.__proto__.__proto__
+PASS HTMLFormElement from inner.document.forms.testForm.0
+PASS HTMLFormElementConstructor from inner.document.forms.testForm.0.constructor
+PASS HTMLFormElementPrototype from inner.document.forms.testForm.0.__proto__
+PASS HTMLHeadElement from inner.document.forms.testForm.0.parentNode.previousElementSibling
+PASS HTMLHeadElementConstructor from inner.document.forms.testForm.0.parentNode.previousElementSibling.constructor
+PASS HTMLHeadElementPrototype from inner.document.forms.testForm.0.parentNode.previousElementSibling.__proto__
+PASS HTMLHtmlElement from inner.document.forms.testForm.0.parentNode.parentNode
+PASS HTMLHtmlElementConstructor from inner.document.forms.testForm.0.parentNode.parentNode.constructor
+PASS HTMLHtmlElementPrototype from inner.document.forms.testForm.0.parentNode.parentNode.__proto__
 FAIL HTMLInputElement from inner.document.testForm[0].testInput
-PASS HTMLInputElementConstructor from inner.document.activeElement.childNodes.26.constructor
-PASS HTMLInputElementPrototype from inner.document.activeElement.childNodes.26.__proto__
-PASS HTMLLIElement from inner.document.activeElement.childNodes.28
-PASS HTMLLIElementConstructor from inner.document.activeElement.childNodes.28.constructor
-PASS HTMLLIElementPrototype from inner.document.activeElement.childNodes.28.__proto__
-PASS HTMLLabelElement from inner.document.activeElement.childNodes.29
-PASS HTMLLabelElementConstructor from inner.document.activeElement.childNodes.29.constructor
-PASS HTMLLabelElementPrototype from inner.document.activeElement.childNodes.29.__proto__
-PASS HTMLLegendElement from inner.document.activeElement.childNodes.30
-PASS HTMLLegendElementConstructor from inner.document.activeElement.childNodes.30.constructor
-PASS HTMLLegendElementPrototype from inner.document.activeElement.childNodes.30.__proto__
-PASS HTMLLinkElement from inner.document.activeElement.childNodes.31
-PASS HTMLLinkElementConstructor from inner.document.activeElement.childNodes.31.constructor
-PASS HTMLLinkElementPrototype from inner.document.activeElement.childNodes.31.__proto__
-PASS HTMLMapElement from inner.document.activeElement.childNodes.32
-PASS HTMLMapElementConstructor from inner.document.activeElement.childNodes.32.constructor
-PASS HTMLMapElementPrototype from inner.document.activeElement.childNodes.32.__proto__
-PASS HTMLMarqueeElement from inner.document.activeElement.childNodes.33
-PASS HTMLMarqueeElementConstructor from inner.document.activeElement.childNodes.33.constructor
-PASS HTMLMarqueeElementPrototype from inner.document.activeElement.childNodes.33.__proto__
-PASS HTMLMediaElementPrototype from inner.document.activeElement.childNodes.3.__proto__.__proto__
-PASS HTMLMenuElement from inner.document.activeElement.childNodes.35
-PASS HTMLMenuElementConstructor from inner.document.activeElement.childNodes.35.constructor
-PASS HTMLMenuElementPrototype from inner.document.activeElement.childNodes.35.__proto__
-PASS HTMLMetaElement from inner.document.activeElement.childNodes.36
-PASS HTMLMetaElementConstructor from inner.document.activeElement.childNodes.36.constructor
-PASS HTMLMetaElementPrototype from inner.document.activeElement.childNodes.36.__proto__
-PASS HTMLOListElement from inner.document.activeElement.childNodes.38
-PASS HTMLOListElementConstructor from inner.document.activeElement.childNodes.38.constructor
-PASS HTMLOListElementPrototype from inner.document.activeElement.childNodes.38.__proto__
-PASS HTMLObjectElement from inner.document.activeElement.childNodes.39
-PASS HTMLObjectElementConstructor from inner.document.activeElement.childNodes.39.constructor
-PASS HTMLObjectElementPrototype from inner.document.activeElement.childNodes.39.__proto__
-PASS HTMLOptGroupElement from inner.document.activeElement.childNodes.40
-PASS HTMLOptGroupElementConstructor from inner.document.activeElement.childNodes.40.constructor
-PASS HTMLOptGroupElementPrototype from inner.document.activeElement.childNodes.40.__proto__
-PASS HTMLOptionElement from inner.document.activeElement.childNodes.41
-PASS HTMLOptionElementConstructor from inner.document.activeElement.childNodes.41.constructor
-PASS HTMLOptionElementPrototype from inner.document.activeElement.childNodes.41.__proto__
-PASS HTMLOptionsCollection from inner.document.activeElement.childNodes.47.options
-PASS HTMLParagraphElement from inner.document.activeElement.childNodes.42
-PASS HTMLParagraphElementConstructor from inner.document.activeElement.childNodes.42.constructor
-PASS HTMLParagraphElementPrototype from inner.document.activeElement.childNodes.42.__proto__
-PASS HTMLParamElement from inner.document.activeElement.childNodes.43
-PASS HTMLParamElementConstructor from inner.document.activeElement.childNodes.43.constructor
-PASS HTMLParamElementPrototype from inner.document.activeElement.childNodes.43.__proto__
-PASS HTMLPreElement from inner.document.activeElement.childNodes.44
-PASS HTMLPreElementConstructor from inner.document.activeElement.childNodes.44.constructor
-PASS HTMLPreElementPrototype from inner.document.activeElement.childNodes.44.__proto__
-PASS HTMLScriptElement from inner.document.scripts.0
-PASS HTMLScriptElementConstructor from inner.document.scripts.0.constructor
-PASS HTMLScriptElementPrototype from inner.document.scripts.0.__proto__
-PASS HTMLSelectElement from inner.document.activeElement.childNodes.47
-PASS HTMLSelectElementConstructor from inner.document.scripts.0.nextElementSibling.constructor
-PASS HTMLSelectElementPrototype from inner.document.activeElement.childNodes.47.__proto__
-PASS HTMLStyleElement from inner.document.activeElement.lastElementChild.previousElementSibling
-PASS HTMLStyleElementConstructor from inner.document.activeElement.lastElementChild.previousElementSibling.constructor
-PASS HTMLStyleElementPrototype from inner.document.activeElement.lastElementChild.previousElementSibling.__proto__
-PASS HTMLTableCaptionElement from inner.document.activeElement.childNodes.49
-PASS HTMLTableCaptionElementConstructor from inner.document.activeElement.childNodes.49.constructor
-PASS HTMLTableCaptionElementPrototype from inner.document.activeElement.childNodes.49.__proto__
-PASS HTMLTableCellElement from inner.document.activeElement.childNodes.50
-PASS HTMLTableCellElementConstructor from inner.document.activeElement.childNodes.50.constructor
-PASS HTMLTableCellElementPrototype from inner.document.activeElement.childNodes.50.__proto__
-PASS HTMLTableColElement from inner.document.activeElement.childNodes.51
-PASS HTMLTableColElementConstructor from inner.document.activeElement.childNodes.51.constructor
-PASS HTMLTableColElementPrototype from inner.document.activeElement.childNodes.51.__proto__
-PASS HTMLTableElement from inner.document.activeElement.childNodes.52
-PASS HTMLTableElementConstructor from inner.document.activeElement.childNodes.52.constructor
-PASS HTMLTableElementPrototype from inner.document.activeElement.childNodes.52.__proto__
-PASS HTMLTableRowElement from inner.document.activeElement.childNodes.53
-PASS HTMLTableRowElementConstructor from inner.document.activeElement.childNodes.53.constructor
-PASS HTMLTableRowElementPrototype from inner.document.activeElement.childNodes.53.__proto__
-PASS HTMLTextAreaElement from inner.document.activeElement.childNodes.55
-PASS HTMLTextAreaElementConstructor from inner.document.activeElement.childNodes.55.constructor
-PASS HTMLTextAreaElementPrototype from inner.document.activeElement.childNodes.55.__proto__
-PASS HTMLTitleElement from inner.document.activeElement.childNodes.56
-PASS HTMLTitleElementConstructor from inner.document.activeElement.childNodes.56.constructor
-PASS HTMLTitleElementPrototype from inner.document.activeElement.childNodes.56.__proto__
-PASS HTMLUListElement from inner.document.activeElement.childNodes.57
-PASS HTMLUListElementConstructor from inner.document.activeElement.childNodes.57.constructor
-PASS HTMLUListElementPrototype from inner.document.activeElement.childNodes.57.__proto__
-PASS HTMLVideoElement from inner.document.activeElement.childNodes.58
-PASS HTMLVideoElementConstructor from inner.document.activeElement.childNodes.58.constructor
-PASS HTMLVideoElementPrototype from inner.document.activeElement.childNodes.58.__proto__
-PASS History from inner.history
-PASS HistoryPrototype from inner.history.__proto__
+PASS HTMLInputElementConstructor from inner.document.forms.testForm.0.0.constructor
+PASS HTMLInputElementPrototype from inner.document.forms.testForm.0.0.__proto__
+PASS HTMLMediaElementPrototype from inner.document.forms.testForm.0.previousElementSibling.__proto__.__proto__
+PASS HTMLStyleElement from inner.document.forms.testForm.0.parentNode.lastElementChild.previousElementSibling
+PASS HTMLStyleElementConstructor from inner.document.forms.testForm.0.parentNode.lastElementChild.previousElementSibling.constructor
+PASS HTMLStyleElementPrototype from inner.document.forms.testForm.0.parentNode.lastElementChild.previousElementSibling.__proto__
+PASS HTMLTextAreaElement from inner.document.forms.testForm.0.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling
+PASS HTMLTextAreaElementConstructor from inner.document.forms.testForm.0.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.constructor
+PASS HTMLTextAreaElementPrototype from inner.document.forms.testForm.0.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.__proto__
+PASS HTMLTitleElement from inner.document.forms.testForm.0.previousElementSibling.previousElementSibling.previousElementSibling
+PASS HTMLTitleElementConstructor from inner.document.forms.testForm.0.previousElementSibling.previousElementSibling.previousElementSibling.constructor
+PASS HTMLTitleElementPrototype from inner.document.forms.testForm.0.previousElementSibling.previousElementSibling.previousElementSibling.__proto__
+PASS HTMLUListElement from inner.document.forms.testForm.0.previousElementSibling.previousElementSibling
+PASS HTMLUListElementConstructor from inner.document.forms.testForm.0.previousElementSibling.previousElementSibling.constructor
+PASS HTMLUListElementPrototype from inner.document.forms.testForm.0.previousElementSibling.previousElementSibling.__proto__
+PASS HTMLVideoElement from inner.document.forms.testForm.0.previousElementSibling
+PASS HTMLVideoElementConstructor from inner.document.forms.testForm.0.previousElementSibling.constructor
+PASS HTMLVideoElementPrototype from inner.document.forms.testForm.0.previousElementSibling.__proto__
+PASS History from inner.document.forms.testForm.0.ownerDocument.defaultView.history
+PASS HistoryPrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.history.__proto__
 PASS Location from inner.document.location
 PASS LocationPrototype from inner.document.location.__proto__
-PASS Media from inner.media
-PASS MediaConstructor from inner.media.constructor
-PASS MediaList from inner.document.styleSheets.0.media
-PASS MediaListConstructor from inner.document.styleSheets.0.media.constructor
-PASS MediaListPrototype from inner.document.styleSheets.0.media.__proto__
-PASS MediaPrototype from inner.media.__proto__
-PASS MimeType from inner.clientInformation.mimeTypes.0
-PASS MimeTypeArray from inner.clientInformation.mimeTypes
-PASS MimeTypeArrayConstructor from inner.clientInformation.mimeTypes.constructor
-PASS MimeTypeArrayPrototype from inner.clientInformation.mimeTypes.__proto__
-PASS MimeTypeConstructor from inner.clientInformation.mimeTypes.0.constructor
-PASS MimeTypePrototype from inner.clientInformation.mimeTypes.0.__proto__
-PASS NamedNodeMap from inner.document.activeElement.previousElementSibling.attributes
-PASS Navigator from inner.clientInformation
-PASS NavigatorPrototype from inner.clientInformation.__proto__
-PASS NodeList from inner.document.documentElement.childNodes
-PASS NodeListConstructor from inner.document.childNodes.constructor
-PASS NodeListPrototype from inner.document.documentElement.childNodes.__proto__
-PASS NodePrototype from inner.document.__proto__.__proto__.__proto__
-FAIL Number from inner.pageXOffset
+PASS Media from inner.document.forms.testForm.0.ownerDocument.defaultView.media
+PASS MediaConstructor from inner.document.forms.testForm.0.ownerDocument.defaultView.media.constructor
+PASS MediaList from inner.document.forms.testForm.0.ownerDocument.styleSheets.0.media
+PASS MediaListConstructor from inner.document.forms.testForm.0.ownerDocument.styleSheets.0.media.constructor
+PASS MediaListPrototype from inner.document.forms.testForm.0.ownerDocument.styleSheets.0.media.__proto__
+PASS MediaPrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.media.__proto__
+PASS MimeType from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.mimeTypes.0
+PASS MimeTypeArray from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.mimeTypes
+PASS MimeTypeArrayConstructor from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.mimeTypes.constructor
+PASS MimeTypeArrayPrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.mimeTypes.__proto__
+PASS MimeTypeConstructor from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.mimeTypes.0.constructor
+PASS MimeTypePrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.mimeTypes.0.__proto__
+PASS NamedNodeMap from inner.document.forms.testForm.0.parentNode.attributes
+PASS Navigator from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation
+PASS NavigatorPrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.__proto__
+PASS NodeList from inner.document.forms.testForm
+PASS NodeListConstructor from inner.document.forms.testForm.constructor
+PASS NodeListPrototype from inner.document.forms.testForm.__proto__
+PASS NodePrototype from inner.document.forms.testForm.0.attributes.0.__proto__.__proto__
+FAIL Number from inner.document.forms.testForm.length
 PASS Object from inner.document.location.__proto__.__proto__
-PASS Plugin from inner.clientInformation.mimeTypes.0.enabledPlugin
-PASS PluginArray from inner.clientInformation.plugins
-PASS PluginArrayConstructor from inner.clientInformation.plugins.constructor
-PASS PluginArrayPrototype from inner.clientInformation.plugins.__proto__
-PASS PluginConstructor from inner.clientInformation.plugins.0.constructor
-PASS PluginPrototype from inner.clientInformation.mimeTypes.0.enabledPlugin.__proto__
+PASS Plugin from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.mimeTypes.0.enabledPlugin
+PASS PluginArray from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.plugins
+PASS PluginArrayConstructor from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.plugins.constructor
+PASS PluginArrayPrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.plugins.__proto__
+PASS PluginConstructor from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.plugins.0.constructor
+PASS PluginPrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.mimeTypes.0.enabledPlugin.__proto__
 PASS RGBColor from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(fill).rgbColor
 PASS RGBColorConstructor from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(fill).rgbColor.constructor
 PASS RGBColorPrototype from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(fill).rgbColor.__proto__
@@ -286,30 +181,30 @@ PASS SVGColorPrototype from inner.getComputedStyle(inner.document.body).getPrope
 PASS SVGPaint from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(fill)
 PASS SVGPaintConstructor from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(fill).constructor
 PASS SVGPaintPrototype from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(fill).__proto__
-PASS Screen from inner.screen
-PASS ScreenPrototype from inner.screen.__proto__
-PASS Storage from inner.localStorage
-PASS StorageConstructor from inner.localStorage.constructor
-PASS StoragePrototype from inner.localStorage.__proto__
+PASS Screen from inner.document.forms.testForm.0.ownerDocument.defaultView.screen
+PASS ScreenPrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.screen.__proto__
+PASS Storage from inner.document.forms.testForm.0.ownerDocument.defaultView.localStorage
+PASS StorageConstructor from inner.document.forms.testForm.0.ownerDocument.defaultView.localStorage.constructor
+PASS StoragePrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.localStorage.__proto__
 FAIL String from inner.document.location.pathname
-PASS StyleSheetList from inner.document.styleSheets
-PASS StyleSheetListConstructor from inner.document.styleSheets.constructor
-PASS StyleSheetListPrototype from inner.document.styleSheets.__proto__
-PASS StyleSheetPrototype from inner.document.styleSheets.0.__proto__.__proto__
-PASS Text from inner.document.activeElement.attributes.0.firstChild
-PASS TextConstructor from inner.document.activeElement.lastElementChild.previousElementSibling.lastChild.constructor
-PASS TextPrototype from inner.document.activeElement.lastElementChild.previousElementSibling.lastChild.__proto__
-PASS TimeRanges from inner.document.activeElement.childNodes.3.played
-PASS TimeRangesPrototype from inner.document.activeElement.childNodes.3.played.__proto__
-PASS ValidityState from inner.document.plugins.0.nextElementSibling.validity
-PASS ValidityStatePrototype from inner.document.plugins.0.nextElementSibling.validity.__proto__
+PASS StyleSheetList from inner.document.forms.testForm.0.ownerDocument.styleSheets
+PASS StyleSheetListConstructor from inner.document.forms.testForm.0.ownerDocument.styleSheets.constructor
+PASS StyleSheetListPrototype from inner.document.forms.testForm.0.ownerDocument.styleSheets.__proto__
+PASS StyleSheetPrototype from inner.document.forms.testForm.0.ownerDocument.styleSheets.0.__proto__.__proto__
+PASS Text from inner.document.forms.testForm.0.parentNode.lastElementChild.previousElementSibling.firstChild
+PASS TextConstructor from inner.document.forms.testForm.0.attributes.0.lastChild.constructor
+PASS TextPrototype from inner.document.forms.testForm.0.attributes.0.lastChild.__proto__
+PASS TimeRanges from inner.document.forms.testForm.0.previousElementSibling.played
+PASS TimeRangesPrototype from inner.document.forms.testForm.0.previousElementSibling.played.__proto__
+PASS ValidityState from inner.document.forms.testForm.0.0.validity
+PASS ValidityStatePrototype from inner.document.forms.testForm.0.0.validity.__proto__
 PASS WebKitCSSKeyframeRule from inner.document.getElementById("dummyStyle").sheet.cssRules.5.0
 PASS WebKitCSSKeyframeRuleConstructor from inner.document.getElementById("dummyStyle").sheet.cssRules.5.0.constructor
 PASS WebKitCSSKeyframeRulePrototype from inner.document.getElementById("dummyStyle").sheet.cssRules.5.0.__proto__
 PASS WebKitCSSKeyframesRule from inner.document.getElementById("dummyStyle").sheet.cssRules.5
 PASS WebKitCSSKeyframesRuleConstructor from inner.document.getElementById("dummyStyle").sheet.cssRules.5.constructor
 PASS WebKitCSSKeyframesRulePrototype from inner.document.getElementById("dummyStyle").sheet.cssRules.5.__proto__
-PASS XSLTProcessorConsructor from inner.XSLTProcessor
+PASS XSLTProcessorConsructor from inner.document.forms.testForm.0.ownerDocument.defaultView.XSLTProcessor
 Never found Audio
 Never found CDATASection
 Never found CSSPageRule
@@ -327,16 +222,49 @@ Never found Entity
 Never found EntityReference
 Never found File
 Never found FileList
+Never found HTMLBaseElement
+Never found HTMLBaseFontElement
 Never found HTMLBlockquoteElement
 Never found HTMLDataGridCellElement
 Never found HTMLDataGridColElement
+Never found HTMLDataGridElement
 Never found HTMLDirectoryElement
+Never found HTMLDivElement
+Never found HTMLEmbedElement
+Never found HTMLFieldSetElement
+Never found HTMLFontElement
 Never found HTMLFrameElement
+Never found HTMLFrameSetElement
+Never found HTMLHRElement
 Never found HTMLHeadingElement
+Never found HTMLIFrameElement
+Never found HTMLImageElement
 Never found HTMLIsIndexElement
+Never found HTMLLIElement
+Never found HTMLLabelElement
+Never found HTMLLegendElement
+Never found HTMLLinkElement
+Never found HTMLMapElement
+Never found HTMLMarqueeElement
 Never found HTMLMediaElement
+Never found HTMLMenuElement
+Never found HTMLMetaElement
 Never found HTMLModElement
+Never found HTMLOListElement
+Never found HTMLObjectElement
+Never found HTMLOptGroupElement
+Never found HTMLOptionElement
+Never found HTMLParagraphElement
+Never found HTMLParamElement
+Never found HTMLPreElement
 Never found HTMLQuoteElement
+Never found HTMLScriptElement
+Never found HTMLSelectElement
+Never found HTMLTableCaptionElement
+Never found HTMLTableCellElement
+Never found HTMLTableColElement
+Never found HTMLTableElement
+Never found HTMLTableRowElement
 Never found HTMLTableSectionElement
 Never found Image
 Never found MessageChannel
