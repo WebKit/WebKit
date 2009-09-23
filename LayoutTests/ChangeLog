@@ -1,3 +1,20 @@
+2009-09-22  Alpha Lam  <hclam@chromium.org>
+
+        Reviewed by Eric Carlson.
+
+        Media test files in Ogg and Theora formats
+        https://bugs.webkit.org/show_bug.cgi?id=29623
+
+        Adding test files for media layout tests in Ogg and Theora. They are transcoded
+        from their originals in H264/AAC using ffmpeg2theora.
+
+        * media/content/counting.ogv: Added.
+        * media/content/empty.oga: Added.
+        * media/content/garbage.ogv: Added.
+        * media/content/silence.oga: Added.
+        * media/content/test.oga: Added.
+        * media/content/test.ogv: Added.
+
 2009-09-22  Drew Wilson  <atwilson@google.com>
 
         Reviewed by David Levin.
