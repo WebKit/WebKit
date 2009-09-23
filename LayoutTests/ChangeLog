@@ -1,3 +1,11 @@
+2009-09-23  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] Skipping test added in r48644 due to missing layoutTestController features.
+
+        * platform/qt/Skipped:
+
 2009-09-22  Charles Wei  <charles.wei@torchmobile.com.cn>
 
         Reviewed by Eric Seidel.

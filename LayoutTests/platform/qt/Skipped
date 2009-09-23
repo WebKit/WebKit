@@ -68,6 +68,9 @@ fast/forms/mailto/post-multiple-items.html
 fast/forms/mailto/post-text-plain-with-accept-charset.html
 fast/forms/mailto/post-text-plain.html
 
+# Missing layoutTestController.dumpBackForwardList()
+fast/loader/fragment-after-redirect-gets-back-entry.html
+
 # ============================================================================= #
 
 # ------- missing eventSender.beginDragWithFiles
