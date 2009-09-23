@@ -1,3 +1,79 @@
+2009-09-22  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        WebInspector: Migrate Databases tab to InjectedScript /
+        serialized interaction.
+
+        DOMStorage interaction is now serialized into JSON messages
+        and doesn't require quarantined objects.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=28873
+
+        * dom/EventListener.h:
+        (WebCore::EventListener::):
+        * inspector/InspectorBackend.cpp:
+        (WebCore::InspectorBackend::selectDOMStorage):
+        (WebCore::InspectorBackend::getDOMStorageEntries):
+        (WebCore::InspectorBackend::setDOMStorageItem):
+        (WebCore::InspectorBackend::removeDOMStorageItem):
+        * inspector/InspectorBackend.h:
+        * inspector/InspectorBackend.idl:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::didCommitLoad):
+        (WebCore::InspectorController::selectDOMStorage):
+        (WebCore::InspectorController::getDOMStorageEntries):
+        (WebCore::InspectorController::setDOMStorageItem):
+        (WebCore::InspectorController::removeDOMStorageItem):
+        (WebCore::InspectorController::getDOMStorageResourceForId):
+        * inspector/InspectorController.h:
+        * inspector/InspectorDOMStorageResource.cpp:
+        (WebCore::InspectorDOMStorageResource::InspectorDOMStorageResource):
+        (WebCore::InspectorDOMStorageResource::bind):
+        (WebCore::InspectorDOMStorageResource::unbind):
+        (WebCore::InspectorDOMStorageResource::startReportingChangesToFrontend):
+        (WebCore::InspectorDOMStorageResource::handleEvent):
+        (WebCore::InspectorDOMStorageResource::operator==):
+        * inspector/InspectorDOMStorageResource.h:
+        (WebCore::InspectorDOMStorageResource::cast):
+        (WebCore::InspectorDOMStorageResource::id):
+        (WebCore::InspectorDOMStorageResource::domStorage):
+        * inspector/InspectorFrontend.cpp:
+        (WebCore::InspectorFrontend::selectDOMStorage):
+        (WebCore::InspectorFrontend::didGetDOMStorageEntries):
+        (WebCore::InspectorFrontend::didSetDOMStorageItem):
+        (WebCore::InspectorFrontend::didRemoveDOMStorageItem):
+        (WebCore::InspectorFrontend::updateDOMStorage):
+        * inspector/InspectorFrontend.h:
+        * inspector/front-end/DOMStorage.js:
+        (WebInspector.DOMStorage):
+        (WebInspector.DOMStorage.prototype.get id):
+        (WebInspector.DOMStorage.prototype.get domStorage):
+        (WebInspector.DOMStorage.prototype.get isLocalStorage):
+        (WebInspector.DOMStorage.prototype.getEntriesAsync):
+        (WebInspector.DOMStorage.prototype.setItemAsync):
+        (WebInspector.DOMStorage.prototype.removeItemAsync):
+        * inspector/front-end/DOMStorageDataGrid.js:
+        (WebInspector.DOMStorageDataGrid):
+        (WebInspector.DOMStorageDataGrid.prototype._startEditingColumnOfDataGridNode):
+        (WebInspector.DOMStorageDataGrid.prototype._startEditing):
+        (WebInspector.DOMStorageDataGrid.prototype._editingCommitted):
+        (WebInspector.DOMStorageDataGrid.prototype._editingCancelled):
+        (WebInspector.DOMStorageDataGrid.prototype.deleteSelectedRow):
+        * inspector/front-end/DOMStorageItemsView.js:
+        (WebInspector.DOMStorageItemsView.prototype.update):
+        (WebInspector.DOMStorageItemsView.prototype._showDOMStorageEntries):
+        (WebInspector.DOMStorageItemsView.prototype._dataGridForDOMStorageEntries):
+        * inspector/front-end/StoragePanel.js:
+        (WebInspector.StoragePanel.prototype.show):
+        (WebInspector.StoragePanel.prototype.reset):
+        (WebInspector.StoragePanel.prototype.selectDOMStorage):
+        (WebInspector.StoragePanel.prototype.updateDOMStorage):
+        (WebInspector.StoragePanel.prototype._domStorageForId):
+        * inspector/front-end/inspector.js:
+        (WebInspector.addDOMStorage):
+        (WebInspector.updateDOMStorage):
+
 2009-09-22  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Alexey Proskuryakov.

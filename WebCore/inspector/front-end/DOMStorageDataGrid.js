@@ -23,10 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DOMStorageDataGrid = function(columns)
+WebInspector.DOMStorageDataGrid = function(columns, domStorage, keys)
 {
     WebInspector.DataGrid.call(this, columns);
     this.dataTableBody.addEventListener("dblclick", this._ondblclick.bind(this), false);
+    this._domStorage = domStorage;
+    this._keys = keys;
 }
 
 WebInspector.DOMStorageDataGrid.prototype = {
@@ -44,7 +46,6 @@ WebInspector.DOMStorageDataGrid.prototype = {
         this._editing = true;
         this._editingNode = node;
         this._editingNode.select();
-        WebInspector.panels.storage._unregisterStorageEventListener();
 
         var element = this._editingNode._element.children[column];
         WebInspector.startEditing(element, this._editingCommitted.bind(this), this._editingCancelled.bind(this), element.textContent);
@@ -69,7 +70,6 @@ WebInspector.DOMStorageDataGrid.prototype = {
             return this._startEditingColumnOfDataGridNode(this._editingNode, 0);
 
         this._editing = true;
-        WebInspector.panels.storage._unregisterStorageEventListener();
         WebInspector.startEditing(element, this._editingCommitted.bind(this), this._editingCancelled.bind(this), element.textContent);
         window.getSelection().setBaseAndExtent(element, 0, element, 1);
     },
@@ -118,22 +118,20 @@ WebInspector.DOMStorageDataGrid.prototype = {
             return;
         }
 
-        var domStorage = WebInspector.panels.storage.visibleView.domStorage.domStorage;
-        if (domStorage) {
-            if (columnIdentifier == 0) {
-                if (domStorage.getItem(newText) != null) {
-                    element.textContent = this._editingNode.data[0];
-                    this._editingCancelled(element);
-                    moveToNextIfNeeded.call(this, false);
-                    return;
-                }
-                domStorage.removeItem(this._editingNode.data[0]);
-                domStorage.setItem(newText, this._editingNode.data[1]);
-                this._editingNode.data[0] = newText;            
-            } else {
-                domStorage.setItem(this._editingNode.data[0], newText);
-                this._editingNode.data[1] = newText;
+        var domStorage = this._domStorage;
+        if (columnIdentifier === 0) {
+            if (this._keys.indexOf(newText) !== -1) {
+                element.textContent = this._editingNode.data[0];
+                this._editingCancelled(element);
+                moveToNextIfNeeded.call(this, false);
+                return;
             }
+            domStorage.removeItem(this._editingNode.data[0]);
+            domStorage.setItem(newText, this._editingNode.data[1]);
+            this._editingNode.data[0] = newText;
+        } else {
+            domStorage.setItem(this._editingNode.data[0], newText);
+            this._editingNode.data[1] = newText;
         }
 
         if (this._editingNode.isCreationNode)
@@ -147,18 +145,16 @@ WebInspector.DOMStorageDataGrid.prototype = {
     {
         delete this._editing;
         this._editingNode = null;
-        WebInspector.panels.storage._registerStorageEventListener();
     },
 
     deleteSelectedRow: function()
     {
         var node = this.selectedNode;
-        if (this.selectedNode.isCreationNode)
+        if (!node || node.isCreationNode)
             return;
 
-        var domStorage = WebInspector.panels.storage.visibleView.domStorage.domStorage;
-        if (node && domStorage)
-            domStorage.removeItem(node.data[0]);
+        if (this._domStorage)
+            this._domStorage.removeItem(node.data[0]);
     }
 }
 

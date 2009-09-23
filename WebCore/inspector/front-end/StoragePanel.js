@@ -93,7 +93,6 @@ WebInspector.StoragePanel.prototype = {
     {
         WebInspector.Panel.prototype.show.call(this);
         this._updateSidebarWidth();
-        this._registerStorageEventListener();
     },
 
     reset: function()
@@ -109,8 +108,6 @@ WebInspector.StoragePanel.prototype = {
         }
 
         this._databases = [];
-
-        this._unregisterStorageEventListener();
 
         if (this._domStorage) {
             var domStorageLength = this._domStorage.length;
@@ -174,16 +171,12 @@ WebInspector.StoragePanel.prototype = {
         }
     },
 
-    selectDOMStorage: function(s)
+    selectDOMStorage: function(storageId)
     {
-        var isLocalStorage = (s === InspectorController.inspectedWindow().localStorage);
-        for (var i = 0, len = this._domStorage.length; i < len; ++i) {
-            var storage = this._domStorage[i];
-            if ( isLocalStorage === storage.isLocalStorage ) {
-                this.showDOMStorage(storage);
-                storage._domStorageTreeElement.select();
-                return;
-            }
+        var domStorage = this._domStorageForId(storageId);
+        if (domStorage) {
+            this.showDOMStorage(domStorage);
+            domStorage._domStorageTreeElement.select();
         }
     },
 
@@ -383,61 +376,6 @@ WebInspector.StoragePanel.prototype = {
         return dataGrid;
     },
 
-    dataGridForDOMStorage: function(domStorage)
-    {
-        if (!domStorage.length)
-            return null;
-
-        var columns = {};
-        columns[0] = {};
-        columns[1] = {};
-        columns[0].title = WebInspector.UIString("Key");
-        columns[0].width = columns[0].title.length;
-        columns[1].title = WebInspector.UIString("Value");
-        columns[1].width = columns[1].title.length;
-
-        var nodes = [];
-        
-        var length = domStorage.length;
-        for (var index = 0; index < domStorage.length; index++) {
-            var data = {};
-       
-            var key = String(domStorage.key(index));
-            data[0] = key;
-            if (key.length > columns[0].width)
-                columns[0].width = key.length;
-        
-            var value = String(domStorage.getItem(key));
-            data[1] = value;
-            if (value.length > columns[1].width)
-                columns[1].width = value.length;
-            var node = new WebInspector.DataGridNode(data, false);
-            node.selectable = true;
-            nodes.push(node);
-        }
-
-        var totalColumnWidths = columns[0].width + columns[1].width;
-        var width = Math.round((columns[0].width * 100) / totalColumnWidths);
-        const minimumPrecent = 10;
-        if (width < minimumPrecent)
-            width = minimumPrecent;
-        if (width > 100 - minimumPrecent)
-            width = 100 - minimumPrecent;
-        columns[0].width = width;
-        columns[1].width = 100 - width;
-        columns[0].width += "%";
-        columns[1].width += "%";
-
-        var dataGrid = new WebInspector.DOMStorageDataGrid(columns);
-        var length = nodes.length;
-        for (var i = 0; i < length; ++i)
-            dataGrid.appendChild(nodes[i]);
-        dataGrid.addCreationNode(false);
-        if (length > 0)
-            nodes[0].selected = true;
-        return dataGrid;
-    },
-
     resize: function()
     {
         var visibleView = this.visibleView;
@@ -445,44 +383,28 @@ WebInspector.StoragePanel.prototype = {
             visibleView.resize();
     },
 
-    _registerStorageEventListener: function()
+    updateDOMStorage: function(storageId)
     {
-        var inspectedWindow = InspectorController.inspectedWindow();
-        if (!inspectedWindow || !inspectedWindow.document)
+        var domStorage = this._domStorageForId(storageId);
+        if (!domStorage)
             return;
 
-        this._storageEventListener = InspectorController.wrapCallback(this._storageEvent.bind(this));
-        inspectedWindow.addEventListener("storage", this._storageEventListener, true);
+        var view = domStorage._domStorageView;
+        if (this.visibleView && view === this.visibleView)
+            domStorage._domStorageView.update();
     },
 
-    _unregisterStorageEventListener: function()
-    {
-        if (!this._storageEventListener)
-            return;
-
-        var inspectedWindow = InspectorController.inspectedWindow();
-        if (!inspectedWindow || !inspectedWindow.document)
-            return;
-
-        inspectedWindow.removeEventListener("storage", this._storageEventListener, true);
-        delete this._storageEventListener;
-    },
-
-    _storageEvent: function(event)
+    _domStorageForId: function(storageId)
     {
         if (!this._domStorage)
-            return;
-
-        var isLocalStorage = (event.storageArea === InspectorController.inspectedWindow().localStorage);
+            return null;
         var domStorageLength = this._domStorage.length;
         for (var i = 0; i < domStorageLength; ++i) {
             var domStorage = this._domStorage[i];
-            if (isLocalStorage === domStorage.isLocalStorage) {
-                var view = domStorage._domStorageView;
-                if (this.visibleView && view === this.visibleView)
-                    domStorage._domStorageView.update();
-            }
+            if (domStorage.id == storageId)
+                return domStorage;
         }
+        return null;
     },
 
     _startSidebarDragging: function(event)

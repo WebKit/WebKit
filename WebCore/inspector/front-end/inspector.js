@@ -1016,10 +1016,15 @@ WebInspector.addDatabase = function(payload)
 WebInspector.addDOMStorage = function(payload)
 {
     var domStorage = new WebInspector.DOMStorage(
-        payload.domStorage,
+        payload.id,
         payload.host,
         payload.isLocalStorage);
     this.panels.storage.addDOMStorage(domStorage);
+}
+
+WebInspector.updateDOMStorage = function(storageId)
+{
+    this.panels.storage.updateDOMStorage(storageId);
 }
 
 WebInspector.resourceTrackingWasEnabled = function()

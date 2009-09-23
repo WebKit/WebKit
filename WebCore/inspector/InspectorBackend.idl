@@ -121,6 +121,9 @@ module core {
 #endif
 #if defined(ENABLE_DOM_STORAGE) && ENABLE_DOM_STORAGE
         [Custom] void selectDOMStorage(in DOMObject storage);
+        void getDOMStorageEntries(in long callId, in long storageId);
+        void setDOMStorageItem(in long callId, in long storageId, in DOMString key, in DOMString value);
+        void removeDOMStorageItem(in long callId, in long storageId, in DOMString key);
 #endif
     };
 }

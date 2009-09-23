@@ -151,6 +151,9 @@ public:
 #endif
 #if ENABLE(DOM_STORAGE)
     void selectDOMStorage(Storage* storage);
+    void getDOMStorageEntries(long callId, long storageId);
+    void setDOMStorageItem(long callId, long storageId, const String& key, const String& value);
+    void removeDOMStorageItem(long callId, long storageId, const String& key);
 #endif
 
 private:

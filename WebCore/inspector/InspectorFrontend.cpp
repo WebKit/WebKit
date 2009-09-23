@@ -404,13 +404,41 @@ void InspectorFrontend::selectDatabase(Database* database)
 #endif
 
 #if ENABLE(DOM_STORAGE)
-void InspectorFrontend::selectDOMStorage(Storage* storage)
+void InspectorFrontend::selectDOMStorage(int storageId)
 {
     OwnPtr<ScriptFunctionCall> function(newFunctionCall("selectDOMStorage"));
-    ScriptObject quarantinedObject;
-    if (!getQuarantinedScriptObject(storage, quarantinedObject))
-        return;
-    function->appendArgument(quarantinedObject);
+    function->appendArgument(storageId);
+    function->call();
+}
+
+void InspectorFrontend::didGetDOMStorageEntries(int callId, const ScriptArray& entries)
+{
+    OwnPtr<ScriptFunctionCall> function(newFunctionCall("didGetDOMStorageEntries"));
+    function->appendArgument(callId);
+    function->appendArgument(entries);
+    function->call();
+}
+
+void InspectorFrontend::didSetDOMStorageItem(int callId, bool success)
+{
+    OwnPtr<ScriptFunctionCall> function(newFunctionCall("didSetDOMStorageItem"));
+    function->appendArgument(callId);
+    function->appendArgument(success);
+    function->call();
+}
+
+void InspectorFrontend::didRemoveDOMStorageItem(int callId, bool success)
+{
+    OwnPtr<ScriptFunctionCall> function(newFunctionCall("didRemoveDOMStorageItem"));
+    function->appendArgument(callId);
+    function->appendArgument(success);
+    function->call();
+}
+
+void InspectorFrontend::updateDOMStorage(int storageId)
+{
+    OwnPtr<ScriptFunctionCall> function(newFunctionCall("updateDOMStorage"));
+    function->appendArgument(storageId);
     function->call();
 }
 #endif

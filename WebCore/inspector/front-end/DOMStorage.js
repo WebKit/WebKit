@@ -26,24 +26,22 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DOMStorage = function(domStorage, domain, isLocalStorage)
+WebInspector.DOMStorage = function(id, domain, isLocalStorage)
 {
-    this.domStorage = domStorage;
-    this.domain = domain;
-    this.isLocalStorage = isLocalStorage;
+    this._id = id;
+    this._domain = domain;
+    this._isLocalStorage = isLocalStorage;
 }
 
 WebInspector.DOMStorage.prototype = {
+    get id()
+    {
+        return this._id;
+    },
+
     get domStorage()
     {
         return this._domStorage;
-    },
-
-    set domStorage(x)
-    {
-        if (this._domStorage === x)
-            return;
-        this._domStorage = x;
     },
 
     get domain()
@@ -51,22 +49,30 @@ WebInspector.DOMStorage.prototype = {
         return this._domain;
     },
 
-    set domain(x)
-    {
-        if (this._domain === x)
-            return;
-        this._domain = x;
-    },
-    
     get isLocalStorage()
     {
         return this._isLocalStorage;
     },
-    
-    set isLocalStorage(x)
+
+    getEntries: function(callback)
     {
-        if (this._isLocalStorage === x)
-            return;
-        this._isLocalStorage = x;
+        var callId = WebInspector.Callback.wrap(callback);
+        InspectorController.getDOMStorageEntries(callId, this._id);
+    },
+    
+    setItem: function(key, value, callback)
+    {
+        var callId = WebInspector.Callback.wrap(callback);
+        InspectorController.setDOMStorageItem(callId, this._id, key, value);
+    },
+    
+    removeItem: function(key, callback)
+    {
+        var callId = WebInspector.Callback.wrap(callback);
+        InspectorController.removeDOMStorageItem(callId, this._id, key);
     }
 }
+
+WebInspector.didGetDOMStorageEntries = WebInspector.Callback.processCallback;
+WebInspector.didSetDOMStorageItem = WebInspector.Callback.processCallback;
+WebInspector.didRemoveDOMStorageItem = WebInspector.Callback.processCallback;

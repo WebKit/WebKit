@@ -99,7 +99,11 @@ namespace WebCore {
         
 #if ENABLE(DOM_STORAGE)
         bool addDOMStorage(const ScriptObject& domStorageObj);
-        void selectDOMStorage(Storage* storage);
+        void selectDOMStorage(int storageId);
+        void didGetDOMStorageEntries(int callId, const ScriptArray& entries);
+        void didSetDOMStorageItem(int callId, bool success);
+        void didRemoveDOMStorageItem(int callId, bool success);
+        void updateDOMStorage(int storageId);
 #endif
 
         void setDocument(const ScriptObject& root);

@@ -502,8 +502,26 @@ void InspectorBackend::selectDatabase(Database* database)
 #if ENABLE(DOM_STORAGE)
 void InspectorBackend::selectDOMStorage(Storage* storage)
 {
-    if (InspectorFrontend* frontend = inspectorFrontend())
-        frontend->selectDOMStorage(storage);
+    if (m_inspectorController)
+        m_inspectorController->selectDOMStorage(storage);
+}
+
+void InspectorBackend::getDOMStorageEntries(long callId, long storageId)
+{
+    if (m_inspectorController)
+        m_inspectorController->getDOMStorageEntries(callId, storageId);
+}
+
+void InspectorBackend::setDOMStorageItem(long callId, long storageId, const String& key, const String& value)
+{
+    if (m_inspectorController)
+        m_inspectorController->setDOMStorageItem(callId, storageId, key, value);
+}
+
+void InspectorBackend::removeDOMStorageItem(long callId, long storageId, const String& key)
+{
+    if (m_inspectorController)
+        m_inspectorController->removeDOMStorageItem(callId, storageId, key);
 }
 #endif
 
