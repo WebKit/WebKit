@@ -1,5 +1,13 @@
 2009-09-23  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
+        Unreviewed. Skipping new tests, and
+        plugins/destroy-during-npp-new.html, after reporting
+        https://bugs.webkit.org/show_bug.cgi?id=29683.
+
+        * platform/gtk/Skipped:
+
+2009-09-23  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
         Unreviewed. Updated to match the changes done in r48566.
 
         * platform/gtk/fast/dom/prototype-inheritance-2-expected.txt:

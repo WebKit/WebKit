@@ -5605,6 +5605,7 @@ fast/box-shadow/spread.html
 fast/box-shadow/transform-fringing.html
 fast/canvas/image-pattern-rotate.html
 fast/css/attribute-selector-dynamic.xml
+fast/css/font-smoothing.html
 fast/css/nested-floating-relative-position-percentages.html
 fast/css/nth-child-dynamic.html
 fast/css/positioned-overflow-scroll.html
@@ -5617,6 +5618,7 @@ fast/forms/search-vertical-alignment.html
 fast/forms/text-style-color.html
 fast/frames/viewsource-on-image-file.html
 fast/overflow/overflow-with-local-background-attachment.html
+fast/overflow/position-fixed-transform-clipping.html
 fast/repaint/background-generated.html
 fast/repaint/background-misaligned.html
 fast/repaint/float-in-new-block-with-layout-delta.html
@@ -5733,3 +5735,15 @@ http/tests/loading/basic-credentials-sent-automatically.html
 
 # This port doesn't support detecting slow unload handlers.
 fast/dom/Window/slow_unload_handler.html
+
+# Tests generating new results
+fast/table/fixed-table-with-percent-inside-percent-table.html
+fast/table/fixed-table-with-percent-width-inside-auto-table.html
+fast/table/fixed-table-with-percent-width-inside-div.html
+fast/table/fixed-table-with-percent-width-inside-extra-large-div.html
+fast/table/fixed-table-with-percent-width-inside-fixed-width-table.html
+fast/table/fixed-table-with-small-percent-width.html
+transforms/2d/hindi-rotated.html
+
+# See https://bugs.webkit.org/show_bug.cgi?id=29683
+plugins/destroy-during-npp-new.html
