@@ -1,3 +1,15 @@
+2009-09-23  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] need to dump number of pending unload handlers
+        https://bugs.webkit.org/show_bug.cgi?id=29685
+
+        * webkit/webkitprivate.h:
+        * webkit/webkitwebframe.cpp:
+        (webkit_web_frame_get_pending_unload_event_count): New function to
+        satisfy DRT needs.
+
 2009-09-23  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Xan Lopez.

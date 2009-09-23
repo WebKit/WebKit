@@ -59,6 +59,7 @@ extern GList* webkit_web_history_item_get_children(WebKitWebHistoryItem*);
 extern GSList* webkit_web_frame_get_children(WebKitWebFrame* frame);
 extern gchar* webkit_web_frame_get_inner_text(WebKitWebFrame* frame);
 extern gchar* webkit_web_frame_dump_render_tree(WebKitWebFrame* frame);
+extern guint webkit_web_frame_get_pending_unload_event_count(WebKitWebFrame* frame);
 extern void webkit_web_settings_add_extra_plugin_directory(WebKitWebView* view, const gchar* directory);
 extern gchar* webkit_web_frame_get_response_mime_type(WebKitWebFrame* frame);
 extern void webkit_web_frame_clear_main_frame_name(WebKitWebFrame* frame);
@@ -472,8 +473,39 @@ static gboolean processWork(void* data)
     return FALSE;
 }
 
+static char* getFrameNameSuitableForTestResult(WebKitWebView* view, WebKitWebFrame* frame)
+{
+    char* frameName = g_strdup(webkit_web_frame_get_name(frame));
+
+    if (frame == webkit_web_view_get_main_frame(view)) {
+        // This is a bit strange. Shouldn't web_frame_get_name return NULL?
+        if (frameName && (frameName[0] != '\0')) {
+            char* tmp = g_strdup_printf("main frame \"%s\"", frameName);
+            g_free (frameName);
+            frameName = tmp;
+        } else {
+            g_free(frameName);
+            frameName = g_strdup("main frame");
+        }
+    } else if (!frameName || (frameName[0] == '\0')) {
+        g_free(frameName);
+        frameName = g_strdup("frame (anonymous)");
+    }
+
+    return frameName;
+}
+
 static void webViewLoadFinished(WebKitWebView* view, WebKitWebFrame* frame, void*)
 {
+    if (!done && !gLayoutTestController->dumpFrameLoadCallbacks()) {
+        guint pendingFrameUnloadEvents = webkit_web_frame_get_pending_unload_event_count(frame);
+        if (pendingFrameUnloadEvents) {
+            char* frameName = getFrameNameSuitableForTestResult(view, frame);
+            printf("%s - has %u onunload handler(s)\n", frameName, pendingFrameUnloadEvents);
+            g_free(frameName);
+        }
+    }
+
     if (frame != topLoadingFrame)
         return;
 

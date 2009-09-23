@@ -798,6 +798,19 @@ gchar* webkit_web_frame_dump_render_tree(WebKitWebFrame* frame)
     return g_strdup(string.utf8().data());
 }
 
+/**
+ * webkit_web_frame_get_pending_unload_event_count:
+ * @frame: a #WebKitWebFrame
+ *
+ * Return value: number of pending unload events
+ */
+guint webkit_web_frame_get_pending_unload_event_count(WebKitWebFrame* frame)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), 0);
+
+    return core(frame)->domWindow()->pendingUnloadEventListeners();
+}
+
 static void begin_print_callback(GtkPrintOperation* op, GtkPrintContext* context, gpointer user_data)
 {
     PrintContext* printContext = reinterpret_cast<PrintContext*>(user_data);

@@ -1,3 +1,27 @@
+2009-09-23  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] need to dump number of pending unload handlers
+        https://bugs.webkit.org/show_bug.cgi?id=29685
+
+        Implement dumping of the number of pending unload handlers.
+
+        The following tests will pass:
+
+          fast/loader/unload-form-about-blank.html
+          fast/loader/unload-form-post-about-blank.html
+          fast/loader/unload-form-post.html
+          fast/loader/unload-form.html
+          fast/loader/unload-hyperlink.html
+          fast/loader/unload-javascript-url.html
+          fast/loader/unload-reload.html
+          fast/loader/unload-window-location.html
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (getFrameNameSuitableForTestResult):
+        (webViewLoadFinished):
+
 2009-09-22  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Eric Seidel.

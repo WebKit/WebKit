@@ -284,6 +284,9 @@ extern "C" {
     WEBKIT_API gchar*
     webkit_web_frame_dump_render_tree (WebKitWebFrame* frame);
 
+    WEBKIT_API guint
+    webkit_web_frame_get_pending_unload_event_count(WebKitWebFrame* frame);
+
     WEBKIT_API bool
     webkit_web_frame_pause_animation(WebKitWebFrame* frame, const gchar* name, double time, const gchar* element);
 
