@@ -1,3 +1,14 @@
+2009-09-22  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        js tests should move into jstests subdirectory instead of resources/
+        https://bugs.webkit.org/show_bug.cgi?id=25880
+
+        Remove support of resources directory.
+
+        * Scripts/make-script-test-wrappers:
+
 2009-09-22  Eric Seidel  <eric@webkit.org>
 
         No review, only fixing typo (missing space character).

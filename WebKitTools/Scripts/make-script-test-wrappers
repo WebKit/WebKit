@@ -64,7 +64,7 @@ for my $tfile (@templates) {
     my $tpath = $tfile;
     my $templateDirectory;
     my $templateRelativePath;
-    if ($tpath =~ s:/(resources)/TEMPLATE.html$:: || $tpath =~ s:/(script-tests)/TEMPLATE.html$::) {
+    if ($tpath =~ s:/(script-tests)/TEMPLATE.html$::) {
         $templateDirectory = $1;
         $templateRelativePath = $1 . "/TEMPLATE.html";
     } else {
@@ -95,57 +95,6 @@ for my $tfile (@templates) {
     }
 
     for my $file (@files) {
-        next if $file =~ /js-test-.*\.js$/;
-        next if $file =~ /cookies-test-(post|pre)\.js$/;
-        next if $file =~ /standalone-.*\.js$/;
-        next if $file =~ /SVGTestCase\.js/;
-        next if $file =~ /WMLTestCase\.js/;
-
-        next if $file =~ m:resources/bom-in-file-retains-correct-offset\.js$:; # has a custom template
-        next if $file =~ m:resources/NSResolver-exceptions\.js$:;
-        next if $file =~ m:resources/WindowProperties\.js$:;
-        next if $file =~ m:resources/altGlyph-dom\.js$:;
-        next if $file =~ m:resources/attr-case-sensitivity\.js$:;
-        next if $file =~ m:resources/box-orient-button\.js$:;
-        next if $file =~ m:resources/box-shadow-overflow-scroll\.js$:;
-        next if $file =~ m:resources/canvas-2d-imageData-create-nonfinite\.js$:;
-        next if $file =~ m:resources/codegen-temporaries-multiple-global-blocks-1\.js$:;
-        next if $file =~ m:resources/codegen-temporaries-multiple-global-blocks-2\.js$:;
-        next if $file =~ m:resources/const\.js$:;
-        next if $file =~ m:resources/constructors-cached-navigate\.js$:;
-        next if $file =~ m:resources/error\.js$:;
-        next if $file =~ m:resources/frame-loading-via-document-write\.js$:;
-        next if $file =~ m:resources/id-fastpath-almost-strict\.js$:;
-        next if $file =~ m:resources/id-fastpath-strict\.js$:;
-        next if $file =~ m:resources/intersectsNode\.js$:;
-        next if $file =~ m:resources/p-in-scope\.js$:;
-        next if $file =~ m:resources/paste-blockquote-before-blockquote\.js$:;
-        next if $file =~ m:resources/permission-denied\.js$:;
-        next if $file =~ m:resources/permission-denied-stops-watches\.js$:;
-        next if $file =~ m:resources/position-string\.js$:;
-        next if $file =~ m:resources/reflection-overflow-scroll\.js$:;
-        next if $file =~ m:resources/script-element-gc\.js$:;
-        next if $file =~ m:resources/script-element-gc\.js$:;
-        next if $file =~ m:resources/script3\.js$:;
-        next if $file =~ m:resources/script4\.js$:;
-        next if $file =~ m:resources/script5\.js$:;
-        next if $file =~ m:resources/scripted-random\.js$:;
-        next if $file =~ m:resources/select-options-remove\.js$:;
-        next if $file =~ m:resources/shadow-offset\.js$:;
-        next if $file =~ m:resources/success\.js$:;
-        next if $file =~ m:resources/tabindex-focus-blur-all\.js$:;
-        next if $file =~ m:resources/use-instanceRoot-event-bubbling\.js$:;
-        next if $file =~ m:resources/use-instanceRoot-event-listeners\.js$:;
-        next if $file =~ m:resources/watch\.js$:;
-        next if $file =~ m:resources/window-properties\.js$:;
-        next if $file =~ m:resources/wrapper-identity-base\.js$:;
-        next if $file =~ m:resources/xhtml-scripts\.js$:;
-        next if $file =~ m:resources/instanceof-operator-dummy-worker\.js$:;
-        next if $file =~ m:resources/json2-es5-compat\.js$:;
-        next if $file =~ m:resources/JSON-stringify\.js$:;
-        next if $file =~ m:resources/JSON-parse\.js$:;
-        next if $file =~ m:resources/textarea-input-event\.js$:;
-
         my $html = $file;
         $html =~ s:${templateDirectory}/(.*)\.js:$1.html:;
         next if -f "$html-disabled";
