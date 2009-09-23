@@ -1,3 +1,15 @@
+2009-09-23  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        <rdar://problem/7243354> 
+        REGRESSION(48580-48636): Crash clicking embedded QT preview button on apple.com/trailers
+        
+        Check for a null IWebPolicyDelegatePrivate.
+        
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::shouldLoadMediaElementURL):
+
 2009-09-22  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Adam Roben.
