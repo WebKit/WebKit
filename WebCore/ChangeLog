@@ -1,3 +1,31 @@
+2009-09-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Tighten up the ScheduledRedirection machinery to prepare for a bug fix
+        https://bugs.webkit.org/show_bug.cgi?id=29663
+
+        * loader/FrameLoader.cpp:
+        (WebCore::ScheduledRedirection::ScheduledRedirection): Added a boolean,
+        initialized to false, to keep track if the redirection has been
+        communicated to the client.
+        (WebCore::FrameLoader::stopLoading): Tweaked a comment.
+        (WebCore::FrameLoader::cancelRedirection): Removed code to clear
+        m_scheduledRedirection.clear since stopRedirectionTimer does that now.
+        (WebCore::FrameLoader::allChildrenAreComplete): Added.
+        (WebCore::FrameLoader::checkCompleted): Use allChildrenAreComplete
+        function for clarity.
+        (WebCore::FrameLoader::checkCallImplicitClose): Ditto.
+        (WebCore::FrameLoader::scheduleRedirection): Changed to take a PassOwnPtr.
+        (WebCore::FrameLoader::startRedirectionTimer): Added code to set the
+        toldClient flag and not call clientRedirected a second time if it is set.
+        (WebCore::FrameLoader::stopRedirectionTimer): Changed so this can be safely
+        called multiple times and it will call clientRedirectCancelledOrFinished
+        only once.
+
+        * loader/FrameLoader.h: Changed scheduleRedirection to be a PassOwnPtr.
+        Added allChildrenAreComplete function.
+
 2009-09-22  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Timothy Hatcher.

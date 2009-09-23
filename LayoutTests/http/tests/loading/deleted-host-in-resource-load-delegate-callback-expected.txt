@@ -3,7 +3,6 @@ main frame - didCommitLoadForFrame
 main frame - didFinishDocumentLoadForFrame
 main frame - willPerformClientRedirectToURL: http://127.0.0.1:8000/loading/deleted-host-in-resource-load-delegate-callback.html 
 main frame - didHandleOnloadEventsForFrame
-main frame - willPerformClientRedirectToURL: http://127.0.0.1:8000/loading/deleted-host-in-resource-load-delegate-callback.html 
 main frame - didFinishLoadForFrame
 main frame - didStartProvisionalLoadForFrame
 main frame - didCancelClientRedirectForFrame
