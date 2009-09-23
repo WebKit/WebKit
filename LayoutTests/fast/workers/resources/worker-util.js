@@ -53,6 +53,9 @@ function done()
     else
         log("DONE");
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    // Call notifyDone via the queue so any pending console messages/exceptions are written out first.
+    setTimeout(function() {
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }, 0);
 }

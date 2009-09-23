@@ -3,7 +3,7 @@ Test SharedWorker constructor functionality. Should print a series of PASS messa
 PASS: toString exception propagated correctly.
 PASS: trying to create workers recursively resulted in an exception (RangeError: Maximum call stack size exceeded.)
 PASS: invoking SharedWorker constructor without arguments resulted in an exception (SyntaxError: Not enough arguments)
-PASS: invoking SharedWorker constructor without name resulted in an exception (SyntaxError: Not enough arguments)
+PASS: invoking SharedWorker constructor without name did not result in an exception
 PASS: SharedWorker constructor succeeded: [object SharedWorker]
 DONE
 

@@ -1,3 +1,22 @@
+2009-09-22  Drew Wilson  <atwilson@google.com>
+
+        Reviewed by David Levin.
+
+        SharedWorkers "name" attribute is now optional
+        https://bugs.webkit.org/show_bug.cgi?id=28897
+
+        * fast/workers/resources/worker-name.js:
+        New tests for optional name parameter.
+        * fast/workers/resources/worker-util.js:
+        (done):
+        Now invokes done via a timer to ensure any pending console errors are written out.
+        * fast/workers/shared-worker-constructor-expected.txt:
+        * fast/workers/shared-worker-constructor.html:
+        Updated test/expectations now that constructor's "name" param is optional.
+        * fast/workers/shared-worker-name-expected.txt:
+        * fast/workers/shared-worker-name.html:
+        New tests for optional name parameter.
+
 2009-09-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

@@ -1,3 +1,24 @@
+2009-09-22  Drew Wilson  <atwilson@google.com>
+
+        Reviewed by David Levin.
+
+        SharedWorkers "name" attribute is now optional.
+        https://bugs.webkit.org/show_bug.cgi?id=28897
+
+        Test: fast/workers/shared-worker-name.html
+
+        * bindings/js/JSSharedWorkerConstructor.cpp:
+        (WebCore::constructSharedWorker):
+        Default 'name' attribute to empty string if it is not provided.
+        * bindings/v8/custom/V8SharedWorkerCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        Default 'name' attribute to empty string if it is not provided.
+        * workers/DefaultSharedWorkerRepository.cpp:
+        (WebCore::SharedWorkerProxy::matches):
+        Now matches URLs if names are empty strings.
+        (WebCore::DefaultSharedWorkerRepository::getProxy):
+        Pass URL in to SharedWorkerProxy::matches().
+
 2009-09-22  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, another build fix.

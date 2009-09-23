@@ -57,11 +57,14 @@ static JSObject* constructSharedWorker(ExecState* exec, JSObject* constructor, c
 {
     JSSharedWorkerConstructor* jsConstructor = static_cast<JSSharedWorkerConstructor*>(constructor);
 
-    if (args.size() < 2)
+    if (args.size() < 1)
         return throwError(exec, SyntaxError, "Not enough arguments");
 
     UString scriptURL = args.at(0).toString(exec);
-    UString name = args.at(1).toString(exec);
+    UString name;
+    if (args.size() > 1)
+        name = args.at(1).toString(exec);
+
     if (exec->hadException())
         return 0;
 

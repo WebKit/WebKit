@@ -64,7 +64,7 @@ public:
     bool isClosing() const { return m_closing; }
     KURL url() const { return m_url.copy(); }
     String name() const { return m_name.copy(); }
-    bool matches(const String& name, PassRefPtr<SecurityOrigin> origin) const { return name == m_name && origin->equal(m_origin.get()); }
+    bool matches(const String& name, PassRefPtr<SecurityOrigin> origin, const KURL& urlToMatch) const;
 
     // WorkerLoaderProxy
     virtual void postTaskToLoader(PassRefPtr<ScriptExecutionContext::Task>);
@@ -107,6 +107,19 @@ SharedWorkerProxy::SharedWorkerProxy(const String& name, const KURL& url, PassRe
 {
     // We should be the sole owner of the SecurityOrigin, as we will free it on another thread.
     ASSERT(m_origin->hasOneRef());
+}
+
+bool SharedWorkerProxy::matches(const String& name, PassRefPtr<SecurityOrigin> origin, const KURL& urlToMatch) const
+{
+    // If the origins don't match, or the names don't match, then this is not the proxy we are looking for.
+    if (!origin->equal(m_origin.get()))
+        return false;
+
+    // If the names are both empty, compares the URLs instead per the Web Workers spec.
+    if (name.isEmpty() && m_name.isEmpty())
+        return urlToMatch == url();
+
+    return name == m_name;
 }
 
 void SharedWorkerProxy::postTaskToLoader(PassRefPtr<ScriptExecutionContext::Task> task)
@@ -365,7 +378,7 @@ PassRefPtr<SharedWorkerProxy> DefaultSharedWorkerRepository::getProxy(const Stri
     // Items in the cache are freed on another thread, so copy the URL before creating the origin, to make sure no references to external strings linger.
     RefPtr<SecurityOrigin> origin = SecurityOrigin::create(url.copy());
     for (unsigned i = 0; i < m_proxies.size(); i++) {
-        if (!m_proxies[i]->isClosing() && m_proxies[i]->matches(name, origin))
+        if (!m_proxies[i]->isClosing() && m_proxies[i]->matches(name, origin, url))
             return m_proxies[i];
     }
     // Proxy is not in the repository currently - create a new one.

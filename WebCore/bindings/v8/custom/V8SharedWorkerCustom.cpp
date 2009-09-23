@@ -53,12 +53,15 @@ CALLBACK_FUNC_DECL(SharedWorkerConstructor)
     if (!args.IsConstructCall())
         return throwError("DOM object constructor cannot be called as a function.");
 
-    if (args.Length() < 2)
+    if (args.Length() < 1)
         return throwError("Not enough arguments", V8Proxy::SyntaxError);
 
     v8::TryCatch tryCatch;
     v8::Handle<v8::String> scriptUrl = args[0]->ToString();
-    v8::Handle<v8::String> name = args[1]->ToString();
+    String name;
+    if (args.Length() > 1)
+        name = toWebCoreString(args[1]->ToString());
+
     if (tryCatch.HasCaught())
         return throwError(tryCatch.Exception());
 
@@ -73,7 +76,7 @@ CALLBACK_FUNC_DECL(SharedWorkerConstructor)
     // Create the worker object.
     // Note: it's OK to let this RefPtr go out of scope because we also call SetDOMWrapper(), which effectively holds a reference to obj.
     ExceptionCode ec = 0;
-    RefPtr<SharedWorker> obj = SharedWorker::create(toWebCoreString(scriptUrl), toWebCoreString(name), context, ec);
+    RefPtr<SharedWorker> obj = SharedWorker::create(toWebCoreString(scriptUrl), name, context, ec);
 
     // Setup the standard wrapper object internal fields.
     v8::Handle<v8::Object> wrapperObject = args.Holder();
