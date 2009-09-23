@@ -1,3 +1,14 @@
+2009-09-23  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Do not add unneeded include paths for gir files, and add the
+        include paths for headers manually instead of relying on our own
+        pc file and installed headers, since that adds a circular
+        dependency.
+
+        * GNUmakefile.am:
+
 2009-09-23  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Xan Lopez.

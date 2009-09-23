@@ -417,7 +417,6 @@ WEBKIT_GIRSOURCES = WebKit-1.0.gir
 
 $(WEBKIT_GIRSOURCES): $(JSCORE_GIRSOURCES) $(G_IR_SCANNER)
 	$(AM_V_GEN)$(G_IR_SCANNER) -v --namespace WebKit --nsversion=1.0 \
-	    --add-include-path=$(srcdir) --add-include-path=. \
 	     --include=GObject-2.0 \
 	     --include=Gtk-2.0 \
 	     --include=JSCore-1.0 \
@@ -426,8 +425,11 @@ $(WEBKIT_GIRSOURCES): $(JSCORE_GIRSOURCES) $(G_IR_SCANNER)
 	     --libtool="$(LIBTOOL)" \
 	     --pkg gobject-2.0 \
 	     --pkg gtk+-2.0 \
-	     --pkg webkit-1.0 \
 	     --output $@ \
+	     -I$(top_srcdir)/WebKit/gtk \
+	     -I$(top_builddir)/WebKit/gtk \
+	     -I$(top_srcdir)/JavaScriptCore/ForwardingHeaders \
+	     -I$(top_srcdir) \
 	     $(webkitgtk_h_api)
 
 girdir = $(GIRDIR)
