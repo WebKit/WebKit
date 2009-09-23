@@ -1,3 +1,16 @@
+2009-09-23  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Fix the Qt/Windows build, after the introduction of
+        the page client.
+
+        * plugins/win/PluginViewWin.cpp:
+        (windowHandleForPageClient):
+        (WebCore::PluginView::getValue):
+        (WebCore::PluginView::forceRedraw):
+        (WebCore::PluginView::platformStart):
+
 2009-09-23  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Xan Lopez.

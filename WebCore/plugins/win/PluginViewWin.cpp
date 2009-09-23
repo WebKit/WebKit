@@ -74,17 +74,17 @@
 #endif
 
 #if PLATFORM(QT)
-#include <QWidget.h>
+#include "QWebPageClient.h"
 #endif
 
-static inline HWND windowHandleForPlatformWidget(PlatformWidget widget)
+static inline HWND windowHandleForPageClient(PlatformPageClient client)
 {
 #if PLATFORM(QT)
-    if (!widget)
+    if (!client)
         return 0;
-    return widget->winId();
+    return client->winId();
 #else
-    return widget;
+    return client;
 #endif
 }
 
@@ -880,7 +880,7 @@ NPError PluginView::getValue(NPNVariable variable, void* value)
         case NPNVnetscapeWindow: {
             HWND* w = reinterpret_cast<HWND*>(value);
 
-            *w = windowHandleForPlatformWidget(parent() ? parent()->hostWindow()->platformPageClient() : 0);
+            *w = windowHandleForPageClient(parent() ? parent()->hostWindow()->platformPageClient() : 0);
 
             return NPERR_NO_ERROR;
         }
@@ -952,7 +952,7 @@ void PluginView::forceRedraw()
     if (m_isWindowed)
         ::UpdateWindow(platformPluginWidget());
     else
-        ::UpdateWindow(windowHandleForPlatformWidget(parent() ? parent()->hostWindow()->platformPageClient() : 0));
+        ::UpdateWindow(windowHandleForPageClient(parent() ? parent()->hostWindow()->platformPageClient() : 0));
 }
 
 bool PluginView::platformStart()
@@ -970,7 +970,7 @@ bool PluginView::platformStart()
         if (isSelfVisible())
             flags |= WS_VISIBLE;
 
-        HWND parentWindowHandle = windowHandleForPlatformWidget(m_parentFrame->view()->hostWindow()->platformPageClient());
+        HWND parentWindowHandle = windowHandleForPageClient(m_parentFrame->view()->hostWindow()->platformPageClient());
         HWND window = ::CreateWindowEx(0, kWebPluginViewdowClassName, 0, flags,
                                        0, 0, 0, 0, parentWindowHandle, 0, Page::instanceHandle(), 0);
 
