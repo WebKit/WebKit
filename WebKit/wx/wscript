@@ -83,6 +83,8 @@ def pre_build(bld):
 def build(bld):
     bld.add_pre_fun(pre_build)
 
+    bld.env.LIBDIR = output_dir
+
     obj = bld.new_task_gen(
         features = 'cxx cshlib implib',
         includes = ' '.join(include_paths + js_include_dirs),
