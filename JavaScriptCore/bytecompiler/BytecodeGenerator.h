@@ -417,9 +417,14 @@ namespace JSC {
         RegisterID* addConstantValue(JSValue);
         unsigned addRegExp(RegExp*);
 
-        PassRefPtr<FunctionExecutable> makeFunction(FunctionBodyNode* body)
+        PassRefPtr<FunctionExecutable> makeFunction(ExecState* exec, FunctionBodyNode* body)
         {
-            return FunctionExecutable::create(body->ident(), body->source(), body->usesArguments(), body->parameters(), body->lineNo(), body->lastLine());
+            return FunctionExecutable::create(exec, body->ident(), body->source(), body->usesArguments(), body->parameters(), body->lineNo(), body->lastLine());
+        }
+
+        PassRefPtr<FunctionExecutable> makeFunction(JSGlobalData* globalData, FunctionBodyNode* body)
+        {
+            return FunctionExecutable::create(globalData, body->ident(), body->source(), body->usesArguments(), body->parameters(), body->lineNo(), body->lastLine());
         }
 
         Vector<Instruction>& instructions() { return m_codeBlock->instructions(); }

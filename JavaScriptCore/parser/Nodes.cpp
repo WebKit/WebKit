@@ -1886,10 +1886,6 @@ ScopeNode::ScopeNode(JSGlobalData* globalData)
     , ParserArenaRefCounted(globalData)
     , m_features(NoFeatures)
 {
-#if ENABLE(CODEBLOCK_SAMPLING)
-    if (SamplingTool* sampler = globalData->interpreter->sampler())
-        sampler->notifyOfScope(this);
-#endif
 }
 
 ScopeNode::ScopeNode(JSGlobalData* globalData, const SourceCode& source, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, CodeFeatures features, int numConstants)
@@ -1899,10 +1895,6 @@ ScopeNode::ScopeNode(JSGlobalData* globalData, const SourceCode& source, SourceE
     , m_features(features)
     , m_source(source)
 {
-#if ENABLE(CODEBLOCK_SAMPLING)
-    if (SamplingTool* sampler = globalData->interpreter->sampler())
-        sampler->notifyOfScope(this);
-#endif
 }
 
 inline void ScopeNode::emitStatementsBytecode(BytecodeGenerator& generator, RegisterID* dst)

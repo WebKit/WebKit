@@ -273,7 +273,7 @@ BytecodeGenerator::BytecodeGenerator(ProgramNode* programNode, const Debugger* d
     } else {
         for (size_t i = 0; i < functionStack.size(); ++i) {
             FunctionBodyNode* function = functionStack[i];
-            globalObject->putWithAttributes(exec, function->ident(), new (exec) JSFunction(exec, makeFunction(function), scopeChain.node()), DontDelete);
+            globalObject->putWithAttributes(exec, function->ident(), new (exec) JSFunction(exec, makeFunction(exec, function), scopeChain.node()), DontDelete);
         }
         for (size_t i = 0; i < varStack.size(); ++i) {
             if (globalObject->hasProperty(exec, *varStack[i].first))
@@ -399,7 +399,7 @@ BytecodeGenerator::BytecodeGenerator(EvalNode* evalNode, const Debugger* debugge
 
     const DeclarationStacks::FunctionStack& functionStack = evalNode->functionStack();
     for (size_t i = 0; i < functionStack.size(); ++i)
-        m_codeBlock->addFunctionDecl(makeFunction(functionStack[i]));
+        m_codeBlock->addFunctionDecl(makeFunction(m_globalData, functionStack[i]));
 
     const DeclarationStacks::VarStack& varStack = evalNode->varStack();
     unsigned numVariables = varStack.size();
@@ -1316,7 +1316,7 @@ RegisterID* BytecodeGenerator::emitNewArray(RegisterID* dst, ElementNode* elemen
 
 RegisterID* BytecodeGenerator::emitNewFunction(RegisterID* dst, FunctionBodyNode* function)
 {
-    unsigned index = m_codeBlock->addFunctionDecl(makeFunction(function));
+    unsigned index = m_codeBlock->addFunctionDecl(makeFunction(m_globalData, function));
 
     emitOpcode(op_new_func);
     instructions().append(dst->index());
@@ -1336,7 +1336,7 @@ RegisterID* BytecodeGenerator::emitNewRegExp(RegisterID* dst, RegExp* regExp)
 RegisterID* BytecodeGenerator::emitNewFunctionExpression(RegisterID* r0, FuncExprNode* n)
 {
     FunctionBodyNode* function = n->body();
-    unsigned index = m_codeBlock->addFunctionExpr(makeFunction(function));
+    unsigned index = m_codeBlock->addFunctionExpr(makeFunction(m_globalData, function));
 
     emitOpcode(op_new_func_exp);
     instructions().append(r0->index());

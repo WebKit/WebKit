@@ -157,7 +157,7 @@ void SamplingThread::stop()
 }
 
 
-void ScopeSampleRecord::sample(CodeBlock* codeBlock, Instruction* vPC)
+void ScriptSampleRecord::sample(CodeBlock* codeBlock, Instruction* vPC)
 {
     if (!m_samples) {
         m_size = codeBlock->instructions().size();
@@ -196,8 +196,8 @@ void SamplingTool::doRun()
 
 #if ENABLE(CODEBLOCK_SAMPLING)
     if (CodeBlock* codeBlock = sample.codeBlock()) {
-        MutexLocker locker(m_scopeSampleMapMutex);
-        ScopeSampleRecord* record = m_scopeSampleMap->get(codeBlock->ownerExecutable());
+        MutexLocker locker(m_scriptSampleMapMutex);
+        ScriptSampleRecord* record = m_scopeSampleMap->get(codeBlock->ownerExecutable());
         ASSERT(record);
         record->sample(codeBlock, sample.vPC());
     }
@@ -209,13 +209,13 @@ void SamplingTool::sample()
     s_samplingTool->doRun();
 }
 
-void SamplingTool::notifyOfScope(ScopeNode* scope)
+void SamplingTool::notifyOfScope(ScriptExecutable* script)
 {
 #if ENABLE(CODEBLOCK_SAMPLING)
-    MutexLocker locker(m_scopeSampleMapMutex);
-    m_scopeSampleMap->set(scope, new ScopeSampleRecord(scope));
+    MutexLocker locker(m_scriptSampleMapMutex);
+    m_scopeSampleMap->set(script, new ScriptSampleRecord(script));
 #else
-    UNUSED_PARAM(scope);
+    UNUSED_PARAM(script);
 #endif
 }
 
@@ -254,10 +254,10 @@ static int compareLineCountInfoSampling(const void* left, const void* right)
     return (leftLineCount->line > rightLineCount->line) ? 1 : (leftLineCount->line < rightLineCount->line) ? -1 : 0;
 }
 
-static int compareScopeSampleRecords(const void* left, const void* right)
+static int compareScriptSampleRecords(const void* left, const void* right)
 {
-    const ScopeSampleRecord* const leftValue = *static_cast<const ScopeSampleRecord* const *>(left);
-    const ScopeSampleRecord* const rightValue = *static_cast<const ScopeSampleRecord* const *>(right);
+    const ScriptSampleRecord* const leftValue = *static_cast<const ScriptSampleRecord* const *>(left);
+    const ScriptSampleRecord* const rightValue = *static_cast<const ScriptSampleRecord* const *>(right);
 
     return (leftValue->m_sampleCount < rightValue->m_sampleCount) ? 1 : (leftValue->m_sampleCount > rightValue->m_sampleCount) ? -1 : 0;
 }
@@ -318,26 +318,26 @@ void SamplingTool::dump(ExecState* exec)
     // (3) Build and sort 'codeBlockSamples' array.
 
     int scopeCount = m_scopeSampleMap->size();
-    Vector<ScopeSampleRecord*> codeBlockSamples(scopeCount);
-    ScopeSampleRecordMap::iterator iter = m_scopeSampleMap->begin();
+    Vector<ScriptSampleRecord*> codeBlockSamples(scopeCount);
+    ScriptSampleRecordMap::iterator iter = m_scopeSampleMap->begin();
     for (int i = 0; i < scopeCount; ++i, ++iter)
         codeBlockSamples[i] = iter->second;
 
-    qsort(codeBlockSamples.begin(), scopeCount, sizeof(ScopeSampleRecord*), compareScopeSampleRecords);
+    qsort(codeBlockSamples.begin(), scopeCount, sizeof(ScriptSampleRecord*), compareScriptSampleRecords);
 
     // (4) Print data from 'codeBlockSamples' array.
 
     printf("\nCodeBlock samples\n\n"); 
 
     for (int i = 0; i < scopeCount; ++i) {
-        ScopeSampleRecord* record = codeBlockSamples[i];
+        ScriptSampleRecord* record = codeBlockSamples[i];
         CodeBlock* codeBlock = record->m_codeBlock;
 
         double blockPercent = (record->m_sampleCount * 100.0) / m_sampleCount;
 
         if (blockPercent >= 1) {
             //Instruction* code = codeBlock->instructions().begin();
-            printf("#%d: %s:%d: %d / %lld (%.3f%%)\n", i + 1, record->m_scope->sourceURL().UTF8String().c_str(), codeBlock->lineNumberForBytecodeOffset(exec, 0), record->m_sampleCount, m_sampleCount, blockPercent);
+            printf("#%d: %s:%d: %d / %lld (%.3f%%)\n", i + 1, record->m_executable->sourceURL().UTF8String().c_str(), codeBlock->lineNumberForBytecodeOffset(exec, 0), record->m_sampleCount, m_sampleCount, blockPercent);
             if (i < 10) {
                 HashMap<unsigned,unsigned> lineCounts;
                 codeBlock->dump(exec);

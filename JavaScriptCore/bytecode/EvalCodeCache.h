@@ -50,7 +50,7 @@ namespace JSC {
                 evalExecutable = m_cacheMap.get(evalSource.rep());
 
             if (!evalExecutable) {
-                evalExecutable = EvalExecutable::create(makeSource(evalSource));
+                evalExecutable = EvalExecutable::create(exec, makeSource(evalSource));
                 exceptionValue = evalExecutable->compile(exec, scopeChain);
                 if (exceptionValue)
                     return 0;

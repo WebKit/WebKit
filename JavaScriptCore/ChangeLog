@@ -1,3 +1,51 @@
+2009-09-22  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Code sampling builds are broken.
+        https://bugs.webkit.org/show_bug.cgi?id=29662
+
+        Fix build.
+
+        * bytecode/EvalCodeCache.h:
+        (JSC::EvalCodeCache::get):
+        * bytecode/SamplingTool.cpp:
+        (JSC::ScriptSampleRecord::sample):
+        (JSC::SamplingTool::doRun):
+        (JSC::SamplingTool::notifyOfScope):
+        (JSC::compareScriptSampleRecords):
+        (JSC::SamplingTool::dump):
+        * bytecode/SamplingTool.h:
+        (JSC::ScriptSampleRecord::ScriptSampleRecord):
+        (JSC::ScriptSampleRecord::~ScriptSampleRecord):
+        (JSC::SamplingTool::SamplingTool):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitNewFunction):
+        (JSC::BytecodeGenerator::emitNewFunctionExpression):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::makeFunction):
+        * debugger/Debugger.cpp:
+        (JSC::evaluateInGlobalCallFrame):
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::evaluate):
+        * parser/Nodes.cpp:
+        (JSC::ScopeNode::ScopeNode):
+        * runtime/Completion.cpp:
+        (JSC::checkSyntax):
+        (JSC::evaluate):
+        * runtime/Executable.cpp:
+        (JSC::FunctionExecutable::fromGlobalCode):
+        * runtime/Executable.h:
+        (JSC::ScriptExecutable::ScriptExecutable):
+        (JSC::EvalExecutable::EvalExecutable):
+        (JSC::EvalExecutable::create):
+        (JSC::ProgramExecutable::ProgramExecutable):
+        (JSC::FunctionExecutable::create):
+        (JSC::FunctionExecutable::FunctionExecutable):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncEval):
+
 2009-09-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

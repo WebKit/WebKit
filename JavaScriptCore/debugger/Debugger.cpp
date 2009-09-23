@@ -100,7 +100,7 @@ JSValue evaluateInGlobalCallFrame(const UString& script, JSValue& exception, JSG
 {
     CallFrame* globalCallFrame = globalObject->globalExec();
 
-    EvalExecutable eval(makeSource(script));
+    EvalExecutable eval(globalCallFrame, makeSource(script));
     JSObject* error = eval.compile(globalCallFrame, globalCallFrame->scopeChain());
     if (error)
         return error;

@@ -79,7 +79,7 @@ JSValue DebuggerCallFrame::evaluate(const UString& script, JSValue& exception) c
     if (!m_callFrame->codeBlock())
         return JSValue();
 
-    EvalExecutable eval(makeSource(script));
+    EvalExecutable eval(m_callFrame, makeSource(script));
     JSObject* error = eval.compile(m_callFrame, m_callFrame->scopeChain());
     if (error)
         return error;
