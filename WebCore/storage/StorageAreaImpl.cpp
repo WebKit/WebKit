@@ -47,6 +47,11 @@ StorageAreaImpl::~StorageAreaImpl()
 {
 }
 
+PassRefPtr<StorageAreaImpl> StorageAreaImpl::create(StorageType storageType, PassRefPtr<SecurityOrigin> origin, PassRefPtr<StorageSyncManager> syncManager)
+{
+    return adoptRef(new StorageAreaImpl(storageType, origin, syncManager));
+}
+
 StorageAreaImpl::StorageAreaImpl(StorageType storageType, PassRefPtr<SecurityOrigin> origin, PassRefPtr<StorageSyncManager> syncManager)
     : m_storageType(storageType)
     , m_securityOrigin(origin)

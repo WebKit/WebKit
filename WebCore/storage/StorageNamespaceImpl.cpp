@@ -99,17 +99,18 @@ PassRefPtr<StorageNamespace> StorageNamespaceImpl::copy()
     return adoptRef(newNamespace);
 }
 
-PassRefPtr<StorageArea> StorageNamespaceImpl::storageArea(SecurityOrigin* origin)
+PassRefPtr<StorageArea> StorageNamespaceImpl::storageArea(PassRefPtr<SecurityOrigin> prpOrigin)
 {
     ASSERT(isMainThread());
     ASSERT(!m_isShutdown);
 
+    RefPtr<SecurityOrigin> origin = prpOrigin;
     RefPtr<StorageAreaImpl> storageArea;
     if (storageArea = m_storageAreaMap.get(origin))
         return storageArea.release();
 
-    storageArea = adoptRef(new StorageAreaImpl(m_storageType, origin, m_syncManager));
-    m_storageAreaMap.set(origin, storageArea);
+    storageArea = StorageAreaImpl::create(m_storageType, origin, m_syncManager);
+    m_storageAreaMap.set(origin.release(), storageArea);
     return storageArea.release();
 }
 

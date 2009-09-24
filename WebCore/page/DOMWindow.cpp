@@ -34,6 +34,8 @@
 #include "CString.h"
 #include "Chrome.h"
 #include "Console.h"
+#include "Database.h"
+#include "DOMApplicationCache.h"
 #include "DOMSelection.h"
 #include "DOMTimer.h"
 #include "PageTransitionEvent.h"
@@ -55,6 +57,7 @@
 #include "Media.h"
 #include "MessageEvent.h"
 #include "Navigator.h"
+#include "NotificationCenter.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include "PlatformScreen.h"
@@ -62,28 +65,13 @@
 #include "Screen.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
+#include "Storage.h"
+#include "StorageArea.h"
+#include "StorageNamespace.h"
 #include "SuddenTermination.h"
 #include "WebKitPoint.h"
 #include <algorithm>
 #include <wtf/MathExtras.h>
-
-#if ENABLE(DATABASE)
-#include "Database.h"
-#endif
-
-#if ENABLE(DOM_STORAGE)
-#include "Storage.h"
-#include "StorageArea.h"
-#include "StorageNamespace.h"
-#endif
-
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-#include "DOMApplicationCache.h"
-#endif
-
-#if ENABLE(NOTIFICATIONS)
-#include "NotificationCenter.h"
-#endif
 
 using std::min;
 using std::max;
@@ -600,15 +588,12 @@ Storage* DOMWindow::localStorage() const
     if (!page->settings()->localStorageEnabled())
         return 0;
 
-    StorageNamespace* localStorage = page->group().localStorage();
-    RefPtr<StorageArea> storageArea = localStorage ? localStorage->storageArea(document->securityOrigin()) : 0; 
-    if (storageArea) {
+    RefPtr<StorageArea> storageArea = page->group().localStorage()->storageArea(document->securityOrigin());
 #if ENABLE(INSPECTOR)
-        page->inspectorController()->didUseDOMStorage(storageArea.get(), true, m_frame);
+    page->inspectorController()->didUseDOMStorage(storageArea.get(), true, m_frame);
 #endif
-        m_localStorage = Storage::create(m_frame, storageArea.release());
-    }
 
+    m_localStorage = Storage::create(m_frame, storageArea.release());
     return m_localStorage.get();
 }
 #endif
