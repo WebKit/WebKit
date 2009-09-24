@@ -1,5 +1,12 @@
 2009-09-24  Geoffrey Garen  <ggaren@apple.com>
 
+        Windows build fix: Declare set/unsetPendingActivity public, so
+        SharedWorkerScriptLoader can call them.
+
+        * dom/ActiveDOMObject.h:
+
+2009-09-24  Geoffrey Garen  <ggaren@apple.com>
+
         Fixed a bit of the Windows build.
 
         * workers/SharedWorker.idl: Declare a custom mark function. (I accidentally

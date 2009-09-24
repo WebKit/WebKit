@@ -53,9 +53,6 @@ namespace WebCore {
         virtual void resume();
         virtual void stop();
 
-    protected:
-        virtual ~ActiveDOMObject();
-
         template<class T> void setPendingActivity(T* thisObject)
         {
             ASSERT(thisObject == this);
@@ -69,6 +66,9 @@ namespace WebCore {
             --m_pendingActivityCount;
             thisObject->deref();
         }
+
+    protected:
+        virtual ~ActiveDOMObject();
 
     private:
         ScriptExecutionContext* m_scriptExecutionContext;
