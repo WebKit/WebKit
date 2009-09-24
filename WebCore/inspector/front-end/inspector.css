@@ -1409,6 +1409,10 @@ li.editing .swatch, li.editing .enabled-button,  li.editing-sub-part .delete-but
     display: none;
 }
 
+.watch-expressions-error-level {
+    color: red;
+}
+
 .section .properties li.editing-sub-part {
     padding: 3px 6px 8px 18px;
     margin: -3px -6px -8px -6px;

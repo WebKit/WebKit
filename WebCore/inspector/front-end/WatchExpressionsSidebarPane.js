@@ -94,6 +94,7 @@ WebInspector.WatchExpressionsSection.prototype = {
 
             var property = new WebInspector.ObjectPropertyProxy(expression, result);
             property.watchIndex = watchIndex;
+            property.isException = exception;
 
             // For newly added, empty expressions, set description to "",
             // since otherwise you get DOMWindow
@@ -221,6 +222,9 @@ WebInspector.WatchExpressionTreeElement.prototype = {
     update: function()
     {
         WebInspector.ObjectPropertyTreeElement.prototype.update.call(this);
+
+        if (this.property.isException)
+            this.valueElement.addStyleClass("watch-expressions-error-level");
 
         var deleteButton = document.createElement("input");
         deleteButton.type = "button";
