@@ -1759,7 +1759,7 @@ bool EventHandler::dispatchMouseEvent(const AtomicString& eventType, Node* targe
 }
 
 #if !PLATFORM(GTK)
-bool EventHandler::shouldTurnVerticalTicksIntoHorizontal(const HitTestResult& result) const
+bool EventHandler::shouldTurnVerticalTicksIntoHorizontal(const HitTestResult&) const
 {
     return false;
 }

@@ -1,5 +1,13 @@
 2009-09-24  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
+        Unreviewed. Mac build fix.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::shouldTurnVerticalTicksIntoHorizontal):
+        remove unused parameter from function signature;
+
+2009-09-24  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
         Reviewed by Oliver Hunt.
 
         Implement correct horizontal scrollbar behavior for GTK+ also on
