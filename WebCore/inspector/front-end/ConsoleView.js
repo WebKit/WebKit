@@ -608,7 +608,7 @@ WebInspector.ConsoleMessage.prototype = {
                 this.formattedMessage = span;
                 break;
             case WebInspector.ConsoleMessage.MessageType.Object:
-                this.formattedMessage = this._format([WebInspector.ObjectProxy.wrapPrimitiveValue("%O"), args[0]]);
+                this.formattedMessage = this._format(["%O", args[0]]);
                 break;
             default:
                 this.formattedMessage = this._format(args);
@@ -630,6 +630,13 @@ WebInspector.ConsoleMessage.prototype = {
 
         if (!parameters.length)
             return formattedResult;
+
+        // Formatting code below assumes that parameters are all wrappers whereas frontend console
+        // API allows passing arbitrary values as messages (strings, numberts, etc.). Wrap them here.
+        for (var i = 0; i < parameters.length; ++i) {
+            if (typeof parameters[i] !== "object" && typeof parameters[i] !== "function")
+                parameters[i] = WebInspector.ObjectProxy.wrapPrimitiveValue(parameters[i]);
+        }
 
         function formatForConsole(obj)
         {

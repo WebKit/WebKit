@@ -1,3 +1,20 @@
+2009-09-24  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Fix formatting for messages derived from resource warnings,
+        couple of drive-by formatting fixes.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29705
+
+        * inspector/InspectorFrontend.cpp:
+        (WebCore::InspectorFrontend::addMessageToConsole):
+        * inspector/front-end/ConsoleView.js:
+        * inspector/front-end/InjectedScript.js:
+        (InjectedScript._evaluateAndWrap):
+        * inspector/front-end/WatchExpressionsSidebarPane.js:
+        (WebInspector.WatchExpressionsSection.prototype.update):
+
 2009-09-22  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

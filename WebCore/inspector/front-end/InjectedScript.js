@@ -536,11 +536,11 @@ InjectedScript._evaluateAndWrap = function(evalFunction, object, expression)
         result.value = InspectorController.wrapObject(InjectedScript._evaluateOn(evalFunction, object, expression));
         // Handle error that might have happened while describing result.
         if (result.value.errorText) {
-            result.value = InspectorController.wrapObject(result.value.errorText);
+            result.value = result.value.errorText;
             result.isException = true;
         }
     } catch (e) {
-        result.value = InspectorController.wrapObject(e.toString());
+        result.value = e.toString();
         result.isException = true;
     }
     return result;
@@ -1100,10 +1100,6 @@ Object.describe = function(obj, abbreviated)
         return objectText;
     case "regexp":
         return String(obj).replace(/([\\\/])/g, "\\$1").replace(/\\(\/[gim]*)$/, "$1").substring(1);
-    case "boolean":
-    case "number":
-    case "null":
-        return obj;
     default:
         return String(obj);
     }
