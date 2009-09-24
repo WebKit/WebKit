@@ -30,7 +30,8 @@ typedef struct {
     gboolean has_been_committed;
     gboolean has_been_first_visually_non_empty_layout;
     gboolean has_been_finished;
-    gboolean has_been_error;
+    gboolean has_been_failed;
+    gboolean has_been_load_error;
 } WebLoadingFixture;
 
 static void web_loading_fixture_setup(WebLoadingFixture* fixture, gconstpointer data)
@@ -42,7 +43,8 @@ static void web_loading_fixture_setup(WebLoadingFixture* fixture, gconstpointer 
     fixture->has_been_committed = FALSE;
     fixture->has_been_first_visually_non_empty_layout = FALSE;
     fixture->has_been_finished = FALSE;
-    fixture->has_been_error = FALSE;
+    fixture->has_been_failed = FALSE;
+    fixture->has_been_load_error = FALSE;
 }
 
 static void web_loading_fixture_teardown(WebLoadingFixture* fixture, gconstpointer data)
@@ -117,17 +119,23 @@ static void load_error_status_changed_cb(GObject* object, GParamSpec* pspec, Web
 
     switch(status) {
     case WEBKIT_LOAD_PROVISIONAL:
-        g_assert(!fixture->has_been_provisional);
-        g_assert(!fixture->has_been_error);
+        /* We are going to go through here twice, so don't assert
+         * anything */
         fixture->has_been_provisional = TRUE;
         break;
     case WEBKIT_LOAD_FINISHED:
         g_assert(fixture->has_been_provisional);
-        g_assert(fixture->has_been_error);
+        g_assert(fixture->has_been_load_error);
+        g_assert(fixture->has_been_failed);
         /* We are checking that only one FINISHED is received in the
            whole cycle, so assert it's FALSE */
         g_assert(!fixture->has_been_finished);
         fixture->has_been_finished = TRUE;
+        g_main_loop_quit(fixture->loop);
+        break;
+    case WEBKIT_LOAD_FAILED:
+        g_assert(!fixture->has_been_failed);
+        fixture->has_been_failed = TRUE;
         break;
     default:
         break;
@@ -137,8 +145,8 @@ static void load_error_status_changed_cb(GObject* object, GParamSpec* pspec, Web
 static gboolean load_error_cb(WebKitWebView* webView, WebKitWebFrame* frame, const char* uri, GError *error, WebLoadingFixture* fixture)
 {
     g_assert(fixture->has_been_provisional);
-    g_assert(!fixture->has_been_error);
-    fixture->has_been_error = TRUE;
+    g_assert(!fixture->has_been_load_error);
+    fixture->has_been_load_error = TRUE;
 
     return FALSE;
 }
@@ -151,6 +159,65 @@ static void test_loading_error(WebLoadingFixture* fixture, gconstpointer data)
     g_signal_connect(fixture->webView, "notify::load-status", G_CALLBACK(load_error_status_changed_cb), fixture);
 
     webkit_web_view_load_uri(fixture->webView, "http://snoetuhsetuhseoutoeutc.com/");
+    g_main_loop_run(fixture->loop);
+}
+
+/* Cancelled load */
+
+static gboolean load_cancelled_cb(WebKitWebView* webView, WebKitWebFrame* frame, const char* uri, GError *error, WebLoadingFixture* fixture)
+{
+    g_assert(fixture->has_been_provisional);
+    g_assert(fixture->has_been_failed);
+    g_assert(!fixture->has_been_load_error);
+    g_assert(error->code == WEBKIT_NETWORK_ERROR_CANCELLED);
+    fixture->has_been_load_error = TRUE;
+
+    return TRUE;
+}
+
+static gboolean stop_load (gpointer data)
+{
+    webkit_web_view_stop_loading(WEBKIT_WEB_VIEW(data));
+    return FALSE;
+}
+
+static void load_cancelled_status_changed_cb(GObject* object, GParamSpec* pspec, WebLoadingFixture* fixture)
+{
+    WebKitLoadStatus status = webkit_web_view_get_load_status(WEBKIT_WEB_VIEW(object));
+
+    switch(status) {
+    case WEBKIT_LOAD_PROVISIONAL:
+        g_assert(!fixture->has_been_provisional);
+        g_assert(!fixture->has_been_failed);
+        fixture->has_been_provisional = TRUE;
+        break;
+    case WEBKIT_LOAD_COMMITTED:
+        g_idle_add (stop_load, object);
+        break;
+    case WEBKIT_LOAD_FAILED:
+        g_assert(fixture->has_been_provisional);
+        g_assert(!fixture->has_been_failed);
+        g_assert(!fixture->has_been_load_error);
+        fixture->has_been_failed = TRUE;
+        g_main_loop_quit(fixture->loop);
+        break;
+    case WEBKIT_LOAD_FINISHED:
+        g_assert_not_reached();
+        break;
+    default:
+        break;
+    }
+}
+
+static void test_loading_cancelled(WebLoadingFixture* fixture, gconstpointer data)
+{
+    g_test_bug("29644");
+
+    g_signal_connect(fixture->webView, "load-error", G_CALLBACK(load_cancelled_cb), fixture);
+    g_signal_connect(fixture->webView, "notify::load-status", G_CALLBACK(load_cancelled_status_changed_cb), fixture);
+
+    webkit_web_view_load_uri(fixture->webView, "http://google.com/");
+    g_main_loop_run(fixture->loop);
 }
 
 int main(int argc, char** argv)
@@ -168,6 +235,11 @@ int main(int argc, char** argv)
                WebLoadingFixture, NULL,
                web_loading_fixture_setup,
                test_loading_error,
+               web_loading_fixture_teardown);
+    g_test_add("/webkit/loading/cancelled",
+               WebLoadingFixture, NULL,
+               web_loading_fixture_setup,
+               test_loading_cancelled,
                web_loading_fixture_teardown);
     return g_test_run();
 }

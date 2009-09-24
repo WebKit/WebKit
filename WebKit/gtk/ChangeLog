@@ -1,5 +1,31 @@
 2009-09-24  Xan Lopez  <xlopez@igalia.com>
 
+        Reviewed by Gustavo Noronha and Jan Alonzo.
+        [GTK] Add WEBKIT_LOAD_ERROR status
+        https://bugs.webkit.org/show_bug.cgi?id=29644
+
+        Add a new load-status enum value, WEBKIT_LOAD_FAILED, emitted when
+        there's an error during the load process. This is needed if we
+        want notify::load-status to be able to handle all situations,
+        since WEBKIT_LOAD_FINISHED is not emitted when there's an error
+        and we are lacking a notification of the load being stopped.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::dispatchDidFailLoad):
+        * tests/testloading.c:
+        (web_loading_fixture_setup):
+        (load_error_status_changed_cb):
+        (load_error_cb):
+        (test_loading_error):
+        (load_cancelled_cb):
+        (stop_load):
+        (load_cancelled_status_changed_cb):
+        (test_loading_cancelled):
+        (main):
+        * webkit/webkitwebframe.h:
+
+2009-09-24  Xan Lopez  <xlopez@igalia.com>
+
         Revert r48697, since it broke key handling notification to GTK+.
 
         * WebCoreSupport/EditorClientGtk.cpp:

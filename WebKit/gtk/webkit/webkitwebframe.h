@@ -75,12 +75,17 @@ struct _WebKitWebFrameClass {
  * because the data available at the time was not significant enough.
  * @WEBKIT_LOAD_FINISHED: This state means that everything that was
  * required to display the page has been loaded.
+ * @WEBKIT_LOAD_FAILED: This state means that some error occurred
+ * during the page load that prevented it from being completed. You
+ * can connect to the #WebKitWebView::load-error signal if you want to
+ * know precisely what kind of error occurred.
  */
 typedef enum {
     WEBKIT_LOAD_PROVISIONAL,
     WEBKIT_LOAD_COMMITTED,
     WEBKIT_LOAD_FINISHED,
-    WEBKIT_LOAD_FIRST_VISUALLY_NON_EMPTY_LAYOUT
+    WEBKIT_LOAD_FIRST_VISUALLY_NON_EMPTY_LAYOUT,
+    WEBKIT_LOAD_FAILED
 } WebKitLoadStatus;
 
 WEBKIT_API GType
