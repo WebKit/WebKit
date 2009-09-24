@@ -58,8 +58,8 @@ namespace WebCore {
         // Returns the owner frame of the listener.
         Frame* frame() { return m_frame; }
 
-        virtual void handleEvent(Event*, bool isWindowEvent);
-        void invokeEventHandler(v8::Handle<v8::Context>, Event*, v8::Handle<v8::Value> jsEvent, bool isWindowEvent);
+        virtual void handleEvent(Event*);
+        void invokeEventHandler(v8::Handle<v8::Context>, Event*, v8::Handle<v8::Value> jsEvent);
 
         // Returns the listener object, either a function or an object.
         virtual v8::Local<v8::Object> getListenerObject()
@@ -83,10 +83,10 @@ namespace WebCore {
     private:
         V8AbstractEventListener(Frame*, bool isInline);
 
-        virtual v8::Local<v8::Value> callListenerFunction(v8::Handle<v8::Value> jsevent, Event*, bool isWindowEvent) = 0;
+        virtual v8::Local<v8::Value> callListenerFunction(v8::Handle<v8::Value> jsevent, Event*) = 0;
 
         // Get the receiver object to use for event listener call.
-        v8::Local<v8::Object> getReceiverObject(Event*, bool isWindowEvent);
+        v8::Local<v8::Object> getReceiverObject(Event*);
 
         // Frame to which the event listener is attached to. An event listener must be destroyed before its owner frame is
         // deleted. See fast/dom/replaceChild.html

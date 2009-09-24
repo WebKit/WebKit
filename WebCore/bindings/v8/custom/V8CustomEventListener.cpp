@@ -73,10 +73,10 @@ v8::Local<v8::Function> V8EventListener::getListenerFunction()
     return v8::Local<v8::Function>();
 }
 
-v8::Local<v8::Value> V8EventListener::callListenerFunction(v8::Handle<v8::Value> jsEvent, Event* event, bool isWindowEvent)
+v8::Local<v8::Value> V8EventListener::callListenerFunction(v8::Handle<v8::Value> jsEvent, Event* event)
 {
     v8::Local<v8::Function> handlerFunction = getListenerFunction();
-    v8::Local<v8::Object> receiver = getReceiverObject(event, isWindowEvent);
+    v8::Local<v8::Object> receiver = getReceiverObject(event);
     if (handlerFunction.IsEmpty() || receiver.IsEmpty())
         return v8::Local<v8::Value>();
 

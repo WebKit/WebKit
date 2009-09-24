@@ -58,7 +58,7 @@ namespace WebCore {
         v8::Local<v8::Function> getListenerFunction();
 
     private:
-        virtual v8::Local<v8::Value> callListenerFunction(v8::Handle<v8::Value> jsEvent, Event*, bool isWindowEvent);
+        virtual v8::Local<v8::Value> callListenerFunction(v8::Handle<v8::Value> jsEvent, Event*);
         virtual bool virtualisAttribute() const { return m_isAttribute; }
     };
 

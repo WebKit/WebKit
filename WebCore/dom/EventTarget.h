@@ -202,6 +202,7 @@ namespace WebCore {
 
         d->eventListenerMap.clear();
     }
+#endif
 
     inline bool EventTarget::isFiringEventListeners()
     {
@@ -226,8 +227,6 @@ namespace WebCore {
             return false;
         return d->eventListenerMap.contains(eventType);
     }
-
-#endif
 
 } // namespace WebCore
 

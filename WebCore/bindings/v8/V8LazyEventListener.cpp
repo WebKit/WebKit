@@ -124,10 +124,10 @@ v8::Local<v8::Function> V8LazyEventListener::getListenerFunction()
     return m_listener.IsEmpty() ? v8::Local<v8::Function>() : v8::Local<v8::Function>::New(v8::Persistent<v8::Function>::Cast(m_listener));
 }
 
-v8::Local<v8::Value> V8LazyEventListener::callListenerFunction(v8::Handle<v8::Value> jsEvent, Event* event, bool isWindowEvent)
+v8::Local<v8::Value> V8LazyEventListener::callListenerFunction(v8::Handle<v8::Value> jsEvent, Event* event)
 {
     v8::Local<v8::Function> handlerFunction = getWrappedListenerFunction();
-    v8::Local<v8::Object> receiver = getReceiverObject(event, isWindowEvent);
+    v8::Local<v8::Object> receiver = getReceiverObject(event);
     if (handlerFunction.IsEmpty() || receiver.IsEmpty())
         return v8::Local<v8::Value>();
 

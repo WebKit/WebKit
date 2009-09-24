@@ -53,7 +53,7 @@ V8WorkerContextEventListener::~V8WorkerContextEventListener()
     disposeListenerObject();
 }
 
-void V8WorkerContextEventListener::handleEvent(Event* event, bool isWindowEvent)
+void V8WorkerContextEventListener::handleEvent(Event* event)
 {
     // Is the EventListener disconnected?
     if (disconnected())
@@ -75,7 +75,7 @@ void V8WorkerContextEventListener::handleEvent(Event* event, bool isWindowEvent)
     // Get the V8 wrapper for the event object.
     v8::Handle<v8::Value> jsEvent = WorkerContextExecutionProxy::convertEventToV8Object(event);
 
-    invokeEventHandler(context, event, jsEvent, isWindowEvent);
+    invokeEventHandler(context, event, jsEvent);
 }
 
 bool V8WorkerContextEventListener::reportError(const String& message, const String& url, int lineNumber)
@@ -124,10 +124,10 @@ bool V8WorkerContextEventListener::reportError(const String& message, const Stri
     return errorHandled;
 }
 
-v8::Local<v8::Value> V8WorkerContextEventListener::callListenerFunction(v8::Handle<v8::Value> jsEvent, Event* event, bool isWindowEvent)
+v8::Local<v8::Value> V8WorkerContextEventListener::callListenerFunction(v8::Handle<v8::Value> jsEvent, Event* event)
 {
     v8::Local<v8::Function> handlerFunction = getListenerFunction();
-    v8::Local<v8::Object> receiver = getReceiverObject(event, isWindowEvent);
+    v8::Local<v8::Object> receiver = getReceiverObject(event);
     if (handlerFunction.IsEmpty() || receiver.IsEmpty())
         return v8::Local<v8::Value>();
 
@@ -139,13 +139,10 @@ v8::Local<v8::Value> V8WorkerContextEventListener::callListenerFunction(v8::Hand
     return result;
 }
 
-v8::Local<v8::Object> V8WorkerContextEventListener::getReceiverObject(Event* event, bool isWindowEvent)
+v8::Local<v8::Object> V8WorkerContextEventListener::getReceiverObject(Event* event)
 {
     if (!m_listener.IsEmpty() && !m_listener->IsFunction())
         return v8::Local<v8::Object>::New(m_listener);
-
-    if (isWindowEvent)
-        return v8::Context::GetCurrent()->Global();
 
     EventTarget* target = event->currentTarget();
     v8::Handle<v8::Value> value = WorkerContextExecutionProxy::convertEventTargetToV8Object(target);

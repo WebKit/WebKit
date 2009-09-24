@@ -1,3 +1,36 @@
+2009-09-24  Vitaly Repeshko  <vitalyr@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [V8] Fixed bindings build after http://trac.webkit.org/changeset/48701
+        https://bugs.webkit.org/show_bug.cgi?id=29713
+
+        Got rid of isWindowEvent in function signatures:
+        * bindings/v8/V8AbstractEventListener.cpp:
+        (WebCore::V8AbstractEventListener::invokeEventHandler):
+        (WebCore::V8AbstractEventListener::handleEvent):
+        (WebCore::V8AbstractEventListener::getReceiverObject):
+        * bindings/v8/V8AbstractEventListener.h:
+        * bindings/v8/V8LazyEventListener.cpp:
+        (WebCore::V8LazyEventListener::callListenerFunction):
+        * bindings/v8/V8LazyEventListener.h:
+        * bindings/v8/V8WorkerContextEventListener.cpp:
+        (WebCore::V8WorkerContextEventListener::handleEvent):
+        (WebCore::V8WorkerContextEventListener::callListenerFunction):
+        (WebCore::V8WorkerContextEventListener::getReceiverObject):
+        * bindings/v8/V8WorkerContextEventListener.h:
+        * bindings/v8/custom/V8CustomEventListener.cpp:
+        (WebCore::V8EventListener::callListenerFunction):
+        * bindings/v8/custom/V8CustomEventListener.h:
+
+        Switched to EventTarget methods of adding/removing listeners:
+        * bindings/v8/custom/V8DOMApplicationCacheCustom.cpp:
+        (WebCore::toEventID):
+        (WebCore::ACCESSOR_SETTER):
+
+        * dom/EventTarget.h: Some functions were incorrectly marked
+        as JSC-specific.
+
 2009-09-24  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
