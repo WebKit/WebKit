@@ -1,3 +1,19 @@
+2009-09-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Speed up access to history items by caching date computation.
+
+        * History/WebHistory.mm:
+        (getDayBoundaries): Refactored from timeIntervalForBeginningOfDay.
+        Returns the beginning of the day that the passed time is within and
+        the beginning of the next day.
+        (beginningOfDay): Added. Uses getDayBoundaries so it can be fast for
+        multiple dates within the same day, which is the common case.
+        (dateKey): Added. Calls beginningOfDay and converts to an integer.
+        (-[WebHistoryPrivate findKey:forDay:]): Changed to call dateKey
+        insetad of timeIntervalForBeginningOfDay.
+
 2009-09-23  David Kilzer  <ddkilzer@apple.com>
 
         Move definition of USE(PLUGIN_HOST_PROCESS) from WebKitPrefix.h to Platform.h

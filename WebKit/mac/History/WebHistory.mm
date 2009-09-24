@@ -148,27 +148,42 @@ private:
 
 #pragma mark MODIFYING CONTENTS
 
-static WebHistoryDateKey timeIntervalForBeginningOfDay(NSTimeInterval interval)
+static void getDayBoundaries(NSTimeInterval interval, NSTimeInterval& beginningOfDay, NSTimeInterval& beginningOfNextDay)
 {
     CFTimeZoneRef timeZone = CFTimeZoneCopyDefault();
     CFGregorianDate date = CFAbsoluteTimeGetGregorianDate(interval, timeZone);
     date.hour = 0;
     date.minute = 0;
     date.second = 0;
-    NSTimeInterval result = CFGregorianDateGetAbsoluteTime(date, timeZone);
+    beginningOfDay = CFGregorianDateGetAbsoluteTime(date, timeZone);
+    date.day += 1;
+    beginningOfNextDay = CFGregorianDateGetAbsoluteTime(date, timeZone);
     CFRelease(timeZone);
+}
 
-    // Converting from double to int64_t is safe here as NSDate's useful range
-    // is -2**48 .. 2**47 which will safely fit in an int64_t.
-    return (WebHistoryDateKey)result;
+static inline NSTimeInterval beginningOfDay(NSTimeInterval date)
+{
+    static NSTimeInterval cachedBeginningOfDay = NAN;
+    static NSTimeInterval cachedBeginningOfNextDay;
+    if (!(date >= cachedBeginningOfDay && date < cachedBeginningOfNextDay))
+        getDayBoundaries(date, cachedBeginningOfDay, cachedBeginningOfNextDay);
+    return cachedBeginningOfDay;
+}
+
+static inline WebHistoryDateKey dateKey(NSTimeInterval date)
+{
+    // Converting from double (NSTimeInterval) to int64_t (WebHistoryDateKey) is
+    // safe here because all sensible dates are in the range -2**48 .. 2**47 which
+    // safely fits in an int64_t.
+    return beginningOfDay(date);
 }
 
 // Returns whether the day is already in the list of days,
 // and fills in *key with the key used to access its location
 - (BOOL)findKey:(WebHistoryDateKey*)key forDay:(NSTimeInterval)date
 {
-    ASSERT_ARG(key, key != nil);
-    *key = timeIntervalForBeginningOfDay(date);
+    ASSERT_ARG(key, key);
+    *key = dateKey(date);
     return _entriesByDate->contains(*key);
 }
 
