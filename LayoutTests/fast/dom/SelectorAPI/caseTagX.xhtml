@@ -18,6 +18,8 @@
     <![CDATA[ 
         shouldBeNull("document.querySelector('div SPAN')");
 
+        shouldBeFalse("document.getElementById('lower1').webkitMatchesSelector('div SPAN')");
+
         var successfullyParsed = true;
     ]]> 
     </script>

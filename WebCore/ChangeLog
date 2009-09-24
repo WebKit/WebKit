@@ -1,3 +1,35 @@
+2009-09-24  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=29703
+        Add a function to element to check whether it matches a CSS selector
+
+        Implement Element.webkitMatchesSelector.
+
+        * css/CSSSelectorList.cpp:
+        (WebCore::forEachTagSelector):
+        (WebCore::forEachSelector):
+        (WebCore::SelectorNeedsNamespaceResolutionFunctor::operator()):
+        (WebCore::CSSSelectorList::selectorsNeedNamespaceResolution):
+        * css/CSSSelectorList.h:
+        Moved code to iterate the CSSSelectorList and determine if any
+        selectors need namespace resolution from a static function in
+        Node.cpp to CSSSelectorList so that it can be used by webkitMatchesSelector
+        as well as querySelector/querySelectorAll.
+
+        * dom/Element.cpp:
+        (WebCore::Element::webkitMatchesSelector):
+        * dom/Element.h: 
+        * dom/Element.idl:
+        Implement the new function. Handles exceptional cases identically to
+        querySelector/querySelectorAll.
+
+        * dom/Node.cpp:
+        (WebCore::Node::querySelector):
+        (WebCore::Node::querySelectorAll):
+        Moved selectorsNeedNamespaceResolution to CSSSelectorList from here.
+
 2009-09-24  Vitaly Repeshko  <vitalyr@chromium.org>
 
         Reviewed by Dimitri Glazkov.

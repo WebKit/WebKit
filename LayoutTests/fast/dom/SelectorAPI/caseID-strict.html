@@ -19,6 +19,11 @@
         shouldBe("document.querySelector('#UPPER1').textContent", "'UPPER 1'");
         shouldBeNull("document.querySelector('#upper2')");
 
+        shouldBeTrue("document.getElementById('lower1').webkitMatchesSelector('#lower1')");
+        shouldBeFalse("document.getElementById('lower2').webkitMatchesSelector('#LOWER2')");
+        shouldBeTrue("document.getElementById('UPPER1').webkitMatchesSelector('#UPPER1')");
+        shouldBeFalse("document.getElementById('UPPER2').webkitMatchesSelector('#upper2')");
+
         var successfullyParsed = true;
     </script>
     <script src="../../js/resources/js-test-post.js"></script>

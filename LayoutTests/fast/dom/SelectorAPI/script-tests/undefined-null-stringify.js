@@ -1,5 +1,5 @@
 description(
-"This tests that the querySelector and querySelectorAll correctly stringify null and undefined to \"null\" and \"undefined\"."
+"This tests that the querySelector, querySelectorAll and matchesSelector (webkitMatchesSelector) correctly stringify null and undefined to \"null\" and \"undefined\"."
 );
 
 var root = document.createElement('div');
@@ -16,5 +16,8 @@ shouldBe("document.querySelectorAll(null).length", "1");
 shouldBe("document.querySelectorAll(null).item(0)", "nullNode");
 shouldBe("document.querySelectorAll(undefined).length", "1");
 shouldBe("document.querySelectorAll(undefined).item(0)", "undefinedNode");
+
+shouldBeTrue("nullNode.webkitMatchesSelector(null)");
+shouldBeTrue("undefinedNode.webkitMatchesSelector(undefined)");
 
 var successfullyParsed = true;

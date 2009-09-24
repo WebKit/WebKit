@@ -1,5 +1,5 @@
 description(
-"This tests that querySelector and querySelectorAll work with elements that are not in a document yet."
+"This tests that querySelector, querySelectorAll and matchesSelector (webkitMatchesSelector) work with elements that are not in a document yet."
 );
 
 var root = document.createElement('div');
@@ -18,5 +18,8 @@ shouldBe("root.querySelectorAll('#testId').item(0)", "correctNode");
 
 shouldBeNull("noChild.querySelector('div')");
 shouldBe("noChild.querySelectorAll('div').length", "0");
+
+shouldBeTrue("correctNode.webkitMatchesSelector('div')");
+shouldBeTrue("correctNode.webkitMatchesSelector('#testId')");
 
 var successfullyParsed = true;

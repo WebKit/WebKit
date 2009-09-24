@@ -1626,52 +1626,6 @@ PassRefPtr<NodeList> Node::getElementsByClassName(const String& classNames)
     return ClassNodeList::create(this, classNames, result.first->second.get());
 }
 
-template <typename Functor>
-static bool forEachTagSelector(Functor& functor, CSSSelector* selector)
-{
-    ASSERT(selector);
-
-    do {
-        if (functor(selector))
-            return true;
-        if (CSSSelector* simpleSelector = selector->simpleSelector()) {
-            if (forEachTagSelector(functor, simpleSelector))
-                return true;
-        }
-    } while ((selector = selector->tagHistory()));
-
-    return false;
-}
-
-template <typename Functor>
-static bool forEachSelector(Functor& functor, const CSSSelectorList& selectorList)
-{
-    for (CSSSelector* selector = selectorList.first(); selector; selector = CSSSelectorList::next(selector)) {
-        if (forEachTagSelector(functor, selector))
-            return true;
-    }
-
-    return false;
-}
-
-class SelectorNeedsNamespaceResolutionFunctor {
-public:
-    bool operator()(CSSSelector* selector)
-    {
-        if (selector->hasTag() && selector->m_tag.prefix() != nullAtom && selector->m_tag.prefix() != starAtom)
-            return true;
-        if (selector->hasAttribute() && selector->attribute().prefix() != nullAtom && selector->attribute().prefix() != starAtom)
-            return true;
-        return false;
-    }
-};
-
-static bool selectorNeedsNamespaceResolution(const CSSSelectorList& selectorList)
-{
-    SelectorNeedsNamespaceResolutionFunctor functor;
-    return forEachSelector(functor, selectorList);
-}
-
 PassRefPtr<Element> Node::querySelector(const String& selectors, ExceptionCode& ec)
 {
     if (selectors.isEmpty()) {
@@ -1690,7 +1644,7 @@ PassRefPtr<Element> Node::querySelector(const String& selectors, ExceptionCode& 
     }
 
     // throw a NAMESPACE_ERR if the selector includes any namespace prefixes.
-    if (selectorNeedsNamespaceResolution(querySelectorList)) {
+    if (querySelectorList.selectorsNeedNamespaceResolution()) {
         ec = NAMESPACE_ERR;
         return 0;
     }
@@ -1738,7 +1692,7 @@ PassRefPtr<NodeList> Node::querySelectorAll(const String& selectors, ExceptionCo
     }
 
     // Throw a NAMESPACE_ERR if the selector includes any namespace prefixes.
-    if (selectorNeedsNamespaceResolution(querySelectorList)) {
+    if (querySelectorList.selectorsNeedNamespaceResolution()) {
         ec = NAMESPACE_ERR;
         return 0;
     }

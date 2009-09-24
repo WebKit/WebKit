@@ -33,31 +33,43 @@
     {
         shouldThrow("document.querySelector('bbb|pre')");
         shouldThrow("document.querySelectorAll('bbb|pre')");
+        shouldThrow("document.body.webkitMatchesSelector('bbb|pre')");
         shouldNotThrow("document.querySelector('*|pre')");
         shouldNotThrow("document.querySelectorAll('*|pre')");
+        shouldNotThrow("document.body.webkitMatchesSelector('*|pre')");
         shouldNotThrow("document.querySelector('|pre')");
         shouldNotThrow("document.querySelectorAll('|pre')");
+        shouldNotThrow("document.body.webkitMatchesSelector('|pre')");
 
         shouldThrow("document.querySelector('div bbb|pre')");
         shouldThrow("document.querySelectorAll('div bbb|pre')");
+        shouldThrow("document.body.webkitMatchesSelector('div bbb|pre')");
         shouldNotThrow("document.querySelector('div *|pre')");
         shouldNotThrow("document.querySelectorAll('div *|pre')");
+        shouldNotThrow("document.body.webkitMatchesSelector('div *|pre')");
         shouldNotThrow("document.querySelector('div |pre')");
         shouldNotThrow("document.querySelectorAll('div |pre')");
+        shouldNotThrow("document.body.webkitMatchesSelector('div |pre')");
 
         shouldThrow("document.querySelector('[bbb|name=value]')");
         shouldThrow("document.querySelectorAll('[bbb|name=value]')");
+        shouldThrow("document.body.webkitMatchesSelector('[bbb|name=value]')");
         shouldNotThrow("document.querySelector('[*|name=value]')");
         shouldNotThrow("document.querySelectorAll('[*|name=value]')");
+        shouldNotThrow("document.body.webkitMatchesSelector('[*|name=value]')");
         shouldNotThrow("document.querySelector('[|name=value]')");
         shouldNotThrow("document.querySelectorAll('[|name=value]')");
+        shouldNotThrow("document.body.webkitMatchesSelector('[|name=value]')");
 
         shouldThrow("document.querySelector('div [bbb|name=value]')");
         shouldThrow("document.querySelectorAll('div [bbb|name=value]')");
+        shouldThrow("document.body.webkitMatchesSelector('div [bbb|name=value]')");
         shouldNotThrow("document.querySelector('div [*|name=value]')");
         shouldNotThrow("document.querySelectorAll('div [*|name=value]')");
+        shouldNotThrow("document.body.webkitMatchesSelector('div [*|name=value]')");
         shouldNotThrow("document.querySelector('div [|name=value]')");
         shouldNotThrow("document.querySelectorAll('div [|name=value]')");
+        shouldNotThrow("document.body.webkitMatchesSelector('div [|name=value]')");
     }
 </script>
 </head>
