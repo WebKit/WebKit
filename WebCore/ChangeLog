@@ -1,3 +1,13 @@
+2009-09-24  Oswald Buddenhagen  <oswald.buddenhagen@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Fix QApp::translate() calls to provide the correct class name without
+        a trailing comma.
+
+        * platform/qt/Localizations.cpp:
+        (WebCore::localizedMediaTimeDescription):
+
 2009-09-24  Geoffrey Garen  <ggaren@apple.com>
 
         More build fix: Removed JSSharedWorkerContextCustom.cpp from project

@@ -444,7 +444,7 @@ String localizedMediaControlElementHelpText(const String& name)
 String localizedMediaTimeDescription(float time)
 {
     if (!isfinite(time))
-        return QCoreApplication::translate("QWebPage," "Indefinite time", "Media time description");
+        return QCoreApplication::translate("QWebPage", "Indefinite time", "Media time description");
 
     int seconds = (int)fabsf(time);
     int days = seconds / (60 * 60 * 24);
@@ -453,18 +453,18 @@ String localizedMediaTimeDescription(float time)
     seconds %= 60;
 
     if (days) {
-        return QCoreApplication::translate("QWebPage," "%1 days %2 hours %3 minutes %4 seconds", "Media time description").arg(days).arg(hours).arg(minutes).arg(seconds);
+        return QCoreApplication::translate("QWebPage", "%1 days %2 hours %3 minutes %4 seconds", "Media time description").arg(days).arg(hours).arg(minutes).arg(seconds);
     }
 
     if (hours) {
-        return QCoreApplication::translate("QWebPage," "%1 hours %2 minutes %3 seconds", "Media time description").arg(hours).arg(minutes).arg(seconds);
+        return QCoreApplication::translate("QWebPage", "%1 hours %2 minutes %3 seconds", "Media time description").arg(hours).arg(minutes).arg(seconds);
     }
 
     if (minutes) {
-        return QCoreApplication::translate("QWebPage," "%1 minutes %2 seconds", "Media time description").arg(minutes).arg(seconds);
+        return QCoreApplication::translate("QWebPage", "%1 minutes %2 seconds", "Media time description").arg(minutes).arg(seconds);
     }
 
-    return QCoreApplication::translate("QWebPage," "%1 seconds", "Media time description").arg(seconds);
+    return QCoreApplication::translate("QWebPage", "%1 seconds", "Media time description").arg(seconds);
 }
 #endif  // ENABLE(VIDEO)
 
