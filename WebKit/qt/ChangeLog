@@ -1,3 +1,17 @@
+2009-09-23  J-P Nurmi  <jpnurmi@gmail.com>
+
+        Reviewed by Simon Hausmann.
+
+        Prevent QWebPage::setView() from changing the viewport size on the fly
+        in case the view doesn't actually change. QWebPage::setView() is
+        called upon every QWebGraphicsItem::hoverMoveEvent(), which forced
+        the viewport size to be equal to the size of the whole graphics view.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29676
+
+        * Api/qwebpage.cpp:
+        (QWebPage::setView):
+
 2009-09-23  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
 
         Reviewed by Simon Hausmann.

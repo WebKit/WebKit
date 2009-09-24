@@ -1555,8 +1555,10 @@ QWebHistory *QWebPage::history() const
 */
 void QWebPage::setView(QWidget *view)
 {
-    d->view = view;
-    setViewportSize(view ? view->size() : QSize(0, 0));
+    if (d->view != view) {
+        d->view = view;
+        setViewportSize(view ? view->size() : QSize(0, 0));
+    }
 }
 
 /*!
