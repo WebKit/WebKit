@@ -57,6 +57,13 @@ static struct tm *gmtimeQt(const time_t *const timep, struct tm *result)
 #endif
 #endif
 
+static inline FTPEntryType ParsingFailed(ListState& state)
+{
+  if (state.parsedOne || state.listStyle) /* junk if we fail to parse */
+    return FTPJunkEntry;      /* this time but had previously parsed sucessfully */
+  return FTPMiscEntry;        /* its part of a comment or error message */
+}
+
 FTPEntryType parseOneFTPLine(const char* line, ListState& state, ListResult& result)
 {
   result.clear();
@@ -125,6 +132,9 @@ FTPEntryType parseOneFTPLine(const char* line, ListState& state, ListResult& res
         }
       }
     }    
+
+    if (!numtoks)
+      return ParsingFailed(state);
 
     linelen_sans_wsp = &(tokens[numtoks-1][toklen[numtoks-1]]) - tokens[0];
     if (numtoks == (sizeof(tokens)/sizeof(tokens[0])) )
@@ -356,11 +366,16 @@ FTPEntryType parseOneFTPLine(const char* line, ListState& state, ListResult& res
               pos++;
               p++;
             }
-            if (lstyle && pos < (toklen[0]-1) && *p == ']')
+            if (lstyle && pos < (toklen[0]-1))
             {
+              /* ']' was found and there is at least one character after it */
+              ASSERT(*p == ']');
               pos++;
               p++;
               tokmarker = pos; /* length of leading "[DIR1.DIR2.etc]" */
+            } else {
+              /* not a CMU style listing */
+              lstyle = 0;
             }
           }
           while (lstyle && pos < toklen[0] && *p != ';')
@@ -387,7 +402,7 @@ FTPEntryType parseOneFTPLine(const char* line, ListState& state, ListResult& res
           pos -= tokmarker;      /* => fnlength sans "[DIR1.DIR2.etc]" */
           p = &(tokens[0][tokmarker]); /* offset of basename */
 
-          if (!lstyle || pos > 80) /* VMS filenames can't be longer than that */
+          if (!lstyle || pos == 0 || pos > 80) /* VMS filenames can't be longer than that */
           {
             lstyle = 0;
           }
@@ -780,7 +795,7 @@ FTPEntryType parseOneFTPLine(const char* line, ListState& state, ListResult& res
         state.parsedOne = true;
         state.listStyle = lstyle;
 
-        p = &(line[linelen_sans_wsp]); /* line end sans wsp */
+        p = &(line[linelen]); /* line end */
         result.caseSensitive = true;
         result.filename = tokens[3];
         result.filenameLength = p - tokens[3];
@@ -788,29 +803,46 @@ FTPEntryType parseOneFTPLine(const char* line, ListState& state, ListResult& res
 
         if (*tokens[2] != '<') /* not <DIR> or <JUNCTION> */
         {
+          // try to handle correctly spaces at the beginning of the filename
+          // filesize (token[2]) must end at offset 38
+          if (tokens[2] + toklen[2] - line == 38) {
+            result.filename = &(line[39]);
+            result.filenameLength = p - result.filename;
+          }
           result.type = FTPFileEntry;
           pos = toklen[2];
           result.fileSize = String(tokens[2], pos);
         }
-        else if ((tokens[2][1]) != 'D') /* not <DIR> */
-        {
-          result.type = FTPJunkEntry; /* unknown until junc for sure */
-          if (result.filenameLength > 4)
+        else {
+          // try to handle correctly spaces at the beginning of the filename
+          // token[2] must begin at offset 24, the length is 5 or 10
+          // token[3] must begin at offset 39 or higher
+          if (tokens[2] - line == 24 && (toklen[2] == 5 || toklen[2] == 10) &&
+              tokens[3] - line >= 39) {
+            result.filename = &(line[39]);
+            result.filenameLength = p - result.filename;
+          }
+
+          if ((tokens[2][1]) != 'D') /* not <DIR> */
           {
-            p = result.filename;
-            for (pos = result.filenameLength - 4; pos > 0; pos--)
+            result.type = FTPJunkEntry; /* unknown until junc for sure */
+            if (result.filenameLength > 4)
             {
-              if (p[0] == ' ' && p[3] == ' ' && p[2] == '>' &&
-                  (p[1] == '=' || p[1] == '-'))
+              p = result.filename;
+              for (pos = result.filenameLength - 4; pos > 0; pos--)
               {
-                result.type = FTPLinkEntry;
-                result.filenameLength = p - result.filename;
-                result.linkname = p + 4;
-                result.linknameLength = &(line[linelen_sans_wsp]) 
-                                   - result.linkname;
-                break;
+                if (p[0] == ' ' && p[3] == ' ' && p[2] == '>' &&
+                    (p[1] == '=' || p[1] == '-'))
+                {
+                  result.type = FTPLinkEntry;
+                  result.filenameLength = p - result.filename;
+                  result.linkname = p + 4;
+                  result.linknameLength = &(line[linelen]) 
+                                     - result.linkname;
+                  break;
+                }
+                p++;
               }
-              p++;
             }    
           }
         }
@@ -821,8 +853,13 @@ FTPEntryType parseOneFTPLine(const char* line, ListState& state, ListResult& res
           result.modifiedTime.tm_mon--;
           result.modifiedTime.tm_mday = atoi(tokens[0]+3);
           result.modifiedTime.tm_year = atoi(tokens[0]+6);
+          /* if year has only two digits then assume that
+               00-79 is 2000-2079
+               80-99 is 1980-1999 */
           if (result.modifiedTime.tm_year < 80)
-            result.modifiedTime.tm_year += 100;
+            result.modifiedTime.tm_year += 2000;
+          else if (result.modifiedTime.tm_year < 100)
+            result.modifiedTime.tm_year += 1900;
         }
 
         result.modifiedTime.tm_hour = atoi(tokens[1]+0);
@@ -974,6 +1011,8 @@ FTPEntryType parseOneFTPLine(const char* line, ListState& state, ListResult& res
        * "drwxr-xr-x  2 0  0  512 May 28 22:17 etc"
       */
     
+      bool isOldHellsoft = false;
+    
       if (numtoks >= 6)
       {
         /* there are two perm formats (Hellsoft/NetWare and *IX strmode(3)).
@@ -999,6 +1038,8 @@ FTPEntryType parseOneFTPLine(const char* line, ListState& state, ListResult& res
             {
               /* rest is FMA[S] or AFM[S] */
               lstyle = 'U'; /* very likely one of the NetWare servers */
+              if (toklen[0] == 10)
+                isOldHellsoft = true;
             }
           }
         }
@@ -1063,7 +1104,7 @@ FTPEntryType parseOneFTPLine(const char* line, ListState& state, ListResult& res
 
             /* check that size is numeric */
             p = tokens[tokmarker];
-            for (pos = 0; lstyle && pos < toklen[tokmarker]; pos++)
+            for (unsigned int i = 0; lstyle && i < toklen[tokmarker]; ++i)
             {
               if (!isASCIIDigit(*p++))
                 lstyle = 0;
@@ -1072,11 +1113,11 @@ FTPEntryType parseOneFTPLine(const char* line, ListState& state, ListResult& res
             {
               month_num = 0;
               p = tokens[tokmarker+1];
-              for (pos = 0;pos < (12*3); pos+=3)
+              for (unsigned int i = 0; i < (12*3); i+=3)
               {
-                if (p[0] == month_names[pos+0] && 
-                    p[1] == month_names[pos+1] && 
-                    p[2] == month_names[pos+2])
+                if (p[0] == month_names[i+0] && 
+                    p[1] == month_names[i+1] && 
+                    p[2] == month_names[i+2])
                   break;
                 month_num++;
               }
@@ -1084,8 +1125,8 @@ FTPEntryType parseOneFTPLine(const char* line, ListState& state, ListResult& res
                 lstyle = 0;
             }
           } /* relative position test */
-        } /* while (pos+5) < numtoks */
-      } /* if (numtoks >= 4) */
+        } /* for (pos = (numtoks-5); !lstyle && pos > 1; pos--) */
+      } /* if (lstyle == 'U') */
 
       if (lstyle == 'U')
       {
@@ -1144,24 +1185,49 @@ FTPEntryType parseOneFTPLine(const char* line, ListState& state, ListResult& res
        
         } /* time/year */
         
-        result.filename = tokens[tokmarker+4];
-        result.filenameLength = (&(line[linelen_sans_wsp]))
+        // there is exacly 1 space between filename and previous token in all
+        // outputs except old Hellsoft
+        if (!isOldHellsoft)
+          result.filename = tokens[tokmarker+3] + toklen[tokmarker+3] + 1;
+        else
+          result.filename = tokens[tokmarker+4];
+
+        result.filenameLength = (&(line[linelen]))
                            - (result.filename);
 
         if (result.type == FTPLinkEntry && result.filenameLength > 4)
         {
-          p = result.filename + 1;
-          for (pos = 1; pos < (result.filenameLength - 4); pos++)
+          /* First try to use result.fe_size to find " -> " sequence.
+             This can give proper result for cases like "aaa -> bbb -> ccc". */
+          unsigned int fileSize = result.fileSize.toUInt();
+
+          if (result.filenameLength > (fileSize + 4) &&
+              strncmp(result.filename + result.filenameLength - fileSize - 4, " -> ", 4) == 0)
           {
-            if (*p == ' ' && p[1] == '-' && p[2] == '>' && p[3] == ' ')
+            result.linkname = result.filename + (result.filenameLength - fileSize);
+            result.linknameLength = (&(line[linelen])) - (result.linkname);
+            result.filenameLength -= fileSize + 4;
+          }
+          else
+          {
+            /* Search for sequence " -> " from the end for case when there are
+               more occurrences. F.e. if ftpd returns "a -> b -> c" assume
+               "a -> b" as a name. Powerusers can remove unnecessary parts
+               manually but there is no way to follow the link when some
+               essential part is missing. */
+            p = result.filename + (result.filenameLength - 5);
+            for (pos = (result.filenameLength - 5); pos > 0; pos--)
             {
-              result.linkname = p + 4;
-              result.linknameLength = (&(line[linelen_sans_wsp]))
-                               - (result.linkname);
-              result.filenameLength = pos;
-              break;
+              if (strncmp(p, " -> ", 4) == 0)
+              {
+                result.linkname = p + 4;
+                result.linknameLength = (&(line[linelen]))
+                                 - (result.linkname);
+                result.filenameLength = pos;
+                break;
+              }
+              p--;
             }
-            p++;
           }
         }
 
@@ -1618,9 +1684,7 @@ FTPEntryType parseOneFTPLine(const char* line, ListState& state, ListResult& res
 
   } /* if (linelen > 0) */
 
-  if (state.parsedOne || state.listStyle) /* junk if we fail to parse */
-    return FTPJunkEntry;      /* this time but had previously parsed sucessfully */
-  return FTPMiscEntry;        /* its part of a comment or error message */
+  return ParsingFailed(state);
 }
 
 } // namespace WebCore

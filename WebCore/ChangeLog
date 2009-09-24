@@ -1,3 +1,17 @@
+2009-09-24  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Merge changes from Mozilla's FTP directory parser.
+        <rdar://problem/7227620> and https://bugs.webkit.org/show_bug.cgi?id=29294
+
+        FTP layout tests not possible at this time.
+        https://bugs.webkit.org/show_bug.cgi?id=29719 tracks making them possible.
+
+        * loader/FTPDirectoryParser.cpp:
+        (WebCore::ParsingFailed):
+        (WebCore::parseOneFTPLine):
+
 2009-09-24  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Gustavo Noronha.
