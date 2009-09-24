@@ -1,3 +1,27 @@
+2009-09-23  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Bug fix. QWebHistory should call QWebPage::updateNavigationActions
+        
+        In QWebHistory's methods that change item count or current item call
+        to QWebPage::updateNavigationActions should be executed.
+        QWebHistory::clear() and QWebHistory::restorState() were changed.
+        New helper method, QWebPagePrivate accesor, were created in
+        QWebHistoryPrivate class.
+        Two autotest were developed.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29246
+
+        * Api/qwebhistory.cpp:
+        (QWebHistory::clear):
+        (QWebHistory::restoreState):
+        (QWebHistoryPrivate::page):
+        * Api/qwebhistory_p.h:
+        * tests/qwebhistory/tst_qwebhistory.cpp:
+        (tst_QWebHistory::saveAndRestore_1):
+        (tst_QWebHistory::clear):
+
 2009-09-23  Norbert Leser  <norbert.leser@nokia.com>
 
         Reviewed by Tor Arne Vestbø.

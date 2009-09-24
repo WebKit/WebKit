@@ -18,6 +18,7 @@
 */
 
 #include <QtTest/QtTest>
+#include <QAction>
 
 #include "qwebpage.h"
 #include "qwebview.h"
@@ -296,10 +297,13 @@ void tst_QWebHistory::serialize_3()
 /** Simple checks should be a bit redundant to streaming operators */
 void tst_QWebHistory::saveAndRestore_1() 
 {
+    QAction* actionBack = page->action(QWebPage::Back);
     hist->back();
     waitForLoadFinished.exec();
+    QVERIFY(actionBack->isEnabled());
     QByteArray buffer(hist->saveState());
     hist->clear();
+    QVERIFY(!actionBack->isEnabled());
     QVERIFY(hist->count() == 1);
     hist->restoreState(buffer);
 
@@ -310,6 +314,7 @@ void tst_QWebHistory::saveAndRestore_1()
     QCOMPARE(hist->currentItemIndex(), histsize - 2);
     QCOMPARE(hist->itemAt(0).title(), QString("page1"));
     QCOMPARE(hist->itemAt(histsize - 1).title(), QString("page") + QString::number(histsize));
+    QVERIFY(actionBack->isEnabled());
 }
 
 /** Check returns value if there are bad parameters. Actually, result
@@ -376,16 +381,20 @@ void tst_QWebHistory::saveAndRestore_crash_3()
 /** ::clear */
 void tst_QWebHistory::clear()
 {
+    QAction* actionBack = page->action(QWebPage::Back);
+    QVERIFY(actionBack->isEnabled());
     hist->saveState();
     QVERIFY(hist->count() > 1);
     hist->clear();
-    QVERIFY(hist->count() == 1);  //leave current item
+    QVERIFY(hist->count() == 1);  // Leave current item.
+    QVERIFY(!actionBack->isEnabled());
+
 
     QWebPage* page2 = new QWebPage(this);
     QWebHistory* hist2 = page2->history();
     QVERIFY(hist2->count() == 0);
     hist2->clear();
-    QVERIFY(hist2->count() == 0); //do not change anything
+    QVERIFY(hist2->count() == 0); // Do not change anything.
     delete page2;
 }
 
