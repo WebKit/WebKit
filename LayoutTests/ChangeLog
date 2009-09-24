@@ -1,3 +1,12 @@
+2009-09-24  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] re-enable some media tests
+        https://bugs.webkit.org/show_bug.cgi?id=29716
+
+        * platform/gtk/Skipped:
+
 2009-09-24  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.

@@ -750,8 +750,9 @@ MediaPlayer::SupportsType MediaPlayerPrivate::supportsType(const String& type, c
     if (type.isNull() || type.isEmpty())
         return MediaPlayer::IsNotSupported;
 
+    // spec says we should not return "probably" if the codecs string is empty
     if (mimeTypeCache().contains(type))
-        return !codecs.isEmpty() ? MediaPlayer::MayBeSupported : MediaPlayer::IsSupported;
+        return codecs.isEmpty() ? MediaPlayer::MayBeSupported : MediaPlayer::IsSupported;
     return MediaPlayer::IsNotSupported;
 }
 

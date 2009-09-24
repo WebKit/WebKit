@@ -3812,17 +3812,9 @@ http/tests/webarchive/test-preload-resources.html
 
 # Tests in media/ directory
 #   Tests failing
-media/video-append-source.html
-media/video-autoplay.html
-media/video-buffered.html
-media/video-can-play-type.html
-media/video-click-dblckick-standalone.html
 media/video-controls-transformed.html
 media/video-controls-zoomed.html
-media/video-document-types.html
-media/video-played-reset.html
 media/video-size-intrinsic-scale.html
-media/video-source-error.html
 #   Tests timing out
 media/audio-data-url.html
 media/controls-drag-timebar.html
