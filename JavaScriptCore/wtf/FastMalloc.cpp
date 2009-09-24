@@ -2388,7 +2388,7 @@ ALWAYS_INLINE void TCMalloc_Central_FreeList::ReleaseToSpans(void* object) {
   // The following check is expensive, so it is disabled by default
   if (false) {
     // Check that object does not occur in list
-    int got = 0;
+    unsigned got = 0;
     for (void* p = span->objects; p != NULL; p = *((void**) p)) {
       ASSERT(p != object);
       got++;

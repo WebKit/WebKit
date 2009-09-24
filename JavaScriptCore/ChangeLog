@@ -1,3 +1,14 @@
+2009-09-24  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Fix FastMalloc to build with assertions enabled.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMalloc_Central_FreeList::ReleaseToSpans):
+        * wtf/TCSpinLock.h:
+        (TCMalloc_SpinLock::IsHeld):
+
 2009-09-24  Geoffrey Garen  <ggaren@apple.com>
 
         Suggested by Darin Adler.

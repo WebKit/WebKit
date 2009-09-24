@@ -209,6 +209,13 @@ struct TCMalloc_SpinLock {
   inline void Unlock() {
     if (pthread_mutex_unlock(&private_lock_) != 0) CRASH();
   }
+  bool IsHeld() {
+    if (pthread_mutex_trylock(&private_lock_))
+      return true;
+
+    Unlock();
+    return false;
+  }
 };
 
 #define SPINLOCK_INITIALIZER { PTHREAD_MUTEX_INITIALIZER }
