@@ -1,0 +1,19 @@
+Update the current status of the commit-queue:
+<form name="update_status" method="post">
+ <div>
+     Active Bug Id:
+    <input name="bug_id">
+ </div>
+ <div>
+     Active Patch Id:
+    <input name="patch_id">
+ </div>
+ <div>
+     Space separated list of other bugs in queue:
+    <input name="bugs_in_queue">
+ </div>
+  <div>
+      <textarea name="status" rows="3" cols="60"></textarea>
+  </div>
+  <div><input type="submit" value="Add Status"></div>
+</form>

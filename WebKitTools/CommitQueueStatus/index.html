@@ -1,0 +1,28 @@
+<html>
+<head>
+    <title>WebKit Commit Queue Status</title>
+    <link type="text/css" rel="stylesheet" href="/stylesheets/main.css" />
+</head>
+<body>
+    <center>
+    <div id="current_status">
+        {{ last_status.message|force_escape|urlize|webkit_linkify|safe }}
+        <div id="last_status_date">As of {{ last_status.date|timesince }} ago</div>
+    </div>
+
+    <table id="recent_status_table">
+        <tr>
+            <th colspan=2>Recent Status</th>
+        </tr>
+        {% for recent_status in recent_statuses %}
+        <tr>
+            <td class='status_date'>{{ recent_status.date|timesince }} ago</td>
+            <td class="recent_status">{{ recent_status.message|force_escape|urlize|webkit_linkify|safe }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <div id="footer"><a href="https://bugs.webkit.org/buglist.cgi?query_format=advanced&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&field0-0-0=flagtypes.name&type0-0-0=equals&value0-0-0=commit-queue%2B">queued bugs</a> | <a href="http://trac.webkit.org/wiki/CommitQueue">documentation</a> | <a href="http://webkit.org/">webkit.org</a></div>
+    </center>
+</body>
+</html>

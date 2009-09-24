@@ -1,3 +1,35 @@
+2009-09-17  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by David Levin.
+
+        commit-queue needs web-based status reporting
+        https://bugs.webkit.org/show_bug.cgi?id=29307
+
+        Add a first-pass web-based status for the commit-queue.
+        The bot is currently reachable at:
+        http://webkit-commit-queue.appspot.com/
+
+        * CommitQueueStatus/app.yaml: Added.
+         - Application description file required by App Engine.
+        * CommitQueueStatus/filters/__init__.py: Added.
+         - Required by python to treat 'filters' as a module.
+        * CommitQueueStatus/filters/webkit_extras.py: Added.
+         - Support for turning 'bug 123' and 'patch 123' into links.
+           This lets us use plain text strings in our logs yet display nice HTML (help prevent XSS attacks on the page).
+        * CommitQueueStatus/index.html: Added.
+        * CommitQueueStatus/index.yaml: Added.
+         - Some auto-generated file from app engine.
+        * CommitQueueStatus/queue_status.py: Added.
+         - The core logic of this bot.  We could eventually split this file out into pieces.
+        * CommitQueueStatus/stylesheets/main.css: Added.
+         - Some basic lame-o CSS to make the page look less awful.
+        * CommitQueueStatus/update_status.html: Added.
+         - The form that the commit-queue (or a human) can use to update the status.
+        * Scripts/bugzilla-tool:
+         - Add some very basic update_status calls.
+        * Scripts/modules/statusbot.py: Added.
+         - Knows how to post to the CommitQueueStatus web application.
+
 2009-09-24  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/29712> mark-bug-fixed: add -m|--comment switch
