@@ -1,3 +1,11 @@
+2009-09-24  Xan Lopez  <xlopez@igalia.com>
+
+        Revert r48697, since it broke key handling notification to GTK+.
+
+        * platform/gtk/KeyEventGtk.cpp:
+        (WebCore::keyIdentifierForGdkKeyCode):
+        (WebCore::singleCharacterString):
+
 2009-09-24  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Xan Lopez.

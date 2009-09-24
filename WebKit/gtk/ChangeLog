@@ -1,3 +1,17 @@
+2009-09-24  Xan Lopez  <xlopez@igalia.com>
+
+        Revert r48697, since it broke key handling notification to GTK+.
+
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::imContextCommitted):
+        (WebKit::imContextPreeditChanged):
+        (WebKit::EditorClient::shouldBeginEditing):
+        (WebKit::EditorClient::shouldEndEditing):
+        (WebKit::interpretKeyEvent):
+        (WebKit::handleEditingKeyboardEvent):
+        (WebKit::EditorClient::handleKeyboardEvent):
+        (WebKit::EditorClient::handleInputMethodKeydown):
+
 2009-09-23  Martin Robinson  <martin.james.robinson@gmail.com>
 
         Reviewed by Xan Lopez.

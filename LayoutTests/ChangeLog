@@ -1,3 +1,9 @@
+2009-09-24  Xan Lopez  <xlopez@igalia.com>
+
+        Revert r48697, since it broke key handling notification to GTK+.
+
+        * platform/gtk/Skipped:
+
 2009-09-24  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Eric Seidel.

@@ -136,8 +136,6 @@ static String keyIdentifierForGdkKeyCode(guint keyCode)
             // Standard says that DEL becomes U+007F.
         case GDK_Delete:
             return "U+007F";
-        case GDK_BackSpace:
-            return "U+0008";
         case GDK_ISO_Left_Tab:
         case GDK_3270_BackTab:
         case GDK_Tab:
@@ -505,8 +503,6 @@ static String singleCharacterString(guint val)
         case GDK_KP_Enter:
         case GDK_Return:
             return String("\r");
-        case GDK_BackSpace:
-            return String("\x8");
         default:
             gunichar c = gdk_keyval_to_unicode(val);
             glong nwc;
