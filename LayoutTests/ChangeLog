@@ -1,3 +1,16 @@
+2009-09-23  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Test for https://bugs.webkit.org/show_bug.cgi?id=26989
+        Should allow navigation of top-level openers
+        <rdar://problem/7034025>
+
+        * http/tests/security/frameNavigation/cross-origin-opener-expected.txt: Added.
+        * http/tests/security/frameNavigation/cross-origin-opener.html: Added.
+        * http/tests/security/frameNavigation/resources/cross-origin-opener-opener.html: Added.
+        * http/tests/security/frameNavigation/resources/navigate-opener.html: Added.
+
 2009-09-23  Andrew Scherkus  <scherkus@chromium.org>
 
         Reviewed by Eric Carlson.

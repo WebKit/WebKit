@@ -2697,7 +2697,8 @@ bool FrameLoader::shouldAllowNavigation(Frame* targetFrame) const
     //
     // Or the target frame is:
     //   - a top-level frame in the frame hierarchy and the active frame can
-    //     navigate the target frame's opener per above.
+    //     navigate the target frame's opener per above or it is the opener of
+    //     the target frame.
 
     if (!targetFrame)
         return true;
@@ -2710,6 +2711,10 @@ bool FrameLoader::shouldAllowNavigation(Frame* targetFrame) const
     // important to allow because it lets a site "frame-bust" (escape from a
     // frame created by another web site).
     if (targetFrame == m_frame->tree()->top())
+        return true;
+
+    // Let a frame navigate its opener if the opener is a top-level window.
+    if (!targetFrame->tree()->parent() && m_frame->loader()->opener() == targetFrame)
         return true;
 
     Document* activeDocument = m_frame->document();

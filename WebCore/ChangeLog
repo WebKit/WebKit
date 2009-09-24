@@ -1,3 +1,18 @@
+2009-09-23  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=26989
+        Should allow navigation of top-level openers
+        <rdar://problem/7034025>
+
+        Allow navigation of cross-origin window.opener if it is top-level frame.
+
+        Test: http/tests/security/frameNavigation/cross-origin-opener.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::shouldAllowNavigation):
+
 2009-09-23  Marshall Culpepper  <mculpepper@appcelerator.com>
 
         Reviewed by Eric Seidel.
