@@ -34,6 +34,21 @@ function objCObjectOfClass(name)
     return objCController.objectOfClass(name);
 }
 
+function objCArrayOfString()
+{
+    if (!window.objCController)
+        return "only works under DumpRenderTree";
+    return objCController.arrayOfString();
+}
+
+function concatenateArray(array)
+{
+    var result = '';
+    for (i in array)
+        result += array[i];
+    return result;
+}
+
 function tagObjCWrapperClass(tagName)
 {
     return objCWrapperClass(document.createElement(tagName));
@@ -271,6 +286,8 @@ function runTest()
     shouldBe("typeof objCObjectOfClass('NSCFString')", "'string'");
     shouldBe("typeof objCObjectOfClass('WebScriptObject')", "'object'");
     shouldBeTrue("objCObjectOfClass('NSArray') instanceof Array");
+
+    shouldBe("concatenateArray(objCArrayOfString())", "'onetwothree'");
 
     // Not yet tested:
 

@@ -1,3 +1,14 @@
+2009-09-24  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        The indices of RuntimeArray should be enumerated like for a regular array.
+        https://bugs.webkit.org/show_bug.cgi?id=29005
+
+        * bridge/runtime_array.cpp:
+        (JSC::RuntimeArray::getPropertyNames):
+        * bridge/runtime_array.h:
+
 2009-09-23  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Eric Seidel.
