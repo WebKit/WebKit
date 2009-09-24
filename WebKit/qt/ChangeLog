@@ -2,6 +2,22 @@
 
         Reviewed by Simon Hausmann.
 
+        [Qt] Crash fix in QWebHistory back and forward methods.
+        
+        QWebHistory::back() and QWebHistory::forward() were crashing on
+        ASSERT in WebCore::BackForwardList. The methods should check
+        canGoBack() and canGoForward() at the beginning.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29675
+
+        * Api/qwebhistory.cpp:
+        (QWebHistory::back):
+        (QWebHistory::forward):
+
+2009-09-23  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
         [Qt] Bug fix. QWebHistory should call QWebPage::updateNavigationActions
         
         In QWebHistory's methods that change item count or current item call
