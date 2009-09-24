@@ -12,13 +12,13 @@
 
     var result = "PASS";
 
-    if (req.getResponseHeader("Set-Cookie") != "" && result == "PASS")
+    if (req.getResponseHeader("Set-Cookie") != null && result == "PASS")
         result = "FAIL: Saw a Set-Cookie header with getResponseHeader.";
-    if (req.getResponseHeader("set-cookie") != "" && result == "PASS")
+    if (req.getResponseHeader("set-cookie") != null && result == "PASS")
         result = "FAIL: Saw a set-cookie header with getResponseHeader.";
-    if (req.getResponseHeader("Set-Cookie2") != "" && result == "PASS")
+    if (req.getResponseHeader("Set-Cookie2") != null && result == "PASS")
         result = "FAIL: Saw a Set-Cookie2 header with getResponseHeader.";
-    if (req.getResponseHeader("set-cookie2") != "" && result == "PASS")
+    if (req.getResponseHeader("set-cookie2") != null && result == "PASS")
         result = "FAIL: Saw a set-cookie2 header with getResponseHeader.";
 
     if (req.getAllResponseHeaders().match(/Set-Cookie/) && result == "PASS")

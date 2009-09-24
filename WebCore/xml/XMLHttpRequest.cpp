@@ -709,23 +709,19 @@ String XMLHttpRequest::getResponseHeader(const AtomicString& name, ExceptionCode
 {
     if (m_state < HEADERS_RECEIVED) {
         ec = INVALID_STATE_ERR;
-        return "";
+        return String();
     }
-
-    if (!isValidToken(name))
-        return "";
 
     // See comment in getAllResponseHeaders above.
     if (isSetCookieHeader(name) && !scriptExecutionContext()->securityOrigin()->canLoadLocalResources()) {
         reportUnsafeUsage(scriptExecutionContext(), "Refused to get unsafe header \"" + name + "\"");
-        return "";
+        return String();
     }
 
     if (!m_sameOriginRequest && !isOnAccessControlResponseHeaderWhitelist(name)) {
         reportUnsafeUsage(scriptExecutionContext(), "Refused to get unsafe header \"" + name + "\"");
-        return "";
+        return String();
     }
-
     return m_response.httpHeaderField(name);
 }
 

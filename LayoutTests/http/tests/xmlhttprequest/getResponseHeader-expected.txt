@@ -1,10 +1,38 @@
+CONSOLE MESSAGE: line 1: Refused to get unsafe header "SeT-COoKie"
+CONSOLE MESSAGE: line 1: Refused to get unsafe header "sEt-coOkIE2"
+CONSOLE MESSAGE: line 1: Refused to get unsafe header "SeT-COoKie"
+CONSOLE MESSAGE: line 1: Refused to get unsafe header "sEt-coOkIE2"
+CONSOLE MESSAGE: line 1: Refused to get unsafe header "SeT-COoKie"
+CONSOLE MESSAGE: line 1: Refused to get unsafe header "sEt-coOkIE2"
 Test page for bug 15356 and bug 29121
 
-Assertion: Invoking getResponseHeader method when readyState >= 2 (HEADERS_RECEIVED) should return a header value if the header exists.
+Assertion: Invoking the getResponseHeader method when readyState >= 2 (HEADERS_RECEIVED) returns a header value if the header exists.
 
-PASSED 0
-PASSED 1
-PASSED 2: getResponseHeader(Content-Type) returned a value.
-PASSED 3
-PASSED 4
+Assertion: Invoking the getResponseHeader method with the parameter satisfying the following conditions causes getResponseHeader to return null:
+
+1a. The parameter case-insensitively matches Set-Cookie;
+1b. The parameter case-insensitively matches Set-Cookie2;
+2. The parameter does not match any header in the response;
+3a. The parameter is null (it is not a valid header name);
+3b. The parameter is "Content-Type:" (it is not a valid header name).
+PASSED 0 Content-Type: exception thrown.
+PASSED 1 Content-Type: exception thrown
+PASSED 2 Content-Type: ResponseHeader(Content-Type) returned a value.
+PASSED 2 SeT-COoKie: getResponseHeader(SeT-COoKie) returned null.
+PASSED 2 sEt-coOkIE2: getResponseHeader(sEt-coOkIE2) returned null.
+PASSED 2 xxx-mytest-headerabc: getResponseHeader(xxx-mytest-headerabc) returned null.
+PASSED 2 null: getResponseHeader(null) returned null.
+PASSED 2 Content-Type:: getResponseHeader(Content-Type:) returned null.
+PASSED 3 Content-Type: Content-Type
+PASSED 3 SeT-COoKie: getResponseHeader(SeT-COoKie) returned null.
+PASSED 3 sEt-coOkIE2: getResponseHeader(sEt-coOkIE2) returned null.
+PASSED 3 xxx-mytest-headerabc: getResponseHeader(xxx-mytest-headerabc) returned null.
+PASSED 3 null: getResponseHeader(null) returned null.
+PASSED 3 Content-Type:: getResponseHeader(Content-Type:) returned null.
+PASSED 4 Content-Type: Content-Type
+PASSED 4 SeT-COoKie: getResponseHeader(SeT-COoKie) returned null.
+PASSED 4 sEt-coOkIE2: getResponseHeader(sEt-coOkIE2) returned null.
+PASSED 4 xxx-mytest-headerabc: getResponseHeader(xxx-mytest-headerabc) returned null.
+PASSED 4 null: getResponseHeader(null) returned null.
+PASSED 4 Content-Type:: getResponseHeader(Content-Type:) returned null.
 

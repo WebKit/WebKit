@@ -1,3 +1,15 @@
+2009-09-24  Carol Szabo  <carol.szabo@nokia.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        WebKit returns "" instead of null when getting
+        inexistent, forbidden or invalidly named headers.
+        https://bugs.webkit.org/show_bug.cgi?id=29140
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::getResponseHeader):
+        Changed to return null as it should according to the spec.
+
 2009-09-24  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Dimitri Glazkov.

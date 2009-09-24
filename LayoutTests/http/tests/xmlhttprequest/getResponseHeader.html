@@ -3,13 +3,24 @@
     <title>Check exception thrown by getReponseHeader </title>
 <script type="text/javascript">
 
+var savedHeader = null;
+var headerName="Content-Type";
+var nullTests =  new Array("SeT-COoKie", "sEt-coOkIE2", 
+    "xxx-mytest-headerabc", null, "Content-Type:");
+
 function log (msg) {
     var paragraph = document.createElement("li");
     paragraph.innerHTML=msg.replace(/\n/gm,"<br>");
     document.getElementById("console").appendChild(paragraph);
 }
 
-var xhr;
+function log4(status, rState, subState, msg) {
+    log(status + " " + rState + " " + subState + ": " + msg);
+}
+
+function log3(status, rState, msg) {
+    log4(status, rState, headerName, msg);
+}
 
 if (window.XMLHttpRequest) {
     xhr = new XMLHttpRequest();
@@ -21,8 +32,6 @@ if (window.XMLHttpRequest) {
     }
 }
 
-var savedHeader = null;
-var headerName="Content-Type";
 xhr.onreadystatechange = function() {
     var rState = this.readyState;
     // We expect an INVALID_STATE_ERR exception for readyState < 2
@@ -30,36 +39,47 @@ xhr.onreadystatechange = function() {
     try {
         var header = this.getResponseHeader(headerName);
         if (rState != this.readyState)
-            log("UNCERTAIN " + rState + ": readyState changed while getting the header.");
+            log3("UNCERTAIN", rState, "readyState changed while getting the header.");
         if (rState < 2) {
-            log("FAILED " + rState + ": " + headerName + "=" + header);
-        } else if (header)
+            log3("FAILED", rState, headerName + "=" + header);
+        } else if (header) {
             if (savedHeader)
                 if (savedHeader != header) {
-                    log("FAILED " + rState +
-": Content-Type changed after it was first returned. Previous " + headerName
-+ "=" + savedHeader + "; New " + headerName + "=" + header + ".");
+                    log3("FAILED", rState,headerName + " changed after it was first returned. Previous " + headerName
+                        + "=" + savedHeader + "; New " + headerName + "=" + header + ".");
                 savedHeader = header;
                 } 
                 else //savedHeader == header here; no need to reprint header
-                    log("PASSED " + rState);
+                    log3("PASSED", rState, headerName);
             else {//first header value retrieved
                 if (window.layoutTestController)
 //do not print the header's value for automated tests to avoid false failures.
-                    log("PASSED " + rState +
-": getResponseHeader(" + headerName + ") returned a value.");
+                    log3("PASSED", rState, "ResponseHeader(" + headerName + ") returned a value.");
                 else
-                    log("PASSED " + rState +
-": getResponseHeader(" + headerName + ") returned: " + header + ".");
+                    log3("PASSED", rState, "getResponseHeader(" + headerName + ") returned: " + header + ".");
                 savedHeader = header;
             }
+            for (var i=0;i<nullTests.length;++i) {
+                try {
+                    var str = this.getResponseHeader(nullTests[i]);
+                    if (str == null)
+                        log4("PASSED", rState, nullTests[i], "getResponseHeader(" + nullTests[i] +
+                            ") returned null.");
+                    else
+                        log4("FAILED", rState, nullTests[i], "getResponseHeader(" + nullTests[i] +
+                            ") returned \"" + str + "\"");
+                } catch(e) {
+                    log4("FAILED", rState, nullTests[i], "getResponseHeader(" + nullTests[i] + ") threw exception:" + e);
+                }
+            }
+        }
         else //header is null
-            log("FAILED " + rState + ": null " + headerName + " returned.");
+            log3("FAILED", rState, "null " + headerName + " returned.");
     } catch (e) {
         if (rState < 2)
-            log("PASSED " + rState);
+            log3("PASSED", rState, "exception thrown");
         else
-            log("FAILED " + rState + ": EXCEPTION THROWN: " + e.message + ".");
+            log3("FAILED", rState, "exception thrown: " + e.message + ".");
     }
     if ((rState == 4) && (window.layoutTestController))
             layoutTestController.notifyDone();
@@ -74,15 +94,15 @@ function test() {
     // Test for readyState = 0
     try {
         var header = xhr.getResponseHeader(headerName);
-        log("FAILED " + xhr.readyState + ": " + headerName + "=" + header + ".");
+        log3("FAILED", xhr.readyState, headerName + "=" + header + ".");
     } catch (e) {
-        log("PASSED " + xhr.readyState);
+        log3("PASSED", xhr.readyState, "exception thrown.");
     }
     try {
         xhr.open("GET","resources/1251.html", true);
         xhr.send(null);
     } catch(e) {
-        log("FAILED open/send: EXCEPTION THROWN: " + e.message +".");
+        log3("FAILED", "open/send", "exception thrown: " + e.message +".");
         if (window.layoutTestController)
             layoutTestController.notifyDone();
     }
@@ -94,15 +114,25 @@ function test() {
 <p>Test page for <a href="http://bugs.webkit.org/show_bug.cgi?id=15356">bug
 15356</a>
 and <a href="http://bugs.webkit.org/show_bug.cgi?id=29121">bug 29121</a></p>
-<p>Assertion: Invoking getResponseHeader method when readyState >= 2
-(HEADERS_RECEIVED) should return a header value if the header exists.</p>
+<p>Assertion: Invoking the getResponseHeader method when readyState >= 2
+(HEADERS_RECEIVED) returns a header value if the header exists.</p>
+<p>Assertion: Invoking the getResponseHeader method with the parameter
+    satisfying the following conditions causes getResponseHeader
+    to return null:
+<li>1a. The parameter case-insensitively matches Set-Cookie;</li>
+<li>1b. The parameter case-insensitively matches Set-Cookie2;</li>
+<li>2.  The parameter does not match any header in the response;</li>
+<li>3a. The parameter is null (it is not a valid header name);</li>
+<li>3b. The parameter is "Content-Type:" (it is not a valid header name).</li>
+
 <script>
     if (!window.layoutTestController)
         document.write("<p>If the test passes one should see \
-below the ruler the text \"passed\" in all capital letters, 5 times, \
-followed each time by a space and the readyState number.</p>\n\
-<p>ReadyStatenumbers should be in ascending order 0 to 4.</p>\n\
-<p>The value of the " + headerName + " header should also be printed.</p>");
+below the ruler the text \"passed\" in all capital letters, once for every ready state &lt; 2, \
+followed each time by a space and the readyState number and 6 times for every ready state >= 2.</p>\n\
+<p>ReadyState numbers should be in ascending order 0 to 4.</p>\n\
+<p>ReadyState numbers should be followed by a blank, the name of the header tested, colon a space and a message.</p>\
+<p>The value of the " + headerName + " header should  be printed for ready state 2.</p>");
 </script>
  <hr>
  <p><ol id=console></ol></p>
