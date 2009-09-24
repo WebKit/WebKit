@@ -987,27 +987,9 @@ WebInspector.ElementsPanel.prototype = {
         // Don't prevent the normal copy if the user has a selection.
         if (!window.getSelection().isCollapsed)
             return;
-
-        switch (this.focusedDOMNode.nodeType) {
-            case Node.ELEMENT_NODE:
-                // TODO: Introduce InspectorController.copyEvent that pushes appropriate markup into the clipboard.
-                var data = null;
-                break;
-
-            case Node.COMMENT_NODE:
-                var data = "<!--" + this.focusedDOMNode.nodeValue + "-->";
-                break;
-
-            default:
-            case Node.TEXT_NODE:
-                var data = this.focusedDOMNode.nodeValue;
-        }
-
         event.clipboardData.clearData();
         event.preventDefault();
-
-        if (data)
-            event.clipboardData.setData("text/plain", data);
+        InspectorController.copyNode(this.focusedDOMNode.id);
     },
 
     rightSidebarResizerDragStart: function(event)

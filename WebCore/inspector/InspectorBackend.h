@@ -138,6 +138,7 @@ public:
     void setAttribute(long callId, long elementId, const String& name, const String& value);
     void removeAttribute(long callId, long elementId, const String& name);
     void setTextNodeValue(long callId, long nodeId, const String& value);
+    void copyNode(long nodeId);
 
     // Generic code called from custom implementations.
     void highlight(long nodeId);

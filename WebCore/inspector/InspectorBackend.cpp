@@ -45,6 +45,7 @@
 #include "InspectorDOMAgent.h"
 #include "InspectorFrontend.h"
 #include "InspectorResource.h"
+#include "Pasteboard.h"
 #include "ScriptFunctionCall.h"
 
 #if ENABLE(DOM_STORAGE)
@@ -56,6 +57,8 @@
 #include "JavaScriptDebugServer.h"
 using namespace JSC;
 #endif
+
+#include "markup.h"
 
 #include <wtf/RefPtr.h>
 #include <wtf/StdLibExtras.h>
@@ -444,6 +447,15 @@ void InspectorBackend::setTextNodeValue(long callId, long nodeId, const String& 
 {
     if (InspectorDOMAgent* domAgent = inspectorDOMAgent())
         domAgent->setTextNodeValue(callId, nodeId, value);
+}
+
+void InspectorBackend::copyNode(long nodeId)
+{
+    Node* node = nodeForId(nodeId);
+    if (!node)
+        return;
+    String markup = createMarkup(node);
+    Pasteboard::generalPasteboard()->writePlainText(markup);
 }
 
 void InspectorBackend::highlight(long nodeId)
