@@ -1,3 +1,30 @@
+2009-09-24  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Add GYP generated files to svn:ignore
+        https://bugs.webkit.org/show_bug.cgi?id=29724
+
+        Adding the following files to the svn:ignore list (all in the
+        WebCore/WebCore.gyp directory)
+
+        WebCore.xcodeproj
+        WebCore.sln
+        WebCore.vcproj
+        WebCore_Debug.rules
+        WebCore_Release.rules
+        WebCore_Release - no tcmalloc.rules
+        WebCore_Purify.rules
+        WebCore.mk
+        WebCore_Debug_rules.mk
+        WebCore_Release_rules.mk
+        WebCore_Release - no tcmalloc_rules.mk
+        WebCore_Purify_rules.mk
+        WebCore.scons
+        WebCore_main.scons
+
+        * WebCore.gyp: Changed property svn:ignore.
+
 2009-09-24  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Unreviewed. Mac build fix.
