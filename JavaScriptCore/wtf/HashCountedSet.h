@@ -64,8 +64,13 @@ namespace WTF {
         void remove(const ValueType& value);
         void remove(iterator it);
  
-       void clear();
-        
+        // removes the value, regardless of its count
+        void clear(iterator it);
+        void clear(const ValueType& value);
+
+        // clears the whole set
+        void clear();
+
     private:
         ImplType m_impl;
     };
@@ -163,6 +168,21 @@ namespace WTF {
             m_impl.remove(it);
         else
             it->second = newVal;
+    }
+    
+    template<typename Value, typename HashFunctions, typename Traits>
+    inline void HashCountedSet<Value, HashFunctions, Traits>::clear(const ValueType& value)
+    {
+        clear(find(value));
+    }
+    
+    template<typename Value, typename HashFunctions, typename Traits>
+    inline void HashCountedSet<Value, HashFunctions, Traits>::clear(iterator it)
+    {
+        if (it == end())
+            return;
+
+        m_impl.remove(it);
     }
     
     template<typename Value, typename HashFunctions, typename Traits>

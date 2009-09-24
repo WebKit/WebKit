@@ -1,3 +1,10 @@
+2009-09-23  Geoffrey Garen  <ggaren@apple.com>
+
+        A piece of my last patch that I forgot.
+
+        * wtf/HashCountedSet.h:
+        (WTF::::clear): Added HashCountedSet::clear.
+
 2009-09-24  Gabor Loki  <loki@inf.u-szeged.hu>
 
         Reviewed by Gavin Barraclough.
