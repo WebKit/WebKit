@@ -1,3 +1,19 @@
+2009-09-23  Martin Robinson  <martin.james.robinson@gmail.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] REGRESSION: BitmapImage::getGdkPixbuf fails for non-square images
+        https://bugs.webkit.org/show_bug.cgi?id=29654
+
+        Give GDK_Backspace key events the proper text properties.
+
+        Instead of adding new tests, this change removes existing tests
+        from Gtk's skipped list.
+
+        * platform/gtk/KeyEventGtk.cpp:
+        (WebCore::keyIdentifierForGdkKeyCode):
+        (WebCore::singleCharacterString):
+
 2009-09-23  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Barth.

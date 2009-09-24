@@ -1,3 +1,14 @@
+2009-09-23  Martin Robinson  <martin.james.robinson@gmail.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] REGRESSION: BitmapImage::getGdkPixbuf fails for non-square images
+        https://bugs.webkit.org/show_bug.cgi?id=29654
+
+        Enable tests which are now passing because of key event fixes.
+
+        * platform/gtk/Skipped:
+
 2009-09-23  Eric Seidel  <eric@webkit.org>
 
         No review, just adding missing pixel test results from recent test additions.

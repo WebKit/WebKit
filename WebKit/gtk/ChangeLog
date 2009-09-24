@@ -1,3 +1,24 @@
+2009-09-23  Martin Robinson  <martin.james.robinson@gmail.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] REGRESSION: BitmapImage::getGdkPixbuf fails for non-square images
+        https://bugs.webkit.org/show_bug.cgi?id=29654
+
+        Ensure that even when GTKSimpleIMContext filters non-IME keystrokes,
+        keyboard events are fired properly.
+
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::clearPendingIMData):
+        (WebKit::imContextCommitted):
+        (WebKit::imContextPreeditChanged):
+        (WebKit::EditorClient::shouldBeginEditing):
+        (WebKit::EditorClient::shouldEndEditing):
+        (WebKit::interpretEditorCommandKeyEvent):
+        (WebKit::handleCaretBrowsingKeyboardEvent):
+        (WebKit::EditorClient::handleKeyboardEvent):
+        (WebKit::EditorClient::handleInputMethodKeydown):
+
 2009-09-23  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Xan Lopez.
