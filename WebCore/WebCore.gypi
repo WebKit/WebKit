@@ -532,7 +532,6 @@
             'bindings/js/JSRGBColor.h',
             'bindings/js/JSSharedWorkerConstructor.cpp',
             'bindings/js/JSSharedWorkerConstructor.h',
-            'bindings/js/JSSharedWorkerContextCustom.cpp',
             'bindings/js/JSSharedWorkerCustom.cpp',
             'bindings/js/JSSQLResultSetRowListCustom.cpp',
             'bindings/js/JSSQLTransactionCustom.cpp',

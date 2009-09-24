@@ -2636,7 +2636,6 @@ contains(DEFINES, ENABLE_SHARED_WORKERS=1) {
 
     SOURCES += \
         bindings/js/JSSharedWorkerConstructor.cpp \
-        bindings/js/JSSharedWorkerContextCustom.cpp \
         bindings/js/JSSharedWorkerCustom.cpp \
         workers/DefaultSharedWorkerRepository.cpp \
         workers/SharedWorker.cpp \

@@ -29307,10 +29307,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\bindings\js\JSSharedWorkerContextCustom.cpp"
-					>
-				</File>
-				<File
 					RelativePath="..\bindings\js\JSSharedWorkerCustom.cpp"
 					>
 				</File>

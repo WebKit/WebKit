@@ -2469,7 +2469,6 @@ webcore_cppflags += \
 webcore_built_sources += \
 	WebCore/bindings/js/JSSharedWorkerConstructor.cpp \
 	WebCore/bindings/js/JSSharedWorkerConstructor.h \
-	WebCore/bindings/js/JSSharedWorkerContextCustom.cpp \
 	WebCore/bindings/js/JSSharedWorkerCustom.cpp \
 	WebCore/workers/DefaultSharedWorkerRepository.cpp \
 	WebCore/workers/DefaultSharedWorkerRepository.h \
