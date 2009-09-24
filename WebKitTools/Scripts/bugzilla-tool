@@ -41,8 +41,9 @@ from datetime import datetime
 from optparse import OptionParser, IndentedHelpFormatter, SUPPRESS_USAGE, make_option
 
 # Import WebKit-specific modules.
-from modules.bugzilla import Bugzilla
-from modules.changelogs import ChangeLog, view_source_url
+from modules.bugzilla import Bugzilla, parse_bug_id
+from modules.changelogs import ChangeLog
+from modules.comments import bug_comment_from_commit_text
 from modules.logging import error, log, tee
 from modules.scm import CommitMessage, detect_scm_system, ScriptError
 from modules.buildbot import BuildBot
@@ -58,15 +59,6 @@ def pluralize(noun, count):
     if count != 1:
         noun = plural(noun)
     return "%d %s" % (count, noun)
-
-def parse_bug_id(message):
-    match = re.search("http\://webkit\.org/b/(?P<bug_id>\d+)", message)
-    if match:
-        return match.group('bug_id')
-    match = re.search(Bugzilla.bug_server_regex + "show_bug\.cgi\?id=(?P<bug_id>\d+)", message)
-    if match:
-        return match.group('bug_id')
-    return None
 
 def commit_message_for_this_commit(scm):
     changelog_paths = scm.modified_changelogs()
@@ -172,14 +164,6 @@ class ApplyPatchesFromBug(Command):
             error("--local-commit passed, but %s does not support local commits" % tool.scm().display_name())
         
         self.apply_patches(patches, tool.scm(), options.local_commit)
-
-
-def bug_comment_from_svn_revision(svn_revision):
-    return "Committed r%s: <%s>" % (svn_revision, view_source_url(svn_revision))
-
-def bug_comment_from_commit_text(scm, commit_text):
-    svn_revision = scm.svn_revision_from_commit_text(commit_text)
-    return bug_comment_from_svn_revision(svn_revision)
 
 
 class WebKitLandingScripts:
@@ -380,59 +364,6 @@ class LandPatchesFromBugs(Command):
 
         for bug_id in bugs_to_patches.keys():
             self.land_patches(bug_id, bugs_to_patches[bug_id], options, tool)
-
-
-class MarkBugFixed(Command):
-    def __init__(self):
-        options = [
-            make_option("-b", "--bug-id", action="store", type="string", dest="bug_id", help="Specify bug id if no URL is provided in the commit log."),
-        ]
-        Command.__init__(self, 'Marks a bug as fixed based on a bug id and a commit revision.', '[rNNNNN]', options=options)
-
-    def _fetch_commit_log(self, scm, svn_revision):
-        if not svn_revision:
-            return scm.last_svn_commit_log()
-        return scm.svn_commit_log(svn_revision)
-
-    def _determine_bug_id_and_svn_revision(self, tool, bug_id, svn_revision):
-        commit_log = self._fetch_commit_log(tool.scm(), svn_revision)
-
-        if not bug_id:
-            bug_id = parse_bug_id(commit_log)
-
-        if not svn_revision:
-            match = re.search("^r(?P<svn_revision>\d+) \|", commit_log, re.MULTILINE)
-            if match:
-                svn_revision = match.group('svn_revision')
-
-        if not bug_id or not svn_revision:
-            not_found = []
-            if not bug_id:
-                not_found.append("bug id")
-            if not svn_revision:
-                not_found.append("svn revision")
-            error("Could not find %s on command-line or in last commit." % " or ".join(not_found))
-
-        log("Bug: <http://webkit.org/b/%s> %s" % (bug_id, tool.bugs.fetch_title_from_bug(bug_id)))
-        log("Revision: %s" % svn_revision)
-        answer = raw_input("Is this correct (y/N)? ")
-        if not re.match("^\s*y(es)?", answer, re.IGNORECASE):
-            exit(1)
-
-        return (bug_id, svn_revision)
-
-    def execute(self, options, args, tool):
-        if len(args) > 1:
-            error("Only one revision may be specified.")
-
-        bug_id = options.bug_id
-        svn_revision = args[0] if len(args) == 1 else None
-
-        if not bug_id or not svn_revision:
-            (bug_id, svn_revision) = self._determine_bug_id_and_svn_revision(tool, bug_id, svn_revision)
-
-        log("Updating bug %s" % bug_id)
-        tool.bugs.close_bug_as_fixed(bug_id, bug_comment_from_svn_revision(svn_revision))
 
 
 class CommitMessageForCurrentDiff(Command):
@@ -820,7 +751,6 @@ class BugzillaTool:
             { 'name' : 'apply-patches', 'object' : ApplyPatchesFromBug() },
             { 'name' : 'land-diff', 'object' : LandAndUpdateBug() },
             { 'name' : 'land-patches', 'object' : LandPatchesFromBugs() },
-            { 'name' : 'mark-fixed', 'object' : MarkBugFixed() },
             { 'name' : 'commit-message', 'object' : CommitMessageForCurrentDiff() },
             { 'name' : 'obsolete-attachments', 'object' : ObsoleteAttachmentsOnBug() },
             { 'name' : 'post-diff', 'object' : PostDiffAsPatchToBug() },

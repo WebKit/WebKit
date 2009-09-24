@@ -92,6 +92,15 @@ def credentials_from_keychain(username=None):
 def is_mac_os_x():
     return platform.mac_ver()[0]
 
+def parse_bug_id(message):
+    match = re.search("http\://webkit\.org/b/(?P<bug_id>\d+)", message)
+    if match:
+        return match.group('bug_id')
+    match = re.search(Bugzilla.bug_server_regex + "show_bug\.cgi\?id=(?P<bug_id>\d+)", message)
+    if match:
+        return match.group('bug_id')
+    return None
+
 # FIXME: This should not depend on git for config storage
 def read_config(key):
     # Need a way to read from svn too

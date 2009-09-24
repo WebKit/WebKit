@@ -1,0 +1,114 @@
+#!/usr/bin/env python
+
+# Copyright (C) 2009 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer. 
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution. 
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# Mark a bug as fixed on bugs.webkit.org.
+
+import os
+import re
+import sys
+
+from optparse import OptionParser
+
+from modules.bugzilla import Bugzilla, parse_bug_id
+from modules.comments import bug_comment_from_svn_revision
+from modules.logging import error, log
+from modules.scm import detect_scm_system
+
+
+class MarkBugFixedTool:
+    def __init__(self):
+        self.bugs = Bugzilla()
+        self.cached_scm = None
+        self.option_parser = OptionParser(usage="usage: %prog [options] [rNNNNN]")
+        self.option_parser.add_option("-b", "--bug-id", dest="bug_id", help="Specify bug id if no URL is provided in the commit log.")
+
+    def scm(self):
+        # Lazily initialize SCM to not error-out before command line parsing (or when running non-scm commands).
+        if not self.cached_scm:
+            original_cwd = os.path.abspath('.')
+            self.cached_scm = detect_scm_system(original_cwd)
+        return self.cached_scm
+
+    def _fetch_commit_log(self, scm, svn_revision):
+        if not svn_revision:
+            return scm.last_svn_commit_log()
+        return scm.svn_commit_log(svn_revision)
+
+    def _determine_bug_id_and_svn_revision(self, bug_id, svn_revision):
+        commit_log = self._fetch_commit_log(self.scm(), svn_revision)
+
+        if not bug_id:
+            bug_id = parse_bug_id(commit_log)
+
+        if not svn_revision:
+            match = re.search("^r(?P<svn_revision>\d+) \|", commit_log, re.MULTILINE)
+            if match:
+                svn_revision = match.group('svn_revision')
+
+        if not bug_id or not svn_revision:
+            not_found = []
+            if not bug_id:
+                not_found.append("bug id")
+            if not svn_revision:
+                not_found.append("svn revision")
+            error("Could not find %s on command-line or in %s."
+                  % (" or ".join(not_found), "r%s" % svn_revision if svn_revision else "last commit"))
+
+        log("Bug: <http://webkit.org/b/%s> %s" % (bug_id, self.bugs.fetch_title_from_bug(bug_id)))
+        log("Revision: %s" % svn_revision)
+        answer = raw_input("Is this correct (y/N)? ")
+        if not re.match("^\s*y(es)?", answer, re.IGNORECASE):
+            exit(1)
+
+        return (bug_id, svn_revision)
+
+    def main(self):
+        (options, args) = self.option_parser.parse_args(sys.argv[1:])
+
+        if len(args) > 1:
+            error("Only one revision may be specified.")
+
+        bug_id = options.bug_id
+
+        svn_revision = args[0] if len(args) == 1 else None
+        if svn_revision:
+            if re.match("^r[0-9]+$", svn_revision, re.IGNORECASE):
+                svn_revision = svn_revision[1:]
+            if not re.match("^[0-9]+$", svn_revision):
+                error("Invalid svn revision: '%s'" % svn_revision)
+
+        if not bug_id or not svn_revision:
+            (bug_id, svn_revision) = self._determine_bug_id_and_svn_revision(bug_id, svn_revision)
+
+        log("Updating Bug %s." % bug_id)
+        self.bugs.close_bug_as_fixed(bug_id, bug_comment_from_svn_revision(svn_revision))
+
+
+def main():
+    tool = MarkBugFixedTool()
+    return tool.main()
+
+if __name__ == "__main__":
+    main()

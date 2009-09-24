@@ -1,3 +1,25 @@
+2009-09-23  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/28910> Move bugzilla-tool mark-fixed to standalone mark-bug-fixed tool
+
+        Reviewed by Darin Adler.
+
+        Also fixed a bug where specifying a revision on the command-line
+        as 'r12345' would fail.  See <http://webkit.org/b/29699>.
+
+        * Scripts/bugzilla-tool: Updated module import statements.
+        (parse_bug_id): Removed.  Moved to bugzilla.py.
+        (bug_comment_from_svn_revision): Removed.  Moved to comments.py.
+        (bug_comment_from_commit_text): Removed.  Moved to comments.py.
+        (MarkBugFixed): Removed.  Code moved to mark-bug-fixed.
+        (BugzillaTool.__init__): Removed mark-fixed subcommand.
+        * Scripts/mark-bug-fixed: Added.
+        * Scripts/modules/bugzilla.py:
+        (parse_bug_id): Added.  Moved from bugzilla-tool.
+        * Scripts/modules/comments.py: Added.
+        (bug_comment_from_svn_revision): Added.  Moved from bugzilla-tool.
+        (bug_comment_from_commit_text): Added.  Moved from bugzilla-tool.
+
 2009-09-23  Marshall Culpepper  <mculpepper@appcelerator.com>
 
         Reviewed by Eric Seidel.
