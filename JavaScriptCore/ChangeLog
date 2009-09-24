@@ -1,3 +1,14 @@
+2009-09-24  Janne Koskinen  <janne.p.koskinen@digia.com>
+
+        Reviewed by Simon Hausmann.
+
+        On Windows JSChar is typedef'ed to wchar_t.
+
+        When building with WINSCW for Symbian we need to do the
+        same typedef.
+
+        * API/JSStringRef.h:
+
 2009-09-23  Geoffrey Garen  <ggaren@apple.com>
 
         A piece of my last patch that I forgot.

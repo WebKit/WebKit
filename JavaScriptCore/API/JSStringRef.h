@@ -37,7 +37,7 @@
 extern "C" {
 #endif
 
-#if !defined(WIN32) && !defined(_WIN32)
+#if !defined(WIN32) && !defined(_WIN32) && !defined(__WINSCW__)
 /*!
 @typedef JSChar
 @abstract A Unicode character.
