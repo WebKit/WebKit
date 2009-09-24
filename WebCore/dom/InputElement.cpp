@@ -34,7 +34,6 @@
 #include "RenderTextControlSingleLine.h"
 #include "SelectionController.h"
 #include "TextIterator.h"
-#include "TextBreakIterator.h"
 
 #if ENABLE(WML)
 #include "WMLInputElement.h"
@@ -159,23 +158,6 @@ void InputElement::setValueFromRenderer(InputElementData& data, InputElement* in
     notifyFormStateChanged(element);
 }
 
-static int numCharactersInGraphemeClusters(StringImpl* s, int numGraphemeClusters)
-{
-    if (!s)
-        return 0;
-
-    TextBreakIterator* it = characterBreakIterator(s->characters(), s->length());
-    if (!it)
-        return 0;
-
-    for (int i = 0; i < numGraphemeClusters; ++i) {
-        if (textBreakNext(it) == TextBreakDone)
-            return s->length();
-    }
-
-    return textBreakCurrent(it);
-}
-
 String InputElement::sanitizeValue(const InputElement* inputElement, const String& proposedValue)
 {
     return InputElement::sanitizeUserInputValue(inputElement, proposedValue, s_maximumLength);
@@ -191,36 +173,15 @@ String InputElement::sanitizeUserInputValue(const InputElement* inputElement, co
     string.replace('\r', ' ');
     string.replace('\n', ' ');
 
-    StringImpl* s = string.impl();
-    int newLength = numCharactersInGraphemeClusters(s, maxLength);
-    for (int i = 0; i < newLength; ++i) {
-        const UChar& current = (*s)[i];
+    unsigned newLength = string.numCharactersInGraphemeClusters(maxLength);
+    for (unsigned i = 0; i < newLength; ++i) {
+        const UChar current = string[i];
         if (current < ' ' && current != '\t') {
             newLength = i;
             break;
         }
     }
-
-    if (newLength < static_cast<int>(string.length()))
-        return string.left(newLength);
-
-    return string;
-}
-
-static int numGraphemeClusters(StringImpl* s)
-{
-    if (!s)
-        return 0;
-
-    TextBreakIterator* it = characterBreakIterator(s->characters(), s->length());
-    if (!it)
-        return 0;
-
-    int num = 0;
-    while (textBreakNext(it) != TextBreakDone)
-        ++num;
-
-    return num;
+    return string.left(newLength);
 }
 
 void InputElement::handleBeforeTextInsertedEvent(InputElementData& data, InputElement* inputElement, Element* element, Event* event)
@@ -231,15 +192,16 @@ void InputElement::handleBeforeTextInsertedEvent(InputElementData& data, InputEl
     // We use RenderTextControlSingleLine::text() instead of InputElement::value()
     // because they can be mismatched by sanitizeValue() in
     // RenderTextControlSingleLine::subtreeHasChanged() in some cases.
-    int oldLength = numGraphemeClusters(toRenderTextControlSingleLine(element->renderer())->text().impl());
+    unsigned oldLength = toRenderTextControlSingleLine(element->renderer())->text().numGraphemeClusters();
 
     // selection() may be a pre-edit text.
-    int selectionLength = numGraphemeClusters(plainText(element->document()->frame()->selection()->selection().toNormalizedRange().get()).impl());
+    unsigned selectionLength = plainText(element->document()->frame()->selection()->selection().toNormalizedRange().get()).numGraphemeClusters();
     ASSERT(oldLength >= selectionLength);
 
     // Selected characters will be removed by the next text event.
-    int baseLength = oldLength - selectionLength;
-    int appendableLength = data.maxLength() - baseLength;
+    unsigned baseLength = oldLength - selectionLength;
+    unsigned maxLength = static_cast<unsigned>(data.maxLength()); // maxLength() can never be negative.
+    unsigned appendableLength = maxLength > baseLength ? maxLength - baseLength : 0;
 
     // Truncate the inserted text to avoid violating the maxLength and other constraints.
     BeforeTextInsertedEvent* textEvent = static_cast<BeforeTextInsertedEvent*>(event);

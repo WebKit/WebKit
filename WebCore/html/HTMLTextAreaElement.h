@@ -28,6 +28,7 @@
 
 namespace WebCore {
 
+class BeforeTextInsertedEvent;
 class VisibleSelection;
 
 class HTMLTextAreaElement : public HTMLFormControlElementWithState {
@@ -78,6 +79,8 @@ public:
     String defaultValue() const;
     void setDefaultValue(const String&);
     int textLength() const { return value().length(); }
+    unsigned maxLength() const;
+    void setMaxLength(unsigned);
     
     void rendererWillBeDestroyed();
     
@@ -99,6 +102,8 @@ public:
 private:
     enum WrapMethod { NoWrap, SoftWrap, HardWrap };
 
+    void handleBeforeTextInsertedEvent(BeforeTextInsertedEvent*) const;
+    static String sanitizeUserInputValue(const String&, unsigned maxLength);
     void updateValue() const;
     void updatePlaceholderVisibility(bool placeholderValueChanged);
     virtual void dispatchFocusEvent();

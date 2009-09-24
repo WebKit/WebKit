@@ -34,6 +34,7 @@ module html {
                  attribute  long                 cols;
                  attribute  boolean              disabled;
                  attribute  boolean              autofocus;
+                 attribute  unsigned long        maxLength;
                  attribute  [ConvertNullToNullString] DOMString            name;
                  attribute  [ConvertNullToNullString, Reflect] DOMString   placeholder;
                  attribute  boolean              readOnly;

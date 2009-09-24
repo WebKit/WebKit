@@ -1,0 +1,31 @@
+Tests for HTMLTextAreaElement.maxLength behaviors.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS textArea.maxLength is 0
+PASS textArea.maxLength is 0
+PASS textArea.maxLength is 0
+PASS textArea.maxLength is 1
+PASS textArea.maxLength is 256
+PASS textArea.getAttribute("maxlength") is "13"
+PASS textArea.maxLength is 4294967295
+PASS textArea.getAttribute("maxlength") is "4294967295"
+PASS textArea.value is "abcd"
+PASS textArea.value is "abcde"
+PASS textArea.value is "abc"
+PASS textArea.value is "abc"
+PASS textArea.value is "def"
+PASS textArea.value is "abcdef"
+PASS textArea.value is "abcde"
+PASS textArea.value is "A\nB"
+PASS textArea.value is "AB" + fancyX
+PASS textArea.value.length is 5
+PASS textArea.value is "ABC"
+PASS textArea.value is "AB" + u10000
+PASS textArea.value.length is 4
+PASS textArea.value is "ABC"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,3 +1,14 @@
+2009-09-23  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Tests for maxLength of <textarea>
+        https://bugs.webkit.org/show_bug.cgi?id=29292
+
+        * fast/forms/script-tests/textarea-maxlength.js: Added.
+        * fast/forms/textarea-maxlength-expected.txt: Added.
+        * fast/forms/textarea-maxlength.html: Added.
+
 2009-09-23  Martin Robinson  <martin.james.robinson@gmail.com>
 
         Reviewed by Xan Lopez.

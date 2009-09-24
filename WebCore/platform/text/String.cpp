@@ -25,6 +25,7 @@
 #include "CString.h"
 #include "FloatConversion.h"
 #include "StringBuffer.h"
+#include "TextBreakIterator.h"
 #include "TextEncoding.h"
 #include <wtf/dtoa.h>
 #include <limits>
@@ -919,6 +920,31 @@ PassRefPtr<SharedBuffer> utf8Buffer(const String& string)
 
     buffer.shrink(p - buffer.data());
     return SharedBuffer::adoptVector(buffer);
+}
+
+unsigned String::numGraphemeClusters() const
+{
+    TextBreakIterator* it = characterBreakIterator(characters(), length());
+    if (!it)
+        return length();
+
+    unsigned num = 0;
+    while (textBreakNext(it) != TextBreakDone)
+        ++num;
+    return num;
+}
+
+unsigned String::numCharactersInGraphemeClusters(unsigned numGraphemeClusters) const
+{
+    TextBreakIterator* it = characterBreakIterator(characters(), length());
+    if (!it)
+        return min(length(), numGraphemeClusters);
+
+    for (unsigned i = 0; i < numGraphemeClusters; ++i) {
+        if (textBreakNext(it) == TextBreakDone)
+            return length();
+    }
+    return textBreakCurrent(it);
 }
 
 } // namespace WebCore

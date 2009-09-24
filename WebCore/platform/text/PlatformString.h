@@ -254,6 +254,14 @@ public:
     // Determines the writing direction using the Unicode Bidi Algorithm rules P2 and P3.
     WTF::Unicode::Direction defaultWritingDirection() const { return m_impl ? m_impl->defaultWritingDirection() : WTF::Unicode::LeftToRight; }
 
+    // Counts the number of grapheme clusters. A surrogate pair or a sequence
+    // of a non-combining character and following combining characters is
+    // counted as 1 grapheme cluster.
+    unsigned numGraphemeClusters() const;
+    // Returns the number of characters which will be less than or equal to
+    // the specified grapheme cluster length.
+    unsigned numCharactersInGraphemeClusters(unsigned) const;
+
 private:
     RefPtr<StringImpl> m_impl;
 };

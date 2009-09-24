@@ -1,3 +1,29 @@
+2009-09-23  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        - Support for maxLength of <textarea>
+        - Move numGraphemeClusters() and numCharactersInGraphemeClusters() from InputElement to String.
+        https://bugs.webkit.org/show_bug.cgi?id=29292
+
+        Test: fast/forms/textarea-maxlength.html
+
+        * dom/InputElement.cpp:
+        (WebCore::InputElement::sanitizeUserInputValue):
+        (WebCore::InputElement::handleBeforeTextInsertedEvent):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::defaultEventHandler):
+        (WebCore::HTMLTextAreaElement::handleBeforeTextInsertedEvent):
+        (WebCore::HTMLTextAreaElement::sanitizeUserInputValue):
+        (WebCore::HTMLTextAreaElement::maxLength):
+        (WebCore::HTMLTextAreaElement::setMaxLength):
+        * html/HTMLTextAreaElement.h:
+        * html/HTMLTextAreaElement.idl:
+        * platform/text/PlatformString.h:
+        * platform/text/String.cpp:
+        (WebCore::String::numGraphemeClusters):
+        (WebCore::String::numCharactersInGraphemeClusters):
+
 2009-09-23  Martin Robinson  <martin.james.robinson@gmail.com>
 
         Reviewed by Xan Lopez.
