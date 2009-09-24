@@ -1,5 +1,13 @@
 2009-09-24  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Steve Falkenburg and Mark Rowe.
+
+        Don't pass -F to GCC on non-mac platforms since it is an darwin only.
+
+        * DerivedSources.make:
+
+2009-09-24  Sam Weinig  <sam@webkit.org>
+
         Fix windows build.
 
         * dom/Element.idl:
