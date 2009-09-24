@@ -42,7 +42,8 @@ class MarkBugFixedTool:
         self.bugs = Bugzilla()
         self.cached_scm = None
         self.option_parser = OptionParser(usage="usage: %prog [options] [rNNNNN]")
-        self.option_parser.add_option("-b", "--bug-id", dest="bug_id", help="Specify bug id if no URL is provided in the commit log.")
+        self.option_parser.add_option("-b", "--bug-id", action="store", type="string", dest="bug_id", help="Specify bug id if no URL is provided in the commit log.")
+        self.option_parser.add_option("-m", "--comment", action="store", type="string", dest="comment", help="Text to include in bug comment.")
 
     def scm(self):
         # Lazily initialize SCM to not error-out before command line parsing (or when running non-scm commands).
@@ -102,8 +103,12 @@ class MarkBugFixedTool:
         if not bug_id or not svn_revision:
             (bug_id, svn_revision) = self._determine_bug_id_and_svn_revision(bug_id, svn_revision)
 
+        bug_comment = bug_comment_from_svn_revision(svn_revision)
+        if options.comment:
+            bug_comment = "%s\n\n%s" % (options.comment, bug_comment)
+
         log("Updating Bug %s." % bug_id)
-        self.bugs.close_bug_as_fixed(bug_id, bug_comment_from_svn_revision(svn_revision))
+        self.bugs.close_bug_as_fixed(bug_id, bug_comment)
 
 
 def main():
