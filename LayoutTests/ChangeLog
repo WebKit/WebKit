@@ -1,3 +1,41 @@
+2009-09-23  Eric Seidel  <eric@webkit.org>
+
+        No review, just adding missing pixel test results from recent test additions.
+
+        * platform/mac/compositing/generated-content-expected.checksum: Added.
+        * platform/mac/compositing/generated-content-expected.png: Added.
+        * platform/mac/compositing/masks/masked-ancestor-expected.png: Added.
+        * platform/mac/compositing/masks/multiple-masks-expected.png: Added.
+        * platform/mac/compositing/masks/simple-composited-mask-expected.png: Added.
+        * platform/mac/compositing/reflections/reflection-on-composited-expected.checksum: Added.
+        * platform/mac/compositing/reflections/reflection-on-composited-expected.png: Added.
+        * platform/mac/compositing/self-painting-layers-expected.checksum: Added.
+        * platform/mac/compositing/self-painting-layers-expected.png: Added.
+        * platform/mac/compositing/sibling-positioning-expected.checksum: Added.
+        * platform/mac/compositing/sibling-positioning-expected.png: Added.
+        * platform/mac/fast/forms/button-style-color-expected.checksum: Added.
+        * platform/mac/fast/forms/button-style-color-expected.png: Added.
+        * platform/mac/fast/forms/text-style-color-expected.checksum: Added.
+        * platform/mac/fast/forms/text-style-color-expected.png: Added.
+        * platform/mac/fast/forms/textarea-placeholder-pseudo-style-expected.checksum: Added.
+        * platform/mac/fast/forms/textarea-placeholder-pseudo-style-expected.png: Added.
+        * platform/mac/fast/forms/textarea-placeholder-set-attribute-expected.checksum: Added.
+        * platform/mac/fast/forms/textarea-placeholder-set-attribute-expected.png: Added.
+        * platform/mac/fast/forms/textarea-placeholder-set-value-expected.checksum: Added.
+        * platform/mac/fast/forms/textarea-placeholder-set-value-expected.png: Added.
+        * platform/mac/fast/frames/viewsource-on-image-file-expected.checksum: Added.
+        * platform/mac/fast/frames/viewsource-on-image-file-expected.png: Added.
+        * platform/mac/fast/text/international/khmer-selection-expected.checksum: Added.
+        * platform/mac/fast/text/international/khmer-selection-expected.png: Added.
+        * platform/mac/media/audio-no-installed-engines-expected.checksum: Added.
+        * platform/mac/media/audio-no-installed-engines-expected.png: Added.
+        * platform/mac/media/controls-strict-expected.checksum: Added.
+        * platform/mac/media/controls-strict-expected.png: Added.
+        * platform/mac/media/controls-styling-expected.checksum: Added.
+        * platform/mac/media/controls-styling-expected.png: Added.
+        * platform/mac/media/video-no-audio-expected.checksum: Added.
+        * platform/mac/media/video-no-audio-expected.png: Added.
+
 2009-09-23  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Barth.
