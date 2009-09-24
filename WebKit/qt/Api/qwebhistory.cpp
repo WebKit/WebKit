@@ -570,8 +570,11 @@ QByteArray QWebHistory::saveState(HistoryStateVersion version) const
   \fn QDataStream& operator<<(QDataStream& stream, const QWebHistory& history)
   \relates QWebHistory
 
-  Saves the given \a history into the specified \a stream. This is a convenience function
-  and is equivalent to calling the saveState() method.
+  \brief The operator<< function streams a history into a data stream.
+
+  It saves the \a history into the specified \a stream. This is a
+  convenience function and is equivalent to calling the saveState()
+  method.
 
   \sa QWebHistory::saveState()
 */
@@ -585,6 +588,8 @@ QDataStream& operator<<(QDataStream& stream, const QWebHistory& history)
   \fn QDataStream& operator>>(QDataStream& stream, QWebHistory& history)
   \relates QWebHistory
   \since 4.6
+
+  \brief The operator>> function loads a history from a data stream.
 
   Loads a QWebHistory from the specified \a stream into the given \a history.
   This is a convenience function and it is equivalent to calling the restoreState()

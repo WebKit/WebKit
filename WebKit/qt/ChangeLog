@@ -1,3 +1,11 @@
+2009-09-24  Martin Smith  <msmith@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
+        qdoc: Added \brief texts to all the since 4.6 functions.
+
+        * Api/qwebhistory.cpp:
+
 2009-09-23  J-P Nurmi  <jpnurmi@gmail.com>
 
         Reviewed by Simon Hausmann.
