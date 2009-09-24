@@ -128,6 +128,7 @@ bool setAlwaysAcceptCookies(bool alwaysAcceptCookies)
     return true;
 #else
     // FIXME: Implement!
+    return false;
 #endif
 }
 

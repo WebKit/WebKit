@@ -1,3 +1,14 @@
+2009-09-23  Marshall Culpepper  <mculpepper@appcelerator.com>
+
+        Reviewed by Eric Seidel.
+
+        Added $(WebKitLibrariesDir)/include/cairo so cairo.h is found by
+        default when the necessary dependencies are extracted into the
+        WebKitLibrariesDir.
+        https://bugs.webkit.org/show_bug.cgi?id=29661
+
+        * WebCore.vcproj/WebCoreCairo.vsprops:
+
 2009-09-23  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.
