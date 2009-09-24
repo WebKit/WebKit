@@ -35,18 +35,10 @@
 
 #if PLATFORM(DARWIN)
 #include <mach/mach.h>
-#endif
-
-#if HAVE(SYS_TIME_H)
-#include <sys/time.h>
-#endif
-
-#if PLATFORM(WIN_OS)
+#elif PLATFORM(WIN_OS)
 #include <windows.h>
-#endif
-
-#if PLATFORM(QT)
-#include <QDateTime>
+#else
+#include "CurrentTime.h"
 #endif
 
 using namespace std;
@@ -75,14 +67,6 @@ static inline unsigned getCPUTime()
     time += info.system_time.seconds * 1000 + info.system_time.microseconds / 1000;
     
     return time;
-#elif HAVE(SYS_TIME_H)
-    // FIXME: This should probably use getrusage with the RUSAGE_THREAD flag.
-    struct timeval tv;
-    gettimeofday(&tv, 0);
-    return tv.tv_sec * 1000 + tv.tv_usec / 1000;
-#elif PLATFORM(QT)
-    QDateTime t = QDateTime::currentDateTime();
-    return t.toTime_t() * 1000 + t.time().msec();
 #elif PLATFORM(WIN_OS)
     union {
         FILETIME fileTime;
@@ -97,7 +81,8 @@ static inline unsigned getCPUTime()
     
     return userTime.fileTimeAsLong / 10000 + kernelTime.fileTimeAsLong / 10000;
 #else
-#error Platform does not have getCurrentTime function
+    // FIXME: We should return the time the current thread has spent executing.
+    return currentTime() * 1000;
 #endif
 }
 

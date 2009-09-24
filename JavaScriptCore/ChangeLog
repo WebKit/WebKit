@@ -1,3 +1,17 @@
+2009-09-24  Yong Li  <yong.li@torchmobile.com>
+
+        Reviewed by Adam Barth.
+
+        Replace platform-dependent code with WTF::currentTime()
+        https://bugs.webkit.org/show_bug.cgi?id=29148
+
+        * jsc.cpp:
+        (StopWatch::start):
+        (StopWatch::stop):
+        (StopWatch::getElapsedMS):
+        * runtime/TimeoutChecker.cpp:
+        (JSC::getCPUTime):
+
 2009-09-24  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Sam Weinig.
