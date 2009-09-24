@@ -111,7 +111,7 @@ void Pasteboard::clear()
 void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete, Frame* frame)
 {
     clear();
-    
+
     // Put CF_HTML format on the pasteboard 
     if (::OpenClipboard(m_owner)) {
         ExceptionCode ec = 0;
@@ -142,6 +142,21 @@ void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete,
             ::CloseClipboard();
         }
         
+    }
+}
+
+void Pasteboard::writePlainText(const String& text)
+{
+    clear();
+
+    // Put plain string on the pasteboard. CF_UNICODETEXT covers CF_TEXT as well
+    String str = text;
+    replaceNewlinesWithWindowsStyleNewlines(str);
+    if (::OpenClipboard(m_owner)) {
+        HGLOBAL cbData = createGlobalData(str);
+        if (!::SetClipboardData(CF_UNICODETEXT, cbData))
+            ::GlobalFree(cbData);
+        ::CloseClipboard();
     }
 }
 

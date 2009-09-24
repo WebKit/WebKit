@@ -1,3 +1,35 @@
+2009-09-23  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Introduce Pasteboard::writePlaintext(const String&) so that copying
+        of the inspected elements HTML will be possible in WebInspector.
+        https://bugs.webkit.org/show_bug.cgi?id=29634
+
+        * platform/Pasteboard.h:
+        * platform/android/TemporaryLinkStubs.cpp:
+        (Pasteboard::writePlainText):
+        * platform/chromium/ChromiumBridge.h:
+        * platform/chromium/PasteboardChromium.cpp:
+        (WebCore::Pasteboard::writePlainText):
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::Pasteboard::writePlainText):
+        * platform/haiku/PasteboardHaiku.cpp:
+        (WebCore::Pasteboard::writePlainText):
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::writePlainText):
+        * platform/qt/PasteboardQt.cpp:
+        (WebCore::Pasteboard::writePlainText):
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::Pasteboard::writeSelection):
+        (WebCore::Pasteboard::writePlainText):
+        * platform/wince/PasteboardWince.cpp:
+        (WebCore::Pasteboard::writePlainText):
+        * platform/wx/PasteboardWx.cpp:
+        (WebCore::Pasteboard::writeSelection):
+        (WebCore::Pasteboard::writePlainText):
+        (WebCore::Pasteboard::writeURL):
+
 2009-09-24  Oswald Buddenhagen  <oswald.buddenhagen@nokia.com>
 
         Reviewed by Simon Hausmann.

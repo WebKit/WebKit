@@ -108,6 +108,12 @@ void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete,
     gtk_target_table_free(targets, n_targets);
 }
 
+void Pasteboard::writePlainText(const String& text)
+{
+    GtkClipboard* clipboard = gtk_clipboard_get_for_display(gdk_display_get_default(), GDK_SELECTION_CLIPBOARD);
+    gtk_clipboard_set_text(clipboard, text.utf8().data(), text.utf8().length());
+}
+
 void Pasteboard::writeURL(const KURL& url, const String&, Frame* frame)
 {
     if (url.isEmpty())

@@ -86,6 +86,7 @@ public:
     
     static Pasteboard* generalPasteboard();
     void writeSelection(Range*, bool canSmartCopyOrDelete, Frame*);
+    void writePlainText(const String&);
     void writeURL(const KURL&, const String&, Frame* = 0);
     void writeImage(Node*, const KURL&, const String& title);
 #if PLATFORM(MAC)

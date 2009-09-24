@@ -142,6 +142,21 @@ void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete,
     }
 }
 
+void Pasteboard::writePlainText(const String& text)
+{
+    clear();
+
+    // Put plain string on the pasteboard. CF_UNICODETEXT covers CF_TEXT as well
+    String str = text;
+    replaceNewlinesWithWindowsStyleNewlines(str);
+    if (::OpenClipboard(m_owner)) {
+        HGLOBAL cbData = createGlobalData(str);
+        if (!::SetClipboardData(CF_UNICODETEXT, cbData))
+            ::GlobalFree(cbData);
+        ::CloseClipboard();
+    }
+}
+
 void Pasteboard::writeURL(const KURL& url, const String& titleStr, Frame* frame)
 {
     ASSERT(!url.isEmpty());

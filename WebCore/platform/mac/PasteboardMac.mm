@@ -203,6 +203,18 @@ void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete,
     Pasteboard::writeSelection(m_pasteboard.get(), selectedRange, canSmartCopyOrDelete, frame);
 }
 
+void Pasteboard::writePlainText(const String& text)
+{
+    if (WebArchivePboardType == nil)
+        Pasteboard::generalPasteboard(); //Initialises pasteboard types
+
+    NSArray *types = [NSArray arrayWithObjects:NSStringPboardType, nil];
+    NSPasteboard* pasteboard = m_pasteboard.get();
+    [pasteboard declareTypes:types owner:nil];
+
+    [pasteboard setString:text forType:NSStringPboardType];
+}
+
 void Pasteboard::writeURL(NSPasteboard* pasteboard, NSArray* types, const KURL& url, const String& titleStr, Frame* frame)
 {
     if (WebArchivePboardType == nil)

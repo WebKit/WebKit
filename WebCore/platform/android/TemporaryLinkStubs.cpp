@@ -175,6 +175,11 @@ void Pasteboard::writeSelection(Range*, bool, Frame*)
     notImplemented();
 }
 
+void Pasteboard::writePlainText(const String&)
+{
+    notImplemented();
+}
+
 void Pasteboard::writeURL(const KURL&, const String&, Frame*)
 {
     notImplemented();

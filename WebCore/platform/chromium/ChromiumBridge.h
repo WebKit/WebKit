@@ -76,6 +76,7 @@ namespace WebCore {
         // Chromium currently uses a different technique to write to alternate
         // clipboard buffers.
         static void clipboardWriteSelection(const String&, const KURL&, const String&, bool);
+        static void clipboardWritePlainText(const String&);
         static void clipboardWriteURL(const KURL&, const String&);
         static void clipboardWriteImage(const NativeImageSkia*, const KURL&, const String&);
 

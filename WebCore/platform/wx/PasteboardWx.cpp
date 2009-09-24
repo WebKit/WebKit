@@ -52,9 +52,16 @@ Pasteboard* Pasteboard::generalPasteboard()
 
 void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete, Frame* frame)
 {
-    if (wxTheClipboard->Open())
-    {
+    if (wxTheClipboard->Open()) {
         wxTheClipboard->SetData( new wxTextDataObject(frame->selectedText()) );
+        wxTheClipboard->Close();
+    }
+}
+
+void Pasteboard::writePlainText(const String& text)
+{
+    if (wxTheClipboard->Open()) {
+        wxTheClipboard->SetData( new wxTextDataObject(text) );
         wxTheClipboard->Close();
     }
 }
@@ -92,8 +99,7 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefP
 
 void Pasteboard::writeURL(const KURL& url, const String&, Frame*)
 {
-    if (wxTheClipboard->Open())
-    {
+    if (wxTheClipboard->Open()) {
         wxTheClipboard->SetData( new wxTextDataObject( url.string() ) );
         wxTheClipboard->Close();
     }
