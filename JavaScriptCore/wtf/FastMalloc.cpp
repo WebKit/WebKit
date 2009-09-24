@@ -2283,6 +2283,10 @@ static void sleep(unsigned seconds)
 
 void TCMalloc_PageHeap::scavengerThread()
 {
+#if HAVE(PTHREAD_SETNAME_NP)
+  pthread_setname_np("JavaScriptCore: FastMalloc scavenger");
+#endif
+
   while (1) {
       if (!shouldContinueScavenging()) {
           pthread_mutex_lock(&m_scavengeMutex);

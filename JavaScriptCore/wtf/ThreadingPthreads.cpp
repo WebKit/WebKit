@@ -186,7 +186,7 @@ ThreadIdentifier createThreadInternal(ThreadFunction entryPoint, void* data, con
 
 void setThreadNameInternal(const char* threadName)
 {
-#if PLATFORM(DARWIN) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !PLATFORM(IPHONE)
+#if HAVE(PTHREAD_SETNAME_NP)
     pthread_setname_np(threadName);
 #else
     UNUSED_PARAM(threadName);

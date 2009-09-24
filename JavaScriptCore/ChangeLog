@@ -1,3 +1,15 @@
+2009-09-24  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/7215058> FastMalloc scavenging thread should be named
+
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMalloc_PageHeap::scavengerThread): Set the thread name.
+        * wtf/Platform.h: Move the knowledge of whether pthread_setname_np exists to here as HAVE(PTHREAD_SETNAME_NP).
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::setThreadNameInternal): Use HAVE(PTHREAD_SETNAME_NP).
+
 2009-09-24  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.
