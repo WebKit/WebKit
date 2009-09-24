@@ -49,24 +49,24 @@ namespace WTF {
         const_iterator begin() const;
         const_iterator end() const;
         
-        iterator find(const ValueType& value);
-        const_iterator find(const ValueType& value) const;
-        bool contains(const ValueType& value) const;
-        unsigned count(const ValueType& value) const;
+        iterator find(const ValueType&);
+        const_iterator find(const ValueType&) const;
+        bool contains(const ValueType&) const;
+        unsigned count(const ValueType&) const;
 
         // increases the count if an equal value is already present
         // the return value is a pair of an interator to the new value's location, 
         // and a bool that is true if an new entry was added
-        std::pair<iterator, bool> add(const ValueType &value);
+        std::pair<iterator, bool> add(const ValueType&);
         
         // reduces the count of the value, and removes it if count
         // goes down to zero
-        void remove(const ValueType& value);
-        void remove(iterator it);
+        void remove(const ValueType&);
+        void remove(iterator);
  
         // removes the value, regardless of its count
-        void clear(iterator it);
-        void clear(const ValueType& value);
+        void clear(iterator);
+        void clear(const ValueType&);
 
         // clears the whole set
         void clear();

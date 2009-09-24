@@ -1,3 +1,11 @@
+2009-09-24  Geoffrey Garen  <ggaren@apple.com>
+
+        Suggested by Darin Adler.
+
+        Removed some unnecessary parameter names.
+
+        * wtf/HashCountedSet.h:
+
 2009-09-24  Janne Koskinen  <janne.p.koskinen@digia.com>
 
         Reviewed by Simon Hausmann.
