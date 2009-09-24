@@ -1,3 +1,9 @@
+2009-09-24  Sam Weinig  <sam@webkit.org>
+
+        Fix windows build.
+
+        * dom/Element.idl:
+
 2009-09-23  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by Eric Seidel.
