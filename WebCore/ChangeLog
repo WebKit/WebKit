@@ -1,3 +1,16 @@
+2009-09-24  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] GStreamer MediaPlayer is unable to correctly querry duration
+        https://bugs.webkit.org/show_bug.cgi?id=24639
+
+        check duration returned by gst_element_query_duration() only
+        when using GStreamer < 0.10.23.
+
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivate::duration):
+
 2009-09-24  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Eric Seidel.
