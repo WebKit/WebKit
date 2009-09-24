@@ -839,7 +839,7 @@ void XMLHttpRequest::didSendData(unsigned long long bytesSent, unsigned long lon
         return;
 
     if (m_uploadEventsAllowed)
-        m_upload->dispatchEvent(XMLHttpRequestProgressEvent::create(eventNames().progressEvent, true, bytesSent, totalBytesToBeSent));
+        m_upload->dispatchEvent(XMLHttpRequestProgressEvent::create(eventNames().progressEvent, true, static_cast<unsigned>(bytesSent), static_cast<unsigned>(totalBytesToBeSent)));
 
     if (bytesSent == totalBytesToBeSent && !m_uploadComplete) {
         m_uploadComplete = true;
@@ -897,7 +897,7 @@ void XMLHttpRequest::didReceiveData(const char* data, int len)
 
         // FIXME: the spec requires that we dispatch the event according to the least
         // frequent method between every 350ms (+/-200ms) and for every byte received.
-        dispatchEvent(XMLHttpRequestProgressEvent::create(eventNames().progressEvent, expectedLength && m_receivedLength <= expectedLength, m_receivedLength, expectedLength));
+        dispatchEvent(XMLHttpRequestProgressEvent::create(eventNames().progressEvent, expectedLength && m_receivedLength <= expectedLength, static_cast<unsigned>(m_receivedLength), static_cast<unsigned>(expectedLength)));
 
         if (m_state != LOADING)
             changeState(LOADING);

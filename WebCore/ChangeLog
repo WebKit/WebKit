@@ -1,5 +1,13 @@
 2009-09-23  Geoffrey Garen  <ggaren@apple.com>
 
+        32-bit build fix: restore previous cast that I thought was unnecessary.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::didSendData):
+        (WebCore::XMLHttpRequest::didReceiveData):
+
+2009-09-23  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Sam Weinig.
 
         Bring a little sanity to this crazy EventTarget world of ours
