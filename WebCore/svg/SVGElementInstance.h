@@ -51,10 +51,11 @@ namespace WebCore {
 
         virtual ScriptExecutionContext* scriptExecutionContext() const;
 
-        virtual void addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture);
-        virtual void removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture);
-        virtual bool dispatchEvent(PassRefPtr<Event>, ExceptionCode&);
-        const RegisteredEventListenerVector& eventListeners() const { return correspondingElement()->eventListeners(); }
+        virtual bool addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture);
+        virtual bool removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture);
+        virtual void removeAllEventListeners();
+        using EventTarget::dispatchEvent;
+        virtual bool dispatchEvent(PassRefPtr<Event>);
 
         SVGElement* correspondingElement() const { return m_element.get(); }
         SVGUseElement* correspondingUseElement() const { return m_useElement; }
@@ -77,86 +78,46 @@ namespace WebCore {
         using TreeShared<SVGElementInstance>::deref;
 
         // EventTarget API
-        EventListener* onabort() const;
-        void setOnabort(PassRefPtr<EventListener>);
-        EventListener* onblur() const;
-        void setOnblur(PassRefPtr<EventListener>);
-        EventListener* onchange() const;
-        void setOnchange(PassRefPtr<EventListener>);
-        EventListener* onclick() const;
-        void setOnclick(PassRefPtr<EventListener>);
-        EventListener* oncontextmenu() const;
-        void setOncontextmenu(PassRefPtr<EventListener>);
-        EventListener* ondblclick() const;
-        void setOndblclick(PassRefPtr<EventListener>);
-        EventListener* onerror() const;
-        void setOnerror(PassRefPtr<EventListener>);
-        EventListener* onfocus() const;
-        void setOnfocus(PassRefPtr<EventListener>);
-        EventListener* oninput() const;
-        void setOninput(PassRefPtr<EventListener>);
-        EventListener* onkeydown() const;
-        void setOnkeydown(PassRefPtr<EventListener>);
-        EventListener* onkeypress() const;
-        void setOnkeypress(PassRefPtr<EventListener>);
-        EventListener* onkeyup() const;
-        void setOnkeyup(PassRefPtr<EventListener>);
-        EventListener* onload() const;
-        void setOnload(PassRefPtr<EventListener>);
-        EventListener* onmousedown() const;
-        void setOnmousedown(PassRefPtr<EventListener>);
-        EventListener* onmousemove() const;
-        void setOnmousemove(PassRefPtr<EventListener>);
-        EventListener* onmouseout() const;
-        void setOnmouseout(PassRefPtr<EventListener>);
-        EventListener* onmouseover() const;
-        void setOnmouseover(PassRefPtr<EventListener>);
-        EventListener* onmouseup() const;
-        void setOnmouseup(PassRefPtr<EventListener>);
-        EventListener* onmousewheel() const;
-        void setOnmousewheel(PassRefPtr<EventListener>);
-        EventListener* onbeforecut() const;
-        void setOnbeforecut(PassRefPtr<EventListener>);
-        EventListener* oncut() const;
-        void setOncut(PassRefPtr<EventListener>);
-        EventListener* onbeforecopy() const;
-        void setOnbeforecopy(PassRefPtr<EventListener>);
-        EventListener* oncopy() const;
-        void setOncopy(PassRefPtr<EventListener>);
-        EventListener* onbeforepaste() const;
-        void setOnbeforepaste(PassRefPtr<EventListener>);
-        EventListener* onpaste() const;
-        void setOnpaste(PassRefPtr<EventListener>);
-        EventListener* ondragenter() const;
-        void setOndragenter(PassRefPtr<EventListener>);
-        EventListener* ondragover() const;
-        void setOndragover(PassRefPtr<EventListener>);
-        EventListener* ondragleave() const;
-        void setOndragleave(PassRefPtr<EventListener>);
-        EventListener* ondrop() const;
-        void setOndrop(PassRefPtr<EventListener>);
-        EventListener* ondragstart() const;
-        void setOndragstart(PassRefPtr<EventListener>);
-        EventListener* ondrag() const;
-        void setOndrag(PassRefPtr<EventListener>);
-        EventListener* ondragend() const;
-        void setOndragend(PassRefPtr<EventListener>);
-        EventListener* onreset() const;
-        void setOnreset(PassRefPtr<EventListener>);
-        EventListener* onresize() const;
-        void setOnresize(PassRefPtr<EventListener>);
-        EventListener* onscroll() const;
-        void setOnscroll(PassRefPtr<EventListener>);
-        EventListener* onsearch() const;
-        void setOnsearch(PassRefPtr<EventListener>);
-        EventListener* onselect() const;
-        void setOnselect(PassRefPtr<EventListener>);
-        EventListener* onselectstart() const;
-        void setOnselectstart(PassRefPtr<EventListener>);
-        EventListener* onsubmit() const;
-        void setOnsubmit(PassRefPtr<EventListener>);
-        EventListener* onunload() const;
-        void setOnunload(PassRefPtr<EventListener>);
+        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), abort);
+        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), blur);
+        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), change);
+        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), click);
+        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), contextmenu);
+        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), dblclick);
+        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), error);
+        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), focus);
+        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), input);
+        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), keydown);
+        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), keypress);
+        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), keyup);
+        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), load);
+        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), mousedown);
+        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), mousemove);
+        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), mouseout);
+        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), mouseover);
+        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), mouseup);
+        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), mousewheel);
+        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), beforecut);
+        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), cut);
+        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), beforecopy);
+        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), copy);
+        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), beforepaste);
+        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), paste);
+        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), dragenter);
+        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), dragover);
+        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), dragleave);
+        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), drop);
+        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), dragstart);
+        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), drag);
+        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), dragend);
+        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), reset);
+        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), resize);
+        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), scroll);
+        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), search);
+        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), select);
+        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), selectstart);
+        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), submit);
+        DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), unload);
 
     private:
         friend class SVGUseElement;
@@ -189,6 +150,8 @@ namespace WebCore {
 
         virtual void refEventTarget() { ref(); }
         virtual void derefEventTarget() { deref(); }
+        virtual EventTargetData* eventTargetData();
+        virtual EventTargetData* ensureEventTargetData();
 
         bool m_needsUpdate : 1;
 

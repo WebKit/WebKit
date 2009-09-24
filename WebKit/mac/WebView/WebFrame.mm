@@ -1174,7 +1174,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
         [result setObject:[NSNumber numberWithBool:YES] forKey:WebFrameHasPlugins];
     
     if (DOMWindow* domWindow = _private->coreFrame->domWindow()) {
-        if (domWindow->hasEventListener(eventNames().unloadEvent))
+        if (domWindow->hasEventListeners(eventNames().unloadEvent))
             [result setObject:[NSNumber numberWithBool:YES] forKey:WebFrameHasUnloadListener];
             
         if (domWindow->optionalApplicationCache())

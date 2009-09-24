@@ -1,3 +1,14 @@
+2009-09-23  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Added the ability to swap vectors with inline capacities, so you can
+        store a vector with inline capacity in a hash table.
+
+        * wtf/Vector.h:
+        (WTF::swap):
+        (WTF::VectorBuffer::swap):
+
 2009-09-23  David Kilzer  <ddkilzer@apple.com>
 
         Move definition of USE(PLUGIN_HOST_PROCESS) from WebKitPrefix.h to Platform.h

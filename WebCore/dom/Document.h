@@ -200,6 +200,49 @@ public:
 
     // DOM methods & attributes for Document
 
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(abort);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(change);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(click);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(contextmenu);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(dblclick);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(dragenter);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(dragover);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(dragleave);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(drop);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(dragstart);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(drag);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(dragend);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(input);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(invalid);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(keydown);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(keypress);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(keyup);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(mousedown);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(mousemove);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(mouseout);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(mouseover);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(mouseup);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(mousewheel);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(scroll);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(select);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(submit);
+
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(blur);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(error);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(focus);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(load);
+
+    // WebKit extensions
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(beforecut);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(cut);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(beforecopy);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(copy);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(beforepaste);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(paste);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(reset);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(search);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(selectstart);
+
     DocumentType* doctype() const { return m_docType.get(); }
 
     DOMImplementation* implementation() const;
@@ -547,10 +590,8 @@ public:
     // Helper functions for forwarding DOMWindow event related tasks to the DOMWindow if it exists.
     void setWindowAttributeEventListener(const AtomicString& eventType, PassRefPtr<EventListener>);
     EventListener* getWindowAttributeEventListener(const AtomicString& eventType);
-    void dispatchWindowEvent(PassRefPtr<Event>);
-    void dispatchWindowEvent(const AtomicString& eventType, bool canBubbleArg, bool cancelableArg);
-    void dispatchLoadEvent();
-    void dispatchPageTransitionEvent(const AtomicString& eventType, bool persisted);
+    void dispatchWindowEvent(PassRefPtr<Event>, PassRefPtr<EventTarget> = 0);
+    void dispatchWindowLoadEvent();
 
     PassRefPtr<Event> createEvent(const String& eventType, ExceptionCode&);
 
@@ -812,7 +853,7 @@ public:
     void setDashboardRegions(const Vector<DashboardRegionValue>&);
 #endif
 
-    void removeAllEventListeners();
+    virtual void removeAllEventListeners();
 
     CheckedRadioButtons& checkedRadioButtons() { return m_checkedRadioButtons; }
     

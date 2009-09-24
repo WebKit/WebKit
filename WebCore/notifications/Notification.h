@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -35,6 +36,7 @@
 #include "AtomicStringHash.h"
 #include "Event.h"
 #include "EventListener.h"
+#include "EventNames.h"
 #include "EventTarget.h"
 #include "ExceptionCode.h"
 #include "KURL.h"
@@ -65,32 +67,16 @@ namespace WebCore {
         KURL url() { return m_notificationURL; }
         NotificationContents& contents() { return m_contents; }
 
-        EventListener* ondisplay() const;
-        void setOndisplay(PassRefPtr<EventListener> eventListener);
-        EventListener* onerror() const;
-        void setOnerror(PassRefPtr<EventListener> eventListener);
-        EventListener* onclose() const;
-        void setOnclose(PassRefPtr<EventListener> eventListener);
+        DEFINE_ATTRIBUTE_EVENT_LISTENER(display);
+        DEFINE_ATTRIBUTE_EVENT_LISTENER(error);
+        DEFINE_ATTRIBUTE_EVENT_LISTENER(close);
     
         using RefCounted<Notification>::ref;
         using RefCounted<Notification>::deref;
     
-        // Dispatching of events on the notification.  The presenter should call these when events occur.
-        void dispatchDisplayEvent();
-        void dispatchErrorEvent();
-        void dispatchCloseEvent();
-
         // EventTarget interface
         virtual ScriptExecutionContext* scriptExecutionContext() const { return ActiveDOMObject::scriptExecutionContext(); }
-        virtual void addEventListener(const AtomicString&, PassRefPtr<EventListener>, bool);
-        virtual void removeEventListener(const AtomicString&, EventListener*, bool);
-        virtual bool dispatchEvent(PassRefPtr<Event>, ExceptionCode&);
         virtual Notification* toNotification() { return this; }
-
-        // These methods are for onEvent style listeners.
-        EventListener* getAttributeEventListener(const AtomicString&) const;
-        void setAttributeEventListener(const AtomicString&, PassRefPtr<EventListener>);
-        void clearAttributeEventListener(const AtomicString&);
 
     private:
         Notification(const String& url, ScriptExecutionContext* context, ExceptionCode& ec, NotificationPresenter* provider);
@@ -99,8 +85,8 @@ namespace WebCore {
         // EventTarget interface
         virtual void refEventTarget() { ref(); }
         virtual void derefEventTarget() { deref(); }
-  
-        void handleEvent(PassRefPtr<Event> event, bool useCapture);
+        virtual EventTargetData* eventTargetData();
+        virtual EventTargetData* ensureEventTargetData();
 
         bool m_isHTML;
         KURL m_notificationURL;
@@ -108,9 +94,9 @@ namespace WebCore {
 
         bool m_isShowing;
 
-        RegisteredEventListenerVector m_eventListeners;
-
         NotificationPresenter* m_presenter;
+        
+        EventTargetData m_eventTargetData;
     };
 
 } // namespace WebCore

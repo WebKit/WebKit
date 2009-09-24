@@ -85,7 +85,7 @@ namespace WebCore {
         void startListening(Document* document);
         void stopListening(Document* document);
 
-        virtual void handleEvent(Event* event, bool isWindowEvent);
+        virtual void handleEvent(Event* event);
 
         typedef HashMap<RefPtr<Node>, long> NodeToIdMap;
         long bind(Node* node, NodeToIdMap* nodesMap);

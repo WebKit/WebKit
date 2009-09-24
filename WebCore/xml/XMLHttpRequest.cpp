@@ -235,56 +235,6 @@ XMLHttpRequestUpload* XMLHttpRequest::upload()
     return m_upload.get();
 }
 
-void XMLHttpRequest::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> eventListener, bool)
-{
-    EventListenersMap::iterator iter = m_eventListeners.find(eventType);
-    if (iter == m_eventListeners.end()) {
-        ListenerVector listeners;
-        listeners.append(eventListener);
-        m_eventListeners.add(eventType, listeners);
-    } else {
-        ListenerVector& listeners = iter->second;
-        for (ListenerVector::iterator listenerIter = listeners.begin(); listenerIter != listeners.end(); ++listenerIter)
-            if (**listenerIter == *eventListener)
-                return;
-
-        listeners.append(eventListener);
-        m_eventListeners.add(eventType, listeners);
-    }
-}
-
-void XMLHttpRequest::removeEventListener(const AtomicString& eventType, EventListener* eventListener, bool)
-{
-    EventListenersMap::iterator iter = m_eventListeners.find(eventType);
-    if (iter == m_eventListeners.end())
-        return;
-
-    ListenerVector& listeners = iter->second;
-    for (ListenerVector::const_iterator listenerIter = listeners.begin(); listenerIter != listeners.end(); ++listenerIter)
-        if (**listenerIter == *eventListener) {
-            listeners.remove(listenerIter - listeners.begin());
-            return;
-        }
-}
-
-bool XMLHttpRequest::dispatchEvent(PassRefPtr<Event> evt, ExceptionCode& ec)
-{
-    // FIXME: check for other error conditions enumerated in the spec.
-    if (!evt || evt->type().isEmpty()) {
-        ec = EventException::UNSPECIFIED_EVENT_TYPE_ERR;
-        return true;
-    }
-
-    ListenerVector listenersCopy = m_eventListeners.get(evt->type());
-    for (ListenerVector::const_iterator listenerIter = listenersCopy.begin(); listenerIter != listenersCopy.end(); ++listenerIter) {
-        evt->setTarget(this);
-        evt->setCurrentTarget(this);
-        listenerIter->get()->handleEvent(evt.get(), false);
-    }
-
-    return !evt->defaultPrevented();
-}
-
 void XMLHttpRequest::changeState(State newState)
 {
     if (m_state != newState) {
@@ -298,10 +248,10 @@ void XMLHttpRequest::callReadyStateChangeListener()
     if (!scriptExecutionContext())
         return;
 
-    dispatchReadyStateChangeEvent();
+    dispatchEvent(XMLHttpRequestProgressEvent::create(eventNames().readystatechangeEvent));
 
     if (m_state == DONE && !m_error)
-        dispatchLoadEvent();
+        dispatchEvent(XMLHttpRequestProgressEvent::create(eventNames().loadEvent));
 }
 
 void XMLHttpRequest::setWithCredentials(bool value, ExceptionCode& ec)
@@ -479,10 +429,10 @@ void XMLHttpRequest::createRequest(ExceptionCode& ec)
     // Also, only async requests support upload progress events.
     bool forcePreflight = false;
     if (m_async) {
-        dispatchLoadStartEvent();
+        dispatchEvent(XMLHttpRequestProgressEvent::create(eventNames().loadstartEvent));
         if (m_requestEntityBody && m_upload) {
-            forcePreflight = m_upload->hasListeners();
-            m_upload->dispatchLoadStartEvent();
+            forcePreflight = m_upload->hasEventListeners();
+            m_upload->dispatchEvent(XMLHttpRequestProgressEvent::create(eventNames().loadstartEvent));
         }
     }
 
@@ -571,11 +521,11 @@ void XMLHttpRequest::abort()
         m_state = UNSENT;
     }
 
-    dispatchAbortEvent();
+    dispatchEvent(XMLHttpRequestProgressEvent::create(eventNames().abortEvent));
     if (!m_uploadComplete) {
         m_uploadComplete = true;
         if (m_upload && m_uploadEventsAllowed)
-            m_upload->dispatchAbortEvent();
+            m_upload->dispatchEvent(XMLHttpRequestProgressEvent::create(eventNames().abortEvent));
     }
 }
 
@@ -625,11 +575,11 @@ void XMLHttpRequest::genericError()
 void XMLHttpRequest::networkError()
 {
     genericError();
-    dispatchErrorEvent();
+    dispatchEvent(XMLHttpRequestProgressEvent::create(eventNames().errorEvent));
     if (!m_uploadComplete) {
         m_uploadComplete = true;
         if (m_upload && m_uploadEventsAllowed)
-            m_upload->dispatchErrorEvent();
+            m_upload->dispatchEvent(XMLHttpRequestProgressEvent::create(eventNames().errorEvent));
     }
     internalAbort();
 }
@@ -637,11 +587,11 @@ void XMLHttpRequest::networkError()
 void XMLHttpRequest::abortError()
 {
     genericError();
-    dispatchAbortEvent();
+    dispatchEvent(XMLHttpRequestProgressEvent::create(eventNames().abortEvent));
     if (!m_uploadComplete) {
         m_uploadComplete = true;
         if (m_upload && m_uploadEventsAllowed)
-            m_upload->dispatchAbortEvent();
+            m_upload->dispatchEvent(XMLHttpRequestProgressEvent::create(eventNames().abortEvent));
     }
 }
 
@@ -889,12 +839,12 @@ void XMLHttpRequest::didSendData(unsigned long long bytesSent, unsigned long lon
         return;
 
     if (m_uploadEventsAllowed)
-        m_upload->dispatchProgressEvent(bytesSent, totalBytesToBeSent);
+        m_upload->dispatchEvent(XMLHttpRequestProgressEvent::create(eventNames().progressEvent, true, bytesSent, totalBytesToBeSent));
 
     if (bytesSent == totalBytesToBeSent && !m_uploadComplete) {
         m_uploadComplete = true;
         if (m_uploadEventsAllowed)
-            m_upload->dispatchLoadEvent();
+            m_upload->dispatchEvent(XMLHttpRequestProgressEvent::create(eventNames().loadEvent));
     }
 }
 
@@ -942,7 +892,12 @@ void XMLHttpRequest::didReceiveData(const char* data, int len)
     m_responseText += m_decoder->decode(data, len);
 
     if (!m_error) {
-        updateAndDispatchOnProgress(len);
+        long long expectedLength = m_response.expectedContentLength();
+        m_receivedLength += len;
+
+        // FIXME: the spec requires that we dispatch the event according to the least
+        // frequent method between every 350ms (+/-200ms) and for every byte received.
+        dispatchEvent(XMLHttpRequestProgressEvent::create(eventNames().progressEvent, expectedLength && m_receivedLength <= expectedLength, m_receivedLength, expectedLength));
 
         if (m_state != LOADING)
             changeState(LOADING);
@@ -950,70 +905,6 @@ void XMLHttpRequest::didReceiveData(const char* data, int len)
             // Firefox calls readyStateChanged every time it receives data, 4449442
             callReadyStateChangeListener();
     }
-}
-
-void XMLHttpRequest::updateAndDispatchOnProgress(unsigned int len)
-{
-    long long expectedLength = m_response.expectedContentLength();
-    m_receivedLength += len;
-
-    // FIXME: the spec requires that we dispatch the event according to the least
-    // frequent method between every 350ms (+/-200ms) and for every byte received.
-    dispatchProgressEvent(expectedLength);
-}
-
-void XMLHttpRequest::dispatchReadyStateChangeEvent()
-{
-    RefPtr<Event> evt = Event::create(eventNames().readystatechangeEvent, false, false);
-    if (m_onReadyStateChangeListener) {
-        evt->setTarget(this);
-        evt->setCurrentTarget(this);
-        m_onReadyStateChangeListener->handleEvent(evt.get(), false);
-    }
-
-    ExceptionCode ec = 0;
-    dispatchEvent(evt.release(), ec);
-    ASSERT(!ec);
-}
-
-void XMLHttpRequest::dispatchXMLHttpRequestProgressEvent(EventListener* listener, const AtomicString& type, bool lengthComputable, unsigned loaded, unsigned total)
-{
-    RefPtr<XMLHttpRequestProgressEvent> evt = XMLHttpRequestProgressEvent::create(type, lengthComputable, loaded, total);
-    if (listener) {
-        evt->setTarget(this);
-        evt->setCurrentTarget(this);
-        listener->handleEvent(evt.get(), false);
-    }
-
-    ExceptionCode ec = 0;
-    dispatchEvent(evt.release(), ec);
-    ASSERT(!ec);
-}
-
-void XMLHttpRequest::dispatchAbortEvent()
-{
-    dispatchXMLHttpRequestProgressEvent(m_onAbortListener.get(), eventNames().abortEvent, false, 0, 0);
-}
-
-void XMLHttpRequest::dispatchErrorEvent()
-{
-    dispatchXMLHttpRequestProgressEvent(m_onErrorListener.get(), eventNames().errorEvent, false, 0, 0);
-}
-
-void XMLHttpRequest::dispatchLoadEvent()
-{
-    dispatchXMLHttpRequestProgressEvent(m_onLoadListener.get(), eventNames().loadEvent, false, 0, 0);
-}
-
-void XMLHttpRequest::dispatchLoadStartEvent()
-{
-    dispatchXMLHttpRequestProgressEvent(m_onLoadStartListener.get(), eventNames().loadstartEvent, false, 0, 0);
-}
-
-void XMLHttpRequest::dispatchProgressEvent(long long expectedLength)
-{
-    dispatchXMLHttpRequestProgressEvent(m_onProgressListener.get(), eventNames().progressEvent, expectedLength && m_receivedLength <= expectedLength,
-                                        static_cast<unsigned>(m_receivedLength), static_cast<unsigned>(expectedLength));
 }
 
 bool XMLHttpRequest::canSuspend() const
@@ -1035,6 +926,16 @@ void XMLHttpRequest::contextDestroyed()
 ScriptExecutionContext* XMLHttpRequest::scriptExecutionContext() const
 {
     return ActiveDOMObject::scriptExecutionContext();
+}
+
+EventTargetData* XMLHttpRequest::eventTargetData()
+{
+    return &m_eventTargetData;
+}
+
+EventTargetData* XMLHttpRequest::ensureEventTargetData()
+{
+    return &m_eventTargetData;
 }
 
 } // namespace WebCore

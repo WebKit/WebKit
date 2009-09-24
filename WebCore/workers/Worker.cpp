@@ -116,28 +116,13 @@ bool Worker::hasPendingActivity() const
 void Worker::notifyFinished()
 {
     if (m_scriptLoader->failed())
-        dispatchLoadErrorEvent();
+        dispatchEvent(Event::create(eventNames().errorEvent, false, true));
     else
         m_contextProxy->startWorkerContext(m_scriptLoader->url(), scriptExecutionContext()->userAgent(m_scriptLoader->url()), m_scriptLoader->script());
 
     m_scriptLoader = 0;
 
     unsetPendingActivity(this);
-}
-
-void Worker::dispatchMessage(const String& message, PassOwnPtr<MessagePortArray> ports)
-{
-    RefPtr<Event> evt = MessageEvent::create(message, "", "", 0, ports);
-
-    if (m_onMessageListener.get()) {
-        evt->setTarget(this);
-        evt->setCurrentTarget(this);
-        m_onMessageListener->handleEvent(evt.get(), false);
-    }
-
-    ExceptionCode ec = 0;
-    dispatchEvent(evt.release(), ec);
-    ASSERT(!ec);
 }
 
 } // namespace WebCore

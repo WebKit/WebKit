@@ -26,13 +26,13 @@ XMLHttpRequest should be an EventTarget.</p>
 
     function eventListener2() {
         log("eventListener2: this = " + this);
-        // It is too late to remove this listener, so it will still fire.
+        // Removing this event listener should prevent it from firing.
         req.removeEventListener("load", eventListener3, false);
     }
 
     function eventListener3() { log("eventListener3: this = " + this); }
     
-    // This one is removed just in time to be really removed.
+    // This listener is removed before it gets a chance to fire.
     function eventListener4() { log("eventListener4: this = " + this); }
 
     function fooListener() { log("fooListener: this = " + this); }

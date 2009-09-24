@@ -47,7 +47,7 @@ cancelBubble : 'false'
 cancelable : 'true'
 clipboardData : 'undefined'
 currentTarget : '[object XMLHttpRequest]'
-eventPhase : '0'
+eventPhase : '2'
 initEvent : 'function initEvent() {
     [native code]
 }'

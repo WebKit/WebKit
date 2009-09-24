@@ -34,11 +34,39 @@
 #include "config.h"
 #include "EventTarget.h"
 
+#include "Event.h"
+#include "EventException.h"
+#include <wtf/StdLibExtras.h>
+
+using namespace WTF;
+
 namespace WebCore {
 
 #ifndef NDEBUG
 static int gEventDispatchForbidden = 0;
-#endif
+
+void forbidEventDispatch()
+{
+    if (!isMainThread())
+        return;
+    ++gEventDispatchForbidden;
+}
+
+void allowEventDispatch()
+{
+    if (!isMainThread())
+        return;
+    if (gEventDispatchForbidden > 0)
+        --gEventDispatchForbidden;
+}
+
+bool eventDispatchForbidden()
+{
+    if (!isMainThread())
+        return false;
+    return gEventDispatchForbidden > 0;
+}
+#endif // NDEBUG
 
 EventTarget::~EventTarget()
 {
@@ -125,22 +153,153 @@ Notification* EventTarget::toNotification()
 }
 #endif
 
-#ifndef NDEBUG
-void forbidEventDispatch()
+bool EventTarget::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> listener, bool useCapture)
 {
-    ++gEventDispatchForbidden;
+    EventTargetData* d = ensureEventTargetData();
+
+    pair<EventListenerMap::iterator, bool> result = d->eventListenerMap.add(eventType, EventListenerVector());
+    EventListenerVector& entry = result.first->second;
+
+    RegisteredEventListener registeredListener(listener, useCapture);
+    if (!result.second) { // pre-existing entry
+        if (entry.find(registeredListener) != notFound) // duplicate listener
+            return false;
+    }
+
+    entry.append(registeredListener);
+    return true;
 }
 
-void allowEventDispatch()
+bool EventTarget::removeEventListener(const AtomicString& eventType, EventListener* listener, bool useCapture)
 {
-    if (gEventDispatchForbidden > 0)
-        --gEventDispatchForbidden;
+    EventTargetData* d = eventTargetData();
+    if (!d)
+        return false;
+
+    EventListenerMap::iterator result = d->eventListenerMap.find(eventType);
+    if (result == d->eventListenerMap.end())
+        return false;
+    EventListenerVector& entry = result->second;
+
+    RegisteredEventListener registeredListener(listener, useCapture);
+    size_t index = entry.find(registeredListener);
+    if (index == notFound)
+        return false;
+
+    entry.remove(index);
+    if (!entry.size())
+        d->eventListenerMap.remove(result);
+
+    // Notify firing events planning to invoke the listener at 'index' that
+    // they have one less listener to invoke.
+    for (size_t i = 0; i < d->firingEventEndIterators.size(); ++i) {
+        if (eventType == *d->firingEventEndIterators[i].eventType && index < *d->firingEventEndIterators[i].value)
+            --*d->firingEventEndIterators[i].value;
+    }
+
+    return true;
 }
 
-bool eventDispatchForbidden()
+bool EventTarget::setAttributeEventListener(const AtomicString& eventType, PassRefPtr<EventListener> listener)
 {
-    return gEventDispatchForbidden > 0;
+    clearAttributeEventListener(eventType);
+    if (!listener)
+        return false;
+    return addEventListener(eventType, listener, false);
 }
-#endif // NDEBUG
 
-} // end namespace
+EventListener* EventTarget::getAttributeEventListener(const AtomicString& eventType)
+{
+    const EventListenerVector& entry = getEventListeners(eventType);
+    for (size_t i = 0; i < entry.size(); ++i) {
+        if (entry[i].listener->isAttribute())
+            return entry[i].listener.get();
+    }
+    return 0;
+}
+
+bool EventTarget::clearAttributeEventListener(const AtomicString& eventType)
+{
+    EventListener* listener = getAttributeEventListener(eventType);
+    if (!listener)
+        return false;
+    return removeEventListener(eventType, listener, false);
+}
+
+bool EventTarget::dispatchEvent(PassRefPtr<Event> event, ExceptionCode& ec)
+{
+    if (!event || event->type().isEmpty()) {
+        ec = EventException::UNSPECIFIED_EVENT_TYPE_ERR;
+        return false;
+    }
+    return dispatchEvent(event);
+}
+
+bool EventTarget::dispatchEvent(PassRefPtr<Event> event)
+{
+    event->setTarget(this);
+    event->setCurrentTarget(this);
+    event->setEventPhase(Event::AT_TARGET);
+    return fireEventListeners(event.get());
+}
+
+bool EventTarget::fireEventListeners(Event* event)
+{
+    ASSERT(!eventDispatchForbidden());
+    ASSERT(event && !event->type().isEmpty());
+
+    EventTargetData* d = eventTargetData();
+    if (!d)
+        return true;
+
+    EventListenerMap::iterator result = d->eventListenerMap.find(event->type());
+    if (result == d->eventListenerMap.end())
+        return false;
+    EventListenerVector& entry = result->second;
+
+    RefPtr<EventTarget> protect = this;
+
+    size_t end = entry.size();
+    d->firingEventEndIterators.append(FiringEventEndIterator(&event->type(), &end));
+    for (size_t i = 0; i < end; ++i) {
+        RegisteredEventListener& registeredListener = entry[i];
+        if (event->eventPhase() == Event::CAPTURING_PHASE && !registeredListener.useCapture)
+            continue;
+        if (event->eventPhase() == Event::BUBBLING_PHASE && registeredListener.useCapture)
+            continue;
+        // To match Mozilla, the AT_TARGET phase fires both capturing and bubbling
+        // event listeners, even though that violates some versions of the DOM spec.
+        registeredListener.listener->handleEvent(event);
+    }
+    d->firingEventEndIterators.removeLast();
+
+    return !event->defaultPrevented();
+}
+
+const EventListenerVector& EventTarget::getEventListeners(const AtomicString& eventType)
+{
+    DEFINE_STATIC_LOCAL(EventListenerVector, emptyVector, ());
+
+    EventTargetData* d = eventTargetData();
+    if (!d)
+        return emptyVector;
+    EventListenerMap::iterator it = d->eventListenerMap.find(eventType);
+    if (it == d->eventListenerMap.end())
+        return emptyVector;
+    return it->second;
+}
+
+void EventTarget::removeAllEventListeners()
+{
+    EventTargetData* d = eventTargetData();
+    if (!d)
+        return;
+    d->eventListenerMap.clear();
+
+    // Notify firing events planning to invoke the listener at 'index' that
+    // they have one less listener to invoke.
+    for (size_t i = 0; i < d->firingEventEndIterators.size(); ++i)
+        *d->firingEventEndIterators[i].value = 0;
+}
+
+} // namespace WebCore

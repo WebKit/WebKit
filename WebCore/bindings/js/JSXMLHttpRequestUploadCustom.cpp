@@ -51,19 +51,7 @@ void JSXMLHttpRequestUpload::markChildren(MarkStack& markStack)
             markStack.append(wrapper);
     }
 
-    markIfNotNull(markStack, m_impl->onabort());
-    markIfNotNull(markStack, m_impl->onerror());
-    markIfNotNull(markStack, m_impl->onload());
-    markIfNotNull(markStack, m_impl->onloadstart());
-    markIfNotNull(markStack, m_impl->onprogress());
-    
-    typedef XMLHttpRequestUpload::EventListenersMap EventListenersMap;
-    typedef XMLHttpRequestUpload::ListenerVector ListenerVector;
-    EventListenersMap& eventListeners = m_impl->eventListeners();
-    for (EventListenersMap::iterator mapIter = eventListeners.begin(); mapIter != eventListeners.end(); ++mapIter) {
-        for (ListenerVector::iterator vecIter = mapIter->second.begin(); vecIter != mapIter->second.end(); ++vecIter)
-            (*vecIter)->markJSFunction(markStack);
-    }
+    m_impl->markEventListeners(markStack);
 }
 
 JSValue JSXMLHttpRequestUpload::addEventListener(ExecState* exec, const ArgList& args)

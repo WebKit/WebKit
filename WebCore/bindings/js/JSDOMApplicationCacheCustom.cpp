@@ -42,28 +42,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSDOMApplicationCache::markChildren(MarkStack& markStack)
-{
-    Base::markChildren(markStack);
-
-    markIfNotNull(markStack, m_impl->onchecking());
-    markIfNotNull(markStack, m_impl->onerror());
-    markIfNotNull(markStack, m_impl->onnoupdate());
-    markIfNotNull(markStack, m_impl->ondownloading());
-    markIfNotNull(markStack, m_impl->onprogress());
-    markIfNotNull(markStack, m_impl->onupdateready());
-    markIfNotNull(markStack, m_impl->oncached());
-    markIfNotNull(markStack, m_impl->onobsolete());
-
-    typedef DOMApplicationCache::EventListenersMap EventListenersMap;
-    typedef DOMApplicationCache::ListenerVector ListenerVector;
-    EventListenersMap& eventListeners = m_impl->eventListeners();
-    for (EventListenersMap::iterator mapIter = eventListeners.begin(); mapIter != eventListeners.end(); ++mapIter) {
-        for (ListenerVector::iterator vecIter = mapIter->second.begin(); vecIter != mapIter->second.end(); ++vecIter)
-            (*vecIter)->markJSFunction(markStack);
-    }
-}
-
 #if ENABLE(APPLICATION_CACHE_DYNAMIC_ENTRIES)
 
 JSValue JSDOMApplicationCache::hasItem(ExecState* exec, const ArgList& args)

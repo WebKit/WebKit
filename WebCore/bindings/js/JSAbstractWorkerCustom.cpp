@@ -44,21 +44,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSAbstractWorker::markChildren(MarkStack& markStack)
-{
-    Base::markChildren(markStack);
-
-    markIfNotNull(markStack, m_impl->onerror());
-
-    typedef AbstractWorker::EventListenersMap EventListenersMap;
-    typedef AbstractWorker::ListenerVector ListenerVector;
-    EventListenersMap& eventListeners = m_impl->eventListeners();
-    for (EventListenersMap::iterator mapIter = eventListeners.begin(); mapIter != eventListeners.end(); ++mapIter) {
-        for (ListenerVector::iterator vecIter = mapIter->second.begin(); vecIter != mapIter->second.end(); ++vecIter)
-            (*vecIter)->markJSFunction(markStack);
-    }
-}
-
 JSValue JSAbstractWorker::addEventListener(ExecState* exec, const ArgList& args)
 {
     JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(impl()->scriptExecutionContext());

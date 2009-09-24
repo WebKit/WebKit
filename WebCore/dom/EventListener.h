@@ -44,7 +44,7 @@ namespace WebCore {
                     
         virtual ~EventListener() { }
         virtual bool operator==(const EventListener&) = 0;
-        virtual void handleEvent(Event*, bool isWindowEvent = false) = 0;
+        virtual void handleEvent(Event*) = 0;
         // Return true to indicate that the error is handled.
         virtual bool reportError(const String& /*message*/, const String& /*url*/, int /*lineNumber*/) { return false; }
         virtual bool wasCreatedFromMarkup() const { return false; }
@@ -68,10 +68,6 @@ namespace WebCore {
         
         Type m_type;
     };
-
-#if USE(JSC)
-    inline void markIfNotNull(JSC::MarkStack& markStack, EventListener* listener) { if (listener) listener->markJSFunction(markStack); }
-#endif
 
 }
 

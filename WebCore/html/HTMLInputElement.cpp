@@ -1742,7 +1742,7 @@ void HTMLInputElement::onSearch()
     ASSERT(isSearchField());
     if (renderer())
         toRenderTextControlSingleLine(renderer())->stopSearchEventTimer();
-    dispatchEvent(eventNames().searchEvent, true, false);
+    dispatchEvent(Event::create(eventNames().searchEvent, true, false));
 }
 
 VisibleSelection HTMLInputElement::selection() const

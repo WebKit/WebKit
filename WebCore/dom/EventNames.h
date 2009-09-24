@@ -45,6 +45,7 @@ namespace WebCore {
     macro(copy) \
     macro(cut) \
     macro(dblclick) \
+    macro(display) \
     macro(downloading) \
     macro(drag) \
     macro(dragend) \

@@ -1,3 +1,34 @@
+2009-09-23  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Layout tests for event target sanitization.
+        
+        New tests for event dispatch:
+
+        * fast/events/event-attributes-after-exception-expected.txt: Added.
+        * fast/events/event-attributes-after-exception.html: Added.
+        * fast/events/event-fire-order-expected.txt: Added.
+        * fast/events/event-fire-order.html: Added.
+        * fast/events/event-fired-after-removal-expected.txt: Added.
+        * fast/events/event-fired-after-removal.html: Added.
+        
+        Fixed these tests:
+
+        * fast/xmlhttprequest/xmlhttprequest-get-expected.txt: eventPhase should
+        be AT_TARGET (2) when firing an event on an XHR, not INVALID (0).
+        * http/tests/xmlhttprequest/infoOnProgressEvent-expected.txt: ditto
+
+        * http/tests/xmlhttprequest/event-target-expected.txt:
+        * http/tests/xmlhttprequest/event-target.html: Removing an event listener
+        during event dispatch should prevent it from firing. (This test was backwards.)
+        
+        * svg/custom/loadevents-capturing.svg: Enhanced this test to tell you
+        why it fails when it fails. Changed it to register runTest() (now named 
+        reportResults()) using addEventListener() instead of the 'onload' attribute.
+        The test relies on reportResults() running after handler(), so it needs
+        to register reportResults() after handler().
+
 2009-09-23  Karen Grünberg  <karen+webkit@chromium.org>
 
         Reviewed by Eric Seidel.

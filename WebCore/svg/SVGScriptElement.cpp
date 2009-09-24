@@ -26,6 +26,7 @@
 #include "SVGScriptElement.h"
 
 #include "Document.h"
+#include "Event.h"
 #include "EventNames.h"
 #include "MappedAttribute.h"
 #include "SVGNames.h"
@@ -209,7 +210,7 @@ void SVGScriptElement::dispatchLoadEvent()
 
 void SVGScriptElement::dispatchErrorEvent()
 {
-    dispatchEvent(eventNames().errorEvent, true, false);
+    dispatchEvent(Event::create(eventNames().errorEvent, true, false));
 }
 
 }

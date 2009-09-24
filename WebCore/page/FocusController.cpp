@@ -36,6 +36,7 @@
 #include "Event.h"
 #include "EventHandler.h"
 #include "EventNames.h"
+#include "ExceptionCode.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "FrameTree.h"
@@ -62,7 +63,7 @@ static inline void dispatchEventsOnWindowAndFocusedNode(Document* document, bool
     // https://bugs.webkit.org/show_bug.cgi?id=27105
     if (!focused && document->focusedNode())
         document->focusedNode()->dispatchBlurEvent();
-    document->dispatchWindowEvent(focused ? eventNames().focusEvent : eventNames().blurEvent, false, false);
+    document->dispatchWindowEvent(Event::create(focused ? eventNames().focusEvent : eventNames().blurEvent, false, false));
     if (focused && document->focusedNode())
         document->focusedNode()->dispatchFocusEvent();
 }
@@ -87,12 +88,12 @@ void FocusController::setFocusedFrame(PassRefPtr<Frame> frame)
     // Now that the frame is updated, fire events and update the selection focused states of both frames.
     if (oldFrame && oldFrame->view()) {
         oldFrame->selection()->setFocused(false);
-        oldFrame->document()->dispatchWindowEvent(eventNames().blurEvent, false, false);
+        oldFrame->document()->dispatchWindowEvent(Event::create(eventNames().blurEvent, false, false));
     }
 
     if (newFrame && newFrame->view() && isFocused()) {
         newFrame->selection()->setFocused(true);
-        newFrame->document()->dispatchWindowEvent(eventNames().focusEvent, false, false);
+        newFrame->document()->dispatchWindowEvent(Event::create(eventNames().focusEvent, false, false));
     }
 }
 

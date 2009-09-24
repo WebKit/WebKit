@@ -169,75 +169,12 @@ void MessagePort::dispatchMessages()
     OwnPtr<MessagePortChannel::EventData> eventData;
     while (m_entangledChannel && m_entangledChannel->tryGetMessageFromRemote(eventData)) {
         OwnPtr<MessagePortArray> ports = MessagePort::entanglePorts(*m_scriptExecutionContext, eventData->channels());
-        RefPtr<Event> evt = MessageEvent::create(eventData->message(), "", "", 0, ports.release());
-
-        if (m_onMessageListener) {
-            evt->setTarget(this);
-            evt->setCurrentTarget(this);
-            m_onMessageListener->handleEvent(evt.get(), false);
-        }
+        RefPtr<Event> evt = MessageEvent::create(ports.release(), eventData->message());
 
         ExceptionCode ec = 0;
         dispatchEvent(evt.release(), ec);
         ASSERT(!ec);
     }
-}
-
-void MessagePort::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> eventListener, bool)
-{
-    EventListenersMap::iterator iter = m_eventListeners.find(eventType);
-    if (iter == m_eventListeners.end()) {
-        ListenerVector listeners;
-        listeners.append(eventListener);
-        m_eventListeners.add(eventType, listeners);
-    } else {
-        ListenerVector& listeners = iter->second;
-        for (ListenerVector::iterator listenerIter = listeners.begin(); listenerIter != listeners.end(); ++listenerIter) {
-            if (**listenerIter == *eventListener)
-                return;
-        }
-        
-        listeners.append(eventListener);
-        m_eventListeners.add(eventType, listeners);
-    }    
-}
-
-void MessagePort::removeEventListener(const AtomicString& eventType, EventListener* eventListener, bool)
-{
-    EventListenersMap::iterator iter = m_eventListeners.find(eventType);
-    if (iter == m_eventListeners.end())
-        return;
-    
-    ListenerVector& listeners = iter->second;
-    for (ListenerVector::const_iterator listenerIter = listeners.begin(); listenerIter != listeners.end(); ++listenerIter) {
-        if (**listenerIter == *eventListener) {
-            listeners.remove(listenerIter - listeners.begin());
-            return;
-        }
-    }
-}
-
-bool MessagePort::dispatchEvent(PassRefPtr<Event> event, ExceptionCode& ec)
-{
-    if (!event || event->type().isEmpty()) {
-        ec = EventException::UNSPECIFIED_EVENT_TYPE_ERR;
-        return true;
-    }
-    
-    ListenerVector listenersCopy = m_eventListeners.get(event->type());
-    for (ListenerVector::const_iterator listenerIter = listenersCopy.begin(); listenerIter != listenersCopy.end(); ++listenerIter) {
-        event->setTarget(this);
-        event->setCurrentTarget(this);
-        listenerIter->get()->handleEvent(event.get(), false);
-    }
-    
-    return !event->defaultPrevented();
-}
-
-void MessagePort::setOnmessage(PassRefPtr<EventListener> eventListener)
-{
-    m_onMessageListener = eventListener;
-    start();
 }
 
 bool MessagePort::hasPendingActivity()
@@ -292,6 +229,16 @@ PassOwnPtr<MessagePortArray> MessagePort::entanglePorts(ScriptExecutionContext& 
         (*portArray)[i] = port.release();
     }
     return portArray;
+}
+
+EventTargetData* MessagePort::eventTargetData()
+{
+    return &m_eventTargetData;
+}
+
+EventTargetData* MessagePort::ensureEventTargetData()
+{
+    return &m_eventTargetData;
 }
 
 } // namespace WebCore

@@ -37,7 +37,7 @@ namespace WebCore {
         {
             return adoptRef(new XMLHttpRequestProgressEvent);
         }
-        static PassRefPtr<XMLHttpRequestProgressEvent> create(const AtomicString& type, bool lengthComputable, unsigned loaded, unsigned total)
+        static PassRefPtr<XMLHttpRequestProgressEvent> create(const AtomicString& type, bool lengthComputable = false, unsigned loaded = 0, unsigned total = 0)
         {
             return adoptRef(new XMLHttpRequestProgressEvent(type, lengthComputable, loaded, total));
         }

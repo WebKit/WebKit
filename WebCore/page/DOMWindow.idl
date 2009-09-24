@@ -39,6 +39,7 @@ module window {
         CustomNativeConverter,
         CustomPutFunction,
         ExtendsDOMGlobalObject,
+        EventTarget,
         GenerateNativeConverter,
         LegacyParent=JSDOMWindowBase
     ] DOMWindow {

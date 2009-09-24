@@ -463,8 +463,8 @@ void HTMLMediaElement::loadInternal()
         bool totalKnown = m_player && m_player->totalBytesKnown();
         unsigned loaded = m_player ? m_player->bytesLoaded() : 0;
         unsigned total = m_player ? m_player->totalBytes() : 0;
-        dispatchProgressEvent(eventNames().abortEvent, totalKnown, loaded, total);
-        dispatchProgressEvent(eventNames().loadendEvent, totalKnown, loaded, total);
+        dispatchEvent(ProgressEvent::create(eventNames().abortEvent, totalKnown, loaded, total));
+        dispatchEvent(ProgressEvent::create(eventNames().loadendEvent, totalKnown, loaded, total));
     }
 
     // 5
@@ -487,7 +487,7 @@ void HTMLMediaElement::loadInternal()
             m_playing = false;
             m_player->seek(0);
         }
-        dispatchEvent(eventNames().emptiedEvent, false, true);
+        dispatchEvent(Event::create(eventNames().emptiedEvent, false, true));
     }
 
     selectMediaResource();

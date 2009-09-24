@@ -36,6 +36,8 @@
 #include "EventNames.h"
 #include "Frame.h"
 #include "RenderView.h"
+#include "WebKitAnimationEvent.h"
+#include "WebKitTransitionEvent.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/UnusedParam.h>
 
@@ -136,9 +138,9 @@ void AnimationControllerPrivate::updateStyleIfNeededDispatcherFired(Timer<Animat
     Vector<EventToDispatch>::const_iterator eventsToDispatchEnd = m_eventsToDispatch.end();
     for (Vector<EventToDispatch>::const_iterator it = m_eventsToDispatch.begin(); it != eventsToDispatchEnd; ++it) {
         if (it->eventType == eventNames().webkitTransitionEndEvent)
-            it->element->dispatchWebKitTransitionEvent(it->eventType, it->name, it->elapsedTime);
+            it->element->dispatchEvent(WebKitTransitionEvent::create(it->eventType, it->name, it->elapsedTime));
         else
-            it->element->dispatchWebKitAnimationEvent(it->eventType, it->name, it->elapsedTime);
+            it->element->dispatchEvent(WebKitAnimationEvent::create(it->eventType, it->name, it->elapsedTime));
     }
     
     m_eventsToDispatch.clear();

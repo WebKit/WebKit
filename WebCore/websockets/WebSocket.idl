@@ -31,9 +31,9 @@
 module websockets {
 
     interface [
-        CustomMarkFunction,
-        NoStaticTables,
-        Conditional=WEB_SOCKETS
+        Conditional=WEB_SOCKETS,
+        EventTarget,
+        NoStaticTables
     ] WebSocket {
         readonly attribute DOMString URL;
 

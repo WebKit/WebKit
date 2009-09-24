@@ -37,6 +37,7 @@
 
 namespace WebCore {
 
+    class MessageEvent;
     class SharedWorkerThread;
 
     class SharedWorkerContext : public WorkerContext {
@@ -54,18 +55,16 @@ namespace WebCore {
         virtual SharedWorkerContext* toSharedWorkerContext() { return this; }
 
         // Setters/Getters for attributes in SharedWorkerContext.idl
-        void setOnconnect(PassRefPtr<EventListener> eventListener) { m_onconnectListener = eventListener; }
-        EventListener* onconnect() const { return m_onconnectListener.get(); }
+        DEFINE_ATTRIBUTE_EVENT_LISTENER(connect);
         String name() const { return m_name; }
-
-        void dispatchConnect(PassRefPtr<MessagePort>);
 
         SharedWorkerThread* thread();
     private:
         SharedWorkerContext(const String& name, const KURL&, const String&, SharedWorkerThread*);
-        RefPtr<EventListener> m_onconnectListener;
         String m_name;
     };
+
+    PassRefPtr<MessageEvent> createConnectEvent(PassRefPtr<MessagePort>);
 
 } // namespace WebCore
 

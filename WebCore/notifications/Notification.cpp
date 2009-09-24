@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -96,137 +97,14 @@ void Notification::cancel()
         m_presenter->cancel(this);
 }
 
-EventListener* Notification::ondisplay() const
+EventTargetData* Notification::eventTargetData()
 {
-    return getAttributeEventListener("display");
+    return &m_eventTargetData;
 }
 
-void Notification::setOndisplay(PassRefPtr<EventListener> eventListener)
+EventTargetData* Notification::ensureEventTargetData()
 {
-    setAttributeEventListener("display", eventListener);
-}
-
-EventListener* Notification::onerror() const
-{
-    return getAttributeEventListener(eventNames().errorEvent);
-}
-
-void Notification::setOnerror(PassRefPtr<EventListener> eventListener)
-{
-    setAttributeEventListener(eventNames().errorEvent, eventListener);
-}
-
-EventListener* Notification::onclose() const
-{
-    return getAttributeEventListener(eventNames().closeEvent);
-}
-
-void Notification::setOnclose(PassRefPtr<EventListener> eventListener)
-{
-    setAttributeEventListener(eventNames().closeEvent, eventListener);
-}
-
-EventListener* Notification::getAttributeEventListener(const AtomicString& eventType) const
-{
-    const RegisteredEventListenerVector& listeners = m_eventListeners;
-    size_t size = listeners.size();
-    for (size_t i = 0; i < size; ++i) {
-        const RegisteredEventListener& r = *listeners[i];
-        if (r.eventType() == eventType && r.listener()->isAttribute())
-            return r.listener();
-    }
-    return 0;
-}
-
-void Notification::setAttributeEventListener(const AtomicString& eventType, PassRefPtr<EventListener> listener)
-{
-    clearAttributeEventListener(eventType);
-    if (listener)
-        addEventListener(eventType, listener, false);
-}
-
-void Notification::clearAttributeEventListener(const AtomicString& eventType)
-{
-    RegisteredEventListenerVector* listeners = &m_eventListeners;
-    size_t size = listeners->size();
-    for (size_t i = 0; i < size; ++i) {
-        RegisteredEventListener& r = *listeners->at(i);
-        if (r.eventType() != eventType || !r.listener()->isAttribute())
-            continue;
-
-        r.setRemoved(true);
-        listeners->remove(i);
-        return;
-    }
-}
-
-void Notification::dispatchDisplayEvent() 
-{   
-    RefPtr<Event> event = Event::create("display", false, true);
-    ExceptionCode ec = 0;
-    dispatchEvent(event.release(), ec);
-    ASSERT(!ec);
-}
-
-void Notification::dispatchErrorEvent()
-{  
-    RefPtr<Event> event = Event::create(eventNames().errorEvent, false, true);
-    ExceptionCode ec = 0;
-    dispatchEvent(event.release(), ec);
-    ASSERT(!ec);
-}
-
-void Notification::dispatchCloseEvent() 
-{   
-    RefPtr<Event> event = Event::create(eventNames().closeEvent, false, true);
-    ExceptionCode ec = 0;
-    dispatchEvent(event.release(), ec);
-    ASSERT(!ec);
-}
-
-void Notification::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> listener, bool useCapture)
-{
-    RefPtr<RegisteredEventListener> registeredListener = RegisteredEventListener::create(eventType, listener, useCapture);
-    m_eventListeners.append(registeredListener);
-}
-
-void Notification::removeEventListener(const AtomicString& eventType, EventListener* listener, bool useCapture)
-{
-    size_t size = m_eventListeners.size();
-    for (size_t i = 0; i < size; ++i) {
-        RegisteredEventListener& r = *m_eventListeners[i];
-        if (r.eventType() == eventType && r.useCapture() == useCapture && *r.listener() == *listener) {
-            r.setRemoved(true);
-            m_eventListeners.remove(i);
-            return; 
-        }
-    }
-}
-
-void Notification::handleEvent(PassRefPtr<Event> event, bool useCapture)
-{
-    RegisteredEventListenerVector listenersCopy = m_eventListeners;
-    size_t size = listenersCopy.size();
-    for (size_t i = 0; i < size; ++i) {
-        RegisteredEventListener& r = *listenersCopy[i];
-        if (r.eventType() == event->type() && r.useCapture() == useCapture && !r.removed())
-            r.listener()->handleEvent(event.get());
-    }
-}
-
-bool Notification::dispatchEvent(PassRefPtr<Event> inEvent, ExceptionCode&)
-{
-    RefPtr<Event> event(inEvent);
-
-    event->setEventPhase(Event::AT_TARGET);
-    event->setCurrentTarget(this);
-
-    handleEvent(event.get(), true);
-    if (!event->propagationStopped()) {
-        handleEvent(event.get(), false);
-    }
-
-    return !event->defaultPrevented();
+    return &m_eventTargetData;
 }
 
 } // namespace WebCore

@@ -52,90 +52,6 @@ AbstractWorker::~AbstractWorker()
 {
 }
 
-void AbstractWorker::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> eventListener, bool)
-{
-    EventListenersMap::iterator iter = m_eventListeners.find(eventType);
-    if (iter == m_eventListeners.end()) {
-        ListenerVector listeners;
-        listeners.append(eventListener);
-        m_eventListeners.add(eventType, listeners);
-    } else {
-        ListenerVector& listeners = iter->second;
-        for (ListenerVector::iterator listenerIter = listeners.begin(); listenerIter != listeners.end(); ++listenerIter) {
-            if (**listenerIter == *eventListener)
-                return;
-        }
-
-        listeners.append(eventListener);
-        m_eventListeners.add(eventType, listeners);
-    }
-}
-
-void AbstractWorker::removeEventListener(const AtomicString& eventType, EventListener* eventListener, bool)
-{
-    EventListenersMap::iterator iter = m_eventListeners.find(eventType);
-    if (iter == m_eventListeners.end())
-        return;
-
-    ListenerVector& listeners = iter->second;
-    for (ListenerVector::const_iterator listenerIter = listeners.begin(); listenerIter != listeners.end(); ++listenerIter) {
-        if (**listenerIter == *eventListener) {
-            listeners.remove(listenerIter - listeners.begin());
-            return;
-        }
-    }
-}
-
-bool AbstractWorker::dispatchEvent(PassRefPtr<Event> event, ExceptionCode& ec)
-{
-    if (!event || event->type().isEmpty()) {
-        ec = EventException::UNSPECIFIED_EVENT_TYPE_ERR;
-        return true;
-    }
-
-    ListenerVector listenersCopy = m_eventListeners.get(event->type());
-    for (ListenerVector::const_iterator listenerIter = listenersCopy.begin(); listenerIter != listenersCopy.end(); ++listenerIter) {
-        event->setTarget(this);
-        event->setCurrentTarget(this);
-        listenerIter->get()->handleEvent(event.get(), false);
-    }
-
-    return !event->defaultPrevented();
-}
-
-void AbstractWorker::dispatchLoadErrorEvent()
-{
-    RefPtr<Event> evt = Event::create(eventNames().errorEvent, false, true);
-    if (m_onErrorListener) {
-        evt->setTarget(this);
-        evt->setCurrentTarget(this);
-        m_onErrorListener->handleEvent(evt.get(), true);
-    }
-
-    ExceptionCode ec = 0;
-    dispatchEvent(evt.release(), ec);
-    ASSERT(!ec);
-}
-
-bool AbstractWorker::dispatchScriptErrorEvent(const String& message, const String& sourceURL, int lineNumber)
-{
-    bool handled = false;
-    RefPtr<ErrorEvent> event = ErrorEvent::create(message, sourceURL, static_cast<unsigned>(lineNumber));
-    if (m_onErrorListener) {
-        event->setTarget(this);
-        event->setCurrentTarget(this);
-        m_onErrorListener->handleEvent(event.get(), true);
-        if (event->defaultPrevented())
-            handled = true;
-    }
-
-    ExceptionCode ec = 0;
-    handled = !dispatchEvent(event.release(), ec);
-    ASSERT(!ec);
-
-    return handled;
-}
-
 KURL AbstractWorker::resolveURL(const String& url, ExceptionCode& ec)
 {
     if (url.isEmpty()) {
@@ -155,6 +71,16 @@ KURL AbstractWorker::resolveURL(const String& url, ExceptionCode& ec)
         return KURL();
     }
     return scriptURL;
+}
+
+EventTargetData* AbstractWorker::eventTargetData()
+{
+    return &m_eventTargetData;
+}
+
+EventTargetData* AbstractWorker::ensureEventTargetData()
+{
+    return &m_eventTargetData;
 }
 
 } // namespace WebCore

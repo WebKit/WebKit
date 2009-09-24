@@ -59,15 +59,12 @@ namespace WebCore {
         void postMessage(const String&, const MessagePortArray*, ExceptionCode&);
         // FIXME: remove this when we update the ObjC bindings (bug #28774).
         void postMessage(const String&, MessagePort*, ExceptionCode&);
-        void setOnmessage(PassRefPtr<EventListener> eventListener) { m_onmessageListener = eventListener; }
-        EventListener* onmessage() const { return m_onmessageListener.get(); }
 
-        void dispatchMessage(const String&, PassOwnPtr<MessagePortArray>);
+        DEFINE_ATTRIBUTE_EVENT_LISTENER(message);
 
         DedicatedWorkerThread* thread();
     private:
         DedicatedWorkerContext(const KURL&, const String&, DedicatedWorkerThread*);
-        RefPtr<EventListener> m_onmessageListener;
     };
 
 } // namespace WebCore

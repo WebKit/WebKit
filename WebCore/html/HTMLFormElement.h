@@ -54,7 +54,7 @@ public:
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
  
-    virtual void handleLocalEvents(Event*, bool useCapture);
+    virtual void handleLocalEvents(Event*);
      
     PassRefPtr<HTMLCollection> elements();
     void getNamedElements(const AtomicString&, Vector<RefPtr<Node> >&);

@@ -52,23 +52,23 @@ namespace WebCore {
 class ProcessWebSocketEventTask : public ScriptExecutionContext::Task {
 public:
     typedef void (WebSocket::*Method)(Event*);
-    static PassRefPtr<ProcessWebSocketEventTask> create(PassRefPtr<WebSocket> webSocket, Method method, PassRefPtr<Event> event)
+    static PassRefPtr<ProcessWebSocketEventTask> create(PassRefPtr<WebSocket> webSocket, PassRefPtr<Event> event)
     {
-        return adoptRef(new ProcessWebSocketEventTask(webSocket, method, event));
+        return adoptRef(new ProcessWebSocketEventTask(webSocket, event));
     }
     virtual void performTask(ScriptExecutionContext*)
     {
-        (m_webSocket.get()->*m_method)(m_event.get());
+        ExceptionCode ec = 0;
+        m_webSocket->dispatchEvent(m_event.get(), ec);
+        ASSERT(!ec);
     }
 
   private:
-    ProcessWebSocketEventTask(PassRefPtr<WebSocket> webSocket, Method method, PassRefPtr<Event> event)
+    ProcessWebSocketEventTask(PassRefPtr<WebSocket> webSocket, PassRefPtr<Event> event)
         : m_webSocket(webSocket)
-        , m_method(method)
         , m_event(event) { }
 
     RefPtr<WebSocket> m_webSocket;
-    Method m_method;
     RefPtr<Event> m_event;
 };
 
@@ -171,54 +171,6 @@ ScriptExecutionContext* WebSocket::scriptExecutionContext() const
     return ActiveDOMObject::scriptExecutionContext();
 }
 
-void WebSocket::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> eventListener, bool)
-{
-    EventListenersMap::iterator iter = m_eventListeners.find(eventType);
-    if (iter == m_eventListeners.end()) {
-        ListenerVector listeners;
-        listeners.append(eventListener);
-        m_eventListeners.add(eventType, listeners);
-    } else {
-        ListenerVector& listeners = iter->second;
-        for (ListenerVector::iterator listenerIter = listeners.begin(); listenerIter != listeners.end(); ++listenerIter)
-            if (*listenerIter == eventListener)
-                return;
-
-        listeners.append(eventListener);
-        m_eventListeners.add(eventType, listeners);
-    }
-}
-
-void WebSocket::removeEventListener(const AtomicString& eventType, EventListener* eventListener, bool)
-{
-    EventListenersMap::iterator iter = m_eventListeners.find(eventType);
-    if (iter == m_eventListeners.end())
-        return;
-
-    ListenerVector& listeners = iter->second;
-    for (ListenerVector::const_iterator listenerIter = listeners.begin(); listenerIter != listeners.end(); ++listenerIter)
-        if (*listenerIter == eventListener) {
-            listeners.remove(listenerIter - listeners.begin());
-            return;
-        }
-}
-
-bool WebSocket::dispatchEvent(PassRefPtr<Event> evt, ExceptionCode& ec)
-{
-    if (!evt || evt->type().isEmpty()) {
-        ec = EventException::UNSPECIFIED_EVENT_TYPE_ERR;
-        return true;
-    }
-
-    ListenerVector listenersCopy = m_eventListeners.get(evt->type());
-    for (ListenerVector::const_iterator listenerIter = listenersCopy.begin(); listenerIter != listenersCopy.end(); ++listenerIter) {
-        evt->setTarget(this);
-        evt->setCurrentTarget(this);
-        listenerIter->get()->handleEvent(evt.get(), false);
-    }
-    return !evt->defaultPrevented();
-}
-
 void WebSocket::didConnect()
 {
     LOG(Network, "WebSocket %p didConnect", this);
@@ -227,7 +179,7 @@ void WebSocket::didConnect()
         return;
     }
     m_state = OPEN;
-    scriptExecutionContext()->postTask(ProcessWebSocketEventTask::create(this, &WebSocket::dispatchOpenEvent, Event::create(eventNames().openEvent, false, false)));
+    scriptExecutionContext()->postTask(ProcessWebSocketEventTask::create(this, Event::create(eventNames().openEvent, false, false)));
 }
 
 void WebSocket::didReceiveMessage(const String& msg)
@@ -238,53 +190,24 @@ void WebSocket::didReceiveMessage(const String& msg)
     RefPtr<MessageEvent> evt = MessageEvent::create();
     // FIXME: origin, lastEventId, source, messagePort.
     evt->initMessageEvent(eventNames().messageEvent, false, false, msg, "", "", 0, 0);
-    scriptExecutionContext()->postTask(ProcessWebSocketEventTask::create(this, &WebSocket::dispatchMessageEvent, evt));
+    scriptExecutionContext()->postTask(ProcessWebSocketEventTask::create(this, evt));
 }
 
 void WebSocket::didClose()
 {
     LOG(Network, "WebSocket %p didClose", this);
     m_state = CLOSED;
-    scriptExecutionContext()->postTask(ProcessWebSocketEventTask::create(this, &WebSocket::dispatchCloseEvent, Event::create(eventNames().closeEvent, false, false)));
+    scriptExecutionContext()->postTask(ProcessWebSocketEventTask::create(this, Event::create(eventNames().closeEvent, false, false)));
 }
 
-void WebSocket::dispatchOpenEvent(Event* evt)
+EventTargetData* WebSocket::eventTargetData()
 {
-    if (m_onopen) {
-        evt->setTarget(this);
-        evt->setCurrentTarget(this);
-        m_onopen->handleEvent(evt, false);
-    }
-
-    ExceptionCode ec = 0;
-    dispatchEvent(evt, ec);
-    ASSERT(!ec);
+    return &m_eventTargetData;
 }
 
-void WebSocket::dispatchMessageEvent(Event* evt)
+EventTargetData* WebSocket::ensureEventTargetData()
 {
-    if (m_onmessage) {
-        evt->setTarget(this);
-        evt->setCurrentTarget(this);
-        m_onmessage->handleEvent(evt, false);
-    }
-
-    ExceptionCode ec = 0;
-    dispatchEvent(evt, ec);
-    ASSERT(!ec);
-}
-
-void WebSocket::dispatchCloseEvent(Event* evt)
-{
-    if (m_onclose) {
-        evt->setTarget(this);
-        evt->setCurrentTarget(this);
-        m_onclose->handleEvent(evt, false);
-    }
-
-    ExceptionCode ec = 0;
-    dispatchEvent(evt, ec);
-    ASSERT(!ec);
+    return &m_eventTargetData;
 }
 
 }  // namespace WebCore

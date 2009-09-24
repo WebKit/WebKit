@@ -56,7 +56,7 @@ void JSEventListener::markJSFunction(MarkStack& markStack)
     markStack.append(m_globalObject);
 }
 
-void JSEventListener::handleEvent(Event* event, bool isWindowEvent)
+void JSEventListener::handleEvent(Event* event)
 {
     JSLock lock(SilenceAssertionsOnly);
 
@@ -106,19 +106,10 @@ void JSEventListener::handleEvent(Event* event, bool isWindowEvent)
         JSGlobalData* globalData = globalObject->globalData();
         DynamicGlobalObjectScope globalObjectScope(exec, globalData->dynamicGlobalObject ? globalData->dynamicGlobalObject : globalObject);
 
-        JSValue retval;
-        if (handleEventFunction) {
-            globalData->timeoutChecker.start();
-            retval = call(exec, handleEventFunction, callType, callData, jsFunction, args);
-        } else {
-            JSValue thisValue;
-            if (isWindowEvent)
-                thisValue = globalObject->toThisObject(exec);
-            else
-                thisValue = toJS(exec, globalObject, event->currentTarget());
-            globalData->timeoutChecker.start();
-            retval = call(exec, jsFunction, callType, callData, thisValue, args);
-        }
+        globalData->timeoutChecker.start();
+        JSValue retval = handleEventFunction
+            ? call(exec, handleEventFunction, callType, callData, jsFunction, args)
+            : call(exec, jsFunction, callType, callData, toJS(exec, globalObject, event->currentTarget()), args);
         globalData->timeoutChecker.stop();
 
         globalObject->setCurrentEvent(savedEvent);

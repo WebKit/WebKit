@@ -37,13 +37,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSWorker::markChildren(MarkStack& markStack)
-{
-    Base::markChildren(markStack);
-
-    markIfNotNull(markStack, static_cast<Worker*>(impl())->onmessage());
-}
-
 JSC::JSValue JSWorker::postMessage(JSC::ExecState* exec, const JSC::ArgList& args)
 {
     return handlePostMessage(exec, args, impl());

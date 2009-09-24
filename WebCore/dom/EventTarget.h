@@ -32,6 +32,9 @@
 #ifndef EventTarget_h
 #define EventTarget_h
 
+#include "AtomicStringHash.h"
+#include "EventNames.h"
+#include "RegisteredEventListener.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -58,8 +61,31 @@ namespace WebCore {
 
     typedef int ExceptionCode;
 
+    struct FiringEventEndIterator {
+        FiringEventEndIterator(const AtomicString* eventType, size_t* value)
+            : eventType(eventType)
+            , value(value)
+        {
+        }
+        
+        const AtomicString* eventType;
+        size_t* value;
+    };
+    typedef Vector<FiringEventEndIterator, 1> FiringEventEndIteratorVector;
+
+    typedef Vector<RegisteredEventListener, 1> EventListenerVector;
+    typedef HashMap<AtomicString, EventListenerVector> EventListenerMap;
+
+    struct EventTargetData {
+        EventListenerMap eventListenerMap;
+        FiringEventEndIteratorVector firingEventEndIterators;
+    };
+
     class EventTarget {
     public:
+        void ref() { refEventTarget(); }
+        void deref() { derefEventTarget(); }
+
         virtual EventSource* toEventSource();
         virtual MessagePort* toMessagePort();
         virtual Node* toNode();
@@ -90,36 +116,119 @@ namespace WebCore {
 
         virtual ScriptExecutionContext* scriptExecutionContext() const = 0;
 
-        virtual void addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture) = 0;
-        virtual void removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture) = 0;
-        virtual bool dispatchEvent(PassRefPtr<Event>, ExceptionCode&) = 0;
+        virtual bool addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture);
+        virtual bool removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture);
+        virtual void removeAllEventListeners();
+        virtual bool dispatchEvent(PassRefPtr<Event>);
+        bool dispatchEvent(PassRefPtr<Event>, ExceptionCode&); // DOM API
 
-        void ref() { refEventTarget(); }
-        void deref() { derefEventTarget(); }
+        // Used for legacy "onEvent" attribute APIs.
+        bool setAttributeEventListener(const AtomicString& eventType, PassRefPtr<EventListener>);
+        bool clearAttributeEventListener(const AtomicString& eventType);
+        EventListener* getAttributeEventListener(const AtomicString& eventType);
 
-        // Handlers to do/undo actions on the target node before an event is dispatched to it and after the event
-        // has been dispatched.  The data pointer is handed back by the preDispatch and passed to postDispatch.
-        virtual void* preDispatchEventHandler(Event*) { return 0; }
-        virtual void postDispatchEventHandler(Event*, void* /*dataFromPreDispatch*/) { }
+        bool hasEventListeners();
+        bool hasEventListeners(const AtomicString& eventType);
+        const EventListenerVector& getEventListeners(const AtomicString& eventType);
+
+        bool fireEventListeners(Event*);
+        bool isFiringEventListeners();
+
+#if USE(JSC)
+        void markEventListeners(JSC::MarkStack&);
+        void invalidateEventListeners();
+#endif
 
     protected:
         virtual ~EventTarget();
+        
+        virtual EventTargetData* eventTargetData() = 0;
+        virtual EventTargetData* ensureEventTargetData() = 0;
 
     private:
         virtual void refEventTarget() = 0;
         virtual void derefEventTarget() = 0;
     };
 
-    void forbidEventDispatch();
-    void allowEventDispatch();
+    #define DEFINE_ATTRIBUTE_EVENT_LISTENER(attribute) \
+        EventListener* on##attribute() { return getAttributeEventListener(eventNames().attribute##Event); } \
+        void setOn##attribute(PassRefPtr<EventListener> listener) { setAttributeEventListener(eventNames().attribute##Event, listener); } \
+
+    #define DEFINE_VIRTUAL_ATTRIBUTE_EVENT_LISTENER(attribute) \
+        virtual EventListener* on##attribute() { return getAttributeEventListener(eventNames().attribute##Event); } \
+        virtual void setOn##attribute(PassRefPtr<EventListener> listener) { setAttributeEventListener(eventNames().attribute##Event, listener); } \
+
+    #define DEFINE_WINDOW_ATTRIBUTE_EVENT_LISTENER(attribute) \
+        EventListener* on##attribute() { return document()->getWindowAttributeEventListener(eventNames().attribute##Event); } \
+        void setOn##attribute(PassRefPtr<EventListener> listener) { document()->setWindowAttributeEventListener(eventNames().attribute##Event, listener); } \
+
+    #define DEFINE_MAPPED_ATTRIBUTE_EVENT_LISTENER(attribute, eventName) \
+        EventListener* on##attribute() { return getAttributeEventListener(eventNames().eventName##Event); } \
+        void setOn##attribute(PassRefPtr<EventListener> listener) { setAttributeEventListener(eventNames().eventName##Event, listener); } \
+
+    #define DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(recipient, attribute) \
+        EventListener* on##attribute() { return recipient ? recipient->getAttributeEventListener(eventNames().attribute##Event) : 0; } \
+        void setOn##attribute(PassRefPtr<EventListener> listener) { if (recipient) recipient->setAttributeEventListener(eventNames().attribute##Event, listener); } \
 
 #ifndef NDEBUG
+    void forbidEventDispatch();
+    void allowEventDispatch();
     bool eventDispatchForbidden();
 #else
     inline void forbidEventDispatch() { }
     inline void allowEventDispatch() { }
 #endif
 
-}
+#if USE(JSC)
+    inline void EventTarget::markEventListeners(JSC::MarkStack& markStack)
+    {
+        EventTargetData* d = eventTargetData();
+        if (!d)
+            return;
+
+        EventListenerMap::iterator end = d->eventListenerMap.end();
+        for (EventListenerMap::iterator it = d->eventListenerMap.begin(); it != end; ++it) {
+            EventListenerVector& entry = it->second;
+            for (size_t i = 0; i < entry.size(); ++i)
+                entry[i].listener->markJSFunction(markStack);
+        }
+    }
+
+    inline void EventTarget::invalidateEventListeners()
+    {
+        EventTargetData* d = eventTargetData();
+        if (!d)
+            return;
+
+        d->eventListenerMap.clear();
+    }
+
+    inline bool EventTarget::isFiringEventListeners()
+    {
+        EventTargetData* d = eventTargetData();
+        if (!d)
+            return false;
+        return d->firingEventEndIterators.size() != 0;
+    }
+
+    inline bool EventTarget::hasEventListeners()
+    {
+        EventTargetData* d = eventTargetData();
+        if (!d)
+            return false;
+        return !d->eventListenerMap.isEmpty();
+    }
+
+    inline bool EventTarget::hasEventListeners(const AtomicString& eventType)
+    {
+        EventTargetData* d = eventTargetData();
+        if (!d)
+            return false;
+        return d->eventListenerMap.contains(eventType);
+    }
 
 #endif
+
+} // namespace WebCore
+
+#endif // EventTarget_h

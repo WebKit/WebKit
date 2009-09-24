@@ -32,8 +32,8 @@ module threads {
 
     interface [
         Conditional=WORKERS,
-        CustomMarkFunction,
         CustomToJS,
+        EventTarget,
         GenerateConstructor
     ] AbstractWorker {
 

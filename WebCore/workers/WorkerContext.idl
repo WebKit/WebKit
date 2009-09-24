@@ -30,6 +30,7 @@ module threads {
         Conditional=WORKERS,
         CustomMarkFunction,
         DelegatingGetOwnPropertySlot,
+        EventTarget,
         ExtendsDOMGlobalObject,
         IsWorkerContext,
         LegacyParent=JSWorkerContextBase,

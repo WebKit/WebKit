@@ -94,7 +94,7 @@ void JSDOMWindow::markChildren(MarkStack& markStack)
 {
     Base::markChildren(markStack);
 
-    markEventListeners(markStack, impl()->eventListeners());
+    impl()->markEventListeners(markStack);
 
     JSGlobalData& globalData = *Heap::heap(this)->globalData();
 

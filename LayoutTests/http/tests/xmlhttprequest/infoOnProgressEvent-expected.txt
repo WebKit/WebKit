@@ -6,7 +6,7 @@ Synchronous case:
 Type: progress
 Bubble: false
 Cancelable: true
-EventPhase: 0
+EventPhase: 2
 Target: [object XMLHttpRequest]
 Current target: [object XMLHttpRequest]
 
@@ -14,7 +14,7 @@ Asynchronous case:
 Type: progress
 Bubble: false
 Cancelable: true
-EventPhase: 0
+EventPhase: 2
 Target: [object XMLHttpRequest]
 Current target: [object XMLHttpRequest]
 

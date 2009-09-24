@@ -32,7 +32,6 @@ module threads {
 
     interface [
         Conditional=SHARED_WORKERS,
-        CustomMarkFunction,
         GenerateNativeConverter,
         GenerateToJS
     ] SharedWorker : AbstractWorker {

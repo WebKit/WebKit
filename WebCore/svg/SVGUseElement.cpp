@@ -768,18 +768,18 @@ void SVGUseElement::transferEventListenersToShadowTree(SVGElementInstance* targe
     ASSERT(originalElement);
 
     if (SVGElement* shadowTreeElement = target->shadowTreeElement()) {
-        const RegisteredEventListenerVector& listeners = originalElement->eventListeners();
-        size_t size = listeners.size();
-        for (size_t i = 0; i < size; ++i) {
-            const RegisteredEventListener& r = *listeners[i];
-            EventListener* listener = r.listener();
-            ASSERT(listener);
-
-            // Event listeners created from markup have already been transfered to the shadow tree during cloning!
-            if (listener->wasCreatedFromMarkup())
-                continue;
-
-            shadowTreeElement->addEventListener(r.eventType(), listener, r.useCapture());
+        if (EventTargetData* d = originalElement->eventTargetData()) {
+            EventListenerMap& map = d->eventListenerMap;
+            EventListenerMap::iterator end = map.end();
+            for (EventListenerMap::iterator it = map.begin(); it != end; ++it) {
+                EventListenerVector& entry = it->second;
+                for (size_t i = 0; i < entry.size(); ++i) {
+                    // Event listeners created from markup have already been transfered to the shadow tree during cloning.
+                    if (entry[i].listener->wasCreatedFromMarkup())
+                        continue;
+                    shadowTreeElement->addEventListener(it->first, entry[i].listener, entry[i].useCapture);
+                }
+            }
         }
     }
 

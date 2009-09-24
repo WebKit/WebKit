@@ -37,6 +37,7 @@
 #include "ActiveDOMObject.h"
 #include "Document.h"
 #include "GenericWorkerTask.h"
+#include "MessageEvent.h"
 #include "MessagePort.h"
 #include "NotImplemented.h"
 #include "PlatformString.h"
@@ -232,8 +233,10 @@ private:
         port->entangle(m_channel.release());
         ASSERT(scriptContext->isWorkerContext());
         WorkerContext* workerContext = static_cast<WorkerContext*>(scriptContext);
+        // Since close() stops the thread event loop, this should not ever get called while closing.
+        ASSERT(!workerContext->isClosing());
         ASSERT(workerContext->isSharedWorkerContext());
-        workerContext->toSharedWorkerContext()->dispatchConnect(port);
+        workerContext->toSharedWorkerContext()->dispatchEvent(createConnectEvent(port));
     }
 
     OwnPtr<MessagePortChannel> m_channel;
@@ -272,18 +275,19 @@ void SharedWorkerScriptLoader::load(const KURL& url)
 
     // Stay alive until the load finishes.
     setPendingActivity(this);
+    m_worker->setPendingActivity(m_worker.get());
 }
 
 void SharedWorkerScriptLoader::notifyFinished()
 {
     // Hand off the just-loaded code to the repository to start up the worker thread.
     if (m_scriptLoader->failed())
-        m_worker->dispatchLoadErrorEvent();
+        m_worker->dispatchEvent(Event::create(eventNames().errorEvent, false, true));
     else
         DefaultSharedWorkerRepository::instance().workerScriptLoaded(*m_proxy, scriptExecutionContext()->userAgent(m_scriptLoader->url()), m_scriptLoader->script(), m_port.release());
 
-    // This frees this object - must be the last action in this function.
-    unsetPendingActivity(this);
+    m_worker->unsetPendingActivity(m_worker.get());
+    unsetPendingActivity(this); // This frees this object - must be the last action in this function.
 }
 
 DefaultSharedWorkerRepository& DefaultSharedWorkerRepository::instance()

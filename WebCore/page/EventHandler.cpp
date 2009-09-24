@@ -1897,7 +1897,7 @@ bool EventHandler::canMouseDownStartSelect(Node* node)
             
     for (RenderObject* curr = node->renderer(); curr; curr = curr->parent()) {
         if (Node* node = curr->node())
-            return node->dispatchEvent(eventNames().selectstartEvent, true, true);
+            return node->dispatchEvent(Event::create(eventNames().selectstartEvent, true, true));
     }
 
     return true;
@@ -1911,7 +1911,7 @@ bool EventHandler::canMouseDragExtendSelect(Node* node)
             
     for (RenderObject* curr = node->renderer(); curr; curr = curr->parent()) {
         if (Node* node = curr->node())
-            return node->dispatchEvent(eventNames().selectstartEvent, true, true);
+            return node->dispatchEvent(Event::create(eventNames().selectstartEvent, true, true));
     }
 
     return true;
@@ -2466,7 +2466,7 @@ void EventHandler::capsLockStateMayHaveChanged()
 
 void EventHandler::sendResizeEvent()
 {
-    m_frame->document()->dispatchWindowEvent(eventNames().resizeEvent, false, false);
+    m_frame->document()->dispatchWindowEvent(Event::create(eventNames().resizeEvent, false, false));
 }
 
 void EventHandler::sendScrollEvent()
@@ -2475,7 +2475,7 @@ void EventHandler::sendScrollEvent()
     if (!v)
         return;
     v->setWasScrolledByUser(true);
-    m_frame->document()->dispatchEvent(eventNames().scrollEvent, true, false);
+    m_frame->document()->dispatchEvent(Event::create(eventNames().scrollEvent, true, false));
 }
 
 bool EventHandler::passMousePressEventToScrollbar(MouseEventWithHitTestResults& mev, Scrollbar* scrollbar)

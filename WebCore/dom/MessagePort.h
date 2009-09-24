@@ -29,9 +29,9 @@
 
 #include "AtomicStringHash.h"
 #include "EventListener.h"
+#include "EventNames.h"
 #include "EventTarget.h"
 #include "MessagePortChannel.h"
-
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
@@ -87,21 +87,17 @@ namespace WebCore {
 
         void dispatchMessages();
 
-        virtual void addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture);
-        virtual void removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture);
-        virtual bool dispatchEvent(PassRefPtr<Event>, ExceptionCode&);
-
-        typedef Vector<RefPtr<EventListener> > ListenerVector;
-        typedef HashMap<AtomicString, ListenerVector> EventListenersMap;
-        EventListenersMap& eventListeners() { return m_eventListeners; }
-
         using RefCounted<MessagePort>::ref;
         using RefCounted<MessagePort>::deref;
 
         bool hasPendingActivity();
 
-        void setOnmessage(PassRefPtr<EventListener>);
-        EventListener* onmessage() const { return m_onMessageListener.get(); }
+        void setOnmessage(PassRefPtr<EventListener> listener)
+        {
+            setAttributeEventListener(eventNames().messageEvent, listener);
+            start();
+        }
+        EventListener* onmessage() { return getAttributeEventListener(eventNames().messageEvent); }
 
         // Returns null if there is no entangled port, or if the entangled port is run by a different thread.
         // Returns null otherwise.
@@ -114,16 +110,15 @@ namespace WebCore {
 
         virtual void refEventTarget() { ref(); }
         virtual void derefEventTarget() { deref(); }
+        virtual EventTargetData* eventTargetData();
+        virtual EventTargetData* ensureEventTargetData();
 
         OwnPtr<MessagePortChannel> m_entangledChannel;
 
         bool m_started;
 
         ScriptExecutionContext* m_scriptExecutionContext;
-
-        RefPtr<EventListener> m_onMessageListener;
-
-        EventListenersMap m_eventListeners;
+        EventTargetData m_eventTargetData;
     };
 
 } // namespace WebCore

@@ -29,11 +29,13 @@
 #include "CachedFramePlatformData.h"
 #include "CString.h"
 #include "DocumentLoader.h"
+#include "ExceptionCode.h"
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"
 #include "FrameView.h"
 #include "Logging.h"
+#include "PageTransitionEvent.h"
 #include <wtf/RefCountedLeakCounter.h>
 
 #if ENABLE(SVG)
@@ -97,7 +99,7 @@ void CachedFrameBase::restore()
     for (unsigned i = 0; i < m_childFrames.size(); ++i)
         m_childFrames[i]->open();
 
-    m_document->dispatchPageTransitionEvent(EventNames().pageshowEvent, true);
+    m_document->dispatchWindowEvent(PageTransitionEvent::create(EventNames().pageshowEvent, true), m_document);
 }
 
 CachedFrame::CachedFrame(Frame* frame)

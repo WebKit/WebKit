@@ -27,6 +27,7 @@
 
 #include "ChromeClient.h"
 #include "Document.h"
+#include "Event.h"
 #include "EventHandler.h"
 #include "EventNames.h"
 #include "Frame.h"
@@ -186,7 +187,7 @@ void HTMLFormControlElement::setName(const AtomicString &value)
 
 void HTMLFormControlElement::dispatchFormControlChangeEvent()
 {
-    dispatchEvent(eventNames().changeEvent, true, false);
+    dispatchEvent(Event::create(eventNames().changeEvent, true, false));
 }
 
 bool HTMLFormControlElement::disabled() const
@@ -282,7 +283,7 @@ bool HTMLFormControlElement::willValidate() const
 bool HTMLFormControlElement::checkValidity()
 {
     if (willValidate() && !isValidFormControlElement()) {
-        dispatchEvent(EventNames().invalidEvent, false, true);
+        dispatchEvent(Event::create(EventNames().invalidEvent, false, true));
         return false;
     }
 

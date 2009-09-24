@@ -28,6 +28,7 @@ module events {
 
     interface [
         CustomMarkFunction,
+        EventTarget,
         GenerateConstructor,
         NoStaticTables
     ] MessagePort {

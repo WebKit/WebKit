@@ -123,7 +123,7 @@ void InspectorDOMAgent::stopListening(Document* doc)
     m_documents.remove(doc);
 }
 
-void InspectorDOMAgent::handleEvent(Event* event, bool)
+void InspectorDOMAgent::handleEvent(Event* event)
 {
     AtomicString type = event->type();
     Node* node = event->target()->toNode();

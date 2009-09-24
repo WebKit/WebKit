@@ -63,6 +63,13 @@ namespace WTF {
     template <size_t size> struct AlignedBuffer<size, 32> { WTF_ALIGNED(AlignedBufferChar, buffer[size], 32); };
     template <size_t size> struct AlignedBuffer<size, 64> { WTF_ALIGNED(AlignedBufferChar, buffer[size], 64); };
 
+    template <size_t size, size_t alignment>
+    void swap(AlignedBuffer<size, alignment>& a, AlignedBuffer<size, alignment>& b)
+    {
+        for (size_t i = 0; i < size; ++i)
+            std::swap(a.buffer[i], b.buffer[i]);
+    }
+
     template <bool needsDestruction, typename T>
     class VectorDestructor;
 
@@ -404,6 +411,27 @@ namespace WTF {
             Base::deallocateBuffer(bufferToDeallocate);
         }
         
+        void swap(VectorBuffer<T, inlineCapacity>& other)
+        {
+            if (buffer() == inlineBuffer() && other.buffer() == other.inlineBuffer()) {
+                WTF::swap(m_inlineBuffer, other.m_inlineBuffer);
+                std::swap(m_capacity, other.m_capacity);
+            } else if (buffer() == inlineBuffer()) {
+                m_buffer = other.m_buffer;
+                other.m_buffer = other.inlineBuffer();
+                WTF::swap(m_inlineBuffer, other.m_inlineBuffer);
+                std::swap(m_capacity, other.m_capacity);
+            } else if (other.buffer() == other.inlineBuffer()) {
+                other.m_buffer = m_buffer;
+                m_buffer = inlineBuffer();
+                WTF::swap(m_inlineBuffer, other.m_inlineBuffer);
+                std::swap(m_capacity, other.m_capacity);
+            } else {
+                std::swap(m_buffer, other.m_buffer);
+                std::swap(m_capacity, other.m_capacity);
+            }
+        }
+
         void restoreInlineBufferIfNeeded()
         {
             if (m_buffer)

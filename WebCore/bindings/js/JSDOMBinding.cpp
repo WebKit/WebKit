@@ -275,7 +275,7 @@ static inline bool isObservableThroughDOM(JSNode* jsNode)
 
         // If a node is in the document, and has event listeners, its wrapper is
         // observable because its wrapper is responsible for marking those event listeners.
-        if (node->eventListeners().size())
+        if (node->hasEventListeners())
             return true; // Technically, we may overzealously mark a wrapper for a node that has only non-JS event listeners. Oh well.
 
         // If a node owns another object with a wrapper with custom properties,
@@ -322,6 +322,11 @@ static inline bool isObservableThroughDOM(JSNode* jsNode)
             return true;
 #endif
     }
+
+    // If a node is firing event listeners, its wrapper is observable because
+    // its wrapper is responsible for marking those event listeners.
+    if (node->isFiringEventListeners())
+        return true;
 
     return false;
 }

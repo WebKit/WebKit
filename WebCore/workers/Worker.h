@@ -33,6 +33,7 @@
 #include "ActiveDOMObject.h"
 #include "AtomicStringHash.h"
 #include "EventListener.h"
+#include "EventNames.h"
 #include "EventTarget.h"
 #include "MessagePort.h"
 #include "WorkerScriptLoaderClient.h"
@@ -64,15 +65,11 @@ namespace WebCore {
 
         void terminate();
 
-        void dispatchMessage(const String&, PassOwnPtr<MessagePortArray>);
-        void dispatchErrorEvent();
-
         virtual bool canSuspend() const;
         virtual void stop();
         virtual bool hasPendingActivity() const;
-
-        void setOnmessage(PassRefPtr<EventListener> eventListener) { m_onMessageListener = eventListener; }
-        EventListener* onmessage() const { return m_onMessageListener.get(); }
+    
+        DEFINE_ATTRIBUTE_EVENT_LISTENER(message);
 
     private:
         Worker(const String&, ScriptExecutionContext*, ExceptionCode&);
@@ -83,10 +80,7 @@ namespace WebCore {
         virtual void derefEventTarget() { deref(); }
 
         OwnPtr<WorkerScriptLoader> m_scriptLoader;
-
         WorkerContextProxy* m_contextProxy; // The proxy outlives the worker to perform thread shutdown.
-
-        RefPtr<EventListener> m_onMessageListener;
     };
 
 } // namespace WebCore

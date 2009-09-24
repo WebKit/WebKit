@@ -62,15 +62,7 @@ void JSWorkerContext::markChildren(MarkStack& markStack)
     markDOMObjectWrapper(markStack, globalData, impl()->optionalLocation());
     markDOMObjectWrapper(markStack, globalData, impl()->optionalNavigator());
 
-    markIfNotNull(markStack, impl()->onerror());
-
-    typedef WorkerContext::EventListenersMap EventListenersMap;
-    typedef WorkerContext::ListenerVector ListenerVector;
-    EventListenersMap& eventListeners = impl()->eventListeners();
-    for (EventListenersMap::iterator mapIter = eventListeners.begin(); mapIter != eventListeners.end(); ++mapIter) {
-        for (ListenerVector::iterator vecIter = mapIter->second.begin(); vecIter != mapIter->second.end(); ++vecIter)
-            (*vecIter)->markJSFunction(markStack);
-    }
+    impl()->markEventListeners(markStack);
 }
 
 bool JSWorkerContext::getOwnPropertySlotDelegate(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)

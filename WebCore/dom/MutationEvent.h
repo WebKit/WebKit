@@ -41,10 +41,11 @@ namespace WebCore {
         {
             return adoptRef(new MutationEvent);
         }
-        static PassRefPtr<MutationEvent> create(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<Node> relatedNode,
-            const String& prevValue, const String& newValue, const String& attrName, unsigned short attrChange)
+
+        static PassRefPtr<MutationEvent> create(const AtomicString& type, bool canBubble, PassRefPtr<Node> relatedNode = 0,
+            const String& prevValue = String(), const String& newValue = String(), const String& attrName = String(), unsigned short attrChange = 0)
         {
-            return adoptRef(new MutationEvent(type, canBubble, cancelable, relatedNode, prevValue, newValue, attrName, attrChange));
+            return adoptRef(new MutationEvent(type, canBubble, false, relatedNode, prevValue, newValue, attrName, attrChange));
         }
 
         void initMutationEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<Node> relatedNode,

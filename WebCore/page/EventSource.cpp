@@ -108,7 +108,7 @@ void EventSource::endRequest()
     m_requestInFlight = false;
 
     if (!m_failSilently)
-        dispatchGenericEvent(eventNames().errorEvent);
+        dispatchEvent(Event::create(eventNames().errorEvent, false, false));
 
     if (!scriptExecutionContext()->isWorkerContext())
         cache()->loader()->nonCacheRequestComplete(m_url);
@@ -162,70 +162,12 @@ ScriptExecutionContext* EventSource::scriptExecutionContext() const
     return ActiveDOMObject::scriptExecutionContext();
 }
 
-void EventSource::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> eventListener, bool)
-{
-    EventListenersMap::iterator iter = m_eventListeners.find(eventType);
-    if (iter == m_eventListeners.end()) {
-        ListenerVector listeners;
-        listeners.append(eventListener);
-        m_eventListeners.add(eventType, listeners);
-    } else {
-        ListenerVector& listeners = iter->second;
-        for (ListenerVector::iterator listenerIter = listeners.begin(); listenerIter != listeners.end(); ++listenerIter) {
-            if (**listenerIter == *eventListener)
-                return;
-        }
-
-        listeners.append(eventListener);
-        m_eventListeners.add(eventType, listeners);
-    }
-}
-
-void EventSource::removeEventListener(const AtomicString& eventType, EventListener* eventListener, bool)
-{
-    EventListenersMap::iterator iter = m_eventListeners.find(eventType);
-    if (iter == m_eventListeners.end())
-        return;
-
-    ListenerVector& listeners = iter->second;
-    for (ListenerVector::const_iterator listenerIter = listeners.begin(); listenerIter != listeners.end(); ++listenerIter) {
-        if (**listenerIter == *eventListener) {
-            listeners.remove(listenerIter - listeners.begin());
-            return;
-        }
-    }
-}
-
-bool EventSource::dispatchEvent(PassRefPtr<Event> event, ExceptionCode& ec)
-{
-    if (!event || event->type().isEmpty()) {
-        ec = EventException::UNSPECIFIED_EVENT_TYPE_ERR;
-        return true;
-    }
-
-    EventListener* attributeListener = m_attributeListeners.get(event->type()).get();
-    if (attributeListener) {
-        event->setTarget(this);
-        event->setCurrentTarget(this);
-        attributeListener->handleEvent(event.get(), false);
-    }
-
-    ListenerVector listenersCopy = m_eventListeners.get(event->type());
-    for (ListenerVector::const_iterator listenerIter = listenersCopy.begin(); listenerIter != listenersCopy.end(); ++listenerIter) {
-        event->setTarget(this);
-        event->setCurrentTarget(this);
-        listenerIter->get()->handleEvent(event.get(), false);
-    }
-
-    return !event->defaultPrevented();
-}
-
 void EventSource::didReceiveResponse(const ResourceResponse& response)
 {
     int statusCode = response.httpStatusCode();
     if (statusCode == 200 && response.httpHeaderField("Content-Type") == "text/event-stream") {
         m_state = OPEN;
-        dispatchGenericEvent(eventNames().openEvent);
+        dispatchEvent(Event::create(eventNames().openEvent, false, false));
     } else {
         if (statusCode <= 200 || statusCode > 299)
             m_state = CLOSED;
@@ -304,7 +246,7 @@ void EventSource::parseEventStreamLine(unsigned int bufPos, int fieldLength, int
 {
     if (!lineLength) {
         if (!m_data.isEmpty())
-            dispatchMessageEvent();
+            dispatchEvent(createMessageEvent());
         if (!m_eventName.isEmpty())
             m_eventName = "";
     } else if (fieldLength) {
@@ -344,27 +286,26 @@ void EventSource::parseEventStreamLine(unsigned int bufPos, int fieldLength, int
     }
 }
 
-void EventSource::dispatchGenericEvent(const AtomicString& type)
-{
-    RefPtr<Event> evt = Event::create(type, false, false);
-    ExceptionCode ec = 0;
-    dispatchEvent(evt.release(), ec);
-    ASSERT(!ec);
-}
-
-void EventSource::dispatchMessageEvent()
-{
-    RefPtr<MessageEvent> evt = MessageEvent::create();
-    String eventName = m_eventName.isEmpty() ? eventNames().messageEvent.string() : m_eventName;
-    evt->initMessageEvent(eventName, false, false, String::adopt(m_data), m_origin, m_lastEventId, 0, 0);
-    ExceptionCode ec = 0;
-    dispatchEvent(evt.release(), ec);
-    ASSERT(!ec);
-}
-
 void EventSource::stop()
 {
     close();
+}
+
+PassRefPtr<MessageEvent> EventSource::createMessageEvent()
+{
+    RefPtr<MessageEvent> event = MessageEvent::create();
+    event->initMessageEvent(m_eventName.isEmpty() ? eventNames().messageEvent : AtomicString(m_eventName), false, false, String::adopt(m_data), m_origin, m_lastEventId, 0, 0);
+    return event.release();
+}
+
+EventTargetData* EventSource::eventTargetData()
+{
+    return &m_eventTargetData;
+}
+
+EventTargetData* EventSource::ensureEventTargetData()
+{
+    return &m_eventTargetData;
 }
 
 } // namespace WebCore

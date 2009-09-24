@@ -43,23 +43,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSEventSource::markChildren(MarkStack& markStack)
-{
-    DOMObject::markChildren(markStack);
-
-    markIfNotNull(markStack, m_impl->onopen());
-    markIfNotNull(markStack, m_impl->onmessage());
-    markIfNotNull(markStack, m_impl->onerror());
-
-    typedef EventSource::EventListenersMap EventListenersMap;
-    typedef EventSource::ListenerVector ListenerVector;
-    EventListenersMap& eventListeners = m_impl->eventListeners();
-    for (EventListenersMap::iterator mapIter = eventListeners.begin(); mapIter != eventListeners.end(); ++mapIter) {
-        for (ListenerVector::iterator vecIter = mapIter->second.begin(); vecIter != mapIter->second.end(); ++vecIter)
-            (*vecIter)->markJSFunction(markStack);
-    }
-}
-
 JSValue JSEventSource::addEventListener(ExecState* exec, const ArgList& args)
 {
     JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(impl()->scriptExecutionContext());

@@ -227,10 +227,13 @@ void ApplicationCacheHost::setDOMApplicationCache(DOMApplicationCache* domApplic
     m_domApplicationCache = domApplicationCache;
 }
 
-void ApplicationCacheHost::notifyEventListener(EventID id)
+void ApplicationCacheHost::notifyDOMApplicationCache(EventID id)
 {
-    if (m_domApplicationCache)
-        m_domApplicationCache->callEventListener(id);
+    if (m_domApplicationCache) {
+        ExceptionCode ec = 0;
+        m_domApplicationCache->dispatchEvent(Event::create(DOMApplicationCache::toEventType(id), false, false), ec);
+        ASSERT(!ec);    
+    }
 }
 
 void ApplicationCacheHost::setCandidateApplicationCacheGroup(ApplicationCacheGroup* group)

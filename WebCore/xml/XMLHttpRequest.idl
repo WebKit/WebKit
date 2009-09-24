@@ -30,6 +30,7 @@ module xml {
 
     interface [
         CustomMarkFunction,
+        EventTarget,
         NoStaticTables
     ] XMLHttpRequest {
         // From XMLHttpRequestEventTarget

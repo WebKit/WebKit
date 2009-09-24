@@ -73,7 +73,7 @@ ObjCEventListener::~ObjCEventListener()
     [m_listener release];
 }
 
-void ObjCEventListener::handleEvent(Event* event, bool)
+void ObjCEventListener::handleEvent(Event* event)
 {
     [m_listener handleEvent:kit(event)];
 }

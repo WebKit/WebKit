@@ -1,30 +1,29 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" onload="runTest();">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
   <script>
     <![CDATA[
       if (window.layoutTestController)
         layoutTestController.dumpAsText();
 
-      function handler(event) {
+      var results = [ ];
+      function handler(event)
+      {
         results.push(event.target.localName);
       }
+      document.documentElement.addEventListener('load', handler, true);
 
-      var results = new Array();
-
-      var test = document.documentElement;
-      test.addEventListener('load', handler, true);
-
-      function runTest()
+      function reportResults()
       {
-        var test = document.getElementById("console");
-        if ( results.length != 6 || results[0] != "image" ||
-             results[1] != "text" || results[2] != "text" ||
-             results[3] != "text" || results[4] != "g" ||
-             results[5] != "svg") {
-          test.appendChild(document.createTextNode("Failed"));
-        } else {
-          test.appendChild(document.createTextNode("Passed"));
+        var console = document.getElementById("console");
+        var expected = [ "image", "text", "text", "text", "g", "svg" ];
+        for (var i = 0; i < expected.length; ++i) {
+            if (results[i] != expected[i]) {
+              console.appendChild(document.createTextNode("FAIL: " + i + " should be " + expected[i] + " but instead is " + results[i] + ".\n"));
+              return;
+            }
         }
+        console.appendChild(document.createTextNode("Passed"));
       }
+      document.documentElement.addEventListener('load', reportResults);
     ]]>
   </script>
   <g>

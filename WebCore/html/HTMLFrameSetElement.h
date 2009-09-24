@@ -24,8 +24,9 @@
 #ifndef HTMLFrameSetElement_h
 #define HTMLFrameSetElement_h
 
-#include "HTMLElement.h"
 #include "Color.h"
+#include "Document.h"
+#include "HTMLElement.h"
 
 namespace WebCore {
 
@@ -67,36 +68,23 @@ public:
     const Length* rowLengths() const { return m_rows; }
     const Length* colLengths() const { return m_cols; }
 
-    // Event handler attributes
-    virtual EventListener* onblur() const;
-    virtual void setOnblur(PassRefPtr<EventListener>);
-    virtual EventListener* onerror() const;
-    virtual void setOnerror(PassRefPtr<EventListener>);
-    virtual EventListener* onfocus() const;
-    virtual void setOnfocus(PassRefPtr<EventListener>);
-    virtual EventListener* onload() const;
-    virtual void setOnload(PassRefPtr<EventListener>);
+    // Declared virtual in Element
+    DEFINE_WINDOW_ATTRIBUTE_EVENT_LISTENER(blur);
+    DEFINE_WINDOW_ATTRIBUTE_EVENT_LISTENER(error);
+    DEFINE_WINDOW_ATTRIBUTE_EVENT_LISTENER(focus);
+    DEFINE_WINDOW_ATTRIBUTE_EVENT_LISTENER(load);
 
-    EventListener* onbeforeunload() const;
-    void setOnbeforeunload(PassRefPtr<EventListener>);
-    EventListener* onhashchange() const;
-    void setOnhashchange(PassRefPtr<EventListener>);
-    EventListener* onmessage() const;
-    void setOnmessage(PassRefPtr<EventListener>);
-    EventListener* onoffline() const;
-    void setOnoffline(PassRefPtr<EventListener>);
-    EventListener* ononline() const;
-    void setOnonline(PassRefPtr<EventListener>);
+    DEFINE_WINDOW_ATTRIBUTE_EVENT_LISTENER(beforeunload);
+    DEFINE_WINDOW_ATTRIBUTE_EVENT_LISTENER(hashchange);
+    DEFINE_WINDOW_ATTRIBUTE_EVENT_LISTENER(message);
+    DEFINE_WINDOW_ATTRIBUTE_EVENT_LISTENER(offline);
+    DEFINE_WINDOW_ATTRIBUTE_EVENT_LISTENER(online);
+    DEFINE_WINDOW_ATTRIBUTE_EVENT_LISTENER(resize);
+    DEFINE_WINDOW_ATTRIBUTE_EVENT_LISTENER(storage);
+    DEFINE_WINDOW_ATTRIBUTE_EVENT_LISTENER(unload);
 #if ENABLE(ORIENTATION_EVENTS)
-    EventListener* onorientationchange() const;
-    void setOnorientationchange(PassRefPtr<EventListener>);
+    DEFINE_WINDOW_ATTRIBUTE_EVENT_LISTENER(orientationchange);
 #endif
-    EventListener* onresize() const;
-    void setOnresize(PassRefPtr<EventListener>);
-    EventListener* onstorage() const;
-    void setOnstorage(PassRefPtr<EventListener>);
-    EventListener* onunload() const;
-    void setOnunload(PassRefPtr<EventListener>);
 
 private:
     Length* m_rows;

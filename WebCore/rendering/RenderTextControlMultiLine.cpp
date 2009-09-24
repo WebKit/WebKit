@@ -22,6 +22,7 @@
 #include "config.h"
 #include "RenderTextControlMultiLine.h"
 
+#include "Event.h"
 #include "EventNames.h"
 #include "Frame.h"
 #include "HTMLNames.h"
@@ -50,8 +51,7 @@ void RenderTextControlMultiLine::subtreeHasChanged()
     if (!node()->focused())
         return;
 
-    // Fire the "input" DOM event
-    node()->dispatchEvent(eventNames().inputEvent, true, false);
+    node()->dispatchEvent(Event::create(eventNames().inputEvent, true, false));
 
     if (Frame* frame = document()->frame())
         frame->textDidChangeInTextArea(static_cast<Element*>(node()));

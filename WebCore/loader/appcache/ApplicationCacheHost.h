@@ -108,7 +108,7 @@ namespace WebCore {
         bool swapCache();
 
         void setDOMApplicationCache(DOMApplicationCache* domApplicationCache);
-        void notifyEventListener(EventID id);
+        void notifyDOMApplicationCache(EventID id);
 
     private:
         bool isApplicationCacheEnabled();

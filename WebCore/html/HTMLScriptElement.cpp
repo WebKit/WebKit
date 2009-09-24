@@ -24,6 +24,7 @@
 #include "HTMLScriptElement.h"
 
 #include "Document.h"
+#include "Event.h"
 #include "EventNames.h"
 #include "HTMLNames.h"
 #include "MappedAttribute.h"
@@ -222,12 +223,12 @@ void HTMLScriptElement::dispatchLoadEvent()
     ASSERT(!m_data.haveFiredLoadEvent());
     m_data.setHaveFiredLoadEvent(true);
 
-    dispatchEvent(eventNames().loadEvent, false, false);
+    dispatchEvent(Event::create(eventNames().loadEvent, false, false));
 }
 
 void HTMLScriptElement::dispatchErrorEvent()
 {
-    dispatchEvent(eventNames().errorEvent, true, false);
+    dispatchEvent(Event::create(eventNames().errorEvent, true, false));
 }
 
 }

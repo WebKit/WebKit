@@ -150,14 +150,14 @@ void HTMLFormElement::removedFromDocument()
     HTMLElement::removedFromDocument();
 }
 
-void HTMLFormElement::handleLocalEvents(Event* event, bool useCapture)
+void HTMLFormElement::handleLocalEvents(Event* event)
 {
     Node* targetNode = event->target()->toNode();
-    if (!useCapture && targetNode && targetNode != this && (event->type() == eventNames().submitEvent || event->type() == eventNames().resetEvent)) {
+    if (event->eventPhase() != Event::CAPTURING_PHASE && targetNode && targetNode != this && (event->type() == eventNames().submitEvent || event->type() == eventNames().resetEvent)) {
         event->stopPropagation();
         return;
     }
-    HTMLElement::handleLocalEvents(event, useCapture);
+    HTMLElement::handleLocalEvents(event);
 }
 
 unsigned HTMLFormElement::length() const
@@ -296,7 +296,7 @@ bool HTMLFormElement::prepareSubmit(Event* event)
     m_insubmit = true;
     m_doingsubmit = false;
 
-    if (dispatchEvent(eventNames().submitEvent, true, true) && !m_doingsubmit)
+    if (dispatchEvent(Event::create(eventNames().submitEvent, true, true)) && !m_doingsubmit)
         m_doingsubmit = true;
 
     m_insubmit = false;
@@ -416,7 +416,7 @@ void HTMLFormElement::reset()
 
     // ### DOM2 labels this event as not cancelable, however
     // common browsers( sick! ) allow it be cancelled.
-    if ( !dispatchEvent(eventNames().resetEvent, true, true) ) {
+    if (!dispatchEvent(Event::create(eventNames().resetEvent, true, true))) {
         m_inreset = false;
         return;
     }

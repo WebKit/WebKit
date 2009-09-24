@@ -71,6 +71,7 @@
 #include "Page.h"
 #include "PageCache.h"
 #include "PageGroup.h"
+#include "PageTransitionEvent.h"
 #include "PlaceholderDocument.h"
 #include "PluginData.h"
 #include "PluginDocument.h"
@@ -592,9 +593,9 @@ void FrameLoader::stopLoading(UnloadEventPolicy unloadEventPolicy, DatabasePolic
                 m_unloadEventBeingDispatched = true;
                 if (m_frame->domWindow()) {
                     if (unloadEventPolicy == UnloadEventPolicyUnloadAndPageHide)
-                        m_frame->domWindow()->dispatchPageTransitionEvent(EventNames().pagehideEvent, m_frame->document()->inPageCache());
+                        m_frame->domWindow()->dispatchEvent(PageTransitionEvent::create(EventNames().pagehideEvent, m_frame->document()->inPageCache()), m_frame->document());
                     if (!m_frame->document()->inPageCache())
-                        m_frame->domWindow()->dispatchUnloadEvent();
+                        m_frame->domWindow()->dispatchEvent(Event::create(eventNames().unloadEvent, false, false), m_frame->domWindow()->document());
                 }
                 m_unloadEventBeingDispatched = false;
                 if (m_frame->document())
@@ -1882,7 +1883,7 @@ bool FrameLoader::canCachePageContainingThisFrame()
         && !m_containsPlugIns
         && !m_URL.protocolIs("https")
 #ifndef PAGE_CACHE_ACCEPTS_UNLOAD_HANDLERS
-        && (!m_frame->domWindow() || !m_frame->domWindow()->hasEventListener(eventNames().unloadEvent))
+        && (!m_frame->domWindow() || !m_frame->domWindow()->hasEventListeners(eventNames().unloadEvent))
 #endif
 #if ENABLE(DATABASE)
         && !m_frame->document()->hasOpenDatabases()
@@ -2029,7 +2030,7 @@ bool FrameLoader::logCanCacheFrameDecision(int indentLevel)
         if (m_URL.protocolIs("https"))
             { PCLOG("   -Frame is HTTPS"); cannotCache = true; }
 #ifndef PAGE_CACHE_ACCEPTS_UNLOAD_HANDLERS
-        if (m_frame->domWindow() && m_frame->domWindow()->hasEventListener(eventNames().unloadEvent))
+        if (m_frame->domWindow() && m_frame->domWindow()->hasEventListeners(eventNames().unloadEvent))
             { PCLOG("   -Frame has an unload event listener"); cannotCache = true; }
 #endif
 #if ENABLE(DATABASE)
@@ -2096,7 +2097,7 @@ public:
     virtual void performTask(ScriptExecutionContext* context)
     {
         ASSERT_UNUSED(context, context->isDocument());
-        m_document->dispatchWindowEvent(eventNames().hashchangeEvent, false, false);
+        m_document->dispatchWindowEvent(Event::create(eventNames().hashchangeEvent, false, false));
     }
     
 private:
@@ -4322,7 +4323,7 @@ void FrameLoader::pageHidden()
 {
     m_unloadEventBeingDispatched = true;
     if (m_frame->domWindow())
-        m_frame->domWindow()->dispatchPageTransitionEvent(EventNames().pagehideEvent, true);
+        m_frame->domWindow()->dispatchEvent(PageTransitionEvent::create(EventNames().pagehideEvent, true), m_frame->document());
     m_unloadEventBeingDispatched = false;
 
     // Send pagehide event for subframes as well

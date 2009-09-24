@@ -71,23 +71,6 @@ void DedicatedWorkerContext::postMessage(const String& message, const MessagePor
     thread()->workerObjectProxy().postMessageToWorkerObject(message, channels.release());
 }
 
-void DedicatedWorkerContext::dispatchMessage(const String& message, PassOwnPtr<MessagePortArray> ports)
-{
-    // Since close() stops the thread event loop, this should not ever get called while closing.
-    ASSERT(!isClosing());
-    RefPtr<Event> evt = MessageEvent::create(message, "", "", 0, ports);
-
-    if (m_onmessageListener.get()) {
-        evt->setTarget(this);
-        evt->setCurrentTarget(this);
-        m_onmessageListener->handleEvent(evt.get(), false);
-    }
-
-    ExceptionCode ec = 0;
-    dispatchEvent(evt.release(), ec);
-    ASSERT(!ec);
-}
-
 void DedicatedWorkerContext::importScripts(const Vector<String>& urls, const String& callerURL, int callerLine, ExceptionCode& ec)
 {
     Base::importScripts(urls, callerURL, callerLine, ec);
