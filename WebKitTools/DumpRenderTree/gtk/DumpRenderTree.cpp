@@ -76,6 +76,7 @@ AccessibilityController* axController = 0;
 LayoutTestController* gLayoutTestController = 0;
 static GCController* gcController = 0;
 static WebKitWebView* webView;
+static GtkWidget* window;
 static GtkWidget* container;
 WebKitWebFrame* mainFrame = 0;
 WebKitWebFrame* topLoadingFrame = 0;
@@ -419,6 +420,7 @@ static void runTest(const string& testPathOrURL)
     size.x = size.y = 0;
     size.width = isSVGW3CTest ? 480 : maxViewWidth;
     size.height = isSVGW3CTest ? 360 : maxViewHeight;
+    gtk_window_resize(GTK_WINDOW(window), size.width, size.height);
     gtk_widget_size_allocate(container, &size);
 
     if (prevTestBFItem)
@@ -721,11 +723,11 @@ int main(int argc, char* argv[])
                 break;
         }
 
-    GtkWidget* window = gtk_window_new(GTK_WINDOW_POPUP);
+    window = gtk_window_new(GTK_WINDOW_POPUP);
     container = GTK_WIDGET(gtk_scrolled_window_new(NULL, NULL));
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(container), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
     gtk_container_add(GTK_CONTAINER(window), container);
-    gtk_widget_realize(window);
+    gtk_widget_show_all(window);
 
     webView = createWebView();
     gtk_container_add(GTK_CONTAINER(container), GTK_WIDGET(webView));

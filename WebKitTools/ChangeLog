@@ -1,3 +1,16 @@
+2009-09-24  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Jan Alonzo.
+
+        [GTK] DRT must display window instead of just realizing, to enable synthesizing events correctly
+        https://bugs.webkit.org/show_bug.cgi?id=29693
+
+        Show the window, to be able to synthesize events correctly.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (runTest):
+        (main):
+
 2009-09-24  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY(rollout)
