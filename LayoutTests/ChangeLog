@@ -1,3 +1,18 @@
+2009-09-23  Karen Grünberg  <karen+webkit@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        This tests all types of inputs text and password, 
+        both enabled and disabled, the existing tests 
+        weren't thorough enough for chromium.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29502
+
+        * fast/forms/basic-inputs.html: Added.
+        * platform/mac/fast/forms/basic-inputs-expected.checksum: Added.
+        * platform/mac/fast/forms/basic-inputs-expected.png: Added.
+        * platform/mac/fast/forms/basic-inputs-expected.txt: Added.
+
 2009-09-23  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.
