@@ -1,3 +1,13 @@
+2009-09-24  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by NOBODY(rollout)
+
+        Roll out r48712 as it is incorrect.
+
+        * DumpRenderTree/mac/ObjCController.m:
+        (+[ObjCController isSelectorExcludedFromWebScript:]):
+        (+[ObjCController webScriptNameForSelector:]):
+
 2009-09-24  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Eric Seidel.

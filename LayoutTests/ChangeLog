@@ -1,3 +1,14 @@
+2009-09-24  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by NOBODY(rollout)
+
+        Roll out r48712 as it is incorrect.
+
+        Rolling out test as test depends on patch.
+
+        * platform/mac/fast/dom/wrapper-classes-objc-expected.txt:
+        * platform/mac/fast/dom/wrapper-classes-objc.html:
+
 2009-09-24  Xan Lopez  <xlopez@igalia.com>
 
         Revert r48697, since it broke key handling notification to GTK+.

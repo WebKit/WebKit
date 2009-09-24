@@ -43,7 +43,6 @@ public:
     
     virtual bool deleteProperty(ExecState *exec, const Identifier &propertyName);
     virtual bool deleteProperty(ExecState *exec, unsigned propertyName);
-    virtual void getPropertyNames(ExecState*, PropertyNameArray&);
     
     virtual const ClassInfo *classInfo() const { return &s_info; }
     

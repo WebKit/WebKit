@@ -192,5 +192,4 @@ PASS typeof objCObjectOfClass('NSCFNumber') is 'number'
 PASS typeof objCObjectOfClass('NSCFString') is 'string'
 PASS typeof objCObjectOfClass('WebScriptObject') is 'object'
 PASS objCObjectOfClass('NSArray') instanceof Array is true
-PASS concatenateArray(objCArrayOfString()) is 'onetwothree'
 
