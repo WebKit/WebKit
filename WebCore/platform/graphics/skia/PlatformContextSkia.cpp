@@ -492,13 +492,11 @@ void PlatformContextSkia::addPath(const SkPath& path)
 
 SkPath PlatformContextSkia::currentPathInLocalCoordinates() const
 {
+    SkPath localPath = m_path;
     const SkMatrix& matrix = m_canvas->getTotalMatrix();
     SkMatrix inverseMatrix;
     if (!matrix.invert(&inverseMatrix))
         return SkPath();
-    if (!WebCore::isPathSkiaSafe(inverseMatrix, m_path))
-        return SkPath();
-    SkPath localPath = m_path;
     localPath.transform(inverseMatrix);
     return localPath;
 }

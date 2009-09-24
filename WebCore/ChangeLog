@@ -1,3 +1,18 @@
+2009-09-23  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Revert the relevant parts of r47925, and implement an alternate
+        fix (localize the coordinate check to GraphicsContext::clipPath()).
+        This fixes http://crbug.com/21174.
+
+        Covered by LayoutTests/svg/dynamic-updates/SVGClipPathElement-dom-clipPathUnits-attr.html.
+
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::clipPath):
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (PlatformContextSkia::currentPathInLocalCoordinates):
+
 2009-09-24  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.

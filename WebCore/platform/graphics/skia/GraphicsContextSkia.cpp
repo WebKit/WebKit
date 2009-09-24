@@ -403,6 +403,9 @@ void GraphicsContext::clipPath(WindRule clipRule)
         return;
 
     SkPath path = platformContext()->currentPathInLocalCoordinates();
+    if (!isPathSkiaSafe(getCTM(), path))
+        return;
+
     path.setFillType(clipRule == RULE_EVENODD ? SkPath::kEvenOdd_FillType : SkPath::kWinding_FillType);
     platformContext()->canvas()->clipPath(path);
 }
