@@ -191,7 +191,7 @@ public:
     {
         User::IMB_Range(code, static_cast<char*>(code) + size);
     }
-#elif PLATFORM(ARM) && COMPILER(GCC) && (GCC_VERSION >= 30406)
+#elif PLATFORM(ARM) && COMPILER(GCC) && (GCC_VERSION >= 30406) && !defined(DISABLE_BUILTIN_CLEAR_CACHE)
     static void cacheFlush(void* code, size_t size)
     {
         __clear_cache(reinterpret_cast<char*>(code), reinterpret_cast<char*>(code) + size);
@@ -203,7 +203,8 @@ public:
             "push    {r7}\n"
             "mov     r0, %0\n"
             "mov     r1, %1\n"
-            "mov     r7, 0xf0002\n"
+            "mov     r7, #0xf0000\n"
+            "add     r7, r7, #0x2\n"
             "mov     r2, #0x0\n"
             "svc     0x0\n"
             "pop     {r7}\n"
