@@ -1,3 +1,23 @@
+2009-09-24  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Added back enable/disableSuddenTermination() functionality I accidentally
+        removed in my last patch.
+
+        * page/DOMWindow.cpp:
+        (WebCore::addUnloadEventListener):
+        (WebCore::removeUnloadEventListener):
+        (WebCore::removeAllUnloadEventListeners):
+        (WebCore::addBeforeUnloadEventListener):
+        (WebCore::removeBeforeUnloadEventListener):
+        (WebCore::removeAllBeforeUnloadEventListeners):
+        (WebCore::DOMWindow::dispatchAllPendingUnloadEvents):
+        (WebCore::DOMWindow::~DOMWindow):
+        (WebCore::DOMWindow::addEventListener):
+        (WebCore::DOMWindow::removeEventListener):
+        (WebCore::DOMWindow::removeAllEventListeners):
+
 2009-09-24  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Steve Falkenburg and Mark Rowe.
