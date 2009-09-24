@@ -93,6 +93,15 @@ namespace WebCore {
         void accept() { m_isAccepted = true; }
         void ignore() { m_isAccepted = false; }
 
+        void turnVerticalTicksIntoHorizontal()
+        {
+            m_deltaX = m_deltaY;
+            m_deltaY = 0;
+
+            m_wheelTicksX = m_wheelTicksY;
+            m_wheelTicksY = 0;
+        }
+
 #if PLATFORM(GTK)
         PlatformWheelEvent(GdkEventScroll*);
 #endif

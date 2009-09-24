@@ -1,0 +1,4 @@
+Test for bug 29348: This tests that using the mouse wheel while having the pointer in a horizontal scrollbar makes it scroll horizontally, also with styled scrollbars. On success, the vertical offset for both divs should be 80, and the horizonta 40.
+
+Scroll offset for 'overflow' is 80 and 40
+Scroll offset for 'styled' is 80 and 40

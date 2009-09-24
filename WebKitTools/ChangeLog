@@ -1,3 +1,15 @@
+2009-09-24  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Oliver Hunt.
+
+        Add support for DRT to send mouse wheel events.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29348
+        [Gtk] Scrollwheel on horizontal scrollbars should slide horizontally
+
+        * DumpRenderTree/gtk/EventSender.cpp:
+        (mouseWheelToCallback):
+
 2009-09-17  Eric Seidel  <eric@webkit.org>
 
         Reviewed by David Levin.

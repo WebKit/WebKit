@@ -232,6 +232,52 @@ static JSValueRef mouseMoveToCallback(JSContextRef context, JSObjectRef function
     return JSValueMakeUndefined(context);
 }
 
+static JSValueRef mouseWheelToCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
+    if (!view)
+        return JSValueMakeUndefined(context);
+
+    if (argumentCount < 2)
+        return JSValueMakeUndefined(context);
+
+    int horizontal = (int)JSValueToNumber(context, arguments[0], exception);
+    g_return_val_if_fail((!exception || !*exception), JSValueMakeUndefined(context));
+    int vertical = (int)JSValueToNumber(context, arguments[1], exception);
+    g_return_val_if_fail((!exception || !*exception), JSValueMakeUndefined(context));
+
+    // GTK+ doesn't support multiple direction scrolls in the same event!
+    g_return_val_if_fail((!vertical || !horizontal), JSValueMakeUndefined(context));
+
+    GdkEvent event;
+    event.type = GDK_SCROLL;
+    event.scroll.x = lastMousePositionX;
+    event.scroll.y = lastMousePositionY;
+    event.scroll.time = GDK_CURRENT_TIME;
+    event.scroll.window = GTK_WIDGET(view)->window;
+
+    if (horizontal < 0)
+        event.scroll.direction = GDK_SCROLL_LEFT;
+    else if (horizontal > 0)
+        event.scroll.direction = GDK_SCROLL_RIGHT;
+    else if (vertical < 0)
+        event.scroll.direction = GDK_SCROLL_UP;
+    else if (vertical > 0)
+        event.scroll.direction = GDK_SCROLL_DOWN;
+    else
+        g_assert_not_reached();
+
+    if (dragMode && down && !replayingSavedEvents) {
+        msgQueue[endOfQueue].event = event;
+        msgQueue[endOfQueue++].isDragEvent = true;
+    } else {
+        webkit_web_frame_layout(mainFrame);
+        gtk_main_do_event(&event);
+    }
+
+    return JSValueMakeUndefined(context);
+}
+
 static JSValueRef beginDragWithFilesCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     if (argumentCount < 1)
@@ -443,6 +489,7 @@ static JSValueRef zoomPageOutCallback(JSContextRef context, JSObjectRef function
 }
 
 static JSStaticFunction staticFunctions[] = {
+    { "mouseWheelTo", mouseWheelToCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { "contextClick", contextClickCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { "mouseDown", mouseDownCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { "mouseUp", mouseUpCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
