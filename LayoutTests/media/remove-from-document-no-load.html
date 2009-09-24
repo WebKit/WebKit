@@ -1,10 +1,11 @@
 <video controls></video>
 <p>Test that removing a media element from the tree when no media has been loaded does not generate a load event.</p>
+<script src=media-file.js></script>
 <script src=video-test.js></script>
 <script>
     didReceiveLoadStartEvent = false;
     video.addEventListener('loadstart', function() { didReceiveLoadStartEvent = true; });
-    video.src = "content/test.mp4";
+    video.src = findMediaFile("video", "content/test");
     testExpected("video.networkState", HTMLMediaElement.NETWORK_EMPTY);
     run("document.body.removeChild(video)");
     testExpected("didReceiveLoadStartEvent", false);

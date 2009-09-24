@@ -3,9 +3,12 @@
         <style>
             audio { background-color: blue; } 
         </style>
+        <script src=media-file.js></script>
         <script>
             function test()
             {
+                setSrcByTagName("audio", findMediaFile("audio", "content/test"));
+
                 if (window.layoutTestController) {
                     layoutTestController.waitUntilDone();
                     setTimeout(function() { 
@@ -27,8 +30,8 @@
     </head>
     <body onload="test()">
         <p>Test controls placement. </p>
-        <audio controls src="content/test.wav"></audio><br><br>
-        <audio controls src="content/test.wav" style="width: 320px;"></audio><br><br>
-        <audio controls src="content/test.wav" style="position: absolute; width: 320px; height: 100px;"></audio><br>
+        <audio controls></audio><br><br>
+        <audio controls style="width: 320px;"></audio><br><br>
+        <audio controls style="position: absolute; width: 320px; height: 100px;"></audio><br>
     </body>
 </html>

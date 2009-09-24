@@ -1,5 +1,6 @@
 <html>
 <head>
+    <script src=media-file.js></script>
     <script>
     var video;
     var loadedCount = 0;
@@ -16,7 +17,7 @@
             return;
         }
         
-        video.src = "content/test.mp4";
+        video.src = findMediaFile("video", "content/test");
         video.load();
     }
 
@@ -25,7 +26,7 @@
         video = document.getElementsByTagName('video')[0];
         video.addEventListener("canplaythrough", canplaythrough);
         
-        video.src = "content/scaled-matrix.mov";
+        video.src = findMediaFile("video", "content/counting");
         video.load();
     }
     </script>

@@ -1,6 +1,7 @@
 <html>
     <head>
         <title>startTime attribute test</title>
+        <script src=media-file.js></script>
         <script src=video-test.js></script>
 
         <script>
@@ -16,7 +17,9 @@
             {
                 findMediaElement();
                 waitForEvent('loadeddata', loadeddata);
-                run("video.src = 'content/test.mp4'");
+
+                var mediaFile = findMediaFile("video", "content/test");
+                run("video.src = '" + mediaFile + "'");
             }
 
         </script>

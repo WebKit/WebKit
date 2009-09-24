@@ -1,6 +1,7 @@
 <body>
 <p>Test that Audio() object loads the resource after src attribute is set and load() is called.</p>
 
+<script src=media-file.js></script>
 <script src=video-test.js></script>
 
 <script>
@@ -9,10 +10,11 @@
 
     testExpected("audio instanceof HTMLAudioElement", true);
 
-    waitForEvent("loadstart", function () { testExpected("relativeURL(audio.currentSrc)", "content/test.wav"); });
+    var mediaFile = findMediaFile("audio", "content/test");
+    waitForEvent("loadstart", function () { testExpected("relativeURL(audio.currentSrc)", mediaFile); });
 
     waitForEventAndEnd("load");
 
-    audio.src = "content/test.wav";
+    audio.src = mediaFile;
     run("audio.load()");
 </script>

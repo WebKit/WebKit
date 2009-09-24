@@ -1,8 +1,9 @@
 <body>
 <p>Test that Audio("url") constructor loads the specified resource.</p>
+<script src=media-file.js></script>
 <script src=video-test.js></script>
 <script>
-    var audio = new Audio("content/test.wav");
+    var audio = new Audio(findMediaFile("audio", "content/test"));
     mediaElement = audio;
 
     testExpected("audio instanceof HTMLAudioElement", true);

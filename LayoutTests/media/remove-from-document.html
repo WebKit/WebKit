@@ -1,5 +1,6 @@
 <video controls autoplay></video>
 <p>Test that removing a media element from the tree pauses playback but does not unload the media.</p>
+<script src=media-file.js></script>
 <script src=video-test.js></script>
 <script>
     waitForEvent('load', function () {
@@ -16,5 +17,5 @@
         endTest();
     } );
 
-video.src = "content/test.mp4";
+video.src = findMediaFile("video", "content/test");
 </script>

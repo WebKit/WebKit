@@ -1,6 +1,7 @@
 <html>
     <head>
 
+        <script src=media-file.js></script>
         <script src=video-test.js></script>
         <script>
             function testOnLoadStart()
@@ -16,16 +17,21 @@
                 consoleWrite("EVENT(" + event.type + ")");
                 testExpected("event.lengthComputable", true);
                 testExpected("event.loaded", 0, '>');
-                var allowedTotalBytes = [188483, 192844];
-                if (event.total == allowedTotalBytes[0] || event.total == allowedTotalBytes[1])
-                    consoleWrite("SUCCESS: event.total is " + allowedTotalBytes[0] + " or " + allowedTotalBytes[1] + " (Playback engine specific)");
+                var allowedTotalBytes = [103746, 188483, 192844];
+                for (var i = 0; i < allowedTotalBytes.length; ++i) {
+                  if (event.total == allowedTotalBytes[i])
+                    break;
+                }
+                if (i < allowedTotalBytes.length)
+                    consoleWrite("SUCCESS: event.total is " + allowedTotalBytes.join(" or ") + " (Playback engine specific)");
                 else
-                    consoleWrite("FAIL: event.total should not be " + event.total + " (should be " + allowedTotalBytes[0] + " or " + allowedTotalBytes[1] + ")");
+                    consoleWrite("FAIL: event.total should not be " + event.total + " (should be " + allowedTotalBytes.join(" or ") + ")");
                 endTest();
             }
 
             function start()
             {
+                setSrcByTagName("video", findMediaFile("video", "content/test"));
                 findMediaElement();
             }
 
@@ -34,7 +40,7 @@
 
     <body onload="start()">
 
-        <video controls src="content/test.mp4" onloadstart="testOnLoadStart()" onload="testOnLoad()">
+        <video controls onloadstart="testOnLoadStart()" onload="testOnLoad()">
         </video>
 
     </body>

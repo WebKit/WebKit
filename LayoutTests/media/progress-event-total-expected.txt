@@ -5,6 +5,6 @@ EXPECTED (event.loaded == '0') OK
 EVENT(load)
 EXPECTED (event.lengthComputable == 'true') OK
 EXPECTED (event.loaded > '0') OK
-SUCCESS: event.total is 188483 or 192844 (Playback engine specific)
+SUCCESS: event.total is 103746 or 188483 or 192844 (Playback engine specific)
 END OF TEST
 

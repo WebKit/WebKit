@@ -1,5 +1,6 @@
 <html>
     <head>
+        <script src=media-file.js></script>
         <script>
             if (window.layoutTestController) {
                 layoutTestController.dumpAsText();
@@ -67,14 +68,19 @@
                 setTimeout(deleteAudio, 10);
             }
 
+            function start()
+            {
+                setSrcByTagName("audio", findMediaFile("audio", "content/test"));
+            }
+
         </script>
     </head>
-    <body >
+    <body onload="start()">
         This tests that events don't continue to target a slider thumb if the media element is deleted while scrubbing.
         <br>
         <input type="button" id="button" value="Click Me!" onmouseup="log('button click!')"> 
         <br>
-        <audio id="audio" ontimeupdate="log('timeupdate')" onload="drag()" controls src="content/test.wav"></audio><br><br>
+        <audio id="audio" ontimeupdate="log('timeupdate')" onload="drag()" controls></audio><br><br>
         <div id="console"></div>
     </body>
 </html>

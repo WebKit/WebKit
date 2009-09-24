@@ -1,6 +1,7 @@
 <html>
     <head>
 
+        <script src=media-file.js></script>
         <script src=video-test.js></script>
         <script>
             function testOnLoadStart()
@@ -22,6 +23,7 @@
 
             function start()
             {
+                setSrcByTagName("video", findMediaFile("video", "content/test"));
                 findMediaElement();
             }
         </script>
@@ -29,7 +31,7 @@
 
     <body onload="start()">
 
-        <video src="content/test.mp4" controls onloadstart="testOnLoadStart()" onload="testOnLoad()">
+        <video controls onloadstart="testOnLoadStart()" onload="testOnLoad()">
         </video>
 
     </body>

@@ -1,6 +1,7 @@
 <html>
     <head>
 
+        <script src=media-file.js></script>
         <script src=video-test.js></script>
         <script>
             var ratechangeCount = 0;
@@ -44,8 +45,9 @@
                         run("video.play()");
                         break;
                     case "ended":
+                        var mediaFile = findMediaFile("video", "content/garbage");
                         consoleWrite("<br>*** played to end, setting 'src' to an invalid movie");
-                        run("video.src = 'content/garbage.mp4'");
+                        run("video.src = '" + mediaFile + "'");
                         run("video.load()");
                         break;
                     case "progress":
@@ -62,6 +64,7 @@
 
             function start()
             {
+                setSrcByTagName("video", findMediaFile("video", "content/test"));
                 findMediaElement();
             }
 
@@ -70,7 +73,7 @@
 
     <body onload="start()">
 
-        <video controls src="content/test.mp4" 
+        <video controls
             onabort="eventHandler()"
             oncanplay="eventHandler()"
             oncanplaythrough="eventHandler()"
