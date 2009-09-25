@@ -1,3 +1,12 @@
+2009-09-25  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Add ARM version detection rules for Symbian
+        https://bugs.webkit.org/show_bug.cgi?id=29715
+
+        * wtf/Platform.h:
+
 2009-09-24  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Mark "Do It!" Rowe.
