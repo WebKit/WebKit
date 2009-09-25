@@ -1,3 +1,22 @@
+2009-09-25  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        Enable Pasteboard::writePlainText for Chromium and fix code style nits.
+        https://bugs.webkit.org/show_bug.cgi?id=29734
+
+        * platform/chromium/PasteboardChromium.cpp:
+        (WebCore::Pasteboard::writePlainText):
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::Pasteboard::writePlainText):
+        (WebCore::Pasteboard::writeURL):
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::writeSelection):
+        (WebCore::Pasteboard::writePlainText):
+        (WebCore::Pasteboard::writeURL):
+        * platform/qt/PasteboardQt.cpp:
+        (WebCore::Pasteboard::writePlainText):
+
 2009-09-25  Yongjun Zhang  <yongjun.zhang@nokia.com>
 
         Reviewed by Ariya Hidayat.

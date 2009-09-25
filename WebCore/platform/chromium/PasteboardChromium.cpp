@@ -98,13 +98,13 @@ void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete,
 
 void Pasteboard::writePlainText(const String& text)
 {
-    String plainText = text;
-
 #if PLATFORM(WIN_OS)
+    String plainText(text);
     replaceNewlinesWithWindowsStyleNewlines(plainText);
+    ChromiumBridge::clipboardWritePlainText(plainText);
+#else
+    ChromiumBridge::clipboardWritePlainText(text);
 #endif
-    // FIXME: uncomment when Chromium CL http://codereview.chromium.org/211052 is closed.
-    //ChromiumBridge::clipboardWritePlainText(plainText);
 }
 
 void Pasteboard::writeURL(const KURL& url, const String& titleStr, Frame* frame)

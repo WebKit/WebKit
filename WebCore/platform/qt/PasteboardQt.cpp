@@ -121,7 +121,6 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefP
 
 void Pasteboard::writePlainText(const String& text)
 {
-
 #ifndef QT_NO_CLIPBOARD
     QMimeData* md = new QMimeData;
     QString qtext = text;

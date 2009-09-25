@@ -135,8 +135,8 @@ static NSAttributedString *stripAttachmentCharacters(NSAttributedString *string)
 
 void Pasteboard::writeSelection(NSPasteboard* pasteboard, Range* selectedRange, bool canSmartCopyOrDelete, Frame* frame)
 {
-    if (WebArchivePboardType == nil)
-        Pasteboard::generalPasteboard(); //Initialises pasteboard types
+    if (!WebArchivePboardType)
+        Pasteboard::generalPasteboard(); // Initialises pasteboard types
     ASSERT(selectedRange);
     
     NSAttributedString *attributedString = [[[NSAttributedString alloc] _initWithDOMRange:kit(selectedRange)] autorelease];
@@ -205,11 +205,11 @@ void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete,
 
 void Pasteboard::writePlainText(const String& text)
 {
-    if (WebArchivePboardType == nil)
-        Pasteboard::generalPasteboard(); //Initialises pasteboard types
+    if (!WebArchivePboardType)
+        Pasteboard::generalPasteboard(); // Initialises pasteboard types
 
-    NSArray *types = [NSArray arrayWithObjects:NSStringPboardType, nil];
-    NSPasteboard* pasteboard = m_pasteboard.get();
+    NSArray *types = [NSArray arrayWithObject:NSStringPboardType];
+    NSPasteboard *pasteboard = m_pasteboard.get();
     [pasteboard declareTypes:types owner:nil];
 
     [pasteboard setString:text forType:NSStringPboardType];
@@ -217,10 +217,10 @@ void Pasteboard::writePlainText(const String& text)
 
 void Pasteboard::writeURL(NSPasteboard* pasteboard, NSArray* types, const KURL& url, const String& titleStr, Frame* frame)
 {
-    if (WebArchivePboardType == nil)
-        Pasteboard::generalPasteboard(); //Initialises pasteboard types
+    if (!WebArchivePboardType)
+        Pasteboard::generalPasteboard(); // Initialises pasteboard types
    
-    if (types == nil) {
+    if (!types) {
         types = writableTypesForURL();
         [pasteboard declareTypes:types owner:nil];
     }
