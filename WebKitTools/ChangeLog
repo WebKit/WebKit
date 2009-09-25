@@ -1,3 +1,15 @@
+2009-09-25  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/29718> mark-bug-fixed: add -u|--update-only switch
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/mark-bug-fixed:
+        (MarkBugFixed.__init__): Added -u|--update-only switch to list
+        of parse options.
+        (MarkBugFixed.main): When -u|--update-only is specified, add a
+        comment to the bug without marking it Resolved/Fixed.
+
 2009-09-25  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoffrey Garen.

@@ -44,6 +44,7 @@ class MarkBugFixedTool:
         self.option_parser = OptionParser(usage="usage: %prog [options] [rNNNNN]")
         self.option_parser.add_option("-b", "--bug-id", action="store", type="string", dest="bug_id", help="Specify bug id if no URL is provided in the commit log.")
         self.option_parser.add_option("-m", "--comment", action="store", type="string", dest="comment", help="Text to include in bug comment.")
+        self.option_parser.add_option("-u", "--update-only", action="store_true", default=False, dest="update_only", help="Add comment to the bug, but do not close it.")
 
     def scm(self):
         # Lazily initialize SCM to not error-out before command line parsing (or when running non-scm commands).
@@ -107,8 +108,12 @@ class MarkBugFixedTool:
         if options.comment:
             bug_comment = "%s\n\n%s" % (options.comment, bug_comment)
 
-        log("Updating Bug %s." % bug_id)
-        self.bugs.close_bug_as_fixed(bug_id, bug_comment)
+        if options.update_only:
+            log("Adding comment to Bug %s." % bug_id)
+            self.bugs.post_comment_to_bug(bug_id, bug_comment)
+        else:
+            log("Adding comment to Bug %s and marking as Resolved/Fixed." % bug_id)
+            self.bugs.close_bug_as_fixed(bug_id, bug_comment)
 
 
 def main():
