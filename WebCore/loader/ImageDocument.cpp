@@ -70,7 +70,7 @@ private:
     {
     }
 
-    virtual void handleEvent(Event*);
+    virtual void handleEvent(ScriptExecutionContext*, Event*);
 
     ImageDocument* m_doc;
 };
@@ -358,7 +358,7 @@ bool ImageDocument::shouldShrinkToFit() const
 
 // --------
 
-void ImageEventListener::handleEvent(Event* event)
+void ImageEventListener::handleEvent(ScriptExecutionContext*, Event* event)
 {
     if (event->type() == eventNames().resizeEvent)
         m_doc->windowSizeChanged();

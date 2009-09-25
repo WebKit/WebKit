@@ -62,7 +62,7 @@ namespace WebCore {
         void unbind();
         void startReportingChangesToFrontend();
 
-        virtual void handleEvent(Event*);
+        virtual void handleEvent(ScriptExecutionContext*, Event*);
         virtual bool operator==(const EventListener& listener);
 
         bool isSameHostAndType(Frame*, bool isLocalStorage) const;
