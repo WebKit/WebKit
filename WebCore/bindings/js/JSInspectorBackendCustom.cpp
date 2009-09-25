@@ -254,7 +254,7 @@ JSValue JSInspectorBackend::currentCallFrame(ExecState* exec, const ArgList&)
         return jsUndefined();
 
     // FIXME: I am not sure if this is actually needed. Can we just use exec?
-    ExecState* globalExec = callFrame->scopeChain()->globalObject()->globalExec();
+    ExecState* globalExec = callFrame->scopeChain()->globalObject->globalExec();
 
     JSLock lock(SilenceAssertionsOnly);
     return JSInspectedObjectWrapper::wrap(globalExec, toJS(exec, callFrame));

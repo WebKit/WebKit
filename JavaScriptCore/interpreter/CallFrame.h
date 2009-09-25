@@ -51,14 +51,14 @@ namespace JSC  {
         // Differs from dynamicGlobalObject() during function calls across web browser frames.
         JSGlobalObject* lexicalGlobalObject() const
         {
-            return scopeChain()->globalObject();
+            return scopeChain()->globalObject;
         }
 
         // Differs from lexicalGlobalObject because this will have DOM window shell rather than
         // the actual DOM window, which can't be "this" for security reasons.
         JSObject* globalThisValue() const
         {
-            return scopeChain()->globalThisObject();
+            return scopeChain()->globalThis;
         }
 
         // FIXME: Elsewhere, we use JSGlobalData* rather than JSGlobalData&.

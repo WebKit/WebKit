@@ -36,8 +36,8 @@ void ScopeChainNode::print() const
     ScopeChainIterator scopeEnd = end();
     for (ScopeChainIterator scopeIter = begin(); scopeIter != scopeEnd; ++scopeIter) {
         JSObject* o = *scopeIter;
-        PropertyNameArray propertyNames(globalObject()->globalExec());
-        o->getPropertyNames(globalObject()->globalExec(), propertyNames);
+        PropertyNameArray propertyNames(globalObject->globalExec());
+        o->getPropertyNames(globalObject->globalExec(), propertyNames);
         PropertyNameArray::const_iterator propEnd = propertyNames.end();
 
         fprintf(stderr, "----- [scope %p] -----\n", o);

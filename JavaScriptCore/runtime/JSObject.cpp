@@ -513,11 +513,6 @@ void JSObject::allocatePropertyStorage(size_t oldSize, size_t newSize)
     allocatePropertyStorageInline(oldSize, newSize);
 }
 
-JSObject* constructEmptyObject(ExecState* exec)
-{
-    return new (exec) JSObject(exec->lexicalGlobalObject()->emptyObjectStructure());
-}
-
 bool JSObject::getOwnPropertyDescriptor(ExecState*, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
     unsigned attributes = 0;

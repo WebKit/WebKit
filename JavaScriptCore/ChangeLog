@@ -1,3 +1,43 @@
+2009-09-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Inlined some object creation code, including lexicalGlobalObject access
+        https://bugs.webkit.org/show_bug.cgi?id=29750
+        
+        SunSpider says 0.5% faster.
+        
+        0.8% speedup on bench-alloc-nonretained.js.
+        2.5% speedup on v8-splay.js.
+
+        * interpreter/CachedCall.h:
+        (JSC::CachedCall::CachedCall):
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::lexicalGlobalObject):
+        (JSC::ExecState::globalThisValue):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::dumpRegisters):
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::privateExecute):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunction):
+        * runtime/ScopeChain.cpp:
+        (JSC::ScopeChainNode::print):
+        * runtime/ScopeChain.h:
+        (JSC::ScopeChainNode::ScopeChainNode):
+        (JSC::ScopeChainNode::~ScopeChainNode):
+        (JSC::ScopeChainNode::push):
+        (JSC::ScopeChain::ScopeChain):
+        (JSC::ScopeChain::globalObject): Added a globalObject data member to ScopeChainNode.
+        Replaced accessor function for globalObject() with data member. Replaced
+        globalThisObject() accessor with direct access to globalThis, to match.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSGlobalObject.h: Inlined array and object construction.
+
 2009-09-25  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Gavin Barraclough.

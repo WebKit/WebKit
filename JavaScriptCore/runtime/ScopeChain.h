@@ -33,14 +33,16 @@ namespace JSC {
     
     class ScopeChainNode : public FastAllocBase {
     public:
-        ScopeChainNode(ScopeChainNode* next, JSObject* object, JSGlobalData* globalData, JSObject* globalThis)
+        ScopeChainNode(ScopeChainNode* next, JSObject* object, JSGlobalData* globalData, JSGlobalObject* globalObject, JSObject* globalThis)
             : next(next)
             , object(object)
             , globalData(globalData)
+            , globalObject(globalObject)
             , globalThis(globalThis)
             , refCount(1)
         {
             ASSERT(globalData);
+            ASSERT(globalObject);
         }
 #ifndef NDEBUG
         // Due to the number of subtle and timing dependent bugs that have occurred due
@@ -51,6 +53,7 @@ namespace JSC {
             next = 0;
             object = 0;
             globalData = 0;
+            globalObject = 0;
             globalThis = 0;
         }
 #endif
@@ -58,6 +61,7 @@ namespace JSC {
         ScopeChainNode* next;
         JSObject* object;
         JSGlobalData* globalData;
+        JSGlobalObject* globalObject;
         JSObject* globalThis;
         int refCount;
 
@@ -82,9 +86,6 @@ namespace JSC {
         ScopeChainIterator begin() const;
         ScopeChainIterator end() const;
 
-        JSGlobalObject* globalObject() const; // defined in JSGlobalObject.h
-        JSObject* globalThisObject() const { return globalThis; }
-
 #ifndef NDEBUG        
         void print() const;
 #endif
@@ -93,7 +94,7 @@ namespace JSC {
     inline ScopeChainNode* ScopeChainNode::push(JSObject* o)
     {
         ASSERT(o);
-        return new ScopeChainNode(this, o, globalData, globalThis);
+        return new ScopeChainNode(this, o, globalData, globalObject, globalThis);
     }
 
     inline ScopeChainNode* ScopeChainNode::pop()
@@ -163,8 +164,8 @@ namespace JSC {
         {
         }
 
-        ScopeChain(JSObject* o, JSGlobalData* globalData, JSObject* globalThis)
-            : m_node(new ScopeChainNode(0, o, globalData, globalThis))
+        ScopeChain(JSObject* o, JSGlobalData* globalData, JSGlobalObject* globalObject, JSObject* globalThis)
+            : m_node(new ScopeChainNode(0, o, globalData, globalObject, globalThis))
         {
         }
 
@@ -203,7 +204,7 @@ namespace JSC {
         void pop() { m_node = m_node->pop(); }
         void clear() { m_node->deref(); m_node = 0; }
         
-        JSGlobalObject* globalObject() const { return m_node->globalObject(); }
+        JSGlobalObject* globalObject() const { return m_node->globalObject; }
 
         void markAggregate(MarkStack&) const;
 

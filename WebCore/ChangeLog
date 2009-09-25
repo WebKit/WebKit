@@ -1,3 +1,16 @@
+2009-09-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Inlined some object creation code, including lexicalGlobalObject access
+        https://bugs.webkit.org/show_bug.cgi?id=29750
+
+        * bindings/js/JSInspectorBackendCustom.cpp:
+        (WebCore::JSInspectorBackend::currentCallFrame):
+        * inspector/JavaScriptDebugServer.cpp:
+        (WebCore::JavaScriptDebugServer::hasBreakpoint): Updated for JavaScriptCore
+        API changes.
+
 2009-09-25  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by Anders Carlsson.

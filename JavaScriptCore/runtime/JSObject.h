@@ -264,8 +264,6 @@ namespace JSC {
         RefPtr<Structure> m_inheritorID;
     };
     
-JSObject* constructEmptyObject(ExecState*);
-
 inline JSObject* asObject(JSCell* cell)
 {
     ASSERT(cell->isObject());

@@ -235,7 +235,7 @@ bool JavaScriptDebugServer::hasBreakpoint(intptr_t sourceID, unsigned lineNumber
         // An erroneous condition counts as "false".
         return false;
     }
-    return result.toBoolean(m_currentCallFrame->scopeChain()->globalObject()->globalExec());
+    return result.toBoolean(m_currentCallFrame->scopeChain()->globalObject->globalExec());
 }
 
 void JavaScriptDebugServer::clearBreakpoints()
