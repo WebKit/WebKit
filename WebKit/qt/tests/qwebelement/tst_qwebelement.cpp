@@ -72,14 +72,10 @@ private slots:
     void namespaceURI();
     void foreachManipulation();
     void evaluateJavaScript();
-    void callFunction();
-    void callFunctionSubmitForm();
-    void functionNames();
     void documentElement();
     void frame();
     void style();
     void computedStyle();
-    void properties();
     void appendAndPrepend();
     void insertBeforeAndAfter();
     void remove();
@@ -293,7 +289,6 @@ void tst_QWebElement::evaluateJavaScript()
     QVERIFY(result.type() == QVariant::String);
     QCOMPARE(result.toString(), QLatin1String("P"));
 
-    QVERIFY(para.functions().contains("hasAttributes"));
     result = para.evaluateJavaScript("this.hasAttributes()");
     QVERIFY(result.isValid());
     QVERIFY(result.type() == QVariant::Bool);
@@ -306,43 +301,6 @@ void tst_QWebElement::evaluateJavaScript()
     QVERIFY(result.isValid());
     QVERIFY(result.type() == QVariant::Bool);
     QVERIFY(result.toBool());
-}
-
-void tst_QWebElement::callFunction()
-{
-    m_mainFrame->setHtml("<body><p>test");
-    QWebElement body = m_mainFrame->documentElement();
-    QVERIFY(body.functions().contains("hasChildNodes"));
-    QVariant result = body.callFunction("hasChildNodes");
-    QVERIFY(result.isValid());
-    QVERIFY(result.type() == QVariant::Bool);
-    QVERIFY(result.toBool());
-
-    body.callFunction("setAttribute", QVariantList() << "foo" << "bar");
-    QCOMPARE(body.attribute("foo"), QString("bar"));
-}
-
-void tst_QWebElement::callFunctionSubmitForm()
-{
-    m_mainFrame->setHtml(QString("<html><body><form name='tstform' action='data:text/html,foo'method='get'>"
-                                 "<input type='text'><input type='submit'></form></body></html>"), QUrl());
-
-    QWebElement form = m_mainFrame->documentElement().findAll("form").at(0);
-    QVERIFY(form.functions().contains("submit"));
-    QVERIFY(!form.isNull());
-    form.callFunction("submit");
-
-    waitForSignal(m_page, SIGNAL(loadFinished(bool)));
-    QCOMPARE(m_mainFrame->url().toString(), QString("data:text/html,foo?"));
-}
-
-void tst_QWebElement::functionNames()
-{
-    m_mainFrame->setHtml("<body><p>Test");
-
-    QWebElement body = m_mainFrame->documentElement();
-
-    QVERIFY(body.functions().contains("setAttribute"));
 }
 
 void tst_QWebElement::documentElement()
@@ -534,37 +492,6 @@ void tst_QWebElement::computedStyle()
     QCOMPARE(p.styleProperty("cursor", QWebElement::ComputedStyle), QLatin1String("text"));
     QCOMPARE(p.styleProperty("color", QWebElement::ComputedStyle), QLatin1String("rgb(255, 0, 0)"));
     QCOMPARE(p.styleProperty("color", QWebElement::InlineStyle), QLatin1String("red"));
-}
-
-void tst_QWebElement::properties()
-{
-    m_mainFrame->setHtml("<body><form><input type=checkbox id=ourcheckbox checked=true>");
-
-    QWebElement checkBox = m_mainFrame->findFirstElement("#ourcheckbox");
-    QVERIFY(!checkBox.isNull());
-
-    QVERIFY(checkBox.scriptableProperties().contains("checked"));
-
-    QCOMPARE(checkBox.scriptableProperty("checked"), QVariant(true));
-    checkBox.setScriptableProperty("checked", false);
-    QCOMPARE(checkBox.scriptableProperty("checked"), QVariant(false));
-
-    QVERIFY(!checkBox.scriptableProperties().contains("non_existant"));
-    QCOMPARE(checkBox.scriptableProperty("non_existant"), QVariant());
-
-    checkBox.setScriptableProperty("non_existant", "test");
-
-    QCOMPARE(checkBox.scriptableProperty("non_existant"), QVariant("test"));
-    QVERIFY(checkBox.scriptableProperties().contains("non_existant"));
-
-    // removing scriptableProperties is currently not supported. We should look into this
-    // and consider the option of just allowing through the QtScript API only.
-#if 0
-    checkBox.setScriptableProperty("non_existant", QVariant());
-
-    QCOMPARE(checkBox.scriptableProperty("non_existant"), QVariant());
-    QVERIFY(!checkBox.scriptableProperties().contains("non_existant"));
-#endif
 }
 
 void tst_QWebElement::appendAndPrepend()

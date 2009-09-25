@@ -1,3 +1,24 @@
+2009-09-24  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Update QWebElement API to remove script related methods.
+        QWebElement::evaluateScript is the only one kept, these are
+        removed to postpone most of the QtWebKit<->JavaScript API design
+        after 4.6.
+        https://bugs.webkit.org/show_bug.cgi?id=29708
+
+        * Api/qwebelement.cpp:
+        * Api/qwebelement.h:
+        Methods removed:
+        - QWebElement::callFunction
+        - QWebElement::functions
+        - QWebElement::scriptableProperty
+        - QWebElement::setScriptableProperty
+        - QWebElement::scriptableProperties
+        * tests/qwebelement/tst_qwebelement.cpp:
+        (tst_QWebElement::evaluateScript):
+
 2009-09-25  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Simon Hausmann.
