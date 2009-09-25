@@ -748,6 +748,8 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setPluginHalterDelegate(IWebPluginHalterDelegate*);
     virtual HRESULT STDMETHODCALLTYPE pluginHalterDelegate(IWebPluginHalterDelegate**);
 
+    virtual HRESULT STDMETHODCALLTYPE invalidateBackingStore(const RECT*);
+
     // WebView
     bool shouldUseEmbeddedView(const WebCore::String& mimeType) const;
 

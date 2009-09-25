@@ -5497,6 +5497,25 @@ HRESULT WebView::removeAllUserContentFromGroup(BSTR groupName)
     return S_OK;
 }
 
+HRESULT WebView::invalidateBackingStore(const RECT* rect)
+{
+    if (!IsWindow(m_viewWindow))
+        return S_OK;
+
+    RECT clientRect;
+    if (!GetClientRect(m_viewWindow, &clientRect))
+        return E_FAIL;
+
+    RECT rectToInvalidate;
+    if (!rect)
+        rectToInvalidate = clientRect;
+    else if (!IntersectRect(&rectToInvalidate, &clientRect, rect))
+        return S_OK;
+
+    repaint(rectToInvalidate, true);
+    return S_OK;
+}
+
 void WebView::downloadURL(const KURL& url)
 {
     // It's the delegate's job to ref the WebDownload to keep it alive - otherwise it will be

@@ -188,4 +188,7 @@ interface IWebViewPrivate : IUnknown
 
     HRESULT setPluginHalterDelegate([in] IWebPluginHalterDelegate* d);
     HRESULT pluginHalterDelegate([retval, out] IWebPluginHalterDelegate** d);
+
+    // If rect is 0, the entire backing store will be invalidated.
+    HRESULT invalidateBackingStore([in] const RECT* rect);
 }

@@ -1,3 +1,23 @@
+2009-09-25  Adam Roben  <aroben@apple.com>
+
+        Add SPI to invalidate a WebView's backing store
+
+        This is useful in conjunction with
+        IWebUIDelegatePrivate2::drawBackground. This provides a way for the UI
+        delegate to force WebView to get its background redrawn.
+
+        Fixes <http://webkit.org/b/29737> Need SPI to invalidate a WebView's
+        backing store
+
+        Reviewed by Anders Carlsson.
+
+        * Interfaces/IWebViewPrivate.idl: Added invalidateBackingStore.
+        * WebView.cpp:
+        (WebView::invalidateBackingStore): If rect is 0, invalidate our whole
+        client rect. Otherwise invalidate the intersection of rect with our
+        client rect.
+        * WebView.h:
+
 2009-09-24  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Add a mechanism for automatically halting plug-ins.
