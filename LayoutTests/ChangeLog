@@ -1,3 +1,15 @@
+2009-09-25  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Darin Adler, Dan Bernstein, Adele Peterson, and others.
+
+        Updated the expected results to reflect the changes in the way the new paragraph
+        is created and added test case for https://bugs.webkit.org/show_bug.cgi?id=29740
+        <rdar://problem/7168738> Gmail: After changing a foreground text color, pressing return doesn't apply background to new line
+
+        * editing/inserting/insert-bg-font.html: Added.
+        * platform/mac/editing/inserting/insert-bg-font-expected.txt: Added.
+        * platform/mac/editing/pasteboard/5478250-expected.txt:
+
 2009-09-25  Yuan Song  <song.yuan@ericsson.com>
 
         Reviewed by Darin Adler.

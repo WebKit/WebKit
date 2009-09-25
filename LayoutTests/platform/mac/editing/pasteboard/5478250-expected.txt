@@ -17,7 +17,7 @@ layer at (0,0) size 800x600
             RenderText {#text} at (108,0) size 34x18
               text run at (108,0) width 34: "bold."
         RenderBlock {DIV} at (0,18) size 784x18
-          RenderInline {B} at (0,0) size 393x18
+          RenderInline {SPAN} at (0,0) size 393x18
             RenderText {#text} at (0,0) size 393x18
               text run at (0,0) width 393: "This text should bold and left justified with \"Some text...\"."
-caret: position 61 of child 0 {#text} of child 0 {B} of child 2 {DIV} of child 4 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 61 of child 0 {#text} of child 0 {SPAN} of child 2 {DIV} of child 4 {DIV} of child 1 {BODY} of child 0 {HTML} of document

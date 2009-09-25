@@ -1,3 +1,33 @@
+2009-09-25  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Darin Adler, Dan Bernstein, Adele Peterson, and others.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=29740
+        <rdar://problem/7168738> Gmail: After changing a foreground text color, pressing return doesn't apply background to new line
+
+        Change the way style is preserved when inserting a new paragraph.
+        The original code handled insertion at the beginning and at the end of a paragraph as special
+        cases. The newly created paragraph contained a set of nodes generated starting from the
+        computed style of the insertion node. This approach has two problems:
+        1. if the insertion node has a non opaque background color and one of the parent element did have
+        a solid background color the new paragraph did not have the element with the solid color in the tree.
+        2. in some circumstances it generated more markup than the original paragraph had (a span with bold, italic,
+        background color and some font attribute was being reproduced as span + bold + italic + font as separate tags.
+        The new approach is to recreate in the new paragraph the same hierarchy of nodes found in the
+        paragraph where the insertion point is.
+
+        Test: editing/inserting/insert-bg-font.html
+
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::getAncestorsInsideBlock): retrieves the list of all the ancestors
+        between the insert node and the outer block.
+        (WebCore::InsertParagraphSeparatorCommand::cloneHierarchyUnderNewBlock): uses the list of ancestors to recreate
+        in the new paragraph the same element hierarchy present in the starting paragraph.
+        (WebCore::InsertParagraphSeparatorCommand::doApply): changed the code to handle the general case of insertion
+        in the middle of the paragraph to use the new methods. Changed the handling of the insertion at the beginning and
+        at the end of the paragraph to use the new methods instead of applying the calculated style.
+        * editing/InsertParagraphSeparatorCommand.h: added methods getAncestorsInsideBlock and cloneHierarchyUnderNewBlock.
+
 2009-09-25  Patrick Mueller  <Patrick_Mueller@us.ibm.com>
 
         Reviewed by Timothy Hatcher.
