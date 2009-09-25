@@ -1,3 +1,12 @@
+2009-09-24  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Mark "Do It!" Rowe.
+
+        Some GCC versions don't like C++-style comments in preprocessor
+        directives, change to C-style to shut them up.
+
+        * wtf/Platform.h:
+
 2009-09-24  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
