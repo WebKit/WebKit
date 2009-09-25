@@ -78,7 +78,7 @@ class CommitMessage:
 
 
 class ScriptError(Exception):
-    def __init__(self, script_args=None, exit_code=None, message=None, output=None, cwd=None):
+    def __init__(self, message=None, script_args=None, exit_code=None, output=None, cwd=None):
         if not message:
             message = 'Failed to run "%s"' % script_args
             if exit_code:
@@ -99,6 +99,23 @@ class ScriptError(Exception):
             return "%s\n%s" % (self, self.output)
         return str(self)
 
+
+class CheckoutNeedsUpdate(ScriptError):
+    def __init__(self, script_args, exit_code, output, cwd):
+        ScriptError.__init__(self, script_args=script_args, exit_code=exit_code, output=output, cwd=cwd)
+
+
+def default_error_handler(error):
+    raise error
+
+def commit_error_handler(error):
+    if re.search("resource out of date", error.output):
+        raise CheckoutNeedsUpdate(script_args=error.script_args, exit_code=error.exit_code, output=error.output, cwd=error.cwd)
+    default_error_handler(error)
+
+def ignore_error(error):
+    pass
+
 class SCM:
     def __init__(self, cwd, dryrun=False):
         self.cwd = cwd
@@ -106,13 +123,14 @@ class SCM:
         self.dryrun = dryrun
 
     @staticmethod
-    def run_command(args, cwd=None, input=None, raise_on_failure=True, return_exit_code=False):
+    def run_command(args, cwd=None, input=None, error_handler=default_error_handler, return_exit_code=False):
         stdin = subprocess.PIPE if input else None
         process = subprocess.Popen(args, stdin=stdin, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=cwd)
         output = process.communicate(input)[0].rstrip()
         exit_code = process.wait()
-        if raise_on_failure and exit_code:
-            raise ScriptError(script_args=args, exit_code=exit_code, output=output, cwd=cwd)
+        if exit_code:
+            script_error = ScriptError(script_args=args, exit_code=exit_code, output=output, cwd=cwd)
+            error_handler(script_error)
         if return_exit_code:
             return exit_code
         return output
@@ -125,7 +143,7 @@ class SCM:
 
     def ensure_clean_working_directory(self, force):
         if not force and not self.working_directory_is_clean():
-            print self.run_command(self.status_command(), raise_on_failure=False)
+            print self.run_command(self.status_command(), error_handler=ignore_error)
             raise ScriptError(message="Working directory has modifications, pass --force-clean or --no-clean to continue.")
         
         log("Cleaning working directory")
@@ -300,7 +318,7 @@ class SVN(SCM):
     @staticmethod
     def commit_success_regexp():
         return "^Committed revision (?P<svn_revision>\d+)\.$"
-    
+
     def svn_version(self):
         if not self.cached_version:
             self.cached_version = self.run_command(['svn', '--version', '--quiet'])
@@ -356,7 +374,7 @@ class SVN(SCM):
         if self.dryrun:
             # Return a string which looks like a commit so that things which parse this output will succeed.
             return "Dry run, no commit.\nCommitted revision 0."
-        return self.run_command(['svn', 'commit', '-m', message])
+        return self.run_command(['svn', 'commit', '-m', message], error_handler=commit_error_handler)
 
     def svn_commit_log(self, svn_revision):
         svn_revision = self.strip_r_from_svn_revision(str(svn_revision))
@@ -388,7 +406,8 @@ class Git(SCM):
     @staticmethod
     def commit_success_regexp():
         return "^Committed r(?P<svn_revision>\d+)$"
-    
+
+
     def discard_local_commits(self):
         self.run_command(['git', 'reset', '--hard', 'trunk'])
     
@@ -448,7 +467,7 @@ class Git(SCM):
 
         # I think this will always fail due to ChangeLogs.
         # FIXME: We need to detec specific failure conditions and handle them.
-        self.run_command(['git', 'revert', '--no-commit', git_commit], raise_on_failure=False)
+        self.run_command(['git', 'revert', '--no-commit', git_commit], error_handler=ignore_error)
 
         # Fix any ChangeLogs if necessary.
         changelog_paths = self.modified_changelogs()
@@ -484,7 +503,7 @@ class Git(SCM):
         if self.dryrun:
             # Return a string which looks like a commit so that things which parse this output will succeed.
             return "Dry run, no remote commit.\nCommitted r0"
-        return self.run_command(['git', 'svn', 'dcommit'])
+        return self.run_command(['git', 'svn', 'dcommit'], error_handler=commit_error_handler)
 
     # This function supports the following argument formats:
     # no args : rev-list trunk..HEAD

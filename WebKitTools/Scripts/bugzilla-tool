@@ -45,7 +45,7 @@ from modules.bugzilla import Bugzilla, parse_bug_id
 from modules.changelogs import ChangeLog
 from modules.comments import bug_comment_from_commit_text
 from modules.logging import error, log, tee
-from modules.scm import CommitMessage, detect_scm_system, ScriptError
+from modules.scm import CommitMessage, detect_scm_system, ScriptError, CheckoutNeedsUpdate
 from modules.buildbot import BuildBot
 from modules.statusbot import StatusBot
 
@@ -341,6 +341,10 @@ class LandPatchesFromBugs(Command):
 
             if options.close_bug:
                 tool.bugs.close_bug_as_fixed(bug_id, "All reviewed patches have been landed.  Closing bug.")
+        except CheckoutNeedsUpdate, e:
+            log("Commit was rejected because the checkout is out of date.  Please update and try again.")
+            log("You can pass --no-build to skip building/testing after update if you believe the new commits did not affect the results.")
+            error(e)
         except ScriptError, e:
             # Mark the patch as commit-queue- and comment in the bug.
             tool.bugs.reject_patch_from_commit_queue(patch['id'], e.message_with_output())

@@ -54,7 +54,7 @@ class LoggingTest(unittest.TestCase):
         self.assert_log_equals("test", "test\n")
 
         # Test that log() does not throw an exception when passed an object instead of a string.
-        self.assert_log_equals(ScriptError("ScriptError"), "ScriptError\n")
+        self.assert_log_equals(ScriptError(message="ScriptError"), "ScriptError\n")
 
 
 if __name__ == '__main__':

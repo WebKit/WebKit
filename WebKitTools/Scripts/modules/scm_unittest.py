@@ -35,7 +35,7 @@ import subprocess
 import tempfile
 import unittest
 import urllib
-from modules.scm import detect_scm_system, SCM, ScriptError
+from modules.scm import detect_scm_system, SCM, ScriptError, CheckoutNeedsUpdate, ignore_error, commit_error_handler
 
 
 # Eventually we will want to write tests which work for both scms. (like update_webkit, changed_files, etc.)
@@ -132,6 +132,25 @@ class SCMTest(unittest.TestCase):
         local_scripts_directory = local_scm.scripts_directory()
         os.mkdir(os.path.dirname(local_scripts_directory))
         os.symlink(webkit_scripts_directory, local_scripts_directory)
+
+    def test_error_handlers(self):
+        git_failure_message="Merge conflict during commit: Your file or directory 'WebCore/ChangeLog' is probably out-of-date: resource out of date; try updating at /usr/local/libexec/git-core//git-svn line 469"
+        svn_failure_message="""svn: Commit failed (details follow):
+svn: File or directory 'ChangeLog' is out of date; try updating
+svn: resource out of date; try updating
+"""
+        command_does_not_exist = ['does_not_exist', 'invalid_option']
+        self.assertRaises(OSError, SCM.run_command, command_does_not_exist)
+        self.assertRaises(OSError, SCM.run_command, command_does_not_exist, error_handler=ignore_error)
+
+        command_returns_non_zero = ['/bin/sh', '--invalid-option']
+        self.assertRaises(ScriptError, SCM.run_command, command_returns_non_zero)
+        self.assertTrue(SCM.run_command(command_returns_non_zero, error_handler=ignore_error))
+
+        self.assertRaises(CheckoutNeedsUpdate, commit_error_handler, ScriptError(output=git_failure_message))
+        self.assertRaises(CheckoutNeedsUpdate, commit_error_handler, ScriptError(output=svn_failure_message))
+        self.assertRaises(ScriptError, commit_error_handler, ScriptError(output='blah blah blah'))
+
 
     # Tests which both GitTest and SVNTest should run.
     # FIXME: There must be a simpler way to add these w/o adding a wrapper method to both subclasses

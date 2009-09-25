@@ -2,6 +2,25 @@
 
         Reviewed by Adam Barth.
 
+        commit-queue should auto-retry patches which fail to commit due to out of date files
+        https://bugs.webkit.org/show_bug.cgi?id=28316
+
+        * Scripts/bugzilla-tool:
+         - Handle new CheckoutNeedsUpdate exception.
+        * Scripts/modules/logging_unittest.py:
+         - Call the ScriptError constructor correctly (this test had regressed).
+        * Scripts/modules/scm.py:
+         - Added the ability to define custom error handlers for run_command
+           and added a commit_error_handler which throws CheckoutNeedsUpdate
+           instead of ScriptError.
+         - Re-ordered ScriptError constructor arguments to make ScriptError("message text") usage possible.
+        * Scripts/modules/scm_unittest.py:
+         - Added tests of new error handlers.
+
+2009-09-25  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
         commit-queue should give better feedback when failing a patch
         https://bugs.webkit.org/show_bug.cgi?id=29316
 
