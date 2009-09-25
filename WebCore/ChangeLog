@@ -1,3 +1,17 @@
+2009-09-25  Paul Godavari  <paul@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Fix a regression in Mac Chromium popup menus, where the user's
+        selection was ignored and the popup became unresponsive.
+        https://bugs.webkit.org/show_bug.cgi?id=29726
+
+        The fix is to notify the popup's client that the popup was hidden,
+        even if the popup has no parent.
+
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupListBox::hidePopup):
+
 2009-09-25  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Dan Bernstein.

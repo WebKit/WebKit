@@ -1057,12 +1057,11 @@ void PopupListBox::adjustSelectedIndex(int delta)
 
 void PopupListBox::hidePopup()
 {
-    if (!parent())
-        return;
-
-    PopupContainer* container = static_cast<PopupContainer*>(parent());
-    if (container->client())
-        container->client()->popupClosed(container);
+    if (parent()) {
+        PopupContainer* container = static_cast<PopupContainer*>(parent());
+        if (container->client())
+            container->client()->popupClosed(container);
+    }
 
     m_popupClient->popupDidHide();
 }
