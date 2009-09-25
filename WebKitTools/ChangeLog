@@ -1,3 +1,10 @@
+2009-09-25  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.  Added Tony to committers.py because he's a
+        committer now.
+
+        * Scripts/modules/committers.py:
+
 2009-09-25  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
