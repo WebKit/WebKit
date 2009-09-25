@@ -1,3 +1,18 @@
+2009-09-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Crash with hardware accelerated rotation of a PDF image in a data URL
+        <rdar://problem/7250378>
+        
+        PDF images don't return a color space from CGImageGetColorSpace(),
+        so we need to null-check the return value before use.
+
+        Test: compositing/color-matching/pdf-image-match.html
+
+        * platform/graphics/mac/GraphicsLayerCA.mm:
+        (WebCore::GraphicsLayerCA::setContentsToImage):
+
 2009-09-25  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoffrey Garen.

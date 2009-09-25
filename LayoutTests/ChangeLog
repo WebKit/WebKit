@@ -1,3 +1,17 @@
+2009-09-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Crash with hardware accelerated rotation of a PDF image in a data URL
+        <rdar://problem/7250378>
+        
+        Testcase for a PDF image as the contents of a compositing layer.
+
+        * compositing/color-matching/pdf-image-match.html: Added.
+        * platform/mac/compositing/color-matching/pdf-image-match-expected.checksum: Added.
+        * platform/mac/compositing/color-matching/pdf-image-match-expected.png: Added.
+        * platform/mac/compositing/color-matching/pdf-image-match-expected.txt: Added.
+
 2009-09-25  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoffrey Garen.
