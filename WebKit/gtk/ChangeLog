@@ -1,3 +1,17 @@
+2009-09-25  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Xan Lopez.
+
+        Pop down the context menu when the page transitions to committed,
+        to avoid keeping a context menu out of context.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::transitionToCommittedForNewPage):
+        * webkit/webkitprivate.h:
+        * webkit/webkitwebview.cpp:
+        (destroy_menu_cb):
+        (webkit_web_view_forward_context_menu_event):
+
 2009-09-24  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Reviewed by Alice Liu.

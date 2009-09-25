@@ -180,6 +180,15 @@ G_DEFINE_TYPE(WebKitWebView, webkit_web_view, GTK_TYPE_CONTAINER)
 static void webkit_web_view_settings_notify(WebKitWebSettings* webSettings, GParamSpec* pspec, WebKitWebView* webView);
 static void webkit_web_view_set_window_features(WebKitWebView* webView, WebKitWebWindowFeatures* webWindowFeatures);
 
+static void destroy_menu_cb(GtkObject* object, gpointer data)
+{
+    WebKitWebView* webView = WEBKIT_WEB_VIEW(data);
+    WebKitWebViewPrivate* priv = WEBKIT_WEB_VIEW_GET_PRIVATE(webView);
+
+    g_object_unref(priv->currentMenu);
+    priv->currentMenu = NULL;
+}
+
 static gboolean webkit_web_view_forward_context_menu_event(WebKitWebView* webView, const PlatformMouseEvent& event)
 {
     Page* page = core(webView);
@@ -211,8 +220,14 @@ static gboolean webkit_web_view_forward_context_menu_event(WebKitWebView* webVie
         return FALSE;
 
     WebKitWebViewPrivate* priv = WEBKIT_WEB_VIEW_GET_PRIVATE(webView);
+    priv->currentMenu = GTK_MENU(g_object_ref(menu));
     priv->lastPopupXPosition = event.globalX();
     priv->lastPopupYPosition = event.globalY();
+
+    g_signal_connect(menu, "destroy",
+                     G_CALLBACK(destroy_menu_cb),
+                     NULL);
+
     gtk_menu_popup(menu, NULL, NULL,
                    NULL,
                    priv, event.button() + 1, gtk_get_current_event_time());

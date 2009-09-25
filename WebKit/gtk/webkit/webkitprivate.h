@@ -121,6 +121,7 @@ extern "C" {
         WebKitWebFrame* mainFrame;
         WebKitWebBackForwardList* backForwardList;
 
+        GtkMenu* currentMenu;
         gint lastPopupXPosition;
         gint lastPopupYPosition;
 

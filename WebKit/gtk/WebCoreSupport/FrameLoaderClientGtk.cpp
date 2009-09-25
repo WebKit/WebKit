@@ -1075,6 +1075,14 @@ void FrameLoaderClient::transitionToCommittedForNewPage()
 
     WebKitWebViewPrivate* priv = WEBKIT_WEB_VIEW_GET_PRIVATE(containingWindow);
     frame->view()->setGtkAdjustments(priv->horizontalAdjustment, priv->verticalAdjustment);
+
+    if (priv->currentMenu) {
+        GtkMenu* menu = priv->currentMenu;
+        priv->currentMenu = NULL;
+
+        gtk_menu_popdown(menu);
+        g_object_unref(menu);
+    }
 }
 
 }
