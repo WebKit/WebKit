@@ -81,14 +81,11 @@ function addAllTextareas(iframe, compatMode) {
     iframe.style.height = docToAppendTo.body.offsetHeight + 5 + 'px';
 }
 
-// Set the domain in the top-level page as well as the iframe.
-// So they can communicate despite use of the data url.
-document.domain = 'mydummydomain';
 document.body.style.margin = 0;
 
 var standardsIframe = document.createElement('iframe');
-// Create a page with a doctype so it's standards mode.
-standardsIframe.src = 'data:text/html;charset=utf-8,%3C!DOCTYPE%20HTML%3E%3Cbody%3E%3Cscript%3Edocument.domain%20%3D%20"mydummydomain"%3B%3C%2Fbody%3E%3C%2Fhtml%3E%0D%0A';
+// Reference a page with a doctype so it's standards mode.
+standardsIframe.src = 'resources/basic-textareas-standards.html';
 standardsIframe.onload = function(e) {
     addAllTextareas(e.target, 'CSS1Compat');
 }

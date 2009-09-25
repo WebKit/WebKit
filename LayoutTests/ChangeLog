@@ -1,3 +1,17 @@
+2009-09-25  Yuan Song  <song.yuan@ericsson.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=14566
+
+        Add test "invalid-domain-change-throws-exception.html" to ensure a SECURITY_ERR exception is raised if an attempt is made to change document.domain to an invalid value. In the existing test case "basic-textareas.html", fix the faulty behavior of setting document.domain to invalid value, and replace the data URL to a file URL that points to "basic-textareas-standards.html" in order to make "basic-textareas.html" runnable in a browser.
+
+        * fast/forms/basic-textareas.html:
+        * fast/forms/resources/basic-textareas-standards.html: Added.
+        * fast/js/invalid-domain-change-throws-exception-expected.txt: Added.
+        * fast/js/invalid-domain-change-throws-exception.html: Added.
+        * fast/js/resources/invalid-domain-change-throws-exception.js: Added.
+
 2009-09-25  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Dimitri Glazkov.

@@ -155,7 +155,8 @@ module core {
                  attribute [ConvertNullToNullString] DOMString title;
         readonly attribute DOMString referrer;
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-                 attribute [ConvertNullToNullString] DOMString domain;
+                 attribute [ConvertNullToNullString] DOMString domain
+                     setter raises (DOMException);
 #else
         readonly attribute DOMString domain;
 #endif
