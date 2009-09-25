@@ -1314,6 +1314,7 @@ webcore_sources += \
 	WebCore/page/Geolocation.cpp \
 	WebCore/page/Geolocation.h \
 	WebCore/page/Geoposition.h \
+	WebCore/page/HaltablePlugin.h \
 	WebCore/page/History.cpp \
 	WebCore/page/History.h \
 	WebCore/page/Location.cpp \
@@ -1332,6 +1333,9 @@ webcore_sources += \
 	WebCore/page/PageGroup.h \
   WebCore/page/PageGroupLoadDeferrer.cpp \
   WebCore/page/PageGroupLoadDeferrer.h \
+	WebCore/page/PluginHalter.cpp \
+	WebCore/page/PluginHalter.h \
+	WebCore/page/PluginHalterClient.h \
 	WebCore/page/PositionCallback.h \
 	WebCore/page/PositionError.h \
 	WebCore/page/PositionErrorCallback.h \

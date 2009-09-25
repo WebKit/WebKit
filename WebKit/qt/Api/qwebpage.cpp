@@ -271,7 +271,7 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     contextMenuClient = new ContextMenuClientQt();
     editorClient = new EditorClientQt(q);
     page = new Page(chromeClient, contextMenuClient, editorClient,
-                    new DragClientQt(q), new InspectorClientQt(q));
+                    new DragClientQt(q), new InspectorClientQt(q), 0);
 
     // ### should be configurable
     page->settings()->setDefaultTextEncodingName("iso-8859-1");

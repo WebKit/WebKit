@@ -42,6 +42,7 @@
 #pragma warning( pop )
 
 #include <CoreFoundation/CoreFoundation.h>
+#include <limits>
 #include <shlobj.h>
 #include <shfolder.h>
 #include <tchar.h>
@@ -54,6 +55,7 @@
 #endif
 
 using namespace WebCore;
+using std::numeric_limits;
 
 static const String& oldPreferencesPath()
 {
@@ -249,6 +251,11 @@ void WebPreferences::initializeDefaultSettings()
     CFDictionaryAddValue(defaults, CFSTR(WebKitPaintNativeControlsPreferenceKey), kCFBooleanTrue);
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitUseHighResolutionTimersPreferenceKey), kCFBooleanTrue);
+
+    CFDictionaryAddValue(defaults, CFSTR(WebKitPluginHalterEnabledPreferenceKey), kCFBooleanFalse);
+
+    RetainPtr<CFStringRef> pluginAllowedRunTime(AdoptCF, CFStringCreateWithFormat(0, 0, CFSTR("%u"), numeric_limits<unsigned>::max()));
+    CFDictionaryAddValue(defaults, CFSTR(WebKitPluginAllowedRunTimePreferenceKey), pluginAllowedRunTime.get());
 
     defaultSettings = defaults;
 }
@@ -1325,6 +1332,31 @@ HRESULT STDMETHODCALLTYPE WebPreferences::setShouldUseHighResolutionTimers(BOOL 
 HRESULT STDMETHODCALLTYPE WebPreferences::shouldUseHighResolutionTimers(BOOL* useHighResolutionTimers)
 {
     *useHighResolutionTimers = boolValueForKey(CFSTR(WebKitUseHighResolutionTimersPreferenceKey));
+    return S_OK;
+}
+
+
+HRESULT STDMETHODCALLTYPE WebPreferences::setPluginHalterEnabled(BOOL enabled)
+{
+    setBoolValue(CFSTR(WebKitPluginHalterEnabledPreferenceKey), enabled);
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebPreferences::pluginHalterEnabled(BOOL* enabled)
+{
+    *enabled = boolValueForKey(CFSTR(WebKitPluginHalterEnabledPreferenceKey));
+    return S_OK;
+}
+
+HRESULT WebPreferences::setPluginAllowedRunTime(UINT allowedRunTime)
+{
+    setIntegerValue(CFSTR(WebKitPluginAllowedRunTimePreferenceKey), allowedRunTime);
+    return S_OK;
+}
+
+HRESULT WebPreferences::pluginAllowedRunTime(UINT* allowedRunTime)
+{
+    *allowedRunTime = integerValueForKey(CFSTR(WebKitPluginAllowedRunTimePreferenceKey));
     return S_OK;
 }
 

@@ -1,3 +1,99 @@
+2009-09-24  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Add a mechanism for automatically halting plug-ins.
+
+        Reviewed by Oliver Hunt and Alice Liu.
+
+        * GNUmakefile.am:
+
+        * WebCore.base.exp:
+        Update export of Page constructor.
+
+        * WebCore.gypi:
+
+        * WebCore.pro:
+
+        * WebCore.vcproj/WebCore.vcproj:
+        Add PluginHalter.{h,cpp}, PluginHalterClient.h, and
+        HaltablePlugin.h.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Add files to Mac project.
+
+        * loader/EmptyClients.h:
+        Added an empty PluginHalterClient.
+        (WebCore::EmptyPluginHalterClient::shouldHaltPlugin):
+        Return false.
+
+        * page/PluginHalter.cpp: Added.
+        (WebCore::PluginHalter::PluginHalter):
+        (WebCore::PluginHalter::didStartPlugin):
+        Add the object to the plug-in set. If this is the only item in the set,
+        set m_oldestStartTime to this object's time, and start the timer.
+        (WebCore::PluginHalter::didStopPlugin):
+        Remove the plug-in from the set.
+        (WebCore::PluginHalter::timerFired):
+        Find the cut-off time as the current time minus the allowed run time;
+        plug-ins older than this may be halted. Iterate over the plug-ins. Find
+        the object with the oldest start time that is too young to be halted;
+        we'll use its start time to set the timer's next fire time. For all
+        plug-ins that are candidates to be halted, call the
+        PluginHalterClient's shouldHaltPlugin(). If this function returns true,
+        call the plug-in's halt() function. Remove these objects from the set
+        of tracked plug-ins. Call startTimerIfNecessary() to restart the timer.
+        (WebCore::PluginHalter::startTimerIfNecessary):
+        If the timer is set to fire, or the set of tracked plug-ins is empty,
+        return early. Set the timer to fire after the oldest plug-in has run
+        for the allowed run time.
+
+        * page/PluginHalter.h: Added.
+        (WebCore::PluginHalter::setPluginAllowedRunTime):
+
+        * page/PluginHalterClient.h: Added.
+        (WebCore::PluginHalterClient::~PluginHalterClient):
+
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        Initialize m_pluginHalterClient. Call pluginHalterEnabledStateChanged()
+        to create the PluginHalter if necessary.
+        (WebCore::Page::pluginHalterEnabledStateChanged):
+        If plug-in halting is enabled, create the PluginHalter. If it is
+        disabled, clear it.
+        (WebCore::Page::pluginAllowedRunTimeChanged):
+        If there is a plug-in halter, call its setPluginAllowedRunTime().
+        (WebCore::Page::didStartPlugin):
+        If there is a plug-in halter, call its didStartPlugin().
+        (WebCore::Page::didStopPlugin):
+        If there is a plug-in halter, call its didStopPlugin().
+
+        * page/Page.h:
+        Add a parameter to the Page constructor for the PluginHalterClient.
+        Added declarations for didStartPlugin() and didStopPlugin(), which are
+        called when HaltablePlugins are added to or removed from the page. Adds
+        pluginAllowedRunTimeChanged() and pluginHalterEnabledStateChanged() to
+        notify the Page when these settings are changed. Added members to hold
+        the PluginHalter and the PluginHalterClient.
+
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::setPluginHalterEnabled):
+        If the enabled state has changed, call the Page's
+        pluginHalterEnabledStateChanged().
+        (WebCore::Settings::setPluginAllowedRunTime):
+        Call the Page's pluginAllowedRunTimeChanged().
+
+        * page/Settings.h:
+        (WebCore::Settings::pluginHalterEnabled):
+        (WebCore::Settings::pluginAllowedRunTime):
+
+        * page/HaltablePlugin.h: Added. Defines an interface for plug-ins that
+        can be automatically halted.
+        (WebCore::HaltablePlugin::~HaltablePlugin):
+
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::dataChanged):
+        Pass a dummy PluginHalterClient.
+
 2009-09-24  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

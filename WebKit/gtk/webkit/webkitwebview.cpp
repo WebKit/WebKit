@@ -2533,7 +2533,7 @@ static void webkit_web_view_init(WebKitWebView* webView)
     priv->imContext = gtk_im_multicontext_new();
 
     WebKit::InspectorClient* inspectorClient = new WebKit::InspectorClient(webView);
-    priv->corePage = new Page(new WebKit::ChromeClient(webView), new WebKit::ContextMenuClient(webView), new WebKit::EditorClient(webView), new WebKit::DragClient(webView), inspectorClient);
+    priv->corePage = new Page(new WebKit::ChromeClient(webView), new WebKit::ContextMenuClient(webView), new WebKit::EditorClient(webView), new WebKit::DragClient(webView), inspectorClient, 0);
 
     // We also add a simple wrapper class to provide the public
     // interface for the Web Inspector.

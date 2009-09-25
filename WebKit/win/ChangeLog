@@ -1,3 +1,68 @@
+2009-09-24  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Add a mechanism for automatically halting plug-ins.
+
+        Reviewed by Oliver Hunt.
+
+        * Interfaces/IWebPluginHalterDelegate.idl: Added. Defines an interface
+        for a delegate that determines whether plug-ins should be halted.
+
+        * Interfaces/IWebPreferencesPrivate.idl:
+        Declare functions to get and set the enabled state of the plug-in
+        halter and the plug-in allowed run time.
+
+        * Interfaces/IWebViewPrivate.idl:
+        Declare functions to get and set the IWebPluginHalterDelegate.
+
+        * Interfaces/WebKit.idl:
+
+        * WebCoreSupport/WebPluginHalterClient.cpp: Added.
+        (WebPluginHalterClient::WebPluginHalterClient):
+        (WebPluginHalterClient::shouldHaltPlugin):
+        Get the IWebPluginHalterDelegate for the WebView. Create a WebKit
+        DOMNode for the WebCore Node. Call the delegate's shouldHaltPlugin().
+        If the call fails, return false. Otherwise, return the result of the
+        call.
+
+        * WebCoreSupport/WebPluginHalterClient.h: Added.
+
+        * WebKit.vcproj/Interfaces.vcproj:
+        Add IWebPluginHalterDelegate.idl.
+
+        * WebKit.vcproj/WebKit.vcproj:
+        Add WebPluginHalterClient.{h,cpp}.
+
+        * WebPreferenceKeysPrivate.h:
+        Define WebKitPluginHalterEnabledPreferenceKey and
+        WebKitPluginAllowedRunTimePreferenceKey.
+
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings):
+        Leave plug-in halting disabled by default. Set the default value for
+        the plug-in allowed run time to the max value of an unsigned int.
+        (WebPreferences::setPluginHalterEnabled):
+        (WebPreferences::pluginHalterEnabled):
+        (WebPreferences::setPluginAllowedRunTime):
+        (WebPreferences::pluginAllowedRunTime):
+
+        * WebPreferences.h:
+
+        * WebView.cpp:
+        (WebView::close):
+        Clear the IWebPluginHalterDelegate.
+        (WebView::initWithFrame):
+        Pass a WebPluginHalterClient when creating the Page.
+        (WebView::notifyPreferencesChanged):
+        Set the new settings when the preferences changed notification is
+        received.
+        (WebView::setPluginHalterDelegate):
+        (WebView::pluginHalterDelegate):
+
+        * WebView.h:
+        Declare overrides of setPluginHalterDelegate() and
+        pluginHalterDelegate(). Added a member to track the
+        IWebPluginHalterDelegate.
+
 2009-09-14  John Gregg  <johnnyg@google.com>
 
         Reviewed by Eric Seidel.

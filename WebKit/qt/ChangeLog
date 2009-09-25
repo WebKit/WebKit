@@ -1,3 +1,11 @@
+2009-09-24  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Alice Liu.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+        Pass 0 for new Page constructor argument.
+
 2009-09-24  Martin Smith  <msmith@trolltech.com>
 
         Reviewed by Simon Hausmann.

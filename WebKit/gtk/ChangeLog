@@ -1,3 +1,11 @@
+2009-09-24  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Alice Liu.
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_init):
+        Pass 0 for new Page constructor argument.
+
 2009-09-24  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha and Jan Alonzo.

@@ -16933,6 +16933,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\page\HaltablePlugin.h"
+				>
+			</File>
+			<File
 				RelativePath="..\page\History.cpp"
 				>
 			</File>
@@ -17018,6 +17022,18 @@
 			</File>
 			<File
 				RelativePath="..\page\Plugin.h"
+				>
+			</File>
+			<File
+				RelativePath="..\page\PluginHalter.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\PluginHalter.h"
+				>
+			</File>
+			<File
+				RelativePath="..\page\PluginHalterClient.h"
 				>
 			</File>
 			<File

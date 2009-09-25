@@ -1194,6 +1194,10 @@
 		75793ED50D0CE85B007FC0AC /* DOMMessageEventInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 75793ED20D0CE85B007FC0AC /* DOMMessageEventInternal.h */; };
 		75A94A03104B74FB0006673C /* TimelineItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75A94A01104B74FB0006673C /* TimelineItem.cpp */; };
 		75A94A04104B74FB0006673C /* TimelineItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 75A94A02104B74FB0006673C /* TimelineItem.h */; };
+		7693BAD2106C2DCA007B0823 /* HaltablePlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 7693BACE106C2DCA007B0823 /* HaltablePlugin.h */; };
+		7693BAD3106C2DCA007B0823 /* PluginHalter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7693BACF106C2DCA007B0823 /* PluginHalter.cpp */; };
+		7693BAD4106C2DCA007B0823 /* PluginHalter.h in Headers */ = {isa = PBXBuildFile; fileRef = 7693BAD0106C2DCA007B0823 /* PluginHalter.h */; };
+		7693BAD5106C2DCA007B0823 /* PluginHalterClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 7693BAD1106C2DCA007B0823 /* PluginHalterClient.h */; };
 		7A1E88F5101CC384000C4DF5 /* ScriptArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A1E88F3101CC384000C4DF5 /* ScriptArray.cpp */; };
 		7A1E88F6101CC384000C4DF5 /* ScriptArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A1E88F4101CC384000C4DF5 /* ScriptArray.h */; };
 		7A24587B1021EAF4000A00AA /* InspectorDOMAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A2458791021EAF4000A00AA /* InspectorDOMAgent.cpp */; };
@@ -6432,6 +6436,10 @@
 		75793ED20D0CE85B007FC0AC /* DOMMessageEventInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMMessageEventInternal.h; sourceTree = "<group>"; };
 		75A94A01104B74FB0006673C /* TimelineItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TimelineItem.cpp; sourceTree = "<group>"; };
 		75A94A02104B74FB0006673C /* TimelineItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimelineItem.h; sourceTree = "<group>"; };
+		7693BACE106C2DCA007B0823 /* HaltablePlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HaltablePlugin.h; sourceTree = "<group>"; };
+		7693BACF106C2DCA007B0823 /* PluginHalter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginHalter.cpp; sourceTree = "<group>"; };
+		7693BAD0106C2DCA007B0823 /* PluginHalter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginHalter.h; sourceTree = "<group>"; };
+		7693BAD1106C2DCA007B0823 /* PluginHalterClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginHalterClient.h; sourceTree = "<group>"; };
 		7A1E88F3101CC384000C4DF5 /* ScriptArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptArray.cpp; sourceTree = "<group>"; };
 		7A1E88F4101CC384000C4DF5 /* ScriptArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptArray.h; sourceTree = "<group>"; };
 		7A2458791021EAF4000A00AA /* InspectorDOMAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorDOMAgent.cpp; sourceTree = "<group>"; };
@@ -11046,6 +11054,7 @@
 				FE80D7B90E9C1F25000D6F75 /* Geolocation.idl */,
 				FE80D7BB0E9C1F25000D6F75 /* Geoposition.h */,
 				FE80D7BC0E9C1F25000D6F75 /* Geoposition.idl */,
+				7693BACE106C2DCA007B0823 /* HaltablePlugin.h */,
 				BC94D1500C275C8B006BC617 /* History.cpp */,
 				BC94D1510C275C8B006BC617 /* History.h */,
 				BC94D1520C275C8B006BC617 /* History.idl */,
@@ -11067,6 +11076,9 @@
 				9302B0BE0D79F82C00C7EE83 /* PageGroup.h */,
 				7A674BD90F9EBF4E006CF099 /* PageGroupLoadDeferrer.cpp */,
 				7A674BDA0F9EBF4E006CF099 /* PageGroupLoadDeferrer.h */,
+				7693BACF106C2DCA007B0823 /* PluginHalter.cpp */,
+				7693BAD0106C2DCA007B0823 /* PluginHalter.h */,
+				7693BAD1106C2DCA007B0823 /* PluginHalterClient.h */,
 				FE80D7BD0E9C1F25000D6F75 /* PositionCallback.h */,
 				FE80D7BF0E9C1F25000D6F75 /* PositionError.h */,
 				FE80D7C00E9C1F25000D6F75 /* PositionError.idl */,
@@ -17880,6 +17892,9 @@
 				FABE72F71059C1EB00D999DD /* MathMLInlineContainerElement.h in Headers */,
 				FABE72F91059C1EB00D999DD /* MathMLMathElement.h in Headers */,
 				37202199106213C600F25C4B /* FontSmoothingMode.h in Headers */,
+				7693BAD2106C2DCA007B0823 /* HaltablePlugin.h in Headers */,
+				7693BAD4106C2DCA007B0823 /* PluginHalter.h in Headers */,
+				7693BAD5106C2DCA007B0823 /* PluginHalterClient.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -19991,6 +20006,7 @@
 				BCCE58AC1061E8CF008FB35A /* JSDatabaseCustom.cpp in Sources */,
 				BCCE58AF1061E90C008FB35A /* JSDocumentFragmentCustom.cpp in Sources */,
 				14CD8D82106B529000A46D23 /* JSSharedWorkerCustom.cpp in Sources */,
+				7693BAD3106C2DCA007B0823 /* PluginHalter.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

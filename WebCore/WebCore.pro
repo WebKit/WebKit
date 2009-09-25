@@ -1137,6 +1137,7 @@ SOURCES += \
     page/Page.cpp \
     page/PageGroup.cpp \
     page/PageGroupLoadDeferrer.cpp \
+    page/PluginHalter.cpp \
     page/PrintContext.cpp \
     page/SecurityOrigin.cpp \
     page/Screen.cpp \
@@ -1811,6 +1812,7 @@ HEADERS += \
     page/FrameView.h \
     page/Geolocation.h \
     page/Geoposition.h \
+    page/HaltablePlugin.h \
     page/History.h \
     page/Location.h \
     page/MouseEventWithHitTestResults.h \
@@ -1819,6 +1821,8 @@ HEADERS += \
     page/PageGroup.h \
     page/PageGroupLoadDeferrer.h \
     page/Page.h \
+    page/PluginHalter.h \
+    page/PluginHalterClient.h \
     page/PrintContext.h \
     page/Screen.h \
     page/SecurityOrigin.h \

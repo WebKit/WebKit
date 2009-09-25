@@ -54,12 +54,15 @@ namespace WebCore {
     class EditorClient;
     class FocusController;
     class Frame;
+    class HaltablePlugin;
     class InspectorClient;
     class InspectorController;
     class InspectorTimelineAgent;
     class Node;
     class PageGroup;
     class PluginData;
+    class PluginHalter;
+    class PluginHalterClient;
     class PluginView;
     class ProgressTracker;
     class RenderTheme;
@@ -82,7 +85,7 @@ namespace WebCore {
     public:
         static void setNeedsReapplyStyles();
 
-        Page(ChromeClient*, ContextMenuClient*, EditorClient*, DragClient*, InspectorClient*);
+        Page(ChromeClient*, ContextMenuClient*, EditorClient*, DragClient*, InspectorClient*, PluginHalterClient*);
         ~Page();
 
         RenderTheme* theme() const { return m_theme.get(); };
@@ -180,6 +183,11 @@ namespace WebCore {
 
         void userStyleSheetLocationChanged();
         const String& userStyleSheet() const;
+
+        void didStartPlugin(HaltablePlugin*);
+        void didStopPlugin(HaltablePlugin*);
+        void pluginAllowedRunTimeChanged();
+        void pluginHalterEnabledStateChanged();
 
         static void setDebuggerForAllPages(JSC::Debugger*);
         void setDebugger(JSC::Debugger*);
@@ -283,6 +291,9 @@ namespace WebCore {
 
         bool m_canStartPlugins;
         HashSet<PluginView*> m_unstartedPlugins;
+
+        OwnPtr<PluginHalter> m_pluginHalter;
+        PluginHalterClient* m_pluginHalterClient;
 
 #if ENABLE(DOM_STORAGE)
         RefPtr<StorageNamespace> m_sessionStorage;

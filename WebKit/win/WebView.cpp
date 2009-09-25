@@ -50,6 +50,7 @@
 #include "WebKitSystemBits.h"
 #include "WebMutableURLRequest.h"
 #include "WebNotificationCenter.h"
+#include "WebPluginHalterClient.h"
 #include "WebPreferences.h"
 #include "WindowsTouch.h"
 #pragma warning( push, 0 )
@@ -642,6 +643,7 @@ HRESULT STDMETHODCALLTYPE WebView::close()
     setResourceLoadDelegate(0);
     setUIDelegate(0);
     setFormDelegate(0);
+    setPluginHalterDelegate(0);
 
     if (m_webInspector)
         m_webInspector->webViewClosed();
@@ -2355,7 +2357,7 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
     if (SUCCEEDED(m_preferences->shouldUseHighResolutionTimers(&useHighResolutionTimer)))
         Settings::setShouldUseHighResolutionTimers(useHighResolutionTimer);
 
-    m_page = new Page(new WebChromeClient(this), new WebContextMenuClient(this), new WebEditorClient(this), new WebDragClient(this), new WebInspectorClient(this));
+    m_page = new Page(new WebChromeClient(this), new WebContextMenuClient(this), new WebEditorClient(this), new WebDragClient(this), new WebInspectorClient(this), new WebPluginHalterClient(this));
 
     BSTR localStoragePath;
     if (SUCCEEDED(m_preferences->localStorageDatabasePath(&localStoragePath))) {
@@ -4434,6 +4436,17 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     settings->setShouldUseHighResolutionTimers(enabled);
 
+    hr = prefsPrivate->pluginHalterEnabled(&enabled);
+    if (FAILED(hr))
+        return hr;
+    settings->setPluginHalterEnabled(enabled);
+
+    UINT runTime;
+    hr = prefsPrivate->pluginAllowedRunTime(&runTime);
+    if (FAILED(hr))
+        return hr;
+    settings->setPluginAllowedRunTime(runTime);
+
     if (!m_closeWindowTimer.isActive())
         m_mainFrame->invalidate(); // FIXME
 
@@ -5490,6 +5503,24 @@ void WebView::downloadURL(const KURL& url)
     // destroyed when this function returns.
     COMPtr<WebDownload> download(AdoptCOM, WebDownload::createInstance(url, m_downloadDelegate.get()));
     download->start();
+}
+
+
+HRESULT STDMETHODCALLTYPE WebView::setPluginHalterDelegate(IWebPluginHalterDelegate* d)
+{
+    m_pluginHalterDelegate = d;
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebView::pluginHalterDelegate(IWebPluginHalterDelegate** d)
+{
+    if (!d)
+        return E_POINTER;
+
+    if (!m_pluginHalterDelegate)
+        return E_FAIL;
+
+    return m_pluginHalterDelegate.copyRefTo(d);
 }
 
 class EnumTextMatches : public IEnumTextMatches

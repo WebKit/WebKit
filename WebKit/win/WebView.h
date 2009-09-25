@@ -745,6 +745,9 @@ public:
     virtual HRESULT STDMETHODCALLTYPE removeUserContentFromGroup(BSTR groupName, unsigned worldID);
     virtual HRESULT STDMETHODCALLTYPE removeAllUserContentFromGroup(BSTR groupName);
 
+    virtual HRESULT STDMETHODCALLTYPE setPluginHalterDelegate(IWebPluginHalterDelegate*);
+    virtual HRESULT STDMETHODCALLTYPE pluginHalterDelegate(IWebPluginHalterDelegate**);
+
     // WebView
     bool shouldUseEmbeddedView(const WebCore::String& mimeType) const;
 
@@ -892,6 +895,7 @@ protected:
     COMPtr<IWebDownloadDelegate> m_downloadDelegate;
     COMPtr<WebPreferences> m_preferences;
     COMPtr<WebInspector> m_webInspector;
+    COMPtr<IWebPluginHalterDelegate> m_pluginHalterDelegate;
 
     bool m_userAgentOverridden;
     bool m_useBackForwardList;

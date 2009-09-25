@@ -1,3 +1,11 @@
+2009-09-24  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Alice Liu.
+
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:usesDocumentViews:]):
+        Pass 0 for new Page constructor argument.
+
 2009-09-14  John Gregg  <johnnyg@google.com>
 
         Reviewed by Eric Seidel.

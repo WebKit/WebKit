@@ -39,6 +39,7 @@
 #include "FormState.h"
 #include "FrameLoaderClient.h"
 #include "InspectorClient.h"
+#include "PluginHalterClient.h"
 #include "ResourceError.h"
 #include "SharedBuffer.h"
 
@@ -481,6 +482,12 @@ public:
     virtual void removeSetting(const String&) { }
 
     virtual void inspectorWindowObjectCleared() { }
+};
+
+class EmptyPluginHalterClient : public PluginHalterClient
+{
+public:
+    virtual bool shouldHaltPlugin(Node*) const { return false; }
 };
 
 }
