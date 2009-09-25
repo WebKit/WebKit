@@ -1,3 +1,15 @@
+2009-09-24  Jessie Berlin  <jberlin@webkit.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Fix expanding profile call stacks being broken after sorting.
+        https://bugs.webkit.org/show_bug.cgi?id=26423
+
+        * inspector/front-end/ProfileDataGridTree.js:
+        (WebInspector.ProfileDataGridNode.prototype.sort):
+        Set shouldRefreshChildren to true on collapsed nodes with children so that expanding it
+        causes the children to be placed in the right positions.
+
 2009-09-24  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Stephanie Lewis.
