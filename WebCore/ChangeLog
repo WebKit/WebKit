@@ -1,3 +1,18 @@
+2009-09-25  Patrick Mueller  <Patrick_Mueller@us.ibm.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Content-type parameters not taken into account when building form-data
+        https://bugs.webkit.org/show_bug.cgi?id=28970
+
+        existing manual test case extended with new tests
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/ResourceView.js:
+        (WebInspector.ResourceView.prototype._refreshFormData):
+        (WebInspector.ResourceView.prototype._refreshParms):
+        * manual-tests/inspector/display-form-data.html:
+
 2009-09-25  Yuan Song  <song.yuan@ericsson.com>
 
         Reviewed by Darin Adler.

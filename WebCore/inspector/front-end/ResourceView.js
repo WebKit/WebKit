@@ -178,7 +178,7 @@ WebInspector.ResourceView.prototype = {
 
         var isFormEncoded = false;
         var requestContentType = this._getHeaderValue(this.resource.requestHeaders, "Content-Type");
-        if (requestContentType == "application/x-www-form-urlencoded")
+        if (requestContentType.match(/^application\/x-www-form-urlencoded\s*(;.*)?$/i))
             isFormEncoded = true;
 
         if (isFormEncoded) {
@@ -217,14 +217,27 @@ WebInspector.ResourceView.prototype = {
 
         for (var i = 0; i < parms.length; ++i) {
             var key = parms[i][0];
-            var val = parms[i][1];
+            var value = parms[i][1];
 
-            if (val.indexOf("%") >= 0)
-                if (this._decodeRequestParameters)
-                    val = decodeURIComponent(val).replace(/\+/g, " ");
+            var errorDecoding = false;
+            if (this._decodeRequestParameters) {
+                if (value.indexOf("%") >= 0) {
+                    try {
+                        value = decodeURIComponent(value);
+                    } catch(e) {
+                        errorDecoding = true;
+                    }
+                }
+                    
+                value = value.replace(/\+/g, " ");
+            }
+
+            valueEscaped = value.escapeHTML();
+            if (errorDecoding)
+                valueEscaped += " <span class=\"error-message\">" + WebInspector.UIString("(unable to decode value)").escapeHTML() + "</span>";
 
             var title = "<div class=\"header-name\">" + key.escapeHTML() + ":</div>";
-            title += "<div class=\"header-value\">" + val.escapeHTML() + "</div>";
+            title += "<div class=\"header-value\">" + valueEscaped + "</div>";
 
             var parmTreeElement = new TreeElement(title, null, false);
             parmTreeElement.selectable = false;
