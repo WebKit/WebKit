@@ -406,6 +406,7 @@ static void resetDefaultsToConsistentValues()
     [preferences setShouldPrintBackgrounds:YES];
     [preferences setCacheModel:WebCacheModelDocumentBrowser];
     [preferences setXSSAuditorEnabled:NO];
+    [preferences setExperimentalNotificationsEnabled:NO];
 
     [preferences setPrivateBrowsingEnabled:NO];
     [preferences setAuthorAndUserStylesEnabled:YES];

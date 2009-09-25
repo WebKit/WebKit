@@ -253,6 +253,9 @@ namespace WebCore {
         void setAcceleratedCompositingEnabled(bool);
         bool acceleratedCompositingEnabled() const { return m_acceleratedCompositingEnabled; }
 
+        void setExperimentalNotificationsEnabled(bool);
+        bool experimentalNotificationsEnabled() const { return m_experimentalNotificationsEnabled; }
+
 #if PLATFORM(WIN) || (PLATFORM(WIN_OS) && PLATFORM(WX))
         static void setShouldUseHighResolutionTimers(bool);
         static bool shouldUseHighResolutionTimers() { return gShouldUseHighResolutionTimers; }
@@ -322,6 +325,7 @@ namespace WebCore {
         bool m_downloadableBinaryFontsEnabled : 1;
         bool m_xssAuditorEnabled : 1;
         bool m_acceleratedCompositingEnabled : 1;
+        bool m_experimentalNotificationsEnabled : 1;
 
 #if USE(SAFARI_THEME)
         static bool gShouldPaintNativeControls;

@@ -1,3 +1,27 @@
+2009-09-14  John Gregg  <johnnyg@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Enable switch for notifications (experimental) in Page Settings
+        https://bugs.webkit.org/show_bug.cgi?id=28930
+
+        Adds support for the experimentalNotificationsEnabled flag in Settings through
+        WebPreferencesPrivate interface.  Also cleans up some issues accessing the
+        notification delegate through DumpRenderTree.
+
+        * Interfaces/IWebPreferencesPrivate.idl:
+        * WebCoreSupport/WebDesktopNotificationsDelegate.cpp:
+        (WebDesktopNotificationsDelegate::hasNotificationDelegate):
+        (WebDesktopNotificationsDelegate::notificationDelegate):
+        * WebPreferenceKeysPrivate.h:
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings):
+        (WebPreferences::setExperimentalNotificationsEnabled):
+        (WebPreferences::experimentalNotificationsEnabled):
+        * WebPreferences.h:
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
 2009-09-23  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.

@@ -1,3 +1,20 @@
+2009-09-24  John Gregg  <johnnyg@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Enable switch for notifications (experimental) in Page Settings
+        https://bugs.webkit.org/show_bug.cgi?id=28930
+
+        Now that desktop notifications are controlled by run-time switch,
+        set that switch to true for DumpRenderTree.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetDefaultsToConsistentValues):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (resetDefaultsToConsistentValues):
+        * DumpRenderTree/win/UIDelegate.cpp:
+        (UIDelegate::QueryInterface):
+
 2009-09-24  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. SnowLeopard fixes for Mac dependencies.

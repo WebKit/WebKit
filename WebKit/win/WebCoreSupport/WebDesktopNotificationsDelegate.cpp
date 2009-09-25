@@ -185,8 +185,7 @@ bool WebDesktopNotificationsDelegate::hasNotificationDelegate()
     m_webView->uiDelegate(&ui);
 
     COMPtr<IWebUIDelegate2> ui2;
-    if (SUCCEEDED(ui->QueryInterface(IID_IWebUIDelegate2, &ui2)))
-        return true;
+    return SUCCEEDED(ui->QueryInterface(IID_IWebUIDelegate2, (void**) &ui2));
 }
 
 COMPtr<IWebDesktopNotificationsDelegate> WebDesktopNotificationsDelegate::notificationDelegate()
@@ -196,7 +195,7 @@ COMPtr<IWebDesktopNotificationsDelegate> WebDesktopNotificationsDelegate::notifi
 
     COMPtr<IWebUIDelegate2> ui2;
     COMPtr<IWebDesktopNotificationsDelegate> delegate;
-    if (SUCCEEDED(ui->QueryInterface(IID_IWebUIDelegate2, &ui2)))
+    if (SUCCEEDED(ui->QueryInterface(IID_IWebUIDelegate2, (void**) &ui2)))
         ui2->desktopNotificationsDelegate(&delegate);
 
     return delegate;

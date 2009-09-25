@@ -624,6 +624,9 @@ NotificationCenter* DOMWindow::webkitNotifications() const
     if (!page)
         return 0;
 
+    if (!page->settings()->experimentalNotificationsEnabled())
+        return 0;
+
     NotificationPresenter* provider = page->chrome()->notificationPresenter();
     if (provider) 
         m_notifications = NotificationCenter::create(document, provider);    

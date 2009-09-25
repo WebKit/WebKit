@@ -320,6 +320,7 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithBool:YES],  WebKitPluginsEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitDatabasesEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitLocalStorageEnabledPreferenceKey,
+        [NSNumber numberWithBool:NO],   WebKitExperimentalNotificationsEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitAllowAnimatedImagesPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitAllowAnimatedImageLoopingPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitDisplayImagesKey,
@@ -1009,6 +1010,16 @@ static WebCacheModel cacheModelForMainBundle(void)
 - (void)setLocalStorageEnabled:(BOOL)localStorageEnabled
 {
     [self _setBoolValue:localStorageEnabled forKey:WebKitLocalStorageEnabledPreferenceKey];
+}
+
+- (BOOL)experimentalNotificationsEnabled
+{
+    return [self _boolValueForKey:WebKitExperimentalNotificationsEnabledPreferenceKey];
+}
+
+- (void)setExperimentalNotificationsEnabled:(BOOL)experimentalNotificationsEnabled
+{
+    [self _setBoolValue:experimentalNotificationsEnabled forKey:WebKitExperimentalNotificationsEnabledPreferenceKey];
 }
 
 + (WebPreferences *)_getInstanceForIdentifier:(NSString *)ident

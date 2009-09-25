@@ -4402,6 +4402,11 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     settings->setLocalStorageEnabled(enabled);
 
+    hr = prefsPrivate->experimentalNotificationsEnabled(&enabled);
+    if (FAILED(hr))
+        return hr;
+    settings->setExperimentalNotificationsEnabled(enabled);
+
     hr = prefsPrivate->isWebSecurityEnabled(&enabled);
     if (FAILED(hr))
         return hr;

@@ -1,3 +1,23 @@
+2009-09-24  John Gregg  <johnnyg@google.com>
+
+        Reviewed by Eric Seidel.
+
+        isEnabled switch for notifications (experimental) in Page Settings
+        https://bugs.webkit.org/show_bug.cgi?id=28930
+
+        Adds a run-time flag in Settings object that controls whether
+        to expose desktop notifications.
+
+        No new test, but test code also modified to set this preference.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::webkitNotifications): check preference before returning notifications object
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::setExperimentalNotificationsEnabled):
+        * page/Settings.h:
+        (WebCore::Settings::experimentalNotificationsEnabled):
+
 2009-09-24  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

@@ -53,6 +53,7 @@
 #define WebKitPluginsEnabledPreferenceKey "WebKitPluginsEnabled"
 #define WebKitDatabasesEnabledPreferenceKey "WebKitDatabasesEnabled"
 #define WebKitLocalStorageEnabledPreferenceKey "WebKitLocalStorageEnabled"
+#define WebKitExperimentalNotificationsEnabledPreferenceKey "WebKitExperimentalNotificationsEnabled"
 #define WebKitAllowAnimatedImagesPreferenceKey "WebKitAllowAnimatedImagesPreferenceKey"
 #define WebKitAllowAnimatedImageLoopingPreferenceKey "WebKitAllowAnimatedImageLoopingPreferenceKey"
 #define WebKitDisplayImagesKey "WebKitDisplayImagesKey"

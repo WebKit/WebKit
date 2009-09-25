@@ -1277,6 +1277,7 @@ static bool fastDocumentTeardownEnabled()
     settings->setPluginsEnabled([preferences arePlugInsEnabled]);
     settings->setDatabasesEnabled([preferences databasesEnabled]);
     settings->setLocalStorageEnabled([preferences localStorageEnabled]);
+    settings->setExperimentalNotificationsEnabled([preferences experimentalNotificationsEnabled]);
     settings->setPrivateBrowsingEnabled([preferences privateBrowsingEnabled]);
     settings->setSansSerifFontFamily([preferences sansSerifFontFamily]);
     settings->setSerifFontFamily([preferences serifFontFamily]);

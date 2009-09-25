@@ -79,6 +79,9 @@ interface IWebPreferencesPrivate : IUnknown
     HRESULT isXSSAuditorEnabled([out, retval] BOOL *enabled);
     HRESULT setXSSAuditorEnabled([in] BOOL enabled);
 
+    HRESULT experimentalNotificationsEnabled([out, retval] BOOL *enabled);
+    HRESULT setExperimentalNotificationsEnabled([in] BOOL enabled);
+
     HRESULT setShouldUseHighResolutionTimers([in] BOOL useHighResolutionTimers);
     HRESULT shouldUseHighResolutionTimers([out, retval] BOOL* useHighResolutionTimers);
 

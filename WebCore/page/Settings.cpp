@@ -114,6 +114,7 @@ Settings::Settings(Page* page)
     , m_downloadableBinaryFontsEnabled(true)
     , m_xssAuditorEnabled(false)
     , m_acceleratedCompositingEnabled(true)
+    , m_experimentalNotificationsEnabled(false)
 {
     // A Frame may not have been created yet, so we initialize the AtomicString 
     // hash before trying to use it.
@@ -495,6 +496,11 @@ void Settings::setAcceleratedCompositingEnabled(bool enabled)
         
     m_acceleratedCompositingEnabled = enabled;
     setNeedsReapplyStylesInAllFrames(m_page);
+}
+
+void Settings::setExperimentalNotificationsEnabled(bool enabled)
+{
+    m_experimentalNotificationsEnabled = enabled;
 }
 
 #if PLATFORM(WIN) || (PLATFORM(WIN_OS) && PLATFORM(WX))

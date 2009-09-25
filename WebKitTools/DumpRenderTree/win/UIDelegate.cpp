@@ -176,6 +176,8 @@ HRESULT STDMETHODCALLTYPE UIDelegate::QueryInterface(REFIID riid, void** ppvObje
         *ppvObject = static_cast<IWebUIDelegate*>(this);
     else if (IsEqualGUID(riid, IID_IWebUIDelegate))
         *ppvObject = static_cast<IWebUIDelegate*>(this);
+    else if (IsEqualGUID(riid, IID_IWebUIDelegate2))
+        *ppvObject = static_cast<IWebUIDelegate2*>(this);
     else if (IsEqualGUID(riid, IID_IWebUIDelegatePrivate))
         *ppvObject = static_cast<IWebUIDelegatePrivate*>(this);
     else

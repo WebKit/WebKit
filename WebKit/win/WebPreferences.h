@@ -325,7 +325,13 @@ public:
 
     virtual HRESULT STDMETHODCALLTYPE setLocalStorageDatabasePath(
         /* [in] */ BSTR location);
-    
+
+    virtual HRESULT STDMETHODCALLTYPE experimentalNotificationsEnabled(
+        /* [retval][out] */ BOOL *enabled);
+
+    virtual HRESULT STDMETHODCALLTYPE setExperimentalNotificationsEnabled(
+        /* [in] */ BOOL enabled);
+
     virtual HRESULT STDMETHODCALLTYPE setShouldPaintNativeControls( 
     /* [in] */ BOOL shouldPaint);
 
