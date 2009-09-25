@@ -120,7 +120,7 @@ public:
     void removeFromDocument();
     void removeChildren();
 
-    QVariant evaluateScript(const QString& scriptSource);
+    QVariant evaluateJavaScript(const QString& scriptSource);
 
     QVariant callFunction(const QString& functionName, const QVariantList& arguments = QVariantList());
     QStringList functions() const;

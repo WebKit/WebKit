@@ -2,6 +2,20 @@
 
         Reviewed by Simon Hausmann.
 
+        [Qt] Rename QWebElement::evaluateScript
+        to QWebElement::evaluateJavaScript.
+        https://bugs.webkit.org/show_bug.cgi?id=29709
+
+        * Api/qwebelement.cpp:
+        (QWebElement::evaluateJavaScript):
+        * Api/qwebelement.h:
+        * tests/qwebelement/tst_qwebelement.cpp:
+        (tst_QWebElement::evaluateJavaScript):
+
+2009-09-25  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
         [Qt] Update the stypeProperty API of QWebElement.
         https://bugs.webkit.org/show_bug.cgi?id=29711
 
