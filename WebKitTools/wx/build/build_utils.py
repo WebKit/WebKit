@@ -26,6 +26,7 @@
 import commands
 import glob
 import os
+import platform
 import shutil
 import sys
 import urllib
@@ -105,7 +106,7 @@ def download_if_newer(url, destdir):
     
     return None
     
-def update_wx_deps(wk_root, msvc_version='msvc2008'):
+def update_wx_deps(conf, wk_root, msvc_version='msvc2008'):
     """
     Download and update tools needed to build the wx port.
     """
@@ -131,6 +132,10 @@ def update_wx_deps(wk_root, msvc_version='msvc2008'):
             os.system('unzip -o %s -d %s' % (archive, os.path.join(wklibs_dir, msvc_version)))
     
     elif sys.platform.startswith('darwin'):
+        # export the right compiler for building the dependencies
+        if platform.release().startswith('10'): # Snow Leopard
+            os.environ['CC'] = conf.env['CC'][0]
+            os.environ['CXX'] = conf.env['CXX'][0]
         os.system('%s/WebKitTools/wx/install-unix-extras' % wk_root)
         
 def includeDirsForSources(sources):

@@ -1,3 +1,11 @@
+2009-09-24  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix. SnowLeopard fixes for Mac dependencies.
+
+        * wx/build/build_utils.py:
+        * wx/build/settings.py:
+        * wx/install-unix-extras:
+
 2009-09-24  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Oliver Hunt.

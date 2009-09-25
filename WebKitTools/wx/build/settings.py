@@ -217,10 +217,12 @@ def common_configure(conf):
     if sys.platform.startswith('darwin') and build_port == 'wx':
         import platform
         if platform.release().startswith('10'): # Snow Leopard
-            wxconfig = commands.getoutput('%s --selected-config' % get_path_to_wxconfig())
             # wx currently only supports 32-bit compilation, so we want gcc-4.0 instead of 4.2 on Snow Leopard
-            conf.env['CC'] = 'gcc-4.0'
-            conf.env['CXX'] = 'g++-4.0'
+            # unless the user has explicitly set a different compiler.
+            if not "CC" in os.environ:
+                conf.env['CC'] = 'gcc-4.0'
+            if not "CXX" in os.environ:
+                conf.env['CXX'] = 'g++-4.0'
     conf.check_tool('compiler_cxx')
     conf.check_tool('compiler_cc')
     if Options.options.wxpython:
@@ -247,7 +249,7 @@ def common_configure(conf):
        conf.env.append_value('CXXDEFINES', ['WTF_USE_%s' % use])
     
     if build_port == "wx":
-        update_wx_deps(wk_root, msvc_version)
+        update_wx_deps(conf, wk_root, msvc_version)
     
         conf.env.append_value('CXXDEFINES', ['BUILDING_WX__=1'])
 

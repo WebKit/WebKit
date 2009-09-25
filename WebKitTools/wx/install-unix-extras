@@ -68,7 +68,7 @@ ICONV_URL="http://ftp.gnu.org/pub/gnu/libiconv/$ICONV_TARBALL"
 
 LIBJPEG_VERSION="6b"
 LIBJPEG_TARBALL="jpegsrc.v$LIBJPEG_VERSION.tar.gz"
-LIBJPEG_URL="http://www.ijg.org/files/$LIBJPEG_TARBALL"
+LIBJPEG_URL="http://wxwebkit.wxcommunity.com/downloads/deps/$LIBJPEG_TARBALL"
 
 LIBPNG_VERSION="1.2.33"
 LIBPNG_TARBALL="libpng-$LIBPNG_VERSION.tar.gz"
