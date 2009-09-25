@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -99,17 +99,12 @@ static RetainPtr<CFPropertyListRef> readFontPlist()
     return plist;
 }
 
-static bool populateFontDatabaseFromPlist()
+static bool populateFontDatabaseFromPlist(CFPropertyListRef plist)
 {
-    RetainPtr<CFPropertyListRef> plist = readFontPlist();
     if (!plist)
         return false;
 
-    RetainPtr<CFDataRef> data(AdoptCF, CFPropertyListCreateXMLData(0, plist.get()));
-    if (!data)
-        return false;
-
-    wkAddFontsFromPlistRepresentation(data.get());
+    wkAddFontsFromPlist(plist);
     return true;
 }
 
@@ -123,13 +118,68 @@ static bool populateFontDatabaseFromFileSystem()
     return true;
 }
 
-static void writeFontDatabaseToPlist()
+static CFStringRef fontFilenamesFromRegistryKey()
 {
-    RetainPtr<CFDataRef> data(AdoptCF, wkCreateFontsPlistRepresentation());
+    static CFStringRef key = CFSTR("WebKitFontFilenamesFromRegistry");
+    return key;
+}
+
+static CFStringRef cgFontDBKey()
+{
+    static CFStringRef key = CFSTR("WebKitCGFontDB");
+    return key;
+}
+
+static void writeFontDatabaseToPlist(CFPropertyListRef cgFontDBPropertyList, CFPropertyListRef filenamesFromRegistry)
+{
+    RetainPtr<CFMutableDictionaryRef> dictionary(AdoptCF, CFDictionaryCreateMutable(kCFAllocatorDefault, 2, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+
+    if (cgFontDBPropertyList)
+        CFDictionarySetValue(dictionary.get(), cgFontDBKey(), cgFontDBPropertyList);
+    if (filenamesFromRegistry)
+        CFDictionarySetValue(dictionary.get(), fontFilenamesFromRegistryKey(), filenamesFromRegistry);
+
+    RetainPtr<CFDataRef> data(AdoptCF, CFPropertyListCreateXMLData(kCFAllocatorDefault, dictionary.get()));
     if (!data)
         return;
 
     safeCreateFile(fontsPlistPath(), data.get());
+}
+
+static RetainPtr<CFArrayRef> fontFilenamesFromRegistry()
+{
+    RetainPtr<CFMutableArrayRef> filenames(AdoptCF, CFArrayCreateMutable(kCFAllocatorDefault, 0, &kCFTypeArrayCallBacks));
+
+    HKEY key;
+    if (FAILED(RegOpenKeyEx(HKEY_LOCAL_MACHINE, TEXT("SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Fonts"), 0, KEY_READ, &key)))
+        return filenames;
+
+    DWORD valueCount;
+    DWORD maxNameLength;
+    DWORD maxValueLength;
+    if (FAILED(RegQueryInfoKey(key, 0, 0, 0, 0, 0, 0, &valueCount, &maxNameLength, &maxValueLength, 0, 0))) {
+        RegCloseKey(key);
+        return filenames;
+    }
+
+    Vector<TCHAR> name(maxNameLength + 1);
+    Vector<BYTE> value(maxValueLength + 1);
+
+    for (size_t i = 0; i < valueCount; ++i) {
+        DWORD nameLength = name.size();
+        DWORD valueLength = value.size();
+        DWORD type;
+        if (FAILED(RegEnumValue(key, i, name.data(), &nameLength, 0, &type, value.data(), &valueLength)))
+            continue;
+        if (type != REG_SZ)
+            continue;
+
+        RetainPtr<CFDataRef> filename(AdoptCF, CFDataCreate(kCFAllocatorDefault, value.data(), valueLength));
+        CFArrayAppendValue(filenames.get(), filename.get());
+    }
+
+    RegCloseKey(key);
+    return filenames;
 }
 
 void populateFontDatabase()
@@ -139,12 +189,38 @@ void populateFontDatabase()
         return;
     initialized = true;
 
-    if (!systemHasFontsNewerThanFontsPlist())
-        if (populateFontDatabaseFromPlist())
-            return;
+    RetainPtr<CFPropertyListRef> propertyList = readFontPlist();
+    RetainPtr<CFArrayRef> lastFilenamesFromRegistry;
+    if (propertyList && CFGetTypeID(propertyList.get()) == CFDictionaryGetTypeID()) {
+        CFDictionaryRef dictionary = static_cast<CFDictionaryRef>(propertyList.get());
+        CFArrayRef array = static_cast<CFArrayRef>(CFDictionaryGetValue(dictionary, fontFilenamesFromRegistryKey()));
+        if (array && CFGetTypeID(array) == CFArrayGetTypeID())
+            lastFilenamesFromRegistry = array;
+    }
+    RetainPtr<CFArrayRef> currentFilenamesFromRegistry = fontFilenamesFromRegistry();
+    bool registryChanged = !lastFilenamesFromRegistry || !CFEqual(lastFilenamesFromRegistry.get(), currentFilenamesFromRegistry.get());
 
-    if (populateFontDatabaseFromFileSystem())
-        writeFontDatabaseToPlist();
+    if (!registryChanged && !systemHasFontsNewerThanFontsPlist()) {
+        RetainPtr<CFPropertyListRef> cgFontDBPropertyList;
+        if (propertyList) {
+            if (CFGetTypeID(propertyList.get()) == CFDictionaryGetTypeID()) {
+                CFDictionaryRef dictionary = static_cast<CFDictionaryRef>(propertyList.get());
+                cgFontDBPropertyList = static_cast<CFArrayRef>(CFDictionaryGetValue(dictionary, cgFontDBKey()));
+            }
+            // Older versions of WebKit stored the CG font DB property list at the root of the property list.
+            if (!cgFontDBPropertyList)
+                cgFontDBPropertyList = propertyList;
+        }
+
+        if (populateFontDatabaseFromPlist(cgFontDBPropertyList.get()))
+            return;
+    }
+
+    if (populateFontDatabaseFromFileSystem()) {
+        wkAddFontsFromRegistry();
+        RetainPtr<CFPropertyListRef> cgFontDBPropertyList(AdoptCF, wkCreateFontsPlist());
+        writeFontDatabaseToPlist(cgFontDBPropertyList.get(), currentFilenamesFromRegistry.get());
+    }
 }
 
 } // namespace WebCore

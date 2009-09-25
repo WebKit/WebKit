@@ -56,8 +56,9 @@ void wkSetFontPlatformInfo(CGFontRef, LOGFONT*, void(*)(void*));
 void wkSetUpFontCache(size_t s);
 void wkAddFontsInDirectory(CFStringRef);
 void wkAddFontsAtPath(CFStringRef);
-void wkAddFontsFromPlistRepresentation(CFDataRef);
-CFDataRef wkCreateFontsPlistRepresentation();
+void wkAddFontsFromRegistry();
+void wkAddFontsFromPlist(CFPropertyListRef);
+CFPropertyListRef wkCreateFontsPlist();
 
 void wkSetPatternBaseCTM(CGContextRef, CGAffineTransform);
 void wkSetPatternPhaseInUserSpace(CGContextRef, CGPoint phasePoint);

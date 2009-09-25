@@ -1,3 +1,18 @@
+2009-09-25  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adam Roben.
+
+        WebKitSystemInterface changes for
+        <rdar://problem/7211635> 2 byte characters are displayed as garbaged
+        <rdar://problem/7212626> garbled/gibberish text (off-by-one)
+
+        * win/include/WebKitSystemInterface/WebKitSystemInterface.h: Added
+        wkAddFontsFromPlistRepresentation() and replaced
+        wkCreateFontsPlistRepresentation() with wkCreateFontsPlist() and
+        wkAddFontsFromPlistRepresentation() with wkAddFontsFromPlist().
+        * win/lib/WebKitSystemInterface.lib:
+        * win/lib/WebKitSystemInterface_debug.lib:
+
 2009-09-23  Marshall Culpepper  <mculpepper@appcelerator.com>
 
         Reviewed by Eric Seidel.

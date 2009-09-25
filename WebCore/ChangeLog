@@ -1,3 +1,44 @@
+2009-09-25  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Jon Honeycutt.
+
+        WebCore part of
+        <rdar://problem/7211635> 2 byte characters are displayed as garbaged
+        <rdar://problem/7212626> garbled/gibberish text (off-by-one)
+
+        When the Windows Fonts directory contains more than one font file for a
+        given font name, which of the fonts gets assigned to the name in the
+        Core Graphics font database was determined arbitrarily and did not
+        always match the font GDI used for the same font name. The mismatch
+        caused character-to-glyph mapping to use one font and glyph rendering to
+        use another.
+
+        The fix is to update the Core Graphics font database from the registry
+        entries (that reflect the name-to-font mapping that GDI uses) after
+        populating it with the result of scanning the Fonts directory. As a
+        consequence, the directory needs to be scanned at startup every time the
+        registry key changes, so the last value of the registry key is kept
+        in the property list on disk so that it could be compared to the current
+        value on startup.
+
+        * platform/graphics/win/FontDatabase.cpp:
+        (WebCore::populateFontDatabaseFromPlist): Now takes a property list as
+        a parameter and avoids round-tripping through XML by calling
+        wkAddFontsFromPlist() instead of wkAddFontsFromPlistRepresentation().
+        (WebCore::fontFilenamesFromRegistryKey):
+        (WebCore::cgFontDBKey):
+        (WebCore::writeFontDatabaseToPlist): Now takes the CG font DB property
+        list and a property list with the font filenames from the registry and
+        writes a dictionary with those property lists as values.
+        (WebCore::fontFilenamesFromRegistry): Added. Returns an array with the
+        values in the HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts
+        registry key.
+        (WebCore::populateFontDatabase): Changed to read the contents of the
+        Fonts registry key and compare it with the last-saved value from the
+        property list, and to call wkAddFontsFromRegistry() after populating the
+        CG font DB from the file system. Uses wkCreateFontsPlist() instead of
+        wkCreateFontsPlistRepresentation() to avoid round-tripping through XML.
+
 2009-09-25  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.
