@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,10 +27,6 @@
 #include "JSNamedNodeMap.h"
 
 #include "JSNode.h"
-#include "NamedNodeMap.h"
-#include "Node.h"
-#include "PlatformString.h"
-#include "JSDOMBinding.h"
 
 using namespace JSC;
 
@@ -45,6 +41,18 @@ JSValue JSNamedNodeMap::nameGetter(ExecState* exec, const Identifier& propertyNa
 {
     JSNamedNodeMap* thisObj = static_cast<JSNamedNodeMap*>(asObject(slot.slotBase()));
     return toJS(exec, thisObj->impl()->getNamedItem(propertyName));
+}
+
+void JSNamedNodeMap::markChildren(MarkStack& markStack)
+{
+    Base::markChildren(markStack);
+
+    // Mark the element so that this will work to access the attribute even if the last
+    // other reference goes away.
+    if (Element* element = impl()->element()) {
+        if (JSNode* wrapper = getCachedDOMNodeWrapper(element->document(), element))
+            markStack.append(wrapper);
+    }
 }
 
 } // namespace WebCore

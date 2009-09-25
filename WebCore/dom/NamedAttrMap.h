@@ -94,10 +94,10 @@ public:
     void addAttribute(PassRefPtr<Attribute>);
     void removeAttribute(const QualifiedName&);
 
+    Element* element() const { return m_element; }
+
 protected:
     virtual void clearAttributes();
-
-    Element* element() const { return m_element; }
 
 private:
     void detachAttributesFromElement();

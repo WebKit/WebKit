@@ -1,3 +1,38 @@
+2009-09-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Null-deref when first access to an Attr node is after its Element is destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=29748
+
+        Test: fast/dom/Attr/access-after-element-destruction.html
+
+        * bindings/js/JSAttrCustom.cpp:
+        (WebCore::JSAttr::markChildren): Added. Keeps the ownerElement alive as
+        long as the Attr is alive.
+
+        * bindings/js/JSNamedNodeMapCustom.cpp:
+        (WebCore::JSNamedNodeMap::markChildren): Added. Keeps the Element alive as
+        long as the NamedNodeMap is alive.
+
+        * dom/Attr.idl: Added CustomMarkFunction attribute.
+
+        * dom/NamedAttrMap.cpp:
+        (WebCore::NamedNodeMap::getAttributeItem): Tweaked formatting.
+        (WebCore::NamedNodeMap::detachFromElement): Call clearAttributes so we don't
+        have attributes hanging around that might need an Attr node created; that way
+        we won't crash with a null-dereference trying to deal with one of them. This
+        can't happen when working with JavaScript since the Element will be kept
+        alive due to the change above.
+        (WebCore::NamedNodeMap::addAttribute): Fix function name in comment.
+        (WebCore::NamedNodeMap::removeAttribute): Removed unneeded "+ 1" and added
+        missing braces.
+
+        * dom/NamedAttrMap.h: Made the element function public so it can be used by
+        the JavaScript binding to keep the Element alive.
+
+        * dom/NamedNodeMap.idl: Added CustomMarkFunction attribute.
+
 2009-09-24  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler and Sam Weinig.

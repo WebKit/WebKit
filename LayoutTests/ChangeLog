@@ -1,3 +1,15 @@
+2009-09-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Null-deref when first access to an Attr node is after its Element is destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=29748
+
+        * fast/dom/Attr/access-after-element-destruction-expected.txt: Added.
+        * fast/dom/Attr/access-after-element-destruction.html: Added.
+        * fast/dom/Attr/script-tests/TEMPLATE.html: Copied from LayoutTests/fast/dom/Node/script-tests/TEMPLATE.html.
+        * fast/dom/Attr/script-tests/access-after-element-destruction.js: Added.
+
 2009-09-24  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler and Sam Weinig.
