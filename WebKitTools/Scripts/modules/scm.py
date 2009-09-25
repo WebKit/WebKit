@@ -78,8 +78,26 @@ class CommitMessage:
 
 
 class ScriptError(Exception):
-    pass
+    def __init__(self, script_args=None, exit_code=None, message=None, output=None, cwd=None):
+        if not message:
+            message = 'Failed to run "%s"' % script_args
+            if exit_code:
+                message += " exit_code: %d" % exit_code
+            if cwd:
+                message += " cwd: %s" % cwd
 
+        Exception.__init__(self, message)
+        self.script_args = script_args # 'args' is already used by Exception
+        self.exit_code = exit_code
+        self.output = output
+        self.cwd = cwd
+
+    def message_with_output(self, output_limit=500):
+        if self.output:
+            if len(self.output) > output_limit:
+                 return "%s\nLast %s characters of output:\n%s" % (self, output_limit, self.output[-output_limit:])
+            return "%s\n%s" % (self, self.output)
+        return str(self)
 
 class SCM:
     def __init__(self, cwd, dryrun=False):
@@ -90,11 +108,11 @@ class SCM:
     @staticmethod
     def run_command(args, cwd=None, input=None, raise_on_failure=True, return_exit_code=False):
         stdin = subprocess.PIPE if input else None
-        process = subprocess.Popen(args, stdout=subprocess.PIPE, stdin=stdin, cwd=cwd)
+        process = subprocess.Popen(args, stdin=stdin, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=cwd)
         output = process.communicate(input)[0].rstrip()
         exit_code = process.wait()
         if raise_on_failure and exit_code:
-            raise ScriptError('Failed to run "%s"  exit_code: %d  cwd: %s' % (args, exit_code, cwd))
+            raise ScriptError(script_args=args, exit_code=exit_code, output=output, cwd=cwd)
         if return_exit_code:
             return exit_code
         return output
@@ -108,7 +126,7 @@ class SCM:
     def ensure_clean_working_directory(self, force):
         if not force and not self.working_directory_is_clean():
             print self.run_command(self.status_command(), raise_on_failure=False)
-            raise ScriptError("Working directory has modifications, pass --force-clean or --no-clean to continue.")
+            raise ScriptError(message="Working directory has modifications, pass --force-clean or --no-clean to continue.")
         
         log("Cleaning working directory")
         self.clean_working_directory()
@@ -134,7 +152,7 @@ class SCM:
 
         return_code = patch_apply_process.wait()
         if return_code:
-            raise ScriptError("Patch %s from bug %s failed to download and apply." % (patch['url'], patch['bug_id']))
+            raise ScriptError(message="Patch %s from bug %s failed to download and apply." % (patch['url'], patch['bug_id']))
 
     def run_status_and_extract_filenames(self, status_command, status_regexp):
         filenames = []
@@ -256,10 +274,11 @@ class SVN(SCM):
 
     @classmethod
     def value_from_svn_info(cls, path, field_name):
-        info_output = cls.run_command(['svn', 'info', path])
+        svn_info_args = ['svn', 'info', path]
+        info_output = cls.run_command(svn_info_args)
         match = re.search("^%s: (?P<value>.+)$" % field_name, info_output, re.MULTILINE)
         if not match:
-            raise ScriptError('svn info did not contain a %s.' % field_name)
+            raise ScriptError(script_args=svn_info_args, message='svn info did not contain a %s.' % field_name)
         return match.group('value')
 
     @staticmethod
@@ -425,7 +444,7 @@ class Git(SCM):
         # Assume the revision is an svn revision.
         git_commit = self.git_commit_from_svn_revision(revision)
         if not git_commit:
-            raise ScriptError('Failed to find git commit for revision %s, git svn log output: "%s"' % (revision, git_commit))
+            raise ScriptError(message='Failed to find git commit for revision %s, git svn log output: "%s"' % (revision, git_commit))
 
         # I think this will always fail due to ChangeLogs.
         # FIXME: We need to detec specific failure conditions and handle them.
@@ -480,7 +499,7 @@ class Git(SCM):
         commit_ids = []
         for commitish in args:
             if '...' in commitish:
-                raise ScriptError("'...' is not supported (found in '%s'). Did you mean '..'?" % commitish)
+                raise ScriptError(message="'...' is not supported (found in '%s'). Did you mean '..'?" % commitish)
             elif '..' in commitish:
                 commit_ids += reversed(self.run_command(['git', 'rev-list', commitish]).splitlines())
             else:

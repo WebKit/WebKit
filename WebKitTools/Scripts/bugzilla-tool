@@ -64,7 +64,7 @@ def pluralize(noun, count):
 def commit_message_for_this_commit(scm):
     changelog_paths = scm.modified_changelogs()
     if not len(changelog_paths):
-        raise ScriptError("Found no modified ChangeLogs, cannot create a commit message.\n"
+        raise ScriptError(message="Found no modified ChangeLogs, cannot create a commit message.\n"
                           "All changes require a ChangeLog.  See:\n"
                           "http://webkit.org/coding/contributing.html")
 
@@ -187,18 +187,33 @@ class WebKitLandingScripts:
         ]
 
     @staticmethod
+    def run_command_with_teed_output(args, teed_output):
+        child_process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+
+        # Use our own custom wait loop because Popen ignores a tee'd stderr/stdout.
+        # FIXME: This could be improved not to flatten output to stdout.
+        while True:
+            output_line = child_process.stdout.readline()
+            if output_line == '' and child_process.poll() != None:
+                return child_process.poll()
+            teed_output.write(output_line)
+
+    @staticmethod
     def run_and_throw_if_fail(args, quiet=False):
-        # Passing None will use the default input/outputs
-        child_output = open(os.devnull, "w") if quiet else None
+        # Cache the child's output locally so it can be used for error reports.
+        child_out_file = StringIO.StringIO()
+        if quiet:
+            dev_null = open(os.devnull, "w")
+        child_stdout = tee(child_out_file, dev_null if quiet else sys.stdout)
+        exit_code = WebKitLandingScripts.run_command_with_teed_output(args, child_stdout)
+        if quiet:
+            dev_null.close()
 
-        child_process = subprocess.Popen(args, stdout=child_output, stderr=child_output)
-        return_code = child_process.wait()
+        child_output = child_out_file.getvalue()
+        child_out_file.close()
 
-        if child_output:
-            child_output.close()
-
-        if return_code:
-            raise ScriptError("%s failed with exit code %d" % (args, return_code))
+        if exit_code:
+            raise ScriptError(script_args=args, exit_code=exit_code, output=child_output)
 
     # We might need to pass scm into this function for scm.checkout_root
     @staticmethod
@@ -328,7 +343,7 @@ class LandPatchesFromBugs(Command):
                 tool.bugs.close_bug_as_fixed(bug_id, "All reviewed patches have been landed.  Closing bug.")
         except ScriptError, e:
             # Mark the patch as commit-queue- and comment in the bug.
-            tool.bugs.reject_patch_from_commit_queue(patch['id'], "This patch will require manual commit. %s" % e)
+            tool.bugs.reject_patch_from_commit_queue(patch['id'], e.message_with_output())
             error(e)
 
     @staticmethod
@@ -343,7 +358,7 @@ class LandPatchesFromBugs(Command):
                 patches = tool.bugs.fetch_reviewed_patches_from_bug(bug_id)
 
             patches_found = len(patches)
-            log("%s found on %s." % (pluralize("reviewed patch", patches_found), bug_id))
+            log("%s found on bug %s." % (pluralize("reviewed patch", patches_found), bug_id))
 
             patch_count += patches_found
             if patches_found:
@@ -685,16 +700,6 @@ class LandPatchesFromCommitQueue(Command):
         self._tee_outputs_to_files(self._files_for_output)
         log_file.close()
 
-    def _run_command(self, args):
-        child_process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-
-        # Use our own custom wait loop because Popen ignores our tee'd stderr/stdout
-        while True:
-            output_line = child_process.stdout.readline()
-            if output_line == '' and child_process.poll() != None:
-                return child_process.poll()
-            sys.stdout.write(output_line)
-
     def execute(self, options, args, tool):
         log("CAUTION: commit-queue will discard all local changes in %s" % tool.scm().checkout_root)
         if options.confirm:
@@ -734,7 +739,8 @@ class LandPatchesFromCommitQueue(Command):
             bug_log_path = os.path.join(self.bug_logs_directory, "%s.log" % first_bug_id)
             bug_log = self._add_log_to_output_tee(bug_log_path)
             bugzilla_tool_path = __file__ # re-execute this script
-            self._run_command([bugzilla_tool_path, 'land-patches', '--force-clean', '--commit-queue', '--quiet', first_bug_id])
+            bugzilla_tool_args = [bugzilla_tool_path, 'land-patches', '--force-clean', '--commit-queue', '--quiet', first_bug_id]
+            WebKitLandingScripts.run_command_with_teed_output(bugzilla_tool_args, sys.stdout)
             self._remove_log_from_output_tee(bug_log)
 
         log("Finished WebKit Commit Queue. %s" % datetime.now().strftime(self.log_date_format))

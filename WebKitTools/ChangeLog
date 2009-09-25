@@ -1,3 +1,22 @@
+2009-09-25  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        commit-queue should give better feedback when failing a patch
+        https://bugs.webkit.org/show_bug.cgi?id=29316
+
+        * Scripts/bugzilla-tool:
+         - Update ScriptError uses to the new constructor format.
+         - Move CommitQueue._run_command to WebKitLandingScripts.run_command_with_teed_output
+           so that we can print to both stdout as well as an output buffer for error reporting.
+         - Update run_and_throw_if_fail to use teed output so that it can report the "output" as part of ScriptError.
+         - Use e.message_with_output() when failing a patch (this is the real fix here).
+           I also removed use of "This patch will require manual commit." as that's not always true.
+         - Add missing word "bug" from log message.
+        * Scripts/modules/scm.py:
+         - Make ScriptError save a bunch more data so that error messages can be nicer.
+         - Update ScriptError callers.
+
 2009-09-24  John Gregg  <johnnyg@google.com>
 
         Reviewed by Eric Seidel.
