@@ -39,6 +39,10 @@
     # FIXEME: Sense whether upstream or downstream build, and
     # point to the right src dir
     'chromium_src_dir': '../../../..',
+
+    # If set to 1, doesn't compile debug symbols into webcore reducing the
+    # size of the binary and increasing the speed of gdb.  gcc only.
+    'remove_webcore_debug_symbols%': 0,
   
     'webcore_include_dirs': [
       '../',
@@ -788,6 +792,13 @@
             ['exclude', 'Win\\.cpp$'],
             ['exclude', '/(Windows|Uniscribe)[^/]*\\.cpp$']
           ],
+        }],
+        ['OS!="win" and remove_webcore_debug_symbols==1', {
+          'configurations': {
+            'Debug': {
+              'cflags!': ['-g'],
+            }
+          },
         }],
       ],
     },
