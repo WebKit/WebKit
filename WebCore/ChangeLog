@@ -1,3 +1,25 @@
+2009-09-25  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24399
+        Make @import work in user stylesheets.  The first bug was that the URL wasn't being set on the
+        user sheets themselves, so relative @import URLs couldn't resolve properly.  The second bug
+        was that the loads would be denied.  This is fixed by using the requestUserCSSStyleSheet method
+        instead of the normal request method.  In order to know when to do this, CSSStyleSheets now have
+        a propagated boolean, m_isUserStyleSheet, that lets them know if they are user stylesheets or not.
+
+        * css/CSSImportRule.cpp:
+        (WebCore::CSSImportRule::insertedIntoParent):
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::CSSStyleSheet):
+        * css/CSSStyleSheet.h:
+        (WebCore::CSSStyleSheet::setIsUserStyleSheet):
+        (WebCore::CSSStyleSheet::isUserStyleSheet):
+        * dom/Document.cpp:
+        (WebCore::Document::pageUserSheet):
+        (WebCore::Document::pageGroupUserSheets):
+
 2009-09-25  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler.

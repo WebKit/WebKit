@@ -40,20 +40,22 @@ CSSStyleSheet::CSSStyleSheet(CSSStyleSheet* parentSheet, const String& href, con
     , m_charset(charset)
     , m_loadCompleted(false)
     , m_strictParsing(!parentSheet || parentSheet->useStrictParsing())
+    , m_isUserStyleSheet(parentSheet ? parentSheet->isUserStyleSheet() : false)
 {
 }
 
-CSSStyleSheet::CSSStyleSheet(Node *parentNode, const String& href, const String& charset)
+CSSStyleSheet::CSSStyleSheet(Node* parentNode, const String& href, const String& charset)
     : StyleSheet(parentNode, href)
     , m_doc(parentNode->document())
     , m_namespaces(0)
     , m_charset(charset)
     , m_loadCompleted(false)
     , m_strictParsing(false)
+    , m_isUserStyleSheet(false)
 {
 }
 
-CSSStyleSheet::CSSStyleSheet(CSSRule *ownerRule, const String& href, const String& charset)
+CSSStyleSheet::CSSStyleSheet(CSSRule* ownerRule, const String& href, const String& charset)
     : StyleSheet(ownerRule, href)
     , m_namespaces(0)
     , m_charset(charset)
@@ -62,6 +64,7 @@ CSSStyleSheet::CSSStyleSheet(CSSRule *ownerRule, const String& href, const Strin
 {
     CSSStyleSheet* parentSheet = ownerRule ? ownerRule->parentStyleSheet() : 0;
     m_doc = parentSheet ? parentSheet->doc() : 0;
+    m_isUserStyleSheet = parentSheet ? parentSheet->isUserStyleSheet() : false;
 }
 
 CSSStyleSheet::~CSSStyleSheet()
