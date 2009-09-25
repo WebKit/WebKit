@@ -1,3 +1,17 @@
+2009-09-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        REGRESSION: webkit-transform scale no longer works properly in nightly build
+        https://bugs.webkit.org/show_bug.cgi?id=29730
+        
+        Test that a scale transition with no initial value uses a starting scale of 1.
+
+        * compositing/transitions/scale-transition-no-start.html: Added.
+        * platform/mac/compositing/transitions/scale-transition-no-start-expected.checksum: Added.
+        * platform/mac/compositing/transitions/scale-transition-no-start-expected.png: Added.
+        * platform/mac/compositing/transitions/scale-transition-no-start-expected.txt: Added.
+
 2009-09-24  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.
