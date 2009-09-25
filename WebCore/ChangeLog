@@ -1,3 +1,12 @@
+2009-09-25  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Declare RegisteredEventListener as a class instead of a struct.
+        This fixes a warning in the Chromium build.
+
+        * dom/RegisteredEventListener.h:
+
 2009-09-25  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Jon Honeycutt.
