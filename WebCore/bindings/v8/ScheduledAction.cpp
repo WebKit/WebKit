@@ -107,8 +107,7 @@ void ScheduledAction::execute(V8Proxy* proxy)
     ASSERT(proxy);
 
     v8::HandleScope handleScope;
-    // FIXME: Figure out why using m_context instead of proxy->context() here causes crashes in V8Proxy::getEnteredContext();
-    v8::Handle<v8::Context> v8Context = proxy->context();
+    v8::Handle<v8::Context> v8Context = v8::Local<v8::Context>::New(m_context.get());
     if (v8Context.IsEmpty())
         return; // JS may not be enabled.
 
@@ -136,8 +135,7 @@ void ScheduledAction::execute(WorkerContext* workerContext)
 
     if (!m_function.IsEmpty() && m_function->IsFunction()) {
         v8::HandleScope handleScope;
-        // FIXME: Figure out why using m_context instead of proxy->context() here causes crashes in V8Proxy::getEnteredContext();
-        v8::Handle<v8::Context> v8Context = scriptController->proxy()->context();
+        v8::Handle<v8::Context> v8Context = v8::Local<v8::Context>::New(m_context.get());
         ASSERT(!v8Context.IsEmpty());
         v8::Context::Scope scope(v8Context);
         m_function->Call(v8Context->Global(), m_argc, m_argv);

@@ -1,3 +1,23 @@
+2009-09-25  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [V8] Teach ScheduledAction::execute about isolated worlds
+        https://bugs.webkit.org/show_bug.cgi?id=27703
+
+        When setTimeout is called with a string argument in an isolated
+        world, we now compile the string in the isolated world.
+
+        Last time we tried this change, we got a lot of crashes.  This
+        time we're using a fresh local handle as our context to avoid
+        trouble if the peristent handle gets disposed before we leave
+        the context.
+
+        Test: fast/dom/timer-clear-interval-in-handler-and-generate-error.html
+
+        * bindings/v8/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::execute):
+
 2009-09-25  Paul Godavari  <paul@chromium.org>
 
         Reviewed by Darin Fisher.

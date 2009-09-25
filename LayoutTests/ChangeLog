@@ -1,3 +1,16 @@
+2009-09-25  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [V8] Teach ScheduledAction::execute about isolated worlds
+        https://bugs.webkit.org/show_bug.cgi?id=27703
+
+        Test a strange error condition after clearing a setInterval
+        timer.  The key point is not to crash on this test.
+
+        * fast/dom/timer-clear-interval-in-handler-and-generate-error-expected.txt: Added.
+        * fast/dom/timer-clear-interval-in-handler-and-generate-error.html: Added.
+
 2009-09-24  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

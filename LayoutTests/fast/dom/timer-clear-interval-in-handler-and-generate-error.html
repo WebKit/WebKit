@@ -1,0 +1,25 @@
+<script>
+if (window.layoutTestController) {
+  layoutTestController.dumpAsText()
+  layoutTestController.waitUntilDone();
+}
+
+function log(msg) {
+  var elmt = document.createElement("div");
+  elmt.textContent = msg;
+  document.body.appendChild(msg);
+}
+
+var timer = setInterval(function() {
+  clearInterval(timer);
+  setTimeout(function() {
+    if (window.layoutTestController)
+      layoutTestController.notifyDone();
+  }, 10);
+
+  // This function tries to appendChild to body, but body doesn't exist
+  // yet, generating an error.  This test passes if we don't crash when
+  // trying to add the error message to the console.
+  log("PASS");
+}, 10);
+</script>
