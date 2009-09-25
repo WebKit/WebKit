@@ -1,3 +1,13 @@
+2009-09-24  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Test for <rdar://problem/7162000> Crash while trying to
+        calculate the horizontal position of image
+
+        * fast/inline-block/relative-positioned-rtl-crash-expected.txt: Added.
+        * fast/inline-block/relative-positioned-rtl-crash.html: Added.
+
 2009-09-24  Carol Szabo  <carol.szabo@nokia.com>
 
         Reviewed by Alexey Proskuryakov.

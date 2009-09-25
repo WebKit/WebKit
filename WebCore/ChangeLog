@@ -1,3 +1,16 @@
+2009-09-24  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix <rdar://problem/7162000> Crash while trying to
+        calculate the horizontal position of image
+
+        Test: fast/inline-block/relative-positioned-rtl-crash.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::calcAbsoluteHorizontalReplaced): Corrected an
+        isInline() test to isRenderInline(). This is similar to r41259.
+
 2009-09-24  Jessie Berlin  <jberlin@webkit.org>
 
         Reviewed by Timothy Hatcher.

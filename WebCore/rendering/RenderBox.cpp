@@ -2456,7 +2456,7 @@ void RenderBox::calcAbsoluteHorizontalReplaced()
     // positioned, inline containing block because right now, it is using the xPos
     // of the first line box when really it should use the last line box.  When
     // this is fixed elsewhere, this block should be removed.
-    if (containerBlock->isInline() && containerBlock->style()->direction() == RTL) {
+    if (containerBlock->isRenderInline() && containerBlock->style()->direction() == RTL) {
         const RenderInline* flow = toRenderInline(containerBlock);
         InlineFlowBox* firstLine = flow->firstLineBox();
         InlineFlowBox* lastLine = flow->lastLineBox();
