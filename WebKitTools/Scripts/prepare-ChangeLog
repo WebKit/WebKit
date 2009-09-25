@@ -1482,7 +1482,8 @@ sub generateFileList(\@\@\%)
                     if isAddedStatus($status)
                        && $file =~ /\.([a-zA-Z]+)$/
                        && $supportedTestExtensions{lc($1)}
-                       && !scalar(grep(/^resources$/i, @components));
+                       && !scalar(grep(/^resources$/i, @components))
+                       && !scalar(grep(/^script-tests$/i, @components));
             }
             push @{$changedFiles}, $file if $components[$#components] ne "ChangeLog";
         } elsif (isConflictStatus($status) || isConflictStatus($propertyStatus)) {
