@@ -1,3 +1,16 @@
+2009-09-25  Yongjun Zhang  <yongjun.zhang@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28876
+        [Qt] reduce peak memory consumption of text decoding.
+
+        Chop large input buffer into small buffers to reduce peak memory
+        during decoding.
+
+        * platform/text/qt/TextCodecQt.cpp:
+        (WebCore::TextCodecQt::decode):
+
 2009-09-24  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Add a mechanism for automatically halting plug-ins.
