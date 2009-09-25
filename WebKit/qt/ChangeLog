@@ -1,3 +1,24 @@
+2009-09-25  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Update the stypeProperty API of QWebElement.
+        https://bugs.webkit.org/show_bug.cgi?id=29711
+
+        * Api/qwebelement.cpp:
+        (QWebElement::styleProperty):
+        - Merge the stypeProperty and the computedStyleProperty methods
+        - Remove the default value for the style resolving enum
+        - Rename ResolveRule to StyleResolveStrategy
+        (QWebElement::setStyleProperty):
+        - Remove the priority argument since it is possible to control the
+          behaviour by adding !important or removing in the value.
+        * Api/qwebelement.h:
+        * tests/qwebelement/tst_qwebelement.cpp:
+        (tst_QWebElement::style):
+        (tst_QWebElement::computedStyle):
+        * tests/qwebframe/tst_qwebframe.cpp:
+
 2009-09-24  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Reviewed by Alice Liu.

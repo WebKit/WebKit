@@ -398,27 +398,27 @@ void tst_QWebElement::style()
     m_mainFrame->setHtml(html);
 
     QWebElement p = m_mainFrame->documentElement().findAll("p").at(0);
-    QCOMPARE(p.styleProperty("color"), QLatin1String("blue"));
-    QVERIFY(p.styleProperty("cursor").isEmpty());
+    QCOMPARE(p.styleProperty("color", QWebElement::InlineStyle), QLatin1String("blue"));
+    QVERIFY(p.styleProperty("cursor", QWebElement::InlineStyle).isEmpty());
 
     p.setStyleProperty("color", "red");
     p.setStyleProperty("cursor", "auto");
 
-    QCOMPARE(p.styleProperty("color"), QLatin1String("red"));
-    QCOMPARE(p.styleProperty("color", QWebElement::RespectCascadingStyles), QLatin1String("yellow"));
-    QCOMPARE(p.styleProperty("cursor"), QLatin1String("auto"));
+    QCOMPARE(p.styleProperty("color", QWebElement::InlineStyle), QLatin1String("red"));
+    QCOMPARE(p.styleProperty("color", QWebElement::CascadedStyle), QLatin1String("yellow"));
+    QCOMPARE(p.styleProperty("cursor", QWebElement::InlineStyle), QLatin1String("auto"));
 
     p.setStyleProperty("color", "green !important");
-    QCOMPARE(p.styleProperty("color"), QLatin1String("green"));
-    QCOMPARE(p.styleProperty("color", QWebElement::RespectCascadingStyles), QLatin1String("green"));
+    QCOMPARE(p.styleProperty("color", QWebElement::InlineStyle), QLatin1String("green"));
+    QCOMPARE(p.styleProperty("color", QWebElement::CascadedStyle), QLatin1String("green"));
 
     p.setStyleProperty("color", "blue");
-    QCOMPARE(p.styleProperty("color"), QLatin1String("green"));
-    QCOMPARE(p.styleProperty("color", QWebElement::RespectCascadingStyles), QLatin1String("green"));
+    QCOMPARE(p.styleProperty("color", QWebElement::InlineStyle), QLatin1String("green"));
+    QCOMPARE(p.styleProperty("color", QWebElement::CascadedStyle), QLatin1String("green"));
 
-    p.setStyleProperty("color", "blue", QWebElement::ImportantStylePriority);
-    QCOMPARE(p.styleProperty("color"), QLatin1String("blue"));
-    QCOMPARE(p.styleProperty("color", QWebElement::RespectCascadingStyles), QLatin1String("blue"));
+    p.setStyleProperty("color", "blue !important");
+    QCOMPARE(p.styleProperty("color", QWebElement::InlineStyle), QLatin1String("blue"));
+    QCOMPARE(p.styleProperty("color", QWebElement::CascadedStyle), QLatin1String("blue"));
 
     QString html2 = "<head>"
         "<style type='text/css'>"
@@ -434,8 +434,8 @@ void tst_QWebElement::style()
     m_mainFrame->setHtml(html2);
     p = m_mainFrame->documentElement().findAll("p").at(0);
 
-    QCOMPARE(p.styleProperty("color"), QLatin1String("blue"));
-    QCOMPARE(p.styleProperty("color", QWebElement::RespectCascadingStyles), QLatin1String("blue"));
+    QCOMPARE(p.styleProperty("color", QWebElement::InlineStyle), QLatin1String("blue"));
+    QCOMPARE(p.styleProperty("color", QWebElement::CascadedStyle), QLatin1String("blue"));
 
     QString html3 = "<head>"
         "<style type='text/css'>"
@@ -451,8 +451,8 @@ void tst_QWebElement::style()
     m_mainFrame->setHtml(html3);
     p = m_mainFrame->documentElement().findAll("p").at(0);
 
-    QCOMPARE(p.styleProperty("color"), QLatin1String("blue"));
-    QCOMPARE(p.styleProperty("color", QWebElement::RespectCascadingStyles), QLatin1String("blue"));
+    QCOMPARE(p.styleProperty("color", QWebElement::InlineStyle), QLatin1String("blue"));
+    QCOMPARE(p.styleProperty("color", QWebElement::CascadedStyle), QLatin1String("blue"));
 
     QString html5 = "<head>"
         "<style type='text/css'>"
@@ -468,8 +468,8 @@ void tst_QWebElement::style()
     m_mainFrame->setHtml(html5);
     p = m_mainFrame->documentElement().findAll("p").at(0);
 
-    QCOMPARE(p.styleProperty("color"), QLatin1String(""));
-    QCOMPARE(p.styleProperty("color", QWebElement::RespectCascadingStyles), QLatin1String("red"));
+    QCOMPARE(p.styleProperty("color", QWebElement::InlineStyle), QLatin1String(""));
+    QCOMPARE(p.styleProperty("color", QWebElement::CascadedStyle), QLatin1String("red"));
 
     QString html6 = "<head>"
         "<link rel='stylesheet' href='qrc:/style.css' type='text/css' />"
@@ -489,8 +489,8 @@ void tst_QWebElement::style()
     QTest::qWait(200);
 
     p = m_mainFrame->documentElement().findAll("p").at(0);
-    QCOMPARE(p.styleProperty("color"), QLatin1String("blue"));
-    QCOMPARE(p.styleProperty("color", QWebElement::RespectCascadingStyles), QLatin1String("black"));
+    QCOMPARE(p.styleProperty("color", QWebElement::InlineStyle), QLatin1String("blue"));
+    QCOMPARE(p.styleProperty("color", QWebElement::CascadedStyle), QLatin1String("black"));
 
     QString html7 = "<head>"
         "<style type='text/css'>"
@@ -507,15 +507,15 @@ void tst_QWebElement::style()
     QTest::qWait(200);
 
     p = m_mainFrame->documentElement().findAll("p").at(0);
-    QCOMPARE(p.styleProperty("color", QWebElement::RespectCascadingStyles), QLatin1String("black"));
+    QCOMPARE(p.styleProperty("color", QWebElement::CascadedStyle), QLatin1String("black"));
 
     QString html8 = "<body><p>some text</p></body>";
 
     m_mainFrame->setHtml(html8);
     p = m_mainFrame->documentElement().findAll("p").at(0);
 
-    QCOMPARE(p.styleProperty("color"), QLatin1String(""));
-    QCOMPARE(p.styleProperty("color", QWebElement::RespectCascadingStyles), QLatin1String(""));
+    QCOMPARE(p.styleProperty("color", QWebElement::InlineStyle), QLatin1String(""));
+    QCOMPARE(p.styleProperty("color", QWebElement::CascadedStyle), QLatin1String(""));
 }
 
 void tst_QWebElement::computedStyle()
@@ -524,16 +524,16 @@ void tst_QWebElement::computedStyle()
     m_mainFrame->setHtml(html);
 
     QWebElement p = m_mainFrame->documentElement().findAll("p").at(0);
-    QCOMPARE(p.computedStyleProperty("cursor"), QLatin1String("auto"));
-    QVERIFY(!p.computedStyleProperty("cursor").isEmpty());
-    QVERIFY(p.styleProperty("cursor").isEmpty());
+    QCOMPARE(p.styleProperty("cursor", QWebElement::ComputedStyle), QLatin1String("auto"));
+    QVERIFY(!p.styleProperty("cursor", QWebElement::ComputedStyle).isEmpty());
+    QVERIFY(p.styleProperty("cursor", QWebElement::InlineStyle).isEmpty());
 
     p.setStyleProperty("cursor", "text");
     p.setStyleProperty("color", "red");
 
-    QCOMPARE(p.computedStyleProperty("cursor"), QLatin1String("text"));
-    QCOMPARE(p.computedStyleProperty("color"), QLatin1String("rgb(255, 0, 0)"));
-    QCOMPARE(p.styleProperty("color"), QLatin1String("red"));
+    QCOMPARE(p.styleProperty("cursor", QWebElement::ComputedStyle), QLatin1String("text"));
+    QCOMPARE(p.styleProperty("color", QWebElement::ComputedStyle), QLatin1String("rgb(255, 0, 0)"));
+    QCOMPARE(p.styleProperty("color", QWebElement::InlineStyle), QLatin1String("red"));
 }
 
 void tst_QWebElement::properties()

@@ -2356,7 +2356,7 @@ void tst_QWebFrame::setHtmlWithResource()
     QCOMPARE(spy.size(), 2);
 
     QWebElement p = frame->documentElement().findAll("p").at(0);
-    QCOMPARE(p.styleProperty("color", QWebElement::RespectCascadingStyles), QLatin1String("red"));
+    QCOMPARE(p.styleProperty("color", QWebElement::CascadedStyle), QLatin1String("red"));
 }
 
 class TestNetworkManager : public QNetworkAccessManager
