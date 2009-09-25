@@ -855,18 +855,33 @@ HRESULT WebHistory::removeItemFromDateCaches(IWebHistoryItem* entry)
     return hr;
 }
 
-WebHistory::DateKey timeIntervalForBeginningOfDay(CFAbsoluteTime day)
+static void getDayBoundaries(CFAbsoluteTime day, CFAbsoluteTime& beginningOfDay, CFAbsoluteTime& beginningOfNextDay)
 {
     RetainPtr<CFTimeZoneRef> timeZone(AdoptCF, CFTimeZoneCopyDefault());
     CFGregorianDate date = CFAbsoluteTimeGetGregorianDate(day, timeZone.get());
     date.hour = 0;
     date.minute = 0;
     date.second = 0;
-    CFAbsoluteTime result = CFGregorianDateGetAbsoluteTime(date, timeZone.get());
+    beginningOfDay = CFGregorianDateGetAbsoluteTime(date, timeZone.get());
+    date.day += 1;
+    beginningOfNextDay = CFGregorianDateGetAbsoluteTime(date, timeZone.get());
+}
 
-    // Converting from double to int64_t is safe here as NSDate's useful range
-    // is -2**48 .. 2**47 which will safely fit in an int64_t.
-    return static_cast<WebHistory::DateKey>(result);
+static inline CFAbsoluteTime beginningOfDay(CFAbsoluteTime date)
+{
+    static CFAbsoluteTime cachedBeginningOfDay = numeric_limits<CFAbsoluteTime>::quiet_NaN();
+    static CFAbsoluteTime cachedBeginningOfNextDay;
+    if (!(date >= cachedBeginningOfDay && date < cachedBeginningOfNextDay))
+        getDayBoundaries(date, cachedBeginningOfDay, cachedBeginningOfNextDay);
+    return cachedBeginningOfDay;
+}
+
+static inline WebHistory::DateKey dateKey(CFAbsoluteTime date)
+{
+    // Converting from double (CFAbsoluteTime) to int64_t (WebHistoryDateKey) is
+    // safe here because all sensible dates are in the range -2**48 .. 2**47 which
+    // safely fits in an int64_t.
+    return beginningOfDay(date);
 }
 
 // Returns whether the day is already in the list of days,
@@ -875,7 +890,7 @@ bool WebHistory::findKey(DateKey* key, CFAbsoluteTime forDay)
 {
     ASSERT_ARG(key, key);
 
-    *key = timeIntervalForBeginningOfDay(forDay);
+    *key = dateKey(forDay);
     return m_entriesByDate.contains(*key);
 }
 

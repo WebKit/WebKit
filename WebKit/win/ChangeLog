@@ -1,3 +1,19 @@
+2009-09-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by Steve Falkenburg.
+
+        Speed up access to history items by caching date computation.
+
+        * History/WebHistory.mm:
+        (getDayBoundaries): Refactored from timeIntervalForBeginningOfDay.
+        Returns the beginning of the day that the passed time is within and
+        the beginning of the next day.
+        (beginningOfDay): Added. Uses getDayBoundaries so it can be fast for
+        multiple dates within the same day, which is the common case.
+        (dateKey): Added. Calls beginningOfDay and converts to an integer.
+        (WebHistory::findKey): Changed to call dateKey instead of
+        timeIntervalForBeginningOfDay.
+
 2009-09-25  Adam Roben  <aroben@apple.com>
 
         Add SPI to invalidate a WebView's backing store
