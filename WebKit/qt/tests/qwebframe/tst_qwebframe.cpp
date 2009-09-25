@@ -33,7 +33,9 @@
 #include <QRegExp>
 #include <QNetworkRequest>
 #include <QNetworkReply>
+#ifndef QT_NO_OPENSSL
 #include <qsslerror.h>
+#endif
 #include "../util.h"
 
 //TESTED_CLASS=
@@ -2183,8 +2185,11 @@ public:
         if (request.url() == QUrl("qrc:/test1.html")) {
             setHeader(QNetworkRequest::LocationHeader, QString("qrc:/test2.html"));
             setAttribute(QNetworkRequest::RedirectionTargetAttribute, QUrl("qrc:/test2.html"));
-        } else if (request.url() == QUrl("qrc:/fake-ssl-error.html"))
+        }
+#ifndef QT_NO_OPENSSL
+        else if (request.url() == QUrl("qrc:/fake-ssl-error.html"))
             setError(QNetworkReply::SslHandshakeFailedError, tr("Fake error !")); // force a ssl error
+#endif
         else if (request.url() == QUrl("http://abcdef.abcdef/"))
             setError(QNetworkReply::HostNotFoundError, tr("Invalid URL"));
 
@@ -2211,8 +2216,10 @@ private slots:
             emit error(this->error());
         else if (request().url() == QUrl("http://abcdef.abcdef/"))
             emit metaDataChanged();
+#ifndef QT_NO_OPENSSL
         else if (request().url() == QUrl("qrc:/fake-ssl-error.html"))
             return;
+#endif
 
         emit readyRead();
         emit finished();
@@ -2232,12 +2239,14 @@ protected:
         if (op == QNetworkAccessManager::GetOperation)
             if (url == "qrc:/test1.html" ||  url == "http://abcdef.abcdef/")
                 return new FakeReply(request, this);
+#ifndef QT_NO_OPENSSL
             else if (url == "qrc:/fake-ssl-error.html") {
                 FakeReply* reply = new FakeReply(request, this);
                 QList<QSslError> errors;
                 emit sslErrors(reply, errors << QSslError(QSslError::UnspecifiedError));
                 return reply;
             }
+#endif
 
         return QNetworkAccessManager::createRequest(op, request, outgoingData);
     }
@@ -2271,6 +2280,7 @@ void tst_QWebFrame::requestedUrl()
     QCOMPARE(frame->requestedUrl(), QUrl("http://abcdef.abcdef/"));
     QCOMPARE(frame->url(), QUrl("http://abcdef.abcdef/"));
 
+#ifndef QT_NO_OPENSSL
     qRegisterMetaType<QList<QSslError> >("QList<QSslError>");
     qRegisterMetaType<QNetworkReply* >("QNetworkReply*");
 
@@ -2280,6 +2290,7 @@ void tst_QWebFrame::requestedUrl()
     QCOMPARE(spy2.count(), 1);
     QCOMPARE(frame->requestedUrl(), QUrl("qrc:/fake-ssl-error.html"));
     QCOMPARE(frame->url(), QUrl("qrc:/fake-ssl-error.html"));
+#endif
 }
 
 void tst_QWebFrame::javaScriptWindowObjectCleared_data()

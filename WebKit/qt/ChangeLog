@@ -1,3 +1,12 @@
+2009-09-25  Csaba Osztrogonac  <oszi@inf.u-szeged.hu>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Make tst_qwebframe work if Qt built without SSL support
+        https://bugs.webkit.org/show_bug.cgi?id=29735
+
+        * tests/qwebframe/tst_qwebframe.cpp: Missing #ifndef blocks added.
+
 2009-09-24  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Simon Hausmann.
