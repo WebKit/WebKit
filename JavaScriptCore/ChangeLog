@@ -1,3 +1,27 @@
+2009-09-24  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Division is needlessly slow in 64-bit
+        https://bugs.webkit.org/show_bug.cgi?id=29723
+
+        Add codegen for op_div on x86-64
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::compileBinaryArithOpSlowCase):
+        (JSC::JIT::emit_op_div):
+        (JSC::JIT::emitSlow_op_div):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::isOperandConstantImmediateDouble):
+        (JSC::JIT::addressFor):
+        (JSC::JIT::emitLoadDouble):
+        (JSC::JIT::emitLoadInt32ToDouble):
+        (JSC::JIT::emitJumpSlowCaseIfNotImmediateNumber):
+
 2009-09-24  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Dimitri Glazkov.

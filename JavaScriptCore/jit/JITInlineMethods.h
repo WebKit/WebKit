@@ -65,6 +65,11 @@ ALWAYS_INLINE void JIT::emitGetJITStubArg(unsigned argumentNumber, RegisterID ds
     peek(dst, argumentStackOffset);
 }
 
+ALWAYS_INLINE bool JIT::isOperandConstantImmediateDouble(unsigned src)
+{
+    return m_codeBlock->isConstantRegisterIndex(src) && getConstantOperand(src).isDouble();
+}
+
 ALWAYS_INLINE JSValue JIT::getConstantOperand(unsigned src)
 {
     ASSERT(m_codeBlock->isConstantRegisterIndex(src));
@@ -305,6 +310,11 @@ ALWAYS_INLINE void JIT::sampleCodeBlock(CodeBlock* codeBlock)
 #endif
 #endif
 
+inline JIT::Address JIT::addressFor(unsigned index, RegisterID base)
+{
+    return Address(base, (index * sizeof(Register)));
+}
+
 #if USE(JSVALUE32_64)
 
 inline JIT::Address JIT::tagFor(unsigned index, RegisterID base)
@@ -315,11 +325,6 @@ inline JIT::Address JIT::tagFor(unsigned index, RegisterID base)
 inline JIT::Address JIT::payloadFor(unsigned index, RegisterID base)
 {
     return Address(base, (index * sizeof(Register)) + OBJECT_OFFSETOF(JSValue, u.asBits.payload));
-}
-
-inline JIT::Address JIT::addressFor(unsigned index, RegisterID base)
-{
-    return Address(base, (index * sizeof(Register)));
 }
 
 inline void JIT::emitLoadTag(unsigned index, RegisterID tag)
@@ -579,11 +584,6 @@ ALWAYS_INLINE bool JIT::getOperandConstantImmediateInt(unsigned op1, unsigned op
     return false;
 }
 
-ALWAYS_INLINE bool JIT::isOperandConstantImmediateDouble(unsigned src)
-{
-    return m_codeBlock->isConstantRegisterIndex(src) && getConstantOperand(src).isDouble();
-}
-
 /* Deprecated: Please use JITStubCall instead. */
 
 ALWAYS_INLINE void JIT::emitPutJITStubArg(RegisterID tag, RegisterID payload, unsigned argumentNumber)
@@ -732,6 +732,24 @@ ALWAYS_INLINE JIT::Jump JIT::emitJumpIfNotImmediateNumber(RegisterID reg)
 {
     return branchTestPtr(Zero, reg, tagTypeNumberRegister);
 }
+
+inline void JIT::emitLoadDouble(unsigned index, FPRegisterID value)
+{
+    if (m_codeBlock->isConstantRegisterIndex(index)) {
+        Register& inConstantPool = m_codeBlock->constantRegister(index);
+        loadDouble(&inConstantPool, value);
+    } else
+        loadDouble(addressFor(index), value);
+}
+
+inline void JIT::emitLoadInt32ToDouble(unsigned index, FPRegisterID value)
+{
+    if (m_codeBlock->isConstantRegisterIndex(index)) {
+        Register& inConstantPool = m_codeBlock->constantRegister(index);
+        convertInt32ToDouble(AbsoluteAddress(&inConstantPool), value);
+    } else
+        convertInt32ToDouble(addressFor(index), value);
+}
 #endif
 
 ALWAYS_INLINE JIT::Jump JIT::emitJumpIfImmediateInteger(RegisterID reg)
@@ -767,6 +785,11 @@ ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotImmediateInteger(RegisterID reg)
 ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotImmediateIntegers(RegisterID reg1, RegisterID reg2, RegisterID scratch)
 {
     addSlowCase(emitJumpIfNotImmediateIntegers(reg1, reg2, scratch));
+}
+
+ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotImmediateNumber(RegisterID reg)
+{
+    addSlowCase(emitJumpIfNotImmediateNumber(reg));
 }
 
 #if !USE(JSVALUE64)

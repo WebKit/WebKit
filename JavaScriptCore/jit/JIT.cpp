@@ -195,7 +195,7 @@ void JIT::privateCompileMainPass()
 
         switch (m_interpreter->getOpcodeID(currentInstruction->u.opcode)) {
         DEFINE_BINARY_OP(op_del_by_val)
-#if !USE(JSVALUE32_64)
+#if USE(JSVALUE32)
         DEFINE_BINARY_OP(op_div)
 #endif
         DEFINE_BINARY_OP(op_in)
@@ -230,7 +230,7 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_create_arguments)
         DEFINE_OP(op_debug)
         DEFINE_OP(op_del_by_id)
-#if USE(JSVALUE32_64)
+#if !USE(JSVALUE32)
         DEFINE_OP(op_div)
 #endif
         DEFINE_OP(op_end)
@@ -379,7 +379,7 @@ void JIT::privateCompileSlowCases()
         DEFINE_SLOWCASE_OP(op_construct)
         DEFINE_SLOWCASE_OP(op_construct_verify)
         DEFINE_SLOWCASE_OP(op_convert_this)
-#if USE(JSVALUE32_64)
+#if !USE(JSVALUE32)
         DEFINE_SLOWCASE_OP(op_div)
 #endif
         DEFINE_SLOWCASE_OP(op_eq)
