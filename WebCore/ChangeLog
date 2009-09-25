@@ -1,3 +1,20 @@
+2009-09-24  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Stephanie Lewis.
+
+        Fixed sudden termination console spew due to too many calls to
+        enableSuddenTermination.
+        
+        <rdar://problem/7063125> 10A410: Safari logging enableSuddenTermination errors
+
+        * page/DOMWindow.cpp:
+        (WebCore::removeUnloadEventListener):
+        (WebCore::removeAllUnloadEventListeners):
+        (WebCore::removeBeforeUnloadEventListener):
+        (WebCore::removeAllBeforeUnloadEventListeners): Only
+        enableSuddenTermination if the set of listeners is empty *and* this
+        window was in the set. Otherwise, a no-op will cause us to enableSuddenTermination.
+
 2009-09-24  Carol Szabo  <carol.szabo@nokia.com>
 
         Reviewed by Alexey Proskuryakov.
