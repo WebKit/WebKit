@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2009 Google Inc. All rights reserved.
+ * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -29,35 +29,55 @@
  */
 
 #include "config.h"
-#include "HTMLCanvasElement.h"
-#include "CanvasRenderingContext.h"
 
-#include "CanvasRenderingContext.h"
+#if ENABLE(3D_CANVAS)
+
+#include "CanvasArrayBuffer.h"
+#include "CanvasIntArray.h"
+
 #include "V8Binding.h"
+#include "V8CanvasArrayBuffer.h"
+#include "V8CanvasArrayCustom.h"
 #include "V8CustomBinding.h"
-#include "V8Node.h"
 #include "V8Proxy.h"
 
 namespace WebCore {
 
-CALLBACK_FUNC_DECL(HTMLCanvasElementGetContext)
+CALLBACK_FUNC_DECL(CanvasIntArrayConstructor)
 {
-    INC_STATS("DOM.HTMLCanvasElement.context");
-    v8::Handle<v8::Object> holder = args.Holder();
-    HTMLCanvasElement* imp = V8DOMWrapper::convertDOMWrapperToNode<HTMLCanvasElement>(holder);
-    String contextId = toWebCoreString(args[0]);
-    CanvasRenderingContext* result = imp->getContext(contextId);
-    if (!result)
+    INC_STATS("DOM.CanvasIntArray.Contructor");
+
+    return constructCanvasArray<CanvasIntArray>(args, V8ClassIndex::ToInt(V8ClassIndex::CANVASINTARRAY));
+}
+
+// Get the specified value from the integer array and return it wrapped as a JavaScript Number object to V8. Accesses outside the valid pixel buffer range return "undefined".
+INDEXED_PROPERTY_GETTER(CanvasIntArray)
+{
+    INC_STATS("DOM.CanvasIntArray.IndexedPropertyGetter");
+    CanvasIntArray* array = V8DOMWrapper::convertToNativeObject<CanvasIntArray>(V8ClassIndex::CANVASINTARRAY, info.Holder());
+
+    if ((index < 0) || (index >= array->length()))
         return v8::Undefined();
-    if (result->is2d())
-        return V8DOMWrapper::convertToV8Object(V8ClassIndex::CANVASRENDERINGCONTEXT2D, result);
-#if ENABLE(3D_CANVAS)
-    else if (result->is3d())
-        return V8DOMWrapper::convertToV8Object(V8ClassIndex::CANVASRENDERINGCONTEXT3D, result);
-#endif
-    ASSERT_NOT_REACHED();
-    return v8::Undefined();
+    int result;
+    if (!array->get(index, result))
+        return v8::Undefined();
+    return v8::Number::New(result);
+}
+
+// Set the specified value in the integer array. Accesses outside the valid integer array range are silently ignored.
+INDEXED_PROPERTY_SETTER(CanvasIntArray)
+{
+    INC_STATS("DOM.CanvasIntArray.IndexedPropertySetter");
+    CanvasIntArray* array = V8DOMWrapper::convertToNativeObject<CanvasIntArray>(V8ClassIndex::CANVASINTARRAY, info.Holder());
+
+    if ((index >= 0) && (index < array->length())) {
+        if (!value->IsNumber())
+            return throwError("Could not convert value argument to a number");
+        array->set(index, value->NumberValue());
+    }
+    return value;
 }
 
 } // namespace WebCore
 
+#endif // ENABLE(3D_CANVAS)

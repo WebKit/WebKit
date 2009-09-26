@@ -62,6 +62,11 @@ namespace WebCore {
     class ImageData;
     class WebKitCSSMatrix;
     
+    // FIXME: ideally this would be used on all platforms.
+#if PLATFORM(SKIA)
+    class GraphicsContext3DInternal;
+#endif
+
     class GraphicsContext3D : Noncopyable {
     public:
         enum ShaderType { FRAGMENT_SHADER, VERTEX_SHADER };
@@ -308,10 +313,6 @@ namespace WebCore {
     private:        
         int m_currentWidth, m_currentHeight;
         
-#if PLATFORM(SKIA)
-#include "GraphicsContext3DSkia.h"
-#endif
-
 #if PLATFORM(MAC)
         Vector<Vector<float> > m_vertexArray;
         
@@ -320,6 +321,12 @@ namespace WebCore {
         GLuint m_fbo;
         GLuint m_depthBuffer;
 #endif        
+
+        // FIXME: ideally this would be used on all platforms.
+#if PLATFORM(SKIA)
+        friend class GraphicsContext3DInternal;
+        OwnPtr<GraphicsContext3DInternal> m_internal;
+#endif
     };
 
 } // namespace WebCore

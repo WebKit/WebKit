@@ -1596,7 +1596,24 @@ sub IsRefPtrType
 {
     my $type = shift;
     return 1 if $type eq "Attr";
+    return 1 if $type eq "CanvasArray";
+    return 1 if $type eq "CanvasArrayBuffer";
+    return 1 if $type eq "CanvasBooleanArray";
+    return 1 if $type eq "CanvasByteArray";
+    return 1 if $type eq "CanvasBuffer";
+    return 1 if $type eq "CanvasFloatArray";
+    return 1 if $type eq "CanvasFramebuffer";
     return 1 if $type eq "CanvasGradient";
+    return 1 if $type eq "CanvasIntArray";
+    return 1 if $type eq "CanvasObject";
+    return 1 if $type eq "CanvasProgram";
+    return 1 if $type eq "CanvasRenderbuffer";
+    return 1 if $type eq "CanvasShader";
+    return 1 if $type eq "CanvasShortArray";
+    return 1 if $type eq "CanvasTexture";
+    return 1 if $type eq "CanvasUnsignedByteArray";
+    return 1 if $type eq "CanvasUnsignedIntArray";
+    return 1 if $type eq "CanvasUnsignedShortArray";
     return 1 if $type eq "ClientRect";
     return 1 if $type eq "ClientRectList";
     return 1 if $type eq "CDATASection";
@@ -1725,6 +1742,19 @@ sub GetNativeType
 my %typeCanFailConversion = (
     "AtomicString" => 0,
     "Attr" => 1,
+    "CanvasArray" => 0,
+    "CanvasBuffer" => 0,
+    "CanvasByteArray" => 0,
+    "CanvasFloatArray" => 0,
+    "CanvasFramebuffer" => 0,
+    "CanvasGradient" => 0,
+    "CanvasIntArray" => 0,
+    "CanvasPixelArray" => 0,
+    "CanvasProgram" => 0,
+    "CanvasRenderbuffer" => 0,
+    "CanvasShader" => 0,
+    "CanvasShortArray" => 0,
+    "CanvasTexture" => 0,
     "CompareHow" => 0,
     "DataGridColumn" => 0,
     "DOMString" => 0,
@@ -1734,8 +1764,11 @@ my %typeCanFailConversion = (
     "Event" => 0,
     "EventListener" => 0,
     "EventTarget" => 0,
+    "HTMLCanvasElement" => 0,
     "HTMLElement" => 0,
+    "HTMLImageElement" => 0,
     "HTMLOptionElement" => 0,
+    "HTMLVideoElement" => 0,
     "Node" => 0,
     "NodeFilter" => 0,
     "MessagePort" => 0,

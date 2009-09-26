@@ -36,6 +36,7 @@
 #include "Node.h"
 #include "XPathNSResolver.h"
 #include "XPathResult.h"
+#include "CanvasRenderingContext.h"
 
 #include "V8Binding.h"
 #include "V8CustomBinding.h"
@@ -94,13 +95,16 @@ CALLBACK_FUNC_DECL(DocumentGetCSSCanvasContext)
     int width = toInt32(args[2]);
     int height = toInt32(args[3]);
     CanvasRenderingContext* result = imp->getCSSCanvasContext(contextId, name, width, height);
+    if (!result)
+        return v8::Undefined();
     if (result->is2d())
         return V8DOMWrapper::convertToV8Object(V8ClassIndex::CANVASRENDERINGCONTEXT2D, result);
-    else {
-        // FIXME: Add the conversion to CanvasRenderingContext3D when it is hooked up.
-        ASSERT_NOT_REACHED();
-        return v8::Handle<v8::Value>();
-    }
+#if ENABLE(3D_CANVAS)
+    else if (result->is3d())
+        return V8DOMWrapper::convertToV8Object(V8ClassIndex::CANVASRENDERINGCONTEXT3D, result);
+#endif // ENABLE(3D_CANVAS)
+    ASSERT_NOT_REACHED();
+    return v8::Undefined();
 }
 
 } // namespace WebCore

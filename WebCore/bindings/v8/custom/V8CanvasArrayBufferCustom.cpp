@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2009 Google Inc. All rights reserved.
+ * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -29,35 +29,43 @@
  */
 
 #include "config.h"
-#include "HTMLCanvasElement.h"
-#include "CanvasRenderingContext.h"
 
-#include "CanvasRenderingContext.h"
+#if ENABLE(3D_CANVAS)
+
+#include "CanvasArrayBuffer.h"
+
 #include "V8Binding.h"
+#include "V8CanvasArrayBuffer.h"
 #include "V8CustomBinding.h"
-#include "V8Node.h"
 #include "V8Proxy.h"
 
 namespace WebCore {
 
-CALLBACK_FUNC_DECL(HTMLCanvasElementGetContext)
+CALLBACK_FUNC_DECL(CanvasArrayBufferConstructor)
 {
-    INC_STATS("DOM.HTMLCanvasElement.context");
-    v8::Handle<v8::Object> holder = args.Holder();
-    HTMLCanvasElement* imp = V8DOMWrapper::convertDOMWrapperToNode<HTMLCanvasElement>(holder);
-    String contextId = toWebCoreString(args[0]);
-    CanvasRenderingContext* result = imp->getContext(contextId);
-    if (!result)
-        return v8::Undefined();
-    if (result->is2d())
-        return V8DOMWrapper::convertToV8Object(V8ClassIndex::CANVASRENDERINGCONTEXT2D, result);
-#if ENABLE(3D_CANVAS)
-    else if (result->is3d())
-        return V8DOMWrapper::convertToV8Object(V8ClassIndex::CANVASRENDERINGCONTEXT3D, result);
-#endif
-    ASSERT_NOT_REACHED();
-    return v8::Undefined();
+    INC_STATS("DOM.CanvasArrayBuffer.Contructor");
+
+    if (!args.IsConstructCall())
+        return throwError("DOM object constructor cannot be called as a function.");
+
+    int argLen = args.Length();
+    // Supported constructors:
+    // CanvasArrayBuffer(n) where n is an integer:
+    //   -- create an empty buffer of n bytes
+
+    if (argLen != 1)
+        return throwError("Wrong number of arguments specified to constructor (requires 1)");
+
+    int len = 0;
+    if (!args[0]->IsInt32())
+        return throwError("Argument to CanvasArrayBuffer constructor was not an integer");
+    len = toInt32(args[0]);
+    RefPtr<CanvasArrayBuffer> buffer = CanvasArrayBuffer::create(len);
+    // Transform the holder into a wrapper object for the array.
+    V8DOMWrapper::setDOMWrapper(args.Holder(), V8ClassIndex::ToInt(V8ClassIndex::CANVASARRAYBUFFER), buffer.get());
+    return toV8(buffer.release(), args.Holder());
 }
 
 } // namespace WebCore
 
+#endif // ENABLE(3D_CANVAS)

@@ -1,3 +1,65 @@
+2009-09-25  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        [Chromium] Add initial V8 bindings for WebGL
+        https://bugs.webkit.org/show_bug.cgi?id=29664
+
+        * WebCore.gypi:
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/v8/DOMObjectsInclude.h:
+        * bindings/v8/DerivedSourcesAllInOne.cpp:
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::getTemplate):
+        * bindings/v8/V8Index.cpp:
+        * bindings/v8/V8Index.h:
+        * bindings/v8/custom/V8CanvasArrayBufferCustom.cpp: Added.
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8CanvasArrayCustom.h: Added.
+        (WebCore::constructCanvasArray):
+        * bindings/v8/custom/V8CanvasByteArrayCustom.cpp: Added.
+        (WebCore::CALLBACK_FUNC_DECL):
+        (WebCore::INDEXED_PROPERTY_GETTER):
+        (WebCore::INDEXED_PROPERTY_SETTER):
+        * bindings/v8/custom/V8CanvasFloatArrayCustom.cpp: Added.
+        (WebCore::CALLBACK_FUNC_DECL):
+        (WebCore::INDEXED_PROPERTY_GETTER):
+        (WebCore::INDEXED_PROPERTY_SETTER):
+        * bindings/v8/custom/V8CanvasIntArrayCustom.cpp: Added.
+        (WebCore::CALLBACK_FUNC_DECL):
+        (WebCore::INDEXED_PROPERTY_GETTER):
+        (WebCore::INDEXED_PROPERTY_SETTER):
+        * bindings/v8/custom/V8CanvasRenderingContext3DCustom.cpp: Added.
+        (WebCore::jsArrayToFloatArray):
+        (WebCore::jsArrayToIntArray):
+        (WebCore::CALLBACK_FUNC_DECL):
+        (WebCore::):
+        (WebCore::vertexAttribAndUniformHelperf):
+        (WebCore::uniformHelperi):
+        (WebCore::uniformMatrixHelper):
+        * bindings/v8/custom/V8CanvasShortArrayCustom.cpp: Added.
+        (WebCore::CALLBACK_FUNC_DECL):
+        (WebCore::INDEXED_PROPERTY_GETTER):
+        (WebCore::INDEXED_PROPERTY_SETTER):
+        * bindings/v8/custom/V8CanvasUnsignedByteArrayCustom.cpp: Added.
+        (WebCore::CALLBACK_FUNC_DECL):
+        (WebCore::INDEXED_PROPERTY_GETTER):
+        (WebCore::INDEXED_PROPERTY_SETTER):
+        * bindings/v8/custom/V8CanvasUnsignedIntArrayCustom.cpp: Added.
+        (WebCore::CALLBACK_FUNC_DECL):
+        (WebCore::INDEXED_PROPERTY_GETTER):
+        (WebCore::INDEXED_PROPERTY_SETTER):
+        * bindings/v8/custom/V8CanvasUnsignedShortArrayCustom.cpp: Added.
+        (WebCore::CALLBACK_FUNC_DECL):
+        (WebCore::INDEXED_PROPERTY_GETTER):
+        (WebCore::INDEXED_PROPERTY_SETTER):
+        * bindings/v8/custom/V8CustomBinding.h:
+        * bindings/v8/custom/V8DocumentCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8HTMLCanvasElementCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * platform/graphics/GraphicsContext3D.h:
+
 2009-09-25  Jeremy Orlow  <jorlow@chromium.org>
 
         This is breaking Chromium try bots, so I'm counting this as a build fix.

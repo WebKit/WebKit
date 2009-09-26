@@ -399,6 +399,25 @@
 #include "V8SharedWorker.h"
 #endif
 
+#if ENABLE(3D_CANVAS)
+#include "V8CanvasRenderingContext3D.h"
+#include "V8CanvasArrayBuffer.h"
+#include "V8CanvasArray.h"
+#include "V8CanvasByteArray.h"
+#include "V8CanvasBuffer.h"
+#include "V8CanvasFloatArray.h"
+#include "V8CanvasFramebuffer.h"
+#include "V8CanvasIntArray.h"
+#include "V8CanvasProgram.h"
+#include "V8CanvasRenderbuffer.h"
+#include "V8CanvasShader.h"
+#include "V8CanvasShortArray.h"
+#include "V8CanvasTexture.h"
+#include "V8CanvasUnsignedByteArray.h"
+#include "V8CanvasUnsignedIntArray.h"
+#include "V8CanvasUnsignedShortArray.h"
+#endif
+
 namespace WebCore {
 
 FunctionTemplateFactory V8ClassIndex::GetFactory(V8WrapperType type)

@@ -436,7 +436,40 @@ v8::Persistent<v8::FunctionTemplate> V8DOMWrapper::getTemplate(V8ClassIndex::V8W
     }
 #endif
 
+#if ENABLE(3D_CANVAS)
     // The following objects are created from JavaScript.
+    case V8ClassIndex::CANVASARRAYBUFFER:
+        descriptor->SetCallHandler(USE_CALLBACK(CanvasArrayBufferConstructor));
+        break;
+    case V8ClassIndex::CANVASBYTEARRAY:
+        descriptor->SetCallHandler(USE_CALLBACK(CanvasByteArrayConstructor));
+        descriptor->InstanceTemplate()->SetIndexedPropertyHandler(USE_INDEXED_PROPERTY_GETTER(CanvasByteArray), USE_INDEXED_PROPERTY_SETTER(CanvasByteArray));
+        break;
+    case V8ClassIndex::CANVASFLOATARRAY:
+        descriptor->SetCallHandler(USE_CALLBACK(CanvasFloatArrayConstructor));
+        descriptor->InstanceTemplate()->SetIndexedPropertyHandler(USE_INDEXED_PROPERTY_GETTER(CanvasFloatArray), USE_INDEXED_PROPERTY_SETTER(CanvasFloatArray));
+        break;
+    case V8ClassIndex::CANVASINTARRAY:
+        descriptor->SetCallHandler(USE_CALLBACK(CanvasIntArrayConstructor));
+        descriptor->InstanceTemplate()->SetIndexedPropertyHandler(USE_INDEXED_PROPERTY_GETTER(CanvasIntArray), USE_INDEXED_PROPERTY_SETTER(CanvasIntArray));
+        break;
+    case V8ClassIndex::CANVASSHORTARRAY:
+        descriptor->SetCallHandler(USE_CALLBACK(CanvasShortArrayConstructor));
+        descriptor->InstanceTemplate()->SetIndexedPropertyHandler(USE_INDEXED_PROPERTY_GETTER(CanvasShortArray), USE_INDEXED_PROPERTY_SETTER(CanvasShortArray));
+        break;
+    case V8ClassIndex::CANVASUNSIGNEDBYTEARRAY:
+        descriptor->SetCallHandler(USE_CALLBACK(CanvasUnsignedByteArrayConstructor));
+        descriptor->InstanceTemplate()->SetIndexedPropertyHandler(USE_INDEXED_PROPERTY_GETTER(CanvasUnsignedByteArray), USE_INDEXED_PROPERTY_SETTER(CanvasUnsignedByteArray));
+        break;
+    case V8ClassIndex::CANVASUNSIGNEDINTARRAY:
+        descriptor->SetCallHandler(USE_CALLBACK(CanvasUnsignedIntArrayConstructor));
+        descriptor->InstanceTemplate()->SetIndexedPropertyHandler(USE_INDEXED_PROPERTY_GETTER(CanvasUnsignedIntArray), USE_INDEXED_PROPERTY_SETTER(CanvasUnsignedIntArray));
+        break;
+    case V8ClassIndex::CANVASUNSIGNEDSHORTARRAY:
+        descriptor->SetCallHandler(USE_CALLBACK(CanvasUnsignedShortArrayConstructor));
+        descriptor->InstanceTemplate()->SetIndexedPropertyHandler(USE_INDEXED_PROPERTY_GETTER(CanvasUnsignedShortArray), USE_INDEXED_PROPERTY_SETTER(CanvasUnsignedShortArray));
+        break;
+#endif
     case V8ClassIndex::DOMPARSER:
         descriptor->SetCallHandler(USE_CALLBACK(DOMParserConstructor));
         break;
