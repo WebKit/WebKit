@@ -1,3 +1,20 @@
+2009-09-26  Zan Dobersek  <zandobersek@gmail.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [Layout tests] [Gtk] Gtk DumpRenderTree should use WebKit test fonts
+        https://bugs.webkit.org/show_bug.cgi?id=29689
+
+        Load test fonts through FontConfig before each test.
+        This ensures a more proper rendering of the tests.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (initializeFonts):
+        (runTest):
+        (main):
+        * DumpRenderTree/gtk/fonts.conf: Copied from WebKitTools/DumpRenderTree/qt/fonts.conf.
+        * GNUmakefile.am:
+
 2009-09-25  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/29718> mark-bug-fixed: add -u|--update-only switch

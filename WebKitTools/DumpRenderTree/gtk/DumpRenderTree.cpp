@@ -44,6 +44,10 @@
 
 #include <wtf/Assertions.h>
 
+#if PLATFORM(X11)
+#include <fontconfig/fontconfig.h>
+#endif
+
 #include <cassert>
 #include <getopt.h>
 #include <stdlib.h>
@@ -125,6 +129,41 @@ static void appendString(gchar*& target, gchar* string)
     target = g_strconcat(target, string, NULL);
     g_free(oldString);
 }
+
+#if PLATFORM(X11)
+static void initializeFonts()
+{
+    static int numFonts = -1;
+
+    // Some tests may add or remove fonts via the @font-face rule.
+    // If that happens, font config should be re-created to suppress any unwanted change.
+    FcFontSet* appFontSet = FcConfigGetFonts(0, FcSetApplication);
+    if (appFontSet && numFonts >= 0 && appFontSet->nfont == numFonts)
+        return;
+
+    const char* fontDirEnv = g_getenv("WEBKIT_TESTFONTS");
+    if (!fontDirEnv)
+        g_error("WEBKIT_TESTFONTS environment variable is not set, but it should point to the directory "
+                "containing the fonts you can clone from git://gitorious.org/qtwebkit/testfonts.git\n");
+
+    GFile* fontDir = g_file_new_for_path(fontDirEnv);
+    if (!fontDir || !g_file_query_exists(fontDir, NULL))
+        g_error("WEBKIT_TESTFONTS environment variable is not set correctly - it should point to the directory "
+                "containing the fonts you can clone from git://gitorious.org/qtwebkit/testfonts.git\n");
+
+    FcConfig *config = FcConfigCreate();
+    if (!FcConfigParseAndLoad (config, (FcChar8*) FONTS_CONF_FILE, true))
+        g_error("Couldn't load font configuration file");
+    if (!FcConfigAppFontAddDir (config, (FcChar8*) g_file_get_path(fontDir)))
+        g_error("Couldn't add font dir!");
+    FcConfigSetCurrent(config);
+
+    g_object_unref(fontDir);
+
+    appFontSet = FcConfigGetFonts(config, FcSetApplication);
+    numFonts = appFontSet->nfont;
+}
+#endif
 
 static gchar* dumpFramesAsText(WebKitWebFrame* frame)
 {
@@ -430,6 +469,10 @@ static void runTest(const string& testPathOrURL)
     if (prevTestBFItem)
         g_object_ref(prevTestBFItem);
 
+#if PLATFORM(X11)
+    initializeFonts();
+#endif
+
     // Focus the web view before loading the test to avoid focusing problems
     gtk_widget_grab_focus(GTK_WIDGET(webView));
     webkit_web_view_open(webView, url);
@@ -706,6 +749,11 @@ int main(int argc, char* argv[])
 {
     g_thread_init(NULL);
     gtk_init(&argc, &argv);
+
+#if PLATFORM(X11)
+    FcInit();
+    initializeFonts();
+#endif
 
     struct option options[] = {
         {"notree", no_argument, &dumpTree, false},
