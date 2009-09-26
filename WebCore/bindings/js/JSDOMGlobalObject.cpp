@@ -68,7 +68,7 @@ PassRefPtr<JSEventListener> JSDOMGlobalObject::createJSAttributeEventListener(JS
     if (!val.isObject())
         return 0;
 
-    return JSEventListener::create(asObject(val), true).get();
+    return JSEventListener::create(asObject(val), this, true).get();
 }
 
 void JSDOMGlobalObject::setCurrentEvent(Event* evt)

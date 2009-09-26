@@ -29,25 +29,24 @@ namespace WebCore {
 
     class JSLazyEventListener : public JSEventListener {
     public:
-        static PassRefPtr<JSLazyEventListener> create(const String& functionName, const String& eventParameterName, const String& code, Node* node, const String& sourceURL, int lineNumber)
+        static PassRefPtr<JSLazyEventListener> create(const String& functionName, const String& eventParameterName, const String& code, JSDOMGlobalObject* globalObject, Node* node, int lineNumber)
         {
-            return adoptRef(new JSLazyEventListener(functionName, eventParameterName, code, node, sourceURL, lineNumber));
+            return adoptRef(new JSLazyEventListener(functionName, eventParameterName, code, globalObject, node, lineNumber));
         }
         virtual ~JSLazyEventListener();
 
     private:
-        JSLazyEventListener(const String& functionName, const String& eventParameterName, const String& code, Node*, const String& sourceURL, int lineNumber);
+        JSLazyEventListener(const String& functionName, const String& eventParameterName, const String& code, JSDOMGlobalObject*, Node*, int lineNumber);
 
-        virtual JSC::JSObject* jsFunction(ScriptExecutionContext*) const;
+        virtual JSC::JSObject* jsFunction() const;
         virtual bool wasCreatedFromMarkup() const { return true; }
 
-        void parseCode(ScriptExecutionContext*) const;
+        void parseCode() const;
 
         mutable String m_functionName;
         mutable String m_eventParameterName;
         mutable String m_code;
         mutable bool m_parsed;
-        mutable String m_sourceURL;
         int m_lineNumber;
         Node* m_originalNode;
     };

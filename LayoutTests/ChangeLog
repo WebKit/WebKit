@@ -1,3 +1,18 @@
+2009-09-25  Alexey Proskuryakov  <ap@apple.com>
+
+        Reverting r48767, as it broke Windows build in a non-trivial way.
+
+        * fast/events/attribute-listener-cloned-from-frameless-doc-context-2-expected.txt: Removed.
+        * fast/events/attribute-listener-cloned-from-frameless-doc-context-2.html: Removed.
+        * fast/events/attribute-listener-cloned-from-frameless-doc-context-expected.txt: Removed.
+        * fast/events/attribute-listener-cloned-from-frameless-doc-context.html: Removed.
+        * fast/events/attribute-listener-cloned-from-frameless-doc-expected.txt: Removed.
+        * fast/events/attribute-listener-cloned-from-frameless-doc.xhtml: Removed.
+        * fast/events/attribute-listener-extracted-from-frameless-doc-context-2-expected.txt: Removed.
+        * fast/events/attribute-listener-extracted-from-frameless-doc-context-2.html: Removed.
+        * fast/events/attribute-listener-extracted-from-frameless-doc-context-expected.txt: Removed.
+        * fast/events/attribute-listener-extracted-from-frameless-doc-context.html: Removed.
+
 2009-09-25  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler.

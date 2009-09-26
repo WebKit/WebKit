@@ -73,7 +73,7 @@ ObjCEventListener::~ObjCEventListener()
     [m_listener release];
 }
 
-void ObjCEventListener::handleEvent(ScriptExecutionContext*, Event* event)
+void ObjCEventListener::handleEvent(Event* event)
 {
     [m_listener handleEvent:kit(event)];
 }

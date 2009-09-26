@@ -35,13 +35,12 @@ namespace WebCore {
 static WTF::RefCountedLeakCounter eventListenerCounter("JSLazyEventListener");
 #endif
 
-JSLazyEventListener::JSLazyEventListener(const String& functionName, const String& eventParameterName, const String& code, Node* node, const String& sourceURL, int lineNumber)
-    : JSEventListener(0, true)
+JSLazyEventListener::JSLazyEventListener(const String& functionName, const String& eventParameterName, const String& code, JSDOMGlobalObject* globalObject, Node* node, int lineNumber)
+    : JSEventListener(0, globalObject, true)
     , m_functionName(functionName)
     , m_eventParameterName(eventParameterName)
     , m_code(code)
     , m_parsed(false)
-    , m_sourceURL(sourceURL)
     , m_lineNumber(lineNumber)
     , m_originalNode(node)
 {
@@ -68,43 +67,23 @@ JSLazyEventListener::~JSLazyEventListener()
 #endif
 }
 
-JSObject* JSLazyEventListener::jsFunction(ScriptExecutionContext* executionContext) const
+JSObject* JSLazyEventListener::jsFunction() const
 {
-    parseCode(executionContext);
+    parseCode();
     return m_jsFunction;
 }
 
-void JSLazyEventListener::parseCode(ScriptExecutionContext* executionContext) const
+void JSLazyEventListener::parseCode() const
 {
-    ASSERT(executionContext);
-    ASSERT(executionContext->isDocument());
-    if (!executionContext)
-        return;
-
     if (m_parsed)
         return;
 
-    Frame* frame = static_cast<Document*>(executionContext)->frame();
-    if (!frame)
+    ScriptExecutionContext* executionContext = m_globalObject->scriptExecutionContext();
+    ASSERT(executionContext);
+    if (!executionContext)
         return;
-
-    ScriptController* scriptController = frame->script();
-    if (!scriptController->isEnabled())
-        return;
-
-    JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(executionContext);
-    if (!globalObject)
-        return;
-
-    // Ensure that 'node' has a JavaScript wrapper to mark the event listener we're creating.
-    if (m_originalNode) {
-        JSLock lock(SilenceAssertionsOnly);
-        // FIXME: Should pass the global object associated with the node
-        toJS(globalObject->globalExec(), globalObject, m_originalNode);
-    }
-
     if (executionContext->isDocument()) {
-        JSDOMWindow* window = static_cast<JSDOMWindow*>(globalObject);
+        JSDOMWindow* window = static_cast<JSDOMWindow*>(m_globalObject);
         Frame* frame = window->impl()->frame();
         if (!frame)
             return;
@@ -116,13 +95,16 @@ void JSLazyEventListener::parseCode(ScriptExecutionContext* executionContext) co
 
     m_parsed = true;
 
-    ExecState* exec = globalObject->globalExec();
+    ExecState* exec = m_globalObject->globalExec();
 
     MarkedArgumentBuffer args;
+    UString sourceURL(executionContext->url().string());
     args.append(jsNontrivialString(exec, m_eventParameterName));
     args.append(jsString(exec, m_code));
 
-    m_jsFunction = constructFunction(exec, args, Identifier(exec, m_functionName), m_sourceURL, m_lineNumber); // FIXME: is globalExec ok?
+    // FIXME: Passing the document's URL to construct is not always correct, since this event listener might
+    // have been added with setAttribute from a script, and we should pass String() in that case.
+    m_jsFunction = constructFunction(exec, args, Identifier(exec, m_functionName), sourceURL, m_lineNumber); // FIXME: is globalExec ok?
 
     JSFunction* listenerAsFunction = static_cast<JSFunction*>(m_jsFunction);
 
@@ -136,7 +118,7 @@ void JSLazyEventListener::parseCode(ScriptExecutionContext* executionContext) co
         // (and the document, and the form - see JSHTMLElement::eventHandlerScope)
         ScopeChain scope = listenerAsFunction->scope();
 
-        JSValue thisObj = toJS(exec, globalObject, m_originalNode);
+        JSValue thisObj = toJS(exec, m_globalObject, m_originalNode);
         if (thisObj.isObject()) {
             static_cast<JSNode*>(asObject(thisObj))->pushEventHandlerScope(exec, scope);
             listenerAsFunction->setScope(scope);
@@ -147,7 +129,6 @@ void JSLazyEventListener::parseCode(ScriptExecutionContext* executionContext) co
     m_functionName = String();
     m_code = String();
     m_eventParameterName = String();
-    m_sourceURL = String();
 }
 
 } // namespace WebCore

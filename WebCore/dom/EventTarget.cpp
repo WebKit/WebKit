@@ -269,7 +269,7 @@ bool EventTarget::fireEventListeners(Event* event)
             continue;
         // To match Mozilla, the AT_TARGET phase fires both capturing and bubbling
         // event listeners, even though that violates some versions of the DOM spec.
-        registeredListener.listener->handleEvent(scriptExecutionContext(), event);
+        registeredListener.listener->handleEvent(event);
     }
     d->firingEventEndIterators.removeLast();
 
