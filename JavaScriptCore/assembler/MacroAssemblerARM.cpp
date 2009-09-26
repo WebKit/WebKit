@@ -62,6 +62,33 @@ static bool isVFPPresent()
 
 const bool MacroAssemblerARM::s_isVFPPresent = isVFPPresent();
 
+#if defined(ARM_REQUIRE_NATURAL_ALIGNMENT) && ARM_REQUIRE_NATURAL_ALIGNMENT
+void MacroAssemblerARM::load32WithUnalignedHalfWords(BaseIndex address, RegisterID dest)
+{
+    ARMWord op2;
+
+    ASSERT(address.scale >= 0 && address.scale <= 3);
+    op2 = m_assembler.lsl(address.index, static_cast<int>(address.scale));
+
+    if (address.offset >= 0 && address.offset + 0x2 <= 0xff) {
+        m_assembler.add_r(ARMRegisters::S0, address.base, op2);
+        m_assembler.ldrh_u(dest, ARMRegisters::S0, ARMAssembler::getOp2Byte(address.offset));
+        m_assembler.ldrh_u(ARMRegisters::S0, ARMRegisters::S0, ARMAssembler::getOp2Byte(address.offset + 0x2));
+    } else if (address.offset < 0 && address.offset >= -0xff) {
+        m_assembler.add_r(ARMRegisters::S0, address.base, op2);
+        m_assembler.ldrh_d(dest, ARMRegisters::S0, ARMAssembler::getOp2Byte(-address.offset));
+        m_assembler.ldrh_d(ARMRegisters::S0, ARMRegisters::S0, ARMAssembler::getOp2Byte(-address.offset - 0x2));
+    } else {
+        m_assembler.ldr_un_imm(ARMRegisters::S0, address.offset);
+        m_assembler.add_r(ARMRegisters::S0, ARMRegisters::S0, op2);
+        m_assembler.ldrh_r(dest, address.base, ARMRegisters::S0);
+        m_assembler.add_r(ARMRegisters::S0, ARMRegisters::S0, ARMAssembler::OP2_IMM | 0x2);
+        m_assembler.ldrh_r(ARMRegisters::S0, address.base, ARMRegisters::S0);
+    }
+    m_assembler.orr_r(dest, dest, m_assembler.lsl(ARMRegisters::S0, 16));
+}
+#endif
+
 }
 
 #endif // ENABLE(ASSEMBLER) && PLATFORM(ARM_TRADITIONAL)

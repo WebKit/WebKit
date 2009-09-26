@@ -257,6 +257,10 @@
 #undef ARM_ARCH_VERSION
 #define ARM_ARCH_VERSION 7
 #endif
+/* On ARMv5 and below the natural alignment is required. */
+#if !defined(ARM_REQUIRE_NATURAL_ALIGNMENT) && ARM_ARCH_VERSION <= 5
+#define ARM_REQUIRE_NATURAL_ALIGNMENT 1
+#endif
 /* Defines two pseudo-platforms for ARM and Thumb-2 instruction set. */
 #if !defined(WTF_PLATFORM_ARM_TRADITIONAL) && !defined(WTF_PLATFORM_ARM_THUMB2)
 #  if defined(thumb2) || defined(__thumb2__)

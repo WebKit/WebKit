@@ -1,3 +1,33 @@
+2009-09-25  Gabor Loki  <loki@inf.u-szeged.hu>
+
+        Reviewed by Gavin Barraclough.
+
+        Fix unaligned data access in YARR_JIT on ARMv5 and below.
+        https://bugs.webkit.org/show_bug.cgi?id=29695
+
+        On ARMv5 and below all data access should be naturally aligned.
+        In the YARR_JIT there is a case when character pairs are
+        loaded from the input string, but this data access is not
+        naturally aligned. This fix introduces load32WithUnalignedHalfWords
+        and branch32WithUnalignedHalfWords functions which contain
+        naturally aligned memory loads - half word loads - on ARMv5 and below.
+
+        * assembler/MacroAssemblerARM.cpp:
+        (JSC::MacroAssemblerARM::load32WithUnalignedHalfWords):
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::load32WithUnalignedHalfWords):
+        (JSC::MacroAssemblerARM::branch32WithUnalignedHalfWords):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::load32WithUnalignedHalfWords):
+        (JSC::MacroAssemblerARMv7::branch32):
+        (JSC::MacroAssemblerARMv7::branch32WithUnalignedHalfWords):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::load32WithUnalignedHalfWords):
+        (JSC::MacroAssemblerX86Common::branch32WithUnalignedHalfWords):
+        * wtf/Platform.h:
+        * yarr/RegexJIT.cpp:
+        (JSC::Yarr::RegexGenerator::generatePatternCharacterPair):
+
 2009-09-25  Jeremy Orlow  <jorlow@chromium.org>
 
         This is breaking Chromium try bots, so I'm counting this as a build fix.
