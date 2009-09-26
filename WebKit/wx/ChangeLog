@@ -1,3 +1,10 @@
+2009-09-25  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix. Add EmptyPluginHalterClient when creating the Page.
+
+        * WebView.cpp:
+        (wxWebView::Create):
+
 2009-09-22  Kevin Ollivier  <kevino@theolliviers.com>
 
         Build fix to ensure the import library gets properly installed on Windows.

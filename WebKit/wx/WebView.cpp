@@ -25,10 +25,14 @@
 
 #include "config.h"
 #include "Cache.h"
+#include "ContextMenu.h"
+#include "ContextMenuItem.h"
+#include "ContextMenuController.h"
 #include "CString.h"
 #include "Document.h"
 #include "Element.h"
 #include "Editor.h"
+#include "EmptyClients.h"
 #include "EventHandler.h"
 #include "FocusController.h"
 #include "Frame.h"
@@ -38,13 +42,11 @@
 #include "Logging.h"
 #include "markup.h"
 #include "Page.h"
-#include "ContextMenu.h"
-#include "ContextMenuItem.h"
-#include "ContextMenuController.h"
 #include "PlatformKeyboardEvent.h"
 #include "PlatformMouseEvent.h"
 #include "PlatformString.h"
 #include "PlatformWheelEvent.h"
+#include "PluginHalterClient.h"
 #include "RenderObject.h"
 #include "RenderView.h"
 #include "Scrollbar.h"
@@ -308,7 +310,7 @@ bool wxWebView::Create(wxWindow* parent, int id, const wxPoint& position,
     WebCore::HTMLFrameOwnerElement* parentFrame = 0;
 
     WebCore::EditorClientWx* editorClient = new WebCore::EditorClientWx();
-    m_impl->page = new WebCore::Page(new WebCore::ChromeClientWx(this), new WebCore::ContextMenuClientWx(), editorClient, new WebCore::DragClientWx(), new WebCore::InspectorClientWx());
+    m_impl->page = new WebCore::Page(new WebCore::ChromeClientWx(this), new WebCore::ContextMenuClientWx(), editorClient, new WebCore::DragClientWx(), new WebCore::InspectorClientWx(), new WebCore::EmptyPluginHalterClient());
     editorClient->setPage(m_impl->page);
     
     m_mainFrame = new wxWebFrame(this);
