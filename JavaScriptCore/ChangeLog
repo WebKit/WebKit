@@ -1,3 +1,10 @@
+2009-09-25  Ada Chan  <adachan@apple.com>
+
+        Build fix.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore_debug.def:
+
 2009-09-25  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.
