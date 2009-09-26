@@ -1,3 +1,9 @@
+2009-09-25  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Build fix. Adding missing header files.
+
+        * bindings/js/JSNamedNodeMapCustom.cpp:
+
 2009-09-25  David Kilzer  <ddkilzer@apple.com>
 
         Part 1 of 2: <http://webkit.org/b/29753> DerivedSources.make broken for non-Mac targets

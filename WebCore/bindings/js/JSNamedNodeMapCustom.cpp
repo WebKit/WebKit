@@ -28,6 +28,9 @@
 
 #include "JSNode.h"
 
+#include "Element.h"
+#include "NamedNodeMap.h"
+
 using namespace JSC;
 
 namespace WebCore {
