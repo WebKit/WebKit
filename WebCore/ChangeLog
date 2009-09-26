@@ -1,3 +1,12 @@
+2009-09-25  Jeremy Orlow  <jorlow@chromium.org>
+
+        This is breaking Chromium try bots, so I'm counting this as a build fix.
+
+        Add more svn:ignore exceptions.  On different platforms, these files are
+        generated with different case for WebCore.
+
+        * WebCore.gyp: Changed property svn:ignore.
+
 2009-09-25  Alexey Proskuryakov  <ap@apple.com>
 
         Reverting r48767, as it broke Windows build in a non-trivial way.
