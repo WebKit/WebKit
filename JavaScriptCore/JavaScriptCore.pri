@@ -128,12 +128,16 @@ SOURCES += \
     yarr/RegexJIT.cpp \
     interpreter/RegisterFile.cpp
 
-win32-*|wince* {
-    SOURCES += jit/ExecutableAllocatorWin.cpp \
-               runtime/MarkStackWin.cpp
+symbian {
+    SOURCES += runtime/MarkStackSymbian.cpp
 } else {
-    SOURCES += jit/ExecutableAllocatorPosix.cpp \
-               runtime/MarkStackPosix.cpp
+    win32-*|wince* {
+        SOURCES += jit/ExecutableAllocatorWin.cpp \
+                  runtime/MarkStackWin.cpp
+    } else {
+        SOURCES += jit/ExecutableAllocatorPosix.cpp \
+                  runtime/MarkStackPosix.cpp
+    }
 }
 
 # AllInOneFile.cpp helps gcc analize and optimize code

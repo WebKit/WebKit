@@ -1,3 +1,23 @@
+2009-09-26  Yongjun Zhang  <yongjun.zhang@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Add MarkStackSymbian.cpp to build JavascriptCore for Symbian.
+
+        Re-use Windows shrinkAllocation implementation because Symbian doesn't
+        support releasing part of memory region.
+        
+        Use fastMalloc and fastFree to implement allocateStack and releaseStack
+        for Symbian port.
+
+        * JavaScriptCore.pri:
+        * runtime/MarkStack.h:
+        (JSC::MarkStack::MarkStackArray::shrinkAllocation):
+        * runtime/MarkStackSymbian.cpp: Added.
+        (JSC::MarkStack::initializePagesize):
+        (JSC::MarkStack::allocateStack):
+        (JSC::MarkStack::releaseStack):
+
 2009-09-25  Gabor Loki  <loki@inf.u-szeged.hu>
 
         Reviewed by Gavin Barraclough.
