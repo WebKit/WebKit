@@ -36,7 +36,7 @@ class TextControlInnerElement;
 
 class RenderTextControlSingleLine : public RenderTextControl, private PopupMenuClient {
 public:
-    RenderTextControlSingleLine(Node*);
+    RenderTextControlSingleLine(Node*, bool);
     virtual ~RenderTextControlSingleLine();
 
     bool placeholderIsVisible() const { return m_placeholderVisible; }

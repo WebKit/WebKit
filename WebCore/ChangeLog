@@ -1,3 +1,61 @@
+2009-09-26  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by David Kilzer.
+
+        Move placeholder-related code to HTMLTextFormControlElement from
+        HTMLInputElement, WMLInputElement, InputElement, and
+        HTMLTextAreaElement.
+        https://bugs.webkit.org/show_bug.cgi?id=28703
+
+        * dom/InputElement.cpp:
+        (WebCore::InputElement::dispatchFocusEvent):
+        (WebCore::InputElement::dispatchBlurEvent):
+        (WebCore::InputElement::setValueFromRenderer):
+        * dom/InputElement.h:
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::HTMLTextFormControlElement):
+        (WebCore::HTMLTextFormControlElement::~HTMLTextFormControlElement):
+        (WebCore::HTMLTextFormControlElement::dispatchFocusEvent):
+        (WebCore::HTMLTextFormControlElement::dispatchBlurEvent):
+        (WebCore::HTMLTextFormControlElement::placeholderShouldBeVisible):
+        (WebCore::HTMLTextFormControlElement::updatePlaceholderVisibility):
+        * html/HTMLFormControlElement.h:
+        (WebCore::HTMLTextFormControlElement::handleFocusEvent):
+        (WebCore::HTMLTextFormControlElement::handleBlurEvent):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::HTMLInputElement):
+        (WebCore::HTMLInputElement::handleFocusEvent):
+        (WebCore::HTMLInputElement::handleBlurEvent):
+        (WebCore::HTMLInputElement::parseMappedAttribute):
+        (WebCore::HTMLInputElement::createRenderer):
+        (WebCore::HTMLInputElement::setValue):
+        (WebCore::HTMLInputElement::setValueFromRenderer):
+        * html/HTMLInputElement.h:
+        (WebCore::HTMLInputElement::supportsPlaceholder):
+        (WebCore::HTMLInputElement::isEmptyValue):
+        * html/HTMLIsIndexElement.cpp:
+        (WebCore::HTMLIsIndexElement::parseMappedAttribute):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::HTMLTextAreaElement):
+        (WebCore::HTMLTextAreaElement::createRenderer):
+        * html/HTMLTextAreaElement.h:
+        (WebCore::HTMLTextAreaElement::supportsPlaceholder):
+        (WebCore::HTMLTextAreaElement::isEmptyValue):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::RenderTextControl):
+        * rendering/RenderTextControl.h:
+        * rendering/RenderTextControlMultiLine.cpp:
+        (WebCore::RenderTextControlMultiLine::RenderTextControlMultiLine):
+        * rendering/RenderTextControlMultiLine.h:
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::RenderTextControlSingleLine):
+        (WebCore::RenderTextControlSingleLine::updateFromElement):
+        * rendering/RenderTextControlSingleLine.h:
+        * wml/WMLInputElement.cpp:
+        (WebCore::WMLInputElement::setValue):
+        (WebCore::WMLInputElement::createRenderer):
+        * wml/WMLInputElement.h:
+
 2009-09-26  Shu Chang  <Chang.Shu@nokia.com>
 
         Reviewed by Alexey Proskuryakov.

@@ -63,7 +63,7 @@ static inline void notifyFormStateChanged(const HTMLTextAreaElement* element)
 }
 
 HTMLTextAreaElement::HTMLTextAreaElement(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
-    : HTMLFormControlElementWithState(tagName, document, form)
+    : HTMLTextFormControlElement(tagName, document, form)
     , m_rows(defaultRows)
     , m_cols(defaultCols)
     , m_wrap(SoftWrap)
@@ -211,7 +211,7 @@ void HTMLTextAreaElement::parseMappedAttribute(MappedAttribute* attr)
 
 RenderObject* HTMLTextAreaElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
-    return new (arena) RenderTextControlMultiLine(this);
+    return new (arena) RenderTextControlMultiLine(this, placeholderShouldBeVisible());
 }
 
 bool HTMLTextAreaElement::appendFormData(FormDataList& encoding, bool)
@@ -446,31 +446,6 @@ VisibleSelection HTMLTextAreaElement::selection() const
 bool HTMLTextAreaElement::shouldUseInputMethod() const
 {
     return true;
-}
-
-bool HTMLTextAreaElement::placeholderShouldBeVisible() const
-{
-    return value().isEmpty()
-        && document()->focusedNode() != this
-        && !getAttribute(placeholderAttr).isEmpty();
-}
-
-void HTMLTextAreaElement::updatePlaceholderVisibility(bool placeholderValueChanged)
-{
-    if (renderer())
-        toRenderTextControl(renderer())->updatePlaceholderVisibility(placeholderShouldBeVisible(), placeholderValueChanged);
-}
-
-void HTMLTextAreaElement::dispatchFocusEvent()
-{
-    updatePlaceholderVisibility(false);
-    HTMLFormControlElementWithState::dispatchFocusEvent();
-}
-
-void HTMLTextAreaElement::dispatchBlurEvent()
-{
-    updatePlaceholderVisibility(false);
-    HTMLFormControlElementWithState::dispatchBlurEvent();
 }
 
 } // namespace

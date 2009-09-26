@@ -143,6 +143,28 @@ protected:
     virtual void didMoveToNewOwnerDocument();
 };
 
+class HTMLTextFormControlElement : public HTMLFormControlElementWithState {
+public:
+    HTMLTextFormControlElement(const QualifiedName&, Document*, HTMLFormElement*);
+    virtual ~HTMLTextFormControlElement();
+    virtual void dispatchFocusEvent();
+    virtual void dispatchBlurEvent();
+
+protected:
+    bool placeholderShouldBeVisible() const;
+    void updatePlaceholderVisibility(bool);
+
+private:
+    // A subclass should return true if placeholder processing is needed.
+    virtual bool supportsPlaceholder() const = 0;
+    // Returns true if user-editable value is empty.  This is used to check placeholder visibility.
+    virtual bool isEmptyValue() const = 0;
+    // Called in dispatchFocusEvent(), after placeholder process, before calling parent's dispatchFocusEvent().
+    virtual void handleFocusEvent() { }
+    // Called in dispatchBlurEvent(), after placeholder process, before calling parent's dispatchBlurEvent().
+    virtual void handleBlurEvent() { }
+};
+
 } //namespace
 
 #endif

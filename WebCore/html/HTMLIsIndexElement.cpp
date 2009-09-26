@@ -44,7 +44,7 @@ void HTMLIsIndexElement::parseMappedAttribute(MappedAttribute* attr)
     if (attr->name() == promptAttr)
         setValue(attr->value());
     else if (attr->name() == placeholderAttr)
-        updatePlaceholderVisibility();
+        updatePlaceholderVisibility(true);
     else
         // don't call HTMLInputElement::parseMappedAttribute here, as it would
         // accept attributes this element does not support

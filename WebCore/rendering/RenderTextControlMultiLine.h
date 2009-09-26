@@ -28,7 +28,7 @@ namespace WebCore {
 
 class RenderTextControlMultiLine : public RenderTextControl {
 public:
-    RenderTextControlMultiLine(Node*);
+    RenderTextControlMultiLine(Node*, bool);
     virtual ~RenderTextControlMultiLine();
 
     void forwardEvent(Event*);

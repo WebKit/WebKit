@@ -39,6 +39,7 @@
 #include "MappedAttribute.h"
 #include "Page.h"
 #include "RenderBox.h"
+#include "RenderTextControl.h"
 #include "RenderTheme.h"
 #include "ValidityState.h"
 
@@ -366,6 +367,45 @@ void HTMLFormControlElementWithState::finishParsingChildren()
         if (doc->takeStateForFormElement(name().impl(), type().impl(), state))
             restoreFormControlState(state);
     }
+}
+
+HTMLTextFormControlElement::HTMLTextFormControlElement(const QualifiedName& tagName, Document* doc, HTMLFormElement* form)
+    : HTMLFormControlElementWithState(tagName, doc, form)
+{
+}
+
+HTMLTextFormControlElement::~HTMLTextFormControlElement()
+{
+}
+
+void HTMLTextFormControlElement::dispatchFocusEvent()
+{
+    if (supportsPlaceholder())
+        updatePlaceholderVisibility(false);
+    handleFocusEvent();
+    HTMLFormControlElementWithState::dispatchFocusEvent();
+}
+
+void HTMLTextFormControlElement::dispatchBlurEvent()
+{
+    if (supportsPlaceholder())
+        updatePlaceholderVisibility(false);
+    handleBlurEvent();
+    HTMLFormControlElementWithState::dispatchBlurEvent();
+}
+
+bool HTMLTextFormControlElement::placeholderShouldBeVisible() const
+{
+    return supportsPlaceholder()
+        && isEmptyValue()
+        && document()->focusedNode() != this
+        && !getAttribute(placeholderAttr).isEmpty();
+}
+
+void HTMLTextFormControlElement::updatePlaceholderVisibility(bool placeholderValueChanged)
+{
+    if (supportsPlaceholder() && renderer())
+        toRenderTextControl(renderer())->updatePlaceholderVisibility(placeholderShouldBeVisible(), placeholderValueChanged);
 }
 
 } // namespace Webcore

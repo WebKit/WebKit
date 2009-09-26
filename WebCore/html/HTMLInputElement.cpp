@@ -71,7 +71,7 @@ using namespace HTMLNames;
 const int maxSavedResults = 256;
 
 HTMLInputElement::HTMLInputElement(const QualifiedName& tagName, Document* doc, HTMLFormElement* f)
-    : HTMLFormControlElementWithState(tagName, doc, f)
+    : HTMLTextFormControlElement(tagName, doc, f)
     , m_xPos(0)
     , m_yPos(0)
     , m_maxResults(-1)
@@ -257,20 +257,17 @@ bool HTMLInputElement::shouldUseInputMethod() const
     return m_type == TEXT || m_type == SEARCH || m_type == ISINDEX;
 }
 
-void HTMLInputElement::dispatchFocusEvent()
+void HTMLInputElement::handleFocusEvent()
 {
     InputElement::dispatchFocusEvent(this, this);
 
     if (isTextField())
         m_autofilled = false;
-
-    HTMLFormControlElementWithState::dispatchFocusEvent();
 }
 
-void HTMLInputElement::dispatchBlurEvent()
+void HTMLInputElement::handleBlurEvent()
 {
     InputElement::dispatchBlurEvent(this, this);
-    HTMLFormControlElementWithState::dispatchBlurEvent();
 }
 
 void HTMLInputElement::setType(const String& t)
@@ -741,8 +738,7 @@ void HTMLInputElement::parseMappedAttribute(MappedAttribute *attr)
         }
         setNeedsStyleRecalc();
     } else if (attr->name() == placeholderAttr) {
-        if (isTextField())
-            updatePlaceholderVisibility();
+        updatePlaceholderVisibility(true);
     } else if (attr->name() == autosaveAttr ||
              attr->name() == incrementalAttr ||
              attr->name() == minAttr ||
@@ -814,7 +810,7 @@ RenderObject *HTMLInputElement::createRenderer(RenderArena *arena, RenderStyle *
         case TELEPHONE:
         case TEXT:
         case URL:
-            return new (arena) RenderTextControlSingleLine(this);
+            return new (arena) RenderTextControlSingleLine(this, placeholderShouldBeVisible());
     }
     ASSERT(false);
     return 0;
@@ -1111,7 +1107,7 @@ void HTMLInputElement::setValue(const String& value)
         else {
             m_data.setValue(sanitizeValue(value));
             if (isTextField()) {
-                InputElement::updatePlaceholderVisibility(this, this);
+                updatePlaceholderVisibility(false);
                 if (inDocument())
                     document()->updateStyleIfNeeded();
             }
@@ -1151,6 +1147,7 @@ void HTMLInputElement::setValueFromRenderer(const String& value)
 {
     // File upload controls will always use setFileListFromRenderer.
     ASSERT(inputType() != FILE);
+    updatePlaceholderVisibility(false);
     InputElement::setValueFromRenderer(m_data, this, this, value);
 }
 
@@ -1788,11 +1785,6 @@ bool HTMLInputElement::willValidate() const
     // FIXME: This shall check for new WF2 input types too
     return HTMLFormControlElementWithState::willValidate() && inputType() != HIDDEN &&
            inputType() != BUTTON && inputType() != RESET;
-}
-
-bool HTMLInputElement::placeholderShouldBeVisible() const
-{
-    return InputElement::placeholderShouldBeVisible(this, this);
 }
 
 bool HTMLInputElement::formStringToDouble(const String& src, double* out)

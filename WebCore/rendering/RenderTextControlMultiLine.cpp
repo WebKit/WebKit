@@ -31,10 +31,9 @@
 
 namespace WebCore {
 
-RenderTextControlMultiLine::RenderTextControlMultiLine(Node* node)
-    : RenderTextControl(node)
+RenderTextControlMultiLine::RenderTextControlMultiLine(Node* node, bool placeholderVisible)
+    : RenderTextControl(node, placeholderVisible)
 {
-    m_placeholderVisible = static_cast<HTMLTextAreaElement*>(node)->placeholderShouldBeVisible();
 }
 
 RenderTextControlMultiLine::~RenderTextControlMultiLine()
