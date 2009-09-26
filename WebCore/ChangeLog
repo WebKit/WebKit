@@ -1,3 +1,16 @@
+2009-09-26  Shu Chang  <Chang.Shu@nokia.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Optimize the code so only the text from start to end is scanned.
+        https://bugs.webkit.org/show_bug.cgi?id=29092
+
+        On a platform with webkit+Qt+Symbian, the parsing time for a 600K text
+        file improved from 400ms to 40ms (10x faster).
+
+        * dom/Text.cpp:
+        (WebCore::Text::createWithLengthLimit):
+
 2009-09-26  Xiaomei Ji  <xji@chromium.org>
 
         Reviewed by Eric Seidel.

@@ -315,10 +315,15 @@ PassRefPtr<Text> Text::createWithLengthLimit(Document* document, const String& d
     unsigned end = start + min(charsLeft, maxChars);
     
     // Check we are not on an unbreakable boundary.
-    TextBreakIterator* it = characterBreakIterator(data.characters(), dataLength);
-    if (end < dataLength && !isTextBreak(it, end))
-        end = textBreakPreceding(it, end);
-        
+    // Some text break iterator implementations work best if the passed buffer is as small as possible, 
+    // see <https://bugs.webkit.org/show_bug.cgi?id=29092>. 
+    // We need at least two characters look-ahead to account for UTF-16 surrogates.
+    if (end < dataLength) {
+        TextBreakIterator* it = characterBreakIterator(data.characters() + start, (end + 2 > dataLength) ? dataLength - start : end - start + 2);
+        if (!isTextBreak(it, end - start))
+            end = textBreakPreceding(it, end - start) + start;
+    }
+    
     // If we have maxChars of unbreakable characters the above could lead to
     // an infinite loop.
     // FIXME: It would be better to just have the old value of end before calling
