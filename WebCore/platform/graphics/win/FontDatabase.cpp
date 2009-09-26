@@ -124,22 +124,21 @@ static CFStringRef fontFilenamesFromRegistryKey()
     return key;
 }
 
-static CFStringRef cgFontDBKey()
-{
-    static CFStringRef key = CFSTR("WebKitCGFontDB");
-    return key;
-}
-
 static void writeFontDatabaseToPlist(CFPropertyListRef cgFontDBPropertyList, CFPropertyListRef filenamesFromRegistry)
 {
-    RetainPtr<CFMutableDictionaryRef> dictionary(AdoptCF, CFDictionaryCreateMutable(kCFAllocatorDefault, 2, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    if (!cgFontDBPropertyList)
+        return;
 
-    if (cgFontDBPropertyList)
-        CFDictionarySetValue(dictionary.get(), cgFontDBKey(), cgFontDBPropertyList);
-    if (filenamesFromRegistry)
+    RetainPtr<CFDataRef> data;
+
+    if (!filenamesFromRegistry || CFGetTypeID(cgFontDBPropertyList) != CFDictionaryGetTypeID())
+        data.adoptCF(CFPropertyListCreateXMLData(kCFAllocatorDefault, cgFontDBPropertyList));
+    else {
+        RetainPtr<CFMutableDictionaryRef> dictionary(AdoptCF, CFDictionaryCreateMutableCopy(kCFAllocatorDefault, 2, static_cast<CFDictionaryRef>(cgFontDBPropertyList)));
         CFDictionarySetValue(dictionary.get(), fontFilenamesFromRegistryKey(), filenamesFromRegistry);
+        data.adoptCF(CFPropertyListCreateXMLData(kCFAllocatorDefault, dictionary.get()));
+    }
 
-    RetainPtr<CFDataRef> data(AdoptCF, CFPropertyListCreateXMLData(kCFAllocatorDefault, dictionary.get()));
     if (!data)
         return;
 
@@ -201,18 +200,7 @@ void populateFontDatabase()
     bool registryChanged = !lastFilenamesFromRegistry || !CFEqual(lastFilenamesFromRegistry.get(), currentFilenamesFromRegistry.get());
 
     if (!registryChanged && !systemHasFontsNewerThanFontsPlist()) {
-        RetainPtr<CFPropertyListRef> cgFontDBPropertyList;
-        if (propertyList) {
-            if (CFGetTypeID(propertyList.get()) == CFDictionaryGetTypeID()) {
-                CFDictionaryRef dictionary = static_cast<CFDictionaryRef>(propertyList.get());
-                cgFontDBPropertyList = static_cast<CFArrayRef>(CFDictionaryGetValue(dictionary, cgFontDBKey()));
-            }
-            // Older versions of WebKit stored the CG font DB property list at the root of the property list.
-            if (!cgFontDBPropertyList)
-                cgFontDBPropertyList = propertyList;
-        }
-
-        if (populateFontDatabaseFromPlist(cgFontDBPropertyList.get()))
+        if (populateFontDatabaseFromPlist(propertyList.get()))
             return;
     }
 

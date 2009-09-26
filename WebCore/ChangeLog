@@ -1,3 +1,18 @@
+2009-09-25  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        REGRESSION (r48775) FontList.plist written by TOT WebKit causes Safari 4
+        to crash on launch
+        https://bugs.webkit.org/show_bug.cgi?id=29759
+
+        * platform/graphics/win/FontDatabase.cpp:
+        (WebCore::writeFontDatabaseToPlist): Reverted to saving the CG font DB
+        property list at the root of FontList.plist, but with an additional
+        key for the last value of the Fonts registry key.
+        (WebCore::populateFontDatabase): Pass the FontList.plist in its entirety
+        to populatFontDatabaseFromPlist.
+
 2009-09-25  Kevin Ollivier  <kevino@theolliviers.com>
 
         Build fix. Adding missing header files.
