@@ -826,12 +826,19 @@ void PopupListBox::paintRow(GraphicsContext* gc, const IntRect& rect, int rowInd
     Font itemFont = getRowFont(rowIndex);
     // FIXME: http://crbug.com/19872 We should get the padding of individual option
     // elements.  This probably implies changes to PopupMenuClient.
-    int textX = max(0, m_popupClient->clientPaddingLeft() - m_popupClient->clientInsetLeft());
-    int textY = rowRect.y() + itemFont.ascent() + (rowRect.height() - itemFont.height()) / 2;
+    bool rightAligned = m_popupClient->menuStyle().textDirection() == RTL;
+    int textX = 0;
+    int maxWidth = 0;
+    if (rightAligned)
+        maxWidth = rowRect.width() - max(0, m_popupClient->clientPaddingRight() - m_popupClient->clientInsetRight());
+    else {
+        textX = max(0, m_popupClient->clientPaddingLeft() - m_popupClient->clientInsetLeft());
+        maxWidth = rowRect.width() - textX;
+    }
     // Prepare text to be drawn.
     String itemText = m_popupClient->itemText(rowIndex);
     if (m_settings.restrictWidthOfListBox)  // truncate string to fit in.
-        itemText = StringTruncator::rightTruncate(itemText, rowRect.width() - textX, itemFont);
+        itemText = StringTruncator::rightTruncate(itemText, maxWidth, itemFont);
     unsigned length = itemText.length();
     const UChar* str = itemText.characters();
     // Prepare the directionality to draw text.
@@ -842,7 +849,12 @@ void PopupListBox::paintRow(GraphicsContext* gc, const IntRect& rect, int rowInd
              PopupContainerSettings::FirstStrongDirectionalCharacterDirection)
         rtl = itemText.defaultWritingDirection() == WTF::Unicode::RightToLeft;
     TextRun textRun(str, length, false, 0, 0, rtl);
+    // If the text is right-to-left, make it right-aligned by adjusting its
+    // beginning position.
+    if (rightAligned)
+        textX += maxWidth - itemFont.width(textRun);
     // Draw the item text.
+    int textY = rowRect.y() + itemFont.ascent() + (rowRect.height() - itemFont.height()) / 2;
     gc->drawBidiText(itemFont, textRun, IntPoint(textX, textY));
 }
 

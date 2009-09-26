@@ -1,3 +1,24 @@
+2009-09-26  Xiaomei Ji  <xji@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        This Patch fixes [chromium] the drop-down is always left-aligned even
+        for RTL element.
+        https://bugs.webkit.org/show_bug.cgi?id=29612
+
+        For auto-complete, the items in drop-down should be right-aligned if
+        the directionality of <input> field is RTL.
+        For <select><option>, the items in drop-down should be right-aligned
+        if the directionality of <select> is RTL.
+
+        No automatic test is possible. Manual tests are added.
+
+        * manual-tests/autofill_alignment.html: Added.
+        * manual-tests/select_alignment.html: Added.
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupListBox::paintRow): Adjust the starting x-axis of text to
+        be paint if it should be right-aligned.
+
 2009-09-25  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.
