@@ -1,3 +1,17 @@
+2009-09-25  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Load blocks during unload should not affect targeted loads
+        https://bugs.webkit.org/show_bug.cgi?id=29747
+
+        Move the check of the unload state after checking for targeted links.
+
+        Test: fast/loader/unload-hyperlink-targeted.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadURL):
+
 2009-09-25  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Dimitri Glazkov.
