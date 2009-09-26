@@ -1,3 +1,12 @@
+2009-09-25  David Kilzer  <ddkilzer@apple.com>
+
+        Part 1 of 2: <http://webkit.org/b/29753> DerivedSources.make broken for non-Mac targets
+
+        Reviewed by Darin Adler.
+
+        * DerivedSources.make: Move tests for ENABLE_CONTEXT_MENUS,
+        ENABLE_DRAG_SUPPORT and ENABLE_INSPECTOR into Mac-only section.
+
 2009-09-25  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.
