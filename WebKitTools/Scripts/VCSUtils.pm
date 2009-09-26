@@ -207,10 +207,16 @@ sub determineVCSRoot()
     if (isGit()) {
         return determineGitRoot();
     }
-    if (isSVN()) {
-        return determineSVNRoot();
+
+    if (!isSVN()) {
+        # Some users have a workflow where svn-create-patch, svn-apply and
+        # svn-unapply are used outside of multiple svn working directores,
+        # so warn the user and assume Subversion is being used in this case.
+        warn "Unable to determine VCS root; assuming Subversion";
+        $isSVN = 1;
     }
-    die "Unable to determine VCS root";
+
+    return determineSVNRoot();
 }
 
 sub svnRevisionForDirectory($)

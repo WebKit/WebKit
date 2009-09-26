@@ -1,3 +1,26 @@
+2009-09-26  David Kilzer  <ddkilzer@apple.com>
+
+        svn-unapply and svn-apply don't work when used outside multiple svn working directories
+
+        <http://webkit.org/b/29744>
+        <rdar://problem/7252905>
+
+        Reviewed by Eric Seidel.
+
+        Some users have a workflow where svn-create-patch, svn-apply and
+        svn-unapply are used outside of multiple svn working
+        directories.  Instead of aborting the scripts in these cases,
+        print a warning and assume that Subversion is being used.
+
+        * Scripts/VCSUtils.pm:
+        (determineVCSRoot): Call warn() instead of die() if both isGit()
+        and isSVN() initially return false.  Set $VCSUtils::isSVN to 1
+        to enforce the assumption about Subversion, then return
+        determineSVNRoot().
+        * Scripts/svn-apply: Switch to using isGit() and isSVN() from
+        VCSUtils.pm.  They both already cache their values and checking
+        here is redundant since determineVCSRoot() is called later.
+
 2009-09-26  Zan Dobersek  <zandobersek@gmail.com>
 
         Reviewed by Gustavo Noronha.

@@ -111,10 +111,6 @@ if (!$optionParseSuccess || $showHelp) {
     exit 1;
 }
 
-my $isGit = isGitDirectory(".");
-my $isSVN = isSVNDirectory(".");
-$isSVN || $isGit || die "Couldn't determine your version control system.";
-
 my %removeDirectoryIgnoreList = (
     '.' => 1,
     '..' => 1,
@@ -179,7 +175,7 @@ if ($patch && !$copiedFromPath) {
 }
 
 if ($merge) {
-    die "--merge is currently only supported for SVN" unless $isSVN;
+    die "--merge is currently only supported for SVN" unless isSVN();
     # How do we handle Git patches applied to an SVN checkout here?
     for my $file (sort keys %versions) {
         print "Getting version $versions{$file} of $file\n";
@@ -417,7 +413,7 @@ sub patch($)
             unlink("$fullPath.orig") if -e "$fullPath.orig" && checksum($fullPath) eq checksum("$fullPath.orig");
             scmAdd($fullPath);
             # What is this for?
-            system "svn", "stat", "$fullPath.orig" if $isSVN && -e "$fullPath.orig";
+            system "svn", "stat", "$fullPath.orig" if isSVN() && -e "$fullPath.orig";
         }
     }
 }
@@ -496,10 +492,10 @@ sub svnStatus($)
 sub scmWillDeleteFile($)
 {
     my ($path) = @_;
-    if ($isSVN) {
+    if (isSVN()) {
         my $svnOutput = svnStatus($path);
         return 1 if $svnOutput && substr($svnOutput, 0, 1) eq "D";
-    } elsif ($isGit) {
+    } elsif (isGit()) {
         my $gitOutput = `git diff-index --name-status HEAD -- $path`;
         return 1 if $gitOutput && substr($gitOutput, 0, 1) eq "D";
     }
@@ -509,7 +505,7 @@ sub scmWillDeleteFile($)
 sub scmKnowsOfFile($)
 {
     my ($path) = @_;
-    if ($isSVN) {
+    if (isSVN()) {
         my $svnOutput = svnStatus($path);
         # This will match more than intended.  ? might not be the first field in the status
         if ($svnOutput && $svnOutput =~ m#\?\s+$path\n#) {
@@ -517,7 +513,7 @@ sub scmKnowsOfFile($)
         }
         # This does not handle errors well.
         return 1;
-    } elsif ($isGit) {
+    } elsif (isGit()) {
         `git ls-files --error-unmatch -- $path`;
         my $exitCode = $? >> 8;
         return $exitCode == 0;
@@ -527,9 +523,9 @@ sub scmKnowsOfFile($)
 sub scmCopy($$)
 {
     my ($source, $destination) = @_;
-    if ($isSVN) {
+    if (isSVN()) {
         system "svn", "copy", $source, $destination;
-    } elsif ($isGit) {
+    } elsif (isGit()) {
         system "cp", $source, $destination;
         system "git", "add", $destination;
     }
@@ -538,9 +534,9 @@ sub scmCopy($$)
 sub scmAdd($)
 {
     my ($path) = @_;
-    if ($isSVN) {
+    if (isSVN()) {
         system "svn", "add", $path;
-    } elsif ($isGit) {
+    } elsif (isGit()) {
         system "git", "add", $path;
     }
 }
@@ -548,7 +544,7 @@ sub scmAdd($)
 sub scmRemove($)
 {
     my ($path) = @_;
-    if ($isSVN) {
+    if (isSVN()) {
         # SVN is very verbose when removing directories.  Squelch all output except the last line.
         my $svnOutput;
         open SVN, "svn rm --force '$path' |" or die "svn rm --force '$path' failed!";
@@ -558,7 +554,7 @@ sub scmRemove($)
         }
         close SVN;
         print $svnOutput if $svnOutput;
-    } elsif ($isGit) {
+    } elsif (isGit()) {
         system "git", "rm", "--force", $path;
     }
 }
