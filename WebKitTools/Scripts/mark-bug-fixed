@@ -34,7 +34,7 @@ from optparse import OptionParser
 from modules.bugzilla import Bugzilla, parse_bug_id
 from modules.comments import bug_comment_from_svn_revision
 from modules.logging import error, log
-from modules.scm import detect_scm_system
+from modules.scm import SCM, detect_scm_system
 
 
 class MarkBugFixedTool:
@@ -44,6 +44,7 @@ class MarkBugFixedTool:
         self.option_parser = OptionParser(usage="usage: %prog [options] [rNNNNN]")
         self.option_parser.add_option("-b", "--bug-id", action="store", type="string", dest="bug_id", help="Specify bug id if no URL is provided in the commit log.")
         self.option_parser.add_option("-m", "--comment", action="store", type="string", dest="comment", help="Text to include in bug comment.")
+        self.option_parser.add_option("-o", "--open", action="store_true", default=False, dest="open_bug", help="Open bug in default web browser (Mac only).")
         self.option_parser.add_option("-u", "--update-only", action="store_true", default=False, dest="update_only", help="Add comment to the bug, but do not close it.")
 
     def scm(self):
@@ -78,13 +79,18 @@ class MarkBugFixedTool:
             error("Could not find %s on command-line or in %s."
                   % (" or ".join(not_found), "r%s" % svn_revision if svn_revision else "last commit"))
 
-        log("Bug: <http://webkit.org/b/%s> %s" % (bug_id, self.bugs.fetch_title_from_bug(bug_id)))
-        log("Revision: %s" % svn_revision)
+        return (bug_id, svn_revision)
+
+    def _open_bug_in_web_browser(self, bug_id):
+        if sys.platform == "darwin":
+            SCM.run_command(["open", self.bugs.short_bug_url_for_bug_id(bug_id)])
+            return
+        log("WARNING: -o|--open is only supported on Mac OS X.")
+
+    def _prompt_user_for_correctness(self, bug_id, svn_revision):
         answer = raw_input("Is this correct (y/N)? ")
         if not re.match("^\s*y(es)?", answer, re.IGNORECASE):
             exit(1)
-
-        return (bug_id, svn_revision)
 
     def main(self):
         (options, args) = self.option_parser.parse_args(sys.argv[1:])
@@ -101,8 +107,19 @@ class MarkBugFixedTool:
             if not re.match("^[0-9]+$", svn_revision):
                 error("Invalid svn revision: '%s'" % svn_revision)
 
+        needs_prompt = False
         if not bug_id or not svn_revision:
+            needs_prompt = True
             (bug_id, svn_revision) = self._determine_bug_id_and_svn_revision(bug_id, svn_revision)
+
+        log("Bug: <%s> %s" % (self.bugs.short_bug_url_for_bug_id(bug_id), self.bugs.fetch_title_from_bug(bug_id)))
+        log("Revision: %s" % svn_revision)
+
+        if options.open_bug:
+            self._open_bug_in_web_browser(bug_id)
+
+        if needs_prompt:
+            self._prompt_user_for_correctness(bug_id, svn_revision)
 
         bug_comment = bug_comment_from_svn_revision(svn_revision)
         if options.comment:

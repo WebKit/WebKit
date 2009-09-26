@@ -151,7 +151,10 @@ class Bugzilla:
     def bug_url_for_bug_id(self, bug_id, xml=False):
         content_type = "&ctype=xml" if xml else ""
         return "%sshow_bug.cgi?id=%s%s" % (self.bug_server_url, bug_id, content_type)
-    
+
+    def short_bug_url_for_bug_id(self, bug_id):
+        return "http://webkit.org/b/%s" % bug_id
+
     def attachment_url_for_id(self, attachment_id, action="view"):
         action_param = ""
         if action and action != "view":

@@ -1,5 +1,30 @@
 2009-09-26  David Kilzer  <ddkilzer@apple.com>
 
+        <http://webkit.org/b/29764> mark-bug-fixed: add -o|--open switch
+
+        Reviewed by Eric Seidel.
+
+        The -o|--open switch uses the open(1) command on Mac OS X to
+        open the bug URL in the default web browser.  If there are
+        similar mechanisms on other platforms, they may be added later.
+
+        * Scripts/mark-bug-fixed:
+        (MarkBugFixed.__init__): Added -o|--open switch to list of parse
+        options.
+        (MarkBugFixed._determine_bug_id_and_svn_revision): Moved logging
+        code into main() and extracted prompting code into
+        _prompt_user_for_correctness().
+        (MarkBugFixed._open_bug_in_web_browser): Added.
+        (MarkBugFixed._prompt_user_for_correctness): Added.
+        (MarkBugFixed.main): Added logging code from
+        _determine_bug_id_and_svn_revision().  Added code to call
+        _open_bug_in_web_browser() if the switch is set.  Added code to
+        call _prompt_user_for_correctness() when needed.
+        * Scripts/modules/bugzilla.py:
+        (Bugzilla.short_bug_url_for_bug_id): Added.
+
+2009-09-26  David Kilzer  <ddkilzer@apple.com>
+
         svn-unapply and svn-apply don't work when used outside multiple svn working directories
 
         <http://webkit.org/b/29744>
