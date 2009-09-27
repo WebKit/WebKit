@@ -1,3 +1,9 @@
+2009-09-26  David Kilzer  <ddkilzer@apple.com>
+
+        GTK BUILD FIX: add ENABLE_ORIENTATION_EVENTS support to configure.ac
+
+        * configure.ac: Added support for ENABLE_ORIENTATION_EVENTS.
+
 2009-09-23  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.
