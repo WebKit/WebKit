@@ -1,3 +1,22 @@
+2009-09-26  David Kilzer  <ddkilzer@apple.com>
+
+        Part 2 of 2: <http://webkit.org/b/29753> DerivedSources.make broken for non-Mac targets
+
+        Reviewed by Darin Adler.
+
+        Fix ENABLE_ORIENTATION_EVENTS for non-Mac platforms.
+
+        * DerivedSources.make: Moved Platform.h check for
+        ENABLE_ORIENTATION_EVENTS into Mac-only section and added
+        default of ENABLE_ORIENTATION_EVENTS = 0 to non-Mac section.
+        Added ifndef test to make it possible to override both
+        ENABLE_DASHBOARD_SUPPORT and ENABLE_ORIENTATION_EVENTS external
+        to the makefile.  Moved addition of ENABLE_ORIENTATION_EVENTS to
+        ADDITIONAL_IDL_DEFINES to common section.
+        * GNUmakefile.am: Added support for ENABLE_ORIENTATION_EVENTS if
+        it is ever used.
+        * WebCore.pro: Ditto.
+
 2009-09-26  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by David Kilzer.
