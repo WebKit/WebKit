@@ -86,6 +86,7 @@ private slots:
     void nullSelect();
     void firstChildNextSibling();
     void lastChildPreviousSibling();
+    void hasSetFocus();
 
 private:
     QWebView* m_view;
@@ -803,6 +804,25 @@ void tst_QWebElement::lastChildPreviousSibling()
     QVERIFY(!p.isNull());
     QCOMPARE(p.tagName(), QString("P"));
     QVERIFY(p.previousSibling().isNull());
+}
+
+void tst_QWebElement::hasSetFocus()
+{
+    m_mainFrame->setHtml("<html><body>" \
+                            "<input type='text' id='input1'/>" \
+                            "<br>"\
+                            "<input type='text' id='input2'/>" \
+                            "</body></html>");
+
+    QList<QWebElement> inputs = m_mainFrame->documentElement().findAll("input");
+    QWebElement input1 = inputs.at(0);
+    input1.setFocus();
+    QVERIFY(input1.hasFocus());
+
+    QWebElement input2 = inputs.at(1);
+    input2.setFocus();
+    QVERIFY(!input1.hasFocus());
+    QVERIFY(input2.hasFocus());
 }
 
 QTEST_MAIN(tst_QWebElement)

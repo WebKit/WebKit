@@ -463,6 +463,33 @@ bool QWebElement::hasAttributes() const
 }
 
 /*!
+    Returns true if the element has keyboard input focus; otherwise, returns false
+
+    \sa setFocus()
+*/
+bool QWebElement::hasFocus() const
+{
+    if (!m_element)
+        return false;
+    if (m_element->document())
+        return m_element == m_element->document()->focusedNode();
+    return false;
+}
+
+/*!
+    Gives keyboard input focus to this element
+
+    \sa hasFocus()
+*/
+void QWebElement::setFocus()
+{
+    if (!m_element)
+        return;
+    if (m_element->document() && m_element->isFocusable())
+        m_element->document()->setFocusedNode(m_element);
+}
+
+/*!
     Returns the geometry of this element, relative to its containing frame.
 
     \sa tagName()

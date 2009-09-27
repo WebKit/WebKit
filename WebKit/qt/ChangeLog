@@ -1,3 +1,18 @@
+2009-09-27  Joe Ligman  <joseph.ligman@mindspring.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Adding API setFocus and hasFocus to QWebElement. This API is needed for
+        clients that want to check/set the focus node of the document.
+        https://bugs.webkit.org/show_bug.cgi?id=29682
+
+        * Api/qwebelement.cpp:
+        (QWebElement::hasFocus):
+        (QWebElement::setFocus):
+        * Api/qwebelement.h:
+        * tests/qwebelement/tst_qwebelement.cpp:
+        (tst_QWebElement::hasSetFocus):
+
 2009-09-25  Csaba Osztrogonac  <oszi@inf.u-szeged.hu>
 
         Reviewed by Simon Hausmann.
