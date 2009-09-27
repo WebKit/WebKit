@@ -44,6 +44,10 @@ InjectedScript.reset();
 InjectedScript.dispatch = function(methodName, args)
 {
     var result = InjectedScript[methodName].apply(InjectedScript, JSON.parse(args));
+    if (typeof result === "undefined") {
+        InjectedScript._window().console.error("Web Inspector error: InjectedScript.%s returns undefined", methodName);
+        result = null;
+    }
     return JSON.stringify(result);
 }
 
@@ -150,6 +154,7 @@ InjectedScript.applyStyleText = function(styleId, styleText, propertyName)
 InjectedScript.setStyleText = function(style, cssText)
 {
     style.cssText = cssText;
+    return true;
 }
 
 InjectedScript.toggleStyleEnabled = function(styleId, propertyName, disabled)
@@ -812,7 +817,10 @@ InjectedScript.searchCanceled = function()
 
 InjectedScript.openInInspectedWindow = function(url)
 {
-    InjectedScript._window().open(url);
+    // Don't call window.open on wrapper - popup blocker mutes it.
+    // URIs should have no double quotes.
+    InjectedScript._window().eval("window.open(\"" + url + "\")");
+    return true;
 }
 
 InjectedScript.getCallFrames = function()

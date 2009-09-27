@@ -1209,7 +1209,7 @@ WebInspector.ResourceSidebarTreeElement.prototype = {
     
     ondblclick: function(treeElement, event)
     {
-        InjectedScriptAccess.openInInspectedWindow(this.resource.url);
+        InjectedScriptAccess.openInInspectedWindow(this.resource.url, function() {});
     },
 
     get mainTitle()
