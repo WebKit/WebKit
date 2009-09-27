@@ -131,6 +131,7 @@ void LayoutTestController::reset()
     m_dumpDatabaseCallbacks = false;
     m_timeoutTimer.stop();
     m_topLoadingFrame = 0;
+    m_waitForPolicy = false;
     qt_dump_editing_callbacks(false);
     qt_dump_resource_load_callbacks(false);
     QWebSettings::globalSettings()->setAttribute(QWebSettings::PrivateBrowsingEnabled, false);
@@ -188,6 +189,7 @@ void LayoutTestController::notifyDone()
     emit done();
     m_isLoading = false;
     m_waitForDone = false;
+    m_waitForPolicy = false;
 }
 
 int LayoutTestController::windowCount()
@@ -340,6 +342,12 @@ void LayoutTestController::clearAllDatabases()
 void LayoutTestController::whiteListAccessFromOrigin(const QString& sourceOrigin, const QString& destinationProtocol, const QString& destinationHost, bool allowDestinationSubdomains)
 {
     QWebSecurityOrigin::whiteListAccessFromOrigin(sourceOrigin, destinationProtocol, destinationHost, allowDestinationSubdomains);
+}
+
+void LayoutTestController::waitForPolicyDelegate()
+{
+    m_waitForPolicy = true;
+    waitUntilDone();
 }
 
 EventSender::EventSender(QWebPage *parent)

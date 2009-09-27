@@ -1,3 +1,20 @@
+2009-09-27  Jakub Wieczorek  <faw217@gmail.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Implement layoutTestController.waitForPolicyDelegate.
+        https://bugs.webkit.org/show_bug.cgi?id=25037
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::WebPage::acceptNavigationRequest):
+        * DumpRenderTree/qt/DumpRenderTree.pro:
+        * DumpRenderTree/qt/jsobjects.cpp:
+        (LayoutTestController::reset):
+        (LayoutTestController::notifyDone):
+        (LayoutTestController::waitForPolicyDelegate):
+        * DumpRenderTree/qt/jsobjects.h:
+        (LayoutTestController::waitForPolicy):
+
 2009-09-26  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/29764> mark-bug-fixed: add -o|--open switch
