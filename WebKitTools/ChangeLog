@@ -1,5 +1,14 @@
 2009-09-27  Jakub Wieczorek  <faw217@gmail.com>
 
+        Reviewed by Darin Adler.
+
+        run-webkit-tests: Do not strip the metrics when there is no expected result for a test.
+        https://bugs.webkit.org/show_bug.cgi?id=29771
+
+        * Scripts/run-webkit-tests:
+
+2009-09-27  Jakub Wieczorek  <faw217@gmail.com>
+
         Reviewed by Simon Hausmann.
 
         [Qt] Implement layoutTestController.waitForPolicyDelegate.

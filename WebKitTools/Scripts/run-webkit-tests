@@ -644,7 +644,7 @@ for my $test (@tests) {
         close EXPECTED;
     }
 
-    if ($ignoreMetrics && !$isText) {
+    if ($ignoreMetrics && !$isText && defined $expected) {
         ($actual, $expected) = stripMetrics($actual, $expected);
     }
 
