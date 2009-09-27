@@ -1094,7 +1094,8 @@ void InspectorController::didOpenDatabase(Database* database, const String& doma
 
     m_databaseResources.add(resource);
 
-    if (m_frontend)
+    // Resources are only bound while visible.
+    if (m_frontend && windowVisible())
         resource->bind(m_frontend.get());
 }
 #endif
@@ -1115,7 +1116,8 @@ void InspectorController::didUseDOMStorage(StorageArea* storageArea, bool isLoca
 
     m_domStorageResources.add(resource);
 
-    if (m_frontend)
+    // Resources are only bound while visible.
+    if (m_frontend && windowVisible())
         resource->bind(m_frontend.get());
 }
 
