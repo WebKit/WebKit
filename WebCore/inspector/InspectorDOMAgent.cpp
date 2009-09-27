@@ -70,10 +70,10 @@ InspectorDOMAgent::~InspectorDOMAgent()
     setDocument(0);
 }
 
-bool InspectorDOMAgent::setDocument(Document* doc)
+void InspectorDOMAgent::setDocument(Document* doc)
 {
     if (doc == mainFrameDocument())
-        return false;
+        return;
     discardBindings();
 
     ListHashSet<RefPtr<Document> > copy = m_documents;
@@ -88,7 +88,6 @@ bool InspectorDOMAgent::setDocument(Document* doc)
             pushDocumentToFrontend();
         }
     }
-    return true;
 }
 
 void InspectorDOMAgent::releaseDanglingNodes()

@@ -75,7 +75,7 @@ namespace WebCore {
         void getCookies(long callId);
 
         // Methods called from the InspectorController.
-        bool setDocument(Document* document);
+        void setDocument(Document* document);
         void releaseDanglingNodes();
 
         Node* nodeForId(long nodeId);

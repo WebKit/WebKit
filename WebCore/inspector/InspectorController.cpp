@@ -503,6 +503,13 @@ void InspectorController::handleMousePressOnNode(Node* node)
     inspect(node);
 }
 
+void InspectorController::inspectedWindowScriptObjectCleared(Frame* frame)
+{
+    if (!enabled() || !m_frontend || frame != m_inspectedPage->mainFrame())
+        return;
+    resetInjectedScript();
+}
+
 void InspectorController::windowScriptObjectAvailable()
 {
     if (!m_page || !enabled())
@@ -644,9 +651,7 @@ void InspectorController::populateScriptObjects()
     if (!m_frontend)
         return;
 
-    // Initialize dom agent and reset injected script state first.
-    if (m_domAgent->setDocument(m_inspectedPage->mainFrame()->document()))
-        resetInjectedScript();
+    m_domAgent->setDocument(m_inspectedPage->mainFrame()->document());
 
     ResourcesMap::iterator resourcesEnd = m_resources.end();
     for (ResourcesMap::iterator it = m_resources.begin(); it != resourcesEnd; ++it)
@@ -694,6 +699,7 @@ void InspectorController::resetScriptObjects()
         m_timelineAgent->reset();
 
     m_frontend->reset();
+    m_domAgent->setDocument(0);
 }
 
 void InspectorController::pruneResources(ResourcesMap* resourceMap, DocumentLoader* loaderToKeep)
@@ -758,10 +764,9 @@ void InspectorController::didCommitLoad(DocumentLoader* loader)
                 // identifierForInitialRequest.
                 m_mainResource = 0;
             }
+            if (windowVisible())
+                m_domAgent->setDocument(m_inspectedPage->mainFrame()->document());
         }
-
-        if (m_domAgent && m_domAgent->setDocument(m_inspectedPage->mainFrame()->document()))
-            resetInjectedScript();
     }
 
     for (Frame* frame = loader->frame(); frame; frame = frame->tree()->traverseNext(loader->frame()))
@@ -1109,6 +1114,7 @@ void InspectorController::didUseDOMStorage(StorageArea* storageArea, bool isLoca
     RefPtr<InspectorDOMStorageResource> resource = InspectorDOMStorageResource::create(domStorage.get(), isLocalStorage, frame);
 
     m_domStorageResources.add(resource);
+
     if (m_frontend)
         resource->bind(m_frontend.get());
 }

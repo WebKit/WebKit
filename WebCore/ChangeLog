@@ -2,6 +2,28 @@
 
         Reviewed by Timothy Hatcher.
 
+        Web Inspector: Do not track DOM changes while inspector window is closed.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29769
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::inspectedWindowScriptObjectCleared):
+        (WebCore::InspectorController::populateScriptObjects):
+        (WebCore::InspectorController::resetScriptObjects):
+        (WebCore::InspectorController::didCommitLoad):
+        * inspector/InspectorController.h:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::setDocument):
+        * inspector/InspectorDOMAgent.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::dispatchWindowObjectAvailable):
+        * page/android/InspectorControllerAndroid.cpp:
+        (WebCore::InspectorController::inspectedWindowScriptObjectCleared):
+
+2009-09-26  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
         Web Inspector: [REGRESSION] Double Clicking Resources Fails to Open in New Window
 
         https://bugs.webkit.org/show_bug.cgi?id=29762

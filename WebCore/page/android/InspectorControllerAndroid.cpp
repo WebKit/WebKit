@@ -90,6 +90,7 @@ void InspectorController::addProfile(PassRefPtr<JSC::Profile>, unsigned int, con
 void InspectorController::inspectedPageDestroyed() {}
 void InspectorController::resourceRetrievedByXMLHttpRequest(unsigned long identifier, JSC::UString& sourceString) {}
 
+void InspectorController::inspectedWindowScriptObjectCleared(Frame* frame) {}
 void InspectorController::startGroup(MessageSource source, JSC::ExecState* exec, const JSC::ArgList& arguments, unsigned lineNumber, const String& sourceURL) {}
 void InspectorController::endGroup(MessageSource source, unsigned lineNumber, const String& sourceURL) {}
 void InspectorController::startTiming(const JSC::UString& title) {}
