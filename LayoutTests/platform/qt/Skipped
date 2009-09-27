@@ -47,26 +47,8 @@ fast/events/click-focus-anchor.html
 fast/events/pageshow-pagehide-on-back-cached-with-frames.html
 fast/loader/frames-with-unload-handlers-in-page-cache.html
 
-# Missing layoutTestController.waitForPolicyDelegate()
-# https://bugs.webkit.org/show_bug.cgi?id=25037
+# layoutTestController.waitForPolicyDelegate() does not report the origin node
 fast/encoding/mailto-always-utf-8.html
-fast/forms/mailto/advanced-get.html
-fast/forms/mailto/advanced-put.html
-fast/forms/mailto/get-multiple-items-text-plain.html
-fast/forms/mailto/get-multiple-items-x-www-form-urlencoded.html
-fast/forms/mailto/get-multiple-items.html
-fast/forms/mailto/get-non-ascii-always-utf-8.html
-fast/forms/mailto/get-non-ascii-text-plain-latin-1.html
-fast/forms/mailto/get-non-ascii-text-plain.html
-fast/forms/mailto/get-non-ascii.html
-fast/forms/mailto/get-overwrite-query.html
-fast/forms/mailto/post-append-query.html
-fast/forms/mailto/post-multiple-items-multipart-form-data.html
-fast/forms/mailto/post-multiple-items-text-plain.html
-fast/forms/mailto/post-multiple-items-x-www-form-urlencoded.html
-fast/forms/mailto/post-multiple-items.html
-fast/forms/mailto/post-text-plain-with-accept-charset.html
-fast/forms/mailto/post-text-plain.html
 
 # Missing layoutTestController.dumpBackForwardList()
 fast/loader/fragment-after-redirect-gets-back-entry.html

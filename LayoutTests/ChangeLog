@@ -1,3 +1,13 @@
+2009-09-27  Jakub Wieczorek  <faw217@gmail.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Remove tests that are passing from the Skipped list after implementing
+        the waitForPolicyDelegate() function in LayoutTestController.
+        https://bugs.webkit.org/show_bug.cgi?id=25037
+
+        * platform/qt/Skipped:
+
 2009-09-25  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.
