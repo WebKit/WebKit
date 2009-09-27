@@ -92,6 +92,7 @@
     <file>Images/enableSolidButtonGlyph.png</file>
     <file>Images/errorIcon.png</file>
     <file>Images/errorMediumIcon.png</file>
+    <file>Images/errorRedDot.png</file>
     <file>Images/excludeButtonGlyph.png</file>
     <file>Images/focusButtonGlyph.png</file>
     <file>Images/forward.png</file>
@@ -153,6 +154,7 @@
     <file>Images/statusbarResizerHorizontal.png</file>
     <file>Images/statusbarResizerVertical.png</file>
     <file>Images/storageIcon.png</file>
+    <file>Images/successGreenDot.png</file>
     <file>Images/timelineHollowPillBlue.png</file>
     <file>Images/timelineHollowPillGray.png</file>
     <file>Images/timelineHollowPillGreen.png</file>
@@ -184,6 +186,7 @@
     <file>Images/userInputResultIcon.png</file>
     <file>Images/warningIcon.png</file>
     <file>Images/warningMediumIcon.png</file>
+    <file>Images/warningOrangeDot.png</file>
     <file>Images/warningsErrors.png</file>
 </qresource>
 </RCC>
