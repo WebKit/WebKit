@@ -1,5 +1,5 @@
-<link rel="stylesheet" href="../js/resources/js-test-style.css">
-<script src="../js/resources/js-test-pre.js"></script>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css">
+<script src="../../js/resources/js-test-pre.js"></script>
 <style>
     #pusher {
         width: 1000px;
@@ -17,24 +17,25 @@
     if (window.layoutTestController)
         layoutTestController.dumpAsText();
 
-    var element = document.getElementById('test');
+    var range = document.createRange();
+    range.selectNodeContents(document.getElementById('test'));
 
     // Get base numbers
-    var unScrolledBoundingBox = element.getBoundingClientRect();
-    var unScrolledBoundingBoxes = element.getClientRects();
+    var unScrolledBoundingBox = range.getBoundingClientRect();
+    var unScrolledBoundingBoxes = range.getClientRects();
 
     // Test scrolling down
     window.scrollBy(0, 50);
-    var scrolledDownBoundingBox = element.getBoundingClientRect();
-    var scrolledDownBoundingBoxes = element.getClientRects();
+    var scrolledDownBoundingBox = range.getBoundingClientRect();
+    var scrolledDownBoundingBoxes = range.getClientRects();
 
     // Reset
     window.scrollTo(0, 0);
 
     // Test scrolling right
     window.scrollBy(50, 0);
-    var scrolledRightBoundingBox = element.getBoundingClientRect();
-    var scrolledRightBoundingBoxes = element.getClientRects();
+    var scrolledRightBoundingBox = range.getBoundingClientRect();
+    var scrolledRightBoundingBoxes = range.getClientRects();
 
     // Reset
     window.scrollTo(0, 0);
@@ -51,4 +52,4 @@
 
     successfullyParsed = true;
 </script>
-<script src="../js/resources/js-test-post.js"></script>
+<script src="../../js/resources/js-test-post.js"></script>

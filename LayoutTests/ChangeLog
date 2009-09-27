@@ -1,3 +1,30 @@
+2009-09-27  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Tests for https://bugs.webkit.org/show_bug.cgi?id=29760
+        Implement CSSOM Range.getClientRects/getBoundingClientRect 
+
+        * fast/dom/Element/getBoundingClientRect-expected.txt: Copied from LayoutTests/fast/dom/getBoundingClientRect-expected.txt.
+        * fast/dom/Element/getBoundingClientRect-getClientRects-relative-to-viewport-expected.txt: Copied from LayoutTests/fast/dom/getBoundingClientRect-getClientRects-relative-to-viewport-expected.txt.
+        * fast/dom/Element/getBoundingClientRect-getClientRects-relative-to-viewport.html: Copied from LayoutTests/fast/dom/getBoundingClientRect-getClientRects-relative-to-viewport.html.
+        * fast/dom/Element/getBoundingClientRect.html: Copied from LayoutTests/fast/dom/getBoundingClientRect.html.
+        * fast/dom/Element/getClientRects-expected.txt: Copied from LayoutTests/fast/dom/getClientRects-expected.txt.
+        * fast/dom/Element/getClientRects.html: Copied from LayoutTests/fast/dom/getClientRects.html.
+        * fast/dom/Range/getBoundingClientRect-expected.txt: Added.
+        * fast/dom/Range/getBoundingClientRect-getClientRects-relative-to-viewport-expected.txt: Added.
+        * fast/dom/Range/getBoundingClientRect-getClientRects-relative-to-viewport.html: Added.
+        * fast/dom/Range/getBoundingClientRect.html: Added.
+        * fast/dom/Range/getClientRects-expected.txt: Added.
+        * fast/dom/Range/getClientRects.html: Added.
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/dom/getBoundingClientRect-expected.txt: Removed.
+        * fast/dom/getBoundingClientRect-getClientRects-relative-to-viewport-expected.txt: Removed.
+        * fast/dom/getBoundingClientRect-getClientRects-relative-to-viewport.html: Removed.
+        * fast/dom/getBoundingClientRect.html: Removed.
+        * fast/dom/getClientRects-expected.txt: Removed.
+        * fast/dom/getClientRects.html: Removed.
+
 2009-09-27  Jakub Wieczorek  <faw217@gmail.com>
 
         Reviewed by Simon Hausmann.

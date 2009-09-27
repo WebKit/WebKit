@@ -85,6 +85,13 @@ module ranges {
         void detach()
             raises(DOMException);
 
+#if defined(LANGUAGE_JAVASCRIPT) || LANGUAGE_JAVASCRIPT
+        // CSSOM View Module API extensions
+
+        ClientRectList getClientRects();
+        ClientRect getBoundingClientRect();
+#endif
+
         // extensions
 
         DocumentFragment createContextualFragment(in DOMString html)

@@ -1,0 +1,349 @@
+<link rel="stylesheet" href="../../js/resources/js-test-style.css">
+<script src="../../js/resources/js-test-pre.js"></script>
+<style>
+.bbox {
+    position:absolute;
+    outline: 5px solid rgba(255, 0, 0, .75);
+    z-index: -1;
+}
+
+.box {
+    width: 400px;
+    line-height: 40px;
+}
+
+.outer {
+    outline: 2px solid green;
+}
+
+.inner {
+    display: inline-block;
+    width: 40px;
+    height: 20px;
+    outline: 2px solid blue;
+}
+
+#test8 {
+    -webkit-transform: translate(50px, 100px) rotate(50deg);
+}
+
+#console {
+    position:absolute;
+    left: 500px;
+}
+#testArea {
+    width: 300px;
+}
+
+</style>
+<div id="console"></div>
+<div id="testArea">
+
+<div class="box" id="test1">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
+
+<br><br>
+
+<div class="box" id="test2">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
+
+<br><br>
+
+<div class="box" id="test3">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
+
+<br><br>
+
+<div class="box" id="test4">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et<img src="../resources/abe.png" width="76" height="103"> dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
+
+<br><br>
+
+<div class="box" id="test5">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et<img src="../resources/abe.png" width="76" height="103"> dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
+
+<br><br>
+
+<div class="box" id="test6">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do <div class="outer">eiusmod <span class="inner"></span>tempor</div> incididunt ut labore etdolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
+
+<br><br>
+
+<div class="box" id="test7">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do <div class="outer">eiusmod <span class="inner"></span>tempor</div> incididunt ut labore etdolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
+
+<br><br>
+
+<div class="box" id="test8">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
+
+</div>
+
+<script>
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    function addBBoxOverClientRect(rect)
+    {
+        var bbox = document.createElement('div');
+        bbox.className = "bbox";
+        var style = "";
+        style += "left: "   + rect.left + "px;";
+        style += "top: "    + rect.top + "px;";
+        style += "width: "  + (rect.right - rect.left) + "px;";
+        style += "height: " + (rect.bottom - rect.top) + "px;";
+        bbox.setAttribute("style", style);
+        document.documentElement.appendChild(bbox);
+    }
+
+    function addBBoxOverClientRects(rects)
+    {
+        for (var i = 0; i < rects.length; ++i)
+            addBBoxOverClientRect(rects[i]);
+    }
+
+    function show(range)
+    {
+        if (window.layoutTestController)
+            return;
+        addBBoxOverClientRects(range.getClientRects());
+    }
+
+    // Test 1
+    debug("Test 1")
+    var range1 = document.createRange();
+    range1.selectNode(document.getElementById('test1'));
+    show(range1);
+    rects = range1.getClientRects();
+    shouldBe("rects.length", "5");
+    shouldBe("rects[0].left", "8");
+    shouldBe("rects[0].top", "8");
+    shouldBe("rects[0].width", "400");
+    shouldBe("rects[0].height", "160");
+    shouldBe("rects[1].left", "8");
+    shouldBe("rects[1].top", "19");
+    shouldBe("rects[1].width", "396");
+    shouldBe("rects[1].height", "18");
+    shouldBe("rects[2].left", "8");
+    shouldBe("rects[2].top", "59");
+    shouldBe("rects[2].width", "398");
+    shouldBe("rects[2].height", "18");
+    shouldBe("rects[3].left", "8");
+    shouldBe("rects[3].top", "99");
+    shouldBe("rects[3].width", "360");
+    shouldBe("rects[3].height", "18");
+    shouldBe("rects[4].left", "8");
+    shouldBe("rects[4].top", "139");
+    shouldBe("rects[4].width", "306");
+    shouldBe("rects[4].height", "18");
+
+    // Test 2
+    debug("Test 2")
+    var range2 = document.createRange();
+    range2.selectNodeContents(document.getElementById('test2'));
+    show(range2);
+    rects = range2.getClientRects();
+    shouldBe("rects.length", "4");
+    shouldBe("rects[0].left", "8");
+    shouldBe("rects[0].top", "215");
+    shouldBe("rects[0].width", "396");
+    shouldBe("rects[0].height", "18");
+    shouldBe("rects[1].left", "8");
+    shouldBe("rects[1].top", "255");
+    shouldBe("rects[1].width", "398");
+    shouldBe("rects[1].height", "18");
+    shouldBe("rects[2].left", "8");
+    shouldBe("rects[2].top", "295");
+    shouldBe("rects[2].width", "360");
+    shouldBe("rects[2].height", "18");
+    shouldBe("rects[3].left", "8");
+    shouldBe("rects[3].top", "335");
+    shouldBe("rects[3].width", "306");
+    shouldBe("rects[3].height", "18");
+
+    // Test 3
+    debug("Test 3")
+    var range3 = document.createRange();
+    range3.setStart(document.getElementById('test3').firstChild, 10);
+    range3.setEnd(document.getElementById('test3').lastChild, 200);
+    show(range3);
+    rects = range3.getClientRects();
+    shouldBe("rects.length", "4");
+    shouldBe("rects[0].left", "80");
+    shouldBe("rects[0].top", "411");
+    shouldBe("rects[0].width", "324");
+    shouldBe("rects[0].height", "18");
+    shouldBe("rects[1].left", "8");
+    shouldBe("rects[1].top", "451");
+    shouldBe("rects[1].width", "398");
+    shouldBe("rects[1].height", "18");
+    shouldBe("rects[2].left", "8");
+    shouldBe("rects[2].top", "491");
+    shouldBe("rects[2].width", "360");
+    shouldBe("rects[2].height", "18");
+    shouldBe("rects[3].left", "8");
+    shouldBe("rects[3].top", "531");
+    shouldBe("rects[3].width", "88");
+    shouldBe("rects[3].height", "18");
+
+    // Test 4 - Should not include rect of the img.
+    debug("Test 4")
+    var range4 = document.createRange();
+    range4.selectNode(document.getElementById('test4'));
+    show(range4);
+    rects = range4.getClientRects();
+    shouldBe("rects.length", "7");
+    shouldBe("rects[0].left", "8");
+    shouldBe("rects[0].top", "596");
+    shouldBe("rects[0].width", "400");
+    shouldBe("rects[0].height", "278");
+    shouldBe("rects[1].left", "8");
+    shouldBe("rects[1].top", "607");
+    shouldBe("rects[1].width", "396");
+    shouldBe("rects[1].height", "18");
+    shouldBe("rects[2].left", "8");
+    shouldBe("rects[2].top", "725");
+    shouldBe("rects[2].width", "242");
+    shouldBe("rects[2].height", "18");
+    shouldBe("rects[3].left", "326");
+    shouldBe("rects[3].top", "725");
+    shouldBe("rects[3].width", "44");
+    shouldBe("rects[3].height", "18");
+    shouldBe("rects[4].left", "8");
+    shouldBe("rects[4].top", "765");
+    shouldBe("rects[4].width", "341");
+    shouldBe("rects[4].height", "18");
+    shouldBe("rects[5].left", "8");
+    shouldBe("rects[5].top", "805");
+    shouldBe("rects[5].width", "366");
+    shouldBe("rects[5].height", "18");
+    shouldBe("rects[6].left", "8");
+    shouldBe("rects[6].top", "845");
+    shouldBe("rects[6].width", "67");
+    shouldBe("rects[6].height", "18");
+    
+    // Test 5 - Should include rect of the img.
+    debug("Test 5");
+    var range5 = document.createRange();
+    range5.setStart(document.getElementById('test5').firstChild, 10);
+    range5.setEnd(document.getElementById('test5').lastChild, 50);
+    show(range5);
+    rects = range5.getClientRects();
+    shouldBe("rects.length", "5");
+    shouldBe("rects[0].left", "80");
+    shouldBe("rects[0].top", "921");
+    shouldBe("rects[0].width", "324");
+    shouldBe("rects[0].height", "18");
+    shouldBe("rects[1].left", "8");
+    shouldBe("rects[1].top", "1039");
+    shouldBe("rects[1].width", "242");
+    shouldBe("rects[1].height", "18");
+    shouldBe("rects[2].left", "250");
+    shouldBe("rects[2].top", "950");
+    shouldBe("rects[2].width", "76");
+    shouldBe("rects[2].height", "103");
+    shouldBe("rects[3].left", "326");
+    shouldBe("rects[3].top", "1039");
+    shouldBe("rects[3].width", "44");
+    shouldBe("rects[3].height", "18");
+    shouldBe("rects[4].left", "8");
+    shouldBe("rects[4].top", "1079");
+    shouldBe("rects[4].width", "284");
+    shouldBe("rects[4].height", "18");
+
+    // Test 6 - Should not include green or blue boxes
+    debug("Test 6");
+    var range6 = document.createRange();
+    range6.selectNode(document.getElementById('test6'));
+    show(range6);
+    rects = range6.getClientRects();
+    shouldBe("rects.length", "7");
+    shouldBe("rects[0].left", "8");
+    shouldBe("rects[0].top", "1224");
+    shouldBe("rects[0].width", "400");
+    shouldBe("rects[0].height", "200");
+    shouldBe("rects[1].left", "8");
+    shouldBe("rects[1].top", "1235");
+    shouldBe("rects[1].width", "396");
+    shouldBe("rects[1].height", "18");
+    shouldBe("rects[2].left", "8");
+    shouldBe("rects[2].top", "1275");
+    shouldBe("rects[2].width", "57");
+    shouldBe("rects[2].height", "18");
+    shouldBe("rects[3].left", "105");
+    shouldBe("rects[3].top", "1275");
+    shouldBe("rects[3].width", "44");
+    shouldBe("rects[3].height", "18");
+    shouldBe("rects[4].left", "8");
+    shouldBe("rects[4].top", "1315");
+    shouldBe("rects[4].width", "387");
+    shouldBe("rects[4].height", "18");
+    shouldBe("rects[5].left", "8");
+    shouldBe("rects[5].top", "1355");
+    shouldBe("rects[5].width", "397");
+    shouldBe("rects[5].height", "18");
+    shouldBe("rects[6].left", "8");
+    shouldBe("rects[6].top", "1395");
+    shouldBe("rects[6].width", "171");
+    shouldBe("rects[6].height", "18");
+
+    // Test 7 - Should include green but not blue box
+    debug("Test 7");
+    var range7 = document.createRange();
+    range7.selectNodeContents(document.getElementById('test7'));
+    show(range7);
+    rects = range7.getClientRects();
+    shouldBe("rects.length", "7");
+    shouldBe("rects[0].left", "8");
+    shouldBe("rects[0].top", "1471");
+    shouldBe("rects[0].width", "396");
+    shouldBe("rects[0].height", "18");
+    shouldBe("rects[1].left", "8");
+    shouldBe("rects[1].top", "1500");
+    shouldBe("rects[1].width", "400");
+    shouldBe("rects[1].height", "40");
+    shouldBe("rects[2].left", "8");
+    shouldBe("rects[2].top", "1511");
+    shouldBe("rects[2].width", "57");
+    shouldBe("rects[2].height", "18");
+    shouldBe("rects[3].left", "105");
+    shouldBe("rects[3].top", "1511");
+    shouldBe("rects[3].width", "44");
+    shouldBe("rects[3].height", "18");
+    shouldBe("rects[4].left", "8");
+    shouldBe("rects[4].top", "1551");
+    shouldBe("rects[4].width", "387");
+    shouldBe("rects[4].height", "18");
+    shouldBe("rects[5].left", "8");
+    shouldBe("rects[5].top", "1591");
+    shouldBe("rects[5].width", "397");
+    shouldBe("rects[5].height", "18");
+    shouldBe("rects[6].left", "8");
+    shouldBe("rects[6].top", "1631");
+    shouldBe("rects[6].width", "171");
+    shouldBe("rects[6].height", "18");
+
+    // Test 8
+    debug("Test 8");
+    var range8 = document.createRange();
+    range8.selectNodeContents(document.getElementById('test8'));
+    show(range8);
+    rects = range8.getClientRects();
+    shouldBe("rects.length", "4");
+    shouldBe("rects[0].left", "168");
+    shouldBe("rects[0].top", "1678");
+    shouldBe("rects[0].width", "269");
+    shouldBe("rects[0].height", "316");
+    shouldBe("rects[1].left", "137");
+    shouldBe("rects[1].top", "1704");
+    shouldBe("rects[1].width", "271");
+    shouldBe("rects[1].height", "317");
+    shouldBe("rects[2].left", "107");
+    shouldBe("rects[2].top", "1729");
+    shouldBe("rects[2].width", "246");
+    shouldBe("rects[2].height", "289");
+    shouldBe("rects[3].left", "76");
+    shouldBe("rects[3].top", "1755");
+    shouldBe("rects[3].width", "212");
+    shouldBe("rects[3].height", "247");
+
+    if (window.layoutTestController) {
+        var area = document.getElementById('testArea');
+        area.parentNode.removeChild(area);
+    }
+
+    successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>

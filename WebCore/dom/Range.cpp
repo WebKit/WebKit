@@ -3,7 +3,7 @@
  * (C) 2000 Gunnstein Lye (gunnstein@netcom.no)
  * (C) 2000 Frederik Holljen (frederik.holljen@hig.no)
  * (C) 2001 Peter Kelly (pmk@post.com)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,7 +26,10 @@
 #include "RangeException.h"
 
 #include "CString.h"
+#include "ClientRect.h"
+#include "ClientRectList.h"
 #include "DocumentFragment.h"
+#include "FrameView.h"
 #include "HTMLElement.h"
 #include "NodeWithIndex.h"
 #include "ProcessingInstruction.h"
@@ -1821,4 +1824,89 @@ void Range::expand(const String& unit, ExceptionCode& ec)
     setEnd(end.deepEquivalent().containerNode(), end.deepEquivalent().computeOffsetInContainerNode(), ec);
 }
 
+PassRefPtr<ClientRectList> Range::getClientRects() const
+{
+    if (!m_start.container())
+        return 0;
+
+    m_ownerDocument->updateLayoutIgnorePendingStylesheets();
+
+    Vector<FloatQuad> quads;
+    getBorderAndTextQuads(quads);
+
+    return ClientRectList::create(quads);
 }
+
+PassRefPtr<ClientRect> Range::getBoundingClientRect() const
+{
+    if (!m_start.container())
+        return 0;
+
+    m_ownerDocument->updateLayoutIgnorePendingStylesheets();
+
+    Vector<FloatQuad> quads;
+    getBorderAndTextQuads(quads);
+
+    if (quads.isEmpty())
+        return ClientRect::create();
+
+    IntRect result;
+    for (size_t i = 0; i < quads.size(); ++i)
+        result.unite(quads[i].enclosingBoundingBox());
+
+    return ClientRect::create(result);
+}
+
+static void adjustFloatQuadsForScrollAndAbsoluteZoom(Vector<FloatQuad>& quads, Document* document, RenderObject* renderer)
+{
+    FrameView* view = document->view();
+    if (!view)
+        return;
+
+    IntRect visibleContentRect = view->visibleContentRect();
+    for (size_t i = 0; i < quads.size(); ++i) {
+        quads[i].move(-visibleContentRect.x(), -visibleContentRect.y());
+        adjustFloatQuadForAbsoluteZoom(quads[i], renderer);
+    }
+}
+
+void Range::getBorderAndTextQuads(Vector<FloatQuad>& quads) const
+{
+    Node* startContainer = m_start.container();
+    Node* endContainer = m_end.container();
+    Node* stopNode = pastLastNode();
+
+    HashSet<Node*> nodeSet;
+    for (Node* node = firstNode(); node != stopNode; node = node->traverseNextNode()) {
+        if (node->isElementNode())
+            nodeSet.add(node);
+    }
+
+    for (Node* node = firstNode(); node != stopNode; node = node->traverseNextNode()) {
+        if (node->isElementNode()) {
+            if (!nodeSet.contains(node->parentNode())) {
+                if (RenderBoxModelObject* renderBoxModelObject = static_cast<Element*>(node)->renderBoxModelObject()) {
+                    Vector<FloatQuad> elementQuads;
+                    renderBoxModelObject->absoluteQuads(elementQuads);
+                    adjustFloatQuadsForScrollAndAbsoluteZoom(elementQuads, m_ownerDocument.get(), renderBoxModelObject);
+
+                    quads.append(elementQuads);
+                }
+            }
+        } else if (node->isTextNode()) {
+            if (RenderObject* renderer = static_cast<Text*>(node)->renderer()) {
+                RenderText* renderText = toRenderText(renderer);
+                int startOffset = (node == startContainer) ? m_start.offset() : 0;
+                int endOffset = (node == endContainer) ? m_end.offset() : INT_MAX;
+                
+                Vector<FloatQuad> textQuads;
+                renderText->absoluteQuadsForRange(textQuads, startOffset, endOffset);
+                adjustFloatQuadsForScrollAndAbsoluteZoom(textQuads, m_ownerDocument.get(), renderText);
+
+                quads.append(textQuads);
+            }
+        }
+    }
+}
+
+} // namespace WebCore

@@ -1,0 +1,24 @@
+Test 1
+PASS rect.left is 8
+PASS rect.top is 8
+PASS rect.width is 400
+PASS rect.height is 160
+Test 2
+PASS rect.left is 8
+PASS rect.top is 215
+PASS rect.width is 398
+PASS rect.height is 138
+Test 3
+PASS rect.left is 8
+PASS rect.top is 451
+PASS rect.width is 398
+PASS rect.height is 58
+Test 4
+PASS rect.left is 76
+PASS rect.top is 578
+PASS rect.width is 361
+PASS rect.height is 343
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

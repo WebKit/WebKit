@@ -1,3 +1,32 @@
+2009-09-27  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=29760
+        Implement CSSOM Range.getClientRects/getBoundingClientRect 
+
+        Tests: fast/dom/Range/getBoundingClientRect-getClientRects-relative-to-viewport.html
+               fast/dom/Range/getBoundingClientRect.html
+               fast/dom/Range/getClientRects.html
+
+        * dom/Range.cpp:
+        (WebCore::Range::getClientRects):
+        (WebCore::Range::getBoundingClientRect):
+        (WebCore::adjustFloatQuadsForScrollAndAbsoluteZoom):
+        (WebCore::Range::getBorderAndTextQuads):
+        * dom/Range.h:
+        * dom/Range.idl:
+        Implement Range.getClientRects/getBoundingClientRect.
+
+        * dom/Element.cpp:
+        * rendering/RenderObject.h: 
+        (WebCore::adjustForAbsoluteZoom):
+        (WebCore::adjustIntRectForAbsoluteZoom):
+        (WebCore::adjustFloatPointForAbsoluteZoom):
+        (WebCore::adjustFloatQuadForAbsoluteZoom):
+        Move point/quad adjustment methods from Element.cpp to RenderObject.h
+        so that Range.cpp can use them as well.
+
 2009-09-27  Simon Hausmann  <hausmann@webkit.org>
 
         Unreviewed fix for WebInspector with Qt build.

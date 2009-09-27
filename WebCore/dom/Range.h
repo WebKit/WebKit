@@ -3,7 +3,7 @@
  * (C) 2000 Gunnstein Lye (gunnstein@netcom.no)
  * (C) 2000 Frederik Holljen (frederik.holljen@hig.no)
  * (C) 2001 Peter Kelly (pmk@post.com)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,12 +25,15 @@
 #ifndef Range_h
 #define Range_h
 
+#include "FloatQuad.h"
 #include "RangeBoundaryPoint.h"
+#include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 
+class ClientRect;
+class ClientRectList;
 class DocumentFragment;
 class NodeWithIndex;
 class Text;
@@ -117,6 +120,9 @@ public:
     // for details.
     void expand(const String&, ExceptionCode&);
 
+    PassRefPtr<ClientRectList> getClientRects() const;
+    PassRefPtr<ClientRect> getBoundingClientRect() const;
+
 #ifndef NDEBUG
     void formatForDebugger(char* buffer, unsigned length) const;
 #endif
@@ -134,6 +140,8 @@ private:
 
     enum ActionType { DELETE_CONTENTS, EXTRACT_CONTENTS, CLONE_CONTENTS };
     PassRefPtr<DocumentFragment> processContents(ActionType, ExceptionCode&);
+
+    void getBorderAndTextQuads(Vector<FloatQuad>&) const;
 
     RefPtr<Document> m_ownerDocument;
     RangeBoundaryPoint m_start;

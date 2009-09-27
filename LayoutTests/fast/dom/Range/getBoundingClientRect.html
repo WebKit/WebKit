@@ -1,0 +1,134 @@
+<link rel="stylesheet" href="../../js/resources/js-test-style.css">
+<script src="../../js/resources/js-test-pre.js"></script>
+<style>
+.bbox {
+    position:absolute;
+    outline: 5px solid rgba(255, 0, 0, .75);
+    z-index: -1;
+}
+
+.box {
+    width: 400px;
+    line-height: 40px;
+}
+
+.outer {
+    outline: 2px solid green;
+}
+
+.inner {
+    display: inline-block;
+    width: 40px;
+    height: 20px;
+    outline: 2px solid blue;
+}
+
+#test4 {
+    -webkit-transform: translate(50px, 100px) rotate(50deg);
+}
+
+#console {
+    position:absolute;
+    left: 500px;
+}
+#testArea {
+    width: 300px;
+}
+</style>
+<div id="console"></div>
+<div id="testArea">
+
+<div class="box" id="test1">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
+
+<br><br>
+
+<div class="box" id="test2">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
+
+<br><br>
+
+<div class="box" id="test3">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
+
+<br><br>
+
+<div class="box" id="test4">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
+
+</div>
+<script>
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    function addBBoxOverClientRect(rect)
+    {
+        var bbox = document.createElement('div');
+        bbox.className = "bbox";
+        var style = "";
+        style += "left: "   + rect.left + "px;";
+        style += "top: "    + rect.top + "px;";
+        style += "width: "  + (rect.right - rect.left) + "px;";
+        style += "height: " + (rect.bottom - rect.top) + "px;";
+        bbox.setAttribute("style", style);
+        document.documentElement.appendChild(bbox);
+    }
+
+    function show(range)
+    {
+        if (window.layoutTestController)
+            return;
+        addBBoxOverClientRect(range.getBoundingClientRect());
+    }
+
+    // Test 1
+    debug("Test 1")
+    var range1 = document.createRange();
+    range1.selectNode(document.getElementById('test1'));
+    show(range1);
+    rect = range1.getBoundingClientRect()
+    shouldBe("rect.left", "8");
+    shouldBe("rect.top", "8");
+    shouldBe("rect.width", "400");
+    shouldBe("rect.height", "160");
+
+    // Test 2
+    debug("Test 2")
+    var range2 = document.createRange();
+    range2.selectNodeContents(document.getElementById('test2'));
+    show(range2);
+    rect = range2.getBoundingClientRect()
+    shouldBe("rect.left", "8");
+    shouldBe("rect.top", "215");
+    shouldBe("rect.width", "398");
+    shouldBe("rect.height", "138");
+
+
+    // Test 3
+    debug("Test 3")
+    var range3 = document.createRange();
+    range3.setStart(document.getElementById('test3').firstChild, 100);
+    range3.setEnd(document.getElementById('test3').lastChild, 150);
+    show(range3);
+    rect = range3.getBoundingClientRect()
+    shouldBe("rect.left", "8");
+    shouldBe("rect.top", "451");
+    shouldBe("rect.width", "398");
+    shouldBe("rect.height", "58");
+
+
+    // Test 4
+    debug("Test 4")
+    var range4 = document.createRange();
+    range4.selectNodeContents(document.getElementById('test4'));
+    show(range4);
+    rect = range4.getBoundingClientRect()
+    shouldBe("rect.left", "76");
+    shouldBe("rect.top", "578");
+    shouldBe("rect.width", "361");
+    shouldBe("rect.height", "343");
+
+    if (window.layoutTestController) {
+        var area = document.getElementById('testArea');
+        area.parentNode.removeChild(area);
+    }
+
+    successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
