@@ -1,3 +1,13 @@
+2009-09-28  Alex Milowski  <alex@milowski.com>
+
+        <http://webkit.org/b/29098> Update to MathML project webpage
+
+        Reviewed by David Kilzer.
+
+        Updated MathML project page and added link to Wiki page.
+
+        * projects/mathml/index.html:
+
 2009-09-21  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler.
