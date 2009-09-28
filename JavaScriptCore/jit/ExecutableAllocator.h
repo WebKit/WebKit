@@ -191,11 +191,6 @@ public:
     {
         User::IMB_Range(code, static_cast<char*>(code) + size);
     }
-#elif PLATFORM(ARM) && COMPILER(GCC) && (GCC_VERSION >= 30406) && !defined(DISABLE_BUILTIN_CLEAR_CACHE)
-    static void cacheFlush(void* code, size_t size)
-    {
-        __clear_cache(reinterpret_cast<char*>(code), reinterpret_cast<char*>(code) + size);
-    }
 #elif PLATFORM(ARM_TRADITIONAL) && PLATFORM(LINUX)
     static void cacheFlush(void* code, size_t size)
     {
