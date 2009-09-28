@@ -1,7 +1,7 @@
 /*
     Copyright (C) 2004, 2005, 2006, 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
-    Copyright (C) Research In Motion Limited 2009, All rights reserved. Charles Wei <charles.wei@torchmobile.com.cn>
+    Copyright (C) Research In Motion Limited 2009. All rights reserved.
 
     This file is part of the KDE project
 
