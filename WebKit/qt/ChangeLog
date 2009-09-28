@@ -1,3 +1,11 @@
+2009-09-28  Andre Poenitz  <andre.poenitz@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
+        Compile fix with namespaced Qt.
+
+        * Api/qwebinspector_p.h:
+
 2009-09-27  Joe Ligman  <joseph.ligman@mindspring.com>
 
         Reviewed by Simon Hausmann.

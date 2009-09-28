@@ -20,10 +20,12 @@
 #ifndef QWEBINSPECTOR_P_H
 #define QWEBINSPECTOR_P_H
 
+QT_BEGIN_NAMESPACE
 class QSize;
+class QWidget;
+QT_END_NAMESPACE
 class QWebInspector;
 class QWebPage;
-class QWidget;
 
 class QWebInspectorPrivate {
 public:
