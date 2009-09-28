@@ -1,3 +1,20 @@
+2009-09-28  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by nobody (trivial follow up fix), Joseph Pecoraro LGTM-ed.
+
+        Web Inspector: Follow up to r48809.
+        InspectorController.wrapObject should only be called on the inspectable page side.
+
+        https://bugs.webkit.org/show_bug.cgi?id=17429
+
+        * inspector/front-end/EventListenersSidebarPane.js:
+        (WebInspector.EventListenersSidebarPane.prototype.update.callback):
+        (WebInspector.EventListenersSidebarPane.prototype.update):
+        (WebInspector.EventListenersSection):
+        (WebInspector.EventListenersSection.prototype.update):
+        (WebInspector.EventListenerBar):
+        (WebInspector.EventListenerBar.prototype.update):
+
 2009-09-28  Jakub Wieczorek  <faw217@gmail.com>
 
         Reviewed by Simon Hausmann.

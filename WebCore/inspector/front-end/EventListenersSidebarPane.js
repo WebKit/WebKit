@@ -69,13 +69,12 @@ WebInspector.EventListenersSidebarPane.prototype = {
             var sectionMap = {};
             for (var i = 0; i < eventListeners.length; ++i) {
                 var eventListener = eventListeners[i];
-                eventListener._selectedNode = (eventListener.nodeId === nodeId);
                 eventListener.node = WebInspector.domAgent.nodeForId(eventListener.nodeId);
                 delete eventListener.nodeId; // no longer needed
                 var type = eventListener.type;
                 var section = sectionMap[type];
                 if (!section) {
-                    section = new WebInspector.EventListenersSection(type);
+                    section = new WebInspector.EventListenersSection(type, nodeId);
                     sectionMap[type] = section;
                     sectionNames.push(type);
                     self.sections.push(section);
@@ -116,10 +115,11 @@ WebInspector.EventListenersSidebarPane.prototype = {
 
 WebInspector.EventListenersSidebarPane.prototype.__proto__ = WebInspector.SidebarPane.prototype;
 
-WebInspector.EventListenersSection = function(title, subtitle)
+WebInspector.EventListenersSection = function(title, nodeId)
 {
     this.eventListeners = [];
-    WebInspector.PropertiesSection.call(this, title, subtitle);
+    this._nodeId = nodeId;
+    WebInspector.PropertiesSection.call(this, title);
 
     // Changed from a Properties List
     this.propertiesElement.parentNode.removeChild(this.propertiesElement);
@@ -140,7 +140,7 @@ WebInspector.EventListenersSection.prototype = {
             filteredEventListeners = [];
             for (var i = 0; i < this.eventListeners.length; ++i) {
                 var eventListener = this.eventListeners[i];
-                if (eventListener._selectedNode)
+                if (eventListener.node.id === this._nodeId)
                     filteredEventListeners.push(eventListener);
             }
         }
@@ -171,12 +171,28 @@ WebInspector.EventListenersSection.prototype.__proto__ = WebInspector.Properties
 WebInspector.EventListenerBar = function(eventListener)
 {
     this.eventListener = eventListener;
-    WebInspector.ObjectPropertiesSection.call(this, InspectorController.wrapObject(eventListener), this._getFunctionDisplayName(), this._getNodeDisplayName());
+    WebInspector.ObjectPropertiesSection.call(this, null, this._getFunctionDisplayName(), this._getNodeDisplayName());
+    this.editable = false;
     this.element.className = "event-bar"; /* Changed from "section" */
     this.propertiesElement.className = "event-properties"; /* Changed from "properties" */
 }
 
 WebInspector.EventListenerBar.prototype = {
+    update: function()
+    {
+        var properties = [];
+        for (var propertyName in this.eventListener) {
+            // Just build properties in place - no need to reach out for injected script.
+            var value = this.eventListener[propertyName];
+            if (value instanceof WebInspector.DOMNode)
+                value = new WebInspector.ObjectProxy(value.id, [], 0, appropriateSelectorForNode(value), true);
+            else
+                value = WebInspector.ObjectProxy.wrapPrimitiveValue(value);
+            properties.push(new WebInspector.ObjectPropertyProxy(propertyName, value));
+        }
+        this.updateProperties(properties);
+    },
+
     _getNodeDisplayName: function()
     {
         var node = this.eventListener.node;
