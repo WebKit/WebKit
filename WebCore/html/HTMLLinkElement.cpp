@@ -252,7 +252,23 @@ void HTMLLinkElement::setCSSStyleSheet(const String& url, const String& charset,
     if (enforceMIMEType && document()->page() && !document()->page()->settings()->enforceCSSMIMETypeInStrictMode())
         enforceMIMEType = false;
 
-    m_sheet->parseString(sheet->sheetText(enforceMIMEType), strictParsing);
+    String sheetText = sheet->sheetText(enforceMIMEType);
+    m_sheet->parseString(sheetText, strictParsing);
+
+    if (strictParsing && document()->settings() && document()->settings()->needsSiteSpecificQuirks()) {
+        // Work around <https://bugs.webkit.org/show_bug.cgi?id=28350>.
+        DEFINE_STATIC_LOCAL(const String, slashKHTMLFixesDotCss, ("/KHTMLFixes.css"));
+        DEFINE_STATIC_LOCAL(const String, mediaWikiKHTMLFixesStyleSheet, ("/* KHTML fix stylesheet */\n/* work around the horizontal scrollbars */\n#column-content { margin-left: 0; }\n\n"));
+        // There are two variants of KHTMLFixes.css. One is equal to mediaWikiKHTMLFixesStyleSheet,
+        // while the other lacks the second trailing newline.
+        if (url.endsWith(slashKHTMLFixesDotCss) && mediaWikiKHTMLFixesStyleSheet.startsWith(sheetText)
+                && sheetText.length() >= mediaWikiKHTMLFixesStyleSheet.length() - 1) {
+            ASSERT(m_sheet->length() == 1);
+            ExceptionCode ec;
+            m_sheet->deleteRule(0, ec);
+        }
+    }
+
     m_sheet->setTitle(title());
 
     RefPtr<MediaList> media = MediaList::createAllowingDescriptionSyntax(m_media);

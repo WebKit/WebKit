@@ -1,3 +1,15 @@
+2009-09-28  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Extend the MediaWiki/KHTMLFixes.css workaround to cover older MediaWiki versions
+        https://bugs.webkit.org/show_bug.cgi?id=29792
+
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::setCSSStyleSheet): If site specific hacks are
+        enabled, check if the linked style sheet is one of two versions of the
+        MediaWiki KHTMLFixes.css. If so, remove the offending rule.
+
 2009-09-28  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Adam Barth.
