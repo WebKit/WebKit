@@ -1,3 +1,9 @@
+2009-09-28  Mark Rowe  <mrowe@apple.com>
+
+        Fix the build by doing something approximating reasonableness in the Xcode project.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2009-09-28  Simon Hausmann  <hausmann@webkit.org>
 
         Prospective Tiger build fix.

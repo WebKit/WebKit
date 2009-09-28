@@ -1083,6 +1083,8 @@
 		5D925B680F64D4DD00B847F0 /* ScrollBehavior.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D925B660F64D4DD00B847F0 /* ScrollBehavior.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5DA5E0FC102B953800088CF9 /* JSWebSocket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DA5E0FA102B953800088CF9 /* JSWebSocket.cpp */; };
 		5DA5E0FD102B953800088CF9 /* JSWebSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DA5E0FB102B953800088CF9 /* JSWebSocket.h */; };
+		5DB1BC6A10715A6400EFAA49 /* TransformSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DB1BC6810715A6400EFAA49 /* TransformSource.h */; };
+		5DB1BC6B10715A6400EFAA49 /* TransformSourceLibxslt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DB1BC6910715A6400EFAA49 /* TransformSourceLibxslt.cpp */; };
 		5DCF836D0D59159800953BC6 /* PluginInfoStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DCF836C0D59159800953BC6 /* PluginInfoStore.h */; };
 		5DD0A3810D9AC6070056C122 /* DOMElementTimeControl.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = E415F1680D9A165D0033CE97 /* DOMElementTimeControl.h */; };
 		5DF7F5C20F01F92A00526B4B /* CSSPropertyNames.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 656580EF09D12B20000E61D7 /* CSSPropertyNames.h */; };
@@ -1544,8 +1546,6 @@
 		854FE7370A2297BE0058D7AD /* Traversal.h in Headers */ = {isa = PBXBuildFile; fileRef = 854FE72D0A2297BE0058D7AD /* Traversal.h */; };
 		854FE7380A2297BE0058D7AD /* TreeWalker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 854FE72E0A2297BE0058D7AD /* TreeWalker.cpp */; };
 		854FE7390A2297BE0058D7AD /* TreeWalker.h in Headers */ = {isa = PBXBuildFile; fileRef = 854FE72F0A2297BE0058D7AD /* TreeWalker.h */; };
-		854FE7400A2297BE0058D7AD /* TransformSourceLibxslt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 854FE72G0A2297BE0058D7AD /* TransformSourceLibxslt.cpp */; };
-		854FE7410A2297BE0058D7AD /* TransformSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 854FE72H0A2297BE0058D7AD /* TransformSource.h */; };
 		855247CF0AD850B80012093B /* DOMHTMLAppletElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 855247CD0AD850B80012093B /* DOMHTMLAppletElementInternal.h */; };
 		855247D00AD850B80012093B /* DOMHTMLEmbedElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 855247CE0AD850B80012093B /* DOMHTMLEmbedElementInternal.h */; };
 		85526C370AB0A17E000302EA /* DOMNodeIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 85526C350AB0A17E000302EA /* DOMNodeIterator.h */; };
@@ -6316,6 +6316,8 @@
 		5D925B660F64D4DD00B847F0 /* ScrollBehavior.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollBehavior.h; sourceTree = "<group>"; };
 		5DA5E0FA102B953800088CF9 /* JSWebSocket.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebSocket.cpp; sourceTree = "<group>"; };
 		5DA5E0FB102B953800088CF9 /* JSWebSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebSocket.h; sourceTree = "<group>"; };
+		5DB1BC6810715A6400EFAA49 /* TransformSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TransformSource.h; sourceTree = "<group>"; };
+		5DB1BC6910715A6400EFAA49 /* TransformSourceLibxslt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TransformSourceLibxslt.cpp; sourceTree = "<group>"; };
 		5DCF836C0D59159800953BC6 /* PluginInfoStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginInfoStore.h; sourceTree = "<group>"; };
 		63189AE20E83A33300012E41 /* NodeRareData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeRareData.h; sourceTree = "<group>"; };
 		637B7ADE0E8767B800E32194 /* ElementRareData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElementRareData.h; sourceTree = "<group>"; };
@@ -6775,8 +6777,6 @@
 		854FE72D0A2297BE0058D7AD /* Traversal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Traversal.h; sourceTree = "<group>"; };
 		854FE72E0A2297BE0058D7AD /* TreeWalker.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TreeWalker.cpp; sourceTree = "<group>"; };
 		854FE72F0A2297BE0058D7AD /* TreeWalker.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TreeWalker.h; sourceTree = "<group>"; };
-		854FE7200A2297BE0058D7AD /* TransformSourceLibxslt.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TransformSourceLibxslt.cpp; sourceTree = "<group>"; };
-		854FE7210A2297BE0058D7AD /* TransformSource.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TransformSource.h; sourceTree = "<group>"; };
 		855247CD0AD850B80012093B /* DOMHTMLAppletElementInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMHTMLAppletElementInternal.h; sourceTree = "<group>"; };
 		855247CE0AD850B80012093B /* DOMHTMLEmbedElementInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMHTMLEmbedElementInternal.h; sourceTree = "<group>"; };
 		85526C350AB0A17E000302EA /* DOMNodeIterator.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMNodeIterator.h; sourceTree = "<group>"; };
@@ -15475,13 +15475,13 @@
 				933A142D0B7D188600A53FFD /* TextEvent.h */,
 				933A142C0B7D188600A53FFD /* TextEvent.idl */,
 				BCCFBAE70B5152ED0001F1D7 /* Tokenizer.h */,
+				5DB1BC6810715A6400EFAA49 /* TransformSource.h */,
+				5DB1BC6910715A6400EFAA49 /* TransformSourceLibxslt.cpp */,
 				854FE72C0A2297BE0058D7AD /* Traversal.cpp */,
 				854FE72D0A2297BE0058D7AD /* Traversal.h */,
 				854FE72E0A2297BE0058D7AD /* TreeWalker.cpp */,
 				854FE72F0A2297BE0058D7AD /* TreeWalker.h */,
 				1A750D3C0A90DE35000FF215 /* TreeWalker.idl */,
-				854FE72G0A2297BE0058D7AD /* TransformSourceLibxslt.cpp */,
-				854FE72H0A2297BE0058D7AD /* TransformSource.h */,
 				85031B370A44EFC700F992E0 /* UIEvent.cpp */,
 				85031B380A44EFC700F992E0 /* UIEvent.h */,
 				141B94EE09EC425A000E9413 /* UIEvent.idl */,
@@ -17904,6 +17904,7 @@
 				7693BAD2106C2DCA007B0823 /* HaltablePlugin.h in Headers */,
 				7693BAD4106C2DCA007B0823 /* PluginHalter.h in Headers */,
 				7693BAD5106C2DCA007B0823 /* PluginHalterClient.h in Headers */,
+				5DB1BC6A10715A6400EFAA49 /* TransformSource.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -19805,7 +19806,6 @@
 				49E911C30EF86D47009D0CAF /* TransformationMatrix.cpp in Sources */,
 				B27535580B053814002CE64F /* TransformationMatrixCG.cpp in Sources */,
 				49E911CF0EF86D47009D0CAF /* TransformOperations.cpp in Sources */,
-				854FE7400A2297BE0058D7AD /* TransformSourceLibxslt.cpp in Sources */,
 				0F500AB10F54DB3100EEF928 /* TransformState.cpp in Sources */,
 				49E911D10EF86D47009D0CAF /* TranslateTransformOperation.cpp in Sources */,
 				854FE7360A2297BE0058D7AD /* Traversal.cpp in Sources */,
@@ -20018,6 +20018,7 @@
 				BCCE58AF1061E90C008FB35A /* JSDocumentFragmentCustom.cpp in Sources */,
 				14CD8D82106B529000A46D23 /* JSSharedWorkerCustom.cpp in Sources */,
 				7693BAD3106C2DCA007B0823 /* PluginHalter.cpp in Sources */,
+				5DB1BC6B10715A6400EFAA49 /* TransformSourceLibxslt.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
