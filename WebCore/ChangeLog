@@ -1,3 +1,14 @@
+2009-09-28  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Allow V8 to handle x/y parameters in a WebKitPoint constructor.
+        https://bugs.webkit.org/show_bug.cgi?id=29823
+
+        Fixes V8's handling of LayoutTests/fast/dom/Window/webkitConvertPoint.html
+
+        * bindings/v8/custom/V8WebKitPointConstructor.cpp: Allow for x/y parameters in constructor.
+
 2009-09-28  Mark Rowe  <mrowe@apple.com>
 
         Fix the build by doing something approximating reasonableness in the Xcode project.
