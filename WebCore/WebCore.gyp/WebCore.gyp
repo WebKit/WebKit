@@ -35,11 +35,18 @@
     '../../WebKit/chromium/features.gypi',
     '../WebCore.gypi',
   ],
-  'variables': {
-    # FIXEME: Sense whether upstream or downstream build, and
-    # point to the right src dir
-    'chromium_src_dir': '../../../..',
+  # Location of the chromium src directory.
+  'conditions': [
+    ['inside_chromium_build==0', {
+      # Webkit is being built outside of the full chromium project.
+      'variables': {'chromium_src_dir': '../../WebKit/chromium'},
+    },{
+      # WebKit is checked out in src/chromium/third_party/WebKit
+      'variables': {'chromium_src_dir': '../../../..'},
+    }],
+  ],  
 
+  'variables': {
     # If set to 1, doesn't compile debug symbols into webcore reducing the
     # size of the binary and increasing the speed of gdb.  gcc only.
     'remove_webcore_debug_symbols%': 0,
@@ -411,19 +418,6 @@
         '../bindings/v8/DerivedSourcesAllInOne.cpp',
 
         '<@(webcore_files)',
-
-        '<(chromium_src_dir)/webkit/extensions/v8/gc_extension.cc',
-        '<(chromium_src_dir)/webkit/extensions/v8/gc_extension.h',
-        '<(chromium_src_dir)/webkit/extensions/v8/gears_extension.cc',
-        '<(chromium_src_dir)/webkit/extensions/v8/gears_extension.h',
-        '<(chromium_src_dir)/webkit/extensions/v8/interval_extension.cc',
-        '<(chromium_src_dir)/webkit/extensions/v8/interval_extension.h',
-        '<(chromium_src_dir)/webkit/extensions/v8/playback_extension.cc',
-        '<(chromium_src_dir)/webkit/extensions/v8/playback_extension.h',
-        '<(chromium_src_dir)/webkit/extensions/v8/profiler_extension.cc',
-        '<(chromium_src_dir)/webkit/extensions/v8/profiler_extension.h',
-        '<(chromium_src_dir)/webkit/extensions/v8/benchmarking_extension.cc',
-        '<(chromium_src_dir)/webkit/extensions/v8/benchmarking_extension.h',
 
         # For WebCoreSystemInterface, Mac-only.
         '../../WebKit/mac/WebCoreSupport/WebSystemInterface.m',

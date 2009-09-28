@@ -1,3 +1,14 @@
+2009-09-28  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29722
+
+        * chromium/DEPS: Describes the chromium port's dependencies and
+          is used by gclient to fetch them.
+        * chromium/webkit.gyp: Currently only builds webcore but in
+          the future will also build the webkit api.
+
 2009-09-26  David Kilzer  <ddkilzer@apple.com>
 
         Part 2 of 2: <http://webkit.org/b/29753> DerivedSources.make broken for non-Mac targets

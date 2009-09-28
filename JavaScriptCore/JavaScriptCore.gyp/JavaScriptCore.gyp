@@ -36,9 +36,16 @@
     '../JavaScriptCore.gypi',
   ],
   'variables': {
-    # FIXME: Sense whether upstream or downstream build, and
-    # point to the right src dir
-    'chromium_src_dir': '../../../..',
+    # Location of the chromium src directory.
+    'conditions': [
+      ['inside_chromium_build==0', {
+        # Webkit is being built outside of the full chromium project.
+        'chromium_src_dir': '../../WebKit/chromium',
+      },{
+        # WebKit is checked out in src/chromium/third_party/WebKit
+        'chromium_src_dir': '../../../..',
+      }],
+    ],
   },
   'targets': [
     {

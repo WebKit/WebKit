@@ -1,3 +1,15 @@
+2009-09-28  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Chromium port - recognize we are being built independently
+        of chromium and look for dependencies under webkit/chromium rather
+        than chromium/src.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29722
+
+        * JavaScriptCore.gyp/JavaScriptCore.gyp:
+
 2009-09-28  Jakub Wieczorek  <faw217@gmail.com>
 
         Reviewed by Simon Hausmann.

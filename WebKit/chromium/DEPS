@@ -1,0 +1,157 @@
+#
+# Copyright (C) 2009 Google Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
+#
+#   * Redistributions of source code must retain the above copyright notice,
+#     this list of conditions and the following disclaimer.
+#   * Redistributions in binary form must reproduce the above copyright 
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#   * Neither the name of Google Inc. nor the names of its contributors 
+#     may be used to endorse or promote products derived from this software
+#     without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+# OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+
+# This file is used by gclient to fetch the projects that the webkit
+# chromium port depends on.
+
+vars = {
+  'chromium_svn': 'http://src.chromium.org/svn/trunk/src',
+  'chromium_deps_svn': 'http://src.chromium.org/svn/trunk/deps/third_party',
+
+  'chromium_rev': '27239', 
+}
+
+deps = {
+  # build tools
+  'build':
+    Var('chromium_svn')+'/build@'+Var('chromium_rev'),
+  'webkit/build':
+      Var('chromium_svn')+'/webkit/build@'+Var('chromium_rev'),
+  'tools/gyp':
+    'http://gyp.googlecode.com/svn/trunk@668',
+
+  # Basic tools
+  'base':
+    Var('chromium_svn')+'/base@'+Var('chromium_rev'),
+
+  # skia dependencies
+  'skia':
+    Var('chromium_svn')+'/skia@'+Var('chromium_rev'),
+  'third_party/skia':
+    'http://skia.googlecode.com/svn/trunk@341',
+
+  # testing
+  'testing':
+    Var('chromium_svn')+'/testing@'+Var('chromium_rev'),
+
+  # v8 javascript engine
+  'v8':
+    'http://v8.googlecode.com/svn/trunk@2966',
+  'webkit/extensions/v8':
+    Var('chromium_svn')+'/webkit/extensions/v8@'+Var('chromium_rev'),
+  
+  # net dependencies
+  'net':
+    Var('chromium_svn')+'/net@'+Var('chromium_rev'),
+  'sdch':
+    Var('chromium_svn')+'/sdch@'+Var('chromium_rev'),
+  'sdch/open-vcdiff':
+    'http://open-vcdiff.googlecode.com/svn/trunk@26',
+  'googleurl':
+    'http://google-url.googlecode.com/svn/trunk@118',
+
+  # other third party
+  'third_party/icu':
+    Var('chromium_deps_svn')+'/icu42@26673',
+
+  'third_party/bzip2':
+    Var('chromium_svn')+'/third_party/bzip2@'+Var('chromium_rev'),
+
+  'third_party/libevent':
+    Var('chromium_svn')+'/third_party/libevent@'+Var('chromium_rev'),
+
+  'third_party/libjpeg':
+    Var('chromium_svn')+'/third_party/libjpeg@'+Var('chromium_rev'),
+
+  'third_party/libpng':
+    Var('chromium_svn')+'/third_party/libpng@'+Var('chromium_rev'),
+
+  'third_party/libxml':
+    Var('chromium_svn')+'/third_party/libxml@'+Var('chromium_rev'),
+
+  'third_party/libxslt':
+    Var('chromium_svn')+'/third_party/libxslt@'+Var('chromium_rev'),
+
+  'third_party/modp_b64':
+    Var('chromium_svn')+'/third_party/modp_b64@'+Var('chromium_rev'),
+
+  'third_party/npapi':
+    Var('chromium_svn')+'/third_party/npapi@'+Var('chromium_rev'),
+
+  'third_party/sqlite':
+    Var('chromium_svn')+'/third_party/sqlite@'+Var('chromium_rev'),
+
+  'third_party/zlib':
+    Var('chromium_svn')+'/third_party/zlib@'+Var('chromium_rev'),
+
+}
+
+skip_child_includes = [
+   # Don't look for dependencies in the following folders: 
+   'base',
+   'build',
+   'googleurl',
+   'net',
+   'sdch',
+   'skia',
+   'testing',
+   'third_party',
+   'tools',
+   'v8',
+   'webkit',
+]
+
+include_rules = [
+  # Everybody can use some things.
+  '+base',
+  '+build',
+  '+ipc',
+
+  # For now, we allow ICU to be included by specifying 'unicode/...', although
+  # this should probably change.
+  '+unicode',
+  '+testing',
+
+  # Allow anybody to include files from the 'public' Skia directory in the
+  # webkit port. This is shared between the webkit port and Chromium.
+  '+webkit/port/platform/graphics/skia/public',
+]
+
+
+hooks = [
+  {
+    # A change to any file in this directory should run the gyp generator.
+    'pattern': '.',
+    'action': ['python',
+               'build/gyp_chromium',
+               '-Dinside_chromium_build=0',
+               '--depth=./',
+               'webkit.gyp'],
+  },
+]
