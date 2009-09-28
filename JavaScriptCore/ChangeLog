@@ -1,3 +1,11 @@
+2009-09-28  Joerg Bornemann  <joerg.bornemann@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Add ARM version detection for Windows CE.
+
+        * wtf/Platform.h:
+
 2009-09-26  Yongjun Zhang  <yongjun.zhang@nokia.com>
 
         Reviewed by Simon Hausmann.
