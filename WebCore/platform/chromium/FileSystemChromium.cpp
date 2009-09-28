@@ -77,19 +77,4 @@ bool fileExists(const String& path)
     return ChromiumBridge::fileExists(path);
 }
 
-String getAbsolutePath(const String& path)
-{
-    return ChromiumBridge::getAbsolutePath(path);
-}
-
-bool isDirectory(const String& path)
-{
-    return ChromiumBridge::isDirectory(path);
-}
-
-KURL filePathToURL(const String& path)
-{
-    return ChromiumBridge::filePathToURL(path);
-}
-
 } // namespace WebCore
