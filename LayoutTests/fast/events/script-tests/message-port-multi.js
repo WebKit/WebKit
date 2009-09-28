@@ -60,3 +60,4 @@ channel.port2.onmessage = function(event) {
         testFailed("Received unexpected message: " + event.data);
 }
 
+var successfullyParsed = true;
