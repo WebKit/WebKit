@@ -30,6 +30,7 @@
 #include "GraphicsContext.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
+#include "MediaControlElements.h"
 #include "Page.h"
 #include "RenderStyle.h"
 #include "RenderView.h"
@@ -395,6 +396,23 @@ bool RenderTheme::hitTestMediaControlPart(RenderObject* o, const IntPoint& absPo
 
     FloatPoint localPoint = o->absoluteToLocal(absPoint, false, true);  // respect transforms
     return toRenderBox(o)->borderBoxRect().contains(roundedIntPoint(localPoint));
+}
+
+bool RenderTheme::shouldRenderMediaControlPart(ControlPart part, Element* e)
+{
+    HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(e);
+    switch (part) {
+    case MediaMuteButtonPart:
+        return mediaElement->hasAudio();
+    case MediaRewindButtonPart:
+        return mediaElement->movieLoadType() != MediaPlayer::LiveStream;
+    case MediaReturnToRealtimeButtonPart:
+        return mediaElement->movieLoadType() == MediaPlayer::LiveStream;
+    case MediaFullscreenButtonPart:
+        return mediaElement->supportsFullscreen();
+    default:
+        return true;
+    }
 }
 #endif
 

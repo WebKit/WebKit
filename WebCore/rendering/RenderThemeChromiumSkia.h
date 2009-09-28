@@ -126,6 +126,11 @@ namespace WebCore {
         virtual int buttonInternalPaddingTop() const;
         virtual int buttonInternalPaddingBottom() const;
 
+#if ENABLE(VIDEO)
+        // Media controls
+        virtual bool shouldRenderMediaControlPart(ControlPart, Element*);
+#endif
+
         // Provide a way to pass the default font size from the Settings object
         // to the render theme.  FIXME: http://b/1129186 A cleaner way would be
         // to remove the default font size from this object and have callers

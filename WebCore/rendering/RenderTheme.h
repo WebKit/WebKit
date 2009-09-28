@@ -172,6 +172,7 @@ public:
 #if ENABLE(VIDEO)
     // Media controls
     virtual bool hitTestMediaControlPart(RenderObject*, const IntPoint& absPoint);
+    virtual bool shouldRenderMediaControlPart(ControlPart, Element*);
 #endif
 
 protected:

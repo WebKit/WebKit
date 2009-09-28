@@ -1,3 +1,24 @@
+2009-09-28  Andrew Scherkus  <scherkus@chromium.org>
+
+        Reviewed by Eric Carlson.
+
+        Delegate implementation of rendererIsNeeded() for media control elements to RenderTheme.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28689
+
+        Covered by LayoutTests/media/video-no-audio.html
+
+        * rendering/MediaControlElements.cpp: Removed subclass implementations of rendererIsNeeded().
+        (WebCore::MediaControlElement::rendererIsNeeded): Include calling shouldRenderMediaControlPart().
+        (WebCore::MediaControlInputElement::rendererIsNeeded): Include calling shouldRenderMediaControlPart().
+        * rendering/MediaControlElements.h:
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::shouldRenderMediaControlPart): New method.  Contains logic moved from subclass implementations of rendererIsNeeded().
+        * rendering/RenderTheme.h:
+        * rendering/RenderThemeChromiumSkia.cpp:
+        (WebCore::RenderThemeChromiumSkia::shouldRenderMediaControlPart): Override to always render mute button.
+        * rendering/RenderThemeChromiumSkia.h:
+
 2009-09-28  Jian Li  <jianli@chromium.org>
 
         Reviewed by David Levin.

@@ -868,6 +868,19 @@ int RenderThemeChromiumSkia::buttonInternalPaddingBottom() const
     return 1;
 }
 
+#if ENABLE(VIDEO)
+bool RenderThemeChromiumSkia::shouldRenderMediaControlPart(ControlPart part, Element* e)
+{
+    HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(e);
+    switch (part) {
+    case MediaMuteButtonPart:
+        return true;
+    default:
+        return RenderTheme::shouldRenderMediaControlPart(part, e);
+    }
+}
+#endif
+
 // static
 void RenderThemeChromiumSkia::setDefaultFontSize(int fontSize)
 {

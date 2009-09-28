@@ -155,9 +155,6 @@ public:
     bool hitTest(const IntPoint& absPoint);
     MediaControlElementType displayType() const { return m_displayType; }
 
-    // Some elements are disabled by movie state (eg. mute if no audio).
-    virtual bool disabled() const  { return false; }
-
     HTMLMediaElement* mediaElement() const { return m_mediaElement; }
     virtual bool isMediaControlElement() const { return true; }
 
@@ -177,8 +174,6 @@ public:
     MediaControlMuteButtonElement(Document*, HTMLMediaElement*);
     virtual void defaultEventHandler(Event*);
     virtual void updateDisplayType();
-    virtual bool disabled() const;
-    virtual bool rendererIsNeeded(RenderStyle*);
 };
 
 // ----------------------------
@@ -212,7 +207,6 @@ class MediaControlRewindButtonElement : public MediaControlInputElement {
 public:
     MediaControlRewindButtonElement(Document*, HTMLMediaElement*);
     virtual void defaultEventHandler(Event*);
-    virtual bool rendererIsNeeded(RenderStyle*);
 };
 
 // ----------------------------
@@ -221,7 +215,6 @@ class MediaControlReturnToRealtimeButtonElement : public MediaControlInputElemen
 public:
     MediaControlReturnToRealtimeButtonElement(Document*, HTMLMediaElement*);
     virtual void defaultEventHandler(Event*);
-    virtual bool rendererIsNeeded(RenderStyle*);
 };    
 
 // ----------------------------
@@ -247,7 +240,6 @@ class MediaControlFullscreenButtonElement : public MediaControlInputElement {
 public:
     MediaControlFullscreenButtonElement(Document*, HTMLMediaElement*);
     virtual void defaultEventHandler(Event*);
-    virtual bool rendererIsNeeded(RenderStyle*);
 };
 
 // ----------------------------
