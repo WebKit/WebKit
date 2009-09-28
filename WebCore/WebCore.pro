@@ -127,7 +127,6 @@ contains(DEFINES, ENABLE_SINGLE_THREADED=1) {
 !contains(DEFINES, ENABLE_DASHBOARD_SUPPORT=.): DEFINES += ENABLE_DASHBOARD_SUPPORT=0
 !contains(DEFINES, ENABLE_FILTERS=.): DEFINES += ENABLE_FILTERS=0
 !contains(DEFINES, ENABLE_XPATH=.): DEFINES += ENABLE_XPATH=1
-!contains(DEFINES, ENABLE_XSLT=.): DEFINES += ENABLE_XSLT=0
 #!contains(DEFINES, ENABLE_XBL=.): DEFINES += ENABLE_XBL=1
 !contains(DEFINES, ENABLE_WCSS=.): DEFINES += ENABLE_WCSS=0
 !contains(DEFINES, ENABLE_WML=.): DEFINES += ENABLE_WML=0
@@ -171,6 +170,12 @@ contains(DEFINES, ENABLE_SINGLE_THREADED=1) {
 
 # Web Socket support.
 !contains(DEFINES, ENABLE_WEB_SOCKETS=.): DEFINES += ENABLE_WEB_SOCKETS=1
+
+# XSLT support with QtXmlPatterns
+!contains(DEFINES, ENABLE_XSLT=.) {
+    contains(QT_CONFIG, xmlpatterns):!lessThan(QT_MINOR_VERSION, 5):DEFINES += ENABLE_XSLT=1
+    else:DEFINES += ENABLE_XSLT=0
+}
 
 DEFINES += WTF_USE_JAVASCRIPTCORE_BINDINGS=1 WTF_CHANGES=1
 
@@ -908,7 +913,6 @@ SOURCES += \
     dom/WheelEvent.cpp \
     dom/XMLTokenizer.cpp \
     dom/XMLTokenizerQt.cpp \
-    dom/XMLTokenizerScope.cpp \
     dom/default/PlatformMessagePortChannel.cpp \
     editing/AppendNodeCommand.cpp \
     editing/ApplyStyleCommand.cpp \
@@ -1568,6 +1572,7 @@ HEADERS += \
     dom/TagNodeList.h \
     dom/TextEvent.h \
     dom/Text.h \
+    dom/TransformSource.h \
     dom/Traversal.h \
     dom/TreeWalker.h \
     dom/UIEvent.h \
@@ -1576,7 +1581,6 @@ HEADERS += \
     dom/WebKitTransitionEvent.h \
     dom/WheelEvent.h \
     dom/XMLTokenizer.h \
-    dom/XMLTokenizerScope.h \
     editing/AppendNodeCommand.h \
     editing/ApplyStyleCommand.h \
     editing/BreakBlockquoteCommand.h \
@@ -2714,25 +2718,16 @@ unix:!mac:CONFIG += link_pkgconfig
 
 contains(DEFINES, ENABLE_XSLT=1) {
     FEATURE_DEFINES_JAVASCRIPT += ENABLE_XSLT=1
-    PKGCONFIG += libxml-2.0 libxslt
 
-    macx {
-        INCLUDEPATH += /usr/include/libxml2
-        LIBS += -lxml2 -lxslt
-    }
-
-    win32-msvc* {
-        LIBS += -llibxml2 -llibxslt
-    }
+    QT += xmlpatterns
 
     SOURCES += \
         bindings/js/JSXSLTProcessorConstructor.cpp \
         bindings/js/JSXSLTProcessorCustom.cpp \
-        xml/XSLImportRule.cpp \
-        xml/XSLStyleSheet.cpp \
-        xml/XSLTExtensions.cpp \
+        dom/TransformSourceQt.cpp \
+        xml/XSLStyleSheetQt.cpp \
         xml/XSLTProcessor.cpp \
-        xml/XSLTUnicodeSort.cpp
+        xml/XSLTProcessorQt.cpp
 }
 
 contains(DEFINES, ENABLE_XBL=1) {

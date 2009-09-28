@@ -1,3 +1,47 @@
+2009-09-28  Jakub Wieczorek  <faw217@gmail.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Implement XSLT support with QtXmlPatterns.
+        https://bugs.webkit.org/show_bug.cgi?id=28303
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCoreSources.bkl:
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::~Document):
+        (WebCore::Document::setTransformSource):
+        * dom/Document.h:
+        (WebCore::Document::transformSource):
+        * dom/TransformSource.h: Added.
+        (WebCore::TransformSource::platformSource):
+        * dom/TransformSourceLibxslt.cpp: Added.
+        (WebCore::TransformSource::TransformSource): Wraps a libxml2 document.
+        (WebCore::TransformSource::~TransformSource):
+        * dom/TransformSourceQt.cpp: Added.
+        (WebCore::TransformSource::TransformSource): Wraps a plain string.
+        (WebCore::TransformSource::~TransformSource):
+        * dom/XMLTokenizerLibxml2.cpp:
+        (WebCore::XMLTokenizer::doEnd):
+        * dom/XMLTokenizerQt.cpp:
+        (WebCore::XMLTokenizer::doEnd):
+        (WebCore::XMLTokenizer::parseProcessingInstruction):
+        * xml/XSLStyleSheet.h:
+        (WebCore::XSLStyleSheet::sheetString):
+        * xml/XSLStyleSheetLibxslt.cpp:
+        (WebCore::XSLStyleSheet::document):
+        * xml/XSLStyleSheetQt.cpp: Added.
+        * xml/XSLTProcessor.h:
+        * xml/XSLTProcessorLibxslt.cpp:
+        (WebCore::xmlDocPtrFromNode):
+        * xml/XSLTProcessorQt.cpp: Added.
+        (WebCore::XSLTMessageHandler::XSLTMessageHandler): A subclass of QAbstractMessageHandler.
+        (WebCore::XSLTMessageHandler::handleMessage): Forwards all processor messages to the Console.
+        (WebCore::XSLTProcessor::transformToString): Uses QXmlQuery.
+
 2009-09-28  Yongjun Zhang  <yongjun.zhang@nokia.com>
 
         Reviewed by Eric Seidel.

@@ -50,6 +50,7 @@
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
 #include "TextResourceDecoder.h"
+#include "TransformSource.h"
 #include "XMLTokenizerScope.h"
 #include <libxml/parser.h>
 #include <libxml/parserInternals.h>
@@ -1280,7 +1281,8 @@ void XMLTokenizer::doEnd()
 {
 #if ENABLE(XSLT)
     if (m_sawXSLTransform) {
-        m_doc->setTransformSource(xmlDocPtrForString(m_doc->docLoader(), m_originalSourceForTransform, m_doc->url().string()));
+        void* doc = xmlDocPtrForString(m_doc->docLoader(), m_originalSourceForTransform, m_doc->url().string());
+        m_doc->setTransformSource(new TransformSource(doc));
         
         m_doc->setParsing(false); // Make the doc think it's done, so it will apply xsl sheets.
         m_doc->updateStyleSelector();

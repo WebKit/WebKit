@@ -1544,6 +1544,8 @@
 		854FE7370A2297BE0058D7AD /* Traversal.h in Headers */ = {isa = PBXBuildFile; fileRef = 854FE72D0A2297BE0058D7AD /* Traversal.h */; };
 		854FE7380A2297BE0058D7AD /* TreeWalker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 854FE72E0A2297BE0058D7AD /* TreeWalker.cpp */; };
 		854FE7390A2297BE0058D7AD /* TreeWalker.h in Headers */ = {isa = PBXBuildFile; fileRef = 854FE72F0A2297BE0058D7AD /* TreeWalker.h */; };
+		854FE7400A2297BE0058D7AD /* TransformSourceLibxslt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 854FE72G0A2297BE0058D7AD /* TransformSourceLibxslt.cpp */; };
+		854FE7410A2297BE0058D7AD /* TransformSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 854FE72H0A2297BE0058D7AD /* TransformSource.h */; };
 		855247CF0AD850B80012093B /* DOMHTMLAppletElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 855247CD0AD850B80012093B /* DOMHTMLAppletElementInternal.h */; };
 		855247D00AD850B80012093B /* DOMHTMLEmbedElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 855247CE0AD850B80012093B /* DOMHTMLEmbedElementInternal.h */; };
 		85526C370AB0A17E000302EA /* DOMNodeIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 85526C350AB0A17E000302EA /* DOMNodeIterator.h */; };
@@ -6773,6 +6775,8 @@
 		854FE72D0A2297BE0058D7AD /* Traversal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Traversal.h; sourceTree = "<group>"; };
 		854FE72E0A2297BE0058D7AD /* TreeWalker.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TreeWalker.cpp; sourceTree = "<group>"; };
 		854FE72F0A2297BE0058D7AD /* TreeWalker.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TreeWalker.h; sourceTree = "<group>"; };
+		854FE72G0A2297BE0058D7AD /* TransformSourceLibxslt.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TransformSourceLibxslt.cpp; sourceTree = "<group>"; };
+		854FE72H0A2297BE0058D7AD /* TransformSource.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TransformSource.h; sourceTree = "<group>"; };
 		855247CD0AD850B80012093B /* DOMHTMLAppletElementInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMHTMLAppletElementInternal.h; sourceTree = "<group>"; };
 		855247CE0AD850B80012093B /* DOMHTMLEmbedElementInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMHTMLEmbedElementInternal.h; sourceTree = "<group>"; };
 		85526C350AB0A17E000302EA /* DOMNodeIterator.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMNodeIterator.h; sourceTree = "<group>"; };
@@ -15476,6 +15480,8 @@
 				854FE72E0A2297BE0058D7AD /* TreeWalker.cpp */,
 				854FE72F0A2297BE0058D7AD /* TreeWalker.h */,
 				1A750D3C0A90DE35000FF215 /* TreeWalker.idl */,
+				854FE72G0A2297BE0058D7AD /* TransformSourceLibxslt.cpp */,
+				854FE72H0A2297BE0058D7AD /* TransformSource.h */,
 				85031B370A44EFC700F992E0 /* UIEvent.cpp */,
 				85031B380A44EFC700F992E0 /* UIEvent.h */,
 				141B94EE09EC425A000E9413 /* UIEvent.idl */,
@@ -19799,6 +19805,7 @@
 				49E911C30EF86D47009D0CAF /* TransformationMatrix.cpp in Sources */,
 				B27535580B053814002CE64F /* TransformationMatrixCG.cpp in Sources */,
 				49E911CF0EF86D47009D0CAF /* TransformOperations.cpp in Sources */,
+				854FE7400A2297BE0058D7AD /* TransformSourceLibxslt.cpp in Sources */,
 				0F500AB10F54DB3100EEF928 /* TransformState.cpp in Sources */,
 				49E911D10EF86D47009D0CAF /* TranslateTransformOperation.cpp in Sources */,
 				854FE7360A2297BE0058D7AD /* Traversal.cpp in Sources */,

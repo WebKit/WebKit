@@ -777,11 +777,11 @@ on MinGW. See https://bugs.webkit.org/show_bug.cgi?id=29268 */
 #define ENABLE_PAN_SCROLLING 1
 #endif
 
-/* Use the QtXmlStreamReader implementation for XMLTokenizer */
+/* Use the QXmlStreamReader implementation for XMLTokenizer */
+/* Use the QXmlQuery implementation for XSLTProcessor */
 #if PLATFORM(QT)
-#if !ENABLE(XSLT)
 #define WTF_USE_QXMLSTREAM 1
-#endif
+#define WTF_USE_QXMLQUERY 1
 #endif
 
 #if !PLATFORM(QT)

@@ -1110,6 +1110,8 @@
             'dom/TextEvent.cpp',
             'dom/TextEvent.h',
             'dom/Tokenizer.h',
+            'dom/TransformSourceLibxslt.cpp',
+            'dom/TransformSource.h',
             'dom/Traversal.cpp',
             'dom/Traversal.h',
             'dom/TreeWalker.cpp',

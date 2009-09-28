@@ -2410,6 +2410,8 @@ FEATURE_DEFINES_JAVASCRIPT += ENABLE_XSLT=1
 webcore_cppflags += -DENABLE_XSLT=1
 
 webcore_sources += \
+	WebCore/dom/TransformSourceLibxslt.cpp \
+	WebCore/dom/TransformSource.h \
 	WebCore/xml/XSLImportRule.cpp \
 	WebCore/xml/XSLImportRule.h \
 	WebCore/xml/XSLStyleSheetLibxslt.cpp \

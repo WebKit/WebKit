@@ -31,6 +31,7 @@
 #include "Document.h"
 #include "Frame.h"
 #include "Node.h"
+#include "TransformSource.h"
 #include "XMLTokenizer.h"
 #include "XMLTokenizerScope.h"
 #include "XSLImportRule.h"
@@ -57,9 +58,9 @@ namespace WebCore {
 XSLStyleSheet::XSLStyleSheet(XSLImportRule* parentRule, const String& href)
     : StyleSheet(parentRule, href)
     , m_ownerDocument(0)
-    , m_stylesheetDoc(0)
     , m_embedded(false)
     , m_processed(false) // Child sheets get marked as processed when the libxslt engine has finally seen them.
+    , m_stylesheetDoc(0)
     , m_stylesheetDocTaken(false)
     , m_parentStyleSheet(0)
 {
@@ -68,9 +69,9 @@ XSLStyleSheet::XSLStyleSheet(XSLImportRule* parentRule, const String& href)
 XSLStyleSheet::XSLStyleSheet(Node* parentNode, const String& href,  bool embedded)
     : StyleSheet(parentNode, href)
     , m_ownerDocument(parentNode->document())
-    , m_stylesheetDoc(0)
     , m_embedded(embedded)
     , m_processed(true) // The root sheet starts off processed.
+    , m_stylesheetDoc(0)
     , m_stylesheetDocTaken(false)
     , m_parentStyleSheet(0)
 {
@@ -108,8 +109,8 @@ void XSLStyleSheet::checkLoaded()
 
 xmlDocPtr XSLStyleSheet::document()
 {
-    if (m_embedded && ownerDocument())
-        return (xmlDocPtr)ownerDocument()->transformSource();
+    if (m_embedded && ownerDocument() && ownerDocument()->transformSource())
+        return (xmlDocPtr)ownerDocument()->transformSource()->platformSource();
     return m_stylesheetDoc;
 }
 

@@ -35,6 +35,7 @@
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include "TransformSource.h"
 #include "XMLTokenizer.h"
 #include "XSLStyleSheet.h"
 #include "XSLTExtensions.h"
@@ -241,8 +242,8 @@ static inline xmlDocPtr xmlDocPtrFromNode(Node* sourceNode, bool& shouldDelete)
     bool sourceIsDocument = (sourceNode == ownerDocument.get());
 
     xmlDocPtr sourceDoc = 0;
-    if (sourceIsDocument)
-        sourceDoc = (xmlDocPtr)ownerDocument->transformSource();
+    if (sourceIsDocument && ownerDocument->transformSource())
+        sourceDoc = (xmlDocPtr)ownerDocument->transformSource()->platformSource();
     if (!sourceDoc) {
         sourceDoc = (xmlDocPtr)xmlDocPtrForString(ownerDocument->docLoader(), createMarkup(sourceNode),
             sourceIsDocument ? ownerDocument->url().string() : String());

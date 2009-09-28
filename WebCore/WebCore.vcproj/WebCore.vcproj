@@ -24476,6 +24476,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\dom\TransformSourceLibxslt.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\TransformSource.h"
+				>
+			</File>
+			<File
 				RelativePath="..\dom\Traversal.cpp"
 				>
 			</File>

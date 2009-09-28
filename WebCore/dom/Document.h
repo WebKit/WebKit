@@ -37,6 +37,8 @@
 #include "ScriptExecutionContext.h"
 #include "Timer.h"
 #include <wtf/HashCountedSet.h>
+#include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
@@ -103,6 +105,10 @@ namespace WebCore {
     class SVGDocumentExtensions;
 #endif
     
+#if ENABLE(XSLT)
+    class TransformSource;
+#endif
+
 #if ENABLE(XBL)
     class XBLBindingManager;
 #endif
@@ -746,10 +752,11 @@ public:
 
 #if ENABLE(XSLT)
     void applyXSLTransform(ProcessingInstruction* pi);
-    void setTransformSource(void* doc);
-    const void* transformSource() { return m_transformSource; }
     PassRefPtr<Document> transformSourceDocument() { return m_transformSourceDocument; }
     void setTransformSourceDocument(Document* doc) { m_transformSourceDocument = doc; }
+
+    void setTransformSource(PassOwnPtr<TransformSource>);
+    TransformSource* transformSource() const { return m_transformSource.get(); }
 #endif
 
 #if ENABLE(XBL)
@@ -1054,7 +1061,7 @@ private:
     Timer<Document> m_executeScriptSoonTimer;
     
 #if ENABLE(XSLT)
-    void* m_transformSource;
+    OwnPtr<TransformSource> m_transformSource;
     RefPtr<Document> m_transformSourceDocument;
 #endif
 

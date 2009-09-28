@@ -1,3 +1,12 @@
+2009-09-28  Jakub Wieczorek  <faw217@gmail.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Implement XSLT support with QtXmlPatterns.
+        https://bugs.webkit.org/show_bug.cgi?id=28303
+
+        * wtf/Platform.h: Add a WTF_USE_QXMLQUERY #define.
+
 2009-09-28  Yongjun Zhang  <yongjun.zhang@nokia.com>
 
         Reviewed by Eric Seidel.

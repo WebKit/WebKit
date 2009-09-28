@@ -507,6 +507,7 @@ This file contains the list of files needed to build WebCore.
         dom/TagNodeList.cpp
         dom/Text.cpp
         dom/TextEvent.cpp
+        dom/TransformSourceLibxslt.cpp
         dom/Traversal.cpp
         dom/TreeWalker.cpp
         dom/UIEvent.cpp

@@ -116,6 +116,7 @@
 #include "TextIterator.h"
 #include "TextResourceDecoder.h"
 #include "Timer.h"
+#include "TransformSource.h"
 #include "TreeWalker.h"
 #include "UIEvent.h"
 #include "WebKitAnimationEvent.h"
@@ -321,9 +322,6 @@ Document::Document(Frame* frame, bool isXHTML)
     , m_titleSetExplicitly(false)
     , m_updateFocusAppearanceTimer(this, &Document::updateFocusAppearanceTimerFired)
     , m_executeScriptSoonTimer(this, &Document::executeScriptSoonTimerFired)
-#if ENABLE(XSLT)
-    , m_transformSource(0)
-#endif
     , m_xmlVersion("1.0")
     , m_xmlStandalone(false)
 #if ENABLE(XBL)
@@ -486,10 +484,6 @@ Document::~Document()
         delete m_renderArena;
         m_renderArena = 0;
     }
-
-#if ENABLE(XSLT)
-    xmlFreeDoc((xmlDocPtr)m_transformSource);
-#endif
 
 #if ENABLE(XBL)
     delete m_bindingManager;
@@ -3850,13 +3844,11 @@ void Document::applyXSLTransform(ProcessingInstruction* pi)
     processor->createDocumentFromSource(newSource, resultEncoding, resultMIMEType, this, frame());
 }
 
-void Document::setTransformSource(void* doc)
+void Document::setTransformSource(PassOwnPtr<TransformSource> source)
 {
-    if (doc == m_transformSource)
+    if (m_transformSource == source)
         return;
-
-    xmlFreeDoc((xmlDocPtr)m_transformSource);
-    m_transformSource = doc;
+    m_transformSource = source;
 }
 
 #endif
