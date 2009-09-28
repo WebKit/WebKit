@@ -1589,6 +1589,11 @@ sub GetNativeTypeFromSignature
 
     my $type = GetTypeFromSignature($signature);
 
+    if ($type eq "unsigned long" and $signature->extendedAttributes->{"IsIndex"}) {
+        # Special-case index arguments because we need to check that they aren't < 0.
+        return "int";
+    }
+
     return GetNativeType($type, $isParameter);
 }
 
