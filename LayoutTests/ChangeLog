@@ -1,3 +1,15 @@
+2009-09-28  Jakub Wieczorek  <faw217@gmail.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Update the Skipped list after adding XSLT support.
+        https://bugs.webkit.org/show_bug.cgi?id=29817
+
+        Remove the tests that are passing now and skip these that are not,
+        with a reason of failure for each of them.
+
+        * platform/qt/Skipped:
+
 2009-09-28  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Simon Fraser.

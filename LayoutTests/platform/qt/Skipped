@@ -1,6 +1,5 @@
 # ------- missing features
 accessibility
-fast/xsl
 media
 webarchive
 svg/webarchive
@@ -146,11 +145,39 @@ editing/pasteboard/testcase-9507.html
 editing/pasteboard/undoable-fragment-removes.html
 editing/pasteboard/unrendered-br.html
 
-# ------- failures due to missing XSLT support
-fast/dom/Window/get-set-properties.html
-fast/dom/Window/window-properties.html
-fast/js/instanceof-operator.html
-fast/dom/prototype-inheritance.html
+# ------- failures due to missing support for particular XSLT features
+# xsl:output
+fast/xsl/xslt-doc-enc.xml
+fast/xsl/xslt-url.xml
+fast/xsl/default-html.html
+fast/xsl/xslt-text.html
+fast/xsl/xslt-entity.xml
+fast/xsl/xslt-extra-content-at-end.xml
+# external entities support
+fast/xsl/dtd-in-source-document.xml
+fast/xsl/xslt-second-level-import.xml
+fast/parser/external-entities-in-xslt.xml
+# exslt:node-set() function
+fast/xsl/exslt-node-set.xml
+# xsl:import
+fast/xsl/import-after-comment.xml
+fast/xsl/xslt-import-depth.xml
+fast/xsl/xslt-nested-stylesheets.xml
+# xsl:attribute-set
+fast/xsl/mozilla-tests.xml
+# xsl:sort: lang and case-order
+fast/xsl/sort-locale.xml
+fast/xsl/sort-unicode.xml
+# output formatting issues (might be related to the lack of xsl:output support)
+fast/xsl/xslt-processor.html
+# to be investigated
+fast/xsl/xslt-enc16.xml
+fast/xsl/xslt-enc16to16.xml
+fast/xsl/xslt-enc-cyr.xml
+fast/xsl/xslt-enc.xml
+fast/xsl/xslt-relative-path.xml
+fast/xsl/xslt-missing-namespace-in-xslt.xml
+fast/xsl/xslt_unicode.xml
 
 # ------- failures for tests with results
 fast/forms/drag-out-of-textarea.html
@@ -170,7 +197,6 @@ fast/css/ignore-text-zoom.html
 fast/dom/clientWidthAfterDocumentIsRemoved.html
 fast/dom/focus-contenteditable.html
 fast/dom/gc-10.html
-fast/dom/global-constructors.html
 fast/dom/isindex-002.html
 fast/dom/object-embed-plugin-scripting.html
 fast/dom/replaceChild.html
@@ -209,7 +235,6 @@ fast/events/ondragenter.html
 fast/events/reveal-link-when-focused.html
 fast/events/standalone-image-drag-to-editable.html
 fast/events/updateLayoutForHitTest.html
-fast/events/xsl-onload.xhtml
 fast/forms/input-list.html
 fast/forms/input-selectedoption.html
 fast/forms/access-key.html
@@ -259,7 +284,6 @@ fast/overflow/overflow-rtl.html
 fast/overflow/overflow-x-y.html
 fast/overflow/scroll-nested-positioned-layer-in-overflow.html
 fast/overflow/scrollRevealButton.html
-fast/parser/external-entities-in-xslt.xml
 fast/parser/external-entities.xml
 fast/parser/xhtml-alternate-entities.xml
 fast/repaint/box-shadow-h.html
@@ -289,40 +313,6 @@ fast/text/large-text-composed-char-dos.html
 fast/text/midword-break-after-breakable-char.html
 fast/text/textIteratorNilRenderer.html
 fast/text/international/002.html
-fast/xsl/default-html.html
-fast/xsl/document-function.xml
-fast/xsl/document-function.xml
-fast/xsl/dtd-in-source-document.xml
-fast/xsl/dtd-in-source-document.xml
-fast/xsl/exslt-node-set.xml
-fast/xsl/mozilla-tests.xml
-fast/xsl/mozilla-tests.xml
-fast/xsl/transform-xhr-doc.xhtml
-fast/xsl/transformToFragment-XML-declaration.html
-fast/xsl/xslt-doc-enc.xml
-fast/xsl/xslt-doc-noenc.xml
-fast/xsl/xslt-enc16.xml
-fast/xsl/xslt-enc16to16.xml
-fast/xsl/xslt-enc-cyr.xml
-fast/xsl/xslt-enc.xml
-fast/xsl/xslt-entity-enc.xml
-fast/xsl/xslt-entity.xml
-fast/xsl/xslt-extra-content-at-end.xml
-fast/xsl/xslt-extra-content-at-end.xml
-fast/xsl/xslt-fragment-in-empty-doc.html
-fast/xsl/xslt-import-depth.xml
-fast/xsl/xslt-mismatched-tags-in-xslt.xml
-fast/xsl/xslt-missing-namespace-in-xslt.xml
-fast/xsl/xslt-processor.html
-fast/xsl/xslt-processor.html
-fast/xsl/xslt-recursion.xml
-fast/xsl/xslt-relative-path.xml
-fast/xsl/xslt-relative-path.xml
-fast/xsl/xslt-second-level-import.xml
-fast/xsl/xslt-second-level-import.xml
-fast/xsl/xslt-string-parameters.html
-fast/xsl/xslt-url.xml
-fast/xsl/xslt_unicode.xml
 
 plugins/call-as-function-test.html
 plugins/destroy-during-npp-new.html
@@ -2577,7 +2567,6 @@ fast/dom/css-inline-style-important.html
 fast/dom/css-mediarule-deleteRule-update.html
 fast/dom/css-mediarule-insertRule-update.html
 fast/dom/css-rule-functions.html
-fast/dom/dom-constructors.html
 fast/dom/dom-parse-serialize-display.html
 fast/dom/dom-parse-serialize.html
 fast/dom/Element/class-attribute-whitespace.html
@@ -4701,7 +4690,6 @@ fast/dom/location-assign.html
 fast/dom/tabindex-clamp.html
 fast/dom/Document/document-charset.html
 fast/dom/HTMLScriptElement/nested-execution.html
-fast/dom/Window/custom-constructors.html
 fast/dom/Window/webkitConvertPoint.html
 fast/dom/Window/window-lookup-precedence.html
 fast/encoding/char-encoding-mac.html
