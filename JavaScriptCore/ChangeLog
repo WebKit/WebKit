@@ -1,5 +1,12 @@
 2009-09-28  Geoffrey Garen  <ggaren@apple.com>
 
+        Windows build fix: removed exports that no longer exist.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore_debug.def:
+
+2009-09-28  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Darin Adler.
 
         NotNullPassRefPtr: smart pointer optimized for passing references that are not null

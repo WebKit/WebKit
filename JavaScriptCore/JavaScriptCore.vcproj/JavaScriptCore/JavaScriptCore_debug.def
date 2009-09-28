@@ -3,16 +3,9 @@ LIBRARY    "JavaScriptCore_debug"
 EXPORTS
     ??0Collator@WTF@@QAE@PBD@Z
     ??0DropAllLocks@JSLock@JSC@@QAE@W4JSLockBehavior@2@@Z
-    ??0InternalFunction@JSC@@IAE@PAVJSGlobalData@1@V?$PassRefPtr@VStructure@JSC@@@WTF@@ABVIdentifier@1@@Z
-    ??0JSArray@JSC@@QAE@V?$PassRefPtr@VStructure@JSC@@@WTF@@@Z
-    ??0JSArray@JSC@@QAE@V?$PassRefPtr@VStructure@JSC@@@WTF@@ABVArgList@1@@Z
-    ??0JSByteArray@JSC@@QAE@PAVExecState@1@V?$PassRefPtr@VStructure@JSC@@@WTF@@PAVByteArray@4@PBUClassInfo@1@@Z
-    ??0JSFunction@JSC@@QAE@PAVExecState@1@V?$PassRefPtr@VStructure@JSC@@@WTF@@HABVIdentifier@1@P6I?AVJSValue@1@0PAVJSObject@1@V61@ABVArgList@1@@Z@Z
     ??0Mutex@WTF@@QAE@XZ
     ??0PrototypeFunction@JSC@@QAE@PAVExecState@1@HABVIdentifier@1@P6I?AVJSValue@1@0PAVJSObject@1@V41@ABVArgList@1@@Z@Z
-    ??0PrototypeFunction@JSC@@QAE@PAVExecState@1@V?$PassRefPtr@VStructure@JSC@@@WTF@@HABVIdentifier@1@P6I?AVJSValue@1@0PAVJSObject@1@V61@ABVArgList@1@@Z@Z
     ??0RefCountedLeakCounter@WTF@@QAE@PBD@Z
-    ??0StringObject@JSC@@QAE@PAVExecState@1@V?$PassRefPtr@VStructure@JSC@@@WTF@@ABVUString@1@@Z
     ??0Structure@JSC@@AAE@VJSValue@1@ABVTypeInfo@1@@Z
     ??0ThreadCondition@WTF@@QAE@XZ
     ??0UString@JSC@@QAE@PBD@Z
