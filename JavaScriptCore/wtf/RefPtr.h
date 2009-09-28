@@ -48,13 +48,13 @@ namespace WTF {
         RefPtr(HashTableDeletedValueType) : m_ptr(hashTableDeletedValue()) { }
         bool isHashTableDeletedValue() const { return m_ptr == hashTableDeletedValue(); }
 
-        ~RefPtr() { if (T* ptr = m_ptr) ptr->deref(); }
+        ~RefPtr() { derefIfNotNull(m_ptr); }
         
         template <typename U> RefPtr(const RefPtr<U>& o) : m_ptr(o.get()) { if (T* ptr = m_ptr) ptr->ref(); }
         
         T* get() const { return m_ptr; }
         
-        void clear() { if (T* ptr = m_ptr) ptr->deref(); m_ptr = 0; }
+        void clear() { derefIfNotNull(m_ptr); m_ptr = 0; }
         PassRefPtr<T> release() { PassRefPtr<T> tmp = adoptRef(m_ptr); m_ptr = 0; return tmp; }
 
         T& operator*() const { return *m_ptr; }
@@ -63,12 +63,8 @@ namespace WTF {
         bool operator!() const { return !m_ptr; }
     
         // This conversion operator allows implicit conversion to bool but not to other integer types.
-#if COMPILER(WINSCW)
-        operator bool() const { return m_ptr; }
-#else
-        typedef T* RefPtr::*UnspecifiedBoolType;
+        typedef T* (RefPtr::*UnspecifiedBoolType);
         operator UnspecifiedBoolType() const { return m_ptr ? &RefPtr::m_ptr : 0; }
-#endif
         
         RefPtr& operator=(const RefPtr&);
         RefPtr& operator=(T*);
