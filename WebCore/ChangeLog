@@ -1,3 +1,9 @@
+2009-09-28  Simon Hausmann  <hausmann@webkit.org>
+
+        Prospective Tiger build fix.
+
+        * WebCore.xcodeproj/project.pbxproj: Try to use unique IDs for the new files.
+
 2009-09-28  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
