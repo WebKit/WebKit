@@ -1,3 +1,12 @@
+2009-09-28  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Fix an absolute path to somewhere in Oliver's machine to a relative path
+        for derived JSONObject.lut.h.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2009-09-28  Joerg Bornemann  <joerg.bornemann@nokia.com>
 
         Reviewed by Simon Hausmann.
