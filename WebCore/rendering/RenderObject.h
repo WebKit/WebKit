@@ -403,11 +403,11 @@ public:
     bool hasOutlineAnnotation() const;
     bool hasOutline() const { return style()->hasOutline() || hasOutlineAnnotation(); }
 
-   /**
-     * returns the object containing this one. can be different from parent for
-     * positioned elements
-     */
-    RenderObject* container() const;
+    // Returns the object containing this one. Can be different from parent for positioned elements.
+    // If repaintContainer and repaintContainerSkipped are not null, on return *repaintContainerSkipped
+    // is true if the renderer returned is an ancestor of repaintContainer.
+    RenderObject* container(RenderBoxModelObject* repaintContainer = 0, bool* repaintContainerSkipped = 0) const;
+
     virtual RenderObject* hoverAncestor() const { return parent(); }
 
     // IE Extension that can be called on any RenderObject.  See the implementation for the details.

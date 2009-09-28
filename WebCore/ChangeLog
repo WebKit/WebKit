@@ -665,6 +665,32 @@
 
         Reviewed by Darin Adler.
 
+        ASSERTION FAILED: !repaintContainer || repaintContainer == this
+        https://bugs.webkit.org/show_bug.cgi?id=29755
+        
+        It's possible for RenderObject::container() to return an object that is higher
+        in the hierarchy than the repaintContainer that is being used to repaint an
+        object. For example, this can happen when running an accelerated opacity
+        transition on an element with a position:absolute parent, and a position:absolute child.
+        
+        In this case we need to detect when RenderObject::container() will skip over
+        repaintContainer, and in that case adjust the coords to shift into repaintContainer's space.
+
+        Test: compositing/repaint/opacity-between-absolute.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::mapLocalToContainer):
+        (WebCore::RenderBox::computeRectForRepaint):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::computeRectForRepaint):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::container):
+        * rendering/RenderObject.h:
+
+2009-09-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+
         Crash with hardware accelerated rotation of a PDF image in a data URL
         <rdar://problem/7250378>
         

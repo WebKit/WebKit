@@ -652,7 +652,8 @@ void RenderInline::computeRectForRepaint(RenderBoxModelObject* repaintContainer,
     if (repaintContainer == this)
         return;
 
-    RenderObject* o = container();
+    bool containerSkipped;
+    RenderObject* o = container(repaintContainer, &containerSkipped);
     if (!o)
         return;
 
@@ -693,6 +694,13 @@ void RenderInline::computeRectForRepaint(RenderBoxModelObject* repaintContainer,
             return;
     } else
         rect.setLocation(topLeft);
+
+    if (containerSkipped) {
+        // If the repaintContainer is below o, then we need to map the rect into repaintContainer's coordinates.
+        IntSize containerOffset = repaintContainer->offsetFromContainer(o);
+        rect.move(-containerOffset);
+        return;
+    }
     
     o->computeRectForRepaint(repaintContainer, rect, fixed);
 }

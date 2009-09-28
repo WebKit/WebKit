@@ -1788,8 +1788,11 @@ bool RenderObject::hasOutlineAnnotation() const
     return node() && node()->isLink() && document()->printing();
 }
 
-RenderObject* RenderObject::container() const
+RenderObject* RenderObject::container(RenderBoxModelObject* repaintContainer, bool* repaintContainerSkipped) const
 {
+    if (repaintContainerSkipped)
+        *repaintContainerSkipped = false;
+
     // This method is extremely similar to containingBlock(), but with a few notable
     // exceptions.
     // (1) It can be used on orphaned subtrees, i.e., it can be called safely even when
@@ -1814,14 +1817,20 @@ RenderObject* RenderObject::container() const
         // we'll just return 0).
         // FIXME: The definition of view() has changed to not crawl up the render tree.  It might
         // be safe now to use it.
-        while (o && o->parent() && !(o->hasTransform() && o->isRenderBlock()))
+        while (o && o->parent() && !(o->hasTransform() && o->isRenderBlock())) {
+            if (repaintContainerSkipped && o == repaintContainer)
+                *repaintContainerSkipped = true;
             o = o->parent();
+        }
     } else if (pos == AbsolutePosition) {
         // Same goes here.  We technically just want our containing block, but
         // we may not have one if we're part of an uninstalled subtree.  We'll
         // climb as high as we can though.
-        while (o && o->style()->position() == StaticPosition && !o->isRenderView() && !(o->hasTransform() && o->isRenderBlock()))
+        while (o && o->style()->position() == StaticPosition && !o->isRenderView() && !(o->hasTransform() && o->isRenderBlock())) {
+            if (repaintContainerSkipped && o == repaintContainer)
+                *repaintContainerSkipped = true;
             o = o->parent();
+        }
     }
 
     return o;
