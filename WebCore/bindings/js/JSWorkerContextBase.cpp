@@ -44,7 +44,7 @@ ASSERT_CLASS_FITS_IN_CELL(JSWorkerContextBase);
 
 const ClassInfo JSWorkerContextBase::s_info = { "WorkerContext", 0, 0, 0 };
 
-JSWorkerContextBase::JSWorkerContextBase(PassRefPtr<JSC::Structure> structure, PassRefPtr<WorkerContext> impl)
+JSWorkerContextBase::JSWorkerContextBase(NonNullPassRefPtr<JSC::Structure> structure, PassRefPtr<WorkerContext> impl)
     : JSDOMGlobalObject(structure, new JSDOMGlobalObjectData, this)
     , m_impl(impl)
 {

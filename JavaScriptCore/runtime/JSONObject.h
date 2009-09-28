@@ -34,7 +34,7 @@ namespace JSC {
 
     class JSONObject : public JSObject {
     public:
-        JSONObject(PassRefPtr<Structure> structure)
+        JSONObject(NonNullPassRefPtr<Structure> structure)
             : JSObject(structure)
         {
         }

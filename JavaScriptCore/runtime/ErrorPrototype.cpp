@@ -34,7 +34,7 @@ ASSERT_CLASS_FITS_IN_CELL(ErrorPrototype);
 static JSValue JSC_HOST_CALL errorProtoFuncToString(ExecState*, JSObject*, JSValue, const ArgList&);
 
 // ECMA 15.9.4
-ErrorPrototype::ErrorPrototype(ExecState* exec, PassRefPtr<Structure> structure, Structure* prototypeFunctionStructure)
+ErrorPrototype::ErrorPrototype(ExecState* exec, NonNullPassRefPtr<Structure> structure, Structure* prototypeFunctionStructure)
     : ErrorInstance(structure)
 {
     // The constructor will be added later in ErrorConstructor's constructor

@@ -31,7 +31,7 @@ namespace JSC {
 
     class DateInstance : public JSWrapperObject {
     public:
-        explicit DateInstance(PassRefPtr<Structure>);
+        explicit DateInstance(NonNullPassRefPtr<Structure>);
         virtual ~DateInstance();
 
         double internalNumber() const { return internalValue().uncheckedGetNumber(); }

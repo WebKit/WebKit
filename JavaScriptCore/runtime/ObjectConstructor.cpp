@@ -41,7 +41,7 @@ static JSValue JSC_HOST_CALL objectConstructorDefineProperty(ExecState*, JSObjec
 static JSValue JSC_HOST_CALL objectConstructorDefineProperties(ExecState*, JSObject*, JSValue, const ArgList&);
 static JSValue JSC_HOST_CALL objectConstructorCreate(ExecState*, JSObject*, JSValue, const ArgList&);
 
-ObjectConstructor::ObjectConstructor(ExecState* exec, PassRefPtr<Structure> structure, ObjectPrototype* objectPrototype, Structure* prototypeFunctionStructure)
+ObjectConstructor::ObjectConstructor(ExecState* exec, NonNullPassRefPtr<Structure> structure, ObjectPrototype* objectPrototype, Structure* prototypeFunctionStructure)
 : InternalFunction(&exec->globalData(), structure, Identifier(exec, "Object"))
 {
     // ECMA 15.2.3.1

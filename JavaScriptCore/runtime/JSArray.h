@@ -41,9 +41,9 @@ namespace JSC {
         friend class Walker;
 
     public:
-        explicit JSArray(PassRefPtr<Structure>);
-        JSArray(PassRefPtr<Structure>, unsigned initialLength);
-        JSArray(PassRefPtr<Structure>, const ArgList& initialValues);
+        explicit JSArray(NonNullPassRefPtr<Structure>);
+        JSArray(NonNullPassRefPtr<Structure>, unsigned initialLength);
+        JSArray(NonNullPassRefPtr<Structure>, const ArgList& initialValues);
         virtual ~JSArray();
 
         virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);

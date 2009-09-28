@@ -41,8 +41,8 @@ namespace JSC {
         typedef InternalFunction Base;
 
     public:
-        JSFunction(ExecState*, PassRefPtr<Structure>, int length, const Identifier&, NativeFunction);
-        JSFunction(ExecState*, PassRefPtr<FunctionExecutable>, ScopeChainNode*);
+        JSFunction(ExecState*, NonNullPassRefPtr<Structure>, int length, const Identifier&, NativeFunction);
+        JSFunction(ExecState*, NonNullPassRefPtr<FunctionExecutable>, ScopeChainNode*);
         virtual ~JSFunction();
 
         JSObject* construct(ExecState*, const ArgList&);
@@ -73,7 +73,7 @@ namespace JSC {
         virtual CallType getCallData(CallData&);
 
     private:
-        JSFunction(PassRefPtr<Structure>);
+        JSFunction(NonNullPassRefPtr<Structure>);
 
         bool isHostFunctionNonInline() const;
 

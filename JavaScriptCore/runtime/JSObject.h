@@ -74,7 +74,7 @@ namespace JSC {
         friend class JSCell;
 
     public:
-        explicit JSObject(PassRefPtr<Structure>);
+        explicit JSObject(NonNullPassRefPtr<Structure>);
 
         virtual void markChildren(MarkStack&);
         ALWAYS_INLINE void markChildrenDirect(MarkStack& markStack);
@@ -86,7 +86,7 @@ namespace JSC {
         JSValue prototype() const;
         void setPrototype(JSValue prototype);
         
-        void setStructure(PassRefPtr<Structure>);
+        void setStructure(NonNullPassRefPtr<Structure>);
         Structure* inheritorID();
 
         virtual UString className() const;
@@ -275,10 +275,9 @@ inline JSObject* asObject(JSValue value)
     return asObject(value.asCell());
 }
 
-inline JSObject::JSObject(PassRefPtr<Structure> structure)
+inline JSObject::JSObject(NonNullPassRefPtr<Structure> structure)
     : JSCell(structure.releaseRef()) // ~JSObject balances this ref()
 {
-    ASSERT(m_structure);
     ASSERT(m_structure->propertyStorageCapacity() == inlineStorageCapacity);
     ASSERT(m_structure->isEmpty());
     ASSERT(prototype().isNull() || Heap::heap(this) == Heap::heap(prototype()));
@@ -307,7 +306,7 @@ inline void JSObject::setPrototype(JSValue prototype)
     setStructure(newStructure.release());
 }
 
-inline void JSObject::setStructure(PassRefPtr<Structure> structure)
+inline void JSObject::setStructure(NonNullPassRefPtr<Structure> structure)
 {
     m_structure->deref();
     m_structure = structure.releaseRef(); // ~JSObject balances this ref()

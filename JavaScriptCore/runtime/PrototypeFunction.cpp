@@ -40,7 +40,7 @@ PrototypeFunction::PrototypeFunction(ExecState* exec, int length, const Identifi
     putDirect(exec->propertyNames().length, jsNumber(exec, length), DontDelete | ReadOnly | DontEnum);
 }
 
-PrototypeFunction::PrototypeFunction(ExecState* exec, PassRefPtr<Structure> prototypeFunctionStructure, int length, const Identifier& name, NativeFunction function)
+PrototypeFunction::PrototypeFunction(ExecState* exec, NonNullPassRefPtr<Structure> prototypeFunctionStructure, int length, const Identifier& name, NativeFunction function)
     : InternalFunction(&exec->globalData(), prototypeFunctionStructure, name)
     , m_function(function)
 {

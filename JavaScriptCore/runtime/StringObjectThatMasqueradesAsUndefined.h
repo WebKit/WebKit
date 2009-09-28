@@ -37,7 +37,7 @@ namespace JSC {
         }
 
     private:
-        StringObjectThatMasqueradesAsUndefined(ExecState* exec, PassRefPtr<Structure> structure, const UString& string)
+        StringObjectThatMasqueradesAsUndefined(ExecState* exec, NonNullPassRefPtr<Structure> structure, const UString& string)
             : StringObject(exec, structure, string)
         {
         }

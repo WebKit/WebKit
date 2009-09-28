@@ -36,7 +36,7 @@ namespace JSC {
 
 const ClassInfo JSCallbackConstructor::info = { "CallbackConstructor", 0, 0, 0 };
 
-JSCallbackConstructor::JSCallbackConstructor(PassRefPtr<Structure> structure, JSClassRef jsClass, JSObjectCallAsConstructorCallback callback)
+JSCallbackConstructor::JSCallbackConstructor(NonNullPassRefPtr<Structure> structure, JSClassRef jsClass, JSObjectCallAsConstructorCallback callback)
     : JSObject(structure)
     , m_class(jsClass)
     , m_callback(callback)

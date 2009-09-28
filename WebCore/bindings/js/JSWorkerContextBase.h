@@ -41,7 +41,7 @@ namespace WebCore {
     class JSWorkerContextBase : public JSDOMGlobalObject {
         typedef JSDOMGlobalObject Base;
     public:
-        JSWorkerContextBase(PassRefPtr<JSC::Structure>, PassRefPtr<WorkerContext>);
+        JSWorkerContextBase(NonNullPassRefPtr<JSC::Structure>, PassRefPtr<WorkerContext>);
         virtual ~JSWorkerContextBase();
 
         virtual const JSC::ClassInfo* classInfo() const { return &s_info; }

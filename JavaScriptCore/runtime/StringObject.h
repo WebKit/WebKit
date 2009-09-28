@@ -28,8 +28,8 @@ namespace JSC {
 
     class StringObject : public JSWrapperObject {
     public:
-        StringObject(ExecState*, PassRefPtr<Structure>);
-        StringObject(ExecState*, PassRefPtr<Structure>, const UString&);
+        StringObject(ExecState*, NonNullPassRefPtr<Structure>);
+        StringObject(ExecState*, NonNullPassRefPtr<Structure>, const UString&);
 
         static StringObject* create(ExecState*, JSString*);
 
@@ -52,7 +52,7 @@ namespace JSC {
         }
 
     protected:
-        StringObject(PassRefPtr<Structure>, JSString*);
+        StringObject(NonNullPassRefPtr<Structure>, JSString*);
   };
 
     StringObject* asStringObject(JSValue);

@@ -71,7 +71,7 @@ JSValue JSInspectedObjectWrapper::wrap(ExecState* unwrappedExec, JSValue unwrapp
     return new (unwrappedExec) JSInspectedObjectWrapper(unwrappedExec, unwrappedObject, JSQuarantinedObjectWrapper::createStructure(asObject(wrap(unwrappedExec, prototype))));
 }
 
-JSInspectedObjectWrapper::JSInspectedObjectWrapper(ExecState* unwrappedExec, JSObject* unwrappedObject, PassRefPtr<Structure> structure)
+JSInspectedObjectWrapper::JSInspectedObjectWrapper(ExecState* unwrappedExec, JSObject* unwrappedObject, NonNullPassRefPtr<Structure> structure)
     : JSQuarantinedObjectWrapper(unwrappedExec, unwrappedObject, structure)
 {
     WrapperMap* wrapperMap = wrappers().get(unwrappedGlobalObject());

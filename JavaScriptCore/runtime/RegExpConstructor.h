@@ -32,7 +32,7 @@ namespace JSC {
 
     class RegExpConstructor : public InternalFunction {
     public:
-        RegExpConstructor(ExecState*, PassRefPtr<Structure>, RegExpPrototype*);
+        RegExpConstructor(ExecState*, NonNullPassRefPtr<Structure>, RegExpPrototype*);
 
         static PassRefPtr<Structure> createStructure(JSValue prototype)
         {

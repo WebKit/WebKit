@@ -66,7 +66,7 @@ public:
     }
 
 protected:
-    RuntimeObjectImp(ExecState*, PassRefPtr<Structure>, PassRefPtr<Bindings::Instance>);
+    RuntimeObjectImp(ExecState*, NonNullPassRefPtr<Structure>, PassRefPtr<Bindings::Instance>);
 
 private:
     virtual const ClassInfo* classInfo() const { return &s_info; }

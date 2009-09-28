@@ -28,7 +28,7 @@ namespace JSC {
 
     class RegExpObject : public JSObject {
     public:
-        RegExpObject(PassRefPtr<Structure>, PassRefPtr<RegExp>);
+        RegExpObject(NonNullPassRefPtr<Structure>, NonNullPassRefPtr<RegExp>);
         virtual ~RegExpObject();
 
         void setRegExp(PassRefPtr<RegExp> r) { d->regExp = r; }
@@ -58,7 +58,7 @@ namespace JSC {
         virtual CallType getCallData(CallData&);
 
         struct RegExpObjectData : FastAllocBase {
-            RegExpObjectData(PassRefPtr<RegExp> regExp, double lastIndex)
+            RegExpObjectData(NonNullPassRefPtr<RegExp> regExp, double lastIndex)
                 : regExp(regExp)
                 , lastIndex(lastIndex)
             {

@@ -27,7 +27,7 @@ namespace JSC {
 
     class ErrorInstance : public JSObject {
     public:
-        explicit ErrorInstance(PassRefPtr<Structure>);
+        explicit ErrorInstance(NonNullPassRefPtr<Structure>);
 
         virtual const ClassInfo* classInfo() const { return &info; }
         static const ClassInfo info;

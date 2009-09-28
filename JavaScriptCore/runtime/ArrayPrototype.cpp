@@ -115,7 +115,7 @@ const ClassInfo ArrayPrototype::info = {"Array", &JSArray::info, 0, ExecState::a
 */
 
 // ECMA 15.4.4
-ArrayPrototype::ArrayPrototype(PassRefPtr<Structure> structure)
+ArrayPrototype::ArrayPrototype(NonNullPassRefPtr<Structure> structure)
     : JSArray(structure)
 {
 }

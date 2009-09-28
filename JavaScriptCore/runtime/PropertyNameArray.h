@@ -44,7 +44,7 @@ namespace JSC {
         void setCachedStructure(Structure* structure) { m_cachedStructure = structure; }
         Structure* cachedStructure() const { return m_cachedStructure; }
 
-        void setCachedPrototypeChain(PassRefPtr<StructureChain> cachedPrototypeChain) { m_cachedPrototypeChain = cachedPrototypeChain; }
+        void setCachedPrototypeChain(NonNullPassRefPtr<StructureChain> cachedPrototypeChain) { m_cachedPrototypeChain = cachedPrototypeChain; }
         StructureChain* cachedPrototypeChain() { return m_cachedPrototypeChain.get(); }
 
     private:

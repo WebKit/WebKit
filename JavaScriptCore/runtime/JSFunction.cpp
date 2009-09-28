@@ -50,13 +50,13 @@ bool JSFunction::isHostFunctionNonInline() const
     return isHostFunction();
 }
 
-JSFunction::JSFunction(PassRefPtr<Structure> structure)
+JSFunction::JSFunction(NonNullPassRefPtr<Structure> structure)
     : Base(structure)
     , m_executable(adoptRef(new VPtrHackExecutable()))
 {
 }
 
-JSFunction::JSFunction(ExecState* exec, PassRefPtr<Structure> structure, int length, const Identifier& name, NativeFunction func)
+JSFunction::JSFunction(ExecState* exec, NonNullPassRefPtr<Structure> structure, int length, const Identifier& name, NativeFunction func)
     : Base(&exec->globalData(), structure, name)
 #if ENABLE(JIT)
     , m_executable(adoptRef(new NativeExecutable(exec)))
@@ -72,7 +72,7 @@ JSFunction::JSFunction(ExecState* exec, PassRefPtr<Structure> structure, int len
 #endif
 }
 
-JSFunction::JSFunction(ExecState* exec, PassRefPtr<FunctionExecutable> executable, ScopeChainNode* scopeChainNode)
+JSFunction::JSFunction(ExecState* exec, NonNullPassRefPtr<FunctionExecutable> executable, ScopeChainNode* scopeChainNode)
     : Base(&exec->globalData(), exec->lexicalGlobalObject()->functionStructure(), executable->name())
     , m_executable(executable)
 {

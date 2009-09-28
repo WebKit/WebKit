@@ -36,7 +36,7 @@ namespace JSC {
 template <class Base>
 class JSCallbackObject : public Base {
 public:
-    JSCallbackObject(ExecState*, PassRefPtr<Structure>, JSClassRef, void* data);
+    JSCallbackObject(ExecState*, NonNullPassRefPtr<Structure>, JSClassRef, void* data);
     JSCallbackObject(JSClassRef);
     virtual ~JSCallbackObject();
 

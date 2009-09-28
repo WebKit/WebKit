@@ -112,7 +112,7 @@ struct RegExpConstructorPrivate : FastAllocBase {
     unsigned lastOvectorIndex : 1;
 };
 
-RegExpConstructor::RegExpConstructor(ExecState* exec, PassRefPtr<Structure> structure, RegExpPrototype* regExpPrototype)
+RegExpConstructor::RegExpConstructor(ExecState* exec, NonNullPassRefPtr<Structure> structure, RegExpPrototype* regExpPrototype)
     : InternalFunction(&exec->globalData(), structure, Identifier(exec, "RegExp"))
     , d(new RegExpConstructorPrivate)
 {

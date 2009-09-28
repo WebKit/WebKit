@@ -47,7 +47,7 @@ RuntimeObjectImp::RuntimeObjectImp(ExecState* exec, PassRefPtr<Instance> instanc
 {
 }
 
-RuntimeObjectImp::RuntimeObjectImp(ExecState*, PassRefPtr<Structure> structure, PassRefPtr<Instance> instance)
+RuntimeObjectImp::RuntimeObjectImp(ExecState*, NonNullPassRefPtr<Structure> structure, PassRefPtr<Instance> instance)
     : JSObject(structure)
     , m_instance(instance)
 {

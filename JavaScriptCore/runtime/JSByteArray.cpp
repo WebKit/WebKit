@@ -35,7 +35,7 @@ namespace JSC {
 
 const ClassInfo JSByteArray::s_defaultInfo = { "ByteArray", 0, 0, 0 };
 
-JSByteArray::JSByteArray(ExecState* exec, PassRefPtr<Structure> structure, ByteArray* storage, const JSC::ClassInfo* classInfo)
+JSByteArray::JSByteArray(ExecState* exec, NonNullPassRefPtr<Structure> structure, ByteArray* storage, const JSC::ClassInfo* classInfo)
     : JSObject(structure)
     , m_storage(storage)
     , m_classInfo(classInfo)

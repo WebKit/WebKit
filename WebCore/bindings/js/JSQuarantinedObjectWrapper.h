@@ -51,7 +51,7 @@ namespace WebCore {
         }
 
     protected:
-        JSQuarantinedObjectWrapper(JSC::ExecState* unwrappedExec, JSC::JSObject* unwrappedObject, PassRefPtr<JSC::Structure>);
+        JSQuarantinedObjectWrapper(JSC::ExecState* unwrappedExec, JSC::JSObject* unwrappedObject, NonNullPassRefPtr<JSC::Structure>);
 
         virtual void markChildren(JSC::MarkStack&);
 

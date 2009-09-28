@@ -40,7 +40,7 @@ namespace WebCore {
         SVGElement* context() const { return m_context.get(); }
 
     protected:
-        DOMObjectWithSVGContext(PassRefPtr<JSC::Structure> structure, JSDOMGlobalObject*, SVGElement* context)
+        DOMObjectWithSVGContext(NonNullPassRefPtr<JSC::Structure> structure, JSDOMGlobalObject*, SVGElement* context)
             : DOMObject(structure)
             , m_context(context)
         {
