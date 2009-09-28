@@ -117,6 +117,18 @@
 
 2009-09-25  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Simon Fraser.
+
+        REGRESSION: media/video-pause-empty-events.html is occasionally timing out on bots
+        https://bugs.webkit.org/show_bug.cgi?id=28624
+
+        Disable hardware compositing on Leopard for versions of QuickTime 7.6.4 and older.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetDefaultsToConsistentValues):
+
+2009-09-25  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Adam Barth.
 
         commit-queue should auto-retry patches which fail to commit due to out of date files

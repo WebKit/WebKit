@@ -1,3 +1,21 @@
+2009-09-25  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        REGRESSION: media/video-pause-empty-events.html is occasionally timing out on bots
+        https://bugs.webkit.org/show_bug.cgi?id=28624
+
+        No longer skip media tests now that we're disabling hardware compositing instead.
+        Add leopard-specific results for 2 tests expected to fail with HW compositing disabled.
+
+        * platform/mac-leopard/Skipped:
+        * platform/mac-leopard/fast/media/mq-transform-02-expected.checksum: Copied from LayoutTests/platform/mac-tiger/fast/media/mq-transform-02-expected.checksum.
+        * platform/mac-leopard/fast/media/mq-transform-02-expected.png: Copied from LayoutTests/platform/mac-tiger/fast/media/mq-transform-02-expected.png.
+        * platform/mac-leopard/fast/media/mq-transform-02-expected.txt: Copied from LayoutTests/platform/mac-tiger/fast/media/mq-transform-02-expected.txt.
+        * platform/mac-leopard/fast/media/mq-transform-03-expected.checksum: Copied from LayoutTests/platform/mac-tiger/fast/media/mq-transform-03-expected.checksum.
+        * platform/mac-leopard/fast/media/mq-transform-03-expected.png: Copied from LayoutTests/platform/mac-tiger/fast/media/mq-transform-03-expected.png.
+        * platform/mac-leopard/fast/media/mq-transform-03-expected.txt: Copied from LayoutTests/platform/mac-tiger/fast/media/mq-transform-03-expected.txt.
+
 2009-09-28  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Darin Adler.
