@@ -1,3 +1,12 @@
+2009-09-28  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Prospective build fix for r48812.
+
+        Forgot to remove the inline reset() implementation when reverting the indentation
+        changes in the file.
+
+        * xml/XSLTProcessor.h:
+
 2009-09-28  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by nobody (trivial follow up fix), Joseph Pecoraro LGTM-ed.
