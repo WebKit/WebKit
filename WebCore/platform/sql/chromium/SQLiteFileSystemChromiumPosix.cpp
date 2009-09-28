@@ -170,7 +170,7 @@ void SQLiteFileSystem::registerSQLiteVFS()
         unix_vfs->mxPathname,
         0,
         "chromium_vfs",
-        0,
+        unix_vfs->pAppData,
         chromiumOpen,
         chromiumDelete,
         chromiumAccess,

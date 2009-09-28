@@ -1,3 +1,19 @@
+2009-09-28  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Register Chromium's VFSs with a proper sqlite3_io_methods
+        finder. This should only affect the POSIX implementation. The
+        Windows change is included for consistency and in case sqlite
+        starts using something similar in its Windows VFS in the future.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29743
+
+        * platform/sql/chromium/SQLiteFileSystemChromiumPosix.cpp:
+        (WebCore::SQLiteFileSystem::registerSQLiteVFS):
+        * platform/sql/chromium/SQLiteFileSystemChromiumWin.cpp:
+        (WebCore::SQLiteFileSystem::registerSQLiteVFS):
+
 2009-09-28  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Adam Barth.

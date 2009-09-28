@@ -155,7 +155,7 @@ void SQLiteFileSystem::registerSQLiteVFS()
         win32_vfs->mxPathname,
         0,
         "chromium_vfs",
-        0,
+        win32_vfs->pAppData,
         chromiumOpen,
         chromiumDelete,
         chromiumAccess,
