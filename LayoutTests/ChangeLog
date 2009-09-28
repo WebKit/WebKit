@@ -1,3 +1,13 @@
+2009-09-28  Charles Wei  <charles.wei@torchmobile.com.cn>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Fix the crash of SVG that crashes when use a non-exist symbol
+        https://bugs.webkit.org/show_bug.cgi?id=27693
+
+        * svg/custom/use-non-existing-symbol-crash-expected.txt: Added.
+        * svg/custom/use-non-existing-symbol-crash.svg: Added.
+
 2009-09-27  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.
