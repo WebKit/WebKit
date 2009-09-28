@@ -1711,7 +1711,8 @@ sub GetNativeType
 
     return "int" if $type eq "int";
     return "int" if $type eq "short" or $type eq "unsigned short";
-    return "int" if $type eq "long" or $type eq "unsigned long";
+    return "unsigned" if $type eq "unsigned long";
+    return "int" if $type eq "long";
     return "unsigned long long" if $type eq "unsigned long long";
     return "bool" if $type eq "boolean";
     return "String" if $type eq "DOMString";

@@ -1,3 +1,16 @@
+2009-09-28  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [V8] Fix an error in type logic in CodeGeneratorV8.pm, where
+        unsigned ints are accidentally used as signed.
+        https://bugs.webkit.org/show_bug.cgi?id=29810
+
+        Test: LayoutTests/fast/forms/textarea-maxlength.html
+
+        * bindings/scripts/CodeGeneratorV8.pm: Made sure "unsigned long" in IDL is
+          properly generates on "unsigned" return value.
+
 2009-09-28  Jakub Wieczorek  <faw217@gmail.com>
 
         Reviewed by Simon Hausmann.
