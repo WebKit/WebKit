@@ -198,28 +198,6 @@
 
         * wtf/Platform.h: Add a WTF_USE_QXMLQUERY #define.
 
-2009-09-28  Yongjun Zhang  <yongjun.zhang@nokia.com>
-
-        Reviewed by Eric Seidel.
-
-        https://bugs.webkit.org/show_bug.cgi?id=28054
-       
-        Use derefInNotNull() to work around winscw compiler forward declaration bug
-        regarding templated classes. 
-
-        The compiler bug is reported at 
-        https://xdabug001.ext.nokia.com/bugzilla/show_bug.cgi?id=9812.
-        
-        The change should be reverted when the above bug is fixed in winscw compiler. 
-
-        Add parenthesis around (RefPtr::*UnspecifiedBoolType) to make winscw compiler
-        work with the default UnSpecifiedBoolType() operator, which removes the winscw hack.
-
-        * wtf/RefPtr.h:
-        (WTF::RefPtr::~RefPtr):
-        (WTF::RefPtr::clear):
-        (WTF::RefPtr::operator UnspecifiedBoolType):
-
 2009-09-28  Gabor Loki  <loki@inf.u-szeged.hu>
 
         Reviewed by Simon Hausmann.

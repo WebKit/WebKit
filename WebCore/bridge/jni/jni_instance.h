@@ -47,7 +47,10 @@ friend class JavaField;
 friend class JavaInstance;
 friend class JavaMethod;
 
-public:
+protected:
+    JObjectWrapper(jobject instance);    
+    ~JObjectWrapper();
+    
     void ref() { _refCount++; }
     void deref() 
     { 
@@ -55,10 +58,6 @@ public:
             delete this; 
     }
 
-protected:
-    JObjectWrapper(jobject instance);    
-    ~JObjectWrapper();
-    
     jobject _instance;
 
 private:

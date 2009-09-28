@@ -149,17 +149,6 @@
         (WebCore::XSLTMessageHandler::handleMessage): Forwards all processor messages to the Console.
         (WebCore::XSLTProcessor::transformToString): Uses QXmlQuery.
 
-2009-09-28  Yongjun Zhang  <yongjun.zhang@nokia.com>
-
-        Reviewed by Eric Seidel.
-
-        Make JObjectWrapper::ref() and deref() public accessible to derefIfNull().
-        
-        Will be reverted when the following winscw compiler bug is fixed.
-        https://xdabug001.ext.nokia.com/bugzilla/show_bug.cgi?id=9812
-
-        * bridge/jni/jni_instance.h:
-
 2009-09-28  Andrew Scherkus  <scherkus@chromium.org>
 
         Reviewed by Eric Carlson.
