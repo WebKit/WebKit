@@ -3519,6 +3519,7 @@
             'xml/XSLTExtensions.cpp',
             'xml/XSLTExtensions.h',
             'xml/XSLTProcessor.cpp',
+            'xml/XSLTProcessorLibxslt.cpp',
             'xml/XSLTProcessor.h',
             'xml/XSLTUnicodeSort.cpp',
             'xml/XSLTUnicodeSort.h',

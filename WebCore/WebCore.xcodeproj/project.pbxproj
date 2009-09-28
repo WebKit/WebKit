@@ -2322,6 +2322,7 @@
 		93F19AFF08245E59001E9ABC /* ClipboardMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D90660C0665D937006B6F1A /* ClipboardMac.mm */; };
 		93F19B0308245E59001E9ABC /* XSLStyleSheet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC06F24906D18A7E004A6FA3 /* XSLStyleSheet.cpp */; };
 		93F19B0408245E59001E9ABC /* XSLTProcessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC06F24B06D18A7E004A6FA3 /* XSLTProcessor.cpp */; };
+		93F19B0508245E59001E9ABC /* XSLTProcessorLibxslt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC06F24D06D18A7E004A6FA3 /* XSLTProcessorLibxslt.cpp */; };
 		93F19B0708245E59001E9ABC /* WebCoreView.m in Sources */ = {isa = PBXBuildFile; fileRef = BE8560510701F91100239769 /* WebCoreView.m */; };
 		93F19B0808245E59001E9ABC /* WebDashboardRegion.m in Sources */ = {isa = PBXBuildFile; fileRef = 5150C2A50702629800AF642C /* WebDashboardRegion.m */; settings = {COMPILER_FLAGS = "-Wno-cast-qual"; }; };
 		93F19B1308245E59001E9ABC /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5C2869302846DCD018635CA /* ApplicationServices.framework */; };
@@ -9075,6 +9076,7 @@
 		BC06F24A06D18A7E004A6FA3 /* XSLStyleSheet.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = XSLStyleSheet.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC06F24B06D18A7E004A6FA3 /* XSLTProcessor.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XSLTProcessor.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC06F24C06D18A7E004A6FA3 /* XSLTProcessor.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = XSLTProcessor.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		BC06F24D06D18A7E004A6FA3 /* XSLTProcessorLibxslt.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XSLTProcessorLibxslt.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC073BA90C399B1F000F5979 /* FloatConversion.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FloatConversion.h; sourceTree = "<group>"; };
 		BC0B36A10CD3C67C00AC7EB5 /* Console.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Console.cpp; sourceTree = "<group>"; };
 		BC0B36A20CD3C67C00AC7EB5 /* Console.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Console.h; sourceTree = "<group>"; };
@@ -14844,6 +14846,7 @@
 				E1F1E82E0C3C2BB9006DB391 /* XSLTExtensions.h */,
 				BC06F24B06D18A7E004A6FA3 /* XSLTProcessor.cpp */,
 				BC06F24C06D18A7E004A6FA3 /* XSLTProcessor.h */,
+				BC06F24D06D18A7E004A6FA3 /* XSLTProcessorLibxslt.cpp */,
 				BCEFE1DC0DCA5CFD00739219 /* XSLTProcessor.idl */,
 				E1BE512B0CF6C512002EA959 /* XSLTUnicodeSort.cpp */,
 				E1BE512C0CF6C512002EA959 /* XSLTUnicodeSort.h */,
@@ -19912,6 +19915,7 @@
 				93F19B0308245E59001E9ABC /* XSLStyleSheet.cpp in Sources */,
 				E1F1E82F0C3C2BB9006DB391 /* XSLTExtensions.cpp in Sources */,
 				93F19B0408245E59001E9ABC /* XSLTProcessor.cpp in Sources */,
+				93F19B0508245E59001E9ABC /* XSLTProcessorLibxslt.cpp in Sources */,
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				97DD4D860FDF4D6E00ECF9A4 /* XSSAuditor.cpp in Sources */,
 				0FF5025C102BA9010066F39A /* DOMMedia.mm in Sources */,

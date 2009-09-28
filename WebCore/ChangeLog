@@ -1,3 +1,40 @@
+2009-09-28  Jakub Wieczorek  <faw217@gmail.com>
+
+        Reviewed by Simon Hausmann.
+
+        Move the libxslt specific part of XSLTProcessor to a separate file.
+        https://bugs.webkit.org/show_bug.cgi?id=28303
+
+        In preparation for adding XSLT support with QtXmlPatterns to the Qt
+        port, move the libxslt part of the XSLTProcessor implementation into
+        another file and leave the part that can be reused and shared.
+
+        Additionally, fix some coding style issues.
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * xml/XSLTProcessor.cpp:
+        (WebCore::XSLTProcessor::createDocumentFromSource): Remove trailing whitespaces.
+        (WebCore::createFragmentFromSource): Remove trailing whitespaces.
+        (WebCore::XSLTProcessor::transformToFragment): Remove trailing whitespaces.
+        (WebCore::XSLTProcessor::reset): Moved out of the class definition.
+        * xml/XSLTProcessorLibxslt.cpp: Added.
+        (WebCore::XSLTProcessor::genericErrorFunc): Moved.
+        (WebCore::XSLTProcessor::parseErrorFunc): Moved.
+        (WebCore::docLoaderFunc): Moved.
+        (WebCore::setXSLTLoadCallBack): Moved.
+        (WebCore::writeToVector): Moved.
+        (WebCore::saveResultToString): Moved.
+        (WebCore::xsltParamArrayFromParameterMap): Moved.
+        (WebCore::freeXsltParamArray): Moved.
+        (WebCore::xsltStylesheetPointer): Moved.
+        (WebCore::xmlDocPtrFromNode): Moved.
+        (WebCore::resultMIMEType): Moved.
+        (WebCore::XSLTProcessor::transformToString): Moved.
+
 2009-09-28  Charles Wei  <charles.wei@torchmobile.com.cn>
 
         Reviewed by Nikolas Zimmermann.

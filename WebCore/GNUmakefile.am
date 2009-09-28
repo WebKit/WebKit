@@ -2417,6 +2417,7 @@ webcore_sources += \
 	WebCore/xml/XSLTExtensions.cpp \
 	WebCore/xml/XSLTExtensions.h \
 	WebCore/xml/XSLTProcessor.cpp \
+	WebCore/xml/XSLTProcessorLibxslt.cpp \
 	WebCore/xml/XSLTProcessor.h \
 	WebCore/xml/XSLTUnicodeSort.cpp \
 	WebCore/xml/XSLTUnicodeSort.h

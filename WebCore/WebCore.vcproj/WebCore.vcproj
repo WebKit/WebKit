@@ -23828,6 +23828,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\xml\XSLTProcessorLibxslt.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\xml\XSLTProcessor.h"
 				>
 			</File>
