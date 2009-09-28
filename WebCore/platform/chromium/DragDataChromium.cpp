@@ -67,9 +67,9 @@ String DragData::asURL(String* title) const
         url = m_platformDragData->url.string();
     else if (m_platformDragData->filenames.size() == 1) {
         String fileName = m_platformDragData->filenames[0];
-        // FIXME: Add isDirectory to FileSystem so that we can check if it is not a directory.
-        if (fileExists(fileName))
-            url = fileName;
+        fileName = getAbsolutePath(fileName);
+        if (fileExists(fileName) && !isDirectory(fileName))
+            url = filePathToURL(fileName).string();
     }
  
     // |title| can be NULL
