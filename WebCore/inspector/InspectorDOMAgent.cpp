@@ -56,6 +56,11 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/Vector.h>
 
+#if USE(JSC)
+#include "JSDOMWindow.h"
+#include <runtime/JSObject.h>
+#endif
+
 namespace WebCore {
 
 InspectorDOMAgent::InspectorDOMAgent(InspectorFrontend* frontend)
@@ -363,6 +368,80 @@ void InspectorDOMAgent::setTextNodeValue(long callId, long nodeId, const String&
     }
 }
 
+void InspectorDOMAgent::getEventListenersForNode(long callId, long nodeId)
+{
+    Node* node = nodeForId(nodeId);
+    ScriptArray listenersArray = m_frontend->newScriptArray();
+    unsigned counter = 0;
+    EventTargetData* d;
+
+    // Quick break if a null node or no listeners at all
+    if (!node || !(d = node->eventTargetData())) {
+        m_frontend->didGetEventListenersForNode(callId, nodeId, listenersArray);
+        return;
+    }
+
+    // Get the list of event types this Node is concerned with
+    Vector<AtomicString> eventTypes;
+    const EventListenerMap& listenerMap = d->eventListenerMap;
+    HashMap<AtomicString, EventListenerVector>::const_iterator end = listenerMap.end();
+    for (HashMap<AtomicString, EventListenerVector>::const_iterator iter = listenerMap.begin(); iter != end; ++iter)
+        eventTypes.append(iter->first);
+
+    // Quick break if no useful listeners
+    size_t eventTypesLength = eventTypes.size();
+    if (eventTypesLength == 0) {
+        m_frontend->didGetEventListenersForNode(callId, nodeId, listenersArray);
+        return;
+    }
+
+    // The Node's Event Ancestors (not including self)
+    Vector<RefPtr<ContainerNode> > ancestors;
+    node->eventAncestors(ancestors);
+
+    // Nodes and their Listeners for the concerned event types (order is top to bottom)
+    Vector<EventListenerInfo> eventInformation;
+    for (size_t i = ancestors.size(); i; --i) {
+        ContainerNode* ancestor = ancestors[i - 1].get();
+        for (size_t j = 0; j < eventTypesLength; ++j) {
+            AtomicString& type = eventTypes[j];
+            if (ancestor->hasEventListeners(type))
+                eventInformation.append(EventListenerInfo(static_cast<Node*>(ancestor), type, ancestor->getEventListeners(type)));
+        }
+    }
+
+    // Insert the Current Node at the end of that list (last in capturing, first in bubbling)
+    for (size_t i = 0; i < eventTypesLength; ++i) {
+        const AtomicString& type = eventTypes[i];
+        eventInformation.append(EventListenerInfo(node, type, node->getEventListeners(type)));
+    }
+
+    // Get Capturing Listeners (in this order)
+    size_t eventInformationLength = eventInformation.size();
+    for (size_t i = 0; i < eventInformationLength; ++i) {
+        const EventListenerInfo& info = eventInformation[i];
+        const EventListenerVector& vector = info.eventListenerVector;
+        for (size_t j = 0; j < vector.size(); ++j) {
+            const RegisteredEventListener& listener = vector[j];
+            if (listener.useCapture)
+                listenersArray.set(counter++, buildObjectForEventListener(listener, info.eventType, info.node));
+        }
+    }
+
+    // Get Bubbling Listeners (reverse order)
+    for (size_t i = eventInformationLength; i; --i) {
+        const EventListenerInfo& info = eventInformation[i - 1];
+        const EventListenerVector& vector = info.eventListenerVector;
+        for (size_t j = 0; j < vector.size(); ++j) {
+            const RegisteredEventListener& listener = vector[j];
+            if (!listener.useCapture)
+                listenersArray.set(counter++, buildObjectForEventListener(listener, info.eventType, info.node));
+        }
+    }
+
+    m_frontend->didGetEventListenersForNode(callId, nodeId, listenersArray);
+}
+
 void InspectorDOMAgent::getCookies(long callId)
 {
     Document* doc = mainFrameDocument();
@@ -381,6 +460,7 @@ ScriptObject InspectorDOMAgent::buildObjectForNode(Node* node, int depth, NodeTo
 
     long id = bind(node, nodesMap);
     String nodeName;
+    String localName;
     String nodeValue;
 
     switch (node->nodeType()) {
@@ -389,18 +469,22 @@ ScriptObject InspectorDOMAgent::buildObjectForNode(Node* node, int depth, NodeTo
             nodeValue = node->nodeValue();
             break;
         case Node::ATTRIBUTE_NODE:
+            localName = node->localName();
+            break;
         case Node::DOCUMENT_FRAGMENT_NODE:
             break;
         case Node::DOCUMENT_NODE:
         case Node::ELEMENT_NODE:
         default:
             nodeName = node->nodeName();
+            localName = node->localName();
             break;
     }
 
     value.set("id", static_cast<int>(id));
     value.set("nodeType", node->nodeType());
     value.set("nodeName", nodeName);
+    value.set("localName", localName);
     value.set("nodeValue", nodeValue);
 
     if (node->nodeType() == Node::ELEMENT_NODE) {
@@ -455,6 +539,22 @@ ScriptArray InspectorDOMAgent::buildArrayForContainerChildren(Node* container, i
     for (Node *child = innerFirstChild(container); child; child = innerNextSibling(child))
         children.set(index++, buildObjectForNode(child, depth, nodesMap));
     return children;
+}
+
+ScriptObject InspectorDOMAgent::buildObjectForEventListener(const RegisteredEventListener& registeredEventListener, const AtomicString& eventType, Node* node)
+{
+    RefPtr<EventListener> eventListener = registeredEventListener.listener;
+    ScriptObject value = m_frontend->newScriptObject();
+    value.set("type", eventType);
+    value.set("useCapture", registeredEventListener.useCapture);
+    value.set("isAttribute", eventListener->isAttribute());
+    value.set("nodeId", static_cast<long long>(pushNodePathToFrontend(node)));
+#if USE(JSC)
+    JSC::JSObject* functionObject = eventListener->jsFunction();
+    if (functionObject)
+        value.set("listener", ScriptObject(m_frontend->scriptState(), functionObject));
+#endif
+    return value;
 }
 
 ScriptObject InspectorDOMAgent::buildObjectForCookie(const Cookie& cookie)

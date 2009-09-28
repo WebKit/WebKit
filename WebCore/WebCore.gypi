@@ -3546,6 +3546,7 @@
             'inspector/front-end/Drawer.js',
             'inspector/front-end/ElementsPanel.js',
             'inspector/front-end/ElementsTreeOutline.js',
+            'inspector/front-end/EventListenersSidebarPane.js',
             'inspector/front-end/FontView.js',
             'inspector/front-end/ImageView.js',
             'inspector/front-end/InjectedScript.js',
@@ -3630,6 +3631,7 @@
             'inspector/front-end/Images/goArrow.png',
             'inspector/front-end/Images/graphLabelCalloutLeft.png',
             'inspector/front-end/Images/graphLabelCalloutRight.png',
+            'inspector/front-end/Images/grayConnectorPoint.png',
             'inspector/front-end/Images/largerResourcesButtonGlyph.png',
             'inspector/front-end/Images/localStorage.png',
             'inspector/front-end/Images/nodeSearchButtonGlyph.png',
@@ -3712,6 +3714,7 @@
             'inspector/front-end/Images/warningIcon.png',
             'inspector/front-end/Images/warningMediumIcon.png',
             'inspector/front-end/Images/warningsErrors.png',
+            'inspector/front-end/Images/whiteConnectorPoint.png'
         ],
     }
 }

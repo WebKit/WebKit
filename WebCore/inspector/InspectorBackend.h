@@ -99,9 +99,6 @@ public:
     void disableTimeline(bool always);
     bool timelineEnabled() const;
 
-    void getCookies(long callId);
-    void deleteCookie(const String& cookieName);
-
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     const ProfilesArray& profiles() const;
 
@@ -138,7 +135,11 @@ public:
     void setAttribute(long callId, long elementId, const String& name, const String& value);
     void removeAttribute(long callId, long elementId, const String& name);
     void setTextNodeValue(long callId, long nodeId, const String& value);
+    void getEventListenersForNode(long callId, long nodeId);
     void copyNode(long nodeId);
+
+    void getCookies(long callId);
+    void deleteCookie(const String& cookieName);
 
     // Generic code called from custom implementations.
     void highlight(long nodeId);

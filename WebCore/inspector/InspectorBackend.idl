@@ -71,9 +71,6 @@ module core {
         void disableResourceTracking(in boolean always);
         void storeLastActivePanel(in DOMString panelName);
 
-        void getCookies(in long callId);
-        void deleteCookie(in DOMString cookieName);
-
 #if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
         boolean debuggerEnabled();
         void enableDebugger(in boolean always);
@@ -109,7 +106,11 @@ module core {
         void setAttribute(in long callId, in long elementId, in DOMString name, in DOMString value);
         void removeAttribute(in long callId, in long elementId, in DOMString name);
         void setTextNodeValue(in long callId, in long nodeId, in DOMString value);
+        void getEventListenersForNode(in long callId, in long nodeId);
         void copyNode(in long nodeId);
+
+        void getCookies(in long callId);
+        void deleteCookie(in DOMString cookieName);
 
         // Called from InjectedScript.
         [Custom] DOMObject nodeForId(in long nodeId);

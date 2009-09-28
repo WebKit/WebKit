@@ -368,6 +368,15 @@ void InspectorFrontend::didApplyDomChange(int callId, bool success)
     function->call();
 }
 
+void InspectorFrontend::didGetEventListenersForNode(int callId, int nodeId, ScriptArray& listenersArray)
+{
+    OwnPtr<ScriptFunctionCall> function(newFunctionCall("didGetEventListenersForNode"));
+    function->appendArgument(callId);
+    function->appendArgument(nodeId);
+    function->appendArgument(listenersArray);
+    function->call();
+}
+
 void InspectorFrontend::didGetCookies(int callId, const ScriptArray& cookies, const String& cookiesString)
 {
     OwnPtr<ScriptFunctionCall> function(newFunctionCall("didGetCookies"));

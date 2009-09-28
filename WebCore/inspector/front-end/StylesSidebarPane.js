@@ -348,7 +348,7 @@ WebInspector.StylesSidebarPane.prototype = {
 
     addBlankSection: function()
     {
-        var blankSection = new WebInspector.BlankStylePropertiesSection(this.appropriateSelectorForNode());
+        var blankSection = new WebInspector.BlankStylePropertiesSection(appropriateSelectorForNode(this.node, true));
         blankSection.pane = this;
 
         var elementStyleSection = this.sections[1];        
@@ -367,27 +367,6 @@ WebInspector.StylesSidebarPane.prototype = {
         this.sections.splice(index, 1);
         if (section.element.parentNode)
             section.element.parentNode.removeChild(section.element);
-    },
-
-    appropriateSelectorForNode: function()
-    {
-        var node = this.node;
-        if (!node)
-            return "";
-
-        var id = node.getAttribute("id");
-        if (id)
-            return "#" + id;
-
-        var className = node.getAttribute("class");
-        if (className)
-            return "." + className.replace(/\s+/, ".");
-
-        var nodeName = node.nodeName.toLowerCase();
-        if (nodeName === "input" && node.getAttribute("type"))
-            return nodeName + "[type=\"" + node.getAttribute("type") + "\"]";
-
-        return nodeName;
     }
 }
 

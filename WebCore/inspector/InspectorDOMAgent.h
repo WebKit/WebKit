@@ -30,7 +30,9 @@
 #ifndef InspectorDOMAgent_h
 #define InspectorDOMAgent_h
 
+#include "AtomicString.h"
 #include "EventListener.h"
+#include "EventTarget.h"
 #include "ScriptArray.h"
 #include "ScriptObject.h"
 #include "ScriptState.h"
@@ -53,6 +55,19 @@ namespace WebCore {
 
     struct Cookie;
 
+    struct EventListenerInfo {
+        EventListenerInfo(Node* node, const AtomicString& eventType, const EventListenerVector& eventListenerVector)
+            : node(node)
+            , eventType(eventType)
+            , eventListenerVector(eventListenerVector)
+        {
+        }
+
+        Node* node;
+        const AtomicString eventType;
+        const EventListenerVector eventListenerVector;
+    };
+
     class InspectorDOMAgent : public EventListener {
     public:
         static const InspectorDOMAgent* cast(const EventListener* listener)
@@ -72,6 +87,7 @@ namespace WebCore {
         void setAttribute(long callId, long elementId, const String& name, const String& value);
         void removeAttribute(long callId, long elementId, const String& name);
         void setTextNodeValue(long callId, long nodeId, const String& value);
+        void getEventListenersForNode(long callId, long nodeId);
         void getCookies(long callId);
 
         // Methods called from the InspectorController.
@@ -97,6 +113,8 @@ namespace WebCore {
         ScriptObject buildObjectForNode(Node* node, int depth, NodeToIdMap* nodesMap);
         ScriptArray buildArrayForElementAttributes(Element* element);
         ScriptArray buildArrayForContainerChildren(Node* container, int depth, NodeToIdMap* nodesMap);
+
+        ScriptObject buildObjectForEventListener(const RegisteredEventListener& registeredEventListener, const AtomicString& eventType, Node* node);
 
         ScriptObject buildObjectForCookie(const Cookie& cookie);
         ScriptArray buildArrayForCookies(const Vector<Cookie>& cookiesList);

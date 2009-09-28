@@ -21,6 +21,7 @@
     <file>Drawer.js</file>
     <file>ElementsPanel.js</file>
     <file>ElementsTreeOutline.js</file>
+    <file>EventListenersSidebarPane.js</file>
     <file>FontView.js</file>
     <file>ImageView.js</file>
     <file>InjectedScript.js</file>
@@ -103,6 +104,7 @@
     <file>Images/goArrow.png</file>
     <file>Images/graphLabelCalloutLeft.png</file>
     <file>Images/graphLabelCalloutRight.png</file>
+    <file>Images/grayConnectorPoint.png</file>
     <file>Images/largerResourcesButtonGlyph.png</file>
     <file>Images/localStorage.png</file>
     <file>Images/nodeSearchButtonGlyph.png</file>
@@ -188,5 +190,6 @@
     <file>Images/warningMediumIcon.png</file>
     <file>Images/warningOrangeDot.png</file>
     <file>Images/warningsErrors.png</file>
+    <file>Images/whiteConnectorPoint.png</file>
 </qresource>
 </RCC>

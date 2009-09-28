@@ -2422,6 +2422,20 @@ static inline EventTarget* eventTargetRespectingSVGTargetRules(Node* referenceNo
     return referenceNode;
 }
 
+void Node::eventAncestors(Vector<RefPtr<ContainerNode> > &ancestors)
+{
+    if (inDocument()) {
+        for (ContainerNode* ancestor = eventParentNode(); ancestor; ancestor = ancestor->eventParentNode()) {
+#if ENABLE(SVG)
+            // Skip <use> shadow tree elements.
+            if (ancestor->isSVGElement() && ancestor->isShadowNode())
+                continue;
+#endif
+            ancestors.append(ancestor);
+        }
+    }
+}
+
 bool Node::dispatchEvent(PassRefPtr<Event> prpEvent)
 {
     RefPtr<EventTarget> protect = this;
@@ -2452,16 +2466,7 @@ bool Node::dispatchGenericEvent(PassRefPtr<Event> prpEvent)
     // Be sure to ref all of nodes since event handlers could result in the last reference going away.
     RefPtr<Node> thisNode(this);
     Vector<RefPtr<ContainerNode> > ancestors;
-    if (inDocument()) {
-        for (ContainerNode* ancestor = eventParentNode(); ancestor; ancestor = ancestor->eventParentNode()) {
-#if ENABLE(SVG)
-            // Skip <use> shadow tree elements.
-            if (ancestor->isSVGElement() && ancestor->isShadowNode())
-                continue;
-#endif
-            ancestors.append(ancestor);
-        }
-    }
+    eventAncestors(ancestors);
 
     // Set up a pointer to indicate whether / where to dispatch window events.
     // We don't dispatch load events to the window. That quirk was originally

@@ -31427,10 +31427,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\DatabasesPanel.js"
-					>
-				</File>
-				<File
 					RelativePath="..\inspector\front-end\DatabaseTableView.js"
 					>
 				</File>
@@ -31460,6 +31456,14 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\ElementsPanel.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\ElementsTreeOutline.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\EventListenersSidebarPane.js"
 					>
 				</File>
 				<File
@@ -31580,6 +31584,10 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\StatusBarButton.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\StoragePanel.js"
 					>
 				</File>
 				<File

@@ -1,3 +1,76 @@
+2009-09-28  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Inspector Should Show Event Listeners/Handlers Registered on each Node
+        https://bugs.webkit.org/show_bug.cgi?id=17429
+        
+          Extracted a method from dispatchEvent to get the event ancestor chain
+        
+        * dom/Node.cpp:
+        (WebCore::Node::eventAncestors): the extracted method
+        (WebCore::Node::dispatchGenericEvent): use eventAncestors
+        * dom/Node.h:
+
+          Asynchronous Flow For the Inspector, Backend -> DOM Agent -> Frontend
+          The DOMAgent's getEventListenersForNode handles the logic of finding
+          all the relevant listeners in the event flow.
+
+        * inspector/InspectorBackend.cpp:
+        (WebCore::InspectorBackend::getEventListenersForNode):
+        * inspector/InspectorBackend.h:
+        * inspector/InspectorBackend.idl:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::getEventListenersForNode):
+        (WebCore::InspectorDOMAgent::buildObjectForEventListener):
+        (WebCore::InspectorDOMAgent::buildObjectForNode): added localName
+        * inspector/InspectorDOMAgent.h:
+        (WebCore::EventListenerInfo::EventListenerInfo):
+        * inspector/InspectorFrontend.cpp:
+        (WebCore::InspectorFrontend::didGetEventListenersForNode):
+        * inspector/InspectorFrontend.h:
+        (WebCore::InspectorFrontend::scriptState):
+        * inspector/front-end/DOMAgent.js: added localName to WebInspector.DOMNode from payload
+        (WebInspector.EventListeners.getEventListenersForNodeAsync.mycallback):
+        (WebInspector.EventListeners.getEventListenersForNodeAsync):
+
+          New Sidebar Pane in the Element's Panel
+          Includes Gear Menu for filtering the Event Listeners on the
+          "Selected Node Only" or "All Nodes"
+
+        * inspector/front-end/ElementsPanel.js: Handles refreshing the Pane when necessary
+        (WebInspector.ElementsPanel.this.treeOutline.focusedNodeChanged):
+        (WebInspector.ElementsPanel):
+        (WebInspector.ElementsPanel.prototype.updateEventListeners):
+        * inspector/front-end/EventListenersSidebarPane.js: Added. 
+        (WebInspector.EventListenersSidebarPane): The 1st level in the Pane
+        (WebInspector.EventListenersSidebarPane.prototype.update.callback):
+        (WebInspector.EventListenersSidebarPane.prototype.update):
+        (WebInspector.EventListenersSection): The 2nd level in the Pane
+        (WebInspector.EventListenersSection.prototype.update): filters on Preference
+        (WebInspector.EventListenersSection.prototype.addListener):
+        (WebInspector.EventListenerBar): The 3rd level in the Pane
+        (WebInspector.EventListenerBar.prototype._getNodeDisplayName):
+        (WebInspector.EventListenerBar.prototype._getFunctionDisplayName):
+        (WebInspector.EventListenersSidebarPane.prototype._changeSetting): For the Gear Menu
+        
+          Consolidated "appropriateSelectorForNode"
+
+        * inspector/front-end/StylesSidebarPane.js:
+        * inspector/front-end/utilities.js:
+
+          Miscellaneous Updates
+
+        * English.lproj/localizedStrings.js: "Event Listeners", "No Event Listeners", "Selected Node Only", "All Nodes"
+        * WebCore.gypi: included the new inspector files
+        * WebCore.vcproj/WebCore.vcproj: included source files that were missing
+        * inspector/front-end/Images/grayConnectorPoint.png: Added. Thanks to Timothy Hatcher.
+        * inspector/front-end/Images/whiteConnectorPoint.png: Added. Thanks to Timothy Hatcher.
+        * inspector/front-end/inspector.js: Preferences for the Gear Menu Event Listeners filter
+        * inspector/front-end/inspector.css: reused as much as possible
+        * inspector/front-end/inspector.html: include the new script
+        * inspector/front-end/WebKit.qrc: included the new inspector files
+
 2009-09-27  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.

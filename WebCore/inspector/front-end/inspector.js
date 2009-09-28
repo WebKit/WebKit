@@ -42,7 +42,8 @@ var Preferences = {
     heapProfilerPresent: false,
     samplingCPUProfiler: false,
     showColorNicknames: true,
-    colorFormat: "hex"
+    colorFormat: "hex",
+    eventListenersFilter: "all"
 }
 
 var WebInspector = {
@@ -353,6 +354,10 @@ WebInspector.loaded = function()
     var colorFormat = InspectorController.setting("color-format");
     if (colorFormat)
         Preferences.colorFormat = colorFormat;
+
+    var eventListenersFilter = InspectorController.setting("event-listeners-filter");
+    if (eventListenersFilter)
+        Preferences.eventListenersFilter = eventListenersFilter;
 
     this.drawer = new WebInspector.Drawer();
     this.console = new WebInspector.ConsoleView(this.drawer);

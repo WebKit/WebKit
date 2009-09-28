@@ -1222,12 +1222,20 @@ body.inactive .placard.selected {
     margin-top: 1px;
 }
 
-.section:nth-last-of-type(1) {
+.section:nth-last-of-type(1), .event-bar:nth-last-of-type(1) {
     margin-bottom: 1px;
 }
 
 .watch-expressions-buttons-container {
     text-align: center;
+}
+
+.event-bar:first-child {
+    margin-top: 1px;
+}
+
+.event-bar:nth-last-of-type(1) .header {
+    border-bottom: 1px solid rgb(163, 163, 163);
 }
 
 .section .header {
@@ -1261,7 +1269,7 @@ body.inactive .placard.selected {
     content: url(Images/treeDownTriangleWhite.png);
 }
 
-.section .header .title {
+.section .header .title, .event-bar .header .title {
     color: white;
     font-weight: bold;
     word-wrap: break-word;
@@ -1272,11 +1280,11 @@ body.inactive .placard.selected {
     font-style: italic;
 }
 
-.section .header label {
+.section .header label, .event-bar .header label {
     display: none;
 }
 
-.section.expanded .header label {
+.section.expanded .header label, .event-bar.expanded .header label {
     display: inline;
 }
 
@@ -1289,7 +1297,7 @@ body.inactive .placard.selected {
     vertical-align: 2px;
 }
 
-.section .header .subtitle {
+.section .header .subtitle, .event-bar .header .subtitle {
     float: right;
     font-size: 10px;
     margin-left: 5px;
@@ -1303,7 +1311,7 @@ body.inactive .placard.selected {
     color: inherit;
 }
 
-.section .properties {
+.section .properties, .event-bar .event-properties {
     display: none;
     margin: 0;
     padding: 2px 6px 3px;
@@ -1320,11 +1328,11 @@ body.inactive .placard.selected {
     opacity: 1.0;
 }
 
-.section.expanded .properties {
+.section.expanded .properties, .event-bar.expanded .event-properties {
     display: block;
 }
 
-.section .properties li {
+.section .properties li, .event-properties li {
     margin-left: 12px;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -1333,22 +1341,22 @@ body.inactive .placard.selected {
     cursor: auto;
 }
 
-.section .properties li.parent {
+.section .properties li.parent, .event-properties li.parent {
     margin-left: 1px;
 }
 
-.section .properties ol {
+.section .properties ol, .event-properties ol {
     display: none;
     margin: 0;
     -webkit-padding-start: 12px;
     list-style: none;
 }
 
-.section .properties ol.expanded {
+.section .properties ol.expanded, .event-properties ol.expanded {
     display: block;
 }
 
-.section .properties li.parent::before {
+.section .properties li.parent::before, .event-properties li.parent::before {
     content: url(Images/treeRightTriangleBlack.png);
     opacity: 0.75;
     float: left;
@@ -1360,14 +1368,77 @@ body.inactive .placard.selected {
     cursor: default;
 }
 
-.section .properties li.parent.expanded::before {
+.section .properties li.parent.expanded::before, .event-properties li.parent.expanded::before {
     content: url(Images/treeDownTriangleBlack.png);
     margin-top: 1px;
 }
 
-.section .properties li .info {
+.section .properties li .info, .event-properties li .info {
     padding-top: 4px;
     padding-bottom: 3px;
+}
+
+.section .event-bars {
+    display: none;
+}
+
+.section.expanded .event-bars {
+    display: block;
+}
+
+.event-bar {
+    position: relative;
+}
+
+.event-bar-connector {
+    position: absolute;
+    left: 75%;
+    bottom: -7px;
+    margin-left: -7px;
+    content: url(Images/grayConnectorPoint.png);
+    z-index: 3;
+}
+
+.event-bar.expanded .event-bar-connector {
+    content: url(Images/whiteConnectorPoint.png);
+}
+
+.event-bars .event-bar .header {
+    padding: 2px 8px 4px 18px;
+    border-top: 1px solid rgb(163, 163, 163);
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(243, 243, 243)), to(rgb(207, 207, 207)));
+    min-height: 18px;
+    white-space: nowrap;
+    -webkit-background-origin: padding;
+    -webkit-background-clip: padding;
+}
+
+.event-bars .event-bar.expanded .header {
+    border-bottom: 1px solid rgb(163, 163, 163);
+}
+
+.event-bars .event-bar .header .title {
+    font-weight: bold;
+    color: #333;
+    text-shadow: white 0 1px 0; 
+}
+
+.event-bars .event-bar .header .subtitle {
+    color: rgba(90, 90, 90, 0.742188);
+}
+
+.event-bars .event-bar .header::before {
+    position: absolute;
+    top: 4px;
+    left: 7px;
+    width: 8px;
+    height: 8px;
+    opacity: 0.75;
+    content: url(Images/treeRightTriangleBlack.png);
+}
+
+.event-bars .event-bar.expanded .header::before {
+    content: url(Images/treeDownTriangleBlack.png);
 }
 
 .editing {
@@ -1461,7 +1532,7 @@ li.editing .swatch, li.editing .enabled-button,  li.editing-sub-part .delete-but
     display: block;
 }
 
-.section .properties .name {
+.section .properties .name, .event-properties .name {
     color: rgb(136, 19, 145);
 }
 
@@ -1469,7 +1540,7 @@ li.editing .swatch, li.editing .enabled-button,  li.editing-sub-part .delete-but
     color: rgb(100, 100, 100);
 }
 
-.section .properties .number {
+.section .properties .number, .event-properties .number {
     color: blue;
 }
 
@@ -1477,11 +1548,11 @@ li.editing .swatch, li.editing .enabled-button,  li.editing-sub-part .delete-but
     color: rgb(128, 0, 0);
 }
 
-.section .properties .keyword {
+.section .properties .keyword, .event-properties .keyword {
     color: rgb(136, 19, 79);
 }
 
-.section .properties .color {
+.section .properties .color, .event-properties .color {
     color: rgb(118, 15, 21);
 }
 
