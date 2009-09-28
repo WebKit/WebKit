@@ -26,6 +26,7 @@
 #import "WebPDFDocumentExtras.h"
 
 #import "WebTypesInternal.h"
+#import <JavaScriptCore/Vector.h>
 #import <JavaScriptCore/RetainPtr.h>
 #import <PDFKit/PDFDocument.h>
 #import <objc/objc-runtime.h>
@@ -36,7 +37,7 @@
 @end
 #endif
 
-static void appendValuesInPDFNameSubtreeToArray(CGPDFDictionaryRef subtree, NSMutableArray *values)
+static void appendValuesInPDFNameSubtreeToVector(CGPDFDictionaryRef subtree, Vector<CGPDFObjectRef>& values)
 {
     CGPDFArrayRef names;
     if (CGPDFDictionaryGetArray(subtree, "Names", &names)) {
@@ -44,7 +45,7 @@ static void appendValuesInPDFNameSubtreeToArray(CGPDFDictionaryRef subtree, NSMu
         for (size_t i = 0; i < nameCount; ++i) {
             CGPDFObjectRef object;
             CGPDFArrayGetObject(names, 2 * i + 1, &object);
-            [values addObject:(id)object];
+            values.append(object);
         }
         return;
     }
@@ -58,15 +59,13 @@ static void appendValuesInPDFNameSubtreeToArray(CGPDFDictionaryRef subtree, NSMu
         CGPDFDictionaryRef kid;
         if (!CGPDFArrayGetDictionary(kids, i, &kid))
             continue;
-        appendValuesInPDFNameSubtreeToArray(kid, values);
+        appendValuesInPDFNameSubtreeToVector(kid, values);
     }
 }
 
-static NSArray *allValuesInPDFNameTree(CGPDFDictionaryRef tree)
+static void getAllValuesInPDFNameTree(CGPDFDictionaryRef tree, Vector<CGPDFObjectRef>& allValues)
 {
-    NSMutableArray *allValues = [[NSMutableArray alloc] init];
-    appendValuesInPDFNameSubtreeToArray(tree, allValues);
-    return [allValues autorelease];
+    appendValuesInPDFNameSubtreeToVector(tree, allValues);
 }
 
 static NSArray *web_PDFDocumentAllScripts(id self, SEL _cmd)
@@ -91,12 +90,13 @@ static NSArray *web_PDFDocumentAllScripts(id self, SEL _cmd)
         return scripts;
 
     // The names are aribtrary. We are only interested in the values.
-    NSArray *objects = allValuesInPDFNameTree(javaScriptNameTree);
-    NSUInteger objectCount = [objects count];
+    Vector<CGPDFObjectRef> objects;
+    getAllValuesInPDFNameTree(javaScriptNameTree, objects);
+    size_t objectCount = objects.size();
 
-    for (NSUInteger i = 0; i < objectCount; ++i) {
+    for (size_t i = 0; i < objectCount; ++i) {
         CGPDFDictionaryRef javaScriptAction;
-        if (!CGPDFObjectGetValue(reinterpret_cast<CGPDFObjectRef>([objects objectAtIndex:i]), kCGPDFObjectTypeDictionary, &javaScriptAction))
+        if (!CGPDFObjectGetValue(reinterpret_cast<CGPDFObjectRef>(objects[i]), kCGPDFObjectTypeDictionary, &javaScriptAction))
             continue;
 
         // A JavaScript action must have an action type of "JavaScript".

@@ -1,3 +1,19 @@
+2009-09-28  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        <rdar://problem/7240911> REGRESSION (r48586): Crash occurs when loading
+        a PDF
+
+        CGPDFObjectRef is not a CFTypeRef, and cannot be retained or released.
+        Its lifetime is managed by its container. Just use a Vector to store
+        CGPDFObjectRefs, relying on the CGPDFDocument to keep them alive.
+
+        * WebView/WebPDFDocumentExtras.mm:
+        (appendValuesInPDFNameSubtreeToVector):
+        (getAllValuesInPDFNameTree):
+        (web_PDFDocumentAllScripts):
+
 2009-09-24  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Reviewed by Alice Liu.
