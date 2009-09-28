@@ -1083,7 +1083,7 @@ This file contains the list of files needed to build WebCore.
         xml/XPathValue.cpp
         xml/XPathVariableReference.cpp
         xml/XSLImportRule.cpp
-        xml/XSLStyleSheet.cpp
+        xml/XSLStyleSheetLibxslt.cpp
         xml/XSLTExtensions.cpp
         xml/XSLTUnicodeSort.cpp
         xml/XSLTProcessor.cpp

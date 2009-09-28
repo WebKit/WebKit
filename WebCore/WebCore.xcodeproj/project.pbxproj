@@ -2320,7 +2320,7 @@
 		93F19AF808245E59001E9ABC /* Position.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE91FC8C06133666005E3790 /* Position.cpp */; };
 		93F19AFD08245E59001E9ABC /* HTMLCanvasElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F6A3D50663BF04004D2919 /* HTMLCanvasElement.cpp */; };
 		93F19AFF08245E59001E9ABC /* ClipboardMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D90660C0665D937006B6F1A /* ClipboardMac.mm */; };
-		93F19B0308245E59001E9ABC /* XSLStyleSheet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC06F24906D18A7E004A6FA3 /* XSLStyleSheet.cpp */; };
+		93F19B0308245E59001E9ABC /* XSLStyleSheetLibxslt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC06F24906D18A7E004A6FA3 /* XSLStyleSheetLibxslt.cpp */; };
 		93F19B0408245E59001E9ABC /* XSLTProcessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC06F24B06D18A7E004A6FA3 /* XSLTProcessor.cpp */; };
 		93F19B0508245E59001E9ABC /* XSLTProcessorLibxslt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC06F24D06D18A7E004A6FA3 /* XSLTProcessorLibxslt.cpp */; };
 		93F19B0708245E59001E9ABC /* WebCoreView.m in Sources */ = {isa = PBXBuildFile; fileRef = BE8560510701F91100239769 /* WebCoreView.m */; };
@@ -9072,7 +9072,7 @@
 		BC06EDE20BFD6D0D00856E9D /* JSHTMLTableCellElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLTableCellElement.h; sourceTree = "<group>"; };
 		BC06EE020BFD71AA00856E9D /* JSHTMLTableElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLTableElement.cpp; sourceTree = "<group>"; };
 		BC06EE030BFD71AA00856E9D /* JSHTMLTableElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLTableElement.h; sourceTree = "<group>"; };
-		BC06F24906D18A7E004A6FA3 /* XSLStyleSheet.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XSLStyleSheet.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		BC06F24906D18A7E004A6FA3 /* XSLStyleSheetLibxslt.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XSLStyleSheetLibxslt.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC06F24A06D18A7E004A6FA3 /* XSLStyleSheet.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = XSLStyleSheet.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC06F24B06D18A7E004A6FA3 /* XSLTProcessor.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XSLTProcessor.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC06F24C06D18A7E004A6FA3 /* XSLTProcessor.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = XSLTProcessor.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -14840,7 +14840,7 @@
 				1AB7FC670A8B92EC00D9D37B /* XPathVariableReference.h */,
 				85217E000A5ECD4700DB8D00 /* XSLImportRule.cpp */,
 				85217E010A5ECD4700DB8D00 /* XSLImportRule.h */,
-				BC06F24906D18A7E004A6FA3 /* XSLStyleSheet.cpp */,
+				BC06F24906D18A7E004A6FA3 /* XSLStyleSheetLibxslt.cpp */,
 				BC06F24A06D18A7E004A6FA3 /* XSLStyleSheet.h */,
 				E1F1E82D0C3C2BB9006DB391 /* XSLTExtensions.cpp */,
 				E1F1E82E0C3C2BB9006DB391 /* XSLTExtensions.h */,
@@ -19912,7 +19912,7 @@
 				1AB7FC850A8B92EC00D9D37B /* XPathValue.cpp in Sources */,
 				1AB7FC870A8B92EC00D9D37B /* XPathVariableReference.cpp in Sources */,
 				85217E020A5ECD4700DB8D00 /* XSLImportRule.cpp in Sources */,
-				93F19B0308245E59001E9ABC /* XSLStyleSheet.cpp in Sources */,
+				93F19B0308245E59001E9ABC /* XSLStyleSheetLibxslt.cpp in Sources */,
 				E1F1E82F0C3C2BB9006DB391 /* XSLTExtensions.cpp in Sources */,
 				93F19B0408245E59001E9ABC /* XSLTProcessor.cpp in Sources */,
 				93F19B0508245E59001E9ABC /* XSLTProcessorLibxslt.cpp in Sources */,

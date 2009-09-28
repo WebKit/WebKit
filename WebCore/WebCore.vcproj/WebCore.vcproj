@@ -23808,7 +23808,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\xml\XSLStyleSheet.cpp"
+				RelativePath="..\xml\XSLStyleSheetLibxslt.cpp"
 				>
 			</File>
 			<File

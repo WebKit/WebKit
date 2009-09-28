@@ -2412,7 +2412,7 @@ webcore_cppflags += -DENABLE_XSLT=1
 webcore_sources += \
 	WebCore/xml/XSLImportRule.cpp \
 	WebCore/xml/XSLImportRule.h \
-	WebCore/xml/XSLStyleSheet.cpp \
+	WebCore/xml/XSLStyleSheetLibxslt.cpp \
 	WebCore/xml/XSLStyleSheet.h \
 	WebCore/xml/XSLTExtensions.cpp \
 	WebCore/xml/XSLTExtensions.h \

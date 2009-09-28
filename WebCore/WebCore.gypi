@@ -3514,7 +3514,7 @@
             'xml/XPathVariableReference.h',
             'xml/XSLImportRule.cpp',
             'xml/XSLImportRule.h',
-            'xml/XSLStyleSheet.cpp',
+            'xml/XSLStyleSheetLibxslt.cpp',
             'xml/XSLStyleSheet.h',
             'xml/XSLTExtensions.cpp',
             'xml/XSLTExtensions.h',
