@@ -635,14 +635,13 @@ void JIT::emitSlow_op_add(Instruction* currentInstruction, Vector<SlowCaseEntry>
     if (getOperandConstantImmediateInt(op1, op2, op, constant)) {
         linkSlowCase(iter); // overflow check
 
-        if (!supportsFloatingPoint()) {
+        if (!supportsFloatingPoint())
             linkSlowCase(iter); // non-sse case
-            return;
+        else {
+            ResultType opType = op == op1 ? types.first() : types.second();
+            if (!opType.definitelyIsNumber())
+                linkSlowCase(iter); // double check
         }
-
-        ResultType opType = op == op1 ? types.first() : types.second();
-        if (!opType.definitelyIsNumber())
-            linkSlowCase(iter); // double check
     } else {
         linkSlowCase(iter); // overflow check
 

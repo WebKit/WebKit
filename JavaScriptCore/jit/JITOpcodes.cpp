@@ -794,14 +794,17 @@ void JIT::emit_op_jfalse(Instruction* currentInstruction)
     Jump isTrue2 = branch32(NotEqual, regT0, Imm32(0));
     addJump(jump(), target + 2);
 
-    isNotInteger.link(this);
+    if (supportsFloatingPoint()) {
+        isNotInteger.link(this);
 
-    addSlowCase(branch32(Above, regT1, Imm32(JSValue::LowestTag)));
+        addSlowCase(branch32(Above, regT1, Imm32(JSValue::LowestTag)));
 
-    zeroDouble(fpRegT0);
-    emitLoadDouble(cond, fpRegT1);
-    addJump(branchDouble(DoubleEqual, fpRegT0, fpRegT1), target + 2);
-    
+        zeroDouble(fpRegT0);
+        emitLoadDouble(cond, fpRegT1);
+        addJump(branchDouble(DoubleEqual, fpRegT0, fpRegT1), target + 2);
+    } else
+        addSlowCase(isNotInteger);
+
     isTrue.link(this);
     isTrue2.link(this);
 }
@@ -832,14 +835,17 @@ void JIT::emit_op_jtrue(Instruction* currentInstruction)
     Jump isFalse2 = branch32(Equal, regT0, Imm32(0));
     addJump(jump(), target + 2);
 
-    isNotInteger.link(this);
+    if (supportsFloatingPoint()) {
+        isNotInteger.link(this);
 
-    addSlowCase(branch32(Above, regT1, Imm32(JSValue::LowestTag)));
+        addSlowCase(branch32(Above, regT1, Imm32(JSValue::LowestTag)));
 
-    zeroDouble(fpRegT0);
-    emitLoadDouble(cond, fpRegT1);
-    addJump(branchDouble(DoubleNotEqual, fpRegT0, fpRegT1), target + 2);
-    
+        zeroDouble(fpRegT0);
+        emitLoadDouble(cond, fpRegT1);
+        addJump(branchDouble(DoubleNotEqual, fpRegT0, fpRegT1), target + 2);
+    } else
+        addSlowCase(isNotInteger);
+
     isFalse.link(this);
     isFalse2.link(this);
 }

@@ -1,3 +1,19 @@
+2009-09-28  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Hard dependency on SSE2 instruction set with JIT
+        https://bugs.webkit.org/show_bug.cgi?id=29779
+
+        Add floating point support checks to op_jfalse and op_jtrue, and
+        fix the logic for the slow case of op_add
+
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emitSlow_op_add):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_jfalse):
+        (JSC::JIT::emit_op_jtrue):
+
 2009-09-28  Yaar Schnitman  <yaar@chromium.org>
 
         Reviewed by Dimitri Glazkov.
