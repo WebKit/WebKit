@@ -1,3 +1,11 @@
+2009-09-28  Nate Chapin  <japhet@chromium.org>
+
+        Rubber stamped by David Levin.
+
+        Chromium build fix, add back in #include of V8Proxy.h in V8WebKitPointConstructor.cpp.
+
+        * bindings/v8/custom/V8WebKitPointConstructor.cpp: Re-include V8Proxy.h.
+
 2009-09-28  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.

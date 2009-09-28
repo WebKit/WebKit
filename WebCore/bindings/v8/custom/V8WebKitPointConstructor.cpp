@@ -34,6 +34,7 @@
 #include "V8CustomBinding.h"
 #include "V8DOMWrapper.h"
 #include "V8Index.h"
+#include "V8Proxy.h"
 #include "WebKitPoint.h"
 
 #include <wtf/MathExtras.h>
