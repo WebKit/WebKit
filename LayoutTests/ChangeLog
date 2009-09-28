@@ -1,3 +1,15 @@
+2009-09-28  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        11 transforms/3d tests failing on the Leopard Debug bot after r48833
+        https://bugs.webkit.org/show_bug.cgi?id=29828
+
+        Leopard has HW compositing disabled until rdar://problem/7228836 can be fixed.
+        So skip tests which depend on it being enabled per Simon's request.
+
+        * platform/mac-leopard/Skipped:
+
 2009-09-28  Jakub Wieczorek  <faw217@gmail.com>
 
         Reviewed by Simon Hausmann.
