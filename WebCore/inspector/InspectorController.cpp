@@ -764,8 +764,10 @@ void InspectorController::didCommitLoad(DocumentLoader* loader)
                 // identifierForInitialRequest.
                 m_mainResource = 0;
             }
-            if (windowVisible())
+            if (windowVisible()) {
+                m_frontend->didCommitLoad();
                 m_domAgent->setDocument(m_inspectedPage->mainFrame()->document());
+            }
         }
     }
 

@@ -62,6 +62,7 @@ namespace WebCore {
         ScriptArray newScriptArray();
         ScriptObject newScriptObject();
 
+        void didCommitLoad();
         void addMessageToConsole(const ScriptObject& messageObj, const Vector<ScriptString>& frames, const Vector<ScriptValue> wrappedArguments, const String& message);
         void clearConsoleMessages();
 

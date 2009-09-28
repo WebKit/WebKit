@@ -919,10 +919,8 @@ WebInspector.addResource = function(identifier, payload)
     this.resources[identifier] = resource;
     this.resourceURLMap[resource.url] = resource;
 
-    if (resource.mainResource) {
+    if (resource.mainResource)
         this.mainResource = resource;
-        this.panels.elements.reset();
-    }
 
     if (this.panels.resources)
         this.panels.resources.addResource(resource);
@@ -1120,6 +1118,12 @@ WebInspector.resourceURLChanged = function(resource, oldURL)
 {
     delete this.resourceURLMap[oldURL];
     this.resourceURLMap[resource.url] = resource;
+}
+
+WebInspector.didCommitLoad = function()
+{
+    // Cleanup elements panel early on inspected page refresh.
+    WebInspector.setDocument(null);
 }
 
 WebInspector.addMessageToConsole = function(payload)

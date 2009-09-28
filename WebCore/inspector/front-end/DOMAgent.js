@@ -378,13 +378,16 @@ WebInspector.DOMAgent.prototype = {
 
     _setDocument: function(payload)
     {
-        this.document = new WebInspector.DOMDocument(this, this._window, payload);
         this._idToDOMNode = {};
-        this._idToDOMNode[payload.id] = this.document;
-        this._bindNodes(this.document.children);
+        if (payload) {
+            this.document = new WebInspector.DOMDocument(this, this._window, payload);
+            this._idToDOMNode[payload.id] = this.document;
+            this._bindNodes(this.document.children);
+        } else
+            this.document = null;
         WebInspector.panels.elements.reset();
     },
-    
+
     _setDetachedRoot: function(payload)
     {
         var root = new WebInspector.DOMNode(this.document, payload);
