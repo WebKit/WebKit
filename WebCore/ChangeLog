@@ -1,5 +1,20 @@
 2009-09-28  Nate Chapin  <japhet@chromium.org>
 
+        Reviewed by Adam Barth.
+
+        Change the V8 bindings' handling of window.toString(),
+        so we return [object DOMWindow] (like JSC), not [object global].
+
+        https://bugs.webkit.org/show_bug.cgi?id=29742
+
+        This will fix a couple of Chromium port test failures and enable us to
+        use the default expectations for a bunch more.
+
+        * bindings/v8/custom/V8DOMWindowCustom.cpp: Use the DOMWindow wrapper instead
+        of the global object wrapper when it's available in the DOMWindow toString callback.
+
+2009-09-28  Nate Chapin  <japhet@chromium.org>
+
         Rubber stamped by David Levin.
 
         Chromium build fix, add back in #include of V8Proxy.h in V8WebKitPointConstructor.cpp.

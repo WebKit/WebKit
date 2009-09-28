@@ -368,7 +368,10 @@ CALLBACK_FUNC_DECL(DOMWindowBtoa)
 CALLBACK_FUNC_DECL(DOMWindowToString)
 {
     INC_STATS("DOM.DOMWindow.toString()");
-    return args.This()->ObjectProtoToString();
+    v8::Handle<v8::Object> domWrapper = V8DOMWrapper::lookupDOMWrapper(V8ClassIndex::DOMWINDOW, args.This());
+    if (domWrapper.IsEmpty())
+        return args.This()->ObjectProtoToString();
+    return domWrapper->ObjectProtoToString();
 }
 
 CALLBACK_FUNC_DECL(DOMWindowNOP)
