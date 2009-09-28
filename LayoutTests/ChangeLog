@@ -1,3 +1,12 @@
+2009-09-28  Jakub Wieczorek  <faw217@gmail.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Add the expected result for the fast/xsl/document-function test.
+        https://bugs.webkit.org/show_bug.cgi?id=29817
+
+        * platform/qt/fast/xsl/document-function-expected.txt: Added.
+
 2009-09-25  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Simon Fraser.

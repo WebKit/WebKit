@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x579
+      RenderBlock {P} at (0,0) size 784x17
+        RenderText {#text} at (0,0) size 603x17
+          text run at (0,0) width 603: "This tests the xslt document() function. If this test is successful, there should be three paragraphs below."
+      RenderBlock {P} at (0,30) size 784x17
+        RenderText {#text} at (0,0) size 109x17
+          text run at (0,0) width 109: "This is a paragraph"
+      RenderBlock {P} at (0,60) size 784x17
+        RenderText {#text} at (0,0) size 146x17
+          text run at (0,0) width 146: "This is another paragraph"
+      RenderBlock {P} at (0,90) size 784x17
+        RenderText {#text} at (0,0) size 141x17
+          text run at (0,0) width 141: "This is a third paragraph."
