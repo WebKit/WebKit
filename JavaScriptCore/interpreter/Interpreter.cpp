@@ -363,10 +363,13 @@ NEVER_INLINE JSValue Interpreter::callEval(CallFrame* callFrame, RegisterFile* r
 }
 
 Interpreter::Interpreter()
-    : m_sampler(0)
+    : m_sampleEntryDepth(0)
     , m_reentryDepth(0)
 {
     privateExecute(InitializeAndReturn, 0, 0, 0);
+#if ENABLE(OPCODE_SAMPLING)
+    enableSampler();
+#endif
 }
 
 #ifndef NDEBUG
@@ -648,7 +651,7 @@ JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, S
 
     JSValue result;
     {
-        SamplingTool::CallRecord callRecord(m_sampler);
+        SamplingTool::CallRecord callRecord(m_sampler.get());
 
         m_reentryDepth++;
 #if ENABLE(JIT)
@@ -714,7 +717,7 @@ JSValue Interpreter::execute(FunctionExecutable* functionExecutable, CallFrame* 
 
     JSValue result;
     {
-        SamplingTool::CallRecord callRecord(m_sampler);
+        SamplingTool::CallRecord callRecord(m_sampler.get());
 
         m_reentryDepth++;
 #if ENABLE(JIT)
@@ -782,7 +785,7 @@ JSValue Interpreter::execute(CallFrameClosure& closure, JSValue* exception)
     
     JSValue result;
     {
-        SamplingTool::CallRecord callRecord(m_sampler);
+        SamplingTool::CallRecord callRecord(m_sampler.get());
         
         m_reentryDepth++;
 #if ENABLE(JIT)
@@ -876,7 +879,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSObjec
 
     JSValue result;
     {
-        SamplingTool::CallRecord callRecord(m_sampler);
+        SamplingTool::CallRecord callRecord(m_sampler.get());
 
         m_reentryDepth++;
 #if ENABLE(JIT)
@@ -3056,7 +3059,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
 
             JSValue returnValue;
             {
-                SamplingTool::HostCallRecord callRecord(m_sampler);
+                SamplingTool::HostCallRecord callRecord(m_sampler.get());
                 returnValue = callData.native.function(newCallFrame, asObject(v), thisValue, args);
             }
             CHECK_FOR_EXCEPTION();
@@ -3210,7 +3213,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
             
             JSValue returnValue;
             {
-                SamplingTool::HostCallRecord callRecord(m_sampler);
+                SamplingTool::HostCallRecord callRecord(m_sampler.get());
                 returnValue = callData.native.function(newCallFrame, asObject(v), thisValue, args);
             }
             CHECK_FOR_EXCEPTION();
@@ -3462,7 +3465,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
 
             JSValue returnValue;
             {
-                SamplingTool::HostCallRecord callRecord(m_sampler);
+                SamplingTool::HostCallRecord callRecord(m_sampler.get());
                 returnValue = constructData.native.function(newCallFrame, asObject(v), args);
             }
             CHECK_FOR_EXCEPTION();
@@ -3912,6 +3915,42 @@ CallFrame* Interpreter::findFunctionCallFrame(CallFrame* callFrame, InternalFunc
             return candidate;
     }
     return 0;
+}
+
+void Interpreter::enableSampler()
+{
+#if ENABLE(OPCODE_SAMPLING)
+    if (!m_sampler) {
+        m_sampler.set(new SamplingTool(this));
+        m_sampler->setup();
+    }
+#endif
+}
+void Interpreter::dumpSampleData(ExecState* exec)
+{
+#if ENABLE(OPCODE_SAMPLING)
+    if (m_sampler)
+        m_sampler->dump(exec);
+#else
+    UNUSED_PARAM(exec);
+#endif
+}
+void Interpreter::startSampling()
+{
+#if ENABLE(SAMPLING_THREAD)
+    if (!m_sampleEntryDepth)
+        SamplingThread::start();
+
+    m_sampleEntryDepth++;
+#endif
+}
+void Interpreter::stopSampling()
+{
+#if ENABLE(SAMPLING_THREAD)
+    m_sampleEntryDepth--;
+    if (!m_sampleEntryDepth)
+        SamplingThread::stop();
+#endif
 }
 
 } // namespace JSC

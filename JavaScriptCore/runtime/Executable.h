@@ -158,11 +158,6 @@ namespace JSC {
 
     class EvalExecutable : public ScriptExecutable {
     public:
-        EvalExecutable(ExecState* exec, const SourceCode& source)
-            : ScriptExecutable(exec, source)
-            , m_evalCodeBlock(0)
-        {
-        }
 
         ~EvalExecutable();
 
@@ -181,6 +176,11 @@ namespace JSC {
         static PassRefPtr<EvalExecutable> create(ExecState* exec, const SourceCode& source) { return adoptRef(new EvalExecutable(exec, source)); }
 
     private:
+        EvalExecutable(ExecState* exec, const SourceCode& source)
+            : ScriptExecutable(exec, source)
+            , m_evalCodeBlock(0)
+        {
+        }
         EvalCodeBlock* m_evalCodeBlock;
 
 #if ENABLE(JIT)
@@ -199,12 +199,11 @@ namespace JSC {
 
     class ProgramExecutable : public ScriptExecutable {
     public:
-        ProgramExecutable(ExecState* exec, const SourceCode& source)
-            : ScriptExecutable(exec, source)
-            , m_programCodeBlock(0)
+        static PassRefPtr<ProgramExecutable> create(ExecState* exec, const SourceCode& source)
         {
+            return adoptRef(new ProgramExecutable(exec, source));
         }
-        
+
         ~ProgramExecutable();
 
         ProgramCodeBlock& bytecode(ExecState* exec, ScopeChainNode* scopeChainNode)
@@ -223,6 +222,11 @@ namespace JSC {
         ExceptionInfo* reparseExceptionInfo(JSGlobalData*, ScopeChainNode*, CodeBlock*) { ASSERT_NOT_REACHED(); return 0; }
 
     private:
+        ProgramExecutable(ExecState* exec, const SourceCode& source)
+            : ScriptExecutable(exec, source)
+            , m_programCodeBlock(0)
+        {
+        }
         ProgramCodeBlock* m_programCodeBlock;
 
 #if ENABLE(JIT)

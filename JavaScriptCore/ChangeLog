@@ -1,3 +1,48 @@
+2009-09-28  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Tidy up codeblock sampler
+        https://bugs.webkit.org/show_bug.cgi?id=29836
+
+        Some rather simple refactoring of codeblock sampler so that
+        it's easier for us to use it to find problems in non-jsc
+        environments
+
+        * JavaScriptCore.exp:
+        * bytecode/SamplingTool.h:
+        * debugger/Debugger.cpp:
+        (JSC::evaluateInGlobalCallFrame):
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::evaluate):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::Interpreter):
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::privateExecute):
+        (JSC::Interpreter::enableSampler):
+        (JSC::Interpreter::dumpSampleData):
+        (JSC::Interpreter::startSampling):
+        (JSC::Interpreter::stopSampling):
+        * interpreter/Interpreter.h:
+        (JSC::Interpreter::sampler):
+        * jit/JIT.h:
+        * jsc.cpp:
+        (runWithScripts):
+        * runtime/Completion.cpp:
+        (JSC::checkSyntax):
+        (JSC::evaluate):
+        * runtime/Executable.h:
+        (JSC::EvalExecutable::EvalExecutable):
+        (JSC::ProgramExecutable::create):
+        (JSC::ProgramExecutable::ProgramExecutable):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::startSampling):
+        (JSC::JSGlobalData::stopSampling):
+        (JSC::JSGlobalData::dumpSampleData):
+        * runtime/JSGlobalData.h:
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncEval):
+
 2009-09-29  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Dimitri Glazkov.

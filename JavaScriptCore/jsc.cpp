@@ -360,11 +360,8 @@ static bool runWithScripts(GlobalObject* globalObject, const Vector<Script>& scr
     if (dump)
         BytecodeGenerator::setDumpsGeneratedCode(true);
 
-#if ENABLE(OPCODE_SAMPLING)
-    Interpreter* interpreter = globalObject->globalData()->interpreter;
-    interpreter->setSampler(new SamplingTool(interpreter));
-    interpreter->sampler()->setup();
-#endif
+    JSGlobalData* globalData = globalObject->globalData();
+
 #if ENABLE(SAMPLING_FLAGS)
     SamplingFlags::start();
 #endif
@@ -381,9 +378,7 @@ static bool runWithScripts(GlobalObject* globalObject, const Vector<Script>& scr
             fileName = "[Command Line]";
         }
 
-#if ENABLE(SAMPLING_THREAD)
-        SamplingThread::start();
-#endif
+        globalData->startSampling();
 
         Completion completion = evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), makeSource(script, fileName));
         success = success && completion.complType() != Throw;
@@ -394,20 +389,14 @@ static bool runWithScripts(GlobalObject* globalObject, const Vector<Script>& scr
                 printf("End: %s\n", completion.value().toString(globalObject->globalExec()).ascii());
         }
 
-#if ENABLE(SAMPLING_THREAD)
-        SamplingThread::stop();
-#endif
-
+        globalData->stopSampling();
         globalObject->globalExec()->clearException();
     }
 
 #if ENABLE(SAMPLING_FLAGS)
     SamplingFlags::stop();
 #endif
-#if ENABLE(OPCODE_SAMPLING)
-    interpreter->sampler()->dump(globalObject->globalExec());
-    delete interpreter->sampler();
-#endif
+    globalData->dumpSampleData(globalObject->globalExec());
 #if ENABLE(SAMPLING_COUNTERS)
     AbstractSamplingCounter::dump();
 #endif

@@ -286,12 +286,12 @@ JSValue JSC_HOST_CALL globalFuncEval(ExecState* exec, JSObject* function, JSValu
     if (JSValue parsedObject = preparser.tryLiteralParse())
         return parsedObject;
 
-    EvalExecutable eval(exec, makeSource(s));
-    JSObject* error = eval.compile(exec, static_cast<JSGlobalObject*>(unwrappedObject)->globalScopeChain().node());
+    RefPtr<EvalExecutable> eval = EvalExecutable::create(exec, makeSource(s));
+    JSObject* error = eval->compile(exec, static_cast<JSGlobalObject*>(unwrappedObject)->globalScopeChain().node());
     if (error)
         return throwError(exec, error);
 
-    return exec->interpreter()->execute(&eval, exec, thisObject, static_cast<JSGlobalObject*>(unwrappedObject)->globalScopeChain().node(), exec->exceptionSlot());
+    return exec->interpreter()->execute(eval.get(), exec, thisObject, static_cast<JSGlobalObject*>(unwrappedObject)->globalScopeChain().node(), exec->exceptionSlot());
 }
 
 JSValue JSC_HOST_CALL globalFuncParseInt(ExecState* exec, JSObject*, JSValue, const ArgList& args)

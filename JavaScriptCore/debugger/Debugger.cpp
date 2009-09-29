@@ -100,12 +100,12 @@ JSValue evaluateInGlobalCallFrame(const UString& script, JSValue& exception, JSG
 {
     CallFrame* globalCallFrame = globalObject->globalExec();
 
-    EvalExecutable eval(globalCallFrame, makeSource(script));
-    JSObject* error = eval.compile(globalCallFrame, globalCallFrame->scopeChain());
+    RefPtr<EvalExecutable> eval = EvalExecutable::create(globalCallFrame, makeSource(script));
+    JSObject* error = eval->compile(globalCallFrame, globalCallFrame->scopeChain());
     if (error)
         return error;
 
-    return globalObject->globalData()->interpreter->execute(&eval, globalCallFrame, globalObject, globalCallFrame->scopeChain(), &exception);
+    return globalObject->globalData()->interpreter->execute(eval.get(), globalCallFrame, globalObject, globalCallFrame->scopeChain(), &exception);
 }
 
 } // namespace JSC
