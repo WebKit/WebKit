@@ -1,5 +1,11 @@
 2009-09-28  Mark Rowe  <mrowe@apple.com>
 
+        Fix the PowerPC build.
+
+        * JavaScriptCore.exp:
+
+2009-09-28  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Gavin Barraclough.
 
         <rdar://problem/7195704> JavaScriptCore fails to mark registers when built for x86_64 using LLVM GCC.
