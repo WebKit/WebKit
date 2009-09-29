@@ -691,13 +691,6 @@ css2.1/t170602-bdr-conflct-w-97-d.html
 css2.1/t170602-bdr-conflct-w-98-d.html
 css2.1/t170602-bdr-conflct-w-99-d.html
 
-# Tests in css3/ directory
-#   Tests generating new results
-css3/css3-modsel-33.html
-css3/css3-modsel-35.html
-css3/css3-modsel-36.html
-css3/css3-modsel-37.html
-
 # Tests in dom/ directory
 #   Tests timing out
 dom/xhtml/level3/core/entitygetinputencoding03.xhtml

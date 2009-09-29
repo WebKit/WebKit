@@ -2,6 +2,21 @@
 
         Reviewed by David Kilzer.
 
+        [Gtk][Layout tests] Generate results for css3 tests
+        https://bugs.webkit.org/show_bug.cgi?id=29784
+
+        Add results for css3 tests and enable these tests in the Skipped.
+
+        * platform/gtk/Skipped:
+        * platform/gtk/css3/css3-modsel-33-expected.txt: Added.
+        * platform/gtk/css3/css3-modsel-35-expected.txt: Added.
+        * platform/gtk/css3/css3-modsel-36-expected.txt: Added.
+        * platform/gtk/css3/css3-modsel-37-expected.txt: Added.
+
+2009-09-28  Zan Dobersek  <zandobersek@gmail.com>
+
+        Reviewed by David Kilzer.
+
         [Gtk][Layout tests] Generate results for transitions tests
         https://bugs.webkit.org/show_bug.cgi?id=29786
 
