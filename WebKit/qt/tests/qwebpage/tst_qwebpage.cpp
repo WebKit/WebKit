@@ -113,11 +113,9 @@ private slots:
     void localURLSchemes();
     void testOptionalJSObjects();
     void testEnablePersistentStorage();
-
     void consoleOutput();
 
-private:
-
+    void crashTests_LazyInitializationOfMainFrame();
 
 private:
     QWebView* m_view;
@@ -1300,6 +1298,27 @@ void tst_QWebPage::testEnablePersistentStorage()
     QVERIFY(!webPage.settings()->offlineWebApplicationCachePath().isEmpty());
     QVERIFY(!webPage.settings()->iconDatabasePath().isEmpty());
 }
+
+void tst_QWebPage::crashTests_LazyInitializationOfMainFrame()
+{
+    {
+        QWebPage webPage;
+    }
+    {
+        QWebPage webPage;
+        webPage.selectedText();
+    }
+    {
+        QWebPage webPage;
+        webPage.triggerAction(QWebPage::Back, true);
+    }
+    {
+        QWebPage webPage;
+        QPoint pos(10,10);
+        webPage.updatePositionDependentActions(pos);
+    }
+}
+
 
 QTEST_MAIN(tst_QWebPage)
 #include "tst_qwebpage.moc"
