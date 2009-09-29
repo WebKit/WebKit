@@ -1,3 +1,22 @@
+2009-09-28  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Add experimentalWebSocketsEnabled in Settings.
+        https://bugs.webkit.org/show_bug.cgi?id=28941
+
+        * WebCore.base.exp:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::webSocket):
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::getConstructor):
+        * bindings/v8/custom/V8WebSocketCustom.cpp:
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::setExperimentalWebSocketsEnabled):
+        * page/Settings.h:
+        (WebCore::Settings::experimentalWebSocketsEnabled):
+        
 2009-09-11  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Adam Barth.

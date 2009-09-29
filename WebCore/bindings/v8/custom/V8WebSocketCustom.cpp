@@ -35,6 +35,7 @@
 #include "WebSocket.h"
 
 #include "Frame.h"
+#include "Settings.h"
 #include "V8Binding.h"
 #include "V8ObjectEventListener.h"
 #include "V8Proxy.h"

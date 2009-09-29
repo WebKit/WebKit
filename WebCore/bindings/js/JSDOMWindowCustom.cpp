@@ -720,6 +720,14 @@ JSValue JSDOMWindow::sharedWorker(ExecState* exec) const
 #if ENABLE(WEB_SOCKETS)
 JSValue JSDOMWindow::webSocket(ExecState* exec) const
 {
+    Frame* frame = impl()->frame();
+    if (!frame)
+        return jsUndefined();
+    Settings* settings = frame->settings();
+    if (!settings)
+        return jsUndefined();
+    if (!settings->experimentalWebSocketsEnabled())
+        return jsUndefined();
     return getDOMConstructor<JSWebSocketConstructor>(exec, this);
 }
 #endif

@@ -4409,6 +4409,11 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     settings->setExperimentalNotificationsEnabled(enabled);
 
+    hr = prefsPrivate->experimentalWebSocketsEnabled(&enabled);
+    if (FAILED(hr))
+        return hr;
+    settings->setExperimentalWebSocketsEnabled(enabled);
+
     hr = prefsPrivate->isWebSecurityEnabled(&enabled);
     if (FAILED(hr))
         return hr;
@@ -5625,4 +5630,3 @@ Page* core(IWebView* iWebView)
 
     return page;
 }
-

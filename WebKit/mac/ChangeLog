@@ -1,3 +1,19 @@
+2009-09-28  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Add experimentalWebSocketsEnabled in WebPreferences.
+        https://bugs.webkit.org/show_bug.cgi?id=28941
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences experimentalWebSocketsEnabled]):
+        (-[WebPreferences setExperimentalWebSocketsEnabled:]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChangedNotification:]):
+
 2009-09-28  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson.

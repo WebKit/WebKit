@@ -407,6 +407,7 @@ static void resetDefaultsToConsistentValues()
     [preferences setCacheModel:WebCacheModelDocumentBrowser];
     [preferences setXSSAuditorEnabled:NO];
     [preferences setExperimentalNotificationsEnabled:NO];
+    [preferences setExperimentalWebSocketsEnabled:NO];
 
     [preferences setPrivateBrowsingEnabled:NO];
     [preferences setAuthorAndUserStylesEnabled:YES];

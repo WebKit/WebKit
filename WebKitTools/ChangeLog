@@ -1,3 +1,15 @@
+2009-09-28  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Add experimentalWebSocketsEnabled in WebPreferences.
+        https://bugs.webkit.org/show_bug.cgi?id=28941
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetDefaultsToConsistentValues):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (resetDefaultsToConsistentValues):
+
 2009-09-28  Yaar Schnitman  <yaar@chromium.org>
 
         Reviewed by David Kilzer.
