@@ -1,5 +1,18 @@
 2009-09-29  Janne Koskinen  <janne.p.koskinen@digia.com>
 
+        Reviewed by David Kilzer.
+
+        [Qt] Assert messages prints visible in Symbian
+        https://bugs.webkit.org/show_bug.cgi?id=29808
+
+        Asserts use vprintf to print the messages to stderr.
+        In Symbian Open C it is not possible to see stderr so
+        I routed the messages to stdout instead.
+
+        * wtf/Assertions.cpp:
+
+2009-09-29  Janne Koskinen  <janne.p.koskinen@digia.com>
+
         Reviewed by Darin Adler.
 
         [Qt] Symbian CRASH macro implementation

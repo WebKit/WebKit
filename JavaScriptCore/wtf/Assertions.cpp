@@ -105,7 +105,11 @@ static void vprintf_stderr_common(const char* format, va_list args)
         } while (size > 1024);
     }
 #endif
+#if PLATFORM(SYMBIAN)
+    vfprintf(stdout, format, args);
+#else
     vfprintf(stderr, format, args);
+#endif
 }
 
 WTF_ATTRIBUTE_PRINTF(1, 2)
