@@ -1,3 +1,11 @@
+2009-09-29  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by NOBODY (missed file).
+
+        Adding file missed in previous commit.
+
+        * manual-tests/gtk/resources/long_cell.cur: Copied from WebCore/dom/PositionCreationFunctions.h.
+
 2009-09-29  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Fisher.
