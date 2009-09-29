@@ -1,3 +1,14 @@
+2009-09-28  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/7157288> Crash in RenderStyle::computedLineHeight()
+        when Times New Roman is not installed
+
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::FontCache::getLastResortFallbackFont): If Times New Roman is
+        not available, use the Windows default GUI font.
+
 2009-09-28  Jian Li  <jianli@chromium.org>
 
         Reviewed by David Levin.

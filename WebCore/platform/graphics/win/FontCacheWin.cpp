@@ -33,8 +33,9 @@
 #include "SimpleFontData.h"
 #include "StringHash.h"
 #include "UnicodeRange.h"
-#include <windows.h>
 #include <mlang.h>
+#include <windows.h>
+#include <wtf/StdLibExtras.h>
 #if PLATFORM(CG)
 #include <ApplicationServices/ApplicationServices.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
@@ -305,7 +306,17 @@ FontPlatformData* FontCache::getLastResortFallbackFont(const FontDescription& fo
     // FIXME: Would be even better to somehow get the user's default font here.  For now we'll pick
     // the default that the user would get without changing any prefs.
     static AtomicString timesStr("Times New Roman");
-    return getCachedFontPlatformData(fontDescription, timesStr);
+    if (FontPlatformData* platformFont = getCachedFontPlatformData(fontDescription, timesStr))
+        return platformFont;
+
+    DEFINE_STATIC_LOCAL(String, defaultGUIFontFamily, ());
+    if (defaultGUIFontFamily.isEmpty()) {
+        HFONT defaultGUIFont = static_cast<HFONT>(GetStockObject(DEFAULT_GUI_FONT));
+        LOGFONT logFont;
+        GetObject(defaultGUIFont, sizeof(logFont), &logFont);
+        defaultGUIFontFamily = String(logFont.lfFaceName, wcsnlen(logFont.lfFaceName, LF_FACESIZE));
+    }
+    return getCachedFontPlatformData(fontDescription, defaultGUIFontFamily);
 }
 
 static LONG toGDIFontWeight(FontWeight fontWeight)
