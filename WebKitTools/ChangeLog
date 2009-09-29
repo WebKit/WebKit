@@ -1,3 +1,16 @@
+2009-09-29  Csaba Osztrogonac  <oszi@inf.u-szeged.hu>
+
+        Reviewed by David Kilzer.
+
+        [Qt] Make build-webkit script work on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=29802
+
+        * Scripts/run-webkit-tests:
+        * Scripts/webkitdirs.pm:
+         - Removed unnecessary -p switch for mkdir on Windows.
+         - Use canonical path, which uses slashes or backslashes depends on platform.
+         - isWindows() only test for Windows and not for Cyqwin.
+
 2009-09-29  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
 
         Reviewed by Simon Hausmann.

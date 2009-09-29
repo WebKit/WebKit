@@ -178,7 +178,7 @@ if (isAppleMacWebKit()) {
         $platform = "qt-mac";
     } elsif (isLinux()) {
         $platform = "qt-linux";
-    } elsif (isWindows()) {
+    } elsif (isWindows() || isCygwin()) {
         $platform = "qt-win";
     } else {
         $platform = "qt";

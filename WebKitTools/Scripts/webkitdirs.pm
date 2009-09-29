@@ -31,6 +31,7 @@ use strict;
 use warnings;
 use FindBin;
 use File::Basename;
+use File::Spec;
 use POSIX;
 use VCSUtils;
 
@@ -865,7 +866,7 @@ sub isDarwin()
 
 sub isWindows()
 {
-    return isCygwin() || ($^O eq "MSWin32") || 0;
+    return ($^O eq "MSWin32") || 0;
 }
 
 sub isLinux()
@@ -1304,16 +1305,18 @@ sub buildQMakeProject($@)
         }
     }
 
-    my $dir = baseProductDir();
+    my $dir = File::Spec->canonpath(baseProductDir());
+    my @mkdirArgs;
+    push @mkdirArgs, "-p" if !isWindows();
     if (! -d $dir) {
-        system "mkdir", "-p", "$dir";
+        system "mkdir", @mkdirArgs, "$dir";
         if (! -d $dir) {
             die "Failed to create product directory " . $dir;
         }
     }
-    $dir = $dir . "/$config";
+    $dir = File::Spec->catfile($dir, $config);
     if (! -d $dir) {
-        system "mkdir", "-p", "$dir";
+        system "mkdir", @mkdirArgs, "$dir";
         if (! -d $dir) {
             die "Failed to create build directory " . $dir;
         }
