@@ -1,3 +1,18 @@
+2009-09-29  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        Basic authentication credentials are not sent automatically to top resources
+        https://bugs.webkit.org/show_bug.cgi?id=29901
+
+        No new tests - I don't want to pollute root directory of http tests to check for this rather
+        minor issue.
+
+        * platform/network/CredentialStorage.cpp:
+        (WebCore::CredentialStorage::set): Changed to always preserve leading slash.
+        (WebCore::CredentialStorage::getDefaultAuthenticationCredential): Made breaking out of the
+        loop more explicit.
+
 2009-09-29  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Oliver Hunt.

@@ -60,6 +60,9 @@ static String originStringFromURL(const KURL& url)
 
 void CredentialStorage::set(const Credential& credential, const ProtectionSpace& protectionSpace, const KURL& url)
 {
+    ASSERT(url.protocolInHTTPFamily());
+    ASSERT(url.isValid());
+
     protectionSpaceToCredentialMap().set(protectionSpace, credential);
     
     ProtectionSpaceAuthenticationScheme scheme = protectionSpace.authenticationScheme();
@@ -70,14 +73,15 @@ void CredentialStorage::set(const Credential& credential, const ProtectionSpace&
         pair<HashMap<String, HashMap<String, Credential> >::iterator, bool> result = originToDefaultBasicCredentialMap().add(origin, pathToCredentialMap);
         
         // Remove the last path component that is not a directory to determine the subpath for which this credential applies.
+        // We keep a leading slash, but remove a trailing one.
         String path = url.path();
-        if (!path.endsWith("/")) {
+        ASSERT(path.length() > 0);
+        ASSERT(path[0] == '/');
+        if (path.length() > 1) {
             int index = path.reverseFind('/');
-            if (index != -1)
-                path = path.substring(0, index);
+            path = path.substring(0, index ? index : 1);
         }
-        if (path.endsWith("/") && path.length() > 1)
-            path = path.substring(0, path.length() - 1);
+        ASSERT(path.length() == 1 || path[path.length() - 1] != '/');
         
         result.first->second.set(path, credential);
     }
@@ -102,13 +106,13 @@ Credential CredentialStorage::getDefaultAuthenticationCredential(const KURL& url
     while (credential.isEmpty() && !path.isNull()) {
         int index = path.reverseFind('/');
         if (index == 0) {
-            path = String();
             credential = pathToCredentialMap.get("/");
+            break;
         } else if (index == -1) {
             // This case should never happen, as all HTTP URL paths should start with a leading /
             ASSERT_NOT_REACHED();
             credential = pathToCredentialMap.get(path);
-            path = String();
+            break;
         } else {
             path = path.substring(0, index);
             credential = pathToCredentialMap.get(path);
