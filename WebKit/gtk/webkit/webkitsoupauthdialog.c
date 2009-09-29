@@ -107,6 +107,11 @@ static void save_password_callback(SoupMessage* msg, WebKitAuthData* authData)
     if (msg->status_code != 401 && msg->status_code < 500)
         soup_auth_save_password(authData->auth, authData->username, authData->password);
 
+    /* Disconnect the callback. If the authentication succeeded we are
+     * done, and if it failed we'll create a new authData and we'll
+     * connect to 'got-headers' again in response_callback */
+    g_signal_handlers_disconnect_by_func(msg, save_password_callback, authData);
+
     free_authData(authData);
 }
 #endif

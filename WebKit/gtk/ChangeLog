@@ -1,3 +1,19 @@
+2009-09-29  Xan Lopez  <xlopez@igalia.com>
+
+        Rubber-stamped by Eric Seidel.
+
+        [Gtk] Crash when saving a password
+        https://bugs.webkit.org/show_bug.cgi?id=28070
+
+        Disconnect the 'got-headers' callback when we are done with
+        it. The signal can be emitted more than once if the message is
+        retransmitted, but each time that happens authData is created
+        again and a new callback connected, so we have to get rid of the
+        old one (which will crash because we free authData).
+
+        * webkit/webkitsoupauthdialog.c:
+        (save_password_callback):
+
 2009-09-25  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Xan Lopez.
