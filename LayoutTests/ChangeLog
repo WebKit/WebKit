@@ -1,3 +1,17 @@
+2009-09-29  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Unreviewed.  Fix 4 layout test failures by webkit r48861.
+        http://bugs.webkit.org/show_bug.cgi?id=29840
+
+        r48861 introduced experimentalWebSocketsEnabled, and false by default.
+        When experimentalWebSocketsEnabled is false, window.WebSocket is
+        undefined, instead of a constructor.
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/dom/prototype-inheritance-2-expected.txt:
+        * fast/dom/prototype-inheritance-expected.txt:
+        * fast/js/global-constructors-expected.txt:
+
 2009-09-28  Zan Dobersek  <zandobersek@gmail.com>
 
         Reviewed by David Kilzer.
