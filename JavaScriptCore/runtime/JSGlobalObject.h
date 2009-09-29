@@ -52,14 +52,22 @@ namespace JSC {
     struct HashTable;
 
     typedef Vector<ExecState*, 16> ExecStateStack;
-
+    
     class JSGlobalObject : public JSVariableObject {
     protected:
         using JSVariableObject::JSVariableObjectData;
 
         struct JSGlobalObjectData : public JSVariableObjectData {
-            JSGlobalObjectData()
+            // We use an explicit destructor function pointer instead of a
+            // virtual destructor because we want to avoid adding a vtable
+            // pointer to this struct. Adding a vtable pointer would force the
+            // compiler to emit costly pointer fixup code when casting from
+            // JSVariableObjectData* to JSGlobalObjectData*.
+            typedef void (*Destructor)(void*);
+
+            JSGlobalObjectData(Destructor destructor)
                 : JSVariableObjectData(&symbolTable, 0)
+                , destructor(destructor)
                 , registerArraySize(0)
                 , globalScopeChain(NoScopeChain())
                 , regExpConstructor(0)
@@ -85,10 +93,8 @@ namespace JSC {
             {
             }
             
-            virtual ~JSGlobalObjectData()
-            {
-            }
-
+            Destructor destructor;
+            
             size_t registerArraySize;
 
             JSGlobalObject* next;
@@ -153,7 +159,7 @@ namespace JSC {
         void* operator new(size_t, JSGlobalData*);
 
         explicit JSGlobalObject()
-            : JSVariableObject(JSGlobalObject::createStructure(jsNull()), new JSGlobalObjectData)
+            : JSVariableObject(JSGlobalObject::createStructure(jsNull()), new JSGlobalObjectData(destroyJSGlobalObjectData))
         {
             init(this);
         }
@@ -280,6 +286,8 @@ namespace JSC {
         void addStaticGlobals(GlobalPropertyInfo*, int count);
 
     private:
+        static void destroyJSGlobalObjectData(void*);
+
         // FIXME: Fold reset into init.
         void init(JSObject* thisValue);
         void reset(JSValue prototype);

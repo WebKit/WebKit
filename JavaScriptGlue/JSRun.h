@@ -41,9 +41,16 @@ class JSGlueGlobalObject : public JSGlobalObject {
 
     private:
         struct Data : JSGlobalObjectData {
+            Data()
+                : JSGlobalObjectData(destroyData)
+            {
+            }
+            
             RefPtr<Structure> userObjectStructure;
             JSFlags flags;
         };
+
+        static void destroyData(void*);
 
         Data* d() const { return static_cast<Data*>(JSGlobalObject::d()); }
 };
