@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.layoutTestController) {
+  layoutTestController.dumpAsText();
+  layoutTestController.setXSSAuditorEnabled(true);
+  layoutTestController.waitUntilDone();
+  window.setTimeout(done, 2000);
+}
+
+function done()
+{
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+</script>
+</head>
+<body>
+<iframe src="http://localhost:8000/security/xssAuditor/resources/echo-head.pl?q=%3Cmeta+http-equiv%3D%22refresh%22+content%3D%220%3B+url%3Djavascript%3Aalert%28document.domain%29%22%3E">
+</iframe>
+</body>
+</html>
