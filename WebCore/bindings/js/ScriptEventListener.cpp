@@ -96,9 +96,9 @@ PassRefPtr<JSLazyEventListener> createAttributeEventListener(Frame* frame, Attri
     return JSLazyEventListener::create(attr->localName().string(), eventParameterName(frame->document()->isSVGDocument()), attr->value(), 0, sourceURL, lineNumber);
 }
 
-String getEventListenerHandlerBody(ScriptState* scriptState, EventListener* eventListener)
+String getEventListenerHandlerBody(ScriptExecutionContext* context, ScriptState* scriptState, EventListener* eventListener)
 {
-    JSC::JSObject* functionObject = eventListener->jsFunction();
+    JSC::JSObject* functionObject = eventListener->jsFunction(context);
     if (!functionObject)
         return "";
     return functionObject->toString(scriptState);

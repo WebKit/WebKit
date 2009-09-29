@@ -1,3 +1,18 @@
+2009-09-29  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Build fix - pass a proper ScriptExecutipnContext to getEventListenerHandlerBody()
+
+        * bindings/js/ScriptEventListener.cpp:
+        (WebCore::getEventListenerHandlerBody):
+        * bindings/js/ScriptEventListener.h:
+        * bindings/v8/ScriptEventListener.cpp:
+        (WebCore::getEventListenerHandlerBody):
+        * bindings/v8/ScriptEventListener.h:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::buildObjectForEventListener):
+
 2009-09-29  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Eric Seidel.
