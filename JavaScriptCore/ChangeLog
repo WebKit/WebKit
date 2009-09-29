@@ -1,5 +1,17 @@
 2009-09-29  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Standardized an optimization for adding non-numbers.
+        
+        SunSpider says maybe a tiny speedup.
+
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_add):
+        (JSC::JIT::emitSlow_op_add):
+
+2009-09-29  Geoffrey Garen  <ggaren@apple.com>
+
         Windows build fix: export a new symbol.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
