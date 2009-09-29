@@ -3,8 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,187) size 405x17
-        text run at (0,187) width 405: "If this renders correctly you should see one big friendly green square. "
-      RenderHTMLCanvas {CANVAS} at (405,0) size 200x200
+      RenderText {#text} at (0,184) size 490x21
+        text run at (0,184) width 490: "If this renders correctly you should see one big friendly green square. "
+      RenderHTMLCanvas {CANVAS} at (490,0) size 200x200
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0

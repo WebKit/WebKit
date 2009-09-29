@@ -8,23 +8,24 @@ layer at (0,0) size 800x600
           RenderView at (0,0) size 800x200
         layer at (0,0) size 800x200
           RenderBlock {HTML} at (0,0) size 800x200
-            RenderBody {BODY} at (8,8) size 784x179
-              RenderBlock {P} at (0,0) size 784x34
-                RenderText {#text} at (0,0) size 49x17
-                  text run at (0,0) width 49: "Test for "
-                RenderInline {I} at (0,0) size 715x34
-                  RenderInline {A} at (0,0) size 275x17 [color=#0000EE]
-                    RenderText {#text} at (49,0) size 275x17
-                      text run at (49,0) width 275: "https://bugs.webkit.org/show_bug.cgi?id=19348"
-                  RenderText {#text} at (324,0) size 715x34
-                    text run at (324,0) width 4: " "
-                    text run at (328,0) width 387: "REGRESSION (r34193): Setting the size of a frame with javascript"
-                    text run at (0,17) width 208: "document.body.row no longer works"
-                RenderText {#text} at (208,17) size 4x17
-                  text run at (208,17) width 4: "."
-              RenderBlock {P} at (0,47) size 784x17
-                RenderText {#text} at (0,0) size 186x17
-                  text run at (0,0) width 186: "This frame should be 200px tall."
+            RenderBody {BODY} at (8,8) size 784x176
+              RenderBlock {P} at (0,0) size 784x42
+                RenderText {#text} at (0,0) size 57x21
+                  text run at (0,0) width 57: "Test for "
+                RenderInline {I} at (0,0) size 761x42
+                  RenderInline {A} at (0,0) size 337x21 [color=#0000EE]
+                    RenderText {#text} at (57,0) size 337x21
+                      text run at (57,0) width 337: "https://bugs.webkit.org/show_bug.cgi?id=19348"
+                  RenderText {#text} at (394,0) size 761x42
+                    text run at (394,0) width 4: " "
+                    text run at (398,0) width 363: "REGRESSION (r34193): Setting the size of a frame"
+                    text run at (0,21) width 105: "with javascript "
+                    text run at (105,21) width 256: "document.body.row no longer works"
+                RenderText {#text} at (361,21) size 4x21
+                  text run at (361,21) width 4: "."
+              RenderBlock {P} at (0,58) size 784x21
+                RenderText {#text} at (0,0) size 226x21
+                  text run at (0,0) width 226: "This frame should be 200px tall."
         layer at (0,100) size 100x100
           RenderBlock (positioned) {DIV} at (0,100) size 100x100 [bgcolor=#008000]
       RenderFrame {FRAME} at (0,206) size 800x394

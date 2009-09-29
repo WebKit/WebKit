@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x342
-  RenderBlock {HTML} at (0,0) size 800x342
-    RenderBody {BODY} at (8,13) size 784x316
-      RenderBlock {P} at (0,0) size 784x17
-        RenderText {#text} at (0,0) size 534x17
-          text run at (0,0) width 534: "The square should consist of exactly five equal bands, orange, lime, orange, yellow, orange."
-      RenderTable {TABLE} at (0,30) size 256x256 [bgcolor=#FFA500] [border: (3px solid #000000)]
+layer at (0,0) size 800x362
+  RenderBlock {HTML} at (0,0) size 800x362
+    RenderBody {BODY} at (8,16) size 784x330
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 649x21
+          text run at (0,0) width 649: "The square should consist of exactly five equal bands, orange, lime, orange, yellow, orange."
+      RenderTable {TABLE} at (0,37) size 256x256 [bgcolor=#FFA500] [border: (3px solid #000000)]
         RenderTableSection {TBODY} at (3,3) size 250x250
           RenderTableRow {TR} at (0,0) size 250x250
             RenderTableCell {TD} at (0,0) size 50x250 [r=0 c=0 rs=1 cs=1]
@@ -109,11 +109,11 @@ layer at (0,0) size 800x342
               RenderBlock (anonymous) at (0,250) size 50x0
                 RenderInline {SPAN} at (0,0) size 0x0
                 RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,299) size 784x17
-        RenderText {#text} at (0,0) size 245x17
-          text run at (0,0) width 245: "This test is meaningless if you don't pass "
-        RenderInline {A} at (0,0) size 47x17 [color=#0000EE]
-          RenderText {#text} at (245,0) size 47x17
-            text run at (245,0) width 47: "test 006"
-        RenderText {#text} at (292,0) size 4x17
-          text run at (292,0) width 4: "."
+      RenderBlock {P} at (0,309) size 784x21
+        RenderText {#text} at (0,0) size 293x21
+          text run at (0,0) width 293: "This test is meaningless if you don't pass "
+        RenderInline {A} at (0,0) size 56x21 [color=#0000EE]
+          RenderText {#text} at (293,0) size 56x21
+            text run at (293,0) width 56: "test 006"
+        RenderText {#text} at (349,0) size 4x21
+          text run at (349,0) width 4: "."

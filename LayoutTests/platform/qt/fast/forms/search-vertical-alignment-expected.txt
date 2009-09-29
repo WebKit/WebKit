@@ -2,62 +2,62 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x579
-      RenderBlock {P} at (0,0) size 784x34
-        RenderText {#text} at (0,0) size 771x34
-          text run at (0,0) width 395: "Test that search field text is vertically centered if the search field is "
-          text run at (395,0) width 376: "taller than the text. In each of the following pairs of a search field"
-          text run at (0,17) width 25: "and "
-          text run at (25,17) width 331: "a text field, the vertical position of the text should be the "
-          text run at (356,17) width 114: "same in both fields."
-      RenderBlock {P} at (0,47) size 784x45
-        RenderTextControl {INPUT} at (2,0) size 155x45 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-          RenderBlock {DIV} at (3,14) size 149x17
-            RenderBlock {DIV} at (0,13) size 0x0
-            RenderBlock {DIV} at (149,13) size 0x0
-        RenderText {#text} at (159,14) size 4x17
-          text run at (159,14) width 4: " "
-        RenderTextControl {INPUT} at (165,0) size 155x45 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 765x42
+          text run at (0,0) width 469: "Test that search field text is vertically centered if the search field is "
+          text run at (469,0) width 296: "taller than the text. In each of the following"
+          text run at (0,21) width 186: "pairs of a search field and "
+          text run at (186,21) width 393: "a text field, the vertical position of the text should be the "
+          text run at (579,21) width 137: "same in both fields."
+      RenderBlock {P} at (0,58) size 784x45
+        RenderTextControl {INPUT} at (2,0) size 177x45 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+          RenderBlock {DIV} at (3,12) size 171x21
+            RenderBlock {DIV} at (0,16) size 0x0
+            RenderBlock {DIV} at (171,16) size 0x0
+        RenderText {#text} at (181,12) size 4x21
+          text run at (181,12) width 4: " "
+        RenderTextControl {INPUT} at (187,0) size 177x45 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,105) size 784x20
-        RenderTextControl {INPUT} at (2,0) size 155x16 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-          RenderBlock {DIV} at (3,3) size 149x17
-            RenderBlock {DIV} at (0,13) size 0x0
-            RenderBlock {DIV} at (149,13) size 0x0
-        RenderText {#text} at (159,3) size 4x17
-          text run at (159,3) width 4: " "
-        RenderTextControl {INPUT} at (165,0) size 155x16 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+      RenderBlock {P} at (0,119) size 784x21
+        RenderTextControl {INPUT} at (2,0) size 177x16 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+          RenderBlock {DIV} at (3,3) size 171x21
+            RenderBlock {DIV} at (0,16) size 0x0
+            RenderBlock {DIV} at (171,16) size 0x0
+        RenderText {#text} at (181,0) size 4x21
+          text run at (181,0) width 4: " "
+        RenderTextControl {INPUT} at (187,0) size 177x16 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,138) size 784x17
-        RenderTextControl {INPUT} at (2,1) size 155x12 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-          RenderBlock {DIV} at (3,3) size 149x17
-            RenderBlock {DIV} at (0,13) size 0x0
-            RenderBlock {DIV} at (149,13) size 0x0
-        RenderText {#text} at (159,0) size 4x17
-          text run at (159,0) width 4: " "
-        RenderTextControl {INPUT} at (165,1) size 155x12 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+      RenderBlock {P} at (0,156) size 784x21
+        RenderTextControl {INPUT} at (2,4) size 177x12 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+          RenderBlock {DIV} at (3,3) size 171x21
+            RenderBlock {DIV} at (0,16) size 0x0
+            RenderBlock {DIV} at (171,16) size 0x0
+        RenderText {#text} at (181,0) size 4x21
+          text run at (181,0) width 4: " "
+        RenderTextControl {INPUT} at (187,4) size 177x12 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
         RenderText {#text} at (0,0) size 0x0
-layer at (13,69) size 149x17
-  RenderBlock {DIV} at (0,0) size 149x17
-    RenderText {#text} at (1,0) size 26x17
-      text run at (1,0) width 26: "Text"
-layer at (176,69) size 149x17
-  RenderBlock {DIV} at (3,14) size 149x17
-    RenderText {#text} at (1,0) size 26x17
-      text run at (1,0) width 26: "Text"
-layer at (13,116) size 149x17
-  RenderBlock {DIV} at (0,0) size 149x17
-    RenderText {#text} at (1,0) size 26x17
-      text run at (1,0) width 26: "Text"
-layer at (176,116) size 149x17
-  RenderBlock {DIV} at (3,3) size 149x17
-    RenderText {#text} at (1,0) size 26x17
-      text run at (1,0) width 26: "Text"
-layer at (13,150) size 149x17
-  RenderBlock {DIV} at (0,0) size 149x17
-    RenderText {#text} at (1,0) size 26x17
-      text run at (1,0) width 26: "Text"
-layer at (176,150) size 149x17
-  RenderBlock {DIV} at (3,3) size 149x17
-    RenderText {#text} at (1,0) size 26x17
-      text run at (1,0) width 26: "Text"
+layer at (13,78) size 171x21
+  RenderBlock {DIV} at (0,0) size 171x21
+    RenderText {#text} at (1,0) size 31x21
+      text run at (1,0) width 31: "Text"
+layer at (198,78) size 171x21
+  RenderBlock {DIV} at (3,12) size 171x21
+    RenderText {#text} at (1,0) size 31x21
+      text run at (1,0) width 31: "Text"
+layer at (13,130) size 171x21
+  RenderBlock {DIV} at (0,0) size 171x21
+    RenderText {#text} at (1,0) size 31x21
+      text run at (1,0) width 31: "Text"
+layer at (198,130) size 171x21
+  RenderBlock {DIV} at (3,3) size 171x21
+    RenderText {#text} at (1,0) size 31x21
+      text run at (1,0) width 31: "Text"
+layer at (13,171) size 171x21
+  RenderBlock {DIV} at (0,0) size 171x21
+    RenderText {#text} at (1,0) size 31x21
+      text run at (1,0) width 31: "Text"
+layer at (198,171) size 171x21
+  RenderBlock {DIV} at (3,3) size 171x21
+    RenderText {#text} at (1,0) size 31x21
+      text run at (1,0) width 31: "Text"

@@ -1,64 +1,64 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x351
-  RenderBlock {HTML} at (0,0) size 800x351
-    RenderBody {BODY} at (8,13) size 784x325
-      RenderBlock {P} at (0,0) size 784x17 [color=#000080]
-        RenderText {#text} at (0,0) size 209x17
-          text run at (0,0) width 209: "This sentence should be underlined."
-      RenderBlock {P} at (0,30) size 784x17 [color=#000080]
-        RenderText {#text} at (0,0) size 202x17
-          text run at (0,0) width 202: "This sentence should be overlined."
-      RenderBlock {P} at (0,60) size 784x17 [color=#000080]
-        RenderText {#text} at (0,0) size 218x17
-          text run at (0,0) width 218: "This sentence should be stricken out."
-      RenderBlock {P} at (0,90) size 784x17 [color=#000080]
-        RenderText {#text} at (0,0) size 337x17
-          text run at (0,0) width 337: "This sentence should be blinking (if the UA supports that)."
-      RenderBlock {P} at (0,120) size 784x18 [color=#000080]
-        RenderText {#text} at (0,0) size 210x17
-          text run at (0,0) width 210: "The sentence should be underlined. "
-        RenderInline {B} at (0,0) size 223x17
-          RenderText {#text} at (210,0) size 223x17
-            text run at (210,0) width 223: "This sentence should be underlined"
-        RenderText {#text} at (433,0) size 4x17
-          text run at (433,0) width 4: "."
-      RenderBlock {P} at (0,151) size 784x17 [color=#000080]
-        RenderText {#text} at (0,0) size 290x17
-          text run at (0,0) width 290: "This sentence should be underlined and overlined."
-      RenderBlock {P} at (0,181) size 784x17 [color=#000080]
-        RenderText {#text} at (0,0) size 348x17
-          text run at (0,0) width 348: "This sentence should be underlined, overlined, and stricken."
-      RenderBlock {DIV} at (0,211) size 784x0 [color=#FF0000]
-      RenderBlock {P} at (0,211) size 784x18 [color=#000080]
-        RenderText {#text} at (0,0) size 263x17
-          text run at (0,0) width 263: "There should be no red at the end of this line."
-        RenderInline {STRONG} at (0,0) size 4x17 [color=#FF0000]
-          RenderText {#text} at (263,0) size 4x17
-            text run at (263,0) width 4: " "
-        RenderText {#text} at (267,0) size 4x17
-          text run at (267,0) width 4: " "
-      RenderBlock {P} at (0,242) size 784x19 [color=#000080]
-        RenderText {#text} at (0,2) size 263x17
-          text run at (0,2) width 263: "There should be no red at the end of this line."
-        RenderImage {IMG} at (263,0) size 15x15 [color=#FF0000]
-        RenderText {#text} at (278,2) size 4x17
-          text run at (278,2) width 4: " "
-      RenderBlock {P} at (0,274) size 784x21 [color=#000080]
-        RenderText {#text} at (0,4) size 192x17
-          text run at (0,4) width 192: "This sentence and all its images "
-        RenderImage {IMG} at (192,0) size 17x17 [color=#FF0000]
-        RenderText {#text} at (209,4) size 4x17
-          text run at (209,4) width 4: " "
-        RenderImage {IMG} at (213,0) size 17x17 [color=#FF0000]
-        RenderText {#text} at (230,4) size 127x17
-          text run at (230,4) width 4: " "
-          text run at (234,4) width 123: "should be underlined."
-      RenderBlock {P} at (0,308) size 784x17 [color=#000080]
-        RenderText {#text} at (0,0) size 305x17
-          text run at (0,0) width 305: "There should be a long blue underline between here: "
-        RenderInline {SPAN} at (0,0) size 128x17 [color=#FFFFFF]
-          RenderText {#text} at (305,0) size 128x17
-            text run at (305,0) width 128: "FAIL FAIL FAIL FAIL "
-        RenderText {#text} at (433,0) size 58x17
-          text run at (433,0) width 58: ":and here."
+layer at (0,0) size 800x426
+  RenderBlock {HTML} at (0,0) size 800x426
+    RenderBody {BODY} at (8,16) size 784x394
+      RenderBlock {P} at (0,0) size 784x21 [color=#000080]
+        RenderText {#text} at (0,0) size 258x21
+          text run at (0,0) width 258: "This sentence should be underlined."
+      RenderBlock {P} at (0,37) size 784x21 [color=#000080]
+        RenderText {#text} at (0,0) size 248x21
+          text run at (0,0) width 248: "This sentence should be overlined."
+      RenderBlock {P} at (0,74) size 784x21 [color=#000080]
+        RenderText {#text} at (0,0) size 263x21
+          text run at (0,0) width 263: "This sentence should be stricken out."
+      RenderBlock {P} at (0,111) size 784x21 [color=#000080]
+        RenderText {#text} at (0,0) size 408x21
+          text run at (0,0) width 408: "This sentence should be blinking (if the UA supports that)."
+      RenderBlock {P} at (0,148) size 784x22 [color=#000080]
+        RenderText {#text} at (0,0) size 259x21
+          text run at (0,0) width 259: "The sentence should be underlined. "
+        RenderInline {B} at (0,0) size 273x21
+          RenderText {#text} at (259,0) size 273x21
+            text run at (259,0) width 273: "This sentence should be underlined"
+        RenderText {#text} at (532,0) size 4x21
+          text run at (532,0) width 4: "."
+      RenderBlock {P} at (0,186) size 784x21 [color=#000080]
+        RenderText {#text} at (0,0) size 359x21
+          text run at (0,0) width 359: "This sentence should be underlined and overlined."
+      RenderBlock {P} at (0,223) size 784x21 [color=#000080]
+        RenderText {#text} at (0,0) size 426x21
+          text run at (0,0) width 426: "This sentence should be underlined, overlined, and stricken."
+      RenderBlock {DIV} at (0,260) size 784x0 [color=#FF0000]
+      RenderBlock {P} at (0,260) size 784x22 [color=#000080]
+        RenderText {#text} at (0,0) size 319x21
+          text run at (0,0) width 319: "There should be no red at the end of this line."
+        RenderInline {STRONG} at (0,0) size 4x21 [color=#FF0000]
+          RenderText {#text} at (319,0) size 4x21
+            text run at (319,0) width 4: " "
+        RenderText {#text} at (323,0) size 4x21
+          text run at (323,0) width 4: " "
+      RenderBlock {P} at (0,298) size 784x21 [color=#000080]
+        RenderText {#text} at (0,0) size 319x21
+          text run at (0,0) width 319: "There should be no red at the end of this line."
+        RenderImage {IMG} at (319,1) size 15x15 [color=#FF0000]
+        RenderText {#text} at (334,0) size 4x21
+          text run at (334,0) width 4: " "
+      RenderBlock {P} at (0,335) size 784x22 [color=#000080]
+        RenderText {#text} at (0,1) size 232x21
+          text run at (0,1) width 232: "This sentence and all its images "
+        RenderImage {IMG} at (232,0) size 17x17 [color=#FF0000]
+        RenderText {#text} at (249,1) size 4x21
+          text run at (249,1) width 4: " "
+        RenderImage {IMG} at (253,0) size 17x17 [color=#FF0000]
+        RenderText {#text} at (270,1) size 158x21
+          text run at (270,1) width 4: " "
+          text run at (274,1) width 154: "should be underlined."
+      RenderBlock {P} at (0,373) size 784x21 [color=#000080]
+        RenderText {#text} at (0,0) size 379x21
+          text run at (0,0) width 379: "There should be a long blue underline between here: "
+        RenderInline {SPAN} at (0,0) size 152x21 [color=#FFFFFF]
+          RenderText {#text} at (379,0) size 152x21
+            text run at (379,0) width 152: "FAIL FAIL FAIL FAIL "
+        RenderText {#text} at (531,0) size 71x21
+          text run at (531,0) width 71: ":and here."

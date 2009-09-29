@@ -3,7 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {H1} at (0,0) size 784x34
-        RenderText {#text} at (0,0) size 715x34
-          text run at (0,0) width 715: "Two gradients, one with zero radius that should not crash."
-      RenderBlock {DIV} at (0,51) size 154x154 [border: (2px solid #000000)]
+      RenderBlock {H1} at (0,0) size 784x84
+        RenderText {#text} at (0,0) size 736x84
+          text run at (0,0) width 736: "Two gradients, one with zero radius that should"
+          text run at (0,42) width 155: "not crash."
+      RenderBlock {DIV} at (0,105) size 154x154 [border: (2px solid #000000)]

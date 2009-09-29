@@ -3,8 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x572
-      RenderBlock {P} at (0,0) size 784x17
-        RenderText {#text} at (0,0) size 384x17
-          text run at (0,0) width 384: "Test that corner-radii are constrained according to the CSS3 rules."
-      RenderBlock {DIV} at (20,37) size 240x80 [border: (20px solid #000000)]
-      RenderBlock {DIV} at (20,137) size 80x240 [border: (20px solid #000000)]
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 467x21
+          text run at (0,0) width 467: "Test that corner-radii are constrained according to the CSS3 rules."
+      RenderBlock {DIV} at (20,41) size 240x80 [border: (20px solid #000000)]
+      RenderBlock {DIV} at (20,141) size 80x240 [border: (20px solid #000000)]

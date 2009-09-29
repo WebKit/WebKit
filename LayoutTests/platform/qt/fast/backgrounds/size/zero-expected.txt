@@ -3,21 +3,21 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x17
-        RenderText {#text} at (0,0) size 49x17
-          text run at (0,0) width 49: "Test for "
-        RenderInline {I} at (0,0) size 475x17
-          RenderInline {A} at (0,0) size 448x17 [color=#0000EE]
-            RenderText {#text} at (49,0) size 448x17
-              text run at (49,0) width 448: "REGRESSION(r27173): Web Inspector freezes beneath Image::drawPattern()"
-          RenderText {#text} at (497,0) size 27x17
-            text run at (497,0) width 27: " Bug"
-        RenderText {#text} at (524,0) size 4x17
-          text run at (524,0) width 4: "."
-      RenderBlock {P} at (0,30) size 784x17
-        RenderText {#text} at (0,0) size 511x17
-          text run at (0,0) width 511: "There should be four blue squares with black borders. WebKit should not hang or assert."
-      RenderBlock {DIV} at (8,60) size 106x106 [border: (3px solid #000000)]
-      RenderBlock {DIV} at (8,174) size 106x106 [border: (3px solid #000000)]
-      RenderBlock {DIV} at (8,288) size 106x106 [border: (3px solid #000000)]
-      RenderBlock {DIV} at (8,402) size 106x106 [border: (3px solid #000000)]
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 57x21
+          text run at (0,0) width 57: "Test for "
+        RenderInline {I} at (0,0) size 581x21
+          RenderInline {A} at (0,0) size 548x21 [color=#0000EE]
+            RenderText {#text} at (57,0) size 548x21
+              text run at (57,0) width 548: "REGRESSION(r27173): Web Inspector freezes beneath Image::drawPattern()"
+          RenderText {#text} at (605,0) size 33x21
+            text run at (605,0) width 33: " Bug"
+        RenderText {#text} at (638,0) size 4x21
+          text run at (638,0) width 4: "."
+      RenderBlock {P} at (0,37) size 784x21
+        RenderText {#text} at (0,0) size 623x21
+          text run at (0,0) width 623: "There should be four blue squares with black borders. WebKit should not hang or assert."
+      RenderBlock {DIV} at (8,74) size 106x106 [border: (3px solid #000000)]
+      RenderBlock {DIV} at (8,188) size 106x106 [border: (3px solid #000000)]
+      RenderBlock {DIV} at (8,302) size 106x106 [border: (3px solid #000000)]
+      RenderBlock {DIV} at (8,416) size 106x106 [border: (3px solid #000000)]

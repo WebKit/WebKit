@@ -1,18 +1,18 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x43
-  RenderBlock {HTML} at (0,0) size 800x43
-    RenderBody {BODY} at (8,13) size 784x17
-      RenderBlock {P} at (0,0) size 784x17
-        RenderText {#text} at (0,0) size 339x17
-          text run at (0,0) width 339: "This page should have one square green block and no red."
-layer at (8,43) size 65x65
-  RenderBlock (positioned) {DIV} at (8,43) size 65x65 [bgcolor=#FF0000]
-layer at (8,43) size 64x65
-  RenderBlock (positioned) {DIV} at (8,43) size 64x65 [bgcolor=#008000]
-    RenderBlock (anonymous) at (0,0) size 64x0
+layer at (0,0) size 800x53
+  RenderBlock {HTML} at (0,0) size 800x53
+    RenderBody {BODY} at (8,16) size 784x21
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 417x21
+          text run at (0,0) width 417: "This page should have one square green block and no red."
+layer at (8,53) size 80x80
+  RenderBlock (positioned) {DIV} at (8,53) size 80x80 [bgcolor=#FF0000]
+layer at (8,53) size 80x80
+  RenderBlock (positioned) {DIV} at (8,53) size 80x80 [bgcolor=#008000]
+    RenderBlock (anonymous) at (0,0) size 80x0
       RenderInline {SPAN} at (0,0) size 0x0
-    RenderBlock (anonymous) at (0,65) size 64x0
-      RenderBlock {DIV} at (32,0) size 0x0 [bgcolor=#FF0000]
-    RenderBlock (anonymous) at (0,65) size 64x0
+    RenderBlock (anonymous) at (0,80) size 80x0
+      RenderBlock {DIV} at (40,0) size 0x0 [bgcolor=#FF0000]
+    RenderBlock (anonymous) at (0,80) size 80x0
       RenderInline {SPAN} at (0,0) size 0x0

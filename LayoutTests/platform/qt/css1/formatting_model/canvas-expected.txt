@@ -3,39 +3,40 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600 [bgcolor=#00FFFF]
     RenderBody {BODY} at (25,25) size 750x550 [bgcolor=#008000]
-      RenderBlock {P} at (0,0) size 750x17
-        RenderText {#text} at (0,0) size 326x17
-          text run at (0,0) width 326: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,30) size 750x34
+      RenderBlock {P} at (0,0) size 750x21
+        RenderText {#text} at (0,0) size 395x21
+          text run at (0,0) width 395: "The style declarations which apply to the text below are:"
+      RenderBlock {PRE} at (0,37) size 750x34
         RenderText {#text} at (0,0) size 425x34
           text run at (0,0) width 186: "HTML {background-color: aqua;}"
           text run at (186,0) width 0: " "
           text run at (0,17) width 425: "BODY {background-color: green; background-image: none; margin: 25px;}"
           text run at (425,17) width 0: " "
-      RenderBlock {HR} at (0,77) size 750x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,92) size 750x51
-        RenderText {#text} at (0,0) size 740x51
-          text run at (0,0) width 355: "The body of this document should have a green background. "
-          text run at (355,0) width 379: "It also has a margin of 25 pixels, so the light blue background set"
-          text run at (0,17) width 293: "for the HTML element should surround the BODY. "
-          text run at (293,17) width 447: "If the BODY content is significantly shorter than the browser's window height,"
-          text run at (0,34) width 303: "then the bottom border may be larger than 25 pixels."
-      RenderTable {TABLE} at (0,156) size 750x87 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 748x85
-          RenderTableRow {TR} at (0,0) size 748x26
-            RenderTableCell {TD} at (0,0) size 748x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 144x17
-                RenderText {#text} at (4,4) size 144x17
-                  text run at (4,4) width 144: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,26) size 748x59
-            RenderTableCell {TD} at (0,43) size 12x25 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 4x17
+      RenderBlock {HR} at (0,84) size 750x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,102) size 750x63
+        RenderText {#text} at (0,0) size 748x63
+          text run at (0,0) width 432: "The body of this document should have a green background. "
+          text run at (432,0) width 308: "It also has a margin of 25 pixels, so the light"
+          text run at (0,21) width 504: "blue background set for the HTML element should surround the BODY. "
+          text run at (504,21) width 244: "If the BODY content is significantly"
+          text run at (0,42) width 664: "shorter than the browser's window height, then the bottom border may be larger than 25 pixels."
+      RenderTable {TABLE} at (0,181) size 750x124 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 748x122
+          RenderTableRow {TR} at (0,0) size 748x30
+            RenderTableCell {TD} at (0,0) size 748x30 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 178x21
+                RenderText {#text} at (4,4) size 178x21
+                  text run at (4,4) width 178: "TABLE Testing Section"
+          RenderTableRow {TR} at (0,30) size 748x92
+            RenderTableCell {TD} at (0,61) size 12x29 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x21
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,26) size 736x59 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock {P} at (4,4) size 728x51
-                RenderText {#text} at (0,0) size 719x51
-                  text run at (0,0) width 355: "The body of this document should have a green background. "
-                  text run at (355,0) width 357: "It also has a margin of 25 pixels, so the light blue background"
-                  text run at (0,17) width 315: "set for the HTML element should surround the BODY. "
-                  text run at (315,17) width 404: "If the BODY content is significantly shorter than the browser's window"
-                  text run at (0,34) width 346: "height, then the bottom border may be larger than 25 pixels."
+            RenderTableCell {TD} at (12,30) size 736x92 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 728x84
+                RenderText {#text} at (0,0) size 706x84
+                  text run at (0,0) width 432: "The body of this document should have a green background. "
+                  text run at (432,0) width 274: "It also has a margin of 25 pixels, so the"
+                  text run at (0,21) width 538: "light blue background set for the HTML element should surround the BODY. "
+                  text run at (538,21) width 156: "If the BODY content is"
+                  text run at (0,42) width 702: "significantly shorter than the browser's window height, then the bottom border may be larger than 25"
+                  text run at (0,63) width 46: "pixels."

@@ -1,94 +1,94 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x85
-  RenderBlock {HTML} at (0,0) size 800x85
-    RenderBody {BODY} at (8,13) size 784x64
-      RenderBlock {P} at (0,0) size 784x17
-        RenderText {#text} at (0,0) size 263x17
-          text run at (0,0) width 263: "The following two lines should look the same:"
-      RenderBlock {DIV} at (0,30) size 784x17
-        RenderInline {SPAN} at (0,0) size 18x17
-          RenderInline (generated) at (0,0) size 18x17
-            RenderCounter at (0,0) size 18x17
-              text run at (0,0) width 18: "a.a"
-        RenderText {#text} at (18,0) size 4x17
-          text run at (18,0) width 4: " "
-        RenderInline {SPAN} at (0,0) size 18x17
-          RenderInline (generated) at (0,0) size 18x17
-            RenderCounter at (22,0) size 18x17
-              text run at (22,0) width 18: "a.b"
-        RenderText {#text} at (40,0) size 4x17
-          text run at (40,0) width 4: " "
-        RenderInline {SPAN} at (0,0) size 18x17
-          RenderInline (generated) at (0,0) size 18x17
-            RenderCounter at (44,0) size 18x17
-              text run at (44,0) width 18: "a.c"
-        RenderText {#text} at (62,0) size 4x17
-          text run at (62,0) width 4: " "
-        RenderInline {SPAN} at (0,0) size 18x17
-          RenderInline (generated) at (0,0) size 18x17
-            RenderCounter at (66,0) size 18x17
-              text run at (66,0) width 18: "a.d"
-        RenderText {#text} at (84,0) size 4x17
-          text run at (84,0) width 4: " "
-        RenderInline {SPAN} at (0,0) size 18x17
-          RenderInline (generated) at (0,0) size 18x17
-            RenderCounter at (88,0) size 18x17
-              text run at (88,0) width 18: "a.e"
-        RenderText {#text} at (106,0) size 4x17
-          text run at (106,0) width 4: " "
-        RenderInline {SPAN} at (0,0) size 15x17
-          RenderInline (generated) at (0,0) size 15x17
-            RenderCounter at (110,0) size 15x17
-              text run at (110,0) width 15: "a.f"
-        RenderText {#text} at (125,0) size 4x17
+layer at (0,0) size 800x103
+  RenderBlock {HTML} at (0,0) size 800x103
+    RenderBody {BODY} at (8,16) size 784x79
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 322x21
+          text run at (0,0) width 322: "The following two lines should look the same:"
+      RenderBlock {DIV} at (0,37) size 784x21
+        RenderInline {SPAN} at (0,0) size 22x21
+          RenderInline (generated) at (0,0) size 22x21
+            RenderCounter at (0,0) size 22x21
+              text run at (0,0) width 22: "a.a"
+        RenderText {#text} at (22,0) size 4x21
+          text run at (22,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 22x21
+          RenderInline (generated) at (0,0) size 22x21
+            RenderCounter at (26,0) size 22x21
+              text run at (26,0) width 22: "a.b"
+        RenderText {#text} at (48,0) size 4x21
+          text run at (48,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 21x21
+          RenderInline (generated) at (0,0) size 21x21
+            RenderCounter at (52,0) size 21x21
+              text run at (52,0) width 21: "a.c"
+        RenderText {#text} at (73,0) size 4x21
+          text run at (73,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 22x21
+          RenderInline (generated) at (0,0) size 22x21
+            RenderCounter at (77,0) size 22x21
+              text run at (77,0) width 22: "a.d"
+        RenderText {#text} at (99,0) size 4x21
+          text run at (99,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 22x21
+          RenderInline (generated) at (0,0) size 22x21
+            RenderCounter at (103,0) size 22x21
+              text run at (103,0) width 22: "a.e"
+        RenderText {#text} at (125,0) size 4x21
           text run at (125,0) width 4: " "
-        RenderInline {SPAN} at (0,0) size 18x17
-          RenderInline (generated) at (0,0) size 18x17
-            RenderCounter at (129,0) size 18x17
-              text run at (129,0) width 18: "a.g"
-        RenderText {#text} at (147,0) size 4x17
-          text run at (147,0) width 4: " "
-        RenderInline {SPAN} at (0,0) size 18x17
-          RenderInline (generated) at (0,0) size 18x17
-            RenderCounter at (151,0) size 18x17
-              text run at (151,0) width 18: "a.h"
-        RenderText {#text} at (169,0) size 4x17
-          text run at (169,0) width 4: " "
-        RenderInline {SPAN} at (0,0) size 14x17
-          RenderInline (generated) at (0,0) size 14x17
-            RenderCounter at (173,0) size 14x17
-              text run at (173,0) width 14: "a.i"
-        RenderText {#text} at (187,0) size 4x17
-          text run at (187,0) width 4: " "
-        RenderInline {SPAN} at (0,0) size 14x17
-          RenderInline (generated) at (0,0) size 14x17
-            RenderCounter at (191,0) size 14x17
-              text run at (191,0) width 14: "a.j"
-        RenderText {#text} at (205,0) size 4x17
-          text run at (205,0) width 4: " "
-        RenderInline {SPAN} at (0,0) size 18x17
-          RenderInline (generated) at (0,0) size 18x17
-            RenderCounter at (209,0) size 18x17
-              text run at (209,0) width 18: "a.k"
-        RenderText {#text} at (227,0) size 4x17
-          text run at (227,0) width 4: " "
-        RenderInline {SPAN} at (0,0) size 14x17
-          RenderInline (generated) at (0,0) size 14x17
-            RenderCounter at (231,0) size 14x17
-              text run at (231,0) width 14: "a.l"
+        RenderInline {SPAN} at (0,0) size 17x21
+          RenderInline (generated) at (0,0) size 17x21
+            RenderCounter at (129,0) size 17x21
+              text run at (129,0) width 17: "a.f"
+        RenderText {#text} at (146,0) size 4x21
+          text run at (146,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 22x21
+          RenderInline (generated) at (0,0) size 22x21
+            RenderCounter at (150,0) size 22x21
+              text run at (150,0) width 22: "a.g"
+        RenderText {#text} at (172,0) size 4x21
+          text run at (172,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 22x21
+          RenderInline (generated) at (0,0) size 22x21
+            RenderCounter at (176,0) size 22x21
+              text run at (176,0) width 22: "a.h"
+        RenderText {#text} at (198,0) size 4x21
+          text run at (198,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 17x21
+          RenderInline (generated) at (0,0) size 17x21
+            RenderCounter at (202,0) size 17x21
+              text run at (202,0) width 17: "a.i"
+        RenderText {#text} at (219,0) size 4x21
+          text run at (219,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 17x21
+          RenderInline (generated) at (0,0) size 17x21
+            RenderCounter at (223,0) size 17x21
+              text run at (223,0) width 17: "a.j"
+        RenderText {#text} at (240,0) size 4x21
+          text run at (240,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 21x21
+          RenderInline (generated) at (0,0) size 21x21
+            RenderCounter at (244,0) size 21x21
+              text run at (244,0) width 21: "a.k"
+        RenderText {#text} at (265,0) size 4x21
+          text run at (265,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 17x21
+          RenderInline (generated) at (0,0) size 17x21
+            RenderCounter at (269,0) size 17x21
+              text run at (269,0) width 17: "a.l"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,47) size 784x17
-        RenderText {#text} at (0,0) size 245x17
-          text run at (0,0) width 22: "a.a "
-          text run at (22,0) width 22: "a.b "
-          text run at (44,0) width 22: "a.c "
-          text run at (66,0) width 22: "a.d "
-          text run at (88,0) width 22: "a.e "
-          text run at (110,0) width 19: "a.f "
-          text run at (129,0) width 22: "a.g "
-          text run at (151,0) width 22: "a.h "
-          text run at (173,0) width 18: "a.i "
-          text run at (191,0) width 18: "a.j "
-          text run at (209,0) width 22: "a.k "
-          text run at (231,0) width 14: "a.l"
+      RenderBlock {DIV} at (0,58) size 784x21
+        RenderText {#text} at (0,0) size 286x21
+          text run at (0,0) width 26: "a.a "
+          text run at (26,0) width 26: "a.b "
+          text run at (52,0) width 25: "a.c "
+          text run at (77,0) width 26: "a.d "
+          text run at (103,0) width 26: "a.e "
+          text run at (129,0) width 21: "a.f "
+          text run at (150,0) width 26: "a.g "
+          text run at (176,0) width 26: "a.h "
+          text run at (202,0) width 21: "a.i "
+          text run at (223,0) width 21: "a.j "
+          text run at (244,0) width 25: "a.k "
+          text run at (269,0) width 17: "a.l"

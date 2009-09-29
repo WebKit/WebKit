@@ -1,57 +1,57 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x299
-  RenderBlock {HTML} at (0,0) size 800x299
-    RenderBody {BODY} at (8,13) size 784x273 [color=#000080]
-      RenderBlock {P} at (0,0) size 784x17
-        RenderText {#text} at (0,0) size 426x17
-          text run at (0,0) width 426: "Each bullet should look as described, and there should be no red present."
-      RenderBlock {UL} at (0,30) size 784x51
-        RenderListItem {LI} at (40,0) size 744x17
-          RenderListMarker at (-16,0) size 6x17: bullet
-          RenderText {#text} at (0,0) size 24x17
-            text run at (0,0) width 24: "disc"
-        RenderListItem {LI} at (40,17) size 744x17
-          RenderListMarker at (-16,0) size 6x17: bullet
-          RenderText {#text} at (0,0) size 24x17
-            text run at (0,0) width 24: "disc"
-        RenderListItem {LI} at (40,34) size 744x17
-          RenderListMarker at (-16,0) size 6x17: bullet
-          RenderText {#text} at (0,0) size 24x17
-            text run at (0,0) width 24: "disc"
-      RenderBlock {UL} at (0,94) size 784x51
-        RenderListItem {LI} at (40,0) size 744x17
-          RenderListMarker at (-16,0) size 6x17: white bullet
-          RenderText {#text} at (0,0) size 31x17
-            text run at (0,0) width 31: "circle"
-        RenderListItem {LI} at (40,17) size 744x17
-          RenderListMarker at (-16,0) size 6x17: white bullet
-          RenderText {#text} at (0,0) size 31x17
-            text run at (0,0) width 31: "circle"
-        RenderListItem {LI} at (40,34) size 744x17
-          RenderListMarker at (-16,0) size 6x17: white bullet
-          RenderText {#text} at (0,0) size 31x17
-            text run at (0,0) width 31: "circle"
-      RenderBlock {UL} at (0,158) size 784x51
-        RenderListItem {LI} at (40,0) size 744x17
-          RenderListMarker at (-16,0) size 6x17: black square
-          RenderText {#text} at (0,0) size 39x17
-            text run at (0,0) width 39: "square"
-        RenderListItem {LI} at (40,17) size 744x17
-          RenderListMarker at (-16,0) size 6x17: black square
-          RenderText {#text} at (0,0) size 39x17
-            text run at (0,0) width 39: "square"
-        RenderListItem {LI} at (40,34) size 744x17
-          RenderListMarker at (-16,0) size 6x17: black square
-          RenderText {#text} at (0,0) size 39x17
-            text run at (0,0) width 39: "square"
-      RenderBlock {UL} at (0,222) size 784x51 [color=#FF0000]
-        RenderListItem {LI} at (40,0) size 744x17
-          RenderText {#text} at (0,0) size 4x17
+layer at (0,0) size 800x369
+  RenderBlock {HTML} at (0,0) size 800x369
+    RenderBody {BODY} at (8,16) size 784x337 [color=#000080]
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 520x21
+          text run at (0,0) width 520: "Each bullet should look as described, and there should be no red present."
+      RenderBlock {UL} at (0,37) size 784x63
+        RenderListItem {LI} at (40,0) size 744x21
+          RenderListMarker at (-18,0) size 7x21: bullet
+          RenderText {#text} at (0,0) size 29x21
+            text run at (0,0) width 29: "disc"
+        RenderListItem {LI} at (40,21) size 744x21
+          RenderListMarker at (-18,0) size 7x21: bullet
+          RenderText {#text} at (0,0) size 29x21
+            text run at (0,0) width 29: "disc"
+        RenderListItem {LI} at (40,42) size 744x21
+          RenderListMarker at (-18,0) size 7x21: bullet
+          RenderText {#text} at (0,0) size 29x21
+            text run at (0,0) width 29: "disc"
+      RenderBlock {UL} at (0,116) size 784x63
+        RenderListItem {LI} at (40,0) size 744x21
+          RenderListMarker at (-18,0) size 7x21: white bullet
+          RenderText {#text} at (0,0) size 38x21
+            text run at (0,0) width 38: "circle"
+        RenderListItem {LI} at (40,21) size 744x21
+          RenderListMarker at (-18,0) size 7x21: white bullet
+          RenderText {#text} at (0,0) size 38x21
+            text run at (0,0) width 38: "circle"
+        RenderListItem {LI} at (40,42) size 744x21
+          RenderListMarker at (-18,0) size 7x21: white bullet
+          RenderText {#text} at (0,0) size 38x21
+            text run at (0,0) width 38: "circle"
+      RenderBlock {UL} at (0,195) size 784x63
+        RenderListItem {LI} at (40,0) size 744x21
+          RenderListMarker at (-18,0) size 7x21: black square
+          RenderText {#text} at (0,0) size 49x21
+            text run at (0,0) width 49: "square"
+        RenderListItem {LI} at (40,21) size 744x21
+          RenderListMarker at (-18,0) size 7x21: black square
+          RenderText {#text} at (0,0) size 49x21
+            text run at (0,0) width 49: "square"
+        RenderListItem {LI} at (40,42) size 744x21
+          RenderListMarker at (-18,0) size 7x21: black square
+          RenderText {#text} at (0,0) size 49x21
+            text run at (0,0) width 49: "square"
+      RenderBlock {UL} at (0,274) size 784x63 [color=#FF0000]
+        RenderListItem {LI} at (40,0) size 744x21
+          RenderText {#text} at (0,0) size 4x21
             text run at (0,0) width 4: " "
-        RenderListItem {LI} at (40,17) size 744x17
-          RenderText {#text} at (0,0) size 4x17
+        RenderListItem {LI} at (40,21) size 744x21
+          RenderText {#text} at (0,0) size 4x21
             text run at (0,0) width 4: " "
-        RenderListItem {LI} at (40,34) size 744x17
-          RenderText {#text} at (0,0) size 4x17
+        RenderListItem {LI} at (40,42) size 744x21
+          RenderText {#text} at (0,0) size 4x21
             text run at (0,0) width 4: " "

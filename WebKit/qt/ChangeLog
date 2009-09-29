@@ -1,3 +1,13 @@
+2009-09-29  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] Default font size reconciliation to 16px/13px to match other platform's de-facto standard.
+        This fixes https://bugs.webkit.org/show_bug.cgi?id=19674.
+
+        * Api/qwebsettings.cpp:
+        (QWebSettings::QWebSettings):
+
 2009-09-29  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
 
         Reviewed by Simon Hausmann.

@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#CCCCCC]
-      RenderBlock {P} at (0,0) size 784x17
-        RenderText {#text} at (0,0) size 326x17
-          text run at (0,0) width 326: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,30) size 784x51
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 395x21
+          text run at (0,0) width 395: "The style declarations which apply to the text below are:"
+      RenderBlock {PRE} at (0,37) size 784x51
         RenderText {#text} at (0,0) size 258x51
           text run at (0,0) width 258: ".one {border-width: 25px; border-style: solid;}"
           text run at (258,0) width 0: " "
@@ -14,72 +14,72 @@ layer at (0,0) size 800x600
           text run at (250,17) width 0: " "
           text run at (0,34) width 155: ".three {border-width: 25px;}"
           text run at (155,34) width 0: " "
-      RenderBlock {HR} at (0,94) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,109) size 784x101 [border: (25px solid #000000)]
-        RenderText {#text} at (25,25) size 165x17
-          text run at (25,25) width 165: "This element has a class of "
+      RenderBlock {HR} at (0,101) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,119) size 784x113 [border: (25px solid #000000)]
+        RenderText {#text} at (25,25) size 197x21
+          text run at (25,25) width 197: "This element has a class of "
         RenderInline {TT} at (0,0) size 21x17
-          RenderText {#text} at (190,25) size 21x17
-            text run at (190,25) width 21: "one"
-        RenderText {#text} at (211,25) size 148x17
-          text run at (211,25) width 8: ". "
-          text run at (219,25) width 140: "However, it contains an "
-        RenderInline {SPAN} at (0,0) size 156x19 [border: (1px solid #000000)]
-          RenderText {#text} at (360,25) size 134x17
-            text run at (360,25) width 134: "inline element of class "
+          RenderText {#text} at (222,28) size 21x17
+            text run at (222,28) width 21: "one"
+        RenderText {#text} at (243,25) size 178x21
+          text run at (243,25) width 8: ". "
+          text run at (251,25) width 170: "However, it contains an "
+        RenderInline {SPAN} at (0,0) size 184x23 [border: (1px solid #000000)]
+          RenderText {#text} at (422,25) size 162x21
+            text run at (422,25) width 162: "inline element of class "
           RenderInline {TT} at (0,0) size 20x17
-            RenderText {#text} at (494,25) size 20x17
-              text run at (494,25) width 20: "two"
-        RenderText {#text} at (515,25) size 730x34
-          text run at (515,25) width 240: ", which should result in a thin solid border"
-          text run at (25,42) width 274: "on each side of each box in the inline element. "
-          text run at (299,42) width 97: "There is also an "
-        RenderInline {SPAN} at (0,0) size 163x17
-          RenderText {#text} at (396,42) size 134x17
-            text run at (396,42) width 134: "inline element of class "
+            RenderText {#text} at (584,28) size 20x17
+              text run at (584,28) width 20: "two"
+        RenderText {#text} at (605,25) size 725x42
+          text run at (605,25) width 145: ", which should result"
+          text run at (25,46) width 480: "in a thin solid border on each side of each box in the inline element. "
+          text run at (505,46) width 118: "There is also an "
+        RenderInline {SPAN} at (0,0) size 715x42
+          RenderText {#text} at (623,46) size 715x42
+            text run at (623,46) width 117: "inline element of"
+            text run at (25,67) width 41: "class "
           RenderInline {TT} at (0,0) size 29x17
-            RenderText {#text} at (530,42) size 29x17
-              text run at (530,42) width 29: "three"
-        RenderText {#text} at (559,42) size 707x34
-          text run at (559,42) width 173: ", which should have no border"
-          text run at (25,59) width 226: "width because no border style was set."
-      RenderTable {TABLE} at (0,223) size 784x137 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 782x135
-          RenderTableRow {TR} at (0,0) size 782x26
-            RenderTableCell {TD} at (0,0) size 782x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 144x17
-                RenderText {#text} at (4,4) size 144x17
-                  text run at (4,4) width 144: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,26) size 782x109
-            RenderTableCell {TD} at (0,68) size 12x25 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 4x17
+            RenderText {#text} at (66,70) size 29x17
+              text run at (66,70) width 29: "three"
+        RenderText {#text} at (95,67) size 491x21
+          text run at (95,67) width 491: ", which should have no border width because no border style was set."
+      RenderTable {TABLE} at (0,248) size 784x153 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x151
+          RenderTableRow {TR} at (0,0) size 782x30
+            RenderTableCell {TD} at (0,0) size 782x30 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 178x21
+                RenderText {#text} at (4,4) size 178x21
+                  text run at (4,4) width 178: "TABLE Testing Section"
+          RenderTableRow {TR} at (0,30) size 782x121
+            RenderTableCell {TD} at (0,76) size 12x29 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x21
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,26) size 770x109 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock {P} at (4,4) size 762x101 [border: (25px solid #000000)]
-                RenderText {#text} at (25,25) size 165x17
-                  text run at (25,25) width 165: "This element has a class of "
+            RenderTableCell {TD} at (12,30) size 770x121 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 762x113 [border: (25px solid #000000)]
+                RenderText {#text} at (25,25) size 197x21
+                  text run at (25,25) width 197: "This element has a class of "
                 RenderInline {TT} at (0,0) size 21x17
-                  RenderText {#text} at (190,25) size 21x17
-                    text run at (190,25) width 21: "one"
-                RenderText {#text} at (211,25) size 148x17
-                  text run at (211,25) width 8: ". "
-                  text run at (219,25) width 140: "However, it contains an "
-                RenderInline {SPAN} at (0,0) size 156x19 [border: (1px solid #000000)]
-                  RenderText {#text} at (360,25) size 134x17
-                    text run at (360,25) width 134: "inline element of class "
+                  RenderText {#text} at (222,28) size 21x17
+                    text run at (222,28) width 21: "one"
+                RenderText {#text} at (243,25) size 178x21
+                  text run at (243,25) width 8: ". "
+                  text run at (251,25) width 170: "However, it contains an "
+                RenderInline {SPAN} at (0,0) size 184x23 [border: (1px solid #000000)]
+                  RenderText {#text} at (422,25) size 162x21
+                    text run at (422,25) width 162: "inline element of class "
                   RenderInline {TT} at (0,0) size 20x17
-                    RenderText {#text} at (494,25) size 20x17
-                      text run at (494,25) width 20: "two"
-                RenderText {#text} at (515,25) size 690x34
-                  text run at (515,25) width 200: ", which should result in a thin solid"
-                  text run at (25,42) width 314: "border on each side of each box in the inline element. "
-                  text run at (339,42) width 97: "There is also an "
-                RenderInline {SPAN} at (0,0) size 163x17
-                  RenderText {#text} at (436,42) size 134x17
-                    text run at (436,42) width 134: "inline element of class "
+                    RenderText {#text} at (584,28) size 20x17
+                      text run at (584,28) width 20: "two"
+                RenderText {#text} at (605,25) size 682x42
+                  text run at (605,25) width 102: ", which should"
+                  text run at (25,46) width 523: "result in a thin solid border on each side of each box in the inline element. "
+                  text run at (548,46) width 118: "There is also an "
+                RenderInline {SPAN} at (0,0) size 680x42
+                  RenderText {#text} at (666,46) size 680x42
+                    text run at (666,46) width 39: "inline"
+                    text run at (25,67) width 119: "element of class "
                   RenderInline {TT} at (0,0) size 29x17
-                    RenderText {#text} at (570,42) size 29x17
-                      text run at (570,42) width 29: "three"
-                RenderText {#text} at (599,42) size 707x34
-                  text run at (599,42) width 133: ", which should have no"
-                  text run at (25,59) width 266: "border width because no border style was set."
+                    RenderText {#text} at (144,70) size 29x17
+                      text run at (144,70) width 29: "three"
+                RenderText {#text} at (173,67) size 491x21
+                  text run at (173,67) width 491: ", which should have no border width because no border style was set."

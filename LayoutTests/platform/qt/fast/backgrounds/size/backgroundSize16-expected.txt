@@ -3,23 +3,22 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderInline {SPAN} at (0,0) size 777x285
-        RenderText {#text} at (0,0) size 777x285
-          text run at (0,0) width 466: "I am typing a lot of text so that this goes onto many lines. I am still typing. "
-          text run at (466,0) width 284: "I am typing a lot of text so that this goes onto"
-          text run at (0,19) width 761: "many lines. I am still typing. I am typing a lot of text so that this goes onto many lines. I am still typing. I am typing a lot of"
-          text run at (0,38) width 761: "text so that this goes onto many lines. I am still typing. I am typing a lot of text so that this goes onto many lines. I am still"
-          text run at (0,57) width 764: "typing. I am typing a lot of text so that this goes onto many lines. I am still typing. I am typing a lot of text so that this goes"
-          text run at (0,76) width 777: "onto many lines. I am still typing. I am typing a lot of text so that this goes onto many lines. I am still typing. I am typing a lot"
-          text run at (0,95) width 777: "of text so that this goes onto many lines. I am still typing. I am typing a lot of text so that this goes onto many lines. I am still"
-          text run at (0,114) width 764: "typing. I am typing a lot of text so that this goes onto many lines. I am still typing. I am typing a lot of text so that this goes"
-          text run at (0,133) width 777: "onto many lines. I am still typing. I am typing a lot of text so that this goes onto many lines. I am still typing. I am typing a lot"
-          text run at (0,152) width 777: "of text so that this goes onto many lines. I am still typing. I am typing a lot of text so that this goes onto many lines. I am still"
-          text run at (0,171) width 764: "typing. I am typing a lot of text so that this goes onto many lines. I am still typing. I am typing a lot of text so that this goes"
-          text run at (0,190) width 777: "onto many lines. I am still typing. I am typing a lot of text so that this goes onto many lines. I am still typing. I am typing a lot"
-          text run at (0,209) width 777: "of text so that this goes onto many lines. I am still typing. I am typing a lot of text so that this goes onto many lines. I am still"
-          text run at (0,228) width 764: "typing. I am typing a lot of text so that this goes onto many lines. I am still typing. I am typing a lot of text so that this goes"
-          text run at (0,247) width 777: "onto many lines. I am still typing. I am typing a lot of text so that this goes onto many lines. I am still typing. I am typing a lot"
-          text run at (0,266) width 357: "of text so that this goes onto many lines. I am still typing."
+      RenderInline {SPAN} at (0,0) size 784x238
+        RenderText {#text} at (0,0) size 784x238
+          text run at (0,0) width 437: "I am typing a lot of text so that this goes onto many lines. I am still typing. "
+          text run at (437,0) width 344: "I am typing a lot of text so that this goes onto many lines. I"
+          text run at (0,17) width 762: "am still typing. I am typing a lot of text so that this goes onto many lines. I am still typing. I am typing a lot of text so that this goes"
+          text run at (0,34) width 769: "onto many lines. I am still typing. I am typing a lot of text so that this goes onto many lines. I am still typing. I am typing a lot of text"
+          text run at (0,51) width 761: "so that this goes onto many lines. I am still typing. I am typing a lot of text so that this goes onto many lines. I am still typing. I am"
+          text run at (0,68) width 773: "typing a lot of text so that this goes onto many lines. I am still typing. I am typing a lot of text so that this goes onto many lines. I am"
+          text run at (0,85) width 769: "still typing. I am typing a lot of text so that this goes onto many lines. I am still typing. I am typing a lot of text so that this goes onto"
+          text run at (0,102) width 784: "many lines. I am still typing. I am typing a lot of text so that this goes onto many lines. I am still typing. I am typing a lot of text so that"
+          text run at (0,119) width 767: "this goes onto many lines. I am still typing. I am typing a lot of text so that this goes onto many lines. I am still typing. I am typing a"
+          text run at (0,136) width 747: "lot of text so that this goes onto many lines. I am still typing. I am typing a lot of text so that this goes onto many lines. I am still"
+          text run at (0,153) width 781: "typing. I am typing a lot of text so that this goes onto many lines. I am still typing. I am typing a lot of text so that this goes onto many"
+          text run at (0,170) width 773: "lines. I am still typing. I am typing a lot of text so that this goes onto many lines. I am still typing. I am typing a lot of text so that this"
+          text run at (0,187) width 775: "goes onto many lines. I am still typing. I am typing a lot of text so that this goes onto many lines. I am still typing. I am typing a lot of"
+          text run at (0,204) width 765: "text so that this goes onto many lines. I am still typing. I am typing a lot of text so that this goes onto many lines. I am still typing. I"
+          text run at (0,221) width 425: "am typing a lot of text so that this goes onto many lines. I am still typing."
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0

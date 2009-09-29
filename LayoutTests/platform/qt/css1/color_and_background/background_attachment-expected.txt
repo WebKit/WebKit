@@ -1,74 +1,75 @@
-layer at (0,0) size 800x1074
+layer at (0,0) size 800x1349
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x1074
-  RenderBlock {HTML} at (0,0) size 800x1074
-    RenderBody {BODY} at (8,8) size 784x1058 [bgcolor=#CCCCCC]
-      RenderBlock {P} at (0,0) size 784x17
-        RenderText {#text} at (0,0) size 326x17
-          text run at (0,0) width 326: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,30) size 784x34
+layer at (0,0) size 800x1349
+  RenderBlock {HTML} at (0,0) size 800x1349
+    RenderBody {BODY} at (8,8) size 784x1333 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 395x21
+          text run at (0,0) width 395: "The style declarations which apply to the text below are:"
+      RenderBlock {PRE} at (0,37) size 784x34
         RenderText {#text} at (0,0) size 644x34
           text run at (0,0) width 644: "BODY {background-image: url(../resources/bg.gif); background-repeat: repeat-x; background-attachment: fixed;}"
           text run at (644,0) width 0: " "
           text run at (0,17) width 0: " "
-      RenderBlock {HR} at (0,77) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,92) size 784x68
-        RenderText {#text} at (0,0) size 783x68
-          text run at (0,0) width 771: "This document should have a green grid-pattern line across the top of the page (or at least a tiled background) which does NOT scroll"
-          text run at (0,17) width 114: "with the document. "
-          text run at (114,17) width 644: "It should, instead, appear to be a fixed pattern past which the content scrolls, even when the end of the page is"
-          text run at (0,34) width 54: "reached. "
-          text run at (54,34) width 685: "In addition, the default Test Suite background should NOT appear, as it's been overridden by the styles shown above. "
-          text run at (739,34) width 44: "I'll have"
-          text run at (0,51) width 553: "to add a lot of extra text to the page in order to make all this something we can actually check. "
-          text run at (553,51) width 199: "Don't worry, I'll think of something."
-      RenderBlock {P} at (0,173) size 784x17
-        RenderText {#text} at (0,0) size 469x17
-          text run at (0,0) width 386: "In fact, why not the relevant section from the CSS1 specification? "
-          text run at (386,0) width 83: "A capital idea."
-      RenderBlock {HR} at (0,203) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {HR} at (0,211) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {H4} at (0,230) size 784x18
-        RenderInline {A} at (0,0) size 197x17
-          RenderText {#text} at (0,0) size 197x17
-            text run at (0,0) width 197: "5.3.5    'background-attachment'"
+      RenderBlock {HR} at (0,84) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,102) size 784x105
+        RenderText {#text} at (0,0) size 773x105
+          text run at (0,0) width 773: "This document should have a green grid-pattern line across the top of the page (or at least a tiled background)"
+          text run at (0,21) width 302: "which does NOT scroll with the document. "
+          text run at (302,21) width 427: "It should, instead, appear to be a fixed pattern past which the"
+          text run at (0,42) width 414: "content scrolls, even when the end of the page is reached. "
+          text run at (414,42) width 320: "In addition, the default Test Suite background"
+          text run at (0,63) width 507: "should NOT appear, as it's been overridden by the styles shown above. "
+          text run at (507,63) width 264: "I'll have to add a lot of extra text to the"
+          text run at (0,84) width 450: "page in order to make all this something we can actually check. "
+          text run at (450,84) width 240: "Don't worry, I'll think of something."
+      RenderBlock {P} at (0,223) size 784x21
+        RenderText {#text} at (0,0) size 562x21
+          text run at (0,0) width 461: "In fact, why not the relevant section from the CSS1 specification? "
+          text run at (461,0) width 101: "A capital idea."
+      RenderBlock {HR} at (0,260) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {HR} at (0,270) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {H4} at (0,293) size 784x22
+        RenderInline {A} at (0,0) size 242x21
+          RenderText {#text} at (0,0) size 242x21
+            text run at (0,0) width 242: "5.3.5    'background-attachment'"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,265) size 784x85
-        RenderInline {EM} at (0,0) size 37x17
-          RenderText {#text} at (0,0) size 37x17
-            text run at (0,0) width 37: "Value:"
-        RenderText {#text} at (37,0) size 74x17
-          text run at (37,0) width 74: " scroll | fixed"
-        RenderBR {BR} at (111,13) size 0x0
-        RenderInline {EM} at (0,0) size 35x17
-          RenderText {#text} at (0,17) size 35x17
-            text run at (0,17) width 35: "Initial:"
-        RenderText {#text} at (35,17) size 35x17
-          text run at (35,17) width 35: " scroll"
-        RenderBR {BR} at (70,30) size 0x0
-        RenderInline {EM} at (0,0) size 62x17
-          RenderText {#text} at (0,34) size 62x17
-            text run at (0,34) width 62: "Applies to:"
-        RenderText {#text} at (62,34) size 74x17
-          text run at (62,34) width 74: " all elements"
-        RenderBR {BR} at (136,47) size 0x0
-        RenderInline {EM} at (0,0) size 54x17
-          RenderText {#text} at (0,51) size 54x17
-            text run at (0,51) width 54: "Inherited:"
-        RenderText {#text} at (54,51) size 18x17
-          text run at (54,51) width 18: " no"
-        RenderBR {BR} at (72,64) size 0x0
-        RenderInline {EM} at (0,0) size 112x17
-          RenderText {#text} at (0,68) size 112x17
-            text run at (0,68) width 112: "Percentage values:"
-        RenderText {#text} at (112,68) size 26x17
-          text run at (112,68) width 26: " N/A"
-        RenderBR {BR} at (138,81) size 0x0
-      RenderBlock {P} at (0,363) size 784x34
-        RenderText {#text} at (0,0) size 784x34
-          text run at (0,0) width 784: "If a background image is specified, the value of 'background-attachment' determines if it is fixed with regard to the canvas or if it scrolls"
-          text run at (0,17) width 131: "along with the content."
-      RenderBlock {PRE} at (0,410) size 784x85
+      RenderBlock {P} at (0,336) size 784x105
+        RenderInline {EM} at (0,0) size 46x21
+          RenderText {#text} at (0,0) size 46x21
+            text run at (0,0) width 46: "Value:"
+        RenderText {#text} at (46,0) size 88x21
+          text run at (46,0) width 88: " scroll | fixed"
+        RenderBR {BR} at (134,16) size 0x0
+        RenderInline {EM} at (0,0) size 42x21
+          RenderText {#text} at (0,21) size 42x21
+            text run at (0,21) width 42: "Initial:"
+        RenderText {#text} at (42,21) size 42x21
+          text run at (42,21) width 42: " scroll"
+        RenderBR {BR} at (84,37) size 0x0
+        RenderInline {EM} at (0,0) size 75x21
+          RenderText {#text} at (0,42) size 75x21
+            text run at (0,42) width 75: "Applies to:"
+        RenderText {#text} at (75,42) size 90x21
+          text run at (75,42) width 90: " all elements"
+        RenderBR {BR} at (165,58) size 0x0
+        RenderInline {EM} at (0,0) size 66x21
+          RenderText {#text} at (0,63) size 66x21
+            text run at (0,63) width 66: "Inherited:"
+        RenderText {#text} at (66,63) size 22x21
+          text run at (66,63) width 22: " no"
+        RenderBR {BR} at (88,79) size 0x0
+        RenderInline {EM} at (0,0) size 137x21
+          RenderText {#text} at (0,84) size 137x21
+            text run at (0,84) width 137: "Percentage values:"
+        RenderText {#text} at (137,84) size 31x21
+          text run at (137,84) width 31: " N/A"
+        RenderBR {BR} at (168,100) size 0x0
+      RenderBlock {P} at (0,457) size 784x42
+        RenderText {#text} at (0,0) size 769x42
+          text run at (0,0) width 769: "If a background image is specified, the value of 'background-attachment' determines if it is fixed with regard to"
+          text run at (0,21) width 332: "the canvas or if it scrolls along with the content."
+      RenderBlock {PRE} at (0,515) size 784x85
         RenderText {#text} at (0,0) size 203x85
           text run at (0,0) width 57: "  BODY { "
           text run at (57,0) width 0: " "
@@ -80,83 +81,85 @@ layer at (0,0) size 800x1074
           text run at (192,51) width 0: " "
           text run at (0,68) width 12: "  }"
           text run at (12,68) width 0: " "
-      RenderBlock {P} at (0,508) size 784x34
-        RenderInline {EM} at (0,0) size 67x17
-          RenderText {#text} at (0,0) size 67x17
-            text run at (0,0) width 67: "CSS1 core:"
-        RenderText {#text} at (67,0) size 746x34
-          text run at (67,0) width 679: " UAs may treat 'fixed' as 'scroll'. However, it is recommended they interpret 'fixed' correctly, at least on the HTML and"
-          text run at (0,17) width 672: "BODY elements, since there is no way for an author to provide an image only for those browsers that support 'fixed'."
-      RenderTable {TABLE} at (0,555) size 784x503 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 782x501
-          RenderTableRow {TR} at (0,0) size 782x26
-            RenderTableCell {TD} at (0,0) size 782x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 144x17
-                RenderText {#text} at (4,4) size 144x17
-                  text run at (4,4) width 144: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,26) size 782x475
-            RenderTableCell {TD} at (0,251) size 12x25 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 4x17
+      RenderBlock {P} at (0,616) size 784x63
+        RenderInline {EM} at (0,0) size 82x21
+          RenderText {#text} at (0,0) size 82x21
+            text run at (0,0) width 82: "CSS1 core:"
+        RenderText {#text} at (82,0) size 772x63
+          text run at (82,0) width 690: " UAs may treat 'fixed' as 'scroll'. However, it is recommended they interpret 'fixed' correctly, at least"
+          text run at (0,21) width 735: "on the HTML and BODY elements, since there is no way for an author to provide an image only for those"
+          text run at (0,42) width 200: "browsers that support 'fixed'."
+      RenderTable {TABLE} at (0,695) size 784x638 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x636
+          RenderTableRow {TR} at (0,0) size 782x30
+            RenderTableCell {TD} at (0,0) size 782x30 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 178x21
+                RenderText {#text} at (4,4) size 178x21
+                  text run at (4,4) width 178: "TABLE Testing Section"
+          RenderTableRow {TR} at (0,30) size 782x606
+            RenderTableCell {TD} at (0,318) size 12x29 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x21
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,26) size 770x475 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock {P} at (4,4) size 762x85
-                RenderText {#text} at (0,0) size 760x85
-                  text run at (0,0) width 736: "This document should have a green grid-pattern line across the top of the page (or at least a tiled background) which does NOT"
-                  text run at (0,17) width 149: "scroll with the document. "
-                  text run at (149,17) width 598: "It should, instead, appear to be a fixed pattern past which the content scrolls, even when the end of the"
-                  text run at (0,34) width 100: "page is reached. "
-                  text run at (100,34) width 638: "In addition, the default Test Suite background should NOT appear, as it's been overridden by the styles shown"
-                  text run at (0,51) width 43: "above. "
-                  text run at (43,51) width 601: "I'll have to add a lot of extra text to the page in order to make all this something we can actually check. "
-                  text run at (644,51) width 116: "Don't worry, I'll think"
-                  text run at (0,68) width 79: "of something."
-              RenderBlock {P} at (4,102) size 762x17
-                RenderText {#text} at (0,0) size 469x17
-                  text run at (0,0) width 386: "In fact, why not the relevant section from the CSS1 specification? "
-                  text run at (386,0) width 83: "A capital idea."
-              RenderBlock {HR} at (4,132) size 762x2 [border: (1px inset #000000)]
-              RenderBlock {HR} at (4,140) size 762x2 [border: (1px inset #000000)]
-              RenderBlock {H4} at (4,159) size 762x18
-                RenderInline {A} at (0,0) size 197x17
-                  RenderText {#text} at (0,0) size 197x17
-                    text run at (0,0) width 197: "5.3.5    'background-attachment'"
+            RenderTableCell {TD} at (12,30) size 770x606 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 762x126
+                RenderText {#text} at (0,0) size 750x126
+                  text run at (0,0) width 680: "This document should have a green grid-pattern line across the top of the page (or at least a tiled"
+                  text run at (0,21) width 395: "background) which does NOT scroll with the document. "
+                  text run at (395,21) width 355: "It should, instead, appear to be a fixed pattern past"
+                  text run at (0,42) width 486: "which the content scrolls, even when the end of the page is reached. "
+                  text run at (486,42) width 232: "In addition, the default Test Suite"
+                  text run at (0,63) width 595: "background should NOT appear, as it's been overridden by the styles shown above. "
+                  text run at (595,63) width 153: "I'll have to add a lot of"
+                  text run at (0,84) width 561: "extra text to the page in order to make all this something we can actually check. "
+                  text run at (561,84) width 158: "Don't worry, I'll think of"
+                  text run at (0,105) width 78: "something."
+              RenderBlock {P} at (4,146) size 762x21
+                RenderText {#text} at (0,0) size 562x21
+                  text run at (0,0) width 461: "In fact, why not the relevant section from the CSS1 specification? "
+                  text run at (461,0) width 101: "A capital idea."
+              RenderBlock {HR} at (4,183) size 762x2 [border: (1px inset #000000)]
+              RenderBlock {HR} at (4,193) size 762x2 [border: (1px inset #000000)]
+              RenderBlock {H4} at (4,216) size 762x22
+                RenderInline {A} at (0,0) size 242x21
+                  RenderText {#text} at (0,0) size 242x21
+                    text run at (0,0) width 242: "5.3.5    'background-attachment'"
                 RenderText {#text} at (0,0) size 0x0
-              RenderBlock {P} at (4,194) size 762x85
-                RenderInline {EM} at (0,0) size 37x17
-                  RenderText {#text} at (0,0) size 37x17
-                    text run at (0,0) width 37: "Value:"
-                RenderText {#text} at (37,0) size 74x17
-                  text run at (37,0) width 74: " scroll | fixed"
-                RenderBR {BR} at (111,13) size 0x0
-                RenderInline {EM} at (0,0) size 35x17
-                  RenderText {#text} at (0,17) size 35x17
-                    text run at (0,17) width 35: "Initial:"
-                RenderText {#text} at (35,17) size 35x17
-                  text run at (35,17) width 35: " scroll"
-                RenderBR {BR} at (70,30) size 0x0
-                RenderInline {EM} at (0,0) size 62x17
-                  RenderText {#text} at (0,34) size 62x17
-                    text run at (0,34) width 62: "Applies to:"
-                RenderText {#text} at (62,34) size 74x17
-                  text run at (62,34) width 74: " all elements"
-                RenderBR {BR} at (136,47) size 0x0
-                RenderInline {EM} at (0,0) size 54x17
-                  RenderText {#text} at (0,51) size 54x17
-                    text run at (0,51) width 54: "Inherited:"
-                RenderText {#text} at (54,51) size 18x17
-                  text run at (54,51) width 18: " no"
-                RenderBR {BR} at (72,64) size 0x0
-                RenderInline {EM} at (0,0) size 112x17
-                  RenderText {#text} at (0,68) size 112x17
-                    text run at (0,68) width 112: "Percentage values:"
-                RenderText {#text} at (112,68) size 26x17
-                  text run at (112,68) width 26: " N/A"
-                RenderBR {BR} at (138,81) size 0x0
-              RenderBlock {P} at (4,292) size 762x34
-                RenderText {#text} at (0,0) size 742x34
-                  text run at (0,0) width 742: "If a background image is specified, the value of 'background-attachment' determines if it is fixed with regard to the canvas or if it"
-                  text run at (0,17) width 173: "scrolls along with the content."
-              RenderBlock {PRE} at (4,339) size 762x85
+              RenderBlock {P} at (4,259) size 762x105
+                RenderInline {EM} at (0,0) size 46x21
+                  RenderText {#text} at (0,0) size 46x21
+                    text run at (0,0) width 46: "Value:"
+                RenderText {#text} at (46,0) size 88x21
+                  text run at (46,0) width 88: " scroll | fixed"
+                RenderBR {BR} at (134,16) size 0x0
+                RenderInline {EM} at (0,0) size 42x21
+                  RenderText {#text} at (0,21) size 42x21
+                    text run at (0,21) width 42: "Initial:"
+                RenderText {#text} at (42,21) size 42x21
+                  text run at (42,21) width 42: " scroll"
+                RenderBR {BR} at (84,37) size 0x0
+                RenderInline {EM} at (0,0) size 75x21
+                  RenderText {#text} at (0,42) size 75x21
+                    text run at (0,42) width 75: "Applies to:"
+                RenderText {#text} at (75,42) size 90x21
+                  text run at (75,42) width 90: " all elements"
+                RenderBR {BR} at (165,58) size 0x0
+                RenderInline {EM} at (0,0) size 66x21
+                  RenderText {#text} at (0,63) size 66x21
+                    text run at (0,63) width 66: "Inherited:"
+                RenderText {#text} at (66,63) size 22x21
+                  text run at (66,63) width 22: " no"
+                RenderBR {BR} at (88,79) size 0x0
+                RenderInline {EM} at (0,0) size 137x21
+                  RenderText {#text} at (0,84) size 137x21
+                    text run at (0,84) width 137: "Percentage values:"
+                RenderText {#text} at (137,84) size 31x21
+                  text run at (137,84) width 31: " N/A"
+                RenderBR {BR} at (168,100) size 0x0
+              RenderBlock {P} at (4,380) size 762x42
+                RenderText {#text} at (0,0) size 752x42
+                  text run at (0,0) width 752: "If a background image is specified, the value of 'background-attachment' determines if it is fixed with regard"
+                  text run at (0,21) width 349: "to the canvas or if it scrolls along with the content."
+              RenderBlock {PRE} at (4,438) size 762x85
                 RenderText {#text} at (0,0) size 203x85
                   text run at (0,0) width 57: "  BODY { "
                   text run at (57,0) width 0: " "
@@ -168,10 +171,11 @@ layer at (0,0) size 800x1074
                   text run at (192,51) width 0: " "
                   text run at (0,68) width 12: "  }"
                   text run at (12,68) width 0: " "
-              RenderBlock {P} at (4,437) size 762x34
-                RenderInline {EM} at (0,0) size 67x17
-                  RenderText {#text} at (0,0) size 67x17
-                    text run at (0,0) width 67: "CSS1 core:"
-                RenderText {#text} at (67,0) size 746x34
-                  text run at (67,0) width 679: " UAs may treat 'fixed' as 'scroll'. However, it is recommended they interpret 'fixed' correctly, at least on the HTML and"
-                  text run at (0,17) width 672: "BODY elements, since there is no way for an author to provide an image only for those browsers that support 'fixed'."
+              RenderBlock {P} at (4,539) size 762x63
+                RenderInline {EM} at (0,0) size 82x21
+                  RenderText {#text} at (0,0) size 82x21
+                    text run at (0,0) width 82: "CSS1 core:"
+                RenderText {#text} at (82,0) size 734x63
+                  text run at (82,0) width 652: " UAs may treat 'fixed' as 'scroll'. However, it is recommended they interpret 'fixed' correctly, at"
+                  text run at (0,21) width 730: "least on the HTML and BODY elements, since there is no way for an author to provide an image only for"
+                  text run at (0,42) width 243: "those browsers that support 'fixed'."

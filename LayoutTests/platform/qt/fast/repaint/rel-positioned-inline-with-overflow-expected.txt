@@ -3,16 +3,16 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x17
-        RenderText {#text} at (0,0) size 341x17
-          text run at (0,0) width 341: "If you see any red or orange below then the test has failed."
-      RenderBlock (anonymous) at (0,30) size 784x100
-        RenderText {#text} at (100,0) size 4x17
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 411x21
+          text run at (0,0) width 411: "If you see any red or orange below then the test has failed."
+      RenderBlock (anonymous) at (0,37) size 784x100
+        RenderText {#text} at (100,0) size 4x21
           text run at (100,0) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
         RenderBlock {DIV} at (0,50) size 100x50 [bgcolor=#FF0000]
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-layer at (8,38) size 100x17
-  RenderInline (relative positioned) {SPAN} at (0,0) size 100x17
+layer at (8,45) size 100x21
+  RenderInline (relative positioned) {SPAN} at (0,0) size 100x21
     RenderBlock {DIV} at (0,0) size 100x100 [bgcolor=#008000]

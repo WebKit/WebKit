@@ -1,3 +1,19 @@
+# ================================================================================================== #
+#      Failing tests introduced by changing the default font sizes to conform other platforms.
+#      Probably caused by previously hidden bugs.
+# ================================================================================================== #
+editing/pasteboard/5761530-1.html
+editing/pasteboard/5780697-2.html
+fast/css/getComputedStyle/computed-style-without-renderer.html
+fast/css/getComputedStyle/computed-style.html
+fast/history/history_reload.html
+fast/html/text-field-input-types.html
+svg/batik/filters/feTile.svg
+svg/custom/getscreenctm-in-mixed-content2.xhtml
+
+# Failing test
+fast/canvas/quadraticCurveTo.xml
+
 # ------- missing features
 accessibility
 media

@@ -106,8 +106,7 @@ WebPage::WebPage(QWidget *parent, DumpRenderTree *drt)
 {
     settings()->setFontSize(QWebSettings::MinimumFontSize, 5);
     settings()->setFontSize(QWebSettings::MinimumLogicalFontSize, 5);
-    // To get DRT compliant to some layout tests lets set the default fontsize to 13.
-    settings()->setFontSize(QWebSettings::DefaultFontSize, 13);
+    settings()->setFontSize(QWebSettings::DefaultFontSize, 16);
     settings()->setFontSize(QWebSettings::DefaultFixedFontSize, 13);
     settings()->setAttribute(QWebSettings::JavascriptCanOpenWindows, true);
     settings()->setAttribute(QWebSettings::JavascriptCanAccessClipboard, true);

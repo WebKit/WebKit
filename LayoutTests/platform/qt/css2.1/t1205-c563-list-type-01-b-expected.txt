@@ -1,73 +1,73 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x363
-  RenderBlock {HTML} at (0,0) size 800x363
-    RenderBody {BODY} at (8,13) size 784x337 [color=#000080]
-      RenderBlock {P} at (0,0) size 784x17
-        RenderText {#text} at (0,0) size 357x17
-          text run at (0,0) width 357: "The two columns should look the same, except for alignment."
-      RenderBlock {OL} at (0,30) size 784x51
-        RenderListItem {LI} at (40,0) size 744x17
-          RenderListMarker at (-15,0) size 11x17: "i"
-          RenderText {#text} at (0,0) size 7x17
-            text run at (0,0) width 7: "i."
-        RenderListItem {LI} at (40,17) size 744x17
-          RenderListMarker at (-18,0) size 14x17: "ii"
-          RenderText {#text} at (0,0) size 10x17
-            text run at (0,0) width 10: "ii."
-        RenderListItem {LI} at (40,34) size 744x17
-          RenderListMarker at (-21,0) size 17x17: "iii"
-          RenderText {#text} at (0,0) size 13x17
-            text run at (0,0) width 13: "iii."
-      RenderBlock {OL} at (0,94) size 784x51
-        RenderListItem {LI} at (40,0) size 744x17
-          RenderListMarker at (-16,0) size 12x17: "I"
-          RenderText {#text} at (0,0) size 8x17
+layer at (0,0) size 800x448
+  RenderBlock {HTML} at (0,0) size 800x448
+    RenderBody {BODY} at (8,16) size 784x416 [color=#000080]
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 431x21
+          text run at (0,0) width 431: "The two columns should look the same, except for alignment."
+      RenderBlock {OL} at (0,37) size 784x63
+        RenderListItem {LI} at (40,0) size 744x21
+          RenderListMarker at (-17,0) size 12x21: "i"
+          RenderText {#text} at (0,0) size 8x21
+            text run at (0,0) width 8: "i."
+        RenderListItem {LI} at (40,21) size 744x21
+          RenderListMarker at (-21,0) size 16x21: "ii"
+          RenderText {#text} at (0,0) size 12x21
+            text run at (0,0) width 12: "ii."
+        RenderListItem {LI} at (40,42) size 744x21
+          RenderListMarker at (-25,0) size 20x21: "iii"
+          RenderText {#text} at (0,0) size 16x21
+            text run at (0,0) width 16: "iii."
+      RenderBlock {OL} at (0,116) size 784x63
+        RenderListItem {LI} at (40,0) size 744x21
+          RenderListMarker at (-17,0) size 12x21: "I"
+          RenderText {#text} at (0,0) size 8x21
             text run at (0,0) width 8: "I."
-        RenderListItem {LI} at (40,17) size 744x17
-          RenderListMarker at (-20,0) size 16x17: "II"
-          RenderText {#text} at (0,0) size 12x17
+        RenderListItem {LI} at (40,21) size 744x21
+          RenderListMarker at (-21,0) size 16x21: "II"
+          RenderText {#text} at (0,0) size 12x21
             text run at (0,0) width 12: "II."
-        RenderListItem {LI} at (40,34) size 744x17
-          RenderListMarker at (-24,0) size 20x17: "III"
-          RenderText {#text} at (0,0) size 16x17
+        RenderListItem {LI} at (40,42) size 744x21
+          RenderListMarker at (-25,0) size 20x21: "III"
+          RenderText {#text} at (0,0) size 16x21
             text run at (0,0) width 16: "III."
-      RenderBlock {OL} at (0,158) size 784x51
-        RenderListItem {LI} at (40,0) size 744x17
-          RenderListMarker at (-19,0) size 15x17: "a"
-          RenderText {#text} at (0,0) size 11x17
-            text run at (0,0) width 11: "a."
-        RenderListItem {LI} at (40,17) size 744x17
-          RenderListMarker at (-19,0) size 15x17: "b"
-          RenderText {#text} at (0,0) size 11x17
-            text run at (0,0) width 11: "b."
-        RenderListItem {LI} at (40,34) size 744x17
-          RenderListMarker at (-19,0) size 15x17: "c"
-          RenderText {#text} at (0,0) size 11x17
-            text run at (0,0) width 11: "c."
-      RenderBlock {OL} at (0,222) size 784x51
-        RenderListItem {LI} at (40,0) size 744x17
-          RenderListMarker at (-21,0) size 17x17: "A"
-          RenderText {#text} at (0,0) size 13x17
-            text run at (0,0) width 13: "A."
-        RenderListItem {LI} at (40,17) size 744x17
-          RenderListMarker at (-21,0) size 17x17: "B"
-          RenderText {#text} at (0,0) size 13x17
-            text run at (0,0) width 13: "B."
-        RenderListItem {LI} at (40,34) size 744x17
-          RenderListMarker at (-21,0) size 17x17: "C"
-          RenderText {#text} at (0,0) size 13x17
-            text run at (0,0) width 13: "C."
-      RenderBlock {OL} at (0,286) size 784x51
-        RenderListItem {LI} at (40,0) size 744x17
-          RenderListMarker at (-21,0) size 17x17: "A"
-          RenderText {#text} at (0,0) size 13x17
-            text run at (0,0) width 13: "A."
-        RenderListItem {LI} at (40,17) size 744x17
-          RenderListMarker at (-21,0) size 17x17: "B"
-          RenderText {#text} at (0,0) size 13x17
-            text run at (0,0) width 13: "B."
-        RenderListItem {LI} at (40,34) size 744x17
-          RenderListMarker at (-19,0) size 15x17: "3"
-          RenderText {#text} at (0,0) size 11x17
-            text run at (0,0) width 11: "3."
+      RenderBlock {OL} at (0,195) size 784x63
+        RenderListItem {LI} at (40,0) size 744x21
+          RenderListMarker at (-22,0) size 17x21: "a"
+          RenderText {#text} at (0,0) size 13x21
+            text run at (0,0) width 13: "a."
+        RenderListItem {LI} at (40,21) size 744x21
+          RenderListMarker at (-22,0) size 17x21: "b"
+          RenderText {#text} at (0,0) size 13x21
+            text run at (0,0) width 13: "b."
+        RenderListItem {LI} at (40,42) size 744x21
+          RenderListMarker at (-21,0) size 16x21: "c"
+          RenderText {#text} at (0,0) size 12x21
+            text run at (0,0) width 12: "c."
+      RenderBlock {OL} at (0,274) size 784x63
+        RenderListItem {LI} at (40,0) size 744x21
+          RenderListMarker at (-24,0) size 19x21: "A"
+          RenderText {#text} at (0,0) size 15x21
+            text run at (0,0) width 15: "A."
+        RenderListItem {LI} at (40,21) size 744x21
+          RenderListMarker at (-24,0) size 19x21: "B"
+          RenderText {#text} at (0,0) size 15x21
+            text run at (0,0) width 15: "B."
+        RenderListItem {LI} at (40,42) size 744x21
+          RenderListMarker at (-25,0) size 20x21: "C"
+          RenderText {#text} at (0,0) size 16x21
+            text run at (0,0) width 16: "C."
+      RenderBlock {OL} at (0,353) size 784x63
+        RenderListItem {LI} at (40,0) size 744x21
+          RenderListMarker at (-24,0) size 19x21: "A"
+          RenderText {#text} at (0,0) size 15x21
+            text run at (0,0) width 15: "A."
+        RenderListItem {LI} at (40,21) size 744x21
+          RenderListMarker at (-24,0) size 19x21: "B"
+          RenderText {#text} at (0,0) size 15x21
+            text run at (0,0) width 15: "B."
+        RenderListItem {LI} at (40,42) size 744x21
+          RenderListMarker at (-22,0) size 17x21: "3"
+          RenderText {#text} at (0,0) size 13x21
+            text run at (0,0) width 13: "3."

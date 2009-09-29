@@ -14,6 +14,6 @@ layer at (0,0) size 800x600
               RenderImage {IMG} at (2,2) size 6x113
           RenderTableRow {TR} at (0,13) size 343x34
             RenderTableCell {TD} at (130,13) size 199x34 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
-              RenderInline {A} at (0,0) size 195x17 [color=#0000EE]
+              RenderInline {A} at (0,0) size 195x21 [color=#0000EE]
                 RenderText {#text} at (0,0) size 0x0
                 RenderImage {IMG} at (2,2) size 195x30

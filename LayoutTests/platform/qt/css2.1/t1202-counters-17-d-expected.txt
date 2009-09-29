@@ -1,32 +1,32 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x85
-  RenderBlock {HTML} at (0,0) size 800x85
-    RenderBody {BODY} at (8,13) size 784x64
-      RenderBlock {P} at (0,0) size 784x17
-        RenderText {#text} at (0,0) size 263x17
-          text run at (0,0) width 263: "The following two lines should look the same:"
-      RenderBlock {DIV} at (0,30) size 784x17
-        RenderInline {SPAN} at (0,0) size 30x17
-          RenderInline (generated) at (0,0) size 30x17
-            RenderCounter at (0,0) size 18x17
-              text run at (0,0) width 18: "1.1"
-            RenderText at (18,0) size 12x17
-              text run at (18,0) width 12: " - "
-        RenderInline {SPAN} at (0,0) size 26x17
-          RenderInline (generated) at (0,0) size 26x17
-            RenderCounter at (30,0) size 14x17
-              text run at (30,0) width 14: "12"
-            RenderText at (44,0) size 12x17
-              text run at (44,0) width 12: " - "
-        RenderInline {SPAN} at (0,0) size 104x17
-          RenderInline (generated) at (0,0) size 104x17
-            RenderCounter at (56,0) size 18x17
-              text run at (56,0) width 18: "1.3"
-            RenderText at (74,0) size 44x17
-              text run at (74,0) width 44: "--       --"
-            RenderCounter at (118,0) size 42x17
-              text run at (118,0) width 42: "1-------3"
-      RenderBlock {DIV} at (0,47) size 784x17
-        RenderText {#text} at (0,0) size 160x17
-          text run at (0,0) width 160: "1.1 - 12 - 1.3--       --1-------3"
+layer at (0,0) size 800x103
+  RenderBlock {HTML} at (0,0) size 800x103
+    RenderBody {BODY} at (8,16) size 784x79
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 322x21
+          text run at (0,0) width 322: "The following two lines should look the same:"
+      RenderBlock {DIV} at (0,37) size 784x21
+        RenderInline {SPAN} at (0,0) size 35x21
+          RenderInline (generated) at (0,0) size 35x21
+            RenderCounter at (0,0) size 22x21
+              text run at (0,0) width 22: "1.1"
+            RenderText at (22,0) size 13x21
+              text run at (22,0) width 13: " - "
+        RenderInline {SPAN} at (0,0) size 31x21
+          RenderInline (generated) at (0,0) size 31x21
+            RenderCounter at (35,0) size 18x21
+              text run at (35,0) width 18: "12"
+            RenderText at (53,0) size 13x21
+              text run at (53,0) width 13: " - "
+        RenderInline {SPAN} at (0,0) size 123x21
+          RenderInline (generated) at (0,0) size 123x21
+            RenderCounter at (66,0) size 22x21
+              text run at (66,0) width 22: "1.3"
+            RenderText at (88,0) size 48x21
+              text run at (88,0) width 48: "--       --"
+            RenderCounter at (136,0) size 53x21
+              text run at (136,0) width 53: "1-------3"
+      RenderBlock {DIV} at (0,58) size 784x21
+        RenderText {#text} at (0,0) size 189x21
+          text run at (0,0) width 189: "1.1 - 12 - 1.3--       --1-------3"

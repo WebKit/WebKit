@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#CCCCCC]
-      RenderBlock {P} at (0,0) size 784x17
-        RenderText {#text} at (0,0) size 326x17
-          text run at (0,0) width 326: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,30) size 784x51
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 395x21
+          text run at (0,0) width 395: "The style declarations which apply to the text below are:"
+      RenderBlock {PRE} at (0,37) size 784x51
         RenderText {#text} at (0,0) size 507x51
           text run at (0,0) width 263: ".one {border-color: purple; border-style: solid;}"
           text run at (263,0) width 0: " "
@@ -14,36 +14,36 @@ layer at (0,0) size 800x600
           text run at (394,17) width 0: " "
           text run at (0,34) width 507: ".three {border-color: purple green blue yellow; border-width: medium; border-style: solid;}"
           text run at (507,34) width 0: " "
-      RenderBlock {HR} at (0,94) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,109) size 784x23 [border: (3px solid #800080)]
-        RenderText {#text} at (3,3) size 325x17
-          text run at (3,3) width 325: "This element should have a purple border surrounding it."
-      RenderBlock {P} at (0,145) size 784x23 [border: (3px solid #800080)]
-        RenderText {#text} at (3,3) size 409x17
-          text run at (3,3) width 409: "This element should have a medium-width purple border surrounding it."
-      RenderBlock {P} at (0,181) size 784x40 [border: (3px solid #800080) (3px solid #008000) (3px solid #0000FF) (3px solid #FFFF00)]
-        RenderText {#text} at (3,3) size 768x34
-          text run at (3,3) width 768: "This element should be surrounded by a medium width border which is purple on top, green on the right side, blue on the bottom, and"
-          text run at (3,20) width 130: "yellow on the left side."
-      RenderTable {TABLE} at (0,234) size 784x148 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 782x146
-          RenderTableRow {TR} at (0,0) size 782x26
-            RenderTableCell {TD} at (0,0) size 782x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 144x17
-                RenderText {#text} at (4,4) size 144x17
-                  text run at (4,4) width 144: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,26) size 782x120
-            RenderTableCell {TD} at (0,73) size 12x25 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 4x17
+      RenderBlock {HR} at (0,101) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,119) size 784x27 [border: (3px solid #800080)]
+        RenderText {#text} at (3,3) size 400x21
+          text run at (3,3) width 400: "This element should have a purple border surrounding it."
+      RenderBlock {P} at (0,162) size 784x27 [border: (3px solid #800080)]
+        RenderText {#text} at (3,3) size 504x21
+          text run at (3,3) width 504: "This element should have a medium-width purple border surrounding it."
+      RenderBlock {P} at (0,205) size 784x48 [border: (3px solid #800080) (3px solid #008000) (3px solid #0000FF) (3px solid #FFFF00)]
+        RenderText {#text} at (3,3) size 767x42
+          text run at (3,3) width 767: "This element should be surrounded by a medium width border which is purple on top, green on the right side,"
+          text run at (3,24) width 327: "blue on the bottom, and yellow on the left side."
+      RenderTable {TABLE} at (0,269) size 784x174 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x172
+          RenderTableRow {TR} at (0,0) size 782x30
+            RenderTableCell {TD} at (0,0) size 782x30 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 178x21
+                RenderText {#text} at (4,4) size 178x21
+                  text run at (4,4) width 178: "TABLE Testing Section"
+          RenderTableRow {TR} at (0,30) size 782x142
+            RenderTableCell {TD} at (0,86) size 12x29 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x21
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,26) size 770x120 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock {P} at (4,4) size 762x23 [border: (3px solid #800080)]
-                RenderText {#text} at (3,3) size 325x17
-                  text run at (3,3) width 325: "This element should have a purple border surrounding it."
-              RenderBlock {P} at (4,40) size 762x23 [border: (3px solid #800080)]
-                RenderText {#text} at (3,3) size 409x17
-                  text run at (3,3) width 409: "This element should have a medium-width purple border surrounding it."
-              RenderBlock {P} at (4,76) size 762x40 [border: (3px solid #800080) (3px solid #008000) (3px solid #0000FF) (3px solid #FFFF00)]
-                RenderText {#text} at (3,3) size 743x34
-                  text run at (3,3) width 743: "This element should be surrounded by a medium width border which is purple on top, green on the right side, blue on the bottom,"
-                  text run at (3,20) width 155: "and yellow on the left side."
+            RenderTableCell {TD} at (12,30) size 770x142 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 762x27 [border: (3px solid #800080)]
+                RenderText {#text} at (3,3) size 400x21
+                  text run at (3,3) width 400: "This element should have a purple border surrounding it."
+              RenderBlock {P} at (4,47) size 762x27 [border: (3px solid #800080)]
+                RenderText {#text} at (3,3) size 504x21
+                  text run at (3,3) width 504: "This element should have a medium-width purple border surrounding it."
+              RenderBlock {P} at (4,90) size 762x48 [border: (3px solid #800080) (3px solid #008000) (3px solid #0000FF) (3px solid #FFFF00)]
+                RenderText {#text} at (3,3) size 729x42
+                  text run at (3,3) width 729: "This element should be surrounded by a medium width border which is purple on top, green on the right"
+                  text run at (3,24) width 365: "side, blue on the bottom, and yellow on the left side."

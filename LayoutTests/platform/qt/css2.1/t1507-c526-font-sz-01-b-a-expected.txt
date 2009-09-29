@@ -1,26 +1,26 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x339
-  RenderBlock {HTML} at (0,0) size 800x339
-    RenderBody {BODY} at (8,13) size 784x318
-      RenderBlock {P} at (0,0) size 784x17
-        RenderText {#text} at (0,0) size 429x17
-          text run at (0,0) width 429: "There should be a solid single uninterrupted smooth column of blue below."
-      RenderBlock {DIV} at (96,30) size 592x48 [color=#000080]
+layer at (0,0) size 800x349
+  RenderBlock {HTML} at (0,0) size 800x349
+    RenderBody {BODY} at (8,16) size 784x325
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 527x21
+          text run at (0,0) width 527: "There should be a solid single uninterrupted smooth column of blue below."
+      RenderBlock {DIV} at (96,37) size 592x48 [color=#000080]
         RenderText {#text} at (0,0) size 48x49
           text run at (0,0) width 48: "x"
-      RenderBlock {DIV} at (96,78) size 592x48 [color=#000080]
+      RenderBlock {DIV} at (96,85) size 592x48 [color=#000080]
         RenderText {#text} at (0,0) size 48x49
           text run at (0,0) width 48: "x"
-      RenderBlock {DIV} at (96,126) size 592x48 [color=#000080]
+      RenderBlock {DIV} at (96,133) size 592x48 [color=#000080]
         RenderText {#text} at (0,0) size 48x49
           text run at (0,0) width 48: "x"
-      RenderBlock {DIV} at (96,174) size 592x48 [color=#000080]
+      RenderBlock {DIV} at (96,181) size 592x48 [color=#000080]
         RenderText {#text} at (0,0) size 48x49
           text run at (0,0) width 48: "x"
-      RenderBlock {DIV} at (96,222) size 592x48 [color=#000080]
+      RenderBlock {DIV} at (96,229) size 592x48 [color=#000080]
         RenderText {#text} at (0,0) size 48x49
           text run at (0,0) width 48: "x"
-      RenderBlock {DIV} at (96,270) size 592x48 [color=#000080]
+      RenderBlock {DIV} at (96,277) size 592x48 [color=#000080]
         RenderText {#text} at (0,0) size 48x49
           text run at (0,0) width 48: "x"

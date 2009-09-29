@@ -1,94 +1,94 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x85
-  RenderBlock {HTML} at (0,0) size 800x85
-    RenderBody {BODY} at (8,13) size 784x64
-      RenderBlock {P} at (0,0) size 784x17
-        RenderText {#text} at (0,0) size 263x17
-          text run at (0,0) width 263: "The following two lines should look the same:"
-      RenderBlock {DIV} at (0,30) size 784x17
-        RenderInline {SPAN} at (0,0) size 30x17
-          RenderInline (generated) at (0,0) size 30x17
-            RenderCounter at (0,0) size 30x17
-              text run at (0,0) width 30: "\x{3B1}.\x{3B1}"
-        RenderText {#text} at (30,0) size 4x17
-          text run at (30,0) width 4: " "
-        RenderInline {SPAN} at (0,0) size 30x17
-          RenderInline (generated) at (0,0) size 30x17
-            RenderCounter at (34,0) size 30x17
-              text run at (34,0) width 30: "\x{3B1}.\x{3B2}"
-        RenderText {#text} at (64,0) size 4x17
-          text run at (64,0) width 4: " "
-        RenderInline {SPAN} at (0,0) size 30x17
-          RenderInline (generated) at (0,0) size 30x17
-            RenderCounter at (68,0) size 30x17
-              text run at (68,0) width 30: "\x{3B1}.\x{3B3}"
-        RenderText {#text} at (98,0) size 4x17
-          text run at (98,0) width 4: " "
-        RenderInline {SPAN} at (0,0) size 30x17
-          RenderInline (generated) at (0,0) size 30x17
-            RenderCounter at (102,0) size 30x17
-              text run at (102,0) width 30: "\x{3B1}.\x{3B4}"
-        RenderText {#text} at (132,0) size 4x17
-          text run at (132,0) width 4: " "
-        RenderInline {SPAN} at (0,0) size 30x17
-          RenderInline (generated) at (0,0) size 30x17
-            RenderCounter at (136,0) size 30x17
-              text run at (136,0) width 30: "\x{3B1}.\x{3B5}"
-        RenderText {#text} at (166,0) size 4x17
-          text run at (166,0) width 4: " "
-        RenderInline {SPAN} at (0,0) size 30x17
-          RenderInline (generated) at (0,0) size 30x17
-            RenderCounter at (170,0) size 30x17
-              text run at (170,0) width 30: "\x{3B1}.\x{3B6}"
-        RenderText {#text} at (200,0) size 4x17
-          text run at (200,0) width 4: " "
-        RenderInline {SPAN} at (0,0) size 30x17
-          RenderInline (generated) at (0,0) size 30x17
-            RenderCounter at (204,0) size 30x17
-              text run at (204,0) width 30: "\x{3B1}.\x{3B7}"
-        RenderText {#text} at (234,0) size 4x17
-          text run at (234,0) width 4: " "
-        RenderInline {SPAN} at (0,0) size 30x17
-          RenderInline (generated) at (0,0) size 30x17
-            RenderCounter at (238,0) size 30x17
-              text run at (238,0) width 30: "\x{3B1}.\x{3B8}"
-        RenderText {#text} at (268,0) size 4x17
-          text run at (268,0) width 4: " "
-        RenderInline {SPAN} at (0,0) size 30x17
-          RenderInline (generated) at (0,0) size 30x17
-            RenderCounter at (272,0) size 30x17
-              text run at (272,0) width 30: "\x{3B1}.\x{3B9}"
-        RenderText {#text} at (302,0) size 4x17
-          text run at (302,0) width 4: " "
-        RenderInline {SPAN} at (0,0) size 30x17
-          RenderInline (generated) at (0,0) size 30x17
-            RenderCounter at (306,0) size 30x17
-              text run at (306,0) width 30: "\x{3B1}.\x{3BA}"
-        RenderText {#text} at (336,0) size 4x17
-          text run at (336,0) width 4: " "
-        RenderInline {SPAN} at (0,0) size 30x17
-          RenderInline (generated) at (0,0) size 30x17
-            RenderCounter at (340,0) size 30x17
-              text run at (340,0) width 30: "\x{3B1}.\x{3BB}"
-        RenderText {#text} at (370,0) size 4x17
-          text run at (370,0) width 4: " "
-        RenderInline {SPAN} at (0,0) size 30x17
-          RenderInline (generated) at (0,0) size 30x17
-            RenderCounter at (374,0) size 30x17
-              text run at (374,0) width 30: "\x{3B1}.\x{3BC}"
+layer at (0,0) size 800x103
+  RenderBlock {HTML} at (0,0) size 800x103
+    RenderBody {BODY} at (8,16) size 784x79
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 322x21
+          text run at (0,0) width 322: "The following two lines should look the same:"
+      RenderBlock {DIV} at (0,37) size 784x21
+        RenderInline {SPAN} at (0,0) size 36x21
+          RenderInline (generated) at (0,0) size 36x21
+            RenderCounter at (0,0) size 36x21
+              text run at (0,0) width 36: "\x{3B1}.\x{3B1}"
+        RenderText {#text} at (36,0) size 4x21
+          text run at (36,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 36x21
+          RenderInline (generated) at (0,0) size 36x21
+            RenderCounter at (40,0) size 36x21
+              text run at (40,0) width 36: "\x{3B1}.\x{3B2}"
+        RenderText {#text} at (76,0) size 4x21
+          text run at (76,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 36x21
+          RenderInline (generated) at (0,0) size 36x21
+            RenderCounter at (80,0) size 36x21
+              text run at (80,0) width 36: "\x{3B1}.\x{3B3}"
+        RenderText {#text} at (116,0) size 4x21
+          text run at (116,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 36x21
+          RenderInline (generated) at (0,0) size 36x21
+            RenderCounter at (120,0) size 36x21
+              text run at (120,0) width 36: "\x{3B1}.\x{3B4}"
+        RenderText {#text} at (156,0) size 4x21
+          text run at (156,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 36x21
+          RenderInline (generated) at (0,0) size 36x21
+            RenderCounter at (160,0) size 36x21
+              text run at (160,0) width 36: "\x{3B1}.\x{3B5}"
+        RenderText {#text} at (196,0) size 4x21
+          text run at (196,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 36x21
+          RenderInline (generated) at (0,0) size 36x21
+            RenderCounter at (200,0) size 36x21
+              text run at (200,0) width 36: "\x{3B1}.\x{3B6}"
+        RenderText {#text} at (236,0) size 4x21
+          text run at (236,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 36x21
+          RenderInline (generated) at (0,0) size 36x21
+            RenderCounter at (240,0) size 36x21
+              text run at (240,0) width 36: "\x{3B1}.\x{3B7}"
+        RenderText {#text} at (276,0) size 4x21
+          text run at (276,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 36x21
+          RenderInline (generated) at (0,0) size 36x21
+            RenderCounter at (280,0) size 36x21
+              text run at (280,0) width 36: "\x{3B1}.\x{3B8}"
+        RenderText {#text} at (316,0) size 4x21
+          text run at (316,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 36x21
+          RenderInline (generated) at (0,0) size 36x21
+            RenderCounter at (320,0) size 36x21
+              text run at (320,0) width 36: "\x{3B1}.\x{3B9}"
+        RenderText {#text} at (356,0) size 4x21
+          text run at (356,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 36x21
+          RenderInline (generated) at (0,0) size 36x21
+            RenderCounter at (360,0) size 36x21
+              text run at (360,0) width 36: "\x{3B1}.\x{3BA}"
+        RenderText {#text} at (396,0) size 4x21
+          text run at (396,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 36x21
+          RenderInline (generated) at (0,0) size 36x21
+            RenderCounter at (400,0) size 36x21
+              text run at (400,0) width 36: "\x{3B1}.\x{3BB}"
+        RenderText {#text} at (436,0) size 4x21
+          text run at (436,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 36x21
+          RenderInline (generated) at (0,0) size 36x21
+            RenderCounter at (440,0) size 36x21
+              text run at (440,0) width 36: "\x{3B1}.\x{3BC}"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,47) size 784x17
-        RenderText {#text} at (0,0) size 404x17
-          text run at (0,0) width 34: "\x{3B1}.\x{3B1} "
-          text run at (34,0) width 34: "\x{3B1}.\x{3B2} "
-          text run at (68,0) width 34: "\x{3B1}.\x{3B3} "
-          text run at (102,0) width 34: "\x{3B1}.\x{3B4} "
-          text run at (136,0) width 34: "\x{3B1}.\x{3B5} "
-          text run at (170,0) width 34: "\x{3B1}.\x{3B6} "
-          text run at (204,0) width 34: "\x{3B1}.\x{3B7} "
-          text run at (238,0) width 34: "\x{3B1}.\x{3B8} "
-          text run at (272,0) width 34: "\x{3B1}.\x{3B9} "
-          text run at (306,0) width 34: "\x{3B1}.\x{3BA} "
-          text run at (340,0) width 34: "\x{3B1}.\x{3BB} "
-          text run at (374,0) width 30: "\x{3B1}.\x{3BC}"
+      RenderBlock {DIV} at (0,58) size 784x21
+        RenderText {#text} at (0,0) size 476x21
+          text run at (0,0) width 40: "\x{3B1}.\x{3B1} "
+          text run at (40,0) width 40: "\x{3B1}.\x{3B2} "
+          text run at (80,0) width 40: "\x{3B1}.\x{3B3} "
+          text run at (120,0) width 40: "\x{3B1}.\x{3B4} "
+          text run at (160,0) width 40: "\x{3B1}.\x{3B5} "
+          text run at (200,0) width 40: "\x{3B1}.\x{3B6} "
+          text run at (240,0) width 40: "\x{3B1}.\x{3B7} "
+          text run at (280,0) width 40: "\x{3B1}.\x{3B8} "
+          text run at (320,0) width 40: "\x{3B1}.\x{3B9} "
+          text run at (360,0) width 40: "\x{3B1}.\x{3BA} "
+          text run at (400,0) width 40: "\x{3B1}.\x{3BB} "
+          text run at (440,0) width 36: "\x{3B1}.\x{3BC}"

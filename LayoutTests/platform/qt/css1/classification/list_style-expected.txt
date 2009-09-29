@@ -3,51 +3,51 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#CCCCCC]
-      RenderBlock {P} at (0,0) size 784x17
-        RenderText {#text} at (0,0) size 326x17
-          text run at (0,0) width 326: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,30) size 784x34
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 395x21
+          text run at (0,0) width 395: "The style declarations which apply to the text below are:"
+      RenderBlock {PRE} at (0,37) size 784x34
         RenderText {#text} at (0,0) size 327x34
           text run at (0,0) width 203: ".one {list-style: upper-alpha inside;}"
           text run at (203,0) width 0: " "
           text run at (0,17) width 327: ".two {list-style: url(../resources/oransqr.gif) disc outside;}"
           text run at (327,17) width 0: " "
-      RenderBlock {HR} at (0,77) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {UL} at (0,92) size 784x34
-        RenderListItem {LI} at (40,0) size 744x34
-          RenderListMarker at (0,0) size 17x17: "A"
-          RenderText {#text} at (17,0) size 737x34
-            text run at (17,0) width 720: "The text in this item should not behave as expected; that is, it should line up with the capital-A on the left margin, leaving no"
-            text run at (0,17) width 201: "blank space beneath the capital-A."
-      RenderBlock {UL} at (0,139) size 784x36
-        RenderListItem {LI} at (40,0) size 744x36
-          RenderListMarker at (-22,0) size 15x15
-          RenderText {#text} at (0,2) size 741x34
-            text run at (0,2) width 443: "The text in this item have an orange square for its bullet; failing that, a disc. "
-            text run at (443,2) width 298: "Also, the bullet should be outside the text block, as"
-            text run at (0,19) width 187: "the list has been set to 'outside'."
-      RenderTable {TABLE} at (0,188) size 784x132 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 782x130
-          RenderTableRow {TR} at (0,0) size 782x26
-            RenderTableCell {TD} at (0,0) size 782x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 144x17
-                RenderText {#text} at (4,4) size 144x17
-                  text run at (4,4) width 144: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,26) size 782x104
-            RenderTableCell {TD} at (0,65) size 12x25 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 4x17
+      RenderBlock {HR} at (0,84) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {UL} at (0,102) size 784x42
+        RenderListItem {LI} at (40,0) size 744x42
+          RenderListMarker at (0,0) size 19x21: "A"
+          RenderText {#text} at (19,0) size 725x42
+            text run at (19,0) width 706: "The text in this item should not behave as expected; that is, it should line up with the capital-A on the"
+            text run at (0,21) width 405: "left margin, leaving no blank space beneath the capital-A."
+      RenderBlock {UL} at (0,160) size 784x42
+        RenderListItem {LI} at (40,0) size 744x42
+          RenderListMarker at (-22,1) size 15x15
+          RenderText {#text} at (0,0) size 708x42
+            text run at (0,0) width 529: "The text in this item have an orange square for its bullet; failing that, a disc. "
+            text run at (529,0) width 179: "Also, the bullet should be"
+            text run at (0,21) width 402: "outside the text block, as the list has been set to 'outside'."
+      RenderTable {TABLE} at (0,218) size 784x156 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x154
+          RenderTableRow {TR} at (0,0) size 782x30
+            RenderTableCell {TD} at (0,0) size 782x30 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 178x21
+                RenderText {#text} at (4,4) size 178x21
+                  text run at (4,4) width 178: "TABLE Testing Section"
+          RenderTableRow {TR} at (0,30) size 782x124
+            RenderTableCell {TD} at (0,77) size 12x29 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x21
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,26) size 770x104 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock {UL} at (4,4) size 762x34
-                RenderListItem {LI} at (40,0) size 722x34
-                  RenderListMarker at (0,0) size 17x17: "A"
-                  RenderText {#text} at (17,0) size 719x34
-                    text run at (17,0) width 702: "The text in this item should not behave as expected; that is, it should line up with the capital-A on the left margin, leaving"
-                    text run at (0,17) width 219: "no blank space beneath the capital-A."
-              RenderBlock {UL} at (4,51) size 762x36
-                RenderListItem {LI} at (40,0) size 722x36
-                  RenderListMarker at (-22,0) size 15x15
-                  RenderText {#text} at (0,2) size 684x34
-                    text run at (0,2) width 443: "The text in this item have an orange square for its bullet; failing that, a disc. "
-                    text run at (443,2) width 241: "Also, the bullet should be outside the text"
-                    text run at (0,19) width 244: "block, as the list has been set to 'outside'."
+            RenderTableCell {TD} at (12,30) size 770x124 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {UL} at (4,4) size 762x42
+                RenderListItem {LI} at (40,0) size 722x42
+                  RenderListMarker at (0,0) size 19x21: "A"
+                  RenderText {#text} at (19,0) size 699x42
+                    text run at (19,0) width 680: "The text in this item should not behave as expected; that is, it should line up with the capital-A on"
+                    text run at (0,21) width 431: "the left margin, leaving no blank space beneath the capital-A."
+              RenderBlock {UL} at (4,62) size 762x42
+                RenderListItem {LI} at (40,0) size 722x42
+                  RenderListMarker at (-22,1) size 15x15
+                  RenderText {#text} at (0,0) size 708x42
+                    text run at (0,0) width 529: "The text in this item have an orange square for its bullet; failing that, a disc. "
+                    text run at (529,0) width 179: "Also, the bullet should be"
+                    text run at (0,21) width 402: "outside the text block, as the list has been set to 'outside'."

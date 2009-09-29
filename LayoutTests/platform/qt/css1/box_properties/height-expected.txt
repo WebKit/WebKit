@@ -1,76 +1,76 @@
-layer at (0,0) size 800x933
+layer at (0,0) size 800x1011
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x933
-  RenderBlock {HTML} at (0,0) size 800x933
-    RenderBody {BODY} at (8,8) size 784x917 [bgcolor=#CCCCCC]
-      RenderBlock {P} at (0,0) size 784x17
-        RenderText {#text} at (0,0) size 326x17
-          text run at (0,0) width 326: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,30) size 784x51
+layer at (0,0) size 800x1011
+  RenderBlock {HTML} at (0,0) size 800x1011
+    RenderBody {BODY} at (8,8) size 784x995 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 395x21
+          text run at (0,0) width 395: "The style declarations which apply to the text below are:"
+      RenderBlock {PRE} at (0,37) size 784x51
         RenderText {#text} at (0,0) size 118x51
           text run at (0,0) width 112: ".one {height: 50px;}"
           text run at (112,0) width 0: " "
           text run at (0,17) width 118: ".two {height: 100px;}"
           text run at (118,17) width 0: " "
           text run at (0,34) width 0: " "
-      RenderBlock {HR} at (0,94) size 784x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,102) size 784x50
+      RenderBlock {HR} at (0,101) size 784x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,111) size 784x50
         RenderImage {IMG} at (0,0) size 50x50
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,165) size 784x17
-        RenderText {#text} at (0,0) size 253x17
-          text run at (0,0) width 253: "The square above should be fifty pixels tall."
-      RenderBlock (anonymous) at (0,195) size 784x100
+      RenderBlock {P} at (0,177) size 784x21
+        RenderText {#text} at (0,0) size 306x21
+          text run at (0,0) width 306: "The square above should be fifty pixels tall."
+      RenderBlock (anonymous) at (0,214) size 784x100
         RenderImage {IMG} at (0,0) size 100x100
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,308) size 784x17
-        RenderText {#text} at (0,0) size 307x17
-          text run at (0,0) width 307: "The square above should be 100 pixels tall and wide."
-      RenderBlock (anonymous) at (0,338) size 784x100
+      RenderBlock {P} at (0,330) size 784x21
+        RenderText {#text} at (0,0) size 378x21
+          text run at (0,0) width 378: "The square above should be 100 pixels tall and wide."
+      RenderBlock (anonymous) at (0,367) size 784x100
         RenderImage {IMG} at (0,0) size 30x100
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,451) size 784x34
-        RenderText {#text} at (0,0) size 771x34
-          text run at (0,0) width 771: "The rectangular image above should be 100 pixels tall and 30 pixels wide (the original image is 50x15, and the size has been doubled"
-          text run at (0,17) width 57: "using the "
+      RenderBlock {P} at (0,483) size 784x42
+        RenderText {#text} at (0,0) size 782x42
+          text run at (0,0) width 782: "The rectangular image above should be 100 pixels tall and 30 pixels wide (the original image is 50x15, and the"
+          text run at (0,21) width 234: "size has been doubled using the "
         RenderInline {CODE} at (0,0) size 35x17
-          RenderText {#text} at (57,17) size 35x17
-            text run at (57,17) width 35: "height"
-        RenderText {#text} at (92,17) size 59x17
-          text run at (92,17) width 59: " property)."
-      RenderTable {TABLE} at (0,498) size 784x419 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 782x417
-          RenderTableRow {TR} at (0,0) size 782x26
-            RenderTableCell {TD} at (0,0) size 782x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 144x17
-                RenderText {#text} at (4,4) size 144x17
-                  text run at (4,4) width 144: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,26) size 782x391
-            RenderTableCell {TD} at (0,209) size 12x25 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 4x17
+          RenderText {#text} at (234,24) size 35x17
+            text run at (234,24) width 35: "height"
+        RenderText {#text} at (269,21) size 71x21
+          text run at (269,21) width 71: " property)."
+      RenderTable {TABLE} at (0,541) size 784x454 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x452
+          RenderTableRow {TR} at (0,0) size 782x30
+            RenderTableCell {TD} at (0,0) size 782x30 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 178x21
+                RenderText {#text} at (4,4) size 178x21
+                  text run at (4,4) width 178: "TABLE Testing Section"
+          RenderTableRow {TR} at (0,30) size 782x422
+            RenderTableCell {TD} at (0,226) size 12x29 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x21
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,26) size 770x391 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (12,30) size 770x422 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock (anonymous) at (4,4) size 762x50
                 RenderImage {IMG} at (0,0) size 50x50
                 RenderText {#text} at (0,0) size 0x0
-              RenderBlock {P} at (4,67) size 762x17
-                RenderText {#text} at (0,0) size 253x17
-                  text run at (0,0) width 253: "The square above should be fifty pixels tall."
-              RenderBlock (anonymous) at (4,97) size 762x100
+              RenderBlock {P} at (4,70) size 762x21
+                RenderText {#text} at (0,0) size 306x21
+                  text run at (0,0) width 306: "The square above should be fifty pixels tall."
+              RenderBlock (anonymous) at (4,107) size 762x100
                 RenderImage {IMG} at (0,0) size 100x100
                 RenderText {#text} at (0,0) size 0x0
-              RenderBlock {P} at (4,210) size 762x17
-                RenderText {#text} at (0,0) size 307x17
-                  text run at (0,0) width 307: "The square above should be 100 pixels tall and wide."
-              RenderBlock (anonymous) at (4,240) size 762x100
+              RenderBlock {P} at (4,223) size 762x21
+                RenderText {#text} at (0,0) size 378x21
+                  text run at (0,0) width 378: "The square above should be 100 pixels tall and wide."
+              RenderBlock (anonymous) at (4,260) size 762x100
                 RenderImage {IMG} at (0,0) size 30x100
                 RenderText {#text} at (0,0) size 0x0
-              RenderBlock {P} at (4,353) size 762x34
-                RenderText {#text} at (0,0) size 722x34
-                  text run at (0,0) width 722: "The rectangular image above should be 100 pixels tall and 30 pixels wide (the original image is 50x15, and the size has been"
-                  text run at (0,17) width 106: "doubled using the "
+              RenderBlock {P} at (4,376) size 762x42
+                RenderText {#text} at (0,0) size 756x42
+                  text run at (0,0) width 756: "The rectangular image above should be 100 pixels tall and 30 pixels wide (the original image is 50x15, and"
+                  text run at (0,21) width 260: "the size has been doubled using the "
                 RenderInline {CODE} at (0,0) size 35x17
-                  RenderText {#text} at (106,17) size 35x17
-                    text run at (106,17) width 35: "height"
-                RenderText {#text} at (141,17) size 59x17
-                  text run at (141,17) width 59: " property)."
+                  RenderText {#text} at (260,24) size 35x17
+                    text run at (260,24) width 35: "height"
+                RenderText {#text} at (295,21) size 71x21
+                  text run at (295,21) width 71: " property)."

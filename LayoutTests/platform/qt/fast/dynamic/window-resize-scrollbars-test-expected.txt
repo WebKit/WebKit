@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 768x592
   RenderBlock {HTML} at (0,0) size 768x568
     RenderBody {BODY} at (8,8) size 752x584
-      RenderText {#text} at (0,0) size 447x17
-        text run at (0,0) width 447: "This window should not have scroll bars. If it has scroll bars, try to use them."
+      RenderText {#text} at (0,0) size 534x21
+        text run at (0,0) width 534: "This window should not have scroll bars. If it has scroll bars, try to use them."
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0

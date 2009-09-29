@@ -2,12 +2,12 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x579
-      RenderBlock {P} at (0,0) size 784x17
-        RenderText {#text} at (0,0) size 551x17
-          text run at (0,0) width 439: "Test that the intensity of text-shadow does not depend on the transparency "
-          text run at (439,0) width 112: "of the text fill color."
-      RenderBlock {DIV} at (0,30) size 784x72
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 659x21
+          text run at (0,0) width 528: "Test that the intensity of text-shadow does not depend on the transparency "
+          text run at (528,0) width 131: "of the text fill color."
+      RenderBlock {DIV} at (0,37) size 784x72
         RenderText {#text} at (0,0) size 48x25
           text run at (0,0) width 48: "A "
         RenderInline {SPAN} at (0,0) size 24x25 [color=#00000000]
@@ -19,10 +19,10 @@ layer at (0,0) size 800x600
           RenderText {#text} at (96,0) size 24x25
             text run at (96,0) width 24: "A"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,115) size 784x17
-        RenderText {#text} at (0,0) size 371x17
-          text run at (0,0) width 371: "There should be three identical green squares on the line above."
-      RenderBlock {DIV} at (0,145) size 784x72
+      RenderBlock {P} at (0,125) size 784x21
+        RenderText {#text} at (0,0) size 456x21
+          text run at (0,0) width 456: "There should be three identical green squares on the line above."
+      RenderBlock {DIV} at (0,162) size 784x72
         RenderText {#text} at (0,0) size 48x25
           text run at (0,0) width 48: "A "
         RenderInline {SPAN} at (0,0) size 24x25 [color=#00000000]
@@ -34,10 +34,10 @@ layer at (0,0) size 800x600
           RenderText {#text} at (96,0) size 24x25
             text run at (96,0) width 24: "A"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,230) size 784x17
-        RenderText {#text} at (0,0) size 436x17
-          text run at (0,0) width 436: "There should be three identical soft-edged green squares on the line above."
-      RenderBlock {DIV} at (0,260) size 784x72 [textStrokeColor=#0000FF] [textStrokeWidth=5.00]
+      RenderBlock {P} at (0,250) size 784x21
+        RenderText {#text} at (0,0) size 535x21
+          text run at (0,0) width 535: "There should be three identical soft-edged green squares on the line above."
+      RenderBlock {DIV} at (0,287) size 784x72 [textStrokeColor=#0000FF] [textStrokeWidth=5.00]
         RenderText {#text} at (0,0) size 48x25
           text run at (0,0) width 48: "A "
         RenderInline {SPAN} at (0,0) size 24x25 [color=#00000000]
@@ -49,6 +49,6 @@ layer at (0,0) size 800x600
           RenderText {#text} at (96,0) size 24x25
             text run at (96,0) width 24: "A"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,345) size 784x17
-        RenderText {#text} at (0,0) size 371x17
-          text run at (0,0) width 371: "There should be three identical green squares on the line above."
+      RenderBlock {P} at (0,375) size 784x21
+        RenderText {#text} at (0,0) size 456x21
+          text run at (0,0) width 456: "There should be three identical green squares on the line above."

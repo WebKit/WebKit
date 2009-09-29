@@ -3,9 +3,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x17
-        RenderText {#text} at (0,0) size 329x17
-          text run at (0,0) width 329: "There should not be any non-white pixels inside this box:"
-      RenderBlock {DIV} at (0,30) size 206x206 [border: (3px solid #000000)]
-layer at (61,91) size 100x100
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 402x21
+          text run at (0,0) width 402: "There should not be any non-white pixels inside this box:"
+      RenderBlock {DIV} at (0,37) size 206x206 [border: (3px solid #000000)]
+layer at (61,98) size 100x100
   RenderBlock {DIV} at (53,53) size 100x100

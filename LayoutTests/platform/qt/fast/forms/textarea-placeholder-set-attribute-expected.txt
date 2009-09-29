@@ -2,13 +2,13 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x579
-      RenderBlock {P} at (0,0) size 784x17
-        RenderText {#text} at (0,0) size 403x17
-          text run at (0,0) width 403: "If you can see the word \"Placeholder\" in the text area, then all is well."
-      RenderBlock {P} at (0,30) size 784x38
-layer at (10,40) size 156x34
-  RenderTextControl {TEXTAREA} at (2,2) size 156x34
-    RenderBlock {DIV} at (0,0) size 156x17 [color=#A9A9A9]
-      RenderText {#text} at (0,0) size 68x17
-        text run at (0,0) width 68: "Placeholder"
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 486x21
+          text run at (0,0) width 486: "If you can see the word \"Placeholder\" in the text area, then all is well."
+      RenderBlock {P} at (0,37) size 784x46
+layer at (10,47) size 176x42
+  RenderTextControl {TEXTAREA} at (2,2) size 176x42
+    RenderBlock {DIV} at (0,0) size 176x21 [color=#A9A9A9]
+      RenderText {#text} at (0,0) size 86x21
+        text run at (0,0) width 86: "Placeholder"

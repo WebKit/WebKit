@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderInline {A} at (0,0) size 468x17 [color=#0000EE]
+      RenderInline {A} at (0,0) size 468x21 [color=#0000EE]
         RenderText {#text} at (0,0) size 0x0
         RenderImage {IMG} at (0,0) size 468x60
       RenderText {#text} at (0,0) size 0x0

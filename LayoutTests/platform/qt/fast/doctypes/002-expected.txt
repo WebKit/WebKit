@@ -1,20 +1,20 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x168
-  RenderBlock {HTML} at (0,0) size 800x168
-    RenderBody {BODY} at (8,8) size 784x147
+layer at (0,0) size 800x182
+  RenderBlock {HTML} at (0,0) size 800x182
+    RenderBody {BODY} at (8,8) size 784x158
       RenderBlock {DIV} at (0,0) size 784x100
-      RenderBlock (anonymous) at (0,100) size 784x17
-        RenderText {#text} at (0,0) size 446x17
-          text run at (0,0) width 280: "This file has a doc type with no public identifier. "
-          text run at (280,0) width 166: "We should be in strict mode."
-      RenderBlock {UL} at (0,130) size 784x17
-        RenderListItem {LI} at (40,0) size 744x17
-          RenderBlock {UL} at (0,0) size 744x17
-            RenderListItem {LI} at (40,0) size 704x17
-              RenderListMarker at (-56,0) size 6x17: bullet
-              RenderListMarker at (-16,0) size 6x17: white bullet
-              RenderText {#text} at (0,0) size 233x17
-                text run at (0,0) width 233: "Both bullets should be on the same line."
+      RenderBlock (anonymous) at (0,100) size 784x21
+        RenderText {#text} at (0,0) size 538x21
+          text run at (0,0) width 338: "This file has a doc type with no public identifier. "
+          text run at (338,0) width 200: "We should be in strict mode."
+      RenderBlock {UL} at (0,137) size 784x21
+        RenderListItem {LI} at (40,0) size 744x21
+          RenderBlock {UL} at (0,0) size 744x21
+            RenderListItem {LI} at (40,0) size 704x21
+              RenderListMarker at (-58,0) size 7x21: bullet
+              RenderListMarker at (-18,0) size 7x21: white bullet
+              RenderText {#text} at (0,0) size 283x21
+                text run at (0,0) width 283: "Both bullets should be on the same line."
 layer at (8,8) size 80x80
   RenderBlock (positioned) {DIV} at (8,8) size 80x80 [bgcolor=#008000]

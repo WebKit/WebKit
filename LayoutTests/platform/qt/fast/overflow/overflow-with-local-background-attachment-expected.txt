@@ -1,23 +1,23 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x283
-  RenderBlock {HTML} at (0,0) size 800x283
-    RenderBody {BODY} at (8,13) size 784x262
-      RenderBlock {UL} at (0,0) size 784x51 [color=#000080]
-        RenderListItem {LI} at (40,0) size 744x17
-          RenderListMarker at (-16,0) size 6x17: bullet
-          RenderText {#text} at (0,0) size 307x17
-            text run at (0,0) width 307: "You should not see the background under the border."
-        RenderListItem {LI} at (40,17) size 744x17
-          RenderListMarker at (-16,0) size 6x17: bullet
-          RenderText {#text} at (0,0) size 318x17
-            text run at (0,0) width 318: "As you scroll the element below the cats should move."
-        RenderListItem {LI} at (40,34) size 744x17
-          RenderListMarker at (-16,0) size 6x17: bullet
-          RenderText {#text} at (0,0) size 272x17
-            text run at (0,0) width 272: "The cats should be on a light grey background."
-layer at (8,77) size 390x198 clip at (38,107) size 314x138 scrollHeight 420
-  RenderBlock {DIV} at (0,64) size 390x198 [bgcolor=#C0C0C0] [border: (30px dotted #000000)]
+layer at (0,0) size 800x301
+  RenderBlock {HTML} at (0,0) size 800x301
+    RenderBody {BODY} at (8,16) size 784x277
+      RenderBlock {UL} at (0,0) size 784x63 [color=#000080]
+        RenderListItem {LI} at (40,0) size 744x21
+          RenderListMarker at (-18,0) size 7x21: bullet
+          RenderText {#text} at (0,0) size 376x21
+            text run at (0,0) width 376: "You should not see the background under the border."
+        RenderListItem {LI} at (40,21) size 744x21
+          RenderListMarker at (-18,0) size 7x21: bullet
+          RenderText {#text} at (0,0) size 383x21
+            text run at (0,0) width 383: "As you scroll the element below the cats should move."
+        RenderListItem {LI} at (40,42) size 744x21
+          RenderListMarker at (-18,0) size 7x21: bullet
+          RenderText {#text} at (0,0) size 331x21
+            text run at (0,0) width 331: "The cats should be on a light grey background."
+layer at (8,95) size 390x198 clip at (38,125) size 314x138 scrollHeight 420
+  RenderBlock {DIV} at (0,79) size 390x198 [bgcolor=#C0C0C0] [border: (30px dotted #000000)]
     RenderText {#text} at (30,30) size 34x420
       text run at (30,30) width 21: "   1"
       text run at (51,30) width 0: " "

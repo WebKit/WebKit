@@ -3,20 +3,20 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x17
-        RenderText {#text} at (0,0) size 49x17
-          text run at (0,0) width 49: "Test for "
-        RenderInline {A} at (0,0) size 275x17 [color=#0000EE]
-          RenderText {#text} at (49,0) size 275x17
-            text run at (49,0) width 275: "https://bugs.webkit.org/show_bug.cgi?id=21248"
-        RenderText {#text} at (324,0) size 4x17
-          text run at (324,0) width 4: "."
-      RenderBlock (anonymous) at (0,30) size 784x38
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 57x21
+          text run at (0,0) width 57: "Test for "
+        RenderInline {A} at (0,0) size 337x21 [color=#0000EE]
+          RenderText {#text} at (57,0) size 337x21
+            text run at (57,0) width 337: "https://bugs.webkit.org/show_bug.cgi?id=21248"
+        RenderText {#text} at (394,0) size 4x21
+          text run at (394,0) width 4: "."
+      RenderBlock (anonymous) at (0,37) size 784x46
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-layer at (10,40) size 156x34
-  RenderTextControl {TEXTAREA} at (2,2) size 156x34
-    RenderBlock {DIV} at (0,0) size 156x17
-      RenderText {#text} at (0,0) size 51x17
-        text run at (0,0) width 51: "New text"
+layer at (10,47) size 176x42
+  RenderTextControl {TEXTAREA} at (2,2) size 176x42
+    RenderBlock {DIV} at (0,0) size 176x21
+      RenderText {#text} at (0,0) size 62x21
+        text run at (0,0) width 62: "New text"

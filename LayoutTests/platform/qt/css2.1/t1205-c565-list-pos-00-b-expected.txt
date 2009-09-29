@@ -1,22 +1,22 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x86
-  RenderBlock {HTML} at (0,0) size 800x86
-    RenderBody {BODY} at (8,13) size 784x65
-      RenderBlock {P} at (0,0) size 784x17
-        RenderText {#text} at (0,0) size 327x17
-          text run at (0,0) width 327: "The following two boxes should be identical, to the pixel."
-      RenderBlock {OL} at (65,30) size 130x17 [color=#FFFFFF] [bgcolor=#000080]
-        RenderListItem {LI} at (0,0) size 130x17
-          RenderListMarker at (-19,0) size 15x17: "1"
-          RenderInline {SPAN} at (0,0) size 11x17 [color=#000080]
-            RenderText {#text} at (0,0) size 11x17
-              text run at (0,0) width 11: "1."
-          RenderText {#text} at (11,0) size 30x17
-            text run at (11,0) width 30: " Test"
-      RenderBlock {OL} at (65,48) size 130x17 [color=#000080] [bgcolor=#000080]
-        RenderListItem {LI} at (0,0) size 130x17
-          RenderListMarker at (0,0) size 15x17: "1"
-          RenderInline {SPAN} at (0,0) size 30x17 [color=#FFFFFF]
-            RenderText {#text} at (15,0) size 30x17
-              text run at (15,0) width 30: " Test"
+layer at (0,0) size 800x104
+  RenderBlock {HTML} at (0,0) size 800x104
+    RenderBody {BODY} at (8,16) size 784x80
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 399x21
+          text run at (0,0) width 399: "The following two boxes should be identical, to the pixel."
+      RenderBlock {OL} at (80,37) size 160x21 [color=#FFFFFF] [bgcolor=#000080]
+        RenderListItem {LI} at (0,0) size 160x21
+          RenderListMarker at (-22,0) size 17x21: "1"
+          RenderInline {SPAN} at (0,0) size 13x21 [color=#000080]
+            RenderText {#text} at (0,0) size 13x21
+              text run at (0,0) width 13: "1."
+          RenderText {#text} at (13,0) size 35x21
+            text run at (13,0) width 35: " Test"
+      RenderBlock {OL} at (80,59) size 160x21 [color=#000080] [bgcolor=#000080]
+        RenderListItem {LI} at (0,0) size 160x21
+          RenderListMarker at (0,0) size 17x21: "1"
+          RenderInline {SPAN} at (0,0) size 35x21 [color=#FFFFFF]
+            RenderText {#text} at (17,0) size 35x21
+              text run at (17,0) width 35: " Test"

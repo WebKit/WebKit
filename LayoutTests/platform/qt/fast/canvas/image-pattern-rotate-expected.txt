@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x81
-  RenderBlock {HTML} at (0,0) size 800x81
-    RenderBody {BODY} at (8,8) size 784x65
-      RenderBlock (anonymous) at (0,0) size 784x17
-        RenderText {#text} at (0,0) size 299x17
-          text run at (0,0) width 299: "You should see (almost) straight vertical line below."
-      RenderBlock {DIV} at (0,17) size 784x48
+layer at (0,0) size 800x85
+  RenderBlock {HTML} at (0,0) size 800x85
+    RenderBody {BODY} at (8,8) size 784x69
+      RenderBlock (anonymous) at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 364x21
+          text run at (0,0) width 364: "You should see (almost) straight vertical line below."
+      RenderBlock {DIV} at (0,21) size 784x48
         RenderBlock {DIV} at (0,0) size 784x3
           RenderHTMLCanvas {CANVAS} at (0,0) size 3x3
         RenderBlock {DIV} at (0,3) size 784x3

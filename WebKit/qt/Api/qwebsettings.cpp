@@ -356,8 +356,8 @@ QWebSettings::QWebSettings()
     // Initialize our global defaults
     d->fontSizes.insert(QWebSettings::MinimumFontSize, 0);
     d->fontSizes.insert(QWebSettings::MinimumLogicalFontSize, 0);
-    d->fontSizes.insert(QWebSettings::DefaultFontSize, 14);
-    d->fontSizes.insert(QWebSettings::DefaultFixedFontSize, 14);
+    d->fontSizes.insert(QWebSettings::DefaultFontSize, 16);
+    d->fontSizes.insert(QWebSettings::DefaultFixedFontSize, 13);
     d->fontFamilies.insert(QWebSettings::StandardFont, QLatin1String("Arial"));
     d->fontFamilies.insert(QWebSettings::FixedFont, QLatin1String("Courier New"));
     d->fontFamilies.insert(QWebSettings::SerifFont, QLatin1String("Times New Roman"));

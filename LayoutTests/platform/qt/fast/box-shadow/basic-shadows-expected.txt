@@ -1,88 +1,88 @@
-layer at (0,0) size 800x663
+layer at (0,0) size 800x697
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x663
-  RenderBlock {HTML} at (0,0) size 800x640
-    RenderBody {BODY} at (8,8) size 784x619
+layer at (0,0) size 800x697
+  RenderBlock {HTML} at (0,0) size 800x685
+    RenderBody {BODY} at (8,8) size 784x661
       RenderBlock (anonymous) at (0,0) size 784x150
-        RenderInline {SPAN} at (0,0) size 237x127 [border: (5px solid #000000)]
-          RenderText {#text} at (5,16) size 51x17
-            text run at (5,16) width 51: "This text"
-          RenderBR {BR} at (56,29) size 0x0
-          RenderText {#text} at (0,66) size 70x17
-            text run at (0,66) width 70: "should have"
-          RenderBR {BR} at (70,79) size 0x0
-          RenderText {#text} at (0,116) size 232x17
-            text run at (0,116) width 232: "a multi-line shadow with a border-radius."
+        RenderInline {SPAN} at (0,0) size 292x131 [border: (5px solid #000000)]
+          RenderText {#text} at (5,14) size 60x21
+            text run at (5,14) width 60: "This text"
+          RenderBR {BR} at (65,30) size 0x0
+          RenderText {#text} at (0,64) size 87x21
+            text run at (0,64) width 87: "should have"
+          RenderBR {BR} at (87,80) size 0x0
+          RenderText {#text} at (0,114) size 287x21
+            text run at (0,114) width 287: "a multi-line shadow with a border-radius."
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,150) size 120x120 [border: (10px solid #000000)]
-        RenderText {#text} at (10,10) size 95x34
-          text run at (10,10) width 30: "50% "
-          text run at (40,10) width 65: "transparent"
-          text run at (10,27) width 79: "black shadow"
-      RenderTable {TABLE} at (0,270) size 172x255
-        RenderTableSection {TBODY} at (0,0) size 172x255
-          RenderTableRow {TR} at (0,10) size 172x39
-            RenderTableCell {TD} at (10,10) size 44x39 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (11,11) size 22x17
-                text run at (11,11) width 22: "Cell"
-            RenderTableCell {TD} at (64,10) size 44x39 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (11,11) size 22x17
-                text run at (11,11) width 22: "Cell"
-            RenderTableCell {TD} at (118,10) size 44x39 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (11,11) size 22x17
-                text run at (11,11) width 22: "Cell"
-          RenderTableRow {TR} at (0,59) size 172x39
-            RenderTableCell {TD} at (10,59) size 44x39 [border: (1px solid #000000)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (11,11) size 22x17
-                text run at (11,11) width 22: "Cell"
-            RenderTableCell {TD} at (64,59) size 44x39 [border: (1px solid #000000)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (11,11) size 22x17
-                text run at (11,11) width 22: "Cell"
-            RenderTableCell {TD} at (118,59) size 44x39 [border: (1px solid #000000)] [r=1 c=2 rs=1 cs=1]
-              RenderText {#text} at (11,11) size 22x17
-                text run at (11,11) width 22: "Cell"
-          RenderTableRow {TR} at (0,108) size 172x39
-            RenderTableCell {TD} at (10,108) size 44x39 [border: (1px solid #000000)] [r=2 c=0 rs=1 cs=1]
-              RenderText {#text} at (11,11) size 22x17
-                text run at (11,11) width 22: "Cell"
-            RenderTableCell {TD} at (64,108) size 44x39 [border: (1px solid #000000)] [r=2 c=1 rs=1 cs=1]
-              RenderText {#text} at (11,11) size 22x17
-                text run at (11,11) width 22: "Cell"
-            RenderTableCell {TD} at (118,108) size 44x39 [border: (1px solid #000000)] [r=2 c=2 rs=1 cs=1]
-              RenderText {#text} at (11,11) size 22x17
-                text run at (11,11) width 22: "Cell"
-          RenderTableRow {TR} at (0,157) size 172x39
-            RenderTableCell {TD} at (10,157) size 44x39 [border: (1px solid #000000)] [r=3 c=0 rs=1 cs=1]
-              RenderText {#text} at (11,11) size 22x17
-                text run at (11,11) width 22: "Cell"
-            RenderTableCell {TD} at (64,157) size 44x39 [border: (1px solid #000000)] [r=3 c=1 rs=1 cs=1]
-              RenderText {#text} at (11,11) size 22x17
-                text run at (11,11) width 22: "Cell"
-            RenderTableCell {TD} at (118,157) size 44x39 [border: (1px solid #000000)] [r=3 c=2 rs=1 cs=1]
-              RenderText {#text} at (11,11) size 22x17
-                text run at (11,11) width 22: "Cell"
-          RenderTableRow {TR} at (0,206) size 172x39
-            RenderTableCell {TD} at (10,206) size 44x39 [border: (1px solid #000000)] [r=4 c=0 rs=1 cs=1]
-              RenderText {#text} at (11,11) size 22x17
-                text run at (11,11) width 22: "Cell"
-            RenderTableCell {TD} at (64,206) size 44x39 [border: (1px solid #000000)] [r=4 c=1 rs=1 cs=1]
-              RenderText {#text} at (11,11) size 22x17
-                text run at (11,11) width 22: "Cell"
-            RenderTableCell {TD} at (118,206) size 44x39 [border: (1px solid #000000)] [r=4 c=2 rs=1 cs=1]
-              RenderText {#text} at (11,11) size 22x17
-                text run at (11,11) width 22: "Cell"
-      RenderBlock {P} at (0,538) size 784x34
-        RenderText {#text} at (0,0) size 324x17
-          text run at (0,0) width 324: "The first line of this div should have a box-shadow on it."
-        RenderBR {BR} at (324,13) size 0x0
-        RenderText {#text} at (0,17) size 163x17
-          text run at (0,17) width 163: "This second line should not."
-      RenderBlock {P} at (0,585) size 784x34
+        RenderText {#text} at (10,10) size 98x63
+          text run at (10,10) width 32: "50%"
+          text run at (10,31) width 80: "transparent"
+          text run at (10,52) width 98: "black shadow"
+      RenderTable {TABLE} at (0,270) size 193x275
+        RenderTableSection {TBODY} at (0,0) size 193x275
+          RenderTableRow {TR} at (0,10) size 193x43
+            RenderTableCell {TD} at (10,10) size 51x43 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (11,11) size 29x21
+                text run at (11,11) width 29: "Cell"
+            RenderTableCell {TD} at (71,10) size 51x43 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (11,11) size 29x21
+                text run at (11,11) width 29: "Cell"
+            RenderTableCell {TD} at (132,10) size 51x43 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (11,11) size 29x21
+                text run at (11,11) width 29: "Cell"
+          RenderTableRow {TR} at (0,63) size 193x43
+            RenderTableCell {TD} at (10,63) size 51x43 [border: (1px solid #000000)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (11,11) size 29x21
+                text run at (11,11) width 29: "Cell"
+            RenderTableCell {TD} at (71,63) size 51x43 [border: (1px solid #000000)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (11,11) size 29x21
+                text run at (11,11) width 29: "Cell"
+            RenderTableCell {TD} at (132,63) size 51x43 [border: (1px solid #000000)] [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (11,11) size 29x21
+                text run at (11,11) width 29: "Cell"
+          RenderTableRow {TR} at (0,116) size 193x43
+            RenderTableCell {TD} at (10,116) size 51x43 [border: (1px solid #000000)] [r=2 c=0 rs=1 cs=1]
+              RenderText {#text} at (11,11) size 29x21
+                text run at (11,11) width 29: "Cell"
+            RenderTableCell {TD} at (71,116) size 51x43 [border: (1px solid #000000)] [r=2 c=1 rs=1 cs=1]
+              RenderText {#text} at (11,11) size 29x21
+                text run at (11,11) width 29: "Cell"
+            RenderTableCell {TD} at (132,116) size 51x43 [border: (1px solid #000000)] [r=2 c=2 rs=1 cs=1]
+              RenderText {#text} at (11,11) size 29x21
+                text run at (11,11) width 29: "Cell"
+          RenderTableRow {TR} at (0,169) size 193x43
+            RenderTableCell {TD} at (10,169) size 51x43 [border: (1px solid #000000)] [r=3 c=0 rs=1 cs=1]
+              RenderText {#text} at (11,11) size 29x21
+                text run at (11,11) width 29: "Cell"
+            RenderTableCell {TD} at (71,169) size 51x43 [border: (1px solid #000000)] [r=3 c=1 rs=1 cs=1]
+              RenderText {#text} at (11,11) size 29x21
+                text run at (11,11) width 29: "Cell"
+            RenderTableCell {TD} at (132,169) size 51x43 [border: (1px solid #000000)] [r=3 c=2 rs=1 cs=1]
+              RenderText {#text} at (11,11) size 29x21
+                text run at (11,11) width 29: "Cell"
+          RenderTableRow {TR} at (0,222) size 193x43
+            RenderTableCell {TD} at (10,222) size 51x43 [border: (1px solid #000000)] [r=4 c=0 rs=1 cs=1]
+              RenderText {#text} at (11,11) size 29x21
+                text run at (11,11) width 29: "Cell"
+            RenderTableCell {TD} at (71,222) size 51x43 [border: (1px solid #000000)] [r=4 c=1 rs=1 cs=1]
+              RenderText {#text} at (11,11) size 29x21
+                text run at (11,11) width 29: "Cell"
+            RenderTableCell {TD} at (132,222) size 51x43 [border: (1px solid #000000)] [r=4 c=2 rs=1 cs=1]
+              RenderText {#text} at (11,11) size 29x21
+                text run at (11,11) width 29: "Cell"
+      RenderBlock {P} at (0,561) size 784x42
+        RenderText {#text} at (0,0) size 391x21
+          text run at (0,0) width 391: "The first line of this div should have a box-shadow on it."
+        RenderBR {BR} at (391,16) size 0x0
+        RenderText {#text} at (0,21) size 199x21
+          text run at (0,21) width 199: "This second line should not."
+      RenderBlock {P} at (0,619) size 784x42
         RenderBlock (floating) at (0,0) size 39x70 [bgcolor=#EEEEEE] [border: (1px solid #000000)]
           RenderText {#text} at (5,5) size 29x60
             text run at (5,5) width 29: "T"
-        RenderText {#text} at (43,0) size 452x17
-          text run at (43,0) width 452: "he first letter of this paragraph should have a border and a nice shadow effect."
-        RenderBR {BR} at (495,13) size 0x0
-        RenderText {#text} at (43,17) size 147x17
-          text run at (43,17) width 147: "It should look pretty cool."
+        RenderText {#text} at (43,0) size 547x21
+          text run at (43,0) width 547: "he first letter of this paragraph should have a border and a nice shadow effect."
+        RenderBR {BR} at (590,16) size 0x0
+        RenderText {#text} at (43,21) size 175x21
+          text run at (43,21) width 175: "It should look pretty cool."

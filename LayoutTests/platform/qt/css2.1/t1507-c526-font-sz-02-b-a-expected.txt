@@ -1,18 +1,18 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x128
-  RenderBlock {HTML} at (0,0) size 800x128
-    RenderBody {BODY} at (8,13) size 784x107
-      RenderBlock {P} at (0,0) size 784x17
-        RenderText {#text} at (0,0) size 429x17
-          text run at (0,0) width 429: "There should be a solid single uninterrupted smooth column of blue below."
-      RenderBlock {DIV} at (0,30) size 784x77 [color=#000080]
-        RenderBlock {DIV} at (0,0) size 784x26
-          RenderText {#text} at (0,0) size 26x27
-            text run at (0,0) width 26: "x"
-        RenderBlock {DIV} at (0,26) size 784x25
-          RenderText {#text} at (0,0) size 25x25
-            text run at (0,0) width 25: "x"
-        RenderBlock {DIV} at (0,51) size 784x26
-          RenderText {#text} at (0,0) size 26x27
-            text run at (0,0) width 26: "x"
+layer at (0,0) size 800x158
+  RenderBlock {HTML} at (0,0) size 800x158
+    RenderBody {BODY} at (8,16) size 784x134
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 527x21
+          text run at (0,0) width 527: "There should be a solid single uninterrupted smooth column of blue below."
+      RenderBlock {DIV} at (0,37) size 784x97 [color=#000080]
+        RenderBlock {DIV} at (0,0) size 784x32
+          RenderText {#text} at (0,0) size 32x33
+            text run at (0,0) width 32: "x"
+        RenderBlock {DIV} at (0,32) size 784x33
+          RenderText {#text} at (0,0) size 33x34
+            text run at (0,0) width 33: "x"
+        RenderBlock {DIV} at (0,65) size 784x32
+          RenderText {#text} at (0,0) size 32x33
+            text run at (0,0) width 32: "x"

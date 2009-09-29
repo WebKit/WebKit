@@ -1,71 +1,72 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x453
-  RenderBlock {HTML} at (0,0) size 800x453
-    RenderBody {BODY} at (8,13) size 784x427
-      RenderBlock {P} at (0,0) size 784x17
-        RenderText {#text} at (0,0) size 142x17
-          text run at (0,0) width 142: "Mask version of test for "
-        RenderInline {I} at (0,0) size 586x17
-          RenderInline {A} at (0,0) size 261x17 [color=#0000EE]
-            RenderText {#text} at (142,0) size 261x17
-              text run at (142,0) width 261: "http://bugs.webkit.org/show_bug.cgi?id=5399"
-          RenderText {#text} at (403,0) size 325x17
-            text run at (403,0) width 4: " "
-            text run at (407,0) width 321: "no-repeat on negatively positioned fill images is ignored"
-        RenderText {#text} at (728,0) size 4x17
-          text run at (728,0) width 4: "."
-      RenderBlock {P} at (0,30) size 784x17
-        RenderText {#text} at (0,0) size 379x17
-          text run at (0,0) width 379: "Element with mask image starting at (-13, -13) with no-repeat set:"
-      RenderBlock {P} at (0,106) size 784x17
-        RenderText {#text} at (0,0) size 372x17
-          text run at (0,0) width 372: "Element with mask image starting at (-13, -13) with repeat-y set:"
-      RenderBlock {P} at (0,182) size 784x17
-        RenderText {#text} at (0,0) size 372x17
-          text run at (0,0) width 372: "Element with mask image starting at (-13, -13) with repeat-x set:"
-      RenderBlock {P} at (0,258) size 784x17
-        RenderText {#text} at (0,0) size 371x17
-          text run at (0,0) width 371: "Element with mask image starting at (13, 13) with no-repeat set:"
-      RenderBlock {P} at (0,334) size 784x17
-        RenderText {#text} at (0,0) size 364x17
-          text run at (0,0) width 364: "Element with mask image starting at (13, 13) with repeat-y set:"
-      RenderBlock {P} at (0,410) size 784x17
-        RenderText {#text} at (0,0) size 364x17
-          text run at (0,0) width 364: "Element with mask image starting at (13, 13) with repeat-x set:"
-layer at (14,79) size 34x34
-  RenderBlock (floating) {DIV} at (6,66) size 34x34 [bgcolor=#000000] [border: (1px dotted #008000)]
-layer at (60,79) size 29x29
-  RenderBlock (floating) {DIV} at (52,66) size 29x29 [bgcolor=#000000] [border: (1px dotted #008000)]
-layer at (101,79) size 24x24
-  RenderBlock (floating) {DIV} at (93,66) size 24x24 [bgcolor=#000000] [border: (1px dotted #008000)]
-layer at (14,155) size 34x34
-  RenderBlock (floating) {DIV} at (6,142) size 34x34 [bgcolor=#000000] [border: (1px dotted #008000)]
-layer at (60,155) size 29x29
-  RenderBlock (floating) {DIV} at (52,142) size 29x29 [bgcolor=#000000] [border: (1px dotted #008000)]
-layer at (101,155) size 24x24
-  RenderBlock (floating) {DIV} at (93,142) size 24x24 [bgcolor=#000000] [border: (1px dotted #008000)]
-layer at (14,231) size 34x34
-  RenderBlock (floating) {DIV} at (6,218) size 34x34 [bgcolor=#000000] [border: (1px dotted #008000)]
-layer at (60,231) size 29x29
-  RenderBlock (floating) {DIV} at (52,218) size 29x29 [bgcolor=#000000] [border: (1px dotted #008000)]
-layer at (101,231) size 24x24
-  RenderBlock (floating) {DIV} at (93,218) size 24x24 [bgcolor=#000000] [border: (1px dotted #008000)]
-layer at (14,307) size 34x34
-  RenderBlock (floating) {DIV} at (6,294) size 34x34 [bgcolor=#000000] [border: (1px dotted #008000)]
-layer at (60,307) size 29x29
-  RenderBlock (floating) {DIV} at (52,294) size 29x29 [bgcolor=#000000] [border: (1px dotted #008000)]
-layer at (101,307) size 24x24
-  RenderBlock (floating) {DIV} at (93,294) size 24x24 [bgcolor=#000000] [border: (1px dotted #008000)]
-layer at (14,383) size 34x34
-  RenderBlock (floating) {DIV} at (6,370) size 34x34 [bgcolor=#000000] [border: (1px dotted #008000)]
-layer at (60,383) size 29x29
-  RenderBlock (floating) {DIV} at (52,370) size 29x29 [bgcolor=#000000] [border: (1px dotted #008000)]
-layer at (101,383) size 24x24
-  RenderBlock (floating) {DIV} at (93,370) size 24x24 [bgcolor=#000000] [border: (1px dotted #008000)]
-layer at (14,459) size 34x34
-  RenderBlock (floating) {DIV} at (6,446) size 34x34 [bgcolor=#000000] [border: (1px dotted #008000)]
-layer at (60,459) size 29x29
-  RenderBlock (floating) {DIV} at (52,446) size 29x29 [bgcolor=#000000] [border: (1px dotted #008000)]
-layer at (101,459) size 24x24
-  RenderBlock (floating) {DIV} at (93,446) size 24x24 [bgcolor=#000000] [border: (1px dotted #008000)]
+layer at (0,0) size 800x526
+  RenderBlock {HTML} at (0,0) size 800x526
+    RenderBody {BODY} at (8,16) size 784x494
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 166x21
+          text run at (0,0) width 166: "Mask version of test for "
+        RenderInline {I} at (0,0) size 755x42
+          RenderInline {A} at (0,0) size 320x21 [color=#0000EE]
+            RenderText {#text} at (166,0) size 320x21
+              text run at (166,0) width 320: "http://bugs.webkit.org/show_bug.cgi?id=5399"
+          RenderText {#text} at (486,0) size 755x42
+            text run at (486,0) width 4: " "
+            text run at (490,0) width 265: "no-repeat on negatively positioned fill"
+            text run at (0,21) width 126: "images is ignored"
+        RenderText {#text} at (126,21) size 4x21
+          text run at (126,21) width 4: "."
+      RenderBlock {P} at (0,58) size 784x21
+        RenderText {#text} at (0,0) size 457x21
+          text run at (0,0) width 457: "Element with mask image starting at (-13, -13) with no-repeat set:"
+      RenderBlock {P} at (0,141) size 784x21
+        RenderText {#text} at (0,0) size 447x21
+          text run at (0,0) width 447: "Element with mask image starting at (-13, -13) with repeat-y set:"
+      RenderBlock {P} at (0,224) size 784x21
+        RenderText {#text} at (0,0) size 447x21
+          text run at (0,0) width 447: "Element with mask image starting at (-13, -13) with repeat-x set:"
+      RenderBlock {P} at (0,307) size 784x21
+        RenderText {#text} at (0,0) size 447x21
+          text run at (0,0) width 447: "Element with mask image starting at (13, 13) with no-repeat set:"
+      RenderBlock {P} at (0,390) size 784x21
+        RenderText {#text} at (0,0) size 437x21
+          text run at (0,0) width 437: "Element with mask image starting at (13, 13) with repeat-y set:"
+      RenderBlock {P} at (0,473) size 784x21
+        RenderText {#text} at (0,0) size 437x21
+          text run at (0,0) width 437: "Element with mask image starting at (13, 13) with repeat-x set:"
+layer at (14,117) size 34x34
+  RenderBlock (floating) {DIV} at (6,101) size 34x34 [bgcolor=#000000] [border: (1px dotted #008000)]
+layer at (60,117) size 29x29
+  RenderBlock (floating) {DIV} at (52,101) size 29x29 [bgcolor=#000000] [border: (1px dotted #008000)]
+layer at (101,117) size 24x24
+  RenderBlock (floating) {DIV} at (93,101) size 24x24 [bgcolor=#000000] [border: (1px dotted #008000)]
+layer at (14,200) size 34x34
+  RenderBlock (floating) {DIV} at (6,184) size 34x34 [bgcolor=#000000] [border: (1px dotted #008000)]
+layer at (60,200) size 29x29
+  RenderBlock (floating) {DIV} at (52,184) size 29x29 [bgcolor=#000000] [border: (1px dotted #008000)]
+layer at (101,200) size 24x24
+  RenderBlock (floating) {DIV} at (93,184) size 24x24 [bgcolor=#000000] [border: (1px dotted #008000)]
+layer at (14,283) size 34x34
+  RenderBlock (floating) {DIV} at (6,267) size 34x34 [bgcolor=#000000] [border: (1px dotted #008000)]
+layer at (60,283) size 29x29
+  RenderBlock (floating) {DIV} at (52,267) size 29x29 [bgcolor=#000000] [border: (1px dotted #008000)]
+layer at (101,283) size 24x24
+  RenderBlock (floating) {DIV} at (93,267) size 24x24 [bgcolor=#000000] [border: (1px dotted #008000)]
+layer at (14,366) size 34x34
+  RenderBlock (floating) {DIV} at (6,350) size 34x34 [bgcolor=#000000] [border: (1px dotted #008000)]
+layer at (60,366) size 29x29
+  RenderBlock (floating) {DIV} at (52,350) size 29x29 [bgcolor=#000000] [border: (1px dotted #008000)]
+layer at (101,366) size 24x24
+  RenderBlock (floating) {DIV} at (93,350) size 24x24 [bgcolor=#000000] [border: (1px dotted #008000)]
+layer at (14,449) size 34x34
+  RenderBlock (floating) {DIV} at (6,433) size 34x34 [bgcolor=#000000] [border: (1px dotted #008000)]
+layer at (60,449) size 29x29
+  RenderBlock (floating) {DIV} at (52,433) size 29x29 [bgcolor=#000000] [border: (1px dotted #008000)]
+layer at (101,449) size 24x24
+  RenderBlock (floating) {DIV} at (93,433) size 24x24 [bgcolor=#000000] [border: (1px dotted #008000)]
+layer at (14,532) size 34x34
+  RenderBlock (floating) {DIV} at (6,516) size 34x34 [bgcolor=#000000] [border: (1px dotted #008000)]
+layer at (60,532) size 29x29
+  RenderBlock (floating) {DIV} at (52,516) size 29x29 [bgcolor=#000000] [border: (1px dotted #008000)]
+layer at (101,532) size 24x24
+  RenderBlock (floating) {DIV} at (93,516) size 24x24 [bgcolor=#000000] [border: (1px dotted #008000)]

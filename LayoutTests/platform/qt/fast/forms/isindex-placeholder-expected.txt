@@ -3,39 +3,39 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x17
-        RenderText {#text} at (0,0) size 30x17
-          text run at (0,0) width 30: "Test "
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 35x21
+          text run at (0,0) width 35: "Test "
         RenderInline {TT} at (0,0) size 57x17
-          RenderText {#text} at (30,0) size 57x17
-            text run at (30,0) width 57: "<isindex>"
-        RenderText {#text} at (87,0) size 116x17
-          text run at (87,0) width 116: " placeholder styling."
-      RenderBlock (anonymous) at (0,30) size 784x17
-        RenderText {#text} at (0,0) size 211x17
-          text run at (0,0) width 211: "The placeholder text should be gray:"
-      RenderBlock {DIV} at (0,53) size 784x43
+          RenderText {#text} at (35,3) size 57x17
+            text run at (35,3) width 57: "<isindex>"
+        RenderText {#text} at (92,0) size 142x21
+          text run at (92,0) width 142: " placeholder styling."
+      RenderBlock (anonymous) at (0,37) size 784x21
+        RenderText {#text} at (0,0) size 258x21
+          text run at (0,0) width 258: "The placeholder text should be gray:"
+      RenderBlock {DIV} at (0,66) size 784x51
         RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
-        RenderBlock (anonymous) at (0,8) size 784x27
-          RenderText {#text} at (0,5) size 301x17
-            text run at (0,5) width 301: "This is a searchable index. Enter search keywords: "
-          RenderTextControl {ISINDEX} at (303,2) size 153x23
-        RenderBlock {HR} at (0,41) size 784x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,102) size 784x17
-        RenderText {#text} at (0,0) size 218x17
-          text run at (0,0) width 218: "The placeholder text should be green:"
-      RenderBlock {DIV} at (0,125) size 784x43
+        RenderBlock (anonymous) at (0,10) size 784x31
+          RenderText {#text} at (0,5) size 364x21
+            text run at (0,5) width 364: "This is a searchable index. Enter search keywords: "
+          RenderTextControl {ISINDEX} at (366,2) size 175x27
+        RenderBlock {HR} at (0,49) size 784x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,125) size 784x21
+        RenderText {#text} at (0,0) size 268x21
+          text run at (0,0) width 268: "The placeholder text should be green:"
+      RenderBlock {DIV} at (0,154) size 784x51
         RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
-        RenderBlock (anonymous) at (0,8) size 784x27
-          RenderText {#text} at (0,5) size 301x17
-            text run at (0,5) width 301: "This is a searchable index. Enter search keywords: "
-          RenderTextControl {ISINDEX} at (303,2) size 153x23
-        RenderBlock {HR} at (0,41) size 784x2 [border: (1px inset #000000)]
-layer at (313,74) size 149x17
-  RenderBlock {DIV} at (2,3) size 149x17 [color=#A9A9A9]
-    RenderText {#text} at (1,0) size 66x17
-      text run at (1,0) width 66: "placeholder"
-layer at (313,146) size 149x17
-  RenderBlock {DIV} at (2,3) size 149x17 [color=#008000]
-    RenderText {#text} at (1,0) size 66x17
-      text run at (1,0) width 66: "placeholder"
+        RenderBlock (anonymous) at (0,10) size 784x31
+          RenderText {#text} at (0,5) size 364x21
+            text run at (0,5) width 364: "This is a searchable index. Enter search keywords: "
+          RenderTextControl {ISINDEX} at (366,2) size 175x27
+        RenderBlock {HR} at (0,49) size 784x2 [border: (1px inset #000000)]
+layer at (376,89) size 171x21
+  RenderBlock {DIV} at (2,3) size 171x21 [color=#A9A9A9]
+    RenderText {#text} at (1,0) size 84x21
+      text run at (1,0) width 84: "placeholder"
+layer at (376,177) size 171x21
+  RenderBlock {DIV} at (2,3) size 171x21 [color=#008000]
+    RenderText {#text} at (1,0) size 84x21
+      text run at (1,0) width 84: "placeholder"

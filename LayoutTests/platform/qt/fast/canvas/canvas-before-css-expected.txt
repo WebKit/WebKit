@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x17
-        RenderText {#text} at (0,0) size 527x17
-          text run at (0,0) width 527: "If the canvas below is black, then we managed to draw before loading stylesheets. Hooray!"
-      RenderBlock (anonymous) at (0,30) size 784x200
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 639x21
+          text run at (0,0) width 639: "If the canvas below is black, then we managed to draw before loading stylesheets. Hooray!"
+      RenderBlock (anonymous) at (0,37) size 784x200
         RenderHTMLCanvas {CANVAS} at (0,0) size 400x200
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0

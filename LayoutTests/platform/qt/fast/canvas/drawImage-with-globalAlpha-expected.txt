@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 569x17
-        text run at (0,0) width 569: "There should be a green square, followed by 6 squares of shades of green from white to full green."
-      RenderBR {BR} at (569,13) size 0x0
-      RenderHTMLCanvas {CANVAS} at (0,17) size 700x100
+      RenderText {#text} at (0,0) size 693x21
+        text run at (0,0) width 693: "There should be a green square, followed by 6 squares of shades of green from white to full green."
+      RenderBR {BR} at (693,16) size 0x0
+      RenderHTMLCanvas {CANVAS} at (0,21) size 700x100
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0

@@ -2,16 +2,16 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x579
-      RenderBlock {P} at (0,0) size 784x104
-        RenderText {#text} at (0,87) size 88x17
-          text run at (0,87) width 88: "Layout test for "
-        RenderInline {A} at (0,0) size 35x17 [color=#0000EE]
-          RenderText {#text} at (88,87) size 35x17
-            text run at (88,87) width 35: "11760"
-        RenderText {#text} at (123,87) size 185x17
-          text run at (123,87) width 8: ". "
-          text run at (131,87) width 177: "If it doesn't crash, we're good. "
-        RenderImage {IMG} at (308,0) size 100x100
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x105
+        RenderText {#text} at (0,84) size 103x21
+          text run at (0,84) width 103: "Layout test for "
+        RenderInline {A} at (0,0) size 45x21 [color=#0000EE]
+          RenderText {#text} at (103,84) size 45x21
+            text run at (103,84) width 45: "11760"
+        RenderText {#text} at (148,84) size 220x21
+          text run at (148,84) width 8: ". "
+          text run at (156,84) width 212: "If it doesn't crash, we're good. "
+        RenderImage {IMG} at (368,0) size 100x100
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0

@@ -1,23 +1,23 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x133
-  RenderBlock {HTML} at (0,0) size 800x133
-    RenderBody {BODY} at (8,13) size 784x107
-      RenderBlock {P} at (0,0) size 784x17
-        RenderText {#text} at (0,0) size 303x17
-          text run at (0,0) width 303: "The following three paragraphs should look identical:"
-      RenderBlock {P} at (0,30) size 784x17
-        RenderText {#text} at (0,0) size 141x17
-          text run at (0,0) width 141: "This is a test paragraph."
-      RenderBlock {P} at (0,60) size 784x17
-        RenderInline (generated) at (0,0) size 29x17
-          RenderText at (0,0) size 29x17
-            text run at (0,0) width 29: "This "
-        RenderText {#text} at (29,0) size 112x17
-          text run at (29,0) width 112: "is a test paragraph."
-      RenderBlock {P} at (0,90) size 784x17
-        RenderInline (generated) at (0,0) size 29x17
-          RenderText at (0,0) size 29x17
-            text run at (0,0) width 29: "This "
-        RenderText {#text} at (29,0) size 112x17
-          text run at (29,0) width 112: "is a test paragraph."
+layer at (0,0) size 800x164
+  RenderBlock {HTML} at (0,0) size 800x164
+    RenderBody {BODY} at (8,16) size 784x132
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 375x21
+          text run at (0,0) width 375: "The following three paragraphs should look identical:"
+      RenderBlock {P} at (0,37) size 784x21
+        RenderText {#text} at (0,0) size 170x21
+          text run at (0,0) width 170: "This is a test paragraph."
+      RenderBlock {P} at (0,74) size 784x21
+        RenderInline (generated) at (0,0) size 35x21
+          RenderText at (0,0) size 35x21
+            text run at (0,0) width 35: "This "
+        RenderText {#text} at (35,0) size 135x21
+          text run at (35,0) width 135: "is a test paragraph."
+      RenderBlock {P} at (0,111) size 784x21
+        RenderInline (generated) at (0,0) size 35x21
+          RenderText at (0,0) size 35x21
+            text run at (0,0) width 35: "This "
+        RenderText {#text} at (35,0) size 135x21
+          text run at (35,0) width 135: "is a test paragraph."

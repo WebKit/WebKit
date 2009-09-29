@@ -2,22 +2,23 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x579
-      RenderBlock {P} at (0,0) size 784x34 [bgcolor=#FFFFFF]
-        RenderText {#text} at (0,0) size 49x17
-          text run at (0,0) width 49: "Test for "
-        RenderInline {I} at (0,0) size 774x34
-          RenderInline {A} at (0,0) size 275x17 [color=#0000EE]
-            RenderText {#text} at (49,0) size 275x17
-              text run at (49,0) width 275: "https://bugs.webkit.org/show_bug.cgi?id=18445"
-          RenderText {#text} at (324,0) size 774x34
-            text run at (324,0) width 4: " "
-            text run at (328,0) width 446: "Assertion failure in CSSGradientValue::image() when the body element has a"
-            text run at (0,17) width 117: "background gradient"
-        RenderText {#text} at (117,17) size 4x17
-          text run at (117,17) width 4: "."
-      RenderBlock {P} at (0,47) size 784x34 [bgcolor=#FFFFFF]
-        RenderText {#text} at (0,0) size 752x34
-          text run at (0,0) width 348: "The test passes if the root element\x{2019}s background is a linear "
-          text run at (348,0) width 404: "gradient from black at the top to white at the bottom, and no assertion"
-          text run at (0,17) width 82: "failure occurs."
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x42 [bgcolor=#FFFFFF]
+        RenderText {#text} at (0,0) size 57x21
+          text run at (0,0) width 57: "Test for "
+        RenderInline {I} at (0,0) size 776x42
+          RenderInline {A} at (0,0) size 337x21 [color=#0000EE]
+            RenderText {#text} at (57,0) size 337x21
+              text run at (57,0) width 337: "https://bugs.webkit.org/show_bug.cgi?id=18445"
+          RenderText {#text} at (394,0) size 776x42
+            text run at (394,0) width 4: " "
+            text run at (398,0) width 378: "Assertion failure in CSSGradientValue::image() when"
+            text run at (0,21) width 315: "the body element has a background gradient"
+        RenderText {#text} at (315,21) size 4x21
+          text run at (315,21) width 4: "."
+      RenderBlock {P} at (0,58) size 784x42 [bgcolor=#FFFFFF]
+        RenderText {#text} at (0,0) size 781x42
+          text run at (0,0) width 419: "The test passes if the root element\x{2019}s background is a linear "
+          text run at (419,0) width 362: "gradient from black at the top to white at the bottom,"
+          text run at (0,21) width 122: "and no assertion "
+          text run at (122,21) width 99: "failure occurs."

@@ -3,22 +3,23 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x34
-        RenderText {#text} at (0,0) size 703x17
-          text run at (0,0) width 703: "This tests that the blockquote's typing style doesn't remain after breaking the blockquote and typing in the unquoted area."
-        RenderBR {BR} at (703,13) size 0x0
-        RenderBR {BR} at (0,17) size 0x17
-      RenderBlock {DIV} at (0,34) size 784x51
-        RenderBlock {BLOCKQUOTE} at (0,0) size 784x17 [color=#0000FF] [border: (2px solid #0000FF)]
-          RenderText {#text} at (12,0) size 24x17
-            text run at (12,0) width 24: "blue"
-        RenderBlock (anonymous) at (0,17) size 784x17
-          RenderText {#text} at (0,0) size 31x17
-            text run at (0,0) width 31: "black"
-          RenderBR {BR} at (31,13) size 0x0
-        RenderBlock {BLOCKQUOTE} at (0,34) size 784x17 [color=#0000FF] [border: (2px solid #0000FF)]
-          RenderBlock {DIV} at (12,0) size 772x17
-            RenderBlock {BLOCKQUOTE} at (0,0) size 772x17 [color=#008000] [border: none (2px solid #008000)]
-              RenderText {#text} at (12,0) size 32x17
-                text run at (12,0) width 32: "green"
+      RenderBlock (anonymous) at (0,0) size 784x63
+        RenderText {#text} at (0,0) size 739x42
+          text run at (0,0) width 739: "This tests that the blockquote's typing style doesn't remain after breaking the blockquote and typing in the"
+          text run at (0,21) width 107: "unquoted area."
+        RenderBR {BR} at (107,37) size 0x0
+        RenderBR {BR} at (0,42) size 0x21
+      RenderBlock {DIV} at (0,63) size 784x63
+        RenderBlock {BLOCKQUOTE} at (0,0) size 784x21 [color=#0000FF] [border: (2px solid #0000FF)]
+          RenderText {#text} at (12,0) size 31x21
+            text run at (12,0) width 31: "blue"
+        RenderBlock (anonymous) at (0,21) size 784x21
+          RenderText {#text} at (0,0) size 38x21
+            text run at (0,0) width 38: "black"
+          RenderBR {BR} at (38,16) size 0x0
+        RenderBlock {BLOCKQUOTE} at (0,42) size 784x21 [color=#0000FF] [border: (2px solid #0000FF)]
+          RenderBlock {DIV} at (12,0) size 772x21
+            RenderBlock {BLOCKQUOTE} at (0,0) size 772x21 [color=#008000] [border: none (2px solid #008000)]
+              RenderText {#text} at (12,0) size 41x21
+                text run at (12,0) width 41: "green"
 caret: position 5 of child 2 {#text} of child 4 {DIV} of child 1 {BODY} of child 0 {HTML} of document

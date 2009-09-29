@@ -3,97 +3,99 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#CCCCCC]
-      RenderBlock {P} at (0,0) size 784x17
-        RenderText {#text} at (0,0) size 326x17
-          text run at (0,0) width 326: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,30) size 784x51
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 395x21
+          text run at (0,0) width 395: "The style declarations which apply to the text below are:"
+      RenderBlock {PRE} at (0,37) size 784x51
         RenderText {#text} at (0,0) size 290x51
           text run at (0,0) width 287: ".one {padding-top: 25px; background-color: aqua;}"
           text run at (287,0) width 0: " "
           text run at (0,17) width 290: ".two {padding-top: -10px; background-color: aqua;}"
           text run at (290,17) width 0: " "
           text run at (0,34) width 0: " "
-      RenderBlock {HR} at (0,94) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,109) size 784x51 [bgcolor=#808080]
-        RenderText {#text} at (0,0) size 442x17
-          text run at (0,0) width 359: "This element is unstyled save for a background color of gray. "
-          text run at (359,0) width 83: "It contains an "
-        RenderInline {SPAN} at (0,0) size 771x59 [bgcolor=#00FFFF]
-          RenderText {#text} at (442,0) size 134x17
-            text run at (442,0) width 134: "inline element of class "
+      RenderBlock {HR} at (0,101) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,119) size 784x84 [bgcolor=#808080]
+        RenderText {#text} at (0,0) size 530x21
+          text run at (0,0) width 432: "This element is unstyled save for a background color of gray. "
+          text run at (432,0) width 98: "It contains an "
+        RenderInline {SPAN} at (0,0) size 776x67 [bgcolor=#00FFFF]
+          RenderText {#text} at (530,0) size 162x21
+            text run at (530,0) width 162: "inline element of class "
           RenderInline {TT} at (0,0) size 21x17
-            RenderText {#text} at (576,0) size 21x17
-              text run at (576,0) width 21: "one"
-          RenderText {#text} at (597,0) size 771x34
-            text run at (597,0) width 174: ", giving it an aqua background"
-            text run at (0,17) width 135: "and a 25px top padding"
-        RenderText {#text} at (135,17) size 781x34
-          text run at (135,17) width 8: ". "
-          text run at (143,17) width 638: "Padding on inline elements does not affect line-height calculations, so all lines in this element should have the"
-          text run at (0,34) width 103: "same line-height. "
-          text run at (103,34) width 616: "There may be implementation-specific limits on how much of the padding the user agent is able to display."
-      RenderBlock {P} at (0,173) size 784x51 [bgcolor=#808080]
-        RenderText {#text} at (0,0) size 442x17
-          text run at (0,0) width 359: "This element is unstyled save for a background color of gray. "
-          text run at (359,0) width 83: "It contains an "
-        RenderInline {SPAN} at (0,0) size 770x34 [bgcolor=#00FFFF]
-          RenderText {#text} at (442,0) size 134x17
-            text run at (442,0) width 134: "inline element of class "
+            RenderText {#text} at (692,3) size 21x17
+              text run at (692,3) width 21: "one"
+          RenderText {#text} at (713,0) size 776x42
+            text run at (713,0) width 63: ", giving it"
+            text run at (0,21) width 317: "an aqua background and a 25px top padding"
+        RenderText {#text} at (317,21) size 739x63
+          text run at (317,21) width 8: ". "
+          text run at (325,21) width 380: "Padding on inline elements does not affect line-height"
+          text run at (0,42) width 523: "calculations, so all lines in this element should have the same line-height. "
+          text run at (523,42) width 216: "There may be implementation-"
+          text run at (0,63) width 531: "specific limits on how much of the padding the user agent is able to display."
+      RenderBlock {P} at (0,219) size 784x63 [bgcolor=#808080]
+        RenderText {#text} at (0,0) size 530x21
+          text run at (0,0) width 432: "This element is unstyled save for a background color of gray. "
+          text run at (432,0) width 98: "It contains an "
+        RenderInline {SPAN} at (0,0) size 775x42 [bgcolor=#00FFFF]
+          RenderText {#text} at (530,0) size 162x21
+            text run at (530,0) width 162: "inline element of class "
           RenderInline {TT} at (0,0) size 20x17
-            RenderText {#text} at (576,0) size 20x17
-              text run at (576,0) width 20: "two"
-          RenderText {#text} at (596,0) size 770x34
-            text run at (596,0) width 174: ", giving it an aqua background"
-            text run at (0,17) width 384: "and no top padding, since negative padding values are not allowed"
-        RenderText {#text} at (384,17) size 779x34
-          text run at (384,17) width 8: ". "
-          text run at (392,17) width 387: "Padding on inline elements does not affect line-height calculations,"
-          text run at (0,34) width 350: "so all lines in this element should have the same line-height."
-      RenderTable {TABLE} at (0,237) size 784x168 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 782x166
-          RenderTableRow {TR} at (0,0) size 782x26
-            RenderTableCell {TD} at (0,0) size 782x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 144x17
-                RenderText {#text} at (4,4) size 144x17
-                  text run at (4,4) width 144: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,26) size 782x140
-            RenderTableCell {TD} at (0,83) size 12x25 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 4x17
+            RenderText {#text} at (692,3) size 20x17
+              text run at (692,3) width 20: "two"
+          RenderText {#text} at (712,0) size 775x42
+            text run at (712,0) width 63: ", giving it"
+            text run at (0,21) width 624: "an aqua background and no top padding, since negative padding values are not allowed"
+        RenderText {#text} at (624,21) size 774x42
+          text run at (624,21) width 8: ". "
+          text run at (632,21) width 125: "Padding on inline"
+          text run at (0,42) width 774: "elements does not affect line-height calculations, so all lines in this element should have the same line-height."
+      RenderTable {TABLE} at (0,298) size 784x224 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x222
+          RenderTableRow {TR} at (0,0) size 782x30
+            RenderTableCell {TD} at (0,0) size 782x30 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 178x21
+                RenderText {#text} at (4,4) size 178x21
+                  text run at (4,4) width 178: "TABLE Testing Section"
+          RenderTableRow {TR} at (0,30) size 782x192
+            RenderTableCell {TD} at (0,111) size 12x29 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x21
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,26) size 770x140 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock {P} at (4,4) size 762x68 [bgcolor=#808080]
-                RenderText {#text} at (0,0) size 442x17
-                  text run at (0,0) width 359: "This element is unstyled save for a background color of gray. "
-                  text run at (359,0) width 83: "It contains an "
-                RenderInline {SPAN} at (0,0) size 700x59 [bgcolor=#00FFFF]
-                  RenderText {#text} at (442,0) size 134x17
-                    text run at (442,0) width 134: "inline element of class "
+            RenderTableCell {TD} at (12,30) size 770x192 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 762x84 [bgcolor=#808080]
+                RenderText {#text} at (0,0) size 530x21
+                  text run at (0,0) width 432: "This element is unstyled save for a background color of gray. "
+                  text run at (432,0) width 98: "It contains an "
+                RenderInline {SPAN} at (0,0) size 717x67 [bgcolor=#00FFFF]
+                  RenderText {#text} at (530,0) size 162x21
+                    text run at (530,0) width 162: "inline element of class "
                   RenderInline {TT} at (0,0) size 21x17
-                    RenderText {#text} at (576,0) size 21x17
-                      text run at (576,0) width 21: "one"
-                  RenderText {#text} at (597,0) size 700x34
-                    text run at (597,0) width 103: ", giving it an aqua"
-                    text run at (0,17) width 206: "background and a 25px top padding"
-                RenderText {#text} at (206,17) size 756x51
-                  text run at (206,17) width 8: ". "
-                  text run at (214,17) width 542: "Padding on inline elements does not affect line-height calculations, so all lines in this element"
-                  text run at (0,34) width 199: "should have the same line-height. "
-                  text run at (199,34) width 552: "There may be implementation-specific limits on how much of the padding the user agent is able"
-                  text run at (0,51) width 60: "to display."
-              RenderBlock {P} at (4,85) size 762x51 [bgcolor=#808080]
-                RenderText {#text} at (0,0) size 442x17
-                  text run at (0,0) width 359: "This element is unstyled save for a background color of gray. "
-                  text run at (359,0) width 83: "It contains an "
-                RenderInline {SPAN} at (0,0) size 699x34 [bgcolor=#00FFFF]
-                  RenderText {#text} at (442,0) size 134x17
-                    text run at (442,0) width 134: "inline element of class "
+                    RenderText {#text} at (692,3) size 21x17
+                      text run at (692,3) width 21: "one"
+                  RenderText {#text} at (713,0) size 717x42
+                    text run at (713,0) width 4: ","
+                    text run at (0,21) width 376: "giving it an aqua background and a 25px top padding"
+                RenderText {#text} at (376,21) size 720x63
+                  text run at (376,21) width 8: ". "
+                  text run at (384,21) width 336: "Padding on inline elements does not affect line-"
+                  text run at (0,42) width 571: "height calculations, so all lines in this element should have the same line-height. "
+                  text run at (571,42) width 98: "There may be"
+                  text run at (0,63) width 645: "implementation-specific limits on how much of the padding the user agent is able to display."
+              RenderBlock {P} at (4,104) size 762x84 [bgcolor=#808080]
+                RenderText {#text} at (0,0) size 530x21
+                  text run at (0,0) width 432: "This element is unstyled save for a background color of gray. "
+                  text run at (432,0) width 98: "It contains an "
+                RenderInline {SPAN} at (0,0) size 716x42 [bgcolor=#00FFFF]
+                  RenderText {#text} at (530,0) size 162x21
+                    text run at (530,0) width 162: "inline element of class "
                   RenderInline {TT} at (0,0) size 20x17
-                    RenderText {#text} at (576,0) size 20x17
-                      text run at (576,0) width 20: "two"
-                  RenderText {#text} at (596,0) size 699x34
-                    text run at (596,0) width 103: ", giving it an aqua"
-                    text run at (0,17) width 455: "background and no top padding, since negative padding values are not allowed"
-                RenderText {#text} at (455,17) size 738x34
-                  text run at (455,17) width 8: ". "
-                  text run at (463,17) width 275: "Padding on inline elements does not affect line-"
-                  text run at (0,34) width 466: "height calculations, so all lines in this element should have the same line-height."
+                    RenderText {#text} at (692,3) size 20x17
+                      text run at (692,3) width 20: "two"
+                  RenderText {#text} at (712,0) size 716x42
+                    text run at (712,0) width 4: ","
+                    text run at (0,21) width 683: "giving it an aqua background and no top padding, since negative padding values are not allowed"
+                RenderText {#text} at (683,21) size 756x63
+                  text run at (683,21) width 8: ". "
+                  text run at (691,21) width 60: "Padding"
+                  text run at (0,42) width 756: "on inline elements does not affect line-height calculations, so all lines in this element should have the same"
+                  text run at (0,63) width 79: "line-height."

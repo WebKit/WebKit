@@ -1,88 +1,88 @@
-layer at (0,0) size 800x600
+layer at (0,0) size 800x609
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x582
-      RenderBlock {P} at (0,0) size 784x17
-        RenderText {#text} at (0,0) size 292x17
-          text run at (0,0) width 292: "Test :nth-child() when dynamically adding siblings."
-      RenderBlock {P} at (0,30) size 784x17
-        RenderInline {A} at (0,0) size 275x17 [color=#0000EE]
-          RenderText {#text} at (0,0) size 275x17
-            text run at (0,0) width 275: "https://bugs.webkit.org/show_bug.cgi?id=26362"
-      RenderBlock {DIV} at (10,60) size 764x199 [border: (1px solid #000000)]
-        RenderBlock {P} at (11,6) size 747x17 [color=#FF0000]
-          RenderText {#text} at (0,0) size 57x17
-            text run at (0,0) width 13: "P "
-            text run at (13,0) width 44: "red text"
-        RenderBlock {DIV} at (6,23) size 752x17
-          RenderText {#text} at (0,0) size 22x17
-            text run at (0,0) width 22: "DIV"
-        RenderBlock {P} at (11,40) size 747x17
-          RenderText {#text} at (0,0) size 9x17
-            text run at (0,0) width 9: "P"
-        RenderBlock {DIV} at (6,57) size 752x17 [color=#FF0000] [bgcolor=#9999FF]
-          RenderText {#text} at (0,0) size 116x17
-            text run at (0,0) width 26: "DIV "
-            text run at (26,0) width 48: "red text "
-            text run at (74,0) width 42: "blue bg"
-        RenderBlock {P} at (11,74) size 747x17
-          RenderText {#text} at (0,0) size 9x17
-            text run at (0,0) width 9: "P"
-        RenderBlock {DIV} at (6,91) size 752x17
-          RenderText {#text} at (0,0) size 22x17
-            text run at (0,0) width 22: "DIV"
-        RenderBlock {P} at (11,108) size 747x17 [color=#FF0000]
-          RenderText {#text} at (0,0) size 57x17
-            text run at (0,0) width 13: "P "
-            text run at (13,0) width 44: "red text"
-        RenderBlock {DIV} at (6,125) size 752x17
-          RenderText {#text} at (0,0) size 22x17
-            text run at (0,0) width 22: "DIV"
-        RenderBlock {P} at (11,142) size 747x17
-          RenderText {#text} at (0,0) size 9x17
-            text run at (0,0) width 9: "P"
-        RenderBlock {DIV} at (6,159) size 752x17 [color=#FF0000]
-          RenderText {#text} at (0,0) size 70x17
-            text run at (0,0) width 26: "DIV "
-            text run at (26,0) width 44: "red text"
-        RenderBlock {P} at (11,176) size 747x17
-          RenderText {#text} at (0,0) size 9x17
-            text run at (0,0) width 9: "P"
-      RenderBlock {DIV} at (10,269) size 764x216 [border: (1px solid #000000)]
-        RenderText {#text} at (6,6) size 235x17
-          text run at (6,6) width 235: "child 0: PASS: found color rgb(255, 0, 0)"
-        RenderBR {BR} at (241,19) size 0x0
-        RenderText {#text} at (6,23) size 221x17
-          text run at (6,23) width 221: "child 1: PASS: found color rgb(0, 0, 0)"
-        RenderBR {BR} at (227,36) size 0x0
-        RenderText {#text} at (6,40) size 221x17
-          text run at (6,40) width 221: "child 2: PASS: found color rgb(0, 0, 0)"
-        RenderBR {BR} at (227,53) size 0x0
-        RenderText {#text} at (6,57) size 235x17
-          text run at (6,57) width 235: "child 3: PASS: found color rgb(255, 0, 0)"
-        RenderBR {BR} at (241,70) size 0x0
-        RenderText {#text} at (6,74) size 221x17
-          text run at (6,74) width 221: "child 4: PASS: found color rgb(0, 0, 0)"
-        RenderBR {BR} at (227,87) size 0x0
-        RenderText {#text} at (6,91) size 221x17
-          text run at (6,91) width 221: "child 5: PASS: found color rgb(0, 0, 0)"
-        RenderBR {BR} at (227,104) size 0x0
-        RenderText {#text} at (6,108) size 235x17
-          text run at (6,108) width 235: "child 6: PASS: found color rgb(255, 0, 0)"
-        RenderBR {BR} at (241,121) size 0x0
-        RenderText {#text} at (6,125) size 221x17
-          text run at (6,125) width 221: "child 7: PASS: found color rgb(0, 0, 0)"
-        RenderBR {BR} at (227,138) size 0x0
-        RenderText {#text} at (6,142) size 221x17
-          text run at (6,142) width 221: "child 8: PASS: found color rgb(0, 0, 0)"
-        RenderBR {BR} at (227,155) size 0x0
-        RenderText {#text} at (6,159) size 235x17
-          text run at (6,159) width 235: "child 9: PASS: found color rgb(255, 0, 0)"
-        RenderBR {BR} at (241,172) size 0x0
-        RenderText {#text} at (6,176) size 228x17
-          text run at (6,176) width 228: "child 10: PASS: found color rgb(0, 0, 0)"
-        RenderBR {BR} at (234,189) size 0x0
-        RenderText {#text} at (6,193) size 253x17
-          text run at (6,193) width 253: "div 1: PASS: found color rgb(153, 153, 255)"
-        RenderBR {BR} at (259,206) size 0x0
+layer at (0,0) size 800x609
+  RenderBlock {HTML} at (0,0) size 800x609
+    RenderBody {BODY} at (8,8) size 784x591
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 358x21
+          text run at (0,0) width 358: "Test :nth-child() when dynamically adding siblings."
+      RenderBlock {P} at (0,37) size 784x21
+        RenderInline {A} at (0,0) size 337x21 [color=#0000EE]
+          RenderText {#text} at (0,0) size 337x21
+            text run at (0,0) width 337: "https://bugs.webkit.org/show_bug.cgi?id=26362"
+      RenderBlock {DIV} at (10,74) size 764x243 [border: (1px solid #000000)]
+        RenderBlock {P} at (11,6) size 747x21 [color=#FF0000]
+          RenderText {#text} at (0,0) size 67x21
+            text run at (0,0) width 15: "P "
+            text run at (15,0) width 52: "red text"
+        RenderBlock {DIV} at (6,27) size 752x21
+          RenderText {#text} at (0,0) size 27x21
+            text run at (0,0) width 27: "DIV"
+        RenderBlock {P} at (11,48) size 747x21
+          RenderText {#text} at (0,0) size 11x21
+            text run at (0,0) width 11: "P"
+        RenderBlock {DIV} at (6,69) size 752x21 [color=#FF0000] [bgcolor=#9999FF]
+          RenderText {#text} at (0,0) size 140x21
+            text run at (0,0) width 31: "DIV "
+            text run at (31,0) width 56: "red text "
+            text run at (87,0) width 53: "blue bg"
+        RenderBlock {P} at (11,90) size 747x21
+          RenderText {#text} at (0,0) size 11x21
+            text run at (0,0) width 11: "P"
+        RenderBlock {DIV} at (6,111) size 752x21
+          RenderText {#text} at (0,0) size 27x21
+            text run at (0,0) width 27: "DIV"
+        RenderBlock {P} at (11,132) size 747x21 [color=#FF0000]
+          RenderText {#text} at (0,0) size 67x21
+            text run at (0,0) width 15: "P "
+            text run at (15,0) width 52: "red text"
+        RenderBlock {DIV} at (6,153) size 752x21
+          RenderText {#text} at (0,0) size 27x21
+            text run at (0,0) width 27: "DIV"
+        RenderBlock {P} at (11,174) size 747x21
+          RenderText {#text} at (0,0) size 11x21
+            text run at (0,0) width 11: "P"
+        RenderBlock {DIV} at (6,195) size 752x21 [color=#FF0000]
+          RenderText {#text} at (0,0) size 83x21
+            text run at (0,0) width 31: "DIV "
+            text run at (31,0) width 52: "red text"
+        RenderBlock {P} at (11,216) size 747x21
+          RenderText {#text} at (0,0) size 11x21
+            text run at (0,0) width 11: "P"
+      RenderBlock {DIV} at (10,327) size 764x264 [border: (1px solid #000000)]
+        RenderText {#text} at (6,6) size 284x21
+          text run at (6,6) width 284: "child 0: PASS: found color rgb(255, 0, 0)"
+        RenderBR {BR} at (290,22) size 0x0
+        RenderText {#text} at (6,27) size 266x21
+          text run at (6,27) width 266: "child 1: PASS: found color rgb(0, 0, 0)"
+        RenderBR {BR} at (272,43) size 0x0
+        RenderText {#text} at (6,48) size 266x21
+          text run at (6,48) width 266: "child 2: PASS: found color rgb(0, 0, 0)"
+        RenderBR {BR} at (272,64) size 0x0
+        RenderText {#text} at (6,69) size 284x21
+          text run at (6,69) width 284: "child 3: PASS: found color rgb(255, 0, 0)"
+        RenderBR {BR} at (290,85) size 0x0
+        RenderText {#text} at (6,90) size 266x21
+          text run at (6,90) width 266: "child 4: PASS: found color rgb(0, 0, 0)"
+        RenderBR {BR} at (272,106) size 0x0
+        RenderText {#text} at (6,111) size 266x21
+          text run at (6,111) width 266: "child 5: PASS: found color rgb(0, 0, 0)"
+        RenderBR {BR} at (272,127) size 0x0
+        RenderText {#text} at (6,132) size 284x21
+          text run at (6,132) width 284: "child 6: PASS: found color rgb(255, 0, 0)"
+        RenderBR {BR} at (290,148) size 0x0
+        RenderText {#text} at (6,153) size 266x21
+          text run at (6,153) width 266: "child 7: PASS: found color rgb(0, 0, 0)"
+        RenderBR {BR} at (272,169) size 0x0
+        RenderText {#text} at (6,174) size 266x21
+          text run at (6,174) width 266: "child 8: PASS: found color rgb(0, 0, 0)"
+        RenderBR {BR} at (272,190) size 0x0
+        RenderText {#text} at (6,195) size 284x21
+          text run at (6,195) width 284: "child 9: PASS: found color rgb(255, 0, 0)"
+        RenderBR {BR} at (290,211) size 0x0
+        RenderText {#text} at (6,216) size 275x21
+          text run at (6,216) width 275: "child 10: PASS: found color rgb(0, 0, 0)"
+        RenderBR {BR} at (281,232) size 0x0
+        RenderText {#text} at (6,237) size 307x21
+          text run at (6,237) width 307: "div 1: PASS: found color rgb(153, 153, 255)"
+        RenderBR {BR} at (313,253) size 0x0

@@ -2,10 +2,10 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x579
-      RenderBlock (anonymous) at (0,0) size 784x34
-        RenderText {#text} at (0,0) size 764x34
-          text run at (0,0) width 764: "The box below should be solid green. If there are 10 pixels of red visible on the top and left, the background image is being repeated"
-          text run at (0,17) width 64: "improperly."
-      RenderBlock {P} at (0,47) size 784x0
-      RenderBlock {P} at (0,47) size 50x50 [bgcolor=#008000]
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock (anonymous) at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 755x42
+          text run at (0,0) width 755: "The box below should be solid green. If there are 10 pixels of red visible on the top and left, the background"
+          text run at (0,21) width 254: "image is being repeated improperly."
+      RenderBlock {P} at (0,58) size 784x0
+      RenderBlock {P} at (0,58) size 50x50 [bgcolor=#008000]

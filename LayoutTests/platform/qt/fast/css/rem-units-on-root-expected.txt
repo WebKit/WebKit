@@ -3,8 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 744x66
-        text run at (0,0) width 744: "This is a test to make sure rem units used on the root element are"
-        text run at (0,33) width 370: "relative to the user agent default."
+      RenderText {#text} at (0,0) size 762x82
+        text run at (0,0) width 762: "This is a test to make sure rem units used on the root"
+        text run at (0,41) width 651: "element are relative to the user agent default."
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0

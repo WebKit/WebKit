@@ -1,17 +1,18 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x208
-  RenderBlock {HTML} at (0,0) size 800x208
-    RenderBody {BODY} at (8,13) size 784x187
-      RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 565x17
-          text run at (0,0) width 565: "The following box should contain exactly three bands, one yellow, one orange, and one lime, with "
-        RenderInline {STRONG} at (0,0) size 153x17
-          RenderText {#text} at (565,0) size 153x17
-            text run at (565,0) width 153: "absolutely no red visible"
-        RenderText {#text} at (718,0) size 4x17
-          text run at (718,0) width 4: "."
-      RenderTable {TABLE} at (0,31) size 106x156 [bgcolor=#FF0000] [border: (3px solid #000000)]
+layer at (0,0) size 800x240
+  RenderBlock {HTML} at (0,0) size 800x240
+    RenderBody {BODY} at (8,16) size 784x216
+      RenderBlock {P} at (0,0) size 784x44
+        RenderText {#text} at (0,0) size 691x21
+          text run at (0,0) width 691: "The following box should contain exactly three bands, one yellow, one orange, and one lime, with "
+        RenderInline {STRONG} at (0,0) size 770x43
+          RenderText {#text} at (691,0) size 770x43
+            text run at (691,0) width 79: "absolutely"
+            text run at (0,22) width 102: "no red visible"
+        RenderText {#text} at (102,22) size 4x21
+          text run at (102,22) width 4: "."
+      RenderTable {TABLE} at (0,60) size 106x156 [bgcolor=#FF0000] [border: (3px solid #000000)]
         RenderTableSection {TBODY} at (3,3) size 100x150
           RenderTableRow {TR} at (0,0) size 100x150
             RenderTableCell {TD} at (0,0) size 50x150 [r=0 c=0 rs=1 cs=1]

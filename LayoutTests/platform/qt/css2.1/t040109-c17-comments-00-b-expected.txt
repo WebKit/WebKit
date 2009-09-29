@@ -1,23 +1,23 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x193
-  RenderBlock {HTML} at (0,0) size 800x193
-    RenderBody {BODY} at (8,13) size 784x167 [color=#FF0000]
-      RenderBlock {P} at (0,0) size 784x17 [color=#008000]
-        RenderText {#text} at (0,0) size 149x17
-          text run at (0,0) width 149: "This line should be green."
-      RenderBlock {P} at (0,30) size 784x17 [color=#008000]
-        RenderText {#text} at (0,0) size 149x17
-          text run at (0,0) width 149: "This line should be green."
-      RenderBlock {P} at (0,60) size 784x17 [color=#008000]
-        RenderText {#text} at (0,0) size 149x17
-          text run at (0,0) width 149: "This line should be green."
-      RenderBlock {P} at (0,90) size 784x17 [color=#008000]
-        RenderText {#text} at (0,0) size 149x17
-          text run at (0,0) width 149: "This line should be green."
-      RenderBlock {P} at (0,120) size 784x17 [color=#008000]
-        RenderText {#text} at (0,0) size 149x17
-          text run at (0,0) width 149: "This line should be green."
-      RenderBlock {P} at (0,150) size 784x17 [color=#008000]
-        RenderText {#text} at (0,0) size 149x17
-          text run at (0,0) width 149: "This line should be green."
+layer at (0,0) size 800x238
+  RenderBlock {HTML} at (0,0) size 800x238
+    RenderBody {BODY} at (8,16) size 784x206 [color=#FF0000]
+      RenderBlock {P} at (0,0) size 784x21 [color=#008000]
+        RenderText {#text} at (0,0) size 184x21
+          text run at (0,0) width 184: "This line should be green."
+      RenderBlock {P} at (0,37) size 784x21 [color=#008000]
+        RenderText {#text} at (0,0) size 184x21
+          text run at (0,0) width 184: "This line should be green."
+      RenderBlock {P} at (0,74) size 784x21 [color=#008000]
+        RenderText {#text} at (0,0) size 184x21
+          text run at (0,0) width 184: "This line should be green."
+      RenderBlock {P} at (0,111) size 784x21 [color=#008000]
+        RenderText {#text} at (0,0) size 184x21
+          text run at (0,0) width 184: "This line should be green."
+      RenderBlock {P} at (0,148) size 784x21 [color=#008000]
+        RenderText {#text} at (0,0) size 184x21
+          text run at (0,0) width 184: "This line should be green."
+      RenderBlock {P} at (0,185) size 784x21 [color=#008000]
+        RenderText {#text} at (0,0) size 184x21
+          text run at (0,0) width 184: "This line should be green."

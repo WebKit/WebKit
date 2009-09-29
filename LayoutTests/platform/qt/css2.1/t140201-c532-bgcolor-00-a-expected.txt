@@ -1,19 +1,19 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x103
-  RenderBlock {HTML} at (0,0) size 800x103
-    RenderBody {BODY} at (8,13) size 784x77
-      RenderBlock {P} at (0,0) size 784x17 [bgcolor=#00FF00]
-        RenderText {#text} at (0,0) size 149x17
-          text run at (0,0) width 149: "This line should be green."
-      RenderBlock {P} at (0,30) size 784x17 [bgcolor=#00FF00]
-        RenderText {#text} at (0,0) size 53x17
-          text run at (0,0) width 53: "This line "
-        RenderInline {SPAN} at (0,0) size 92x17
-          RenderText {#text} at (53,0) size 92x17
-            text run at (53,0) width 92: "should be green"
-        RenderText {#text} at (145,0) size 26x17
-          text run at (145,0) width 26: " too."
-      RenderBlock {P} at (0,60) size 784x17 [bgcolor=#AAFFAA]
-        RenderText {#text} at (0,0) size 177x17
-          text run at (0,0) width 177: "This line should be pale green."
+layer at (0,0) size 800x127
+  RenderBlock {HTML} at (0,0) size 800x127
+    RenderBody {BODY} at (8,16) size 784x95
+      RenderBlock {P} at (0,0) size 784x21 [bgcolor=#00FF00]
+        RenderText {#text} at (0,0) size 184x21
+          text run at (0,0) width 184: "This line should be green."
+      RenderBlock {P} at (0,37) size 784x21 [bgcolor=#00FF00]
+        RenderText {#text} at (0,0) size 65x21
+          text run at (0,0) width 65: "This line "
+        RenderInline {SPAN} at (0,0) size 115x21
+          RenderText {#text} at (65,0) size 115x21
+            text run at (65,0) width 115: "should be green"
+        RenderText {#text} at (180,0) size 30x21
+          text run at (180,0) width 30: " too."
+      RenderBlock {P} at (0,74) size 784x21 [bgcolor=#AAFFAA]
+        RenderText {#text} at (0,0) size 219x21
+          text run at (0,0) width 219: "This line should be pale green."

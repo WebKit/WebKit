@@ -3,81 +3,81 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (20,20) size 760x560 [bgcolor=#FFFFFF]
-      RenderBlock {DIV} at (0,0) size 760x503
-        RenderTable {TABLE} at (0,0) size 582x503
-          RenderTableSection {TBODY} at (0,0) size 582x503
-            RenderTableRow {TR} at (0,2) size 582x165
-              RenderTableCell {TD} at (2,2) size 143x165 [r=0 c=0 rs=1 cs=1]
+      RenderBlock {DIV} at (0,0) size 760x515
+        RenderTable {TABLE} at (0,0) size 582x515
+          RenderTableSection {TBODY} at (0,0) size 582x515
+            RenderTableRow {TR} at (0,2) size 582x169
+              RenderTableCell {TD} at (2,2) size 143x169 [r=0 c=0 rs=1 cs=1]
                 RenderHTMLCanvas {CANVAS} at (7,7) size 129x129 [border: (2px solid #000000)]
                 RenderBR {BR} at (136,141) size 0x0
-                RenderInline {LABEL} at (0,0) size 68x17
-                  RenderText {#text} at (7,141) size 68x17
-                    text run at (7,141) width 68: "source-over"
-              RenderTableCell {TD} at (147,2) size 143x165 [r=0 c=1 rs=1 cs=1]
+                RenderInline {LABEL} at (0,0) size 84x21
+                  RenderText {#text} at (7,141) size 84x21
+                    text run at (7,141) width 84: "source-over"
+              RenderTableCell {TD} at (147,2) size 143x169 [r=0 c=1 rs=1 cs=1]
                 RenderHTMLCanvas {CANVAS} at (7,7) size 129x129 [border: (2px solid #000000)]
                 RenderBR {BR} at (136,141) size 0x0
-                RenderInline {LABEL} at (0,0) size 53x17
-                  RenderText {#text} at (7,141) size 53x17
-                    text run at (7,141) width 53: "source-in"
-              RenderTableCell {TD} at (292,2) size 143x165 [r=0 c=2 rs=1 cs=1]
+                RenderInline {LABEL} at (0,0) size 66x21
+                  RenderText {#text} at (7,141) size 66x21
+                    text run at (7,141) width 66: "source-in"
+              RenderTableCell {TD} at (292,2) size 143x169 [r=0 c=2 rs=1 cs=1]
                 RenderHTMLCanvas {CANVAS} at (7,7) size 129x129 [border: (2px solid #000000)]
                 RenderBR {BR} at (136,141) size 0x0
-                RenderInline {LABEL} at (0,0) size 61x17
-                  RenderText {#text} at (7,141) size 61x17
-                    text run at (7,141) width 61: "source-out"
-              RenderTableCell {TD} at (437,2) size 143x165 [r=0 c=3 rs=1 cs=1]
+                RenderInline {LABEL} at (0,0) size 75x21
+                  RenderText {#text} at (7,141) size 75x21
+                    text run at (7,141) width 75: "source-out"
+              RenderTableCell {TD} at (437,2) size 143x169 [r=0 c=3 rs=1 cs=1]
                 RenderHTMLCanvas {CANVAS} at (7,7) size 129x129 [border: (2px solid #000000)]
                 RenderBR {BR} at (136,141) size 0x0
-                RenderInline {LABEL} at (0,0) size 68x17
-                  RenderText {#text} at (7,141) size 68x17
-                    text run at (7,141) width 68: "source-atop"
-            RenderTableRow {TR} at (0,169) size 582x165
-              RenderTableCell {TD} at (2,169) size 143x165 [r=1 c=0 rs=1 cs=1]
+                RenderInline {LABEL} at (0,0) size 84x21
+                  RenderText {#text} at (7,141) size 84x21
+                    text run at (7,141) width 84: "source-atop"
+            RenderTableRow {TR} at (0,173) size 582x169
+              RenderTableCell {TD} at (2,173) size 143x169 [r=1 c=0 rs=1 cs=1]
                 RenderHTMLCanvas {CANVAS} at (7,7) size 129x129 [border: (2px solid #000000)]
                 RenderBR {BR} at (136,141) size 0x0
-                RenderInline {LABEL} at (0,0) size 92x17
-                  RenderText {#text} at (7,141) size 92x17
-                    text run at (7,141) width 92: "destination-over"
-              RenderTableCell {TD} at (147,169) size 143x165 [r=1 c=1 rs=1 cs=1]
+                RenderInline {LABEL} at (0,0) size 114x21
+                  RenderText {#text} at (7,141) size 114x21
+                    text run at (7,141) width 114: "destination-over"
+              RenderTableCell {TD} at (147,173) size 143x169 [r=1 c=1 rs=1 cs=1]
                 RenderHTMLCanvas {CANVAS} at (7,7) size 129x129 [border: (2px solid #000000)]
                 RenderBR {BR} at (136,141) size 0x0
-                RenderInline {LABEL} at (0,0) size 77x17
-                  RenderText {#text} at (7,141) size 77x17
-                    text run at (7,141) width 77: "destination-in"
-              RenderTableCell {TD} at (292,169) size 143x165 [r=1 c=2 rs=1 cs=1]
+                RenderInline {LABEL} at (0,0) size 96x21
+                  RenderText {#text} at (7,141) size 96x21
+                    text run at (7,141) width 96: "destination-in"
+              RenderTableCell {TD} at (292,173) size 143x169 [r=1 c=2 rs=1 cs=1]
                 RenderHTMLCanvas {CANVAS} at (7,7) size 129x129 [border: (2px solid #000000)]
                 RenderBR {BR} at (136,141) size 0x0
-                RenderInline {LABEL} at (0,0) size 85x17
-                  RenderText {#text} at (7,141) size 85x17
-                    text run at (7,141) width 85: "destination-out"
-              RenderTableCell {TD} at (437,169) size 143x165 [r=1 c=3 rs=1 cs=1]
+                RenderInline {LABEL} at (0,0) size 105x21
+                  RenderText {#text} at (7,141) size 105x21
+                    text run at (7,141) width 105: "destination-out"
+              RenderTableCell {TD} at (437,173) size 143x169 [r=1 c=3 rs=1 cs=1]
                 RenderHTMLCanvas {CANVAS} at (7,7) size 129x129 [border: (2px solid #000000)]
                 RenderBR {BR} at (136,141) size 0x0
-                RenderInline {LABEL} at (0,0) size 92x17
-                  RenderText {#text} at (7,141) size 92x17
-                    text run at (7,141) width 92: "destination-atop"
-            RenderTableRow {TR} at (0,336) size 582x165
-              RenderTableCell {TD} at (2,336) size 143x165 [r=2 c=0 rs=1 cs=1]
+                RenderInline {LABEL} at (0,0) size 114x21
+                  RenderText {#text} at (7,141) size 114x21
+                    text run at (7,141) width 114: "destination-atop"
+            RenderTableRow {TR} at (0,344) size 582x169
+              RenderTableCell {TD} at (2,344) size 143x169 [r=2 c=0 rs=1 cs=1]
                 RenderHTMLCanvas {CANVAS} at (7,7) size 129x129 [border: (2px solid #000000)]
                 RenderBR {BR} at (136,141) size 0x0
-                RenderInline {LABEL} at (0,0) size 35x17
-                  RenderText {#text} at (7,141) size 35x17
-                    text run at (7,141) width 35: "lighter"
-              RenderTableCell {TD} at (147,336) size 143x165 [r=2 c=1 rs=1 cs=1]
+                RenderInline {LABEL} at (0,0) size 44x21
+                  RenderText {#text} at (7,141) size 44x21
+                    text run at (7,141) width 44: "lighter"
+              RenderTableCell {TD} at (147,344) size 143x169 [r=2 c=1 rs=1 cs=1]
                 RenderHTMLCanvas {CANVAS} at (7,7) size 129x129 [border: (2px solid #000000)]
                 RenderBR {BR} at (136,141) size 0x0
-                RenderInline {LABEL} at (0,0) size 36x17
-                  RenderText {#text} at (7,141) size 36x17
-                    text run at (7,141) width 36: "darker"
-              RenderTableCell {TD} at (292,336) size 143x165 [r=2 c=2 rs=1 cs=1]
+                RenderInline {LABEL} at (0,0) size 45x21
+                  RenderText {#text} at (7,141) size 45x21
+                    text run at (7,141) width 45: "darker"
+              RenderTableCell {TD} at (292,344) size 143x169 [r=2 c=2 rs=1 cs=1]
                 RenderHTMLCanvas {CANVAS} at (7,7) size 129x129 [border: (2px solid #000000)]
                 RenderBR {BR} at (136,141) size 0x0
-                RenderInline {LABEL} at (0,0) size 28x17
-                  RenderText {#text} at (7,141) size 28x17
-                    text run at (7,141) width 28: "copy"
-              RenderTableCell {TD} at (437,336) size 143x165 [r=2 c=3 rs=1 cs=1]
+                RenderInline {LABEL} at (0,0) size 34x21
+                  RenderText {#text} at (7,141) size 34x21
+                    text run at (7,141) width 34: "copy"
+              RenderTableCell {TD} at (437,344) size 143x169 [r=2 c=3 rs=1 cs=1]
                 RenderHTMLCanvas {CANVAS} at (7,7) size 129x129 [border: (2px solid #000000)]
                 RenderBR {BR} at (136,141) size 0x0
-                RenderInline {LABEL} at (0,0) size 18x17
-                  RenderText {#text} at (7,141) size 18x17
-                    text run at (7,141) width 18: "xor"
+                RenderInline {LABEL} at (0,0) size 22x21
+                  RenderText {#text} at (7,141) size 22x21
+                    text run at (7,141) width 22: "xor"

@@ -1,20 +1,21 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x176
-  RenderBlock {HTML} at (0,0) size 800x176
-    RenderBody {BODY} at (8,13) size 784x155
-      RenderBlock {P} at (0,0) size 784x17 [color=#000080]
-        RenderText {#text} at (0,0) size 290x17
-          text run at (0,0) width 290: "There should be two unbroken vertical bars below."
-      RenderBlock {P} at (0,30) size 784x34 [color=#000080]
-        RenderText {#text} at (0,0) size 723x34
-          text run at (0,0) width 370: "Hold up a credit card to your display. The distance between the "
-          text run at (370,0) width 353: "two vertical bars should be exactly the length of a credit card"
-          text run at (0,17) width 66: "(85.60mm)."
-      RenderBlock {DIV} at (0,77) size 784x78 [border: (3px solid #000000)]
-        RenderBlock {DIV} at (326,0) size 458x13 [border: (3px solid #000000)]
-        RenderBlock {DIV} at (326,13) size 458x13 [border: (3px solid #000000)]
-        RenderBlock {DIV} at (326,26) size 458x13 [border: (3px solid #000000)]
-        RenderBlock {DIV} at (326,39) size 458x13 [border: (3px solid #000000)]
-        RenderBlock {DIV} at (326,52) size 458x13 [border: (3px solid #000000)]
-        RenderBlock {DIV} at (326,65) size 458x13 [border: (3px solid #000000)]
+layer at (0,0) size 800x215
+  RenderBlock {HTML} at (0,0) size 800x215
+    RenderBody {BODY} at (8,16) size 784x191
+      RenderBlock {P} at (0,0) size 784x21 [color=#000080]
+        RenderText {#text} at (0,0) size 357x21
+          text run at (0,0) width 357: "There should be two unbroken vertical bars below."
+      RenderBlock {P} at (0,37) size 784x42 [color=#000080]
+        RenderText {#text} at (0,0) size 783x42
+          text run at (0,0) width 449: "Hold up a credit card to your display. The distance between the "
+          text run at (449,0) width 334: "two vertical bars should be exactly the length of"
+          text run at (0,21) width 91: "a credit card "
+          text run at (91,21) width 80: "(85.60mm)."
+      RenderBlock {DIV} at (0,95) size 784x96 [border: (3px solid #000000)]
+        RenderBlock {DIV} at (326,0) size 458x16 [border: (3px solid #000000)]
+        RenderBlock {DIV} at (326,16) size 458x16 [border: (3px solid #000000)]
+        RenderBlock {DIV} at (326,32) size 458x16 [border: (3px solid #000000)]
+        RenderBlock {DIV} at (326,48) size 458x16 [border: (3px solid #000000)]
+        RenderBlock {DIV} at (326,64) size 458x16 [border: (3px solid #000000)]
+        RenderBlock {DIV} at (326,80) size 458x16 [border: (3px solid #000000)]
