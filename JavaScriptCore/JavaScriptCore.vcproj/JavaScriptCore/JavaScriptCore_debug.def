@@ -1,6 +1,7 @@
 LIBRARY    "JavaScriptCore_debug"
 
 EXPORTS
+    
     ??0Collator@WTF@@QAE@PBD@Z
     ??0DropAllLocks@JSLock@JSC@@QAE@W4JSLockBehavior@2@@Z
     ??0InternalFunction@JSC@@IAE@PAVJSGlobalData@1@V?$NonNullPassRefPtr@VStructure@JSC@@@WTF@@ABVIdentifier@1@@Z
@@ -102,6 +103,7 @@ EXPORTS
     ?despecifyFunctionTransition@Structure@JSC@@SA?AV?$PassRefPtr@VStructure@JSC@@@WTF@@PAV12@ABVIdentifier@2@@Z
     ?destroy@Heap@JSC@@QAEXXZ
     ?destroy@Rep@UString@JSC@@QAEXXZ
+    ?destroyJSGlobalObjectData@JSGlobalObject@JSC@@CAXPAX@Z
     ?detach@Debugger@JSC@@UAEXPAVJSGlobalObject@2@@Z
     ?detachThread@WTF@@YAXI@Z
     ?enumerable@PropertyDescriptor@JSC@@QBE_NXZ

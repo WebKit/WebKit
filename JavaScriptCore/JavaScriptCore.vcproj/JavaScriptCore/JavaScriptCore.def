@@ -102,6 +102,7 @@ EXPORTS
     ?despecifyFunctionTransition@Structure@JSC@@SA?AV?$PassRefPtr@VStructure@JSC@@@WTF@@PAV12@ABVIdentifier@2@@Z
     ?destroy@Heap@JSC@@QAEXXZ
     ?destroy@Rep@UString@JSC@@QAEXXZ
+    ?destroyJSGlobalObjectData@JSGlobalObject@JSC@@CAXPAX@Z
     ?detach@Debugger@JSC@@UAEXPAVJSGlobalObject@2@@Z
     ?detachThread@WTF@@YAXI@Z
     ?enumerable@PropertyDescriptor@JSC@@QBE_NXZ
