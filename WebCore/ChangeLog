@@ -1,3 +1,10 @@
+2009-09-29  Xan Lopez  <xlopez@igalia.com>
+
+        Unreviewed attempt to fix the build.
+
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+
 2009-09-28  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Eric Seidel.
