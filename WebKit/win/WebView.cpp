@@ -4452,6 +4452,10 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     settings->setPluginAllowedRunTime(runTime);
 
+#if ENABLE(3D_CANVAS)
+    settings->setExperimentalWebGLEnabled(true);
+#endif  // ENABLE(3D_CANVAS)
+
     if (!m_closeWindowTimer.isActive())
         m_mainFrame->invalidate(); // FIXME
 

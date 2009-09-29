@@ -1,3 +1,19 @@
+2009-09-29  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Add support for run-time flag for 3D canvas
+        https://bugs.webkit.org/show_bug.cgi?id=29826
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::getContext): Check page settings for
+        experimental WebGL flag before returning 3D graphics context.
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings): Initialize new flag to false.
+        (WebCore::Settings::setExperimentalWebGLEnabled):
+        * page/Settings.h: Set new flag.
+        (WebCore::Settings::experimentalWebGLEnabled): Return new flag.
+
 2009-09-29  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Darin Fisher.

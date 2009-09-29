@@ -165,17 +165,20 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type)
         return m_context.get();
     }
 #if ENABLE(3D_CANVAS)    
-    if ((type == "webkit-3d") ||
-        (type == "GL")) {
-        if (m_context && !m_context->is3d())
-            return 0;
-        if (!m_context) {
-            m_context = new CanvasRenderingContext3D(this);
-            
-            // Need to make sure a RenderLayer and compositing layer get created for the Canvas
-            setNeedsStyleRecalc(SyntheticStyleChange);
+    Settings* settings = document()->settings();
+    if (settings && settings->experimentalWebGLEnabled()) {
+        if ((type == "webkit-3d") ||
+            (type == "GL")) {
+            if (m_context && !m_context->is3d())
+                return 0;
+            if (!m_context) {
+                m_context = new CanvasRenderingContext3D(this);
+
+                // Need to make sure a RenderLayer and compositing layer get created for the Canvas
+                setNeedsStyleRecalc(SyntheticStyleChange);
+            }
+            return m_context.get();
         }
-        return m_context.get();
     }
 #endif
     return 0;

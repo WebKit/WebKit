@@ -1,3 +1,14 @@
+2009-09-29  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Add support for run-time flag for 3D canvas
+        https://bugs.webkit.org/show_bug.cgi?id=29826
+
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChangedNotification:]): Enable experimental
+        WebGL flag when 3D_CANVAS is enabled in the build.
+
 2009-09-28  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Eric Seidel.
