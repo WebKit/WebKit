@@ -1,3 +1,11 @@
+2009-09-28  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Unreviewed.
+
+        Add myself to list of committers.
+
+        * Scripts/modules/committers.py:
+
 2009-09-27  Jakub Wieczorek  <faw217@gmail.com>
 
         Reviewed by Darin Adler.

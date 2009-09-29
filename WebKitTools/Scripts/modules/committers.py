@@ -53,6 +53,7 @@ committers_unable_to_review = [
     Committer("Daniel Bates", "dbates@webkit.org"),
     Committer("Drew Wilson", "atwilson@chromium.org"),
     Committer("Dirk Schulze", "krit@webkit.org"),
+    Committer("Fumitoshi Ukai", "ukai@chromium.org"),
     Committer("Greg Bolsinga", "bolsinga@apple.com"),
     Committer("Jeremy Orlow", "jorlow@chromium.org"),
     Committer("Joseph Pecoraro", "joepeck@webkit.org"),
