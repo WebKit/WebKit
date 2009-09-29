@@ -1,3 +1,21 @@
+2009-09-29  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Chromium needs to be able to override the way storage events are delivered - part 1
+        https://bugs.webkit.org/show_bug.cgi?id=29889
+
+        Chromium needs to be able to override the way storage events are delivered.
+        This replaced https://bugs.webkit.org/show_bug.cgi?id=29257 because it'll be
+        faster (no vtables and extra allocation) and somewhat cleaner (no dependency
+        injection).  This is necessary because Chromium needs to transport events across
+        a process barrier and then dispatch them without use of a Frame*.
+
+        This patch should be a no-op for all ports other than Chromium.
+
+        * WebCore.gypi:
+        * storage/StorageEventDispatcher.h: Added.
+
 2009-09-29  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY (missed file).
