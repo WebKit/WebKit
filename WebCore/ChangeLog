@@ -269,6 +269,15 @@
 
         Reviewed by Simon Hausmann.
 
+        Use const references when using Qt's foreach.
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyHandler::sendResponseIfNeeded):
+
+2009-09-29  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
         Fix handling of QNetworkReply errors.
 
         In the QNetworkReplyHandler::finish() a response was sent even when

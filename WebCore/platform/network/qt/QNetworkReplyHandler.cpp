@@ -309,8 +309,7 @@ void QNetworkReplyHandler::sendResponseIfNeeded()
      * For local file requests remove the content length and the last-modified
      * headers as required by fast/dom/xmlhttprequest-get.xhtml
      */
-    foreach (QByteArray headerName, m_reply->rawHeaderList()) {
-
+    foreach (const QByteArray& headerName, m_reply->rawHeaderList()) {
         if (isLocalFileReply
             && (headerName == "Content-Length" || headerName == "Last-Modified"))
             continue;
