@@ -397,7 +397,7 @@ sub writeCongrats()
     my $launcherPath = launcherPath();
     my $launcherName = launcherName();
     my $endTime = time();
-    my $buildTime = formatBuildTime($endTime - @_);
+    my $buildTime = formatBuildTime($endTime - $startTime);
 
     print "\n";
     print "===========================================================\n";

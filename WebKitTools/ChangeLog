@@ -1,5 +1,13 @@
 2009-09-29  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
 
+        Reviewed by Simon Hausmann.
+
+        Fix time measurement in build-webkit after refactoring done in r48853.
+
+        * Scripts/build-webkit:
+
+2009-09-29  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
+
         Reviewed by Tor Arne Vestbø.
 
         [Qt] Default font size reconciliation to 16px/13px to match other platform's de-facto standard.
