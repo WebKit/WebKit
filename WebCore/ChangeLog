@@ -1,3 +1,16 @@
+2009-09-29  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Oliver Hunt.
+
+        Web Inspector REGRESSION(r47820-r47822): Profiles aren't
+        added to the inspector unless the inspector is already open
+        when the profile completes.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29897
+
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype._populateProfiles):
+
 2009-09-29  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Rubberstamped by David Hyatt.

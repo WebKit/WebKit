@@ -395,7 +395,10 @@ WebInspector.ProfilesPanel.prototype = {
 
     _populateProfiles: function()
     {
-        if (this.sidebarTree.children.length)
+        // FIXME: This code needs to be adjusted when more profiling types are added.
+        // Currently defaults to CPU profiles.
+        var cpuProfiles = this.sidebarTree.children[0];
+        if (cpuProfiles.children.length)
             return;
 
         var profiles = InspectorController.profiles();
@@ -405,8 +408,8 @@ WebInspector.ProfilesPanel.prototype = {
             this.addProfile(profile);
         }
 
-        if (this.sidebarTree.children[0])
-            this.sidebarTree.children[0].select();
+        if (cpuProfiles.children[0])
+            cpuProfiles.children[0].select();
 
         delete this._shouldPopulateProfiles;
     },
