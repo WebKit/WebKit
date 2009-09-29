@@ -4683,8 +4683,10 @@ fast/canvas/canvas-composite-alpha.html
 fast/canvas/canvas-gradient-addStop-error.html
 fast/css/zoom-body-scroll.html
 fast/dom/cssTarget-crash.html
-fast/dom/getBoundingClientRect.html
-fast/dom/getClientRects.html
+fast/dom/Element/getBoundingClientRect.html
+fast/dom/Element/getClientRects.html
+fast/dom/Range/getBoundingClientRect.html
+fast/dom/Range/getClientRects.html
 fast/dom/location-assign.html
 fast/dom/tabindex-clamp.html
 fast/dom/Document/document-charset.html

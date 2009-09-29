@@ -1,3 +1,11 @@
+2009-09-29  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Update Skipped list after test refactoring done in r48806.
+
+        * platform/qt/Skipped:
+
 2009-09-29  Jakub Wieczorek  <faw217@gmail.com>
 
         Reviewed by Simon Hausmann.
