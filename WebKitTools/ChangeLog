@@ -1,3 +1,20 @@
+2009-09-28  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by David Kilzer.
+
+        Integrated chromium port building into webkit tools update-webkit and
+        build-webkit.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29749
+
+        * Scripts/build-webkit: When --chromium is specified, will build
+          the chromium port (currently only Mac is supported).
+        * Scripts/update-webkit: When --chromium is specified, delegates to
+          update-webkit-chromium.
+        * Scripts/webkitdirs.pm: Added chromium specific defs.
+        * Scripts/update-webkit-chromium: Uses gclient and gyp to fetch
+          chromium port's dependencies and update its project files.
+
 2009-09-28  Fumitoshi Ukai  <ukai@chromium.org>
 
         Unreviewed.

@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
 
-# Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+# Copyright (C) 2005, 2006 Apple Inc. All rights reserved.
+# Copyright (C) 2009 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -38,6 +39,7 @@ use webkitdirs;
 use POSIX;
 
 sub formatBuildTime($);
+sub writeCongrats();
 
 my $originalWorkingDirectory = getcwd();
 chdirWebKit();
@@ -315,6 +317,13 @@ if (isWx()) {
     push @projects, 'WebKit/wx/bindings/python';
 }
 
+if (isChromium()) {
+    # Chromium doesn't build by project directories.
+    @projects = ();
+    my $result = buildChromium($clean, @options);
+    exit $result if $result;
+}
+
 # Build, and abort if the build fails.
 for my $dir (@projects) {
     chdir $dir or die;
@@ -365,18 +374,7 @@ for my $dir (@projects) {
 exit if $clean;
 
 # Write out congratulations message.
-
-my $launcherPath = launcherPath();
-my $launcherName = launcherName();
-my $endTime = time();
-my $buildTime = formatBuildTime($endTime - $startTime);
-
-print "\n";
-print "===========================================================\n";
-print " WebKit is now built ($buildTime). \n";
-print " To run $launcherName with this newly-built code, use the\n";
-print " \"$launcherPath\" script.\n";
-print "===========================================================\n";
+writeCongrats();
 
 exit 0;
 
@@ -392,4 +390,21 @@ sub formatBuildTime($)
         return sprintf("%dh:%02dm:%02ds", $buildHours, $buildMins, $buildSecs);
     }
     return sprintf("%02dm:%02ds", $buildMins, $buildSecs);
+}
+
+sub writeCongrats()
+{
+    my $launcherPath = launcherPath();
+    my $launcherName = launcherName();
+    my $endTime = time();
+    my $buildTime = formatBuildTime($endTime - @_);
+
+    print "\n";
+    print "===========================================================\n";
+    print " WebKit is now built ($buildTime). \n";
+    if (!isChromium()) {
+        print " To run $launcherName with this newly-built code, use the\n";
+        print " \"$launcherPath\" script.\n";
+    }
+    print "===========================================================\n";
 }

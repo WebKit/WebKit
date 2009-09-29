@@ -1,4 +1,5 @@
 # Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
+# Copyright (C) 2009 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -995,7 +996,7 @@ sub checkRequiredSystemConfig
             print "http://developer.apple.com/tools/xcode\n";
             print "*************************************************************\n";
         }
-    } elsif (isGtk() or isQt() or isWx()) {
+    } elsif (isGtk() or isQt() or isWx() or isChromium()) {
         my @cmds = qw(flex bison gperf);
         my @missing = ();
         foreach my $cmd (@cmds) {
@@ -1354,6 +1355,28 @@ sub buildGtkProject($$@)
     }
 
     return buildAutotoolsProject($clean, @buildArgs);
+}
+
+sub buildChromium($@)
+{
+    my ($clean, @options) = @_;
+
+    my $result = 1;
+    if (isDarwin()) {
+        # Mac build - builds the root xcode project.
+        $result = buildXCodeProject("WebKit/chromium/webkit", $clean, (@options));
+    } elsif (isCygwin()) {
+        # Windows build
+        # FIXME support windows.
+        print STDERR "Windows build is not supported. Yet.";
+    } elsif (isLinux()) {
+        # Linux build
+        # FIXME support linux.
+        print STDERR "Linux build is not supported. Yet.";
+    } else {
+        print STDERR "This platform is not supported by chromium.";
+    }
+    return $result;
 }
 
 sub setPathForRunningWebKitApp
