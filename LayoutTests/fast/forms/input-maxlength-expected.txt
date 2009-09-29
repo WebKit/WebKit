@@ -72,6 +72,10 @@ Attempting to insert 530000 characters with maxLength = 524288.
 PASS 
 Attempting to insert 530000 characters with maxLength = 600000.
 PASS 
+Some tests for .maxLength property.
+PASS input.maxLength is implicitMaxLength
+PASS input.maxLength = -1 threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS input.getAttribute('maxlength') is '100'
 PASS successfullyParsed is true
 
 TEST COMPLETE

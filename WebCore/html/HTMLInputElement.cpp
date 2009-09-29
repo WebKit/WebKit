@@ -34,6 +34,7 @@
 #include "Event.h"
 #include "EventHandler.h"
 #include "EventNames.h"
+#include "ExceptionCode.h"
 #include "File.h"
 #include "FileList.h"
 #include "FocusController.h"
@@ -1609,9 +1610,12 @@ int HTMLInputElement::maxLength() const
     return m_data.maxLength();
 }
 
-void HTMLInputElement::setMaxLength(int _maxLength)
+void HTMLInputElement::setMaxLength(int _maxLength, ExceptionCode& exceptionCode)
 {
-    setAttribute(maxlengthAttr, String::number(_maxLength));
+    if (_maxLength < 0)
+        exceptionCode = INDEX_SIZE_ERR;
+    else
+        setAttribute(maxlengthAttr, String::number(_maxLength));
 }
 
 bool HTMLInputElement::multiple() const

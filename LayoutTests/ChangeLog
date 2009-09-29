@@ -1,3 +1,15 @@
+2009-09-29  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Update for .maxLength behavior change.
+        https://bugs.webkit.org/show_bug.cgi?id=29796
+
+        * fast/forms/input-maxlength-expected.txt:
+        * fast/forms/input-maxlength.html:
+        * fast/forms/script-tests/textarea-maxlength.js:
+        * fast/forms/textarea-maxlength-expected.txt:
+
 2009-09-29  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

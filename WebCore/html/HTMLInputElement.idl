@@ -42,7 +42,8 @@ module html {
 #if defined(ENABLE_DATALIST) && ENABLE_DATALIST
         readonly attribute HTMLElement     list;
 #endif
-                 attribute long            maxLength;
+                 attribute long            maxLength
+                     setter raises(DOMException);
                  attribute boolean         multiple;
                  attribute [ConvertNullToNullString] DOMString name;
                  attribute [Reflect] DOMString       pattern;

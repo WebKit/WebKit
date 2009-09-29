@@ -4,13 +4,13 @@ var textArea = document.createElement('textarea');
 document.body.appendChild(textArea);
 
 // No maxlength attribute
-shouldBe('textArea.maxLength', '0');
+shouldBe('textArea.maxLength', '-1');
 
 // Invalid maxlength attributes
 textArea.setAttribute('maxlength', '-3');
-shouldBe('textArea.maxLength', '0');
+shouldBe('textArea.maxLength', '-1');
 textArea.setAttribute('maxlength', 'xyz');
-shouldBe('textArea.maxLength', '0');
+shouldBe('textArea.maxLength', '-1');
 
 // Valid maxlength attributes
 textArea.setAttribute('maxlength', '1');
@@ -22,9 +22,12 @@ shouldBe('textArea.maxLength', '256');
 textArea.maxLength = 13;
 shouldBe('textArea.getAttribute("maxlength")', '"13"');
 
-textArea.maxLength = -1;
-shouldBe('textArea.maxLength', '4294967295');
-shouldBe('textArea.getAttribute("maxlength")', '"4294967295"');
+shouldThrow('textArea.maxLength = -1', '"Error: INDEX_SIZE_ERR: DOM Exception 1"');
+shouldBe('textArea.getAttribute("maxlength")', '"13"');  // Not changed
+
+textArea.maxLength = null;
+shouldBe('textArea.maxLength', '0');
+shouldBe('textArea.getAttribute("maxlength")', '"0"');
 
 // maxLength doesn't truncate the default value.
 textArea = document.createElement('textarea');

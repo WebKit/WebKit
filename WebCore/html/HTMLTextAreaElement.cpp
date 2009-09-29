@@ -32,6 +32,7 @@
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
+#include "ExceptionCode.h"
 #include "FocusController.h"
 #include "FormDataList.h"
 #include "Frame.h"
@@ -283,16 +284,16 @@ void HTMLTextAreaElement::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent*
 {
     ASSERT(event);
     ASSERT(renderer());
-    bool ok;
-    unsigned maxLength = getAttribute(maxlengthAttr).string().toUInt(&ok);
-    if (!ok)
+    int signedMaxLength = maxLength();
+    if (signedMaxLength < 0)
         return;
+    unsigned unsignedMaxLength = static_cast<unsigned>(signedMaxLength);
 
     unsigned currentLength = toRenderTextControl(renderer())->text().numGraphemeClusters();
     unsigned selectionLength = plainText(document()->frame()->selection()->selection().toNormalizedRange().get()).numGraphemeClusters();
     ASSERT(currentLength >= selectionLength);
     unsigned baseLength = currentLength - selectionLength;
-    unsigned appendableLength = maxLength > baseLength ? maxLength - baseLength : 0;
+    unsigned appendableLength = unsignedMaxLength > baseLength ? unsignedMaxLength - baseLength : 0;
     event->setText(sanitizeUserInputValue(event->text(), appendableLength));
 }
 
@@ -401,14 +402,19 @@ void HTMLTextAreaElement::setDefaultValue(const String& defaultValue)
     setValue(value);
 }
 
-unsigned HTMLTextAreaElement::maxLength() const
+int HTMLTextAreaElement::maxLength() const
 {
-    return getAttribute(maxlengthAttr).string().toUInt();
+    bool ok;
+    int value = getAttribute(maxlengthAttr).string().toInt(&ok);
+    return ok && value >= 0 ? value : -1;
 }
 
-void HTMLTextAreaElement::setMaxLength(unsigned newValue)
+void HTMLTextAreaElement::setMaxLength(int newValue, ExceptionCode& exceptionCode)
 {
-    setAttribute(maxlengthAttr, String::number(newValue));
+    if (newValue < 0)
+        exceptionCode = INDEX_SIZE_ERR;
+    else
+        setAttribute(maxlengthAttr, String::number(newValue));
 }
 
 void HTMLTextAreaElement::accessKeyAction(bool)

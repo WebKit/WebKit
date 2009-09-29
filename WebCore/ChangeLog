@@ -1,3 +1,25 @@
+2009-09-29  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Follows HTML5's maxLength change in September 2009.
+        - Change HTMLTextAreaElement.maxLength type to signed.
+        - HTMLTextAreaElement.maxLength returns -1 if maxlength= attribute is missing.
+        - HTMLTextAreaElement.maxLength and HTMLInputElement.maxLength
+          throw INDEX_SIZE_ERR for setting negative values.
+        https://bugs.webkit.org/show_bug.cgi?id=29796
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setMaxLength):
+        * html/HTMLInputElement.h:
+        * html/HTMLInputElement.idl:
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::handleBeforeTextInsertedEvent):
+        (WebCore::HTMLTextAreaElement::maxLength):
+        (WebCore::HTMLTextAreaElement::setMaxLength):
+        * html/HTMLTextAreaElement.h:
+        * html/HTMLTextAreaElement.idl:
+
 2009-09-29  Dimitri Glazkov  <dglazkov@chromium.org>
 
         No review, rolling out r48894, because review discussion was not complete.
