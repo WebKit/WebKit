@@ -1,3 +1,19 @@
+2009-09-29  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Starting all read-only transactions with an explicit BEGIN
+        DEFERRED command instead of BEGIN, since some ports (chromium)
+        might compile their own SQLite library and set BEGIN to BEGIN
+        IMMEDIATE by default; which would result in a deadlock in case of
+        two concurrent read-only transactions on the same DB, and would
+        unnecessarily delay other potential transactions to the same DB.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29729
+
+        * platform/sql/SQLiteTransaction.cpp:
+        (WebCore::SQLiteTransaction::begin):
+
 2009-09-29  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Dimitri Glazkov.

@@ -47,15 +47,21 @@ void SQLiteTransaction::begin()
 {
     if (!m_inProgress) {
         ASSERT(!m_db.m_transactionInProgress);
-        // Call BEGIN IMMEDIATE for a write transaction to acquire
-        // a RESERVED lock on the DB file. Otherwise, another write
-        // transaction (on another connection) could make changes
-        // to the same DB file before this transaction gets to execute
-        // any statements. If that happens, this transaction will fail.
+        // For read-only transactions, call BEGIN DEFERRED explicitly.
+        // Otherwise, a port might use a SQLite library that was build
+        // to interpret BEGIN as BEGIN IMMEDIATE, which would lead to
+        // a deadlock whenever two read transactions on the same DB
+        // are scheduled concurrently.
+        // For write transactions, call BEGIN IMMEDIATE to acquire
+        // a RESERVED lock on the DB file before the transaction
+        // callback is executed. Otherwise, another write transaction
+        // (on another connection) could make changes to the same DB file
+        // before this transaction gets to execute any statements.
+        // If that happens, this transaction will fail.
         // http://www.sqlite.org/lang_transaction.html
         // http://www.sqlite.org/lockingv3.html#locking
         if (m_readOnly)
-            m_inProgress = m_db.executeCommand("BEGIN;");
+            m_inProgress = m_db.executeCommand("BEGIN DEFERRED;");
         else
             m_inProgress = m_db.executeCommand("BEGIN IMMEDIATE;");
         m_db.m_transactionInProgress = m_inProgress;
