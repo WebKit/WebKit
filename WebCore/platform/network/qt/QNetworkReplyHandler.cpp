@@ -228,11 +228,11 @@ void QNetworkReplyHandler::finish()
     } else if (m_reply->error() != QNetworkReply::NoError
                // a web page that returns 401/403/404 can still have content
                && ((m_reply->error() != QNetworkReply::ContentOperationNotPermittedError
-               && m_reply->error() != QNetworkReply::ContentNotFoundError
-               && m_reply->error() != QNetworkReply::ProtocolUnknownError
-               && m_reply->error() != QNetworkReply::UnknownContentError)
-               // If the web page sent content, let's give it to the user.
-               || !m_responseDataSent)
+                 && m_reply->error() != QNetworkReply::ContentAccessDenied  // 401
+                 && m_reply->error() != QNetworkReply::ContentNotFoundError // 404
+                 && m_reply->error() != QNetworkReply::UnknownContentError)
+                 // If the web page sent content, let's give it to the user.
+                 || !m_responseDataSent)
                && m_reply->error() != QNetworkReply::AuthenticationRequiredError
                && m_reply->error() != QNetworkReply::ProxyAuthenticationRequiredError) {
         QUrl url = m_reply->url();
