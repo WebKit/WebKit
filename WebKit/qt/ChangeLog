@@ -2,6 +2,20 @@
 
         Reviewed by Simon Hausmann.
 
+        https://bugs.webkit.org/show_bug.cgi?id=29844
+
+        QWebPage dependency autotest fix.
+
+        Fix for database() autotest. All opened databases should be removed at
+        end of test.
+
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::database):
+
+2009-09-29  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
         Some QWebHistory and QWebPage autotest crash fixes.
 
         Some checking for m_mainFrame were added. MainFrame should be created
