@@ -105,6 +105,7 @@ EXPORTS
     ?destroyJSGlobalObjectData@JSGlobalObject@JSC@@CAXPAX@Z
     ?detach@Debugger@JSC@@UAEXPAVJSGlobalObject@2@@Z
     ?detachThread@WTF@@YAXI@Z
+    ?dumpSampleData@JSGlobalData@JSC@@QAEXPAVExecState@2@@Z
     ?enumerable@PropertyDescriptor@JSC@@QBE_NXZ
     ?equal@Identifier@JSC@@SA_NPBURep@UString@2@PBD@Z
     ?equal@JSC@@YA_NPBURep@UString@1@0@Z
@@ -241,8 +242,10 @@ EXPORTS
     ?slowAppend@MarkedArgumentBuffer@JSC@@AAEXVJSValue@2@@Z
     ?startIgnoringLeaks@Structure@JSC@@SAXXZ
     ?startProfiling@Profiler@JSC@@QAEXPAVExecState@2@ABVUString@2@@Z
+    ?startSampling@JSGlobalData@JSC@@QAEXXZ
     ?stopIgnoringLeaks@Structure@JSC@@SAXXZ
     ?stopProfiling@Profiler@JSC@@QAE?AV?$PassRefPtr@VProfile@JSC@@@WTF@@PAVExecState@2@ABVUString@2@@Z
+    ?stopSampling@JSGlobalData@JSC@@QAEXXZ
     ?strtod@WTF@@YANPBDPAPAD@Z
     ?substr@UString@JSC@@QBE?AV12@HH@Z
     ?symbolTableGet@JSVariableObject@JSC@@IAE_NABVIdentifier@2@AAVPropertyDescriptor@2@@Z
