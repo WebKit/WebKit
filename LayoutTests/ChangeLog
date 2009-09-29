@@ -1,3 +1,12 @@
+2009-09-29  Jakub Wieczorek  <faw217@gmail.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Unskip the passing tests that make use of eventSender.contextClick().
+        https://bugs.webkit.org/show_bug.cgi?id=29821
+
+        * platform/qt/Skipped:
+
 2009-09-29  Fumitoshi Ukai  <ukai@chromium.org>
 
         Unreviewed.  Fix 4 layout test failures by webkit r48861.

@@ -1002,7 +1002,6 @@ fast/encoding/mailto-always-utf-8.html
 fast/events/access-key-self-destruct.html
 fast/events/arrow-keys-on-body.html
 fast/events/attempt-scroll-with-no-scrollbars.html
-fast/events/context-onmousedown-event.html
 fast/events/contextmenu-scrolled-page-with-frame.html
 fast/events/key-events-in-input-button.html
 fast/events/key-events-in-input-text.html
@@ -4701,7 +4700,6 @@ fast/events/crash-on-mutate-during-drop.html
 fast/events/mouseup-from-button2.html
 fast/events/mouseup-outside-button.html
 fast/events/pointer-events-2.html
-fast/events/right-click-focus.html
 fast/events/special-key-events-in-input-text.html
 fast/events/stopPropagation-submit.html
 fast/events/tabindex-focus-blur-all.html
