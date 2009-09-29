@@ -1,3 +1,13 @@
+2009-09-28  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        <rdar://problem/7195704> JavaScriptCore fails to mark registers when built for x86_64 using LLVM GCC.
+
+        * runtime/Collector.cpp:
+        (JSC::Heap::markCurrentThreadConservatively): Force jmp_buf to use the appropriate alignment for a pointer
+        to ensure that we correctly interpret the contents of registers during marking.
+
 2009-09-28  Geoffrey Garen  <ggaren@apple.com>
 
         Windows build fix: added new exports.

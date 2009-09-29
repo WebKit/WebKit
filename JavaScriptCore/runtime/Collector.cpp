@@ -782,10 +782,16 @@ void NEVER_INLINE Heap::markCurrentThreadConservativelyInternal(MarkStack& markS
     markConservatively(markStack, stackPointer, stackBase);
 }
 
+#if COMPILER(GCC)
+#define REGISTER_BUFFER_ALIGNMENT __attribute__ ((aligned (sizeof(void*))))
+#else
+#define REGISTER_BUFFER_ALIGNMENT
+#endif
+
 void Heap::markCurrentThreadConservatively(MarkStack& markStack)
 {
     // setjmp forces volatile registers onto the stack
-    jmp_buf registers;
+    jmp_buf registers REGISTER_BUFFER_ALIGNMENT;
 #if COMPILER(MSVC)
 #pragma warning(push)
 #pragma warning(disable: 4611)
