@@ -1,0 +1,11 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x326
+  RenderBlock {HTML} at (0,0) size 800x326
+    RenderBody {BODY} at (0,21) size 800x305
+      RenderBlock {H1} at (0,0) size 800x84
+        RenderText {#text} at (0,0) size 799x84
+          text run at (0,0) width 799: "Test for DRT pauseAnimationAtTimeOnElementWithId()"
+          text run at (0,42) width 55: "API"
+layer at (150,126) size 200x200
+  RenderBlock (relative positioned) {DIV} at (0,105) size 200x200 [bgcolor=#FF0000]

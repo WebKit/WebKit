@@ -90,11 +90,6 @@ accessibility/table-sections.html
 accessibility/table-with-aria-role.html
 accessibility/table-with-rules.html
 
-# Tests in animations/ directory
-#   Tests generating new results
-animations/animation-drt-api-multiple-keyframes.html
-animations/animation-drt-api.html
-
 # Tests in css1/ directory
 #   Tests generating new results
 css1/basic/class_as_selector.html

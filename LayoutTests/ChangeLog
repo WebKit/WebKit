@@ -2,6 +2,19 @@
 
         Reviewed by David Kilzer.
 
+        [Gtk][Layout tests] Generate results for animations tests
+        https://bugs.webkit.org/show_bug.cgi?id=29783
+
+        Add results for animations tests and enable these tests in the Skipped.
+
+        * platform/gtk/Skipped:
+        * platform/gtk/animations/animation-drt-api-expected.txt: Added.
+        * platform/gtk/animations/animation-drt-api-multiple-keyframes-expected.txt: Added.
+
+2009-09-28  Zan Dobersek  <zandobersek@gmail.com>
+
+        Reviewed by David Kilzer.
+
         [Gtk][Layout tests] Generate results for transforms tests
         https://bugs.webkit.org/show_bug.cgi?id=29785
 
