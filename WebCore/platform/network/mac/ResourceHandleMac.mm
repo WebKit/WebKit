@@ -28,6 +28,7 @@
 
 #import "AuthenticationChallenge.h"
 #import "AuthenticationMac.h"
+#import "Base64.h"
 #import "BlockExceptions.h"
 #import "CString.h"
 #import "CredentialStorage.h"
@@ -118,6 +119,16 @@ public:
     }
 };
 
+static String encodeBasicAuthorization(const String& user, const String& password)
+{
+    CString unencodedString = (user + ":" + password).utf8();
+    Vector<char> unencoded(unencodedString.length());
+    std::copy(unencodedString.data(), unencodedString.data() + unencodedString.length(), unencoded.begin());
+    Vector<char> encoded;
+    base64Encode(unencoded, encoded);
+    return String(encoded.data(), encoded.size());
+}
+
 ResourceHandleInternal::~ResourceHandleInternal()
 {
 }
@@ -178,10 +189,7 @@ bool ResourceHandle::start(Frame* frame)
         d->m_initialCredential = CredentialStorage::getDefaultAuthenticationCredential(d->m_request.url());
         
     if (!d->m_initialCredential.isEmpty()) {
-        // Apply basic auth header
-        String unencoded = d->m_initialCredential.user() + ":" + d->m_initialCredential.password();
-        CString encoded = unencoded.utf8().base64Encode();
-        String authHeader = String::format("Basic %s", encoded.data());
+        String authHeader = "Basic " + encodeBasicAuthorization(d->m_initialCredential.user(), d->m_initialCredential.password());
         d->m_request.addHTTPHeaderField("Authorization", authHeader);
     }
 
@@ -875,9 +883,11 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
     [super dealloc];
 }
 
-- (NSURLRequest *)connection:(NSURLConnection *)unusedConnection willSendRequest:(NSURLRequest *)newRequest redirectResponse:(NSURLResponse *)redirectResponse
+- (NSURLRequest *)connection:(NSURLConnection *)connection willSendRequest:(NSURLRequest *)newRequest redirectResponse:(NSURLResponse *)redirectResponse
 {
-    UNUSED_PARAM(unusedConnection);
+    UNUSED_PARAM(connection);
+
+    LOG(Network, "WebCoreSynchronousLoader delegate connection:%p willSendRequest:%@ redirectResponse:%p", connection, [newRequest description], redirectResponse);
 
     // FIXME: This needs to be fixed to follow the redirect correctly even for cross-domain requests.
     if (m_url && !protocolHostAndPortAreEqual(m_url, [newRequest URL])) {
@@ -906,17 +916,21 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
     return newRequest;
 }
 
-- (BOOL)connectionShouldUseCredentialStorage:(NSURLConnection *)unusedConnection
+- (BOOL)connectionShouldUseCredentialStorage:(NSURLConnection *)connection
 {
-    UNUSED_PARAM(unusedConnection);
+    UNUSED_PARAM(connection);
+
+    LOG(Network, "WebCoreSynchronousLoader delegate connectionShouldUseCredentialStorage:%p", connection);
 
     // FIXME: We should ask FrameLoaderClient whether using credential storage is globally forbidden.
     return m_allowStoredCredentials;
 }
 
-- (void)connection:(NSURLConnection *)unusedConnection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
+- (void)connection:(NSURLConnection *)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
-    UNUSED_PARAM(unusedConnection);
+    UNUSED_PARAM(connection);
+
+    LOG(Network, "WebCoreSynchronousLoader delegate connection:%p didReceiveAuthenticationChallenge:%p", connection, challenge);
 
     if (m_user && m_pass) {
         NSURLCredential *credential = [[NSURLCredential alloc] initWithUser:m_user
@@ -947,9 +961,11 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
     [[challenge sender] continueWithoutCredentialForAuthenticationChallenge:challenge];
 }
 
-- (void)connection:(NSURLConnection *)unusedConnection didReceiveResponse:(NSURLResponse *)response
+- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
 {
-    UNUSED_PARAM(unusedConnection);
+    UNUSED_PARAM(connection);
+
+    LOG(Network, "WebCoreSynchronousLoader delegate connection:%p didReceiveResponse:%p (HTTP status %d, reported MIMEType '%s')", connection, response, [response respondsToSelector:@selector(statusCode)] ? [(id)response statusCode] : 0, [[response MIMEType] UTF8String]);
 
     NSURLResponse *r = [response copy];
     
@@ -957,9 +973,11 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
     m_response = r;
 }
 
-- (void)connection:(NSURLConnection *)unusedConnection didReceiveData:(NSData *)data
+- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
 {
-    UNUSED_PARAM(unusedConnection);
+    UNUSED_PARAM(connection);
+
+    LOG(Network, "WebCoreSynchronousLoader delegate connection:%p didReceiveData:%p", connection, data);
 
     if (!m_data)
         m_data = [[NSMutableData alloc] init];
@@ -967,16 +985,20 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
     [m_data appendData:data];
 }
 
-- (void)connectionDidFinishLoading:(NSURLConnection *)unusedConnection
+- (void)connectionDidFinishLoading:(NSURLConnection *)connection
 {
-    UNUSED_PARAM(unusedConnection);
+    UNUSED_PARAM(connection);
+
+    LOG(Network, "WebCoreSynchronousLoader delegate connectionDidFinishLoading:%p", connection);
 
     m_isDone = YES;
 }
 
-- (void)connection:(NSURLConnection *)unusedConnection didFailWithError:(NSError *)error
+- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
 {
-    UNUSED_PARAM(unusedConnection);
+    UNUSED_PARAM(connection);
+
+    LOG(Network, "WebCoreSynchronousLoader delegate connection:%p didFailWithError:%@", connection, error);
 
     ASSERT(!m_error);
     
@@ -1001,6 +1023,8 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
 
 + (NSData *)loadRequest:(NSURLRequest *)request allowStoredCredentials:(BOOL)allowStoredCredentials returningResponse:(NSURLResponse **)response error:(NSError **)error
 {
+    LOG(Network, "WebCoreSynchronousLoader loadRequest:%@ allowStoredCredentials:%u", request, allowStoredCredentials);
+
     WebCoreSynchronousLoader *delegate = [[WebCoreSynchronousLoader alloc] init];
 
     KURL url([request URL]);
@@ -1024,10 +1048,7 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
             delegate->m_initialCredential = CredentialStorage::getDefaultAuthenticationCredential(url);
             
         if (!delegate->m_initialCredential.isEmpty()) {
-            // Apply basic auth header
-            String unencoded = delegate->m_initialCredential.user() + ":" + delegate->m_initialCredential.password();
-            CString encoded = unencoded.utf8().base64Encode();
-            String authHeader = String::format("Basic %s", encoded.data());
+            String authHeader = "Basic " + encodeBasicAuthorization(delegate->m_initialCredential.user(), delegate->m_initialCredential.password());
             requestWithInitialCredentials.addHTTPHeaderField("Authorization", authHeader);
         }
         connection = [[NSURLConnection alloc] initWithRequest:requestWithInitialCredentials.nsURLRequest() delegate:delegate startImmediately:NO];
@@ -1047,7 +1068,9 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
     
     [connection release];
     [delegate release];
-    
+
+    LOG(Network, "WebCoreSynchronousLoader done");
+
     return data;
 }
 

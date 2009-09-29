@@ -43,12 +43,9 @@ namespace WebCore {
         friend class CString;
 
         static PassRefPtr<CStringBuffer> create(unsigned length) { return adoptRef(new CStringBuffer(length)); }
-        static PassRefPtr<CStringBuffer> create(const Vector<char>& vectorToAdopt) { return adoptRef(new CStringBuffer(vectorToAdopt)); }
         CStringBuffer(unsigned length) : m_vector(length) { }
-        CStringBuffer(const Vector<char>& vectorToAdopt) : m_vector(vectorToAdopt) { }
         char* mutableData() { return m_vector.data(); }
 
-        PassRefPtr<CStringBuffer> base64Encode();
         Vector<char> m_vector;
     };
 
@@ -62,8 +59,6 @@ namespace WebCore {
         CString(CStringBuffer* buffer) : m_buffer(buffer) { }
         static CString newUninitialized(size_t length, char*& characterBuffer);
 
-        CString base64Encode();
-        
         const char* data() const;
         char* mutableData();
         unsigned length() const;

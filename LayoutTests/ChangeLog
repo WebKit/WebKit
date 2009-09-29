@@ -1,3 +1,14 @@
+2009-09-28  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        <rdar://problem/7259965> REGRESSION: http/tests/xmlhttprequest/cross-origin-authorization.html
+        is failing/crashing intermittently
+        https://bugs.webkit.org/show_bug.cgi?id=29322
+
+        * http/tests/xmlhttprequest/cross-origin-authorization.html: While at it, made the test
+        detect more error conditions
+
 2009-09-29  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
 
         Reviewed by Tor Arne Vestbø.

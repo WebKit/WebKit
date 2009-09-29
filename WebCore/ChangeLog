@@ -1,3 +1,37 @@
+2009-09-28  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        <rdar://problem/7259965> REGRESSION: http/tests/xmlhttprequest/cross-origin-authorization.html
+        is failing/crashing intermittently
+        https://bugs.webkit.org/show_bug.cgi?id=29322
+
+        This was caused by CStringBuffer::encodeBase64() returning a buffer that wasn't zero terminated.
+        The code had other issues as well, so I removed it altogether:
+        - it claimed to avoid some buffer copies, but it didn't;
+        - and I don't think that base64 encoding should be part of CString interface.
+
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::encodeBasicAuthorization): Encode username and password using Base64.h directly.
+        (WebCore::ResourceHandle::start): Use encodeBasicAuthorization().
+        (+[WebCoreSynchronousLoader loadRequest:allowStoredCredentials:returningResponse:error:]): Ditto.
+        (-[WebCoreSynchronousLoader connection:willSendRequest:redirectResponse:]): Extended logging
+        to synchronous case.
+        (-[WebCoreSynchronousLoader connectionShouldUseCredentialStorage:]): Ditto.
+        (-[WebCoreSynchronousLoader connection:didReceiveAuthenticationChallenge:]): Ditto.
+        (-[WebCoreSynchronousLoader connection:didReceiveResponse:]): Ditto.
+        (-[WebCoreSynchronousLoader connection:didReceiveData:]): Ditto.
+        (-[WebCoreSynchronousLoader connectionDidFinishLoading:]): Ditto.
+        (-[WebCoreSynchronousLoader connection:didFailWithError:]): Ditto.
+
+        * platform/network/cf/ResourceHandleCFNet.cpp: Matched Mac changes.
+
+        * platform/text/CString.cpp:
+        * platform/text/CString.h:
+        (WebCore::CStringBuffer::create):
+        (WebCore::CStringBuffer::CStringBuffer):
+        Removed code that was added for Base64 in r48363.
+
 2009-09-29  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
 
         Reviewed by Simon Hausmann.

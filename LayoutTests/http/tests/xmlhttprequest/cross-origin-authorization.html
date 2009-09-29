@@ -54,7 +54,10 @@ function test_sync_cookies()
     req.open("GET", "http://localhost:8000/xmlhttprequest/resources/cross-origin-check-cookies.php", false);
     req.withCredentials = true;
     req.send();
-    log(req.responseText.match(/WK\-cross\-origin/) ? "PASS" : "FAIL");
+    if (req.status == 200)
+        log(req.responseText.match(/WK\-cross\-origin/) ? "PASS" : "FAIL");
+    else
+        log("FAIL: Wrong status code " + req.status);
     test_async_auth_stored();
 }
 
@@ -99,7 +102,10 @@ function test_sync_auth_explicit()
     req.withCredentials = true;
     try {
         req.send();
-        log(req.responseText.match(/test2/) ? "FAIL: Explicit credentials were not ignored" : "PASS");
+        if (req.status == 200)
+            log(req.responseText.match(/test2/) ? "FAIL: Explicit credentials were not ignored" : "PASS");
+        else
+            log("FAIL: Wrong status code " + req.status);
     } catch (ex) {
         log("FAIL: Got an exception. " + ex);
     }
@@ -116,7 +122,10 @@ function test_async_auth_explicit()
     req.withCredentials = true;
     req.send();
     req.onload = function() {
-        log(req.responseText.match(/test2/) ? "FAIL: Explicit credentials were not ignored" : "PASS");
+        if (req.status == 200)
+            log(req.responseText.match(/test2/) ? "FAIL: Explicit credentials were not ignored" : "PASS");
+        else
+            log("FAIL: Wrong status code " + req.status);
         log("DONE");
         if (window.layoutTestController)
             layoutTestController.notifyDone();
