@@ -236,9 +236,16 @@ void QNetworkReplyHandler::finish()
                && m_reply->error() != QNetworkReply::AuthenticationRequiredError
                && m_reply->error() != QNetworkReply::ProxyAuthenticationRequiredError) {
         QUrl url = m_reply->url();
-        ResourceError error(url.host(), m_reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt(),
-                            url.toString(), m_reply->errorString());
-        client->didFail(m_resourceHandle, error);
+
+        int code = m_reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+
+        if (code) {
+            ResourceError error("HTTP", code, url.toString(), m_reply->attribute(QNetworkRequest::HttpReasonPhraseAttribute).toString());
+            client->didFail(m_resourceHandle, error);
+        } else {
+            ResourceError error("QtNetwork", m_reply->error(), url.toString(), m_reply->errorString());
+            client->didFail(m_resourceHandle, error);
+        }
     } else {
         client->didFinishLoading(m_resourceHandle);
     }

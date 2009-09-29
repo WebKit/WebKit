@@ -25,12 +25,12 @@
 #include "qwebkitglobal.h"
 
 #include <QtCore/qobject.h>
+#include <QtCore/qurl.h>
 #include <QtGui/qwidget.h>
 
 QT_BEGIN_NAMESPACE
 class QNetworkProxy;
 class QUndoStack;
-class QUrl;
 class QMenu;
 class QNetworkRequest;
 class QNetworkReply;
@@ -266,7 +266,8 @@ public:
     QMenu *createStandardContextMenu();
 
     enum Extension {
-        ChooseMultipleFilesExtension
+        ChooseMultipleFilesExtension,
+        ErrorPageExtension
     };
     class ExtensionOption
     {};
@@ -283,6 +284,24 @@ public:
     public:
         QStringList fileNames;
     };
+
+    enum ErrorDomain { QtNetwork, Http, WebKit };
+    class ErrorPageExtensionOption : public ExtensionOption {
+    public:
+        ErrorDomain domain;
+        int error;
+        QString errorString;
+    };
+
+    class ErrorPageExtensionReturn : public ExtensionReturn {
+    public:
+        ErrorPageExtensionReturn() : contentType(QLatin1String("text/html")), encoding(QLatin1String("utf-8")) {};
+        QString contentType;
+        QString encoding;
+        QUrl baseUrl;
+        QByteArray content;
+    };
+
 
     virtual bool extension(Extension extension, const ExtensionOption *option = 0, ExtensionReturn *output = 0);
     virtual bool supportsExtension(Extension extension) const;

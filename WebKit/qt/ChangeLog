@@ -1,3 +1,32 @@
+2009-09-29  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Simon Hausmann and Tor Arne Vestbø.
+
+        Implement QWebPage Extension for error pages, incl.
+        an example on how to use it in QtLauncher.
+
+        Correct our use of ResourceError.
+
+        * Api/qwebpage.h:
+        (ExtensionOption::):
+        (ExtensionOption::ErrorPageExtensionReturn::ErrorPageExtensionReturn):
+        * QtLauncher/main.cpp:
+        (WebPage::supportsExtension):
+        (MainWindow::MainWindow):
+        (MainWindow::selectElements):
+        (WebPage::extension):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::cancelledError):
+        (WebCore::FrameLoaderClientQt::blockedError):
+        (WebCore::FrameLoaderClientQt::cannotShowURLError):
+        (WebCore::FrameLoaderClientQt::interruptForPolicyChangeError):
+        (WebCore::FrameLoaderClientQt::cannotShowMIMETypeError):
+        (WebCore::FrameLoaderClientQt::fileDoesNotExistError):
+        (WebCore::FrameLoaderClientQt::callErrorPageExtension):
+        (WebCore::FrameLoaderClientQt::dispatchDidFailProvisionalLoad):
+        (WebCore::FrameLoaderClientQt::dispatchDidFailLoad):
+        * WebCoreSupport/FrameLoaderClientQt.h:
+
 2009-09-28  Andre Poenitz  <andre.poenitz@trolltech.com>
 
         Reviewed by Simon Hausmann.

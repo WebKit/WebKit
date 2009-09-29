@@ -1,4 +1,16 @@
-2009-09-29  Pavel Feldman  <pfeldman@chromium.org>
+2009-09-29  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Simon Hausmann and Tor Arne Vestbø.
+
+        Use the ResourceError as it is supposed to and handle
+        not HTTP errors from QNetworkReply.
+
+        Thanks to Adam Roben for his input.
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyHandler::finish):
+
+009-09-29  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
 
