@@ -38,11 +38,14 @@
 namespace WebCore {
 
     class Attribute;
+    class EventListener;
     class Frame;
     class Node;
+    class ScriptState;
 
     PassRefPtr<V8LazyEventListener> createAttributeEventListener(Node*, Attribute*);
     PassRefPtr<V8LazyEventListener> createAttributeEventListener(Frame*, Attribute*);
+    String getEventListenerHandlerBody(ScriptState*, EventListener*);
 
 } // namespace WebCore
 

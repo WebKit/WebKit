@@ -33,6 +33,7 @@
 
 #include "Attribute.h"
 #include "Document.h"
+#include "EventListener.h"
 #include "JSNode.h"
 #include "Frame.h"
 #include "XSSAuditor.h"
@@ -97,6 +98,14 @@ PassRefPtr<JSLazyEventListener> createAttributeEventListener(Frame* frame, Attri
     JSDOMWindow* globalObject = scriptController->globalObject();
 
     return JSLazyEventListener::create(attr->localName().string(), eventParameterName(frame->document()->isSVGDocument()), attr->value(), globalObject, 0, scriptController->eventHandlerLineNumber());
+}
+
+String getEventListenerHandlerBody(ScriptState* scriptState, EventListener* eventListener)
+{
+    JSC::JSObject* functionObject = eventListener->jsFunction();
+    if (!functionObject)
+        return "";
+    return functionObject->toString(scriptState);
 }
 
 } // namespace WebCore

@@ -50,16 +50,12 @@
 #include "Node.h"
 #include "NodeList.h"
 #include "PlatformString.h"
+#include "ScriptEventListener.h"
 #include "ScriptObject.h"
 #include "Text.h"
 
 #include <wtf/OwnPtr.h>
 #include <wtf/Vector.h>
-
-#if USE(JSC)
-#include "JSDOMWindow.h"
-#include <runtime/JSObject.h>
-#endif
 
 namespace WebCore {
 
@@ -549,11 +545,7 @@ ScriptObject InspectorDOMAgent::buildObjectForEventListener(const RegisteredEven
     value.set("useCapture", registeredEventListener.useCapture);
     value.set("isAttribute", eventListener->isAttribute());
     value.set("nodeId", static_cast<long long>(pushNodePathToFrontend(node)));
-#if USE(JSC)
-    JSC::JSObject* functionObject = eventListener->jsFunction();
-    if (functionObject)
-        value.set("listener", ScriptObject(m_frontend->scriptState(), functionObject));
-#endif
+    value.set("listener", getEventListenerHandlerBody(m_frontend->scriptState(), eventListener.get()));
     return value;
 }
 

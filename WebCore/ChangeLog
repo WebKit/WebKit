@@ -1,3 +1,20 @@
+2009-09-29  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Encapsulate JS listeners specifics into ScriptEventListener.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29816
+
+        * bindings/js/ScriptEventListener.cpp:
+        (WebCore::getEventListenerHandlerBody):
+        * bindings/js/ScriptEventListener.h:
+        * bindings/v8/ScriptEventListener.cpp:
+        (WebCore::getEventListenerHandlerBody):
+        * bindings/v8/ScriptEventListener.h:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::buildObjectForEventListener):
+
 2009-09-29  Xan Lopez  <xlopez@igalia.com>
 
         Unreviewed attempt to fix the build.

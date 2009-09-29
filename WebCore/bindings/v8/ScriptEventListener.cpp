@@ -33,7 +33,11 @@
 
 #include "Attribute.h"
 #include "Document.h"
+#include "EventListener.h"
 #include "Frame.h"
+#include "ScriptScope.h"
+#include "V8AbstractEventListener.h"
+#include "V8Binding.h"
 #include "XSSAuditor.h"
 
 namespace WebCore {
@@ -66,6 +70,20 @@ PassRefPtr<V8LazyEventListener> createAttributeEventListener(Frame* frame, Attri
     }
 
     return V8LazyEventListener::create(frame, attr->value(), attr->localName().string(), frame->document()->isSVGDocument());
+}
+
+String getEventListenerHandlerBody(ScriptState* scriptState, EventListener* listener)
+{
+    if (listener->type() != EventListener::JSEventListenerType)
+        return "";
+
+    ScriptScope scope(scriptState);
+    V8AbstractEventListener* v8Listener = static_cast<V8AbstractEventListener*>(listener);
+    v8::Handle<v8::Object> function = v8Listener->getListenerObject();
+    if (function.IsEmpty())
+        return "";
+
+    return toWebCoreStringWithNullCheck(function);
 }
 
 } // namespace WebCore
