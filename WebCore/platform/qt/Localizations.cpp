@@ -427,7 +427,7 @@ String localizedMediaControlElementHelpText(const String& name)
     if (name == "CurrentTimeDisplay")
         return QCoreApplication::translate("QWebPage", "Current movie time", "Media controller element");
     if (name == "TimeRemainingDisplay")
-        return QCoreApplication::translate("QWebPage", "Remaining move time", "Media controller element");
+        return QCoreApplication::translate("QWebPage", "Remaining movie time", "Media controller element");
     if (name == "StatusDisplay")
         return QCoreApplication::translate("QWebPage", "Current movie status", "Media controller element");
     if (name == "FullscreenButton")

@@ -1,3 +1,14 @@
+2009-09-29  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Fix typo in Localizations.cpp
+
+        https://bugs.webkit.org/show_bug.cgi?id=29872
+
+        * platform/qt/Localizations.cpp:
+        (WebCore::localizedMediaControlElementHelpText):
+
 2009-09-29  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Tor Arne Vestbø.
