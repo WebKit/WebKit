@@ -489,9 +489,7 @@ module window {
         attribute XMLHttpRequestUploadConstructor XMLHttpRequestUpload;
         attribute XMLHttpRequestExceptionConstructor XMLHttpRequestException;
 
-#if defined(ENABLE_XSLT) && ENABLE_XSLT
-        attribute [JSCCustomGetter] XSLTProcessorConstructor XSLTProcessor; // Usable with the new operator
-#endif
+        attribute [JSCCustomGetter,Conditional=XSLT] XSLTProcessorConstructor XSLTProcessor; // Usable with the new operator
 
 #if defined(ENABLE_CHANNEL_MESSAGING) && ENABLE_CHANNEL_MESSAGING
         attribute MessagePortConstructor MessagePort;
