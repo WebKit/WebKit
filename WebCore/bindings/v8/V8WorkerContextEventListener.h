@@ -51,7 +51,7 @@ namespace WebCore {
         V8WorkerContextEventListener(WorkerContextExecutionProxy*, v8::Local<v8::Object> listener, bool isInline);
 
         virtual ~V8WorkerContextEventListener();
-        virtual void handleEvent(Event*);
+        virtual void handleEvent(ScriptExecutionContext*, Event*);
         virtual bool reportError(const String& message, const String& url, int lineNumber);
         virtual bool disconnected() const { return !m_proxy; }
 

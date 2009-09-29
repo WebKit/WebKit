@@ -58,7 +58,7 @@ namespace WebCore {
         // Returns the owner frame of the listener.
         Frame* frame() { return m_frame; }
 
-        virtual void handleEvent(Event*);
+        virtual void handleEvent(ScriptExecutionContext*, Event*);
         void invokeEventHandler(v8::Handle<v8::Context>, Event*, v8::Handle<v8::Value> jsEvent);
 
         // Returns the listener object, either a function or an object.

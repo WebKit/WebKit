@@ -1,3 +1,18 @@
+2009-09-29  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed, build fix.
+
+        Fixing Chromium build, following r48884.
+
+        [https://bugs.webkit.org/show_bug.cgi?id=29894]
+
+        * bindings/v8/V8AbstractEventListener.cpp:
+        (WebCore::V8AbstractEventListener::handleEvent):
+        * bindings/v8/V8AbstractEventListener.h:
+        * bindings/v8/V8WorkerContextEventListener.cpp:
+        (WebCore::V8WorkerContextEventListener::handleEvent):
+        * bindings/v8/V8WorkerContextEventListener.h:
+
 2009-09-29  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.
