@@ -1,3 +1,18 @@
+2009-09-28  Zan Dobersek  <zandobersek@gmail.com>
+
+        Reviewed by David Kilzer.
+
+        [Gtk][Layout tests] Generate results for transforms tests
+        https://bugs.webkit.org/show_bug.cgi?id=29785
+
+        Add results for transforms tests and enable these tests in the Skipped.
+
+        * platform/gtk/Skipped:
+        * platform/gtk/transforms/2d/compound-transforms-vs-containers-expected.txt: Added.
+        * platform/gtk/transforms/2d/transform-borderbox-expected.txt: Added.
+        * platform/gtk/transforms/2d/transform-origin-borderbox-expected.txt: Added.
+        * platform/gtk/transforms/no_transform_hit_testing-expected.txt: Added.
+
 2009-09-28  Jakub Wieczorek  <faw217@gmail.com>
 
         Reviewed by Simon Hausmann.

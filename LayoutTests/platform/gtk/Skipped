@@ -5531,10 +5531,6 @@ tables/mozilla_expected_failures/other/test4.html
 
 # Tests in transforms/ directory
 #   Tests generating new results
-transforms/no_transform_hit_testing.html
-transforms/2d/compound-transforms-vs-containers.html
-transforms/2d/transform-borderbox.html
-transforms/2d/transform-origin-borderbox.html
 transforms/2d/zoom-menulist.html
 
 # Tests in transitions/ directory
