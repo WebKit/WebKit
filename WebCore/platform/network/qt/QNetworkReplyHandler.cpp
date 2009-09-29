@@ -211,7 +211,9 @@ void QNetworkReplyHandler::finish()
     if (m_shouldFinish)
         return;
 
-    sendResponseIfNeeded();
+    // FIXME: Investigate if this check should be moved into sendResponseIfNeeded()
+    if (!m_reply->error())
+        sendResponseIfNeeded();
 
     if (!m_resourceHandle)
         return;

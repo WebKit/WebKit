@@ -269,6 +269,27 @@
 
         Reviewed by Simon Hausmann.
 
+        Fix handling of QNetworkReply errors.
+
+        In the QNetworkReplyHandler::finish() a response was sent even when
+        the reply contained an error. This resulted in a sendResponseIfNeeded()
+        calling didReceiveResponse on the client, leading to the destruction
+        of the m_resourceHandle, discontinuing further processing in finish(),
+        and thus not calling didFail on the client.
+
+        Instead it continued as everything went fine, and
+        FrameLoaderClientQt::dispatchDecidePolicyForMIMEType() changed the
+        policy to PolicyDownload due to not being able to show the non existing
+        MIMEType. As the download also obviously fails, it ended up with a
+        policy change error.
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyHandler::finish):
+
+2009-09-29  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
         The code for showing error pages when the response was
         a 401/403/404, was not actually doing so. This patch
         fixes that.
