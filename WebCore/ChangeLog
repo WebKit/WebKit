@@ -1,3 +1,19 @@
+2009-09-11  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Add platform code to support WebSocket for chromium.
+        https://bugs.webkit.org/show_bug.cgi?id=29171
+
+        To build within chromium tree, it requires a patch in bug 29174.
+        Real implementation will be landed in chromium tree.
+
+        * WebCore.gypi:
+        * platform/network/chromium/SocketStreamError.h: Added.
+        (WebCore::SocketStreamError::SocketStreamError):
+        * platform/network/chromium/SocketStreamHandle.h: Added.
+        (WebCore::SocketStreamHandle::create):
+
 2009-09-28  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.
