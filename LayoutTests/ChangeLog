@@ -1,3 +1,12 @@
+2009-09-29  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Test case for <rdar://problem/7085453>.
+
+        * editing/selection/blockquote-crash-expected.txt: Added.
+        * editing/selection/blockquote-crash.html: Added.
+
 2009-09-29  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.

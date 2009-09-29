@@ -51,7 +51,16 @@ void BreakBlockquoteCommand::doApply()
     if (endingSelection().isRange())
         deleteSelection(false, false);
     
+    // This is a scenario that should never happen, but we want to
+    // make sure we don't dereference a null pointer below.    
+
+    ASSERT(!endingSelection().isNone());
+    
+    if (endingSelection().isNone())
+        return;
+        
     VisiblePosition visiblePos = endingSelection().visibleStart();
+    
     // pos is a position equivalent to the caret.  We use downstream() so that pos will 
     // be in the first node that we need to move (there are a few exceptions to this, see below).
     Position pos = endingSelection().start().downstream();

@@ -537,8 +537,6 @@ void DeleteSelectionCommand::mergeParagraphs()
 {
     if (!m_mergeBlocksAfterDelete) {
         if (m_pruneStartBlockIfNecessary) {
-            // Make sure that the ending position isn't inside the block we're about to prune.
-            m_endingPosition = m_downstreamEnd;
             // We aren't going to merge into the start block, so remove it if it's empty.
             prune(m_startBlock);
             // Removing the start block during a deletion is usually an indication that we need

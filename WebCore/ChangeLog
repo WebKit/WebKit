@@ -1,3 +1,25 @@
+2009-09-29  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Reproducible crash pressing return inside quoted content
+        at WebCore::BreakBlockquoteCommand::doApply.
+        <rdar://problem/7085453>
+        In some case, like the one provided in the test case, m_downStreamEnd
+        refers to a node that gets deleted when executing the DeleteSelectionCommand.
+        We shouldn't use m_downStreamEnd to recalculate the new m_endPosition when
+        pruning is needed, because it may be point to a node that has been deleted, but
+        rather rely on removeNode in CompositeEditCommand to update m_endPosition correctly.
+
+        Test: editing/selection/blockquote-crash.html
+
+        * editing/BreakBlockquoteCommand.cpp:
+        (WebCore::BreakBlockquoteCommand::doApply): Added check for invalid position
+        to avoid dereferencing a null node pointer.
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::mergeParagraphs): Don't reset m_endPosition
+        using the value in m_downStreamEnd when it is necessary to prune the start block.
+        
 2009-09-29  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Brady Eidson.
