@@ -5528,11 +5528,6 @@ tables/mozilla_expected_failures/other/test4.html
 #   Tests generating new results
 transforms/2d/zoom-menulist.html
 
-# Tests in transitions/ directory
-#   Tests generating new results
-transitions/transition-drt-api.html
-transitions/zero-duration-with-non-zero-delay-end.html
-
 # Tests in webarchive/ directory
 #   Tests failing
 webarchive/loading/test-loading-archive.html
