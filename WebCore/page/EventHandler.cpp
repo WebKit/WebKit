@@ -894,8 +894,10 @@ bool EventHandler::scrollOverflow(ScrollDirection direction, ScrollGranularity g
     
     if (node) {
         RenderObject* r = node->renderer();
-        if (r && !r->isListBox())
-            return r->enclosingBox()->scroll(direction, granularity);
+        if (r && !r->isListBox() && r->enclosingBox()->scroll(direction, granularity)) {
+            setFrameWasScrolledByUser();
+            return true;
+        }
     }
 
     return false;
@@ -1778,6 +1780,7 @@ bool EventHandler::handleWheelEvent(PlatformWheelEvent& e)
     FrameView* view = m_frame->view();
     if (!view)
         return false;
+    setFrameWasScrolledByUser();
     IntPoint vPoint = view->windowToContents(e.pos());
 
     Node* node;
@@ -2479,17 +2482,23 @@ void EventHandler::sendResizeEvent()
 
 void EventHandler::sendScrollEvent()
 {
+    setFrameWasScrolledByUser();
+    if (m_frame->view())
+        m_frame->document()->dispatchEvent(Event::create(eventNames().scrollEvent, true, false));
+}
+
+void EventHandler::setFrameWasScrolledByUser()
+{
     FrameView* v = m_frame->view();
-    if (!v)
-        return;
-    v->setWasScrolledByUser(true);
-    m_frame->document()->dispatchEvent(Event::create(eventNames().scrollEvent, true, false));
+    if (v)
+        v->setWasScrolledByUser(true);
 }
 
 bool EventHandler::passMousePressEventToScrollbar(MouseEventWithHitTestResults& mev, Scrollbar* scrollbar)
 {
     if (!scrollbar || !scrollbar->enabled())
         return false;
+    setFrameWasScrolledByUser();
     return scrollbar->mouseDown(mev.event());
 }
 

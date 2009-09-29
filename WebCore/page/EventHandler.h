@@ -306,6 +306,8 @@ private:
 #endif
 
     void updateLastScrollbarUnderMouse(Scrollbar*, bool);
+    
+    void setFrameWasScrolledByUser();
 
     bool capturesDragging() const { return m_capturesDragging; }
 

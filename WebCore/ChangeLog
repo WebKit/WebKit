@@ -1,3 +1,21 @@
+2009-09-29  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Ensure that we don't scroll lock to an anchor node after a
+        user-initiated scroll, even if that scroll doesn't propagate
+        all the way up to FrameView.
+
+        Test: fast/events/node-event-anchor-lock.html
+
+        * page/EventHandler.cpp: Call setFrameWasScrolledByUser() when a scroll is handled by a node rather than a frame.
+        (WebCore::EventHandler::scrollOverflow):
+        (WebCore::EventHandler::handleWheelEvent):
+        (WebCore::EventHandler::sendScrollEvent): Use setFrameWasScrolledByUser();
+        (WebCore::EventHandler::setFrameWasScrolledByUser): Split out of sendScrollEvent();
+        (WebCore::EventHandler::passMousePressEventToScrollbar):
+        * page/EventHandler.h: Declare setFrameWasScrolledByUser().
+
 2009-09-28  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler and Sam Weinig.
