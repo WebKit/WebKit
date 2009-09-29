@@ -38,8 +38,6 @@
 #include "Frame.h"
 #include "XSSAuditor.h"
 
-#include <runtime/JSLock.h>
-
 using namespace JSC;
 
 namespace WebCore {
@@ -55,29 +53,25 @@ PassRefPtr<JSLazyEventListener> createAttributeEventListener(Node* node, Attribu
 {
     ASSERT(node);
 
-    Frame* frame = node->document()->frame();
-    if (!frame)
-        return 0;
-
-    ScriptController* scriptController = frame->script();
-    if (!scriptController->isEnabled())
-        return 0;
-
-    if (!scriptController->xssAuditor()->canCreateInlineEventListener(attr->localName().string(), attr->value())) {
-        // This script is not safe to execute.
-        return 0;
-    }
+    int lineNumber = 1;
+    String sourceURL;
     
-    JSDOMWindow* globalObject = scriptController->globalObject();
+    // FIXME: We should be able to provide accurate source information for frameless documents, too (e.g. for importing nodes from XMLHttpRequest.responseXML).
+    if (Frame* frame = node->document()->frame()) {
+        ScriptController* scriptController = frame->script();
+        if (!scriptController->isEnabled())
+            return 0;
 
-    // Ensure that 'node' has a JavaScript wrapper to mark the event listener we're creating.
-    {
-        JSLock lock(SilenceAssertionsOnly);
-        // FIXME: Should pass the global object associated with the node
-        toJS(globalObject->globalExec(), globalObject, node);
+        if (!scriptController->xssAuditor()->canCreateInlineEventListener(attr->localName().string(), attr->value())) {
+            // This script is not safe to execute.
+            return 0;
+        }
+
+        lineNumber = scriptController->eventHandlerLineNumber();
+        sourceURL = node->document()->url().string();
     }
 
-    return JSLazyEventListener::create(attr->localName().string(), eventParameterName(node->isSVGElement()), attr->value(), globalObject, node, scriptController->eventHandlerLineNumber());
+    return JSLazyEventListener::create(attr->localName().string(), eventParameterName(node->isSVGElement()), attr->value(), node, sourceURL, lineNumber);
 }
 
 PassRefPtr<JSLazyEventListener> createAttributeEventListener(Frame* frame, Attribute* attr)
@@ -85,19 +79,21 @@ PassRefPtr<JSLazyEventListener> createAttributeEventListener(Frame* frame, Attri
     if (!frame)
         return 0;
 
+    int lineNumber = 1;
+    String sourceURL;
+    
     ScriptController* scriptController = frame->script();
     if (!scriptController->isEnabled())
         return 0;
-    
+
     if (!scriptController->xssAuditor()->canCreateInlineEventListener(attr->localName().string(), attr->value())) {
         // This script is not safe to execute.
         return 0;
     }
 
-    // 'globalObject' is the JavaScript wrapper that will mark the event listener we're creating.
-    JSDOMWindow* globalObject = scriptController->globalObject();
-
-    return JSLazyEventListener::create(attr->localName().string(), eventParameterName(frame->document()->isSVGDocument()), attr->value(), globalObject, 0, scriptController->eventHandlerLineNumber());
+    lineNumber = scriptController->eventHandlerLineNumber();
+    sourceURL = frame->document()->url().string();
+    return JSLazyEventListener::create(attr->localName().string(), eventParameterName(frame->document()->isSVGDocument()), attr->value(), 0, sourceURL, lineNumber);
 }
 
 String getEventListenerHandlerBody(ScriptState* scriptState, EventListener* eventListener)

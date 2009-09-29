@@ -326,9 +326,8 @@ sub AddIncludesForTypeInCPPImplementation
 
 sub GetAdditionalInterfaces
 {
+    # This function does nothing, but it stays here for future multiple inheritance support.
     my $type = $codeGenerator->StripModule(shift);
-
-    return ("EventTarget") if $type eq "Node";
     return ();
 }
 

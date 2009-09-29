@@ -1,3 +1,111 @@
+2009-09-28  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler and Sam Weinig.
+
+        Onclick not fired for an element copied with cloneContents() or cloneNode()
+        https://bugs.webkit.org/show_bug.cgi?id=25130
+
+        The change here is that JS event listeners don't keep a reference to a global object from
+        where they were created, and instead take it as a parameter when parsing source code. Also,
+        the listener creation won't fail just because it happens for an element in a frameless
+        document.
+        Thus, moving nodes between documents no longer results in having incorrect registered
+        lazy event listeners on them.
+
+        Tests: fast/events/attribute-listener-cloned-from-frameless-doc-context-2.html
+               fast/events/attribute-listener-cloned-from-frameless-doc-context.html
+               fast/events/attribute-listener-cloned-from-frameless-doc.xhtml
+               fast/events/attribute-listener-extracted-from-frameless-doc-context-2.html
+               fast/events/attribute-listener-extracted-from-frameless-doc-context.html
+
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::JSEventListener): Don't take a reference to JSDOMGlobalObject.
+        (WebCore::JSEventListener::jsFunction): Take ScriptExecutionContext as a parameter for
+        getting to JSDOMGlobalObject. It's not used in base class, but is in JSLazyEventListner.
+        (WebCore::JSEventListener::markJSFunction): Don't mark the global object.
+        (WebCore::JSEventListener::handleEvent): Get global object from ScriptExecutionContext.
+        (WebCore::JSEventListener::reportError): Ditto.
+
+        * bindings/js/JSEventListener.h: (WebCore::JSEventListener::create): Don't keep a reference
+        to JSDOMGlobalObject.
+
+        * bindings/js/JSLazyEventListener.cpp: (WebCore::JSLazyEventListener::parseCode): Listener
+        creation was split between this function and ScriptEventListener; moved it here, as JS
+        global object can be different now.
+
+        * bindings/js/JSLazyEventListener.h: (WebCore::JSLazyEventListener::create): Keep source URL,
+        which can not be determined at parsing time.
+
+        * bindings/js/ScriptEventListener.cpp: (WebCore::createAttributeEventListener): Moved code
+        for listener creation to JSLazyEventListener. XSSAuditor code remains here, because tests
+        expect that errors are logged at document parsing time, and because I don't know what other
+        side effects moving it vould have.
+
+        * dom/EventListener.h: handleEvent() and reportError() now take ScriptExecutionContext,
+        because JSC needs a global context here.
+
+        * bindings/js/JSAbstractWorkerCustom.cpp:
+        (WebCore::JSAbstractWorker::addEventListener):
+        (WebCore::JSAbstractWorker::removeEventListener):
+        * bindings/js/JSDOMApplicationCacheCustom.cpp:
+        (WebCore::JSDOMApplicationCache::addEventListener):
+        (WebCore::JSDOMApplicationCache::removeEventListener):
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::createJSAttributeEventListener):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::addEventListener):
+        (WebCore::JSDOMWindow::removeEventListener):
+        * bindings/js/JSEventSourceCustom.cpp:
+        (WebCore::JSEventSource::addEventListener):
+        (WebCore::JSEventSource::removeEventListener):
+        * bindings/js/JSMessagePortCustom.cpp:
+        (WebCore::JSMessagePort::addEventListener):
+        (WebCore::JSMessagePort::removeEventListener):
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::JSNode::addEventListener):
+        (WebCore::JSNode::removeEventListener):
+        * bindings/js/JSSVGElementInstanceCustom.cpp:
+        (WebCore::JSSVGElementInstance::addEventListener):
+        (WebCore::JSSVGElementInstance::removeEventListener):
+        * bindings/js/JSWorkerContextCustom.cpp:
+        (WebCore::JSWorkerContext::addEventListener):
+        (WebCore::JSWorkerContext::removeEventListener):
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::addEventListener):
+        (WebCore::JSXMLHttpRequest::removeEventListener):
+        * bindings/js/JSXMLHttpRequestUploadCustom.cpp:
+        (WebCore::JSXMLHttpRequestUpload::addEventListener):
+        (WebCore::JSXMLHttpRequestUpload::removeEventListener):
+        * bindings/objc/ObjCEventListener.h:
+        * bindings/objc/ObjCEventListener.mm:
+        (WebCore::ObjCEventListener::handleEvent):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::fireEventListeners):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::handleEvent):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorDOMStorageResource.cpp:
+        (WebCore::InspectorDOMStorageResource::handleEvent):
+        * inspector/InspectorDOMStorageResource.h:
+        * loader/ImageDocument.cpp:
+        (WebCore::ImageEventListener::handleEvent):
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::ConditionEventListener::handleEvent):
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::reportException):
+        Don't pass global object to JSEventListener::create(), which no longer needs it.
+        Note that some of these functions still have an early return for null global object, which
+        can probably be removed in a later patch.
+        Pass ScriptExecutionContext to EventListener methods that now need it.
+
+        * bindings/scripts/CodeGeneratorCOM.pm: Don't force EventTarget implementation on Node -
+        it doesn't work yet (it didn't quite work before this patch, too, because it assumed that
+        any object implementing EventTarget COM interface originated from WebCore).
+
+        * dom/EventListener.idl: Just like in ObjC, EventListener should be a pure interface in
+        COM bindings.
+
 2009-09-28  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.

@@ -1294,7 +1294,11 @@ sub GenerateImplementation
                     push(@implContent, "    UNUSED_PARAM(exec);\n");
                     push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(castedThis->impl());\n");
                     push(@implContent, "    if (EventListener* listener = imp->$implGetterFunctionName()) {\n");
-                    push(@implContent, "        if (JSObject* jsFunction = listener->jsFunction())\n");
+                    if ($implClassName eq "Document" || $implClassName eq "WorkerContext" || $implClassName eq "SharedWorkerContext" || $implClassName eq "DedicatedWorkerContext") {
+                        push(@implContent, "        if (JSObject* jsFunction = listener->jsFunction(imp))\n");
+                    } else {
+                        push(@implContent, "        if (JSObject* jsFunction = listener->jsFunction(imp->scriptExecutionContext()))\n");
+                    }
                     push(@implContent, "            return jsFunction;\n");
                     push(@implContent, "    }\n");
                     push(@implContent, "    return jsNull();\n");

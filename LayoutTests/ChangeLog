@@ -1,5 +1,23 @@
 2009-09-28  Alexey Proskuryakov  <ap@apple.com>
 
+        Reviewed by Darin Adler and Sam Weinig.
+
+        Onclick not fired for an element copied with cloneContents() or cloneNode()
+        https://bugs.webkit.org/show_bug.cgi?id=25130
+
+        * fast/events/attribute-listener-cloned-from-frameless-doc-context-2-expected.txt: Added.
+        * fast/events/attribute-listener-cloned-from-frameless-doc-context-2.html: Added.
+        * fast/events/attribute-listener-cloned-from-frameless-doc-context-expected.txt: Added.
+        * fast/events/attribute-listener-cloned-from-frameless-doc-context.html: Added.
+        * fast/events/attribute-listener-cloned-from-frameless-doc-expected.txt: Added.
+        * fast/events/attribute-listener-cloned-from-frameless-doc.xhtml: Added.
+        * fast/events/attribute-listener-extracted-from-frameless-doc-context-2-expected.txt: Added.
+        * fast/events/attribute-listener-extracted-from-frameless-doc-context-2.html: Added.
+        * fast/events/attribute-listener-extracted-from-frameless-doc-context-expected.txt: Added.
+        * fast/events/attribute-listener-extracted-from-frameless-doc-context.html: Added.
+
+2009-09-28  Alexey Proskuryakov  <ap@apple.com>
+
         Reviewed by Brady Eidson.
 
         <rdar://problem/7259965> REGRESSION: http/tests/xmlhttprequest/cross-origin-authorization.html

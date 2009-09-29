@@ -1478,10 +1478,6 @@
 					>
 				</File>
 				<File
-					RelativePath="$(WebKitOutputDir)\obj\WebKit\DerivedSources\GEN_DOMEventListener.cpp"
-					>
-				</File>
-				<File
 					RelativePath="$(WebKitOutputDir)\obj\WebKit\DerivedSources\GEN_DOMEventListener.h"
 					>
 				</File>

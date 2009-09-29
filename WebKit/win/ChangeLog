@@ -1,3 +1,14 @@
+2009-09-28  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler and Sam Weinig.
+
+        Onclick not fired for an element copied with cloneContents() or cloneNode()
+        https://bugs.webkit.org/show_bug.cgi?id=25130
+
+        * DOMCreateInstance.cpp: GEN_DOMEventListener is a pure interface now.
+
+        * WebKit.vcproj/WebKit.vcproj: Removed GEN_DOMEventListener.cpp.
+
 2009-09-28  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Eric Seidel.

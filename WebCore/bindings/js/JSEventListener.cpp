@@ -31,20 +31,18 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSEventListener::JSEventListener(JSObject* function, JSDOMGlobalObject* globalObject, bool isAttribute)
+JSEventListener::JSEventListener(JSObject* function, bool isAttribute)
     : EventListener(JSEventListenerType)
     , m_jsFunction(function)
-    , m_globalObject(globalObject)
     , m_isAttribute(isAttribute)
 {
-    ASSERT(m_globalObject);
 }
 
 JSEventListener::~JSEventListener()
 {
 }
 
-JSObject* JSEventListener::jsFunction() const
+JSObject* JSEventListener::jsFunction(ScriptExecutionContext*) const
 {
     return m_jsFunction;
 }
@@ -53,20 +51,22 @@ void JSEventListener::markJSFunction(MarkStack& markStack)
 {
     if (m_jsFunction)
         markStack.append(m_jsFunction);
-    markStack.append(m_globalObject);
 }
 
-void JSEventListener::handleEvent(Event* event)
+void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext, Event* event)
 {
+    ASSERT(scriptExecutionContext);
+    if (!scriptExecutionContext)
+        return;
+
     JSLock lock(SilenceAssertionsOnly);
 
-    JSObject* jsFunction = this->jsFunction();
+    JSObject* jsFunction = this->jsFunction(scriptExecutionContext);
     if (!jsFunction)
         return;
 
-    JSDOMGlobalObject* globalObject = m_globalObject;
-    ScriptExecutionContext* scriptExecutionContext = globalObject->scriptExecutionContext();
-    if (!scriptExecutionContext)
+    JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(scriptExecutionContext);
+    if (!globalObject)
         return;
 
     if (scriptExecutionContext->isDocument()) {
@@ -132,15 +132,15 @@ void JSEventListener::handleEvent(Event* event)
     }
 }
 
-bool JSEventListener::reportError(const String& message, const String& url, int lineNumber)
+bool JSEventListener::reportError(ScriptExecutionContext* context, const String& message, const String& url, int lineNumber)
 {
     JSLock lock(SilenceAssertionsOnly);
 
-    JSObject* jsFunction = this->jsFunction();
+    JSObject* jsFunction = this->jsFunction(context);
     if (!jsFunction)
         return false;
 
-    JSDOMGlobalObject* globalObject = m_globalObject;
+    JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(context);
     ExecState* exec = globalObject->globalExec();
 
     CallData callData;

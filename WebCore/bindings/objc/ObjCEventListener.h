@@ -54,7 +54,7 @@ namespace WebCore {
         ObjCEventListener(id <DOMEventListener>);
         virtual ~ObjCEventListener();
 
-        virtual void handleEvent(Event*);
+        virtual void handleEvent(ScriptExecutionContext*, Event*);
 
         id <DOMEventListener> m_listener;
     };

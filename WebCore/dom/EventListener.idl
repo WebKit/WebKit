@@ -24,8 +24,8 @@ module events {
     interface [
         NoStaticTables,
         ObjCProtocol,
+        PureInterface,
         InterfaceUUID=B04F2AE3-71E2-4ebe-ABFE-EF4938354082,
-        ImplementationUUID=DDFDD342-A78B-4f19-8F32-A5DF51B56E08
     ] EventListener {
         void               handleEvent(in Event evt);
     };

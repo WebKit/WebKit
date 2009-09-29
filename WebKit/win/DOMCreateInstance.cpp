@@ -72,7 +72,6 @@
 #include "GEN_DOMStyleSheet.h"
 #include "GEN_DOMStyleSheetList.h"
 #include "GEN_DOMEvent.h"
-#include "GEN_DOMEventListener.h"
 #include "GEN_DOMEvent.h"
 #include <wtf/HashMap.h>
 
@@ -249,7 +248,6 @@ CREATE_ONLY_SELF(NodeList)
 
 // FIXME: Add the subclasses for Event when they get generated.
 CREATE_ONLY_SELF(Event)
-CREATE_ONLY_SELF(EventListener)
 
 
 // CSS
