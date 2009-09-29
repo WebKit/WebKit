@@ -1,3 +1,18 @@
+2009-09-29  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG Filter feComposite implementation is missing
+        [https://bugs.webkit.org/show_bug.cgi?id=28362]
+
+        feComposite implementation for SVG.
+
+        Test: svg/filters/feComposite.svg
+
+        * platform/graphics/filters/FEComposite.cpp:
+        (WebCore::arithmetic):
+        (WebCore::FEComposite::apply):
+
 2009-09-29  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Dimitri Glazkov.

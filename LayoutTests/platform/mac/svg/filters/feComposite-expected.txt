@@ -1,0 +1,29 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 400x400
+  RenderSVGRoot {svg} at (10,10) size 182x184
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderPath {rect} at (10,10) size 50x50 [fill={[type=SOLID] [color=#000000]}] [filter=over] [data="M10.00,10.00 L60.00,10.00 L60.00,60.00 L10.00,60.00 Z"]
+    RenderSVGText {text} at (10,90) size 28x18 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,-14) size 28x18
+        chunk 1 text run 1 at (10.00,90.00) startOffset 0 endOffset 4 width 28.00: "over"
+    RenderPath {rect} at (70,10) size 50x50 [fill={[type=SOLID] [color=#000000]}] [filter=in] [data="M70.00,10.00 L120.00,10.00 L120.00,60.00 L70.00,60.00 Z"]
+    RenderSVGText {text} at (70,90) size 12x18 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,-14) size 12x18
+        chunk 1 text run 1 at (70.00,90.00) startOffset 0 endOffset 2 width 12.00: "in"
+    RenderPath {rect} at (130,10) size 50x50 [fill={[type=SOLID] [color=#000000]}] [filter=out] [data="M130.00,10.00 L180.00,10.00 L180.00,60.00 L130.00,60.00 Z"]
+    RenderSVGText {text} at (130,90) size 20x18 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,-14) size 20x18
+        chunk 1 text run 1 at (130.00,90.00) startOffset 0 endOffset 3 width 20.00: "out"
+    RenderPath {rect} at (10,110) size 50x50 [fill={[type=SOLID] [color=#000000]}] [filter=atop] [data="M10.00,110.00 L60.00,110.00 L60.00,160.00 L10.00,160.00 Z"]
+    RenderSVGText {text} at (10,190) size 27x18 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,-14) size 27x18
+        chunk 1 text run 1 at (10.00,190.00) startOffset 0 endOffset 4 width 27.00: "atop"
+    RenderPath {rect} at (70,110) size 50x50 [fill={[type=SOLID] [color=#000000]}] [filter=xor] [data="M70.00,110.00 L120.00,110.00 L120.00,160.00 L70.00,160.00 Z"]
+    RenderSVGText {text} at (70,190) size 21x18 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,-14) size 21x18
+        chunk 1 text run 1 at (70.00,190.00) startOffset 0 endOffset 3 width 21.00: "xor"
+    RenderPath {rect} at (130,110) size 50x50 [fill={[type=SOLID] [color=#000000]}] [filter=arithmetic] [data="M130.00,110.00 L180.00,110.00 L180.00,160.00 L130.00,160.00 Z"]
+    RenderSVGText {text} at (130,190) size 62x18 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,-14) size 62x18
+        chunk 1 text run 1 at (130.00,190.00) startOffset 0 endOffset 10 width 62.00: "arithmetic"

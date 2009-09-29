@@ -1,3 +1,14 @@
+2009-09-29  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Tests the feComposite implementation for SVG.
+
+        * platform/mac/svg/filters/feComposite-expected.checksum: Added.
+        * platform/mac/svg/filters/feComposite-expected.png: Added.
+        * platform/mac/svg/filters/feComposite-expected.txt: Added.
+        * svg/filters/feComposite.svg: Added.
+
 2009-09-29  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by David Kilzer.
