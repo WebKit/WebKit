@@ -1,4 +1,4 @@
 Test for Bug 9537 REGRESSION: Reproducible crash in WebCore::RenderTextField::textWithHardLineBreaks()
-http://bugzilla.opendarwin.org/show_bug.cgi?id=9537
+https://bugs.webkit.org/show_bug.cgi?id=9537
  
 Success

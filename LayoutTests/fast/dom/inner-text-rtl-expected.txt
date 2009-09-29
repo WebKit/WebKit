@@ -1,4 +1,4 @@
-This is a test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6029 plainText() returns a partial result when the node contains RTL text.
+This is a test for https://bugs.webkit.org/show_bug.cgi?id=6029 plainText() returns a partial result when the node contains RTL text.
 
 The following lines should be identical.
 

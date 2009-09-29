@@ -1,6 +1,6 @@
 This tests:
 Bug 9954 REGRESSION: document.dir should return empty string in <head>
-http://bugzilla.opendarwin.org/show_bug.cgi?id=9954
+https://bugs.webkit.org/show_bug.cgi?id=9954
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 

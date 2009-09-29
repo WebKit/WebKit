@@ -1,3 +1,121 @@
+2009-09-29  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by David Kilzer.
+
+        Change remaining references in tests from bugzilla.opendarwin.org to bugs.webkit.org
+        https://bugs.webkit.org/show_bug.cgi?id=12140
+
+        Change the URLs in dumpAsText tests.
+
+        * editing/deleting/delete-all-text-in-text-field-assertion-expected.txt:
+        * editing/deleting/delete-all-text-in-text-field-assertion.html:
+        * fast/dom/Document/doc-open-while-parsing.html:
+        * fast/dom/Document/document-reopen.html:
+        * fast/dom/Element/setAttribute-case-insensitivity.html:
+        * fast/dom/HTMLHeadElement/head-check.html:
+        * fast/dom/HTMLImageElement/image-without-renderer-width-expected.txt:
+        * fast/dom/HTMLImageElement/image-without-renderer-width.html:
+        * fast/dom/HTMLScriptElement/script-load-events-expected.txt:
+        * fast/dom/HTMLScriptElement/script-load-events.html:
+        * fast/dom/clone-node-form-elements-with-attr.html:
+        * fast/dom/document-dir-property-expected.txt:
+        * fast/dom/document-dir-property.html:
+        * fast/dom/everything-to-string.html:
+        * fast/dom/generic-form-element-assert-expected.txt:
+        * fast/dom/generic-form-element-assert.html:
+        * fast/dom/inner-text-rtl-expected.txt:
+        * fast/dom/inner-text-rtl.html:
+        * fast/dom/navigator-vendorSub.html:
+        * fast/dom/option-properties-expected.txt:
+        * fast/dom/option-properties.html:
+        * fast/dom/replace-child-siblings-expected.txt:
+        * fast/dom/replace-child-siblings.html:
+        * fast/dom/replace-first-child.html:
+        * fast/dom/setAttribute-using-initial-input-value.html:
+        * fast/dom/space-to-text.html:
+        * fast/dynamic/hovered-detach-expected.txt:
+        * fast/dynamic/hovered-detach.html:
+        * fast/encoding/charset-koi8-u.html:
+        * fast/encoding/css-charset-dom.html:
+        * fast/encoding/css-charset-evil.html:
+        * fast/encoding/css-charset.html:
+        * fast/encoding/latin1-winlatin.html:
+        * fast/encoding/mispositioned-meta.html:
+        * fast/encoding/percent-escaping.html:
+        * fast/encoding/pseudo-xml-2.html:
+        * fast/encoding/pseudo-xml-3.html:
+        * fast/encoding/pseudo-xml-4.html:
+        * fast/encoding/pseudo-xml.html:
+        * fast/events/init-event-null-view.html:
+        * fast/events/mouseover-mouseout.html:
+        * fast/events/mouseover-mouseout2.html:
+        * fast/events/onload-webkit-before-webcore.html:
+        * fast/forms/button-in-forms-collection.html:
+        * fast/forms/document-write.html:
+        * fast/forms/domstring-replace-crash-expected.txt:
+        * fast/forms/domstring-replace-crash.html:
+        * fast/forms/element-by-name.html:
+        * fast/forms/empty-get.html:
+        * fast/forms/form-data-encoding-normalization-overrun.html:
+        * fast/forms/radio-button-no-change-event.html:
+        * fast/forms/selected-index-assert-expected.txt:
+        * fast/forms/selected-index-assert.html:
+        * fast/forms/textarea-hard-linewrap-empty-expected.txt:
+        * fast/forms/textarea-hard-linewrap-empty.html:
+        * fast/forms/textfield-focus-out-expected.txt:
+        * fast/forms/textfield-focus-out.html:
+        * fast/frames/empty-frame-document-expected.txt:
+        * fast/frames/empty-frame-document.html:
+        * fast/frames/frame-name-reset.html:
+        * fast/frames/frame-set-same-location.html:
+        * fast/frames/frame-set-same-src.html:
+        * fast/frames/frameElement-widthheight.html:
+        * fast/frames/iframe-name-and-id-expected.txt:
+        * fast/frames/iframe-name-and-id.html:
+        * fast/frames/iframe-set-same-location.html:
+        * fast/frames/iframe-set-same-src.html:
+        * fast/frames/repaint-display-none-crash-expected.txt:
+        * fast/frames/repaint-display-none-crash.html:
+        * fast/js/exception-linenums-in-html-2.html:
+        * fast/js/missing-title-end-tag-js.html:
+        * fast/loader/link-no-URL.html:
+        * fast/loader/url-strip-cr-lf-tab.html:
+        * fast/overflow/generated-content-crash-expected.txt:
+        * fast/overflow/generated-content-crash.html:
+        * fast/parser/number-sign-in-map-name.html:
+        * fast/parser/remove-current-node-parent.html:
+        * fast/parser/script-after-frameset-assert.html:
+        * fast/tokenizer/image-empty-crash-expected.txt:
+        * fast/tokenizer/image-empty-crash.html:
+        * fast/tokenizer/nested-cached-scripts-expected.txt:
+        * fast/tokenizer/nested-cached-scripts.html:
+        * fast/tokenizer/write-unclosed-script-expected.txt:
+        * fast/tokenizer/write-unclosed-script.html:
+        * fast/xsl/transformToFragment-XML-declaration.html:
+        * http/tests/misc/text-refresh.html:
+        * http/tests/plugins/npapi-response-headers.html:
+        * http/tests/uri/utf8-path.html:
+        * http/tests/xmlhttprequest/cache-override.html:
+        * http/tests/xmlhttprequest/event-listener-gc-expected.txt:
+        * http/tests/xmlhttprequest/event-listener-gc.html:
+        * http/tests/xmlhttprequest/event-target.html:
+        * http/tests/xmlhttprequest/frame-load-cancelled-abort.html:
+        * http/tests/xmlhttprequest/interactive-state.html:
+        * http/tests/xmlhttprequest/methods-async.html:
+        * http/tests/xmlhttprequest/methods-lower-case.html:
+        * http/tests/xmlhttprequest/methods.html:
+        * http/tests/xmlhttprequest/post-content-type.html:
+        * http/tests/xmlhttprequest/readystatechange.html:
+        * http/tests/xmlhttprequest/supported-xml-content-types.html:
+        * http/tests/xmlhttprequest/xhr-onunload.html:
+        * http/tests/xmlhttprequest/zero-length-response.html:
+        * platform/mac/fast/events/objc-event-api.html:
+        * platform/mac/fast/events/objc-keyboard-event-creation.html:
+        * plugins/get-empty-url.html:
+        * plugins/geturl-replace-query.html:
+        * plugins/invoke.html:
+        * plugins/mouse-events.html:
+
 2009-09-29  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Eric Seidel.

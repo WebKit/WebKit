@@ -1,6 +1,6 @@
 Tests: getting and setting frames[x].name on an iFrame
 
-Related bug: rdar://problem/4170960 http://bugzilla.opendarwin.org/show_bug.cgi?id=3952 iFrame name and id information incorrectly returned
+Related bug: rdar://problem/4170960 https://bugs.webkit.org/show_bug.cgi?id=3952 iFrame name and id information incorrectly returned
 
 
 frames[0].name (should be frame0_name): frame0_name

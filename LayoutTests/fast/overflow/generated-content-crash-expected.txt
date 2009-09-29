@@ -1,4 +1,4 @@
-Test case for http://bugzilla.opendarwin.org/show_bug.cgi?id=10198 REGRESSION: WebKit r15750 crashes while loading anthem.com.
+Test case for https://bugs.webkit.org/show_bug.cgi?id=10198 REGRESSION: WebKit r15750 crashes while loading anthem.com.
 
 No crash means test PASS.
 

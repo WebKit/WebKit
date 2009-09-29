@@ -9,15 +9,15 @@ function mainFunc() {
     if (window.layoutTestController)
         layoutTestController.dumpAsText();
 
-	document.open();
-	document.write("will not be visible<br>");
-	document.close();
+        document.open();
+        document.write("will not be visible<br>");
+        document.close();
 
-	for (i = 0; i < 5; i++) {
+        for (i = 0; i < 5; i++) {
 
-		document.open();
-		document.write("There should be only one line of text here. <a href=\'http://bugzilla.opendarwin.org/show_bug.cgi?id=4395\'>Bug 4395</a><br>");
-	}
+                document.open();
+                document.write("There should be only one line of text here. <a href=\'https://bugs.webkit.org/show_bug.cgi?id=4395\'>Bug 4395</a><br>");
+        }
 }
 </script>
 </body>
