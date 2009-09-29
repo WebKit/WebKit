@@ -128,7 +128,7 @@ GdkPixbuf* BitmapImage::getGdkPixbuf()
      * if this machine is little-endian.
      */
     for (int y = 0; y < height; y++) {
-        for (int x = 0; x < height; x++) {
+        for (int x = 0; x < width; x++) {
             unsigned char* source = getCairoSurfacePixel(surfaceData, x, y, surfaceRowStride);
             guchar* dest = getGdkPixbufPixel(pixbufData, x, y, pixbufRowStride);
 

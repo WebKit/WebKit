@@ -1,3 +1,20 @@
+2009-09-22  Martin Robinson  <martin.james.robinson@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        Fix corruption for non-square images.
+
+        [GTK] REGRESSION: BitmapImage::getGdkPixbuf fails for non-square images
+        https://bugs.webkit.org/show_bug.cgi?id=29654
+
+        Added an additional manual-test for this issue to the existing Gtk
+        cursor image test.
+
+        * manual-tests/gtk/cursor-image.html:
+        * manual-tests/gtk/resources/long_cell.cur: Added.
+        * platform/graphics/gtk/ImageGtk.cpp:
+        (WebCore::BitmapImage::getGdkPixbuf):
+
 2009-09-29  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Timothy Hatcher.
