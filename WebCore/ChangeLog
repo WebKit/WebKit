@@ -1,3 +1,17 @@
+2009-09-29  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [V8] Correct an issue with XMLHttpRequest attribute event listeners never being cleared.
+        https://bugs.webkit.org/show_bug.cgi?id=29888
+
+        Test: LayoutTests/http/tests/xmlhttprequest/xmlhttprequest-abort-readyState-shouldDispatchEvent.html
+
+        * bindings/v8/custom/V8XMLHttpRequestCustom.cpp:
+        (WebCore::getEventListener): Added isAttribute parameter.
+        (WebCore::ACCESSOR_SETTER): Made all event listener setters create attribute listeners.
+        (WebCore::CALLBACK_FUNC_DECL): Made addEventListener create object listener.
+
 2009-09-22  Martin Robinson  <martin.james.robinson@gmail.com>
 
         Reviewed by Eric Seidel.
