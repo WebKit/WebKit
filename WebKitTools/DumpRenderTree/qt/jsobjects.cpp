@@ -498,6 +498,14 @@ void EventSender::keyDown(const QString &string, const QStringList &modifiers)
     QApplication::sendEvent(m_page, &event);
 }
 
+void EventSender::contextClick()
+{
+    QMouseEvent event(QEvent::MouseButtonPress, m_mousePos, Qt::RightButton, Qt::RightButton, Qt::NoModifier);
+    QApplication::sendEvent(m_page, &event);
+    QMouseEvent event2(QEvent::MouseButtonRelease, m_mousePos, Qt::RightButton, Qt::RightButton, Qt::NoModifier);
+    QApplication::sendEvent(m_page, &event2);
+}
+
 QWebFrame* EventSender::frameUnderMouse() const
 {
     QWebFrame* frame = m_page->mainFrame();

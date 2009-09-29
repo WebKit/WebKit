@@ -143,6 +143,7 @@ public slots:
     void leapForward(int ms);
     void keyDown(const QString &string, const QStringList &modifiers=QStringList());
     void clearKillRing() {}
+    void contextClick();
 
 private:
     QPoint m_mousePos;

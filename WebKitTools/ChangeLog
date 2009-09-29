@@ -1,3 +1,14 @@
+2009-09-29  Jakub Wieczorek  <faw217@gmail.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Implement eventSender.contextClick().
+        https://bugs.webkit.org/show_bug.cgi?id=29821
+
+        * DumpRenderTree/qt/jsobjects.cpp:
+        (EventSender::contextClick):
+        * DumpRenderTree/qt/jsobjects.h:
+
 2009-09-28  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Eric Seidel.
