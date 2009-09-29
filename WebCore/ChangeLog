@@ -1,3 +1,15 @@
+2009-09-29  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Rubberstamped by David Hyatt.
+
+        Fix to logic of earlier commit 48902.
+
+        When merging two if's before committing, I forgot to invert the
+        bool check.
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::ignoreHttpError):
+
 2009-09-29  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed, build fix.

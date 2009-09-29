@@ -212,7 +212,7 @@ static bool ignoreHttpError(QNetworkReply* reply, bool receivedData)
     if (httpStatusCode == 401 || httpStatusCode == 407)
         return true;
 
-    if (!receivedData && (httpStatusCode >= 400 && httpStatusCode < 600))
+    if (receivedData && (httpStatusCode >= 400 && httpStatusCode < 600))
         return true;
 
     return false;
