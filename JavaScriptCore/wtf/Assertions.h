@@ -50,6 +50,11 @@
 #include <inttypes.h>
 #endif
 
+#if PLATFORM(SYMBIAN)
+#include <e32def.h>
+#include <e32debug.h>
+#endif
+
 #ifdef NDEBUG
 #define ASSERTIONS_DISABLED_DEFAULT 1
 #else
@@ -120,10 +125,17 @@ void WTFLogVerbose(const char* file, int line, const char* function, WTFLogChann
 /* CRASH -- gets us into the debugger or the crash reporter -- signals are ignored by the crash reporter so we must do better */
 
 #ifndef CRASH
+#if PLATFORM(SYMBIAN)
+#define CRASH() do { \
+    __DEBUGGER(); \
+    User::Panic(_L("Webkit CRASH"),0); \
+    while(false)
+#else
 #define CRASH() do { \
     *(int *)(uintptr_t)0xbbadbeef = 0; \
     ((void(*)())0)(); /* More reliable, but doesn't say BBADBEEF */ \
 } while(false)
+#endif
 #endif
 
 /* ASSERT, ASSERT_WITH_MESSAGE, ASSERT_NOT_REACHED */

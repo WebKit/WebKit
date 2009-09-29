@@ -1,3 +1,16 @@
+2009-09-29  Janne Koskinen  <janne.p.koskinen@digia.com>
+
+        Reviewed by Darin Adler.
+
+        [Qt] Symbian CRASH macro implementation
+
+        Added Symbian specific crash macro that
+        stops to crash line if JIT debugging is used.
+        Additional differentiation of access violation
+        (KERN-EXEC 3) and CRASH panic.
+
+        * wtf/Assertions.h:
+
 2009-09-28  Mark Rowe  <mrowe@apple.com>
 
         Fix the PowerPC build.
