@@ -1,5 +1,22 @@
 2009-09-29  Xan Lopez  <xlopez@igalia.com>
 
+        Reviewed by Gustavo Noronha.
+
+        Do not set a non-default parent window for child widgets. We are
+        just doing the same than the default path does, and on top of that
+        if the widget's window changes (for example, during DnD widgets
+        are usually unrealized/realized) the child widget will we left
+        pointing to a dead window.
+
+        For examples of crashers caused by this see
+        https://bugzilla.gnome.org/show_bug.cgi?id=596397 and
+        https://bugzilla.gnome.org/show_bug.cgi?id=596398
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_container_add):
+
+2009-09-29  Xan Lopez  <xlopez@igalia.com>
+
         Rubber-stamped by Eric Seidel.
 
         [Gtk] Crash when saving a password

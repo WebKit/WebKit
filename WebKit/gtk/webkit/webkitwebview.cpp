@@ -713,8 +713,6 @@ static void webkit_web_view_container_add(GtkContainer* container, GtkWidget* wi
     WebKitWebViewPrivate* priv = webView->priv;
 
     priv->children.add(widget);
-    if (GTK_WIDGET_REALIZED(container))
-        gtk_widget_set_parent_window(widget, GTK_WIDGET(webView)->window);
     gtk_widget_set_parent(widget, GTK_WIDGET(container));
 }
 
