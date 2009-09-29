@@ -1,3 +1,26 @@
+2009-09-29  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28902
+        
+        Fixes an issue where the drop effect returned by Window Dump Render Tree 
+        was always DROPEFFECT_NONE (since it was hard coded to do so).
+        
+        This patch corrects this issue by determining the actual drop effect 
+        performed by the corresponding drag-and-drop operation so that we can 
+        return it.
+
+        * DumpRenderTree/win/DraggingInfo.h: Added field m_dropEffect to store performed drop effect.
+        (DraggingInfo::DraggingInfo):
+        (DraggingInfo::performedDropEffect): Added method.
+        (DraggingInfo::setPerformedDropEffect): Added method.
+        * DumpRenderTree/win/EventSender.cpp:
+        (doMouseUp): Calls method DraggingInfo::setPerformedDropEffect with performed drop effect.
+        Moved delete draggingInfo to UIDelegate::doDragDrop.
+        * DumpRenderTree/win/UIDelegate.cpp:
+        (UIDelegate::doDragDrop): Sets performedDropEffect to DraggingInfo::performedDropEffect().
+
 2009-09-29  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adam Roben.

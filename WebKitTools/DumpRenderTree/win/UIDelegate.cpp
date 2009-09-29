@@ -503,6 +503,11 @@ HRESULT STDMETHODCALLTYPE UIDelegate::doDragDrop(
 
     draggingInfo = new DraggingInfo(object, source);
     replaySavedEvents();
+    if (draggingInfo) {
+        *performedEffect = draggingInfo->performedDropEffect();
+        delete draggingInfo;
+        draggingInfo = 0;
+    }
     return S_OK;
 }
 
