@@ -269,6 +269,17 @@
 
         Reviewed by Simon Hausmann.
 
+        Don't rely on QNetworkReply::NetworkError codes, but
+        on HTTP error codes instead.
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::ignoreHttpError):
+        (WebCore::QNetworkReplyHandler::finish):
+
+2009-09-29  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
         Use const references when using Qt's foreach.
 
         * platform/network/qt/QNetworkReplyHandler.cpp:

@@ -205,6 +205,19 @@ QNetworkReply* QNetworkReplyHandler::release()
     return reply;
 }
 
+static bool ignoreHttpError(QNetworkReply* reply, bool receivedData)
+{
+    int httpStatusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+
+    if (httpStatusCode == 401 || httpStatusCode == 407)
+        return true;
+
+    if (!receivedData && (httpStatusCode >= 400 && httpStatusCode < 600))
+        return true;
+
+    return false;
+}
+
 void QNetworkReplyHandler::finish()
 {
     m_shouldFinish = (m_loadMode != LoadNormal);
@@ -227,19 +240,12 @@ void QNetworkReplyHandler::finish()
     if (m_redirected) {
         resetState();
         start();
-    } else if (m_reply->error() != QNetworkReply::NoError
-               // a web page that returns 401/403/404 can still have content
-               && ((m_reply->error() != QNetworkReply::ContentOperationNotPermittedError
-                 && m_reply->error() != QNetworkReply::ContentAccessDenied  // 401
-                 && m_reply->error() != QNetworkReply::ContentNotFoundError // 404
-                 && m_reply->error() != QNetworkReply::UnknownContentError)
-                 // If the web page sent content, let's give it to the user.
-                 || !m_responseDataSent)
-               && m_reply->error() != QNetworkReply::AuthenticationRequiredError
-               && m_reply->error() != QNetworkReply::ProxyAuthenticationRequiredError) {
-        QUrl url = m_reply->url();
-
+    } else if (!m_reply->error() || ignoreHttpError(m_reply, m_responseDataSent)) {
+        client->didFinishLoading(m_resourceHandle);
+    } else {
         int code = m_reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+
+        QUrl url = m_reply->url();
 
         if (code) {
             ResourceError error("HTTP", code, url.toString(), m_reply->attribute(QNetworkRequest::HttpReasonPhraseAttribute).toString());
@@ -248,9 +254,8 @@ void QNetworkReplyHandler::finish()
             ResourceError error("QtNetwork", m_reply->error(), url.toString(), m_reply->errorString());
             client->didFail(m_resourceHandle, error);
         }
-    } else {
-        client->didFinishLoading(m_resourceHandle);
     }
+
     oldReply->deleteLater();
     if (oldReply == m_reply)
         m_reply = 0;
