@@ -1,15 +1,15 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x143
-  RenderBlock {HTML} at (0,0) size 800x143
-    RenderBody {BODY} at (8,13) size 784x120
-      RenderBlock {P} at (0,0) size 784x17
-        RenderText {#text} at (0,0) size 272x17
-          text run at (0,0) width 272: "The two boxes below should be the same size."
-      RenderBlock {DIV} at (0,30) size 784x90 [color=#000080]
-        RenderBlock {P} at (30,0) size 724x40
-          RenderText {#text} at (0,0) size 39x40
-            text run at (0,0) width 39: "x"
-        RenderBlock {P} at (30,50) size 724x40
-          RenderText {#text} at (0,0) size 39x40
-            text run at (0,0) width 39: "x"
+layer at (0,0) size 800x171
+  RenderBlock {HTML} at (0,0) size 800x171
+    RenderBody {BODY} at (8,16) size 784x145
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 331x21
+          text run at (0,0) width 331: "The two boxes below should be the same size."
+      RenderBlock {DIV} at (0,37) size 784x108 [color=#000080]
+        RenderBlock {P} at (30,0) size 724x49
+          RenderText {#text} at (0,0) size 48x49
+            text run at (0,0) width 48: "x"
+        RenderBlock {P} at (30,59) size 724x49
+          RenderText {#text} at (0,0) size 48x49
+            text run at (0,0) width 48: "x"

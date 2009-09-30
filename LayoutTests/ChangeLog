@@ -1,3 +1,21 @@
+2009-09-30  Renata Hodovan  <hodovan.renata@stud.u-szeged.hu>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Update Skipped after #48873 and some expected files, whose
+        problems are the same (default font size reconciliation
+        16px/13px), but the previous update didn't contain them.
+
+        * platform/qt/Skipped:
+        * platform/qt/css2.1/t040103-ident-04-c-expected.txt:
+        * platform/qt/css2.1/t0402-c71-fwd-parsing-00-f-expected.txt:
+        * platform/qt/css2.1/t040304-c64-uri-00-a-g-expected.txt:
+        * platform/qt/css2.1/t040306-syntax-01-f-expected.txt:
+        * platform/qt/css2.1/t1202-counter-05-b-expected.txt:
+        * platform/qt/css2.1/t140201-c535-bg-fixd-00-b-g-expected.txt:
+        * platform/qt/css2.1/t1507-c526-font-sz-03-f-a-expected.txt:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-00-d-expected.txt:
+
 2009-09-30  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by David Levin.

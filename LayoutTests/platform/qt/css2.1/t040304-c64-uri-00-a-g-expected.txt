@@ -1,17 +1,17 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x133
-  RenderBlock {HTML} at (0,0) size 800x133
-    RenderBody {BODY} at (8,13) size 784x107
-      RenderBlock {P} at (0,0) size 784x17
-        RenderText {#text} at (0,0) size 234x17
-          text run at (0,0) width 234: "There should be three green lines below."
-      RenderBlock {P} at (0,30) size 784x17 [color=#FFFFFF] [bgcolor=#FF0000]
-        RenderText {#text} at (0,0) size 149x17
-          text run at (0,0) width 149: "This line should be green."
-      RenderBlock {P} at (0,60) size 784x17 [color=#FFFFFF] [bgcolor=#FF0000]
-        RenderText {#text} at (0,0) size 149x17
-          text run at (0,0) width 149: "This line should be green."
-      RenderBlock {P} at (0,90) size 784x17 [color=#FFFFFF] [bgcolor=#FF0000]
-        RenderText {#text} at (0,0) size 149x17
-          text run at (0,0) width 149: "This line should be green."
+layer at (0,0) size 800x164
+  RenderBlock {HTML} at (0,0) size 800x164
+    RenderBody {BODY} at (8,16) size 784x132
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 290x21
+          text run at (0,0) width 290: "There should be three green lines below."
+      RenderBlock {P} at (0,37) size 784x21 [color=#FFFFFF] [bgcolor=#FF0000]
+        RenderText {#text} at (0,0) size 184x21
+          text run at (0,0) width 184: "This line should be green."
+      RenderBlock {P} at (0,74) size 784x21 [color=#FFFFFF] [bgcolor=#FF0000]
+        RenderText {#text} at (0,0) size 184x21
+          text run at (0,0) width 184: "This line should be green."
+      RenderBlock {P} at (0,111) size 784x21 [color=#FFFFFF] [bgcolor=#FF0000]
+        RenderText {#text} at (0,0) size 184x21
+          text run at (0,0) width 184: "This line should be green."
