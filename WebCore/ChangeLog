@@ -1,3 +1,14 @@
+2009-09-30  Chris Hawk  <hawk@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Fix for conditionals in the WebCore gyp file, which contained two separate
+        'conditions' values for the webcore target. The first entry was ignored,
+        resulting in some missine defines.
+        https://bugs.webkit.org/show_bug.cgi?id=29907
+
+        * WebCore.gyp/WebCore.gyp:
+
 2009-09-21  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Adam Barth.

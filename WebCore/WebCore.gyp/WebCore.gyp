@@ -159,54 +159,6 @@
       'defines': [
         'WEBCORE_NAVIGATOR_VENDOR="Google Inc."', 
       ],
-      'conditions': [
-        ['OS=="linux"', {
-          'defines': [
-            # Mozilla on Linux effectively uses uname -sm, but when running
-            # 32-bit x86 code on an x86_64 processor, it uses
-            # "Linux i686 (x86_64)".  Matching that would require making a
-            # run-time determination.
-            'WEBCORE_NAVIGATOR_PLATFORM="Linux i686"',
-          ],
-        }],
-        ['OS=="mac"', {
-          'defines': [
-            # Match Safari and Mozilla on Mac x86.
-            'WEBCORE_NAVIGATOR_PLATFORM="MacIntel"',
-
-            # Chromium's version of WebCore includes the following Objective-C
-            # classes. The system-provided WebCore framework may also provide
-            # these classes. Because of the nature of Objective-C binding
-            # (dynamically at runtime), it's possible for the Chromium-provided
-            # versions to interfere with the system-provided versions.  This may
-            # happen when a system framework attempts to use WebCore.framework,
-            # such as when converting an HTML-flavored string to an
-            # NSAttributedString.  The solution is to force Objective-C class
-            # names that would conflict to use alternate names.
-
-            # FIXME: This list will hopefully shrink but may also grow.
-            # Periodically run:
-            # nm libwebcore.a | grep -E '[atsATS] ([+-]\[|\.objc_class_name)'
-            # and make sure that everything listed there has the alternate
-            # ChromiumWebCoreObjC name, and that nothing extraneous is listed
-            # here. If all Objective-C can be eliminated from Chromium's WebCore
-            # library, these defines should be removed entirely.
-            'ScrollbarPrefsObserver=ChromiumWebCoreObjCScrollbarPrefsObserver',
-            'WebCoreRenderThemeNotificationObserver=ChromiumWebCoreObjCWebCoreRenderThemeNotificationObserver',
-            'WebFontCache=ChromiumWebCoreObjCWebFontCache',
-          ],
-        }],
-        ['OS=="win"', {
-          'defines': [
-            # Match Safari and Mozilla on Windows.
-            'WEBCORE_NAVIGATOR_PLATFORM="Win32"',
-          ],
-          'dependencies': [
-            # Needed on windows for some actions and rules
-            '<(chromium_src_dir)/build/win/system.gyp:cygwin'
-          ],
-        }],
-      ], 
       'actions': [
         # Actions to build derived sources.
         {
@@ -640,7 +592,41 @@
             '-fno-strict-aliasing',
           ],
         }],
+        ['OS=="linux"', {
+          'defines': [
+            # Mozilla on Linux effectively uses uname -sm, but when running
+            # 32-bit x86 code on an x86_64 processor, it uses
+            # "Linux i686 (x86_64)".  Matching that would require making a
+            # run-time determination.
+            'WEBCORE_NAVIGATOR_PLATFORM="Linux i686"',
+          ],
+        }],
         ['OS=="mac"', {
+          'defines': [
+            # Match Safari and Mozilla on Mac x86.
+            'WEBCORE_NAVIGATOR_PLATFORM="MacIntel"',
+
+            # Chromium's version of WebCore includes the following Objective-C
+            # classes. The system-provided WebCore framework may also provide
+            # these classes. Because of the nature of Objective-C binding
+            # (dynamically at runtime), it's possible for the Chromium-provided
+            # versions to interfere with the system-provided versions.  This may
+            # happen when a system framework attempts to use WebCore.framework,
+            # such as when converting an HTML-flavored string to an
+            # NSAttributedString.  The solution is to force Objective-C class
+            # names that would conflict to use alternate names.
+
+            # FIXME: This list will hopefully shrink but may also grow.
+            # Periodically run:
+            # nm libwebcore.a | grep -E '[atsATS] ([+-]\[|\.objc_class_name)'
+            # and make sure that everything listed there has the alternate
+            # ChromiumWebCoreObjC name, and that nothing extraneous is listed
+            # here. If all Objective-C can be eliminated from Chromium's WebCore
+            # library, these defines should be removed entirely.
+            'ScrollbarPrefsObserver=ChromiumWebCoreObjCScrollbarPrefsObserver',
+            'WebCoreRenderThemeNotificationObserver=ChromiumWebCoreObjCWebCoreRenderThemeNotificationObserver',
+            'WebFontCache=ChromiumWebCoreObjCWebFontCache',
+          ],
           'actions': [
             {
               # Allow framework-style #include of
@@ -773,6 +759,8 @@
             ['include', '/SkiaFontWin\\.cpp$'],
           ],
           'defines': [
+            # Match Safari and Mozilla on Windows.
+            'WEBCORE_NAVIGATOR_PLATFORM="Win32"',
             '__PRETTY_FUNCTION__=__FUNCTION__',
           ],
           # This is needed because Event.h in this directory is blocked
