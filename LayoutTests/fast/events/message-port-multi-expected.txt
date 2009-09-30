@@ -9,9 +9,6 @@ PASS channel.port1.postMessage("null port", [channel3.port1, null, channel3.port
 PASS channel.port1.postMessage("notAPort", [channel3.port1, {}, channel3.port2]) threw exception TypeError: Type error.
 PASS channel.port1.postMessage("notAnArray", channel3.port1) threw exception TypeError: Type error.
 PASS channel.port1.postMessage("notASequence", [{length: 3}]) threw exception TypeError: Type error.
-PASS successfullyParsed is true
-
-TEST COMPLETE
 PASS event.ports is null when no port sent
 PASS event.ports is null when empty array sent
 PASS event.ports contains two ports when two ports sent

@@ -1,5 +1,20 @@
 2009-09-30  Shinichiro Hamaji  <hamaji@chromium.org>
 
+        Reviewed by David Levin.
+
+        Move message-port-multi.js from resources to script-tests
+        https://bugs.webkit.org/show_bug.cgi?id=29798
+
+        Revert r48823. message-port-multi.js needs custom HTML.
+
+        * fast/events/message-port-multi-expected.txt:
+        * fast/events/message-port-multi.html:
+        * fast/events/resources/message-port-multi.js: Added.
+        (channel.port2.onmessage):
+        * fast/events/script-tests/message-port-multi.js: Removed.
+
+2009-09-30  Shinichiro Hamaji  <hamaji@chromium.org>
+
         Reviewed by David Kilzer.
 
         Change remaining references in tests from bugzilla.opendarwin.org to bugs.webkit.org
