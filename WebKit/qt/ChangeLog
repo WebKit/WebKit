@@ -1,3 +1,14 @@
+2009-09-30  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by David Hyatt.
+
+        Add the failed URL to the ErrorPageExtension, as it is quite
+        useful for creating error pages.
+
+        * Api/qwebpage.h:
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::callErrorPageExtension):
+
 2009-09-29  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
 
         Reviewed by Tor Arne Vestbø.

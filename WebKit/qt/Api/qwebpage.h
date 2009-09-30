@@ -288,6 +288,7 @@ public:
     enum ErrorDomain { QtNetwork, Http, WebKit };
     class ErrorPageExtensionOption : public ExtensionOption {
     public:
+        QUrl url;
         ErrorDomain domain;
         int error;
         QString errorString;

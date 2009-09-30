@@ -877,6 +877,7 @@ void FrameLoaderClientQt::callErrorPageExtension(const WebCore::ResourceError& e
         else
             return;
 
+        option.url = QUrl(error.failingURL());
         option.error = error.errorCode();
         option.errorString = error.localizedDescription();
 
@@ -885,7 +886,7 @@ void FrameLoaderClientQt::callErrorPageExtension(const WebCore::ResourceError& e
             return;
 
         KURL baseUrl(output.baseUrl);
-        KURL failingUrl(QUrl(error.failingURL()));
+        KURL failingUrl(option.url);
 
         WebCore::ResourceRequest request(baseUrl);
         WTF::RefPtr<WebCore::SharedBuffer> buffer = WebCore::SharedBuffer::create(output.content.constData(), output.content.length());
