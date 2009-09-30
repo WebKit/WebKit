@@ -1528,15 +1528,15 @@ bool EventHandler::updateDragAndDrop(const PlatformMouseEvent& event, Clipboard*
         // it is sometimes incorrect when dragging within subframes, as seen with
         // LayoutTests/fast/events/drag-in-frames.html.
         if (newTarget) {
-            if (newTarget->hasTagName(frameTag) || newTarget->hasTagName(iframeTag))
-                accept = static_cast<HTMLFrameElementBase*>(newTarget)->contentFrame()->eventHandler()->updateDragAndDrop(event, clipboard);
+            Frame* frame = (newTarget->hasTagName(frameTag) || newTarget->hasTagName(iframeTag)) ? static_cast<HTMLFrameElementBase*>(newTarget)->contentFrame() : 0;
+            if (frame)
+                accept = frame->eventHandler()->updateDragAndDrop(event, clipboard);
             else
                 accept = dispatchDragEvent(eventNames().dragenterEvent, newTarget, event, clipboard);
         }
 
         if (m_dragTarget) {
-            Frame* frame = (m_dragTarget->hasTagName(frameTag) || m_dragTarget->hasTagName(iframeTag)) 
-                            ? static_cast<HTMLFrameElementBase*>(m_dragTarget.get())->contentFrame() : 0;
+            Frame* frame = (m_dragTarget->hasTagName(frameTag) || m_dragTarget->hasTagName(iframeTag)) ? static_cast<HTMLFrameElementBase*>(m_dragTarget.get())->contentFrame() : 0;
             if (frame)
                 accept = frame->eventHandler()->updateDragAndDrop(event, clipboard);
             else
@@ -1544,8 +1544,9 @@ bool EventHandler::updateDragAndDrop(const PlatformMouseEvent& event, Clipboard*
         }
     } else {
         if (newTarget) {
-            if (newTarget->hasTagName(frameTag) || newTarget->hasTagName(iframeTag))
-                accept = static_cast<HTMLFrameElementBase*>(newTarget)->contentFrame()->eventHandler()->updateDragAndDrop(event, clipboard);
+            Frame* frame = (newTarget->hasTagName(frameTag) || newTarget->hasTagName(iframeTag)) ? static_cast<HTMLFrameElementBase*>(newTarget)->contentFrame() : 0;
+            if (frame)
+                accept = frame->eventHandler()->updateDragAndDrop(event, clipboard);
             else
                 accept = dispatchDragEvent(eventNames().dragoverEvent, newTarget, event, clipboard);
         }

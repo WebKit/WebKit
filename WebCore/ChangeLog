@@ -1,3 +1,15 @@
+2009-09-30  Jian Li  <jianli@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Need to check NULL frame in EventHandler::updateDragAndDrop.
+        https://bugs.webkit.org/show_bug.cgi?id=29929
+
+        Test: http/tests/misc/drag-over-iframe-invalid-source-crash.html
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::updateDragAndDrop):
+
 2009-09-29  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
