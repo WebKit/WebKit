@@ -139,6 +139,20 @@ typedef enum {
 */    
 - (id)scriptDebugDelegate;
 
+/*!
+    @method setHistoryDelegate:
+    @abstract Set the WebView's WebHistoryDelegate delegate.
+    @param delegate The WebHistoryDelegate to set as the delegate.
+*/    
+- (void)setHistoryDelegate:(id)delegate;
+
+/*!
+    @method historyDelegate
+    @abstract Return the WebView's WebHistoryDelegate delegate.
+    @result The WebView's WebHistoryDelegate delegate.
+*/    
+- (id)historyDelegate;
+
 - (BOOL)shouldClose;
 
 /*!

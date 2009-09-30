@@ -1,3 +1,43 @@
+2009-09-29  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by John Sullivan.
+
+        WebKit Mac API should provide a delegate interface for global history.
+        <rdar://problem/7042773> and https://webkit.org/b/29904
+
+        * WebView/WebHistoryDelegate.h: Added. New interface for WebKit clients to implement to manage 
+          their own global history store.
+
+        Object to store all of the bits of data relevant to a page visit:
+        * WebView/WebNavigationData.h: Added.
+        * WebView/WebNavigationData.mm: Added.
+        (-[WebNavigationDataPrivate dealloc]):
+        (-[WebNavigationData initWithURLString:title:originalRequest:response:hasSubstituteData:clientRedirectSource:]):
+        (-[WebNavigationData url]):
+        (-[WebNavigationData title]):
+        (-[WebNavigationData originalRequest]):
+        (-[WebNavigationData response]):
+        (-[WebNavigationData hasSubstituteData]):
+        (-[WebNavigationData clientRedirectSource]):
+        (-[WebNavigationData dealloc]):
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::updateGlobalHistory): If the delegate exists, don't use the built-in WebHistory.
+          If the implementation for this method exists, call it.
+        (WebFrameLoaderClient::updateGlobalHistoryRedirectLinks): Ditto
+
+        * WebView/WebDelegateImplementationCaching.h:
+        * WebView/WebDelegateImplementationCaching.mm:
+        (WebViewGetHistoryDelegateImplementations):
+        (CallHistoryDelegate):
+
+        * WebView/WebView.mm:
+        (-[WebView _cacheHistoryDelegateImplementations]):
+        (-[WebView setHistoryDelegate:]):
+        (-[WebView historyDelegate]):
+        * WebView/WebViewData.h:
+        * WebView/WebViewPrivate.h:
+
 2009-09-29  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Dimitri Glazkov.

@@ -81,9 +81,16 @@ struct WebScriptDebugDelegateImplementationCache {
     IMP exceptionWasRaisedFunc;
 };
 
+struct WebHistoryDelegateImplementationCache {
+    IMP navigatedFunc;
+    IMP clientRedirectFunc;
+    IMP serverRedirectFunc;
+};
+
 WebResourceDelegateImplementationCache* WebViewGetResourceLoadDelegateImplementations(WebView *);
 WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementations(WebView *);
 WebScriptDebugDelegateImplementationCache* WebViewGetScriptDebugDelegateImplementations(WebView *);
+WebHistoryDelegateImplementationCache* WebViewGetHistoryDelegateImplementations(WebView *webView);
 
 id CallFormDelegate(WebView *, SEL, id, id);
 id CallFormDelegate(WebView *self, SEL selector, id object1, id object2, id object3, id object4, id object5);
@@ -121,3 +128,6 @@ id CallScriptDebugDelegate(IMP, WebView *, SEL, id, id, NSInteger, id);
 id CallScriptDebugDelegate(IMP, WebView *, SEL, id, NSInteger, id, NSInteger, id);
 id CallScriptDebugDelegate(IMP, WebView *, SEL, id, NSInteger, id, id, id);
 id CallScriptDebugDelegate(IMP, WebView *, SEL, id, NSInteger, NSInteger, id);
+
+id CallHistoryDelegate(IMP, WebView *, SEL, id, id);
+id CallHistoryDelegate(IMP, WebView *, SEL, id, id, id);

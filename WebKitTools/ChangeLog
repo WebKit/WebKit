@@ -1,3 +1,29 @@
+2009-09-29  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by John Sullivan.
+
+        WebKit Mac API should provide a delegate interface for global history.
+        <rdar://problem/7042773> and https://webkit.org/b/29904
+
+        Adding the dumping of global history delegate callbacks.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+
+        Automatically dump history delegate callbacks for tests with "globalhistory/" in their URL:
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (createWebViewAndOffscreenWindow):
+        (allocateGlobalControllers):
+        (shouldLogFrameLoadDelegates):
+        (shouldLogHistoryDelegates):
+        (runTest):
+
+        Dump history delegate callbacks:
+        * DumpRenderTree/mac/HistoryDelegate.h: Added.
+        * DumpRenderTree/mac/HistoryDelegate.mm: Added.
+        (-[HistoryDelegate webView:didNavigateWithNavigationData:inFrame:]):
+        (-[HistoryDelegate webView:didPerformClientRedirectFromURL:toURL:inFrame:]):
+        (-[HistoryDelegate webView:didPerformServerRedirectFromURL:toURL:inFrame:]):
+
 2009-09-29  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Adam Roben.

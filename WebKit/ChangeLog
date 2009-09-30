@@ -1,3 +1,12 @@
+2009-09-29  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by John Sullivan.
+
+        WebKit Mac API should provide a delegate interface for global history.
+        <rdar://problem/7042773> and https://webkit.org/b/29904
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2009-09-28  Yaar Schnitman  <yaar@chromium.org>
 
         Reviewed by Dimitri Glazkov.

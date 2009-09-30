@@ -56,6 +56,7 @@
 #import "WebKitErrorsPrivate.h"
 #import "WebKitLogging.h"
 #import "WebKitNSStringExtras.h"
+#import "WebNavigationData.h"
 #import "WebNSURLExtras.h"
 #import "WebNetscapePluginView.h"
 #import "WebNetscapePluginPackage.h"
@@ -810,7 +811,26 @@ void WebFrameLoaderClient::finishedLoading(DocumentLoader* loader)
 
 void WebFrameLoaderClient::updateGlobalHistory()
 {
+    WebView* view = getWebView(m_webFrame.get());
     DocumentLoader* loader = core(m_webFrame.get())->loader()->documentLoader();
+
+    if ([view historyDelegate]) {
+        WebHistoryDelegateImplementationCache* implementations = WebViewGetHistoryDelegateImplementations(view);
+        if (implementations->navigatedFunc) {
+            WebNavigationData *data = [[WebNavigationData alloc] initWithURLString:loader->urlForHistory()
+                                                                             title:loader->title()
+                                                                   originalRequest:loader->originalRequestCopy().nsURLRequest()
+                                                                          response:loader->response().nsURLResponse()
+                                                                 hasSubstituteData:loader->substituteData().isValid()
+                                                              clientRedirectSource:loader->clientRedirectSourceForHistory()];
+
+            CallHistoryDelegate(implementations->navigatedFunc, view, @selector(webView:didNavigateWithNavigationData:inFrame:), data, m_webFrame.get());
+            [data release];
+        }
+    
+        return;
+    }
+
     [[WebHistory optionalSharedHistory] _visitedURL:loader->urlForHistory() 
                                           withTitle:loader->title()
                                              method:loader->originalRequestCopy().httpMethod()
@@ -820,16 +840,29 @@ void WebFrameLoaderClient::updateGlobalHistory()
 
 void WebFrameLoaderClient::updateGlobalHistoryRedirectLinks()
 {
+    WebView* view = getWebView(m_webFrame.get());
+    WebHistoryDelegateImplementationCache* implementations = [view historyDelegate] ? WebViewGetHistoryDelegateImplementations(view) : 0;
+    
     DocumentLoader* loader = core(m_webFrame.get())->loader()->documentLoader();
     ASSERT(loader->unreachableURL().isEmpty());
 
     if (!loader->clientRedirectSourceForHistory().isNull()) {
-        if (WebHistoryItem *item = [[WebHistory optionalSharedHistory] _itemForURLString:loader->clientRedirectSourceForHistory()])
+        if (implementations) {
+            if (implementations->clientRedirectFunc) {
+                CallHistoryDelegate(implementations->clientRedirectFunc, view, @selector(webView:didPerformClientRedirectFromURL:toURL:inFrame:), 
+                    loader->clientRedirectSourceForHistory(), loader->clientRedirectDestinationForHistory(), m_webFrame.get());
+            }
+        } else if (WebHistoryItem *item = [[WebHistory optionalSharedHistory] _itemForURLString:loader->clientRedirectSourceForHistory()])
             core(item)->addRedirectURL(loader->clientRedirectDestinationForHistory());
     }
 
     if (!loader->serverRedirectSourceForHistory().isNull()) {
-        if (WebHistoryItem *item = [[WebHistory optionalSharedHistory] _itemForURLString:loader->serverRedirectSourceForHistory()])
+        if (implementations) {
+            if (implementations->serverRedirectFunc) {
+                CallHistoryDelegate(implementations->serverRedirectFunc, view, @selector(webView:didPerformServerRedirectFromURL:toURL:inFrame:), 
+                    loader->serverRedirectSourceForHistory(), loader->serverRedirectDestinationForHistory(), m_webFrame.get());
+            }
+        } else if (WebHistoryItem *item = [[WebHistory optionalSharedHistory] _itemForURLString:loader->serverRedirectSourceForHistory()])
             core(item)->addRedirectURL(loader->serverRedirectDestinationForHistory());
     }
 }

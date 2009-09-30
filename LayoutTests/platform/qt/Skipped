@@ -4845,3 +4845,6 @@ http/tests/loading/basic-credentials-sent-automatically.html
 
 # This port doesn't support detecting slow unload handlers.
 fast/dom/Window/slow_unload_handler.html
+
+# This port doesn't have a global history delegate yet
+http/tests/globalhistory

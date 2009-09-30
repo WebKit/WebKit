@@ -1,3 +1,23 @@
+2009-09-29  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by John Sullivan.
+
+        WebKit Mac API should provide a delegate interface for global history.
+        <rdar://problem/7042773> and https://webkit.org/b/29904
+
+        * http/tests/globalhistory: Added.
+        * http/tests/globalhistory/history-delegate-basic-302-redirect-expected.txt: Added.
+        * http/tests/globalhistory/history-delegate-basic-302-redirect.html: Added.
+        * http/tests/globalhistory/history-delegate-basic-refresh-redirect-expected.txt: Added.
+        * http/tests/globalhistory/history-delegate-basic-refresh-redirect.html: Added.
+        * http/tests/resources/notify-done.html: Added.
+        * http/tests/resources/redirect.php: Augment to optionally do "Refresh:"-style redirects.
+
+        Skip these new tests on all platforms that don't have history delegates (yet):
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2009-09-29  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Adam Barth.

@@ -64,6 +64,7 @@ extern int pluginDatabaseClientCount;
     id editingDelegate;
     id editingDelegateForwarder;
     id scriptDebugDelegate;
+    id historyDelegate;
 
     WebInspector *inspector;
     WebNodeHighlight *currentNodeHighlight;
@@ -86,6 +87,7 @@ extern int pluginDatabaseClientCount;
     WebResourceDelegateImplementationCache resourceLoadDelegateImplementations;
     WebFrameLoadDelegateImplementationCache frameLoadDelegateImplementations;
     WebScriptDebugDelegateImplementationCache scriptDebugDelegateImplementations;
+    WebHistoryDelegateImplementationCache historyDelegateImplementations;
 
     void *observationInfo;
     

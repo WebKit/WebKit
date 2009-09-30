@@ -38,6 +38,7 @@
 #import "EditingDelegate.h"
 #import "EventSendingController.h"
 #import "FrameLoadDelegate.h"
+#import "HistoryDelegate.h"
 #import "JavaScriptThreading.h"
 #import "LayoutTestController.h"
 #import "NavigationController.h"
@@ -116,6 +117,7 @@ static FrameLoadDelegate *frameLoadDelegate;
 static UIDelegate *uiDelegate;
 static EditingDelegate *editingDelegate;
 static ResourceLoadDelegate *resourceLoadDelegate;
+static HistoryDelegate *historyDelegate;
 PolicyDelegate *policyDelegate;
 
 static int dumpPixels;
@@ -490,6 +492,7 @@ static void allocateGlobalControllers()
     editingDelegate = [[EditingDelegate alloc] init];
     resourceLoadDelegate = [[ResourceLoadDelegate alloc] init];
     policyDelegate = [[PolicyDelegate alloc] init];
+    historyDelegate = [[HistoryDelegate alloc] init];
 }
 
 // ObjC++ doens't seem to let me pass NSObject*& sadly.
@@ -1075,9 +1078,14 @@ void dump()
     done = YES;
 }
 
-static bool shouldLogFrameLoadDelegates(const char *pathOrURL)
+static bool shouldLogFrameLoadDelegates(const char* pathOrURL)
 {
     return strstr(pathOrURL, "loading/");
+}
+
+static bool shouldLogHistoryDelegates(const char* pathOrURL)
+{
+    return strstr(pathOrURL, "globalhistory/");
 }
 
 static void resetWebViewToConsistentStateBeforeTesting()
@@ -1152,6 +1160,11 @@ static void runTest(const string& testPathOrURL)
     if (shouldLogFrameLoadDelegates(pathOrURL.c_str()))
         gLayoutTestController->setDumpFrameLoadCallbacks(true);
 
+    if (shouldLogHistoryDelegates(pathOrURL.c_str()))
+        [[mainFrame webView] setHistoryDelegate:historyDelegate];
+    else
+        [[mainFrame webView] setHistoryDelegate:nil];
+    
     if ([WebHistory optionalSharedHistory])
         [WebHistory setOptionalSharedHistory:nil];
     lastMousePosition = NSZeroPoint;

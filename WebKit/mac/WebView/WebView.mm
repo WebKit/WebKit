@@ -1403,6 +1403,21 @@ static inline IMP getMethod(id o, SEL s)
     cache->exceptionWasRaisedFunc = getMethod(delegate, @selector(webView:exceptionWasRaised:sourceId:line:forWebFrame:));
 }
 
+- (void)_cacheHistoryDelegateImplementations
+{
+    WebHistoryDelegateImplementationCache *cache = &_private->historyDelegateImplementations;
+    id delegate = _private->historyDelegate;
+
+    if (!delegate) {
+        bzero(cache, sizeof(WebHistoryDelegateImplementationCache));
+        return;
+    }
+
+    cache->navigatedFunc = getMethod(delegate, @selector(webView:didNavigateWithNavigationData:inFrame:));
+    cache->clientRedirectFunc = getMethod(delegate, @selector(webView:didPerformClientRedirectFromURL:toURL:inFrame:));
+    cache->serverRedirectFunc = getMethod(delegate, @selector(webView:didPerformServerRedirectFromURL:toURL:inFrame:));
+}
+
 - (id)_policyDelegateForwarder
 {
     if (!_private->policyDelegateForwarder)
@@ -3960,6 +3975,17 @@ done:
 - (id)scriptDebugDelegate
 {
     return _private->scriptDebugDelegate;
+}
+  
+- (void)setHistoryDelegate:(id)delegate
+{
+    _private->historyDelegate = delegate;
+    [self _cacheHistoryDelegateImplementations];
+}
+
+- (id)historyDelegate
+{
+    return _private->historyDelegate;
 }
 
 - (BOOL)shouldClose

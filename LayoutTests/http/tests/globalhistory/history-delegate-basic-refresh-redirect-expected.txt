@@ -1,0 +1,21 @@
+WebView navigated to url "http://127.0.0.1:8000/globalhistory/history-delegate-basic-refresh-redirect.html" with title "" with HTTP equivalent method "GET".  The navigation was successful and was not a client redirect.
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
+main frame - willPerformClientRedirectToURL: http://127.0.0.1:8000/resources/redirect.php?url=notify-done.html&refresh=0 
+main frame - didStartProvisionalLoadForFrame
+WebView performed a client redirect from "http://127.0.0.1:8000/globalhistory/history-delegate-basic-refresh-redirect.html" to "http://127.0.0.1:8000/resources/redirect.php?url=notify-done.html&refresh=0".
+main frame - didCancelClientRedirectForFrame
+main frame - didCommitLoadForFrame
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+main frame - willPerformClientRedirectToURL: http://127.0.0.1:8000/resources/notify-done.html 
+main frame - didFinishLoadForFrame
+main frame - didStartProvisionalLoadForFrame
+WebView performed a client redirect from "http://127.0.0.1:8000/globalhistory/history-delegate-basic-refresh-redirect.html" to "http://127.0.0.1:8000/resources/notify-done.html".
+main frame - didCancelClientRedirectForFrame
+main frame - didCommitLoadForFrame
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
+

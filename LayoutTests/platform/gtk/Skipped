@@ -5718,3 +5718,6 @@ transforms/2d/hindi-rotated.html
 
 # See https://bugs.webkit.org/show_bug.cgi?id=29683
 plugins/destroy-during-npp-new.html
+
+# This port doesn't have a global history delegate yet
+http/tests/globalhistory

@@ -35,6 +35,8 @@
 		1AC6C84A0D07638600CD3161 /* PluginObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC6C7800D07589B00CD3161 /* PluginObject.cpp */; };
 		1AC6C84B0D07638600CD3161 /* TestObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC6C7810D07589B00CD3161 /* TestObject.cpp */; };
 		23BCB8900EA57623003C6289 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 23BCB88F0EA57623003C6289 /* OpenGL.framework */; };
+		5185F6B210714E07007AA393 /* HistoryDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5185F69F10714A57007AA393 /* HistoryDelegate.mm */; };
+		5185F6B310714E12007AA393 /* HistoryDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5185F69E10714A57007AA393 /* HistoryDelegate.h */; };
 		5DB9AC970F722C3600684641 /* AHEM____.TTF in Copy Font Files */ = {isa = PBXBuildFile; fileRef = AA7F10C20CB3C1030003BDC9 /* AHEM____.TTF */; };
 		5DB9AC980F722C3600684641 /* WebKitWeightWatcher100.ttf in Copy Font Files */ = {isa = PBXBuildFile; fileRef = 375F09710DAC3CB600C8B4E5 /* WebKitWeightWatcher100.ttf */; };
 		5DB9AC990F722C3600684641 /* WebKitWeightWatcher200.ttf in Copy Font Files */ = {isa = PBXBuildFile; fileRef = 375F09720DAC3CB600C8B4E5 /* WebKitWeightWatcher200.ttf */; };
@@ -189,6 +191,8 @@
 		375F09770DAC3CB600C8B4E5 /* WebKitWeightWatcher700.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = WebKitWeightWatcher700.ttf; path = fonts/WebKitWeightWatcher700.ttf; sourceTree = "<group>"; };
 		375F09780DAC3CB600C8B4E5 /* WebKitWeightWatcher800.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = WebKitWeightWatcher800.ttf; path = fonts/WebKitWeightWatcher800.ttf; sourceTree = "<group>"; };
 		375F09790DAC3CB600C8B4E5 /* WebKitWeightWatcher900.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = WebKitWeightWatcher900.ttf; path = fonts/WebKitWeightWatcher900.ttf; sourceTree = "<group>"; };
+		5185F69E10714A57007AA393 /* HistoryDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HistoryDelegate.h; path = mac/HistoryDelegate.h; sourceTree = "<group>"; };
+		5185F69F10714A57007AA393 /* HistoryDelegate.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = HistoryDelegate.mm; path = mac/HistoryDelegate.mm; sourceTree = "<group>"; };
 		8465E2C60FFA8DF2003B8342 /* PixelDumpSupport.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; path = PixelDumpSupport.cpp; sourceTree = "<group>"; };
 		9335435F03D75502008635CE /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		933BF5A90F93FA5C000F0441 /* PlainTextController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlainTextController.h; path = mac/PlainTextController.h; sourceTree = "<group>"; };
@@ -388,6 +392,8 @@
 				BCA18B580C9B08C200114369 /* EditingDelegate.mm */,
 				BCA18B590C9B08C200114369 /* FrameLoadDelegate.h */,
 				BCA18B5A0C9B08C200114369 /* FrameLoadDelegate.mm */,
+				5185F69E10714A57007AA393 /* HistoryDelegate.h */,
+				5185F69F10714A57007AA393 /* HistoryDelegate.mm */,
 				BCA18B5B0C9B08C200114369 /* PolicyDelegate.h */,
 				BCA18B5C0C9B08C200114369 /* PolicyDelegate.mm */,
 				BCA18B5D0C9B08C200114369 /* ResourceLoadDelegate.h */,
@@ -531,6 +537,7 @@
 				BCA18B690C9B08C200114369 /* UIDelegate.h in Headers */,
 				BC9D90250C97472E0099A4A3 /* WorkQueue.h in Headers */,
 				BC9D90260C97472E0099A4A3 /* WorkQueueItem.h in Headers */,
+				5185F6B310714E12007AA393 /* HistoryDelegate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -696,6 +703,7 @@
 				BCA18B6A0C9B08C200114369 /* UIDelegate.mm in Sources */,
 				BC9D90240C97472E0099A4A3 /* WorkQueue.cpp in Sources */,
 				BCA18B260C9B015C00114369 /* WorkQueueItemMac.mm in Sources */,
+				5185F6B210714E07007AA393 /* HistoryDelegate.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
