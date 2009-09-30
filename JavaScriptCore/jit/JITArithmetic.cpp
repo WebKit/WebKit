@@ -2412,12 +2412,13 @@ void JIT::emit_op_add(Instruction* currentInstruction)
     unsigned result = currentInstruction[1].u.operand;
     unsigned op1 = currentInstruction[2].u.operand;
     unsigned op2 = currentInstruction[3].u.operand;
+    OperandTypes types = OperandTypes::fromInt(currentInstruction[4].u.operand);
 
     if (!types.first().mightBeNumber() || !types.second().mightBeNumber()) {
         JITStubCall stubCall(this, cti_op_add);
-        stubCall.addArgument(op1);
-        stubCall.addArgument(op2);
-        stubCall.call(dst);
+        stubCall.addArgument(op1, regT2);
+        stubCall.addArgument(op2, regT2);
+        stubCall.call(result);
         return;
     }
 
@@ -2434,15 +2435,7 @@ void JIT::emit_op_add(Instruction* currentInstruction)
         signExtend32ToPtr(regT0, regT0);
         emitPutVirtualRegister(result);
     } else {
-        OperandTypes types = OperandTypes::fromInt(currentInstruction[4].u.operand);
-        if (types.first().mightBeNumber() && types.second().mightBeNumber())
-            compileBinaryArithOp(op_add, result, op1, op2, OperandTypes::fromInt(currentInstruction[4].u.operand));
-        else {
-            JITStubCall stubCall(this, cti_op_add);
-            stubCall.addArgument(op1, regT2);
-            stubCall.addArgument(op2, regT2);
-            stubCall.call(result);
-        }
+        compileBinaryArithOp(op_add, result, op1, op2, OperandTypes::fromInt(currentInstruction[4].u.operand));
     }
 }
 
@@ -2452,6 +2445,7 @@ void JIT::emitSlow_op_add(Instruction* currentInstruction, Vector<SlowCaseEntry>
     unsigned op1 = currentInstruction[2].u.operand;
     unsigned op2 = currentInstruction[3].u.operand;
 
+    OperandTypes types = OperandTypes::fromInt(currentInstruction[4].u.operand);
     if (!types.first().mightBeNumber() || !types.second().mightBeNumber())
         return;
 

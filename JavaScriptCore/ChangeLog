@@ -1,3 +1,21 @@
+2009-09-30  Csaba Osztrogonac  <oszi@inf.u-szeged.hu>
+
+        Reviewed by Geoffrey Garen.
+
+        Buildfix for platforms using JSVALUE32.
+        https://bugs.webkit.org/show_bug.cgi?id=29915
+
+        After http://trac.webkit.org/changeset/48905 the build broke in JSVALUE32 case.
+        Also removed unreachable code.
+
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_add):
+         - Declaration of "OperandTypes types" moved before first use.
+         - Typos fixed: dst modified to result, regT2 added.
+         - Unreachable code removed.
+        (JSC::JIT::emitSlow_op_add):
+         - Missing declaration of "OperandTypes types" added.
+
 2009-09-30  Janne Koskinen  <janne.p.koskinen@digia.com> 
 
         Reviewed by Simon Hausmann.
