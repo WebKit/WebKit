@@ -578,28 +578,23 @@ void InlineFlowBox::computeVerticalOverflow(int lineTop, int lineBottom, bool st
             
             topVisualOverflow = min(curr->y() + childOverflowTop, topVisualOverflow);
             bottomVisualOverflow = max(curr->y() + text->height() + childOverflowBottom, bottomVisualOverflow);
-        } else {
-            // Only include overflow from inline flows and replaced inlines if they do not paint themselves.
-            bool childIsSelfPainting = curr->boxModelObject()->hasSelfPaintingLayer();
-            if (curr->renderer()->isRenderInline()) {
-                InlineFlowBox* flow = static_cast<InlineFlowBox*>(curr);
-                flow->computeVerticalOverflow(lineTop, lineBottom, strictMode);
-                if (!childIsSelfPainting) {
-                    topLayoutOverflow = min(topLayoutOverflow, flow->topLayoutOverflow());
-                    bottomLayoutOverflow = max(bottomLayoutOverflow, flow->bottomLayoutOverflow());
-                    topVisualOverflow = min(topVisualOverflow, flow->topVisualOverflow());
-                    bottomVisualOverflow = max(bottomVisualOverflow, flow->bottomVisualOverflow());
-                }
-            } else if (!childIsSelfPainting){
-                RenderBox* box = toRenderBox(curr->renderer());
-                int boxY = curr->y();
-                int childTopOverflow = box->hasOverflowClip() ? 0 : box->topLayoutOverflow();
-                int childBottomOverflow = box->hasOverflowClip() ? curr->height() : box->bottomLayoutOverflow();
-                topLayoutOverflow = min(boxY + childTopOverflow, topLayoutOverflow);
-                bottomLayoutOverflow = max(boxY + childBottomOverflow, bottomLayoutOverflow);
-                topVisualOverflow = min(boxY + box->topVisualOverflow(), topVisualOverflow);
-                bottomVisualOverflow = max(boxY + box->bottomVisualOverflow(), bottomVisualOverflow);
-            }
+        } else  if (curr->renderer()->isRenderInline()) {
+            InlineFlowBox* flow = static_cast<InlineFlowBox*>(curr);
+            flow->computeVerticalOverflow(lineTop, lineBottom, strictMode);
+            topLayoutOverflow = min(topLayoutOverflow, flow->topLayoutOverflow());
+            bottomLayoutOverflow = max(bottomLayoutOverflow, flow->bottomLayoutOverflow());
+            topVisualOverflow = min(topVisualOverflow, flow->topVisualOverflow());
+            bottomVisualOverflow = max(bottomVisualOverflow, flow->bottomVisualOverflow());
+        } else if (!curr->boxModelObject()->hasSelfPaintingLayer()){
+            // Only include overflow from replaced inlines if they do not paint themselves.
+            RenderBox* box = toRenderBox(curr->renderer());
+            int boxY = curr->y();
+            int childTopOverflow = box->hasOverflowClip() ? 0 : box->topLayoutOverflow();
+            int childBottomOverflow = box->hasOverflowClip() ? curr->height() : box->bottomLayoutOverflow();
+            topLayoutOverflow = min(boxY + childTopOverflow, topLayoutOverflow);
+            bottomLayoutOverflow = max(boxY + childBottomOverflow, bottomLayoutOverflow);
+            topVisualOverflow = min(boxY + box->topVisualOverflow(), topVisualOverflow);
+            bottomVisualOverflow = max(boxY + box->bottomVisualOverflow(), bottomVisualOverflow);
         }
     }
     

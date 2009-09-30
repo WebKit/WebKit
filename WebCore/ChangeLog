@@ -1,3 +1,16 @@
+2009-09-30  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        REGRESSION(r47440): drop down menus at americanexpress.com disappear on mouse out
+        https://bugs.webkit.org/show_bug.cgi?id=29209
+
+        Test: fast/inline/relative-positioned-overflow.html
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::computeVerticalOverflow): Add self-painting
+        inlines to overflow to ensure that they are included in hit-testing.
+
 2009-09-30  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Mark Rowe.
