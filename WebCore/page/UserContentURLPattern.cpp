@@ -90,7 +90,7 @@ bool UserContentURLPattern::parse(const String& pattern)
         pathStartPos = hostEndPos;
     }
 
-    m_path = pattern.right(pathStartPos);
+    m_path = pattern.right(pattern.length() - pathStartPos);
 
     return true;
 }
@@ -128,10 +128,10 @@ bool UserContentURLPattern::matchesHost(const KURL& test) const
 
 struct MatchTester
 {
-    const String& m_pattern;
+    const String m_pattern;
     unsigned m_patternIndex;
     
-    const String& m_test;
+    const String m_test;
     unsigned m_testIndex;
     
     MatchTester(const String& pattern, const String& test)
