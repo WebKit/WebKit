@@ -17076,6 +17076,14 @@
 				RelativePath="..\page\Settings.h"
 				>
 			</File>
+                        <File
+				RelativePath="..\page\UserContentURLPattern.cpp"
+				>
+			</File>
+                        <File
+				RelativePath="..\page\UserContentURLPattern.h"
+				>
+			</File>
 			<File
 				RelativePath="..\page\UserScript.h"
 				>

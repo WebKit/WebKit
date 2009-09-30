@@ -1147,6 +1147,7 @@ SOURCES += \
     page/SecurityOrigin.cpp \
     page/Screen.cpp \
     page/Settings.cpp \
+    page/UserContentURLPattern.cpp \
     page/WindowFeatures.cpp \
     page/XSSAuditor.cpp \
     plugins/PluginData.cpp \

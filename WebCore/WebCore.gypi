@@ -1769,6 +1769,8 @@
             'page/SecurityOriginHash.h',
             'page/Settings.cpp',
             'page/Settings.h',
+            'page/UserContentURLPattern.cpp',
+            'page/UserContentURLPattern.h',
             'page/UserScript.h',
             'page/UserScriptTypes.h',
             'page/UserStyleSheet.h',

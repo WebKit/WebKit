@@ -1,3 +1,41 @@
+2009-09-29  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Jon Honeycutt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29892
+        Add support for whitelist patterns to control conditional injection of user scripts and
+        user stylesheets.
+
+        No new tests. Not testable until WebKit portion is added in followup patch.
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::pageGroupUserSheets):
+        * page/Frame.cpp:
+        (WebCore::Frame::injectUserScriptsForWorld):
+        * page/UserContentURLPattern.cpp: Added.
+        (WebCore::UserContentURLPattern::matchesPatterns):
+        (WebCore::UserContentURLPattern::parse):
+        (WebCore::UserContentURLPattern::matches):
+        (WebCore::UserContentURLPattern::matchesHost):
+        (WebCore::MatchTester::MatchTester):
+        (WebCore::MatchTester::testStringFinished):
+        (WebCore::MatchTester::patternStringFinished):
+        (WebCore::MatchTester::eatWildcard):
+        (WebCore::MatchTester::eatSameChars):
+        (WebCore::MatchTester::test):
+        (WebCore::UserContentURLPattern::matchesPath):
+        * page/UserContentURLPattern.h: Added.
+        (WebCore::UserContentURLPattern::UserContentURLPattern):
+        (WebCore::UserContentURLPattern::scheme):
+        (WebCore::UserContentURLPattern::host):
+        (WebCore::UserContentURLPattern::path):
+        (WebCore::UserContentURLPattern::matchSubdomains):
+
 2009-09-29  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Adele Peterson.

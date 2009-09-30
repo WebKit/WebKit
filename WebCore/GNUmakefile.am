@@ -1349,6 +1349,8 @@ webcore_sources += \
 	WebCore/page/SecurityOriginHash.h \
 	WebCore/page/Settings.cpp \
 	WebCore/page/Settings.h \
+	WebCore/page/UserContentURLPattern.cpp \
+	WebCore/page/UserContentURLPattern.h \
 	WebCore/page/UserScript.h \
 	WebCore/page/UserScriptTypes.h \
 	WebCore/page/UserStyleSheet.h \
