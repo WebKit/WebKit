@@ -2590,6 +2590,7 @@ contains(DEFINES, ENABLE_DOM_STORAGE=1) {
         storage/StorageAreaImpl.h \
         storage/StorageAreaSync.h \
         storage/StorageEvent.h \
+        storage/StorageEventDispatcher.h \
         storage/Storage.h \
         storage/StorageMap.h \
         storage/StorageNamespace.h \
@@ -2604,6 +2605,7 @@ contains(DEFINES, ENABLE_DOM_STORAGE=1) {
         storage/StorageAreaImpl.cpp \
         storage/StorageAreaSync.cpp \
         storage/StorageEvent.cpp \
+        storage/StorageEventDispatcher.cpp \
         storage/StorageMap.cpp \
         storage/StorageNamespace.cpp \
         storage/StorageNamespaceImpl.cpp \

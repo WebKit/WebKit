@@ -1,3 +1,9 @@
+2009-09-30  Jeremy Orlow  <jorlow@chromium.org>
+
+        Build fix for QT.  Didn't know WebCore.pro existed.
+
+        * WebCore.pro:
+
 2009-09-30  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by Adam Roben.
