@@ -67,7 +67,7 @@ sub buildJSC
 {
     if (!defined($root)){
         chdirWebKit();
-        my $buildResult = system "WebKitTools/Scripts/build-jsc", "--" . $configuration;
+        my $buildResult = system currentPerlPath(), "WebKitTools/Scripts/build-jsc", "--" . $configuration;
         if ($buildResult) {
             print STDERR "Compiling jsc failed!\n";
             exit WEXITSTATUS($buildResult);
@@ -124,4 +124,4 @@ my @args = ("--shell", $jscPath);
 push @args, "--ubench" if $ubench;
 push @args, "--v8" if $v8;
 
-exec "./sunspider-compare-results", @args, @ARGV;
+exec currentPerlPath(), "./sunspider-compare-results", @args, @ARGV;

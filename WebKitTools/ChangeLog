@@ -1,3 +1,14 @@
+2009-09-30  Csaba Osztrogonac  <oszi@inf.u-szeged.hu>
+
+        Reviewed by David Kilzer.
+
+        Make sunspider scripts work on Windows platform.
+        https://bugs.webkit.org/show_bug.cgi?id=29656
+
+        * Scripts/run-sunspider: Perl scripts invoked with same Perl interpreter.
+        * Scripts/sunspider-compare-results: Perl scripts invoked with same Perl interpreter.
+        * Scripts/webkitdirs.pm: currentPerlPath() added.
+
 2009-09-29  Brady Eidson  <beidson@apple.com>
 
         Rubberstamped by Dan Bernstein.

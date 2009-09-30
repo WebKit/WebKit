@@ -29,6 +29,7 @@
 
 use strict;
 use warnings;
+use Config;
 use FindBin;
 use File::Basename;
 use File::Spec;
@@ -83,6 +84,15 @@ sub determineSourceDir
     }
 
     $sourceDir = "$sourceDir/OpenSource" if -d "$sourceDir/OpenSource";
+}
+
+sub currentPerlPath()
+{
+    my $thisPerl = $^X;
+    if ($^O ne 'VMS') {
+        $thisPerl .= $Config{_exe} unless $thisPerl =~ m/$Config{_exe}$/i;
+    }
+    return $thisPerl;
 }
 
 # used for scripts which are stored in a non-standard location

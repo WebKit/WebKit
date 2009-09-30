@@ -87,7 +87,7 @@ sub buildJSC
         push(@ARGV,  "--" . $configuration);
         
         chdirWebKit();
-        my $buildResult = system "WebKitTools/Scripts/build-jsc", @ARGV;
+        my $buildResult = system currentPerlPath(), "WebKitTools/Scripts/build-jsc", @ARGV;
         if ($buildResult) {
             print STDERR "Compiling jsc failed!\n";
             exit exitStatus($buildResult);
@@ -133,4 +133,4 @@ push @args, "--v8" if $v8;
 push @args, "--parse-only" if $parseonly;
 push @args, "--tests", $testsPattern if $testsPattern;
 
-exec "./sunspider", @args;
+exec currentPerlPath(), "./sunspider", @args;
