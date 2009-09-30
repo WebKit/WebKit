@@ -1,3 +1,12 @@
+2009-09-29  Brady Eidson  <beidson@apple.com>
+
+        Rubberstamped by Dan Bernstein.
+
+        Fix license and some sorting in new files.
+
+        * DumpRenderTree/mac/HistoryDelegate.h:
+        * DumpRenderTree/mac/HistoryDelegate.mm:
+
 2009-09-29  Yaar Schnitman  <yaar@chromium.org>
 
         Reviewed by David Kilzer.

@@ -1,5 +1,15 @@
 2009-09-29  Brady Eidson  <beidson@apple.com>
 
+        Rubberstamped by Dan Bernstein.
+
+        Fix license and some sorting in new files.
+
+        * WebView/WebHistoryDelegate.h:
+        * WebView/WebNavigationData.h:
+        * WebView/WebNavigationData.mm:
+
+2009-09-29  Brady Eidson  <beidson@apple.com>
+
         Reviewed by John Sullivan.
 
         WebKit Mac API should provide a delegate interface for global history.
