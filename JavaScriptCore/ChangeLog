@@ -1,3 +1,20 @@
+2009-09-29  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Inlined a few math operations.
+        
+        ~1% SunSpider speedup.
+
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::compileBinaryArithOpSlowCase):
+        (JSC::JIT::emitSlow_op_add):
+        (JSC::JIT::emitSlow_op_mul):
+        (JSC::JIT::emit_op_sub):
+        (JSC::JIT::emitSlow_op_sub): Don't take a stub call when operating on
+        a constant int and a double.
+
 2009-09-28  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
