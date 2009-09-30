@@ -1,3 +1,15 @@
+2009-09-30  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Fix for <rdar://problem/7259706>
+        Need WebKit API or SPI on Mac and Windows to test whether it's safe to load a page in a new tab/window
+
+        * Interfaces/IWebFramePrivate.idl:
+        * WebFrame.cpp:
+        (WebFrame::allowsFollowingLink):
+        * WebFrame.h:
+
 2009-09-30  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by Adam Roben.

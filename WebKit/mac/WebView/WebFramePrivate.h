@@ -110,4 +110,6 @@ typedef enum {
 - (void)_replaceSelectionWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace;
 
 - (NSMutableDictionary *)_cacheabilityDictionary;
+
+- (BOOL)_allowsFollowingLink:(NSURL *)URL;
 @end

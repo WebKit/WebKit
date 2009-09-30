@@ -1148,6 +1148,21 @@ HRESULT WebFrame::isDisplayingStandaloneImage(BOOL* result)
     return S_OK;
 }
 
+HRESULT WebFrame::allowsFollowingLink(BSTR url, BOOL* result)
+{
+    if (!result)
+        return E_POINTER;
+
+    *result = TRUE;
+
+    Frame* frame = core(this);
+    if (!frame)
+        return E_FAIL;
+
+    *result = FrameLoader::canLoad(MarshallingHelpers::BSTRToKURL(url), String(), frame->document());
+    return S_OK;
+}
+
 HRESULT WebFrame::controlsInForm(IDOMElement* form, IDOMElement** controls, int* cControls)
 {
     if (!form)

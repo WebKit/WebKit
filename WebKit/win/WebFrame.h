@@ -240,6 +240,10 @@ public:
 
     virtual HRESULT STDMETHODCALLTYPE isDisplayingStandaloneImage(BOOL*);
 
+    virtual HRESULT STDMETHODCALLTYPE allowsFollowingLink(
+        /* [in] */ BSTR url,
+        /* [retval][out] */ BOOL* result);
+
     // IWebDocumentText
     virtual HRESULT STDMETHODCALLTYPE supportsTextEncoding( 
         /* [retval][out] */ BOOL* result);
