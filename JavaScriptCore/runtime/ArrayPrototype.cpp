@@ -149,10 +149,11 @@ static void putProperty(ExecState* exec, JSObject* obj, const Identifier& proper
 
 JSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState* exec, JSObject*, JSValue thisValue, const ArgList&)
 {
-    if (!thisValue.inherits(&JSArray::info))
+    bool isRealArray = isJSArray(&exec->globalData(), thisValue);
+    if (!isRealArray && !thisValue.inherits(&JSArray::info))
         return throwError(exec, TypeError);
-    JSObject* thisObj = asArray(thisValue);
-
+    JSArray* thisObj = asArray(thisValue);
+    
     HashSet<JSObject*>& arrayVisitedElements = exec->globalData().arrayVisitedElements;
     if (arrayVisitedElements.size() >= MaxSecondaryThreadReentryDepth) {
         if (!isMainThread() || arrayVisitedElements.size() >= MaxMainThreadReentryDepth)
@@ -163,34 +164,48 @@ JSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState* exec, JSObject*, JSValue
     if (alreadyVisited)
         return jsEmptyString(exec); // return an empty string, avoiding infinite recursion.
 
-    Vector<UChar, 256> strBuffer;
     unsigned length = thisObj->get(exec, exec->propertyNames().length).toUInt32(exec);
+    unsigned totalSize = length ? length - 1 : 0;
+    Vector<RefPtr<UString::Rep>, 256> strBuffer(length);
     for (unsigned k = 0; k < length; k++) {
-        if (k >= 1)
-            strBuffer.append(',');
-        if (!strBuffer.data()) {
-            JSObject* error = Error::create(exec, GeneralError, "Out of memory");
-            exec->setException(error);
-            break;
-        }
-
-        JSValue element = thisObj->get(exec, k);
+        JSValue element;
+        if (isRealArray && thisObj->canGetIndex(k))
+            element = thisObj->getIndex(k);
+        else
+            element = thisObj->get(exec, k);
+        
         if (element.isUndefinedOrNull())
             continue;
-
+        
         UString str = element.toString(exec);
-        strBuffer.append(str.data(), str.size());
-
+        strBuffer[k] = str.rep();
+        totalSize += str.size();
+        
         if (!strBuffer.data()) {
             JSObject* error = Error::create(exec, GeneralError, "Out of memory");
             exec->setException(error);
         }
-
+        
         if (exec->hadException())
             break;
     }
     arrayVisitedElements.remove(thisObj);
-    return jsString(exec, UString(strBuffer.data(), strBuffer.data() ? strBuffer.size() : 0));
+    if (!totalSize)
+        return jsEmptyString(exec);
+    Vector<UChar> buffer;
+    buffer.reserveCapacity(totalSize);
+    if (!buffer.data())
+        return throwError(exec, GeneralError, "Out of memory");
+        
+    for (unsigned i = 0; i < length; i++) {
+        if (i)
+            buffer.append(',');
+        if (RefPtr<UString::Rep> rep = strBuffer[i])
+            buffer.append(rep->data(), rep->size());
+    }
+    ASSERT(buffer.size() == totalSize);
+    unsigned finalSize = buffer.size();
+    return jsString(exec, UString(buffer.releaseBuffer(), finalSize, false));
 }
 
 JSValue JSC_HOST_CALL arrayProtoFuncToLocaleString(ExecState* exec, JSObject*, JSValue thisValue, const ArgList&)

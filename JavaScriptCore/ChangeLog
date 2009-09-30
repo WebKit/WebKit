@@ -1,3 +1,15 @@
+2009-09-30  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Devirtualise array toString conversion
+
+        Tweak the implementation of Array.prototype.toString to have a fast path
+        when acting on a true JSArray.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncToString):
+
 2009-09-30  Csaba Osztrogonac  <oszi@inf.u-szeged.hu>
 
         Reviewed by Geoffrey Garen.
