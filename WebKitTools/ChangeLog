@@ -1,3 +1,13 @@
+2009-09-30  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Added the WebKit Layout Tests fonts that are referenced in
+        LayoutTests/platform/win/css2.1/resources/Mac-compatible-font-fallback.css
+
+        * DumpRenderTree/fonts/WebKit Layout Tests 2.ttf: Added.
+        * DumpRenderTree/fonts/WebKit Layout Tests.ttf: Added.
+
 2009-09-30  Csaba Osztrogonac  <oszi@inf.u-szeged.hu>
 
         Reviewed by David Kilzer.
