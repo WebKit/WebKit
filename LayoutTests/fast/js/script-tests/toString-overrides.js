@@ -2,7 +2,7 @@
 // (c) 2001 Harri Porten <porten@kde.org>
 
 description(
-'This test checks for regression against <a href="http://bugzilla.opendarwin.org/show_bug.cgi?id=4147">4147: Array.toString() and toLocaleString() improvements from KDE KJS</a>.'
+'This test checks for regression against <a href="https://bugs.webkit.org/show_bug.cgi?id=4147">4147: Array.toString() and toLocaleString() improvements from KDE KJS</a>.'
 );
 
 // backup

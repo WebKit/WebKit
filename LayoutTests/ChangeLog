@@ -1,3 +1,30 @@
+2009-09-30  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by David Kilzer.
+
+        Change remaining references in tests from bugzilla.opendarwin.org to bugs.webkit.org
+        https://bugs.webkit.org/show_bug.cgi?id=12140
+
+        Fixes for JS files.
+
+        * fast/js/date-preserve-milliseconds-expected.txt:
+        * fast/js/script-tests/array-float-delete.js:
+        * fast/js/script-tests/array-tostring-ignore-separator.js:
+        * fast/js/script-tests/date-big-setmonth.js:
+        * fast/js/script-tests/date-negative-setmonth.js:
+        * fast/js/script-tests/date-preserve-milliseconds.js:
+        * fast/js/script-tests/number-tofixed.js:
+        * fast/js/script-tests/object-extra-comma.js:
+        * fast/js/script-tests/object-prototype-constructor.js:
+        * fast/js/script-tests/object-prototype-toLocaleString.js:
+        * fast/js/script-tests/regexp-lastindex.js:
+        * fast/js/script-tests/regexp-stack-overflow.js:
+        * fast/js/script-tests/string-split-ignore-case.js:
+        * fast/js/script-tests/toString-exception.js:
+        * fast/js/script-tests/toString-overrides.js:
+        * fast/js/script-tests/toString-stack-overflow.js:
+        * fast/js/toString-stack-overflow-expected.txt:
+
 2009-09-30  Steve Block  <steveblock@google.com>
 
         Reviewed by Darin Adler.

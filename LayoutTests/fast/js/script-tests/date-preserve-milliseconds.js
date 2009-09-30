@@ -1,5 +1,5 @@
 description(
-'The following test checks if an existing milliseconds value gets preserved if a call to setHours(), setMinutes() or setSeconds() does not specify the milliseconds. See <a href="http://bugzilla.opendarwin.org/show_bug.cgi?id=3759">http://bugzilla.opendarwin.org/show_bug.cgi?id=3759</a>'
+'The following test checks if an existing milliseconds value gets preserved if a call to setHours(), setMinutes() or setSeconds() does not specify the milliseconds. See <a href="https://bugs.webkit.org/show_bug.cgi?id=3759">https://bugs.webkit.org/show_bug.cgi?id=3759</a>'
 );
 
 var d = new Date(0);

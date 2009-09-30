@@ -1,5 +1,5 @@
 description(
-'Test for regression against <a href="http://bugzilla.opendarwin.org/show_bug.cgi?id=5602">REGRESSION: RegExp("[^\\s$]+", "g") returns extra matches</a>'
+'Test for regression against <a href="https://bugs.webkit.org/show_bug.cgi?id=5602">REGRESSION: RegExp("[^\\s$]+", "g") returns extra matches</a>'
 );
 
 var re = new RegExp("[^\\s$]+", "g");

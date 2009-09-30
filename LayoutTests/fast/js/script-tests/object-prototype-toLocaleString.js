@@ -1,5 +1,5 @@
 description(
-'Tests: Object.prototype.toLocaleString(). Related bug: <a href="http://bugzilla.opendarwin.org/show_bug.cgi?id=3989">3989 JSC doesn\'t implement Object.prototype.toLocaleString()</a>'
+'Tests: Object.prototype.toLocaleString(). Related bug: <a href="https://bugs.webkit.org/show_bug.cgi?id=3989">3989 JSC doesn\'t implement Object.prototype.toLocaleString()</a>'
 );
 
 var o = new Object();

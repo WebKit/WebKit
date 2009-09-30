@@ -1,6 +1,6 @@
 description(
 
-'Test for <a href="http://bugzilla.opendarwin.org/show_bug.cgi?id=8870">bug 8870</a>: Crash typing in Yahoo auto-complete widget.'
+'Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=8870">bug 8870</a>: Crash typing in Yahoo auto-complete widget.'
 
 );
 

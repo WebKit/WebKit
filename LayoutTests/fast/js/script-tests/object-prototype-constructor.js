@@ -1,5 +1,5 @@
 description(
-'This is a test case for <a href="http://bugzilla.opendarwin.org/show_bug.cgi?id=3537">bug 3537</a>.'
+'This is a test case for <a href="https://bugs.webkit.org/show_bug.cgi?id=3537">bug 3537</a>.'
 );
 
 var Foo = { Bar: function () {}};

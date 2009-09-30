@@ -1,5 +1,5 @@
 description(
-'This test checks for regressions against <a href="http://bugzilla.opendarwin.org/show_bug.cgi?id=6261">6261:Do not use a separator argument when doing toString/toLocalString.</a>'
+'This test checks for regressions against <a href="https://bugs.webkit.org/show_bug.cgi?id=6261">6261:Do not use a separator argument when doing toString/toLocalString.</a>'
 );
 
 var a = new Array;  
