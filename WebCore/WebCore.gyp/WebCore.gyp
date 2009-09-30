@@ -497,6 +497,9 @@
         # Don't build StorageNamespace.  We have our own implementation.
         '../storage/StorageNamespace.cpp',
 
+        # Don't build StorageEventDispatcher.  We have our own implementation.
+        '../storage/StorageEventDispatcher.cpp',
+
         # Use history/BackForwardListChromium.cpp instead.
         '../history/BackForwardList.cpp',
 

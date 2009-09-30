@@ -2229,6 +2229,7 @@ webcore_sources += \
 	WebCore/storage/StorageAreaSync.cpp \
 	WebCore/storage/StorageAreaSync.h \
 	WebCore/storage/StorageEvent.cpp \
+	WebCore/storage/StorageEventDispatcher.cpp \
 	WebCore/storage/StorageEvent.h \
 	WebCore/storage/StorageMap.cpp \
 	WebCore/storage/StorageMap.h \

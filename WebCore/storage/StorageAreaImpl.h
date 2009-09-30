@@ -66,8 +66,6 @@ namespace WebCore {
 
         void blockUntilImportComplete() const;
 
-        void dispatchStorageEvent(const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame);
-
         StorageType m_storageType;
         RefPtr<SecurityOrigin> m_securityOrigin;
         RefPtr<StorageMap> m_storageMap;

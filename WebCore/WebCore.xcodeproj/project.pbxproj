@@ -4510,6 +4510,8 @@
 		C5160EEB1004543A00A7CEE2 /* StorageAreaImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = C5160EE91004543A00A7CEE2 /* StorageAreaImpl.h */; };
 		C55E38BF10040D5D00A56BDB /* StorageNamespaceImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = C55E38BB10040D5D00A56BDB /* StorageNamespaceImpl.h */; };
 		C55E38C010040D5D00A56BDB /* StorageNamespaceImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C55E38BC10040D5D00A56BDB /* StorageNamespaceImpl.cpp */; };
+		C5E9B67710697E1300C7BB1A /* StorageEventDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C5E9B67610697E1300C7BB1A /* StorageEventDispatcher.cpp */; };
+		C5EBDD84105EDDEC0056816F /* StorageEventDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = C5EBDD81105EDDEC0056816F /* StorageEventDispatcher.h */; };
 		C6D74AD509AA282E000B0A52 /* ModifySelectionListLevel.h in Headers */ = {isa = PBXBuildFile; fileRef = C6D74AD309AA282E000B0A52 /* ModifySelectionListLevel.h */; };
 		C6D74AE409AA290A000B0A52 /* ModifySelectionListLevel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6D74AE309AA290A000B0A52 /* ModifySelectionListLevel.cpp */; };
 		CE54FD381016D9A6008B44C8 /* ScriptSourceProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = CE54FD371016D9A6008B44C8 /* ScriptSourceProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9614,6 +9616,8 @@
 		C5160EE91004543A00A7CEE2 /* StorageAreaImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageAreaImpl.h; sourceTree = "<group>"; };
 		C55E38BB10040D5D00A56BDB /* StorageNamespaceImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageNamespaceImpl.h; sourceTree = "<group>"; };
 		C55E38BC10040D5D00A56BDB /* StorageNamespaceImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageNamespaceImpl.cpp; sourceTree = "<group>"; };
+		C5E9B67610697E1300C7BB1A /* StorageEventDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageEventDispatcher.cpp; sourceTree = "<group>"; };
+		C5EBDD81105EDDEC0056816F /* StorageEventDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageEventDispatcher.h; sourceTree = "<group>"; };
 		C6D74AD309AA282E000B0A52 /* ModifySelectionListLevel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModifySelectionListLevel.h; sourceTree = "<group>"; };
 		C6D74AE309AA290A000B0A52 /* ModifySelectionListLevel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModifySelectionListLevel.cpp; sourceTree = "<group>"; };
 		CE54FD371016D9A6008B44C8 /* ScriptSourceProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptSourceProvider.h; sourceTree = "<group>"; };
@@ -10237,6 +10241,8 @@
 				51E0BABA0DA5547100A9E417 /* StorageEvent.cpp */,
 				51E0BAB90DA5547100A9E417 /* StorageEvent.h */,
 				51E0BABD0DA5548400A9E417 /* StorageEvent.idl */,
+				C5E9B67610697E1300C7BB1A /* StorageEventDispatcher.cpp */,
+				C5EBDD81105EDDEC0056816F /* StorageEventDispatcher.h */,
 				51E0BB370DA5ACB600A9E417 /* StorageMap.cpp */,
 				51E0BB360DA5ACB600A9E417 /* StorageMap.h */,
 				C50D0E800FF4272900AC2644 /* StorageNamespace.cpp */,
@@ -17903,6 +17909,7 @@
 				510D4A4F103177A20049EA54 /* WebSocketChannel.h in Headers */,
 				510D4A50103177A20049EA54 /* WebSocketChannelClient.h in Headers */,
 				51ABAE451043AB4A008C5260 /* WebSocketHandshake.h in Headers */,
+				C5EBDD84105EDDEC0056816F /* StorageEventDispatcher.h in Headers */,
 				FABE72F51059C1EB00D999DD /* MathMLElement.h in Headers */,
 				FABE72F71059C1EB00D999DD /* MathMLInlineContainerElement.h in Headers */,
 				FABE72F91059C1EB00D999DD /* MathMLMathElement.h in Headers */,
@@ -20023,6 +20030,7 @@
 				FABE72FE1059C21100D999DD /* MathMLNames.cpp in Sources */,
 				BCCE58AC1061E8CF008FB35A /* JSDatabaseCustom.cpp in Sources */,
 				BCCE58AF1061E90C008FB35A /* JSDocumentFragmentCustom.cpp in Sources */,
+				C5E9B67710697E1300C7BB1A /* StorageEventDispatcher.cpp in Sources */,
 				14CD8D82106B529000A46D23 /* JSSharedWorkerCustom.cpp in Sources */,
 				7693BAD3106C2DCA007B0823 /* PluginHalter.cpp in Sources */,
 				BCACF3BC1072921A00C0C8A3 /* UserContentURLPattern.cpp in Sources */,

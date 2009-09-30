@@ -3105,6 +3105,7 @@
             'storage/StorageAreaSync.h',
             'storage/StorageEvent.cpp',
             'storage/StorageEvent.h',
+            'storage/StorageEventDispatcher.cpp',
             'storage/StorageEventDispatcher.h',
             'storage/StorageMap.cpp',
             'storage/StorageMap.h',
