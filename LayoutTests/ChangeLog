@@ -1,3 +1,19 @@
+2009-09-30  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Use a script-tests directory rather than a resources directory for DOM Storage
+        https://bugs.webkit.org/show_bug.cgi?id=29938
+
+        Use a script-tests directory rather than a resources directory for DOM Storage.
+        This matches up with what's been done elsewhere in the tree.
+
+        * storage/domstorage/localstorage/clear.html:
+        * storage/domstorage/resources: Removed.
+        * storage/domstorage/resources/clear.js: Removed.
+        * storage/domstorage/script-tests: Copied from LayoutTests/storage/domstorage/resources.
+        * storage/domstorage/sessionstorage/clear.html:
+
 2009-09-30  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.
