@@ -77,7 +77,7 @@ if (-d "../Internal") {
     print "Updating Internal\n" unless $quiet;
     runSvnUpdate();
 } elsif (isChromium()) {
-    system("perl", "WebKitTools/Scripts/update-webkit-chromium") == 0 or die;
+    system("perl", "WebKitTools/Scripts/update-webkit-chromium") == 0 or die $!;
 } elsif (isAppleWinWebKit()) {
     system("perl", "WebKitTools/Scripts/update-webkit-auxiliary-libs") == 0 or die;
 }

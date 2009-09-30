@@ -37,18 +37,15 @@ if (not `gclient --version`) {
     die;
 }
 
-# If .gclient configuration file doesn't exist, create it.
 chdir("WebKit/chromium") or die $!;
 if (! -e ".gclient") {
+    # If .gclient configuration file doesn't exist, create it.
     print "Configuring gclient...\n";
-    my $result = exec("gclient", 
-                        "config", 
-                        "--spec=solutions=[{'name':'./','url':None}]");
-    if (!$result) {
-        die "Error while configuring gclient for chromium port\n";
-    }
+    system("gclient", 
+           "config", 
+           "--spec=solutions=[{'name':'./','url':None}]") == 0 or die $!;
 }
 
 # Execute gclient sync.
 print "Updating chromium port dependencies using gclient...\n";
-exec("gclient", "sync") == 0 or die;
+system("gclient", "sync") == 0 or die $!;
