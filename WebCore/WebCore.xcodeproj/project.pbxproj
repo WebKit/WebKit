@@ -5285,6 +5285,7 @@
 		0F580CFC0F12DE9B0051D689 /* RenderLayerBacking.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderLayerBacking.cpp; sourceTree = "<group>"; };
 		0F6ECD430F252F3700BDE271 /* CSSPropertyLonghand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSPropertyLonghand.h; sourceTree = "<group>"; };
 		0F6ECD440F252F3700BDE271 /* CSSPropertyLonghand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSPropertyLonghand.cpp; sourceTree = "<group>"; };
+		0F9C6F4B1073EF0400DED9BF /* WebCore.3DRendering.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; path = WebCore.3DRendering.exp; sourceTree = "<group>"; };
 		0FC705200EB1815600B90AD8 /* AtomicStringHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AtomicStringHash.h; sourceTree = "<group>"; };
 		0FCF33230F2B9715004B6795 /* ColorCG.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ColorCG.cpp; sourceTree = "<group>"; };
 		0FCF33280F2B9A25004B6795 /* WebTiledLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebTiledLayer.mm; sourceTree = "<group>"; };
@@ -10478,6 +10479,7 @@
 			isa = PBXGroup;
 			children = (
 				F58EF58E02DFDFB7018635CA /* WebCore.base.exp */,
+				0F9C6F4B1073EF0400DED9BF /* WebCore.3DRendering.exp */,
 				FEFD102C105C41470002855E /* WebCore.ContextMenus.exp */,
 				4491959D0FBE17D700D9F824 /* WebCore.DashboardSupport.exp */,
 				FEA4133F105D67AE0007236F /* WebCore.DragSupport.exp */,

@@ -1,3 +1,18 @@
+2009-09-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        transforms/3d tests are not run in Release builds
+        https://bugs.webkit.org/show_bug.cgi?id=29827
+
+        Make sure we export the WebCoreHas3DRendering symbol in Release builds,
+        because this symbols is used by run-webkit-tests (via 'nm') to detect whether
+        WebCore was built with ENABLE_3D_RENDERING turned on.
+
+        * DerivedSources.make:
+        * WebCore.3DRendering.exp: Added.
+        * WebCore.xcodeproj/project.pbxproj:
+
 2009-09-30  Jeremy Orlow  <jorlow@chromium.org>
 
         Build fix for QT.  Didn't know WebCore.pro existed.
