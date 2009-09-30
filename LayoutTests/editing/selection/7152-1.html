@@ -9,7 +9,7 @@ function editingTest() {
 </script>
 </head>
 <body id="test" contenteditable="true" onLoad="runEditingTest();">
-<p>This is a testcase for <a href="http://bugzilla.opendarwin.org/show_bug.cgi?id=7152">http://bugzilla.opendarwin.org/show_bug.cgi?id=7152</a>.  Adding visible candidates after tables, at [table, numberOfChildren], threw RenderView::setSelection for a loop because it assumed the end of a selection would be inside an atomic node.</p>
+<p>This is a testcase for <a href="https://bugs.webkit.org/show_bug.cgi?id=7152">http://bugzilla.opendarwin.org/show_bug.cgi?id=7152</a>.  Adding visible candidates after tables, at [table, numberOfChildren], threw RenderView::setSelection for a loop because it assumed the end of a selection would be inside an atomic node.</p>
 <hr>
 <table border="1" ><tr><td>This should be selected.</td></tr><tr><td>This should be selected.</td></tr></table>
 </body></html>

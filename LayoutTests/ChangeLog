@@ -1,3 +1,135 @@
+2009-09-29  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Change remaining references in tests from bugzilla.opendarwin.org to bugs.webkit.org
+        https://bugs.webkit.org/show_bug.cgi?id=12140
+
+        Remove opendarwin URLs from href="".
+        This change doesn't change pixel test results.
+
+        * editing/pasteboard/display-block-on-spans.html:
+        * editing/pasteboard/drop-text-without-selection.html:
+        * editing/pasteboard/paste-text-019.html:
+        * editing/selection/6476.html:
+        * editing/selection/7152-1.html:
+        * editing/selection/7152-2.html:
+        * editing/selection/after-line-wrap.html:
+        * editing/selection/click-start-of-line.html:
+        * editing/selection/leave-requested-block.html:
+        * editing/selection/select-from-textfield-outwards.html:
+        * fast/block/basic/text-indent-rtl.html:
+        * fast/block/float/nopaint-after-layer-destruction.html:
+        * fast/block/float/nopaint-after-layer-destruction2.html:
+        * fast/block/float/table-relayout.html:
+        * fast/block/float/vertical-move-relayout.html:
+        * fast/block/positioning/height-change.html:
+        * fast/block/positioning/relayout-on-position-change.html:
+        * fast/block/positioning/window-height-change.html:
+        * fast/css-generated-content/hover-style-change.html: Added property allow-tabs.
+        * fast/css/error-in-last-decl.html:
+        * fast/css/ex-after-font-variant.html:
+        * fast/css/find-next-layer.html:
+        * fast/css/first-letter-detach.html:
+        * fast/css/font-shorthand-weight-only.html:
+        * fast/css/hover-subselector.html:
+        * fast/css/invalidation-errors-2.html:
+        * fast/css/invalidation-errors-3.html:
+        * fast/css/invalidation-errors.html:
+        * fast/css/resize-corner-tracking.html:
+        * fast/css/rtl-ordering.html:
+        * fast/css/universal-hover-quirk.html:
+        * fast/dom/Element/class-attribute-whitespace.html: Added property allow-tabs.
+        * fast/dom/HTMLHeadElement/head-link-style-href-check.html:
+        * fast/dom/HTMLLinkElement/pending-stylesheet-count.html:
+        * fast/dynamic/layer-hit-test-crash.html:
+        * fast/dynamic/selection-highlight-adjust.html:
+        * fast/encoding/resources/%25%u0435 0 %xx%%%ulike.html:
+        * fast/events/event-sender-mouse-moved.html:
+        * fast/events/resources/drag-outside-window-frame.html:
+        * fast/forms/button-cannot-be-nested.html:
+        * fast/forms/button-generated-content.html:
+        * fast/forms/button-inner-block-reuse.html:
+        * fast/forms/button-white-space.html:
+        * fast/forms/floating-textfield-relayout.html:
+        * fast/forms/form-hides-table.html:
+        * fast/forms/visual-hebrew-text-field.html:
+        * fast/history/clicked-link-is-visited.html:
+        * fast/history/resources/clicked-link-is-visited-2.html:
+        * fast/inline-block/overflow-clip.html:
+        * fast/invalid/missing-address-end-tag.html:
+        * fast/invalid/missing-dl-end-tag.html:
+        * fast/invalid/missing-dt-end-tag.html:
+        * fast/invalid/missing-font-end-tag.html:
+        * fast/js/exception-linenums-in-html-3.html:
+        * fast/js/missing-style-end-tag-js.html:
+        * fast/layers/opacity-outline.html:
+        * fast/lists/list-style-none-crash.html:
+        * fast/lists/markers-in-selection.html:
+        * fast/lists/scrolled-marker-paint.html:
+        * fast/overflow/image-selection-highlight.html:
+        * fast/overflow/overflow-rtl-inline-scrollbar.html:
+        * fast/parser/broken-comments-vs-parsing-mode.html:
+        * fast/parser/nofoo-tags-inside-paragraph.html:
+        * fast/parser/remove-block-in-residual-style.html:
+        * fast/repaint/backgroundSizeRepaint.html:
+        * fast/repaint/border-repaint-glitch.html:
+        * fast/repaint/bugzilla-3509.html:
+        * fast/repaint/bugzilla-5699.html:
+        * fast/repaint/bugzilla-6278.html:
+        * fast/repaint/bugzilla-6388.html:
+        * fast/repaint/bugzilla-6473.html:
+        * fast/repaint/bugzilla-7235.html:
+        * fast/repaint/clipped-relative.html:
+        * fast/repaint/containing-block-position-change.html:
+        * fast/repaint/flexible-box-overflow-horizontal.html:
+        * fast/repaint/flexible-box-overflow.html:
+        * fast/repaint/float-move-during-layout.html:
+        * fast/repaint/inline-outline-repaint.html:
+        * fast/repaint/layer-outline-horizontal.html:
+        * fast/repaint/layer-outline.html:
+        * fast/repaint/line-overflow.html:
+        * fast/repaint/outline-repaint-glitch.html:
+        * fast/repaint/outline-shrinking.html:
+        * fast/repaint/repaint-resized-overflow.html:
+        * fast/repaint/static-to-positioned.html:
+        * fast/repaint/table-cell-move.html:
+        * fast/repaint/table-extra-bottom-grow.html:
+        * fast/repaint/text-shadow-horizontal.html:
+        * fast/repaint/text-shadow.html:
+        * fast/replaced/applet-rendering-java-disabled.html:
+        * fast/replaced/image-solid-color-with-alpha.html:
+        * fast/replaced/inline-box-wrapper-handover.html:
+        * fast/replaced/pdf-as-image.html:
+        * fast/table/absolute-table-at-bottom.html:
+        * fast/table/add-before-anonymous-child.html:
+        * fast/table/border-collapsing/003.html:
+        * fast/table/border-collapsing/border-collapsing-head-foot.html:
+        * fast/table/border-collapsing/rtl-border-collapsing.html:
+        * fast/table/cell-absolute-child.html:
+        * fast/table/click-near-anonymous-table.html:
+        * fast/table/edge-offsets.html:
+        * fast/table/empty-section-crash.html:
+        * fast/table/fixed-table-non-cell-in-row.html:
+        * fast/table/form-with-table-style.html:
+        * fast/table/row-height-recalc.html:
+        * fast/table/rtl-cell-display-none-assert.html:
+        * fast/table/text-field-baseline.html:
+        * fast/text/atsui-small-caps-punctuation-size.html:
+        * fast/text/atsui-spacing-features.html:
+        * fast/text/basic/015.html:
+        * fast/text/capitalize-empty-generated-string.html:
+        * fast/text/in-rendered-text-rtl.html:
+        * fast/text/international/rtl-caret.html:
+        * fast/text/midword-break-hang.html:
+        * fast/text/whitespace/pre-wrap-overflow-selection.html:
+        * fast/text/whitespace/pre-wrap-spaces-after-newline.html:
+        * fast/tokenizer/missing-style-end-tag-1.html:
+        * fast/tokenizer/missing-style-end-tag-2.html:
+        * fast/tokenizer/missing-title-end-tag-1.html:
+        * fast/tokenizer/missing-title-end-tag-2.html:
+        * http/tests/misc/iframe404.html:
+
 2009-09-29  Brady Eidson  <beidson@apple.com>
 
         Reviewed by John Sullivan.
