@@ -93,11 +93,11 @@ public:
 
     bool elementDoesAutoCompleteForElementWithId(JSStringRef id);
 
-    bool dumpAsText() const { return m_dumpAsText; }
-    void setDumpAsText(bool dumpAsText) { m_dumpAsText = dumpAsText; }
-
     bool dumpAsPDF() const { return m_dumpAsPDF; }
     void setDumpAsPDF(bool dumpAsPDF) { m_dumpAsPDF = dumpAsPDF; }
+
+    bool dumpAsText() const { return m_dumpAsText; }
+    void setDumpAsText(bool dumpAsText) { m_dumpAsText = dumpAsText; }
     
     bool dumpBackForwardList() const { return m_dumpBackForwardList; }
     void setDumpBackForwardList(bool dumpBackForwardList) { m_dumpBackForwardList = dumpBackForwardList; }
@@ -111,23 +111,14 @@ public:
     bool dumpDatabaseCallbacks() const { return m_dumpDatabaseCallbacks; }
     void setDumpDatabaseCallbacks(bool dumpDatabaseCallbacks) { m_dumpDatabaseCallbacks = dumpDatabaseCallbacks; }
 
-    bool dumpStatusCallbacks() const { return m_dumpStatusCallbacks; }
-    void setDumpStatusCallbacks(bool dumpStatusCallbacks) { m_dumpStatusCallbacks = dumpStatusCallbacks; }
-
     bool dumpDOMAsWebArchive() const { return m_dumpDOMAsWebArchive; }
     void setDumpDOMAsWebArchive(bool dumpDOMAsWebArchive) { m_dumpDOMAsWebArchive = dumpDOMAsWebArchive; }
 
-    bool dumpSelectionRect() const { return m_dumpSelectionRect; }
-    void setDumpSelectionRect(bool dumpSelectionRect) { m_dumpSelectionRect = dumpSelectionRect; }
-
-    bool dumpSourceAsWebArchive() const { return m_dumpSourceAsWebArchive; }
-    void setDumpSourceAsWebArchive(bool dumpSourceAsWebArchive) { m_dumpSourceAsWebArchive = dumpSourceAsWebArchive; }
-
-    bool dumpTitleChanges() const { return m_dumpTitleChanges; }
-    void setDumpTitleChanges(bool dumpTitleChanges) { m_dumpTitleChanges = dumpTitleChanges; }
-
     bool dumpEditingCallbacks() const { return m_dumpEditingCallbacks; }
     void setDumpEditingCallbacks(bool dumpEditingCallbacks) { m_dumpEditingCallbacks = dumpEditingCallbacks; }
+
+    bool dumpFrameLoadCallbacks() const { return m_dumpFrameLoadCallbacks; }
+    void setDumpFrameLoadCallbacks(bool dumpFrameLoadCallbacks) { m_dumpFrameLoadCallbacks = dumpFrameLoadCallbacks; }
 
     bool dumpResourceLoadCallbacks() const { return m_dumpResourceLoadCallbacks; }
     void setDumpResourceLoadCallbacks(bool dumpResourceLoadCallbacks) { m_dumpResourceLoadCallbacks = dumpResourceLoadCallbacks; }
@@ -135,12 +126,21 @@ public:
     bool dumpResourceResponseMIMETypes() const { return m_dumpResourceResponseMIMETypes; }
     void setDumpResourceResponseMIMETypes(bool dumpResourceResponseMIMETypes) { m_dumpResourceResponseMIMETypes = dumpResourceResponseMIMETypes; }
 
+    bool dumpSelectionRect() const { return m_dumpSelectionRect; }
+    void setDumpSelectionRect(bool dumpSelectionRect) { m_dumpSelectionRect = dumpSelectionRect; }
+
+    bool dumpSourceAsWebArchive() const { return m_dumpSourceAsWebArchive; }
+    void setDumpSourceAsWebArchive(bool dumpSourceAsWebArchive) { m_dumpSourceAsWebArchive = dumpSourceAsWebArchive; }
+
+    bool dumpStatusCallbacks() const { return m_dumpStatusCallbacks; }
+    void setDumpStatusCallbacks(bool dumpStatusCallbacks) { m_dumpStatusCallbacks = dumpStatusCallbacks; }
+
+    bool dumpTitleChanges() const { return m_dumpTitleChanges; }
+    void setDumpTitleChanges(bool dumpTitleChanges) { m_dumpTitleChanges = dumpTitleChanges; }
+    
     bool dumpWillCacheResponse() const { return m_dumpWillCacheResponse; }
     void setDumpWillCacheResponse(bool dumpWillCacheResponse) { m_dumpWillCacheResponse = dumpWillCacheResponse; }
-
-    bool dumpFrameLoadCallbacks() const { return m_dumpFrameLoadCallbacks; }
-    void setDumpFrameLoadCallbacks(bool dumpFrameLoadCallbacks) { m_dumpFrameLoadCallbacks = dumpFrameLoadCallbacks; }
-
+    
     bool callCloseOnWebViews() const { return m_callCloseOnWebViews; }
     void setCallCloseOnWebViews(bool callCloseOnWebViews) { m_callCloseOnWebViews = callCloseOnWebViews; }
 
@@ -204,22 +204,22 @@ public:
     bool geolocationPermission() const { return m_geolocationPermission; }
 
 private:
-    bool m_dumpAsText;
     bool m_dumpAsPDF;
+    bool m_dumpAsText;
     bool m_dumpBackForwardList;
     bool m_dumpChildFrameScrollPositions;
     bool m_dumpChildFramesAsText;
-    bool m_dumpDatabaseCallbacks;
     bool m_dumpDOMAsWebArchive;
+    bool m_dumpDatabaseCallbacks;
+    bool m_dumpEditingCallbacks;
+    bool m_dumpFrameLoadCallbacks;
+    bool m_dumpResourceLoadCallbacks;
+    bool m_dumpResourceResponseMIMETypes;
     bool m_dumpSelectionRect;
     bool m_dumpSourceAsWebArchive;
     bool m_dumpStatusCallbacks;
     bool m_dumpTitleChanges;
-    bool m_dumpEditingCallbacks;
-    bool m_dumpResourceLoadCallbacks;
-    bool m_dumpResourceResponseMIMETypes;
     bool m_dumpWillCacheResponse;
-    bool m_dumpFrameLoadCallbacks;
     bool m_callCloseOnWebViews;
     bool m_canOpenWindows;
     bool m_closeRemainingWindowsWhenComplete;

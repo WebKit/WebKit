@@ -2,6 +2,36 @@
 
         Reviewed by John Sullivan.
 
+        Updated way-out-of-date sorting throughout the dump methods/flags.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (dumpAsPDFCallback):
+        (dumpAsTextCallback):
+        (dumpFrameLoadCallbacksCallback):
+        (dumpResourceLoadCallbacksCallback):
+        (LayoutTestController::staticFunctions):
+
+        * DumpRenderTree/LayoutTestController.h:
+        (LayoutTestController::dumpAsText):
+        (LayoutTestController::setDumpAsText):
+        (LayoutTestController::dumpFrameLoadCallbacks):
+        (LayoutTestController::setDumpFrameLoadCallbacks):
+        (LayoutTestController::dumpSelectionRect):
+        (LayoutTestController::setDumpSelectionRect):
+        (LayoutTestController::dumpSourceAsWebArchive):
+        (LayoutTestController::setDumpSourceAsWebArchive):
+        (LayoutTestController::dumpStatusCallbacks):
+        (LayoutTestController::setDumpStatusCallbacks):
+        (LayoutTestController::dumpTitleChanges):
+        (LayoutTestController::setDumpTitleChanges):
+        (LayoutTestController::dumpWillCacheResponse):
+        (LayoutTestController::setDumpWillCacheResponse):
+
+2009-09-29  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by John Sullivan.
+
         WebKit Mac API should provide a delegate interface for global history.
         <rdar://problem/7042773> and https://webkit.org/b/29904
 
