@@ -1,3 +1,18 @@
+2009-09-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        ASSERTION FAILED: !repaintContainer || repaintContainer == this
+        https://bugs.webkit.org/show_bug.cgi?id=29755
+        
+        Testcase with multiple containers between the absolutely positioned div and its positioned
+        ancestor.
+
+        * compositing/repaint/opacity-between-absolute2.html: Added.
+        * platform/mac/compositing/repaint/opacity-between-absolute2-expected.checksum: Added.
+        * platform/mac/compositing/repaint/opacity-between-absolute2-expected.png: Added.
+        * platform/mac/compositing/repaint/opacity-between-absolute2-expected.txt: Added.
+
 2009-09-30  Renata Hodovan  <hodovan.renata@stud.u-szeged.hu>
 
         Reviewed by Simon Hausmann.

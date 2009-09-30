@@ -1,3 +1,29 @@
+2009-09-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        ASSERTION FAILED: !repaintContainer || repaintContainer == this
+        https://bugs.webkit.org/show_bug.cgi?id=29755
+        
+        Generalize the fix for this bug to account for cases where there may be multiple
+        containing blocks between the repaint container, and the container of the element
+        being repainted.
+
+        Test: compositing/repaint/opacity-between-absolute2.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::mapLocalToContainer):
+        Call offsetFromAncestorContainer() to get the correct offset.
+        
+        (WebCore::RenderBox::computeRectForRepaint): Ditto
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::computeRectForRepaint): Ditto.
+        
+        * rendering/RenderObject.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::offsetFromAncestorContainer):
+        New method that computes an offset from some object in the ancestor container() chain.
+
 2009-09-30  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
 
         Reviewed by Simon Hausmann.

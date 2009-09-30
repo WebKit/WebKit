@@ -541,6 +541,8 @@ public:
 
     // Return the offset from the container() renderer (excluding transforms)
     virtual IntSize offsetFromContainer(RenderObject*) const;
+    // Return the offset from an object up the container() chain. Asserts that none of the intermediate objects have transforms.
+    IntSize offsetFromAncestorContainer(RenderObject*) const;
     
     virtual void absoluteRects(Vector<IntRect>&, int, int) { }
     // FIXME: useTransforms should go away eventually
