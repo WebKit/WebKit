@@ -473,6 +473,7 @@ Could be worth adding to the API.
 
 + (void)_addUserScriptToGroup:(NSString *)groupName source:(NSString *)source url:(NSURL *)url worldID:(unsigned)worldID patterns:(NSArray *)patterns injectionTime:(WebUserScriptInjectionTime)injectionTime;
 + (void)_addUserStyleSheetToGroup:(NSString *)groupName source:(NSString *)source url:(NSURL *)url worldID:(unsigned)worldID patterns:(NSArray *)patterns;
++ (void)_removeUserContentFromGroup:(NSString *)groupName url:(NSURL *)url worldID:(unsigned)worldID;
 + (void)_removeUserContentFromGroup:(NSString *)groupName worldID:(unsigned)worldID;
 + (void)_removeAllUserContentFromGroup:(NSString *)groupName;
 

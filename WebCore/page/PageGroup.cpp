@@ -233,6 +233,41 @@ void PageGroup::addUserStyleSheet(const String& source, const KURL& url, const V
     }
 }
 
+void PageGroup::removeUserContentWithURLForWorld(const KURL& url, unsigned worldID)
+{
+    if (m_userScripts) {
+        UserScriptMap::iterator it = m_userScripts->find(worldID);
+        if (it != m_userScripts->end()) {
+            UserScriptVector* scripts = it->second;
+            for (int i = scripts->size() - 1; i >= 0; --i) {
+                if (scripts->at(i)->url() == url)
+                    scripts->remove(i);
+            }
+            
+            if (scripts->isEmpty()) {
+                m_userScripts->remove(it);
+                delete it->second;
+            }
+        }
+    }
+    
+    if (m_userStyleSheets) {
+        UserStyleSheetMap::iterator it = m_userStyleSheets->find(worldID);
+        if (it != m_userStyleSheets->end()) {
+            UserStyleSheetVector* stylesheets = it->second;
+            for (int i = stylesheets->size() - 1; i >= 0; --i) {
+                if (stylesheets->at(i)->url() == url)
+                    stylesheets->remove(i);
+            }
+            
+            if (stylesheets->isEmpty()) {
+                m_userStyleSheets->remove(it);
+                delete it->second;
+            }
+        }
+    }
+}
+
 void PageGroup::removeUserContentForWorld(unsigned worldID)
 {
     if (m_userScripts) {

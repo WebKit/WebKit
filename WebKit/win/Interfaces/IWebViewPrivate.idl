@@ -183,6 +183,7 @@ interface IWebViewPrivate : IUnknown
     // For the following functions, 0 < worldID < UINT_MAX.
     HRESULT addUserScriptToGroup([in] BSTR groupName, [in] unsigned worldID, [in] BSTR source, [in] BSTR url, [in] unsigned patternsCount, [in, size_is(patternsCount)] BSTR* patterns, [in] WebUserScriptInjectionTime injectionTime);
     HRESULT addUserStyleSheetToGroup([in] BSTR groupName, [in] unsigned worldID, [in] BSTR source, [in] BSTR url, [in] unsigned patternsCount, [in, size_is(patternsCount)] BSTR* patterns);
+    HRESULT removeUserContentWithURLFromGroup([in] BSTR groupName, [in] unsigned worldID, [in] BSTR url);
     HRESULT removeUserContentFromGroup([in] BSTR groupName, [in] unsigned worldID);
     HRESULT removeAllUserContentFromGroup([in] BSTR groupName);
 

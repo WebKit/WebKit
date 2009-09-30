@@ -1,3 +1,13 @@
+2009-09-30  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Add a method for removal of user scripts and stylesheets by URL from a specific world.
+
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::removeUserContentURLForWorld):
+        * page/PageGroup.h:
+
 2009-09-30  Chris Hawk  <hawk@chromium.org>
 
         Reviewed by Dimitri Glazkov.

@@ -2175,6 +2175,19 @@ static inline IMP getMethod(id o, SEL s)
     pageGroup->addUserStyleSheet(source, url, patternsVector, worldID);
 }
 
++ (void)_removeUserContentFromGroup:(NSString *)groupName url:(NSURL *)url worldID:(unsigned)worldID
+{
+    String group(groupName);
+    if (group.isEmpty())
+        return;
+    
+    PageGroup* pageGroup = PageGroup::pageGroup(group);
+    if (!pageGroup)
+        return;
+
+    pageGroup->removeUserContentWithURLForWorld(url, worldID);
+}
+
 + (void)_removeUserContentFromGroup:(NSString *)groupName worldID:(unsigned)worldID
 {
     String group(groupName);

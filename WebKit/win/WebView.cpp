@@ -5476,6 +5476,22 @@ HRESULT WebView::addUserStyleSheetToGroup(BSTR groupName, unsigned worldID, BSTR
     return S_OK;
 }
 
+HRESULT WebView::removeUserContentWithURLFromGroup(BSTR groupName, unsigned worldID, BSTR url)
+{
+    String group(groupName, SysStringLen(groupName));
+    if (group.isEmpty() || !worldID || worldID == numeric_limits<unsigned>::max())
+        return E_INVALIDARG;
+
+    PageGroup* pageGroup = PageGroup::pageGroup(group);
+    ASSERT(pageGroup);
+    if (!pageGroup)
+        return E_FAIL;
+
+    pageGroup->removeUserContentWithURLForWorld(KURL(KURL(), String(url, SysStringLen(url))), worldID);
+
+    return S_OK;
+}
+
 HRESULT WebView::removeUserContentFromGroup(BSTR groupName, unsigned worldID)
 {
     String group(groupName, SysStringLen(groupName));

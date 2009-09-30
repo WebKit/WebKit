@@ -78,6 +78,7 @@ namespace WebCore {
         const UserStyleSheetMap* userStyleSheets() const { return m_userStyleSheets.get(); }
         
         void removeUserContentForWorld(unsigned);
+        void removeUserContentWithURLForWorld(const KURL&, unsigned);
         void removeAllUserContent();
         
     private:

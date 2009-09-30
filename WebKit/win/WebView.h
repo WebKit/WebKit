@@ -742,6 +742,7 @@ public:
 
     virtual HRESULT STDMETHODCALLTYPE addUserScriptToGroup(BSTR groupName, unsigned worldID, BSTR source, BSTR url, unsigned patternsCount, BSTR* patterns, WebUserScriptInjectionTime);
     virtual HRESULT STDMETHODCALLTYPE addUserStyleSheetToGroup(BSTR groupName, unsigned worldID, BSTR source, BSTR url, unsigned patternsCount, BSTR* patterns);
+    virtual HRESULT STDMETHODCALLTYPE removeUserContentWithURLFromGroup(BSTR groupName, unsigned worldID, BSTR url);
     virtual HRESULT STDMETHODCALLTYPE removeUserContentFromGroup(BSTR groupName, unsigned worldID);
     virtual HRESULT STDMETHODCALLTYPE removeAllUserContentFromGroup(BSTR groupName);
 

@@ -1,3 +1,14 @@
+2009-09-30  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Add the ability to remove user stylesheets and scripts by URL.
+
+        * Interfaces/IWebViewPrivate.idl:
+        * WebView.cpp:
+        (WebView::removeUserContentWithURLFromGroup):
+        * WebView.h:
+
 2009-09-29  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Dimitri Glazkov.
