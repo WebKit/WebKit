@@ -181,7 +181,7 @@ namespace JSC {
 #endif
     template<> struct CellSize<sizeof(uint64_t)> { static const size_t m_value = 64; };
 
-#if PLATFORM(WINCE)
+#if PLATFORM(WINCE) || PLATFORM(SYMBIAN)
     const size_t BLOCK_SIZE = 64 * 1024; // 64k
 #else
     const size_t BLOCK_SIZE = 64 * 4096; // 256k
