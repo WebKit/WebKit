@@ -90,6 +90,7 @@ reviewers_list = [
     Reviewer("Eric Carlson", "eric.carlson@apple.com"),
     Reviewer("Eric Seidel", "eric@webkit.org"),
     Reviewer("Gavin Barraclough", "barraclough@apple.com"),
+    Reviewer("Geoffrey Garen", "ggaren@apple.com"),
     Reviewer("George Staikos", "staikos@kde.org"),
     Reviewer("Gustavo Noronha", "gns@gnome.org"),
     Reviewer("Holger Freyther", "zecke@selfish.org"),

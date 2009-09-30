@@ -1,3 +1,9 @@
+2009-09-30  Eric Seidel  <eric@webkit.org>
+
+        No review, just adding Geoff to the list of reviewers.
+
+        * Scripts/modules/committers.py:
+
 2009-09-30  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.
