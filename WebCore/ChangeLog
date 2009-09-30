@@ -1,3 +1,13 @@
+2009-09-30  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Fix TextCodecQt::decode method after r48752 to return a non-null string if the length of the input is 0.
+        This fixes https://bugs.webkit.org/show_bug.cgi?id=29736.
+
+        * platform/text/qt/TextCodecQt.cpp:
+        (WebCore::TextCodecQt::decode):
+
 2009-09-29  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by Jon Honeycutt.
