@@ -1,3 +1,68 @@
+2009-09-30  Steve Block  <steveblock@google.com>
+
+        Reviewed by Darin Adler.
+
+        Geolocation LayoutTests should use an HTML template.
+        https://bugs.webkit.org/show_bug.cgi?id=29179
+
+        Updates Geolocation LayoutTests to correctly use an HTML template so that
+        individual HTML files can be generated using make-script-test-wrappers.
+        This requires a new js-test-post.js which allows for asynchronous tests.
+
+
+        * fast/dom/Geolocation/resources/TEMPLATE.html: Modified. Updated to use new js-test-post.js.
+        * fast/dom/Geolocation/resources/js-test-post.js: Added. Allows for asynchronous tests.
+
+        * fast/dom/Geolocation/resources/argument-types.js: Modified. Sepcifies synchronous test.
+        * fast/dom/Geolocation/argument-types.html: Modified. Updated to use new js-test-post.js.
+
+        * fast/dom/Geolocation/resources/callback-exception.js: Modified. Specifies asynchronous test.
+        * fast/dom/Geolocation/callback-exception.html: Modified. Updated to use new js-test-post.js.
+        * fast/dom/Geolocation/callback-exception-expected.txt: Modified. Adds successfullyParsed.
+
+        * fast/dom/Geolocation/resources/enabled.js: Modified. Sepcifies synchronous test.
+        * fast/dom/Geolocation/enabled.html: Modified. Updated to use new js-test-post.js.
+
+        * fast/dom/Geolocation/resources/error.js: Modified. Specifies asynchronous test.
+        * fast/dom/Geolocation/error.html: Modified. Updated to use new js-test-post.js.
+        * fast/dom/Geolocation/error-expected.txt: Modified. Adds successfullyParsed.
+
+        * fast/dom/Geolocation/resources/permission-denied.js: Modified. Specifies asynchronous test.
+        * fast/dom/Geolocation/permission-denied.html: Modified. Updated to use new js-test-post.js.
+        * fast/dom/Geolocation/permission-denied-expected.txt: Modified. Adds successfullyParsed.
+
+        * fast/dom/Geolocation/resources/permission-denied-stops-watches.js: Modified. Specifies asynchronous test.
+        * fast/dom/Geolocation/permission-denied-stops-watches.html: Modified. Updated to use new js-test-post.js.
+        * fast/dom/Geolocation/permission-denied-stops-watches-expected.txt: Modified. Adds successfullyParsed.
+
+        * fast/dom/Geolocation/resources/position-string.js: Modified. Specifies asynchronous test.
+        * fast/dom/Geolocation/position-string.html: Modified. Updated to use new js-test-post.js.
+        * fast/dom/Geolocation/position-string-expected.txt: Modified. Adds successfullyParsed.
+
+        * fast/dom/Geolocation/resources/reentrant-error.js: Modified. Specifies asynchronous test.
+        * fast/dom/Geolocation/reentrant-error.html: Modified. Updated to use new js-test-post.js.
+        * fast/dom/Geolocation/reentrant-error-expected.txt: Modified. Adds successfullyParsed.
+
+        * fast/dom/Geolocation/resources/reentrant-success.js: Modified. Specifies asynchronous test.
+        * fast/dom/Geolocation/reentrant-success.html: Modified. Updated to use new js-test-post.js.
+        * fast/dom/Geolocation/reentrant-success-expected.txt: Modified. Adds successfullyParsed.
+
+        * fast/dom/Geolocation/resources/success.js: Modified. Specifies asynchronous test.
+        * fast/dom/Geolocation/success.html: Modified. Updated to use new js-test-post.js.
+        * fast/dom/Geolocation/success-expected.txt: Modified. Adds successfullyParsed.
+
+        * fast/dom/Geolocation/resources/timeout.js: Modified. Specifies asynchronous test.
+        * fast/dom/Geolocation/timeout.html: Modified. Updated to use new js-test-post.js.
+        * fast/dom/Geolocation/timeout-expected.txt: Modified. Adds successfullyParsed.
+
+        * fast/dom/Geolocation/resources/timeout-zero.js: Modified. Specifies asynchronous test.
+        * fast/dom/Geolocation/timeout-zero.html: Modified. Updated to use new js-test-post.js.
+        * fast/dom/Geolocation/timeout-zero-expected.txt: Modified. Adds successfullyParsed.
+
+        * fast/dom/Geolocation/resources/watch.js: Modified. Specifies asynchronous test.
+        * fast/dom/Geolocation/watch.html: Updated to use new js-test-post.js.
+        * fast/dom/Geolocation/watch-expected.txt: Modified. Adds successfullyParsed.
+
 2009-09-29  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Eric Seidel.

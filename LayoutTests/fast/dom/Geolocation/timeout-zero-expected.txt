@@ -3,6 +3,7 @@ Tests that when timeout is zero (and maximumAge is too), the error callback is c
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+PASS successfullyParsed is true
 PASS error.code is error.TIMEOUT
 PASS error.message is "Timeout expired"
 PASS error.UNKNOWN_ERROR is 0

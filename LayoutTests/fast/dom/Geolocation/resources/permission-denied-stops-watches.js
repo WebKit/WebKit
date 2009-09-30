@@ -37,3 +37,6 @@ function completeTest()
     window.layoutTestController.notifyDone();
 }
 window.layoutTestController.waitUntilDone();
+
+var isAsynchronous = true;
+var successfullyParsed = true;

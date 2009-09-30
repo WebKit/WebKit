@@ -48,5 +48,5 @@ function continueTest() {
 }
 window.layoutTestController.waitUntilDone();
 
-
-
+var isAsynchronous = true;
+var successfullyParsed = true;

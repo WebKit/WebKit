@@ -20,3 +20,6 @@ navigator.geolocation.getCurrentPosition(function(p) {
     timeout: 0
 });
 window.layoutTestController.waitUntilDone();
+
+var isAsynchronous = true;
+var successfullyParsed = true;

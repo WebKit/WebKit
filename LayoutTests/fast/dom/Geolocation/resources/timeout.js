@@ -24,3 +24,6 @@ navigator.geolocation.getCurrentPosition(function(p) {
     timeout: 1000
 });
 window.layoutTestController.waitUntilDone();
+
+var isAsynchronous = true;
+var successfullyParsed = true;

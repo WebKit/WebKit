@@ -64,3 +64,6 @@ navigator.geolocation.watchPosition(function(p) {
     }
 });
 window.layoutTestController.waitUntilDone();
+
+var isAsynchronous = true;
+var successfullyParsed = true;
