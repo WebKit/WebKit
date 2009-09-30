@@ -31,8 +31,8 @@
 #include "PlatformString.h"
 
 #include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
-#include <wtf/Threading.h>
 
 namespace WebCore {
 
@@ -40,7 +40,7 @@ namespace WebCore {
     class SecurityOrigin;
     class StorageAreaSync;
 
-    class StorageSyncManager : public ThreadSafeShared<StorageSyncManager> {
+    class StorageSyncManager : public RefCounted<StorageSyncManager> {
     public:
         static PassRefPtr<StorageSyncManager> create(const String& path);
         ~StorageSyncManager();

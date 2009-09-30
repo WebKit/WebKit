@@ -31,7 +31,7 @@
 #include "PlatformString.h"
 
 #include <wtf/PassRefPtr.h>
-#include <wtf/Threading.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
@@ -42,7 +42,7 @@ namespace WebCore {
     enum StorageType { LocalStorage, SessionStorage };
 
     // This interface is required for Chromium since these actions need to be proxied between processes.
-    class StorageArea : public ThreadSafeShared<StorageArea> {
+    class StorageArea : public RefCounted<StorageArea> {
     public:
         virtual ~StorageArea() { }
 

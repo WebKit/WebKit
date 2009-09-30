@@ -45,8 +45,8 @@ namespace WebCore {
 
         bool start();
 
-        void scheduleImport(PassRefPtr<StorageAreaSync>);
-        void scheduleSync(PassRefPtr<StorageAreaSync>);
+        void scheduleImport(StorageAreaSync*);
+        void scheduleSync(StorageAreaSync*);
 
         // Called from the main thread to synchronously shut down this thread
         void terminate();

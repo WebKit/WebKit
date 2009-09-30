@@ -44,19 +44,19 @@ namespace WebCore {
 
         ~LocalStorageTask();
 
-        static PassRefPtr<LocalStorageTask> createImport(PassRefPtr<StorageAreaSync> area) { return adoptRef(new LocalStorageTask(AreaImport, area)); }
-        static PassRefPtr<LocalStorageTask> createSync(PassRefPtr<StorageAreaSync> area) { return adoptRef(new LocalStorageTask(AreaSync, area)); }
-        static PassRefPtr<LocalStorageTask> createTerminate(PassRefPtr<LocalStorageThread> thread) { return adoptRef(new LocalStorageTask(TerminateThread, thread)); }
+        static PassRefPtr<LocalStorageTask> createImport(StorageAreaSync* area) { return adoptRef(new LocalStorageTask(AreaImport, area)); }
+        static PassRefPtr<LocalStorageTask> createSync(StorageAreaSync* area) { return adoptRef(new LocalStorageTask(AreaSync, area)); }
+        static PassRefPtr<LocalStorageTask> createTerminate(LocalStorageThread* thread) { return adoptRef(new LocalStorageTask(TerminateThread, thread)); }
 
         void performTask();
 
     private:
-        LocalStorageTask(Type, PassRefPtr<StorageAreaSync>);
-        LocalStorageTask(Type, PassRefPtr<LocalStorageThread>);
+        LocalStorageTask(Type, StorageAreaSync*);
+        LocalStorageTask(Type, LocalStorageThread*);
 
         Type m_type;
-        RefPtr<StorageAreaSync> m_area;
-        RefPtr<LocalStorageThread> m_thread;
+        StorageAreaSync* m_area;
+        LocalStorageThread* m_thread;
     };
 
 } // namespace WebCore

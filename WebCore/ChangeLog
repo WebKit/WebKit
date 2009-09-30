@@ -1,3 +1,67 @@
+2009-09-21  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        DOM Storage needs to be more careful about where "ThreadSafe" objects are destroyed.
+        https://bugs.webkit.org/show_bug.cgi?id=29265
+
+        DOM Storage needs to be more careful about where "ThreadSafe" objects are
+        destroyed.  With the current code, there actually isn't a race condition, but
+        it sure would be easy for someone to introduce one.  A bunch of
+        ThreadSafeShared objects have RefPtrs to objects that are NOT ThreadSafeShared
+        objects.  If it were possible any of these objects' destructors to be fired off
+        the main thread, then the you'd have a race condition.  The code should be more
+        clear and self-documenting about how things related to each other.
+
+        Since the lifetime of a LocalStorageTask is bounded by the LocalStorageThread
+        which is bounded by the StorageSyncManager, StorageAreaImpl, and
+        StorageAreaSync, there's no reason for LocalStorageTask to store anything other
+        than pointers.  By breaking this dependency, we can eliminate the risk.
+
+        Note that we _could_ have LocalStorageThread's task queue just store
+        LocalStorageTask*'s rather than RefPtr<LocalStorageTask>s but then we'd need to
+        manually take care of deleting.  It'd probably also be possible to change
+        LocalStorageThread around so that it needn't hold onto a reference of itself
+        and have a more deterministic shutdown, but my initial attempts to do so
+        failed, and I decided it wasn't worth changing.  The queue is killed before
+        hand, so the thread is 100% impotent before the main thread continues anyway.
+
+        The constructors and destructors of StorageSyncManager, StorageAreaImpl, and
+        StorageAreaSync now have ASSERTs to verify they're running on the main thread. 
+        I'm fairly positive that it'd be impossible to hit these asserts and the fact
+        that these classes are no longer ThreadSafeShared should make it clear how
+        they're meant to be used, but I think it's worth it to be extra sure.  Of
+        course, ideally, we'd have such an assert every time a ref is incremented or
+        decremented.
+
+        Behavior should be unchanged and this is just an internal code cleanup, so no
+        new tests.
+
+        * storage/LocalStorageTask.cpp:
+        (WebCore::LocalStorageTask::LocalStorageTask):
+        (WebCore::LocalStorageTask::performTask):
+        * storage/LocalStorageTask.h:
+        (WebCore::LocalStorageTask::createImport):
+        (WebCore::LocalStorageTask::createSync):
+        (WebCore::LocalStorageTask::createTerminate):
+        * storage/LocalStorageThread.cpp:
+        (WebCore::LocalStorageThread::scheduleImport):
+        (WebCore::LocalStorageThread::scheduleSync):
+        * storage/LocalStorageThread.h:
+        * storage/StorageArea.h:
+        * storage/StorageAreaImpl.cpp:
+        (WebCore::StorageAreaImpl::~StorageAreaImpl):
+        (WebCore::StorageAreaImpl::StorageAreaImpl):
+        * storage/StorageAreaSync.cpp:
+        (WebCore::StorageAreaSync::StorageAreaSync):
+        (WebCore::StorageAreaSync::~StorageAreaSync):
+        * storage/StorageSyncManager.cpp:
+        (WebCore::StorageSyncManager::StorageSyncManager):
+        (WebCore::StorageSyncManager::~StorageSyncManager):
+        (WebCore::StorageSyncManager::scheduleImport):
+        (WebCore::StorageSyncManager::scheduleSync):
+        * storage/StorageSyncManager.h:
+
 2009-09-28  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Darin Fisher.
