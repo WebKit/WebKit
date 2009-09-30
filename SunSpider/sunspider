@@ -160,8 +160,7 @@ sub writePrefixFile()
 sub runTestsOnce($)
 {
     my ($useShark) = @_;
-    my $nullDevice = ($^O eq "MSWin32") ? "NUL" : "/dev/null";
-    my $shellArgs = $jsShellArgs . " -f $prefixFile -f resources/sunspider-standalone-driver.js 2> " . $nullDevice;
+    my $shellArgs = $jsShellArgs . " -f $prefixFile -f resources/sunspider-standalone-driver.js 2> " . File::Spec->devnull();
     my $output;
     if ($useShark) {
         my $intervalArg = $useShark == 20 ? "-I 20u" : "";
