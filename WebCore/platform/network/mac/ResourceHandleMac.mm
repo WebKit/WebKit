@@ -485,6 +485,7 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
     if (!challenge.previousFailureCount() && (!client() || client()->shouldUseCredentialStorage(this))) {
         Credential credential = CredentialStorage::get(challenge.protectionSpace());
         if (!credential.isEmpty() && credential != d->m_initialCredential) {
+            ASSERT(credential.persistence() == CredentialPersistenceNone);
             [challenge.sender() useCredential:mac(credential) forAuthenticationChallenge:mac(challenge)];
             return;
         }
@@ -951,8 +952,8 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
     }
     if ([challenge previousFailureCount] == 0 && m_allowStoredCredentials) {
         Credential credential = CredentialStorage::get(core([challenge protectionSpace]));
-        ASSERT(credential.persistence() == CredentialPersistenceNone);
         if (!credential.isEmpty() && credential != m_initialCredential) {
+            ASSERT(credential.persistence() == CredentialPersistenceNone);
             [[challenge sender] useCredential:mac(credential) forAuthenticationChallenge:challenge];
             return;
         }

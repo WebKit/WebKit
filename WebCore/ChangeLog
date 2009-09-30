@@ -1,3 +1,20 @@
+2009-09-29  Alexey Proskuryakov  <ap@apple.com>
+
+        Rubber-stamped by Brady Eidson.
+
+        Assertion failure in http/tests/xmlhttprequest/failed-auth.html.
+
+        I couldn't find out why this only started to happen now, but it was incorrect to check
+        persistence of a credential returned by CredentialStorage::get() without checking that it
+        was non-null. When there is no credential for the protection space in storage, get()
+        returns a new object, and Credentil constructor doesn't initialize m_persistence.
+
+        * platform/network/mac/ResourceHandleMac.mm:
+        (-[WebCoreSynchronousLoader connection:didReceiveAuthenticationChallenge:]): Moved the
+        assertion after credential null check.
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge): Added the same persistence
+        assertion, matching sync code (and CF one, as well).
+
 2009-09-29  Yong Li  <yong.li@torchmobile.com>
 
         Reviewed by Darin Adler.
