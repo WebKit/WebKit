@@ -1,3 +1,11 @@
+2009-09-30  Janne Koskinen  <janne.p.koskinen@digia.com> 
+
+        Reviewed by Simon Hausmann.
+
+        Fix CRASH() macro for Symbian build.
+
+        * wtf/Assertions.h: Added missing }
+
 2009-09-29  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Gavin Barraclough.

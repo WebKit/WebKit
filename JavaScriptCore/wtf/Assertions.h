@@ -129,7 +129,7 @@ void WTFLogVerbose(const char* file, int line, const char* function, WTFLogChann
 #define CRASH() do { \
     __DEBUGGER(); \
     User::Panic(_L("Webkit CRASH"),0); \
-    while(false)
+    } while(false)
 #else
 #define CRASH() do { \
     *(int *)(uintptr_t)0xbbadbeef = 0; \
