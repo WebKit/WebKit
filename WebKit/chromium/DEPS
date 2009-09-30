@@ -34,7 +34,7 @@ vars = {
   'chromium_svn': 'http://src.chromium.org/svn/trunk/src',
   'chromium_deps_svn': 'http://src.chromium.org/svn/trunk/deps/third_party',
 
-  'chromium_rev': '27239', 
+  'chromium_rev': '27573', 
 }
 
 deps = {
@@ -44,7 +44,7 @@ deps = {
   'webkit/build':
       Var('chromium_svn')+'/webkit/build@'+Var('chromium_rev'),
   'tools/gyp':
-    'http://gyp.googlecode.com/svn/trunk@668',
+    'http://gyp.googlecode.com/svn/trunk@671',
 
   # Basic tools
   'base':
@@ -74,7 +74,7 @@ deps = {
   'sdch/open-vcdiff':
     'http://open-vcdiff.googlecode.com/svn/trunk@26',
   'googleurl':
-    'http://google-url.googlecode.com/svn/trunk@118',
+    'http://google-url.googlecode.com/svn/trunk@119',
 
   # other third party
   'third_party/icu':
@@ -151,6 +151,7 @@ hooks = [
     'action': ['python',
                'build/gyp_chromium',
                '-Dinside_chromium_build=0',
+               '-Dv8_use_snapshot=false',
                '--depth=./',
                'webkit.gyp'],
   },

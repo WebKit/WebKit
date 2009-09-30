@@ -1,3 +1,14 @@
+2009-09-30  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        1. Keeping up with downstream revisions.
+        2. Turning off v8 snapshot build step.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29928
+
+        * chromium/DEPS
+
 2009-09-29  Brady Eidson  <beidson@apple.com>
 
         Reviewed by John Sullivan.
