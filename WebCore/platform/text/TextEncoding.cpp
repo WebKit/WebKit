@@ -264,6 +264,7 @@ const TextEncoding& UTF32LittleEndianEncoding()
 const TextEncoding& UTF8Encoding()
 {
     static TextEncoding globalUTF8Encoding("UTF-8");
+    ASSERT(globalUTF8Encoding.isValid());
     return globalUTF8Encoding;
 }
 
