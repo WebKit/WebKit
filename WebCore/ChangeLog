@@ -1,3 +1,16 @@
+2009-10-01  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Make a copy of listeners array before dispatching an event in
+        WebInspector.Object.prototype.dispatchEventToListeners. Otherwise if current
+        listener removes itself from the array next listener will be skipped.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29920
+
+        * inspector/front-end/Object.js:
+        (WebInspector.Object.prototype.dispatchEventToListeners): make a copy of listeners array before dispatching an event
+
 2009-10-01  Martin Robinson  <martin.james.robinson@gmail.com>
 
         Reviewed by Xan Lopez.

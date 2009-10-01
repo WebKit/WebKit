@@ -67,10 +67,10 @@ WebInspector.Object.prototype = {
         }
 
         var event = {target: this, type: eventType, defaultPrevented: false};
-        event.stopPropagation = stopPropagation.bind(event);
-        event.preventDefault = preventDefault.bind(event);
+        event.stopPropagation = stopPropagation;
+        event.preventDefault = preventDefault;
 
-        var listeners = this._listeners[eventType];
+        var listeners = this._listeners[eventType].slice(0);
         for (var i = 0; i < listeners.length; ++i) {
             listeners[i].listener.call(listeners[i].thisObject, event);
             if (stoppedPropagation)
