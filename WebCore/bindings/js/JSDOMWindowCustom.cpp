@@ -933,7 +933,15 @@ JSValue JSDOMWindow::showModalDialog(ExecState* exec, const ArgList& args)
     JSDOMWindow* dialogWindow = toJSDOMWindow(dialogFrame);
     dialogFrame->page()->chrome()->runModal();
 
-    return dialogWindow->getDirect(Identifier(exec, "returnValue"));
+    Identifier returnValue(exec, "returnValue");
+    if (dialogWindow->allowsAccessFromNoErrorMessage(exec)) {
+        PropertySlot slot;
+        // This is safe, we have already performed the origin security check and we are
+        // not interested in any of the DOM properties of the window.
+        if (dialogWindow->JSGlobalObject::getOwnPropertySlot(exec, returnValue, slot))
+            return slot.getValue(exec, returnValue);
+    }
+    return jsUndefined();
 }
 
 JSValue JSDOMWindow::postMessage(ExecState* exec, const ArgList& args)
