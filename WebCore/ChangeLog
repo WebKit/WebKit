@@ -1,3 +1,13 @@
+2009-10-01  Beth Dakin  <bdakin@apple.com>
+
+        Rubber-stamped by Sam Weinig.
+
+        At bad merge at some point in the development of my patch must have 
+        put TextRenderMode.h in a weird spot in the xcodeproj. Moving it 
+        back where it belongs!
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2009-10-01  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.
