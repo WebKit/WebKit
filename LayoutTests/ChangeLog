@@ -1,3 +1,13 @@
+2009-10-01  Brian Weinstein  <bweinstein@apple.com>
+
+        Rubber-stamped by Adam Roben.
+
+        Added fast/inline/relative-positioned-overflow.html to Skipped list because
+        it hits an asssert in Windows debug builds. Assertion failure is being tracked
+        by <https://bugs.webkit.org/show_bug.cgi?id=29966>.
+
+        * platform/win/Skipped:
+
 2009-10-01  Beth Dakin  <bdakin@apple.com>
 
         Rubber-stamped by Sam Weinig.
