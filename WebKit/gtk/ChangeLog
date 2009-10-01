@@ -1,3 +1,35 @@
+2009-10-01  Martin Robinson  <martin.james.robinson@gmail.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] GtkIMContext filtering interferes with DOM key events
+        https://bugs.webkit.org/show_bug.cgi?id=28733
+
+        Ensure that keyboard events filtered by the GtkIMContext still create
+        the proper DOM events.
+
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::clearPendingIMData):
+        (WebKit::imContextCommitted):
+        (WebKit::imContextPreeditChanged):
+        (WebKit::EditorClient::shouldBeginEditing):
+        (WebKit::EditorClient::shouldEndEditing):
+        (WebKit::interpretEditorCommandKeyEvent):
+        (WebKit::handleCaretBrowsingKeyboardEvent):
+        (WebKit::EditorClient::handleKeyboardEvent):
+        (WebKit::EditorClient::handleInputMethodKeydown):
+        * tests/testkeyevents.c: Added.
+        (test_info_new):
+        (test_info_destroy):
+        (key_event_fixture_setup):
+        (key_event_fixture_teardown):
+        (key_press_event_cb):
+        (key_release_event_cb):
+        (load_status_cb):
+        (map_event_cb):
+        (test_keypress):
+        (main):
+
 2009-09-29  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.

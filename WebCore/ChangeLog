@@ -1,3 +1,19 @@
+2009-10-01  Martin Robinson  <martin.james.robinson@gmail.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] GtkIMContext filtering interferes with DOM key events
+        https://bugs.webkit.org/show_bug.cgi?id=28733
+
+        Ensure that keyboard events filtered by the GtkIMContext still create
+        the proper DOM events.
+
+        No tests added. Instead previously skipped tests have been enabled.
+
+        * platform/gtk/KeyEventGtk.cpp:
+        (WebCore::keyIdentifierForGdkKeyCode):
+        (WebCore::singleCharacterString):
+
 2009-10-01  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Xan Lopez.
