@@ -42,12 +42,6 @@ namespace WebCore {
 
 const ClassInfo JSDOMWindowBase::s_info = { "Window", 0, 0, 0 };
 
-JSDOMWindowBase::JSDOMWindowBaseData::JSDOMWindowBaseData(PassRefPtr<DOMWindow> window, JSDOMWindowShell* shell)
-    : impl(window)
-    , shell(shell)
-{
-}
-
 JSDOMWindowBase::JSDOMWindowBase(NonNullPassRefPtr<Structure> structure, PassRefPtr<DOMWindow> window, JSDOMWindowShell* shell)
     : JSDOMGlobalObject(structure, new JSDOMWindowBaseData(window, shell), shell)
 {
@@ -173,6 +167,11 @@ JSGlobalData* JSDOMWindowBase::commonJSGlobalData()
     }
 
     return globalData;
+}
+
+void JSDOMWindowBase::destroyJSDOMWindowBaseData(void* jsDOMWindowBaseData)
+{
+    delete static_cast<JSDOMWindowBaseData*>(jsDOMWindowBaseData);
 }
 
 // JSDOMGlobalObject* is ignored, accesing a window in any context will

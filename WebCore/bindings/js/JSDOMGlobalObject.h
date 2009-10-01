@@ -73,6 +73,12 @@ namespace WebCore {
             {
             }
 
+            JSDOMGlobalObjectData(Destructor destructor)
+                : JSGlobalObjectData(destructor)
+                , evt(0)
+            {
+            }
+
             JSDOMStructureMap structures;
             JSDOMConstructorMap constructors;
 
