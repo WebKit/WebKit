@@ -1,3 +1,16 @@
+2009-10-01  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Read-only transactions do not change file sizes and therefore
+        should not trigger quota updates.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29945
+
+        * storage/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::openTransactionAndPreflight):
+        (WebCore::SQLTransaction::runStatements):
+
 2009-09-30  Timothy Hatcher  <timothy@apple.com>
 
         Fix list box scrolling by correctly overriding the scroll()

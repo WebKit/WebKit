@@ -232,8 +232,9 @@ void SQLTransaction::openTransactionAndPreflight()
         return;
     }
 
-    // Set the maximum usage for this transaction
-    m_database->m_sqliteDatabase.setMaximumSize(m_database->maximumSize());
+    // Set the maximum usage for this transaction if this transactions is not read-only
+    if (!m_readOnly)
+        m_database->m_sqliteDatabase.setMaximumSize(m_database->maximumSize());
 
     ASSERT(!m_sqliteTransaction);
     m_sqliteTransaction.set(new SQLiteTransaction(m_database->m_sqliteDatabase, m_readOnly));
@@ -307,7 +308,10 @@ void SQLTransaction::runStatements()
             // FIXME - Another place that needs fixing up after <rdar://problem/5628468> is addressed.
             // See ::openTransactionAndPreflight() for discussion
 
-            // Reset the maximum size here, as it was increased to allow us to retry this statement
+            // Reset the maximum size here, as it was increased to allow us to retry this statement.
+            // m_shouldRetryCurrentStatement is set to true only when a statement exceeds
+            // the quota, which can happen only in a read-write transaction. Therefore, there
+            // is no need to check here if the transaction is read-write.
             m_database->m_sqliteDatabase.setMaximumSize(m_database->maximumSize());
         } else {
             // If the current statement has already been run, failed due to quota constraints, and we're not retrying it,
