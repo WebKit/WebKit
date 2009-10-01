@@ -1,3 +1,11 @@
+2009-10-01  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Rubberstamped by Simon Hausmann.
+
+        Enable HTTP tests for Qt
+
+        * Scripts/run-webkit-tests:
+
 2009-10-01  Yaar Schnitman  <yaar@chromium.org>
 
         Reviewed by Dimitri Glazkov.
