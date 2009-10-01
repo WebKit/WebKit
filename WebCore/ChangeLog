@@ -1,3 +1,10 @@
+2009-10-01  Beth Dakin  <bdakin@apple.com>
+
+        Just removing a comment I accidentally committed earlier. 
+
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::SimpleFontData::getCFStringAttributes):
+
 2009-09-30  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Darin Adler.

@@ -459,7 +459,6 @@ CFDictionaryRef SimpleFontData::getCFStringAttributes(TextRenderingMode textMode
     static const int ligaturesAllowedValue = 1;
     static CFNumberRef ligaturesAllowed = CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &ligaturesAllowedValue);
 
-    // This is where the if would go.
     if (!allowKerning) {
         static const float kerningAdjustmentValue = 0;
         static CFNumberRef kerningAdjustment = CFNumberCreate(kCFAllocatorDefault, kCFNumberFloatType, &kerningAdjustmentValue);
