@@ -1,3 +1,19 @@
+2009-10-01  Drew Wilson  <atwilson@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        REGRESSION: fast/workers/dedicated-worker-lifecycle.html failing intermittently on leopard bot
+        https://bugs.webkit.org/show_bug.cgi?id=29344
+
+        * fast/workers/resources/dedicated-worker-lifecycle.js:
+        (runTests):
+        Allocate objects on the stack to try to force a GC to eliminate flakiness.
+        * fast/workers/resources/worker-util.js:
+        (gc):
+        Added an optional "forceAlloc" parameter which causes a more extensive stack-clobbering algorithm to be run.
+        (waitUntilThreadCountMatches):
+        Pass the forceAlloc flag to gc() to try to force unreferenced workers to get GC'd.
+
 2009-10-01  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Rubberstamped by Simon Hausmann.

@@ -26,6 +26,8 @@ function runTests()
         // Orphan our worker (no more references to it) and wait for it to exit.
         worker.onmessage = 0;
         worker = 0;
+        // Allocating a Date object seems to scramble the stack and force the worker object to get GC'd.
+        new Date();
         waitUntilWorkerThreadsExit(orphanedWorkerExited);
     }
 }

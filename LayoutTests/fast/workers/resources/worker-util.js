@@ -5,13 +5,21 @@ function log(message)
     document.getElementById("result").innerHTML += message + "<br>";
 }
 
-function gc()
+function gc(forceAlloc)
 {
-    if (window.GCController)
-        return GCController.collect();
+    if (typeof GCController !== "undefined")
+        GCController.collect();
 
-    for (var i = 0; i < 10000; i++) { // force garbage collection (FF requires about 9K allocations before a collect)
-        var s = new String("abc");
+    if (typeof GCController == "undefined" || forceAlloc) {
+        function gcRec(n) {
+            if (n < 1)
+                return {};
+            var temp = {i: "ab" + i + (i / 100000)};
+            temp += "foo";
+            gcRec(n-1);
+        }
+        for (var i = 0; i < 1000; i++)
+            gcRec(10)
     }
 }
 
@@ -24,7 +32,7 @@ function waitUntilThreadCountMatches(callback, count)
 {
     // When running in a browser, just wait for one second then call the callback.
     if (!window.layoutTestController) {
-        setTimeout(function() { gc(); callback(); }, 1000);
+        setTimeout(function() { gc(true); callback(); }, 1000);
         return;
     }
 
@@ -33,7 +41,8 @@ function waitUntilThreadCountMatches(callback, count)
         callback();
     } else {
         // Poll until worker threads have been GC'd/exited.
-        gc();
+        // Force a GC with a bunch of allocations to try to scramble the stack and force worker objects to be collected.
+        gc(true);
         setTimeout(function() { waitUntilThreadCountMatches(callback, count); }, 10);
     }
 }
