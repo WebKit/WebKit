@@ -67,6 +67,7 @@ namespace WebCore {
     class Editor;
     class EventHandler;
     class FrameLoader;
+    class RedirectScheduler;
     class FrameLoaderClient;
     class FrameTree;
     class FrameView;
@@ -110,6 +111,7 @@ namespace WebCore {
         Editor* editor() const;
         EventHandler* eventHandler() const;
         FrameLoader* loader() const;
+        RedirectScheduler* redirectScheduler() const;
         SelectionController* selection() const;
         FrameTree* tree() const;
         AnimationController* animation() const;
@@ -334,6 +336,7 @@ namespace WebCore {
         Page* m_page;
         mutable FrameTree m_treeNode;
         mutable FrameLoader m_loader;
+        mutable RedirectScheduler m_redirectScheduler;
 
         mutable RefPtr<DOMWindow> m_domWindow;
         HashSet<DOMWindow*> m_liveFormerWindows;

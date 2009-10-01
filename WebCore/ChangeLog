@@ -1,3 +1,59 @@
+2009-09-30  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Factor RedirectScheduler out of FrameLoader
+        https://bugs.webkit.org/show_bug.cgi?id=29948
+
+        This change introduces a new sub-object of Frame, redirectScheduler.
+        The redirectScheduler is responsible for scheduling redirects.
+
+        This change leaves the code for the redirectScheduler in
+        FrameLoader.cpp.  A future change will move the class into its own
+        file.
+
+        No behavior change (hopefully!).
+
+        * loader/FrameLoader.cpp:
+        (WebCore::RedirectScheduler::RedirectScheduler):
+        (WebCore::RedirectScheduler::~RedirectScheduler):
+        (WebCore::RedirectScheduler::redirectScheduledDuringLoad):
+        (WebCore::RedirectScheduler::clear):
+        (WebCore::FrameLoader::FrameLoader):
+        (WebCore::FrameLoader::setDefersLoading):
+        (WebCore::FrameLoader::stopLoading):
+        (WebCore::FrameLoader::didOpenURL):
+        (WebCore::FrameLoader::didExplicitOpen):
+        (WebCore::FrameLoader::cancelAndClear):
+        (WebCore::FrameLoader::clear):
+        (WebCore::FrameLoader::checkCompleted):
+        (WebCore::FrameLoader::isScheduledLocationChangePending):
+        (WebCore::FrameLoader::scheduleHTTPRedirection):
+        (WebCore::RedirectScheduler::scheduleRedirect):
+        (WebCore::RedirectScheduler::mustLockBackForwardList):
+        (WebCore::FrameLoader::scheduleLocationChange):
+        (WebCore::RedirectScheduler::scheduleLocationChange):
+        (WebCore::FrameLoader::scheduleFormSubmission):
+        (WebCore::RedirectScheduler::scheduleFormSubmission):
+        (WebCore::FrameLoader::scheduleRefresh):
+        (WebCore::RedirectScheduler::scheduleRefresh):
+        (WebCore::RedirectScheduler::locationChangePending):
+        (WebCore::FrameLoader::scheduleHistoryNavigation):
+        (WebCore::RedirectScheduler::scheduleHistoryNavigation):
+        (WebCore::RedirectScheduler::timerFired):
+        (WebCore::FrameLoader::provisionalLoadStarted):
+        (WebCore::RedirectScheduler::schedule):
+        (WebCore::RedirectScheduler::startTimer):
+        (WebCore::RedirectScheduler::cancel):
+        (WebCore::FrameLoader::completed):
+        (WebCore::FrameLoader::open):
+        * loader/FrameLoader.h:
+        (WebCore::FrameLoader::committedFirstRealDocumentLoad):
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame):
+        (WebCore::Frame::redirectScheduler):
+        * page/Frame.h:
+
 2009-09-30  Maciej Stachowiak  <mjs@apple.com>
 
         Build fix, not reviewed.

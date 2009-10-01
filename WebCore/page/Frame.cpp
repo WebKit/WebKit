@@ -123,6 +123,7 @@ Frame::Frame(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient*
     : m_page(page)
     , m_treeNode(this, parentFromOwnerElement(ownerElement))
     , m_loader(this, frameLoaderClient)
+    , m_redirectScheduler(this)
     , m_ownerElement(ownerElement)
     , m_script(this)
     , m_selectionGranularity(CharacterGranularity)
@@ -218,6 +219,11 @@ void Frame::init()
 FrameLoader* Frame::loader() const
 {
     return &m_loader;
+}
+
+RedirectScheduler* Frame::redirectScheduler() const
+{
+    return &m_redirectScheduler;
 }
 
 FrameView* Frame::view() const
