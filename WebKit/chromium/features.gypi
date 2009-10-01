@@ -29,32 +29,41 @@
 #
 
 {
-  # The following defines turn webkit features on or off. 
+  # The following defines turn webkit features on and off.
   'variables': {
-    'feature_defines': [
-      'ENABLE_3D_CANVAS=0',
-      'ENABLE_CHANNEL_MESSAGING=1',
-      'ENABLE_DATABASE=1',
-      'ENABLE_DATAGRID=0',
-      'ENABLE_OFFLINE_WEB_APPLICATIONS=1',
-      'ENABLE_DASHBOARD_SUPPORT=0',
-      'ENABLE_DOM_STORAGE=1',
-      'ENABLE_JAVASCRIPT_DEBUGGER=0',
-      'ENABLE_JSC_MULTIPLE_THREADS=0',
-      'ENABLE_ICONDATABASE=0',
-      'ENABLE_NOTIFICATIONS=0',
-      'ENABLE_ORIENTATION_EVENTS=0',
-      'ENABLE_XSLT=1',
-      'ENABLE_XPATH=1',
-      'ENABLE_SHARED_WORKERS=0',
-      'ENABLE_SVG=1',
-      'ENABLE_SVG_ANIMATION=1',
-      'ENABLE_SVG_AS_IMAGE=1',
-      'ENABLE_SVG_USE=1',
-      'ENABLE_SVG_FOREIGN_OBJECT=1',
-      'ENABLE_SVG_FONTS=1',
-      'ENABLE_VIDEO=1',
-      'ENABLE_WORKERS=1',
-    ],
+    'variables': {
+      # We have to nest variables inside variables as a hack for variables
+      # override.
+
+      # WARNING: build/features_override.gypi which is included in a full
+      # chromium build, overrides this list with its own values. See
+      # features_override.gypi inline documentation for more details.
+      'feature_defines%': [
+        'ENABLE_3D_CANVAS=0',
+        'ENABLE_CHANNEL_MESSAGING=1',
+        'ENABLE_DATABASE=1',
+        'ENABLE_DATAGRID=0',
+        'ENABLE_OFFLINE_WEB_APPLICATIONS=1',
+        'ENABLE_DASHBOARD_SUPPORT=0',
+        'ENABLE_DOM_STORAGE=1',
+        'ENABLE_JAVASCRIPT_DEBUGGER=0',
+        'ENABLE_JSC_MULTIPLE_THREADS=0',
+        'ENABLE_ICONDATABASE=0',
+        'ENABLE_NOTIFICATIONS=0',
+        'ENABLE_ORIENTATION_EVENTS=0',
+        'ENABLE_XSLT=1',
+        'ENABLE_XPATH=1',
+        'ENABLE_SHARED_WORKERS=0',
+        'ENABLE_SVG=1',
+        'ENABLE_SVG_ANIMATION=1',
+        'ENABLE_SVG_AS_IMAGE=1',
+        'ENABLE_SVG_USE=1',
+        'ENABLE_SVG_FOREIGN_OBJECT=1',
+        'ENABLE_SVG_FONTS=1',
+        'ENABLE_VIDEO=1',
+        'ENABLE_WORKERS=1',
+      ],
+    },
+    'feature_defines%': '<(feature_defines)',
   },
 }
