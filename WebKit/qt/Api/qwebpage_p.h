@@ -111,6 +111,7 @@ public:
     void shortcutOverrideEvent(QKeyEvent*);
     void leaveEvent(QEvent*);
     void handleClipboard(QEvent*, Qt::MouseButton);
+    void handleSoftwareInputPanel(Qt::MouseButton);
     bool handleScrolling(QKeyEvent*, WebCore::Frame*);
 
     void setInspector(QWebInspector*);

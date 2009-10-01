@@ -764,10 +764,14 @@ void QWebPagePrivate::mouseReleaseEvent(QGraphicsSceneMouseEvent* ev)
     ev->setAccepted(accepted);
 
     handleClipboard(ev, ev->button());
+    handleSoftwareInputPanel(ev->button());
+}
 
+void QWebPagePrivate::handleSoftwareInputPanel(Qt::MouseButton button)
+{
 #if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
     if (view && view->testAttribute(Qt::WA_InputMethodEnabled)
-        && ev->button() == Qt::LeftButton && qApp->autoSipEnabled()) {
+        && button == Qt::LeftButton && qApp->autoSipEnabled()) {
         QStyle::RequestSoftwareInputPanel behavior = QStyle::RequestSoftwareInputPanel(
             view->style()->styleHint(QStyle::SH_RequestSoftwareInputPanel));
         if (!clickCausedFocus || behavior == QStyle::RSIP_OnMouseClick) {
@@ -794,6 +798,7 @@ void QWebPagePrivate::mouseReleaseEvent(QMouseEvent *ev)
     ev->setAccepted(accepted);
 
     handleClipboard(ev, ev->button());
+    handleSoftwareInputPanel(ev->button());
 }
 
 #ifndef QT_NO_CONTEXTMENU
