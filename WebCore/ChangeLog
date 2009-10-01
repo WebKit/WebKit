@@ -2,6 +2,20 @@
 
         Reviewed by Gustavo Noronha.
 
+        [GTK] media player: better mute support
+        https://bugs.webkit.org/show_bug.cgi?id=29960
+
+        Handle volume and mute state with the two corresponding properties
+        of playbin2.
+
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivate::setMuted):
+        (WebCore::MediaPlayerPrivate::setVolume):
+
+2009-10-01  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
         [GTK] video sink pad template colorspace is wrong
         https://bugs.webkit.org/show_bug.cgi?id=29953
 

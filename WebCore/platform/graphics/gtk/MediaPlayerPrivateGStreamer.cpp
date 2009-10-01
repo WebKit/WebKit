@@ -363,20 +363,19 @@ void MediaPlayerPrivate::setVolume(float volume)
 {
     m_volume = volume;
     LOG_VERBOSE(Media, "Volume to %f", volume);
-    setMuted(false);
+
+    if (!m_playBin)
+        return;
+
+    g_object_set(G_OBJECT(m_playBin), "volume", m_volume, NULL);
 }
 
-void MediaPlayerPrivate::setMuted(bool b)
+void MediaPlayerPrivate::setMuted(bool mute)
 {
     if (!m_playBin)
         return;
 
-    if (b) {
-        g_object_get(G_OBJECT(m_playBin), "volume", &m_volume, NULL);
-        g_object_set(G_OBJECT(m_playBin), "volume", (double)0.0, NULL);
-    } else
-        g_object_set(G_OBJECT(m_playBin), "volume", m_volume, NULL);
-
+    g_object_set(G_OBJECT(m_playBin), "mute", mute, NULL);
 }
 
 void MediaPlayerPrivate::setRate(float rate)
