@@ -18,6 +18,14 @@
 
         Rubberstamped by Simon Hausmann.
 
+        Disable HTTP loading tests that fail on the buildbot.
+
+        * platform/qt/Skipped:
+
+2009-10-01  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Rubberstamped by Simon Hausmann.
+
         Enable Local tests for Qt.
 
         * platform/qt/Skipped:

@@ -35,7 +35,20 @@ http/tests/xmlhttprequest
 http/tests/uri/escaped-entity.html
 
 # Failing HTTP Loading tests
-LayoutTests/http/tests/loading/bad-scheme-subframe.html
+http/tests/loading/bad-scheme-subframe.html
+http/tests/loading/basic-auth-resend-wrong-credentials.html
+http/tests/loading/basic.html
+http/tests/loading/deleted-host-in-resource-load-delegate-callback.html
+http/tests/loading/empty-subframe.html
+http/tests/loading/gmail-assert-on-load.html
+http/tests/loading/location-hash-reload-cycle.html
+http/tests/loading/onload-vs-immediate-refresh.pl
+http/tests/loading/preload-img-test.html
+http/tests/loading/redirect-methods.html
+http/tests/loading/redirect-with-no-location-crash.html
+http/tests/loading/simple-subframe.html
+http/tests/loading/slow-parsing-subframe.html
+http/tests/loading/text-content-type-with-binary-extension.html
 
 # Failing Local tests
 http/tests/local/drag-over-remote-content.html
