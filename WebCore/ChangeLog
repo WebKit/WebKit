@@ -1,5 +1,30 @@
 2009-10-01  Beth Dakin  <bdakin@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Fix for <rdar://problem/7264725> Re-add a vendor prefix to box-
+        shadow (29927)
+        -and corresponding-
+        https://bugs.webkit.org/show_bug.cgi?id=29927
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::ShadowParseContext::ShadowParseContext):
+        (WebCore::ShadowParseContext::commitValue):
+        (WebCore::ShadowParseContext::commitLength):
+        (WebCore::ShadowParseContext::commitColor):
+        (WebCore::cssPropertyID):
+        * css/CSSPropertyNames.in:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * page/animation/AnimationBase.cpp:
+        (WebCore::ensurePropertyMap):
+
+2009-10-01  Beth Dakin  <bdakin@apple.com>
+
         Rubber-stamped by Sam Weinig.
 
         At bad merge at some point in the development of my patch must have 

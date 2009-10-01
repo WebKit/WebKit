@@ -49,7 +49,6 @@ border-top-style
 border-top-width
 border-width
 bottom
-box-shadow
 caption-side
 clear
 clip
@@ -180,6 +179,7 @@ zoom
 -webkit-box-orient
 -webkit-box-pack
 -webkit-box-reflect
+-webkit-box-shadow
 -webkit-box-sizing
 -webkit-column-break-after
 -webkit-column-break-before

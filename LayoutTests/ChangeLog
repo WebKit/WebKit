@@ -1,3 +1,20 @@
+2009-10-01  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Updated test results for <rdar://problem/7264725> Re-add a vendor 
+        prefix to box-shadow (29927)
+        -and corresponding-
+        https://bugs.webkit.org/show_bug.cgi?id=29927
+
+        * platform/mac/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/mac/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/qt/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/qt/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/win/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/win/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * svg/css/getComputedStyle-basic-expected.txt:
+
 2009-10-01  Brian Weinstein  <bweinstein@apple.com>
 
         Rubber-stamped by Adam Roben.
