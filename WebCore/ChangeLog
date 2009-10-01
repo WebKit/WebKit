@@ -1,3 +1,33 @@
+2009-10-01  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] data: uri support in media player
+        https://bugs.webkit.org/show_bug.cgi?id=29842
+
+        New GStreamer element to handle data: uris. For now only base64
+        encoded data is supported. Decoded data is handed over to
+        giostreamsrc.
+
+        * GNUmakefile.am:
+        * platform/graphics/gtk/DataSourceGStreamer.cpp: Added.
+        (_do_init):
+        (webkit_data_src_base_init):
+        (webkit_data_src_class_init):
+        (webkit_data_src_reset):
+        (webkit_data_src_init):
+        (webkit_data_src_finalize):
+        (webkit_data_src_uri_get_type):
+        (webkit_data_src_uri_get_protocols):
+        (webkit_data_src_uri_get_uri):
+        (webkit_data_src_uri_set_uri):
+        (webkit_data_src_uri_handler_init):
+        * platform/graphics/gtk/DataSourceGStreamer.h: Added.
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::do_gst_init):
+        (WebCore::MediaPlayerPrivate::MediaPlayerPrivate):
+        (WebCore::MediaPlayerPrivate::mimeTypeCache):
+
 2009-09-30  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Adam Barth.

@@ -680,6 +680,7 @@ if test "$enable_video" = "yes"; then
    PKG_CHECK_MODULES([GSTREAMER],
                      [gstreamer-0.10 >= $GSTREAMER_REQUIRED_VERSION
                      gstreamer-base-0.10
+                     gstreamer-pbutils-0.10
                      gstreamer-plugins-base-0.10
                      gstreamer-video-0.10])
    AC_SUBST([GSTREAMER_CFLAGS])

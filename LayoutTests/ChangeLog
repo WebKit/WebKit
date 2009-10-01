@@ -1,3 +1,14 @@
+2009-10-01  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] data: uri support in media player
+        https://bugs.webkit.org/show_bug.cgi?id=29842
+
+        Re-enable media/audio-data-url.html.
+
+        * platform/gtk/Skipped:
+
 2009-09-30  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Adam Barth.

@@ -1,3 +1,14 @@
+2009-10-01  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] data: uri support in media player
+        https://bugs.webkit.org/show_bug.cgi?id=29842
+
+        Check presence of gstreamer-pbutils-0.10.
+
+        * configure.ac:
+
 2009-09-26  David Kilzer  <ddkilzer@apple.com>
 
         GTK BUILD FIX: add ENABLE_ORIENTATION_EVENTS support to configure.ac

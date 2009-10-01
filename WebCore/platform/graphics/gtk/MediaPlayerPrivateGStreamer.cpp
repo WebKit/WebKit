@@ -25,6 +25,7 @@
 #if ENABLE(VIDEO)
 
 #include "MediaPlayerPrivateGStreamer.h"
+#include "DataSourceGStreamer.h"
 
 #include "CString.h"
 #include "GraphicsContext.h"
@@ -122,6 +123,17 @@ void MediaPlayerPrivate::registerMediaEngine(MediaEngineRegistrar registrar)
 
 static bool gstInitialized = false;
 
+static void do_gst_init() {
+    // FIXME: We should pass the arguments from the command line
+    if (!gstInitialized) {
+        gst_init(0, 0);
+        gstInitialized = true;
+        gst_element_register(0, "webkitmediasrc", GST_RANK_PRIMARY,
+                             WEBKIT_TYPE_DATA_SRC);
+
+    }
+}
+
 MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
     : m_player(player)
     , m_playBin(0)
@@ -140,11 +152,7 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
     , m_seeking(false)
     , m_errorOccured(false)
 {
-    // FIXME: We should pass the arguments from the command line
-    if (!gstInitialized) {
-        gst_init(0, 0);
-        gstInitialized = true;
-    }
+    do_gst_init();
 
     // FIXME: The size shouldn't be fixed here, this is just a quick hack.
     m_surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, 640, 480);
@@ -652,10 +660,8 @@ void MediaPlayerPrivate::paint(GraphicsContext* context, const IntRect& rect)
 
 static HashSet<String> mimeTypeCache()
 {
-    if (!gstInitialized) {
-        gst_init(0, NULL);
-        gstInitialized = true;
-    }
+
+    do_gst_init();
 
     static HashSet<String> cache;
     static bool typeListInitialized = false;

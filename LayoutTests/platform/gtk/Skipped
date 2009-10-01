@@ -3804,7 +3804,6 @@ media/video-controls-transformed.html
 media/video-controls-zoomed.html
 media/video-size-intrinsic-scale.html
 #   Tests timing out
-media/audio-data-url.html
 media/controls-drag-timebar.html
 media/event-attributes.html
 media/unsupported-rtsp.html
