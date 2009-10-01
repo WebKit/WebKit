@@ -1,3 +1,14 @@
+2009-09-30  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Make sure the removal of user stylesheets results in all of the WebViews being updated to
+        reflect the changes.
+
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::removeUserContentWithURLForWorld):
+        (WebCore::PageGroup::removeUserContentForWorld):
+
 2009-09-30  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.
