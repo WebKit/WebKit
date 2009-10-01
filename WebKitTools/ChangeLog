@@ -1,3 +1,13 @@
+2009-10-01  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        build-webkit --chromium now also works on cygwin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29973
+
+        * Scripts/webkitdirs.pm:
+
 2009-10-01  Zoltan Horvath  <zoltan@webkit.org>
 
         Reviewed by Simon Hausmann.

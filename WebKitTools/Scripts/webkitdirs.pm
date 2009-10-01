@@ -1377,11 +1377,13 @@ sub buildChromium($@)
     my $result = 1;
     if (isDarwin()) {
         # Mac build - builds the root xcode project.
-        $result = buildXCodeProject("WebKit/chromium/webkit", $clean, (@options));
+        $result = buildXCodeProject("WebKit/chromium/webkit",
+                                    $clean,
+                                    (@options));
     } elsif (isCygwin()) {
-        # Windows build
-        # FIXME support windows.
-        print STDERR "Windows build is not supported. Yet.";
+        # Windows build - builds the root visual studio solution.
+        $result = buildVisualStudioProject("WebKit/chromium/webkit.sln",
+                                           $clean);
     } elsif (isLinux()) {
         # Linux build
         # FIXME support linux.

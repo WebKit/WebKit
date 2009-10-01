@@ -1,3 +1,15 @@
+2009-10-01  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Added windows-specific dependencies, updated some revisions and
+        re-organized file to make revision tracking easier. Also removed
+        extensions/v8 dependency that is no longer needed upstream.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29973
+
+        * chromium/DEPS:
+
 2009-09-30  Yaar Schnitman  <yaar@chromium.org>
 
         Reviewed by Dimitri Glazkov.
