@@ -31,7 +31,10 @@ building-libs {
     DEPENDPATH += $$PWD/WebKit/qt/Api
 }
 
-DEFINES += USE_SYSTEM_MALLOC
+!win32:!mac:!unix {
+    DEFINES += USE_SYSTEM_MALLOC
+}
+
 CONFIG(release, debug|release) {
     DEFINES += NDEBUG
 }

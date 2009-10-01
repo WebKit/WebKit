@@ -379,6 +379,9 @@ extern "C" const int jscore_fastmalloc_introspection = 0;
 #include <stdarg.h>
 #include <stddef.h>
 #include <stdio.h>
+#if PLATFORM(UNIX)
+#include <unistd.h>
+#endif
 #if COMPILER(MSVC)
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
@@ -2274,7 +2277,7 @@ static inline TCMalloc_PageHeap* getPageHeap()
 #define pageheap getPageHeap()
 
 #if USE_BACKGROUND_THREAD_TO_SCAVENGE_MEMORY
-#if PLATFORM(WIN)
+#if PLATFORM(WIN_OS)
 static void sleep(unsigned seconds)
 {
     ::Sleep(seconds * 1000);

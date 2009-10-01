@@ -1,3 +1,15 @@
+2009-10-01  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Enable TCmalloc for the Linux, Mac and Windows Qt-port
+        https://bugs.webkit.org/show_bug.cgi?id=27029
+
+        Remove USE_SYSTEM_MALLOC for Linux, Mac and Windows Qt-port from WebKit.pri,
+        so these Qt-ports will use TCmalloc as other ports.
+
+        * WebKit.pri:
+
 2009-10-01  Martin Robinson  <martin.james.robinson@gmail.com>
 
         Reviewed by Xan Lopez.

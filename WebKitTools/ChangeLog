@@ -1,3 +1,14 @@
+2009-10-01  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Don't use TCmalloc in DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=27029
+
+        Add USE_SYSTEM_MALLOC macro to the DRT's profile to avoid using TCmalloc in Qt's DRT.
+
+        * DumpRenderTree/qt/DumpRenderTree.pro:
+
 2009-10-01  Jakub Wieczorek  <faw217@gmail.com>
 
         Reviewed by Simon Hausmann.

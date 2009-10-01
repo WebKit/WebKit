@@ -140,6 +140,10 @@ symbian {
     }
 }
 
+!contains(DEFINES, USE_SYSTEM_MALLOC) {
+    SOURCES += wtf/TCSystemAlloc.cpp
+}
+
 # AllInOneFile.cpp helps gcc analize and optimize code
 # Other compilers may be able to do this at link time
 SOURCES += \

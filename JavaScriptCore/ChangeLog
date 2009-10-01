@@ -1,3 +1,24 @@
+2009-10-01  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Allow custom memory allocation control for the whole JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=27029
+
+        Since in JavaScriptCore almost every class which has been instantiated by operator new is
+        inherited from FastAllocBase (bug #20422), we disable customizing global operator new for the Qt-port
+        when USE_SYSTEM_MALLOC=0.
+
+        Add #include <unistd.h> to FastMalloc.cpp because it's used by TCMalloc_PageHeap::scavengerThread().
+        (It's needed for the functionality of TCmalloc.)
+
+        Add TCSystemAlloc.cpp to JavaScriptCore.pri if USE_SYSTEM_MALLOC is disabled.
+
+        * JavaScriptCore.pri:
+        * wtf/FastMalloc.cpp:
+        (WTF::sleep):
+        * wtf/FastMalloc.h:
+
 2009-09-30  Gabor Loki  <loki@inf.u-szeged.hu>
 
         Reviewed by George Staikos.
