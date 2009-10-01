@@ -1,3 +1,15 @@
+2009-10-01  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] video sink pad template colorspace is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=29953
+
+        Set sink pad template colorspace depending on byte order.
+
+        * platform/graphics/gtk/VideoSinkGStreamer.cpp:
+        (webkit_video_sink_idle_func):
+
 2009-10-01  Vitaly Repeshko  <vitalyr@chromium.org>
 
         Reviewed by Dimitri Glazkov.

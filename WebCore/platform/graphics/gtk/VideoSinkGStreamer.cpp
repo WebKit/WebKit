@@ -33,8 +33,14 @@
 #include <gst/video/video.h>
 
 static GstStaticPadTemplate sinktemplate = GST_STATIC_PAD_TEMPLATE("sink",
-        GST_PAD_SINK, GST_PAD_ALWAYS,
-        GST_STATIC_CAPS(GST_VIDEO_CAPS_RGBx ";" GST_VIDEO_CAPS_BGRx));
+                                                                   GST_PAD_SINK, GST_PAD_ALWAYS,
+// CAIRO_FORMAT_RGB24 used to render the video buffers is little/big endian dependant.
+#if G_BYTE_ORDER == G_LITTLE_ENDIAN
+                                                                   GST_STATIC_CAPS(GST_VIDEO_CAPS_BGRx)
+#else
+                                                                   GST_STATIC_CAPS(GST_VIDEO_CAPS_xRGB)
+#endif
+);
 
 GST_DEBUG_CATEGORY_STATIC(webkit_video_sink_debug);
 #define GST_CAT_DEFAULT webkit_video_sink_debug
@@ -112,7 +118,6 @@ webkit_video_sink_idle_func(gpointer data)
     if (!buffer || G_UNLIKELY(!GST_IS_BUFFER(buffer)))
         return FALSE;
 
-    // TODO: consider priv->rgb_ordering?
     cairo_surface_t* src = cairo_image_surface_create_for_data(GST_BUFFER_DATA(buffer), CAIRO_FORMAT_RGB24, priv->width, priv->height, (4 * priv->width + 3) & ~3);
 
     // TODO: We copy the data twice right now. This could be easily improved.
