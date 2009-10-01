@@ -1,3 +1,16 @@
+2009-10-01  Adam Roben  <aroben@apple.com>
+
+        Land expected failure results for two tests on Windows
+
+        These failures are covered by <http://webkit.org/b/29963> and
+        <http://webkit.org/b/29964>.
+
+        Rubber-stamped in advance by Eric Carlson.
+
+        * platform/win/fast/events/mouse-drag-from-frame-to-other-frame-expected.txt:
+        Added.
+        * platform/win/fast/forms/basic-inputs-expected.txt: Added.
+
 2009-10-01  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
 
         Reviewed by Simon Hausmann.
