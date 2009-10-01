@@ -58,6 +58,18 @@ static bool isNonCanonicalCharacter(UChar c)
     return (c == '\\' || c == '0' || c < ' ' || c >= 127);
 }
 
+static bool isIllegalURICharacter(UChar c)
+{
+    // The characters described in section 2.4.3 of RFC 2396 <http://www.faqs.org/rfcs/rfc2396.html> in addition to the 
+    // single quote character "'" are considered illegal URI characters. That is, the following characters cannot appear
+    // in a valid URI: ', ", <, >
+    //
+    // If the request does not contain these characters then we can assume that no inline scripts have been injected 
+    // into response page, because it is impossible to write an inline script of the form <script>...</script>
+    // without "<", ">".
+    return (c == '\'' || c == '"' || c == '<' || c == '>');
+}
+
 String XSSAuditor::CachingURLCanonicalizer::canonicalizeURL(const String& url, const TextEncoding& encoding, bool decodeEntities)
 {
     if (decodeEntities == m_decodeEntities && encoding == m_encoding && url == m_inputURL)
@@ -90,7 +102,7 @@ bool XSSAuditor::canEvaluate(const String& code) const
     if (!isEnabled())
         return true;
 
-    if (findInRequest(code, false)) {
+    if (findInRequest(code, false, true)) {
         DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to execute a JavaScript script. Source code of script found within request.\n"));
         m_frame->domWindow()->console()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, consoleMessage, 1, String());
         return false;
@@ -116,7 +128,7 @@ bool XSSAuditor::canCreateInlineEventListener(const String&, const String& code)
     if (!isEnabled())
         return true;
 
-    if (findInRequest(code)) {
+    if (findInRequest(code, true, true)) {
         DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to execute a JavaScript script. Source code of script found within request.\n"));
         m_frame->domWindow()->console()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, consoleMessage, 1, String());
         return false;
@@ -223,18 +235,18 @@ String XSSAuditor::decodeHTMLEntities(const String& string, bool leaveUndecodabl
     return String::adopt(result);
 }
 
-bool XSSAuditor::findInRequest(const String& string, bool decodeEntities) const
+bool XSSAuditor::findInRequest(const String& string, bool decodeEntities, bool allowRequestIfNoIllegalURICharacters) const
 {
     bool result = false;
     Frame* parentFrame = m_frame->tree()->parent();
     if (parentFrame && m_frame->document()->url() == blankURL())
-        result = findInRequest(parentFrame, string, decodeEntities);
+        result = findInRequest(parentFrame, string, decodeEntities, allowRequestIfNoIllegalURICharacters);
     if (!result)
-        result = findInRequest(m_frame, string, decodeEntities);
+        result = findInRequest(m_frame, string, decodeEntities, allowRequestIfNoIllegalURICharacters);
     return result;
 }
 
-bool XSSAuditor::findInRequest(Frame* frame, const String& string, bool decodeEntities) const
+bool XSSAuditor::findInRequest(Frame* frame, const String& string, bool decodeEntities, bool allowRequestIfNoIllegalURICharacters) const
 {
     ASSERT(frame->document());
 
@@ -274,8 +286,13 @@ bool XSSAuditor::findInRequest(Frame* frame, const String& string, bool decodeEn
     if (string.length() < pageURL.length()) {
         // The string can actually fit inside the pageURL.
         String decodedPageURL = m_cache.canonicalizeURL(pageURL, frame->document()->decoder()->encoding(), decodeEntities);
+
+        if (allowRequestIfNoIllegalURICharacters && (!formDataObj || formDataObj->isEmpty()) 
+            && decodedPageURL.find(&isIllegalURICharacter, 0) == -1)
+            return false; // Injection is impossible because the request does not contain any illegal URI characters. 
+
         if (decodedPageURL.find(canonicalizedString, 0, false) != -1)
-           return true;  // We've found the smoking gun.
+            return true;  // We've found the smoking gun.
     }
 
     if (formDataObj && !formDataObj->isEmpty()) {

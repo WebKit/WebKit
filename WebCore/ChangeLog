@@ -1,3 +1,29 @@
+2009-09-30  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29944
+        
+        Reduces false positives in the XSSAuditor by explicitly allowing requests
+        that do not contain illegal URI characters.
+        
+        As a side effect of this change, the tests property-inject.html, 
+        property-escape-noquotes.html, and property-escape-noquotes-tab-slash-chars.html 
+        fail because these attacks do not contain any illegal URI characters and 
+        thus are now allowed by the XSSAuditor, where previously they weren't. A future
+        change may reinstate this functionality.
+
+        Tests: http/tests/security/xssAuditor/script-tag-safe2.html
+               http/tests/security/xssAuditor/script-tag-safe3.html
+
+        * page/XSSAuditor.cpp:
+        (WebCore::isIllegalURICharacter): Added method.
+        (WebCore::XSSAuditor::canEvaluate):
+        (WebCore::XSSAuditor::canCreateInlineEventListener):
+        (WebCore::XSSAuditor::findInRequest): Added parameter 
+        allowRequestIfNoIllegalURICharacters.
+        * page/XSSAuditor.h:
+
 2009-09-30  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.

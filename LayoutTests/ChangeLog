@@ -1,3 +1,30 @@
+2009-09-30  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29944
+        
+        Tests that the XSSAuditor allows requests that do not contain illegal URI 
+        characters.
+        
+        Added a notice regarding the failure of tests property-inject.html, 
+        property-escape-noquotes.html and property-escape-noquotes-tab-slash-chars.html, 
+        and rebased the expected results of these tests.
+
+        * http/tests/security/xssAuditor/property-escape-noquotes-expected.txt:
+        * http/tests/security/xssAuditor/property-escape-noquotes-tab-slash-chars-expected.txt:
+        * http/tests/security/xssAuditor/property-escape-noquotes-tab-slash-chars.html:
+        * http/tests/security/xssAuditor/property-escape-noquotes.html:
+        * http/tests/security/xssAuditor/property-inject-expected.txt:
+        * http/tests/security/xssAuditor/property-inject.html:
+        * http/tests/security/xssAuditor/resources/safe-script-noquotes.js: Added.
+        * http/tests/security/xssAuditor/resources/script-tag-safe2.html: Added.
+        * http/tests/security/xssAuditor/resources/script-tag-safe3.html: Added.
+        * http/tests/security/xssAuditor/script-tag-safe2-expected.txt: Added.
+        * http/tests/security/xssAuditor/script-tag-safe2.html: Added.
+        * http/tests/security/xssAuditor/script-tag-safe3-expected.txt: Added.
+        * http/tests/security/xssAuditor/script-tag-safe3.html: Added.
+
 2009-09-30  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.
