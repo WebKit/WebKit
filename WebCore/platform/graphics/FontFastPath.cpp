@@ -251,6 +251,10 @@ bool Font::canUseGlyphCache(const TextRun& run) const
             return false;
     }
 
+    TextRenderingMode textMode = m_fontDescription.textRenderingMode();
+    if (textMode == OptimizeLegibility || textMode == GeometricPrecision)
+        return false;
+
     return true;
 
 }

@@ -93,8 +93,6 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getSVGPropertyCSSValue(int pro
             return CSSPrimitiveValue::create(svgStyle->strokeMiterLimit(), CSSPrimitiveValue::CSS_NUMBER);
         case CSSPropertyStrokeOpacity:
             return CSSPrimitiveValue::create(svgStyle->strokeOpacity(), CSSPrimitiveValue::CSS_NUMBER);
-        case CSSPropertyTextRendering:
-            return CSSPrimitiveValue::create(svgStyle->textRendering());
         case CSSPropertyAlignmentBaseline:
             return CSSPrimitiveValue::create(svgStyle->alignmentBaseline());
         case CSSPropertyDominantBaseline:

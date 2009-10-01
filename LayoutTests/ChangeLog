@@ -1,3 +1,30 @@
+2009-10-01  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Tests for <rdar://problem/6934421> Support CSS for Text Kerning and 
+        ligature
+        -and corresponding-
+        https://bugs.webkit.org/show_bug.cgi?id=6136
+
+        New tests.
+        * fast/css/parsing-text-rendering-expected.txt: Added.
+        * fast/css/parsing-text-rendering.html: Added.
+        * fast/css/resources/parsing-text-rendering.js: Added.
+        (test):
+        * fast/css/text-rendering.html: Added.
+        * platform/mac/fast/css/text-rendering-expected.checksum: Added.
+        * platform/mac/fast/css/text-rendering-expected.png: Added.
+        * platform/mac/fast/css/text-rendering-expected.txt: Added.
+
+        New and improved results.
+        * platform/mac/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/mac/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-conv-01-f-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/filters-conv-01-f-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/filters-conv-01-f-expected.txt:
+        * svg/css/getComputedStyle-basic-expected.txt:
+
 2009-10-01  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Darin Adler.

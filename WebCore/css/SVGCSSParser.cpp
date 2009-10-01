@@ -132,12 +132,6 @@ bool CSSParser::parseSVGValue(int propId, bool important)
             valid_primitive = true;
         break;
 
-    case CSSPropertyTextRendering:   // auto | optimizeSpeed | optimizeLegibility | geometricPrecision | inherit
-        if (id == CSSValueAuto || id == CSSValueOptimizespeed || id == CSSValueOptimizelegibility ||
-       id == CSSValueGeometricprecision)
-            valid_primitive = true;
-        break;
-
     case CSSPropertyImageRendering:  // auto | optimizeSpeed |
     case CSSPropertyColorRendering:  // optimizeQuality | inherit
         if (id == CSSValueAuto || id == CSSValueOptimizespeed ||

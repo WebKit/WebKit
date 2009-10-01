@@ -631,3 +631,9 @@ stroke
 # none
 antialiased
 subpixel-antialiased
+
+# text-rendering
+#auto
+optimizeSpeed
+optimizeLegibility
+geometricPrecision

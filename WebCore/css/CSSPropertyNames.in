@@ -127,6 +127,7 @@ text-overline-color
 text-overline-mode
 text-overline-style
 text-overline-width
+text-rendering
 text-shadow
 text-transform
 text-underline

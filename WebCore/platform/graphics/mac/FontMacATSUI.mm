@@ -105,12 +105,12 @@ static bool fontHasMirroringInfo(ATSUFontID fontID)
     return false;
 }
 
-static void disableLigatures(const SimpleFontData* fontData)
+static void disableLigatures(const SimpleFontData* fontData, TextRenderingMode textMode)
 {
     // Don't be too aggressive: if the font doesn't contain 'a', then assume that any ligatures it contains are
     // in characters that always go through ATSUI, and therefore allow them. Geeza Pro is an example.
     // See bugzilla 5166.
-    if (fontData->platformData().allowsLigatures())
+    if (textMode == OptimizeLegibility || textMode == GeometricPrecision || fontData->platformData().allowsLigatures())
         return;
 
     ATSUFontFeatureType featureTypes[] = { kLigaturesType };
@@ -120,7 +120,7 @@ static void disableLigatures(const SimpleFontData* fontData)
         LOG_ERROR("ATSUSetFontFeatures failed (%d) -- ligatures remain enabled", status);
 }
 
-static void initializeATSUStyle(const SimpleFontData* fontData)
+static void initializeATSUStyle(const SimpleFontData* fontData, TextRenderingMode textMode)
 {
     if (fontData->m_ATSUStyleInitialized)
         return;
@@ -141,19 +141,28 @@ static void initializeATSUStyle(const SimpleFontData* fontData)
         transform = CGAffineTransformConcat(transform, CGAffineTransformMake(1, 0, -tanf(SYNTHETIC_OBLIQUE_ANGLE * acosf(0) / 90), 1, 0, 0));
     Fixed fontSize = FloatToFixed(fontData->platformData().m_size);
     ByteCount styleSizes[4] = { sizeof(Fixed), sizeof(ATSUFontID), sizeof(CGAffineTransform), sizeof(Fract) };
-    // Turn off automatic kerning until it is supported in the CG code path (bug 6136)
-    Fract kerningInhibitFactor = FloatToFract(1.0);
     
-    ATSUAttributeTag styleTags[4] = { kATSUSizeTag, kATSUFontTag, kATSUFontMatrixTag, kATSUKerningInhibitFactorTag };
-    ATSUAttributeValuePtr styleValues[4] = { &fontSize, &fontID, &transform, &kerningInhibitFactor };
-    status = ATSUSetAttributes(fontData->m_ATSUStyle, 4, styleTags, styleSizes, styleValues);
-    if (status != noErr)
-        LOG_ERROR("ATSUSetAttributes failed (%d)", status);
+    bool allowKerning = textMode == OptimizeLegibility || textMode == GeometricPrecision;
+    if (!allowKerning) {
+        // Turn off automatic kerning until it is supported in the CG code path (bug 6136)
+        Fract kerningInhibitFactor = FloatToFract(1.0);
+        ATSUAttributeTag styleTags[4] = { kATSUSizeTag, kATSUFontTag, kATSUFontMatrixTag, kATSUKerningInhibitFactorTag };
+        ATSUAttributeValuePtr styleValues[4] = { &fontSize, &fontID, &transform, &kerningInhibitFactor };
+        status = ATSUSetAttributes(fontData->m_ATSUStyle, 4, styleTags, styleSizes, styleValues);
+        if (status != noErr)
+            LOG_ERROR("ATSUSetAttributes failed (%d)", status);
+    } else {
+        ATSUAttributeTag styleTags[3] = { kATSUSizeTag, kATSUFontTag, kATSUFontMatrixTag };
+        ATSUAttributeValuePtr styleValues[3] = { &fontSize, &fontID, &transform, };
+        status = ATSUSetAttributes(fontData->m_ATSUStyle, 3, styleTags, styleSizes, styleValues);
+        if (status != noErr)
+            LOG_ERROR("ATSUSetAttributes failed (%d)", status);
+    }
 
     fontData->m_ATSUMirrors = fontHasMirroringInfo(fontID);
 
     // Turn off ligatures such as 'fi' to match the CG code path's behavior, until bug 6135 is fixed.
-    disableLigatures(fontData);
+    disableLigatures(fontData, textMode);
 
     fontData->m_ATSUStyleInitialized = true;
 }
@@ -329,7 +338,7 @@ void ATSULayoutParameters::initialize(const Font* font, const GraphicsContext* g
     OSStatus status;
     ATSULayoutOperationOverrideSpecifier overrideSpecifier;
     
-    initializeATSUStyle(fontData);
+    initializeATSUStyle(fontData, m_font->fontDescription().textRenderingMode());
     
     // FIXME: This is currently missing the following required features that the CoreGraphics code path has:
     // - \n, \t, and nonbreaking space render as a space.
@@ -393,7 +402,7 @@ void ATSULayoutParameters::initialize(const Font* font, const GraphicsContext* g
             const FontData* fallbackFontData = m_font->fontDataForCharacters(m_run.characters() + substituteOffset, substituteLength);
             substituteFontData = fallbackFontData ? fallbackFontData->fontDataForCharacter(m_run[0]) : 0;
             if (substituteFontData) {
-                initializeATSUStyle(substituteFontData);
+                initializeATSUStyle(substituteFontData, m_font->fontDescription().textRenderingMode());
                 if (substituteFontData->m_ATSUStyle)
                     ATSUSetRunStyle(layout, substituteFontData->m_ATSUStyle, substituteOffset, substituteLength);
             } else
@@ -412,7 +421,7 @@ void ATSULayoutParameters::initialize(const Font* font, const GraphicsContext* g
             if (i == substituteOffset || i == substituteOffset + substituteLength) {
                 if (isSmallCap) {
                     isSmallCap = false;
-                    initializeATSUStyle(r->smallCapsFontData(m_font->fontDescription()));
+                    initializeATSUStyle(r->smallCapsFontData(m_font->fontDescription()), m_font->fontDescription().textRenderingMode());
                     ATSUSetRunStyle(layout, r->smallCapsFontData(m_font->fontDescription())->m_ATSUStyle, firstSmallCap, i - firstSmallCap);
                 }
                 if (i == substituteOffset && substituteLength > 0)
@@ -456,7 +465,7 @@ void ATSULayoutParameters::initialize(const Font* font, const GraphicsContext* g
                 } else {
                     if (isSmallCap) {
                         isSmallCap = false;
-                        initializeATSUStyle(smallCapsData);
+                        initializeATSUStyle(smallCapsData, m_font->fontDescription().textRenderingMode());
                         ATSUSetRunStyle(layout, smallCapsData->m_ATSUStyle, firstSmallCap, i - firstSmallCap);
                     }
                     m_fonts[i] = r;

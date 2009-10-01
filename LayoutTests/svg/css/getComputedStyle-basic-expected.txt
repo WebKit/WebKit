@@ -154,6 +154,8 @@ rect: style.getPropertyValue(text-decoration) : none
 rect: style.getPropertyCSSValue(text-decoration) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(text-indent) : 0px
 rect: style.getPropertyCSSValue(text-indent) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(text-rendering) : auto
+rect: style.getPropertyCSSValue(text-rendering) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(text-shadow) : none
 rect: style.getPropertyCSSValue(text-shadow) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(text-overflow) : clip
@@ -388,8 +390,6 @@ rect: style.getPropertyValue(stroke-opacity) : 1
 rect: style.getPropertyCSSValue(stroke-opacity) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(stroke-width) : 2px
 rect: style.getPropertyCSSValue(stroke-width) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(text-rendering) : auto
-rect: style.getPropertyCSSValue(text-rendering) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(alignment-baseline) : auto
 rect: style.getPropertyCSSValue(alignment-baseline) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(baseline-shift) : baseline
@@ -562,6 +562,8 @@ g: style.getPropertyValue(text-decoration) : none
 g: style.getPropertyCSSValue(text-decoration) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(text-indent) : 0px
 g: style.getPropertyCSSValue(text-indent) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(text-rendering) : auto
+g: style.getPropertyCSSValue(text-rendering) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(text-shadow) : none
 g: style.getPropertyCSSValue(text-shadow) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(text-overflow) : clip
@@ -796,8 +798,6 @@ g: style.getPropertyValue(stroke-opacity) : 1
 g: style.getPropertyCSSValue(stroke-opacity) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(stroke-width) : 2px
 g: style.getPropertyCSSValue(stroke-width) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(text-rendering) : auto
-g: style.getPropertyCSSValue(text-rendering) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(alignment-baseline) : auto
 g: style.getPropertyCSSValue(alignment-baseline) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(baseline-shift) : baseline

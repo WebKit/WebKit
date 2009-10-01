@@ -445,13 +445,13 @@ CTFontRef SimpleFontData::getCTFont() const
     return m_CTFont.get();
 }
 
-CFDictionaryRef SimpleFontData::getCFStringAttributes() const
+CFDictionaryRef SimpleFontData::getCFStringAttributes(TextRenderingMode textMode) const
 {
     if (m_CFStringAttributes)
         return m_CFStringAttributes.get();
 
-    static const float kerningAdjustmentValue = 0;
-    static CFNumberRef kerningAdjustment = CFNumberCreate(kCFAllocatorDefault, kCFNumberFloatType, &kerningAdjustmentValue);
+    bool allowKerning = textMode == OptimizeLegibility || textMode == GeometricPrecision;
+    bool allowLigatures = platformData().allowsLigatures() || allowKerning;
 
     static const int ligaturesNotAllowedValue = 0;
     static CFNumberRef ligaturesNotAllowed = CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &ligaturesNotAllowedValue);
@@ -459,10 +459,24 @@ CFDictionaryRef SimpleFontData::getCFStringAttributes() const
     static const int ligaturesAllowedValue = 1;
     static CFNumberRef ligaturesAllowed = CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &ligaturesAllowedValue);
 
-    static const void* attributeKeys[] = { kCTFontAttributeName, kCTKernAttributeName, kCTLigatureAttributeName };
-    const void* attributeValues[] = { getCTFont(), kerningAdjustment, platformData().allowsLigatures() ? ligaturesAllowed : ligaturesNotAllowed };
-
-    m_CFStringAttributes.adoptCF(CFDictionaryCreate(NULL, attributeKeys, attributeValues, sizeof(attributeKeys) / sizeof(*attributeKeys), &kCFCopyStringDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    // This is where the if would go.
+    if (!allowKerning) {
+        static const float kerningAdjustmentValue = 0;
+        static CFNumberRef kerningAdjustment = CFNumberCreate(kCFAllocatorDefault, kCFNumberFloatType, &kerningAdjustmentValue);
+        static const void* keysWithKerningDisabled[] = { kCTFontAttributeName, kCTKernAttributeName, kCTLigatureAttributeName };
+        const void* valuesWithKerningDisabled[] = { getCTFont(), kerningAdjustment, allowLigatures
+            ? ligaturesAllowed : ligaturesNotAllowed };
+        m_CFStringAttributes.adoptCF(CFDictionaryCreate(NULL, keysWithKerningDisabled, valuesWithKerningDisabled,
+            sizeof(keysWithKerningDisabled) / sizeof(*keysWithKerningDisabled),
+            &kCFCopyStringDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    } else {
+        // By omitting the kCTKernAttributeName attribute, we get Core Text's standard kerning.
+        static const void* keysWithKerningEnabled[] = { kCTFontAttributeName, kCTLigatureAttributeName };
+        const void* valuesWithKerningEnabled[] = { getCTFont(), allowLigatures ? ligaturesAllowed : ligaturesNotAllowed };
+        m_CFStringAttributes.adoptCF(CFDictionaryCreate(NULL, keysWithKerningEnabled, valuesWithKerningEnabled,
+            sizeof(keysWithKerningEnabled) / sizeof(*keysWithKerningEnabled),
+            &kCFCopyStringDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    }
 
     return m_CFStringAttributes.get();
 }

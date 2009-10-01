@@ -1,3 +1,90 @@
+2009-10-01  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Fix for <rdar://problem/6934421> Support CSS for Text Kerning and 
+        ligature
+        -and corresponding-
+        https://bugs.webkit.org/show_bug.cgi?id=6136
+
+        This patch makes the SVG CSS property text-rendering work with any 
+        HTML, much like it does in Firefox. It accepts four possible input 
+        values: auto, optimizeSpeed, optimizeLegibility, and 
+        geometricPrecision. Right now, in this implementation, here is what 
+        those values correspond to:
+
+        auto = optimizeSpeed = what we normally when the value's not set
+        optimizeLegibility = geometricPrecision = ligatures + kerning
+
+        Add new file TextRenderingMode.h to the project files.
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        CSS support for the new CSSPropertyTextRendering
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator TextRenderingMode):
+        * css/CSSPropertyNames.in:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * css/CSSValueKeywords.in:
+
+        All the old SVG CSS support for this property can go away. When 
+        it's used in SVG, it will just fall into the normal HTML case.
+        * css/SVGCSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getSVGPropertyCSSValue):
+        * css/SVGCSSParser.cpp:
+        (WebCore::CSSParser::parseSVGValue):
+        * css/SVGCSSPropertyNames.in:
+        * css/SVGCSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applySVGProperty):
+        * css/SVGCSSValueKeywords.in:
+
+        FontDescription stores the m_textRendering bit.
+        * platform/graphics/FontDescription.h:
+        (WebCore::FontDescription::FontDescription):
+        (WebCore::FontDescription::textRenderingMode):
+        (WebCore::FontDescription::setTextRenderingMode):
+        (WebCore::FontDescription::operator==):
+
+        We want to fall into the complex text rendering code path if 
+        kerning and ligatures have been enabled with this property.
+        * platform/graphics/FontFastPath.cpp:
+        (WebCore::Font::canUseGlyphCache):
+
+        Now takes a TextRenderingMode as a parameter.
+        * platform/graphics/SimpleFontData.h:
+
+        New header for the enum.
+        * platform/graphics/TextRenderingMode.h: Added.
+        (WebCore::):
+
+        getCFStringAttributes() now takes a TextRenderingMode as an 
+        attribute.
+        * platform/graphics/mac/CoreTextController.cpp:
+        (WebCore::CoreTextController::collectCoreTextRunsForCharacters):
+
+        Enable kerning and ligatures whenever the TextRenderingMode is 
+        OptimizeLegibility or GeometricPrecision
+        * platform/graphics/mac/FontMacATSUI.mm:
+        (WebCore::disableLigatures):
+        (WebCore::initializeATSUStyle):
+        (WebCore::ATSULayoutParameters::initialize):
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::SimpleFontData::getCFStringAttributes):
+
+        More SVG CSS stuff that isn't needed anymore since SVG will use the 
+        new HTML CSS implementation.
+        * rendering/style/SVGRenderStyle.h:
+        (WebCore::SVGRenderStyle::InheritedFlags::operator==):
+        (WebCore::SVGRenderStyle::setBitDefaults):
+        * rendering/style/SVGRenderStyleDefs.h:
+
 2009-10-01  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Timothy Hatcher.

@@ -29,6 +29,7 @@
 #include "FontRenderingMode.h"
 #include "FontSmoothingMode.h"
 #include "FontTraitsMask.h"
+#include "TextRenderingMode.h"
 
 namespace WebCore {
 
@@ -63,6 +64,7 @@ public:
         , m_renderingMode(NormalRenderingMode)
         , m_keywordSize(0)
         , m_fontSmoothing(AutoSmoothing)
+        , m_textRendering(AutoTextRendering)
     {
     }
 
@@ -87,6 +89,7 @@ public:
     FontRenderingMode renderingMode() const { return static_cast<FontRenderingMode>(m_renderingMode); }
     unsigned keywordSize() const { return m_keywordSize; }
     FontSmoothingMode fontSmoothing() const { return static_cast<FontSmoothingMode>(m_fontSmoothing); }
+    TextRenderingMode textRenderingMode() const { return static_cast<TextRenderingMode>(m_textRendering); }
 
     FontTraitsMask traitsMask() const;
 
@@ -102,6 +105,7 @@ public:
     void setRenderingMode(FontRenderingMode mode) { m_renderingMode = mode; }
     void setKeywordSize(unsigned s) { m_keywordSize = s; }
     void setFontSmoothing(FontSmoothingMode smoothing) { m_fontSmoothing = smoothing; }
+    void setTextRenderingMode(TextRenderingMode rendering) { m_textRendering = rendering; }
 
 private:
     FontFamily m_familyList; // The list of font families to be used.
@@ -125,6 +129,7 @@ private:
                            // (e.g., 13px monospace vs. 16px everything else).  Sizes are 1-8 (like the HTML size values for <font>).
 
     unsigned m_fontSmoothing : 2; // FontSmoothingMode
+    unsigned m_textRendering : 2; // TextRenderingMode
 };
 
 inline bool FontDescription::operator==(const FontDescription& other) const
@@ -140,7 +145,8 @@ inline bool FontDescription::operator==(const FontDescription& other) const
         && m_usePrinterFont == other.m_usePrinterFont
         && m_renderingMode == other.m_renderingMode
         && m_keywordSize == other.m_keywordSize
-        && m_fontSmoothing == other.m_fontSmoothing;
+        && m_fontSmoothing == other.m_fontSmoothing
+        && m_textRendering == other.m_textRendering;
 }
 
 }

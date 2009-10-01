@@ -37,7 +37,7 @@ stroke-linejoin
 stroke-miterlimit
 stroke-opacity
 stroke-width
-text-rendering
+# text-rendering
 alignment-baseline
 baseline-shift
 dominant-baseline

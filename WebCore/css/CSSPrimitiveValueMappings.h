@@ -36,6 +36,7 @@
 #include "RenderStyleConstants.h"
 #include "SVGRenderStyleDefs.h"
 #include "TextDirection.h"
+#include "TextRenderingMode.h"
 #include "ThemeTypes.h"
 
 namespace WebCore {
@@ -2241,39 +2242,39 @@ template<> inline CSSPrimitiveValue::operator ETextAnchor() const
     }
 }
 
-template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ETextRendering e)
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TextRenderingMode e)
     : m_type(CSS_IDENT)
 {
     switch (e) {
-        case TR_AUTO:
+        case AutoTextRendering:
             m_value.ident = CSSValueAuto;
             break;
-        case TR_OPTIMIZESPEED:
+        case OptimizeSpeed:
             m_value.ident = CSSValueOptimizespeed;
             break;
-        case TR_OPTIMIZELEGIBILITY:
+        case OptimizeLegibility:
             m_value.ident = CSSValueOptimizelegibility;
             break;
-        case TR_GEOMETRICPRECISION:
+        case GeometricPrecision:
             m_value.ident = CSSValueGeometricprecision;
             break;
     }
 }
 
-template<> inline CSSPrimitiveValue::operator ETextRendering() const
+template<> inline CSSPrimitiveValue::operator TextRenderingMode() const
 {
     switch (m_value.ident) {
         case CSSValueAuto:
-            return TR_AUTO;
+            return AutoTextRendering;
         case CSSValueOptimizespeed:
-            return TR_OPTIMIZESPEED;
+            return OptimizeSpeed;
         case CSSValueOptimizelegibility:
-            return TR_OPTIMIZELEGIBILITY;
+            return OptimizeLegibility;
         case CSSValueGeometricprecision:
-            return TR_GEOMETRICPRECISION;
+            return GeometricPrecision;
         default:
             ASSERT_NOT_REACHED();
-            return TR_AUTO;
+            return AutoTextRendering;
     }
 }
 

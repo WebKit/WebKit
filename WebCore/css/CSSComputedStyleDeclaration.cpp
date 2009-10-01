@@ -129,6 +129,7 @@ static const int computedProperties[] = {
     CSSPropertyTextAlign,
     CSSPropertyTextDecoration,
     CSSPropertyTextIndent,
+    CSSPropertyTextRendering,
     CSSPropertyTextShadow,
     CSSPropertyTextOverflow,
     CSSPropertyTextTransform,
@@ -252,7 +253,6 @@ static const int computedProperties[] = {
     CSSPropertyStrokeMiterlimit,
     CSSPropertyStrokeOpacity,
     CSSPropertyStrokeWidth,
-    CSSPropertyTextRendering,
     CSSPropertyAlignmentBaseline,
     CSSPropertyBaselineShift,
     CSSPropertyDominantBaseline,
@@ -1052,6 +1052,8 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return CSSPrimitiveValue::create(style->textIndent());
         case CSSPropertyTextShadow:
             return valueForShadow(style->textShadow(), static_cast<CSSPropertyID>(propertyID));
+        case CSSPropertyTextRendering:
+            return CSSPrimitiveValue::create(style->fontDescription().textRenderingMode());
         case CSSPropertyTextOverflow:
             if (style->textOverflow())
                 return CSSPrimitiveValue::createIdentifier(CSSValueEllipsis);

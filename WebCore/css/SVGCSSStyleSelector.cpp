@@ -229,13 +229,6 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
                 svgstyle->setShapeRendering(*primitiveValue);
             break;
         }
-        case CSSPropertyTextRendering:
-        {
-            HANDLE_INHERIT_AND_INITIAL(textRendering, TextRendering)
-            if (primitiveValue)
-                svgstyle->setTextRendering(*primitiveValue);
-            break;
-        }
         // end of ident only properties
         case CSSPropertyFill:
         {

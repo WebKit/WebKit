@@ -196,7 +196,7 @@ linearRGB
 
 # CSS_PROP_COLOR_RENDERING
 #auto
-optimizeSpeed
+#optimizeSpeed
 optimizeQuality
 
 ## CSS_PROP_FILL
@@ -220,7 +220,7 @@ optimizeQuality
 #auto
 #optimizeSpeed
 crispEdges
-geometricPrecision
+#geometricPrecision
 
 # CSS_PROP_STROKE
 # CSS_PROP_STROKE_DASHARRAY
@@ -238,11 +238,6 @@ bevel
 # CSS_PROP_STROKE_MITERLIMIT
 # CSS_PROP_STROKE_OPACITY
 # CSS_PROP_STROKE_WIDTH
-# CSS_PROP_TEXT_RENDERING
-#auto
-#optimizeSpeed
-optimizeLegibility
-#geometricPrecision
 
 # CSS_PROP_ALIGNMENT_BASELINE
 #auto
