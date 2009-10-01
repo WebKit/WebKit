@@ -82,6 +82,7 @@ load_status_cb(WebKitWebView* webView,
         WebKitHitTestResult* result;
         guint context;
         GdkEventButton event;
+        event.type = GDK_BUTTON_PRESS;
         /* Close enough to 0,0 */
         event.x = 5;
         event.y = 5;

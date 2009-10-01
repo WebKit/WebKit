@@ -1,3 +1,13 @@
+2009-10-01  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Set the type for the fake event, otherwise the test ASSERTs in
+        debug builds.
+
+        * tests/testhittestresult.c:
+        (load_status_cb):
+
 2009-10-01  Martin Robinson  <martin.james.robinson@gmail.com>
 
         Reviewed by Xan Lopez.
