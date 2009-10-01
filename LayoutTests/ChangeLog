@@ -1,3 +1,14 @@
+2009-10-01  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Add baseline pngs for a couple of tests that currently only have checksums.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28322
+
+        * platform/mac/fast/borders/border-radius-constraints-expected.png: Added.
+        * platform/mac/fast/borders/border-radius-split-inline-expected.png: Added.
+
 2009-10-01  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Rubberstamped by Simon Hausmann.
