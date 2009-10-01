@@ -231,40 +231,94 @@
 #if   defined(arm) \
    || defined(__arm__)
 #define WTF_PLATFORM_ARM 1
+
 #if defined(__ARMEB__)
 #define WTF_PLATFORM_BIG_ENDIAN 1
-#elif !defined(__ARM_EABI__) && !defined(__EABI__) && !defined(__VFP_FP__)
+
+#elif !defined(__ARM_EABI__) \
+   && !defined(__EABI__) \
+   && !defined(__VFP_FP__)
 #define WTF_PLATFORM_MIDDLE_ENDIAN 1
+
 #endif
-#define ARM_ARCH_VERSION 3
-#if defined(__ARM_ARCH_4__) || defined(__ARM_ARCH_4T__) || defined(__MARM_ARMV4__) \
-    || defined(_ARMV4I_)
-#undef ARM_ARCH_VERSION
+
+/* Set ARM_ARCH_VERSION */
+#if   defined(__ARM_ARCH_4__) \
+   || defined(__ARM_ARCH_4T__) \
+   || defined(__MARM_ARMV4__) \
+   || defined(_ARMV4I_)
 #define ARM_ARCH_VERSION 4
-#endif
-#if defined(__ARM_ARCH_5__) || defined(__ARM_ARCH_5T__) \
-        || defined(__ARM_ARCH_5E__) || defined(__ARM_ARCH_5TE__) \
-        || defined(__ARM_ARCH_5TEJ__) || defined(__MARM_ARMV5__)
-#undef ARM_ARCH_VERSION
+
+#elif defined(__ARM_ARCH_5__) \
+   || defined(__ARM_ARCH_5T__) \
+   || defined(__ARM_ARCH_5E__) \
+   || defined(__ARM_ARCH_5TE__) \
+   || defined(__ARM_ARCH_5TEJ__) \
+   || defined(__MARM_ARMV5__)
 #define ARM_ARCH_VERSION 5
-#endif
-#if defined(__ARM_ARCH_6__) || defined(__ARM_ARCH_6J__) \
-     || defined(__ARM_ARCH_6K__) || defined(__ARM_ARCH_6Z__) \
-     || defined(__ARM_ARCH_6ZK__) || defined(__ARMV6__)
-#undef ARM_ARCH_VERSION
+
+#elif defined(__ARM_ARCH_6__) \
+   || defined(__ARM_ARCH_6J__) \
+   || defined(__ARM_ARCH_6K__) \
+   || defined(__ARM_ARCH_6Z__) \
+   || defined(__ARM_ARCH_6ZK__) \
+   || defined(__ARM_ARCH_6T2__) \
+   || defined(__ARMV6__)
 #define ARM_ARCH_VERSION 6
-#endif
-#if defined(__ARM_ARCH_7A__)
-#undef ARM_ARCH_VERSION
+
+#elif defined(__ARM_ARCH_7A__) \
+   || defined(__ARM_ARCH_7R__)
 #define ARM_ARCH_VERSION 7
+
+/* RVCT sets _TARGET_ARCH_ARM */
+#elif defined(__TARGET_ARCH_ARM)
+#define ARM_ARCH_VERSION __TARGET_ARCH_ARM
+
+#else
+#define ARM_ARCH_VERSION 0
+
 #endif
+
+/* Set THUMB_ARM_VERSION */
+#if   defined(__ARM_ARCH_4T__)
+#define THUMB_ARCH_VERSION 1
+
+#elif defined(__ARM_ARCH_5T__) \
+   || defined(__ARM_ARCH_5TE__) \
+   || defined(__ARM_ARCH_5TEJ__)
+#define THUMB_ARCH_VERSION 2
+
+#elif defined(__ARM_ARCH_6J__) \
+   || defined(__ARM_ARCH_6K__) \
+   || defined(__ARM_ARCH_6Z__) \
+   || defined(__ARM_ARCH_6ZK__) \
+   || defined(__ARM_ARCH_6M__)
+#define THUMB_ARCH_VERSION 3
+
+#elif defined(__ARM_ARCH_6T2__) \
+   || defined(__ARM_ARCH_7__) \
+   || defined(__ARM_ARCH_7A__) \
+   || defined(__ARM_ARCH_7R__) \
+   || defined(__ARM_ARCH_7M__)
+#define THUMB_ARCH_VERSION 4
+
+/* RVCT sets __TARGET_ARCH_THUMB */
+#elif defined(__TARGET_ARCH_THUMB)
+#define THUMB_ARCH_VERSION __TARGET_ARCH_THUMB
+
+#else
+#define THUMB_ARCH_VERSION 0
+#endif
+
 /* On ARMv5 and below the natural alignment is required. */
 #if !defined(ARM_REQUIRE_NATURAL_ALIGNMENT) && ARM_ARCH_VERSION <= 5
 #define ARM_REQUIRE_NATURAL_ALIGNMENT 1
 #endif
+
 /* Defines two pseudo-platforms for ARM and Thumb-2 instruction set. */
 #if !defined(WTF_PLATFORM_ARM_TRADITIONAL) && !defined(WTF_PLATFORM_ARM_THUMB2)
-#  if defined(thumb2) || defined(__thumb2__)
+#  if defined(thumb2) || defined(__thumb2__) \
+  || ((defined(__thumb) || defined(__thumb__)) && THUMB_ARCH_VERSION == 4)
 #    define WTF_PLATFORM_ARM_TRADITIONAL 0
 #    define WTF_PLATFORM_ARM_THUMB2 1
 #  elif PLATFORM_ARM_ARCH(4)
