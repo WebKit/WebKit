@@ -1,3 +1,20 @@
+2009-09-30  Timothy Hatcher  <timothy@apple.com>
+
+        Fix list box scrolling by correctly overriding the scroll()
+        function on RenderBox.
+
+        <rdar://problem/7255440> REGRESSION (r48683): Mousewheel scrolling
+        of listboxes is broken (29756)
+
+        Reviewed by Dan Bernstein.
+
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::scroll):
+        * rendering/RenderListBox.h:
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::scroll):
+        * rendering/RenderTextControlSingleLine.h:
+
 2009-10-01  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Timothy Hatcher.
