@@ -1,3 +1,20 @@
+2009-09-30  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        307 redirects should pass along http body and Content-Type header
+        https://bugs.webkit.org/show_bug.cgi?id=29943
+
+        Follow-up fix for:
+        <rdar://problem/3802660> SAP: 307 (Temporary Redirect) responses should use POST, not GET
+        
+        Test: http/tests/loading/resources/redirect-methods-result.php
+
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::willSendRequest): Pass along http body and Content-Type header.
+        * platform/network/mac/ResourceHandleMac.mm:
+        (-[WebCoreResourceHandleAsDelegate connection:willSendRequest:redirectResponse:]): ditto
+
 2009-09-30  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Mark Rowe.

@@ -15,9 +15,13 @@ var testCodes = [301, 302, 303, 307];
 
 function createFrame(index)
 {
+    var h4 = document.createElement("h4");
+    h4.innerHTML = testCodes[index] + " redirect";
+    document.body.appendChild(h4);
     var iframe = document.createElement("iframe");
     iframe.setAttribute("testCode", testCodes[index]);
     iframe.setAttribute("id", index);
+    iframe.setAttribute("height", "90px");
     document.body.appendChild(iframe);
     iframe.src="resources/redirect-methods-form.html";
     iframe.setAttribute("onload", "iframeLoaded(" + index + ");");

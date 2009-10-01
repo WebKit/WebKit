@@ -5,4 +5,6 @@ if ($status > 200 && !$_GET['redirected']) {
   exit();
 }
 ?>
-This page loaded using the <?php echo $_SERVER['REQUEST_METHOD'] ?> method.
+Request Method: <?php echo $_SERVER['REQUEST_METHOD'] ?><br> 
+Request Body: <?php echo @file_get_contents('php://input') ?><br>
+Request Content-Type: <?php echo $_SERVER["CONTENT_TYPE"]; ?>

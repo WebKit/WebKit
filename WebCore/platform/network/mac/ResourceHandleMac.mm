@@ -605,6 +605,15 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
         if (!equalIgnoringCase(originalMethod, String([newRequest HTTPMethod]))) {
             NSMutableURLRequest *mutableRequest = [newRequest mutableCopy];
             [mutableRequest setHTTPMethod:originalMethod];
+    
+            FormData* body = m_handle->request().httpBody();
+            if (!equalIgnoringCase(originalMethod, "GET") && body && !body->isEmpty())
+                WebCore::setHTTPBody(mutableRequest, body);
+
+            String originalContentType = m_handle->request().httpContentType();
+            if (!originalContentType.isEmpty())
+                [mutableRequest setValue:originalContentType forHTTPHeaderField:@"Content-Type"];
+
             newRequest = [mutableRequest autorelease];
         }
     }
