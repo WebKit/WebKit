@@ -1,5 +1,5 @@
 WEBKIT_API_HEADERS = $$PWD/qwebframe.h \
-                     $$PWD/qwebgraphicsitem.h \
+                     $$PWD/qgraphicswebview.h \
                      $$PWD/qwebkitglobal.h \
                      $$PWD/qwebpage.h \
                      $$PWD/qwebview.h \

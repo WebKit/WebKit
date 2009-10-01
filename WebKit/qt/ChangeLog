@@ -1,3 +1,18 @@
+2009-10-01  Alexis Menard  <alexis.menard@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Rename QWebGraphicsItem to QGraphicsWebView
+
+        * Api/headers.pri:
+        * Api/qwebpage.h:
+        * Api/qwebgraphicsitem.cpp: Renamed.
+        * Api/qwebgraphicsitem.h: Renamed.
+        * WebKit/qt/QGVLauncher/main.cpp:
+        * tests/tests.pro:
+        * tests/qwebgraphicsitem/qwebgraphicsitem.pro: Renamed.
+        * tests/qwebgraphicsitem/tst_qwebgraphicsitem.cpp: Renamed.
+
 2009-10-01  Antonio Gomes   <tonikitoo@webkit.org>
 
         Reviewed by Simon Hausmann.

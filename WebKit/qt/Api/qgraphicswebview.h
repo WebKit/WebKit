@@ -17,8 +17,8 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef QWebGraphicsItem_h
-#define QWebGraphicsItem_h
+#ifndef QGraphicsWebView_h
+#define QGraphicsWebView_h
 
 #include "qwebkitglobal.h"
 #include <QtCore/qurl.h>
@@ -32,9 +32,9 @@ class QWebPage;
 class QWebHistory;
 class QWebSettings;
 
-class QWebGraphicsItemPrivate;
+class QGraphicsWebViewPrivate;
 
-class QWEBKIT_EXPORT QWebGraphicsItem : public QGraphicsWidget {
+class QWEBKIT_EXPORT QGraphicsWebView : public QGraphicsWidget {
     Q_OBJECT
 
     Q_PROPERTY(QString title READ title NOTIFY titleChanged)
@@ -49,8 +49,8 @@ class QWEBKIT_EXPORT QWebGraphicsItem : public QGraphicsWidget {
     Q_PROPERTY(bool interactive READ isInteractive WRITE setInteractive NOTIFY interactivityChanged)
 
 public:
-    QWebGraphicsItem(QGraphicsItem* parent = 0);
-    ~QWebGraphicsItem();
+    QGraphicsWebView(QGraphicsItem* parent = 0);
+    ~QGraphicsWebView();
 
     QWebPage* page() const;
     void setPage(QWebPage*);
@@ -137,8 +137,8 @@ private:
     Q_PRIVATE_SLOT(d, void _q_doLoadFinished(bool success))
     Q_PRIVATE_SLOT(d, void _q_setStatusBarMessage(const QString& message))
 
-    QWebGraphicsItemPrivate* const d;
-    friend class QWebGraphicsItemPrivate;
+    QGraphicsWebViewPrivate* const d;
+    friend class QGraphicsWebViewPrivate;
 };
 
-#endif // QWebGraphicsItem_h
+#endif // QGraphicsWebView_h

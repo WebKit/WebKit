@@ -44,7 +44,7 @@
 #include <cstdio>
 #include <qwebelement.h>
 #include <qwebframe.h>
-#include <qwebgraphicsitem.h>
+#include <qgraphicswebview.h>
 #include <qwebpage.h>
 #include <qwebsettings.h>
 #include <qwebview.h>
@@ -111,7 +111,7 @@ public:
     {
         m_scene = new QGraphicsScene;
 
-        m_item = new QWebGraphicsItem;
+        m_item = new QGraphicsWebView;
         m_item->setPage(new WebPage());
 
         m_scene->addItem(m_item);
@@ -125,11 +125,11 @@ public:
     }
 
     QGraphicsScene* scene() const { return m_scene; }
-    QWebGraphicsItem* webItem() const { return m_item; }
+    QGraphicsWebView* webView() const { return m_item; }
 
 private:
     QGraphicsScene* m_scene;
-    QWebGraphicsItem* m_item;
+    QGraphicsWebView* m_item;
 };
 
 
@@ -158,11 +158,11 @@ public:
         view->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         setCentralWidget(view);
 
-        view->setMainWidget(scene->webItem());
+        view->setMainWidget(scene->webView());
 
-        connect(scene->webItem(), SIGNAL(loadFinished()), this, SLOT(loadFinished()));
-        connect(scene->webItem(), SIGNAL(titleChanged(const QString&)), this, SLOT(setWindowTitle(const QString&)));
-        connect(scene->webItem()->page(), SIGNAL(windowCloseRequested()), this, SLOT(close()));
+        connect(scene->webView(), SIGNAL(loadFinished()), this, SLOT(loadFinished()));
+        connect(scene->webView(), SIGNAL(titleChanged(const QString&)), this, SLOT(setWindowTitle(const QString&)));
+        connect(scene->webView()->page(), SIGNAL(windowCloseRequested()), this, SLOT(close()));
 
         resize(640, 480);
         buildUI();
@@ -175,8 +175,8 @@ public:
             deducedUrl = QUrl("http://" + url + "/");
 
         urlEdit->setText(deducedUrl.toEncoded());
-        scene->webItem()->load(deducedUrl);
-        scene->webItem()->setFocus(Qt::OtherFocusReason);
+        scene->webView()->load(deducedUrl);
+        scene->webView()->setFocus(Qt::OtherFocusReason);
     }
 
     QUrl guessUrlFromString(const QString& string)
@@ -191,7 +191,7 @@ public:
 
     QWebPage* page() const
     {
-        return scene->webItem()->page();
+        return scene->webView()->page();
     }
 
 protected slots:
@@ -202,7 +202,7 @@ protected slots:
 
     void loadFinished()
     {
-        QUrl url = scene->webItem()->url();
+        QUrl url = scene->webView()->url();
         urlEdit->setText(url.toString());
 
         QUrl::FormattingOptions opts;
@@ -238,7 +238,7 @@ public slots:
 private:
     void buildUI()
     {
-        QWebPage* page = scene->webItem()->page();
+        QWebPage* page = scene->webView()->page();
         urlEdit = new QLineEdit(this);
         urlEdit->setSizePolicy(QSizePolicy::Expanding, urlEdit->sizePolicy().verticalPolicy());
         connect(urlEdit, SIGNAL(returnPressed()), SLOT(changeLocation()));
