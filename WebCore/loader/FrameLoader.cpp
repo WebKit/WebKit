@@ -460,7 +460,7 @@ bool FrameLoader::requestFrame(HTMLFrameOwnerElement* ownerElement, const String
 
     Frame* frame = ownerElement->contentFrame();
     if (frame)
-        frame->loader()->scheduleLocationChange(url.string(), m_outgoingReferrer, true, true, isProcessingUserGesture());
+        frame->redirectScheduler()->scheduleLocationChange(url.string(), m_outgoingReferrer, true, true, isProcessingUserGesture());
     else
         frame = loadSubframe(ownerElement, url, frameName, m_outgoingReferrer);
     
@@ -595,7 +595,7 @@ void FrameLoader::submitForm(const char* action, const String& url, PassRefPtr<F
     frameRequest.resourceRequest().setURL(u);
     addHTTPOriginIfNeeded(frameRequest.resourceRequest(), outgoingOrigin());
 
-    targetFrame->loader()->scheduleFormSubmission(frameRequest, lockHistory, event, formState);
+    targetFrame->redirectScheduler()->scheduleFormSubmission(frameRequest, lockHistory, event, formState);
 }
 
 void FrameLoader::stopLoading(UnloadEventPolicy unloadEventPolicy, DatabasePolicy databasePolicy)
@@ -906,7 +906,7 @@ void FrameLoader::receivedFirstData()
     else
         url = m_frame->document()->completeURL(url).string();
 
-    scheduleHTTPRedirection(delay, url);
+    m_frame->redirectScheduler()->scheduleRedirect(delay, url);
 }
 
 const String& FrameLoader::responseMIMEType() const
@@ -1374,16 +1374,6 @@ KURL FrameLoader::completeURL(const String& url)
     return m_frame->document()->completeURL(url);
 }
 
-bool FrameLoader::isScheduledLocationChangePending() const
-{
-    return m_frame->redirectScheduler()->locationChangePending();
-}
-
-void FrameLoader::scheduleHTTPRedirection(double delay, const String& url)
-{
-    m_frame->redirectScheduler()->scheduleRedirect(delay, url);
-}
-
 void RedirectScheduler::scheduleRedirect(double delay, const String& url)
 {
     if (delay < 0 || delay > INT_MAX / 1000)
@@ -1414,11 +1404,6 @@ bool RedirectScheduler::mustLockBackForwardList(Frame* targetFrame)
     return false;
 }
 
-void FrameLoader::scheduleLocationChange(const String& url, const String& referrer, bool lockHistory, bool lockBackForwardList, bool wasUserGesture)
-{
-    m_frame->redirectScheduler()->scheduleLocationChange(url, referrer, lockHistory, lockBackForwardList, wasUserGesture);
-}
-
 void RedirectScheduler::scheduleLocationChange(const String& url, const String& referrer, bool lockHistory, bool lockBackForwardList, bool wasUserGesture)
 {
     if (!m_frame->page())
@@ -1446,12 +1431,6 @@ void RedirectScheduler::scheduleLocationChange(const String& url, const String& 
     schedule(new ScheduledRedirection(url, referrer, lockHistory, lockBackForwardList, wasUserGesture, false, duringLoad));
 }
 
-void FrameLoader::scheduleFormSubmission(const FrameLoadRequest& frameRequest,
-    bool lockHistory, PassRefPtr<Event> event, PassRefPtr<FormState> formState)
-{
-    m_frame->redirectScheduler()->scheduleFormSubmission(frameRequest, lockHistory, event, formState);
-}
-
 void RedirectScheduler::scheduleFormSubmission(const FrameLoadRequest& frameRequest,
     bool lockHistory, PassRefPtr<Event> event, PassRefPtr<FormState> formState)
 {
@@ -1466,11 +1445,6 @@ void RedirectScheduler::scheduleFormSubmission(const FrameLoadRequest& frameRequ
     bool duringLoad = !m_frame->loader()->committedFirstRealDocumentLoad();
 
     schedule(new ScheduledRedirection(frameRequest, lockHistory, mustLockBackForwardList(m_frame), event, formState, duringLoad));
-}
-
-void FrameLoader::scheduleRefresh(bool wasUserGesture)
-{
-    m_frame->redirectScheduler()->scheduleRefresh(wasUserGesture);
 }
 
 void RedirectScheduler::scheduleRefresh(bool wasUserGesture)
@@ -1501,11 +1475,6 @@ bool RedirectScheduler::locationChangePending()
     }
     ASSERT_NOT_REACHED();
     return false;
-}
-
-void FrameLoader::scheduleHistoryNavigation(int steps)
-{
-    m_frame->redirectScheduler()->scheduleHistoryNavigation(steps);
 }
 
 void RedirectScheduler::scheduleHistoryNavigation(int steps)

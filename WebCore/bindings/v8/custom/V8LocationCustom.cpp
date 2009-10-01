@@ -274,7 +274,7 @@ CALLBACK_FUNC_DECL(LocationReload)
         return v8::Undefined();
 
     if (!protocolIsJavaScript(frame->loader()->url()))
-        frame->loader()->scheduleRefresh(processingUserGesture());
+        frame->redirectScheduler()->scheduleRefresh(processingUserGesture());
     return v8::Undefined();
 }
 

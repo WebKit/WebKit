@@ -515,7 +515,7 @@ static Frame* createWindow(Frame* callingFrame,
         if (created)
             newFrame->loader()->changeLocation(completedUrl, referrer, false, false, userGesture);
         else if (!url.isEmpty())
-            newFrame->loader()->scheduleLocationChange(completedUrl.string(), referrer, false, userGesture);
+            newFrame->redirectScheduler()->scheduleLocationChange(completedUrl.string(), referrer, false, userGesture);
     }
 
     return newFrame;
@@ -673,7 +673,7 @@ CALLBACK_FUNC_DECL(DOMWindowOpen)
             // the outgoingReferrer.  We replicate that behavior here.
             String referrer = enteredFrame->loader()->outgoingReferrer();
 
-            frame->loader()->scheduleLocationChange(completedUrl, referrer, false, userGesture);
+            frame->redirectScheduler()->scheduleLocationChange(completedUrl, referrer, false, userGesture);
         }
         return V8DOMWrapper::convertToV8Object(V8ClassIndex::DOMWINDOW, frame->domWindow());
     }

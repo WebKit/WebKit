@@ -1,3 +1,48 @@
+2009-10-01  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Remove FrameLoader::schedule* APIs
+        https://bugs.webkit.org/show_bug.cgi?id=29950
+
+        Change clients of FrameLoader::schedule* to call redirectScheduler
+        directly.
+
+        No behavior change.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::setLocation):
+        (WebCore::createWindow):
+        (WebCore::JSDOMWindow::open):
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::setLocation):
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::navigateIfAllowed):
+        (WebCore::JSLocation::reload):
+        * bindings/v8/V8Utilities.cpp:
+        (WebCore::navigateIfAllowed):
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::createWindow):
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8LocationCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * dom/Document.cpp:
+        (WebCore::Document::implicitClose):
+        (WebCore::Document::processHttpEquiv):
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::write):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::requestFrame):
+        (WebCore::FrameLoader::submitForm):
+        (WebCore::FrameLoader::receivedFirstData):
+        * loader/FrameLoader.h:
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::selectCache):
+        * page/History.cpp:
+        (WebCore::History::back):
+        (WebCore::History::forward):
+        (WebCore::History::go):
+
 2009-10-01  Beth Dakin  <bdakin@apple.com>
 
         Just removing a comment I accidentally committed earlier. 

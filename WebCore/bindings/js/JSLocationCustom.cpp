@@ -196,7 +196,7 @@ static void navigateIfAllowed(ExecState* exec, Frame* frame, const KURL& url, bo
         return;
 
     if (!protocolIsJavaScript(url) || allowsAccessFromFrame(exec, frame))
-        frame->loader()->scheduleLocationChange(url.string(), lexicalFrame->loader()->outgoingReferrer(), lockHistory, lockBackForwardList, processingUserGesture(exec));
+        frame->redirectScheduler()->scheduleLocationChange(url.string(), lexicalFrame->loader()->outgoingReferrer(), lockHistory, lockBackForwardList, processingUserGesture(exec));
 }
 
 void JSLocation::setHref(ExecState* exec, JSValue value)
@@ -326,7 +326,7 @@ JSValue JSLocation::reload(ExecState* exec, const ArgList&)
         return jsUndefined();
 
     if (!protocolIsJavaScript(frame->loader()->url()))
-        frame->loader()->scheduleRefresh(processingUserGesture(exec));
+        frame->redirectScheduler()->scheduleRefresh(processingUserGesture(exec));
     return jsUndefined();
 }
 
