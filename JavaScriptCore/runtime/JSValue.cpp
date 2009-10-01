@@ -122,9 +122,13 @@ char* JSValue::description()
         snprintf(description, size, "False");
     else if (isNull())
         snprintf(description, size, "Null");
-    else {
-        ASSERT(isUndefined());
+    else if (isUndefined())
         snprintf(description, size, "Undefined");
+    else if (tag() == EmptyValueTag)
+        snprintf(description, size, "<JSValue()>");
+    else {
+        ASSERT(tag() == DeletedValueTag);
+        snprintf(description, size, "<HashTableDeletedValue>");
     }
 
     return description;
