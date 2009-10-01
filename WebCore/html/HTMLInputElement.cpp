@@ -196,6 +196,42 @@ bool HTMLInputElement::patternMismatch() const
     return false;
 }
 
+bool HTMLInputElement::tooLong() const
+{
+    switch (inputType()) {
+    case EMAIL:
+    case PASSWORD:
+    case SEARCH:
+    case TELEPHONE:
+    case TEXT:
+    case URL: {
+        int max = maxLength();
+        if (max < 0)
+            return false;
+        // Return false for the default value even if it is longer than maxLength.
+        bool userEdited = !m_data.value().isNull();
+        if (!userEdited)
+            return false;
+        return value().length() > static_cast<unsigned>(max);
+    }
+    case BUTTON:
+    case CHECKBOX:
+    case COLOR:
+    case FILE:
+    case HIDDEN:
+    case IMAGE:
+    case ISINDEX:
+    case NUMBER:
+    case RADIO:
+    case RANGE:
+    case RESET:
+    case SUBMIT:
+        return false;
+    }
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 static inline CheckedRadioButtons& checkedRadioButtons(const HTMLInputElement *element)
 {
     if (HTMLFormElement* form = element->form())
@@ -1610,12 +1646,12 @@ int HTMLInputElement::maxLength() const
     return m_data.maxLength();
 }
 
-void HTMLInputElement::setMaxLength(int _maxLength, ExceptionCode& exceptionCode)
+void HTMLInputElement::setMaxLength(int maxLength, ExceptionCode& ec)
 {
-    if (_maxLength < 0)
-        exceptionCode = INDEX_SIZE_ERR;
+    if (maxLength < 0)
+        ec = INDEX_SIZE_ERR;
     else
-        setAttribute(maxlengthAttr, String::number(_maxLength));
+        setAttribute(maxlengthAttr, String::number(maxLength));
 }
 
 bool HTMLInputElement::multiple() const

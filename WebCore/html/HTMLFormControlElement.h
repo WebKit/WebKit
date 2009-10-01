@@ -110,6 +110,7 @@ public:
 
     virtual bool valueMissing() const { return false; }
     virtual bool patternMismatch() const { return false; }
+    virtual bool tooLong() const { return false; }
 
     void formDestroyed() { m_form = 0; }
 

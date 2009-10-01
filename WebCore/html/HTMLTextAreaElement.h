@@ -81,6 +81,7 @@ public:
     int textLength() const { return value().length(); }
     int maxLength() const;
     void setMaxLength(int, ExceptionCode&);
+    virtual bool tooLong() const;
     
     void rendererWillBeDestroyed();
     
@@ -116,6 +117,7 @@ private:
     mutable String m_value;
     int m_cachedSelectionStart;
     int m_cachedSelectionEnd;
+    mutable bool m_isDirty;
 };
 
 } //namespace

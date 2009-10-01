@@ -1,3 +1,17 @@
+2009-09-30  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Add ValidityState.tooLong support for <input> and <textarea>.
+        https://bugs.webkit.org/show_bug.cgi?id=27454
+
+        * fast/forms/ValidityState-tooLong-input-expected.txt: Added.
+        * fast/forms/ValidityState-tooLong-input.html: Added.
+        * fast/forms/ValidityState-tooLong-textarea-expected.txt: Added.
+        * fast/forms/ValidityState-tooLong-textarea.html: Added.
+        * fast/forms/script-tests/ValidityState-tooLong-input.js: Added.
+        * fast/forms/script-tests/ValidityState-tooLong-textarea.js: Added.
+
 2009-09-30  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Brady Eidson.

@@ -1,3 +1,38 @@
+2009-09-30  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Adds ValidityState.tooLong support for <input> and <textarea>.
+
+        Introduces tooLong() in HTMLFormControlElement and it always returns false.
+        HTMLInputElement and HTMLTextAreaElement overrides it and checks the text
+        length and maxLength.  tooLong() should work only for `dirty' values.
+        So, introduces m_isDirty flag for HTMLTextAreaElement, and
+        !m_data.value().isNull() works as a dirty flag for HTMLInputElement.
+
+        Renames parameter names of setMaxLength().
+
+        https://bugs.webkit.org/show_bug.cgi?id=27454
+
+        Tests: fast/forms/ValidityState-tooLong-input.html
+               fast/forms/ValidityState-tooLong-textarea.html
+
+        * html/HTMLFormControlElement.h:
+        (WebCore::HTMLFormControlElement::tooLong):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::tooLong):
+        (WebCore::HTMLInputElement::setMaxLength):
+        * html/HTMLInputElement.h:
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::HTMLTextAreaElement):
+        (WebCore::HTMLTextAreaElement::reset):
+        (WebCore::HTMLTextAreaElement::updateValue):
+        (WebCore::HTMLTextAreaElement::setMaxLength):
+        (WebCore::HTMLTextAreaElement::tooLong):
+        * html/HTMLTextAreaElement.h:
+        * html/ValidityState.h:
+        (WebCore::ValidityState::tooLong):
+
 2009-09-30  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Maciej Stachowiak.
