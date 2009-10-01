@@ -77,6 +77,7 @@ Computed style of an element whose parent's 'display' value is 'none':
     text-align: auto
     text-decoration: none
     text-indent: 0px
+    text-rendering: auto
     text-shadow: none
     text-overflow: clip
     text-transform: none
@@ -193,7 +194,6 @@ Computed style of an element whose parent's 'display' value is 'none':
     stroke-miterlimit: 4
     stroke-opacity: 1
     stroke-width: 
-    text-rendering: auto
     alignment-baseline: auto
     baseline-shift: baseline
     dominant-baseline: auto
