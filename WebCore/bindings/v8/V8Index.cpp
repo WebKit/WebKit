@@ -109,6 +109,7 @@
 #include "V8HTMLHtmlElement.h"
 #include "V8HTMLIFrameElement.h"
 #include "V8HTMLImageElement.h"
+#include "V8HTMLImageElementConstructor.h"
 #include "V8HTMLInputElement.h"
 #include "V8HTMLIsIndexElement.h"
 #include "V8HTMLLabelElement.h"
@@ -123,6 +124,7 @@
 #include "V8HTMLOListElement.h"
 #include "V8HTMLOptGroupElement.h"
 #include "V8HTMLOptionElement.h"
+#include "V8HTMLOptionElementConstructor.h"
 #include "V8HTMLParagraphElement.h"
 #include "V8HTMLParamElement.h"
 #include "V8HTMLPreElement.h"
@@ -370,6 +372,7 @@
 
 #if ENABLE(VIDEO)
 #include "V8HTMLAudioElement.h"
+#include "V8HTMLAudioElementConstructor.h"
 #include "V8HTMLMediaElement.h"
 #include "V8HTMLSourceElement.h"
 #include "V8HTMLVideoElement.h"

@@ -54,6 +54,7 @@ typedef v8::Persistent<v8::FunctionTemplate> (*FunctionTemplateFactory)();
 
 #if ENABLE(VIDEO)
 #define VIDEO_HTMLELEMENT_TYPES(V)                                      \
+    V(AUDIO, HTMLAudioElementConstructor)                               \
     V(HTMLAUDIOELEMENT, HTMLAudioElement)                               \
     V(HTMLMEDIAELEMENT, HTMLMediaElement)                               \
     V(HTMLSOURCEELEMENT, HTMLSourceElement)                             \
@@ -117,7 +118,9 @@ typedef v8::Persistent<v8::FunctionTemplate> (*FunctionTemplateFactory)();
     V(ENTITY, Entity)                                                   \
     V(ENTITYREFERENCE, EntityReference)                                 \
     V(HTMLDOCUMENT, HTMLDocument)                                       \
+    V(IMAGE, HTMLImageElementConstructor)                               \
     V(NODE, Node)                                                       \
+    V(OPTION, HTMLOptionElementConstructor)                             \
     V(NOTATION, Notation)                                               \
     V(PROCESSINGINSTRUCTION, ProcessingInstruction)                     \
     V(TEXT, Text)                                                       \

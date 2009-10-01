@@ -473,17 +473,6 @@ v8::Persistent<v8::FunctionTemplate> V8DOMWrapper::getTemplate(V8ClassIndex::V8W
     case V8ClassIndex::DOMPARSER:
         descriptor->SetCallHandler(USE_CALLBACK(DOMParserConstructor));
         break;
-#if ENABLE(VIDEO)
-    case V8ClassIndex::HTMLAUDIOELEMENT:
-        descriptor->SetCallHandler(USE_CALLBACK(HTMLAudioElementConstructor));
-        break;
-#endif
-    case V8ClassIndex::HTMLIMAGEELEMENT:
-        descriptor->SetCallHandler(USE_CALLBACK(HTMLImageElementConstructor));
-        break;
-    case V8ClassIndex::HTMLOPTIONELEMENT:
-        descriptor->SetCallHandler(USE_CALLBACK(HTMLOptionElementConstructor));
-        break;
     case V8ClassIndex::WEBKITCSSMATRIX:
         descriptor->SetCallHandler(USE_CALLBACK(WebKitCSSMatrixConstructor));
         break;

@@ -29,8 +29,9 @@
  */
 
 #include "config.h"
-#include "HTMLOptionElement.h"
+#include "V8HTMLOptionElementConstructor.h"
 
+#include "HTMLOptionElement.h"
 #include "Document.h"
 #include "Frame.h"
 #include "HTMLNames.h"
@@ -42,6 +43,24 @@
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
+
+v8::Persistent<v8::FunctionTemplate> V8HTMLOptionElementConstructor::GetTemplate()
+{
+    static v8::Persistent<v8::FunctionTemplate> cachedTemplate;
+    if (!cachedTemplate.IsEmpty())
+        return cachedTemplate;
+
+    v8::HandleScope scope;
+    v8::Local<v8::FunctionTemplate> result = v8::FunctionTemplate::New(USE_CALLBACK(HTMLOptionElementConstructor));
+
+    v8::Local<v8::ObjectTemplate> instance = result->InstanceTemplate();
+    instance->SetInternalFieldCount(V8Custom::kNodeMinimumInternalFieldCount);
+    result->SetClassName(v8::String::New("HTMLOptionElement"));
+    result->Inherit(V8DOMWrapper::getTemplate(V8ClassIndex::HTMLOPTIONELEMENT));
+
+    cachedTemplate = v8::Persistent<v8::FunctionTemplate>::New(result);
+    return cachedTemplate;
+}
 
 CALLBACK_FUNC_DECL(HTMLOptionElementConstructor)
 {

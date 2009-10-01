@@ -233,6 +233,13 @@ namespace WebCore {
         DECLARE_PROPERTY_ACCESSOR_SETTER(DOMWindowLocation);
         DECLARE_PROPERTY_ACCESSOR_SETTER(DOMWindowOpener);
 
+#if ENABLE(VIDEO)
+        DECLARE_PROPERTY_ACCESSOR_GETTER(DOMWindowAudio);
+#endif
+
+        DECLARE_PROPERTY_ACCESSOR_GETTER(DOMWindowImage);
+        DECLARE_PROPERTY_ACCESSOR_GETTER(DOMWindowOption);
+
         DECLARE_PROPERTY_ACCESSOR(DocumentLocation);
         DECLARE_PROPERTY_ACCESSOR(DocumentImplementation);
         DECLARE_PROPERTY_ACCESSOR_GETTER(EventSrcElement);

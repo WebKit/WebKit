@@ -958,8 +958,12 @@ sub GenerateBatchedAttributeData
             my $constructorType = $codeGenerator->StripModule($attribute->signature->type);
             $constructorType =~ s/Constructor$//;
             my $constructorIndex = uc($constructorType);
-            $data = "V8ClassIndex::${constructorIndex}";
-            $getter = "${interfaceName}Internal::${interfaceName}ConstructorGetter";
+            if ($customAccessor) {
+                $getter = "V8Custom::v8${customAccessor}AccessorGetter";
+            } else {
+                $data = "V8ClassIndex::${constructorIndex}";
+                $getter = "${interfaceName}Internal::${interfaceName}ConstructorGetter";
+            }
             $setter = "0";
             $propAttr = "v8::ReadOnly";
 
@@ -1088,7 +1092,11 @@ sub GenerateImplementation
 
         # Generate special code for the constructor attributes.
         if ($attrType =~ /Constructor$/) {
-            $hasConstructors = 1;
+            if ($attribute->signature->extendedAttributes->{"CustomGetter"}) {
+                $implIncludes{"V8CustomBinding.h"} = 1;
+            } else {
+                $hasConstructors = 1;
+            }
             next;
         }
 

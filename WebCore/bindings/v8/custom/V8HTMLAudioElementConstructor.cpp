@@ -29,8 +29,9 @@
  */
 
 #include "config.h"
-#include "HTMLAudioElement.h"
+#include "V8HTMLAudioElementConstructor.h"
 
+#include "HTMLAudioElement.h"
 #include "Document.h"
 #include "Frame.h"
 #include "HTMLNames.h"
@@ -41,6 +42,24 @@
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
+
+v8::Persistent<v8::FunctionTemplate> V8HTMLAudioElementConstructor::GetTemplate()
+{
+    static v8::Persistent<v8::FunctionTemplate> cachedTemplate;
+    if (!cachedTemplate.IsEmpty())
+        return cachedTemplate;
+
+    v8::HandleScope scope;
+    v8::Local<v8::FunctionTemplate> result = v8::FunctionTemplate::New(USE_CALLBACK(HTMLAudioElementConstructor));
+
+    v8::Local<v8::ObjectTemplate> instance = result->InstanceTemplate();
+    instance->SetInternalFieldCount(V8Custom::kNodeMinimumInternalFieldCount);
+    result->SetClassName(v8::String::New("HTMLAudioElement"));
+    result->Inherit(V8DOMWrapper::getTemplate(V8ClassIndex::HTMLAUDIOELEMENT));
+
+    cachedTemplate = v8::Persistent<v8::FunctionTemplate>::New(result);
+    return cachedTemplate;
+}
 
 CALLBACK_FUNC_DECL(HTMLAudioElementConstructor)
 {

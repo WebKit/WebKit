@@ -230,6 +230,28 @@ ACCESSOR_SETTER(DOMWindowOpener)
     info.This()->Set(name, value);
 }
 
+#if ENABLE(VIDEO)
+
+ACCESSOR_GETTER(DOMWindowAudio)
+{
+    DOMWindow* window = V8DOMWrapper::convertToNativeObject<DOMWindow>(V8ClassIndex::DOMWINDOW, info.Holder());
+    return V8DOMWrapper::getConstructor(V8ClassIndex::AUDIO, window);
+}
+
+#endif
+
+ACCESSOR_GETTER(DOMWindowImage)
+{
+    DOMWindow* window = V8DOMWrapper::convertToNativeObject<DOMWindow>(V8ClassIndex::DOMWINDOW, info.Holder());
+    return V8DOMWrapper::getConstructor(V8ClassIndex::IMAGE, window);
+}
+
+ACCESSOR_GETTER(DOMWindowOption)
+{
+    DOMWindow* window = V8DOMWrapper::convertToNativeObject<DOMWindow>(V8ClassIndex::DOMWINDOW, info.Holder());
+    return V8DOMWrapper::getConstructor(V8ClassIndex::OPTION, window);
+}
+
 CALLBACK_FUNC_DECL(DOMWindowAddEventListener)
 {
     INC_STATS("DOM.DOMWindow.addEventListener()");
