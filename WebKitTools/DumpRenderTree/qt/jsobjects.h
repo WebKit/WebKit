@@ -145,6 +145,7 @@ public slots:
     void keyDown(const QString &string, const QStringList &modifiers=QStringList());
     void clearKillRing() {}
     void contextClick();
+    void scheduleAsynchronousClick();
 
 private:
     QPoint m_mousePos;

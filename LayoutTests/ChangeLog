@@ -2,6 +2,16 @@
 
         Reviewed by Simon Hausmann.
 
+        [Qt] Implement eventSender.scheduleAsynchronousClick().
+
+        https://bugs.webkit.org/show_bug.cgi?id=29931
+
+        * platform/qt/Skipped:
+
+2009-10-01  Jakub Wieczorek  <faw217@gmail.com>
+
+        Reviewed by Simon Hausmann.
+
         [Qt] Implement setPopupBlockingEnabled() in the LayoutTestController and remove
         fast/events/open-window-from-another-frame.html from the Skipped list.
 

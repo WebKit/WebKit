@@ -27,7 +27,6 @@ editing/selection/5354455-1.html
 editing/selection/5354455-2.html
 editing/selection/caret-and-focus-ring.html
 fast/loader/subframe-navigate-during-main-frame-load.html
-fast/events/popup-blocking-click-in-iframe.html
 
 # Plain text controller currently in Mac DumpRenderTree only.
 editing/text-iterator/basic-iteration.html

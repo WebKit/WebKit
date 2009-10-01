@@ -511,6 +511,14 @@ void EventSender::contextClick()
     QApplication::sendEvent(m_page, &event2);
 }
 
+void EventSender::scheduleAsynchronousClick()
+{
+    QMouseEvent* event = new QMouseEvent(QEvent::MouseButtonPress, m_mousePos, Qt::LeftButton, Qt::RightButton, Qt::NoModifier);
+    QApplication::postEvent(m_page, event);
+    QMouseEvent* event2 = new QMouseEvent(QEvent::MouseButtonRelease, m_mousePos, Qt::LeftButton, Qt::RightButton, Qt::NoModifier);
+    QApplication::postEvent(m_page, event2);
+}
+
 QWebFrame* EventSender::frameUnderMouse() const
 {
     QWebFrame* frame = m_page->mainFrame();
