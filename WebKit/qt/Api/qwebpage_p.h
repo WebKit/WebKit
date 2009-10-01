@@ -143,6 +143,8 @@ public:
     QPoint tripleClick;
     QBasicTimer tripleClickTimer;
 
+    bool clickCausedFocus;
+
 #if QT_VERSION < 0x040400
     bool acceptNavigationRequest(QWebFrame *frame, const QWebNetworkRequest &request, QWebPage::NavigationType type);
 

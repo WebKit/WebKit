@@ -1,3 +1,18 @@
+2009-10-01  Kristian Amlie  <kristian.amlie@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Fixed software input panel support on web input elements.
+
+        Send the RequestSoftwareInputPanel event if the element supports focus
+        and the element is clicked.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+        (QWebPagePrivate::mousePressEvent):
+        (QWebPagePrivate::mouseReleaseEvent):
+        * Api/qwebpage_p.h:
+
 2009-10-01  Joe Ligman  <joseph.ligman@nokia.com>
 
         Reviewed by Simon Hausmann.
