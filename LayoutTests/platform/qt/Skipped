@@ -21,7 +21,6 @@ http/tests/webarchive
 http/tests/globalhistory
 http/tests/history
 http/tests/incremental
-http/tests/local
 http/tests/media
 http/tests/misc
 http/tests/navigation
@@ -37,6 +36,10 @@ http/tests/uri/escaped-entity.html
 
 # Failing HTTP Loading tests
 LayoutTests/http/tests/loading/bad-scheme-subframe.html
+
+# Failing Local tests
+http/tests/local/drag-over-remote-content.html
+http/tests/local/send-dragged-file.html
 
 # Flanky test
 http/tests/cookies/simple-cookies-max-age.html
