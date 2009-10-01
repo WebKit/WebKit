@@ -1,3 +1,16 @@
+2009-10-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Odd color transitions on anchors with transition-property: all
+        https://bugs.webkit.org/show_bug.cgi?id=29911
+        
+        Testcase for 'color' changing with -webkit-transition-property: all,
+        to test whether -webkit-text-fill-color animates.
+
+        * transitions/color-transition-all-expected.txt: Added.
+        * transitions/color-transition-all.html: Added.
+
 2009-10-01  Victor Wang  <victorw@chromium.org>
 
         Reviewed by Oliver Hunt.

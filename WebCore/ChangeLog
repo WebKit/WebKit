@@ -1,3 +1,26 @@
+2009-10-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Odd color transitions on anchors with transition-property: all
+        https://bugs.webkit.org/show_bug.cgi?id=29911
+
+        When transitioning maybe-invalid colors, if the source and destination
+        color are both invalid, then don't animate.
+        
+        This fixes an issue where a child element of an element running a color
+        transition, with -webkit-transition-property:all, would show a color change.
+        This happened because the "maybe invalid color" logic copied the color style
+        into -webkit-text-fill-color for both endpoints, causing -webkit-text-fill-color
+        to animate while the transition ran, and to then to disappear when the transition
+        finished.
+        
+        Test: transitions/color-transition-all.html
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::PropertyWrapperMaybeInvalidColor::equals):
+        (WebCore::PropertyWrapperMaybeInvalidColor::blend):
+
 2009-10-01  Victor Wang  <victorw@chromium.org>
 
         Reviewed by Oliver Hunt.
