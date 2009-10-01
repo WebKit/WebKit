@@ -1,3 +1,11 @@
+2009-10-01  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Skip fast/table/008.html until a solution for the crash on the buildbot is found.
+
+        * platform/qt/Skipped:
+
 2009-10-01  Jakub Wieczorek  <faw217@gmail.com>
 
         Reviewed by Simon Hausmann.
