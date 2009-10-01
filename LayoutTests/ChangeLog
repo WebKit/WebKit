@@ -1,3 +1,11 @@
+2009-10-01  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Rubberstamped by Simon Hausmann.
+
+        Enable HTTP loading tests for Qt.
+
+        * platform/qt/Skipped:
+
 2009-10-01  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Dave Hyatt.
