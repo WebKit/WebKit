@@ -220,7 +220,9 @@ void EditorClientQt::respondToChangedSelection()
 
     m_page->d->updateEditorActions();
     emit m_page->selectionChanged();
-    emit m_page->microFocusChanged();
+    Frame* frame = m_page->d->page->focusController()->focusedOrMainFrame();
+    if (!frame->editor()->ignoreCompositionSelectionChange())
+        emit m_page->microFocusChanged();
 }
 
 void EditorClientQt::didEndEditing()

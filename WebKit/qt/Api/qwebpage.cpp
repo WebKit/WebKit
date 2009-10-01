@@ -66,8 +66,12 @@
 #include "PluginDatabase.h"
 #include "ProgressTracker.h"
 #include "RefPtr.h"
+#include "RenderTextControl.h"
+#include "TextIterator.h"
 #include "HashMap.h"
 #include "HTMLFormElement.h"
+#include "HTMLInputElement.h"
+#include "HTMLNames.h"
 #include "HitTestResult.h"
 #include "WindowFeatures.h"
 #include "LocalizedStrings.h"
@@ -95,6 +99,7 @@
 #include <QSslSocket>
 #include <QStyle>
 #include <QSysInfo>
+#include <QTextCharFormat>
 #if QT_VERSION >= 0x040400
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
@@ -1087,13 +1092,53 @@ void QWebPagePrivate::inputMethodEvent(QInputMethodEvent *ev)
         return;
     }
 
+    RenderObject* renderer = 0;
+    RenderTextControl* renderTextControl = 0;
+
+    if (frame->selection()->rootEditableElement())
+        renderer = frame->selection()->rootEditableElement()->shadowAncestorNode()->renderer();
+
+    if (renderer && renderer->isTextControl())
+        renderTextControl = toRenderTextControl(renderer);
+
+    Vector<CompositionUnderline> underlines;
+
+    for (int i = 0; i < ev->attributes().size(); ++i) {
+        const QInputMethodEvent::Attribute& a = ev->attributes().at(i);
+        switch (a.type) {
+        case QInputMethodEvent::TextFormat: {
+            QTextCharFormat textCharFormat = a.value.value<QTextFormat>().toCharFormat();
+            QColor qcolor = textCharFormat.underlineColor();
+            underlines.append(CompositionUnderline(a.start, a.length, Color(makeRGBA(qcolor.red(), qcolor.green(), qcolor.blue(), qcolor.alpha())), false));
+            break;
+        }
+        case QInputMethodEvent::Cursor: {
+            frame->setCaretVisible(a.length); //if length is 0 cursor is invisible
+            if (a.length > 0) {
+                RenderObject* caretRenderer = frame->selection()->caretRenderer();
+                if (caretRenderer) {
+                    QColor qcolor = a.value.value<QColor>();
+                    caretRenderer->style()->setColor(Color(makeRGBA(qcolor.red(), qcolor.green(), qcolor.blue(), qcolor.alpha())));
+                }
+            }
+            break;
+        }
+#if QT_VERSION >= 0x040600
+        case QInputMethodEvent::Selection: {
+            if (renderTextControl) {
+                renderTextControl->setSelectionStart(a.start);
+                renderTextControl->setSelectionEnd(a.start + a.length);
+            }
+            break;
+        }
+#endif
+        }
+    }
+
     if (!ev->commitString().isEmpty())
         editor->confirmComposition(ev->commitString());
-    else {
+    else if (!ev->preeditString().isEmpty()) {
         QString preedit = ev->preeditString();
-        // ### FIXME: use the provided QTextCharFormat (use color at least)
-        Vector<CompositionUnderline> underlines;
-        underlines.append(CompositionUnderline(0, preedit.length(), Color(0, 0, 0), false));
         editor->setComposition(preedit, underlines, preedit.length(), 0);
     }
     ev->accept();
@@ -1196,41 +1241,89 @@ bool QWebPagePrivate::handleScrolling(QKeyEvent *ev, Frame *frame)
 */
 QVariant QWebPage::inputMethodQuery(Qt::InputMethodQuery property) const
 {
+    Frame* frame = d->page->focusController()->focusedFrame();
+    if (!frame)
+        return QVariant();
+
+    WebCore::Editor* editor = frame->editor();
+
+    RenderObject* renderer = 0;
+    RenderTextControl* renderTextControl = 0;
+
+    if (frame->selection()->rootEditableElement())
+        renderer = frame->selection()->rootEditableElement()->shadowAncestorNode()->renderer();
+
+    if (renderer && renderer->isTextControl())
+        renderTextControl = toRenderTextControl(renderer);
+
     switch (property) {
-    case Qt::ImMicroFocus: {
-        Frame *frame = d->page->focusController()->focusedFrame();
-        if (frame)
+        case Qt::ImMicroFocus: {
             return QVariant(frame->selection()->absoluteCaretBounds());
-        return QVariant();
-    }
-    case Qt::ImFont: {
-        QWebView *webView = qobject_cast<QWebView *>(d->view);
-        if (webView)
-            return QVariant(webView->font());
-        return QVariant();
-    }
-    case Qt::ImCursorPosition: {
-        Frame *frame = d->page->focusController()->focusedFrame();
-        if (frame) {
-            VisibleSelection selection = frame->selection()->selection();
-            if (selection.isCaret())
-                return QVariant(selection.start().deprecatedEditingOffset());
         }
-        return QVariant();
-    }
-    case Qt::ImSurroundingText: {
-        Frame *frame = d->page->focusController()->focusedFrame();
-        if (frame) {
-            Document *document = frame->document();
-            if (document->focusedNode())
-                return QVariant(document->focusedNode()->nodeValue());
+        case Qt::ImFont: {
+            if (renderTextControl) {
+                RenderStyle* renderStyle = renderTextControl->style();
+                return QVariant(QFont(renderStyle->font().font()));
+            }
+            return QVariant(QFont());
         }
-        return QVariant();
-    }
-    case Qt::ImCurrentSelection:
-        return QVariant(selectedText());
-    default:
-        return QVariant();
+        case Qt::ImCursorPosition: {
+            if (renderTextControl) {
+                if (editor->hasComposition()) {
+                    RefPtr<Range> range = editor->compositionRange();
+                    return QVariant(renderTextControl->selectionEnd() - TextIterator::rangeLength(range.get()));
+                }
+                return QVariant(renderTextControl->selectionEnd());
+            }
+            return QVariant();
+        }
+        case Qt::ImSurroundingText: {
+            if (renderTextControl) {
+                QString text = renderTextControl->text();
+                RefPtr<Range> range = editor->compositionRange();
+                if (range) {
+                    text.remove(range->startPosition().offsetInContainerNode(), TextIterator::rangeLength(range.get()));
+                }
+                return QVariant(text);
+            }
+            return QVariant();
+        }
+        case Qt::ImCurrentSelection: {
+            if (renderTextControl) {
+                int start = renderTextControl->selectionStart();
+                int end = renderTextControl->selectionEnd();
+                if (end > start)
+                    return QVariant(QString(renderTextControl->text()).mid(start,end-start));
+            }
+            return QVariant();
+
+        }
+#if QT_VERSION >= 0x040600
+        case Qt::ImAnchorPosition: {
+            if (renderTextControl) {
+                if (editor->hasComposition()) {
+                    RefPtr<Range> range = editor->compositionRange();
+                    return QVariant(renderTextControl->selectionStart() - TextIterator::rangeLength(range.get()));
+                }
+                return QVariant(renderTextControl->selectionStart());
+            }
+            return QVariant();
+        }
+        case Qt::ImMaximumTextLength: {
+            if (frame->selection()->isContentEditable()) {
+                if (frame->document() && frame->document()->focusedNode()) {
+                    if (frame->document()->focusedNode()->hasTagName(HTMLNames::inputTag)) {
+                        HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(frame->document()->focusedNode());
+                        return QVariant(inputElement->maxLength());
+                    }
+                }
+                return QVariant(InputElement::s_maximumLength);
+            }
+            return QVariant(0);
+        }
+#endif
+        default:
+            return QVariant();
     }
 }
 

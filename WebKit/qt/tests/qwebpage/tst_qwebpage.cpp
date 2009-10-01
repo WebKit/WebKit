@@ -20,6 +20,7 @@
 
 #include <QtTest/QtTest>
 
+#include <qwebelement.h>
 #include <qwebpage.h>
 #include <qwidget.h>
 #include <qwebview.h>
@@ -114,6 +115,7 @@ private slots:
     void testOptionalJSObjects();
     void testEnablePersistentStorage();
     void consoleOutput();
+    void inputMethods();
 
     void crashTests_LazyInitializationOfMainFrame();
 
@@ -1201,6 +1203,94 @@ void tst_QWebPage::frameAt()
     webPage->mainFrame()->load(url);
     QTRY_COMPARE(loadSpy.count(), 1);
     frameAtHelper(webPage, webPage->mainFrame(), webPage->mainFrame()->pos());
+}
+
+void tst_QWebPage::inputMethods()
+{
+    m_view->page()->mainFrame()->setHtml("<html><body>" \
+                                            "<input type='text' id='input1' style='font-family: serif' value='' maxlength='20'/>" \
+                                            "</body></html>");
+    m_view->page()->mainFrame()->setFocus();
+
+    QList<QWebElement> inputs = m_view->page()->mainFrame()->documentElement().findAll("input");
+
+    QMouseEvent evpres(QEvent::MouseButtonPress, inputs.at(0).geometry().center(), Qt::LeftButton, Qt::NoButton, Qt::NoModifier);
+    m_view->page()->event(&evpres);
+    QMouseEvent evrel(QEvent::MouseButtonRelease, inputs.at(0).geometry().center(), Qt::LeftButton, Qt::NoButton, Qt::NoModifier);
+    m_view->page()->event(&evrel);
+
+    //ImMicroFocus
+    QVariant variant = m_view->page()->inputMethodQuery(Qt::ImMicroFocus);
+    QRect focusRect = variant.toRect();
+    QVERIFY(inputs.at(0).geometry().contains(variant.toRect().topLeft()));
+
+    //ImFont
+    variant = m_view->page()->inputMethodQuery(Qt::ImFont);
+    QFont font = variant.value<QFont>();
+    QCOMPARE(QString("-webkit-serif"), font.family());
+
+    QList<QInputMethodEvent::Attribute> inputAttributes;
+
+    //Insert text.
+    {
+        QInputMethodEvent eventText("QtWebKit", inputAttributes);
+        QSignalSpy signalSpy(m_view->page(), SIGNAL(microFocusChanged()));
+        m_view->page()->event(&eventText);
+        QCOMPARE(signalSpy.count(), 0);
+    }
+
+    {
+        QInputMethodEvent eventText("", inputAttributes);
+        eventText.setCommitString(QString("QtWebKit"), 0, 0);
+        m_view->page()->event(&eventText);
+    }
+
+#if QT_VERSION >= 0x040600
+    //ImMaximumTextLength
+    variant = m_view->page()->inputMethodQuery(Qt::ImMaximumTextLength);
+    QCOMPARE(20, variant.toInt());
+
+    //Set selection
+    inputAttributes << QInputMethodEvent::Attribute(QInputMethodEvent::Selection, 3, 2, QVariant());
+    QInputMethodEvent eventSelection("",inputAttributes);
+    m_view->page()->event(&eventSelection);
+
+    //ImAnchorPosition
+    variant = m_view->page()->inputMethodQuery(Qt::ImAnchorPosition);
+    int anchorPosition =  variant.toInt();
+    QCOMPARE(anchorPosition, 3);
+
+    //ImCursorPosition
+    variant = m_view->page()->inputMethodQuery(Qt::ImCursorPosition);
+    int cursorPosition =  variant.toInt();
+    QCOMPARE(cursorPosition, 5);
+
+    //ImCurrentSelection
+    variant = m_view->page()->inputMethodQuery(Qt::ImCurrentSelection);
+    QString selectionValue = variant.value<QString>();
+    QCOMPARE(selectionValue, QString("eb"));
+#endif
+
+    //ImSurroundingText
+    variant = m_view->page()->inputMethodQuery(Qt::ImSurroundingText);
+    QString value = variant.value<QString>();
+    QCOMPARE(value, QString("QtWebKit"));
+
+#if QT_VERSION >= 0x040600
+    {
+        QList<QInputMethodEvent::Attribute> attributes;
+        // Clear the selection, so the next test does not clear any contents.
+        QInputMethodEvent::Attribute newSelection(QInputMethodEvent::Selection, 0, 0, QVariant());
+        attributes.append(newSelection);
+        QInputMethodEvent event("composition", attributes);
+        m_view->page()->event(&event);
+    }
+
+    // A ongoing composition should not change the surrounding text before it is committed.
+    variant = m_view->page()->inputMethodQuery(Qt::ImSurroundingText);
+    value = variant.value<QString>();
+    QCOMPARE(value, QString("QtWebKit"));
+#endif
 }
 
 // import a little DRT helper function to trigger the garbage collector

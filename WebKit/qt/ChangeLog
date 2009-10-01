@@ -1,3 +1,24 @@
+2009-10-01  Joe Ligman  <joseph.ligman@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Implementation for QWebPage::inputMethodQuery and QWebPagePrivate::inputMethodEvent
+
+        https://bugs.webkit.org/show_bug.cgi?id=29681
+
+        Some additional changes from Kristian Amlie <kristian.amlie@nokia.com>:
+
+            * Fixed surrounding text to exclude preedit string
+            * Avoid emission of microFocusChanged during setComposition()
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::inputMethodEvent):
+        (QWebPage::inputMethodQuery):
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::respondToChangedSelection):
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::inputMethods):
+
 2009-09-30  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by David Hyatt.
