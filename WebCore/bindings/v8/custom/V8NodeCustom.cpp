@@ -39,26 +39,18 @@
 #include "V8CustomBinding.h"
 #include "V8CustomEventListener.h"
 #include "V8Node.h"
-#include "V8ObjectEventListener.h"
 #include "V8Proxy.h"
 
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-static inline String toEventType(v8::Local<v8::String> value)
-{
-    String key = toWebCoreString(value);
-    ASSERT(key.startsWith("on"));
-    return key.substring(2);
-}
-
 CALLBACK_FUNC_DECL(NodeAddEventListener)
 {
     INC_STATS("DOM.Node.addEventListener()");
     Node* node = V8DOMWrapper::convertDOMWrapperToNode<Node>(args.Holder());
 
-    RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(node, args[1], false, false);
+    RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(node, args[1], false, ListenerFindOrCreate);
     if (listener) {
         String type = toWebCoreString(args[0]);
         bool useCapture = args[2]->BooleanValue();
@@ -76,9 +68,9 @@ CALLBACK_FUNC_DECL(NodeRemoveEventListener)
     // It is possbile that the owner document of the node is detached
     // from the frame.
     // See issue http://b/878909
-    RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(node, args[1], false, true);
+    RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(node, args[1], false, ListenerFindOnly);
     if (listener) {
-        String type = toWebCoreString(args[0]);
+        AtomicString type = v8ValueToAtomicWebCoreString(args[0]);
         bool useCapture = args[2]->BooleanValue();
         node->removeEventListener(type, listener.get(), useCapture);
         removeHiddenDependency(args.Holder(), args[1], V8Custom::kNodeEventListenerCacheIndex);

@@ -1,3 +1,121 @@
+2009-10-01  Vitaly Repeshko  <vitalyr@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [V8] Refactored V8 event listeners:
+        (This change should fix http://crbug.com/21079 and
+        https://bugs.webkit.org/show_bug.cgi?id=29093.)
+         o All listeners use weak handles to JS objects to avoid creating
+           cycles and leaking memory.
+         o "Object" variants of listeners removed.
+         o All event accessor callbacks are generated.
+         o Custom event accessors removed.
+         o All wrappers have hidden dependencies on their listeners to
+           prevent listeners from being collected.
+         o All variats of getEventListener function grouped in V8DOMWrapper.
+         o Pointers to C++ EventListener wrappers are stored in JS objects
+           instead of event listener lists.
+        https://bugs.webkit.org/show_bug.cgi?id=29825
+
+        * WebCore.gypi: Removed "Object" listeners.
+        * bindings/scripts/CodeGeneratorV8.pm: Now handles event accessors.
+        * bindings/v8/DOMObjectsInclude.h:
+
+        V8AbstractEventListener manages weak JS handle:
+        * bindings/v8/V8AbstractEventListener.cpp:
+        (WebCore::weakEventListenerCallback):
+        (WebCore::V8AbstractEventListener::V8AbstractEventListener):
+        (WebCore::V8AbstractEventListener::~V8AbstractEventListener):
+        (WebCore::V8AbstractEventListener::handleEvent):
+        (WebCore::V8AbstractEventListener::disposeListenerObject):
+        (WebCore::V8AbstractEventListener::setListenerObject):
+        * bindings/v8/V8AbstractEventListener.h:
+        (WebCore::V8AbstractEventListener::cast):
+        (WebCore::V8AbstractEventListener::isLazy):
+        (WebCore::V8AbstractEventListener::getListenerObject):
+        (WebCore::V8AbstractEventListener::getExistingListenerObject):
+        (WebCore::V8AbstractEventListener::hasExistingListenerObject):
+        (WebCore::V8AbstractEventListener::disconnectFrame):
+        (WebCore::V8AbstractEventListener::disconnected):
+        (WebCore::V8AbstractEventListener::prepareListenerObject):
+        (WebCore::V8AbstractEventListener::lineNumber):
+        (WebCore::V8AbstractEventListener::virtualisAttribute):
+
+        Grouped getEventListener functions:
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::getTemplate):
+        (WebCore::V8DOMWrapper::getEventListener):
+        * bindings/v8/V8DOMWrapper.h:
+
+        Removed most event listener objects bookkeeping:
+        * bindings/v8/V8EventListenerList.cpp:
+        * bindings/v8/V8EventListenerList.h:
+        (WebCore::V8EventListenerList::findWrapper):
+        (WebCore::V8EventListenerList::clearWrapper):
+        (WebCore::V8EventListenerList::doFindWrapper):
+        (WebCore::V8EventListenerList::getHiddenProperty):
+        (WebCore::V8EventListenerList::findOrCreateWrapper):
+
+        Added hidden properties for storing EventListener wrappers:
+        * bindings/v8/V8HiddenPropertyName.cpp:
+        (WebCore::V8HiddenPropertyName::listener):
+        (WebCore::V8HiddenPropertyName::attributeListener):
+        * bindings/v8/V8HiddenPropertyName.h:
+
+        * bindings/v8/V8LazyEventListener.cpp:
+        (WebCore::V8LazyEventListener::V8LazyEventListener):
+        (WebCore::V8LazyEventListener::callListenerFunction):
+        (WebCore::V8LazyEventListener::prepareListenerObject):
+        * bindings/v8/V8LazyEventListener.h:
+        (WebCore::V8LazyEventListener::isLazy):
+        * bindings/v8/V8ObjectEventListener.cpp: Removed.
+        * bindings/v8/V8ObjectEventListener.h: Removed.
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::disconnectFrame):
+        (WebCore::V8Proxy::disconnectEventListeners):
+        * bindings/v8/V8Proxy.h:
+        * bindings/v8/V8WorkerContextEventListener.cpp:
+        (WebCore::V8WorkerContextEventListener::reportError):
+        (WebCore::V8WorkerContextEventListener::getReceiverObject):
+        * bindings/v8/V8WorkerContextEventListener.h:
+        * bindings/v8/V8WorkerContextObjectEventListener.cpp: Removed.
+        * bindings/v8/V8WorkerContextObjectEventListener.h: Removed.
+        * bindings/v8/WorkerContextExecutionProxy.cpp:
+        (WebCore::WorkerContextExecutionProxy::dispose):
+        (WebCore::WorkerContextExecutionProxy::initContextIfNeeded):
+        (WebCore::WorkerContextExecutionProxy::findOrCreateEventListener):
+        * bindings/v8/WorkerContextExecutionProxy.h:
+        * bindings/v8/custom/V8AbstractWorkerCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8CustomBinding.h:
+        * bindings/v8/custom/V8CustomEventListener.cpp:
+        (WebCore::V8EventListener::V8EventListener):
+        (WebCore::V8EventListener::getListenerFunction):
+        (WebCore::V8EventListener::callListenerFunction):
+        * bindings/v8/custom/V8CustomEventListener.h:
+        * bindings/v8/custom/V8DOMApplicationCacheCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8DedicatedWorkerContextCustom.cpp:
+        * bindings/v8/custom/V8MessagePortCustom.cpp:
+        (WebCore::getEventListener):
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8NodeCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8NotificationCenterCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8SVGElementInstanceCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8WebSocketCustom.cpp:
+        * bindings/v8/custom/V8WorkerContextCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8WorkerCustom.cpp:
+        * bindings/v8/custom/V8XMLHttpRequestConstructor.cpp:
+        * bindings/v8/custom/V8XMLHttpRequestCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8XMLHttpRequestUploadCustom.cpp:
+
 2009-10-01  Alexis Menard  <alexis.menard@nokia.com>
 
         Reviewed by Tor Arne Vestbø.

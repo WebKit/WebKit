@@ -48,7 +48,6 @@
 #include "V8Index.h"
 #include "V8Proxy.h"
 #include "V8WorkerContextEventListener.h"
-#include "V8WorkerContextObjectEventListener.h"
 #if ENABLE(WEB_SOCKETS)
 #include "WebSocket.h"
 #endif
@@ -82,14 +81,6 @@ WorkerContextExecutionProxy::~WorkerContextExecutionProxy()
 
 void WorkerContextExecutionProxy::dispose()
 {
-    // Disconnect all event listeners.
-    if (m_listeners.get()) {
-        for (V8EventListenerList::iterator iterator(m_listeners->begin()); iterator != m_listeners->end(); ++iterator)
-           static_cast<V8WorkerContextEventListener*>(*iterator)->disconnect();
-
-        m_listeners->clear();
-    }
-
     // Detach all events from their JS wrappers.
     for (size_t eventIndex = 0; eventIndex < m_events.size(); ++eventIndex) {
         Event* event = m_events[eventIndex];
@@ -169,8 +160,6 @@ void WorkerContextExecutionProxy::initContextIfNeeded()
     // Insert the object instance as the prototype of the shadow object.
     v8::Handle<v8::Object> globalObject = m_context->Global();
     globalObject->Set(implicitProtoString, jsWorkerContext);
-
-    m_listeners.set(new V8EventListenerList());
 }
 
 v8::Handle<v8::Value> WorkerContextExecutionProxy::convertToV8Object(V8ClassIndex::V8WrapperType type, void* impl)
@@ -405,39 +394,9 @@ v8::Local<v8::Value> WorkerContextExecutionProxy::runScript(v8::Handle<v8::Scrip
     return result;
 }
 
-PassRefPtr<V8EventListener> WorkerContextExecutionProxy::findOrCreateEventListenerHelper(v8::Local<v8::Value> object, bool isInline, bool findOnly, bool createObjectEventListener)
-{
-    if (!object->IsObject())
-        return 0;
-
-    V8EventListener* listener = m_listeners->find(object->ToObject(), isInline);
-    if (findOnly)
-        return listener;
-
-    // Create a new one, and add to cache.
-    RefPtr<V8EventListener> newListener;
-    if (createObjectEventListener)
-        newListener = V8WorkerContextObjectEventListener::create(this, v8::Local<v8::Object>::Cast(object), isInline);
-    else
-        newListener = V8WorkerContextEventListener::create(this, v8::Local<v8::Object>::Cast(object), isInline);
-    m_listeners->add(newListener.get());
-
-    return newListener.release();
-}
-
 PassRefPtr<V8EventListener> WorkerContextExecutionProxy::findOrCreateEventListener(v8::Local<v8::Value> object, bool isInline, bool findOnly)
 {
-    return findOrCreateEventListenerHelper(object, isInline, findOnly, false);
-}
-
-PassRefPtr<V8EventListener> WorkerContextExecutionProxy::findOrCreateObjectEventListener(v8::Local<v8::Value> object, bool isInline, bool findOnly)
-{
-    return findOrCreateEventListenerHelper(object, isInline, findOnly, true);
-}
-
-void WorkerContextExecutionProxy::removeEventListener(V8EventListener* listener)
-{
-    m_listeners->remove(listener);
+    return findOnly ? V8EventListenerList::findWrapper(object, isInline) : V8EventListenerList::findOrCreateWrapper<V8WorkerContextEventListener>(this, object, isInline);
 }
 
 void WorkerContextExecutionProxy::trackEvent(Event* event)

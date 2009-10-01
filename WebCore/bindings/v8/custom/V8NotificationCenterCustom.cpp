@@ -51,21 +51,12 @@ CALLBACK_FUNC_DECL(NotificationAddEventListener)
     INC_STATS("DOM.Notification.addEventListener()");
     Notification* notification = V8DOMWrapper::convertToNativeObject<Notification>(V8ClassIndex::NOTIFICATION, args.Holder());
 
-    RefPtr<EventListener> listener;
-    ScriptExecutionContext* context = notification->scriptExecutionContext();
-    if (context->isWorkerContext())
-        listener = static_cast<WorkerContext*>(context)->script()->proxy()->findOrCreateEventListener(v8::Local<v8::Object>::Cast(args[1]), false, false);
-    else {
-        V8Proxy* proxy = V8Proxy::retrieve(context);
-        if (!proxy)
-            return v8::Undefined();
-        listener = proxy->eventListeners()->findOrCreateWrapper<V8EventListener>(proxy->frame(), args[1], true);
-    }
-
+    RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(notification, args[1], false, ListenerFindOrCreate);
     if (listener) {
         String type = toWebCoreString(args[0]);
         bool useCapture = args[2]->BooleanValue();
         notification->addEventListener(type, listener, useCapture);
+        createHiddenDependency(args.Holder(), args[1], V8Custom::kNotificationRequestCacheIndex);
     }
 
     return v8::Undefined();
@@ -76,75 +67,15 @@ CALLBACK_FUNC_DECL(NotificationRemoveEventListener)
     INC_STATS("DOM.Notification.removeEventListener()");
     Notification* notification = V8DOMWrapper::convertToNativeObject<Notification>(V8ClassIndex::NOTIFICATION, args.Holder());
 
-    RefPtr<EventListener> listener;
-    ScriptExecutionContext* context = notification->scriptExecutionContext();
-    if (context->isWorkerContext())
-        listener = static_cast<WorkerContext*>(context)->script()->proxy()->findOrCreateEventListener(v8::Local<v8::Object>::Cast(args[1]), false, true);
-    else {
-        V8Proxy* proxy = V8Proxy::retrieve(context);
-        if (!proxy)
-            return v8::Undefined();
-        RefPtr<EventListener> listener = proxy->eventListeners()->findWrapper(args[1], false);
-    }
-
+    RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(notification, args[1], false, ListenerFindOnly);
     if (listener) {
         String type = toWebCoreString(args[0]);
         bool useCapture = args[2]->BooleanValue();
         notification->removeEventListener(type, listener.get(), useCapture);
+        removeHiddenDependency(args.Holder(), args[1], V8Custom::kNotificationRequestCacheIndex);
     }
 
     return v8::Undefined();
-}
-
-ACCESSOR_SETTER(NotificationEventHandler)
-{
-    v8::Handle<v8::Object> holder = V8DOMWrapper::lookupDOMWrapper(V8ClassIndex::NOTIFICATION, info.This());
-    if (holder.IsEmpty())
-        return;
-
-    Notification* notification = V8DOMWrapper::convertToNativeObject<Notification>(V8ClassIndex::NOTIFICATION, holder);
-    ScriptExecutionContext* context = notification->scriptExecutionContext();
-
-    if (!context)
-        return;
-
-    String key = toWebCoreString(name);
-    ASSERT(key.startsWith("on"));
-    String eventType = key.substring(2);
-
-    if (value->IsNull()) {
-        // Clear the event listener
-        notification->clearAttributeEventListener(eventType);
-    } else {
-        RefPtr<EventListener> listener;
-        if (context->isWorkerContext())
-            listener = static_cast<WorkerContext*>(context)->script()->proxy()->findOrCreateEventListener(v8::Local<v8::Object>::Cast(value), false, false);
-        else {
-            V8Proxy* proxy = V8Proxy::retrieve(context);
-            if (!proxy)
-                return;
-            listener = proxy->eventListeners()->findOrCreateWrapper<V8EventListener>(proxy->frame(), value, true);
-        }
-
-        if (listener)
-            notification->setAttributeEventListener(eventType, listener);
-    }
-}
-
-ACCESSOR_GETTER(NotificationEventHandler)
-{
-    v8::Handle<v8::Object> holder = V8DOMWrapper::lookupDOMWrapper(V8ClassIndex::DOMWINDOW, info.This());
-    if (holder.IsEmpty())
-        return v8::Undefined();
-
-    Notification* notification = V8DOMWrapper::convertToNativeObject<Notification>(V8ClassIndex::NOTIFICATION, holder);
-
-    String key = toWebCoreString(name);
-    ASSERT(key.startsWith("on"));
-    String eventType = key.substring(2);
-
-    EventListener* listener = notification->getAttributeEventListener(eventType);
-    return V8DOMWrapper::convertEventListenerToV8Object(listener);
 }
 
 CALLBACK_FUNC_DECL(NotificationCenterCreateHTMLNotification)

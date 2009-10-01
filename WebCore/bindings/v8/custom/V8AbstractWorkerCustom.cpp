@@ -38,75 +38,18 @@
 #include "ScriptExecutionContext.h"
 #include "V8Binding.h"
 #include "V8CustomBinding.h"
-#include "V8ObjectEventListener.h"
 #include "V8Proxy.h"
 #include "V8Utilities.h"
 #include "WorkerContextExecutionProxy.h"
 
 namespace WebCore {
 
-PassRefPtr<EventListener> getEventListener(AbstractWorker* worker, v8::Local<v8::Value> value, bool isAttribute, bool findOnly)
-{
-    if (worker->scriptExecutionContext()->isWorkerContext()) {
-        WorkerContextExecutionProxy* workerContextProxy = WorkerContextExecutionProxy::retrieve();
-        ASSERT(workerContextProxy);
-        return workerContextProxy->findOrCreateObjectEventListener(value, isAttribute, findOnly);
-    }
-
-    V8Proxy* proxy = V8Proxy::retrieve(worker->scriptExecutionContext());
-    if (proxy) {
-        V8EventListenerList* list = proxy->objectListeners();
-        return findOnly ? list->findWrapper(value, isAttribute) : list->findOrCreateWrapper<V8ObjectEventListener>(proxy->frame(), value, isAttribute);
-    }
-
-    return 0;
-}
-
-ACCESSOR_GETTER(AbstractWorkerOnerror)
-{
-    INC_STATS(L"DOM.AbstractWorker.onerror._get");
-    AbstractWorker* worker = V8DOMWrapper::convertToNativeObject<AbstractWorker>(V8ClassIndex::ABSTRACTWORKER, info.Holder());
-    if (worker->onerror()) {
-        V8ObjectEventListener* listener = static_cast<V8ObjectEventListener*>(worker->onerror());
-        v8::Local<v8::Object> v8Listener = listener->getListenerObject();
-        return v8Listener;
-    }
-    return v8::Undefined();
-}
-
-ACCESSOR_SETTER(AbstractWorkerOnerror)
-{
-    INC_STATS(L"DOM.AbstractWorker.onerror._set");
-    AbstractWorker* worker = V8DOMWrapper::convertToNativeObject<AbstractWorker>(V8ClassIndex::ABSTRACTWORKER, info.Holder());
-    V8ObjectEventListener* oldListener = static_cast<V8ObjectEventListener*>(worker->onerror());
-    if (value->IsNull()) {
-        if (oldListener) {
-            v8::Local<v8::Object> oldV8Listener = oldListener->getListenerObject();
-            removeHiddenDependency(info.Holder(), oldV8Listener, V8Custom::kAbstractWorkerRequestCacheIndex);
-        }
-
-        // Clear the listener.
-        worker->setOnerror(0);
-    } else {
-        RefPtr<EventListener> listener = getEventListener(worker, value, true, false);
-        if (listener) {
-            if (oldListener) {
-                v8::Local<v8::Object> oldV8Listener = oldListener->getListenerObject();
-                removeHiddenDependency(info.Holder(), oldV8Listener, V8Custom::kAbstractWorkerRequestCacheIndex);
-            }
-
-            worker->setOnerror(listener);
-            createHiddenDependency(info.Holder(), value, V8Custom::kAbstractWorkerRequestCacheIndex);
-        }
-    }
-}
-
 CALLBACK_FUNC_DECL(AbstractWorkerAddEventListener)
 {
     INC_STATS(L"DOM.AbstractWorker.addEventListener()");
     AbstractWorker* worker = V8DOMWrapper::convertToNativeObject<AbstractWorker>(V8ClassIndex::ABSTRACTWORKER, args.Holder());
 
-    RefPtr<EventListener> listener = getEventListener(worker, args[1], false, false);
+    RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(worker, args[1], false, ListenerFindOrCreate);
     if (listener) {
         String type = toWebCoreString(args[0]);
         bool useCapture = args[2]->BooleanValue();
@@ -122,7 +65,7 @@ CALLBACK_FUNC_DECL(AbstractWorkerRemoveEventListener)
     INC_STATS(L"DOM.AbstractWorker.removeEventListener()");
     AbstractWorker* worker = V8DOMWrapper::convertToNativeObject<AbstractWorker>(V8ClassIndex::ABSTRACTWORKER, args.Holder());
 
-    RefPtr<EventListener> listener = getEventListener(worker, args[1], false, true);
+    RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(worker, args[1], false, ListenerFindOnly);
     if (listener) {
         String type = toWebCoreString(args[0]);
         bool useCapture = args[2]->BooleanValue();

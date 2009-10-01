@@ -93,6 +93,11 @@ namespace WebCore {
 #endif
     class WorkerContext;
 
+    enum ListenerLookupType {
+        ListenerFindOnly,
+        ListenerFindOrCreate,
+    };
+
     class V8DOMWrapper {
     public:
 #ifndef NDEBUG
@@ -215,9 +220,24 @@ namespace WebCore {
 
         static v8::Handle<v8::Value> convertEventListenerToV8Object(EventListener*);
 
-        static PassRefPtr<EventListener> getEventListener(Node* node, v8::Local<v8::Value> value, bool isAttribute, bool findOnly);
+        static PassRefPtr<EventListener> getEventListener(Node* node, v8::Local<v8::Value> value, bool isAttribute, ListenerLookupType lookup);
 
-        static PassRefPtr<EventListener> getEventListener(SVGElementInstance* element, v8::Local<v8::Value> value, bool isAttribute, bool findOnly);
+        static PassRefPtr<EventListener> getEventListener(SVGElementInstance* element, v8::Local<v8::Value> value, bool isAttribute, ListenerLookupType lookup);
+
+        static PassRefPtr<EventListener> getEventListener(AbstractWorker* worker, v8::Local<v8::Value> value, bool isAttribute, ListenerLookupType lookup);
+
+#if ENABLE(NOTIFICATIONS)
+        static PassRefPtr<EventListener> getEventListener(Notification* notification, v8::Local<v8::Value> value, bool isAttribute, ListenerLookupType lookup);
+#endif
+
+        static PassRefPtr<EventListener> getEventListener(WorkerContext* workerContext, v8::Local<v8::Value> value, bool isAttribute, ListenerLookupType lookup);
+
+        static PassRefPtr<EventListener> getEventListener(XMLHttpRequestUpload* upload, v8::Local<v8::Value> value, bool isAttribute, ListenerLookupType lookup);
+
+        static PassRefPtr<EventListener> getEventListener(EventTarget* eventTarget, v8::Local<v8::Value> value, bool isAttribute, ListenerLookupType lookup);
+
+        static PassRefPtr<EventListener> getEventListener(V8Proxy* proxy, v8::Local<v8::Value> value, bool isAttribute, ListenerLookupType lookup);
+
 
         // DOMImplementation is a singleton and it is handled in a special
         // way. A wrapper is generated per document and stored in an

@@ -39,6 +39,8 @@ namespace WebCore {
     public:
         static v8::Handle<v8::String> objectPrototype();
         static v8::Handle<v8::String> isolatedWorld();
+        static v8::Handle<v8::String> listener();
+        static v8::Handle<v8::String> attributeListener();
 
     private:
         static v8::Persistent<v8::String>* createString(const char* key);

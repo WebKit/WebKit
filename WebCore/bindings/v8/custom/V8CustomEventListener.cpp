@@ -38,34 +38,22 @@ namespace WebCore {
 V8EventListener::V8EventListener(Frame* frame, v8::Local<v8::Object> listener, bool isAttribute)
     : V8AbstractEventListener(frame, isAttribute)
 {
-    m_listener = v8::Persistent<v8::Object>::New(listener);
-#ifndef NDEBUG
-    V8GCController::registerGlobalHandle(EVENT_LISTENER, this, m_listener);
-#endif
-}
-
-V8EventListener::~V8EventListener()
-{
-    if (m_frame) {
-        V8Proxy* proxy = V8Proxy::retrieve(m_frame);
-        if (proxy)
-            proxy->eventListeners()->remove(this);
-    }
-
-    disposeListenerObject();
+    setListenerObject(listener);
 }
 
 v8::Local<v8::Function> V8EventListener::getListenerFunction()
 {
+    v8::Local<v8::Object> listener = getListenerObject();
+
     // Has the listener been disposed?
-    if (m_listener.IsEmpty())
+    if (listener.IsEmpty())
         return v8::Local<v8::Function>();
 
-    if (m_listener->IsFunction())
-        return v8::Local<v8::Function>::New(v8::Persistent<v8::Function>::Cast(m_listener));
+    if (listener->IsFunction())
+        return v8::Local<v8::Function>::Cast(listener);
 
-    if (m_listener->IsObject()) {
-        v8::Local<v8::Value> property = m_listener->Get(v8::String::NewSymbol("handleEvent"));
+    if (listener->IsObject()) {
+        v8::Local<v8::Value> property = listener->Get(v8::String::NewSymbol("handleEvent"));
         if (property->IsFunction())
             return v8::Local<v8::Function>::Cast(property);
     }
@@ -82,7 +70,7 @@ v8::Local<v8::Value> V8EventListener::callListenerFunction(v8::Handle<v8::Value>
 
     v8::Handle<v8::Value> parameters[1] = { jsEvent };
 
-    V8Proxy* proxy = V8Proxy::retrieve(m_frame);
+    V8Proxy* proxy = V8Proxy::retrieve(frame());
     if (!proxy)
         return v8::Local<v8::Value>();
     return proxy->callFunction(handlerFunction, receiver, 1, parameters);

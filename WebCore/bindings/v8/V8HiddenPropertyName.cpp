@@ -36,19 +36,30 @@ namespace WebCore {
 v8::Handle<v8::String> V8HiddenPropertyName::objectPrototype()
 {
     static v8::Persistent<v8::String>* string = createString("WebCore::V8HiddenPropertyName::objectPrototype");
-
     return *string;
 }
 
 v8::Handle<v8::String> V8HiddenPropertyName::isolatedWorld()
 {
     static v8::Persistent<v8::String>* string = createString("WebCore::V8HiddenPropertyName::isolatedWorld");
+    return *string;
+}
 
+v8::Handle<v8::String> V8HiddenPropertyName::listener()
+{
+    static v8::Persistent<v8::String>* string = createString("WebCore::V8HiddenPropertyName::listener");
+    return *string;
+}
+
+v8::Handle<v8::String> V8HiddenPropertyName::attributeListener()
+{
+    static v8::Persistent<v8::String>* string = createString("WebCore::V8HiddenPropertyName::attributeListener");
     return *string;
 }
 
 v8::Persistent<v8::String>* V8HiddenPropertyName::createString(const char* key)
 {
+    v8::HandleScope scope;
     return new v8::Persistent<v8::String>(v8::Persistent<v8::String>::New(v8::String::NewSymbol(key)));
 }
 

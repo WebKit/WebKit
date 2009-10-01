@@ -326,10 +326,26 @@ sub IsNodeSubType
     return 0;
 }
 
-sub RequiresCustomEventListenerAccessors
+sub GetHiddenDependencyIndex
 {
     my $dataNode = shift;
-    return !IsNodeSubType($dataNode) && $dataNode->name ne "SVGElementInstance";
+    my $attribute = shift;
+    my $name = $dataNode->name;
+    return "V8Custom::kNodeEventListenerCacheIndex" if IsNodeSubType($dataNode);
+    return "V8Custom::kSVGElementInstanceEventListenerCacheIndex" if $name eq "SVGElementInstance";
+    return "V8Custom::kAbstractWorkerRequestCacheIndex" if $name eq "AbstractWorker";
+    return "V8Custom::kWorkerRequestCacheIndex" if $name eq "Worker";
+    return "V8Custom::kDedicatedWorkerContextRequestCacheIndex" if $name eq "DedicatedWorkerContext";
+    return "V8Custom::kWorkerContextRequestCacheIndex" if $name eq "WorkerContext";
+    return "V8Custom::kWorkerContextRequestCacheIndex" if $name eq "SharedWorkerContext";
+    return "V8Custom::kMessagePortRequestCacheIndex" if $name eq "MessagePort";
+    return "V8Custom::kWebSocketCacheIndex" if $name eq "WebSocket";
+    return "V8Custom::kXMLHttpRequestCacheIndex" if $name eq "XMLHttpRequest";
+    return "V8Custom::kXMLHttpRequestCacheIndex" if $name eq "XMLHttpRequestUpload";
+    return "V8Custom::kDOMApplicationCacheCacheIndex" if $name eq "DOMApplicationCache";
+    return "V8Custom::kNotificationRequestCacheIndex" if $name eq "Notification";
+    return "V8Custom::kDOMWindowEventListenerCacheIndex" if $name eq "DOMWindow";
+    die "Unexpected name " . $name . " when generating " . $attribute;
 }
 
 sub HolderToNative
@@ -594,6 +610,10 @@ END
         }
 
     } else {
+        if ($attribute->signature->type eq "EventListener" && $dataNode->name eq "DOMWindow") {
+            push(@implContentDecls, "    if (!imp->document())\n");
+            push(@implContentDecls, "      return v8::Undefined();\n");
+        }
         push(@implContentDecls, "    $nativeType v = ");
 
         push(@implContentDecls, "$getterString;\n");
@@ -675,7 +695,7 @@ sub GenerateNormalAttrSetter
         # perform lookup first
         push(@implContentDecls, <<END);
     v8::Handle<v8::Object> holder = V8DOMWrapper::lookupDOMWrapper(V8ClassIndex::$classIndex, info.This());
-    if (holder.IsEmpty()) return v8::Undefined();
+    if (holder.IsEmpty()) return;
 END
         HolderToNative($dataNode, $implClassName, $classIndex);
     } else {
@@ -687,7 +707,11 @@ END
 
     my $nativeType = GetNativeTypeFromSignature($attribute->signature, 0);
     if ($attribute->signature->type eq "EventListener") {
-        push(@implContentDecls, "    $nativeType v = V8DOMWrapper::getEventListener(imp, value, true, false);\n");
+        if ($dataNode->name eq "DOMWindow") {
+            push(@implContentDecls, "    if (!imp->document())\n");
+            push(@implContentDecls, "      return;\n");
+        }
+        push(@implContentDecls, "    $nativeType v = V8DOMWrapper::getEventListener(imp, value, true, ListenerFindOrCreate);\n");
     } else {
         push(@implContentDecls, "    $nativeType v = " . JSValueToNative($attribute->signature, "value") . ";\n");
     }
@@ -725,14 +749,17 @@ END
         } elsif ($attribute->signature->type eq "EventListener") {
             $implIncludes{"V8AbstractEventListener.h"} = 1;
             $implIncludes{"V8CustomBinding.h"} = 1;
+            $cacheIndex = GetHiddenDependencyIndex($dataNode, $attrName);
             push(@implContentDecls, "    $nativeType old = imp->$attrName();\n");
-            push(@implContentDecls, "    if (old && static_cast<V8AbstractEventListener*>(old.get())->isObjectListener()) {\n");
-            push(@implContentDecls, "      v8::Local<v8::Object> oldListener = static_cast<V8AbstractEventListener*>(old.get())->getListenerObject();\n");
-            push(@implContentDecls, "      removeHiddenDependency(holder, oldListener, V8Custom::kNodeEventListenerCacheIndex);\n");
+            push(@implContentDecls, "    V8AbstractEventListener* oldListener = old ? V8AbstractEventListener::cast(old.get()) : 0;\n");
+            push(@implContentDecls, "    if (oldListener) {\n");
+            push(@implContentDecls, "      v8::Local<v8::Object> oldListenerObject = oldListener->getExistingListenerObject();\n");
+            push(@implContentDecls, "      if (!oldListenerObject.IsEmpty())\n");
+            push(@implContentDecls, "        removeHiddenDependency(holder, oldListenerObject, $cacheIndex);\n");
             push(@implContentDecls, "    }\n");
             push(@implContentDecls, "    imp->set$implSetterFunctionName($result);\n");
             push(@implContentDecls, "    if ($result)\n");
-            push(@implContentDecls, "      createHiddenDependency(holder, value, V8Custom::kNodeEventListenerCacheIndex");
+            push(@implContentDecls, "      createHiddenDependency(holder, value, $cacheIndex");
         } else {
             push(@implContentDecls, "    imp->set$implSetterFunctionName(" . $result);
         }
@@ -967,26 +994,6 @@ sub GenerateBatchedAttributeData
             $setter = "0";
             $propAttr = "v8::ReadOnly";
 
-        # EventListeners
-        } elsif ($attribute->signature->type eq "EventListener" && RequiresCustomEventListenerAccessors($dataNode)) {
-            if ($interfaceName eq "DOMWindow") {
-                $getter = "V8Custom::v8DOMWindowEventHandlerAccessorGetter";
-                $setter = "V8Custom::v8DOMWindowEventHandlerAccessorSetter";
-            } elsif ($interfaceName eq "DOMApplicationCache") {
-                $getter = "V8Custom::v8DOMApplicationCacheEventHandlerAccessorGetter";
-                $setter = "V8Custom::v8DOMApplicationCacheEventHandlerAccessorSetter";
-            } elsif ($interfaceName eq "Notification") {
-                $getter = "V8Custom::v8NotificationEventHandlerAccessorGetter";
-                $setter = "V8Custom::v8NotificationEventHandlerAccessorSetter";
-            } else {
-                $getter = "V8Custom::v8${customAccessor}AccessorGetter";
-                if ($interfaceName eq "WorkerContext" and $attrName eq "self") {
-                    $setter = "0";
-                    $propAttr = "v8::ReadOnly";
-                } else {
-                    $setter = "V8Custom::v8${customAccessor}AccessorSetter";
-                }
-            }
         } else {
             # Default Getter and Setter
             $getter = "${interfaceName}Internal::${attrName}AttrGetter";
@@ -1100,16 +1107,8 @@ sub GenerateImplementation
             next;
         }
 
-        # Make EventListeners custom for some types.
-        # FIXME: make the perl code capable of generating the
-        #   event setters/getters.  For now, WebKit has started removing the
-        #   [Custom] attribute, so just automatically insert it to avoid forking
-        #   other files.  This should be okay because we can't generate stubs
-        #   for any event getter/setters anyway.
-        if ($attrType eq "EventListener" && RequiresCustomEventListenerAccessors($dataNode)) {
-            $attribute->signature->extendedAttributes->{"Custom"} = 1;
-            $implIncludes{"V8CustomBinding.h"} = 1;
-            next;
+        if ($attrType eq "EventListener" && $interfaceName eq "DOMWindow") {
+            $attribute->signature->extendedAttributes->{"v8OnProto"} = 1;
         }
 
         # Do not generate accessor if this is a custom attribute.  The

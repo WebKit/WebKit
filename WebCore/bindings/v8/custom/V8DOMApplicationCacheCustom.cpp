@@ -37,68 +37,11 @@
 #include "V8Binding.h"
 #include "V8CustomBinding.h"
 #include "V8Document.h"
-#include "V8ObjectEventListener.h"
 #include "V8Proxy.h"
 #include "V8Utilities.h"
 #include "WorkerContextExecutionProxy.h"
 
 namespace WebCore {
-
-static const bool kFindOnly = true;
-static const bool kFindOrCreate = false;
-
-static PassRefPtr<EventListener> argumentToEventListener(DOMApplicationCache* appcache, v8::Local<v8::Value> value, bool findOnly)
-{
-    V8Proxy* proxy = V8Proxy::retrieve(appcache->scriptExecutionContext());
-    if (proxy)
-        return findOnly ? proxy->objectListeners()->findWrapper(value, false)
-                        : proxy->objectListeners()->findOrCreateWrapper<V8ObjectEventListener>(proxy->frame(), value, false);
-    return 0;
-}
-
-static v8::Local<v8::Object> eventListenerToV8Object(EventListener* listener)
-{
-    return (static_cast<V8ObjectEventListener*>(listener))->getListenerObject();
-}
-
-static inline String toEventID(v8::Local<v8::String> value)
-{
-    String key = toWebCoreString(value);
-    ASSERT(key.startsWith("on"));
-    return key.substring(2);
-}
-
-// Handles appcache.onfooevent attribute getting
-ACCESSOR_GETTER(DOMApplicationCacheEventHandler)
-{
-    INC_STATS("DOMApplicationCache.onevent_getter");
-    DOMApplicationCache* appcache = V8DOMWrapper::convertToNativeObject<DOMApplicationCache>(V8ClassIndex::DOMAPPLICATIONCACHE, info.Holder());
-    if (EventListener* listener = appcache->getAttributeEventListener(toEventID(name)))
-        return eventListenerToV8Object(listener);
-    return v8::Null();
-}
-
-// Handles appcache.onfooevent attribute setting
-ACCESSOR_SETTER(DOMApplicationCacheEventHandler)
-{
-    INC_STATS("DOMApplicationCache.onevent_setter");
-    DOMApplicationCache* appcache = V8DOMWrapper::convertToNativeObject<DOMApplicationCache>(V8ClassIndex::DOMAPPLICATIONCACHE, info.Holder());
-    String eventType = toEventID(name);
-
-    if (EventListener* oldListener = appcache->getAttributeEventListener(eventType)) {
-        v8::Local<v8::Object> object = eventListenerToV8Object(oldListener);
-        removeHiddenDependency(info.Holder(), object, V8Custom::kDOMApplicationCacheCacheIndex);
-        appcache->clearAttributeEventListener(eventType);
-    }
-
-    if (value->IsFunction()) {
-        RefPtr<EventListener> newListener = argumentToEventListener(appcache, value, kFindOrCreate);
-        if (newListener) {
-            createHiddenDependency(info.Holder(), value, V8Custom::kDOMApplicationCacheCacheIndex);
-            appcache->setAttributeEventListener(eventType, newListener);
-        }
-    }
-}
 
 // Handles appcache.addEventListner(name, func, capture) method calls
 CALLBACK_FUNC_DECL(DOMApplicationCacheAddEventListener)
@@ -106,7 +49,7 @@ CALLBACK_FUNC_DECL(DOMApplicationCacheAddEventListener)
     INC_STATS("DOMApplicationCache.addEventListener()");
     DOMApplicationCache* appcache = V8DOMWrapper::convertToNativeObject<DOMApplicationCache>(V8ClassIndex::DOMAPPLICATIONCACHE, args.Holder());
 
-    RefPtr<EventListener> listener = argumentToEventListener(appcache, args[1], kFindOrCreate);
+    RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(appcache, args[1], false, ListenerFindOrCreate);
     if (listener) {
         createHiddenDependency(args.Holder(), args[1], V8Custom::kDOMApplicationCacheCacheIndex);
         String eventType = toWebCoreString(args[0]);
@@ -122,7 +65,7 @@ CALLBACK_FUNC_DECL(DOMApplicationCacheRemoveEventListener)
     INC_STATS("DOMApplicationCache.removeEventListener()");
     DOMApplicationCache* appcache = V8DOMWrapper::convertToNativeObject<DOMApplicationCache>(V8ClassIndex::DOMAPPLICATIONCACHE, args.Holder());
 
-    RefPtr<EventListener> listener = argumentToEventListener(appcache, args[1], kFindOnly);
+    RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(appcache, args[1], false, ListenerFindOnly);
     if (listener) {
         removeHiddenDependency(args.Holder(), args[1], V8Custom::kDOMApplicationCacheCacheIndex);
         String eventType = toWebCoreString(args[0]);

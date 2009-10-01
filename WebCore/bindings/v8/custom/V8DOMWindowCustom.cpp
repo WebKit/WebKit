@@ -274,10 +274,12 @@ CALLBACK_FUNC_DECL(DOMWindowAddEventListener)
     if (!proxy)
         return v8::Undefined();
 
-    RefPtr<EventListener> listener = proxy->eventListeners()->findOrCreateWrapper<V8EventListener>(proxy->frame(), args[1], false);
+    RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(proxy, args[1], false, ListenerFindOrCreate);
 
-    if (listener)
+    if (listener) {
         imp->addEventListener(eventType, listener, useCapture);
+        createHiddenDependency(args.Holder(), args[1], V8Custom::kDOMWindowEventListenerCacheIndex);
+    }
 
     return v8::Undefined();
 }
@@ -304,10 +306,12 @@ CALLBACK_FUNC_DECL(DOMWindowRemoveEventListener)
     if (!proxy)
         return v8::Undefined();
 
-    RefPtr<EventListener> listener = proxy->eventListeners()->findWrapper(args[1], false);
+    RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(proxy, args[1], false, ListenerFindOnly);
 
-    if (listener)
+    if (listener) {
         imp->removeEventListener(eventType, listener.get(), useCapture);
+        removeHiddenDependency(args.Holder(), args[1], V8Custom::kDOMWindowEventListenerCacheIndex);
+    }
 
     return v8::Undefined();
 }
@@ -400,82 +404,6 @@ CALLBACK_FUNC_DECL(DOMWindowNOP)
 {
     INC_STATS("DOM.DOMWindow.nop()");
     return v8::Undefined();
-}
-
-static String eventNameFromAttributeName(const String& name)
-{
-    ASSERT(name.startsWith("on"));
-    String eventType = name.substring(2);
-
-    if (eventType.startsWith("w")) {
-        switch(eventType[eventType.length() - 1]) {
-        case 't':
-            eventType = "webkitAnimationStart";
-            break;
-        case 'n':
-            eventType = "webkitAnimationIteration";
-            break;
-        case 'd':
-            ASSERT(eventType.length() > 7);
-            if (eventType[7] == 'a')
-                eventType = "webkitAnimationEnd";
-            else
-                eventType = "webkitTransitionEnd";
-            break;
-        }
-    }
-
-    return eventType;
-}
-
-ACCESSOR_SETTER(DOMWindowEventHandler)
-{
-    v8::Handle<v8::Object> holder = V8DOMWrapper::lookupDOMWrapper(V8ClassIndex::DOMWINDOW, info.This());
-    if (holder.IsEmpty())
-        return;
-
-    DOMWindow* imp = V8DOMWrapper::convertToNativeObject<DOMWindow>(V8ClassIndex::DOMWINDOW, holder);
-
-    Document* doc = imp->document();
-
-    if (!doc)
-        return;
-
-    String key = toWebCoreString(name);
-    String eventType = eventNameFromAttributeName(key);
-
-    if (value->IsNull()) {
-        // Clear the event listener
-        imp->clearAttributeEventListener(eventType);
-    } else {
-        V8Proxy* proxy = V8Proxy::retrieve(imp->frame());
-        if (!proxy)
-            return;
-
-        RefPtr<EventListener> listener = proxy->eventListeners()->findOrCreateWrapper<V8EventListener>(proxy->frame(), value, true);
-        if (listener)
-            imp->setAttributeEventListener(eventType, listener);
-    }
-}
-
-ACCESSOR_GETTER(DOMWindowEventHandler)
-{
-    v8::Handle<v8::Object> holder = V8DOMWrapper::lookupDOMWrapper(V8ClassIndex::DOMWINDOW, info.This());
-    if (holder.IsEmpty())
-        return v8::Undefined();
-
-    DOMWindow* imp = V8DOMWrapper::convertToNativeObject<DOMWindow>(V8ClassIndex::DOMWINDOW, holder);
-
-    Document* doc = imp->document();
-
-    if (!doc)
-        return v8::Undefined();
-
-    String key = toWebCoreString(name);
-    String eventType = eventNameFromAttributeName(key);
-
-    EventListener* listener = imp->getAttributeEventListener(eventType);
-    return V8DOMWrapper::convertEventListenerToV8Object(listener);
 }
 
 static bool canShowModalDialogNow(const Frame* frame)

@@ -50,30 +50,19 @@ namespace WebCore {
             return adoptRef(new V8LazyEventListener(frame, code, functionName, isSVGEvent));
         }
 
-        // For lazy event listener, the listener object is the same as its listener
-        // function without additional scope chains.
-        virtual v8::Local<v8::Object> getListenerObject() { return getWrappedListenerFunction(); }
+        virtual bool isLazy() const { return true; }
+
+    protected:
+        virtual void prepareListenerObject();
 
     private:
         V8LazyEventListener(Frame*, const String& code, const String& functionName, bool isSVGEvent);
-        virtual ~V8LazyEventListener();
 
-        virtual bool virtualisAttribute() const { return true; }
+        virtual v8::Local<v8::Value> callListenerFunction(v8::Handle<v8::Value> jsEvent, Event*);
 
         String m_code;
         String m_functionName;
         bool m_isSVGEvent;
-        bool m_compiled;
-
-        // If the event listener is on a non-document dom node, we compile the function with some implicit scope chains before it.
-        bool m_wrappedFunctionCompiled;
-        v8::Persistent<v8::Function> m_wrappedFunction;
-
-        v8::Local<v8::Function> getWrappedListenerFunction();
-
-        virtual v8::Local<v8::Value> callListenerFunction(v8::Handle<v8::Value> jsEvent, Event*);
-
-        v8::Local<v8::Function> getListenerFunction();
     };
 
 } // namespace WebCore
