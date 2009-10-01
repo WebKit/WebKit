@@ -55,14 +55,16 @@ WebInspector.ScopeChainSidebarPane.prototype = {
             var extraProperties = null;
 
             if (scopeObjectProxy.isLocal) {
-                if (scopeObjectProxy.thisObject) {
-                    extraProperties = [ new WebInspector.ObjectPropertyProxy("this", scopeObjectProxy.thisObject) ];
-                    title = WebInspector.UIString("Local");
-                } else
-                    title = WebInspector.UIString("Closure");
+                foundLocalScope = true;
+                title = WebInspector.UIString("Local");
                 emptyPlaceholder = WebInspector.UIString("No Variables");
                 subtitle = null;
-                foundLocalScope = true;
+                if (scopeObjectProxy.thisObject)
+                    extraProperties = [ new WebInspector.ObjectPropertyProxy("this", scopeObjectProxy.thisObject) ];
+            } else if (scopeObjectProxy.isClosure) {
+                title = WebInspector.UIString("Closure");
+                emptyPlaceholder = WebInspector.UIString("No Variables");
+                subtitle = null;
             } else if (i === (scopeChain.length - 1))
                 title = WebInspector.UIString("Global");
             else if (scopeObjectProxy.isElement)

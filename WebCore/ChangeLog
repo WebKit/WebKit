@@ -1,3 +1,15 @@
+2009-10-01  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Use isClosure property of scope proxy to decide whether the
+        scope is a closure.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29965
+
+        * inspector/front-end/ScopeChainSidebarPane.js:
+        (WebInspector.ScopeChainSidebarPane.prototype.update):
+
 2009-10-01  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt.
