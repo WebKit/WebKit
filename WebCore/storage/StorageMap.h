@@ -42,24 +42,24 @@ namespace WebCore {
         static PassRefPtr<StorageMap> create();
 
         unsigned length() const;
-        String key(unsigned index) const;
+        String key(unsigned index);
         String getItem(const String&) const;
         PassRefPtr<StorageMap> setItem(const String& key, const String& value, String& oldValue);
         PassRefPtr<StorageMap> removeItem(const String&, String& oldValue);
 
         bool contains(const String& key) const;
 
-        void importItem(const String& key, const String& value) const;
+        void importItem(const String& key, const String& value);
 
     private:
         StorageMap();
         PassRefPtr<StorageMap> copy();
         void invalidateIterator();
-        void setIteratorToIndex(unsigned) const;
+        void setIteratorToIndex(unsigned);
 
-        mutable HashMap<String, String> m_map;
-        mutable HashMap<String, String>::iterator m_iterator;
-        mutable unsigned m_iteratorIndex;
+        HashMap<String, String> m_map;
+        HashMap<String, String>::iterator m_iterator;
+        unsigned m_iteratorIndex;
     };
 
 } // namespace WebCore

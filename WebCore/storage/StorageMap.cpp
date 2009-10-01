@@ -54,7 +54,7 @@ void StorageMap::invalidateIterator()
     m_iteratorIndex = UINT_MAX;
 }
 
-void StorageMap::setIteratorToIndex(unsigned index) const
+void StorageMap::setIteratorToIndex(unsigned index)
 {
     // FIXME: Once we have bidirectional iterators for HashMap we can be more intelligent about this.
     // The requested index will be closest to begin(), our current iterator, or end(), and we
@@ -82,7 +82,7 @@ unsigned StorageMap::length() const
     return m_map.size();
 }
 
-String StorageMap::key(unsigned index) const
+String StorageMap::key(unsigned index)
 {
     if (index >= length())
         return String();
@@ -145,7 +145,7 @@ bool StorageMap::contains(const String& key) const
     return m_map.contains(key);
 }
 
-void StorageMap::importItem(const String& key, const String& value) const
+void StorageMap::importItem(const String& key, const String& value)
 {
     // Be sure to copy the keys/values as items imported on a background thread are destined
     // to cross a thread boundary

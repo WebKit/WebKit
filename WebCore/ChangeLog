@@ -1,3 +1,19 @@
+2009-09-30  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Clean up use of const and mutable in StorageMap
+        https://bugs.webkit.org/show_bug.cgi?id=29933
+
+        What's the point of having every single member variable be mutable and nearly
+        every method be const?  Let's clean it up.
+
+        * storage/StorageMap.cpp:
+        (WebCore::StorageMap::setIteratorToIndex):
+        (WebCore::StorageMap::key):
+        (WebCore::StorageMap::importItem):
+        * storage/StorageMap.h:
+
 2009-10-01  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Dave Hyatt.
