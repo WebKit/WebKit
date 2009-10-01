@@ -29,10 +29,12 @@ http/tests/navigation
 http/tests/plugins
 http/tests/security
 http/tests/ssl
-http/tests/uri
 http/tests/webarchive
 http/tests/wml
 http/tests/xmlhttprequest
+
+# Failing URL test
+http/tests/uri/escaped-entity.html
 
 # Flanky test
 http/tests/cookies/simple-cookies-max-age.html

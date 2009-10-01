@@ -13,6 +13,14 @@
 
         Rubberstamped by Simon Hausmann.
 
+        Enable URI tests for Qt, skip the single test we don't pass.
+
+        * platform/qt/Skipped:
+
+2009-10-01  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Rubberstamped by Simon Hausmann.
+
         Enable HTTP tests for Qt, and skip the subdirs we don't pass yet.
 
         * platform/qt/Skipped:
