@@ -1,3 +1,16 @@
+2009-10-01  Victor Wang  <victorw@chromium.org>
+
+        Reviewed by Oliver Hunt.
+
+        Allow dragging a node who has child nodes.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28632
+
+        Test: fast/events/drag-parent-node.html
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::shouldDragAutoNode):
+
 2009-10-01  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Gustavo Noronha.

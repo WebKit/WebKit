@@ -1,3 +1,15 @@
+2009-10-01  Victor Wang  <victorw@chromium.org>
+
+        Reviewed by Oliver Hunt.
+
+        Allow dragging a node who has child nodes.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28632
+
+        * fast/events/drag-parent-node-expected.txt: Added.
+        * fast/events/drag-parent-node.html: Added.
+        * fast/events/resources/bookmark.gif: Added.
+
 2009-10-01  Adam Roben  <aroben@apple.com>
 
         Land expected failure results for two tests on Windows
