@@ -1025,7 +1025,6 @@ fast/events/onchange-passwordfield.html
 fast/events/onchange-searchfield.html
 fast/events/onchange-textfield.html
 fast/events/onsearch-enter.html
-fast/events/open-window-from-another-frame.html
 fast/forms/enter-clicks-buttons.html
 fast/forms/input-align-image.html
 fast/forms/input-align.html

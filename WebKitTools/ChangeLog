@@ -1,3 +1,16 @@
+2009-10-01  Jakub Wieczorek  <faw217@gmail.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Implement setPopupBlockingEnabled() in the LayoutTestController and remove
+        fast/events/open-window-from-another-frame.html from the Skipped list.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29930
+
+        * DumpRenderTree/qt/jsobjects.cpp:
+        (LayoutTestController::setPopupBlockingEnabled):
+        * DumpRenderTree/qt/jsobjects.h:
+
 2009-09-30  Cameron McCormack  <cam@mcc.id.au>
 
         Unreviewed.
