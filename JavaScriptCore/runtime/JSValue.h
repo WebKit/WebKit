@@ -213,8 +213,7 @@ namespace JSC {
         enum { FalseTag =        0xfffffffc };
         enum { NullTag =         0xfffffffb };
         enum { UndefinedTag =    0xfffffffa };
-        enum { EmptyValueTag =   0xfffffff9 };
-        enum { DeletedValueTag = 0xfffffff8 };
+        enum { DeletedValueTag = 0xfffffff9 };
 
         enum { LowestTag =  DeletedValueTag };
 
@@ -428,7 +427,7 @@ namespace JSC {
 
     inline JSValue::JSValue()
     {
-        u.asBits.tag = EmptyValueTag;
+        u.asBits.tag = CellTag;
         u.asBits.payload = 0;
     }
 
@@ -464,26 +463,19 @@ namespace JSC {
 
     inline JSValue::JSValue(JSCell* ptr)
     {
-        if (ptr)
-            u.asBits.tag = CellTag;
-        else
-            u.asBits.tag = EmptyValueTag;
+        u.asBits.tag = CellTag;
         u.asBits.payload = reinterpret_cast<int32_t>(ptr);
     }
 
     inline JSValue::JSValue(const JSCell* ptr)
     {
-        if (ptr)
-            u.asBits.tag = CellTag;
-        else
-            u.asBits.tag = EmptyValueTag;
+        u.asBits.tag = CellTag;
         u.asBits.payload = reinterpret_cast<int32_t>(const_cast<JSCell*>(ptr));
     }
 
     inline JSValue::operator bool() const
     {
-        ASSERT(tag() != DeletedValueTag);
-        return tag() != EmptyValueTag;
+        return u.asBits.payload || tag() != CellTag;
     }
 
     inline bool JSValue::operator==(const JSValue& other) const

@@ -248,8 +248,10 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     addPtr(Imm32(NativeCallFrameSize - sizeof(NativeFunctionCalleeSignature)), stackPointerRegister);
 
     // Check for an exception
+    // FIXME: Maybe we can optimize this comparison to JSValue().
     move(ImmPtr(&globalData->exception), regT2);
-    Jump sawException = branch32(NotEqual, tagFor(0, regT2), Imm32(JSValue::EmptyValueTag));
+    Jump sawException1 = branch32(NotEqual, tagFor(0, regT2), Imm32(JSValue::CellTag));
+    Jump sawException2 = branch32(NonZero, payloadFor(0, regT2), Imm32(0));
 
     // Grab the return address.
     emitGetFromCallFrameHeaderPtr(RegisterFile::ReturnPC, regT3);
@@ -262,7 +264,8 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     ret();
 
     // Handle an exception
-    sawException.link(this);
+    sawException1.link(this);
+    sawException2.link(this);
     // Grab the return address.
     emitGetFromCallFrameHeaderPtr(RegisterFile::ReturnPC, regT1);
     move(ImmPtr(&globalData->exceptionLocation), regT2);
@@ -1234,7 +1237,7 @@ void JIT::emit_op_to_jsnumber(Instruction* currentInstruction)
     emitLoad(src, regT1, regT0);
 
     Jump isInt32 = branch32(Equal, regT1, Imm32(JSValue::Int32Tag));
-    addSlowCase(branch32(AboveOrEqual, regT1, Imm32(JSValue::EmptyValueTag)));
+    addSlowCase(branch32(AboveOrEqual, regT1, Imm32(JSValue::DeletedValueTag)));
     isInt32.link(this);
 
     if (src != dst)
@@ -1378,7 +1381,8 @@ void JIT::emit_op_enter_with_activation(Instruction* currentInstruction)
 
 void JIT::emit_op_create_arguments(Instruction*)
 {
-    Jump argsCreated = branch32(NotEqual, tagFor(RegisterFile::ArgumentsRegister, callFrameRegister), Imm32(JSValue::EmptyValueTag));
+    Jump argsNotCell = branch32(NotEqual, tagFor(RegisterFile::ArgumentsRegister, callFrameRegister), Imm32(JSValue::CellTag));
+    Jump argsNotNull = branchTestPtr(NonZero, payloadFor(RegisterFile::ArgumentsRegister, callFrameRegister));
 
     // If we get here the arguments pointer is a null cell - i.e. arguments need lazy creation.
     if (m_codeBlock->m_numParameters == 1)
@@ -1386,7 +1390,8 @@ void JIT::emit_op_create_arguments(Instruction*)
     else
         JITStubCall(this, cti_op_create_arguments).call();
 
-    argsCreated.link(this);
+    argsNotCell.link(this);
+    argsNotNull.link(this);
 }
     
 void JIT::emit_op_init_arguments(Instruction*)
