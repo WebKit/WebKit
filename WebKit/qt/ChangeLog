@@ -1,3 +1,19 @@
+2009-10-01  Antonio Gomes   <tonikitoo@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29248
+        [Qt] [API] Make it possible to have 'invisible' loads
+
+        Make QWebFrame's setHtml and setContent methods to not change
+        session and global history at all.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::setHtml):
+        (QWebFrame::setContent):
+        * tests/qwebframe/qwebframe.pro:
+        * tests/qwebframe/tst_qwebframe.cpp:
+
 2009-10-01  Kristian Amlie  <kristian.amlie@nokia.com>
 
         Reviewed by Simon Hausmann.

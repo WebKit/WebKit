@@ -710,7 +710,9 @@ void QWebFrame::load(const QNetworkRequest &req,
   script can be specified through the charset attribute of the HTML script tag. It is also possible
   for the encoding to be specified by web server.
 
-  \sa toHtml()
+  \note This method will not affect session or global history for the frame.
+
+  \sa toHtml(), setContent()
 */
 void QWebFrame::setHtml(const QString &html, const QUrl &baseUrl)
 {
@@ -718,7 +720,7 @@ void QWebFrame::setHtml(const QString &html, const QUrl &baseUrl)
     WebCore::ResourceRequest request(kurl);
     const QByteArray utf8 = html.toUtf8();
     WTF::RefPtr<WebCore::SharedBuffer> data = WebCore::SharedBuffer::create(utf8.constData(), utf8.length());
-    WebCore::SubstituteData substituteData(data, WebCore::String("text/html"), WebCore::String("utf-8"), kurl);
+    WebCore::SubstituteData substituteData(data, WebCore::String("text/html"), WebCore::String("utf-8"), KURL());
     d->frame->loader()->load(request, substituteData, false);
 }
 
@@ -731,7 +733,9 @@ void QWebFrame::setHtml(const QString &html, const QUrl &baseUrl)
 
   The \a data is loaded immediately; external objects are loaded asynchronously.
 
-  \sa toHtml()
+  \note This method will not affect session or global history for the frame.
+
+  \sa toHtml(), setHtml()
 */
 void QWebFrame::setContent(const QByteArray &data, const QString &mimeType, const QUrl &baseUrl)
 {
@@ -741,10 +745,9 @@ void QWebFrame::setContent(const QByteArray &data, const QString &mimeType, cons
     QString actualMimeType = mimeType;
     if (actualMimeType.isEmpty())
         actualMimeType = QLatin1String("text/html");
-    WebCore::SubstituteData substituteData(buffer, WebCore::String(actualMimeType), WebCore::String(), kurl);
+    WebCore::SubstituteData substituteData(buffer, WebCore::String(actualMimeType), WebCore::String(), KURL());
     d->frame->loader()->load(request, substituteData, false);
 }
-
 
 /*!
   Returns the parent frame of this frame, or 0 if the frame is the web pages
