@@ -1,3 +1,17 @@
+2009-10-02  Victor Wang  <victorw@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29619
+
+        Patch http://trac.webkit.org/changeset/35290 adds win support for
+        JPEG and GIF for toDataURL encoding canvases and the test was
+        rewritten to not output the encoded image data, it should pass
+        on Win now.
+
+        * platform/win/Skipped:
+        * platform/win/fast/canvas/toDataURL-supportedTypes-expected.txt: Removed.
+
 2009-10-02  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Adele Peterson.

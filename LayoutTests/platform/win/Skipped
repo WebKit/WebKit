@@ -253,10 +253,6 @@ http/tests/xmlhttprequest/cookies.html
 # <rdar://5723191>
 http/tests/navigation/javascriptlink-frames.html
 
-
-#<rdar://problem/5829342> REGRESSION: fast/canvas/toDataURL-supportedTypes.html fails on Windows
-fast/canvas/toDataURL-supportedTypes.html
-
 #<rdar://problem/5829202> new subframe reload tests fail on Windows
 http/tests/navigation/reload-subframe-object.html
 
