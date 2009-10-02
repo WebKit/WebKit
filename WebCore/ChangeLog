@@ -14,6 +14,17 @@
 
         Reviewed by Simon Hausmann.
 
+        Clean up the QNetworkReplyHandler to only apply HTTP headers
+        for protocols in the HTTP family.
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyHandler::finish):
+        (WebCore::QNetworkReplyHandler::sendResponseIfNeeded):
+
+2009-10-02  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
         Move error check into sendResponseIfNeeded() as suggested
         by Eric Seidel. Also, remove some dead code.
 
