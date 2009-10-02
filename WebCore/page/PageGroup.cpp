@@ -199,12 +199,12 @@ StorageNamespace* PageGroup::localStorage()
 }
 #endif
 
-void PageGroup::addUserScript(const String& source, const KURL& url, const Vector<String>& patterns, 
-                              unsigned worldID, UserScriptInjectionTime injectionTime)
+void PageGroup::addUserScript(const String& source, const KURL& url,  PassOwnPtr<Vector<String> > whitelist,
+                              PassOwnPtr<Vector<String> > blacklist, unsigned worldID, UserScriptInjectionTime injectionTime)
 {
     if (worldID == UINT_MAX)
         return;
-    OwnPtr<UserScript> userScript(new UserScript(source, url, patterns, worldID, injectionTime));
+    OwnPtr<UserScript> userScript(new UserScript(source, url, whitelist, blacklist, worldID, injectionTime));
     if (!m_userScripts)
         m_userScripts.set(new UserScriptMap);
     UserScriptVector*& scriptsInWorld = m_userScripts->add(worldID, 0).first->second;
@@ -213,11 +213,12 @@ void PageGroup::addUserScript(const String& source, const KURL& url, const Vecto
     scriptsInWorld->append(userScript.release());
 }
 
-void PageGroup::addUserStyleSheet(const String& source, const KURL& url, const Vector<String>& patterns, unsigned worldID)
+void PageGroup::addUserStyleSheet(const String& source, const KURL& url, PassOwnPtr<Vector<String> > whitelist,
+                                  PassOwnPtr<Vector<String> > blacklist, unsigned worldID)
 {
     if (worldID == UINT_MAX)
         return;
-    OwnPtr<UserStyleSheet> userStyleSheet(new UserStyleSheet(source, url, patterns, worldID));
+    OwnPtr<UserStyleSheet> userStyleSheet(new UserStyleSheet(source, url, whitelist, blacklist, worldID));
     if (!m_userStyleSheets)
         m_userStyleSheets.set(new UserStyleSheetMap);
     UserStyleSheetVector*& styleSheetsInWorld = m_userStyleSheets->add(worldID, 0).first->second;
@@ -245,8 +246,8 @@ void PageGroup::removeUserContentWithURLForWorld(const KURL& url, unsigned world
             }
             
             if (scripts->isEmpty()) {
-                m_userScripts->remove(it);
                 delete it->second;
+                m_userScripts->remove(it);
             }
         }
     }
@@ -264,8 +265,8 @@ void PageGroup::removeUserContentWithURLForWorld(const KURL& url, unsigned world
             }
             
             if (stylesheets->isEmpty()) {
-                m_userStyleSheets->remove(it);
                 delete it->second;
+                m_userStyleSheets->remove(it);
             }
         }
         
@@ -285,8 +286,8 @@ void PageGroup::removeUserContentForWorld(unsigned worldID)
     if (m_userScripts) {
         UserScriptMap::iterator it = m_userScripts->find(worldID);
         if (it != m_userScripts->end()) {
-            m_userScripts->remove(it);
             delete it->second;
+            m_userScripts->remove(it);
         }
     }
     
@@ -294,9 +295,9 @@ void PageGroup::removeUserContentForWorld(unsigned worldID)
         bool sheetsChanged = false;
         UserStyleSheetMap::iterator it = m_userStyleSheets->find(worldID);
         if (it != m_userStyleSheets->end()) {
+            delete it->second;
             m_userStyleSheets->remove(it);
             sheetsChanged = true;
-            delete it->second;
         }
     
         if (sheetsChanged) {

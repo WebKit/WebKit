@@ -30,19 +30,33 @@
 
 namespace WebCore {
 
-bool UserContentURLPattern::matchesPatterns(const KURL& url, const Vector<String>& patterns)
+bool UserContentURLPattern::matchesPatterns(const KURL& url, const Vector<String>* whitelist, const Vector<String>* blacklist)
 {
-    // Treat no patterns at all as though a pattern of * was specified.
-    if (patterns.isEmpty())
-        return true;
-
-    for (unsigned i = 0; i < patterns.size(); ++i) {
-        UserContentURLPattern contentPattern(patterns[i]);
-        if (contentPattern.matches(url))
-            return true;
+    // In order for a URL to be a match it has to be present in the whitelist and not present in the blacklist.
+    // If there is no whitelist at all, then all URLs are assumed to be in the whitelist.
+    bool matchesWhitelist = !whitelist || whitelist->isEmpty();
+    if (!matchesWhitelist) {
+        for (unsigned i = 0; i < whitelist->size(); ++i) {
+            UserContentURLPattern contentPattern(whitelist->at(i));
+            if (contentPattern.matches(url)) {
+                matchesWhitelist = true;
+                break;
+            }
+        }
     }
 
-    return false;
+    bool matchesBlacklist = false;
+    if (blacklist) {
+        for (unsigned i = 0; i < blacklist->size(); ++i) {
+            UserContentURLPattern contentPattern(blacklist->at(i));
+            if (contentPattern.matches(url)) {
+                matchesBlacklist = true;
+                break;
+            }
+        }
+    }
+
+    return matchesWhitelist && !matchesBlacklist;
 }
 
 bool UserContentURLPattern::parse(const String& pattern)

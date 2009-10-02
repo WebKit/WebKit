@@ -1,3 +1,32 @@
+2009-10-02  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Add support for blacklist patterns to user stylesheets and scripts in addition to whitelist patterns.
+
+        * WebCore.base.exp:
+        * dom/Document.cpp:
+        (WebCore::Document::pageGroupUserSheets):
+        * page/Frame.cpp:
+        (WebCore::Frame::injectUserScriptsForWorld):
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::addUserScript):
+        (WebCore::PageGroup::addUserStyleSheet):
+        (WebCore::PageGroup::removeUserContentWithURLForWorld):
+        (WebCore::PageGroup::removeUserContentForWorld):
+        * page/PageGroup.h:
+        * page/UserContentURLPattern.cpp:
+        (WebCore::UserContentURLPattern::matchesPatterns):
+        * page/UserContentURLPattern.h:
+        * page/UserScript.h:
+        (WebCore::UserScript::UserScript):
+        (WebCore::UserScript::whitelist):
+        (WebCore::UserScript::blacklist):
+        * page/UserStyleSheet.h:
+        (WebCore::UserStyleSheet::UserStyleSheet):
+        (WebCore::UserStyleSheet::whitelist):
+        (WebCore::UserStyleSheet::blacklist):
+
 2009-10-02  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Darin Adler.

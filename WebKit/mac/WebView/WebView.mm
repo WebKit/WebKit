@@ -2128,7 +2128,23 @@ static inline IMP getMethod(id o, SEL s)
         _private->page->focusController()->setActive([[self window] isKeyWindow]);
 }
 
-+ (void)_addUserScriptToGroup:(NSString *)groupName source:(NSString *)source url:(NSURL *)url worldID:(unsigned)worldID patterns:(NSArray *)patterns injectionTime:(WebUserScriptInjectionTime)injectionTime
+static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
+{
+    // Convert the patterns into Vectors.
+    NSUInteger count = [patterns count];
+    if (count == 0)
+        return 0;
+    Vector<String>* patternsVector = new Vector<String>;
+    for (NSUInteger i = 0; i < count; ++i) {
+        id entry = [patterns objectAtIndex:i];
+        if ([entry isKindOfClass:[NSString class]])
+            patternsVector->append(String((NSString*)entry));
+    }
+    return patternsVector;
+}
+
++ (void)_addUserScriptToGroup:(NSString *)groupName source:(NSString *)source url:(NSURL *)url worldID:(unsigned)worldID 
+                    whitelist:(NSArray *)whitelist blacklist:(NSArray *)blacklist injectionTime:(WebUserScriptInjectionTime)injectionTime
 {
     String group(groupName);
     if (group.isEmpty() || worldID == UINT_MAX)
@@ -2138,20 +2154,12 @@ static inline IMP getMethod(id o, SEL s)
     if (!pageGroup)
         return;
     
-    // Convert the patterns into a Vector.
-    Vector<String> patternsVector;
-    NSUInteger count = [patterns count];
-    for (NSUInteger i = 0; i < count; ++i) {
-        id entry = [patterns objectAtIndex: i];
-        if ([entry isKindOfClass:[NSString class]])
-            patternsVector.append(String((NSString*)entry));
-    }
-    
-    pageGroup->addUserScript(source, url, patternsVector, worldID, 
+    pageGroup->addUserScript(source, url, toStringVector(whitelist), toStringVector(blacklist), worldID, 
                              injectionTime == WebInjectAtDocumentStart ? InjectAtDocumentStart : InjectAtDocumentEnd);
 }
 
-+ (void)_addUserStyleSheetToGroup:(NSString *)groupName source:(NSString *)source url:(NSURL *)url worldID:(unsigned)worldID patterns:(NSArray *)patterns
++ (void)_addUserStyleSheetToGroup:(NSString *)groupName source:(NSString *)source url:(NSURL *)url worldID:(unsigned)worldID
+                        whitelist:(NSArray *)whitelist blacklist:(NSArray *)blacklist
 {
     String group(groupName);
     if (group.isEmpty() || worldID == UINT_MAX)
@@ -2160,17 +2168,8 @@ static inline IMP getMethod(id o, SEL s)
     PageGroup* pageGroup = PageGroup::pageGroup(group);
     if (!pageGroup)
         return;
-    
-    // Convert the patterns into a Vector.
-    Vector<String> patternsVector;
-    NSUInteger count = [patterns count];
-    for (NSUInteger i = 0; i < count; ++i) {
-        id entry = [patterns objectAtIndex: i];
-        if ([entry isKindOfClass:[NSString class]])
-            patternsVector.append(String((NSString*)entry));
-    }
-    
-    pageGroup->addUserStyleSheet(source, url, patternsVector, worldID);
+
+    pageGroup->addUserStyleSheet(source, url, toStringVector(whitelist), toStringVector(blacklist), worldID);
 }
 
 + (void)_removeUserContentFromGroup:(NSString *)groupName url:(NSURL *)url worldID:(unsigned)worldID

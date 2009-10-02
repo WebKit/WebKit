@@ -1,3 +1,15 @@
+2009-10-02  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Add support for blacklist patterns to user stylesheets and scripts in addition to whitelist patterns.
+
+        * WebView/WebView.mm:
+        (toStringVector):
+        (+[WebView _addUserScriptToGroup:source:url:worldID:whitelist:blacklist:injectionTime:]):
+        (+[WebView _addUserStyleSheetToGroup:source:url:worldID:whitelist:blacklist:]):
+        * WebView/WebViewPrivate.h:
+
 2009-10-01  Mark Rowe  <mrowe@apple.com>
 
         Fix the Tiger build.  Don't unconditionally enable 3D canvas as it is not supported on Tiger.
