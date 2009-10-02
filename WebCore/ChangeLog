@@ -1,3 +1,13 @@
+2009-10-02  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        [chromium] Fix WebGL build after CustomGetter constructor changes
+        https://bugs.webkit.org/show_bug.cgi?id=30020
+
+        * page/DOMWindow.idl:
+        Changed CustomGetter to JSCCustomGetter for CanvasArray constructors.
+
 2009-10-02  Patrick Mueller  <Patrick_Mueller@us.ibm.com>
 
         Reviewed by Timothy Hatcher.

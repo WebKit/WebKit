@@ -434,14 +434,14 @@ module window {
         attribute [Conditional=3D_CANVAS] CanvasRenderingContext3DConstructor CanvasRenderingContext3D;
         attribute TextMetricsConstructor TextMetrics;
 
-        attribute [CustomGetter,Conditional=3D_CANVAS] CanvasArrayBufferConstructor CanvasArrayBuffer; // Usable with new operator
-        attribute [CustomGetter,Conditional=3D_CANVAS] CanvasByteArrayConstructor CanvasByteArray; // Usable with new operator
-        attribute [CustomGetter,Conditional=3D_CANVAS] CanvasUnsignedByteArrayConstructor CanvasUnsignedByteArray; // Usable with new operator
-        attribute [CustomGetter,Conditional=3D_CANVAS] CanvasShortArrayConstructor CanvasShortArray; // Usable with new operator
-        attribute [CustomGetter,Conditional=3D_CANVAS] CanvasUnsignedShortArrayConstructor CanvasUnsignedShortArray; // Usable with new operator
-        attribute [CustomGetter,Conditional=3D_CANVAS] CanvasIntArrayConstructor CanvasIntArray; // Usable with new operator
-        attribute [CustomGetter,Conditional=3D_CANVAS] CanvasUnsignedIntArrayConstructor CanvasUnsignedIntArray; // Usable with new operator
-        attribute [CustomGetter,Conditional=3D_CANVAS] CanvasFloatArrayConstructor CanvasFloatArray; // Usable with new operator
+        attribute [JSCCustomGetter,Conditional=3D_CANVAS] CanvasArrayBufferConstructor CanvasArrayBuffer; // Usable with new operator
+        attribute [JSCCustomGetter,Conditional=3D_CANVAS] CanvasByteArrayConstructor CanvasByteArray; // Usable with new operator
+        attribute [JSCCustomGetter,Conditional=3D_CANVAS] CanvasUnsignedByteArrayConstructor CanvasUnsignedByteArray; // Usable with new operator
+        attribute [JSCCustomGetter,Conditional=3D_CANVAS] CanvasShortArrayConstructor CanvasShortArray; // Usable with new operator
+        attribute [JSCCustomGetter,Conditional=3D_CANVAS] CanvasUnsignedShortArrayConstructor CanvasUnsignedShortArray; // Usable with new operator
+        attribute [JSCCustomGetter,Conditional=3D_CANVAS] CanvasIntArrayConstructor CanvasIntArray; // Usable with new operator
+        attribute [JSCCustomGetter,Conditional=3D_CANVAS] CanvasUnsignedIntArrayConstructor CanvasUnsignedIntArray; // Usable with new operator
+        attribute [JSCCustomGetter,Conditional=3D_CANVAS] CanvasFloatArrayConstructor CanvasFloatArray; // Usable with new operator
 
         attribute EventConstructor Event;
         attribute KeyboardEventConstructor KeyboardEvent;
