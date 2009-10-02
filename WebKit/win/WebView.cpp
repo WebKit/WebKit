@@ -5459,7 +5459,7 @@ HRESULT WebView::addUserScriptToGroup(BSTR groupName, unsigned worldID, BSTR sou
         return E_FAIL;
 
     pageGroup->addUserScript(String(source, SysStringLen(source)), KURL(KURL(), String(url, SysStringLen(url))),
-                             toStringVector(whitelist), toStringVector(blacklist), worldID,
+                             toStringVector(whitelistCount, whitelist), toStringVector(blacklistCount, blacklist), worldID,
                              injectionTime == WebInjectAtDocumentStart ? InjectAtDocumentStart : InjectAtDocumentEnd);
 
     return S_OK;
@@ -5479,7 +5479,7 @@ HRESULT WebView::addUserStyleSheetToGroup(BSTR groupName, unsigned worldID, BSTR
         return E_FAIL;
 
     pageGroup->addUserStyleSheet(String(source, SysStringLen(source)), KURL(KURL(), String(url, SysStringLen(url))),
-                                 toStringVector(whitelist), toStringVector(blacklist), worldID);
+                                 toStringVector(whitelistCount, whitelist), toStringVector(blacklistCount, blacklist), worldID);
 
     return S_OK;
 }
