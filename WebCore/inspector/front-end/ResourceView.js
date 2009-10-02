@@ -197,6 +197,7 @@ WebInspector.ResourceView.prototype = {
         var title = "<div class=\"header-name\">&nbsp;</div>";
         title += "<div class=\"raw-form-data header-value\">" + formData.escapeHTML() + "</div>";
         var parmTreeElement = new TreeElement(title, null, false);
+        parmTreeElement.selectable = false;
         this.requestPayloadTreeElement.appendChild(parmTreeElement);
     },
 

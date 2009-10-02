@@ -1,3 +1,15 @@
+2009-10-02  Patrick Mueller  <Patrick_Mueller@us.ibm.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: text in a "Request Payload" section disappears on selection
+        https://bugs.webkit.org/show_bug.cgi?id=29967
+
+        No new tests.
+
+        * inspector/front-end/ResourceView.js:
+        (WebInspector.ResourceView.prototype._refreshRequestPayload):
+
 2009-10-02  Vitaly Repeshko  <vitalyr@chromium.org>
 
         Reviewed by Dimitri Glazkov.
