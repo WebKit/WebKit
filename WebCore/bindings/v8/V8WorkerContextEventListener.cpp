@@ -40,8 +40,8 @@
 
 namespace WebCore {
 
-V8WorkerContextEventListener::V8WorkerContextEventListener(WorkerContextExecutionProxy* proxy, v8::Local<v8::Object> listener, bool isInline)
-    : V8EventListener(0, listener, isInline)
+V8WorkerContextEventListener::V8WorkerContextEventListener(WorkerContextExecutionProxy* proxy, PassRefPtr<V8ListenerGuard> guard, v8::Local<v8::Object> listener, bool isInline)
+    : V8EventListener(0, guard, listener, isInline)
     , m_proxy(proxy)
 {
 }

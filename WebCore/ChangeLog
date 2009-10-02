@@ -1,3 +1,49 @@
+2009-10-02  Vitaly Repeshko  <vitalyr@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [V8] Disconnect event listeners on navigation.
+        Fixes http://crbug.com/23597.
+        https://bugs.webkit.org/show_bug.cgi?id=30027
+
+        Added V8ListenerGuard that is shared by listeners and proxy. On
+        navigation proxy sets a flag in the guard turning off listeners.
+
+        * bindings/v8/V8AbstractEventListener.cpp:
+        (WebCore::V8AbstractEventListener::V8AbstractEventListener):
+        * bindings/v8/V8AbstractEventListener.h:
+        (WebCore::V8ListenerGuard::create):
+        (WebCore::V8ListenerGuard::isDisconnected):
+        (WebCore::V8ListenerGuard::disconnectListeners):
+        (WebCore::V8ListenerGuard::V8ListenerGuard):
+        (WebCore::V8AbstractEventListener::disconnected):
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::getEventListener):
+        * bindings/v8/V8EventListenerList.h:
+        (WebCore::V8EventListenerList::findOrCreateWrapper):
+        * bindings/v8/V8LazyEventListener.cpp:
+        (WebCore::V8LazyEventListener::V8LazyEventListener):
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::V8Proxy):
+        (WebCore::V8Proxy::disconnectFrame):
+        (WebCore::V8Proxy::disconnectEventListeners):
+        (WebCore::V8Proxy::clearForNavigation):
+        * bindings/v8/V8Proxy.h:
+        (WebCore::V8Proxy::listenerGuard):
+        * bindings/v8/V8WorkerContextEventListener.cpp:
+        (WebCore::V8WorkerContextEventListener::V8WorkerContextEventListener):
+        * bindings/v8/V8WorkerContextEventListener.h:
+        (WebCore::V8WorkerContextEventListener::create):
+        * bindings/v8/WorkerContextExecutionProxy.cpp:
+        (WebCore::WorkerContextExecutionProxy::WorkerContextExecutionProxy):
+        (WebCore::WorkerContextExecutionProxy::dispose):
+        (WebCore::WorkerContextExecutionProxy::findOrCreateEventListener):
+        * bindings/v8/WorkerContextExecutionProxy.h:
+        * bindings/v8/custom/V8CustomEventListener.cpp:
+        (WebCore::V8EventListener::V8EventListener):
+        * bindings/v8/custom/V8CustomEventListener.h:
+        (WebCore::V8EventListener::create):
+
 2009-10-02  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Dimitri Glazkov.

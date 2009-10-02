@@ -33,13 +33,39 @@
 
 #include "EventListener.h"
 #include "OwnHandle.h"
-#include "V8Proxy.h"
+#include "SharedPersistent.h"
 #include <v8.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
     class Event;
     class Frame;
+    class V8Proxy;
+
+    // Shared by listener objects and V8Proxy so that V8Proxy can
+    // silence listeners when needed.
+    class V8ListenerGuard : public RefCounted<V8ListenerGuard> {
+      public:
+        static PassRefPtr<V8ListenerGuard> create()
+        {
+            return adoptRef(new V8ListenerGuard);
+        }
+
+        bool isDisconnected() const { return m_disconnected; }
+
+        void disconnectListeners()
+        {
+            m_disconnected = true;
+        }
+
+      private:
+        V8ListenerGuard()
+            : m_disconnected(false) { }
+
+        bool m_disconnected;
+    };
 
     // There are two kinds of event listeners: HTML or non-HMTL. onload,
     // onfocus, etc (attributes) are always HTML event handler type; Event
@@ -99,10 +125,10 @@ namespace WebCore {
         // Detach the listener from its owner frame.
         void disconnectFrame() { m_frame = 0; }
 
-        virtual bool disconnected() const { return !m_frame; }
+        virtual bool disconnected() const { return m_guard && m_guard->isDisconnected(); }
 
     protected:
-        V8AbstractEventListener(Frame*, bool isAttribute);
+        V8AbstractEventListener(Frame*, PassRefPtr<V8ListenerGuard>, bool isAttribute);
 
         virtual void prepareListenerObject() { }
 
@@ -134,6 +160,7 @@ namespace WebCore {
         // FIXME: this could hold m_frame live until the event listener is deleted.
         Frame* m_frame;
         RefPtr<SharedPersistent<v8::Context> > m_context;
+        RefPtr<V8ListenerGuard> m_guard;
 
         // Position in the HTML source for HTML event listeners.
         int m_lineNumber;

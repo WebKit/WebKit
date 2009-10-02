@@ -55,7 +55,7 @@ namespace WebCore {
         }
 
         template<typename WrapperType, typename ContextType>
-        static PassRefPtr<V8EventListener> findOrCreateWrapper(ContextType*, v8::Local<v8::Value>, bool isAttribute);
+        static PassRefPtr<V8EventListener> findOrCreateWrapper(ContextType*, PassRefPtr<V8ListenerGuard>, v8::Local<v8::Value>, bool isAttribute);
 
         static void clearWrapper(v8::Handle<v8::Object> listenerObject, bool isAttribute)
         {
@@ -81,7 +81,7 @@ namespace WebCore {
     };
 
     template<typename WrapperType, typename ContextType>
-    PassRefPtr<V8EventListener> V8EventListenerList::findOrCreateWrapper(ContextType* context, v8::Local<v8::Value> value, bool isAttribute)
+    PassRefPtr<V8EventListener> V8EventListenerList::findOrCreateWrapper(ContextType* context, PassRefPtr<V8ListenerGuard> guard, v8::Local<v8::Value> value, bool isAttribute)
     {
         ASSERT(v8::Context::InContext());
         if (!value->IsObject())
@@ -94,7 +94,7 @@ namespace WebCore {
         if (wrapper)
             return wrapper;
 
-        PassRefPtr<V8EventListener> wrapperPtr = WrapperType::create(context, object, isAttribute);
+        PassRefPtr<V8EventListener> wrapperPtr = WrapperType::create(context, guard, object, isAttribute);
         if (wrapperPtr)
             object->SetHiddenValue(wrapperProperty, v8::External::Wrap(wrapperPtr.get()));
 

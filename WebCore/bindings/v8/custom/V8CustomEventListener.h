@@ -44,13 +44,13 @@ namespace WebCore {
     // that can handle the event.
     class V8EventListener : public V8AbstractEventListener {
     public:
-        static PassRefPtr<V8EventListener> create(Frame* frame, v8::Local<v8::Object> listener, bool isAttribute)
+        static PassRefPtr<V8EventListener> create(Frame* frame, PassRefPtr<V8ListenerGuard> guard, v8::Local<v8::Object> listener, bool isAttribute)
         {
-            return adoptRef(new V8EventListener(frame, listener, isAttribute));
+            return adoptRef(new V8EventListener(frame, guard, listener, isAttribute));
         }
 
     protected:
-        V8EventListener(Frame*, v8::Local<v8::Object> listener, bool isAttribute);
+        V8EventListener(Frame*, PassRefPtr<V8ListenerGuard>, v8::Local<v8::Object> listener, bool isAttribute);
 
         v8::Local<v8::Function> getListenerFunction();
 

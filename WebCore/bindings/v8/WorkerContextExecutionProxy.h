@@ -110,6 +110,7 @@ namespace WebCore {
         WorkerContext* m_workerContext;
         v8::Persistent<v8::Context> m_context;
         int m_recursion;
+        RefPtr<V8ListenerGuard> m_listenerGuard;
 
         Vector<Event*> m_events;
     };

@@ -38,7 +38,7 @@
 namespace WebCore {
 
 V8LazyEventListener::V8LazyEventListener(Frame* frame, const String& code, const String& functionName, bool isSVGEvent)
-    : V8AbstractEventListener(frame, true)
+    : V8AbstractEventListener(frame, 0, true)
     , m_code(code)
     , m_functionName(functionName)
     , m_isSVGEvent(isSVGEvent)
