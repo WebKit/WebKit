@@ -83,12 +83,12 @@ void XSLStyleSheet::loadChildSheets()
     notImplemented();
 }
 
-void XSLStyleSheet::loadChildSheet(const String& href)
+void XSLStyleSheet::loadChildSheet(const String&)
 {
     notImplemented();
 }
 
-void XSLStyleSheet::setParentStyleSheet(XSLStyleSheet* parent)
+void XSLStyleSheet::setParentStyleSheet(XSLStyleSheet*)
 {
     notImplemented();
 }

@@ -860,7 +860,7 @@ void GraphicsContext::drawFocusRing(const Color& color)
     p->setRenderHint(QPainter::Antialiasing, antiAlias);
 }
 
-void GraphicsContext::drawLineForText(const IntPoint& origin, int width, bool printing)
+void GraphicsContext::drawLineForText(const IntPoint& origin, int width, bool)
 {
     if (paintingDisabled())
         return;
@@ -869,8 +869,7 @@ void GraphicsContext::drawLineForText(const IntPoint& origin, int width, bool pr
     drawLine(origin, endPoint);
 }
 
-void GraphicsContext::drawLineForMisspellingOrBadGrammar(const IntPoint&,
-                                                         int width, bool grammar)
+void GraphicsContext::drawLineForMisspellingOrBadGrammar(const IntPoint&, int, bool)
 {
     if (paintingDisabled())
         return;
@@ -887,7 +886,7 @@ FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& frect)
     return FloatRect(QRectF(result));
 }
 
-void GraphicsContext::setPlatformShadow(const IntSize& size, int blur, const Color &color)
+void GraphicsContext::setPlatformShadow(const IntSize& size, int, const Color&)
 {
     // Qt doesn't support shadows natively, they are drawn manually in the draw*
     // functions
@@ -1198,7 +1197,7 @@ void GraphicsContext::concatCTM(const TransformationMatrix& transform)
     }
 }
 
-void GraphicsContext::setURLForRect(const KURL& link, const IntRect& destRect)
+void GraphicsContext::setURLForRect(const KURL&, const IntRect&)
 {
     notImplemented();
 }

@@ -282,9 +282,7 @@ void FrameLoaderClientQt::dispatchDidCancelClientRedirect()
 }
 
 
-void FrameLoaderClientQt::dispatchWillPerformClientRedirect(const KURL& url,
-                                                            double interval,
-                                                            double fireDate)
+void FrameLoaderClientQt::dispatchWillPerformClientRedirect(const KURL& url, double, double)
 {
     if (dumpFrameLoaderCallbacks)
         printf("%s - willPerformClientRedirectToURL: %s \n", qPrintable(drtDescriptionSuitableForTestResult(m_frame)), qPrintable(drtDescriptionSuitableForTestResult(url)));
@@ -464,7 +462,7 @@ void FrameLoaderClientQt::postProgressFinishedNotification()
         emit loadFinished(m_loadError.isNull());
 }
 
-void FrameLoaderClientQt::setMainFrameDocumentReady(bool b)
+void FrameLoaderClientQt::setMainFrameDocumentReady(bool)
 {
     // this is only interesting once we provide an external API for the DOM
 }
@@ -514,13 +512,13 @@ bool FrameLoaderClientQt::canShowMIMEType(const String& MIMEType) const
     return false;
 }
 
-bool FrameLoaderClientQt::representationExistsForURLScheme(const String& URLScheme) const
+bool FrameLoaderClientQt::representationExistsForURLScheme(const String&) const
 {
     return false;
 }
 
 
-String FrameLoaderClientQt::generatedMIMETypeForURLScheme(const String& URLScheme) const
+String FrameLoaderClientQt::generatedMIMETypeForURLScheme(const String&) const
 {
     notImplemented();
     return String();
@@ -632,7 +630,7 @@ void FrameLoaderClientQt::updateGlobalHistoryRedirectLinks()
 {
 }
 
-bool FrameLoaderClientQt::shouldGoToHistoryItem(WebCore::HistoryItem *item) const
+bool FrameLoaderClientQt::shouldGoToHistoryItem(WebCore::HistoryItem *) const
 {
     return true;
 }
@@ -750,7 +748,7 @@ WebCore::ResourceError FrameLoaderClientQt::fileDoesNotExistError(const WebCore:
             QCoreApplication::translate("QWebFrame", "File does not exist", 0, QCoreApplication::UnicodeUTF8));
 }
 
-WebCore::ResourceError FrameLoaderClientQt::pluginWillHandleLoadError(const WebCore::ResourceResponse& response)
+WebCore::ResourceError FrameLoaderClientQt::pluginWillHandleLoadError(const WebCore::ResourceResponse&)
 {
     notImplemented();
     return ResourceError();
@@ -788,7 +786,7 @@ void FrameLoaderClientQt::download(WebCore::ResourceHandle* handle, const WebCor
 #endif
 }
 
-void FrameLoaderClientQt::assignIdentifierToInitialRequest(unsigned long identifier, WebCore::DocumentLoader* loader, const WebCore::ResourceRequest& request)
+void FrameLoaderClientQt::assignIdentifierToInitialRequest(unsigned long identifier, WebCore::DocumentLoader*, const WebCore::ResourceRequest& request)
 {
     if (dumpResourceLoadCallbacks)
         dumpAssignedUrls[identifier] = drtDescriptionSuitableForTestResult(request.url());
@@ -835,7 +833,7 @@ void FrameLoaderClientQt::dispatchDidReceiveContentLength(WebCore::DocumentLoade
 {
 }
 
-void FrameLoaderClientQt::dispatchDidFinishLoading(WebCore::DocumentLoader* loader, unsigned long)
+void FrameLoaderClientQt::dispatchDidFinishLoading(WebCore::DocumentLoader*, unsigned long)
 {
 }
 
@@ -1207,8 +1205,8 @@ void FrameLoaderClientQt::redirectDataToPlugin(Widget* pluginWidget)
     m_hasSentResponseToPlugin = false;
 }
 
-PassRefPtr<Widget> FrameLoaderClientQt::createJavaAppletWidget(const IntSize&, HTMLAppletElement*, const KURL& baseURL,
-                                                    const Vector<String>& paramNames, const Vector<String>& paramValues)
+PassRefPtr<Widget> FrameLoaderClientQt::createJavaAppletWidget(const IntSize&, HTMLAppletElement*, const KURL&,
+                                                    const Vector<String>&, const Vector<String>&)
 {
     notImplemented();
     return 0;

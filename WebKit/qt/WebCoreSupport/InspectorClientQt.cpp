@@ -138,12 +138,12 @@ void InspectorClientQt::detachWindow()
     notImplemented();
 }
 
-void InspectorClientQt::setAttachedWindowHeight(unsigned height)
+void InspectorClientQt::setAttachedWindowHeight(unsigned)
 {
     notImplemented();
 }
 
-void InspectorClientQt::highlight(Node* node)
+void InspectorClientQt::highlight(Node*)
 {
     notImplemented();
 }
@@ -205,7 +205,7 @@ void InspectorClientQt::storeSetting(const String& key, const InspectorControlle
     qsettings.setValue(settingKey + settingStorageTypeSuffix, QVariant::typeToName(valueToStore.type()));
 }
 
-void InspectorClientQt::removeSetting(const String& key)
+void InspectorClientQt::removeSetting(const String&)
 {
     notImplemented();
 }

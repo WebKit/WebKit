@@ -147,7 +147,7 @@ void MediaPlayerPrivate::getSupportedTypes(HashSet<String>&)
     notImplemented();
 }
 
-MediaPlayer::SupportsType MediaPlayerPrivate::supportsType(const String& type, const String& codecs)
+MediaPlayer::SupportsType MediaPlayerPrivate::supportsType(const String&, const String&)
 {
     // FIXME: do the real thing
     notImplemented();
@@ -256,7 +256,7 @@ float MediaPlayerPrivate::currentTime() const
     return currentTime;
 }
 
-void MediaPlayerPrivate::setEndTime(float endTime)
+void MediaPlayerPrivate::setEndTime(float)
 {
     notImplemented();
 }

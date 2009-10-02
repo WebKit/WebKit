@@ -1,3 +1,11 @@
+2009-10-02  Prasanth Ullattil  <prasanth.ullattil@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Disable a few more harmless MSVC warnings.
+
+        * WebKit.pri:
+
 2009-10-01  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Unreviewed, build fix.

@@ -26,7 +26,7 @@
 
 QT_BEGIN_NAMESPACE
 class QObject;
-class QMetaObject;
+struct QMetaObject;
 QT_END_NAMESPACE
 
 namespace JSC {

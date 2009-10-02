@@ -1,3 +1,71 @@
+2009-10-02  Prasanth Ullattil  <prasanth.ullattil@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Fix compiler warnings about unused function arguments.
+
+        * bridge/qt/qt_class.h:
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::QtRuntimeMetaMethod::call):
+        (JSC::Bindings::QtRuntimeConnectionMethod::call):
+        * dom/XMLTokenizerQt.cpp:
+        (WebCore::XMLTokenizer::initializeParserContext):
+        * platform/graphics/qt/FontCacheQt.cpp:
+        (WebCore::FontCache::getTraitsInFamily):
+        (WebCore::FontCache::getCachedFontPlatformData):
+        * platform/graphics/qt/FontFallbackListQt.cpp:
+        (WebCore::FontFallbackList::setPlatformFont):
+        * platform/graphics/qt/FontQt.cpp:
+        (WebCore::Font::offsetForPositionForComplexText):
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::drawLineForText):
+        (WebCore::GraphicsContext::drawLineForMisspellingOrBadGrammar):
+        (WebCore::GraphicsContext::setPlatformShadow):
+        (WebCore::GraphicsContext::setURLForRect):
+        * platform/graphics/qt/IconQt.cpp:
+        (WebCore::Icon::createIconForFiles):
+        * platform/graphics/qt/ImageBufferQt.cpp:
+        (WebCore::ImageBuffer::ImageBuffer):
+        * platform/graphics/qt/ImageDecoderQt.cpp:
+        (WebCore::ImageDecoderQt::frameBufferAtIndex):
+        * platform/graphics/qt/MediaPlayerPrivatePhonon.cpp:
+        (WebCore::MediaPlayerPrivate::supportsType):
+        (WebCore::MediaPlayerPrivate::setEndTime):
+        * platform/graphics/qt/SimpleFontDataQt.cpp:
+        (WebCore::SimpleFontData::containsCharacters):
+        * platform/graphics/qt/StillImageQt.h:
+        (WebCore::StillImage::destroyDecodedData):
+        * platform/network/qt/DnsPrefetchHelper.h:
+        (WebCore::DnsPrefetchHelper::lookedUp):
+        * platform/qt/ContextMenuQt.cpp:
+        (WebCore::ContextMenu::setPlatformDescription):
+        * platform/qt/DragDataQt.cpp:
+        (WebCore::DragData::asURL):
+        * platform/qt/PopupMenuQt.cpp:
+        (WebCore::PopupMenu::populate):
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::supportsFocusRing):
+        (WebCore::RenderThemeQt::systemFont):
+        (WebCore::RenderThemeQt::adjustButtonStyle):
+        (WebCore::RenderThemeQt::adjustMenuListButtonStyle):
+        (WebCore::RenderThemeQt::paintMediaSeekBackButton):
+        (WebCore::RenderThemeQt::paintMediaSeekForwardButton):
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::platformAddChild):
+        * platform/qt/SearchPopupMenuQt.cpp:
+        (WebCore::SearchPopupMenu::saveRecentSearches):
+        (WebCore::SearchPopupMenu::loadRecentSearches):
+        * platform/qt/TemporaryLinkStubs.cpp:
+        (WebCore::signedPublicKeyAndChallengeString):
+        * platform/qt/WidgetQt.cpp:
+        (WebCore::Widget::paint):
+        * xml/XSLStyleSheetQt.cpp:
+        (WebCore::XSLStyleSheet::loadChildSheet):
+        (WebCore::XSLStyleSheet::setParentStyleSheet):
+        * xml/XSLTProcessorQt.cpp:
+        (WebCore::XSLTMessageHandler::handleMessage):
+        (WebCore::XSLTProcessor::transformToString):
+
 2009-10-02  Ben Murdoch  <benm@google.com>
 
         Reviewed by David Kilzer.

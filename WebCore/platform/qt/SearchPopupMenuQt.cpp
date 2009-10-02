@@ -29,11 +29,11 @@ SearchPopupMenu::SearchPopupMenu(PopupMenuClient* client)
 {
 }
 
-void SearchPopupMenu::saveRecentSearches(const AtomicString& name, const Vector<String>& searchItems)
+void SearchPopupMenu::saveRecentSearches(const AtomicString&, const Vector<String>&)
 {
 }
 
-void SearchPopupMenu::loadRecentSearches(const AtomicString& name, Vector<String>& searchItems)
+void SearchPopupMenu::loadRecentSearches(const AtomicString&, Vector<String>&)
 {
 }
 

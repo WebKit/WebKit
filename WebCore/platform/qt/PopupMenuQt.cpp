@@ -60,7 +60,7 @@ void PopupMenu::clear()
     m_popup->clear();
 }
 
-void PopupMenu::populate(const IntRect& r)
+void PopupMenu::populate(const IntRect&)
 {
     clear();
     Q_ASSERT(client());

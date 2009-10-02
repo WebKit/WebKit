@@ -172,7 +172,7 @@ bool RenderThemeQt::supportsHover(const RenderStyle*) const
     return true;
 }
 
-bool RenderThemeQt::supportsFocusRing(const RenderStyle* style) const
+bool RenderThemeQt::supportsFocusRing(const RenderStyle*) const
 {
     return true; // Qt provides this through the style
 }
@@ -274,7 +274,7 @@ Color RenderThemeQt::platformInactiveSelectionForegroundColor() const
     return pal.brush(QPalette::Inactive, QPalette::HighlightedText).color();
 }
 
-void RenderThemeQt::systemFont(int propId, FontDescription& fontDescription) const
+void RenderThemeQt::systemFont(int, FontDescription&) const
 {
     // no-op
 }
@@ -387,7 +387,7 @@ bool RenderThemeQt::paintRadio(RenderObject* o, const RenderObject::PaintInfo& i
     return paintButton(o, i, r);
 }
 
-void RenderThemeQt::adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+void RenderThemeQt::adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* style, Element*) const
 {
     // Ditch the border.
     style->resetBorder();
@@ -584,8 +584,7 @@ bool RenderThemeQt::paintMenuList(RenderObject* o, const RenderObject::PaintInfo
     return false;
 }
 
-void RenderThemeQt::adjustMenuListButtonStyle(CSSStyleSelector* selector, RenderStyle* style,
-                                              Element* e) const
+void RenderThemeQt::adjustMenuListButtonStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
 {
     // WORKAROUND because html.css specifies -webkit-border-radius for <select> so we override it here
     // see also http://bugs.webkit.org/show_bug.cgi?id=18399
@@ -887,13 +886,13 @@ bool RenderThemeQt::paintMediaPlayButton(RenderObject* o, const RenderObject::Pa
     return false;
 }
 
-bool RenderThemeQt::paintMediaSeekBackButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeQt::paintMediaSeekBackButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&)
 {
     // We don't want to paint this at the moment.
     return false;
 }
 
-bool RenderThemeQt::paintMediaSeekForwardButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeQt::paintMediaSeekForwardButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&)
 {
     // We don't want to paint this at the moment.
     return false;

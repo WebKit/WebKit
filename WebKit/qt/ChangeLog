@@ -1,3 +1,42 @@
+2009-10-02  Prasanth Ullattil  <prasanth.ullattil@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Fix compiler warnings about unused function arguments.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::scrollBarMinimum):
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::focusInEvent):
+        (QWebPagePrivate::focusOutEvent):
+        (QWebPagePrivate::leaveEvent):
+        (QWebPage::javaScriptAlert):
+        (QWebPage::javaScriptConfirm):
+        (QWebPage::javaScriptPrompt):
+        (QWebPage::triggerAction):
+        (QWebPage::acceptNavigationRequest):
+        (QWebPage::chooseFile):
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::repaint):
+        (WebCore::ChromeClientQt::mouseDidMoveOverElement):
+        (WebCore::ChromeClientQt::reachedMaxAppCacheSize):
+        * WebCoreSupport/ContextMenuClientQt.cpp:
+        (WebCore::ContextMenuClientQt::downloadURL):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::dispatchWillPerformClientRedirect):
+        (WebCore::FrameLoaderClientQt::setMainFrameDocumentReady):
+        (WebCore::FrameLoaderClientQt::representationExistsForURLScheme):
+        (WebCore::FrameLoaderClientQt::generatedMIMETypeForURLScheme):
+        (WebCore::FrameLoaderClientQt::shouldGoToHistoryItem):
+        (WebCore::FrameLoaderClientQt::pluginWillHandleLoadError):
+        (WebCore::FrameLoaderClientQt::assignIdentifierToInitialRequest):
+        (WebCore::FrameLoaderClientQt::dispatchDidFinishLoading):
+        (WebCore::FrameLoaderClientQt::createJavaAppletWidget):
+        * WebCoreSupport/InspectorClientQt.cpp:
+        (WebCore::InspectorClientQt::setAttachedWindowHeight):
+        (WebCore::InspectorClientQt::highlight):
+        (WebCore::InspectorClientQt::removeSetting):
+
 2009-10-01  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Tor Arne Vestbø.

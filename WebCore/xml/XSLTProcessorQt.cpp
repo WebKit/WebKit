@@ -60,7 +60,7 @@ XSLTMessageHandler::XSLTMessageHandler(Document* document)
 }
 
 void XSLTMessageHandler::handleMessage(QtMsgType type, const QString& description,
-                                       const QUrl& identifier, const QSourceLocation& sourceLocation)
+                                       const QUrl&, const QSourceLocation& sourceLocation)
 {
     if (!m_document->frame())
         return;
@@ -87,7 +87,7 @@ void XSLTMessageHandler::handleMessage(QtMsgType type, const QString& descriptio
                         sourceLocation.line(), sourceLocation.uri().toString());
 }
 
-bool XSLTProcessor::transformToString(Node* sourceNode, String& mimeType, String& resultString, String& resultEncoding)
+bool XSLTProcessor::transformToString(Node* sourceNode, String&, String& resultString, String&)
 {
     bool success = false;
 

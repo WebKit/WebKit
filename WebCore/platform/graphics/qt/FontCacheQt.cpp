@@ -48,7 +48,7 @@ FontCache::FontCache()
 {
 }
 
-void FontCache::getTraitsInFamily(const AtomicString& familyName, Vector<unsigned>& traitsMasks)
+void FontCache::getTraitsInFamily(const AtomicString&, Vector<unsigned>&)
 {
 }
 
@@ -177,7 +177,7 @@ typedef HashMap<FontPlatformDataCacheKey, FontPlatformData*, FontPlatformDataCac
 // using Q_GLOBAL_STATIC leads to crash. TODO investigate the way to fix this.
 static FontPlatformDataCache* gFontPlatformDataCache = 0;
 
-FontPlatformData* FontCache::getCachedFontPlatformData(const FontDescription& description, const AtomicString& family, bool checkingAlternateName)
+FontPlatformData* FontCache::getCachedFontPlatformData(const FontDescription& description, const AtomicString&, bool)
 {
     if (!gFontPlatformDataCache)
         gFontPlatformDataCache = new FontPlatformDataCache;

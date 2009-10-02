@@ -47,7 +47,7 @@ PassRefPtr<Icon> Icon::createIconForFile(const String& filename)
     return i.release();
 }
 
-PassRefPtr<Icon> Icon::createIconForFiles(const Vector<String>& filenames)
+PassRefPtr<Icon> Icon::createIconForFiles(const Vector<String>&)
 {
     //FIXME: Implement this
     return 0;

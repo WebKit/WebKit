@@ -56,7 +56,7 @@ namespace WebCore {
             }
         }
 
-        void lookedUp(const QHostInfo &host)
+        void lookedUp(const QHostInfo&)
         {
             // we do not cache the result, we throw it away.
             // we currently rely on the OS to cache the results. If it does not do that

@@ -33,7 +33,7 @@ void SimpleFontData::determinePitch()
     m_treatAsFixedPitch = m_platformData.font().fixedPitch();
 }
 
-bool SimpleFontData::containsCharacters(const UChar*, int length) const
+bool SimpleFontData::containsCharacters(const UChar*, int) const
 {
     return true;
 }

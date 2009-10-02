@@ -53,7 +53,7 @@ void ScrollView::adjustWidgetsPreventingBlittingCount(int delta)
         parent()->adjustWidgetsPreventingBlittingCount(delta);
 }
 
-void ScrollView::platformAddChild(Widget* child)
+void ScrollView::platformAddChild(Widget*)
 {
     adjustWidgetsPreventingBlittingCount(1);
 }

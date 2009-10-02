@@ -876,6 +876,7 @@ int QWebFrame::scrollBarMaximum(Qt::Orientation orientation) const
 */
 int QWebFrame::scrollBarMinimum(Qt::Orientation orientation) const
 {
+    Q_UNUSED(orientation)
     return 0;
 }
 

@@ -51,7 +51,7 @@ symbian|*-armcc {
     RVCT_COMMON_CFLAGS = --gnu --diag_suppress 68,111,177,368,830,1293
     RVCT_COMMON_CXXFLAGS = $$RVCT_COMMON_CFLAGS --no_parse_templates
     DEFINES *= QT_NO_UITOOLS
-} 
+}
 
 *-armcc {
     QMAKE_CFLAGS += $$RVCT_COMMON_CFLAGS
@@ -66,7 +66,7 @@ contains(DEFINES, QT_NO_UITOOLS): CONFIG -= uitools
 
 # Disable a few warnings on Windows. The warnings are also
 # disabled in WebKitLibraries/win/tools/vsprops/common.vsprops
-win32-msvc*: QMAKE_CXXFLAGS += -wd4291 -wd4344 -wd4503 -wd4800 -wd4819 -wd4996
+win32-msvc*: QMAKE_CXXFLAGS += -wd4291 -wd4344 -wd4396 -wd4503 -wd4800 -wd4819 -wd4996
 
 #
 # For builds inside Qt we interpret the output rule and the input of each extra compiler manually

@@ -1339,7 +1339,7 @@ void QtRuntimeMetaMethod::markChildren(MarkStack& markStack)
         markStack.append(d->m_disconnect);
 }
 
-JSValue QtRuntimeMetaMethod::call(ExecState* exec, JSObject* functionObject, JSValue thisValue, const ArgList& args)
+JSValue QtRuntimeMetaMethod::call(ExecState* exec, JSObject* functionObject, JSValue, const ArgList& args)
 {
     QtRuntimeMetaMethodData* d = static_cast<QtRuntimeMetaMethod *>(functionObject)->d_func();
 
@@ -1437,7 +1437,7 @@ QtRuntimeConnectionMethod::QtRuntimeConnectionMethod(ExecState* exec, const Iden
     d->m_isConnect = isConnect;
 }
 
-JSValue QtRuntimeConnectionMethod::call(ExecState* exec, JSObject* functionObject, JSValue thisValue, const ArgList& args)
+JSValue QtRuntimeConnectionMethod::call(ExecState* exec, JSObject* functionObject, JSValue, const ArgList& args)
 {
     QtRuntimeConnectionMethodData* d = static_cast<QtRuntimeConnectionMethod *>(functionObject)->d_func();
 

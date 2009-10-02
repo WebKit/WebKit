@@ -61,7 +61,7 @@ void ContextMenu::insertItem(unsigned position, ContextMenuItem& item)
     m_items.insert(position, item);
 }
 
-void ContextMenu::setPlatformDescription(PlatformMenuDescription menu)
+void ContextMenu::setPlatformDescription(PlatformMenuDescription)
 {
     // doesn't make sense
 }

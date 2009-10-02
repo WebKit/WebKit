@@ -301,7 +301,7 @@ String ImageDecoderQt::filenameExtension() const
     return m_imageFormat;
 };
 
-RGBA32Buffer* ImageDecoderQt::frameBufferAtIndex(size_t index)
+RGBA32Buffer* ImageDecoderQt::frameBufferAtIndex(size_t)
 {
     Q_ASSERT("use imageAtIndex instead");
     return 0;

@@ -100,7 +100,7 @@ void getSupportedKeySizes(Vector<String>&)
     notImplemented();
 }
 
-String signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String &challengeString, const KURL &url)
+String signedPublicKeyAndChallengeString(unsigned, const String&, const KURL&)
 {
     return String();
 }

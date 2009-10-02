@@ -130,7 +130,7 @@ const FontData* FontFallbackList::fontDataForCharacters(const WebCore::Font* fon
     return primaryFontData(font);
 }
 
-void FontFallbackList::setPlatformFont(const WebCore::FontPlatformData& platformData)
+void FontFallbackList::setPlatformFont(const WebCore::FontPlatformData&)
 {
     m_familyIndex = cAllFamiliesScanned;
 }

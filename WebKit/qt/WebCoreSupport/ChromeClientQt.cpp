@@ -305,7 +305,7 @@ IntRect ChromeClientQt::windowResizerRect() const
     return IntRect();
 }
 
-void ChromeClientQt::repaint(const IntRect& windowRect, bool contentChanged, bool immediate, bool repaintContentOnly)
+void ChromeClientQt::repaint(const IntRect& windowRect, bool contentChanged, bool, bool)
 {
     // No double buffer, so only update the QWidget if content changed.
     if (contentChanged) {
@@ -351,7 +351,7 @@ void ChromeClientQt::contentsSizeChanged(Frame* frame, const IntSize& size) cons
     emit QWebFramePrivate::kit(frame)->contentsSizeChanged(size);
 }
 
-void ChromeClientQt::mouseDidMoveOverElement(const HitTestResult& result, unsigned modifierFlags)
+void ChromeClientQt::mouseDidMoveOverElement(const HitTestResult& result, unsigned)
 {
     TextDirection dir;
     if (result.absoluteLinkURL() != lastHoverURL
@@ -402,7 +402,7 @@ void ChromeClientQt::exceededDatabaseQuota(Frame* frame, const String& databaseN
 #endif
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
-void ChromeClientQt::reachedMaxAppCacheSize(int64_t spaceNeeded)
+void ChromeClientQt::reachedMaxAppCacheSize(int64_t)
 {
     // FIXME: Free some space.
     notImplemented();
