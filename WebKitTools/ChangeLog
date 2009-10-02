@@ -1,3 +1,21 @@
+2009-10-02  Jakub Wieczorek  <faw217@gmail.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Implement layoutTestController.overridePreference().
+        https://bugs.webkit.org/show_bug.cgi?id=29970
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::WebPage::WebPage):
+        (WebCore::WebPage::resetSettings):
+        (WebCore::DumpRenderTree::resetToConsistentStateBeforeTesting):
+        * DumpRenderTree/qt/jsobjects.cpp:
+        (LayoutTestController::reset):
+        (LayoutTestController::setPrivateBrowsingEnabled):
+        (LayoutTestController::setPopupBlockingEnabled):
+        (LayoutTestController::overridePreference):
+        * DumpRenderTree/qt/jsobjects.h:
+
 2009-10-01  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Oliver Hunt.
