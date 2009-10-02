@@ -17449,6 +17449,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\loader\RedirectScheduler.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\loader\RedirectScheduler.h"
+				>
+			</File>
+			<File
 				RelativePath="..\loader\Request.cpp"
 				>
 			</File>

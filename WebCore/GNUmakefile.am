@@ -1244,6 +1244,8 @@ webcore_sources += \
 	WebCore/loader/PluginDocument.h \
 	WebCore/loader/ProgressTracker.cpp \
 	WebCore/loader/ProgressTracker.h \
+	WebCore/loader/RedirectScheduler.cpp \
+	WebCore/loader/RedirectScheduler.h \
 	WebCore/loader/Request.cpp \
 	WebCore/loader/Request.h \
 	WebCore/loader/ResourceLoader.cpp \

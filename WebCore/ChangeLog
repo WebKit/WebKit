@@ -1,3 +1,42 @@
+2009-10-01  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Move RedirectScheduler to its own file
+        https://bugs.webkit.org/show_bug.cgi?id=29952
+
+        This change is purely code motion.
+
+        No behavior change.
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * loader/FrameLoader.cpp:
+        * loader/FrameLoader.h:
+        * loader/RedirectScheduler.cpp: Added.
+        (WebCore::ScheduledRedirection::):
+        (WebCore::ScheduledRedirection::ScheduledRedirection):
+        (WebCore::RedirectScheduler::RedirectScheduler):
+        (WebCore::RedirectScheduler::~RedirectScheduler):
+        (WebCore::RedirectScheduler::redirectScheduledDuringLoad):
+        (WebCore::RedirectScheduler::clear):
+        (WebCore::RedirectScheduler::scheduleRedirect):
+        (WebCore::RedirectScheduler::mustLockBackForwardList):
+        (WebCore::RedirectScheduler::scheduleLocationChange):
+        (WebCore::RedirectScheduler::scheduleFormSubmission):
+        (WebCore::RedirectScheduler::scheduleRefresh):
+        (WebCore::RedirectScheduler::locationChangePending):
+        (WebCore::RedirectScheduler::scheduleHistoryNavigation):
+        (WebCore::RedirectScheduler::timerFired):
+        (WebCore::RedirectScheduler::schedule):
+        (WebCore::RedirectScheduler::startTimer):
+        (WebCore::RedirectScheduler::cancel):
+        * loader/RedirectScheduler.h: Added.
+
 2009-10-02  Dave MacLachlan  <dmaclach@gmail.com>
 
         Reviewed by David Levin.
@@ -97,7 +136,7 @@
 
         * WebCore.xcodeproj/project.pbxproj:
 
-2009-10-01  Adam Barth  <abarth@webkit.org>
+2009-09-30  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.
 

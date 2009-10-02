@@ -1628,6 +1628,8 @@
             'loader/PluginDocument.h',
             'loader/ProgressTracker.cpp',
             'loader/ProgressTracker.h',
+            'loader/RedirectScheduler.cpp',
+            'loader/RedirectScheduler.h',
             'loader/Request.cpp',
             'loader/Request.h',
             'loader/ResourceLoader.cpp',
