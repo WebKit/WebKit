@@ -29,20 +29,11 @@ VERSIONPATH=$VERSIONPATH/include
 VERSIONFILE=$VERSIONPATH/autoversion.h
 mkdir -p "$VERSIONPATH"
 
-PRODUCTVERSION=`cat $SRCPATH/PRODUCTVERSION | sed -r 's/(.+?)[\r\n]*$/\1/'`
-MAJORVERSION=`echo "$PRODUCTVERSION" | sed 's/\([^\.]*\)\.\([^.]*\)\(\.\([^.]*\)\)\?/\1/'`
-MINORVERSION=`echo "$PRODUCTVERSION" | sed 's/\([^\.]*\)\.\([^.]*\)\(\.\([^.]*\)\)\?/\2/'`
-TINYVERSION=`echo "$PRODUCTVERSION" | sed 's/\([^\.]*\)\.\([^.]*\)\(\.\([^.]*\)\)\?/\4/'`
-if [ "$TINYVERSION" == "" ]; then
-    TINYVERSION=0
-fi
-
 if [ "$RC_PROJECTSOURCEVERSION" == "" ]; then
-    PROPOSEDVERSION=`cat $SRCPATH/VERSION`
+    PROPOSEDVERSION=$(cat "$SRCPATH/VERSION")
 else
     PROPOSEDVERSION="$RC_PROJECTSOURCEVERSION"
 fi
-PROPOSEDVERSION=`echo "$PROPOSEDVERSION" | sed -r 's/(.+?)[\r\n]*$/\1/'`
 
 BLDMAJORVERSION=`echo "$PROPOSEDVERSION" | sed 's/\([^\.]*\)\(\.\([^.]*\)\(\.\([^.]*\)\)\?\)\?/\1/'`
 BLDMINORVERSION=`echo "$PROPOSEDVERSION" | sed 's/\([^\.]*\)\(\.\([^.]*\)\(\.\([^.]*\)\)\?\)\?/\3/'`
@@ -53,25 +44,34 @@ fi
 if [ "$BLDVARIANTVERSION" == "" ]; then
     BLDVARIANTVERSION=0
 fi
-SVNOPENSOURCEREVISION=`svn info | grep '^Revision' | sed -r 's/^Revision: (.+?)[\r\n]*$/\1/'`
+SVNOPENSOURCEREVISION=`svn info | grep '^Revision' | sed 's/^Revision: \(.*\)/\1/'`
+
+MAJORVERSION=`echo "$PROPOSEDVERSION" | sed 's/\(.\)[^\.]*\(\.\([^.]*\)\(\.\([^.]*\)\)\?\)\?/\1/'`
+MINORVERSION=`echo "$PROPOSEDVERSION" | sed 's/.\([^\.]*\)\(\.\([^.]*\)\(\.\([^.]*\)\)\?\)\?/\1/'`
+TINYVERSION=`echo "$PROPOSEDVERSION" | sed 's/\([^\.]*\)\(\.\([^.]*\)\(\.\([^.]*\)\)\?\)\?/\3/'`
+if [ "$MINORVERSION" == "" ]; then
+    MINORVERSION=0
+fi
+if [ "$TINYVERSION" == "" ]; then
+    TINYVERSION=0
+fi
 
 BLDNMBR="$PROPOSEDVERSION"
 BLDNMBRSHORT="$BLDNMBR"
 
 if [ "$RC_PROJECTSOURCEVERSION" == "" ]; then
     BLDNMBRSHORT="$BLDNMBRSHORT+"
-    BLDUSERNAME=`echo "$(whoami)" | sed -r 's/(.+?)[\r\n]*$/\1/'`
-    BLDDATE=`echo "$(date)" | sed -r 's/(.+?)[\r\n]*$/\1/'`
-    BLDNMBR="$BLDNMBRSHORT $BLDUSERNAME - $BLDDATE - r$SVNOPENSOURCEREVISION"
+    BLDNMBR="$BLDNMBRSHORT $(whoami) - $(date) - r$SVNOPENSOURCEREVISION"
 fi
 
 cat > "$VERSIONFILE" <<EOF
-#define __VERSION_TEXT__ "$PRODUCTVERSION ($BLDNMBR)"
+#define __VERSION_TEXT__ "$BLDNMBR"
 #define __BUILD_NUMBER__ "$BLDNMBR"
 #define __BUILD_NUMBER_SHORT__ "$BLDNMBRSHORT"
 #define __VERSION_MAJOR__ $MAJORVERSION
 #define __VERSION_MINOR__ $MINORVERSION
 #define __VERSION_TINY__ $TINYVERSION
+#define __VERSION_BUILD__ $BLDVARIANTVERSION
 #define __BUILD_NUMBER_MAJOR__ $BLDMAJORVERSION
 #define __BUILD_NUMBER_MINOR__ $BLDMINORVERSION
 #define __BUILD_NUMBER_VARIANT__ $BLDVARIANTVERSION

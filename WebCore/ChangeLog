@@ -1,3 +1,16 @@
+2009-10-02  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        <https://bugs.webkit.org/show_bug.cgi?id=29989>
+        Safari version number shouldn't be exposed in WebKit code
+        
+        For a WebKit version of 532.3.4:
+        Product version is: 5.32.3.4 (was 4.0.3.0)
+        File version is: 5.32.3.4 (was 4.532.3.4)
+
+        * WebCore.vcproj/QTMovieWin.rc:
+
 2009-10-02  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by Dimitri Glazkov.
