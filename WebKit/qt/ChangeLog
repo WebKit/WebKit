@@ -1,3 +1,13 @@
+2009-10-02  Norbert Leser  <norbert.leser@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Conditionally guard cursor code (cursor and updateCursor functions) with !QT_NO_CURSOR.
+        Otherwise, it is inconsistent with class declaration of QCursor.
+
+        * Api/qgraphicswebview.cpp:
+        * Api/qwebview.cpp:
+
 2009-10-02  Prasanth Ullattil  <prasanth.ullattil@nokia.com>
 
         Reviewed by Simon Hausmann.

@@ -48,8 +48,10 @@ public:
     virtual void scroll(int dx, int dy, const QRect&);
     virtual void update(const QRect& dirtyRect);
 
+#ifndef QT_NO_CURSOR
     virtual QCursor cursor() const;
     virtual void updateCursor(const QCursor& cursor);
+#endif
 
     virtual int screenNumber() const;
     virtual WId winId() const;
@@ -72,6 +74,7 @@ void QWebViewPrivate::update(const QRect & dirtyRect)
     view->update(dirtyRect);
 }
 
+#ifndef QT_NO_CURSOR
 QCursor QWebViewPrivate::cursor() const
 {
     return view->cursor();
@@ -81,6 +84,7 @@ void QWebViewPrivate::updateCursor(const QCursor& cursor)
 {
     view->setCursor(cursor);
 }
+#endif
 
 int QWebViewPrivate::screenNumber() const
 {

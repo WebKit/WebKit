@@ -35,28 +35,36 @@ public:
 
     inline void resetCursor()
     {
+#ifndef QT_NO_CURSOR
         if (!cursor().bitmap() && cursor().shape() == m_lastCursor.shape())
             return;
         updateCursor(m_lastCursor);
+#endif
     }
 
     inline void setCursor(const QCursor& cursor)
     {
+#ifndef QT_NO_CURSOR
         m_lastCursor = cursor;
         if (!cursor.bitmap() && cursor.shape() == this->cursor().shape())
             return;
         updateCursor(cursor);
+#endif
     }
 
     virtual int screenNumber() const = 0;
     virtual WId winId() const = 0;
 
 protected:
+#ifndef QT_NO_CURSOR
     virtual QCursor cursor() const = 0;
     virtual void updateCursor(const QCursor& cursor) = 0;
+#endif
 
 private:
+#ifndef QT_NO_CURSOR
     QCursor m_lastCursor;
+#endif
 };
 
 #endif
