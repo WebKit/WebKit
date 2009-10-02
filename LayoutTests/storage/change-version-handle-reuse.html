@@ -1,0 +1,71 @@
+<html> 
+<head>
+<script> 
+function log(message)
+{
+    document.getElementById("result").innerText += message + "\n";
+}
+
+function finishTest()
+{
+    log("TEST COMPLETE.");
+
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+function runTest()
+{
+    if (window.layoutTestController) {
+        layoutTestController.waitUntilDone();
+        layoutTestController.dumpAsText();
+    }
+ 
+    document.getElementById("result").innerText = "";
+ 
+    try {
+        db = openDatabase("ChangeVersion", "", "Test that changing a database version doesn\'t kill our handle to it", 1);
+        var version = db.version;
+        var newVersion = version ? (parseInt(version) + 1).toString() : "1"; 
+        db.changeVersion(version, newVersion, function(tx) {
+            log("changeVersion: transaction callback");
+        }, function(error) {
+            log("changeVersion: error callback: " + error.message);
+        }, function() {
+            log("changeVersion: success callback");
+        });
+        
+        setTimeout(runTest2, 1000);
+        
+    } catch (e) {
+        log("changeVersion exception: " + e);
+        finishTest();
+    }
+}
+ 
+function runTest2()
+{
+    try {
+        db.transaction(function(tx) {
+            tx.executeSql("SELECT * from FooBar", [], function(tx) {
+                log("transaction: statement callback");
+                finishTest();
+            }, function(tx, error) {
+                log("transaction: statement error callback: " + error.message);
+                finishTest();
+            });
+        });
+    } catch (e) {
+        log("transaction exception: " + e);
+        finishTest();
+    }
+}
+</script> 
+</head> 
+<body onload="runTest()"> 
+<div>This tests that a database can be accessed after changing its version. You should see an error about FooBar table below, not about mismatching versions. Also, reloading the page should not cause an assertion failure.
+<pre id="result"> 
+FAILURE: test didn't run.
+</pre> 
+</body> 
+</html>

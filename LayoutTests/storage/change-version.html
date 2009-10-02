@@ -1,0 +1,90 @@
+<html> 
+<head>
+<title>Test database.changeVersion</title>
+<script> 
+var db;
+var EXPECTED_VERSION_AFTER_HIXIE_TEST = '2';
+var EXPECTED_VERSION_AFTER_RELOAD = '3';
+ 
+function emptyFunction() { }
+ 
+function changeVersionCallback(tx)
+{
+    tx.executeSql("DROP table if exists info;", [], emptyFunction, emptyFunction);
+    tx.executeSql("CREATE table if not exists info (version INTEGER);", [], emptyFunction, emptyFunction);
+    tx.executeSql("INSERT into info values(?);", [EXPECTED_VERSION_AFTER_RELOAD], emptyFunction, emptyFunction);
+}
+ 
+function changeVersionSuccess()
+{
+    log("Successfully changed version to ' + db.version + '. Reloading.");
+    window.location.href = window.location + '?2';
+}
+ 
+function changeVersionError(error)
+{
+    log("Error: " + error.message);
+    finishTest();
+}
+
+function finishTest()
+{
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+    log("TEST COMPLETE");
+}
+
+function log(message)
+{
+    document.getElementById("console").innerText += message + "\n";
+}
+
+function runTest()
+{
+    if (window.location.search == "?2") {
+        db = window.openDatabase("changeversion-test", "", "Test for the database.changeVersion() function", 1024);
+        log("Finished tests with version " + db.version + "; expected version: " + EXPECTED_VERSION_AFTER_RELOAD);
+        finishTest();
+    } else
+        testPart1();
+}
+
+function testPart1() {
+    if (window.layoutTestController) {
+        layoutTestController.clearAllDatabases();
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+    
+    db = window.openDatabase("changeversion-test", "", "Test for the database.changeVersion() function", 1024);
+
+    if (db.version != EXPECTED_VERSION_AFTER_RELOAD) {
+        // First run Hixie's test to ensure basic changeVersion functionality works (see bug 28418).
+        db.changeVersion("", EXPECTED_VERSION_AFTER_HIXIE_TEST, emptyFunction, function (e) {
+            log('FAIL in changeVersion:' + e);
+            finishTest();
+        }, function () {
+            try {
+                var db2 = openDatabase("change-version-test", EXPECTED_VERSION_AFTER_HIXIE_TEST, "", 0);
+            } catch (e) {
+                log('FAIL in openDatabase: ' + e);
+                finishTest();
+            }
+            // The two database versions should match.
+            if (db.version == db2.version)
+                log("PASS: db.version(" + db.version + ") matches db2.version(" + db2.version +") as expected.");
+            else
+                log("FAIL: db.version(" + db.version + ") does not match db2.version(" + db2.version +")");
+
+            // Now try a test to ensure the version persists after reloading (see bug 27836)
+            db.changeVersion(EXPECTED_VERSION_AFTER_HIXIE_TEST, EXPECTED_VERSION_AFTER_RELOAD, changeVersionCallback, changeVersionError, changeVersionSuccess);
+        });
+    }
+}
+</script>
+</head>
+<body onload="runTest();">
+This test verifies that the JS database.changeVersion() function works as expected.
+<pre id="console"></pre>
+</body>
+</html>

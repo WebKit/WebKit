@@ -1,0 +1,6 @@
+This tests that a database can be accessed after changing its version. You should see an error about FooBar table below, not about mismatching versions. Also, reloading the page should not cause an assertion failure.
+changeVersion: transaction callback
+changeVersion: success callback
+transaction: statement error callback: no such table: FooBar
+TEST COMPLETE.
+

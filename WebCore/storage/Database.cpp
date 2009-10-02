@@ -89,6 +89,19 @@ static GuidVersionMap& guidToVersionMap()
     return map;
 }
 
+// NOTE: Caller must lock guidMutex().
+static inline void updateGuidVersionMap(int guid, String newVersion)
+{
+    // Note: It is not safe to put an empty string into the guidToVersionMap() map.
+    // That's because the map is cross-thread, but empty strings are per-thread.
+    // The copy() function makes a version of the string you can use on the current
+    // thread, but we need a string we can keep in a cross-thread data structure.
+    // FIXME: This is a quite-awkward restriction to have to program with.
+
+    // Map null string to empty string (see comment above).
+    guidToVersionMap().set(guid, newVersion.isEmpty() ? String() : newVersion.copy());
+}
+
 typedef HashMap<int, HashSet<Database*>*> GuidDatabaseMap;
 static GuidDatabaseMap& guidToDatabaseMap()
 {
@@ -177,20 +190,6 @@ Database::Database(Document* document, const String& name, const String& expecte
 
 Database::~Database()
 {
-    {
-        MutexLocker locker(guidMutex());
-
-        HashSet<Database*>* hashSet = guidToDatabaseMap().get(m_guid);
-        ASSERT(hashSet);
-        ASSERT(hashSet->contains(this));
-        hashSet->remove(this);
-        if (hashSet->isEmpty()) {
-            guidToDatabaseMap().remove(m_guid);
-            delete hashSet;
-            guidToVersionMap().remove(m_guid);
-        }
-    }
-
     if (m_document->databaseThread())
         m_document->databaseThread()->unscheduleDatabaseTasks(this);
 
@@ -277,6 +276,8 @@ static bool setTextValueInDatabase(SQLiteDatabase& db, const String& query, cons
 
 bool Database::setVersionInDatabase(const String& version)
 {
+    // The INSERT will replace an existing entry for the database with the new version number, due to the UNIQUE ON CONFLICT REPLACE
+    // clause in the CREATE statement (see Database::performOpenAndVerify()).
     DEFINE_STATIC_LOCAL(String, setVersionQuery, ("INSERT INTO " + databaseInfoTableName() + " (key, value) VALUES ('" + databaseVersionKey() + "', ?);"));
 
     m_databaseAuthorizer->disable();
@@ -330,6 +331,20 @@ void Database::close()
         m_sqliteDatabase.close();
         m_document->databaseThread()->recordDatabaseClosed(this);
         m_opened = false;
+
+        {
+            MutexLocker locker(guidMutex());
+
+            HashSet<Database*>* hashSet = guidToDatabaseMap().get(m_guid);
+            ASSERT(hashSet);
+            ASSERT(hashSet->contains(this));
+            hashSet->remove(this);
+            if (hashSet->isEmpty()) {
+                guidToDatabaseMap().remove(m_guid);
+                delete hashSet;
+                guidToVersionMap().remove(m_guid);
+            }
+        }
     }
 }
 
@@ -449,15 +464,9 @@ bool Database::performOpenAndVerify(ExceptionCode& e)
     {
         MutexLocker locker(guidMutex());
 
-        // Note: It is not safe to put an empty string into the guidToVersionMap() map.
-        // That's because the map is cross-thread, but empty strings are per-thread.
-        // The copy() function makes a version of the string you can use on the current
-        // thread, but we need a string we can keep in a cross-thread data structure.
-        // FIXME: This is a quite-awkward restriction to have to program with.
-
         GuidVersionMap::iterator entry = guidToVersionMap().find(m_guid);
         if (entry != guidToVersionMap().end()) {
-            // Map null string to empty string (see comment above).
+            // Map null string to empty string (see updateGuidVersionMap()).
             currentVersion = entry->second.isNull() ? String("") : entry->second;
             LOG(StorageAPI, "Current cached version for guid %i is %s", m_guid, currentVersion.ascii().data());
         } else {
@@ -488,8 +497,7 @@ bool Database::performOpenAndVerify(ExceptionCode& e)
                 currentVersion = m_expectedVersion;
             }
 
-            // Map empty string to null string (see comment above).
-            guidToVersionMap().set(m_guid, currentVersion.isEmpty() ? String() : currentVersion.copy());
+            updateGuidVersionMap(m_guid, currentVersion);
         }
     }
 
@@ -633,6 +641,9 @@ Vector<String> Database::tableNames()
 void Database::setExpectedVersion(const String& version)
 {
     m_expectedVersion = version.copy();
+    // Update the in memory database version map.
+    MutexLocker locker(guidMutex());
+    updateGuidVersionMap(m_guid, version);
 }
 
 PassRefPtr<SecurityOrigin> Database::securityOriginCopy() const

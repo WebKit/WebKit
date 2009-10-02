@@ -1,3 +1,15 @@
+2009-10-02  Ben Murdoch  <benm@google.com>
+
+        Reviewed by  David Kilzer.
+
+        Stale database version persists through browser refresh (changeVersion doesn't work)
+        https://bugs.webkit.org/show_bug.cgi?id=27836
+
+        * storage/change-version-expected.txt: Added.
+        * storage/change-version-handle-reuse-expected.txt: Added.
+        * storage/change-version-handle-reuse.html: Added.
+        * storage/change-version.html: Added.
+
 2009-10-01  Drew Wilson  <atwilson@chromium.org>
 
         Reviewed by David Levin.

@@ -1,3 +1,24 @@
+2009-10-02  Ben Murdoch  <benm@google.com>
+
+        Reviewed by David Kilzer.
+
+        Stale database version persists through browser refresh (changeVersion doesn't work)
+        https://bugs.webkit.org/show_bug.cgi?id=27836
+
+        Tests: storage/change-version-handle-reuse.html
+               storage/change-version.html
+
+        * bindings/v8/custom/V8DatabaseCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL): Implement the V8 binding for database.changeVersion().
+        (WebCore::createTransaction): Fix a bug that was checking the wrong argument index to save the success callback.
+        * storage/Database.cpp:
+        (WebCore::updateGuidVersionMap): Safely update the Guid/version hash map.
+        (WebCore::Database::~Database): Remove code that removes the database from the guid->database and guid->version maps.
+        (WebCore::Database::setVersionInDatabase): Add a comment to explain some behaviour.
+        (WebCore::Database::close): Move the code that updates the maps from the destructor to here.
+        (WebCore::Database::performOpenAndVerify): Call updateGuidVersionMap instead of setting the hash map directly.
+        (WebCore::Database::setExpectedVersion): Update the in memory guid->version map when we want to update the database version.
+
 2009-10-02  Janne Koskinen <janne.p.koskinen@digia.com>
 
         Reviewed by Simon Hausmann.
