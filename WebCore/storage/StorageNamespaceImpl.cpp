@@ -31,6 +31,7 @@
 #include "SecurityOriginHash.h"
 #include "StringHash.h"
 #include "StorageAreaImpl.h"
+#include "StorageMap.h"
 #include "StorageSyncManager.h"
 #include <wtf/StdLibExtras.h>
 
@@ -44,12 +45,12 @@ static LocalStorageNamespaceMap& localStorageNamespaceMap()
     return localStorageNamespaceMap;
 }
 
-PassRefPtr<StorageNamespace> StorageNamespaceImpl::localStorageNamespace(const String& path)
+PassRefPtr<StorageNamespace> StorageNamespaceImpl::localStorageNamespace(const String& path, unsigned quota)
 {
     const String lookupPath = path.isNull() ? String("") : path;
     LocalStorageNamespaceMap::iterator it = localStorageNamespaceMap().find(lookupPath);
     if (it == localStorageNamespaceMap().end()) {
-        RefPtr<StorageNamespace> storageNamespace = adoptRef(new StorageNamespaceImpl(LocalStorage, lookupPath));
+        RefPtr<StorageNamespace> storageNamespace = adoptRef(new StorageNamespaceImpl(LocalStorage, lookupPath, quota));
         localStorageNamespaceMap().set(lookupPath, storageNamespace.get());
         return storageNamespace.release();
     }
@@ -59,13 +60,14 @@ PassRefPtr<StorageNamespace> StorageNamespaceImpl::localStorageNamespace(const S
 
 PassRefPtr<StorageNamespace> StorageNamespaceImpl::sessionStorageNamespace()
 {
-    return adoptRef(new StorageNamespaceImpl(SessionStorage, String()));
+    return adoptRef(new StorageNamespaceImpl(SessionStorage, String(), StorageMap::noQuota));
 }
 
-StorageNamespaceImpl::StorageNamespaceImpl(StorageType storageType, const String& path)
+StorageNamespaceImpl::StorageNamespaceImpl(StorageType storageType, const String& path, unsigned quota)
     : m_storageType(storageType)
     , m_path(path.copy())  // Copy makes it safe for our other thread to access the path.
     , m_syncManager(0)
+    , m_quota(quota)
     , m_isShutdown(false)
 {
     if (m_storageType == LocalStorage && !m_path.isEmpty())
@@ -91,7 +93,7 @@ PassRefPtr<StorageNamespace> StorageNamespaceImpl::copy()
     ASSERT(!m_isShutdown);
     ASSERT(m_storageType == SessionStorage);
 
-    StorageNamespaceImpl* newNamespace = new StorageNamespaceImpl(m_storageType, m_path);
+    StorageNamespaceImpl* newNamespace = new StorageNamespaceImpl(m_storageType, m_path, m_quota);
 
     StorageAreaMap::iterator end = m_storageAreaMap.end();
     for (StorageAreaMap::iterator i = m_storageAreaMap.begin(); i != end; ++i)
@@ -109,7 +111,7 @@ PassRefPtr<StorageArea> StorageNamespaceImpl::storageArea(PassRefPtr<SecurityOri
     if (storageArea = m_storageAreaMap.get(origin))
         return storageArea.release();
 
-    storageArea = StorageAreaImpl::create(m_storageType, origin, m_syncManager);
+    storageArea = StorageAreaImpl::create(m_storageType, origin, m_syncManager, m_quota);
     m_storageAreaMap.set(origin.release(), storageArea);
     return storageArea.release();
 }

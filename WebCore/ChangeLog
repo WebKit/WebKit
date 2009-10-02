@@ -1,3 +1,67 @@
+2009-10-02  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Implement per-storage-area quotas for LocalStorage
+        https://bugs.webkit.org/show_bug.cgi?id=29991
+
+        I put 90% of the code in StorageMap since the decision to allow an update is
+        closely tied to quota tracking.  The quota is set via a page's Settings class.
+        Like with the local storage path and whether it's enabled, it's assumed that
+        all pages in the same group will have the same settings.  The setting defaults
+        to 5mb which is what the spec suggests, but it can easily be changed to
+        anything else--including StorageMap::noQuota.  Any values in LocalStorage are
+        grandfathered in regarudless of quota, so importItem only tracks (and will
+        never block) imports.
+
+        I believe this change is a good transition to more complex quota management.
+        For example, if we wanted to track quotas in the SQLite DB, then we'd just add
+        a function to the StorageMap that sets the quota.  This would be fine since all
+        use of LocalStorage is blocked on the import completing, so you'd never hit a
+        quota error in the mean time.  Also, if embedders wanted to ask the user
+        whether to expand the quota whenever it's hit (before deciding whether or not
+        to raise an exception), a callback via the chrome client should be fairly easy.
+        That said, I think it's best to add these features in steps rather than one
+        huge patch.  (Both of these are on my TODO list, btw.)
+
+        Included is a layout test that verifies the behavior.  It assumes the default
+        quota is 5mb (since that's what Settings defaults to).
+
+        Test: storage/domstorage/localstorage/quota.html
+
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::localStorage):
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::setLocalStorageQuota):
+        * page/Settings.h:
+        (WebCore::Settings::localStorageQuota):
+        * storage/StorageAreaImpl.cpp:
+        (WebCore::StorageAreaImpl::create):
+        (WebCore::StorageAreaImpl::StorageAreaImpl):
+        (WebCore::StorageAreaImpl::setItem):
+        (WebCore::StorageAreaImpl::clear):
+        * storage/StorageAreaImpl.h:
+        * storage/StorageMap.cpp:
+        (WebCore::StorageMap::create):
+        (WebCore::StorageMap::StorageMap):
+        (WebCore::StorageMap::copy):
+        (WebCore::StorageMap::setItem):
+        (WebCore::StorageMap::removeItem):
+        (WebCore::StorageMap::importItem):
+        * storage/StorageMap.h:
+        (WebCore::StorageMap::quota):
+        * storage/StorageNamespace.cpp:
+        (WebCore::StorageNamespace::localStorageNamespace):
+        * storage/StorageNamespace.h:
+        * storage/StorageNamespaceImpl.cpp:
+        (WebCore::StorageNamespaceImpl::localStorageNamespace):
+        (WebCore::StorageNamespaceImpl::sessionStorageNamespace):
+        (WebCore::StorageNamespaceImpl::StorageNamespaceImpl):
+        (WebCore::StorageNamespaceImpl::copy):
+        (WebCore::StorageNamespaceImpl::storageArea):
+        * storage/StorageNamespaceImpl.h:
+
 2009-10-02  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Timothy Hatcher.

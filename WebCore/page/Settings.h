@@ -128,6 +128,9 @@ namespace WebCore {
         void setSessionStorageEnabled(bool);
         bool sessionStorageEnabled() const { return m_sessionStorageEnabled; }
 
+        void setLocalStorageQuota(unsigned);
+        unsigned localStorageQuota() const { return m_localStorageQuota; }
+
         void setPrivateBrowsingEnabled(bool);
         bool privateBrowsingEnabled() const { return m_privateBrowsingEnabled; }
 
@@ -295,6 +298,7 @@ namespace WebCore {
         int m_defaultFontSize;
         int m_defaultFixedFontSize;
         size_t m_maximumDecodedImageSize;
+        unsigned m_localStorageQuota;
         unsigned m_pluginAllowedRunTime;
         bool m_isJavaEnabled : 1;
         bool m_loadsImagesAutomatically : 1;

@@ -191,8 +191,9 @@ StorageNamespace* PageGroup::localStorage()
     if (!m_localStorage) {
         // Need a page in this page group to query the settings for the local storage database path.
         Page* page = *m_pages.begin();
-        ASSERT(page);
-        m_localStorage = StorageNamespace::localStorageNamespace(page->settings()->localStorageDatabasePath());
+        const String& path = page->settings()->localStorageDatabasePath();
+        unsigned quota = page->settings()->localStorageQuota();
+        m_localStorage = StorageNamespace::localStorageNamespace(path, quota);
     }
 
     return m_localStorage.get();

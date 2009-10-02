@@ -43,15 +43,15 @@ StorageAreaImpl::~StorageAreaImpl()
     ASSERT(isMainThread());
 }
 
-PassRefPtr<StorageAreaImpl> StorageAreaImpl::create(StorageType storageType, PassRefPtr<SecurityOrigin> origin, PassRefPtr<StorageSyncManager> syncManager)
+PassRefPtr<StorageAreaImpl> StorageAreaImpl::create(StorageType storageType, PassRefPtr<SecurityOrigin> origin, PassRefPtr<StorageSyncManager> syncManager, unsigned quota)
 {
-    return adoptRef(new StorageAreaImpl(storageType, origin, syncManager));
+    return adoptRef(new StorageAreaImpl(storageType, origin, syncManager, quota));
 }
 
-StorageAreaImpl::StorageAreaImpl(StorageType storageType, PassRefPtr<SecurityOrigin> origin, PassRefPtr<StorageSyncManager> syncManager)
+StorageAreaImpl::StorageAreaImpl(StorageType storageType, PassRefPtr<SecurityOrigin> origin, PassRefPtr<StorageSyncManager> syncManager, unsigned quota)
     : m_storageType(storageType)
     , m_securityOrigin(origin)
-    , m_storageMap(StorageMap::create())
+    , m_storageMap(StorageMap::create(quota))
     , m_storageSyncManager(syncManager)
 #ifndef NDEBUG
     , m_isShutdown(false)
@@ -135,15 +135,14 @@ void StorageAreaImpl::setItem(const String& key, const String& value, ExceptionC
         return;
     }
 
-    // FIXME: For LocalStorage where a disk quota will be enforced, here is where we need to do quota checking.
-    //        If we decide to enforce a memory quota for SessionStorage, this is where we'd do that, also.
-    // if (<over quota>) {
-    //     ec = QUOTA_EXCEEDED_ERR;
-    //     return;
-    // }
-
     String oldValue;
-    RefPtr<StorageMap> newMap = m_storageMap->setItem(key, value, oldValue);
+    bool quotaException;
+    RefPtr<StorageMap> newMap = m_storageMap->setItem(key, value, oldValue, quotaException);
+
+    if (quotaException) {
+        ec = QUOTA_EXCEEDED_ERR;
+        return;
+    }
 
     if (newMap)
         m_storageMap = newMap.release();
@@ -185,7 +184,8 @@ void StorageAreaImpl::clear(Frame* frame)
     if (privateBrowsingEnabled(frame))
         return;
 
-    m_storageMap = StorageMap::create();
+    unsigned quota = m_storageMap->quota();
+    m_storageMap = StorageMap::create(quota);
 
     if (m_storageAreaSync)
         m_storageAreaSync->scheduleClear();

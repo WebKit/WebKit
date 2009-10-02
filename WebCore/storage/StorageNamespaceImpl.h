@@ -42,7 +42,7 @@ namespace WebCore {
 
     class StorageNamespaceImpl : public StorageNamespace {
     public:
-        static PassRefPtr<StorageNamespace> localStorageNamespace(const String& path);
+        static PassRefPtr<StorageNamespace> localStorageNamespace(const String& path, unsigned quota);
         static PassRefPtr<StorageNamespace> sessionStorageNamespace();
 
         virtual ~StorageNamespaceImpl();
@@ -52,7 +52,7 @@ namespace WebCore {
         virtual void unlock();
 
     private:
-        StorageNamespaceImpl(StorageType, const String& path);
+        StorageNamespaceImpl(StorageType, const String& path, unsigned quota);
 
         typedef HashMap<RefPtr<SecurityOrigin>, RefPtr<StorageAreaImpl>, SecurityOriginHash> StorageAreaMap;
         StorageAreaMap m_storageAreaMap;
@@ -63,6 +63,7 @@ namespace WebCore {
         String m_path;
         RefPtr<StorageSyncManager> m_syncManager;
 
+        unsigned m_quota;  // The default quota for each new storage area.
         bool m_isShutdown;
     };
 
