@@ -1,3 +1,14 @@
+2009-10-02  Janne Koskinen <janne.p.koskinen@digia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Partial WINSCW build fix.
+
+        Add parentheses around the function pointer declaration, similar to the
+        second hunk in r48825.
+
+        * loader/CachedResourceHandle.h:
+
 2009-10-02  Adam Barth  <abarth@webkit.org>
 
         Unreviewed attempted build fix by Xcode magic.
