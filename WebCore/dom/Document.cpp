@@ -4019,9 +4019,14 @@ void Document::finishedParsing()
     if (Frame* f = frame()) {
         f->loader()->finishedParsing();
 
+#if ENABLE(INSPECTOR)
+        if (!page())
+            return;
+
         if (InspectorController* controller = page()->inspectorController())
             controller->mainResourceFiredDOMContentEvent(f->loader()->documentLoader(), url());
     }
+#endif
 }
 
 Vector<String> Document::formElementsState() const

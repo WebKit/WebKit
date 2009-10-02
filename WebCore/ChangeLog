@@ -1,3 +1,15 @@
+2009-10-02  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Jon Honeycutt.
+
+        Fix test breakages by adding null checks, and putting inspector code in
+        ENABLE(INSPECTOR).
+
+        * dom/Document.cpp:
+        (WebCore::Document::finishedParsing):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::dispatchLoadEvent):
+
 2009-10-02  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Simon Hausmann.
