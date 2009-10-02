@@ -1,3 +1,34 @@
+2009-10-02  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Take one branch instead of two to test for JSValue().
+        
+        1.1% SunSpider speedup.
+
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCall):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_to_jsnumber):
+        (JSC::JIT::emit_op_create_arguments):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitSlow_op_get_by_val):
+        (JSC::JIT::emit_op_put_by_val): Test for the empty value tag, instead
+        of testing for the cell tag with a 0 payload.
+
+        * runtime/JSValue.cpp:
+        (JSC::JSValue::description): Added support for dumping the new empty value,
+        and deleted values, in debug builds.
+
+        * runtime/JSValue.h:
+        (JSC::JSValue::JSValue()): Construct JSValue() with the empty value tag.
+
+        (JSC::JSValue::JSValue(JSCell*)): Convert null pointer to the empty value
+        tag, to avoid having two different c++ versions of null / empty.
+
+        (JSC::JSValue::operator bool): Test for the empty value tag, instead
+        of testing for the cell tag with a 0 payload.
+
 2009-10-02  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Mark Rowe.
