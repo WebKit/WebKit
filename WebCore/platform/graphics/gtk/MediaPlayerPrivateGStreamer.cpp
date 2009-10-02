@@ -334,13 +334,28 @@ IntSize MediaPlayerPrivate::naturalSize() const
     if (!hasVideo())
         return IntSize();
 
-    int x = 0, y = 0;
+    // TODO: handle possible clean aperture data. See
+    // https://bugzilla.gnome.org/show_bug.cgi?id=596571
+    // TODO: handle possible transformation matrix. See
+    // https://bugzilla.gnome.org/show_bug.cgi?id=596326
+    int width = 0, height = 0;
     if (GstPad* pad = gst_element_get_static_pad(m_videoSink, "sink")) {
-        gst_video_get_size(GST_PAD(pad), &x, &y);
+        gst_video_get_size(GST_PAD(pad), &width, &height);
+        GstCaps* caps = GST_PAD_CAPS(pad);
+        gfloat pixelAspectRatio;
+        gint pixelAspectRatioNumerator, pixelAspectRatioDenominator;
+
+        if (!gst_video_parse_caps_pixel_aspect_ratio(caps, &pixelAspectRatioNumerator,
+                                                     &pixelAspectRatioDenominator))
+            pixelAspectRatioNumerator = pixelAspectRatioDenominator = 1;
+
+        pixelAspectRatio = (gfloat) pixelAspectRatioNumerator / (gfloat) pixelAspectRatioDenominator;
+        width *= pixelAspectRatio;
+        height /= pixelAspectRatio;
         gst_object_unref(GST_OBJECT(pad));
     }
 
-    return IntSize(x, y);
+    return IntSize(width, height);
 }
 
 bool MediaPlayerPrivate::hasVideo() const
@@ -624,7 +639,18 @@ void MediaPlayerPrivate::loadingFailed(MediaPlayer::NetworkState error)
 
 void MediaPlayerPrivate::setSize(const IntSize& size)
 {
+    // Destroy and re-create the cairo surface only if the size
+    // changed.
+    if (size != m_size) {
+        if (m_surface)
+            cairo_surface_destroy(m_surface);
+        m_surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, size.width(),
+                                               size.height());
+        g_object_set(m_videoSink, "surface", m_surface, 0);
+    }
+
     m_size = size;
+
 }
 
 void MediaPlayerPrivate::setVisible(bool visible)
@@ -645,11 +671,12 @@ void MediaPlayerPrivate::paint(GraphicsContext* context, const IntRect& rect)
     if (!m_visible)
         return;
 
-    //TODO: m_size vs rect?
     cairo_t* cr = context->platformContext();
 
     cairo_save(cr);
     cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
+
+    // paint the rectangle on the context and draw the surface inside.
     cairo_translate(cr, rect.x(), rect.y());
     cairo_rectangle(cr, 0, 0, rect.width(), rect.height());
     cairo_set_source_surface(cr, m_surface, 0, 0);

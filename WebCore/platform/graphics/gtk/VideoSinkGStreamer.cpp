@@ -111,6 +111,12 @@ webkit_video_sink_idle_func(gpointer data)
     WebKitVideoSink* sink = reinterpret_cast<WebKitVideoSink*>(data);
     WebKitVideoSinkPrivate* priv = sink->priv;
     GstBuffer* buffer;
+    GstCaps* caps;
+    GstVideoFormat* format;
+    gint par_n, par_d;
+    gfloat par;
+    gint bwidth, bheight;
+
     if (!priv->async_queue)
         return FALSE;
 
@@ -118,10 +124,27 @@ webkit_video_sink_idle_func(gpointer data)
     if (!buffer || G_UNLIKELY(!GST_IS_BUFFER(buffer)))
         return FALSE;
 
-    cairo_surface_t* src = cairo_image_surface_create_for_data(GST_BUFFER_DATA(buffer), CAIRO_FORMAT_RGB24, priv->width, priv->height, (4 * priv->width + 3) & ~3);
+    caps = GST_BUFFER_CAPS(buffer);
+    if (!gst_video_format_parse_caps(caps, format, &bwidth, &bheight)) {
+        GST_ERROR_OBJECT(sink, "Unknown video format in buffer caps '%s'",
+                         gst_caps_to_string(caps));
+        return FALSE;
+    }
+
+    if (!gst_video_parse_caps_pixel_aspect_ratio(caps, &par_n, &par_d))
+        par_n = par_d = 1;
+
+    par = (gfloat) par_n / (gfloat) par_d;
+
+    // TODO: consider priv->rgb_ordering?
+    cairo_surface_t* src = cairo_image_surface_create_for_data(GST_BUFFER_DATA(buffer),
+                                                               CAIRO_FORMAT_RGB24,
+                                                               bwidth, bheight,
+                                                               4 * bwidth);
 
     // TODO: We copy the data twice right now. This could be easily improved.
     cairo_t* cr = cairo_create(priv->surface);
+    cairo_scale(cr, par, 1.0 / par);
     cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
     cairo_set_source_surface(cr, src, 0, 0);
     cairo_surface_destroy(src);

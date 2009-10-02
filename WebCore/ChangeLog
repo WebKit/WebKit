@@ -5,6 +5,25 @@
         Stale database version persists through browser refresh (changeVersion doesn't work)
         https://bugs.webkit.org/show_bug.cgi?id=27836
 
+        Scale the cairo surface of the video sink depending on the
+        pixel-aspect-ratio of the video buffer to paint. Also
+        destruct/re-create the surface when setSize() is called with a new
+        size.
+
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivate::naturalSize):
+        (WebCore::MediaPlayerPrivate::setSize):
+        (WebCore::MediaPlayerPrivate::paint):
+        * platform/graphics/gtk/VideoSinkGStreamer.cpp:
+        (webkit_video_sink_idle_func):
+
+2009-10-02  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] missing support for anamorphic PAR video size
+        https://bugs.webkit.org/show_bug.cgi?id=29717
+
         Tests: storage/change-version-handle-reuse.html
                storage/change-version.html
 
