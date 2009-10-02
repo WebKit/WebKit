@@ -152,19 +152,21 @@ SkShader* Gradient::platformGradient()
     }
 
     if (m_radial) {
-        // FIXME: CSS radial Gradients allow an offset focal point (the
-        // "start circle"), but skia doesn't seem to support that, so this just
-        // ignores m_p0/m_r0 and draws the gradient centered in the "end
-        // circle" (m_p1/m_r1).
-        // See http://webkit.org/blog/175/introducing-css-gradients/ for a
-        // description of the expected behavior.
-        
-        // The radius we give to Skia must be positive (and non-zero).  If
-        // we're given a zero radius, just ask for a very small radius so
-        // Skia will still return an object.
-        SkScalar radius = m_r1 > 0 ? WebCoreFloatToSkScalar(m_r1) : SK_ScalarMin;
-        m_gradient = SkGradientShader::CreateRadial(m_p1,
-            radius, colors, pos, static_cast<int>(countUsed), tile);
+        // Since the two-point radial gradient is slower than the plain radial,
+        // only use it if we have to.
+        if (m_p0 != m_p1) {
+            // The radii we give to Skia must be positive.  If we're given a 
+            // negative radius, ask for zero instead.
+            SkScalar radius0 = m_r0 >= 0.0f ? WebCoreFloatToSkScalar(m_r0) : 0;
+            SkScalar radius1 = m_r1 >= 0.0f ? WebCoreFloatToSkScalar(m_r1) : 0;
+            m_gradient = SkGradientShader::CreateTwoPointRadial(m_p0, radius0, m_p1, radius1, colors, pos, static_cast<int>(countUsed), tile);
+        } else {
+            // The radius we give to Skia must be positive (and non-zero).  If
+            // we're given a zero radius, just ask for a very small radius so
+            // Skia will still return an object.
+            SkScalar radius = m_r1 > 0 ? WebCoreFloatToSkScalar(m_r1) : SK_ScalarMin;
+            m_gradient = SkGradientShader::CreateRadial(m_p1, radius, colors, pos, static_cast<int>(countUsed), tile);
+        }
     } else {
         SkPoint pts[2] = { m_p0, m_p1 };
         m_gradient = SkGradientShader::CreateLinear(pts, colors, pos,
