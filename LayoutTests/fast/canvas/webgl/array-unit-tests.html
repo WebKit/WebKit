@@ -1,0 +1,229 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css"/>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+
+if (window.layoutTestController)
+    layoutTestController.overridePreference("WebKitWebGLEnabled", "1");
+
+description("Verifies the functionality of the new array-like objects in the WebGL spec");
+
+var currentlyRunning = '';
+var allPassed = true;
+function running(str) {
+  currentlyRunning = str;
+}
+
+function output(str) {
+  debug(str);
+}
+
+function pass() {
+  testPassed(currentlyRunning);
+}
+
+function fail(str) {
+  var exc = 'FAILED: ' + currentlyRunning + ': ' + str;
+  testFailed(str);
+}
+
+function assertEq(prefix, expected, val) {
+  if (expected != val) {
+    fail(prefix + ': expected ' + expected + ', got ' + val);
+  }
+}
+
+function printSummary() {
+  if (allPassed) {
+    debug("Test passed.");
+  } else {
+    debug("TEST FAILED");
+  }
+}
+
+//
+// Tests for unsigned array variants
+//
+
+function testSetAndGet10To1(type, name) {
+  running('test ' + name + ' SetAndGet10To1');
+  try {
+    var array = new type(10);
+    for (var i = 0; i < 10; i++) {
+      array[i] = 10 - i;
+    }
+    for (var i = 0; i < 10; i++) {
+      assertEq('Element ' + i, 10 - i, array[i]);
+    }
+    pass();
+  } catch (e) {
+    fail(e);
+  }
+}
+
+function testConstructWithArrayOfUnsignedValues(type, name) {
+  running('test ' + name + ' ConstructWithArrayOfUnsignedValues');
+  try {
+    var array = new type([10, 9, 8, 7, 6, 5, 4, 3, 2, 1]);
+    assertEq('Array length', 10, array.length);
+    for (var i = 0; i < 10; i++) {
+      assertEq('Element ' + i, 10 - i, array[i]);
+    }
+    pass();
+  } catch (e) {
+    fail(e);
+  }
+}
+
+//
+// Tests for signed array variants
+//
+
+function testSetAndGetPos10ToNeg10(type, name) {
+  running('test ' + name + ' SetAndGetPos10ToNeg10');
+  try {
+    var array = new type(21);
+    for (var i = 0; i < 21; i++) {
+      array[i] = 10 - i;
+    }
+    for (var i = 0; i < 21; i++) {
+      assertEq('Element ' + i, 10 - i, array[i]);
+    }
+    pass();
+  } catch (e) {
+    fail(e);
+  }
+}
+
+function testConstructWithArrayOfSignedValues(type, name) {
+  running('test ' + name + ' ConstructWithArrayOfSignedValues');
+  try {
+    var array = new type([10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6, -7, -8, -9, -10]);
+    assertEq('Array length', 21, array.length);
+    for (var i = 0; i < 21; i++) {
+      assertEq('Element ' + i, 10 - i, array[i]);
+    }
+    pass();
+  } catch (e) {
+    fail(e);
+  }
+}
+
+//
+// Test cases for both signed and unsigned types
+//
+
+function testBoundaryConditions(type, name, lowValue, expectedLowValue, highValue, expectedHighValue) {
+  running('test ' + name + ' BoundaryConditions(' +
+          lowValue + ', ' + expectedLowValue + ', ' +
+          highValue + ', ' + expectedHighValue + ')');
+  try {
+    var array = new type(1);
+    assertEq('Array length', 1, array.length);
+    array[0] = lowValue;
+    assertEq('Element 0', expectedLowValue, array[0]);
+    array[0] = highValue;
+    assertEq('Element 0', expectedHighValue, array[0]);
+    pass();
+  } catch (e) {
+    fail(e);
+  }
+}
+
+//
+// Test driver
+//
+
+function runTests() {
+  allPassed = true;
+
+  // The "name" attribute is a concession to browsers which don't
+  // implement the "name" property on function objects
+  var testCases =
+    [ {name: "CanvasByteArray",
+       unsigned: false,
+       low: -128,
+       expectedLow: -128,
+       high: 127,
+       expectedHigh: 127},
+      {name: "CanvasFloatArray",
+       unsigned: false,
+       low: -500,
+       expectedLow: -500,
+       high: 500,
+       expectedHigh: 500},
+      {name: "CanvasIntArray",
+       unsigned: false,
+       low: -2147483648,
+       expectedLow: -2147483648,
+       high: 2147483647,
+       expectedHigh: 2147483647},
+      {name: "CanvasShortArray",
+       unsigned: false,
+       low: -32768,
+       expectedLow: -32768,
+       high: 32767,
+       expectedHigh: 32767},
+      {name: "CanvasUnsignedByteArray",
+       unsigned: true,
+       low: 0,
+       expectedLow: 0,
+       high: 255,
+       expectedHigh: 255},
+      {name: "CanvasUnsignedIntArray",
+       unsigned: true,
+       low: 0,
+       expectedLow: 0,
+       high: 4294967295,
+       expectedHigh: 4294967295},
+      {name: "CanvasUnsignedShortArray",
+       unsigned: true,
+       low: 0,
+       expectedLow: 0,
+       high: 65535,
+       expectedHigh: 65535} ];
+
+  for (var i = 0; i < testCases.length; i++) {
+    var testCase = testCases[i];
+    running(testCase.name);
+    if (!(testCase.name in window)) {
+        fail("does not exist");
+        continue;
+    }
+    var type = window[testCase.name];
+    var name = testCase.name;
+    if (testCase.unsigned) {
+      testSetAndGet10To1(type, name);
+      testConstructWithArrayOfUnsignedValues(type, name);
+    } else {
+      testSetAndGetPos10ToNeg10(type, name);
+      testConstructWithArrayOfSignedValues(type, name);
+    }
+    testBoundaryConditions(type,
+                           name,
+                           testCase.low,
+                           testCase.expectedLow,
+                           testCase.high,
+                           testCase.expectedHigh);
+  }
+
+  printSummary();
+}
+
+runTests();
+successfullyParsed = true;
+
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+
+<script>
+</script>
+
+</body>
+</html>

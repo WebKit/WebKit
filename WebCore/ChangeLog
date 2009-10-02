@@ -1,3 +1,16 @@
+2009-10-02  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Oliver Hunt.
+
+        WebGL crashes with recent CanvasArray change
+        https://bugs.webkit.org/show_bug.cgi?id=30018
+
+        Test: fast/canvas/webgl/array-unit-tests.html
+
+        * html/canvas/CanvasArray.cpp:
+        (WebCore::CanvasArray::CanvasArray):
+        Fix bug where PassRefPtr was tested after transferring value to RefPtr.
+
 2009-10-02  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Mark Rowe.

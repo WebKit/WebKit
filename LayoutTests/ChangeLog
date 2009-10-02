@@ -1,3 +1,13 @@
+2009-10-02  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Oliver Hunt.
+
+        WebGL crashes with recent CanvasArray change
+        https://bugs.webkit.org/show_bug.cgi?id=30018
+
+        * fast/canvas/webgl/array-unit-tests-expected.html: Added.
+        * fast/canvas/webgl/array-unit-tests.html: Added.
+
 2009-10-02  Ben Murdoch  <benm@google.com>
 
         Reviewed by  David Kilzer.
