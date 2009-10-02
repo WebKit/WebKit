@@ -59,6 +59,8 @@ InspectorResource::InspectorResource(long long identifier, DocumentLoader* loade
     , m_startTime(-1.0)
     , m_responseReceivedTime(-1.0)
     , m_endTime(-1.0)
+    , m_loadEventTime(-1.0)
+    , m_domContentEventTime(-1.0)
     , m_isMainResource(false)
 {
 }
@@ -200,6 +202,10 @@ void InspectorResource::updateScriptObject(InspectorFrontend* frontend)
             jsonObject.set("responseReceivedTime", m_responseReceivedTime);
         if (m_endTime > 0)
             jsonObject.set("endTime", m_endTime);
+        if (m_loadEventTime > 0)
+            jsonObject.set("loadEventTime", m_loadEventTime);
+        if (m_domContentEventTime > 0)
+            jsonObject.set("domContentEventTime", m_domContentEventTime);
         jsonObject.set("didTimingChange", true);
     }
     if (!frontend->updateResource(m_identifier, jsonObject))
@@ -318,6 +324,18 @@ void InspectorResource::endTiming()
     m_finished = true;
     m_changes.set(TimingChange);
     m_changes.set(CompletionChange);
+}
+
+void InspectorResource::markDOMContentEventTime()
+{
+    m_domContentEventTime = currentTime();
+    m_changes.set(TimingChange);
+}
+
+void InspectorResource::markLoadEventTime()
+{
+    m_loadEventTime = currentTime();
+    m_changes.set(TimingChange);
 }
 
 void InspectorResource::markFailed()

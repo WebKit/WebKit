@@ -1,3 +1,43 @@
+2009-10-02  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Fixes <http://webkit.org/b/14370>.
+        Inspector's timeline should record when certain DOM events fired.
+        
+        This patch adds calls into the Web Inspector when the main frame
+        fires an load event, and when the document fires its DOMContent
+        event. Once these values are passed in, they are sent to the Web Inspector
+        as a timing change, and these are denoted by vertical lines in the resources
+        panel (blue for DOM Content, red for load event).
+
+        * English.lproj/localizedStrings.js: Added tooltip text.
+        * dom/Document.cpp:
+        (WebCore::Document::finishedParsing): Added an Inspector callback for DOM Content.
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::mainResourceFiredDOMContentEvent): Tell the main resource it got the event.
+        (WebCore::InspectorController::mainResourceFiredLoadEvent): Ditto.
+        * inspector/InspectorController.h:
+        * inspector/InspectorResource.cpp:
+        (WebCore::InspectorResource::InspectorResource): Added new variables.
+        (WebCore::InspectorResource::updateScriptObject): Send new variables to inspector.js.
+        (WebCore::InspectorResource::markDOMContentEventTime): Send a TimingChange event.
+        (WebCore::InspectorResource::markLoadEventTime): Ditto.
+        * inspector/InspectorResource.h:
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.get mainResourceLoadTime):
+        (WebInspector.ResourcesPanel.prototype.set mainResourceLoadTime):
+        (WebInspector.ResourcesPanel.prototype.get mainResourceDOMContentTime):
+        (WebInspector.ResourcesPanel.prototype.set mainResourceDOMContentTime):
+        (WebInspector.ResourcesPanel.prototype.reset):
+        (WebInspector.ResourcesPanel.prototype._updateGraphDividersIfNeeded): Draw dividers for event timings.
+        (WebInspector.ResourceTimeCalculator.prototype.computePercentageFromEventTime):
+        * inspector/front-end/inspector.css:
+        * inspector/front-end/inspector.js:
+        (WebInspector.updateResource):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::dispatchLoadEvent): Add an Inspector callback for the Load event.
+
 2009-10-02  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by Adam Roben.

@@ -204,6 +204,37 @@ WebInspector.ResourcesPanel.prototype = {
     {
         return WebInspector.UIString("Resources");
     },
+    
+    get mainResourceLoadTime()
+    {
+        return this._mainResourceLoadTime || -1;
+    },
+    
+    set mainResourceLoadTime(x)
+    {
+        if (this._mainResourceLoadTime === x)
+            return;
+        
+        this._mainResourceLoadTime = x;
+        
+        // Update the dividers to draw the new line
+        this._updateGraphDividersIfNeeded(true);
+    },
+    
+    get mainResourceDOMContentTime()
+    {
+        return this._mainResourceDOMContentTime || -1;
+    },
+    
+    set mainResourceDOMContentTime(x)
+    {
+        if (this._mainResourceDOMContentTime === x)
+            return;
+        
+        this._mainResourceDOMContentTime = x;
+        
+        this._updateGraphDividersIfNeeded(true);
+    },
 
     get statusBarItems()
     {
@@ -451,6 +482,9 @@ WebInspector.ResourcesPanel.prototype = {
 
         this._resources = [];
         this._staleResources = [];
+        
+        this.mainResourceLoadTime = -1;
+        this.mainResourceDOMContentTime = -1;
 
         this.resourcesTreeElement.removeChildren();
         this.viewsContainerElement.removeChildren();
@@ -720,6 +754,31 @@ WebInspector.ResourcesPanel.prototype = {
             divider.appendChild(label);
 
             this.dividersLabelBarElement.appendChild(divider);
+        }
+
+        if (this.calculator.startAtZero) {
+            // If our current sorting method starts at zero, that means it shows all
+            // resources starting at the same point, and so onLoad event and DOMContent
+            // event lines really wouldn't make much sense here, so don't render them.
+            return;
+        }
+
+        if (this.mainResourceLoadTime !== -1) {
+            var percent = this.calculator.computePercentageFromEventTime(this.mainResourceLoadTime);
+            var loadDivider = document.createElement("div");
+            loadDivider.className = "resources-onload-divider";
+            loadDivider.style.left = percent + "%";
+            loadDivider.title = WebInspector.UIString("Load event fired");
+            this.dividersElement.appendChild(loadDivider);
+        }
+        
+        if (this.mainResourceDOMContentTime !== -1) {
+            var percent = this.calculator.computePercentageFromEventTime(this.mainResourceDOMContentTime);
+            var domContentDivider = document.createElement("div");
+            domContentDivider.className = "resources-ondomcontent-divider";
+            domContentDivider.title = WebInspector.UIString("DOMContent event fired");
+            domContentDivider.style.left = percent + "%";
+            this.dividersElement.appendChild(domContentDivider);
         }
     },
 
@@ -1047,6 +1106,17 @@ WebInspector.ResourceTimeCalculator.prototype = {
         }
 
         return {start: start, middle: middle, end: end};
+    },
+    
+    computePercentageFromEventTime: function(eventTime)
+    {
+        // This function computes a percentage in terms of the total loading time
+        // of a specific event. If startAtZero is set, then this is useless, and we
+        // want to return 0.
+        if (eventTime !== -1 && !this.startAtZero)
+            return ((eventTime - this.minimumBoundary) / this.boundarySpan) * 100;
+
+        return 0;
     },
 
     computeBarGraphLabels: function(resource)

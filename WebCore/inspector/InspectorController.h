@@ -229,6 +229,9 @@ public:
     bool timelineEnabled() const;
     InspectorTimelineAgent* timelineAgent() { return m_timelineAgent.get(); }
 
+    void mainResourceFiredLoadEvent(DocumentLoader*, const KURL&);
+    void mainResourceFiredDOMContentEvent(DocumentLoader*, const KURL&);
+
 #if ENABLE(DATABASE)
     void didOpenDatabase(Database*, const String& domain, const String& name, const String& version);
 #endif

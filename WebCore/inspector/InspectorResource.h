@@ -103,6 +103,8 @@ namespace WebCore {
 
         void startTiming();
         void markResponseReceivedTime();
+        void markLoadEventTime();
+        void markDOMContentEventTime();
         void endTiming();
 
         void markFailed();
@@ -161,6 +163,8 @@ namespace WebCore {
         double m_startTime;
         double m_responseReceivedTime;
         double m_endTime;
+        double m_loadEventTime;
+        double m_domContentEventTime;
         ScriptString m_xmlHttpResponseText;
         Changes m_changes;
         bool m_isMainResource;

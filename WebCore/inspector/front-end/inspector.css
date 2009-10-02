@@ -2578,6 +2578,24 @@ button.enable-toggle-status-bar-item.toggled-on .glyph {
     background-color: rgba(0, 0, 0, 0.1);
 }
 
+.resources-onload-divider {
+    position: absolute;
+    width: 2px;
+    top: 0;
+    bottom: 0;
+    z-index: 300;
+    background-color: rgba(255, 0, 0, 0.5);
+}
+
+.resources-ondomcontent-divider {
+    position: absolute;
+    width: 2px;
+    top: 0;
+    bottom: 0;
+    z-index: 300;
+    background-color: rgba(0, 0, 255, 0.5);
+}
+
 .resources-divider.last {
     background-color: transparent;
 }
