@@ -26,11 +26,7 @@
 #include <wtf/Assertions.h>
 
 #if USE(QT4_UNICODE)
-#if COMPILER(WINSCW) || COMPILER(RVCT)
-#include "wtf/unicode/qt4/UnicodeQt4.h"
-#else
 #include "qt4/UnicodeQt4.h"
-#endif
 #elif USE(ICU_UNICODE)
 #include <wtf/unicode/icu/UnicodeIcu.h>
 #elif USE(GLIB_UNICODE)
