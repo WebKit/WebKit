@@ -394,6 +394,7 @@ extern "C" const int jscore_fastmalloc_introspection = 0;
 #if PLATFORM(DARWIN)
 #include "MallocZoneSupport.h"
 #include <wtf/HashSet.h>
+#include <wtf/Vector.h>
 #endif
 
 #ifndef PRIuS

@@ -1,3 +1,11 @@
+2009-10-02  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Rubber-stamped by Simon Hausmann.
+
+        Fix the Qt on Mac OS X build.
+
+        * wtf/FastMalloc.cpp:
+
 2009-10-02  Jørgen Lind  <jorgen.lind@nokia.com>
 
         Reviewed by Simon Hausmann.
