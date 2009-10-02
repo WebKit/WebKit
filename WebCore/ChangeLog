@@ -1,3 +1,15 @@
+2009-10-02  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] missing support for anamorphic PAR video size
+        https://bugs.webkit.org/show_bug.cgi?id=29717
+
+        cleanup of caps handling in the video sink
+
+        * platform/graphics/gtk/VideoSinkGStreamer.cpp:
+        (webkit_video_sink_set_caps):
+
 2009-10-02  Prasanth Ullattil  <prasanth.ullattil@nokia.com>
 
         Reviewed by Simon Hausmann.

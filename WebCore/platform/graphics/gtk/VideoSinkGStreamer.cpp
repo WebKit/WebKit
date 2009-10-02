@@ -179,9 +179,7 @@ webkit_video_sink_set_caps(GstBaseSink* bsink, GstCaps* caps)
     WebKitVideoSinkPrivate* priv = sink->priv;
     GstStructure* structure;
     gboolean ret;
-    const GValue* fps;
-    const GValue* par;
-    gint width, height;
+    gint width, height, fps_n, fps_d;
     int red_mask;
 
     GstCaps* intersection = gst_caps_intersect(gst_static_pad_template_get_caps(&sinktemplate), caps);
@@ -195,25 +193,19 @@ webkit_video_sink_set_caps(GstBaseSink* bsink, GstCaps* caps)
 
     ret = gst_structure_get_int(structure, "width", &width);
     ret &= gst_structure_get_int(structure, "height", &height);
-    fps = gst_structure_get_value(structure, "framerate");
-    ret &= (fps != 0);
 
-    par = gst_structure_get_value(structure, "pixel-aspect-ratio");
-
-    if (!ret)
-        return FALSE;
+    /* We dont yet use fps but handy to have */
+    ret &= gst_structure_get_fraction(structure, "framerate",
+                                      &fps_n, &fps_d);
+    g_return_val_if_fail(ret, FALSE);
 
     priv->width = width;
     priv->height = height;
+    priv->fps_n = fps_n;
+    priv->fps_d = fps_d;
 
-    /* We dont yet use fps or pixel aspect into but handy to have */
-    priv->fps_n = gst_value_get_fraction_numerator(fps);
-    priv->fps_d = gst_value_get_fraction_denominator(fps);
-
-    if (par) {
-        priv->par_n = gst_value_get_fraction_numerator(par);
-        priv->par_d = gst_value_get_fraction_denominator(par);
-    } else
+    if (!gst_structure_get_fraction(structure, "pixel-aspect-ratio",
+                                    &priv->par_n, &priv->par_d))
         priv->par_n = priv->par_d = 1;
 
     gst_structure_get_int(structure, "red_mask", &red_mask);
