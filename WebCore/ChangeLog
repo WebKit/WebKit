@@ -1,5 +1,11 @@
 2009-10-02  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed attempted build fix by Xcode magic.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+2009-10-02  Adam Barth  <abarth@webkit.org>
+
         Unreviewed build fix.  Actually add the new files.
 
         * loader/RedirectScheduler.cpp: Added.
