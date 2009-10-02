@@ -1,3 +1,13 @@
+2009-10-02  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Database Inspector crashes Safari when table has more than 21 columns
+        https://bugs.webkit.org/show_bug.cgi?id=29924
+
+        * inspector/front-end/StoragePanel.js:
+        (WebInspector.StoragePanel.prototype.dataGridForResult): adjust the minimum column width percentage to be flexible for many columns.
+
 2009-10-02  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Timothy Hatcher.

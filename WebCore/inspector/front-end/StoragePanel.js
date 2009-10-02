@@ -303,6 +303,7 @@ WebInspector.StoragePanel.prototype = {
             return null;
 
         var columns = {};
+        var numColumns = 0;
 
         var rows = result.rows;
         for (var columnIdentifier in rows.item(0)) {
@@ -311,6 +312,7 @@ WebInspector.StoragePanel.prototype = {
             column.title = columnIdentifier;
 
             columns[columnIdentifier] = column;
+            ++numColumns;
         }
 
         var nodes = [];
@@ -339,7 +341,7 @@ WebInspector.StoragePanel.prototype = {
             totalColumnWidths += columns[columnIdentifier].width;
 
         // Calculate the percentage width for the columns.
-        const minimumPrecent = 5;
+        const minimumPrecent = Math.min(5, Math.floor(100/numColumns));
         var recoupPercent = 0;
         for (var columnIdentifier in columns) {
             var width = columns[columnIdentifier].width;
