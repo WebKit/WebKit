@@ -1,3 +1,15 @@
+2009-10-02  Yuta Kitamura  <yutak@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Update pixel test image for fast/table/vertical-align-baseline.html.
+
+        Expected render tree dump for this test was modified in r40146
+        <http://trac.webkit.org/changeset/40146>, but the image was not updated with it.
+
+        * platform/mac/fast/table/vertical-align-baseline-expected.checksum:
+        * platform/mac/fast/table/vertical-align-baseline-expected.png:
+
 2009-10-02  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
