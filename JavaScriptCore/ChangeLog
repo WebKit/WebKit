@@ -1,3 +1,13 @@
+2009-10-02  Jonni Rainisto  <jonni.rainisto@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Math.random() gives too low values on Win32 when _CRT_RAND_S is not defined
+        https://bugs.webkit.org/show_bug.cgi?id=29956
+
+        * wtf/RandomNumber.cpp:
+        (WTF::randomNumber): Added PLATFORM(WIN_OS) to handle 15bit rand()
+
 2009-10-02  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.

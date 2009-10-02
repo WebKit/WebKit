@@ -82,6 +82,23 @@ double randomNumber()
     return static_cast<double>(fullRandom)/static_cast<double>(1LL << 53);
 #elif PLATFORM(WINCE)
     return genrand_res53();
+#elif PLATFORM(WIN_OS)
+    uint32_t part1 = rand() & (RAND_MAX - 1);
+    uint32_t part2 = rand() & (RAND_MAX - 1);
+    uint32_t part3 = rand() & (RAND_MAX - 1);
+    uint32_t part4 = rand() & (RAND_MAX - 1);
+    // rand only provides 15 bits on Win32
+    uint64_t fullRandom = part1;
+    fullRandom <<= 15;
+    fullRandom |= part2;
+    fullRandom <<= 15;
+    fullRandom |= part3;
+    fullRandom <<= 15;
+    fullRandom |= part4;
+
+    // Mask off the low 53bits
+    fullRandom &= (1LL << 53) - 1;
+    return static_cast<double>(fullRandom)/static_cast<double>(1LL << 53);
 #else
     uint32_t part1 = rand() & (RAND_MAX - 1);
     uint32_t part2 = rand() & (RAND_MAX - 1);
