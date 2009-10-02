@@ -662,21 +662,20 @@ RenderLayer* RenderLayer::enclosingTransformedAncestor() const
     return curr;
 }
 
+static inline const RenderLayer* compositingContainer(const RenderLayer* layer)
+{
+    return layer->isNormalFlowOnly() ? layer->parent() : layer->stackingContext();
+}
+
 #if USE(ACCELERATED_COMPOSITING)
 RenderLayer* RenderLayer::enclosingCompositingLayer(bool includeSelf) const
 {
     if (includeSelf && isComposited())
         return const_cast<RenderLayer*>(this);
 
-    // Compositing layers are parented according to stacking order and overflow list,
-    // so we have to check whether the parent is a stacking context, or whether 
-    // the child is overflow-only.
-    bool inNormalFlowList = isNormalFlowOnly();
-    for (RenderLayer* curr = parent(); curr; curr = curr->parent()) {
-        if (curr->isComposited() && (inNormalFlowList || curr->isStackingContext()))
-            return curr;
-        
-        inNormalFlowList = curr->isNormalFlowOnly();
+    for (const RenderLayer* curr = compositingContainer(this); curr; curr = compositingContainer(curr)) {
+        if (curr->isComposited())
+            return const_cast<RenderLayer*>(curr);
     }
          
     return 0;

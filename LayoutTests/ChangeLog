@@ -1,3 +1,17 @@
+2009-10-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Setting zero size on a container of a video element doesn't hide the controller
+        https://bugs.webkit.org/show_bug.cgi?id=30031
+
+        Testcase with a video element inside a positioned div with overflow.
+        
+        * compositing/geometry/clipped-video-controller.html: Added.
+        * platform/mac/compositing/geometry/clipped-video-controller-expected.checksum: Added.
+        * platform/mac/compositing/geometry/clipped-video-controller-expected.png: Added.
+        * platform/mac/compositing/geometry/clipped-video-controller-expected.txt: Added.
+
 2009-10-02  Vitaly Repeshko  <vitalyr@chromium.org>
 
         Reviewed by Dimitri Glazkov.

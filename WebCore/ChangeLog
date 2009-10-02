@@ -1,3 +1,23 @@
+2009-10-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Setting zero size on a container of a video element doesn't hide the controller
+        https://bugs.webkit.org/show_bug.cgi?id=30031
+        
+        Fix a logic error in enclosingCompositingLayer() when mixing normal flow and 
+        positioned layers. This resulted in enclosingCompositingLayer() giving back a different
+        answer to the logic used to actually parent compositing layers, so layer positions
+        and layer hierarchy would be out of agreement.
+        
+        Test: compositing/geometry/clipped-video-controller.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::compositingContainer):
+        (WebCore::RenderLayer::enclosingCompositingLayer):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::setCompositingParent):
+
 2009-10-02  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Eric Seidel.
