@@ -857,7 +857,7 @@ void LayoutTestController::addUserScript(JSStringRef source, bool runAtStart)
     if (FAILED(WebKitCreateInstance(__uuidof(WebView), 0, __uuidof(webView), reinterpret_cast<void**>(&webView))))
         return;
 
-    webView->addUserScriptToGroup(_bstr_t(L"org.webkit.DumpRenderTree").GetBSTR(), 1, bstrT(source).GetBSTR(), 0, 0, 0, runAtStart ? WebInjectAtDocumentStart : WebInjectAtDocumentEnd);
+    webView->addUserScriptToGroup(_bstr_t(L"org.webkit.DumpRenderTree").GetBSTR(), 1, bstrT(source).GetBSTR(), 0, 0, 0, 0, 0, runAtStart ? WebInjectAtDocumentStart : WebInjectAtDocumentEnd);
 }
 
 
@@ -867,5 +867,5 @@ void LayoutTestController::addUserStyleSheet(JSStringRef source)
     if (FAILED(WebKitCreateInstance(__uuidof(WebView), 0, __uuidof(webView), reinterpret_cast<void**>(&webView))))
         return;
 
-    webView->addUserStyleSheetToGroup(_bstr_t(L"org.webkit.DumpRenderTree").GetBSTR(), 1, bstrT(source).GetBSTR(), 0, 0, 0);
+    webView->addUserStyleSheetToGroup(_bstr_t(L"org.webkit.DumpRenderTree").GetBSTR(), 1, bstrT(source).GetBSTR(), 0, 0, 0, 0, 0);
 }
