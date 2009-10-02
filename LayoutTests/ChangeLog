@@ -1,3 +1,14 @@
+2009-10-02  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Added test case.
+        <rdar://problem/7148712> Assertion failure in CompositeEditCommand::moveParagraphs() and crash in Node::nodeIndex() when pasting.
+        https://bugs.webkit.org/show_bug.cgi?id=28992
+
+        * editing/selection/replace-selection-crash-expected.txt: Added.
+        * editing/selection/replace-selection-crash.html: Added.
+
 2009-10-02  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Dimitri Glazkov.

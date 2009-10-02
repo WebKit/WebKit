@@ -695,8 +695,17 @@ void ReplaceSelectionCommand::mergeEndIfNeeded()
     
     VisiblePosition destination = mergeForward ? endOfInsertedContent.next() : endOfInsertedContent;
     VisiblePosition startOfParagraphToMove = mergeForward ? startOfParagraph(endOfInsertedContent) : endOfInsertedContent.next();
+   
+    // Merging forward could result in deleting the destination anchor node.
+    // To avoid this, we add a placeholder node before the start of the paragraph.
+    if (endOfParagraph(startOfParagraphToMove) == destination) {
+        RefPtr<Node> placeholder = createBreakElement(document());
+        insertNodeBefore(placeholder, startOfParagraphToMove.deepEquivalent().node());
+        destination = VisiblePosition(Position(placeholder.get(), 0));
+    }
 
     moveParagraph(startOfParagraphToMove, endOfParagraph(startOfParagraphToMove), destination);
+    
     // Merging forward will remove m_lastLeafInserted from the document.
     // FIXME: Maintain positions for the start and end of inserted content instead of keeping nodes.  The nodes are
     // only ever used to create positions where inserted content starts/ends.  Also, we sometimes insert content
@@ -705,6 +714,10 @@ void ReplaceSelectionCommand::mergeEndIfNeeded()
         m_lastLeafInserted = destination.previous().deepEquivalent().node();
         if (!m_firstNodeInserted->inDocument())
             m_firstNodeInserted = endingSelection().visibleStart().deepEquivalent().node();
+        // If we merged text nodes, m_lastLeafInserted could be null. If this is the case,
+        // we use m_firstNodeInserted.
+        if (!m_lastLeafInserted)
+            m_lastLeafInserted = m_firstNodeInserted;
     }
 }
 

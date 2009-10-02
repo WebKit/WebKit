@@ -1,3 +1,17 @@
+2009-10-02  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Assertion failure in CompositeEditCommand::moveParagraphs() and crash in Node::nodeIndex() when pasting.
+        <rdar://problem/7148712>
+        https://bugs.webkit.org/show_bug.cgi?id=28992
+
+        Test: editing/selection/replace-selection-crash.html
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::mergeEndIfNeeded): Handle properly the case of
+        the destination position matching the end of the paragraph to move.
+
 2009-10-02  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Dimitri Glazkov.
