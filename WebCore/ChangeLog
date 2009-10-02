@@ -1,3 +1,40 @@
+2009-10-01  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Turn on ENABLE_3D_CANVAS in TOT
+        https://bugs.webkit.org/show_bug.cgi?id=29906
+
+        Fixed a bug found when running tests with flag on
+
+        * Configurations/FeatureDefines.xcconfig:
+        * WebCore.base.exp:
+        * bindings/js/JSCanvasArrayBufferConstructor.h:
+        (WebCore::construct):
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::getContext):
+        * html/canvas/CanvasArray.cpp:
+        (WebCore::CanvasArray::CanvasArray):
+        * html/canvas/CanvasByteArray.cpp:
+        (WebCore::CanvasByteArray::create):
+        * html/canvas/CanvasFloatArray.cpp:
+        (WebCore::CanvasFloatArray::create):
+        * html/canvas/CanvasIntArray.cpp:
+        (WebCore::CanvasIntArray::create):
+        * html/canvas/CanvasShortArray.cpp:
+        (WebCore::CanvasShortArray::create):
+        * html/canvas/CanvasUnsignedByteArray.cpp:
+        (WebCore::CanvasUnsignedByteArray::create):
+        * html/canvas/CanvasUnsignedIntArray.cpp:
+        (WebCore::CanvasUnsignedIntArray::create):
+        * html/canvas/CanvasUnsignedShortArray.cpp:
+        (WebCore::CanvasUnsignedShortArray::create):
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::setWebGLEnabled):
+        * page/Settings.h:
+        (WebCore::Settings::webGLEnabled):
+
 2009-10-01  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Dan Bernstein.

@@ -15,6 +15,19 @@ constructorNames.sort();
 for (var x in constructorNames) {
     var name = constructorNames[x];
     var expectedConstructorName = "'[object " + name + "Constructor]'";
+
+    // Ignore these properties because they do not exist in all implementations. They will be tested separately
+    if (name == "CanvasRenderingContext3D" ||
+        name == "CanvasArrayBuffer" ||
+        name =="CanvasByteArray" ||
+        name =="CanvasFloatArray" ||
+        name =="CanvasIntArray" ||
+        name =="CanvasShortArray" ||
+        name =="CanvasUnsignedByteArray" ||
+        name =="CanvasUnsignedIntArray" ||
+        name =="CanvasUnsignedShortArray")
+        continue;
+
     if (name == "XMLDocument")
         // Gecko exposes an "XMLDocument" constructor, but we just use Document for XML documents instead of a custom sub-type
         expectedConstructorName = "'[object DocumentConstructor]'";

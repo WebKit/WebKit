@@ -48,16 +48,15 @@ namespace WebCore {
     PassRefPtr<CanvasFloatArray> CanvasFloatArray::create(PassRefPtr<CanvasArrayBuffer> buffer, int offset, unsigned length)
     {
         // Make sure the offset results in valid alignment.
-        if ((offset % sizeof(float)) != 0) {
+        if ((offset % sizeof(float)) != 0)
             return NULL;
-        }
 
-        // Check to make sure we are talking about a valid region of
-        // the given CanvasArrayBuffer's storage.
-        if ((offset + (length * sizeof(float))) > buffer->byteLength()) {
-            return NULL;
+        if (buffer) {
+            // Check to make sure we are talking about a valid region of
+            // the given CanvasArrayBuffer's storage.
+            if ((offset + (length * sizeof(float))) > buffer->byteLength())
+                return NULL;
         }
-
         return adoptRef(new CanvasFloatArray(buffer, offset, length));
     }
     

@@ -1,3 +1,21 @@
+2009-10-01  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Turn on ENABLE_3D_CANVAS in TOT
+        https://bugs.webkit.org/show_bug.cgi?id=29906
+
+        Fixed layout tests which failed with flag on
+
+        * fast/canvas/webgl/gl-get-calls.html:
+        * fast/dom/Window/window-properties.html:
+        * fast/dom/script-tests/constructed-objects-prototypes.js:
+        (constructorPropertiesOnWindow):
+        * fast/dom/script-tests/prototype-inheritance-2.js:
+        (constructorNamesForWindow):
+        * fast/dom/script-tests/prototype-inheritance.js:
+        * fast/js/script-tests/global-constructors.js:
+
 2009-10-01  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Dan Bernstein.

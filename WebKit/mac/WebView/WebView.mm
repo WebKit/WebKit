@@ -1313,9 +1313,7 @@ static bool fastDocumentTeardownEnabled()
     settings->setXSSAuditorEnabled([preferences isXSSAuditorEnabled]);
     settings->setEnforceCSSMIMETypeInStrictMode(!WKAppVersionCheckLessThan(@"com.apple.iWeb", -1, 2.1));
     settings->setAcceleratedCompositingEnabled([preferences acceleratedCompositingEnabled]);
-#if ENABLE(3D_CANVAS)
-    settings->setExperimentalWebGLEnabled(true);
-#endif  // ENABLE(3D_CANVAS)
+    settings->setWebGLEnabled([preferences webGLEnabled]);
 }
 
 static inline IMP getMethod(id o, SEL s)

@@ -149,6 +149,9 @@ extern NSString *WebPreferencesRemovedNotification;
 - (BOOL)acceleratedCompositingEnabled;
 - (void)setAcceleratedCompositingEnabled:(BOOL)enabled;
 
+- (BOOL)webGLEnabled;
+- (void)setWebGLEnabled:(BOOL)enabled;
+
 // Other private methods
 - (void)_postPreferencesChangesNotification;
 + (WebPreferences *)_getInstanceForIdentifier:(NSString *)identifier;

@@ -36,7 +36,7 @@ namespace WebCore {
         : m_offset(offset)
         , m_buffer(buffer)
     {
-        m_baseAddress = static_cast<char*>(m_buffer->data()) + m_offset;
+        m_baseAddress = buffer ? (static_cast<char*>(m_buffer->data()) + m_offset) : 0;
     }
 
     CanvasArray::~CanvasArray()

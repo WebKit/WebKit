@@ -26,6 +26,17 @@ function constructorPropertiesOnWindow(globalObject)
         if (value == null)
             continue;
         var type = classNameForObject(value);
+        // Ignore these properties because they do not exist in all implementations. They will be tested separately
+        if (type == "CanvasRenderingContext3DConstructor" ||
+            type == "CanvasArrayBufferConstructor" ||
+            type =="CanvasByteArrayConstructor" ||
+            type =="CanvasFloatArrayConstructor" ||
+            type =="CanvasIntArrayConstructor" ||
+            type =="CanvasShortArrayConstructor" ||
+            type =="CanvasUnsignedByteArrayConstructor" ||
+            type =="CanvasUnsignedIntArrayConstructor" ||
+            type =="CanvasUnsignedShortArrayConstructor")
+            continue;
         if (!type.match('Constructor$'))
             continue;
         constructorNames.push(property);

@@ -10,91 +10,91 @@
 
 <script>
 
+if (window.layoutTestController)
+    layoutTestController.overridePreference("WebKitWebGLEnabled", "1");
+
 description("This test ensures basic functionality of the underlying graphics library");
 
 debug("");
 debug("Canvas.getContext");
 
 var context = document.getElementById("canvas").getContext("webkit-3d");
-if (context)
-  testPassed("context exists");
-else
-  testFailed("context does not exist");
+if (!context)
+    testFailed("context does not exist");
+else {
+    testPassed("context exists");
 
-debug("");
-debug("Context is correct type");
-if (context instanceof CanvasRenderingContext3D)
-  testPassed("context is correct type");
-else
-  testFailed("context is not correct type");
+    debug("");
+    debug("Context is correct type");
+    if (context instanceof CanvasRenderingContext3D)
+      testPassed("context is correct type");
+    else
+      testFailed("context is not correct type");
   
-debug("");
-debug("Context contains getError");
-if ("getError" in context)
-  testPassed("context contains getError");
-else
-  testFailed("context does not contains getError");
+    debug("");
+    debug("Context contains getError");
+    if ("getError" in context)
+      testPassed("context contains getError");
+    else
+      testFailed("context does not contains getError");
 
-debug("");
-debug("Check default values");
-shouldBe('context.getInteger(context.ACTIVE_TEXTURE)', 'context.TEXTURE0');
-shouldBe('context.getInteger(context.ALIASED_LINE_WIDTH_RANGE)', '1');
-shouldBe('context.getInteger(context.ALIASED_POINT_SIZE_RANGE)', '1');
-shouldBe('context.getInteger(context.ARRAY_BUFFER_BINDING)', '0');
-shouldBe('context.getInteger(context.BLEND)', '0');
-shouldBe('context.getInteger(context.BLEND_COLOR)', '0');
-shouldBe('context.getInteger(context.BLEND_DST_ALPHA)', '0');
-shouldBe('context.getInteger(context.BLEND_DST_RGB)', '0');
-shouldBe('context.getInteger(context.BLEND_EQUATION_ALPHA)', 'context.FUNC_ADD');
-shouldBe('context.getInteger(context.BLEND_EQUATION_RGB)', 'context.FUNC_ADD');
-shouldBe('context.getInteger(context.BLEND_SRC_ALPHA)', '1');
-shouldBe('context.getInteger(context.BLEND_SRC_RGB)', '1');
-shouldBe('context.getInteger(context.COLOR_CLEAR_VALUE)', '0');
-shouldBe('context.getInteger(context.COLOR_WRITEMASK)', '1');
-shouldBe('context.getInteger(context.CULL_FACE)', '0');
-shouldBe('context.getInteger(context.CULL_FACE_MODE)', 'context.BACK');
-shouldBe('context.getInteger(context.CURRENT_PROGRAM)', '0');
-shouldBe('context.getInteger(context.DEPTH_FUNC)', 'context.LESS');
-shouldBe('context.getInteger(context.DEPTH_RANGE)', '0');
-shouldBe('context.getInteger(context.DEPTH_TEST)', '0');
-shouldBe('context.getInteger(context.DEPTH_WRITEMASK)', '1');
-shouldBe('context.getInteger(context.DITHER)', '1');
-shouldBe('context.getInteger(context.ELEMENT_ARRAY_BUFFER_BINDING)', '0');
-shouldBe('context.getInteger(context.FRONT_FACE)', 'context.CCW');
-shouldBe('context.getInteger(context.GENERATE_MIPMAP_HINT)', 'context.DONT_CARE');
-shouldBe('context.getInteger(context.LINE_WIDTH)', '1');
-shouldBe('context.getInteger(context.POLYGON_OFFSET_FACTOR)', '0');
-shouldBe('context.getInteger(context.POLYGON_OFFSET_FILL)', '0');
-shouldBe('context.getInteger(context.POLYGON_OFFSET_UNITS)', '0');
-shouldBe('context.getInteger(context.RENDERBUFFER_BINDING_EXT)', '0');
-shouldBe('context.getInteger(context.SAMPLE_COVERAGE_INVERT)', '0');
-shouldBe('context.getInteger(context.SAMPLE_COVERAGE_VALUE)', '1');
-shouldBe('context.getInteger(context.SCISSOR_BOX)', '0');
-shouldBe('context.getInteger(context.SCISSOR_TEST)', '0');
-shouldBe('context.getInteger(context.STENCIL_BACK_FAIL)', 'context.KEEP');
-shouldBe('context.getInteger(context.STENCIL_BACK_FUNC)', 'context.ALWAYS');
-shouldBe('context.getInteger(context.STENCIL_BACK_PASS_DEPTH_FAIL)', 'context.KEEP');
-shouldBe('context.getInteger(context.STENCIL_BACK_PASS_DEPTH_PASS)', 'context.KEEP');
-shouldBe('context.getInteger(context.STENCIL_BACK_REF)', '0');
-shouldBe('context.getInteger(context.STENCIL_BACK_VALUE_MASK)', '-1');
-shouldBe('context.getInteger(context.STENCIL_BACK_WRITEMASK)', '-1');
-shouldBe('context.getInteger(context.STENCIL_BITS)', '0');
-shouldBe('context.getInteger(context.STENCIL_CLEAR_VALUE)', '0');
-shouldBe('context.getInteger(context.STENCIL_FAIL)', 'context.KEEP');
-shouldBe('context.getInteger(context.STENCIL_FUNC)', 'context.ALWAYS');
-shouldBe('context.getInteger(context.STENCIL_PASS_DEPTH_FAIL)', 'context.KEEP');
-shouldBe('context.getInteger(context.STENCIL_PASS_DEPTH_PASS)', 'context.KEEP');
-shouldBe('context.getInteger(context.STENCIL_REF)', '0');
-shouldBe('context.getInteger(context.STENCIL_TEST)', '0');
-shouldBe('context.getInteger(context.STENCIL_VALUE_MASK)', '-1');
-shouldBe('context.getInteger(context.STENCIL_WRITEMASK)', '-1');
-shouldBe('context.getInteger(context.TEXTURE_BINDING_2D)', '0');
-shouldBe('context.getInteger(context.TEXTURE_BINDING_CUBE_MAP)', '0');
-shouldBe('context.getInteger(context.VIEWPORT)', '0');
-
-
-
-
+    debug("");
+    debug("Check default values");
+    shouldBe('context.getInteger(context.ACTIVE_TEXTURE)', 'context.TEXTURE0');
+    shouldBe('context.getInteger(context.ALIASED_LINE_WIDTH_RANGE)', '1');
+    shouldBe('context.getInteger(context.ALIASED_POINT_SIZE_RANGE)', '1');
+    shouldBe('context.getInteger(context.ARRAY_BUFFER_BINDING)', '0');
+    shouldBe('context.getInteger(context.BLEND)', '0');
+    shouldBe('context.getInteger(context.BLEND_COLOR)', '0');
+    shouldBe('context.getInteger(context.BLEND_DST_ALPHA)', '0');
+    shouldBe('context.getInteger(context.BLEND_DST_RGB)', '0');
+    shouldBe('context.getInteger(context.BLEND_EQUATION_ALPHA)', 'context.FUNC_ADD');
+    shouldBe('context.getInteger(context.BLEND_EQUATION_RGB)', 'context.FUNC_ADD');
+    shouldBe('context.getInteger(context.BLEND_SRC_ALPHA)', '1');
+    shouldBe('context.getInteger(context.BLEND_SRC_RGB)', '1');
+    shouldBe('context.getInteger(context.COLOR_CLEAR_VALUE)', '0');
+    shouldBe('context.getInteger(context.COLOR_WRITEMASK)', '1');
+    shouldBe('context.getInteger(context.CULL_FACE)', '0');
+    shouldBe('context.getInteger(context.CULL_FACE_MODE)', 'context.BACK');
+    shouldBe('context.getInteger(context.CURRENT_PROGRAM)', '0');
+    shouldBe('context.getInteger(context.DEPTH_FUNC)', 'context.LESS');
+    shouldBe('context.getInteger(context.DEPTH_RANGE)', '0');
+    shouldBe('context.getInteger(context.DEPTH_TEST)', '0');
+    shouldBe('context.getInteger(context.DEPTH_WRITEMASK)', '1');
+    shouldBe('context.getInteger(context.DITHER)', '1');
+    shouldBe('context.getInteger(context.ELEMENT_ARRAY_BUFFER_BINDING)', '0');
+    shouldBe('context.getInteger(context.FRONT_FACE)', 'context.CCW');
+    shouldBe('context.getInteger(context.GENERATE_MIPMAP_HINT)', 'context.DONT_CARE');
+    shouldBe('context.getInteger(context.LINE_WIDTH)', '1');
+    shouldBe('context.getInteger(context.POLYGON_OFFSET_FACTOR)', '0');
+    shouldBe('context.getInteger(context.POLYGON_OFFSET_FILL)', '0');
+    shouldBe('context.getInteger(context.POLYGON_OFFSET_UNITS)', '0');
+    shouldBe('context.getInteger(context.RENDERBUFFER_BINDING_EXT)', '0');
+    shouldBe('context.getInteger(context.SAMPLE_COVERAGE_INVERT)', '0');
+    shouldBe('context.getInteger(context.SAMPLE_COVERAGE_VALUE)', '1');
+    shouldBe('context.getInteger(context.SCISSOR_BOX)', '0');
+    shouldBe('context.getInteger(context.SCISSOR_TEST)', '0');
+    shouldBe('context.getInteger(context.STENCIL_BACK_FAIL)', 'context.KEEP');
+    shouldBe('context.getInteger(context.STENCIL_BACK_FUNC)', 'context.ALWAYS');
+    shouldBe('context.getInteger(context.STENCIL_BACK_PASS_DEPTH_FAIL)', 'context.KEEP');
+    shouldBe('context.getInteger(context.STENCIL_BACK_PASS_DEPTH_PASS)', 'context.KEEP');
+    shouldBe('context.getInteger(context.STENCIL_BACK_REF)', '0');
+    shouldBe('context.getInteger(context.STENCIL_BACK_VALUE_MASK)', '-1');
+    shouldBe('context.getInteger(context.STENCIL_BACK_WRITEMASK)', '-1');
+    shouldBe('context.getInteger(context.STENCIL_BITS)', '0');
+    shouldBe('context.getInteger(context.STENCIL_CLEAR_VALUE)', '0');
+    shouldBe('context.getInteger(context.STENCIL_FAIL)', 'context.KEEP');
+    shouldBe('context.getInteger(context.STENCIL_FUNC)', 'context.ALWAYS');
+    shouldBe('context.getInteger(context.STENCIL_PASS_DEPTH_FAIL)', 'context.KEEP');
+    shouldBe('context.getInteger(context.STENCIL_PASS_DEPTH_PASS)', 'context.KEEP');
+    shouldBe('context.getInteger(context.STENCIL_REF)', '0');
+    shouldBe('context.getInteger(context.STENCIL_TEST)', '0');
+    shouldBe('context.getInteger(context.STENCIL_VALUE_MASK)', '-1');
+    shouldBe('context.getInteger(context.STENCIL_WRITEMASK)', '-1');
+    shouldBe('context.getInteger(context.TEXTURE_BINDING_2D)', '0');
+    shouldBe('context.getInteger(context.TEXTURE_BINDING_CUBE_MAP)', '0');
+    shouldBe('context.getInteger(context.VIEWPORT)', '0');
+}
 
 debug("");
 successfullyParsed = true;

@@ -61,7 +61,16 @@ var __skip__ = {
     "window.objCPluginFunction" : 1,
     "window.plainText" : 1,
     "window.textInputController" : 1,
-    "window.CanvasRenderingContext3D" : 1 // We ignore CanvasRenderingContext3D and test it elsewhere, since it is not in all builds
+    // Ignore these properties because they do not exist in all implementations. They will be tested separately
+    "window.CanvasRenderingContext3D" : 1, 
+    "window.CanvasArrayBuffer" : 1, 
+    "window.CanvasByteArray" : 1, 
+    "window.CanvasFloatArray" : 1, 
+    "window.CanvasIntArray" : 1, 
+    "window.CanvasShortArray" : 1, 
+    "window.CanvasUnsignedByteArray" : 1, 
+    "window.CanvasUnsignedIntArray" : 1, 
+    "window.CanvasUnsignedShortArray" : 1
 };
 
 function logValue(valueName)

@@ -267,10 +267,8 @@ namespace WebCore {
         void setPluginAllowedRunTime(unsigned);
         unsigned pluginAllowedRunTime() const { return m_pluginAllowedRunTime; }
 
-        // This run-time flag is only temporary while the WebGL
-        // specification is being developed.
-        void setExperimentalWebGLEnabled(bool);
-        bool experimentalWebGLEnabled() const { return m_experimentalWebGLEnabled; }
+        void setWebGLEnabled(bool);
+        bool webGLEnabled() const { return m_webGLEnabled; }
 
 #if ENABLE(WEB_SOCKETS)
         void setExperimentalWebSocketsEnabled(bool);
@@ -344,7 +342,7 @@ namespace WebCore {
         bool m_acceleratedCompositingEnabled : 1;
         bool m_experimentalNotificationsEnabled : 1;
         bool m_pluginHalterEnabled : 1;
-        bool m_experimentalWebGLEnabled : 1;
+        bool m_webGLEnabled : 1;
 
 #if ENABLE(WEB_SOCKETS)
         bool m_experimentalWebSocketsEnabled : 1;

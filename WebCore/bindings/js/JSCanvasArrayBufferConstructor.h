@@ -47,8 +47,9 @@ namespace WebCore {
         //
         RefPtr<C> arrayObject;
         
+        // For the 0 args case, just create an object without a buffer 
         if (args.size() < 1)
-            return 0;
+            return C::create(0, 0, 0);
         
         if (args.at(0).isObject()) {
             RefPtr<CanvasArrayBuffer> buffer = toCanvasArrayBuffer(args.at(0));

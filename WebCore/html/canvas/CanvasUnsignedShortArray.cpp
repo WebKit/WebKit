@@ -55,10 +55,11 @@ namespace WebCore {
             return NULL;
         }
 
-        // Check to make sure we are talking about a valid region of
-        // the given CanvasArrayBuffer's storage.
-        if ((offset + (length * sizeof(unsigned short))) > buffer->byteLength()) {
-            return NULL;
+        if (buffer) {
+            // Check to make sure we are talking about a valid region of
+            // the given CanvasArrayBuffer's storage.
+            if ((offset + (length * sizeof(unsigned short))) > buffer->byteLength()) 
+                return NULL;
         }
 
         return adoptRef(new CanvasUnsignedShortArray(buffer, offset, length));
