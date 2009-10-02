@@ -80,6 +80,16 @@ bool PluginPackage::fetchInfo()
     return true;
 }
 
+static NPError staticPluginQuirkRequiresGtkToolKit_NPN_GetValue(NPP instance, NPNVariable variable, void* value)
+{
+    if (variable == NPNVToolkit) {
+        *static_cast<uint32*>(value) = 2;
+        return NPERR_NO_ERROR;
+    }
+
+    return NPN_GetValue(instance, variable, value);
+}
+
 bool PluginPackage::load()
 {
     if (m_isLoaded) {
@@ -110,6 +120,12 @@ bool PluginPackage::load()
     m_pluginFuncs.size = sizeof(m_pluginFuncs);
 
     initializeBrowserFuncs();
+
+    if (m_path.contains("npwrapper.")) {
+        // nspluginwrapper relies on the toolkit value to know if glib is available
+        // It does so in NP_Initialize with a null instance, therefore it is done this way:
+        m_browserFuncs.getvalue = staticPluginQuirkRequiresGtkToolKit_NPN_GetValue;
+    }
 
 #if defined(XP_UNIX)
     npErr = NP_Initialize(&m_browserFuncs, &m_pluginFuncs);
