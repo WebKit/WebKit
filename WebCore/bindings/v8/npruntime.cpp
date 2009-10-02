@@ -39,7 +39,7 @@
 // The static initializer here should work okay, but we want to avoid
 // static initialization in general.
 
-namespace {
+namespace npruntime {
 
 // We use StringKey here as the key-type to avoid a string copy to
 // construct the map key and for faster comparisons than strcmp.
@@ -112,7 +112,10 @@ struct StringKeyHash {
     static const bool safeToCompareToEmptyOrDeleted = true;
 };
 
-}  // namespace
+}  // namespace npruntime
+
+using npruntime::StringKey;
+using npruntime::StringKeyHash;
 
 // Implement HashTraits<StringKey>
 struct StringKeyHashTraits : WTF::GenericHashTraits<StringKey> {
