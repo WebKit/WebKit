@@ -41,7 +41,6 @@ worker.onmessage = function(evt) {
 }
 
 // Keep cloning the passed port until we're told to stop.
-var numClones = 0;
 function resendPort(evt)
 {
     if (!evt.ports)
@@ -50,15 +49,8 @@ function resendPort(evt)
         log("FAIL: ports.length = " + evt.ports.length);
 
     if (!stopCloning) {
-        numClones++;
         evt.target.postMessage("", evt.ports);
     } else {
-        if (numClones < 50) {
-            // If we didn't clone at least 50 times, then there's something amiss.
-            log("FAIL: postBack complete, but only cloned " + numClones + " times.");
-        } else {
-            log("PASS: postBack complete, cloned > 50 times.");
-        }
         // Make sure the messages arrived in order.
         var itemNum = 0;
         // Queue up a task to execute once the messages have been processed. The timeout value is set fairly large to account for Chromium's different message delivery architecture.
