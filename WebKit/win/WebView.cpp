@@ -5440,7 +5440,7 @@ static PassOwnPtr<Vector<String> > toStringVector(unsigned patternsCount, BSTR* 
         return 0;
     Vector<String>* patternsVector = new Vector<String>;
     for (unsigned i = 0; i < patternsCount; ++i)
-        patternsVector.append(String(patterns[i], SysStringLen(patterns[i])));
+        patternsVector->append(String(patterns[i], SysStringLen(patterns[i])));
     return patternsVector;
 }
 
