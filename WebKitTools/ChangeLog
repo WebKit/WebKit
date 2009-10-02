@@ -1,3 +1,12 @@
+2009-10-02  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        svn-create-patch should have an --ignore-changelogs to not add ChangeLogs to the diff,
+        this will help the patch merging process when TryBots are used.
+
+        * Scripts/svn-create-patch:
+
 2009-10-02  Jakub Wieczorek  <faw217@gmail.com>
 
         Reviewed by Simon Hausmann.

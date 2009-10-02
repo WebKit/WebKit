@@ -77,13 +77,15 @@ sub testfilecmp($$);
 $ENV{'LC_ALL'} = 'C';
 
 my $showHelp;
+my $ignoreChangelogs = 0;
 my $devNull = File::Spec->devnull();
 
 my $result = GetOptions(
     "help"       => \$showHelp,
+    "ignore-changelogs"    => \$ignoreChangelogs
 );
 if (!$result || $showHelp) {
-    print STDERR basename($0) . " [-h|--help] [svndir1 [svndir2 ...]]\n";
+    print STDERR basename($0) . " [-h|--help] [--ignore-changelogs] [svndir1 [svndir2 ...]]\n";
     exit 1;
 }
 
@@ -264,6 +266,11 @@ sub generateDiff($$)
 {
     my ($fileData, $prefix) = @_;
     my $file = File::Spec->catdir($prefix, $fileData->{path});
+    
+    if ($ignoreChangelogs && basename($file) eq "ChangeLog") {
+        return;
+    }
+    
     my $patch;
     if ($fileData->{modificationType} eq "additionWithHistory") {
         manufacturePatchForAdditionWithHistory($fileData);
