@@ -224,9 +224,7 @@ void QNetworkReplyHandler::finish()
     if (m_shouldFinish)
         return;
 
-    // FIXME: Investigate if this check should be moved into sendResponseIfNeeded()
-    if (!m_reply->error())
-        sendResponseIfNeeded();
+    sendResponseIfNeeded();
 
     if (!m_resourceHandle)
         return;
@@ -265,6 +263,9 @@ void QNetworkReplyHandler::sendResponseIfNeeded()
 {
     m_shouldSendResponse = (m_loadMode != LoadNormal);
     if (m_shouldSendResponse)
+        return;
+
+    if (m_reply->error())
         return;
 
     if (m_responseSent || !m_resourceHandle)
@@ -306,9 +307,6 @@ void QNetworkReplyHandler::sendResponseIfNeeded()
         response.setHTTPStatusCode(statusCode);
         response.setHTTPStatusText(m_reply->attribute(QNetworkRequest::HttpReasonPhraseAttribute).toByteArray().constData());
     }
-    else if (m_reply->error() == QNetworkReply::ContentNotFoundError)
-        response.setHTTPStatusCode(404);
-
 
     /* Fill in the other fields
      * For local file requests remove the content length and the last-modified

@@ -1,3 +1,14 @@
+2009-10-02  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        Move error check into sendResponseIfNeeded() as suggested
+        by Eric Seidel. Also, remove some dead code.
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyHandler::finish):
+        (WebCore::QNetworkReplyHandler::sendResponseIfNeeded):
+
 2009-10-02  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Adele Peterson.
