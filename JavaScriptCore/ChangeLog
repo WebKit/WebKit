@@ -1,3 +1,15 @@
+2009-10-02  Jørgen Lind  <jorgen.lind@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Allow enabling and disabling of the JIT through a qmake variable.
+
+        Qt's configure may set this variable through .qmake.cache if a
+        commandline option is given and/or the compile test for hwcap.h
+        failed/succeeded.
+
+        * JavaScriptCore.pri:
+
 2009-10-01  Mark Rowe  <mrowe@apple.com>
 
         Fix the Tiger build.  Don't unconditionally enable 3D canvas as it is not supported on Tiger.
