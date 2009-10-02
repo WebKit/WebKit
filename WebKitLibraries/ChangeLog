@@ -1,3 +1,13 @@
+2009-10-02  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Adam Roben.
+
+        <rdar://problem/7271334> 
+        Rename MediaControllerThemeQT to MediaControllerThemeQuickTime
+
+        * WebKitSystemInterface.h: 
+        MediaControllerThemeQT -> MediaControllerThemeQuickTime
+
 2009-10-02  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Mark Rowe.

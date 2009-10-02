@@ -216,7 +216,7 @@ typedef enum {
 
 typedef enum {
     WKMediaControllerThemeClassic   = 1,
-    WKMediaControllerThemeQT        = 2
+    WKMediaControllerThemeQuickTime = 2
 } WKMediaControllerThemeStyle;
 
 typedef enum {
