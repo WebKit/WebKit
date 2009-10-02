@@ -55,15 +55,6 @@ public:
 
     virtual bool valueMissing() const { return isRequiredFormControl() && !disabled() && !readOnly() && value().isEmpty(); }
 
-    int selectionStart();
-    int selectionEnd();
-
-    void setSelectionStart(int);
-    void setSelectionEnd(int);
-
-    void select();
-    void setSelectionRange(int, int);
-
     virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
     virtual void parseMappedAttribute(MappedAttribute*);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
@@ -94,7 +85,6 @@ public:
     void setRows(int);
     
     void cacheSelection(int s, int e) { m_cachedSelectionStart = s; m_cachedSelectionEnd = e; };
-    VisibleSelection selection() const;
 
     virtual bool shouldUseInputMethod() const;
 
@@ -107,6 +97,8 @@ private:
 
     virtual bool supportsPlaceholder() const { return true; }
     virtual bool isEmptyValue() const { return value().isEmpty(); }
+    virtual int cachedSelectionStart() const { return m_cachedSelectionStart; }
+    virtual int cachedSelectionEnd() const { return m_cachedSelectionEnd; }
 
     virtual bool isOptionalFormControl() const { return !isRequiredFormControl(); }
     virtual bool isRequiredFormControl() const { return required(); }

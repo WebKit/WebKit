@@ -94,54 +94,6 @@ void HTMLTextAreaElement::restoreFormControlState(const String& state)
     setDefaultValue(state);
 }
 
-int HTMLTextAreaElement::selectionStart()
-{
-    if (!renderer())
-        return 0;
-    if (document()->focusedNode() != this && m_cachedSelectionStart >= 0)
-        return m_cachedSelectionStart;
-    return toRenderTextControl(renderer())->selectionStart();
-}
-
-int HTMLTextAreaElement::selectionEnd()
-{
-    if (!renderer())
-        return 0;
-    if (document()->focusedNode() != this && m_cachedSelectionEnd >= 0)
-        return m_cachedSelectionEnd;
-    return toRenderTextControl(renderer())->selectionEnd();
-}
-
-static RenderTextControl* rendererAfterUpdateLayout(HTMLTextAreaElement* element)
-{
-    element->document()->updateLayoutIgnorePendingStylesheets();
-    return toRenderTextControl(element->renderer());
-}
-
-void HTMLTextAreaElement::setSelectionStart(int start)
-{
-    if (RenderTextControl* renderer = rendererAfterUpdateLayout(this))
-        renderer->setSelectionStart(start);
-}
-
-void HTMLTextAreaElement::setSelectionEnd(int end)
-{
-    if (RenderTextControl* renderer = rendererAfterUpdateLayout(this))
-        renderer->setSelectionEnd(end);
-}
-
-void HTMLTextAreaElement::select()
-{
-    if (RenderTextControl* renderer = rendererAfterUpdateLayout(this))
-        renderer->select();
-}
-
-void HTMLTextAreaElement::setSelectionRange(int start, int end)
-{
-    if (RenderTextControl* renderer = rendererAfterUpdateLayout(this))
-        renderer->setSelectionRange(start, end);
-}
-
 void HTMLTextAreaElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
     setValue(defaultValue());
@@ -197,18 +149,8 @@ void HTMLTextAreaElement::parseMappedAttribute(MappedAttribute* attr)
     } else if (attr->name() == alignAttr) {
         // Don't map 'align' attribute.  This matches what Firefox, Opera and IE do.
         // See http://bugs.webkit.org/show_bug.cgi?id=7075
-    } else if (attr->name() == placeholderAttr) {
-        updatePlaceholderVisibility(true);
-    } else if (attr->name() == onfocusAttr)
-        setAttributeEventListener(eventNames().focusEvent, createAttributeEventListener(this, attr));
-    else if (attr->name() == onblurAttr)
-        setAttributeEventListener(eventNames().blurEvent, createAttributeEventListener(this, attr));
-    else if (attr->name() == onselectAttr)
-        setAttributeEventListener(eventNames().selectEvent, createAttributeEventListener(this, attr));
-    else if (attr->name() == onchangeAttr)
-        setAttributeEventListener(eventNames().changeEvent, createAttributeEventListener(this, attr));
-    else
-        HTMLFormControlElementWithState::parseMappedAttribute(attr);
+    } else
+        HTMLTextFormControlElement::parseMappedAttribute(attr);
 }
 
 RenderObject* HTMLTextAreaElement::createRenderer(RenderArena* arena, RenderStyle*)
@@ -455,13 +397,6 @@ void HTMLTextAreaElement::setCols(int cols)
 void HTMLTextAreaElement::setRows(int rows)
 {
     setAttribute(rowsAttr, String::number(rows));
-}
-
-VisibleSelection HTMLTextAreaElement::selection() const
-{
-    if (!renderer() || m_cachedSelectionStart < 0 || m_cachedSelectionEnd < 0)
-        return VisibleSelection();
-    return toRenderTextControl(renderer())->selection(m_cachedSelectionStart, m_cachedSelectionEnd);
 }
 
 bool HTMLTextAreaElement::shouldUseInputMethod() const

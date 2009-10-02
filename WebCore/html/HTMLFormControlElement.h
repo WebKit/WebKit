@@ -30,7 +30,9 @@ namespace WebCore {
 
 class FormDataList;
 class HTMLFormElement;
+class RenderTextControl;
 class ValidityState;
+class VisibleSelection;
 
 class HTMLFormControlElement : public HTMLElement {
 public:
@@ -151,9 +153,20 @@ public:
     virtual void dispatchFocusEvent();
     virtual void dispatchBlurEvent();
 
+    int selectionStart();
+    int selectionEnd();
+    void setSelectionStart(int);
+    void setSelectionEnd(int);
+    void select();
+    void setSelectionRange(int start, int end);
+    VisibleSelection selection() const;
+
 protected:
     bool placeholderShouldBeVisible() const;
     void updatePlaceholderVisibility(bool);
+    virtual int cachedSelectionStart() const = 0;
+    virtual int cachedSelectionEnd() const = 0;
+    virtual void parseMappedAttribute(MappedAttribute*);
 
 private:
     // A subclass should return true if placeholder processing is needed.
@@ -164,6 +177,7 @@ private:
     virtual void handleFocusEvent() { }
     // Called in dispatchBlurEvent(), after placeholder process, before calling parent's dispatchBlurEvent().
     virtual void handleBlurEvent() { }
+    RenderTextControl* textRendererAfterUpdateLayout();
 };
 
 } //namespace

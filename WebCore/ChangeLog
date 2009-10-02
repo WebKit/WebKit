@@ -1,3 +1,49 @@
+2009-10-02  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        - Move the following methods of HTMLInputElement and HTMLTextAreaElement
+          to HTMLTextFormControlElement.
+           setSelectionStart()
+           setSelectionEnd()
+           select()
+           setSelectionRange()
+           selectionStart()
+           selectionEnd()
+           selection()
+
+        - Introduce cachedSelectionStart() and cachedSelectionEnd().
+
+        - Unify HTMLInputElement::isTextFieldWithRenderer() and
+         HTMLTextAreaElement::rendererAfterUpdateLayout() into textRendererAfterUpdateLayout().
+        
+        - Unify a part of parseMappedAttribute() of HTMLInputElement and HTMLTextAreaElement.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29782
+
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::textRendererAfterUpdateLayout):
+        (WebCore::HTMLTextFormControlElement::setSelectionStart):
+        (WebCore::HTMLTextFormControlElement::setSelectionEnd):
+        (WebCore::HTMLTextFormControlElement::select):
+        (WebCore::HTMLTextFormControlElement::setSelectionRange):
+        (WebCore::HTMLTextFormControlElement::selectionStart):
+        (WebCore::HTMLTextFormControlElement::selectionEnd):
+        (WebCore::HTMLTextFormControlElement::selection):
+        (WebCore::HTMLTextFormControlElement::parseMappedAttribute):
+        * html/HTMLFormControlElement.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::parseMappedAttribute):
+        * html/HTMLInputElement.h:
+        (WebCore::HTMLInputElement::select):
+        (WebCore::HTMLInputElement::cachedSelectionStart):
+        (WebCore::HTMLInputElement::cachedSelectionEnd):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::parseMappedAttribute):
+        * html/HTMLTextAreaElement.h:
+        (WebCore::HTMLTextAreaElement::cachedSelectionStart):
+        (WebCore::HTMLTextAreaElement::cachedSelectionEnd):
+
 2009-10-02  Vitaly Repeshko  <vitalyr@chromium.org>
 
         Reviewed by Dimitri Glazkov.
