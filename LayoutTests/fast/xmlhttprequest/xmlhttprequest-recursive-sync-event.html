@@ -1,0 +1,32 @@
+<html>
+<script>
+function log(s)
+{
+    var logDiv = document.getElementById("log");
+    logDiv.appendChild(document.createTextNode(s));
+    logDiv.appendChild(document.createElement("br"));
+}
+
+function test()
+{
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+    }
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4) {
+            xhr.open("GET", "recurse.html", false);
+            xhr.send(null);
+        }
+    };
+    xhr.open("GET", "recurse.html", false);
+    xhr.send(null);
+    log("PASS");
+}
+</script>
+<body onload="test()">
+This tests that having infinite recursion in XMLHttpRequest event handler does not crash.
+<br>
+<div id="log"></div>
+</body>
+</html>

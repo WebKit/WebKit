@@ -1,3 +1,16 @@
+2009-10-02  Vitaly Repeshko  <vitalyr@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [V8] Recursion guard for V8Proxy::callFunction.
+        Fixes http://crbug.com/23278.
+        https://bugs.webkit.org/show_bug.cgi?id=29974
+
+        Test: fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html
+
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::callFunction):
+
 2009-10-02  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Jon Honeycutt.

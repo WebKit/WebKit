@@ -417,6 +417,17 @@ v8::Local<v8::Value> V8Proxy::callFunction(v8::Handle<v8::Function> function, v8
     {
         V8ConsoleMessage::Scope scope;
 
+        if (m_recursion >= kMaxRecursionDepth) {
+            v8::Local<v8::String> code = v8::String::New("throw new RangeError('Maximum call stack size exceeded.')");
+            if (code.IsEmpty())
+                return result;
+            v8::Local<v8::Script> script = v8::Script::Compile(code);
+            if (script.IsEmpty())
+                return result;
+            script->Run();
+            return result;
+        }
+
         // Evaluating the JavaScript could cause the frame to be deallocated,
         // so we start the keep alive timer here.
         // Frame::keepAlive method adds the ref count of the frame and sets a

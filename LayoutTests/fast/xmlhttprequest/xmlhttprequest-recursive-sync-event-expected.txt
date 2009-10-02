@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: line 0: RangeError: Maximum call stack size exceeded.
+CONSOLE MESSAGE: line 0: RangeError: Maximum call stack size exceeded.
+CONSOLE MESSAGE: line 0: RangeError: Maximum call stack size exceeded.
+This tests that having infinite recursion in XMLHttpRequest event handler does not crash. 
+PASS
+
