@@ -1,3 +1,27 @@
+2009-10-02  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed build fix.  Actually add the new files.
+
+        * loader/RedirectScheduler.cpp: Added.
+        (WebCore::ScheduledRedirection::):
+        (WebCore::ScheduledRedirection::ScheduledRedirection):
+        (WebCore::RedirectScheduler::RedirectScheduler):
+        (WebCore::RedirectScheduler::~RedirectScheduler):
+        (WebCore::RedirectScheduler::redirectScheduledDuringLoad):
+        (WebCore::RedirectScheduler::clear):
+        (WebCore::RedirectScheduler::scheduleRedirect):
+        (WebCore::RedirectScheduler::mustLockBackForwardList):
+        (WebCore::RedirectScheduler::scheduleLocationChange):
+        (WebCore::RedirectScheduler::scheduleFormSubmission):
+        (WebCore::RedirectScheduler::scheduleRefresh):
+        (WebCore::RedirectScheduler::locationChangePending):
+        (WebCore::RedirectScheduler::scheduleHistoryNavigation):
+        (WebCore::RedirectScheduler::timerFired):
+        (WebCore::RedirectScheduler::schedule):
+        (WebCore::RedirectScheduler::startTimer):
+        (WebCore::RedirectScheduler::cancel):
+        * loader/RedirectScheduler.h: Added.
+
 2009-10-01  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.
