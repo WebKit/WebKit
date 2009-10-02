@@ -1,3 +1,15 @@
+2009-10-02  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Added gyp_webkit that does a subset of the things gyp_chromium does
+        plus some specialization for an upstream chromium build.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29986
+
+        * chromium/DEPS: Points to gyp_webkit instead of gyp_chromium.
+        * chromium/gyp_webkit: A new python file.
+
 2009-10-01  Yaar Schnitman  <yaar@chromium.org>
 
         Reviewed by Dimitri Glazkov.

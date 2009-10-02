@@ -174,12 +174,6 @@ hooks = [
   {
     # A change to any file in this directory should run the gyp generator.
     'pattern': '.',
-    'action': ['python',
-               'build/gyp_chromium',
-               '-Dinside_chromium_build=0',
-               '-Dv8_use_snapshot=false',
-               '-Dmsvs_use_common_release=0',
-               '--depth=./',
-               'webkit.gyp'],
+    'action': ['python', 'gyp_webkit'],
   },
 ]
