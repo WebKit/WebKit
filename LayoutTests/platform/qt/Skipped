@@ -127,8 +127,6 @@ fast/forms/input-maxlength-ime-completed.html
 
 # Missing layoutTestController.overridePreference()
 fast/events/pageshow-pagehide-on-back-cached.html
-fast/events/tab-focus-anchor.html
-fast/events/click-focus-anchor.html
 
 # Missing layoutTestController.overridePreference()
 fast/events/pageshow-pagehide-on-back-cached-with-frames.html
@@ -4861,9 +4859,6 @@ fast/dom/prototype-inheritance-2.html
 
 # Missing DRT ability to override 'standard' preferences.
 fast/dom/Window/timer-resume-on-navigation-back.html
-fast/harness/override-preferences.html
-fast/harness/override-preferences-2.html
-fast/harness/override-zzz-reset.html
 fast/harness/use-page-cache.html
 loader/go-back-to-different-window-size.html
 

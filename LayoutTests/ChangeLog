@@ -1,3 +1,14 @@
+2009-10-03  Jakub Wieczorek  <faw217@gmail.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Remove 5 tests from the Skipped list that pass after the addition
+        of layoutTestController.overridePreference().
+
+        https://bugs.webkit.org/show_bug.cgi?id=29970
+
+        * platform/qt/Skipped:
+
 2009-10-02  Yuta Kitamura  <yutak@chromium.org>
 
         Reviewed by Darin Adler.
