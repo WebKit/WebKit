@@ -273,11 +273,14 @@ void JIT::emit_op_get_by_val(Instruction* currentInstruction)
     addSlowCase(branch32(NotEqual, regT3, Imm32(JSValue::Int32Tag)));
     emitJumpSlowCaseIfNotJSCell(base, regT1);
     addSlowCase(branchPtr(NotEqual, Address(regT0), ImmPtr(m_globalData->jsArrayVPtr)));
-    addSlowCase(branch32(AboveOrEqual, regT2, Address(regT0, OBJECT_OFFSETOF(JSArray, m_fastAccessCutoff))));
 
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSArray, m_storage)), regT0);
-    load32(BaseIndex(regT0, regT2, TimesEight, OBJECT_OFFSETOF(ArrayStorage, m_vector[0]) + 4), regT1); // tag
-    load32(BaseIndex(regT0, regT2, TimesEight, OBJECT_OFFSETOF(ArrayStorage, m_vector[0])), regT0); // payload
+    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSArray, m_storage)), regT3);
+    addSlowCase(branch32(AboveOrEqual, regT2, Address(regT0, OBJECT_OFFSETOF(JSArray, m_vectorLength))));
+
+    load32(BaseIndex(regT3, regT2, TimesEight, OBJECT_OFFSETOF(ArrayStorage, m_vector[0]) + 4), regT1); // tag
+    load32(BaseIndex(regT3, regT2, TimesEight, OBJECT_OFFSETOF(ArrayStorage, m_vector[0])), regT0); // payload
+    addSlowCase(branch32(Equal, regT1, Imm32(JSValue::EmptyValueTag)));
+
     emitStore(dst, regT1, regT0);
     map(m_bytecodeIndex + OPCODE_LENGTH(op_get_by_val), dst, regT1, regT0);
 }
@@ -288,31 +291,16 @@ void JIT::emitSlow_op_get_by_val(Instruction* currentInstruction, Vector<SlowCas
     unsigned base = currentInstruction[2].u.operand;
     unsigned property = currentInstruction[3].u.operand;
 
-    // The slow void JIT::emitSlow_that handles accesses to arrays (below) may jump back up to here. 
-    Label callGetByValJITStub(this);
-
     linkSlowCase(iter); // property int32 check
     linkSlowCaseIfNotJSCell(iter, base); // base cell check
     linkSlowCase(iter); // base array check
+    linkSlowCase(iter); // vector length check
+    linkSlowCase(iter); // empty value
 
     JITStubCall stubCall(this, cti_op_get_by_val);
     stubCall.addArgument(base);
     stubCall.addArgument(property);
     stubCall.call(dst);
-
-    emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_get_by_val));
-
-    linkSlowCase(iter); // array fast cut-off check
-
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSArray, m_storage)), regT0);
-    branch32(AboveOrEqual, regT2, Address(regT0, OBJECT_OFFSETOF(ArrayStorage, m_vectorLength)), callGetByValJITStub);
-
-    // Missed the fast region, but it is still in the vector.
-    load32(BaseIndex(regT0, regT2, TimesEight, OBJECT_OFFSETOF(ArrayStorage, m_vector[0]) + 4), regT1); // tag
-    load32(BaseIndex(regT0, regT2, TimesEight, OBJECT_OFFSETOF(ArrayStorage, m_vector[0])), regT0); // payload
-    branch32(Equal, regT1, Imm32(JSValue::EmptyValueTag)).linkTo(callGetByValJITStub, this);
-
-    emitStore(dst, regT1, regT0);
 }
 
 void JIT::emit_op_put_by_val(Instruction* currentInstruction)
@@ -326,22 +314,27 @@ void JIT::emit_op_put_by_val(Instruction* currentInstruction)
     addSlowCase(branch32(NotEqual, regT3, Imm32(JSValue::Int32Tag)));
     emitJumpSlowCaseIfNotJSCell(base, regT1);
     addSlowCase(branchPtr(NotEqual, Address(regT0), ImmPtr(m_globalData->jsArrayVPtr)));
+    addSlowCase(branch32(AboveOrEqual, regT2, Address(regT0, OBJECT_OFFSETOF(JSArray, m_vectorLength))));
+
     loadPtr(Address(regT0, OBJECT_OFFSETOF(JSArray, m_storage)), regT3);
 
-    Jump inFastVector = branch32(Below, regT2, Address(regT0, OBJECT_OFFSETOF(JSArray, m_fastAccessCutoff)));
-    
-    // Check if the access is within the vector.
-    addSlowCase(branch32(AboveOrEqual, regT2, Address(regT3, OBJECT_OFFSETOF(ArrayStorage, m_vectorLength))));
+    Jump empty = branch32(Equal, BaseIndex(regT3, regT2, TimesEight, OBJECT_OFFSETOF(ArrayStorage, m_vector[0]) + 4), Imm32(JSValue::EmptyValueTag));
 
-    // This is a write to the slow part of the vector; first, we have to check if this would be the first write to this location.
-    // FIXME: should be able to handle initial write to array; increment the the number of items in the array, and potentially update fast access cutoff. 
-    addSlowCase(branch32(Equal, BaseIndex(regT3, regT2, TimesEight, OBJECT_OFFSETOF(ArrayStorage, m_vector[0]) + 4), Imm32(JSValue::EmptyValueTag)));
-
-    inFastVector.link(this);
-
+    Label storeResult(this);
     emitLoad(value, regT1, regT0);
     store32(regT0, BaseIndex(regT3, regT2, TimesEight, OBJECT_OFFSETOF(ArrayStorage, m_vector[0]))); // payload
     store32(regT1, BaseIndex(regT3, regT2, TimesEight, OBJECT_OFFSETOF(ArrayStorage, m_vector[0]) + 4)); // tag
+    Jump end = jump();
+
+    empty.link(this);
+    add32(Imm32(1), Address(regT3, OBJECT_OFFSETOF(ArrayStorage, m_numValuesInVector)));
+    branch32(Below, regT2, Address(regT3, OBJECT_OFFSETOF(ArrayStorage, m_length))).linkTo(storeResult, this);
+
+    add32(Imm32(1), regT2, regT0);
+    store32(regT0, Address(regT3, OBJECT_OFFSETOF(ArrayStorage, m_length)));
+    jump().linkTo(storeResult, this);
+
+    end.link(this);
 }
 
 void JIT::emitSlow_op_put_by_val(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -353,24 +346,13 @@ void JIT::emitSlow_op_put_by_val(Instruction* currentInstruction, Vector<SlowCas
     linkSlowCase(iter); // property int32 check
     linkSlowCaseIfNotJSCell(iter, base); // base cell check
     linkSlowCase(iter); // base not array check
+    linkSlowCase(iter); // in vector check
 
     JITStubCall stubPutByValCall(this, cti_op_put_by_val);
     stubPutByValCall.addArgument(base);
     stubPutByValCall.addArgument(property);
     stubPutByValCall.addArgument(value);
     stubPutByValCall.call();
-
-    emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_get_by_val));
-
-    // Slow cases for immediate int accesses to arrays.
-    linkSlowCase(iter); // in vector check
-    linkSlowCase(iter); // written to slot check
-
-    JITStubCall stubCall(this, cti_op_put_by_val_array);
-    stubCall.addArgument(regT1, regT0);
-    stubCall.addArgument(regT2);
-    stubCall.addArgument(value);
-    stubCall.call();
 }
 
 void JIT::emit_op_get_by_id(Instruction* currentInstruction)
@@ -952,12 +934,16 @@ void JIT::privateCompileGetByIdChain(StructureStubInfo* stubInfo, Structure* str
 
 void JIT::emit_op_get_by_val(Instruction* currentInstruction)
 {
-    emitGetVirtualRegisters(currentInstruction[2].u.operand, regT0, currentInstruction[3].u.operand, regT1);
+    unsigned dst = currentInstruction[1].u.operand;
+    unsigned base = currentInstruction[2].u.operand;
+    unsigned property = currentInstruction[3].u.operand;
+
+    emitGetVirtualRegisters(base, regT0, property, regT1);
     emitJumpSlowCaseIfNotImmediateInteger(regT1);
 #if USE(JSVALUE64)
     // This is technically incorrect - we're zero-extending an int32.  On the hot path this doesn't matter.
-    // We check the value as if it was a uint32 against the m_fastAccessCutoff - which will always fail if
-    // number was signed since m_fastAccessCutoff is always less than intmax (since the total allocation
+    // We check the value as if it was a uint32 against the m_vectorLength - which will always fail if
+    // number was signed since m_vectorLength is always less than intmax (since the total allocation
     // size is always less than 4Gb).  As such zero extending wil have been correct (and extending the value
     // to 64-bits is necessary since it's used in the address calculation.  We zero extend rather than sign
     // extending since it makes it easier to re-tag the value in the slow case.
@@ -965,21 +951,25 @@ void JIT::emit_op_get_by_val(Instruction* currentInstruction)
 #else
     emitFastArithImmToInt(regT1);
 #endif
-    emitJumpSlowCaseIfNotJSCell(regT0);
+    emitJumpSlowCaseIfNotJSCell(regT0, base);
     addSlowCase(branchPtr(NotEqual, Address(regT0), ImmPtr(m_globalData->jsArrayVPtr)));
 
-    // This is an array; get the m_storage pointer into ecx, then check if the index is below the fast cutoff
     loadPtr(Address(regT0, OBJECT_OFFSETOF(JSArray, m_storage)), regT2);
-    addSlowCase(branch32(AboveOrEqual, regT1, Address(regT0, OBJECT_OFFSETOF(JSArray, m_fastAccessCutoff))));
+    addSlowCase(branch32(AboveOrEqual, regT1, Address(regT0, OBJECT_OFFSETOF(JSArray, m_vectorLength))));
 
-    // Get the value from the vector
     loadPtr(BaseIndex(regT2, regT1, ScalePtr, OBJECT_OFFSETOF(ArrayStorage, m_vector[0])), regT0);
-    emitPutVirtualRegister(currentInstruction[1].u.operand);
+    addSlowCase(branchTestPtr(Zero, regT0));
+
+    emitPutVirtualRegister(dst);
 }
 
 void JIT::emit_op_put_by_val(Instruction* currentInstruction)
 {
-    emitGetVirtualRegisters(currentInstruction[1].u.operand, regT0, currentInstruction[2].u.operand, regT1);
+    unsigned base = currentInstruction[1].u.operand;
+    unsigned property = currentInstruction[2].u.operand;
+    unsigned value = currentInstruction[3].u.operand;
+
+    emitGetVirtualRegisters(base, regT0, property, regT1);
     emitJumpSlowCaseIfNotImmediateInteger(regT1);
 #if USE(JSVALUE64)
     // See comment in op_get_by_val.
@@ -987,23 +977,29 @@ void JIT::emit_op_put_by_val(Instruction* currentInstruction)
 #else
     emitFastArithImmToInt(regT1);
 #endif
-    emitJumpSlowCaseIfNotJSCell(regT0);
+    emitJumpSlowCaseIfNotJSCell(regT0, base);
     addSlowCase(branchPtr(NotEqual, Address(regT0), ImmPtr(m_globalData->jsArrayVPtr)));
+    addSlowCase(branch32(AboveOrEqual, regT1, Address(regT0, OBJECT_OFFSETOF(JSArray, m_vectorLength))));
 
-    // This is an array; get the m_storage pointer into ecx, then check if the index is below the fast cutoff
     loadPtr(Address(regT0, OBJECT_OFFSETOF(JSArray, m_storage)), regT2);
-    Jump inFastVector = branch32(Below, regT1, Address(regT0, OBJECT_OFFSETOF(JSArray, m_fastAccessCutoff)));
-    // No; oh well, check if the access if within the vector - if so, we may still be okay.
-    addSlowCase(branch32(AboveOrEqual, regT1, Address(regT2, OBJECT_OFFSETOF(ArrayStorage, m_vectorLength))));
 
-    // This is a write to the slow part of the vector; first, we have to check if this would be the first write to this location.
-    // FIXME: should be able to handle initial write to array; increment the the number of items in the array, and potentially update fast access cutoff. 
-    addSlowCase(branchTestPtr(Zero, BaseIndex(regT2, regT1, ScalePtr, OBJECT_OFFSETOF(ArrayStorage, m_vector[0]))));
+    Jump empty = branchTestPtr(Zero, BaseIndex(regT2, regT1, ScalePtr, OBJECT_OFFSETOF(ArrayStorage, m_vector[0])));
 
-    // All good - put the value into the array.
-    inFastVector.link(this);
-    emitGetVirtualRegister(currentInstruction[3].u.operand, regT0);
+    Label storeResult(this);
+    emitGetVirtualRegister(value, regT0);
     storePtr(regT0, BaseIndex(regT2, regT1, ScalePtr, OBJECT_OFFSETOF(ArrayStorage, m_vector[0])));
+    Jump end = jump();
+    
+    empty.link(this);
+    add32(Imm32(1), Address(regT2, OBJECT_OFFSETOF(ArrayStorage, m_numValuesInVector)));
+    branch32(Below, regT1, Address(regT2, OBJECT_OFFSETOF(ArrayStorage, m_length))).linkTo(storeResult, this);
+
+    move(regT1, regT0);
+    add32(Imm32(1), regT0);
+    store32(regT0, Address(regT2, OBJECT_OFFSETOF(ArrayStorage, m_length)));
+    jump().linkTo(storeResult, this);
+
+    end.link(this);
 }
 
 void JIT::emit_op_put_by_index(Instruction* currentInstruction)

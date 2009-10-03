@@ -2691,32 +2691,20 @@ void JIT::emitSlow_op_to_primitive(Instruction* currentInstruction, Vector<SlowC
 
 void JIT::emitSlow_op_get_by_val(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    // The slow void JIT::emitSlow_that handles accesses to arrays (below) may jump back up to here. 
-    Label beginGetByValSlow(this);
+    unsigned dst = currentInstruction[1].u.operand;
+    unsigned base = currentInstruction[2].u.operand;
+    unsigned property = currentInstruction[3].u.operand;
 
-    Jump notImm = getSlowCase(iter);
-    linkSlowCase(iter);
-    linkSlowCase(iter);
-    emitFastArithIntToImmNoCheck(regT1, regT1);
+    linkSlowCase(iter); // property int32 check
+    linkSlowCaseIfNotJSCell(iter, base); // base cell check
+    linkSlowCase(iter); // base array check
+    linkSlowCase(iter); // vector length check
+    linkSlowCase(iter); // empty value
 
-    notImm.link(this);
     JITStubCall stubCall(this, cti_op_get_by_val);
-    stubCall.addArgument(regT0);
-    stubCall.addArgument(regT1);
-    stubCall.call(currentInstruction[1].u.operand);
-    emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_get_by_val));
-
-    // This is slow void JIT::emitSlow_that handles accesses to arrays above the fast cut-off.
-    // First, check if this is an access to the vector
-    linkSlowCase(iter);
-    branch32(AboveOrEqual, regT1, Address(regT2, OBJECT_OFFSETOF(ArrayStorage, m_vectorLength)), beginGetByValSlow);
-
-    // okay, missed the fast region, but it is still in the vector.  Get the value.
-    loadPtr(BaseIndex(regT2, regT1, ScalePtr, OBJECT_OFFSETOF(ArrayStorage, m_vector[0])), regT2);
-    // Check whether the value loaded is zero; if so we need to return undefined.
-    branchTestPtr(Zero, regT2, beginGetByValSlow);
-    move(regT2, regT0);
-    emitPutVirtualRegister(currentInstruction[1].u.operand, regT0);
+    stubCall.addArgument(base, regT2);
+    stubCall.addArgument(property, regT2);
+    stubCall.call(dst);
 }
 
 void JIT::emitSlow_op_loop_if_less(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -2773,30 +2761,20 @@ void JIT::emitSlow_op_loop_if_lesseq(Instruction* currentInstruction, Vector<Slo
 
 void JIT::emitSlow_op_put_by_val(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    // Normal slow cases - either is not an immediate imm, or is an array.
-    Jump notImm = getSlowCase(iter);
-    linkSlowCase(iter);
-    linkSlowCase(iter);
-    emitFastArithIntToImmNoCheck(regT1, regT1);
+    unsigned base = currentInstruction[1].u.operand;
+    unsigned property = currentInstruction[2].u.operand;
+    unsigned value = currentInstruction[3].u.operand;
 
-    notImm.link(this); {
-        JITStubCall stubCall(this, cti_op_put_by_val);
-        stubCall.addArgument(regT0);
-        stubCall.addArgument(regT1);
-        stubCall.addArgument(currentInstruction[3].u.operand, regT2);
-        stubCall.call();
-        emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_put_by_val));
-    }
+    linkSlowCase(iter); // property int32 check
+    linkSlowCaseIfNotJSCell(iter, base); // base cell check
+    linkSlowCase(iter); // base not array check
+    linkSlowCase(iter); // in vector check
 
-    // slow cases for immediate int accesses to arrays
-    linkSlowCase(iter);
-    linkSlowCase(iter); {
-        JITStubCall stubCall(this, cti_op_put_by_val_array);
-        stubCall.addArgument(regT0);
-        stubCall.addArgument(regT1);
-        stubCall.addArgument(currentInstruction[3].u.operand, regT2);
-        stubCall.call();
-    }
+    JITStubCall stubPutByValCall(this, cti_op_put_by_val);
+    stubPutByValCall.addArgument(regT0);
+    stubPutByValCall.addArgument(property, regT2);
+    stubPutByValCall.addArgument(value, regT2);
+    stubPutByValCall.call();
 }
 
 void JIT::emitSlow_op_loop_if_true(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
