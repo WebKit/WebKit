@@ -1,3 +1,10 @@
+2009-10-02  Steve Falkenburg  <sfalken@apple.com>
+
+        Windows build fix.
+        Re-apply lost changes to auto-version.sh.
+        
+        * win/tools/scripts/auto-version.sh:
+
 2009-10-02  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Adam Roben.
