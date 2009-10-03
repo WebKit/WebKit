@@ -136,4 +136,12 @@ void PluginView::updatePluginWidget()
     notImplemented();
 }
 
+void PluginView::halt()
+{
+}
+
+void PluginView::restart()
+{
+}
+
 } // namespace WebCore

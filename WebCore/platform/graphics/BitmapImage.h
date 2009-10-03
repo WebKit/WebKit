@@ -141,6 +141,7 @@ public:
 #endif
 
 #if PLATFORM(WIN)
+    static PassRefPtr<BitmapImage> create(HBITMAP);
     virtual bool getHBITMAP(HBITMAP);
     virtual bool getHBITMAPOfSize(HBITMAP, LPSIZE);
 #endif

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Image.h"
 #include "BitmapImage.h"
+#include "BitmapInfo.h"
 #include "GraphicsContext.h"
 #include <ApplicationServices/ApplicationServices.h>
 
@@ -33,6 +34,30 @@
 #include "PlatformString.h"
 
 namespace WebCore {
+
+PassRefPtr<BitmapImage> BitmapImage::create(HBITMAP hBitmap)
+{
+    DIBSECTION dibSection;
+    if (!GetObject(hBitmap, sizeof(DIBSECTION), &dibSection))
+        return 0;
+
+    ASSERT(dibSection.dsBm.bmBitsPixel == 32);
+    if (dibSection.dsBm.bmBitsPixel != 32)
+        return 0;
+
+    ASSERT(dibSection.dsBm.bmBits);
+    if (!dibSection.dsBm.bmBits)
+        return 0;
+
+    RetainPtr<CGColorSpaceRef> deviceRGB(AdoptCF, CGColorSpaceCreateDeviceRGB());
+    RetainPtr<CGContextRef> bitmapContext(AdoptCF, CGBitmapContextCreate(dibSection.dsBm.bmBits, dibSection.dsBm.bmWidth, dibSection.dsBm.bmHeight, 8,
+        dibSection.dsBm.bmWidthBytes, deviceRGB.get(), kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst));
+
+    // The BitmapImage takes ownership of this.
+    CGImageRef cgImage = CGBitmapContextCreateImage(bitmapContext.get());
+
+    return adoptRef(new BitmapImage(cgImage));
+}
 
 bool BitmapImage::getHBITMAPOfSize(HBITMAP bmp, LPSIZE size)
 {

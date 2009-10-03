@@ -29,6 +29,7 @@
 
 #include "CString.h"
 #include "FrameLoadRequest.h"
+#include "HaltablePlugin.h"
 #include "IntRect.h"
 #include "KURL.h"
 #include "PlatformString.h"
@@ -106,7 +107,7 @@ namespace WebCore {
         virtual void didFail(const ResourceError&) = 0;
     };
 
-    class PluginView : public Widget, private PluginStreamClient, public PluginManualLoader {
+    class PluginView : public Widget, private PluginStreamClient, public PluginManualLoader, private HaltablePlugin {
     public:
         static PassRefPtr<PluginView> create(Frame* parentFrame, const IntSize&, Element*, const KURL&, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually);
         virtual ~PluginView();
@@ -192,6 +193,11 @@ namespace WebCore {
         void didReceiveData(const char*, int);
         void didFinishLoading();
         void didFail(const ResourceError&);
+
+        // HaltablePlugin
+        virtual void halt();
+        virtual void restart();
+        virtual Node* node() const;
 
         static bool isCallingPlugin();
 
@@ -295,6 +301,7 @@ public:
         void setPlatformPluginWidget(PlatformPluginWidget widget) { m_window = widget; }
 #else
 public:
+        void setPlatformPluginWidget(PlatformPluginWidget widget) { setPlatformWidget(widget); }
         PlatformPluginWidget platformPluginWidget() const { return platformWidget(); }
 #endif
 

@@ -507,5 +507,13 @@ void PluginView::platformDestroy()
 {
 }
 
+void PluginView::halt()
+{
+}
+
+void PluginView::restart()
+{
+}
+
 } // namespace WebCore
 

@@ -1,3 +1,78 @@
+2009-09-25  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Make WebCore::PluginView participate in plug-in halting.
+
+        Reviewed by Sam Weinig.
+
+        * platform/graphics/BitmapImage.h:
+        Declare a create() function that takes an HBITMAP.
+
+        * platform/graphics/win/ImageCGWin.cpp:
+        (WebCore::BitmapImage::create):
+        Use GetObject() to fill out a DIBSECTION structure for the given
+        HBITMAP. Call CGBitmapContextCreate() to create a CG context from the
+        bits of the bitmap. Create a CG image from the context, and pass this
+        when creating a new BitmapImage.
+
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::start):
+        If we successfully started, tell our parent frame's Page.
+        (WebCore::PluginView::stop):
+        Tell our parent frame's Page that we stopped.
+        (WebCore::PluginView::node):
+
+        * plugins/PluginView.h:
+        Inherit from HaltablePlugin.
+        (WebCore::PluginView::setPlatformPluginWidget):
+        On platforms where the platform plug-in widget is the WebCore::Widget's
+        platform widget, have setPlatformPluginWidget() call
+        setPlatformWidget().
+
+        * plugins/PluginViewNone.cpp:
+        (WebCore::PluginView::halt):
+        Stubbed.
+        (WebCore::PluginView::restart):
+        Stubbed.
+
+        * plugins/gtk/PluginViewGtk.cpp:
+        (WebCore::PluginView::halt):
+        Stubbed.
+        (WebCore::PluginView::restart):
+        Stubbed.
+
+        * plugins/mac/PluginViewMac.cpp:
+        (WebCore::PluginView::halt):
+        Stubbed.
+        (WebCore::PluginView::restart):
+        Stubbed.
+
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::halt):
+        Stubbed.
+        (WebCore::PluginView::restart):
+        Stubbed.
+
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::platformDestroy):
+        After destroying the window, set the platform plug-in widget to 0 to
+        ensure that Widget isn't holding a stale handle.
+        (WebCore::PluginView::halt):
+        Have our element's RenderWidget display a screenshot of the plug-in,
+        then stop the plug-in and destroy it.
+        (WebCore::PluginView::restart):
+        Clear the RenderWidget's substitute image, then start the plug-in.
+
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::showSubstituteImage):
+        Set m_substituteImage to the passed image, and repaint.
+        (WebCore::RenderWidget::paint):
+        If we have a substitute image, paint that instead of allowing the
+        widget to paint itself.
+
+        * rendering/RenderWidget.h:
+        Declare showSubstituteImage(). Added a member to store the substitute
+        image.
+
 2009-10-02  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

@@ -29,6 +29,7 @@
 
 #include "PluginView.h"
 
+#include "BitmapImage.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Element.h"
@@ -52,6 +53,7 @@
 #include "PluginMessageThrottlerWin.h"
 #include "PluginPackage.h"
 #include "PluginMainThreadScheduler.h"
+#include "RenderWidget.h"
 #include "JSDOMBinding.h"
 #include "ScriptController.h"
 #include "PluginDatabase.h"
@@ -1008,8 +1010,32 @@ bool PluginView::platformStart()
 
 void PluginView::platformDestroy()
 {
-    if (platformPluginWidget())
-        DestroyWindow(platformPluginWidget());
+    if (!platformPluginWidget())
+        return;
+
+    DestroyWindow(platformPluginWidget());
+    setPlatformPluginWidget(0);
+}
+
+void PluginView::halt()
+{
+    // Show a screenshot of the plug-in.
+    OwnPtr<HBITMAP> nodeImage(m_parentFrame->nodeImage(m_element));
+    toRenderWidget(m_element->renderer())->showSubstituteImage(BitmapImage::create(nodeImage.get()));
+
+    stop();
+    platformDestroy();
+}
+
+void PluginView::restart()
+{
+    ASSERT(!m_isStarted);
+
+    // Clear any substitute image.
+    toRenderWidget(m_element->renderer())->showSubstituteImage(0);
+
+    m_haveUpdatedPluginWidget = false;
+    start();
 }
 
 } // namespace WebCore
