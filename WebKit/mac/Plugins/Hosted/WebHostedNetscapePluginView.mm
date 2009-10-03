@@ -330,10 +330,9 @@ extern "C" {
 {
     if (_proxy) {
         if (_softwareRenderer) {
-            if ([NSGraphicsContext currentContextDrawingToScreen]) {
+            if ([NSGraphicsContext currentContextDrawingToScreen])
                 WKSoftwareCARendererRender(_softwareRenderer, (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort], NSRectToCGRect(rect));
-                _proxy->didDraw();
-            } else
+            else
                 _proxy->print(reinterpret_cast<CGContextRef>([[NSGraphicsContext currentContext] graphicsPort]), [self bounds].size.width, [self bounds].size.height);
         }
             

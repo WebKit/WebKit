@@ -1,29 +1,3 @@
-2009-10-02  Anders Carlsson  <andersca@apple.com>
-
-        Reviewed by Kevin Decker and Dan Bernstein.
-
-        WebKit side of <rdar://problem/7179166>
-
-        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
-        Add an m_pluginIsWaitingForDraw member variable.
-        
-        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
-        (WebKit::NetscapePluginInstanceProxy::NetscapePluginInstanceProxy):
-        Initialize m_pluginIsWaitingForDraw.
-        
-        (WebKit::NetscapePluginInstanceProxy::invalidateRect):
-        Set m_pluginIsWaitingForDraw to true.
-        
-        (WebKit::NetscapePluginInstanceProxy::didDraw):
-        If m_pluginIsWaitingForDraw is true, call _WKPHPluginInstanceDidDraw.
-        
-        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
-        (-[WebHostedNetscapePluginView drawRect:]):
-        Call didDraw.
-        
-        * Plugins/Hosted/WebKitPluginHost.defs:
-        Add PHPluginInstanceDidDraw.
-
 2009-10-02  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by Adam Roben.

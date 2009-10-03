@@ -113,7 +113,6 @@ NetscapePluginInstanceProxy::NetscapePluginInstanceProxy(NetscapePluginHostProxy
     , m_shouldStopSoon(false)
     , m_currentRequestID(0)
     , m_inDestroy(false)
-    , m_pluginIsWaitingForDraw(false)
 {
     ASSERT(m_pluginView);
     
@@ -1286,19 +1285,9 @@ void NetscapePluginInstanceProxy::invalidateRect(double x, double y, double widt
 {
     ASSERT(m_pluginView);
     
-    m_pluginIsWaitingForDraw = true;
     [m_pluginView invalidatePluginContentRect:NSMakeRect(x, y, width, height)];
 }
 
-void NetscapePluginInstanceProxy::didDraw()
-{
-    if (!m_pluginIsWaitingForDraw)
-        return;
-    
-    m_pluginIsWaitingForDraw = false;
-    _WKPHPluginInstanceDidDraw(m_pluginHostProxy->port(), m_pluginID);
-}
-    
 bool NetscapePluginInstanceProxy::getCookies(data_t urlData, mach_msg_type_number_t urlLength, data_t& cookiesData, mach_msg_type_number_t& cookiesLength)
 {
     ASSERT(m_pluginView);
