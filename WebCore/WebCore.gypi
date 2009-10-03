@@ -1626,6 +1626,8 @@
             'loader/PlaceholderDocument.h',
             'loader/PluginDocument.cpp',
             'loader/PluginDocument.h',
+            'loader/PolicyCheck.cpp',
+            'loader/PolicyCheck.h',
             'loader/ProgressTracker.cpp',
             'loader/ProgressTracker.h',
             'loader/RedirectScheduler.cpp',

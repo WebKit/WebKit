@@ -17441,6 +17441,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\loader\PolicyCheck.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\loader\PolicyCheck.h"
+				>
+			</File>
+			<File
 				RelativePath="..\loader\ProgressTracker.cpp"
 				>
 			</File>

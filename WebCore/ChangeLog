@@ -1,3 +1,22 @@
+2009-10-02  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Move PolicyCheck out of FrameLoader.{h,cpp}
+        https://bugs.webkit.org/show_bug.cgi?id=30035
+
+        Purely code motion (and adding a destructor).
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/FrameLoader.cpp:
+        * loader/FrameLoader.h:
+        * loader/PolicyCheck.cpp:
+        * loader/PolicyCheck.h:
+
 2009-10-02  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Tor Arne Vestbø.
