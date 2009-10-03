@@ -673,6 +673,11 @@ void InspectorController::populateScriptObjects()
 #endif
 
     m_frontend->populateInterface();
+
+    // Dispatch pending frontend commands
+    for (Vector<pair<long, String> >::iterator it = m_pendingEvaluateTestCommands.begin(); it != m_pendingEvaluateTestCommands.end(); ++it)
+        m_frontend->evaluateForTestInFrontend((*it).first, (*it).second);
+    m_pendingEvaluateTestCommands.clear();
 }
 
 void InspectorController::resetScriptObjects()
@@ -1446,6 +1451,25 @@ void InspectorController::didContinue()
 }
 
 #endif
+
+void InspectorController::evaluateForTestInFrontend(long callId, const String& script)
+{
+    if (m_frontend && windowVisible())
+        m_frontend->evaluateForTestInFrontend(callId, script);
+    else
+        m_pendingEvaluateTestCommands.append(pair<long, String>(callId, script));
+}
+
+void InspectorController::didEvaluateForTestInFrontend(long callId, const String& jsonResult)
+{
+    ScriptState* scriptState = scriptStateFromPage(m_inspectedPage);
+    ScriptObject window;
+    ScriptGlobalObject::get(scriptState, "window", window);
+    ScriptFunctionCall function(scriptState, window, "didEvaluateForTestInFrontend");
+    function.appendArgument(static_cast<int>(callId));
+    function.appendArgument(jsonResult);
+    function.call();
+}
 
 static Path quadToPath(const FloatQuad& quad)
 {

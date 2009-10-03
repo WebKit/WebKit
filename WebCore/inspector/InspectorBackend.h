@@ -157,6 +157,7 @@ public:
     void setDOMStorageItem(long callId, long storageId, const String& key, const String& value);
     void removeDOMStorageItem(long callId, long storageId, const String& key);
 #endif
+    void didEvaluateForTestInFrontend(long callId, const String& jsonResult);
 
 private:
     InspectorBackend(InspectorController* inspectorController, InspectorClient* client);

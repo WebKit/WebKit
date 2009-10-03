@@ -129,6 +129,7 @@ namespace WebCore {
 
         ScriptState* scriptState() const { return m_scriptState; }
 
+        void evaluateForTestInFrontend(int callId, const String& script);
     private:
         PassOwnPtr<ScriptFunctionCall> newFunctionCall(const String& functionName);
         void callSimpleFunction(const String& functionName);

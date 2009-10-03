@@ -459,6 +459,14 @@ void InspectorFrontend::addNodesToSearchResult(const String& nodeIds)
     function->call();
 }
 
+void InspectorFrontend::evaluateForTestInFrontend(int callId, const String& script)
+{
+    OwnPtr<ScriptFunctionCall> function(newFunctionCall("evaluateForTestInFrontend"));
+    function->appendArgument(callId);
+    function->appendArgument(script);
+    function->call();
+}
+
 PassOwnPtr<ScriptFunctionCall> InspectorFrontend::newFunctionCall(const String& functionName)
 {
     ScriptFunctionCall* function = new ScriptFunctionCall(m_scriptState, m_webInspector, "dispatch");

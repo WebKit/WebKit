@@ -1615,6 +1615,11 @@ WebInspector._toolbarItemClicked = function(event)
     this.currentPanel = toolbarItem.panel;
 }
 
+WebInspector.evaluateForTestInFrontend = function(callId, script)
+{
+    InspectorController.didEvaluateForTestInFrontend(callId, JSON.stringify(window.eval(script)));
+}
+
 // This table maps MIME types to the Resource.Types which are valid for them.
 // The following line:
 //    "text/html":                {0: 1},

@@ -283,6 +283,8 @@ public:
     virtual void didContinue();
 #endif
 
+    void evaluateForTestInFrontend(long callId, const String& script);
+
 private:
     friend class InspectorBackend;
     // Following are used from InspectorBackend and internally.
@@ -331,6 +333,8 @@ private:
 
     SpecialPanels specialPanelForJSName(const String& panelName);
 
+    void didEvaluateForTestInFrontend(long callId, const String& jsonResult);
+
     Page* m_inspectedPage;
     InspectorClient* m_client;
     OwnPtr<InspectorFrontend> m_frontend;
@@ -365,6 +369,7 @@ private:
     RefPtr<InspectorBackend> m_inspectorBackend;
     HashMap<String, ScriptValue> m_idToConsoleObject;
     long m_lastBoundObjectId;
+    Vector<pair<long, String> > m_pendingEvaluateTestCommands;
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     bool m_debuggerEnabled;
     bool m_attachDebuggerWhenShown;

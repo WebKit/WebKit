@@ -127,5 +127,6 @@ module core {
         void setDOMStorageItem(in long callId, in long storageId, in DOMString key, in DOMString value);
         void removeDOMStorageItem(in long callId, in long storageId, in DOMString key);
 #endif
+        void didEvaluateForTestInFrontend(in long callId, in DOMString jsonResult);
     };
 }
