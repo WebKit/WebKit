@@ -70,6 +70,7 @@ WebInspector.CookieItemsView.prototype = {
             if (dataGrid) {
                 self._dataGrid = dataGrid;
                 self.element.appendChild(dataGrid.element);
+                self._dataGrid.updateWidths();
                 if (isAdvanced)
                     self.deleteButton.visible = true;
             } else {
@@ -245,6 +246,12 @@ WebInspector.CookieItemsView.prototype = {
             nodes[0].selected = true;
 
         return dataGrid;
+    },
+    
+    resize: function()
+    {
+        if (this._datagrid)
+            this._dataGrid.updateWidths();
     },
 
     _deleteButtonClicked: function(event)

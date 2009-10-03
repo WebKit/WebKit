@@ -1,3 +1,15 @@
+2009-10-02  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Fixes <https://bugs.webkit.org/show_bug.cgi?id=30036>
+        Should be able to resize Cookie Columns.
+
+        * inspector/front-end/CookieItemsView.js:
+        (WebInspector.CookieItemsView.prototype.update.callback):
+        (WebInspector.CookieItemsView.prototype.update):
+        (WebInspector.CookieItemsView.prototype.resize):
+
 2009-09-25  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Make WebCore::PluginView participate in plug-in halting.
