@@ -1,3 +1,11 @@
+2009-10-02  Julie Parent  <jparent@chromium.org>
+
+        Unreviewed.
+
+        Adding myself and Ojan Vafai as committers, because we are committers.
+
+        * Scripts/modules/committers.py:
+
 2009-10-02  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben.
