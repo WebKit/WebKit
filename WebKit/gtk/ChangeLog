@@ -1,5 +1,13 @@
 2009-10-03  Adam Barth  <abarth@webkit.org>
 
+        More build fixing.
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_go_back_or_forward):
+        (webkit_web_view_can_go_back_or_forward):
+
+2009-10-03  Adam Barth  <abarth@webkit.org>
+
         Unreviewed build fix.
 
         * webkit/webkitwebview.cpp:
