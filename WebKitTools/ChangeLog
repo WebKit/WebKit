@@ -1,3 +1,14 @@
+2009-10-04  Carol Szabo  <carol.szabo@nokia.com>
+
+        Reviewed by David Levin.
+
+        check-webkit-style misses whitespace errors for operators:
+        <<, >>, <<=, >>=, &=, |=, +=, -=, *=, /=, /, |, &&, ||.
+        https://bugs.webkit.org/show_bug.cgi?id=30021
+
+        * Scripts/modules/cpp_style.py:
+        Added the operators mentioned above to the same list as == and !=.
+
 2009-10-02  Julie Parent  <jparent@chromium.org>
 
         Unreviewed.

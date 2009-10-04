@@ -1548,7 +1548,7 @@ def check_spacing(filename, clean_lines, line_number, error):
     # Alas, we can't test < or > because they're legitimately used sans spaces
     # (a->b, vector<int> a).  The only time we can tell is a < with no >, and
     # only if it's not template params list spilling into the next line.
-    matched = search(r'[^<>=!\s](==|!=|<=|>=)[^<>=!\s]', line)
+    matched = search(r'[^<>=!\s](==|!=|\+=|-=|\*=|/=|/|\|=|&=|<<=|>>=|<=|>=|\|\||\||&&|>>|<<)[^<>=!\s]', line)
     if not matched:
         # Note that while it seems that the '<[^<]*' term in the following
         # regexp could be simplified to '<.*', which would indeed match
@@ -1561,7 +1561,7 @@ def check_spacing(filename, clean_lines, line_number, error):
               'Missing spaces around %s' % matched.group(1))
     # We allow no-spaces around << and >> when used like this: 10<<20, but
     # not otherwise (particularly, not when used as streams)
-    matched = search(r'[^0-9\s](<<|>>)[^0-9\s]', line)
+    matched = search(r'[^0-9\s](<<|>>)[^0-9\s=]', line)
     if matched:
         error(filename, line_number, 'whitespace/operators', 3,
               'Missing spaces around %s' % matched.group(1))

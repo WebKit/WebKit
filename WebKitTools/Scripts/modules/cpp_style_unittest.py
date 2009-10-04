@@ -951,7 +951,7 @@ class CppStyleTest(CppStyleTestBase):
         self.assert_lint('int a[sizeof(struct Foo)];', '')
         self.assert_lint('int a[128 - sizeof(const bar)];', '')
         self.assert_lint('int a[(sizeof(foo) * 4)];', '')
-        self.assert_lint('int a[(arraysize(fixed_size_array)/2) << 1];', '')
+        self.assert_lint('int a[(arraysize(fixed_size_array)/2) << 1];', 'Missing spaces around /  [whitespace/operators] [3]')
         self.assert_lint('delete a[some_var];', '')
         self.assert_lint('return a[some_var];', '')
 
@@ -1209,6 +1209,62 @@ class CppStyleTest(CppStyleTestBase):
         self.assert_lint('typedef hash_map<Foo, Bar', 'Missing spaces around <'
                          '  [whitespace/operators] [3]')
         self.assert_lint('typedef hash_map<FoooooType, BaaaaarType,', '')
+        self.assert_lint('a<Foo> t+=b;', 'Missing spaces around +='
+                         '  [whitespace/operators] [3]')
+        self.assert_lint('a<Foo> t-=b;', 'Missing spaces around -='
+                         '  [whitespace/operators] [3]')
+        self.assert_lint('a<Foo*> t*=b;', 'Missing spaces around *='
+                         '  [whitespace/operators] [3]')
+        self.assert_lint('a<Foo*> t/=b;', 'Missing spaces around /='
+                         '  [whitespace/operators] [3]')
+        self.assert_lint('a<Foo*> t|=b;', 'Missing spaces around |='
+                         '  [whitespace/operators] [3]')
+        self.assert_lint('a<Foo*> t&=b;', 'Missing spaces around &='
+                         '  [whitespace/operators] [3]')
+        self.assert_lint('a<Foo*> t<<=b;', 'Missing spaces around <<='
+                         '  [whitespace/operators] [3]')
+        self.assert_lint('a<Foo*> t>>=b;', 'Missing spaces around >>='
+                         '  [whitespace/operators] [3]')
+        self.assert_lint('a<Foo*> t>>=&b|c;', 'Missing spaces around >>='
+                         '  [whitespace/operators] [3]')
+        self.assert_lint('a<Foo*> t<<=*b/c;', 'Missing spaces around <<='
+                         '  [whitespace/operators] [3]')
+        self.assert_lint('a<Foo> t -= b;', '')
+        self.assert_lint('a<Foo> t += b;', '')
+        self.assert_lint('a<Foo*> t *= b;', '')
+        self.assert_lint('a<Foo*> t /= b;', '')
+        self.assert_lint('a<Foo*> t |= b;', '')
+        self.assert_lint('a<Foo*> t &= b;', '')
+        self.assert_lint('a<Foo*> t <<= b;', '')
+        self.assert_lint('a<Foo*> t >>= b;', '')
+        self.assert_lint('a<Foo*> t >>= &b|c;', 'Missing spaces around |'
+                         '  [whitespace/operators] [3]')
+        self.assert_lint('a<Foo*> t <<= *b/c;', 'Missing spaces around /'
+                         '  [whitespace/operators] [3]')
+        self.assert_lint('a<Foo*> t <<= b/c; //Test', ['At least two spaces'
+                         ' is best between code and comments  [whitespace/'
+                         'comments] [2]', 'Should have a space between // '
+                         'and comment  [whitespace/comments] [4]', 'Missing'
+                         ' spaces around /  [whitespace/operators] [3]'])
+        self.assert_lint('a<Foo*> t <<= b||c;  //Test', ['Should have a space'
+                         ' between // and comment  [whitespace/comments] [4]',
+                         'Missing spaces around ||  [whitespace/operators] [3]'])
+        self.assert_lint('a<Foo*> t <<= b&&c;  // Test', 'Missing spaces around'
+                         ' &&  [whitespace/operators] [3]')
+        self.assert_lint('a<Foo*> t <<= b&&&c;  // Test', 'Missing spaces around'
+                         ' &&  [whitespace/operators] [3]')
+        self.assert_lint('a<Foo*> t <<= b&&*c;  // Test', 'Missing spaces around'
+                         ' &&  [whitespace/operators] [3]')
+        self.assert_lint('a<Foo*> t <<= b && *c;  // Test', '')
+        self.assert_lint('a<Foo*> t <<= b && &c;  // Test', '')
+        self.assert_lint('a<Foo*> t <<= b || &c;  /*Test', 'Complex multi-line '
+                         '/*...*/-style comment found. Lint may give bogus '
+                         'warnings.  Consider replacing these with //-style'
+                         ' comments, with #if 0...#endif, or with more clearly'
+                         ' structured multi-line comments.  [readability/multiline_comment] [5]')
+        self.assert_lint('a<Foo&> t <<= &b | &c;', '')
+        self.assert_lint('a<Foo*> t <<= &b & &c;  // Test', '')
+        self.assert_lint('a<Foo*> t <<= *b / &c;  // Test', '')
 
     def test_spacing_before_last_semicolon(self):
         self.assert_lint('call_function() ;',
@@ -2960,7 +3016,7 @@ class WebKitStyleTest(CppStyleTestBase):
             'Missing space after ,  [whitespace/comma] [3]')
         self.assert_multi_line_lint(
             'c = a|b;',
-            '')
+            'Missing spaces around |  [whitespace/operators] [3]')
         # FIXME: We cannot catch this lint error.
         # self.assert_multi_line_lint(
         #     'return condition ? 1:0;',
