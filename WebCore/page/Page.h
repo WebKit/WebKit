@@ -111,7 +111,10 @@ namespace WebCore {
         // makes more sense when that class exists.
         bool goBack();
         bool goForward();
+        bool canGoBackOrForward(int distance) const;
+        void goBackOrForward(int distance);
         void goToItem(HistoryItem*, FrameLoadType);
+        int getHistoryLength();
 
         HistoryItem* globalHistoryItem() const { return m_globalHistoryItem.get(); }
         void setGlobalHistoryItem(HistoryItem*);

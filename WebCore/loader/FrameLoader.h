@@ -238,10 +238,6 @@ namespace WebCore {
 
         KURL baseURL() const;
 
-        bool canGoBackOrForward(int distance) const;
-        void goBackOrForward(int distance);
-        int getHistoryLength();
-
         void begin();
         void begin(const KURL&, bool dispatchWindowObjectAvailable = true, SecurityOrigin* forcedSecurityOrigin = 0);
 

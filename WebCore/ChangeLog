@@ -1,3 +1,33 @@
+2009-10-03  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        Factor back-forward list methods out of FrameLoader
+        https://bugs.webkit.org/show_bug.cgi?id=30037
+
+        This change moves these back-forward related methods from FrameLoader
+        to Page.  It's possible we should move these methods into some kind of
+        "page controller" object, but we can figure that out in a future patch.
+
+        * loader/FrameLoader.cpp:
+        * loader/FrameLoader.h:
+        * loader/RedirectScheduler.cpp:
+        (WebCore::RedirectScheduler::timerFired):
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::close):
+        * page/History.cpp:
+        (WebCore::History::length):
+        * page/Page.cpp:
+        (WebCore::Page::canGoBackOrForward):
+        (WebCore::Page::goBackOrForward):
+        (WebCore::Page::getHistoryLength):
+        * page/Page.h:
+        * platform/ContextMenu.cpp:
+        (WebCore::ContextMenu::populate):
+        (WebCore::ContextMenu::checkOrEnableIfNeeded):
+
 2009-10-02  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

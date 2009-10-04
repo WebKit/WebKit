@@ -1270,36 +1270,6 @@ KURL FrameLoader::completeURL(const String& url)
     return m_frame->document()->completeURL(url);
 }
 
-void FrameLoader::goBackOrForward(int distance)
-{
-    if (distance == 0)
-        return;
-        
-    Page* page = m_frame->page();
-    if (!page)
-        return;
-    BackForwardList* list = page->backForwardList();
-    if (!list)
-        return;
-    
-    HistoryItem* item = list->itemAtIndex(distance);
-    if (!item) {
-        if (distance > 0) {
-            int forwardListCount = list->forwardListCount();
-            if (forwardListCount > 0) 
-                item = list->itemAtIndex(forwardListCount);
-        } else {
-            int backListCount = list->backListCount();
-            if (backListCount > 0)
-                item = list->itemAtIndex(-backListCount);
-        }
-    }
-    
-    ASSERT(item); // we should not reach this line with an empty back/forward list
-    if (item)
-        page->goToItem(item, FrameLoadTypeIndexedBackForward);
-}
-
 void FrameLoader::loadURLIntoChildFrame(const KURL& url, const String& referer, Frame* childFrame)
 {
     ASSERT(childFrame);
@@ -3955,26 +3925,6 @@ bool FrameLoader::shouldInterruptLoadForXFrameOptions(const String& content, con
     }
 
     return false;
-}
-
-bool FrameLoader::canGoBackOrForward(int distance) const
-{
-    if (Page* page = m_frame->page()) {
-        if (distance == 0)
-            return true;
-        if (distance > 0 && distance <= page->backForwardList()->forwardListCount())
-            return true;
-        if (distance < 0 && -distance <= page->backForwardList()->backListCount())
-            return true;
-    }
-    return false;
-}
-
-int FrameLoader::getHistoryLength()
-{
-    if (Page* page = m_frame->page())
-        return page->backForwardList()->backListCount() + 1;
-    return 0;
 }
 
 void FrameLoader::addHistoryItemForFragmentScroll()

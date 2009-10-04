@@ -228,6 +228,40 @@ bool Page::goForward()
     return false;
 }
 
+bool Page::canGoBackOrForward(int distance) const
+{
+    if (distance == 0)
+        return true;
+    if (distance > 0 && distance <= m_backForwardList->forwardListCount())
+        return true;
+    if (distance < 0 && -distance <= m_backForwardList->backListCount())
+        return true;
+    return false;
+}
+
+void Page::goBackOrForward(int distance)
+{
+    if (distance == 0)
+        return;
+
+    HistoryItem* item = m_backForwardList->itemAtIndex(distance);
+    if (!item) {
+        if (distance > 0) {
+            int forwardListCount = m_backForwardList->forwardListCount();
+            if (forwardListCount > 0) 
+                item = m_backForwardList->itemAtIndex(forwardListCount);
+        } else {
+            int backListCount = m_backForwardList->backListCount();
+            if (backListCount > 0)
+                item = m_backForwardList->itemAtIndex(-backListCount);
+        }
+    }
+
+    ASSERT(item); // we should not reach this line with an empty back/forward list
+    if (item)
+        goToItem(item, FrameLoadTypeIndexedBackForward);
+}
+
 void Page::goToItem(HistoryItem* item, FrameLoadType type)
 {
     // Abort any current load if we're going to a history item
@@ -245,6 +279,11 @@ void Page::goToItem(HistoryItem* item, FrameLoadType type)
 #endif
     m_mainFrame->loader()->stopAllLoaders(databasePolicy);
     m_mainFrame->loader()->goToItem(item, type);
+}
+
+int Page::getHistoryLength()
+{
+    return m_backForwardList->backListCount() + 1;
 }
 
 void Page::setGlobalHistoryItem(HistoryItem* item)

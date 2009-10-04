@@ -166,10 +166,12 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
         frame->editor()->copy();
         break;
     case ContextMenuItemTagGoBack:
-        frame->loader()->goBackOrForward(-1);
+        if (Page* page = frame->page())
+            page->goBackOrForward(-1);
         break;
     case ContextMenuItemTagGoForward:
-        frame->loader()->goBackOrForward(1);
+        if (Page* page = frame->page())
+            page->goBackOrForward(1);
         break;
     case ContextMenuItemTagStop:
         frame->loader()->stop();

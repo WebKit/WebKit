@@ -282,8 +282,8 @@ void RedirectScheduler::timerFired(Timer<RedirectScheduler>*)
             }
             // go(i!=0) from a frame navigates into the history of the frame only,
             // in both IE and NS (but not in Mozilla). We can't easily do that.
-            if (loader->canGoBackOrForward(redirection->historySteps))
-                loader->goBackOrForward(redirection->historySteps);
+            if (m_frame->page()->canGoBackOrForward(redirection->historySteps))
+                m_frame->page()->goBackOrForward(redirection->historySteps);
             return;
         case ScheduledRedirection::formSubmission:
             // The submitForm function will find a target frame before using the redirection timer.

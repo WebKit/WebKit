@@ -1,3 +1,13 @@
+2009-10-03  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        Factor PageController out of FrameLoader and Page
+        https://bugs.webkit.org/show_bug.cgi?id=30037
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_can_go_back_or_forward):
+
 2009-10-01  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.
