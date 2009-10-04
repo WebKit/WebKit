@@ -198,7 +198,6 @@ static void restartedCallback(SoupMessage* msg, gpointer data)
     ResourceRequest request = handle->request();
     ResourceResponse response;
     request.setURL(newURL);
-    request.setHTTPMethod(msg->method);
     fillResponseFromMessage(msg, &response);
     if (d->client())
         d->client()->willSendRequest(handle, request, response);

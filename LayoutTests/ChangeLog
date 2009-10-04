@@ -1,5 +1,17 @@
 2009-10-04  Xan Lopez  <xlopez@igalia.com>
 
+        Revert previous patch, as the newly added test breaks other tests.
+
+        * http/tests/navigation/postredirect-reload-expected.txt: Removed.
+        * http/tests/navigation/postredirect-reload.html: Removed.
+        * http/tests/navigation/resources/postresult.pl:
+        * http/tests/navigation/resources/reloadresult.pl: Removed.
+        * http/tests/navigation/resources/success200.html:
+        * http/tests/navigation/resources/testcode.js:
+        (runLoadSameTest):
+
+2009-10-04  Xan Lopez  <xlopez@igalia.com>
+
         Reviewed by Gustavo Noronha.
 
         [GTK] performs a POST when refreshing a view that was obtained with a GET

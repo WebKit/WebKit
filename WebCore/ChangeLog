@@ -1,5 +1,12 @@
 2009-10-04  Xan Lopez  <xlopez@igalia.com>
 
+        Revert previous patch, as the newly added test breaks other tests.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::restartedCallback):
+
+2009-10-04  Xan Lopez  <xlopez@igalia.com>
+
         Reviewed by Gustova Noronha.
 
         [GTK] performs a POST when refreshing a view that was obtained with a GET

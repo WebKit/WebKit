@@ -38,12 +38,6 @@ function submitFormWithPostRedirect() {
     testDoc.getElementById('testform').submitwithpostredirect.click();
 }
 
-// utility function to make a form post, using the postredirect idiom
-function submitFormWithPostRedirectReload() {
-    testDoc = (window.frames.length == 0) ? document : window.frames['main'].document;
-    testDoc.getElementById('testform').submitwithpostredirectreload.click();
-}
-
 // utility function to do a jump within the page to an anchor
 function jumpToAnchor() {
     testWin = (window.frames.length == 0) ? window : window.frames['main'];
@@ -154,16 +148,4 @@ function runLoadSameTest(testCase) {
     layoutTestController.queueNonLoadingScript("fillTestForm()");
     layoutTestController.queueNonLoadingScript("scrollDocDown()");
     layoutTestController.queueLoad(testCase);
-}
-
-// A sequence testing a reload after a redirect. The goal is to check
-// that in a reload we use the method set by the redirect, GET,
-// instead of the original one, POST.
-function runRedirectReloadTest(testCase) {
-    layoutTestController.dumpBackForwardList();
-    layoutTestController.queueLoad(testCase);
-    layoutTestController.queueNonLoadingScript("fillTestForm()");
-    layoutTestController.queueNonLoadingScript("scrollDocDown()");
-    layoutTestController.queueLoadingScript("submitFormWithPostRedirectReload()");
-    layoutTestController.queueReload();
 }
