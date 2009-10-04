@@ -43,7 +43,8 @@ var Preferences = {
     samplingCPUProfiler: false,
     showColorNicknames: true,
     colorFormat: "hex",
-    eventListenersFilter: "all"
+    eventListenersFilter: "all",
+    resourcesLargeRows: true
 }
 
 var WebInspector = {
@@ -143,6 +144,21 @@ var WebInspector = {
             this.panels.profiles = new WebInspector.ProfilesPanel();
         if (hiddenPanels.indexOf("storage") === -1 && hiddenPanels.indexOf("databases") === -1)
             this.panels.storage = new WebInspector.StoragePanel();      
+    },
+
+    _loadPreferences: function()
+    {
+        var colorFormat = InspectorController.setting("color-format");
+        if (colorFormat)
+            Preferences.colorFormat = colorFormat;
+
+        var eventListenersFilter = InspectorController.setting("event-listeners-filter");
+        if (eventListenersFilter)
+            Preferences.eventListenersFilter = eventListenersFilter;
+
+        var resourcesLargeRows = InspectorController.setting("resources-large-rows");
+        if (typeof resourcesLargeRows !== "undefined")
+            Preferences.resourcesLargeRows = resourcesLargeRows;
     },
 
     get attached()
@@ -351,13 +367,7 @@ WebInspector.loaded = function()
     var platform = InspectorController.platform();
     document.body.addStyleClass("platform-" + platform);
 
-    var colorFormat = InspectorController.setting("color-format");
-    if (colorFormat)
-        Preferences.colorFormat = colorFormat;
-
-    var eventListenersFilter = InspectorController.setting("event-listeners-filter");
-    if (eventListenersFilter)
-        Preferences.eventListenersFilter = eventListenersFilter;
+    this._loadPreferences();
 
     this.drawer = new WebInspector.Drawer();
     this.console = new WebInspector.ConsoleView(this.drawer);

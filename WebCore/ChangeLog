@@ -2,6 +2,19 @@
 
         Reviewed by Timothy Hatcher.
 
+        Inspector should remember preferences for docked/undocked etc
+        https://bugs.webkit.org/show_bug.cgi?id=29089
+
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype._toggleLargerResources): toggle the preference
+        * inspector/front-end/inspector.js:
+        (WebInspector._loadPreferences): factored out loading preferences
+        (WebInspector.loaded):
+
+2009-10-03  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Timothy Hatcher.
+
         CSS Source View Should be Syntax Highlighted
         https://bugs.webkit.org/show_bug.cgi?id=14359
 

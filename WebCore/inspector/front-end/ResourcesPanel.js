@@ -133,8 +133,12 @@ WebInspector.ResourcesPanel = function()
     this.enableToggleButton.addEventListener("click", this._toggleResourceTracking.bind(this), false);
 
     this.largerResourcesButton = new WebInspector.StatusBarButton(WebInspector.UIString("Use small resource rows."), "resources-larger-resources-status-bar-item");
-    this.largerResourcesButton.toggled = true;
+    this.largerResourcesButton.toggled = Preferences.resourcesLargeRows;
     this.largerResourcesButton.addEventListener("click", this._toggleLargerResources.bind(this), false);
+    if (!Preferences.resourcesLargeRows) {
+        Preferences.resourcesLargeRows = !Preferences.resourcesLargeRows;
+        this._toggleLargerResources(); // this will toggle the preference back to the original
+    }
 
     this.sortingSelectElement = document.createElement("select");
     this.sortingSelectElement.className = "status-bar-item";
@@ -825,6 +829,8 @@ WebInspector.ResourcesPanel.prototype = {
             return;
 
         this.resourcesTreeElement.smallChildren = !this.resourcesTreeElement.smallChildren;
+        Preferences.resourcesLargeRows = !Preferences.resourcesLargeRows;
+        InspectorController.setSetting("resources-large-rows", Preferences.resourcesLargeRows);
 
         if (this.resourcesTreeElement.smallChildren) {
             this.resourcesGraphsElement.addStyleClass("small");
