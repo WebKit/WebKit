@@ -11,6 +11,7 @@ use CGI;
 $query = new CGI;
 $submitWithPost = $query->param('submitwithpost');
 $submitWithPostRedirect = $query->param('submitwithpostredirect');
+$submitWithPostRedirectReload = $query->param('submitwithpostredirectreload');
 $redirectHappened = $query->param('redirectHappened');
 $method = $query->request_method();
 
@@ -35,6 +36,21 @@ if (($submitWithPost && $method eq "POST") || ($redirectHappened && $method eq "
     The first text field contained: $textFieldData
     <br>
     This page was requested with an HTTP $method
+    </body>
+    </html>
+HERE_DOC_END
+
+} elsif ($submitWithPostRedirectReload && $method eq "POST") {
+
+    print "Status: 303 See Other\r\n";
+    print "Location: reloadresult.pl\r\n";
+    print "Content-type: text/html\r\n";
+    print "\r\n";
+
+    print <<HERE_DOC_END
+    <html>
+    <body style="font-size: 32">
+    This page should not be seen - it is a 303 redirect to another page.
     </body>
     </html>
 HERE_DOC_END
