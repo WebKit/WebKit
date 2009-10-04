@@ -1,3 +1,10 @@
+2009-10-03  Adam Barth  <abarth@webkit.org>
+
+        Unreview build fix.  I wish I had a try server...
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::updateAction):
+
 2009-10-02  Norbert Leser  <norbert.leser@nokia.com>
 
         Reviewed by Simon Hausmann.
