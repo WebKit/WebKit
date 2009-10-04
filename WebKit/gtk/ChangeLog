@@ -1,5 +1,12 @@
 2009-10-03  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed build fix.
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_go_back_or_forward):
+
+2009-10-03  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Sam Weinig.
 
         Factor PageController out of FrameLoader and Page
