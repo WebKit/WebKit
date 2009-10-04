@@ -113,6 +113,9 @@ extern NSString *WebPreferencesRemovedNotification;
 - (BOOL)experimentalWebSocketsEnabled;
 - (void)setExperimentalWebSocketsEnabled:(BOOL)websocketsEnabled;
 
+- (BOOL)pluginHalterEnabled;
+- (void)setPluginHalterEnabled:(BOOL)enabled;
+
 // zero means do AutoScale
 - (float)PDFScaleFactor;
 - (void)setPDFScaleFactor:(float)scale;
