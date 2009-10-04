@@ -1,3 +1,18 @@
+2009-10-04  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustova Noronha.
+
+        [GTK] performs a POST when refreshing a view that was obtained with a GET
+        https://bugs.webkit.org/show_bug.cgi?id=29761
+
+        Update the HTTP method in the request stored by willSendRequest
+        after a redirect, since it could have changed.
+
+        Test: http/tests/navigation/postredirect-reload.html
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::restartedCallback):
+
 2009-10-04  Vitaly Repeshko  <vitalyr@chromium.org>
 
         Reviewed by Adam Barth.

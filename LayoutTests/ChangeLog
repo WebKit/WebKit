@@ -1,3 +1,23 @@
+2009-10-04  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] performs a POST when refreshing a view that was obtained with a GET
+        https://bugs.webkit.org/show_bug.cgi?id=29761
+
+        New test that checks that a reload after a redirect to a page with
+        a GET method from one with a POST method will use GET and not
+        POST.
+
+        * http/tests/navigation/postredirect-reload-expected.txt: Added.
+        * http/tests/navigation/postredirect-reload.html: Added.
+        * http/tests/navigation/resources/postresult.pl:
+        * http/tests/navigation/resources/reloadresult.pl: Added.
+        * http/tests/navigation/resources/success200.html:
+        * http/tests/navigation/resources/testcode.js:
+        (submitFormWithPostRedirectReload):
+        (runRedirectReloadTest):
+
 2009-10-03  Jakub Wieczorek  <faw217@gmail.com>
 
         Reviewed by Simon Hausmann.
