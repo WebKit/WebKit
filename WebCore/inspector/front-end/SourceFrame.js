@@ -245,6 +245,14 @@ WebInspector.SourceFrame.prototype = {
         styleText += ".webkit-javascript-number { color: rgb(28, 0, 207); }\n";
         styleText += ".webkit-javascript-string, .webkit-javascript-regexp { color: rgb(196, 26, 22); }\n";
 
+        styleText += ".webkit-css-comment { color: rgb(0, 116, 0); }\n";
+        styleText += ".webkit-css-string, .webkit-css-keyword, .webkit-css-unit { color: rgb(7, 144, 154); }\n";
+        styleText += ".webkit-css-number { color: rgb(50, 0, 255); }\n";
+        styleText += ".webkit-css-property, .webkit-css-at-rule { color: rgb(200, 0, 0); }\n";
+        styleText += ".webkit-css-url { color: rgb(0, 0, 0); }\n";
+        styleText += ".webkit-css-selector { color: rgb(0, 0, 0); }\n";
+        styleText += ".webkit-css-pseudo-class { color: rgb(128, 128, 128); }\n";
+
         // TODO: Move these styles into inspector.css once https://bugs.webkit.org/show_bug.cgi?id=28913 is fixed and popup moved into the top frame.
         styleText += ".popup-content { position: absolute; z-index: 10000; padding: 4px; background-color: rgb(203, 226, 255); -webkit-border-radius: 7px; border: 2px solid rgb(169, 172, 203); }";
         styleText += ".popup-glasspane { position: absolute; top: 0; left: 0; height: 100%; width: 100%; opacity: 0; z-index: 9900; }";
@@ -253,7 +261,7 @@ WebInspector.SourceFrame.prototype = {
         styleText += ".popup-content input#bp-condition { font-family: monospace; margin: 0; border: 1px inset rgb(190, 190, 190) !important; width: 100%; box-shadow: none !important; outline: none !important; -webkit-user-modify: read-write; }";
         // This class is already in inspector.css
         styleText += ".hidden { display: none !important; }";
-        
+
         styleElement.textContent = styleText;
 
         this._needsProgramCounterImage = true;
@@ -311,11 +319,11 @@ WebInspector.SourceFrame.prototype = {
         var sourceRow = event.target.enclosingNodeOrSelfWithNodeName("tr");
         if (!sourceRow._breakpointObject && this.addBreakpointDelegate)
             this.addBreakpointDelegate(this.lineNumberForSourceRow(sourceRow));
-        
+
         var breakpoint = sourceRow._breakpointObject;
         if (!breakpoint)
             return;
-        
+
         this._editBreakpointCondition(event.target, sourceRow, breakpoint);
         event.preventDefault();
     },
@@ -340,7 +348,7 @@ WebInspector.SourceFrame.prototype = {
         // TODO: Migrate the popup to the top-level document and remove the blur listener from conditionElement once https://bugs.webkit.org/show_bug.cgi?id=28913 is fixed.
         var popupDocument = this.element.contentDocument;
         this._showBreakpointConditionPopup(eventTarget, breakpoint.line, popupDocument);
-        
+
         function committed(element, newText)
         {
             breakpoint.condition = newText;
@@ -359,7 +367,7 @@ WebInspector.SourceFrame.prototype = {
 
         var dismissedHandler = dismissed.bind(this);
         this._conditionEditorElement.addEventListener("blur", dismissedHandler, false);
-        
+
         WebInspector.startEditing(this._conditionEditorElement, committed.bind(this), dismissedHandler);
         this._conditionEditorElement.value = breakpoint.condition;
         this._conditionEditorElement.select();
@@ -716,191 +724,393 @@ WebInspector.SourceFrame.prototype = {
         if (!table)
             return;
 
-        function deleteContinueFlags(cell)
-        {
-            if (!cell)
-                return;
-            delete cell._commentContinues;
-            delete cell._singleQuoteStringContinues;
-            delete cell._doubleQuoteStringContinues;
-            delete cell._regexpContinues;
-        }
+        var jsSyntaxHighlighter = new WebInspector.JavaScriptSourceSyntaxHighlighter(table, this);
+        jsSyntaxHighlighter.process();
+    },
 
-        function createSpan(content, className)
-        {
-            var span = document.createElement("span");
-            span.className = className;
-            span.appendChild(document.createTextNode(content));
-            return span;
-        }
+    syntaxHighlightCSS: function()
+    {
+        var table = this.element.contentDocument.getElementsByTagName("table")[0];
+        if (!table)
+            return;
 
-        function generateFinder(regex, matchNumber, className)
-        {
-            return function(str) {
-                var match = regex.exec(str);
-                if (!match)
-                    return null;
-                previousMatchLength = match[matchNumber].length;
-                return createSpan(match[matchNumber], className);
-            };
-        }
+        var cssSyntaxHighlighter = new WebInspector.CSSSourceSyntaxHighligher(table, this);
+        cssSyntaxHighlighter.process();
+    }
+}
 
-        var findNumber = generateFinder(/^(-?(\d+\.?\d*([eE][+-]\d+)?|0[xX]\h+|Infinity)|NaN)(?:\W|$)/, 1, "webkit-javascript-number");
-        var findKeyword = generateFinder(/^(null|true|false|break|case|catch|const|default|finally|for|instanceof|new|var|continue|function|return|void|delete|if|this|do|while|else|in|switch|throw|try|typeof|with|debugger|class|enum|export|extends|import|super|get|set)(?:\W|$)/, 1, "webkit-javascript-keyword");
-        var findSingleLineString = generateFinder(/^"(?:[^"\\]|\\.)*"|^'([^'\\]|\\.)*'/, 0, "webkit-javascript-string"); // " this quote keeps Xcode happy
-        var findMultilineCommentStart = generateFinder(/^\/\*.*$/, 0, "webkit-javascript-comment");
-        var findMultilineCommentEnd = generateFinder(/^.*?\*\//, 0, "webkit-javascript-comment");
-        var findMultilineSingleQuoteStringStart = generateFinder(/^'(?:[^'\\]|\\.)*\\$/, 0, "webkit-javascript-string");
-        var findMultilineSingleQuoteStringEnd = generateFinder(/^(?:[^'\\]|\\.)*?'/, 0, "webkit-javascript-string");
-        var findMultilineDoubleQuoteStringStart = generateFinder(/^"(?:[^"\\]|\\.)*\\$/, 0, "webkit-javascript-string");
-        var findMultilineDoubleQuoteStringEnd = generateFinder(/^(?:[^"\\]|\\.)*?"/, 0, "webkit-javascript-string");
-        var findMultilineRegExpEnd = generateFinder(/^(?:[^\/\\]|\\.)*?\/([gim]{0,3})/, 0, "webkit-javascript-regexp");
-        var findSingleLineComment = generateFinder(/^\/\/.*|^\/\*.*?\*\//, 0, "webkit-javascript-comment");
+WebInspector.SourceFrame.prototype.__proto__ = WebInspector.Object.prototype;
 
-        function findMultilineRegExpStart(str)
-        {
-            var match = /^\/(?:[^\/\\]|\\.)*\\$/.exec(str);
-            if (!match || !/\\|\$|\.[\?\*\+]|[^\|]\|[^\|]/.test(match[0]))
+WebInspector.SourceSyntaxHighligher = function(table, sourceFrame)
+{
+    this.table = table;
+    this.sourceFrame = sourceFrame;
+}
+
+WebInspector.SourceSyntaxHighligher.prototype = {
+    createSpan: function(content, className)
+    {
+        var span = document.createElement("span");
+        span.className = className;
+        span.appendChild(document.createTextNode(content));
+        return span;
+    },
+
+    generateFinder: function(regex, matchNumber, className)
+    {
+        return function(str) {
+            var match = regex.exec(str);
+            if (!match)
                 return null;
-            var node = createSpan(match[0], "webkit-javascript-regexp");
-            previousMatchLength = match[0].length;
-            return node;
-        }
+            this.previousMatchLength = match[matchNumber].length;
+            return this.createSpan(match[matchNumber], className);
+        };
+    },
 
-        function findSingleLineRegExp(str)
-        {
-            var match = /^(\/(?:[^\/\\]|\\.)*\/([gim]{0,3}))(.?)/.exec(str);
-            if (!match || !(match[2].length > 0 || /\\|\$|\.[\?\*\+]|[^\|]\|[^\|]/.test(match[1]) || /\.|;|,/.test(match[3])))
-                return null;
-            var node = createSpan(match[1], "webkit-javascript-regexp");
-            previousMatchLength = match[1].length;
-            return node;
-        }
-
-        function syntaxHighlightJavascriptLine(line, prevLine)
-        {
-            var messageBubble = line.lastChild;
-            if (messageBubble && messageBubble.nodeType === Node.ELEMENT_NODE && messageBubble.hasStyleClass("webkit-html-message-bubble"))
-                line.removeChild(messageBubble);
-            else
-                messageBubble = null;
-
-            var code = line.textContent;
-
-            while (line.firstChild)
-                line.removeChild(line.firstChild);
-
-            var token;
-            var tmp = 0;
-            var i = 0;
-            previousMatchLength = 0;
-
-            if (prevLine) {
-                if (prevLine._commentContinues) {
-                    if (!(token = findMultilineCommentEnd(code))) {
-                        token = createSpan(code, "webkit-javascript-comment");
-                        line._commentContinues = true;
-                    }
-                } else if (prevLine._singleQuoteStringContinues) {
-                    if (!(token = findMultilineSingleQuoteStringEnd(code))) {
-                        token = createSpan(code, "webkit-javascript-string");
-                        line._singleQuoteStringContinues = true;
-                    }
-                } else if (prevLine._doubleQuoteStringContinues) {
-                    if (!(token = findMultilineDoubleQuoteStringEnd(code))) {
-                        token = createSpan(code, "webkit-javascript-string");
-                        line._doubleQuoteStringContinues = true;
-                    }
-                } else if (prevLine._regexpContinues) {
-                    if (!(token = findMultilineRegExpEnd(code))) {
-                        token = createSpan(code, "webkit-javascript-regexp");
-                        line._regexpContinues = true;
-                    }
-                }
-                if (token) {
-                    i += previousMatchLength ? previousMatchLength : code.length;
-                    tmp = i;
-                    line.appendChild(token);
-                }
-            }
-
-            for ( ; i < code.length; ++i) {
-                var codeFragment = code.substr(i);
-                var prevChar = code[i - 1];
-                token = findSingleLineComment(codeFragment);
-                if (!token) {
-                    if ((token = findMultilineCommentStart(codeFragment)))
-                        line._commentContinues = true;
-                    else if (!prevChar || /^\W/.test(prevChar)) {
-                        token = findNumber(codeFragment, code[i - 1]) ||
-                                findKeyword(codeFragment, code[i - 1]) ||
-                                findSingleLineString(codeFragment) ||
-                                findSingleLineRegExp(codeFragment);
-                        if (!token) {
-                            if (token = findMultilineSingleQuoteStringStart(codeFragment))
-                                line._singleQuoteStringContinues = true;
-                            else if (token = findMultilineDoubleQuoteStringStart(codeFragment))
-                                line._doubleQuoteStringContinues = true;
-                            else if (token = findMultilineRegExpStart(codeFragment))
-                                line._regexpContinues = true;
-                        }
-                    }
-                }
-
-                if (token) {
-                    if (tmp !== i)
-                        line.appendChild(document.createTextNode(code.substring(tmp, i)));
-                    line.appendChild(token);
-                    i += previousMatchLength - 1;
-                    tmp = i + 1;
-                }
-            }
-
-            if (tmp < code.length)
-                line.appendChild(document.createTextNode(code.substring(tmp, i)));
-
-            if (messageBubble)
-                line.appendChild(messageBubble);
-        }
-
-        var i = 0;
-        var rows = table.rows;
-        var rowsLength = rows.length;
-        var previousCell = null;
-        var previousMatchLength = 0;
-        var sourceFrame = this;
-
+    process: function()
+    {
         // Split up the work into chunks so we don't block the
         // UI thread while processing.
 
+        var i = 0;
+        var rows = this.table.rows;
+        var rowsLength = rows.length;
+        var previousCell = null;
+        const linesPerChunk = 10;
+
         function processChunk()
         {
-            for (var end = Math.min(i + 10, rowsLength); i < end; ++i) {
+            for (var end = Math.min(i + linesPerChunk, rowsLength); i < end; ++i) {
                 var row = rows[i];
                 if (!row)
                     continue;
                 var cell = row.cells[1];
                 if (!cell)
                     continue;
-                syntaxHighlightJavascriptLine(cell, previousCell);
+                this.syntaxHighlightLine(cell, previousCell);
                 if (i < (end - 1))
-                    deleteContinueFlags(previousCell);
+                    this.deleteContinueFlags(previousCell);
                 previousCell = cell;
             }
 
             if (i >= rowsLength && processChunkInterval) {
-                deleteContinueFlags(previousCell);
+                this.deleteContinueFlags(previousCell);
+                delete this.previousMatchLength;
                 clearInterval(processChunkInterval);
 
-                sourceFrame.dispatchEventToListeners("syntax highlighting complete");
+                this.sourceFrame.dispatchEventToListeners("syntax highlighting complete");
             }
         }
 
-        processChunk();
-
-        var processChunkInterval = setInterval(processChunk, 25);
+        var boundProcessChunk = processChunk.bind(this);
+        var processChunkInterval = setInterval(boundProcessChunk, 25);
+        boundProcessChunk();
     }
 }
 
-WebInspector.SourceFrame.prototype.__proto__ = WebInspector.Object.prototype;
+WebInspector.CSSSourceSyntaxHighligher = function(table, sourceFrame) {
+    WebInspector.SourceSyntaxHighligher.call(this, table, sourceFrame);
 
+    this.findNumber = this.generateFinder(/^((-?(\d+|\d*\.\d+))|^(#[a-fA-F0-9]{3,6}))(?:\D|$)/, 1, "webkit-css-number");
+    this.findUnits = this.generateFinder(/^(px|em|pt|in|cm|mm|pc|ex)(?:\W|$)/, 1, "webkit-css-unit");
+    this.findKeyword = this.generateFinder(/^(rgba?|hsla?)(?:\W|$)/, 1, "webkit-css-keyword");
+    this.findSingleLineString = this.generateFinder(/^"(?:[^"\\]|\\.)*"|^'([^'\\]|\\.)*'/, 0, "webkit-css-string"); // " this quote keeps Xcode happy
+    this.findSingleLineComment = this.generateFinder(/^\/\*.*?\*\//, 0, "webkit-css-comment");
+    this.findMultilineCommentStart = this.generateFinder(/^\/\*.*$/, 0, "webkit-css-comment");
+    this.findMultilineCommentEnd = this.generateFinder(/^.*?\*\//, 0, "webkit-css-comment");
+    this.findSelector = this.generateFinder(/^([#\.]?[_a-zA-Z].*?)(?:\W|$)/, 1, "webkit-css-selector");
+    this.findProperty = this.generateFinder(/^(-?[_a-z0-9][_a-z0-9-]*\s*)(?:\:)/, 1, "webkit-css-property");
+    this.findGenericIdent = this.generateFinder(/^([@-]?[_a-z0-9][_a-z0-9-]*)(?:\W|$)/, 1, "webkit-css-string");
+}
+
+WebInspector.CSSSourceSyntaxHighligher.prototype = {
+    deleteContinueFlags: function(cell)
+    {
+        if (!cell)
+            return;
+        delete cell._commentContinues;
+        delete cell._inSelector;
+    },
+
+    findPseudoClass: function(str)
+    {
+        var match = /^(::?)([_a-z0-9][_a-z0-9-]*)/.exec(str);
+        if (!match)
+            return null;
+        this.previousMatchLength = match[0].length;
+        var span = document.createElement("span");
+        span.appendChild(document.createTextNode(match[1]));
+        span.appendChild(this.createSpan(match[2], "webkit-css-pseudo-class"));
+        return span;
+    },
+
+    findURL: function(str)
+    {
+        var match = /^(?:local|url)\(([^\)]*?)\)/.exec(str);
+        if (!match)
+            return null;
+        this.previousMatchLength = match[0].length;
+        var innerUrlSpan = this.createSpan(match[1], "webkit-css-url");
+        var outerSpan = document.createElement("span");
+        outerSpan.appendChild(this.createSpan("url", "webkit-css-keyword"));
+        outerSpan.appendChild(document.createTextNode("("));
+        outerSpan.appendChild(innerUrlSpan);
+        outerSpan.appendChild(document.createTextNode(")"));
+        return outerSpan;
+    },
+
+    findAtRule: function(str)
+    {
+        var match = /^@[_a-z0-9][_a-z0-9-]*(?:\W|$)/.exec(str);
+        if (!match)
+            return null;
+        this.previousMatchLength = match[0].length;
+        return this.createSpan(match[0], "webkit-css-at-rule");
+    },
+
+    syntaxHighlightLine: function(line, prevLine)
+    {
+        var code = line.textContent;
+        while (line.firstChild)
+            line.removeChild(line.firstChild);
+
+        var token;
+        var tmp = 0;
+        var i = 0;
+        this.previousMatchLength = 0;
+
+        if (prevLine) {
+            if (prevLine._commentContinues) {
+                if (!(token = this.findMultilineCommentEnd(code))) {
+                    token = this.createSpan(code, "webkit-javascript-comment");
+                    line._commentContinues = true;
+                }
+            }
+            if (token) {
+                i += this.previousMatchLength ? this.previousMatchLength : code.length;
+                tmp = i;
+                line.appendChild(token);
+            }
+        }
+
+        var inSelector = (prevLine && prevLine._inSelector); // inside a selector, we can now parse properties and values
+        var inAtRuleBlock = (prevLine && prevLine._inAtRuleBlock); // inside an @rule block, but not necessarily inside a selector yet
+        var atRuleStarted = (prevLine && prevLine._atRuleStarted); // we received an @rule, we may stop the @rule at a semicolon or open a block and become inAtRuleBlock
+        var atRuleIsSelector = (prevLine && prevLine._atRuleIsSelector); // when this @rule opens a block it immediately goes into parsing properties and values instead of selectors
+
+        for ( ; i < code.length; ++i) {
+            var codeFragment = code.substr(i);
+            var prevChar = code[i - 1];
+            var currChar = codeFragment[0];
+            token = this.findSingleLineComment(codeFragment);
+            if (!token) {
+                if ((token = this.findMultilineCommentStart(codeFragment)))
+                    line._commentContinues = true;
+                else if (currChar === ";" && !inAtRuleBlock)
+                    atRuleStarted = false;
+                else if (currChar === "}") {
+                    if (inSelector && inAtRuleBlock && atRuleIsSelector) {
+                        inSelector = false;
+                        inAtRuleBlock = false;
+                        atRuleStarted = false;
+                    } else if (inSelector) {
+                        inSelector = false;
+                    } else if (inAtRuleBlock) {
+                        inAtRuleBlock = false;
+                        atRuleStarted = false;
+                    }
+                } else if (currChar === "{") {
+                    if (!atRuleStarted || inAtRuleBlock) {
+                        inSelector = true;
+                    } else if (!inAtRuleBlock && atRuleIsSelector) {
+                        inAtRuleBlock = true;
+                        inSelector = true;
+                    } else if (!inAtRuleBlock) {
+                        inAtRuleBlock = true;
+                        inSelector = false;
+                    }
+                } else if (inSelector) {
+                    if (!prevChar || /^\d/.test(prevChar)) {
+                        token = this.findUnits(codeFragment);
+                    } else if (!prevChar || /^\W/.test(prevChar)) {
+                        token = this.findNumber(codeFragment) ||
+                                this.findKeyword(codeFragment) ||
+                                this.findURL(codeFragment) ||
+                                this.findProperty(codeFragment) ||
+                                this.findAtRule(codeFragment) ||
+                                this.findGenericIdent(codeFragment) ||
+                                this.findSingleLineString(codeFragment);
+                    }
+                } else if (!inSelector) {
+                    if (atRuleStarted && !inAtRuleBlock)
+                        token = this.findURL(codeFragment); // for @import
+                    if (!token) {
+                        token = this.findSelector(codeFragment) ||
+                                this.findPseudoClass(codeFragment) ||
+                                this.findAtRule(codeFragment);
+                    }
+                }
+            }
+
+            if (token) {
+                if (currChar === '@') {
+                    atRuleStarted = true;
+
+                    // The @font-face at-rule does not contain selectors like other at-rules
+                    // instead it acts as a selector and contains properties and values.
+                    atRuleIsSelector = /font-face/.test(token.textContent);
+                }
+
+                if (tmp !== i)
+                    line.appendChild(document.createTextNode(code.substring(tmp, i)));
+                line.appendChild(token);
+                i += this.previousMatchLength - 1;
+                tmp = i + 1;
+            }
+        }
+
+        line._inSelector = inSelector;
+        line._inAtRuleBlock = inAtRuleBlock;
+        line._atRuleStarted = atRuleStarted;
+        line._atRuleIsSelector = atRuleIsSelector;
+
+        if (tmp < code.length)
+            line.appendChild(document.createTextNode(code.substring(tmp, i)));
+    }
+}
+
+WebInspector.CSSSourceSyntaxHighligher.prototype.__proto__ = WebInspector.SourceSyntaxHighligher.prototype;
+
+WebInspector.JavaScriptSourceSyntaxHighlighter = function(table, sourceFrame) {
+    WebInspector.SourceSyntaxHighligher.call(this, table, sourceFrame);
+
+    this.findNumber = this.generateFinder(/^(-?(\d+\.?\d*([eE][+-]\d+)?|0[xX]\h+|Infinity)|NaN)(?:\W|$)/, 1, "webkit-javascript-number");
+    this.findKeyword = this.generateFinder(/^(null|true|false|break|case|catch|const|default|finally|for|instanceof|new|var|continue|function|return|void|delete|if|this|do|while|else|in|switch|throw|try|typeof|with|debugger|class|enum|export|extends|import|super|get|set)(?:\W|$)/, 1, "webkit-javascript-keyword");
+    this.findSingleLineString = this.generateFinder(/^"(?:[^"\\]|\\.)*"|^'([^'\\]|\\.)*'/, 0, "webkit-javascript-string"); // " this quote keeps Xcode happy
+    this.findMultilineCommentStart = this.generateFinder(/^\/\*.*$/, 0, "webkit-javascript-comment");
+    this.findMultilineCommentEnd = this.generateFinder(/^.*?\*\//, 0, "webkit-javascript-comment");
+    this.findMultilineSingleQuoteStringStart = this.generateFinder(/^'(?:[^'\\]|\\.)*\\$/, 0, "webkit-javascript-string");
+    this.findMultilineSingleQuoteStringEnd = this.generateFinder(/^(?:[^'\\]|\\.)*?'/, 0, "webkit-javascript-string");
+    this.findMultilineDoubleQuoteStringStart = this.generateFinder(/^"(?:[^"\\]|\\.)*\\$/, 0, "webkit-javascript-string");
+    this.findMultilineDoubleQuoteStringEnd = this.generateFinder(/^(?:[^"\\]|\\.)*?"/, 0, "webkit-javascript-string");
+    this.findMultilineRegExpEnd = this.generateFinder(/^(?:[^\/\\]|\\.)*?\/([gim]{0,3})/, 0, "webkit-javascript-regexp");
+    this.findSingleLineComment = this.generateFinder(/^\/\/.*|^\/\*.*?\*\//, 0, "webkit-javascript-comment");
+}
+
+WebInspector.JavaScriptSourceSyntaxHighlighter.prototype = {
+    deleteContinueFlags: function(cell)
+    {
+        if (!cell)
+            return;
+        delete cell._commentContinues;
+        delete cell._singleQuoteStringContinues;
+        delete cell._doubleQuoteStringContinues;
+        delete cell._regexpContinues;
+    },
+
+    findMultilineRegExpStart: function(str)
+    {
+        var match = /^\/(?:[^\/\\]|\\.)*\\$/.exec(str);
+        if (!match || !/\\|\$|\.[\?\*\+]|[^\|]\|[^\|]/.test(match[0]))
+            return null;
+        this.previousMatchLength = match[0].length;
+        return this.createSpan(match[0], "webkit-javascript-regexp");
+    },
+
+    findSingleLineRegExp: function(str)
+    {
+        var match = /^(\/(?:[^\/\\]|\\.)*\/([gim]{0,3}))(.?)/.exec(str);
+        if (!match || !(match[2].length > 0 || /\\|\$|\.[\?\*\+]|[^\|]\|[^\|]/.test(match[1]) || /\.|;|,/.test(match[3])))
+            return null;
+        this.previousMatchLength = match[1].length;
+        return this.createSpan(match[1], "webkit-javascript-regexp");
+    },
+
+    syntaxHighlightLine: function(line, prevLine)
+    {
+        var messageBubble = line.lastChild;
+        if (messageBubble && messageBubble.nodeType === Node.ELEMENT_NODE && messageBubble.hasStyleClass("webkit-html-message-bubble"))
+            line.removeChild(messageBubble);
+        else
+            messageBubble = null;
+
+        var code = line.textContent;
+
+        while (line.firstChild)
+            line.removeChild(line.firstChild);
+
+        var token;
+        var tmp = 0;
+        var i = 0;
+        this.previousMatchLength = 0;
+
+        if (prevLine) {
+            if (prevLine._commentContinues) {
+                if (!(token = this.findMultilineCommentEnd(code))) {
+                    token = this.createSpan(code, "webkit-javascript-comment");
+                    line._commentContinues = true;
+                }
+            } else if (prevLine._singleQuoteStringContinues) {
+                if (!(token = this.findMultilineSingleQuoteStringEnd(code))) {
+                    token = this.createSpan(code, "webkit-javascript-string");
+                    line._singleQuoteStringContinues = true;
+                }
+            } else if (prevLine._doubleQuoteStringContinues) {
+                if (!(token = this.findMultilineDoubleQuoteStringEnd(code))) {
+                    token = this.createSpan(code, "webkit-javascript-string");
+                    line._doubleQuoteStringContinues = true;
+                }
+            } else if (prevLine._regexpContinues) {
+                if (!(token = this.findMultilineRegExpEnd(code))) {
+                    token = this.createSpan(code, "webkit-javascript-regexp");
+                    line._regexpContinues = true;
+                }
+            }
+            if (token) {
+                i += this.previousMatchLength ? this.previousMatchLength : code.length;
+                tmp = i;
+                line.appendChild(token);
+            }
+        }
+
+        for ( ; i < code.length; ++i) {
+            var codeFragment = code.substr(i);
+            var prevChar = code[i - 1];
+            token = this.findSingleLineComment(codeFragment);
+            if (!token) {
+                if ((token = this.findMultilineCommentStart(codeFragment)))
+                    line._commentContinues = true;
+                else if (!prevChar || /^\W/.test(prevChar)) {
+                    token = this.findNumber(codeFragment) ||
+                            this.findKeyword(codeFragment) ||
+                            this.findSingleLineString(codeFragment) ||
+                            this.findSingleLineRegExp(codeFragment);
+                    if (!token) {
+                        if (token = this.findMultilineSingleQuoteStringStart(codeFragment))
+                            line._singleQuoteStringContinues = true;
+                        else if (token = this.findMultilineDoubleQuoteStringStart(codeFragment))
+                            line._doubleQuoteStringContinues = true;
+                        else if (token = this.findMultilineRegExpStart(codeFragment))
+                            line._regexpContinues = true;
+                    }
+                }
+            }
+
+            if (token) {
+                if (tmp !== i)
+                    line.appendChild(document.createTextNode(code.substring(tmp, i)));
+                line.appendChild(token);
+                i += this.previousMatchLength - 1;
+                tmp = i + 1;
+            }
+        }
+
+        if (tmp < code.length)
+            line.appendChild(document.createTextNode(code.substring(tmp, i)));
+
+        if (messageBubble)
+            line.appendChild(messageBubble);
+    }
+}
+
+WebInspector.JavaScriptSourceSyntaxHighlighter.prototype.__proto__ = WebInspector.SourceSyntaxHighligher.prototype;

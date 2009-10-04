@@ -1,3 +1,28 @@
+2009-10-03  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Timothy Hatcher.
+
+        CSS Source View Should be Syntax Highlighted
+        https://bugs.webkit.org/show_bug.cgi?id=14359
+
+          Trigger the Syntax Highlighter for CSS files.
+
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype.syntaxHighlightJavascript):
+        (WebInspector.SourceFrame.prototype.syntaxHighlightCSS):
+        * inspector/front-end/SourceView.js:
+        (WebInspector.SourceView.prototype._contentLoaded):
+
+          Factored out the Syntax Highlighting procedure into a "Class"
+          Added CSSSourceSyntaxHighlighter and JavaScriptSourceSyntaxHighlighter
+
+        (WebInspector.SourceSyntaxHighligher):
+        (WebInspector.SourceSyntaxHighligher.prototype.createSpan):
+        (WebInspector.SourceSyntaxHighligher.prototype.process.processChunk):
+        (WebInspector.SourceSyntaxHighligher.prototype.process):
+        (WebInspector.CSSSourceSyntaxHighligher): the CSS Highlighter
+        (WebInspector.JavaScriptSourceSyntaxHighligher): the JS Highlighter
+
 2009-10-03  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Sam Weinig.
