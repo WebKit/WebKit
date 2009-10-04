@@ -2,6 +2,18 @@
 
         Reviewed by Timothy Hatcher.
 
+        CSS Source View Should be Syntax Highlighted
+        https://bugs.webkit.org/show_bug.cgi?id=14359
+
+          Support for WebKit's CSS Variables @variables and var()
+
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.CSSSourceSyntaxHighligher):
+
+2009-10-03  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Timothy Hatcher.
+
         Inspector should remember preferences for docked/undocked etc
         https://bugs.webkit.org/show_bug.cgi?id=29089
 

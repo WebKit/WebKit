@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2009 Joseph Pecoraro
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -813,7 +814,7 @@ WebInspector.CSSSourceSyntaxHighligher = function(table, sourceFrame) {
 
     this.findNumber = this.generateFinder(/^((-?(\d+|\d*\.\d+))|^(#[a-fA-F0-9]{3,6}))(?:\D|$)/, 1, "webkit-css-number");
     this.findUnits = this.generateFinder(/^(px|em|pt|in|cm|mm|pc|ex)(?:\W|$)/, 1, "webkit-css-unit");
-    this.findKeyword = this.generateFinder(/^(rgba?|hsla?)(?:\W|$)/, 1, "webkit-css-keyword");
+    this.findKeyword = this.generateFinder(/^(rgba?|hsla?|var)(?:\W|$)/, 1, "webkit-css-keyword");
     this.findSingleLineString = this.generateFinder(/^"(?:[^"\\]|\\.)*"|^'([^'\\]|\\.)*'/, 0, "webkit-css-string"); // " this quote keeps Xcode happy
     this.findSingleLineComment = this.generateFinder(/^\/\*.*?\*\//, 0, "webkit-css-comment");
     this.findMultilineCommentStart = this.generateFinder(/^\/\*.*$/, 0, "webkit-css-comment");
@@ -953,12 +954,13 @@ WebInspector.CSSSourceSyntaxHighligher.prototype = {
             }
 
             if (token) {
-                if (currChar === '@') {
+                if (currChar === "@") {
                     atRuleStarted = true;
 
-                    // The @font-face at-rule does not contain selectors like other at-rules
+                    // The @font-face, @page, and @variables at-rules do not contain selectors like other at-rules
                     // instead it acts as a selector and contains properties and values.
-                    atRuleIsSelector = /font-face/.test(token.textContent);
+                    var text = token.textContent;
+                    atRuleIsSelector = /font-face/.test(text) || /page/.test(text) || /variables/.test(text);
                 }
 
                 if (tmp !== i)
