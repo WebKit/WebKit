@@ -33,29 +33,17 @@
 
 namespace WebCore {
 
-v8::Handle<v8::String> V8HiddenPropertyName::objectPrototype()
-{
-    static v8::Persistent<v8::String>* string = createString("WebCore::V8HiddenPropertyName::objectPrototype");
-    return *string;
+#define V8_AS_STRING(x) V8_AS_STRING_IMPL(x)
+#define V8_AS_STRING_IMPL(x) #x
+
+#define V8_DEFINE_PROPERTY(name) \
+v8::Handle<v8::String> V8HiddenPropertyName::name() \
+{ \
+    static v8::Persistent<v8::String>* string = createString("WebCore::V8HiddenPropertyName::" V8_AS_STRING(name)); \
+    return *string; \
 }
 
-v8::Handle<v8::String> V8HiddenPropertyName::isolatedWorld()
-{
-    static v8::Persistent<v8::String>* string = createString("WebCore::V8HiddenPropertyName::isolatedWorld");
-    return *string;
-}
-
-v8::Handle<v8::String> V8HiddenPropertyName::listener()
-{
-    static v8::Persistent<v8::String>* string = createString("WebCore::V8HiddenPropertyName::listener");
-    return *string;
-}
-
-v8::Handle<v8::String> V8HiddenPropertyName::attributeListener()
-{
-    static v8::Persistent<v8::String>* string = createString("WebCore::V8HiddenPropertyName::attributeListener");
-    return *string;
-}
+V8_HIDDEN_PROPERTIES(V8_DEFINE_PROPERTY);
 
 v8::Persistent<v8::String>* V8HiddenPropertyName::createString(const char* key)
 {

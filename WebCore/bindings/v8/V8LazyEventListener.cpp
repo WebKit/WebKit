@@ -33,7 +33,10 @@
 
 #include "Frame.h"
 #include "V8Binding.h"
+#include "V8HiddenPropertyName.h"
 #include "V8Proxy.h"
+
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
@@ -60,7 +63,7 @@ v8::Local<v8::Value> V8LazyEventListener::callListenerFunction(v8::Handle<v8::Va
 
 static v8::Handle<v8::Value> V8LazyEventListenerToString(const v8::Arguments& args)
 {
-    return args.Callee()->GetHiddenValue(v8::String::New("toStringString"));
+    return args.Holder()->GetHiddenValue(V8HiddenPropertyName::toStringString());
 }
 
 void V8LazyEventListener::prepareListenerObject()
@@ -108,11 +111,17 @@ void V8LazyEventListener::prepareListenerObject()
 
             v8::Local<v8::Function> wrappedFunction = v8::Local<v8::Function>::Cast(value);
 
-            // Change the toString function on the wrapper function to avoid it returning the source for the actual wrapper function. Instead
-            // it returns source for a clean wrapper function with the event argument wrapping the event source code. The reason for this
-            // is that some web sites uses toString on event functions and the evals the source returned (some times a RegExp is applied as
-            // well) for some other use. That fails miserably if the actual wrapper source is returned.
-            v8::Local<v8::FunctionTemplate> toStringTemplate = v8::FunctionTemplate::New(V8LazyEventListenerToString);
+            // Change the toString function on the wrapper function to avoid it
+            // returning the source for the actual wrapper function. Instead it
+            // returns source for a clean wrapper function with the event
+            // argument wrapping the event source code. The reason for this is
+            // that some web sites use toString on event functions and eval the
+            // source returned (sometimes a RegExp is applied as well) for some
+            // other use. That fails miserably if the actual wrapper source is
+            // returned.
+            DEFINE_STATIC_LOCAL(v8::Persistent<v8::FunctionTemplate>, toStringTemplate, ());
+            if (toStringTemplate.IsEmpty())
+                toStringTemplate = v8::Persistent<v8::FunctionTemplate>::New(v8::FunctionTemplate::New(V8LazyEventListenerToString));
             v8::Local<v8::Function> toStringFunction;
             if (!toStringTemplate.IsEmpty())
                 toStringFunction = toStringTemplate->GetFunction();
@@ -120,14 +129,11 @@ void V8LazyEventListener::prepareListenerObject()
                 String toStringResult = "function ";
                 toStringResult.append(m_functionName);
                 toStringResult.append("(");
-                if (m_isSVGEvent)
-                    toStringResult.append("evt");
-                else
-                    toStringResult.append("event");
+                toStringResult.append(m_isSVGEvent ? "evt" : "event");
                 toStringResult.append(") {\n  ");
                 toStringResult.append(m_code);
                 toStringResult.append("\n}");
-                toStringFunction->SetHiddenValue(v8::String::New("toStringString"), v8ExternalString(toStringResult));
+                wrappedFunction->SetHiddenValue(V8HiddenPropertyName::toStringString(), v8ExternalString(toStringResult));
                 wrappedFunction->Set(v8::String::New("toString"), toStringFunction);
             }
 

@@ -1,3 +1,25 @@
+2009-10-04  Vitaly Repeshko  <vitalyr@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [V8] Fixed Function leak in V8LazyEventListener.
+        (Should fix the remaning leak in
+        https://bugs.webkit.org/show_bug.cgi?id=29093).
+        V8LazyEventListeners used to create FunctionTemplates for each
+        wrapped listener which in turn created Functions that were cached
+        forever in V8 Context. Now there is at most one such Function per
+        Context.
+        https://bugs.webkit.org/show_bug.cgi?id=30060
+
+        Added new hidden property name to store toString result:
+        * bindings/v8/V8HiddenPropertyName.cpp:
+        * bindings/v8/V8HiddenPropertyName.h:
+
+        Switched to static FunctionTemplate:
+        * bindings/v8/V8LazyEventListener.cpp:
+        (WebCore::V8LazyEventListenerToString):
+        (WebCore::V8LazyEventListener::prepareListenerObject):
+
 2009-10-03  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Timothy Hatcher.
