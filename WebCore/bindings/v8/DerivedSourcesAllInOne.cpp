@@ -34,6 +34,7 @@
 #include "bindings/V8AbstractWorker.cpp"
 #include "bindings/V8Attr.cpp"
 #include "bindings/V8BarInfo.cpp"
+#include "bindings/V8BeforeLoadEvent.cpp"
 #include "bindings/V8CanvasArray.cpp"
 #include "bindings/V8CanvasArrayBuffer.cpp"
 #include "bindings/V8CanvasBuffer.cpp"

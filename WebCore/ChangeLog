@@ -1,3 +1,10 @@
+2009-10-05  Julie Parent  <jparent@chromium.org>
+
+        Unreviewed, Chromium build fix #3.  Add V8BeforeLoadEvent.[cc|h] to derived sources.
+
+        * bindings/v8/DerivedSourcesAllInOne.cpp:
+        * bindings/v8/V8Index.cpp:
+
 2009-10-05  Mark Rowe  <mrowe@apple.com>
 
         Try and fix the GTK build.
