@@ -1,3 +1,12 @@
+2009-10-05  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Disable TCmalloc for Windows port at the present, because MinGW
+        hasn't got built-in pthread library.
+
+        * WebKit.pri:
+
 2009-10-02  Prasanth Ullattil  <prasanth.ullattil@nokia.com>
 
         Reviewed by Simon Hausmann.
