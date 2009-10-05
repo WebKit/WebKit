@@ -1,3 +1,18 @@
+2009-10-05  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Fixes <https://bugs.webkit.org/show_bug.cgi?id=30065>
+        nodeTitleInfo should be placed in ElementsTreeOutline.
+        
+        Move nodeTitleInfo into ElementsTreeOutline.js from utilities.js.
+
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement):
+        (WebInspector.ElementsTreeElement.prototype._updateTitle):
+        (WebInspector.ElementsTreeElement.prototype._nodeTitleInfo):
+        * inspector/front-end/utilities.js:
+
 2009-10-02  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Simon Hausmann.
