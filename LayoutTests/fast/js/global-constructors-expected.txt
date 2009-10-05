@@ -5,6 +5,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS Attr.toString() is '[object AttrConstructor]'
 PASS Audio.toString() is '[object AudioConstructor]'
+PASS BeforeLoadEvent.toString() is '[object BeforeLoadEventConstructor]'
 PASS CDATASection.toString() is '[object CDATASectionConstructor]'
 PASS CSSCharsetRule.toString() is '[object CSSCharsetRuleConstructor]'
 PASS CSSFontFaceRule.toString() is '[object CSSFontFaceRuleConstructor]'
