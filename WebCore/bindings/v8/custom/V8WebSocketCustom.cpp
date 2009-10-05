@@ -37,7 +37,6 @@
 #include "Frame.h"
 #include "Settings.h"
 #include "V8Binding.h"
-#include "V8ObjectEventListener.h"
 #include "V8Proxy.h"
 #include "V8Utilities.h"
 #include "WorkerContext.h"
