@@ -1,3 +1,14 @@
+2009-10-05  Julie Parent  <jparent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Make LayoutTests/editing/selection/hit-test-anonymous.html resistant to
+        GDI/CG differences, by increasing the font size so the slight
+        difference in fonts doesn't result in a different character clicked.
+        https://bugs.webkit.org/show_bug.cgi?id=29985
+
+        * editing/selection/hit-test-anonymous.html:
+
 2009-10-05  Dave Hyatt  <hyatt@apple.com>
 
         Update layout tests to account for the new beforeload event object.

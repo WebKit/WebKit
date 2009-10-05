@@ -44,6 +44,8 @@ span:after {
         var y = block.offsetTop + 5;
 
         if (window.eventSender) {
+            // Click in the anonymous content, check that cursor goes to
+            // the start of the span.
             eventSender.mouseMoveTo(x, y);
             eventSender.mouseDown();
             eventSender.mouseUp();
@@ -55,12 +57,13 @@ span:after {
         x = block.offsetLeft + 200;
 
         if (window.eventSender) {
+            // Click in the regular text, make sure it goes into the span.
             eventSender.mouseMoveTo(x, y);
             eventSender.mouseDown();
             eventSender.mouseUp();
         }
 
-        if (checkSelection(2, "(text in span, 24), (text in span, 24)"))
+        if (checkSelection(2, "(text in span, 7), (text in span, 7)"))
             return;
 
         document.getElementById("result").innerHTML = "SUCCESS";
@@ -69,6 +72,6 @@ span:after {
 </head>
 <body onload="runTest()">
 <p>This tests clicking in anonymous content to see if a selection is successfully created.</p>
-<p id="block" contentEditable style="border: 1px solid blue"><span id="span">This is the selectable text.</span></div>
+<p id="block" contentEditable style="border: 1px solid blue; font-size:30px"><span id="span">This is the selectable text.</span></div>
 <p id="result">TEST DID NOT RUN</div>
 </body>
