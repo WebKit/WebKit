@@ -1,5 +1,20 @@
 2009-10-05  Kent Tamura  <tkent@chromium.org>
 
+        Reviewed by Eric Seidel.
+
+        Tests to check if validation-related CSS selectors are applied immediately.
+        https://bugs.webkit.org/show_bug.cgi?id=28868
+
+        * fast/forms/input-live-pseudo-selectors-expected.txt: Added.
+        * fast/forms/input-live-pseudo-selectors.html: Added.
+        * fast/forms/resources/input-live-pseudo-selectors.js: Added.
+        * fast/forms/resources/live-pseudo-selectors.css: Added.
+        * fast/forms/resources/textarea-live-pseudo-selectors.js: Added.
+        * fast/forms/textarea-live-pseudo-selectors-expected.txt: Added.
+        * fast/forms/textarea-live-pseudo-selectors.html: Added.
+
+2009-10-05  Kent Tamura  <tkent@chromium.org>
+
         Reviewed by Darin Adler.
 
         Implement min/max attributes, ValidityState.rangeUnderflow and

@@ -108,8 +108,8 @@ public:
 
     virtual bool willValidate() const;
     bool checkValidity();
+    void updateValidity();
     void setCustomValidity(const String&);
-
     virtual bool valueMissing() const { return false; }
     virtual bool patternMismatch() const { return false; }
     virtual bool tooLong() const { return false; }
@@ -129,9 +129,10 @@ private:
 
     HTMLFormElement* m_form;
     RefPtr<ValidityState> m_validityState;
-    bool m_disabled;
-    bool m_readOnly;
-    bool m_valueMatchesRenderer;
+    bool m_disabled : 1;
+    bool m_readOnly : 1;
+    bool m_required : 1;
+    bool m_valueMatchesRenderer : 1;
 };
 
 class HTMLFormControlElementWithState : public HTMLFormControlElement {

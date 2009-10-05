@@ -45,7 +45,9 @@ RenderTextControlMultiLine::~RenderTextControlMultiLine()
 void RenderTextControlMultiLine::subtreeHasChanged()
 {
     RenderTextControl::subtreeHasChanged();
-    static_cast<Element*>(node())->setFormControlValueMatchesRenderer(false);
+    HTMLTextAreaElement* textArea = static_cast<HTMLTextAreaElement*>(node());
+    textArea->setFormControlValueMatchesRenderer(false);
+    textArea->updateValidity();
 
     if (!node()->focused())
         return;
@@ -53,7 +55,7 @@ void RenderTextControlMultiLine::subtreeHasChanged()
     node()->dispatchEvent(Event::create(eventNames().inputEvent, true, false));
 
     if (Frame* frame = document()->frame())
-        frame->textDidChangeInTextArea(static_cast<Element*>(node()));
+        frame->textDidChangeInTextArea(textArea);
 }
 
 bool RenderTextControlMultiLine::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int x, int y, int tx, int ty, HitTestAction hitTestAction)

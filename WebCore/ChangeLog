@@ -1,5 +1,39 @@
 2009-10-05  Kent Tamura  <tkent@chromium.org>
 
+        Reviewed by Eric Seidel.
+
+        Update style immediately when validation-related values are updated.
+        https://bugs.webkit.org/show_bug.cgi?id=28868
+
+        In order to apply :valid, :invalid, :optional or :required lively,
+          - call setNeedsStyleRecalc() when properties which can change
+            willValidate state are updated, and
+             (Parent form element, name, disabled, readonly)
+          - call updateValidity() when properties which can change validity
+            state are updated. (value, pattern, required)
+
+        Tests: fast/forms/input-live-pseudo-selectors.html
+               fast/forms/textarea-live-pseudo-selectors.html
+
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::HTMLFormControlElement):
+        (WebCore::HTMLFormControlElement::parseMappedAttribute):
+        (WebCore::HTMLFormControlElement::required):
+        (WebCore::HTMLFormControlElement::updateValidity):
+        * html/HTMLFormControlElement.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setInputType):
+        (WebCore::HTMLInputElement::parseMappedAttribute):
+        (WebCore::HTMLInputElement::setValue):
+        (WebCore::HTMLInputElement::setValueFromRenderer):
+        (WebCore::HTMLInputElement::setFileListFromRenderer):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::setValue):
+        * rendering/RenderTextControlMultiLine.cpp:
+        (WebCore::RenderTextControlMultiLine::subtreeHasChanged):
+
+2009-10-05  Kent Tamura  <tkent@chromium.org>
+
         Reviewed by Darin Adler.
 
         Implement min/max attributes, ValidityState.rangeUnderflow and

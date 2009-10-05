@@ -474,6 +474,7 @@ void HTMLInputElement::setInputType(const String& t)
         }
 
         InputElement::notifyFormStateChanged(this);
+        updateValidity();
     }
     m_haveType = true;
 
@@ -694,6 +695,7 @@ void HTMLInputElement::parseMappedAttribute(MappedAttribute *attr)
         checkedRadioButtons(this).removeButton(this);
         m_data.setName(attr->value());
         checkedRadioButtons(this).addButton(this);
+        HTMLFormControlElementWithState::parseMappedAttribute(attr);
     } else if (attr->name() == autocompleteAttr) {
         if (equalIgnoringCase(attr->value(), "off")) {
             m_autocomplete = Off;
@@ -713,12 +715,14 @@ void HTMLInputElement::parseMappedAttribute(MappedAttribute *attr)
         if (m_data.value().isNull())
             setNeedsStyleRecalc();
         setFormControlValueMatchesRenderer(false);
+        updateValidity();
     } else if (attr->name() == checkedAttr) {
         m_defaultChecked = !attr->isNull();
         if (m_useDefaultChecked) {
             setChecked(m_defaultChecked);
             m_useDefaultChecked = true;
         }
+        updateValidity();
     } else if (attr->name() == maxlengthAttr)
         InputElement::parseMaxLengthAttribute(m_data, this, this, attr);
     else if (attr->name() == sizeAttr)
@@ -772,6 +776,8 @@ void HTMLInputElement::parseMappedAttribute(MappedAttribute *attr)
              attr->name() == multipleAttr ||
              attr->name() == precisionAttr)
         setNeedsStyleRecalc();
+    else if (attr->name() == patternAttr)
+        updateValidity();
 #if ENABLE(DATALIST)
     else if (attr->name() == listAttr)
         m_hasNonEmptyList = !attr->isEmpty();
@@ -1152,6 +1158,7 @@ void HTMLInputElement::setValue(const String& value)
             cacheSelection(max, max);
     }
     InputElement::notifyFormStateChanged(this);
+    updateValidity();
 }
 
 String HTMLInputElement::placeholder() const
@@ -1175,6 +1182,7 @@ void HTMLInputElement::setValueFromRenderer(const String& value)
     ASSERT(inputType() != FILE);
     updatePlaceholderVisibility(false);
     InputElement::setValueFromRenderer(m_data, this, this, value);
+    updateValidity();
 }
 
 void HTMLInputElement::setFileListFromRenderer(const Vector<String>& paths)
@@ -1186,6 +1194,7 @@ void HTMLInputElement::setFileListFromRenderer(const Vector<String>& paths)
 
     setFormControlValueMatchesRenderer(true);
     InputElement::notifyFormStateChanged(this);
+    updateValidity();
 }
 
 bool HTMLInputElement::storesValueSeparateFromAttribute() const

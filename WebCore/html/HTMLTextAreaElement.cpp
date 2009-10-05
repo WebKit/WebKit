@@ -298,6 +298,7 @@ void HTMLTextAreaElement::setValue(const String& value)
 
     setNeedsStyleRecalc();
     notifyFormStateChanged(this);
+    updateValidity();
 }
 
 String HTMLTextAreaElement::defaultValue() const

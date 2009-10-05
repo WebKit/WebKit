@@ -53,6 +53,7 @@ HTMLFormControlElement::HTMLFormControlElement(const QualifiedName& tagName, Doc
     , m_form(f)
     , m_disabled(false)
     , m_readOnly(false)
+    , m_required(false)
     , m_valueMatchesRenderer(false)
 {
     if (!m_form)
@@ -87,9 +88,9 @@ ValidityState* HTMLFormControlElement::validity()
 
 void HTMLFormControlElement::parseMappedAttribute(MappedAttribute *attr)
 {
-    if (attr->name() == nameAttr) {
-        // Do nothing.
-    } else if (attr->name() == disabledAttr) {
+    if (attr->name() == nameAttr)
+        setNeedsStyleRecalc();
+    else if (attr->name() == disabledAttr) {
         bool oldDisabled = m_disabled;
         m_disabled = !attr->isNull();
         if (oldDisabled != m_disabled) {
@@ -105,6 +106,11 @@ void HTMLFormControlElement::parseMappedAttribute(MappedAttribute *attr)
             if (renderer() && renderer()->style()->hasAppearance())
                 renderer()->theme()->stateChanged(renderer(), ReadOnlyState);
         }
+    } else if (attr->name() == requiredAttr) {
+        bool oldRequired = m_required;
+        m_required = !attr->isNull();
+        if (oldRequired != m_required)
+            setNeedsStyleRecalc();
     } else
         HTMLElement::parseMappedAttribute(attr);
 }
@@ -219,7 +225,7 @@ void HTMLFormControlElement::setAutofocus(bool b)
 
 bool HTMLFormControlElement::required() const
 {
-    return hasAttribute(requiredAttr);
+    return m_required;
 }
 
 void HTMLFormControlElement::setRequired(bool b)
@@ -290,6 +296,14 @@ bool HTMLFormControlElement::checkValidity()
     }
 
     return true;
+}
+
+void HTMLFormControlElement::updateValidity()
+{
+    if (willValidate()) {
+        // Update style for pseudo classes such as :valid :invalid.
+        setNeedsStyleRecalc();
+    }
 }
 
 void HTMLFormControlElement::setCustomValidity(const String& error)
