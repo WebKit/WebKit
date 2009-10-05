@@ -1337,7 +1337,7 @@ sub buildQMakeProject($@)
     print "Calling '$qmakebin @buildArgs' in " . $dir . "\n\n";
     print "Installation directory: $prefix\n" if(defined($prefix));
 
-    my $result = system $qmakebin, @buildArgs;
+    my $result = system "$qmakebin @buildArgs";
     if ($result ne 0) {
        die "Failed to setup build environment using $qmakebin!\n";
     }

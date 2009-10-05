@@ -1,3 +1,16 @@
+2009-10-05  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Ariyha Hidayat.
+
+        Pass arguments to system() as a string instead of array
+
+        When passed as an array entries with a space fail to translate
+        to two arguments to the child process, so instead of manually
+        splitting all the entries in @buildArgs we pass the whole thing
+        as a string instead.
+
+        * Scripts/webkitdirs.pm:
+
 2009-10-04  Carol Szabo  <carol.szabo@nokia.com>
 
         Reviewed by David Levin.
