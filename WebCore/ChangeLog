@@ -1,3 +1,13 @@
+2009-10-05  Priit Laes  <plaes@plaes.org>
+
+        Reviewed by Gustavo Noronha.
+
+        Add Gentoo-specific paths for searching browser plugins.
+        https://bugs.webkit.org/show_bug.cgi?id=30088
+
+        * plugins/PluginDatabase.cpp:
+        (WebCore::PluginDatabase::defaultPluginDirectories):
+
 2009-10-02  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Adele Peterson.

@@ -355,6 +355,8 @@ Vector<String> PluginDatabase::defaultPluginDirectories()
     paths.append("/usr/lib/netscape/plugins-libc6");
     paths.append("/usr/lib64/netscape/plugins");
     paths.append("/usr/lib64/mozilla/plugins");
+    paths.append("/usr/lib/nsbrowser/plugins");
+    paths.append("/usr/lib64/nsbrowser/plugins");
 
     String mozHome(getenv("MOZILLA_HOME"));
     mozHome.append("/plugins");
