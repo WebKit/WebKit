@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Canvas3d example</title>
+    <script src="resources/CanvasMatrix.js"> </script>
+    <script src="resources/utils3d.js"> </script>
+    <script id="vshader" type="x-shader/x-vertex">
+        /*
+          Copyright (c) 2008 Seneca College
+          Licenced under the MIT License (http://www.c3dl.org/index.php/mit-license/)
+        */
+        
+        // We need to create our own light structure since we can't access 
+        // the light() function in the 2.0 context.
+        struct Light 
+        { 
+            vec4 ambient;
+            vec4 diffuse;
+            vec4 specular;
+            vec4 position;
+            
+            vec3 halfVector;
+        };
+        
+        struct Material
+        {
+            vec4 emission;
+            vec4 ambient;
+            vec4 diffuse;
+            vec4 specular;
+            float shininess;
+        };
+
+        //
+        // vertex attributes
+        //
+        attribute vec4 a_vertex; 
+        attribute vec3 a_normal; 
+        attribute vec4 a_texCoord; 
+
+        // for every model we multiply the projection, view and model matrices
+        // once to prevent having to do it for every vertex, however we still need
+        // the view matrix to calculate lighting.
+        uniform mat4 u_modelViewMatrix;
+
+        // we can calculate this once per model to speed up processing done on the js side.
+        uniform mat4 u_modelViewProjMatrix;
+
+        // matrix to transform the vertex normals
+        uniform mat4 u_normalMatrix;
+
+         // custom light structures need to be used since we don't have access to 
+        // light states.
+        uniform Light u_light;
+        
+        // material
+        uniform vec4 u_globalAmbientColor;
+        uniform Material u_frontMaterial;
+        uniform Material u_backMaterial;
+        
+        // passed to fragment shader
+        varying vec4 v_diffuse, v_ambient;
+        varying vec3 v_normal, v_lightDir;
+        varying vec2 v_texCoord;
+
+        /*
+            Given a reference to the ambient and diffuse  lighting variables,
+            this function will calculate how much each component contributes to the scene.
+
+            Light light - the light in view space
+            vec3 normal - 
+            vec4 ambient - 
+            vec4 diffuse - 
+        */
+        vec3 directionalLight(inout vec4 ambient, inout vec4 diffuse)
+        {
+            ambient += u_light.ambient;
+            diffuse += u_light.diffuse;
+            return normalize(vec3(u_light.position));
+        }
+
+        void main()
+        { 
+            v_normal = normalize(u_normalMatrix * vec4(a_normal, 1)).xyz; 
+
+            vec4 ambient = vec4(0.0, 0.0, 0.0, 1.0); 
+            vec4 diffuse = vec4(0.0, 0.0, 0.0, 1.0); 
+            vec4 specular = vec4(0.0, 0.0, 0.0, 1.0); 
+
+            // place the current vertex into view space
+            // ecPos = eye coordinate position.
+            vec4 ecPos4 = u_modelViewMatrix * a_vertex;
+
+            // the current vertex in eye coordinate space
+            vec3 ecPos = ecPos4.xyz/ecPos4.w;
+            v_lightDir = directionalLight(ambient, diffuse);
+            
+            v_ambient = u_frontMaterial.ambient * ambient;
+            v_ambient += u_globalAmbientColor * u_frontMaterial.ambient;
+            v_diffuse = u_frontMaterial.diffuse * diffuse;
+
+            gl_Position =  u_modelViewProjMatrix * a_vertex;
+            v_texCoord = a_texCoord.st; 
+        }
+    </script>
+
+    <script id="fshader" type="x-shader/x-fragment">
+        struct Light 
+        { 
+            vec4 ambient;
+            vec4 diffuse;
+            vec4 specular;
+            vec4 position;
+        
+            vec3 halfVector;
+        };
+    
+        struct Material
+        {
+            vec4 emission;
+            vec4 ambient;
+            vec4 diffuse;
+            vec4 specular;
+            float shininess;
+        };
+        
+        uniform sampler2D u_sampler2d;
+        uniform Light u_light;
+        uniform Material u_frontMaterial;
+        uniform Material u_backMaterial;
+        
+        varying vec4 v_diffuse, v_ambient;
+        varying vec3 v_normal, v_lightDir;
+        varying vec2 v_texCoord;
+
+        void main()
+        {
+            vec4 color = v_diffuse;
+                
+            vec3 n = normalize(v_normal);
+
+            Light light = u_light;
+            vec3 lightDir = v_lightDir;
+            float nDotL = max(dot(n, lightDir), 0.0);
+            if (nDotL > 0.0) {
+                color = vec4(color.rgb * nDotL, color.a);
+                float nDotHV = max(dot(n, light.halfVector), 0.0);
+                vec4 specular = u_frontMaterial.specular * light.specular;
+                color += vec4(specular.rgb * pow(nDotHV, u_frontMaterial.shininess), specular.a);
+            }
+            
+            gl_FragColor = color + v_ambient;
+        }
+    </script>
+
+    <script>
+    console.log("Hello");
+    function setDirectionalLight(ctx, program, eyeVector, direction, ambient, diffuse, specular)
+    {
+        var lightString = "u_light.";
+        
+        ctx.uniform4f(ctx.getUniformLocation(program, lightString+"ambient"), 
+                                                ambient[0], ambient[1], ambient[2], ambient[3]);
+        ctx.uniform4f(ctx.getUniformLocation(program, lightString+"diffuse"), 
+                                                diffuse[0], diffuse[1], diffuse[2], diffuse[3]);
+        ctx.uniform4f(ctx.getUniformLocation(program, lightString+"specular"), 
+                                                specular[0], specular[1], specular[2], specular[3]);
+        ctx.uniform4f(ctx.getUniformLocation(program, lightString+"position"), 
+                                                direction[0], direction[1], direction[2], direction[3]);
+                                                
+        // compute the half vector
+        var halfVector = [ eyeVector[0] + direction[0], eyeVector[1] + direction[1], eyeVector[2] + direction[2] ];
+        var length = Math.sqrt(halfVector[0] * halfVector[0] + 
+                               halfVector[1] * halfVector[1] + 
+                               halfVector[2] * halfVector[2]);
+        if (length == 0)
+            halfVector = [ 0, 0, 1 ];
+        else {
+            halfVector[0] /= length;
+            halfVector[1] /= length;
+            halfVector[2] /= length;
+        }
+
+        ctx.uniform3f(ctx.getUniformLocation(program, lightString+"halfVector"), 
+                                                halfVector[0], halfVector[1], halfVector[2]);
+    }
+        
+        function setMaterial(ctx, program, emission, ambient, diffuse, specular, shininess)
+        {
+            var matString = "u_frontMaterial.";
+            ctx.uniform4f(ctx.getUniformLocation(program, matString+"emission"), 
+                                                    emission[0], emission[1], emission[2], emission[3]);
+            ctx.uniform4f(ctx.getUniformLocation(program, matString+"ambient"), 
+                                                    ambient[0], ambient[1], ambient[2], ambient[3]);
+            ctx.uniform4f(ctx.getUniformLocation(program, matString+"diffuse"), 
+                                                    diffuse[0], diffuse[1], diffuse[2], diffuse[3]);
+            ctx.uniform4f(ctx.getUniformLocation(program, matString+"specular"), 
+                                                    specular[0], specular[1], specular[2], specular[3]);
+            ctx.uniform1f(ctx.getUniformLocation(program, matString+"shininess"), shininess);
+        }
+
+        function init()
+        {
+           var gl = initWebGL("example", "vshader", "fshader", 
+                                [ "a_normal", "a_texCoord", "a_vertex"],
+                                [ 0, 0, 0, 0 ], 10000);
+
+            gl.uniform1i(gl.getUniformLocation(gl.program, "u_sampler2d"), 0);
+            gl.uniform4f(gl.getUniformLocation(gl.program, "u_globalAmbientColor"), 0.2, 0.2, 0.2, 1);
+
+            setDirectionalLight(gl, gl.program, 
+                                [ 0, 0, 1 ],            // eyeVector
+                                [0, 0, 1, 1],           // position
+                                [0.1, 0.1, 0.1, 1],     // ambient
+                                [1, 1, 1, 1],           // diffuse
+                                [1, 1, 1, 1]);          // specular
+
+            setMaterial(gl, gl.program, 
+                [ 0, 0, 0, 0 ],         // emission
+                [ 0.1, 0.1, 0.1, 1 ],   // ambient
+                [ 0.8, 0.2, 0, 1 ], // diffuse
+                [ 0, 0, 1, 1 ],     // specular
+                32);                    // shininess
+            
+            obj = loadObj(gl, "resources/teapot.obj");
+
+            mvMatrix = new CanvasMatrix4();
+            normalMatrix = new CanvasMatrix4();
+            
+            return gl;
+        }
+                
+        width = -1;
+        height = -1;
+        loaded = false;
+        
+        function reshape(ctx)
+        {
+            var canvas = document.getElementById('example');
+            if (canvas.clientWidth == width && canvas.clientHeight == height)
+                return;
+
+            width = canvas.clientWidth;
+            height = canvas.clientHeight;
+            
+            ctx.viewport(0, 0, width, height);
+    
+            ctx.perspectiveMatrix = new CanvasMatrix4();
+            ctx.perspectiveMatrix.lookat(0,0,50, 0, 0, 0, 0, 1, 0);
+            ctx.perspectiveMatrix.perspective(30, width/height, 1, 10000);
+        }
+        
+        function drawPicture(ctx)
+        {
+            var startRenderTime = new Date().getTime();
+            
+            reshape(ctx);
+            ctx.clear(ctx.COLOR_BUFFER_BIT | ctx.DEPTH_BUFFER_BIT);
+
+            if (!loaded && obj.loaded) {
+                loaded = true;
+
+                ctx.enableVertexAttribArray(0);
+                ctx.enableVertexAttribArray(1);
+                ctx.enableVertexAttribArray(2);
+
+                ctx.bindBuffer(ctx.ARRAY_BUFFER, obj.vertexObject);
+                ctx.vertexAttribPointer(2, 3, ctx.FLOAT, false, 0, 0);
+
+                ctx.bindBuffer(ctx.ARRAY_BUFFER, obj.normalObject);
+                ctx.vertexAttribPointer(0, 3, ctx.FLOAT, false, 0, 0);
+
+                ctx.bindBuffer(ctx.ARRAY_BUFFER, obj.texCoordObject);
+                ctx.vertexAttribPointer(1, 2, ctx.FLOAT, false, 0, 0);
+
+                ctx.bindBuffer(ctx.ELEMENT_ARRAY_BUFFER, obj.indexObject);
+            }
+            
+            if (!loaded)
+                return;
+            
+            // generate the model-view matrix
+            mvMatrix.makeIdentity();
+            mvMatrix.rotate(currentAngle, 0, 1, 0);
+            mvMatrix.rotate(10, 1,0,0);
+            ctx.uniformMatrix4fv(ctx.getUniformLocation(ctx.program, "u_modelViewMatrix"), false, mvMatrix.getAsCanvasFloatArray());
+
+            // construct the normal matrix from the model-view matrix
+            normalMatrix.load(mvMatrix);
+            normalMatrix.invert();
+            normalMatrix.transpose();
+            ctx.uniformMatrix4fv(ctx.getUniformLocation(ctx.program, "u_normalMatrix"), false, normalMatrix.getAsCanvasFloatArray());
+            
+            mvMatrix.multRight(ctx.perspectiveMatrix);
+            ctx.uniformMatrix4fv(ctx.getUniformLocation(ctx.program, "u_modelViewProjMatrix"), false, mvMatrix.getAsCanvasFloatArray());
+
+            ctx.drawElements(ctx.TRIANGLES, obj.numIndices, ctx.UNSIGNED_SHORT, 0);
+            
+            ctx.flush();
+            
+            framerate.snapshot();
+            
+            currentAngle += incAngle;
+            if (currentAngle > 360)
+                currentAngle -= 360;
+        }
+        
+        function start()
+        {
+            // set up event listener on the canvas
+            var canvas = document.getElementById('example');
+            var container = document.getElementById('container');
+            container.addEventListener('click', function () {
+                isTilted = !isTilted;
+                container.className = isTilted ? 'tilted' : '';
+            }, false);
+            
+            var ctx = init();
+            currentAngle = 0;
+            incAngle = 0.2;
+            framerate = new Framerate("framerate");
+            var f = function() { drawPicture(ctx) };
+            setInterval(f, 10);
+        }
+        
+        var isTilted = false;
+        
+    </script>
+    <style type="text/css">
+        body {
+            background-color:grey;
+        }
+        #container {
+            -webkit-transform: perspective(800) rotateY(0) rotateZ(0);
+            -webkit-transition: -webkit-transform 0.5s;
+        }
+        #container.tilted {
+            -webkit-transform: perspective(800) rotateY(60deg) rotateZ(320deg);
+        }
+        canvas {
+            width:90%;
+            height:90%;
+        }
+        #bg {
+            border:4px solid #242;
+            position:absolute;
+            width:90%;
+            height:90%;
+        }
+        #framerate {
+            position:absolute;
+            top:10px;
+            margin:10px;
+            text-shadow: black 2px 2px 4px;
+            font-size:2em;
+            font-family:helvetica;
+            color:white;
+        }
+    </style>
+    </head>
+    <body onload="start()">
+        <div id="container">
+            <img id="bg" src="resources/BambooBridge.jpg" />
+            <canvas id="example">
+                There is supposed to be an example drawing here, but it's not important.
+            </canvas>
+        </div>
+        <div id="framerate"></div>
+  </body>
+</html>
