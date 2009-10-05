@@ -51,6 +51,7 @@
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/HTMLPlugInElement.h>
+#import <WebCore/HaltablePlugin.h>
 #import <WebCore/Page.h>
 #import <WebCore/ProtectionSpace.h>
 #import <WebCore/RenderView.h>
@@ -62,6 +63,21 @@
 #define LoginWindowDidSwitchToUserNotification      @"WebLoginWindowDidSwitchToUserNotification"
 
 using namespace WebCore;
+
+class WebHaltablePlugin : public HaltablePlugin {
+public:
+    WebHaltablePlugin(WebBaseNetscapePluginView* view)
+        : m_view(view)
+    {
+    }
+    
+private:
+    virtual void halt() { [m_view stop]; }
+    virtual void restart() { [m_view start]; }
+    virtual Node* node() const { return [m_view element]; }
+
+    WebBaseNetscapePluginView* m_view;
+};
 
 @implementation WebBaseNetscapePluginView
 
@@ -114,7 +130,7 @@ using namespace WebCore;
         _mode = NP_EMBED;
     
     _loadManually = loadManually;
-
+    _haltable = new WebHaltablePlugin(self);
     return self;
 }
 
@@ -391,6 +407,8 @@ using namespace WebCore;
     }
     
     _isStarted = YES;
+    page->didStartPlugin(_haltable.get());
+
     [[self webView] addPluginInstanceView:self];
 
     if ([self currentWindow])
@@ -418,6 +436,11 @@ using namespace WebCore;
     
     if (!_isStarted)
         return;
+
+    if (Frame* frame = core([self webFrame])) {
+        if (Page* page = frame->page())
+            page->didStopPlugin(_haltable.get());
+    }
     
     _isStarted = NO;
     

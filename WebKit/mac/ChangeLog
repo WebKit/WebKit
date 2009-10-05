@@ -1,3 +1,20 @@
+2009-10-04  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/7273363> Plug-ins should use PluginHalter
+        
+        * Plugins/WebBaseNetscapePluginView.h: Add WebHaltablePlugin forward declare and _haltable ivar.
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (WebHaltablePlugin::WebHaltablePlugin): Added.
+        (WebHaltablePlugin::halt): New method that stops a plug-in.
+        (WebHaltablePlugin::restart): New method that starts a plug-in.
+        (WebHaltablePlugin::node): Added. Provides the DOMNode corresponding to the plug-in in WebBaseNetscapePluginView.
+        (-[WebBaseNetscapePluginView initWithFrame:pluginPackage:URL:baseURL:MIMEType:attributeKeys:attributeValues:loadManually:element:WebCore::]):
+        Initialize new _haltable ivar.
+        (-[WebBaseNetscapePluginView start]): Call the page's didStartPlugin() upon starting a plug-in.
+        (-[WebBaseNetscapePluginView stop]): Call the page's didStopPlugin() upon stopping a plug-in.
+
 2009-10-05  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
