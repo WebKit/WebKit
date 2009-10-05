@@ -1,0 +1,23 @@
+This test aims to check for rangeUnderflow flag with type=number input fields
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS The value "99" doesn't underflow the minimum value "100".
+PASS The value "101" doesn't underflow the minimum value "100".
+PASS The value "-99" doesn't underflow the minimum value "-100".
+PASS The value "101" doesn't underflow the minimum value "1E+2".
+PASS The value "1.01" doesn't underflow the minimum value "1.00".
+PASS The value "abc" doesn't underflow the minimum value "100".
+PASS The value "" doesn't underflow the minimum value "1".
+PASS The value "-1" doesn't underflow the minimum value "".
+PASS The value "-1" doesn't underflow the minimum value "xxx".
+PASS The value "0.999999999999999999999999999999999999999998" doesn't underflow the minimum value "0.999999999999999999999999999999999999999999".
+PASS The value "99" underflows the minimum value "100".
+PASS The value "-101" underflows the minimum value "-100".
+PASS The value "99" underflows the minimum value "1E+2".
+PASS The value "101" underflows the minimum value "200".
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -50,7 +50,7 @@ static const int defaultTrackLength = 129;
 struct SliderRange {
     bool isIntegral;
     double minimum;
-    double maximum;
+    double maximum;  // maximum must be >= minimum.
 
     explicit SliderRange(HTMLInputElement*);
     double clampValue(double value);
@@ -80,12 +80,8 @@ SliderRange::SliderRange(HTMLInputElement* element)
 
     isIntegral = !equalIgnoringCase(element->getAttribute(precisionAttr), "float");
 
-    // FIXME: This treats maximum strings that can't be parsed as 0, but perhaps 100 would be more appropriate.
-    const AtomicString& maxString = element->getAttribute(maxAttr);
-    maximum = maxString.isNull() ? 100.0 : maxString.toDouble();
-
-    // If the maximum is smaller, use it as the minimum.
-    minimum = min(element->getAttribute(minAttr).toDouble(), maximum);
+    maximum = element->rangeMaximum();
+    minimum = element->rangeMinimum();
 }
 
 double SliderRange::clampValue(double value)
@@ -96,12 +92,14 @@ double SliderRange::clampValue(double value)
 
 double SliderRange::valueFromElement(HTMLInputElement* element, bool* wasClamped)
 {
-    String valueString = element->value();
-    double oldValue = valueString.isNull() ? (minimum + maximum) / 2 : valueString.toDouble();
+    double oldValue;
+    bool parseSuccess = HTMLInputElement::formStringToDouble(element->value(), &oldValue);
+    if (!parseSuccess)
+        oldValue = (minimum + maximum) / 2;
     double newValue = clampValue(oldValue);
 
     if (wasClamped)
-        *wasClamped = valueString.isNull() || newValue != oldValue;
+        *wasClamped = !parseSuccess || newValue != oldValue;
 
     return newValue;
 }
