@@ -1,3 +1,23 @@
+2009-10-05  Hironori Bono  <hbono@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        A super quick fix for Bug 28710.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28710
+
+        This change just resets the style sent to addStyleMarkup() to avoid an assertion error
+        and creates an empty style when computedStyleAtPosition is 0 to avoid a crash.
+        (This change is nothing but a better-than-crash change.)
+
+        Tests: editing/selection/select-crash-001.html
+               editing/selection/select-crash-002.html
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::editingStyleAtPosition): Resets the style sent to addStyleMarkup() if it is not valid.
+        * editing/markup.cpp:
+        (WebCore::createMarkup): Creates an empty style if computedStyleAtPosition is 0.
+
 2009-10-05  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.

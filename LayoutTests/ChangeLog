@@ -1,3 +1,20 @@
+2009-10-05  Hironori Bono  <hbono@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        A super quick fix for Bug 28710.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28710
+
+        This change just resets the style sent to addStyleMarkup() to avoid an assertion error
+        and creates an empty style when computedStyleAtPosition is 0 to avoid a crash.
+        (This change is nothing but a better-than-crash change.)
+
+        * editing/selection/select-crash-001-expected.txt: Added.
+        * editing/selection/select-crash-001.html: Added.
+        * editing/selection/select-crash-002-expected.txt: Added.
+        * editing/selection/select-crash-002.html: Added.
+
 2009-10-05  Julie Parent  <jparent@chromium.org>
 
         Reviewed by Darin Adler.

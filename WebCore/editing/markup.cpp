@@ -983,8 +983,16 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
                 if (!fullySelectedRootStyle->getPropertyCSSValue(CSSPropertyBackgroundImage) && static_cast<Element*>(fullySelectedRoot)->hasAttribute(backgroundAttr))
                     fullySelectedRootStyle->setProperty(CSSPropertyBackgroundImage, "url('" + static_cast<Element*>(fullySelectedRoot)->getAttribute(backgroundAttr) + "')");
                 
-                if (fullySelectedRootStyle->length())
+                if (fullySelectedRootStyle->length()) {
+                    // Reset the CSS properties to avoid an assertion error in addStyleMarkup().
+                    // This assertion is caused at least when we select all text of a <body> element whose
+                    // 'text-decoration' property is "inherit", and copy it.
+                    if (!propertyMissingOrEqualToNone(fullySelectedRootStyle.get(), CSSPropertyTextDecoration))
+                        fullySelectedRootStyle->setProperty(CSSPropertyTextDecoration, CSSValueNone);
+                    if (!propertyMissingOrEqualToNone(fullySelectedRootStyle.get(), CSSPropertyWebkitTextDecorationsInEffect))
+                        fullySelectedRootStyle->setProperty(CSSPropertyWebkitTextDecorationsInEffect, CSSValueNone);
                     addStyleMarkup(preMarkups, markups, fullySelectedRootStyle.get(), document, true);
+                }
             } else {
                 // Since this node and all the other ancestors are not in the selection we want to set RangeFullySelectsNode to DoesNotFullySelectNode
                 // so that styles that affect the exterior of the node are not included.
