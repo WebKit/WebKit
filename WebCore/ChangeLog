@@ -1,3 +1,12 @@
+2009-10-04  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Eric Seidel
+
+        Enable Web Sockets in chromium build.
+        https://bugs.webkit.org/show_bug.cgi?id=29917
+
+        * WebCore.gyp/WebCore.gyp:
+
 2009-10-04  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustova Noronha.
