@@ -1,3 +1,15 @@
+2009-10-05  Jakub Wieczorek  <faw217@gmail.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] EventSender::keyDown() cannot send function-key events.
+        https://bugs.webkit.org/show_bug.cgi?id=30044
+
+        This affects the fast/events/keydown-function-keys.html layout test.
+
+        * DumpRenderTree/qt/jsobjects.cpp:
+        (EventSender::keyDown):
+
 2009-10-05  Vadim Zeitlin  <vadim@wxwidgets.org>
 
         Added --wx-compiler-prefix waf option to allow building wxWebKit with

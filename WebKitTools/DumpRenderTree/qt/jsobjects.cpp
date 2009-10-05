@@ -482,8 +482,14 @@ void EventSender::keyDown(const QString &string, const QStringList &modifiers)
             code = string.unicode()->toUpper().unicode();
     } else {
         qDebug() << ">>>>>>>>> keyDown" << string;
+
+        if (string.startsWith(QLatin1Char('F')) && string.count() <= 3) {
+            s = s.mid(1);
+            int functionKey = s.toInt();
+            Q_ASSERT(functionKey >= 1 && functionKey <= 35);
+            code = Qt::Key_F1 + (functionKey - 1);
         // map special keycode strings used by the tests to something that works for Qt/X11
-        if (string == QLatin1String("leftArrow")) {
+        } else if (string == QLatin1String("leftArrow")) {
             s = QString();
             code = Qt::Key_Left;
         } else if (string == QLatin1String("rightArrow")) {
