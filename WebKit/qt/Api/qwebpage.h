@@ -56,6 +56,7 @@ namespace WebCore {
     class InspectorClientQt;
     class ResourceHandle;
     class HitTestResult;
+    class QNetworkReplyHandler;
 
     struct FrameLoadRequest;
 }
@@ -346,6 +347,8 @@ Q_SIGNALS:
     void saveFrameStateRequested(QWebFrame* frame, QWebHistoryItem* item);
     void restoreFrameStateRequested(QWebFrame* frame);
 
+    void networkRequestStarted(QWebFrame* frame, QNetworkRequest* request);
+
 protected:
     virtual QWebPage *createWindow(WebWindowType type);
     virtual QObject *createPlugin(const QString &classid, const QUrl &url, const QStringList &paramNames, const QStringList &paramValues);
@@ -380,6 +383,7 @@ private:
     friend class WebCore::FrameLoaderClientQt;
     friend class WebCore::InspectorClientQt;
     friend class WebCore::ResourceHandle;
+    friend class WebCore::QNetworkReplyHandler;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QWebPage::FindFlags)
