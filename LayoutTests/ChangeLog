@@ -1,3 +1,11 @@
+2009-10-05  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Rubberstamped by Simon Hausmann.
+
+        Remove test that I forgot in earlier commit.
+
+        * platform/qt/Skipped:
+
 2009-10-05  Eric Seidel  <eric@webkit.org>
 
         No review, rolling out r49104.

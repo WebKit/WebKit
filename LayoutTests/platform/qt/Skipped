@@ -35,6 +35,7 @@ http/tests/xmlhttprequest
 http/tests/uri/escaped-entity.html
 
 # Failing HTTP Loading tests
+http/tests/loading/bad-server-subframe.html
 http/tests/loading/bad-scheme-subframe.html
 http/tests/loading/basic-auth-resend-wrong-credentials.html
 http/tests/loading/basic.html
