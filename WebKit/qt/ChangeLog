@@ -1,3 +1,14 @@
+2009-10-05  Girish Ramakrishnan  <girish@forwardbias.in>
+
+        Reviewed by Simon Hausmann.
+
+        Setting the env QTLAUNCHER_USE_ARGB_VISUALS makes Qt use WA_TranslucentWindow.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30068
+
+        * QtLauncher/main.cpp:
+        (MainWindow::MainWindow):
+
 2009-10-05  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Rubberstamped by Simon Hausmann.

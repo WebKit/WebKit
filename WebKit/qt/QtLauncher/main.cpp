@@ -78,6 +78,8 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QString url = QString()): currentZoom(100) {
         setAttribute(Qt::WA_DeleteOnClose);
+        if (qgetenv("QTLAUNCHER_USE_ARGB_VISUALS").toInt() == 1)
+            setAttribute(Qt::WA_TranslucentBackground);
 
         QSplitter* splitter = new QSplitter(Qt::Vertical, this);
         setCentralWidget(splitter);
