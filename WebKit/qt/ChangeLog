@@ -1,5 +1,16 @@
 2009-10-05  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
+        Reviewed by Simon Hausmann.
+
+        ErrorPageExtension: Add a pointer to the QWebFrame that had
+        an error.
+
+        * Api/qwebpage.h:
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::callErrorPageExtension):
+
+2009-10-05  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
         Reviewed by Tor Arne Vestbø.
 
         Do not empty the offline web appcache when clearing

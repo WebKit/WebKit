@@ -289,6 +289,7 @@ public:
     class ErrorPageExtensionOption : public ExtensionOption {
     public:
         QUrl url;
+        QWebFrame* frame;
         ErrorDomain domain;
         int error;
         QString errorString;

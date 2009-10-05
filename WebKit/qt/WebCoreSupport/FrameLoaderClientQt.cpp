@@ -880,6 +880,7 @@ void FrameLoaderClientQt::callErrorPageExtension(const WebCore::ResourceError& e
             return;
 
         option.url = QUrl(error.failingURL());
+        option.frame = m_webFrame;
         option.error = error.errorCode();
         option.errorString = error.localizedDescription();
 
