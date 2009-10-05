@@ -217,12 +217,18 @@ WebInspector.SourceFrame.prototype = {
             headElement = this.element.contentDocument.createElement("head");
             this.element.contentDocument.documentElement.insertBefore(headElement, this.element.contentDocument.documentElement.firstChild);
         }
+        
+        var linkElement = this.element.contentDocument.createElement("link");
+        linkElement.type = "text/css";
+        linkElement.rel = "stylesheet";
+        linkElement.href = "inspectorSyntaxHighlight.css";
+        headElement.appendChild(linkElement);
 
         var styleElement = this.element.contentDocument.createElement("style");
         headElement.appendChild(styleElement);
 
         // Add these style rules here since they are specific to the Inspector. They also behave oddly and not
-        // all properties apply if added to view-source.css (becuase it is a user agent sheet.)
+        // all properties apply if added to view-source.css (because it is a user agent sheet.)
         var styleText = ".webkit-line-number { background-repeat: no-repeat; background-position: right 1px; }\n";
         styleText += ".webkit-execution-line .webkit-line-number { color: transparent; background-image: -webkit-canvas(program-counter); }\n";
 
@@ -241,18 +247,6 @@ WebInspector.SourceFrame.prototype = {
         styleText += ".webkit-line-content { background-color: white; }\n";
         styleText += "@-webkit-keyframes fadeout {from {background-color: rgb(255, 255, 120);} to { background-color: white;}}\n";
         styleText += ".webkit-highlighted-line .webkit-line-content { background-color: rgb(255, 255, 120); -webkit-animation: 'fadeout' 2s 500ms}\n";
-        styleText += ".webkit-javascript-comment { color: rgb(0, 116, 0); }\n";
-        styleText += ".webkit-javascript-keyword { color: rgb(170, 13, 145); }\n";
-        styleText += ".webkit-javascript-number { color: rgb(28, 0, 207); }\n";
-        styleText += ".webkit-javascript-string, .webkit-javascript-regexp { color: rgb(196, 26, 22); }\n";
-
-        styleText += ".webkit-css-comment { color: rgb(0, 116, 0); }\n";
-        styleText += ".webkit-css-string, .webkit-css-keyword, .webkit-css-unit { color: rgb(7, 144, 154); }\n";
-        styleText += ".webkit-css-number { color: rgb(50, 0, 255); }\n";
-        styleText += ".webkit-css-property, .webkit-css-at-rule { color: rgb(200, 0, 0); }\n";
-        styleText += ".webkit-css-url { color: rgb(0, 0, 0); }\n";
-        styleText += ".webkit-css-selector { color: rgb(0, 0, 0); }\n";
-        styleText += ".webkit-css-pseudo-class { color: rgb(128, 128, 128); }\n";
 
         // TODO: Move these styles into inspector.css once https://bugs.webkit.org/show_bug.cgi?id=28913 is fixed and popup moved into the top frame.
         styleText += ".popup-content { position: absolute; z-index: 10000; padding: 4px; background-color: rgb(203, 226, 255); -webkit-border-radius: 7px; border: 2px solid rgb(169, 172, 203); }";

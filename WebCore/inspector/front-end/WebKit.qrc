@@ -65,6 +65,7 @@
     <file>View.js</file>
     <file>WatchExpressionsSidebarPane.js</file>
     <file>inspector.css</file>
+    <file>inspectorSyntaxHighlight.css</file>
     <file>Images/back.png</file>
     <file>Images/checker.png</file>
     <file>Images/clearConsoleButtonGlyph.png</file>

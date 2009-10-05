@@ -3625,6 +3625,7 @@
             'inspector/front-end/View.js',
             'inspector/front-end/WatchExpressionsSidebarPane.js',
             'inspector/front-end/inspector.css',
+            'inspector/front-end/inspectorSyntaxHighlight.css',
         ],
         'webinspector_image_files': [
 

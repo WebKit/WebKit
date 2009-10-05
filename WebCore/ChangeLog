@@ -2,6 +2,26 @@
 
         Reviewed by Timothy Hatcher.
         
+        Fixes <https://bugs.webkit.org/show_bug.cgi?id=30064>
+        Syntax Highlighting CSS shouldn't be duplicated.
+
+        Refactor syntax highlighting CSS into a new file, add it to the
+        projects, and have SourceFrame.js and inspector.html include the
+        new CSS file.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._loaded):
+        * inspector/front-end/inspector.css:
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspectorSyntaxHighlight.css: Added.
+        * inspector/front-end/WebKit.qrc:
+
+2009-10-04  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Timothy Hatcher.
+        
         Fixes <https://bugs.webkit.org/show_bug.cgi?id=30062>
         Inspector should syntax highlight JS/CSS in elements view.
 
