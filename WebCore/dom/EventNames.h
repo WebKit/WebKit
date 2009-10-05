@@ -32,6 +32,7 @@ namespace WebCore {
     macro(abort) \
     macro(beforecopy) \
     macro(beforecut) \
+    macro(beforeload) \
     macro(beforepaste) \
     macro(beforeunload) \
     macro(blur) \

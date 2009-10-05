@@ -444,6 +444,7 @@ module window {
         attribute [JSCCustomGetter,Conditional=3D_CANVAS] CanvasFloatArrayConstructor CanvasFloatArray; // Usable with new operator
 
         attribute EventConstructor Event;
+        attribute BeforeLoadEventConstructor BeforeLoadEvent;
         attribute KeyboardEventConstructor KeyboardEvent;
         attribute MouseEventConstructor MouseEvent;
         attribute MutationEventConstructor MutationEvent;

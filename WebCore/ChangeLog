@@ -1,3 +1,25 @@
+2009-10-05  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add a beforeload event that will be fired before subresources load. (It isn't fired yet.)  The event
+        has one field, the URL that is going to be requested.  Setting preventDefault will stop the load
+        from occurring.
+
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/BeforeLoadEvent.h: Added.
+        (WebCore::BeforeLoadEvent::create):
+        (WebCore::BeforeLoadEvent::initBeforeLoadEvent):
+        (WebCore::BeforeLoadEvent::url):
+        (WebCore::BeforeLoadEvent::BeforeLoadEvent):
+        * dom/BeforeLoadEvent.idl: Added.
+        * dom/EventNames.h:
+        * page/DOMWindow.idl:
+
 2009-10-05  Priit Laes  <plaes@plaes.org>
 
         Reviewed by Gustavo Noronha.

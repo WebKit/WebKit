@@ -31,6 +31,7 @@
             'css/WebKitCSSMatrix.idl',
             'css/WebKitCSSTransformValue.idl',
             'dom/Attr.idl',
+            'dom/BeforeLoadEvent.idl'
             'dom/CDATASection.idl',
             'dom/CharacterData.idl',
             'dom/ClientRect.idl',
@@ -960,6 +961,7 @@
             'dom/Attribute.h',
             'dom/BeforeTextInsertedEvent.cpp',
             'dom/BeforeTextInsertedEvent.h',
+            'dom/BeforeLoadEvent.h',
             'dom/BeforeUnloadEvent.cpp',
             'dom/BeforeUnloadEvent.h',
             'dom/CDATASection.cpp',

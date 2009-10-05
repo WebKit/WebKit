@@ -52,6 +52,7 @@ DOM_CLASSES = \
     AbstractWorker \
     Attr \
     BarInfo \
+    BeforeLoadEvent \
     CDATASection \
     CSSCharsetRule \
     CSSFontFaceRule \
