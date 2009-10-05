@@ -331,11 +331,11 @@
             background-color:grey;
         }
         #container {
-            -webkit-transform: perspective(800) rotateY(0) rotateZ(0);
+            -webkit-transform: perspective(800) rotateY(0) rotateZ(0) translateZ(0);
             -webkit-transition: -webkit-transform 2s;
         }
         #container.tilted {
-            -webkit-transform: perspective(800) rotateY(60deg) rotateZ(320deg);
+            -webkit-transform: perspective(800) rotateY(60deg) rotateZ(320deg) translateZ(-200px);
         }
         canvas {
             width:90%;
