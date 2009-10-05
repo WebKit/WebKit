@@ -60,20 +60,6 @@ bool ValidityState::typeMismatch()
     }
 }
 
-bool ValidityState::rangeUnderflow()
-{
-    if (!control()->hasTagName(inputTag))
-        return false;
-    return static_cast<HTMLInputElement*>(control())->rangeUnderflow();
-}
-
-bool ValidityState::rangeOverflow()
-{
-    if (!control()->hasTagName(inputTag))
-        return false;
-    return static_cast<HTMLInputElement*>(control())->rangeOverflow();
-}
-
 bool ValidityState::valid()
 {
     bool someError = typeMismatch() || stepMismatch() || rangeUnderflow() || rangeOverflow() ||

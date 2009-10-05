@@ -232,62 +232,6 @@ bool HTMLInputElement::tooLong() const
     return false;
 }
 
-bool HTMLInputElement::rangeUnderflow() const
-{
-    if (inputType() == NUMBER) {
-        double min;
-        double doubleValue;
-        if (formStringToDouble(getAttribute(minAttr), &min) && formStringToDouble(value(), &doubleValue))
-            return doubleValue < min;
-    } else if (inputType() == RANGE) {
-        double doubleValue;
-        if (formStringToDouble(value(), &doubleValue))
-            return doubleValue < rangeMinimum();
-    }
-    return false;
-}
-
-bool HTMLInputElement::rangeOverflow() const
-{
-    if (inputType() == NUMBER) {
-        double max;
-        double doubleValue;
-        if (formStringToDouble(getAttribute(maxAttr), &max) && formStringToDouble(value(), &doubleValue))
-            return doubleValue > max;
-    } else if (inputType() == RANGE) {
-        double doubleValue;
-        if (formStringToDouble(value(), &doubleValue))
-            return doubleValue > rangeMaximum();
-    }
-    return false;
-}
-
-double HTMLInputElement::rangeMinimum() const
-{
-    ASSERT(inputType() == RANGE);
-    // The range type's "default minimum" is 0.
-    double min = 0.0;
-    formStringToDouble(getAttribute(minAttr), &min);
-    return min;
-}
-
-double HTMLInputElement::rangeMaximum() const
-{
-    ASSERT(inputType() == RANGE);
-    // The range type's "default maximum" is 100.
-    static const double defaultMaximum = 100.0;
-    double max = defaultMaximum;
-    formStringToDouble(getAttribute(maxAttr), &max);
-    const double min = rangeMinimum();
-
-    if (max < min) {
-        // A remedy for the inconsistent min/max values.
-        // Sets the maxmimum to the default (100.0) or the minimum value.
-        max = min < defaultMaximum ? defaultMaximum : min;
-    }
-    return max;
-}
-
 static inline CheckedRadioButtons& checkedRadioButtons(const HTMLInputElement *element)
 {
     if (HTMLFormElement* form = element->form())

@@ -1,3 +1,24 @@
+2009-10-05  Eric Seidel  <eric@webkit.org>
+
+        No review, rolling out r49104.
+        http://trac.webkit.org/changeset/49104
+
+        * fast/forms/ValidityState-rangeOverflow-number-expected.txt: Removed.
+        * fast/forms/ValidityState-rangeOverflow-number.html: Removed.
+        * fast/forms/ValidityState-rangeOverflow-range-expected.txt: Removed.
+        * fast/forms/ValidityState-rangeOverflow-range.html: Removed.
+        * fast/forms/ValidityState-rangeUnderflow-number-expected.txt: Removed.
+        * fast/forms/ValidityState-rangeUnderflow-number.html: Removed.
+        * fast/forms/ValidityState-rangeUnderflow-range-expected.txt: Removed.
+        * fast/forms/ValidityState-rangeUnderflow-range.html: Removed.
+        * fast/forms/input-minmax-expected.txt: Removed.
+        * fast/forms/input-minmax.html: Removed.
+        * fast/forms/script-tests/ValidityState-rangeOverflow-number.js: Removed.
+        * fast/forms/script-tests/ValidityState-rangeOverflow-range.js: Removed.
+        * fast/forms/script-tests/ValidityState-rangeUnderflow-number.js: Removed.
+        * fast/forms/script-tests/ValidityState-rangeUnderflow-range.js: Removed.
+        * fast/forms/script-tests/input-minmax.js: Removed.
+
 2009-10-05  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Eric Seidel.

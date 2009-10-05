@@ -1,3 +1,19 @@
+2009-10-05  Eric Seidel  <eric@webkit.org>
+
+        No review, rolling out r49104.
+        http://trac.webkit.org/changeset/49104
+
+        * html/HTMLInputElement.cpp:
+        * html/HTMLInputElement.h:
+        * html/HTMLInputElement.idl:
+        * html/ValidityState.cpp:
+        * html/ValidityState.h:
+        (WebCore::ValidityState::rangeUnderflow):
+        (WebCore::ValidityState::rangeOverflow):
+        * rendering/RenderSlider.cpp:
+        (WebCore::SliderRange::SliderRange):
+        (WebCore::SliderRange::valueFromElement):
+
 2009-10-05  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Eric Seidel.

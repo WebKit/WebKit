@@ -94,14 +94,6 @@ public:
     virtual bool valueMissing() const;
     virtual bool patternMismatch() const;
     virtual bool tooLong() const;
-    // For ValidityState
-    bool rangeUnderflow() const;
-    bool rangeOverflow() const;
-    // Returns the minimum value for type=range.  Don't call this for other types.
-    double rangeMinimum() const;
-    // Returns the maximum value for type=range.  Don't call this for other types.
-    // This always returns a value which is <= rangeMinimum().
-    double rangeMaximum() const;
 
     bool isTextButton() const { return m_type == SUBMIT || m_type == RESET || m_type == BUTTON; }
     virtual bool isRadioButton() const { return m_type == RADIO; }
