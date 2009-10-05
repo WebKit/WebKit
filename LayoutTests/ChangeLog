@@ -1,3 +1,16 @@
+2009-10-05  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Add expected files for passing fast/table tests.
+
+        * platform/qt/fast/table/fixed-table-with-percent-inside-percent-table-expected.txt: Added.
+        * platform/qt/fast/table/fixed-table-with-percent-width-inside-auto-table-expected.txt: Added.
+        * platform/qt/fast/table/fixed-table-with-percent-width-inside-div-expected.txt: Added.
+        * platform/qt/fast/table/fixed-table-with-percent-width-inside-extra-large-div-expected.txt: Added.
+        * platform/qt/fast/table/fixed-table-with-percent-width-inside-fixed-width-table-expected.txt: Added.
+        * platform/qt/fast/table/fixed-table-with-small-percent-width-expected.txt: Added.
+
 2009-10-04  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.
