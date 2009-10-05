@@ -1,3 +1,14 @@
+2009-09-30  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Update platform-specific #ifdefs in GraphicsContext3D.h for the
+        Chromium port.
+        https://bugs.webkit.org/show_bug.cgi?id=29936
+
+        * platform/graphics/GraphicsContext3D.h:
+        Changed #if PLATFORM(SKIA) to #if PLATFORM(CHROMIUM).
+
 2009-10-05  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

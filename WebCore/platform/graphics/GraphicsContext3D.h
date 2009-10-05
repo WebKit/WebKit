@@ -63,7 +63,7 @@ namespace WebCore {
     class WebKitCSSMatrix;
     
     // FIXME: ideally this would be used on all platforms.
-#if PLATFORM(SKIA)
+#if PLATFORM(CHROMIUM)
     class GraphicsContext3DInternal;
 #endif
 
@@ -77,7 +77,7 @@ namespace WebCore {
 #if PLATFORM(MAC)
         PlatformGraphicsContext3D platformGraphicsContext3D() const { return m_contextObj; }
         Platform3DObject platformTexture() const { return m_texture; }
-#elif PLATFORM(SKIA)
+#elif PLATFORM(CHROMIUM)
         PlatformGraphicsContext3D platformGraphicsContext3D() const;
         Platform3DObject platformTexture() const;
 #else
@@ -323,7 +323,7 @@ namespace WebCore {
 #endif        
 
         // FIXME: ideally this would be used on all platforms.
-#if PLATFORM(SKIA)
+#if PLATFORM(CHROMIUM)
         friend class GraphicsContext3DInternal;
         OwnPtr<GraphicsContext3DInternal> m_internal;
 #endif
