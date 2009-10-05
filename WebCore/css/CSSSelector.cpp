@@ -99,6 +99,9 @@ void CSSSelector::extractPseudoType() const
     DEFINE_STATIC_LOCAL(AtomicString, focus, ("focus"));
     DEFINE_STATIC_LOCAL(AtomicString, hover, ("hover"));
     DEFINE_STATIC_LOCAL(AtomicString, indeterminate, ("indeterminate"));
+#if ENABLE(DATALIST)
+    DEFINE_STATIC_LOCAL(AtomicString, inputListButton, ("-webkit-input-list-button"));
+#endif
     DEFINE_STATIC_LOCAL(AtomicString, inputPlaceholder, ("-webkit-input-placeholder"));
     DEFINE_STATIC_LOCAL(AtomicString, lastChild, ("last-child"));
     DEFINE_STATIC_LOCAL(AtomicString, lastOfType, ("last-of-type"));
@@ -197,7 +200,14 @@ void CSSSelector::extractPseudoType() const
         m_pseudoType = PseudoFirstChild;
     else if (m_value == fullPageMedia)
         m_pseudoType = PseudoFullPageMedia;
-    else if (m_value == inputPlaceholder) {
+    else
+#if ENABLE(DATALIST)
+    if (m_value == inputListButton) {
+        m_pseudoType = PseudoInputListButton;
+        element = true;
+    } else
+#endif
+    if (m_value == inputPlaceholder) {
         m_pseudoType = PseudoInputPlaceholder;
         element = true;
     } else if (m_value == lastChild)

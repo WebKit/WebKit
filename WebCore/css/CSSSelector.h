@@ -183,7 +183,8 @@ namespace WebCore {
             PseudoMediaControlsRewindButton,
             PseudoMediaControlsReturnToRealtimeButton,
             PseudoMediaControlsStatusDisplay,
-            PseudoMediaControlsFullscreenButton
+            PseudoMediaControlsFullscreenButton,
+            PseudoInputListButton
         };
 
         PseudoType pseudoType() const

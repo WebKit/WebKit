@@ -85,6 +85,7 @@ void RenderTheme::adjustStyle(CSSStyleSelector* selector, RenderStyle* style, El
     
 #if USE(NEW_THEME)
     switch (part) {
+        case ListButtonPart:
         case CheckboxPart:
         case RadioPart:
         case PushButtonPart:
@@ -171,6 +172,7 @@ void RenderTheme::adjustStyle(CSSStyleSelector* selector, RenderStyle* style, El
             return adjustRadioStyle(selector, style, e);
         case PushButtonPart:
         case SquareButtonPart:
+        case ListButtonPart:
         case DefaultButtonPart:
         case ButtonPart:
             return adjustButtonStyle(selector, style, e);
@@ -227,6 +229,7 @@ bool RenderTheme::paint(RenderObject* o, const RenderObject::PaintInfo& paintInf
         case RadioPart:
         case PushButtonPart:
         case SquareButtonPart:
+        case ListButtonPart:
         case DefaultButtonPart:
         case ButtonPart:
             m_theme->paint(part, controlStatesForRenderer(o), const_cast<GraphicsContext*>(paintInfo.context), r, o->style()->effectiveZoom(), o->view()->frameView());
@@ -245,6 +248,7 @@ bool RenderTheme::paint(RenderObject* o, const RenderObject::PaintInfo& paintInf
             return paintRadio(o, paintInfo, r);
         case PushButtonPart:
         case SquareButtonPart:
+        case ListButtonPart:
         case DefaultButtonPart:
         case ButtonPart:
             return paintButton(o, paintInfo, r);
@@ -335,6 +339,7 @@ bool RenderTheme::paintBorderOnly(RenderObject* o, const RenderObject::PaintInfo
         case RadioPart:
         case PushButtonPart:
         case SquareButtonPart:
+        case ListButtonPart:
         case DefaultButtonPart:
         case ButtonPart:
         case MenulistPart:
@@ -369,6 +374,7 @@ bool RenderTheme::paintDecorations(RenderObject* o, const RenderObject::PaintInf
         case RadioPart:
         case PushButtonPart:
         case SquareButtonPart:
+        case ListButtonPart:
         case DefaultButtonPart:
         case ButtonPart:
         case MenulistPart:

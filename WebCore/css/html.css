@@ -354,6 +354,11 @@ input[type="search"]::-webkit-search-results-button {
     display: inline-block;
 }
 
+input::-webkit-input-list-button {
+    -webkit-appearance: list-button;
+    display: inline-block;
+}
+
 textarea {
     -webkit-appearance: textarea;
     background-color: white;

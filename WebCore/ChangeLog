@@ -1,3 +1,50 @@
+2009-10-05  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Introduces
+         - new CSS pseudo selector: "-webkit-input-list-button"
+         - new CSS apperance type: "list-button"
+         - new ControlPart value: "ListButtonPart"
+        for the UI of the list attribute of the input element, and adds
+        implementation to draw ListButtonPart on Mac.
+        The code is guarded by ENABLE(DATALIST).
+
+        https://bugs.webkit.org/show_bug.cgi?id=27794
+
+        Test: platform/mac/fast/forms/input-list-button-size.html
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::extractPseudoType):
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector):
+        * css/CSSValueKeywords.in:
+        * css/html.css:
+        * html/HTMLInputElement.cpp:
+        * platform/ThemeTypes.h:
+        (WebCore::):
+        * platform/mac/ThemeMac.mm:
+        (WebCore::listButtonSizes):
+        (WebCore::button):
+        (WebCore::paintButton):
+        (WebCore::ThemeMac::controlSize):
+        (WebCore::ThemeMac::minimumControlSize):
+        (WebCore::ThemeMac::controlBorder):
+        (WebCore::ThemeMac::paint):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustStyle):
+        (WebCore::RenderTheme::paint):
+        (WebCore::RenderTheme::paintBorderOnly):
+        (WebCore::RenderTheme::paintDecorations):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::adjustRepaintRect):
+        * rendering/style/RenderStyleConstants.h:
+        (WebCore::):
+
 2009-10-05  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Timothy Hatcher.

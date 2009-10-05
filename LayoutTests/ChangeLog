@@ -1,3 +1,13 @@
+2009-10-05  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Tests for -webkit-appearance:list-button
+        https://bugs.webkit.org/show_bug.cgi?id=27794
+
+        * platform/mac/fast/forms/input-list-button-size-expected.txt: Added.
+        * platform/mac/fast/forms/input-list-button-size.html: Added.
+
 2009-10-05  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
 
         Reviewed by Tor Arne Vestbø.

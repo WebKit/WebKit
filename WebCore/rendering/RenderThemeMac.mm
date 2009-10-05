@@ -473,6 +473,7 @@ void RenderThemeMac::adjustRepaintRect(const RenderObject* o, IntRect& r)
         case RadioPart:
         case PushButtonPart:
         case SquareButtonPart:
+        case ListButtonPart:
         case DefaultButtonPart:
         case ButtonPart:
             return RenderTheme::adjustRepaintRect(o, r);
