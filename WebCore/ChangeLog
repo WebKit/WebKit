@@ -1,3 +1,13 @@
+2009-10-05  J-P Nurmi  <jpnurmi@gmail.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Added pure virtual QWebPageClient::pluginParent()
+
+        https://bugs.webkit.org/show_bug.cgi?id=29710
+
+        * platform/qt/QWebPageClient.h:
+
 2009-10-05  Jakub Wieczorek  <faw217@gmail.com>
 
         Reviewed by Tor Arne Vestbø.

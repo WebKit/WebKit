@@ -1,3 +1,19 @@
+2009-10-05  J-P Nurmi  <jpnurmi@gmail.com>
+
+        Reviewed by Simon Hausmann.
+
+        Added QGraphicsWidget-plugins support to FrameLoaderClientQt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29710
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebViewPrivate::pluginParent):
+        * Api/qwebview.cpp:
+        (QWebViewPrivate::pluginParent):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::):
+        (WebCore::FrameLoaderClientQt::createPlugin):
+
 2009-10-03  Adam Barth  <abarth@webkit.org>
 
         Unreview build fix.  I wish I had a try server...

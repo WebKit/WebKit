@@ -56,6 +56,8 @@ public:
     virtual int screenNumber() const;
     virtual WId winId() const;
 
+    virtual QObject* pluginParent() const;
+
     void _q_pageDestroyed();
 
     QWebView *view;
@@ -102,6 +104,11 @@ WId QWebViewPrivate::winId() const
         return view->winId();
 
     return 0;
+}
+
+QObject* QWebViewPrivate::pluginParent() const
+{
+    return view;
 }
 
 void QWebViewPrivate::_q_pageDestroyed()

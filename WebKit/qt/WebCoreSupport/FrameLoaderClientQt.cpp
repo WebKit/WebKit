@@ -55,8 +55,10 @@
 #include "ResourceHandle.h"
 #include "Settings.h"
 #include "ScriptString.h"
+#include "QWebPageClient.h"
 
 #include "qwebpage.h"
+#include "qwebpage_p.h"
 #include "qwebframe.h"
 #include "qwebframe_p.h"
 #include "qwebhistoryinterface.h"
@@ -67,6 +69,8 @@
 #include <QCoreApplication>
 #include <QDebug>
 #if QT_VERSION >= 0x040400
+#include <QGraphicsScene>
+#include <QGraphicsWidget>
 #include <QNetworkRequest>
 #include <QNetworkReply>
 #else
@@ -1117,6 +1121,53 @@ public:
     }
 };
 
+#if QT_VERSION >= 0x040600
+class QtPluginGraphicsWidget: public Widget
+{
+public:
+    static RefPtr<QtPluginGraphicsWidget> create(QGraphicsWidget* w = 0)
+    {
+        return adoptRef(new QtPluginGraphicsWidget(w));
+    }
+
+    ~QtPluginGraphicsWidget()
+    {
+        if (graphicsWidget)
+            graphicsWidget->deleteLater();
+    }
+    virtual void invalidateRect(const IntRect& r)
+    {
+        QGraphicsScene* scene = graphicsWidget ? graphicsWidget->scene() : 0;
+        if (scene)
+            scene->update(QRect(r));
+    }
+    virtual void frameRectsChanged()
+    {
+        if (!graphicsWidget)
+            return;
+
+        IntRect windowRect = convertToContainingWindow(IntRect(0, 0, frameRect().width(), frameRect().height()));
+        graphicsWidget->setGeometry(QRect(windowRect));
+
+        // FIXME: clipping of graphics widgets
+    }
+    virtual void show()
+    {
+        if (graphicsWidget)
+            graphicsWidget->show();
+    }
+    virtual void hide()
+    {
+        if (graphicsWidget)
+            graphicsWidget->hide();
+    }
+private:
+    QtPluginGraphicsWidget(QGraphicsWidget* w = 0): Widget(0), graphicsWidget(w) {}
+
+    QGraphicsWidget* graphicsWidget;
+};
+#endif
+
 PassRefPtr<Widget> FrameLoaderClientQt::createPlugin(const IntSize& pluginSize, HTMLPlugInElement* element, const KURL& url, const Vector<String>& paramNames,
                                           const Vector<String>& paramValues, const String& mimeType, bool loadManually)
 {
@@ -1178,15 +1229,26 @@ PassRefPtr<Widget> FrameLoaderClientQt::createPlugin(const IntSize& pluginSize, 
         if (object) {
             QWidget* widget = qobject_cast<QWidget*>(object);
             if (widget) {
-                QWidget* view = m_webFrame->page()->view();
-                if (view)
-                    widget->setParent(view);
+                QWidget* parentWidget = qobject_cast<QWidget*>(m_webFrame->page()->d->client->pluginParent());
+                if (parentWidget)
+                    widget->setParent(parentWidget);
                 RefPtr<QtPluginWidget> w = adoptRef(new QtPluginWidget());
                 w->setPlatformWidget(widget);
                 // Make sure it's invisible until properly placed into the layout
                 w->setFrameRect(IntRect(0, 0, 0, 0));
                 return w;
             }
+#if QT_VERSION >= 0x040600
+            QGraphicsWidget* graphicsWidget = qobject_cast<QGraphicsWidget*>(object);
+            if (graphicsWidget) {
+                graphicsWidget->hide();
+                graphicsWidget->setParentItem(qobject_cast<QGraphicsObject*>(m_webFrame->page()->d->client->pluginParent()));
+                RefPtr<QtPluginGraphicsWidget> w = QtPluginGraphicsWidget::create(graphicsWidget);
+                // Make sure it's invisible until properly placed into the layout
+                w->setFrameRect(IntRect(0, 0, 0, 0));
+                return w;
+            }
+#endif
             // FIXME: make things work for widgetless plugins as well
             delete object;
     } else { // NPAPI Plugins

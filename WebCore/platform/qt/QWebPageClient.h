@@ -55,6 +55,8 @@ public:
     virtual int screenNumber() const = 0;
     virtual WId winId() const = 0;
 
+    virtual QObject* pluginParent() const = 0;
+
 protected:
 #ifndef QT_NO_CURSOR
     virtual QCursor cursor() const = 0;
