@@ -628,11 +628,6 @@ void QWebSettings::clearMemoryCaches()
     // Invalidating the font cache and freeing all inactive font data.
     WebCore::fontCache()->invalidate();
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-    // Empty the application cache.
-    WebCore::cacheStorage().empty();
-#endif
-
     // Empty the Cross-Origin Preflight cache
     WebCore::CrossOriginPreflightResultCache::shared().empty();
 }

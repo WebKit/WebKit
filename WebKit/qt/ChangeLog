@@ -1,3 +1,14 @@
+2009-10-05  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Do not empty the offline web appcache when clearing
+        memory caches. That one is not in memory, but stored
+        in sqlite.
+
+        * Api/qwebsettings.cpp:
+        (QWebSettings::clearMemoryCaches):
+
 2009-10-05  J-P Nurmi  <jpnurmi@gmail.com>
 
         Reviewed by Simon Hausmann.
