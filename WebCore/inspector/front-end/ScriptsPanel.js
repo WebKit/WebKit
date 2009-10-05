@@ -359,7 +359,7 @@ WebInspector.ScriptsPanel.prototype = {
         return selectedCallFrame.id;
     },
 
-    evaluateInSelectedCallFrame: function(code, updateInterface, callback)
+    evaluateInSelectedCallFrame: function(code, updateInterface, objectGroup, callback)
     {
         var selectedCallFrame = this.sidebarPanes.callstack.selectedCallFrame;
         if (!this._paused || !selectedCallFrame)
@@ -375,17 +375,17 @@ WebInspector.ScriptsPanel.prototype = {
             if (updateInterface)
                 self.sidebarPanes.scopechain.update(selectedCallFrame);
         }
-        this.doEvalInCallFrame(selectedCallFrame, code, updatingCallbackWrapper);
+        this.doEvalInCallFrame(selectedCallFrame, code, objectGroup, updatingCallbackWrapper);
     },
 
-    doEvalInCallFrame: function(callFrame, code, callback)
+    doEvalInCallFrame: function(callFrame, code, objectGroup, callback)
     {
         function evalCallback(result)
         {
             if (result)
                 callback(result.value, result.isException);
         }
-        InjectedScriptAccess.evaluateInCallFrame(callFrame.id, code, evalCallback);
+        InjectedScriptAccess.evaluateInCallFrame(callFrame.id, code, objectGroup, evalCallback);
     },
 
     variablesInSelectedCallFrame: function()

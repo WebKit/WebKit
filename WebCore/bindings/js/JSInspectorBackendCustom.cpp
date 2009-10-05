@@ -295,12 +295,12 @@ JSValue JSInspectorBackend::nodeForId(ExecState* exec, const ArgList& args)
     return JSInspectedObjectWrapper::wrap(inspectedWindow->globalExec(), toJS(exec, deprecatedGlobalObjectForPrototype(inspectedWindow->globalExec()), node));
 }
 
-JSValue JSInspectorBackend::wrapObject(ExecState*, const ArgList& args)
+JSValue JSInspectorBackend::wrapObject(ExecState* exec, const ArgList& args)
 {
-    if (args.size() < 1)
+    if (args.size() < 2)
         return jsUndefined();
 
-    return impl()->wrapObject(ScriptValue(args.at(0))).jsValue();
+    return impl()->wrapObject(ScriptValue(args.at(0)), args.at(1).toString(exec)).jsValue();
 }
 
 JSValue JSInspectorBackend::unwrapObject(ExecState* exec, const ArgList& args)

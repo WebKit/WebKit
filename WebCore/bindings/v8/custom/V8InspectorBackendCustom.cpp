@@ -232,11 +232,11 @@ CALLBACK_FUNC_DECL(InspectorBackendNodeForId)
 CALLBACK_FUNC_DECL(InspectorBackendWrapObject)
 {
     INC_STATS("InspectorBackend.wrapObject()");
-    if (args.Length() < 1)
+    if (args.Length() < 2)
         return v8::Undefined();
 
     InspectorBackend* inspectorBackend = V8DOMWrapper::convertToNativeObject<InspectorBackend>(V8ClassIndex::INSPECTORBACKEND, args.Holder());
-    return inspectorBackend->wrapObject(ScriptValue(args[0])).v8Value();
+    return inspectorBackend->wrapObject(ScriptValue(args[0]), toWebCoreStringWithNullCheck(args[1])).v8Value();
 }
 
 CALLBACK_FUNC_DECL(InspectorBackendUnwrapObject)

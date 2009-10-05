@@ -391,16 +391,16 @@ WebInspector.ConsoleView.prototype = {
         this.prompt.handleKeyEvent(event);
     },
 
-    evalInInspectedWindow: function(expression, callback)
+    evalInInspectedWindow: function(expression, objectGroup, callback)
     {
         if (WebInspector.panels.scripts && WebInspector.panels.scripts.paused) {
-            WebInspector.panels.scripts.evaluateInSelectedCallFrame(expression, false, callback);
+            WebInspector.panels.scripts.evaluateInSelectedCallFrame(expression, false, objectGroup, callback);
             return;
         }
-        this.doEvalInWindow(expression, callback);
+        this.doEvalInWindow(expression, objectGroup, callback);
     },
 
-    doEvalInWindow: function(expression, callback)
+    doEvalInWindow: function(expression, objectGroup, callback)
     {
         if (!expression) {
             // There is no expression, so the completion should happen against global properties.
@@ -411,7 +411,7 @@ WebInspector.ConsoleView.prototype = {
         {
             callback(result.value, result.isException);
         };
-        InjectedScriptAccess.evaluate(expression, evalCallback);
+        InjectedScriptAccess.evaluate(expression, objectGroup, evalCallback);
     },
 
     _enterKeyPressed: function(event)
@@ -439,7 +439,7 @@ WebInspector.ConsoleView.prototype = {
             self.prompt.text = "";
             self.addMessage(new WebInspector.ConsoleCommandResult(result, exception, commandMessage));
         }
-        this.evalInInspectedWindow(str, printResult);
+        this.evalInInspectedWindow(str, "console", printResult);
     },
 
     _format: function(output, forceObjectFormat)

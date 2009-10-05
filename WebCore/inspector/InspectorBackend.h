@@ -144,8 +144,9 @@ public:
     // Generic code called from custom implementations.
     void highlight(long nodeId);
     Node* nodeForId(long nodeId);
-    ScriptValue wrapObject(const ScriptValue& object);
+    ScriptValue wrapObject(const ScriptValue& object, const String& objectGroup);
     ScriptValue unwrapObject(const String& objectId);
+    void releaseWrapperObjectGroup(const String& objectGroup);
     long pushNodePathToFrontend(Node* node, bool selectInUI);
     void addNodesToSearchResult(const String& nodeIds);
 #if ENABLE(DATABASE)

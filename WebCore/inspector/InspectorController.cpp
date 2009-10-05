@@ -390,7 +390,7 @@ void InspectorController::clearConsoleMessages(bool clearUI)
     m_consoleMessages.clear();
     m_previousMessage = 0;
     m_groupLevel = 0;
-    m_idToConsoleObject.clear();
+    releaseWrapperObjectGroup("console");
     if (m_domAgent)
         m_domAgent->releaseDanglingNodes();
     if (clearUI && m_frontend)
@@ -705,6 +705,8 @@ void InspectorController::resetScriptObjects()
 
     m_frontend->reset();
     m_domAgent->setDocument(0);
+    m_objectGroups.clear();
+    m_idToWrappedObject.clear();
 }
 
 void InspectorController::pruneResources(ResourcesMap* resourceMap, DocumentLoader* loaderToKeep)
@@ -1665,15 +1667,18 @@ InspectorController::SpecialPanels InspectorController::specialPanelForJSName(co
         return ElementsPanel;
 }
 
-ScriptValue InspectorController::wrapObject(const ScriptValue& quarantinedObject)
+ScriptValue InspectorController::wrapObject(const ScriptValue& quarantinedObject, const String& objectGroup)
 {
     ScriptFunctionCall function(m_scriptState, m_injectedScriptObj, "createProxyObject");
     function.appendArgument(quarantinedObject);
     if (quarantinedObject.isObject()) {
         long id = m_lastBoundObjectId++;
         String objectId = String::format("object#%ld", id);
-        m_idToConsoleObject.set(objectId, quarantinedObject);
-
+        m_idToWrappedObject.set(objectId, quarantinedObject);
+        ObjectGroupsMap::iterator it = m_objectGroups.find(objectGroup);
+        if (it == m_objectGroups.end())
+            it = m_objectGroups.set(objectGroup, Vector<String>()).first;
+        it->second.append(objectId);
         function.appendArgument(objectId);
     }
     ScriptValue wrapper = function.call();
@@ -1682,10 +1687,22 @@ ScriptValue InspectorController::wrapObject(const ScriptValue& quarantinedObject
 
 ScriptValue InspectorController::unwrapObject(const String& objectId)
 {
-    HashMap<String, ScriptValue>::iterator it = m_idToConsoleObject.find(objectId);
-    if (it != m_idToConsoleObject.end())
+    HashMap<String, ScriptValue>::iterator it = m_idToWrappedObject.find(objectId);
+    if (it != m_idToWrappedObject.end())
         return it->second;
     return ScriptValue();
+}
+
+void InspectorController::releaseWrapperObjectGroup(const String& objectGroup)
+{
+    ObjectGroupsMap::iterator groupIt = m_objectGroups.find(objectGroup);
+    if (groupIt == m_objectGroups.end())
+        return;
+
+    Vector<String>& groupIds = groupIt->second;
+    for (Vector<String>::iterator it = groupIds.begin(); it != groupIds.end(); ++it)
+        m_idToWrappedObject.remove(*it);
+    m_objectGroups.remove(groupIt);
 }
 
 void InspectorController::resetInjectedScript()

@@ -477,10 +477,10 @@ Node* InspectorBackend::nodeForId(long nodeId)
     return 0;
 }
 
-ScriptValue InspectorBackend::wrapObject(const ScriptValue& object)
+ScriptValue InspectorBackend::wrapObject(const ScriptValue& object, const String& objectGroup)
 {
     if (m_inspectorController)
-        return m_inspectorController->wrapObject(object);
+        return m_inspectorController->wrapObject(object, objectGroup);
     return ScriptValue();
 }
 
@@ -489,6 +489,12 @@ ScriptValue InspectorBackend::unwrapObject(const String& objectId)
     if (m_inspectorController)
         return m_inspectorController->unwrapObject(objectId);
     return ScriptValue();
+}
+
+void InspectorBackend::releaseWrapperObjectGroup(const String& objectGroup)
+{
+    if (m_inspectorController)
+        m_inspectorController->releaseWrapperObjectGroup(objectGroup);
 }
 
 long InspectorBackend::pushNodePathToFrontend(Node* node, bool selectInUI)

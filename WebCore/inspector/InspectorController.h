@@ -92,6 +92,7 @@ public:
     typedef HashMap<RefPtr<Frame>, ResourcesMap*> FrameResourcesMap;
     typedef HashSet<RefPtr<InspectorDatabaseResource> > DatabaseResourcesSet;
     typedef HashSet<RefPtr<InspectorDOMStorageResource> > DOMStorageResourcesSet;
+    typedef HashMap<String, Vector<String> > ObjectGroupsMap;
 
     typedef enum {
         CurrentPanel,
@@ -300,8 +301,9 @@ private:
     // Following are used from InspectorFrontend only. We don't want to expose them to the
     // rest of the InspectorController clients.
     // TODO: extract these into a separate interface.
-    ScriptValue wrapObject(const ScriptValue& object);
+    ScriptValue wrapObject(const ScriptValue& object, const String& objectGroup);
     ScriptValue unwrapObject(const String& objectId);
+    void releaseWrapperObjectGroup(const String& objectGroup);
     
     void resetInjectedScript();
 
@@ -367,7 +369,9 @@ private:
     bool m_resourceTrackingEnabled;
     bool m_resourceTrackingSettingsLoaded;
     RefPtr<InspectorBackend> m_inspectorBackend;
-    HashMap<String, ScriptValue> m_idToConsoleObject;
+    HashMap<String, ScriptValue> m_idToWrappedObject;
+    ObjectGroupsMap m_objectGroups;
+
     long m_lastBoundObjectId;
     Vector<pair<long, String> > m_pendingEvaluateTestCommands;
 #if ENABLE(JAVASCRIPT_DEBUGGER)

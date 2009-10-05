@@ -529,16 +529,16 @@ InjectedScript.getCompletions = function(expression, includeInspectorCommandLine
     return props;
 }
 
-InjectedScript.evaluate = function(expression)
+InjectedScript.evaluate = function(expression, objectGroup)
 {
-    return InjectedScript._evaluateAndWrap(InjectedScript._window().eval, InjectedScript._window(), expression);
+    return InjectedScript._evaluateAndWrap(InjectedScript._window().eval, InjectedScript._window(), expression, objectGroup);
 }
 
-InjectedScript._evaluateAndWrap = function(evalFunction, object, expression)
+InjectedScript._evaluateAndWrap = function(evalFunction, object, expression, objectGroup)
 {
     var result = {};
     try {
-        result.value = InspectorController.wrapObject(InjectedScript._evaluateOn(evalFunction, object, expression));
+        result.value = InspectorController.wrapObject(InjectedScript._evaluateOn(evalFunction, object, expression), objectGroup);
         // Handle error that might have happened while describing result.
         if (result.value.errorText) {
             result.value = result.value.errorText;
@@ -838,12 +838,12 @@ InjectedScript.getCallFrames = function()
     return result;
 }
 
-InjectedScript.evaluateInCallFrame = function(callFrameId, code)
+InjectedScript.evaluateInCallFrame = function(callFrameId, code, objectGroup)
 {
     var callFrame = InjectedScript._callFrameForId(callFrameId);
     if (!callFrame)
         return false;
-    return InjectedScript._evaluateAndWrap(callFrame.evaluate, callFrame, code);
+    return InjectedScript._evaluateAndWrap(callFrame.evaluate, callFrame, code, objectGroup);
 }
 
 InjectedScript._callFrameForId = function(id)

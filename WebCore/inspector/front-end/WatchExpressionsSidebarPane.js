@@ -75,6 +75,8 @@ WebInspector.WatchExpressionsSection = function()
     this.editable = true;
     this.expanded = true;
     this.propertiesElement.addStyleClass("watch-expressions");
+
+    this._watchObjectGroupId = "watch-group";
 }
 
 WebInspector.WatchExpressionsSection.NewWatchExpression = "\xA0";
@@ -114,6 +116,7 @@ WebInspector.WatchExpressionsSection.prototype = {
                 this.updateProperties(properties, WebInspector.WatchExpressionTreeElement, WebInspector.WatchExpressionsSection.CompareProperties);
         }
 
+        InspectorController.releaseWrapperObjectGroup(this._watchObjectGroupId)
         var properties = [];
 
         // Count the properties, so we known when to call this.updateProperties()
@@ -129,10 +132,10 @@ WebInspector.WatchExpressionsSection.prototype = {
         // which is checked in the appendResult inner function.
         for (var i = 0; i < this.watchExpressions.length; ++i) {
             var expression = this.watchExpressions[i];
-            if (!expression) 
+            if (!expression)
                 continue;
 
-            WebInspector.console.evalInInspectedWindow("(" + expression + ")", appendResult.bind(this, expression, i));
+            WebInspector.console.evalInInspectedWindow("(" + expression + ")", this._watchObjectGroupId, appendResult.bind(this, expression, i));
         }
 
         // note this is setting the expansion of the tree, not the section;

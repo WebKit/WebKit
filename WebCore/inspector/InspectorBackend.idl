@@ -114,8 +114,9 @@ module core {
 
         // Called from InjectedScript.
         [Custom] DOMObject nodeForId(in long nodeId);
-        [Custom] long wrapObject(in DOMObject object);
+        [Custom] long wrapObject(in DOMObject object, in DOMString objectGroup);
         [Custom] DOMObject unwrapObject(in long objectId);
+        void releaseWrapperObjectGroup(in DOMString objectGroup);
         [Custom] int pushNodePathToFrontend(in DOMObject node, in boolean selectInUI);
         void addNodesToSearchResult(in DOMString nodeIds);
 #if defined(ENABLE_DATABASE) && ENABLE_DATABASE
