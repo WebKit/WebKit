@@ -1,3 +1,17 @@
+2009-10-05  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Allow V8 to throw an exception in _NPN_SetException without worrying about context
+        if we don't have enough information to find the correct context.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30026
+
+        Part of the fix for Chromium's failure of LayouTests/plugins/netscape-throw-exception.html.
+
+        * bindings/v8/NPV8Object.cpp: 
+        (_NPN_SetException): Don't suppress the exception if we can't find the relevant context.
+
 2009-10-05  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Timothy Hatcher.

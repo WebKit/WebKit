@@ -400,8 +400,12 @@ bool _NPN_HasMethod(NPP npp, NPObject* npObject, NPIdentifier methodName)
 
 void _NPN_SetException(NPObject* npObject, const NPUTF8 *message)
 {
-    if (npObject->_class != npScriptObjectClass)
+    if (npObject->_class != npScriptObjectClass) {
+        // We won't be able to find a proper scope for this exception, so just throw it.
+        // This is consistent with JSC, which throws a global exception all the time.
+        V8Proxy::throwError(V8Proxy::GeneralError, message);
         return;
+    }
     v8::HandleScope handleScope;
     v8::Handle<v8::Context> context = toV8Context(0, npObject);
     if (context.IsEmpty())
