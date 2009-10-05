@@ -1,3 +1,9 @@
+2009-10-05  Julie Parent  <jparent@chromium.org>
+
+        Unreviewed, Chromium build fix.  Missing "," after entry for BeforeLoadEvent.idl. 
+
+        * WebCore.gypi:
+
 2009-10-05  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig.
