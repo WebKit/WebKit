@@ -1,3 +1,16 @@
+2009-10-05  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Place "Close" button in docked mode on the same side as the window "Close" button in detached mode.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29961
+
+        * inspector/front-end/inspector.css:
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+        (WebInspector.loaded):
+
 2009-10-05  J-P Nurmi  <jpnurmi@gmail.com>
 
         Reviewed by Simon Hausmann.

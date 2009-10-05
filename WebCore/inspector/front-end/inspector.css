@@ -211,7 +211,7 @@ body.attached #search-results-matches {
     background-image: url(Images/profilesIcon.png);
 }
 
-#close-button {
+#close-button-left, #close-button-right {
     width: 14px;
     height: 14px;
     background-image: url(Images/closeButtons.png);
@@ -221,19 +221,27 @@ body.attached #search-results-matches {
     margin: 5px 0;
 }
 
-#close-button:hover {
+#close-button-left:hover, #close-button-right:hover {
     background-position: 14px 0;
 }
 
-#close-button:active {
+#close-button-left:active, #close-button-right:active {
     background-position: 28px 0;
 }
 
-body.detached .toolbar-item.close {
+body.detached .toolbar-item.close-left, body.detached .toolbar-item.close-right {
     display: none;
 }
 
-body.attached.platform-qt .toolbar-item.close {
+body.attached.platform-qt .toolbar-item.close-left, body.attached.platform-qt .toolbar-item.close-right {
+    display: none;
+}
+
+body.platform-mac-tiger .toolbar-item.close-right, body.platform-mac-leopard .toolbar-item.close-right { 
+    display: none;
+}
+
+body:not(.platform-mac-tiger):not(.platform-mac-leopard) .toolbar-item.close-left { 
     display: none;
 }
 

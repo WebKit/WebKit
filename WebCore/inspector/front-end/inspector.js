@@ -459,8 +459,9 @@ WebInspector.loaded = function()
     searchField.addEventListener("keyup", this.searchKeyUp.bind(this), false);
     searchField.addEventListener("search", this.performSearch.bind(this), false); // when the search is emptied
 
-    document.getElementById("toolbar").addEventListener("mousedown", this.toolbarDragStart, true);
-    document.getElementById("close-button").addEventListener("click", this.close, true);
+    toolbarElement.addEventListener("mousedown", this.toolbarDragStart, true);
+    document.getElementById("close-button-left").addEventListener("click", this.close, true);
+    document.getElementById("close-button-right").addEventListener("click", this.close, true);
 
     InspectorController.loaded();
 }
