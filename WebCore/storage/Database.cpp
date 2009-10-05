@@ -92,6 +92,9 @@ static GuidVersionMap& guidToVersionMap()
 // NOTE: Caller must lock guidMutex().
 static inline void updateGuidVersionMap(int guid, String newVersion)
 {
+    // Ensure the the mutex is locked.
+    ASSERT(!guidMutex().tryLock());
+
     // Note: It is not safe to put an empty string into the guidToVersionMap() map.
     // That's because the map is cross-thread, but empty strings are per-thread.
     // The copy() function makes a version of the string you can use on the current

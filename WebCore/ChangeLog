@@ -1,3 +1,13 @@
+2009-10-05  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Darin Adler.
+
+        Add an ASSERT in updateGuidVersionMap.
+        https://bugs.webkit.org/show_bug.cgi?id=30077
+
+        * storage/Database.cpp:
+        (WebCore::updateGuidVersionMap): ASSERT that the guidMutex() is locked.
+
 2009-10-05  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Eric Seidel.
