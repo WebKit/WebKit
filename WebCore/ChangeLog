@@ -1,3 +1,10 @@
+2009-10-05  Kevin Decker  <kdecker@apple.com>
+
+        Rubberstamped by Anders Carlsson.
+        
+        * WebCore.base.exp: Update export of HaltablePlugin/PluginHalterClient.
+        * WebCore.xcodeproj/project.pbxproj: Likewise.
+
 2009-10-05  Eric Seidel  <eric@webkit.org>
 
         No review, rolling out r49104.
