@@ -869,3 +869,36 @@ void LayoutTestController::addUserStyleSheet(JSStringRef source)
 
     webView->addUserStyleSheetToGroup(_bstr_t(L"org.webkit.DumpRenderTree").GetBSTR(), 1, bstrT(source).GetBSTR(), 0, 0, 0, 0, 0);
 }
+
+void LayoutTestController::showWebInspector()
+{
+    COMPtr<IWebViewPrivate> webView;
+    if (FAILED(WebKitCreateInstance(__uuidof(WebView), 0, __uuidof(webView), reinterpret_cast<void**>(&webView))))
+        return;
+
+    COMPtr<IWebInspector> inspector;
+    if (SUCCEEDED(webView->inspector(&inspector)))
+        inspector->show();
+}
+
+void LayoutTestController::closeWebInspector()
+{
+    COMPtr<IWebViewPrivate> webView;
+    if (FAILED(WebKitCreateInstance(__uuidof(WebView), 0, __uuidof(webView), reinterpret_cast<void**>(&webView))))
+        return;
+
+    COMPtr<IWebInspector> inspector;
+    if (SUCCEEDED(webView->inspector(&inspector)))
+        inspector->close();
+}
+
+void LayoutTestController::evaluateInWebInspector(long callId, JSStringRef script)
+{
+    COMPtr<IWebViewPrivate> webView;
+    if (FAILED(WebKitCreateInstance(__uuidof(WebView), 0, __uuidof(webView), reinterpret_cast<void**>(&webView))))
+        return;
+
+    COMPtr<IWebInspectorPrivate> inspector;
+    if (SUCCEEDED(webView->inspectorPrivate(&inspector)))
+        inspector->evaluateInFrontend(callId, bstrT(script).GetBSTR());
+}

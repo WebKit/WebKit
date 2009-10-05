@@ -27,7 +27,9 @@
  */
 
 #import "WebInspector.h"
+
 #import "WebFrameInternal.h"
+#import "WebInspectorPrivate.h"
 
 #include <WebCore/Document.h>
 #include <WebCore/Frame.h>
@@ -162,6 +164,12 @@ using namespace WebCore;
 {
     if (Page* page = core(_webView))
         page->inspectorController()->detachWindow();
+}
+
+- (void)evaluateInFrontend:(id)sender callId:(long)callId script:(NSString *)script
+{
+    if (Page* page = core(_webView))
+        page->inspectorController()->evaluateForTestInFrontend(callId, script);
 }
 @end
 

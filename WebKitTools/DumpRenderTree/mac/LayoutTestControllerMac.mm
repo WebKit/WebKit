@@ -51,7 +51,7 @@
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebHistory.h>
 #import <WebKit/WebHistoryPrivate.h>
-#import <WebKit/WebInspector.h>
+#import <WebKit/WebInspectorPrivate.h>
 #import <WebKit/WebGeolocationMockPrivate.h>
 #import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebPreferences.h>
@@ -492,3 +492,19 @@ void LayoutTestController::addUserStyleSheet(JSStringRef source)
     [WebView _addUserStyleSheetToGroup:@"org.webkit.DumpRenderTree" source:sourceNS url:nil worldID:1 whitelist:nil blacklist:nil];
 }
 
+void LayoutTestController::showWebInspector()
+{
+    [[[mainFrame webView] inspector] show:nil];
+}
+
+void LayoutTestController::closeWebInspector()
+{
+    [[[mainFrame webView] inspector] close:nil];
+}
+
+void LayoutTestController::evaluateInWebInspector(long callId, JSStringRef script)
+{
+    RetainPtr<CFStringRef> scriptCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, script));
+    NSString *scriptNS = (NSString *)scriptCF.get();
+    [[[mainFrame webView] inspector] evaluateInFrontend:nil callId:callId script:scriptNS];
+}

@@ -96,6 +96,7 @@ import "ocidl.idl";
 #include "IWebIconDatabase.idl"
 #include "IWebIconFetcher.idl"
 #include "IWebInspector.idl"
+#include "IWebInspectorPrivate.idl"
 #include "IWebJavaScriptCollector.idl"
 #include "IWebKitStatistics.idl"
 #include "IWebMutableURLRequestPrivate.idl"

@@ -256,3 +256,17 @@ HRESULT STDMETHODCALLTYPE WebInspector::setJavaScriptProfilingEnabled(BOOL enabl
 
     return S_OK;
 }
+
+HRESULT STDMETHODCALLTYPE  WebInspector::evaluateInFrontend(ULONG callId, BSTR bScript)
+{
+    if (!m_webView)
+        return S_OK;
+
+    Page* page = m_webView->page();
+    if (!page)
+        return S_OK;
+
+    String script(bScript, SysStringLen(bScript));
+    page->inspectorController()->evaluateForTestInFrontend(callId, script);
+    return S_OK;
+}

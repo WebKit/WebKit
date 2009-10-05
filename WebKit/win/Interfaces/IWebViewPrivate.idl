@@ -29,6 +29,7 @@ import "ocidl.idl";
 import "IWebFormDelegate.idl";
 import "IWebFrameLoadDelegatePrivate.idl";
 import "IWebInspector.idl";
+import "IWebInspectorPrivate.idl";
 #endif
 
 // Sent when IWebView::close is called. No userInfo is associated with this notification.
@@ -38,6 +39,7 @@ interface IEnumTextMatches;
 interface IWebFormDelegate;
 interface IWebFrameLoadDelegatePrivate;
 interface IWebInspector;
+interface IWebInspectorPrivate;
 interface IWebPluginHalterDelegate;
 interface IWebURLRequest;
 interface IWebView;
@@ -113,6 +115,8 @@ interface IWebViewPrivate : IUnknown
     HRESULT setInitialFocus([in] BOOL forward);
 
     HRESULT inspector([out, retval] IWebInspector**);
+
+    HRESULT inspectorPrivate([out, retval] IWebInspectorPrivate**);
 
     HRESULT clearUndoRedoOperations();
 

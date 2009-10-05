@@ -471,3 +471,18 @@ void LayoutTestController::addUserStyleSheet(JSStringRef source)
 {
     printf("LayoutTestController::addUserStyleSheet not implemented.\n");
 }
+
+void LayoutTestController::showWebInspector()
+{
+    // FIXME: Implement this.
+}
+
+void LayoutTestController::closeWebInspector()
+{
+    // FIXME: Implement this.
+}
+
+void LayoutTestController::evaluateInWebInspector(long callId, JSStringRef script)
+{
+    // FIXME: Implement this.
+}

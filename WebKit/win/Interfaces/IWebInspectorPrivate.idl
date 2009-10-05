@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,48 +26,18 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebInspector_h
-#define WebInspector_h
+#ifndef DO_NO_IMPORTS
+import "oaidl.idl";
+import "ocidl.idl";
+#endif
 
-#include "WebKit.h"
-#include <wtf/Noncopyable.h>
-
-class WebView;
-
-class WebInspector : public IWebInspector, public IWebInspectorPrivate, public Noncopyable {
-public:
-    static WebInspector* createInstance(WebView*);
-
-    void webViewClosed();
-
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef();
-    virtual ULONG STDMETHODCALLTYPE Release();
-
-    virtual HRESULT STDMETHODCALLTYPE show();
-    virtual HRESULT STDMETHODCALLTYPE showConsole();
-    virtual HRESULT STDMETHODCALLTYPE unused1();
-    virtual HRESULT STDMETHODCALLTYPE close();
-    virtual HRESULT STDMETHODCALLTYPE attach();
-    virtual HRESULT STDMETHODCALLTYPE detach();
-
-    virtual HRESULT STDMETHODCALLTYPE isDebuggingJavaScript(BOOL* isDebugging);
-    virtual HRESULT STDMETHODCALLTYPE toggleDebuggingJavaScript();
-
-    virtual HRESULT STDMETHODCALLTYPE isProfilingJavaScript(BOOL* isProfiling);
-    virtual HRESULT STDMETHODCALLTYPE toggleProfilingJavaScript();
-
-    virtual HRESULT STDMETHODCALLTYPE isJavaScriptProfilingEnabled(BOOL* isProfilingEnabled);
-    virtual HRESULT STDMETHODCALLTYPE setJavaScriptProfilingEnabled(BOOL);
-    
-    virtual HRESULT STDMETHODCALLTYPE evaluateInFrontend(ULONG callId, BSTR script);
-
-private:
-    WebInspector(WebView*);
-    ~WebInspector();
-
-    ULONG m_refCount;
-    WebView* m_webView;
-};
-
-#endif // !defined(WebInspector_h)
+[
+    object,
+    oleautomation,
+    uuid(A5A31CD0-AEA9-11de-8A39-0800200C9A66),
+    pointer_default(unique)
+]
+interface IWebInspectorPrivate : IUnknown
+{
+    HRESULT evaluateInFrontend([in] ULONG callId, [in] BSTR script);
+}

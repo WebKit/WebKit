@@ -5177,6 +5177,14 @@ HRESULT STDMETHODCALLTYPE WebView::inspector(IWebInspector** inspector)
     return m_webInspector.copyRefTo(inspector);
 }
 
+HRESULT STDMETHODCALLTYPE WebView::inspectorPrivate(IWebInspectorPrivate** inspector)
+{
+    if (!m_webInspector)
+        m_webInspector.adoptRef(WebInspector::createInstance(this));
+
+    return m_webInspector.copyRefTo(inspector);
+}
+
 HRESULT STDMETHODCALLTYPE WebView::windowAncestryDidChange()
 {
     HWND newParent = findTopLevelParent(m_hostWindow);

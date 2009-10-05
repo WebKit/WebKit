@@ -1,3 +1,34 @@
+2009-10-05  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: add testing harness for Web Inspector.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30010
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (showWebInspectorCallback):
+        (closeWebInspectorCallback):
+        (evaluateInWebInspectorCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::showWebInspector):
+        (LayoutTestController::closeWebInspector):
+        (LayoutTestController::evaluateInWebInspector):
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::showWebInspector):
+        (LayoutTestController::closeWebInspector):
+        (LayoutTestController::evaluateInWebInspector):
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::showWebInspector):
+        (LayoutTestController::closeWebInspector):
+        (LayoutTestController::evaluateInWebInspector):
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::showWebInspector):
+        (LayoutTestController::closeWebInspector):
+        (LayoutTestController::evaluateInWebInspector):
+
 2009-10-05  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Ariyha Hidayat.
