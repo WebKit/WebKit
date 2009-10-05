@@ -1,3 +1,24 @@
+2009-10-02  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Eric Carlson.
+
+        Rename WebCore/css/mediaControlsQT.css and MediaControllerThemeQT
+
+        https://bugs.webkit.org/show_bug.cgi?id=30013
+
+        The QT suffix has been expanded to QuickTime, to not cause confusion
+        and name-crashes with similar files in the Qt port.
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/mediaControlsQuickTime.css: Renamed from WebCore/css/mediaControlsQT.css.
+        * rendering/RenderThemeMac.mm:
+        (WebCore::):
+        (WebCore::mediaControllerTheme):
+        (WebCore::RenderThemeMac::adjustSliderThumbSize):
+        (WebCore::getUnzoomedRectAndAdjustCurrentContext):
+        (WebCore::RenderThemeMac::extraMediaControlsStyleSheet):
+
 2009-10-04  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Timothy Hatcher.

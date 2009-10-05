@@ -5172,7 +5172,7 @@
 		070DD8F50F01868000727DEB /* mediaControls.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = mediaControls.css; sourceTree = "<group>"; };
 		0735EE690F40C5E4004A2604 /* MediaPlayerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPlayerProxy.h; sourceTree = "<group>"; };
 		079F5E4B0F3BEBEA005E0782 /* MediaPlayerPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPlayerPrivate.h; sourceTree = "<group>"; };
-		07AFE5900F1446BD00841617 /* mediaControlsQT.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = mediaControlsQT.css; sourceTree = "<group>"; };
+		07AFE5900F1446BD00841617 /* mediaControlsQuickTime.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = mediaControlsQuickTime.css; sourceTree = "<group>"; };
 		07B0113C1032241900FBDC33 /* AccessibilityMediaControls.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityMediaControls.cpp; sourceTree = "<group>"; };
 		07B0113E1032242200FBDC33 /* AccessibilityMediaControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityMediaControls.h; sourceTree = "<group>"; };
 		080081940ED3B2DD00C53BC0 /* WMLAnchorElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLAnchorElement.cpp; sourceTree = "<group>"; };
@@ -15035,7 +15035,7 @@
 				93CA4C9B09DF93FA00DF8677 /* makeprop.pl */,
 				93CA4C9D09DF93FA00DF8677 /* makevalues.pl */,
 				070DD8F50F01868000727DEB /* mediaControls.css */,
-				07AFE5900F1446BD00841617 /* mediaControlsQT.css */,
+				07AFE5900F1446BD00841617 /* mediaControlsQuickTime.css */,
 				4E19591F0A39DABA00220FE5 /* MediaFeatureNames.cpp */,
 				4E1959200A39DABA00220FE5 /* MediaFeatureNames.h */,
 				0FF5026E102BA9660066F39A /* Media.cpp */,
