@@ -1,5 +1,13 @@
 2009-10-05  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
 
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] Re-enable fast/table/008.html after fixing buildbot's phonon problems.
+
+        * platform/qt/Skipped:
+
+2009-10-05  Andras Becsi  <becsi.andras@stud.u-szeged.hu>
+
         Reviewed by Ariya Hidayat.
 
         [Qt] Add expected files for passing fast/table tests.

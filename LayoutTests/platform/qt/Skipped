@@ -86,8 +86,6 @@ http/tests/misc/will-send-request-returns-null-on-redirect.html
 # Failing test
 fast/canvas/quadraticCurveTo.xml
 
-# Crashing test on buildbot due to enabled phonon in Qt
-fast/table/008.html
 # ------- missing features
 accessibility
 media
