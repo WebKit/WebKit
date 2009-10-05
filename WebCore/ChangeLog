@@ -1,5 +1,11 @@
 2009-10-05  Julie Parent  <jparent@chromium.org>
 
+        Unreviewed, Chromium build fix #2.  Add new BEFORELOADEVENT to V8ClassIndex.
+
+        * bindings/v8/V8Index.h:
+
+2009-10-05  Julie Parent  <jparent@chromium.org>
+
         Unreviewed, Chromium build fix.  Missing "," after entry for BeforeLoadEvent.idl. 
 
         * WebCore.gypi:

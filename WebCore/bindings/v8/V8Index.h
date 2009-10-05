@@ -321,6 +321,7 @@ typedef v8::Persistent<v8::FunctionTemplate> (*FunctionTemplateFactory)();
 // DOM_OBJECT_TYPES are non-node DOM types.
 #define DOM_OBJECT_TYPES_1(V)                                           \
     V(BARINFO, BarInfo)                                                 \
+    V(BEFORELOADEVENT, BeforeLoadEvent)                                 \
     V(CANVASGRADIENT, CanvasGradient)                                   \
     V(CANVASPATTERN, CanvasPattern)                                     \
     V(CANVASRENDERINGCONTEXT, CanvasRenderingContext)                   \
