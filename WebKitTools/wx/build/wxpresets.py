@@ -26,6 +26,8 @@
 import os
 import re
 
+import Options
+
 def parse_build_cfg(filename):
     cfg_file = open(filename, 'r')
     cfg = {}
@@ -73,9 +75,9 @@ def get_wxmsw_settings(wx_root, shared = False, unicode = False, debug = False, 
     
     if shared:
         defines.append('WXUSINGDLL')
-        libdir = os.path.join(libdir, 'vc_dll')
+        libdir = os.path.join(libdir, Options.options.wx_compiler_prefix + '_dll')
     else:
-        libdir = os.path.join(libdir, 'vc_lib')
+        libdir = os.path.join(libdir, Options.options.wx_compiler_prefix + '_lib')
         
     if unicode:
         defines.append('_UNICODE')

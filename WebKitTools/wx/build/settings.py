@@ -201,6 +201,8 @@ def common_set_options(opt):
     opt.tool_options('python')
     
     opt.add_option('--wxpython', action='store_true', default=False, help='Create the wxPython bindings.')
+    opt.add_option('--wx-compiler-prefix', action='store', default='vc',
+                   help='Specify a different compiler prefix (do this if you used COMPILER_PREFIX when building wx itself)')
 
 def common_configure(conf):
     """

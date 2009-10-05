@@ -1,3 +1,11 @@
+2009-10-05  Vadim Zeitlin  <vadim@wxwidgets.org>
+
+        Added --wx-compiler-prefix waf option to allow building wxWebKit with
+        wxWidgets built using "nmake COMPILER_PREFIX=something-non-default".
+
+        * wx/build/settings.py:
+        * wx/build/wxpresets.py:
+
 2009-10-05  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
