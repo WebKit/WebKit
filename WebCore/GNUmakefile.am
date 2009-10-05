@@ -109,6 +109,7 @@ IDL_BINDINGS += \
 	WebCore/css/WebKitCSSMatrix.idl \
 	WebCore/css/WebKitCSSTransformValue.idl \
 	WebCore/dom/Attr.idl \
+	WebCore/dom/BeforeLoadEvent.idl \
 	WebCore/dom/CDATASection.idl \
 	WebCore/dom/CharacterData.idl \
 	WebCore/dom/ClientRect.idl \

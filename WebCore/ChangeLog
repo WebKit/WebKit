@@ -1,3 +1,9 @@
+2009-10-05  Mark Rowe  <mrowe@apple.com>
+
+        Try and fix the GTK build.
+
+        * GNUmakefile.am:
+
 2009-10-05  Julie Parent  <jparent@chromium.org>
 
         Unreviewed, Chromium build fix #2.  Add new BEFORELOADEVENT to V8ClassIndex.
