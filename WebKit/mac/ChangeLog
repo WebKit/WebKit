@@ -1,3 +1,20 @@
+2009-10-02  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Add functionality to pause/throttle CSS transitions/animations in a WebView
+        https://bugs.webkit.org/show_bug.cgi?id=29942
+
+        Added both a setter and getter function
+
+        * WebView/WebView.mm:
+        (-[WebView cssAnimationsSuspended]):
+        (-[WebView setCSSAnimationsSuspended:]):
+        * WebView/WebViewData.h:
+        * WebView/WebViewData.mm:
+        (-[WebViewPrivate init]):
+        * WebView/WebViewPrivate.h:
+
 2009-10-04  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Sam Weinig.

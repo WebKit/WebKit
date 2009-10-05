@@ -2210,6 +2210,26 @@ static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
     
     pageGroup->removeAllUserContent();
 }
+
+- (BOOL)cssAnimationsSuspended
+{
+    return _private->cssAnimationsSuspended;
+}
+
+- (void)setCSSAnimationsSuspended:(BOOL)suspended
+{
+    if (suspended == _private->cssAnimationsSuspended)
+        return;
+        
+    _private->cssAnimationsSuspended = suspended;
+    
+    Frame* frame = core([self mainFrame]);
+    if (suspended)
+        frame->animation()->suspendAnimations(frame->document());
+    else
+        frame->animation()->resumeAnimations(frame->document());
+}
+
 @end
 
 @implementation _WebSafeForwarder

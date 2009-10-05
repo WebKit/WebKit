@@ -1,3 +1,14 @@
+2009-10-02  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Add functionality to pause/throttle CSS transitions/animations in a WebView
+        https://bugs.webkit.org/show_bug.cgi?id=29942
+
+        Exporting call from AnimationController
+
+        * WebCore.base.exp:
+
 2009-10-05  Kevin Decker  <kdecker@apple.com>
 
         Rubberstamped by Anders Carlsson.

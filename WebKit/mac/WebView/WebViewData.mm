@@ -57,6 +57,7 @@ int pluginDatabaseClientCount = 0;
     allowsUndo = YES;
     usesPageCache = YES;
     shouldUpdateWhileOffscreen = YES;
+    cssAnimationsSuspended = NO;
 
     zoomMultiplier = 1;
 
