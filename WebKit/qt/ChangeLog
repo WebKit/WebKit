@@ -1,3 +1,11 @@
+2009-10-05  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Rubberstamped by Simon Hausmann.
+
+        Add documentation to the ErrorPageExtension.
+
+        * Api/qwebpage.cpp:
+
 2009-10-02  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Simon Hausmann.
