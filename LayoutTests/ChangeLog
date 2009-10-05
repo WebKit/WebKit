@@ -1,3 +1,16 @@
+2009-10-05  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (r47440): Inserting text in the middle of content in a scrolled textfield results in painting bugs
+        <rdar://problem/7269108>
+        https://bugs.webkit.org/show_bug.cgi?id=29982
+
+        * fast/repaint/line-in-scrolled-clipped-block.html: Added.
+        * platform/mac/fast/repaint/line-in-scrolled-clipped-block-expected.checksum: Added.
+        * platform/mac/fast/repaint/line-in-scrolled-clipped-block-expected.png: Added.
+        * platform/mac/fast/repaint/line-in-scrolled-clipped-block-expected.txt: Added.
+
 2009-10-05  Hironori Bono  <hbono@chromium.org>
 
         Reviewed by Eric Seidel.

@@ -774,7 +774,9 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
     // Repaint with our new bounds if they are different from our old bounds.
     bool didFullRepaint = repainter.repaintAfterLayout();
     if (!didFullRepaint && repaintTop != repaintBottom && (style()->visibility() == VISIBLE || enclosingLayer()->hasVisibleContent())) {
-        IntRect repaintRect(leftVisibleOverflow(), repaintTop, rightVisibleOverflow() - leftVisibleOverflow(), repaintBottom - repaintTop);
+        int repaintLeft = min(leftVisualOverflow(), leftLayoutOverflow());
+        int repaintRight = max(rightVisualOverflow(), rightLayoutOverflow());
+        IntRect repaintRect(repaintLeft, repaintTop, repaintRight - repaintLeft, repaintBottom - repaintTop);
 
         // FIXME: Deal with multiple column repainting.  We have to split the repaint
         // rect up into multiple rects if it spans columns.

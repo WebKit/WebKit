@@ -1,3 +1,17 @@
+2009-10-05  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (r47440): Inserting text in the middle of content in a scrolled textfield results in painting bugs
+        <rdar://problem/7269108>
+        https://bugs.webkit.org/show_bug.cgi?id=29982
+
+        Test: fast/repaint/line-in-scrolled-clipped-block.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock): Use the unclipped overflow rect
+        (including layout overflow) for the repaint rect calculation.
+
 2009-10-05  Drew Wilson  <atwilson@google.com>
 
         Reviewed by David Levin.
