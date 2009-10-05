@@ -1,3 +1,13 @@
+2009-10-05  Jakub Wieczorek  <faw217@gmail.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] windowsKeyCodeForKeyEvent() returns a wrong value for the F10 key.
+        https://bugs.webkit.org/show_bug.cgi?id=30042
+
+        * platform/qt/PlatformKeyboardEventQt.cpp:
+        (WebCore::windowsKeyCodeForKeyEvent):
+
 2009-10-05  Fumitoshi Ukai  <ukai@chromium.org>
 
         Unreviewed build fix for ENABLE(WEB_SOCKETS) and v8.

@@ -217,7 +217,7 @@ static int windowsKeyCodeForKeyEvent(unsigned int keycode, bool isKeypad = false
         case Qt::Key_F9:
             return VK_F9;
         case Qt::Key_F10:
-            return VK_F11;
+            return VK_F10;
         case Qt::Key_F11:
             return VK_F11;
         case Qt::Key_F12:
