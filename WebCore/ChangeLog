@@ -1,3 +1,14 @@
+2009-10-05  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Silence duplicate errors logged for missing getComputedStyle
+        implementations. Improves the error message as well.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::logUnimplementedPropertyID):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+
 2009-10-05  Julie Parent  <jparent@chromium.org>
 
         Unreviewed, Chromium build fix #3.  Add V8BeforeLoadEvent.[cc|h] to derived sources.
