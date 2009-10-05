@@ -1,3 +1,18 @@
+2009-10-04  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Timothy Hatcher.
+        
+        Fixes <https://bugs.webkit.org/show_bug.cgi?id=30062>
+        Inspector should syntax highlight JS/CSS in elements view.
+
+        Add syntax highlighting of CSS and JavaScript tags to the elements panel.
+        Copied CSS rules from SourceFrame.js to inspector.css, and have the text nodes
+        in utilities.js call the CSS or JS Syntax highlighters if their parent is a script
+        or style tag.
+
+        * inspector/front-end/inspector.css:
+        * inspector/front-end/utilities.js:
+
 2009-10-04  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Eric Seidel

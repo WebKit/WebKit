@@ -594,9 +594,28 @@ function nodeTitleInfo(hasChildren, linkify)
         case Node.TEXT_NODE:
             if (isNodeWhitespace.call(this))
                 info.title = "(whitespace)";
-            else
-                info.title = "\"<span class=\"webkit-html-text-node\">" + this.nodeValue.escapeHTML() + "</span>\"";
-            break
+            else {
+                if (this.parentNode && this.parentNode.nodeName.toLowerCase() == "script") {
+                    var newNode = document.createElement("span");
+                    newNode.textContent = this.textContent;
+                    
+                    var javascriptSyntaxHighlighter = new WebInspector.JavaScriptSourceSyntaxHighlighter(null, null);
+                    javascriptSyntaxHighlighter.syntaxHighlightLine(newNode, null);
+                    
+                    info.title = "<span class=\"webkit-html-text-node webkit-html-js-node\">" + newNode.innerHTML.replace(/^[\n\r]*/, "").replace(/\s*$/, "") + "</span>";
+                } else if (this.parentNode && this.parentNode.nodeName.toLowerCase() == "style") {
+                    var newNode = document.createElement("span");
+                    newNode.textContent = this.textContent;
+                    
+                    var cssSyntaxHighlighter = new WebInspector.CSSSourceSyntaxHighligher(null, null);
+                    cssSyntaxHighlighter.syntaxHighlightLine(newNode, null);
+                    
+                    info.title = "<span class=\"webkit-html-text-node webkit-html-css-node\">" + newNode.innerHTML.replace(/^[\n\r]*/, "").replace(/\s*$/, "") + "</span>";
+                } else {
+                    info.title = "\"<span class=\"webkit-html-text-node\">" + this.nodeValue.escapeHTML() + "</span>\""; 
+                }
+            } 
+            break;
 
         case Node.COMMENT_NODE:
             info.title = "<span class=\"webkit-html-comment\">&lt;!--" + this.nodeValue.escapeHTML() + "--&gt;</span>";
