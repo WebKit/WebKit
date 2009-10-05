@@ -44,6 +44,7 @@
 #include "Page.h"
 #include "RenderBox.h"
 #include "RenderTheme.h"
+#include "UserAgentStyleSheets.h"
 #include "qwebpage.h"
 
 #include <QApplication>
@@ -771,13 +772,7 @@ ControlPart RenderThemeQt::applyTheme(QStyleOption& option, RenderObject* o) con
 
 String RenderThemeQt::extraMediaControlsStyleSheet()
 {
-    QFile platformStyleSheet(QLatin1String(":/webcore/css/mediaControls-extras.css"));
-    if (platformStyleSheet.open(QFile::ReadOnly)) {
-        QByteArray sheetData = platformStyleSheet.readAll();
-        return QString::fromUtf8(sheetData.constData(), sheetData.length());
-    }
-
-    return String();
+    return String(mediaControlsQtUserAgentStyleSheet, sizeof(mediaControlsQtUserAgentStyleSheet));
 }
 
 // Helper class to transform the painter's world matrix to the object's content area, scaled to 0,0,100,100

@@ -66,6 +66,20 @@
 
         Reviewed by Eric Carlson.
 
+        Move mediaControls extras for the Qt port into WebCore/css like other ports
+
+        https://bugs.webkit.org/show_bug.cgi?id=30013
+
+        * WebCore.pro:
+        * WebCore.qrc:
+        * css/mediaControlsQt.css: Renamed from WebCore/css/qt/mediaControls-extras.css.
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::extraMediaControlsStyleSheet):
+
+2009-10-02  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Eric Carlson.
+
         Rename WebCore/css/mediaControlsQT.css and MediaControllerThemeQT
 
         https://bugs.webkit.org/show_bug.cgi?id=30013

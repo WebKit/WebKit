@@ -293,7 +293,8 @@ STYLESHEETS_EMBED = \
     $$PWD/css/svg.css \
     $$PWD/css/view-source.css \
     $$PWD/css/wml.css \
-    $$PWD/css/mediaControls.css
+    $$PWD/css/mediaControls.css \
+    $$PWD/css/mediaControlsQt.css
 
 DOMLUT_FILES += \
     bindings/js/JSDOMWindowBase.cpp \
