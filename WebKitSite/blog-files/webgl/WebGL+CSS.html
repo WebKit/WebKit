@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Canvas3d example</title>
+    <title>WebGL + CSS Effects</title>
     <script src="resources/CanvasMatrix.js"> </script>
     <script src="resources/utils3d.js"> </script>
     <script id="vshader" type="x-shader/x-vertex">
@@ -332,7 +332,7 @@
         }
         #container {
             -webkit-transform: perspective(800) rotateY(0) rotateZ(0);
-            -webkit-transition: -webkit-transform 0.5s;
+            -webkit-transition: -webkit-transform 2s;
         }
         #container.tilted {
             -webkit-transform: perspective(800) rotateY(60deg) rotateZ(320deg);
@@ -347,6 +347,23 @@
             width:90%;
             height:90%;
         }
+        #rocker {
+            position:absolute;
+            top:300px;
+            left:300px;
+            font-size:3em;
+            text-shadow: white 2px 2px 4px;
+            -webkit-animation:5s rock infinite alternate ease-in-out;
+        }
+        
+        @-webkit-keyframes rock {
+            0% { -webkit-transform: translateX(-100px) rotate3d(0,0,1, -30deg) }
+            25% { -webkit-transform: translateX(-50px) rotate3d(0,0,1, 30deg) }
+            50% { -webkit-transform: translateX(0px) rotate3d(0,0,1, -30deg) }
+            75% { -webkit-transform: translateX(50px) rotate3d(0,0,1, 30deg) }
+            100% { -webkit-transform: translateX(100px) rotate3d(0,0,1, -30deg) }
+        }
+        
         #framerate {
             position:absolute;
             top:10px;
@@ -365,6 +382,7 @@
                 There is supposed to be an example drawing here, but it's not important.
             </canvas>
         </div>
+        <div id="rocker">WebGL Rocks!</div>
         <div id="framerate"></div>
   </body>
 </html>

@@ -16,7 +16,15 @@
 function initWebGL(canvasName, vshader, fshader, attribs, clearColor, clearDepth)
 {
     var canvas = document.getElementById(canvasName);
-    var gl = canvas.getContext("webkit-3d");
+    var gl;
+    
+    try {gl = canvas.getContext("webkit-3d") } catch(e) { }
+    if (!gl)
+        try {gl = canvas.getContext("moz-webgl") } catch(e) { }
+    if (!gl) {
+        alert("No WebGL context found");
+        return null;
+    }
 
     // create our shaders
     var vertexShader = loadShader(gl, vshader);
@@ -58,8 +66,8 @@ function initWebGL(canvasName, vshader, fshader, attribs, clearColor, clearDepth
 
     gl.useProgram(gl.program);
 
-    gl.clearColor (clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
-    gl.clearDepth (clearDepth);
+    gl.clearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
+    gl.clearDepth(clearDepth);
 
     gl.enable(gl.DEPTH_TEST);
     gl.enable(gl.BLEND);
