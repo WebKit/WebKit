@@ -80,6 +80,7 @@
 #include "ScheduledAction.h"
 #include "ScriptController.h"
 #include "Settings.h"
+#include "SharedWorkerRepository.h"
 #include "WindowFeatures.h"
 #include <runtime/Error.h>
 #include <runtime/JSFunction.h>
@@ -713,7 +714,9 @@ JSValue JSDOMWindow::worker(ExecState* exec) const
 #if ENABLE(SHARED_WORKERS)
 JSValue JSDOMWindow::sharedWorker(ExecState* exec) const
 {
-    return getDOMConstructor<JSSharedWorkerConstructor>(exec, this);
+    if (SharedWorkerRepository::isAvailable())
+        return getDOMConstructor<JSSharedWorkerConstructor>(exec, this);
+    return jsUndefined();
 }
 #endif
 

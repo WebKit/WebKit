@@ -48,6 +48,9 @@ namespace WebCore {
     // Interface to a repository which manages references to the set of active shared workers.
     class SharedWorkerRepository {
     public:
+        // Returns true if the platform supports SharedWorkers, otherwise false.
+        static bool isAvailable();
+
         // Connects the passed SharedWorker object with the specified worker thread, creating a new thread if necessary.
         static void connect(PassRefPtr<SharedWorker>, PassOwnPtr<MessagePortChannel>, const KURL&, const String& name, ExceptionCode&);
 
