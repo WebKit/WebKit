@@ -1,3 +1,13 @@
+2009-10-05  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Remove precompiled header from JavaScriptCore compilation to
+        prevent qmake warning during autonomous compilation.
+        https://bugs.webkit.org/show_bug.cgi?id=30069
+
+        * JavaScriptCore.pro:
+
 2009-10-02  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.
