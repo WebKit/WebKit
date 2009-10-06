@@ -43,4 +43,4 @@ my $exceptionsFile = "WebKit/StringsNotToBeLocalized.txt";
 chdirWebKit();
 
 system "sort -u $exceptionsFile -o $exceptionsFile";
-exec "extract-localizable-strings", $exceptionsFile, $fileToUpdate, @directoriesToScan;
+exec "./WebKitTools/Scripts/extract-localizable-strings", $exceptionsFile, $fileToUpdate, @directoriesToScan;

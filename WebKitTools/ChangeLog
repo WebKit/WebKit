@@ -1,3 +1,12 @@
+2009-10-06  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <http://webkit.org/b/30138> update-webkit-localizable-strings assumes that WebKitTools/Scripts is in the PATH
+
+        * Scripts/update-webkit-localizable-strings: Use an explicit path to extract-localizable-strings based on the
+        the fact we have already changed the working directory to the top of the open source tree.
+
 2009-10-06  Julie Parent  <jparent@chromium.org>
 
         Unreviewed. Fixing the entry for myself in committers.py to use my bugzilla email,
