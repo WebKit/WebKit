@@ -41,9 +41,9 @@ namespace WebCore {
 
     class FormState;
     class Frame;
-    class FrameLoadRequest;
     class String;
 
+    struct FrameLoadRequest;
     struct ScheduledRedirection;
 
     class RedirectScheduler : public Noncopyable {

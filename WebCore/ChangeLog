@@ -1,3 +1,13 @@
+2009-10-05  James Robinson  <jamesr@google.com>
+
+        Reviewed by Darin Adler.
+
+        Fix forward declaration (struct vs class mismatch)
+
+        https://bugs.webkit.org/show_bug.cgi?id=30094
+
+        * loader/RedirectScheduler.h:
+
 2009-10-05  Julie Parent  <jparent@chromium.org>
 
         Unreviewed, last Chromium build fix corresponding to revision 49113.
