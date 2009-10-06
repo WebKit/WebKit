@@ -3,6 +3,14 @@
         More build fixes for Tiger.
 
         * WebView/WebVideoFullscreenController.mm:
+        (-[WebVideoFullscreenWindow animationDidEnd:]):
+        * WebView/WebWindowAnimation.m:
+
+2009-10-05  Simon Fraser  <simon.fraser@apple.com>
+
+        More build fixes for Tiger.
+
+        * WebView/WebVideoFullscreenController.mm:
         * WebView/WebVideoFullscreenHUDWindowController.mm:
         (-[WebVideoFullscreenHUDWindow initWithContentRect:styleMask:backing:defer:]):
         (-[WebVideoFullscreenHUDWindowController scheduleTimeUpdate]):

@@ -52,6 +52,7 @@ static CGFloat squaredDistance(NSPoint point1, NSPoint point2)
 }
 
 @implementation WebWindowScaleAnimation
+
 - (id)init
 {
     self = [super init];
@@ -164,9 +165,11 @@ static CGFloat squaredDistance(NSPoint point1, NSPoint point2)
     [super stopAnimation];
     [_subAnimation stopAnimation];
 }
+
 @end
 
 @implementation WebWindowFadeAnimation
+
 - (id)init
 {
     self = [super init];

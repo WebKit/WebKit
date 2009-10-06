@@ -404,10 +404,12 @@ static NSWindow *createBackgroundFullscreenWindow(NSRect frame, int level)
 
 - (void)animationDidEnd:(NSAnimation *)animation
 {
+#if !defined(BUILDING_ON_TIGER) // Animations are never threaded on Tiger.
     if (![NSThread isMainThread]) {
         [self performSelectorOnMainThread:@selector(animationDidEnd:) withObject:animation waitUntilDone:NO];
         return;
     }
+#endif
     if (animation != _fullscreenAnimation)
         return;
 
