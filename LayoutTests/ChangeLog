@@ -1,3 +1,18 @@
+2009-10-06  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30107
+        
+        Tests that drag-and-drop returns dropEffect = "none" when 
+        effectAllowed == "none", regardless of the user-specified
+        drop effect.
+
+        * fast/events/drag-and-drop-none-expected.txt: Added.
+        * fast/events/drag-and-drop-none.html: Added.
+        * platform/win/Skipped: This test does not work under 
+        Windows. We need the fix for bug #24731.
+
 2009-10-06  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.

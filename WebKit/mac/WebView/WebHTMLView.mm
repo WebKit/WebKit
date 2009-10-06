@@ -3425,10 +3425,6 @@ done:
     if (!page)
         return NSDragOperationNone;
 
-    // FIXME: Why do we override the source provided operation here?  Why not in DragController::startDrag
-    if (page->dragController()->sourceDragOperation() == DragOperationNone)
-        return NSDragOperationGeneric | NSDragOperationCopy;
-
     return (NSDragOperation)page->dragController()->sourceDragOperation();
 }
 

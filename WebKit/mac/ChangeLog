@@ -1,3 +1,21 @@
+2009-10-06  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30107
+        
+        Fixes an issue where the Mac build does return the correct drop effect
+        with respect to the HTML 5 specification when effectAllowed == "none".
+        
+        Currently, when effectAllowed == "none" and dropEffect == "copy" or 
+        dropEffect == "move" the resulting drop effect is "copy" and "move",
+        respectively. However, the HTML 5 specification states that regardless
+        of the specified dropEffect, when effectAllowed == "none" the resulting
+        drop effect should be "none".
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView draggingSourceOperationMaskForLocal:]):
+
 2009-10-06  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

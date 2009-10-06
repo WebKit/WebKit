@@ -1,0 +1,14 @@
+This test checks that drag-and-drop support works and conforms to the HTML 5 specification when effectAllowed = none.
+This test iterates through the possible dropEffects: none, copy, move, link, dummy.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS event.dataTransfer.dropEffect is dropEffectElem.options[dropEffectElem.selectedIndex].value
+PASS event.dataTransfer.dropEffect is "none"
+PASS event.dataTransfer.dropEffect is "none"
+PASS event.dataTransfer.dropEffect is "none"
+PASS event.dataTransfer.dropEffect is "none"
+
+TEST COMPLETE
+
