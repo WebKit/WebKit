@@ -31,6 +31,7 @@
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Element.h"
+#include "FloatPoint.h"
 #include "FocusController.h"
 #include "Frame.h"
 #include "FrameLoadRequest.h"
@@ -318,15 +319,15 @@ static unsigned int inputEventState(MouseEvent* event)
     return state;
 }
 
-static void setXButtonEventSpecificFields(XEvent* xEvent, MouseEvent* event)
+static void setXButtonEventSpecificFields(XEvent* xEvent, MouseEvent* event, const IntPoint& postZoomPos)
 {
     XButtonEvent& xbutton = xEvent->xbutton;
     xbutton.type = event->type() == eventNames().mousedownEvent ? ButtonPress : ButtonRelease;
     xbutton.root = QX11Info::appRootWindow();
     xbutton.subwindow = 0;
     xbutton.time = event->timeStamp();
-    xbutton.x = event->offsetX();
-    xbutton.y = event->offsetY();
+    xbutton.x = postZoomPos.x();
+    xbutton.y = postZoomPos.y();
     xbutton.x_root = event->screenX();
     xbutton.y_root = event->screenY();
     xbutton.state = inputEventState(event);
@@ -345,15 +346,15 @@ static void setXButtonEventSpecificFields(XEvent* xEvent, MouseEvent* event)
     xbutton.same_screen = true;
 }
 
-static void setXMotionEventSpecificFields(XEvent* xEvent, MouseEvent* event)
+static void setXMotionEventSpecificFields(XEvent* xEvent, MouseEvent* event, const IntPoint& postZoomPos)
 {
     XMotionEvent& xmotion = xEvent->xmotion;
     xmotion.type = MotionNotify;
     xmotion.root = QX11Info::appRootWindow();
     xmotion.subwindow = 0;
     xmotion.time = event->timeStamp();
-    xmotion.x = event->offsetX();
-    xmotion.y = event->offsetY();
+    xmotion.x = postZoomPos.x();
+    xmotion.y = postZoomPos.y();
     xmotion.x_root = event->screenX();
     xmotion.y_root = event->screenY();
     xmotion.state = inputEventState(event);
@@ -361,15 +362,15 @@ static void setXMotionEventSpecificFields(XEvent* xEvent, MouseEvent* event)
     xmotion.same_screen = true;
 }
 
-static void setXCrossingEventSpecificFields(XEvent* xEvent, MouseEvent* event)
+static void setXCrossingEventSpecificFields(XEvent* xEvent, MouseEvent* event, const IntPoint& postZoomPos)
 {
     XCrossingEvent& xcrossing = xEvent->xcrossing;
     xcrossing.type = event->type() == eventNames().mouseoverEvent ? EnterNotify : LeaveNotify;
     xcrossing.root = QX11Info::appRootWindow();
     xcrossing.subwindow = 0;
     xcrossing.time = event->timeStamp();
-    xcrossing.x = event->offsetX();
-    xcrossing.y = event->offsetY();
+    xcrossing.x = postZoomPos.y();
+    xcrossing.y = postZoomPos.x();
     xcrossing.x_root = event->screenX();
     xcrossing.y_root = event->screenY();
     xcrossing.state = inputEventState(event);
@@ -395,12 +396,14 @@ void PluginView::handleMouseEvent(MouseEvent* event)
     XEvent npEvent;
     initXEvent(&npEvent);
 
+    IntPoint postZoomPos = roundedIntPoint(m_element->renderer()->absoluteToLocal(event->absoluteLocation()));
+
     if (event->type() == eventNames().mousedownEvent || event->type() == eventNames().mouseupEvent)
-        setXButtonEventSpecificFields(&npEvent, event);
+        setXButtonEventSpecificFields(&npEvent, event, postZoomPos);
     else if (event->type() == eventNames().mousemoveEvent)
-        setXMotionEventSpecificFields(&npEvent, event);
+        setXMotionEventSpecificFields(&npEvent, event, postZoomPos);
     else if (event->type() == eventNames().mouseoutEvent || event->type() == eventNames().mouseoverEvent)
-        setXCrossingEventSpecificFields(&npEvent, event);
+        setXCrossingEventSpecificFields(&npEvent, event, postZoomPos);
     else
         return;
 
@@ -487,8 +490,8 @@ void PluginView::setNPWindowIfNeeded()
     }
 
     // FLASH WORKAROUND: Only set initially. Multiple calls to
-    // setNPWindow() cause the plugin to crash.
-    if (m_npWindow.width == -1 || m_npWindow.height == -1) {
+    // setNPWindow() cause the plugin to crash in windowed mode.
+    if (!m_isWindowed || m_npWindow.width == -1 || m_npWindow.height == -1) {
         m_npWindow.width = m_windowRect.width();
         m_npWindow.height = m_windowRect.height();
     }

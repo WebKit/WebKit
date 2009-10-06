@@ -2,6 +2,27 @@
 
         Reviewed by Simon Hausmann.
 
+        [Qt] Windowless plugins: Make painting and events work when page is zoomed.
+
+        The element gets resized when zoomed. So, we have to make sure that we resize
+        the drawable and do a setwindow call. Multiple calls to setwindow do not
+        crash plugin in windowless mode (unlike in windowed mode).
+
+        For mouse events we have to convert the pos to post-zoom position.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20081
+
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::setXButtonEventSpecificFields):
+        (WebCore::setXMotionEventSpecificFields):
+        (WebCore::setXCrossingEventSpecificFields):
+        (WebCore::PluginView::handleMouseEvent):
+        (WebCore::PluginView::setNPWindowIfNeeded):
+
+2009-10-06  Girish Ramakrishnan  <girish@forwardbias.in>
+
+        Reviewed by Simon Hausmann.
+
         [Qt] Windowless plugins: Add PluginQuirkRequiresDefaultScreenDepth quirk for Flash.
 
         Flash does not use the visual provided by us to draw into the drawable.
