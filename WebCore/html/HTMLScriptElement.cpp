@@ -23,7 +23,6 @@
 #include "config.h"
 #include "HTMLScriptElement.h"
 
-#include "BeforeLoadEvent.h"
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
@@ -219,14 +218,6 @@ String HTMLScriptElement::languageAttributeValue() const
 String HTMLScriptElement::forAttributeValue() const
 {
     return getAttribute(forAttr).string();
-}
- 
-bool HTMLScriptElement::dispatchBeforeLoadEvent(const String& sourceURL)
-{
-    RefPtr<HTMLScriptElement> protector(this);
-    RefPtr<BeforeLoadEvent> beforeLoadEvent = BeforeLoadEvent::create(sourceURL);
-    dispatchEvent(beforeLoadEvent.get());
-    return inDocument() && !beforeLoadEvent->defaultPrevented();
 }
 
 void HTMLScriptElement::dispatchLoadEvent()

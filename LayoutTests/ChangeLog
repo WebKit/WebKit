@@ -1,3 +1,15 @@
+2009-10-06  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30132, make beforeload work with CSS stylesheets loaded from
+        <link> elements and XML processing instructions.
+
+        * fast/dom/beforeload/link-before-load-expected.txt: Added.
+        * fast/dom/beforeload/link-before-load.html: Added.
+        * fast/dom/beforeload/pi-before-load-expected.txt: Added.
+        * fast/dom/beforeload/pi-before-load.xhtml: Added.
+
 2009-10-06  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Mark Rowe.

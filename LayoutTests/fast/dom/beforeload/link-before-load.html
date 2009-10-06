@@ -1,0 +1,39 @@
+<html>
+<head>
+<style>
+.block {
+  width: 100px;
+  height: 100px;
+  background-color: green;
+}
+</style>
+<link onbeforeload="return false" rel="stylesheet" href="resources/fail.css">
+<script>
+function print(message, color) 
+{
+    var paragraph = document.createElement("div");
+    paragraph.appendChild(document.createTextNode(message));
+    paragraph.style.fontFamily = "monospace";
+    if (color)
+        paragraph.style.color = color;
+    document.getElementById("console").appendChild(paragraph);
+}
+
+function test()
+{
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    if (document.getElementById('block').offsetWidth == 100)
+        print("PASS", "green");
+    else
+        print("FAIL", "red");
+}
+</script>
+</head>
+<body onload="test()">
+<p>This page tests the beforeload event on link elements.  You should see the word PASS below underneath a green square.</p>
+<hr>
+<div id="block" class="block"></div>
+<hr>
+<div id="console"></div>

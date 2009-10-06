@@ -64,6 +64,7 @@ void ProcessingInstruction::setData(const String& data, ExceptionCode&)
     int oldLength = m_data.length();
     m_data = data;
     document()->textRemoved(this, 0, oldLength);
+    checkStyleSheet();
 }
 
 String ProcessingInstruction::nodeName() const
@@ -142,13 +143,21 @@ void ProcessingInstruction::checkStyleSheet()
             }
 #endif
         } else {
+            if (m_cachedSheet) {
+                m_cachedSheet->removeClient(this);
+                m_cachedSheet = 0;
+            }
+            
+            String url = document()->completeURL(href).string();
+            if (!dispatchBeforeLoadEvent(url))
+                return;
+            
             m_loading = true;
             document()->addPendingSheet();
-            if (m_cachedSheet)
-                m_cachedSheet->removeClient(this);
+            
 #if ENABLE(XSLT)
             if (m_isXSL)
-                m_cachedSheet = document()->docLoader()->requestXSLStyleSheet(document()->completeURL(href).string());
+                m_cachedSheet = document()->docLoader()->requestXSLStyleSheet(url);
             else
 #endif
             {
@@ -156,10 +165,15 @@ void ProcessingInstruction::checkStyleSheet()
                 if (charset.isEmpty())
                     charset = document()->frame()->loader()->encoding();
 
-                m_cachedSheet = document()->docLoader()->requestCSSStyleSheet(document()->completeURL(href).string(), charset);
+                m_cachedSheet = document()->docLoader()->requestCSSStyleSheet(url, charset);
             }
             if (m_cachedSheet)
                 m_cachedSheet->addClient(this);
+            else {
+                // The request may have been denied if (for example) the stylesheet is local and the document is remote.
+                m_loading = false;
+                document()->removePendingSheet();
+            }
         }
     }
 }

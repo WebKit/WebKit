@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<style>
+.block {
+  width: 100px;
+  height: 100px;
+  background-color: green;
+}
+</style>
+<script>
+function print(message, color) 
+{
+    var paragraph = document.createElement("div");
+    paragraph.appendChild(document.createTextNode(message));
+    paragraph.style.fontFamily = "monospace";
+    if (color)
+        paragraph.style.color = color;
+    document.getElementById("console").appendChild(paragraph);
+}
+
+function test()
+{
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    if (document.getElementById('block').offsetWidth == 100)
+        print("PASS", "green");
+    else
+        print("FAIL", "red");
+}
+</script>
+</head>
+<body onload="test()">
+<div id="block" class="block"></div>
+<script>
+function beforeLoadFunc()
+{
+    event.preventDefault();
+}
+
+document.addEventListener("beforeload", beforeLoadFunc, true);
+
+var pi = document.createProcessingInstruction("xml-stylesheet", "type=\"text/css\" href=\"resources/fail.css\"");
+document.insertBefore(pi, document.documentElement);
+</script>
+<hr/>
+<div id="console"></div>
+</body>
+</html>

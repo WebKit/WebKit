@@ -69,7 +69,6 @@ namespace WebCore {
         virtual String languageAttributeValue() const;
         virtual String forAttributeValue() const;
 
-        virtual bool dispatchBeforeLoadEvent(const String& sourceURL);
         virtual void dispatchLoadEvent();
         virtual void dispatchErrorEvent();
 

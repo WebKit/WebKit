@@ -1,3 +1,38 @@
+2009-10-06  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30132, make beforeload work with <link> elements and
+        XML processing instructions.
+
+        Fix up ProcessingInstruction's setData call so that it actually updates a stylesheet when the
+        data gets changed.
+
+        Move dispatchBeforeLoadedEvent to ContainerNode so all Elements (and ProcessingInstruction) can
+        access it.
+
+        Added fast/dom/beforeload/link-before-load.html
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::dispatchBeforeLoadEvent):
+        * dom/ContainerNode.h:
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::checkStyleSheet):
+        (WebCore::ProcessingInstruction::setData):
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElementData::requestScript):
+        * dom/ScriptElement.h:
+        * dom/XMLTokenizerLibxml2.cpp:
+        (WebCore::XMLTokenizer::endElementNs):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::parseMappedAttribute):
+        (WebCore::HTMLLinkElement::process):
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::forAttributeValue):
+        * html/HTMLScriptElement.h:
+        * svg/SVGScriptElement.cpp:
+        * svg/SVGScriptElement.h:
+
 2009-10-06  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Mark Rowe.

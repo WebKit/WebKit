@@ -25,7 +25,6 @@
 #if ENABLE(SVG)
 #include "SVGScriptElement.h"
 
-#include "BeforeLoadEvent.h"
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
@@ -179,14 +178,6 @@ String SVGScriptElement::languageAttributeValue() const
 String SVGScriptElement::forAttributeValue() const
 {
     return String();
-}
-
-bool SVGScriptElement::dispatchBeforeLoadEvent(const String& sourceURL)
-{
-    RefPtr<SVGScriptElement> protector(this);
-    RefPtr<BeforeLoadEvent> beforeLoadEvent = BeforeLoadEvent::create(sourceURL);
-    dispatchEvent(beforeLoadEvent.get());
-    return inDocument() && !beforeLoadEvent->defaultPrevented();
 }
 
 void SVGScriptElement::dispatchLoadEvent()

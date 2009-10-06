@@ -71,6 +71,8 @@ public:
     void removeAllChildren();
 
     void cloneChildNodes(ContainerNode* clone);
+    
+    bool dispatchBeforeLoadEvent(const String& sourceURL);
 
 protected:
     ContainerNode(Document*, ConstructionType = CreateContainer);

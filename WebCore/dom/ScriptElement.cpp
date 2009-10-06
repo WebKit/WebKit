@@ -151,7 +151,7 @@ void ScriptElementData::requestScript(const String& sourceUrl)
     if (!document->frame())
         return;
 
-    if (!m_scriptElement->dispatchBeforeLoadEvent(sourceUrl))
+    if (!m_element->dispatchBeforeLoadEvent(sourceUrl))
         return;
 
     ASSERT(!m_cachedScript);
