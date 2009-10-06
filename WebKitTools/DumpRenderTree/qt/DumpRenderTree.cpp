@@ -232,6 +232,8 @@ DumpRenderTree::DumpRenderTree()
             SLOT(titleChanged(const QString&)));
     connect(m_page, SIGNAL(databaseQuotaExceeded(QWebFrame*,QString)),
             this, SLOT(dumpDatabaseQuota(QWebFrame*,QString)));
+    connect(m_page, SIGNAL(statusBarMessage(const QString&)),
+            this, SLOT(statusBarMessage(const QString&)));
 
     m_eventSender = new EventSender(m_page);
     m_textInputController = new TextInputController(m_page);
@@ -528,6 +530,14 @@ void DumpRenderTree::dumpDatabaseQuota(QWebFrame* frame, const QString& dbName)
            origin.port(),
            dbName.toUtf8().data());
     origin.setDatabaseQuota(5 * 1024 * 1024);
+}
+
+void DumpRenderTree::statusBarMessage(const QString& message)
+{
+    if (!m_controller->shouldDumpStatusCallbacks())
+        return;
+
+    printf("UI DELEGATE STATUS CALLBACK: setStatusText:%s\n", message.toUtf8().constData());
 }
 
 QWebPage *DumpRenderTree::createWindow()

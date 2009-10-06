@@ -2,6 +2,23 @@
 
         Reviewed by Simon Hausmann.
 
+        [Qt] Implement layoutTestController.dumpStatusCallbacks() and unskip the
+        fast/dom/assign-to-window-status.html test, which is passing as a result.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30127
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::DumpRenderTree):
+        (WebCore::DumpRenderTree::statusBarMessage):
+        * DumpRenderTree/qt/DumpRenderTree.h:
+        * DumpRenderTree/qt/jsobjects.h:
+        (LayoutTestController::shouldDumpStatusCallbacks):
+        (LayoutTestController::dumpStatusCallbacks):
+
+2009-10-06  Jakub Wieczorek  <faw217@gmail.com>
+
+        Reviewed by Simon Hausmann.
+
         [Qt] The implementation of EventSender::mouseUp() and EventSender::mouseDown()
         ignores the argument indicating which mouse button to trigger.
         https://bugs.webkit.org/show_bug.cgi?id=30048

@@ -1061,7 +1061,6 @@ fast/css/css2-system-fonts.html
 fast/css/namespaces/003.xml
 fast/css/namespaces/007.xml
 fast/doctypes/003.html
-fast/dom/assign-to-window-status.html
 fast/dom/frame-loading-via-document-write.html
 fast/dom/set-frame-src-while-running-script-in-frame.html
 fast/dom/wrapper-classes.html

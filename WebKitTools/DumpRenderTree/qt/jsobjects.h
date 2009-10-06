@@ -53,6 +53,7 @@ public:
     bool shouldDumpBackForwardList() const { return m_dumpBackForwardList; }
     bool shouldDumpChildrenAsText() const { return m_dumpChildrenAsText; }
     bool shouldDumpDatabaseCallbacks() const { return m_dumpDatabaseCallbacks; }
+    bool shouldDumpStatusCallbacks() const { return m_dumpStatusCallbacks; }
     bool shouldWaitUntilDone() const { return m_waitForDone; }
     bool canOpenWindows() const { return m_canOpenWindows; }
     bool shouldDumpTitleChanges() const { return m_dumpTitleChanges; }
@@ -71,6 +72,7 @@ public slots:
     void dumpAsText() { m_textDump = true; }
     void dumpChildFramesAsText() { m_dumpChildrenAsText = true; }
     void dumpDatabaseCallbacks() { m_dumpDatabaseCallbacks = true; }
+    void dumpStatusCallbacks() { m_dumpStatusCallbacks = true; }
     void setCanOpenWindows() { m_canOpenWindows = true; }
     void waitUntilDone();
     void notifyDone();
@@ -123,7 +125,9 @@ private:
     bool m_waitForDone;
     bool m_dumpTitleChanges;
     bool m_dumpDatabaseCallbacks;
+    bool m_dumpStatusCallbacks;
     bool m_waitForPolicy;
+
     QBasicTimer m_timeoutTimer;
     QWebFrame *m_topLoadingFrame;
     WebCore::DumpRenderTree *m_drt;
