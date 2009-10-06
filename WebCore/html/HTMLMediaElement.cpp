@@ -28,6 +28,8 @@
 #if ENABLE(VIDEO)
 #include "HTMLMediaElement.h"
 
+#include "ClientRect.h"
+#include "ClientRectList.h"
 #include "ChromeClient.h"
 #include "CSSHelper.h"
 #include "CSSPropertyNames.h"
@@ -40,6 +42,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
+#include "FrameView.h"
 #include "HTMLDocument.h"
 #include "HTMLNames.h"
 #include "HTMLSourceElement.h"
@@ -54,10 +57,9 @@
 #include "Page.h"
 #include "ProgressEvent.h"
 #include "RenderVideo.h"
+#include "RenderView.h"
 #include "ScriptEventListener.h"
 #include "TimeRanges.h"
-#include "ClientRect.h"
-#include "ClientRectList.h"
 #include <limits>
 #include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>

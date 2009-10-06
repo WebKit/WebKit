@@ -1,5 +1,11 @@
 2009-10-05  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix Windows build.
+
+        * html/HTMLMediaElement.cpp:
+
+2009-10-05  Simon Fraser  <simon.fraser@apple.com>
+
         Fix the build: MediaControllerThemeQT was renamed to MediaControllerThemeQuickTime.
 
         * rendering/RenderThemeMac.mm:
