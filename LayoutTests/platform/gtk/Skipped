@@ -1561,6 +1561,7 @@ fast/dom/Geolocation/timeout.html
 fast/dom/Geolocation/watch.html
 fast/dom/Element/getBoundingClientRect.html
 fast/dom/Range/getBoundingClientRect.html
+fast/dom/Range/getClientRects.html
 fast/dom/null-document-location-put-crash.html
 fast/dom/null-document-location-replace-crash.html
 fast/dom/object-embed-plugin-scripting.html

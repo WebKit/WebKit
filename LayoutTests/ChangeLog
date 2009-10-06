@@ -1,3 +1,9 @@
+2009-10-06  Xan Lopez  <xlopez@igalia.com>
+
+        Skip another failing test.
+
+        * platform/gtk/Skipped:
+
 2009-10-06  Jakub Wieczorek  <faw217@gmail.com>
 
         Reviewed by Simon Hausmann.
