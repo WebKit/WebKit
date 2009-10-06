@@ -179,11 +179,6 @@ void InspectorController::inspectedPageDestroyed()
     if (m_scriptState)
         ScriptGlobalObject::remove(m_scriptState, "InspectorController");
 
-    if (m_page) {
-        m_page->setParentInspectorController(0);
-        m_page = 0;
-    }
-
     ASSERT(m_inspectedPage);
     m_inspectedPage = 0;
 
@@ -621,6 +616,9 @@ void InspectorController::close()
     m_domAgent = 0;
     m_timelineAgent = 0;
     m_scriptState = 0;
+    if (m_page)
+        m_page->setParentInspectorController(0);
+    m_page = 0;
 }
 
 void InspectorController::showWindow()

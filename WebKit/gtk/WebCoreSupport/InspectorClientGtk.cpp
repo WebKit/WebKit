@@ -68,8 +68,13 @@ void InspectorClient::webViewDestroyed()
 
 Page* InspectorClient::createPage()
 {
-    if (m_webView)
-      return core(m_webView);
+    if (m_webView) {
+        gboolean handled = FALSE;
+        g_signal_emit_by_name(m_webInspector, "destroy", &handled);
+
+        /* we can now dispose our own reference */
+        g_object_unref(m_webInspector);
+    }
 
     // This g_object_get will ref the inspector. We're not doing an
     // unref if this method succeeds because the inspector object must

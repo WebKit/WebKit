@@ -99,12 +99,10 @@ void WebInspectorClient::inspectorDestroyed()
 
 Page* WebInspectorClient::createPage()
 {
-    if (m_webView)
-        return core(m_webView.get());
-
-    ASSERT(!m_hwnd);
-
     registerWindowClass();
+
+    if (m_hwnd)
+        ::DestroyWindow(m_hwnd);
 
     m_hwnd = ::CreateWindowEx(0, kWebInspectorWindowClassName, 0, WS_OVERLAPPEDWINDOW,
         defaultWindowRect().x(), defaultWindowRect().y(), defaultWindowRect().width(), defaultWindowRect().height(),

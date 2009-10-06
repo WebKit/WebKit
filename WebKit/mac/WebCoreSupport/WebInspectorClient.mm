@@ -81,8 +81,9 @@ void WebInspectorClient::inspectorDestroyed()
 
 Page* WebInspectorClient::createPage()
 {
-    if (!m_windowController)
-        m_windowController.adoptNS([[WebInspectorWindowController alloc] initWithInspectedWebView:m_webView]);
+    if (m_windowController)
+        [[m_windowController.get() webView] close];
+    m_windowController.adoptNS([[WebInspectorWindowController alloc] initWithInspectedWebView:m_webView]);
 
     return core([m_windowController.get() webView]);
 }
