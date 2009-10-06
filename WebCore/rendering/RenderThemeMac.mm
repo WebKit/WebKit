@@ -1701,7 +1701,7 @@ String RenderThemeMac::extraMediaControlsStyleSheet()
 bool RenderThemeMac::shouldRenderMediaControlPart(ControlPart part, Element* e)
 {
     if (part == MediaFullscreenButtonPart)
-        return mediaControllerTheme() == MediaControllerThemeQT;
+        return mediaControllerTheme() == MediaControllerThemeQuickTime;
 
     return RenderTheme::shouldRenderMediaControlPart(part, e);
 }

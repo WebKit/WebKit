@@ -1,3 +1,10 @@
+2009-10-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix the build: MediaControllerThemeQT was renamed to MediaControllerThemeQuickTime.
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::shouldRenderMediaControlPart):
+
 2009-10-05  Pierre d'Herbemont  <pdherbemont@webkit.org>
 
         Reviewed by Simon Fraser
