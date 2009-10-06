@@ -3,7 +3,7 @@ Test .removeItem within DOM Storage.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-Testing window.localStorage
+Testing window.sessionStorage
 storage.clear()
 PASS storage.length is 0
 
