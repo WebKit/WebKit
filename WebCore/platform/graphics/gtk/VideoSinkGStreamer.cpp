@@ -112,7 +112,7 @@ webkit_video_sink_idle_func(gpointer data)
     WebKitVideoSinkPrivate* priv = sink->priv;
     GstBuffer* buffer;
     GstCaps* caps;
-    GstVideoFormat* format;
+    GstVideoFormat format;
     gint par_n, par_d;
     gfloat par;
     gint bwidth, bheight;
@@ -125,7 +125,7 @@ webkit_video_sink_idle_func(gpointer data)
         return FALSE;
 
     caps = GST_BUFFER_CAPS(buffer);
-    if (!gst_video_format_parse_caps(caps, format, &bwidth, &bheight)) {
+    if (!gst_video_format_parse_caps(caps, &format, &bwidth, &bheight)) {
         GST_ERROR_OBJECT(sink, "Unknown video format in buffer caps '%s'",
                          gst_caps_to_string(caps));
         return FALSE;

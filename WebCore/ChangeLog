@@ -1,3 +1,15 @@
+2009-10-06  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] segfault when calling gst_video_format_parse_caps in the video sink
+        https://bugs.webkit.org/show_bug.cgi?id=30120
+
+        Fix use of gst_video_format_parse_caps()
+
+        * platform/graphics/gtk/VideoSinkGStreamer.cpp:
+        (webkit_video_sink_idle_func):
+
 2009-10-06  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Simon Hausmann.
