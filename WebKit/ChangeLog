@@ -1,3 +1,9 @@
+2009-10-05  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        * WebKit.xcodeproj/project.pbxproj: Add WebPluginHalterClient to the project.
+
 2009-10-05  Yaar Schnitman  <yaar@chromium.org>
 
         Reviewed by Dimitri Glazkov.

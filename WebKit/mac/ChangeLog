@@ -1,3 +1,25 @@
+2009-10-05  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Added new PluginHalter client, delegate and few more WebPreferences keys.
+
+        * WebView/WebPreferenceKeysPrivate.h: Added two new keys.
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]): Initialize newly added key.
+        (-[WebPreferences pluginAllowedRunTime]): Added.
+        (-[WebPreferences setPluginAllowedRunTime:]): Added.
+        * WebView/WebPreferencesPrivate.h: Added above two methods.
+        * WebView/WebUIDelegatePrivate.h: Added shouldHaltPlugin delegate.
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:usesDocumentViews:]):
+        Setup a new WebPluginHalterClient.
+        (-[WebView _preferencesChangedNotification:]): Update WebCore settings accordingly.
+        * WebCoreSupport/WebPluginHalterClient.h: Added.
+        * WebCoreSupport/WebPluginHalterClient.mm: Added.
+        (WebPluginHalterClient::WebPluginHalterClient):
+        (WebPluginHalterClient::shouldHaltPlugin): Added, invoke the delegate.
+
 2009-10-05  Simon Fraser  <simon.fraser@apple.com>
 
         More build fixes for Tiger.

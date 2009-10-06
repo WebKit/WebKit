@@ -116,6 +116,9 @@ extern NSString *WebPreferencesRemovedNotification;
 - (BOOL)pluginHalterEnabled;
 - (void)setPluginHalterEnabled:(BOOL)enabled;
 
+- (unsigned)pluginAllowedRunTime;
+- (void)setPluginAllowedRunTime:(unsigned)allowedRunTime;
+
 // zero means do AutoScale
 - (float)PDFScaleFactor;
 - (void)setPDFScaleFactor:(float)scale;

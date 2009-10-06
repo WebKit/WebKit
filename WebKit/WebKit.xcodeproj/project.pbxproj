@@ -11,6 +11,8 @@
 		065AD5A40B0C32C7005A2B1D /* WebContextMenuClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 065AD5A20B0C32C7005A2B1D /* WebContextMenuClient.mm */; };
 		06693DDC0BFBA85200216072 /* WebInspectorClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 06693DDA0BFBA85200216072 /* WebInspectorClient.h */; };
 		06693DDD0BFBA85200216072 /* WebInspectorClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 06693DDB0BFBA85200216072 /* WebInspectorClient.mm */; };
+		0A2D87FD107AF52B00CDDEE3 /* WebPluginHalterClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 0A2D87FB107AF52B00CDDEE3 /* WebPluginHalterClient.h */; };
+		0A2D87FE107AF52B00CDDEE3 /* WebPluginHalterClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0A2D87FC107AF52B00CDDEE3 /* WebPluginHalterClient.mm */; };
 		0AB752370FA2E4DB00D7CBB1 /* WebNetscapeContainerCheckContextInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0AB752350FA2E4DB00D7CBB1 /* WebNetscapeContainerCheckContextInfo.h */; };
 		0AB752380FA2E4DB00D7CBB1 /* WebNetscapeContainerCheckContextInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0AB752360FA2E4DB00D7CBB1 /* WebNetscapeContainerCheckContextInfo.mm */; };
 		0AEBFF630F9FA8BE000D486B /* WebNetscapeContainerCheckPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 0AEBFF610F9FA8BE000D486B /* WebNetscapeContainerCheckPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -351,6 +353,8 @@
 		065AD5A20B0C32C7005A2B1D /* WebContextMenuClient.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebContextMenuClient.mm; sourceTree = "<group>"; };
 		06693DDA0BFBA85200216072 /* WebInspectorClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebInspectorClient.h; sourceTree = "<group>"; };
 		06693DDB0BFBA85200216072 /* WebInspectorClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebInspectorClient.mm; sourceTree = "<group>"; };
+		0A2D87FB107AF52B00CDDEE3 /* WebPluginHalterClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPluginHalterClient.h; sourceTree = "<group>"; };
+		0A2D87FC107AF52B00CDDEE3 /* WebPluginHalterClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPluginHalterClient.mm; sourceTree = "<group>"; };
 		0AB752350FA2E4DB00D7CBB1 /* WebNetscapeContainerCheckContextInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNetscapeContainerCheckContextInfo.h; sourceTree = "<group>"; };
 		0AB752360FA2E4DB00D7CBB1 /* WebNetscapeContainerCheckContextInfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebNetscapeContainerCheckContextInfo.mm; sourceTree = "<group>"; };
 		0AEBFF610F9FA8BE000D486B /* WebNetscapeContainerCheckPrivate.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = WebNetscapeContainerCheckPrivate.h; sourceTree = "<group>"; };
@@ -1211,6 +1215,8 @@
 				84723BE4056D719E0044BFEA /* WebKeyGenerator.m */,
 				A7D3C5BA0B5773C5002CA450 /* WebPasteboardHelper.h */,
 				A7D3C5BB0B5773C5002CA450 /* WebPasteboardHelper.mm */,
+				0A2D87FB107AF52B00CDDEE3 /* WebPluginHalterClient.h */,
+				0A2D87FC107AF52B00CDDEE3 /* WebPluginHalterClient.mm */,
 				93EB178E09F88D510091F8FF /* WebSystemInterface.h */,
 				93EB178C09F88D460091F8FF /* WebSystemInterface.m */,
 				F5F7174C02885C5B018635CA /* WebViewFactory.h */,
@@ -1503,6 +1509,7 @@
 				0FD3B0F21076C3E900039B96 /* WebVideoFullscreenController.h in Headers */,
 				0FD3B0F41076C3E900039B96 /* WebVideoFullscreenHUDWindowController.h in Headers */,
 				0FD3B0F81076C3F700039B96 /* WebWindowAnimation.h in Headers */,
+				0A2D87FD107AF52B00CDDEE3 /* WebPluginHalterClient.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1841,6 +1848,7 @@
 				0FD3B0F31076C3E900039B96 /* WebVideoFullscreenController.mm in Sources */,
 				0FD3B0F51076C3E900039B96 /* WebVideoFullscreenHUDWindowController.mm in Sources */,
 				0FD3B0F91076C3F700039B96 /* WebWindowAnimation.m in Sources */,
+				0A2D87FE107AF52B00CDDEE3 /* WebPluginHalterClient.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
