@@ -129,6 +129,7 @@ void LayoutTestController::reset()
     m_waitForDone = false;
     m_dumpTitleChanges = false;
     m_dumpDatabaseCallbacks = false;
+    m_dumpStatusCallbacks = false;
     m_timeoutTimer.stop();
     m_topLoadingFrame = 0;
     m_waitForPolicy = false;

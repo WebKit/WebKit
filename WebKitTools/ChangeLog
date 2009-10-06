@@ -1,5 +1,18 @@
 2009-10-06  Jakub Wieczorek  <faw217@gmail.com>
 
+        Reviewed by Eric Seidel.
+
+        [Qt] LayoutTestController: Reset m_dumpStatusCallbacks to false in reset().
+
+        r49189 added support for the 'dumpStatusCallbacks' setting but didn't reset
+        it after each layout test as it should do, making the DRT dump additional output
+        for all of the subsequent layout tests.
+
+        * DumpRenderTree/qt/jsobjects.cpp:
+        (LayoutTestController::reset):
+
+2009-10-06  Jakub Wieczorek  <faw217@gmail.com>
+
         Reviewed by Simon Hausmann.
 
         [Qt] Implement layoutTestController.dumpStatusCallbacks() and unskip the
