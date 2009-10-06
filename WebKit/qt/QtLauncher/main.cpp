@@ -405,6 +405,7 @@ public:
     URLLoader(QWebView* view, const QString& inputFileName)
         : m_view(view)
         , m_stdOut(stdout)
+        , m_loaded(0)
     {
         init(inputFileName);
     }
@@ -416,7 +417,7 @@ public slots:
         if (getUrl(qstr)) {
             QUrl url(qstr, QUrl::StrictMode);
             if (url.isValid()) {
-                m_stdOut << "Loading " << qstr << " ......" << endl;
+                m_stdOut << "Loading " << qstr << " ......" << ++m_loaded << endl;
                 m_view->load(url);
             } else
                 loadNext();
@@ -459,6 +460,7 @@ private:
     int m_index;
     QWebView* m_view;
     QTextStream m_stdOut;
+    int m_loaded;
 };
 
 #include "main.moc"

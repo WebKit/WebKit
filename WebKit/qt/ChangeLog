@@ -1,3 +1,17 @@
+2009-10-05  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon Hausmann.
+
+        QtLauncher: print the number of loaded urls
+        
+        When using the -r mode print the number of URLs loaded so far. This
+        is extremly useful when opening the same URL over and over again and
+        one wants to see the progress.
+
+        * QtLauncher/main.cpp:
+        (URLLoader::URLLoader):
+        (URLLoader::loadNext):
+
 2009-10-05  Girish Ramakrishnan  <girish@forwardbias.in>
 
         Reviewed by Simon Hausmann.
