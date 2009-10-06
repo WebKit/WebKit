@@ -1,3 +1,14 @@
+2009-10-06  Kelly Norton  <knorton@google.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Fixes <https://bugs.webkit.org/show_bug.cgi?id=30028>
+        Multiple calls to SetFrontendProxyObject can leave an InspectorTimelineAgent with an invalid
+        InspectorFrontend.
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::setFrontendProxyObject): Adds a check for an existing timeline agent.
+
 2009-10-06  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Dave Kilzer.
