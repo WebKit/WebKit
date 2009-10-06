@@ -32,6 +32,7 @@
 #include "DateExtension.h"
 
 #include "V8Proxy.h"
+#include "V8HiddenPropertyName.h"
 
 namespace WebCore {
 
@@ -56,9 +57,9 @@ static const char* dateExtensionScript =
     "      Date.prototype.getTime = orig_getTime;"
     "    }"
     "  };"
+    "  native function Setup();"
     "  native function OnSleepDetected();"
-    "  native function GiveEnableSleepDetectionFunction();"
-    "  GiveEnableSleepDetectionFunction(enableSleepDetection);"
+    "  Setup(Date, enableSleepDetection);"
     "})()";
 
 DateExtension::DateExtension() : v8::Extension(dateExtensionName, dateExtensionScript)
@@ -74,57 +75,47 @@ DateExtension* DateExtension::get()
 
 void DateExtension::setAllowSleep(bool allow)
 {
+    v8::Local<v8::Value> result = V8Proxy::retrieve()->context()->Global()->Get(v8::String::New("Date"));
+    if (result.IsEmpty())
+        return;
+
+    v8::Handle<v8::Object> dateObject = v8::Handle<v8::Object>::Cast(result);
+    if (dateObject.IsEmpty())
+        return;
+
+    v8::Local<v8::Value> sleepFunctionHandle = dateObject->GetHiddenValue(V8HiddenPropertyName::sleepFunction());
+    if (sleepFunctionHandle.IsEmpty() || !sleepFunctionHandle->IsFunction())
+        return;
+
     v8::Handle<v8::Value> argv[1];
     argv[0] = v8::String::New(allow ? "false" : "true");
-    for (size_t i = 0; i < callEnableSleepDetectionFunctionPointers.size(); ++i)
-        callEnableSleepDetectionFunctionPointers[i]->Call(v8::Object::New(), 1, argv);
+    v8::Handle<v8::Function>::Cast(sleepFunctionHandle)->Call(v8::Object::New(), 1, argv);
 }
 
 v8::Handle<v8::FunctionTemplate> DateExtension::GetNativeFunction(v8::Handle<v8::String> name)
 {
-    if (name->Equals(v8::String::New("GiveEnableSleepDetectionFunction")))
-        return v8::FunctionTemplate::New(GiveEnableSleepDetectionFunction);
+    if (name->Equals(v8::String::New("Setup")))
+        return v8::FunctionTemplate::New(Setup);
     if (name->Equals(v8::String::New("OnSleepDetected")))
         return v8::FunctionTemplate::New(OnSleepDetected);
 
     return v8::Handle<v8::FunctionTemplate>();
 }
 
-void DateExtension::weakCallback(v8::Persistent<v8::Value> object, void* param)
+v8::Handle<v8::Value> DateExtension::Setup(const v8::Arguments& args)
 {
-    DateExtension* extension = get();
-    for (size_t i = 0; i < extension->callEnableSleepDetectionFunctionPointers.size(); ++i) {
-        if (extension->callEnableSleepDetectionFunctionPointers[i] == object) {
-            object.Dispose();
-            extension->callEnableSleepDetectionFunctionPointers.remove(i);
-            return;
-        }
-    }
-    ASSERT_NOT_REACHED();
-}
-
-v8::Handle<v8::Value> DateExtension::GiveEnableSleepDetectionFunction(const v8::Arguments& args)
-{
-    if (args.Length() != 1 || !args[0]->IsFunction())
+    if (args.Length() != 2 || !args[0]->IsObject() || !args[1]->IsFunction())
         return v8::Undefined();
 
-    // Ideally, we would get the Frame* here and associate it with the function pointer, so that
-    // each time we go into an unload handler we just call that frame's function.  However there's
-    // no way to get the Frame* at this point, so we just store all the function pointers and call
-    // them all each time.
-    DateExtension* extension = get();
-    extension->callEnableSleepDetectionFunctionPointers.append(
-        v8::Persistent<v8::Function>::New(v8::Handle<v8::Function>::Cast(args[0])));
-    extension->callEnableSleepDetectionFunctionPointers.last().MakeWeak(NULL, weakCallback);
+    v8::Handle<v8::Object> dateObject = v8::Handle<v8::Object>::Cast(args[0]);
+    v8::Handle<v8::Function> enableSleepDetectionFunction = v8::Handle<v8::Function>::Cast(args[1]);
+
+    dateObject->SetHiddenValue(V8HiddenPropertyName::sleepFunction(), enableSleepDetectionFunction);
     return v8::Undefined();
 }
 
 v8::Handle<v8::Value> DateExtension::OnSleepDetected(const v8::Arguments&)
 {
-    // After we call TerminateExecution(), we can't call back into JavaScript again, so
-    // reset all the other frames first.
-    get()->setAllowSleep(true);
-
     v8::V8::TerminateExecution();
     return v8::Undefined();
 }

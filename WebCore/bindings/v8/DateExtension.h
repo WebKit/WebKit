@@ -33,8 +33,6 @@
 
 #include <v8.h>
 
-#include "Vector.h"
-
 namespace WebCore {
 
 // Prevent "sleep" calls in unload handlers.
@@ -46,12 +44,8 @@ public:
 private:
     DateExtension();
     virtual v8::Handle<v8::FunctionTemplate> GetNativeFunction(v8::Handle<v8::String>);
-    static v8::Handle<v8::Value> GiveEnableSleepDetectionFunction(const v8::Arguments&);
+    static v8::Handle<v8::Value> Setup(const v8::Arguments&);
     static v8::Handle<v8::Value> OnSleepDetected(const v8::Arguments&);
-    static void weakCallback(v8::Persistent<v8::Value> object, void* param);
-
-    typedef WTF::Vector<v8::Persistent<v8::Function> > FunctionPointers;
-    FunctionPointers callEnableSleepDetectionFunctionPointers;
 
     static DateExtension* extension;
 };

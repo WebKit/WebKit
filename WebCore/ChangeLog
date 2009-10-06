@@ -1,3 +1,23 @@
+2009-10-05  John Abd-El-Malek  <jam@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Fix reliablity bot crash in DateExtension.
+        https://bugs.webkit.org/show_bug.cgi?id=30033
+
+        There were a few problems using the weak persistent pointers because no one else had a
+        handle to them.  The new approach stores them as a hidden value on the Date constructor.
+
+        * bindings/v8/DateExtension.cpp:
+        (WebCore::DateExtension::setAllowSleep):
+        (WebCore::DateExtension::GetNativeFunction):
+        (WebCore::DateExtension::Setup):
+        (WebCore::DateExtension::OnSleepDetected):
+        * bindings/v8/DateExtension.h:
+        * bindings/v8/V8HiddenPropertyName.cpp:
+        (WebCore::V8HiddenPropertyName::sleepFunction):
+        * bindings/v8/V8HiddenPropertyName.h:
+
 2009-10-05  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Dan Bernstein.

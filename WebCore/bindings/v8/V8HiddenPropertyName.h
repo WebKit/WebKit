@@ -40,6 +40,7 @@ namespace WebCore {
     V(isolatedWorld) \
     V(listener) \
     V(attributeListener) \
+    V(sleepFunction) \
     V(toStringString)
 
     class V8HiddenPropertyName {
