@@ -1,3 +1,16 @@
+2009-10-06  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Fix the Qt/Windows build by stubbing out the still image
+        support for halted plugins for the Qt build.
+
+        Bugzilla entry https://bugs.webkit.org/show_bug.cgi?id=30130
+        tracks removing this by implementing Frame::nodeImage().
+
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::halt):
+
 2009-10-05  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Simon Hausmann.

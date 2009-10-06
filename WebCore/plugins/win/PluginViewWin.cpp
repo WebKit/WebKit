@@ -1019,9 +1019,11 @@ void PluginView::platformDestroy()
 
 void PluginView::halt()
 {
+#if !PLATFORM(QT)
     // Show a screenshot of the plug-in.
     OwnPtr<HBITMAP> nodeImage(m_parentFrame->nodeImage(m_element));
     toRenderWidget(m_element->renderer())->showSubstituteImage(BitmapImage::create(nodeImage.get()));
+#endif
 
     stop();
     platformDestroy();
