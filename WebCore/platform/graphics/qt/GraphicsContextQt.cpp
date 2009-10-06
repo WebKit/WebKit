@@ -1059,14 +1059,18 @@ void GraphicsContext::clipOut(const Path& path)
         return;
 
     QPainter* p = m_data->p();
-    QRectF clipBounds = p->clipPath().boundingRect();
     QPainterPath clippedOut = *path.platformPath();
     QPainterPath newClip;
     newClip.setFillRule(Qt::OddEvenFill);
-    newClip.addRect(clipBounds);
-    newClip.addPath(clippedOut);
-
-    p->setClipPath(newClip, Qt::IntersectClip);
+    if (p->hasClipping()) {
+        newClip.addRect(p->clipPath().boundingRect());
+        newClip.addPath(clippedOut);
+        p->setClipPath(newClip, Qt::IntersectClip);
+    } else {
+        newClip.addRect(p->window());
+        newClip.addPath(clippedOut & newClip);
+        p->setClipPath(newClip);
+    }
 }
 
 void GraphicsContext::translate(float x, float y)
@@ -1125,13 +1129,20 @@ void GraphicsContext::clipOut(const IntRect& rect)
         return;
 
     QPainter* p = m_data->p();
-    QRectF clipBounds = p->clipPath().boundingRect();
     QPainterPath newClip;
     newClip.setFillRule(Qt::OddEvenFill);
-    newClip.addRect(clipBounds);
-    newClip.addRect(QRect(rect));
-
-    p->setClipPath(newClip, Qt::IntersectClip);
+    if (p->hasClipping()) {
+        newClip.addRect(p->clipPath().boundingRect());
+        newClip.addRect(QRect(rect));
+        p->setClipPath(newClip, Qt::IntersectClip);
+    } else {
+        QRect clipOutRect(rect);
+        QRect window(p->window());
+        clipOutRect &= window;
+        newClip.addRect(window);
+        newClip.addRect(clipOutRect);
+        p->setClipPath(newClip);
+    }
 }
 
 void GraphicsContext::clipOutEllipseInRect(const IntRect& rect)
@@ -1140,13 +1151,20 @@ void GraphicsContext::clipOutEllipseInRect(const IntRect& rect)
         return;
 
     QPainter* p = m_data->p();
-    QRectF clipBounds = p->clipPath().boundingRect();
     QPainterPath newClip;
     newClip.setFillRule(Qt::OddEvenFill);
-    newClip.addRect(clipBounds);
-    newClip.addEllipse(QRect(rect));
-
-    p->setClipPath(newClip, Qt::IntersectClip);
+    if (p->hasClipping()) {
+        newClip.addRect(p->clipPath().boundingRect());
+        newClip.addEllipse(QRect(rect));
+        p->setClipPath(newClip, Qt::IntersectClip);
+    } else {
+        QRect clipOutRect(rect);
+        QRect window(p->window());
+        clipOutRect &= window;
+        newClip.addRect(window);
+        newClip.addEllipse(clipOutRect);
+        p->setClipPath(newClip);
+    }
 }
 
 void GraphicsContext::clipToImageBuffer(const FloatRect&, const ImageBuffer*)

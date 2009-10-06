@@ -1,3 +1,23 @@
+2009-10-06  Carol Szabo  <carol.szabo@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Some functions in GraphicsContext do not work
+        as expected if the associated painter has no clipping.
+        https://bugs.webkit.org/show_bug.cgi?id=29691
+
+        No new tests are associated with this because DumpRenderTree
+        always sets clipping on the painter, thus it would never hit 
+        the test case, but fast/box-shadow/basic-shadows.html is a
+        good example of what happens if the clipping is not set by
+        the user of QtWebKit.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::clipOut):
+        (WebCore::GraphicsContext::clipOutEllipseInRect):
+        Fixed to handle the case that there is no clipping
+        before the call.
+
 2009-10-06  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by Adam Roben.
