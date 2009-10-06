@@ -5306,17 +5306,22 @@ fast/css/positioned-overflow-scroll.html
 fast/css/pseudo-cache-stale.html
 fast/css/rem-dynamic-scaling.html
 fast/css/rem-units-on-root.html
+fast/css/text-rendering.html
 fast/dom/HTMLTableColElement/resize-table-using-col-width.html
+fast/forms/basic-buttons.html
+fast/forms/basic-inputs.html
 fast/forms/menulist-style-color.html
 fast/forms/search-vertical-alignment.html
 fast/forms/text-style-color.html
 fast/frames/viewsource-on-image-file.html
+fast/multicol/positioned-with-constrained-height.html
 fast/overflow/overflow-with-local-background-attachment.html
 fast/overflow/position-fixed-transform-clipping.html
 fast/repaint/background-generated.html
 fast/repaint/background-misaligned.html
 fast/repaint/float-in-new-block-with-layout-delta.html
 fast/repaint/float-new-in-block.html
+fast/repaint/line-in-scrolled-clipped-block.html
 fast/text/international/khmer-selection.html
 fast/text/shadow-translucent-fill.html
 fast/text/text-letter-spacing.html
@@ -5331,9 +5336,11 @@ svg/custom/js-update-image-and-display2.svg
 svg/custom/js-update-image-and-display3.svg
 svg/custom/js-update-image-and-display.svg
 svg/custom/outer-svg-unknown-feature.svg
+svg/filters/feComposite.svg
 svg/filters/feMerge.svg
 svg/filters/feOffset.svg
 svg/filters/feTile.svg
+svg/filters/sourceAlpha.svg
 
 # Requires expected results - related changeset: http://trac.webkit.org/changeset/47678
 fast/block/margin-collapse/block-inside-inline

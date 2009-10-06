@@ -1,3 +1,9 @@
+2009-10-06  Xan Lopez  <xlopez@igalia.com>
+
+        Skip new tests for which we are missing expected results.
+
+        * platform/gtk/Skipped:
+
 2009-10-06  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by Adam Roben.
