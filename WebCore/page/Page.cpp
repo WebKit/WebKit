@@ -119,6 +119,7 @@ Page::Page(ChromeClient* chromeClient, ContextMenuClient* contextMenuClient, Edi
     , m_theme(RenderTheme::themeForPage(this))
     , m_editorClient(editorClient)
     , m_frameCount(0)
+    , m_openedByDOM(false)
     , m_tabKeyCyclesThroughElements(true)
     , m_defersLoading(false)
     , m_inLowQualityInterpolationMode(false)
@@ -199,6 +200,16 @@ void Page::setMainFrame(PassRefPtr<Frame> mainFrame)
 {
     ASSERT(!m_mainFrame); // Should only be called during initialization
     m_mainFrame = mainFrame;
+}
+
+bool Page::openedByDOM() const
+{
+    return m_openedByDOM;
+}
+
+void Page::setOpenedByDOM()
+{
+    m_openedByDOM = true;
 }
 
 BackForwardList* Page::backForwardList()

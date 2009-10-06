@@ -770,7 +770,7 @@ static Frame* createWindow(ExecState* exec, Frame* lexicalFrame, Frame* dynamicF
         return 0;
 
     newFrame->loader()->setOpener(openerFrame);
-    newFrame->loader()->setOpenedByDOM();
+    newFrame->page()->setOpenedByDOM();
 
     JSDOMWindow* newWindow = toJSDOMWindow(newFrame);
 

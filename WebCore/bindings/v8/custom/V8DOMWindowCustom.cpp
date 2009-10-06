@@ -496,7 +496,7 @@ static Frame* createWindow(Frame* callingFrame,
         return 0;
 
     newFrame->loader()->setOpener(openerFrame);
-    newFrame->loader()->setOpenedByDOM();
+    newFrame->page()->setOpenedByDOM();
 
     // Set dialog arguments on the global object of the new frame.
     if (!dialogArgs.IsEmpty()) {

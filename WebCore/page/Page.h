@@ -103,6 +103,9 @@ namespace WebCore {
         void setMainFrame(PassRefPtr<Frame>);
         Frame* mainFrame() const { return m_mainFrame.get(); }
 
+        bool openedByDOM() const;
+        void setOpenedByDOM();
+
         BackForwardList* backForwardList();
 
         // FIXME: The following three methods don't fall under the responsibilities of the Page object
@@ -264,6 +267,7 @@ namespace WebCore {
 
         int m_frameCount;
         String m_groupName;
+        bool m_openedByDOM;
 
         bool m_tabKeyCyclesThroughElements;
         bool m_defersLoading;

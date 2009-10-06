@@ -272,8 +272,6 @@ namespace WebCore {
 
         Frame* opener();
         void setOpener(Frame*);
-        bool openedByDOM() const;
-        void setOpenedByDOM();
 
         bool isProcessingUserGesture();
 

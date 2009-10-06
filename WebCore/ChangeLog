@@ -1,3 +1,28 @@
+2009-10-06  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Move m_openedByDOM to Page
+        https://bugs.webkit.org/show_bug.cgi?id=30109
+
+        We only need one instance of m_openedByDOM per page, we should move it
+        to a page-scoped object.  Notice that it's only ever touched for the
+        main frame.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::createWindow):
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::createWindow):
+        * loader/FrameLoader.cpp:
+        * loader/FrameLoader.h:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::close):
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::openedByDOM):
+        (WebCore::Page::setOpenedByDOM):
+        * page/Page.h:
+
 2009-10-06  Carol Szabo  <carol.szabo@nokia.com>
 
         Reviewed by Ariya Hidayat.
