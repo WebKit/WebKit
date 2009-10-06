@@ -37,9 +37,12 @@
 #include "NodeFilter.h"
 #include "PlatformString.h" // for WebCore::String
 #include "V8CustomBinding.h"
+#include "V8CustomXPathNSResolver.h"
 #include "V8DOMMap.h"
 #include "V8Index.h"
 #include "V8Utilities.h"
+#include "V8XPathNSResolver.h"
+#include "XPathNSResolver.h"
 #include <v8.h>
 
 namespace WebCore {
@@ -238,6 +241,17 @@ namespace WebCore {
 
         static PassRefPtr<EventListener> getEventListener(V8Proxy* proxy, v8::Local<v8::Value> value, bool isAttribute, ListenerLookupType lookup);
 
+
+        // XPath-related utilities
+        static RefPtr<XPathNSResolver> getXPathNSResolver(v8::Handle<v8::Value> value)
+        {
+            RefPtr<XPathNSResolver> resolver;
+            if (V8XPathNSResolver::HasInstance(value))
+                resolver = convertToNativeObject<XPathNSResolver>(V8ClassIndex::XPATHNSRESOLVER, v8::Handle<v8::Object>::Cast(value));
+            else if (value->IsObject())
+                resolver = V8CustomXPathNSResolver::create(value->ToObject());
+            return resolver;
+        }
 
         // DOMImplementation is a singleton and it is handled in a special
         // way. A wrapper is generated per document and stored in an

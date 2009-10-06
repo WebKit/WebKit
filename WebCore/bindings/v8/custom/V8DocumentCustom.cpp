@@ -61,12 +61,8 @@ CALLBACK_FUNC_DECL(DocumentEvaluate)
     if (V8Node::HasInstance(args[1]))
         contextNode = V8DOMWrapper::convertDOMWrapperToNode<Node>(v8::Handle<v8::Object>::Cast(args[1]));
 
-    RefPtr<XPathNSResolver> resolver;
-    if (V8XPathNSResolver::HasInstance(args[2]))
-        resolver = V8DOMWrapper::convertToNativeObject<XPathNSResolver>(V8ClassIndex::XPATHNSRESOLVER, v8::Handle<v8::Object>::Cast(args[2]));
-    else if (args[2]->IsObject())
-        resolver = V8CustomXPathNSResolver::create(args[2]->ToObject());
-    else if (!args[2]->IsNull() && !args[2]->IsUndefined())
+    RefPtr<XPathNSResolver> resolver = V8DOMWrapper::getXPathNSResolver(args[2]);
+    if (!resolver && !args[2]->IsNull() && !args[2]->IsUndefined())
         return throwError(TYPE_MISMATCH_ERR);
 
     int type = toInt32(args[3]);

@@ -1,3 +1,17 @@
+2009-10-06  Anton Muhin  <antonm@chromium>
+
+        Reviewed by Dimitri Glazkov.
+
+        Non standard, but popular exetension allows automagically
+        turn a function into a namespace resolver.  Support that in
+        Chromium as well.
+
+        This adds new layout tests.
+        https://bugs.webkit.org/show_bug.cgi?id=30128
+
+        * fast/xpath/xpath-namespaces-expected.txt:
+        * fast/xpath/xpath-namespaces.html:
+
 2009-10-06  Jakub Wieczorek  <faw217@gmail.com>
 
         Reviewed by Simon Hausmann.

@@ -3,6 +3,8 @@ This tests that XPath expressions with prefixes work correctly.
 PASS /ns:foo
 PASS /ns:*
 PASS /foo:*
+PASS /xmpl:*
+PASS /xmpl:*
 PASS successfullyParsed is true
 
 TEST COMPLETE
