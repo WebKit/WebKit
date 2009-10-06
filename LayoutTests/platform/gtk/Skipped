@@ -1559,7 +1559,8 @@ fast/dom/Geolocation/success.html
 fast/dom/Geolocation/timeout-zero.html
 fast/dom/Geolocation/timeout.html
 fast/dom/Geolocation/watch.html
-fast/dom/getBoundingClientRect.html
+fast/dom/Element/getBoundingClientRect.html
+fast/dom/Range/getBoundingClientRect.html
 fast/dom/null-document-location-put-crash.html
 fast/dom/null-document-location-replace-crash.html
 fast/dom/object-embed-plugin-scripting.html
@@ -3717,7 +3718,6 @@ http/tests/xmlhttprequest/uri-resolution-opera-open-009.html
 http/tests/xmlhttprequest/uri-resolution-opera-open-010.html
 http/tests/xmlhttprequest/xhr-onunload.html
 http/tests/xmlhttprequest/xml-encoding.html
-http/tests/xmlhttprequest/xmlhttprequest-InvalidStateException-getAllRequestHeaders.html
 http/tests/xmlhttprequest/xmlhttprequest-LSProgressEvent-ProgressEvent-should-match.html
 http/tests/xmlhttprequest/xmlhttprequest-abort-readyState-shouldDispatchEvent.html
 http/tests/xmlhttprequest/xmlhttprequest-abort-readyState-shouldNotDispatchEvent.html
@@ -3727,7 +3727,6 @@ http/tests/xmlhttprequest/xmlhttprequest-crlf-getAllResponseHeader.html
 http/tests/xmlhttprequest/xmlhttprequest-forbidden-methods-exception.html
 http/tests/xmlhttprequest/xmlhttprequest-image-not-loaded-svg.svg
 http/tests/xmlhttprequest/xmlhttprequest-image-not-loaded.html
-http/tests/xmlhttprequest/xmlhttprequest-invalidHeader-getRequestHeader.html
 http/tests/xmlhttprequest/xmlhttprequest-missing-file-exception.html
 http/tests/xmlhttprequest/xmlhttprequest-multiple-open.html
 http/tests/xmlhttprequest/xmlhttprequest-no-content-length-onProgress.html

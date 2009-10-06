@@ -1,3 +1,9 @@
+2009-10-06  Xan Lopez  <xlopez@igalia.com>
+
+        Update the skipped list to recent changes in tests.
+
+        * platform/gtk/Skipped:
+
 2009-10-05  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Darin Fisher.
