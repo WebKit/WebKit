@@ -1,3 +1,35 @@
+2009-10-06  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Implement min/max attributes, ValidityState.rangeUnderflow and
+        ValidityState.rangeOverflow for <input type=number> and <input type=range>
+        https://bugs.webkit.org/show_bug.cgi?id=29069
+        
+        HTMLInputElement::max and min are not defined for COM because they
+        conflict with the standard min() and max() macros.
+
+        Tests: fast/forms/ValidityState-rangeOverflow-number.html
+               fast/forms/ValidityState-rangeOverflow-range.html
+               fast/forms/ValidityState-rangeUnderflow-number.html
+               fast/forms/ValidityState-rangeUnderflow-range.html
+               fast/forms/input-minmax.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::rangeUnderflow):
+        (WebCore::HTMLInputElement::rangeOverflow):
+        (WebCore::HTMLInputElement::rangeMinimum):
+        (WebCore::HTMLInputElement::rangeMaximum):
+        * html/HTMLInputElement.h:
+        * html/HTMLInputElement.idl:
+        * html/ValidityState.cpp:
+        (WebCore::ValidityState::rangeUnderflow):
+        (WebCore::ValidityState::rangeOverflow):
+        * html/ValidityState.h:
+        * rendering/RenderSlider.cpp:
+        (WebCore::SliderRange::SliderRange):
+        (WebCore::SliderRange::valueFromElement):
+
 2009-10-06  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

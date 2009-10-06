@@ -1,3 +1,27 @@
+2009-10-06  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Implement min/max attributes, ValidityState.rangeUnderflow and
+        ValidityState.rangeOverflow for <input type=number> and <input type=range>
+        https://bugs.webkit.org/show_bug.cgi?id=29069
+
+        * fast/forms/ValidityState-rangeOverflow-number-expected.txt: Added.
+        * fast/forms/ValidityState-rangeOverflow-number.html: Added.
+        * fast/forms/ValidityState-rangeOverflow-range-expected.txt: Added.
+        * fast/forms/ValidityState-rangeOverflow-range.html: Added.
+        * fast/forms/ValidityState-rangeUnderflow-number-expected.txt: Added.
+        * fast/forms/ValidityState-rangeUnderflow-number.html: Added.
+        * fast/forms/ValidityState-rangeUnderflow-range-expected.txt: Added.
+        * fast/forms/ValidityState-rangeUnderflow-range.html: Added.
+        * fast/forms/input-minmax-expected.txt: Added.
+        * fast/forms/input-minmax.html: Added.
+        * fast/forms/script-tests/ValidityState-rangeOverflow-number.js: Added.
+        * fast/forms/script-tests/ValidityState-rangeOverflow-range.js: Added.
+        * fast/forms/script-tests/ValidityState-rangeUnderflow-number.js: Added.
+        * fast/forms/script-tests/ValidityState-rangeUnderflow-range.js: Added.
+        * fast/forms/script-tests/input-minmax.js: Added.
+
 2009-10-06  Xan Lopez  <xlopez@igalia.com>
 
         Skip new tests for which we are missing expected results.

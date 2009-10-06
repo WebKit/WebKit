@@ -232,6 +232,62 @@ bool HTMLInputElement::tooLong() const
     return false;
 }
 
+bool HTMLInputElement::rangeUnderflow() const
+{
+    if (inputType() == NUMBER) {
+        double min = 0.0;
+        double doubleValue = 0.0;
+        if (formStringToDouble(getAttribute(minAttr), &min) && formStringToDouble(value(), &doubleValue))
+            return doubleValue < min;
+    } else if (inputType() == RANGE) {
+        double doubleValue;
+        if (formStringToDouble(value(), &doubleValue))
+            return doubleValue < rangeMinimum();
+    }
+    return false;
+}
+
+bool HTMLInputElement::rangeOverflow() const
+{
+    if (inputType() == NUMBER) {
+        double max = 0.0;
+        double doubleValue = 0.0;
+        if (formStringToDouble(getAttribute(maxAttr), &max) && formStringToDouble(value(), &doubleValue))
+            return doubleValue > max;
+    } else if (inputType() == RANGE) {
+        double doubleValue;
+        if (formStringToDouble(value(), &doubleValue))
+            return doubleValue > rangeMaximum();
+    }
+    return false;
+}
+
+double HTMLInputElement::rangeMinimum() const
+{
+    ASSERT(inputType() == RANGE);
+    // The range type's "default minimum" is 0.
+    double min = 0.0;
+    formStringToDouble(getAttribute(minAttr), &min);
+    return min;
+}
+
+double HTMLInputElement::rangeMaximum() const
+{
+    ASSERT(inputType() == RANGE);
+    // The range type's "default maximum" is 100.
+    static const double defaultMaximum = 100.0;
+    double max = defaultMaximum;
+    formStringToDouble(getAttribute(maxAttr), &max);
+    const double min = rangeMinimum();
+
+    if (max < min) {
+        // A remedy for the inconsistent min/max values.
+        // Sets the maxmimum to the default (100.0) or the minimum value.
+        max = min < defaultMaximum ? defaultMaximum : min;
+    }
+    return max;
+}
+
 static inline CheckedRadioButtons& checkedRadioButtons(const HTMLInputElement *element)
 {
     if (HTMLFormElement* form = element->form())
@@ -705,7 +761,7 @@ void HTMLInputElement::parseMappedAttribute(MappedAttribute *attr)
         setAttributeEventListener(eventNames().searchEvent, createAttributeEventListener(this, attr));
     } else if (attr->name() == resultsAttr) {
         int oldResults = m_maxResults;
-        m_maxResults = !attr->isNull() ? min(attr->value().toInt(), maxSavedResults) : -1;
+        m_maxResults = !attr->isNull() ? std::min(attr->value().toInt(), maxSavedResults) : -1;
         // FIXME: Detaching just for maxResults change is not ideal.  We should figure out the right
         // time to relayout for this change.
         if (m_maxResults != oldResults && (m_maxResults <= 0 || oldResults <= 0) && attached()) {

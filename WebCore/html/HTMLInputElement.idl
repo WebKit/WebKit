@@ -42,8 +42,14 @@ module html {
 #if defined(ENABLE_DATALIST) && ENABLE_DATALIST
         readonly attribute HTMLElement     list;
 #endif
+#if !defined(LANGUAGE_COM) || !LANGUAGE_COM
+                 attribute [Reflect] DOMString max;
+#endif
                  attribute long            maxLength
                      setter raises(DOMException);
+#if !defined(LANGUAGE_COM) || !LANGUAGE_COM
+                 attribute [Reflect] DOMString min;
+#endif
                  attribute boolean         multiple;
                  attribute [ConvertNullToNullString] DOMString name;
                  attribute [Reflect] DOMString       pattern;
