@@ -36,13 +36,11 @@
 #import "WebVideoFullscreenController.h"
 #import "WebVideoFullscreenHUDWindowController.h"
 #import "WebKitSystemInterface.h"
+#import "WebTypesInternal.h"
 #import "WebWindowAnimation.h"
 
 SOFT_LINK_FRAMEWORK(QTKit)
-
-
 SOFT_LINK_CLASS(QTKit, QTMovieView)
-
 
 @interface WebVideoFullscreenWindow : NSWindow
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_TIGER)

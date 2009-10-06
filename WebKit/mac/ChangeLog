@@ -1,5 +1,17 @@
 2009-10-05  Simon Fraser  <simon.fraser@apple.com>
 
+        More build fixes for Tiger.
+
+        * WebView/WebVideoFullscreenController.mm:
+        * WebView/WebVideoFullscreenHUDWindowController.mm:
+        (-[WebVideoFullscreenHUDWindow initWithContentRect:styleMask:backing:defer:]):
+        (-[WebVideoFullscreenHUDWindowController scheduleTimeUpdate]):
+        (-[WebVideoFullscreenHUDWindowController fadeWindowIn]):
+        (-[WebVideoFullscreenHUDWindowController fadeWindowOut]):
+        (-[WebVideoFullscreenHUDWindowController closeWindow]):
+
+2009-10-05  Simon Fraser  <simon.fraser@apple.com>
+
         Build fixes for Tiger.
 
         * WebView/WebVideoFullscreenHUDWindowController.h:
