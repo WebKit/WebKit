@@ -374,17 +374,57 @@ EventSender::EventSender(QWebPage *parent)
     m_page = parent;
 }
 
-void EventSender::mouseDown()
+void EventSender::mouseDown(int button)
 {
+    Qt::MouseButton mouseButton;
+    switch (button) {
+    case 0:
+        mouseButton = Qt::LeftButton;
+        break;
+    case 1:
+        mouseButton = Qt::MidButton;
+        break;
+    case 2:
+        mouseButton = Qt::RightButton;
+        break;
+    case 3:
+        // fast/events/mouse-click-events expects the 4th button to be treated as the middle button
+        mouseButton = Qt::MidButton;
+        break;
+    default:
+        mouseButton = Qt::LeftButton;
+        break;
+    }
+
 //     qDebug() << "EventSender::mouseDown" << frame;
-    QMouseEvent event(QEvent::MouseButtonPress, m_mousePos, Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+    QMouseEvent event(QEvent::MouseButtonPress, m_mousePos, mouseButton, mouseButton, Qt::NoModifier);
     QApplication::sendEvent(m_page, &event);
 }
 
-void EventSender::mouseUp()
+void EventSender::mouseUp(int button)
 {
+    Qt::MouseButton mouseButton;
+    switch (button) {
+    case 0:
+        mouseButton = Qt::LeftButton;
+        break;
+    case 1:
+        mouseButton = Qt::MidButton;
+        break;
+    case 2:
+        mouseButton = Qt::RightButton;
+        break;
+    case 3:
+        // fast/events/mouse-click-events expects the 4th button to be treated as the middle button
+        mouseButton = Qt::MidButton;
+        break;
+    default:
+        mouseButton = Qt::LeftButton;
+        break;
+    }
+
 //     qDebug() << "EventSender::mouseUp" << frame;
-    QMouseEvent event(QEvent::MouseButtonRelease, m_mousePos, Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+    QMouseEvent event(QEvent::MouseButtonRelease, m_mousePos, mouseButton, mouseButton, Qt::NoModifier);
     QApplication::sendEvent(m_page, &event);
 }
 

@@ -2,6 +2,21 @@
 
         Reviewed by Simon Hausmann.
 
+        [Qt] The implementation of EventSender::mouseUp() and EventSender::mouseDown()
+        ignores the argument indicating which mouse button to trigger.
+        https://bugs.webkit.org/show_bug.cgi?id=30048
+
+        This affects the fast/events/mouse-click-events.html layout test.
+
+        * DumpRenderTree/qt/jsobjects.cpp:
+        (EventSender::mouseDown):
+        (EventSender::mouseUp):
+        * DumpRenderTree/qt/jsobjects.h:
+
+2009-10-06  Jakub Wieczorek  <faw217@gmail.com>
+
+        Reviewed by Simon Hausmann.
+
         [Qt] Fix the EventSender::keyDown() implementation
         https://bugs.webkit.org/show_bug.cgi?id=30043
 

@@ -139,8 +139,8 @@ public:
     EventSender(QWebPage *parent);
 
 public slots:
-    void mouseDown();
-    void mouseUp();
+    void mouseDown(int button = 0);
+    void mouseUp(int button = 0);
     void mouseMoveTo(int x, int y);
     void leapForward(int ms);
     void keyDown(const QString &string, const QStringList &modifiers=QStringList());
