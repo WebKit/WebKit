@@ -1,3 +1,15 @@
+2009-10-06  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        ASSERT executing the webhistory unittest in a debug build
+        https://bugs.webkit.org/show_bug.cgi?id=28947
+
+        We have to call g_object_new first to initialize webkit threading
+        before creating the KURL.
+
+        * WebKit/gtk/webkit/webkitwebhistoryitem.cpp:
+
 2009-10-06  José Millán Soto  <fid@gpul.org>
 
         Reviewed by Xan Lopez.
