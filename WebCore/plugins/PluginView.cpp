@@ -127,8 +127,8 @@ void PluginView::setFrameRect(const IntRect& rect)
     // On Windows, always call plugin to change geometry.
     setNPWindowRect(rect);
 #elif XP_UNIX
-    // On Unix, only call plugin if it's full-page.
-    if (m_mode == NP_FULL)
+    // On Unix, multiple calls to setNPWindow() in windowed mode causes Flash to crash
+    if (m_mode == NP_FULL || !m_isWindowed)
         setNPWindowRect(rect);
 #endif
 }
@@ -147,6 +147,12 @@ void PluginView::handleEvent(Event* event)
         handleMouseEvent(static_cast<MouseEvent*>(event));
     else if (event->isKeyboardEvent())
         handleKeyboardEvent(static_cast<KeyboardEvent*>(event));
+#if defined(Q_WS_X11)
+    else if (event->type() == eventNames().DOMFocusOutEvent)
+        handleFocusOutEvent();
+    else if (event->type() == eventNames().DOMFocusInEvent)
+        handleFocusInEvent();
+#endif
 }
 
 void PluginView::init()
@@ -814,6 +820,7 @@ PluginView::PluginView(Frame* parentFrame, const IntSize& size, PluginPackage* p
 #endif
 #if defined(Q_WS_X11)
     , m_hasPendingGeometryChange(false)
+    , m_pluginDisplay(0)
 #endif
     , m_loadManually(loadManually)
     , m_manualStream(0)

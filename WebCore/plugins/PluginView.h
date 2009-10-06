@@ -52,6 +52,10 @@ typedef HWND PlatformPluginWidget;
 typedef PlatformWidget PlatformPluginWidget;
 #endif
 
+#if defined(Q_WS_X11)
+#include <QPixmap>
+#endif
+
 namespace JSC {
     namespace Bindings {
         class Instance;
@@ -255,6 +259,10 @@ namespace WebCore {
 
         void handleKeyboardEvent(KeyboardEvent*);
         void handleMouseEvent(MouseEvent*);
+#if defined(Q_WS_X11)
+        void handleFocusInEvent();
+        void handleFocusOutEvent();
+#endif
 
         int m_mode;
         int m_paramCount;
@@ -322,6 +330,10 @@ private:
 
 #if defined(Q_WS_X11)
         bool m_hasPendingGeometryChange;
+        QPixmap m_drawable;
+        Display* m_pluginDisplay;
+
+        void initXEvent(XEvent* event);
 #endif
 
         IntRect m_clipRect; // The clip rect to apply to a windowed plug-in

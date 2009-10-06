@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
  * Copyright (C) 2008 Collabora Ltd. All rights reserved.
+ * Copyright (C) 2009 Girish Ramakrishnan <girish@forwardbias.in>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +31,7 @@
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Element.h"
+#include "FocusController.h"
 #include "Frame.h"
 #include "FrameLoadRequest.h"
 #include "FrameLoader.h"
@@ -58,7 +60,9 @@
 #include "runtime_root.h"
 #include "QWebPageClient.h"
 #include <QApplication>
+#include <QDesktopWidget>
 #include <QKeyEvent>
+#include <QPainter>
 #include <QWidget>
 #include <QX11Info>
 #include <runtime/JSLock.h>
@@ -81,7 +85,7 @@ using namespace HTMLNames;
 
 void PluginView::updatePluginWidget()
 {
-    if (!parent() || !m_isWindowed || !platformPluginWidget())
+    if (!parent())
         return;
 
     ASSERT(parent()->isFrameView());
@@ -96,6 +100,8 @@ void PluginView::updatePluginWidget()
 
     if (m_windowRect == oldWindowRect && m_clipRect == oldClipRect)
         return;
+
+    m_drawable = QPixmap(m_windowRect.width(), m_windowRect.height());
 
     // do not call setNPWindowIfNeeded immediately, will be called on paint()
     m_hasPendingGeometryChange = true;
@@ -151,8 +157,62 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
     if (context->paintingDisabled())
         return;
 
-    if (m_isWindowed && platformPluginWidget())
-        setNPWindowIfNeeded();
+    setNPWindowIfNeeded();
+
+    if (m_isWindowed)
+        return;
+
+    const bool syncX = m_pluginDisplay && m_pluginDisplay != QX11Info::display();
+
+    QPainter* painter = context->platformContext();
+    const bool isPaintingOnWidget = painter->device()->devType() == QInternal::Widget;
+    if (!isPaintingOnWidget || m_drawable.handle() == 0)
+        return;
+
+    if (m_isTransparent) {
+        // Attempt content propagation by copying over from the backing store
+        QPoint offset;
+        QPaintDevice* backingStoreDevice =  QPainter::redirected(painter->device(), &offset);
+        const bool hasValidBackingStore = backingStoreDevice && backingStoreDevice->devType() == QInternal::Pixmap;
+        offset = -offset; // negating the offset gives us the offset of the view within the backing store pixmap
+
+        if (hasValidBackingStore) {
+            QPixmap* backingStorePixmap = static_cast<QPixmap *>(backingStoreDevice);
+            GC gc = XDefaultGC(QX11Info::display(), QX11Info::appScreen());
+            XCopyArea(QX11Info::display(), backingStorePixmap->handle(), m_drawable.handle(), gc,
+                offset.x() + m_windowRect.x() + m_clipRect.x(), offset.y() + m_windowRect.y() + m_clipRect.y(),
+                m_clipRect.width(), m_clipRect.height(), m_clipRect.x(), m_clipRect.y());
+        } else { // no backing store, clean the pixmap
+            QPainter painter(&m_drawable);
+            painter.fillRect(m_clipRect, Qt::white);
+        }
+    }
+
+    if (syncX) {
+        // We also sync for opaque mode though we made no changes to the drawable.
+        // Not sure why this is needed but gdk fails to recognize the Pixmap handle
+        // that we send below without this.
+        QApplication::syncX();
+    }
+
+    XEvent xevent;
+    memset(&xevent, 0, sizeof(XEvent));
+    XGraphicsExposeEvent& exposeEvent = xevent.xgraphicsexpose;
+    exposeEvent.type = GraphicsExpose;
+    exposeEvent.display = QX11Info::display();
+    exposeEvent.drawable = m_drawable.handle();
+    exposeEvent.x = m_clipRect.x();
+    exposeEvent.y = m_clipRect.y();
+    exposeEvent.width = m_clipRect.x() + m_clipRect.width(); // flash bug? it thinks width is the right
+    exposeEvent.height = m_clipRect.y() + m_clipRect.height(); // flash bug? it thinks height is the bottom
+
+    dispatchNPEvent(xevent);
+
+    if (syncX)
+        XSync(m_pluginDisplay, False); // sync changes by plugin
+
+    painter->drawPixmap(frameRect().x() + m_clipRect.x(), frameRect().y() + m_clipRect.y(), m_drawable,
+        m_clipRect.x(), m_clipRect.y(), m_clipRect.width(), m_clipRect.height());
 }
 
 // TODO: Unify across ports.
@@ -165,42 +225,52 @@ bool PluginView::dispatchNPEvent(NPEvent& event)
     JSC::JSLock::DropAllLocks dropAllLocks(false);
 
     setCallingPlugin(true);
-    bool accepted = m_plugin->pluginFuncs();
+    bool accepted = m_plugin->pluginFuncs()->event(m_instance, &event);
     setCallingPlugin(false);
 
     return accepted;
 }
 
-void setSharedXEventFields(XEvent& xEvent, QWidget* hostWindow)
+void setSharedXEventFields(XEvent* xEvent, QWidget* hostWindow)
 {
-    xEvent.xany.serial = 0; // we are unaware of the last request processed by X Server
-    xEvent.xany.send_event = false;
-    xEvent.xany.display = hostWindow->x11Info().display();
-    // NOTE: event.xany.window doesn't always respond to the .window property of other XEvent's
+    xEvent->xany.serial = 0; // we are unaware of the last request processed by X Server
+    xEvent->xany.send_event = false;
+    xEvent->xany.display = hostWindow->x11Info().display();
+    // NOTE: event->xany.window doesn't always respond to the .window property of other XEvent's
     // but does in the case of KeyPress, KeyRelease, ButtonPress, ButtonRelease, and MotionNotify
     // events; thus, this is right:
-    xEvent.xany.window = hostWindow->window()->handle();
+    xEvent->xany.window = hostWindow->window()->handle();
 }
 
-void setXKeyEventSpecificFields(XEvent& xEvent, KeyboardEvent* event)
+void PluginView::initXEvent(XEvent* xEvent)
+{
+    memset(xEvent, 0, sizeof(XEvent));
+
+    QWebPageClient* client = m_parentFrame->view()->hostWindow()->platformPageClient();
+    QWidget* window = QWidget::find(client->winId());
+    setSharedXEventFields(xEvent, window);
+}
+
+void setXKeyEventSpecificFields(XEvent* xEvent, KeyboardEvent* event)
 {
     QKeyEvent* qKeyEvent = event->keyEvent()->qtEvent();
 
-    xEvent.xkey.root = QX11Info::appRootWindow();
-    xEvent.xkey.subwindow = 0; // we have no child window
-    xEvent.xkey.time = event->timeStamp();
-    xEvent.xkey.state = qKeyEvent->nativeModifiers();
-    xEvent.xkey.keycode = qKeyEvent->nativeScanCode();
-    xEvent.xkey.same_screen = true;
+    xEvent->type = (event->type() == eventNames().keydownEvent) ? 2 : 3; // ints as Qt unsets KeyPress and KeyRelease
+    xEvent->xkey.root = QX11Info::appRootWindow();
+    xEvent->xkey.subwindow = 0; // we have no child window
+    xEvent->xkey.time = event->timeStamp();
+    xEvent->xkey.state = qKeyEvent->nativeModifiers();
+    xEvent->xkey.keycode = qKeyEvent->nativeScanCode();
+    xEvent->xkey.same_screen = true;
 
     // NOTE: As the XEvents sent to the plug-in are synthesized and there is not a native window
     // corresponding to the plug-in rectangle, some of the members of the XEvent structures are not
     // set to their normal Xserver values. e.g. Key events don't have a position.
     // source: https://developer.mozilla.org/en/NPEvent
-    xEvent.xkey.x = 0;
-    xEvent.xkey.y = 0;
-    xEvent.xkey.x_root = 0;
-    xEvent.xkey.y_root = 0;
+    xEvent->xkey.x = 0;
+    xEvent->xkey.y = 0;
+    xEvent->xkey.x_root = 0;
+    xEvent->xkey.y_root = 0;
 }
 
 void PluginView::handleKeyboardEvent(KeyboardEvent* event)
@@ -208,25 +278,145 @@ void PluginView::handleKeyboardEvent(KeyboardEvent* event)
     if (m_isWindowed)
         return;
 
-    if (event->type() != "keydown" && event->type() != "keyup")
+    if (event->type() != eventNames().keydownEvent && event->type() != eventNames().keyupEvent)
         return;
 
-    XEvent npEvent; // On UNIX NPEvent is a typedef for XEvent.
-
-    npEvent.type = (event->type() == "keydown") ? 2 : 3; // ints as Qt unsets KeyPress and KeyRelease
-    QWebPageClient* client = m_parentFrame->view()->hostWindow()->platformPageClient();
-    QWidget* window = QWidget::find(client->winId());
-    setSharedXEventFields(npEvent, window);
-    setXKeyEventSpecificFields(npEvent, event);
+    XEvent npEvent;
+    initXEvent(&npEvent);
+    setXKeyEventSpecificFields(&npEvent, event);
 
     if (!dispatchNPEvent(npEvent))
         event->setDefaultHandled();
+}
+
+static unsigned int inputEventState(MouseEvent* event)
+{
+    unsigned int state = 0;
+    if (event->ctrlKey())
+        state |= ControlMask;
+    if (event->shiftKey())
+        state |= ShiftMask;
+    if (event->altKey())
+        state |= Mod1Mask;
+    if (event->metaKey())
+        state |= Mod4Mask;
+    return state;
+}
+
+static void setXButtonEventSpecificFields(XEvent* xEvent, MouseEvent* event)
+{
+    XButtonEvent& xbutton = xEvent->xbutton;
+    xbutton.type = event->type() == eventNames().mousedownEvent ? ButtonPress : ButtonRelease;
+    xbutton.root = QX11Info::appRootWindow();
+    xbutton.subwindow = 0;
+    xbutton.time = event->timeStamp();
+    xbutton.x = event->offsetX();
+    xbutton.y = event->offsetY();
+    xbutton.x_root = event->screenX();
+    xbutton.y_root = event->screenY();
+    xbutton.state = inputEventState(event);
+    switch (event->button()) {
+    case MiddleButton:
+        xbutton.button = Button2;
+        break;
+    case RightButton:
+        xbutton.button = Button3;
+        break;
+    case LeftButton:
+    default:
+        xbutton.button = Button1;
+        break;
+    }
+    xbutton.same_screen = true;
+}
+
+static void setXMotionEventSpecificFields(XEvent* xEvent, MouseEvent* event)
+{
+    XMotionEvent& xmotion = xEvent->xmotion;
+    xmotion.type = MotionNotify;
+    xmotion.root = QX11Info::appRootWindow();
+    xmotion.subwindow = 0;
+    xmotion.time = event->timeStamp();
+    xmotion.x = event->offsetX();
+    xmotion.y = event->offsetY();
+    xmotion.x_root = event->screenX();
+    xmotion.y_root = event->screenY();
+    xmotion.state = inputEventState(event);
+    xmotion.is_hint = NotifyNormal;
+    xmotion.same_screen = true;
+}
+
+static void setXCrossingEventSpecificFields(XEvent* xEvent, MouseEvent* event)
+{
+    XCrossingEvent& xcrossing = xEvent->xcrossing;
+    xcrossing.type = event->type() == eventNames().mouseoverEvent ? EnterNotify : LeaveNotify;
+    xcrossing.root = QX11Info::appRootWindow();
+    xcrossing.subwindow = 0;
+    xcrossing.time = event->timeStamp();
+    xcrossing.x = event->offsetX();
+    xcrossing.y = event->offsetY();
+    xcrossing.x_root = event->screenX();
+    xcrossing.y_root = event->screenY();
+    xcrossing.state = inputEventState(event);
+    xcrossing.mode = NotifyNormal;
+    xcrossing.detail = NotifyDetailNone;
+    xcrossing.same_screen = true;
+    xcrossing.focus = false;
 }
 
 void PluginView::handleMouseEvent(MouseEvent* event)
 {
     if (m_isWindowed)
         return;
+
+    if (event->type() == eventNames().mousedownEvent) {
+        // Give focus to the plugin on click
+        if (Page* page = m_parentFrame->page())
+            page->focusController()->setActive(true);
+
+        focusPluginElement();
+    }
+
+    XEvent npEvent;
+    initXEvent(&npEvent);
+
+    if (event->type() == eventNames().mousedownEvent || event->type() == eventNames().mouseupEvent)
+        setXButtonEventSpecificFields(&npEvent, event);
+    else if (event->type() == eventNames().mousemoveEvent)
+        setXMotionEventSpecificFields(&npEvent, event);
+    else if (event->type() == eventNames().mouseoutEvent || event->type() == eventNames().mouseoverEvent)
+        setXCrossingEventSpecificFields(&npEvent, event);
+    else
+        return;
+
+    if (!dispatchNPEvent(npEvent))
+        event->setDefaultHandled();
+}
+
+void PluginView::handleFocusInEvent()
+{
+    XEvent npEvent;
+    initXEvent(&npEvent);
+
+    XFocusChangeEvent& event = npEvent.xfocus;
+    event.type = 9; /* int as Qt unsets FocusIn */
+    event.mode = NotifyNormal;
+    event.detail = NotifyDetailNone;
+
+    dispatchNPEvent(npEvent);
+}
+
+void PluginView::handleFocusOutEvent()
+{
+    XEvent npEvent;
+    initXEvent(&npEvent);
+
+    XFocusChangeEvent& event = npEvent.xfocus;
+    event.type = 10; /* int as Qt unsets FocusOut */
+    event.mode = NotifyNormal;
+    event.detail = NotifyDetailNone;
+
+    dispatchNPEvent(npEvent);
 }
 
 void PluginView::setParent(ScrollView* parent)
@@ -239,7 +429,8 @@ void PluginView::setParent(ScrollView* parent)
 
 void PluginView::setNPWindowRect(const IntRect&)
 {
-    // Ignored as we don't want to move immediately.
+    if (!m_isWindowed)
+        setNPWindowIfNeeded();
 }
 
 void PluginView::setNPWindowIfNeeded()
@@ -255,12 +446,30 @@ void PluginView::setNPWindowIfNeeded()
         return;
     m_hasPendingGeometryChange = false;
 
-    ASSERT(platformPluginWidget());
-    platformPluginWidget()->setGeometry(m_windowRect);
-    // if setMask is set with an empty QRegion, no clipping will
-    // be performed, so in that case we hide the plugin view
-    platformPluginWidget()->setVisible(!m_clipRect.isEmpty());
-    platformPluginWidget()->setMask(QRegion(m_clipRect));
+    if (m_isWindowed) {
+        ASSERT(platformPluginWidget());
+        platformPluginWidget()->setGeometry(m_windowRect);
+        // if setMask is set with an empty QRegion, no clipping will
+        // be performed, so in that case we hide the plugin view
+        platformPluginWidget()->setVisible(!m_clipRect.isEmpty());
+        platformPluginWidget()->setMask(QRegion(m_clipRect));
+
+        m_npWindow.x = m_windowRect.x();
+        m_npWindow.y = m_windowRect.y();
+
+        m_npWindow.clipRect.left = m_clipRect.x();
+        m_npWindow.clipRect.top = m_clipRect.y();
+        m_npWindow.clipRect.right = m_clipRect.width();
+        m_npWindow.clipRect.bottom = m_clipRect.height();
+    } else {
+        m_npWindow.x = 0;
+        m_npWindow.y = 0;
+
+        m_npWindow.clipRect.left = 0;
+        m_npWindow.clipRect.top = 0;
+        m_npWindow.clipRect.right = 0;
+        m_npWindow.clipRect.bottom = 0;
+    }
 
     // FLASH WORKAROUND: Only set initially. Multiple calls to
     // setNPWindow() cause the plugin to crash.
@@ -268,16 +477,6 @@ void PluginView::setNPWindowIfNeeded()
         m_npWindow.width = m_windowRect.width();
         m_npWindow.height = m_windowRect.height();
     }
-
-    m_npWindow.x = m_windowRect.x();
-    m_npWindow.y = m_windowRect.y();
-
-    m_npWindow.clipRect.left = m_clipRect.x();
-    m_npWindow.clipRect.top = m_clipRect.y();
-    m_npWindow.clipRect.right = m_clipRect.width();
-    m_npWindow.clipRect.bottom = m_clipRect.height();
-
-    QApplication::syncX();
 
     PluginView::setCurrentPluginView(this);
     JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
@@ -340,6 +539,10 @@ NPError PluginView::getValueStatic(NPNVariable variable, void* value)
         return NPERR_NO_ERROR;
 
     case NPNVjavascriptEnabledBool:
+        *static_cast<NPBool*>(value) = true;
+        return NPERR_NO_ERROR;
+
+    case NPNVSupportsWindowless:
         *static_cast<NPBool*>(value) = true;
         return NPERR_NO_ERROR;
 
@@ -422,7 +625,7 @@ NPError PluginView::getValue(NPNVariable variable, void* value)
 
 void PluginView::invalidateRect(const IntRect& rect)
 {
-    if (platformWidget()) {
+    if (m_isWindowed) {
         platformWidget()->update(rect);
         return;
     }
@@ -432,17 +635,45 @@ void PluginView::invalidateRect(const IntRect& rect)
 
 void PluginView::invalidateRect(NPRect* rect)
 {
-    notImplemented();
+    if (!rect) {
+        invalidate();
+        return;
+    }
+    IntRect r(rect->left, rect->top, rect->right + rect->left, rect->bottom + rect->top);
+    invalidateWindowlessPluginRect(r);
 }
 
 void PluginView::invalidateRegion(NPRegion region)
 {
-    notImplemented();
+    invalidate();
 }
 
 void PluginView::forceRedraw()
 {
-    notImplemented();
+    invalidate();
+}
+
+static Display *getPluginDisplay()
+{
+    // The plugin toolkit might run using a different X connection. At the moment, we only
+    // support gdk based plugins (like flash) that use a different X connection.
+    // The code below has the same effect as this one:
+    // Display *gdkDisplay = gdk_x11_display_get_xdisplay(gdk_display_get_default());
+    QLibrary library("libgdk-x11-2.0");
+    if (!library.load())
+        return 0;
+
+    typedef void *(*gdk_display_get_default_ptr)();
+    gdk_display_get_default_ptr gdk_display_get_default = (gdk_display_get_default_ptr)library.resolve("gdk_display_get_default");
+    if (!gdk_display_get_default)
+        return 0;
+
+    typedef void *(*gdk_x11_display_get_xdisplay_ptr)(void *);
+    gdk_x11_display_get_xdisplay_ptr gdk_x11_display_get_xdisplay = (gdk_x11_display_get_xdisplay_ptr)library.resolve("gdk_x11_display_get_xdisplay");
+    if (!gdk_x11_display_get_xdisplay)
+        return 0;
+
+    return (Display*)gdk_x11_display_get_xdisplay(gdk_display_get_default());
 }
 
 bool PluginView::platformStart()
@@ -459,30 +690,49 @@ bool PluginView::platformStart()
         PluginView::setCurrentPluginView(0);
     }
 
-    if (m_needsXEmbed) {
-        QWebPageClient* client = m_parentFrame->view()->hostWindow()->platformPageClient();
-        setPlatformWidget(new PluginContainerQt(this, QWidget::find(client->winId())));
+    if (m_isWindowed) {
+        if (m_needsXEmbed) {
+            QWebPageClient* client = m_parentFrame->view()->hostWindow()->platformPageClient();
+            setPlatformWidget(new PluginContainerQt(this, QWidget::find(client->winId())));
+        } else {
+            notImplemented();
+            m_status = PluginStatusCanNotLoadPlugin;
+            return false;
+        }
     } else {
-        notImplemented();
-        return false;
+        setPlatformWidget(0);
+        m_pluginDisplay = getPluginDisplay();
     }
 
     show();
 
     NPSetWindowCallbackStruct *wsi = new NPSetWindowCallbackStruct();
-
     wsi->type = 0;
+    
+    const QX11Info* x11Info = 0;
+    if (m_isWindowed) {
+        x11Info = &platformPluginWidget()->x11Info();
 
-    wsi->display = platformPluginWidget()->x11Info().display();
-    wsi->visual = (Visual*)platformPluginWidget()->x11Info().visual();
-    wsi->depth = platformPluginWidget()->x11Info().depth();
-    wsi->colormap = platformPluginWidget()->x11Info().colormap();
+        m_npWindow.type = NPWindowTypeWindow;
+        m_npWindow.window = (void*)platformPluginWidget()->winId();
+        m_npWindow.width = -1;
+        m_npWindow.height = -1;
+    } else {
+        x11Info = &QApplication::desktop()->x11Info();
+
+        m_npWindow.type = NPWindowTypeDrawable;
+        m_npWindow.window = 0; // Not used?
+        m_npWindow.x = 0;
+        m_npWindow.y = 0;
+        m_npWindow.width = -1;
+        m_npWindow.height = -1;
+    }
+
+    wsi->display = x11Info->display();
+    wsi->visual = (Visual*)x11Info->visual();
+    wsi->depth = x11Info->depth();
+    wsi->colormap = x11Info->colormap();
     m_npWindow.ws_info = wsi;
-
-    m_npWindow.type = NPWindowTypeWindow;
-    m_npWindow.window = (void*)platformPluginWidget()->winId();
-    m_npWindow.width = -1;
-    m_npWindow.height = -1;
 
     if (!(m_plugin->quirks().contains(PluginQuirkDeferFirstSetWindowCall))) {
         updatePluginWidget();

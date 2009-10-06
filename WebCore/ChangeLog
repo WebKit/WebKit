@@ -1,3 +1,40 @@
+2009-10-06  Girish Ramakrishnan  <girish@forwardbias.in>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Add support for windowless NPAPI plugins
+
+        https://bugs.webkit.org/show_bug.cgi?id=20081
+
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::setFrameRect):
+        (WebCore::PluginView::handleEvent):
+        (WebCore::PluginView::PluginView):
+        * plugins/PluginView.h:
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::updatePluginWidget):
+        (WebCore::PluginView::paint):
+        (WebCore::PluginView::dispatchNPEvent):
+        (WebCore::setSharedXEventFields):
+        (WebCore::PluginView::initXEvent):
+        (WebCore::setXKeyEventSpecificFields):
+        (WebCore::PluginView::handleKeyboardEvent):
+        (WebCore::inputEventState):
+        (WebCore::setXButtonEventSpecificFields):
+        (WebCore::setXMotionEventSpecificFields):
+        (WebCore::setXCrossingEventSpecificFields):
+        (WebCore::PluginView::handleMouseEvent):
+        (WebCore::PluginView::handleFocusInEvent):
+        (WebCore::PluginView::handleFocusOutEvent):
+        (WebCore::PluginView::setNPWindowRect):
+        (WebCore::PluginView::setNPWindowIfNeeded):
+        (WebCore::PluginView::getValueStatic):
+        (WebCore::PluginView::invalidateRect):
+        (WebCore::PluginView::invalidateRegion):
+        (WebCore::PluginView::forceRedraw):
+        (WebCore::getPluginDisplay):
+        (WebCore::PluginView::platformStart):
+
 2009-10-05  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.
