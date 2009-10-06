@@ -1,3 +1,32 @@
+2009-10-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Updated results for media tests after controller change to add the fullscreen button. 
+
+        * platform/mac/media/audio-controls-rendering-expected.checksum:
+        * platform/mac/media/audio-controls-rendering-expected.png:
+        * platform/mac/media/audio-controls-rendering-expected.txt:
+        * platform/mac/media/controls-after-reload-expected.checksum: Added.
+        * platform/mac/media/controls-after-reload-expected.png: Added.
+        * platform/mac/media/controls-after-reload-expected.txt:
+        * platform/mac/media/controls-styling-expected.checksum:
+        * platform/mac/media/controls-styling-expected.png:
+        * platform/mac/media/controls-styling-expected.txt:
+        * platform/mac/media/video-aspect-ratio-expected.checksum:
+        * platform/mac/media/video-aspect-ratio-expected.png:
+        * platform/mac/media/video-empty-source-expected.checksum:
+        * platform/mac/media/video-empty-source-expected.png:
+        * platform/mac/media/video-empty-source-expected.txt:
+        * platform/mac/media/video-no-audio-expected.checksum:
+        * platform/mac/media/video-no-audio-expected.png:
+        * platform/mac/media/video-no-audio-expected.txt:
+        * platform/mac/media/video-transformed-expected.checksum:
+        * platform/mac/media/video-transformed-expected.png:
+        * platform/mac/media/video-zoom-controls-expected.checksum: Added.
+        * platform/mac/media/video-zoom-controls-expected.png: Added.
+        * platform/mac/media/video-zoom-controls-expected.txt:
+        * platform/mac/media/video-zoom-expected.checksum:
+        * platform/mac/media/video-zoom-expected.png:
+
 2009-10-05  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
