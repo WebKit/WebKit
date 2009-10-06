@@ -2,6 +2,18 @@
 
         Reviewed by Darin Fisher.
 
+        Add a test to verify session storage does not have a quota
+        https://bugs.webkit.org/show_bug.cgi?id=30093
+
+        * storage/domstorage/script-tests/no-quota.js: Added.
+        (runTest):
+        * storage/domstorage/sessionstorage/no-quota-expected.txt: Added.
+        * storage/domstorage/sessionstorage/no-quota.html: Added.
+
+2009-10-05  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Darin Fisher.
+
         Convert DOM Storage's "complex-values" test into the new format.
         https://bugs.webkit.org/show_bug.cgi?id=30097
 
