@@ -1,3 +1,13 @@
+2009-10-05  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        One of the dependencies' SVN url was missing a @ before the revision number.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30101
+
+        * chromium/DEPS:
+
 2009-10-05  Pierre d'Herbemont  <pdherbemont@webkit.org>
 
         Reviewed by Simon Fraser

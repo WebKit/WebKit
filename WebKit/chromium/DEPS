@@ -128,7 +128,7 @@ deps_os = {
       Var('chromium_deps_svn')+'/cygwin@'+Var('cygwin_rev'),
 
     'third_party/python_24':
-      Var('chromium_deps_svn')+'/python_24'+Var('python_24_rev'),
+      Var('chromium_deps_svn')+'/python_24@'+Var('python_24_rev'),
 
     'third_party/ffmpeg/binaries/chromium/win/ia32':
       Var('chromium_deps_svn')+'/ffmpeg/binaries/win@'+Var('ffmpeg_ia32_rev'),
