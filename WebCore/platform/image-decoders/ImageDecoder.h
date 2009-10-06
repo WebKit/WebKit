@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2008-2009 Torch Mobile, Inc.
+ * Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,6 +38,8 @@
 
 #if PLATFORM(SKIA)
 #include "NativeImageSkia.h"
+#elif PLATFORM(QT)
+#include <QImage>
 #endif
 
 namespace WebCore {
@@ -54,7 +57,7 @@ namespace WebCore {
             DisposeOverwriteBgcolor,   // Clear frame to transparent
             DisposeOverwritePrevious,  // Clear frame to previous framebuffer contents
         };
-#if PLATFORM(SKIA)
+#if PLATFORM(SKIA) || PLATFORM(QT)
         typedef uint32_t PixelData;
 #else
         typedef unsigned PixelData;
@@ -126,6 +129,11 @@ namespace WebCore {
             setRGBA(getAddr(x, y), r, g, b, a);
         }
 
+#if PLATFORM(QT)
+        void setDecodedImage(const QImage& image);
+        QImage decodedImage() const { return m_image; }
+#endif
+
     private:
         RGBA32Buffer& operator=(const RGBA32Buffer& other);
 
@@ -136,6 +144,8 @@ namespace WebCore {
         {
 #if PLATFORM(SKIA)
             return m_bitmap.getAddr32(x, y);
+#elif PLATFORM(QT)
+            return reinterpret_cast<QRgb*>(m_image.scanLine(y)) + x;
 #else
             return m_bytes.data() + (y * width()) + x;
 #endif
@@ -159,6 +169,10 @@ namespace WebCore {
 
 #if PLATFORM(SKIA)
         NativeImageSkia m_bitmap;
+#elif PLATFORM(QT)
+        QImage m_image;
+        bool m_hasAlpha;
+        IntSize m_size;
 #else
         Vector<PixelData> m_bytes;
         IntSize m_size;       // The size of the buffer.  This should be the

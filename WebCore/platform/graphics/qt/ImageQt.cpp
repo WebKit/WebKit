@@ -76,6 +76,7 @@ bool FrameData::clear(bool clearMetadata)
         m_haveMetadata = false;
 
     if (m_frame) {
+        delete m_frame;
         m_frame = 0;
         return true;
     }

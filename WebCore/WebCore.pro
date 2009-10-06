@@ -1175,6 +1175,7 @@ SOURCES += \
     platform/DragImage.cpp \
     platform/FileChooser.cpp \
     platform/GeolocationService.cpp \
+    platform/image-decoders/qt/RGBA32BufferQt.cpp \
     platform/graphics/FontDescription.cpp \
     platform/graphics/FontFamily.cpp \
     platform/graphics/BitmapImage.cpp \
@@ -1851,6 +1852,7 @@ HEADERS += \
     platform/DragImage.h \
     platform/FileChooser.h \
     platform/GeolocationService.h \
+    platform/image-decoders/ImageDecoder.h \
     platform/mock/GeolocationServiceMock.h \
     platform/graphics/BitmapImage.h \
     platform/graphics/Color.h \
@@ -2334,7 +2336,6 @@ SOURCES += \
     platform/graphics/qt/ImageBufferQt.cpp \
     platform/graphics/qt/ImageDecoderQt.cpp \
     platform/graphics/qt/ImageQt.cpp \
-    platform/graphics/qt/ImageSourceQt.cpp \
     platform/graphics/qt/IntPointQt.cpp \
     platform/graphics/qt/IntRectQt.cpp \
     platform/graphics/qt/IntSizeQt.cpp \

@@ -48,32 +48,16 @@ public:
     virtual int repetitionCount() const;
     virtual RGBA32Buffer* frameBufferAtIndex(size_t index);
 
-    QPixmap* imageAtIndex(size_t index) const;
-    virtual bool supportsAlpha() const;
-    int duration(size_t index) const;
     virtual String filenameExtension() const;
 
-    void clearFrame(size_t index);
+    virtual void clearFrameBufferCache(size_t clearBeforeFrame);
 
 private:
     ImageDecoderQt(const ImageDecoderQt&);
     ImageDecoderQt &operator=(const ImageDecoderQt&);
 
     class ReadContext;
-    bool hasFirstImageHeader() const;
 
-
-    // TODO: Replace usage of ImageData with RGBBuffer32
-    struct ImageData {
-        ImageData(const QImage& image, int duration=0);
-        QImage m_image;
-        int m_duration;
-    };
-
-    bool m_hasAlphaChannel;
-    typedef QList<ImageData> ImageList;
-    mutable ImageList m_imageList;
-    mutable QHash<int, QPixmap> m_pixmapCache;
     int m_loopCount;
     String m_imageFormat;
 };

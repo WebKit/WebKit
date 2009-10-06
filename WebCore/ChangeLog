@@ -2,6 +2,56 @@
 
         Reviewed by Simon Hausmann.
 
+        [Qt] Make use of RGBA32Buffer in ImageDecoderQt
+        https://bugs.webkit.org/show_bug.cgi?id=27538
+
+        Use the RGBA32Buffer instead of the internal ImageData
+        to be able to use support of the base class, optionally
+        support WebCore decoders for Qt and most importantly
+        separate metadata and image data for better cache control.
+
+        Remove ImageSourceQt as everything is now shared with
+        the normal ImageSource.
+
+        Change the ownership of the NativeImagePtr/QPixmap in
+        ImageQt.cpp to delete the m_frame to be subject to cache
+        control.
+
+        * WebCore.pro:
+        * platform/graphics/ImageSource.cpp:
+        * platform/graphics/qt/ImageDecoderQt.cpp:
+        (WebCore::ImageDecoderQt::ReadContext::ReadContext):
+        (WebCore::ImageDecoderQt::ReadContext::read):
+        (WebCore::ImageDecoderQt::ReadContext::readImageLines):
+        (WebCore::ImageDecoderQt::ImageDecoderQt):
+        (WebCore::ImageDecoderQt::setData):
+        (WebCore::ImageDecoderQt::frameCount):
+        (WebCore::ImageDecoderQt::frameBufferAtIndex):
+        (WebCore::ImageDecoderQt::clearFrameBufferCache):
+        * platform/graphics/qt/ImageDecoderQt.h:
+        * platform/graphics/qt/ImageSourceQt.cpp: Removed.
+        * platform/image-decoders/ImageDecoder.h:
+        (WebCore::RGBA32Buffer::decodedImage):
+        (WebCore::RGBA32Buffer::getAddr):
+        * platform/image-decoders/qt/RGBA32BufferQt.cpp: Added.
+        (WebCore::RGBA32Buffer::RGBA32Buffer):
+        (WebCore::RGBA32Buffer::setDecodedImage):
+        (WebCore::RGBA32Buffer::clear):
+        (WebCore::RGBA32Buffer::zeroFill):
+        (WebCore::RGBA32Buffer::copyBitmapData):
+        (WebCore::RGBA32Buffer::setSize):
+        (WebCore::RGBA32Buffer::asNewNativeImage):
+        (WebCore::RGBA32Buffer::hasAlpha):
+        (WebCore::RGBA32Buffer::setHasAlpha):
+        (WebCore::RGBA32Buffer::setStatus):
+        (WebCore::RGBA32Buffer::operator=):
+        (WebCore::RGBA32Buffer::width):
+        (WebCore::RGBA32Buffer::height):
+
+2009-10-05  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon Hausmann.
+
         [Qt] ImageDecoderQt avoid QString creation.
         https://bugs.webkit.org/show_bug.cgi?id=27538
 
