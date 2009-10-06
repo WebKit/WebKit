@@ -1,3 +1,10 @@
+2009-10-06  Julie Parent  <jparent@chromium.org>
+
+        Unreviewed. Fixing the entry for myself in committers.py to use my bugzilla email,
+        rather than my committer email.
+
+        * Scripts/modules/committers.py:
+
 2009-10-06  Jakub Wieczorek  <faw217@gmail.com>
 
         Reviewed by Eric Seidel.
