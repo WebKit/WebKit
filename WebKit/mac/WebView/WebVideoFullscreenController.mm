@@ -56,7 +56,7 @@ SOFT_LINK_CLASS(QTKit, QTMovieView)
 - (void)setMovieView:(QTMovieView *)movieView;
 @end
 
-@interface WebVideoFullscreenController () <WebVideoFullscreenHUDWindowControllerDelegate>
+@interface WebVideoFullscreenController(HUDWindowControllerDelegate) <WebVideoFullscreenHUDWindowControllerDelegate>
 @end
 
 @implementation WebVideoFullscreenController
