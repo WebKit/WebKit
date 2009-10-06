@@ -1,3 +1,20 @@
+2009-10-06  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Ariya Hidayat.
+
+        Qt build fix.
+        https://bugs.webkit.org/show_bug.cgi?id=29362.
+
+        In Qt 4.5, a new function QPainter::fillRect(QRect, QColor) is
+        introduced to avoid the expensive construction of QBrush.
+        By casting WebCore::Color to QColor, we can compile on Qt 4.4
+        and use optimization for solid color fill in Qt 4.5.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::drawRect):
+        (WebCore::GraphicsContext::drawLine):
+        (WebCore::drawBorderlessRectShadow):
+
 2009-10-05  Andrei Popescu  <andreip@google.com>
 
         Reviewed by Eric Carlson.
