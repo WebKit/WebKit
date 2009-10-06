@@ -48,7 +48,7 @@ PassRefPtr<StorageSyncManager> StorageSyncManager::create(const String& path)
 }
 
 StorageSyncManager::StorageSyncManager(const String& path)
-    : m_path(path.copy())
+    : m_path(path.crossThreadString())
 {
     ASSERT(isMainThread());
     ASSERT(!m_path.isEmpty());

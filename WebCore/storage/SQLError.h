@@ -41,10 +41,10 @@ public:
     static PassRefPtr<SQLError> create(unsigned code, const String& message) { return adoptRef(new SQLError(code, message)); }
 
     unsigned code() const { return m_code; }
-    String message() const { return m_message.copy(); }
+    String message() const { return m_message.threadsafeCopy(); }
 
 private:
-    SQLError(unsigned code, const String& message) : m_code(code), m_message(message.copy()) { }
+    SQLError(unsigned code, const String& message) : m_code(code), m_message(message.threadsafeCopy()) { }
     unsigned m_code;
     String m_message;
 };

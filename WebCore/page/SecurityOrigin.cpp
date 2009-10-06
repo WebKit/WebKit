@@ -116,9 +116,9 @@ SecurityOrigin::SecurityOrigin(const KURL& url)
 }
 
 SecurityOrigin::SecurityOrigin(const SecurityOrigin* other)
-    : m_protocol(other->m_protocol.copy())
-    , m_host(other->m_host.copy())
-    , m_domain(other->m_domain.copy())
+    : m_protocol(other->m_protocol.threadsafeCopy())
+    , m_host(other->m_host.threadsafeCopy())
+    , m_domain(other->m_domain.threadsafeCopy())
     , m_port(other->m_port)
     , m_noAccess(other->m_noAccess)
     , m_universalAccess(other->m_universalAccess)
@@ -144,7 +144,7 @@ PassRefPtr<SecurityOrigin> SecurityOrigin::createEmpty()
     return create(KURL());
 }
 
-PassRefPtr<SecurityOrigin> SecurityOrigin::copy()
+PassRefPtr<SecurityOrigin> SecurityOrigin::threadsafeCopy()
 {
     return adoptRef(new SecurityOrigin(this));
 }

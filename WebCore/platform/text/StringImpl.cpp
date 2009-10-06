@@ -218,15 +218,6 @@ PassRefPtr<StringImpl> StringImpl::substring(unsigned start, unsigned length)
     return create(m_data + start, length);
 }
 
-PassRefPtr<StringImpl> StringImpl::substringCopy(unsigned start, unsigned length)
-{
-    start = min(start, m_length);
-    length = min(length, m_length - start);
-    if (!length)
-        return adoptRef(new StringImpl);
-    return create(m_data + start, length);
-}
-
 UChar32 StringImpl::characterStartingAt(unsigned i)
 {
     if (U16_IS_SINGLE(m_data[i]))
@@ -1074,8 +1065,21 @@ PassRefPtr<StringImpl> StringImpl::createWithTerminatingNullCharacter(const Stri
     return adoptRef(new StringImpl(string, WithTerminatingNullCharacter()));
 }
 
-PassRefPtr<StringImpl> StringImpl::copy()
+PassRefPtr<StringImpl> StringImpl::threadsafeCopy() const
 {
+    // Using the constructor directly to make sure that per-thread empty string instance isn't returned.
+    return adoptRef(new StringImpl(m_data, m_length));
+}
+
+PassRefPtr<StringImpl> StringImpl::crossThreadString()
+{
+    SharedUChar* shared = sharedBuffer();
+    if (shared) {
+        RefPtr<StringImpl> impl = adoptRef(new StringImpl(const_cast<UChar*>(m_data), m_length, AdoptBuffer()));
+        impl->m_sharedBufferAndFlags.set(shared->crossThreadCopy().releaseRef());
+        return impl.release();
+    }
+
     // Using the constructor directly to make sure that per-thread empty string instance isn't returned.
     return adoptRef(new StringImpl(m_data, m_length));
 }

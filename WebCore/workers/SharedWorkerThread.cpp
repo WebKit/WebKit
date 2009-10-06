@@ -45,7 +45,7 @@ PassRefPtr<SharedWorkerThread> SharedWorkerThread::create(const String& name, co
 
 SharedWorkerThread::SharedWorkerThread(const String& name, const KURL& url, const String& userAgent, const String& sourceCode, WorkerLoaderProxy& workerLoaderProxy, WorkerReportingProxy& workerReportingProxy)
     : WorkerThread(url, userAgent, sourceCode, workerLoaderProxy, workerReportingProxy)
-    , m_name(name.copy())
+    , m_name(name.crossThreadString())
 {
 }
 

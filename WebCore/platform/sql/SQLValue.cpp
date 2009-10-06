@@ -32,10 +32,10 @@
 namespace WebCore {
 
 SQLValue::SQLValue(const SQLValue& val)
+    : m_type(val.m_type)
+    , m_number(val.m_number)
+    , m_string(val.m_string.threadsafeCopy())
 {
-    m_number = val.m_number;
-    m_string = val.m_string.copy();
-    m_type = val.m_type;
 }
 
 String SQLValue::string() const
@@ -43,7 +43,7 @@ String SQLValue::string() const
     ASSERT(m_type == StringValue);
 
     // Must return a copy since ref-shared Strings are not thread safe
-    return m_string.copy();
+    return m_string.threadsafeCopy();
 }
 
 double SQLValue::number() const

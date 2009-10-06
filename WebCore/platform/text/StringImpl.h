@@ -114,15 +114,12 @@ public:
     static unsigned computeHash(const UChar*, unsigned len);
     static unsigned computeHash(const char*);
     
-    // Makes a deep copy. Helpful only if you need to use a String on another thread.
+    // Returns a StringImpl suitable for use on another thread.
+    PassRefPtr<StringImpl> crossThreadString();
+    // Makes a deep copy. Helpful only if you need to use a String on another thread
+    // (use crossThreadString if the method call doesn't need to be threadsafe).
     // Since StringImpl objects are immutable, there's no other reason to make a copy.
-    PassRefPtr<StringImpl> copy();
-
-    // Makes a deep copy like copy() but only for a substring.
-    // (This ensures that you always get something suitable for a thread while subtring
-    // may not.  For example, in the empty string case, substring returns empty() which
-    // is not safe for another thread.)
-    PassRefPtr<StringImpl> substringCopy(unsigned pos, unsigned len  = UINT_MAX);
+    PassRefPtr<StringImpl> threadsafeCopy() const;
 
     PassRefPtr<StringImpl> substring(unsigned pos, unsigned len = UINT_MAX);
 

@@ -53,7 +53,7 @@ const int updateTimerDelay = 5;
 String IconDatabase::defaultDatabaseFilename()
 {
     DEFINE_STATIC_LOCAL(String, defaultDatabaseFilename, ("Icons.db"));
-    return defaultDatabaseFilename.copy();
+    return defaultDatabaseFilename.threadsafeCopy();
 }
 
 IconDatabase* iconDatabase()

@@ -102,7 +102,7 @@ static inline void updateGuidVersionMap(int guid, String newVersion)
     // FIXME: This is a quite-awkward restriction to have to program with.
 
     // Map null string to empty string (see comment above).
-    guidToVersionMap().set(guid, newVersion.isEmpty() ? String() : newVersion.copy());
+    guidToVersionMap().set(guid, newVersion.isEmpty() ? String() : newVersion.threadsafeCopy());
 }
 
 typedef HashMap<int, HashSet<Database*>*> GuidDatabaseMap;
@@ -150,7 +150,7 @@ PassRefPtr<Database> Database::openDatabase(Document* document, const String& na
 Database::Database(Document* document, const String& name, const String& expectedVersion)
     : m_transactionInProgress(false)
     , m_document(document)
-    , m_name(name.copy())
+    , m_name(name.crossThreadString())
     , m_guid(0)
     , m_expectedVersion(expectedVersion)
     , m_deleted(false)
@@ -247,7 +247,7 @@ bool Database::getVersionFromDatabase(String& version)
 
     m_databaseAuthorizer->disable();
 
-    bool result = retrieveTextResultFromDatabase(m_sqliteDatabase, getVersionQuery.copy(), version);
+    bool result = retrieveTextResultFromDatabase(m_sqliteDatabase, getVersionQuery.threadsafeCopy(), version);
     if (!result)
         LOG_ERROR("Failed to retrieve version from database %s", databaseDebugName().ascii().data());
 
@@ -285,7 +285,7 @@ bool Database::setVersionInDatabase(const String& version)
 
     m_databaseAuthorizer->disable();
 
-    bool result = setTextValueInDatabase(m_sqliteDatabase, setVersionQuery.copy(), version);
+    bool result = setTextValueInDatabase(m_sqliteDatabase, setVersionQuery.threadsafeCopy(), version);
     if (!result)
         LOG_ERROR("Failed to set version %s in database (%s)", version.ascii().data(), setVersionQuery.ascii().data());
 
@@ -618,7 +618,7 @@ String Database::version() const
     if (m_deleted)
         return String();
     MutexLocker locker(guidMutex());
-    return guidToVersionMap().get(m_guid).copy();
+    return guidToVersionMap().get(m_guid).threadsafeCopy();
 }
 
 void Database::deliverPendingCallback(void* context)
@@ -643,7 +643,7 @@ Vector<String> Database::tableNames()
 
 void Database::setExpectedVersion(const String& version)
 {
-    m_expectedVersion = version.copy();
+    m_expectedVersion = version.threadsafeCopy();
     // Update the in memory database version map.
     MutexLocker locker(guidMutex());
     updateGuidVersionMap(m_guid, version);
@@ -651,13 +651,13 @@ void Database::setExpectedVersion(const String& version)
 
 PassRefPtr<SecurityOrigin> Database::securityOriginCopy() const
 {
-    return m_securityOrigin->copy();
+    return m_securityOrigin->threadsafeCopy();
 }
 
 String Database::stringIdentifier() const
 {
     // Return a deep copy for ref counting thread safety
-    return m_name.copy();
+    return m_name.threadsafeCopy();
 }
 
 #endif

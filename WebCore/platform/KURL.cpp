@@ -529,7 +529,7 @@ void KURL::init(const KURL& base, const String& relative, const TextEncoding& en
 KURL KURL::copy() const
 {
     KURL result = *this;
-    result.m_string = result.m_string.copy();
+    result.m_string = result.m_string.crossThreadString();
     return result;
 }
 

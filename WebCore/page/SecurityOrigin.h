@@ -52,7 +52,7 @@ namespace WebCore {
 
         // Create a deep copy of this SecurityOrigin.  This method is useful
         // when marshalling a SecurityOrigin to another thread.
-        PassRefPtr<SecurityOrigin> copy();
+        PassRefPtr<SecurityOrigin> threadsafeCopy();
 
         // Set the domain property of this security origin to newDomain.  This
         // function does not check whether newDomain is a suffix of the current

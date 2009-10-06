@@ -77,7 +77,7 @@ public:
 private:
     Task(PassRefPtr<ScriptExecutionContext::Task> task, const String& mode)
         : m_task(task)
-        , m_mode(mode.copy())
+        , m_mode(mode.crossThreadString())
     {
     }
 
@@ -205,7 +205,7 @@ void WorkerRunLoop::postTask(PassRefPtr<ScriptExecutionContext::Task> task)
 
 void WorkerRunLoop::postTaskForMode(PassRefPtr<ScriptExecutionContext::Task> task, const String& mode)
 {
-    m_messageQueue.append(Task::create(task, mode.copy()));
+    m_messageQueue.append(Task::create(task, mode.crossThreadString()));
 }
 
 } // namespace WebCore

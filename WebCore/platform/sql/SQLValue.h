@@ -38,9 +38,9 @@ namespace WebCore {
     public:
         enum Type { NullValue, NumberValue, StringValue };
 
-        SQLValue() : m_type(NullValue) { }
+        SQLValue() : m_type(NullValue), m_number(0.0) { }
         SQLValue(double number) : m_type(NumberValue), m_number(number) { }
-        SQLValue(const String& s) : m_type(StringValue), m_string(s) { }
+        SQLValue(const String& s) : m_type(StringValue), m_number(0.0), m_string(s) { }
         SQLValue(const SQLValue&);
 
         Type type() const { return m_type; }

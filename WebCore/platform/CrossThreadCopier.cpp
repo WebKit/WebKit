@@ -41,7 +41,7 @@ namespace WebCore {
 
 CrossThreadCopierBase<false, String>::Type CrossThreadCopierBase<false, String>::copy(const String& str)
 {
-    return str.copy();
+    return str.crossThreadString();
 }
 
 CrossThreadCopierBase<false, ResourceError>::Type CrossThreadCopierBase<false, ResourceError>::copy(const ResourceError& error)

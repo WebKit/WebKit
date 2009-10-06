@@ -762,7 +762,7 @@ void DatabaseTracker::scheduleNotifyDatabaseChanged(SecurityOrigin* origin, cons
 {
     MutexLocker locker(notificationMutex());
 
-    notificationQueue().append(pair<SecurityOrigin*, String>(origin, name.copy()));
+    notificationQueue().append(pair<SecurityOrigin*, String>(origin, name.crossThreadString()));
     scheduleForNotification();
 }
 

@@ -108,12 +108,12 @@ auto_ptr<CrossThreadResourceResponseData> ResourceResponseBase::copyData() const
 {
     auto_ptr<CrossThreadResourceResponseData> data(new CrossThreadResourceResponseData());
     data->m_url = url().copy();
-    data->m_mimeType = mimeType().copy();
+    data->m_mimeType = mimeType().crossThreadString();
     data->m_expectedContentLength = expectedContentLength();
-    data->m_textEncodingName = textEncodingName().copy();
-    data->m_suggestedFilename = suggestedFilename().copy();
+    data->m_textEncodingName = textEncodingName().crossThreadString();
+    data->m_suggestedFilename = suggestedFilename().crossThreadString();
     data->m_httpStatusCode = httpStatusCode();
-    data->m_httpStatusText = httpStatusText().copy();
+    data->m_httpStatusText = httpStatusText().crossThreadString();
     data->m_httpHeaders.adopt(httpHeaderFields().copyData());
     data->m_lastModifiedDate = lastModifiedDate();
     return data;

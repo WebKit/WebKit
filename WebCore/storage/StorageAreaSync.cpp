@@ -140,7 +140,7 @@ void StorageAreaSync::syncTimerFired(Timer<StorageAreaSync>*)
         }
 
         for (; it != end; ++it)
-            m_itemsPendingSync.set(it->first.copy(), it->second.copy());
+            m_itemsPendingSync.set(it->first.crossThreadString(), it->second.crossThreadString());
 
         if (!m_syncScheduled) {
             m_syncScheduled = true;

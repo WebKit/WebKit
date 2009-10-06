@@ -45,7 +45,7 @@ auto_ptr<CrossThreadHTTPHeaderMapData> HTTPHeaderMap::copyData() const
 
     HTTPHeaderMap::const_iterator end_it = end();
     for (HTTPHeaderMap::const_iterator it = begin(); it != end_it; ++it) {
-        data->append(make_pair(it->first.string().copy(), it->second.copy()));
+        data->append(make_pair(it->first.string().crossThreadString(), it->second.crossThreadString()));
     }
     return data;
 }

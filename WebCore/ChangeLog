@@ -1,3 +1,112 @@
+2009-10-06  David Levin  <levin@chromium.org>
+
+        Reviewed by Oliver Hunt.
+
+        StringImpl needs a method to get an instance for another thread which doesn't copy the underlying buffer.
+        https://bugs.webkit.org/show_bug.cgi?id=30095
+
+        All String::copy methods were changed to call either threadsafeCopy or crossThreadString. The method
+        call was made threadsafeCopy unless I could show that threadsafety wasn't needed.
+
+        No visible change in functionality so no new tests.
+
+        * dom/MessagePortChannel.cpp:
+        (WebCore::MessagePortChannel::EventData::EventData):
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::MainThreadBridge):
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::open):
+        (WebCore::IconDatabase::iconForPageURL):
+        (WebCore::IconDatabase::iconURLForPageURL):
+        (WebCore::IconDatabase::retainIconForPageURL):
+        (WebCore::IconDatabase::releaseIconForPageURL):
+        (WebCore::IconDatabase::setIconDataForIconURL):
+        (WebCore::IconDatabase::setIconURLForPageURL):
+        (WebCore::IconDatabase::databasePath):
+        (WebCore::IconDatabase::defaultDatabaseFilename):
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::SecurityOrigin): Since this is used by SecurityOrigin::threadsafeCopy,
+        it makes threadsafe calls.
+        (WebCore::SecurityOrigin::threadsafeCopy): The only place that called this
+        needed a threadsafe method.
+        * page/SecurityOrigin.h:
+        * platform/CrossThreadCopier.cpp:
+        (WebCore::::copy):
+        * platform/KURL.cpp:
+        (WebCore::KURL::copy):
+        * platform/network/HTTPHeaderMap.cpp:
+        (WebCore::HTTPHeaderMap::copyData):
+        * platform/network/ResourceErrorBase.cpp:
+        (WebCore::ResourceErrorBase::copy):
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::copyData):
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::copyData):
+        * platform/sql/SQLValue.cpp:
+        (WebCore::SQLValue::SQLValue):
+        (WebCore::SQLValue::string):
+        * platform/sql/SQLValue.h:
+        (WebCore::SQLValue::SQLValue):
+        All constructors now initialize the m_number which is a double. Failure to
+        do so can result in unexpected crashes when it is copied in the copy constructor.
+        See http://blogs.msdn.com/oldnewthing/archive/2008/07/02/8679191.aspx, I was that colleague.
+        * platform/text/PlatformString.h:
+        * platform/text/String.cpp:
+        (WebCore::String::threadsafeCopy):
+        (WebCore::String::crossThreadString):
+        * platform/text/StringImpl.cpp:
+        Removed StringImpl::substringCopy which was no longer being used anywhere.
+        (WebCore::StringImpl::threadsafeCopy): Changed the name to indicate that
+        it is threadsafe.
+        (WebCore::StringImpl::crossThreadString): The way to get strings for
+        another thread which is not threadsafe. This shares the underlying buffer
+        with both strings and gives them a way to do threadsafe refcounting for it.
+        * platform/text/StringImpl.h:
+        * storage/ChangeVersionWrapper.cpp:
+        (WebCore::ChangeVersionWrapper::ChangeVersionWrapper):
+        * storage/Database.cpp:
+        (WebCore::updateGuidVersionMap):
+        (WebCore::Database::Database):
+        (WebCore::Database::getVersionFromDatabase):
+        (WebCore::Database::setVersionInDatabase):
+        (WebCore::Database::version):
+        (WebCore::Database::setExpectedVersion):
+        (WebCore::Database::securityOriginCopy):
+        (WebCore::Database::stringIdentifier):
+        * storage/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::scheduleNotifyDatabaseChanged):
+        * storage/OriginQuotaManager.cpp:
+        (WebCore::OriginQuotaManager::addDatabase):
+        * storage/SQLError.h:
+        (WebCore::SQLError::message):
+        (WebCore::SQLError::SQLError):
+        * storage/SQLStatement.cpp:
+        (WebCore::SQLStatement::SQLStatement):
+        * storage/StorageAreaSync.cpp:
+        (WebCore::StorageAreaSync::syncTimerFired):
+        * storage/StorageMap.cpp:
+        (WebCore::StorageMap::importItem):
+        * storage/StorageNamespaceImpl.cpp:
+        (WebCore::StorageNamespaceImpl::StorageNamespaceImpl):
+        * storage/StorageSyncManager.cpp:
+        (WebCore::StorageSyncManager::StorageSyncManager):
+        * workers/DefaultSharedWorkerRepository.cpp:
+        (WebCore::SharedWorkerProxy::url): Do the copy of the url in a way that is threadsafe.
+        (WebCore::SharedWorkerProxy::name):
+        (WebCore::SharedWorkerProxy::SharedWorkerProxy):
+        (WebCore::DefaultSharedWorkerRepository::getProxy): Do the copy of the url in a way that is threadsafe.
+        * workers/SharedWorkerThread.cpp:
+        (WebCore::SharedWorkerThread::SharedWorkerThread):
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::MessageWorkerContextTask::MessageWorkerContextTask):
+        (WebCore::MessageWorkerTask::MessageWorkerTask):
+        (WebCore::WorkerExceptionTask::WorkerExceptionTask):
+        * workers/WorkerRunLoop.cpp:
+        (WebCore::WorkerRunLoop::Task::Task):
+        (WebCore::WorkerRunLoop::postTaskForMode):
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThreadStartupData::WorkerThreadStartupData):
+
 2009-10-06  Girish Ramakrishnan  <girish@forwardbias.in>
 
         Reviewed by Simon Hausmann.

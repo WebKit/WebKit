@@ -193,16 +193,13 @@ public:
 
     bool percentage(int& percentage) const;
 
-    // Makes a deep copy. Helpful only if you need to use a String on another thread.
+    // Returns a StringImpl suitable for use on another thread.
+    String crossThreadString() const;
+    // Makes a deep copy. Helpful only if you need to use a String on another thread
+    // (use crossThreadString if the method call doesn't need to be threadsafe).
     // Since the underlying StringImpl objects are immutable, there's no other reason
     // to ever prefer copy() over plain old assignment.
-    String copy() const;
-
-    // Makes a deep copy like copy() but only for a substring.
-    // (This ensures that you always get something suitable for a thread while subtring
-    // may not.  For example, in the empty string case, StringImpl::substring returns
-    // empty() which is not safe for another thread.)
-    String substringCopy(unsigned pos, unsigned len  = UINT_MAX) const;
+    String threadsafeCopy() const;
 
     bool isNull() const { return !m_impl; }
     bool isEmpty() const;
