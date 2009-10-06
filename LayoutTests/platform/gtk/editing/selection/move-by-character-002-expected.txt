@@ -1,0 +1,27 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x358 [border: (2px solid #FF0000)]
+        RenderInline {SPAN} at (0,0) size 254x250
+          RenderText {#text} at (14,94) size 11x30
+            text run at (14,94) width 11: "a"
+          RenderImage {IMG} at (25,14) size 76x103
+          RenderText {#text} at (101,94) size 46x30
+            text run at (101,94) width 46: "new "
+          RenderBR {BR} at (0,0) size 0x0
+          RenderText {#text} at (14,204) size 67x30
+            text run at (14,204) width 67: "nation "
+          RenderInline {I} at (0,0) size 0x0
+            RenderText {#text} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+          RenderImage {IMG} at (81,124) size 76x103
+          RenderText {#text} at (157,204) size 111x30
+            text run at (157,204) width 111: " conceived "
+          RenderBR {BR} at (268,227) size 0x0
+          RenderText {#text} at (14,314) size 61x30
+            text run at (14,314) width 61: "nation"
+          RenderImage {IMG} at (75,234) size 76x103
+        RenderText {#text} at (0,0) size 0x0
+caret: position 6 of child 10 {#text} of child 1 {SPAN} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document

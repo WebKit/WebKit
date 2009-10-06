@@ -1,0 +1,21 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 763x20
+          text run at (0,0) width 260: "This test execCommand(\"FontSize\", ...). "
+          text run at (260,0) width 503: "You should see 'small' 'medium' and 'large' below in every increasing font sizes."
+      RenderBlock {DIV} at (0,36) size 784x39
+        RenderInline {SPAN} at (0,0) size 29x17
+          RenderText {#text} at (0,17) size 29x17
+            text run at (0,17) width 29: "small"
+        RenderInline {SPAN} at (0,0) size 59x23
+          RenderText {#text} at (29,13) size 59x23
+            text run at (29,13) width 59: "medium"
+        RenderInline {SPAN} at (0,0) size 64x39
+          RenderText {#text} at (88,0) size 64x39
+            text run at (88,0) width 64: "large"
+      RenderBlock {UL} at (0,91) size 784x0
+caret: position 5 of child 0 {#text} of child 2 {SPAN} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

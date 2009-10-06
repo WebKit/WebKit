@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 381x20
+          text run at (0,0) width 381: "This tests to see if trailing spaces are lost during a copy/paste"
+      RenderBlock {HR} at (0,36) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {DIV} at (0,46) size 784x28 [border: (2px solid #FFAAAA)]
+        RenderBlock {DIV} at (2,2) size 780x24 [border: (2px solid #AAAAFF)]
+          RenderText {#text} at (2,2) size 4x20
+            text run at (2,2) width 4: "."
+caret: position 0 of child 0 {#text} of child 1 {DIV} of child 5 {DIV} of child 1 {BODY} of child 0 {HTML} of document

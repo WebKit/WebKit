@@ -1,0 +1,28 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 758x40
+          text run at (0,0) width 758: "This tests to see that selected non-editable nodes that are not in both the start and end editable root are preserved during a"
+          text run at (0,20) width 58: "deletion. "
+          text run at (58,20) width 526: "You should see two 'Non-editable' pieces on either side of the editable piece below."
+      RenderBlock {DIV} at (0,56) size 784x26
+        RenderTable {TABLE} at (0,0) size 280x26
+          RenderTableSection {TBODY} at (0,0) size 280x26
+            RenderTableRow {TR} at (0,2) size 280x22
+              RenderTableCell {TD} at (2,2) size 84x22 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 82x20
+                  text run at (1,1) width 82: "Non-editable"
+              RenderTableCell {TD} at (88,2) size 104x22 [r=0 c=1 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 56x20
+                  text run at (1,1) width 56: "Editable "
+                RenderInline {SPAN} at (0,0) size 46x20
+                  RenderText {#text} at (57,1) size 46x20
+                    text run at (57,1) width 46: "content"
+              RenderTableCell {TD} at (194,2) size 84x22 [r=0 c=2 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 82x20
+                  text run at (1,1) width 82: "Non-editable"
+        RenderBlock (anonymous) at (0,26) size 784x0
+caret: position 9 of child 0 {#text} of child 3 {TD} of child 0 {TR} of child 1 {TBODY} of child 1 {TABLE} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

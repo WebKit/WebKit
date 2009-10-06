@@ -1,0 +1,31 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x80
+        RenderText {#text} at (0,0) size 777x80
+          text run at (0,0) width 671: "This tests to see that selected editable nodes that are not in both the start and end editable roots are cleared. "
+          text run at (671,0) width 98: "You should see"
+          text run at (0,20) width 471: "one non-editable piece and an editable one and then two empty table cells. "
+          text run at (471,20) width 306: "The table cells are editable but are preserved and"
+          text run at (0,40) width 348: "not removed because they are in a non-editable region. "
+          text run at (348,40) width 407: "They should be completely cleared out, even the second one that"
+          text run at (0,60) width 186: "contains a non-editable piece."
+      RenderBlock {DIV} at (0,96) size 784x30
+        RenderTable {TABLE} at (0,0) size 212x30 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 210x28
+            RenderTableRow {TR} at (0,2) size 210x24
+              RenderTableCell {TD} at (2,2) size 86x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 82x20
+                  text run at (2,2) width 82: "Non-editable"
+              RenderTableCell {TD} at (90,2) size 106x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 56x20
+                  text run at (2,2) width 56: "Editable "
+                RenderInline {SPAN} at (0,0) size 46x20
+                  RenderText {#text} at (58,2) size 46x20
+                    text run at (58,2) width 46: "content"
+              RenderTableCell {TD} at (198,2) size 4x24 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (204,2) size 4x24 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
+        RenderBlock (anonymous) at (0,30) size 784x0
+caret: position 9 of child 0 {#text} of child 3 {TD} of child 0 {TR} of child 1 {TBODY} of child 1 {TABLE} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

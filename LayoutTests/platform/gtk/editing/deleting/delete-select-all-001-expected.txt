@@ -1,0 +1,10 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x48 [border: (2px solid #FF0000)]
+        RenderBlock (anonymous) at (14,14) size 756x20
+          RenderInline {SPAN} at (0,0) size 0x20
+            RenderBR {BR} at (0,0) size 0x20
+caret: position 0 of child 0 {BR} of child 0 {SPAN} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document

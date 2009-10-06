@@ -1,0 +1,18 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x20
+        RenderInline {SPAN} at (0,0) size 368x20
+          RenderText {#text} at (0,0) size 368x20
+            text run at (0,0) width 368: "This test passes if the caret is at the start of the second line."
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,20) size 352x102 [border: (1px solid #0000FF)]
+        RenderText {#text} at (1,1) size 11x20
+          text run at (1,1) width 7: "a"
+          text run at (8,1) width 4: " "
+        RenderInline {SPAN} at (0,0) size 344x20 [color=#0000FF]
+          RenderText {#text} at (1,21) size 344x20
+            text run at (1,21) width 344: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+caret: position 2 of child 0 {#text} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

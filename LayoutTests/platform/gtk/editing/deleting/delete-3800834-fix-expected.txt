@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x58 [border: (2px solid #FF0000)]
+        RenderBlock (anonymous) at (14,14) size 756x30
+          RenderInline {SPAN} at (0,0) size 37x30
+            RenderText {#text} at (0,0) size 37x30
+              text run at (0,0) width 37: "Foo"
+        RenderBlock (anonymous) at (14,44) size 756x0
+        RenderBlock (anonymous) at (14,44) size 756x0
+          RenderInline {SPAN} at (0,0) size 0x0
+caret: position 3 of child 0 {#text} of child 1 {SPAN} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document

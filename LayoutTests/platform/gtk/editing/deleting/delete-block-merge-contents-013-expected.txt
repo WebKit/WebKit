@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x58 [border: (2px solid #FF0000)]
+        RenderBlock {DIV} at (14,14) size 756x30
+          RenderBlock {DIV} at (0,0) size 756x30
+            RenderText {#text} at (0,0) size 71x30
+              text run at (0,0) width 71: "This is "
+            RenderText {#text} at (71,0) size 100x30
+              text run at (71,0) width 100: "some text."
+caret: position 8 of child 0 {#text} of child 1 {DIV} of child 1 {DIV} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document

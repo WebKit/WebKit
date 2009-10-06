@@ -1,0 +1,24 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x91 [border: (2px solid #0000FF)]
+        RenderText {#text} at (14,14) size 715x61
+          text run at (14,14) width 715: "Should see \"foo\" and \"bar\" each in a separate red box. Note that the \"foo\""
+          text run at (14,45) width 197: "text is really \"foo \". "
+          text run at (211,45) width 63: "There "
+        RenderInline {B} at (0,0) size 50x33
+          RenderText {#text} at (274,44) size 50x33
+            text run at (274,44) width 50: "must"
+        RenderText {#text} at (324,45) size 318x30
+          text run at (324,45) width 318: " be a space at the end of the line."
+      RenderBlock {DIV} at (0,115) size 784x174
+        RenderBlock {DIV} at (0,0) size 784x58 [border: (2px solid #FF0000)]
+          RenderText {#text} at (14,14) size 32x30
+            text run at (14,14) width 32: "foo"
+        RenderBlock {DIV} at (0,58) size 784x58 [border: (2px solid #FF0000)]
+          RenderBR {BR} at (14,14) size 0x30
+        RenderBlock {DIV} at (0,116) size 784x58 [border: (2px solid #FF0000)]
+          RenderBR {BR} at (14,14) size 0x30
+caret: position 0 of child 0 {BR} of child 3 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

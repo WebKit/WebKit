@@ -1,0 +1,27 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 548x20
+          text run at (0,0) width 548: "This test passes if nothing is double-quoted, and \"Two\" and \"Four\" aren't quoted at all."
+      RenderBlock {DIV} at (0,36) size 784x100
+        RenderBlock {BLOCKQUOTE} at (0,0) size 784x40 [color=#0000FF] [border: (2px solid #0000FF)]
+          RenderText {#text} at (22,0) size 33x20
+            text run at (22,0) width 33: "Paste"
+          RenderBR {BR} at (55,15) size 0x0
+          RenderText {#text} at (22,20) size 31x20
+            text run at (22,20) width 31: "Here"
+          RenderText {#text} at (53,20) size 27x20
+            text run at (53,20) width 27: "One"
+        RenderBlock (anonymous) at (0,40) size 784x20
+          RenderText {#text} at (0,0) size 30x20
+            text run at (0,0) width 30: "Two"
+        RenderBlock {BLOCKQUOTE} at (0,60) size 784x20 [color=#0000FF] [border: (2px solid #0000FF)]
+          RenderText {#text} at (22,0) size 37x20
+            text run at (22,0) width 37: "Three"
+        RenderBlock (anonymous) at (0,80) size 784x20
+          RenderText {#text} at (0,0) size 30x20
+            text run at (0,0) width 30: "Four"
+caret: position 4 of child 3 {#text} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

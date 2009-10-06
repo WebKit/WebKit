@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 755x40
+          text run at (0,0) width 595: "This tests for a bug where Remove Format would fail to remove links that were fully selected. "
+          text run at (595,0) width 160: "You should see plain text"
+          text run at (0,20) width 211: "only in the editable region below."
+      RenderBlock {DIV} at (0,56) size 784x20
+        RenderText {#text} at (0,0) size 239x20
+          text run at (0,0) width 239: "This shouldn't be a link or underlined."
+selection start: position 0 of child 0 {#text} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 39 of child 0 {#text} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

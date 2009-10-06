@@ -1,0 +1,32 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x568
+      RenderBlock (anonymous) at (0,0) size 784x120
+        RenderText {#text} at (0,0) size 749x60
+          text run at (0,0) width 743: "Test inserting paragraphs and managing typing style correctly: Only \"line 1\""
+          text run at (743,0) width 6: " "
+          text run at (0,30) width 621: "should be bold. Other lines should be non-bold. Fix for this bug:"
+          text run at (621,30) width 6: " "
+        RenderInline {A} at (0,0) size 260x30 [color=#0000EE]
+          RenderText {#text} at (0,60) size 260x30
+            text run at (0,60) width 260: "<rdar://problem/3944492>"
+        RenderText {#text} at (260,60) size 724x60
+          text run at (260,60) width 458: " after pressing return twice, text is bold when it"
+          text run at (718,60) width 6: " "
+          text run at (0,90) width 116: "shouldn't be"
+      RenderBlock {DIV} at (0,120) size 784x12
+      RenderBlock {P} at (0,156) size 784x61 [border: (2px solid #0000FF)]
+        RenderInline {B} at (0,0) size 56x33
+          RenderText {#text} at (14,14) size 56x33
+            text run at (14,14) width 56: "line 1"
+      RenderBlock {P} at (0,241) size 784x58 [border: (2px solid #0000FF)]
+        RenderText {#text} at (14,14) size 36x30
+          text run at (14,14) width 36: "xxx"
+      RenderBlock {P} at (0,323) size 784x58 [border: (2px solid #0000FF)]
+        RenderBR {BR} at (14,14) size 0x30 [bgcolor=#008000]
+      RenderBlock {P} at (0,405) size 784x58 [border: (2px solid #0000FF)]
+        RenderText {#text} at (14,14) size 36x30
+          text run at (14,14) width 36: "xxx"
+caret: position 3 of child 0 {#text} of child 8 {P} of child 1 {BODY} of child 0 {HTML} of document

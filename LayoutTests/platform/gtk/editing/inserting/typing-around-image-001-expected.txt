@@ -1,0 +1,21 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x138 [border: (2px solid #FF0000)]
+        RenderInline {SPAN} at (0,0) size 390x30
+          RenderText {#text} at (14,94) size 12x30
+            text run at (14,94) width 12: "x"
+          RenderImage {IMG} at (26,14) size 76x103
+          RenderText {#text} at (102,94) size 36x30
+            text run at (102,94) width 36: "xxx"
+          RenderImage {IMG} at (138,14) size 76x103
+          RenderText {#text} at (214,94) size 36x30
+            text run at (214,94) width 36: "xxx"
+          RenderText {#text} at (250,94) size 42x30
+            text run at (250,94) width 42: " xxx"
+          RenderImage {IMG} at (292,14) size 76x103
+          RenderText {#text} at (368,94) size 36x30
+            text run at (368,94) width 36: "xxx"
+caret: position 3 of child 7 {#text} of child 1 {SPAN} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document

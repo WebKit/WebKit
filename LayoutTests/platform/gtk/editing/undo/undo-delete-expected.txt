@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x88 [border: (2px solid #FF0000)]
+        RenderInline {SPAN} at (0,0) size 727x60
+          RenderText {#text} at (14,14) size 727x60
+            text run at (14,14) width 721: "This word should be selected, since the test deleted it a character at a time"
+            text run at (735,14) width 6: " "
+            text run at (14,44) width 209: "and then did an undo."
+        RenderText {#text} at (0,0) size 0x0
+selection start: position 5 of child 0 {#text} of child 1 {SPAN} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 9 of child 0 {#text} of child 1 {SPAN} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document

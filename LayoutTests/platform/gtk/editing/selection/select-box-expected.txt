@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 691x20
+          text run at (0,0) width 292: "This tests caret movement across a select box. "
+          text run at (292,0) width 399: "The caret should skip over the select box as if it were an image."
+      RenderBlock {DIV} at (0,36) size 784x32
+        RenderBlock {DIV} at (0,0) size 784x32
+          RenderText {#text} at (0,6) size 71x20
+            text run at (0,6) width 71: "select box: "
+          RenderMenuList {SELECT} at (73,2) size 33x28 [bgcolor=#FFFFFF]
+            RenderBlock (anonymous) at (4,4) size 8x20
+              RenderText at (0,0) size 8x20
+                text run at (0,0) width 8: "1"
+          RenderText {#text} at (108,6) size 66x20
+            text run at (108,6) width 66: " the end ..."
+caret: position 1 of child 0 {#text} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

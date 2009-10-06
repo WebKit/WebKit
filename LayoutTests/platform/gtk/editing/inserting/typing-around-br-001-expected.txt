@@ -1,0 +1,31 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x268 [border: (2px solid #FF0000)]
+        RenderInline {SPAN} at (0,0) size 70x240
+          RenderText {#text} at (14,14) size 70x30
+            text run at (14,14) width 70: "XXxxx"
+          RenderBR {BR} at (84,37) size 0x0
+          RenderText {#text} at (14,44) size 70x30
+            text run at (14,44) width 70: "XXxxx"
+          RenderBR {BR} at (84,67) size 0x0
+          RenderText {#text} at (14,74) size 36x30
+            text run at (14,74) width 36: "xxx"
+          RenderBR {BR} at (50,97) size 0x0
+          RenderText {#text} at (14,104) size 70x30
+            text run at (14,104) width 70: "XXxxx"
+          RenderBR {BR} at (84,127) size 0x0
+          RenderText {#text} at (14,134) size 36x30
+            text run at (14,134) width 36: "xxx"
+          RenderBR {BR} at (50,157) size 0x0
+          RenderText {#text} at (14,164) size 36x30
+            text run at (14,164) width 36: "xxx"
+          RenderBR {BR} at (50,187) size 0x0
+          RenderText {#text} at (14,194) size 36x30
+            text run at (14,194) width 36: "xxx"
+          RenderBR {BR} at (50,217) size 0x0
+          RenderText {#text} at (14,224) size 70x30
+            text run at (14,224) width 70: "XXxxx"
+caret: position 5 of child 14 {#text} of child 1 {SPAN} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document

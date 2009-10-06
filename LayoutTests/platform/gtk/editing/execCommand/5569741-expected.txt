@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 681x20
+          text run at (0,0) width 681: "This tests for a bug where hitting return inside an empty paragraph in a non-empty list item would remove it."
+      RenderBlock {DIV} at (0,36) size 784x60
+        RenderBlock {UL} at (0,0) size 784x60
+          RenderListItem {LI} at (40,0) size 744x40
+            RenderListMarker at (-18,0) size 7x20: bullet
+            RenderText {#text} at (0,0) size 21x20
+              text run at (0,0) width 21: "foo"
+            RenderBR {BR} at (21,15) size 0x0
+            RenderBR {BR} at (0,20) size 0x20
+          RenderListItem {LI} at (40,40) size 744x20
+            RenderListMarker at (-18,0) size 7x20: bullet
+            RenderBR {BR} at (0,0) size 0x20
+caret: position 0 of child 0 {BR} of child 1 {LI} of child 1 {UL} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

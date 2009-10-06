@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 611x20
+          text run at (0,0) width 611: "This tests for a bug where style would not be applied to a selection that ended just after an image."
+      RenderBlock {DIV} at (0,36) size 784x131
+        RenderBlock (anonymous) at (0,0) size 784x22
+          RenderInline {B} at (0,0) size 0x22
+            RenderBR {BR} at (0,0) size 0x22
+        RenderBlock {DIV} at (0,22) size 784x109
+          RenderInline {B} at (0,0) size 166x22
+            RenderText {#text} at (0,87) size 166x22
+              text run at (0,87) width 166: "This text should be bold."
+          RenderInline {B} at (0,0) size 76x22
+            RenderImage {IMG} at (166,0) size 76x103
+selection start: position 0 of child 0 {BR} of child 0 {B} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 1 of child 0 {IMG} of child 1 {B} of child 1 {DIV} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

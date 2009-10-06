@@ -1,0 +1,26 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x200 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x63
+          RenderText {#text} at (0,0) size 67x33
+            text run at (0,0) width 67: "Tests: "
+          RenderBR {BR} at (0,0) size 0x0
+          RenderText {#text} at (0,33) size 460x30
+            text run at (0,33) width 460: "Option-delete when a typing command is open."
+        RenderBlock {DIV} at (14,93) size 756x93
+          RenderText {#text} at (0,0) size 189x33
+            text run at (0,0) width 189: "Expected Results: "
+          RenderBR {BR} at (189,24) size 0x0
+          RenderText {#text} at (0,33) size 440x30
+            text run at (0,33) width 440: "Net result is a third \"cha\". It should like this: "
+          RenderBR {BR} at (440,56) size 0x0
+          RenderText {#text} at (0,63) size 418x30
+            text run at (0,63) width 418: "one two cha cha cha three four cha cha cha"
+      RenderBlock {DIV} at (0,224) size 784x34
+        RenderBlock {DIV} at (0,0) size 784x34 [border: (2px solid #FF0000)]
+          RenderText {#text} at (2,2) size 418x30
+            text run at (2,2) width 418: "one two cha cha cha three four cha cha cha"
+caret: position 12 of child 0 {#text} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

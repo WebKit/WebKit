@@ -1,0 +1,16 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 474x20
+          text run at (0,0) width 474: "This tests to make sure that right clicking selects the word under the mouse."
+      RenderBlock {DIV} at (0,36) size 784x20
+        RenderText {#text} at (0,0) size 29x20
+          text run at (0,0) width 29: "The "
+        RenderInline {SPAN} at (0,0) size 44x20
+          RenderText {#text} at (29,0) size 44x20
+            text run at (29,0) width 44: "second"
+        RenderText {#text} at (73,0) size 260x20
+          text run at (73,0) width 260: " word in this sentence should be selected."

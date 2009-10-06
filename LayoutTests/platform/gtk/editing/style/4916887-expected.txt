@@ -1,0 +1,16 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 458x20
+          text run at (0,0) width 458: "This tests for a bug where the color of indented text couldn't be changed."
+      RenderBlock {DIV} at (0,36) size 784x20
+        RenderBlock {BLOCKQUOTE} at (40,0) size 744x20
+          RenderInline {FONT} at (0,0) size 155x20 [color=#0000FF]
+            RenderText {#text} at (0,0) size 155x20
+              text run at (0,0) width 155: "This text should be blue."
+        RenderBlock (anonymous) at (0,20) size 784x0
+selection start: position 0 of child 0 {#text} of child 0 {FONT} of child 0 {BLOCKQUOTE} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 25 of child 0 {#text} of child 0 {FONT} of child 0 {BLOCKQUOTE} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x146 [border: (2px solid #FF0000)]
+        RenderBlock (anonymous) at (14,14) size 756x30
+          RenderText {#text} at (0,0) size 351x30
+            text run at (0,0) width 351: "Omitted, all the voyage of their life,"
+        RenderBlock {DIV} at (14,44) size 756x58 [border: (2px solid #FF0000)]
+          RenderText {#text} at (14,14) size 357x30
+            text run at (14,14) width 357: "Is bound in shallows and in miseries."
+        RenderBlock (anonymous) at (14,102) size 756x30
+          RenderText {#text} at (0,0) size 382x30
+            text run at (0,0) width 382: "Upon such a full sea are we now afloat,"
+selection start: position 12 of child 0 {#text} of child 1 {DIV} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 20 of child 2 {#text} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document

@@ -1,0 +1,18 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 720x20
+          text run at (0,0) width 518: "This tests to make sure that RemoveFormat destroys lists if they are fully selected. "
+          text run at (518,0) width 202: "You should see foo\\nbar below."
+      RenderBlock {DIV} at (0,36) size 784x40
+        RenderBlock {DIV} at (0,0) size 784x40
+          RenderText {#text} at (0,0) size 21x20
+            text run at (0,0) width 21: "foo"
+          RenderBR {BR} at (21,15) size 0x0
+          RenderText {#text} at (0,20) size 20x20
+            text run at (0,20) width 20: "bar"
+selection start: position 0 of child 0 {#text} of child 0 {DIV} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 3 of child 2 {#text} of child 0 {DIV} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

@@ -1,0 +1,24 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x60
+        RenderText {#text} at (0,0) size 764x60
+          text run at (0,0) width 521: "This tests for a bug when moving the caret forward/backward by a line/paragraph. "
+          text run at (521,0) width 220: "The horizontal position of the caret"
+          text run at (0,20) width 583: "would be lost when moving the caret into an empty paragraph, when it should be preserved. "
+          text run at (583,20) width 181: "The caret should be between"
+          text run at (0,40) width 289: "the first and second 'x's in the third paragraph."
+      RenderBlock {DIV} at (0,76) size 784x80
+        RenderText {#text} at (0,0) size 24x20
+          text run at (0,0) width 24: "xxx"
+        RenderBR {BR} at (24,15) size 0x0
+        RenderText {#text} at (0,20) size 24x20
+          text run at (0,20) width 24: "xxx"
+        RenderBR {BR} at (24,35) size 0x0
+        RenderBR {BR} at (0,40) size 0x20
+        RenderText {#text} at (0,60) size 24x20
+          text run at (0,60) width 24: "xxx"
+        RenderBR {BR} at (24,75) size 0x0
+caret: position 2 of child 6 {#text} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

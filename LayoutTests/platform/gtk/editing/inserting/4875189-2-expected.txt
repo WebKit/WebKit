@@ -1,0 +1,16 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 784x20
+          text run at (0,0) width 441: "This tests for a bug when replacing the contents of a floating element. "
+          text run at (441,0) width 343: "Just its contents should be removed during the replace."
+      RenderBlock {DIV} at (0,36) size 784x20
+        RenderText {#text} at (293,0) size 235x20
+          text run at (293,0) width 235: "This shouldn't be in the bordered div."
+        RenderBlock (floating) {DIV} at (0,0) size 293x22 [border: (1px solid #0000FF)]
+          RenderText {#text} at (1,1) size 291x20
+            text run at (1,1) width 291: "This should be in a floating blue bordered div."
+caret: position 47 of child 0 {#text} of child 1 {DIV} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

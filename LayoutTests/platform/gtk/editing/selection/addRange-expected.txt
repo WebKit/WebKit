@@ -1,0 +1,16 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 758x40
+          text run at (0,0) width 211: "This tests Selection::addRange(). "
+          text run at (211,0) width 547: "It should have no effect if the range passed to it does not intersect the currently selected"
+          text run at (0,20) width 43: "range. "
+          text run at (43,20) width 161: "'3456' should be selected."
+      RenderBlock {DIV} at (0,56) size 784x20
+        RenderText {#text} at (0,0) size 72x20
+          text run at (0,0) width 72: "123456789"
+selection start: position 2 of child 0 {#text} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 6 of child 0 {#text} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

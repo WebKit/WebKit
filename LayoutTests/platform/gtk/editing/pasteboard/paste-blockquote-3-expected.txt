@@ -1,0 +1,24 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 390x20
+          text run at (0,0) width 390: "This tests pasting a blockquote into the middle of a paragraph."
+      RenderBlock {DIV} at (0,36) size 784x60
+        RenderBlock (anonymous) at (0,0) size 784x20
+          RenderText {#text} at (0,0) size 203x20
+            text run at (0,0) width 203: "This should not be blockquoted."
+          RenderText {#text} at (203,0) size 207x20
+            text run at (203,0) width 207: " This should not be blockquoted."
+        RenderBlock {BLOCKQUOTE} at (0,20) size 784x20 [color=#0000FF] [border: (2px solid #0000FF)]
+          RenderText {#text} at (22,0) size 179x20
+            text run at (22,0) width 179: "This should be blockquoted."
+          RenderBR {BR} at (201,15) size 0x0
+        RenderBlock (anonymous) at (0,40) size 784x20
+          RenderText {#text} at (0,0) size 203x20
+            text run at (0,0) width 203: "This should not be blockquoted."
+          RenderText {#text} at (203,0) size 207x20
+            text run at (203,0) width 207: " This should not be blockquoted."
+caret: position 31 of child 3 {#text} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

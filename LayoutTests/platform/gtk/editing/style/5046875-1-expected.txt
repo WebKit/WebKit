@@ -1,0 +1,23 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 781x20
+          text run at (0,0) width 476: "This tests for a bug where centering two paragraphs would center the third. "
+          text run at (476,0) width 305: "Only the selected paragraphs should be selected."
+      RenderBlock {DIV} at (0,36) size 784x60
+        RenderBlock {DIV} at (0,0) size 784x20
+          RenderText {#text} at (381,0) size 21x20
+            text run at (381,0) width 21: "foo"
+        RenderBlock (anonymous) at (0,20) size 784x0
+        RenderBlock {DIV} at (0,20) size 784x40
+          RenderBlock {DIV} at (0,0) size 784x20
+            RenderText {#text} at (382,0) size 20x20
+              text run at (382,0) width 20: "bar"
+          RenderBlock (anonymous) at (0,20) size 784x20
+            RenderText {#text} at (0,0) size 22x20
+              text run at (0,0) width 22: "baz"
+selection start: position 0 of child 0 {#text} of child 0 {DIV} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 3 of child 0 {#text} of child 0 {DIV} of child 1 {DIV} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

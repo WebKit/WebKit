@@ -1,0 +1,16 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x20
+        RenderInline {SPAN} at (0,0) size 32x20
+          RenderText {#text} at (0,0) size 32x20
+            text run at (0,0) width 32: "0123"
+        RenderText {#text} at (32,0) size 16x20
+          text run at (32,0) width 16: "45"
+        RenderInline {SPAN} at (0,0) size 32x20
+          RenderText {#text} at (48,0) size 32x20
+            text run at (48,0) width 32: "6789"
+selection start: position 0 of child 1 {#text} of child 0 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 2 of child 1 {#text} of child 0 {DIV} of child 1 {BODY} of child 0 {HTML} of document

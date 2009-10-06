@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 719x20
+          text run at (0,0) width 336: "This tests moving backward by sentence boundaries. "
+          text run at (336,0) width 383: "The caret should be at the start of the second to last sentence."
+      RenderBlock {DIV} at (0,36) size 784x60
+        RenderText {#text} at (0,0) size 758x60
+          text run at (0,0) width 754: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc a augue. Pellentesque habitant morbi tristique senectus et"
+          text run at (754,0) width 4: " "
+          text run at (0,20) width 719: "netus et malesuada fames ac turpis egestas. Mauris ut pede. Integer lacus. Ut ipsum. Phasellus tristique leo eu velit."
+          text run at (719,20) width 4: " "
+          text run at (0,40) width 655: "Vestibulum arcu lacus, blandit ac, condimentum sed, commodo in, arcu. Curabitur suscipit pede eu sem."
+caret: position 241 of child 0 {#text} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

@@ -1,0 +1,12 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x118 [border: (2px solid #FF0000)]
+        RenderText {#text} at (14,14) size 348x30
+          text run at (14,14) width 348: "There is a tide in the affairs of men."
+        RenderBR {BR} at (362,37) size 0x0
+        RenderBR {BR} at (14,44) size 0x30
+        RenderBR {BR} at (14,74) size 0x30
+caret: position 0 of child 3 {BR} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document

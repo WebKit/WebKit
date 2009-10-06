@@ -1,0 +1,24 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {OL} at (0,0) size 784x60
+        RenderListItem {LI} at (40,0) size 744x20
+          RenderListMarker at (-21,0) size 16x20: "1"
+          RenderInline {U} at (0,0) size 497x20
+            RenderText {#text} at (0,0) size 497x20
+              text run at (0,0) width 497: "This tests for a crash when making and removing lists from underlined content."
+        RenderListItem {LI} at (40,20) size 744x20
+          RenderListMarker at (-21,0) size 16x20: "2"
+          RenderInline {U} at (0,0) size 272x20
+            RenderText {#text} at (0,0) size 272x20
+              text run at (0,0) width 272: "All three paragraphs should be in list items."
+        RenderListItem {LI} at (40,40) size 744x20
+          RenderListMarker at (-21,0) size 16x20: "3"
+          RenderInline {U} at (0,0) size 222x20
+            RenderText {#text} at (0,0) size 222x20
+              text run at (0,0) width 222: "And all three should be underlined."
+      RenderBlock (anonymous) at (0,76) size 784x0
+selection start: position 0 of child 0 {#text} of child 0 {U} of child 0 {LI} of child 0 {OL} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 35 of child 0 {#text} of child 0 {U} of child 2 {LI} of child 0 {OL} of child 1 {BODY} of child 0 {HTML} of document

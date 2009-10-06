@@ -1,0 +1,27 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 784x20
+          text run at (0,0) width 784: "This tests for a bug moving down by a line from a line just above a ToDo, and moving up by a line from just below a ToDo."
+      RenderBlock {DIV} at (0,36) size 784x70
+        RenderBlock {DIV} at (0,0) size 784x20
+          RenderText {#text} at (0,0) size 279x20
+            text run at (0,0) width 279: "Click anywhere in this line and move down."
+        RenderTable {TABLE} at (0,20) size 335x30 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 333x28
+            RenderTableRow {TR} at (0,2) size 333x24
+              RenderTableCell {TD} at (2,2) size 329x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 63x20
+                  text run at (2,2) width 63: "The caret "
+                RenderInline {SPAN} at (0,0) size 42x20 [color=#0000FF]
+                  RenderText {#text} at (65,2) size 42x20
+                    text run at (65,2) width 42: "should"
+                RenderText {#text} at (107,2) size 220x20
+                  text run at (107,2) width 220: " always go into the editable region."
+        RenderBlock {DIV} at (0,50) size 784x20
+          RenderText {#text} at (0,0) size 259x20
+            text run at (0,0) width 259: "Click anywhere in this line and move up."
+caret: position 6 of child 0 {#text} of child 1 {SPAN} of child 0 {TD} of child 0 {TR} of child 0 {TBODY} of child 3 {TABLE} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
