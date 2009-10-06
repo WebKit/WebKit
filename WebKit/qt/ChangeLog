@@ -1,3 +1,12 @@
+2009-10-06  Benjamin C Meyer  <bmeyer@rim.com>
+
+        Reviewed by Ariya Hidayat.
+        
+        When the drag data contains an image set it on the QDrag so it will be visible to the user.
+        
+        * WebCoreSupport/DragClientQt.cpp:
+        (WebCore::DragClientQt::startDrag):
+
 2009-10-06  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
