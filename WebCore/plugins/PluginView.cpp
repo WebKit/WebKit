@@ -821,6 +821,8 @@ PluginView::PluginView(Frame* parentFrame, const IntSize& size, PluginPackage* p
 #if defined(Q_WS_X11)
     , m_hasPendingGeometryChange(false)
     , m_drawable(0)
+    , m_visual(0)
+    , m_colormap(0)
     , m_pluginDisplay(0)
 #endif
     , m_loadManually(loadManually)

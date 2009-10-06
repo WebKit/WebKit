@@ -68,6 +68,11 @@
 #include <runtime/JSLock.h>
 #include <runtime/JSValue.h>
 #include <X11/X.h>
+#ifndef QT_NO_XRENDER
+#define Bool int
+#define Status int
+#include <X11/extensions/Xrender.h>
+#endif
 
 using JSC::ExecState;
 using JSC::Interpreter;
@@ -105,7 +110,8 @@ void PluginView::updatePluginWidget()
         XFreePixmap(QX11Info::display(), m_drawable);
 
     if (!m_isWindowed)
-        m_drawable = XCreatePixmap(QX11Info::display(), QX11Info::appRootWindow(), m_windowRect.width(), m_windowRect.height(), QX11Info::appDepth());
+        m_drawable = XCreatePixmap(QX11Info::display(), QX11Info::appRootWindow(), m_windowRect.width(), m_windowRect.height(), 
+                                   ((NPSetWindowCallbackStruct*)m_npWindow.ws_info)->depth);
 
     // do not call setNPWindowIfNeeded immediately, will be called on paint()
     m_hasPendingGeometryChange = true;
@@ -174,21 +180,24 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
         return;
 
     QPixmap qtDrawable = QPixmap::fromX11Pixmap(m_drawable, QPixmap::ExplicitlyShared);
+    const int drawableDepth = ((NPSetWindowCallbackStruct*)m_npWindow.ws_info)->depth;
+    ASSERT(drawableDepth == qtDrawable.depth());
 
-    if (m_isTransparent) {
-        // Attempt content propagation by copying over from the backing store
+    if (m_isTransparent && drawableDepth != 32) {
+        // Attempt content propagation for drawable with no alpha by copying over from the backing store
         QPoint offset;
         QPaintDevice* backingStoreDevice =  QPainter::redirected(painter->device(), &offset);
-        const bool hasValidBackingStore = backingStoreDevice && backingStoreDevice->devType() == QInternal::Pixmap;
         offset = -offset; // negating the offset gives us the offset of the view within the backing store pixmap
 
-        if (hasValidBackingStore) {
-            QPixmap* backingStorePixmap = static_cast<QPixmap*>(backingStoreDevice);
+        const bool hasValidBackingStore = backingStoreDevice && backingStoreDevice->devType() == QInternal::Pixmap;
+        QPixmap* backingStorePixmap = static_cast<QPixmap*>(backingStoreDevice);
+
+        if (hasValidBackingStore && backingStorePixmap->depth() == drawableDepth) {
             GC gc = XDefaultGC(QX11Info::display(), QX11Info::appScreen());
             XCopyArea(QX11Info::display(), backingStorePixmap->handle(), m_drawable, gc,
                 offset.x() + m_windowRect.x() + m_clipRect.x(), offset.y() + m_windowRect.y() + m_clipRect.y(),
                 m_clipRect.width(), m_clipRect.height(), m_clipRect.x(), m_clipRect.y());
-        } else { // no backing store, clean the pixmap
+        } else { // no backing store, clean the pixmap because the plugin thinks its transparent
             QPainter painter(&qtDrawable);
             painter.fillRect(m_clipRect, Qt::white);
         }
@@ -682,6 +691,49 @@ static Display *getPluginDisplay()
     return (Display*)gdk_x11_display_get_xdisplay(gdk_display_get_default());
 }
 
+static void getVisualAndColormap(int depth, Visual **visual, Colormap *colormap)
+{
+    *visual = 0;
+    *colormap = 0;
+
+#ifndef QT_NO_XRENDER
+    static const bool useXRender = qgetenv("QT_X11_NO_XRENDER").isNull(); // Should also check for XRender >= 0.5
+#else
+    static const bool useXRender = false;
+#endif
+
+    if (!useXRender && depth == 32)
+        return;
+
+    int nvi;
+    XVisualInfo templ;
+    templ.screen  = QX11Info::appScreen();
+    templ.depth   = depth;
+    templ.c_class = TrueColor;
+    XVisualInfo* xvi = XGetVisualInfo(QX11Info::display(), VisualScreenMask | VisualDepthMask | VisualClassMask, &templ, &nvi);
+
+    if (!xvi)
+        return;
+
+#ifndef QT_NO_XRENDER
+    if (depth == 32) {
+        for (int idx = 0; idx < nvi; ++idx) {
+            XRenderPictFormat* format = XRenderFindVisualFormat(QX11Info::display(), xvi[idx].visual);
+            if (format->type == PictTypeDirect && format->direct.alphaMask) {
+                 *visual = xvi[idx].visual;
+                 break;
+            }
+         }
+    } else
+#endif // QT_NO_XRENDER
+        *visual = xvi[0].visual;
+
+    XFree(xvi);
+
+    if (*visual)
+        *colormap = XCreateColormap(QX11Info::display(), QX11Info::appRootWindow(), *visual, AllocNone);
+}
+
 bool PluginView::platformStart()
 {
     ASSERT(m_isStarted);
@@ -715,16 +767,34 @@ bool PluginView::platformStart()
     NPSetWindowCallbackStruct* wsi = new NPSetWindowCallbackStruct();
     wsi->type = 0;
 
-    const QX11Info* x11Info = 0;
     if (m_isWindowed) {
-        x11Info = &platformPluginWidget()->x11Info();
+        const QX11Info* x11Info = &platformPluginWidget()->x11Info();
+
+        wsi->display = x11Info->display();
+        wsi->visual = (Visual*)x11Info->visual();
+        wsi->depth = x11Info->depth();
+        wsi->colormap = x11Info->colormap();
 
         m_npWindow.type = NPWindowTypeWindow;
         m_npWindow.window = (void*)platformPluginWidget()->winId();
         m_npWindow.width = -1;
         m_npWindow.height = -1;
     } else {
-        x11Info = &QApplication::desktop()->x11Info();
+        const QX11Info* x11Info = &QApplication::desktop()->x11Info();
+
+        if (x11Info->depth() == 32 || !m_plugin->quirks().contains(PluginQuirkRequiresDefaultScreenDepth)) {
+            getVisualAndColormap(32, &m_visual, &m_colormap);
+            wsi->depth = 32;
+        }
+
+        if (!m_visual) {
+            getVisualAndColormap(x11Info->depth(), &m_visual, &m_colormap);
+            wsi->depth = x11Info->depth();
+        }
+
+        wsi->display = x11Info->display();
+        wsi->visual = m_visual;
+        wsi->colormap = m_colormap;
 
         m_npWindow.type = NPWindowTypeDrawable;
         m_npWindow.window = 0; // Not used?
@@ -734,10 +804,6 @@ bool PluginView::platformStart()
         m_npWindow.height = -1;
     }
 
-    wsi->display = x11Info->display();
-    wsi->visual = (Visual*)x11Info->visual();
-    wsi->depth = x11Info->depth();
-    wsi->colormap = x11Info->colormap();
     m_npWindow.ws_info = wsi;
 
     if (!(m_plugin->quirks().contains(PluginQuirkDeferFirstSetWindowCall))) {
@@ -755,6 +821,9 @@ void PluginView::platformDestroy()
 
     if (m_drawable)
         XFreePixmap(QX11Info::display(), m_drawable);
+
+    if (m_colormap)
+        XFreeColormap(QX11Info::display(), m_colormap);
 }
 
 void PluginView::halt()

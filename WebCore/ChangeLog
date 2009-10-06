@@ -1,3 +1,43 @@
+2009-10-06  Girish Ramakrishnan  <girish@forwardbias.in>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Windowless plugins: Add PluginQuirkRequiresDefaultScreenDepth quirk for Flash.
+
+        Flash does not use the visual provided by us to draw into the drawable.
+        It instead uses the system default visual (as returned by XDefaultVisual).
+        This means that if the screen default visual is 24-bit, Flash won't be
+        able to draw on 32-bit drawable created by us. This is a bug in Flash
+        and for the moment, the above quirk is only set for Flash.
+
+        Our strategy to create the drawable:
+        1. Create a 32-bit drawable if the default screen depth is 32 or the
+        quirk is not set (i.e not flash)
+        2. If we didn't create a 32-bit drawable (maybe the Display has no such
+        visual), we create a drawable with default screen depth.
+
+        As a result of the above changes, content propagation behavior changes as:
+        1. Content propagation is possible only if the drawable we create and
+        Qt's backing store are of the same depth.
+        2. If we created a 32-bit drawable, there is no need for content
+        propagation (Qt will take care of it).
+
+        https://bugs.webkit.org/show_bug.cgi?id=20081
+
+        * plugins/PluginPackage.cpp:
+        (WebCore::PluginPackage::determineQuirks):
+        * plugins/PluginQuirkSet.h:
+        (WebCore::):
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::PluginView):
+        * plugins/PluginView.h:
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::updatePluginWidget):
+        (WebCore::PluginView::paint):
+        (WebCore::getVisualAndColormap):
+        (WebCore::PluginView::platformStart):
+        (WebCore::PluginView::platformDestroy):
+
 2009-10-06  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Ariya Hidayat.

@@ -183,6 +183,7 @@ void PluginPackage::determineQuirks(const String& mimeType)
 #if PLATFORM(QT)
             m_quirks.add(PluginQuirkRequiresGtkToolKit);
 #endif
+            m_quirks.add(PluginQuirkRequiresDefaultScreenDepth);
         } else {
             // Flash 9 and older requests windowless plugins if we return a mozilla user agent
             m_quirks.add(PluginQuirkWantsMozillaUserAgent);
