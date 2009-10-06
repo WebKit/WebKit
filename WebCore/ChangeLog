@@ -1,3 +1,24 @@
+2009-10-04  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Remove dead code from ImageDecoderQt
+        https://bugs.webkit.org/show_bug.cgi?id=27538
+
+        Remove unused variables and debugging code. The debug
+        code has never been used and does not provide anything
+        useful.
+
+        * platform/graphics/qt/ImageDecoderQt.cpp:
+        (WebCore::ImageDecoderQt::ReadContext::read):
+        (WebCore::ImageDecoderQt::ReadContext::readImageLines):
+        (WebCore::ImageDecoderQt::setData):
+        (WebCore::ImageDecoderQt::isSizeAvailable):
+        (WebCore::ImageDecoderQt::frameCount):
+        (WebCore::ImageDecoderQt::repetitionCount):
+        (WebCore::ImageDecoderQt::filenameExtension):
+        (WebCore::ImageDecoderQt::imageAtIndex):
+
 2009-10-06  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Xan Lopez.

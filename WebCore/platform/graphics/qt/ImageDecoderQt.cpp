@@ -35,11 +35,6 @@
 #include <QtGui/QImageReader>
 #include <qdebug.h>
 
-namespace {
-    const  QImage::Format DesiredFormat = QImage::Format_ARGB32;
-    const  bool debugImageDecoderQt = false;
-}
-
 namespace WebCore {
 
 ImageDecoder* ImageDecoder::create(const SharedBuffer& data)
@@ -155,9 +150,6 @@ ImageDecoderQt::ReadContext::ReadResult
             m_size = m_target.back().m_image.size();
             const bool supportsAnimation = m_reader.supportsAnimation();
 
-            if (debugImageDecoderQt)
-                qDebug() << "readImage(): #" << m_target.size() << " complete, " << m_size
-                    << " format " << m_dataFormat <<  " supportsAnimation=" <<  supportsAnimation;
             // No point in readinfg further
             if (!supportsAnimation)
                 return ReadComplete;
@@ -183,9 +175,6 @@ ImageDecoderQt::ReadContext::IncrementalReadResult
         m_buffer.seek(startPos);
         const bool gotHeader = imageData.m_image.size().width();
 
-        if (debugImageDecoderQt)
-            qDebug() << "readImageLines(): read() failed: " << m_reader.errorString()
-                << " got header=" << gotHeader;
         // [Experimental] Did we manage to read the header?
         if (gotHeader) {
             imageData.m_imageState = ImageHeaderValid;
@@ -226,16 +215,10 @@ void ImageDecoderQt::setData(SharedBuffer* data, bool allDataReceived)
     reset();
     ReadContext readContext(data, ReadContext::LoadComplete, m_imageList);
 
-    if (debugImageDecoderQt)
-        qDebug() << " setData " << data->size() << " image bytes, complete=" << allDataReceived;
-
     const  ReadContext::ReadResult readResult =  readContext.read(allDataReceived);
 
     if (hasFirstImageHeader())
         m_hasAlphaChannel = m_imageList[0].m_image.hasAlphaChannel();
-
-    if (debugImageDecoderQt)
-        qDebug()  << " read returns " << readResult;
 
     switch (readResult) {
     case ReadContext::ReadFailed:
@@ -263,22 +246,16 @@ void ImageDecoderQt::setData(SharedBuffer* data, bool allDataReceived)
 
 bool ImageDecoderQt::isSizeAvailable()
 {
-    if (debugImageDecoderQt)
-        qDebug() << " ImageDecoderQt::isSizeAvailable() returns" << ImageDecoder::isSizeAvailable();
     return ImageDecoder::isSizeAvailable();
 }
 
 size_t ImageDecoderQt::frameCount() const
 {
-    if (debugImageDecoderQt)
-        qDebug() << " ImageDecoderQt::frameCount() returns" << m_imageList.size();
     return m_imageList.size();
 }
 
 int ImageDecoderQt::repetitionCount() const
 {
-    if (debugImageDecoderQt)
-        qDebug() << " ImageDecoderQt::repetitionCount() returns" << m_loopCount;
     return m_loopCount;
 }
 
@@ -296,8 +273,6 @@ int ImageDecoderQt::duration(size_t index) const
 
 String ImageDecoderQt::filenameExtension() const
 {
-    if (debugImageDecoderQt)
-           qDebug() << " ImageDecoderQt::filenameExtension() returns" << m_imageFormat;
     return m_imageFormat;
 };
 
@@ -309,9 +284,6 @@ RGBA32Buffer* ImageDecoderQt::frameBufferAtIndex(size_t)
 
 QPixmap* ImageDecoderQt::imageAtIndex(size_t index) const
 {
-    if (debugImageDecoderQt)
-        qDebug() << "ImageDecoderQt::imageAtIndex(" << index << ')';
-
     if (index >= static_cast<size_t>(m_imageList.size()))
         return 0;
 
