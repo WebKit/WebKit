@@ -520,6 +520,8 @@ void EventSender::keyDown(const QString &string, const QStringList &modifiers)
     }
     QKeyEvent event(QEvent::KeyPress, code, modifs, s);
     QApplication::sendEvent(m_page, &event);
+    QKeyEvent event2(QEvent::KeyRelease, code, modifs, s);
+    QApplication::sendEvent(m_page, &event2);
 }
 
 void EventSender::contextClick()
