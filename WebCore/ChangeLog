@@ -1,3 +1,14 @@
+2009-10-06  Benjamin C Meyer  <bmeyer@rim.com>
+
+        Reviewed by Ariya Hidayat.
+        
+        Match the behavior of other WebKit browser and have the first url of the drag data be the url passed in declareAndWriteDragImage and set the text of the drag data to be the title argument.
+        
+        Manual test: Drag the readability js link from http://lab.arc90.com/experiments/readability/
+        
+        * platform/qt/ClipboardQt.cpp:
+        (WebCore::ClipboardQt::declareAndWriteDragImage):
+
 2009-10-06  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.
