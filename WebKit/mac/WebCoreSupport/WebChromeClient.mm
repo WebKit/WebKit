@@ -49,6 +49,7 @@
 #import <Foundation/Foundation.h>
 #import <WebCore/BlockExceptions.h>
 #import <WebCore/Console.h>
+#import <WebCore/Element.h>
 #import <WebCore/FileChooser.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/Frame.h>

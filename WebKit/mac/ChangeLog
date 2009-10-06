@@ -1,3 +1,9 @@
+2009-10-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Build fix. If you call Node::hasTagName(), you also have to include Element.h.
+
+        * WebCoreSupport/WebChromeClient.mm:
+
 2009-10-05  Pierre d'Herbemont  <pdherbemont@webkit.org>
 
         Reviewed by Simon Fraser
