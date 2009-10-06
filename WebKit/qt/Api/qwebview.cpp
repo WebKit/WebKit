@@ -209,7 +209,7 @@ QWebView::QWebView(QWidget *parent)
 {
     d = new QWebViewPrivate(this);
 
-#if !defined(Q_WS_QWS)
+#if !defined(Q_WS_QWS) && !defined(Q_OS_SYMBIAN)
     setAttribute(Qt::WA_InputMethodEnabled);
 #endif
 

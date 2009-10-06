@@ -1,3 +1,16 @@
+2009-10-06  Janne Koskinen  <janne.p.koskinen@digia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] don't enable input methods on Symbian by default.
+        https://bugs.webkit.org/show_bug.cgi?id=30117
+
+        If input methods are enabled Symbian FEP will be launched on every
+        pointer event making webpage navigation impossible with QWebView.
+
+        * Api/qwebview.cpp:
+        (QWebView::QWebView):
+
 2009-10-05  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Simon Hausmann.
