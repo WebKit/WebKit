@@ -44,7 +44,7 @@ public:
 
     virtual void setData(SharedBuffer* data, bool allDataReceived);
     virtual bool isSizeAvailable();
-    virtual size_t frameCount() const;
+    virtual size_t frameCount();
     virtual int repetitionCount() const;
     virtual RGBA32Buffer* frameBufferAtIndex(size_t index);
 
