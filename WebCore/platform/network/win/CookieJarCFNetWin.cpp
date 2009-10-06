@@ -114,11 +114,38 @@ bool cookiesEnabled(const Document* /*document*/)
     return policy == CFHTTPCookieStorageAcceptPolicyOnlyFromMainDocumentDomain || policy == CFHTTPCookieStorageAcceptPolicyAlways;
 }
 
-bool getRawCookies(const Document*, const KURL&, Vector<Cookie>& rawCookies)
+bool getRawCookies(const Document*, const KURL& url, Vector<Cookie>& rawCookies)
 {
-    // FIXME: Not yet implemented
     rawCookies.clear();
-    return false; // return true when implemented
+    CFHTTPCookieStorageRef cookieStorage = currentCookieStorage();
+    if (!cookieStorage)
+        return false;
+
+    RetainPtr<CFURLRef> urlCF(AdoptCF, url.createCFURL());
+
+    bool sendSecureCookies = url.protocolIs("https");
+    RetainPtr<CFArrayRef> cookiesCF(AdoptCF, CFHTTPCookieStorageCopyCookiesForURL(cookieStorage, urlCF.get(), sendSecureCookies));
+
+    CFIndex count = CFArrayGetCount(cookiesCF.get());
+    rawCookies.reserveCapacity(count);
+
+    for (CFIndex i = 0; i < count; i++) {
+       CFHTTPCookieRef cookie = (CFHTTPCookieRef)CFArrayGetValueAtIndex(cookiesCF.get(), i);
+       String name = CFHTTPCookieGetName(cookie);
+       String value = CFHTTPCookieGetValue(cookie);
+       String domain = CFHTTPCookieGetDomain(cookie);
+       String path = CFHTTPCookieGetPath(cookie);
+
+       double expires = (CFDateGetAbsoluteTime(CFHTTPCookieGetExpiratonDate(cookie)) + kCFAbsoluteTimeIntervalSince1970) * 1000;
+
+       bool httpOnly = CFHTTPCookieIsHTTPOnly(cookie);
+       bool secure = CFHTTPCookieIsSecure(cookie);
+       bool session = false;    // FIXME: Need API for if a cookie is a session cookie.
+
+       rawCookies.uncheckedAppend(Cookie(name, value, domain, path, expires, httpOnly, secure, session));
+    }
+
+    return true;
 }
 
 void deleteCookie(const Document*, const KURL&, const String&)

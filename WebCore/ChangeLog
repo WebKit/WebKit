@@ -1,3 +1,16 @@
+2009-10-06  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        Preparation for <http://webkit.org/b/30104>.
+        Inspector should show cookies of sub-resources on the page.
+        
+        Implement getRawCookies for CFNetwork for Windows, so we can see more
+        than just a key/value pair for Cookies when we are on Windows.
+
+        * platform/network/win/CookieJarCFNetWin.cpp:
+        (WebCore::getRawCookies):
+
 2009-10-06  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by Adam Roben.
