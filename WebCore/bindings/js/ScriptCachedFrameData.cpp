@@ -86,7 +86,7 @@ void ScriptCachedFrameData::clear()
 {
     JSLock lock(SilenceAssertionsOnly);
 
-    if (!m_window) {
+    if (m_window) {
         m_window = 0;
         gcController().garbageCollectSoon();
     }

@@ -1,3 +1,14 @@
+2009-10-05  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        1-char fix for obviously reverse condition.
+        https://bugs.webkit.org/show_bug.cgi?id=30100
+        No test since the only difference is a timing of GC.
+
+        * bindings/js/ScriptCachedFrameData.cpp:
+        (WebCore::ScriptCachedFrameData::clear): Revert condition. Almost a typo.
+
 2009-09-30  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Darin Fisher.
