@@ -1,3 +1,21 @@
+2009-10-05  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Convert DOM Storage's "complex-keys" test into the new format
+        https://bugs.webkit.org/show_bug.cgi?id=30089
+
+        Convert DOM Storage's "complex-keys" test into the new format and add it for
+        session storage.  This test should be a bit more thorough than the old
+        version as well.
+
+        * storage/domstorage/localstorage/complex-keys-expected.txt:
+        * storage/domstorage/localstorage/complex-keys.html:
+        * storage/domstorage/script-tests/complex-keys.js: Added.
+        (runTest):
+        * storage/domstorage/sessionstorage/complex-keys-expected.txt: Added.
+        * storage/domstorage/sessionstorage/complex-keys.html: Added.
+
 2009-10-05  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.
