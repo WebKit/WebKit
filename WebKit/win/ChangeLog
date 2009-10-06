@@ -1,3 +1,14 @@
+2009-10-06  David Levin  <levin@chromium.org>
+
+        Reviewed by NOBODY (windows build fix).
+
+        Speculative build fix for windows (due to r49160).
+
+        * WebDownloadCFNet.cpp:
+        (WebDownload::initToResumeWithBundle):
+        * WebIconDatabase.cpp:
+        (WebIconDatabase::dispatchDidAddIconForPageURL):
+
 2009-10-05  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
