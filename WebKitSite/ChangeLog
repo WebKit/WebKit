@@ -1,3 +1,15 @@
+2009-10-06  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Diagram needs to be linked from the home page
+        https://bugs.webkit.org/show_bug.cgi?id=30142
+
+        http://webkit.org/coding/major-objects.html was never linked from the home
+        page.
+
+        * nav.inc:
+
 2009-09-28  Alex Milowski  <alex@milowski.com>
 
         <http://webkit.org/b/29098> Update to MathML project webpage
