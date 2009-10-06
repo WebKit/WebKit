@@ -1,3 +1,10 @@
+2009-10-06  Dirk Schulze  <krit@webkit.org>
+
+        Previous SourceAlpha test were made with an filters enabled build. 
+        This is the result of a filters disabled build (default).
+
+        * platform/mac/svg/filters/sourceAlpha-expected.txt:
+
 2009-10-06  Xan Lopez  <xlopez@igalia.com>
 
         Update the skipped list to recent changes in tests.
