@@ -27,6 +27,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef DocumentLoaderGtk_h
+#define DocumentLoaderGtk_h
+
 #include "DocumentLoader.h"
 #include "webkitdefines.h"
 #include "wtf/HashSet.h"
@@ -67,3 +70,5 @@ private:
 };
 
 } // end namespace WebKit
+
+#endif

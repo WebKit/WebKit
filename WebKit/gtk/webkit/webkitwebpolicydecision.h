@@ -17,8 +17,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WEBKIT_WEB_POLICY_DECISION_H
-#define WEBKIT_WEB_POLICY_DECISION_H
+#ifndef webkitwebpolicydecision_h
+#define webkitwebpolicydecision_h
 
 #include <glib-object.h>
 #include <stdint.h>

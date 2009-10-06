@@ -18,8 +18,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WEBKIT_DOWNLOAD_H
-#define WEBKIT_DOWNLOAD_H
+#ifndef webkitdownload_h
+#define webkitdownload_h
 
 #include <webkit/webkitdefines.h>
 

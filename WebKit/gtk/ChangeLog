@@ -1,3 +1,36 @@
+2009-10-06  José Millán Soto  <fid@gpul.org>
+
+        Reviewed by Xan Lopez.
+
+        Header files of WebKitGTK do not comply with WebKit coding style (Patch attached)
+        https://bugs.webkit.org/show_bug.cgi?id=30076
+
+        Solves various issues in header files.
+
+        * WebCoreSupport/DocumentLoaderGtk.h: Added "headed guards"
+        * webkit/webkitdefines.h:
+        * webkit/webkitdownload.h:
+        * webkit/webkiterror.h:
+        * webkit/webkithittestresult.h:
+        * webkit/webkitnetworkrequest.h:
+        * webkit/webkitnetworkresponse.h:
+        * webkit/webkitprivate.h:
+        * webkit/webkitsecurityorigin.h:
+        * webkit/webkitsoupauthdialog.h:
+        * webkit/webkitversion.h.in:
+        * webkit/webkitwebbackforwardlist.h:
+        * webkit/webkitwebdatabase.h:
+        * webkit/webkitwebdatasource.h:
+        * webkit/webkitwebframe.h:
+        * webkit/webkitwebhistoryitem.h:
+        * webkit/webkitwebinspector.h:
+        * webkit/webkitwebnavigationaction.h:
+        * webkit/webkitwebpolicydecision.h:
+        * webkit/webkitwebresource.h:
+        * webkit/webkitwebsettings.h:
+        * webkit/webkitwebview.h:
+        * webkit/webkitwebwindowfeatures.h:
+
 2009-10-03  Adam Barth  <abarth@webkit.org>
 
         More build fixing.

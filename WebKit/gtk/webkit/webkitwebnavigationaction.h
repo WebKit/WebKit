@@ -17,8 +17,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WEBKIT_WEB_NAVIGATION_ACTION_H
-#define WEBKIT_WEB_NAVIGATION_ACTION_H
+#ifndef webkitwebnavigationaction_h
+#define webkitwebnavigationaction_h
 
 #include <glib-object.h>
 

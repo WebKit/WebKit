@@ -17,8 +17,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WEBKIT_NETWORK_REQUEST_H
-#define WEBKIT_NETWORK_REQUEST_H
+#ifndef webkitnetworkrequest_h
+#define webkitnetworkrequest_h
 
 #include <glib-object.h>
 #include <libsoup/soup.h>

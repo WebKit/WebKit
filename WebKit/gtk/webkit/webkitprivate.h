@@ -19,8 +19,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WEBKIT_PRIVATE_H
-#define WEBKIT_PRIVATE_H
+#ifndef webkitprivate_h
+#define webkitprivate_h
 
 /*
  * This file knows the shared secret of WebKitWebView, WebKitWebFrame,

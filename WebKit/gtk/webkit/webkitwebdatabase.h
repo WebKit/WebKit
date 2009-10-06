@@ -17,8 +17,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WEBKIT_WEB_DATABASE_H
-#define WEBKIT_WEB_DATABASE_H
+#ifndef webkitwebdatabase_h
+#define webkitwebdatabase_h
 
 #include <glib-object.h>
 
@@ -93,4 +93,4 @@ webkit_set_default_web_database_quota   (guint64 defaultQuota);
 
 G_END_DECLS
 
-#endif /* __WEBKIT_WEB_DATABASE_H__ */
+#endif /* webkitwebdatabase_h */

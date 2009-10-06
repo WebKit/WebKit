@@ -18,8 +18,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WEBKIT_HIT_TEST_RESULT_H
-#define WEBKIT_HIT_TEST_RESULT_H
+#ifndef webkithittestresult_h
+#define webkithittestresult_h
 
 #include <glib-object.h>
 

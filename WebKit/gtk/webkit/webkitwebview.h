@@ -19,8 +19,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WEBKIT_WEB_VIEW_H
-#define WEBKIT_WEB_VIEW_H
+#ifndef webkitwebview_h
+#define webkitwebview_h
 
 #include <gtk/gtk.h>
 #include <libsoup/soup.h>

@@ -18,8 +18,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WEBKIT_WEB_FRAME_H
-#define WEBKIT_WEB_FRAME_H
+#ifndef webkitwebframe_h
+#define webkitwebframe_h
 
 #include <glib-object.h>
 #include <gtk/gtk.h>

@@ -17,8 +17,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WEBKIT_VERSION_H
-#define WEBKIT_VERSION_H
+#ifndef webkitversion_h
+#define webkitversion_h
 
 #include <glib.h>
 #include <webkit/webkitdefines.h>

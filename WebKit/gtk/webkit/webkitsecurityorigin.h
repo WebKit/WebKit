@@ -17,8 +17,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WEBKIT_SECURITY_ORIGIN_H
-#define WEBKIT_SECURITY_ORIGIN_H
+#ifndef webkitsecurityorigin_h
+#define webkitsecurityorigin_h
 
 #include "webkitsecurityorigin.h"
 #include "webkitwebdatabase.h"

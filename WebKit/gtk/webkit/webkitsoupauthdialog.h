@@ -22,8 +22,8 @@
 
 #include <webkit/webkitdefines.h>
 
-#ifndef WEBKIT_SOUP_AUTH_DIALOG_H
-#define WEBKIT_SOUP_AUTH_DIALOG_H 1
+#ifndef webkitsoupauthdialog_h
+#define webkitsoupauthdialog_h
 
 G_BEGIN_DECLS
 
@@ -49,4 +49,4 @@ webkit_soup_auth_dialog_get_type (void);
 
 G_END_DECLS
 
-#endif /* WEBKIT_SOUP_AUTH_DIALOG_H */
+#endif /* webkitsoupauthdialog_h */

@@ -17,8 +17,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WEBKIT_ERROR_H
-#define WEBKIT_ERROR_H
+#ifndef webkiterror_h
+#define webkiterror_h
 
 #include <glib.h>
 
