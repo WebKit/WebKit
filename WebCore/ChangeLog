@@ -1,3 +1,10 @@
+2009-10-05  Julie Parent  <jparent@chromium.org>
+
+        Unreviewed, last Chromium build fix corresponding to revision 49113.
+        Add include for BeforeLoadEvent to DOMObjectsInclude.h.
+
+        * bindings/v8/DOMObjectsInclude.h:
+
 2009-10-05  Simon Fraser  <simon.fraser@apple.com>
 
         Fix Windows build.
