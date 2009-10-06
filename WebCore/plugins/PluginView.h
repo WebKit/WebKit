@@ -52,10 +52,6 @@ typedef HWND PlatformPluginWidget;
 typedef PlatformWidget PlatformPluginWidget;
 #endif
 
-#if defined(Q_WS_X11)
-#include <QPixmap>
-#endif
-
 namespace JSC {
     namespace Bindings {
         class Instance;
@@ -330,7 +326,7 @@ private:
 
 #if defined(Q_WS_X11)
         bool m_hasPendingGeometryChange;
-        QPixmap m_drawable;
+        Pixmap m_drawable;
         Display* m_pluginDisplay;
 
         void initXEvent(XEvent* event);

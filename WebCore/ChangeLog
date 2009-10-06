@@ -2,6 +2,30 @@
 
         Reviewed by Simon Hausmann.
 
+        [Qt] Windowless plugins: Use X Pixmap instead of QPixmap.
+
+        This has the following advantages:
+        1. Allows more sharing of code between gtk and Qt ports in the future
+        2. QPixmap creates 24-bit by default. We have to later 'upgrade' it to 32-bit.
+        3. QPixmap may sometime change depth behind our back! This will require us to
+        update the plugin about the new visual and colormap.
+        4. We cannot ensure that QPixmap is backed by a X Drawable. For example, with
+        -graphicssystem raster, QPixmap uses the raster (image) backend.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20081
+
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::PluginView):
+        * plugins/PluginView.h:
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::updatePluginWidget):
+        (WebCore::PluginView::paint):
+        (WebCore::PluginView::platformDestroy):
+
+2009-10-06  Girish Ramakrishnan  <girish@forwardbias.in>
+
+        Reviewed by Simon Hausmann.
+
         [Qt] Add support for windowless NPAPI plugins
 
         https://bugs.webkit.org/show_bug.cgi?id=20081

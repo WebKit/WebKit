@@ -101,7 +101,11 @@ void PluginView::updatePluginWidget()
     if (m_windowRect == oldWindowRect && m_clipRect == oldClipRect)
         return;
 
-    m_drawable = QPixmap(m_windowRect.width(), m_windowRect.height());
+    if (m_drawable)
+        XFreePixmap(QX11Info::display(), m_drawable);
+
+    if (!m_isWindowed)
+        m_drawable = XCreatePixmap(QX11Info::display(), QX11Info::appRootWindow(), m_windowRect.width(), m_windowRect.height(), QX11Info::appDepth());
 
     // do not call setNPWindowIfNeeded immediately, will be called on paint()
     m_hasPendingGeometryChange = true;
@@ -166,8 +170,10 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
 
     QPainter* painter = context->platformContext();
     const bool isPaintingOnWidget = painter->device()->devType() == QInternal::Widget;
-    if (!isPaintingOnWidget || m_drawable.handle() == 0)
+    if (!isPaintingOnWidget || !m_drawable)
         return;
+
+    QPixmap qtDrawable = QPixmap::fromX11Pixmap(m_drawable, QPixmap::ExplicitlyShared);
 
     if (m_isTransparent) {
         // Attempt content propagation by copying over from the backing store
@@ -177,13 +183,13 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
         offset = -offset; // negating the offset gives us the offset of the view within the backing store pixmap
 
         if (hasValidBackingStore) {
-            QPixmap* backingStorePixmap = static_cast<QPixmap *>(backingStoreDevice);
+            QPixmap* backingStorePixmap = static_cast<QPixmap*>(backingStoreDevice);
             GC gc = XDefaultGC(QX11Info::display(), QX11Info::appScreen());
-            XCopyArea(QX11Info::display(), backingStorePixmap->handle(), m_drawable.handle(), gc,
+            XCopyArea(QX11Info::display(), backingStorePixmap->handle(), m_drawable, gc,
                 offset.x() + m_windowRect.x() + m_clipRect.x(), offset.y() + m_windowRect.y() + m_clipRect.y(),
                 m_clipRect.width(), m_clipRect.height(), m_clipRect.x(), m_clipRect.y());
         } else { // no backing store, clean the pixmap
-            QPainter painter(&m_drawable);
+            QPainter painter(&qtDrawable);
             painter.fillRect(m_clipRect, Qt::white);
         }
     }
@@ -200,7 +206,7 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
     XGraphicsExposeEvent& exposeEvent = xevent.xgraphicsexpose;
     exposeEvent.type = GraphicsExpose;
     exposeEvent.display = QX11Info::display();
-    exposeEvent.drawable = m_drawable.handle();
+    exposeEvent.drawable = m_drawable;
     exposeEvent.x = m_clipRect.x();
     exposeEvent.y = m_clipRect.y();
     exposeEvent.width = m_clipRect.x() + m_clipRect.width(); // flash bug? it thinks width is the right
@@ -211,7 +217,7 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
     if (syncX)
         XSync(m_pluginDisplay, False); // sync changes by plugin
 
-    painter->drawPixmap(frameRect().x() + m_clipRect.x(), frameRect().y() + m_clipRect.y(), m_drawable,
+    painter->drawPixmap(frameRect().x() + m_clipRect.x(), frameRect().y() + m_clipRect.y(), qtDrawable,
         m_clipRect.x(), m_clipRect.y(), m_clipRect.width(), m_clipRect.height());
 }
 
@@ -706,9 +712,9 @@ bool PluginView::platformStart()
 
     show();
 
-    NPSetWindowCallbackStruct *wsi = new NPSetWindowCallbackStruct();
+    NPSetWindowCallbackStruct* wsi = new NPSetWindowCallbackStruct();
     wsi->type = 0;
-    
+
     const QX11Info* x11Info = 0;
     if (m_isWindowed) {
         x11Info = &platformPluginWidget()->x11Info();
@@ -746,6 +752,9 @@ void PluginView::platformDestroy()
 {
     if (platformPluginWidget())
         delete platformPluginWidget();
+
+    if (m_drawable)
+        XFreePixmap(QX11Info::display(), m_drawable);
 }
 
 void PluginView::halt()
