@@ -261,7 +261,7 @@ void HTMLLinkElement::setCSSStyleSheet(const String& url, const String& charset,
         DEFINE_STATIC_LOCAL(const String, mediaWikiKHTMLFixesStyleSheet, ("/* KHTML fix stylesheet */\n/* work around the horizontal scrollbars */\n#column-content { margin-left: 0; }\n\n"));
         // There are two variants of KHTMLFixes.css. One is equal to mediaWikiKHTMLFixesStyleSheet,
         // while the other lacks the second trailing newline.
-        if (url.endsWith(slashKHTMLFixesDotCss) && mediaWikiKHTMLFixesStyleSheet.startsWith(sheetText)
+        if (url.endsWith(slashKHTMLFixesDotCss) && !sheetText.isNull() && mediaWikiKHTMLFixesStyleSheet.startsWith(sheetText)
                 && sheetText.length() >= mediaWikiKHTMLFixesStyleSheet.length() - 1) {
             ASSERT(m_sheet->length() == 1);
             ExceptionCode ec;

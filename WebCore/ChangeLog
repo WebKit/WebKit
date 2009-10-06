@@ -1,3 +1,16 @@
+2009-10-05  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Crash when trying to load a null stylesheet for a site specific hack. 
+        https://bugs.webkit.org/show_bug.cgi?id=30105
+
+        Created a testcase and tested in browser.  DRT doesn't test
+        site specific hacks.
+
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::setCSSStyleSheet):
+
 2009-10-05  James Robinson  <jamesr@google.com>
 
         Reviewed by Darin Adler.
