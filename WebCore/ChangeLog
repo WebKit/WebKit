@@ -1,3 +1,12 @@
+2009-10-06  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Dave Kilzer.
+
+        Move textRects to the right category in DOM.mm. Include DOMPrivate.h to ensure that the interfaces match.
+
+        * bindings/objc/DOM.mm:
+        (-[DOMNode textRects]):
+
 2009-10-06  Benjamin C Meyer  <bmeyer@rim.com>
 
         Reviewed by Ariya Hidayat.
