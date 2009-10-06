@@ -32,6 +32,10 @@ State at 'load' event:
         role: AXRole: AXStaticText
 
 
+        description: AXDescription: fullscreen
+        role: AXRole: AXButton
+
+
         description: AXDescription: mute
         role: AXRole: AXButton
 

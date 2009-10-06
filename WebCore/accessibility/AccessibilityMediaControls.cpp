@@ -101,6 +101,7 @@ MediaControlElementType AccessibilityMediaControl::controlType() const
 
 String AccessibilityMediaControl::controlTypeName() const
 {
+    DEFINE_STATIC_LOCAL(const String, mediaFullscreenButtonName, ("FullscreenButton"));
     DEFINE_STATIC_LOCAL(const String, mediaMuteButtonName, ("MuteButton"));
     DEFINE_STATIC_LOCAL(const String, mediaPlayButtonName, ("PlayButton"));
     DEFINE_STATIC_LOCAL(const String, mediaSeekBackButtonName, ("SeekBackButton"));
@@ -114,6 +115,8 @@ String AccessibilityMediaControl::controlTypeName() const
     DEFINE_STATIC_LOCAL(const String, mediaTimeRemainingDisplay, ("TimeRemainingDisplay"));
 
     switch (controlType()) {
+    case MediaFullscreenButton:
+        return mediaFullscreenButtonName;
     case MediaMuteButton:
         return mediaMuteButtonName;
     case MediaPlayButton:

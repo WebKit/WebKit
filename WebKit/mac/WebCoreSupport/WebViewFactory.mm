@@ -652,6 +652,10 @@
     if ([name isEqualToString:@"VideoElement"])
         return UI_STRING("video element controller", "accessibility role description for video element controller");
 
+    // FIXME: the ControlsPanel container should never be visible in the accessibility hierarchy.
+    if ([name isEqualToString:@"ControlsPanel"])
+        return @"";
+
     if ([name isEqualToString:@"MuteButton"])
         return UI_STRING("mute", "accessibility role description for mute button");
     if ([name isEqualToString:@"UnMuteButton"])

@@ -1,3 +1,18 @@
+2009-10-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        accessibility/media-element.html crashes (and has incorrect result)
+        https://bugs.webkit.org/show_bug.cgi?id=30108
+
+        Fix up the accessibilty label for the newly added fullscreen button,
+        and update the test result accordingly.
+
+        * WebCoreSupport/WebViewFactory.mm:
+        (-[WebViewFactory localizedMediaControlElementString:]):
+        Handle "ControlsPanel" which is just an empty container, to avoid
+        asserting in debug builds.
+
 2009-10-06  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Eric Seidel.
