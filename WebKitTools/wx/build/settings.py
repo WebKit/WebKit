@@ -328,7 +328,7 @@ def common_configure(conf):
         conf.env['LIB_XSLT'] = ['libxslt']
     else:    
         if build_port == 'wx':
-            conf.env.append_value('LIB', ['png', 'pthread'])
+            conf.env.append_value('LIB', ['jpeg', 'png', 'pthread'])
             conf.env.append_value('LIBPATH', os.path.join(wklibs_dir, 'unix', 'lib'))
             conf.env.append_value('CPPPATH', os.path.join(wklibs_dir, 'unix', 'include'))
             conf.env.append_value('CXXFLAGS', ['-fPIC', '-DPIC'])

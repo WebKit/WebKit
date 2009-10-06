@@ -1,3 +1,9 @@
+2009-10-05  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix. Add jpeg to the list of libs to link against.
+
+        * wx/build/settings.py:
+
 2009-10-05  Jakub Wieczorek  <faw217@gmail.com>
 
         Reviewed by Simon Hausmann.

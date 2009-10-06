@@ -30,7 +30,7 @@ import commands
 from settings import *
 
 jscore_excludes = ['jsc.cpp', 'ucptable.cpp', 'GOwnPtr.cpp']
-jscore_excludes.extend(get_excludes(jscore_dir, ['*CF.cpp']))
+jscore_excludes.extend(get_excludes(jscore_dir, ['*CF.cpp', '*Symbian.cpp']))
 
 sources = []
 

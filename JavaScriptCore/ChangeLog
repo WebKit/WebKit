@@ -1,3 +1,9 @@
+2009-10-05  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix. Add Symbian files to the list of excludes.
+
+        * wscript:
+
 2009-10-05  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Simon Hausmann.
