@@ -60,7 +60,6 @@ private:
     ImageDecoderQt &operator=(const ImageDecoderQt&);
 
     class ReadContext;
-    void reset();
     bool hasFirstImageHeader() const;
 
     enum ImageState {

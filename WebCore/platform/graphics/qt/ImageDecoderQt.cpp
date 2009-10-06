@@ -201,18 +201,18 @@ bool ImageDecoderQt::hasFirstImageHeader() const
     return  !m_imageList.empty() && m_imageList[0].m_imageState >= ImageHeaderValid;
 }
 
-void ImageDecoderQt::reset()
-{
-    m_hasAlphaChannel = false;
-    m_failed = false;
-    m_imageList.clear();
-    m_pixmapCache.clear();
-    m_loopCount = cAnimationNone;
-}
-
 void ImageDecoderQt::setData(SharedBuffer* data, bool allDataReceived)
 {
-    reset();
+    if (m_failed)
+        return;
+
+    // Cache our own new data.
+    ImageDecoder::setData(data, allDataReceived);
+
+    // No progressive loading possible
+    if (!allDataReceived)
+        return;
+
     ReadContext readContext(data, ReadContext::LoadComplete, m_imageList);
 
     const  ReadContext::ReadResult readResult =  readContext.read(allDataReceived);

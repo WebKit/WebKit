@@ -2,6 +2,24 @@
 
         Reviewed by Simon Hausmann.
 
+        [Qt] QImageReader does not support progressive reading
+        https://bugs.webkit.org/show_bug.cgi?id=27538
+
+        Change the ImageDecoderQt::setData to store the encoded
+        data in ImageDecoder.
+
+        Only call ReadContext when the whole Resource has been
+        loaded to avoid needless calls to reset and the
+        ReadContext as progressive loading is not supported.
+
+        * platform/graphics/qt/ImageDecoderQt.cpp:
+        (WebCore::ImageDecoderQt::setData):
+        * platform/graphics/qt/ImageDecoderQt.h:
+
+2009-10-04  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon Hausmann.
+
         [Qt] Remove dead code from ImageDecoderQt
         https://bugs.webkit.org/show_bug.cgi?id=27538
 
