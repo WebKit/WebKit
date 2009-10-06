@@ -2,6 +2,38 @@
 
         Reviewed by Simon Hausmann.
 
+        [Qt] Change QImageReader usage in ImageDecoderQt
+        https://bugs.webkit.org/show_bug.cgi?id=27538
+
+        Replace the ReadContext with another appoach to
+        reading the image. Attempt to only read meta information
+        like the image size and number of frames (for animations)
+        first and then when the page is getting drawn decode
+        the image with the QImageReader.
+
+        This is a huge benefit on pages with many images and saves
+        ~2GB of memory on the szeged image test page.
+
+        * platform/graphics/qt/ImageDecoderQt.cpp:
+        (WebCore::ImageDecoderQt::ImageDecoderQt):
+        (WebCore::ImageDecoderQt::setData):
+        (WebCore::ImageDecoderQt::isSizeAvailable):
+        (WebCore::ImageDecoderQt::frameCount):
+        (WebCore::ImageDecoderQt::repetitionCount):
+        (WebCore::ImageDecoderQt::filenameExtension):
+        (WebCore::ImageDecoderQt::frameBufferAtIndex):
+        (WebCore::ImageDecoderQt::clearFrameBufferCache):
+        (WebCore::ImageDecoderQt::internalDecodeSize):
+        (WebCore::ImageDecoderQt::internalReadImage):
+        (WebCore::ImageDecoderQt::internalHandleCurrentImage):
+        (WebCore::ImageDecoderQt::forceLoadEverything):
+        (WebCore::ImageDecoderQt::failRead):
+        * platform/graphics/qt/ImageDecoderQt.h:
+
+2009-10-05  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon Hausmann.
+
         [Qt] Make use of RGBA32Buffer in ImageDecoderQt
         https://bugs.webkit.org/show_bug.cgi?id=27538
 

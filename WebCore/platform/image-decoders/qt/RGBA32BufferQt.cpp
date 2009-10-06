@@ -97,7 +97,10 @@ bool RGBA32Buffer::setSize(int newWidth, int newHeight)
 
 QPixmap* RGBA32Buffer::asNewNativeImage() const
 {
-    return new QPixmap(QPixmap::fromImage(m_image));
+    QPixmap pix = QPixmap::fromImage(m_image);
+    m_image = QImage();
+
+    return new QPixmap(pix);
 }
 
 bool RGBA32Buffer::hasAlpha() const

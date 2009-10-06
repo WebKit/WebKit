@@ -55,104 +55,17 @@ ImageDecoder* ImageDecoder::create(const SharedBuffer& data)
     return new ImageDecoderQt(imageFormat);
 }
 
-// Context, maintains IODevice on a data buffer.
-class ImageDecoderQt::ReadContext {
-public:
-
-    ReadContext(SharedBuffer* data, Vector<RGBA32Buffer>& target);
-    bool read();
-
-    QImageReader *reader() { return &m_reader; }
-
-private:
-    enum IncrementalReadResult { IncrementalReadFailed, IncrementalReadPartial, IncrementalReadComplete };
-    // Incrementally read an image
-    IncrementalReadResult readImageLines(RGBA32Buffer&);
-
-    QByteArray m_data;
-    QBuffer m_buffer;
-    QImageReader m_reader;
-
-    Vector<RGBA32Buffer> &m_target;
-};
-
-ImageDecoderQt::ReadContext::ReadContext(SharedBuffer* data, Vector<RGBA32Buffer> &target)
-    : m_data(data->data(), data->size())
-    , m_buffer(&m_data)
-    , m_reader(&m_buffer)
-    , m_target(target)
-{
-    m_buffer.open(QIODevice::ReadOnly);
-}
-
-
-bool ImageDecoderQt::ReadContext::read()
-{
-    // Attempt to read out all images
-    bool completed = false;
-    while (true) {
-        if (m_target.isEmpty() || completed) {
-            // Start a new image.
-            if (!m_reader.canRead())
-                return true;
-
-            m_target.append(RGBA32Buffer());
-            completed = false;
-        }
-
-        // read chunks
-        switch (readImageLines(m_target.last())) {
-        case IncrementalReadFailed:
-            m_target.removeLast();
-            return false;
-        case IncrementalReadPartial:
-            return true;
-        case IncrementalReadComplete:
-            completed = true;
-            //store for next
-            const bool supportsAnimation = m_reader.supportsAnimation();
-
-            // No point in readinfg further
-            if (!supportsAnimation)
-                return true;
-
-            break;
-        }
-    }
-    return true;
-}
-
-
-
-ImageDecoderQt::ReadContext::IncrementalReadResult
-        ImageDecoderQt::ReadContext::readImageLines(RGBA32Buffer& buffer)
-{
-    // TODO: Implement incremental reading here,
-    // set state to reflect complete header, etc.
-    // For now, we read the whole image.
-
-
-    const qint64 startPos = m_buffer.pos();
-    QImage img;
-    // Oops, failed. Rewind.
-    if (!m_reader.read(&img)) {
-        m_buffer.seek(startPos);
-        return IncrementalReadFailed;
-    }
-
-    buffer.setDuration(m_reader.nextImageDelay());
-    buffer.setDecodedImage(img);
-    buffer.setStatus(RGBA32Buffer::FrameComplete);
-    return IncrementalReadComplete;
-}
-
 ImageDecoderQt::ImageDecoderQt(const QByteArray& imageFormat)
-    : m_imageFormat(imageFormat.constData())
+    : m_buffer(0)
+    , m_reader(0)
+    , m_repetitionCount(-1)
 {
 }
 
 ImageDecoderQt::~ImageDecoderQt()
 {
+    delete m_reader;
+    delete m_buffer;
 }
 
 void ImageDecoderQt::setData(SharedBuffer* data, bool allDataReceived)
@@ -167,52 +80,79 @@ void ImageDecoderQt::setData(SharedBuffer* data, bool allDataReceived)
     if (!allDataReceived)
         return;
 
-    ReadContext readContext(data, m_frameBufferCache);
+    // We expect to be only called once with allDataReceived
+    ASSERT(!m_buffer);
+    ASSERT(!m_reader);
 
-    const bool result =  readContext.read();
+    // Attempt to load the data
+    QByteArray imageData = QByteArray::fromRawData(m_data->data(), m_data->size());
+    m_buffer = new QBuffer;
+    m_buffer->setData(imageData);
+    m_buffer->open(QBuffer::ReadOnly);
+    m_reader = new QImageReader(m_buffer);
 
-    if (!result)
-        setFailed();
-    else if (!m_frameBufferCache.isEmpty()) {
-        QSize imgSize = m_frameBufferCache[0].decodedImage().size();
-        setSize(imgSize.width(), imgSize.height());
-
-        if (readContext.reader()->supportsAnimation()) {
-            if (readContext.reader()->loopCount() != -1)
-                m_loopCount = readContext.reader()->loopCount();
-            else
-                m_loopCount = 0; //loop forever
-        }
-    }
+    if (!m_reader->canRead())
+        failRead();
 }
-
 
 bool ImageDecoderQt::isSizeAvailable()
 {
+    if (!m_failed && !ImageDecoder::isSizeAvailable() && m_reader)
+        internalDecodeSize();
+
     return ImageDecoder::isSizeAvailable();
 }
 
 size_t ImageDecoderQt::frameCount()
 {
+    if (m_frameBufferCache.isEmpty() && m_reader) {
+        if (m_reader->supportsAnimation()) {
+            int imageCount = m_reader->imageCount();
+
+            // Fixup for Qt decoders... imageCount() is wrong
+            // and jumpToNextImage does not work either... so
+            // we will have to parse everything...
+            if (imageCount == 0)
+                forceLoadEverything();
+            else
+                m_frameBufferCache.resize(imageCount);
+        } else {
+            m_frameBufferCache.resize(1);
+        }
+    }
+
     return m_frameBufferCache.size();
 }
 
 int ImageDecoderQt::repetitionCount() const
 {
-    return m_loopCount;
+    if (m_reader && m_reader->supportsAnimation())
+        m_repetitionCount = qMax(0, m_reader->loopCount());
+
+    return m_repetitionCount;
 }
 
 String ImageDecoderQt::filenameExtension() const
 {
-    return m_imageFormat;
+    return m_format;
 };
 
 RGBA32Buffer* ImageDecoderQt::frameBufferAtIndex(size_t index)
 {
-    if (index >= m_frameBufferCache.size())
+    // this information might not have been set
+    int count = m_frameBufferCache.size();
+    if (count == 0) {
+        internalDecodeSize();
+        count = frameCount();
+    }
+
+    if (index >= static_cast<size_t>(count))
         return 0;
 
-    return &m_frameBufferCache[index];
+    RGBA32Buffer& frame = m_frameBufferCache[index];
+    if (frame.status() != RGBA32Buffer::FrameComplete && m_reader)
+        internalReadImage(index);
+    return &frame;
 }
 
 void ImageDecoderQt::clearFrameBufferCache(size_t index)
@@ -224,9 +164,80 @@ void ImageDecoderQt::clearFrameBufferCache(size_t index)
         return;
 
     for (size_t i = 0; i < index; ++index)
-        m_frameBufferCache[index].setDecodedImage(QImage());
+        m_frameBufferCache[index].clear();
 }
 
+void ImageDecoderQt::internalDecodeSize()
+{
+    ASSERT(m_reader);
+
+    QSize size = m_reader->size();
+    setSize(size.width(), size.height());
+}
+
+void ImageDecoderQt::internalReadImage(size_t frameIndex)
+{
+    ASSERT(m_reader);
+
+    if (m_reader->supportsAnimation())
+        m_reader->jumpToImage(frameIndex);
+    else if (frameIndex != 0)
+        return failRead();
+
+    internalHandleCurrentImage(frameIndex);
+
+    // Attempt to return some memory
+    for (int i = 0; i < m_frameBufferCache.size(); ++i)
+        if (m_frameBufferCache[i].status() != RGBA32Buffer::FrameComplete)
+            return;
+
+    delete m_reader;
+    delete m_buffer;
+    m_buffer = 0;
+    m_reader = 0;
+}
+
+void ImageDecoderQt::internalHandleCurrentImage(size_t frameIndex)
+{
+    // Now get the QImage from Qt and place it in the RGBA32Buffer
+    QImage img;
+    if (!m_reader->read(&img))
+        return failRead();
+
+    // now into the RGBA32Buffer - even if the image is not
+    QSize imageSize = img.size();
+    RGBA32Buffer* const buffer = &m_frameBufferCache[frameIndex];
+    buffer->setRect(m_reader->currentImageRect());
+    buffer->setStatus(RGBA32Buffer::FrameComplete);
+    buffer->setDuration(m_reader->nextImageDelay());
+    buffer->setDecodedImage(img);
+}
+
+// We will parse everything and we have no idea how
+// many images we have... We will have to find out the
+// hard way.
+void ImageDecoderQt::forceLoadEverything()
+{
+    int imageCount = 0;
+
+    do {
+        m_frameBufferCache.resize(++imageCount);
+        internalHandleCurrentImage(imageCount - 1);
+    } while(!m_failed);
+
+    // reset the failed state and resize the vector...
+    m_frameBufferCache.resize(imageCount - 1);
+    m_failed = false;
+}
+
+void ImageDecoderQt::failRead()
+{
+    setFailed();
+    delete m_reader;
+    delete m_buffer;
+    m_reader = 0;
+    m_buffer = 0;
+}
 }
 
 // vim: ts=4 sw=4 et
