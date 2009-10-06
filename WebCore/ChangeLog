@@ -1,3 +1,24 @@
+2009-10-05  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Cleanup the ImageDecoder of Qt.
+        https://bugs.webkit.org/show_bug.cgi?id=27538
+
+        Remove the various enums for partial load. The fact is
+        that this image decoder will decode everything that is
+        in the file at once. Make it look like it behaves to
+        ease fixing this core problem.
+
+        * platform/graphics/qt/ImageDecoderQt.cpp:
+        (WebCore::ImageDecoderQt::ImageData::ImageData):
+        (WebCore::ImageDecoderQt::ReadContext::ReadContext):
+        (WebCore::ImageDecoderQt::ReadContext::read):
+        (WebCore::ImageDecoderQt::ReadContext::readImageLines):
+        (WebCore::ImageDecoderQt::hasFirstImageHeader):
+        (WebCore::ImageDecoderQt::setData):
+        * platform/graphics/qt/ImageDecoderQt.h:
+
 2009-10-04  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Simon Hausmann.

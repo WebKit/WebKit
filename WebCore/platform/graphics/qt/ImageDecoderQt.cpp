@@ -55,8 +55,9 @@ ImageDecoder* ImageDecoder::create(const SharedBuffer& data)
     return new ImageDecoderQt(imageFormat);
 }
 
-ImageDecoderQt::ImageData::ImageData(const QImage& image, ImageState imageState, int duration) :
-    m_image(image), m_imageState(imageState), m_duration(duration)
+ImageDecoderQt::ImageData::ImageData(const QImage& image, int duration)
+    : m_image(image)
+    , m_duration(duration)
 {
 }
 
@@ -64,23 +65,8 @@ ImageDecoderQt::ImageData::ImageData(const QImage& image, ImageState imageState,
 class ImageDecoderQt::ReadContext {
 public:
 
-    enum LoadMode {
-        // Load images incrementally. This is still experimental and
-        // will cause the image plugins to report errors.
-        // Also note that as of Qt 4.2.2, the JPEG loader does not return error codes
-        // on "preliminary end of data".
-        LoadIncrementally,
-            // Load images only if  all data have been received
-            LoadComplete };
-
-    ReadContext(SharedBuffer* data, LoadMode loadMode, ImageList &target);
-
-    enum ReadResult { ReadEOF, ReadFailed, ReadPartial, ReadComplete };
-
-    // Append data and read out all images. Returns the result
-    // of the last read operation, so, even if  ReadPartial is returned,
-    // a few images might have been read.
-    ReadResult read(bool allDataReceived);
+    ReadContext(SharedBuffer* data, ImageList &target);
+    bool read();
 
     QImageReader *reader() { return &m_reader; }
 
@@ -88,8 +74,6 @@ private:
     enum IncrementalReadResult { IncrementalReadFailed, IncrementalReadPartial, IncrementalReadComplete };
     // Incrementally read an image
     IncrementalReadResult readImageLines(ImageData &);
-
-    const LoadMode m_loadMode;
 
     QByteArray m_data;
     QBuffer m_buffer;
@@ -103,9 +87,8 @@ private:
 
 };
 
-ImageDecoderQt::ReadContext::ReadContext(SharedBuffer* data, LoadMode loadMode, ImageList &target)
-    : m_loadMode(loadMode)
-    , m_data(data->data(), data->size())
+ImageDecoderQt::ReadContext::ReadContext(SharedBuffer* data, ImageList &target)
+    : m_data(data->data(), data->size())
     , m_buffer(&m_data)
     , m_reader(&m_buffer)
     , m_target(target)
@@ -115,36 +98,33 @@ ImageDecoderQt::ReadContext::ReadContext(SharedBuffer* data, LoadMode loadMode, 
 }
 
 
-ImageDecoderQt::ReadContext::ReadResult
-        ImageDecoderQt::ReadContext::read(bool allDataReceived)
+bool ImageDecoderQt::ReadContext::read()
 {
-    // Complete mode: Read only all all data received
-    if (m_loadMode == LoadComplete && !allDataReceived)
-        return ReadPartial;
-
     // Attempt to read out all images
+    bool completed = false;
     while (true) {
-        if (m_target.empty() || m_target.back().m_imageState == ImageComplete) {
+        if (m_target.empty() || completed) {
             // Start a new image.
             if (!m_reader.canRead())
-                return ReadEOF;
+                return true;
 
             // Attempt to construct an empty image of the matching size and format
             // for efficient reading
             QImage newImage = m_dataFormat != QImage::Format_Invalid  ?
                           QImage(m_size, m_dataFormat) : QImage();
             m_target.push_back(ImageData(newImage));
+            completed = false;
         }
 
         // read chunks
         switch (readImageLines(m_target.back())) {
         case IncrementalReadFailed:
             m_target.pop_back();
-            return ReadFailed;
+            return false;
         case IncrementalReadPartial:
-            return ReadPartial;
+            return true;
         case IncrementalReadComplete:
-            m_target.back().m_imageState = ImageComplete;
+            completed = true;
             //store for next
             m_dataFormat = m_target.back().m_image.format();
             m_size = m_target.back().m_image.size();
@@ -152,12 +132,12 @@ ImageDecoderQt::ReadContext::ReadResult
 
             // No point in readinfg further
             if (!supportsAnimation)
-                return ReadComplete;
+                return true;
 
             break;
         }
     }
-    return ReadComplete;
+    return true;
 }
 
 
@@ -176,10 +156,8 @@ ImageDecoderQt::ReadContext::IncrementalReadResult
         const bool gotHeader = imageData.m_image.size().width();
 
         // [Experimental] Did we manage to read the header?
-        if (gotHeader) {
-            imageData.m_imageState = ImageHeaderValid;
+        if (gotHeader)
             return IncrementalReadPartial;
-        }
         return IncrementalReadFailed;
     }
     imageData.m_duration = m_reader.nextImageDelay();
@@ -198,7 +176,7 @@ ImageDecoderQt::~ImageDecoderQt()
 
 bool ImageDecoderQt::hasFirstImageHeader() const
 {
-    return  !m_imageList.empty() && m_imageList[0].m_imageState >= ImageHeaderValid;
+    return  !m_imageList.empty();
 }
 
 void ImageDecoderQt::setData(SharedBuffer* data, bool allDataReceived)
@@ -213,33 +191,25 @@ void ImageDecoderQt::setData(SharedBuffer* data, bool allDataReceived)
     if (!allDataReceived)
         return;
 
-    ReadContext readContext(data, ReadContext::LoadComplete, m_imageList);
+    ReadContext readContext(data, m_imageList);
 
-    const  ReadContext::ReadResult readResult =  readContext.read(allDataReceived);
+    const bool result =  readContext.read();
 
     if (hasFirstImageHeader())
         m_hasAlphaChannel = m_imageList[0].m_image.hasAlphaChannel();
 
-    switch (readResult) {
-    case ReadContext::ReadFailed:
-        m_failed = true;
-        break;
-    case ReadContext::ReadEOF:
-    case ReadContext::ReadPartial:
-    case ReadContext::ReadComplete:
-        // Did we read anything - try to set the size.
-        if (hasFirstImageHeader()) {
-            QSize imgSize = m_imageList[0].m_image.size();
-            setSize(imgSize.width(), imgSize.height());
+    if (!result)
+        setFailed();
+    else if (hasFirstImageHeader()) {
+        QSize imgSize = m_imageList[0].m_image.size();
+        setSize(imgSize.width(), imgSize.height());
 
-            if (readContext.reader()->supportsAnimation()) {
-                if (readContext.reader()->loopCount() != -1)
-                    m_loopCount = readContext.reader()->loopCount();
-                else
-                    m_loopCount = 0; //loop forever
-            }
+        if (readContext.reader()->supportsAnimation()) {
+            if (readContext.reader()->loopCount() != -1)
+                m_loopCount = readContext.reader()->loopCount();
+            else
+                m_loopCount = 0; //loop forever
         }
-        break;
     }
 }
 

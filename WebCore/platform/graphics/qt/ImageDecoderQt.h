@@ -62,18 +62,11 @@ private:
     class ReadContext;
     bool hasFirstImageHeader() const;
 
-    enum ImageState {
-        // Started image reading
-        ImagePartial,
-            // Header (size / alpha) are known
-            ImageHeaderValid,
-            // Image is complete
-            ImageComplete };
 
+    // TODO: Replace usage of ImageData with RGBBuffer32
     struct ImageData {
-        ImageData(const QImage& image, ImageState imageState = ImagePartial, int duration=0);
+        ImageData(const QImage& image, int duration=0);
         QImage m_image;
-        ImageState m_imageState;
         int m_duration;
     };
 
