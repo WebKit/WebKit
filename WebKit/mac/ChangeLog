@@ -1,3 +1,11 @@
+2009-10-05  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        Moved a WebPluginHalterClient out of the WebCore namesapce.
+
+        * WebCoreSupport/WebPluginHalterClient.h:
+
 2009-10-05  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Dan Bernstein.
