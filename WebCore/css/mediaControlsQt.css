@@ -25,9 +25,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+ /* QtWebKit media controls. Extends mediaControls.css */
+
 audio {
     height: 34px;
     width: 400px;
+}
+
+audio::-webkit-media-controls-panel, video::-webkit-media-controls-panel {
+    display: -webkit-box;
+    -webkit-box-orient: horizontal;
+    -webkit-box-align: end;
+    -webkit-user-select: none;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    z-index: 0;
+    overflow: hidden;
+    height: 100%;
+    text-align: right;
+}
+
+video:-webkit-full-page-media::-webkit-media-controls-panel {
+	display: none;
 }
 
 audio::-webkit-media-controls-mute-button, video::-webkit-media-controls-mute-button {
@@ -36,7 +56,7 @@ audio::-webkit-media-controls-mute-button, video::-webkit-media-controls-mute-bu
     width: 12px;
     height: 12px;
     padding: 6px;
-    margin: 5px 0px;
+    margin: 5px 5px 5px 3px;
 }
 
 audio::-webkit-media-controls-play-button, video::-webkit-media-controls-play-button {
@@ -44,17 +64,18 @@ audio::-webkit-media-controls-play-button, video::-webkit-media-controls-play-bu
     width: 9px;
     height: 12px;
     padding: 6px 12px 6px 11px;
-    margin: 5px 0px;
+    margin: 5px 3px 5px 5px;
 }
 
-audio::-webkit-media-controls-time-display, video::-webkit-media-controls-time-display {
-    /* Since MediaControlElements are always created with a renderer we have to hide
-       the controls we don't use, so they don't mess up activation and event handling */
-    left: 0px;
-    top: 0px;
-    width: 0px;
-    height: 0px;
+audio::-webkit-media-controls-timeline-container, video::-webkit-media-controls-timeline-container {
+    height: 34px;
+}
 
+audio::-webkit-media-controls-current-time-display, video::-webkit-media-controls-current-time-display {
+    display: none;
+}
+
+audio::-webkit-media-controls-time-remaining-display, video::-webkit-media-controls-time-remaining-display {
     display: none;
 }
 
@@ -64,6 +85,14 @@ audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline {
     height: 12px;
     padding: 6px 8px;
     margin: 5px 0px;
+}
+
+audio::-webkit-media-controls-volume-slider-container, video::-webkit-media-controls-volume-slider-container {
+    display: none;
+}
+
+audio::-webkit-media-controls-volume-slider, video::-webkit-media-controls-volume-slider {
+    display: none;
 }
 
 audio::-webkit-media-controls-seek-back-button, video::-webkit-media-controls-seek-back-button {
@@ -96,6 +125,14 @@ audio::-webkit-media-controls-fullscreen-button, video::-webkit-media-controls-f
     width: 0px;
     height: 0px;
 
+    display: none;
+}
+
+audio::-webkit-media-controls-rewind-button, video::-webkit-media-controls-rewind-button {
+    display: none;
+}
+
+audio::-webkit-media-controls-return-to-realtime-button, video::-webkit-media-controls-return-to-realtime-button {
     display: none;
 }
 
