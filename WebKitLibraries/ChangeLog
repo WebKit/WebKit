@@ -1,3 +1,17 @@
+2009-10-05  Pierre d'Herbemont  <pdherbemont@webkit.org>
+
+        Reviewed by Simon Fraser
+        
+        Support fullscreen in MediaPlayer (Mac)
+        https://bugs.webkit.org/show_bug.cgi?id=26742
+        
+        New methods required for video fullscreen.
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceLeopard.a:
+        * libWebKitSystemInterfaceSnowLeopard.a:
+        * libWebKitSystemInterfaceTiger.a:
+
 2009-10-02  Steve Falkenburg  <sfalken@apple.com>
 
         Windows build fix.

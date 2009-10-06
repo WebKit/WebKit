@@ -43,6 +43,8 @@ public:
     virtual void load(const String& url) = 0;
     virtual void cancelLoad() = 0;
     
+    virtual PlatformMedia platformMedia() const { return NoPlatformMedia; }
+
     virtual void play() = 0;
     virtual void pause() = 0;    
 

@@ -28,6 +28,7 @@
 #if ENABLE(VIDEO)
 #include "HTMLMediaElement.h"
 
+#include "ChromeClient.h"
 #include "CSSHelper.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
@@ -55,6 +56,8 @@
 #include "RenderVideo.h"
 #include "ScriptEventListener.h"
 #include "TimeRanges.h"
+#include "ClientRect.h"
+#include "ClientRectList.h"
 #include <limits>
 #include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>
@@ -111,6 +114,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* doc)
     , m_sentEndEvent(false)
     , m_pausedInternal(false)
     , m_sendProgressEvents(true)
+    , m_isFullscreen(false)
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     , m_needWidgetUpdate(false)
 #endif
@@ -241,6 +245,12 @@ void HTMLMediaElement::insertedIntoDocument()
         scheduleLoad();
 }
 
+void HTMLMediaElement::willRemove()
+{
+    if (m_isFullscreen)
+        exitFullscreen();
+    HTMLElement::willRemove();
+}
 void HTMLMediaElement::removedFromDocument()
 {
     if (m_networkState > NETWORK_EMPTY)
@@ -1696,6 +1706,14 @@ void HTMLMediaElement::mediaVolumeDidChange()
     updateVolume();
 }
 
+const IntRect HTMLMediaElement::screenRect()
+{
+    IntRect elementRect;
+    if (renderer())
+        elementRect = renderer()->view()->frameView()->contentsToScreen(renderer()->absoluteBoundingBoxRect());
+    return elementRect;
+}
+    
 void HTMLMediaElement::defaultEventHandler(Event* event)
 {
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
@@ -1768,6 +1786,28 @@ void HTMLMediaElement::finishParsingChildren()
 
 #endif
 
+void HTMLMediaElement::enterFullscreen()
+{
+    ASSERT(!m_isFullscreen);
+    if (!renderer())
+        return;
+    if (document() && document()->page())
+        document()->page()->chrome()->client()->enterFullscreenForNode(this);
+    m_isFullscreen = true;
+}
+
+void HTMLMediaElement::exitFullscreen()
+{
+    ASSERT(m_isFullscreen);
+    if (document() && document()->page())
+        document()->page()->chrome()->client()->exitFullscreenForNode(this);
+    m_isFullscreen = false;
+}
+
+PlatformMedia HTMLMediaElement::platformMedia() const
+{
+    return m_player ? m_player->platformMedia() : NoPlatformMedia;
+}        
 }
 
 #endif

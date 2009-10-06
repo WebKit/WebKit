@@ -55,6 +55,7 @@
 #import <WebCore/FrameLoadRequest.h>
 #import <WebCore/Geolocation.h>
 #import <WebCore/HitTestResult.h>
+#import <WebCore/HTMLNames.h>
 #import <WebCore/IntRect.h>
 #import <WebCore/Page.h>
 #import <WebCore/PlatformScreen.h>
@@ -711,6 +712,29 @@ void WebChromeClient::scheduleCompositingLayerSync()
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [m_webView _scheduleCompositingLayerSync];
     END_BLOCK_OBJC_EXCEPTIONS;
+}
+
+#endif
+
+#if ENABLE(VIDEO)
+
+bool WebChromeClient::supportsFullscreenForNode(const Node* node)
+{
+    return node->hasTagName(WebCore::HTMLNames::videoTag);
+}
+
+void WebChromeClient::enterFullscreenForNode(Node* node)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    [m_webView _enterFullscreenForNode:node];
+    END_BLOCK_OBJC_EXCEPTIONS;
+}
+
+void WebChromeClient::exitFullscreenForNode(Node*)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    [m_webView _exitFullscreen];
+    END_BLOCK_OBJC_EXCEPTIONS;    
 }
 
 #endif

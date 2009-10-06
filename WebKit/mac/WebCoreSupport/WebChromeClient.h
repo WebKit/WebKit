@@ -150,6 +150,10 @@ public:
     virtual void scheduleCompositingLayerSync();
 #endif
 
+    virtual bool supportsFullscreenForNode(const WebCore::Node*);
+    virtual void enterFullscreenForNode(WebCore::Node*);
+    virtual void exitFullscreenForNode(WebCore::Node*);
+
     virtual void requestGeolocationPermissionForFrame(WebCore::Frame*, WebCore::Geolocation*);
 
 private:

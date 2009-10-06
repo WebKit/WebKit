@@ -565,6 +565,12 @@ void MediaPlayerPrivate::load(const String& url)
     [m_objcObserver.get() setDelayCallbacks:NO];
 }
 
+PlatformMedia MediaPlayerPrivate::platformMedia() const
+{
+    PlatformMedia plaftformMedia = { m_qtMovie.get() };
+    return plaftformMedia;
+}
+
 void MediaPlayerPrivate::play()
 {
     if (!metaDataAvailable())
@@ -727,6 +733,11 @@ bool MediaPlayerPrivate::hasAudio() const
     if (!m_qtMovie)
         return false;
     return [[m_qtMovie.get() attributeForKey:QTMovieHasAudioAttribute] boolValue];
+}
+
+bool MediaPlayerPrivate::supportsFullscreen() const
+{   
+    return true;
 }
 
 void MediaPlayerPrivate::setVolume(float volume)

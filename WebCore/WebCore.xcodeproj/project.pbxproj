@@ -6335,6 +6335,7 @@
 		63189AE20E83A33300012E41 /* NodeRareData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeRareData.h; sourceTree = "<group>"; };
 		637B7ADE0E8767B800E32194 /* ElementRareData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElementRareData.h; sourceTree = "<group>"; };
 		63D7B32C0E78CD3F00F7617C /* NodeRenderStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeRenderStyle.h; sourceTree = "<group>"; };
+		63F371CD100E790000BBA87A /* WebCore.Video.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; path = WebCore.Video.exp; sourceTree = "<group>"; };
 		650F53DB09D15DDA00C9B0C8 /* CSSGrammar.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSGrammar.h; sourceTree = "<group>"; };
 		650FBF270D9AF046008FC292 /* SVGHKernElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGHKernElement.cpp; sourceTree = "<group>"; };
 		650FBF280D9AF047008FC292 /* SVGHKernElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGHKernElement.h; sourceTree = "<group>"; };
@@ -10510,6 +10511,7 @@
 				449195970FBE17D700D9F824 /* WebCore.SVG.Filters.exp */,
 				449195960FBE17D700D9F824 /* WebCore.SVG.ForeignObject.exp */,
 				449195950FBE17D700D9F824 /* WebCore.Tiger.exp */,
+				63F371CD100E790000BBA87A /* WebCore.Video.exp */,
 				449195940FBE17D700D9F824 /* WebCore.VideoProxy.exp */,
 			);
 			name = Exports;

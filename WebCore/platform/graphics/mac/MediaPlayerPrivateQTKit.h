@@ -77,9 +77,12 @@ private:
     static MediaPlayer::SupportsType supportsType(const String& type, const String& codecs);
     static bool isAvailable();
 
+    PlatformMedia platformMedia() const;
+
     IntSize naturalSize() const;
     bool hasVideo() const;
     bool hasAudio() const;
+    bool supportsFullscreen() const;
     
     void load(const String& url);
     void cancelLoad();

@@ -93,6 +93,7 @@
 #import "WebTextIterator.h"
 #import "WebUIDelegate.h"
 #import "WebUIDelegatePrivate.h"
+#import "WebVideoFullscreenController.h"
 #import <CoreFoundation/CFSet.h>
 #import <Foundation/NSURLConnection.h>
 #import <WebCore/ApplicationCacheStorage.h>
@@ -996,6 +997,8 @@ static bool fastDocumentTeardownEnabled()
         [self _closeWithFastTeardown];
         return;
     }
+
+    [self _exitFullscreen];
 
     if (Frame* mainFrame = [self _mainCoreFrame])
         mainFrame->loader()->detachFromParent();
@@ -5610,6 +5613,45 @@ static void layerSyncRunLoopObserverCallBack(CFRunLoopObserverRef, CFRunLoopActi
         runLoopOrder, layerSyncRunLoopObserverCallBack, &context);
 
     CFRunLoopAddObserver(CFRunLoopGetCurrent(), _private->layerSyncRunLoopObserver, kCFRunLoopCommonModes);
+}
+
+#endif
+
+#if ENABLE(VIDEO)
+
+- (void)_enterFullscreenForNode:(WebCore::Node*)node
+{
+    ASSERT(node->hasTagName(WebCore::HTMLNames::videoTag));
+    HTMLMediaElement* videoElement = static_cast<HTMLMediaElement*>(node);
+
+    if (_private->fullscreenController) {
+        if ([_private->fullscreenController mediaElement] == videoElement) {
+            // The backend may just warn us that the underlaying plaftormMovie()
+            // has changed. Just force an update.
+            [_private->fullscreenController setMediaElement:videoElement];
+            return; // No more to do.
+        }
+
+        // First exit Fullscreen for the old mediaElement.
+        [_private->fullscreenController mediaElement]->exitFullscreen();
+        // This previous call has to trigger _exitFullscreen,
+        // which has to clear _private->fullscreenController.
+        ASSERT(!_private->fullscreenController);
+    }
+    if (!_private->fullscreenController) {
+        _private->fullscreenController = [[WebVideoFullscreenController alloc] init];
+        [_private->fullscreenController setMediaElement:videoElement];
+        [_private->fullscreenController enterFullscreen:[[self window] screen]];        
+    }
+    else
+        [_private->fullscreenController setMediaElement:videoElement];
+}
+
+- (void)_exitFullscreen
+{
+    [_private->fullscreenController exitFullscreen];
+    [_private->fullscreenController release];
+    _private->fullscreenController = nil;
 }
 
 #endif

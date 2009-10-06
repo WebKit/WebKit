@@ -1697,7 +1697,16 @@ String RenderThemeMac::extraMediaControlsStyleSheet()
     else
         return String();
 }
-#endif
+
+bool RenderThemeMac::shouldRenderMediaControlPart(ControlPart part, Element* e)
+{
+    if (part == MediaFullscreenButtonPart)
+        return mediaControllerTheme() == MediaControllerThemeQT;
+
+    return RenderTheme::shouldRenderMediaControlPart(part, e);
+}
+
+#endif // ENABLE(VIDEO)
 
 NSPopUpButtonCell* RenderThemeMac::popupButton() const
 {

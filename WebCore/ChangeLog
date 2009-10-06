@@ -1,3 +1,65 @@
+2009-10-05  Pierre d'Herbemont  <pdherbemont@webkit.org>
+
+        Reviewed by Simon Fraser
+        
+        Support fullscreen in MediaPlayer (Mac)
+        https://bugs.webkit.org/show_bug.cgi?id=26742
+
+        Add a fullscreen button to the <video> controller if the media engine,
+        and the theme have support for fullscreen, and can show appropriate controls.
+        Clicking the button calls through the ChromeClient to the WebVideoFullscreenController
+        in WebKit to do a nice animation to fullscreen, with a custom controller.
+
+        * DerivedSources.make:
+        * WebCore.Video.exp: Added.
+        New export file for when VIDEO is enabled.
+        
+        * WebCore.base.exp: Export WebCore::HTMLNames::videoTag
+        * WebCore.xcodeproj/project.pbxproj: New files
+        
+        * html/HTMLMediaElement.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::willRemove):
+        (WebCore::HTMLMediaElement::screenRect):
+        (WebCore::HTMLMediaElement::enterFullscreen):
+        (WebCore::HTMLMediaElement::exitFullscreen):
+        (WebCore::HTMLMediaElement::platformMedia):
+        Add fullscreen logic. platformMedia returns a pointer to platform-specific playback data
+        used for fullscreen.
+        
+        * html/HTMLVideoElement.h:
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::supportsFullscreen): Check with both the player and the ChromeClient
+        to see if it's possile to enter fullscreen for this element.
+        
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::supportsFullscreenForNode):
+        (WebCore::ChromeClient::enterFullscreenForNode):
+        (WebCore::ChromeClient::exitFullscreenForNode):
+        New methods
+        
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::NullMediaPlayerPrivate::platformMedia):
+        (WebCore::MediaPlayer::platformMedia):
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::platformMedia):
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::platformMedia):
+        (WebCore::MediaPlayerPrivate::supportsFullscreen):
+        New methods to return platform-specific playback data for fullscreen.
+        
+        * rendering/MediaControlElements.cpp:
+        (WebCore::MediaControlFullscreenButtonElement::defaultEventHandler):
+        Hook up the fullscreen button.
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::shouldRenderMediaControlPart):
+        Allow the RenderThemeMac to make a decision about the availability of fullscreen based
+        on the QuickTime version, since this affects what controls are availabl.e
+
 2009-10-05  Kevin Decker  <kdecker@apple.com>
 
         Export a few more methods from Settings.h

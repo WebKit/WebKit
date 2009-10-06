@@ -229,6 +229,21 @@ BOOL WKHitTestMediaUIPart(int part, int themeStyle, CGRect bounds, CGPoint point
 void WKMeasureMediaUIPart(int part, int themeStyle, CGRect *bounds, CGSize *naturalSize);
 void WKDrawMediaUIPart(int part, int themeStyle, CGContextRef context, CGRect rect, unsigned state);
 void WKDrawMediaSliderTrack(int themeStyle, CGContextRef context, CGRect rect, float timeLoaded, float currentTime, float duration, unsigned state);
+NSView *WKCreateMediaUIBackgroundView(void);
+
+typedef enum {
+    WKMediaUIControlTimeline,
+    WKMediaUIControlSlider,
+    WKMediaUIControlPlayPauseButton,
+    WKMediaUIControlExitFullscreenButton,
+    WKMediaUIControlRewindButton,
+    WKMediaUIControlFastForwardButton,
+    WKMediaUIControlVolumeUpButton,
+    WKMediaUIControlVolumeDownButton
+
+} WKMediaUIControlType;
+    
+NSControl *WKCreateMediaUIControl(int controlType);
 
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && defined(__x86_64__)
 mach_port_t WKInitializeRenderServer(void);
@@ -259,6 +274,11 @@ void WKSetCAAnimationValueFunction(CAPropertyAnimation*, NSString* function);
 unsigned WKInitializeMaximumHTTPConnectionCountPerHost(unsigned preferredConnectionCount);
 
 BOOL WKIsLatchingWheelEvent(NSEvent *);
+
+#ifndef BUILDING_ON_TIGER
+void WKWindowSetAlpha(NSWindow *window, float alphaValue);
+void WKWindowSetScaledFrame(NSWindow *window, NSRect scaleFrame, NSRect nonScaledFrame);
+#endif
     
 #ifdef __cplusplus
 }

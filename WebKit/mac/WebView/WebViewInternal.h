@@ -41,6 +41,7 @@ namespace WebCore {
     class KURL;
     class KeyboardEvent;
     class Page;
+    class Node;
 }
 #endif
 
@@ -162,5 +163,10 @@ namespace WebCore {
 + (BOOL)_canHandleRequest:(NSURLRequest *)request forMainFrame:(BOOL)forMainFrame;
 
 - (void)_setInsertionPasteboard:(NSPasteboard *)pasteboard;
+
+#if ENABLE(VIDEO) && defined(__cplusplus)
+- (void)_enterFullscreenForNode:(WebCore::Node*)node;
+- (void)_exitFullscreen;
+#endif
 
 @end

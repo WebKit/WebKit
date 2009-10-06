@@ -646,11 +646,11 @@ MediaControlFullscreenButtonElement::MediaControlFullscreenButtonElement(Documen
 void MediaControlFullscreenButtonElement::defaultEventHandler(Event* event)
 {
     if (event->type() == eventNames().clickEvent) {
+        m_mediaElement->enterFullscreen();
         event->setDefaultHandled();
     }
     HTMLInputElement::defaultEventHandler(event);
 }
-
 
 // ----------------------------
 

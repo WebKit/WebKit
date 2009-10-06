@@ -28,6 +28,7 @@
 #if ENABLE(VIDEO)
 #include "HTMLVideoElement.h"
 
+#include "ChromeClient.h"
 #include "CSSHelper.h"
 #include "CSSPropertyNames.h"
 #include "Document.h"
@@ -110,6 +111,18 @@ void HTMLVideoElement::parseMappedAttribute(MappedAttribute* attr)
         addCSSLength(attr, CSSPropertyHeight, attr->value());
     else
         HTMLMediaElement::parseMappedAttribute(attr);
+}
+
+bool HTMLVideoElement::supportsFullscreen() const
+{
+    Page* page = document() ? document()->page() : 0;
+    if (!page) 
+        return false;
+
+    if (!m_player || !m_player->supportsFullscreen())
+        return false;
+    
+    return page->chrome()->client()->supportsFullscreenForNode(this);
 }
 
 unsigned HTMLVideoElement::videoWidth() const

@@ -203,6 +203,10 @@ namespace WebCore {
         virtual void scheduleCompositingLayerSync() = 0;
 #endif
 
+        virtual bool supportsFullscreenForNode(const Node*) { return false; }
+        virtual void enterFullscreenForNode(Node*) { }
+        virtual void exitFullscreenForNode(Node*) { }
+        
 #if PLATFORM(MAC)
         virtual KeyboardUIMode keyboardUIMode() { return KeyboardAccessDefault; }
 

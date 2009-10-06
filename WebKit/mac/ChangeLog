@@ -1,3 +1,57 @@
+2009-10-05  Pierre d'Herbemont  <pdherbemont@webkit.org>
+
+        Reviewed by Simon Fraser
+        
+        Support fullscreen in MediaPlayer (Mac)
+        https://bugs.webkit.org/show_bug.cgi?id=26742
+
+        Add a fullscreen button to the <video> controller if the media engine,
+        and the theme have support for fullscreen, and can show appropriate controls.
+        Clicking the button calls through the ChromeClient to the WebVideoFullscreenController
+        in WebKit to do a nice animation to fullscreen, with a custom controller.
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::supportsFullscreenForNode):
+        (WebChromeClient::enterFullscreenForNode):
+        (WebChromeClient::exitFullscreenForNode):
+        New methods to ask whether fullscreen is possible for a given node, and
+        notifications on enterying and exiting fullscreen.
+        
+        * WebView/WebVideoFullscreenController.h: Added.
+        * WebView/WebVideoFullscreenController.mm: Added.
+        WebVideoFullscreenController is responsible for creating the fullscreen window,
+        and coordinating the various animations when going fullscreen.
+
+        * WebView/WebVideoFullscreenHUDWindowController.h: Added.
+        * WebView/WebVideoFullscreenHUDWindowController.mm: Added.
+        This class manages the heads-up display (HUD) control bar.
+
+        * WebView/WebView.mm:
+        (-[WebView _close]):
+        Make sure we come out of fullscreen if the WebView is torn down (e.g. if
+        you close a background window).
+
+        (-[WebView _enterFullscreenForNode:WebCore::]):
+        Make a WebVideoFullscreenController and tell is to start to go fullscreen.
+        
+        (-[WebView _exitFullscreen]):
+        Tell the WebVideoFullscreenController to come out of fullscreen, and clean up.
+        
+        * WebView/WebViewData.h:
+        * WebView/WebViewData.mm:
+        (-[WebViewPrivate dealloc]):
+        (-[WebViewPrivate finalize]):
+        * WebView/WebViewInternal.h:
+        Keep a pointer to the WebVideoFullscreenController.
+        
+        * WebView/WebWindowAnimation.h: Added.
+        * WebView/WebWindowAnimation.m: Added.
+        (WebWindowAnimationDurationFromDuration):
+        (scaledRect):
+        (squaredDistance):
+        Handle the animations used during the transitition to fullscreen.
+
 2009-10-05  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Kevin Decker.
