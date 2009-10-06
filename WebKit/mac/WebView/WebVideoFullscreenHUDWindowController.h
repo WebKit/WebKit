@@ -34,7 +34,9 @@
 @private
     id<WebVideoFullscreenHUDWindowControllerDelegate> _delegate;
     NSTimer *_timelineUpdateTimer;
+#if !defined(BUILDING_ON_TIGER)
     NSTrackingArea *_area;
+#endif
     BOOL _mouseIsInHUD;
 
     NSControl *_timeline;

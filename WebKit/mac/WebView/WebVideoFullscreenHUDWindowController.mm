@@ -33,6 +33,12 @@
 
 #define HAVE_MEDIA_CONTROL (!defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD))
 
+#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4
+#define WebNSUInteger unsigned int
+#else
+#define WebNSUInteger NSUInteger
+#endif
+
 @interface WebVideoFullscreenHUDWindowController (Private) <NSWindowDelegate>
 
 - (void)updateTime;
@@ -69,7 +75,7 @@
 
 @implementation WebVideoFullscreenHUDWindow
 
-- (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)aStyle backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag
+- (id)initWithContentRect:(NSRect)contentRect styleMask:(WebNSUInteger)aStyle backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag
 {
     UNUSED_PARAM(aStyle);
     self = [super initWithContentRect:contentRect styleMask:NSBorderlessWindowMask backing:bufferingType defer:flag];
@@ -140,7 +146,9 @@ static const NSTimeInterval HUDWindowFadeOutDelay = 3;
 - (void)dealloc
 {
     ASSERT(!_timelineUpdateTimer);
+#if !defined(BUILDING_ON_TIGER)
     ASSERT(!_area);
+#endif
     [_timeline release];
     [_remainingTimeText release];
     [_elapsedTimeText release];
@@ -149,6 +157,7 @@ static const NSTimeInterval HUDWindowFadeOutDelay = 3;
     [super dealloc];
 }
 
+#if !defined(BUILDING_ON_TIGER)
 - (void)setArea:(NSTrackingArea *)area
 {
     if (area == _area)
@@ -156,6 +165,7 @@ static const NSTimeInterval HUDWindowFadeOutDelay = 3;
     [_area release];
     _area = [area retain];
 }
+#endif
 
 - (id<WebVideoFullscreenHUDWindowControllerDelegate>)delegate
 {
@@ -218,7 +228,9 @@ static const NSTimeInterval HUDWindowFadeOutDelay = 3;
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(fadeWindowOut) object:nil];
     [self unscheduleTimeUpdate];
     NSWindow *window = [self window];
+#if !defined(BUILDING_ON_TIGER)
     [[window contentView] removeTrackingArea:_area];
+#endif
     [self setArea:nil];
     [window close];
     [window setDelegate:nil];
@@ -280,8 +292,10 @@ static NSTextField *createTimeTextField(NSRect frame)
     NSView *background = [[NSView alloc] init];
 #endif
     [window setContentView:background];
+#if !defined(BUILDING_ON_TIGER)
     _area = [[NSTrackingArea alloc] initWithRect:[background bounds] options:NSTrackingMouseEnteredAndExited|NSTrackingActiveAlways owner:self userInfo:nil];
     [background addTrackingArea:_area];
+#endif
     [background release];    
 
     NSView *contentView = [[self window] contentView];

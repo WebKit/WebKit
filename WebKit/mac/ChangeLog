@@ -1,5 +1,16 @@
 2009-10-05  Simon Fraser  <simon.fraser@apple.com>
 
+        Build fixes for Tiger.
+
+        * WebView/WebVideoFullscreenHUDWindowController.h:
+        * WebView/WebVideoFullscreenHUDWindowController.mm:
+        (-[WebVideoFullscreenHUDWindow initWithContentRect:styleMask:backing:defer:]):
+        (-[WebVideoFullscreenHUDWindowController dealloc]):
+        (-[WebVideoFullscreenHUDWindowController closeWindow]):
+        (-[WebVideoFullscreenHUDWindowController windowDidLoad]):
+
+2009-10-05  Simon Fraser  <simon.fraser@apple.com>
+
         Build fix. If you call Node::hasTagName(), you also have to include Element.h.
 
         * WebCoreSupport/WebChromeClient.mm:
