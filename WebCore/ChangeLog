@@ -2,6 +2,24 @@
 
         Reviewed by Simon Hausmann.
 
+        [Qt] Windowless plugins: Enable painting on printer.
+
+        The print preview dialog crashed because the depth of the drawable
+        changed owing to a bug in Qt - if you draw onto a 32-bit pixmap,
+        and set a 24-bit pixmap as source, it will convert the source to
+        32-bit.
+
+        1210fa5b2d65895ad2be1f9ca7cae586e3b29dc1 is the bug fix in Qt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20081
+
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::paint):
+
+2009-10-06  Girish Ramakrishnan  <girish@forwardbias.in>
+
+        Reviewed by Simon Hausmann.
+
         [Qt] Windowless plugins: Make painting and events work when page is zoomed.
 
         The element gets resized when zoomed. So, we have to make sure that we resize

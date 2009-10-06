@@ -170,15 +170,12 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
 
     setNPWindowIfNeeded();
 
-    if (m_isWindowed)
+    if (m_isWindowed || !m_drawable)
         return;
 
     const bool syncX = m_pluginDisplay && m_pluginDisplay != QX11Info::display();
 
     QPainter* painter = context->platformContext();
-    const bool isPaintingOnWidget = painter->device()->devType() == QInternal::Widget;
-    if (!isPaintingOnWidget || !m_drawable)
-        return;
 
     QPixmap qtDrawable = QPixmap::fromX11Pixmap(m_drawable, QPixmap::ExplicitlyShared);
     const int drawableDepth = ((NPSetWindowCallbackStruct*)m_npWindow.ws_info)->depth;
