@@ -39,7 +39,7 @@ namespace WebCore {
 class ImageDecoderQt : public ImageDecoder
 {
 public:
-    ImageDecoderQt(const QString& imageFormat);
+    ImageDecoderQt(const QByteArray& imageFormat);
     ~ImageDecoderQt();
 
     virtual void setData(SharedBuffer* data, bool allDataReceived);
@@ -75,7 +75,7 @@ private:
     mutable ImageList m_imageList;
     mutable QHash<int, QPixmap> m_pixmapCache;
     int m_loopCount;
-    QString m_imageFormat;
+    String m_imageFormat;
 };
 
 
