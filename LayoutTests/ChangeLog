@@ -1,3 +1,14 @@
+2009-10-05  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Test for SVG's SourceAlpha support for Filters.
+
+        * platform/mac/svg/filters/sourceAlpha-expected.checksum: Added.
+        * platform/mac/svg/filters/sourceAlpha-expected.png: Added.
+        * platform/mac/svg/filters/sourceAlpha-expected.txt: Added.
+        * svg/filters/sourceAlpha.svg: Added.
+
 2009-10-05  Simon Fraser  <simon.fraser@apple.com>
 
         Updated results for media tests after controller change to add the fullscreen button. 

@@ -35,7 +35,7 @@ namespace WebCore {
         static const AtomicString& effectName();
 
         virtual bool isSourceInput() { return true; }
-        virtual FloatRect calculateEffectRect(Filter* filter) { return filter->sourceImageRect(); }
+        virtual FloatRect calculateEffectRect(Filter*);
         void apply(Filter*);
         void dump();
     

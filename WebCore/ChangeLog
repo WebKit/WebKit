@@ -1,3 +1,19 @@
+2009-10-05  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG Filters do not support source images besides "sourceGraphic"
+        [https://bugs.webkit.org/show_bug.cgi?id=6022]
+
+        Add support for SourceAlpha to SVG filters.
+
+        Test: svg/filters/sourceAlpha.svg
+
+        * platform/graphics/filters/SourceAlpha.cpp:
+        (WebCore::SourceAlpha::calculateEffectRect):
+        (WebCore::SourceAlpha::apply):
+        * platform/graphics/filters/SourceAlpha.h:
+
 2009-10-05  John Abd-El-Malek  <jam@chromium.org>
 
         Reviewed by Adam Barth.

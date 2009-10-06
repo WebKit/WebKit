@@ -1,0 +1,10 @@
+KCanvasResource {id="filter" [type=FILTER]  [bounding box=at (-10.00%,-10.00%) size 120.00%x120.00%]}
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (42,9.40) size 96x55.20
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (42,9.40) size 96x55.20 [filter=filter]
+      RenderSVGText {text} at (50,50) size 80x46 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-36) size 80x46
+          chunk 1 text run 1 at (50.00,50.00) startOffset 0 endOffset 3 width 80.00: "SVG"

@@ -22,6 +22,7 @@
 #if ENABLE(FILTERS)
 #include "SourceAlpha.h"
 
+#include "Color.h"
 #include "GraphicsContext.h"
 #include "PlatformString.h"
 #include "Filter.h"
@@ -41,8 +42,28 @@ const AtomicString& SourceAlpha::effectName()
     return s_effectName;
 }
 
-void SourceAlpha::apply(Filter*)
+FloatRect SourceAlpha::calculateEffectRect(Filter* filter)
 {
+    FloatRect clippedSourceRect = filter->sourceImageRect();
+    if (filter->sourceImageRect().x() < filter->filterRegion().x())
+        clippedSourceRect.setX(filter->filterRegion().x());
+    if (filter->sourceImageRect().y() < filter->filterRegion().y())
+        clippedSourceRect.setY(filter->filterRegion().y());
+    setSubRegion(clippedSourceRect);
+    return filter->filterRegion();
+}
+
+void SourceAlpha::apply(Filter* filter)
+{
+    GraphicsContext* filterContext = getEffectContext();
+    if (!filterContext)
+        return;
+
+    FloatRect imageRect(FloatPoint(), filter->sourceImage()->image()->size());
+    filterContext->save();
+    filterContext->clipToImageBuffer(imageRect, filter->sourceImage());
+    filterContext->fillRect(imageRect, Color::black);
+    filterContext->restore();
 }
 
 void SourceAlpha::dump()
