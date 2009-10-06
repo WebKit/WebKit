@@ -2,6 +2,25 @@
 
         Reviewed by Darin Fisher.
 
+        Convert DOM Storage's "complex-values" test into the new format.
+        https://bugs.webkit.org/show_bug.cgi?id=30097
+
+        Convert DOM Storage's "complex-values" test into the new format and add it for
+        session storage.  This also increases the coverage of these tests a bit.
+
+        * storage/domstorage/localstorage/complex-values-expected.txt:
+        * storage/domstorage/localstorage/complex-values.html:
+        * storage/domstorage/script-tests/complex-values.js: Added.
+        (handleStorageEvent):
+        (testKeyValue):
+        (runTest):
+        * storage/domstorage/sessionstorage/complex-values-expected.txt: Copied from LayoutTests/storage/domstorage/localstorage/complex-values-expected.txt.
+        * storage/domstorage/sessionstorage/complex-values.html: Copied from LayoutTests/storage/domstorage/localstorage/complex-values.html.
+
+2009-10-05  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Darin Fisher.
+
         Convert DOM Storage's "complex-keys" test into the new format
         https://bugs.webkit.org/show_bug.cgi?id=30089
 
