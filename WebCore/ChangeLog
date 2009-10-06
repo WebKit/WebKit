@@ -1,3 +1,48 @@
+2009-10-05  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Eric Carlson.
+
+        Allow the platform media player to know the <video> poster URL.
+        Add MediaPlayerPrivate::prepareToPlay() to support media engines
+        that do not buffer video data automatically. This method allows
+        such media engines to start the buffering just before starting
+        playback.
+        https://bugs.webkit.org/show_bug.cgi?id=29133
+
+        All platforms that currently implement <video> return false
+        in MediaPlayerPrivate::canLoadPoster() and do nothing in
+        MediaPlayerPrivate::prepareToPlay() their behavior is
+        unchanged. The current set of media test should then be
+        sufficient to guarantee that this patch does not break anything.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::loadResource):
+        After the MediaPlayer is created, inform it what the poster URL is.
+        (WebCore::HTMLMediaElement::updatePlayState):
+        Add another case where prepareToPlay is called for the platforms
+        that do not buffer video content automatically.
+        (WebCore::HTMLMediaElement::couldPlayIfEnoughData)
+        Same as potentiallyPlaying, except that we don't check for
+        the readyState being at least HAVE_FUTURE_DATA.
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::NullMediaPlayerPrivate::canLoadPoster):
+        Empty implementation for the NullMediaPlayerPrivate.
+        (WebCore::NullMediaPlayerPrivate::setPoster):
+        Empty implementation for the NullMediaPlayerPrivate.
+        (WebCore::MediaPlayer::canLoadPoster):
+        Proxy to the m_private.
+        (WebCore::MediaPlayer::setPoster):
+        Proxy to m_private.
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::canLoadPoster):
+        (WebCore::MediaPlayerPrivateInterface::setPoster):
+        Add new methods that allow the platform player to receive the poster URL.
+        (WebCore::MediaPlayerPrivateInterface::prepareToPlay):
+        Notifies the media engine that playback should start. The media engine
+        should start preparing (e.g. by initializing the player and starting to buffer)
+        and call back when the state is changed to HAVE_FUTURE_DATA.
+
 2009-10-06  David Levin  <levin@chromium.org>
 
         Reviewed by Oliver Hunt.

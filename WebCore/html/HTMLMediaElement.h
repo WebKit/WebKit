@@ -241,6 +241,7 @@ private:
     bool endedPlayback() const;
     bool stoppedDueToErrors() const;
     bool pausedForUserInteraction() const;
+    bool couldPlayIfEnoughData() const;
 
     float minTimeSeekable() const;
     float maxTimeSeekable() const;
