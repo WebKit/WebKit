@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<script>
+function print(message, color) 
+{
+    var paragraph = document.createElement("div");
+    paragraph.appendChild(document.createTextNode(message));
+    paragraph.style.fontFamily = "monospace";
+    if (color)
+        paragraph.style.color = color;
+    document.getElementById("console").appendChild(paragraph);
+}
+</script>
+</head>
+
+<body>
+<p>This page tests the beforeload event on script elements.  You should see a PASS message below if everything
+works.</p>
+<hr/>
+<div id="console"></div>
+
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+    
+function beforeLoadFunc()
+{
+    print("PASS", "green");
+    event.preventDefault();
+}
+
+document.body.addEventListener("beforeload", beforeLoadFunc, true);
+</script>
+<script src="resources/fail.js"></script>
+
+</body>
+</html>

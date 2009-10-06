@@ -23,6 +23,7 @@
 #include "config.h"
 #include "HTMLScriptElement.h"
 
+#include "BeforeLoadEvent.h"
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
@@ -71,6 +72,8 @@ void HTMLScriptElement::parseMappedAttribute(MappedAttribute* attr)
         handleSourceAttribute(m_data, attr->value());
     else if (attrName == onloadAttr)
         setAttributeEventListener(eventNames().loadEvent, createAttributeEventListener(this, attr));
+    else if (attrName == onbeforeloadAttr)
+        setAttributeEventListener(eventNames().beforeloadEvent, createAttributeEventListener(this, attr));
     else
         HTMLElement::parseMappedAttribute(attr);
 }
@@ -218,6 +221,14 @@ String HTMLScriptElement::forAttributeValue() const
     return getAttribute(forAttr).string();
 }
  
+bool HTMLScriptElement::dispatchBeforeLoadEvent(const String& sourceURL)
+{
+    RefPtr<HTMLScriptElement> protector(this);
+    RefPtr<BeforeLoadEvent> beforeLoadEvent = BeforeLoadEvent::create(sourceURL);
+    dispatchEvent(beforeLoadEvent.get());
+    return inDocument() && !beforeLoadEvent->defaultPrevented();
+}
+
 void HTMLScriptElement::dispatchLoadEvent()
 {
     ASSERT(!m_data.haveFiredLoadEvent());

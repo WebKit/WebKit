@@ -151,6 +151,9 @@ void ScriptElementData::requestScript(const String& sourceUrl)
     if (!document->frame())
         return;
 
+    if (!m_scriptElement->dispatchBeforeLoadEvent(sourceUrl))
+        return;
+
     ASSERT(!m_cachedScript);
     m_cachedScript = document->docLoader()->requestScript(sourceUrl, scriptCharset());
     m_requested = true;

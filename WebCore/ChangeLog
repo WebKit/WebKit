@@ -1,3 +1,27 @@
+2009-10-06  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30131, make beforeload fire on script elements.
+
+        Added tests in fast/dom/beforeload/.
+
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElementData::requestScript):
+        * dom/ScriptElement.h:
+        * dom/XMLTokenizerLibxml2.cpp:
+        (WebCore::XMLTokenizer::endElementNs):
+        * html/HTMLAttributeNames.in:
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::parseMappedAttribute):
+        (WebCore::HTMLScriptElement::dispatchBeforeLoadEvent):
+        * html/HTMLScriptElement.h:
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::scriptHandler):
+        * svg/SVGScriptElement.cpp:
+        (WebCore::SVGScriptElement::dispatchBeforeLoadEvent):
+        * svg/SVGScriptElement.h:
+
 2009-10-06  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Eric Seidel.
