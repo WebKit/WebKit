@@ -453,38 +453,6 @@ static const char* interpretEditorCommandKeyEvent(const KeyboardEvent* evt)
     return mapKey ? keyPressCommandsMap->get(mapKey) : 0;
 }
 
-static bool handleCaretBrowsingKeyboardEvent(Frame* frame, const PlatformKeyboardEvent* keyEvent)
-{
-    switch (keyEvent->windowsVirtualKeyCode()) {
-        case VK_LEFT:
-            frame->selection()->modify(keyEvent->shiftKey() ? SelectionController::EXTEND : SelectionController::MOVE,
-                    SelectionController::LEFT,
-                    keyEvent->ctrlKey() ? WordGranularity : CharacterGranularity,
-                    true);
-            return true;
-        case VK_RIGHT:
-            frame->selection()->modify(keyEvent->shiftKey() ? SelectionController::EXTEND : SelectionController::MOVE,
-                    SelectionController::RIGHT,
-                    keyEvent->ctrlKey() ? WordGranularity : CharacterGranularity,
-                    true);
-            return true;
-        case VK_UP:
-            frame->selection()->modify(keyEvent->shiftKey() ? SelectionController::EXTEND : SelectionController::MOVE,
-                    SelectionController::BACKWARD,
-                    keyEvent->ctrlKey() ? ParagraphGranularity : LineGranularity,
-                    true);
-            return true;
-        case VK_DOWN:
-            frame->selection()->modify(keyEvent->shiftKey() ? SelectionController::EXTEND : SelectionController::MOVE,
-                    SelectionController::FORWARD,
-                    keyEvent->ctrlKey() ? ParagraphGranularity : LineGranularity,
-                    true);
-            return true;
-        default:
-            return false; // Not a caret browswing keystroke, so continue processing.
-    }
-}
-
 void EditorClient::handleKeyboardEvent(KeyboardEvent* event)
 {
     Node* node = event->target()->toNode();
@@ -496,15 +464,9 @@ void EditorClient::handleKeyboardEvent(KeyboardEvent* event)
     if (!platformEvent)
         return;
 
-    bool caretBrowsing = frame->settings()->caretBrowsingEnabled();
-    if (caretBrowsing && handleCaretBrowsingKeyboardEvent(frame, platformEvent)) {
-        // This was a caret browsing key event, so prevent it from bubbling up to the DOM.
-        event->setDefaultHandled();
-        return;
-    }
-
-    // Don't allow editor commands or text insertion for nodes that cannot edit.
-    if (!frame->editor()->canEdit())
+    // Don't allow editor commands or text insertion for nodes that
+    // cannot edit, unless we are in caret mode.
+    if (!frame->editor()->canEdit() && !(frame->settings() && frame->settings()->caretBrowsingEnabled()))
         return;
 
     const gchar* editorCommandString = interpretEditorCommandKeyEvent(event);

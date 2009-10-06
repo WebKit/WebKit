@@ -1,3 +1,16 @@
+2009-10-06  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25526
+        [Gtk] Additional support is needed for caret browsing
+
+        Remove special cases for caret browsing, they are now handled in
+        cross-platform code.
+
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::EditorClient::handleKeyboardEvent):
+
 2009-10-06  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

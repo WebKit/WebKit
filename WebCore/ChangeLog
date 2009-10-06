@@ -1,3 +1,20 @@
+2009-10-06  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25526
+        [Gtk] Additional support is needed for caret browsing
+
+        Enable caret movement commands also when caret browsing setting is
+        enabled.
+
+        * editing/EditorCommand.cpp:
+        (WebCore::caretBrowsingEnabled):
+        (WebCore::enabledVisibleSelectionOrCaretBrowsing):
+        (WebCore::enabledInEditableTextOrCaretBrowsing):
+        (WebCore::CommandEntry::):
+        * manual-tests/gtk/caret-browsing.html: Added.
+
 2009-10-06  Anton Muhin  <antonm@chromium>
 
         Reviewed by Dimitri Glazkov.
