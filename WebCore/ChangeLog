@@ -1,3 +1,15 @@
+2009-10-06  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Do not call nodeTitleInfo twice +
+        followup fixes for r49101.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30087
+
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement):
+
 2009-10-06  Girish Ramakrishnan  <girish@forwardbias.in>
 
         Reviewed by Simon Hausmann.

@@ -231,13 +231,13 @@ WebInspector.ElementsTreeOutline.prototype.__proto__ = TreeOutline.prototype;
 WebInspector.ElementsTreeElement = function(node)
 {
     var hasChildren = Preferences.ignoreWhitespace ? (firstChildSkippingWhitespace.call(node) ? true : false) : node.hasChildNodes();
-    var titleInfo = this._nodeTitleInfo(node, hasChildren, WebInspector.linkifyURL);
+    var hasChildrenOverride = hasChildren && !this._showInlineText(node);
 
-    if (titleInfo.hasChildren) 
+    if (hasChildrenOverride)
         this.whitespaceIgnored = Preferences.ignoreWhitespace;
 
     // The title will be updated in onattach.
-    TreeElement.call(this, "", node, titleInfo.hasChildren);
+    TreeElement.call(this, "", node, hasChildrenOverride);
 
     if (this.representedObject.nodeType == Node.ELEMENT_NODE)
         this._canAddAttributes = true;
@@ -726,7 +726,7 @@ WebInspector.ElementsTreeElement.prototype = {
         this.updateSelection();
         this._preventFollowingLinksOnDoubleClick();
     },
-    
+
     _nodeTitleInfo: function(node, hasChildren, linkify)
     {
         var info = {title: "", hasChildren: hasChildren};
@@ -762,7 +762,7 @@ WebInspector.ElementsTreeElement.prototype = {
                 // just show that text and the closing tag inline rather than
                 // create a subtree for them
                 
-                var textChild = onlyTextChild.call(this, Preferences.ignoreWhitespace);
+                var textChild = onlyTextChild.call(node, Preferences.ignoreWhitespace);
                 var showInlineText = textChild && textChild.textContent.length < Preferences.maxInlineTextChildLength;
                 
                 if (showInlineText) {
@@ -772,7 +772,7 @@ WebInspector.ElementsTreeElement.prototype = {
                 break;
                 
             case Node.TEXT_NODE:
-                if (isNodeWhitespace.call(this))
+                if (isNodeWhitespace.call(node))
                     info.title = "(whitespace)";
                 else {
                     if (node.parentNode && node.parentNode.nodeName.toLowerCase() == "script") {
@@ -818,6 +818,16 @@ WebInspector.ElementsTreeElement.prototype = {
         }
         
         return info;
+    },
+
+    _showInlineText: function(node)
+    {
+        if (node.nodeType === Node.ELEMENT_NODE) {
+            var textChild = onlyTextChild.call(node, Preferences.ignoreWhitespace);
+            if (textChild && textChild.textContent.length < Preferences.maxInlineTextChildLength)
+                return true;
+        }
+        return false;
     }
 }
 
