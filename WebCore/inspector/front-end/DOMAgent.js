@@ -307,13 +307,6 @@ WebInspector.DOMAgent = function() {
     this._window = new WebInspector.DOMWindow(this);
     this._idToDOMNode = null;
     this.document = null;
-
-    // TODO: update ElementsPanel to not track embedded iframes - it is already being handled
-    // in the agent backend.
-
-    // Whitespace is ignored in InspectorDOMAgent already -> no need to filter.
-    // TODO: Either remove all of its usages or push value into the agent backend.
-    Preferences.ignoreWhitespace = false;
 }
 
 WebInspector.DOMAgent.prototype = {
@@ -417,10 +410,8 @@ WebInspector.DOMAgent.prototype = {
         node._childNodeCount = newValue;
         var outline = WebInspector.panels.elements.treeOutline;
         var treeElement = outline.findTreeElement(node);
-        if (treeElement) {
+        if (treeElement)
             treeElement.hasChildren = newValue;
-            treeElement.whitespaceIgnored = Preferences.ignoreWhitespace;
-        }
     },
 
     _childNodeInserted: function(parentId, prevId, payload)

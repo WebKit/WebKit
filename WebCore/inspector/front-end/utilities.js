@@ -91,7 +91,7 @@ Node.prototype.rangeOfWord = function(offset, stopCharacters, stayWithinNode, di
             if (startNode)
                 break;
 
-            node = node.traversePreviousNode(false, stayWithinNode);
+            node = node.traversePreviousNode(stayWithinNode);
         }
 
         if (!startNode) {
@@ -126,7 +126,7 @@ Node.prototype.rangeOfWord = function(offset, stopCharacters, stayWithinNode, di
             if (endNode)
                 break;
 
-            node = node.traverseNextNode(false, stayWithinNode);
+            node = node.traverseNextNode(stayWithinNode);
         }
 
         if (!endNode) {
@@ -269,9 +269,6 @@ Element.prototype.offsetRelativeToWindow = function(targetWindow)
     return elementOffset;
 }
 
-Element.prototype.firstChildSkippingWhitespace = firstChildSkippingWhitespace;
-Element.prototype.lastChildSkippingWhitespace = lastChildSkippingWhitespace;
-
 Node.prototype.isWhitespace = isNodeWhitespace;
 Node.prototype.displayName = nodeDisplayName;
 Node.prototype.isAncestor = function(node)
@@ -279,8 +276,6 @@ Node.prototype.isAncestor = function(node)
     return isAncestorNode(this, node);
 };
 Node.prototype.isDescendant = isDescendantNode;
-Node.prototype.nextSiblingSkippingWhitespace = nextSiblingSkippingWhitespace;
-Node.prototype.previousSiblingSkippingWhitespace = previousSiblingSkippingWhitespace;
 Node.prototype.traverseNextNode = traverseNextNode;
 Node.prototype.traversePreviousNode = traversePreviousNode;
 Node.prototype.onlyTextChild = onlyTextChild;
@@ -455,95 +450,55 @@ function isDescendantNode(descendant)
     return isAncestorNode(descendant, this);
 }
 
-function nextSiblingSkippingWhitespace()
+function traverseNextNode(stayWithin)
 {
     if (!this)
         return;
-    var node = this.nextSibling;
-    while (node && node.nodeType === Node.TEXT_NODE && isNodeWhitespace.call(node))
-        node = node.nextSibling;
-    return node;
-}
 
-function previousSiblingSkippingWhitespace()
-{
-    if (!this)
-        return;
-    var node = this.previousSibling;
-    while (node && node.nodeType === Node.TEXT_NODE && isNodeWhitespace.call(node))
-        node = node.previousSibling;
-    return node;
-}
-
-function firstChildSkippingWhitespace()
-{
-    if (!this)
-        return;
     var node = this.firstChild;
-    while (node && node.nodeType === Node.TEXT_NODE && isNodeWhitespace.call(node))
-        node = nextSiblingSkippingWhitespace.call(node);
-    return node;
-}
-
-function lastChildSkippingWhitespace()
-{
-    if (!this)
-        return;
-    var node = this.lastChild;
-    while (node && node.nodeType === Node.TEXT_NODE && isNodeWhitespace.call(node))
-        node = previousSiblingSkippingWhitespace.call(node);
-    return node;
-}
-
-function traverseNextNode(skipWhitespace, stayWithin)
-{
-    if (!this)
-        return;
-
-    var node = skipWhitespace ? firstChildSkippingWhitespace.call(this) : this.firstChild;
     if (node)
         return node;
 
     if (stayWithin && this === stayWithin)
         return null;
 
-    node = skipWhitespace ? nextSiblingSkippingWhitespace.call(this) : this.nextSibling;
+    node = this.nextSibling;
     if (node)
         return node;
 
     node = this;
-    while (node && !(skipWhitespace ? nextSiblingSkippingWhitespace.call(node) : node.nextSibling) && (!stayWithin || !node.parentNode || node.parentNode !== stayWithin))
+    while (node && !node.nextSibling && (!stayWithin || !node.parentNode || node.parentNode !== stayWithin))
         node = node.parentNode;
     if (!node)
         return null;
 
-    return skipWhitespace ? nextSiblingSkippingWhitespace.call(node) : node.nextSibling;
+    return node.nextSibling;
 }
 
-function traversePreviousNode(skipWhitespace, stayWithin)
+function traversePreviousNode(stayWithin)
 {
     if (!this)
         return;
     if (stayWithin && this === stayWithin)
         return null;
-    var node = skipWhitespace ? previousSiblingSkippingWhitespace.call(this) : this.previousSibling;
-    while (node && (skipWhitespace ? lastChildSkippingWhitespace.call(node) : node.lastChild) )
-        node = skipWhitespace ? lastChildSkippingWhitespace.call(node) : node.lastChild;
+    var node = this.previousSibling;
+    while (node && node.lastChild)
+        node = node.lastChild;
     if (node)
         return node;
     return this.parentNode;
 }
 
-function onlyTextChild(ignoreWhitespace)
+function onlyTextChild()
 {
     if (!this)
         return null;
 
-    var firstChild = ignoreWhitespace ? firstChildSkippingWhitespace.call(this) : this.firstChild;
+    var firstChild = this.firstChild;
     if (!firstChild || firstChild.nodeType !== Node.TEXT_NODE)
         return null;
 
-    var sibling = ignoreWhitespace ? nextSiblingSkippingWhitespace.call(firstChild) : firstChild.nextSibling;
+    var sibling = firstChild.nextSibling;
     return sibling ? null : firstChild;
 }
 

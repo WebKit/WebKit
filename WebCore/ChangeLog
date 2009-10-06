@@ -2,6 +2,32 @@
 
         Reviewed by Timothy Hatcher.
 
+        Web Inspector: Get rid of Preferences.ignoreWhitespace.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30092
+
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMAgent):
+        (WebInspector.DOMAgent.prototype._childNodeCountUpdated):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeOutline.prototype.update):
+        (WebInspector.ElementsTreeElement):
+        (WebInspector.ElementsTreeElement.prototype.onpopulate):
+        (WebInspector.ElementsTreeElement.prototype._updateChildren.updateChildrenOfNode):
+        (WebInspector.ElementsTreeElement.prototype._updateChildren):
+        * inspector/front-end/TextPrompt.js:
+        (WebInspector.TextPrompt.prototype.isCaretAtEndOfPrompt):
+        * inspector/front-end/inspector.js:
+        * inspector/front-end/utilities.js:
+        (Node.prototype.rangeOfWord):
+        (traverseNextNode):
+        (traversePreviousNode):
+        (onlyTextChild):
+
+2009-10-06  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
         Web Inspector: Do not call nodeTitleInfo twice +
         followup fixes for r49101.
 

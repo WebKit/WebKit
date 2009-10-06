@@ -115,12 +115,12 @@ WebInspector.ElementsTreeOutline.prototype = {
             this.appendChild(treeElement);
         } else {
             // FIXME: this could use findTreeElement to reuse a tree element if it already exists
-            var node = (Preferences.ignoreWhitespace ? firstChildSkippingWhitespace.call(this.rootDOMNode) : this.rootDOMNode.firstChild);
+            var node = this.rootDOMNode.firstChild;
             while (node) {
                 treeElement = new WebInspector.ElementsTreeElement(node);
                 treeElement.selectable = this.selectEnabled;
                 this.appendChild(treeElement);
-                node = Preferences.ignoreWhitespace ? nextSiblingSkippingWhitespace.call(node) : node.nextSibling;
+                node = node.nextSibling;
             }
         }
 
@@ -230,11 +230,7 @@ WebInspector.ElementsTreeOutline.prototype.__proto__ = TreeOutline.prototype;
 
 WebInspector.ElementsTreeElement = function(node)
 {
-    var hasChildren = Preferences.ignoreWhitespace ? (firstChildSkippingWhitespace.call(node) ? true : false) : node.hasChildNodes();
-    var hasChildrenOverride = hasChildren && !this._showInlineText(node);
-
-    if (hasChildrenOverride)
-        this.whitespaceIgnored = Preferences.ignoreWhitespace;
+    var hasChildrenOverride = node.hasChildNodes() && !this._showInlineText(node);
 
     // The title will be updated in onattach.
     TreeElement.call(this, "", node, hasChildrenOverride);
@@ -362,10 +358,8 @@ WebInspector.ElementsTreeElement.prototype = {
 
     onpopulate: function()
     {
-        if (this.children.length || this.whitespaceIgnored !== Preferences.ignoreWhitespace)
+        if (this.children.length || this._showInlineText(this.representedObject))
             return;
-
-        this.whitespaceIgnored = Preferences.ignoreWhitespace;
 
         this.updateChildren();
     },
@@ -390,7 +384,7 @@ WebInspector.ElementsTreeElement.prototype = {
         function updateChildrenOfNode(node)
         {
             var treeOutline = treeElement.treeOutline;
-            var child = (Preferences.ignoreWhitespace ? firstChildSkippingWhitespace.call(node) : node.firstChild);
+            var child = node.firstChild;
             while (child) {
                 var currentTreeElement = treeElement.children[treeChildIndex];
                 if (!currentTreeElement || currentTreeElement.representedObject !== child) {
@@ -418,7 +412,7 @@ WebInspector.ElementsTreeElement.prototype = {
                     }
                 }
 
-                child = Preferences.ignoreWhitespace ? nextSiblingSkippingWhitespace.call(child) : child.nextSibling;
+                child = child.nextSibling;
                 ++treeChildIndex;
             }
         }
@@ -762,7 +756,7 @@ WebInspector.ElementsTreeElement.prototype = {
                 // just show that text and the closing tag inline rather than
                 // create a subtree for them
                 
-                var textChild = onlyTextChild.call(node, Preferences.ignoreWhitespace);
+                var textChild = onlyTextChild.call(node);
                 var showInlineText = textChild && textChild.textContent.length < Preferences.maxInlineTextChildLength;
                 
                 if (showInlineText) {
@@ -823,7 +817,7 @@ WebInspector.ElementsTreeElement.prototype = {
     _showInlineText: function(node)
     {
         if (node.nodeType === Node.ELEMENT_NODE) {
-            var textChild = onlyTextChild.call(node, Preferences.ignoreWhitespace);
+            var textChild = onlyTextChild.call(node);
             if (textChild && textChild.textContent.length < Preferences.maxInlineTextChildLength)
                 return true;
         }

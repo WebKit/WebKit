@@ -29,7 +29,6 @@
  */
 
 var Preferences = {
-    ignoreWhitespace: true,
     showUserAgentStyles: true,
     maxInlineTextChildLength: 80,
     minConsoleHeight: 75,

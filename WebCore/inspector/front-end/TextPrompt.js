@@ -252,7 +252,7 @@ WebInspector.TextPrompt.prototype = {
                 foundNextText = true;
             }
 
-            node = node.traverseNextNode(false, this.element);
+            node = node.traverseNextNode(this.element);
         }
 
         return true;
