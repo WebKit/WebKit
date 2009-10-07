@@ -443,6 +443,8 @@ static void resetDefaultsToConsistentValues()
         [preferences setAcceleratedCompositingEnabled:YES];
 
     [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookieAcceptPolicy:NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain];
+
+    setlocale(LC_ALL, "");
 }
 
 // Called once on DumpRenderTree startup.

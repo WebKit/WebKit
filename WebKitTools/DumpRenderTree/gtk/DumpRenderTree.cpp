@@ -334,6 +334,8 @@ static void resetDefaultsToConsistentValues()
     g_object_set(G_OBJECT(inspector), "javascript-profiling-enabled", FALSE, NULL);
 
     webkit_reset_origin_access_white_lists();
+
+    setlocale(LC_ALL, "");
 }
 
 void dump()

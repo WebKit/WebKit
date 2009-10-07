@@ -286,6 +286,8 @@ void DumpRenderTree::resetToConsistentStateBeforeTesting()
 
     m_controller->reset();
     QWebSecurityOrigin::resetOriginAccessWhiteLists();
+
+    setlocale(LC_ALL, "");
 }
 
 void DumpRenderTree::open(const QUrl& aurl)

@@ -1,3 +1,14 @@
+2009-10-07  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Layout test for verifying that LC_NUMERIC setting doesn't affect
+        the way CSS properties are stringified.
+        https://bugs.webkit.org/show_bug.cgi?id=18994
+
+        * fast/css/opacity-float-expected.txt: Added.
+        * fast/css/opacity-float.html: Added.
+
 2009-10-07  Xan Lopez  <xlopez@igalia.com>
 
         Skip two new tests for which we are missing results.

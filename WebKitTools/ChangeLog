@@ -1,3 +1,16 @@
+2009-10-07  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Add API to LayoutTestController for re/setting the system locale.
+        https://bugs.webkit.org/show_bug.cgi?id=18994
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (setLocaleCallback):
+        (LayoutTestController::staticFunctions):
+        (LayoutTestController::setLocale):
+        * DumpRenderTree/LayoutTestController.h:
+
 2009-10-06  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Jan Alonzo.

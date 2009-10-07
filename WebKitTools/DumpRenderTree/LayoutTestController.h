@@ -207,6 +207,8 @@ public:
     void closeWebInspector();
     void evaluateInWebInspector(long callId, JSStringRef script);
 
+    void setPOSIXLocale(JSStringRef locale);
+
 private:
     bool m_dumpAsPDF;
     bool m_dumpAsText;
