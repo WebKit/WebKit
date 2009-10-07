@@ -1,3 +1,19 @@
+2009-10-07  Adam Roben  <aroben@apple.com>
+
+        Fix typo in PluginView::load that was causing cross-origin loads to
+        be allowed
+
+        This typo was introduced in the build fix in r49213.
+
+        Fixes <http://webkit.org/b/30168> REGRESSION (r49213):
+        http/tests/plugins/local-geturl-from-remote.html is failing on Windows
+
+        Reviewed by Sam Weinig.
+
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::load): Removed a comma operator that was making
+        a condition always evaluate to true.
+
 2009-10-07  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Simon Hausmann.
