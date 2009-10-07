@@ -1,5 +1,12 @@
 2009-10-06  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed build fix for Windows.
+
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::load):
+
+2009-10-06  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         Move FrameLoader::canLoad to SecurityOrigin
