@@ -1,3 +1,15 @@
+2009-10-07  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        getChildrenWithRange expects as last parameter the end index, not
+        the length of the range. Correct this and clarify the variable
+        names to reflect how the code works.
+
+        * DumpRenderTree/gtk/AccessibilityUIElementGtk.cpp:
+        (AccessibilityUIElement::getChildrenWithRange):
+        (AccessibilityUIElement::getChildAtIndex):
+
 2009-10-06  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Simon Fraser.
