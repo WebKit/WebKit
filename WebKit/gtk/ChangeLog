@@ -1,3 +1,20 @@
+2009-10-07  Martin Robinson  <martin.james.robinson@gmail.com>
+
+        [GTK] Segfault while testing fast/events/keydown-keypress-preventDefault.html
+        https://bugs.webkit.org/show_bug.cgi?id=30121
+
+        Clear previous preedit or pending composition before storing new ones.
+        This can happen when a WebView receives a native keydown event without
+        a matching keyup event or when preventDefault() is called on DOM keydown
+        events.
+
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::setPendingComposition):
+        (WebKit::setPendingPreedit):
+        (WebKit::clearPendingIMData):
+        (WebKit::imContextCommitted):
+        (WebKit::imContextPreeditChanged):
+
 2009-10-06  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Eric Seidel.

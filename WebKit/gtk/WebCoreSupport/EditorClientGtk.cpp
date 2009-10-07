@@ -52,29 +52,37 @@ namespace WebKit {
 static gchar* pendingComposition = 0;
 static gchar* pendingPreedit = 0;
 
-static void clearPendingIMData()
+static void setPendingComposition(gchar* newComposition)
 {
     g_free(pendingComposition);
-    pendingComposition = 0;
+    pendingComposition = newComposition;
+}
+
+static void setPendingPreedit(gchar* newPreedit)
+{
     g_free(pendingPreedit);
-    pendingPreedit = 0;
+    pendingPreedit = newPreedit;
+}
+
+static void clearPendingIMData()
+{
+    setPendingComposition(0);
+    setPendingPreedit(0);
 }
 static void imContextCommitted(GtkIMContext* context, const gchar* str, EditorClient* client)
 {
-    ASSERT(!pendingComposition);
-
     // This signal will fire during a keydown event. We want the contents of the
     // field to change right before the keyup event, so we wait until then to actually
     // commit this composition.
-    pendingComposition = g_strdup(str);
+    setPendingComposition(g_strdup(str));
 }
 
 static void imContextPreeditChanged(GtkIMContext* context, EditorClient* client)
 {
-    ASSERT(!pendingPreedit);
-
     // We ignore the provided PangoAttrList for now.
-    gtk_im_context_get_preedit_string(context, &pendingPreedit, NULL, NULL);
+    gchar* newPreedit = 0;
+    gtk_im_context_get_preedit_string(context, &newPreedit, NULL, NULL);
+    setPendingPreedit(newPreedit);
 }
 
 void EditorClient::setInputMethodState(bool active)
