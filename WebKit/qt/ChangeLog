@@ -1,3 +1,16 @@
+2009-10-07  Girish Ramakrishnan  <girish@forwardbias.in>
+
+        Reviewed by Simon Hausmann.
+
+        Add a simple rotation effect to QGVLauncher
+
+        https://bugs.webkit.org/show_bug.cgi?id=30162
+
+        * QGVLauncher/main.cpp:
+        (MainView::animatedFlip):
+        (MainWindow::animatedFlip):
+        (MainWindow::buildUI):
+
 2009-10-07  Volker Hilsheimer  <volker.hilsheimer@nokia.com>
 
         Reviewed by Simon Hausmann.
