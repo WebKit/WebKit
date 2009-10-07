@@ -28,11 +28,32 @@
 #include "BitmapImage.h"
 #include "GraphicsContext.h"
 #include <cairo.h>
+#include <cairo-win32.h>
 
 #include <windows.h>
 #include "PlatformString.h"
 
 namespace WebCore {
+
+PassRefPtr<BitmapImage> BitmapImage::create(HBITMAP hBitmap)
+{
+    DIBSECTION dibSection;
+    if (!GetObject(hBitmap, sizeof(DIBSECTION), &dibSection))
+        return 0;
+
+    ASSERT(dibSection.dsBm.bmBitsPixel == 32);
+    if (dibSection.dsBm.bmBitsPixel != 32)
+        return 0;
+
+    ASSERT(dibSection.dsBm.bmBits);
+    if (!dibSection.dsBm.bmBits)
+        return 0;
+
+    cairo_surface_t* image = cairo_win32_surface_create_with_dib (CAIRO_FORMAT_ARGB32, dibSection.dsBm.bmWidth, dibSection.dsBm.bmHeight);
+
+    // The BitmapImage object takes over ownership of the cairo_surface_t*, so no need to destroy here.
+    return adoptRef(new BitmapImage(image));
+}
 
 bool BitmapImage::getHBITMAPOfSize(HBITMAP bmp, LPSIZE size)
 {
