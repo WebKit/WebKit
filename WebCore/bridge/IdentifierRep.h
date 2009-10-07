@@ -27,11 +27,12 @@
 #define IdentifierRep_h
 
 #include <wtf/Assertions.h>
+#include <wtf/FastAllocBase.h>
 #include <string.h>
 
 namespace WebCore {
     
-class IdentifierRep {
+class IdentifierRep : public FastAllocBase {
 public:
     static IdentifierRep* get(int);
     static IdentifierRep* get(const char*);
