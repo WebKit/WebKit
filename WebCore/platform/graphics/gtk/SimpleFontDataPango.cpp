@@ -49,9 +49,9 @@ void SimpleFontData::platformInit()
     cairo_font_extents_t font_extents;
     cairo_text_extents_t text_extents;
     cairo_scaled_font_extents(m_platformData.m_scaledFont, &font_extents);
-    m_ascent = static_cast<int>(font_extents.ascent);
-    m_descent = static_cast<int>(font_extents.descent);
-    m_lineSpacing = static_cast<int>(font_extents.height);
+    m_ascent = static_cast<int>(lroundf(font_extents.ascent));
+    m_descent = static_cast<int>(lroundf(font_extents.descent));
+    m_lineSpacing = static_cast<int>(lroundf(font_extents.height));
     // There seems to be some rounding error in cairo (or in how we
     // use cairo) with some fonts, like DejaVu Sans Mono, which makes
     // cairo report a height smaller than ascent + descent, which is
