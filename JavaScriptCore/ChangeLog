@@ -1,3 +1,15 @@
+2009-10-07  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Allow custom memory allocation control for JavaScriptCore's IdentifierArena
+        https://bugs.webkit.org/show_bug.cgi?id=30158
+
+        Inherits IdentifierArena class from FastAllocBase because it has been
+        instantiated by 'new' in JavaScriptCore/parser/ParserArena.cpp:36.
+
+        * parser/ParserArena.h:
+
 2009-10-07  Adam Roben  <aroben@apple.com>
 
         Export DateInstance::info in a way that works on Windows
