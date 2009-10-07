@@ -2,6 +2,18 @@
 
         Reviewed by Xan Lopez.
 
+        Fix incorrect convertion of double into int while assigning it to
+        a float.
+
+        * platform/graphics/gtk/SimpleFontDataGtk.cpp:
+        (WebCore::SimpleFontData::platformInit):
+        * platform/graphics/gtk/SimpleFontDataPango.cpp:
+        (WebCore::SimpleFontData::platformInit):
+
+2009-10-07  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Xan Lopez.
+
         Fix rounding error issues in height calculation in 64 bits.
 
         Already covered by existing tests.

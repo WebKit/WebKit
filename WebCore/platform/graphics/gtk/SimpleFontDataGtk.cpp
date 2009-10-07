@@ -63,7 +63,7 @@ void SimpleFontData::platformInit()
     cairo_scaled_font_text_extents(m_platformData.m_scaledFont, "x", &text_extents);
     m_xHeight = text_extents.height;
     cairo_scaled_font_text_extents(m_platformData.m_scaledFont, " ", &text_extents);
-    m_spaceWidth =  static_cast<int>(text_extents.x_advance);
+    m_spaceWidth = static_cast<float>(text_extents.x_advance);
     m_lineGap = m_lineSpacing - m_ascent - m_descent;
     m_syntheticBoldOffset = m_platformData.syntheticBold() ? 1.0f : 0.f;
 }
