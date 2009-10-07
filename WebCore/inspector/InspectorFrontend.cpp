@@ -125,6 +125,13 @@ void InspectorFrontend::removeResource(long long identifier)
     function->call();
 }
 
+void InspectorFrontend::addCookieDomain(String domain)
+{
+    OwnPtr<ScriptFunctionCall> function(newFunctionCall("addCookieDomain"));
+    function->appendArgument(domain);
+    function->call();
+}
+
 void InspectorFrontend::updateFocusedNode(long long nodeId)
 {
     OwnPtr<ScriptFunctionCall> function(newFunctionCall("updateFocusedNode"));

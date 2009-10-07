@@ -27,6 +27,7 @@
 #define Cookie_h
 
 #include "PlatformString.h"
+#include "StringHash.h"
 
 namespace WebCore {
 
@@ -58,6 +59,24 @@ namespace WebCore {
         bool session;
     };
 
+    struct CookieHash {
+        static unsigned hash(Cookie key)
+        { 
+            return StringHash::hash(key.name) + StringHash::hash(key.domain) + StringHash::hash(key.path) + key.secure;
+        }
+
+        static bool equal(Cookie a, Cookie b)
+        {
+            return a.name == b.name && a.domain == b.domain && a.path == b.path && a.secure == b.secure;
+        }
+    };
+}
+
+namespace WTF {
+    template<typename T> struct DefaultHash;
+    template<> struct DefaultHash<WebCore::Cookie> {
+        typedef WebCore::CookieHash Hash;
+    };
 }
 
 #endif

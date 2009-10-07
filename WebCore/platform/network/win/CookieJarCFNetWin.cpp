@@ -148,9 +148,26 @@ bool getRawCookies(const Document*, const KURL& url, Vector<Cookie>& rawCookies)
     return true;
 }
 
-void deleteCookie(const Document*, const KURL&, const String&)
+void deleteCookie(const Document*, const KURL& url, const String& name)
 {
-    // FIXME: Not yet implemented
+    CFHTTPCookieStorageRef cookieStorage = currentCookieStorage();
+    if (!cookieStorage)
+        return;
+
+    RetainPtr<CFURLRef> urlCF(AdoptCF, url.createCFURL());
+
+    bool sendSecureCookies = url.protocolIs("https");
+    RetainPtr<CFArrayRef> cookiesCF(AdoptCF, CFHTTPCookieStorageCopyCookiesForURL(cookieStorage, urlCF.get(), sendSecureCookies));
+
+    CFIndex count = CFArrayGetCount(cookiesCF.get());
+    for (CFIndex i = 0; i < count; i++) {
+        CFHTTPCookieRef cookie = (CFHTTPCookieRef)CFArrayGetValueAtIndex(cookiesCF.get(), i);
+        String cookieName = CFHTTPCookieGetName(cookie);
+        if (cookieName == name) {
+            CFHTTPCookieStorageDeleteCookie(cookieStorage, cookie);
+            break;
+        }
+    }
 }
 
 }

@@ -53,8 +53,6 @@ namespace WebCore {
     class Node;
     class Page;
 
-    struct Cookie;
-
     struct EventListenerInfo {
         EventListenerInfo(Node* node, const AtomicString& eventType, const EventListenerVector& eventListenerVector)
             : node(node)
@@ -88,7 +86,6 @@ namespace WebCore {
         void removeAttribute(long callId, long elementId, const String& name);
         void setTextNodeValue(long callId, long nodeId, const String& value);
         void getEventListenersForNode(long callId, long nodeId);
-        void getCookies(long callId);
 
         // Methods called from the InspectorController.
         void setDocument(Document* document);
@@ -115,9 +112,6 @@ namespace WebCore {
         ScriptArray buildArrayForContainerChildren(Node* container, int depth, NodeToIdMap* nodesMap);
 
         ScriptObject buildObjectForEventListener(const RegisteredEventListener& registeredEventListener, const AtomicString& eventType, Node* node);
-
-        ScriptObject buildObjectForCookie(const Cookie& cookie);
-        ScriptArray buildArrayForCookies(const Vector<Cookie>& cookiesList);
 
         // We represent embedded doms as a part of the same hierarchy. Hence we treat children of frame owners differently.
         // We also skip whitespace text nodes conditionally. Following methods encapsulate these specifics.

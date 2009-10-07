@@ -456,17 +456,18 @@ void InspectorBackend::copyNode(long nodeId)
     Pasteboard::generalPasteboard()->writePlainText(markup);
 }
 
-void InspectorBackend::getCookies(long callId)
-{
-    if (InspectorDOMAgent* domAgent = inspectorDOMAgent())
-        domAgent->getCookies(callId);
-}
-
-void InspectorBackend::deleteCookie(const String& cookieName)
+void InspectorBackend::getCookies(long callId, const String& domain)
 {
     if (!m_inspectorController)
         return;
-    m_inspectorController->deleteCookie(cookieName);
+    m_inspectorController->getCookies(callId, domain);
+}
+
+void InspectorBackend::deleteCookie(const String& cookieName, const String& domain)
+{
+    if (!m_inspectorController)
+        return;
+    m_inspectorController->deleteCookie(cookieName, domain);
 }
 
 void InspectorBackend::highlight(long nodeId)

@@ -110,8 +110,8 @@ module core {
         void getEventListenersForNode(in long callId, in long nodeId);
         void copyNode(in long nodeId);
 
-        void getCookies(in long callId);
-        void deleteCookie(in DOMString cookieName);
+        void getCookies(in long callId, in DOMString domain);
+        void deleteCookie(in DOMString cookieName, in DOMString domain);
 
         // Called from InjectedScript.
         // TODO: extract into a separate IDL.

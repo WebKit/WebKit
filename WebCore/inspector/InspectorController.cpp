@@ -36,6 +36,7 @@
 #include "CachedResource.h"
 #include "Console.h"
 #include "ConsoleMessage.h"
+#include "Cookie.h"
 #include "CookieJar.h"
 #include "Document.h"
 #include "DocumentLoader.h"
@@ -76,6 +77,7 @@
 #include "TextEncoding.h"
 #include "TextIterator.h"
 #include <wtf/CurrentTime.h>
+#include <wtf/ListHashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/StdLibExtras.h>
 
@@ -652,9 +654,11 @@ void InspectorController::populateScriptObjects()
     m_domAgent->setDocument(m_inspectedPage->mainFrame()->document());
 
     ResourcesMap::iterator resourcesEnd = m_resources.end();
-    for (ResourcesMap::iterator it = m_resources.begin(); it != resourcesEnd; ++it)
+    for (ResourcesMap::iterator it = m_resources.begin(); it != resourcesEnd; ++it) {
         it->second->createScriptObject(m_frontend.get());
-
+        m_frontend->addCookieDomain(it->second->frame()->document()->url().host());
+    }
+        
     unsigned messageCount = m_consoleMessages.size();
     for (unsigned i = 0; i < messageCount; ++i)
         m_consoleMessages[i]->addToConsole(m_frontend.get());
@@ -972,8 +976,10 @@ void InspectorController::didFinishLoading(DocumentLoader*, unsigned long identi
 
     addResource(resource.get());
 
-    if (m_frontend)
+    if (m_frontend) {
         resource->updateScriptObject(m_frontend.get());
+        m_frontend->addCookieDomain(resource->frame()->document()->url().host());
+    }
 }
 
 void InspectorController::didFailLoading(DocumentLoader*, unsigned long identifier, const ResourceError& /*error*/)
@@ -1146,6 +1152,75 @@ void InspectorController::didOpenDatabase(Database* database, const String& doma
 }
 #endif
 
+void InspectorController::getCookies(long callId, const String& host)
+{
+    if (!m_frontend)
+        return;
+    
+    // If we can get raw cookies.
+    ListHashSet<Cookie> rawCookiesList;
+    
+    // If we can't get raw cookies - fall back to String representation
+    String stringCookiesList;
+    
+    // Return value to getRawCookies should be the same for every call because
+    // the return value is platform/network backend specific, and the call will
+    // always return the same true/false value.
+    bool rawCookiesImplemented = false;
+    
+    ResourcesMap::iterator resourcesEnd = m_resources.end();
+    for (ResourcesMap::iterator it = m_resources.begin(); it != resourcesEnd; ++it) {
+        Document* document = it->second->frame()->document();
+        if (document->url().host() == host) {
+            Vector<Cookie> docCookiesList;
+            rawCookiesImplemented = getRawCookies(document, document->cookieURL(), docCookiesList);
+            
+            if (!rawCookiesImplemented)
+                // FIXME: We need duplication checking for the String representation of cookies.
+                stringCookiesList += document->cookie();
+            else {
+                int cookiesSize = docCookiesList.size();
+                for (int i = 0; i < cookiesSize; i++) {
+                    if (!rawCookiesList.contains(docCookiesList[i]))
+                        rawCookiesList.add(docCookiesList[i]);
+                }
+            }
+        }
+    }
+    
+    if (!rawCookiesImplemented)
+        m_frontend->didGetCookies(callId, m_frontend->newScriptArray(), stringCookiesList);
+    else
+        m_frontend->didGetCookies(callId, buildArrayForCookies(rawCookiesList), String());
+}
+    
+ScriptArray InspectorController::buildArrayForCookies(ListHashSet<Cookie>& cookiesList)
+{
+    ScriptArray cookies = m_frontend->newScriptArray();
+
+    ListHashSet<Cookie>::iterator end = cookiesList.end();
+    ListHashSet<Cookie>::iterator it = cookiesList.begin();
+    for (int i = 0; it != end; ++it, i++)
+        cookies.set(i, buildObjectForCookie(*it));
+
+    return cookies;
+}
+
+ScriptObject InspectorController::buildObjectForCookie(const Cookie& cookie)
+{
+    ScriptObject value = m_frontend->newScriptObject();
+    value.set("name", cookie.name);
+    value.set("value", cookie.value);
+    value.set("domain", cookie.domain);
+    value.set("path", cookie.path);
+    value.set("expires", cookie.expires);
+    value.set("size", (cookie.name.length() + cookie.value.length()));
+    value.set("httpOnly", cookie.httpOnly);
+    value.set("secure", cookie.secure);
+    value.set("session", cookie.session);
+    return value;
+}
+    
 #if ENABLE(DOM_STORAGE)
 void InspectorController::didUseDOMStorage(StorageArea* storageArea, bool isLocalStorage, Frame* frame)
 {
@@ -1729,10 +1804,14 @@ void InspectorController::resetInjectedScript()
     function.call();
 }
 
-void InspectorController::deleteCookie(const String& cookieName)
+void InspectorController::deleteCookie(const String& cookieName, const String& domain)
 {
-    Document* document = m_inspectedPage->mainFrame()->document();
-    WebCore::deleteCookie(document, document->cookieURL(), cookieName);
+    ResourcesMap::iterator resourcesEnd = m_resources.end();
+    for (ResourcesMap::iterator it = m_resources.begin(); it != resourcesEnd; ++it) {
+        Document* document = it->second->frame()->document();
+        if (document->url().host() == domain)
+            WebCore::deleteCookie(document, document->cookieURL(), cookieName);
+    }
 }
 
 } // namespace WebCore

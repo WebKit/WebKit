@@ -27,7 +27,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CookieItemsView = function()
+WebInspector.CookieItemsView = function(cookieDomain)
 {
     WebInspector.View.call(this);
 
@@ -40,6 +40,8 @@ WebInspector.CookieItemsView = function()
 
     this.refreshButton = new WebInspector.StatusBarButton(WebInspector.UIString("Refresh"), "refresh-storage-status-bar-item");
     this.refreshButton.addEventListener("click", this._refreshButtonClicked.bind(this), false);
+    
+    this._cookieDomain = cookieDomain;
 }
 
 WebInspector.CookieItemsView.prototype = {
@@ -83,7 +85,7 @@ WebInspector.CookieItemsView.prototype = {
             }
         }
 
-        WebInspector.Cookies.getCookiesAsync(callback);
+        WebInspector.Cookies.getCookiesAsync(callback, this._cookieDomain);
     },
 
     dataGridForCookies: function(cookies)
@@ -260,7 +262,7 @@ WebInspector.CookieItemsView.prototype = {
             return;
 
         var cookie = this._dataGrid.selectedNode.cookie;
-        InspectorController.deleteCookie(cookie.name);
+        InspectorController.deleteCookie(cookie.name, this._cookieDomain);
         this.update();
     },
 

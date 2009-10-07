@@ -63,9 +63,6 @@ WebInspector.StoragePanel = function(database)
     this.sidebarTree.appendChild(this.cookieListTreeElement);
     this.cookieListTreeElement.expand();
 
-    this.cookieTreeElement = new WebInspector.CookieSidebarTreeElement();
-    this.cookieListTreeElement.appendChild(this.cookieTreeElement);
-
     this.storageViews = document.createElement("div");
     this.storageViews.id = "storage-views";
     this.element.appendChild(this.storageViews);
@@ -120,11 +117,14 @@ WebInspector.StoragePanel.prototype = {
 
         this._domStorage = [];
 
-        delete this._cookieView;
+        this._cookieDomains = {};
+        this._cookieViews = {};
 
         this.databasesListTreeElement.removeChildren();
         this.localStorageListTreeElement.removeChildren();
         this.sessionStorageListTreeElement.removeChildren();
+        this.cookieListTreeElement.removeChildren();
+
         this.storageViews.removeChildren();        
 
         this.storageViewStatusBarItemsContainer.removeChildren();
@@ -145,6 +145,17 @@ WebInspector.StoragePanel.prototype = {
         var databaseTreeElement = new WebInspector.DatabaseSidebarTreeElement(database);
         database._databasesTreeElement = databaseTreeElement;
         this.databasesListTreeElement.appendChild(databaseTreeElement);
+    },
+    
+    addCookieDomain: function(domain)
+    {
+        // Eliminate duplicate domains from the list.
+        if (typeof this._cookieDomains[domain] !== "undefined")
+            return;
+
+        var cookieDomainTreeElement = new WebInspector.CookieSidebarTreeElement(domain);
+        this.cookieListTreeElement.appendChild(cookieDomainTreeElement);
+        this._cookieDomains[domain] = true;
     },
 
     addDOMStorage: function(domStorage)
@@ -240,15 +251,15 @@ WebInspector.StoragePanel.prototype = {
             this.storageViewStatusBarItemsContainer.appendChild(statusBarItems[i]);
     },
 
-    showCookies: function()
+    showCookies: function(cookieDomain)
     {
         if (this.visibleView)
             this.visibleView.hide();
 
-        var view = this._cookieView;
+        var view = this._cookieViews[cookieDomain];
         if (!view) {
-            view = new WebInspector.CookieItemsView();
-            this._cookieView = view;
+            view = new WebInspector.CookieItemsView(cookieDomain);
+            this._cookieViews[cookieDomain] = view;
         }
 
         view.show(this.storageViews);
@@ -568,9 +579,10 @@ WebInspector.DOMStorageSidebarTreeElement.prototype = {
 
 WebInspector.DOMStorageSidebarTreeElement.prototype.__proto__ = WebInspector.SidebarTreeElement.prototype;
 
-WebInspector.CookieSidebarTreeElement = function()
+WebInspector.CookieSidebarTreeElement = function(cookieDomain)
 {
-    WebInspector.SidebarTreeElement.call(this, "cookie-sidebar-tree-item", null, "", null, false);
+    WebInspector.SidebarTreeElement.call(this, "cookie-sidebar-tree-item", cookieDomain, "", null, false);
+    this._cookieDomain = cookieDomain;
 
     this.refreshTitles();
 }
@@ -578,17 +590,7 @@ WebInspector.CookieSidebarTreeElement = function()
 WebInspector.CookieSidebarTreeElement.prototype = {
     onselect: function()
     {
-        WebInspector.panels.storage.showCookies();
-    },
-
-    get mainTitle()
-    {
-        return WebInspector.UIString("Cookies");
-    },
-
-    set mainTitle(x)
-    {
-        // Do nothing.
+        WebInspector.panels.storage.showCookies(this._cookieDomain);
     },
 
     get subtitle()

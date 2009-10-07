@@ -70,6 +70,8 @@ namespace WebCore {
         bool updateResource(long long identifier, const ScriptObject& resourceObj);
         void removeResource(long long identifier);
 
+        void addCookieDomain(String);
+
         void updateFocusedNode(long long nodeId);
         void setAttachedWindow(bool attached);
         void showPanel(int panel);

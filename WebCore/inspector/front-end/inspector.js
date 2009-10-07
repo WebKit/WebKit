@@ -1041,6 +1041,11 @@ WebInspector.addDatabase = function(payload)
     this.panels.storage.addDatabase(database);
 }
 
+WebInspector.addCookieDomain = function(domain)
+{
+    this.panels.storage.addCookieDomain(domain);
+}
+
 WebInspector.addDOMStorage = function(payload)
 {
     var domStorage = new WebInspector.DOMStorage(

@@ -437,7 +437,7 @@ WebInspector.DOMAgent.prototype = {
 
 WebInspector.Cookies = {}
 
-WebInspector.Cookies.getCookiesAsync = function(callback)
+WebInspector.Cookies.getCookiesAsync = function(callback, cookieDomain)
 {
     function mycallback(cookies, cookiesString) {
         if (cookiesString)
@@ -446,7 +446,7 @@ WebInspector.Cookies.getCookiesAsync = function(callback)
             callback(cookies, true);
     }
     var callId = WebInspector.Callback.wrap(mycallback);
-    InspectorController.getCookies(callId);
+    InspectorController.getCookies(callId, cookieDomain);
 }
 
 WebInspector.Cookies.buildCookiesFromString = function(rawCookieString)

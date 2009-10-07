@@ -1,3 +1,66 @@
+2009-10-07  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Fixes <http://webkit.org/b/30104>.
+        Inspector should show cookies of sub-resources on the page.
+        
+        This function implements showing cookies for all sub-resources of a page.
+        When the page is loaded, it populates the Storage Panel with a list of all
+        domains that were loaded as part of the full page load (iframes, ads, etc).
+        When the user selects one of the domains, the inspector calls back into the
+        controller, and the controller combines all of the cookies from that domain
+        into a list, and sends that list is sent back to the controller to render.
+        
+        A domain now needs to be passed into CookieItemsView, and CookieSidebarTreeElement.
+        
+        As a result of a previous patch, we now have detailed cookie information for
+        both Windows on CFNetwork and Mac. Additionally, this patch provides deleteCookie
+        support on Windows.
+
+        * bindings/js/ScriptObject.cpp:
+        (WebCore::ScriptObject::set):
+        * bindings/js/ScriptObject.h:
+        * inspector/InspectorBackend.cpp:
+        (WebCore::InspectorBackend::getCookies):
+        (WebCore::InspectorBackend::deleteCookie):
+        * inspector/InspectorBackend.h:
+        * inspector/InspectorBackend.idl:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::populateScriptObjects):
+        (WebCore::InspectorController::didFinishLoading):
+        (WebCore::InspectorController::getCookies):
+        (WebCore::InspectorController::buildArrayForCookies):
+        (WebCore::InspectorController::buildObjectForCookie):
+        (WebCore::InspectorController::deleteCookie):
+        * inspector/InspectorController.h:
+        * inspector/InspectorDOMAgent.cpp:
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorFrontend.cpp:
+        (WebCore::InspectorFrontend::addCookieDomainForDocument):
+        * inspector/InspectorFrontend.h:
+        * inspector/front-end/CookieItemsView.js:
+        (WebInspector.CookieItemsView):
+        (WebInspector.CookieItemsView.prototype.update):
+        (WebInspector.CookieItemsView.prototype._deleteButtonClicked):
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.Cookies.getCookiesAsync):
+        * inspector/front-end/StoragePanel.js:
+        (WebInspector.StoragePanel):
+        (WebInspector.StoragePanel.prototype.reset):
+        (WebInspector.StoragePanel.prototype.addCookieDomain):
+        (WebInspector.StoragePanel.prototype.showCookies):
+        (WebInspector.CookieSidebarTreeElement):
+        (WebInspector.CookieSidebarTreeElement.prototype.onselect):
+        * inspector/front-end/inspector.js:
+        (WebInspector.addCookieDomain):
+        * platform/Cookie.h:
+        (WebCore::CookieHash::hash):
+        (WebCore::CookieHash::equal):
+        (WTF::):
+        * platform/network/win/CookieJarCFNetWin.cpp:
+        (WebCore::deleteCookie):
+
 2009-10-07  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
