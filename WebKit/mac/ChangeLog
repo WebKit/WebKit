@@ -2,6 +2,16 @@
 
         Reviewed by Dan Bernstein.
 
+        Avoid Obj-C message dispatch when possible by storing accessed objects
+        in local variables.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView drawRect:]):
+
+2009-10-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
         Animation stalls for a few seconds partway through
         https://bugs.webkit.org/show_bug.cgi?id=30182
         

@@ -3178,7 +3178,8 @@ WEBCORE_COMMAND(yankAndSelect)
     double start = CFAbsoluteTimeGetCurrent();
 #endif
 
-    if ([[self _webView] _mustDrawUnionedRect:rect singleRects:rects count:count])
+    WebView* webView = [self _webView];
+    if ([webView _mustDrawUnionedRect:rect singleRects:rects count:count])
         [self drawSingleRect:rect];
     else
         for (int i = 0; i < count; ++i)
@@ -3193,18 +3194,19 @@ WEBCORE_COMMAND(yankAndSelect)
         [self _setAsideSubviews];
         
 #if USE(ACCELERATED_COMPOSITING)
-    if ([[self _webView] _needsOneShotDrawingSynchronization]) {
+    if ([webView _needsOneShotDrawingSynchronization]) {
         // Disable screen updates so that any layer changes committed here
         // don't show up on the screen before the window flush at the end
         // of the current window display, but only if a window flush is actually
         // going to happen.
-        if ([[self window] viewsNeedDisplay])
-            [[self window] disableScreenUpdatesUntilFlush];
+        NSWindow* window = [self window];
+        if ([window viewsNeedDisplay])
+            [window disableScreenUpdatesUntilFlush];
         
         // Make sure any layer changes that happened as a result of layout
         // via -viewWillDraw are committed.
         [CATransaction flush];
-        [[self _webView] _setNeedsOneShotDrawingSynchronization:NO];
+        [webView _setNeedsOneShotDrawingSynchronization:NO];
     }
 #endif
 }
