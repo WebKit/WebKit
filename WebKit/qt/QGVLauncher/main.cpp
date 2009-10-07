@@ -175,7 +175,7 @@ public:
 
         view->setMainWidget(scene->webView());
 
-        connect(scene->webView(), SIGNAL(loadFinished()), this, SLOT(loadFinished()));
+        connect(scene->webView(), SIGNAL(loadFinished(bool)), this, SLOT(loadFinished(bool)));
         connect(scene->webView(), SIGNAL(titleChanged(const QString&)), this, SLOT(setWindowTitle(const QString&)));
         connect(scene->webView()->page(), SIGNAL(windowCloseRequested()), this, SLOT(close()));
 
@@ -215,7 +215,7 @@ protected slots:
         load(urlEdit->text());
     }
 
-    void loadFinished()
+    void loadFinished(bool)
     {
         QUrl url = scene->webView()->url();
         urlEdit->setText(url.toString());

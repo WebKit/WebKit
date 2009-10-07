@@ -83,10 +83,7 @@ void QGraphicsWebViewPrivate::_q_doLoadFinished(bool success)
     if (q->title().isEmpty())
         emit q->urlChanged(q->url());
 
-    if (success)
-        emit q->loadFinished();
-    else
-        emit q->loadFailed();
+    emit q->loadFinished(success);
 }
 
 void QGraphicsWebViewPrivate::scroll(int dx, int dy, const QRect& rectToScroll)

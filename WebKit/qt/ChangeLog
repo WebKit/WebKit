@@ -1,3 +1,17 @@
+2009-10-07  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Get rid of useless loadFailed signal in QGraphicsWebView
+        https://bugs.webkit.org/show_bug.cgi?id=30166
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebViewPrivate::_q_doLoadFinished):
+        * Api/qgraphicswebview.h:
+        * QGVLauncher/main.cpp:
+        (MainWindow::init):
+        (MainWindow::loadFinished):
+
 2009-10-07  Girish Ramakrishnan  <girish@forwardbias.in>
 
         Reviewed by Simon Hausmann.
