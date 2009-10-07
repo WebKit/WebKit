@@ -56,7 +56,7 @@ shouldBe("testInitEvent('Message', '\"a\", true, false, \"b\", \"c\", \"d\", win
 shouldBe("testInitEvent('Message', '\"a\", false, false, \"b\", \"c\", \"d\", window, null').cancelable", "false");
 shouldBe("testInitEvent('Message', '\"a\", false, true, \"b\", \"c\", \"d\", window, null').cancelable", "true");
 shouldBe("testInitEvent('Message', '\"a\", false, false, \"b\", \"c\", \"d\", window, null').data", "'b'");
-shouldBe("testInitEvent('Message', '\"a\", false, false, null, \"c\", \"d\", window, null').data", "'null'");
+shouldBe("testInitEvent('Message', '\"a\", false, false, null, \"c\", \"d\", window, null').data", "null");
 shouldBe("testInitEvent('Message', '\"a\", false, false, \"b\", \"c\", \"d\", window, null').origin", "'c'");
 shouldBe("testInitEvent('Message', '\"a\", false, false, \"b\", null, \"d\", window, null').origin", "'null'");
 shouldBe("testInitEvent('Message', '\"a\", false, false, \"b\", \"c\", \"d\", window, null').lastEventId", "'d'");

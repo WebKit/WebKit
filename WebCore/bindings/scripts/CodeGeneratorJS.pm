@@ -1842,6 +1842,11 @@ sub JSValueToNative
         return "$value.toString(exec)";
     }
 
+    if ($type eq "SerializedScriptValue") {
+        $implIncludes{"SerializedScriptValue.h"} = 1;
+        return "SerializedScriptValue::create(exec, $value)";
+    }
+
     $implIncludes{"FloatPoint.h"} = 1 if $type eq "SVGPoint";
     $implIncludes{"FloatRect.h"} = 1 if $type eq "SVGRect";
     $implIncludes{"HTMLOptionElement.h"} = 1 if $type eq "HTMLOptionElement";
@@ -1947,6 +1952,9 @@ sub NativeToJSValue
         $joinedName = $type;
         $joinedName =~ s/Abs|Rel//;
         $implIncludes{"$joinedName.h"} = 1;
+    } elsif ($type eq "SerializedScriptValue") {
+        $implIncludes{"$type.h"} = 1;
+        return "$value->deserialize(exec)";
     } else {
         # Default, include header with same name.
         $implIncludes{"JS$type.h"} = 1;

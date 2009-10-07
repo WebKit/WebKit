@@ -55,10 +55,10 @@ namespace WebCore {
 
         // EventTarget
         virtual DedicatedWorkerContext* toDedicatedWorkerContext() { return this; }
-        void postMessage(const String&, ExceptionCode&);
-        void postMessage(const String&, const MessagePortArray*, ExceptionCode&);
+        void postMessage(PassRefPtr<SerializedScriptValue>, ExceptionCode&);
+        void postMessage(PassRefPtr<SerializedScriptValue>, const MessagePortArray*, ExceptionCode&);
         // FIXME: remove this when we update the ObjC bindings (bug #28774).
-        void postMessage(const String&, MessagePort*, ExceptionCode&);
+        void postMessage(PassRefPtr<SerializedScriptValue>, MessagePort*, ExceptionCode&);
 
         DEFINE_ATTRIBUTE_EVENT_LISTENER(message);
 

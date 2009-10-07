@@ -58,10 +58,10 @@ namespace WebCore {
 
         virtual Worker* toWorker() { return this; }
 
-        void postMessage(const String&, ExceptionCode&);
-        void postMessage(const String&, const MessagePortArray*, ExceptionCode&);
+        void postMessage(PassRefPtr<SerializedScriptValue>, ExceptionCode&);
+        void postMessage(PassRefPtr<SerializedScriptValue>, const MessagePortArray*, ExceptionCode&);
         // FIXME: remove this when we update the ObjC bindings (bug #28774).
-        void postMessage(const String& message, MessagePort*, ExceptionCode&);
+        void postMessage(PassRefPtr<SerializedScriptValue> message, MessagePort*, ExceptionCode&);
 
         void terminate();
 

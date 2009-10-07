@@ -29671,6 +29671,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\SerializedScriptValue.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\SerializedScriptValue.h"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\StringSourceProvider.h"
 					>
 				</File>

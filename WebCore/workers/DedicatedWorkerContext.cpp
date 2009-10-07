@@ -47,7 +47,7 @@ DedicatedWorkerContext::DedicatedWorkerContext(const KURL& url, const String& us
 }
 
 // FIXME: remove this when we update the ObjC bindings (bug #28774).
-void DedicatedWorkerContext::postMessage(const String& message, MessagePort* port, ExceptionCode& ec)
+void DedicatedWorkerContext::postMessage(PassRefPtr<SerializedScriptValue> message, MessagePort* port, ExceptionCode& ec)
 {
     MessagePortArray ports;
     if (port)
@@ -55,12 +55,12 @@ void DedicatedWorkerContext::postMessage(const String& message, MessagePort* por
     postMessage(message, &ports, ec);
 }
 
-void DedicatedWorkerContext::postMessage(const String& message, ExceptionCode& ec)
+void DedicatedWorkerContext::postMessage(PassRefPtr<SerializedScriptValue> message, ExceptionCode& ec)
 {
     postMessage(message, static_cast<MessagePortArray*>(0), ec);
 }
 
-void DedicatedWorkerContext::postMessage(const String& message, const MessagePortArray* ports, ExceptionCode& ec)
+void DedicatedWorkerContext::postMessage(PassRefPtr<SerializedScriptValue> message, const MessagePortArray* ports, ExceptionCode& ec)
 {
     if (isClosing())
         return;

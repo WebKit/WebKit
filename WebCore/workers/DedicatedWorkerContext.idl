@@ -39,7 +39,7 @@ module threads {
     ] DedicatedWorkerContext : WorkerContext {
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-        [Custom] void postMessage(in DOMString message, in [Optional] Array messagePorts)
+        [Custom] void postMessage(in any message, in [Optional] Array messagePorts)
             raises(DOMException);
 #else
         // There's no good way to expose an array via the ObjC bindings, so for now just allow passing in a single port.

@@ -1,3 +1,23 @@
+2009-10-05  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        It should be possible to post (clone) built-in JS objects to Workers
+        https://bugs.webkit.org/show_bug.cgi?id=22878
+
+        Expose helpers to throw correct exceptions during object graph walk
+        used for cloning and add a helper function to create Date instances
+        without going through the JS Date constructor function.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/DateInstance.cpp:
+        (JSC::DateInstance::DateInstance):
+        * runtime/DateInstance.h:
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::createTypeError):
+        * runtime/ExceptionHelpers.h:
+
 2009-10-06  David Levin  <levin@chromium.org>
 
         Reviewed by Oliver Hunt.

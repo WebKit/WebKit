@@ -70,7 +70,7 @@ Worker::~Worker()
 }
 
 // FIXME: remove this when we update the ObjC bindings (bug #28774).
-void Worker::postMessage(const String& message, MessagePort* port, ExceptionCode& ec)
+void Worker::postMessage(PassRefPtr<SerializedScriptValue> message, MessagePort* port, ExceptionCode& ec)
 {
     MessagePortArray ports;
     if (port)
@@ -78,12 +78,12 @@ void Worker::postMessage(const String& message, MessagePort* port, ExceptionCode
     postMessage(message, &ports, ec);
 }
 
-void Worker::postMessage(const String& message, ExceptionCode& ec)
+void Worker::postMessage(PassRefPtr<SerializedScriptValue> message, ExceptionCode& ec)
 {
     postMessage(message, static_cast<MessagePortArray*>(0), ec);
 }
 
-void Worker::postMessage(const String& message, const MessagePortArray* ports, ExceptionCode& ec)
+void Worker::postMessage(PassRefPtr<SerializedScriptValue> message, const MessagePortArray* ports, ExceptionCode& ec)
 {
     // Disentangle the port in preparation for sending it to the remote context.
     OwnPtr<MessagePortChannelArray> channels = MessagePort::disentanglePorts(ports, ec);

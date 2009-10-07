@@ -1,3 +1,190 @@
+2009-10-05  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        It should be possible to post (clone) built-in JS objects to Workers
+        https://bugs.webkit.org/show_bug.cgi?id=22878
+
+        Implement object cloning semantics for postMessage.  Currently only
+        a partial implementation of the spec -- cloning of File, FileList,
+        ImageData, and RegExp were left out as they would have significantly
+        increased patch size.
+
+        Cloning requires multiple tree walks so we use a templated tree
+        walk function, allowing us to share a single implementation for
+        serialization, deserialization, and eventual destruction of the
+        serialized object tree.
+
+        Test: fast/dom/Window/window-postmessage-clone.html
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::postMessage):
+        * bindings/js/JSMessageEventCustom.cpp:
+        (WebCore::JSMessageEvent::initMessageEvent):
+        * bindings/js/JSMessagePortCustom.h:
+        (WebCore::handlePostMessage):
+        * bindings/js/SerializedScriptValue.cpp: Added.
+        (WebCore::SerializedObject::set):
+        (WebCore::SerializedObject::names):
+        (WebCore::SerializedObject::values):
+        (WebCore::SerializedObject::create):
+        (WebCore::SerializedObject::clear):
+        (WebCore::SerializedObject::SerializedObject):
+        (WebCore::SerializedArray::setIndex):
+        (WebCore::SerializedArray::canDoFastRead):
+        (WebCore::SerializedArray::getIndex):
+        (WebCore::SerializedArray::getSparseIndex):
+        (WebCore::SerializedArray::length):
+        (WebCore::SerializedArray::create):
+        (WebCore::SerializedArray::clear):
+        (WebCore::SerializedArray::SerializedArray):
+        (WebCore::SerializedScriptValueData::SerializedScriptValueData):
+        (WebCore::SharedSerializedData::asArray):
+        (WebCore::SharedSerializedData::asObject):
+        (WebCore::):
+        (WebCore::walk):
+        (WebCore::BaseWalker::BaseWalker):
+        (WebCore::BaseWalker::shouldTerminate):
+        (WebCore::BaseWalker::ticksUntilNextCheck):
+        (WebCore::BaseWalker::didTimeOut):
+        (WebCore::BaseWalker::throwStackOverflow):
+        (WebCore::BaseWalker::throwInterruptedException):
+        (WebCore::SerializingTreeWalker::SerializingTreeWalker):
+        (WebCore::SerializingTreeWalker::null):
+        (WebCore::SerializingTreeWalker::isArray):
+        (WebCore::SerializingTreeWalker::isObject):
+        (WebCore::SerializingTreeWalker::asInputArray):
+        (WebCore::SerializingTreeWalker::asInputObject):
+        (WebCore::SerializingTreeWalker::createOutputArray):
+        (WebCore::SerializingTreeWalker::createOutputObject):
+        (WebCore::SerializingTreeWalker::length):
+        (WebCore::SerializingTreeWalker::canDoFastRead):
+        (WebCore::SerializingTreeWalker::getIndex):
+        (WebCore::SerializingTreeWalker::getSparseIndex):
+        (WebCore::SerializingTreeWalker::getProperty):
+        (WebCore::SerializingTreeWalker::convertIfTerminal):
+        (WebCore::SerializingTreeWalker::getPropertyNames):
+        (WebCore::SerializingTreeWalker::putIndex):
+        (WebCore::SerializingTreeWalker::putProperty):
+        (WebCore::SerializingTreeWalker::startArray):
+        (WebCore::SerializingTreeWalker::endArray):
+        (WebCore::SerializingTreeWalker::startObject):
+        (WebCore::SerializingTreeWalker::endObject):
+        (WebCore::SerializedScriptValueData::serialize):
+        (WebCore::DeserializingTreeWalker::DeserializingTreeWalker):
+        (WebCore::DeserializingTreeWalker::null):
+        (WebCore::DeserializingTreeWalker::isArray):
+        (WebCore::DeserializingTreeWalker::isObject):
+        (WebCore::DeserializingTreeWalker::asInputArray):
+        (WebCore::DeserializingTreeWalker::asInputObject):
+        (WebCore::DeserializingTreeWalker::createOutputArray):
+        (WebCore::DeserializingTreeWalker::createOutputObject):
+        (WebCore::DeserializingTreeWalker::length):
+        (WebCore::DeserializingTreeWalker::canDoFastRead):
+        (WebCore::DeserializingTreeWalker::getIndex):
+        (WebCore::DeserializingTreeWalker::getSparseIndex):
+        (WebCore::DeserializingTreeWalker::getProperty):
+        (WebCore::DeserializingTreeWalker::convertIfTerminal):
+        (WebCore::DeserializingTreeWalker::getPropertyNames):
+        (WebCore::DeserializingTreeWalker::putIndex):
+        (WebCore::DeserializingTreeWalker::putProperty):
+        (WebCore::DeserializingTreeWalker::startArray):
+        (WebCore::DeserializingTreeWalker::endArray):
+        (WebCore::DeserializingTreeWalker::startObject):
+        (WebCore::DeserializingTreeWalker::endObject):
+        (WebCore::SerializedScriptValueData::deserialize):
+        (WebCore::TeardownTreeWalker::shouldTerminate):
+        (WebCore::TeardownTreeWalker::ticksUntilNextCheck):
+        (WebCore::TeardownTreeWalker::didTimeOut):
+        (WebCore::TeardownTreeWalker::throwStackOverflow):
+        (WebCore::TeardownTreeWalker::throwInterruptedException):
+        (WebCore::TeardownTreeWalker::null):
+        (WebCore::TeardownTreeWalker::isArray):
+        (WebCore::TeardownTreeWalker::isObject):
+        (WebCore::TeardownTreeWalker::asInputArray):
+        (WebCore::TeardownTreeWalker::asInputObject):
+        (WebCore::TeardownTreeWalker::createOutputArray):
+        (WebCore::TeardownTreeWalker::createOutputObject):
+        (WebCore::TeardownTreeWalker::length):
+        (WebCore::TeardownTreeWalker::canDoFastRead):
+        (WebCore::TeardownTreeWalker::getIndex):
+        (WebCore::TeardownTreeWalker::getSparseIndex):
+        (WebCore::TeardownTreeWalker::getProperty):
+        (WebCore::TeardownTreeWalker::convertIfTerminal):
+        (WebCore::TeardownTreeWalker::getPropertyNames):
+        (WebCore::TeardownTreeWalker::putIndex):
+        (WebCore::TeardownTreeWalker::putProperty):
+        (WebCore::TeardownTreeWalker::startArray):
+        (WebCore::TeardownTreeWalker::endArray):
+        (WebCore::TeardownTreeWalker::startObject):
+        (WebCore::TeardownTreeWalker::endObject):
+        (WebCore::SerializedScriptValueData::tearDownSerializedData):
+        * bindings/js/SerializedScriptValue.h: Added.
+        (WebCore::SharedSerializedData::~SharedSerializedData):
+        (WebCore::SerializedScriptValueData::):
+        (WebCore::SerializedScriptValueData::type):
+        (WebCore::SerializedScriptValueData::~SerializedScriptValueData):
+        (WebCore::SerializedScriptValueData::SerializedScriptValueData):
+        (WebCore::SerializedScriptValueData::asImmediate):
+        (WebCore::SerializedScriptValueData::asDouble):
+        (WebCore::SerializedScriptValueData::asString):
+        (WebCore::SerializedScriptValueData::asObject):
+        (WebCore::SerializedScriptValueData::asArray):
+        (WebCore::SerializedScriptValueData::operator bool ):
+        (WebCore::SerializedScriptValueData::release):
+        (WebCore::SerializedScriptValue::create):
+        (WebCore::SerializedScriptValue::release):
+        (WebCore::SerializedScriptValue::toString):
+        (WebCore::SerializedScriptValue::deserialize):
+        (WebCore::SerializedScriptValue::~SerializedScriptValue):
+        (WebCore::SerializedScriptValue::SerializedScriptValue):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        * dom/MessageEvent.cpp:
+        (WebCore::MessageEvent::MessageEvent):
+        (WebCore::MessageEvent::initMessageEvent):
+        * dom/MessageEvent.h:
+        (WebCore::MessageEvent::create):
+        (WebCore::MessageEvent::data):
+        * dom/MessageEvent.idl:
+        * dom/MessagePort.cpp:
+        (WebCore::MessagePort::postMessage):
+        * dom/MessagePort.h:
+        * dom/MessagePortChannel.cpp:
+        (WebCore::MessagePortChannel::EventData::create):
+        (WebCore::MessagePortChannel::EventData::EventData):
+        * dom/MessagePortChannel.h:
+        (WebCore::MessagePortChannel::EventData::message):
+        * page/DOMWindow.cpp:
+        (WebCore::PostMessageTimer::PostMessageTimer):
+        (WebCore::DOMWindow::postMessage):
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+        * page/EventSource.cpp:
+        (WebCore::EventSource::createMessageEvent):
+        * websockets/WebSocket.cpp:
+        (WebCore::WebSocket::didReceiveMessage):
+        * workers/DedicatedWorkerContext.cpp:
+        (WebCore::DedicatedWorkerContext::postMessage):
+        * workers/DedicatedWorkerContext.h:
+        * workers/DedicatedWorkerContext.idl:
+        * workers/Worker.cpp:
+        (WebCore::Worker::postMessage):
+        * workers/Worker.h:
+        * workers/Worker.idl:
+        * workers/WorkerContextProxy.h:
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::MessageWorkerContextTask::create):
+        (WebCore::MessageWorkerContextTask::MessageWorkerContextTask):
+        (WebCore::MessageWorkerTask::create):
+        (WebCore::MessageWorkerTask::MessageWorkerTask):
+        (WebCore::WorkerMessagingProxy::postMessageToWorkerObject):
+        (WebCore::WorkerMessagingProxy::postMessageToWorkerContext):
+        * workers/WorkerMessagingProxy.h:
+        * workers/WorkerObjectProxy.h:
+
 2009-10-06  Adam Barth  <abarth@webkit.org>
 
         Unreviewed build fix for Windows.

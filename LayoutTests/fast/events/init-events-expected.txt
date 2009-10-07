@@ -45,7 +45,7 @@ PASS testInitEvent('Message', '"a", true, false, "b", "c", "d", window, null').b
 PASS testInitEvent('Message', '"a", false, false, "b", "c", "d", window, null').cancelable is false
 PASS testInitEvent('Message', '"a", false, true, "b", "c", "d", window, null').cancelable is true
 PASS testInitEvent('Message', '"a", false, false, "b", "c", "d", window, null').data is 'b'
-PASS testInitEvent('Message', '"a", false, false, null, "c", "d", window, null').data is 'null'
+PASS testInitEvent('Message', '"a", false, false, null, "c", "d", window, null').data is null
 PASS testInitEvent('Message', '"a", false, false, "b", "c", "d", window, null').origin is 'c'
 PASS testInitEvent('Message', '"a", false, false, "b", null, "d", window, null').origin is 'null'
 PASS testInitEvent('Message', '"a", false, false, "b", "c", "d", window, null').lastEventId is 'd'

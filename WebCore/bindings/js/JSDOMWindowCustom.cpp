@@ -79,6 +79,7 @@
 #include "RegisteredEventListener.h"
 #include "ScheduledAction.h"
 #include "ScriptController.h"
+#include "SerializedScriptValue.h"
 #include "Settings.h"
 #include "SharedWorkerRepository.h"
 #include "WindowFeatures.h"
@@ -952,7 +953,7 @@ JSValue JSDOMWindow::postMessage(ExecState* exec, const ArgList& args)
     DOMWindow* window = impl();
 
     DOMWindow* source = asJSDOMWindow(exec->lexicalGlobalObject())->impl();
-    String message = args.at(0).toString(exec);
+    PassRefPtr<SerializedScriptValue> message = SerializedScriptValue::create(exec, args.at(0));
 
     if (exec->hadException())
         return jsUndefined();

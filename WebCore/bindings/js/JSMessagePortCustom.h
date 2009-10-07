@@ -49,7 +49,7 @@ namespace WebCore {
     template <typename T>
     inline JSC::JSValue handlePostMessage(JSC::ExecState* exec, const JSC::ArgList& args, T* impl)
     {
-        String message = args.at(0).toString(exec);
+        PassRefPtr<SerializedScriptValue> message = SerializedScriptValue::create(exec, args.at(0));
         MessagePortArray portArray;
         fillMessagePortArray(exec, args.at(1), portArray);
         if (exec->hadException())

@@ -1,3 +1,19 @@
+2009-10-05  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        It should be possible to post (clone) built-in JS objects to Workers
+        https://bugs.webkit.org/show_bug.cgi?id=22878
+
+        Add a test for object cloning for postMessage, and update existing tests
+        to reflect the new cloning semantics.
+
+        * fast/dom/Window/window-postmessage-clone-expected.txt: Added.
+        * fast/dom/Window/window-postmessage-clone.html: Added.
+        * fast/events/init-events-expected.txt:
+        * fast/events/script-tests/init-events.js:
+        * fast/workers/resources/use-machine-stack.js:
+
 2009-10-06  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by Adam Roben.

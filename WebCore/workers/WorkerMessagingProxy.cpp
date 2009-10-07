@@ -46,14 +46,14 @@ namespace WebCore {
 
 class MessageWorkerContextTask : public ScriptExecutionContext::Task {
 public:
-    static PassRefPtr<MessageWorkerContextTask> create(const String& message, PassOwnPtr<MessagePortChannelArray> channels)
+    static PassRefPtr<MessageWorkerContextTask> create(PassRefPtr<SerializedScriptValue> message, PassOwnPtr<MessagePortChannelArray> channels)
     {
         return adoptRef(new MessageWorkerContextTask(message, channels));
     }
 
 private:
-    MessageWorkerContextTask(const String& message, PassOwnPtr<MessagePortChannelArray> channels)
-        : m_message(message.crossThreadString())
+    MessageWorkerContextTask(PassRefPtr<SerializedScriptValue> message, PassOwnPtr<MessagePortChannelArray> channels)
+        : m_message(message->release())
         , m_channels(channels)
     {
     }
@@ -68,20 +68,20 @@ private:
     }
 
 private:
-    String m_message;
+    RefPtr<SerializedScriptValue> m_message;
     OwnPtr<MessagePortChannelArray> m_channels;
 };
 
 class MessageWorkerTask : public ScriptExecutionContext::Task {
 public:
-    static PassRefPtr<MessageWorkerTask> create(const String& message, PassOwnPtr<MessagePortChannelArray> channels, WorkerMessagingProxy* messagingProxy)
+    static PassRefPtr<MessageWorkerTask> create(PassRefPtr<SerializedScriptValue> message, PassOwnPtr<MessagePortChannelArray> channels, WorkerMessagingProxy* messagingProxy)
     {
         return adoptRef(new MessageWorkerTask(message, channels, messagingProxy));
     }
 
 private:
-    MessageWorkerTask(const String& message, PassOwnPtr<MessagePortChannelArray> channels, WorkerMessagingProxy* messagingProxy)
-        : m_message(message.crossThreadString())
+    MessageWorkerTask(PassRefPtr<SerializedScriptValue> message, PassOwnPtr<MessagePortChannelArray> channels, WorkerMessagingProxy* messagingProxy)
+        : m_message(message->release())
         , m_channels(channels)
         , m_messagingProxy(messagingProxy)
     {
@@ -98,7 +98,7 @@ private:
     }
 
 private:
-    String m_message;
+    RefPtr<SerializedScriptValue> m_message;
     OwnPtr<MessagePortChannelArray> m_channels;
     WorkerMessagingProxy* m_messagingProxy;
 };
@@ -240,12 +240,12 @@ void WorkerMessagingProxy::startWorkerContext(const KURL& scriptURL, const Strin
     thread->start();
 }
 
-void WorkerMessagingProxy::postMessageToWorkerObject(const String& message, PassOwnPtr<MessagePortChannelArray> channels)
+void WorkerMessagingProxy::postMessageToWorkerObject(PassRefPtr<SerializedScriptValue> message, PassOwnPtr<MessagePortChannelArray> channels)
 {
     m_scriptExecutionContext->postTask(MessageWorkerTask::create(message, channels.release(), this));
 }
 
-void WorkerMessagingProxy::postMessageToWorkerContext(const String& message, PassOwnPtr<MessagePortChannelArray> channels)
+void WorkerMessagingProxy::postMessageToWorkerContext(PassRefPtr<SerializedScriptValue> message, PassOwnPtr<MessagePortChannelArray> channels)
 {
     if (m_askedToTerminate)
         return;

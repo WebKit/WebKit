@@ -1,0 +1,118 @@
+<html>
+<head></head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+var console = document.getElementById("console");
+
+var messages = [];
+
+function equal(actual, expected)
+{
+    if (typeof actual !== typeof expected)
+        return false;
+    if (actual === expected)
+        return true;
+    if ((actual instanceof Date) || (expected instanceof Date)) {
+        if ((actual instanceof Date) && (expected instanceof Date))
+            return (expected instanceof Date) && actual.getTime() == expected.getTime();
+        return false;
+    }
+    if (Array.isArray(actual) || Array.isArray(expected)) {
+        if (!Array.isArray(actual) || !Array.isArray(expected))
+            return false;
+        if (actual.length != expected.length)
+            return false;
+        for (var i = 0; i < actual.length; i++) {
+            if ((i in actual) ^ (i in expected))
+                return false;
+            if (!equal(actual[i], expected[i]))
+                return false;
+        }
+        return true;
+    }
+    var keys = Object.keys(actual);
+    if (!equal(keys, Object.keys(expected)))
+        return false;
+    for (var i = 0; i < keys.length; i++)
+        if (!equal(actual[i], expected[i]))
+            return false;
+    return true;
+}
+
+function shouldBe(actual, expected)
+{
+    var actualValue = eval(actual);
+    var expectedValue = eval(expected);
+    if (equal(actualValue, expectedValue))
+        console.innerHTML += "PASS: " + actual + " is " + expectedValue + " of type " + typeof actualValue + "<br>";
+    else
+        console.innerHTML += "FAIL: " + actual + " is " + actualValue + " should be " + expectedValue + " of type " + typeof expectedValue + "<br>";
+}
+
+function onmessage(evt) {
+    eventData = evt.data
+    shouldBe("eventData", messages.shift());
+
+    if (evt.data == 'done' && window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+window.addEventListener('message', onmessage, false);
+
+function tryPostMessage(message, shouldThrow, expected) {
+    try {
+        var value = eval(message);
+        postMessage(value, "*");
+        if (shouldThrow)
+            console.innerHTML += "FAIL: 'postMessage("+message+")' should throw but didn't<br>";
+        messages.push(expected || message);
+    } catch(e) {
+        if (shouldThrow)
+            console.innerHTML += "PASS: 'postMessage("+message+")' threw " + e + "<br>";
+        else
+            console.innerHTML += "FAIL: 'postMessage("+message+")' should not throw but threw " + e + "<br>";
+    }
+}
+
+document.getElementById("description").innerHTML = "Tests that we clone object hierarchies";
+
+tryPostMessage('null');
+tryPostMessage('undefined');
+tryPostMessage('1');
+tryPostMessage('true');
+tryPostMessage('"1"');
+tryPostMessage('({})');
+tryPostMessage('({a:1})');
+tryPostMessage('[]');
+tryPostMessage('[1,2,3]');
+tryPostMessage('[,,1]');
+tryPostMessage('(function(){})', false, 'null');
+tryPostMessage('new Date(0)');
+tryPostMessage('cyclicObject', true);
+cyclicObject={};
+cyclicObject.self = cyclicObject;
+tryPostMessage('cyclicObject', true);
+cyclicArray=[];
+cyclicArray[0] = cyclicArray;
+tryPostMessage('cyclicArray', true);
+deepArray=[];
+for (var i = 0; i < 10000; i++)
+    deepArray=[deepArray];
+tryPostMessage('deepArray');
+reallyDeepArray=[];
+for (var i = 0; i < 100000; i++)
+    reallyDeepArray=[reallyDeepArray];
+tryPostMessage('reallyDeepArray', true);
+tryPostMessage('window', true);
+
+tryPostMessage('"done"');
+</script>
+</body>
+</html>

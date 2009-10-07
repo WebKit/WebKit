@@ -16,6 +16,6 @@ try {
     try {
         g();
     } catch (ex) {
-        postMessage(ex);
+        postMessage(ex.toString());
     }
 }

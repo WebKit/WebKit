@@ -311,7 +311,7 @@ sub GetClassName
     my $name = $codeGenerator->StripModule(shift);
 
     # special cases
-    return "NSString" if $codeGenerator->IsStringType($name);
+    return "NSString" if $codeGenerator->IsStringType($name) or $name eq "SerializedScriptValue";
     return "NS$name" if IsNativeObjCType($name);
     return "BOOL" if $name eq "boolean";
     return "unsigned" if $name eq "unsigned long";
@@ -492,6 +492,11 @@ sub GetObjCTypeGetter
     return "WTF::getPtr(nativeEventListener)" if $type eq "EventListener";
     return "WTF::getPtr(nativeNodeFilter)" if $type eq "NodeFilter";
     return "WTF::getPtr(nativeResolver)" if $type eq "XPathNSResolver";
+    
+    if ($type eq "SerializedScriptValue") {
+        $implIncludes{"SerializedScriptValue.h"} = 1;
+        return "WebCore::SerializedScriptValue::create(WebCore::String($argName))";
+    }
     return "core($argName)";
 }
 
@@ -604,6 +609,11 @@ sub AddIncludesForType
     if ($type eq "XPathNSResolver") {
         $implIncludes{"DOMCustomXPathNSResolver.h"} = 1;
         $implIncludes{"XPathNSResolver.h"} = 1;
+        return;
+    }
+
+    if ($type eq "SerializedScriptValue") {
+        $implIncludes{"SerializedScriptValue.h"} = 1;
         return;
     }
 
@@ -1212,6 +1222,9 @@ sub GenerateImplementation
             } elsif ($idlType eq "Color") {
                 $getterContentHead = "WebCore::nsColor($getterContentHead";
                 $getterContentTail .= ")";
+            } elsif ($attribute->signature->type eq "SerializedScriptValue") {
+                $getterContentHead = "$getterContentHead";
+                $getterContentTail .= "->toString()";                
             } elsif (ConversionNeeded($attribute->signature->type)) {
                 $getterContentHead = "kit(WTF::getPtr($getterContentHead";
                 $getterContentTail .= "))";
@@ -1446,6 +1459,8 @@ sub GenerateImplementation
                     push(@functionContent, "        return $toReturn;\n");
                     push(@functionContent, "    return nil;\n");
                 }
+            } elsif ($returnType eq "SerializedScriptValue") {
+                $content = "foo";
             } else {
                 if (ConversionNeeded($function->signature->type)) {
                     if ($codeGenerator->IsPodType($function->signature->type)) {

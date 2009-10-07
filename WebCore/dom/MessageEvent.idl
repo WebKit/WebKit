@@ -30,20 +30,20 @@ module events {
         GenerateConstructor,
         NoStaticTables
     ] MessageEvent : Event {
+        readonly attribute SerializedScriptValue data;
 
-        readonly attribute DOMString data;
         readonly attribute DOMString origin;
         readonly attribute DOMString lastEventId;
         readonly attribute DOMWindow source;
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
         readonly attribute [CustomGetter] Array ports;
 
-        [Custom] void initMessageEvent(in DOMString typeArg, in boolean canBubbleArg, in boolean cancelableArg, in DOMString dataArg, in DOMString originArg, in DOMString lastEventIdArg, in DOMWindow sourceArg, in Array messagePorts);
+        [Custom] void initMessageEvent(in DOMString typeArg, in boolean canBubbleArg, in boolean cancelableArg, in SerializedScriptValue dataArg, in DOMString originArg, in DOMString lastEventIdArg, in DOMWindow sourceArg, in Array messagePorts);
 #else
         // There's no good way to expose an array via the ObjC bindings, so for now just expose a single port.
         readonly attribute MessagePort messagePort;
 
-        void initMessageEvent(in DOMString typeArg, in boolean canBubbleArg, in boolean cancelableArg, in DOMString dataArg, in DOMString originArg, in DOMString lastEventIdArg, in DOMWindow sourceArg, in MessagePort messagePort);
+        void initMessageEvent(in DOMString typeArg, in boolean canBubbleArg, in boolean cancelableArg, in SerializedScriptValue dataArg, in DOMString originArg, in DOMString lastEventIdArg, in DOMWindow sourceArg, in MessagePort messagePort);
 #endif
 
     };
