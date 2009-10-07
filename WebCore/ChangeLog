@@ -1,3 +1,24 @@
+2009-10-07  Anton Muhin  <antonm@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Fetch pointers to C++ DOM window immediately from holder
+        object (do not search prototype chain for proper JS wrapper).
+        https://bugs.webkit.org/show_bug.cgi?id=29031
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::getTemplate):
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::createNewContext):
+        (WebCore::V8Proxy::installDOMWindow):
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::ACCESSOR_GETTER):
+        (WebCore::ACCESSOR_SETTER):
+        (WebCore::INDEXED_PROPERTY_GETTER):
+        (WebCore::NAMED_PROPERTY_GETTER):
+        (WebCore::NAMED_ACCESS_CHECK):
+        (WebCore::INDEXED_ACCESS_CHECK):
 2009-10-07  Adam Roben  <aroben@apple.com>
 
         Fix typo in PluginView::load that was causing cross-origin loads to

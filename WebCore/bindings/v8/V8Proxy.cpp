@@ -912,6 +912,7 @@ v8::Persistent<v8::Context> V8Proxy::createNewContext(v8::Handle<v8::Object> glo
 
     // Install a security handler with V8.
     globalTemplate->SetAccessCheckCallbacks(V8Custom::v8DOMWindowNamedSecurityCheck, V8Custom::v8DOMWindowIndexedSecurityCheck, v8::Integer::New(V8ClassIndex::DOMWINDOW));
+    globalTemplate->SetInternalFieldCount(V8Custom::kDOMWindowInternalFieldCount);
 
     // Used to avoid sleep calls in unload handlers.
     if (!registeredExtensionWithV8(DateExtension::get()))
@@ -953,12 +954,14 @@ bool V8Proxy::installDOMWindow(v8::Handle<v8::Context> context, DOMWindow* windo
 
     // Wrap the window.
     V8DOMWrapper::setDOMWrapper(jsWindow, V8ClassIndex::ToInt(V8ClassIndex::DOMWINDOW), window);
+    V8DOMWrapper::setDOMWrapper(v8::Handle<v8::Object>::Cast(jsWindow->GetPrototype()), V8ClassIndex::ToInt(V8ClassIndex::DOMWINDOW), window);
 
     window->ref();
     V8DOMWrapper::setJSWrapperForDOMObject(window, v8::Persistent<v8::Object>::New(jsWindow));
 
     // Insert the window instance as the prototype of the shadow object.
     v8::Handle<v8::Object> v8Global = context->Global();
+    V8DOMWrapper::setDOMWrapper(v8::Handle<v8::Object>::Cast(v8Global->GetPrototype()), V8ClassIndex::ToInt(V8ClassIndex::DOMWINDOW), window);
     v8Global->Set(implicitProtoString, jsWindow);
     return true;
 }

@@ -516,11 +516,17 @@ END
         }
 
     } elsif ($attrExt->{"v8OnProto"} || $attrExt->{"V8DisallowShadowing"}) {
+      if ($classIndex eq "DOMWINDOW") {
+        push(@implContentDecls, <<END);
+    v8::Handle<v8::Object> holder = info.Holder();
+END
+      } else {
         # perform lookup first
         push(@implContentDecls, <<END);
     v8::Handle<v8::Object> holder = V8DOMWrapper::lookupDOMWrapper(V8ClassIndex::$classIndex, info.This());
     if (holder.IsEmpty()) return v8::Undefined();
 END
+      }
         HolderToNative($dataNode, $implClassName, $classIndex);
     } else {
         push(@implContentDecls, <<END);
@@ -692,11 +698,17 @@ sub GenerateNormalAttrSetter
         push(@implContentDecls, "    $implClassName* imp = &imp_instance;\n");
 
     } elsif ($attrExt->{"v8OnProto"}) {
+      if ($classIndex eq "DOMWINDOW") {
+        push(@implContentDecls, <<END);
+    v8::Handle<v8::Object> holder = info.Holder();
+END
+      } else {
         # perform lookup first
         push(@implContentDecls, <<END);
     v8::Handle<v8::Object> holder = V8DOMWrapper::lookupDOMWrapper(V8ClassIndex::$classIndex, info.This());
     if (holder.IsEmpty()) return;
 END
+      }
         HolderToNative($dataNode, $implClassName, $classIndex);
     } else {
         push(@implContentDecls, <<END);
