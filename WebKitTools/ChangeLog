@@ -1,3 +1,11 @@
+2009-10-07  Csaba Osztrogonac  <oszi@inf.u-szeged.hu>
+
+        Reviewed by Simon Hausmann.
+
+        Re-enable use-remote-links-to-tests for Qt. Disabled in r46416.
+
+        * Scripts/run-webkit-tests:
+
 2009-10-07  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.
