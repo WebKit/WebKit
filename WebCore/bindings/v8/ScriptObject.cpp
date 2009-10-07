@@ -97,6 +97,13 @@ bool ScriptObject::set(const char* name, int value)
     return scope.success();
 }
 
+bool ScriptObject::set(const char* name, unsigned value)
+{
+    ScriptScope scope(m_scriptState);
+    v8Object()->Set(v8::String::New(name), v8::Number::New(value));
+    return scope.success();
+}
+
 bool ScriptObject::set(const char* name, bool value)
 {
     ScriptScope scope(m_scriptState);
