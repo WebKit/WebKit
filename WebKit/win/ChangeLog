@@ -1,3 +1,29 @@
+2009-10-07  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30102
+        And
+        <rdar://problem/5015957>
+        
+        Fixes an issue (in the Windows build) where the cursor does not change to the
+        not-allowed cursor when the drag-and-drop operation is not allowed.
+        
+        The allowed effects in WebDragClient::startDrag are hard-coded to be 
+        DROPEFFECT_COPY | DROPEFFECT_LINK | DROPEFFECT_MOVE. Instead, the list of 
+        allowed drop effects should be determined by the allowed operations of the
+        drag source.
+        
+        We cannot test this using DRT because DRT looks at the programmatic drop 
+        cursor and until bug #24731 is fixed this value is hard-coded to DragOperationCopy.
+        That is, there is a discrepancy in the Windows build between the Windows API-based 
+        drop effect and the WebKit drop effect. Because DRT cannot read the screen buffer 
+        to determine the cursor, a manual test is needed.
+
+        * WebCoreSupport/WebDragClient.cpp:
+        (draggingSourceOperationMaskToDragCursors): Added method.
+        (WebDragClient::startDrag):
+
 2009-10-07  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Darin Adler.
