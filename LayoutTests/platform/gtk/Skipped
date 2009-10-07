@@ -5299,6 +5299,8 @@ fast/box-shadow/spread.html
 fast/box-shadow/transform-fringing.html
 fast/canvas/image-pattern-rotate.html
 fast/css/attribute-selector-dynamic.xml
+fast/css/counters/t1204-increment-00-c-o.html
+fast/css/counters/t1204-increment-01-c-o.html
 fast/css/font-smoothing.html
 fast/css/nested-floating-relative-position-percentages.html
 fast/css/nth-child-dynamic.html

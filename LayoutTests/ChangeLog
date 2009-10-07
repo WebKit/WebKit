@@ -1,3 +1,9 @@
+2009-10-07  Xan Lopez  <xlopez@igalia.com>
+
+        Skip two new tests for which we are missing results.
+
+        * platform/gtk/Skipped:
+
 2009-10-07  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
