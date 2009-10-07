@@ -190,7 +190,14 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
         const bool hasValidBackingStore = backingStoreDevice && backingStoreDevice->devType() == QInternal::Pixmap;
         QPixmap* backingStorePixmap = static_cast<QPixmap*>(backingStoreDevice);
 
-        if (hasValidBackingStore && backingStorePixmap->depth() == drawableDepth) {
+        // We cannot grab contents from the backing store when painting on QGraphicsView items
+        // (because backing store contents are already transformed). What we really mean to do 
+        // here is to check if we are painting on QWebView, but let's be a little permissive :)
+        QWebPageClient* client = m_parentFrame->view()->hostWindow()->platformPageClient();
+        const bool backingStoreHasUntransformedContents = qobject_cast<QWidget*>(client->pluginParent());
+
+        if (hasValidBackingStore && backingStorePixmap->depth() == drawableDepth 
+            && backingStoreHasUntransformedContents) {
             GC gc = XDefaultGC(QX11Info::display(), QX11Info::appScreen());
             XCopyArea(QX11Info::display(), backingStorePixmap->handle(), m_drawable, gc,
                 offset.x() + m_windowRect.x() + m_clipRect.x(), offset.y() + m_windowRect.y() + m_clipRect.y(),

@@ -1,3 +1,23 @@
+2009-10-07  Girish Ramakrishnan  <girish@forwardbias.in>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Windowless Plugins: Disable content propagation for QGraphicsView items
+        
+        We cannot support content propagation for items in QGraphicsView because
+        the contents of the backing store might be transformed. So turn it off
+        if we are not painting on QWidget.
+        
+        Note that this check will not work for a QWebView in a
+        QGraphicsProxyWidget, but I guess it's fine. Alternative is to do an
+        even uglier cast: static_cast painter's paintDevice() to QWidget and
+        check if it is the viewport() of QGraphicsView.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30149
+
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::paint):
+
 2009-10-07  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Fix the Qt build by adding the missing files to the build.
