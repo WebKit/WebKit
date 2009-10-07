@@ -83,7 +83,7 @@ StringImpl::StringImpl()
     : m_data(0)
     , m_length(0)
     , m_hash(0)
-    , m_buffer(0)
+    , m_buffer()
 {
     // Ensure that the hash is computed so that AtomicStringHash can call existingHash()
     // with impunity. The empty string is special because it is never entered into
@@ -95,7 +95,7 @@ inline StringImpl::StringImpl(UChar* characters, unsigned length, AdoptBuffer)
     : m_data(characters)
     , m_length(length)
     , m_hash(0)
-    , m_buffer(0)
+    , m_buffer()
 {
     ASSERT(characters);
     ASSERT(length);
@@ -106,7 +106,7 @@ StringImpl::StringImpl(const UChar* characters, unsigned length, unsigned hash)
     : m_data(0)
     , m_length(length)
     , m_hash(hash)
-    , m_buffer(0)
+    , m_buffer()
 {
     ASSERT(hash);
     ASSERT(characters);
@@ -123,7 +123,7 @@ StringImpl::StringImpl(const char* characters, unsigned length, unsigned hash)
     : m_data(0)
     , m_length(length)
     , m_hash(hash)
-    , m_buffer(0)
+    , m_buffer()
 {
     ASSERT(hash);
     ASSERT(characters);
