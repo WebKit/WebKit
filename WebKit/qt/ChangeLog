@@ -1,3 +1,13 @@
+2009-10-07  Martin Smith  <msmith@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
+        Fix qdoc warning about disabled renderHints property
+        on Symbian.
+
+        * Api/qwebview.cpp:
+        * Api/qwebview.h:
+
 2009-10-06  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
