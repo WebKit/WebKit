@@ -206,7 +206,13 @@ private:
     // and the actual size is determined when the instance is created. 
     // It will be zero unless using an "internal buffer", in which case m_data
     // will point to m_buffer and the length of m_buffer will be equal to m_length.
+#if COMPILER(GCC)
     const UChar m_buffer[];
+#else
+    // Non-GCC compilers may not accept the "[]" syntax. So we'll waste 2 bytes when
+    // allocating non-internal strings.
+    const UChar m_buffer[1];
+#endif
 };
 
 bool equal(StringImpl*, StringImpl*);

@@ -1,3 +1,9 @@
+2009-10-07  Jeremy Orlow  <jorlow@chromium.org>
+
+        Build fix for http://trac.webkit.org/changeset/49272 on Windows
+
+        * platform/text/StringImpl.h:
+
 2009-10-07  Jens Alfke  <snej@chromium.org>
 
         Reviewed by Darin Adler.
