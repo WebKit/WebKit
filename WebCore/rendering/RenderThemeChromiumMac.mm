@@ -29,7 +29,6 @@
 #import "Document.h"
 #import "Element.h"
 #import "FrameView.h"
-#import "Gradient.h"
 #import "GraphicsContext.h"
 #import "HTMLInputElement.h"
 #import "HTMLMediaElement.h"
@@ -38,6 +37,7 @@
 #import "LocalCurrentGraphicsContext.h"
 #import "MediaControlElements.h"
 #import "RenderMedia.h"
+#import "RenderMediaControlsChromium.h"
 #import "RenderSlider.h"
 #import "RenderView.h"
 #import "SharedBuffer.h"
@@ -1251,20 +1251,6 @@ bool RenderThemeChromiumMac::paintSliderThumb(RenderObject* o, const RenderObjec
     return false;
 }
 
-#if ENABLE(VIDEO)
-static Image* mediaSliderThumbImage()
-{
-    static Image* mediaSliderThumb = Image::loadPlatformResource("mediaSliderThumb").releaseRef();
-    return mediaSliderThumb;
-}
-  
-static Image* mediaVolumeSliderThumbImage()
-{
-    static Image* mediaVolumeSliderThumb = Image::loadPlatformResource("mediaVolumeSliderThumb").releaseRef();
-    return mediaVolumeSliderThumb;
-}
-#endif
-
 void RenderThemeChromiumMac::adjustSliderThumbSize(RenderObject* o) const
 {
     static const int sliderThumbWidth = 15;
@@ -1277,16 +1263,7 @@ void RenderThemeChromiumMac::adjustSliderThumbSize(RenderObject* o) const
     }
 
 #if ENABLE(VIDEO)
-    Image* thumbImage = 0;
-    if (o->style()->appearance() == MediaSliderThumbPart)
-        thumbImage = mediaSliderThumbImage();
-    else if (o->style()->appearance() == MediaVolumeSliderThumbPart)
-        thumbImage = mediaVolumeSliderThumbImage();
-  
-    if (thumbImage) {
-        o->style()->setWidth(Length(thumbImage->width(), Fixed));
-        o->style()->setHeight(Length(thumbImage->height(), Fixed));
-    }
+    RenderMediaControlsChromium::adjustMediaSliderThumbSize(o);
 #endif
 }
 
@@ -1537,173 +1514,44 @@ bool RenderThemeChromiumMac::paintSearchFieldResultsButton(RenderObject* o, cons
 }
 
 #if ENABLE(VIDEO)
-// Attempt to retrieve a HTMLMediaElement from a Node. Returns 0 if one cannot be found.
-static HTMLMediaElement* mediaElementParent(Node* node)
+bool RenderThemeChromiumMac::shouldRenderMediaControlPart(ControlPart part, Element* e)
 {
-    if (!node)
-        return 0;
-    Node* mediaNode = node->shadowAncestorNode();
-    if (!mediaNode || (!mediaNode->hasTagName(HTMLNames::videoTag) && !mediaNode->hasTagName(HTMLNames::audioTag)))
-        return 0;
-
-    return static_cast<HTMLMediaElement*>(mediaNode);
-}
-
-bool RenderThemeChromiumMac::paintMediaButtonInternal(GraphicsContext* context, const IntRect& rect, Image* image)
-{
-    // Create a destination rectangle for the image that is centered in the drawing rectangle, rounded left, and down.
-    IntRect imageRect = image->rect();
-    imageRect.setY(rect.y() + (rect.height() - image->height() + 1) / 2);
-    imageRect.setX(rect.x() + (rect.width() - image->width() + 1) / 2);
-
-    context->drawImage(image, imageRect);
-    return true;
+    return RenderMediaControlsChromium::shouldRenderMediaControlPart(part, e);
 }
 
 bool RenderThemeChromiumMac::paintMediaPlayButton(RenderObject* object, const RenderObject::PaintInfo& paintInfo, const IntRect& rect)
 {
-    HTMLMediaElement* mediaElement = mediaElementParent(object->node());
-    if (!mediaElement)
-        return false;
-
-    static Image* mediaPlay = Image::loadPlatformResource("mediaPlay").releaseRef();
-    static Image* mediaPause = Image::loadPlatformResource("mediaPause").releaseRef();
-    static Image* mediaPlayDisabled = Image::loadPlatformResource("mediaPlayDisabled").releaseRef();
-
-    if (mediaElement->networkState() == HTMLMediaElement::NETWORK_NO_SOURCE)
-        return paintMediaButtonInternal(paintInfo.context, rect, mediaPlayDisabled);
-
-    return paintMediaButtonInternal(paintInfo.context, rect, mediaElement->paused() ? mediaPlay : mediaPause);
+    return RenderMediaControlsChromium::paintMediaControlsPart(MediaPlayButton, object, paintInfo, rect);
 }
 
 bool RenderThemeChromiumMac::paintMediaMuteButton(RenderObject* object, const RenderObject::PaintInfo& paintInfo, const IntRect& rect)
 {
-    HTMLMediaElement* mediaElement = mediaElementParent(object->node());
-    if (!mediaElement)
-        return false;
-
-    static Image* soundFull = Image::loadPlatformResource("mediaSoundFull").releaseRef();
-    static Image* soundNone = Image::loadPlatformResource("mediaSoundNone").releaseRef();
-    static Image* soundDisabled = Image::loadPlatformResource("mediaSoundDisabled").releaseRef();
-
-    if (mediaElement->networkState() == HTMLMediaElement::NETWORK_NO_SOURCE || !mediaElement->hasAudio())
-        return paintMediaButtonInternal(paintInfo.context, rect, soundDisabled);
-
-    return paintMediaButtonInternal(paintInfo.context, rect, mediaElement->muted() ? soundNone : soundFull);
+    return RenderMediaControlsChromium::paintMediaControlsPart(MediaMuteButton, object, paintInfo, rect);
 }
 
 bool RenderThemeChromiumMac::paintMediaSliderTrack(RenderObject* object, const RenderObject::PaintInfo& paintInfo, const IntRect& rect)
 {
-    HTMLMediaElement* mediaElement = mediaElementParent(object->node());
-    if (!mediaElement)
-        return false;
-
-    RenderStyle* style = object->style();    
-    GraphicsContext* context = paintInfo.context;
-    context->save();
-    
-    context->setShouldAntialias(true);
-
-    IntSize topLeftRadius = style->borderTopLeftRadius();
-    IntSize topRightRadius = style->borderTopRightRadius();
-    IntSize bottomLeftRadius = style->borderBottomLeftRadius();
-    IntSize bottomRightRadius = style->borderBottomRightRadius();
-    float borderWidth = style->borderLeftWidth();
-
-    // Draw the border of the time bar.
-    context->setStrokeColor(style->borderLeftColor());
-    context->setStrokeThickness(borderWidth);
-    context->setFillColor(style->backgroundColor());
-    context->addPath(Path::createRoundedRectangle(rect, topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius));
-    context->drawPath();
-    
-    // Draw the buffered ranges.
-    // FIXME: Draw multiple ranges if there are multiple buffered ranges.
-    FloatRect bufferedRect = rect;
-    bufferedRect.inflate(-1.0 - borderWidth);
-    bufferedRect.setWidth(bufferedRect.width() * mediaElement->percentLoaded());
-    bufferedRect = context->roundToDevicePixels(bufferedRect);
-   
-    // Don't bother drawing an empty area.
-    if (bufferedRect.width() > 0 && bufferedRect.height() > 0) {
-        FloatPoint sliderTopLeft = bufferedRect.location();
-        FloatPoint sliderTopRight = sliderTopLeft;
-        sliderTopRight.move(0.0f, bufferedRect.height());
-        
-        RefPtr<Gradient> gradient = Gradient::create(sliderTopLeft, sliderTopRight);
-        Color startColor = object->style()->color();
-        gradient->addColorStop(0.0, startColor);
-        gradient->addColorStop(1.0, Color(startColor.red() / 2, startColor.green() / 2, startColor.blue() / 2, startColor.alpha()));
- 
-        context->setFillGradient(gradient);
-        context->addPath(Path::createRoundedRectangle(bufferedRect, topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius));
-        context->fillPath();
-    }
-    
-    context->restore();    
-    return true;
+    return RenderMediaControlsChromium::paintMediaControlsPart(MediaSlider, object, paintInfo, rect);
 }
 
 bool RenderThemeChromiumMac::paintMediaVolumeSliderTrack(RenderObject* object, const RenderObject::PaintInfo& paintInfo, const IntRect& rect)
 {
-    HTMLMediaElement* mediaElement = mediaElementParent(object->node());
-    if (!mediaElement)
-        return false;
-
-    GraphicsContext* context = paintInfo.context;
-    Color originalColor = context->strokeColor();
-    if (originalColor != Color::white)
-        context->setStrokeColor(Color::white);
-
-    int x = rect.x() + rect.width() / 2;
-    context->drawLine(IntPoint(x, rect.y()),  IntPoint(x, rect.y() + rect.height()));
-    
-    if (originalColor != Color::white)
-        context->setStrokeColor(originalColor);
-    return true;
+    return RenderMediaControlsChromium::paintMediaControlsPart(MediaVolumeSlider, object, paintInfo, rect);
 }
 
 bool RenderThemeChromiumMac::paintMediaSliderThumb(RenderObject* object, const RenderObject::PaintInfo& paintInfo, const IntRect& rect)
 {
-    if (!object->parent()->isSlider())
-        return false;
-
-    return paintMediaButtonInternal(paintInfo.context, rect, mediaSliderThumbImage());
+    return RenderMediaControlsChromium::paintMediaControlsPart(MediaSliderThumb, object, paintInfo, rect);
 }
 
 bool RenderThemeChromiumMac::paintMediaVolumeSliderThumb(RenderObject* object, const RenderObject::PaintInfo& paintInfo, const IntRect& rect)
 {
-    if (!object->parent()->isSlider())
-        return false;
-
-    return paintMediaButtonInternal(paintInfo.context, rect, mediaVolumeSliderThumbImage());
+    return RenderMediaControlsChromium::paintMediaControlsPart(MediaVolumeSliderThumb, object, paintInfo, rect);
 }
 
 bool RenderThemeChromiumMac::paintMediaControlsBackground(RenderObject* object, const RenderObject::PaintInfo& paintInfo, const IntRect& rect)
 {
-    HTMLMediaElement* mediaElement = mediaElementParent(object->node());
-    if (!mediaElement)
-        return false;
-
-    if (!rect.isEmpty())
-    {
-        GraphicsContext* context = paintInfo.context;
-        Color originalColor = context->strokeColor();
- 
-        // Draws the left border, it is always 1px wide.
-        context->setStrokeColor(object->style()->borderLeftColor());
-        context->drawLine(IntPoint(rect.x() + 1, rect.y()),
-                          IntPoint(rect.x() + 1, rect.y() + rect.height()));
-                         
-
-        // Draws the right border, it is always 1px wide.
-        context->setStrokeColor(object->style()->borderRightColor());
-        context->drawLine(IntPoint(rect.x() + rect.width() - 1, rect.y()),
-                          IntPoint(rect.x() + rect.width() - 1, rect.y() + rect.height()));
-        
-        context->setStrokeColor(originalColor);
-    }
-    return true;
+    return RenderMediaControlsChromium::paintMediaControlsPart(MediaTimelineContainer, object, paintInfo, rect);
 }
     
 String RenderThemeChromiumMac::extraMediaControlsStyleSheet()

@@ -83,8 +83,8 @@ audio::-webkit-media-controls-timeline-container, video::-webkit-media-controls-
     width: auto;
     height: 32px;
 
-    border-left-color: rgba(255, 255, 255, 0.2);
-    border-right-color: rgba(255, 255, 255, 0.2);
+    border-left: 1px solid rgba(255, 255, 255, 0.2);
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 audio::-webkit-media-controls-current-time-display, video::-webkit-media-controls-current-time-display {
@@ -141,7 +141,7 @@ audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline {
     -webkit-appearance: media-slider;
     position: absolute;
     top: auto;
-    bottom: 8px;
+    bottom: 7px;
     left: 6px;
     right: 65px;
     height: 16px;

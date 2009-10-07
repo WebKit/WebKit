@@ -46,6 +46,16 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+HTMLMediaElement* toParentMediaElement(RenderObject* o)
+{
+    Node* node = o->node();
+    Node* mediaNode = node ? node->shadowAncestorNode() : 0;
+    if (!mediaNode || (!mediaNode->hasTagName(HTMLNames::videoTag) && !mediaNode->hasTagName(HTMLNames::audioTag)))
+        return 0;
+
+    return static_cast<HTMLMediaElement*>(mediaNode);
+}
+
 // FIXME: These constants may need to be tweaked to better match the seeking in the QuickTime plug-in.
 static const float cSeekRepeatDelay = 0.1f;
 static const float cStepTime = 0.07f;
@@ -138,7 +148,7 @@ bool MediaControlElement::rendererIsNeeded(RenderStyle* style)
     ASSERT(document()->page());
 
     return HTMLDivElement::rendererIsNeeded(style) && parent() && parent()->renderer()
-        && document()->page()->theme()->shouldRenderMediaControlPart(style->appearance(), m_mediaElement);
+        && (!style->hasAppearance() || document()->page()->theme()->shouldRenderMediaControlPart(style->appearance(), m_mediaElement));
 }
     
 void MediaControlElement::attach()
@@ -366,7 +376,7 @@ bool MediaControlInputElement::rendererIsNeeded(RenderStyle* style)
     ASSERT(document()->page());
 
     return HTMLInputElement::rendererIsNeeded(style) && parent() && parent()->renderer()
-        && document()->page()->theme()->shouldRenderMediaControlPart(style->appearance(), m_mediaElement);
+        && (!style->hasAppearance() || document()->page()->theme()->shouldRenderMediaControlPart(style->appearance(), m_mediaElement));
 }
 
 void MediaControlInputElement::attach()

@@ -33,6 +33,7 @@
 #include "MediaControlElements.h"
 #include "PlatformContextSkia.h"
 #include "RenderBox.h"
+#include "RenderMediaControlsChromium.h"
 #include "RenderObject.h"
 #include "RenderSlider.h"
 #include "ScrollbarTheme.h"
@@ -95,20 +96,6 @@ static void drawBox(SkCanvas* canvas, const IntRect& rect, const SkPaint& paint)
     drawHorizLine(canvas, rect.x(), right, bottom, paint);
     drawVertLine(canvas, rect.x(), rect.y(), bottom, paint);
 }
-
-#if ENABLE(VIDEO)
-// Attempt to retrieve a HTMLMediaElement from a Node. Returns NULL if one cannot be found.
-static HTMLMediaElement* mediaElementParent(Node* node)
-{
-    if (!node)
-        return 0;
-    Node* mediaNode = node->shadowAncestorNode();
-    if (!mediaNode || (!mediaNode->hasTagName(HTMLNames::videoTag) && !mediaNode->hasTagName(HTMLNames::audioTag)))
-        return 0;
-
-    return static_cast<HTMLMediaElement*>(mediaNode);
-}
-#endif
 
 // We aim to match IE here.
 // -IE uses a font based on the encoding as the default font for form controls.
@@ -486,42 +473,10 @@ bool RenderThemeChromiumSkia::paintSearchFieldResultsButton(RenderObject* o, con
     return false;
 }
 
-bool RenderThemeChromiumSkia::paintMediaButtonInternal(GraphicsContext* context, const IntRect& rect, Image* image)
-{
-    // Create a destination rectangle for the image that is centered in the drawing rectangle, rounded left, and down.
-    IntRect imageRect = image->rect();
-    imageRect.setY(rect.y() + (rect.height() - image->height() + 1) / 2);
-    imageRect.setX(rect.x() + (rect.width() - image->width() + 1) / 2);
-
-    context->drawImage(image, imageRect);
-    return true;
-}
-
 bool RenderThemeChromiumSkia::paintMediaControlsBackground(RenderObject* object, const RenderObject::PaintInfo& paintInfo, const IntRect& rect)
 {
 #if ENABLE(VIDEO)
-    HTMLMediaElement* mediaElement = mediaElementParent(object->node());
-    if (!mediaElement)
-        return false;
-
-    if (!rect.isEmpty())
-    {
-        SkCanvas* canvas = paintInfo.context->platformContext()->canvas();
-        SkPaint paint;
-
-        // Draws the left border, it is always 1px wide.
-        paint.setColor(object->style()->borderLeftColor().rgb());
-        canvas->drawLine(rect.x() + 1, rect.y(),
-                         rect.x() + 1, rect.y() + rect.height(),
-                         paint);
-
-        // Draws the right border, it is always 1px wide.
-        paint.setColor(object->style()->borderRightColor().rgb());
-        canvas->drawLine(rect.x() + rect.width() - 1, rect.y(),
-                         rect.x() + rect.width() - 1, rect.y() + rect.height(),
-                         paint);
-    }
-    return true;
+    return RenderMediaControlsChromium::paintMediaControlsPart(MediaTimelineContainer, object, paintInfo, rect);
 #else
     UNUSED_PARAM(object);
     UNUSED_PARAM(paintInfo);
@@ -533,62 +488,7 @@ bool RenderThemeChromiumSkia::paintMediaControlsBackground(RenderObject* object,
 bool RenderThemeChromiumSkia::paintMediaSliderTrack(RenderObject* object, const RenderObject::PaintInfo& paintInfo, const IntRect& rect)
 {
 #if ENABLE(VIDEO)
-    HTMLMediaElement* mediaElement = mediaElementParent(object->node());
-    if (!mediaElement)
-        return false;
-
-    SkCanvas* canvas = paintInfo.context->platformContext()->canvas();
-    SkRect backgroundRect;
-    backgroundRect.set(rect.x(), rect.y(), rect.x() + rect.width(), rect.y() + rect.height());
-
-    SkPaint paint;
-    paint.setAntiAlias(true);
-
-    // Draw the border of the time bar. The border only has one single color,
-    // width and radius. So use the property of the left border.
-    SkColor borderColor = object->style()->borderLeftColor().rgb();
-    int borderWidth = object->style()->borderLeftWidth();
-    IntSize borderRadius = object->style()->borderTopLeftRadius();
-    paint.setStyle(SkPaint::kStroke_Style);
-    paint.setStrokeWidth(borderWidth);
-    paint.setColor(borderColor);
-    canvas->drawRoundRect(backgroundRect, borderRadius.width(), borderRadius.height(), paint);
-
-    // Draw the background of the time bar.
-    SkColor backgroundColor = object->style()->backgroundColor().rgb();
-    paint.setStyle(SkPaint::kFill_Style);
-    paint.setColor(backgroundColor);
-    canvas->drawRoundRect(backgroundRect, borderRadius.width(), borderRadius.height(), paint);
-
-    if (backgroundRect.width() >= 3 && backgroundRect.height() >= 3)
-    {
-        // Draw the buffered ranges.
-        // FIXME: Draw multiple ranges if there are multiple buffered ranges.
-        SkRect bufferedRect;
-        bufferedRect.set(backgroundRect.fLeft + 2, backgroundRect.fTop + 2,
-                         backgroundRect.fRight - 1, backgroundRect.fBottom - 1);
-        int width = static_cast<int>(bufferedRect.width() * mediaElement->percentLoaded());
-        bufferedRect.fRight = bufferedRect.fLeft + width;
-
-        SkPoint points[2] = { { 0, bufferedRect.fTop }, { 0, bufferedRect.fBottom } };
-        SkColor startColor = object->style()->color().rgb();
-        SkColor endColor = SkColorSetRGB(SkColorGetR(startColor) / 2,
-                                         SkColorGetG(startColor) / 2,
-                                         SkColorGetB(startColor) / 2);
-        SkColor colors[2] = { startColor, endColor };
-        SkShader* gradient = SkGradientShader::CreateLinear(points, colors, 0,
-                                                            sizeof(points) / sizeof(points[0]),
-                                                            SkShader::kMirror_TileMode, 0);
-
-        paint.reset();
-        paint.setShader(gradient);
-        paint.setAntiAlias(true);
-        // Check for round rect with zero width or height, otherwise Skia will assert
-        if (bufferedRect.width() > 0 && bufferedRect.height() > 0)
-            canvas->drawRoundRect(bufferedRect, borderRadius.width(), borderRadius.height(), paint);
-        gradient->unref();
-    }
-    return true;
+    return RenderMediaControlsChromium::paintMediaControlsPart(MediaSlider, object, paintInfo, rect);
 #else
     UNUSED_PARAM(object);
     UNUSED_PARAM(paintInfo);
@@ -600,17 +500,7 @@ bool RenderThemeChromiumSkia::paintMediaSliderTrack(RenderObject* object, const 
 bool RenderThemeChromiumSkia::paintMediaVolumeSliderTrack(RenderObject* object, const RenderObject::PaintInfo& paintInfo, const IntRect& rect)
 {
 #if ENABLE(VIDEO)
-    HTMLMediaElement* mediaElement = mediaElementParent(object->node());
-    if (!mediaElement)
-        return false;
-
-    SkCanvas* canvas = paintInfo.context->platformContext()->canvas();
-    SkPaint paint;
-    paint.setColor(SK_ColorWHITE);
-
-    int x = rect.x() + rect.width() / 2;
-    canvas->drawLine(x, rect.y(), x, rect.y() + rect.height(), paint);
-    return true;
+    return RenderMediaControlsChromium::paintMediaControlsPart(MediaVolumeSlider, object, paintInfo, rect);
 #else
     UNUSED_PARAM(object);
     UNUSED_PARAM(paintInfo);
@@ -619,31 +509,10 @@ bool RenderThemeChromiumSkia::paintMediaVolumeSliderTrack(RenderObject* object, 
 #endif
 }
 
-static Image* mediaSliderThumbImage()
-{
-    static Image* mediaSliderThumb = Image::loadPlatformResource("mediaSliderThumb").releaseRef();
-    return mediaSliderThumb;
-}
-
-static Image* mediaVolumeSliderThumbImage()
-{
-    static Image* mediaVolumeSliderThumb = Image::loadPlatformResource("mediaVolumeSliderThumb").releaseRef();
-    return mediaVolumeSliderThumb;
-}
-
 void RenderThemeChromiumSkia::adjustSliderThumbSize(RenderObject* object) const
 {
 #if ENABLE(VIDEO)
-    Image* thumbImage = 0;
-    if (object->style()->appearance() == MediaSliderThumbPart)
-        thumbImage = mediaSliderThumbImage();
-    else if (object->style()->appearance() == MediaVolumeSliderThumbPart)
-        thumbImage = mediaVolumeSliderThumbImage();
-
-    if (thumbImage) {
-        object->style()->setWidth(Length(thumbImage->width(), Fixed));
-        object->style()->setHeight(Length(thumbImage->height(), Fixed));
-    }
+    RenderMediaControlsChromium::adjustMediaSliderThumbSize(object);
 #else
     UNUSED_PARAM(object);
 #endif
@@ -652,10 +521,7 @@ void RenderThemeChromiumSkia::adjustSliderThumbSize(RenderObject* object) const
 bool RenderThemeChromiumSkia::paintMediaSliderThumb(RenderObject* object, const RenderObject::PaintInfo& paintInfo, const IntRect& rect)
 {
 #if ENABLE(VIDEO)
-    if (!object->parent()->isSlider())
-        return false;
-
-    return paintMediaButtonInternal(paintInfo.context, rect, mediaSliderThumbImage());
+    return RenderMediaControlsChromium::paintMediaControlsPart(MediaSliderThumb, object, paintInfo, rect);
 #else
     UNUSED_PARAM(object);
     UNUSED_PARAM(paintInfo);
@@ -667,10 +533,7 @@ bool RenderThemeChromiumSkia::paintMediaSliderThumb(RenderObject* object, const 
 bool RenderThemeChromiumSkia::paintMediaVolumeSliderThumb(RenderObject* object, const RenderObject::PaintInfo& paintInfo, const IntRect& rect)
 {
 #if ENABLE(VIDEO)
-    if (!object->parent()->isSlider())
-        return false;
-
-    return paintMediaButtonInternal(paintInfo.context, rect, mediaVolumeSliderThumbImage());
+    return RenderMediaControlsChromium::paintMediaControlsPart(MediaVolumeSliderThumb, object, paintInfo, rect);
 #else
     UNUSED_PARAM(object);
     UNUSED_PARAM(paintInfo);
@@ -682,18 +545,7 @@ bool RenderThemeChromiumSkia::paintMediaVolumeSliderThumb(RenderObject* object, 
 bool RenderThemeChromiumSkia::paintMediaPlayButton(RenderObject* object, const RenderObject::PaintInfo& paintInfo, const IntRect& rect)
 {
 #if ENABLE(VIDEO)
-    HTMLMediaElement* mediaElement = mediaElementParent(object->node());
-    if (!mediaElement)
-        return false;
-
-    static Image* mediaPlay = Image::loadPlatformResource("mediaPlay").releaseRef();
-    static Image* mediaPause = Image::loadPlatformResource("mediaPause").releaseRef();
-    static Image* mediaPlayDisabled = Image::loadPlatformResource("mediaPlayDisabled").releaseRef();
-
-    if (mediaElement->networkState() == HTMLMediaElement::NETWORK_NO_SOURCE)
-        return paintMediaButtonInternal(paintInfo.context, rect, mediaPlayDisabled);
-
-    return paintMediaButtonInternal(paintInfo.context, rect, mediaElement->paused() ? mediaPlay : mediaPause);
+    return RenderMediaControlsChromium::paintMediaControlsPart(MediaPlayButton, object, paintInfo, rect);
 #else
     UNUSED_PARAM(object);
     UNUSED_PARAM(paintInfo);
@@ -705,18 +557,7 @@ bool RenderThemeChromiumSkia::paintMediaPlayButton(RenderObject* object, const R
 bool RenderThemeChromiumSkia::paintMediaMuteButton(RenderObject* object, const RenderObject::PaintInfo& paintInfo, const IntRect& rect)
 {
 #if ENABLE(VIDEO)
-    HTMLMediaElement* mediaElement = mediaElementParent(object->node());
-    if (!mediaElement)
-        return false;
-
-    static Image* soundFull = Image::loadPlatformResource("mediaSoundFull").releaseRef();
-    static Image* soundNone = Image::loadPlatformResource("mediaSoundNone").releaseRef();
-    static Image* soundDisabled = Image::loadPlatformResource("mediaSoundDisabled").releaseRef();
-
-    if (mediaElement->networkState() == HTMLMediaElement::NETWORK_NO_SOURCE || !mediaElement->hasAudio())
-        return paintMediaButtonInternal(paintInfo.context, rect, soundDisabled);
-
-    return paintMediaButtonInternal(paintInfo.context, rect, mediaElement->muted() ? soundNone: soundFull);
+    return RenderMediaControlsChromium::paintMediaControlsPart(MediaMuteButton, object, paintInfo, rect);
 #else
     UNUSED_PARAM(object);
     UNUSED_PARAM(paintInfo);
@@ -871,13 +712,7 @@ int RenderThemeChromiumSkia::buttonInternalPaddingBottom() const
 #if ENABLE(VIDEO)
 bool RenderThemeChromiumSkia::shouldRenderMediaControlPart(ControlPart part, Element* e)
 {
-    HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(e);
-    switch (part) {
-    case MediaMuteButtonPart:
-        return true;
-    default:
-        return RenderTheme::shouldRenderMediaControlPart(part, e);
-    }
+    return RenderMediaControlsChromium::shouldRenderMediaControlPart(part, e);
 }
 #endif
 

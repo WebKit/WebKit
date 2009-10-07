@@ -1,3 +1,60 @@
+2009-10-07  Andrew Scherkus  <scherkus@chromium.org>
+
+        Reviewed by Eric Carlson.
+
+        Refactor RenderThemeChromiumMac and RenderThemeChromiumSkia to render media controls using GraphicsContext.
+
+        Design was based on existing RenderMediaControls.cpp used by RenderThemeSafari/Win.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29987
+
+        Covered by existing layout tests as no new functionality was introduced.
+
+        * WebCore.gypi: Added RenderMediaControlsChromium.cpp/h.
+        * css/mediaControlsChromium.css: Tweaked media slider position and border style.
+        * rendering/MediaControlElements.cpp:
+        (WebCore::toParentMediaElement): Taken from RenderMediaControls.
+        (WebCore::MediaControlElement::rendererIsNeeded): Don't call shouldRenderMediaControlPart() if element has no appearance.
+        (WebCore::MediaControlInputElement::rendererIsNeeded): Ditto.
+        * rendering/RenderMediaControls.cpp: Moved parentMediaElement() to MediaControlElements.
+        * rendering/RenderMediaControlsChromium.cpp: Added.
+        (WebCore::platformResource): Helper to load and cache media control image resources.
+        (WebCore::mediaSliderThumbImage): Implementation refactored from RenderThemeChromiumMac/Skia.
+        (WebCore::mediaVolumeSliderThumbImage): Ditto.
+        (WebCore::paintMediaButton): Ditto.
+        (WebCore::paintMediaMuteButton): Ditto.
+        (WebCore::paintMediaPlayButton): Ditto.
+        (WebCore::paintMediaSlider): Ditto.
+        (WebCore::paintMediaSliderThumb): Ditto.
+        (WebCore::paintMediaVolumeSlider): Ditto.
+        (WebCore::paintMediaVolumeSliderThumb): Ditto.
+        (WebCore::paintMediaTimelineContainer): Ditto.
+        (WebCore::RenderMediaControlsChromium::shouldRenderMediaControlPart): Ditto.
+        (WebCore::RenderMediaControlsChromium::paintMediaControlsPart): Same
+        (WebCore::RenderMediaControlsChromium::adjustMediaSliderThumbSize):
+        * rendering/RenderMediaControlsChromium.h: Added.
+        * rendering/RenderThemeChromiumMac.h:
+        * rendering/RenderThemeChromiumMac.mm:
+        (WebCore::RenderThemeChromiumMac::adjustSliderThumbSize): Implementation delegated to RenderMediaControlsChromium.
+        (WebCore::RenderThemeChromiumMac::shouldRenderMediaControlPart): Ditto.
+        (WebCore::RenderThemeChromiumMac::paintMediaPlayButton): Ditto.
+        (WebCore::RenderThemeChromiumMac::paintMediaMuteButton): Ditto.
+        (WebCore::RenderThemeChromiumMac::paintMediaSliderTrack): Ditto.
+        (WebCore::RenderThemeChromiumMac::paintMediaVolumeSliderTrack): Ditto.
+        (WebCore::RenderThemeChromiumMac::paintMediaSliderThumb): Ditto.
+        (WebCore::RenderThemeChromiumMac::paintMediaVolumeSliderThumb): Ditto.
+        (WebCore::RenderThemeChromiumMac::paintMediaControlsBackground): Ditto.
+        * rendering/RenderThemeChromiumSkia.cpp:
+        (WebCore::RenderThemeChromiumSkia::paintMediaControlsBackground): Implementation delegated to RenderMediaControlsChromium.
+        (WebCore::RenderThemeChromiumSkia::paintMediaSliderTrack): Ditto.
+        (WebCore::RenderThemeChromiumSkia::paintMediaVolumeSliderTrack): Ditto.
+        (WebCore::RenderThemeChromiumSkia::adjustSliderThumbSize): Ditto.
+        (WebCore::RenderThemeChromiumSkia::paintMediaSliderThumb): Ditto.
+        (WebCore::RenderThemeChromiumSkia::paintMediaVolumeSliderThumb): Ditto.
+        (WebCore::RenderThemeChromiumSkia::paintMediaPlayButton): Ditto.
+        (WebCore::RenderThemeChromiumSkia::paintMediaMuteButton): Ditto.
+        (WebCore::RenderThemeChromiumSkia::shouldRenderMediaControlPart): Ditto.
+
 2009-10-07  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by Adam Roben.
