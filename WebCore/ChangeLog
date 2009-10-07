@@ -1,3 +1,32 @@
+2009-10-07  Jens Alfke  <snej@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Optimization of StringImpl:
+        - Remove unnecessary m_bufferIsInternal member (saves 4 bytes). Instead, check whether
+          m_data points to just past the end of the object's members.
+        - copy() and createWithTerminatingNullCharacter() create the string in a single malloc
+          block instead of 2 (saves ~20 bytes and considerable CPU cycles, increases locality).
+        - Move m_length next to m_hash to save 4 bytes of padding in 64-bit builds.
+          
+        https://bugs.webkit.org/show_bug.cgi?id=29500
+
+        * platform/text/StringImpl.cpp:
+        (WebCore::StringImpl::StringImpl): Re-ordered members.
+        (WebCore::StringImpl::~StringImpl): Change to is-buffer-internal check.
+        (WebCore::StringImpl::createUninitialized): Use new m_buffer member instead of sizeof()
+            to ensure chars are copied to correct location.
+        (WebCore::StringImpl::createWithTerminatingNullCharacter): Make sure copy is created
+            in a single malloc block.
+        (WebCore::StringImpl::threadsafeCopy): Make sure copy is created in a single malloc block.
+        (WebCore::StringImpl::crossThreadString): Make sure copy is created in a single malloc block.
+        (WebCore::StringImpl::sharedBuffer): Change to is-buffer-internal check.
+        * platform/text/StringImpl.h:
+        (WebCore::StringImpl::startsWith): Just fixed a confusing param name.
+        (WebCore::StringImpl::bufferIsInternal): Changed member var into accessor method.
+        (WebCore::StringImpl::m_data): Repositioned for optimal member packing in 64-bit.
+        (WebCore::StringImpl::m_buffer): Added to provide an explicit location for where internal buffer goes.
+
 2009-10-07  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Darin Adler.

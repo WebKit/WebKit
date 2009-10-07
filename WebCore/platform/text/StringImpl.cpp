@@ -36,6 +36,7 @@
 #include "ThreadGlobalData.h"
 #include <wtf/dtoa.h>
 #include <wtf/Assertions.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/Threading.h>
 #include <wtf/unicode/Unicode.h>
 
@@ -57,7 +58,7 @@ static inline void deleteUCharVector(const UChar* p)
 }
 
 // Some of the factory methods create buffers using fastMalloc.
-// We must ensure that ll allocations of StringImpl are allocated using
+// We must ensure that all allocations of StringImpl are allocated using
 // fastMalloc so that we don't have mis-matched frees. We accomplish 
 // this by overriding the new and delete operators.
 void* StringImpl::operator new(size_t size, void* address)
@@ -79,10 +80,10 @@ void StringImpl::operator delete(void* address)
 
 // This constructor is used only to create the empty string.
 StringImpl::StringImpl()
-    : m_length(0)
-    , m_data(0)
+    : m_data(0)
+    , m_length(0)
     , m_hash(0)
-    , m_bufferIsInternal(false)
+    , m_buffer()
 {
     // Ensure that the hash is computed so that AtomicStringHash can call existingHash()
     // with impunity. The empty string is special because it is never entered into
@@ -90,52 +91,11 @@ StringImpl::StringImpl()
     hash();
 }
 
-// This is one of the most common constructors, but it's also used for the copy()
-// operation. Because of that, it's the one constructor that doesn't assert the
-// length is non-zero, since we support copying the empty string.
-inline StringImpl::StringImpl(const UChar* characters, unsigned length)
-    : m_length(length)
-    , m_hash(0)
-    , m_bufferIsInternal(false)
-{
-    UChar* data = newUCharVector(length);
-    memcpy(data, characters, length * sizeof(UChar));
-    m_data = data;
-}
-
-inline StringImpl::StringImpl(const StringImpl& str, WithTerminatingNullCharacter)
-    : m_length(str.m_length)
-    , m_hash(str.m_hash)
-    , m_bufferIsInternal(false)
-{
-    m_sharedBufferAndFlags.setFlag(HasTerminatingNullCharacter);
-    UChar* data = newUCharVector(str.m_length + 1);
-    memcpy(data, str.m_data, str.m_length * sizeof(UChar));
-    data[str.m_length] = 0;
-    m_data = data;
-}
-
-inline StringImpl::StringImpl(const char* characters, unsigned length)
-    : m_length(length)
-    , m_hash(0)
-    , m_bufferIsInternal(false)
-{
-    ASSERT(characters);
-    ASSERT(length);
-
-    UChar* data = newUCharVector(length);
-    for (unsigned i = 0; i != length; ++i) {
-        unsigned char c = characters[i];
-        data[i] = c;
-    }
-    m_data = data;
-}
-
 inline StringImpl::StringImpl(UChar* characters, unsigned length, AdoptBuffer)
-    : m_length(length)
-    , m_data(characters)
+    : m_data(characters)
+    , m_length(length)
     , m_hash(0)
-    , m_bufferIsInternal(false)
+    , m_buffer()
 {
     ASSERT(characters);
     ASSERT(length);
@@ -143,9 +103,10 @@ inline StringImpl::StringImpl(UChar* characters, unsigned length, AdoptBuffer)
 
 // This constructor is only for use by AtomicString.
 StringImpl::StringImpl(const UChar* characters, unsigned length, unsigned hash)
-    : m_length(length)
+    : m_data(0)
+    , m_length(length)
     , m_hash(hash)
-    , m_bufferIsInternal(false)
+    , m_buffer()
 {
     ASSERT(hash);
     ASSERT(characters);
@@ -159,9 +120,10 @@ StringImpl::StringImpl(const UChar* characters, unsigned length, unsigned hash)
 
 // This constructor is only for use by AtomicString.
 StringImpl::StringImpl(const char* characters, unsigned length, unsigned hash)
-    : m_length(length)
+    : m_data(0)
+    , m_length(length)
     , m_hash(hash)
-    , m_bufferIsInternal(false)
+    , m_buffer()
 {
     ASSERT(hash);
     ASSERT(characters);
@@ -180,7 +142,7 @@ StringImpl::~StringImpl()
 {
     if (inTable())
         AtomicString::remove(this);
-    if (!m_bufferIsInternal) {
+    if (!bufferIsInternal()) {
         SharedUChar* sharedBuffer = m_sharedBufferAndFlags.get();
         if (sharedBuffer)
             sharedBuffer->deref();
@@ -997,11 +959,10 @@ PassRefPtr<StringImpl> StringImpl::createUninitialized(unsigned length, UChar*& 
     // Allocate a single buffer large enough to contain the StringImpl
     // struct as well as the data which it contains. This removes one 
     // heap allocation from this call.
-    size_t size = sizeof(StringImpl) + length * sizeof(UChar);
-    char* buffer = static_cast<char*>(fastMalloc(size));
-    data = reinterpret_cast<UChar*>(buffer + sizeof(StringImpl));
-    StringImpl* string = new (buffer) StringImpl(data, length, AdoptBuffer());
-    string->m_bufferIsInternal = true;
+    size_t size = OBJECT_OFFSETOF(StringImpl, m_buffer) + length * sizeof(UChar);
+    StringImpl* string = static_cast<StringImpl*>(fastMalloc(size));
+    data = const_cast<UChar*>(&string->m_buffer[0]);
+    string = new (string) StringImpl(data, length, AdoptBuffer());
     return adoptRef(string);
 }
 
@@ -1062,13 +1023,25 @@ JSC::UString StringImpl::ustring()
 
 PassRefPtr<StringImpl> StringImpl::createWithTerminatingNullCharacter(const StringImpl& string)
 {
-    return adoptRef(new StringImpl(string, WithTerminatingNullCharacter()));
+    // Use createUninitialized instead of 'new StringImpl' so that the string and its buffer
+    // get allocated in a single malloc block.
+    UChar* data;
+    int length = string.m_length;
+    RefPtr<StringImpl> terminatedString = createUninitialized(length + 1, data);
+    memcpy(data, string.m_data, length * sizeof(UChar));
+    data[length] = 0;
+    terminatedString->m_length--;
+    terminatedString->m_hash = string.m_hash;
+    terminatedString->m_sharedBufferAndFlags.setFlag(HasTerminatingNullCharacter);
+    return terminatedString.release();
 }
 
 PassRefPtr<StringImpl> StringImpl::threadsafeCopy() const
 {
-    // Using the constructor directly to make sure that per-thread empty string instance isn't returned.
-    return adoptRef(new StringImpl(m_data, m_length));
+    // Special-case empty strings to make sure that per-thread empty string instance isn't returned.
+    if (m_length == 0)
+        return adoptRef(new StringImpl);
+    return create(m_data, m_length);
 }
 
 PassRefPtr<StringImpl> StringImpl::crossThreadString()
@@ -1080,13 +1053,13 @@ PassRefPtr<StringImpl> StringImpl::crossThreadString()
         return impl.release();
     }
 
-    // Using the constructor directly to make sure that per-thread empty string instance isn't returned.
-    return adoptRef(new StringImpl(m_data, m_length));
+    // If no shared buffer is available, create a copy.
+    return threadsafeCopy();
 }
 
 StringImpl::SharedUChar* StringImpl::sharedBuffer()
 {
-    if (m_length < minLengthToShare || m_bufferIsInternal)
+    if (m_length < minLengthToShare || bufferIsInternal())
         return 0;
 
     if (!m_sharedBufferAndFlags.get())

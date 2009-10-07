@@ -67,14 +67,9 @@ class StringImpl : public RefCounted<StringImpl> {
 private:
     friend class ThreadGlobalData;
     StringImpl();
-    StringImpl(const UChar*, unsigned length);
-    StringImpl(const char*, unsigned length);
 
     struct AdoptBuffer { };
     StringImpl(UChar*, unsigned length, AdoptBuffer);
-
-    struct WithTerminatingNullCharacter { };
-    StringImpl(const StringImpl&, WithTerminatingNullCharacter);
 
     // For AtomicString.
     StringImpl(const UChar*, unsigned length, unsigned hash);
@@ -163,7 +158,7 @@ public:
     int reverseFind(UChar, int index);
     int reverseFind(StringImpl*, int index, bool caseSensitive = true);
     
-    bool startsWith(StringImpl* m_data, bool caseSensitive = true) { return reverseFind(m_data, 0, caseSensitive) == 0; }
+    bool startsWith(StringImpl* str, bool caseSensitive = true) { return reverseFind(str, 0, caseSensitive) == 0; }
     bool endsWith(StringImpl*, bool caseSensitive = true);
 
     PassRefPtr<StringImpl> replace(UChar, UChar);
@@ -193,21 +188,25 @@ private:
     void* operator new(size_t size, void* address);
 
     static PassRefPtr<StringImpl> createStrippingNullCharactersSlowCase(const UChar*, unsigned length);
+    
+    // The StringImpl struct and its data may be allocated within a single heap block.
+    // In this case, the m_data pointer is an "internal buffer", and does not need to be deallocated.
+    bool bufferIsInternal() { return m_data == &m_buffer[0]; }
 
     enum StringImplFlags {
         HasTerminatingNullCharacter,
         InTable,
     };
 
-    unsigned m_length;
     const UChar* m_data;
+    unsigned m_length;
     mutable unsigned m_hash;
     PtrAndFlags<SharedUChar, StringImplFlags> m_sharedBufferAndFlags;
-
-    // In some cases, we allocate the StringImpl struct and its data
-    // within a single heap buffer. In this case, the m_data pointer
-    // is an "internal buffer", and does not need to be deallocated.
-    bool m_bufferIsInternal;
+    // m_buffer is declared with no size; the compiler treats it as zero size,
+    // and the actual size is determined when the instance is created. 
+    // It will be zero unless using an "internal buffer", in which case m_data
+    // will point to m_buffer and the length of m_buffer will be equal to m_length.
+    const UChar m_buffer[];
 };
 
 bool equal(StringImpl*, StringImpl*);
