@@ -74,12 +74,12 @@ PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, Subresourc
 
     if (!skipCanLoadCheck
             && SecurityOrigin::restrictAccessToLocal()
-            && !FrameLoader::canLoad(request.url(), String(), frame->document())) {
+            && !SecurityOrigin::canLoad(request.url(), String(), frame->document())) {
         FrameLoader::reportLocalLoadFailed(frame, request.url().string());
         return 0;
     }
     
-    if (FrameLoader::shouldHideReferrer(request.url(), fl->outgoingReferrer()))
+    if (SecurityOrigin::shouldHideReferrer(request.url(), fl->outgoingReferrer()))
         newRequest.clearHTTPReferrer();
     else if (!request.httpReferrer())
         newRequest.setHTTPReferrer(fl->outgoingReferrer());

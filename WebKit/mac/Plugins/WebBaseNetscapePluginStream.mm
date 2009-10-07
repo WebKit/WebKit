@@ -42,6 +42,7 @@
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
+#import <WebCore/SecurityOrigin.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebCoreURLResponse.h>
 #import <WebKitSystemInterface.h>
@@ -160,7 +161,7 @@ WebNetscapePluginStream::WebNetscapePluginStream(NSURLRequest *request, NPP plug
     WebNetscapePluginView *view = (WebNetscapePluginView *)plugin->ndata;
     
     // This check has already been done by the plug-in view.
-    ASSERT(FrameLoader::canLoad([request URL], String(), core([view webFrame])->document()));
+    ASSERT(SecurityOrigin::canLoad([request URL], String(), core([view webFrame])->document()));
     
     ASSERT([request URL]);
     ASSERT(plugin);
@@ -169,7 +170,7 @@ WebNetscapePluginStream::WebNetscapePluginStream(NSURLRequest *request, NPP plug
     
     streams().add(&m_stream, plugin);
         
-    if (core([view webFrame])->loader()->shouldHideReferrer([request URL], core([view webFrame])->loader()->outgoingReferrer()))
+    if (SecurityOrigin::shouldHideReferrer([request URL], core([view webFrame])->loader()->outgoingReferrer()))
         [m_request.get() _web_setHTTPReferrer:nil];
 }
 

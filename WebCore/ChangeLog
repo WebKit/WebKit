@@ -2,6 +2,32 @@
 
         Reviewed by Eric Seidel.
 
+        Move FrameLoader::canLoad to SecurityOrigin
+        https://bugs.webkit.org/show_bug.cgi?id=30111
+
+        * WebCore.base.exp:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::isSafeToLoadURL):
+        * loader/Cache.cpp:
+        (WebCore::Cache::requestResource):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadSubframe):
+        (WebCore::FrameLoader::loadPlugin):
+        (WebCore::FrameLoader::loadFrameRequest):
+        (WebCore::FrameLoader::loadResourceSynchronously):
+        (WebCore::FrameLoader::createJavaAppletWidget):
+        * loader/FrameLoader.h:
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::create):
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::canLoad):
+        (WebCore::SecurityOrigin::shouldHideReferrer):
+        * page/SecurityOrigin.h:
+
+2009-10-06  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Move setLocalLoadPolicy and friends to SecurityOrigin
         https://bugs.webkit.org/show_bug.cgi?id=30110
 

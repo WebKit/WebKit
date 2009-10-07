@@ -40,6 +40,7 @@
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameLoaderTypes.h>
+#import <WebCore/SecurityOrigin.h>
 #import <wtf/Assertions.h>
 #import <objc/objc-runtime.h>
 
@@ -98,7 +99,7 @@ using namespace WebCore;
 {
    Frame* coreFrame = core([_controller webFrame]);
    ASSERT(coreFrame);
-   if (!coreFrame->loader()->canLoad([_request URL], String(), coreFrame->document())) {
+   if (!SecurityOrigin::canLoad([_request URL], String(), coreFrame->document())) {
        [self _continueWithPolicy:PolicyIgnore];
        return YES;
    }

@@ -30,6 +30,7 @@
 #include "SecurityOrigin.h"
 
 #include "CString.h"
+#include "Document.h"
 #include "KURL.h"
 #include "OriginAccessEntry.h"
 #include <wtf/StdLibExtras.h>
@@ -238,6 +239,20 @@ bool SecurityOrigin::taintsCanvas(const KURL& url) const
     return true;
 }
 
+bool SecurityOrigin::canLoad(const KURL& url, const String& referrer, Document* document)
+{
+    if (!shouldTreatURLAsLocal(url.string()))
+        return true;
+
+    // If we were provided a document, we let its local file policy dictate the result,
+    // otherwise we allow local loads only if the supplied referrer is also local.
+    if (document)
+        return document->securityOrigin()->canLoadLocalResources();
+    if (!referrer.isEmpty())
+        return shouldTreatURLAsLocal(referrer);
+    return false;
+}
+
 void SecurityOrigin::grantLoadLocalResources()
 {
     // This method exists only to support backwards compatibility with older
@@ -442,6 +457,22 @@ void SecurityOrigin::registerURLSchemeAsNoAccess(const String& scheme)
 bool SecurityOrigin::shouldTreatURLSchemeAsNoAccess(const String& scheme)
 {
     return noAccessSchemes().contains(scheme);
+}
+
+bool SecurityOrigin::shouldHideReferrer(const KURL& url, const String& referrer)
+{
+    bool referrerIsSecureURL = protocolIs(referrer, "https");
+    bool referrerIsWebURL = referrerIsSecureURL || protocolIs(referrer, "http");
+
+    if (!referrerIsWebURL)
+        return true;
+
+    if (!referrerIsSecureURL)
+        return false;
+
+    bool URLIsSecureURL = url.protocolIs("https");
+
+    return !URLIsSecureURL;
 }
 
 void SecurityOrigin::setLocalLoadPolicy(LocalLoadPolicy policy)

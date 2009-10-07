@@ -49,6 +49,7 @@
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameTree.h>
 #import <WebCore/KURL.h>
+#import <WebCore/SecurityOrigin.h>
 #import <WebCore/ScriptController.h>
 #import <WebCore/ScriptValue.h>
 #import <WebCore/StringSourceProvider.h>
@@ -598,7 +599,7 @@ NPError NetscapePluginInstanceProxy::loadRequest(NSURLRequest *request, const ch
             return NPERR_GENERIC_ERROR;
         }
     } else {
-        if (!FrameLoader::canLoad(URL, String(), core([m_pluginView webFrame])->document()))
+        if (!SecurityOrigin::canLoad(URL, String(), core([m_pluginView webFrame])->document()))
             return NPERR_GENERIC_ERROR;
     }
     

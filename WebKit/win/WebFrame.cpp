@@ -94,6 +94,7 @@
 #include <WebCore/TextIterator.h>
 #include <WebCore/JSDOMBinding.h>
 #include <WebCore/ScriptController.h>
+#include <WebCore/SecurityOrigin.h>
 #include <JavaScriptCore/APICast.h>
 #include <wtf/MathExtras.h>
 #pragma warning(pop)
@@ -1159,7 +1160,7 @@ HRESULT WebFrame::allowsFollowingLink(BSTR url, BOOL* result)
     if (!frame)
         return E_FAIL;
 
-    *result = FrameLoader::canLoad(MarshallingHelpers::BSTRToKURL(url), String(), frame->document());
+    *result = SecurityOrigin::canLoad(MarshallingHelpers::BSTRToKURL(url), String(), frame->document());
     return S_OK;
 }
 

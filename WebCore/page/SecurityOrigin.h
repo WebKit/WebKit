@@ -40,7 +40,8 @@
 namespace WebCore {
 
     typedef HashSet<String, CaseFoldingHash> URLSchemesMap;
-    
+
+    class Document;
     class KURL;
     
     class SecurityOrigin : public ThreadSafeShared<SecurityOrigin> {
@@ -80,6 +81,11 @@ namespace WebCore {
         // this security origin.  For example, call this function before
         // drawing an image onto an HTML canvas element with the drawImage API.
         bool taintsCanvas(const KURL&) const;
+
+        // Returns true for any non-local URL. If document parameter is supplied,
+        // its local load policy dictates, otherwise if referrer is non-empty and
+        // represents a local file, then the local load is allowed.
+        static bool canLoad(const KURL&, const String& referrer, Document* document);
 
         // Returns true if this SecurityOrigin can load local resources, such
         // as images, iframes, and style sheets, and can link to local URLs.
@@ -142,6 +148,8 @@ namespace WebCore {
         static const URLSchemesMap& localURLSchemes();
         static bool shouldTreatURLAsLocal(const String&);
         static bool shouldTreatURLSchemeAsLocal(const String&);
+
+        static bool shouldHideReferrer(const KURL&, const String& referrer);
 
         enum LocalLoadPolicy {
             AllowLocalLoadsForAll,  // No restriction on local loads.

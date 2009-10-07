@@ -69,6 +69,7 @@
 #import <WebCore/Page.h> 
 #import <WebCore/PluginMainThreadScheduler.h>
 #import <WebCore/ScriptController.h>
+#import <WebCore/SecurityOrigin.h>
 #import <WebCore/SoftLinking.h> 
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebCoreURLResponse.h>
@@ -1682,7 +1683,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
             return NPERR_INVALID_PARAM;
         }
     } else {
-        if (!FrameLoader::canLoad(URL, String(), core([self webFrame])->document()))
+        if (!SecurityOrigin::canLoad(URL, String(), core([self webFrame])->document()))
             return NPERR_GENERIC_ERROR;
     }
         

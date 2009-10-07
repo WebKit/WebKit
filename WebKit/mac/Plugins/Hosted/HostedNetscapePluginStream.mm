@@ -39,6 +39,7 @@
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
+#import <WebCore/SecurityOrigin.h>
 #import <WebCore/WebCoreURLResponse.h>
 #import <wtf/RefCountedLeakCounter.h>
 
@@ -58,7 +59,7 @@ HostedNetscapePluginStream::HostedNetscapePluginStream(NetscapePluginInstancePro
     , m_requestURL([request URL])
     , m_frameLoader(0)
 {
-    if (core([instance->pluginView() webFrame])->loader()->shouldHideReferrer([request URL], core([instance->pluginView() webFrame])->loader()->outgoingReferrer()))
+    if (SecurityOrigin::shouldHideReferrer([request URL], core([instance->pluginView() webFrame])->loader()->outgoingReferrer()))
         [m_request.get() _web_setHTTPReferrer:nil];
 
 #ifndef NDEBUG

@@ -1199,7 +1199,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 {
     if (!_private->coreFrame)
         return YES;
-    return FrameLoader::canLoad(URL, String(), _private->coreFrame->document());
+    return SecurityOrigin::canLoad(URL, String(), _private->coreFrame->document());
 }
 
 @end

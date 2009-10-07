@@ -606,7 +606,7 @@ bool HTMLMediaElement::isSafeToLoadURL(const KURL& url, InvalidSourceAction acti
     FrameLoader* loader = frame ? frame->loader() : 0;
 
     // don't allow remote to local urls, and check with the frame loader client.
-    if (!loader || !loader->canLoad(url, String(), document()) || !loader->client()->shouldLoadMediaElementURL(url)) {
+    if (!loader || !SecurityOrigin::canLoad(url, String(), document()) || !loader->client()->shouldLoadMediaElementURL(url)) {
         if (actionIfInvalid == Complain)
             FrameLoader::reportLocalLoadFailed(frame, url.string());
         return false;

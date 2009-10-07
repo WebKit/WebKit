@@ -106,13 +106,7 @@ namespace WebCore {
         
         void loadArchive(PassRefPtr<Archive>);
 
-        // Returns true for any non-local URL. If document parameter is supplied, its local load policy dictates,
-        // otherwise if referrer is non-empty and represents a local file, then the local load is allowed.
-        static bool canLoad(const KURL&, const String& referrer, const Document*);
-        static bool canLoad(const KURL&, const String& referrer, const SecurityOrigin* = 0);
         static void reportLocalLoadFailed(Frame*, const String& url);
-
-        static bool shouldHideReferrer(const KURL&, const String& referrer);
 
         // Called by createWindow in JSDOMWindowBase.cpp, e.g. to fulfill a modal dialog creation
         Frame* createWindow(FrameLoader* frameLoaderForFrameLookup, const FrameLoadRequest&, const WindowFeatures&, bool& created);
