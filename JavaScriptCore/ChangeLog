@@ -1,3 +1,12 @@
+2009-10-07  Jørgen Lind  <jorgen.lind@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        When enabling or disabling the JIT through .qmake.cache, make sure
+        to also toggle ENABLE_YARR_JIT.
+
+        * JavaScriptCore.pri:
+
 2009-10-06  Priit Laes  <plaes@plaes.org>
 
         Reviewed by Gavin Barraclough.
