@@ -1,5 +1,12 @@
 2009-10-07  Simon Fraser  <simon.fraser@apple.com>
 
+        Make Dan Bernstein happy.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView drawRect:]):
+
+2009-10-07  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Avoid Obj-C message dispatch when possible by storing accessed objects

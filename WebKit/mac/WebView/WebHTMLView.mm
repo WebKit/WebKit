@@ -3178,7 +3178,7 @@ WEBCORE_COMMAND(yankAndSelect)
     double start = CFAbsoluteTimeGetCurrent();
 #endif
 
-    WebView* webView = [self _webView];
+    WebView *webView = [self _webView];
     if ([webView _mustDrawUnionedRect:rect singleRects:rects count:count])
         [self drawSingleRect:rect];
     else
@@ -3199,7 +3199,7 @@ WEBCORE_COMMAND(yankAndSelect)
         // don't show up on the screen before the window flush at the end
         // of the current window display, but only if a window flush is actually
         // going to happen.
-        NSWindow* window = [self window];
+        NSWindow *window = [self window];
         if ([window viewsNeedDisplay])
             [window disableScreenUpdatesUntilFlush];
         
