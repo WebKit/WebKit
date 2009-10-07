@@ -1,5 +1,13 @@
 2009-10-06  David Levin  <levin@chromium.org>
 
+        Reviewed by NOBODY (build fix).
+
+        A few small/trivial tweaks to the last build fix.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+
+2009-10-06  David Levin  <levin@chromium.org>
+
         Reviewed by Dimitri Glazkov.
 
         [Chromium] Need to adjust MessagePort, etc. code for the post clone work done.

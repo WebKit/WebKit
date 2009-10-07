@@ -1885,7 +1885,7 @@ sub JSValueToNative
 
     if ($type eq "SerializedScriptValue") {
         $implIncludes{"SerializedScriptValue.h"} = 1;
-        return "SerializedScriptValue::create(exec, $value)";
+        return "SerializedScriptValue::create($value)";
     }
 
     if ($type eq "NodeFilter") {
@@ -2118,7 +2118,7 @@ sub ReturnNativeToJSValue
 
     if ($type eq "SerializedScriptValue") {
         $implIncludes{"$type.h"} = 1;
-        return "v8String($value->toString())";
+        return "return v8String($value->toString())";
     }
 
     if ($type eq "DedicatedWorkerContext" or $type eq "WorkerContext" or $type eq "SharedWorkerContext") {
