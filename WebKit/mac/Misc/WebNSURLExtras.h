@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,9 @@
 
 #import <Foundation/Foundation.h>
 
+// FIXME: Change method names back to _web_ from _webkit_ when identically-named
+// methods are no longer present in Foundation.
+
 @interface NSURL (WebNSURLExtras)
 
 + (NSURL *)_web_URLWithUserTypedString:(NSString *)string;
@@ -52,12 +55,10 @@
 
 - (BOOL)_web_isEmpty;
 
-// FIXME: change these names back to _web_ when identically-named
-// methods are removed from Foundation
-
 - (NSURL *)_webkit_canonicalize;
 - (NSURL *)_webkit_URLByRemovingFragment;
 - (NSURL *)_webkit_URLByRemovingResourceSpecifier;
+- (NSURL *)_web_URLByRemovingUserInfo;
 
 - (BOOL)_webkit_isJavaScriptURL;
 - (BOOL)_webkit_isFileURL;
@@ -83,8 +84,6 @@
 - (NSString *)_web_decodeHostName; // turns funny-looking ASCII form into Unicode, returns self if no decoding needed, convenient cover
 - (NSString *)_web_encodeHostName; // turns Unicode into funny-looking ASCII form, returns self if no decoding needed, convenient cover
 
-// FIXME: change these names back to _web_ when identically-named
-// methods are removed from or renamed in Foundation
 - (BOOL)_webkit_isJavaScriptURL;
 - (BOOL)_webkit_isFTPDirectoryURL;
 - (BOOL)_webkit_isFileURL;

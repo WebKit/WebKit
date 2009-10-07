@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,13 +28,13 @@
 
 #import <WebKit/WebNSFileManagerExtras.h>
 
+#import "WebKitNSStringExtras.h"
+#import "WebNSURLExtras.h"
 #import <WebCore/FoundationExtras.h>
-#import <WebKit/WebKitNSStringExtras.h>
 #import <WebKitSystemInterface.h>
-#import <wtf/Assertions.h>
-
 #import <pthread.h>
 #import <sys/mount.h>
+#import <JavaScriptCore/Assertions.h>
 
 @implementation NSFileManager (WebNSFileManagerExtras)
 
@@ -170,6 +170,10 @@ static void *setMetaData(void* context)
 {
     ASSERT(URLString);
     ASSERT(path);
+
+    NSURL *URL = [NSURL _web_URLWithUserTypedString:URLString];
+    if (URL)
+        URLString = [[URL _web_URLByRemovingUserInfo] _web_userVisibleString];
  
     // Spawn a background thread for WKSetMetadataURL because this function will not return until mds has
     // journaled the data we're're trying to set. Depending on what other I/O is going on, it can take some
