@@ -1,5 +1,14 @@
 2009-10-07  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed.  Remove some folks from committers.py who were listed on
+        the WebKit Team wiki page but who weren't actually listed as commit+.
+        At some point, we should coorelate this list with the committers
+        mailing list.
+
+        * Scripts/modules/committers.py:
+
+2009-10-07  Adam Barth  <abarth@webkit.org>
+
         Unreviewed.  Import a bunch of committers from the WebKit Team page on
         the wiki into committers.py.
 
