@@ -75,6 +75,12 @@ namespace JSC {
 #define THUMB_FUNC_PARAM(name)
 #endif
 
+#if PLATFORM(LINUX) && PLATFORM(X86_64)
+#define SYMBOL_STRING_RELOCATION(name) #name "@plt"
+#else
+#define SYMBOL_STRING_RELOCATION(name) SYMBOL_STRING(name)
+#endif
+
 #if USE(JSVALUE32_64)
 
 #if COMPILER(GCC) && PLATFORM(X86)
@@ -112,7 +118,7 @@ SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
 #if !USE(JIT_STUB_ARGUMENT_VA_LIST)
     "movl %esp, %ecx" "\n"
 #endif
-    "call " SYMBOL_STRING(cti_vm_throw) "\n"
+    "call " SYMBOL_STRING_RELOCATION(cti_vm_throw) "\n"
     "addl $0x3c, %esp" "\n"
     "popl %ebx" "\n"
     "popl %edi" "\n"
@@ -175,7 +181,7 @@ asm volatile (
 ".globl " SYMBOL_STRING(ctiVMThrowTrampoline) "\n"
 SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
     "movq %rsp, %rdi" "\n"
-    "call " SYMBOL_STRING(cti_vm_throw) "\n"
+    "call " SYMBOL_STRING_RELOCATION(cti_vm_throw) "\n"
     "addq $0x48, %rsp" "\n"
     "popq %rbx" "\n"
     "popq %r15" "\n"
@@ -239,7 +245,7 @@ asm volatile (
 ".thumb_func " THUMB_FUNC_PARAM(ctiVMThrowTrampoline) "\n"
 SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
     "cpy r0, sp" "\n"
-    "bl " SYMBOL_STRING(cti_vm_throw) "\n"
+    "bl " SYMBOL_STRING_RELOCATION(cti_vm_throw) "\n"
     "ldr r6, [sp, #0x2c]" "\n"
     "ldr r5, [sp, #0x28]" "\n"
     "ldr r4, [sp, #0x24]" "\n"
@@ -365,7 +371,7 @@ SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
 #if !USE(JIT_STUB_ARGUMENT_VA_LIST)
     "movl %esp, %ecx" "\n"
 #endif
-    "call " SYMBOL_STRING(cti_vm_throw) "\n"
+    "call " SYMBOL_STRING_RELOCATION(cti_vm_throw) "\n"
     "addl $0x1c, %esp" "\n"
     "popl %ebx" "\n"
     "popl %edi" "\n"
@@ -434,7 +440,7 @@ asm volatile (
 ".globl " SYMBOL_STRING(ctiVMThrowTrampoline) "\n"
 SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
     "movq %rsp, %rdi" "\n"
-    "call " SYMBOL_STRING(cti_vm_throw) "\n"
+    "call " SYMBOL_STRING_RELOCATION(cti_vm_throw) "\n"
     "addq $0x78, %rsp" "\n"
     "popq %rbx" "\n"
     "popq %r15" "\n"
@@ -498,7 +504,7 @@ asm volatile (
 ".thumb_func " THUMB_FUNC_PARAM(ctiVMThrowTrampoline) "\n"
 SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
     "cpy r0, sp" "\n"
-    "bl " SYMBOL_STRING(cti_vm_throw) "\n"
+    "bl " SYMBOL_STRING_RELOCATION(cti_vm_throw) "\n"
     "ldr r6, [sp, #0x2c]" "\n"
     "ldr r5, [sp, #0x28]" "\n"
     "ldr r4, [sp, #0x24]" "\n"
@@ -554,7 +560,7 @@ SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
     "mov lr, r6" "\n"
     "add r8, pc, #4" "\n"
     "str r8, [sp, #-4]!" "\n"
-    "b " SYMBOL_STRING(cti_vm_throw) "\n"
+    "b " SYMBOL_STRING_RELOCATION(cti_vm_throw) "\n"
 
 // Both has the same return sequence
 ".globl " SYMBOL_STRING(ctiOpThrowNotCaught) "\n"

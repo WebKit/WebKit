@@ -1,3 +1,16 @@
+2009-10-06  Priit Laes  <plaes@plaes.org>
+
+        Reviewed by Gavin Barraclough.
+
+        Linking fails with "relocation R_X86_64_PC32 against symbol
+        `cti_vm_throw'"
+        https://bugs.webkit.org/show_bug.cgi?id=28422
+
+        * jit/JITStubs.cpp:
+        Mark cti_vm_throw symbol as PLT-indirect symbol, so it doesn't end up
+        in text segment causing relocation errors on amd64 architecture.
+        Introduced new define SYMBOL_STRING_RELOCATION for such symbols.
+
 2009-10-06  Oliver Hunt  <oliver@apple.com>
 
         Windows linking fix
