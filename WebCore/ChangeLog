@@ -1,3 +1,28 @@
+2009-10-06  David Levin  <levin@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [Chromium] Need to adjust MessagePort, etc. code for the post clone work done.
+        https://bugs.webkit.org/show_bug.cgi?id=30147
+
+        No change in functionality so no new tests.
+
+        * WebCore.gypi:
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/v8/SerializedScriptValue.h: Added.
+         A very simple implementation of SerializedScriptValue
+         that only works for strings.
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8DedicatedWorkerContextCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8MessageEventCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8MessagePortCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8WorkerCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+
 2009-10-06  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Brady Eidson.

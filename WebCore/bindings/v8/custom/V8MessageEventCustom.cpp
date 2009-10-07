@@ -30,6 +30,7 @@
 
 #include "config.h"
 #include "MessageEvent.h"
+#include "SerializedScriptValue.h"
 
 #include "V8Binding.h"
 #include "V8CustomBinding.h"
@@ -62,7 +63,7 @@ CALLBACK_FUNC_DECL(MessageEventInitMessageEvent)
     String typeArg = v8ValueToWebCoreString(args[0]);
     bool canBubbleArg = args[1]->BooleanValue();
     bool cancelableArg = args[2]->BooleanValue();
-    String dataArg = v8ValueToWebCoreString(args[3]);
+    RefPtr<SerializedScriptValue> dataArg = SerializedScriptValue::create(v8ValueToWebCoreString(args[3]));
     String originArg = v8ValueToWebCoreString(args[4]);
     String lastEventIdArg = v8ValueToWebCoreString(args[5]);
     DOMWindow* sourceArg = V8DOMWindow::HasInstance(args[6]) ? V8DOMWrapper::convertToNativeObject<DOMWindow>(V8ClassIndex::DOMWINDOW, v8::Handle<v8::Object>::Cast(args[6])) : 0;
@@ -73,7 +74,7 @@ CALLBACK_FUNC_DECL(MessageEventInitMessageEvent)
         if (!getMessagePortArray(args[7], *portArray))
             return v8::Undefined();
     }
-    event->initMessageEvent(typeArg, canBubbleArg, cancelableArg, dataArg, originArg, lastEventIdArg, sourceArg, portArray.release());
+    event->initMessageEvent(typeArg, canBubbleArg, cancelableArg, dataArg.release(), originArg, lastEventIdArg, sourceArg, portArray.release());
     return v8::Undefined();
   }
 

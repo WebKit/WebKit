@@ -36,6 +36,7 @@
 
 #include "ExceptionCode.h"
 #include "Frame.h"
+#include "SerializedScriptValue.h"
 #include "V8Binding.h"
 #include "V8CustomBinding.h"
 #include "V8MessagePortCustom.h"
@@ -90,14 +91,14 @@ CALLBACK_FUNC_DECL(WorkerPostMessage)
 {
     INC_STATS("DOM.Worker.postMessage");
     Worker* worker = V8DOMWrapper::convertToNativeObject<Worker>(V8ClassIndex::WORKER, args.Holder());
-    String message = toWebCoreString(args[0]);
+    RefPtr<SerializedScriptValue> message = SerializedScriptValue::create(toWebCoreString(args[0]));
     MessagePortArray portArray;
     if (args.Length() > 1) {
         if (!getMessagePortArray(args[1], portArray))
             return v8::Undefined();
     }
     ExceptionCode ec = 0;
-    worker->postMessage(message, &portArray, ec);
+    worker->postMessage(message.release(), &portArray, ec);
     return throwError(ec);
 }
 

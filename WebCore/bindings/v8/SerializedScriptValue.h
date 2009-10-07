@@ -28,35 +28,50 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef SerializedScriptValue_h
+#define SerializedScriptValue_h
 
-#if ENABLE(WORKERS)
-
-#include "WorkerContextExecutionProxy.h"
-
-#include "DedicatedWorkerContext.h"
+#include "ScriptValue.h"
 #include "V8Binding.h"
-#include "V8MessagePortCustom.h"
-#include "V8Proxy.h"
-#include "V8WorkerContextEventListener.h"
+#include <v8.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-CALLBACK_FUNC_DECL(DedicatedWorkerContextPostMessage)
-{
-    INC_STATS(L"DOM.DedicatedWorkerContext.postMessage");
-    DedicatedWorkerContext* workerContext = V8DOMWrapper::convertToNativeObject<DedicatedWorkerContext>(V8ClassIndex::DEDICATEDWORKERCONTEXT, args.Holder());
-    RefPtr<SerializedScriptValue> message = SerializedScriptValue::create(v8ValueToWebCoreString(args[0]));
-    MessagePortArray portArray;
-    if (args.Length() > 1) {
-        if (!getMessagePortArray(args[1], portArray))
-            return v8::Undefined();
+class SerializedScriptValue : public RefCounted<SerializedScriptValue> {
+public:
+    static PassRefPtr<SerializedScriptValue> create(String string)
+    {
+        return adoptRef(new SerializedScriptValue(string));
     }
-    ExceptionCode ec = 0;
-    workerContext->postMessage(message.release(), &portArray, ec);
-    return throwError(ec);
-}
+
+    static PassRefPtr<SerializedScriptValue> create()
+    {
+        return adoptRef(new SerializedScriptValue());
+    }
+
+    PassRefPtr<SerializedScriptValue> release()
+    {
+        RefPtr<SerializedScriptValue> result = adoptRef(new SerializedScriptValue(m_data));
+        m_data = String();
+        return result.release();
+    }
+
+    String toString()
+    {
+        return m_data;
+    }
+
+private:
+    SerializedScriptValue(String string)
+        : m_data(string)
+    {
+    }
+
+    SerializedScriptValue() { }
+    String m_data;
+};
 
 } // namespace WebCore
 
-#endif // ENABLE(WORKERS)
+#endif // SerializedScriptValue_h

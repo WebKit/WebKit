@@ -1883,6 +1883,11 @@ sub JSValueToNative
         return "toWebCoreString($value)";
     }
 
+    if ($type eq "SerializedScriptValue") {
+        $implIncludes{"SerializedScriptValue.h"} = 1;
+        return "SerializedScriptValue::create(exec, $value)";
+    }
+
     if ($type eq "NodeFilter") {
         return "V8DOMWrapper::wrapNativeNodeFilter($value)";
     }
@@ -2109,6 +2114,11 @@ sub ReturnNativeToJSValue
 
     if ($type eq "EventListener") {
         return "return V8DOMWrapper::convertEventListenerToV8Object($value)";
+    }
+
+    if ($type eq "SerializedScriptValue") {
+        $implIncludes{"$type.h"} = 1;
+        return "v8String($value->toString())";
     }
 
     if ($type eq "DedicatedWorkerContext" or $type eq "WorkerContext" or $type eq "SharedWorkerContext") {

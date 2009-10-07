@@ -767,6 +767,7 @@
             'bindings/v8/ScriptString.h',
             'bindings/v8/ScriptValue.cpp',
             'bindings/v8/ScriptValue.h',
+            'bindings/v8/SerializedScriptValue.h',
             'bindings/v8/StaticDOMDataStore.cpp',
             'bindings/v8/StaticDOMDataStore.h',
             'bindings/v8/V8AbstractEventListener.cpp',
