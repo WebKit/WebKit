@@ -1,3 +1,19 @@
+2009-10-06  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by NOBODY (Build fix).
+
+        Build and formatting fix.
+
+        * ForwardingHeaders/runtime/ExceptionHelpers.h: Added.
+        * bindings/js/SerializedScriptValue.cpp:
+        * bindings/js/SerializedScriptValue.h:
+        (WebCore::SerializedScriptValueData::operator bool):
+        (WebCore::SerializedScriptValueData::release):
+        (WebCore::SerializedScriptValue::release):
+        (WebCore::SerializedScriptValue::toString):
+        (WebCore::SerializedScriptValue::~SerializedScriptValue):
+        (WebCore::SerializedScriptValue::SerializedScriptValue):
+
 2009-10-05  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

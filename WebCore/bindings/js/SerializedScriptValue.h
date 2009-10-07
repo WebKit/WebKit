@@ -33,8 +33,7 @@ namespace WebCore {
     class SerializedObject;
     class SerializedArray;
 
-    class SharedSerializedData : public RefCounted<SharedSerializedData>
-    {
+    class SharedSerializedData : public RefCounted<SharedSerializedData> {
     public:
         virtual ~SharedSerializedData() { }
         SerializedArray* asArray();
@@ -43,8 +42,7 @@ namespace WebCore {
 
     class SerializedScriptValue;
 
-    class SerializedScriptValueData
-    {
+    class SerializedScriptValueData {
     public:
         enum SerializedType {
             EmptyType,
@@ -125,9 +123,10 @@ namespace WebCore {
             return m_sharedData->asArray();
         }
 
-        operator bool () const { return m_type != EmptyType; }
+        operator bool() const { return m_type != EmptyType; }
 
-        SerializedScriptValueData release() {
+        SerializedScriptValueData release()
+        {
             SerializedScriptValueData result = *this;
             *this = SerializedScriptValueData();
             return result;
@@ -144,8 +143,7 @@ namespace WebCore {
         } m_data;
     };
 
-    class SerializedScriptValue : public RefCounted<SerializedScriptValue>
-    {
+    class SerializedScriptValue : public RefCounted<SerializedScriptValue> {
     public:
         static PassRefPtr<SerializedScriptValue> create(JSC::ExecState* exec, JSC::JSValue value)
         {
@@ -162,14 +160,16 @@ namespace WebCore {
             return adoptRef(new SerializedScriptValue(SerializedScriptValueData()));
         }
 
-        PassRefPtr<SerializedScriptValue> release() {
+        PassRefPtr<SerializedScriptValue> release()
+        {
             PassRefPtr<SerializedScriptValue> result = adoptRef(new SerializedScriptValue(m_value));
             m_value = SerializedScriptValueData();
             result->m_mustCopy = true;
             return result;
         }
 
-        String toString() {
+        String toString()
+        {
             if (m_value.type() != SerializedScriptValueData::StringType)
                 return "";
             return m_value.asString();
@@ -182,18 +182,17 @@ namespace WebCore {
             return m_value.deserialize(exec, m_mustCopy);
         }
 
-        ~SerializedScriptValue()
-        {
-        }
+        ~SerializedScriptValue() {}
+
     private:
         SerializedScriptValue(SerializedScriptValueData value)
             : m_value(value)
             , m_mustCopy(false)
         {
-        }
+
         SerializedScriptValueData m_value;
         bool m_mustCopy;
     };
 }
 
-#endif
+#endif // SerializedScriptValue_h

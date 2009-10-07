@@ -25,7 +25,6 @@
  */
 
 #include "config.h"
-
 #include "SerializedScriptValue.h"
 
 #include <runtime/DateInstance.h>
@@ -36,31 +35,36 @@
 
 using namespace JSC;
 
-namespace WebCore
-{
+namespace WebCore {
 
 class SerializedObject : public SharedSerializedData
 {
 public:
     typedef Vector<RefPtr<StringImpl> > PropertyNameList;
     typedef Vector<SerializedScriptValueData> ValueList;
+
     void set(const Identifier& propertyName, const SerializedScriptValueData& value)
     {
         ASSERT(m_names.size() == m_values.size());
         m_names.append(String(propertyName.ustring()).crossThreadString().impl());
         m_values.append(value);
     }
+
     PropertyNameList& names() { return m_names; }
+
     ValueList& values() { return m_values; }
+
     static PassRefPtr<SerializedObject> create()
     {
         return adoptRef(new SerializedObject);
     }
+
     void clear()
     {
         m_names.clear();
         m_values.clear();
     }
+
 private:
     SerializedObject() { }
     PropertyNameList m_names;
