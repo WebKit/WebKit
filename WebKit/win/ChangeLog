@@ -1,3 +1,12 @@
+2009-10-07  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30176
+        <rdar://problem/7281553> Extra information in UA causes problems with gmail
+        
+        * WebKit.vcproj/WebKit.rc: Restore PRODUCTVERSION to build number only. Remove extra space.
+
 2009-10-06  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

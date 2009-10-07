@@ -44,8 +44,8 @@ BEGIN
             VALUE "InternalName", "WebKit"
             VALUE "LegalCopyright", "Copyright Apple Inc. 2003-2009"
             VALUE "OriginalFilename", "WebKit.dll"
-            VALUE "ProductName", " WebKit"
-            VALUE "ProductVersion", __VERSION_TEXT__
+            VALUE "ProductName", "WebKit"
+            VALUE "ProductVersion", __BUILD_NUMBER_SHORT__
         END
     END
     BLOCK "VarFileInfo"
