@@ -1,3 +1,15 @@
+2009-10-06  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Move setLocalLoadPolicy and friends to SecurityOrigin
+        https://bugs.webkit.org/show_bug.cgi?id=30110
+
+        Call the new API.
+
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:usesDocumentViews:]):
+
 2009-10-06  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Mark Rowe.

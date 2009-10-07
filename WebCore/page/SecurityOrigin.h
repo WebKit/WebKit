@@ -143,6 +143,15 @@ namespace WebCore {
         static bool shouldTreatURLAsLocal(const String&);
         static bool shouldTreatURLSchemeAsLocal(const String&);
 
+        enum LocalLoadPolicy {
+            AllowLocalLoadsForAll,  // No restriction on local loads.
+            AllowLocalLoadsForLocalAndSubstituteData,
+            AllowLocalLoadsForLocalOnly,
+        };
+        static void setLocalLoadPolicy(LocalLoadPolicy);
+        static bool restrictAccessToLocal();
+        static bool allowSubstituteDataAccessToLocal();
+
         static void registerURLSchemeAsNoAccess(const String&);
         static bool shouldTreatURLSchemeAsNoAccess(const String&);
 

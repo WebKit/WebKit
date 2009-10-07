@@ -4239,7 +4239,7 @@ void Document::initSecurityContext()
     m_cookieURL = url;
     ScriptExecutionContext::setSecurityOrigin(SecurityOrigin::create(url));
 
-    if (FrameLoader::allowSubstituteDataAccessToLocal()) {
+    if (SecurityOrigin::allowSubstituteDataAccessToLocal()) {
         // If this document was loaded with substituteData, then the document can
         // load local resources.  See https://bugs.webkit.org/show_bug.cgi?id=16756
         // and https://bugs.webkit.org/show_bug.cgi?id=19760 for further

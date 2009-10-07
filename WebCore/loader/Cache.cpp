@@ -34,6 +34,7 @@
 #include "FrameView.h"
 #include "Image.h"
 #include "ResourceHandle.h"
+#include "SecurityOrigin.h"
 #include <stdio.h>
 #include <wtf/CurrentTime.h>
 
@@ -104,7 +105,7 @@ CachedResource* Cache::requestResource(DocLoader* docLoader, CachedResource::Typ
     if (resource && requestIsPreload && !resource->isPreloaded())
         return 0;
     
-    if (FrameLoader::restrictAccessToLocal() && !FrameLoader::canLoad(url, String(), docLoader->doc())) {
+    if (SecurityOrigin::restrictAccessToLocal() && !FrameLoader::canLoad(url, String(), docLoader->doc())) {
         Document* doc = docLoader->doc();
         if (doc && !requestIsPreload)
             FrameLoader::reportLocalLoadFailed(doc->frame(), url.string());

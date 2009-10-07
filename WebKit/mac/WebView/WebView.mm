@@ -663,11 +663,11 @@ static bool runningTigerMail()
 
     if (!WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_LOCAL_RESOURCE_SECURITY_RESTRICTION)) {
         // Originally, we allowed all local loads.
-        FrameLoader::setLocalLoadPolicy(FrameLoader::AllowLocalLoadsForAll);
+        SecurityOrigin::setLocalLoadPolicy(SecurityOrigin::AllowLocalLoadsForAll);
     } else if (!WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_MORE_STRICT_LOCAL_RESOURCE_SECURITY_RESTRICTION)) {
         // Later, we allowed local loads for local URLs and documents loaded
         // with substitute data.
-        FrameLoader::setLocalLoadPolicy(FrameLoader::AllowLocalLoadsForLocalAndSubstituteData);
+        SecurityOrigin::setLocalLoadPolicy(SecurityOrigin::AllowLocalLoadsForLocalAndSubstituteData);
     }
 
     if (!WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITHOUT_CONTENT_SNIFFING_FOR_FILE_URLS))

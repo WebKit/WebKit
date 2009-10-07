@@ -1,3 +1,28 @@
+2009-10-06  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Move setLocalLoadPolicy and friends to SecurityOrigin
+        https://bugs.webkit.org/show_bug.cgi?id=30110
+
+        These have more to do with security policies than with loading frames.
+
+        * WebCore.base.exp:
+        * dom/Document.cpp:
+        (WebCore::Document::initSecurityContext):
+        * loader/Cache.cpp:
+        (WebCore::Cache::requestResource):
+        * loader/FrameLoader.cpp:
+        * loader/FrameLoader.h:
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::create):
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::setLocalLoadPolicy):
+        (WebCore::SecurityOrigin::restrictAccessToLocal):
+        (WebCore::SecurityOrigin::allowSubstituteDataAccessToLocal):
+        * page/SecurityOrigin.h:
+        (WebCore::SecurityOrigin::):
+
 2009-10-06  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Brady Eidson.

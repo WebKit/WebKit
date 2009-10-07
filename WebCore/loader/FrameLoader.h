@@ -314,15 +314,6 @@ namespace WebCore {
         HistoryItem* currentHistoryItem();
         void setCurrentHistoryItem(PassRefPtr<HistoryItem>);
 
-        enum LocalLoadPolicy {
-            AllowLocalLoadsForAll,  // No restriction on local loads.
-            AllowLocalLoadsForLocalAndSubstituteData,
-            AllowLocalLoadsForLocalOnly,
-        };
-        static void setLocalLoadPolicy(LocalLoadPolicy);
-        static bool restrictAccessToLocal();
-        static bool allowSubstituteDataAccessToLocal();
-
         bool committingFirstRealLoad() const { return !m_creatingInitialEmptyDocument && !m_committedFirstRealDocumentLoad; }
         bool committedFirstRealDocumentLoad() const { return m_committedFirstRealDocumentLoad; }
 
