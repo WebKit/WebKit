@@ -45,6 +45,7 @@ class Reviewer(Committer):
 # All reviewers are committers, so this list is only of committers
 # who are not reviewers.
 committers_unable_to_review = [
+    Committer("Aaron Boodman", "aa@chromium.org"),
     Committer("Adam Langley", "agl@chromium.org"),
     Committer("Albert J. Wong", "ajwong@chromium.org"),
     Committer("Ben Murdoch", "benm@google.com"),
