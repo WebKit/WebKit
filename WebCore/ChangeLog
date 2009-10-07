@@ -1,3 +1,19 @@
+2009-10-06  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Brady Eidson.
+
+        Fix for <rdar://problem/7271202>
+        Dispatch resource load delegate functions for the media element.
+        Since we don't get the required callbacks from the media engine,
+        just fake the parameters to the delegate functions as best as possible.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::loadResource):
+        (WebCore::HTMLMediaElement::isSafeToLoadURL):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::willLoadMediaElementURL):
+        * loader/FrameLoader.h:
+
 2009-10-06  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY (Build fix).

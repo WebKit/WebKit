@@ -565,9 +565,20 @@ void HTMLMediaElement::loadNextSourceChild()
     loadResource(mediaURL, contentType);
 }
 
-void HTMLMediaElement::loadResource(const KURL& url, ContentType& contentType)
+void HTMLMediaElement::loadResource(const KURL& initialURL, ContentType& contentType)
 {
-    ASSERT(isSafeToLoadURL(url, Complain));
+    ASSERT(isSafeToLoadURL(initialURL, Complain));
+
+    Frame* frame = document()->frame();
+    if (!frame)
+        return;
+    FrameLoader* loader = frame->loader();
+    if (!loader)
+        return;
+
+    KURL url(initialURL);
+    if (!loader->willLoadMediaElementURL(url))
+        return;
 
     // The resource fetch algorithm 
     m_networkState = NETWORK_LOADING;
@@ -606,7 +617,7 @@ bool HTMLMediaElement::isSafeToLoadURL(const KURL& url, InvalidSourceAction acti
     FrameLoader* loader = frame ? frame->loader() : 0;
 
     // don't allow remote to local urls, and check with the frame loader client.
-    if (!loader || !SecurityOrigin::canLoad(url, String(), document()) || !loader->client()->shouldLoadMediaElementURL(url)) {
+    if (!loader || !SecurityOrigin::canLoad(url, String(), document())) {
         if (actionIfInvalid == Complain)
             FrameLoader::reportLocalLoadFailed(frame, url.string());
         return false;
