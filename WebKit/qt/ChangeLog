@@ -1,3 +1,11 @@
+2009-10-07  Volker Hilsheimer  <volker.hilsheimer@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Doc: Document HTML and status as properties.
+
+        * Api/qgraphicswebview.cpp:
+
 2009-10-07  Martin Smith  <msmith@trolltech.com>
 
         Reviewed by Simon Hausmann.

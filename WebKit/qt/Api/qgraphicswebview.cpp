@@ -403,7 +403,8 @@ void QGraphicsWebView::setGeometry(const QRectF& rect)
 }
 
 /*!
-    \brief The load status message associated to the web graphicsitem
+    \property QGraphicsWebView::status
+    \brief the load status message.
 
     Provides the latest status message set during the load of a URL.
     Commonly shown by Status Bar widgets.
@@ -503,14 +504,15 @@ void QGraphicsWebView::load(const QNetworkRequest& request,
 }
 
 /*!
-    Sets the content of the web graphicsitem to the specified \a html.
+    \property QGraphicsWebView::html
+    This property provides an HTML interface to the text in the webview.
 
-    External objects such as stylesheets or images referenced in the HTML
-    document are located relative to \a baseUrl.
+    When setting this property, external objects such as stylesheets or images
+    referenced in the HTML document are located relative to \a baseUrl.
 
     The \a html is loaded immediately; external objects are loaded asynchronously.
 
-    When using this method, WebKit assumes that external resources such as
+    When using these methods, WebKit assumes that external resources such as
     JavaScript programs or style sheets are encoded in UTF-8 unless otherwise
     specified. For example, the encoding of an external script can be specified
     through the charset attribute of the HTML script tag. Alternatively, the
