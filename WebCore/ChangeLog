@@ -1,3 +1,16 @@
+2009-10-07  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Make plugins work with beforeload.
+
+        Added fast/dom/beforeload/flash-before-load.html
+
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::parseMappedAttribute):
+        * rendering/RenderPartObject.cpp:
+        (WebCore::RenderPartObject::updateWidget):
+
 2009-10-07  Vitaly Repeshko  <vitalyr@chromium.org>
 
         Reviewed by Adam Barth.

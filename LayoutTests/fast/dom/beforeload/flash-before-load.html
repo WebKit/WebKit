@@ -1,0 +1,28 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<script>
+function print(message, color) 
+{
+    var paragraph = document.createElement("div");
+    paragraph.appendChild(document.createTextNode(message));
+    paragraph.style.fontFamily = "monospace";
+    if (color)
+        paragraph.style.color = color;
+    document.getElementById("console").appendChild(paragraph);
+}
+</script>
+</head>
+<body>
+<div id="console"></div>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+</script>
+
+<object id="plugin" onbeforeload="return false" type="application/x-shockwave-flash" data="../../../plugins/resources/simple_blank.swf"
+width="300" height="150">
+<span style="font-family:monospace; color:green">PASS</span>
+</object>
+
+</body>
+</html>

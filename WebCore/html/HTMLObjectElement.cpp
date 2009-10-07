@@ -95,9 +95,11 @@ void HTMLObjectElement::parseMappedAttribute(MappedAttribute *attr)
         m_classId = val;
         if (renderer())
           m_needWidgetUpdate = true;
-    } else if (attr->name() == onloadAttr) {
+    } else if (attr->name() == onloadAttr)
         setAttributeEventListener(eventNames().loadEvent, createAttributeEventListener(this, attr));
-    } else if (attr->name() == nameAttr) {
+    else if (attr->name() == onbeforeloadAttr)
+        setAttributeEventListener(eventNames().beforeloadEvent, createAttributeEventListener(this, attr));
+    else if (attr->name() == nameAttr) {
         const AtomicString& newName = attr->value();
         if (isDocNamedItem() && inDocument() && document()->isHTMLDocument()) {
             HTMLDocument* document = static_cast<HTMLDocument*>(this->document());
