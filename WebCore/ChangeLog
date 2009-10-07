@@ -1,3 +1,21 @@
+2009-10-07  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Dual lines in css2.1 layout tests do not match:
+        https://bugs.webkit.org/show_bug.cgi?id=23262
+
+        Now we can put a counter node as the next sibling of a reset node.
+        Re-layout the counter content when the count is updated.
+
+        Tests: fast/css/counters/t1204-increment-00-c-o.html
+               fast/css/counters/t1204-increment-01-c-o.html
+
+        * rendering/CounterNode.cpp:
+        (WebCore::CounterNode::recount):
+        * rendering/RenderCounter.cpp:
+        (WebCore::findPlaceForCounter):
+
 2009-10-06  Xan Lopez  <xlopez@igalia.com>
 
         Try to fix the GTK+ build.

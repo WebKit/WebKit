@@ -143,13 +143,19 @@ static bool findPlaceForCounter(RenderObject* object, const AtomicString& counte
     RenderObject* resetCandidate = isReset ? object->parent() : previousSiblingOrParent(object);
     RenderObject* prevCounterCandidate = object;
     CounterNode* candidateCounter = 0;
+    // When a reset counter is chosen as candidateCounter, we'll
+    // decide the new node should be a child of the reset node or a
+    // sibling or the reset node. This flag controls it.
+    bool createChildForReset = true;
     while ((prevCounterCandidate = prevCounterCandidate->previousInPreOrder())) {
         CounterNode* c = counter(prevCounterCandidate, counterName, false);
         if (prevCounterCandidate == resetCandidate) {
-            if (!candidateCounter)
+            if (!candidateCounter) {
                 candidateCounter = c;
+                createChildForReset = true;
+            }
             if (candidateCounter) {
-                if (candidateCounter->isReset()) {
+                if (createChildForReset && candidateCounter->isReset()) {
                     parent = candidateCounter;
                     previousSibling = 0;
                 } else {
@@ -160,10 +166,19 @@ static bool findPlaceForCounter(RenderObject* object, const AtomicString& counte
             }
             resetCandidate = previousSiblingOrParent(resetCandidate);
         } else if (c) {
-            if (c->isReset())
-                candidateCounter = 0;
-            else if (!candidateCounter)
+            if (c->isReset()) {
+                if (c->parent()) {
+                    // The new node may be the next sibling of this reset node.
+                    createChildForReset = false;
+                    candidateCounter = c;
+                } else {
+                    createChildForReset = true;
+                    candidateCounter = 0;
+                }
+            } else if (!candidateCounter) {
+                createChildForReset = true;
                 candidateCounter = c;
+            }
         }
     }
 

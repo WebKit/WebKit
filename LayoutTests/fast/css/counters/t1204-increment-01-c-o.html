@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+ <head>
+  <title>CSS 2.1 Test Suite: dynamic changes to 'counter-increment'</title>
+  <style type="text/css">
+
+  #test, .reset { counter-reset: c; }
+  .increment:before { content: counters(c, ".") "-"; }
+  .increment { counter-increment: c; }
+
+  </style>
+  <script type="text/javascript">
+
+  if (window.layoutTestController)
+      layoutTestController.waitUntilDone();
+
+  function run() {
+      var t = document.getElementById("test");
+      t.removeChild(t.childNodes.item(1));
+
+      if (window.layoutTestController)
+          layoutTestController.notifyDone();
+  }
+
+  // We cannot use dumpAsText() because the counters are CSS properties and
+  // they aren't dumped by the function. Let's use render tree...
+  </script>
+ </head>
+
+ <!-- This test checks if the counters work properly when some elements are
+ added/removed *after* the first rendering finishes. If we put the script in
+ <body>, this only checks the results of first rendering and this isn't
+ the purpose of this test. That's why we use timeout for this test. -->
+ <body onload="setTimeout('run()', 0)">
+
+ <p>The following two lines should be the same:</p>
+
+ <div id="test"><span class="increment"></span><span class="increment">FAIL-</span><span class="increment"></span><span class="increment"></span></div>
+
+ <div id="reference">1-2-3-</div>
+
+ </body>
+</html>
