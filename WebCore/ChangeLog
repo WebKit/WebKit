@@ -1,3 +1,12 @@
+2009-10-07  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        Do not create valid QColor's for invalid WebCore::Color's.
+
+        * platform/graphics/qt/ColorQt.cpp:
+        (WebCore::Color::operator QColor):
+
 2009-10-07  Janne Koskinen  <janne.p.koskinen@digia.com>
 
         Reviewed by Simon Hausmann.
