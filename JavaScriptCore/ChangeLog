@@ -1,3 +1,11 @@
+2009-10-06  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by NOBODY (build fix).
+
+        Windows build fix.
+
+        * runtime/DateInstance.cpp:
+
 2009-10-05  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

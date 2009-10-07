@@ -22,6 +22,8 @@
 #include "config.h"
 #include "DateInstance.h"
 
+#include "JSGlobalObject.h"
+
 #include <math.h>
 #include <wtf/DateMath.h>
 #include <wtf/MathExtras.h>
