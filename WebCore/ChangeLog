@@ -1,3 +1,14 @@
+2009-10-06  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Removed unused member variable from FrameLoader
+        https://bugs.webkit.org/show_bug.cgi?id=30146
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::FrameLoader):
+        * loader/FrameLoader.h:
+
 2009-10-06  David Levin  <levin@chromium.org>
 
         Reviewed by NOBODY (build fix).
