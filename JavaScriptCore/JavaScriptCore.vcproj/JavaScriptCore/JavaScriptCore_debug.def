@@ -166,7 +166,6 @@ EXPORTS
     ?hasTransition@Structure@JSC@@QAE_NPAURep@UString@2@I@Z
     ?heap@Heap@JSC@@SAPAV12@VJSValue@2@@Z
     ?increment@RefCountedLeakCounter@WTF@@QAEXXZ
-    ?info@DateInstance@JSC@@2UClassInfo@2@B
     ?init@JSGlobalObject@JSC@@AAEXPAVJSObject@2@@Z
     ?initializeMainThread@WTF@@YAXXZ
     ?initializeThreading@JSC@@YAXXZ

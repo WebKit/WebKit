@@ -1,3 +1,20 @@
+2009-10-07  Adam Roben  <aroben@apple.com>
+
+        Export DateInstance::info in a way that works on Windows
+
+        Fixes <http://webkit.org/b/30171>
+        fast/dom/Window/window-postmessage-clone.html fails on Windows
+
+        Reviewed by Anders Carlsson.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore_debug.def:
+        Removed the export of DateInstance::info from here.
+
+        * runtime/DateInstance.h: Use JS_EXPORTDATA to export
+        DateInstance::info, which is the required way of exporting data on
+        Windows.
+
 2009-10-07  Jørgen Lind  <jorgen.lind@nokia.com>
 
         Reviewed by Simon Hausmann.
