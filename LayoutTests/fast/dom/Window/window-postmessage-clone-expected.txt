@@ -1,6 +1,4 @@
-CONSOLE MESSAGE: line 54: RangeError: Maximum call stack size exceeded.
 Tests that we clone object hierarchies
-PASS: 'postMessage(cyclicObject)' threw ReferenceError: Can't find variable: cyclicObject
 PASS: 'postMessage(cyclicObject)' threw TypeError: Cannot post cyclic structures.
 PASS: 'postMessage(cyclicArray)' threw TypeError: Cannot post cyclic structures.
 PASS: 'postMessage(reallyDeepArray)' threw RangeError: Maximum call stack size exceeded.
@@ -16,7 +14,7 @@ PASS: eventData is of type object
 PASS: eventData is 1,2,3 of type object
 PASS: eventData is ,,1 of type object
 PASS: eventData is null of type object
-PASS: eventData is Wed Dec 31 1969 16:00:00 GMT-0800 (PST) of type object
-PASS: eventData is of type object
+PASS: eventData is 2009-02-13T23:31:30.000Z of type object
+PASS: eventData is [object Array](default toString threw RangeError: Maximum call stack size exceeded.) of type object
 PASS: eventData is done of type string
 

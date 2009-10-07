@@ -46,12 +46,24 @@ function equal(actual, expected)
     return true;
 }
 
+function safeToString(o) {
+    if (o instanceof Date)
+        return o.toISOString();
+    if (typeof o !== "object" || !o)
+        return o;
+    try {
+        return o.toString();
+    } catch (e) {
+        return Object.prototype.toString.call(o) + "(default toString threw "+e+")";
+    }
+}
+
 function shouldBe(actual, expected)
 {
     var actualValue = eval(actual);
     var expectedValue = eval(expected);
     if (equal(actualValue, expectedValue))
-        console.innerHTML += "PASS: " + actual + " is " + expectedValue + " of type " + typeof actualValue + "<br>";
+        console.innerHTML += "PASS: " + actual + " is " + safeToString(expectedValue) + " of type " + typeof actualValue + "<br>";
     else
         console.innerHTML += "FAIL: " + actual + " is " + actualValue + " should be " + expectedValue + " of type " + typeof expectedValue + "<br>";
 }
@@ -60,7 +72,7 @@ function onmessage(evt) {
     eventData = evt.data
     shouldBe("eventData", messages.shift());
 
-    if (evt.data == 'done' && window.layoutTestController)
+    if (safeToString(evt.data) == 'done' && window.layoutTestController)
         layoutTestController.notifyDone();
 }
 
@@ -94,8 +106,7 @@ tryPostMessage('[]');
 tryPostMessage('[1,2,3]');
 tryPostMessage('[,,1]');
 tryPostMessage('(function(){})', false, 'null');
-tryPostMessage('new Date(0)');
-tryPostMessage('cyclicObject', true);
+tryPostMessage('new Date(1234567890000)');
 cyclicObject={};
 cyclicObject.self = cyclicObject;
 tryPostMessage('cyclicObject', true);

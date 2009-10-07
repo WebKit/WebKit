@@ -1,3 +1,12 @@
+2009-10-07  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Tidy up postMessage testcase
+
+        * fast/dom/Window/window-postmessage-clone-expected.txt:
+        * fast/dom/Window/window-postmessage-clone.html:
+
 2009-10-07  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Eric Seidel.
