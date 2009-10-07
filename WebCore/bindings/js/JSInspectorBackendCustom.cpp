@@ -122,27 +122,20 @@ JSValue JSInspectorBackend::search(ExecState* exec, const ArgList& args)
 }
 
 #if ENABLE(DATABASE)
-JSValue JSInspectorBackend::databaseTableNames(ExecState* exec, const ArgList& args)
+JSValue JSInspectorBackend::databaseForId(ExecState* exec, const ArgList& args)
 {
     if (args.size() < 1)
         return jsUndefined();
 
-    JSQuarantinedObjectWrapper* wrapper = JSQuarantinedObjectWrapper::asWrapper(args.at(0));
-    if (!wrapper)
+    InspectorController* ic = impl()->inspectorController();
+    if (!ic)
         return jsUndefined();
 
-    Database* database = toDatabase(wrapper->unwrappedObject());
+    Database* database = impl()->databaseForId(args.at(0).toInt32(exec));
     if (!database)
         return jsUndefined();
-
-    MarkedArgumentBuffer result;
-
-    Vector<String> tableNames = database->tableNames();
-    unsigned length = tableNames.size();
-    for (unsigned i = 0; i < length; ++i)
-        result.append(jsString(exec, tableNames[i]));
-
-    return constructArray(exec, result);
+    JSDOMWindow* inspectedWindow = toJSDOMWindow(ic->inspectedPage()->mainFrame());
+    return JSInspectedObjectWrapper::wrap(inspectedWindow->globalExec(), toJS(exec, database));
 }
 #endif
 

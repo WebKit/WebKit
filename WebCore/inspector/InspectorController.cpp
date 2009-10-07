@@ -660,14 +660,14 @@ void InspectorController::populateScriptObjects()
         m_consoleMessages[i]->addToConsole(m_frontend.get());
 
 #if ENABLE(DATABASE)
-    DatabaseResourcesSet::iterator databasesEnd = m_databaseResources.end();
-    for (DatabaseResourcesSet::iterator it = m_databaseResources.begin(); it != databasesEnd; ++it)
-        (*it)->bind(m_frontend.get());
+    DatabaseResourcesMap::iterator databasesEnd = m_databaseResources.end();
+    for (DatabaseResourcesMap::iterator it = m_databaseResources.begin(); it != databasesEnd; ++it)
+        it->second->bind(m_frontend.get());
 #endif
 #if ENABLE(DOM_STORAGE)
-    DOMStorageResourcesSet::iterator domStorageEnd = m_domStorageResources.end();
-    for (DOMStorageResourcesSet::iterator it = m_domStorageResources.begin(); it != domStorageEnd; ++it)
-        (*it)->bind(m_frontend.get());
+    DOMStorageResourcesMap::iterator domStorageEnd = m_domStorageResources.end();
+    for (DOMStorageResourcesMap::iterator it = m_domStorageResources.begin(); it != domStorageEnd; ++it)
+        it->second->bind(m_frontend.get());
 #endif
 
     m_frontend->populateInterface();
@@ -688,14 +688,14 @@ void InspectorController::resetScriptObjects()
         it->second->releaseScriptObject(m_frontend.get(), false);
 
 #if ENABLE(DATABASE)
-    DatabaseResourcesSet::iterator databasesEnd = m_databaseResources.end();
-    for (DatabaseResourcesSet::iterator it = m_databaseResources.begin(); it != databasesEnd; ++it)
-        (*it)->unbind();
+    DatabaseResourcesMap::iterator databasesEnd = m_databaseResources.end();
+    for (DatabaseResourcesMap::iterator it = m_databaseResources.begin(); it != databasesEnd; ++it)
+        it->second->unbind();
 #endif
 #if ENABLE(DOM_STORAGE)
-    DOMStorageResourcesSet::iterator domStorageEnd = m_domStorageResources.end();
-    for (DOMStorageResourcesSet::iterator it = m_domStorageResources.begin(); it != domStorageEnd; ++it)
-        (*it)->unbind();
+    DOMStorageResourcesMap::iterator domStorageEnd = m_domStorageResources.end();
+    for (DOMStorageResourcesMap::iterator it = m_domStorageResources.begin(); it != domStorageEnd; ++it)
+        it->second->unbind();
 #endif
 
     if (m_timelineAgent)
@@ -1110,6 +1110,27 @@ bool InspectorController::timelineEnabled() const
 }
 
 #if ENABLE(DATABASE)
+void InspectorController::selectDatabase(Database* database)
+{
+    if (!m_frontend)
+        return;
+
+    for (DatabaseResourcesMap::iterator it = m_databaseResources.begin(); it != m_databaseResources.end(); ++it) {
+        if (it->second->database() == database) {
+            m_frontend->selectDatabase(it->first);
+            break;
+        }
+    }
+}
+
+Database* InspectorController::databaseForId(int databaseId)
+{
+    DatabaseResourcesMap::iterator it = m_databaseResources.find(databaseId);
+    if (it == m_databaseResources.end())
+        return 0;
+    return it->second->database();
+}
+
 void InspectorController::didOpenDatabase(Database* database, const String& domain, const String& name, const String& version)
 {
     if (!enabled())
@@ -1117,7 +1138,7 @@ void InspectorController::didOpenDatabase(Database* database, const String& doma
 
     RefPtr<InspectorDatabaseResource> resource = InspectorDatabaseResource::create(database, domain, name, version);
 
-    m_databaseResources.add(resource);
+    m_databaseResources.set(resource->id(), resource);
 
     // Resources are only bound while visible.
     if (m_frontend && windowVisible())
@@ -1131,15 +1152,15 @@ void InspectorController::didUseDOMStorage(StorageArea* storageArea, bool isLoca
     if (!enabled())
         return;
 
-    DOMStorageResourcesSet::iterator domStorageEnd = m_domStorageResources.end();
-    for (DOMStorageResourcesSet::iterator it = m_domStorageResources.begin(); it != domStorageEnd; ++it)
-        if ((*it)->isSameHostAndType(frame, isLocalStorage))
+    DOMStorageResourcesMap::iterator domStorageEnd = m_domStorageResources.end();
+    for (DOMStorageResourcesMap::iterator it = m_domStorageResources.begin(); it != domStorageEnd; ++it)
+        if (it->second->isSameHostAndType(frame, isLocalStorage))
             return;
 
     RefPtr<Storage> domStorage = Storage::create(frame, storageArea);
     RefPtr<InspectorDOMStorageResource> resource = InspectorDOMStorageResource::create(domStorage.get(), isLocalStorage, frame);
 
-    m_domStorageResources.add(resource);
+    m_domStorageResources.set(resource->id(), resource);
 
     // Resources are only bound while visible.
     if (m_frontend && windowVisible())
@@ -1155,10 +1176,10 @@ void InspectorController::selectDOMStorage(Storage* storage)
     Frame* frame = storage->frame();
     bool isLocalStorage = (frame->domWindow()->localStorage() == storage);
     int storageResourceId = 0;
-    DOMStorageResourcesSet::iterator domStorageEnd = m_domStorageResources.end();
-    for (DOMStorageResourcesSet::iterator it = m_domStorageResources.begin(); it != domStorageEnd; ++it) {
-        if ((*it)->isSameHostAndType(frame, isLocalStorage)) {
-            storageResourceId = (*it)->id();
+    DOMStorageResourcesMap::iterator domStorageEnd = m_domStorageResources.end();
+    for (DOMStorageResourcesMap::iterator it = m_domStorageResources.begin(); it != domStorageEnd; ++it) {
+        if (it->second->isSameHostAndType(frame, isLocalStorage)) {
+            storageResourceId = it->first;
             break;
         }
     }
@@ -1219,11 +1240,10 @@ void InspectorController::removeDOMStorageItem(long callId, long storageId, cons
 
 InspectorDOMStorageResource* InspectorController::getDOMStorageResourceForId(int storageId)
 {
-    DOMStorageResourcesSet::iterator domStorageEnd = m_domStorageResources.end();
-    for (DOMStorageResourcesSet::iterator it = m_domStorageResources.begin(); it != domStorageEnd; ++it)
-        if ((*it)->id() == storageId)
-            return it->get();
-    return 0;
+    DOMStorageResourcesMap::iterator it = m_domStorageResources.find(storageId);
+    if (it == m_domStorageResources.end())
+        return 0;
+    return it->second.get();
 }
 #endif
 

@@ -281,28 +281,6 @@ void InspectorFrontend::resumedScript()
 }
 #endif
 
-#if ENABLE(DATABASE)
-bool InspectorFrontend::addDatabase(const ScriptObject& dbObject)
-{
-    OwnPtr<ScriptFunctionCall> function(newFunctionCall("addDatabase"));
-    function->appendArgument(dbObject);
-    bool hadException = false;
-    function->call(hadException);
-    return !hadException;
-}
-#endif
-
-#if ENABLE(DOM_STORAGE)
-bool InspectorFrontend::addDOMStorage(const ScriptObject& domStorageObj)
-{
-    OwnPtr<ScriptFunctionCall> function(newFunctionCall("addDOMStorage"));
-    function->appendArgument(domStorageObj);
-    bool hadException = false;
-    function->call(hadException);
-    return !hadException;
-}
-#endif
-
 void InspectorFrontend::setDocument(const ScriptObject& root)
 {
     OwnPtr<ScriptFunctionCall> function(newFunctionCall("setDocument"));
@@ -401,18 +379,40 @@ void InspectorFrontend::didDispatchOnInjectedScript(int callId, const String& re
 }
 
 #if ENABLE(DATABASE)
-void InspectorFrontend::selectDatabase(Database* database)
+bool InspectorFrontend::addDatabase(const ScriptObject& dbObject)
+{
+    OwnPtr<ScriptFunctionCall> function(newFunctionCall("addDatabase"));
+    function->appendArgument(dbObject);
+    bool hadException = false;
+    function->call(hadException);
+    return !hadException;
+}
+
+void InspectorFrontend::selectDatabase(int databaseId)
 {
     OwnPtr<ScriptFunctionCall> function(newFunctionCall("selectDatabase"));
-    ScriptObject quarantinedObject;
-    if (!getQuarantinedScriptObject(database, quarantinedObject))
-        return;
-    function->appendArgument(quarantinedObject);
+    function->appendArgument(databaseId);
+    function->call();
+}
+void InspectorFrontend::didGetDatabaseTableNames(int callId, const ScriptArray& tableNames)
+{
+    OwnPtr<ScriptFunctionCall> function(newFunctionCall("didGetDatabaseTableNames"));
+    function->appendArgument(callId);
+    function->appendArgument(tableNames);
     function->call();
 }
 #endif
 
 #if ENABLE(DOM_STORAGE)
+bool InspectorFrontend::addDOMStorage(const ScriptObject& domStorageObj)
+{
+    OwnPtr<ScriptFunctionCall> function(newFunctionCall("addDOMStorage"));
+    function->appendArgument(domStorageObj);
+    bool hadException = false;
+    function->call(hadException);
+    return !hadException;
+}
+
 void InspectorFrontend::selectDOMStorage(int storageId)
 {
     OwnPtr<ScriptFunctionCall> function(newFunctionCall("selectDOMStorage"));

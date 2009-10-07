@@ -130,7 +130,7 @@ public:
     void stepOutOfFunctionInDebugger();
 #endif
 
-    void dispatchOnInjectedScript(long callId, const String& methodName, const String& arguments);
+    void dispatchOnInjectedScript(long callId, const String& methodName, const String& arguments, bool async);
     void getChildNodes(long callId, long nodeId);
     void setAttribute(long callId, long elementId, const String& name, const String& value);
     void removeAttribute(long callId, long elementId, const String& name);
@@ -150,7 +150,9 @@ public:
     long pushNodePathToFrontend(Node* node, bool selectInUI);
     void addNodesToSearchResult(const String& nodeIds);
 #if ENABLE(DATABASE)
+    Database* databaseForId(long databaseId);
     void selectDatabase(Database* database);
+    void getDatabaseTableNames(long callId, long databaseId);
 #endif
 #if ENABLE(DOM_STORAGE)
     void selectDOMStorage(Storage* storage);
@@ -158,6 +160,7 @@ public:
     void setDOMStorageItem(long callId, long storageId, const String& key, const String& value);
     void removeDOMStorageItem(long callId, long storageId, const String& key);
 #endif
+    void reportDidDispatchOnInjectedScript(long callId, const String& result, bool isException);
     void didEvaluateForTestInFrontend(long callId, const String& jsonResult);
 
 private:

@@ -41,9 +41,12 @@ InjectedScript.reset = function()
 
 InjectedScript.reset();
 
-InjectedScript.dispatch = function(methodName, args)
+InjectedScript.dispatch = function(methodName, args, callId)
 {
-    var result = InjectedScript[methodName].apply(InjectedScript, JSON.parse(args));
+    var argsArray = JSON.parse(args);
+    if (callId)
+        argsArray.splice(0, 0, callId);  // Methods that run asynchronously have a call back id parameter.
+    var result = InjectedScript[methodName].apply(InjectedScript, argsArray);
     if (typeof result === "undefined") {
         InjectedScript._window().console.error("Web Inspector error: InjectedScript.%s returns undefined", methodName);
         result = null;
@@ -1039,6 +1042,45 @@ InjectedScript.CallFrameProxy.prototype = {
         }
         return scopeChainProxy;
     }
+}
+
+InjectedScript.executeSql = function(callId, databaseId, query)
+{
+    function successCallback(tx, result)
+    {
+        var rows = result.rows;
+        var result = [];
+        var length = rows.length;
+        for (var i = 0; i < length; ++i) {
+            var data = {};
+            result.push(data);
+            var row = rows.item(i);
+            for (var columnIdentifier in row) {
+                // FIXME: (Bug 19439) We should specially format SQL NULL here
+                // (which is represented by JavaScript null here, and turned
+                // into the string "null" by the String() function).
+                var text = row[columnIdentifier];
+                data[columnIdentifier] = String(text);
+            }
+        }
+        InspectorController.reportDidDispatchOnInjectedScript(callId, JSON.stringify(result), false);
+    }
+
+    function errorCallback(tx, error)
+    {
+        InspectorController.reportDidDispatchOnInjectedScript(callId, JSON.stringify(error), false);
+    }
+
+    function queryTransaction(tx)
+    {
+        tx.executeSql(query, null, InspectorController.wrapCallback(successCallback), InspectorController.wrapCallback(errorCallback));
+    }
+
+    var database = InspectorController.databaseForId(databaseId);
+    if (!database)
+        errorCallback(null, { code : 2 });  // Return as unexpected version.
+    database.transaction(InspectorController.wrapCallback(queryTransaction), InspectorController.wrapCallback(errorCallback));
+    return true;
 }
 
 Object.type = function(obj)

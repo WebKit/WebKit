@@ -158,12 +158,12 @@ WebInspector.StoragePanel.prototype = {
             this.sessionStorageListTreeElement.appendChild(domStorageTreeElement);
     },
 
-    selectDatabase: function(db)
+    selectDatabase: function(databaseId)
     {
         var database;
         for (var i = 0, len = this._databases.length; i < len; ++i) {
             database = this._databases[i];
-            if (database.isDatabase(db)) {
+            if (database.id === databaseId) {
                 this.showDatabase(database);
                 database._databasesTreeElement.select();
                 return;
@@ -297,16 +297,15 @@ WebInspector.StoragePanel.prototype = {
         database.getTableNames(tableNamesCallback);
     },
 
-    dataGridForResult: function(result)
+    dataGridForResult: function(rows)
     {
-        if (!result.rows.length)
+        if (!rows.length)
             return null;
 
         var columns = {};
         var numColumns = 0;
 
-        var rows = result.rows;
-        for (var columnIdentifier in rows.item(0)) {
+        for (var columnIdentifier in rows[0]) {
             var column = {};
             column.width = columnIdentifier.length;
             column.title = columnIdentifier;
@@ -320,12 +319,9 @@ WebInspector.StoragePanel.prototype = {
         for (var i = 0; i < length; ++i) {
             var data = {};
 
-            var row = rows.item(i);
+            var row = rows[i];
             for (var columnIdentifier in row) {
-                // FIXME: (Bug 19439) We should specially format SQL NULL here
-                // (which is represented by JavaScript null here, and turned
-                // into the string "null" by the String() function).
-                var text = String(row[columnIdentifier]);
+                var text = row[columnIdentifier];
                 data[columnIdentifier] = text;
                 if (text.length > columns[columnIdentifier].width)
                     columns[columnIdentifier].width = text.length;

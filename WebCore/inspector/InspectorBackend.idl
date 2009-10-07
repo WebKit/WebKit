@@ -52,8 +52,9 @@ module core {
         boolean addSourceToFrame(in DOMString mimeType, in DOMString sourceValue, in Node frame);
         [Custom] void search(in Node node, in DOMString query);
 #if defined(ENABLE_DATABASE) && ENABLE_DATABASE
-        [Custom] DOMObject databaseTableNames(in Database database);
+        void getDatabaseTableNames(in long callId, in long databaseId);
 #endif
+
         [Custom] DOMObject setting(in DOMString key);
         [Custom] void setSetting(in DOMString key, in DOMObject  value);
         [Custom] DOMWindow inspectedWindow();
@@ -101,7 +102,7 @@ module core {
 
         [Custom] Array profiles();
 #endif
-        void dispatchOnInjectedScript(in long callId, in DOMString methodName, in DOMString arguments);
+        void dispatchOnInjectedScript(in long callId, in DOMString methodName, in DOMString arguments, in boolean async);
         void getChildNodes(in long callId, in long nodeId);
         void setAttribute(in long callId, in long elementId, in DOMString name, in DOMString value);
         void removeAttribute(in long callId, in long elementId, in DOMString name);
@@ -113,6 +114,7 @@ module core {
         void deleteCookie(in DOMString cookieName);
 
         // Called from InjectedScript.
+        // TODO: extract into a separate IDL.
         [Custom] DOMObject nodeForId(in long nodeId);
         [Custom] long wrapObject(in DOMObject object, in DOMString objectGroup);
         [Custom] DOMObject unwrapObject(in long objectId);
@@ -121,6 +123,7 @@ module core {
         void addNodesToSearchResult(in DOMString nodeIds);
 #if defined(ENABLE_DATABASE) && ENABLE_DATABASE
         [Custom] void selectDatabase(in DOMObject database);
+        [Custom] DOMObject databaseForId(in long databaseId);
 #endif
 #if defined(ENABLE_DOM_STORAGE) && ENABLE_DOM_STORAGE
         [Custom] void selectDOMStorage(in DOMObject storage);
@@ -128,6 +131,7 @@ module core {
         void setDOMStorageItem(in long callId, in long storageId, in DOMString key, in DOMString value);
         void removeDOMStorageItem(in long callId, in long storageId, in DOMString key);
 #endif
+        void reportDidDispatchOnInjectedScript(in long callId, in DOMString result, in boolean isException);
         void didEvaluateForTestInFrontend(in long callId, in DOMString jsonResult);
     };
 }

@@ -31,6 +31,7 @@
 #include "config.h"
 #include "InspectorBackend.h"
 
+#include "Database.h"
 #include "DOMWindow.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -102,11 +103,17 @@ CALLBACK_FUNC_DECL(InspectorBackendSearch)
 }
 
 #if ENABLE(DATABASE)
-CALLBACK_FUNC_DECL(InspectorBackendDatabaseTableNames)
+CALLBACK_FUNC_DECL(InspectorBackendDatabaseForId)
 {
-    INC_STATS("InspectorBackend.databaseTableNames()");
-    v8::Local<v8::Array> result = v8::Array::New(0);
-    return result;
+    INC_STATS("InspectorBackend.databaseForId()");
+    if (args.Length() < 1)
+        return v8::Undefined();
+
+    InspectorBackend* inspectorBackend = V8DOMWrapper::convertToNativeObject<InspectorBackend>(V8ClassIndex::INSPECTORBACKEND, args.Holder());
+    Database* database = inspectorBackend->databaseForId(args[0]->ToInt32()->Value());
+    if (!database)
+        return v8::Undefined();
+    return V8DOMWrapper::convertToV8Object<Database>(V8ClassIndex::DATABASE, database);
 }
 #endif
 

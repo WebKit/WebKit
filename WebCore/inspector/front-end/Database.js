@@ -26,18 +26,18 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.Database = function(database, domain, name, version)
+WebInspector.Database = function(id, domain, name, version)
 {
-    this._database = database;
-    this.domain = domain;
-    this.name = name;
-    this.version = version;
+    this._id = id;
+    this._domain = domain;
+    this._name = name;
+    this._version = version;
 }
 
 WebInspector.Database.prototype = {
-    isDatabase: function(db)
+    get id()
     {
-        return this._database === db;
+        return this._id;
     },
 
     get name()
@@ -47,8 +47,6 @@ WebInspector.Database.prototype = {
 
     set name(x)
     {
-        if (this._name === x)
-            return;
         this._name = x;
     },
 
@@ -59,8 +57,6 @@ WebInspector.Database.prototype = {
 
     set version(x)
     {
-        if (this._version === x)
-            return;
         this._version = x;
     },
 
@@ -71,8 +67,6 @@ WebInspector.Database.prototype = {
 
     set domain(x)
     {
-        if (this._domain === x)
-            return;
         this._domain = x;
     },
 
@@ -83,31 +77,26 @@ WebInspector.Database.prototype = {
 
     getTableNames: function(callback)
     {
-        var names = InspectorController.databaseTableNames(this._database);
-        function sortingCallback()
+        function sortingCallback(names)
         {
             callback(names.sort());
         }
-        setTimeout(sortingCallback, 0);
+        var callId = WebInspector.Callback.wrap(sortingCallback);
+        InspectorController.getDatabaseTableNames(callId, this._id);
     },
     
     executeSql: function(query, onSuccess, onError)
     {
-        function successCallback(tx, result)
+        function callback(result)
         {
+            if (!(result instanceof Array)) {
+                onError(result);
+                return;
+            }
             onSuccess(result);
         }
-
-        function errorCallback(tx, error)
-        {
-            onError(error);
-        }
-
-        var self = this;
-        function queryTransaction(tx)
-        {
-            tx.executeSql(query, null, InspectorController.wrapCallback(successCallback.bind(self)), InspectorController.wrapCallback(errorCallback.bind(self)));
-        }
-        this._database.transaction(InspectorController.wrapCallback(queryTransaction.bind(this)), InspectorController.wrapCallback(errorCallback.bind(this)));
+        InjectedScriptAccess.executeSql(this._id, query, callback);
     }
 }
+
+WebInspector.didGetDatabaseTableNames = WebInspector.Callback.processCallback;

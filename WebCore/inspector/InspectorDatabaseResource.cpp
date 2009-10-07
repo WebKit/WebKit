@@ -41,8 +41,11 @@
 
 namespace WebCore {
 
+int InspectorDatabaseResource::s_nextUnusedId = 1;
+
 InspectorDatabaseResource::InspectorDatabaseResource(Database* database, const String& domain, const String& name, const String& version)
     : m_database(database)
+    , m_id(s_nextUnusedId++)
     , m_domain(domain)
     , m_name(name)
     , m_version(version)
@@ -59,7 +62,7 @@ void InspectorDatabaseResource::bind(InspectorFrontend* frontend)
     ScriptObject database;
     if (!getQuarantinedScriptObject(m_database.get(), database))
         return;
-    jsonObject.set("database", database);
+    jsonObject.set("id", m_id);
     jsonObject.set("domain", m_domain);
     jsonObject.set("name", m_name);
     jsonObject.set("version", m_version);

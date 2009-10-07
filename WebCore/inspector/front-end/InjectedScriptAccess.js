@@ -31,7 +31,7 @@
 
 var InjectedScriptAccess = {};
 
-InjectedScriptAccess._installHandler = function(methodName)
+InjectedScriptAccess._installHandler = function(methodName, async)
 {
     InjectedScriptAccess[methodName] = function()
     {
@@ -47,35 +47,37 @@ InjectedScriptAccess._installHandler = function(methodName)
                 WebInspector.console.addMessage(new WebInspector.ConsoleTextMessage("Error dispatching: " + methodName));
         }
         var callId = WebInspector.Callback.wrap(myCallback);
-        InspectorController.dispatchOnInjectedScript(callId, methodName, argsString);
+        InspectorController.dispatchOnInjectedScript(callId, methodName, argsString, !!async);
     };
 }
 
 // InjectedScriptAccess message forwarding puts some constraints on the way methods are imlpemented and called:
 // - Make sure corresponding methods in InjectedScript return non-null and non-undefined values,
 // - Make sure last parameter of all the InjectedSriptAccess.* calls is a callback function.
-InjectedScriptAccess._installHandler("getStyles");
+// We keep these sorted.
+InjectedScriptAccess._installHandler("addInspectedNode");
+InjectedScriptAccess._installHandler("addStyleSelector");
+InjectedScriptAccess._installHandler("applyStyleRuleText");
+InjectedScriptAccess._installHandler("applyStyleText");
+InjectedScriptAccess._installHandler("evaluate");
+InjectedScriptAccess._installHandler("evaluateInCallFrame");
+InjectedScriptAccess._installHandler("getCompletions");
 InjectedScriptAccess._installHandler("getComputedStyle");
 InjectedScriptAccess._installHandler("getInlineStyle");
-InjectedScriptAccess._installHandler("applyStyleText");
+InjectedScriptAccess._installHandler("getProperties");
+InjectedScriptAccess._installHandler("getPrototypes");
+InjectedScriptAccess._installHandler("getStyles");
+InjectedScriptAccess._installHandler("openInInspectedWindow");
+InjectedScriptAccess._installHandler("performSearch");
+InjectedScriptAccess._installHandler("pushNodeToFrontend");
+InjectedScriptAccess._installHandler("searchCanceled");
+InjectedScriptAccess._installHandler("setPropertyValue");
+InjectedScriptAccess._installHandler("setStyleProperty");
 InjectedScriptAccess._installHandler("setStyleText");
 InjectedScriptAccess._installHandler("toggleStyleEnabled");
-InjectedScriptAccess._installHandler("applyStyleRuleText");
-InjectedScriptAccess._installHandler("addStyleSelector");
-InjectedScriptAccess._installHandler("setStyleProperty");
-InjectedScriptAccess._installHandler("getPrototypes");
-InjectedScriptAccess._installHandler("getProperties");
-InjectedScriptAccess._installHandler("setPropertyValue");
-InjectedScriptAccess._installHandler("getCompletions");
-InjectedScriptAccess._installHandler("evaluate");
-InjectedScriptAccess._installHandler("addInspectedNode");
-InjectedScriptAccess._installHandler("pushNodeToFrontend");
-InjectedScriptAccess._installHandler("evaluate");
-InjectedScriptAccess._installHandler("addInspectedNode");
-InjectedScriptAccess._installHandler("pushNodeToFrontend");
-InjectedScriptAccess._installHandler("performSearch");
-InjectedScriptAccess._installHandler("searchCanceled");
-InjectedScriptAccess._installHandler("openInInspectedWindow");
-InjectedScriptAccess._installHandler("evaluateInCallFrame");
+
+// Some methods can't run synchronously even on the injected script side (such as DB transactions).
+// Mark them as asynchronous here.
+InjectedScriptAccess._installHandler("executeSql", true);
 
 WebInspector.didDispatchOnInjectedScript = WebInspector.Callback.processCallback;

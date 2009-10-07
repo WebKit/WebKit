@@ -1,3 +1,68 @@
+2009-10-07  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Migrate database inspection to the injected script-based schema.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29788
+
+        * bindings/js/JSInspectorBackendCustom.cpp:
+        (WebCore::JSInspectorBackend::databaseForId):
+        * bindings/v8/custom/V8CustomBinding.h:
+        * bindings/v8/custom/V8InspectorBackendCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * inspector/InspectorBackend.cpp:
+        (WebCore::InspectorBackend::dispatchOnInjectedScript):
+        (WebCore::InspectorBackend::databaseForId):
+        (WebCore::InspectorBackend::selectDatabase):
+        (WebCore::InspectorBackend::getDatabaseTableNames):
+        (WebCore::InspectorBackend::reportDidDispatchOnInjectedScript):
+        * inspector/InspectorBackend.h:
+        * inspector/InspectorBackend.idl:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::populateScriptObjects):
+        (WebCore::InspectorController::resetScriptObjects):
+        (WebCore::InspectorController::selectDatabase):
+        (WebCore::InspectorController::databaseForId):
+        (WebCore::InspectorController::didOpenDatabase):
+        (WebCore::InspectorController::didUseDOMStorage):
+        (WebCore::InspectorController::selectDOMStorage):
+        (WebCore::InspectorController::getDOMStorageResourceForId):
+        * inspector/InspectorController.h:
+        * inspector/InspectorDatabaseResource.cpp:
+        (WebCore::InspectorDatabaseResource::InspectorDatabaseResource):
+        (WebCore::InspectorDatabaseResource::bind):
+        * inspector/InspectorDatabaseResource.h:
+        (WebCore::InspectorDatabaseResource::database):
+        (WebCore::InspectorDatabaseResource::id):
+        * inspector/InspectorFrontend.cpp:
+        (WebCore::InspectorFrontend::addDatabase):
+        (WebCore::InspectorFrontend::selectDatabase):
+        (WebCore::InspectorFrontend::didGetDatabaseTableNames):
+        (WebCore::InspectorFrontend::addDOMStorage):
+        * inspector/InspectorFrontend.h:
+        * inspector/front-end/Database.js:
+        (WebInspector.Database):
+        (WebInspector.Database.prototype.get id):
+        (WebInspector.Database.prototype.set name):
+        (WebInspector.Database.prototype.set version):
+        (WebInspector.Database.prototype.set domain):
+        (WebInspector.Database.prototype.getTableNames):
+        (WebInspector.Database.prototype.executeSql):
+        * inspector/front-end/InjectedScript.js:
+        (InjectedScript.dispatch):
+        (InjectedScript.executeSql):
+        (InjectedScript.executeSql.errorCallback):
+        (InjectedScript.executeSql.queryTransaction):
+        * inspector/front-end/InjectedScriptAccess.js:
+        (InjectedScriptAccess._installHandler.InjectedScriptAccess.methodName):
+        (InjectedScriptAccess._installHandler):
+        * inspector/front-end/StoragePanel.js:
+        (WebInspector.StoragePanel.prototype.selectDatabase):
+        (WebInspector.StoragePanel.prototype.dataGridForResult):
+        * inspector/front-end/inspector.js:
+        (WebInspector.addDatabase):
+
 2009-10-07  Girish Ramakrishnan  <girish@forwardbias.in>
 
         Reviewed by Simon Hausmann.

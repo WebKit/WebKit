@@ -90,8 +90,8 @@ class InspectorController
 public:
     typedef HashMap<long long, RefPtr<InspectorResource> > ResourcesMap;
     typedef HashMap<RefPtr<Frame>, ResourcesMap*> FrameResourcesMap;
-    typedef HashSet<RefPtr<InspectorDatabaseResource> > DatabaseResourcesSet;
-    typedef HashSet<RefPtr<InspectorDOMStorageResource> > DOMStorageResourcesSet;
+    typedef HashMap<int, RefPtr<InspectorDatabaseResource> > DatabaseResourcesMap;
+    typedef HashMap<int, RefPtr<InspectorDOMStorageResource> > DOMStorageResourcesMap;
     typedef HashMap<String, Vector<String> > ObjectGroupsMap;
 
     typedef enum {
@@ -314,6 +314,10 @@ private:
     void toggleRecordButton(bool);
     void enableDebuggerFromFrontend(bool always);
 #endif
+#if ENABLE(DATABASE)
+    void selectDatabase(Database* database);
+    Database* databaseForId(int databaseId);
+#endif
 #if ENABLE(DOM_STORAGE)
     InspectorDOMStorageResource* getDOMStorageResourceForId(int storageId);
 #endif
@@ -353,10 +357,10 @@ private:
     HashMap<String, double> m_times;
     HashMap<String, unsigned> m_counts;
 #if ENABLE(DATABASE)
-    DatabaseResourcesSet m_databaseResources;
+    DatabaseResourcesMap m_databaseResources;
 #endif
 #if ENABLE(DOM_STORAGE)
-    DOMStorageResourcesSet m_domStorageResources;
+    DOMStorageResourcesMap m_domStorageResources;
 #endif
     ScriptState* m_scriptState;
     bool m_windowVisible;

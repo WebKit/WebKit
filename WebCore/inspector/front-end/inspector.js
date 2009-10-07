@@ -1034,7 +1034,7 @@ WebInspector.removeResource = function(identifier)
 WebInspector.addDatabase = function(payload)
 {
     var database = new WebInspector.Database(
-        payload.database,
+        payload.id,
         payload.domain,
         payload.name,
         payload.version);

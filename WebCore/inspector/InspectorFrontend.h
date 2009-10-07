@@ -95,7 +95,8 @@ namespace WebCore {
 
 #if ENABLE(DATABASE)
         bool addDatabase(const ScriptObject& dbObj);
-        void selectDatabase(Database* database);
+        void selectDatabase(int databaseId);
+        void didGetDatabaseTableNames(int callId, const ScriptArray& tableNames);
 #endif
         
 #if ENABLE(DOM_STORAGE)
