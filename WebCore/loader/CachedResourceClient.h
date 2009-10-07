@@ -25,6 +25,8 @@
 #ifndef CachedResourceClient_h
 #define CachedResourceClient_h
 
+#include <wtf/FastAllocBase.h>
+
 #if ENABLE(XBL)
 namespace XBL {
     class XBLDocument;
@@ -48,7 +50,7 @@ namespace WebCore {
      * inherit from this class and overload one of the 3 functions
      *
      */
-    class CachedResourceClient
+    class CachedResourceClient : public FastAllocBase
     {
     public:
         virtual ~CachedResourceClient() { }

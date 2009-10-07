@@ -1,5 +1,17 @@
 2009-10-07  Zoltan Horvath  <zoltan@webkit.org>
 
+        Rubber-stamped by Eric Seidel.
+
+        Allow custom memory allocation control for WebCore's CachedResourceClient class
+        https://bugs.webkit.org/show_bug.cgi?id=30165
+
+        Inherits CachedResourceClient class from FastAllocBase because (its
+        child class) CSSFontFaceSource has been instantiated by 'new' in WebCore/css/CSSFontFaceSource.h:46.
+
+        * loader/CachedResourceClient.h:
+
+2009-10-07  Zoltan Horvath  <zoltan@webkit.org>
+
         Reviewed by Darin Adler.
 
         Allow custom memory allocation control for WebCore's IdentifierRep 
