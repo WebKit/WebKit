@@ -1,3 +1,9 @@
+2009-10-07  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Fix the Qt build by adding the missing files to the build.
+
+        * WebCore.pro:
+
 2009-10-07  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Xan Lopez.

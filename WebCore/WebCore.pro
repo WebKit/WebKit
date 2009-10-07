@@ -762,6 +762,7 @@ SOURCES += \
     bindings/js/ScriptState.cpp \
     bindings/js/ScriptValue.cpp \
     bindings/js/ScheduledAction.cpp \
+    bindings/js/SerializedScriptValue.cpp \
     bridge/IdentifierRep.cpp \
     bridge/NP_jsobject.cpp \
     bridge/npruntime.cpp \
@@ -1429,6 +1430,7 @@ HEADERS += \
     bindings/js/ScriptSourceProvider.h \
     bindings/js/ScriptState.h \
     bindings/js/ScriptValue.h \
+    bindings/js/SerializedScriptValue.h \
     bindings/js/StringSourceProvider.h \
     bindings/js/WorkerScriptController.h \
     bridge/c/c_class.h \
