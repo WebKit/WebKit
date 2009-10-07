@@ -1,3 +1,14 @@
+2009-10-06  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Jan Alonzo.
+
+        [Layout tests] [Gtk] Gtk DumpRenderTree should use WebKit test fonts
+        https://bugs.webkit.org/show_bug.cgi?id=29689
+
+        Build fix by adding -lfontconfig for DumpRenderTree.
+
+        * GNUmakefile.am:
+
 2009-10-07  Csaba Osztrogonac  <oszi@inf.u-szeged.hu>
 
         Reviewed by Simon Hausmann.

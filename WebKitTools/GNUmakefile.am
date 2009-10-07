@@ -87,7 +87,8 @@ Programs_DumpRenderTree_LDADD = \
 	$(CAIRO_LIBS) \
 	$(GTK_LIBS) \
 	$(GLIB_LIBS) \
-	$(LIBSOUP_LIBS)
+	$(LIBSOUP_LIBS) \
+	$(FREETYPE_LIBS)
 
 Programs_DumpRenderTree_LDFLAGS = \
 	-no-fast-install \
