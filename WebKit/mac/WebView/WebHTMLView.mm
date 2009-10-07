@@ -3196,8 +3196,10 @@ WEBCORE_COMMAND(yankAndSelect)
     if ([[self _webView] _needsOneShotDrawingSynchronization]) {
         // Disable screen updates so that any layer changes committed here
         // don't show up on the screen before the window flush at the end
-        // of the current window display.
-        [[self window] disableScreenUpdatesUntilFlush];
+        // of the current window display, but only if a window flush is actually
+        // going to happen.
+        if ([[self window] viewsNeedDisplay])
+            [[self window] disableScreenUpdatesUntilFlush];
         
         // Make sure any layer changes that happened as a result of layout
         // via -viewWillDraw are committed.
