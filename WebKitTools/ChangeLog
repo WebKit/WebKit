@@ -2,6 +2,15 @@
 
         Reviewed by Gustavo Noronha.
 
+        "delete" in EventSender is the backspace key, not the delete one.
+
+        * DumpRenderTree/gtk/EventSender.cpp:
+        (keyDownCallback):
+
+2009-10-07  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
         getChildrenWithRange expects as last parameter the end index, not
         the length of the range. Correct this and clarify the variable
         names to reflect how the code works.
