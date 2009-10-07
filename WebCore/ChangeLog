@@ -1,3 +1,14 @@
+2009-10-07  Vitaly Repeshko  <vitalyr@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [V8] Protect JS listener object from GC while clearing a property on it.
+        See http://crbug.com/23780.
+        https://bugs.webkit.org/show_bug.cgi?id=30137
+
+        * bindings/v8/V8AbstractEventListener.cpp:
+        (WebCore::V8AbstractEventListener::~V8AbstractEventListener):
+
 2009-10-07  Zoltan Horvath  <zoltan@webkit.org>
 
         Rubber-stamped by Eric Seidel.
