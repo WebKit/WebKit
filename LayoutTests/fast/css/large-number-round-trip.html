@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Round-trip large values</title>
+  <style type="text/css" media="screen">
+    #box {
+      position: absolute;
+    }
+  </style>
+</head>
+<body>
+<div id="box">
+</div>
+<div id="results">
+</div>
+<script type="text/javascript" charset="utf-8">
+  if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+  var box = document.getElementById('box');
+
+  var testValue = "90010000px";
+  box.style.left = testValue;
+
+  var leftValue = window.getComputedStyle(box).left;
+
+  box.style.left = "0px";
+  box.style.left = leftValue;
+  var newLeftValue = window.getComputedStyle(box).left;
+
+  var results = document.getElementById('results');
+  var result;
+  if (leftValue == newLeftValue)
+    result = "PASS: read " + testValue + " back as " + leftValue + ", read again as " + newLeftValue;
+  else
+    result = "FAIL: read " + testValue + " back as " + leftValue + ", read again as " + newLeftValue;
+  results.innerHTML = result;
+</script>
+</body>
+</html>

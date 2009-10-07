@@ -1,5 +1,26 @@
 2009-10-07  Evan Martin  <evan@chromium.org>
 
+        Reviewed by Simon Fraser.
+
+        Add a currently-failing test exhibiting the problem in
+        https://bugs.webkit.org/show_bug.cgi?id=20674:
+
+        When converting very large or small numbers back to strings, exponential
+        notation is used, so a value like 90010000px is returned from
+        getComputedStyle() as 9.001e+07px.
+
+        9.001e+07px does not parse, so such a value cannot be round-tripped.
+
+        This is a particular problem with tranformation matrices, which can often
+        contain very large or small numbers.
+
+        (Test written by Simon Fraser; I've just made it a committable patch.)
+
+        * fast/css/large-number-round-trip-expected.txt: Added.
+        * fast/css/large-number-round-trip.html: Added.
+
+2009-10-07  Evan Martin  <evan@chromium.org>
+
         Reviewed by Darin Adler.
 
         Layout test for verifying that LC_NUMERIC setting doesn't affect
