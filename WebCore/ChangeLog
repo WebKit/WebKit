@@ -1,3 +1,15 @@
+2009-10-07  Janne Koskinen  <janne.p.koskinen@digia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Symbian SBSv2 .data segment adress fix
+        https://bugs.webkit.org/show_bug.cgi?id=30157
+
+        RO-section in qtwebkit.dll exceeds allocated space in SBSv2. Move RW-section
+        base address to start from 0x800000 instead of the toolchain default 0x400000
+
+        * WebCore.pro:
+
 2009-10-07  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
