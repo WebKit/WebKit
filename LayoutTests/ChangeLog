@@ -1,5 +1,14 @@
 2009-10-07  Evan Martin  <evan@chromium.org>
 
+        Reviewed by Adam Roben.
+
+        Windows-specific baselines for some new tests.
+
+        * platform/win/fast/css/large-number-round-trip-expected.txt: Added.
+        * platform/win/fast/css/opacity-float-expected.txt: Copied from LayoutTests/fast/css/opacity-float-expected.txt.
+
+2009-10-07  Evan Martin  <evan@chromium.org>
+
         Reviewed by Simon Fraser.
 
         Add a currently-failing test exhibiting the problem in
