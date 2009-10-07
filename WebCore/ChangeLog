@@ -1,3 +1,9 @@
+2009-10-06  Xan Lopez  <xlopez@igalia.com>
+
+        Try to fix the GTK+ build.
+
+        * GNUmakefile.am:
+
 2009-10-06  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Adam Barth.

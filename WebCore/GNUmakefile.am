@@ -471,6 +471,8 @@ webcore_sources += \
 	WebCore/bindings/js/ScriptString.h \
 	WebCore/bindings/js/ScriptValue.cpp \
 	WebCore/bindings/js/ScriptValue.h \
+	WebCore/bindings/js/SerializedScriptValue.cpp \
+	WebCore/bindings/js/SerializedScriptValue.h \
 	WebCore/bindings/js/StringSourceProvider.h \
 	WebCore/bridge/IdentifierRep.cpp \
 	WebCore/bridge/IdentifierRep.h \
