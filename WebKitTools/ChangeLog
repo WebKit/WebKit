@@ -1,5 +1,12 @@
 2009-10-07  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed.  Import a bunch of committers from the WebKit Team page on
+        the wiki into committers.py.
+
+        * Scripts/modules/committers.py:
+
+2009-10-07  Adam Barth  <abarth@webkit.org>
+
         Unreviewed.  Added Aaron Boodman to committers.py.
 
         * Scripts/modules/committers.py:
