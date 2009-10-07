@@ -1,5 +1,12 @@
 2009-10-06  Oliver Hunt  <oliver@apple.com>
 
+        Windows linking fix
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore_debug.def:
+
+2009-10-06  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by NOBODY (build fix).
 
         Windows build fix.
