@@ -622,6 +622,7 @@ struct DeserializingTreeWalker : public BaseWalker {
     SerializedScriptValueData getProperty(RefPtr<SerializedObject> object, const RefPtr<StringImpl>& propertyName, unsigned propertyIndex)
     {
         ASSERT(object->names()[propertyIndex] == propertyName);
+        UNUSED_PARAM(propertyName);
         return object->values()[propertyIndex];
     }
 
@@ -776,6 +777,7 @@ struct TeardownTreeWalker {
     SerializedScriptValueData getProperty(RefPtr<SerializedObject> object, const RefPtr<StringImpl>& propertyName, unsigned propertyIndex)
     {
         ASSERT(object->names()[propertyIndex] == propertyName);
+        UNUSED_PARAM(propertyName);
         return object->values()[propertyIndex];
     }
 

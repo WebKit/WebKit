@@ -189,6 +189,7 @@ namespace WebCore {
             : m_value(value)
             , m_mustCopy(false)
         {
+        }
 
         SerializedScriptValueData m_value;
         bool m_mustCopy;

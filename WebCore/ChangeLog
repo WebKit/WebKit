@@ -2,6 +2,18 @@
 
         Reviewed by NOBODY (Build fix).
 
+        More build fixes.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::DeserializingTreeWalker::getProperty):
+        (WebCore::TeardownTreeWalker::getProperty):
+        * bindings/js/SerializedScriptValue.h:
+        (WebCore::SerializedScriptValue::SerializedScriptValue):
+
+2009-10-06  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by NOBODY (Build fix).
+
         Build and formatting fix.
 
         * ForwardingHeaders/runtime/ExceptionHelpers.h: Added.
