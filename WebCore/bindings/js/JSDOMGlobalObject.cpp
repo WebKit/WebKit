@@ -51,7 +51,7 @@ void JSDOMGlobalObject::markChildren(MarkStack& markStack)
 
     JSDOMStructureMap::iterator end = structures().end();
     for (JSDOMStructureMap::iterator it = structures().begin(); it != end; ++it)
-        it->second->markAggregate(markStack);
+        markStack.append(it->second->storedPrototype());
 
     JSDOMConstructorMap::iterator end2 = constructors().end();
     for (JSDOMConstructorMap::iterator it2 = constructors().begin(); it2 != end2; ++it2)

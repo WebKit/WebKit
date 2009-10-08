@@ -1,3 +1,10 @@
+2009-10-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Build fix: updated for removal of Structure::markAggregate().
+
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::markChildren):
+
 2009-10-08  Jens Alfke  <snej@chromium.org>
 
         Reviewed by Darin Adler.
