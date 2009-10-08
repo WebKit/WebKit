@@ -2163,41 +2163,9 @@ bool FrameLoader::willLoadMediaElementURL(KURL& url)
     return error.isNull();
 }
 
-void PolicyChecker::handleUnimplementablePolicy(const ResourceError& error)
-{
-    m_delegateIsHandlingUnimplementablePolicy = true;
-    m_frame->loader()->client()->dispatchUnableToImplementPolicy(error);
-    m_delegateIsHandlingUnimplementablePolicy = false;
-}
-
-void PolicyChecker::cannotShowMIMEType(const ResourceResponse& response)
-{
-    handleUnimplementablePolicy(m_frame->loader()->client()->cannotShowMIMETypeError(response));
-}
-
 ResourceError FrameLoader::interruptionForPolicyChangeError(const ResourceRequest& request)
 {
     return m_client->interruptForPolicyChangeError(request);
-}
-
-PolicyChecker::PolicyChecker(Frame* frame)
-    : m_frame(frame)
-    , m_delegateIsDecidingNavigationPolicy(false)
-    , m_delegateIsHandlingUnimplementablePolicy(false)
-    , m_loadType(FrameLoadTypeStandard)
-{
-}
-
-void PolicyChecker::checkNavigationPolicy(const ResourceRequest& newRequest, NavigationPolicyDecisionFunction function, void* argument)
-{
-    checkNavigationPolicy(newRequest, m_frame->loader()->activeDocumentLoader(), 0, function, argument);
-}
-
-void PolicyChecker::checkContentPolicy(const String& MIMEType, ContentPolicyDecisionFunction function, void* argument)
-{
-    m_policyCheck.set(function, argument);
-    m_frame->loader()->client()->dispatchDecidePolicyForMIMEType(&PolicyChecker::continueAfterContentPolicy,
-        MIMEType, m_frame->loader()->activeDocumentLoader()->request());
 }
 
 bool FrameLoader::shouldReloadToHandleUnreachableURL(DocumentLoader* docLoader)
@@ -2851,12 +2819,6 @@ String FrameLoader::generatedMIMETypeForURLScheme(const String& URLScheme)
     return m_client->generatedMIMETypeForURLScheme(URLScheme);
 }
 
-void PolicyChecker::cancelCheck()
-{
-    m_frame->loader()->client()->cancelPolicyCheck();
-    m_policyCheck.clear();
-}
-
 void FrameLoader::didReceiveServerRedirectForProvisionalLoadForFrame()
 {
     m_client->dispatchDidReceiveServerRedirectForProvisionalLoad();
@@ -2976,14 +2938,6 @@ CachePolicy FrameLoader::subresourceCachePolicy() const
     return CachePolicyVerify;
 }
 
-void PolicyChecker::stopCheck()
-{
-    m_frame->loader()->client()->cancelPolicyCheck();
-    PolicyCheck check = m_policyCheck;
-    m_policyCheck.clear();
-    check.cancel();
-}
-
 void FrameLoader::checkLoadCompleteForThisFrame()
 {
     ASSERT(m_client->hasWebView());
@@ -3080,20 +3034,6 @@ void FrameLoader::checkLoadCompleteForThisFrame()
     }
 
     ASSERT_NOT_REACHED();
-}
-
-void PolicyChecker::continueAfterContentPolicy(PolicyAction policy)
-{
-    PolicyCheck check = m_policyCheck;
-    m_policyCheck.clear();
-    check.call(policy);
-}
-
-void PolicyChecker::continueLoadAfterWillSubmitForm(PolicyAction)
-{
-    // See header file for an explaination of why this function
-    // isn't like the others.
-    m_frame->loader()->continueLoadAfterWillSubmitForm();
 }
 
 void FrameLoader::continueLoadAfterWillSubmitForm()
@@ -3588,100 +3528,6 @@ bool FrameLoader::shouldScrollToAnchor(bool isFormSubmission, FrameLoadType load
         && !m_frame->document()->isFrameSet();
 }
 
-void PolicyChecker::checkNewWindowPolicy(const NavigationAction& action, NewWindowPolicyDecisionFunction function,
-    const ResourceRequest& request, PassRefPtr<FormState> formState, const String& frameName, void* argument)
-{
-    m_policyCheck.set(request, formState, frameName, function, argument);
-    m_frame->loader()->client()->dispatchDecidePolicyForNewWindowAction(&PolicyChecker::continueAfterNewWindowPolicy,
-        action, request, formState, frameName);
-}
-
-void PolicyChecker::continueAfterNewWindowPolicy(PolicyAction policy)
-{
-    PolicyCheck check = m_policyCheck;
-    m_policyCheck.clear();
-
-    switch (policy) {
-        case PolicyIgnore:
-            check.clearRequest();
-            break;
-        case PolicyDownload:
-            m_frame->loader()->client()->startDownload(check.request());
-            check.clearRequest();
-            break;
-        case PolicyUse:
-            break;
-    }
-
-    check.call(policy == PolicyUse);
-}
-
-void PolicyChecker::checkNavigationPolicy(const ResourceRequest& request, DocumentLoader* loader,
-    PassRefPtr<FormState> formState, NavigationPolicyDecisionFunction function, void* argument)
-{
-    NavigationAction action = loader->triggeringAction();
-    if (action.isEmpty()) {
-        action = NavigationAction(request.url(), NavigationTypeOther);
-        loader->setTriggeringAction(action);
-    }
-
-    // Don't ask more than once for the same request or if we are loading an empty URL.
-    // This avoids confusion on the part of the client.
-    if (equalIgnoringHeaderFields(request, loader->lastCheckedRequest()) || (!request.isNull() && request.url().isEmpty())) {
-        function(argument, request, 0, true);
-        loader->setLastCheckedRequest(request);
-        return;
-    }
-    
-    // We are always willing to show alternate content for unreachable URLs;
-    // treat it like a reload so it maintains the right state for b/f list.
-    if (loader->substituteData().isValid() && !loader->substituteData().failingURL().isEmpty()) {
-        if (isBackForwardLoadType(m_loadType))
-            m_loadType = FrameLoadTypeReload;
-        function(argument, request, 0, true);
-        return;
-    }
-    
-    loader->setLastCheckedRequest(request);
-
-    m_policyCheck.set(request, formState.get(), function, argument);
-
-    m_delegateIsDecidingNavigationPolicy = true;
-    m_frame->loader()->client()->dispatchDecidePolicyForNavigationAction(&PolicyChecker::continueAfterNavigationPolicy,
-        action, request, formState);
-    m_delegateIsDecidingNavigationPolicy = false;
-}
-
-void PolicyChecker::continueAfterNavigationPolicy(PolicyAction policy)
-{
-    PolicyCheck check = m_policyCheck;
-    m_policyCheck.clear();
-
-    bool shouldContinue = policy == PolicyUse;
-
-    switch (policy) {
-        case PolicyIgnore:
-            check.clearRequest();
-            break;
-        case PolicyDownload:
-            m_frame->loader()->client()->startDownload(check.request());
-            check.clearRequest();
-            break;
-        case PolicyUse: {
-            ResourceRequest request(check.request());
-
-            if (!m_frame->loader()->client()->canHandleRequest(request)) {
-                handleUnimplementablePolicy(m_frame->loader()->cannotShowURLError(check.request()));
-                check.clearRequest();
-                shouldContinue = false;
-            }
-            break;
-        }
-    }
-
-    check.call(shouldContinue);
-}
-
 void FrameLoader::callContinueLoadAfterNavigationPolicy(void* argument,
     const ResourceRequest& request, PassRefPtr<FormState> formState, bool shouldContinue)
 {
@@ -3757,7 +3603,6 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest&, Pass
     else
         continueLoadAfterWillSubmitForm();
 }
-
 
 void FrameLoader::callContinueLoadAfterNewWindowPolicy(void* argument,
     const ResourceRequest& request, PassRefPtr<FormState> formState, const String& frameName, bool shouldContinue)

@@ -29,7 +29,7 @@
  */
 
 #include "config.h"
-#include "PolicyCheck.h"
+#include "PolicyCallback.h"
 
 #include "FormState.h"
 #include "Frame.h"
@@ -38,18 +38,18 @@
 
 namespace WebCore {
 
-PolicyCheck::PolicyCheck()
+PolicyCallback::PolicyCallback()
     : m_navigationFunction(0)
     , m_newWindowFunction(0)
     , m_contentFunction(0)
 {
 }
 
-PolicyCheck::~PolicyCheck()
+PolicyCallback::~PolicyCallback()
 {
 }
 
-void PolicyCheck::clear()
+void PolicyCallback::clear()
 {
     clearRequest();
     m_navigationFunction = 0;
@@ -57,7 +57,7 @@ void PolicyCheck::clear()
     m_contentFunction = 0;
 }
 
-void PolicyCheck::set(const ResourceRequest& request, PassRefPtr<FormState> formState,
+void PolicyCallback::set(const ResourceRequest& request, PassRefPtr<FormState> formState,
     NavigationPolicyDecisionFunction function, void* argument)
 {
     m_request = request;
@@ -70,7 +70,7 @@ void PolicyCheck::set(const ResourceRequest& request, PassRefPtr<FormState> form
     m_argument = argument;
 }
 
-void PolicyCheck::set(const ResourceRequest& request, PassRefPtr<FormState> formState,
+void PolicyCallback::set(const ResourceRequest& request, PassRefPtr<FormState> formState,
     const String& frameName, NewWindowPolicyDecisionFunction function, void* argument)
 {
     m_request = request;
@@ -83,7 +83,7 @@ void PolicyCheck::set(const ResourceRequest& request, PassRefPtr<FormState> form
     m_argument = argument;
 }
 
-void PolicyCheck::set(ContentPolicyDecisionFunction function, void* argument)
+void PolicyCallback::set(ContentPolicyDecisionFunction function, void* argument)
 {
     m_request = ResourceRequest();
     m_formState = 0;
@@ -95,7 +95,7 @@ void PolicyCheck::set(ContentPolicyDecisionFunction function, void* argument)
     m_argument = argument;
 }
 
-void PolicyCheck::call(bool shouldContinue)
+void PolicyCallback::call(bool shouldContinue)
 {
     if (m_navigationFunction)
         m_navigationFunction(m_argument, m_request, m_formState.get(), shouldContinue);
@@ -104,7 +104,7 @@ void PolicyCheck::call(bool shouldContinue)
     ASSERT(!m_contentFunction);
 }
 
-void PolicyCheck::call(PolicyAction action)
+void PolicyCallback::call(PolicyAction action)
 {
     ASSERT(!m_navigationFunction);
     ASSERT(!m_newWindowFunction);
@@ -112,14 +112,14 @@ void PolicyCheck::call(PolicyAction action)
     m_contentFunction(m_argument, action);
 }
 
-void PolicyCheck::clearRequest()
+void PolicyCallback::clearRequest()
 {
     m_request = ResourceRequest();
     m_formState = 0;
     m_frameName = String();
 }
 
-void PolicyCheck::cancel()
+void PolicyCallback::cancel()
 {
     clearRequest();
     if (m_navigationFunction)

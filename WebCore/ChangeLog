@@ -1,3 +1,32 @@
+2009-10-07  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Move PolicyChecker to it's own file
+        https://bugs.webkit.org/show_bug.cgi?id=30193
+
+        This is just moving code around and re-naming things.
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/FrameLoader.cpp:
+        * loader/FrameLoader.h:
+        * loader/PolicyCallback.cpp: Added.
+        (WebCore::PolicyCallback::PolicyCallback):
+        (WebCore::PolicyCallback::~PolicyCallback):
+        (WebCore::PolicyCallback::clear):
+        (WebCore::PolicyCallback::set):
+        (WebCore::PolicyCallback::call):
+        (WebCore::PolicyCallback::clearRequest):
+        (WebCore::PolicyCallback::cancel):
+        * loader/PolicyCallback.h: Added.
+        (WebCore::PolicyCallback::request):
+        * loader/PolicyCheck.cpp: Removed.
+        * loader/PolicyCheck.h: Removed.
+
 2009-10-07  Joel Stanley  <joel@jms.id.au>
 
         Reviewed by Mark Rowe.

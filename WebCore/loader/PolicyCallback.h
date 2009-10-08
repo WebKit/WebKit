@@ -27,8 +27,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PolicyCheck_h
-#define PolicyCheck_h
+#ifndef PolicyCallback_h
+#define PolicyCallback_h
 
 #include "FrameLoaderTypes.h"
 #include "PlatformString.h"
@@ -45,10 +45,10 @@ namespace WebCore {
         const ResourceRequest&, PassRefPtr<FormState>, const String& frameName, bool shouldContinue);
     typedef void (*ContentPolicyDecisionFunction)(void* argument, PolicyAction);
 
-    class PolicyCheck {
+    class PolicyCallback {
     public:
-        PolicyCheck();
-        ~PolicyCheck();
+        PolicyCallback();
+        ~PolicyCallback();
 
         void clear();
         void set(const ResourceRequest&, PassRefPtr<FormState>,
@@ -77,4 +77,4 @@ namespace WebCore {
 
 } // namespace WebCore
 
-#endif // PolicyCheck_h
+#endif // PolicyCallback_h

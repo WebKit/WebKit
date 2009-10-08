@@ -17489,11 +17489,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\loader\PolicyCheck.cpp"
+				RelativePath="..\loader\PolicyCallback.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\loader\PolicyCheck.h"
+				RelativePath="..\loader\PolicyCallback.h"
+				>
+			</File>
+			<File
+				RelativePath="..\loader\PolicyChecker.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\loader\PolicyChecker.h"
 				>
 			</File>
 			<File

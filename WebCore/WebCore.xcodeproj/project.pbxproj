@@ -2345,10 +2345,12 @@
 		93F9B7A00BA6032600854064 /* JSCDATASection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F9B79E0BA6032600854064 /* JSCDATASection.cpp */; };
 		93F9B7A10BA6032600854064 /* JSCDATASection.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F9B79F0BA6032600854064 /* JSCDATASection.h */; };
 		93FDAFCA0B11307400E2746F /* EditorInsertAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 93FDAFC90B11307400E2746F /* EditorInsertAction.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		97059977107D975200A50A7C /* PolicyCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97059973107D975200A50A7C /* PolicyCallback.cpp */; };
+		97059978107D975200A50A7C /* PolicyCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 97059974107D975200A50A7C /* PolicyCallback.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		97059979107D975200A50A7C /* PolicyChecker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97059975107D975200A50A7C /* PolicyChecker.cpp */; };
+		9705997A107D975200A50A7C /* PolicyChecker.h in Headers */ = {isa = PBXBuildFile; fileRef = 97059976107D975200A50A7C /* PolicyChecker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		979F43D31075E44A0000F83B /* RedirectScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 979F43D11075E44A0000F83B /* RedirectScheduler.cpp */; };
 		979F43D41075E44A0000F83B /* RedirectScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = 979F43D21075E44A0000F83B /* RedirectScheduler.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		97BC63B81076C97F002C2142 /* PolicyCheck.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97BC63B61076C97F002C2142 /* PolicyCheck.cpp */; };
-		97BC63B91076C97F002C2142 /* PolicyCheck.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC63B71076C97F002C2142 /* PolicyCheck.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		97DD4D860FDF4D6E00ECF9A4 /* XSSAuditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97DD4D840FDF4D6D00ECF9A4 /* XSSAuditor.cpp */; };
 		97DD4D870FDF4D6E00ECF9A4 /* XSSAuditor.h in Headers */ = {isa = PBXBuildFile; fileRef = 97DD4D850FDF4D6E00ECF9A4 /* XSSAuditor.h */; };
 		A17C81220F2A5CF7005DAAEB /* HTMLElementFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A17C81200F2A5CF7005DAAEB /* HTMLElementFactory.cpp */; };
@@ -7536,10 +7538,12 @@
 		93F9B79E0BA6032600854064 /* JSCDATASection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCDATASection.cpp; sourceTree = "<group>"; };
 		93F9B79F0BA6032600854064 /* JSCDATASection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCDATASection.h; sourceTree = "<group>"; };
 		93FDAFC90B11307400E2746F /* EditorInsertAction.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = EditorInsertAction.h; sourceTree = "<group>"; };
+		97059973107D975200A50A7C /* PolicyCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PolicyCallback.cpp; sourceTree = "<group>"; };
+		97059974107D975200A50A7C /* PolicyCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PolicyCallback.h; sourceTree = "<group>"; };
+		97059975107D975200A50A7C /* PolicyChecker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PolicyChecker.cpp; sourceTree = "<group>"; };
+		97059976107D975200A50A7C /* PolicyChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PolicyChecker.h; sourceTree = "<group>"; };
 		979F43D11075E44A0000F83B /* RedirectScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RedirectScheduler.cpp; sourceTree = "<group>"; };
 		979F43D21075E44A0000F83B /* RedirectScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RedirectScheduler.h; sourceTree = "<group>"; };
-		97BC63B61076C97F002C2142 /* PolicyCheck.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PolicyCheck.cpp; sourceTree = "<group>"; };
-		97BC63B71076C97F002C2142 /* PolicyCheck.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PolicyCheck.h; sourceTree = "<group>"; };
 		97DD4D840FDF4D6D00ECF9A4 /* XSSAuditor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XSSAuditor.cpp; sourceTree = "<group>"; };
 		97DD4D850FDF4D6E00ECF9A4 /* XSSAuditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XSSAuditor.h; sourceTree = "<group>"; };
 		A17C81200F2A5CF7005DAAEB /* HTMLElementFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLElementFactory.cpp; sourceTree = "<group>"; };
@@ -14588,8 +14592,10 @@
 				377C4CDD1014E9F600B9AE42 /* PlaceholderDocument.h */,
 				1AC694C50A3B1676003F5049 /* PluginDocument.cpp */,
 				1AC694C60A3B1676003F5049 /* PluginDocument.h */,
-				97BC63B61076C97F002C2142 /* PolicyCheck.cpp */,
-				97BC63B71076C97F002C2142 /* PolicyCheck.h */,
+				97059973107D975200A50A7C /* PolicyCallback.cpp */,
+				97059974107D975200A50A7C /* PolicyCallback.h */,
+				97059975107D975200A50A7C /* PolicyChecker.cpp */,
+				97059976107D975200A50A7C /* PolicyChecker.h */,
 				1A2A68210B5BEDE70002A480 /* ProgressTracker.cpp */,
 				1A2A68220B5BEDE70002A480 /* ProgressTracker.h */,
 				979F43D11075E44A0000F83B /* RedirectScheduler.cpp */,
@@ -17964,9 +17970,10 @@
 				979F43D41075E44A0000F83B /* RedirectScheduler.h in Headers */,
 				BC9462D8107A7B4C00857193 /* BeforeLoadEvent.h in Headers */,
 				BC946348107A936600857193 /* JSBeforeLoadEvent.h in Headers */,
-				97BC63B91076C97F002C2142 /* PolicyCheck.h in Headers */,
 				1449E24C107D4A8400B5793F /* JSCallbackData.h in Headers */,
 				A75E497610752ACB00C9B896 /* SerializedScriptValue.h in Headers */,
+				97059978107D975200A50A7C /* PolicyCallback.h in Headers */,
+				9705997A107D975200A50A7C /* PolicyChecker.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -20086,9 +20093,10 @@
 				5DB1BC6B10715A6400EFAA49 /* TransformSourceLibxslt.cpp in Sources */,
 				979F43D31075E44A0000F83B /* RedirectScheduler.cpp in Sources */,
 				BC946346107A934B00857193 /* JSBeforeLoadEvent.cpp in Sources */,
-				97BC63B81076C97F002C2142 /* PolicyCheck.cpp in Sources */,
 				1449E287107D4DB400B5793F /* JSCallbackData.cpp in Sources */,
 				A75E497710752ACB00C9B896 /* SerializedScriptValue.cpp in Sources */,
+				97059977107D975200A50A7C /* PolicyCallback.cpp in Sources */,
+				97059979107D975200A50A7C /* PolicyChecker.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

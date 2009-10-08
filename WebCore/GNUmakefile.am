@@ -1245,8 +1245,10 @@ webcore_sources += \
 	WebCore/loader/PlaceholderDocument.h \
 	WebCore/loader/PluginDocument.cpp \
 	WebCore/loader/PluginDocument.h \
-	WebCore/loader/PolicyCheck.cpp \
-	WebCore/loader/PolicyCheck.h \
+	WebCore/loader/PolicyCallback.cpp \
+	WebCore/loader/PolicyCallback.h \
+	WebCore/loader/PolicyChecker.cpp \
+	WebCore/loader/PolicyChecker.h \
 	WebCore/loader/ProgressTracker.cpp \
 	WebCore/loader/ProgressTracker.h \
 	WebCore/loader/RedirectScheduler.cpp \

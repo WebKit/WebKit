@@ -1113,7 +1113,8 @@ SOURCES += \
     loader/NetscapePlugInStreamLoader.cpp \
     loader/PlaceholderDocument.cpp \
     loader/PluginDocument.cpp \
-    loader/PolicyCheck.cpp \
+    loader/PolicyCallback.cpp \
+    loader/PolicyChecker.cpp \
     loader/ProgressTracker.cpp \
     loader/RedirectScheduler.cpp \
     loader/Request.cpp \
